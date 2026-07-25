@@ -12,6 +12,17 @@ The purpose is twofold: to help writing **gain attention**, by naming which cont
 
 One development is worth flagging at the section level, because it shifts a long-standing piece of CGP's positioning. The obstacle CGP's audience has cited most is not conceptual but practical: its compiler errors, where a small wiring mistake expands into a wall of generated-type noise with the real cause buried or hidden. That obstacle now has a first-class answer — [`cargo-cgp`](https://github.com/contextgeneric/cargo-cgp), a cargo subcommand that rewrites those errors into a compact, root-cause-first form (see the [cargo-cgp reference](../cgp/reference/cargo-cgp.md) and the [error catalog](../cgp/errors/README.md)). For an advocate this is a de-risking asset to lead with, not a cost to quietly concede — subject to the one honesty caveat the whole section is bound by: cargo-cgp is an early pre-release that already handles the common wiring errors but does not yet reshape every class, so present it as *the error experience is dramatically better and actively improving*, never as solved. The [skepticism](skepticism.md), [problems solved](problems-solved.md), [selling points](selling-points.md), and [technical barriers](technical-barriers.md) documents work this shift out in detail.
 
+## Where this guidance gets spent
+
+Nearly all of it ends up on the public website, so [website/](../website/README.md) is the practical
+companion to this section. That directory documents <https://contextgeneric.dev> page by page — one
+document per blog post, one per tutorial series, one for the site's configuration and standalone
+pages — and each records which document here governs its framing. An agent writing or revising a page
+starts there and is sent back to the relevant strategy document; an agent revising a strategy document
+can look there to see what the project has actually published and how it landed. The two-way traffic
+is deliberate: this section supplies the judgment, and the website section is the record of that
+judgment applied.
+
 ## Relationship to related work
 
 This section is the natural companion to [related-work/](../related-work/README.md), and the two are read together when preparing public writing. A related-work document explains one external idea — dependency injection, type classes, reflection — faithfully, records what its users like and dislike, and positions CGP against it; a communication-strategy document generalizes across those comparisons into audience-level guidance about which readers exist, what they already believe, and how a piece should be shaped for them. When a related-work document records a sentiment — that Rust developers reach for Dagger to escape reflection's runtime cost, say — this section turns it into a reader trait an author can plan around. Read the matching related-work document for the depth of a comparison; read here for the shape of the audience.

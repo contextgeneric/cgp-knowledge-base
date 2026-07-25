@@ -43,6 +43,30 @@ Five patterns recur in that discussion, and each maps to guidance elsewhere in t
 - **The name does not communicate.** Multiple commenters said plainly that "context-generic programming" obscures more than it conveys, that "coining a new phrase makes it harder to understand," and reached instead for "structural typing" or "duck typing for statically-typed code" to name what they thought was being described. This is direct field validation of the [tag-lines.md](tag-lines.md) rule that a name is not a pitch, and it surfaces a community-supplied bridge term worth testing — with the caveat that CGP is nominal-and-wired, not truly structural.
 - **Do not overstate the ergonomics.** When CGP claims a reader need not understand its internals, a skeptic answers that "when I hit a compilation error, I'm going to have to understand the desugaring," and they are right. The honest position, per [technical-barriers.md](technical-barriers.md) and [skepticism.md](skepticism.md), concedes the error-message barrier rather than promising the internals stay out of sight. This is the complaint CGP has answered most directly since: [`cargo-cgp`](https://github.com/contextgeneric/cargo-cgp), CGP's error toolchain, exists specifically to un-hide and lead with the root cause of a CGP compile error, so a piece meeting this objection can now point to a deliberate response rather than only conceding the cost. The tool is new — v0.1.0-alpha — and has no reception evidence of its own yet; do not manufacture any, and point to it as the deliberate answer to a recorded complaint, not as something the community is already praising.
 
+The discussion is also broader than those two threads, and the fuller inventory is worth knowing
+before concluding anything from a single one. Every substantial post since the launch has been
+submitted to the same three venues, and the [blog catalog](../website/blog/README.md) records the
+links per post: the [Hypershell announcement](../website/blog/hypershell-release.md), all four parts of
+the [extensible-data-types series](../website/blog/extensible-datatypes-part-1.md), the
+[v0.7.0 release](../website/blog/v0-7-0-release.md), and the
+[RustLab transcript](../website/blog/rustlab-2025-coherence.md) each carry Reddit, Lobsters, and Hacker
+News threads, several also opening a GitHub discussion. That is the sample to read when testing a
+framing claim, rather than the launch thread alone — and it is worth noting *what* drew submission
+effort, since the deep dives and the DSL post were judged worth the same push as the releases.
+
+**The conference channel has now been used, and it worked.** CGP was presented at RustLab 2025 in
+Florence, and the talk exists as a [recording](https://www.youtube.com/watch?v=gXIfP-W9074), a slide
+deck, and a [full transcript published as a blog post](../website/blog/rustlab-2025-coherence.md).
+Three things follow for the strategy. The talk-format playbook in [formats.md](formats.md) is no
+longer hypothetical — a delivered talk exists that follows it closely, opening on the problem, spending
+its middle on one idea, deferring the theory, and closing on honest limits — so a future talk should be
+built from that one rather than from first principles. **Publishing the transcript is itself a
+reusable move**: it converts an ephemeral, unindexable artifact into something linkable, quotable, and
+readable by people who will never watch a video, and it costs almost nothing once the talk is written.
+And a conference gives a project something the link aggregators do not, which is a room that has
+already decided to listen for forty minutes — the one format where the *evaluator* profile can be
+reached at depth.
+
 Two further lessons come from outside that discussion and still hold. "Dependency injection" is not a safe general hook, because idiomatic Rust already does lightweight DI with traits and generics and a large part of the audience treats DI *frameworks* as an unwanted import — the distinct native objection now in [skepticism.md](skepticism.md). And social proof is worth building: the comparable success stories in adjacent ecosystems turned on a flagship adopter, the way TypeScript's adoption accelerated once a major framework endorsed it, so CGP's most convincing answer to the evaluator's "is anyone really using this" is a real, non-trivial system built with it and shown as a worked example, not more argument.
 
 ## Where the profiles gather

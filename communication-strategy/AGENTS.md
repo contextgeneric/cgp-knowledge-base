@@ -24,6 +24,23 @@ The single rule that governs everything here is that honesty *is* the marketing 
 
 Two guardrails follow directly and are absolute. Never fabricate evidence — no invented benchmarks, adoption numbers, quotations, or version-specific claims; when a number or quote would strengthen a point, either source it or omit it. And never disparage another language, framework, or community to elevate CGP; the related-work documents set the standard of representing every compared tool as its own users would recognize it, and public writing must meet the same bar. Naming where a competing tool is simply the better choice is a devrel asset, not a concession.
 
+## The website is this section's largest consumer
+
+Most of what this section governs eventually appears on <https://contextgeneric.dev>, so the
+[website/](../website/README.md) section is where this guidance is actually spent. Its own
+[AGENTS.md](../website/AGENTS.md) makes consulting these documents mandatory before any change to a
+page, and maps each artifact — the launch post, the tutorial, the landing page, the talk transcript —
+onto the document that governs it. Read in that direction when writing a page.
+
+Read in *this* direction when the question is whether the guidance still matches reality. The
+website's per-page documents record what the project has actually published and how it was received,
+which makes them a source of evidence rather than only a destination for advice: the
+[RustLab talk transcript](../website/blog/rustlab-2025-coherence.md) is a delivered instance of the
+talk playbook, the [tutorial documents](../website/tutorials/README.md) record teaching contracts that
+[technical-barriers.md](technical-barriers.md) predicts, and the
+[blog catalog](../website/blog/README.md) is the fullest inventory of what has been said publicly in
+CGP's name. A claim here about "what works" should be checkable against something published there.
+
 ## Keeping the section in sync
 
 These documents sync against three moving targets rather than one, and a review checks all three. First, they sync against **CGP's actual capabilities**: a selling point or rebuttal that rests on a feature the code no longer has, or misses a capability newly added, is stale and must be corrected — the synchronization rule applies to every CGP claim. Second, they sync against **the related-work sentiment**: community attitudes evolve, features that were experimental ship and features that were praised fall out of favor, so when a related-work document's sentiment is revised, revisit the selling points and skepticisms that rest on it. Third, they sync against **the reader profiles**: [reader-profiles.md](reader-profiles.md) is the audience model the rest of the section builds on, so a change to who the readers are ripples into what to sell them and which objections to expect.

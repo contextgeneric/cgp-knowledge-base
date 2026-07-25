@@ -606,3 +606,103 @@ it stale.
   consumer could recover the cause from the output, currently with no reproduced case.
 - [usability.md](cargo-cgp/issues/usability.md) — output that carries the cause but buries it, the
   readability gaps that remain.
+
+## `website/` — the public website, page by page
+
+- [website/README.md](website/README.md) — what this section documents, the one-way link asymmetry
+  that makes it necessary, how the Docusaurus site is organized, and its catalog.
+- [website/AGENTS.md](website/AGENTS.md) — the rules: the one-way link rule, consulting
+  communication-strategy before writing public prose, never taking current syntax from a blog post,
+  the prohibition on rewriting published history, the document template, and the status vocabulary.
+- [website/site-structure.md](website/site-structure.md) — the site's build, navigation, announcement
+  bar, and deployment, plus one entry each for the front page, Introduction, Overview, Resources,
+  Contribute, and the AI skills page.
+
+### `website/blog/` — one document per published post
+
+- [README.md](website/blog/README.md) — the chronological catalog, why drift matters most here, the
+  five breaking changes that account for it, and the site's publication conventions.
+- [early-preview-announcement.md](website/blog/early-preview-announcement.md) — the launch post, CGP's
+  origin in the Hermes relayer, and a 2025 plan since resolved by other means.
+- [v0-3-0-release.md](website/blog/v0-3-0-release.md) — abstract types via the removed `cgp_type!`,
+  the first getter macros, `CanWrapError`, and the error and runtime crates.
+- [v0-4-0-release.md](website/blog/v0-4-0-release.md) — the release that made CGP debuggable:
+  `IsProviderFor`, `check_components!`, plus `#[cgp_context]` and the preset system.
+- [v0-4-1-release.md](website/blog/v0-4-1-release.md) — the `cgp-handler` crate introducing
+  `Handler`, `Computer`, and `Producer`.
+- [hypershell-release.md](website/blog/hypershell-release.md) — the site's longest post: building a
+  type-level DSL, with a self-contained CGP primer and a candid disadvantages section.
+- [extensible-datatypes-part-1.md](website/blog/extensible-datatypes-part-1.md) — extensible records,
+  enum casts, and modular application construction from independent builder providers.
+- [extensible-datatypes-part-2.md](website/blog/extensible-datatypes-part-2.md) — extensible variants
+  applied to the expression problem, with the `serde::Visitor` motivation.
+- [extensible-datatypes-part-3.md](website/blog/extensible-datatypes-part-3.md) — the record
+  internals: constraint propagation, partial records, and the builder dispatchers.
+- [extensible-datatypes-part-4.md](website/blog/extensible-datatypes-part-4.md) — the variant
+  internals: `Void`, exhaustive extraction, the casts, and the monadic visitor dispatchers.
+- [v0-5-0-release.md](website/blog/v0-5-0-release.md) — `#[derive(CgpData)]`, `#[cgp_auto_dispatch]`,
+  monadic computation, and the removal of `Async` for the `Send`-recovery pattern.
+- [v0-6-0-release.md](website/blog/v0-6-0-release.md) — `#[cgp_impl]`, direct delegation on the
+  context, and the removal of `HasCgpProvider`.
+- [cgp-serde-release.md](website/blog/cgp-serde-release.md) — Serde as CGP components, two apps
+  encoding the same data differently, and arena-allocating deserialization.
+- [v0-6-1-release.md](website/blog/v0-6-1-release.md) — implicit context types, `#[check_providers]`,
+  and associated types in getter traits.
+- [new-website.md](website/blog/new-website.md) — the Zola-to-Docusaurus migration, the stock-install
+  policy, and the project's disclosed use of LLM assistance.
+- [v0-7-0-release.md](website/blog/v0-7-0-release.md) — the attribute suite (`#[cgp_fn]`,
+  `#[implicit]`, `#[uses]`, `#[use_provider]`, `#[use_type]`) and the removal of `#[cgp_context]`.
+- [rustlab-2025-coherence.md](website/blog/rustlab-2025-coherence.md) — the conference talk
+  transcript, and the clearest published account of why coherence exists and why specialization
+  cannot replace it.
+- [v0-8-0-release.md](website/blog/v0-8-0-release.md) — the namespace announcement for the
+  unreleased v0.8.0, an unfinished draft begun under the abandoned v0.7.1 number.
+
+### `website/tutorials/` — one document per tutorial series
+
+- [README.md](website/tutorials/README.md) — why a tutorial needs a teaching-contract document rather
+  than a drift record, the catalog, and the document shape.
+- [hello-world.md](website/tutorials/hello-world.md) — the single-page first contact: one CGP
+  function, two contexts, and an optional desugaring appendix.
+- [area-calculation.md](website/tutorials/area-calculation.md) — the three-part series from plain
+  functions to higher-order providers, its two load-bearing orderings, and the checking gap in it.
+
+## `releases/` — the version history
+
+- [releases/README.md](releases/README.md) — why the base keeps one historical section, the **removal
+  ledger** dating every renamed or deleted construct, the catalog of releases, and the two places the
+  upstream changelog disagrees with the tags.
+- [v0-1-0.md](releases/v0-1-0.md) — 2024-09-02, the first crates.io publication, predating the public
+  announcement; every idea present, almost every name since changed.
+- [v0-2-0.md](releases/v0-2-0.md) — 2024-12-08, the pre-launch cleanup: `#[cgp_component]`, and the
+  type-level vocabulary in essentially its final form.
+- [v0-3-0.md](releases/v0-3-0.md) — 2025-01-08, abstract types, the getter macros, `CanWrapError`,
+  and the error and runtime crates.
+- [v0-3-1.md](releases/v0-3-1.md) — 2025-01-16, a patch release whose async error aliases were all
+  removed two releases later.
+- [v0-4-0.md](releases/v0-4-0.md) — 2025-05-09, the debuggability release: `IsProviderFor`,
+  `check_components!`, presets, `#[cgp_context]`, and the first datatype-generic support.
+- [v0-4-1.md](releases/v0-4-1.md) — 2025-06-14, the `cgp-handler` crate and the computation family
+  everything later is built on.
+- [v0-4-2.md](releases/v0-4-2.md) — 2025-07-07, extensible records and variants, the builder and
+  visitor patterns, and safe enum casting.
+- [v0-5-0.md](releases/v0-5-0.md) — 2025-10-12, the stabilization release: `#[derive(CgpData)]`,
+  `#[cgp_auto_dispatch]`, monads, `StaticString`, and the removal of `Async`.
+- [v0-6-0.md](releases/v0-6-0.md) — 2025-10-26, `#[cgp_impl]`, direct delegation on the context, and
+  the removal of `HasCgpProvider`.
+- [v0-6-1.md](releases/v0-6-1.md) — 2026-02-01, implicit context types, `#[check_providers]`, and
+  associated types in getter traits; all three still current.
+- [v0-7-0.md](releases/v0-7-0.md) — 2026-02-28, the most recent shipped release: the attribute suite
+  and the removal of `#[cgp_context]`; its changelog entry is mislabelled v0.6.2.
+- [v0-8-0.md](releases/v0-8-0.md) — **unreleased**, in development at `0.8.0-alpha`: namespaces and
+  paths, the `open` statement, the removal of presets, and why it is not v0.7.1.
+
+## `projects/` — the libraries built with CGP
+
+- [projects/README.md](projects/README.md) — what qualifies as an ecosystem project, why these
+  documents stay brief, and how each connects to an example, an announcement post, and a set of
+  constructs.
+- [projects/hypershell/README.md](projects/hypershell/README.md) — the type-level shell-scripting
+  DSL: its crate layout, its namespace-based assembly, and the CGP it exercises.
+- [projects/cgp-serde/README.md](projects/cgp-serde/README.md) — Serde rebuilt as CGP components:
+  its provider set, derive-free struct handling, lifetime-carrying components, and open gaps.

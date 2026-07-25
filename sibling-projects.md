@@ -8,13 +8,34 @@ step — so treat this table as the authoritative list of what exists alongside 
 
 The knowledge base documents these projects rather than duplicating them: `cgp/` and `cargo-cgp/`
 each document one member's own subject, so every claim in them is verified against that member's
-source, and the skills built from this base live in `cgp-skills`.
+source; the skills built from this base live in `cgp-skills`; the public website is documented from
+this side in `website/`, because a published page may not link back here; and the libraries built
+*with* CGP are documented briefly in `projects/`.
 
 | Project | Repository | Branch/tag to read | What it is |
 |---|---|---|---|
 | `cgp` | <https://github.com/contextgeneric/cgp> | `main` | The CGP library: the proc-macro suite and the runtime crates its expansions target. |
 | `cargo-cgp` | <https://github.com/contextgeneric/cargo-cgp> | `main` | CGP's first-class toolchain: the cargo subcommand that makes CGP compile errors readable and expands CGP macros. |
 | `cgp-skills` | <https://github.com/contextgeneric/cgp-skills> | `main` | The agent skills for CGP, deployed on their own — the `/cgp` skill among them. |
+| `cgp-website` | <https://github.com/contextgeneric/contextgeneric.dev> | `main` | The public website at <https://contextgeneric.dev>: a Docusaurus site holding the docs, tutorials, and blog. Documented in [website/](website/README.md). |
+| `hypershell` | <https://github.com/contextgeneric/hypershell> | `main` | A modular type-level DSL for shell-script-like programs, built with CGP. Documented in [projects/hypershell/](projects/hypershell/README.md). |
+| `cgp-serde` | <https://github.com/contextgeneric/cgp-serde> | `main` | Serde's `Serialize` and `Deserialize` rebuilt as CGP components. Documented in [projects/cgp-serde/](projects/cgp-serde/README.md). |
+| `cgp-examples` | <https://github.com/contextgeneric/cgp-examples> | `main` | Runnable example crates — `builder`, `expression`, `greet`, `transfer`, `web-app` — several of which are the origin of the scenarios in [examples/](examples/README.md). |
+| `cgp-example-profile-picture` | <https://github.com/contextgeneric/cgp-example-profile-picture> | `main` | A single worked tutorial evolving one real application from a monolithic function to a modular CGP design; the origin of [examples/profile-picture.md](examples/profile-picture.md). |
+
+The two example repositories have no directory of their own here, and the reason is a rule rather than
+an oversight. [examples/AGENTS.md](examples/AGENTS.md) requires a worked example to be **self-contained
+and to cite no source**, re-derived in current vocabulary rather than copied — so an example document
+must not point back at the repository its scenario came from. Recording the relationship here instead
+keeps the provenance findable for an agent without putting a citation in the document. Both repositories
+track the same `cgp` version as the library, so they are reliable references for current syntax.
+
+Two entries need a note on their names. The website's local checkout is `../cgp-website` while its
+repository is named `contextgeneric.dev`, so the directory and the remote do not match — use the
+directory name when locating the checkout and the repository name when writing a link. And
+[Hermes SDK](https://github.com/informalsystems/hermes-sdk/), the first real-world adopter of CGP, is
+developed outside the contextgeneric organization and is not a sibling: read it as an external
+reference, never expect a local checkout of it, and do not edit it.
 
 ## Finding a sibling
 

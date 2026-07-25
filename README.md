@@ -99,6 +99,36 @@ across those comparisons into audience-level strategy: which readers exist and w
 believes, which hooks earn attention, which misunderstandings CGP reliably provokes, and what
 vocabulary keeps everything written about CGP reading as one voice.
 
+### `website/` — the public website, page by page
+
+[website/](website/README.md) is the meta-documentation for <https://contextgeneric.dev>, and it
+exists to bridge a deliberate asymmetry: the website is public and may never link into this internal
+base, so the map from a published page back to the material behind it has to live here. It carries one
+document per blog post, one per tutorial series, and one covering the site's configuration and
+standalone pages — each recording what the page says, which knowledge-base documents own its content,
+and how far its code has drifted from the current release. That last point is why the section matters
+most: nearly every blog post predates v0.8.0, several teach constructs the compiler no longer accepts,
+and an agent needs to know which is which before quoting any of them.
+
+### `releases/` — the version history
+
+[releases/](releases/README.md) is the one section that deliberately looks backwards. Everywhere else
+the base [documents the present](AGENTS.md#document-the-present-not-the-history), which leaves no
+answer to a question an agent hits constantly: this code, blog post, or book chapter uses
+`#[cgp_context]` or `cgp_preset!` — when did that exist, and what replaced it? A document per released
+version records what it introduced, what it broke, and how much of it still stands, and a **removal
+ledger** in the index dates every construct that has been renamed or deleted. It also tracks the
+release currently in preparation, since v0.8.0 is not yet out.
+
+### `projects/` — the libraries built with CGP
+
+[projects/](projects/README.md) documents the ecosystem projects that *use* CGP rather than being part
+of it — [hypershell](projects/hypershell/README.md), a type-level shell-scripting DSL, and
+[cgp-serde](projects/cgp-serde/README.md), Serde rebuilt as swappable components. These entries are
+deliberately brief: enough to orient an agent on what each project is, how it is structured, and which
+CGP constructs it exercises, with the verified code living in [examples/](examples/README.md) and the
+exhaustive semantics in the member sections.
+
 ## Finding your way in
 
 Four files at the top level orient an agent before it opens any section. Read them in this order and
@@ -117,15 +147,23 @@ you know what exists, what the rules are, and where the code lives.
 
 ## The projects it documents
 
-The knowledge base currently documents three member projects, and the list will grow as the
-ecosystem does. [`cgp`](https://github.com/contextgeneric/cgp) is the library — the proc-macro suite
-and the runtime crates its expansions target. [`cargo-cgp`](https://github.com/contextgeneric/cargo-cgp)
-is the first-class toolchain that rewrites CGP compile errors and expands CGP macros.
-[`cgp-skills`](https://github.com/contextgeneric/cgp-skills) holds the agent skills built *from* this
-base — the `/cgp` skill an agent loads before reading or writing CGP code — which live in their own
-repository because a skill is deployed on its own and may not link back to anything here.
-[sibling-projects.md](sibling-projects.md) records where each one lives; adding a member means adding
-it there, giving it a directory here if it needs one, and registering that directory in this README.
+The knowledge base documents the whole CGP ecosystem, and the repositories fall into three groups.
+The **core** is [`cgp`](https://github.com/contextgeneric/cgp), the library — the proc-macro suite and
+the runtime crates its expansions target — together with
+[`cargo-cgp`](https://github.com/contextgeneric/cargo-cgp), the first-class toolchain that rewrites
+CGP compile errors and expands CGP macros. The **outputs built from this base** are
+[`cgp-skills`](https://github.com/contextgeneric/cgp-skills), which holds the agent skills — the
+`/cgp` skill an agent loads before reading or writing CGP code — and
+[`contextgeneric.dev`](https://github.com/contextgeneric/contextgeneric.dev), the public website; both
+live in their own repositories because both are deployed to audiences that may not link back to
+anything here, which is why [website/](website/README.md) documents the site from this side instead.
+The **ecosystem projects** are [`hypershell`](https://github.com/contextgeneric/hypershell) and
+[`cgp-serde`](https://github.com/contextgeneric/cgp-serde), libraries built with CGP rather than part
+of it, documented under [projects/](projects/README.md).
+
+[sibling-projects.md](sibling-projects.md) records where each one lives; adding a repository means
+adding it there, giving it a directory here if it needs one, and registering that directory in this
+README.
 
 ## How to use it
 

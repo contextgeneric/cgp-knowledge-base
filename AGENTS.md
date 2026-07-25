@@ -6,15 +6,21 @@ This file governs how to write and maintain every document in this repository. R
 section adds its own rules in its own `AGENTS.md`, and those build on these rather than replacing
 them.
 
-The sections with rules of their own are the two member directories and the two outward-facing
-sections: [cgp/AGENTS.md](cgp/AGENTS.md) for the CGP library's documentation (and, nested under it,
+The sections with rules of their own are the two member directories and the outward-facing sections:
+[cgp/AGENTS.md](cgp/AGENTS.md) for the CGP library's documentation (and, nested under it,
 [cgp/implementation/AGENTS.md](cgp/implementation/AGENTS.md) and [cgp/errors/AGENTS.md](cgp/errors/AGENTS.md)),
 [cargo-cgp/AGENTS.md](cargo-cgp/AGENTS.md) for the toolchain's (with
 [cargo-cgp/implementation/AGENTS.md](cargo-cgp/implementation/AGENTS.md)),
 [examples/AGENTS.md](examples/AGENTS.md) for the worked examples,
-[related-work/AGENTS.md](related-work/AGENTS.md) for the outward comparisons, and
-[communication-strategy/AGENTS.md](communication-strategy/AGENTS.md) for public-facing writing. Read
-the one that owns what you are about to touch, after this file.
+[related-work/AGENTS.md](related-work/AGENTS.md) for the outward comparisons,
+[communication-strategy/AGENTS.md](communication-strategy/AGENTS.md) for public-facing writing, and
+[website/AGENTS.md](website/AGENTS.md) for the public site and the documents that track it. Read the
+one that owns what you are about to touch, after this file.
+
+Two sections have no rules of their own and are governed by this file alone:
+[projects/](projects/README.md), whose only addition is that its documents stay brief, and
+[releases/](releases/README.md), which is the single exception to the document-the-present rule below
+and is otherwise bound by this file unchanged.
 
 ## Orient before any task
 
@@ -87,6 +93,15 @@ state describes something that no longer exists. When you correct a discrepancy,
 state the current behavior and delete the old wording outright. Git history is where the evolution
 lives. The one place a document describes a deviation is a Known issues or limitations section, and
 even there the deviation is a current one.
+
+Two sections are exempt, and the exemption is narrow. [releases/](releases/README.md) exists to record
+the history this rule keeps out of everywhere else — when a construct arrived, what it was called at
+each point, and where it went — because a reader meeting `#[cgp_context]` in old code has nowhere else
+to look. [website/blog/](website/blog/README.md) records how far each published post has drifted from
+the current release, for the same reason. Neither exemption travels: a reference, concept, guide, or
+implementation document still describes only the present, and a construct that no longer exists is
+deleted from it rather than annotated. When you need to say what something *used* to be, link to the
+release document that says it.
 
 ## Writing links
 
