@@ -20,21 +20,21 @@ goes deeper and stays in sync with the code. Read the two together.
 
 ## Why this exists
 
-CGP is implemented almost entirely as procedural macros, and proc-macro source code is a poor place
-to learn semantics from. An agent reading [crates/macros/cgp-macro-core](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-core)
-sees token-stream manipulation and AST transforms, not the meaning those transforms produce. The
-meaning — "`#[cgp_component]` generates a consumer trait, a provider trait, and two blanket impls
-that connect them" — has to be reconstructed by mentally running the macro. That reconstruction is
-slow, error-prone, and gets repeated on every visit. These documents capture it once, in prose, so
-the next agent reads the conclusion instead of re-deriving it.
+The base's [README](../README.md#why-this-exists) makes the general case that CGP's meaning has to be
+recorded in prose because the macro source does not show it. This section is where that reconstruction
+lives for the library: an agent reading
+[crates/macros/cgp-macro-core](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-core)
+sees token-stream manipulation and AST transforms, not the meaning they produce, and the meaning —
+"`#[cgp_component]` generates a consumer trait, a provider trait, and two blanket impls that connect
+them" — has to be reconstructed by mentally running the macro. Documented once, it is read rather than
+re-derived on every visit.
 
-They also serve as a contract. When an agent changes how a macro expands, the corresponding reference
-document is where the intended new behavior is stated in plain language, so a reviewer can compare
-the prose against the code and against the expansion snapshots in
+What makes that documentation checkable is a third artifact. A reference document's Expansion section
+states the intended generated code in plain language, and the expansion snapshots in
 [crates/tests/cgp-macro-tests](https://github.com/contextgeneric/cgp/tree/main/crates/tests/cgp-macro-tests)
-to confirm that all three agree. Documentation that drifts out of sync with the code is worse than
-none, so keeping these documents accurate is a hard requirement of any change — see
-[AGENTS.md](AGENTS.md) for this section's rules and [../AGENTS.md](../AGENTS.md) for the ones the
+pin what the macro really emits, so a reviewer can hold the prose, the code, and the snapshot against
+each other and see whether all three agree. Keeping them agreeing is a hard requirement of any change
+— see [AGENTS.md](AGENTS.md) for this section's rules and [../AGENTS.md](../AGENTS.md) for the ones the
 whole base shares.
 
 ## How it is organized
@@ -66,15 +66,10 @@ here.
 The [errors/](errors/README.md) directory catalogs the compiler errors CGP produces *after* codegen —
 input a macro accepts and lowers to Rust that then fails to compile — organized by the kind of error
 rather than by the macro that produced it. Each document records the anatomy of one class: the mistake
-that triggers it, the shape of the diagnostic, whether the root cause is present in the output, and
-where it sits when it is. The catalog is built around the distinction between errors that *surface*
-their root cause and those the compiler *hides*, and it is the canonical documentation for the
-post-codegen compile-fail cases — pinned as UI fixtures in
-[`cargo-cgp`](https://github.com/contextgeneric/cargo-cgp), CGP's first-class error toolchain. Each
-class records both the raw diagnostic and how `cargo-cgp` reshapes it, so the catalog serves debugging
-agents, guides the tool, and doubles as the reference behind [`cargo-cgp`'s own](reference/cargo-cgp.md)
-`[CGP-Exxx]` output. Failures a macro raises by *rejecting* its input stay with the macro's
-implementation document instead.
+that triggers it, the shape of the diagnostic, whether the compiler *surfaces* or *hides* the root
+cause, and how [`cargo-cgp`](reference/cargo-cgp.md) reshapes it. That axis and the dividing line
+against the failures a macro raises by *rejecting* its input are explained in the
+[catalog's README](errors/README.md).
 
 The [implementation/](implementation/README.md) directory documents the *internals* of the macros —
 how each one is built, as opposed to what it does for a user: its entry function, the pipeline stages
@@ -82,23 +77,16 @@ it drives, the AST types it parses into, the helper functions that synthesize ea
 corner cases and known limitations, and every pointer into the test suite. An agent asked to review,
 debug, or extend the macro source reads here first.
 
-## What lives elsewhere in the base
+## What lives elsewhere
 
-Three parts of CGP's documentation are shared across the ecosystem rather than owned by this section,
-so they sit at the knowledge base's top level and this section links out to them.
-
-The [examples/](../examples/README.md) directory holds the self-contained worked examples — one
-realistic use case developed end to end per document. They are the canonical source of the code
-snippets the reference, concept, and guide documents reuse, so the same running scenarios recur
-everywhere a reader looks. The [related-work/](../related-work/README.md) directory compares CGP to
-the outside ideas it resembles, and [communication-strategy/](../communication-strategy/README.md)
-turns those comparisons into guidance for writing about CGP in public.
-
-The `/cgp` skill is a fourth view that lives outside this repository entirely, in
+Three parts of CGP's documentation serve the whole ecosystem rather than this section, so they sit at
+the base's top level: the worked [examples/](../examples/README.md) these documents quote their
+snippets from, the [related-work/](../related-work/README.md) comparisons with the ideas CGP resembles,
+and the [communication-strategy/](../communication-strategy/README.md) guidance for writing about CGP
+in public. A fourth view lives outside this repository entirely — the `/cgp` skill, in
 [`cgp-skills`](https://github.com/contextgeneric/cgp-skills), because a skill is deployed on its own
-and may not link back to anything here. It is a distilled synthesis of this section and the examples,
-and it is bound by the same synchronization rule: a change to a construct propagates out to the
-matching sub-skill in the same change.
+and may not link back to anything here. All four are bound by the same synchronization rule as this
+section, so a construct change propagates into whichever of them shows it.
 
 ## How to use it
 

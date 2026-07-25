@@ -1,14 +1,10 @@
-# AGENTS.md
-
-This file provides guidance to LLM agents when working with code in this repository.
+# AGENTS.md — the related-work comparisons
 
 This directory holds the **related-work** documents of the CGP knowledge base — one document per external concept, framework, or language feature that solves a problem CGP also solves, or that resembles a CGP construct closely enough that a reader coming from it can be met on familiar ground. Read the knowledge-base [README.md](../README.md) for the background on the whole base, and the governing [../AGENTS.md](../AGENTS.md) for the rules every section shares. The rules below are specific to related work.
 
-## Why this section exists
+## The bar these documents must clear
 
-A related-work document exists to serve *future user-facing documentation*, not to teach CGP directly. The rest of the knowledge base explains CGP on its own terms; this section records how a mainstream idea — dependency injection, implicit parameters, type classes, and so on — actually works, what its users value and resent about it, and where CGP lands relative to it. An agent later asked to write a tutorial, a blog post, or a landing page *for readers who already know that idea* reads the matching related-work document first, then leans on the reader's existing intuition to make the CGP explanation land. The audience of the eventual writing is a practitioner of the related concept; the audience of the document itself is the agent preparing to address them.
-
-This purpose sets the bar for the content. A related-work document is worth writing only if it captures the concept faithfully enough that an agent could explain it to that concept's own community without embarrassment, and honestly enough that the comparison to CGP survives a skeptic who prefers the other tool. Shallow praise of CGP and strawman versions of the related work both defeat the point: the reader we are ultimately writing for will spot either one immediately.
+[README.md](README.md) explains who this section is for — an agent preparing user-facing writing for readers who already know the compared idea — and that purpose sets the bar for the content. A related-work document is worth writing only if it captures the concept faithfully enough that an agent could explain it to that concept's own community without embarrassment, and honestly enough that the comparison to CGP survives a skeptic who prefers the other tool. Shallow praise of CGP and strawman versions of the related work both defeat the point: the reader we are ultimately writing for will spot either one immediately.
 
 ## What every related-work document must cover
 
@@ -32,7 +28,7 @@ Keep the account current and neutral. Describe the related work as it exists now
 
 ## The CGP side must obey the synchronization rule
 
-Every CGP snippet in a related-work document is bound by the [synchronization rule](../AGENTS.md#the-synchronization-rule) exactly as a reference document's Expansion section is. A CGP comparison that shows syntax the macros no longer accept, or an expansion the code no longer produces, is a bug in the change that made it stale — and a especially damaging one here, because it will be quoted into user-facing material and shown to the very audience most likely to scrutinize it. Verify each CGP snippet against the source and the current macro behavior, invoke the `/cgp` skill before writing any CGP code, and prefer the modern idioms the skill and the [guides](../cgp/guides/) recommend. Draw CGP snippets from the [examples](../examples/) and the running scenarios the rest of the base already uses, rather than inventing fresh contexts, so the CGP side of every comparison speaks the knowledge base's shared vocabulary.
+Every CGP snippet here is bound by the [synchronization rule](../AGENTS.md#the-synchronization-rule) exactly as a reference document's Expansion section is, and a stale one does more damage here than anywhere else: it will be quoted into user-facing material and shown to the audience most able to scrutinize it. Invoke the `/cgp` skill before writing any CGP code, prefer the modern idioms it and the [guides](../cgp/guides/) recommend, and draw snippets from the [examples](../examples/) rather than inventing fresh contexts.
 
 ## Document structure
 
@@ -46,6 +42,6 @@ Each related-work document follows the same shape so readers can navigate any of
 - **Presenting CGP to someone who knows this** — the positioning guidance for future user-facing writing: intuitions to build on, analogies that land or mislead, advantages that resonate, and expectations to address before they trip the reader.
 - **Sources** — the framed list of citations described above.
 
-Follow the dual-reader prose style (the `/dual-reader-prose` skill) throughout: open every section with a self-contained topic sentence, frame every list, and let the prose carry the meaning around each code block. Prefer plain language and the knowledge base's established CGP vocabulary — consumer trait, provider trait, provider, wiring, impl-side dependency, context — so a reader moving between this section and the rest never reconciles two dialects.
+Use the knowledge base's established CGP vocabulary — consumer trait, provider trait, provider, wiring, impl-side dependency, context — even where the related work has a word of its own for the same idea, so a reader moving between this section and the rest never reconciles two dialects. Introduce the related work's own term once, in its own section, and then keep the CGP side speaking CGP.
 
 Register every new document in the catalog in [README.md](README.md) in the same change that adds it, and cross-link generously: to the [concepts](../cgp/concepts/README.md) for the CGP idea a comparison rests on, to the [reference](../cgp/reference/README.md) for the exact syntax of any construct shown, and to sibling related-work documents when two concepts are themselves related.

@@ -38,7 +38,7 @@ backs `Ty`'s `Display`. It is where a `Symbol` or a `Chars` chain becomes the ch
 and where the `pretty_print_const_scalar_int` function renders a `char` const literal such as `'h'`.
 It also holds `should_print_verbose`, the gate on the compiler's *internal* debug printing,
 discussed under
-[the two verbosity switches](#the-two-verbosity-switches-verbose-versus-verbose-internals) below.
+[the two verbosity switches](#the-two-verbosity-switches---verbose-versus--zverbose-internals) below.
 
 **Trait-error reporting lives in
 [`rustc_trait_selection/src/error_reporting/`](../../../external/rust/compiler/rustc_trait_selection/src/error_reporting).**

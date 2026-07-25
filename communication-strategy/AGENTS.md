@@ -1,6 +1,4 @@
-# AGENTS.md
-
-This file provides guidance to LLM agents when working with code in this repository.
+# AGENTS.md — the communication strategy
 
 This directory holds the **communication-strategy** documents of the CGP knowledge base — the guidance an agent uses when writing anything public-facing about CGP, from a landing page or tutorial to a blog post, an article, or a social-media thread. Read the knowledge-base [README.md](../README.md) for the background on the whole base, the section's own [README.md](README.md) for what it covers, and the governing [../AGENTS.md](../AGENTS.md) for the rules every section shares. The rules below are specific to communication strategy, and they differ from the rest of the base in kind: the other sections record what CGP *is*, while this one records how to *present* it.
 
@@ -36,6 +34,6 @@ The documents also sync against **each other**, and the tightest coupling is a t
 
 ## Document structure
 
-These are strategy documents, not reference documents, so they do not follow the reference template of Purpose/Syntax/Expansion. They follow the dual-reader prose style instead: open with a level-one heading naming the document and a one-sentence summary, open every section and subsection with a self-contained topic sentence, and frame every list with a sentence before it. What is distinctive here is that the writing is *about* wording, so quotable example phrasings are welcome and a short framed list of "say it like this / avoid this" is often the clearest form — use it freely, but frame it, and let the prose around it carry the reasoning. Prefer plain language and the knowledge base's established CGP vocabulary — consumer trait, provider trait, provider, wiring, impl-side dependency, context — so a reader moving between this section and the rest never reconciles two dialects.
+These are strategy documents, not reference documents, so they do not follow the reference template of Purpose/Syntax/Expansion — only the base's dual-reader style, opening with a level-one heading and a one-sentence summary. What is distinctive here is that the writing is *about* wording, so quotable example phrasings are welcome and a short framed list of "say it like this / avoid this" is often the clearest form — use it freely, but frame it, and let the prose around it carry the reasoning. Where a document names a CGP construct, use the knowledge base's own vocabulary for it, even while [vocabulary.md](vocabulary.md) governs which of those words a *public* piece should reach for.
 
 Register every new document in the catalog in [README.md](README.md) in the same change that adds it, and cross-link generously: to [reader-profiles.md](reader-profiles.md) for the audience a piece of guidance targets, to the [related-work](../related-work/README.md) documents for the sentiment and the comparison a claim rests on, to the [concepts](../cgp/concepts/README.md) for the CGP idea behind a selling point, and to the [reference](../cgp/reference/README.md) for the exact construct a claim names.

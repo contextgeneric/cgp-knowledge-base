@@ -74,7 +74,7 @@ where a provider trait belongs: `CGP-E013`/`CGP-E014` a `#[cgp_impl]` header nam
 consumer trait where its provider trait belongs (`CGP-E013`), or a trait that is not a CGP component
 at all (`CGP-E014`); and `CGP-E015` an inner-provider bound (typically `#[use_provider]`) naming the
 consumer trait rather than the provider trait. Each entry below gives the rewritten message, the
-mistake behind it, the fix, and the upstream [CGP error catalog](../cgp/errors/README.md) class it
+mistake behind it, the fix, and the [CGP error catalog](../cgp/errors/README.md) class it
 recognizes.
 
 ### `CGP-E001` — consumer trait not implemented

@@ -8,23 +8,21 @@ the dual-reader prose style, document-the-present, and how a document registers 
 below add what is specific to examples.
 
 The examples sit at the base's top level rather than inside a member section because they serve the
-whole ecosystem. They exist for two reasons: they are the canonical source of code snippets the rest
-of the base reuses — the [construct reference](../cgp/reference/README.md), the
+whole ecosystem: the [construct reference](../cgp/reference/README.md), the
 [concepts](../cgp/concepts/README.md), the [guides](../cgp/guides/README.md), and the
-[related-work](../related-work/README.md) comparisons all draw on them — and they are the raw material
-an agent works from when writing expanded documentation such as a tutorial or an article. An example
-is judged by whether it is quotable and correct, not by whether it covers every detail.
+[related-work](../related-work/README.md) comparisons all quote them, and an agent writing a tutorial
+or an article works from them. An example is judged by whether it is quotable and correct, not by
+whether it covers every detail.
 
-## An example is not a second copy of the reference
+## Leave the mechanics to the reference
 
-A [reference document](../cgp/reference/README.md) explains one construct completely — its syntax,
-exact expansion, and corner cases — while an example shows several constructs cooperating to solve a
-problem and deliberately leaves the mechanics to the reference. Keep the prose in an example light:
-enough to make the code legible, a short note on which CGP concept each step demonstrates, and a link
-to the reference document that owns that concept. Do not re-explain a construct an example uses; link
-to it instead. Examples are still subject to the synchronization rule — code that no longer reflects
-current CGP is a bug — so verify every snippet against the source the same way you would a reference
-document's Expansion section, and invoke the `/cgp` skill before writing any CGP code here.
+[README.md](README.md) explains why an example and a reference document are complementary; the rule
+that follows is to keep the prose in an example light. Give enough to make the code legible, a short
+note on which CGP concept each step demonstrates, and a link to the reference document that owns that
+concept — and never re-explain a construct the example uses. Examples are bound by the
+[synchronization rule](../AGENTS.md#the-synchronization-rule) like everything else, so verify every
+snippet against the source the way you would a reference document's Expansion section, and invoke the
+`/cgp` skill before writing any CGP code here.
 
 ## Adding an example from an outside source
 

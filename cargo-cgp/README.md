@@ -24,10 +24,10 @@ Reading [`crates/cargo-cgp`](https://github.com/contextgeneric/cargo-cgp/tree/ma
 and
 [`crates/cargo-cgp-driver`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver)
 tells you *what* each function does, but not why the two-executable split exists, why the front-end
-must compute a sysroot the driver could seemingly find itself, or how the design compares to the
-tool it is modeled on. That reasoning has to be reconstructed by whoever reads the code next. These
-documents capture the reconstruction once, in prose, so the next agent reads the conclusion instead of
-rebuilding it.
+must compute a sysroot the driver could seemingly find itself, or how the design compares to the tool
+it is modeled on. That reasoning has to be reconstructed by whoever reads the code next, so these
+documents capture it once, in prose — which is why they carry design rationale as prominently as
+description.
 
 They are also a contract. When an agent changes how the tool is structured — the argument handling,
 the environment variables the two executables agree on, the way the driver accesses the compiler — the
@@ -75,7 +75,7 @@ section, which is the seam where the two member sections meet: `cgp` owns the an
 
 As the tool grows more moving parts, expect further categories and documents to appear. The
 `reference/` category will grow a fuller reference for the CGP error classes the tool learns to
-recognize (drawing on the upstream [CGP error catalog](../cgp/errors/README.md)) alongside
+recognize (drawing on the [CGP error catalog](../cgp/errors/README.md) next door) alongside
 its installation and usage guides. Add a category by creating its directory with a `README.md` and
 registering it here in the same change, and record its documents in
 [../summary.md](../summary.md); add a standalone document (like `error-code.md`) the same way.

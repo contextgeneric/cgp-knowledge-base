@@ -50,7 +50,7 @@ the same categories, so a fixture's directory names the kind of problem it expos
 The dividing line is a single test: if no amount of downstream processing of the text could
 reconstruct the root cause, the issue is a hidden root cause; if a sufficiently careful reader or
 tool could, it is a usability issue. Both draw their evidence from the fixtures and read them
-against the upstream [CGP error catalog](../../cgp/errors/README.md), which maps every error class
+against the [CGP error catalog](../../cgp/errors/README.md), which maps every error class
 CGP produces and, class by class, whether the root cause is present in the output or suppressed.
 
 Two further categories hold the fixtures that are *not* open problems, and neither has a matching

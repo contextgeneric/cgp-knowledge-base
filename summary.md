@@ -26,8 +26,9 @@ it stale.
 - [cgp/README.md](cgp/README.md) — what this member section documents, why prose beats reading the
   proc-macro source, and how its five parts divide.
 - [cgp/AGENTS.md](cgp/AGENTS.md) — the rules for documenting `cgp`: what the synchronization rule
-  lands on here, the authoring conventions, the per-directory rules, the reference document template,
-  the syntax-grammar notation, and how to review a document.
+  lands on here (including propagating a change to the skill), the authoring conventions, which rules
+  govern which directory, the reference document template and its syntax-grammar notation, what a
+  concept and a guide each owe, and how to review a document.
 
 ### `cgp/reference/` — one document per construct
 

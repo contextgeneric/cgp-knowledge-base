@@ -53,58 +53,51 @@ its own, an `AGENTS.md`.
 
 [cgp/](cgp/README.md) documents the CGP language extension itself: what each construct means, what
 code it expands to, and how the macros that produce it are built. It is the largest section, and it
-divides into five parts. [reference/](cgp/reference/README.md) holds one self-contained document per
-construct — its purpose, its accepted syntax, its exact expansion, and its examples — and is the
-ground truth to read before writing or changing CGP code. [concepts/](cgp/concepts/README.md) holds
-the cross-cutting overviews that span several constructs, explaining the shape of the forest where
-the reference explains the individual trees. [guides/](cgp/guides/README.md) is prescriptive rather
-than descriptive: it directs the choices an author makes when more than one construct could express
-the same thing. [errors/](cgp/errors/README.md) catalogs the compiler errors CGP produces *after*
-codegen, organized by the kind of error and built around whether the compiler surfaces or hides each
-class's root cause. [implementation/](cgp/implementation/README.md) documents the macro internals —
-the pipeline, AST stack, and helper functions behind each macro, plus every pointer into the test
+divides into five parts — [reference/](cgp/reference/README.md), one self-contained document per
+construct and the ground truth to read before writing CGP; [concepts/](cgp/concepts/README.md), the
+cross-cutting overviews that span several constructs; [guides/](cgp/guides/README.md), which is
+prescriptive where the other two are descriptive and directs the choice between constructs;
+[errors/](cgp/errors/README.md), the catalog of the compiler errors CGP produces *after* codegen,
+organized by kind and built around whether the compiler surfaces or hides each cause; and
+[implementation/](cgp/implementation/README.md), the macro internals plus every pointer into the test
 suite.
 
 ### `cargo-cgp/` — the CGP toolchain
 
-[cargo-cgp/](cargo-cgp/README.md) documents `cargo-cgp`, the cargo subcommand that makes CGP's
-compiler errors readable and shows the Rust that CGP macros generate. [reference/](cargo-cgp/reference/README.md)
-is the usage side — installing the tool, running its commands, and diagnosing a tool that will not
-run. [implementation/](cargo-cgp/implementation/README.md) is the internals: the two-executable
-split, the `rustc_driver` wrapping, the typed root-cause resolver that turns a wiring failure into a
-dependency tree, and the rustc-free crates that word the result. [issues/](cargo-cgp/issues/README.md)
-tracks the gaps the tool has not yet closed, each backed by a fixture that reproduces it. The
-standalone [error-code.md](cargo-cgp/error-code.md) catalogs the `[CGP-Exxx]` codes the tool stamps
-on the messages it rewrites.
+[cargo-cgp/](cargo-cgp/README.md) documents the cargo subcommand that makes CGP's compiler errors
+readable and shows the Rust that CGP macros generate. [reference/](cargo-cgp/reference/README.md) is
+the usage side — installing the tool, running its commands, diagnosing one that will not run;
+[implementation/](cargo-cgp/implementation/README.md) is the internals, from the two-executable split
+and the `rustc_driver` wrapping to the typed resolver that turns a wiring failure into a dependency
+tree; [issues/](cargo-cgp/issues/README.md) tracks the gaps the tool has not yet closed, each backed
+by a fixture that reproduces it; and [error-code.md](cargo-cgp/error-code.md) catalogs the
+`[CGP-Exxx]` codes it stamps on the messages it rewrites.
 
 ### `examples/` — worked examples
 
-[examples/](examples/README.md) holds self-contained worked examples, one realistic use case
-developed end to end per document, from its contexts and components through to the wiring that
-connects them. They sit at the top level because they serve the whole base rather than one member:
-they are the canonical source of the code snippets the reference, concept, guide, and related-work
-documents reuse, so the same running scenarios recur everywhere a reader looks, and they are the raw
-material an agent draws on when writing a tutorial or an article.
+[examples/](examples/README.md) holds self-contained worked examples, one realistic use case developed
+end to end per document, from its contexts and components through to the wiring that connects them.
+They sit at the top level because they serve the whole base rather than one member: they are the
+canonical source of the code snippets the reference, concept, guide, and related-work documents reuse,
+so the same running scenarios recur everywhere a reader looks.
 
 ### `related-work/` — CGP against the ideas it resembles
 
 [related-work/](related-work/README.md) looks outward instead of inward. Each document takes an
 external concept, framework, or language feature that resembles CGP — dependency injection, implicit
 parameters, type classes, algebraic effects, row polymorphism, ML modules, reflection, dynamic
-dispatch — explains it faithfully and with citations, weighs what its users like and dislike about
-it, and positions CGP against it. These documents exist to serve future user-facing writing, giving
-an agent who must explain CGP to readers of a particular background the honest comparison to build
-on.
+dispatch — explains it faithfully and with citations, weighs what its users like and dislike about it,
+and positions CGP against it. They exist to serve future user-facing writing, giving an agent who must
+explain CGP to readers of a particular background the honest comparison to build on.
 
 ### `communication-strategy/` — writing about CGP in public
 
 [communication-strategy/](communication-strategy/README.md) turns that outward-facing material into
-guidance for *presenting* CGP — landing pages, tutorials, articles, blog posts, social-media
-threads. Where a related-work document compares CGP to one external idea, a communication-strategy
-document generalizes across those comparisons into audience-level strategy: which readers exist and
-what each already believes, which hooks earn attention, which misunderstandings CGP reliably
-provokes and how to preempt them, and what vocabulary keeps everything written about CGP reading as
-one voice.
+guidance for *presenting* CGP — landing pages, tutorials, articles, blog posts, threads. Where a
+related-work document compares CGP to one external idea, a communication-strategy document generalizes
+across those comparisons into audience-level strategy: which readers exist and what each already
+believes, which hooks earn attention, which misunderstandings CGP reliably provokes, and what
+vocabulary keeps everything written about CGP reading as one voice.
 
 ## Finding your way in
 
