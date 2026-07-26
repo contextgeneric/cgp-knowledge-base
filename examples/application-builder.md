@@ -2,6 +2,8 @@
 
 This example assembles an application context — a struct holding a database pool, an HTTP client, and an AI agent — from independent builder providers that each construct one subsystem and know nothing of the final struct or of each other. It progresses from a hand-written constructor that grows unmanageably, through a builder provider per subsystem, to a builder context that merges them all, and finally to swapping subsystems and producing several application variants from one builder. It is a template for any use case where a context is configured from independently-evolving parts that should compose without a central constructor.
 
+The contexts here are **environmental contexts** and the components are **self-targeted**: each builder context stands for the application under construction, and building a subsystem is something that context does. Note that the *product* of the build is also an application context, so the example has environmental contexts on both sides of the pattern; see the [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md).
+
 The concepts each step demonstrates are documented in full in the reference; this example only notes which one is in play and links to it:
 
 - assembling a struct from independent contributions — [extensible records](../cgp/concepts/extensible-records.md) and the [extensible builder pattern](../cgp/concepts/dispatching.md)

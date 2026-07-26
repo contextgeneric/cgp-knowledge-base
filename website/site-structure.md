@@ -180,10 +180,16 @@ anything maintained. The page also predates `cargo-cgp` and the extensible-data 
 
 ### Maintaining it
 
-Hold the page to five features and five problems; both counts are already at the limit
-the [headline feature set](../communication-strategy/identity.md#the-headline-feature-set) argues
-for, and a sixth entry weakens the set rather than strengthening it. Keep each problem written as a
-pain the reader already feels rather than as a capability, which is the ordering the
+**The page's job is the feature tour**, per
+[information-architecture.md](information-architecture.md#the-target-page-inventory): every high-level
+CGP capability walked through in more detail than any other surface carries, which is what the front
+page's capability beats and its breadth section offload to. Two consequences follow. It is **not** held
+to five features — the five-entry limit the
+[headline feature set](../communication-strategy/identity.md#the-headline-feature-set) argues for is the
+*front page's* constraint, and this page is where those five are expanded and the breadth capabilities
+(abstract types, extensible records and variants, the handler family) are added. And it stops competing
+with the front page's list rather than being made identical to it. Keep each problem written as a pain
+the reader already feels rather than as a capability, which is the ordering the
 [problems catalog](../communication-strategy/message.md#the-problems-cgp-removes) prescribes.
 
 ## Resources

@@ -79,10 +79,11 @@ whose opening steps cover the same constructs.
 
 ## Where it diverges from CGP v0.8.0
 
-Only one thing, and it is trivial to fix: the `Cargo.toml` snippet pins `cgp = "0.7.0"` while the
-current release is 0.8.0. Everything else on the page is current — `#[cgp_fn]`, `#[implicit]`, and
-`#[derive(HasField)]` are unchanged, and the simplified desugaring in the appendix remains an accurate
-simplification.
+Only one thing: the `Cargo.toml` snippet pins `cgp = "0.7.0"` while the page's code is written against
+[v0.8.0](../../releases/v0-8-0.md), so the pin should read `"0.8.0"`. That pin resolves once the release
+is published and not before, which makes it correct rather than broken — the page and the release land
+together. Everything else here is current: `#[cgp_fn]`, `#[implicit]`, and `#[derive(HasField)]` are
+unchanged, and the simplified desugaring in the appendix remains an accurate simplification.
 
 One caveat rather than a divergence: the appendix's `HasName` trait returns `&str` from a `String`
 field, which the real `#[cgp_auto_getter]` supports but which is presented here as hand-written code.

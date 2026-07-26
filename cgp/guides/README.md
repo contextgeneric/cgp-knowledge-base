@@ -12,6 +12,7 @@ A guide leans on the other three rather than restating them. It links to the ref
 
 The authoring rules for these documents live in [../AGENTS.md](../AGENTS.md). Each guide below names a decision you face when writing CGP and walks through how to make it; the [Summary](#summary) at the end condenses all of them into one cheat-sheet, so read it first for the recommendations and follow a link for the full before/after mapping and the rules.
 
+- [Choosing a component's shape](choosing-a-component-shape.md) — what goes in the `Self` position, and whether the capability targets `Self` or a type parameter; the decision that comes before every other one here, since it cannot be revised without a breaking change.
 - [Writing providers](writing-providers.md) — `#[cgp_impl]` in consumer-trait shape, omitting the context parameter, instead of the inside-out provider forms.
 - [Declaring a provider's dependencies](declaring-dependencies.md) — `#[uses]` and `#[use_provider]` instead of hand-written `where` bounds.
 - [Reading context fields](reading-context-fields.md) — `#[implicit]` arguments instead of getter traits.
@@ -29,8 +30,9 @@ This section condenses every guide above into one quick reference. Read it for t
 
 | When you… | Prefer | Instead of |
 |---|---|---|
+| define a component ([guide](choosing-a-component-shape.md)) | a capability about the application, self-targeted on an environmental context — and a `Value` parameter only when the target type is one you do not own | inheriting whichever shape the last example you read used |
 | write a provider ([guide](writing-providers.md)) | `#[cgp_impl]` with the header `impl Trait` (omit `for Context`, keep `self`/`Self`) | raw `#[cgp_provider]`/`#[cgp_new_provider]` in inside-out shape |
-| require a capability or an inner provider ([guide](declaring-dependencies.md)) | `#[uses(Trait)]` / `#[use_provider(P: Trait)]`, comma-separated in one attribute | hand-written `Self:`/`P: Trait<Self>` `where` bounds |
+| require a capability or an inner provider ([guide](declaring-dependencies.md)) | `#[uses(Trait)]` / `#[use_provider(P: Trait)]`, comma-separated in one attribute — `#[uses]` covers ordinary Rust traits too (`#[uses(AsRef<[u8]>)]`) | hand-written `Self:`/`P: Trait<Self>` `where` bounds |
 | read a value from the context's own field ([guide](reading-context-fields.md)) | an `#[implicit]` argument | a getter trait declared only to read it |
 | name an abstract type ([guide](importing-abstract-types.md)) | `#[use_type(Trait.Type)]` + the bare alias (`Trait.Type in Context` for a foreign type, `{Type = Concrete}` to pin one) | a `: Trait` supertrait + qualified `Self::Type`, or `where Context: Trait` + `Context::Type` |
 | add a non-type capability supertrait ([guide](capability-supertraits.md)) | `#[extend(Trait)]` | native `: Supertrait` inheritance syntax |

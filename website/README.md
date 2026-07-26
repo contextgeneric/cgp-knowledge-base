@@ -25,7 +25,7 @@ stays self-contained for its readers; the agent gets a map from any page back to
 it.
 
 The second job these documents do is **track drift**. Almost every blog post on the site predates the
-current v0.8.0 release of CGP, and several of them teach syntax the library no longer accepts —
+v0.8.0 CGP this base describes, and several of them teach syntax the library no longer accepts —
 `#[cgp_context]`, `cgp_preset!`, the `Async` trait, `ProvideType`, `symbol!`. A reader can still learn
 the ideas from those posts, but an agent must never mine them for current syntax, and must never
 "fix" a historical post by silently rewriting it. Each blog document therefore carries an explicit
@@ -59,8 +59,9 @@ and the entries in [site-structure.md](site-structure.md) — describes a page t
 which knowledge-base documents own its material, how far it has drifted, and what a revision must
 preserve. A specification — [information-architecture.md](information-architecture.md) and everything under
 [writing-guides/](writing-guides/README.md) — describes what the site should be and how a *kind* of page
-should be written, whether or not the current pages match. The gap between the two is the redesign, and
-[redesign-queue.md](redesign-queue.md) is that gap written out as work.
+should be written, whether or not the current pages match. The gap between the two is the redesign:
+[redesign-queue.md](redesign-queue.md) is that gap written out as defects, and [tasks.md](tasks.md) is
+the same gap written out as an ordered, dependency-aware plan.
 
 The distinction matters because the site is being redesigned rather than merely maintained. A writing
 guide states the intent, a page document states the present, and during a redesign the two will
@@ -80,8 +81,12 @@ record drift — live in [AGENTS.md](AGENTS.md).
   design, and the path each reader profile takes through the site. The document the writing guides
   assume.
 - [redesign-queue.md](redesign-queue.md) — the consolidated list of what is wrong with or missing from
-  the site today, grouped by cost and ordered, with a pointer to the document that owns each item.
-  Emptied as work lands, and deleted when empty.
+  the site today, grouped by cost, with a pointer to the document that owns each item. Emptied as work
+  lands, and deleted when empty.
+- [tasks.md](tasks.md) — the redesign's *plan*, where the queue is its *diagnosis*: every remaining
+  task with the repository it lands in, its dependencies, and its done-condition, plus the dependency
+  graph, the recommended ordering, and the decisions that must be settled before certain tasks can
+  start. Emptied as work lands, and deleted when empty.
 - [writing-guides/](writing-guides/README.md) — one guide per *kind* of page, saying what that page is
   for, what goes on it in what order, and what must never appear. Prescriptive and forward-looking:
   these describe how pages should be rewritten, not how the current ones happen to read. Currently the

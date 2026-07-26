@@ -101,14 +101,21 @@ what a release did at the time; rewriting its snippets to v0.8.0 syntax would ma
 v0.4.0 shipped features it did not, and would destroy the record the post exists to keep. Leave
 published posts as they stand.
 
-Three actions are legitimate instead, and the choice between them belongs to the user rather than to
-you. A post may be **annotated**, with a short dated note at the top pointing readers to current
-material — appropriate when a post is heavily read and actively misleading. A post may be
-**superseded**, by writing a new post and updating the older one's pointer. Or the drift may simply be
-**recorded here**, in the post's internal document, and left alone — which is the default, and the
-right choice for release notes, whose whole value is historical. When a post is genuinely a
+Three actions are legitimate instead, and outside the one case settled below the choice between them
+belongs to the user rather than to you. A post may be **annotated**, with a short note at the top
+pointing readers to current material — appropriate when a post is heavily read and actively misleading. A
+post may be **superseded**, by writing a new post and updating the older one's pointer. Or the drift may
+simply be **recorded here**, in the post's internal document, and left alone — which is the default, and
+the right choice for release notes, whose whole value is historical. When a post is genuinely a
 **published draft** rather than a finished artifact, the ordinary editing rules apply again; the
 document for such a post says so explicitly.
+
+One case is settled and needs no further authorization: **when a [deep dive](deep-dives/README.md) is
+published, a pointer to it is added at the top of the post it grew out of.** That edit adds a link and
+changes no claim, so it leaves the record intact while routing a reader who arrives from a search result
+to the maintained version. Two things are *not* settled by it: a published post's **`slug` is never
+changed**, because moving a live URL breaks every inbound link to it, and no snippet in the post is
+rewritten.
 
 Pages under `docs/` are the opposite case: they describe CGP as it is now, carry no date, and are
 covered by document-the-present in full. Correct them in place, without a changelog note.
@@ -165,9 +172,11 @@ internal document has no recorded provenance, which is the failure this section 
 Adding a page of a *kind* the site has not published before means adding a writing guide for it too,
 before the page rather than after, since the guide is what a later revision is checked against.
 
-Two documents track the redesign rather than a page, and both are updated as work lands.
+Three documents track the redesign rather than a page, and all three are updated as work lands.
 [information-architecture.md](information-architecture.md) carries the target page inventory, so a page
-that is added, moved, or repurposed loses its **new** or **moved** marker there in the same change. And
-[redesign-queue.md](redesign-queue.md) is the outstanding-work list: **remove** a completed entry rather
-than marking it done, and delete the document once it is empty, per
+that is added, moved, or repurposed loses its **new** or **moved** marker there in the same change.
+[redesign-queue.md](redesign-queue.md) is the defect list and [tasks.md](tasks.md) is the plan built on
+it — the queue says what is wrong with a page, the plan says where the fix lands, what blocks it, and in
+what order. For both: **remove** a completed entry rather than marking it done, and delete the document
+once it is empty, per
 [document-the-present](../AGENTS.md#document-the-present-not-the-history).

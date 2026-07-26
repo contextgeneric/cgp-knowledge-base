@@ -148,15 +148,16 @@ assumed.
 beneath them correctly uses `namespace HypershellNamespace;`. These are the only preset-era references
 left in the repository and they will be read as current by anyone quoting the examples.
 
-### Worth doing, not blocking
+**Drop the six `#[derive_delegate(UseDelegate<Arg>)]` attributes** on `command_arg.rs`,
+`method_arg.rs`, `url_arg.rs`, `string_arg.rs`, `update_builder.rs`, and `update_command.rs`. Since
+`open` resolves through the `RedirectLookup` impl that every `#[cgp_component]` generates, these are
+needed only by a context that still wires the component through a `UseDelegate<new ...>` table. Removing
+them **is a breaking change for any downstream user who does**, and that breakage is accepted — the
+attributes go. Check that nothing inside the repository still depends on one before removing it, since
+the `Input`-keyed variant in the [expression example](extensible-datatypes.md) is a case where an
+equivalent attribute must stay.
 
-**Consider dropping the six `#[derive_delegate(UseDelegate<Arg>)]` attributes** on
-`command_arg.rs`, `method_arg.rs`, `url_arg.rs`, `string_arg.rs`, `update_builder.rs`, and
-`update_command.rs`. Since `open` resolves through the `RedirectLookup` impl that every
-`#[cgp_component]` generates, these are needed only by a context that still wires the component through
-a `UseDelegate<new ...>` table. Removing them is a **breaking change for downstream users** who do, so
-it is a deliberate decision rather than a cleanup — and the deep dive can simply not show them either
-way.
+### Worth doing, not blocking
 
 **Widen `#[use_type]` adoption.** Two uses exist against several places where an abstract type is
 named. Low priority, but it is what the deep dive's code should look like.

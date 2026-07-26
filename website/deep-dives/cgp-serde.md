@@ -114,11 +114,12 @@ should be, not a mechanical conversion.
 
 ### Smaller items
 
-**Consider dropping the three `#[derive_delegate(UseDelegate<...>)]` attributes** on
+**Drop the three `#[derive_delegate(UseDelegate<...>)]` attributes** on
 `crates/cgp-serde/src/components/serialize.rs`, `deserialize.rs`, and
 `crates/cgp-serde-typed-arena/src/traits/has_arena.rs`. Now that every context wires through `open`,
-these are needed only by a downstream user still building `UseDelegate<new ...>` tables, so removing
-them is a **breaking change** and a deliberate call. The deep dive need not show them either way.
+these are needed only by a downstream user still building `UseDelegate<new ...>` tables, and the
+**breaking change that removing them causes is accepted**. Confirm first that no table inside the
+repository still resolves through one.
 
 **Check the two getter traits** against the implicit-argument rule in
 [reading-context-fields](../../cgp/guides/reading-context-fields.md). The arena getter is likely a

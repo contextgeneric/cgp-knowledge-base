@@ -130,6 +130,16 @@ but under the wrong parent or doing the wrong job.
   essay.
 - *Project status and adoption risk* — **moved**, out of the Introduction. The evaluator's page, linkable
   directly from above the fold.
+- *Overview* — present, **repurposed**. The feature tour: every high-level CGP capability walked through
+  in more detail than any other surface carries. This is the page the front page's capability beats and
+  its "it goes further than trait implementations" section offload to, which is the job that keeps it
+  from overlapping its neighbours — *Why CGP exists* argues the coherence case, *How CGP works* shows the
+  mechanism, *When to use CGP* draws the boundary, and the Overview covers the breadth. It is no longer
+  capped at five features, since the curated five are the *front page's* constraint and this page is where
+  they are expanded and the breadth capabilities added. Moving it into this category means moving the file,
+  so it must carry `slug: /overview` in its front matter to keep serving `/docs/overview` — a stock
+  Docusaurus feature needing no plugin, and the alternative is a hard 404 for every inbound link, since
+  the [no-plugin policy](site-structure.md) rules out a redirect.
 
 **Tutorials**
 - *Hello World* — present. First contact, five minutes, one durable idea.
@@ -156,6 +166,9 @@ Each grows out of a long blog post that stays where it is; the plans are in
 - *Tooling* — **new**, a sibling section rather than part of the reference, covering `cargo-cgp`.
 
 **Orientation**
+- *Quickstart* — **new**. Install and one working program, with no concepts and nothing to understand:
+  the low-commitment landing the front page and every launch post ask for. It is deliberately smaller
+  than *Hello World*, which teaches an idea; this page only proves the thing runs.
 - *Introduction* — present, narrowed. Keeps the definition and the routing; loses the maturity section
   to *Project status* and stops sending newcomers to the blog.
 - *Resources* — present, needs correcting. The ecosystem index, currently omitting `cargo-cgp`.
@@ -180,12 +193,18 @@ the documentation rather than in a fifth menu. Keeping the bar at four also resp
 directory tree and a new category is a directory with a `_category_.json` rather than site machinery.
 
 The sidebar order should follow the order a reader needs things rather than the order the project thinks
-about them: **Introduction**, then **Understanding CGP**, then **Tutorials**, then **Reference**, then
-**Deep dives**, then **Tooling**, **Resources**, **Contribute**, and **AI**. Reference sits after
-Tutorials because a reader reaches for it once they are writing code rather than while learning, and
-Understanding precedes Tutorials because a reader who arrives via the homepage has just been told *why*
-and wants the argument before the exercise — while a reader who wants to start writing code immediately
-uses the Tutorials entry in the nav bar and never sees the sidebar order at all.
+about them: **Introduction**, **Quickstart**, then **Understanding CGP**, then **Tutorials**, then
+**Reference**, then **Deep dives**, then **Tooling**, **Resources**, **Contribute**, and **AI**. Reference
+sits after Tutorials because a reader reaches for it once they are writing code rather than while
+learning, and Understanding precedes Tutorials because a reader who arrives via the homepage has just been
+told *why* and wants the argument before the exercise — while a reader who wants to start writing code
+immediately uses the Tutorials entry in the nav bar and never sees the sidebar order at all. The
+Quickstart sits second because the Introduction is the docs root and cannot be displaced, and because a
+reader who wants to see CGP run should meet it before any argument.
+
+Inside **Understanding CGP** the five pages run *Why CGP exists*, *Overview*, *How CGP works*, *When to
+use CGP*, *Project status* — the coherence argument first because it is what the front page sends readers
+for, then the breadth tour, then the mechanism, then the boundary, then the risk.
 
 One naming rule: **do not label the category "Explanation"**. That is vocabulary for the people
 organizing documentation, not for the people reading it, and Diátaxis advises against exposing its own
@@ -198,13 +217,13 @@ where each of them should end up. A page that cannot be placed on one of these p
 exist.
 
 The **first-contact skimmer** arrives at a blog post or the front page, gives it seconds, and either
-bounces or takes one low-commitment step. Their path is short by design: hook → *Hello World*. Everything
-else on the site is downstream of a decision they have not made yet, so the only ask is the tutorial or
-the quickstart.
+bounces or takes one low-commitment step. Their path is short by design: hook → *Quickstart* → *Hello
+World*. Everything else on the site is downstream of a decision they have not made yet, so the only ask is
+the Quickstart, which exists precisely because this reader will spend two minutes and not twenty.
 
 The **working developer** arrives with a problem and wants to know whether CGP solves it. Their path is
 front page → *Why CGP exists* → *Hello World* → *Area calculation* → *Checking and debugging* → the
-the reference, which is where they live once they are writing code. The checking tutorial is
+reference, which is where they live once they are writing code. The checking tutorial is
 load-bearing on this path: it is where a reader either learns to read a CGP error or decides the
 language is not worth it.
 

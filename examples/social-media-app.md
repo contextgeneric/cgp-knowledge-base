@@ -2,6 +2,8 @@
 
 This example builds the CRUD backend for a small social media service — managing users and posts — and follows it as the wiring grows from a handful of components into something a real application would have. It progresses from one coarse manager trait per domain, through fine-grained per-operation traits and a higher-order provider that adds input filtering, to provider bundles and finally namespace-grouped wiring that keeps the top-level configuration short even as the component count climbs. It is a template for any application whose component count grows past the point where a flat delegation table stays readable.
 
+The contexts here are **environmental contexts** — `ProductionApp` stands for the running service, holding its database handle and its wiring — and every component is **self-targeted**, since creating a user or filtering a post is something the application does. No target parameter appears anywhere, which is worth noticing: this example gets its per-application swappability entirely from the wired type being one the program defines. See the [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md).
+
 The concepts each step demonstrates are documented in full in the reference; this example only notes which one is in play and links to it:
 
 - consumer/provider trait pairs — [`#[cgp_component]`](../cgp/reference/macros/cgp_component.md) and [consumer and provider traits](../cgp/concepts/consumer-and-provider-traits.md)

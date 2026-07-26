@@ -140,7 +140,10 @@ This dispatches on the handler's `Code` parameter, which is what `open` handles,
 keyed on `Input`, per the [`#[derive_delegate]` reference](../../cgp/reference/attributes/derive_delegate.md).
 **There is currently no `open` equivalent for input-keyed dispatch**, so these tables stay, and the deep
 dive should show them as the correct current form rather than apologizing for them. If that changes, this
-entry changes with it.
+entry changes with it. This is also the one exception to the decision to remove `#[derive_delegate]` from
+the ecosystem code: the `Arg`-keyed attributes in [hypershell](hypershell.md) and
+[cgp-serde](cgp-serde.md) go, but the `Input`-keyed attribute these tables resolve through must remain,
+because removing it would break them.
 
 **Consider `#[derive(CgpData)]`** on `MathExpr` and `LispExpr`, which derive
 `HasFields, FromVariant, ExtractField` individually.

@@ -52,9 +52,10 @@ overflow does.
 
 Register a new guide here in the same change that adds it, and in [../../summary.md](../../summary.md).
 
-- [homepage.md](homepage.md) — the landing page: its two-tier structure, the before/after code that
-  carries the hook, the bounded essay beneath it, the dedicated documentation pages the essay offloads
-  to, and the routing at the end.
+- [homepage.md](homepage.md) — the landing page: its two-tier structure, the settled before/after
+  example that carries the hook together with the copy that sells it and the properties a replacement
+  must keep, the bounded essay beneath it, the dedicated documentation pages the essay offloads to, and
+  the routing at the end.
 - [explanation.md](explanation.md) — the understanding-oriented pages the homepage offloads to, a page
   type the site does not yet have: what every one owes its reader, how a concept document is rewritten
   into one, per-page specs for the four planned pages, and where they sit in the docs tree.

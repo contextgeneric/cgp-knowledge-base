@@ -221,6 +221,12 @@ the top sit coherence and the orphan rule, and type-level programming with highe
 which only the advanced audience holds. The recurring mistake is assuming the reader stands higher on
 the ladder than they do, because CGP's author and its most enthusiastic readers stand near the top.
 
+One barrier below is different in kind from the rest and worth flagging before the list. Most of these
+are things a reader finds *hard*; the application-context shape is something they have never had a reason
+to *imagine*, because vanilla Rust makes it legal and pointless at the same time. A barrier of missing
+concepts is not lowered by simpler wording — it is lowered by building the concept out of code the reader
+can check.
+
 ### Generic parameters are intimidating
 
 The largest barrier by far is that many Rust developers disengage the moment they see a signature
@@ -254,6 +260,38 @@ material; when the raw form must be shown, say plainly and up front that here `s
 the context. Introducing the
 [consumer/provider split](../cgp/concepts/consumer-and-provider-traits.md) by leading with the raw
 provider trait is the surest way to lose a reader who would have followed `#[cgp_impl]` fine.
+
+### A type can stand for your whole application
+
+A barrier that looks like vocabulary and is really a missing concept: readers do not know what an
+"application context" *is*, because vanilla Rust gives them no reason to have built the idea. The shape
+is legal — `impl CanEncodeValue<Vec<u8>> for ApiServer` compiles, and alongside the same impl for
+`Firmware` it genuinely gives per-application encoding with no CGP at all — but every context-and-type
+pair needs its own hand-written body and nothing can be factored out, because a blanket impl would
+overlap. So the arrangement is **available and unrewarding**, it dies at three types, and nobody carries
+it in their repertoire. A reader is then handed the phrase "application context" and has no shape to
+attach it to.
+
+This is why naming the thing does not work. **The concept has to be built, and it can be built out of
+plain Rust the reader can verify**, in three steps. First show the vanilla version working — two
+application types, one value type, two different encodings — so the unfamiliar arrangement turns out to
+be ordinary Rust they simply never had a reason to write. Then show it not scaling: add a third value
+type, then try to factor the shared logic into a blanket impl and hit `E0119`. Only then name it, at the
+point where the reader already wants what it provides.
+
+Two concrete anchors carry more than the definition. **Say that such a context usually has no fields** —
+`struct AppA;` is a complete context, and an empty struct with traits on it is otherwise unreadable. And
+**name what it replaces in the reader's own world**: a config struct, an axum `State`, a Spring
+`@Configuration`, a Dagger module — the application's configuration lifted to the type level so the
+compiler resolves it.
+
+One framing follows from all this and is worth using wherever the payoff is stated: coherence does not
+*forbid* the application-context shape, it makes it **not worth building**. So CGP's contribution is
+constructive rather than permissive — it does not merely escape a rule, it makes an available shape worth
+using. That is a harder claim to dismiss as cleverness than "we work around coherence", and it is the
+same move as explaining what Rust already does before improving on it. The technical account is in the
+[modularity hierarchy](../cgp/concepts/modularity-hierarchy.md), and the wording rules are in
+[vocabulary.md](vocabulary.md#qualifying-a-context-and-a-target).
 
 ### Bounds on the context are a barrier of their own
 
@@ -340,8 +378,12 @@ deeper level.
 ### The teaching discipline this points to
 
 The barriers share one strategy, and it can be run as a checklist before publishing anything
-instructional. **Disclose progressively**, leading with `#[cgp_fn]`, `#[cgp_impl]`, `#[implicit]`,
-`#[uses]`, and `#[use_type]`, and revealing the machinery beneath only when a reader needs it.
+instructional. **Say which shape an example is in**, since a piece that shows a value context and then an
+environmental one without marking the change leaves the reader unable to say what a context is — the
+qualifiers and the four misreadings they prevent are in
+[vocabulary.md](vocabulary.md#qualifying-a-context-and-a-target). **Disclose progressively**, leading
+with `#[cgp_fn]`, `#[cgp_impl]`, `#[implicit]`, `#[uses]`, and `#[use_type]`, and revealing the machinery
+beneath only when a reader needs it.
 **Teach the ergonomic idioms as the idiom**, since they are the recommended forms rather than a
 simplified dialect. **Motivate before mechanism**, opening on a concrete problem rather than the
 consumer/provider split. **Introduce vocabulary gradually and by analogy**, deferring "generic",

@@ -8,6 +8,62 @@ Adopting CGP is not an all-or-nothing jump from ordinary Rust traits to fully co
 
 The ladder is illustrated throughout with one running capability — serializing a value, mirroring the [modular serialization](../../examples/modular-serialization.md) example — so the only thing that changes between rungs is the modularity technique, not the problem. All snippets assume `use cgp::prelude::*;`.
 
+## What actually varies: the context and the target
+
+Two independent questions decide which rung a capability sits on, and naming them before the rungs makes the whole ladder legible — because the rung numbers describe *consequences*, while these two questions describe the *causes*.
+
+**What is the `Self` type?** It is either a **value context** — the data the capability operates on, such as the `Vec<u8>` being serialized — or an **environmental context**, a type that exists to supply choices and capabilities rather than to be operated on, such as an application. Both are contexts in the ordinary CGP sense: both sit in the `Self` position and both carry a wiring table. They differ in what they *are*, and the difference decides how much freedom the wiring has.
+
+**What does the capability target?** It is either **self-targeted**, meaning the capability is about the `Self` type — `CanEncode`, `CanGreet`, `HasErrorType` — or **parameter-targeted**, meaning it is about a type parameter while `Self` only decides — `CanEncodeValue<Value>`, `CanSerializeValue<Value>`, `CanCalculateArea<Shape>`. A parameter is not automatically a target: in `CanCompute<Code, Input>` the target is `Input` and `Code` is a *selector* the wiring dispatches on, and a component may carry both. The test is which type the capability acts on, not whether a parameter is present.
+
+Crossed, the two questions describe three shapes that occur in practice, and one that does not earn its keep.
+
+| Shape | `Self` is | Targets | Independent choices available | Rung |
+|---|---|---|---|---|
+| **Retrofit** | a value context | `Self` | one per value type, program-wide | 3 |
+| **Application** | an environmental context | `Self` | one per context you define | 3 |
+| **Fully modular** | an environmental context | a parameter | one per context, per target type | 4–5 |
+
+A value context with a target parameter is legal and uninteresting, since the capability would be about one type while being wired on another for no gain.
+
+### Why the qualifications are needed at all
+
+**Vanilla Rust idiomatically supports exactly one of these three shapes, which is why it never needed the vocabulary — and why CGP does.** The distinctions are not terminology CGP invented for its own sake; they are the names of choices that only become choices once alternatives are viable.
+
+The **retrofit** shape is what every ordinary Rust trait is: `impl Display for String`, `impl Iterator for Chars`. The data is `Self`, the capability is about it, and coherence gives it exactly one implementation. This shape is so dominant that a Rust programmer has no reason to notice it *is* a shape.
+
+The **application** shape is legal and does occur — `impl Handler for MyApp` — but vanilla Rust gives it no leverage. Each application type must write its own method bodies, because the moment two implementations are factored into blanket impls they overlap:
+
+```rust
+impl<T: HasSmtpConfig>      CanSendEmail for T { /* ... */ }
+impl<T: HasRecordedEmails>  CanSendEmail for T { /* ... */ }   // error[E0119]
+```
+
+So the shape survives but nothing can be shared, and it never becomes a *modularity* technique.
+
+The **fully modular** shape is legal too, and this surprises people: a parameter-targeted trait implemented on an application type compiles perfectly well in vanilla Rust.
+
+```rust
+pub trait CanEncodeValue<Value> {
+    fn encode(&self, value: &Value) -> Vec<u8>;
+}
+
+impl CanEncodeValue<Vec<u8>> for ApiServer { /* hex */ }
+impl CanEncodeValue<Vec<u8>> for Firmware  { /* raw bytes */ }
+```
+
+Two application types, the same value type, different encodings — with no CGP at all. What fails is reuse: every `(context, target type)` pair needs its own hand-written body, and factoring one into `impl<V: Display> CanEncodeValue<V> for ApiServer` collides with any sibling. The shape is therefore available and unrewarding, which is why almost nobody writes it and why "application context" tends to land on a reader as an unfamiliar noun rather than a familiar arrangement.
+
+**CGP's contribution is not that it legalizes these shapes — two of the three are already legal — but that it makes the implementations reusable, which is what turns each shape into a technique.** Named providers replace hand-written bodies, so a per-pair decision becomes a wiring line. Once all three shapes are worth using, a reader has to be able to say which one they are in, and that is what the qualifiers are for.
+
+### Which restriction each shape escapes
+
+The most consequential thing the two axes reveal is that **the escape from coherence happens when `Self` becomes a type you own, not when a parameter appears**. This is easy to miss, because the parameter is the visible change.
+
+At the retrofit shape the wired type is data you often do not own, so coherence still binds: `Vec<u8>` gets one wiring for the whole program, and no amount of provider machinery changes that. At the application shape `Self` is a type you define, so when one wiring per type is not enough you simply define another type — which is why `App` and `TestApp` can each choose their own `CanSendEmail` provider with no parameter anywhere. The fully modular shape then extends that same freedom to target types you do *not* own, which is the only thing the parameter adds.
+
+That ordering matters when explaining the ladder, because it means the application shape is the common case rather than a way-station, and the parameter is a response to a specific need rather than the point.
+
 ## Rung 1 — one implementation per interface
 
 The least modular rung is a generic function or a blanket trait impl, which allows exactly one implementation of the interface it defines. A blanket impl over a generic type captures a single piece of logic that applies everywhere the bound holds, and there can be only one such impl:
@@ -48,40 +104,53 @@ The gain over rung 1 is per-type variation; the cost is that each type needs its
 
 ## Rung 3 — many implementations, one wiring per type
 
-The first CGP rung keeps the type in the `Self` position but splits the trait into a consumer/provider pair, so many overlapping implementations can coexist as named providers while each type still commits to one of them globally. Applying [`#[cgp_component]`](../reference/macros/cgp_component.md) to the trait and writing providers with [`#[cgp_impl]`](../reference/macros/cgp_impl.md) lets `SerializeBytes` and a `Serialize`-deferring `UseSerde` both exist, overlapping freely on any type that is both `AsRef<[u8]>` and `Serialize`:
+The first CGP rung keeps the type in the `Self` position but splits the trait into a consumer/provider pair, so many overlapping implementations can coexist as named providers while each type still commits to one of them globally. The component is therefore **self-targeted**, which the names below say out loud — `CanSerializeSelf` here against the `CanSerializeValue<Value>` of rung 4, which is a *different* component rather than a revision of this one. Applying [`#[cgp_component]`](../reference/macros/cgp_component.md) to the trait and writing providers with [`#[cgp_impl]`](../reference/macros/cgp_impl.md) lets `SerializeSelfAsBytes` and a `Serialize`-deferring `UseSerdeForSelf` both exist, overlapping freely on any type that is both `AsRef<[u8]>` and `Serialize`:
 
 ```rust
-#[cgp_component(ValueSerializer)]
-pub trait CanSerialize {
+#[cgp_component(SelfSerializer)]
+pub trait CanSerializeSelf {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error>;
 }
 
-#[cgp_impl(new SerializeBytes)]
-impl ValueSerializer
-where
-    Self: AsRef<[u8]>,
-{
+#[cgp_impl(new SerializeSelfAsBytes)]
+#[uses(AsRef<[u8]>)]
+impl SelfSerializer {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         serializer.serialize_bytes(self.as_ref())
     }
 }
 ```
 
-A type then picks one provider with a [`delegate_components!`](../reference/macros/delegate_components.md) entry — `Vec<u8>` becomes its own context, wiring its serializer component to `SerializeBytes`:
+A type then picks one provider with a [`delegate_components!`](../reference/macros/delegate_components.md) entry — `Vec<u8>` becomes its own context, wiring its serializer component to `SerializeSelfAsBytes`:
 
 ```rust
 delegate_components! {
     Vec<u8> {
-        ValueSerializerComponent: SerializeBytes,
+        SelfSerializerComponent: SerializeSelfAsBytes,
     }
 }
 ```
 
-This rung's advantage is backward compatibility: the original trait is extended without changing its interface, a type can still implement it directly, and many reusable providers replace the hand-copied logic of rung 2. Its limitation is that coherence is only partly lifted. The wiring still keys on the type in the `Self` position, so `Vec<u8>` commits to one provider globally — there can be no separate wiring for a generic `Vec<T>` that would overlap it, and the [orphan rule](coherence.md) still applies, since `delegate_components!` for `Vec<u8>` must live in a crate that owns either the trait or `Vec`. This rung suits retrofitting modular providers onto an existing trait when one global choice per type is acceptable.
+This rung's advantage is backward compatibility: the original trait is extended without changing its interface, a type can still implement it directly, and many reusable providers replace the hand-copied logic of rung 2. Its limitation is that coherence is only partly lifted. The wiring still keys on the type in the `Self` position, so `Vec<u8>` commits to one provider globally — there can be no separate wiring for a generic `Vec<T>` that would overlap it, and the [orphan rule](coherence.md) still applies, since `delegate_components!` for `Vec<u8>` must live in a crate that owns either the trait or `Vec`.
+
+### The rung holds two shapes, and only one of them is limited
+
+**How binding that limitation is depends entirely on whether the `Self` type is a value context or an environmental one**, and this rung contains both — which is why it is the rung most often misread.
+
+Wired on a **value context**, the limitation bites exactly as described. `Vec<u8>` is data, it is not yours, and one wiring is all you get; this is the **retrofit** shape, and it is the right choice when a capability genuinely belongs to the data or when an existing trait's signature cannot be changed.
+
+Wired on an **environmental context**, the same rung behaves very differently, because the constraint "one wiring per type" stops being a constraint when you control how many types there are. The capability there is about the application rather than about data — `CanSendEmail` rather than `CanSerializeSelf` — so the component is still self-targeted and still on this rung. `App` and `TestApp` are both yours, so each wires its own provider and the same capability resolves differently in production and in tests:
+
+```rust
+delegate_components! { App     { EmailSenderComponent: SendViaSmtp } }
+delegate_components! { TestApp { EmailSenderComponent: RecordEmails } }
+```
+
+No parameter is involved, and nothing has been worked around. This is the **application** shape, and it is where most CGP code lives: a capability about the application itself — send an email, query a user, run the server — wired per application. Reading rung 3 as merely "the retrofit rung" therefore undersells it substantially, and reading rung 4 as the first rung with per-application choice is simply wrong.
 
 ## Rung 4 — many implementations, one wiring per type per context
 
-The decisive CGP rung moves the type being implemented out of `Self` and into an explicit parameter, so the `Self` position names a context that owns the wiring — which lifts the orphan rule and lets each context choose providers per type independently. The trait gains a `Value` parameter, leaving `Self` free to be any application context:
+This rung moves the type being implemented out of `Self` and into an explicit parameter, so the `Self` position is always an environmental context — which lifts the orphan rule and lets each context choose providers **per target type** independently. What it adds over the application shape of rung 3 is precise and worth stating narrowly: rung 3 already lets each context you define make its own choice, so what rung 4 buys is the ability to make that choice **about types you do not own**. The trait gains a `Value` parameter, leaving `Self` free to be any application context:
 
 ```rust
 #[cgp_component(ValueSerializer)]
@@ -149,7 +218,11 @@ This rung adds fine-grained, per-provider control on top of rung 4's per-context
 
 ## Choosing a rung
 
-The guiding rule is to settle at the lowest rung that expresses the use case, because each step up trades simplicity for modularity that may not be needed. A capability with one universal implementation belongs on rung 1; one that varies by type but never by application belongs on rung 2; a trait that should gain alternative providers without changing its interface belongs on rung 3; a capability where different applications must encode the same type differently belongs on rung 4, the home of most CGP code; and only a provider that must override a nested type's wiring locally needs rung 5. Climbing higher than necessary adds context parameters, wiring, and coupling that buy nothing, while stopping too low forces the hand-written impls and global commitments the higher rungs exist to avoid.
+The guiding rule is to settle at the lowest rung that expresses the use case, because each step up trades simplicity for modularity that may not be needed. A capability with one universal implementation belongs on rung 1; one that varies by type but never by application belongs on rung 2; a trait that should gain alternative providers without changing its interface belongs on rung 3 in its retrofit shape; a capability *about the application itself* belongs on rung 3 in its application shape, which is where most CGP code lives; a capability where different applications must treat the same foreign type differently belongs on rung 4; and only a provider that must override a nested type's wiring locally needs rung 5. Climbing higher than necessary adds context parameters, wiring, and coupling that buy nothing, while stopping too low forces the hand-written impls and global commitments the higher rungs exist to avoid.
+
+Two questions settle it faster than walking the rungs. **Is the capability about the data, or about the application?** About the data means a value context and the retrofit shape; about the application means an environmental context. **Does the capability concern a type you do not own, and must different applications treat it differently?** If yes, the target moves into a parameter and you are on rung 4; if no, self-targeting is enough. Each shape is the right answer to a different question rather than a different amount of sophistication, which is why none of them is a stepping stone to be outgrown.
+
+This document is descriptive; the prescriptive companion is [choosing a component's shape](../guides/choosing-a-component-shape.md), which carries the default to reach for, the cost of each alternative, the refactoring that promotes a self-targeted component to a parameter-targeted one, and the two traps — that a parameter is not always a target, and that per-application choice needs no parameter at all.
 
 ## Related constructs
 

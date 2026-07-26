@@ -2,6 +2,8 @@
 
 This example builds a modular interpreter for a small arithmetic language, where each operator is its own type and each operation over the language — evaluation, conversion to Lisp — is a separate provider, so variants and operations can both be added without editing existing code. It progresses from the closed enum-and-`match` form, through per-variant evaluation providers wired by input dispatch, to a second operation, a generalized operator provider, code-based dispatch between operations, and finally an extended language with new variants. It is a template for any recursive data type — expression trees, JSON values, syntax trees — that must stay open to new cases and new traversals at once, the classic [expression problem](https://en.wikipedia.org/wiki/Expression_problem).
 
+The contexts here are **environmental contexts** — `Interpreter` and its extensions exist only to carry the wiring, with no expression data of their own — and the components are **parameter-targeted**, since the expression being evaluated arrives as the handler's input rather than as `Self`. That separation is what lets one language have several independent operations; see the [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md).
+
 The concepts each step demonstrates are documented in full in the reference; this example only notes which one is in play and links to it:
 
 - handling each variant of an enum independently — [extensible variants](../cgp/concepts/extensible-variants.md) and the [extensible visitor pattern](../cgp/concepts/dispatching.md)

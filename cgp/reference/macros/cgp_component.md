@@ -8,6 +8,8 @@
 
 The payoff is that providers become first-class, named, swappable units. Because a provider implements the provider trait for a generic `Context` rather than for itself, the usual orphan and overlap restrictions do not bite, and a crate can define many alternative providers for the same component. A concrete context then picks one provider per component through wiring (see [`delegate_components!`](delegate_components.md)), and the generated blanket impls route the consumer-trait call through that choice. `#[cgp_component]` is what makes a trait participate in this mechanism; without it, a trait is just a vanilla Rust trait.
 
+One design decision belongs to the trait rather than to this macro, and it determines how much the wiring can vary. A component is **self-targeted** when the capability is about the `Self` type — `CanCalculateArea` computing the area of the context itself — and **parameter-targeted** when it is about a type parameter while `Self` only supplies the decisions, as `CanSerializeValue<Value>` is. A parameter alone does not decide this: in `CanCompute<Code, Input>` the target is `Input` while `Code` is a selector the wiring dispatches on, and a component may carry both. The choice matters because a self-targeted component's wiring is keyed on the type the capability is about, so that type gets one provider for the whole program, whereas a parameter-targeted component's wiring is keyed on a context that can be defined as many times as needed. The [modularity hierarchy](../../concepts/modularity-hierarchy.md) works through which to reach for.
+
 ## Syntax
 
 The macro is applied as an attribute on a trait definition and takes the provider trait's name as its argument. The simplest form passes a bare identifier:

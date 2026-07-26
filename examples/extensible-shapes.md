@@ -2,6 +2,8 @@
 
 This example computes properties of geometric shapes — area, scaling — modeled as the variants of an enum, dispatching each operation to a per-variant implementation without a hand-written `match`. It progresses from a per-type operation that is lifted onto an enum automatically, through mutating and argument-taking operations, to converting between related shape enums and finally wiring the dispatch into a context. It is a template for any use case where one operation has a separate implementation per case of a sum type, and the set of cases should stay open to extension — the *extensible visitor* counterpart to the per-context dispatch in [area calculation](area-calculation.md).
 
+The context here is an **environmental context** — `App` carries the wiring and nothing else — and the components are **parameter-targeted**, with the shape arriving as the handler's input. Contrast this with the [area calculation](area-calculation.md) example, which computes areas with the shape itself as a **value context**; the two arrangements solve the same-sounding problem differently, and the [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md) explains when each is right.
+
 The concepts each step demonstrates are documented in full in the reference; this example only notes which one is in play and links to it:
 
 - shapes as the variants of an enum — [extensible variants](../cgp/concepts/extensible-variants.md) via [`#[derive(CgpData)]`](../cgp/reference/derives/derive_cgp_data.md)

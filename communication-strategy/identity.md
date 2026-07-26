@@ -191,6 +191,14 @@ of which costs more attention than it wins. Use the **recognized Rust terms** �
 breath: "at compile time", "in safe Rust", "still ordinary Rust". The qualifier is what turns a claim
 the reader would discount into one they believe.
 
+One phrase in the set above is worth flagging rather than silently changing. "One Interface, Many
+Implementations" says *"choose between them per context"*, and
+[vocabulary.md](vocabulary.md#qualifying-a-context-and-a-target) — the authority on phrasing — now
+prefers **"per application"** in public copy wherever the context is one, because "context" is opaque
+on first contact and is the term that most reliably loses a reader who has not met it. The feature set
+is declared settled here, so the substitution is the author's call rather than an editorial one; it is
+recorded so a writer meets the tension instead of resolving it two different ways in two pieces.
+
 ## Keeping this document in sync
 
 Because the tag line is settled, a change to it ripples across the section and must be propagated in

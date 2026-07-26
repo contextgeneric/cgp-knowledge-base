@@ -2,6 +2,8 @@
 
 This example builds a type-level shell-scripting DSL whose programs are ordinary Rust *types*, interpreted at compile time by whichever context runs them. It progresses from a fixed CLI program, through the component that interprets a program and the namespace that wires the interpreters, to a custom context that supplies runtime values and a language extension that adds new syntax — and is a template for any embedded DSL where the program's *syntax* should be decoupled from its *semantics* so that each can vary independently. The general pattern it instantiates is described in [type-level DSLs](../cgp/concepts/type-level-dsls.md).
 
+The contexts here are **environmental contexts** — `MyApp` and its variants exist to carry the wiring and the runtime, holding no program data of their own — and the handler components are **parameter-targeted**, with the program itself arriving as a type-level `Code` selector the wiring dispatches on. See the [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md) for what that arrangement buys.
+
 The concepts each step demonstrates are documented in full in the reference; this example only notes which one is in play and links to it:
 
 - the computation component the DSL is built on — [`Handler` / `CanHandle`](../cgp/reference/components/handler.md) in the [handler family](../cgp/concepts/handlers.md)

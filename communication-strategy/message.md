@@ -29,6 +29,13 @@ All code here uses the modern idioms the `/cgp` skill and the [guides](../cgp/gu
 [`delegate_components!`](../cgp/reference/macros/delegate_components.md) — because a before/after
 showing dated CGP teaches a dialect the reader must later unlearn.
 
+**The entries below deliberately span all three of CGP's shapes, and a piece that reuses two of them must
+say when it crosses between them.** The first entry wires a value type, the mock-in-tests entry wires an
+application, and the second entry moves the encoded type into a parameter — three arrangements that look
+alike in a snippet and mean different things, with no signature change marking the shift. Each entry
+therefore names its shape, and the vocabulary is fixed in
+[vocabulary.md](vocabulary.md#qualifying-a-context-and-a-target).
+
 ## The problems CGP removes
 
 ### Give one interface many implementations that Rust rejects outright
@@ -72,10 +79,13 @@ impl<Value> Encoder<Value> where Value: core::fmt::Display { /* ... */ }
 impl<Value> Encoder<Value> where Value: AsRef<[u8]> { /* ... */ }
 ```
 
-Note that the value has moved out of `Self` into a parameter — the climb from rung 3 to rung 4 of the
-[modularity hierarchy](../cgp/concepts/modularity-hierarchy.md), and the same move that dissolves the
-orphan rule in the next entry. Narrate it rather than letting a reader spot it uncommented, because an
-unexplained difference between a before and an after reads as sleight of hand.
+Note that the value has moved out of `Self` into a parameter, which turns a **self-targeted** component
+into a **parameter-targeted** one and makes `Self` an **environmental context** — the climb from rung 3 to
+rung 4 of the [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md), and the same move that
+dissolves the orphan rule in the next entry. Narrate it rather than letting a reader spot it uncommented,
+because an unexplained difference between a before and an after reads as sleight of hand. A shorter
+version that keeps `Self` as the value is available and is what the front page uses, at the cost that
+each value type then gets one encoding for the whole program.
 
 Both compile, and a context names the one it wants. This is the entry for the **type-system reader**
 and the strongest hook for the front page, since it shows something the language cannot do rather
@@ -127,7 +137,16 @@ delegate_components! { TestApp { EmailSenderComponent: RecordEmails } }
 `App` sends real mail and `TestApp` records it; neither pays for `dyn`, the swap is one greppable
 line, and code calling `self.send_email(..)` never changes. This is the most legible entry for the
 **working developer**, and it defuses the "why not just use traits" reflex by showing the case where a
-plain generic would have proliferated. Two cautions: the choice is a line *you* write rather than one
+plain generic would have proliferated.
+
+**This entry is the shape most CGP code is in, and it is worth saying so**: `App` and `TestApp` are
+**environmental contexts** — types standing for an application, carrying the wiring, holding whatever data
+the providers need and nothing more — and `CanSendEmail` is **self-targeted**, since sending mail is
+something the application does. No parameter appears anywhere, which makes the point that per-application
+choice does not require one: it comes from the wired type being a type you define, so when one choice is
+not enough you define a second context. Readers arriving from an example that wires a *value* type will
+not have that idea yet, so introduce the context as "a type standing for this application, which is where
+its choices live" the first time it appears. Two cautions: the choice is a line *you* write rather than one
 CGP infers, and for a dependency with exactly one implementation a plain trait is still right. This
 entry is also the one most likely to draw "I already solved that", so pair it with one of the two
 above when the audience is skeptical.
@@ -258,9 +277,10 @@ uniqueness: uniqueness is *per context*, and that scoping is the point.
 
 **Swappable implementations chosen per context** is the most legible capability for the working
 developer, and its whole risk is implying the choice is automatic. Say *"one interface, many
-implementations — the context picks which one, and the choice is a line you can read"*. Never say CGP
-"picks the right one"; the explicitness is the feature, and a reader sold on automatic resolution
-feels misled at their first `delegate_components!` entry.
+implementations — the application picks which one, and the choice is a line you can read"*, preferring
+"application" to "context" in public copy where the context is one, since it is concrete and needs no
+vocabulary. Never say CGP "picks the right one"; the explicitness is the feature, and a reader sold on
+automatic resolution feels misled at their first `delegate_components!` entry.
 
 **Explicit, compiler-checked dependencies** answers the loudest complaint against DI frameworks
 directly. A provider states what it needs through `#[uses]` and `#[implicit]` rather than hiding it, a

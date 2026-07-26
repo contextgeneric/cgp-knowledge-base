@@ -1,10 +1,10 @@
 # `#[uses(...)]`
 
-`#[uses(...)]` adds simple `Self: Trait<...>` bounds to a provider's `where` clause, written to read like a `use` import of the CGP capabilities the body depends on.
+`#[uses(...)]` adds simple `Self: Trait<...>` bounds to a provider's `where` clause, written to read like a `use` import of the capabilities the body depends on.
 
 ## Purpose
 
-`#[uses(...)]` exists to make impl-side dependencies look like imports rather than trait bounds. A provider often calls capabilities defined elsewhere — another [`#[cgp_fn]`](../macros/cgp_fn.md) trait, or a [`#[cgp_component]`](../macros/cgp_component.md) consumer trait — and to do so it must require the context to implement them. Expressed in raw Rust, that is a `where Self: SomeTrait` clause, which is unfamiliar territory for many programmers: writing a bound on `Self` is uncommon in everyday Rust, and it reads as machinery rather than intent.
+`#[uses(...)]` exists to make impl-side dependencies look like imports rather than trait bounds. A provider often calls capabilities defined elsewhere — another [`#[cgp_fn]`](../macros/cgp_fn.md) trait, a [`#[cgp_component]`](../macros/cgp_component.md) consumer trait, or an ordinary Rust trait such as `Display` — and to do so it must require the context to implement them. Expressed in raw Rust, that is a `where Self: SomeTrait` clause, which is unfamiliar territory for many programmers: writing a bound on `Self` is uncommon in everyday Rust, and it reads as machinery rather than intent.
 
 `#[uses(RectangleArea)]` instead reads as "this function uses the `RectangleArea` capability," which mirrors the mental model of a `use` statement bringing a name into scope. The attribute lists the capabilities the body relies on; the macro turns each into the corresponding `Self` bound on the generated impl. The body can then call those methods directly on `self`, exactly as if they had been imported.
 
@@ -18,7 +18,7 @@ This framing is the reason `#[uses(...)]` is recommended over hand-written `Self
 #[uses(RectangleArea, CanCalculateArea)]
 ```
 
-Each entry is the name of a capability, optionally with generic type arguments. A bare `RectangleArea` becomes `Self: RectangleArea`; a parameterized `CanCompute<Code, Input>` becomes `Self: CanCompute<Code, Input>`. When a provider depends on several capabilities, prefer listing them all in a single `#[uses(...)]` attribute — `#[uses(RectangleArea, CanCalculateArea)]` — since one combined import reads as a single dependency list. The entries may also be split across multiple `#[uses(...)]` attributes on the same item, and they accumulate, but stack a second attribute only when a genuine reason calls for it rather than as the default.
+Each entry is the name of a capability, optionally with generic type arguments. A bare `RectangleArea` becomes `Self: RectangleArea`; a parameterized `CanCompute<Code, Input>` becomes `Self: CanCompute<Code, Input>`. The trait need not be a CGP construct: `#[uses(Display)]` and `#[uses(AsRef<[u8]>)]` are accepted and preferred over the equivalent hand-written `where Self:` clauses, since the attribute only cares that the trait is one the context can implement. When a provider depends on several capabilities, prefer listing them all in a single `#[uses(...)]` attribute — `#[uses(RectangleArea, CanCalculateArea)]` — since one combined import reads as a single dependency list. The entries may also be split across multiple `#[uses(...)]` attributes on the same item, and they accumulate, but stack a second attribute only when a genuine reason calls for it rather than as the default.
 
 The idiomatic entry is the simple `Trait<Params>` form, since the attribute is meant to read like an import. An entry may nonetheless be any bound a Rust `where` clause accepts, including an associated-type-equality binding (`HasErrorType<Error = anyhow::Error>`), a higher-ranked bound, or a lifetime bound; each lands on the impl's `where` clause verbatim. Use that generality sparingly. To pin an abstract type to a concrete one, prefer the [`#[use_type]`](use_type.md) equality form `#[use_type(HasErrorType.{Error = anyhow::Error})]`, which adds the bound and also rewrites bare mentions of the type; and to place a bound on the generated *trait* rather than only its impl, use [`#[extend_where]`](extend_where.md) (on `#[cgp_fn]`).
 

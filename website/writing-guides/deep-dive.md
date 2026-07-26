@@ -37,9 +37,12 @@ record of what was said in its moment.
 A deep dive **supersedes a blog post's usefulness without replacing the post**. Three rules keep that
 relationship honest.
 
-**The post is not edited.** It remains a dated artifact; its internal document already records what has
-gone stale in it. The one legitimate change is adding a short dated note pointing readers at the deep
-dive, and that decision belongs to the user rather than to an agent.
+**The post is not edited, except for one addition that is now settled.** It remains a dated artifact and
+its internal document already records what has gone stale in it — but **a short pointer to the deep dive
+goes at the top of the post**, as the deep dive's last step. This is the one sanctioned edit to a
+published post: it adds a link and changes no claim, so the record survives intact while a reader who
+lands on the post from a search result is sent to the maintained version. Write it as a pointer, not as
+an apology for the post.
 
 **The deep dive is not a copy with the syntax patched.** The blog posts are structured as arguments
 delivered once, with a beginning that assumes nothing and an end that trails into future work. A deep
@@ -125,8 +128,8 @@ this grew out of. A deep dive describes how things are.
 
 **No first-person narration**, per the voice rule above.
 
-**No construct reference.** Name the constructs, show them in use, and link to
-[docs.rs](https://docs.rs/cgp) or the reference for the full grammar.
+**No construct reference.** Name the constructs, show them in use, and link to the
+[reference page](reference.md) for each one, which is where the full grammar lives.
 
 **No unmarked speculation.** The source posts contain substantial future-work sections. Ideas that have
 since shipped are now simply features; ideas that have not should be clearly marked as unbuilt, or left

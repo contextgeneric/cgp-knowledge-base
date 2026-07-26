@@ -21,8 +21,10 @@ writing adds is the gloss: introduce a term with a plain-language definition on 
 consistently.
 
 - **Context** — the concrete type an application wires and calls methods on. Introduce it as "the type
-  that owns the wiring — your application, your test harness, your service", not as a bare `Self`,
-  because a cold reader has no reason to know the two coincide.
+  that owns the wiring", not as a bare `Self`, because a cold reader has no reason to know the two
+  coincide. The word needs qualifying more often than any other term here; see
+  [Qualifying a context and a target](#qualifying-a-context-and-a-target) below, which is the single
+  most load-bearing wording rule in this document.
 - **Component** — one capability, defined once, that can have many implementations. Introduce it as
   "an interface you can wire an implementation for", and reserve the detail that it is a consumer
   trait plus a provider trait for when the reader asks how it works.
@@ -49,6 +51,96 @@ consistently.
   a wall of generated types. Prefer the framing **readable, root-cause-first, dramatically better and
   actively improving**, and always concede in the same breath that it is a **v0.1.0-alpha** reshaping
   the core wiring errors but not yet every class.
+
+## Qualifying a context and a target
+
+**"Context" is the most overloaded word in CGP's vocabulary, and unqualified use of it is the most
+reliable way to lose a reader who was following.** The problem is not that the term is imprecise — it
+means exactly the type in the `Self` position — but that the same word covers two situations a reader
+experiences as opposites, and public writing moves between them without saying so.
+
+Two qualifiers fix it, and both are needed because they answer independent questions.
+
+- **Value context** — a context that *is* the data the capability operates on. The `String` in
+  `String: CanEncode`, the `Rectangle` in `Rectangle: CanCalculateArea`. Introduce it as "here the type
+  being encoded is also the type that carries the wiring — one type doing both jobs".
+- **Environmental context** — a context that exists to supply choices and capabilities rather than to be
+  operated on. Introduce it as "a type that stands for one set of choices", and say in the same breath
+  that **it often has no fields at all** — `struct AppA;` is a complete context — because a reader
+  meeting an empty struct with traits on it has no other way to guess what it is for. Use the qualifier
+  where the contrast with a value context matters, and plain "context" in running prose once the reader
+  knows which is in play.
+- **Application context** — the typical environmental context, one standing for a whole application.
+  Already the base's established compound, and the friendliest specific form.
+- **Environment** — a simile, never a term. Spend it once on the readers whose prior model it matches —
+  the Scala `given`, `Reader`-monad, and implicits audience — as
+  [related-work does](../related-work/implicit-parameters.md): "CGP's context *is* their implicit
+  environment, made a first-class, explicitly-wired type". Do not promote it: the paradigm is called
+  *context*-generic programming, `__Context__` is what every diagnostic says, and "environment" leans
+  runtime in a way [identity.md](identity.md) works hard to prevent.
+
+A second, independent qualifier describes the **component** rather than its context.
+
+- **Self-targeted** — the capability is about the `Self` type: `CanEncode`, `CanGreet`, `HasErrorType`,
+  every getter.
+- **Parameter-targeted** — the capability is about a type parameter while `Self` only decides:
+  `CanEncodeValue<Value>`, `CanCalculateArea<Shape>`.
+
+A parameter does not by itself make a component parameter-targeted. In `CanCompute<Code, Input>` the
+target is `Input` while `Code` is a **selector** the wiring dispatches on, and a component may carry
+both. The test is which type the capability acts on. Note also that the labels describe the *consumer*
+trait: on the provider side both shapes carry the context (`Encoder<Context>` versus
+`ValueSerializer<Context, Value>`), so the distinction is invisible in an expansion.
+
+### Why the qualifiers are not jargon
+
+Some readers will resist being taught three shapes where they expected one idea, and the answer to that
+resistance is not to hide the distinctions but to show that **Rust already has them and simply never had
+to name them.** Vanilla Rust idiomatically supports exactly one of the three: a value context whose
+`Self` is the target. That is what `impl Display for String` is, and it is so dominant that a Rust
+programmer has no reason to notice it *is* one option among several.
+
+The other two shapes are legal in vanilla Rust and merely unrewarding. An environmental context works
+until you try to share logic between two of them, at which point the blanket impls overlap. A
+parameter-targeted trait on an application type compiles fine — `impl CanEncodeValue<Vec<u8>> for ApiServer`
+alongside the same for `Firmware` genuinely gives per-application encoding, with no CGP involved — but
+every context-and-type pair needs its own hand-written body and nothing can be factored out. So both
+shapes exist and neither pays, which is why nobody carries them in their repertoire.
+
+**That is the case to make: CGP's contribution is not legalizing these shapes but making their
+implementations reusable, which is what turns each one into a technique.** Once all three are worth
+using, a reader needs to be able to say which one they are in — so the qualifiers are the names of
+choices that only became choices recently, not complexity CGP added. State it that way and the reader
+stops hearing jargon and starts hearing an answer to "why three?". The
+[modularity hierarchy](../cgp/concepts/modularity-hierarchy.md) carries the full argument and the
+use case for each shape.
+
+### The confusions these qualifiers prevent
+
+Four specific misreadings recur, and each is worth recognizing in a draft, because every one of them is
+produced by *correct* prose that omitted a qualifier.
+
+**"The context is `String`?"** A reader given the usual gloss — the type that owns the wiring, your
+application — and then shown `String` as a context concludes they have misunderstood something. The fix
+is not to avoid the word but to say once that at the retrofit shape the target and the context are the
+same type, and that the fully modular shape separates them. Told forwards, the coincidence explains
+itself; discovered by the reader, it reads as an inconsistency.
+
+**"So a dedicated context is *less* general?"** Hearing "this provider works with any context" and then
+"now we define a dedicated context" invites exactly the wrong inference. What widened is *who chooses*:
+the choice moved from the type, which gets one, to you, who can define as many contexts as you like.
+Say that explicitly rather than leaving the reader to infer a narrowing.
+
+**Two examples on the same rung feeling like opposites.** `Person: CanGreet` and `String: CanEncode` are
+both value contexts, and calling `Person` a context is unremarkable while calling `String` one is
+jarring. A reader who forms their model on one and then meets the other loses it — so an introductory
+example should say which shape it is rather than leaving the reader to generalize from a single case.
+
+**The silent shift from data to application.** This is the worst of the four, because nothing signals
+it: moving from `String: CanEncode` to a web application's `App: CanQueryUser` changes no signature and
+adds no parameter, yet `Self` has stopped being data and become an environmental context. A piece that
+crosses that line must say so in a sentence, or the reader simply notices at some point that they no
+longer know what a context is.
 
 ## Terms to defer, and how to reveal them
 

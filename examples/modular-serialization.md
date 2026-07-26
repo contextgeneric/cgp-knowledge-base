@@ -36,6 +36,8 @@ pub trait CanDeserializeValue<'de, Value> {
 
 `CanSerializeValue` and `CanDeserializeValue` are the [consumer traits](../cgp/concepts/consumer-and-provider-traits.md) callers use as `context.serialize(value, s)`; `ValueSerializer` and `ValueDeserializer` are the provider traits implementations are written against. The extra `&self` is the whole point — it gives every implementation access to the context, both to look up how to serialize nested values and, for deserialization, to pull runtime dependencies out of it. Because `Value` is a generic parameter rather than the `Self` type, a context can later wire a different provider for each concrete value type, which is the per-type dispatch set up when the contexts are wired below.
 
+Both components are therefore **parameter-targeted**, and every context in this example is an **environmental context** — the shape the [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md) places on rung 4. The example starts there rather than working up to it because serialization is the case that genuinely needs it: the encoded types are foreign, so a self-targeted component would give `Vec<u8>` one encoding for the whole program, and the two-applications payoff below would be impossible. A capability *about* the application, by contrast, needs no parameter at all.
+
 ## Overlapping providers
 
 With the type moved off `Self`, several implementations of the same component can coexist even though they overlap — each is written for its own zero-sized provider struct, which the defining crate owns, so the [coherence](../cgp/concepts/coherence.md) rules never apply. The simplest provider stays compatible with the existing Serde ecosystem by deferring to Serde's own `Serialize`:
@@ -198,6 +200,8 @@ pub struct MessagesArchive {
 ## Wiring an application context
 
 A context turns this pile of overlapping providers into one coherent scheme by choosing, per value type, which provider runs. The `open` statement in [`delegate_components!`](../cgp/reference/macros/delegate_components.md) opens the serialization component for per-type wiring directly in the context's own table; after it, an `@ValueSerializerComponent.<Type>: <Provider>` entry assigns a provider to each value type the archive touches, the type written as a [`@`-path key](../cgp/concepts/namespaces.md). `open` is the lightweight wiring form that suits a self-contained application like this one; a large code base with many components instead shares wiring through named [namespaces](../cgp/concepts/namespaces.md) that contexts join and selectively override:
+
+`AppA` is a unit struct with no fields, and that is complete rather than a placeholder: an environmental context's whole job is to be a name the wiring table hangs off, so it carries data only when a provider needs data from it — as `App<'a>` does for the arena in the deserialization section below.
 
 ```rust
 pub struct AppA;

@@ -62,6 +62,8 @@ fn print_area(rect: &Rectangle) {
 }
 ```
 
+The context here is `Rectangle` — the shape whose area is being computed — which makes this a **value context**, the kind whose wired type *is* the data the capability operates on. That is the simplest arrangement to read and the reason it is used above, but it is not the common one: most CGP code wires an **environmental context**, a type standing for an application whose whole job is to carry choices, and which frequently has no fields at all. The distinction changes nothing about the trait split described here, and a great deal about how far one wiring choice reaches, which the [modularity hierarchy](modularity-hierarchy.md) works out. It is worth naming whenever a reader might generalize from one example to the other, because nothing in a signature marks the difference.
+
 A context can also implement a consumer trait directly, exactly as it would a vanilla Rust trait, when code reuse is not the goal. The consumer/provider split is a superset of ordinary traits, not a replacement: the provider machinery is what you opt into when a capability needs more than one implementation, and skipping it costs nothing for the simple case.
 
 A second provider mirrors the consumer relationship in reverse. [`UseContext`](../reference/providers/use_context.md) is a built-in provider that implements the provider trait *by routing back through the context's own consumer-trait implementation* — the dual of the consumer blanket impl, and the hook that lets a higher-order provider fall back to whatever the context already has wired.

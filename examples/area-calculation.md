@@ -2,6 +2,8 @@
 
 This example computes the area of several shapes, progressing from a single field-driven function to a unified, wireable area-calculation component whose implementations compose through higher-order providers. It is a template for any use case where one operation has several interchangeable implementations chosen per context — the shapes here stand in for whatever set of variants an application needs to treat uniformly.
 
+The contexts here are **value contexts** and the component is **self-targeted**: the wired types are the shapes themselves, and `CanCalculateArea` is about the shape it is called on. That is the simplest arrangement to follow, which is why this example is the one the website's teaching material is built from, but it is the least common one in real CGP code — [eight of the nine examples](README.md#which-shape-each-example-wires) here wire an **environmental context** instead, a type standing for an application. Nothing in a signature marks the difference, so a document that draws on this example alongside one of the others has to say when it crosses over; the two arrangements and the reason both exist are worked out in the [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md).
+
 The concepts each step demonstrates are documented in full in the reference; this example only notes which one is in play and links to it:
 
 - context-generic functions — [`#[cgp_fn]`](../cgp/reference/macros/cgp_fn.md) with [implicit arguments](../cgp/concepts/implicit-arguments.md)

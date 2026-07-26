@@ -116,12 +116,13 @@ one or more tags from the fixed set in
 `release`, `deepdive`, `walkthrough` — and an explicit `slug`. A `{/* truncate */}` marker separates
 the excerpt shown on the index from the body, and Docusaurus warns on any post that omits it.
 
-**Always set the `slug`.** Without one, Docusaurus does not derive a flat URL from the filename — it
-publishes the post under a *dated* path instead, so `2026-02-21-new-website.md` becomes
-`/blog/2026/02/21/new-website` rather than `/blog/new-website`. Exactly one post is currently in that
-state, the [new-website post](new-website.md), and its URL is inconsistent with every other post on
-the site as a result. The fix is a one-line front-matter addition, though it changes that post's URL
-and so is the user's call.
+**Always set the `slug` on a new post.** Without one, Docusaurus does not derive a flat URL from the
+filename — it publishes the post under a *dated* path instead, so `2026-02-21-new-website.md` becomes
+`/blog/2026/02/21/new-website` rather than `/blog/new-website`. Exactly one post is in that state, the
+[new-website post](new-website.md), and its URL is inconsistent with every other post as a result.
+**Leave it.** A published post's slug is not changed, because changing it moves a live URL and breaks
+every inbound link to it; the inconsistency is cheaper than the breakage. The rule applies forward only:
+set the slug before a post is published, never after.
 
 One further inconsistency is worth knowing before adding a post: the release-note slugs are not
 uniform. Posts through v0.6.1 use dash-separated versions (`v0-6-1-release`), while v0.7.0 and the

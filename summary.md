@@ -28,7 +28,8 @@ it stale.
 - [cgp/AGENTS.md](cgp/AGENTS.md) — the rules for documenting `cgp`: what the synchronization rule
   lands on here (including propagating a change to the skill), the authoring conventions, which rules
   govern which directory, the reference document template and its syntax-grammar notation, what a
-  concept and a guide each owe, and how to review a document.
+  concept and a guide each owe, the rule that a document says which context shape its examples wire,
+  and how to review a document.
 
 ### `cgp/reference/` — one document per construct
 
@@ -218,10 +219,12 @@ it stale.
   reusable provider, and why such a bundle is a provider rather than a context.
 - [check-traits.md](cgp/concepts/check-traits.md) — why wiring is lazy and how a compile-time
   assertion makes its failures readable.
-- [coherence.md](cgp/concepts/coherence.md) — what Rust's coherence rules forbid and the
-  incoherent-impl-plus-local-wiring strategy CGP uses.
+- [coherence.md](cgp/concepts/coherence.md) — what Rust's coherence rules forbid, the
+  incoherent-impl-plus-local-wiring strategy CGP uses, and why the number of independent choices
+  available depends on who owns the wired type.
 - [consumer-and-provider-traits.md](cgp/concepts/consumer-and-provider-traits.md) — the trait duality
-  at the heart of CGP.
+  at the heart of CGP, and why its worked example is a value context rather than the more common
+  environmental one.
 - [dispatching.md](cgp/concepts/dispatching.md) — routing extensible-data inputs to per-field and
   per-variant handlers.
 - [extensible-records.md](cgp/concepts/extensible-records.md) — building and reading a struct by its
@@ -239,7 +242,9 @@ it stale.
 - [modular-error-handling.md](cgp/concepts/modular-error-handling.md) — the error type, its
   construction, and its detail as three independent wiring decisions.
 - [modularity-hierarchy.md](cgp/concepts/modularity-hierarchy.md) — the ladder from one blanket impl
-  to per-type-per-provider wiring, and how to pick the lowest rung.
+  to per-type-per-provider wiring, the value-versus-environmental context and self-versus-parameter
+  target axes that decide a rung, why vanilla Rust idiomatically supports only one of the three shapes,
+  and how to pick the lowest rung.
 - [monadic-handlers.md](cgp/concepts/monadic-handlers.md) — chaining handlers that short-circuit
   through a monad.
 - [namespaces.md](cgp/concepts/namespaces.md) — reusable, inheritable wiring tables as CGP's preset
@@ -253,6 +258,9 @@ it stale.
 
 - [README.md](cgp/guides/README.md) — the guide catalog plus a summary table condensing every
   recommendation into one cheat-sheet.
+- [choosing-a-component-shape.md](cgp/guides/choosing-a-component-shape.md) — what goes in `Self` and
+  whether the capability targets `Self` or a parameter, with the promotion refactoring worked and the
+  two traps: a parameter is not always a target, and per-application choice needs no parameter.
 - [capability-supertraits.md](cgp/guides/capability-supertraits.md) — prefer `#[extend]` over native
   `:` supertrait syntax.
 - [debugging.md](cgp/guides/debugging.md) — reach for `cargo-cgp` first, then trace a wiring failure
@@ -456,10 +464,11 @@ it stale.
 
 ## `examples/` — worked examples
 
-- [README.md](examples/README.md) — the example catalog, and how an example differs from a reference
-  document.
+- [README.md](examples/README.md) — the example catalog with the context shape each one wires, and how
+  an example differs from a reference document.
 - [AGENTS.md](examples/AGENTS.md) — the rules: leave the mechanics to the reference, re-derive rather
-  than cite an outside source, the document shape, and where a missing concept belongs.
+  than cite an outside source, the document shape, naming the context shape the example wires, and where
+  a missing concept belongs.
 - [application-builder.md](examples/application-builder.md) — assembling an application context from
   independent per-subsystem builder providers via the extensible builder pattern.
 - [area-calculation.md](examples/area-calculation.md) — computing shape areas, from field-driven
@@ -520,14 +529,16 @@ it stale.
   enhances-not-replaces frame, the layered pitch that follows the line, and the curated headline feature
   set for a front page.
 - [readers.md](communication-strategy/readers.md) — the audience model by Rust experience, imported
-  mental model, and role, plus the comprehension barriers a willing reader hits and the teaching move
-  that lowers each.
+  mental model, and role, plus the comprehension barriers a willing reader hits — including the
+  application-context shape vanilla Rust gives them no reason to imagine — and the teaching move that
+  lowers each.
 - [message.md](communication-strategy/message.md) — everything a piece says about CGP: the pains it
   removes, the capabilities worth advertising, the objections readers bring, and the boundary where a
   plainer tool wins — four views of one reader.
 - [vocabulary.md](communication-strategy/vocabulary.md) — the canonical word list for public writing
-  (use, defer, avoid) plus the glossary of the non-technical craft; the authority that resolves any
-  phrasing disagreement.
+  (use, defer, avoid), the value/environmental/application context and self/parameter target qualifiers
+  with the case that they are not jargon and the four misreadings they prevent, plus the glossary of the
+  non-technical craft; the authority that resolves any phrasing disagreement.
 - [formats.md](communication-strategy/formats.md) — per-artifact playbooks for the launch post,
   deep-dive, README, talk, thread, and comparison, the ready thread answers, the conversion ladder, and
   annotated model drafts.
@@ -618,8 +629,11 @@ it stale.
   for, the target page inventory including unwritten pages, the sidebar order, and each reader
   profile's path through the site.
 - [website/redesign-queue.md](website/redesign-queue.md) — the consolidated list of what is wrong with
-  or missing from the site, grouped into cheap corrections, page rewrites, and new pages, with an
-  ordering; deleted when empty.
+  or missing from the site, grouped into cheap corrections, page rewrites, and new pages; deleted when
+  empty.
+- [website/tasks.md](website/tasks.md) — the redesign's work plan: every remaining task with its
+  repository, dependencies, and done-condition, plus the dependency graph, the ordering, and the open
+  decisions; deleted when empty.
 - [website/site-structure.md](website/site-structure.md) — the site's build, navigation, announcement
   bar, and deployment, plus one entry each for the front page, Introduction, Overview, Resources,
   Contribute, and the AI skills page.
@@ -629,8 +643,9 @@ it stale.
 - [README.md](website/writing-guides/README.md) — what a writing guide is, how it differs from a
   per-page document, the three decisions every guide assumes, and the catalog.
 - [homepage.md](website/writing-guides/homepage.md) — the landing page: its two-tier structure, the
-  before/after code that carries the hook, the six-section bounded essay, the offload rule and the
-  dedicated explanation pages it offloads to, and what must never appear on the page.
+  settled before/after example with the copy that sells it and the six properties a replacement must
+  keep, the six-section bounded essay, the offload rule and the dedicated explanation pages it offloads
+  to, and what must never appear on the page.
 - [explanation.md](website/writing-guides/explanation.md) — the understanding-oriented page type the
   site does not yet have: what every explanation page owes, what Diátaxis gives the tier and where CGP
   diverges, how a concept document is rewritten into one, specs for the four planned pages, and where

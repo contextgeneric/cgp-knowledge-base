@@ -48,6 +48,21 @@ sections, each introducing one step of the progression with a sentence of contex
 brief concept note pointing into the reference. Register the new document in the catalog in
 [README.md](README.md), and in [../summary.md](../summary.md), in the same change.
 
+## Name the shape the example wires
+
+Say, in the opening summary or the first wiring section, **what kind of context the example wires and what
+its components target**, because an example is the raw material an agent quotes into a tutorial or a page
+and the shape has to travel with the code. A context is either a **value context**, where the wired type
+*is* the data the capability operates on, or an **environmental context**, a type standing for an
+application; a component is either **self-targeted** or **parameter-targeted**. Both pairs are defined in
+the [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md).
+
+The catalog in [README.md](README.md) records the shape for every existing example, and the distribution is
+worth knowing before writing a new one: eight of the nine wire an environmental context, and the ninth —
+[area calculation](area-calculation.md) — is the one both website tutorials are built from. So a reader who
+learns CGP from the teaching material meets the least common shape first, which is exactly why an example
+must not leave its own shape implicit.
+
 ## When an example needs a concept the base does not cover
 
 Document the concept where it belongs rather than explaining it inside the example. Add the missing

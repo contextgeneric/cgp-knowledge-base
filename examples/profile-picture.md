@@ -2,6 +2,8 @@
 
 This example fetches a user's profile picture — a real-world operation that queries a database for a user record and, if one is set, downloads and decodes the image from object storage. It progresses from two field-driven async functions to a fully wired application that swaps its database engine and its storage backend per context without touching the orchestration logic. It is a template for any use case where one business operation composes several infrastructure steps, each of which may have more than one implementation.
 
+The contexts here are **environmental contexts** — `App` and `GCloudApp` stand for the application, carrying the database handle and the wiring — and the components are **self-targeted**, since fetching a profile picture is something the application does rather than a property of any value. That is the shape most CGP code is in; see the [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md).
+
 The concepts each step demonstrates are documented in full in the reference; this example only notes which one is in play and links to it:
 
 - context-generic functions — [`#[cgp_fn]`](../cgp/reference/macros/cgp_fn.md) with [implicit arguments](../cgp/concepts/implicit-arguments.md)

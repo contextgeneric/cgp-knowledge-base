@@ -12,6 +12,11 @@ per the base's [document-the-present rule](../AGENTS.md#document-the-present-not
 detail behind each entry stays in its home document; what is here is the one-line statement, the cost,
 and the pointer.
 
+**This document is the diagnosis; [tasks.md](tasks.md) is the plan.** The two are kept apart because two
+lists of outstanding work would drift: an entry here says what is wrong with a page and why, while a task
+there names where the change lands, what blocks it, and what "done" means. Every entry below has a task,
+and the dependency graph, the ordering, and the open decisions all live there.
+
 ## How to read the entries
 
 Each entry names **where the change is made**, since not all of them are in the website repository. Most
@@ -22,8 +27,8 @@ and a few are knowledge-base documents that need updating in the same change.
 Entries are grouped by cost rather than by page, because cost is what decides the order. The
 **corrections** are single-line changes that are wrong today and cheap to fix. The **rewrites** are
 existing pages whose content is sound but whose shape or framing is not. The **new pages** are the
-largest items and depend on the guides that specify them. A short **ordering** section at the end says
-what to do first and why.
+largest items and depend on the guides that specify them. Which of them to do first, and which depend on
+which, is in [tasks.md](tasks.md) rather than here.
 
 ## Corrections — single lines, wrong today
 
@@ -39,9 +44,13 @@ Rust."** This is the retired framing, and "modular" as a lead word is specifical
 post, so it goes stale silently with every release, and it is the site's most prominent single piece of
 copy. *Website repo, `docusaurus.config.ts`.*
 
-**The Hello World tutorial pins `cgp = "0.7.0"`.** The current release is v0.8.0, and a version pin that
-does not resolve is exactly the small failure that costs a first-time reader. *Website repo,
-`docs/tutorials/hello.md`; see [tutorials/hello-world.md](tutorials/hello-world.md).*
+**The Hello World tutorial pins `cgp = "0.7.0"`.** The site's material is written against
+[v0.8.0](../releases/v0-8-0.md), so `"0.8.0"` is the pin to carry. It does not resolve on crates.io until
+the release ships, which ties this correction to the release rather than making it wrong: the tutorials
+are correct the moment v0.8.0 is published, and until then a reader who wants to follow along needs a git
+dependency on `main`, which is how every ecosystem repository tracks the library. *Website repo,
+`docs/tutorials/hello.md`; see [tutorials/hello-world.md](tutorials/hello-world.md) and
+[tasks.md](tasks.md).*
 
 **The Resources page omits `cargo-cgp` entirely.** This is the most consequential single omission on the
 site: the error toolchain is the direct answer to the most-cited obstacle to adopting CGP, and Resources
@@ -79,8 +88,11 @@ which on a page for this audience is the most consequential omission of the six.
 
 **The site carries three disagreeing feature lists.** The front page names six capabilities, the Overview
 names five, and [identity.md](../communication-strategy/identity.md#the-headline-feature-set) curates a
-different five. Reconcile all three against the curated set. *Website repo, front page and
-`docs/overview.md`.*
+different five. The fix is not to make all three identical: the **front page** carries the curated five,
+and the **Overview** — whose job is the detailed feature tour, per
+[information-architecture.md](information-architecture.md#the-target-page-inventory) — expands each of
+them and adds the breadth capabilities, so it is not capped at five and stops competing with the front
+page rather than matching it. *Website repo, front page and `docs/overview.md`.*
 
 **The Overview's depth pointers all lead to the book,** which the Introduction itself describes as not
 recently updated — the error-handling section in particular links to a book chapter rather than to
@@ -176,21 +188,8 @@ written from it; the v0.8.0 draft is the first opportunity and will show whether
 `expression` crates of `cgp-examples`, and it is genuine library work rather than documentation
 housekeeping.
 
-## Ordering
+## Where the ordering lives
 
-Do the **corrections** first, in a single pass. They are wrong today, they cost minutes, and two of them
-— the missing `cargo-cgp` entry and the stale tagline — are actively costing the project readers.
-
-Then write **Project status** and **Why CGP exists**, in that order. Project status is mostly a move of
-text that already exists and unblocks the homepage's second call to action; *Why CGP exists* is the page
-the rewritten homepage links to most, so the homepage rewrite is better done after it exists than before.
-
-Then **rebuild the front page**, which is the largest single-page change and the one that most needs its
-destinations to be in place.
-
-Then the **checking tutorial**, which is the highest-value teaching addition and the one that most
-directly answers the objection that has cost CGP the most readers.
-
-**Finish the v0.8.0 post whenever the release ships**, independently of everything above — it is on a
-different clock, and shipping a release with an unfinished announcement is worse than any item on this
-list.
+The order to do these in, the dependency graph behind that order, and the decisions that must be settled
+before certain entries can start are all in [tasks.md](tasks.md), which is the redesign's plan. Keeping
+them there rather than here is what stops the two documents disagreeing about what to do next.

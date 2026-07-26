@@ -2,6 +2,8 @@
 
 This example builds the backend for a small money-transfer web service — querying a user's balance and moving funds between accounts — as a set of composable API handlers that an HTTP server drives. It progresses from abstract domain types and a status-coded error component, through a per-endpoint-dispatched handler and the reusable wrappers that add decoding, authentication, and encoding, to an in-memory context whose whole wiring is organized into a namespace and served over HTTP. It is a template for any request/response service whose endpoints share cross-cutting concerns and whose backend should be swappable behind abstract types.
 
+The contexts here are **environmental contexts** standing for the application, and the components are mostly **self-targeted** — transferring money is something the app does — with the API handler dispatching per endpoint through a selector rather than acting on a target parameter. See the [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md) for the distinction.
+
 The concepts each step demonstrates are documented in full elsewhere; this example only notes which one is in play and links to it:
 
 - abstract domain types — [`#[cgp_type]`](../cgp/reference/macros/cgp_type.md) and the [abstract-types concept](../cgp/concepts/abstract-types.md)

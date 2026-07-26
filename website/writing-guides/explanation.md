@@ -30,8 +30,8 @@ explanation page assumes nobody is following along, which is exactly what frees 
 round, discuss alternatives, and admit complications a tutorial must suppress.
 
 A **reference page** specifies a construct completely and is read in fragments by someone looking one
-thing up. Its published home is [docs.rs](https://docs.rs/cgp) and the
-[CGP Patterns book](https://patterns.contextgeneric.dev/); the exhaustive internal version is
+thing up. Its published home is the site's own reference tier, which is
+[canonical rather than a supplement to rustdoc](reference.md) and is ported from the exhaustive internal
 [cgp/reference/](../../cgp/reference/README.md). An explanation page names constructs but never
 enumerates their syntax — the moment it starts listing accepted forms, it has become a bad reference.
 
@@ -152,6 +152,48 @@ Built from [coherence](../../cgp/concepts/coherence.md) and
 name the [modularity hierarchy](../../cgp/concepts/modularity-hierarchy.md) at the end, because a reader
 who has just been told coherence can be escaped needs to hear immediately that most code should not.
 
+#### The sixth movement: the shape the page has to build
+
+The five movements above leave the reader believing overlapping implementations can be made safe, and
+then the page has to do one more thing that no other surface on the site can: **build the idea of a type
+that stands for the application.** This is a missing concept rather than a hard one — vanilla Rust makes
+the arrangement legal and pointless at once, so a reader has never had a reason to construct it, and
+handing them the phrase "application context" therefore lands as an unfamiliar noun. The full account is
+the [comprehension barrier](../../communication-strategy/readers.md) of the same name; on this page it
+runs in three steps.
+
+**Show the vanilla version working.** Two application types, one value type, two encodings, no CGP:
+`impl CanEncodeValue<Vec<u8>> for ApiServer` beside the same impl for `Firmware`. This compiles, and
+showing it is what converts an unfamiliar shape into ordinary Rust the reader simply never had a reason to
+write. **Show it not scaling**: a third value type, then an attempt to factor the shared logic into a
+blanket impl, then `E0119`. **Then name it**, at the point where the reader already wants what it
+provides — and say in the same breath that such a context usually has no fields, because `struct AppA;`
+is otherwise unreadable.
+
+The payoff is then available in its strongest form, and the page should state it: coherence does not
+forbid this shape, it makes it **not worth building**, so CGP's contribution is constructive rather than
+permissive. It does not merely escape a rule; it makes an available shape worth using.
+
+#### Two transitions this page must not leave silent
+
+The site's examples move through three shapes — a value context whose target is `Self`, an environmental
+context whose target is `Self`, and an environmental context targeting a parameter — and **both
+transitions between them are currently unmarked everywhere**. Each needs one sentence, and this page is
+where they belong, because it is the page that has the room.
+
+The first is the harder one, precisely because nothing signals it: going from `String: CanEncode` to a web
+application's `App: CanQueryUser` changes no signature and adds no parameter, yet `Self` has stopped being
+data. Mark it — *"until now the wired type has been the data; from here it is a type you define to stand
+for your application, and that change alone is what escapes coherence, because you can define as many as
+you like"* — and note that this, not the parameter, is where the restriction lifts. The second is the
+visible one: *"the context can already decide for itself; to let it decide for a type you don't own, the
+value moves out of `Self` and becomes a parameter."*
+
+Use the qualifiers from
+[vocabulary.md](../../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target) — value
+context, environmental context, self-targeted, parameter-targeted — and introduce each at the transition
+it explains rather than as a glossary up front.
+
 ### How CGP works
 
 The page for the reader who believes the pitch and now wants to see through the macros. Its organizing
@@ -187,6 +229,20 @@ tightly. **Never disparage the alternative** — represent each as its own users
 **if a table is used, every row must concede a case where the other tool wins**; a table showing CGP
 winning everything reads as a strawman and loses the reader it was written for. The technical map behind
 it is the [modularity hierarchy](../../cgp/concepts/modularity-hierarchy.md).
+
+This page also carries a second decision the others do not: **which of CGP's three shapes to reach for.**
+Some readers will resist being taught three where they expected one, and the defence is to show that each
+answers a different question rather than representing a different amount of sophistication. Two questions
+settle it, and they should appear as questions rather than as a taxonomy: *is the capability about the
+data, or about the application?* — about the data means a value context and the retrofit shape, about the
+application means an environmental context. And *does it concern a type you don't own, which different
+applications must treat differently?* — if so the target moves into a parameter, and if not, self-targeting
+is enough.
+
+Presented that way the shapes read as a decision the reader is already equipped to make. Presented as
+three named forms to learn first, they read as the complexity the page exists to disarm. State plainly
+that the application shape is where most CGP code lives, so the reader knows the common case rather than
+inferring that the most elaborate shape is the intended destination.
 
 ### Project status and adoption risk
 
@@ -228,7 +284,7 @@ follow. The moment the reader is expected to be typing, the page has become a tu
 removed.
 
 **No exhaustive syntax.** Naming a construct and showing one use is explanation; listing its accepted
-forms is reference, and it belongs in the [reference](../../cgp/reference/README.md) or on docs.rs.
+forms is reference, and it belongs on the [reference page](reference.md) for that construct.
 
 **No first-person narration.** Project voice throughout. Where the argument wants a person behind it,
 link to the [transcript](../blog/rustlab-2025-coherence.md) or the blog post that has one.

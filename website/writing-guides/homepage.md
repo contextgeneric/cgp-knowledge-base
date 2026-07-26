@@ -70,74 +70,202 @@ toolchain gamble and finding it immediately is worth more than the space it cost
 **The before/after code block.** This is the hook, and its content is fixed: **show the implementations
 Rust rejects, then the same implementations under CGP.** Nothing else on the site says "this does
 something the language cannot" as fast, and no amount of prose substitutes for the reader seeing an
-`E0119` they recognize.
+`E0119` they recognize. The example is settled, and it comes with copy that has to sit around it; both
+are in [The example, and how to sell it](#the-example-and-how-to-sell-it) below, which is the longest
+section of this guide because the block carries more of the page's weight than everything else combined.
 
-Four properties make the block work, and getting any of them wrong costs more than the block is worth.
+**Two links, no more.** The **Quickstart** for the reader ready to try, and the honest
+[project status page](explanation.md#project-status-and-adoption-risk) for the reader deciding on risk.
+Two calls to action are the maximum, matched to the two readers who reach this page in numbers; a third
+dilutes both. Do not add a third for the enthusiast — they will find the blog. The Quickstart is a page
+the redesign creates — install and one working program, no concepts — and it is deliberately smaller than
+the [Hello World tutorial](../tutorials/hello-world.md), which teaches an idea. Until it exists, this link
+points at Hello World.
 
-**Demonstrate overlap, not the orphan rule.** These are two different failures with two different error
-codes, and conflating them is the single easiest way to lose a precise reader. Two blanket impls of a
-trait you own that could both match one type is `E0119`; implementing a *foreign* trait over an uncovered
-type parameter is `E0210`, and it fails on its own rather than because of overlap. A "before" that writes
-`impl<T: Display> serde::Serialize for T` is therefore not "legal on its own" from a downstream crate, and
-labelling it `E0119` invites a correction in the first reply. **Use a trait the snippet itself defines**,
-so the only error shown is the overlap and the claim is airtight.
+The current page's GitHub star widget may stay; it is social proof rather than a call to action and does
+not compete for the click.
 
-**Keep the trait's shape the same on both sides.** The reader is comparing two versions of one program,
-so any change other than the CGP machinery reads as sleight of hand. The verified candidate below stays
-on rung 3 of the [modularity hierarchy](../../cgp/concepts/modularity-hierarchy.md) — the value stays in
-`Self` — precisely so the before and after differ only by the annotations:
+## The example, and how to sell it
+
+The example is settled: **a trait the snippet defines, implemented twice over two ordinary Rust bounds
+that overlap, then wired per type.** The concrete pair is `Display` and `AsRef<[u8]>` on a `CanEncode`
+trait, and the whole of it — both blocks, the caption, and the sentences that must sit around them — is
+below. It is the highest-leverage twenty lines on the site: two-thirds of the readers who ever see the
+homepage see this block and nothing beneath it, so it has to carry the pitch, the proof, and the
+pre-emption of the first objection on its own.
+
+### The code
+
+Two blocks in sequence, the first labelled as what Rust refuses and the second as the same program under
+CGP. This is the verified form: the first block fails with exactly the error it claims, and the second
+compiles and runs against `cgp` `0.8.0-alpha` once the two imports (`core::fmt::Display` and
+`cgp::prelude::*`) are added back.
 
 ```rust
-// Before — Rust allows only one. `String` satisfies both bounds,
-// so the compiler has no principled way to choose:
+// Rust allows only one of these. `String` is both `Display` and
+// `AsRef<[u8]>`, so the compiler has no principled way to choose.
 pub trait CanEncode {
     fn encode(&self) -> Vec<u8>;
 }
 
-impl<T: Display> CanEncode for T { /* ... */ }
-impl<T: AsRef<[u8]>> CanEncode for T { /* ... */ }   // error[E0119]
+impl<T: Display> CanEncode for T {
+    fn encode(&self) -> Vec<u8> { self.to_string().into_bytes() }
+}
+
+impl<T: AsRef<[u8]>> CanEncode for T {          // error[E0119]
+    fn encode(&self) -> Vec<u8> { self.as_ref().to_vec() }
+}
 ```
 
 ```rust
-// After — both compile, because each implementation has its own name:
 #[cgp_component(Encoder)]
 pub trait CanEncode {
     fn encode(&self) -> Vec<u8>;
 }
 
-#[cgp_impl(new EncodeWithDisplay)]
-impl Encoder where Self: Display { /* ... */ }
+#[cgp_impl(new EncodeAsText)]
+#[uses(Display)]
+impl Encoder {
+    fn encode(&self) -> Vec<u8> { self.to_string().into_bytes() }
+}
 
-#[cgp_impl(new EncodeBytes)]
-impl Encoder where Self: AsRef<[u8]> { /* ... */ }
+#[cgp_impl(new EncodeAsBytes)]
+#[uses(AsRef<[u8]>)]
+impl Encoder {
+    fn encode(&self) -> Vec<u8> { self.as_ref().to_vec() }
+}
 
-// ...and each type says which one it uses:
-delegate_components! { Uuid    { EncoderComponent: EncodeWithDisplay } }
-delegate_components! { Payload { EncoderComponent: EncodeBytes } }
+// Both compile. Each type names the implementation it uses:
+delegate_components! { u64     { EncoderComponent: EncodeAsText } }
+delegate_components! { String  { EncoderComponent: EncodeAsText } }
+delegate_components! { Vec<u8> { EncoderComponent: EncodeAsBytes } }
 ```
 
-**End on wiring that shows both providers in use.** The wiring line answers the reader's immediate next
-thought — "then how does the compiler know which one" — and showing *two* entries answers it better than
-one, because a single entry looks like the other provider was discarded. Without this, the reader's
-conclusion is that CGP has made the program ambiguous rather than that it has made the choice explicit.
+### The copy that sells it
 
-**Quote the real error code.** `error[E0119]` is the detail that makes the claim checkable, and a reader
-who has hit it recognizes it instantly.
+**The block does not work without its caption, and the caption is two sentences.** The first names what
+changed, the second pre-empts the informed objection:
 
-Two caveats belong in the page's prose rather than in the block. Rung 3 keeps the **orphan rule** — the
-`delegate_components!` entries must live in a crate owning either the trait or the type — and CGP dissolves
-that too, by moving the value out of `Self` into a parameter. That is worth one sentence in the essay
-below, not a second code block above the fold. And the code is **illustrative rather than runnable**:
-eliding the bodies costs nothing, whereas a complete example would need three times the vertical space and
-bury the contrast. Runnable code belongs in the quickstart and the tutorials.
+> Both implementations compile, because each one now has a name — and each type names the one it uses, so
+> a call to `encode()` is as unambiguous as it ever was. Coherence is not repealed; it is scoped.
 
-**Two links, no more.** The quickstart or first tutorial for the reader ready to try, and the honest
-status page for the reader deciding on risk. Two calls to action are the maximum, matched to the two
-readers who reach this page in numbers; a third dilutes both. Do not add a third for the enthusiast —
-they will find the blog.
+That is the whole sell above the fold. Everything else a writer wants to add here — why coherence exists,
+what the wiring table is, what it costs at runtime — belongs to the essay below or to
+[*Why CGP exists*](explanation.md#why-cgp-exists), and adding it here is the most common way this block
+gets ruined.
 
-The current page's GitHub star widget may stay; it is social proof rather than a call to action and does
-not compete for the click.
+Three properties of the *copy* matter as much as the code. **Label the first block as a refusal, not as a
+mistake** — the reader must feel that the program is reasonable and the language is saying no, because
+that is the feeling the whole page converts. **Say `String` out loud in the comment**, since naming the
+witness is what turns "impls might overlap" into a fact the reader checks in their head in one second.
+And **quote `error[E0119]` verbatim**, because it is the detail that makes the claim checkable and a
+reader who has hit it recognizes it instantly.
+
+### Why this example and not another
+
+**The overlap is visceral and needs no domain.** Every Rust programmer knows `String` is both `Display`
+and `AsRef<[u8]>`, so the conflict is self-evident from bounds the reader already holds — no invented
+domain types, no crate to introduce, nothing to take on trust. An example built on a plausible business
+trait would spend half its lines establishing the setup before the conflict could even be seen.
+
+**The reader has wanted this.** "Encode anything printable one way and anything byte-like another" is a
+thing developers try and are refused, and the escape they reach for — a newtype per case, or a marker
+struct plus a helper trait — is
+[independently reinvented and blogged](../../communication-strategy/evidence.md). The block's real job is
+recognition, so the CGP version arrives as relief from a workaround the reader has written rather than as
+a capability they must be talked into wanting.
+
+**The bodies are shown rather than elided, and they are identical on both sides.** One line each costs
+almost nothing and buys the block's central proof: the *only* difference between the two programs is the
+annotations and the wiring, so CGP moved the choice and not the code. A `/* ... */` here would leave the
+reader wondering what was quietly changed inside, which is exactly the suspicion the block exists to
+remove.
+
+**The trait's shape is unchanged across the pair.** The example stays on rung 3 of the
+[modularity hierarchy](../../cgp/concepts/modularity-hierarchy.md) — the encoded value stays in `Self` —
+so the before and after differ only by the machinery. Any change beyond that reads as sleight of hand to
+a reader comparing two versions of one program, and above the fold there is no room to narrate one.
+
+**Three wiring lines, not two.** Two entries prove the first provider was not simply discarded; the third
+does two further jobs. One provider serving both `u64` and `String` shows that a provider is reusable
+logic rather than a renamed per-type impl, which forecloses "I could have written two ordinary impls".
+And wiring `String` — the very type whose ambiguity caused the error — closes the loop the first block
+opened, answering "so which one does `String` get?" with "the one you name."
+
+**The bounds move into `#[uses]`, and that is a second small win.** `#[uses(Display)]` and
+`#[uses(AsRef<[u8]>)]` are what the [guides](../../cgp/guides/declaring-dependencies.md) prescribe, and
+they apply to ordinary Rust traits exactly as they do to CGP capabilities — which the block quietly
+demonstrates, since a reader who assumed the attribute was CGP-only machinery sees it carrying `Display`.
+Parity survives the move because the bound stays in the reader's eye-line, one line above the impl,
+naming the same trait they just read in `impl<T: Display>`. Do not rewrite it back to
+`where Self: Display`: the shorter form is the idiom, and the point that the attribute is not
+CGP-specific is worth a line of the page's most valuable space.
+
+**It is a fragment rather than a program.** The imports are omitted and no `main` or call site is shown,
+because a complete example would need half again the vertical space and bury the contrast. That is a
+presentation choice rather than a licence to be approximate — the fragment still has to compile once the
+imports are restored. A program the reader runs belongs in the Hello World tutorial.
+
+### Which shape it is, and why that matters here
+
+**The block is the retrofit shape**: a value context — `String` and `u64` are the data being encoded —
+with the capability targeting `Self`. Say so in the meta record even though the page never uses the
+terms, because it is the **least representative of CGP's three shapes** and a writer needs to know that
+deliberately. Most CGP code is the *application* shape, where `Self` is a type you define and the
+capability is about the application; and the fully modular shape moves the target into a parameter. The
+vocabulary is in
+[vocabulary.md](../../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target) and the
+technical account in the [modularity hierarchy](../../cgp/concepts/modularity-hierarchy.md).
+
+The retrofit shape is kept above the fold anyway, and the trade is worth stating so it is not reopened
+every redesign. It buys the two things nothing else buys in twenty lines: the before and after differ by
+nothing but the annotations, and the failure is a real `E0119` the reader recognizes. It costs
+representativeness, and it costs two transitions that the essay below must then carry.
+
+**Do not use the word "context" anywhere in the hero.** At the retrofit shape the context and the target
+are the same type, so calling `String` a context — while true — contradicts the gloss every other page
+gives, and a reader who meets that contradiction concludes they have misunderstood something. "Each type
+names the implementation it uses" says everything the block needs.
+
+### What it deliberately does not show
+
+Three things are missing from the block, each on purpose, and each has a named place where it is repaid.
+Naming them here is what stops a well-meaning revision from cramming one in.
+
+**Two applications choosing differently for the same type.** At the retrofit shape the wired type *is* the
+context, so `String` commits to one provider globally and the block shows per-*type* choice rather than
+per-*application* choice. That is repaid in essay section 2 and in full by
+[*Why CGP exists*](explanation.md#why-cgp-exists). **Do not try to put the fully modular shape above the
+fold**: it changes the trait to `CanEncodeValue<Value>`, which is precisely the shape change the parity
+rule forbids, and it adds `open` and `@`-path wiring syntax the reader has no grounding for. The
+[launch-post model draft](../../communication-strategy/formats.md) does run at that shape and is right to,
+because a post has the paragraph of narration this block does not.
+
+**The orphan rule dissolved.** The block quietly wires three types the snippet does not own, which is
+legal because the snippet owns the trait — and that is exactly the limit of rung 3: the wiring must live
+in a crate owning either the trait or the type. CGP dissolves that too, by moving the value out of `Self`,
+and that is one sentence in the essay rather than a second code block.
+
+**Everything past trait implementations.** No abstract types, no extensible data, no handlers, no
+dependency injection. Section 4 of the essay repays the tag line's breadth debt in one sentence each; the
+block stays on the one thing it can prove in twenty lines.
+
+### Replacing it
+
+The example is settled, not sacred, but a replacement has to keep six properties, and a candidate failing
+any one of them is worse than what it replaces.
+
+The trait is **defined in the snippet**, so the failure shown is unambiguously the overlap rule. This is
+the property most easily lost: `impl<T: Display> serde::Serialize for T` is an *orphan-rule* failure
+(`E0210`) that fails on its own rather than because of overlap, so a "before" written against a foreign
+trait and labelled `E0119` invites a correction in the first reply. The two bounds **overlap on a type
+the reader can name without being told**. The **trait's shape is identical** across the pair. The
+**bodies are identical** across the pair, and short enough to show. The wiring shows **at least two
+providers with at least one of them used twice**. And the **real error code** appears verbatim.
+
+A replacement must be compiled before it ships, not eyeballed — the current one was, together with a
+`check_components!` assertion per wired type, which is how the wiring is confirmed to resolve rather than
+merely parse.
 
 ## Below the fold: the bounded essay
 
@@ -155,14 +283,27 @@ earned: a reader who believes the page respects Rust will follow the rest.
 **2. What CGP changes.** The move, in one idea: the implementation's `Self` becomes something the
 implementing crate always owns, so a provider implements *its own* named type rather than a foreign
 trait, and neither rule bites. Then the other half, which matters just as much: **coherence is restored
-locally**, because each context names exactly one provider, so a call site is as unambiguous as it ever
+locally**, because each wired type names exactly one provider, so a call site is as unambiguous as it ever
 was. State it as "coherence is not repealed — it is scoped", because that sentence pre-empts the informed
 objection in eight words.
 
+**This section is also where the page crosses from the retrofit shape to the application shape, and it
+must say so.** Everything above it wires the *data*; every other page on the site wires an *application*,
+and nothing in a signature marks the change — no parameter appears, so a reader simply notices at some
+point that they no longer know what is being wired. One sentence closes it: *"so far the wired type has
+been the data, which gets one choice for the whole program; the move that makes the choice yours is to
+wire a type you define to stand for your application — and because it is yours, you can define as many as
+you like."* That sentence is also the first legitimate use of the word **context** on the page, and it
+should be introduced there rather than earlier, because this is the point at which it means something the
+reader can check. The two transitions and the reasoning behind them are specified in
+[explanation.md](explanation.md).
+
 **3. What that buys you.** Here the capabilities appear, as prose beats rather than cards, each two or
-three sentences: many implementations chosen per context; no runtime cost, because a wired call
+three sentences: many implementations chosen per application; no runtime cost, because a wired call
 monomorphizes to a direct call; dependencies that are explicit and compiler-checked; and still ordinary
-Rust, adopted incrementally. Draw the wording from
+Rust, adopted incrementally. Prefer "per application" to "per context" throughout this section — it is
+concrete, it needs no vocabulary, and it is true of the shape section 2 has just introduced. Draw the
+wording from
 [message.md](../../communication-strategy/message.md#the-capabilities-worth-advertising) and keep each
 beat anchored to something the reader has now seen.
 
@@ -197,10 +338,10 @@ section keeps one paragraph plus a link. This is the rule that keeps the essay b
 if the destination pages exist — so the redesign must create them rather than discovering the need
 mid-draft.
 
-Four pages are the planned destinations, and only one of them exists today. Together they form an
+Five pages are the destinations, and two of them exist today in some form. Together they form an
 **explanation** tier the docs tree currently lacks, distinct from the tutorials that teach and the
 reference that specifies. **[explanation.md](explanation.md) is the guide for writing them**, and it
-carries a fuller spec for each than the summaries below — read it before drafting any of the four.
+carries a fuller spec for the first four than the summaries below — read it before drafting any of them.
 
 - **Why CGP exists** — the long-form version of sections 1 and 2: how Rust's trait system resolves
   dependencies, why coherence is necessary, what the overlap and orphan rules cost in practice, the
@@ -224,13 +365,14 @@ carries a fuller spec for each than the summaries below — read it before draft
   directly from above the fold. Its frankness is a genuine asset and must not be softened when it moves;
   what should change is the stale year-stamp and the absence of any mention of
   [`cargo-cgp`](../../cargo-cgp/README.md).
-
-The existing [Overview page](../site-structure.md) is the fifth destination and needs reconciling rather
-than creating: its five features and five problems should be brought into agreement with
-[identity.md](../../communication-strategy/identity.md#the-headline-feature-set) and
-[message.md](../../communication-strategy/message.md#the-problems-cgp-removes), since today the site
-carries three disagreeing feature lists — six on the homepage, five on the Overview, and five in the
-strategy.
+- **Overview** — the fifth destination, and the one that already exists. It is the **feature tour**: every
+  high-level CGP capability walked through in more detail than any other surface carries, which makes it
+  the destination for both section 3 and section 4 of the essay. That job resolves the site's three
+  disagreeing feature lists rather than merely reconciling them: the front page carries the curated five
+  from [identity.md](../../communication-strategy/identity.md#the-headline-feature-set) as prose beats,
+  and the Overview expands each one and adds the breadth capabilities the tag line only gestures at, so
+  it is not competing with the front page's list and is not capped at five. Its problems half stays
+  anchored to [message.md](../../communication-strategy/message.md#the-problems-cgp-removes).
 
 ## What must not be on the homepage
 
@@ -291,5 +433,8 @@ has the frame backwards.
 means something needs offloading; a third hero link means one of them is not load-bearing.
 
 **Verify every snippet** against the source and the `/cgp` skill, preferring code already verified in
-[examples/](../../examples/README.md) — the serialization contrast has a worked counterpart in
-[modular serialization](../../examples/modular-serialization.md).
+[examples/](../../examples/README.md). For the hero block specifically, compile it rather than reading it:
+its nearest counterparts are rung 3 of the
+[modularity hierarchy](../../cgp/concepts/modularity-hierarchy.md) and the
+[modular serialization](../../examples/modular-serialization.md) example, and the six properties a
+replacement must keep are in [Replacing it](#replacing-it).

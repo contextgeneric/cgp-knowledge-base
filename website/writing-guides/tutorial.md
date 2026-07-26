@@ -92,9 +92,12 @@ are what makes a tutorial feel supervised rather than transcribed.
 each time and prevents understanding from compounding. One domain, developed.
 
 **Aim for perfect reliability.** A tutorial the reader cannot make work is worse than no tutorial. Pin the
-`cgp` version in the `Cargo.toml` snippet and keep the pin current — the Hello World tutorial currently
-pins 0.7.0 against a 0.8.0 release, which is exactly the small failure that costs a first-time reader.
-Where a step intentionally fails to compile, say so before it happens.
+`cgp` version in the `Cargo.toml` snippet, and pin **the version the tutorial's code is written against** —
+currently `"0.8.0"`, not the `"0.7.0"` the Hello World tutorial still carries. Where that release has not
+yet been published, the pin resolves only when it does, so re-pinning every tutorial belongs on the
+[release checklist](release-announcement.md#publishing-and-what-happens-afterwards) and a tutorial going
+live ahead of its release needs a one-line note giving the git dependency instead. Where a step
+intentionally fails to compile, say so before it happens.
 
 **Give one path.** Do not offer options, alternatives, or "you could also". A tutorial is not the place
 for a decision; the [guides](../../cgp/guides/README.md) are, and the tutorial can link there.
@@ -191,6 +194,28 @@ Vocabulary is introduced on the same schedule. Defer "consumer trait", "provider
 and "monomorphization" further still — introducing each through the problem it names rather than as a term
 to learn. [vocabulary.md](../../communication-strategy/vocabulary.md) is the authority on which word and
 which gloss.
+
+### Say which shape the tutorial's example is in
+
+**Every tutorial states, in its own internal document, which of CGP's three shapes its running example
+uses**, and a tutorial that crosses from one to another says so in the prose. Both existing series use a
+**value context** whose capability targets `Self`: `Person` is the thing being greeted, `Rectangle` is the
+thing whose area is computed. That is the right choice for a first tutorial, because the wired type is
+something the reader can see and hold — but it is not the shape most CGP code is written in, which is an
+**environmental context**: a type standing for the application, with the capability about the application
+rather than about data.
+
+The obligation is narrow and cheap. A tutorial need not teach the qualifiers or use the words, and an
+introductory one should not; what it must not do is let a reader generalize from a value context and then
+meet an application context with nothing marking the change, since nothing in a signature marks it — no
+parameter appears, and the reader is left unable to say what a context is. An applied tutorial, whose
+scenario is a real system, is almost always in the environmental shape and should introduce the context as
+"a type that stands for this application, which is where its choices live" the first time it appears.
+Whether such a context has fields is incidental and worth saying: some carry a database pool, and some are
+an empty `struct App;` whose whole job is to be a name the wiring hangs off. The vocabulary and the
+misreadings it prevents are in
+[vocabulary.md](../../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target); the
+underlying account is the [modularity hierarchy](../../cgp/concepts/modularity-hierarchy.md).
 
 ## Errors, checking, and the tooling
 
