@@ -41,7 +41,7 @@ one. It does not assume the reader has read the Introduction page.
 **Concept sequence.** Prelude, then `#[cgp_fn]`, then `#[implicit]`, then `#[derive(HasField)]`, then
 a second context â€” and only then, optionally, the desugaring. The ordering principle is that the
 reader sees a *working program* before any explanation of why it works, which is the progressive
-disclosure that [technical-barriers.md](../../communication-strategy/technical-barriers.md)
+disclosure that [readers.md](../../communication-strategy/readers.md#the-comprehension-barriers)
 prescribes. The second context is the payoff and must stay in that position; moving it earlier removes
 the motivation, moving it later loses the reader.
 
@@ -68,10 +68,10 @@ field is [reading-context-fields](../../cgp/guides/reading-context-fields.md) â€
 follows correctly.
 
 For framing, the reader it targets is the first-contact skimmer in
-[reader-profiles.md](../../communication-strategy/reader-profiles.md), and the "no hidden logic, no
+[readers.md](../../communication-strategy/readers.md), and the "no hidden logic, no
 unsafe, no runtime cost" claims are the zero-cost selling point in
-[selling-points.md](../../communication-strategy/selling-points.md), backed by the survey evidence in
-[attention-and-engagement.md](../../communication-strategy/attention-and-engagement.md) that the Rust
+[message.md](../../communication-strategy/message.md#the-capabilities-worth-advertising), backed by the survey evidence in
+[evidence.md](../../communication-strategy/evidence.md) that the Rust
 community explicitly prizes runtime performance.
 
 The nearest verified code is the [area calculation example](../../examples/area-calculation.md),

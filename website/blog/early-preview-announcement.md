@@ -38,14 +38,14 @@ discussions on [Reddit](https://www.reddit.com/r/rust/comments/1hkzaiu/announcin
 ## How it relates to the knowledge base
 
 The origin story is the source for a fact the communication strategy leans on: the monolithic-trait
-pain in [problems-solved.md](../../communication-strategy/problems-solved.md) is not hypothetical but
+pain in [message.md](../../communication-strategy/message.md#the-problems-cgp-removes) is not hypothetical but
 the concrete problem CGP was built to solve, and Hermes SDK is the flagship real-world adopter that
-[attention-and-engagement.md](../../communication-strategy/attention-and-engagement.md) argues is the
+[evidence.md](../../communication-strategy/evidence.md) argues is the
 strongest available social proof. The dependency-injection-through-blanket-impls technique the post
 describes discovering is [impl-side dependencies](../../cgp/concepts/impl-side-dependencies.md).
 
 The launch discussions this post links to are the primary evidence base for CGP's public reception,
-analyzed in [attention-and-engagement.md](../../communication-strategy/attention-and-engagement.md) —
+analyzed in [evidence.md](../../communication-strategy/evidence.md) —
 the "verbose / over-engineered," "isn't this just X reinvented," and "the name does not communicate"
 patterns all come from this thread. Anyone revising CGP's framing should read the linked discussions
 alongside that analysis rather than only the summary.

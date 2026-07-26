@@ -55,10 +55,10 @@ described in [consumer and provider traits](../../cgp/concepts/consumer-and-prov
 
 The post's `Hash` example is the origin of the framing the
 [Introduction page](../site-structure.md) still opens with, and it is a strong one for
-[selling-points.md](../../communication-strategy/selling-points.md): CGP can be added to an existing
+[message.md](../../communication-strategy/message.md#the-capabilities-worth-advertising): CGP can be added to an existing
 trait without breaking a single existing implementation, which is the most direct answer available to
 the incremental-adoption question in
-[positioning.md](../../communication-strategy/positioning.md).
+[message.md](../../communication-strategy/message.md#when-not-to-reach-for-cgp).
 
 ## Where it diverges from CGP v0.8.0
 

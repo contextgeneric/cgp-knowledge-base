@@ -97,18 +97,27 @@ guidance for *presenting* CGP — landing pages, tutorials, articles, blog posts
 related-work document compares CGP to one external idea, a communication-strategy document generalizes
 across those comparisons into audience-level strategy: which readers exist and what each already
 believes, which hooks earn attention, which misunderstandings CGP reliably provokes, and what
-vocabulary keeps everything written about CGP reading as one voice.
+vocabulary keeps everything written about CGP reading as one voice. The section is deliberately small
+and dense — eight documents rather than thirteen thinner ones — because its subjects overlap and
+splitting them guaranteed drift. Two of them govern the rest:
+[author-personality.md](communication-strategy/author-personality.md), which records who CGP's author
+is as a writer, and [voice-and-register.md](communication-strategy/voice-and-register.md), which turns
+that into rules, because the failure this section exists to prevent is not a false claim but
+voiceless copy that no human wrote and no reader trusts.
 
 ### `website/` — the public website, page by page
 
 [website/](website/README.md) is the meta-documentation for <https://contextgeneric.dev>, and it
 exists to bridge a deliberate asymmetry: the website is public and may never link into this internal
-base, so the map from a published page back to the material behind it has to live here. It carries one
-document per blog post, one per tutorial series, and one covering the site's configuration and
-standalone pages — each recording what the page says, which knowledge-base documents own its content,
-and how far its code has drifted from the current release. That last point is why the section matters
-most: nearly every blog post predates v0.8.0, several teach constructs the compiler no longer accepts,
-and an agent needs to know which is which before quoting any of them.
+base, so the map from a published page back to the material behind it has to live here. It holds two
+kinds of document. The **records** carry one document per blog post, one per tutorial series, and one
+covering the site's configuration and standalone pages — each recording what the page says, which
+knowledge-base documents own its content, and how far its code has drifted from the current release.
+That last point is why the section matters most: nearly every blog post predates v0.8.0, several teach
+constructs the compiler no longer accepts, and an agent needs to know which is which before quoting
+any of them. The **specifications** are the [writing guides](website/writing-guides/README.md), one
+per kind of page, which say how a page *should* be written rather than how it currently reads —
+forward-looking documents that serve the site's redesign.
 
 ### `releases/` — the version history
 

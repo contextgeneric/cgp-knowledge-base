@@ -87,7 +87,7 @@ it**; use the [example](../../examples/shell-scripting-dsl.md) or the project's 
 
 The project also appears on the website's [Resources page](../../website/site-structure.md), and it is
 one of the concrete artifacts the
-[communication strategy](../../communication-strategy/attention-and-engagement.md) counts as social
+[communication strategy](../../communication-strategy/evidence.md) counts as social
 proof for the evaluator profile.
 
 ## Status and gaps

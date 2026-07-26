@@ -8,13 +8,27 @@ how much explanation it pitches at each. A revision that keeps the prose current
 contract has damaged the tutorial, and these documents exist so the contract is written down where a
 reviser will find it.
 
+## Read the writing guide first
+
+The specification for how a CGP tutorial should be written is
+[../writing-guides/tutorial.md](../writing-guides/tutorial.md), and it comes before anything here. It
+fixes what this section does not: that tutorials are independent and named for an outcome, that they
+come in a **first-principles** register and an **applied** register with different obligations, which
+Diátaxis rules CGP adopts and which two it deliberately rejects, the two orderings every
+first-principles tutorial depends on, and the checking-and-tooling material every tutorial that wires
+a context owes its reader.
+
+The division of labour is that the guide says what a tutorial should be, and the documents below
+record what each published tutorial currently is and must not lose. When the two disagree, the guide is
+the intent and the gap belongs in the tutorial's own document.
+
 ## Why tutorials need a different document
 
 A tutorial is not a reference and is not judged as one. Its correctness matters, but its *pedagogy*
 matters more: a tutorial that is technically flawless and introduces the consumer/provider split on
 page one has failed, while one that defers a mechanism until the reader has a reason to want it has
 succeeded even if it says less. The judgment involved is what
-[technical-barriers.md](../../communication-strategy/technical-barriers.md) calls progressive
+[readers.md](../../communication-strategy/readers.md#the-comprehension-barriers) calls progressive
 disclosure, and it is the easiest thing for a well-meaning revision to destroy — an agent asked to
 "add namespaces to the tutorial" can wreck a carefully built ramp in one edit.
 

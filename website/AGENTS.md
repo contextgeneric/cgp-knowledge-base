@@ -39,21 +39,35 @@ here; it is the specification for how CGP is presented, and the website is the s
 it applies to. A page revised without it will drift out of the project's voice, reach for a framing the
 audience has already rejected, or make a claim the Rust community will read as overselling.
 
-Which document to read depends on what you are writing, and the mapping is worth stating once. Reach
-for [formats.md](../communication-strategy/formats.md) for the playbook matching the artifact — the
-launch post, the tutorial, the README and landing page, the talk, the thread, the comparison — since
-it fixes the opening move, the length, the dismissal to preempt, and the call to action. Reach for
-[reader-profiles.md](../communication-strategy/reader-profiles.md) to name the single reader a page is
-written for before outlining it, and [technical-barriers.md](../communication-strategy/technical-barriers.md)
-for the order in which concepts may be introduced to that reader. Reach for
+**Start with the page's writing guide, when one exists.** The
+[writing-guides/](writing-guides/README.md) subsection turns that strategy into a specification per
+*kind* of page — what the page is for, what goes on it, in what order, and what must never appear —
+and it is the more specific instrument, so it governs the page's shape where it speaks. When the task
+is adding or moving a page rather than revising one, read
+[information-architecture.md](information-architecture.md) first instead: it decides which surface a
+page belongs to and what the reader does next, and a page placed without it will sit somewhere no
+reader's path goes. Read the guide, then the page's own document for what the page currently is, then
+the strategy documents below
+for the material.
+
+Which strategy document to read depends on what you are writing, and the mapping is worth stating
+once. Read [author-personality.md](../communication-strategy/author-personality.md) and
+[voice-and-register.md](../communication-strategy/voice-and-register.md) before any prose, because
+the site speaks in the project voice while the blog speaks in the author's, and getting that wrong is
+the most visible way a draft can be off-voice. Reach for
+[formats.md](../communication-strategy/formats.md) for the playbook matching the artifact — the launch
+post, the deep-dive, the README, the talk, the thread, the comparison — since it fixes the opening
+move, the length, the dismissal to preempt, and the call to action. Reach for
+[readers.md](../communication-strategy/readers.md) to name the single reader a page is written for
+before outlining it, and for the
+[comprehension barriers](../communication-strategy/readers.md#the-comprehension-barriers) that fix the
+order in which concepts may be introduced to that reader. Reach for
 [vocabulary.md](../communication-strategy/vocabulary.md) for which term to use and which to defer, so
-the whole site reads as one voice, and [tag-lines.md](../communication-strategy/tag-lines.md) for any
-line that describes CGP in one sentence. Reach for [selling-points.md](../communication-strategy/selling-points.md),
-[problems-solved.md](../communication-strategy/problems-solved.md), and
-[skepticism.md](../communication-strategy/skepticism.md) together whenever a page makes a claim about
-what CGP is good for, because those three are three views of one reader and a page should satisfy all
-of them. And reach for [positioning.md](../communication-strategy/positioning.md) wherever a page must
-draw CGP's boundary honestly.
+the whole site reads as one voice, and [identity.md](../communication-strategy/identity.md) for any
+line that describes CGP in one sentence, for the enhances-not-replaces frame, and for the headline
+feature set. And reach for [message.md](../communication-strategy/message.md) whenever a page makes a
+claim about what CGP is good for — its four halves are the pain, the capability, the objection, and
+the boundary, and a page should satisfy all four.
 
 The section's own governing rule applies unchanged: **honesty is the strategy**. Never publish an
 invented benchmark, adoption figure, or quotation; never disparage another crate or language to
@@ -123,6 +137,12 @@ A tutorial document replaces the divergence section with the teaching contract t
 its objective, its prerequisites, the concepts it introduces and in what order, and the level of
 explanation it pitches at. [tutorials/README.md](tutorials/README.md) states that shape in full.
 
+A **writing guide** does not follow this template at all, because it describes a page that may not
+exist yet rather than one that does. A guide states the job that kind of page has to do, its
+structure section by section, what must never appear on it, how a draft is checked, and — where the
+current page falls short of the guide — a concrete list of the gaps, so a redesign has a checklist.
+[writing-guides/README.md](writing-guides/README.md) states the distinction in full.
+
 ## Status vocabulary
 
 Use exactly one of five words for a page's status, so the value is scannable and comparable across
@@ -136,8 +156,18 @@ it and it is kept for the record.
 ## Registering a document
 
 Register every new document in the catalog of its immediate index —
-[blog/README.md](blog/README.md), [tutorials/README.md](tutorials/README.md), or the catalog in
-[README.md](README.md) for a top-level document — and in [../summary.md](../summary.md), in the same
-change that creates it. Adding a page to the website means adding its document here in that same
-change; a page with no internal document has no recorded provenance, which is the failure this
-section exists to prevent.
+[blog/README.md](blog/README.md), [tutorials/README.md](tutorials/README.md),
+[writing-guides/README.md](writing-guides/README.md), or the catalog in [README.md](README.md) for a
+top-level document — and in [../summary.md](../summary.md), in the same change that creates it.
+Adding a page to the website means adding its document here in that same change; a page with no
+internal document has no recorded provenance, which is the failure this section exists to prevent.
+
+Adding a page of a *kind* the site has not published before means adding a writing guide for it too,
+before the page rather than after, since the guide is what a later revision is checked against.
+
+Two documents track the redesign rather than a page, and both are updated as work lands.
+[information-architecture.md](information-architecture.md) carries the target page inventory, so a page
+that is added, moved, or repurposed loses its **new** or **moved** marker there in the same change. And
+[redesign-queue.md](redesign-queue.md) is the outstanding-work list: **remove** a completed entry rather
+than marking it done, and delete the document once it is empty, per
+[document-the-present](../AGENTS.md#document-the-present-not-the-history).

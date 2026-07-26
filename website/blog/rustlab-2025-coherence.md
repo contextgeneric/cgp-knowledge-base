@@ -76,7 +76,7 @@ first, one central "aha," theory deferred, honest limits at the close. Its discu
 [Reddit](https://www.reddit.com/r/rust/comments/1rn9vii/how_to_stop_fighting_with_coherence_and_start/),
 [Lobsters](https://lobste.rs/s/jreugl/how_stop_fighting_with_coherence_start), and
 [Hacker News](https://news.ycombinator.com/item?id=47287502) are reception evidence for
-[attention-and-engagement.md](../../communication-strategy/attention-and-engagement.md). And
+[evidence.md](../../communication-strategy/evidence.md). And
 publishing the transcript as a blog post — with slides inline and the video embedded — is a reusable
 pattern that turns an ephemeral talk into indexable, linkable, quotable material.
 
@@ -94,7 +94,7 @@ Very little, because the talk shows only a handful of small snippets and spends 
   [`cargo-cgp`](../../cargo-cgp/README.md) had not been released; it is now the first thing to reach
   for, and any restaging of this talk should say so.
 - **CGP is described as "a modular programming paradigm."** That is the retired framing;
-  [tag-lines.md](../../communication-strategy/tag-lines.md) fixes the current line as "a language
+  [identity.md](../../communication-strategy/identity.md) fixes the current line as "a language
   extension for Rust, with pluggable trait implementations at compile-time."
 
 ## Maintaining it

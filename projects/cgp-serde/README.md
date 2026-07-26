@@ -82,8 +82,8 @@ project was also the live demonstration in the
 
 For the communication strategy this is the project's strongest argument, because Serde is universally
 known and the orphan-rule pain around it is universally felt; the framing belongs in
-[problems-solved.md](../../communication-strategy/problems-solved.md) and the derive-free result in
-[selling-points.md](../../communication-strategy/selling-points.md).
+[message.md](../../communication-strategy/message.md#the-problems-cgp-removes) and the derive-free result in
+[message.md](../../communication-strategy/message.md#the-capabilities-worth-advertising).
 
 ## Status and gaps
 

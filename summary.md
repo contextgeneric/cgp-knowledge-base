@@ -504,37 +504,36 @@ it stale.
 
 ## `communication-strategy/` — writing about CGP in public
 
-- [README.md](communication-strategy/README.md) — the catalog, the marketing-naive expert this section
-  writes for, and the principles of marketing, public communication, and developer relations it rests
-  on.
-- [AGENTS.md](communication-strategy/AGENTS.md) — the rules: the marketing-director and devrel roles,
-  what every document must do, honesty as the strategy, and the section's three sync targets.
-- [attention-and-engagement.md](communication-strategy/attention-and-engagement.md) — the evidence base
-  for where the Rust community's attention sits and how CGP has been received.
+- [README.md](communication-strategy/README.md) — the catalog and reading order, the marketing-naive
+  expert this section writes for, the voicelessness failure mode it exists to prevent, and the
+  principles of marketing, public communication, and developer relations it rests on.
+- [AGENTS.md](communication-strategy/AGENTS.md) — the rules: write for the author's voice first, the
+  marketing-director and devrel roles, what every document must do, honesty as the strategy, the
+  consolidation rule, and the four sync targets.
+- [author-personality.md](communication-strategy/author-personality.md) — who CGP's author is as a
+  writer, the habits his published work evidences, and the preferences he has stated; the document every
+  other one here is downstream of.
+- [voice-and-register.md](communication-strategy/voice-and-register.md) — the layered voice (project on
+  the site, author on the blog), the sentence-level register, the four structural moves that make CGP
+  prose work, and the habits that mark a draft as machine-written.
+- [identity.md](communication-strategy/identity.md) — the settled tag line analyzed word by word, the
+  enhances-not-replaces frame, the layered pitch that follows the line, and the curated headline feature
+  set for a front page.
+- [readers.md](communication-strategy/readers.md) — the audience model by Rust experience, imported
+  mental model, and role, plus the comprehension barriers a willing reader hits and the teaching move
+  that lowers each.
+- [message.md](communication-strategy/message.md) — everything a piece says about CGP: the pains it
+  removes, the capabilities worth advertising, the objections readers bring, and the boundary where a
+  plainer tool wins — four views of one reader.
+- [vocabulary.md](communication-strategy/vocabulary.md) — the canonical word list for public writing
+  (use, defer, avoid) plus the glossary of the non-technical craft; the authority that resolves any
+  phrasing disagreement.
 - [formats.md](communication-strategy/formats.md) — per-artifact playbooks for the launch post,
-  tutorial, README, talk, thread, and comparison, plus the conversion ladder.
-- [glossary.md](communication-strategy/glossary.md) — plain-language definitions of the non-technical
-  terms of art, each anchored to a programmer's intuition.
-- [key-features.md](communication-strategy/key-features.md) — the short headline feature set for a
-  front page, with titles and one-line copy.
-- [positioning.md](communication-strategy/positioning.md) — the honest decision guide for when to reach
-  for CGP and when a plainer tool wins.
-- [problems-solved.md](communication-strategy/problems-solved.md) — the concrete pains CGP removes,
-  written as short before-and-after stories.
-- [reader-profiles.md](communication-strategy/reader-profiles.md) — the audience model: who reads about
-  CGP, what each already knows, and what each needs.
-- [selling-points.md](communication-strategy/selling-points.md) — the true capabilities to advertise,
-  with the phrasings that land and the ones that backfire.
-- [skepticism.md](communication-strategy/skepticism.md) — the objections readers bring, whether each is
-  justified, and wording that answers without provoking.
-- [tag-lines.md](communication-strategy/tag-lines.md) — CGP's one-line description analyzed word by
-  word, plus model introductions.
-- [technical-barriers.md](communication-strategy/technical-barriers.md) — the comprehension barriers a
-  learner hits and the teaching moves that lower each.
-- [vocabulary.md](communication-strategy/vocabulary.md) — the canonical word list for public writing:
-  which term to use, which to defer, which to avoid.
-- [worked-examples.md](communication-strategy/worked-examples.md) — finished annotated drafts of a
-  launch post, a README, and a social thread, each move traced to the document that argues for it.
+  deep-dive, README, talk, thread, and comparison, the ready thread answers, the conversion ladder, and
+  annotated model drafts.
+- [evidence.md](communication-strategy/evidence.md) — the citable facts: what the Rust community
+  worries about and rewards, which conversations draw attention, and how CGP's own posts and talk were
+  received; the section's single home for external citations.
 
 ## `cargo-cgp/` — the CGP toolchain
 
@@ -614,9 +613,43 @@ it stale.
 - [website/AGENTS.md](website/AGENTS.md) — the rules: the one-way link rule, consulting
   communication-strategy before writing public prose, never taking current syntax from a blog post,
   the prohibition on rewriting published history, the document template, and the status vocabulary.
+- [website/information-architecture.md](website/information-architecture.md) — the site as intended:
+  why most readers never see the homepage, the four routes in and why three fail, what each surface is
+  for, the target page inventory including unwritten pages, the sidebar order, and each reader
+  profile's path through the site.
+- [website/redesign-queue.md](website/redesign-queue.md) — the consolidated list of what is wrong with
+  or missing from the site, grouped into cheap corrections, page rewrites, and new pages, with an
+  ordering; deleted when empty.
 - [website/site-structure.md](website/site-structure.md) — the site's build, navigation, announcement
   bar, and deployment, plus one entry each for the front page, Introduction, Overview, Resources,
   Contribute, and the AI skills page.
+
+### `website/writing-guides/` — how new pages should be written
+
+- [README.md](website/writing-guides/README.md) — what a writing guide is, how it differs from a
+  per-page document, the three decisions every guide assumes, and the catalog.
+- [homepage.md](website/writing-guides/homepage.md) — the landing page: its two-tier structure, the
+  before/after code that carries the hook, the six-section bounded essay, the offload rule and the
+  dedicated explanation pages it offloads to, and what must never appear on the page.
+- [explanation.md](website/writing-guides/explanation.md) — the understanding-oriented page type the
+  site does not yet have: what every explanation page owes, what Diátaxis gives the tier and where CGP
+  diverges, how a concept document is rewritten into one, specs for the four planned pages, and where
+  they sit in the docs tree.
+- [tutorial.md](website/writing-guides/tutorial.md) — the tutorials: independent outcome-named pages,
+  the first-principles and applied registers, the six obligations taken from Diátaxis and the two rules
+  rejected, the problem-before-construct and explicit-before-sugar orderings, and the checking and
+  tooling every tutorial owes.
+- [release-announcement.md](website/writing-guides/release-announcement.md) — the blog's most repeated
+  artifact and the only page type specified in the author's voice: the two readers it serves, the
+  one-change rule, the seven-part shape, the breaking-changes obligation from the removal ledger, and
+  the five mechanical items publication fixes.
+- [deep-dive.md](website/writing-guides/deep-dive.md) — the multi-page living documents grown from the
+  longest blog posts: why they are new artifacts rather than edits, converting the author's voice to
+  the project's without losing the concessions, the page split, and tracking the live code base.
+- [reference.md](website/writing-guides/reference.md) — the canonical per-construct reference ported
+  from the internal one: why the site rather than docs.rs is canonical, the six-section layered descent
+  serving beginner to advanced on one page, near-one-page-per-construct with four consolidations, the
+  replacement for every internal link target, and the external Rust documentation table.
 
 ### `website/blog/` — one document per published post
 
@@ -657,6 +690,19 @@ it stale.
   cannot replace it.
 - [v0-8-0-release.md](website/blog/v0-8-0-release.md) — the namespace announcement for the
   unreleased v0.8.0, an unfinished draft begun under the abandoned v0.7.1 number.
+
+### `website/deep-dives/` — one document per planned deep dive
+
+- [README.md](website/deep-dives/README.md) — why a deep dive rather than a revised blog post, the fact
+  that the tracked code bases are ahead of the posts, the catalog, and the document shape.
+- [hypershell.md](website/deep-dives/hypershell.md) — the type-level DSL: a six-page split, the embedded
+  CGP primer removed in favour of the explanation tier, presets replaced by namespaces, and the
+  `#[uses]`/`#[implicit]` adoption the repository still needs.
+- [extensible-datatypes.md](website/deep-dives/extensible-datatypes.md) — records and variants from four
+  posts and two example crates: a seven-page pattern-then-internals split, and why the expression
+  crate's `UseInputDelegate` tables are *not* `open` candidates.
+- [cgp-serde.md](website/deep-dives/cgp-serde.md) — Serde as components: a five-page split, the release
+  framing removed, and the missing `CgpSerdeNamespace` that would make the two-application payoff land.
 
 ### `website/tutorials/` — one document per tutorial series
 

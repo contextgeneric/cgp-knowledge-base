@@ -94,5 +94,5 @@ Leave it alone. The `Async`-removal section is the most substantive prose the pr
 the `Send`-bound problem in async Rust, and the reasoning transfers cleanly even though its code does
 not — [send-bounds](../../cgp/concepts/send-bounds.md) is where that reasoning now lives in current
 form. Anything written publicly about CGP and async should be checked against the survey evidence in
-[attention-and-engagement.md](../../communication-strategy/attention-and-engagement.md), which warns
+[evidence.md](../../communication-strategy/evidence.md), which warns
 that async and function coloring is a high-attention topic where the honest attachment is narrow.

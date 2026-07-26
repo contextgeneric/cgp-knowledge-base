@@ -82,11 +82,11 @@ current syntax. The intermediate steps map to
 
 For the communication strategy, the motivation section is a strong asset. The "nine entries and
 climbing" demonstration is a real, self-inflicted pain narrated honestly, which is what
-[problems-solved.md](../../communication-strategy/problems-solved.md) asks for; and admitting that
+[message.md](../../communication-strategy/message.md#the-problems-cgp-removes) asks for; and admitting that
 presets were tried and did not work is exactly the candour
-[skepticism.md](../../communication-strategy/skepticism.md) argues buys credibility. It also speaks
+[message.md](../../communication-strategy/message.md#the-objections-readers-bring) argues buys credibility. It also speaks
 directly to the "verbose / over-engineered" reflex recorded in
-[attention-and-engagement.md](../../communication-strategy/attention-and-engagement.md) — a post that
+[evidence.md](../../communication-strategy/evidence.md) — a post that
 concedes the verbosity and then fixes it is better positioned than one that denies it.
 
 ## Where it diverges from the feature as built

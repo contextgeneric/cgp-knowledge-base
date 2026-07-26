@@ -45,7 +45,7 @@ Every construct the post introduces is documented in current form. Abstract type
 The post's own framing — that the launch audience read CGP as "primarily a dependency injection
 framework in Rust," and that abstract types were the answer — is a documented reception fact worth
 knowing, and it matches the DI-framework objection recorded in
-[skepticism.md](../../communication-strategy/skepticism.md).
+[message.md](../../communication-strategy/message.md#the-objections-readers-bring).
 
 ## Where it diverges from CGP v0.8.0
 

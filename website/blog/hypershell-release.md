@@ -74,12 +74,12 @@ injection; [modular error handling](../../cgp/concepts/modular-error-handling.md
 
 Two of its arguments are strategy assets rather than technical ones. The prototypal-inheritance
 comparison is a genuine teaching bridge for the OOP-background reader in
-[reader-profiles.md](../../communication-strategy/reader-profiles.md), and belongs in the toolkit
-[technical-barriers.md](../../communication-strategy/technical-barriers.md) assembles — with the
+[readers.md](../../communication-strategy/readers.md), and belongs in the toolkit
+[readers.md](../../communication-strategy/readers.md#the-comprehension-barriers) assembles — with the
 caveat the post itself states, that the lookup is compile-time and zero-cost, which
 [vocabulary.md](../../communication-strategy/vocabulary.md) requires be said explicitly whenever a
 runtime-flavored analogy is used. The candid disadvantages section is a model of the
-concede-the-costs discipline [skepticism.md](../../communication-strategy/skepticism.md) prescribes,
+concede-the-costs discipline [message.md](../../communication-strategy/message.md#the-objections-readers-bring) prescribes,
 and the compile-time observations in it are among the few concrete statements the project has made on
 that topic.
 

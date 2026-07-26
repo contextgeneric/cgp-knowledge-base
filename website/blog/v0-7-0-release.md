@@ -72,12 +72,12 @@ are in [`check_components!`](../../cgp/reference/macros/check_components.md) and
 [`delegate_and_check_components!`](../../cgp/reference/macros/delegate_and_check_components.md).
 
 The Scala-implicits section is a communication-strategy asset in its own right. It is a model of the
-concede-then-distinguish move [skepticism.md](../../communication-strategy/skepticism.md) prescribes —
+concede-then-distinguish move [message.md](../../communication-strategy/message.md#the-objections-readers-bring) prescribes —
 it grants that the reputation is deserved before explaining why the mechanisms differ — and the
 comparison itself is grounded in [implicit-parameters](../../related-work/implicit-parameters.md).
 Anyone writing publicly about `#[implicit]` should reuse that structure rather than reinventing it.
 The Reddit and Lobsters threads it links are part of the reception evidence analyzed in
-[attention-and-engagement.md](../../communication-strategy/attention-and-engagement.md).
+[evidence.md](../../communication-strategy/evidence.md).
 
 ## Where it diverges from CGP v0.8.0
 

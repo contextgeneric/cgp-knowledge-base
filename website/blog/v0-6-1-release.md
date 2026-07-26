@@ -51,7 +51,7 @@ associated types are covered in
 example is a [higher-order provider](../../cgp/concepts/higher-order-providers.md).
 
 The post's stated motivation — that generic syntax is a barrier for readers from an OOP background —
-is the same argument [technical-barriers.md](../../communication-strategy/technical-barriers.md) makes
+is the same argument [readers.md](../../communication-strategy/readers.md#the-comprehension-barriers) makes
 about the prerequisite ladder, and the release is a good illustration of the project responding to it
 in the design rather than only in the prose.
 

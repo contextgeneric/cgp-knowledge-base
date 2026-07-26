@@ -59,11 +59,11 @@ family is [`HasBuilder`](../../cgp/reference/traits/has_builder.md); the extract
 [dispatch combinators](../../cgp/reference/providers/dispatch_combinators.md).
 
 The post also carries a communication-strategy asset: its opening is a textbook execution of the
-before/after narrative [problems-solved.md](../../communication-strategy/problems-solved.md)
+before/after narrative [message.md](../../communication-strategy/message.md#the-problems-cgp-removes)
 prescribes, growing an ordinary constructor until the reader feels the pain before naming any CGP
 construct. The "swap SQLite for Postgres, ChatGPT for Claude, or run both" progression is the
 concrete answer to the feature-flag alternative that
-[positioning.md](../../communication-strategy/positioning.md) weighs.
+[message.md](../../communication-strategy/message.md#when-not-to-reach-for-cgp) weighs.
 
 ## Where it diverges from CGP v0.8.0
 

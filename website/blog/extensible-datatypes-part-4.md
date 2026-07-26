@@ -77,7 +77,7 @@ explains. The worked scenario in current syntax is the
 [extensible shapes example](../../examples/extensible-shapes.md).
 
 Two passages are reusable as explanations rather than as code. The `⸮` operator is a teaching device
-worth keeping in the toolkit [technical-barriers.md](../../communication-strategy/technical-barriers.md)
+worth keeping in the toolkit [readers.md](../../communication-strategy/readers.md#the-comprehension-barriers)
 assembles, because it makes an unfamiliar control flow legible by analogy to one every Rust programmer
 knows. And the monad explanation — monads as containers, `?` and `.await` as bind — is a rare instance
 of introducing a functional-programming concept without the jargon that

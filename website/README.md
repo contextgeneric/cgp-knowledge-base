@@ -47,15 +47,49 @@ transcript, each with an author and a tag drawn from a fixed set (`release`, `de
 `walkthrough`). The **front page and static assets** live under `src/` and `static/`. This section
 mirrors that shape: [site-structure.md](site-structure.md) covers the configuration, navigation, and
 every non-blog, non-tutorial page; [blog/](blog/README.md) holds one document per blog post; and
-[tutorials/](tutorials/README.md) holds one document per tutorial series.
+[tutorials/](tutorials/README.md) holds one document per tutorial series. That mirroring describes the
+site as it stands; [information-architecture.md](information-architecture.md) describes the shape it is
+being rebuilt toward, which differs.
+
+## Two kinds of document here
+
+The section holds **records** and **specifications**, and telling them apart decides which one a task
+starts from. A record — everything under [blog/](blog/README.md), [tutorials/](tutorials/README.md),
+and the entries in [site-structure.md](site-structure.md) — describes a page that exists: what it says,
+which knowledge-base documents own its material, how far it has drifted, and what a revision must
+preserve. A specification — [information-architecture.md](information-architecture.md) and everything under
+[writing-guides/](writing-guides/README.md) — describes what the site should be and how a *kind* of page
+should be written, whether or not the current pages match. The gap between the two is the redesign, and
+[redesign-queue.md](redesign-queue.md) is that gap written out as work.
+
+The distinction matters because the site is being redesigned rather than merely maintained. A writing
+guide states the intent, a page document states the present, and during a redesign the two will
+disagree; that gap is expected and belongs in the page document rather than being quietly resolved.
+Read the guide for the page type first, then the document for the specific page.
 
 ## The catalog
 
-The three entries below are the section's own subdivisions, each with its own index that catalogs the
-documents beneath it. The authoring rules for everything here — including the one-way link rule, the
-obligation to consult [communication-strategy](../communication-strategy/README.md) before writing
-public prose, and how to record drift — live in [AGENTS.md](AGENTS.md).
+The entries below are the section's own documents and subdivisions, the latter each with its own index
+that catalogs the documents beneath it. The authoring rules for everything here — including the one-way
+link rule, the obligation to consult
+[communication-strategy](../communication-strategy/README.md) before writing public prose, and how to
+record drift — live in [AGENTS.md](AGENTS.md).
 
+- [information-architecture.md](information-architecture.md) — the site as *intended*: what each surface
+  is for, the target page inventory including the pages that do not exist yet, the sidebar and navigation
+  design, and the path each reader profile takes through the site. The document the writing guides
+  assume.
+- [redesign-queue.md](redesign-queue.md) — the consolidated list of what is wrong with or missing from
+  the site today, grouped by cost and ordered, with a pointer to the document that owns each item.
+  Emptied as work lands, and deleted when empty.
+- [writing-guides/](writing-guides/README.md) — one guide per *kind* of page, saying what that page is
+  for, what goes on it in what order, and what must never appear. Prescriptive and forward-looking:
+  these describe how pages should be rewritten, not how the current ones happen to read. Currently the
+  [homepage](writing-guides/homepage.md), the [explanation pages](writing-guides/explanation.md) it
+  offloads to, the [tutorials](writing-guides/tutorial.md), the
+  [release announcement](writing-guides/release-announcement.md), the
+  [deep dive](writing-guides/deep-dive.md), and the
+  [reference page](writing-guides/reference.md).
 - [site-structure.md](site-structure.md) — the site's configuration, navigation, deployment, and
   front page, plus one entry per standalone page: the Introduction, the Overview, Resources,
   Contribute, and the AI skills page.
@@ -65,11 +99,16 @@ public prose, and how to record drift — live in [AGENTS.md](AGENTS.md).
 - [tutorials/](tutorials/README.md) — one internal document per tutorial series, recording the
   series' objective, the concepts it introduces in order, the prerequisites it assumes, and the level
   of explanation it pitches at, so a revision keeps the same teaching contract.
+- [deep-dives/](deep-dives/README.md) — one internal document per planned deep dive: the multi-page
+  living documents that grow out of the longest blog posts. Each records the page split, what changes
+  from the source post, and the concrete list of source-code changes the tracked repository needs
+  first. None of the three is written yet, so these are plans rather than records.
 
 ## Reading a page's document before changing the page
 
-The workflow for any website change runs inward before it runs outward. Find the page's document in
-one of the three catalogs above and read it, because it names the material the page rests on and the
+The workflow for any website change runs inward before it runs outward. Read the
+[writing guide](writing-guides/README.md) for the kind of page, if one exists, then find the page's own
+document in one of the catalogs above, because it names the material the page rests on and the
 constraints the page is already under. Follow its links into the [reference](../cgp/reference/README.md)
 and [concepts](../cgp/concepts/README.md) for the semantics the page describes, into
 [examples/](../examples/README.md) for code that is already verified against current CGP, and into

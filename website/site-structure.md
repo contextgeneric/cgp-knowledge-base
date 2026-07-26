@@ -45,10 +45,10 @@ Above all of that sits a dismissible **announcement bar**, which currently promo
 post. It is the site's most prominent single piece of copy and the one most likely to go stale: it is
 hardcoded in `docusaurus.config.ts` rather than derived from the newest post, so it must be updated by
 hand with every release announcement. Its wording is a one-line pitch and is therefore governed by
-[tag-lines.md](../communication-strategy/tag-lines.md).
+[identity.md](../communication-strategy/identity.md).
 
 The site's tagline in the configuration reads "Modular programming paradigm for Rust." This is the
-**retired** framing. [tag-lines.md](../communication-strategy/tag-lines.md) analyzes it as historical
+**retired** framing. [identity.md](../communication-strategy/identity.md) analyzes it as historical
 background and fixes the current line as *"a language extension for Rust, with pluggable trait
 implementations at compile-time."* Bringing the configuration in line with the chosen tag line is an
 outstanding, low-risk correction.
@@ -65,17 +65,24 @@ friendliness, and zero-cost abstraction. Five of those are the set the [Overview
 expands; the sixth, bypassing coherence, appears only here, which means the site's two feature lists
 do not agree and should be reconciled.
 
+**The specification for what this page should become is
+[writing-guides/homepage.md](writing-guides/homepage.md), and it should be read before any change
+here.** That guide fixes the page's two-tier structure, the before/after code that carries the hook,
+the six-section bounded essay beneath it, the four dedicated explanation pages the essay offloads to,
+and a checklist of the ways the current page falls short. This entry records what the page is; the
+guide records what it is for.
+
 The front page is the highest-leverage copy on the site and is governed end to end by the
-communication strategy. Its headline feature set should be reconciled against
-[key-features.md](../communication-strategy/key-features.md), which curates a deliberately smaller
-list chosen for breadth and honesty and reserves a slot for "Still Ordinary Rust" — the direct answer
-to the community's stated fear of added complexity, per
-[attention-and-engagement.md](../communication-strategy/attention-and-engagement.md). The
-above-the-fold structure is prescribed by the README-and-landing-page playbook in
-[formats.md](../communication-strategy/formats.md).
+communication strategy. Its headline feature set should be reconciled against the
+[curated set](../communication-strategy/identity.md#the-headline-feature-set), which is deliberately
+smaller, is chosen for breadth and honesty, and reserves a slot for "Still Ordinary Rust" — the direct
+answer to the community's stated fear of added complexity, per
+[evidence.md](../communication-strategy/evidence.md). The above-the-fold structure is prescribed by
+the [homepage guide](writing-guides/homepage.md), with the README-and-landing-page playbook in
+[formats.md](../communication-strategy/formats.md) as its shorter cousin.
 
 Status: **Current** in the sense that nothing on it is false, but its feature set predates
-`key-features.md` and does not yet reflect that curation, nor the `cargo-cgp` error-tooling
+`identity.md` and does not yet reflect that curation, nor the `cargo-cgp` error-tooling
 development that the [communication-strategy README](../communication-strategy/README.md) flags as a
 positioning shift worth leading with.
 
@@ -104,9 +111,9 @@ The `Hash` illustration is the [coherence](../cgp/concepts/coherence.md) strateg
 three constructs it names are [`#[cgp_component]`](../cgp/reference/macros/cgp_component.md),
 [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md), and
 [`delegate_components!`](../cgp/reference/macros/delegate_components.md). The honest maturity framing
-is exactly what [positioning.md](../communication-strategy/positioning.md) and
-[skepticism.md](../communication-strategy/skepticism.md) prescribe for the evaluator profile in
-[reader-profiles.md](../communication-strategy/reader-profiles.md), and it is one of the site's
+is exactly what the [boundary](../communication-strategy/message.md#when-not-to-reach-for-cgp) and
+[objection](../communication-strategy/message.md#the-objections-readers-bring) guidance prescribe for
+the evaluator profile in [readers.md](../communication-strategy/readers.md), and it is one of the site's
 strongest devrel assets — a page that concedes its own immaturity earns the trust that later claims
 spend. The routing advice in "Getting Started" is the conversion ladder from
 [formats.md](../communication-strategy/formats.md) applied to a docs landing page.
@@ -126,7 +133,7 @@ the page does not mention, which is the single most valuable addition available 
 Preserve the frank maturity framing — it is doing real work and must not be softened into marketing.
 When updating the routing advice, keep the ladder shape: a low-commitment look first, depth after.
 Any revision that touches the opening definition must reconcile it with
-[tag-lines.md](../communication-strategy/tag-lines.md).
+[identity.md](../communication-strategy/identity.md).
 
 ## Overview
 
@@ -147,8 +154,8 @@ decomposed.
 ### How it relates to the knowledge base
 
 The two halves map almost one to one onto two communication-strategy documents:
-[key-features.md](../communication-strategy/key-features.md) governs the first and
-[problems-solved.md](../communication-strategy/problems-solved.md) the second, and any revision should
+[identity.md](../communication-strategy/identity.md#the-headline-feature-set) governs the first and
+[message.md](../communication-strategy/message.md#the-problems-cgp-removes) the second, and any revision should
 reconcile the page against both. On the technical side, the component system is
 [consumer and provider traits](../cgp/concepts/consumer-and-provider-traits.md); the overlapping
 implementations claim is [coherence](../cgp/concepts/coherence.md); error handling is
@@ -174,10 +181,10 @@ anything maintained. The page also predates `cargo-cgp` and the extensible-data 
 ### Maintaining it
 
 Hold the page to five features and five problems; both counts are already at the limit
-[key-features.md](../communication-strategy/key-features.md) argues for, and a sixth entry weakens the
-set rather than strengthening it. Keep each problem written as a pain the reader already feels rather
-than as a capability, which is the ordering [problems-solved.md](../communication-strategy/problems-solved.md)
-prescribes.
+the [headline feature set](../communication-strategy/identity.md#the-headline-feature-set) argues
+for, and a sixth entry weakens the set rather than strengthening it. Keep each problem written as a
+pain the reader already feels rather than as a capability, which is the ordering the
+[problems catalog](../communication-strategy/message.md#the-problems-cgp-removes) prescribes.
 
 ## Resources
 
@@ -200,7 +207,7 @@ This page is the site's index of the ecosystem, so it should mirror
 [sibling-projects.md](../sibling-projects.md) for anything public. Two of its entries have internal
 documents here: [hypershell](../projects/hypershell/README.md) and
 [cgp-serde](../projects/cgp-serde/README.md). Hermes SDK is the flagship real-world adopter that
-[attention-and-engagement.md](../communication-strategy/attention-and-engagement.md) argues is the
+[evidence.md](../communication-strategy/evidence.md) argues is the
 strongest available social proof for the evaluator profile, so its placement in a bare list at the
 bottom undersells it.
 
@@ -240,10 +247,10 @@ modularity benefits people who do not care about modularity.
 
 This page is the top rung of the conversion ladder in
 [formats.md](../communication-strategy/formats.md) — the ask made of the enthusiast profile in
-[reader-profiles.md](../communication-strategy/reader-profiles.md). The
+[readers.md](../communication-strategy/readers.md). The
 "consumers need not care about modularity" argument is the same one the
 [hypershell post](blog/hypershell-release.md) makes at length, and it is a genuine positioning asset
-that [positioning.md](../communication-strategy/positioning.md) could draw on more.
+that [message.md](../communication-strategy/message.md#when-not-to-reach-for-cgp) could draw on more.
 
 ### Maintaining it
 

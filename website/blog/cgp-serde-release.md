@@ -64,11 +64,11 @@ parameters are [`Life`](../../cgp/reference/types/life.md).
 Two things make this post disproportionately useful to the communication strategy. It is the project's
 best worked answer to "what problem does this solve" for a reader who does not care about paradigms,
 because Serde is universally known and the orphan-rule pain around it is universally felt — which is
-what [problems-solved.md](../../communication-strategy/problems-solved.md) asks a lead to be. And the
+what [message.md](../../communication-strategy/message.md#the-problems-cgp-removes) asks a lead to be. And the
 "you don't even need `#[derive(Serialize)]`" result is a genuine
-[selling point](../../communication-strategy/selling-points.md) that no competing approach in Rust can
+[selling point](../../communication-strategy/message.md#the-capabilities-worth-advertising) that no competing approach in Rust can
 match. The candid future-work section is the honesty that
-[skepticism.md](../../communication-strategy/skepticism.md) requires be paired with those claims.
+[message.md](../../communication-strategy/message.md#the-objections-readers-bring) requires be paired with those claims.
 
 ## Where it diverges from CGP v0.8.0
 

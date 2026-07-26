@@ -110,7 +110,7 @@ the two must be kept in step. The Scala comparison rests on
 The series is also the site's best execution of the tutorial playbook in
 [formats.md](../../communication-strategy/formats.md): it opens on a concrete pain, carries one
 running example throughout, leads with vanilla-looking idioms, and defers machinery. Its target reader
-is the working developer in [reader-profiles.md](../../communication-strategy/reader-profiles.md).
+is the working developer in [readers.md](../../communication-strategy/readers.md).
 
 ## Where it diverges from CGP v0.8.0
 
