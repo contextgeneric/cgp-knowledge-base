@@ -180,7 +180,11 @@ Each grows out of a long blog post that stays where it is; the plans are in
 repositories. [docs.rs](https://docs.rs/cgp) is linked once from Resources rather than from each
 reference page.
 
-**Blog** — 17 posts, plus the unfinished v0.8.0 draft.
+**Blog** — 17 posts, plus the unfinished v0.8.0 draft and one planned post, the
+implicit-type-arguments `deepdive` (B1 in [tasks.md](tasks.md)). The blog is the one surface this
+inventory does not try to specify in advance: a post is a dated statement rather than a page with a job,
+so posts are listed as they are written rather than planned into the target, and B1 appears only because
+it is currently owed.
 
 **AI** — the inlined skill copy, regenerated from `cgp-skills` rather than edited.
 

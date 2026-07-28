@@ -312,6 +312,16 @@ that "trait implementations" undersells the reach. One sentence each for abstrac
 for itself, extensible records and variants, and the composable handler family. Resist elaborating; each
 of the three is a linked page's worth of material and none of it belongs here.
 
+The abstract-types sentence should carry the **payoff and not only the mechanism**, matching the
+[breadth line](../../communication-strategy/identity.md#the-pitch-that-follows-the-line) it compresses: a
+type the application chooses means an error type or a runtime *stops being a parameter every layer has to
+carry*. "A context chooses it for itself" describes the construct and lands on a reader who already wants
+a type swappable; the parameter clause names what it removes and lands on a reader whose signatures have
+filled up, which is the larger group and the one this section is otherwise silent for. One clause is
+enough — the [Overview](../site-structure.md) is where the argument is made in full, and the pain behind
+it is an entry in [message.md](../../communication-strategy/message.md#the-problems-cgp-removes) for a
+piece that has room to show a before and after.
+
 **5. What it costs.** The cost section is not optional and is not softened. It is more machinery than a
 plain trait; for a capability with one implementation a plain trait is the right tool; the compile-time
 work is real; the raw diagnostics are verbose, `cargo cgp check` leads with the root cause for the

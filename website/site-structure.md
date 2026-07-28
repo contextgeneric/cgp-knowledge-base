@@ -178,19 +178,35 @@ not recently updated. The error-handling section in particular links to a book c
 anything maintained. The page also predates `cargo-cgp` and the extensible-data work, so its
 "Dynamic Dispatch" section understates what CGP now offers for enums.
 
+Two things are **absent** rather than dated, and both concern abstract types. The Key Features half names
+five capabilities and abstract types is not among them, even though this page is where the front page's
+breadth section offloads — so the site's fullest feature tour is silent on one of the three capabilities
+the [breadth line](../communication-strategy/identity.md#the-pitch-that-follows-the-line) advertises. And
+the Problems Solved half has no entry for **generic-parameter threading**, the pain a reader with a deep
+call graph feels: a signature carrying an error type, a runtime, and a storage handle as parameters
+through layers that touch none of them. The two are separate additions on purpose, per
+[message.md](../communication-strategy/message.md)'s rule that a capability and the pain it removes are
+different views for different readers — one wants a type swappable, the other wants their signatures
+back. The capability entry should carry the payoff (*the layers that never touch a type never mention
+it*) rather than restating that the application chooses; the problem entry is the before/after
+[message.md](../communication-strategy/message.md#the-problems-cgp-removes) now carries.
+
 ### Maintaining it
 
 **The page's job is the feature tour**, per
 [information-architecture.md](information-architecture.md#the-target-page-inventory): every high-level
 CGP capability walked through in more detail than any other surface carries, which is what the front
-page's capability beats and its breadth section offload to. Two consequences follow. It is **not** held
+page's capability beats and its breadth section offload to. Three consequences follow. It is **not** held
 to five features — the five-entry limit the
 [headline feature set](../communication-strategy/identity.md#the-headline-feature-set) argues for is the
 *front page's* constraint, and this page is where those five are expanded and the breadth capabilities
 (abstract types, extensible records and variants, the handler family) are added. And it stops competing
-with the front page's list rather than being made identical to it. Keep each problem written as a pain
-the reader already feels rather than as a capability, which is the ordering the
-[problems catalog](../communication-strategy/message.md#the-problems-cgp-removes) prescribes.
+with the front page's list rather than being made identical to it. And because it is the breadth
+section's destination, **every capability the breadth line names has to appear here** — which is what
+makes the missing abstract-types entry above a gap in this page's job rather than merely an omission.
+Keep each problem written as a pain the reader already feels rather than as a capability, which is the
+ordering the [problems catalog](../communication-strategy/message.md#the-problems-cgp-removes)
+prescribes.
 
 ## Resources
 

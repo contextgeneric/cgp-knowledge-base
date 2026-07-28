@@ -104,10 +104,20 @@ enhances-not-replaces frame becomes explicit.
 
 The second rung is the **breadth line**, which repays the tag line's debt in one sentence: beyond
 swappable trait implementations, CGP adds [abstract types](../cgp/concepts/abstract-types.md) a
-context chooses for itself, [extensible records](../cgp/concepts/extensible-records.md) and
+context chooses for itself — so an error type or a runtime stops being a parameter every layer has to
+carry — [extensible records](../cgp/concepts/extensible-records.md) and
 [variants](../cgp/concepts/extensible-variants.md), and a family of
 [composable handlers](../cgp/concepts/handlers.md). This turns "an extension for one thing" into "an
 extension broad enough to earn the word" without weighing down the line.
+
+The abstract-types clause carries a payoff rather than only the mechanism, and that is deliberate.
+"A context chooses for itself" describes what the construct *is*, which interests a reader who already
+wants a type swappable; the clause about parameters names what it *removes*, which is the half a reader
+with a deep call graph feels. A generic parameter is an input the caller supplies, so it propagates
+through every intermediate signature, while an abstract type is determined by the context and
+propagates nowhere — the argument is developed in
+[impl-side dependencies](../cgp/concepts/impl-side-dependencies.md#type-dependencies-and-why-they-need-no-parameter)
+and sold in [message.md](message.md#the-capabilities-worth-advertising).
 
 The third rung, and the most persuasive, is a **concrete pain** the reader has already felt, stated
 before any mechanism — the overlapping impls Rust rejects, the orphan-rule newtype dance, the trait
@@ -190,6 +200,21 @@ of which costs more attention than it wins. Use the **recognized Rust terms** �
 *sentence* to name a benefit and, wherever a skeptic would balk, the honest qualifier in the same
 breath: "at compile time", "in safe Rust", "still ordinary Rust". The qualifier is what turns a claim
 the reader would discount into one they believe.
+
+One further question about the set is left open rather than decided here, and it concerns
+**"Abstract Over Every Dependency"**. Its sentence pays off in *portability* — a `no_std`-friendly core
+that runs from embedded systems to WebAssembly — which is the right claim for the systems programmer and
+is checkable in a way a claim about signatures is not. The
+[breadth line](#the-pitch-that-follows-the-line) now also carries the *threading* payoff, which reaches a
+different reader: someone whose signatures have filled up with parameters no intermediate layer touches.
+Three ways to reconcile them are available, and the recommendation is the first. **Leave the feature as
+it stands** and let the threading payoff ship through the breadth line, the homepage essay's breadth
+section, and the Overview's feature tour — a front page's job is the snap category, and "fewer generic
+parameters" is a payoff a reader values only after they believe the mechanism. **Extending the sentence**
+costs the set its own rule that a feature is a title and one or two sentences, which this one already
+fills. **Swapping the payoff** would trade a differentiated, verifiable claim for a softer one. Whichever
+way it goes it is the author's call, and it is recorded here so a writer meets the question rather than
+answering it two different ways in two pieces.
 
 One phrase in the set above is worth flagging rather than silently changing. "One Interface, Many
 Implementations" says *"choose between them per context"*, and

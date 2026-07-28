@@ -102,6 +102,16 @@ anything maintained. Repoint at the explanation pages once they exist. *Website 
 **The Overview predates `cargo-cgp` and the extensible-data work,** so its "Dynamic Dispatch" section
 understates what CGP now offers for enums. *Website repo, `docs/overview.md`.*
 
+**The Overview names no abstract-types capability and no generic-parameter-threading pain.** These are
+absences rather than staleness, and the first is a gap in the page's *job*: it is where the front page's
+breadth section offloads, so a capability the breadth line advertises has to appear here, and abstract
+types do not. The second is the pain a reader with a deep call graph feels — a signature carrying an error
+type, a runtime, and a storage handle through layers that touch none of them — which no entry on the site
+currently names. The two are separate additions, one to each half of the page, because a capability and
+the pain it removes reach different readers. *Website repo, `docs/overview.md`; the capability payoff and
+the before/after are in [message.md](../communication-strategy/message.md), and the record of the gap in
+[site-structure.md](site-structure.md).*
+
 **Neither tutorial teaches that wiring is lazy,** mentions
 [`check_components!`](../cgp/reference/macros/check_components.md), or mentions
 [`cargo-cgp`](../cgp/reference/cargo-cgp.md) — so a reader who mis-wires a context meets a wall of
@@ -175,6 +185,14 @@ in [deep-dives/](deep-dives/README.md), and each carries a list of source-code c
 repository needs first. Two of those lists contain a substantial item: **adopting `#[uses]` and
 `#[implicit]` in `hypershell` and `cgp-examples/builder`**, and **publishing a `CgpSerdeNamespace`**,
 which is a library improvement rather than a documentation convenience.
+
+**A blog post on implicit type arguments** — the framing that an abstract type is an implicit *type*
+argument, so a type dependency stops being a parameter every layer threads. It is a `deepdive` rather
+than a release note: abstract types date to v0.3.0 and `#[use_type]` to v0.7.0, so putting it in the
+v0.8.0 announcement would present a reframing as new and set it competing with namespaces, against that
+guide's one-change rule. Strictly this is new content rather than a redesign defect, and it is listed
+here because it is the one piece of *writing* the queue would otherwise lose track of; its task, its
+running example, and the two decisions it still carries are in [tasks.md](tasks.md).
 
 ## Also outstanding, outside the site
 

@@ -214,7 +214,7 @@ it stale.
 - [README.md](cgp/concepts/README.md) — the concept catalog, and how a concept differs from a
   reference document, an example, and a guide.
 - [abstract-types.md](cgp/concepts/abstract-types.md) — associated types each context chooses for
-  itself.
+  itself, and why a determined type propagates nowhere while a parameter propagates everywhere.
 - [aggregate-providers.md](cgp/concepts/aggregate-providers.md) — bundling component wirings into a
   reusable provider, and why such a bundle is a provider rather than a context.
 - [check-traits.md](cgp/concepts/check-traits.md) — why wiring is lazy and how a compile-time
@@ -236,7 +236,8 @@ it stale.
 - [higher-order-providers.md](cgp/concepts/higher-order-providers.md) — providers parameterized by
   other providers.
 - [impl-side-dependencies.md](cgp/concepts/impl-side-dependencies.md) — dependency injection through a
-  blanket impl's `where` clause.
+  blanket impl's `where` clause, in its three legs: capabilities, values, and types — the last being why
+  an abstract type needs no generic parameter.
 - [implicit-arguments.md](cgp/concepts/implicit-arguments.md) — writing providers as ordinary
   functions whose arguments come from context fields.
 - [modular-error-handling.md](cgp/concepts/modular-error-handling.md) — the error type, its

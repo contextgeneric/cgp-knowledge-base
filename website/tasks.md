@@ -18,9 +18,9 @@ detail is needed, follow the link rather than restating it here.
 
 Every task has an ID so that dependencies can be stated without ambiguity, a **lands in** field naming
 the repository and path, and a **done when** condition. The IDs group by kind — `C` corrections, `E`
-explanation tier, `F` front page, `T` teaching, `R` reference, `D` deep dives, `V` the version release,
-`O` orientation, `X` cross-cutting — and they are stable, so a task removed on completion leaves its ID
-retired rather than renumbered.
+explanation tier, `F` front page, `T` teaching, `R` reference, `D` deep dives, `B` the blog, `V` the
+version release, `O` orientation, `X` cross-cutting — and they are stable, so a task removed on completion
+leaves its ID retired rather than renumbered.
 
 Three obligations apply to **every** task that adds or moves a page, and they are stated once here rather
 than repeated in each entry, per [AGENTS.md](AGENTS.md). Adding a page means **adding or updating its
@@ -120,8 +120,13 @@ to, so it is the group that unblocks the most downstream work, and none of it is
   stop competing rather than being made identical. *Lands in:* the front page and the Overview.
 - **F3 — repurpose and repair the Overview.** Its job is the **feature tour**: every high-level CGP
   capability walked through in more detail than any other surface carries, which makes it the destination
-  for both section 3 and section 4 of the homepage essay. Four changes: state that job and drop the
-  five-feature cap, since the cap belongs to the front page; repoint the depth pointers, which all
+  for both section 3 and section 4 of the homepage essay. Five changes: state that job and drop the
+  five-feature cap, since the cap belongs to the front page; **add the two abstract-types entries the page
+  is missing** — a Key Features capability whose payoff is that a type the application chooses *stops
+  being a parameter every layer carries*, and a Problems Solved entry for the threading pain itself, kept
+  separate because a capability and the pain it removes reach different readers (the copy for both is in
+  [message.md](../communication-strategy/message.md), and the gap is recorded in
+  [site-structure.md](site-structure.md)); repoint the depth pointers, which all
   currently lead to the [CGP Patterns book](https://patterns.contextgeneric.dev/) that the Introduction
   itself describes as not recently updated; refresh the "Dynamic Dispatch" section, which predates
   `cargo-cgp` and the extensible-data work and understates what CGP now offers for enums; and move the
@@ -220,6 +225,44 @@ Each of DD1–DD3 finishes the same way: **a pointer to the deep dive is added a
 it grew out of** — four posts in DD2's case. That is the one sanctioned edit to a published post, since it
 adds a link and changes no claim; the post's slug and its snippets are untouched.
 
+## B — The blog
+
+One planned post, and the group exists so that a piece of writing which is neither a release note nor a
+multi-page deep dive has somewhere to be tracked. Everything here is **new content rather than a redesign
+defect**, so it is startable at any time and blocks nothing.
+
+- **B1 — the implicit-type-arguments post.** The framing that an abstract type is an implicit *type*
+  argument: a generic parameter is an input the caller supplies and so propagates through every
+  intermediate signature, while an abstract type is determined by the context and propagates nowhere, so a
+  codebase can accumulate type dependencies without its signatures growing. *Lands in:* `blog/`, tagged
+  `deepdive`, author voice, with an explicit `slug` and a `{/* truncate */}` marker per the
+  [publication conventions](blog/README.md). *Spec:* the deep-dive playbook in
+  [formats.md](../communication-strategy/formats.md); the pain, the capability, and the audience-tuned
+  one-liner are in [message.md](../communication-strategy/message.md), the mechanism in
+  [impl-side dependencies](../cgp/concepts/impl-side-dependencies.md#type-dependencies-and-why-they-need-no-parameter)
+  and [abstract types](../cgp/concepts/abstract-types.md), the prescriptive decision in
+  [naming a type dependency](../cgp/guides/naming-a-type-dependency.md), and the related-work comparison in
+  [implicit parameters](../related-work/implicit-parameters.md). *Blocked by:* nothing. *Blocks:* nothing.
+
+  Four things about its shape are already settled. **Not a release note**, for the reason in
+  [redesign-queue.md](redesign-queue.md): the capabilities are old, so a release framing would misreport
+  them as new and compete with namespaces for v0.8.0's one change. **Title in the concrete-capability
+  register** with no paradigm name, per [vocabulary.md](../communication-strategy/vocabulary.md).
+  **One running example the whole way through**, and the database-and-transaction scenario is the one to
+  use: it is already verified as compiling code, it is the environmental/self-targeted shape most CGP code
+  is in, and `Db` → `Transaction` is a two-step climb that motivates the *second* forcing condition — two
+  types that must agree — rather than only the first. And **reuse the v0.7.0 post's "Isn't this just Scala
+  implicits?" section** rather than reinventing it, which [formats.md](../communication-strategy/formats.md)
+  already names as the model of concede-then-distinguish.
+
+  Two decisions remain open. Whether to include the **`mtl` functional-dependency comparison** —
+  `class MonadReader r m | m -> r` fixes the environment type *by* the monad, which is the same
+  output-not-input move — since it is the strongest argument for the functional-programming reader,
+  showing CGP reaching for a discipline they already trust rather than a novelty, but costs a paragraph
+  most readers will skip; the suggestion is to include it late, after the payoff has landed. And whether
+  the post ships **before or after v0.8.0**: it is independent of the release, so the only argument for
+  waiting is not competing with the announcement for attention.
+
 ## V — The version release
 
 - **V1 — finish the v0.8.0 release announcement.** On its own clock and independent of everything above,
@@ -285,6 +328,7 @@ the [ordering](#the-ordering) for what to start on.
 | R4 | nothing | R2's *Gotchas* sections (soft) |
 | DC1, DC2, DC3 | nothing | DD1, DD2, DD3 respectively |
 | DD1, DD2, DD3 | their DC task, plus E2 and E3 | nothing |
+| B1 | nothing | nothing |
 | V1 | the v0.8.0 release shipping | completes C3; re-touches C2 |
 | O1 | nothing | O2, and the Introduction narrowing (soft) |
 | O2 | O1 | F1's first call to action (soft) |
@@ -295,7 +339,9 @@ Three shapes in that graph are worth naming, because they are what make the orde
 three deep dives, which is why building them early converts into progress everywhere else. The **deep
 dives are gated on code** rather than on writing, so their long lead time starts with DC1–DC3 and those
 can run in parallel with anything. And **V1 is on a separate clock**, so it interrupts the sequence
-whenever the release ships rather than waiting for a slot.
+whenever the release ships rather than waiting for a slot. **B1 sits outside the graph entirely** — it is
+new content rather than a redesign defect, so it neither waits for anything nor holds anything up, and it
+can fill a slot whenever the writing appetite is there rather than the editing appetite.
 
 ## The ordering
 

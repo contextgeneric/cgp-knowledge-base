@@ -198,6 +198,23 @@ and with nothing walked on each call — developed in
 it works only on types that derive the shape and does no runtime introspection, so the precise frame
 is "compile-time structural reflection encoded in types" rather than "reflection for Rust".
 
+### Stop threading a dozen generic parameters through every layer
+
+A pain that arrives with a codebase's *depth* rather than its domain is the signature that fills up with type parameters nobody in the middle cares about. A library that leaves its error type, its runtime, and its storage handle open takes three parameters and their bounds, and because a parameter is an input the caller supplies, every intermediate function that merely passes a value along declares them too:
+
+```rust
+pub async fn run_job<E, R, S>(store: &S, runtime: &R) -> Result<(), E>
+where
+    E: From<S::Error> + From<R::Error> + Send + Sync + 'static,
+    R: Runtime<Error = R::Err>,
+    S: Store,
+{ /* this layer touches none of the three */ }
+```
+
+The developer has felt every part of this: adding a fourth open type is a breaking change to every caller, the bounds get restated at each layer, and the function that actually uses `S` is four frames down. CGP makes those types **abstract types on the context**, so they are named where they are used and nowhere else — the intermediate layer above becomes `async fn run_job(&self) -> Result<(), Error>`, with `Error` imported by [`#[use_type]`](../cgp/reference/attributes/use_type.md) and the storage and runtime reached as capabilities. The count of types a context decides can then rise freely, because *deciding is not passing*.
+
+This is the entry for the **working developer with a deep call graph**, and it is the one pain here that is about code becoming unreadable rather than a rule being restrictive — which makes it the closest match to the community's own stated anxiety about growing complexity ([evidence.md](evidence.md)). It also has an unusually checkable payoff: adding a type dependency is one `#[use_type]` line and one wiring line, where adding a generic parameter is a signature change that propagates. **Environmental context, self-targeted.** The honest limit, in the same breath: a type that only ever flows through values the provider reads can stay an ordinary inferred parameter, and for a function with one or two open types a plain generic is clearer than a component — the boundary is worked out in [naming a type dependency](../cgp/guides/naming-a-type-dependency.md).
+
 ### Keep a provider's dependencies out of your public API
 
 A subtler pain felt by library authors is that trait-based dependency injection leaks: any type named
@@ -242,7 +259,8 @@ errors among them, still pass through as the compiler wrote them.
 Name the dominant [reader profile](readers.md) for the channel first, then pick the problem that
 reader feels most sharply: the rejected overlapping impls for the type-system reader, the orphan-rule
 escape for the trait-heavy developer, the mock-in-tests swap for the pragmatic majority, the error-type
-swap for the systems and ML-module reader, the monolith decomposition for the evaluator, the
+swap for the systems and ML-module reader, the generic-parameter threading for anyone maintaining a deep
+call graph, the monolith decomposition for the evaluator, the
 structure-generic framework for the tooling author, and the readable-errors story for anyone who has
 heard CGP's diagnostics are unusable. For a broad public audience, lead with the rejected-impls or
 orphan-rule entries, because they show something Rust cannot do rather than something it does
@@ -310,6 +328,18 @@ that each context fills in through the same wiring that selects behavior. Say *"
 type; the context chooses it"*. Do not conflate this with sealing — representation hiding is Rust's
 module privacy, a distinction the [ML-module reader](../related-work/ml-modules.md) will look for.
 
+**Type dependencies you never thread** is the same capability stated as the pain it removes, and it is
+worth advertising separately because the two land on different readers: the sentence above interests
+someone who wants a type *swappable*, while this one interests someone whose signatures have simply
+filled up. A generic parameter is an input the caller supplies, so it propagates through every
+intermediate layer; an abstract type is an output the context determines, so it propagates nowhere.
+Say *"the layers that don't touch your error type never mention it"* or *"adding a type dependency is
+one line, not a signature change to every caller"*. Two cautions. Do not say CGP "removes generics" — a
+component may still carry a parameter, deliberately, when the capability is *about* a type the context
+does not own. And do not oversell the reach: a type that only ever flows through a value the provider
+reads can stay an ordinary inferred parameter, so the honest claim is about the types a signature has
+to *name*.
+
 **Generic over a type's structure, checked and free** is the framework author's capability: a type
 opts in with a derive, its shape becomes type-level data, and generic code recurses over it with full
 static checking. Say *"reflection's payoff without the runtime cost or the stringly-typed failures"*,
@@ -329,7 +359,10 @@ misfires.
 
 - **Scala or implicits reader:** "implicits without the mystery — the dependency still arrives without
   threading it through every call, but which implementation supplies it is a line in a wiring table,
-  not a resolution search." ([implicit parameters](../related-work/implicit-parameters.md))
+  not a resolution search." The type-level half is worth adding for a reader who has felt it: "and the
+  same holds one level up — an abstract type is an implicit *type* argument, so the error type and the
+  runtime stop being parameters every layer has to carry."
+  ([implicit parameters](../related-work/implicit-parameters.md))
 - **Haskell or type-class reader:** "type classes without the orphan rule, and overlapping instances
   made legal." ([type classes](../related-work/type-classes.md))
 - **Spring, Guice, or Dagger reader:** "Dagger, taken further — compile-time-checked injection, with
