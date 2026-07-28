@@ -60,6 +60,19 @@ A **bound on the associated type** is threaded not only into the provider trait 
 
 The **provider-name default** is the one behavior `#[cgp_type]` adds ahead of the pipeline: an omitted provider name becomes `{Type}TypeProvider` (from the associated type), where a bare `#[cgp_component]` would instead reject a missing name. A supplied name — `#[cgp_type(ProvideFooType)]` — overrides this exactly as it does for `#[cgp_component]`.
 
+## Failure modes
+
+One acceptable failure is worth recording because the expansion is what shapes its wording. Naming the abstract type after the trait that bounds it — `type Db: Database` written instead as `type Database: Database` — makes the bound resolve to the associated type being declared rather than to the trait in scope, since a nearer binding wins:
+
+```rust
+#[cgp_type]
+pub trait HasDatabaseType {
+    type Database: Database; // resolves to this very associated type
+}
+```
+
+The collision is ordinary Rust name resolution rather than anything CGP introduces, so the macro rightly does not intervene. What the expansion contributes is the *phrasing*: because the pipeline lifts the associated type into a free parameter on the generated `UseType` and `WithProvider` impls, the compiler reports `E0404` "expected trait, found **type parameter** `Database`" rather than naming an associated type, which can read as though the author had written a generic parameter they did not. The class is the [shadowed-abstract-type sibling](../../errors/lowering/out-of-scope-generated-name.md#a-sibling-the-shadowed-abstract-type), pinned by [`acceptable/lowering/cgp_type_name_shadows_bound.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/cgp_type_name_shadows_bound.rs).
+
 ## Snapshots
 
 Every `snapshot_cgp_type!` invocation across the suite is indexed here; the canonical variants live in the `abstract_types` target, with one `UseDelegate`-focused variant owned by the dispatch target:

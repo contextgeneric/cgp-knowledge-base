@@ -64,6 +64,18 @@ The conversion applied to each binding is chosen by the argument's type, followi
 
 **A mutable implicit argument must be the only implicit argument.** The `field_mut` of each argument follows the argument's own type — set from a `&mut` in the type, whether the outer reference of a `&mut T`/`&mut [T]` or the inner reference of an `Option<&mut T>`, not from the receiver — so a mutable argument reads through `get_field_mut` while every immutable argument reads through `get_field`, even under a `&mut self` receiver. Because a `get_field_mut` read borrows the whole context exclusively for the rest of the body, a mutable implicit cannot coexist with any other implicit read; extraction rejects the combination (`has_mutable && count > 1`) rather than emit a blanket impl that fails to borrow-check. Any number of purely immutable implicits, by contrast, are shared borrows and combine freely. A mutable argument additionally requires the `&mut self` receiver (checked in `parse_field_type`), and a `mut` *pattern* on any implicit argument is rejected outright. These checks are enforced during implicit-argument extraction.
 
+## Failure modes
+
+One acceptable failure follows directly from the generics split above, and it is the boundary that decides whether a type dependency may stay an `#[impl_generics]` parameter at all. Because `#[impl_generics(...)]` inserts its parameters into the *impl* generics only, a parameter it declares is not in scope in the generated trait — so a signature that names one refers to nothing, and the compiler rejects the generated trait:
+
+```rust
+#[cgp_fn]
+#[impl_generics(Db: Database)]
+pub fn fetch_row(&self, #[implicit] database: &Pool<Db>) -> Db::Row { todo!() }
+```
+
+The `&Pool<Db>` annotation is fine, since that parameter is stripped from the signature and becomes a `HasField` bound on the impl where `Db` *is* in scope; the `Db::Row` return type is not, because the return type stays on the trait. The macro cannot catch this earlier without deciding for the author which of the two they meant — promoting the type to an abstract type, or keeping it out of the signature — so it lowers faithfully and defers. The observable diagnostic is the [out-of-scope generated name](../../errors/lowering/out-of-scope-generated-name.md) class (`E0433`), pinned by [`acceptable/lowering/impl_generics_in_signature.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/impl_generics_in_signature.rs); the prescriptive side — when to climb from an inferred parameter to an abstract type — is [naming a type dependency](../../guides/naming-a-type-dependency.md). Note that an *abstract* type has no such restriction: [`#[use_type]`](../../reference/attributes/use_type.md) adds its bound to the generated trait as well as the impl and rewrites the alias in the trait's own signatures, which is exactly why promoting the type is the fix.
+
 ## Known issues
 
 `#[cgp_fn]` does not support generics on the desugared *method* itself — generic parameters are only ever lifted onto the trait and impl. A method-level generic is silently treated as a trait/impl generic rather than rejected, which is the intended limitation rather than a bug: method-level generics are considered an advanced case better written as an explicit blanket impl or a [`#[cgp_component]`](../../reference/macros/cgp_component.md) provider.

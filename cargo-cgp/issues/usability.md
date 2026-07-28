@@ -177,6 +177,21 @@ the [cross-block elision](../implementation/dependency-graph-rendering.md#elidin
 which drops whole subtrees an earlier block already drew, is the mechanism for brevity that does not
 sacrifice precision.
 
+- A **required type that projects through the context's own wiring** is now shown in both forms. When
+  a provider reads a field whose type is expressed through an
+  [abstract type](../../cgp/concepts/abstract-types.md) it imports — `#[implicit] database: &Pool<Db>`
+  under `#[use_type(HasDbType.Db)]` — the requirement is `Pool<<App as HasDbType>::Db>` rather than a
+  constant, and printing only that told the reader where the requirement came from but never what it
+  resolved to, so the two things actually in conflict — the context's `Db` wiring and its field — were
+  never put side by side. Printing only the reduced form has the opposite flaw and is what raw rustc
+  does. The requirement now reads
+  `` of type `Pool<<App as HasDbType>::Db>` (`Pool<Postgres>`) ``, un-normalized form first because it
+  names the wiring to change, reduced form after because it is what the field is compared against; a
+  requirement that is already concrete normalizes to itself and gets no parenthetical. The `[CGP-E003]`
+  headline and the `[CGP-E109]` leaf render it through one helper, so they cannot state a requirement
+  two ways
+  ([`abstract_field_type_mismatch`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/field-types/abstract_field_type_mismatch.rs)).
+
 What remains below are the classes the tool does not yet reshape.
 
 ## An unconstrained per-entry generic emits two contradictory errors

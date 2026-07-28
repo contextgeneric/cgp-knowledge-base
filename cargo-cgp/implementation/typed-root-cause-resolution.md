@@ -464,6 +464,15 @@ Each **leaf class** has fixtures for its field, wiring, and redirect shapes:
 - `field_via_deref` — a field on a `Deref` target, with the `help` pointed at the target.
 - `field_type_mismatch` and `field_type_mismatch_1` — a matching name with a mismatched type, read
   through a getter and directly via an `#[implicit]` argument.
+- `abstract_field_type_mismatch` (under
+  [`acceptable/field-types/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/acceptable/field-types))
+  — the same leaf where the *required* type is itself a projection through the context's own wiring
+  (`Pool<<App as HasDbType>::Db>`, from a provider reading `&Pool<Db>` under an imported abstract
+  type), so the mismatch is between two of the context's own decisions rather than between a provider
+  and a struct. Pins the dual rendering: `classify::leaf` normalizes the required type alongside the
+  un-normalized form and keeps the reduction only when it differs, so the `[CGP-E003]` header and the
+  `[CGP-E109]` leaf both read `` `Pool<<App as HasDbType>::Db>` (`Pool<Postgres>`) `` while a
+  concrete requirement stays bare.
 - `abstract_type_mismatch` (under [`acceptable/types/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/acceptable/types)) — the
   abstract-type sibling of those two: a context binds `HasScalarType` to `UseType<u32>` while its
   provider pins the same type to `f64` with the `#[use_type(HasScalarType.{Scalar = f64})]` equality

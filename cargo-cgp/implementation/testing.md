@@ -154,7 +154,14 @@ dependency builds; cargo re-runs only the fixture crate itself, whose expansion 
 
 A cross-crate scenario — the orphan rule, cross-crate coherence — cannot live in one crate, so a
 fixture may pull in **auxiliary crates** with a header directive (`//@aux-build: cgp-test-crate-a`),
-the same mechanism Clippy's `aux-build` provides. The `aux` module materializes every stored
+the same mechanism Clippy's `aux-build` provides. **The directive's spelling is exact and a
+near-miss is rejected rather than ignored**, because a dropped directive is invisible in a way that
+matters: the fixture keeps compiling, loses its path dependency, and fails on an unresolved import
+instead of reproducing the scenario it was written for — which reads as ordinary snapshot staleness.
+A formatter inserting one space (`// @aux-build:`) once disabled four cross-crate fixtures, the three
+orphan-rule cases among them, for months. `aux::declared` therefore asserts on any comment that
+*starts* with something directive-shaped but does not match the exact prefix, while leaving prose
+that merely mentions the syntax alone. The `aux` module materializes every stored
 auxiliary crate once, up front: it copies the crate's source from
 [`crates/cargo-cgp-ui-tests/auxiliary/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-ui-tests/auxiliary)
 into `target/ui-harness/aux/` and generates its manifest there, substituting the resolved
@@ -233,9 +240,23 @@ After an *intended* change to what the tool emits, `--bless` regenerates all thr
 analogue of Clippy's `cargo bless` — writing `.cgp.stderr` from the real `cargo-cgp` run,
 `.rust.stderr` from plain `cargo check`, and `.expand.rs` from `cargo cgp expand`, and the diff is
 reviewed before committing. The three move for different reasons, which is what makes a diff
-informative: `.cgp.stderr` changes when the tool's diagnostics change, `.rust.stderr` only on a
-toolchain bump, and `.expand.rs` when a CGP macro's expansion changes or when the resugaring does —
-so an unexpected `.expand.rs` diff after a `cgp` update is a report of what the macros now generate.
+informative: `.cgp.stderr` changes when the tool's diagnostics change, `.rust.stderr` on a toolchain
+bump *or* whenever a fixture's own line numbering shifts, and `.expand.rs` when a CGP macro's
+expansion changes or when the resugaring does — so an unexpected `.expand.rs` diff after a `cgp`
+update is a report of what the macros now generate.
+
+**Reading a bless diff means telling three causes apart, and two of them are not about behavior at
+all.** Editing a fixture's `//!` header — rewriting a doc pointer, re-wrapping a sentence — moves
+every line below it, so both `.stderr` files fill with `--> src/main.rs:N:N` changes and, where a
+block's widest line number gains a digit, a one-column gutter shift on every line of that block. That
+is pure noise, and the reliable way to see past it is to normalize line numbers and gutter padding out
+of the old and new snapshots and diff what remains: what survives is the behavior change, and if
+nothing survives there was none. A header edit that shifts lines without re-blessing leaves the whole
+suite mismatching, which is worse than it sounds — a genuine regression then hides among the noise
+rather than standing out, so re-bless in the same change that edits a header. The third cause is a
+fixture that has stopped testing what it claims, of which the disabled `//@aux-build:` directive above
+is the worked example; a diff whose *content* changes — a different error code, a vanished note — is
+this rather than a shift, and it is never blessed without explaining it first.
 
 ### Toolchain and determinism
 
@@ -309,6 +330,10 @@ no dogfood test yet (see above).
 - [`crates/cargo-cgp-ui-tests/tests/options.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/options.rs),
   [`crates/cargo-cgp-ui-tests/tests/normalize.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/normalize.rs)
   — harness option/filter parsing and the output normalizer.
+- [`crates/cargo-cgp-ui-tests/tests/aux.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/aux.rs)
+  — the `//@aux-build:` parser: one and several declared crates, a fixture declaring none, an
+  unreadable fixture, and the malformed-directive guard from both sides — a space after the slashes
+  and a doc-comment form are rejected, while prose mentioning the syntax is not.
 - [`tests/ui/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui) — the UI snapshot fixtures, each `<name>.rs` paired with a blessed
   `<name>.cgp.stderr` (the tool's output) and `<name>.rust.stderr` (the plain-`cargo check`
   baseline) and its `.expand.rs` generated code, run by the harness's three passes.

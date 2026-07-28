@@ -271,6 +271,9 @@ it stale.
   namespace over a `UseDelegate` table.
 - [importing-abstract-types.md](cgp/guides/importing-abstract-types.md) — prefer `#[use_type]` aliases
   over a supertrait plus `Self::Type`.
+- [naming-a-type-dependency.md](cgp/guides/naming-a-type-dependency.md) — infer a needed type from a
+  field with `#[impl_generics]`, climb to an abstract type when it must be named or two types must
+  agree, and never thread it as a generic parameter on the capability.
 - [namespaces-and-prefixes.md](cgp/guides/namespaces-and-prefixes.md) — keep a growing wiring table
   short with prefixes, namespaces, and per-type defaults, worked as a refactoring.
 - [reading-context-fields.md](cgp/guides/reading-context-fields.md) — prefer an `#[implicit]` argument
@@ -316,6 +319,9 @@ it stale.
   shorthand lowered into a bound naming an unsized type.
 - [lowering/unresolved-imported-type.md](cgp/errors/lowering/unresolved-imported-type.md) — a
   `#[use_type]` import naming an associated type its trait does not declare (`E0576`).
+- [lowering/out-of-scope-generated-name.md](cgp/errors/lowering/out-of-scope-generated-name.md) — an
+  `#[impl_generics]` parameter named in the capability's own signature, where only the generated impl
+  declares it (`E0433`), plus the abstract type shadowing its own bound (`E0404`).
 - [error_codes/README.md](cgp/errors/error_codes/README.md) — the forward index from a `rustc` error
   code to its meaning and the CGP classes that emit it.
 - [error_codes/cargo-cgp-codes.md](cgp/errors/error_codes/cargo-cgp-codes.md) — a pointer entry for
@@ -326,8 +332,15 @@ it stale.
 - [error_codes/e0210.md](cgp/errors/error_codes/e0210.md) — the orphan rule for an uncovered type
   parameter.
 - [error_codes/e0275.md](cgp/errors/error_codes/e0275.md) — overflow evaluating a requirement.
+- [error_codes/e0271.md](cgp/errors/error_codes/e0271.md) — a type mismatch resolving an
+  associated-type projection.
 - [error_codes/e0277.md](cgp/errors/error_codes/e0277.md) — a trait bound is not satisfied, including
   the `Sized` form.
+- [error_codes/e0404.md](cgp/errors/error_codes/e0404.md) — a trait was expected in a bound position
+  but the name resolved to something else.
+- [error_codes/e0425.md](cgp/errors/error_codes/e0425.md) — an identifier is not found in this scope.
+- [error_codes/e0433.md](cgp/errors/error_codes/e0433.md) — a path's leading segment names an
+  undeclared type, crate, or module.
 - [error_codes/e0428.md](cgp/errors/error_codes/e0428.md) — a name defined more than once in one scope.
 - [error_codes/e0576.md](cgp/errors/error_codes/e0576.md) — an associated item the trait does not
   declare.

@@ -108,12 +108,24 @@ recognizes.
 ### `CGP-E003` — field has the wrong type
 
 - **Message:** `` [CGP-E003] expected a `<field>` field of type `<expected>` on `<Context>`, but
-  found `<actual>` ``.
+  found `<actual>` `` — with `` `<expected>` (`<normalized>`) `` in place of `` `<expected>` ``
+  when the required type projects through the context's own wiring (below).
 - **Means:** a context field the wiring reads is present and derives `HasField`, but its type is
   not the type a provider needs. The `HasField<Symbol!("<field>")>` trait bound holds; only the
   associated-type projection `<Context as HasField<Symbol!("<field>")>>::Value == <expected>`
   fails. The expected type is read from the failing projection, and the actual type is queried from
   the struct itself (by `DefId`, so a same-named struct in another module is never read).
+- **The required type is shown in both forms when they differ.** A provider reading a field whose
+  type is expressed through an [abstract type](../cgp/concepts/abstract-types.md) it imports —
+  `#[implicit] database: &Pool<Db>` under `#[use_type(HasDbType.Db)]` — requires
+  `Pool<<Context as HasDbType>::Db>`, a projection through the context's own wiring rather than a
+  constant. The message keeps that un-normalized form, because it names *where* the requirement comes
+  from and points the reader at the wiring entry, and appends what it reduces to in parentheses,
+  because that is what the reader compares against the field:
+  `` expected a `database` field of type `Pool<<App as HasDbType>::Db>` (`Pool<Postgres>`) on `App`, but found `Pool<Sqlite>` ``.
+  Neither form alone is enough — the projection does not say what it resolves to, and the reduction
+  does not say where it came from — so both are carried. A required type that is already concrete
+  normalizes to itself and gets no parenthetical.
 - **Triggered by:** a `` type mismatch resolving `<Context as HasField<Symbol!("<field>")>>::Value == <expected>` ``
   (`E0271`) that the typed resolver traced through CGP wiring to a `HasField`
   projection — a `check_components!` entry whose provider reads the field with the wrong type. The
@@ -419,7 +431,9 @@ The codes divide into the inner chain-node templates and the terminal root-cause
   `<T>` ``, over one merged tree whose branches still end at the per-field leaves.
 - **`CGP-E109` — field type mismatch (leaf).** `` field `<f>` on `<T>` has type `<actual>`, but
   `<expected>` is required `` — the field is present and derived but has the wrong type (the leaf face
-  of the `CGP-E003` main message).
+  of the `CGP-E003` main message). The required type is rendered by the same helper as that headline,
+  so a wiring-derived requirement reads `` but `Pool<<App as HasDbType>::Db>` (`Pool<Postgres>`) is
+  required `` here too and the two can never state one requirement two ways.
 - **`CGP-E110` — missing dispatch entry (leaf).** `` provider `<T>` does not contain any delegate
   entry for `<key>` `` — the chain bottoms out on a *non-context* delegation table missing a key: an
   [aggregate provider](../cgp/concepts/aggregate-providers.md) missing a component wiring, or
