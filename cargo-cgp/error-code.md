@@ -154,10 +154,19 @@ recognizes.
 - **Triggered by:** a `` type mismatch resolving `<Ctx as Trait>::Assoc == T` `` (`E0271`) that the
   typed resolver traced through CGP wiring to a projection other than `HasField`'s. The Rust code
   stays `E0271`.
+- **The required type is shown in both forms when they differ,** on the same rule as
+  [`CGP-E003`](#cgp-e003--field-has-the-wrong-type). A provider can pin an abstract type to a type that
+  *projects through another one* — `#[use_type(HasDbType.Db, HasTransactionType.{Transaction = Tx<Db>})]`
+  requires `Tx<<App as HasDbType>::Db>` — so the message keeps that form, which names the wiring the
+  requirement flows from, and appends what it reduces to: `` to be `Tx<<App as HasDbType>::Db>`
+  (`Tx<Postgres>`) ``. A pin to a concrete type normalizes to itself and gets no parenthetical.
 - **Fix:** reconcile the two sides. For a `#[cgp_type]` component a `help` names both ways —
   `` wire `<Marker>` to `UseType<<expected>>` in the wiring for `<Owner>`, or change the provider to
   work with `<actual>` `` — with the component marker recovered from the trait, so the reader is
-  pointed at the wiring entry rather than left to find it. An ordinary trait's associated type has no
+  pointed at the wiring entry rather than left to find it. **The `help` uses the *reduced* type where
+  the header uses both**, because it prescribes an edit the reader types rather than describing the
+  requirement: `` UseType<Tx<Postgres>> `` is a wiring entry, while `` UseType<Tx<<App as HasDbType>::Db>> ``
+  would restate the requirement and leave them to reduce it. An ordinary trait's associated type has no
   such wiring entry, so it carries no `help`.
 - **Upstream class:** [check-trait failure](../cgp/errors/checks/check-trait-failure.md)
   (its abstract-type projection-mismatch face).
@@ -453,7 +462,10 @@ The codes divide into the inner chain-node templates and the terminal root-cause
   `<Owner>` is `<actual>`, but `<expected>` is required `` — the chain bottoms out on an associated
   type the owner supplies differently from what a provider requires (the leaf face of the
   `CGP-E017` main message). It reads `associated type` in place of `abstract type` when the trait is
-  not a CGP abstract-type component. The non-`HasField` sibling of `CGP-E109`.
+  not a CGP abstract-type component, and renders its required type through the same helper as
+  `CGP-E109`, so a requirement that projects through another abstract type reads
+  `` but `Tx<<App as HasDbType>::Db>` (`Tx<Postgres>`) is required `` here too. The non-`HasField`
+  sibling of `CGP-E109`.
 
 ## Root-cause lead codes (`CGP-E2xx`)
 

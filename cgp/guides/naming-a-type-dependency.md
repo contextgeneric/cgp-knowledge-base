@@ -89,7 +89,7 @@ where
     Transaction: CanBeginFrom<Db>,
 {
     fn begin_transaction(&self, #[implicit] database: &Pool<Db>) -> Result<Transaction, Error> {
-        Ok(<Transaction as CanBeginFrom<Db>>::begin_from(database))
+        Ok(Transaction::begin_from(database))
     }
 }
 ```

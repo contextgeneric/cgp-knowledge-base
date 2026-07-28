@@ -480,6 +480,12 @@ Each **leaf class** has fixtures for its field, wiring, and redirect shapes:
   recovery — the walk reports the unmet non-`HasField` projection instead of declining — the
   `[CGP-E017]` header and `[CGP-E112]` leaf, the actual type read by normalizing the projection, and
   the `UseType<…>` `help` the `#[cgp_type]` recognition earns.
+- `abstract_type_mismatch_projected` — the same class where the provider pins the abstract type to a
+  type that *projects through another one* (`{Transaction = Tx<Db>}`), so the requirement is
+  `Tx<<App as HasDbType>::Db>` and the two things in conflict are both the context's own wiring
+  decisions. Pins the dual rendering on `[CGP-E017]`/`[CGP-E112]` — the projection followed by what it
+  reduces to — and that the `help` uses the reduced form alone, since it names an edit to type. Only
+  reachable since a pin grounds an alias nested in its right-hand side.
 - `plain_assoc_type_mismatch` — the negative counterpart, and the pin on that recognition's
   discriminator: the same projection failure on a plain associated-type trait implemented directly on
   the context. It takes the same `[CGP-E017]` class, since the mechanism is the projection rather than

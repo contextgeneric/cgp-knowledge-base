@@ -189,7 +189,11 @@ sacrifice precision.
   names the wiring to change, reduced form after because it is what the field is compared against; a
   requirement that is already concrete normalizes to itself and gets no parenthetical. The `[CGP-E003]`
   headline and the `[CGP-E109]` leaf render it through one helper, so they cannot state a requirement
-  two ways
+  two ways, and the abstract-type pair `[CGP-E017]`/`[CGP-E112]` does the same — a pin whose
+  right-hand side projects through another abstract type reads
+  `` `Tx<<App as HasDbType>::Db>` (`Tx<Postgres>`) `` there too. The one deliberate divergence is the
+  abstract-type `help`, which takes the reduced form alone because it prescribes an edit the reader
+  types rather than describing the requirement
   ([`abstract_field_type_mismatch`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/field-types/abstract_field_type_mismatch.rs)).
 
 What remains below are the classes the tool does not yet reshape.
