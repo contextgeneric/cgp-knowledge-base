@@ -227,7 +227,7 @@ because it shows the cheaper way to close a case of this shape. A cyclic `#[use_
 (`#[use_type(HasA.A in B, HasB.B in A)]`) reported `cannot find type A`/`B` without ever saying the
 routing was cyclic, and it trended toward a hidden cause since nothing in the output stated "cycle".
 It was resolved upstream instead of here: the cycle is decidable from the import list alone, so
-`#[use_type]` now [rejects it at macro time](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/implementation/asts/attributes/use_type.md#forbid_grounding_cycles)
+`#[use_type]` now [rejects it at macro time](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/implementation/asts/attributes/use_type.md#ground_specs)
 with a message naming the cycle and a caret on the alias that closes it. Nothing reaches the compiler
 for the tool to reshape, so the fixture was removed rather than graduated. When a lowering error's
 cause is available to the macro, fixing it in `cgp` beats teaching the tool to reconstruct it — worth
