@@ -317,12 +317,25 @@ is ceremony, and *within the design they chose they are right*.
 
 This barrier sits here rather than among the objections because it is not a doubt to be answered: the
 reader is willing, and the shape of their first attempt is what made the value unavailable. Persuasion
-cannot reach it. The teaching move is to make granularity explicit early and to show the contrast on code
-— a one-method `AreaCalculator` wraps in four lines and composes over any inner calculator, while the same
-wrapper over `Shape` is mostly passthrough — and to hand the reader the checkable smell, which is that a
-consumer trait named after a noun rather than a verb is usually several capabilities sharing one
-component. The three costs and the splitting procedure are in
+cannot reach it. The teaching move is to show the contrast on code — a single-decision `AreaCalculator`
+wraps in four lines and composes over any inner calculator, while the same wrapper over `Shape` is mostly
+passthrough — and to hand the reader the checkable smell, which is that a consumer trait named after a noun
+rather than a verb usually holds several decisions. The costs and the splitting procedure are in
 [sizing a component](../cgp/guides/sizing-a-component.md).
+
+**Delivering this correction badly is worse than not delivering it, and the failure is specific: the reader
+concludes CGP traits are limited to one item.** Because idiomatic CGP is dominated by single-method
+components, teaching material that shows only those reads as a restriction the macros impose rather than a
+recommendation the author can weigh — and a developer who believes their traits are being capped gets
+defensive about the whole paradigm rather than engaging with the guidance. This has been observed in
+practice, and it can lose a reader before they try anything. Three rules follow, and the first is the one
+that does the work. **Show a multi-item component working before recommending anything about grouping** —
+CGP's own `CanCompute` and `CanHandle` declare an associated `Output` beside their method, so the
+demonstration costs one snippet and is not a concession. **State the non-limitation as a fact rather than a
+permission**: a component trait is an ordinary trait taking as many methods, associated types, and consts
+as any other. And **frame the guidance as a cost curve the reader prices**, not a rule they comply with —
+grouping items one provider choice decides together collects more reuse, and how much that is worth is
+their call on their codebase.
 
 ### Bounds on the context are a barrier of their own
 

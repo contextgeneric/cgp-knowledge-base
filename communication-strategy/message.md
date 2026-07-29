@@ -538,6 +538,22 @@ to extend is one where CGP's central bargain does not pay — and the right reco
 wiring, nothing to reverse, and it keeps working unchanged if a second context ever arrives. A reader
 told that plainly comes back when they hit the second context; a reader who was oversold does not.
 
+**"So a CGP trait can only have one method?"** Not an objection a reader imports but one CGP's own teaching
+material provokes, and it is the more damaging for that. Idiomatic CGP is dominated by single-method
+components, so a tutorial, a README, or a front-page snippet that only ever shows one method leaves the
+reader believing the macros impose a cap — and a developer who thinks a tool is taking away a freedom they
+have always had gets defensive about the tool rather than curious about the reason. Observed in practice,
+this can end the evaluation before anything is tried.
+
+The answer is a demonstration rather than a reassurance, and the ordering is what matters: **show a
+multi-item component before saying anything about how to group them.** A component trait is an ordinary
+trait carrying as many methods, associated types, and consts as any other, and CGP's own `CanCompute` and
+`CanHandle` declare an associated `Output` beside their method, so the proof is one snippet from the
+library. Then state the guidance as the trade-off it is — items that one provider choice decides together
+belong together, and grouping decisions a context would want to make separately costs reuse — and leave the
+pricing to the reader, per [sizing a component](../cgp/guides/sizing-a-component.md). Never phrase it as a
+rule about counts, and never let a piece imply that a monolithic trait will not compile, because it will.
+
 **"Won't I end up with a context per configuration?"** The natural worry once the multiple-contexts idea
 lands, and *partly justified*: separating every axis really would multiply, and four independent binary
 choices would mean sixteen types. The answer is that CGP does not ask you to separate an axis you do not

@@ -173,6 +173,10 @@ fn print_area(rect: &Rectangle) {
 
 The call `rect.area()` resolves through the consumer blanket impl to `Rectangle`'s table, which maps `AreaCalculatorComponent` to `RectangleArea`, and `RectangleArea::area` reads `rect.width` and `rect.height` to compute the result.
 
+## Known issues
+
+The `Self`-means-context rewrite reaches associated-item paths, which makes a provider's *own* associated const or type awkward to name inside its body. A component may declare associated consts and types alongside its methods, and the provider supplies them in the `#[cgp_impl]` block as usual — but `Self::LIMIT` in a method body does not resolve to the const the block just defined, because `Self` has been rewritten to the context, and the error reads `E0599: no associated function or constant named 'LIMIT' found for type parameter '__Context__'`. Name the provider explicitly through its provider trait instead, as `<AllowUnderLimit as RateLimiter<Self>>::LIMIT`, which the rewrite turns into the correct fully-qualified path. The consumer side is unaffected: a wired context reads the same const as `<App as CanRateLimit>::LIMIT`.
+
 ## Related constructs
 
 `#[cgp_impl]` is the recommended way to implement a component defined by [`#[cgp_component]`](cgp_component.md), and it is one layer of sugar above [`#[cgp_provider]`](cgp_provider.md), which it desugars to; [`#[cgp_new_provider]`](cgp_new_provider.md) is the `new`-keyword equivalent at that lower layer. For the common case where only a single implementation is ever needed and no wiring is desired, [`#[cgp_fn]`](cgp_fn.md) is the lighter alternative. The companion attributes [`#[implicit]`](../attributes/implicit.md), [`#[uses]`](../attributes/uses.md), [`#[use_type]`](../attributes/use_type.md), [`#[use_provider]`](../attributes/use_provider.md), and [`#[default_impl]`](../traits/default_namespace.md) all apply inside a `#[cgp_impl]` block. Once a provider is written, [`delegate_components!`](delegate_components.md) wires it onto a context and [`check_components!`](check_components.md) verifies the wiring.

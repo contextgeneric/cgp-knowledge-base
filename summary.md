@@ -262,8 +262,9 @@ it stale.
 - [choosing-a-component-shape.md](cgp/guides/choosing-a-component-shape.md) — what goes in `Self` and
   whether the capability targets `Self` or a parameter, with the promotion refactoring worked and the
   two traps: a parameter is not always a target, and per-application choice needs no parameter.
-- [sizing-a-component.md](cgp/guides/sizing-a-component.md) — one capability per component, the three
-  costs a monolithic entity trait pays, and splitting one along the axis its contexts differ on.
+- [sizing-a-component.md](cgp/guides/sizing-a-component.md) — group the items one provider choice decides
+  together, the two cases where several belong, the three costs of grouping unrelated decisions, and
+  splitting a trait that has along the axis its contexts differ on.
 - [capability-supertraits.md](cgp/guides/capability-supertraits.md) — prefer `#[extend]` over native
   `:` supertrait syntax.
 - [debugging.md](cgp/guides/debugging.md) — reach for `cargo-cgp` first, then trace a wiring failure
