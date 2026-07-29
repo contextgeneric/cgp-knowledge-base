@@ -215,14 +215,24 @@ When a macro lowers accepted input into ill-formed Rust, the error lands on the 
 never states the real cause.
 [`option_slice`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/lowering/option_slice.rs)
 produces an unsized-type failure — an `Option<[u8]>` generated from an auto-getter returning `&[u8]`
-— as two cascading errors both anchored on the `#[cgp_auto_getter]` attribute, and
-[`use_type_cyclic_context`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/lowering/use_type_cyclic_context.rs)
-reports `cannot find type A`/`B` without ever saying the `#[use_type]` routing is cyclic. The cause
-is hinted by the spans but never named; the `use_type_cyclic_context` case in particular trends
-toward a hidden cause, since nothing in the output states "cycle" (its counterpart
+— as two cascading errors both anchored on the `#[cgp_auto_getter]` attribute, naming neither the
+field nor the shorthand combination that has no lowering rule. The cause is hinted by the spans but
+never named; its counterpart
 [`use_type_unknown_assoc`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/use_type_unknown_assoc.rs)
-is `acceptable/` precisely because rustc already names the typo and its fix). Recognizing the
+is `acceptable/` precisely because rustc already names the typo and its fix. Recognizing the
 lowering class and naming the offending construct is the work here.
+
+A second fixture used to sit beside `option_slice` and no longer does, which is worth recording
+because it shows the cheaper way to close a case of this shape. A cyclic `#[use_type]` routing
+(`#[use_type(HasA.A in B, HasB.B in A)]`) reported `cannot find type A`/`B` without ever saying the
+routing was cyclic, and it trended toward a hidden cause since nothing in the output stated "cycle".
+It was resolved upstream instead of here: the cycle is decidable from the import list alone, so
+`#[use_type]` now [rejects it at macro time](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/implementation/asts/attributes/use_type.md#forbid_grounding_cycles)
+with a message naming the cycle and a caret on the alias that closes it. Nothing reaches the compiler
+for the tool to reshape, so the fixture was removed rather than graduated. When a lowering error's
+cause is available to the macro, fixing it in `cgp` beats teaching the tool to reconstruct it — worth
+asking of `option_slice` too, whose unsupported shorthand combination is likewise knowable at
+expansion time.
 
 ## Extensible-data failures are not reshaped at all
 
