@@ -130,6 +130,13 @@ ready answers is worth keeping — each conceding the real cost before making th
   invent a number, and name `check_components!` and `cargo cgp check` as the real mitigations.
 - **"Why not just use traits?"** Agree that for one implementation, or a closed set, the plain tool
   wins, and point at the [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md).
+- **"I only have one app — what does this buy me?"** Concede that the per-context payoff is not available
+  yet, name the value that does not need a second context (overlapping providers, the orphan-rule escape,
+  dependencies off the signature), then point at the second context they already have in their test
+  harness — and say plainly that a codebase which will only ever have one belongs on `#[cgp_fn]` alone.
+- **"Won't I end up with a context per configuration?"** Concede that separating every axis multiplies,
+  then say CGP does not ask you to: a generic parameter or an enum collapses the axes that need no
+  separate type, and a context holds either while wiring normally.
 
 ## The conversion ladder
 

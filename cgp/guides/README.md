@@ -1,6 +1,6 @@
 # CGP Guides
 
-This directory holds the *guides* to writing Context-Generic Programming code — documents that direct the **choices** an author makes, rather than explaining what a construct is. Where the [reference](../reference/README.md) tells you what a construct means and the [concepts](../concepts/README.md) explain the ideas that tie constructs together, a guide answers the question that comes up once you already understand the pieces: *given several ways to express something, which should I use, and how do I evolve code from one form to another?*
+This directory holds the *guides* to writing Context-Generic Programming code — documents that direct the **choices** an author makes, rather than explaining what a construct is. Where the [reference](../reference/README.md) tells you what a construct means and the [concepts](../concepts/README.md) explain the ideas that tie constructs together, a guide answers the question that comes up once you already understand the pieces: *given several ways to express something, which should I use, and how do I evolve code from one form to another?* Two of the guides answer a decision of a different kind — not which construct to reach for, but how to shape the component itself, which is settled before any construct is chosen and is the harder decision to revise afterwards.
 
 ## How guides differ from concepts, reference, and examples
 
@@ -13,6 +13,7 @@ A guide leans on the other three rather than restating them. It links to the ref
 The authoring rules for these documents live in [../AGENTS.md](../AGENTS.md). Each guide below names a decision you face when writing CGP and walks through how to make it; the [Summary](#summary) at the end condenses all of them into one cheat-sheet, so read it first for the recommendations and follow a link for the full before/after mapping and the rules.
 
 - [Choosing a component's shape](choosing-a-component-shape.md) — what goes in the `Self` position, and whether the capability targets `Self` or a type parameter; the decision that comes before every other one here, since it cannot be revised without a breaking change.
+- [Sizing a component](sizing-a-component.md) — how many methods a component should carry, the three costs a monolithic entity trait pays, and how to split one along the axis its contexts differ on.
 - [Writing providers](writing-providers.md) — `#[cgp_impl]` in consumer-trait shape, omitting the context parameter, instead of the inside-out provider forms.
 - [Declaring a provider's dependencies](declaring-dependencies.md) — `#[uses]` and `#[use_provider]` instead of hand-written `where` bounds.
 - [Reading context fields](reading-context-fields.md) — `#[implicit]` arguments instead of getter traits.
@@ -32,6 +33,7 @@ This section condenses every guide above into one quick reference. Read it for t
 | When you… | Prefer | Instead of |
 |---|---|---|
 | define a component ([guide](choosing-a-component-shape.md)) | a capability about the application, self-targeted on an environmental context — and a `Value` parameter only when the target type is one you do not own | inheriting whichever shape the last example you read used |
+| decide how many methods a component carries ([guide](sizing-a-component.md)) | one capability per component, so each is a point where a context can choose | an entity trait grouping every operation of a thing, whose providers no second context can reuse whole |
 | write a provider ([guide](writing-providers.md)) | `#[cgp_impl]` with the header `impl Trait` (omit `for Context`, keep `self`/`Self`) | raw `#[cgp_provider]`/`#[cgp_new_provider]` in inside-out shape |
 | require a capability or an inner provider ([guide](declaring-dependencies.md)) | `#[uses(Trait)]` / `#[use_provider(P: Trait)]`, comma-separated in one attribute — `#[uses]` covers ordinary Rust traits too (`#[uses(AsRef<[u8]>)]`) | hand-written `Self:`/`P: Trait<Self>` `where` bounds |
 | read a value from the context's own field ([guide](reading-context-fields.md)) | an `#[implicit]` argument | a getter trait declared only to read it |

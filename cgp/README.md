@@ -56,12 +56,13 @@ mechanics. Where the reference explains the individual trees, the concepts expla
 forest.
 
 The [guides/](guides/README.md) directory holds the guides to *writing* CGP — documents that direct
-the choices an author makes when more than one construct could express the same thing. Where the
-reference and concepts explain what a construct means and why it exists, a guide is prescriptive: it
-recommends a default form, names the trade-offs of the alternatives, and usually walks a concrete
-before/after refactoring. Choosing a construct's vanilla-looking form over its explicit equivalent,
-keeping wiring tables short with namespaces, and debugging a wiring that will not compile all live
-here.
+the choices an author makes, whether between two constructs that could express the same thing or
+about the shape of a component before any construct is chosen. Where the reference and concepts
+explain what a construct means and why it exists, a guide is prescriptive: it recommends a default
+form, names the trade-offs of the alternatives, and usually walks a concrete before/after
+refactoring. Deciding what a component is about and how many methods it carries, choosing a
+construct's vanilla-looking form over its explicit equivalent, keeping wiring tables short with
+namespaces, and debugging a wiring that will not compile all live here.
 
 The [errors/](errors/README.md) directory catalogs the compiler errors CGP produces *after* codegen —
 input a macro accepts and lowers to Rust that then fails to compile — organized by the kind of error

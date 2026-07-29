@@ -27,6 +27,15 @@ stops reading, while one who understands that a CGP trait is still a trait, that
 be implemented directly with no CGP machinery at all, and that a project can use CGP in one module
 and stay otherwise vanilla, has no reason to feel threatened by any of the rest.
 
+The frame reaches past the trait system, and the extra distance is worth spending because it answers a
+fear the trait framing alone does not. The patterns a Rust developer already uses to absorb variation — a
+generic parameter on a struct, an enum over the alternatives, a boxed trait object — are not things CGP
+displaces; a context is free to hold any of them while wiring its components normally, which is what
+stops the multiple-contexts idea from reading as a demand to separate every axis of a program. Say it as
+composition: CGP decides which variations are worth their own type, and the reader's existing tools keep
+handling the ones that are not. The worry this defuses, and the shape a real application lands on, are in
+[message.md](message.md#the-objections-readers-bring).
+
 The frame is also what makes the honesty easy. "A superset of ordinary traits", "a library on stable
 Rust", and "adopt it one component at a time" are all true, all reassuring, and all reinforcing of
 the same idea, so a writer never has to choose between accuracy and reassurance. And it sets the tone

@@ -64,9 +64,13 @@ without a dependency-injection framework — shown on code that looks like code 
 Their skepticism is the decisive obstacle, because they have watched "enterprise" abstraction ruin
 codebases and will pattern-match CGP to that at the first sign of ceremony. Their questions are
 whether it is over-engineered, what it does to compile times, how one debugs generated code, how long
-a teammate takes to learn it, and whether it is a lock-in risk. Win them by leading with a problem
+a teammate takes to learn it, whether it is a lock-in risk, and — once they are actually trying it —
+what it buys them while their codebase still contains a single application context, which
+[message.md](message.md#the-objections-readers-bring) answers at length. Win them by leading with a problem
 rather than the paradigm, showing a before/after on realistic code, and being candid about when *not*
-to reach for CGP. On debugging specifically, point them at
+to reach for CGP. Hold higher-order providers back for this reader in particular: composing providers
+asks them to absorb functional composition on top of CGP, and two unfamiliar paradigms arriving together
+is enough to lose someone who would have followed either alone. On debugging specifically, point them at
 [`cargo-cgp`](../cgp/reference/cargo-cgp.md), which reshapes CGP's compiler errors to lead with the
 root cause — conceding in the same breath that it is a v0.1.0-alpha handling the core wiring errors
 rather than every class. Restraint earns this reader; a single overclaim loses them, often
@@ -244,6 +248,13 @@ its place, and never open with a raw provider-trait signature. **Show that CGP c
 Rust the reader already writes, rather than reassuring them the generics are not as scary as they
 look** — the demonstration persuades where the reassurance does not.
 
+Rust's own designers used exactly this move, and pointing at it is a useful precedent when the strategy
+needs defending. `&impl Trait` and `&dyn Trait` read almost identically at the call site while the first
+is generics and the second is dynamic dispatch, so a developer moving from one to the other adopts
+monomorphized generics without registering that they have — the syntax did the teaching that an
+explanation would not have. `#[cgp_fn]` and `#[implicit]` do the same job for CGP, which is why they are
+the entry point rather than a simplification of one.
+
 ### The provider trait reads inside-out
 
 A distinct and disorienting barrier is that a raw provider trait turns Rust's conventions inside-out:
@@ -292,6 +303,26 @@ using. That is a harder claim to dismiss as cleverness than "we work around cohe
 same move as explaining what Rust already does before improving on it. The technical account is in the
 [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md), and the wording rules are in
 [vocabulary.md](vocabulary.md#qualifying-a-context-and-a-target).
+
+### The trait a reader would design hides the payoff
+
+A barrier that produces no confusion whatsoever and still loses the reader: the trait shape most
+developers reach for first is the shape CGP pays least for. Asked to model shapes, a reader with any
+object-oriented training writes `Shape` carrying `area`, `perimeter`, `scale`, and `rotate` — a coherent
+entity, one word for a team to use, and how most people were taught to model a domain. CGP accepts that
+trait, and then very little about it is reusable: a provider must answer the whole surface, a wrapper must
+forward every method it has no opinion about, and a context that only computes areas still has to supply a
+`rotate` body and an `Angle` type. The reader concludes from a fair experiment on their own code that CGP
+is ceremony, and *within the design they chose they are right*.
+
+This barrier sits here rather than among the objections because it is not a doubt to be answered: the
+reader is willing, and the shape of their first attempt is what made the value unavailable. Persuasion
+cannot reach it. The teaching move is to make granularity explicit early and to show the contrast on code
+— a one-method `AreaCalculator` wraps in four lines and composes over any inner calculator, while the same
+wrapper over `Shape` is mostly passthrough — and to hand the reader the checkable smell, which is that a
+consumer trait named after a noun rather than a verb is usually several capabilities sharing one
+component. The three costs and the splitting procedure are in
+[sizing a component](../cgp/guides/sizing-a-component.md).
 
 ### Bounds on the context are a barrier of their own
 
@@ -385,7 +416,9 @@ qualifiers and the four misreadings they prevent are in
 with `#[cgp_fn]`, `#[cgp_impl]`, `#[implicit]`, `#[uses]`, and `#[use_type]`, and revealing the machinery
 beneath only when a reader needs it.
 **Teach the ergonomic idioms as the idiom**, since they are the recommended forms rather than a
-simplified dialect. **Motivate before mechanism**, opening on a concrete problem rather than the
+simplified dialect. **Show the granularity, not only the constructs**, because a reader who groups every
+operation of an entity into one component collects none of the reuse and reasonably blames CGP for it.
+**Motivate before mechanism**, opening on a concrete problem rather than the
 consumer/provider split. **Introduce vocabulary gradually and by analogy**, deferring "generic",
 "blanket impl", "coherence", and "monomorphization" until needed. **Show rather than reassure**,
 because demonstrating that CGP code looks like plain Rust convinces where "it's not that hard" does

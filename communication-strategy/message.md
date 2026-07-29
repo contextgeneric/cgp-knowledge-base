@@ -149,7 +149,44 @@ not have that idea yet, so introduce the context as "a type standing for this ap
 its choices live" the first time it appears. Two cautions: the choice is a line *you* write rather than one
 CGP infers, and for a dependency with exactly one implementation a plain trait is still right. This
 entry is also the one most likely to draw "I already solved that", so pair it with one of the two
-above when the audience is skeptical.
+above when the audience is skeptical. It also rests on a prior the reader may not share — that having
+two application types is normal — which the next entry supplies.
+
+### Your second application already exists — it is spelled as a feature flag
+
+Underneath the swap above sits a question a reader asks before any other: *why would I want two
+application types at all?* The answer that lands is that they almost certainly already have two, and
+have encoded the second one inside a single type because vanilla Rust gave them nowhere else to put
+it:
+
+```rust
+pub struct App {
+    #[cfg(feature = "postgres")]
+    pub database: Postgres,
+    #[cfg(feature = "sqlite")]
+    pub database: Sqlite,
+
+    pub email: Box<dyn EmailSender>,
+}
+```
+
+A `cfg`-gated field, an `AnyDatabase` enum wrapping two engines, a boxed trait object, a `<Database>`
+parameter on the application struct, a mock assembled behind `cfg(test)` — each one is a decision that
+one implementation was not enough, and each pays for it in a different currency: a combination that
+compiles only under one feature set, a match arm at every access, a vtable, a parameter every `impl`
+block restates whether it uses it or not. Naming the second application as its own type does not add a
+variation; it moves one the reader is already maintaining somewhere the compiler can resolve it.
+
+This entry needs no CGP snippet of its own, and a writer should not invent one: the "after" is the
+`App`/`TestApp` wiring pair in the entry above, which is why the two are best shown together — this one
+supplies the motivation and that one the mechanism.
+
+This is the most useful thing to say to a reader who cannot yet see why anyone would define two
+contexts, and it inverts the usual ask: they are not being asked to invent an abstraction but to name
+something they already have. **Environmental context, self-targeted.** The honest limit, in the same
+breath: a variation that must genuinely be chosen at runtime, from configuration read at startup,
+belongs in an enum or behind `dyn` and stays there — CGP's contexts are fixed at build time, so this
+entry is about the variations that were only ever build-time to begin with.
 
 ### Swap your error type or runtime by changing one line
 
@@ -182,8 +219,16 @@ it an entry with a true story behind it. CGP lets one large capability become a 
 wired components, each with its own providers, so an implementor supplies only what it uses and adding
 a capability is adding a wiring line rather than editing a shared trait. This is the decoupling pitch
 for the **framework author and the evaluator**, resting on the
-[consumer/provider split](../cgp/concepts/consumer-and-provider-traits.md). The honest limit:
-decomposition is a judgment call, and a small, stable trait with one implementation should stay a
+[consumer/provider split](../cgp/concepts/consumer-and-provider-traits.md).
+
+What makes this entry credible rather than aspirational is that the decomposition has a *method*, and
+a piece making the pitch should show it: split the trait along the axis on which the contexts you
+actually want differ, so the methods whose dependencies are shared become components with reusable
+providers while the methods that must differ per context are implemented directly on each. The
+procedure and its costs are in [sizing a component](../cgp/guides/sizing-a-component.md), which also
+carries the diagnostic worth quoting — a trait none of whose providers a second context could reuse
+whole is not paying for its machinery. The honest limit: the split reaches every caller of the old
+trait, so it is a real refactoring, and a small, stable trait with one implementation should stay a
 plain trait.
 
 ### Write a framework over any type's structure — without runtime reflection
@@ -258,7 +303,9 @@ errors among them, still pass through as the compiler wrote them.
 
 Name the dominant [reader profile](readers.md) for the channel first, then pick the problem that
 reader feels most sharply: the rejected overlapping impls for the type-system reader, the orphan-rule
-escape for the trait-heavy developer, the mock-in-tests swap for the pragmatic majority, the error-type
+escape for the trait-heavy developer, the mock-in-tests swap for the pragmatic majority, the
+already-existing-second-application reframe for anyone who cannot see why two contexts would be wanted,
+the error-type
 swap for the systems and ML-module reader, the generic-parameter threading for anyone maintaining a deep
 call graph, the monolith decomposition for the evaluator, the
 structure-generic framework for the tooling author, and the readable-errors story for anyone who has
@@ -309,6 +356,16 @@ the dependencies live in the implementation they never force internal types into
 Do not oversell the verification as effortless: the check is something you write, and its raw output
 is verbose.
 
+The same capability read from the maintenance side is **least privilege on a signature**, and it is worth
+stating separately because it pays with a single context and therefore reaches a reader who has no second
+one yet. A `&self` method on a concrete application struct may read any field and call any other method,
+so nothing short of reading the body says which parts of the application it depends on; a provider's
+declared dependencies are that answer, checked. Say *"the bounds are the list of what this code can reach
+through the application — and the compiler enforces it"*. Keep the qualifier: the claim is about state
+reached through the context, not a sandbox, since any Rust function can still call anything in scope. This is the strongest thing to offer a reader weighing CGP inside one application, and it pairs with
+the finer-grained version in [sizing a component](../cgp/guides/sizing-a-component.md): a component per
+operation means code that should only read can be handed the reader and never the deleter.
+
 **First-class tooling for the errors** is the capability CGP could not honestly claim until recently,
 and it is bound by an unusually load-bearing honesty rule because the reader can `cargo install` and
 check within the hour. Say *"a dedicated checker that leads with the root cause — `cargo cgp check`
@@ -322,6 +379,15 @@ argument looks like a function parameter, a `#[cgp_impl]` provider looks like a 
 consumer trait can be implemented directly with no CGP machinery at all. Say *"a superset of ordinary
 traits — start with one component and leave the rest of your code unchanged"*. Do not claim "no
 boilerplate"; CGP *moves* wiring into one readable place rather than erasing it.
+
+There is a sharper version of this claim worth reaching for with the working developer, because it says
+the reader has *already* accepted CGP's foundation. The construct everything here is built on is the
+blanket impl over a generic type, and the reader uses two of those every week without calling them
+anything: `Itertools` and `StreamExt` are blanket impls over every `Iterator` and every `Stream`, which is
+why a method appears on a type whose author never wrote it. Say *"if you have used `Itertools`, you have
+used the pattern — CGP is that, with more than one implementation allowed"*. The reason this lands is that
+it relocates the unfamiliarity: what is new is not the mechanism but the ability to have several of them
+and choose, which is a much smaller thing to ask someone to accept.
 
 **Abstract types chosen per context** lets generic code name an error type, a scalar, or a runtime
 that each context fills in through the same wiring that selects behavior. Say *"generic code names the
@@ -364,7 +430,12 @@ misfires.
   runtime stop being parameters every layer has to carry."
   ([implicit parameters](../related-work/implicit-parameters.md))
 - **Haskell or type-class reader:** "type classes without the orphan rule, and overlapping instances
-  made legal." ([type classes](../related-work/type-classes.md))
+  made legal." ([type classes](../related-work/type-classes.md)) For one who has felt the friction of
+  composing constrained functions, a second line is available and unusually flattering to Rust: composing
+  two constrained generic functions into a third normally means restating both sets of constraints in the
+  composed signature, in Haskell as much as in Rust, whereas composing two providers is a type alias with
+  no bounds at all — `type ScaledRectangleArea = ScaledAreaCalculator<RectangleAreaCalculator>;` — because
+  the constraints are discharged at the wiring site rather than at the composition.
 - **Spring, Guice, or Dagger reader:** "Dagger, taken further — compile-time-checked injection, with
   per-context choice a single global binding graph can't express."
   ([dependency injection](../related-work/dependency-injection.md))
@@ -441,6 +512,49 @@ concrete pain shown gone on ordinary-looking code, and an explicit statement of 
 CGP. The reader who watches the author decline to apply CGP everywhere believes them about where it
 does belong.
 
+**"I only have one application — what does this actually buy me?"** The question a reader asks in their
+first week with CGP, looking at the single context their new codebase contains, and it is *justified
+rather than a misunderstanding*: with one context the swappability payoff genuinely is invisible,
+because every wiring line has exactly one plausible value and every provider exactly one user. It is
+also the most likely reason a reader who got as far as trying CGP stops. Do not answer it by predicting
+that they will want a second context later, which asks them to spend now for a benefit they cannot
+check, and do not answer it by listing capabilities — the reader is holding a concrete codebase and
+will measure any claim against it.
+
+Answer in three parts, in this order. **Concede that the per-context payoff is not available yet**: with
+one context, wiring is bookkeeping. Then **name the value that does not depend on a second context** —
+overlapping providers Rust rejects outright, which multiply along the *target types* one application
+touches rather than along its contexts; the orphan-rule escape, which needs one context and a type you
+do not own; and dependencies declared on the implementation instead of threaded through every
+intermediate signature, which is worth something in one context and more in each one added. Then
+**point at the second context they already have**, per
+[the entry above](#your-second-application-already-exists--it-is-spelled-as-a-feature-flag): the test
+harness is the cheapest and the one nobody argues about.
+
+Then concede the boundary, because it is real and stating it is what makes the rest believable. A
+codebase with one application, no capability needing more than one implementation, and no foreign type
+to extend is one where CGP's central bargain does not pay — and the right recommendation there is
+[`#[cgp_fn]`](../cgp/reference/macros/cgp_fn.md) alone: a capability written as a plain function, no
+wiring, nothing to reverse, and it keeps working unchanged if a second context ever arrives. A reader
+told that plainly comes back when they hit the second context; a reader who was oversold does not.
+
+**"Won't I end up with a context per configuration?"** The natural worry once the multiple-contexts idea
+lands, and *partly justified*: separating every axis really would multiply, and four independent binary
+choices would mean sixteen types. The answer is that CGP does not ask you to separate an axis you do not
+need separated, and it composes with the patterns that collapse one — a generic parameter on the context
+struct keeps a single type across several database engines, an enum keeps a single type for a choice made
+at runtime, and a context wires its components normally while holding either. What a real application
+lands on is separation for the axis where a wrong combination must be *impossible* — a mock client must
+never reach production — and collapse for the rest. Say it as composition rather than concession: CGP
+decides which axes are worth a type, and the tools the reader already uses handle the ones that are not.
+
+The combination also has a payoff worth naming for a library author, because it turns the answer from
+defensive to positive. An enum that a crate exposes for its supported backends is normally the ceiling on
+what downstream users can have: a new variant means an upstream pull request or a fork. When the
+context-generic code is written against capabilities rather than against the enum, a downstream crate
+defines its own wider enum and its own context and reuses everything, with nothing to petition for. So the
+fused axis stays fused for the people it suits and stops being a bottleneck for the people it does not.
+
 **"Macros are magic — I can't see what they generate."** *Partly justified*: generated code is harder
 to inspect than hand-written code. Replace "magic" with "explicit" and point at the seams — the wiring
 is a table you write and read, the dependencies are declared, the expansion is specified, and
@@ -509,6 +623,14 @@ alternatives a reader actually weighs and concedes each one's home ground first.
   with a single global choice — this is most code. Reach for CGP when the implementations multiply,
   when the choice must differ per context, or when threading a generic through every layer has begun
   to hurt. CGP is a *superset* of this approach, so it is a climb rather than a rejection.
+- **A direct impl on the context.** Prefer implementing the consumer trait straight onto the concrete
+  context when a provider would have exactly one user. This line is finer than the one above and easy to
+  miss: the *capability* may genuinely need several implementations while each individual implementation
+  serves a single context, and two contexts that each have their own single implementation need no
+  providers and no wiring at all. Reach for a named provider when a second context wants the same
+  implementation, or when the implementation should compose with a wrapper;
+  [`#[cgp_impl(Self)]`](../cgp/reference/macros/cgp_impl.md) writes the direct impl while keeping the
+  companion attributes.
 - **An enum.** Prefer it for a small, closed, known set of variants with fixed operations — a match is
   clearer than any machinery. Reach for [extensible variants](../cgp/concepts/extensible-variants.md)
   when the variant set is open or independent modules must each contribute one.

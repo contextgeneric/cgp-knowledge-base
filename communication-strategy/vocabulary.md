@@ -197,6 +197,12 @@ precise, smaller claim forecloses it and survives scrutiny — which, with this 
   mechanism, so "reusable trait implementations" names nothing new. Say **"pluggable"**.
 - Avoid **"just"** in a competitor's description — "just macros", "just another DI framework" are the
   reader's dismissals, not ours, and echoing them concedes the frame.
+- Avoid **coining a new term for a distinction the list above already names.** The recorded lesson is
+  specific: readers said "context-generic programming" obscures more than it conveys, so a second or third
+  coinage costs more attention than it wins, however well it compresses the idea for whoever coined it.
+  When a piece needs to talk about whether a design absorbs variation into one type or separates it across
+  several, the plain phrasings carry it with nothing to look up — **"a type standing for one set of
+  choices"**, **"you already have two applications"**, **"which variations are worth their own type"**.
 - Avoid overstating maturity — **"works on stable Rust today"** is true and worth saying, while
   **"production-proven at scale"** needs evidence the evaluator will notice is missing.
 - Avoid calling CGP's errors **"solved", "fixed",** or **"now as clear as any other Rust error's"**.

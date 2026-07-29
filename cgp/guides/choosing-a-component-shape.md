@@ -127,6 +127,7 @@ The payoff is the last two blocks: `ApiServer` and `Firmware` encode the same `S
 
 ## Related guides
 
+- [Sizing a component](sizing-a-component.md) — the companion decision: how many methods the component carries, once you know what it is about.
 - [Writing providers](writing-providers.md) — the `#[cgp_impl]` header each shape uses, once the shape is chosen.
 - [Declaring a provider's dependencies](declaring-dependencies.md) — why a `Self` bound is an `#[uses]` import while a bound on the target parameter stays an explicit `where` clause.
 - [Organizing wiring with namespaces and prefixes](namespaces-and-prefixes.md) — how to keep a parameter-targeted component's per-type entries from overwhelming a context's table.

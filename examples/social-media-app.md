@@ -183,7 +183,7 @@ impl UserGetter {
 }
 ```
 
-Splitting the traits also makes capability isolation possible: because deleting a post is its own `PostDeleter` component, code that should only read and write posts can be given the getter and updater without ever receiving the destructive `delete_post`. The price is that there are now seven CRUD components plus two content-safety ones to wire, where before there were four.
+Splitting the traits also makes capability isolation possible: because deleting a post is its own `PostDeleter` component, code that should only read and write posts can be given the getter and updater without ever receiving the destructive `delete_post`. The price is that there are now seven CRUD components plus two content-safety ones to wire, where before there were four. This step is the decision [sizing a component](../cgp/guides/sizing-a-component.md) prescribes, and that guide carries the general form of both the payoff and the price.
 
 ## Lifting the filter into a higher-order provider
 
