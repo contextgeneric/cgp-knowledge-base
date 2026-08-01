@@ -209,19 +209,18 @@ as they are written rather than planned into the target.
 directions are different subjects that must be named apart rather than blended.
 - *Using CGP with coding agents* — present as the inlined skill copy, regenerated from `cgp-skills`
   rather than edited. This is a **capability**: what CGP offers a reader who works with an assistant.
-- *How AI is used in this project* — **new**. The disclosure page: the four levels from agent-written
-  documentation through revised drafts and non-imported code to the hand-written core library, and the
-  destination every AI-assisted page's provenance note links to. This is a **fact about the project**,
-  and it is the answer a reader wants before they trust the rest of the site. Specified in
+- *AI disclaimer* — present. The disclosure page: the four levels from agent-written documentation
+  through revised drafts and non-imported code to the hand-written core library, and the destination
+  every AI-assisted page's provenance note links to. This is a **fact about the project**, and it is the
+  answer a reader wants before they trust the rest of the site. Specified in
   [ai-disclosure.md](../communication-strategy/ai-disclosure.md) rather than in a writing guide, since
-  it is one project-meta page rather than a kind the site will publish repeatedly.
+  it is one project-meta page rather than a kind the site will publish repeatedly, and recorded in
+  [site-structure.md](site-structure.md).
 
-The section's directory is currently `docs/ai/`, and the name is worth settling when the page lands: an
-unmerged branch renames it to `docs/ai-assisted-development/`, which describes the disclosure half well
-and the skill half poorly. Whatever it becomes, a reader scanning the navigation should be able to tell
-that one page is about using CGP and the other is about building it. The alternative placement — the
-disclosure page under **Project** beside Contribute — is defensible and was not chosen, because a reader
-looking for provenance looks under AI first.
+The section stays at `docs/ai/`, labelled "AI Assisted Development", which reads correctly for both
+pages; the unmerged rename to `docs/ai-assisted-development/` would move both URLs to no benefit. The
+alternative placement — the disclosure page under **Project** beside Contribute — is defensible and was
+not chosen, because a reader looking for provenance looks under AI first.
 
 ## Navigation and sidebar order
 

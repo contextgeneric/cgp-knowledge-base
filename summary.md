@@ -666,7 +666,7 @@ it stale.
   disclosure page — which of them the release waits for, and the ordering; deleted when empty.
 - [website/site-structure.md](website/site-structure.md) — the site's build, navigation, announcement
   bar, deployment, and release-branch workflow, plus one entry each for the front page, Introduction,
-  Overview, Resources, Contribute, and the AI skills page.
+  Overview, Resources, Contribute, the AI skills page, and the AI disclaimer.
 
 ### `website/writing-guides/` — how new pages should be written
 

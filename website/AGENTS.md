@@ -24,6 +24,16 @@ the public page it describes, so an agent starting from a page always reaches th
 The practical consequence is that **the internal document is the only place a page's provenance can be
 recorded**, which is why creating a page without creating its document leaves that provenance nowhere.
 
+**One page is a sanctioned exception, and only one.** The
+[AI disclaimer page](https://contextgeneric.dev/docs/ai/disclaimer) links to the knowledge base
+repository, because the base is the subject it is disclosing: its argument is that CGP's documentation
+is written against a public record whose rules and history a reader can go and check, and that argument
+cannot be made while hiding the record. Neither reason behind the one-way rule applies there — the link
+is a public GitHub URL that resolves for everyone, and exposing the material is the point rather than
+an accident. The exception is to the repository as a whole, not to individual documents: that page links
+the base's front door, never a path into a particular file, because a reader following a deep link lands
+in prose written for agents with no idea what they are reading. No other page may link here.
+
 Two mechanics follow from the base's [link conventions](../AGENTS.md#writing-links). A link to a
 published page is its live URL under `https://contextgeneric.dev`, since that is where a reader meets
 it. A link to a page's *source file* is a GitHub URL on `main` in the

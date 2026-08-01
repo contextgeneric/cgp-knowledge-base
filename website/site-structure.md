@@ -357,18 +357,73 @@ Never edit this page directly to fix the skill. It is a copy: correct the skill 
 then re-inline the result. Editing the copy alone creates a fourth version of the truth and guarantees
 the three views diverge further.
 
-### The section gains a second page, on a different subject
+## AI disclaimer
 
-The AI section is about to hold two pages that point in opposite directions, and keeping them legibly
-apart is the design problem. The skill page is a **capability** — what CGP offers a reader who works with
-a coding assistant. The planned disclosure page is a **fact about the project** — how AI is used in
-building CGP, at four levels from agent-written documentation to a hand-written core library. It is
-specified in [ai-disclosure.md](../communication-strategy/ai-disclosure.md) and is task A1 in
-[tasks.md](tasks.md), and it becomes the destination that every new AI-assisted page's provenance note
-links to.
+- **URL** — <https://contextgeneric.dev/docs/ai/disclaimer>
+- **Source** — [docs/ai/disclaimer.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/docs/ai/disclaimer.md)
+- **Status** — Current
+- **How it was made** — written by an agent from
+  [ai-disclosure.md](../communication-strategy/ai-disclosure.md), which specifies it; level one of the
+  four it describes
 
-The directory name is an open item that should be settled with that page rather than after it, because
-it sits in both pages' URLs. It is `docs/ai/` today; the unmerged `rustlab-presentation` branch renames it
-to `docs/ai-assisted-development/`, which describes the disclosure page well and the skill page poorly.
-Whatever it becomes, a reader scanning the sidebar should be able to tell which page is about using CGP
-and which is about building it.
+### What it covers
+
+The page states how much of each part of CGP is written by AI and why the amount varies. It opens on
+the principle rather than the list, since four levels without one read as four excuses: two questions
+decide how much an agent writes — whether the artifact becomes part of a user's program, and whether it
+can be checked cheaply against something already true — and they point the same way, so the closer
+something sits to code a user compiles, the more of it is hand-written.
+
+Four sections then run from most AI to least. **Documentation and reference pages** is the longest,
+because it is the only level whose trustworthiness rests on a process rather than on a person: it
+describes the knowledge base, the rule that source outranks every document, claims being read out of
+code and tests and expansion snapshots rather than recalled, documentation changing with the behavior it
+describes, and the per-commit model trailers that make the whole thing checkable. **Blog posts and
+tutorials** inverts the order — the author drafts, an agent revises. **Tooling and tests** covers
+`cargo-cgp` and the test suite under one rule, that neither becomes part of a user's program.
+**The CGP library** states that the design is entirely the author's and separates that from macro
+implementation work he directs and shares. Each level ends on its own honest limit. A short
+**Responsibility** section carries the page's single sentence in the author's own voice, and
+**How pages are marked** explains the provenance notes and why older pages do not carry them.
+
+### How it relates to the knowledge base
+
+It is written from [ai-disclosure.md](../communication-strategy/ai-disclosure.md), which owns the
+policy, the wording rules, the two claims easiest to get wrong, and the page's specification. Its
+review claim is taken from the [authorship rule](AGENTS.md#who-drafts-a-page-and-who-reads-it-before-it-publishes)
+rather than paraphrased, because on this page a wrong version of it is a false public claim about the
+project. The disposition behind the page is recorded in
+[author-personality.md](../communication-strategy/author-personality.md), and the linking mechanics in
+[AGENTS.md](AGENTS.md#disclosing-ai-use-on-a-page).
+
+**This is the one page permitted to link into the knowledge base**, for the reason given in
+[AGENTS.md](AGENTS.md#the-one-way-link-rule): the base is the subject it discloses, and the argument
+cannot be made while hiding the record. It links the repository's front door and never a path inside it.
+
+### Maintaining it
+
+The page describes a working arrangement, so it is wrong the moment the arrangement changes and nobody
+notices — which makes it the page most at risk of quietly becoming false while reading perfectly well.
+Revisit it when the review policy changes, when a part of the project starts or stops being
+agent-written, and when a level's honest limit stops being honest.
+
+Two things must not be smoothed. **The review claim is deliberately not uniform** and says so; flattening
+it into "everything is reviewed" is the single most damaging edit available here. And **the library
+section separates the design from the implementation** because the `cgp` repository's commit trailers
+make a blunter claim disprovable in a minute.
+
+Its seven section headings are link targets for every page that carries a provenance note, and the
+anchors are generated from the heading text — `#documentation-and-reference-pages`,
+`#blog-posts-and-tutorials`, `#tooling-and-tests`, `#the-cgp-library`, and the rest. Rewording a heading
+breaks every inbound link, and `onBrokenLinks` is set to `throw`, so the build will catch it. Note also
+that this site's MDX setup rejects the `{#custom-id}` heading syntax, so explicit anchor ids are not an
+option here.
+
+### The section holds two pages pointing in opposite directions
+
+Keeping them legibly apart is the section's design problem. The skill page is a **capability** — what
+CGP offers a reader who works with a coding assistant. The disclaimer page is a **fact about the
+project**. The category is labelled "AI Assisted Development", which covers both adequately, and the
+directory stays `docs/ai/`; the unmerged `rustlab-presentation` branch renames the directory to
+`docs/ai-assisted-development/`, which would move both pages' URLs and is not worth doing for a label
+that already reads correctly in the sidebar.

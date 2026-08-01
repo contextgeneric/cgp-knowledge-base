@@ -379,26 +379,15 @@ somewhere to be tracked.
 
 ## A — The AI disclosure
 
-- **A1 — the disclosure page.** One page describing how AI is used across the project, at the four
-  levels the policy sets out: agent-written documentation from a public knowledge base, agent revision
-  of the author's own drafts, agent-written code users never import, and a core library that is
-  hand-designed and hand-written. It is release-blocking, because from the moment it exists every new
-  page's provenance note points at it and the relaunch is where most of those pages appear. *Lands in:*
-  the AI section, `docs/ai/` or whatever that directory is renamed to — see
-  [information-architecture.md](information-architecture.md#the-target-page-inventory). *Spec:*
-  [ai-disclosure.md](../communication-strategy/ai-disclosure.md), which fixes the page's job, its
-  ordering, its voice, and what must not appear on it. *Blocked by:* nothing, and worth writing
-  **early**, since every page added after it owes a provenance note and has nowhere to point until it
-  exists. *Done when:* the page stands alone, each level names its own honest limit, the review claim
-  matches the
+- **A1 — the disclosure page.** Written and building at `docs/ai/disclaimer.md` on the release branch,
+  and recorded in [site-structure.md](site-structure.md). What remains is **the author's read**, which
+  is the task's real gate rather than a formality: this is the one page where a wrong sentence is a
+  false public claim about the project rather than about CGP. Two things to check in particular — that
+  the review claim still matches the
   [authorship rule](AGENTS.md#who-drafts-a-page-and-who-reads-it-before-it-publishes) rather than
-  flattening it, and the author has read it — this is a surface where a wrong sentence is a false claim
-  about the project rather than about CGP.
-- **A2 — settle the AI section's name and shape.** The section currently holds one page, the inlined
-  skill, and is about to hold a second that is a different subject — what CGP offers an agent user
-  versus how the project was built. An unmerged branch renames the directory to
-  `docs/ai-assisted-development/`, which fits the second page and not the first. Decide the naming with
-  A1 rather than after it, since the directory name is in the URL of both pages. *Blocked by:* nothing.
+  flattening it, and that the library section still separates the design from the macro implementation,
+  since the `cgp` commit trailers make the blunter version disprovable. *Spec:*
+  [ai-disclosure.md](../communication-strategy/ai-disclosure.md).
 
 Disclosure for the **other repositories** — `cargo-cgp` above all, whose source sits wholly at level
 three — is deliberately out of scope here and happens after the redesign is published. Do not add notes
@@ -455,7 +444,7 @@ the [ordering](#the-ordering) for what to start on.
 | V1 | the v0.8.0 release, and every release-blocking task | completes C2 and C3; unblocks B1 and B2 |
 | O1 | nothing | O2, and the Introduction narrowing (soft) |
 | O2 | O1 | F1's first call to action (soft) |
-| A1, A2 | nothing | every page-adding task's provenance note (A1) |
+| A1 | the author's read | every page-adding task's provenance note |
 | X1, X2 | nothing | nothing |
 
 Four shapes in that graph are worth naming, because they are what make the ordering non-obvious. The
@@ -471,9 +460,9 @@ interrupt**: nothing publishes until it lands, so a task deferred is a release d
 **First, the corrections (C1–C8), in a single pass on the branch.** They cost minutes each and they stop
 every later task inheriting known-wrong copy.
 
-**Then A1 and A2, early.** The disclosure page is small and it is what every subsequent page's provenance
-note links to, so writing it first means no page is added with a dangling obligation — and settling the
-AI section's name at the same time avoids moving two URLs later.
+**A1 is drafted already**, which matters for the ordering rather than merely for the tally: it is what
+every subsequent page's provenance note links to, so no page added from here carries a dangling
+obligation. Its remaining step is the author's read.
 
 **Then R4, R3, and R1.** This is the change most worth noticing in the ordering: because the release
 waits for the reference, the reference's *prerequisites* are the real critical path, and all three are
