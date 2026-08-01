@@ -202,6 +202,11 @@ authorship or to anything added since.
 **Record which level applies in the page's internal document**, since that is where the site's provenance
 is already kept and the fact will not be recoverable from the page later.
 
+**A scaffolded stub carries no note; it gets one when it is written.** A placeholder that already tells
+the reader it is unwritten has disclosed the only thing about it worth disclosing, and stacking a
+provenance note under a "not written yet" admonition tells them nothing further. The note is part of
+filling the page in, not part of creating the placeholder.
+
 **This is the website only, for now.** Other repositories get their disclosure after the redesign is
 published, as separate work; do not add notes to another project's README or documentation in the
 meantime.

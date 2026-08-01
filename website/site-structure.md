@@ -357,6 +357,95 @@ Never edit this page directly to fix the skill. It is a copy: correct the skill 
 then re-inline the result. Editing the copy alone creates a fourth version of the truth and guarantees
 the three views diverge further.
 
+## Reference
+
+- **URL** — <https://contextgeneric.dev/docs/reference/>
+- **Source** — [docs/reference/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/reference)
+- **Status** — Draft: the index and three pages are written, the remaining pages are stubs
+- **How it was made** — ported by an agent from [cgp/reference/](../cgp/reference/README.md); level one
+  of the four in [ai-disclosure.md](../communication-strategy/ai-disclosure.md)
+
+### What it covers
+
+The reference is the site's largest surface and is [canonical](writing-guides/reference.md) rather than
+a supplement to docs.rs. It is a new top-level category at `docs/reference/`, position 5, with a
+hand-written index as its category link and seven subdirectories mirroring what a construct *is* —
+`macros/`, `attributes/`, `derives/`, `components/`, `providers/`, `traits/`, `types/` — each with a
+`generated-index` category page. A separate `errors.md` covers post-expansion compile errors.
+
+**Every page is scaffolded and the construct list is complete**, which matters more than it sounds: the
+completeness obligation is against the index rather than against the prose, so no construct is missing
+from the site even while most pages are placeholders. Each stub carries its one-line description and an
+admonition saying it is unwritten. Three pages are written in full —
+[`#[cgp_component]`](https://contextgeneric.dev/docs/reference/macros/cgp_component),
+[`#[cgp_impl]`](https://contextgeneric.dev/docs/reference/macros/cgp_impl), and
+[`delegate_components!`](https://contextgeneric.dev/docs/reference/macros/delegate_components) — and
+they are the model the rest are ported against.
+
+### How it relates to the knowledge base
+
+Each public page is derived from the internal document of the same name under
+[cgp/reference/](../cgp/reference/README.md), which stays the source of truth; the porting procedure and
+the six-section layered descent are in
+[writing-guides/reference.md](writing-guides/reference.md). The file names match the internal ones, so
+the mapping is one to one and most relative links between pages port unchanged. Four
+[consolidations](writing-guides/reference.md#granularity-close-to-one-page-per-construct) take 85
+internal documents to 75 public pages: `cgp_provider.md` covers `#[cgp_new_provider]` too,
+`derive_cgp_data.md` covers `CgpRecord` and `CgpVariant`, `use_field.md` covers `UseFieldRef` and
+`UseFields`, and `type_level_spines.md` covers `Cons`/`Nil`, `Either`/`Void`, `Chars`, and `PathCons`.
+Two internal targets have no public counterpart by design: the [guides](../cgp/guides/README.md) are
+folded into each page's *When to reach for it* section, and implementation documents are replaced by
+GitHub source links.
+
+The three written pages also draw on the guides directly —
+[writing providers](../cgp/guides/writing-providers.md) and
+[sizing a component](../cgp/guides/sizing-a-component.md) supply most of two *When to reach for it*
+sections — and the shared running example is the `Rectangle` area calculation from
+[area calculation](../examples/area-calculation.md). **Value context, self-targeted**, which is the
+least representative of CGP's three shapes and is used here because a reference page illustrates a
+construct rather than teaching a design.
+
+### Conventions the port must follow
+
+Four mechanics are settled and a later page should copy rather than rediscover them.
+
+**Anchors come from heading text**, because this site's MDX setup rejects the `{#custom-id}` syntax —
+it parses the braces as an expression and fails the build. Section headings are therefore link targets
+and cannot be reworded freely.
+
+**One shared provenance note** closes every page, in the wording the three written pages use, linking
+[the disclaimer](AGENTS.md#disclosing-ai-use-on-a-page)'s documentation section.
+
+**The formal grammar lives in a collapsed `<details>`** labelled "Formal grammar", so a beginner never
+meets EBNF by accident, and it cites the Rust Reference's notation page.
+
+**Snippets are compiled, not eyeballed.** The three written pages' examples were checked against `cgp`
+`0.8.0-alpha` with a `check_components!` assertion per wired context, which is what confirms wiring
+resolves rather than merely parses.
+
+**Expansions are checked with `cargo cgp expand`, not copied from the internal document.** The internal
+reference may itself have drifted, so the *Under the hood* section is verified against what the macros
+actually emit — for the three written pages, `expand --lib --item` on each of the consumer trait, the
+provider trait, the wired context, and the provider. This is the draft check most easily skipped and
+the section most likely to be wrong without it.
+
+**Sidebar labels carry no backticks.** A `sidebar_label` is plain text rather than Markdown, so
+`` `#[cgp_impl]` `` renders with its backticks visible in the navigation. Write `#[cgp_impl]` in the
+label and keep the backticks in the page's `#` heading, where they render.
+
+### Maintaining it
+
+The reference is bound to the internal documents by the
+[synchronization rule](../AGENTS.md#the-synchronization-rule) in both directions: a change to a macro
+updates the code, the internal document, and the public page. A public page that disagrees with its
+internal document is a defect in the public page.
+
+One ordering wrinkle is outstanding rather than settled. The category sits at position 5, which puts it
+after the AI section at position 4, whereas
+[information-architecture.md](information-architecture.md#navigation-and-sidebar-order) wants Reference
+directly after Tutorials with AI near the end. Renumbering the existing sections belongs to the
+orientation and front-page work rather than to the port, so it is left alone here.
+
 ## AI disclaimer
 
 - **URL** — <https://contextgeneric.dev/docs/ai/disclaimer>

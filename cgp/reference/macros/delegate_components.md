@@ -40,7 +40,7 @@ delegate_components! {
 
 A leading `<...>` generic list on the target makes the whole table generic, so the same wiring can apply across a family of context types — for example `delegate_components! { <T> MyContext<T> { ... } }` wires every `MyContext<T>` at once.
 
-The recommended way to dispatch a component on its generic parameter is the `open` statement, which folds the per-value entries directly into the context's own table. A leading `open AreaCalculatorComponent;` header opens one or more components for per-key wiring, after which a `@`-path entry such as `@AreaCalculatorComponent.Rectangle: RectangleArea` assigns a provider to a single value of that component's dispatch parameter. The braces are optional when opening a single component, so `open AreaCalculatorComponent;` is equivalent to `open { AreaCalculatorComponent };`; the braced list is only required to open several components at once:
+The recommended way to dispatch a component on its generic parameter is the `open` statement, which folds the per-value entries directly into the context's own table. A leading `open AreaCalculatorComponent;` header opens one or more components for per-key wiring, after which a `@`-path entry such as `@AreaCalculatorComponent.Rectangle: RectangleArea` assigns a provider to a single value of that component's dispatch parameter. The header **must lead the block**, before any `Mapping`, as the `TableBody` production below requires — a statement written after a mapping is a parse error rather than a wiring error, so the message points at the syntax rather than at the intent. The braces are optional when opening a single component, so `open AreaCalculatorComponent;` is equivalent to `open { AreaCalculatorComponent };`; the braced list is only required to open several components at once:
 
 ```rust
 delegate_components! {
@@ -246,6 +246,16 @@ delegate_components! {
     }
 }
 ```
+
+## Known issues
+
+Three failure modes recur, and none of them reports itself as a wiring problem.
+
+**Wiring is lazy, so a wrong table still compiles.** A missing entry, or an entry naming a provider whose own dependencies are unmet, produces no error at the `delegate_components!` site — the failure surfaces wherever the capability is finally used, as an `E0277`/`E0599` cascade over generated types. This is the [hidden unsatisfied-dependency class](../../errors/hidden/unsatisfied-dependency.md), and the answer is to pair the table with [`check_components!`](check_components.md) so the failure is forced to the wiring site, and to read it through [`cargo cgp check`](../cargo-cgp.md), which un-hides the suppressed cause.
+
+**A value naming a provider struct that was never declared** reports as an unresolved type rather than as anything about wiring. The usual cause is a provider written with [`#[cgp_impl]`](cgp_impl.md) *without* the `new` keyword and never declared separately, since the bare form implements the provider trait for a struct the author is expected to have written.
+
+**A statement placed after a mapping fails to parse**, per the ordering constraint in Syntax above. Because the error is a parse error, it names the token rather than the statement, and it does not say that the statement was merely in the wrong position.
 
 ## Related constructs
 
