@@ -80,6 +80,24 @@ the section's fixed vocabulary from [../AGENTS.md](../AGENTS.md).
   mid-argument, covers one feature of several, and teaches an attribute name that changed twice
   during development. Begun as the v0.7.1 announcement before the release was renumbered.
 
+## Drafts that live on branches
+
+Not every unpublished post is on the branch its release is being written on, and a post that exists
+only on a feature branch is invisible to anyone reading `main` — which is how one of them went
+unrecorded here for months. **A draft substantial enough to be worth finishing gets a document here as
+soon as it exists**, with its branch named, so that the catalog is the inventory of CGP's writing
+rather than of its published writing.
+
+- [Using an incoherent, dictionary-passing style Rust today](incoherent-rust-today.md) — on the
+  `incoherent-rust` branch, dated 2026-03-30, *draft*. Roughly 12,800 words reading CGP against the
+  dictionary-passing, incoherent-traits, and context-and-capabilities discussion, and arguing that CGP
+  is a working implementation strategy for a fragment of it on stable Rust today. The only post aimed
+  at the language-design reader, and the only one whose value decays with time.
+
+Two further branches carry material rather than posts and are recorded in
+[site-structure.md](../site-structure.md): the notes an earlier drafting effort left under `notes/`,
+and the slide assets for the RustLab transcript.
+
 ## Reading the drift at a glance
 
 Five breaking changes account for most of the staleness across the catalog, and knowing which post

@@ -25,6 +25,17 @@ generic marketing advice reliably produces the second, which is why
 [author-personality.md](author-personality.md) sits at the head of the section and governs everything
 below it.
 
+## What this section is not
+
+Two things sit deliberately outside its scope, and knowing which they are stops an agent filling a gap
+that is not one. **Distribution is managed elsewhere** — what ships on which day, to which channel,
+and what came of it are not planned or logged here, so this section carries the standing conclusions
+about what earns attention and never a campaign. And **specific public discussion of CGP is distilled
+rather than cited**, because [this repository is public](../AGENTS.md#this-repository-is-public):
+[evidence.md](evidence.md) records which objections recur and which framings misfire, and never the
+thread or the reader who raised one. Citations to published work that is not itself a reaction to CGP
+are unaffected, and remain how an audience claim is grounded.
+
 ## Two decisions that shape everything here
 
 **CGP speaks in a layered voice.** The website — homepage, docs, tutorials — speaks as the project:

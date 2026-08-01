@@ -51,6 +51,12 @@ consistently.
   a wall of generated types. Prefer the framing **readable, root-cause-first, dramatically better and
   actively improving**, and always concede in the same breath that it is a **v0.1.0-alpha** reshaping
   the core wiring errors but not yet every class.
+- **The CGP agent skill** — the published skill that teaches a coding assistant to read and write CGP.
+  Call it "CGP's agent skill" and describe what it does in those exact terms: it teaches an agent the
+  vocabulary, not the reader. Introduce it only where a cost is being discussed, per
+  [message.md](message.md#the-one-mitigation-that-spans-three-of-these), and say what it reduces —
+  wiring volume, error decoding, the vocabulary a newcomer has to hold — rather than that it makes CGP
+  easy.
 
 ## Qualifying a context and a target
 
@@ -208,6 +214,13 @@ precise, smaller claim forecloses it and survives scrutiny — which, with this 
 - Avoid calling CGP's errors **"solved", "fixed",** or **"now as clear as any other Rust error's"**.
   Say a dedicated checker **"leads with the root cause"** for the classes it recognizes, and concede
   the **v0.1.0-alpha**.
+- Avoid **"AI-native", "AI-first", "built for the age of AI"**, and any framing that makes agent
+  support part of what CGP *is*. CGP is a language extension whose costs happen to be mechanical; that
+  is a fact about the costs, not an identity, and a reader who meets the identity version files the
+  project under trend-chasing and stops. Say **"CGP publishes an agent skill, and the wiring and the
+  diagnostics are the parts an assistant handles well"**, and say it beside the cost rather than in a
+  hook. Avoid too the implied promise that **"an agent writes the wiring for you"** — the wiring is
+  still code somebody reviews.
 
 Sentence-level habits to avoid — adjective inflation, hedge stacking, corporate "we", invented
 evidence — are a separate list and live in [voice-and-register.md](voice-and-register.md), because

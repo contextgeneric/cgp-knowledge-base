@@ -83,10 +83,10 @@ record drift — live in [AGENTS.md](AGENTS.md).
 - [redesign-queue.md](redesign-queue.md) — the consolidated list of what is wrong with or missing from
   the site today, grouped by cost, with a pointer to the document that owns each item. Emptied as work
   lands, and deleted when empty.
-- [tasks.md](tasks.md) — the redesign's *plan*, where the queue is its *diagnosis*: every remaining
-  task with the repository it lands in, its dependencies, and its done-condition, plus the dependency
-  graph, the recommended ordering, and the decisions that must be settled before certain tasks can
-  start. Emptied as work lands, and deleted when empty.
+- [tasks.md](tasks.md) — the redesign's *plan*, where the queue is its *diagnosis*: that the whole site
+  relaunches with the v0.8.0 release from a single branch, every remaining task with the repository it
+  lands in, its dependencies, and its done-condition, which of them the release waits for, and the
+  recommended ordering. Emptied as work lands, and deleted when empty.
 - [writing-guides/](writing-guides/README.md) — one guide per *kind* of page, saying what that page is
   for, what goes on it in what order, and what must never appear. Prescriptive and forward-looking:
   these describe how pages should be rewritten, not how the current ones happen to read. Currently the
@@ -98,9 +98,10 @@ record drift — live in [AGENTS.md](AGENTS.md).
 - [site-structure.md](site-structure.md) — the site's configuration, navigation, deployment, and
   front page, plus one entry per standalone page: the Introduction, the Overview, Resources,
   Contribute, and the AI skills page.
-- [blog/](blog/README.md) — one internal document per published blog post, each recording what the
-  post covers, which knowledge-base documents own its material, and how its code and claims diverge
-  from CGP v0.8.0. The index carries the chronological catalog and a drift summary.
+- [blog/](blog/README.md) — one internal document per blog post, each recording what the post covers,
+  which knowledge-base documents own its material, and how its code and claims diverge from CGP v0.8.0.
+  The index carries the chronological catalog and a drift summary, and it covers substantial **drafts**
+  as well as published posts, including one that lives on a branch rather than on `main`.
 - [tutorials/](tutorials/README.md) — one internal document per tutorial series, recording the
   series' objective, the concepts it introduces in order, the prerequisites it assumes, and the level
   of explanation it pitches at, so a revision keeps the same teaching contract.

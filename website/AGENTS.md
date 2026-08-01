@@ -120,6 +120,48 @@ rewritten.
 Pages under `docs/` are the opposite case: they describe CGP as it is now, carry no date, and are
 covered by document-the-present in full. Correct them in place, without a changelog note.
 
+## The redesign lands on a release branch, all at once
+
+**The site redesign is not published incrementally. It is written on the `v0.8.0` branch of the website
+repository and goes live when that branch merges, together with the v0.8.0 release.** Two rules follow
+and both are absolute while the campaign runs.
+
+**Never commit redesign work to `main`.** The site deploys to GitHub Pages from `main` on every push,
+so a page landed there publishes immediately — which would put a half-rebuilt site in front of readers
+and spend the release's attention on it. The branch is also how previous releases were staged, so this
+is the project's existing habit rather than a new one.
+
+**Write every page as though v0.8.0 has already shipped.** Version pins name `0.8.0`, prose describes
+the library as it is on that branch, and nothing hedges about an unreleased version or an alpha. The
+whole site becomes true on the day the branch merges, which is what makes the two events one event. The
+`0.8.0-alpha` pre-release the ecosystem repositories currently track is a fact about today rather than
+about the site being written.
+
+The corollary is that a correction which should reach readers *before* the release — something on the
+live site that is actively wrong — is the one kind of change that goes to `main` as well, and is then
+carried onto the branch. Raise it rather than deciding alone, since it costs a deploy of the current
+site.
+
+## Who drafts a page, and who reads it before it publishes
+
+Agents draft the pages; the author reads the surfaces where voice and framing decide the outcome. That
+split is a decision rather than a default, and it exists because this section's whole apparatus is
+built to prevent [voiceless machine prose](../communication-strategy/README.md) and the redesign is
+roughly a hundred pages of it.
+
+**The author reads, in full, before publication:** the front page, the four *Understanding CGP* pages,
+the reference index, and every blog post. These carry the voice, make the argument, and are what a
+first-contact reader meets, so an off-voice paragraph in one of them costs more than a wrong sentence
+anywhere else.
+
+**Everything else ships on the guides plus a spot check.** The construct reference is the bulk of the
+work and the lowest risk: it is a mechanical port from internal documents that are already written and
+verified, into the project voice, against a fixed six-section template. Draft it, check it against its
+guide's five draft checks, and sample rather than read it end to end. Where a ported page turns out to
+need a judgement call rather than a transformation — a *When to reach for it* section with no internal
+guide behind it, a *Gotchas* entry that reads as a warning about the library — flag it for reading
+rather than deciding alone.
+
 ## The document template
 
 Every document in this section follows one shape, so an agent can find the same fact in the same place

@@ -217,6 +217,15 @@ misreadings it prevents are in
 [vocabulary.md](../../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target); the
 underlying account is the [modularity hierarchy](../../cgp/concepts/modularity-hierarchy.md).
 
+**This is also why the applied tutorial comes second in the section rather than last.** A reader's first
+two contacts with CGP — the front page's hero block and Hello World — both wire a value context, which is
+deliberate in each case and leaves the site having taught only the least representative shape. The applied
+tutorial is naturally environmental, so placing it directly after Hello World is what gets the common
+shape in front of a reader before their habits form; the alternative, reaching it after three parts of
+area calculation, means most readers never do. The ordering is fixed in
+[information-architecture.md](../information-architecture.md#the-target-page-inventory) and the trade it
+pays for is stated in the [homepage guide](homepage.md#which-shape-it-is-and-why-that-matters-here).
+
 ## Errors, checking, and the tooling
 
 **Every tutorial that wires a context must teach that wiring is lazy, and must show the reader what a
@@ -285,8 +294,9 @@ that motivates the consumer/provider split, and it calls providers explicitly be
 Three gaps are worth writing down as the section's work queue. There is **no tutorial on checking and
 debugging**, which is the highest-value addition and the natural next part of the area-calculation family.
 There is **no tutorial in the applied register**, so the reader who evaluates by seeing a realistic system
-has nowhere to go on the site. And **no tutorial mentions `cargo-cgp`**, despite it being the project's
-direct answer to the obstacle most cited by readers who walked away.
+has nowhere to go on the site — and, per the ordering above, no reader meets an application context
+either. And **no tutorial mentions `cargo-cgp`**, despite it being the project's direct answer to the
+obstacle most cited by readers who walked away.
 
 ## Checking a draft
 

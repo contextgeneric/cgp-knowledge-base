@@ -222,6 +222,15 @@ every redesign. It buys the two things nothing else buys in twenty lines: the be
 nothing but the annotations, and the failure is a real `E0119` the reader recognizes. It costs
 representativeness, and it costs two transitions that the essay below must then carry.
 
+**The site pays that cost back by teaching the application shape second.** Because the hero is a value
+context and so is the Hello World tutorial, a reader's first two contacts both show the shape least CGP
+code is in — so the surfaces immediately downstream are where the common shape has to arrive. On the
+explanation path that is essay section 2 and the sixth movement of
+[*Why CGP exists*](explanation.md#why-cgp-exists); on the teaching path it is the applied tutorial,
+which is placed second in the tutorial order for this reason and is naturally environmental. Keeping
+the hero as it is depends on those two doing their job, so a change to either is a change to this
+trade.
+
 **Do not use the word "context" anywhere in the hero.** At the retrofit shape the context and the target
 are the same type, so calling `String` a context — while true — contradicts the gloss every other page
 gives, and a reader who meets that contradiction concludes they have misunderstood something. "Each type
@@ -329,6 +338,18 @@ classes it recognizes, and that tool is an early pre-release. This section is th
 element on the page, and the register to write it in is the author's own: state the cost as part of
 describing the thing accurately, not as a hedge appended to a pitch.
 
+This is also **the only place on the page where agent support may be mentioned**, and one clause is the
+budget. Three of the costs just named — the learning curve, the diagnostics, and the volume of wiring —
+are mechanical work over a written-down vocabulary, and CGP publishes an agent skill that reduces all
+three for a reader who works with an assistant. Say it as a smaller cost rather than a solved one, in
+the same breath as the cost itself, and link the skill rather than elaborating. It must not appear in
+the hero, the reassurance line, the capability beats, or a feature title: a landing page that leads on
+AI in 2026 is read as chasing attention by exactly the audience this page is written for. The full
+rule is in
+[message.md](../../communication-strategy/message.md#the-one-mitigation-that-spans-three-of-these) and
+the wording to avoid in
+[vocabulary.md](../../communication-strategy/vocabulary.md#words-and-framings-to-avoid).
+
 **6. Where to start.** The routing section, and the only place on the page with more than two links.
 Match the destination to the reader per the conversion ladder in
 [formats.md](../../communication-strategy/formats.md): the first tutorial for someone ready to try, the
@@ -418,6 +439,13 @@ show the rejected impl, so the reader never sees what Rust refuses, and it elide
 line carries no weight. The **problem cards are generic** ("No More Monolithic Traits", "Decouple
 Dependencies") and are not anchored to anything the reader has seen. And there is **no cost section at
 all**, which on a page for this audience is the most consequential omission of the six.
+
+One further defect is a factual error rather than a framing one, and it outranks all six: **the code
+example does not compile.** It writes `#[cgp_impl(HashWithDisplay)]` without the `new` keyword and never
+declares `struct HashWithDisplay;`, so it wires a provider that does not exist. This is the most-seen
+CGP code the project publishes, which is the worst possible place for it. The replacement block above is
+correct, and the rule that follows is in [Replacing it](#replacing-it): compile the hero snippet, never
+eyeball it.
 
 Two smaller notes. The closing "Ready to Get Started?" block is template filler and should become the
 routing section described above. And the feature illustrations under `static/img/features/` are

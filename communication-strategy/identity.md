@@ -159,10 +159,15 @@ capabilities — which means above all that a **title must not lead with a word 
 The five below are the set, ordered most-important first.
 
 - **One Interface, Many Implementations** — *"Write many interchangeable implementations of the same
-  interface and choose between them per context, with the overlapping and orphan implementations
+  interface and choose between them per application, with the overlapping and orphan implementations
   Rust normally forbids made safe because every choice is explicit and local."* This is CGP's core
   identity, naming the capability directly and grounding the
-  [coherence](../cgp/concepts/coherence.md) advantage.
+  [coherence](../cgp/concepts/coherence.md) advantage. It says **per application** rather than per
+  context because a front page is first contact and "context" is the term that most reliably loses a
+  reader who has not met it, per
+  [vocabulary.md](vocabulary.md#qualifying-a-context-and-a-target); the substitution costs a little
+  precision, since a context need not be a whole application, and buys a sentence a cold reader can
+  parse without a definition.
 - **Zero-Cost Abstraction** — *"Everything is resolved at compile time and compiles down to direct
   calls, so the flexibility costs nothing at runtime and unused providers never reach the binary."*
   The strongest broad reassurance for a Rust audience that
@@ -210,28 +215,19 @@ of which costs more attention than it wins. Use the **recognized Rust terms** �
 breath: "at compile time", "in safe Rust", "still ordinary Rust". The qualifier is what turns a claim
 the reader would discount into one they believe.
 
-One further question about the set is left open rather than decided here, and it concerns
-**"Abstract Over Every Dependency"**. Its sentence pays off in *portability* — a `no_std`-friendly core
-that runs from embedded systems to WebAssembly — which is the right claim for the systems programmer and
-is checkable in a way a claim about signatures is not. The
-[breadth line](#the-pitch-that-follows-the-line) now also carries the *threading* payoff, which reaches a
-different reader: someone whose signatures have filled up with parameters no intermediate layer touches.
-Three ways to reconcile them are available, and the recommendation is the first. **Leave the feature as
-it stands** and let the threading payoff ship through the breadth line, the homepage essay's breadth
-section, and the Overview's feature tour — a front page's job is the snap category, and "fewer generic
-parameters" is a payoff a reader values only after they believe the mechanism. **Extending the sentence**
-costs the set its own rule that a feature is a title and one or two sentences, which this one already
-fills. **Swapping the payoff** would trade a differentiated, verifiable claim for a softer one. Whichever
-way it goes it is the author's call, and it is recorded here so a writer meets the question rather than
-answering it two different ways in two pieces.
-
-One phrase in the set above is worth flagging rather than silently changing. "One Interface, Many
-Implementations" says *"choose between them per context"*, and
-[vocabulary.md](vocabulary.md#qualifying-a-context-and-a-target) — the authority on phrasing — now
-prefers **"per application"** in public copy wherever the context is one, because "context" is opaque
-on first contact and is the term that most reliably loses a reader who has not met it. The feature set
-is declared settled here, so the substitution is the author's call rather than an editorial one; it is
-recorded so a writer meets the tension instead of resolving it two different ways in two pieces.
+One decision inside the set is worth recording with its reasoning, because it will look like an
+omission otherwise. **"Abstract Over Every Dependency" pays off in portability rather than in
+threading**, and that is deliberate. A `no_std`-friendly core running from embedded systems to
+WebAssembly is the right claim for the systems programmer and is checkable in a way a claim about
+signatures is not. The [breadth line](#the-pitch-that-follows-the-line) carries the *threading* payoff
+instead — that an error type or a runtime stops being a parameter every layer has to declare — which
+reaches a different and larger reader, someone whose signatures have filled up with types no
+intermediate layer touches. Splitting them this way keeps the feature to a title and two sentences,
+which is the set's own rule, and it puts each payoff where its reader is: a front page's job is the
+snap category, and "fewer generic parameters" is a payoff a reader values only after they believe the
+mechanism. The threading argument is made in full by the homepage essay's breadth section and the
+Overview's feature tour, and the pain behind it is an entry in
+[message.md](message.md#the-problems-cgp-removes).
 
 ## Keeping this document in sync
 

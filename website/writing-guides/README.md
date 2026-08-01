@@ -75,10 +75,12 @@ Register a new guide here in the same change that adds it, and in [../../summary
   the granularity and the four consolidations, where every internal link is re-pointed, and the
   external Rust documentation to link for concepts a page assumes.
 
-The six guides above cover every page type the site publishes or plans. A seventh is worth writing when
-the need arises rather than pre-emptively: the site has no spec for its **orientation pages**, the
-Introduction and Resources, whose job is routing rather than teaching and changes once the
-[explanation tier](explanation.md) exists.
+The six guides above cover every page type the site publishes or plans. A seventh is now owed rather than
+merely possible: the site has no spec for its **orientation pages**, the Introduction and Resources,
+whose job is routing rather than teaching and changes once the [explanation tier](explanation.md)
+exists — and the redesign adds a Quickstart, which is a page of a kind the site has not published and
+which [AGENTS.md](../AGENTS.md) therefore requires a guide for *before* the page rather than after. It is
+task O1 in [tasks.md](../tasks.md).
 
 ## Where a guide's authority stops
 

@@ -6,11 +6,21 @@ the hooks and channels a piece should choose. It is the section's **single home 
 citations**: every other document links here for the evidence behind an audience claim, the way they
 link to [related-work](../related-work/README.md) for the evidence behind a concept claim.
 
+Its two halves are sourced differently, and the asymmetry is deliberate rather than sloppy. Claims
+about **the Rust community in general** are linked to the published work they come from — a survey, an
+article, a repository — because that is what keeps them checkable. Claims about **how CGP itself has
+been received** are distilled instead: the finding is recorded, the thread it came from is not, and no
+sentence is quoted in a way that identifies the reader who wrote it. That rule comes from
+[this repository being public](../AGENTS.md#this-repository-is-public), and it costs less than it
+appears to, because what a writer needs from a reaction is the pattern rather than the instance.
+
 A caution on reading it. Public engagement metrics are noisy, and absence of discussion is not proof
 of absence of interest. The findings are strong enough to steer framing decisions, but they are inputs
 to judgment rather than verdicts, and the closing section treats publication itself as the real
 measurement. Community attention also moves, which makes this document a sync target in its own right:
-when the survey or the discourse shifts, the guidance resting on it must be revisited.
+when the survey or the discourse shifts, the guidance resting on it must be revisited. **The planning
+of publication — what ships when, to which channel, and what came of it — is managed outside this
+repository**, so this document carries the distilled conclusions and never a campaign.
 
 ## What the Rust community worries about — and what it rewards
 
@@ -65,6 +75,29 @@ conversation borrows its energy — provided the attachment is honest.
   makes it timely — but because first-class reflection is coming to the language, position CGP as
   *available today* and *type-level and checked*, complementary to the built-in facility rather than a
   competitor the language will absorb.
+- **Dictionary-passing style, incoherence, and context and capabilities.** The closest match to CGP's
+  own thesis that the language-design conversation has produced, and the newest. Nadrieril's posts on
+  [elaborating Rust traits to dictionary-passing style](https://nadrieril.github.io/blog/2026/03/20/dictionary-passing-style.html)
+  and [what if traits carried values](https://nadrieril.github.io/blog/2026/03/22/what-if-traits-carried-values.html),
+  Boxy's [An Incoherent Rust](https://www.boxyuwu.blog/posts/an-incoherent-rust/), and Tyler Mandry's
+  earlier [context and capabilities](https://tmandry.gitlab.io/blog/posts/2021-12-21-context-capabilities/)
+  together sketch a Rust in which incoherent implementations are legal and a context carries the
+  capabilities a function needs. CGP is a working implementation of a subset of exactly that, on stable
+  Rust, today. This is the one conversation where CGP is not analogous to the subject but an instance of
+  it, and it reaches the **language-design reader** profile in
+  [readers.md](readers.md#the-language-design-and-compiler-team-reader), who is otherwise unreachable
+  through the general channels. The attachment is honest only if it is modest: CGP covers a fragment,
+  it does nothing for the formalization goal these efforts are actually pursuing, and it cannot migrate
+  the existing trait ecosystem. Lead with what it *does* supply — a desugaring path that exists — and
+  concede the rest in the same breath.
+- **AI-assisted development.** Not a conversation to attach a hook to, and worth naming here anyway,
+  because it changes the arithmetic behind CGP's most-cited costs rather than adding a capability. The
+  wiring volume, the vocabulary, and the diagnostics are the three things readers say deter them, and
+  all three are mechanical work that an agent with the [`/cgp` skill](https://github.com/contextgeneric/cgp-skills)
+  absorbs — which is a checkable claim, since the skill is published and a reader can attach it and see.
+  Where this belongs is beside the costs, per
+  [message.md](message.md#the-objections-readers-bring), never as a lead: a project that opens on AI in
+  2026 is heard as chasing attention, and this audience punishes that faster than any other.
 
 ## The pains are real — and developers already hand-roll the fix
 
@@ -80,77 +113,73 @@ the reader must be talked into wanting, but one they have already built by hand 
 maintain. Point to the reinvention as evidence and the "isn't this over-engineered" reflex softens,
 because the reader recognizes their own workaround.
 
-The neighbouring pains are evidenced too. The dependency-injection frameworks Rust does have are niche
-and criticized on their own forums —
-[shaku](https://users.rust-lang.org/t/comparing-dependency-injection-libraries-shaku-nject/102619), for
-instance, for forcing `Arc<dyn Trait>` and for being unable to declare multiple implementations per
-component — which is precisely the limitation per-context wiring removes, so the honest pitch to that
-reader is "many implementations per context, no `dyn`", grounded in a complaint they can find
-themselves. And even hand-rolled trait-based DI leaks: as a
+The neighbouring pains are evidenced too. The dependency-injection crates Rust does have stay niche,
+and the structural reason is worth stating without singling any of them out: a runtime container
+resolves an object graph, so it reaches for `Arc<dyn Trait>` and binds one implementation per
+interface. Both are the right design for what a container is doing, and both are exactly the costs
+per-context wiring does not pay — so the honest pitch to that reader is "many implementations per
+context, no `dyn`", made as a description of a different trade rather than as a complaint about
+theirs. And even hand-rolled trait-based DI leaks: as a
 [widely-cited post](https://jmmv.dev/2022/04/rust-traits-and-dependency-injection.html) documents, any
 type named in a public trait's method signature must itself be public, so trait-based injection quietly
 breaks encapsulation — the concrete cost CGP's impl-side dependencies avoid.
 
 ## CGP's own reception, and the lessons in it
 
-CGP's ideas do get discussed, but the reception is niche and runs mixed-to-skeptical, and reading it
-correctly starts with knowing which venue to trust. The substantive discussion happens on
-[Lobsters](https://lobste.rs/) and the [Rust subreddit](https://www.reddit.com/r/rust/), not on Hacker
-News: an HN submission is hit-or-miss, drawing almost no engagement unless it reaches the front page, so
-a low HN score reflects a submission's title and timing far more than the idea's reception and must not
-be reasoned from. On Lobsters, where the vote counts are small but the discussion is real, the original
-[Context-Generic Programming thread](https://lobste.rs/s/a5wfid/context_generic_programming) drew
-nineteen comments and the
-[v0.7.0 implicit-arguments thread](https://lobste.rs/s/6gcdzl/supercharge_rust_functions_with) twelve —
-enough to read what the skepticism actually clusters on.
+CGP's ideas do get discussed, the reception is niche and runs mixed-to-skeptical, and the five patterns
+below are what the skepticism reliably clusters on. They are recorded as findings rather than as
+citations, per the sourcing rule at the top of this document — the pattern is what a writer can act on,
+and the thread it came from is not this repository's to reproduce.
+
+Reading the reception correctly starts with knowing which venue to trust. The substantive discussion
+happens on Lobsters and the Rust subreddit rather than on Hacker News, where a submission is
+hit-or-miss and draws almost no engagement unless it reaches the front page — so a low score there
+reflects a title and a posting hour far more than the idea's reception, and must not be reasoned from.
+Vote counts on the venues that do discuss CGP are small, and the comment threads are nonetheless
+substantive enough to read patterns out of.
 
 Five patterns recur, and each maps to guidance elsewhere.
 
-- **Verbosity and "what problem justifies this."** The most common reaction is that CGP looks like "a
-  very verbose boilerplate", with even an experienced Rust programmer reporting they struggled to
-  follow the samples and asking what concrete problem warrants the complexity. This is the
-  over-engineering reflex firing in the wild, and it confirms the prescription: lead with a concrete
-  pain and a before/after, never with the paradigm.
-- **Traceability of control flow.** A distinct, repeated objection is that the indirection makes a
-  codebase hard to navigate, because it is "basically impossible to tell which particular bit of code
-  will be entered on a method call". This is not the generic macros-are-magic complaint but a specific
-  worry about following execution, and the answer is that the wiring table is the one explicit,
-  greppable place naming the provider for each component.
+- **Verbosity, and "what problem justifies this."** The most common reaction by a distance is that CGP
+  reads as heavy boilerplate, and it comes from experienced Rust programmers as readily as from
+  newcomers — including readers who report being unable to follow the sample code and asking what
+  concrete problem warrants the machinery. This is the over-engineering reflex firing in the wild, and
+  it confirms the prescription: lead with a concrete pain and a before/after, never with the paradigm.
+- **Traceability of control flow.** A distinct and repeated objection is that the indirection makes a
+  codebase hard to navigate, because a reader cannot tell which code a method call will actually enter.
+  This is not the generic macros-are-magic complaint but a specific worry about following execution,
+  and the answer is that the wiring table is the one explicit, greppable place naming the provider for
+  each component.
 - **"Isn't this just X reinvented."** Knowledgeable readers reach for prior art — aspect-oriented
-  programming, Microsoft's COM, the ML module system (one comment invoked Greenspun's tenth rule) — as a
-  skeptical frame. These deserve the honest engagement the
+  programming, COM, the ML module system — as a skeptical frame. These deserve the honest engagement the
   [related-work](../related-work/README.md) documents supply, not deflection, because the reader making
   the comparison is exactly the one who can be won or lost on it.
-- **The name does not communicate.** Multiple commenters said plainly that "context-generic
-  programming" obscures more than it conveys, that "coining a new phrase makes it harder to
-  understand", and reached instead for "structural typing" or "duck typing for statically-typed code" to
-  name what they thought was being described. This is direct field validation of the rule that a name is
-  not a pitch, and it surfaces community bridge terms worth using in body copy — with the caveat that
-  CGP is nominal-and-wired rather than truly structural.
-- **Do not overstate the ergonomics.** When CGP claims a reader need not understand its internals, a
-  skeptic answers that "when I hit a compilation error, I'm going to have to understand the desugaring",
-  and they are right. This is the complaint CGP has answered most directly since:
+- **The name does not communicate.** Readers say plainly that "context-generic programming" obscures
+  more than it conveys and that coining a phrase makes the idea harder rather than easier to grasp, and
+  they reach instead for "structural typing" or "duck typing for statically-typed code" to name what
+  they think is being described. This is field validation of the rule that a name is not a pitch, and it
+  surfaces bridge terms worth using in body copy — with the caveat that CGP is nominal-and-wired rather
+  than truly structural.
+- **Do not overstate the ergonomics.** When CGP claims a reader need not understand its internals, the
+  standing answer is that the first compilation error will force them to understand the desugaring
+  anyway — and that is correct. This is the complaint CGP has answered most directly since:
   [`cargo-cgp`](../cgp/reference/cargo-cgp.md) exists specifically to un-hide and lead with the root
   cause, so a piece meeting this objection can point to a deliberate response rather than only conceding
-  the cost. The tool is new — v0.1.0-alpha — and has no reception evidence of its own; do not manufacture
-  any, and present it as the deliberate answer to a recorded complaint rather than as something the
-  community already praises.
+  the cost. The tool is new — v0.1.0-alpha — and has no reception of its own; do not manufacture any,
+  and present it as the deliberate answer to a recorded complaint rather than as something the community
+  already praises.
 
-This objection also explains why showing the desugaring is treated as a
+That last pattern also explains why showing the desugaring is treated as a
 [teaching requirement](readers.md#the-comprehension-barriers) rather than an optional appendix: the
-skeptic is correct that a reader will eventually meet the generated code, so a tutorial that shows it
+objection is right that a reader will eventually meet the generated code, so a tutorial that shows it
 early is being accurate rather than indulgent.
 
-The discussion is broader than those two threads, and the fuller inventory is worth knowing before
-concluding anything from one. Every substantial post since the launch has been submitted to the same
-three venues, and the [blog catalog](../website/blog/README.md) records the links per post: the
-[Hypershell announcement](../website/blog/hypershell-release.md), all four parts of the
-[extensible-data-types series](../website/blog/extensible-datatypes-part-1.md), the
-[v0.7.0 release](../website/blog/v0-7-0-release.md), and the
-[RustLab transcript](../website/blog/rustlab-2025-coherence.md) each carry Reddit, Lobsters, and Hacker
-News threads, several also opening a GitHub discussion. That is the sample to read when testing a
-framing claim — and it is worth noting *what* drew submission effort, since the deep dives and the DSL
-post were judged worth the same push as the releases.
+Two facts about the sample are worth holding before concluding anything from one reaction. Every
+substantial post since the launch has been submitted to the same three venues, several also opening a
+GitHub discussion, so the reception evidence spans the whole [blog catalog](../website/blog/README.md)
+rather than one or two threads. And it is worth noticing *what* drew submission effort: the deep dives
+and the DSL announcement were judged worth the same push as the releases, which says the project
+already treats long-form as distribution rather than as documentation.
 
 **The conference channel has now been used, and it worked.** CGP was presented at RustLab 2025 in
 Florence, and the talk exists as a [recording](https://www.youtube.com/watch?v=gXIfP-W9074), a slide
@@ -186,6 +215,14 @@ translation. The evaluator reads long-form: a design document, a detailed write-
 where candour about maturity and cost is what persuades. Pick the channel, then the reader, then the
 hook — in that order.
 
+The **language-design reader** is the exception to all of this, and the exception is worth stating
+because the general channels cannot reach them. Compiler-team members and the people writing Rust's
+design posts do not evaluate a crate from an aggregator submission; they are reached by a piece that
+engages a live design question on its own terms, at their level of precision, and concedes the parts
+CGP does not solve. That is a rare and perishable opportunity rather than a standing channel — it
+exists only while a matching conversation is live — which is why the attachment points above are worth
+watching and why a piece written for one is worth writing while the conversation still is.
+
 ## Reading the reaction
 
 Because attention is empirical, the real grade of any hook is the reaction it draws, so treat
@@ -197,3 +234,15 @@ actually reaches for — "verbose / over-engineered", "I can't tell what code ru
 fire before the novel part landed, and the fix is upstream, in the opening lines. Float a candidate hook
 where the target reader gathers, watch which dismissal it attracts, and revise toward the framing that
 draws the *how* question instead.
+
+What comes back from that is revised into the patterns above rather than logged. **Publication planning
+and its results are managed outside this repository**, so this document holds the standing conclusion —
+which framings misfire, and what to do instead — and never a record of a campaign or of who said what.
+When a reaction changes the conclusion, change the pattern; when it merely confirms one, nothing needs
+writing down.
+
+One further consequence of publication being a measurement is that measurements interfere with each
+other. Several pieces released at once compete for the same readers on the same day, in channels whose
+ranking is time-weighted, so a second post published beside a first mostly takes attention from it —
+which both wastes the smaller piece and makes each result unreadable as evidence. Space substantial
+publications out, and treat that spacing as part of the plan rather than as a delay in it.

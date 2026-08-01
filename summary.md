@@ -15,8 +15,9 @@ it stale.
 - [README.md](README.md) — what the knowledge base is, why the ecosystem's documentation is
   consolidated here, and a summary of every top-level directory.
 - [AGENTS.md](AGENTS.md) — the authoring and maintenance rules for the whole base: the
-  synchronization rule, verifying against the source, document-the-present, how links are written,
-  registering a document, the prose mechanics, and the committing rule.
+  synchronization rule, verifying against the source, document-the-present, the rules that follow from
+  this repository being public, how links are written, registering a document, the prose mechanics, and
+  the committing rule.
 - [summary.md](summary.md) — this file.
 - [sibling-projects.md](sibling-projects.md) — the member projects, their repositories, the revision
   of each to read, and the rules for finding a sibling locally versus linking to it.
@@ -546,8 +547,9 @@ it stale.
   enhances-not-replaces frame, the layered pitch that follows the line, and the curated headline feature
   set for a front page.
 - [readers.md](communication-strategy/readers.md) — the audience model by Rust experience, imported
-  mental model, and role, plus the comprehension barriers a willing reader hits — including the
-  application-context shape vanilla Rust gives them no reason to imagine — and the teaching move that
+  mental model, and role — the last including the language-design reader, who is unreachable through the
+  general channels — plus the comprehension barriers a willing reader hits, including the
+  application-context shape vanilla Rust gives them no reason to imagine, and the teaching move that
   lowers each.
 - [message.md](communication-strategy/message.md) — everything a piece says about CGP: the pains it
   removes, the capabilities worth advertising, the objections readers bring, and the boundary where a
@@ -560,8 +562,9 @@ it stale.
   deep-dive, README, talk, thread, and comparison, the ready thread answers, the conversion ladder, and
   annotated model drafts.
 - [evidence.md](communication-strategy/evidence.md) — the citable facts: what the Rust community
-  worries about and rewards, which conversations draw attention, and how CGP's own posts and talk were
-  received; the section's single home for external citations.
+  worries about and rewards, which conversations draw attention, and the distilled patterns in how CGP's
+  own posts and talk were received; the section's single home for external citations, and the rule that
+  reaction to CGP is summarized rather than linked.
 
 ## `cargo-cgp/` — the CGP toolchain
 
@@ -648,12 +651,12 @@ it stale.
 - [website/redesign-queue.md](website/redesign-queue.md) — the consolidated list of what is wrong with
   or missing from the site, grouped into cheap corrections, page rewrites, and new pages; deleted when
   empty.
-- [website/tasks.md](website/tasks.md) — the redesign's work plan: every remaining task with its
-  repository, dependencies, and done-condition, plus the dependency graph, the ordering, and the open
-  decisions; deleted when empty.
+- [website/tasks.md](website/tasks.md) — the redesign's work plan: that the whole site relaunches with
+  the v0.8.0 release from one branch, every remaining task with its repository, dependencies, and
+  done-condition, which of them the release waits for, and the ordering; deleted when empty.
 - [website/site-structure.md](website/site-structure.md) — the site's build, navigation, announcement
-  bar, and deployment, plus one entry each for the front page, Introduction, Overview, Resources,
-  Contribute, and the AI skills page.
+  bar, deployment, and release-branch workflow, plus one entry each for the front page, Introduction,
+  Overview, Resources, Contribute, and the AI skills page.
 
 ### `website/writing-guides/` — how new pages should be written
 
@@ -722,6 +725,9 @@ it stale.
   cannot replace it.
 - [v0-8-0-release.md](website/blog/v0-8-0-release.md) — the namespace announcement for the
   unreleased v0.8.0, an unfinished draft begun under the abandoned v0.7.1 number.
+- [incoherent-rust-today.md](website/blog/incoherent-rust-today.md) — an unpublished draft on the
+  `incoherent-rust` branch reading CGP against the dictionary-passing and incoherent-traits discussion,
+  and what it needs before it can be published.
 
 ### `website/deep-dives/` — one document per planned deep dive
 

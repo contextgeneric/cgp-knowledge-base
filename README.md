@@ -15,6 +15,14 @@ toolchain that reads CGP errors, the worked examples, the comparisons with relat
 strategy for writing about CGP publicly. Each member project keeps its code; the documentation for
 all of them lives here.
 
+It is written for that audience but **published openly**, and the two facts pull against each other
+often enough to be worth stating at the top. The documents assume the `/cgp` skill and record
+unfinished work and known defects, which is what makes them internal in the sense that matters; they
+are also readable by anyone, and the `cgp` crate's own documentation links here. The rules that follow
+from that — distil public discussion rather than citing it, never disparage another project, and keep
+out anything that would harm someone if read — are in
+[AGENTS.md](AGENTS.md#this-repository-is-public).
+
 ## Why this exists
 
 CGP's behavior is recorded as much in prose as in code, and the code is a poor place to learn it

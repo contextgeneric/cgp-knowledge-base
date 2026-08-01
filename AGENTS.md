@@ -103,6 +103,32 @@ implementation document still describes only the present, and a construct that n
 deleted from it rather than annotated. When you need to say what something *used* to be, link to the
 release document that says it.
 
+## This repository is public
+
+**This knowledge base is written for an internal audience but published in a public repository, and
+those are different things.** "Internal" here means the documents assume the `/cgp` skill, record
+unfinished work, and are never linked from the website — not that they are unread by anyone outside
+the project. Anyone can read them, and some already do: the `cgp` crate's own documentation links
+here. Write every document as though a member of the Rust community will find it, because one may.
+
+Three consequences bind every section, and the first is the one an agent is most likely to breach
+without noticing. **Distil public discussion rather than pointing at it.** Community reaction to CGP
+is legitimate input to the [communication strategy](communication-strategy/README.md), and the
+conclusions drawn from it belong here — but a document records what the reaction *amounts to*, never a
+link to the thread it came from and never a quotation attributable to the person who wrote it.
+Summarizing a recurring objection is analysis; naming the comment that raised it is finger-pointing,
+and it reads that way to the person named. Citations to *published work* that is not itself a reaction
+to CGP — a survey, an article, a repository of design notes — are unaffected and remain the way an
+audience claim is grounded.
+
+**Never disparage another project, and assume its maintainers are reading.** The rule already governs
+public writing; it governs these documents too, for the same reason and now also because they are
+visible. A criticism of another crate is fair only where it would be fair said to its author's face.
+
+**Keep material out that would harm someone if read.** Unfinished work and known defects belong here
+and are the point of the base. Speculation about individuals, private correspondence, and anything
+about the project's finances or plans that has not been said publicly do not.
+
 ## Writing links
 
 Where a link points decides how it is written, and the three cases are worth keeping straight.

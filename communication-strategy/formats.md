@@ -75,6 +75,17 @@ quickstart for the skimmer and the honest maturity discussion for the evaluator.
 [homepage guide](../website/writing-guides/homepage.md) works the same layout out in more detail and
 should be read alongside this entry, since the two surfaces share a job.
 
+**A Rust project has two READMEs, and the one that reaches strangers is usually the neglected one.**
+The repository's root `README.md` is what a visitor to GitHub sees, and the file named by the crate's
+`readme` field in its `Cargo.toml` is what **crates.io and docs.rs** render — a different file, in a
+different directory, reaching a reader who arrived by searching for a crate rather than by following a
+link from a post. That second surface is the more first-contact of the two, so it is the one that most
+needs the tag line, the reassurance line, and a code block, and it must not be left as a pointer to
+somewhere else. Two failure modes are specific to it and both read badly: **disclaiming your own
+documentation** on the page a reader landed on to find documentation, and **routing them onward** to a
+book, a repository, or internal notes instead of showing them anything. Whatever a crate page says
+about where the full documentation lives, it says *after* proving there is something worth reading.
+
 ## The conference talk or video
 
 A talk has the most room to motivate, and its audience forgives depth if the *why* comes first. It

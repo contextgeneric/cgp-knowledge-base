@@ -624,6 +624,25 @@ Shrink the *first step* rather than the whole curve: the first useful thing, a c
 function and used with no wiring, takes only ordinary Rust knowledge, and the deeper machinery can be
 learned as needed. The curve is real but not a cliff.
 
+### The one mitigation that spans three of these
+
+Three of the costs above — the learning curve, the wall of generated types, and the volume of wiring a
+reader has to write and read — have a common shape: they are mechanical work over a vocabulary that is
+fully written down. That is what a coding agent is good at, and CGP publishes a
+[skill](https://github.com/contextgeneric/cgp-skills) that teaches one the vocabulary, so a reader
+working with an assistant meets a materially smaller version of all three. The claim is checkable
+within the hour, which is the only reason it is worth making to this audience.
+
+Where it goes is the whole difficulty, and the rule is narrow. **Say it beside the cost, never as a
+capability and never near the top.** It belongs in a cost section, in the boundary discussion, and on
+the page an evaluator reads about maturity; it does not belong in the tag line, the feature set, a
+hook, or a thread's first post. A project that leads on AI in 2026 is heard as chasing attention, and
+this is the audience that punishes that hardest and remembers longest — which would cost more than the
+mitigation is worth. **Frame it as a smaller cost, not as a solved one**: the diagnostics are still
+verbose, the vocabulary still has to be learned by whoever reviews the code, and a reader who works
+without an assistant must not be told their problem has been handled. And **claim only what the skill
+does** — it teaches an agent to read and write CGP, which is not the same as CGP being easy.
+
 ## When not to reach for CGP
 
 Drawing CGP's boundary in public is a positioning asset rather than a concession, because the instinct

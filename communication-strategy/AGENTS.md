@@ -50,10 +50,11 @@ that merely describes CGP without telling the writer how to *present* it has not
   able to act on the document without re-deriving the strategy.
 - **Ground every claim about audiences in the evidence.** Sentiment about what developers value and
   resent lives, cited, in the [related-work](../related-work/README.md) documents, and facts about what
-  the community measurably reads and how CGP has been received live, cited, in
-  [evidence.md](evidence.md). Draw on both and link to them rather than inventing reactions. External
-  citations are concentrated in those two homes so the strategy documents stay in one voice; add a new
-  source there and link to it rather than scattering raw URLs.
+  the community measurably reads and how CGP has been received live in [evidence.md](evidence.md).
+  Draw on both rather than inventing reactions. External citations are concentrated in those two homes
+  so the strategy documents stay in one voice; add a new source there and link to it rather than
+  scattering raw URLs. Reception of CGP itself is the exception to the citation habit and is
+  distilled rather than linked, per the guardrail below.
 - **Keep every CGP claim true.** A capability CGP does not have, or a rebuttal promising behavior it does
   not deliver, is the most damaging kind of error here, because it is shown to the audience most able to
   catch it. Every factual claim is bound by the
@@ -80,12 +81,24 @@ the reader's vocabulary, and concedes the genuine trade-offs, because that is wh
 When a piece of strategy tempts you toward exaggeration, treat the temptation as a signal that the honest
 version needs a better frame, not that the honest version needs abandoning.
 
-Two guardrails follow and are absolute. **Never fabricate evidence** — no invented benchmarks, adoption
+Three guardrails follow and are absolute. **Never fabricate evidence** — no invented benchmarks, adoption
 numbers, quotations, or version-specific claims; when a number would strengthen a point, either source it
-or omit it. And **never disparage another language, framework, or community** to elevate CGP; the
+or omit it. **Never disparage another language, framework, or community** to elevate CGP; the
 related-work documents set the standard of representing every compared tool as its own users would
 recognize it, and public writing must meet the same bar. Naming where a competing tool is simply the
 better choice is a devrel asset rather than a concession.
+
+And **distil what readers say about CGP rather than pointing at where they said it.** This section's
+most valuable input is the reaction CGP's own posts and talks have drawn, and that reaction belongs
+here as a finding — which objections recur, which framings misfire, which dismissals fire first. What
+does not belong here is the thread it came from or a sentence attributable to the person who wrote it.
+The reason is that [this repository is public](../AGENTS.md#this-repository-is-public): a document that
+quotes a named commenter's criticism, however fairly, is a project holding up a reader as an example,
+and it reads as finger-pointing to the reader held up. Write the pattern, not the instance — "the most
+common reaction is that CGP looks verbose and readers ask what problem justifies the machinery" says
+everything a writer needs and costs nobody anything. The same rule keeps this section's citations
+asymmetric on purpose: published work that is not a reaction to CGP is linked and quoted freely,
+because that is how an audience claim stays grounded.
 
 ## Document structure and the consolidation rule
 

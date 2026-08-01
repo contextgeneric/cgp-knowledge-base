@@ -230,6 +230,13 @@ tightly. **Never disparage the alternative** — represent each as its own users
 winning everything reads as a strawman and loses the reader it was written for. The technical map behind
 it is the [modularity hierarchy](../../cgp/concepts/modularity-hierarchy.md).
 
+Because the page's whole subject is where CGP's costs outweigh its benefits, it is also one of the two
+places the **agent-support mitigation** belongs: the learning curve, the diagnostics, and the wiring
+volume are three of the costs a reader is weighing here, and CGP's published agent skill genuinely
+changes their size. State it where those costs are discussed, as a smaller cost rather than a
+disappearing one, and do not let it soften a boundary — a codebase that will only ever have one
+application still belongs on `#[cgp_fn]` alone, regardless of who writes the wiring.
+
 This page also carries a second decision the others do not: **which of CGP's three shapes to reach for.**
 Some readers will resist being taught three where they expected one, and the defence is to show that each
 answers a different question rather than representing a different amount of sophistication. Two questions
@@ -254,10 +261,14 @@ it directly from above the fold.
 **Its frankness is the asset and must survive the move.** It currently tells readers that CGP is in
 formative early stages, that the rough edges are real, and that adopting it for mission-critical work
 carries risk — and that candour is doing more persuasive work for the evaluator profile than any claim on
-the site. Do not soften it into marketing. Three things should change: the stale year-stamp, the absence
-of any mention of [`cargo-cgp`](../../cgp/reference/cargo-cgp.md) — which directly answers two of the
-rough edges the page lists — and the missing incremental-adoption reassurance, that CGP is a superset of
-ordinary traits and can be adopted in one corner and stepped back from.
+the site. Do not soften it into marketing. Four things should change: the stale year-stamp; the absence
+of any mention of [`cargo-cgp`](../../cgp/reference/cargo-cgp.md), which directly answers two of the
+rough edges the page lists; the missing incremental-adoption reassurance, that CGP is a superset of
+ordinary traits and can be adopted in one corner and stepped back from; and a sentence on CGP's
+published agent skill among the mitigations, since the learning curve and the diagnostics this page is
+honest about are two of the three costs it reduces. That last one belongs here precisely because this is
+a page about risk — stated beside a cost it makes smaller, never as a capability, per
+[message.md](../../communication-strategy/message.md#the-one-mitigation-that-spans-three-of-these).
 
 ## Placing them in the docs tree
 

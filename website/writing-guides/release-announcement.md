@@ -144,6 +144,16 @@ previous release. **Add the discussion links** once the post is submitted. And *
 internal document** under [blog/](../blog/README.md) in the same change, per
 [AGENTS.md](../AGENTS.md) — a post with no document has no recorded provenance.
 
+A release is also the largest attention event the project gets, which has two consequences for what
+travels with it. **Whatever the announcement links to should be ready before it publishes**, because a
+release post is routinely a first-contact reader's landing page and the traffic does not come back — this
+is the reason the v0.8.0 announcement and the site relaunch are
+[one event](../AGENTS.md#the-redesign-lands-on-a-release-branch-all-at-once) rather than two. And
+**nothing substantial publishes beside it.** Two significant pieces released together compete for the
+same readers on the same day, in channels ranked by recency, so the second mostly takes attention from
+the first and neither result says anything useful about how its framing landed. Space other writing out
+after the release rather than bundling it in.
+
 Then the post becomes **a dated artifact and is not edited into agreement with later releases**. This is
 the rule that most distinguishes a release post from every other page specified in this directory: a docs
 page describes the present and is corrected in place forever, while a release announcement records what

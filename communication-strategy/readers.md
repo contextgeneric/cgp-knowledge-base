@@ -162,7 +162,8 @@ having to value it (see [author-personality.md](author-personality.md)).
 
 ## Readers by role and point of contact
 
-Two further profiles matter disproportionately, because they govern first impressions and adoption.
+Three further profiles matter disproportionately: two govern first impressions and adoption, and the
+third governs whether CGP's ideas are taken seriously by the people shaping the language itself.
 
 **The first-contact skimmer** is scrolling a feed, a link aggregator, or a chat channel, gives the
 piece a few seconds, and will form a snap judgment they may broadcast. What earns them is a sharp,
@@ -183,6 +184,32 @@ Reach them with candour rather than enthusiasm: be honest about maturity, show t
 of ordinary traits so it can be adopted incrementally and stepped back from, and state plainly where
 it fits and where it does not. Address "can my team learn this" head-on rather than letting it fester.
 Overselling is fatal here, because this reader's job is to discount hype.
+
+### The language-design and compiler-team reader
+
+The language-design reader works on Rust itself or writes about where it should go: compiler-team
+members, the people publishing design posts on traits and coherence, and the readers who follow them.
+They hold the coherence rules, the trait solver, and the desugarings not as advanced knowledge but as
+their subject matter, so nothing in CGP needs simplifying for them and any imprecision is immediately
+visible. What interests them is not whether CGP is useful but whether it is *evidence*: a paradigm that
+implements, on stable Rust and in production code, a fragment of something the language is considering
+building is a data point about feasibility, ergonomics, and what the desugaring actually costs.
+
+This reader is unreachable through the general channels and is reached only by engaging a live design
+question at their level. Two rules govern a piece written for them, and both invert the usual advice.
+**Precision beats accessibility** — the audience-tuned one-liners and the vocabulary schedule are for
+somebody else, and hedged prose reads here as not having thought it through. And **the concessions are
+the contribution**: what CGP does *not* solve — the formalization goal, migrating the existing trait
+ecosystem, the parts of a full dictionary-passing design it cannot express — is more useful to a
+language designer than the parts it does, because that is the boundary they are trying to map. A piece
+that positions CGP as a competitor to a language feature loses this reader in a paragraph; one that
+positions it as an existence proof with a stated edge is the rarest kind of contribution the project
+can make.
+
+The opportunity is also perishable in a way no other profile's is. It exists only while a matching
+conversation is live, so a piece for this reader is worth writing when the conversation is happening
+rather than when the project's own schedule is clear. The current attachment points are in
+[evidence.md](evidence.md#the-conversations-that-draw-attention).
 
 ## What nearly every reader shares
 
@@ -407,6 +434,18 @@ reshape every class, leaving some (orphan-rule errors among them) passing throug
 wrote them. **The honest frame is that the error experience is dramatically better and actively
 improving, not solved.** This is the one barrier where pretending it away costs more trust than
 admitting it.
+
+A second mitigation now exists and is worth naming *here*, beside the cost, rather than anywhere more
+prominent. Decoding a generated-type cascade is mechanical work over a vocabulary that is written down,
+which is the kind of work a coding agent does well — and CGP publishes a
+[skill](https://github.com/contextgeneric/cgp-skills) that teaches an agent that vocabulary. A reader
+who already works with an assistant can attach it and check the claim within the hour, which is what
+makes it sayable at all. Two constraints keep it honest. **Say it as a mitigation, not as an answer**:
+the diagnostics are still verbose, and a reader who wants to work without an assistant must not be told
+their problem is solved. And **never lead with it** — a project that opens on AI in 2026 is heard as
+chasing attention, and this is the audience least willing to extend the benefit of the doubt. The same
+rule holds for the learning curve and the wiring volume, which the skill reduces for the same reason
+and which should be conceded the same way.
 
 ### Knowing where to start, and why it is worth it
 

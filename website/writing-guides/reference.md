@@ -86,10 +86,22 @@ Resist consolidating anything else. In particular the four provider *catalogues*
 already groups — handler combinators, dispatch combinators, monad providers, error providers — are
 already the consolidated form and should not be split, but neither should they absorb their neighbours.
 
-One page is not a construct at all: [`cargo-cgp`](../../cgp/reference/cargo-cgp.md) documents the
-toolchain. It does not belong under `reference/` on the public site, where every other page answers "what
-does this construct mean". Give the tool its own top-level docs section, alongside the reference rather
-than inside it.
+Two pages are not constructs at all, and they go in opposite directions.
+[`cargo-cgp`](../../cgp/reference/cargo-cgp.md) documents the toolchain, and it does not belong under
+`reference/` on the public site, where every other page answers "what does this construct mean" — give
+the tool its own top-level docs section, alongside the reference rather than inside it. The **error
+catalog**, by contrast, belongs *inside* the reference, because a reader who hits a wiring failure is
+doing exactly what the reference is for: looking one thing up by a name they already have, in this case
+an error code or a message shape.
+
+That page is a consolidation of a different kind from the four above. The internal
+[errors catalog](../../cgp/errors/README.md) is seventeen documents organized by class, and seventeen
+public pages would be a category no reader scans; one page, organized by the internal catalog's own
+**hidden-versus-surfaced** axis, is what a reader can actually use. It shows the small program behind
+each class, says what the compiler reports, and says what `cargo cgp check` makes of it — the last
+being why it sits beside the tooling section conceptually even though it lives in the reference. Write
+it **before** the bulk of the port, because its existence is what lets every *Gotchas* section stay
+construct-specific instead of re-explaining the same failure.
 
 ## The layered page
 
@@ -194,10 +206,11 @@ guide's recommendation into the page's *When to reach for it* section, which is 
 A link to an **example** becomes a link to the tutorial or deep dive that carries the same scenario, or
 the example code is inlined.
 
-A link to an **error class** has no public destination either, and this is a real gap rather than a
-mapping: the internal [errors catalog](../../cgp/errors/README.md) has seventeen documents and nothing
-on the site corresponds to them. Record what a *Gotchas* section needs inline for now, and treat the
-public error catalog as a page type still to be designed.
+A link to an **error class** becomes a link to the section of the reference's
+[error catalog page](#granularity-close-to-one-page-per-construct) covering that class. This is the one
+mapping that depends on a page being written rather than merely re-pointed, which is why the catalog
+page comes early: until it exists, a *Gotchas* section has to inline whatever it needs, and every
+section written that way has to be revisited afterwards.
 
 A link to an **implementation document** is dropped. That material is for people maintaining CGP, and its
 public substitute is the GitHub source link in the Source list.
@@ -215,9 +228,11 @@ naming the handful of constructs a newcomer actually needs, then group the rest 
 the shape the internal [reference index](../../cgp/reference/README.md) already uses. A reader who does
 not yet know which construct they want should be able to find it from this page.
 
-Because the site reference is canonical, **completeness is an obligation**. Every construct the `cgp`
-crate exports needs a page or a named place inside a consolidated one, and a construct added to the
-library gets its public page in the same change as its internal document.
+Because the site reference is canonical, **completeness is an obligation**, and it is met when the
+section first publishes rather than approached over time. Every construct the `cgp` crate exports needs
+a page or a named place inside a consolidated one, and a construct added to the library gets its public
+page in the same change as its internal document. That obligation is what makes this section the item
+setting the relaunch's date, per [tasks.md](../tasks.md).
 
 ## What must not be on a reference page
 

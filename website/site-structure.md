@@ -34,6 +34,28 @@ One configuration setting deserves an agent's attention: `onBrokenLinks` is set 
 internal link fails the build rather than degrading quietly, so a change that renames or moves a page
 must fix every reference to it in the same change.
 
+## Branches, and what is not on `main`
+
+**Because deployment runs from `main` on every push, work that should not be public yet lives on a
+branch, and the repository has a settled habit of naming that branch after the release it accompanies.**
+`v0.6.2`, `v0.7.1`, and now `v0.8.0` are release branches in that sense; `v0.8.0` is where the whole
+site redesign is being written, and it merges when the release ships. The rule that follows — never
+commit redesign work to `main` — is in [AGENTS.md](AGENTS.md#the-redesign-lands-on-a-release-branch-all-at-once).
+
+Three other branches carry material that is easy to miss because it is not on `main`, and an agent
+looking for "everything the site has" will not find it otherwise. The **`incoherent-rust` branch**
+holds a substantial unpublished blog post, recorded in
+[blog/incoherent-rust-today.md](blog/incoherent-rust-today.md). The **`ai-draft-1` branch** carries the
+`notes/` tree — a set of working notes on applying Diátaxis to the site, plus a long note on implicit
+parameters — which are drafting material rather than publishable pages and are not built by Docusaurus.
+The **`rustlab-presentation` branch** carries the slide assets for the talk transcript. None of these
+is dead: the notes informed the writing guides, and the two others are content.
+
+The `notes/` tree deserves one line of its own, because its status is ambiguous on sight. It sits in the
+repository, is written in Markdown, and is not part of the site — nothing under it is routed or built.
+Treat it as a scratchpad whose conclusions belong in the [writing guides](writing-guides/README.md)
+rather than as a fourth documentation tier.
+
 ## Navigation and the announcement bar
 
 The navigation bar carries four content entries — Tutorials, Docs, Blog, and AI — plus a GitHub link,
@@ -81,10 +103,21 @@ answer to the community's stated fear of added complexity, per
 the [homepage guide](writing-guides/homepage.md), with the README-and-landing-page playbook in
 [formats.md](../communication-strategy/formats.md) as its shorter cousin.
 
-Status: **Current** in the sense that nothing on it is false, but its feature set predates
-`identity.md` and does not yet reflect that curation, nor the `cargo-cgp` error-tooling
-development that the [communication-strategy README](../communication-strategy/README.md) flags as a
-positioning shift worth leading with.
+**Its code example does not compile, which is the one defect here that is a factual error rather than a
+framing one.** The `Hash` illustration writes `#[cgp_impl(HashWithDisplay)]` without the `new` keyword
+and never declares `struct HashWithDisplay;` anywhere, so the provider it wires does not exist — the
+bare form of [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md) implements the provider trait for a
+struct the author is expected to have declared, and `new` is what declares it. The snippet also elides
+its bodies with `{ ... }`, so it is a sketch rather than a program, but the missing declaration would
+be a compile error even in context. It is the most-seen CGP code the project publishes, which makes
+this worth fixing regardless of what replaces the page.
+
+Status: **Outdated.** The code example is wrong as above; the feature set predates
+[identity.md](../communication-strategy/identity.md) and does not reflect that curation; and the page
+predates the `cargo-cgp` error tooling, which the
+[communication-strategy README](../communication-strategy/README.md) flags as a positioning shift worth
+leading with. The full divergence list and the page's replacement are in
+[writing-guides/homepage.md](writing-guides/homepage.md).
 
 ## Introduction
 

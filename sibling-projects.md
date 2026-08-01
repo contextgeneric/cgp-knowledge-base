@@ -22,6 +22,7 @@ this side in `website/`, because a published page may not link back here; and th
 | `cgp-serde` | <https://github.com/contextgeneric/cgp-serde> | `main` | Serde's `Serialize` and `Deserialize` rebuilt as CGP components. Documented in [projects/cgp-serde/](projects/cgp-serde/README.md). |
 | `cgp-examples` | <https://github.com/contextgeneric/cgp-examples> | `main` | Runnable example crates — `builder`, `expression`, `greet`, `transfer`, `web-app` — several of which are the origin of the scenarios in [examples/](examples/README.md). |
 | `cgp-example-profile-picture` | <https://github.com/contextgeneric/cgp-example-profile-picture> | `main` | A single worked tutorial evolving one real application from a monolithic function to a modular CGP design; the origin of [examples/profile-picture.md](examples/profile-picture.md). |
+| `cgp-anatomy` | <https://github.com/contextgeneric/cgp-anatomy> | `main` | *The Anatomy of Context-Generic Programming*, a book-length report on CGP and fission-driven development, together with the preserved record of how it was co-authored by the project's author and an LLM — the human draft, the instructions, each AI revision, and the methodology. |
 
 The two example repositories have no directory of their own here, and the reason is a rule rather than
 an oversight. [examples/AGENTS.md](examples/AGENTS.md) requires a worked example to be **self-contained
