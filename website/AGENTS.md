@@ -149,10 +149,17 @@ split is a decision rather than a default, and it exists because this section's 
 built to prevent [voiceless machine prose](../communication-strategy/README.md) and the redesign is
 roughly a hundred pages of it.
 
-**The author reads, in full, before publication:** the front page, the four *Understanding CGP* pages,
-the reference index, and every blog post. These carry the voice, make the argument, and are what a
-first-contact reader meets, so an off-voice paragraph in one of them costs more than a wrong sentence
-anywhere else.
+**The author reads, in full, before publication:** the front page, the four explanation-tier pages under
+*Understanding CGP*, the reference index, the AI disclosure page, and every blog post. Most of these
+carry the voice, make the argument, and are what a first-contact reader meets, so an off-voice paragraph
+in one of them costs more than a wrong sentence anywhere else. The disclosure page is on the list for a
+different reason: a wrong sentence there is a false claim about the project rather than about CGP, and
+it is the page whose entire value is that it is accurate.
+
+This list is the authoritative one, and it is quoted elsewhere — in
+[tasks.md](tasks.md) and in
+[ai-disclosure.md](../communication-strategy/ai-disclosure.md#the-two-claims-that-are-easiest-to-get-wrong),
+which turns it into a public claim. Change it here and check those in the same edit.
 
 **Everything else ships on the guides plus a spot check.** The construct reference is the bulk of the
 work and the lowest risk: it is a mechanical port from internal documents that are already written and
@@ -161,6 +168,33 @@ guide's five draft checks, and sample rather than read it end to end. Where a po
 need a judgement call rather than a transformation — a *When to reach for it* section with no internal
 guide behind it, a *Gotchas* entry that reads as a warning about the library — flag it for reading
 rather than deciding alone.
+
+## Disclosing AI use on a page
+
+The site carries one page describing how AI is used across the project, and **a page written with AI
+assistance links to the section of it that matches how that page was made.** The policy, the four levels,
+and the wording are in
+[ai-disclosure.md](../communication-strategy/ai-disclosure.md); what belongs here is the mechanics.
+
+**One line at the foot of the page**, linking the specific section rather than the page as a whole, so
+the note says which arrangement applies. A reference page and a blog post describe different things and
+get different sentences. The note is a provenance fact rather than a warning, which is why it goes at the
+bottom: at the top it primes a reader to discount everything beneath it.
+
+**New pages only, and never a retroactive sweep.** A page written or substantially rewritten from now on
+carries the note. An existing page does not get one unless the user asks, because attaching a note to a
+page whose actual provenance nobody has checked is a guess presented as a disclosure — worse than the
+silence it replaces. The older pages are not undisclosed in the meantime: the
+[new-website post](blog/new-website.md) records that the site's text was LLM-refined throughout, which is
+partial cover rather than a closed gap, since it speaks to refinement of what existed then rather than to
+authorship or to anything added since.
+
+**Record which level applies in the page's internal document**, since that is where the site's provenance
+is already kept and the fact will not be recoverable from the page later.
+
+**This is the website only, for now.** Other repositories get their disclosure after the redesign is
+published, as separate work; do not add notes to another project's README or documentation in the
+meantime.
 
 ## The document template
 
@@ -181,6 +215,13 @@ status. Then develop these sections in prose:
   constructs, names, and claims that no longer hold, each with what replaced it. Omit this section
   only for a page that is current.
 - **Maintaining it** — what a revision must preserve and what it must not do.
+
+For a page written or substantially rewritten from now on, the identifying facts at the top also carry
+**how it was made** — which of the four levels in
+[ai-disclosure.md](../communication-strategy/ai-disclosure.md) applies, in a few words. This is the only
+place that fact survives: it is not recoverable from the page later, and the provenance note the page
+carries names a level without saying who decided it applied. Omit it for pages that predate the rule
+rather than guessing.
 
 A tutorial document replaces the divergence section with the teaching contract the tutorial is under:
 its objective, its prerequisites, the concepts it introduces and in what order, and the level of

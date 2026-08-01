@@ -356,3 +356,19 @@ Never edit this page directly to fix the skill. It is a copy: correct the skill 
 [`cgp-skills`](https://github.com/contextgeneric/cgp-skills), which is regenerated from this base, and
 then re-inline the result. Editing the copy alone creates a fourth version of the truth and guarantees
 the three views diverge further.
+
+### The section gains a second page, on a different subject
+
+The AI section is about to hold two pages that point in opposite directions, and keeping them legibly
+apart is the design problem. The skill page is a **capability** — what CGP offers a reader who works with
+a coding assistant. The planned disclosure page is a **fact about the project** — how AI is used in
+building CGP, at four levels from agent-written documentation to a hand-written core library. It is
+specified in [ai-disclosure.md](../communication-strategy/ai-disclosure.md) and is task A1 in
+[tasks.md](tasks.md), and it becomes the destination that every new AI-assisted page's provenance note
+links to.
+
+The directory name is an open item that should be settled with that page rather than after it, because
+it sits in both pages' URLs. It is `docs/ai/` today; the unmerged `rustlab-presentation` branch renames it
+to `docs/ai-assisted-development/`, which describes the disclosure page well and the skill page poorly.
+Whatever it becomes, a reader scanning the sidebar should be able to tell which page is about using CGP
+and which is about building it.

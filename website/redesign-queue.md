@@ -172,6 +172,15 @@ natural next part of the area-calculation family. *Spec in
 the reader who evaluates a technology by seeing a realistic system rather than a rectangle. The site has
 nothing in this register.
 
+**An AI disclosure page** — how AI is used across the project, at four levels from agent-written
+documentation to a hand-written core library, and the destination every new page's provenance note links
+to. The site currently discloses its AI use only in the
+[new-website post](blog/new-website.md), which described the answer as uniform at a time when it was, and
+it is no longer: the same site now carries agent-written reference pages, agent-revised tutorials, and
+material about a library the author writes by hand, and one sentence cannot cover all three. Small, and
+worth doing early because everything added afterwards has to point at it. *Spec in
+[ai-disclosure.md](../communication-strategy/ai-disclosure.md); task A1 in [tasks.md](tasks.md).*
+
 **The construct reference** — roughly seventy pages under `docs/reference/`, ported from the knowledge
 base's internal reference and canonical rather than deferring to docs.rs. By far the largest single item
 on this list, and the one that sets the release date, since the relaunch waits for it. It carries a

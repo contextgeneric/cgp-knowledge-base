@@ -105,9 +105,11 @@ guidance for *presenting* CGP — landing pages, tutorials, articles, blog posts
 related-work document compares CGP to one external idea, a communication-strategy document generalizes
 across those comparisons into audience-level strategy: which readers exist and what each already
 believes, which hooks earn attention, which misunderstandings CGP reliably provokes, and what
-vocabulary keeps everything written about CGP reading as one voice. The section is deliberately small
-and dense — eight documents rather than thirteen thinner ones — because its subjects overlap and
-splitting them guaranteed drift. Two of them govern the rest:
+vocabulary keeps everything written about CGP reading as one voice. It also carries the project's
+[disclosure policy](communication-strategy/ai-disclosure.md) for how AI is used in building CGP, which
+is a claim about provenance rather than about the technology and is governed separately for that reason.
+The section is deliberately small and dense — nine documents rather than twice as many thinner ones —
+because its subjects overlap and splitting them guaranteed drift. Two of them govern the rest:
 [author-personality.md](communication-strategy/author-personality.md), which records who CGP's author
 is as a writer, and [voice-and-register.md](communication-strategy/voice-and-register.md), which turns
 that into rules, because the failure this section exists to prevent is not a false claim but

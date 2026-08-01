@@ -278,7 +278,7 @@ resolves", no unqualified "DI framework" — each an entry on the [avoid list](v
 > ---
 >
 > **One Interface, Many Implementations.** Write many interchangeable implementations of the same
-> interface and choose between them per context, with the overlapping and orphan implementations Rust
+> interface and choose between them per application, with the overlapping and orphan implementations Rust
 > normally forbids made safe because every choice is explicit and local.
 >
 > **Zero-Cost Abstraction.** Everything is resolved at compile time and compiles down to direct calls,

@@ -110,9 +110,11 @@ supplement to rustdoc. Its spec is [writing-guides/reference.md](writing-guides/
 **Orientation pages** — the Introduction and Resources — route rather than teach. Their readers arrive
 already interested and want to be sent somewhere, not persuaded.
 
-**Project pages** — Contribute, and the planned Project status — speak about the project rather than
-about CGP. Contribute is the one page carrying the author's own voice on the site, in its sponsorship
-section, and that must stay.
+**Project pages** — Contribute, the planned Project status, and the planned AI disclosure page — speak
+about the project rather than about CGP. Contribute is the one page carrying the author's own voice on
+the site, in its sponsorship section, and that must stay; the disclosure page carries the second
+permitted instance, for the sentence taking responsibility for what the project publishes, since
+accountability is something a person can say and a project cannot.
 
 ## The target page inventory
 
@@ -198,13 +200,28 @@ their readers are already served, if imperfectly, by the posts they grow out of.
 repositories. [docs.rs](https://docs.rs/cgp) is linked once from Resources rather than from each
 reference page.
 
-**Blog** — 17 posts, plus the unfinished v0.8.0 draft and one planned post, the
-implicit-type-arguments `deepdive` (B1 in [tasks.md](tasks.md)). The blog is the one surface this
-inventory does not try to specify in advance: a post is a dated statement rather than a page with a job,
-so posts are listed as they are written rather than planned into the target, and B1 appears only because
-it is currently owed.
+**Blog** — 17 posts, plus the unfinished v0.8.0 draft, one draft on a branch, and one planned post; the
+owed writing is B1 and B2 in [tasks.md](tasks.md). The blog is the one surface this inventory does not
+try to specify in advance: a post is a dated statement rather than a page with a job, so posts are listed
+as they are written rather than planned into the target.
 
-**AI** — the inlined skill copy, regenerated from `cgp-skills` rather than edited.
+**AI** — the section carries CGP's relationship with coding agents in both directions, and the two
+directions are different subjects that must be named apart rather than blended.
+- *Using CGP with coding agents* — present as the inlined skill copy, regenerated from `cgp-skills`
+  rather than edited. This is a **capability**: what CGP offers a reader who works with an assistant.
+- *How AI is used in this project* — **new**. The disclosure page: the four levels from agent-written
+  documentation through revised drafts and non-imported code to the hand-written core library, and the
+  destination every AI-assisted page's provenance note links to. This is a **fact about the project**,
+  and it is the answer a reader wants before they trust the rest of the site. Specified in
+  [ai-disclosure.md](../communication-strategy/ai-disclosure.md) rather than in a writing guide, since
+  it is one project-meta page rather than a kind the site will publish repeatedly.
+
+The section's directory is currently `docs/ai/`, and the name is worth settling when the page lands: an
+unmerged branch renames it to `docs/ai-assisted-development/`, which describes the disclosure half well
+and the skill half poorly. Whatever it becomes, a reader scanning the navigation should be able to tell
+that one page is about using CGP and the other is about building it. The alternative placement — the
+disclosure page under **Project** beside Contribute — is defensible and was not chosen, because a reader
+looking for provenance looks under AI first.
 
 ## Navigation and sidebar order
 
@@ -284,11 +301,13 @@ a statement about how things are is a docs page and is corrected in place foreve
 author's first person means the blog, with the Contribute page's sponsorship section as the one standing
 exception.
 
-Two obligations come with the answer. Adding a page means adding its internal document in the same
-change, per [AGENTS.md](AGENTS.md), because a page with no document has no recorded provenance. And
-adding a page of a *kind* the site has not published before means writing its
+Three obligations come with the answer. Adding a page means adding its internal document in the same
+change, per [AGENTS.md](AGENTS.md), because a page with no document has no recorded provenance. Adding a
+page of a *kind* the site has not published before means writing its
 [writing guide](writing-guides/README.md) first, since the guide is what later revisions are checked
-against.
+against. And a page written with AI assistance carries a
+[provenance note](AGENTS.md#disclosing-ai-use-on-a-page) at its foot, with the level recorded in its
+document — new pages only, never a retroactive sweep.
 
 ## What this document does not decide
 

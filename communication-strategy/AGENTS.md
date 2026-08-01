@@ -76,7 +76,10 @@ that merely describes CGP without telling the writer how to *present* it has not
 The single rule that governs everything is that honesty *is* the marketing strategy, not a constraint on
 it. CGP's public audience is unusually able to detect spin — they are practitioners of the very concepts
 CGP compares itself to — so an overclaim, a strawman of a competing tool, or a hidden cost does more
-damage than saying nothing. The guidance therefore leads with a true, concrete capability, states it in
+damage than saying nothing. The rule covers claims about **how the project is made** as well as claims
+about what it does, and that half has its own document: [ai-disclosure.md](ai-disclosure.md) fixes what
+is said about AI's role in CGP, level by level, and it is the one place where over-disclosing is as much
+an error as under-disclosing. The guidance therefore leads with a true, concrete capability, states it in
 the reader's vocabulary, and concedes the genuine trade-offs, because that is what actually persuades.
 When a piece of strategy tempts you toward exaggeration, treat the temptation as a signal that the honest
 version needs a better frame, not that the honest version needs abandoning.

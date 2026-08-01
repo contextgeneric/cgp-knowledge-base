@@ -145,6 +145,17 @@ beautiful overhaul redesign," "gracefully superseded by more intuitive and moder
 should replace them whenever they can do better. This is a licence to improve, not a mandate to
 sweep. See [voice-and-register.md](voice-and-register.md).
 
+**How the project is built is disclosed, in the same register as any other cost.** The
+[new-website post](../website/blog/new-website.md) volunteered that the site's design, text, and images
+were largely LLM-produced and said plainly that a professional designer would have done better — nobody
+asked, and no part of it reads as apology or as boast. That instinct is now a policy, because the
+project's use of AI is not uniform: it runs from agent-written documentation to a hand-written core
+library, and the distinctions are the informative part rather than a detail one sentence can carry.
+The levels, the wording, and the site page that carries them are in
+[ai-disclosure.md](ai-disclosure.md). The habit to preserve is the one already on display — state what
+was done, state its limit, take responsibility for the result, and do not argue about whether it was
+legitimate.
+
 ## What this means for an agent writing in his name
 
 The single most useful instruction is to write as though the author will read the draft and ask "did

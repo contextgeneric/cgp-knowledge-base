@@ -82,6 +82,14 @@ exists — and the redesign adds a Quickstart, which is a page of a kind the sit
 which [AGENTS.md](../AGENTS.md) therefore requires a guide for *before* the page rather than after. It is
 task O1 in [tasks.md](../tasks.md).
 
+Two planned pages are deliberately specified elsewhere rather than here, and knowing that stops a later
+agent hunting for a missing guide. *Project status* is specified inside
+[explanation.md](explanation.md#project-status-and-adoption-risk), and the **AI disclosure page** inside
+[ai-disclosure.md](../../communication-strategy/ai-disclosure.md#the-page-on-the-website). Both are
+single project-meta pages rather than kinds the site will publish repeatedly, and in the second case the
+policy and the page are one subject — splitting them across two documents would guarantee that the page
+and the practice it describes drift apart.
+
 ## Where a guide's authority stops
 
 A writing guide governs the shape and content of a page type; it does not govern the CGP facts on the

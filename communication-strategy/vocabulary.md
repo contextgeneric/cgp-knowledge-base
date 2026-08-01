@@ -221,6 +221,12 @@ precise, smaller claim forecloses it and survives scrutiny — which, with this 
   diagnostics are the parts an assistant handles well"**, and say it beside the cost rather than in a
   hook. Avoid too the implied promise that **"an agent writes the wiring for you"** — the wiring is
   still code somebody reviews.
+- Avoid letting **"AI-assisted"** cover two different claims. *CGP works well with coding agents* is
+  about the technology and belongs beside a cost, per [message.md](message.md); *CGP is partly built by
+  coding agents* is about the project's provenance and belongs on the site's disclosure page, per
+  [ai-disclosure.md](ai-disclosure.md). Use wording that says which — **"CGP ships an agent skill"** for
+  the first, **"this page was written by an AI agent from a public knowledge base"** for the second —
+  because a sentence that could mean either makes the capability read as an excuse for the provenance.
 
 Sentence-level habits to avoid — adjective inflation, hedge stacking, corporate "we", invented
 evidence — are a separate list and live in [voice-and-register.md](voice-and-register.md), because

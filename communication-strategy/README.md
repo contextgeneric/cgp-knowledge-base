@@ -100,9 +100,10 @@ stage**. And **beware the pile-on**, whose defence is the same as the honest mov
 
 ## The catalog
 
-The section is deliberately small: eight documents, each dense, so a writer reads a whole subject in one
-place rather than assembling it from cross-links. Read them in this order the first time. The authoring
-rules live in [AGENTS.md](AGENTS.md).
+The section is deliberately small: nine documents, each dense, so a writer reads a whole subject in one
+place rather than assembling it from cross-links. Read the first eight in this order the first time; the
+ninth is a reference for a narrow question and is read when that question arises. The authoring rules
+live in [AGENTS.md](AGENTS.md).
 
 - [The author's personality and preferences](author-personality.md) — who CGP's author is as a writer,
   the habits evidenced by his published work, and the preferences he has stated. **Read this first**;
@@ -128,6 +129,11 @@ rules live in [AGENTS.md](AGENTS.md).
 - [Evidence](evidence.md) — the citable facts: what the Rust community measurably worries about and
   rewards, which conversations draw attention, how CGP's own posts and talk were received, and the
   lessons in that reception. The section's single home for external citations.
+- [AI disclosure](ai-disclosure.md) — what the project says about **how it is made**: the principle that
+  decides how much of an artifact an agent may write, the four levels from agent-written documentation to
+  the hand-written core library, how a disclosure is worded, the claim about review that is easiest to
+  get wrong, and the rule for linking the site's disclosure page. Read it before writing that page, and
+  before adding a provenance note to any page.
 
 ## Where this guidance gets spent
 

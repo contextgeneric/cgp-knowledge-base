@@ -579,8 +579,9 @@ resugared. Concede that debugging generated code is a real cost; overclaiming tr
 exactly the reader you are addressing.
 
 **"I can't tell which code actually runs on a method call."** A specific worry distinct from the macro
-complaint, which appeared verbatim in CGP's own community discussion ([evidence.md](evidence.md)), and
-is *partly justified*: CGP does add a hop between a consumer call and the provider answering it.
+complaint, and one CGP's own readers raise repeatedly rather than one imported from elsewhere
+([evidence.md](evidence.md)); it is *partly justified*, because CGP does add a hop between a consumer
+call and the provider answering it.
 Concede the hop and point at the map: unlike runtime dispatch, the indirection is statically resolved
 and explicit, and the `delegate_components!` table is a single greppable place naming exactly one
 provider per component.
@@ -642,6 +643,12 @@ mitigation is worth. **Frame it as a smaller cost, not as a solved one**: the di
 verbose, the vocabulary still has to be learned by whoever reviews the code, and a reader who works
 without an assistant must not be told their problem has been handled. And **claim only what the skill
 does** — it teaches an agent to read and write CGP, which is not the same as CGP being easy.
+
+One adjacent claim is easy to conflate with this one and must be kept apart. *CGP works well with coding
+agents* is what this section is about: a property of the technology, made where costs are discussed.
+*CGP is partly built by coding agents* is a fact about the project's own provenance, governed by
+[ai-disclosure.md](ai-disclosure.md) and made on the site's disclosure page. A piece that runs the two
+together makes the first read as an excuse for the second, which costs both.
 
 ## When not to reach for CGP
 

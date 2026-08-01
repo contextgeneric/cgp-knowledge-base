@@ -41,16 +41,20 @@ handed over is actually startable.
 Every task has an ID so that dependencies can be stated without ambiguity, a **lands in** field naming
 the repository and path, and a **done when** condition. The IDs group by kind — `C` corrections, `E`
 explanation tier, `F` front page, `T` teaching, `R` reference, `D` deep dives, `B` the blog, `V` the
-version release, `O` orientation, `X` cross-cutting — and they are stable, so a task removed on completion
-leaves its ID retired rather than renumbered.
+version release, `O` orientation, `A` the AI disclosure, `X` cross-cutting — and they are stable, so a
+task removed on completion leaves its ID retired rather than renumbered.
 
-Three obligations apply to **every** task that adds or moves a page, and they are stated once here rather
+Four obligations apply to **every** task that adds or moves a page, and they are stated once here rather
 than repeated in each entry, per [AGENTS.md](AGENTS.md). Adding a page means **adding or updating its
 internal document in the same change**, because a page with no document has no recorded provenance.
 Landing a task means **removing its entry from [redesign-queue.md](redesign-queue.md)** rather than
-marking it done, and deleting that document once it is empty. And landing a task means **clearing the
+marking it done, and deleting that document once it is empty. Landing a task means **clearing the
 matching `new` or `moved` marker** in [information-architecture.md](information-architecture.md), since
-the redesign is finished when that inventory and [site-structure.md](site-structure.md) agree.
+the redesign is finished when that inventory and [site-structure.md](site-structure.md) agree. And a page
+written with AI assistance carries **one provenance note at its foot**, linking the section of the
+disclosure page that matches how it was made, with the level recorded in its internal document — the
+mechanics are in [AGENTS.md](AGENTS.md#disclosing-ai-use-on-a-page), and this one applies from the moment
+A1 lands and never retroactively.
 
 Four further standing rules bind the content rather than the bookkeeping. Every page is public writing and
 is governed by [communication-strategy/](../communication-strategy/README.md) through its writing guide.
@@ -63,9 +67,10 @@ reader who generalizes from one and then meets another without being told has no
 is; the qualifiers and the four misreadings they prevent are in
 [vocabulary.md](../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target), and an
 introductory page records the shape in its internal document without necessarily using the terms on the
-page. And **the author reads the high-traffic surfaces before they publish** — the front page, the four
-*Understanding CGP* pages, the reference index, and every blog post — while the rest ships on its guide
-plus a spot check, per [AGENTS.md](AGENTS.md#who-drafts-a-page-and-who-reads-it-before-it-publishes).
+page. And **the author reads the high-traffic surfaces before they publish** while the rest ships on its
+guide plus a spot check. Which surfaces those are is listed authoritatively in
+[AGENTS.md](AGENTS.md#who-drafts-a-page-and-who-reads-it-before-it-publishes) rather than restated here,
+because the disclosure page states the arrangement publicly and three copies of it would drift.
 
 ## Two threads that run through several tasks
 
@@ -372,6 +377,33 @@ somewhere to be tracked.
   third tutorial. *Lands in:* `docs/`, second in the sidebar after the Introduction. *Blocked by:* O1.
   *Blocks:* F1's first call to action, which points at Hello World until this exists.
 
+## A — The AI disclosure
+
+- **A1 — the disclosure page.** One page describing how AI is used across the project, at the four
+  levels the policy sets out: agent-written documentation from a public knowledge base, agent revision
+  of the author's own drafts, agent-written code users never import, and a core library that is
+  hand-designed and hand-written. It is release-blocking, because from the moment it exists every new
+  page's provenance note points at it and the relaunch is where most of those pages appear. *Lands in:*
+  the AI section, `docs/ai/` or whatever that directory is renamed to — see
+  [information-architecture.md](information-architecture.md#the-target-page-inventory). *Spec:*
+  [ai-disclosure.md](../communication-strategy/ai-disclosure.md), which fixes the page's job, its
+  ordering, its voice, and what must not appear on it. *Blocked by:* nothing, and worth writing
+  **early**, since every page added after it owes a provenance note and has nowhere to point until it
+  exists. *Done when:* the page stands alone, each level names its own honest limit, the review claim
+  matches the
+  [authorship rule](AGENTS.md#who-drafts-a-page-and-who-reads-it-before-it-publishes) rather than
+  flattening it, and the author has read it — this is a surface where a wrong sentence is a false claim
+  about the project rather than about CGP.
+- **A2 — settle the AI section's name and shape.** The section currently holds one page, the inlined
+  skill, and is about to hold a second that is a different subject — what CGP offers an agent user
+  versus how the project was built. An unmerged branch renames the directory to
+  `docs/ai-assisted-development/`, which fits the second page and not the first. Decide the naming with
+  A1 rather than after it, since the directory name is in the URL of both pages. *Blocked by:* nothing.
+
+Disclosure for the **other repositories** — `cargo-cgp` above all, whose source sits wholly at level
+three — is deliberately out of scope here and happens after the redesign is published. Do not add notes
+to another project's README or documentation in the meantime.
+
 ## X — Cross-cutting
 
 - **X1 — update the agent skill and re-inline it.** The published copy states v0.7.0, teaches
@@ -423,6 +455,7 @@ the [ordering](#the-ordering) for what to start on.
 | V1 | the v0.8.0 release, and every release-blocking task | completes C2 and C3; unblocks B1 and B2 |
 | O1 | nothing | O2, and the Introduction narrowing (soft) |
 | O2 | O1 | F1's first call to action (soft) |
+| A1, A2 | nothing | every page-adding task's provenance note (A1) |
 | X1, X2 | nothing | nothing |
 
 Four shapes in that graph are worth naming, because they are what make the ordering non-obvious. The
@@ -430,14 +463,17 @@ Four shapes in that graph are worth naming, because they are what make the order
 three deep dives, which is why building them early converts into progress everywhere else. **R2 sets the
 release date**, so it is the one task worth starting before it is strictly next and worth running in
 parallel with everything else. The **deep dives are gated on code** rather than on writing, so their long
-lead time starts with DC1–DC3 and those can run at any time. And **V1 is now the terminus rather than an
-interrupt**, which is the largest change from how this plan used to read: nothing publishes until it
-lands, so a task deferred is a release deferred.
+lead time starts with DC1–DC3 and those can run at any time. And **V1 is the terminus rather than an
+interrupt**: nothing publishes until it lands, so a task deferred is a release deferred.
 
 ## The ordering
 
 **First, the corrections (C1–C8), in a single pass on the branch.** They cost minutes each and they stop
 every later task inheriting known-wrong copy.
+
+**Then A1 and A2, early.** The disclosure page is small and it is what every subsequent page's provenance
+note links to, so writing it first means no page is added with a dangling obligation — and settling the
+AI section's name at the same time avoids moving two URLs later.
 
 **Then R4, R3, and R1.** This is the change most worth noticing in the ordering: because the release
 waits for the reference, the reference's *prerequisites* are the real critical path, and all three are

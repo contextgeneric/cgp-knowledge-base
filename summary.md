@@ -532,11 +532,13 @@ it stale.
 ## `communication-strategy/` — writing about CGP in public
 
 - [README.md](communication-strategy/README.md) — the catalog and reading order, the marketing-naive
-  expert this section writes for, the voicelessness failure mode it exists to prevent, and the
-  principles of marketing, public communication, and developer relations it rests on.
+  expert this section writes for, the voicelessness failure mode it exists to prevent, the two things
+  the section deliberately does not cover, and the principles of marketing, public communication, and
+  developer relations it rests on.
 - [AGENTS.md](communication-strategy/AGENTS.md) — the rules: write for the author's voice first, the
-  marketing-director and devrel roles, what every document must do, honesty as the strategy, the
-  consolidation rule, and the four sync targets.
+  marketing-director and devrel roles, what every document must do, honesty as the strategy and its
+  three guardrails including distilling reaction to CGP rather than citing it, the consolidation rule,
+  and the four sync targets.
 - [author-personality.md](communication-strategy/author-personality.md) — who CGP's author is as a
   writer, the habits his published work evidences, and the preferences he has stated; the document every
   other one here is downstream of.
@@ -565,6 +567,11 @@ it stale.
   worries about and rewards, which conversations draw attention, and the distilled patterns in how CGP's
   own posts and talk were received; the section's single home for external citations, and the rule that
   reaction to CGP is summarized rather than linked.
+- [ai-disclosure.md](communication-strategy/ai-disclosure.md) — how the project discloses its own use of
+  AI: the reach-and-verifiability principle behind the gradient, the four levels from agent-written
+  documentation through revised drafts and non-imported code to the hand-written core library, the
+  wording rules, the non-uniform-review claim that is easiest to get wrong, the site's disclosure page,
+  and the rule that only new pages link to it.
 
 ## `cargo-cgp/` — the CGP toolchain
 
@@ -643,7 +650,9 @@ it stale.
   that makes it necessary, how the Docusaurus site is organized, and its catalog.
 - [website/AGENTS.md](website/AGENTS.md) — the rules: the one-way link rule, consulting
   communication-strategy before writing public prose, never taking current syntax from a blog post,
-  the prohibition on rewriting published history, the document template, and the status vocabulary.
+  the prohibition on rewriting published history, the release-branch model the redesign lands through,
+  who drafts a page and who reads it before it publishes, disclosing AI use on a page, the document
+  template, and the status vocabulary.
 - [website/information-architecture.md](website/information-architecture.md) — the site as intended:
   why most readers never see the homepage, the four routes in and why three fail, what each surface is
   for, the target page inventory including unwritten pages, the sidebar order, and each reader
@@ -652,8 +661,9 @@ it stale.
   or missing from the site, grouped into cheap corrections, page rewrites, and new pages; deleted when
   empty.
 - [website/tasks.md](website/tasks.md) — the redesign's work plan: that the whole site relaunches with
-  the v0.8.0 release from one branch, every remaining task with its repository, dependencies, and
-  done-condition, which of them the release waits for, and the ordering; deleted when empty.
+  the v0.8.0 release from one branch, the four standing obligations every page-adding task carries,
+  every remaining task with its repository, dependencies, and done-condition — including the AI
+  disclosure page — which of them the release waits for, and the ordering; deleted when empty.
 - [website/site-structure.md](website/site-structure.md) — the site's build, navigation, announcement
   bar, deployment, and release-branch workflow, plus one entry each for the front page, Introduction,
   Overview, Resources, Contribute, and the AI skills page.
