@@ -86,9 +86,11 @@ Six surfaces make up the site, and each has one job. A page that does two jobs i
 The **front page** makes the idea click and carries the selling points, then routes. It teaches nothing
 and specifies nothing. Its spec is [writing-guides/homepage.md](writing-guides/homepage.md).
 
-The **explanation tier** — a new category, `Understanding CGP` — answers *why* for a reader who is not
-writing code: why Rust cannot do this, what CGP actually generates, when to reach for it, and whether it
-is safe to adopt. Its spec is [writing-guides/explanation.md](writing-guides/explanation.md).
+The **explanation tier** — a new category, `Concepts` — answers *why* for a reader who is not writing
+code: why Rust cannot share these implementations, what CGP actually generates, how each of its ideas
+works, and where each one stops paying. It carries one page per idea, mirroring the internal
+[cgp/concepts/](../cgp/concepts/README.md) catalog. Its spec is
+[writing-guides/explanation.md](writing-guides/explanation.md).
 
 The **tutorials** teach a reader to do something, in two registers: first-principles, which derives
 constructs from problems using deliberately simple examples, and applied, which builds something real
@@ -130,25 +132,35 @@ commit to. The one exception is the deep dives, which land afterwards. The mecha
 
 **Front page** — the hook and the bounded essay. Present, needs rewriting.
 
-**Understanding CGP** (new category)
-- *Why CGP exists* — **new**. Coherence, what it buys, what it costs, the workarounds, and the move.
-  The highest-value page missing from the site and the homepage's most frequent destination.
-- *How CGP works* — **new**. The two traits, the wiring table, what a call resolves to, the generated
-  Rust, and why it costs nothing at runtime. The site's answer to "macros are magic".
-- *When to use CGP, and when not* — **new**. The honest boundary, as a decision guide rather than an
-  essay.
-- *Project status and adoption risk* — **moved**, out of the Introduction. The evaluator's page, linkable
-  directly from above the fold.
-- *Overview* — present, **repurposed**. The feature tour: every high-level CGP capability walked through
-  in more detail than any other surface carries. This is the page the front page's capability beats and
-  its "it goes further than trait implementations" section offload to, which is the job that keeps it
-  from overlapping its neighbours — *Why CGP exists* argues the coherence case, *How CGP works* shows the
-  mechanism, *When to use CGP* draws the boundary, and the Overview covers the breadth. It is no longer
-  capped at five features, since the curated five are the *front page's* constraint and this page is where
-  they are expanded and the breadth capabilities added. Moving it into this category means moving the file,
-  so it must carry `slug: /overview` in its front matter to keep serving `/docs/overview` — a stock
-  Docusaurus feature needing no plugin, and the alternative is a hard 404 for every inbound link, since
-  the [no-plugin policy](site-structure.md) rules out a redirect.
+**Concepts** (new category, 18 pages plus an index) — present, and **being filled in**
+
+This is the explanation tier, and its shape is now **one page per idea** rather than the four curated
+pages this document originally planned. The category is labelled *Concepts*, sits at `docs/concepts/`
+between Tutorials and Reference, and mirrors the internal
+[cgp/concepts/](../cgp/concepts/README.md) catalog one to one — the same relationship the reference
+section has to `cgp/reference/`. All eighteen are scaffolded and one,
+*Consumer and provider traits*, is written; the current state is recorded in
+[site-structure.md](site-structure.md).
+
+The three explanation pages this document named are not lost, but they are no longer separate
+artifacts: *Why CGP exists* is **Bypassing coherence**, *How CGP works* is **Consumer and provider
+traits** together with **Impl-side dependencies**, and *When to use CGP, and when not* is **How much
+CGP to use**, the modularity hierarchy rendered as a decision guide. The trade is that the tier now
+covers every idea rather than the four a homepage essay offloads to, at the cost of the curation that
+made those four a short reading path — which the section's index page is what restores.
+
+- *Project status and adoption risk* — **moved**, out of the Introduction, and now **without a settled
+  home**: it is project meta rather than a CGP idea, so it does not belong among the concepts. Under
+  **Project** beside Contribute is the obvious placement and is not yet decided. The evaluator's page,
+  and it must stay linkable directly from above the fold.
+- *Overview* — present, **repurposed**, and staying where it is. The feature tour: every high-level CGP
+  capability walked through in more detail than any other surface carries. This is the page the front
+  page's capability beats and its "it goes further than trait implementations" section offload to, which
+  is the job that keeps it from overlapping its neighbours — the concepts explain one idea each, and the
+  Overview covers the breadth. It is no longer capped at five features, since the curated five are the
+  *front page's* constraint and this page is where they are expanded and the breadth capabilities added.
+  It is no longer moved into a new category, which also retires the `slug: /overview` requirement the
+  move would have carried.
 
 **Tutorials**, in the order a reader meets them rather than the order they were written
 - *Hello World* — present. First contact, five minutes, one durable idea.
@@ -233,26 +245,26 @@ the documentation rather than in a fifth menu. Keeping the bar at four also resp
 directory tree and a new category is a directory with a `_category_.json` rather than site machinery.
 
 The sidebar order should follow the order a reader needs things rather than the order the project thinks
-about them: **Introduction**, **Quickstart**, then **Understanding CGP**, then **Tutorials**, then
-**Reference**, then **Deep dives**, then **Tooling**, **Resources**, **Contribute**, and **AI**. Reference
-sits after Tutorials because a reader reaches for it once they are writing code rather than while
-learning, and Understanding precedes Tutorials because a reader who arrives via the homepage has just been
-told *why* and wants the argument before the exercise — while a reader who wants to start writing code
-immediately uses the Tutorials entry in the nav bar and never sees the sidebar order at all. The
-Quickstart sits second because the Introduction is the docs root and cannot be displaced, and because a
-reader who wants to see CGP run should meet it before any argument.
+about them: **Introduction**, **Quickstart**, **Overview**, then **Tutorials**, then **Concepts**, then
+**Reference**, then **Deep dives**, then **Tooling**, **Resources**, **Contribute**, and **AI**.
+Reference sits after Tutorials because a reader reaches for it once they are writing code rather than
+while learning. The Quickstart sits second because the Introduction is the docs root and cannot be
+displaced, and because a reader who wants to see CGP run should meet it before any argument.
 
-Inside **Understanding CGP** the five pages run *Why CGP exists*, *Overview*, *How CGP works*, *When to
-use CGP*, *Project status* — the coherence argument first because it is what the front page sends readers
-for, then the breadth tour, then the mechanism, then the boundary, then the risk. The
-[explanation guide](writing-guides/explanation.md) gives the order of the four pages it specifies and
-does not mention the Overview, which is not a disagreement: the Overview is an existing page moved into
-the category rather than one of the four, and it is interleaved here because a reader who has just been
-told *why* is better served by the breadth tour than by the mechanism.
+Concepts sits between Tutorials and Reference rather than before Tutorials, which is a departure from
+what this document originally planned and is worth stating with its reason. A four-page curated tier
+could reasonably precede the tutorials, since a reader arriving from the homepage has just been told
+*why* and wants the argument. Eighteen pages cannot: a reader who meets the whole idea catalog before
+writing a line reads it as the amount of theory CGP demands up front, which is the impression the
+project can least afford to give. Placing the section after Tutorials makes it what a reader reaches
+for once a construct has raised a question, and its index page is what preserves the short reading path
+the curated four would have been.
 
-One naming rule: **do not label the category "Explanation"**. That is vocabulary for the people
+Two naming rules follow. **Do not label the category "Explanation"** — that is vocabulary for the people
 organizing documentation, not for the people reading it, and Diátaxis advises against exposing its own
-terms in navigation. *Understanding CGP* names what the reader gets.
+terms in navigation. And **prefer *Concepts* to *Understanding CGP*** now that the section mirrors an
+idea catalog rather than carrying four essays: it names the same thing more plainly, and it matches the
+word the knowledge base already uses for these documents, so the internal and public names agree.
 
 ## How each reader moves through the site
 

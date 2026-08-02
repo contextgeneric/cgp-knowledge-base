@@ -134,33 +134,48 @@ in [redesign-queue.md](redesign-queue.md#corrections--single-lines-wrong-today).
 
 ## E — The explanation tier
 
-Four new pages under a new `Understanding CGP` category, specified in full by
-[writing-guides/explanation.md](writing-guides/explanation.md). This is the tier the homepage offloads
-to, so it is the group that unblocks the most downstream work, and none of it is blocked by anything.
-All four are surfaces the author reads before publication.
+The tier is the **Concepts** section at `docs/concepts/`, one page per idea, mirroring the internal
+[cgp/concepts/](../cgp/concepts/README.md) catalog — eighteen pages plus a hand-written index,
+specified by [writing-guides/explanation.md](writing-guides/explanation.md). It is the tier the
+homepage offloads to, so it unblocks the most downstream work, and none of it is blocked by anything.
+Every page here is a surface the author reads before publication.
+
+**The section is scaffolded**, on the pattern the reference port uses: the category, the index, and all
+eighteen stubs exist, each carrying its one-line summary and a *Not written yet* notice, so no idea is
+missing from the site even where the page behind it is unwritten. What remains per page is the prose.
+One page is written and is the model for the rest —
+[Consumer and provider traits](https://contextgeneric.dev/docs/concepts/consumer-and-provider-traits),
+which covers what E3 was to cover of the trait split.
+
+The four entries below are the pages the homepage offloads to, and they are the ones to write first;
+the remaining fourteen follow, and a group of related pages is the natural unit for one session.
 
 - **E1 — *Project status and adoption risk*.** Mostly a move: lift the "Current Status" section out of
   the Introduction so the homepage can link it from above the fold. Its frankness is the asset and must
   survive the move; what changes is the year-stamp, the absence of `cargo-cgp`, the missing
-  incremental-adoption reassurance, and the agent-support note among the mitigations. **This task also
-  creates the category** — the directory, its `_category_.json`, and the `sidebar_position` front matter
-  — since it is the first page in it. *Lands in:* `docs/understanding/` (name per the guide's naming
-  rule) plus `docs/index.md`. *Blocks:* F1's second call to action. *Done when:* the page stands alone,
-  the Introduction links to it, and C7 is moot.
-- **E2 — *Why CGP exists*.** The highest-value page missing from the site and the homepage's most
-  frequent destination: coherence as a guarantee, what it costs, the workarounds developers hand-roll,
-  and the `Self`-becomes-a-parameter move with local coherence restored. The guide carries the
-  five-movement outline plus the sixth movement that builds the application-context shape, which is
-  where the first of the two unmarked transitions is closed. *Blocks:* F1 (better done after, since the
-  rewritten homepage links here most), R2's concept-link destinations, and the deep dives' primer
-  removal.
-- **E3 — *How CGP works*.** The site's answer to "macros are magic": the two traits, the wiring table,
-  what a call resolves to, the plain Rust an expansion produces, and why none of it costs anything at
-  runtime. *Blocks:* R2's concept-link destinations, and the deep dives' primer removal.
-- **E4 — *When to use CGP, and when not*.** A decision guide rather than an essay, and the page the
-  homepage's cost section hands a skeptic. It also carries the second of the two shape decisions — which
-  of CGP's three shapes to reach for, posed as two questions rather than as a taxonomy — and the agent
-  support note beside the costs. *Blocks:* F1's cost section, which currently has nowhere to hand off to.
+  incremental-adoption reassurance, and the agent-support note among the mitigations. **This page has no
+  settled home** — it is project meta rather than a CGP idea, so it does not belong under Concepts, and
+  under **Project** beside Contribute is the obvious alternative. Settle that before writing it.
+  *Blocks:* F1's second call to action. *Done when:* the page stands alone, the Introduction links to
+  it, and C7 is moot.
+- **E2 — *Bypassing coherence*, the page that plays *Why CGP exists*.** The highest-value page still
+  unwritten and the homepage's most frequent destination: coherence as a guarantee, what it costs, the
+  workarounds developers hand-roll, and the `Self`-becomes-a-parameter move with local coherence
+  restored. The guide carries the five-movement outline plus the sixth movement that builds the
+  application-context shape. *Lands in:* `docs/concepts/coherence.md`. *Blocks:* F1 (better done after,
+  since the rewritten homepage links here most), R2's concept-link destinations, and the deep dives'
+  primer removal.
+- **E3 — *Impl-side dependencies*, completing *How CGP works*.** The trait-split half is written; what
+  remains of the site's answer to "macros are magic" is the dependency-injection half — how an
+  implementation states what it needs without the interface carrying it. *Lands in:*
+  `docs/concepts/impl-side-dependencies.md`. *Blocks:* R2's concept-link destinations, and the deep
+  dives' primer removal.
+- **E4 — *How much CGP to use*, the page that plays *When to use CGP, and when not*.** A decision guide
+  rather than an essay, and the page the homepage's cost section hands a skeptic. It also carries the
+  second of the two shape decisions — which of CGP's three shapes to reach for, posed as two questions
+  rather than as a taxonomy — and the agent support note beside the costs. *Lands in:*
+  `docs/concepts/modularity-hierarchy.md`. *Blocks:* F1's cost section, which currently has nowhere to
+  hand off to.
 
 ## F — The front page
 
@@ -188,11 +203,10 @@ All four are surfaces the author reads before publication.
   [site-structure.md](site-structure.md)); repoint the depth pointers, which all
   currently lead to the [CGP Patterns book](https://patterns.contextgeneric.dev/) that the Introduction
   itself describes as not recently updated; refresh the "Dynamic Dispatch" section, which predates
-  `cargo-cgp` and the extensible-data work and understates what CGP now offers for enums; and move the
-  file into the `Understanding CGP` category, **carrying `slug: /overview` so `/docs/overview` keeps
-  serving** — the [no-plugin policy](site-structure.md) rules out a redirect, so without the slug every
-  inbound link 404s. *Blocked by:* E2 and E4, which are what the depth pointers should point at instead,
-  and E1, which creates the category.
+  `cargo-cgp` and the extensible-data work and understates what CGP now offers for enums. The page
+  **stays where it is** rather than moving into a category, so the `slug: /overview` this task once
+  carried is no longer needed. *Blocked by:* E2 and E4, which are what the depth pointers should point
+  at instead.
 
 ## T — Teaching
 

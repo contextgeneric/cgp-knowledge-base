@@ -107,15 +107,21 @@ construct-specific instead of re-explaining the same failure.
 
 Every reference page descends through the same six sections, in the same order, so that a reader learns
 the shape once and can then skim any page by habit. **The descent is by reader level**: a beginner gets
-what they need from the first two sections and stops, a working developer reads to the end of the
-examples, and only an advanced reader continues into the machinery. Nobody has to read past their level
-to find their answer.
+what they need from *What it's for* and *Using it* and stops, a working developer reads to the end of the
+examples and the *When to reach for it* judgement that follows them, and only an advanced reader
+continues into the machinery. Nobody has to read past their level to find their answer.
 
 **What it's for** — one or two paragraphs, readable by someone who has finished the first tutorial and
 nothing else. State the problem the construct solves before naming any mechanism, and gloss or link every
 term a newcomer will not have. This is the internal Purpose section rewritten for a reader who does not
 have the `/cgp` skill loaded, and it is the section most often ported badly, because the internal version
 assumes fluency the public reader has not got.
+
+**Using it** — the accepted forms, each argument and option, and what defaults fill an omission. The
+internal Syntax section, largely unchanged.
+
+**Examples** — at least one realistic, self-contained example, and more where forms differ meaningfully.
+Prefer code already verified in [examples/](../../examples/README.md) over new snippets.
 
 **When to reach for it, and when not** — the section with no internal counterpart, and often the most
 useful on the page. Name the situations the construct is for, the alternative to prefer when it is not,
@@ -124,11 +130,12 @@ the internal [guides](../../cgp/guides/README.md), which are prescriptive where 
 descriptive; folding each guide's recommendation into the relevant page's *When* section is how that
 material reaches the public site, since the guides have no public home of their own.
 
-**Using it** — the accepted forms, each argument and option, and what defaults fill an omission. The
-internal Syntax section, largely unchanged.
-
-**Examples** — at least one realistic, self-contained example, and more where forms differ meaningfully.
-Prefer code already verified in [examples/](../../examples/README.md) over new snippets.
+**It sits after the examples rather than before them, which is a deliberate departure from a
+strict level-by-level descent.** Choosing between two constructs is a judgement, and a reader makes it
+better having just seen what the construct looks like in use than having only been told what it is for —
+so the page shows the thing, then argues about when to reach for it. The descent is otherwise intact: a
+beginner still stops after *Using it* and *Examples*, and everything below *When to reach for it* is for
+a reader going deeper.
 
 **Under the hood** — the exact expansion, with before/after blocks. **This section stays**, and it is not
 optional: CGP's central credibility problem is that its constructs are macros, and a Rust programmer will
@@ -257,9 +264,9 @@ and explains that the older form is what a reader will meet in existing code.
 
 ## Checking a draft
 
-**Read only the first two sections and ask whether a reader who has finished one tutorial understands
-what this is and whether they need it.** That is the layered promise, and it is the thing porting from an
-internal document most reliably breaks.
+**Read only *What it's for* and *Using it* and ask whether a reader who has finished one tutorial
+understands what this is and how to write it.** That is the layered promise, and it is the thing porting
+from an internal document most reliably breaks.
 
 **Grep the page for links into the knowledge base.** One surviving `../../cgp/` link is a broken public
 page.

@@ -5,14 +5,21 @@ to reach by following a tutorial or looking up a construct. Its reader is not do
 read — no editor open, no compiler running — so the page's whole job is to leave them holding an idea
 they did not have before, and able to repeat it.
 
-This is a **new page type** on the site. The docs tree currently holds orientation (the Introduction),
+This is a **new page type** on the site. The docs tree previously held orientation (the Introduction),
 a feature-and-benefit summary (the Overview), a link directory, a contribution page, the tutorials, and
 an inlined copy of the agent skill — none of which explain CGP's ideas at length to a public reader. The
-tier is being created because the [homepage guide](homepage.md) offloads to it: the homepage's essay is
-bounded, and everything that outgrows a section becomes one of these pages. So these pages are not
-optional companions to the redesign; they are where the redesign puts what it cannot keep.
+tier exists for two reasons at once. The [homepage guide](homepage.md) offloads to it, so everything
+that outgrows a homepage section becomes one of these pages; and the site needs a public counterpart to
+the internal [cgp/concepts/](../../cgp/concepts/README.md) catalog, so that every cross-cutting CGP idea
+has somewhere a reader can be sent.
 
-- **Where they live** — `docs/`, in a category of their own; see
+The second reason decides the tier's shape: it is the **Concepts** section, with **one page per idea**,
+mirroring the internal catalog one to one — eighteen pages plus a hand-written index. The four pages the
+homepage offloads to are four of those eighteen rather than the whole tier; which concept page plays
+each role is recorded in [information-architecture.md](../information-architecture.md), and the current
+state of the section in [site-structure.md](../site-structure.md).
+
+- **Where they live** — `docs/concepts/`; see
   [Placing them in the docs tree](#placing-them-in-the-docs-tree)
 - **Voice** — project voice, per
   [voice-and-register.md](../../communication-strategy/voice-and-register.md), with one real tension
@@ -119,11 +126,36 @@ mechanism behind the model rather than as the model.
 The synchronization rule applies unchanged in both directions: an explanation page's claims are bound to
 the source exactly as a concept document's are, and a change to the underlying behavior updates both.
 
+## The page shape
+
+Every page in the tier follows the same shape, which is looser than a reference page's fixed template
+because an explanation is an argument rather than a specification, and firmer than nothing because a
+reader who has read one page should be able to skim the next by habit.
+
+**Open by naming the question and saying where the page ends.** A sentence or two: what the page
+answers, and what it closes on. This is the declared-length habit at the scale of a single page — a
+reader who knows the shape navigates, and one who does not, abandons.
+
+**Develop the idea in as many sections as it takes**, with the argument's own headings rather than
+prescribed ones, and with code shown as illustration rather than as steps.
+
+**Close with two fixed sections, in this order.** *What it costs* names what the idea costs or where it
+stops applying, and is not optional — these are the pages a skeptic reads to the end. *Where to go next*
+routes to the neighbouring concept, the tutorial that puts the idea to work, and the reference pages
+that specify the constructs, rather than summarizing what the reader just read.
+
+The written [Consumer and provider traits](https://contextgeneric.dev/docs/concepts/consumer-and-provider-traits)
+page is the model, and it shows what the shape looks like when the argument is about a mechanism.
+
 ## The four pages the homepage offloads to
 
-The homepage's [offload rule](homepage.md) names four destinations. Two are explanation pages proper and
-two are neighbours that live in the same tier for practical reasons; saying which is which keeps a writer
-from applying the wrong rules to them.
+The homepage's [offload rule](homepage.md) names four destinations, and each is now a page of the
+Concepts section rather than a separate artifact: *Why CGP exists* is **Bypassing coherence**, *How CGP
+works* is **Consumer and provider traits** with **Impl-side dependencies** beside it, and *When to use
+CGP* is **How much CGP to use**. The fourth, *Project status*, is project meta rather than a CGP idea
+and does not belong among the concepts; its home is unsettled, per
+[information-architecture.md](../information-architecture.md). The specifications below still stand for
+the pages they describe — read each one as the spec for the concept page that plays its role.
 
 ### Why CGP exists
 
@@ -278,9 +310,16 @@ the mechanics and for the stock-Docusaurus policy that constrains anything more 
 
 **Do not name the category after the framework.** "Explanation" is a term for the people organizing the
 documentation, not for the people reading it, and Diátaxis itself advises against exposing its own
-vocabulary in navigation. Prefer a label that names what the reader gets — *Understanding CGP* — and let
-the four pages sit under it in the order a reader would meet them: *Why CGP exists*, *How CGP works*,
-*When to use CGP*, *Project status*.
+vocabulary in navigation. The category is labelled **Concepts**, which names the same thing plainly and
+matches the word the knowledge base already uses for these documents, so the internal and public names
+agree.
+
+The section sits at `docs/concepts/`, between Tutorials and Reference, and its pages are ordered in the
+sidebar as a reader meets the ideas rather than as the internal catalog lists them: the coherence
+problem and the trait split first, then the three faces of dependency injection, then composition and
+scale, then the applied ideas, with the `Send`-bound workaround and the how-far-to-go decision guide
+last. The order and its reasoning are recorded in
+[information-architecture.md](../information-architecture.md#navigation-and-sidebar-order).
 
 Two consequences for neighbouring pages follow and should land in the same change. The
 [Introduction](../site-structure.md) currently carries both the maturity discussion and the routing

@@ -159,8 +159,8 @@ split is a decision rather than a default, and it exists because this section's 
 built to prevent [voiceless machine prose](../communication-strategy/README.md) and the redesign is
 roughly a hundred pages of it.
 
-**The author reads, in full, before publication:** the front page, the four explanation-tier pages under
-*Understanding CGP*, the reference index, the AI disclosure page, and every blog post. Most of these
+**The author reads, in full, before publication:** the front page, every page of the *Concepts*
+explanation tier, the reference index, the AI disclosure page, and every blog post. Most of these
 carry the voice, make the argument, and are what a first-contact reader meets, so an off-voice paragraph
 in one of them costs more than a wrong sentence anywhere else. The disclosure page is on the list for a
 different reason: a wrong sentence there is a false claim about the project rather than about CGP, and

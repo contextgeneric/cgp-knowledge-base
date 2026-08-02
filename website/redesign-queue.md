@@ -144,23 +144,32 @@ repo, `blog/2026-05-10-v0.8.0-release.md`; the material and the four mechanical 
 
 ## New pages
 
-Each of these is specified but unwritten. The first four are the explanation tier the homepage offloads
-to, and they are blocked on nothing.
+Each of these is specified but unwritten. The first group is the explanation tier the homepage offloads
+to, and it is blocked on nothing.
 
-**Why CGP exists** — coherence, what it buys, what it costs, the workarounds developers hand-roll, and
-the `Self`-becomes-a-parameter move with local coherence restored. The highest-value page missing from
-the site and the homepage's most frequent destination. *Spec and full outline in
-[writing-guides/explanation.md](writing-guides/explanation.md).*
+**The Concepts section is scaffolded but mostly unwritten** — eighteen pages under `docs/concepts/`, one
+per idea in the internal [concepts catalog](../cgp/concepts/README.md), of which one is written and the
+rest carry a one-line summary and a stub notice. What the scaffold already buys is that the *index* is
+complete, so no idea is missing from the site and no later page has to be retrofitted into the ordering;
+what remains is the prose. Three of the pages are the destinations the homepage essay needs most, and
+they are the ones to write first. *Spec and per-page outlines in
+[writing-guides/explanation.md](writing-guides/explanation.md); current state in
+[site-structure.md](site-structure.md).*
 
-**How CGP works** — the two traits, the wiring table, what a call resolves to, the generated Rust, and
-why none of it costs anything at runtime. The site's direct answer to "macros are magic".
-
-**When to use CGP, and when not** — the honest boundary as a decision guide. Nothing on the site
-currently draws it, which is why the homepage's cost section has nowhere to hand a skeptic.
+- **Bypassing coherence** — coherence, what it buys, what it costs, the workarounds developers
+  hand-roll, and the `Self`-becomes-a-parameter move with local coherence restored. The highest-value
+  page still missing and the homepage's most frequent destination.
+- **Impl-side dependencies** — the half of "what is actually generated" that the written
+  *Consumer and provider traits* page leaves out: how an implementation states what it needs without
+  the interface carrying it.
+- **How much CGP to use** — the honest boundary as a decision guide. Nothing on the site currently
+  draws it, which is why the homepage's cost section has nowhere to hand a skeptic.
 
 **Project status and adoption risk** — lifted out of the Introduction so it can be linked from above the
 fold. Its frankness is the asset and must survive the move; what changes is the year-stamp, the absence
-of `cargo-cgp`, and the missing incremental-adoption reassurance.
+of `cargo-cgp`, and the missing incremental-adoption reassurance. **Its home is unsettled**: it is
+project meta rather than a CGP idea, so it does not belong under Concepts, and under **Project** beside
+Contribute is the obvious alternative.
 
 **A checking and debugging tutorial** — lazy wiring, `check_components!`, and `cargo cgp check`, with one
 deliberate failure shown both raw and through the tool. The largest gap in the teaching material and the

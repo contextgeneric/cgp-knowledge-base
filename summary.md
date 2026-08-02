@@ -666,7 +666,8 @@ it stale.
   disclosure page — which of them the release waits for, and the ordering; deleted when empty.
 - [website/site-structure.md](website/site-structure.md) — the site's build, navigation, announcement
   bar, deployment, and release-branch workflow, plus one entry each for the front page, Introduction,
-  Overview, Resources, Contribute, the AI skills page, and the AI disclaimer.
+  Overview, Resources, Contribute, the AI skills page, the Concepts section, the Reference section, and
+  the AI disclaimer.
 
 ### `website/writing-guides/` — how new pages should be written
 
@@ -676,10 +677,10 @@ it stale.
   settled before/after example with the copy that sells it and the six properties a replacement must
   keep, the six-section bounded essay, the offload rule and the dedicated explanation pages it offloads
   to, and what must never appear on the page.
-- [explanation.md](website/writing-guides/explanation.md) — the understanding-oriented page type the
-  site does not yet have: what every explanation page owes, what Diátaxis gives the tier and where CGP
-  diverges, how a concept document is rewritten into one, specs for the four planned pages, and where
-  they sit in the docs tree.
+- [explanation.md](website/writing-guides/explanation.md) — the understanding-oriented `Concepts`
+  tier, one page per idea: what every explanation page owes, what Diátaxis gives the tier and where CGP
+  diverges, how a concept document is rewritten into one, the fixed page shape, specs for the four
+  pages the homepage offloads to, and where the section sits in the docs tree.
 - [tutorial.md](website/writing-guides/tutorial.md) — the tutorials: independent outcome-named pages,
   the first-principles and applied registers, the six obligations taken from Diátaxis and the two rules
   rejected, the problem-before-construct and explicit-before-sugar orderings, and the checking and

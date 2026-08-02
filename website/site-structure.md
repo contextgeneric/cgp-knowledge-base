@@ -357,6 +357,73 @@ Never edit this page directly to fix the skill. It is a copy: correct the skill 
 then re-inline the result. Editing the copy alone creates a fourth version of the truth and guarantees
 the three views diverge further.
 
+## Concepts
+
+- **URL** — <https://contextgeneric.dev/docs/concepts/>
+- **Source** — [docs/concepts/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/concepts)
+- **Status** — Draft: the index and one page are written, the remaining pages are stubs
+- **How it was made** — written by an agent from [cgp/concepts/](../cgp/concepts/README.md); level one
+  of the four in [ai-disclosure.md](../communication-strategy/ai-disclosure.md)
+
+### What it covers
+
+Concepts is the site's **explanation tier**: one page per cross-cutting CGP idea, read away from a
+keyboard, answering *why does CGP work this way* rather than *how do I write it*. It is a new
+top-level category at `docs/concepts/`, position 4, sitting between Tutorials and Reference, with a
+hand-written index as its category link. Placing it there moved the AI section from position 4 to 6,
+which also brings the sidebar closer to the order
+[information-architecture.md](information-architecture.md#navigation-and-sidebar-order) wants.
+
+**Every page is scaffolded and the idea list is complete**, mirroring how the reference port works:
+eighteen pages, one per document under [cgp/concepts/](../cgp/concepts/README.md), each carrying its
+one-line summary and a *Not written yet* admonition until it is filled in. One page is written in
+full — [Consumer and provider traits](https://contextgeneric.dev/docs/concepts/consumer-and-provider-traits)
+— and it is the model the rest are written against.
+
+The sidebar order is the order a reader meets the ideas rather than the internal catalog's order:
+the coherence problem and the trait split first, then the three faces of dependency injection, then
+composition and scale, then the applied ideas, with *Recovering `Send` bounds* and *How much CGP to
+use* last as a workaround and a decision guide respectively.
+
+### The page shape
+
+The written page follows a shape the stubs will grow into, and it differs from a reference page's
+fixed template because an explanation is an argument rather than a specification. It opens by naming
+the question it answers and saying where it ends; explains what ordinary Rust already does, and shows
+it *working*, before showing what it cannot share; develops the idea with code shown as illustration
+rather than as steps; and closes with two fixed sections — **What it costs**, which is not optional,
+and **Where to go next**, which routes rather than concludes.
+
+### How it relates to the knowledge base
+
+Each page is derived from the internal document of the same name under
+[cgp/concepts/](../cgp/concepts/README.md), which stays the source of truth; the page-type rules are
+in [writing-guides/explanation.md](writing-guides/explanation.md). File names match the internal ones,
+so the mapping is one to one. Two internal targets have no public counterpart and are folded in: the
+[guides](../cgp/guides/README.md) reach the site through a page's *What it costs* and *Where to go
+next* sections, and implementation documents are dropped.
+
+The written page draws on [consumer and provider traits](../cgp/concepts/consumer-and-provider-traits.md)
+for the split, [coherence](../cgp/concepts/coherence.md) for why it is needed, and the
+[modularity hierarchy](../cgp/concepts/modularity-hierarchy.md) for the vanilla-Rust account of the
+application shape that its opening builds. Its running example is the `App`/`TestApp` email swap from
+[message.md](../communication-strategy/message.md#the-problems-cgp-removes) — **environmental context,
+self-targeted**, chosen deliberately because the front page's hero block and both tutorials wire a
+*value* context, so this is one of the first places on the site a reader meets a type that stands for
+an application.
+
+### Maintaining it
+
+The section is bound to the internal concept documents by the
+[synchronization rule](../AGENTS.md#the-synchronization-rule) in both directions: a change to a
+construct updates the code, the internal document, and any public page that shows it. A public page
+that disagrees with its internal document is a defect in the public page.
+
+Two things a revision must not do. **Do not turn a concept page into a reference page** — naming a
+construct and showing one use is explanation, listing its accepted forms is reference and belongs on
+that construct's page. And **do not drop the cost section**; it is what the least credulous readers
+come for, and it is the first thing a well-meaning trim targets.
+
 ## Reference
 
 - **URL** — <https://contextgeneric.dev/docs/reference/>
@@ -432,6 +499,12 @@ the section most likely to be wrong without it.
 **Sidebar labels carry no backticks.** A `sidebar_label` is plain text rather than Markdown, so
 `` `#[cgp_impl]` `` renders with its backticks visible in the navigation. Write `#[cgp_impl]` in the
 label and keep the backticks in the page's `#` heading, where they render.
+
+**An admonition's title is a heading on its own line, not text after the directive.** Write
+`:::note` on its own, then a blank line, then `### Advanced`, rather than `:::note Advanced` — the
+inline form does not render the title as intended on this installation. The heading becomes a link
+target and appears in the page's table of contents, which is wanted for an *Advanced* note nested
+under *Under the hood* and merely harmless on a stub's *Not written yet* notice.
 
 ### Maintaining it
 
