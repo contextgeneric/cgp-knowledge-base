@@ -95,7 +95,9 @@ It is filled in **lazily**, and the rule is in
 [AGENTS.md](AGENTS.md#verify-code-against-current-cgp-and-never-against-a-blog-post): a page gets its
 file when someone writes, revises, or reviews it. A missing file therefore means nobody has been
 through that page yet. **`docs/concepts/` is covered in full** — seventeen files, one per page that shows
-code — and no other section has been through yet. The crate pins `cgp = "0.8.0-alpha"`, which resolves
+code. Three files cover pages elsewhere: `src/cargo_cgp/check.rs`, and under `src/reference/`,
+`macros/delegate_components.rs` and `errors.rs`. The rest of the reference is uncovered, which is the
+largest remaining gap and closes page by page as the port proceeds. The crate pins `cgp = "0.8.0-alpha"`, which resolves
 from crates.io today and joins the tutorials' pin on the release checklist.
 
 ## Navigation and the announcement bar
@@ -629,10 +631,45 @@ hand-written index as its category link and seven subdirectories mirroring what 
 **Every page is scaffolded and the construct list is complete**, which matters more than it sounds: the
 completeness obligation is against the index rather than against the prose, so no construct is missing
 from the site even while most pages are placeholders. Each stub carries its one-line description and an
-admonition saying it is unwritten. Twenty-seven construct pages are written, plus the index: the whole of
-`macros/` (twenty pages) and the whole of `attributes/` (seven), which are the first two groups finished
-end to end. Forty-eight construct pages and `errors.md` remain stubs — `derives/`, `components/`,
-`providers/`, `traits/`, and `types/` are untouched.
+admonition saying it is unwritten. Twenty-seven construct pages are written, plus the index and
+`errors.md`: the whole of `macros/` (twenty pages) and the whole of `attributes/` (seven), which are the
+first two groups finished end to end. Forty-eight construct pages remain stubs — `derives/`,
+`components/`, `providers/`, `traits/`, and `types/` are untouched.
+
+### The compile-errors page
+
+`errors.md` is the one page in the section that documents no construct, and it is a consolidation rather
+than a port: the sixteen class documents under [cgp/errors/](../cgp/errors/README.md) become one page,
+because sixteen public pages would be a category no reader scans. It is organized by the internal
+catalog's own **hidden-versus-surfaced** axis, stated once near the top as "the one distinction that
+explains everything", and it opens with a lookup table keyed on what a reader actually has in front of
+them — a `rustc` code plus a message shape — since that is how anyone arrives at it.
+
+**Every quoted diagnostic is real output read out of a `cargo-cgp` UI fixture's blessed `.cgp.stderr` or
+`.rust.stderr`**, not a remembered or reconstructed one. That is the same source the internal class
+documents are verified against, and it is what makes the page's central demonstration land: the checked
+and the method-call routes to one mistake produce byte-identical recovered output, which the page shows
+rather than asserts. A revision re-reads the fixtures rather than editing the quotes.
+
+The page covers one group the internal catalog has **no classes for**, and the gap is recorded in
+[cgp/errors/README.md](../cgp/errors/README.md) rather than papered over here. `cargo-cgp`'s
+`CGP-E012`–`CGP-E016` rewrites — a capability used without `#[uses]`, an inner provider used without
+`#[use_provider]`, and the three consumer-versus-provider-trait confusions — are common, first-week
+mistakes with no upstream class document, so the public page carries them under *Using something you did
+not declare* on the strength of the tool's own catalog and its fixtures.
+
+It also becomes the site's home for the **`[CGP-Exxx]` code reference**. Nothing else on the site listed
+the codes: the tooling section explains the scheme and shows four of them in an example, and the internal
+catalog that defines them is not linkable from a public page. Two tables close the page, one for headline
+codes and one for dependency-tree codes.
+
+Its code is backed by
+[`src/reference/errors.rs`](https://github.com/contextgeneric/contextgeneric.dev/blob/main/example-code/src/reference/errors.rs),
+which is unusual in the crate and worth knowing before editing: the page shows exactly one program, and
+that program is pinned in *both* directions. A live module proves the wiring block compiles — the page
+asserts that in bold, and it is the reason the error arrives elsewhere — and it deliberately omits the
+`check_components!` this crate otherwise adds to every wired context, because the check is precisely what
+the page withholds. Two `compile_fail` doctests then pin the checked failure and the hidden one.
 
 Finishing `macros/` settled one thing about the template a later group should copy rather than rediscover:
 **the three argument-free macros get no grammar section** — `#[async_trait]`, `#[cgp_auto_dispatch]`, and

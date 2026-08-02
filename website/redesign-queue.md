@@ -176,13 +176,6 @@ state are in [site-structure.md](site-structure.md). One dependency is worth rep
 *When to reach for it* sections are where the internal [guides](../cgp/guides/README.md) reach the
 public site, since they have no public home of their own.
 
-**An error catalog page in the reference** — the compile errors CGP produces after codegen, so a reader
-who hits a wiring failure has somewhere on the site to look it up. The seventeen internal
-[error-class documents](../cgp/errors/README.md) currently have no public counterpart at all, which
-forces every reference page's *Gotchas* section to inline whatever it needs. One public page organized
-by the internal catalog's hidden-versus-surfaced axis resolves both. It comes **before** the bulk of the
-port, so the *Gotchas* sections do not all have to be revisited.
-
 **Three deep dives** — Hypershell, extensible data types, and cgp-serde: multi-page living documents
 replacing the usefulness of the three longest blog posts, whose code is uniformly stale. **These land
 after the v0.8.0 relaunch rather than with it**, which is the one part of the target the relaunch does

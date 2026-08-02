@@ -237,21 +237,12 @@ reader falls into. The spec and the porting procedure are in
   themselves — the internal [guides](../cgp/guides/README.md) reach the public site **only** through
   the *When to reach for it* sections, and every new page owes a provenance note. This group ships on
   its guide plus a spot check rather than a full read, and a subdirectory is the natural unit for one
-  session. *Blocked by:* R4 for what a *Gotchas* section may defer to. **Not blocked by the explanation
+  session. *Blocked by:* nothing — the error catalog page a *Gotchas* section defers to is written. **Not blocked by the explanation
   tier**: the twenty-seven were written without a single link into it, because the guide's own fallback —
   summarize the idea in a sentence on the page — was the better answer while that tier was stubs. That
   tier has since landed and **the linking sweep is done for all twenty-seven**, so each now closes with a
   short *The ideas behind it* list; a page written from here on carries that list from the start rather
   than deferring it. *Done when:* no stub notice remains.
-- **R4 — the error catalog page.** Scaffolded at `docs/reference/errors.md` and still to be written: the
-  compile errors CGP produces after codegen, so a reader who hits a wiring failure has somewhere on the
-  site to look it up. The seventeen internal [error-class documents](../cgp/errors/README.md) are the
-  material; the public page is one page rather than seventeen, organized by the catalog's own
-  hidden-versus-surfaced axis, showing the small program behind each class and what `cargo cgp check`
-  makes of it. Its existence is what lets every *Gotchas* section stay construct-specific instead of
-  re-explaining the same failure, which is why it should be written **before** the bulk of R2 — the
-  three pages written so far each inline a little of what it will own. *Blocked by:* nothing.
-
 ## D — The deep dives, and the code they quote
 
 **Post-release.** All three deep dives are still wanted, and none of them holds up the v0.8.0 release —
@@ -436,9 +427,8 @@ the [ordering](#the-ordering) for what to start on.
 | T2, T4 | nothing | nothing |
 | T3 | nothing hard; reads better after R2 | nothing |
 | R1 | nothing | R2 |
-| R2 | R1, R4 (soft) | T3 (soft), X2 (soft) |
+| R2 | R1 | T3 (soft), X2 (soft) |
 | R3 | nothing | nothing (C4, T2 point at it) |
-| R4 | nothing | R2's *Gotchas* sections |
 | DC1, DC2, DC3 | nothing | DD1, DD2, DD3 respectively |
 | DD1, DD2, DD3 | their DC task | nothing |
 | B1, B2 | nothing (both held until after V1) | nothing |
@@ -463,10 +453,11 @@ every later task inheriting known-wrong copy.
 every subsequent page's provenance note links to, so no page added from here carries a dangling
 obligation. Its remaining step is the author's read.
 
-**Then R4, R3, and R1.** This is the change most worth noticing in the ordering: because the release
-waits for the reference, the reference's *prerequisites* are the real critical path, and all three are
-small. R4 fixes what a *Gotchas* section may defer to, R3 is what C4, T2, and the homepage's cost section
-all point at, and R1 fixes the grouping that seventy pages then slot into.
+**Then R3 and R1.** Because the release waits for the reference, the reference's *prerequisites* are the
+real critical path, and both are small: R3 is what C4, T2, and the homepage's cost section all point at,
+and R1 fixes the grouping that seventy pages then slot into. The third prerequisite that used to sit here,
+the error catalog page, is written — which is what freed every later *Gotchas* section to stay
+construct-specific.
 
 **Then E1**, the last homepage-offload page left. It is mostly a move of text that already exists and
 unblocks the homepage's second call to action, but it cannot start until its home is settled.

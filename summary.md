@@ -293,7 +293,8 @@ it stale.
 ### `cgp/errors/` — post-codegen compile errors, by class
 
 - [README.md](cgp/errors/README.md) — the catalog: why these errors are hard, the hidden-versus-
-  surfaced axis it is built around, what belongs here, and the index of every class.
+  surfaced axis it is built around, what belongs here, the index of every class, and the recorded gap
+  where `cargo-cgp`'s `CGP-E012`–`CGP-E016` rewrites have no class document yet.
 - [AGENTS.md](cgp/errors/AGENTS.md) — the rules: never paste verbatim output, record the three facts a
   tool needs, the document template, backing every class with a fixture, and gathering an error with a
   sub-agent.
