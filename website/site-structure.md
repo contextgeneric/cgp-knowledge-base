@@ -355,6 +355,73 @@ The sponsorship section is written in the author's own first-person voice and is
 finances. Do not rewrite it into corporate prose; its frankness is the point, and it is the one place
 on the site where a single voice is appropriate rather than the project's collective one.
 
+## cargo-cgp
+
+- **URL** — <https://contextgeneric.dev/docs/cargo-cgp/>
+- **Source** — [docs/cargo-cgp/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/cargo-cgp)
+- **Status** — Current: all five pages written
+- **How it was made** — written by an agent from [cargo-cgp/reference/](../cargo-cgp/reference/README.md)
+  and verified by running the tool; level one of the four in
+  [ai-disclosure.md](../communication-strategy/ai-disclosure.md)
+
+### What it covers
+
+The tool's own section, a top-level category beside the reference rather than inside it, since every
+reference page answers "what does this construct mean" and these answer "how do I run this". Five
+pages: an **overview** carrying the argument, one page each for **check** and **expand**, plus
+**installation** and **troubleshooting**. The category links to the overview rather than to a generated
+index.
+
+The overview leads on the problem rather than the tool, with the same wiring mistake shown twice — once
+as plain `cargo check` reports it, a `Chars` spine the reader has to decode character by character, and
+once as `cargo cgp check` does, with the missing field named in English and the dependency chain drawn
+beneath it. That contrast is the page's whole argument, and both halves were produced by running the
+two commands rather than transcribed.
+
+### How it relates to the knowledge base
+
+The material is [cargo-cgp/reference/](../cargo-cgp/reference/README.md), which stays the source of
+truth: [installation.md](../cargo-cgp/reference/installation.md) behind the installation page,
+[usage.md](../cargo-cgp/reference/usage.md) behind check and expand, and
+[troubleshooting.md](../cargo-cgp/reference/troubleshooting.md) behind troubleshooting, with the
+`[CGP-Exxx]` meanings from [error-code.md](../cargo-cgp/error-code.md). The public pages drop what those
+documents carry for an agent — the pointers into the tool's implementation notes, the driver-level
+debugging recipes — and add the one thing they lack, which is a reader who has to *choose* an install
+path rather than follow one.
+
+The page type is specified in [writing-guides/tooling.md](writing-guides/tooling.md), added with this
+section because a program the reader runs fails differently from a construct they write, and the
+reference guide's rules do not cover it.
+
+Two pages show Rust, and both are backed by the website repository's `example-code/` crate under
+`src/cargo_cgp/`: the broken program the check page runs the tool on is a `compile_fail` doctest, and
+the fixed program the expand page expands is a live module with a test.
+
+### Where it diverges
+
+Writing the pages corrected one claim in the internal reference, found by running the command rather
+than transcribing it. [usage.md](../cargo-cgp/reference/usage.md) said `expand` answers `--help` itself
+rather than forwarding it, on the reasoning that `cargo rustc --help` could never mention `--item`. The
+tool forwards: `cargo cgp expand --help` prints cargo's help, and `--item` appears nowhere in it. The
+premise was right and the conclusion backwards — the flag is genuinely undiscoverable from the command
+line, which is an argument for documenting it, not evidence that the tool already does.
+
+Two further facts are release-dependent and will go out of date on their own. **`cargo cgp expand` is newer than the published `v0.1.0-alpha`**, so an install from
+crates.io does not carry it; both the installation and expand pages say so, and both notes should be
+removed when the next release ships. And **the version string does not tell you which commands you
+have** — a build from the default branch still reports `0.1.0-alpha` while carrying `expand` — which is
+why the installation page tells a reader to read the command list rather than the version.
+
+### Maintaining it
+
+**Re-run the commands rather than editing their output.** Every quoted diagnostic and listing on these
+pages came out of the tool, and a paraphrase reads to a user as a version mismatch. The guide's draft
+checks are the procedure.
+
+When the tool's diagnostics change, the internal reference and these pages move together, per the
+[synchronization rule](../AGENTS.md#the-synchronization-rule) — and so does the
+[error catalog](../cgp/errors/README.md), whose classes cite the same `[CGP-Exxx]` codes.
+
 ## AI skills
 
 - **URL** — <https://contextgeneric.dev/docs/ai/skills/>

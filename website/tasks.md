@@ -241,10 +241,6 @@ reader falls into. The spec and the porting procedure are in
   to what this entry previously claimed: twenty-seven pages were written without a single link into it, because the guide's own fallback — summarize the idea in a sentence on the page — is the
   better answer while that tier is almost entirely stubs. Adding those links once the tier lands is a
   separate sweep rather than a prerequisite. *Done when:* no stub notice remains.
-- **R3 — the tooling section.** `cargo-cgp` gets its own top-level docs section beside the reference
-  rather than inside it, since every other reference page answers "what does this construct mean".
-  *Material:* [cargo-cgp/reference/](../cargo-cgp/reference/README.md). *Blocked by:* nothing, and it is
-  small — worth doing early, since it is what C4, T2, and the homepage's cost section all point at.
 - **R4 — the error catalog page.** Scaffolded at `docs/reference/errors.md` and still to be written: the
   compile errors CGP produces after codegen, so a reader who hits a wiring failure has somewhere on the
   site to look it up. The seventeen internal [error-class documents](../cgp/errors/README.md) are the

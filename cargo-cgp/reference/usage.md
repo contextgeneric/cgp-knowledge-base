@@ -81,9 +81,10 @@ cargo cgp expand --lib | rg 'Symbol!'
 cargo cgp expand --help                 # the expand options, including --item
 ```
 
-`expand` answers `--help` itself rather than forwarding it, because `--item` is a flag cargo does not
-know and `cargo rustc --help` would never mention it. Run `cargo rustc --help` for the forwarded
-options.
+`--help` is forwarded like every other argument, so `cargo cgp expand --help` prints `cargo rustc`'s
+own help. That help does **not** list `--item`, which is the tool's flag rather than cargo's, so the
+option is not discoverable from the command line and has to be documented — which is what the line
+above and the public [Expand page](https://contextgeneric.dev/docs/cargo-cgp/expand) are for.
 
 **A whole crate's expansion is long, so `--item <path>` narrows it to one part.** The path is
 `::`-separated, and what it selects depends on what it names:

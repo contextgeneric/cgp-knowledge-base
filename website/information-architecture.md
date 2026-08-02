@@ -186,7 +186,9 @@ made those four a short reading path — which the section's index page is what 
   wiring failure has somewhere on the site to look it up. One page rather than seventeen, drawn from
   [cgp/errors/](../cgp/errors/README.md), and the reason every reference page's *Gotchas* section can
   stay construct-specific instead of re-explaining the same failure.
-- *Tooling* — **new**, a sibling section rather than part of the reference, covering `cargo-cgp`.
+- *Tooling* — present at `docs/cargo-cgp/`, labelled for the tool rather than the category, since it
+  covers one. A sibling section rather than part of the reference: five pages, an overview plus one per
+  command, plus installation and troubleshooting.
 
 **Deep dives** (new category) — **after the release**, unlike everything else in this inventory
 - *Hypershell* — **new**, six pages. The type-level DSL.

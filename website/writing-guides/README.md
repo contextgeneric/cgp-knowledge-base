@@ -70,6 +70,10 @@ Register a new guide here in the same change that adds it, and in [../../summary
   posts: why they are new artifacts rather than edits, how the author's voice converts to the
   project's without losing the concessions, how to split into pages, and the obligation to track the
   live code base rather than the post.
+- [tooling.md](tooling.md) — the pages documenting a program the reader *runs* rather than a construct
+  they write: why a tool's page fails differently from a construct's, the five-page section shape, the
+  obligation to quote real output rather than remembered output, and the version concession every claim
+  about the error experience carries.
 - [reference.md](reference.md) — the canonical per-construct reference, ported from the knowledge
   base's internal reference: the layered descent that serves beginner through advanced on one page,
   the granularity and the four consolidations, where every internal link is re-pointed, and the

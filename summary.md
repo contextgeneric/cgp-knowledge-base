@@ -674,8 +674,8 @@ it stale.
   bar, deployment, release-branch workflow, the three settings that depart from stock Docusaurus to
   publish the agent skill from its own repository, and the `example-code/` crate that holds the compiled
   counterparts of the code the site shows, plus one entry each for the front page, Introduction,
-  Overview, Resources, Contribute, the AI skills section and its `cgp-skills` submodule, the Concepts
-  section, the Reference section, and the AI disclaimer.
+  Overview, Resources, Contribute, the `cargo-cgp` tooling section, the AI skills section and its
+  `cgp-skills` submodule, the Concepts section, the Reference section, and the AI disclaimer.
 
 ### `website/writing-guides/` — how new pages should be written
 
@@ -700,6 +700,9 @@ it stale.
 - [deep-dive.md](website/writing-guides/deep-dive.md) — the multi-page living documents grown from the
   longest blog posts: why they are new artifacts rather than edits, converting the author's voice to
   the project's without losing the concessions, the page split, and tracking the live code base.
+- [tooling.md](website/writing-guides/tooling.md) — the pages documenting a program the reader runs
+  rather than a construct they write: why a tool's page fails differently, the five-page section shape,
+  quoting real output rather than remembered output, and the version concession.
 - [reference.md](website/writing-guides/reference.md) — the canonical per-construct reference ported
   from the internal one: why the site rather than docs.rs is canonical, the six-section layered descent
   serving beginner to advanced on one page, the obligation to cover every form the parser accepts and
