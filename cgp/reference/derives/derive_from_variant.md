@@ -82,6 +82,8 @@ The call is equivalent to `Shape::Circle(circle)`, but the variant is selected b
 
 ## Known issues
 
+**A variant named `Value` fails to compile.** The generated `from_variant` signature names the payload as `Self::Value`, so a variant of that name makes the path ambiguous between the variant and the associated type, and the compiler reports `ambiguous associated item` with its headline on the `#[derive(FromVariant)]` attribute and a `note: "Value" could refer to the variant defined here` pointing at the offending variant, so the error is readable once the note is followed. Writing the projection as `<Self as FromVariant<Tag>>::Value` in the codegen would remove the ambiguity; until then, renaming the variant is the only fix. `Value` is the only name this derive reserves, but [`#[derive(ExtractField)]`](derive_extract_field.md) reserves it along with four more and [`#[derive(HasFields)]`](derive_has_fields.md) two others, so an enum deriving the whole family must avoid all seven.
+
 The derive only accepts enums whose every variant is a single-field tuple variant. A fieldless variant like `Empty`, a multi-field variant like `Pair(A, B)`, or a struct-style variant like `Named { x: A }` causes the macro to fail with the error "Expected variant to contain exactly one unnamed field." There is no way to opt a variant out of the requirement, so an enum that mixes shapes cannot derive the constructor at all.
 
 ## Source

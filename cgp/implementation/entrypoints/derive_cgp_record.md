@@ -21,8 +21,9 @@ The record's corner cases — `Symbol!` versus `Index<N>` tagging, the newtype `
 
 ## Tests
 
-`#[derive(CgpRecord)]` has no snapshot macro of its own; its expansion is identical to the record path of `#[derive(CgpData)]` and is pinned by the `snapshot_derive_cgp_data!` snapshots indexed in [derive_cgp_data.md's Snapshots section](derive_cgp_data.md#snapshots).
+`#[derive(CgpRecord)]` has no snapshot macro of its own, and needs none: its expansion is identical to the record path of `#[derive(CgpData)]` and is pinned by the `snapshot_derive_cgp_data!` snapshots indexed in [derive_cgp_data.md's Snapshots section](derive_cgp_data.md#snapshots).
 
+- [cgp_record_derive.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_records/cgp_record_derive.rs) is the derive's own behavioral test, checking that one `#[derive(CgpRecord)]` delivers all three slices — the per-field getters including the mutable one, the whole-shape round trip, and the incremental builder.
 - The behavioral record tests in [crates/tests/cgp-tests/tests/extensible_records/](https://github.com/contextgeneric/cgp/tree/main/crates/tests/cgp-tests/tests/extensible_records/) — notably [record_build_from.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_records/record_build_from.rs) and [record_build_with_handlers.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_records/record_build_with_handlers.rs) — exercise the builder that this derive produces.
 
 ## Source

@@ -95,7 +95,8 @@ The family is normally driven through `builder()`, a series of `build_field` cal
 use cgp::prelude::*;
 use cgp::core::field::impls::CanBuildFrom;
 
-#[derive(BuildField)]
+// The source of a `build_from` needs its field list too, so it derives `HasFields` as well.
+#[derive(HasFields, BuildField)]
 pub struct FooBar { pub foo: u64, pub bar: String }
 
 #[derive(BuildField)]
@@ -110,6 +111,8 @@ fn extend(foo_bar: FooBar) -> FooBarBaz {
 ```
 
 Each line changes the partial type, and the `finalize_build` on the last line type-checks only because every marker has reached `IsPresent` by that point. Reordering the steps so that `finalize_build` ran before `baz` was set would be a compile error rather than a runtime failure.
+
+**`CanBuildFrom` bounds its *source* on `HasFields + IntoBuilder`, which is why the source above derives [`HasFields`](has_fields.md) as well as the builder.** `build_from` recurses over `Source::Fields` to know which fields to copy, so a source deriving only `#[derive(BuildField)]` has a builder of its own and still cannot be merged into anything — the failure is an unsatisfied `HasFields` bound on the source type rather than anything about the target. The target needs only the builder.
 
 ## Related constructs
 

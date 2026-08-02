@@ -37,25 +37,37 @@ impl<__F1__: MapType> HasField<Symbol!("first_name")> for __PartialPerson<IsPres
 }
 ```
 
-The `BuildField` trait itself is *not* emitted. It is a blanket impl in the field crate over any `UpdateField<Tag, IsPresent, Mapper = IsNothing>`, so `build_field` is sugar over the generated `update_field` that transitions a field from absent to present; `FinalizeBuild` is likewise a field-crate subtrait of `PartialData`, and the derive supplies only the all-present impl.
+Neither `BuildField` nor `TakeField` is emitted, and that is why `UpdateField` — parameterized by the marker to move *to* — is the trait the derive actually writes: both capabilities are field-crate blanket impls over it, in opposite directions. `BuildField<Tag>` covers `UpdateField<Tag, IsPresent, Mapper = IsNothing>` and `TakeField<Tag>` covers `UpdateField<Tag, IsNothing, Mapper = IsPresent>`, so one generated impl per field supplies both. `TakeField` is what `CanBuildFrom`'s recursion in [impls/build_from.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/impls/build_from.rs) uses to pull each field out of a source record before building it into the target. That recursion walks the *source's* `HasFields::Fields`, so `CanBuildFrom` bounds the source on `HasFields + IntoBuilder` — which is why a `build_from` source needs [`#[derive(HasFields)]`](derive_has_fields.md) as well as this derive, while the target needs only this one. `FinalizeBuild` is likewise a field-crate subtrait of `PartialData`, and the derive supplies only the all-present impl.
 
 ## Behavior and corner cases
 
 A named field is keyed by [`Symbol!`](../../reference/macros/symbol.md) and a tuple field by [`Index<N>`](../../reference/types/index.md), following the whole family's tagging rule, so a tuple struct produces `UpdateField<Index<N>, _>` impls. The struct's generic parameters and `where` clause are preserved and carried onto the companion struct and every impl, with the field markers added on top and `PartialData::Target` naming the original struct with its own generics.
 
-An **empty struct** produces a `__Partial{Name}` with no field markers, a trivial `HasBuilder`/`FinalizeBuild`, and no `UpdateField`/`HasField` impls. This derive emits no `HasField`/`HasFieldMut` getters on the original struct and no `HasFields` representation impls — those come from [`#[derive(HasField)]`](derive_has_field.md) and [`#[derive(HasFields)]`](derive_has_fields.md); `BuildField` is purely the construction slice, included wholesale by [`#[derive(CgpRecord)]`](derive_cgp_record.md) and [`#[derive(CgpData)]`](derive_cgp_data.md).
+An **empty struct** produces a `__Partial{Name}` with no field markers, a trivial `HasBuilder`/`FinalizeBuild`, and no `UpdateField`/`HasField` impls — so there is exactly one configuration of the partial type and `builder()` is already finalizable. This derive emits no `HasField`/`HasFieldMut` getters on the original struct and no `HasFields` representation impls — those come from [`#[derive(HasField)]`](derive_has_field.md) and [`#[derive(HasFields)]`](derive_has_fields.md); `BuildField` is purely the construction slice, included wholesale by [`#[derive(CgpRecord)]`](derive_cgp_record.md) and [`#[derive(CgpData)]`](derive_cgp_data.md).
+
+`derive_builder_struct` builds the companion by **cloning the input struct and replacing its identifier**, which decides two user-visible properties. The clone keeps the struct's own visibility and each field's, so a `pub struct` yields a `pub struct __Partial{Name}` with `pub` fields. But the helper then calls `attrs.clear()`, so none of the input's attributes reach the companion — a `#[derive(Debug, Clone)]` on the record does not carry over, and a partially-built value can therefore be neither printed nor cloned. That is not an oversight: a field's type is the projection `<__F0__ as MapType>::Map<T>`, so a blanket `Debug` derive on the companion would need bounds the derive has no way to state.
 
 ## Error spans
 
 Each generated impl is re-spanned onto the token it derives from, so a compiler error points at that token rather than at the whole `#[derive(BuildField)]`. The per-field `UpdateField` and `HasField`-on-partial impls are aimed at the field they read (the field identifier, or the whole `syn::Field` for a tuple field), and the whole-struct `HasBuilder`/`IntoBuilder`/`PartialData`/`FinalizeBuild` impls at the struct name. Each goes through [`override_item_span`](../README.md#spans-aim-generated-items-at-the-token-the-user-wrote), moving only the `impl`/`{ … }` boundary — the mechanism the [`#[derive(HasField)]`](derive_has_field.md#error-spans) doc explains in full. The `__Partial{Name}` companion struct is cloned from the user's own struct, so its tokens already carry meaningful spans and need no re-spanning.
 
+## Snapshots
+
+`snapshot_derive_build_field!` pins this derive's output on its own, which is what makes the slice claim checkable rather than asserted — the snapshot shows the builder items and *no* getters or representation impls:
+
+- [extensible_records/build_field_derive.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_records/build_field_derive.rs) — the canonical two-named-field builder slice in isolation.
+
+The same items also appear inside the record expansion pinned by the `snapshot_derive_cgp_data!` snapshots indexed in [derive_cgp_data.md's Snapshots section](derive_cgp_data.md#snapshots), which is where the tuple, generic, and fieldless record shapes are covered.
+
 ## Tests
 
-`#[derive(BuildField)]` has no snapshot macro of its own; the builder items it emits are part of the record expansion pinned by the `snapshot_derive_cgp_data!` snapshots indexed in [derive_cgp_data.md's Snapshots section](derive_cgp_data.md#snapshots). The behavioral builder tests in [crates/tests/cgp-tests/tests/extensible_records/](https://github.com/contextgeneric/cgp/tree/main/crates/tests/cgp-tests/tests/extensible_records/) exercise the machinery:
+The behavioral builder tests in [crates/tests/cgp-tests/tests/extensible_records/](https://github.com/contextgeneric/cgp/tree/main/crates/tests/cgp-tests/tests/extensible_records/) exercise the machinery:
 
+- [build_field_derive.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_records/build_field_derive.rs) drives the slice on its own: field-by-field construction, reading a field back out of a partial value through the partial type's `HasField`, and the `IntoBuilder` → `take_field` → `build_field` → `finalize_build` round trip that exercises `TakeField` in the opposite direction from `BuildField`.
 - [record_build_from.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_records/record_build_from.rs) drives `builder`/`build_from`/`build_field`/`finalize_build`.
 - [optional_builder.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_records/optional_builder.rs) drives the optional-builder path.
 - [point_cast.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_records/point_cast.rs) drives the `build_with_default` cast.
+- [record_empty.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_records/record_empty.rs) drives the fieldless record, where `builder()` finalizes with no intervening `build_field`.
 
 ## Source
 

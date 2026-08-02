@@ -78,7 +78,7 @@ Lowering errors — [lowering/](lowering/):
 
 - [Ill-formed generated type](lowering/ill-formed-generated-type.md) — a macro lowers an unsupported field- or argument-type shorthand (such as `Option<&[T]>`) into a generated bound naming an ill-formed, unsized type, which the compiler rejects with the `E0277` `Sized` form.
 - [Unresolved imported abstract type](lowering/unresolved-imported-type.md) — a `#[use_type]` import names an associated type the owning trait does not declare, so the rewritten `<Self as Trait>::WrongName` path resolves to nothing and the compiler rejects it with `E0576`, its caret on the name the user wrote.
-- [Out-of-scope generated name](lowering/out-of-scope-generated-name.md) — an `#[impl_generics]` parameter named in the capability's own signature, where only the generated impl declares it, so the generated trait names a type it cannot see (`E0433`). Its sibling is the abstract type whose name shadows the trait bounding it (`E0404`).
+- [Out-of-scope generated name](lowering/out-of-scope-generated-name.md) — an `#[impl_generics]` parameter named in the capability's own signature, where only the generated impl declares it, so the generated trait names a type it cannot see (`E0433`). It has two siblings, both name collisions between a generated path and a user identifier: the abstract type whose name shadows the trait bounding it (`E0404`), and the enum variant whose name collides with an associated type the extensible-data derives generate, reported as a code-less `ambiguous associated item` — the one shape in this class that is a CGP defect, and one whose diagnostic names the offending variant for two of the three derives and not for the extractor.
 
 Error-code reference — [error_codes/](error_codes/):
 

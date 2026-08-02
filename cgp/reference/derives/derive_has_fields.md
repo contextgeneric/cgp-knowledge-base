@@ -28,7 +28,25 @@ pub enum Shape {
 }
 ```
 
-For a struct the generated `Fields` type is a product; for an enum it is a sum. Named fields within either are tagged by [`Symbol!`](../macros/symbol.md), and unnamed (tuple) fields by [`Index<N>`](../types/index.md), exactly as in `HasField`. A single-field tuple struct (a newtype) is treated specially: its `Fields` is the inner type directly, not wrapped in a one-element product. Applying the derive to anything other than a struct or enum is a compile error.
+For a struct the generated `Fields` type is a product; for an enum it is a sum. Named fields within either are tagged by [`Symbol!`](../macros/symbol.md), and unnamed (tuple) fields by [`Index<N>`](../types/index.md), exactly as in `HasField`. A single-field tuple struct (a newtype) is treated specially: its `Fields` is the inner type directly, not wrapped in a one-element product, and a unit struct is the empty case, whose `Fields` is `Nil`. Applying the derive to anything other than a struct or enum is a compile error.
+
+### Every variant shape is accepted
+
+**`HasFields` is the one derive in the extensible-data family that places no restriction on an enum's variant shapes.** The derives that *deconstruct* an enum — [`#[derive(ExtractField)]`](derive_extract_field.md) and [`#[derive(FromVariant)]`](derive_from_variant.md), and therefore [`#[derive(CgpVariant)]`](derive_cgp_variant.md) and [`#[derive(CgpData)]`](derive_cgp_data.md) — require every variant to be a single-unnamed-field tuple variant, because each has to name one payload type. `HasFields` only *describes* a variant, so it accepts all four shapes and nests each variant's own fields as a product inside that variant's `Field` entry, applying the same tagging rules it applies to a struct:
+
+```rust
+#[derive(HasFields)]
+pub enum Shape {
+    Empty,                                  // Field<Symbol!("Empty"), Nil>
+    Circle(u32),                            // Field<Symbol!("Circle"), u32>
+    Rectangle(u32, u32),                    // Field<Symbol!("Rectangle"), Product![Field<Index<0>, u32>, Field<Index<1>, u32>]>
+    Triangle { base: u32, height: u32 },    // Field<Symbol!("Triangle"), Product![Field<Symbol!("base"), u32>, Field<Symbol!("height"), u32>]>
+}
+```
+
+A unit variant becomes the empty product `Nil`; a single-unnamed-field variant becomes the payload type directly, which is the newtype special case above applied inside a variant; a multi-field tuple variant becomes a product keyed by `Index<N>`; and a named-field variant becomes a product keyed by `Symbol!`. The `FromFields`, `ToFields`, and `ToFieldsRef` conversions handle each shape, so a value of any such enum round-trips through its `Fields` representation.
+
+This matters mostly when deriving `HasFields` alone. Reaching for the umbrella `#[derive(CgpData)]` on the same enum would fail, because its extractor slice imposes the single-payload requirement that this derive does not — so an enum with mixed variant shapes can have a structural representation but no generic constructor or extractor.
 
 ## Expansion
 
@@ -53,12 +71,12 @@ impl HasFields for Person {
 }
 
 impl HasFieldsRef for Person {
-    type FieldsRef<'a> = Product![
-        Field<Symbol!("name"), &'a String>,
-        Field<Symbol!("age"), &'a u8>,
+    type FieldsRef<'__a> = Product![
+        Field<Symbol!("name"), &'__a String>,
+        Field<Symbol!("age"), &'__a u8>,
     ]
     where
-        Self: 'a;
+        Self: '__a;
 }
 ```
 
@@ -78,9 +96,9 @@ impl FromFields for Person {
 }
 
 impl ToFieldsRef for Person {
-    fn to_fields_ref<'a>(&'a self) -> Self::FieldsRef<'a>
+    fn to_fields_ref<'__a>(&'__a self) -> Self::FieldsRef<'__a>
     where
-        Self: 'a,
+        Self: '__a,
     {
         Cons((&self.name).into(), Cons((&self.age).into(), Nil))
     }
@@ -114,9 +132,22 @@ impl HasFields for Shape {
 }
 ```
 
-The enum derive likewise emits `HasFieldsRef` (the same sum with borrowed values), `ToFields`, `FromFields`, and `ToFieldsRef`, with each conversion matching on the concrete variant and mapping it to the corresponding `Either` arm.
+The enum derive likewise emits `HasFieldsRef` (the same sum with borrowed values), `ToFields`, `FromFields`, and `ToFieldsRef`, with each conversion matching on the concrete variant and mapping it to the corresponding `Either` arm. Note that `Circle { radius: f64 }` is a named-field variant, so its payload is a one-entry product; a newtype variant such as `Circle(Circle)` carries its payload type directly instead, per the shape rules above.
 
-The associated trait definitions these impls satisfy are minimal: `HasFields` carries `type Fields`, `HasFieldsRef` carries `type FieldsRef<'a>`, and the three conversion traits each supertrait one of those and add a single method (`to_fields`, `from_fields`, `to_fields_ref`).
+The empty shapes fall out of the same construction rather than being special-cased. A unit struct's `Fields` is `Nil` and its conversions round-trip through the empty product, so a unit struct is a valid if trivial record:
+
+```rust
+#[derive(HasFields)]
+pub struct Unit;
+
+impl HasFields for Unit {
+    type Fields = Nil;
+}
+```
+
+A variantless enum's `Fields` is `Void`, and its conversions match the uninhabited value with an empty `match`.
+
+The associated trait definitions these impls satisfy are minimal: `HasFields` carries `type Fields`, `HasFieldsRef` carries `type FieldsRef<'a>` (the generated impls name that lifetime `'__a`, a reserved name that cannot collide with one of the type's own), and the three conversion traits each supertrait one of those and add a single method (`to_fields`, `from_fields`, `to_fields_ref`).
 
 ## Examples
 
@@ -146,6 +177,10 @@ Generic algorithms key off the `Fields` type rather than the concrete struct. Th
 ## Related constructs
 
 `#[derive(HasFields)]` is the structural counterpart to [`#[derive(HasField)]`](derive_has_field.md): `HasField` gives indexed, single-field access for dependency injection, while `HasFields` gives the aggregate view of the whole type. The `Fields` type it produces is built from [`Product`](../macros/product.md) for structs and [`Sum`](../macros/sum.md) for enums, with named entries tagged by [`Symbol!`](../macros/symbol.md). [`#[derive(CgpData)]`](derive_cgp_data.md) builds on this derive, generating `HasFields` together with the additional builder, partial-record, and field-update machinery needed for extensible data.
+
+## Known issues
+
+**Two variant names are reserved, and using one fails to compile.** The generated impls name their associated types through `Self::Fields` and `Self::FieldsRef`, so an enum with a variant called `Fields` or `FieldsRef` makes that path ambiguous between the variant and the associated type. The compiler reports `ambiguous associated item` with its headline on the `#[derive(HasFields)]` attribute, but a `note: "Fields" could refer to the variant defined here` points at the offending variant, so the error is readable once the note is followed. The extractor's collisions are the opaque ones, because there the colliding variant belongs to a generated companion enum; see [`#[derive(ExtractField)]`](derive_extract_field.md)'s Known issues. Writing the projections as `<Self as HasFields>::Fields` in the codegen would remove the ambiguity; until then, renaming the variant is the only fix. The variant derives reserve five further names, listed in [`#[derive(ExtractField)]`](derive_extract_field.md)'s Known issues, so an enum deriving the whole family must avoid all seven. A struct's *field* names are unaffected, since a field is not in the same namespace as an associated type.
 
 ## Source
 

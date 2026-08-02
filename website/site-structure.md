@@ -616,7 +616,7 @@ come for, and it is the first thing a well-meaning trim targets.
 
 - **URL** — <https://contextgeneric.dev/docs/reference/>
 - **Source** — [docs/reference/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/reference)
-- **Status** — Draft: the index and 27 construct pages are written, the remaining pages are stubs
+- **Status** — Draft: the index and 33 construct pages are written, the remaining pages are stubs
 - **How it was made** — ported by an agent from [cgp/reference/](../cgp/reference/README.md); level one
   of the four in [ai-disclosure.md](../communication-strategy/ai-disclosure.md)
 
@@ -631,10 +631,10 @@ hand-written index as its category link and seven subdirectories mirroring what 
 **Every page is scaffolded and the construct list is complete**, which matters more than it sounds: the
 completeness obligation is against the index rather than against the prose, so no construct is missing
 from the site even while most pages are placeholders. Each stub carries its one-line description and an
-admonition saying it is unwritten. Twenty-seven construct pages are written, plus the index and
-`errors.md`: the whole of `macros/` (twenty pages) and the whole of `attributes/` (seven), which are the
-first two groups finished end to end. Forty-eight construct pages remain stubs — `derives/`,
-`components/`, `providers/`, `traits/`, and `types/` are untouched.
+admonition saying it is unwritten. Thirty-three construct pages are written, plus the index and
+`errors.md`: the whole of `macros/` (twenty pages), the whole of `attributes/` (seven), and the whole of
+`derives/` (six), which are the first three groups finished end to end. Forty-two construct pages remain
+stubs — `components/`, `providers/`, `traits/`, and `types/` are untouched.
 
 ### The compile-errors page
 
@@ -772,6 +772,42 @@ That page is also the first under `docs/reference/` with a file in the
 `src/reference/macros/delegate_components.rs`, so every form it shows is compiled with a
 `check_components!` assertion per wired context and its rejected snippet is a `compile_fail` doctest.
 A later page in this section adds its own file the same way.
+
+Porting the `derives/` group corrected two claims and turned up a library defect, all three found by
+compiling the pages' snippets rather than by reading them — which is the strongest argument yet for the
+`example-code` crate, since each of the six derive pages carries a file there and every one of these was
+invisible on the page. **`build_from` needs [`#[derive(HasFields)]`](../cgp/reference/derives/derive_has_fields.md)
+on its *source*, not just the builder**: `CanBuildFrom` walks the source's field list, so the internal
+reference's own Examples snippet — which derived only `BuildField` on both structs — would not have
+compiled. And **a partial companion type carries none of the input's attributes**, because the codegen
+clears them, so a partially-built record or an extraction remainder is neither `Debug` nor `Clone`
+however the original is derived; that had gone unrecorded on either side and is why an
+`assert_eq!` over an `extract_field` result does not compile.
+
+The defect is the first entry in the library's [`invalid_expansion`](https://github.com/contextgeneric/cgp/tree/main/crates/tests/cgp-macro-tests/tests/invalid_expansion)
+target, which had been standing empty against exactly this case: **the variant derives name their own
+associated types through `Self::…`, so seven variant names cannot be used.** A variant called `Fields` or
+`FieldsRef` breaks `#[derive(HasFields)]`, `Value` breaks `#[derive(FromVariant)]`, and `Value`,
+`Remainder`, `Extractor`, `ExtractorRef`, or `ExtractorMut` breaks `#[derive(ExtractField)]` — each
+reported as a code-less `ambiguous associated item` headlined at the derive attribute. Whether the message
+also *names* the offending variant turned out to depend on the derive, which is worth recording because the
+first draft of these pages asserted the pessimistic case for all of them: the representation and constructor
+impls are generated `for` the user's enum, so a note points at the real variant, while the extractor's target
+the generated companion enums whose variant identifiers the codegen rebuilds, so both notes land on the
+derive and nothing names the variant. The fix is a fully qualified projection in the codegen; until then it is
+recorded as a Known issue in all five affected reference and implementation documents, on the three public
+pages, and as a third sibling in the
+[out-of-scope generated name](../cgp/errors/lowering/out-of-scope-generated-name.md) error class. Struct *field* names are
+unaffected, since a field is not in the same namespace as an associated type.
+
+Three coverage gaps in the library's own test suite were closed in the same pass, and the shape of them
+is worth noting: **`#[derive(BuildField)]`, `#[derive(ExtractField)]`, and `#[derive(CgpRecord)]` had no
+test anywhere**, despite two of them being the form the concept pages show. Three new snapshot macros —
+`snapshot_derive_build_field!`, `snapshot_derive_extract_field!`, and `snapshot_derive_from_variant!` —
+now pin what each building-block derive emits *on its own*, which is what makes each page's
+"it emits this slice and not the neighbouring ones" claim checkable rather than asserted. Six new test
+files cover those three derives, the four enum variant shapes `#[derive(HasFields)]` accepts and no other
+derive does, the unit struct, and the fieldless record.
 
 Reviewing the first four written pages had earlier corrected one originating on the site. The
 [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md) page had given "implementing a provider trait on a

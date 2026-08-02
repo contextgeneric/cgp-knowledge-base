@@ -227,8 +227,8 @@ reader falls into. The spec and the porting procedure are in
   every construct has an entry here even where the page behind it is a stub — so a page added later is
   added to this index in the same change.
 - **R2 — port the construct pages.** Seventy-five pages under `docs/reference/`, all **scaffolded** with
-  a one-line description and a stub notice. **Twenty-seven are written: `macros/` and `attributes/` are
-  complete.** Forty-eight remain, in `derives/` (6), `components/` (9), `providers/` (13), `traits/` (15),
+  a one-line description and a stub notice. **Thirty-three are written: `macros/`, `attributes/`, and
+  `derives/` are complete.** Forty-two remain, in `components/` (9), `providers/` (13), `traits/` (15),
   and `types/` (5). The settled conventions — anchors from heading text, the collapsed formal grammar,
   the shared provenance note, compiled snippets, the `context` gloss — are recorded in
   [site-structure.md](site-structure.md). Each remaining page is ported from its internal document by

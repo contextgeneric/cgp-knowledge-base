@@ -26,6 +26,8 @@ pub struct Person {
 
 Each named field becomes a type-level string `Symbol!` used as the field's `Tag`, and its declared type becomes its value type. A tuple struct works equally well: an unnamed field at position `N` is keyed by [`Index<N>`](../types/index.md) instead of a `Symbol!`. Generic parameters on the struct are carried onto the generated impls. The derive emits the same builder impls that the record path of [`#[derive(CgpData)]`](derive_cgp_data.md) emits — it is that slice in isolation, with no `HasField` getters or `HasFields` representation traits.
 
+A fieldless struct is the degenerate case rather than an error: the partial companion type takes no `MapType` parameters at all, so it has exactly one configuration and `HasBuilder`, `IntoBuilder`, and `FinalizeBuild` all name it. The practical consequence is that `builder()` is already finalizable, because the present/absent tracking has nothing to track.
+
 ## Expansion
 
 `#[derive(BuildField)]` expands into a partial companion struct and the traits that drive it. The symbols below are abbreviated as `Symbol!("name")` in place of the full `Symbol<Len, Chars<...>>` form. Starting from:
@@ -95,9 +97,15 @@ impl<__F1__: MapType> HasField<Symbol!("first_name")> for __PartialPerson<IsPres
 // plus the analogous HasField for "last_name"
 ```
 
-The `BuildField` trait itself is not emitted by the derive. It is defined once in the field crate as a blanket impl: any type implementing `UpdateField<Tag, IsPresent, Mapper = IsNothing>` — that is, setting a currently-absent field to present — automatically implements `BuildField<Tag>`. So `build_field` is sugar over the generated `update_field` that specifically transitions a field from `IsNothing` to `IsPresent`. `FinalizeBuild` is likewise defined in the field crate as a subtrait of `PartialData`; the derive only provides the all-present impl.
+Neither `BuildField` nor its reverse is emitted by the derive. Both are defined once in the field crate as blanket impls over the generated `UpdateField`, which is why `UpdateField` — the more general trait, parameterized by the marker to move *to* — is the one the derive actually writes. `BuildField<Tag>` covers any type implementing `UpdateField<Tag, IsPresent, Mapper = IsNothing>`, the absent-to-present transition, so `build_field` is sugar over `update_field` in that one direction. `TakeField<Tag>` covers `UpdateField<Tag, IsNothing, Mapper = IsPresent>`, the present-to-absent transition, so `take_field` removes a field that is already set and hands back the value alongside a partial value with that field absent. `FinalizeBuild` is likewise a field-crate subtrait of `PartialData`; the derive only provides the all-present impl.
+
+`TakeField` is the trait behind bulk merging: `CanBuildFrom`'s `build_from` recurses over a source record's field list, taking each field out of the source and building it into the target. Unlike the rest of the family it is not in the prelude, so code calling `take_field` directly imports it from `cgp::core::field::traits`.
+
+**That recursion is over the *source's* field list, which is why the source of a `build_from` needs [`#[derive(HasFields)]`](derive_has_fields.md) as well as this derive.** `CanBuildFrom` bounds the source on `HasFields + IntoBuilder` and walks `Source::Fields`, so a source deriving only `BuildField` has a builder of its own and still cannot be merged into anything — the error is an unsatisfied `HasFields` bound on the source type. The target needs only `BuildField`.
 
 The key takeaway is that `builder()` yields `__PartialPerson<IsNothing, IsNothing>`, each `build_field` flips one marker to `IsPresent`, and `finalize_build` exists only at `__PartialPerson<IsPresent, IsPresent>` — so an incomplete build cannot be finalized.
+
+Two properties of the generated companion struct are worth knowing before reaching for it directly. It **keeps the original struct's visibility**, and each field keeps its own, so a `pub struct` yields a `pub struct __PartialPerson` whose fields can be read and written positionally. But it **carries none of the original's attributes**: the derive clears them, so a `#[derive(Debug, Clone)]` on the input does not reach the partial type and a partially-built value can be neither printed nor cloned. The per-field `HasField` impls on the partial type are the supported way to read a field back out mid-build.
 
 ## Examples
 
@@ -107,7 +115,8 @@ The builder is driven through `builder()`, `build_field`, and `finalize_build`, 
 use cgp::prelude::*;
 use cgp::core::field::impls::CanBuildFrom;
 
-#[derive(BuildField)]
+// The source of a `build_from` needs its field list too, so it derives `HasFields` as well.
+#[derive(HasFields, BuildField)]
 pub struct FooBar { pub foo: u64, pub bar: String }
 
 #[derive(BuildField)]
@@ -125,7 +134,7 @@ Each step changes the partial type, and only after the last field is set does th
 
 ## Related constructs
 
-`#[derive(BuildField)]` is one slice of the record output of [`#[derive(CgpData)]`](derive_cgp_data.md) and [`#[derive(CgpRecord)]`](derive_cgp_record.md); those derives include it alongside the [`#[derive(HasField)]`](derive_has_field.md) getters and [`#[derive(HasFields)]`](derive_has_fields.md) representation traits. Its enum analogues are [`#[derive(ExtractField)]`](derive_extract_field.md) for incremental matching and [`#[derive(FromVariant)]`](derive_from_variant.md) for variant construction. The entry and exit points it generates target the [`HasBuilder`](../traits/has_builder.md) family of traits. The generated code reads back fields through [`HasField`](../traits/has_field.md), stores them in the [`product`](../macros/product.md)-shaped partial struct, and switches on the [`MapType`](../traits/map_type.md) markers `IsPresent`/`IsNothing`/`IsVoid`.
+`#[derive(BuildField)]` is one slice of the record output of [`#[derive(CgpData)]`](derive_cgp_data.md) and [`#[derive(CgpRecord)]`](derive_cgp_record.md); those derives include it alongside the [`#[derive(HasField)]`](derive_has_field.md) getters and [`#[derive(HasFields)]`](derive_has_fields.md) representation traits. Its enum analogues are [`#[derive(ExtractField)]`](derive_extract_field.md) for incremental matching and [`#[derive(FromVariant)]`](derive_from_variant.md) for variant construction. The entry and exit points it generates target the [`HasBuilder`](../traits/has_builder.md) family of traits, which also carries `TakeField`, the present-to-absent counterpart of `BuildField` that the same generated `UpdateField` impls satisfy; bulk merging through `CanBuildFrom` is documented with the other [structural casts](../traits/cast.md). The generated code reads back fields through [`HasField`](../traits/has_field.md), stores them in the [`product`](../macros/product.md)-shaped partial struct, and switches on the [`MapType`](../traits/map_type.md) markers `IsPresent`/`IsNothing`/`IsVoid`.
 
 ## Source
 

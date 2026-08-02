@@ -118,6 +118,10 @@ Because each `extract_field` narrows the remainder type, the compiler knows afte
 
 `#[derive(CgpVariant)]` is the enum restriction of [`#[derive(CgpData)]`](derive_cgp_data.md), which dispatches to this same path; [`#[derive(CgpRecord)]`](derive_cgp_record.md) is the struct counterpart. Its output decomposes into [`#[derive(HasFields)]`](derive_has_fields.md) (the representation traits), [`#[derive(FromVariant)]`](derive_from_variant.md) (the variant constructors), and [`#[derive(ExtractField)]`](derive_extract_field.md) (the incremental extractor) — derive those individually when you need only one slice. The generated types reference [`Field`](../types/field.md), the [`sum`](../macros/sum.md) type-level list (`Either`/`Void`), and the `MapType` markers `IsPresent`/`IsVoid`.
 
+## Known issues
+
+**Seven variant names are reserved, and using one fails to compile.** `CgpVariant` runs the representation, constructor, and extractor codegen together, so it inherits every reserved name those slices introduce: `Fields` and `FieldsRef` from [`#[derive(HasFields)]`](derive_has_fields.md), `Value` from [`#[derive(FromVariant)]`](derive_from_variant.md), and `Value`, `Remainder`, `Extractor`, `ExtractorRef`, and `ExtractorMut` from [`#[derive(ExtractField)]`](derive_extract_field.md). A variant with any of those names makes the generated `Self::…` path ambiguous, reported as `ambiguous associated item` with its headline on the derive attribute. Whether the message also names the variant depends on which slice collided — the extractor's impls target the generated companions and so point back at the derive, while the representation and constructor impls point at the real variant.
+
 ## Source
 
 - Entry point: `derive_cgp_variant` in [crates/macros/cgp-macro-lib/src/cgp_variant.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-lib/src/cgp_variant.rs), which parses an `ItemCgpVariant` and calls `to_items()`.

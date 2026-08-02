@@ -54,18 +54,32 @@ Each generated impl is re-spanned onto the token it derives from, so a compiler 
 
 ## Known issues
 
+**The codegen names its associated types as `Self::…`, so five variant names make the expansion invalid.** The `extract_field` impls return `Result<Self::Value, Self::Remainder>` and the three accessors return `Self::Extractor`, `Self::ExtractorRef`, and `Self::ExtractorMut`; inside an impl for an enum each of those paths can resolve to either the associated type or a variant of the same name, so a variant called `Value`, `Remainder`, `Extractor`, `ExtractorRef`, or `ExtractorMut` is rejected with `ambiguous associated item`. This derive's diagnostic is the opaque one in the family: both the headline and the `"could refer to the variant defined here"` note land on the derive attribute, because these impls target the generated `__Partial…` companions and `derive_extractor_enum` rebuilds their variant identifiers, so those idents carry the derive's span rather than a user token. `derive_has_fields` and `derive_from_variant` write their impls `for` the user's enum, so their notes do point at the real variant — which makes this the one collision a reader cannot resolve from the output alone. Writing each as a fully qualified projection — `<Self as ExtractField<Tag>>::Value` and so on — would remove the ambiguity and is the fix. [`#[derive(FromVariant)]`](derive_from_variant.md#known-issues) shares the `Value` collision and [`#[derive(HasFields)]`](derive_has_fields.md) adds `Fields` and `FieldsRef`, so an enum deriving the whole family has seven reserved names. Pinned by [invalid_expansion/reserved_variant_names.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/invalid_expansion/reserved_variant_names.rs).
+
+**The partial enums carry none of the input's attributes**, for the same reason and with the same consequence as the [record companion](derive_build_field.md#behavior-and-corner-cases): `derive_extractor_enum` clones the input enum and clears its attributes, so a `Result<Value, Remainder>` from `extract_field` is neither `Debug` nor `PartialEq` however the original enum is derived, and cannot be compared or printed whole.
+
 The extractor codegen requires every variant to be a single-unnamed-field tuple variant (enforced by `get_variant_type` in the `derive_extractor/utils.rs` helper). A fieldless variant like `Empty`, a multi-field variant like `Pair(A, B)`, or a struct-style variant like `Named { x: A }` makes the macro fail with "Expected variant to contain exactly one unnamed field." There is no per-variant opt-out, so an enum mixing variant shapes cannot derive the extractor at all; the same requirement applies to [`#[derive(FromVariant)]`](derive_from_variant.md) and therefore to `#[derive(CgpVariant)]`/`#[derive(CgpData)]` on such an enum. The reference document records the user-visible form of this limitation in its own Known issues.
+
+## Snapshots
+
+`snapshot_derive_extract_field!` pins this derive's output on its own, which is what makes the slice claim checkable rather than asserted — the snapshot shows both partial enums and their impls and *no* representation impls or `FromVariant` constructors:
+
+- [extensible_variants/extract_field_derive.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/extract_field_derive.rs) — the canonical two-variant extractor slice in isolation, owned and borrowed.
+
+The same items also appear inside the variant expansion pinned by the `snapshot_derive_cgp_data!` snapshots indexed in [derive_cgp_data.md's Snapshots section](derive_cgp_data.md#snapshots), which is where the generic, struct-payload, and variantless enum shapes are covered.
 
 ## Tests
 
-`#[derive(ExtractField)]` has no snapshot macro of its own; the extractor items it emits are part of the variant expansion pinned by the `snapshot_derive_cgp_data!` snapshots indexed in [derive_cgp_data.md's Snapshots section](derive_cgp_data.md#snapshots). The behavioral extractor tests in [crates/tests/cgp-tests/tests/extensible_variants/](https://github.com/contextgeneric/cgp/tree/main/crates/tests/cgp-tests/tests/extensible_variants/) exercise the machinery:
+The behavioral extractor tests in [crates/tests/cgp-tests/tests/extensible_variants/](https://github.com/contextgeneric/cgp/tree/main/crates/tests/cgp-tests/tests/extensible_variants/) exercise the machinery:
 
+- [extract_field_derive.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/extract_field_derive.rs) drives the slice on its own: both outcomes of a two-step extraction chain closed by `finalize_extract_result`, the borrowed and mutable extractors, and the `to_extractor`/`from_extractor` round trip.
 - [shape_dispatch.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/shape_dispatch.rs) drives the owned extractor.
 - [shape_dispatch_ref.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/shape_dispatch_ref.rs) drives the borrowed extractor.
 - [variant_dispatch.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/variant_dispatch.rs) drives the extract-and-dispatch flow.
 - [derive_cgp_data_empty.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/derive_cgp_data_empty.rs) snapshots the variantless-enum expansion, pinning the empty-enum special case: bare `__PartialNever`/`__PartialRefNever` enums with no parameters and `match *self {}` in the borrowed accessors.
 - The single-unnamed-field requirement (Known issues) has no dedicated failure case in `cgp-macro-tests`, but is covered end-to-end through the variant derives by [parser_rejections/derive_from_variant.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/derive_from_variant.rs).
 - The reserved-`'__a__` lifetime is exercised against a lifetime-parameterized enum by [derive_cgp_data_lifetime.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/derive_cgp_data_lifetime.rs), which derives `#[derive(CgpData)]` on an `enum Message<'a>` and drives the owned, borrowed, and mutable extractors.
+- [invalid_expansion/reserved_variant_names.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/invalid_expansion/reserved_variant_names.rs) pins the reserved-variant-name defect recorded under Known issues, capturing the emitted `Self::…` paths as a string snapshot so the test compiles even though the code it describes would not.
 
 ## Source
 

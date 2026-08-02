@@ -45,11 +45,15 @@ A **unit struct** produces `Nil` as its `Fields`, and its conversions round-trip
 
 The type's **generic parameters and `where` clause** are threaded onto all five impls. A borrowed field type appears verbatim in the product, and `HasFieldsRef` layers its own `'__a` borrow on top — so a field of type `&'a Name` becomes `&'__a &'a Name` in `FieldsRef<'__a>`. The `HasFieldsRef` associated type carries the `where Self: '__a` bound that every borrowed representation needs.
 
-An **enum** always maps each variant's payload into a `Field` entry regardless of the payload's own shape; the `HasFields` enum path does not impose the single-unnamed-field requirement that the extractor and `FromVariant` derives do, because it only names the payload type rather than deconstructing it.
+An **enum** accepts every variant shape, because the `HasFields` path only *describes* a variant rather than deconstructing it, and so does not impose the single-unnamed-field requirement that the extractor and `FromVariant` derives do. `variants_to_sum_type` runs each variant's own `syn::Fields` through the same `item_fields_to_product_type` helper the struct path uses, which is what makes the four shapes fall out of one rule: a unit variant becomes `Nil`, a single-unnamed-field variant becomes its payload type directly (the newtype special case applied inside a variant), a multi-field tuple variant becomes a product keyed by `Index<N>`, and a named-field variant becomes a product keyed by `Symbol!`. The conversions follow: `derive_from_field_params` and `extract_variant_args` destructure and rebuild whichever shape each variant has, so a mixed-shape enum round-trips. The consequence worth stating is that `#[derive(HasFields)]` alone succeeds on an enum where the umbrella `#[derive(CgpData)]` would fail.
 
 ## Error spans
 
 All five impls are keyed on the whole type, so each is re-spanned onto the struct or enum name the user wrote rather than left at the derive's `call_site` span. A coherence conflict (`E0119`) — a hand-written `HasFields` impl clashing with the derived one — therefore lands its caret on the type name instead of on the whole `#[derive(HasFields)]`. `derive_has_fields_impls_from_struct` and `derive_has_fields_impls_from_enum` pass each finished impl through [`override_item_span`](../README.md#spans-aim-generated-items-at-the-token-the-user-wrote), which moves only the `impl`/`{ … }` boundary — the mechanism the [`#[derive(HasField)]`](derive_has_field.md#error-spans) doc explains in full.
+
+## Known issues
+
+**The codegen names its associated types as `Self::Fields` and `Self::FieldsRef`, so those two variant names make the enum expansion invalid.** `from_fields` takes `rest: Self::Fields` and `to_fields_ref` returns `Self::FieldsRef<'__a>`; inside an impl for an enum either path can resolve to a variant of the same name, so `rustc` rejects the expansion with `ambiguous associated item`, with its headline on the derive attribute and a `note` pointing at the user's own variant — because these impls are written `for` the user's enum, the colliding variant keeps its own span and the error stays actionable, unlike the extractor's. Writing each as `<Self as HasFields>::Fields` would remove the ambiguity and is the fix. The variant derives add five further reserved names — see [`#[derive(ExtractField)]`](derive_extract_field.md#known-issues) — so an enum deriving the whole family has seven. A struct's *field* names are unaffected, since a field is not in the same namespace as an associated type. Pinned by [invalid_expansion/reserved_variant_names.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/invalid_expansion/reserved_variant_names.rs).
 
 ## Snapshots
 
@@ -61,8 +65,10 @@ Every `snapshot_derive_has_fields!` invocation across the suite is indexed here,
 - [extensible_records/struct_tuple_fields.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_records/struct_tuple_fields.rs) — a multi-field tuple struct keyed by `Index<N>`.
 - [extensible_records/struct_generic.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_records/struct_generic.rs) — a generic struct with a `where` clause threaded onto each impl.
 - [extensible_records/struct_generic_lifetime.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_records/struct_generic_lifetime.rs) — a lifetime plus type parameter, with the layered `&'__a &'a` borrow in `FieldsRef`.
+- [extensible_records/struct_unit_field.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_records/struct_unit_field.rs) — a unit struct, `Fields` = `Nil`; the same file pins that `#[derive(HasField)]` on a unit struct emits nothing at all, with an empty snapshot.
 - [extensible_variants/has_fields_enum.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/has_fields_enum.rs) — the canonical enum expansion, a `Sum!` of `Field<Symbol!("Variant"), Payload>`.
 - [extensible_variants/has_fields_enum_generic.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/has_fields_enum_generic.rs) — a generic enum with a lifetime and a reference-typed payload.
+- [extensible_variants/has_fields_enum_shapes.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/has_fields_enum_shapes.rs) — all four variant shapes in one enum, pinning the unit-to-`Nil`, newtype-passthrough, `Index<N>`-product, and `Symbol!`-product mappings, with a round-trip per shape and one over the borrowed form.
 
 ## Tests
 
@@ -71,6 +77,7 @@ The snapshot tests above double as the coverage:
 - Each pins one field-shape and, where paired with runtime assertions, round-trips a value through `to_fields`/`from_fields`.
 - The `struct_single_unnamed_field` snapshot is the guard on the newtype special case.
 - `struct_generic`/`struct_generic_lifetime` and `has_fields_enum_generic` guard the generic-threading behavior.
+- [invalid_expansion/reserved_variant_names.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/invalid_expansion/reserved_variant_names.rs) pins the reserved-variant-name defect recorded under Known issues, capturing the emitted `Self::…` paths as a string snapshot so the test compiles even though the code it describes would not.
 
 ## Source
 

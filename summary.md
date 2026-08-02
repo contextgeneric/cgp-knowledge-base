@@ -331,7 +331,8 @@ it stale.
   `#[use_type]` import naming an associated type its trait does not declare (`E0576`).
 - [lowering/out-of-scope-generated-name.md](cgp/errors/lowering/out-of-scope-generated-name.md) — an
   `#[impl_generics]` parameter named in the capability's own signature, where only the generated impl
-  declares it (`E0433`), plus the abstract type shadowing its own bound (`E0404`).
+  declares it (`E0433`), plus the abstract type shadowing its own bound (`E0404`) and the enum variant
+  colliding with a derive-generated associated type (`ambiguous associated item`).
 - [error_codes/README.md](cgp/errors/error_codes/README.md) — the forward index from a `rustc` error
   code to its meaning and the CGP classes that emit it.
 - [error_codes/cargo-cgp-codes.md](cgp/errors/error_codes/cargo-cgp-codes.md) — a pointer entry for
