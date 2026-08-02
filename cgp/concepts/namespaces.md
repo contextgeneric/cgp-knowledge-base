@@ -6,7 +6,7 @@ A namespace is a reusable, named lookup table of component wirings that a contex
 
 A namespace lifts a delegation table out of any one context, gives it a name, and lets other contexts inherit it. With [`delegate_components!`](../reference/macros/delegate_components.md) alone, every context spells out its own wiring entry by entry, and two contexts that should share the same set of providers must repeat it. A namespace captures "this exact set of wirings" as a thing contexts can refer to: a context says "use everything in this namespace" and gets the whole group at once. It is the answer to the question "how do I reuse a block of wiring across many contexts," and it is defined with [`cgp_namespace!`](../reference/macros/cgp_namespace.md).
 
-The defining feature is inheritance with override. A context that joins a namespace inherits its entries as defaults, then adds its own entries that win over the inherited ones — because a directly-wired entry on the context resolves before the namespace fallback is consulted. So a namespace behaves like a base configuration that contexts specialize: most of the wiring comes for free, and each context tweaks the handful of entries it cares about. Namespaces can also inherit from one another, so a base namespace can be extended into a richer one that every context downstream picks up.
+The defining feature is inheritance with specialization, and the shape of it is set by one rule: **a key the namespace itself binds is not overridable, and only a path the namespace routes to without terminating is left for a context to supply.** Joining a namespace generates a forwarding impl covering every key the namespace answers, so a direct entry for one of those keys overlaps it and is rejected with `E0119` — the [namespace override conflict](../errors/wiring/namespace-override-conflict.md) class, which catches the same mistake in a child namespace redefining an inherited key. So a namespace is designed around what varies: it binds what every context agrees on, leaves the rest of the paths open, and each context — or each inheriting namespace, one per configuration — supplies those. Most of the wiring then comes for free and a context states only what makes it different.
 
 Crucially, a namespace is *not* a context. It is a trait — named after the namespace — that carries a `Delegate` associated type and is implemented once per key. A context opts in and forwards its lookups through that trait, so the namespace supplies defaults without ever being instantiated or holding any wiring of its own at the context level.
 
@@ -63,7 +63,7 @@ delegate_components! {
 }
 ```
 
-The `namespace DefaultNamespace;` line makes `AppA` fall back to `DefaultNamespace`'s entries, while the direct line on the same context shadows just the `u64` entry — the override-by-precedence rule in action. Joining through [`delegate_and_check_components!`](../reference/macros/delegate_and_check_components.md) instead does the same while verifying the merged wiring.
+The `namespace DefaultNamespace;` line makes `AppA` fall back to `DefaultNamespace`'s entries, while the direct line supplies the `u64` entry the namespace routes to but leaves unbound — which is the only kind of entry a context may add, per the rule above. Joining through [`delegate_and_check_components!`](../reference/macros/delegate_and_check_components.md) instead does the same while verifying the merged wiring.
 
 ## Preset-style configuration
 

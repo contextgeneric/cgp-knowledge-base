@@ -132,15 +132,14 @@ commit to. The one exception is the deep dives, which land afterwards. The mecha
 
 **Front page** — the hook and the bounded essay. Present, needs rewriting.
 
-**Concepts** (new category, 18 pages plus an index) — present, and **being filled in**
+**Concepts** (new category, 18 pages plus an index) — present and **complete**
 
 This is the explanation tier, and its shape is now **one page per idea** rather than the four curated
 pages this document originally planned. The category is labelled *Concepts*, sits at `docs/concepts/`
 between Tutorials and Reference, and mirrors the internal
 [cgp/concepts/](../cgp/concepts/README.md) catalog one to one — the same relationship the reference
-section has to `cgp/reference/`. All eighteen are scaffolded and three are written —
-*Consumer and provider traits*, *Bypassing coherence*, and *How much CGP to use*, which between them cover
-every route the section's index offers as a starting point; the current state is recorded in
+section has to `cgp/reference/`. All eighteen are written, and the code on each is backed by the website
+repository's `example-code/` crate; the current state is recorded in
 [site-structure.md](site-structure.md).
 
 The three explanation pages this document named are not lost, but they are no longer separate

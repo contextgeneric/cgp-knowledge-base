@@ -82,9 +82,9 @@ authority on its text, which is the same rule the reference port already follows
 It is filled in **lazily**, and the rule is in
 [AGENTS.md](AGENTS.md#verify-code-against-current-cgp-and-never-against-a-blog-post): a page gets its
 file when someone writes, revises, or reviews it. A missing file therefore means nobody has been
-through that page yet. Two files exist so far, both from the Concepts review — `coherence.rs` and
-`consumer_and_provider_traits.rs`. The crate pins `cgp = "0.8.0-alpha"`, which resolves from crates.io
-today and joins the tutorials' pin on the release checklist.
+through that page yet. **`docs/concepts/` is covered in full** — seventeen files, one per page that shows
+code — and no other section has been through yet. The crate pins `cgp = "0.8.0-alpha"`, which resolves
+from crates.io today and joins the tutorials' pin on the release checklist.
 
 ## Navigation and the announcement bar
 
@@ -391,7 +391,7 @@ the three views diverge further.
 
 - **URL** — <https://contextgeneric.dev/docs/concepts/>
 - **Source** — [docs/concepts/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/concepts)
-- **Status** — Draft: the index and three pages are written, the remaining fifteen are stubs
+- **Status** — Current: the index and all eighteen pages are written
 - **How it was made** — written by an agent from [cgp/concepts/](../cgp/concepts/README.md); level one
   of the four in [ai-disclosure.md](../communication-strategy/ai-disclosure.md)
 
@@ -404,28 +404,37 @@ hand-written index as its category link. Placing it there moved the AI section f
 which also brings the sidebar closer to the order
 [information-architecture.md](information-architecture.md#navigation-and-sidebar-order) wants.
 
-**Every page is scaffolded and the idea list is complete**, mirroring how the reference port works:
-eighteen pages, one per document under [cgp/concepts/](../cgp/concepts/README.md), each carrying its
-one-line summary and a *Not written yet* admonition until it is filled in. **Three are written**, and
-between them they cover every route the index advertises as a starting point, so that section no longer
-sends a reader to a placeholder:
-[Consumer and provider traits](https://contextgeneric.dev/docs/concepts/consumer-and-provider-traits) for
-*how CGP works*, [Bypassing coherence](https://contextgeneric.dev/docs/concepts/coherence) for *why CGP
-exists*, and [How much CGP to use](https://contextgeneric.dev/docs/concepts/modularity-hierarchy) for
-*whether to adopt it*. All three are verified the same way the reference pages are: every snippet compiles,
-closing examples carry a `check_components!` assertion per wired context, and each quoted error — the
-`E0119` from two overlapping blanket impls, the `E0117` from a wholly foreign impl, the `E0119` from
-factoring an application's impls into a blanket one — is what the compiler actually reports.
+**The section is complete**: eighteen pages, one per document under
+[cgp/concepts/](../cgp/concepts/README.md), plus a hand-written index. The file names match the internal
+ones, so the mapping is one to one.
 
-The two newer pages are deliberately different in kind, which is what makes them a useful pair to have
-written early. *Bypassing coherence* is the tier's long argument and follows the guide's five-movement
-outline plus the sixth movement that builds the application-context shape, ending on the sentence the page
-exists to earn — coherence is not repealed, it is scoped. *How much CGP to use* is a **decision guide
-rather than an explanation**, so it is shorter, leads with a rule of thumb, and uses tables where an
-explanation page would use prose; every row of its alternatives table concedes a case where the other tool
-wins, per the guide. It is also the site's only public home for the boundary material in
-[message.md](../communication-strategy/message.md#when-not-to-reach-for-cgp), and the place the reference's
-twenty-seven *When to reach for it* sections can point at instead of re-arguing locally.
+Every page is verified the same way the reference pages are, and the verification now survives the
+session that did it: the code each page shows has a compiled counterpart in the
+[`example-code/` crate](#the-example-code-crate), one file per page, so `cargo test` there is the check
+rather than an agent's word. Seventeen pages show code; the index and *How much CGP to use* show none.
+Every quoted error is what the compiler actually reports — including the three `E0119`s and the `E0117`
+on *Bypassing coherence*, the `E0599` / `CanUseComponent` / `[CGP-E001]` progression on *Checking your
+wiring*, and the two override conflicts on *Namespaces*.
+
+Three pages are worth knowing about individually. *Bypassing coherence* is the tier's long argument and
+follows the guide's five-movement outline plus the sixth movement that builds the application-context
+shape, ending on the sentence the page exists to earn — coherence is not repealed, it is scoped.
+*How much CGP to use* is a **decision guide rather than an explanation**, so it leads with a rule of
+thumb and uses tables where an explanation page would use prose; every row of its alternatives table
+concedes a case where the other tool wins. It is also the site's only public home for the boundary
+material in [message.md](../communication-strategy/message.md#when-not-to-reach-for-cgp), and the place
+the reference's *When to reach for it* sections can point at instead of re-arguing locally. And
+*Checking your wiring* is the tier's answer to the objection that has cost CGP the most readers: it
+follows one broken context through three stages — unchecked, checked, and checked through the toolchain
+— quoting the real output at each.
+
+Writing the tier turned up one correction to this base. The
+[namespaces concept](../cgp/concepts/namespaces.md) described a context as adding "entries that win over
+the inherited ones", which does not compile: joining a namespace generates a forwarding impl covering
+every key it answers, so a direct entry for a **bound** key overlaps it and is rejected with `E0119` —
+the [override-conflict](../cgp/errors/wiring/namespace-override-conflict.md) class the errors catalog
+already documented. Only a path the namespace routes to without binding is available to a context, which
+is why the public page teaches namespace design as the question *what varies?*.
 
 The sidebar order is the order a reader meets the ideas rather than the internal catalog's order:
 the coherence problem and the trait split first, then the three faces of dependency injection, then
