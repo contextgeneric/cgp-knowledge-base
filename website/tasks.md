@@ -247,20 +247,21 @@ reader falls into. The spec and the porting procedure are in
   every construct has an entry here even where the page behind it is a stub — so a page added later is
   added to this index in the same change.
 - **R2 — port the construct pages.** Seventy-five pages under `docs/reference/`, all **scaffolded** with
-  a one-line description and a stub notice, and four written in full:
-  [`#[cgp_component]`](https://contextgeneric.dev/docs/reference/macros/cgp_component),
-  `#[cgp_impl]`, `delegate_components!`, and `#[cgp_fn]`. Those four are the model the rest are ported
-  against, and
-  the settled conventions — anchors from heading text, the collapsed formal grammar, the shared
-  provenance note, compiled snippets — are recorded in
+  a one-line description and a stub notice. **Twenty-seven are written: `macros/` and `attributes/` are
+  complete.** Forty-eight remain, in `derives/` (6), `components/` (9), `providers/` (13), `traits/` (15),
+  and `types/` (5). The settled conventions — anchors from heading text, the collapsed formal grammar,
+  the shared provenance note, compiled snippets, the `context` gloss — are recorded in
   [site-structure.md](site-structure.md). Each remaining page is ported from its internal document by
   the guide's four transformations: re-point every link, restructure into the layered descent, add
   *When to reach for it*, and convert the Source section. Two things ride on this beyond the pages
   themselves — the internal [guides](../cgp/guides/README.md) reach the public site **only** through
   the *When to reach for it* sections, and every new page owes a provenance note. This group ships on
   its guide plus a spot check rather than a full read, and a subdirectory is the natural unit for one
-  session. *Blocked by:* E2 and E3 for the concept links the remaining pages need, R4 for what a
-  *Gotchas* section may defer to. *Done when:* no stub notice remains.
+  session. *Blocked by:* R4 for what a *Gotchas* section may defer to. **Not blocked by E2/E3**, contrary
+  to what this entry previously claimed: twenty-seven pages were written without a single link into the
+  concept tier, because the guide's own fallback — summarize the idea in a sentence on the page — is the
+  better answer while that tier is almost entirely stubs. Adding those links once the tier lands is a
+  separate sweep rather than a prerequisite. *Done when:* no stub notice remains.
 - **R3 — the tooling section.** `cargo-cgp` gets its own top-level docs section beside the reference
   rather than inside it, since every other reference page answers "what does this construct mean".
   *Material:* [cargo-cgp/reference/](../cargo-cgp/reference/README.md). *Blocked by:* nothing, and it is

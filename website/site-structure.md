@@ -431,7 +431,7 @@ come for, and it is the first thing a well-meaning trim targets.
 
 - **URL** — <https://contextgeneric.dev/docs/reference/>
 - **Source** — [docs/reference/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/reference)
-- **Status** — Draft: the index and four pages are written, the remaining pages are stubs
+- **Status** — Draft: the index and 27 construct pages are written, the remaining pages are stubs
 - **How it was made** — ported by an agent from [cgp/reference/](../cgp/reference/README.md); level one
   of the four in [ai-disclosure.md](../communication-strategy/ai-disclosure.md)
 
@@ -446,13 +446,16 @@ hand-written index as its category link and seven subdirectories mirroring what 
 **Every page is scaffolded and the construct list is complete**, which matters more than it sounds: the
 completeness obligation is against the index rather than against the prose, so no construct is missing
 from the site even while most pages are placeholders. Each stub carries its one-line description and an
-admonition saying it is unwritten. Eleven construct pages are written, plus the index: four in `macros/`
-— [`#[cgp_component]`](https://contextgeneric.dev/docs/reference/macros/cgp_component),
-[`#[cgp_impl]`](https://contextgeneric.dev/docs/reference/macros/cgp_impl),
-[`#[cgp_fn]`](https://contextgeneric.dev/docs/reference/macros/cgp_fn), and
-[`delegate_components!`](https://contextgeneric.dev/docs/reference/macros/delegate_components) — and the
-whole of `attributes/`, which is the first group finished end to end. Sixty-four construct pages and
-`errors.md` remain stubs.
+admonition saying it is unwritten. Twenty-seven construct pages are written, plus the index: the whole of
+`macros/` (twenty pages) and the whole of `attributes/` (seven), which are the first two groups finished
+end to end. Forty-eight construct pages and `errors.md` remain stubs — `derives/`, `components/`,
+`providers/`, `traits/`, and `types/` are untouched.
+
+Finishing `macros/` settled one thing about the template a later group should copy rather than rediscover:
+**the three argument-free macros get no grammar section** — `#[async_trait]`, `#[cgp_auto_dispatch]`, and
+`#[cgp_auto_getter]` — which matches the [internal rule](../cgp/AGENTS.md#syntax-grammar-conventions) and is
+the only place the six-section template legitimately loses a part. The rest of what the group settled is in
+[the conventions below](#conventions-the-port-must-follow).
 
 Every written page is verified against both the guide and the library: each snippet compiles under a
 `check_components!` assertion per wired context, and each *Under the hood* listing and quoted diagnostic
@@ -469,7 +472,21 @@ one-attribute-comma-separated convention its siblings follow. And a predicate pr
 rather than a bound they inherit, so it does not save a caller from restating it; what it buys is that an
 unsatisfiable requirement is reported where the trait is named instead of being accepted in silence.
 
-Reviewing the written pages afterwards corrected a third, this one originating on the site. The
+Writing the rest of `macros/` corrected four more, all of them in this base rather than on the site, and all
+found by running the construct rather than transcribing the document. **`#[blanket_trait]` is not in the
+prelude** — its reference's own example would not have compiled — and needs
+`use cgp::core::macros::blanket_trait;`. **`#[blanket_trait]` does not strip the trait's default bodies**, as
+its Expansion claimed; the body appears both on the trait and in the generated impl. **A self-inheriting
+namespace fails with `E0207`, not the `E0275` overflow** the namespace reference attributed to every cycle;
+only a chain through two or more namespaces overflows. And **the `IsProviderFor` clause `#[cgp_provider]`
+derives is augmented, not copied**: a bound naming the component's own provider trait gains its marker
+counterpart, which is the mechanism that carries an inner provider's requirements outward and lets
+`#[check_providers]` localize a broken layer. The claim that `delegate_and_check_components!` on an aggregate
+provider "cannot hold" was also too strong — it passes vacuously when the bundled provider has no
+dependencies — so both that reference and the
+[aggregate providers](../cgp/concepts/aggregate-providers.md) concept now state the conditional behaviour.
+
+Reviewing the first four written pages had earlier corrected one originating on the site. The
 [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md) page had given "implementing a provider trait on a
 concrete type" as a reason to drop to [`#[cgp_provider]`](../cgp/reference/macros/cgp_provider.md), and
 that is not one: `#[cgp_impl(new P)] impl SomeProvider for ConcreteContext` compiles, pins the provider to
@@ -536,12 +553,27 @@ that `expand` resugars unevenly within a single expansion — an `open` header's
 back as `Path!(@Component)` while the per-entry key stays a raw `PathCons` spine — so a page showing
 both should say so rather than quietly normalizing one.
 
+**No reference page links the Concepts tier.** All twenty-seven written pages summarize the idea behind a
+construct in a sentence of their own instead, which is the fallback
+[the guide](writing-guides/reference.md#where-the-internal-links-go) allows where no explanation page covers
+the material — and while seventeen of the eighteen concept pages are stubs, a link would send a reader to a
+placeholder. Treat this as the convention rather than an omission, and treat adding the links once that tier
+lands as a deliberate later sweep. It also means the port is **not** blocked on the explanation tier, which
+is corrected in [tasks.md](tasks.md).
+
 **Introduce "context" with a gloss on first use, on every page, above the advanced line.** It is a
 knowledge-base word before it is a public one, and a reference page is read on its own rather than in
 order, so no reader can be assumed to have met it already. One clause carries it — "the type the
-capability runs against, which supplies those values as its fields" — leaving the full account to
-[the concept page](https://contextgeneric.dev/docs/concepts/consumer-and-provider-traits). Two of the
-first four written pages had missed this, which makes it the convention here most easily dropped.
+capability runs against, which supplies those values as its fields" — which is deliberately enough to read
+the page with and not an attempt at the full account; that lives on
+[the concept page](https://contextgeneric.dev/docs/concepts/consumer-and-provider-traits), reached through
+the sidebar rather than through an inline link, per the convention above. Two of the first four written
+pages had missed the gloss, which makes it the convention here most easily dropped.
+
+**Five pages are exempt from the gloss, because they never use the word above the advanced line**: the four
+type-level construction pages (`Symbol!`, `Product!`, `Sum!`, `Path!`) and `#[async_trait]`. A mechanical
+check therefore has to allow both for the exemption and for the phrase being split across a line wrap —
+grepping line by line for it reports false failures on most pages that do carry it.
 
 **A written index carries the provenance note too.** The rule that a scaffolded stub carries no note
 covers placeholders rather than hand-written prose, and both section indexes are substantial written

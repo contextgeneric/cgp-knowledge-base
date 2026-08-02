@@ -93,7 +93,28 @@ where
 {}
 ```
 
-The derived impl is the original impl with its body and associated types removed and its trait replaced. It keeps the same generic parameters (`Context, Code, Input`) and the same `where` clause, so it holds under precisely the conditions that the provider impl holds. Its trait arguments are assembled from the provider trait's arguments: the first is the **component type** (`ComputerRefComponent`, the default derived from the `ComputerRef` trait name); the second is the **context type**, taken from the provider trait's leading type argument (`Context`); and the third is the **`Params` tuple** holding every remaining provider-trait type parameter — here `(Code, Input)`. For a provider trait with no extra parameters beyond the context, the `Params` tuple is the empty `()`.
+The derived impl is the original impl with its body and associated types removed and its trait replaced. It keeps the same generic parameters (`Context, Code, Input`) and — with one exception below — the same `where` clause, so it holds under precisely the conditions that the provider impl holds. Its trait arguments are assembled from the provider trait's arguments: the first is the **component type** (`ComputerRefComponent`, the default derived from the `ComputerRef` trait name); the second is the **context type**, taken from the provider trait's leading type argument (`Context`); and the third is the **`Params` tuple** holding every remaining provider-trait type parameter — here `(Code, Input)`. For a provider trait with no extra parameters beyond the context, the `Params` tuple is the empty `()`.
+
+**One kind of bound is augmented rather than copied**, and it is the mechanism that keeps a nested provider stack diagnosable. A bound naming *this component's own provider trait* — the inner-provider bound of a [higher-order provider](../../concepts/higher-order-providers.md) — gains its `IsProviderFor` counterpart alongside it. So
+
+```rust
+#[cgp_new_provider]
+impl<Context, Inner> AreaCalculator<Context> for Scaled<Inner>
+where
+    Inner: AreaCalculator<Context>,
+{ /* ... */ }
+```
+
+derives a marker impl whose clause carries both predicates:
+
+```rust
+impl<Context, Inner> IsProviderFor<AreaCalculatorComponent, Context, ()> for Scaled<Inner>
+where
+    Inner: IsProviderFor<AreaCalculatorComponent, Context, ()> + AreaCalculator<Context>,
+{}
+```
+
+That added bound is what carries a requirement from the inner provider outward through the wrapper, so a field missing several layers down still reaches the context where the component is finally checked — and it is why `#[check_providers(...)]` can localize which layer of a stack is broken. Bounds of every other kind are copied verbatim, with no counterpart: an ordinary `Context: Clone` and a consumer-trait bound such as `Context: CanPerimeter` both pass through unchanged.
 
 The component-type argument is the only thing the attribute argument changes. Passing `#[cgp_provider(RunnerComponent)]` substitutes that type into the first position of the `IsProviderFor` impl in place of the default `{Trait}Component`; everything else about the expansion is unchanged.
 

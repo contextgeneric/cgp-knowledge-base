@@ -12,7 +12,9 @@ The payoff is the impl-side-dependency, or dependency-injection, pattern in its 
 
 ## Syntax
 
-`#[blanket_trait]` is applied as an attribute on a trait definition. Every method and constant in the trait must have a default body, and every associated type may declare bounds; these defaults are what the generated impl forwards. The supertraits of the trait become the dependencies that the blanket impl requires.
+`#[blanket_trait]` is **not re-exported by the prelude**, unlike every other macro in this section, so it must be imported explicitly as `use cgp::core::macros::blanket_trait;` — `cgp_macro` is re-exported as `cgp::core::macros`. Omitting the import fails with `error: cannot find attribute 'blanket_trait' in this scope`, which names the attribute rather than the missing import.
+
+The attribute is applied to a trait definition. Every method and constant in the trait must have a default body, and every associated type may declare bounds; these defaults are what the generated impl forwards. The supertraits of the trait become the dependencies that the blanket impl requires.
 
 ```rust
 #[blanket_trait]
@@ -47,7 +49,7 @@ When the argument is omitted, the generic context type in the generated impl def
 
 ## Expansion
 
-`#[blanket_trait]` emits two items: the trait, unchanged from its definition, and a blanket impl for a generic context. The impl forwards each default method body, requires the trait's supertraits in its `where` clause, and strips the defaults from the trait so the trait declaration stays a pure interface. Starting from the method example:
+`#[blanket_trait]` emits two items: the trait, unchanged from its definition, and a blanket impl for a generic context. The impl forwards each default method body and requires the trait's supertraits in its `where` clause. Starting from the method example:
 
 ```rust
 #[blanket_trait]
@@ -63,7 +65,10 @@ the macro produces the trait and a blanket impl whose `where` clause carries the
 
 ```rust
 pub trait FooBar: Foo + Bar {
-    fn foo_bar(&self);
+    fn foo_bar(&self) {
+        self.foo();
+        self.bar();
+    }
 }
 
 impl<__Context__> FooBar for __Context__
@@ -76,6 +81,8 @@ where
     }
 }
 ```
+
+**The trait keeps its default bodies**; the macro does not strip them, so each body appears both on the trait and in the impl. The impl is what supplies the method for every qualifying context, and the retained default is harmless — a type implementing the trait by hand can still rely on it. Expect to see the duplication when reading an expansion.
 
 The simplest case, a trait with no methods, generates an empty impl — a trait alias in everything but name:
 
@@ -127,6 +134,7 @@ A self-contained extension trait that hides two dependencies behind one method i
 
 ```rust
 use cgp::prelude::*;
+use cgp::core::macros::blanket_trait;
 
 pub trait Foo {
     fn foo(&self);
