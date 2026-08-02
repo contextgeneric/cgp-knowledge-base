@@ -50,7 +50,7 @@ What differs is the item each entry lowers to. A `delegate_components!` entry em
 
 The two forms that carry the namespace's meaning are the ones above: `=>` states a route and `:` binds a provider. The rest are legal and rarely what a namespace wants. A `->` mapping still projects through the *value's* `DelegateComponent` table rather than through the namespace, so it names a concrete table inside what is meant to be a table-generic definition. An `open Component;` statement is accepted and generates exactly the entry `Component => @Component,` would, which is occasionally a convenient spelling for rooting a component's route at its own name. A `namespace Other;` statement is accepted and emits a forwarding impl, but inheritance is written with the `: ParentNamespace` header instead — that is the form the parent chain, its overrides, and the cycle diagnostics under Known issues are all defined in terms of.
 
-One shared form parses here and then fails to compile, so it is worth naming rather than leaving to be discovered. The nested-table value `Wrapper<new Inner { … }>` is accepted by the parser and the macro substitutes `Wrapper<Inner>` as the entry's `Delegate`, but `cgp_namespace!` never lifts the inner table out — unlike `delegate_components!`, its evaluation emits only the namespace trait, its struct, and one impl per entry — so the `Inner` struct and its `DelegateComponent` impls are never generated at all:
+The nested-table value works here too, and putting the dispatch table in the namespace is the reason to write it here rather than on a context: every context that joins the namespace inherits the per-type wiring without restating it.
 
 ```rust
 cgp_namespace! {
@@ -58,16 +58,13 @@ cgp_namespace! {
         FooProviderComponent:
             UseDelegate<new FooTable {
                 String: DummyFoo,
+                u64: DummyFoo,
             }>,
     }
 }
 ```
 
-```text
-error[E0425]: cannot find type `FooTable` in this scope
-```
-
-The message names the missing table rather than the unsupported form, so it reads as a typo. Declare the inner table in its own `delegate_components! { new FooTable { … } }` block and bind the namespace key to `UseDelegate<FooTable>`, or — better, since the nested-table form is legacy either way — leave per-type dispatch to the context, as [`delegate_components!`](delegate_components.md) describes.
+The macro lifts `FooTable` out into its own struct and [`DelegateComponent`](../traits/delegate_component.md) impls exactly as [`delegate_components!`](delegate_components.md) does, and the entry's `Delegate` is `UseDelegate<FooTable>`. The legacy form needs [`#[derive_delegate]`](../attributes/derive_delegate.md) on the component here as it does anywhere; per-type dispatch written the modern way belongs on the context, through `open`.
 
 ## Syntax Grammar
 

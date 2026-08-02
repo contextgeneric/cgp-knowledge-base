@@ -584,8 +584,13 @@ plus the three statements, and say that all of them combine in one block. Two fa
 recorded came out of enumerating against the parser rather than the previous draft: **a bracketed path
 group holds alternatives for one segment and may be followed by more path, while a braced group holds
 whole tails and terminates the path** — writing more path after a braced group fails with a bare
-`expected ':'` — and **`cgp_namespace!` parses the whole `delegate_components!` body grammar**, including
-the nested-table value, which then fails with `E0425` because its `eval` never lifts an inner table out.
+`expected ':'` — and **`cgp_namespace!` parses the whole `delegate_components!` body grammar**. Enumerating it also
+turned up a library defect rather than a documentation one: the nested-table value in that shared grammar
+was dropped instead of emitted, in a namespace body and inside a `for` loop's body alike, so the entry
+named a struct nothing declared. The base's own
+[adjacency test](../cgp/implementation/AGENTS.md#documenting-how-a-macros-expansion-can-fail-to-compile)
+is what reclassified it — the two macros share their entry parser, so the neighbouring case was already
+handled — and it is fixed, with a regression test on each half.
 The claim that `delegate_and_check_components!` "only understands the plain `Component: Provider` form"
 was also slightly wrong: it derives checks from any mapping keyed on a component *name*, `->` included,
 and leaves path keys, `=>` redirects, and every statement wired but silently unchecked.

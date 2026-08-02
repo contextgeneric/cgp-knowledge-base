@@ -34,7 +34,7 @@ The namespace and `for` forms share `EvaluatedForEntry` and `eval_delegate_entri
 - **`DirectDelegateMapping`** (`->`) — forwards to the value's own entry for the key. It sets `Delegate` to `<Value as DelegateComponent<Key>>::Delegate` and adds a `Value: DelegateComponent<Key>` bound to the entry's generics.
 - **`RedirectDelegateMapping`** (`=>`) — redirects the lookup along an `@`-path value. It sets `Delegate` to `RedirectLookup<TableType, Path>`, using the path directly for a plain key or a wildcard-terminated prefix for a path key.
 
-Only Normal and Direct mappings can carry a nested inner table (their values are `DelegateValue`); a Redirect value is a bare path and contributes no inner table.
+Only Normal and Direct mappings can carry a nested inner table (their values are `DelegateValue`); a Redirect value is a bare path and contributes no inner table. `DelegateEntries` walks its **statements** as well as its mappings when extracting, because a `for` loop's body holds `NormalDelegateMapping`s whose values can open a table too; `namespace` and `open` carry no value and contribute nothing.
 
 ## A key: `DelegateKey`
 

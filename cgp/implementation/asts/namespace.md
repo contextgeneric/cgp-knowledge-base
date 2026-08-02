@@ -31,10 +31,13 @@ pub struct EvaluatedNamespaceTable {
     pub item_impls: Vec<ItemImpl>,
     pub item_trait: Option<ItemTrait>,
     pub item_struct: Option<ItemStruct>,
+    pub inner_structs: Vec<EmptyStruct>,
 }
 ```
 
-Its only behavior is a `ToTokens` impl that renders the items in a fixed order — struct first, then trait, then every impl — which is the order the canonical snapshots pin. Because the inheritance impl was inserted at the front of `item_impls` during `eval`, it renders ahead of the per-entry impls.
+Its only behavior is a `ToTokens` impl that renders the items in a fixed order — the namespace struct first, then the trait, then the structs of any lifted inner tables, then every impl — which is the order the canonical snapshots pin. Because the inheritance impl was inserted at the front of `item_impls` during `eval`, it renders ahead of the per-entry impls.
+
+`inner_structs` mirrors `EvaluatedDelegateTable::item_structs`: a namespace body accepts the legacy `Wrapper<new Inner { … }>` value like any delegation table, so `eval` runs the same `ExtractInnerDelegateTables` walk and appends each lifted table's own `DelegateComponent` impls to `item_impls`. Without it the entry's `Delegate` would name a struct nothing declares.
 
 ## Tests
 
