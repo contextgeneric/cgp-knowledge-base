@@ -70,3 +70,7 @@ These traits are consumed by the monad providers in [monad providers](../provide
 
 - The traits are defined in [crates/extra/cgp-monad/src/traits/](https://github.com/contextgeneric/cgp/tree/main/crates/extra/cgp-monad/src/traits/) — `monadic_trans.rs`, `bind.rs`, `lift.rs`, and `value.rs`.
 - Their implementations for each monad marker are in [crates/extra/cgp-monad/src/monadic/](https://github.com/contextgeneric/cgp/tree/main/crates/extra/cgp-monad/src/monadic/) (`ident.rs`, `ok.rs`, `err.rs`).
+
+## Public pages derived from this document
+
+The public reference is organized one page per named construct, so this document feeds **4 pages** rather than one: [`monadic_bind`](https://contextgeneric.dev/docs/reference/traits/monadic_bind), [`contains_value`](https://contextgeneric.dev/docs/reference/traits/contains_value), [`lift_value`](https://contextgeneric.dev/docs/reference/traits/lift_value), [`monadic_trans`](https://contextgeneric.dev/docs/reference/traits/monadic_trans). A change here is propagated to each of them, per the [synchronization rule](../../../AGENTS.md#the-synchronization-rule); the mapping and the granularity rule behind it are recorded in [website/site-structure.md](../../../website/site-structure.md).

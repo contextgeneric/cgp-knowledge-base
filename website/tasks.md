@@ -222,13 +222,14 @@ reader falls into. The spec and the porting procedure are in
 [writing-guides/reference.md](writing-guides/reference.md).
 
 - **R1 — the reference index.** Written, at `docs/reference/index.md`: it names the six constructs a
-  newcomer needs, then groups the remaining seventy-five by the job they do. It is one of the surfaces
+  newcomer needs, then groups the rest by the job they do. It is one of the surfaces
   the author reads, so **that read is what remains**. It is also the section's completeness check —
   every construct has an entry here even where the page behind it is a stub — so a page added later is
   added to this index in the same change.
-- **R2 — port the construct pages.** Seventy-five pages under `docs/reference/`, all **scaffolded** with
-  a one-line description and a stub notice. **Forty-eight are written: `macros/`, `attributes/`,
-  `derives/`, and `traits/` are complete.** Twenty-seven remain, in `components/` (9), `providers/` (13),
+- **R2 — port the construct pages.** A hundred and twenty pages under `docs/reference/`, all
+  **scaffolded** with a one-line description and a stub notice. **Ninety-three are written:
+  `macros/` (20), `attributes/` (8), `derives/` (8), and `traits/` (57) are complete.** Twenty-seven
+  remain, in `components/` (9), `providers/` (13),
   and `types/` (5). The settled conventions — anchors from heading text, the collapsed formal grammar,
   the shared provenance note, compiled snippets, the `context` gloss — are recorded in
   [site-structure.md](site-structure.md). Each remaining page is ported from its internal document by
@@ -455,7 +456,7 @@ obligation. Its remaining step is the author's read.
 
 **Then R3 and R1.** Because the release waits for the reference, the reference's *prerequisites* are the
 real critical path, and both are small: R3 is what C4, T2, and the homepage's cost section all point at,
-and R1 fixes the grouping that seventy pages then slot into. The third prerequisite that used to sit here,
+and R1 fixes the grouping that a hundred and twenty pages then slot into. The third prerequisite that used to sit here,
 the error catalog page, is written — which is what freed every later *Gotchas* section to stay
 construct-specific.
 

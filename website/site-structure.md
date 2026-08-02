@@ -616,7 +616,7 @@ come for, and it is the first thing a well-meaning trim targets.
 
 - **URL** — <https://contextgeneric.dev/docs/reference/>
 - **Source** — [docs/reference/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/reference)
-- **Status** — Draft: the index and 48 construct pages are written, the remaining pages are stubs
+- **Status** — Draft: the index and 93 construct pages are written, the remaining pages are stubs
 - **How it was made** — ported by an agent from [cgp/reference/](../cgp/reference/README.md); level one
   of the four in [ai-disclosure.md](../communication-strategy/ai-disclosure.md)
 
@@ -631,10 +631,10 @@ hand-written index as its category link and seven subdirectories mirroring what 
 **Every page is scaffolded and the construct list is complete**, which matters more than it sounds: the
 completeness obligation is against the index rather than against the prose, so no construct is missing
 from the site even while most pages are placeholders. Each stub carries its one-line description and an
-admonition saying it is unwritten. Forty-eight construct pages are written, plus the index and
-`errors.md`: the whole of `macros/` (twenty pages), `attributes/` (seven), `derives/` (six), and `traits/`
-(fifteen), which are the first four groups finished end to end. Twenty-seven construct pages remain
-stubs — `components/`, `providers/`, and `types/` are untouched.
+admonition saying it is unwritten. Ninety-three construct pages are written, plus the index and
+`errors.md`: the whole of `macros/` (twenty pages), `attributes/` (eight), `derives/` (eight), and
+`traits/` (fifty-seven), which are the first four groups finished end to end. Twenty-seven construct
+pages remain stubs — `components/`, `providers/`, and `types/` are untouched.
 
 ### The compile-errors page
 
@@ -812,11 +812,15 @@ compile**, each missing an import for a trait that is not in the prelude: `cast.
 the argument for auditing prelude membership as a whole rather than per page. Each public page now states where
 its traits are imported from.
 
-Three further corrections came out of the same audit. **`StaticFormat` cannot be named through the `cgp` crate
-at all** — it is `pub` in `cgp-base-types`, but `cgp::core` re-exports a different types crate, `cgp-base` is
-not a dependency of `cgp`, and the prelude carries only its sibling `ConcatPath`; so it is reachable only
-through the `Display` impls it powers, which the internal document had presented as a usable trait and now
-records as a Known issue. **`DefaultImpls1` and `DefaultImpls2` put the instance type in the `Self` position
+Three further corrections came out of the same audit. **`StaticFormat` could not be named through the `cgp`
+crate at all** — it is `pub` in `cgp-base-types`, and nothing re-exported that crate onto a reachable path, so
+it was usable only through the `Display` impls it powers. **The library has since closed that gap**: `cgp-core`
+re-exports `cgp-base` as `cgp::core::base` and `cgp-base` re-exports `cgp-base-types::*`, so the trait is now
+imported from `cgp::core::base::traits` and the same module tree reaches `cgp::core::base::types` for `Chars`,
+`Cons`, `Nil`, `PathCons`, and `Symbol`. The Known issue is gone from the internal document, and the public
+pages state the import rather than the limitation — which leaves the three neighbouring recovery traits with
+three different homes, since `ConcatPath` is in the prelude and `StaticString` is in
+`cgp::core::field::traits`. **`DefaultImpls1` and `DefaultImpls2` put the instance type in the `Self` position
 and the component name in a leading parameter**, which is the opposite of what the parameter names `T`/`T1`/`T2`
 suggest — the internal document's Definition section had it backwards while its Behavior section had it right,
 so the document contradicted itself. And `static_format.md`'s `ConcatPath` example used `Path!(a.b)`, which does
@@ -844,6 +848,28 @@ now pin what each building-block derive emits *on its own*, which is what makes 
 files cover those three derives, the four enum variant shapes `#[derive(HasFields)]` accepts and no other
 derive does, the unit struct, and the fieldless record.
 
+**A later pass split `derives/` and `traits/` to one page per named construct**, taking the two groups
+from twenty-one pages to sixty-five and the section from seventy-five to a hundred and twenty. Before it,
+eleven pages were titled with a list — *`CanUpcast`, `CanDowncast` & `CanBuildFrom`*, *Monad traits*,
+*Optional-field traits* — which is the shape the
+[granularity rule](writing-guides/reference.md#granularity-one-page-per-named-construct) now forbids.
+No prose was discarded: each page's material moved to the construct it belongs to, and where two pages
+would have repeated an explanation one keeps it and the other links, which is why
+[`CanDowncastFields`](https://contextgeneric.dev/docs/reference/traits/can_downcast_fields) defers its
+recursion to [`CanDowncast`](https://contextgeneric.dev/docs/reference/traits/can_downcast) and every
+optional-field page defers the transform to
+[`TransformMapFields`](https://contextgeneric.dev/docs/reference/traits/transform_map_fields).
+
+Three decisions the split settled are worth copying rather than rediscovering. **Markers stay with their
+trait** — `IsPresent` and the other six are types implementing `MapType` or `MapTypeRef`, not constructs,
+so the index's *Looking for a name you don't see?* table routes them. **A construct documented inside
+another page moves to its own page in the directory its kind belongs to**, which is why
+`#[default_impl(...)]` left `default_namespace.md` for `attributes/`, taking that group from seven pages
+to eight. And **the `example-code` mirror splits with the pages**: `cast.rs` became four files and
+`product_ops.rs` three, since a mirror file that names a page which no longer exists is worse than none.
+The split pages inherited their snippets already compiled, so the crate stayed green throughout — but
+**the pages created around them are not yet mirrored**, which is the round's one outstanding item.
+
 Reviewing the first four written pages had earlier corrected one originating on the site. The
 [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md) page had given "implementing a provider trait on a
 concrete type" as a reason to drop to [`#[cgp_provider]`](../cgp/reference/macros/cgp_provider.md), and
@@ -855,15 +881,30 @@ the wrong reason stand.
 
 ### How it relates to the knowledge base
 
-Each public page is derived from the internal document of the same name under
+Each public page is derived from the internal reference at
 [cgp/reference/](../cgp/reference/README.md), which stays the source of truth; the porting procedure and
 the six-section layered descent are in
-[writing-guides/reference.md](writing-guides/reference.md). The file names match the internal ones, so
-the mapping is one to one and most relative links between pages port unchanged. Four
-[consolidations](writing-guides/reference.md#granularity-close-to-one-page-per-construct) take 85
-internal documents to 75 public pages: `cgp_provider.md` covers `#[cgp_new_provider]` too,
-`derive_cgp_data.md` covers `CgpRecord` and `CgpVariant`, `use_field.md` covers `UseFieldRef` and
-`UseFields`, and `type_level_spines.md` covers `Cons`/`Nil`, `Either`/`Void`, `Chars`, and `PathCons`.
+[writing-guides/reference.md](writing-guides/reference.md).
+
+**The mapping is one internal document to one or more public pages, and which is which depends on the
+group.** In `macros/`, `attributes/`, `components/`, `providers/`, and `types/` the file names match the
+internal ones and most relative links port unchanged. In `derives/` and `traits/` they do not: the
+site is organized
+[one page per named construct](writing-guides/reference.md#granularity-one-page-per-named-construct),
+so one internal document that documents a family feeds several public pages —
+`traits/has_builder.md` feeds seven, `traits/extract_field.md` six, `traits/optional_fields.md` eight.
+Each internal document records the public pages it feeds, in a note under its Source section, so a later
+synchronization knows where to look. Three public pages have no internal document of their own:
+`derives/derive_cgp_record.md` and `derives/derive_cgp_variant.md` both come from
+[derive_cgp_data.md](../cgp/reference/derives/derive_cgp_data.md), and
+`attributes/default_impl.md` from
+[default_namespace.md](../cgp/reference/traits/default_namespace.md).
+
+Two [consolidations](writing-guides/reference.md#granularity-one-page-per-named-construct) survive:
+`cgp_provider.md` covers `#[cgp_new_provider]` too, and `type_level_spines.md` covers `Cons`/`Nil`,
+`Either`/`Void`, `Chars`, and `PathCons`. The four provider catalogues and `use_field.md` are the
+remaining multi-construct titles, in the two groups not yet ported.
+
 Two internal targets have no public counterpart by design: the [guides](../cgp/guides/README.md) are
 folded into each page's *When to reach for it* section, and implementation documents are replaced by
 GitHub source links.

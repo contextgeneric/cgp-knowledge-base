@@ -10,6 +10,8 @@ These traits close the loop between CGP's compile-time names and the runtime wor
 
 ## Definition
 
+The three differ in where they are imported from, and the split is worth stating before the definitions because no two of them agree. `ConcatPath` is in the prelude. `StaticString` comes from `cgp::core::field::traits`. And `StaticFormat` — which lives in the same crate as `ConcatPath` — comes from `cgp::core::base::traits`, the module through which `cgp-core` re-exports `cgp-base`; `cgp-base` in turn re-exports `cgp-base-types::*`, so the same module tree also reaches `cgp::core::base::types` for [`Chars`](../types/chars.md), [`Cons`](../types/cons.md), `Nil`, [`PathCons`](../types/path_cons.md), and `Symbol`.
+
 `StaticFormat` is a trait with a single associated function that writes the type-level string into a `Formatter`. The implementor is the type-level string itself, so the function takes no `self` — there is no runtime value, only the type:
 
 ```rust
@@ -91,10 +93,6 @@ library itself uses is narrower than joining two written paths — the generated
 `__Path__: ConcatPath<PathCons<T, Nil>>`, which is how a redirected lookup extends the route it was given by one
 step.
 
-## Known issues
-
-**`StaticFormat` cannot be named through the `cgp` crate.** It is `pub` in `cgp-base-types`, but nothing re-exports it onto a public path: `cgp::core` re-exports `cgp_type as types` rather than `cgp-base-types`, `cgp-base` is not a dependency of `cgp` at all, and the prelude carries only its sibling `ConcatPath` (through `cgp-base`'s `macro_prelude`). So a crate depending on `cgp` can use the trait's *effect* — `Symbol` and `Chars` implement `Display` by delegating to it, so `to_string()` and `{}` work — but cannot name the trait, bound on it, or implement it for a type of its own. In practice it is an implementation detail of those `Display` impls rather than part of the public surface, and [`StaticString`](#staticstring) (reachable at `cgp::core::field::traits::StaticString`) is the trait to reach for when the decoded name is actually wanted. The correct behavior would be to re-export it beside `ConcatPath`; the asymmetry between the two, which live in the same crate, is what makes this look like an oversight rather than a decision.
-
 ## Related constructs
 
 `StaticFormat` and `StaticString` decode the [`Chars`](../types/chars.md) chain and [`Symbol`](../macros/symbol.md) wrapper that the [`Symbol!`](../macros/symbol.md) macro builds from a string literal — the type-level string at the heart of CGP's field naming. `ConcatPath` operates on the [`PathCons`](../types/path_cons.md) spine constructed by the [`Path!`](../macros/path.md) macro, and is the path-level analogue of the product-level `ConcatProduct`. Together they let the names that drive [`HasField`](has_field.md) lookups and nested-getter composition surface as ordinary strings and paths.
@@ -104,3 +102,7 @@ step.
 - `StaticFormat` and its `Chars`/`Nil` impls are defined in [crates/core/cgp-base-types/src/traits/static_format.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-base-types/src/traits/static_format.rs); the `Display` impls that delegate to it are on the [`Chars`](../types/chars.md) and [`Symbol`](../macros/symbol.md) types in [crates/core/cgp-base-types/src/types/](https://github.com/contextgeneric/cgp/tree/main/crates/core/cgp-base-types/src/types/).
 - `StaticString`, with its const-evaluated UTF-8 decoding, is in [crates/core/cgp-field/src/traits/static_string.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/traits/static_string.rs).
 - `ConcatPath` is in [crates/core/cgp-base-types/src/traits/concat_path.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-base-types/src/traits/concat_path.rs), and `PathCons` in [crates/core/cgp-base-types/src/types/path.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-base-types/src/types/path.rs).
+
+## Public pages derived from this document
+
+The public reference is organized one page per named construct, so this document feeds **3 pages** rather than one: [`static_format`](https://contextgeneric.dev/docs/reference/traits/static_format), [`static_string`](https://contextgeneric.dev/docs/reference/traits/static_string), [`concat_path`](https://contextgeneric.dev/docs/reference/traits/concat_path). A change here is propagated to each of them, per the [synchronization rule](../../../AGENTS.md#the-synchronization-rule); the mapping and the granularity rule behind it are recorded in [website/site-structure.md](../../../website/site-structure.md).

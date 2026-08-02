@@ -9,7 +9,7 @@ on the site.
 - **Voice** — project voice, per
   [voice-and-register.md](../../communication-strategy/voice-and-register.md)
 - **Derived from** — the internal reference at `cgp/reference/`, which stays the source of truth
-- **Scale** — roughly 70–85 pages, ported rather than written from scratch
+- **Scale** — roughly 120 pages, ported rather than written from scratch
 
 ## The site reference is canonical
 
@@ -56,7 +56,7 @@ construct now has a public page as well as an internal document, and the base's
 the code, the internal document, *and* the public page, in that order and in the same change. A public
 page that disagrees with its internal document is a defect in the public page.
 
-## Granularity: close to one page per construct
+## Granularity: one page per named construct
 
 The reference is organized **one page per construct**, because a reader arrives knowing a name and
 wanting a URL, and because a page per construct is what makes deep links from the tutorials, the deep
@@ -64,27 +64,36 @@ dives, and compiler errors possible. The subdirectory layout mirrors what a cons
 `attributes/`, `derives/`, `components/`, `providers/`, `traits/`, `types/` — the same split the internal
 [reference index](../../cgp/reference/README.md) explains.
 
-**Consolidate only where separate pages would serve nobody.** Four groups qualify, and they take the
-count from 85 to roughly 70.
+**The rule is literal: every publicly nameable macro, attribute, derive, and trait gets its own page**,
+and no page's title is a list of names. That includes a trait that exists only as the mutable, borrowed,
+or provider-side mirror of another, and it includes the interlocking members of a family — the seven
+builder traits get seven pages, not one. A page whose title reads *`X`, `Y` & `Z`* is a defect, however
+closely the three are related.
 
-The **type-level spines** — `Cons`/`Nil`, `Either`/`Void`, `Chars`, and `PathCons` — are types a reader
-needs to *recognize in an error message*, never to write, and each internal document is short. One
-*Type-level spines* page covering all four serves that reader better than four pages. The sugar that
-builds them — `Symbol!`, `Product!`, `Sum!`, `Path!` — keeps a page each, since those are written
-constantly.
+Two consequences follow and both are load-bearing. **Cross-link instead of repeating**: where two pages
+would say the same thing, one says it and the other links, so the shared explanation has exactly one
+home. And **the mapping to the internal reference is no longer one to one** — one internal document now
+feeds several public pages, which each internal document records so a later synchronization knows where
+to look.
 
-The **three getter providers** `UseField`, `UseFieldRef`, and `UseFields` differ by one axis each and are
-chosen together; one page comparing them is more useful than three pages a reader must collate.
+**Markers are the one thing that stays with its trait.** `IsPresent`, `IsNothing`, `IsVoid`,
+`IsOptional`, `IsRef`, `IsMut`, and `IsOwned` are *types* implementing
+[`MapType`](../../cgp/reference/traits/map_type.md) or `MapTypeRef` rather than constructs of their own,
+so they are documented as their trait's impls. The reference index's *Looking for a name you don't see?*
+table is what routes a reader who arrives holding one of those names.
 
-The **extensible-data derive family** `CgpData`, `CgpRecord`, and `CgpVariant` is an umbrella and its two
-faces. One page, with the umbrella leading.
+**Two consolidations survive, and both are of things that are not separately nameable constructs.** The
+**type-level spines** — `Cons`/`Nil`, `Either`/`Void`, `Chars`, and `PathCons` — are types a reader needs
+to *recognize in an error message*, never to write, and one page covering all four serves that reader
+better than four; the sugar that builds them, `Symbol!`, `Product!`, `Sum!`, and `Path!`, keeps a page
+each. And the **two low-level provider macros** `#[cgp_provider]` and `#[cgp_new_provider]` differ only
+in whether the struct is declared, and are forms a reader meets rather than writes.
 
-The **two low-level provider macros** `#[cgp_provider]` and `#[cgp_new_provider]` are forms a reader
-meets rather than writes, and they differ only in whether the struct is declared. One page.
-
-Resist consolidating anything else. In particular the four provider *catalogues* the internal reference
-already groups — handler combinators, dispatch combinators, monad providers, error providers — are
-already the consolidated form and should not be split, but neither should they absorb their neighbours.
+The four provider *catalogues* the internal reference already groups — handler combinators, dispatch
+combinators, monad providers, error providers — are the one open question this rule leaves. They are
+currently one page each and are the last titles on the site that name several constructs; splitting them
+is the consistent move and has not been done. The **three getter providers** `UseField`, `UseFieldRef`,
+and `UseFields` are in the same position.
 
 Two pages are not constructs at all, and they go in opposite directions.
 [`cargo-cgp`](../../cgp/reference/cargo-cgp.md) documents the toolchain, and it does not belong under
@@ -94,7 +103,7 @@ catalog**, by contrast, belongs *inside* the reference, because a reader who hit
 doing exactly what the reference is for: looking one thing up by a name they already have, in this case
 an error code or a message shape.
 
-That page is a consolidation of a different kind from the four above. The internal
+That page is a consolidation of a different kind from the two above. The internal
 [errors catalog](../../cgp/errors/README.md) is seventeen documents organized by class, and seventeen
 public pages would be a category no reader scans; one page, organized by the internal catalog's own
 **hidden-versus-surfaced** axis, is what a reader can actually use. It shows the small program behind
@@ -228,7 +237,7 @@ A link to an **example** becomes a link to the tutorial or deep dive that carrie
 the example code is inlined.
 
 A link to an **error class** becomes a link to the section of the reference's
-[error catalog page](#granularity-close-to-one-page-per-construct) covering that class. This is the one
+[error catalog page](#granularity-one-page-per-named-construct) covering that class. This is the one
 mapping that depends on a page being written rather than merely re-pointed, which is why the catalog
 page comes early: until it exists, a *Gotchas* section has to inline whatever it needs, and every
 section written that way has to be revisited afterwards.
@@ -243,7 +252,7 @@ reader reaches for it once they are writing code rather than while learning. It 
 `_category_.json` per group, and the sidebar is autogenerated from the tree — see
 [site-structure.md](../site-structure.md) for the mechanics and the stock-Docusaurus constraint.
 
-The category needs a real **index page**, not an autogenerated list. Seventy pages is too many to scan,
+The category needs a real **index page**, not an autogenerated list. A hundred and twenty pages is far too many to scan,
 and the index is where the layered-audience promise is kept at the section level: it should open by
 naming the handful of constructs a newcomer actually needs, then group the rest by the job they do, in
 the shape the internal [reference index](../../cgp/reference/README.md) already uses. A reader who does

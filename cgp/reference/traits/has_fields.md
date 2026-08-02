@@ -88,3 +88,7 @@ For an enum the `Fields` shape is a sum instead of a product. A `Shape` enum wit
 - The `Field`, `Cons`/`Nil`, `Either`/`Void` building blocks live under [crates/core/cgp-field/src/types/](https://github.com/contextgeneric/cgp/tree/main/crates/core/cgp-field/src/types/).
 - The derive that emits the impls is in [crates/macros/cgp-macro-core/src/types/cgp_data/derive_has_fields/](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-core/src/types/cgp_data/derive_has_fields/).
 - For how it is generated and the index of tests, see the implementation document [implementation/entrypoints/derive_has_fields.md](../../implementation/entrypoints/derive_has_fields.md).
+
+## Public pages derived from this document
+
+The public reference is organized one page per named construct, so this document feeds **5 pages** rather than one: [`has_fields`](https://contextgeneric.dev/docs/reference/traits/has_fields), [`has_fields_ref`](https://contextgeneric.dev/docs/reference/traits/has_fields_ref), [`to_fields`](https://contextgeneric.dev/docs/reference/traits/to_fields), [`from_fields`](https://contextgeneric.dev/docs/reference/traits/from_fields), [`to_fields_ref`](https://contextgeneric.dev/docs/reference/traits/to_fields_ref). A change here is propagated to each of them, per the [synchronization rule](../../../AGENTS.md#the-synchronization-rule); the mapping and the granularity rule behind it are recorded in [website/site-structure.md](../../../website/site-structure.md).

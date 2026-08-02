@@ -132,3 +132,7 @@ Because `Person` derives `HasField`, it implements `HasField<Symbol!("name"), Va
 - The `MapField`/`FieldMapper` lifetime helpers are in [crates/core/cgp-field/src/traits/map_field.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/traits/map_field.rs).
 - The `UseField` provider lives in [crates/core/cgp-field/src/impls/use_field.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/impls/use_field.rs).
 - For how it is generated and the index of tests, see the implementation document [implementation/entrypoints/derive_has_field.md](../../implementation/entrypoints/derive_has_field.md).
+
+## Public pages derived from this document
+
+The public reference is organized one page per named construct, so this document feeds **6 pages** rather than one: [`has_field`](https://contextgeneric.dev/docs/reference/traits/has_field), [`has_field_mut`](https://contextgeneric.dev/docs/reference/traits/has_field_mut), [`field_getter`](https://contextgeneric.dev/docs/reference/traits/field_getter), [`mut_field_getter`](https://contextgeneric.dev/docs/reference/traits/mut_field_getter), [`map_field`](https://contextgeneric.dev/docs/reference/traits/map_field), [`field_mapper`](https://contextgeneric.dev/docs/reference/traits/field_mapper). A change here is propagated to each of them, per the [synchronization rule](../../../AGENTS.md#the-synchronization-rule); the mapping and the granularity rule behind it are recorded in [website/site-structure.md](../../../website/site-structure.md).
