@@ -267,6 +267,16 @@ top-level document — and in [../summary.md](../summary.md), in the same change
 Adding a page to the website means adding its document here in that same change; a page with no
 internal document has no recorded provenance, which is the failure this section exists to prevent.
 
+**A ported catalog is the one exception, and it is recorded as one entry rather than one per page.**
+The Reference and Concepts sections each mirror a catalog in this base one page at a time, so a public
+page's provenance is already fully determined by the internal document it was ported from and the
+section's shared conventions — seventy-eight near-identical documents saying so would carry no
+information and would go stale as a body. Each section therefore gets a single entry in
+[site-structure.md](site-structure.md) covering the mapping, the conventions, and the current state,
+and a page that needs something said about it *specifically* gets a paragraph inside that entry. This
+exception reaches a section built by porting a catalog; it does not reach a page written on its own,
+which still gets its own document.
+
 Adding a page of a *kind* the site has not published before means adding a writing guide for it too,
 before the page rather than after, since the guide is what a later revision is checked against.
 

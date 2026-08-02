@@ -506,11 +506,17 @@ rule the `#[cgp_fn]` port corrected.
 `` `#[cgp_impl]` `` renders with its backticks visible in the navigation. Write `#[cgp_impl]` in the
 label and keep the backticks in the page's `#` heading, where they render.
 
-**An admonition's title is a heading on its own line, not text after the directive.** Write
-`:::note` on its own, then a blank line, then `### Advanced`, rather than `:::note Advanced` — the
-inline form does not render the title as intended on this installation. The heading becomes a link
-target and appears in the page's table of contents, which is wanted for an *Advanced* note nested
-under *Under the hood* and merely harmless on a stub's *Not written yet* notice.
+**An admonition's title is a heading on its own line, not text after the directive.** Write `:::note`
+on its own, then a blank line, then `### Advanced`. The failure mode this avoids is worse than a
+missing title: on this installation `:::note Advanced` is not recognized as a directive at all, so the
+whole block degrades to literal text and the reader sees `:::note Advanced`, the body, and `:::` as
+three plain paragraphs. The build reports nothing, since no link is broken.
+
+Docusaurus v3's own titled form, `:::note[Advanced]`, does render correctly here and was **not** chosen
+— so a later agent meeting the heading convention should read it as a decision rather than as ignorance
+of the bracket syntax. The trade the heading form makes is that the title becomes a link target and an
+entry in the page's table of contents: wanted for an *Advanced* note nested under *Under the hood*, and
+the reason a stub's table of contents reads "Not written yet" and nothing else.
 
 ### Maintaining it
 

@@ -652,7 +652,8 @@ it stale.
   communication-strategy before writing public prose, never taking current syntax from a blog post,
   the prohibition on rewriting published history, the release-branch model the redesign lands through,
   who drafts a page and who reads it before it publishes, disclosing AI use on a page, the document
-  template, and the status vocabulary.
+  template, the status vocabulary, and how a ported catalog registers as one entry rather than one
+  document per page.
 - [website/information-architecture.md](website/information-architecture.md) — the site as intended:
   why most readers never see the homepage, the four routes in and why three fail, what each surface is
   for, the target page inventory including unwritten pages, the sidebar order, and each reader
