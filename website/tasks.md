@@ -60,7 +60,10 @@ Four further standing rules bind the content rather than the bookkeeping. Every 
 is governed by [communication-strategy/](../communication-strategy/README.md) through its writing guide.
 Every snippet is bound by the [synchronization rule](../AGENTS.md#the-synchronization-rule): verify
 against the `cgp` source and the `/cgp` skill, prefer code already verified in
-[examples/](../examples/README.md), and **never** take current syntax from a blog post. Every page
+[examples/](../examples/README.md), and **never** take current syntax from a blog post. A page that
+shows code also puts that code in the website repository's
+[`example-code/` crate](site-structure.md#the-example-code-crate), at the mirrored path, so the
+verification survives the session that did it. Every page
 that shows CGP code **says which of the three shapes its example is in** — a value context or an
 environmental one, self-targeted or parameter-targeted — because the site's examples span all three and a
 reader who generalizes from one and then meets another without being told has no way to say what a context
@@ -113,8 +116,9 @@ in [redesign-queue.md](redesign-queue.md#corrections--single-lines-wrong-today).
   stale bar.
 - **C3 — the tutorial version pin.** Set it to `cgp = "0.8.0"`. Because the branch merges with the
   release, this is simply correct rather than a promise about an unpublished version — which is the
-  whole reason the two events are coupled. *Lands in:* `docs/tutorials/hello.md`, and every future
-  tutorial. *Done when:* the pin names the version the code is written against and re-pinning is on the
+  whole reason the two events are coupled. *Lands in:* `docs/tutorials/hello.md`, every future
+  tutorial, and `example-code/Cargo.toml`, which pins the resolvable `0.8.0-alpha` until then.
+  *Done when:* the pin names the version the code is written against and re-pinning is on the
   release checklist.
 - **C4 — `cargo-cgp` on Resources.** The single most consequential omission on the site: the error
   toolchain is the direct answer to the most-cited obstacle to adopting CGP, and Resources is where an

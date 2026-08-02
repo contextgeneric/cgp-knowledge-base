@@ -666,7 +666,8 @@ it stale.
   every remaining task with its repository, dependencies, and done-condition — including the AI
   disclosure page — which of them the release waits for, and the ordering; deleted when empty.
 - [website/site-structure.md](website/site-structure.md) — the site's build, navigation, announcement
-  bar, deployment, and release-branch workflow, plus one entry each for the front page, Introduction,
+  bar, deployment, release-branch workflow, and the `example-code/` crate that holds the compiled
+  counterparts of the code the site shows, plus one entry each for the front page, Introduction,
   Overview, Resources, Contribute, the AI skills page, the Concepts section, the Reference section, and
   the AI disclaimer.
 

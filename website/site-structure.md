@@ -56,6 +56,36 @@ repository, is written in Markdown, and is not part of the site — nothing unde
 Treat it as a scratchpad whose conclusions belong in the [writing guides](writing-guides/README.md)
 rather than as a fourth documentation tier.
 
+## The example-code crate
+
+**A Rust crate sits in the repository at `example-code/`, holding compiled counterparts of the code the
+site shows, and it is not part of the site.** Docusaurus never sees it, no page links it, and readers
+are not meant to find it; it exists so that an agent revising a page can check that page's code against
+something the compiler has agreed to. Its layout mirrors `docs/` one file per page, with the file name
+in `snake_case` — `docs/concepts/coherence.md` against
+[`src/concepts/coherence.rs`](https://github.com/contextgeneric/contextgeneric.dev/blob/main/example-code/src/concepts/coherence.rs)
+— and inside a file, one module per heading of the page, in the page's order. A page that shows no code
+gets no file. `cargo test` in that directory is the check; `cargo check` is the fast half of it.
+
+The conventions live in the crate's own
+[README](https://github.com/contextgeneric/contextgeneric.dev/blob/main/example-code/README.md) rather
+than here, since they are read alongside the code. Four are worth knowing from this side. **Elided
+bodies are filled in**, each with a comment saying the page elided it, so a difference in a body is
+expected while a difference in a signature, bound, attribute, or wiring line is a defect in one side or
+the other. **Snippets a page deliberately rejects are `compile_fail` doctests**, which catch the
+regression that matters — a rejected snippet the compiler has started accepting — but do *not* verify
+which error is produced, since rustdoc accepts an error code after the annotation without enforcing it.
+**Duplication between files is wanted**, because each file has to answer for its page alone.
+And **a listing of *generated* code can only be shape-checked here**; `cargo cgp expand` remains the
+authority on its text, which is the same rule the reference port already follows.
+
+It is filled in **lazily**, and the rule is in
+[AGENTS.md](AGENTS.md#verify-code-against-current-cgp-and-never-against-a-blog-post): a page gets its
+file when someone writes, revises, or reviews it. A missing file therefore means nobody has been
+through that page yet. Two files exist so far, both from the Concepts review — `coherence.rs` and
+`consumer_and_provider_traits.rs`. The crate pins `cgp = "0.8.0-alpha"`, which resolves from crates.io
+today and joins the tutorials' pin on the release checklist.
+
 ## Navigation and the announcement bar
 
 The navigation bar carries four content entries — Tutorials, Docs, Blog, and AI — plus a GitHub link,

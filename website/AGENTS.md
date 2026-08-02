@@ -91,6 +91,24 @@ exactly as a reference document's Expansion is: invoke the `/cgp` skill, verify 
 richest source of already-verified snippets is [examples/](../examples/README.md), which exists partly
 to be quoted, so draw on it rather than writing new code that then needs its own verification.
 
+**The website repository carries a Rust crate whose job is to hold that verification, and a page you
+write or revise puts its code there.** `example-code/` is a crate mirroring the `docs/` tree one file
+per page — `docs/concepts/coherence.md` against `src/concepts/coherence.rs` — so the check on a
+snippet stops being "an agent compiled this once" and becomes "`cargo test` in that directory is
+green". It is not part of the site: nothing renders it, no page links it, and its own
+[README](https://github.com/contextgeneric/contextgeneric.dev/blob/main/example-code/README.md)
+carries the conventions — one module per heading, elided bodies filled in with a comment saying so,
+rejected snippets as `compile_fail` doctests, duplication between files preferred over a shared helper
+neither page shows.
+
+Three things about it are worth knowing before you reach for it. **It is filled in lazily**: a page
+gets its file when someone writes, revises, or reviews that page, so a missing file means nobody has
+been through that page yet rather than that the page is unverified. **It does not replace
+`cargo cgp expand`** for a listing that shows *generated* code, which the crate can only check the
+shape of. And **it is the website's alone** — the knowledge base's own snippets are not mirrored
+there, since they are verified against the source directly and a second copy would be one more thing
+to keep in step.
+
 **Never take current syntax from an existing blog post.** Almost every post on the site predates
 v0.8.0, and the drift is not cosmetic: posts published as recently as 2026 still show
 `#[cgp_context]`, `cgp_preset!`, `#[cgp_inherit]`, `HasCgpProvider`, the `Async` trait, `ProvideType`,
