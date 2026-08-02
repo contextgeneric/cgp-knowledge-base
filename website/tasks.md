@@ -247,9 +247,10 @@ reader falls into. The spec and the porting procedure are in
   every construct has an entry here even where the page behind it is a stub — so a page added later is
   added to this index in the same change.
 - **R2 — port the construct pages.** Seventy-five pages under `docs/reference/`, all **scaffolded** with
-  a one-line description and a stub notice, and three written in full:
+  a one-line description and a stub notice, and four written in full:
   [`#[cgp_component]`](https://contextgeneric.dev/docs/reference/macros/cgp_component),
-  `#[cgp_impl]`, and `delegate_components!`. Those three are the model the rest are ported against, and
+  `#[cgp_impl]`, `delegate_components!`, and `#[cgp_fn]`. Those four are the model the rest are ported
+  against, and
   the settled conventions — anchors from heading text, the collapsed formal grammar, the shared
   provenance note, compiled snippets — are recorded in
   [site-structure.md](site-structure.md). Each remaining page is ported from its internal document by

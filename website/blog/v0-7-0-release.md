@@ -101,6 +101,11 @@ Less than any other release note, but the gaps are real and one of them is easy 
 - **The `HasScalarType` example declares `type Scalar: Mul<Output = Scalar> + Copy;`**, which names
   `Scalar` bare inside its own definition rather than as `Self::Scalar` — a slip in the post, not a
   syntax that ever worked.
+- **The post's breaking-change note that owned getter and implicit values "now require `Copy` rather
+  than `Clone`" no longer describes the library.** As of v0.8.0 both read the field by reference and
+  call `.clone()`, so `Clone` is the requirement and a `String` field satisfies an owned `String`
+  argument — confirmed against the expansion, not inferred. Do not carry the `Copy` claim forward into
+  any current page.
 
 ## Maintaining it
 

@@ -88,9 +88,9 @@ unchanged, and the simplified desugaring in the appendix remains an accurate sim
 One caveat rather than a divergence: the appendix's `HasName` trait returns `&str` from a `String`
 field, which the real `#[cgp_auto_getter]` supports but which is presented here as hand-written code.
 That is fine as a simplification, but a reviser adding detail should check the actual access rules in
-[`#[implicit]`](../../cgp/reference/attributes/implicit.md) — in particular that an *owned* implicit
-argument now requires `Copy` rather than `Clone` — before making any claim about how values are
-fetched.
+[`#[implicit]`](../../cgp/reference/attributes/implicit.md) before making any claim about how values
+are fetched — an owned argument is read by reference and `.clone()`d, a `&str` is read from a `String`
+field with `.as_str()`, and a plain `&T` is borrowed with no conversion at all.
 
 ## Maintaining it
 

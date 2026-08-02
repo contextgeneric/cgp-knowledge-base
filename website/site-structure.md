@@ -428,7 +428,7 @@ come for, and it is the first thing a well-meaning trim targets.
 
 - **URL** — <https://contextgeneric.dev/docs/reference/>
 - **Source** — [docs/reference/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/reference)
-- **Status** — Draft: the index and three pages are written, the remaining pages are stubs
+- **Status** — Draft: the index and four pages are written, the remaining pages are stubs
 - **How it was made** — ported by an agent from [cgp/reference/](../cgp/reference/README.md); level one
   of the four in [ai-disclosure.md](../communication-strategy/ai-disclosure.md)
 
@@ -464,10 +464,12 @@ Two internal targets have no public counterpart by design: the [guides](../cgp/g
 folded into each page's *When to reach for it* section, and implementation documents are replaced by
 GitHub source links.
 
-The three written pages also draw on the guides directly —
+The written pages also draw on the guides directly —
 [writing providers](../cgp/guides/writing-providers.md) and
 [sizing a component](../cgp/guides/sizing-a-component.md) supply most of two *When to reach for it*
-sections — and the shared running example is the `Rectangle` area calculation from
+sections, and [naming a type dependency](../cgp/guides/naming-a-type-dependency.md) supplies the
+`#[impl_generics]`-versus-abstract-type decision on `#[cgp_fn]` — and the shared running example is the
+`Rectangle` area calculation from
 [area calculation](../examples/area-calculation.md). **Value context, self-targeted**, which is the
 least representative of CGP's three shapes and is used here because a reference page illustrates a
 construct rather than teaching a design.
@@ -480,21 +482,25 @@ Four mechanics are settled and a later page should copy rather than rediscover t
 it parses the braces as an expression and fails the build. Section headings are therefore link targets
 and cannot be reworded freely.
 
-**One shared provenance note** closes every page, in the wording the three written pages use, linking
+**One shared provenance note** closes every page, in the wording the written pages use, linking
 [the disclaimer](AGENTS.md#disclosing-ai-use-on-a-page)'s documentation section.
 
 **The formal grammar lives in a collapsed `<details>`** labelled "Formal grammar", so a beginner never
 meets EBNF by accident, and it cites the Rust Reference's notation page.
 
-**Snippets are compiled, not eyeballed.** The three written pages' examples were checked against `cgp`
-`0.8.0-alpha` with a `check_components!` assertion per wired context, which is what confirms wiring
-resolves rather than merely parses.
+**Snippets are compiled, not eyeballed.** Every written page's examples were checked against `cgp`
+`0.8.0-alpha`, with a `check_components!` assertion per wired context where the page wires one, which is
+what confirms wiring resolves rather than merely parses. A page that documents a *failure* — a rejected
+input, a macro's own error message — quotes the message the compiler actually produced rather than a
+remembered one, since those wordings change without notice.
 
 **Expansions are checked with `cargo cgp expand`, not copied from the internal document.** The internal
 reference may itself have drifted, so the *Under the hood* section is verified against what the macros
-actually emit — for the three written pages, `expand --lib --item` on each of the consumer trait, the
-provider trait, the wired context, and the provider. This is the draft check most easily skipped and
-the section most likely to be wrong without it.
+actually emit — `expand --lib --item` on each item the page shows, which for a component means the
+consumer trait, the provider trait, the wired context, and the provider, and for a `#[cgp_fn]` means the
+generated trait. This is the draft check most easily skipped and the section most likely to be wrong
+without it; it is also what catches a drifted internal claim, as it did for the owned-implicit access
+rule the `#[cgp_fn]` port corrected.
 
 **Sidebar labels carry no backticks.** A `sidebar_label` is plain text rather than Markdown, so
 `` `#[cgp_impl]` `` renders with its backticks visible in the navigation. Write `#[cgp_impl]` in the
