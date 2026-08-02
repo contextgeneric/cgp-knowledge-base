@@ -651,7 +651,8 @@ it stale.
 
 - [website/README.md](website/README.md) — what this section documents, the one-way link asymmetry
   that makes it necessary, how the Docusaurus site is organized, and its catalog.
-- [website/AGENTS.md](website/AGENTS.md) — the rules: the one-way link rule, consulting
+- [website/AGENTS.md](website/AGENTS.md) — the rules: the one-way link rule and its two exceptions,
+  the published agent skill as a pinned snapshot that agents never edit, bump, or read from, consulting
   communication-strategy before writing public prose, covering every supported form by layering the
   depth rather than omitting the advanced material, never taking current syntax from a blog post,
   the prohibition on rewriting published history, the release-branch model the redesign lands through,
@@ -670,10 +671,11 @@ it stale.
   every remaining task with its repository, dependencies, and done-condition — including the AI
   disclosure page — which of them the release waits for, and the ordering; deleted when empty.
 - [website/site-structure.md](website/site-structure.md) — the site's build, navigation, announcement
-  bar, deployment, release-branch workflow, and the `example-code/` crate that holds the compiled
+  bar, deployment, release-branch workflow, the three settings that depart from stock Docusaurus to
+  publish the agent skill from its own repository, and the `example-code/` crate that holds the compiled
   counterparts of the code the site shows, plus one entry each for the front page, Introduction,
-  Overview, Resources, Contribute, the AI skills page, the Concepts section, the Reference section, and
-  the AI disclaimer.
+  Overview, Resources, Contribute, the AI skills section and its `cgp-skills` submodule, the Concepts
+  section, the Reference section, and the AI disclaimer.
 
 ### `website/writing-guides/` — how new pages should be written
 

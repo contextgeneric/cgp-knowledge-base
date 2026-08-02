@@ -23,6 +23,18 @@ Docusaurus precisely to stop spending time on theming, and committed to adding n
 no React beyond the landing page. An agent adding site machinery is therefore working against a stated
 decision and should raise it with the user rather than assume it.
 
+**Three settings depart from stock, and all three exist to publish the agent skill from its own
+repository rather than as a copy.** `markdown.format` is `detect`, so a `.md` file is parsed as
+CommonMark and only `.mdx` as MDX — the skill is plain Markdown written by a repository with no reason
+to know about MDX, and MDX reads an autolink like `<https://example.com>` as a JSX tag and fails the
+build. A one-function inline plugin sets webpack's `resolve.symlinks` to `false`, because the skill
+pages are symlinks whose real path lies inside the submodule; resolved, the compiled module no longer
+matches the metadata the docs plugin registered against the symlink, and every such page fails to
+render. And the docs plugin excludes `**/cgp-skills/**`, so the submodule's own files — its README,
+its `AGENTS.md` — do not become pages. Nothing else on the site depends on any of the three: no page
+uses MDX-only syntax, so `detect` changes no existing rendering. Both deploy workflows check out with
+`submodules: recursive`, without which the build fails on missing files.
+
 Deployment runs from GitHub Actions. The workflows in
 [.github/workflows/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/.github/workflows)
 build the site and publish it to GitHub Pages, with the custom domain fixed by
@@ -347,45 +359,66 @@ on the site where a single voice is appropriate rather than the project's collec
 
 - **URL** — <https://contextgeneric.dev/docs/ai/skills/>
 - **Source** — [docs/ai/skills/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/ai/skills)
-- **Status** — Outdated
+- **Status** — Current: the index is written and the skill is served from a pinned submodule
+- **How it was made** — the index page written by an agent; the skill pages are
+  [`cgp-skills`](https://github.com/contextgeneric/cgp-skills) published unedited
 
 ### What it covers
 
-The AI section publishes CGP's agent skill for readers who want to hand it to an LLM. Its index page
-explains what agent skills are, points at the
-[cgp-skills repository](https://github.com/contextgeneric/cgp-skills) and the raw `SKILL.md`, and then
-**inlines the entire skill text** so a reader can see what the agent is being taught. A companion page
-under `references/` inlines the modularity-hierarchy sub-skill, which walks the ladder from a single
-blanket impl to per-type-per-provider wiring using Serde's `Serialize` as the running example.
+The AI section publishes CGP's agent skill for readers who want to hand it to an assistant. The index
+page explains what the skill is, states plainly that it teaches the assistant rather than the reader,
+gives the two ways to install it, and routes a human who is actually trying to *learn* CGP to the
+tutorials and concepts instead. It carries no skill content of its own.
+
+The skill itself follows as sibling pages: `SKILL.md` and one page per file in `cgp/references/`.
+**These are symlinks, not copies.** The `cgp-skills` repository is a git submodule checked out at
+`docs/ai/skills/cgp-skills/`, and each published page is a symlink into it, so the site serves the
+skill's own bytes at a pinned revision.
 
 ### How it relates to the knowledge base
 
-This page is a *published copy* of material whose source of truth is the
-[`cgp-skills`](https://github.com/contextgeneric/cgp-skills) repository, which is itself built from
-this knowledge base — see [sibling-projects.md](../sibling-projects.md). That makes it a third view of
-one truth, and the base's [synchronization rule](../AGENTS.md#the-synchronization-rule) names exactly
-this situation: when the skill, the base, and the code disagree, the code wins and the other two are
-defects. The inlined sub-skill covers the same ground as
-[modularity-hierarchy](../cgp/concepts/modularity-hierarchy.md).
+The skill is built from this base and is one of the [five views](../cgp/AGENTS.md) of CGP's truth, so
+the [synchronization rule](../AGENTS.md#the-synchronization-rule) already governs it. What the
+submodule changes is that the *site* is no longer a further view: it renders the skill repository
+rather than a transcription of it, so the page cannot drift from the skill, and correcting the skill
+is the only way to correct the page. That removes the failure this entry previously had to warn about.
 
-### Where it diverges
+Three consequences are worth knowing before touching this section.
 
-The inlined skill text states plainly that it describes **CGP v0.7.0**, and the library is now at
-v0.8.0, so the whole page is a version behind. The concrete drift is substantial: it teaches
-`#[use_type(HasScalarType::Scalar)]` with `::` where current syntax uses `.`; it presents
-`derive_delegate: UseDelegate<Shape>` and nested `UseDelegate` tables as the way to dispatch on a
-generic parameter, where the current idiom is the `open` statement of
-[`delegate_components!`](../cgp/reference/macros/delegate_components.md); it does not mention
-[namespaces](../cgp/concepts/namespaces.md) at all; and its `check_components!` examples use forms the
-v0.7.0 release changed. It also omits [`cargo-cgp`](../cargo-cgp/README.md), which the current skill
-leads with.
+**Publishing the skill verbatim publishes its links, and that is accepted.** The skill cites the
+knowledge base by GitHub URL roughly ninety times, so those deep links are live on the public site. It
+is a settled exception to the [one-way link rule](AGENTS.md#the-one-way-link-rule) rather than an
+oversight: these pages *are* prose written for agents, the index says so before a reader reaches them,
+and a reader who follows one lands where the skill meant to send them. The exception is bounded to
+pages nobody hand-writes.
+
+**Three pages lose their in-page navigation.** Docusaurus generates heading anchors for `h2` and `h3`
+only, and the skill uses `#` for its major sections — fourteen in `SKILL.md`, ten in `macro-grammar.md`,
+three in `error-extraction.md`. Those sections therefore get no anchor and no table-of-contents entry,
+and the one intra-document link that targets such a heading is reported as a broken anchor on every
+build. The other thirteen reference pages carry a single `h1` title and are unaffected. Demoting the
+non-title headings to `##` in the skill repository would fix all of it and is better structure for a
+single document; it has not been done, because it is the skill's authored shape and the choice belongs
+with its author.
+
+**The skill's front matter is not Docusaurus front matter.** `SKILL.md` opens with the agent-skill
+`name`/`description` block. Docusaurus tolerates it and takes the page title from the first heading, so
+the sidebar reads "Context-Generic Programming (CGP) in Rust" — long, and not overridable from this
+side, since a `sidebar_label` would have to be added to the upstream file.
 
 ### Maintaining it
 
-Never edit this page directly to fix the skill. It is a copy: correct the skill in
-[`cgp-skills`](https://github.com/contextgeneric/cgp-skills), which is regenerated from this base, and
-then re-inline the result. Editing the copy alone creates a fourth version of the truth and guarantees
-the three views diverge further.
+**The index is the only page here an agent writes, and the snapshot is not an agent's to advance.** The
+full rule, and the reason it is a safe exception to the synchronization rule, is in
+[AGENTS.md](AGENTS.md#the-agent-skill-is-published-as-a-snapshot); in short, correct the skill in
+[`cgp-skills`](https://github.com/contextgeneric/cgp-skills) and stop there, read that checkout rather
+than this copy when you need to know what the skill says, and leave the submodule pointer alone. The
+author advances it deliberately, and a snapshot that lags is not a defect.
+
+Two mechanics matter when it *is* advanced. The bump is a submodule pointer commit in the website
+repository and nothing more. But a **new file** in `cgp/references/` also needs a symlink beside its
+siblings, because the site publishes named files rather than a directory glob — so a skill that grows a
+reference will publish it only once someone adds that link.
 
 ## Concepts
 

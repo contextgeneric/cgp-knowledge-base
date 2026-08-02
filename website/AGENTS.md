@@ -32,7 +32,14 @@ cannot be made while hiding the record. Neither reason behind the one-way rule a
 is a public GitHub URL that resolves for everyone, and exposing the material is the point rather than
 an accident. The exception is to the repository as a whole, not to individual documents: that page links
 the base's front door, never a path into a particular file, because a reader following a deep link lands
-in prose written for agents with no idea what they are reading. No other page may link here.
+in prose written for agents with no idea what they are reading.
+
+**The published agent skill is a second exception, and it is a different kind.** The skill pages under
+`docs/ai/skills/` cite this base by deep GitHub URL roughly ninety times, and those links are
+deliberate rather than tolerated: the pages *are* prose written for agents, the reader has been told so
+before reaching them, and a reader who follows one lands exactly where the skill intended. That
+exception is bounded to those pages, which nobody hand-writes — see
+[the section below](#the-agent-skill-is-published-as-a-snapshot). No page you write may link here.
 
 Two mechanics follow from the base's [link conventions](../AGENTS.md#writing-links). A link to a
 published page is its live URL under `https://contextgeneric.dev`, since that is where a reader meets
@@ -40,6 +47,35 @@ it. A link to a page's *source file* is a GitHub URL on `main` in the
 [`contextgeneric.dev`](https://github.com/contextgeneric/contextgeneric.dev) repository, never a
 relative `../../cgp-website/...` path; when you need to *read* that file, prefer the local sibling
 checkout at `../cgp-website`, per [sibling-projects.md](../sibling-projects.md).
+
+## The agent skill is published as a snapshot
+
+**The pages under `docs/ai/skills/` other than `index.md` are symlinks into the
+[`cgp-skills`](https://github.com/contextgeneric/cgp-skills) repository, checked out as a submodule at
+`docs/ai/skills/cgp-skills/` and pinned to one revision. Three rules govern them, and all three cut
+against habits that are correct everywhere else on this site.**
+
+**Never edit one.** They are symlinks: editing a page edits the skill's working tree in another
+repository, where the change will either be lost or land somewhere nobody expected. A correction to the
+skill is made in `cgp-skills` — which is itself built from this base, so a correction usually starts
+here and propagates out, per [cgp/AGENTS.md](../cgp/AGENTS.md#what-the-synchronization-rule-means-here).
+
+**Never bump the submodule pointer.** Advancing the snapshot is the author's decision, taken
+deliberately and occasionally; it is not part of a skill change and not a tidy-up an agent performs on
+its way past. A skill change lands in `cgp-skills` and stops there.
+
+**Assume the snapshot is current, and do not read it.** When you need to know what the skill says, read
+the `../cgp-skills` checkout, never the copy under `docs/`. The copy may be several revisions behind,
+and treating it as a source is how a stale claim gets laundered back into this base as though it were
+fact.
+
+This is a standing exception to the [synchronization rule](../AGENTS.md#the-synchronization-rule), so it
+is worth saying plainly why the exception is safe. **The snapshot exists for search visibility**, so
+that a developer looking for CGP's agent skill finds it on the project's own site rather than only in a
+GitHub repository. Against that purpose a lag of a few revisions costs nothing, while the usual cost of
+staleness — a reader trusting a document that no longer matches the code — is carried by the page
+itself, which tells the reader the repository is canonical. **A snapshot that lags is therefore not a
+defect and needs no issue, no note, and no fix.**
 
 ## Consult communication-strategy before writing public prose
 
