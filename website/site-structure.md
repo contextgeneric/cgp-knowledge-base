@@ -452,8 +452,8 @@ and **Where to go next**, which routes rather than concludes. *How much CGP to u
 sections and departs from the rest, because it is a decision guide: it leads with a rule of thumb and uses
 tables where an explanation page would use prose.
 
-Three conventions the written pages settle are worth copying rather than rediscovering. **The `cargo cgp
-check` concession names the version** — every page that mentions the tool calls it a `v0.1.0-alpha`
+Three conventions the written pages settle are worth copying rather than rediscovering.
+**The `cargo cgp check` concession names the version** — every page that mentions the tool calls it a `v0.1.0-alpha`
 covering the core wiring errors rather than every class, per
 [vocabulary.md](../communication-strategy/vocabulary.md). **A page that crosses between context shapes
 marks the crossing where it happens**, in prose beside the code, rather than in a glossary at either end.
@@ -573,6 +573,28 @@ conditional behaviour: the two macro references, the
 [check traits](../cgp/concepts/check-traits.md) concepts, and the `/cgp` skill. The related overclaim that a
 bundle "never implements a provider trait with itself in the context position" went with it, since a bundle of
 context-agnostic providers demonstrably does — which is precisely why the vacuous pass is possible.
+
+A later pass over [`delegate_components!`](../cgp/reference/macros/delegate_components.md) established the
+[coverage rule](AGENTS.md#layer-the-depth-do-not-omit-the-advanced-material) and turned up what an
+incompletely-covered page looks like. The page had documented the array key, `new`, the generic list, and
+`open`, and had left the `->` and `=>` operators to a line of grammar — so three of the macro's forms were
+effectively undocumented, and the two grouping syntaxes inside an `@`-path key were conflated. Both public
+and internal versions now take the body along its three independent axes (operator, key form, value form)
+plus the three statements, and say that all of them combine in one block. Two facts the base had not
+recorded came out of enumerating against the parser rather than the previous draft: **a bracketed path
+group holds alternatives for one segment and may be followed by more path, while a braced group holds
+whole tails and terminates the path** — writing more path after a braced group fails with a bare
+`expected ':'` — and **`cgp_namespace!` parses the whole `delegate_components!` body grammar**, including
+the nested-table value, which then fails with `E0425` because its `eval` never lifts an inner table out.
+The claim that `delegate_and_check_components!` "only understands the plain `Component: Provider` form"
+was also slightly wrong: it derives checks from any mapping keyed on a component *name*, `->` included,
+and leaves path keys, `=>` redirects, and every statement wired but silently unchecked.
+
+That page is also the first under `docs/reference/` with a file in the
+[`example-code`](https://github.com/contextgeneric/contextgeneric.dev/tree/main/example-code) crate, at
+`src/reference/macros/delegate_components.rs`, so every form it shows is compiled with a
+`check_components!` assertion per wired context and its rejected snippet is a `compile_fail` doctest.
+A later page in this section adds its own file the same way.
 
 Reviewing the first four written pages had earlier corrected one originating on the site. The
 [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md) page had given "implementing a provider trait on a

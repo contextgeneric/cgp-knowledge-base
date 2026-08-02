@@ -42,6 +42,33 @@ Here `ExtendedNamespace` inherits every entry of `DefaultNamespace` and addition
 
 Defining a namespace is only half of the pattern; a context joins a namespace through `delegate_components!` using a `namespace` header line, and individual components attach to a namespace through the `#[prefix(...)]` attribute on their trait. Those two constructs are where namespaces are consumed, and both are shown under Expansion and Examples below.
 
+### The shared body grammar, and what differs here
+
+**`cgp_namespace!` parses its body with the same code [`delegate_components!`](delegate_components.md) uses, so every syntax that macro accepts is accepted here too** — the three mapping operators (`:`, `->`, `=>`), the three key forms (a single key, a bracketed [list key](delegate_components.md#keys-a-single-name-a-list-or-a-path), an `@`-path key with its `[…]` and `{…}` grouping forms), per-key generics, the nested-table value form, and the three leading statements (`open`, `namespace`, `for`). Read that macro's Syntax section for the grammar of each; what follows is only what *differs* here.
+
+What differs is the item each entry lowers to. A `delegate_components!` entry emits `impl DelegateComponent<Key> for TargetType`, keyed on the component and implemented for the context; a `cgp_namespace!` entry emits `impl Namespace<__Table__> for Key`, implemented **for the key** and generic over whatever table later consults it. So an entry here answers "where should a lookup for this key go next", not "which provider does this context use", and that difference decides which of the shared forms are worth writing.
+
+The two forms that carry the namespace's meaning are the ones above: `=>` states a route and `:` binds a provider. The rest are legal and rarely what a namespace wants. A `->` mapping still projects through the *value's* `DelegateComponent` table rather than through the namespace, so it names a concrete table inside what is meant to be a table-generic definition. An `open Component;` statement is accepted and generates exactly the entry `Component => @Component,` would, which is occasionally a convenient spelling for rooting a component's route at its own name. A `namespace Other;` statement is accepted and emits a forwarding impl, but inheritance is written with the `: ParentNamespace` header instead — that is the form the parent chain, its overrides, and the cycle diagnostics under Known issues are all defined in terms of.
+
+One shared form parses here and then fails to compile, so it is worth naming rather than leaving to be discovered. The nested-table value `Wrapper<new Inner { … }>` is accepted by the parser and the macro substitutes `Wrapper<Inner>` as the entry's `Delegate`, but `cgp_namespace!` never lifts the inner table out — unlike `delegate_components!`, its evaluation emits only the namespace trait, its struct, and one impl per entry — so the `Inner` struct and its `DelegateComponent` impls are never generated at all:
+
+```rust
+cgp_namespace! {
+    new NestedNs {
+        FooProviderComponent:
+            UseDelegate<new FooTable {
+                String: DummyFoo,
+            }>,
+    }
+}
+```
+
+```text
+error[E0425]: cannot find type `FooTable` in this scope
+```
+
+The message names the missing table rather than the unsupported form, so it reads as a typo. Declare the inner table in its own `delegate_components! { new FooTable { … } }` block and bind the namespace key to `UseDelegate<FooTable>`, or — better, since the nested-table form is legacy either way — leave per-type dispatch to the context, as [`delegate_components!`](delegate_components.md) describes.
+
 ## Syntax Grammar
 
 The body of `cgp_namespace!` is an optional generic list and `new` keyword, a namespace name, an optional parent namespace, and a brace-delimited table:
@@ -55,22 +82,18 @@ ParentNamespace -> TypePath GenericArgs?
 NamespaceBody   -> Statement* ( Mapping ( `,` Mapping )* `,`? )?
 ```
 
-The mappings in `NamespaceBody` are the same `Mapping` production as [`delegate_components!`](delegate_components.md) — most often the `` `=>` `` redirect to an `@`-`Path` or a `` `:` `` direct provider. The `` `:` `` between `NamespaceName` and `ParentNamespace` is the inheritance colon, distinct from a mapping's `:`. `NamespaceName` is an identifier with optional generic arguments (it becomes both a trait and, with `new`, a struct); `ParentNamespace` is a type path that may itself be parameterized.
+**`NamespaceBody` is [`delegate_components!`](delegate_components.md)'s `TableBody` production unchanged**, so its `Statement` and `Mapping` productions — every operator, every key form including the grouped `@`-paths, and every value form — are that macro's and are defined there rather than restated here. The two forms a namespace normally uses are the `` `=>` `` redirect to an `@`-`Path` and the `` `:` `` bind to a provider; the Syntax section above says what the others do here and which one fails to compile. The `` `:` `` between `NamespaceName` and `ParentNamespace` is the inheritance colon, distinct from a mapping's `:`. `NamespaceName` is an identifier with optional generic arguments (it becomes both a trait and, with `new`, a struct); `ParentNamespace` is a type path that may itself be parameterized.
 
-This macro also owns the two namespace statement forms that a context's [`delegate_components!`](delegate_components.md) table uses to join a namespace:
+Two of the three statement forms in that shared production are owned here rather than there, because they exist to join a context's table to a namespace:
 
 ```ebnf
-Statement     -> NamespaceStmt | ForStmt
-
 NamespaceStmt -> `namespace` IDENTIFIER `;`
 
 ForStmt       -> `for` `<` IDENTIFIER `,` IDENTIFIER `>` `in` TypePath WhereClause?
                  `{` ( NormalMapping ( `,` NormalMapping )* `,`? )? `}`
-
-NormalMapping -> Key `:` ProviderValue
 ```
 
-A `NamespaceStmt` forwards every lookup on the table through the named namespace. A `ForStmt` binds a key variable and a provider variable, reads each entry of the table named after `in`, and emits one mapping per entry — its body holds only `` `:` `` mappings (`NormalMapping`), whose `Key` and `ProviderValue` are the shared productions from [`delegate_components!`](delegate_components.md). Its optional `WhereClause` is merged into every impl the loop generates, so a bound written there (`for <T, P> in Table where T: Clone { … }`) constrains which keys the loop wires, alongside the namespace bound the loop reconstructs. `TypePath` and `WhereClause` are Rust grammar productions.
+A `NamespaceStmt` forwards every lookup on the table through the named namespace. A `ForStmt` binds a key variable and a provider variable, reads each entry of the table named after `in`, and emits one mapping per entry — its body admits only the `` `:` `` form, which is why [`delegate_components!`](delegate_components.md) names that `NormalMapping` separately, and its `Key` and `ProviderValue` are that macro's shared productions. Its optional `WhereClause` is merged into every impl the loop generates, so a bound written there (`for <T, P> in Table where T: Clone { … }`) constrains which keys the loop wires, alongside the namespace bound the loop reconstructs. The third statement form, `OpenStmt`, is owned by [`delegate_components!`](delegate_components.md) because that is where it is written; it parses in a namespace body too, where it is another spelling of a `` `=>` `` entry. `TypePath` and `WhereClause` are Rust grammar productions.
 
 Like [`delegate_components!`](delegate_components.md), the body accepts no attributes on any entry — on a mapping key, a `=>` redirect key, or a key inside a `for` loop — and rejects any it finds with a spanned "unsupported attribute" error rather than silently discarding it.
 

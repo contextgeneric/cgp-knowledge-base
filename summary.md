@@ -28,9 +28,9 @@ it stale.
   proc-macro source, and how its five parts divide.
 - [cgp/AGENTS.md](cgp/AGENTS.md) — the rules for documenting `cgp`: what the synchronization rule
   lands on here (including propagating a change to the skill), the authoring conventions, which rules
-  govern which directory, the reference document template and its syntax-grammar notation, what a
-  concept and a guide each owe, the rule that a document says which context shape its examples wire,
-  and how to review a document.
+  govern which directory, the reference document template and its syntax-grammar notation, the rule
+  that a reference document covers every form its parser accepts, what a concept and a guide each owe,
+  the rule that a document says which context shape its examples wire, and how to review a document.
 
 ### `cgp/reference/` — one document per construct
 
@@ -61,7 +61,8 @@ it stale.
 - [cgp_impl.md](cgp/reference/macros/cgp_impl.md) — write a provider in consumer-trait shape, the
   idiomatic form; includes the `#[cgp_impl(Self)]` direct-impl form.
 - [cgp_namespace.md](cgp/reference/macros/cgp_namespace.md) — define a reusable, inheritable wiring
-  table; also documents the `#[prefix(...)]` registration attribute.
+  table; also documents the `#[prefix(...)]` registration attribute, and which of
+  `delegate_components!`'s shared body forms mean something here.
 - [cgp_new_provider.md](cgp/reference/macros/cgp_new_provider.md) — `#[cgp_provider]` that also
   declares the provider struct.
 - [cgp_producer.md](cgp/reference/macros/cgp_producer.md) — define a `Producer` provider from an
@@ -73,10 +74,12 @@ it stale.
 - [check_components.md](cgp/reference/macros/check_components.md) — assert at compile time that a
   context can use each listed component; covers `#[check_providers]` and `#[check_params]`.
 - [delegate_and_check_components.md](cgp/reference/macros/delegate_and_check_components.md) — wire
-  and check in one macro, and why it is wrong for an aggregate provider.
+  and check in one macro, which of the shared syntax forms the check derivation reads, and why it is
+  wrong for an aggregate provider.
 - [delegate_components.md](cgp/reference/macros/delegate_components.md) — build a context's wiring
-  table: array keys, generic lists, the `new` aggregate form, `open` dispatch, and namespace
-  statements.
+  table, exhaustively: the `new` aggregate form and generic lists, the three operators (`:`, `->`,
+  `=>`), the three key forms with the `[…]`/`{…}` path groups, the two value forms, the three
+  statements (`open`, `namespace`, `for`), and how they all combine in one block.
 - [path.md](cgp/reference/macros/path.md) — the type-level path macro behind namespaces and
   redirected lookups.
 - [product.md](cgp/reference/macros/product.md) — the type-level list type `Product!` and its
@@ -649,7 +652,8 @@ it stale.
 - [website/README.md](website/README.md) — what this section documents, the one-way link asymmetry
   that makes it necessary, how the Docusaurus site is organized, and its catalog.
 - [website/AGENTS.md](website/AGENTS.md) — the rules: the one-way link rule, consulting
-  communication-strategy before writing public prose, never taking current syntax from a blog post,
+  communication-strategy before writing public prose, covering every supported form by layering the
+  depth rather than omitting the advanced material, never taking current syntax from a blog post,
   the prohibition on rewriting published history, the release-branch model the redesign lands through,
   who drafts a page and who reads it before it publishes, disclosing AI use on a page, the document
   template, the status vocabulary, and how a ported catalog registers as one entry rather than one
@@ -696,8 +700,9 @@ it stale.
   the project's without losing the concessions, the page split, and tracking the live code base.
 - [reference.md](website/writing-guides/reference.md) — the canonical per-construct reference ported
   from the internal one: why the site rather than docs.rs is canonical, the six-section layered descent
-  serving beginner to advanced on one page, near-one-page-per-construct with four consolidations, the
-  replacement for every internal link target, and the external Rust documentation table.
+  serving beginner to advanced on one page, the obligation to cover every form the parser accepts and
+  to enumerate against it, near-one-page-per-construct with four consolidations, the replacement for
+  every internal link target, and the external Rust documentation table.
 
 ### `website/blog/` — one document per published post
 

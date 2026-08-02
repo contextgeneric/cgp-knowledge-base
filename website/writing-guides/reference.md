@@ -120,6 +120,20 @@ assumes fluency the public reader has not got.
 **Using it** — the accepted forms, each argument and option, and what defaults fill an omission. The
 internal Syntax section, largely unchanged.
 
+**This section is where the [coverage rule](../AGENTS.md#layer-the-depth-do-not-omit-the-advanced-material)
+bites hardest, and it is exhaustive by obligation rather than by ambition.** Every form the macro's
+parser accepts belongs here — including the ones an author judges rare, advanced, or legacy — because
+the site reference is canonical and a form that is absent reads as a form that does not exist. Three
+habits make that achievable without the section becoming a wall. **Enumerate against the parser**, not
+against the internal document, which may itself cover only the forms someone happened to write about.
+**Give the forms a spine** rather than a flat list: where a grammar has independent axes — an operator,
+a key form, a value form — name the axes and take them in turn, so a reader can find the one they are
+asking about. And **say when the forms combine**, with one example that combines them, since a section
+that treats each form in its own subsection otherwise implies they are alternatives.
+
+Ordering carries the beginner, not selection. Lead with the form nearly everyone writes, put the
+advanced and legacy forms after it, and mark a legacy form as legacy with its replacement named.
+
 **Examples** — at least one realistic, self-contained example, and more where forms differ meaningfully.
 Prefer code already verified in [examples/](../../examples/README.md) over new snippets.
 
@@ -267,6 +281,11 @@ and explains that the older form is what a reader will meet in existing code.
 **Read only *What it's for* and *Using it* and ask whether a reader who has finished one tutorial
 understands what this is and how to write it.** That is the layered promise, and it is the thing porting
 from an internal document most reliably breaks.
+
+**Count the forms against the parser.** Open the construct's argument or body parser in
+`cgp-macro-core` and check that every branch it takes has a place on the page. A page that covers most
+of a grammar is the normal failure here, and it is invisible from the page itself — see the
+[coverage rule](../AGENTS.md#layer-the-depth-do-not-omit-the-advanced-material).
 
 **Grep the page for links into the knowledge base.** One surviving `../../cgp/` link is a broken public
 page.

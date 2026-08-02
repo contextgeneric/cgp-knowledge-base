@@ -83,6 +83,46 @@ The section's own governing rule applies unchanged: **honesty is the strategy**.
 invented benchmark, adoption figure, or quotation; never disparage another crate or language to
 elevate CGP; and concede a genuine cost beside the benefit wherever the audience will look for it.
 
+## Layer the depth; do not omit the advanced material
+
+**A website page covers everything its subject supports. The layered structure exists to control the
+*order* a reader meets things in, never to decide what gets left out.** This is the rule most easily
+broken while trying to be kind to a beginner, and breaking it costs more than the kindness is worth: a
+reader who needs an advanced form and cannot find it concludes the form does not exist, or that the page
+cannot be trusted for anything they have not already verified elsewhere.
+
+The obligation is sharpest on a [reference page](writing-guides/reference.md), where it is not a
+preference but the section's contract. The site reference is
+[canonical](writing-guides/reference.md#the-site-reference-is-canonical) — there is no fuller public
+source to fall through to — so **a construct's page must cover every syntax form the macro accepts,
+every option, and every default**, including the forms an author judges rare, legacy, or advanced. A
+form that parses and is not on the page is a hole, exactly as a construct with no page at all is. When a
+form is legacy, say so and say what replaced it; when it is advanced, put it lower on the page. Neither
+is a reason to drop it.
+
+The same rule governs the other tiers with their own thresholds. An
+[explanation page](writing-guides/explanation.md) is about one idea rather than one construct, so it
+carries the idea completely — including the parts that are hard — and links to the reference for the
+mechanics it does not owe. A [tutorial](writing-guides/tutorial.md) is the one place selection is
+legitimate, because a tutorial is defined by a teaching path and a beginner audience; even there, what
+is left out is deferred to a linked page rather than left unmentioned.
+
+Where the tension is real, resolve it with **structure rather than omission**. The reference page's
+[layered descent](writing-guides/reference.md#the-layered-page) already provides the mechanism: a
+beginner stops after *Using it* and *Examples*, and everything an advanced reader needs sits below,
+marked. Move an advanced form down the page, put a grammar in a collapsed block, mark a machinery
+section as advanced — but keep it on the page.
+
+Two habits make this checkable. **Enumerate against the parser, not against the previous draft**: a page
+covering four of a macro's six accepted forms usually got there by copying an internal document that
+covered four, so the count comes from the source. And **say when forms combine**, since a page that
+documents each form in its own subsection quietly implies they are alternatives; if they compose, show
+one example that composes them.
+
+The knowledge base itself needs no such rule. Its documents are written for agents, so they always carry
+everything, and this rule exists because the website is the one surface where a reader's inexperience is
+a live consideration and "leave it out" is therefore a tempting answer.
+
 ## Verify code against current CGP, and never against a blog post
 
 Any code that appears on a website page is bound by the [synchronization rule](../AGENTS.md#the-synchronization-rule)
