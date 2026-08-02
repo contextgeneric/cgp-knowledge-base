@@ -89,11 +89,34 @@ better than four; the sugar that builds them, `Symbol!`, `Product!`, `Sum!`, and
 each. And the **two low-level provider macros** `#[cgp_provider]` and `#[cgp_new_provider]` differ only
 in whether the struct is declared, and are forms a reader meets rather than writes.
 
-The four provider *catalogues* the internal reference already groups — handler combinators, dispatch
-combinators, monad providers, error providers — are the one open question this rule leaves. They are
-currently one page each and are the last titles on the site that name several constructs; splitting them
-is the consistent move and has not been done. The **three getter providers** `UseField`, `UseFieldRef`,
-and `UseFields` are in the same position.
+**The rule reaches the groups that are still stubs, and applying it there is part of porting them.**
+`components/`, `providers/`, and `types/` were scaffolded before the rule existed, so their stub files
+still carry the internal reference's groupings, and a page count taken off the current tree understates
+what those groups become. Three kinds of stub have to be split as they are written:
+
+- **The four provider catalogues** — handler combinators, dispatch combinators, monad providers, error
+  providers — become one page per provider. They are the largest expansion on the list: the error
+  catalogue alone holds `RaiseFrom`, `ReturnError`, `RaiseInfallible`, `DebugError`, `DisplayError`,
+  `DiscardDetail`, and `PanicOnError`.
+- **`use_field.md`** becomes three, for `UseField`, `UseFieldRef`, and `UseFields`. The old guide kept
+  them together because they are chosen together; a reader choosing between them is served by each page's
+  *When to reach for it* and by the index.
+- **The component pages that bundle siblings** — `can_raise_error.md` holds two components,
+  `runner.md` and `has_runtime.md` two each, and `computer.md`, `try_computer.md`, and `handler.md` each
+  hold a component plus its by-reference and async variants. A *component* is one construct even though
+  it generates a consumer trait, a provider trait, and a marker; two components are two pages.
+
+Enumerate each group against the source when you port it rather than trusting the stub's title, and
+update the counts in [site-structure.md](../site-structure.md),
+[information-architecture.md](../information-architecture.md), and [tasks.md](../tasks.md) in the same
+change.
+
+**Two things are documented on another construct's page rather than getting one, and both follow the same
+principle: they are not separately nameable *constructs*.** A **marker** is a type implementing a trait —
+`IsPresent`, `IsRef` — and belongs with that trait. An **alias** is a spelling of another construct —
+`WithType`, `WithField`, and `WithContext` for `WithProvider` — and belongs with the construct it aliases.
+In both cases the index's *Looking for a name you don't see?* table is what routes a reader who arrives
+holding the name, and adding the row is part of the change.
 
 Two pages are not constructs at all, and they go in opposite directions.
 [`cargo-cgp`](../../cgp/reference/cargo-cgp.md) documents the toolchain, and it does not belong under
@@ -181,6 +204,36 @@ reader who hits an unlisted corner case trusts the rest of the page less.
 
 The page then closes with two short lists rather than sections: **Related constructs**, each with a
 phrase saying how it relates, and **Source**, linking the construct's implementation on GitHub.
+
+## Say when a construct is machinery the macros generate
+
+**Many of the constructs with a page are ones a user never writes.** The macros generate their impls, the
+library's own recursions consume them, and a reader meets the name in an expansion or an error message
+rather than in code they typed. A page that documents such a construct the same way it documents
+`#[cgp_impl]` misleads by omission: it reads as an instruction, and a reader who takes it as one goes
+looking for where to put something that was never theirs to put anywhere.
+
+**So a page for a generated construct opens with a notice saying so**, in an `:::info` block headed
+*Generated machinery*, placed after the one-line summary and before *What it's for* — the same position
+and shape the *Legacy — read, don't write* notice uses on
+[`#[derive_delegate]`](../../cgp/reference/attributes/derive_delegate.md). The two notices are distinct
+and a page carries at most one: legacy means *superseded, prefer the replacement*, while this one means
+*current and correct, but not yours to write*.
+
+The block says three things and stops.
+
+**That the reader is not expected to use it**, stated in bold as the first sentence, because that is the
+sentence a scanner needs. **Which macro or provider produces or consumes it**, linked — the derive that
+emits the impls, the wiring macro that emits the table, the provider that bounds on it. And **what the
+page is therefore for**: explaining what that macro produces, so an expansion or a diagnostic naming the
+construct is legible. Where there is a narrow case in which the reader *does* name it — defining a monad
+of their own, writing a getter provider by hand — say so in the same breath rather than overclaiming.
+
+Two failure modes are worth naming. **Do not let the notice contradict the page**: if *Using it* gives an
+import path and a bound, the notice cannot say the construct is unreachable — say instead that it is
+rarely reached, and why. And **do not apply it to a construct whose methods a reader calls**. The test is
+whether the name appears in ordinary application or generic code: `HasBuilder` and `ExtractField` are
+generated too, but a reader calls `builder()` and `extract_field` by name, so they get no notice.
 
 ## Linking: three destinations, and one prohibition
 
@@ -295,6 +348,10 @@ from an internal document most reliably breaks.
 `cgp-macro-core` and check that every branch it takes has a place on the page. A page that covers most
 of a grammar is the normal failure here, and it is invisible from the page itself — see the
 [coverage rule](../AGENTS.md#layer-the-depth-do-not-omit-the-advanced-material).
+
+**Ask whether a reader would ever type this construct's name.** If not, the page needs the
+[*Generated machinery* notice](#say-when-a-construct-is-machinery-the-macros-generate), and if it has one,
+check that nothing further down contradicts it.
 
 **Grep the page for links into the knowledge base.** One surviving `../../cgp/` link is a broken public
 page.

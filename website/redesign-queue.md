@@ -166,7 +166,9 @@ nothing in this register.
 
 **The construct reference is scaffolded and partly written** — a hundred and twenty pages under
 `docs/reference/`, of which ninety-three are written (`macros/`, `attributes/`, `derives/`, and
-`traits/`, complete) and twenty-seven carry a one-line description and a stub notice. This is still by
+`traits/`, complete) and twenty-seven carry a one-line description and a stub notice. Those twenty-seven
+become more pages than that when they are ported, since their titles still bundle several constructs
+each. This is still by
 far the largest item on the list and the one that sets the release date, since the relaunch waits for
 it. What the scaffold already buys is that the *index* is complete, so no construct is missing from the
 site and no later page has to be retrofitted into the grouping; what remains is the prose, one

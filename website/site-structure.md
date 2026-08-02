@@ -921,7 +921,15 @@ construct rather than teaching a design.
 
 ### Conventions the port must follow
 
-Four mechanics are settled and a later page should copy rather than rediscover them.
+Five mechanics are settled and a later page should copy rather than rediscover them.
+
+**A construct the macros generate opens with a *Generated machinery* notice**, an `:::info` block between
+the summary and *What it's for*, saying that the reader is not expected to use the construct, which macro
+produces or consumes it, and that the page therefore exists to explain what that macro emits. Twenty-seven
+`traits/` pages carry one. It shares its position and shape with the *Legacy — read, don't write* notice
+on `attributes/derive_delegate.md`, and a page carries at most one of the two; the rule and the test for
+which pages qualify are in
+[writing-guides/reference.md](writing-guides/reference.md#say-when-a-construct-is-machinery-the-macros-generate).
 
 **Anchors come from heading text**, because this site's MDX setup rejects the `{#custom-id}` syntax —
 it parses the braces as an expression and fails the build. Section headings are therefore link targets

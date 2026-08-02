@@ -229,8 +229,17 @@ reader falls into. The spec and the porting procedure are in
 - **R2 — port the construct pages.** A hundred and twenty pages under `docs/reference/`, all
   **scaffolded** with a one-line description and a stub notice. **Ninety-three are written:
   `macros/` (20), `attributes/` (8), `derives/` (8), and `traits/` (57) are complete.** Twenty-seven
-  remain, in `components/` (9), `providers/` (13),
-  and `types/` (5). The settled conventions — anchors from heading text, the collapsed formal grammar,
+  stubs remain, in `components/` (9), `providers/` (13), and `types/` (5) — **and they will become more
+  pages than that**, since their titles predate the
+  [granularity rule](writing-guides/reference.md#granularity-one-page-per-named-construct) and still
+  bundle: the four provider catalogues, `use_field.md`, and the component pages holding a sibling or a
+  by-reference variant each split. Enumerate each group against the source as you port it, and carry the
+  new counts into the three tracking documents. Two page-level conventions apply from the start: a
+  construct the macros generate opens with a
+  [*Generated machinery* notice](writing-guides/reference.md#say-when-a-construct-is-machinery-the-macros-generate),
+  which most of `providers/` will need, and a marker or an alias is documented on the construct it belongs
+  to with a row in the index's lookup table.
+  The settled conventions — anchors from heading text, the collapsed formal grammar,
   the shared provenance note, compiled snippets, the `context` gloss — are recorded in
   [site-structure.md](site-structure.md). Each remaining page is ported from its internal document by
   the guide's four transformations: re-point every link, restructure into the layered descent, add
