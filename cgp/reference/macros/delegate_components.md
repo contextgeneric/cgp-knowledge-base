@@ -194,7 +194,18 @@ impl DelegateComponent<AreaCalculatorComponent> for MyApp {
 }
 ```
 
-Each `@AreaCalculatorComponent.Rectangle: RectangleArea` entry then stores its provider in that same table under the path key, so `MyApp` gains `DelegateComponent<PathCons<AreaCalculatorComponent, PathCons<Rectangle, Nil>>>` with `Delegate = RectangleArea`. The [`RedirectLookup`](../providers/redirect_lookup.md) impl that [`#[cgp_component]`](cgp_component.md) generates for `AreaCalculator` appends the dispatch parameter — here `Rectangle` — onto the redirect path and reads the result back, so `MyApp: CanCalculateArea<Rectangle>` resolves to `RectangleArea`. The lookup keys on the same `Shape` parameter the legacy `UseDelegate` form keys on; the difference is only that the per-value entries live on the context itself rather than in a separate table type.
+Each `@AreaCalculatorComponent.Rectangle: RectangleArea` entry then stores its provider in that same table under the path key, so `MyApp` gains a `DelegateComponent` impl generic over the path's tail:
+
+```rust
+impl<__Wildcard__>
+    DelegateComponent<PathCons<AreaCalculatorComponent, PathCons<Rectangle, __Wildcard__>>>
+    for MyApp
+{
+    type Delegate = RectangleArea;
+}
+```
+
+The [`RedirectLookup`](../providers/redirect_lookup.md) impl that [`#[cgp_component]`](cgp_component.md) generates for `AreaCalculator` appends the dispatch parameter — here `Rectangle` — onto the redirect path and reads the result back, so `MyApp: CanCalculateArea<Rectangle>` resolves to `RectangleArea`. **The key's tail is a generic `__Wildcard__` parameter rather than `Nil`**, so the entry matches any path beginning with that component and dispatch type whatever the lookup appends after it; an entry written against a `Nil` tail would only answer a path of exactly that length. Note also that `cargo cgp expand` resugars the redirect target in the header impl to `Path!(@AreaCalculatorComponent)` while printing the per-entry key as the raw `PathCons` spine, so one expansion shows the same type in both spellings. The lookup keys on the same `Shape` parameter the legacy `UseDelegate` form keys on; the difference is only that the per-value entries live on the context itself rather than in a separate table type.
 
 ## Examples
 

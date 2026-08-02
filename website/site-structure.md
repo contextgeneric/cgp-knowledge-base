@@ -378,7 +378,10 @@ which also brings the sidebar closer to the order
 eighteen pages, one per document under [cgp/concepts/](../cgp/concepts/README.md), each carrying its
 one-line summary and a *Not written yet* admonition until it is filled in. One page is written in
 full — [Consumer and provider traits](https://contextgeneric.dev/docs/concepts/consumer-and-provider-traits)
-— and it is the model the rest are written against.
+— and it is the model the rest are written against. It and the index are verified the same way the
+reference pages are: every snippet on the written page compiles, its closing example under a
+`check_components!` assertion per context, and the `E0119` its second listing turns on is the error the
+compiler actually reports for those two impls.
 
 The sidebar order is the order a reader meets the ideas rather than the internal catalog's order:
 the coherence problem and the trait split first, then the three faces of dependency injection, then
@@ -443,11 +446,16 @@ hand-written index as its category link and seven subdirectories mirroring what 
 **Every page is scaffolded and the construct list is complete**, which matters more than it sounds: the
 completeness obligation is against the index rather than against the prose, so no construct is missing
 from the site even while most pages are placeholders. Each stub carries its one-line description and an
-admonition saying it is unwritten. Three pages are written in full —
+admonition saying it is unwritten. Four pages are written in full —
 [`#[cgp_component]`](https://contextgeneric.dev/docs/reference/macros/cgp_component),
-[`#[cgp_impl]`](https://contextgeneric.dev/docs/reference/macros/cgp_impl), and
+[`#[cgp_impl]`](https://contextgeneric.dev/docs/reference/macros/cgp_impl),
+[`#[cgp_fn]`](https://contextgeneric.dev/docs/reference/macros/cgp_fn), and
 [`delegate_components!`](https://contextgeneric.dev/docs/reference/macros/delegate_components) — and
-they are the model the rest are ported against.
+they are the model the rest are ported against. All four and the index are verified against both the
+guide and the library: every snippet compiles under a `check_components!` assertion per wired context,
+and every *Under the hood* listing and quoted diagnostic matches what the toolchain actually emits. The
+conventions that verification pins down are in
+[Conventions the port must follow](#conventions-the-port-must-follow) below.
 
 ### How it relates to the knowledge base
 
@@ -500,7 +508,25 @@ actually emit — `expand --lib --item` on each item the page shows, which for a
 consumer trait, the provider trait, the wired context, and the provider, and for a `#[cgp_fn]` means the
 generated trait. This is the draft check most easily skipped and the section most likely to be wrong
 without it; it is also what catches a drifted internal claim, as it did for the owned-implicit access
-rule the `#[cgp_fn]` port corrected.
+rule the `#[cgp_fn]` port corrected, and again for the tail of an `@`-path key, where both the public
+page and [the internal reference](../cgp/reference/macros/delegate_components.md) had asserted `Nil`
+where the macro emits a generic parameter. **Treat a remembered path expansion as suspect**, and note
+that `expand` resugars unevenly within a single expansion — an `open` header's redirect target comes
+back as `Path!(@Component)` while the per-entry key stays a raw `PathCons` spine — so a page showing
+both should say so rather than quietly normalizing one.
+
+**Introduce "context" with a gloss on first use, on every page, above the advanced line.** It is a
+knowledge-base word before it is a public one, and a reference page is read on its own rather than in
+order, so no reader can be assumed to have met it already. One clause carries it — "the type the
+capability runs against, which supplies those values as its fields" — leaving the full account to
+[the concept page](https://contextgeneric.dev/docs/concepts/consumer-and-provider-traits). Two of the
+first four written pages had missed this, which makes it the convention here most easily dropped.
+
+**A written index carries the provenance note too.** The rule that a scaffolded stub carries no note
+covers placeholders rather than hand-written prose, and both section indexes are substantial written
+pages. Both also announce their own incompleteness through
+the same `:::info` / `### Still being written` admonition, placed after the introduction rather than at
+the foot, so a reader learns the state before working through a catalog of mostly-placeholder links.
 
 **Sidebar labels carry no backticks.** A `sidebar_label` is plain text rather than Markdown, so
 `` `#[cgp_impl]` `` renders with its backticks visible in the navigation. Write `#[cgp_impl]` in the
@@ -525,11 +551,12 @@ The reference is bound to the internal documents by the
 updates the code, the internal document, and the public page. A public page that disagrees with its
 internal document is a defect in the public page.
 
-One ordering wrinkle is outstanding rather than settled. The category sits at position 5, which puts it
-after the AI section at position 4, whereas
-[information-architecture.md](information-architecture.md#navigation-and-sidebar-order) wants Reference
-directly after Tutorials with AI near the end. Renumbering the existing sections belongs to the
-orientation and front-page work rather than to the port, so it is left alone here.
+One ordering wrinkle is outstanding rather than settled, and it is smaller than it used to be. Adding
+Concepts at position 4 pushed AI to 6, so Reference at position 5 now sits where
+[information-architecture.md](information-architecture.md#navigation-and-sidebar-order) wants it —
+after Tutorials and Concepts. What remains is that AI at 6 precedes Resources at 8 and Contribute at 9,
+where the intended order puts AI last. Renumbering the existing sections belongs to the orientation and
+front-page work rather than to the port, so it is left alone here.
 
 ## AI disclaimer
 
