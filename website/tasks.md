@@ -237,10 +237,12 @@ reader falls into. The spec and the porting procedure are in
   themselves — the internal [guides](../cgp/guides/README.md) reach the public site **only** through
   the *When to reach for it* sections, and every new page owes a provenance note. This group ships on
   its guide plus a spot check rather than a full read, and a subdirectory is the natural unit for one
-  session. *Blocked by:* R4 for what a *Gotchas* section may defer to. **Not blocked by the explanation tier**, contrary
-  to what this entry previously claimed: twenty-seven pages were written without a single link into it, because the guide's own fallback — summarize the idea in a sentence on the page — is the
-  better answer while that tier is almost entirely stubs. Adding those links once the tier lands is a
-  separate sweep rather than a prerequisite. *Done when:* no stub notice remains.
+  session. *Blocked by:* R4 for what a *Gotchas* section may defer to. **Not blocked by the explanation
+  tier**: the twenty-seven were written without a single link into it, because the guide's own fallback —
+  summarize the idea in a sentence on the page — was the better answer while that tier was stubs. That
+  tier has since landed and **the linking sweep is done for all twenty-seven**, so each now closes with a
+  short *The ideas behind it* list; a page written from here on carries that list from the start rather
+  than deferring it. *Done when:* no stub notice remains.
 - **R4 — the error catalog page.** Scaffolded at `docs/reference/errors.md` and still to be written: the
   compile errors CGP produces after codegen, so a reader who hits a wiring failure has somewhere on the
   site to look it up. The seventeen internal [error-class documents](../cgp/errors/README.md) are the

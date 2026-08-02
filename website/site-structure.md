@@ -673,6 +673,42 @@ conditional behaviour: the two macro references, the
 bundle "never implements a provider trait with itself in the context position" went with it, since a bundle of
 context-agnostic providers demonstrably does — which is precisely why the vacuous pass is possible.
 
+A **coverage review of all twenty-seven written pages** against the parsers — rather than against the
+internal documents — turned up eleven further gaps, every one of them a form or a rule that exists in the
+code and was absent from both the public page and the internal one. They fall into three groups.
+
+Four are **shapes a construct accepts that neither document listed**. A getter method's first argument may
+be a **typed reference to another type** instead of `self`, which is the one getter shape an
+[`#[implicit]`](../cgp/reference/attributes/implicit.md) argument cannot reach and the clearest reason to
+declare a getter at all; a getter method may take an optional second **`PhantomData<T>`** argument; and
+`MRef<'_, T>` is an accepted form both for a getter's return type and for an implicit argument's type,
+missing from both access-mode tables. `#[cgp_component]` accepts a fourth companion attribute,
+[`#[prefix(...)]`](../cgp/reference/macros/cgp_namespace.md), which only the namespace pages had mentioned.
+
+Four are **rules the expansion follows that were unstated**. A provider trait's `IsProviderFor` params
+tuple lifts a lifetime into [`Life<'a>`](../cgp/reference/types/life.md) and takes the first *type* argument
+as the context, which matters the moment a component carries a lifetime. `#[cgp_component]` replaces the
+consumer trait's supertraits with `IsProviderFor` and lowers them to a `where` bound on the context.
+`#[cgp_impl]`'s `Self`-to-context rewrite **exempts an associated type the block itself declares**, so the
+Known-issues entry that had claimed a provider's own associated const *or type* was awkward to name was
+half wrong — only the const is. And `#[cgp_fn]` moves the function's visibility onto the generated trait and
+copies an unrecognized attribute onto both emitted items.
+
+Three are **grammar sections the template requires and five pages lacked**: `#[uses]`, `#[extend]`,
+`#[extend_where]`, `#[use_provider]`, and `#[derive_delegate]` each take a bespoke argument and now carry a
+formal grammar. Writing them settled facts the prose had not: a key's generic list is an *impl-position*
+list, so it takes bounds but rejects a parameter default, while a nested table's is a *definition-position*
+list that rejects both; a `=>` redirect's path segments accept no generics, unlike a path *key*'s; and
+`#[derive_delegate]`'s key parameters are identifiers rather than types.
+
+The review also found one **defect rather than a gap**, recorded as a Known issue rather than fixed: the
+inner-provider bound of a higher-order provider gets no `IsProviderFor` counterpart when the component
+carries a lifetime, because the rewrite reads the bound's first generic argument as the context and finds a
+lifetime there. The stack still compiles and runs; what is lost is the propagation that lets
+`#[check_providers]` localize a broken layer. Four new tests were added to the library in the same pass —
+the associated-type exemption, the `MRef` implicit argument, the `#[use_provider]` comma rejection, and the
+`delegate_and_check_components!` attribute-merge rejections — plus a snapshot pinning the lifetime defect.
+
 A later pass over [`delegate_components!`](../cgp/reference/macros/delegate_components.md) established the
 [coverage rule](AGENTS.md#layer-the-depth-do-not-omit-the-advanced-material) and turned up what an
 incompletely-covered page looks like. The page had documented the array key, `new`, the generic list, and
@@ -767,13 +803,22 @@ that `expand` resugars unevenly within a single expansion — an `open` header's
 back as `Path!(@Component)` while the per-entry key stays a raw `PathCons` spine — so a page showing
 both should say so rather than quietly normalizing one.
 
-**No reference page links the Concepts tier.** All twenty-seven written pages summarize the idea behind a
-construct in a sentence of their own instead, which is the fallback
-[the guide](writing-guides/reference.md#where-the-internal-links-go) allows where no explanation page covers
-the material — and while seventeen of the eighteen concept pages are stubs, a link would send a reader to a
-placeholder. Treat this as the convention rather than an omission, and treat adding the links once that tier
-lands as a deliberate later sweep. It also means the port is **not** blocked on the explanation tier, which
-is corrected in [tasks.md](tasks.md).
+**Every reference page closes with a short *The ideas behind it* list linking the Concepts tier**, beneath
+the *Related constructs* list and before *Source*. Each entry names the concept page and says in a phrase
+what it adds — the trait split for `#[cgp_component]`, the lazy-wiring problem for `check_components!`, the
+handler family for `#[cgp_computer]`. The pages keep the one-sentence summaries they already carried, so a
+reader who does not follow the link loses nothing; the list is a route onward rather than a substitute for
+explaining the idea in place. Two or three entries is the norm and no page carries more than three, since a
+longer list stops being a route.
+
+That list is a later addition rather than part of the original port, and the reason is worth keeping: the
+port was written while the explanation tier was still scaffolding, so linking it would have sent readers to
+placeholders, and the pages summarized each idea locally instead. The tier is now complete, so the links
+were added in a single sweep. A page written from here on carries the list from the start.
+
+The tooling pages are linked the same way, and this is the other correction that sweep made: a mention of
+`cargo cgp check` links to <https://contextgeneric.dev/docs/cargo-cgp/check> rather than to the tool's
+GitHub repository, which is where two pages had pointed while that section was unwritten.
 
 **Introduce "context" with a gloss on first use, on every page, above the advanced line.** It is a
 knowledge-base word before it is a public one, and a reference page is read on its own rather than in
@@ -784,10 +829,17 @@ the page with and not an attempt at the full account; that lives on
 the sidebar rather than through an inline link, per the convention above. Two of the first four written
 pages had missed the gloss, which makes it the convention here most easily dropped.
 
-**Five pages are exempt from the gloss, because they never use the word above the advanced line**: the four
-type-level construction pages (`Symbol!`, `Product!`, `Sum!`, `Path!`) and `#[async_trait]`. A mechanical
-check therefore has to allow both for the exemption and for the phrase being split across a line wrap —
-grepping line by line for it reports false failures on most pages that do carry it.
+**Four pages are exempt from the gloss, because they never use the word above the advanced line**:
+`Product!`, `Sum!`, `Path!`, and `#[async_trait]`. `Symbol!` is *not* among them despite belonging to the
+same group — it opens on why encoding a string as a type matters to a context, and glosses the word there.
+
+A mechanical check over this convention has to allow for three things, and missing any of them reports
+false failures. The phrase may be **split across a line wrap**, so a line-by-line grep fails on most pages
+that do carry it. The **wording varies**: the canonical clause is "the type the capability runs against,
+which supplies those values as its fields", but a page with nothing to say about fields shortens it — the
+four attribute pages that use the word write "the type the implementation runs against", "the type the code
+runs against", or "the type it runs against", all of which discharge the convention. And `MyContext` inside
+a code block is not a prose use of the word.
 
 **A written index carries the provenance note too.** The rule that a scaffolded stub carries no note
 covers placeholders rather than hand-written prose, and both section indexes are substantial written

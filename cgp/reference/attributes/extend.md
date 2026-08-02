@@ -22,6 +22,16 @@ Each entry names a trait that becomes a supertrait of the generated trait, optio
 
 `#[extend(...)]` is accepted in [`#[cgp_fn]`](../macros/cgp_fn.md) and in [`#[cgp_component]`](../macros/cgp_component.md). It is not available in [`#[cgp_impl]`](../macros/cgp_impl.md), because a provider impl has no trait definition of its own to attach supertraits to — the supertraits belong to the component's trait, defined by `#[cgp_component]`.
 
+## Syntax Grammar
+
+The attribute argument of `#[extend]` is a comma-separated list of bounds:
+
+```ebnf
+ExtendArgs -> TypeParamBound ( `,` TypeParamBound )* `,`?
+```
+
+This is the same production [`#[uses]`](uses.md) accepts, and the same Rust `TypeParamBound`, so a lifetime, a `?Sized`, or an associated-type equality parses as readily as a plain trait name. The list may be empty and the attribute may be repeated, with every occurrence's entries collected together. The two attributes differ in where the collected bounds land, not in what they accept.
+
 ## Expansion
 
 `#[extend(...)]` adds each listed bound as a supertrait of the generated trait, and the same bound also appears in the impl's `where` clause so the implementation may rely on it. The example below uses the abstract-type trait `HasScalarType` to make the two-placement behavior visible in one signature; in production, an abstract-type supertrait like this is better declared with [`#[use_type]`](use_type.md), and `#[extend(...)]` is reserved for a non-type capability supertrait. Starting from a `#[cgp_fn]` definition that depends on an abstract `Scalar` type:

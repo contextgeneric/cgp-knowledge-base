@@ -65,7 +65,11 @@ delegate_and_check_components! {
 }
 ```
 
-The `#[check_params(...)]` and `#[skip_check]` attributes are mutually exclusive on a given key, and at most one may appear.
+The `#[check_params(...)]` and `#[skip_check]` attributes are mutually exclusive on a given key, and at most one may appear; a second is rejected with `Expected at most one #[check_params] or #[skip_check] attribute`, and an attribute that is neither with a message naming both. `#[skip_check]` takes no arguments and says so if given any.
+
+Both attributes may appear on a **list key** as well as on the individual keys inside it, and the two are merged per element rather than one overriding the other. An absent attribute defers to the present one; two `#[check_params]` lists concatenate, so a list-level `#[check_params(Rectangle)]` above `[<T> AreaCalculatorComponent, RotatorComponent]` with an inner `#[check_params(Circle)]` on the first key checks that key against `Rectangle` *and* `Circle` while the second is checked against `Rectangle` alone. Two `#[skip_check]`s stay a skip. The one combination that is refused is a `#[skip_check]` merged with a `#[check_params]`, since the two ask for opposite things: `cannot combine #[skip_check] with #[check_params]`.
+
+Two forms silently produce no check, and both are worth recognizing because neither reports anything. An **empty** `#[check_params()]` supplies no parameters to iterate, so it skips the entry exactly as `#[skip_check]` would — write the latter when that is the intent, since it says so. And a key that carries **only generics** and no attribute is still checked, with those generics bound on the check impl and unit parameters: `<I> FooKey<I>: FooProvider` derives `impl<I> __CanUseContext<FooKey<I>, ()> for Context {}`, which is what keeps the key's own parameter from appearing unbound.
 
 ### What the shared grammar covers, and what the derivation reads
 

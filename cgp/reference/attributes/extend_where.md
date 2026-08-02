@@ -20,6 +20,16 @@ Unlike [`#[uses]`](uses.md), whose entries are bounds attached to `Self` on the 
 
 `#[extend_where(...)]` is supported only in [`#[cgp_fn]`](../macros/cgp_fn.md). It has no meaning in [`#[cgp_impl]`](../macros/cgp_impl.md) or [`#[cgp_component]`](../macros/cgp_component.md), because in those macros the `where` clause you write is already part of the trait definition — there is nothing to promote, so write the bound as a normal `where` clause directly.
 
+## Syntax Grammar
+
+The attribute argument of `#[extend_where]` is a comma-separated list of `where` predicates:
+
+```ebnf
+ExtendWhereArgs -> WherePredicate ( `,` WherePredicate )* `,`?
+```
+
+`WherePredicate` is the Rust grammar's own production — what appears between the commas of a `where` clause — and it is what distinguishes this attribute from [`#[uses]`](uses.md) and [`#[extend]`](extend.md). Those accept a *bound* and always attach it to `Self`, whereas a predicate names its own subject, so `#[extend_where(Self::Output: Clone)]` and a higher-ranked `#[extend_where(for<'a> &'a T: IntoIterator)]` are expressible here and neither is expressible there. The list may be empty and the attribute may be repeated.
+
 ## Expansion
 
 `#[extend_where(...)]` adds its predicates to the `where` clause of the generated trait, and the same predicates also remain on the impl. Starting from a generic `#[cgp_fn]` definition:

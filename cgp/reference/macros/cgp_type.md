@@ -32,6 +32,8 @@ pub trait HasScalarType {
 
 A bound on the associated type is preserved everywhere the type appears in the expansion. For example `type Scalar: Copy;` carries the `Copy` bound onto the generated provider trait and into the `where` clauses of the generated provider impls.
 
+A **self-referential** bound — one naming the associated type it constrains, as `type Scalar: Mul<Output = Self::Scalar> + Clone;` does — is handled by rewriting rather than rejected. The bound stays as written on the consumer and provider traits, where `Self::Scalar` still means what it says, and every `Self::Scalar` inside it is rewritten to the free parameter when the bound is copied onto the `UseType` and `WithProvider` impls, whose `where` clause therefore reads `Scalar: Mul<Output = Scalar> + Clone`. Without that rewrite the copied bound would name an associated type of the wrong `Self`.
+
 ## Syntax Grammar
 
 The attribute argument of `#[cgp_type]` is the same grammar as [`#[cgp_component]`](cgp_component.md)'s `CgpComponentArgs` — a bare provider name or the keyed `name`/`provider`/`context` form:

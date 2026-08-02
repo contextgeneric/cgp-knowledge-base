@@ -43,6 +43,21 @@ pub trait CanCompute<Code, Input> {
 
 Here the default `UseDelegate` dispatches on `Code`, while the custom `UseInputDelegate` dispatches on `Input`. The custom dispatcher is an ordinary struct the user defines — `pub struct UseInputDelegate<Components>(pub PhantomData<Components>);` — with the same single-type-parameter shape as `UseDelegate`.
 
+## Syntax Grammar
+
+The attribute argument of `#[derive_delegate]` is a wrapper name applied to the parameters to key on:
+
+```ebnf
+DeriveDelegateArgs -> Wrapper `<` KeyParams `>`
+
+Wrapper            -> IDENTIFIER
+
+KeyParams          -> IDENTIFIER
+                    | `(` IDENTIFIER ( `,` IDENTIFIER )* `,`? `)`
+```
+
+Both parts are required; there is no bare or defaulted form. `Wrapper` is an `IDENTIFIER` rather than a `TypePath`, so a dispatcher reached through a module path must be imported into scope before it can be named here. `KeyParams` are likewise identifiers rather than types — each must name a generic parameter the annotated trait declares, and a type expression such as `Vec<u8>` in that position fails to parse. The parenthesized form must be non-empty (`expect non-empty tuple list of identifiers in use_delegate_spec`), and a single parameter written without parentheses is keyed exactly as a one-element tuple would be, since the expansion wraps the parameter list in a tuple either way. The attribute may be repeated, once per dispatcher, as the Syntax section shows.
+
 ## Expansion
 
 Each `#[derive_delegate]` attribute emits one additional provider impl alongside everything else `#[cgp_component]` generates. The impl is for the named wrapper applied to a fresh `Components` table type, and it follows the same forwarding shape as a normal provider blanket impl, except that the lookup key is the dispatch parameter rather than the component name. Starting from the single-form example:

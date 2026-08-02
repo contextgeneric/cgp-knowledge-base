@@ -35,7 +35,33 @@ pub trait HasDimensions {
 }
 ```
 
-The return type controls how the field value is read, and several shorthand forms are recognized so the method signature stays ergonomic. A plain reference `&T` reads a field of type `T` directly. The form `&str` is treated specially: it reads a `String` field and calls `.as_str()` on it, so you can return `&str` while the context stores a `String`. Other recognized forms include `Option<&T>` (an `Option<T>` field returned via `.as_ref()`), `Option<&str>` (an `Option<String>` field returned via `.as_deref()`, composing the `&str` special case with the option case), `&[T]` (a field whose value implements `AsRef<[T]>`), and any owned type — a path type, a tuple, or an array — read by reference and `.clone()`d. A `&mut self` receiver reads the field mutably through `get_field_mut`, and each reference form has a mutable mirror: a `&mut T` return, a `&mut [T]` return (a field implementing `AsMut<[T]>`, read via `.as_mut()`), an `Option<&mut T>` return (via `.as_mut()`), and an `Option<&mut str>` return (via `.as_deref_mut()`).
+The return type controls how the field value is read, and several shorthand forms are recognized so the method signature stays ergonomic. A plain reference `&T` reads a field of type `T` directly. The form `&str` is treated specially: it reads a `String` field and calls `.as_str()` on it, so you can return `&str` while the context stores a `String`. Other recognized forms include `Option<&T>` (an `Option<T>` field returned via `.as_ref()`), `Option<&str>` (an `Option<String>` field returned via `.as_deref()`, composing the `&str` special case with the option case), `&[T]` (a field whose value implements `AsRef<[T]>`), [`MRef<'_, T>`](../types/mref.md) (a `T` field wrapped as `MRef::Ref(…)`, for a getter that may lend or produce its value), and any owned type — a path type, a tuple, or an array — read by reference and `.clone()`d. A `&mut self` receiver reads the field mutably through `get_field_mut`, and each reference form has a mutable mirror: a `&mut T` return, a `&mut [T]` return (a field implementing `AsMut<[T]>`, read via `.as_mut()`), an `Option<&mut T>` return (via `.as_mut()`), and an `Option<&mut str>` return (via `.as_deref_mut()`).
+
+The rule that decides mutability differs here from the one an [`#[implicit]`](../attributes/implicit.md) argument follows, and the difference is easy to miss because the two share every other access rule. A getter takes its mutability from the **receiver** — `&mut self` reads through `get_field_mut`, `&self` through `get_field` — while an implicit argument takes it from the *argument's own type*. The mutability the return type implies is discarded in favour of the receiver's.
+
+Two further shapes of getter method are accepted, and both are easy to overlook because the common case shows neither.
+
+The first argument need not be `self`. It may instead be a **typed reference to another type**, which is what lets a getter read a field of something the context merely names rather than of the context itself:
+
+```rust
+#[cgp_auto_getter]
+pub trait HasFooBar: HasFooType + HasBarType {
+    fn foo_bar(foo: &Self::Foo) -> &Self::Bar;
+}
+```
+
+The blanket impl then bounds `Self::Foo` rather than the context — `__Context__::Foo: HasField<Symbol!("foo_bar"), Value = __Context__::Bar>` — and the method is called as an associated function, `App::foo_bar(&foo)`. `Self` inside the receiver and return types is rewritten to the context parameter, and whether the reference is `&` or `&mut` decides the access mode exactly as a receiver's would. This is the one getter shape an implicit argument cannot reach, since there is no `self` field to read.
+
+A getter method may also take an **optional second argument**, which must be a `PhantomData<T>`:
+
+```rust
+#[cgp_auto_getter]
+pub trait HasFoo {
+    fn foo(&self, _tag: PhantomData<Foo>) -> &Foo;
+}
+```
+
+The parameter is forwarded to the generated method unchanged and takes no part in the field lookup; it exists so a getter can carry a type-level argument through its signature. Any argument in that position that is not a `PhantomData` is rejected (`only PhantomData is allowed as second argument`), and a third argument is rejected outright.
 
 A getter trait may also declare a single associated type and use it as the method's return type, which lets the abstract type be inferred from the field. This is covered under Expansion below. When an associated type is present, the trait must contain exactly one getter method, and that method's return type must be `&Self::AssocType`.
 

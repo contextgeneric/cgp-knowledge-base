@@ -76,7 +76,7 @@ One variant has no snapshot: a `#[skip_check]` entry alongside checked entries, 
 ## Tests
 
 - The snapshot files above are compile-only tests, so a successful build is the passing assertion for both the wiring and the derived check.
-- There are no separate behavioral or `cgp-macro-tests` failure cases for this macro.
+- [parser_rejections/delegate_and_check_components.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/delegate_and_check_components.rs) covers the check attributes the macro refuses: a `#[skip_check]` merged with a `#[check_params]` across a list key and its element — the case that only exists once the two are merged, so neither attribute is wrong on its own — two check attributes on one key, `#[skip_check]` given arguments, an unrecognized per-entry attribute, and `#[check_providers]` on the table, which belongs to the standalone `check_components!`.
 
 ## Source
 

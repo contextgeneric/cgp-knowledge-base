@@ -125,7 +125,9 @@ where
 }
 ```
 
-The bounds contributed by the companion attributes are layered into this same impl. `#[uses(Trait)]` and `#[extend(Trait)]` push a `Self: Trait` predicate onto the impl's `where` clause; `#[extend(Trait)]` additionally adds `Trait` as a supertrait of the generated trait, and `#[extend_where(...)]` adds its predicates to the trait's own `where` clause. `#[impl_generics(...)]` inserts its parameters into the impl generics only. The implicit-argument bounds are always appended last, after the attribute-contributed predicates.
+The bounds contributed by the companion attributes are layered into this same impl. `#[uses(Trait)]` and `#[extend(Trait)]` push a `Self: Trait` predicate onto the impl's `where` clause; `#[extend(Trait)]` additionally adds `Trait` as a supertrait of the generated trait, and `#[extend_where(...)]` adds its predicates to the trait's own `where` clause. `#[impl_generics(...)]` inserts its parameters into the impl generics only, and its argument is a comma-separated list of Rust `GenericParam` productions, so a lifetime and a const parameter are accepted there alongside a bounded type parameter. The implicit-argument bounds are always appended last, after the attribute-contributed predicates.
+
+Two further placements are decided by the macro rather than written by the author. The **function's visibility moves to the generated trait**, and the method inside the impl is emitted with inherited visibility — so `pub fn rectangle_area` yields `pub trait RectangleArea` while a private `fn` yields a trait visible only in its own module. And an attribute the macro does **not** recognize is copied onto *both* generated items rather than one, which is what lets `#[allow(...)]`, `#[doc]`, and a doc comment on the function apply to the trait and its impl alike.
 
 ## Examples
 

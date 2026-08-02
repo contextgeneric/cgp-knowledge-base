@@ -68,15 +68,17 @@ CheckEntries    -> ( CheckEntry ( `,` CheckEntry )* `,`? )?
 CheckEntry      -> CheckKey ( `:` CheckValue )?
 
 CheckKey        -> Type
-                 | `[` Type ( `,` Type )* `,`? `]`
+                 | `[` ( Type ( `,` Type )* `,`? )? `]`
 
 CheckValue      -> CheckParam
-                 | `[` CheckParam ( `,` CheckParam )* `,`? `]`
+                 | `[` ( CheckParam ( `,` CheckParam )* `,`? )? `]`
 
 CheckParam      -> Generics? Type
 ```
 
-A single invocation may carry several `CheckTable`s, each with its own context type. The optional `#[check_trait(...)]` overrides the derived `__Check{Context}` trait name, and `#[check_providers(...)]` switches the check to verify the listed providers instead of the context. The `where` clause and a leading `Generics` list introduce and constrain generics used by the checked parameters. A `CheckEntry`'s value is omitted for a component with no generic parameters; when present, a bracketed `CheckKey` or `CheckValue` expands to the cartesian product, so a set of components is checked against a set of parameters. `WhereClause`, `Generics`, and `Type` are Rust grammar productions.
+A single invocation may carry several `CheckTable`s, each with its own context type, written one after another with no separator between them. Both `TableAttr` forms are collected in one pass at the head of a table, so they may be stacked in either order, each may appear at most once, and an attribute that is neither is rejected by name (`Invalid attribute …`) rather than passed through. The optional `#[check_trait(...)]` overrides the derived `__Check{Context}` trait name, and `#[check_providers(...)]` switches the check to verify the listed providers instead of the context. The `where` clause and a leading `Generics` list introduce and constrain generics used by the checked parameters, and a `CheckParam` may carry a further `Generics` list of its own, which is merged with the table's before the impl is emitted. A `CheckEntry`'s value is omitted for a component with no generic parameters; when present, a bracketed `CheckKey` or `CheckValue` expands to the cartesian product, so a set of components is checked against a set of parameters. `WhereClause`, `Generics`, and `Type` are Rust grammar productions.
+
+Both bracketed lists accept an **empty** element list, and the two empty forms are not symmetric. An empty `CheckValue` — `FooComponent: []` — falls back to the no-parameter check, exactly as omitting the colon does. An empty `CheckKey` — `[]: Rectangle` — expands to no entries at all, so the line contributes no assertion and reports nothing; a table that appears to pass while asserting nothing is the failure mode to recognize.
 
 ## Expansion
 
@@ -101,6 +103,8 @@ impl __CheckPerson<GreeterComponent, ()> for Person {}
 ```
 
 The impl compiles only if `Person: CanUseComponent<GreeterComponent, ()>`, which in turn requires that `Person` delegates `GreeterComponent` and that its delegate satisfies `IsProviderFor<GreeterComponent, Person, ()>`. If the provider's dependencies are unmet — say it needs a `name` field the context lacks — the compiler reports the unsatisfied `HasField` bound rather than a bare "provider trait not implemented", which is the whole point of the indirection through `CanUseComponent`. The check trait name follows the `__Check{Context}` pattern, and the generic parameters are literally `__Component__` and `__Params__` in the emitted code.
+
+The `?Sized` bound on `__Params__` is load-bearing rather than defensive. A component's parameter is an ordinary type argument and may be unsized, so a component declared over `str` — checked as `ReferenceGetterComponent: (Life<'a>, str)` — would be rejected for the implicit `Sized` bound before the assertion was ever evaluated. Relaxing it lets the check say what the component says.
 
 Generic parameters appear in the `__Params__` slot of each impl. A single parameter is placed there directly, and multiple parameters as a tuple:
 

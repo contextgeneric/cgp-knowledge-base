@@ -90,6 +90,16 @@ ForStmt       -> `for` `<` IDENTIFIER `,` IDENTIFIER `>` `in` TypePath WhereClau
                  `{` ( NormalMapping ( `,` NormalMapping )* `,`? )? `}`
 ```
 
+The `#[prefix(...)]` attribute, which is the other half of the pattern and is hosted by [`#[cgp_component]`](cgp_component.md), has a grammar of its own:
+
+```ebnf
+PrefixArgs    -> Path `in` NamespacePath
+
+NamespacePath -> TypePath GenericArgs?
+```
+
+`Path` is the `@`-prefixed dotted production [`Path!`](path.md) defines — segments take no generics and no grouping form is accepted, so a component registers under exactly one prefix per attribute. `NamespacePath` is the namespace to register into, which may itself be parameterized; the macro appends the components table as a further argument when it emits the impl. Both parts are required, and the attribute may be repeated to register one component into several namespaces.
+
 A `NamespaceStmt` forwards every lookup on the table through the named namespace. A `ForStmt` binds a key variable and a provider variable, reads each entry of the table named after `in`, and emits one mapping per entry — its body admits only the `` `:` `` form, which is why [`delegate_components!`](delegate_components.md) names that `NormalMapping` separately, and its `Key` and `ProviderValue` are that macro's shared productions. Its optional `WhereClause` is merged into every impl the loop generates, so a bound written there (`for <T, P> in Table where T: Clone { … }`) constrains which keys the loop wires, alongside the namespace bound the loop reconstructs. The third statement form, `OpenStmt`, is owned by [`delegate_components!`](delegate_components.md) because that is where it is written; it parses in a namespace body too, where it is another spelling of a `` `=>` `` entry. `TypePath` and `WhereClause` are Rust grammar productions.
 
 Like [`delegate_components!`](delegate_components.md), the body accepts no attributes on any entry — on a mapping key, a `=>` redirect key, or a key inside a `for` loop — and rejects any it finds with a spanned "unsupported attribute" error rather than silently discarding it.

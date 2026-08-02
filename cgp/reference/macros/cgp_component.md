@@ -38,9 +38,15 @@ The three keys correspond to the three names the macro needs, and each has a def
 
 The trait body itself is unrestricted in the number of items it declares. A component trait may carry any number of methods, associated types, and associated consts, and every one of them is reproduced on the generated provider trait, so a provider implements the whole set — CGP's own [`CanCompute`](../components/computer.md) declares an associated `Output` beside its `compute` method, and a [getter trait](cgp_getter.md) commonly declares one method per field. The only rejected declaration is a **const generic parameter** on the trait, for the reason given under Known issues. Which items are worth grouping into one component is a design question rather than a limit of the macro, and it is answered in [sizing a component](../../guides/sizing-a-component.md): everything in one component is decided by one provider, so items that a single provider choice settles belong together while items that separate choices settle are better off in separate components.
 
-Two companion attributes extend the macro for special cases and are documented separately. Adding [`#[derive_delegate(...)]`](../attributes/derive_delegate.md) generates `UseDelegate` providers that dispatch on a generic parameter, and adding [`#[extend(...)]`](../attributes/extend.md) adds supertrait bounds to the generated consumer trait. The related macros [`#[cgp_type]`](cgp_type.md) and [`#[cgp_getter]`](cgp_getter.md) build on `#[cgp_component]` to derive additional constructs for abstract-type and getter components respectively.
+Four companion attributes extend the macro for special cases, and each is documented separately. [`#[extend(...)]`](../attributes/extend.md) adds supertrait bounds to the generated consumer trait; [`#[use_type(...)]`](../attributes/use_type.md) imports an abstract associated type, adding the owning trait as a supertrait and rewriting the bare alias throughout the signatures; [`#[derive_delegate(...)]`](../attributes/derive_delegate.md) generates `UseDelegate` providers that dispatch on a generic parameter; and [`#[prefix(@path in Namespace)]`](cgp_namespace.md) registers the component into a namespace under a type-level path, emitting one namespace impl per attribute. Any of the four may be repeated, and `#[extend]`, `#[use_type]`, and `#[derive_delegate]` each accept a comma-separated list in one attribute.
+
+Three modifiers that host macros elsewhere accept are **not** accepted here, and the failure they produce is worth recognizing because the macro does not report it. `#[uses(...)]`, `#[extend_where(...)]`, and `#[use_provider(...)]` are meaningful only where there is a provider impl or a generated trait definition to attach them to, so the component collector does not match them; an unrecognized attribute is passed straight through onto the items the macro emits, where the compiler rejects it as `cannot find attribute … in this scope`. None of these modifiers is a standalone proc macro, so there is nothing else for the name to resolve to. The equivalent of `#[uses]` on a component is a supertrait, written with `#[extend]`.
+
+The related macros [`#[cgp_type]`](cgp_type.md) and [`#[cgp_getter]`](cgp_getter.md) build on `#[cgp_component]` to derive additional constructs for abstract-type and getter components respectively.
 
 When a component's supertrait exists only to supply an abstract type the trait's own signatures name — most commonly [`HasErrorType`](../components/has_error_type.md), whose `Error` a fallible method returns — prefer importing that type with [`#[use_type]`](../attributes/use_type.md) over writing the supertrait and the qualified `Self::` path by hand. Annotating the trait with `#[use_type(HasErrorType.Error)]` adds `HasErrorType` as a supertrait *and* rewrites a bare `Error` in the signatures to `<Self as HasErrorType>::Error`, so the definition reads `pub trait CanLoad { fn load(&self, path: &str) -> Result<String, Error>; }` rather than spelling `: HasErrorType` and `Self::Error`. For a supertrait `#[use_type]` cannot express — a capability supertrait with no associated type to import, or a bound the trait does not name in its signatures — declare it with `#[extend(...)]` in preference to native `: Supertrait` syntax, which reads as OOP-style inheritance rather than the capability import a CGP supertrait actually is. A local associated type the trait declares itself, such as a handler's `type Output`, always stays written as `Self::Output`; it is not imported, so `#[use_type]` neither lists nor rewrites it.
+
+One form of `#[use_type]` is refused on a component trait: the **equality form** `#[use_type(HasScalarType.{Scalar = f64})]`, which pins an imported type to a concrete one. Pinning belongs to a provider that has decided the type, not to the definition every provider must satisfy, so the macro rejects the `=` with `Type equality constraints cannot be used in component trait definition`. Every other form — the `in Context` clause, the `as Alias` rename, the braced list, and generic arguments on the owning trait — is accepted here exactly as it is on `#[cgp_impl]` and `#[cgp_fn]`.
 
 ## Syntax Grammar
 
@@ -63,7 +69,7 @@ ComponentName    -> IDENTIFIER GenericArgs?
 
 ## Expansion
 
-`#[cgp_component]` replaces the annotated trait with five top-level items plus a set of standard provider impls. Starting from this input:
+`#[cgp_component]` replaces the annotated trait with five top-level items plus a set of standard provider impls. The five are emitted in a fixed order — consumer trait, consumer blanket impl, provider trait, provider blanket impl, component marker — and are described below in the order that makes them easiest to read, which pairs each trait with the impl that routes to it. Starting from this input:
 
 ```rust
 #[cgp_component(AreaCalculator)]
@@ -88,6 +94,28 @@ pub trait AreaCalculator<Context>:
 {
     fn area(context: &Context) -> f64;
 }
+```
+
+The provider trait's supertrait list is *replaced* by `IsProviderFor` rather than extended with it, and the consumer trait's own supertraits — whether written natively, added by [`#[extend]`](../attributes/extend.md), or added by [`#[use_type]`](../attributes/use_type.md) — are lowered into a `where` predicate on the context instead. This is a consequence of the `Self`-to-`Context` move: a supertrait of the consumer trait constrains the type the capability is about, which on the provider side is the context parameter and not `Self`. So `#[cgp_component(Greeter)] #[extend(HasName)] pub trait CanGreet { … }` yields:
+
+```rust
+pub trait Greeter<Context>: IsProviderFor<GreeterComponent, Context, ()>
+where
+    Context: HasName,
+{
+    fn greet(context: &Context);
+}
+```
+
+The same predicate is added to *every* item the macro emits that mentions the context — the consumer blanket impl, the provider blanket impl, and the `UseContext` and `RedirectLookup` provider impls each gain their own `Context: HasName` — since none of them can apply where the supertrait does not hold.
+
+**A component trait's methods may carry default bodies, and the body travels to the provider trait rather than staying behind on the consumer trait.** This is the second thing the `Self`-to-`Context` move reaches, and it is what makes a provider able to inherit a default at all: the body is rewritten along with the signature, so `fn greet(&self) -> String { format!("Hello, {}!", self.name()) }` on the consumer trait becomes `fn greet(context: &Context) -> String { format!("Hello, {}!", context.name()) }` on the provider trait, keeping its default. The consumer trait keeps its own copy of the body as well, so the same duplication [`#[blanket_trait]`](blanket_trait.md) produces appears here.
+
+The payoff is that an **empty provider impl inherits the default**, which is how [`UseDefault`](../providers/use_default.md) works and the reason a provider can be declared with nothing in its block:
+
+```rust
+#[cgp_impl(UseDefault)]
+impl<Context: HasName> Greeter for Context {}
 ```
 
 Third, it emits the **consumer blanket impl**, which says that any context implementing the provider trait *for itself* automatically gets the consumer trait. This is the bridge that lets callers write `context.area()`:
@@ -126,9 +154,16 @@ Fifth, it emits the **component name struct**, a zero-sized marker that serves a
 pub struct AreaCalculatorComponent;
 ```
 
-Beyond these five items, the macro also generates standard provider impls that make the component usable in the patterns CGP relies on. It emits a [`UseContext`](../providers/use_context.md) impl, so that the provider trait can be satisfied by routing back through a context's own consumer-trait implementation; a `RedirectLookup` impl, used by the namespace and preset machinery; and, for each [`#[derive_delegate(...)]`](../attributes/derive_delegate.md) attribute present, a [`UseDelegate`](../providers/use_delegate.md) impl that dispatches on the named generic parameter. When the component is defined inside a namespace, prefix impls are emitted as well (see [`#[cgp_namespace]`](cgp_namespace.md)).
+Beyond these five items, the macro also generates standard provider impls that make the component usable in the patterns CGP relies on. Two are unconditional and two are one-per-attribute:
 
-Two details of the expansion are worth holding onto because they are easy to get wrong. The generated type parameters carry reserved names, not the readable ones used above: the context parameter is literally `__Context__` unless overridden, and the provider parameter in the provider blanket impl is `__Provider__`. The examples here use `Context` and `Provider` for legibility, but the emitted code uses the reserved names. And the generic parameters of a component with type parameters (for example `CanCalculateArea<Shape>`) are appended *after* the context parameter in the provider trait and grouped into a parenthesized list in the `IsProviderFor` `Params` position — so `IsProviderFor<AreaCalculatorComponent, __Context__, (Shape)>` for one parameter and `(Shape, Scalar)` for several — see generic parameters in the `/cgp` skill for the multi-parameter rules.
+- A [`UseContext`](../providers/use_context.md) impl, so that the provider trait can be satisfied by routing back through a context's own consumer-trait implementation. Its `where` clause is the single predicate `__Context__: CanCalculateArea`, and each method body forwards to the consumer method.
+- A [`RedirectLookup`](../providers/redirect_lookup.md) impl, which is what the `open` statement of [`delegate_components!`](delegate_components.md) and the [namespace](cgp_namespace.md) machinery resolve through. It is written for `RedirectLookup<__Components__, __Path__>` and looks the component up as `__Components__: DelegateComponent<__Path__>`.
+- One [`UseDelegate`](../providers/use_delegate.md) impl per [`#[derive_delegate(...)]`](../attributes/derive_delegate.md) attribute, dispatching on the named generic parameter.
+- One namespace impl per [`#[prefix(@path in Namespace)]`](cgp_namespace.md) attribute, binding the component's key inside that namespace to a `RedirectLookup` down the given path.
+
+The `RedirectLookup` impl is where a component's own type parameters earn their place in a path, and it is the mechanism behind `@AreaCalculatorComponent.Rectangle`. When the component has type parameters, the impl does not look up `__Path__` directly: it requires `__Path__: ConcatPath<Shape>` and looks up the *extended* path `<__Path__ as ConcatPath<Shape>>::Output`, so the component's parameters are appended to whatever path the lookup arrived on. Only **type** parameters take part — lifetimes and const parameters are filtered out, since neither can key a path — and a component with no type parameters gets the simpler form that looks `__Path__` up unchanged.
+
+Two details of the expansion are worth holding onto because they are easy to get wrong. The generated type parameters carry reserved names, not the readable ones used above: the context parameter is literally `__Context__` unless overridden, and the provider parameter in the provider blanket impl is `__Provider__`. The examples here use `Context` and `Provider` for legibility, but the emitted code uses the reserved names. And the generic parameters of a component with parameters of its own are appended *after* the context parameter in the provider trait — except lifetimes, which Rust requires to lead, so `HasReference<'a, T>` yields `ReferenceGetter<'a, __Context__, T>` — and are grouped into a parenthesized list in the `IsProviderFor` `Params` position. The tuple holds *types*, so each parameter is recorded by name and a **lifetime is lifted into [`Life<'a>`](../types/life.md)**: `CanCalculateArea<Shape>` gives `IsProviderFor<AreaCalculatorComponent, __Context__, (Shape)>`, a two-parameter component gives `(Shape, Scalar)`, and `HasReference<'a, T>` gives `(Life<'a>, T)`. Bounds and defaults are dropped, since the tuple only names the parameters positionally, and a const parameter has no representation at all — which is why it is rejected outright, per Known issues.
 
 ## Examples
 
@@ -187,7 +222,11 @@ The call `rect.area()` resolves through the consumer blanket impl to `Rectangle:
 
 ## Known issues
 
-A const generic parameter on the trait is not supported and is rejected with a compile error. Because the provider trait records a component's extra parameters as a tuple of *types* in its `IsProviderFor` supertrait, and CGP's wiring dispatches on types rather than values, a const value has nowhere to live in that machinery. A const *item* on the trait is unaffected — writing `const CONSTANT: u64;` as a trait member is an associated const, not a generic parameter, and is supplied by a const-generic provider struct (for example `UseConstant<const CONSTANT: u64>`) in the usual way.
+A const generic parameter on the trait is not supported and is rejected with `const generic parameters are not supported on CGP component traits`. Because the provider trait records a component's extra parameters as a tuple of *types* in its `IsProviderFor` supertrait, and CGP's wiring dispatches on types rather than values, a const value has nowhere to live in that machinery. A const *item* on the trait is unaffected — writing `const CONSTANT: u64;` as a trait member is an associated const, not a generic parameter, and is supplied by a const-generic provider struct (for example `UseConstant<const CONSTANT: u64>`) in the usual way.
+
+The macro must be applied to a trait, and anything else is rejected at parse time rather than lowered into non-compiling code: applying it to a struct, an enum, or a free function fails with a parse error naming the trait item it expected. Two rejections come from `#[use_type]` and are worth knowing here because a component definition is where a reader most often meets them: the equality form described under Syntax, and two imports that resolve to the same bare alias, which would make the substitution silently pick one and drop the other.
+
+Finally, a modifier the component collector does not recognize is not rejected but forwarded, and it is forwarded onto *every* generated item rather than one. The unmatched attribute is re-attached to the consumer trait, and from there it is cloned onto the provider trait and onto the impls built from each — the two blanket impls and the `UseContext` and `RedirectLookup` provider impls. That is what lets `#[allow(...)]` or a doc comment apply where it should. It also means a misplaced `#[uses(...)]` surfaces as a *cannot find attribute* resolution error repeated once per generated item, none of which mentions `#[cgp_component]` — the same shape of error a genuine typo in an attribute name produces, several times over.
 
 ## Source
 

@@ -241,25 +241,29 @@ SingleKey     -> Generics? Type
 MultiKey      -> `[` SingleKey ( `,` SingleKey )* `,`? `]`
 PathKey       -> Generics? `@` PathHead
 
-PathHead      -> PathSegment ( `.` PathHead )?
-               | `[` PathSegment ( `,` PathSegment )* `,`? `]` ( `.` PathHead )?
+PathHead      -> KeySegment ( `.` PathHead )?
+               | `[` KeySegment ( `,` KeySegment )* `,`? `]` ( `.` PathHead )?
                | `{` PathHead ( `,` PathHead )* `,`? `}`
 
-PathSegment   -> Generics? Type
+KeySegment    -> Generics? PathSegment
 
 PathValue     -> `@` PathSegment ( `.` PathSegment )*      // see Path!
+
+PathSegment   -> Type
 
 ProviderValue -> Type
                | IDENTIFIER `<` `new` InnerTable `>`
 
-InnerTable    -> IDENTIFIER GenericArgs? `{` TableBody `}`
+InnerTable    -> IDENTIFIER BoundFreeGenerics? `{` TableBody `}`
 ```
 
 A leading `Generics` list (a Rust `< … >`) makes the whole table generic over the target; the `new` keyword additionally emits the target struct. Each `Mapping` chooses one of three operators, and the choice is independent of the key form: `` `:` `` maps a key directly to the named provider — the common form — while `` `->` `` delegates to the value's own entry for that key and `` `=>` `` redirects the lookup along a `PathValue`. `NormalMapping` is named separately because the `ForStmt` body admits only that form.
 
-A `Key` may be a single type, a bracketed list expanding to one entry per name, or an `@`-`PathKey`. The two grouping forms inside a `PathHead` differ in what they group and in whether the path may continue: a bracketed group holds alternative `PathSegment`s for one position and may be followed by `` `.` `` and more path, while a braced group holds alternative whole remainders and terminates the path, which is why a `PathHead` may nest further groups only through the braced form. Both fan out to the cartesian product of their alternatives with the rest of the path. A `PathValue` — the right-hand side of a `` `=>` `` — admits no groups and is the same `@`-path production [`Path!`](path.md) defines.
+A `Key` may be a single type, a bracketed list expanding to one entry per name, or an `@`-`PathKey`. The two grouping forms inside a `PathHead` differ in what they group and in whether the path may continue: a bracketed group holds alternative `KeySegment`s for one position and may be followed by `` `.` `` and more path, while a braced group holds alternative whole remainders and terminates the path, which is why a `PathHead` may nest further groups only through the braced form. Both fan out to the cartesian product of their alternatives with the rest of the path.
 
-The `ProviderValue` nested-table form wires the key to a `UseDelegate`-style wrapper while defining the inner table in place; the `InnerTable`'s `TableBody` is the same production, so an inner table accepts every statement and mapping form an outer one does. Note that an `InnerTable` is an identifier with an optional generic argument list rather than a full `TargetType`: an outer table may be keyed on any `Type`, while a nested one always names a fresh struct the macro declares, and its generic list is bound-free — write the bound on the *entry's* generics instead. A bound written on the inner table is rejected, but not informatively: the value parser tries the nested-table form speculatively and falls back to parsing the whole value as a plain type when that fails, so `UseDelegate<new BarValue<T: Clone> { … }>` reports `expected ','` at the inner table's name rather than anything about generics. An `OpenStmt` opens each listed component for per-value wiring directly in the context's table, after which `PathKey` mappings populate it; its brace-delimited list may be written without braces when it opens exactly one component (`open Component;`), while opening several at once requires the braces. The `NamespaceStmt` and `ForStmt` statement forms are defined under [`#[cgp_namespace]`](cgp_namespace.md). Every `Statement` must precede every `Mapping`, as the `TableBody` production requires. `Mapping`, `NormalMapping`, `Key`, `PathKey`, and `ProviderValue` are the shared productions reused by [`delegate_and_check_components!`](delegate_and_check_components.md) and [`#[cgp_namespace]`](cgp_namespace.md). The macro accepts no attributes on the table or its entries and rejects any it finds.
+Three productions carry the same shape with different permissions, and keeping them apart is what the grammar's three segment names are for. A `KeySegment` — a segment of a `PathKey` — takes an optional leading `Generics` list, so `@SomeComponent.<'a, T> &'a T` is accepted and the parameter it introduces lands on that entry's impls; the generics of every segment along one path are merged. A `PathSegment` — a segment of a `PathValue`, the right-hand side of a `` `=>` `` — takes no generics at all and admits no groups; it is exactly the production [`Path!`](path.md) defines, which is why the two are always in step. And every `Generics` list on a key is an *impl-position* list, so it accepts bounds (`<T: Clone> BazKey<T>: BazProvider`) but rejects a parameter default, which has no meaning on an impl and fails with `invalid impl generics syntax`.
+
+The `ProviderValue` nested-table form wires the key to a `UseDelegate`-style wrapper while defining the inner table in place; the `InnerTable`'s `TableBody` is the same production, so an inner table accepts every statement and mapping form an outer one does. Note that an `InnerTable` is an identifier with an optional generic list rather than a full `TargetType`: an outer table may be keyed on any `Type`, while a nested one always names a fresh struct the macro declares, and its `BoundFreeGenerics` is a *definition-position* list — no bounds and no defaults, and a `const` parameter must be written as the bare name — so write the bound on the *entry's* generics instead. A bound written on the inner table is rejected, but not informatively: the value parser tries the nested-table form speculatively and falls back to parsing the whole value as a plain type when that fails, so `UseDelegate<new BarValue<T: Clone> { … }>` reports `expected ','` at the inner table's name rather than anything about generics. An `OpenStmt` opens each listed component for per-value wiring directly in the context's table, after which `PathKey` mappings populate it; its brace-delimited list may be written without braces when it opens exactly one component (`open Component;`), while opening several at once requires the braces. The `NamespaceStmt` and `ForStmt` statement forms are defined under [`#[cgp_namespace]`](cgp_namespace.md). Every `Statement` must precede every `Mapping`, as the `TableBody` production requires. `Mapping`, `NormalMapping`, `Key`, `PathKey`, and `ProviderValue` are the shared productions reused by [`delegate_and_check_components!`](delegate_and_check_components.md) and [`#[cgp_namespace]`](cgp_namespace.md). The macro accepts no attributes on the table or its entries and rejects any it finds.
 
 ## Expansion
 

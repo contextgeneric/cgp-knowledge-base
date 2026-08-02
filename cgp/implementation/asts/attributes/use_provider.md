@@ -29,6 +29,10 @@ The behavioral tests exercise both hosts and a full higher-order provider:
 - [higher_order_providers/use_provider_impl.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/higher_order_providers/use_provider_impl.rs) pins the `#[cgp_impl]` form.
 - [higher_order_providers/scaled_area.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/higher_order_providers/scaled_area.rs) wires a full higher-order provider through it.
 
+The rejection cases pin the one-provider-per-attribute rule, which is what makes this modifier the exception to the comma-separated convention its siblings follow:
+
+- [parser_rejections/use_provider.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/use_provider.rs) checks that a comma-separated list of provider-and-trait pairs is refused on both hosts, and — as the counterpart that stops the rejection being read too broadly — that `+`-separated bounds on *one* provider are accepted.
+
 ## Source
 
 - The `use_provider/` submodule in [cgp-macro-core/src/types/attributes/use_provider/](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-core/src/types/attributes/use_provider/): `attribute.rs` holds `UseProviderAttribute` and the bound completion, `attributes.rs` holds `UseProviderAttributes` and its `AddTypeParamBounds` impl.

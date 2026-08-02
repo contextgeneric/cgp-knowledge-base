@@ -24,6 +24,16 @@ The idiomatic entry is the simple `Trait<Params>` form, since the attribute is m
 
 `#[uses(...)]` is accepted in both [`#[cgp_fn]`](../macros/cgp_fn.md) and [`#[cgp_impl]`](../macros/cgp_impl.md). In either case it imports capabilities into the provider being defined, and those capabilities may themselves be defined with either [`#[cgp_fn]`](../macros/cgp_fn.md) or [`#[cgp_component]`](../macros/cgp_component.md) — the attribute does not care how the imported capability was produced, only that it is a trait the context can implement.
 
+## Syntax Grammar
+
+The attribute argument of `#[uses]` is a comma-separated list of bounds:
+
+```ebnf
+UsesArgs -> TypeParamBound ( `,` TypeParamBound )* `,`?
+```
+
+`TypeParamBound` is the Rust grammar's own bound production, which is wider than the plain `Trait<Args>` form the attribute is normally written with: a lifetime, a `?Sized`, and an associated-type equality such as `HasErrorType<Error = AppError>` all parse, even though [`#[use_type]`](use_type.md)'s equality form is the preferred way to spell the last of those for an abstract-type trait. The list may be empty, and the attribute may be repeated — entries from every occurrence are collected before the single `Self:` predicate is built, so `#[uses(A, B)]` and `#[uses(A)] #[uses(B)]` emit the same thing.
+
 ## Expansion
 
 `#[uses(...)]` adds one `Self`-anchored predicate to the generated impl's `where` clause for the listed bounds, and changes nothing about the trait definition. Starting from two `#[cgp_fn]` capabilities where the second depends on the first:

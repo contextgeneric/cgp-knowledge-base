@@ -72,10 +72,11 @@ it stale.
 - [cgp_type.md](cgp/reference/macros/cgp_type.md) — define an abstract-type component, layering a
   `UseType` impl over `#[cgp_component]`.
 - [check_components.md](cgp/reference/macros/check_components.md) — assert at compile time that a
-  context can use each listed component; covers `#[check_providers]` and `#[check_params]`.
+  context can use each listed component; covers `#[check_providers]` and `#[check_trait]`.
 - [delegate_and_check_components.md](cgp/reference/macros/delegate_and_check_components.md) — wire
-  and check in one macro, which of the shared syntax forms the check derivation reads, and why it is
-  wrong for an aggregate provider.
+  and check in one macro, which of the shared syntax forms the check derivation reads, the
+  `#[check_params]`/`#[skip_check]` per-entry attributes and how they merge on a list key, and why the
+  macro is wrong for an aggregate provider.
 - [delegate_components.md](cgp/reference/macros/delegate_components.md) — build a context's wiring
   table, exhaustively: the `new` aggregate form and generic lists, the three operators (`:`, `->`,
   `=>`), the three key forms with the `[…]`/`{…}` path groups, the two value forms, the three
@@ -96,7 +97,7 @@ it stale.
 - [extend_where.md](cgp/reference/attributes/extend_where.md) — add `where` predicates to a
   `#[cgp_fn]` trait's own definition rather than only its impl.
 - [implicit.md](cgp/reference/attributes/implicit.md) — source a function argument from a same-named
-  context field, with the clone/`as_str`/option/slice/mutable access rules.
+  context field, with the clone/`as_str`/option/slice/`MRef`/mutable access rules.
 - [use_provider.md](cgp/reference/attributes/use_provider.md) — complete an inner provider's bound in
   a higher-order provider by filling in the context argument.
 - [uses.md](cgp/reference/attributes/uses.md) — import `Self` capability bounds, reading like a `use`

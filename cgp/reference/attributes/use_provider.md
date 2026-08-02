@@ -27,6 +27,19 @@ The body of such a provider still calls the inner provider as an associated func
 
 Stacking is therefore the intended form here rather than a fallback, and this attribute is the exception to the one-attribute-comma-separated convention the sibling attributes follow. Writing the pairs with a comma is a parse error reported against the comma, reading `expected +`; omitting the trait entirely is one reported against the missing colon, reading `expected :`, since there is no bare provider form.
 
+## Syntax Grammar
+
+The attribute argument of `#[use_provider]` is one provider type and the provider traits it must satisfy:
+
+```ebnf
+UseProviderArgs -> ProviderType `:` ProviderBound ( `+` ProviderBound )*
+
+ProviderType    -> Type
+ProviderBound   -> TypePath GenericArgs?
+```
+
+Both parts are required. `ProviderType` is the generic parameter the inner provider occupies, and each `ProviderBound` is a provider trait to require of it, written *without* the leading context argument that the attribute inserts. Two properties of these productions account for every parse failure the attribute produces. A `ProviderBound` is a path with plain generic arguments rather than a full `TypeParamBound`, so a turbofish or an associated-type binding in that position does not parse and belongs in the host's own `where` clause instead. And the `+`-separated bound list is parsed to the end of the attribute's input, which is why exactly one provider fits in one attribute and why a comma after the first pair is read as a missing `+`.
+
 ## Expansion
 
 `#[use_provider]` rewrites nothing in the body; it only completes and inserts the `where`-clause bound. Take this higher-order provider, where `ScaledArea` scales the area produced by an inner calculator:
