@@ -111,6 +111,17 @@ update the counts in [site-structure.md](../site-structure.md),
 [information-architecture.md](../information-architecture.md), and [tasks.md](../tasks.md) in the same
 change.
 
+**Splitting a page that already exists means re-pointing every link into it, and that is the step most
+easily half-done.** Pages that are already written link to the stubs — `use_field.md` in particular is
+cited from across `traits/` — so a split leaves dangling links in files you were not editing. Three
+habits make it survivable. Search for the *old* file name across all of `docs/`, not just the group you
+are porting, since the concepts tier links into the reference too. Search for **both link forms** — the
+relative one ending in `.md`, written between reference pages, and the absolute one rooted at
+`/docs/reference/` with no extension, which is what a concepts page uses — because a check that knows
+only the first will pass while the build still fails on the second. And decide per
+link which of the new pages it meant — a link labelled `CanUpcast` and a link labelled `build_from` came
+from one page and belong on two different ones, so a blanket rename is wrong.
+
 **Two things are documented on another construct's page rather than getting one, and both follow the same
 principle: they are not separately nameable *constructs*.** A **marker** is a type implementing a trait —
 `IsPresent`, `IsRef` — and belongs with that trait. An **alias** is a spelling of another construct —
