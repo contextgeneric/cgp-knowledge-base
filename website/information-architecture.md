@@ -138,8 +138,9 @@ This is the explanation tier, and its shape is now **one page per idea** rather 
 pages this document originally planned. The category is labelled *Concepts*, sits at `docs/concepts/`
 between Tutorials and Reference, and mirrors the internal
 [cgp/concepts/](../cgp/concepts/README.md) catalog one to one — the same relationship the reference
-section has to `cgp/reference/`. All eighteen are scaffolded and one,
-*Consumer and provider traits*, is written; the current state is recorded in
+section has to `cgp/reference/`. All eighteen are scaffolded and three are written —
+*Consumer and provider traits*, *Bypassing coherence*, and *How much CGP to use*, which between them cover
+every route the section's index offers as a starting point; the current state is recorded in
 [site-structure.md](site-structure.md).
 
 The three explanation pages this document named are not lost, but they are no longer separate

@@ -361,7 +361,7 @@ the three views diverge further.
 
 - **URL** — <https://contextgeneric.dev/docs/concepts/>
 - **Source** — [docs/concepts/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/concepts)
-- **Status** — Draft: the index and one page are written, the remaining pages are stubs
+- **Status** — Draft: the index and three pages are written, the remaining fifteen are stubs
 - **How it was made** — written by an agent from [cgp/concepts/](../cgp/concepts/README.md); level one
   of the four in [ai-disclosure.md](../communication-strategy/ai-disclosure.md)
 
@@ -376,12 +376,26 @@ which also brings the sidebar closer to the order
 
 **Every page is scaffolded and the idea list is complete**, mirroring how the reference port works:
 eighteen pages, one per document under [cgp/concepts/](../cgp/concepts/README.md), each carrying its
-one-line summary and a *Not written yet* admonition until it is filled in. One page is written in
-full — [Consumer and provider traits](https://contextgeneric.dev/docs/concepts/consumer-and-provider-traits)
-— and it is the model the rest are written against. It and the index are verified the same way the
-reference pages are: every snippet on the written page compiles, its closing example under a
-`check_components!` assertion per context, and the `E0119` its second listing turns on is the error the
-compiler actually reports for those two impls.
+one-line summary and a *Not written yet* admonition until it is filled in. **Three are written**, and
+between them they cover every route the index advertises as a starting point, so that section no longer
+sends a reader to a placeholder:
+[Consumer and provider traits](https://contextgeneric.dev/docs/concepts/consumer-and-provider-traits) for
+*how CGP works*, [Bypassing coherence](https://contextgeneric.dev/docs/concepts/coherence) for *why CGP
+exists*, and [How much CGP to use](https://contextgeneric.dev/docs/concepts/modularity-hierarchy) for
+*whether to adopt it*. All three are verified the same way the reference pages are: every snippet compiles,
+closing examples carry a `check_components!` assertion per wired context, and each quoted error — the
+`E0119` from two overlapping blanket impls, the `E0117` from a wholly foreign impl, the `E0119` from
+factoring an application's impls into a blanket one — is what the compiler actually reports.
+
+The two newer pages are deliberately different in kind, which is what makes them a useful pair to have
+written early. *Bypassing coherence* is the tier's long argument and follows the guide's five-movement
+outline plus the sixth movement that builds the application-context shape, ending on the sentence the page
+exists to earn — coherence is not repealed, it is scoped. *How much CGP to use* is a **decision guide
+rather than an explanation**, so it is shorter, leads with a rule of thumb, and uses tables where an
+explanation page would use prose; every row of its alternatives table concedes a case where the other tool
+wins, per the guide. It is also the site's only public home for the boundary material in
+[message.md](../communication-strategy/message.md#when-not-to-reach-for-cgp), and the place the reference's
+twenty-seven *When to reach for it* sections can point at instead of re-arguing locally.
 
 The sidebar order is the order a reader meets the ideas rather than the internal catalog's order:
 the coherence problem and the trait split first, then the three faces of dependency injection, then

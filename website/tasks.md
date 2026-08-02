@@ -143,12 +143,21 @@ Every page here is a surface the author reads before publication.
 **The section is scaffolded**, on the pattern the reference port uses: the category, the index, and all
 eighteen stubs exist, each carrying its one-line summary and a *Not written yet* notice, so no idea is
 missing from the site even where the page behind it is unwritten. What remains per page is the prose.
-One page is written and is the model for the rest —
-[Consumer and provider traits](https://contextgeneric.dev/docs/concepts/consumer-and-provider-traits),
-which covers what E3 was to cover of the trait split.
 
-The four entries below are the pages the homepage offloads to, and they are the ones to write first;
-the remaining fourteen follow, and a group of related pages is the natural unit for one session.
+**Three pages are written**, and between them they cover every route the index advertises as a starting
+point, so that section no longer hands a reader a placeholder:
+[Consumer and provider traits](https://contextgeneric.dev/docs/concepts/consumer-and-provider-traits) for
+*how CGP works* — which covers what E3 was to cover of the trait split —
+[Bypassing coherence](https://contextgeneric.dev/docs/concepts/coherence) for *why CGP exists*, and
+[How much CGP to use](https://contextgeneric.dev/docs/concepts/modularity-hierarchy) for *whether to adopt
+it*. The two newer ones are the models to write against, and deliberately of different kinds: the long
+argument, and the decision guide with its tables. The conventions they settle are recorded in
+[site-structure.md](site-structure.md).
+
+Two of the four homepage-offload entries therefore remain. **E1 is not startable** until its home is
+settled, which leaves **E3** as the one to write next — after which the tier's answer to "macros are magic"
+is complete and the remaining fourteen pages follow, a group of related pages being the natural unit for
+one session.
 
 - **E1 — *Project status and adoption risk*.** Mostly a move: lift the "Current Status" section out of
   the Introduction so the homepage can link it from above the fold. Its frankness is the asset and must
@@ -158,24 +167,11 @@ the remaining fourteen follow, and a group of related pages is the natural unit 
   under **Project** beside Contribute is the obvious alternative. Settle that before writing it.
   *Blocks:* F1's second call to action. *Done when:* the page stands alone, the Introduction links to
   it, and C7 is moot.
-- **E2 — *Bypassing coherence*, the page that plays *Why CGP exists*.** The highest-value page still
-  unwritten and the homepage's most frequent destination: coherence as a guarantee, what it costs, the
-  workarounds developers hand-roll, and the `Self`-becomes-a-parameter move with local coherence
-  restored. The guide carries the five-movement outline plus the sixth movement that builds the
-  application-context shape. *Lands in:* `docs/concepts/coherence.md`. *Blocks:* F1 (better done after,
-  since the rewritten homepage links here most), R2's concept-link destinations, and the deep dives'
-  primer removal.
 - **E3 — *Impl-side dependencies*, completing *How CGP works*.** The trait-split half is written; what
   remains of the site's answer to "macros are magic" is the dependency-injection half — how an
   implementation states what it needs without the interface carrying it. *Lands in:*
   `docs/concepts/impl-side-dependencies.md`. *Blocks:* R2's concept-link destinations, and the deep
   dives' primer removal.
-- **E4 — *How much CGP to use*, the page that plays *When to use CGP, and when not*.** A decision guide
-  rather than an essay, and the page the homepage's cost section hands a skeptic. It also carries the
-  second of the two shape decisions — which of CGP's three shapes to reach for, posed as two questions
-  rather than as a taxonomy — and the agent support note beside the costs. *Lands in:*
-  `docs/concepts/modularity-hierarchy.md`. *Blocks:* F1's cost section, which currently has nowhere to
-  hand off to.
 
 ## F — The front page
 
@@ -185,8 +181,8 @@ the remaining fourteen follow, and a group of related pages is the natural unit 
   essay including the cost section, and the routing section replacing the "Ready to Get Started?" filler.
   The hero block's own snippet must be **compiled, not eyeballed**, per the guide. *Lands in:*
   `src/pages/index.tsx` and `src/components/HomepageFeatures/`. *Spec:*
-  [writing-guides/homepage.md](writing-guides/homepage.md). *Blocked by:* C1, E1, E2, E4, F2, and O2
-  softly. *Done when:* the guide's five draft checks pass and the author has read it.
+  [writing-guides/homepage.md](writing-guides/homepage.md). *Blocked by:* C1, E1, F2, and O2 softly;
+  E2 and E4 are done. *Done when:* the guide's five draft checks pass and the author has read it.
 - **F2 — reconcile the three feature lists.** The front page names six capabilities, the Overview names
   five, and [identity.md](../communication-strategy/identity.md#the-headline-feature-set) curates a
   different five. The reconciliation is not a merge: the **front page** carries the curated five as prose
@@ -205,8 +201,8 @@ the remaining fourteen follow, and a group of related pages is the natural unit 
   itself describes as not recently updated; refresh the "Dynamic Dispatch" section, which predates
   `cargo-cgp` and the extensible-data work and understates what CGP now offers for enums. The page
   **stays where it is** rather than moving into a category, so the `slug: /overview` this task once
-  carried is no longer needed. *Blocked by:* E2 and E4, which are what the depth pointers should point
-  at instead.
+  carried is no longer needed. *Unblocked:* E2 and E4 are written, and are what the depth
+  pointers should point at instead of the book.
 
 ## T — Teaching
 
@@ -257,9 +253,8 @@ reader falls into. The spec and the porting procedure are in
   themselves — the internal [guides](../cgp/guides/README.md) reach the public site **only** through
   the *When to reach for it* sections, and every new page owes a provenance note. This group ships on
   its guide plus a spot check rather than a full read, and a subdirectory is the natural unit for one
-  session. *Blocked by:* R4 for what a *Gotchas* section may defer to. **Not blocked by E2/E3**, contrary
-  to what this entry previously claimed: twenty-seven pages were written without a single link into the
-  concept tier, because the guide's own fallback — summarize the idea in a sentence on the page — is the
+  session. *Blocked by:* R4 for what a *Gotchas* section may defer to. **Not blocked by the explanation tier**, contrary
+  to what this entry previously claimed: twenty-seven pages were written without a single link into it, because the guide's own fallback — summarize the idea in a sentence on the page — is the
   better answer while that tier is almost entirely stubs. Adding those links once the tier lands is a
   separate sweep rather than a prerequisite. *Done when:* no stub notice remains.
 - **R3 — the tooling section.** `cargo-cgp` gets its own top-level docs section beside the reference
@@ -302,13 +297,13 @@ are also independent of everything above, so they can start whenever there is ca
   and a genuine library improvement: without it every context spells out a dozen wiring entries, and the
   deep dive's payoff — two applications differing by a handful of lines — is far weaker. The attribute
   removals are breaking for downstream users and are accepted. *Lands in:* the `cgp-serde` repository.
-- **DD1 — the Hypershell deep dive.** Six pages. *Blocked by:* DC1, and by E2/E3, which is where the
+- **DD1 — the Hypershell deep dive.** Six pages. *Blocked by:* DC1, and by E3, which is where the
   post's embedded CGP primer goes instead of being re-taught. **This task also creates the `Deep dives`
   category.**
 - **DD2 — the extensible data types deep dive.** Seven pages, from four blog posts and two example
-  crates. *Blocked by:* DC2, E2/E3. Note that this is the deep dive serving the
+  crates. *Blocked by:* DC2, E3. Note that this is the deep dive serving the
   [least well-served reader](information-architecture.md) — the framework and library author.
-- **DD3 — the cgp-serde deep dive.** Five pages. *Blocked by:* DC3, E2/E3.
+- **DD3 — the cgp-serde deep dive.** Five pages. *Blocked by:* DC3, E3.
 
 Each of DD1–DD3 finishes the same way: **a pointer to the deep dive is added at the top of the blog post
 it grew out of** — four posts in DD2's case. That is the one sanctioned edit to a published post, since it
@@ -452,20 +447,19 @@ the [ordering](#the-ordering) for what to start on.
 |---|---|---|
 | C1–C8 | nothing | C1 → F1; C2 and C3 completed by V1 |
 | E1 | nothing | F1, F3 (it creates the category) |
-| E2, E3 | nothing | F1 (E2), F3 (E2), R2, DD1–DD3 |
-| E4 | nothing | F1, F3 |
+| E3 | nothing | DD1–DD3 |
 | F2 | nothing | F1 |
-| F3 | E1, E2, E4 | nothing |
-| F1 | C1, E1, E2, E4, F2, O2 (soft) | nothing |
+| F3 | E1 | nothing |
+| F1 | C1, E1, F2, O2 (soft) | nothing |
 | T1 | nothing | nothing (superseded by T2) |
 | T2, T4 | nothing | nothing |
 | T3 | nothing hard; reads better after R2 | nothing |
 | R1 | nothing | R2 |
-| R2 | R1, E2, E3, R4 (soft) | T3 (soft), X2 (soft) |
+| R2 | R1, R4 (soft) | T3 (soft), X2 (soft) |
 | R3 | nothing | nothing (C4, T2 point at it) |
 | R4 | nothing | R2's *Gotchas* sections |
 | DC1, DC2, DC3 | nothing | DD1, DD2, DD3 respectively |
-| DD1, DD2, DD3 | their DC task, plus E2 and E3 | nothing |
+| DD1, DD2, DD3 | their DC task, plus E3 | nothing |
 | B1, B2 | nothing (both held until after V1) | nothing |
 | V1 | the v0.8.0 release, and every release-blocking task | completes C2 and C3; unblocks B1 and B2 |
 | O1 | nothing | O2, and the Introduction narrowing (soft) |
@@ -474,8 +468,9 @@ the [ordering](#the-ordering) for what to start on.
 | X1, X2 | nothing | nothing |
 
 Four shapes in that graph are worth naming, because they are what make the ordering non-obvious. The
-**explanation tier is the hub**: E2 and E3 are prerequisites for the front page, the reference, and all
-three deep dives, which is why building them early converts into progress everywhere else. **R2 sets the
+**explanation tier is the hub**: E3 remains a prerequisite for all three deep dives, and E2 — now
+written — was the front page's most-linked destination, which is why building this tier early converts
+into progress everywhere else. **R2 sets the
 release date**, so it is the one task worth starting before it is strictly next and worth running in
 parallel with everything else. The **deep dives are gated on code** rather than on writing, so their long
 lead time starts with DC1–DC3 and those can run at any time. And **V1 is the terminus rather than an
@@ -495,10 +490,10 @@ waits for the reference, the reference's *prerequisites* are the real critical p
 small. R4 fixes what a *Gotchas* section may defer to, R3 is what C4, T2, and the homepage's cost section
 all point at, and R1 fixes the grouping that seventy pages then slot into.
 
-**Then E1 and E2, then E4 and E3.** E1 is mostly a move of text that already exists, unblocks the
-homepage's second call to action, and creates the category the rest of the tier and F3 need; E2 is the
-page the rewritten homepage links to most. E4 is what the homepage's cost section needs, and E3 is what
-the reference's concept links need.
+**Then E1 and E3**, the two homepage-offload pages left. E1 is mostly a move of text that already
+exists, unblocks the homepage's second call to action, and creates the category F3 needs — but it cannot
+start until its home is settled, which makes E3 the startable one. E3 completes the tier's answer to
+"macros are magic" and is the last blocker on the three deep dives.
 
 **Then start R2, and keep it running.** It is long, mechanical, parallelizable, and it is the release
 date. Split it by subdirectory across sessions and let everything below run alongside it.

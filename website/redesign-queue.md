@@ -147,23 +147,19 @@ repo, `blog/2026-05-10-v0.8.0-release.md`; the material and the four mechanical 
 Each of these is specified but unwritten. The first group is the explanation tier the homepage offloads
 to, and it is blocked on nothing.
 
-**The Concepts section is scaffolded but mostly unwritten** — eighteen pages under `docs/concepts/`, one
-per idea in the internal [concepts catalog](../cgp/concepts/README.md), of which one is written and the
-rest carry a one-line summary and a stub notice. What the scaffold already buys is that the *index* is
-complete, so no idea is missing from the site and no later page has to be retrofitted into the ordering;
-what remains is the prose. Three of the pages are the destinations the homepage essay needs most, and
-they are the ones to write first. *Spec and per-page outlines in
+**The Concepts section is scaffolded and mostly unwritten** — eighteen pages under `docs/concepts/`, one
+per idea in the internal [concepts catalog](../cgp/concepts/README.md), of which **three** are written and
+the remaining fifteen carry a one-line summary and a stub notice. What the scaffold already buys is that the
+*index* is complete, so no idea is missing from the site and no later page has to be retrofitted into the
+ordering; what remains is the prose. The three written pages cover every route that index advertises as a
+starting point, so it no longer hands a reader a placeholder. *Spec and per-page outlines in
 [writing-guides/explanation.md](writing-guides/explanation.md); current state in
 [site-structure.md](site-structure.md).*
 
-- **Bypassing coherence** — coherence, what it buys, what it costs, the workarounds developers
-  hand-roll, and the `Self`-becomes-a-parameter move with local coherence restored. The highest-value
-  page still missing and the homepage's most frequent destination.
 - **Impl-side dependencies** — the half of "what is actually generated" that the written
   *Consumer and provider traits* page leaves out: how an implementation states what it needs without
-  the interface carrying it.
-- **How much CGP to use** — the honest boundary as a decision guide. Nothing on the site currently
-  draws it, which is why the homepage's cost section has nowhere to hand a skeptic.
+  the interface carrying it. **The last of the homepage's offload destinations still missing**, and the
+  remaining blocker on all three deep dives.
 
 **Project status and adoption risk** — lifted out of the Introduction so it can be linked from above the
 fold. Its frankness is the asset and must survive the move; what changes is the year-stamp, the absence
