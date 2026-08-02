@@ -54,7 +54,9 @@ The `Scalar: Mul<Output = Scalar>` bound, written in the function body, stays as
 
 ## Examples
 
-`#[extend_where(...)]` is the right tool when a generic parameter of a `#[cgp_fn]` trait needs a publicly visible bound. The example above already shows the realistic shape: a `Scalar`-generic area function whose trait advertises `Scalar: Clone` while keeping the multiplication bound private to the impl. The promoted bound means any code naming `RectangleArea<Scalar>` can rely on `Scalar: Clone` without restating it.
+`#[extend_where(...)]` is the right tool when a generic parameter of a `#[cgp_fn]` trait needs a publicly visible bound. The example above already shows the realistic shape: a `Scalar`-generic area function whose trait advertises `Scalar: Clone` while keeping the multiplication bound private to the impl.
+
+**What the promotion buys is enforcement at the use site, not a bound callers inherit**, and the difference is easy to state backwards. A trait's `where` clause is a *precondition* on naming the trait rather than a guarantee elaborated to whoever holds it, so a caller generic over `Scalar` must still write `Scalar: Clone` in its own `where` clause — and naming `RectangleArea<NoClone>` for a non-`Clone` type is now rejected against the bound, reported as `E0277` with a `required by a bound in RectangleArea` note. Left on the impl alone, that same unsatisfiable bound is accepted in silence: an impl-side bound only decides where the impl applies, so `Ctx: RectangleArea<NoClone>` is a predicate nothing can prove and nothing complains until a concrete context is supplied. Removing that silence is the reason to promote a predicate; sparing a caller a bound is not, and only a supertrait added with [`#[extend]`](extend.md) does that.
 
 ## Related constructs
 

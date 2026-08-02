@@ -446,16 +446,28 @@ hand-written index as its category link and seven subdirectories mirroring what 
 **Every page is scaffolded and the construct list is complete**, which matters more than it sounds: the
 completeness obligation is against the index rather than against the prose, so no construct is missing
 from the site even while most pages are placeholders. Each stub carries its one-line description and an
-admonition saying it is unwritten. Four pages are written in full —
-[`#[cgp_component]`](https://contextgeneric.dev/docs/reference/macros/cgp_component),
+admonition saying it is unwritten. Eleven construct pages are written, plus the index: four in `macros/`
+— [`#[cgp_component]`](https://contextgeneric.dev/docs/reference/macros/cgp_component),
 [`#[cgp_impl]`](https://contextgeneric.dev/docs/reference/macros/cgp_impl),
 [`#[cgp_fn]`](https://contextgeneric.dev/docs/reference/macros/cgp_fn), and
-[`delegate_components!`](https://contextgeneric.dev/docs/reference/macros/delegate_components) — and
-they are the model the rest are ported against. All four and the index are verified against both the
-guide and the library: every snippet compiles under a `check_components!` assertion per wired context,
-and every *Under the hood* listing and quoted diagnostic matches what the toolchain actually emits. The
-conventions that verification pins down are in
+[`delegate_components!`](https://contextgeneric.dev/docs/reference/macros/delegate_components) — and the
+whole of `attributes/`, which is the first group finished end to end. Sixty-four construct pages and
+`errors.md` remain stubs.
+
+Every written page is verified against both the guide and the library: each snippet compiles under a
+`check_components!` assertion per wired context, and each *Under the hood* listing and quoted diagnostic
+matches what the toolchain actually emits. The conventions that verification pins down are in
 [Conventions the port must follow](#conventions-the-port-must-follow) below.
+
+Porting the attributes group corrected two claims this base had carried, which is worth recording because
+both had propagated from the internal reference rather than originating on the site.
+[`#[use_provider]`](../cgp/reference/attributes/use_provider.md) does **not** accept a comma-separated
+list of provider-and-trait pairs — the comma is a parse error, `+` continues one provider's bounds, and
+stacked attributes are the only way to bind several providers, making this attribute the exception to the
+one-attribute-comma-separated convention its siblings follow. And a predicate promoted by
+[`#[extend_where]`](../cgp/reference/attributes/extend_where.md) is a precondition callers must prove
+rather than a bound they inherit, so it does not save a caller from restating it; what it buys is that an
+unsatisfiable requirement is reported where the trait is named instead of being accepted in silence.
 
 ### How it relates to the knowledge base
 

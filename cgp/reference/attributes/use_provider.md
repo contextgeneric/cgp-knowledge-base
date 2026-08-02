@@ -18,7 +18,14 @@ The body of such a provider still calls the inner provider as an associated func
 #[use_provider(InnerCalculator: AreaCalculator)]
 ```
 
-`InnerCalculator` is the provider type — usually a generic parameter of the impl — and `AreaCalculator` is the provider trait whose `Self`/context argument the macro fills in. The trait may carry its own further generic arguments after the context slot, and these are preserved in order behind the inserted `Self`. When a provider binds more than one inner provider, prefer supplying all the bounds in a single `#[use_provider]` attribute separated by commas — `#[use_provider(Inner1: TraitA, Inner2: TraitB)]` — since one attribute reads as a single dependency list. Splitting the bounds across stacked attributes behaves identically, but reach for a second attribute only when a real reason calls for it rather than as the default.
+`InnerCalculator` is the provider type — usually a generic parameter of the impl — and `AreaCalculator` is the provider trait whose `Self`/context argument the macro fills in. The trait may carry its own further generic arguments after the context slot, and these are preserved in order behind the inserted `Self`. Two forms carry more than one bound, and **unlike [`#[uses]`](uses.md) and [`#[use_type]`](use_type.md), a comma-separated list of provider-and-trait pairs is not among them.** Several trait bounds on *one* provider are joined with `+` — `#[use_provider(Inner: TraitA + TraitB)]` — because after the first trait the parser is continuing that provider's bound list. Several *providers* take one stacked attribute each:
+
+```rust
+#[use_provider(A: AreaCalculator)]
+#[use_provider(P: PerimeterCalculator)]
+```
+
+Stacking is therefore the intended form here rather than a fallback, and this attribute is the exception to the one-attribute-comma-separated convention the sibling attributes follow. Writing the pairs with a comma is a parse error reported against the comma, reading `expected +`; omitting the trait entirely is one reported against the missing colon, reading `expected :`, since there is no bare provider form.
 
 ## Expansion
 

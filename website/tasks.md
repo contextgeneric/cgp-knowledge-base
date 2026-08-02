@@ -415,17 +415,22 @@ to another project's README or documentation in the meantime.
 
 ## X — Cross-cutting
 
-- **X1 — update the agent skill and re-inline it.** The published copy states v0.7.0, teaches
-  `#[use_type]` with `::` where current syntax uses `.`, presents `#[derive_delegate]` and nested
-  `UseDelegate` tables where the idiom is `open`, never mentions
-  [namespaces](../cgp/concepts/namespaces.md), and omits `cargo-cgp`. It should also carry two
-  clarifications settled since: that [`#[uses]`](../cgp/reference/attributes/uses.md) applies to ordinary
-  Rust traits and not only to CGP capabilities, and the
+- **X1 — re-inline the agent skill.** What remains here is the re-inlining, not the skill: the source in
+  `cgp-skills` is current at v0.8.0, spells `#[use_type]` with `.`, leads with `open` over
+  [`#[derive_delegate]`](../cgp/reference/attributes/derive_delegate.md), covers
+  [namespaces](../cgp/concepts/namespaces.md) and `cargo-cgp`, carries the
   [context and target qualifiers](../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target),
-  since the skill's own examples span a value context (`Person: CanGreet`) and an environmental one
-  without distinguishing them. **Fix it in `cgp-skills` and re-inline the result; never edit the website
-  copy**, which would create a fourth version of the truth. *Lands in:* the `cgp-skills` repository, then
-  the website repository. *Blocked by:* nothing.
+  and now states that [`#[uses]`](../cgp/reference/attributes/uses.md) takes ordinary Rust traits as
+  readily as CGP capabilities. **The published copy on the website is the stale one** — it still states
+  v0.7.0 and carries every defect that list describes, which is what the re-inline fixes. **Never edit the
+  website copy directly**, since that would create a fourth version of the truth. *Lands in:* the website
+  repository. *Blocked by:* nothing.
+
+  Two corrections landed in `cgp-skills` alongside the attributes port and are worth knowing about,
+  because both had been recommending forms that do not compile: `#[use_provider]` takes **one attribute
+  per inner provider** rather than a comma-separated list, which the skill had advised in four places; and
+  a predicate promoted by [`#[extend_where]`](../cgp/reference/attributes/extend_where.md) is a
+  precondition callers must prove rather than a bound they inherit.
 - **X2 — the crate's own landing page.** `crates/main/cgp/README.md` is what crates.io and docs.rs
   display for the `cgp` crate, and it is a thirteen-line stub that says CGP's constructs are "still
   mostly undocumented within Rustdoc", routes readers to the book the site itself describes as not
