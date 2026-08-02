@@ -392,14 +392,13 @@ oversight: these pages *are* prose written for agents, the index says so before 
 and a reader who follows one lands where the skill meant to send them. The exception is bounded to
 pages nobody hand-writes.
 
-**Three pages lose their in-page navigation.** Docusaurus generates heading anchors for `h2` and `h3`
-only, and the skill uses `#` for its major sections — fourteen in `SKILL.md`, ten in `macro-grammar.md`,
-three in `error-extraction.md`. Those sections therefore get no anchor and no table-of-contents entry,
-and the one intra-document link that targets such a heading is reported as a broken anchor on every
-build. The other thirteen reference pages carry a single `h1` title and are unaffected. Demoting the
-non-title headings to `##` in the skill repository would fix all of it and is better structure for a
-single document; it has not been done, because it is the skill's authored shape and the choice belongs
-with its author.
+**Heading depth is load-bearing here, in a way it is nowhere else on the site.** Docusaurus generates
+anchors for `h2` and `h3` only, so a skill file that used `#` for its major sections would leave every
+one of them unanchored, absent from the page's table of contents, and impossible to link to. Both files
+that did — `SKILL.md` and `macro-grammar.md` — now carry a single `#` title with their sections beneath
+it, and every heading in the section is anchored. A skill file added or restructured upstream should
+keep that shape, and the check is cheap: more than one `#` outside a code fence is the defect. (Counting
+by grep overstates it — a `#` shell comment inside a fenced block is not a heading.)
 
 **The skill's front matter is not Docusaurus front matter.** `SKILL.md` opens with the agent-skill
 `name`/`description` block. Docusaurus tolerates it and takes the page title from the first heading, so
