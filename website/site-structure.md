@@ -469,6 +469,15 @@ one-attribute-comma-separated convention its siblings follow. And a predicate pr
 rather than a bound they inherit, so it does not save a caller from restating it; what it buys is that an
 unsatisfiable requirement is reported where the trait is named instead of being accepted in silence.
 
+Reviewing the written pages afterwards corrected a third, this one originating on the site. The
+[`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md) page had given "implementing a provider trait on a
+concrete type" as a reason to drop to [`#[cgp_provider]`](../cgp/reference/macros/cgp_provider.md), and
+that is not one: `#[cgp_impl(new P)] impl SomeProvider for ConcreteContext` compiles, pins the provider to
+that context, and passes a check. What genuinely needs the lower-level form is a provider *struct* the
+attribute cannot declare — one with a default generic parameter, or one shared by several impls. The
+internal reference now records the concrete-context form explicitly, since its absence there is what let
+the wrong reason stand.
+
 ### How it relates to the knowledge base
 
 Each public page is derived from the internal document of the same name under
