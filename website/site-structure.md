@@ -616,7 +616,7 @@ come for, and it is the first thing a well-meaning trim targets.
 
 - **URL** — <https://contextgeneric.dev/docs/reference/>
 - **Source** — [docs/reference/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/reference)
-- **Status** — Draft: the index and 33 construct pages are written, the remaining pages are stubs
+- **Status** — Draft: the index and 48 construct pages are written, the remaining pages are stubs
 - **How it was made** — ported by an agent from [cgp/reference/](../cgp/reference/README.md); level one
   of the four in [ai-disclosure.md](../communication-strategy/ai-disclosure.md)
 
@@ -631,10 +631,10 @@ hand-written index as its category link and seven subdirectories mirroring what 
 **Every page is scaffolded and the construct list is complete**, which matters more than it sounds: the
 completeness obligation is against the index rather than against the prose, so no construct is missing
 from the site even while most pages are placeholders. Each stub carries its one-line description and an
-admonition saying it is unwritten. Thirty-three construct pages are written, plus the index and
-`errors.md`: the whole of `macros/` (twenty pages), the whole of `attributes/` (seven), and the whole of
-`derives/` (six), which are the first three groups finished end to end. Forty-two construct pages remain
-stubs — `components/`, `providers/`, `traits/`, and `types/` are untouched.
+admonition saying it is unwritten. Forty-eight construct pages are written, plus the index and
+`errors.md`: the whole of `macros/` (twenty pages), `attributes/` (seven), `derives/` (six), and `traits/`
+(fifteen), which are the first four groups finished end to end. Twenty-seven construct pages remain
+stubs — `components/`, `providers/`, and `types/` are untouched.
 
 ### The compile-errors page
 
@@ -771,7 +771,9 @@ That page is also the first under `docs/reference/` with a file in the
 [`example-code`](https://github.com/contextgeneric/contextgeneric.dev/tree/main/example-code) crate, at
 `src/reference/macros/delegate_components.rs`, so every form it shows is compiled with a
 `check_components!` assertion per wired context and its rejected snippet is a `compile_fail` doctest.
-A later page in this section adds its own file the same way.
+Later pages in this section add their own files the same way; `derives/` covers all six and `traits/` covers the
+four whose pages show code a compiler can check, since a page that only displays a trait definition would be
+checking nothing about CGP by re-declaring it.
 
 Porting the `derives/` group corrected two claims and turned up a library defect, all three found by
 compiling the pages' snippets rather than by reading them — which is the strongest argument yet for the
@@ -799,6 +801,39 @@ recorded as a Known issue in all five affected reference and implementation docu
 pages, and as a third sibling in the
 [out-of-scope generated name](../cgp/errors/lowering/out-of-scope-generated-name.md) error class. Struct *field* names are
 unaffected, since a field is not in the same namespace as an associated type.
+
+Porting the `traits/` group turned up a different class of defect from the derives, and the shape of it is
+worth recording because it was found by one systematic check rather than page by page. **Auditing every trait
+against the prelude** — thirty-three of the sixty-three public traits and markers these pages cover are
+re-exported, thirty are not — showed that four internal reference documents carried **examples that would not
+compile**, each missing an import for a trait that is not in the prelude: `cast.md` for the four casts,
+`product_ops.md` for all three operations, `map_type.md` for `TransformMap`, and `default_namespace.md` for
+`DefaultImpls1`. That is the same class as the derives round's `build_from` defect, and finding four at once is
+the argument for auditing prelude membership as a whole rather than per page. Each public page now states where
+its traits are imported from.
+
+Three further corrections came out of the same audit. **`StaticFormat` cannot be named through the `cgp` crate
+at all** — it is `pub` in `cgp-base-types`, but `cgp::core` re-exports a different types crate, `cgp-base` is
+not a dependency of `cgp`, and the prelude carries only its sibling `ConcatPath`; so it is reachable only
+through the `Display` impls it powers, which the internal document had presented as a usable trait and now
+records as a Known issue. **`DefaultImpls1` and `DefaultImpls2` put the instance type in the `Self` position
+and the component name in a leading parameter**, which is the opposite of what the parameter names `T`/`T1`/`T2`
+suggest — the internal document's Definition section had it backwards while its Behavior section had it right,
+so the document contradicted itself. And `static_format.md`'s `ConcatPath` example used `Path!(a.b)`, which does
+not parse: [`Path!`](../cgp/reference/macros/path.md) requires the leading `@`.
+
+Two smaller facts are now recorded rather than implied: `IsOwned` is a public `MapTypeRef` marker that
+**nothing in CGP selects**, so a reader meeting it in the list of three should not assume an owned extractor
+exists; and `FieldsExtractor` is `pub` while its analogue `FieldsBuilder` is private, so only the former can
+appear by name in a diagnostic.
+
+Two coverage gaps in the library were closed alongside. **`AppendProduct`, `ConcatProduct`, and `MapFields` had
+no test anywhere** despite being public and carrying worked examples in the internal reference; they now have
+one, written as type equalities since they compute types rather than values, and covering `MapFields` over the
+sum spine as well as the product one. And **`DefaultImpls2` is reachable rather than declared-and-unusable** —
+nothing in the library emits or consumes it, so a test establishes that `#[default_impl]` registers a two-type
+key and a `for … in` loop consumes it, which needed no new construct because the attribute accepts an arbitrary
+namespace path.
 
 Three coverage gaps in the library's own test suite were closed in the same pass, and the shape of them
 is worth noting: **`#[derive(BuildField)]`, `#[derive(ExtractField)]`, and `#[derive(CgpRecord)]` had no

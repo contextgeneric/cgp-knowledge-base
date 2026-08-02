@@ -103,6 +103,8 @@ One variant has no dedicated `snapshot_cgp_namespace!` yet: a namespace body car
 
 ## Tests
 
+- [namespaces/default_impls2.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/namespaces/default_impls2.rs) establishes that [`DefaultImpls2`](../../reference/traits/default_namespace.md) is reachable rather than a declared-but-unusable trait: because `#[default_impl]` accepts an arbitrary namespace path and appends only the table parameter, a two-type key registers and a `for … in` loop consumes it with no new construct. Nothing in the library emits or consumes it, so this is its only coverage.
+
 The behavioral tests confirm the generated namespaces wire correctly:
 
 - [namespaces/namespace_group.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/namespaces/namespace_group.rs) wires a context to a namespace and checks the grouped components resolve.

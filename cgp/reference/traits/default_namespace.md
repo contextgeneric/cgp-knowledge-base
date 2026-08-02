@@ -28,11 +28,23 @@ pub trait DefaultImpls2<T1, T2, Components> {
 }
 ```
 
-`Self` is the key being looked up — a component-name type for `DefaultNamespace`, and the component-name type for the `DefaultImpls` variants too, with the per-instance types carried as the leading parameters. `Components` is the table the lookup is performed against, threaded through so that the same key can resolve differently depending on which context's table is consulted. The leading `T`, or `T1`/`T2`, are the instance types a per-type or per-pair default is keyed on. `Delegate` is the resolved value: the provider (or further redirect) the key maps to. As with [`DelegateComponent`](delegate_component.md), there is no method and no data; resolution is the projection of `Delegate` from the matching impl.
+`Self` is the key being looked up and `Components` is the table the lookup is performed against, threaded through so that the same key can resolve differently depending on which context's table is consulted. `Delegate` is the resolved value: the provider (or further redirect) the key maps to. As with [`DelegateComponent`](delegate_component.md), there is no method and no data; resolution is the projection of `Delegate` from the matching impl.
+
+**The parameter names `T`, `T1`, and `T2` are misleading about which position holds what, and this is the easiest thing on this page to get backwards.** For `DefaultNamespace` the key in the `Self` position is the component name, as the name suggests. For the two `DefaultImpls` variants it is the other way round: `Self` is the *instance* type and the component name is passed as a leading parameter. Registering `ShowString` as the `String` default for `ShowImplComponent` emits
+
+```rust
+impl<Components> DefaultImpls1<ShowImplComponent, Components> for String {
+    type Delegate = ShowString;
+}
+```
+
+so `Self` is `String` and the trait's `T` parameter is filled by `ShowImplComponent`. The rule that actually governs it comes from the attribute rather than from the trait: `#[default_impl(Key in NamespacePath)]` makes `Key` the impl's `Self` and appends the table parameter to whatever `NamespacePath` names, so the leading arguments are simply the ones written inside the path. The same rule is what makes the `for … in` loop's bound read `T: DefaultImpls1<Component, App, Delegate = Provider>`, with the loop variable in the `Self` position.
+
+`DefaultImpls2` extends this to a two-type key and is reachable by exactly the same route, since the attribute accepts an arbitrary namespace path: `#[default_impl(String in DefaultImpls2<ShowImplComponent, u64>)]` registers a default under the pair. Nothing in the library itself emits or consumes `DefaultImpls2` — no macro special-cases it and it has no other user — so it is a provided extension point rather than a construct the generated code relies on.
 
 ## Behavior
 
-Each trait is implemented once per default entry, and resolving a default is reading `Delegate` from the matching impl. `DefaultNamespace<Components>` is implemented for a component-name key when a namespace supplies a default for that component regardless of any type parameter; the [`#[prefix(...)]`](../macros/cgp_namespace.md) attribute that attaches a component to a namespace emits exactly such an impl, with `Delegate` a [`RedirectLookup`](../providers/redirect_lookup.md) that re-routes the lookup along a path. `DefaultImpls1<T, Components>` is implemented for a component-name key carrying one instance type `T`, so the same component resolves per type; the `#[default_impl(T in DefaultImpls1<Component>)]` attribute on a provider impl (shown under Examples below) registers the provider as the default for that `T`, emitting `impl<Components> DefaultImpls1<Component, Components> for T { type Delegate = Provider; }`. `DefaultImpls2` does the same with two instance types for a pair-parameterized component.
+Each trait is implemented once per default entry, and resolving a default is reading `Delegate` from the matching impl. `DefaultNamespace<Components>` is implemented for a component-name key when a namespace supplies a default for that component regardless of any type parameter; the [`#[prefix(...)]`](../macros/cgp_namespace.md) attribute that attaches a component to a namespace emits exactly such an impl, with `Delegate` a [`RedirectLookup`](../providers/redirect_lookup.md) that re-routes the lookup along a path. `DefaultImpls1<T, Components>` is implemented for an *instance* type carrying the component name as its leading parameter, so the same component resolves per type; the `#[default_impl(T in DefaultImpls1<Component>)]` attribute on a provider impl (shown under Examples below) registers the provider as the default for that `T`, emitting `impl<Components> DefaultImpls1<Component, Components> for T { type Delegate = Provider; }` — note again that `T` is the impl's `Self`, not the trait's `T` parameter. `DefaultImpls2` does the same under a two-type key.
 
 The registration impl carries only the parameters that name the key and provider plus the `Components` table — never the provider's impl-side `where` clause. A provider whose bounds come from `#[use_type]`, `#[uses]`, `#[implicit]`, or `#[use_provider]` (for example `where Self: HasErrorType`) registers cleanly: those bounds stay on the provider's own impl and its [`IsProviderFor`](is_provider_for.md), and are checked when a real context resolves the provider, so a per-type default works regardless of what abstract types the provider depends on.
 
@@ -47,6 +59,7 @@ Inheritance and override compose on top. A namespace that inherits from a parent
 A per-type default registered with `#[default_impl]` and then pulled into a context shows the chain. A provider declares itself the default for one type:
 
 ```rust
+use cgp::core::component::DefaultImpls1;
 use cgp::prelude::*;
 use core::fmt::Display;
 

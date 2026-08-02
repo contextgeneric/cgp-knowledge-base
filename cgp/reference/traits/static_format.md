@@ -80,11 +80,20 @@ assert_eq!(<Symbol!("") as StaticString>::VALUE, "");
 `ConcatPath` composes two paths into one at the type level, the operation behind chaining nested accessors:
 
 ```rust
-type Outer = Path!(a.b);
-type Inner = Path!(c.d);
+type Outer = Path!(@a.b);
+type Inner = Path!(@c.d);
 type Joined = <Outer as ConcatPath<Inner>>::Output;
-// the path a.b.c.d
+// the path @a.b.c.d
 ```
+
+Note the leading `@`: [`Path!`](../macros/path.md) requires it, so `Path!(a.b)` does not parse. The shape the
+library itself uses is narrower than joining two written paths — the generated code appends a single segment, as
+`__Path__: ConcatPath<PathCons<T, Nil>>`, which is how a redirected lookup extends the route it was given by one
+step.
+
+## Known issues
+
+**`StaticFormat` cannot be named through the `cgp` crate.** It is `pub` in `cgp-base-types`, but nothing re-exports it onto a public path: `cgp::core` re-exports `cgp_type as types` rather than `cgp-base-types`, `cgp-base` is not a dependency of `cgp` at all, and the prelude carries only its sibling `ConcatPath` (through `cgp-base`'s `macro_prelude`). So a crate depending on `cgp` can use the trait's *effect* — `Symbol` and `Chars` implement `Display` by delegating to it, so `to_string()` and `{}` work — but cannot name the trait, bound on it, or implement it for a type of its own. In practice it is an implementation detail of those `Display` impls rather than part of the public surface, and [`StaticString`](#staticstring) (reachable at `cgp::core::field::traits::StaticString`) is the trait to reach for when the decoded name is actually wanted. The correct behavior would be to re-export it beside `ConcatPath`; the asymmetry between the two, which live in the same crate, is what makes this look like an oversight rather than a decision.
 
 ## Related constructs
 

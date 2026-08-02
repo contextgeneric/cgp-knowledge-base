@@ -61,6 +61,7 @@ The variant conversions are driven by a shared recursion over the target's sum o
 Upcasting and downcasting let independently-defined enums interconvert by their common variants. Given a wide enum and a narrow one that share variant names, conversion is name-driven and needs no manual impl:
 
 ```rust
+use cgp::core::field::impls::{CanDowncast, CanUpcast};
 use cgp::prelude::*;
 use core::marker::PhantomData;
 
@@ -89,6 +90,8 @@ assert_eq!(FooBarBaz::Baz(true).downcast(PhantomData::<FooBar>).ok(), None);
 `CanBuildFrom` assembles one struct from several smaller ones by copying their fields into a builder before finalizing:
 
 ```rust
+use cgp::core::field::impls::CanBuildFrom;
+
 #[derive(CgpData)] pub struct FooBar { pub foo: u64, pub bar: String }
 #[derive(CgpData)] pub struct Baz { pub baz: bool }
 #[derive(CgpData)] pub struct FooBarBaz { pub foo: u64, pub bar: String, pub baz: bool }
@@ -105,6 +108,6 @@ The casting traits sit on top of the extensible-data primitives: variant casts r
 
 ## Source
 
-- `CanUpcast`, `CanDowncast`, and `CanDowncastFields`, together with the internal `FieldsExtractor` recursion that drives them, are defined in [crates/core/cgp-field/src/impls/cast.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/impls/cast.rs).
+- `CanUpcast`, `CanDowncast`, and `CanDowncastFields`, together with the `FieldsExtractor` recursion that drives them, are defined in [crates/core/cgp-field/src/impls/cast.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/impls/cast.rs). Note that `FieldsExtractor` is `pub` while the analogous `FieldsBuilder` in `build_from.rs` is private — so the extractor recursion can appear by name in a diagnostic and be named in a bound, while the builder recursion cannot.
 - `CanBuildFrom` and its internal `FieldsBuilder` recursion are in [crates/core/cgp-field/src/impls/build_from.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/impls/build_from.rs).
 - The underlying extractor and builder traits are under [crates/core/cgp-field/src/traits/](https://github.com/contextgeneric/cgp/tree/main/crates/core/cgp-field/src/traits/) (`extract_field.rs`, `from_variant.rs`, `has_builder.rs`).

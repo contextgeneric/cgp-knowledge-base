@@ -47,6 +47,8 @@ impl MapTypeRef for IsMut   { type Map<'a, T: 'a> = &'a mut T; }
 impl MapTypeRef for IsOwned { type Map<'a, T: 'a> = T; }
 ```
 
+Two of the three have consumers. `IsRef` and `IsMut` are what `HasExtractorRef` and `HasExtractorMut` fix their borrowed extractors to, but **nothing in CGP currently selects `IsOwned`** — no derive emits it and no provider resolves against it. It is available for a borrowed view that holds its payloads by value, and at present that view exists only if you write it yourself. `IsOwned` is also, unlike `IsRef` and `IsMut`, not in the prelude.
+
 A borrowed extractor combines the two families: the partial type carries one outer `MapTypeRef` marker (`IsRef` for `extractor_ref`, `IsMut` for `extractor_mut`) shared across all fields, and one `MapType` marker per field. A field's storage type is then `MapType::Map<MapTypeRef::Map<'a, T>>` — the per-field presence marker applied to the borrowed value type.
 
 ## `TransformMap` and `TransformMapFields`
@@ -76,6 +78,8 @@ The recursion is the load-bearing part. For each `Field<Tag, Value>` in the spin
 These markers are mostly seen through the generated partial types of [`#[derive(CgpData)]`](../derives/derive_cgp_data.md), but the transform family is directly useful. A common application fills in default values for absent fields by transforming every field's marker to `IsPresent`, supplying `Default::default()` wherever a field was `IsNothing` or an empty `Option`:
 
 ```rust
+use cgp::core::field::impls::IsOptional;
+use cgp::core::field::traits::TransformMap;
 use cgp::prelude::*;
 
 pub struct FillDefaults;

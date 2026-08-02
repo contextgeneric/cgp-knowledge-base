@@ -81,6 +81,7 @@ The defining behavior of all three is that they are evaluated at compile time by
 These operations underlie the extensible-record machinery, so they are most visible through its higher-level interface, but they can be exercised directly on type-level lists. Appending and concatenating compute new product types:
 
 ```rust
+use cgp::core::field::traits::{AppendProduct, ConcatProduct};
 use cgp::prelude::*;
 
 type Base = Product![Field<Symbol!("host"), String>];
@@ -98,6 +99,9 @@ type Full = <WithPort as ConcatProduct<Extra>>::Output;
 `MapFields` rewrites every entry uniformly. Applying `IsOptional` turns a product of plain values into a product of optionals, the shape a partial builder uses to track which fields are not yet filled:
 
 ```rust
+use cgp::core::field::impls::IsOptional;
+use cgp::core::field::traits::MapFields;
+
 type Fields = Product![String, u16, bool];
 type Optional = <Fields as MapFields<IsOptional>>::Mapped;
 // = Product![Option<String>, Option<u16>, Option<bool>]
