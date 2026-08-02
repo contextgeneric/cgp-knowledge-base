@@ -404,12 +404,24 @@ use* last as a workaround and a decision guide respectively.
 
 ### The page shape
 
-The written page follows a shape the stubs will grow into, and it differs from a reference page's
-fixed template because an explanation is an argument rather than a specification. It opens by naming
+The written pages follow a shape the stubs will grow into, and it differs from a reference page's
+fixed template because an explanation is an argument rather than a specification. A page opens by naming
 the question it answers and saying where it ends; explains what ordinary Rust already does, and shows
 it *working*, before showing what it cannot share; develops the idea with code shown as illustration
 rather than as steps; and closes with two fixed sections — **What it costs**, which is not optional,
-and **Where to go next**, which routes rather than concludes.
+and **Where to go next**, which routes rather than concludes. *How much CGP to use* keeps the two closing
+sections and departs from the rest, because it is a decision guide: it leads with a rule of thumb and uses
+tables where an explanation page would use prose.
+
+Three conventions the written pages settle are worth copying rather than rediscovering. **The `cargo cgp
+check` concession names the version** — every page that mentions the tool calls it a `v0.1.0-alpha`
+covering the core wiring errors rather than every class, per
+[vocabulary.md](../communication-strategy/vocabulary.md). **A page that crosses between context shapes
+marks the crossing where it happens**, in prose beside the code, rather than in a glossary at either end.
+And **the encoding example is shared with the front page**: the homepage hero's rejected `CanEncode` pair
+over `Display` and `AsRef<[u8]>` is the same code *Bypassing coherence* opens its argument on, and the
+`EncodeAsText` provider name carries across, so a reader arriving from the front page meets one running
+example rather than two.
 
 ### How it relates to the knowledge base
 
@@ -420,14 +432,33 @@ so the mapping is one to one. Two internal targets have no public counterpart an
 [guides](../cgp/guides/README.md) reach the site through a page's *What it costs* and *Where to go
 next* sections, and implementation documents are dropped.
 
-The written page draws on [consumer and provider traits](../cgp/concepts/consumer-and-provider-traits.md)
-for the split, [coherence](../cgp/concepts/coherence.md) for why it is needed, and the
+Each written page also records which of CGP's three shapes its code is in, since nothing in a signature
+marks the difference and the tier is where a reader first meets more than one of them.
+
+*Consumer and provider traits* draws on
+[consumer and provider traits](../cgp/concepts/consumer-and-provider-traits.md) for the split,
+[coherence](../cgp/concepts/coherence.md) for why it is needed, and the
 [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md) for the vanilla-Rust account of the
 application shape that its opening builds. Its running example is the `App`/`TestApp` email swap from
 [message.md](../communication-strategy/message.md#the-problems-cgp-removes) — **environmental context,
-self-targeted**, chosen deliberately because the front page's hero block and both tutorials wire a
-*value* context, so this is one of the first places on the site a reader meets a type that stands for
-an application.
+self-targeted** throughout, chosen deliberately because the front page's hero block and both tutorials
+wire a *value* context, so this is one of the first places on the site a reader meets a type that stands
+for an application. The page describes that shape without using the qualifiers, which is what an
+introductory page is allowed to do.
+
+*Bypassing coherence* is the one page that **crosses between shapes**, which is its job rather than an
+accident: it opens on a **value context, self-targeted** (`CanEncode` implemented for the data), moves to
+an **environmental context, parameter-targeted** (`CanEncodeValue<Value>` wired on `ApiServer` and
+`Firmware`), and builds the environmental shape out of plain Rust in between. Both crossings are marked in
+prose where they happen — the parameter move is named in *The move*, and *Naming the two shapes* attaches
+the four qualifiers to code the page has already shown. This is the guide's
+[two transitions](writing-guides/explanation.md) obligation discharged, and the reason the page may use
+the qualifiers where the other two need not.
+
+*How much CGP to use* shows no wired context at all. It names all three shapes as a decision the reader
+makes, drawing on [message.md](../communication-strategy/message.md#when-not-to-reach-for-cgp) for the
+boundary and the [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md) for the shapes and the
+progression inside CGP.
 
 ### Maintaining it
 
@@ -496,9 +527,13 @@ only a chain through two or more namespaces overflows. And **the `IsProviderFor`
 derives is augmented, not copied**: a bound naming the component's own provider trait gains its marker
 counterpart, which is the mechanism that carries an inner provider's requirements outward and lets
 `#[check_providers]` localize a broken layer. The claim that `delegate_and_check_components!` on an aggregate
-provider "cannot hold" was also too strong — it passes vacuously when the bundled provider has no
-dependencies — so both that reference and the
-[aggregate providers](../cgp/concepts/aggregate-providers.md) concept now state the conditional behaviour.
+provider "cannot hold" was also too strong — it passes vacuously when the bundled provider needs nothing from
+its context, and fails blaming the bundle when it does — and every view of that claim now states the
+conditional behaviour: the two macro references, the
+[aggregate providers](../cgp/concepts/aggregate-providers.md) and
+[check traits](../cgp/concepts/check-traits.md) concepts, and the `/cgp` skill. The related overclaim that a
+bundle "never implements a provider trait with itself in the context position" went with it, since a bundle of
+context-agnostic providers demonstrably does — which is precisely why the vacuous pass is possible.
 
 Reviewing the first four written pages had earlier corrected one originating on the site. The
 [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md) page had given "implementing a provider trait on a
