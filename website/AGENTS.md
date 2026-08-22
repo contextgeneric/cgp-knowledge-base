@@ -145,7 +145,7 @@ is left out is deferred to a linked page rather than left unmentioned.
 
 Where the tension is real, resolve it with **structure rather than omission**. The reference page's
 [layered descent](writing-guides/reference.md#the-layered-page) already provides the mechanism: a
-beginner stops after *Using it* and *Examples*, and everything an advanced reader needs sits below,
+beginner stops after *Usage* and *Examples*, and everything an advanced reader needs sits below,
 marked. Move an advanced form down the page, put a grammar in a collapsed block, mark a machinery
 section as advanced — but keep it on the page.
 

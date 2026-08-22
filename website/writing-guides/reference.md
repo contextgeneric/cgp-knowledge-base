@@ -150,7 +150,7 @@ construct-specific instead of re-explaining the same failure.
 
 Every reference page descends through the same six sections, in the same order, so that a reader learns
 the shape once and can then skim any page by habit. **The descent is by reader level**: a beginner gets
-what they need from *Overview* and *Using it* and stops, a working developer reads to the end of the
+what they need from *Overview* and *Usage* and stops, a working developer reads to the end of the
 examples and the *When to reach for it* judgement that follows them, and only an advanced reader
 continues into the machinery. Nobody has to read past their level to find their answer.
 
@@ -160,7 +160,7 @@ term a newcomer will not have. This is the internal Purpose section rewritten fo
 have the `/cgp` skill loaded, and it is the section most often ported badly, because the internal version
 assumes fluency the public reader has not got.
 
-**Using it** — the accepted forms, each argument and option, and what defaults fill an omission. The
+**Usage** — the accepted forms, each argument and option, and what defaults fill an omission. The
 internal Syntax section, largely unchanged.
 
 **This section is where the [coverage rule](../AGENTS.md#layer-the-depth-do-not-omit-the-advanced-material)
@@ -191,7 +191,7 @@ material reaches the public site, since the guides have no public home of their 
 strict level-by-level descent.** Choosing between two constructs is a judgement, and a reader makes it
 better having just seen what the construct looks like in use than having only been told what it is for —
 so the page shows the thing, then argues about when to reach for it. The descent is otherwise intact: a
-beginner still stops after *Using it* and *Examples*, and everything below *When to reach for it* is for
+beginner still stops after *Usage* and *Examples*, and everything below *When to reach for it* is for
 a reader going deeper.
 
 **Under the hood** — the exact expansion, with before/after blocks. **This section stays**, and it is not
@@ -240,7 +240,7 @@ page is therefore for**: explaining what that macro produces, so an expansion or
 construct is legible. Where there is a narrow case in which the reader *does* name it — defining a monad
 of their own, writing a getter provider by hand — say so in the same breath rather than overclaiming.
 
-Two failure modes are worth naming. **Do not let the notice contradict the page**: if *Using it* gives an
+Two failure modes are worth naming. **Do not let the notice contradict the page**: if *Usage* gives an
 import path and a bound, the notice cannot say the construct is unreachable — say instead that it is
 rarely reached, and why. And **do not apply it to a construct whose methods a reader calls**. The test is
 whether the name appears in ordinary application or generic code: `HasBuilder` and `ExtractField` are
@@ -351,7 +351,7 @@ and explains that the older form is what a reader will meet in existing code.
 
 ## Checking a draft
 
-**Read only *Overview* and *Using it* and ask whether a reader who has finished one tutorial
+**Read only *Overview* and *Usage* and ask whether a reader who has finished one tutorial
 understands what this is and how to write it.** That is the layered promise, and it is the thing porting
 from an internal document most reliably breaks.
 

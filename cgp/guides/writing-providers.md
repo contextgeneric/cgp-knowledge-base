@@ -33,7 +33,7 @@ impl AreaCalculator {
 }
 ```
 
-`#[cgp_impl]` desugars back to `#[cgp_provider]`/`#[cgp_new_provider]`, so the raw forms are still what the reference documents show in their Expansion sections and what you read in generated code. Write the raw form yourself only when you specifically need the inside-out shape — for instance, to state a bound the sugar cannot express, or to implement a provider trait on a concrete context rather than a generic one.
+`#[cgp_impl]` desugars back to `#[cgp_provider]`/`#[cgp_new_provider]`, so the raw forms are still what the reference documents show in their Expansion sections and what you read in generated code. Write the raw form yourself only when you specifically need the inside-out shape itself — for instance, to state a bound the sugar cannot express, or a construct `#[cgp_impl]`'s rewrite does not support. Neither a concrete (rather than generic) context nor a provider struct `new` cannot declare is by itself a reason: `#[cgp_impl]` reaches a concrete context through its explicit-context form, and a struct `new` cannot express is simply declared by hand and then targeted by `#[cgp_impl(ProviderName)]` without `new`.
 
 ## Omit the context parameter
 
