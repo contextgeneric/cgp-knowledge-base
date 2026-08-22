@@ -100,9 +100,9 @@ stage**. And **beware the pile-on**, whose defence is the same as the honest mov
 
 ## The catalog
 
-The section is deliberately small: nine documents, each dense, so a writer reads a whole subject in one
-place rather than assembling it from cross-links. Read the first eight in this order the first time; the
-ninth is a reference for a narrow question and is read when that question arises. The authoring rules
+The section is deliberately small: ten documents, each dense, so a writer reads a whole subject in one
+place rather than assembling it from cross-links. Read the first nine in this order the first time; the
+tenth is a reference for a narrow question and is read when that question arises. The authoring rules
 live in [AGENTS.md](AGENTS.md).
 
 - [The author's personality and preferences](author-personality.md) — who CGP's author is as a writer,
@@ -111,6 +111,9 @@ live in [AGENTS.md](AGENTS.md).
 - [Voice and register](voice-and-register.md) — the layered voice model (project on the site, author on
   the blog), the sentence-level register, the four structural moves that make CGP prose work, and the
   habits that mark a draft as machine-written.
+- [Writing styles](writing-styles.md) — the mechanical habits to catch by pattern rather than
+  judgment: the cleft-sentence inversion and the crutch em dash everywhere, plus a stricter plain-English
+  register for agent-drafted pages specifically, each with a before/after and the check that finds it.
 - [Identity](identity.md) — the settled tag line analyzed word by word, the enhances-not-replaces frame,
   the pitch that must follow the line, and the curated headline feature set for a front page.
 - [Readers](readers.md) — the audience model: who reads about CGP by Rust experience, by imported mental

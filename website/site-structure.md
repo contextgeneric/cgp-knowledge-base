@@ -924,7 +924,7 @@ construct rather than teaching a design.
 Five mechanics are settled and a later page should copy rather than rediscover them.
 
 **A construct the macros generate opens with a *Generated machinery* notice**, an `:::info` block between
-the summary and *What it's for*, saying that the reader is not expected to use the construct, which macro
+the summary and *Overview*, saying that the reader is not expected to use the construct, which macro
 produces or consumes it, and that the page therefore exists to explain what that macro emits. Twenty-seven
 `traits/` pages carry one. It shares its position and shape with the *Legacy — read, don't write* notice
 on `attributes/derive_delegate.md`, and a page carries at most one of the two; the rule and the test for

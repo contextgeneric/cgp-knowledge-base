@@ -108,7 +108,7 @@ believes, which hooks earn attention, which misunderstandings CGP reliably provo
 vocabulary keeps everything written about CGP reading as one voice. It also carries the project's
 [disclosure policy](communication-strategy/ai-disclosure.md) for how AI is used in building CGP, which
 is a claim about provenance rather than about the technology and is governed separately for that reason.
-The section is deliberately small and dense — nine documents rather than twice as many thinner ones —
+The section is deliberately small and dense: ten documents rather than twice as many thinner ones,
 because its subjects overlap and splitting them guaranteed drift. Two of them govern the rest:
 [author-personality.md](communication-strategy/author-personality.md), which records who CGP's author
 is as a writer, and [voice-and-register.md](communication-strategy/voice-and-register.md), which turns

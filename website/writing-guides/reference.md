@@ -150,11 +150,11 @@ construct-specific instead of re-explaining the same failure.
 
 Every reference page descends through the same six sections, in the same order, so that a reader learns
 the shape once and can then skim any page by habit. **The descent is by reader level**: a beginner gets
-what they need from *What it's for* and *Using it* and stops, a working developer reads to the end of the
+what they need from *Overview* and *Using it* and stops, a working developer reads to the end of the
 examples and the *When to reach for it* judgement that follows them, and only an advanced reader
 continues into the machinery. Nobody has to read past their level to find their answer.
 
-**What it's for** — one or two paragraphs, readable by someone who has finished the first tutorial and
+**Overview** — one or two paragraphs, readable by someone who has finished the first tutorial and
 nothing else. State the problem the construct solves before naming any mechanism, and gloss or link every
 term a newcomer will not have. This is the internal Purpose section rewritten for a reader who does not
 have the `/cgp` skill loaded, and it is the section most often ported badly, because the internal version
@@ -225,7 +225,7 @@ rather than in code they typed. A page that documents such a construct the same 
 looking for where to put something that was never theirs to put anywhere.
 
 **So a page for a generated construct opens with a notice saying so**, in an `:::info` block headed
-*Generated machinery*, placed after the one-line summary and before *What it's for* — the same position
+*Generated machinery*, placed after the one-line summary and before *Overview* — the same position
 and shape the *Legacy — read, don't write* notice uses on
 [`#[derive_delegate]`](../../cgp/reference/attributes/derive_delegate.md). The two notices are distinct
 and a page carries at most one: legacy means *superseded, prefer the replacement*, while this one means
@@ -351,7 +351,7 @@ and explains that the older form is what a reader will meet in existing code.
 
 ## Checking a draft
 
-**Read only *What it's for* and *Using it* and ask whether a reader who has finished one tutorial
+**Read only *Overview* and *Using it* and ask whether a reader who has finished one tutorial
 understands what this is and how to write it.** That is the layered promise, and it is the thing porting
 from an internal document most reliably breaks.
 

@@ -551,6 +551,10 @@ it stale.
 - [voice-and-register.md](communication-strategy/voice-and-register.md) — the layered voice (project on
   the site, author on the blog), the sentence-level register, the four structural moves that make CGP
   prose work, and the habits that mark a draft as machine-written.
+- [writing-styles.md](communication-strategy/writing-styles.md) — the cleft-sentence inversion and the
+  crutch em dash everywhere, plus ASD-STE100-style plain English (no metaphors, idioms, jargon, or
+  passive voice) for agent-drafted pages specifically; each habit named, shown as a before/after, and
+  given a pattern-based check.
 - [identity.md](communication-strategy/identity.md) — the settled tag line analyzed word by word, the
   enhances-not-replaces frame, the layered pitch that follows the line, and the curated headline feature
   set for a front page.
