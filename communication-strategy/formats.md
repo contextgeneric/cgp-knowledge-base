@@ -254,7 +254,7 @@ defines**, so the failure shown is unambiguously the overlap rule (`E0119`) — 
 on its own, and mislabelling it invites a correction in the first reply. And the shape change between
 the two snippets — the value moving out of `Self` into a parameter — is **narrated rather than
 smuggled**, because a reader comparing two versions of one program reads any unexplained difference as
-sleight of hand. That move is the climb from rung 3 to rung 4 of the
+sleight of hand. That move is the shift from tier 3 to tier 4 of the
 [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md), and it is what also dissolves the
 orphan rule, which is why the closing paragraph can name it as a case CGP unblocks. The hand-rolled
 workaround is named so the CGP version arrives as relief and the reader recognizes their own code

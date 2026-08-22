@@ -137,7 +137,7 @@ itself; discovered by the reader, it reads as an inconsistency.
 the choice moved from the type, which gets one, to you, who can define as many contexts as you like.
 Say that explicitly rather than leaving the reader to infer a narrowing.
 
-**Two examples on the same rung feeling like opposites.** `Person: CanGreet` and `String: CanEncode` are
+**Two examples on the same tier feeling like opposites.** `Person: CanGreet` and `String: CanEncode` are
 both value contexts, and calling `Person` a context is unremarkable while calling `String` one is
 jarring. A reader who forms their model on one and then meets the other loses it — so an introductory
 example should say which shape it is rather than leaving the reader to generalize from a single case.

@@ -147,7 +147,7 @@ A provider that only computes areas must now pick some `Angle` it never uses and
 
 **A trait grouping every operation of an entity is the natural design for anyone with an object-oriented background, and it is worth being honest that the recommendation here cuts against a habit most developers hold for good reasons.** `Shape` with `area`, `perimeter`, `scale`, and `rotate` describes a coherent thing, gives a team one word to talk about, and matches how most people were taught to model a domain. A behavior-named component like `AreaCalculator` feels thinner and less principled by comparison, so the entity trait is what an author writes unless something stops them — and CGP will compile it.
 
-The trait's own name is the cheapest signal that the grouping has gone past one decision. CGP's consumer traits read as verbs — `CanCreateUser`, `CanCalculateArea` — precisely because a capability is something a context *does*; a consumer trait named after a noun is usually several decisions sharing one component. The diagnostic behind the naming is more direct: **would any provider for this trait ever be reused, whole, by a second context?** If the honest answer is no, the trait's providers are not reusable units and the CGP machinery around them is not paying for itself — at which point implementing the trait directly on each concrete type, with no component at all, is the better design. That is a real outcome and not a failure: it is rung 2 of the [modularity hierarchy](../concepts/modularity-hierarchy.md), one implementation per type, chosen deliberately rather than settled for.
+The trait's own name is the cheapest signal that the grouping has gone past one decision. CGP's consumer traits read as verbs — `CanCreateUser`, `CanCalculateArea` — precisely because a capability is something a context *does*; a consumer trait named after a noun is usually several decisions sharing one component. The diagnostic behind the naming is more direct: **would any provider for this trait ever be reused, whole, by a second context?** If the honest answer is no, the trait's providers are not reusable units and the CGP machinery around them is not paying for itself — at which point implementing the trait directly on each concrete type, with no component at all, is the better design. That is a real outcome and not a failure: it is tier 2 of the [modularity hierarchy](../concepts/modularity-hierarchy.md), one implementation per type, chosen deliberately rather than settled for.
 
 ## Split an existing trait along the axis its contexts differ on
 
@@ -185,7 +185,7 @@ delegate_components! { ProductionApp { UserCreatorComponent: CreateUserWithPostg
 delegate_components! { TestApp       { UserCreatorComponent: CreateUserWithPostgres } }
 ```
 
-The email capability differs per context and has exactly one implementation on each side, so it needs no provider at all — a consumer trait is an ordinary trait, and implementing it directly is the lowest rung that expresses the case:
+The email capability differs per context and has exactly one implementation on each side, so it needs no provider at all — a consumer trait is an ordinary trait, and implementing it directly is the lowest tier that expresses the case:
 
 ```rust
 impl CanSendEmail for ProductionApp {
@@ -213,6 +213,6 @@ One observation makes the trade-off easier to hold: **a component holding exactl
 - [Naming a type dependency](naming-a-type-dependency.md) — when an associated type belongs in its own abstract-type component rather than inside the component that produces it.
 - [Writing providers](writing-providers.md) — the `#[cgp_impl]` form each provider above is written in, including the `#[cgp_impl(Self)]` direct impl.
 - [Organizing wiring with namespaces and prefixes](namespaces-and-prefixes.md) — the answer to the component count a split produces.
-- [Modularity hierarchy](../concepts/modularity-hierarchy.md) — the ladder, and rung 2 as the honest destination for a trait whose providers nothing would reuse.
+- [Modularity hierarchy](../concepts/modularity-hierarchy.md) — the hierarchy, and tier 2 as the honest destination for a trait whose providers nothing would reuse.
 - [Higher-order providers](../concepts/higher-order-providers.md) — the composition a single-decision component buys and a many-decision one taxes.
 - [Guides summary](README.md#summary) — the cheat-sheet across all the guides.

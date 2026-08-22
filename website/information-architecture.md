@@ -144,8 +144,8 @@ repository's `example-code/` crate; the current state is recorded in
 
 The three explanation pages this document named are not lost, but they are no longer separate
 artifacts: *Why CGP exists* is **Bypassing coherence**, *How CGP works* is **Consumer and provider
-traits** together with **Impl-side dependencies**, and *When to use CGP, and when not* is **How much
-CGP to use**, the modularity hierarchy rendered as a decision guide. The trade is that the tier now
+traits** together with **Impl-side dependencies**, and *When to use CGP, and when not* is **Modularity
+Hierarchy**, the modularity hierarchy rendered as an explanation with a decision-guide tail. The trade is that the tier now
 covers every idea rather than the four a homepage essay offloads to, at the cost of the curation that
 made those four a short reading path — which the section's index page is what restores.
 

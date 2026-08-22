@@ -181,7 +181,7 @@ annotations and the wiring, so CGP moved the choice and not the code. A `/* ... 
 reader wondering what was quietly changed inside, which is exactly the suspicion the block exists to
 remove.
 
-**The trait's shape is unchanged across the pair.** The example stays on rung 3 of the
+**The trait's shape is unchanged across the pair.** The example stays on tier 3 of the
 [modularity hierarchy](../../cgp/concepts/modularity-hierarchy.md) — the encoded value stays in `Self` —
 so the before and after differ only by the machinery. Any change beyond that reads as sleight of hand to
 a reader comparing two versions of one program, and above the fold there is no room to narrate one.
@@ -244,14 +244,14 @@ Naming them here is what stops a well-meaning revision from cramming one in.
 **Two applications choosing differently for the same type.** At the retrofit shape the wired type *is* the
 context, so `String` commits to one provider globally and the block shows per-*type* choice rather than
 per-*application* choice. That is repaid in full by
-[*How much CGP to use*](explanation.md#when-to-use-cgp-and-when-not). **Do not try to put the fully
+[*Modularity Hierarchy*](explanation.md#when-to-use-cgp-and-when-not). **Do not try to put the fully
 modular shape above the fold**: it changes the trait to `CanEncodeValue<Value>`, which is precisely the shape change the parity
 rule forbids, and it adds `open` and `@`-path wiring syntax the reader has no grounding for. The
 [launch-post model draft](../../communication-strategy/formats.md) does run at that shape and is right to,
 because a post has the paragraph of narration this block does not.
 
 **The orphan rule dissolved.** The block quietly wires three types the snippet does not own, which is
-legal because the snippet owns the trait — and that is exactly the limit of rung 3: the wiring must live
+legal because the snippet owns the trait — and that is exactly the limit of tier 3: the wiring must live
 in a crate owning either the trait or the type. CGP dissolves that too, by moving the value out of `Self`,
 and that is one sentence in the essay rather than a second code block.
 
@@ -473,7 +473,7 @@ means something needs offloading; a third hero link means one of them is not loa
 
 **Verify every snippet** against the source and the `/cgp` skill, preferring code already verified in
 [examples/](../../examples/README.md). For the hero block specifically, compile it rather than reading it:
-its nearest counterparts are rung 3 of the
+its nearest counterparts are tier 3 of the
 [modularity hierarchy](../../cgp/concepts/modularity-hierarchy.md) and the
 [modular serialization](../../examples/modular-serialization.md) example, and the six properties a
 replacement must keep are in [Replacing it](#replacing-it).

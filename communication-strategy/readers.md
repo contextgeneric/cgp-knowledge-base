@@ -452,7 +452,7 @@ and which should be conceded the same way.
 Two meta-barriers sit above the individual constructs. The first is breadth: CGP has many pieces, and
 a reader who cannot see the minimal path assumes they must learn all of it before writing anything.
 The [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md) is the answer to hand them — start
-at the lowest rung that solves the problem — and a piece should give an explicit on-ramp rather than a
+at the lowest tier that solves the problem — and a piece should give an explicit on-ramp rather than a
 tour of the whole surface. The second is motivation: a reader who can parse the syntax may still not
 grasp *why* the consumer/provider split earns its keep, so the mechanics read as ceremony. Lead with a
 concrete problem the reader has felt and defer the coherence theory that explains the split at a

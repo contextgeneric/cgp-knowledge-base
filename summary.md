@@ -247,10 +247,10 @@ it stale.
   functions whose arguments come from context fields.
 - [modular-error-handling.md](cgp/concepts/modular-error-handling.md) — the error type, its
   construction, and its detail as three independent wiring decisions.
-- [modularity-hierarchy.md](cgp/concepts/modularity-hierarchy.md) — the ladder from one blanket impl
+- [modularity-hierarchy.md](cgp/concepts/modularity-hierarchy.md) — the hierarchy from one blanket impl
   to per-type-per-provider wiring, the value-versus-environmental context and self-versus-parameter
-  target axes that decide a rung, why vanilla Rust idiomatically supports only one of the three shapes,
-  and how to pick the lowest rung.
+  target axes that decide a tier, why vanilla Rust idiomatically supports only one of the three shapes,
+  and how to pick the lowest tier.
 - [monadic-handlers.md](cgp/concepts/monadic-handlers.md) — chaining handlers that short-circuit
   through a monad.
 - [namespaces.md](cgp/concepts/namespaces.md) — reusable, inheritable wiring tables as CGP's preset

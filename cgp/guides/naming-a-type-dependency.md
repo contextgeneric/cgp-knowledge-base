@@ -4,7 +4,7 @@ When an implementation needs a type it does not fix — a database handle, a tra
 
 The decision matters because the obvious answer is the expensive one. A generic parameter on the trait works, and it makes every caller and every intermediate capability that never touches the type declare it anyway and repeat its bounds. The two CGP forms both avoid that, and they differ in what they let you *do* with the type afterwards, so picking between them is worth doing deliberately rather than by reaching for whichever construct is already in the file.
 
-All snippets below wire an **environmental context** — `App` stands for the application and carries the database handle — and every capability is **self-targeted**. Nothing crosses into another shape, so the difference between the rungs is only where the type lives. The shapes themselves are the subject of [choosing a component's shape](choosing-a-component-shape.md).
+All snippets below wire an **environmental context** — `App` stands for the application and carries the database handle — and every capability is **self-targeted**. Nothing crosses into another shape, so the difference between the tiers is only where the type lives. The shapes themselves are the subject of [choosing a component's shape](choosing-a-component-shape.md).
 
 ## Start by inferring the type from a field
 

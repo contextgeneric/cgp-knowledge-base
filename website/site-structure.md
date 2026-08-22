@@ -512,7 +512,7 @@ ones, so the mapping is one to one.
 Every page is verified the same way the reference pages are, and the verification now survives the
 session that did it: the code each page shows has a compiled counterpart in the
 [`example-code/` crate](#the-example-code-crate), one file per page, so `cargo test` there is the check
-rather than an agent's word. Seventeen pages show code; the index and *How much CGP to use* show none.
+rather than an agent's word. Eighteen pages show code; the index shows none.
 Every quoted error is what the compiler actually reports — including the three `E0119`s and the `E0117`
 on *Bypassing coherence*, the `E0599` / `CanUseComponent` / `[CGP-E001]` progression on *Checking your
 wiring*, and the two override conflicts on *Namespaces*.
@@ -520,9 +520,10 @@ wiring*, and the two override conflicts on *Namespaces*.
 Three pages are worth knowing about individually. *Bypassing coherence* is the tier's opening argument and
 follows the guide's five-movement outline, staying at the basic tier and ending on the line the page
 exists to earn, that coherence is not repealed but scoped.
-*How much CGP to use* is a **decision guide rather than an explanation**, so it leads with a rule of
-thumb and uses tables where an explanation page would use prose; every row of its alternatives table
-concedes a case where the other tool wins. It is also the site's only public home for the boundary
+*Modularity Hierarchy* is a hybrid: it explains the five tiers of the hierarchy in a section each, with
+code shown as illustration, then closes with a decision-guide tail that leads with a rule of thumb and
+uses tables where prose would slow a reader who is deciding, every row of its alternatives table
+conceding a case where the other tool wins. It is also the site's only public home for the boundary
 material in [message.md](../communication-strategy/message.md#when-not-to-reach-for-cgp), and the place
 the reference's *When to reach for it* sections can point at instead of re-arguing locally. And
 *Checking your wiring* is the tier's answer to the objection that has cost CGP the most readers: it
@@ -539,8 +540,8 @@ is why the public page teaches namespace design as the question *what varies?*.
 
 The sidebar order is the order a reader meets the ideas rather than the internal catalog's order:
 the coherence problem and the trait split first, then the three faces of dependency injection, then
-composition and scale, then the applied ideas, with *Recovering `Send` bounds* and *How much CGP to
-use* last as a workaround and a decision guide respectively.
+composition and scale, then the applied ideas, with *Recovering `Send` bounds* and *Modularity
+Hierarchy* last, a workaround and the how-far-to-go hierarchy respectively.
 
 ### The page shape
 
@@ -549,9 +550,9 @@ fixed template because an explanation is an argument rather than a specification
 the question it answers and saying where it ends; explains what ordinary Rust already does, and shows
 it *working*, before showing what it cannot share; develops the idea with code shown as illustration
 rather than as steps; and closes with two fixed sections — **What it costs**, which is not optional,
-and **Where to go next**, which routes rather than concludes. *How much CGP to use* keeps the two closing
-sections and departs from the rest, because it is a decision guide: it leads with a rule of thumb and uses
-tables where an explanation page would use prose.
+and **Where to go next**, which routes rather than concludes. *Modularity Hierarchy* keeps the two closing
+sections and adds a decision-guide tail after its tier explanations: the tail leads with a rule of thumb
+and uses tables where an explanation page would use prose.
 
 Three conventions the written pages settle are worth copying rather than rediscovering.
 **The `cargo cgp check` concession names the version** — every page that mentions the tool calls it a `v0.1.0-alpha`
@@ -589,14 +590,15 @@ introductory page is allowed to do.
 *Bypassing coherence* stays on one shape, a **value context, self-targeted** retrofit: `CanEncode`
 implemented for the data and wired onto the concrete types that use it (`String`, `Vec<u8>`). It does not
 cross into the environmental or parameter-targeted shapes, because coherence is the section's most basic
-idea and those shapes raise the modularity hierarchy. The page defers them in a sentence to *How much CGP
-to use*, which is where the qualifiers and the shape transitions belong, per the
+idea and those shapes raise the modularity hierarchy. The page defers them in a sentence to *Modularity
+Hierarchy*, which is where the qualifiers and the shape transitions belong, per the
 [*Why CGP exists* spec](writing-guides/explanation.md#why-cgp-exists).
 
-*How much CGP to use* shows no wired context at all. It names all three shapes as a decision the reader
-makes, drawing on [message.md](../communication-strategy/message.md#when-not-to-reach-for-cgp) for the
-boundary and the [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md) for the shapes and the
-progression inside CGP.
+*Modularity Hierarchy* wires a context in each of its tier examples, and shows all three shapes across
+tiers 3 and 4. It draws on the [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md) concept
+for the tiers and the shapes, and on
+[message.md](../communication-strategy/message.md#when-not-to-reach-for-cgp) for the boundary in its
+decision-guide tail.
 
 ### Maintaining it
 

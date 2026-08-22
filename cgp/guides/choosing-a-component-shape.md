@@ -131,5 +131,5 @@ The payoff is the last two blocks: `ApiServer` and `Firmware` encode the same `S
 - [Writing providers](writing-providers.md) — the `#[cgp_impl]` header each shape uses, once the shape is chosen.
 - [Declaring a provider's dependencies](declaring-dependencies.md) — why a `Self` bound is an `#[uses]` import while a bound on the target parameter stays an explicit `where` clause.
 - [Organizing wiring with namespaces and prefixes](namespaces-and-prefixes.md) — how to keep a parameter-targeted component's per-type entries from overwhelming a context's table.
-- [Modularity hierarchy](../concepts/modularity-hierarchy.md) — the concept behind this decision: the five rungs, the two axes, and why vanilla Rust idiomatically supports only one of the three shapes.
+- [Modularity hierarchy](../concepts/modularity-hierarchy.md) — the concept behind this decision: the five tiers, the two axes, and why vanilla Rust idiomatically supports only one of the three shapes.
 - [Guides summary](README.md#summary) — the cheat-sheet across all the guides.

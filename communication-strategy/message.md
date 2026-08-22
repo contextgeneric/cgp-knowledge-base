@@ -80,8 +80,8 @@ impl<Value> Encoder<Value> where Value: AsRef<[u8]> { /* ... */ }
 ```
 
 Note that the value has moved out of `Self` into a parameter, which turns a **self-targeted** component
-into a **parameter-targeted** one and makes `Self` an **environmental context** — the climb from rung 3 to
-rung 4 of the [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md), and the same move that
+into a **parameter-targeted** one and makes `Self` an **environmental context** — the move from tier 3 to
+tier 4 of the [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md), and the same move that
 dissolves the orphan rule in the next entry. Narrate it rather than letting a reader spot it uncommented,
 because an unexplained difference between a before and an after reads as sleight of hand. A shorter
 version that keeps `Self` as the value is available and is what the front page uses, at the cost that
@@ -655,7 +655,7 @@ together makes the first read as an excuse for the second, which costs both.
 Drawing CGP's boundary in public is a positioning asset rather than a concession, because the instinct
 to sell a tool as universally better is exactly the instinct this audience punishes. The one principle
 that settles most cases: **use CGP when a capability needs more than one implementation and the choice
-belongs to the context — not before.** The full ladder is the
+belongs to the context — not before.** The full account is the
 [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md); this is its compression.
 
 The recurring question is not "is CGP good" but "CGP or this other thing", so the guide below takes the
@@ -702,8 +702,8 @@ objection, because it shows CGP knows the limit of its own bargain.
 
 Say it like this: *"For one implementation, use a trait. CGP earns its keep when you need several,
 chosen per context."* *"If your set of implementations is known at compile time, CGP gives you the
-decoupling of `dyn` with none of the cost. If it isn't, use `dyn`."* *"Reach for the lowest rung that
-solves your problem; CGP is a rung you climb to deliberately, not a default."*
+decoupling of `dyn` with none of the cost. If it isn't, use `dyn`."* *"Reach for the lowest tier that
+solves your problem; CGP is a tier you adopt deliberately, not a default."*
 
 ## Keeping this document honest
 

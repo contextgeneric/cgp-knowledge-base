@@ -152,7 +152,7 @@ page is the model, and it shows what the shape looks like when the argument is a
 The homepage's [offload rule](homepage.md) names four destinations, and each is now a page of the
 Concepts section rather than a separate artifact: *Why CGP exists* is **Bypassing coherence**, *How CGP
 works* is **Consumer and provider traits** with **Impl-side dependencies** beside it, and *When to use
-CGP* is **How much CGP to use**. The fourth, *Project status*, is project meta rather than a CGP idea
+CGP* is **Modularity Hierarchy**. The fourth, *Project status*, is project meta rather than a CGP idea
 and does not belong among the concepts; its home is unsettled, per
 [information-architecture.md](../information-architecture.md). The specifications below still stand for
 the pages they describe — read each one as the spec for the concept page that plays its role.
@@ -192,11 +192,11 @@ dispatch, no type that stands for an application, and none of the value-context 
 or self-targeted / parameter-targeted vocabulary. Coherence is the most basic idea in the section, and a
 reader meeting it should not have to hold the modularity hierarchy in their head to follow it.
 
-The examples are therefore all rung-3 retrofit: a self-targeted capability such as `CanEncode`, wired
+The examples are therefore all tier-3 retrofit: a self-targeted capability such as `CanEncode`, wired
 onto the concrete types that use it (`String`, `Vec<u8>`). That earns the whole point on its own, because
 overlapping providers become legal and each type coherently names one. How far the idea then scales,
 whether to one choice per application or one per type per application, is the
-[How much CGP to use](../../cgp/concepts/modularity-hierarchy.md) page's job, and the coherence page hands
+[Modularity Hierarchy](../../cgp/concepts/modularity-hierarchy.md) page's job, and the coherence page hands
 off to it in a sentence rather than teaching it. The application-context shape, the two transitions
 between shapes, and the qualifiers that name them belong on that page, taught the way the
 [comprehension barrier](../../communication-strategy/readers.md) and
@@ -225,18 +225,21 @@ they arrive late, after the model has landed, and are introduced as the machiner
 
 ### When to use CGP, and when not
 
-**Not an explanation page** — it is a decision guide, and it follows the rules of one: it exists to be
-acted on, so it is shorter, more scannable, and may use a table where an explanation page would use
-prose. It sits in this tier because the homepage's cost section needs somewhere to hand a skeptic, and
-because nothing on the site currently draws CGP's boundary in public.
+This page is titled **Modularity Hierarchy**, and it is a hybrid rather than a pure decision guide. It
+opens as an explanation, walking the five tiers of the hierarchy in a section each with code shown as
+illustration, and closes with a decision-guide tail that exists to be acted on: shorter, more
+scannable, and using tables where prose would slow a reader who is deciding. It plays the homepage's
+*When to use CGP* role, because the cost section needs somewhere to hand a skeptic and nothing else on
+the site draws CGP's boundary in public.
 
-Its content is [message.md](../../communication-strategy/message.md#when-not-to-reach-for-cgp) rendered
-for a public reader: the rule of thumb, the alternative-by-alternative guide with each alternative's home
+The tail is [message.md](../../communication-strategy/message.md#when-not-to-reach-for-cgp) rendered for
+a public reader: the rule of thumb, the alternative-by-alternative guide with each alternative's home
 ground conceded first, and the cases where CGP is simply the wrong tool. Two rules bind it especially
 tightly. **Never disparage the alternative** — represent each as its own users would recognize it. And
 **if a table is used, every row must concede a case where the other tool wins**; a table showing CGP
-winning everything reads as a strawman and loses the reader it was written for. The technical map behind
-it is the [modularity hierarchy](../../cgp/concepts/modularity-hierarchy.md).
+winning everything reads as a strawman and loses the reader it was written for. The tier sections that
+open the page are built from the [modularity hierarchy](../../cgp/concepts/modularity-hierarchy.md)
+concept, which stays their source of truth.
 
 Because the page's whole subject is where CGP's costs outweigh its benefits, it is also one of the two
 places the **agent-support mitigation** belongs: the learning curve, the diagnostics, and the wiring
