@@ -146,8 +146,8 @@ is left out is deferred to a linked page rather than left unmentioned.
 Where the tension is real, resolve it with **structure rather than omission**. The reference page's
 [layered descent](writing-guides/reference.md#the-layered-page) already provides the mechanism: a
 beginner stops after *Usage* and *Examples*, and everything an advanced reader needs sits below,
-marked. Move an advanced form down the page, put a grammar in a collapsed block, mark a machinery
-section as advanced — but keep it on the page.
+marked. Move an advanced form down the page, put a grammar in its own section low on the page, mark a machinery
+section as advanced. But keep it on the page.
 
 Two habits make this checkable. **Enumerate against the parser, not against the previous draft**: a page
 covering four of a macro's six accepted forms usually got there by copying an internal document that
@@ -270,7 +270,7 @@ work and the lowest risk: it is a mechanical port from internal documents that a
 verified, into the project voice, against a fixed six-section template. Draft it, check it against its
 guide's five draft checks, and sample rather than read it end to end. Where a ported page turns out to
 need a judgement call rather than a transformation — a *When to reach for it* section with no internal
-guide behind it, a *Gotchas* entry that reads as a warning about the library — flag it for reading
+guide behind it, a *Common Mistakes* entry that reads as a warning about the library — flag it for reading
 rather than deciding alone.
 
 ## Disclosing AI use on a page

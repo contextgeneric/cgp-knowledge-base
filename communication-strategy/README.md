@@ -111,9 +111,10 @@ live in [AGENTS.md](AGENTS.md).
 - [Voice and register](voice-and-register.md) — the layered voice model (project on the site, author on
   the blog), the sentence-level register, the four structural moves that make CGP prose work, and the
   habits that mark a draft as machine-written.
-- [Writing styles](writing-styles.md) — the mechanical habits to catch by pattern rather than
-  judgment: the cleft-sentence inversion and the crutch em dash everywhere, plus a stricter plain-English
-  register for agent-drafted pages specifically, each with a before/after and the check that finds it.
+- [Writing styles](writing-styles.md) — the sentence-level habits to catch when a shape is doing the
+  work the point should: the directness principle (real subject, real action), the cleft-sentence
+  inversion and the crutch em dash everywhere, plus a stricter plain-English register for agent-drafted
+  pages specifically, each with a before/after and the check that finds it.
 - [Identity](identity.md) — the settled tag line analyzed word by word, the enhances-not-replaces frame,
   the pitch that must follow the line, and the curated headline feature set for a front page.
 - [Readers](readers.md) — the audience model: who reads about CGP by Rust experience, by imported mental

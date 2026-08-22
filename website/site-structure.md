@@ -938,8 +938,9 @@ and cannot be reworded freely.
 **One shared provenance note** closes every page, in the wording the written pages use, linking
 [the disclaimer](AGENTS.md#disclosing-ai-use-on-a-page)'s documentation section.
 
-**The formal grammar lives in a collapsed `<details>`** labelled "Formal grammar", so a beginner never
-meets EBNF by accident, and it cites the Rust Reference's notation page.
+**The formal grammar is its own `## Formal grammar` section**, placed after *Under the hood*, so a
+reader who needs it can find it while a beginner meets it only after the examples; it cites the Rust
+Reference's notation page.
 
 **Snippets are compiled, not eyeballed.** Every written page's examples were checked against `cgp`
 `0.8.0-alpha`, with a `check_components!` assertion per wired context where the page wires one, which is
@@ -1008,17 +1009,17 @@ the foot, so a reader learns the state before working through a catalog of mostl
 `` `#[cgp_impl]` `` renders with its backticks visible in the navigation. Write `#[cgp_impl]` in the
 label and keep the backticks in the page's `#` heading, where they render.
 
-**An admonition's title is a heading on its own line, not text after the directive.** Write `:::note`
-on its own, then a blank line, then `### Advanced`. The failure mode this avoids is worse than a
-missing title: on this installation `:::note Advanced` is not recognized as a directive at all, so the
-whole block degrades to literal text and the reader sees `:::note Advanced`, the body, and `:::` as
-three plain paragraphs. The build reports nothing, since no link is broken.
+**An admonition's title is a heading on its own line, not text after the directive.** Write `:::info`
+on its own, then a blank line, then `### Still being written`. The failure mode this avoids is worse than
+a missing title: on this installation `:::info Still being written` is not recognized as a directive at
+all, so the whole block degrades to literal text and the reader sees `:::info Still being written`, the
+body, and `:::` as three plain paragraphs. The build reports nothing, since no link is broken.
 
-Docusaurus v3's own titled form, `:::note[Advanced]`, does render correctly here and was **not** chosen
-— so a later agent meeting the heading convention should read it as a decision rather than as ignorance
-of the bracket syntax. The trade the heading form makes is that the title becomes a link target and an
-entry in the page's table of contents: wanted for an *Advanced* note nested under *Under the hood*, and
-the reason a stub's table of contents reads "Not written yet" and nothing else.
+Docusaurus v3's own titled form, `:::info[Still being written]`, does render correctly here and was
+**not** chosen. A later agent meeting the heading convention should read it as a decision rather than as
+ignorance of the bracket syntax. The trade the heading form makes is that the title becomes a link target
+and an entry in the page's table of contents, which is the reason a stub's table of contents reads
+"Not written yet" and nothing else.
 
 ### Maintaining it
 

@@ -1,15 +1,50 @@
 # Writing styles: habits to prefer or avoid
 
-This document fixes the *mechanical* habits an agent defaults to when writing prose, as opposed to the
+This document fixes the sentence-level habits an agent defaults to when writing prose, as opposed to the
 *audience and positioning* guidance the rest of this section carries or the *paragraph-and-list*
 structure the [`dual-reader-prose`](https://github.com/contextgeneric/cgp-skills) skill governs. Where
 those ask "does this sound like the author" and "can both a scanner and a deep reader follow this,"
-this document asks a plainer question: does this sentence do real work, or is it a shape the model
-reached for because it fits almost any content? The first two sections below are checkable by pattern
-and apply everywhere prose is written in this base or on the site, agent-drafted or not, because a
-cleft sentence or a crutch em dash reads as generated in a reference document exactly as it does on a
-landing page. The third section is a stricter register for a narrower case, and it says where that
+this document asks a plainer question: does the sentence commit to its point, or is it a shape the model
+reached for because it fits almost any content? The first section states the principle positively, that
+you say it straight with the real subject doing the real action; the cleft and the em dash that follow
+are two specific shapes that dodge it, and all three apply everywhere prose is written in this base or on
+the site, agent-drafted or not, because they read as generated in a reference document exactly as they do
+on a landing page. The last section is a stricter register for a narrower case, and it says where that
 narrower case starts.
+
+## Say it straight: the real subject, doing the real thing
+
+**Prefer the direct statement of a claim: put the thing the sentence is about in the subject position,
+and put what it does in the verb.** The cleft section and the passive-voice rule below are specific cases
+of this. Indirection takes other forms the pattern scans miss, and they read as generated for the same
+reason a cleft does: the shape fits almost any content, so the model reaches for it instead of committing
+to the point. All of them appear anywhere a claim is made, not only at a section's opening.
+
+Three forms recur.
+
+- **A background fact or an abstract noun as the subject.** The sentence is about a construct, but its
+  grammatical subject is a generality. *Before:* "Reading a value out of the surrounding type is most of
+  what CGP code does, and `#[implicit]` is what makes it look like an ordinary function parameter."
+  *After:* "`#[implicit]` lets a construct read a field value from a generic context by naming the field
+  like an ordinary argument."
+- **Resemblance in place of action.** The sentence says what the subject is *like* rather than what it
+  *does*. *Before:* "`#[implicit]` makes a field read look like a parameter." *After:* "`#[implicit]`
+  reads a field value from the context." State the resemblance too where it helps a reader, but after the
+  action rather than instead of it.
+- **The point held to the end.** The sentence or paragraph reaches its claim only in the last clause, so
+  a reader who stops early leaves without it. Move the claim to the front and let the qualification
+  follow.
+
+**Why the model reaches for it.** A general or hedged opener commits to nothing and fits in front of any
+topic, so it serves as a warm-up rather than a chosen sentence, the same reason a cleft or an em dash
+appears. It often rides on a cleft ("… is what makes …"), which is why it survives a cleft fix that
+repairs only the grammar: rewriting "is what makes" to "makes" leaves the general subject in place.
+
+**The check**: for any sentence that makes a claim, name its real subject and its real action, then
+confirm they are the grammatical subject and the verb. On the first sentence of a section or paragraph
+this is the [`dual-reader-prose`](https://github.com/contextgeneric/cgp-skills) topic-sentence test, and
+that is its highest-value use, because the lead is first contact; the same check applies to a claim
+buried mid-paragraph. A clean, cleft-free, dash-free sentence can still fail it.
 
 ## Cleft and pseudo-cleft inversions
 
@@ -151,14 +186,20 @@ a second pass, because each is a small, local edit that does not change the sent
 
 ## Checking a draft
 
-Run all three checks together, because they catch different symptoms of the same underlying habit: a
-shape or a word chosen for its generic applicability rather than for what the sentence actually needs
-to say. Scan for the cleft patterns above and rewrite each with the real subject leading. Scan for em
-dashes and, for each one, name the relationship it stands in for and pick the mark built for that
-relationship: a colon, a period, a conjunction, or parentheses. And, for agent-drafted content, scan for
-figurative language, unnamed passive actors, and stacked dash- or colon-joined clauses, and fix each
-directly. None of the three checks requires understanding the subject matter, which is what makes them
-worth running even on a document you did not write.
+Run these checks together, because they catch different symptoms of the same underlying habit: a shape
+or a word chosen for its generic applicability rather than for what the sentence actually needs to say.
+For any sentence that makes a claim, name its real subject and its real action and confirm they lead, per
+the directness principle above; a sentence can pass every other scan here and still state its point
+indirectly, so this one is not optional even when the prose reads cleanly. Scan for the cleft patterns
+and rewrite each with the real subject leading. Scan for em dashes and, for each one, name the
+relationship it stands in for and pick the mark built for that relationship: a colon, a period, a
+conjunction, or parentheses. And, for agent-drafted content, scan for figurative language, unnamed
+passive actors, and stacked dash- or colon-joined clauses, and fix each directly.
+
+The cleft and em-dash scans are purely mechanical and need no understanding of the subject, which is what
+makes them worth running even on a document you did not write. The directness and plain-English scans
+need only light familiarity with what the passage is about: enough to name a sentence's real subject, or
+to see that an uncommon word has a common substitute.
 
 When you notice a new pattern with the same shape (generically applicable, decorative rather than
 necessary, recurring across drafts), add it here in the same change and in the same form: name the

@@ -143,7 +143,7 @@ public pages would be a category no reader scans; one page, organized by the int
 **hidden-versus-surfaced** axis, is what a reader can actually use. It shows the small program behind
 each class, says what the compiler reports, and says what `cargo cgp check` makes of it — the last
 being why it sits beside the tooling section conceptually even though it lives in the reference. Write
-it **before** the bulk of the port, because its existence is what lets every *Gotchas* section stay
+it **before** the bulk of the port, because its existence is what lets every *Common Mistakes* section stay
 construct-specific instead of re-explaining the same failure.
 
 ## The layered page
@@ -177,6 +177,11 @@ that treats each form in its own subsection otherwise implies they are alternati
 Ordering carries the beginner, not selection. Lead with the form nearly everyone writes, put the
 advanced and legacy forms after it, and mark a legacy form as legacy with its replacement named.
 
+A construct whose accepted grammar is large (several operators, several key forms, several statements)
+stays a long section even after that ordering, and that length is the coverage rule working as
+intended, not a page to trim. Judge a Usage section by whether a beginner can stop at the common form
+and an advanced reader can still find every other one, not by its word count.
+
 **Examples** — at least one realistic, self-contained example, and more where forms differ meaningfully.
 Prefer code already verified in [examples/](../../examples/README.md) over new snippets.
 
@@ -198,19 +203,20 @@ a reader going deeper.
 optional: CGP's central credibility problem is that its constructs are macros, and a Rust programmer will
 not adopt what they cannot see through. It is the same commitment the
 [tutorial guide](tutorial.md) makes for the desugaring appendix and the
-[explanation guide](explanation.md) makes for *How CGP works*. Mark it clearly as the advanced section so
-a beginner knows they may skip it, and keep it faithful to current macro output — this is the part most
-likely to drift, and `cargo cgp expand` is how to check it rather than guess.
+[explanation guide](explanation.md) makes for *How CGP works*. The heading itself marks the section as
+internals a beginner may skip, so it carries no separate admonition note. Keep it faithful to current
+macro output, since this is the part most likely to drift, and `cargo cgp expand` is how to check it
+rather than guess.
 
-For a macro with custom syntax, the **formal grammar** belongs here too, in the Rust Reference's
-[notation](https://doc.rust-lang.org/reference/notation.html), and it goes inside a collapsed
-`<details>` block labelled "Formal grammar" so that a beginner never meets EBNF by accident while an
-advanced reader or macro author gets the precise answer. The rules for what counts as custom syntax and
-how the grammar is written are unchanged from the internal
-[conventions](../../cgp/AGENTS.md#syntax-grammar-conventions).
+For a macro or attribute with custom syntax, the **formal grammar** is its own `## Formal grammar`
+section, in the Rust Reference's
+[notation](https://doc.rust-lang.org/reference/notation.html), placed after *Under the hood* so a
+beginner never meets EBNF before the examples while an advanced reader or macro author gets the precise
+answer. The rules for what counts as custom syntax and how the grammar is written are unchanged from the
+internal [conventions](../../cgp/AGENTS.md#syntax-grammar-conventions).
 
-**Gotchas** — corner cases, surprising behavior, and open bugs. The internal Known issues section, kept
-whenever there is something to record and omitted entirely when there is not. Do not soften these; a
+**Common Mistakes** — corner cases, surprising behavior, and open bugs. The internal Known issues section,
+kept whenever there is something to record and omitted entirely when there is not. Do not soften these; a
 reader who hits an unlisted corner case trusts the rest of the page less.
 
 The page then closes with two short lists rather than sections: **Related constructs**, each with a
@@ -303,7 +309,7 @@ the example code is inlined.
 A link to an **error class** becomes a link to the section of the reference's
 [error catalog page](#granularity-one-page-per-named-construct) covering that class. This is the one
 mapping that depends on a page being written rather than merely re-pointed, which is why the catalog
-page comes early: until it exists, a *Gotchas* section has to inline whatever it needs, and every
+page comes early: until it exists, a *Common Mistakes* section has to inline whatever it needs, and every
 section written that way has to be revisited afterwards.
 
 A link to an **implementation document** is dropped. That material is for people maintaining CGP, and its
