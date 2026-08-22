@@ -170,12 +170,12 @@ naming it, and the compiler resolves that bound and every transitive bound benea
 orphan rule buy, so coherence is a guarantee rather than a restriction. Then show **what the guarantee
 costs**, concretely: two blanket impls that could both match one type are rejected even when the author
 knows which should apply, and a trait cannot be implemented for a type from another crate. Then the
-**workarounds** — the newtype dance, and the marker-struct-plus-helper-trait pattern developers
-[independently reinvent](../../communication-strategy/evidence.md) — because the reader has written one
-of these and recognizing it is what makes the next movement land. Finally the **move**: the
-implementation's `Self` becomes a type the implementing crate owns, so neither rule bites; and coherence
-is **restored locally**, because each context names exactly one provider, so no call site is ambiguous.
-"Coherence is not repealed — it is scoped" is the sentence the page exists to earn.
+**workarounds**: the newtype dance, and the marker-struct-plus-helper-trait pattern developers
+[reinvent independently](../../communication-strategy/evidence.md), which the page names rather than
+teaches, because recognizing the hand-rolled pattern sets up the move. Finally the **move**: the
+implementation's `Self` becomes a type the implementing crate owns, so neither rule applies; and coherence
+is **restored locally**, because each type names exactly one provider, so no call site is ambiguous.
+"Coherence is not repealed; it is scoped" is the sentence the page exists to earn.
 
 Built from [coherence](../../cgp/concepts/coherence.md) and
 [consumer and provider traits](../../cgp/concepts/consumer-and-provider-traits.md), with the
@@ -184,47 +184,23 @@ Built from [coherence](../../cgp/concepts/coherence.md) and
 name the [modularity hierarchy](../../cgp/concepts/modularity-hierarchy.md) at the end, because a reader
 who has just been told coherence can be escaped needs to hear immediately that most code should not.
 
-#### The sixth movement: the shape the page has to build
+#### Keep it at the basic tier, and defer the shapes
 
-The five movements above leave the reader believing overlapping implementations can be made safe, and
-then the page has to do one more thing that no other surface on the site can: **build the idea of a type
-that stands for the application.** This is a missing concept rather than a hard one — vanilla Rust makes
-the arrangement legal and pointless at once, so a reader has never had a reason to construct it, and
-handing them the phrase "application context" therefore lands as an unfamiliar noun. The full account is
-the [comprehension barrier](../../communication-strategy/readers.md) of the same name; on this page it
-runs in three steps.
+The five movements end the page. It stops at the provider-trait move and simple per-type wiring, and it
+does **not** climb into CGP's more modular shapes: no parameter-targeted component, no per-value
+dispatch, no type that stands for an application, and none of the value-context / environmental-context
+or self-targeted / parameter-targeted vocabulary. Coherence is the most basic idea in the section, and a
+reader meeting it should not have to hold the modularity hierarchy in their head to follow it.
 
-**Show the vanilla version working.** Two application types, one value type, two encodings, no CGP:
-`impl CanEncodeValue<Vec<u8>> for ApiServer` beside the same impl for `Firmware`. This compiles, and
-showing it is what converts an unfamiliar shape into ordinary Rust the reader simply never had a reason to
-write. **Show it not scaling**: a third value type, then an attempt to factor the shared logic into a
-blanket impl, then `E0119`. **Then name it**, at the point where the reader already wants what it
-provides — and say in the same breath that such a context usually has no fields, because `struct AppA;`
-is otherwise unreadable.
-
-The payoff is then available in its strongest form, and the page should state it: coherence does not
-forbid this shape, it makes it **not worth building**, so CGP's contribution is constructive rather than
-permissive. It does not merely escape a rule; it makes an available shape worth using.
-
-#### Two transitions this page must not leave silent
-
-The site's examples move through three shapes — a value context whose target is `Self`, an environmental
-context whose target is `Self`, and an environmental context targeting a parameter — and **both
-transitions between them are currently unmarked everywhere**. Each needs one sentence, and this page is
-where they belong, because it is the page that has the room.
-
-The first is the harder one, precisely because nothing signals it: going from `String: CanEncode` to a web
-application's `App: CanQueryUser` changes no signature and adds no parameter, yet `Self` has stopped being
-data. Mark it — *"until now the wired type has been the data; from here it is a type you define to stand
-for your application, and that change alone is what escapes coherence, because you can define as many as
-you like"* — and note that this, not the parameter, is where the restriction lifts. The second is the
-visible one: *"the context can already decide for itself; to let it decide for a type you don't own, the
-value moves out of `Self` and becomes a parameter."*
-
-Use the qualifiers from
-[vocabulary.md](../../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target) — value
-context, environmental context, self-targeted, parameter-targeted — and introduce each at the transition
-it explains rather than as a glossary up front.
+The examples are therefore all rung-3 retrofit: a self-targeted capability such as `CanEncode`, wired
+onto the concrete types that use it (`String`, `Vec<u8>`). That earns the whole point on its own, because
+overlapping providers become legal and each type coherently names one. How far the idea then scales,
+whether to one choice per application or one per type per application, is the
+[How much CGP to use](../../cgp/concepts/modularity-hierarchy.md) page's job, and the coherence page hands
+off to it in a sentence rather than teaching it. The application-context shape, the two transitions
+between shapes, and the qualifiers that name them belong on that page, taught the way the
+[comprehension barrier](../../communication-strategy/readers.md) and
+[vocabulary.md](../../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target) prescribe.
 
 ### How CGP works
 
@@ -282,6 +258,11 @@ Presented that way the shapes read as a decision the reader is already equipped 
 three named forms to learn first, they read as the complexity the page exists to disarm. State plainly
 that the application shape is where most CGP code lives, so the reader knows the common case rather than
 inferring that the most elaborate shape is the intended destination.
+
+Since the [coherence page](#why-cgp-exists) stays at the basic tier and no longer introduces these
+shapes, this page is where a reader first meets them: introduce the application-context idea rather than
+assuming it, building it from code the way the
+[comprehension barrier](../../communication-strategy/readers.md) describes.
 
 ### Project status and adoption risk
 

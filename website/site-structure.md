@@ -517,9 +517,9 @@ Every quoted error is what the compiler actually reports — including the three
 on *Bypassing coherence*, the `E0599` / `CanUseComponent` / `[CGP-E001]` progression on *Checking your
 wiring*, and the two override conflicts on *Namespaces*.
 
-Three pages are worth knowing about individually. *Bypassing coherence* is the tier's long argument and
-follows the guide's five-movement outline plus the sixth movement that builds the application-context
-shape, ending on the sentence the page exists to earn — coherence is not repealed, it is scoped.
+Three pages are worth knowing about individually. *Bypassing coherence* is the tier's opening argument and
+follows the guide's five-movement outline, staying at the basic tier and ending on the line the page
+exists to earn, that coherence is not repealed but scoped.
 *How much CGP to use* is a **decision guide rather than an explanation**, so it leads with a rule of
 thumb and uses tables where an explanation page would use prose; every row of its alternatives table
 concedes a case where the other tool wins. It is also the site's only public home for the boundary
@@ -586,14 +586,12 @@ wire a *value* context, so this is one of the first places on the site a reader 
 for an application. The page describes that shape without using the qualifiers, which is what an
 introductory page is allowed to do.
 
-*Bypassing coherence* is the one page that **crosses between shapes**, which is its job rather than an
-accident: it opens on a **value context, self-targeted** (`CanEncode` implemented for the data), moves to
-an **environmental context, parameter-targeted** (`CanEncodeValue<Value>` wired on `ApiServer` and
-`Firmware`), and builds the environmental shape out of plain Rust in between. Both crossings are marked in
-prose where they happen — the parameter move is named in *The move*, and *Naming the two shapes* attaches
-the four qualifiers to code the page has already shown. This is the guide's
-[two transitions](writing-guides/explanation.md) obligation discharged, and the reason the page may use
-the qualifiers where the other two need not.
+*Bypassing coherence* stays on one shape, a **value context, self-targeted** retrofit: `CanEncode`
+implemented for the data and wired onto the concrete types that use it (`String`, `Vec<u8>`). It does not
+cross into the environmental or parameter-targeted shapes, because coherence is the section's most basic
+idea and those shapes raise the modularity hierarchy. The page defers them in a sentence to *How much CGP
+to use*, which is where the qualifiers and the shape transitions belong, per the
+[*Why CGP exists* spec](writing-guides/explanation.md#why-cgp-exists).
 
 *How much CGP to use* shows no wired context at all. It names all three shapes as a decision the reader
 makes, drawing on [message.md](../communication-strategy/message.md#when-not-to-reach-for-cgp) for the

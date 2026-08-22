@@ -225,8 +225,8 @@ representativeness, and it costs two transitions that the essay below must then 
 **The site pays that cost back by teaching the application shape second.** Because the hero is a value
 context and so is the Hello World tutorial, a reader's first two contacts both show the shape least CGP
 code is in — so the surfaces immediately downstream are where the common shape has to arrive. On the
-explanation path that is essay section 2 and the sixth movement of
-[*Why CGP exists*](explanation.md#why-cgp-exists); on the teaching path it is the applied tutorial,
+explanation path that is essay section 2 and [*How CGP works*](explanation.md#how-cgp-works), where
+the `App`/`TestApp` example is environmental; on the teaching path it is the applied tutorial,
 which is placed second in the tutorial order for this reason and is naturally environmental. Keeping
 the hero as it is depends on those two doing their job, so a change to either is a change to this
 trade.
@@ -243,9 +243,9 @@ Naming them here is what stops a well-meaning revision from cramming one in.
 
 **Two applications choosing differently for the same type.** At the retrofit shape the wired type *is* the
 context, so `String` commits to one provider globally and the block shows per-*type* choice rather than
-per-*application* choice. That is repaid in essay section 2 and in full by
-[*Why CGP exists*](explanation.md#why-cgp-exists). **Do not try to put the fully modular shape above the
-fold**: it changes the trait to `CanEncodeValue<Value>`, which is precisely the shape change the parity
+per-*application* choice. That is repaid in full by
+[*How much CGP to use*](explanation.md#when-to-use-cgp-and-when-not). **Do not try to put the fully
+modular shape above the fold**: it changes the trait to `CanEncodeValue<Value>`, which is precisely the shape change the parity
 rule forbids, and it adds `open` and `@`-path wiring syntax the reader has no grounding for. The
 [launch-post model draft](../../communication-strategy/formats.md) does run at that shape and is right to,
 because a post has the paragraph of narration this block does not.
@@ -305,7 +305,8 @@ wire a type you define to stand for your application — and because it is yours
 you like."* That sentence is also the first legitimate use of the word **context** on the page, and it
 should be introduced there rather than earlier, because this is the point at which it means something the
 reader can check. The two transitions and the reasoning behind them are specified in
-[explanation.md](explanation.md).
+[vocabulary.md](../../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target) and the
+[comprehension barrier](../../communication-strategy/readers.md).
 
 **3. What that buys you.** Here the capabilities appear, as prose beats rather than cards, each two or
 three sentences: many implementations chosen per application; no runtime cost, because a wired call
