@@ -616,7 +616,7 @@ come for, and it is the first thing a well-meaning trim targets.
 
 - **URL** — <https://contextgeneric.dev/docs/reference/>
 - **Source** — [docs/reference/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/reference)
-- **Status** — Draft: the index and 93 construct pages are written, the remaining pages are stubs
+- **Status** — Draft: the index and 104 construct pages are written, the remaining pages are stubs
 - **How it was made** — ported by an agent from [cgp/reference/](../cgp/reference/README.md); level one
   of the four in [ai-disclosure.md](../communication-strategy/ai-disclosure.md)
 
@@ -631,10 +631,13 @@ hand-written index as its category link and seven subdirectories mirroring what 
 **Every page is scaffolded and the construct list is complete**, which matters more than it sounds: the
 completeness obligation is against the index rather than against the prose, so no construct is missing
 from the site even while most pages are placeholders. Each stub carries its one-line description and an
-admonition saying it is unwritten. Ninety-three construct pages are written, plus the index and
-`errors.md`: the whole of `macros/` (twenty pages), `attributes/` (eight), `derives/` (eight), and
-`traits/` (fifty-seven), which are the first four groups finished end to end. Twenty-seven construct
-pages remain stubs — `components/`, `providers/`, and `types/` are untouched.
+admonition saying it is unwritten. A hundred and four construct pages are written, plus the index and
+`errors.md`: `macros/` (twenty pages), `attributes/` (eight), `derives/` (eight), and `traits/`
+(fifty-seven) are finished end to end, and `providers/` is under way with eleven pages written — the
+eight singleton providers plus the `use_field` trio (`use_field`, `use_field_ref`, `use_fields`), the
+last two split off from `use_field` under the granularity rule. Eighteen construct pages remain stubs:
+the four `providers/` catalogues (dispatch, handler, monad, and error providers, each of which splits
+into one page per provider), and the untouched `components/` and `types/` groups.
 
 ### The compile-errors page
 
@@ -902,8 +905,9 @@ synchronization knows where to look. Three public pages have no internal documen
 
 Two [consolidations](writing-guides/reference.md#granularity-one-page-per-named-construct) survive:
 `cgp_provider.md` covers `#[cgp_new_provider]` too, and `type_level_spines.md` covers `Cons`/`Nil`,
-`Either`/`Void`, `Chars`, and `PathCons`. The four provider catalogues and `use_field.md` are the
-remaining multi-construct titles, in the two groups not yet ported.
+`Either`/`Void`, `Chars`, and `PathCons`. Among the titles that split, `use_field.md` has already become
+`use_field`, `use_field_ref`, and `use_fields`; the four provider catalogues and the `components/` pages
+that bundle a sibling or by-reference variant are the multi-construct titles still to split.
 
 Two internal targets have no public counterpart by design: the [guides](../cgp/guides/README.md) are
 folded into each page's *When to reach for it* section, and implementation documents are replaced by

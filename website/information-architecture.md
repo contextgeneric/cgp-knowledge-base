@@ -174,11 +174,12 @@ made those four a short reading path — which the section's index page is what 
 - *Checking and debugging* — **new**. Lazy wiring, `check_components!`, and `cargo cgp check`. The
   largest gap in the teaching material and the natural next part of the area-calculation family.
 
-**Reference** (new category, 120 pages today and growing, plus an index) — present, and **being filled
+**Reference** (new category, 122 pages today and growing, plus an index) — present, and **being filled
 in**
 - One page per named construct, grouped as `macros/`, `attributes/`, `derives/`, `components/`,
-  `providers/`, `traits/`, and `types/`. All are scaffolded; ninety-three are written — `macros/` (20),
-  `attributes/` (8), `derives/` (8), and `traits/` (57) are complete. Ported from the internal
+  `providers/`, `traits/`, and `types/`. All are scaffolded; a hundred and four are written — `macros/` (20),
+  `attributes/` (8), `derives/` (8), and `traits/` (57) are complete, and `providers/` has eleven pages
+  written (the eight singletons and the `use_field` trio). Ported from the internal
   reference, and recorded in [site-structure.md](site-structure.md).
 - **The count will rise as the last three groups are ported**, because their stubs predate the
   [granularity rule](writing-guides/reference.md#granularity-one-page-per-named-construct) and still carry

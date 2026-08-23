@@ -226,11 +226,12 @@ reader falls into. The spec and the porting procedure are in
   the author reads, so **that read is what remains**. It is also the section's completeness check —
   every construct has an entry here even where the page behind it is a stub — so a page added later is
   added to this index in the same change.
-- **R2 — port the construct pages.** A hundred and twenty pages under `docs/reference/`, all
-  **scaffolded** with a one-line description and a stub notice. **Ninety-three are written:
-  `macros/` (20), `attributes/` (8), `derives/` (8), and `traits/` (57) are complete.** Twenty-seven
-  stubs remain, in `components/` (9), `providers/` (13), and `types/` (5) — **and they will become more
-  pages than that**, since their titles predate the
+- **R2 — port the construct pages.** A hundred and twenty-two pages under `docs/reference/`, all
+  **scaffolded** with a one-line description and a stub notice. **A hundred and four are written:
+  `macros/` (20), `attributes/` (8), `derives/` (8), and `traits/` (57) are complete, and `providers/`
+  has eleven written — the eight singletons and the `use_field` trio (`use_field`, `use_field_ref`,
+  `use_fields`).** Eighteen stubs remain, in `components/` (9), the four `providers/` catalogues, and
+  `types/` (5) — **and they will become more pages than that**, since their titles predate the
   [granularity rule](writing-guides/reference.md#granularity-one-page-per-named-construct) and still
   bundle: the four provider catalogues, `use_field.md`, and the component pages holding a sibling or a
   by-reference variant each split. Enumerate each group against the source as you port it, and carry the

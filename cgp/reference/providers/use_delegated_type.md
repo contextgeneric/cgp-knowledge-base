@@ -46,7 +46,7 @@ A typical use defines a lookup table mapping type tags to concrete types and wir
 
 ```rust
 use cgp::prelude::*;
-use cgp::core::types::UseDelegatedType; // not re-exported through the prelude
+use cgp::core::types::WithDelegatedType; // not re-exported through the prelude
 
 #[cgp_type]
 pub trait HasScalarType {
@@ -73,12 +73,12 @@ delegate_components! {
         [
             ScalarTypeProviderComponent,
             IndexTypeProviderComponent,
-        ]: UseDelegatedType<AppTypes>,
+        ]: WithDelegatedType<AppTypes>,
     }
 }
 ```
 
-`App` routes both its scalar and index type components through `UseDelegatedType<AppTypes>`. When the wiring asks for `App`'s `Scalar`, the provider looks `ScalarTypeProviderComponent` up in `AppTypes` and finds `f64`; for `Index` it finds `usize`. A single provider entry on `App` thus answers two abstract types, with the concrete choices held in one place in `AppTypes`.
+`App` routes both its scalar and index type components through `WithDelegatedType<AppTypes>`, the [`WithProvider`](with_provider.md) alias that adapts the foundational `UseDelegatedType` provider to a `#[cgp_type]` component. When the wiring asks for `App`'s `Scalar`, the provider looks `ScalarTypeProviderComponent` up in `AppTypes` and finds `f64`; for `Index` it finds `usize`. A single provider entry on `App` thus answers two abstract types, with the concrete choices held in one place in `AppTypes`.
 
 This is what makes `UseDelegatedType` valuable for bundling: the set of concrete types lives in the `AppTypes` table and can be reused, swapped, or supplied by a preset, while each context only points its type components at the table.
 

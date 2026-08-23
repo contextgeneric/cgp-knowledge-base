@@ -16,7 +16,7 @@ The list is a type-level [`Cons`](../types/cons.md) spine — `Cons<GetterA, Con
 pub struct ChainGetters<Getters>(pub PhantomData<Getters>);
 ```
 
-`Getters` is a [`Cons`](../types/cons.md)/`Nil` list whose elements are field getters. The provider has no `With...` alias; it is used directly in wiring as the provider for a getter component, or composed inside other getter wiring. `ChainGetters` is not re-exported through `cgp::prelude`; reach it through `cgp::core::field::impls`.
+`Getters` is a [`Cons`](../types/cons.md)/`Nil` list whose elements are field getters. `ChainGetters` implements the foundational [`FieldGetter`](../traits/has_field.md) rather than a getter component's own provider trait, so it has no dedicated `With...` alias and is wired to a getter component by wrapping it in [`WithProvider`](with_provider.md). `ChainGetters` is not re-exported through `cgp::prelude`; reach it through `cgp::core::field::impls`.
 
 ## Implementations
 
@@ -80,17 +80,17 @@ pub struct App {
 
 delegate_components! {
     App {
-        PortGetterComponent: ChainGetters<
-            Product![
+        PortGetterComponent: WithProvider<
+            ChainGetters<Product![
                 UseField<Symbol!("config")>,
                 UseField<Symbol!("port")>,
-            ],
+            ]>,
         >,
     }
 }
 ```
 
-`App` wires `PortGetterComponent` to `ChainGetters` over a two-element list. The first getter, `UseField<Symbol!("config")>`, reads `App`'s `config` field to produce a `&Config`; the second, `UseField<Symbol!("port")>`, reads that `Config`'s `port` field to produce the `&u16`. `ChainGetters` threads the reference from the first step into the second, so `app.port()` returns the port nested two levels in, without any hand-written walking code.
+`App` wires `PortGetterComponent` to `WithProvider<ChainGetters<...>>` over a two-element list. The first getter, `UseField<Symbol!("config")>`, reads `App`'s `config` field to produce a `&Config`; the second, `UseField<Symbol!("port")>`, reads that `Config`'s `port` field to produce the `&u16`. `ChainGetters` threads the reference from the first step into the second, and the [`WithProvider`](with_provider.md) adapter turns the resulting `FieldGetter` into the getter component's provider, so `app.port()` returns the port nested two levels in, without any hand-written walking code.
 
 ## Related constructs
 

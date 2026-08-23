@@ -81,8 +81,10 @@ documented at [projects/cgp-serde/](../../projects/cgp-serde/README.md).
 - **The migration advice to copy `Async` and `HasAsyncErrorType` locally still works**, but it is
   transitional advice for a version-old codebase and should not be read as a recommendation for new
   code.
-- **The `#[cgp_component { provider: ..., derive_delegate: ... }]` brace form is still valid** but is
-  now the long way round; the positional `#[cgp_component(Handler)]` form is idiomatic.
+- **The `#[cgp_component { provider: ..., derive_delegate: ... }]` brace form no longer parses.** The
+  brace form now takes only `name`, `provider`, and `context`, so `derive_delegate` is a separate
+  `#[derive_delegate(...)]` attribute rather than a brace key. The positional `#[cgp_component(Handler)]`
+  form is idiomatic.
 - **Two notes on the RTN discussion.** The post's claim that RTN "does not appear to be close to
   stabilization" was accurate at the time and should be re-checked before being repeated anywhere
   public. And the proxy-trait workaround the post calls temporary is still in use, so it should be
