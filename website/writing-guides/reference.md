@@ -43,7 +43,7 @@ dense with links to `concepts/`, `guides/`, `examples/`, `errors/`, and `impleme
 
 **Restructure into the layered descent**, so a beginner and an expert can use the same page.
 
-**Add the two sections the internal template lacks** — *When to reach for it* and, where the construct
+**Add the two sections the internal template lacks** — *When to use it* and, where the construct
 has one, a plain-language gloss of any vocabulary a newcomer will not have. Internal documents assume the
 `/cgp` skill and use "provider trait" and "impl-side dependency" as known words.
 
@@ -100,7 +100,7 @@ what it becomes. The splits already applied are the model for it:
   `PanicOnError`.
 - **`use_field.md`** became three, for `UseField`, `UseFieldRef`, and `UseFields`. The internal guide
   kept them together because they are chosen together; a reader choosing between them is served by each
-  page's *When to reach for it* and by the index.
+  page's *When to use it* and by the index.
 - **The component docs that bundle more than one component** split by component: `can_raise_error.md`
   into `CanRaiseError` and `CanWrapError`, `runner.md` into `CanRun` and `CanSendRun`, and
   `has_runtime.md` into `HasRuntimeType` and `HasRuntime`. A *component* is one construct even though it
@@ -164,7 +164,7 @@ construct-specific instead of re-explaining the same failure.
 Every reference page descends through the same six sections, in the same order, so that a reader learns
 the shape once and can then skim any page by habit. **The descent is by reader level**: a beginner gets
 what they need from *Overview* and *Usage* and stops, a working developer reads to the end of the
-examples and the *When to reach for it* judgement that follows them, and only an advanced reader
+examples and the *When to use it* judgement that follows them, and only an advanced reader
 continues into the machinery. Nobody has to read past their level to find their answer.
 
 **Built-in component pages use a variant of this descent.** A page for one of the components CGP ships —
@@ -213,7 +213,7 @@ and an advanced reader can still find every other one, not by its word count.
 **Examples** — at least one realistic, self-contained example, and more where forms differ meaningfully.
 Prefer code already verified in [examples/](../../examples/README.md) over new snippets.
 
-**When to reach for it, and when not** — the section with no internal counterpart, and often the most
+**When to use it** — the section with no internal counterpart, and often the most
 useful on the page. Name the situations the construct is for, the alternative to prefer when it is not,
 and the neighbouring construct a reader may actually have wanted. Most of this material already exists in
 the internal [guides](../../cgp/guides/README.md), which are prescriptive where the reference is
@@ -224,7 +224,7 @@ material reaches the public site, since the guides have no public home of their 
 strict level-by-level descent.** Choosing between two constructs is a judgement, and a reader makes it
 better having just seen what the construct looks like in use than having only been told what it is for —
 so the page shows the thing, then argues about when to reach for it. The descent is otherwise intact: a
-beginner still stops after *Usage* and *Examples*, and everything below *When to reach for it* is for
+beginner still stops after *Usage* and *Examples*, and everything below *When to use it* is for
 a reader going deeper.
 
 **Under the hood** — the exact expansion, with before/after blocks. **This section stays** on a macro,
@@ -331,7 +331,7 @@ idea — usually *Why CGP exists* or *How CGP works* — or, where no explanatio
 material is summarized in a sentence on the reference page itself rather than left dangling.
 
 A link to a **guide** has no public destination, because the guides have no public counterpart. Fold the
-guide's recommendation into the page's *When to reach for it* section, which is what that section is for.
+guide's recommendation into the page's *When to use it* section, which is what that section is for.
 
 A link to an **example** becomes a link to the tutorial or deep dive that carries the same scenario, or
 the example code is inlined.
@@ -382,7 +382,7 @@ per [vocabulary.md](../../communication-strategy/vocabulary.md).
 **No deferral to docs.rs** for anything a reader needs, since the site reference is the canonical place.
 
 **No legacy form presented as current.** Where a construct has been superseded — `#[derive_delegate]` and
-`UseDelegate` by the `open` statement, for instance — the page says so plainly in *When to reach for it*
+`UseDelegate` by the `open` statement, for instance — the page says so plainly in *When to use it*
 and explains that the older form is what a reader will meet in existing code.
 
 ## Checking a draft

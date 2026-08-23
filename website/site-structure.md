@@ -527,7 +527,7 @@ code shown as illustration, then closes with a decision-guide tail that leads wi
 uses tables where prose would slow a reader who is deciding, every row of its alternatives table
 conceding a case where the other tool wins. It is also the site's only public home for the boundary
 material in [message.md](../communication-strategy/message.md#when-not-to-reach-for-cgp), and the place
-the reference's *When to reach for it* sections can point at instead of re-arguing locally. And
+the reference's *When to use it* sections can point at instead of re-arguing locally. And
 *Checking your wiring* is the tier's answer to the objection that has cost CGP the most readers: it
 follows one broken context through three stages — unchecked, checked, and checked through the toolchain
 — quoting the real output at each.
@@ -940,12 +940,12 @@ Two [consolidations](writing-guides/reference.md#granularity-one-page-per-named-
 that bundle a sibling or by-reference variant are the multi-construct titles still to split.
 
 Two internal targets have no public counterpart by design: the [guides](../cgp/guides/README.md) are
-folded into each page's *When to reach for it* section, and implementation documents are replaced by
+folded into each page's *When to use it* section, and implementation documents are replaced by
 GitHub source links.
 
 The written pages also draw on the guides directly —
 [writing providers](../cgp/guides/writing-providers.md) and
-[sizing a component](../cgp/guides/sizing-a-component.md) supply most of two *When to reach for it*
+[sizing a component](../cgp/guides/sizing-a-component.md) supply most of two *When to use it*
 sections, and [naming a type dependency](../cgp/guides/naming-a-type-dependency.md) supplies the
 `#[impl_generics]`-versus-abstract-type decision on `#[cgp_fn]` — and the shared running example is the
 `Rectangle` area calculation from

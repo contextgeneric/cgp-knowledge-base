@@ -269,7 +269,7 @@ which turns it into a public claim. Change it here and check those in the same e
 work and the lowest risk: it is a mechanical port from internal documents that are already written and
 verified, into the project voice, against a fixed six-section template. Draft it, check it against its
 guide's five draft checks, and sample rather than read it end to end. Where a ported page turns out to
-need a judgement call rather than a transformation — a *When to reach for it* section with no internal
+need a judgement call rather than a transformation — a *When to use it* section with no internal
 guide behind it, a *Common Mistakes* entry that reads as a warning about the library — flag it for reading
 rather than deciding alone.
 

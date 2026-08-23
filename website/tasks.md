@@ -244,9 +244,9 @@ reader falls into. The spec and the porting procedure are in
   the shared provenance note, compiled snippets, the `context` gloss — are recorded in
   [site-structure.md](site-structure.md). Each remaining page is ported from its internal document by
   the guide's four transformations: re-point every link, restructure into the layered descent, add
-  *When to reach for it*, and convert the Source section. Two things ride on this beyond the pages
+  *When to use it*, and convert the Source section. Two things ride on this beyond the pages
   themselves — the internal [guides](../cgp/guides/README.md) reach the public site **only** through
-  the *When to reach for it* sections, and every new page owes a provenance note. This group ships on
+  the *When to use it* sections, and every new page owes a provenance note. This group ships on
   its guide plus a spot check rather than a full read, and a subdirectory is the natural unit for one
   session. *Blocked by:* nothing — the error catalog page a *Gotchas* section defers to is written. **Not blocked by the explanation
   tier**: the twenty-seven were written without a single link into it, because the guide's own fallback —

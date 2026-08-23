@@ -174,7 +174,7 @@ site and no later page has to be retrofitted into the grouping; what remains is 
 subdirectory at a time. Spec and porting procedure in
 [writing-guides/reference.md](writing-guides/reference.md); the settled conventions and the current
 state are in [site-structure.md](site-structure.md). One dependency is worth repeating: the reference's
-*When to reach for it* sections are where the internal [guides](../cgp/guides/README.md) reach the
+*When to use it* sections are where the internal [guides](../cgp/guides/README.md) reach the
 public site, since they have no public home of their own.
 
 **Three deep dives** — Hypershell, extensible data types, and cgp-serde: multi-page living documents
