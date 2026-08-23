@@ -177,9 +177,9 @@ made those four a short reading path — which the section's index page is what 
 **Reference** (new category, 122 pages today and growing, plus an index) — present, and **being filled
 in**
 - One page per named construct, grouped as `macros/`, `attributes/`, `derives/`, `components/`,
-  `providers/`, `traits/`, and `types/`. All are scaffolded; 138 are written — `macros/` (20),
-  `attributes/` (8), `derives/` (8), `traits/` (57), and `providers/` (45) are complete. The
-  `providers/` group is one page per provider: eleven singleton pages plus four subsections — `error/`,
+  `providers/`, `traits/`, and `types/`. All are scaffolded; 143 are written — `macros/` (20),
+  `attributes/` (8), `derives/` (8), `traits/` (57), and `providers/` (50) are complete. The
+  `providers/` group is one page per provider: sixteen singleton pages plus four subsections — `error/`,
   `handler/`, `dispatch/`, and `monad/` — each with its own overview. Ported from the internal
   reference, and recorded in [site-structure.md](site-structure.md).
 - **The count will rise as the last two groups are ported**, because their stubs predate the

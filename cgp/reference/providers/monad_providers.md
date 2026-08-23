@@ -57,7 +57,7 @@ pub struct BindOk<M, Cont>(pub PhantomData<(M, Cont)>);
 pub struct BindErr<M, Cont>(pub PhantomData<(M, Cont)>);
 ```
 
-In both, `M` is the monad layer beneath this bind and `Cont` is the continuation provider to run on the continue branch. `BindErr<M, Cont>` implements `Computer` and `AsyncComputer` for an input of `Result<T1, E>`: on `Ok(value)` it runs `Cont` on `value` and lifts the continuation's output back through `M`, and on `Err(err)` it short-circuits by lifting the error directly to the output, skipping `Cont`. `BindOk<M, Cont>` is the mirror, branching on `Result<T, E1>`: it runs `Cont` on the `Err` payload and short-circuits on `Ok`. The `M` parameter is what lets these binds nest — at the bottom of a single-layer pipeline it is `IdentMonadic`, and a stacked monad threads a deeper monad through it.
+In both, `M` is the monad layer beneath this bind and `Cont` is the continuation provider to run on the continue branch. `BindErr<M, Cont>` implements `Computer` and `AsyncComputer` for an input of `Result<T1, E>`: on `Ok(value)` it runs `Cont` on `value` and lifts the continuation's output back through `M`, and on `Err(err)` it short-circuits by lifting the error directly to the output, skipping `Cont`. `BindOk<M, Cont>` is the mirror, branching on `Result<T, E1>`: it runs `Cont` on the `Err` payload and short-circuits on `Ok`. The `M` parameter lets these binds nest: at the bottom of a single-layer pipeline it is `IdentMonadic`, and a stacked monad threads a deeper monad through it.
 
 ## The `TryPromoteProviders` mapper
 
@@ -82,7 +82,7 @@ PipeMonadic::<ErrMonadic, Product![Increment, Increment, Increment]>::compute(&c
 // 253 -> Ok(254) -> Ok(255) -> Err("overflow")
 ```
 
-A single bind step can be assembled by hand and run through `PipeHandlers`, which is what `PipeMonadic` does internally for a two-element list:
+A single bind step can be assembled by hand and run through `PipeHandlers`, which `PipeMonadic` does internally for a two-element list:
 
 ```rust
 PipeHandlers::<Product![Increment, BindErr<IdentMonadic, Increment>]>::compute(&context, code, 1)
@@ -97,7 +97,7 @@ PipeMonadic::<OkMonadic, Product![ReturnOkErr, ReturnOkOk, ReturnOkErr]>::try_co
 
 ## Related constructs
 
-`PipeMonadic` generalizes the non-monadic [handler combinators](handler_combinators.md): `PipeHandlers` and `ComposeHandlers` chain handlers feeding each output straight into the next, which is exactly what `PipeMonadic<IdentMonadic, ...>` reduces to, while the `TryPromote` provider those combinators define is what `PipeMonadic` uses to bridge fallible and infallible handlers. The monads these providers consume are defined by the trait layer in [monad traits](../traits/monad.md) — `MonadicTrans`, `MonadicBind`, `ContainsValue`, and `LiftValue` — and the conceptual overview of why a monadic pipeline short-circuits is in [monadic handlers](../../concepts/monadic-handlers.md). The pipelines build providers for the [`Computer`](../components/computer.md) family, and `TryPromoteProviders` relies on [`MapType`](../traits/map_type.md) and `MapFields` to map over the handler list. For selecting one handler among several by a type-level key rather than running them in sequence, see [dispatch combinators](dispatch_combinators.md).
+`PipeMonadic` generalizes the non-monadic [handler combinators](handler_combinators.md): `PipeHandlers` and `ComposeHandlers` chain handlers feeding each output straight into the next, which `PipeMonadic<IdentMonadic, ...>` reduces to, while `PipeMonadic` uses the `TryPromote` provider those combinators define to bridge fallible and infallible handlers. The monads these providers consume are defined by the trait layer in [monad traits](../traits/monad.md) — `MonadicTrans`, `MonadicBind`, `ContainsValue`, and `LiftValue` — and the conceptual overview of why a monadic pipeline short-circuits is in [monadic handlers](../../concepts/monadic-handlers.md). The pipelines build providers for the [`Computer`](../components/computer.md) family, and `TryPromoteProviders` relies on [`MapType`](../traits/map_type.md) and `MapFields` to map over the handler list. For selecting one handler among several by a type-level key rather than running them in sequence, see [dispatch combinators](dispatch_combinators.md).
 
 ## Source
 

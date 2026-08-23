@@ -113,7 +113,7 @@ As a `TryComputer`, it requires the inner `Provider: Computer` whose `Output` is
 
 ## Promotion bundles
 
-Several promotion adapters are not handler impls themselves but delegation tables that wire a whole cluster of handler components to the right single-trait promotion at once. They exist so that a provider author can implement just one trait — say `Computer` — and have the bundle fill in every other member of the family by promotion. Each is defined with [`delegate_components!`](../macros/delegate_components.md) over a generic inner `Provider`, and is what the [`#[cgp_computer]`](../macros/cgp_computer.md) and [`#[cgp_producer]`](../macros/cgp_producer.md) macros wire their generated providers into.
+Several promotion adapters are not handler impls themselves but delegation tables that wire a whole cluster of handler components to the right single-trait promotion at once. They exist so that a provider author can implement just one trait — say `Computer` — and have the bundle fill in every other member of the family by promotion. Each is defined with [`delegate_components!`](../macros/delegate_components.md) over a generic inner `Provider`, and the [`#[cgp_computer]`](../macros/cgp_computer.md) and [`#[cgp_producer]`](../macros/cgp_producer.md) macros wire their generated providers into it.
 
 `PromoteComputer<Provider>` starts from a provider that implements `Computer` (the by-value, synchronous, infallible base) and fills in every other family member. It routes `TryComputerComponent` to `Promote<Provider>` (wrap in `Ok`), `AsyncComputerComponent` and `HandlerComponent` to `PromoteAsync<Provider>` (run synchronously in an async method), and all the `…Ref` components to `PromoteRef<Provider>` (dereference, then defer to the base):
 

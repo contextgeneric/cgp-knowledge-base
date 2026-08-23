@@ -95,3 +95,7 @@ Both forms read `first_name`; `UseField` is the idiomatic choice for binding a g
 - The `HasField`, `FieldGetter`, and (in `has_field_mut.rs`) `HasFieldMut`, `MutFieldGetter` traits are in [crates/core/cgp-field/src/traits/](https://github.com/contextgeneric/cgp/tree/main/crates/core/cgp-field/src/traits/).
 - The `#[cgp_getter]`-generated `UseField` impl is built in [crates/macros/cgp-macro-core/src/types/cgp_getter/use_field.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/cgp_getter/use_field.rs).
 - For how it is generated and the index of tests, see the implementation document [implementation/entrypoints/cgp_getter](../../implementation/entrypoints/cgp_getter.md).
+
+## Public pages derived from this document
+
+This document feeds two public pages: [`use_field`](https://contextgeneric.dev/docs/reference/providers/use_field) and its alias page [`with_field`](https://contextgeneric.dev/docs/reference/providers/with_field), which carries the `WithField` wiring example. The alias family itself is documented in [with_provider.md](with_provider.md). A change here is propagated to both, per the [synchronization rule](../../../AGENTS.md#the-synchronization-rule).

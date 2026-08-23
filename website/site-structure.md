@@ -633,19 +633,27 @@ rest use a `generated-index`. A separate `errors.md` covers post-expansion compi
 **Every page is scaffolded and the construct list is complete**, which matters more than it sounds: the
 completeness obligation is against the index rather than against the prose, so no construct is missing
 from the site even while most pages are placeholders. Each stub carries its one-line description and an
-admonition saying it is unwritten. A hundred and thirty-eight construct pages are written, plus the
+admonition saying it is unwritten. A hundred and forty-three construct pages are written, plus the
 index and `errors.md`: `macros/` (twenty pages), `attributes/` (eight), `derives/` (eight), `traits/`
-(fifty-seven), and `providers/` (forty-five) are finished end to end. The `providers/` group is now one
-page per provider: eleven singleton pages, plus four subsections — `error/`, `handler/`, `dispatch/`,
+(fifty-seven), and `providers/` (fifty) are finished end to end. The `providers/` group is now one
+page per provider: sixteen singleton pages, plus four subsections — `error/`, `handler/`, `dispatch/`,
 and `monad/` — each carrying its own overview and one page per construct (error 7, handler 13, dispatch
-11, monad 3). The four former catalogue pages became those subsections, which is where the granularity
-rule's "one page per provider" for `providers/` lands. Fourteen construct pages remain stubs: the
+11, monad 3). The singleton pages include the five `With…` aliases — `WithContext`, `WithType`,
+`WithField`, `WithFieldRef`, and `WithDelegatedType` — each given a page for the `WithProvider<Inner>`
+spelling a reader may look up by name, per the
+[granularity rule](writing-guides/reference.md#granularity-one-page-per-named-construct); for
+`WithFieldRef` and `WithDelegatedType`, whose inner provider is foundational, the alias page carries the
+wiring form and example while the inner provider's page keeps the mechanism. The four former catalogue
+pages became those subsections, which is where the granularity rule's "one page per provider" for
+`providers/` lands. Fourteen construct pages remain stubs: the
 untouched `components/` (nine) and `types/` (five) groups. The provider pages are mirrored in the
-`example-code` crate under `src/reference/providers/` — the singletons, all of `error/`, `handler/`,
-and `monad/`, and the matcher-side of `dispatch/` (`match_with_handlers`, `match_with_value_handlers`,
-`match_with_field_handlers`, `extract_field_and_handle`, `handle_field_value`); the builder-side and
-advanced-matcher `dispatch/` pages (the `build_*` providers, `match_first_with_handlers`, and
-`downcast_and_handle`) are the group's remaining unmirrored item.
+`example-code` crate under `src/reference/providers/`: the singletons, the four `With…` alias pages
+except `with_context` (which shows no wireable example), all of `error/`, `handler/`, and `monad/`, and
+all of `dispatch/`. The `dispatch/` group is now covered end to end, including the builder-side
+(`build_and_set_field`, `build_and_merge`, `build_with_handlers`, `build_and_merge_outputs`) and
+advanced-matcher (`match_first_with_handlers`, `downcast_and_handle`) pages that were previously the
+group's remaining gap. `UseFieldRef` and `UseDelegatedType` carry no mirror of their own, since their
+wireable example lives on their alias page (`with_field_ref`, `with_delegated_type`).
 
 ### The compile-errors page
 

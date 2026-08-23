@@ -41,7 +41,7 @@ where
 
 The `where` clause carries the defining constraint: the context's field at `Tag` must implement `AsRef<Value>`, so the stored type can be borrowed as the exposed type. As in `UseField`, `OutTag` is the tag the component asks under and is ignored; the field is read at `Tag`. The body reads the field and calls `as_ref()`. The `'static` bound on the field type lets Rust infer the borrow's lifetime through the `AsRef` call.
 
-`UseFieldRef` also implements the mutable getter [`MutFieldGetter`](../traits/has_field.md), requiring the field type to implement both `AsRef<Value>` and `AsMut<Value>` and returning `&mut Value` via `as_mut()`. Because these are `FieldGetter` implementations rather than a getter component's provider trait, the [`WithProvider`](with_provider.md) adapter behind `WithFieldRef` is what turns `UseFieldRef` into a provider a getter component can be wired to. Unlike `UseField`, `UseFieldRef` does not implement [`TypeProvider`](../components/has_type.md), because its purpose is borrowed field access rather than abstract-type resolution.
+`UseFieldRef` also implements the mutable getter [`MutFieldGetter`](../traits/has_field.md), requiring the field type to implement both `AsRef<Value>` and `AsMut<Value>` and returning `&mut Value` via `as_mut()`. Because these are `FieldGetter` implementations rather than a getter component's provider trait, the [`WithProvider`](with_provider.md) adapter behind `WithFieldRef` turns `UseFieldRef` into a provider a getter component can be wired to. Unlike `UseField`, `UseFieldRef` does not implement [`TypeProvider`](../components/has_type.md), because its purpose is borrowed field access rather than abstract-type resolution.
 
 ## Examples
 
@@ -90,3 +90,7 @@ delegate_components! {
 
 - The `UseFieldRef` struct, its `WithFieldRef` alias, and the `FieldGetter` and `MutFieldGetter` impls are in [crates/core/cgp-field/src/impls/use_ref.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/impls/use_ref.rs).
 - The `HasField` and `FieldGetter` traits are in [crates/core/cgp-field/src/traits/has_field.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/traits/has_field.rs), and `HasFieldMut`/`MutFieldGetter` are in [crates/core/cgp-field/src/traits/has_field_mut.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/traits/has_field_mut.rs).
+
+## Public pages derived from this document
+
+This document feeds two public pages: [`use_field_ref`](https://contextgeneric.dev/docs/reference/providers/use_field_ref), which keeps the foundational mechanism, and its alias page [`with_field_ref`](https://contextgeneric.dev/docs/reference/providers/with_field_ref), which carries the wiring form and worked example, since `UseFieldRef` is wired only through the `WithFieldRef` alias. The alias family itself is documented in [with_provider.md](with_provider.md). A change here is propagated to both, per the [synchronization rule](../../../AGENTS.md#the-synchronization-rule).

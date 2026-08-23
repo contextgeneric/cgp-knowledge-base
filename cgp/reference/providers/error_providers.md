@@ -49,7 +49,7 @@ where
 }
 ```
 
-The `HasErrorType<Error = E>` bound ties the source type to the abstract error, so `raise_error` returns its argument untouched. This is what a context uses when generic code raises a value that is already of the context's chosen error type.
+The `HasErrorType<Error = E>` bound ties the source type to the abstract error, so `raise_error` returns its argument untouched. A context uses this when generic code raises a value that is already of the context's chosen error type.
 
 ### `RaiseInfallible` — absorb an impossible error
 
@@ -138,7 +138,7 @@ where
 
 ## Behavior
 
-A context gains an error strategy by wiring one of these providers to `ErrorRaiserComponent` or `ErrorWrapperComponent` exactly like any other component, and the provider's `where` clause is what determines when that wiring type-checks. `RaiseFrom` requires the abstract error to be `From` the source, `ReturnError` requires the source to be the abstract error itself, `RaiseInfallible` accepts only `Infallible`, and `PanicOnError` accepts any `Debug` source — so the choice of provider is also a statement about which source errors a context will accept and how. Because both components dispatch through `UseDelegate` over the source-error or detail type, a context commonly wires several of these providers at once through a delegation table, one per source error type.
+A context gains an error strategy by wiring one of these providers to `ErrorRaiserComponent` or `ErrorWrapperComponent` exactly like any other component, and the provider's `where` clause determines when that wiring type-checks. `RaiseFrom` requires the abstract error to be `From` the source, `ReturnError` requires the source to be the abstract error itself, `RaiseInfallible` accepts only `Infallible`, and `PanicOnError` accepts any `Debug` source — so the choice of provider is also a statement about which source errors a context will accept and how. Because both components dispatch through `UseDelegate` over the source-error or detail type, a context commonly wires several of these providers at once through a delegation table, one per source error type.
 
 The string-formatting providers compose with the other raisers rather than replacing them, which is the key to their design. `DebugError` and `DisplayError` do not know the context's error type; they only know how to turn a `Debug` or `Display` value into a `String` and hand it off. The context must separately wire a provider — often `RaiseFrom` or a backend provider — that handles the `String` source, and the formatting providers route every other source error through that single string path. This lets a context handle an open-ended set of error types with one concrete string-raising rule plus a uniform formatting redirect.
 

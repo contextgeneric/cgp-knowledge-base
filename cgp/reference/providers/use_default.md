@@ -8,7 +8,7 @@
 
 This keeps a default-only component consistent with the rest of CGP wiring. Without it, a component whose methods are all defaulted would still need some provider type and some `delegate_components!` entry to participate in the delegation table; `UseDefault` is the shared name for that role, so authors do not invent a one-off marker each time. A context that wants the defaults wires the component to `UseDefault` and writes no method bodies of its own.
 
-`UseDefault` is a bare marker that CGP defines but does not implement for any trait. Unlike [`UseContext`](use_context.md), [`UseFields`](use_fields.md), or [`UseField`](use_field.md), no macro generates a provider impl for it; the provider impl is written by the author, typically with [`#[cgp_impl]`](../macros/cgp_impl.md) and an empty body so the trait's defaults take effect. This is what distinguishes `UseDefault` from the providers that carry generated behavior: it is purely a conventional name for an author-supplied, default-bodied implementation.
+`UseDefault` is a bare marker that CGP defines but does not implement for any trait. Unlike [`UseContext`](use_context.md), [`UseFields`](use_fields.md), or [`UseField`](use_field.md), no macro generates a provider impl for it; the provider impl is written by the author, typically with [`#[cgp_impl]`](../macros/cgp_impl.md) and an empty body so the trait's defaults take effect. This distinguishes `UseDefault` from the providers that carry generated behavior: it is purely a conventional name for an author-supplied, default-bodied implementation.
 
 Like every CGP provider, `UseDefault` carries no runtime value. It is a unit struct used purely as a type-level marker, and its provider impls never read the `self` position.
 

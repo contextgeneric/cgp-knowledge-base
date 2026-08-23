@@ -122,12 +122,20 @@ only the first will pass while the build still fails on the second. And decide p
 link which of the new pages it meant — a link labelled `CanUpcast` and a link labelled `build_from` came
 from one page and belong on two different ones, so a blanket rename is wrong.
 
-**Two things are documented on another construct's page rather than getting one, and both follow the same
-principle: they are not separately nameable *constructs*.** A **marker** is a type implementing a trait —
-`IsPresent`, `IsRef` — and belongs with that trait. An **alias** is a spelling of another construct —
-`WithType`, `WithField`, and `WithContext` for `WithProvider` — and belongs with the construct it aliases.
-In both cases the index's *Looking for a name you don't see?* table is what routes a reader who arrives
-holding the name, and adding the row is part of the change.
+**A marker is documented on its trait's page rather than getting one, because it is not a separately
+nameable *construct*.** A marker is a type implementing a trait, such as `IsPresent` or `IsRef`, and
+belongs with that trait; the index's *Looking for a name you don't see?* table routes a reader who
+arrives holding the name, and adding the row is part of the change.
+
+**A provider alias, by contrast, gets its own page.** An alias such as `WithType`, `WithField`, or
+`WithContext` is a spelling of `WithProvider<Inner>`, and though it is not a distinct type, a reader who
+reaches for it by name needs a page to land on rather than an index row. Each alias page states what it
+expands to, carries the wiring form and a worked example, and links to `WithProvider` for the adapter
+mechanism and to its inner provider for the underlying behavior, so it repeats neither. The five `With…`
+aliases — `WithContext`, `WithType`, `WithField`, `WithFieldRef`, and `WithDelegatedType` — each have a
+page for this reason, and for the two whose inner provider is foundational and has no directly-wireable
+form (`WithFieldRef`, `WithDelegatedType`), the alias page is where the wiring form and example live
+while the inner provider's page keeps the mechanism.
 
 Two pages are not constructs at all, and they go in opposite directions.
 [`cargo-cgp`](../../cgp/reference/cargo-cgp.md) documents the toolchain, and it does not belong under

@@ -37,7 +37,7 @@ impl<Context, Tag, Type> TypeProvider<Context, Tag> for UseType<Type> {
 
 The impl is unconditional in `Context` and `Tag` — `UseType<f64>` is a `TypeProvider` whose `Type` is `f64` regardless of which context or which type tag asks. `HasType<Tag>` is the consumer trait that reads this; `TypeProvider` is its provider trait. So once a context's `TypeProviderComponent` is wired to `UseType<f64>`, the context implements `HasType<Tag>` with `Type = f64`, and `TypeOf<Context, Tag>` resolves to `f64`.
 
-This same provider is what [`#[cgp_type]`](../macros/cgp_type.md) targets. When you write `#[cgp_type] trait HasScalarType { type Scalar; }`, the macro generates a `UseType` impl for the component's provider trait:
+[`#[cgp_type]`](../macros/cgp_type.md) targets this same provider. When you write `#[cgp_type] trait HasScalarType { type Scalar; }`, the macro generates a `UseType` impl for the component's provider trait:
 
 ```rust
 impl<Scalar, __Context__> ScalarTypeProvider<__Context__> for UseType<Scalar> {
@@ -100,3 +100,7 @@ Both forms produce the same result — `App::Scalar` is `f64` — which is why `
 - The `HasType` consumer trait, the `TypeProvider` provider trait, and the `TypeOf` alias are in [crates/core/cgp-type/src/traits/has_type.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-type/src/traits/has_type.rs).
 - The `#[cgp_type]`-generated `UseType` impl is built in [crates/macros/cgp-macro-core/src/types/cgp_type/item.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/cgp_type/item.rs).
 - For how it is generated and the index of tests, see the implementation document [implementation/entrypoints/cgp_type](../../implementation/entrypoints/cgp_type.md).
+
+## Public pages derived from this document
+
+This document feeds two public pages: [`use_type`](https://contextgeneric.dev/docs/reference/providers/use_type) and its alias page [`with_type`](https://contextgeneric.dev/docs/reference/providers/with_type), which carries the `WithType` wiring example. The alias family itself is documented in [with_provider.md](with_provider.md). A change here is propagated to both, per the [synchronization rule](../../../AGENTS.md#the-synchronization-rule).
