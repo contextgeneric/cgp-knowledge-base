@@ -169,7 +169,7 @@ to be quoted, so draw on it rather than writing new code that then needs its own
 
 **The website repository carries a Rust crate whose job is to hold that verification, and a page you
 write or revise puts its code there.** `example-code/` is a crate mirroring the `docs/` tree one file
-per page — `docs/concepts/coherence.md` against `src/concepts/coherence.rs` — so the check on a
+per page — `docs/concepts/coherence.md` against `tests/concepts/coherence.rs` — so the check on a
 snippet stops being "an agent compiled this once" and becomes "`cargo test` in that directory is
 green". It is not part of the site: nothing renders it, no page links it, and its own
 [README](https://github.com/contextgeneric/contextgeneric.dev/blob/main/example-code/README.md)

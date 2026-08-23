@@ -73,34 +73,40 @@ rather than as a fourth documentation tier.
 **A Rust crate sits in the repository at `example-code/`, holding compiled counterparts of the code the
 site shows, and it is not part of the site.** Docusaurus never sees it, no page links it, and readers
 are not meant to find it; it exists so that an agent revising a page can check that page's code against
-something the compiler has agreed to. Its layout mirrors `docs/` one file per page, with the file name
-in `snake_case` — `docs/concepts/coherence.md` against
-[`src/concepts/coherence.rs`](https://github.com/contextgeneric/contextgeneric.dev/blob/main/example-code/src/concepts/coherence.rs)
-— and inside a file, one module per heading of the page, in the page's order. A page that shows no code
-gets no file. `cargo test` in that directory is the check; `cargo check` is the fast half of it.
+something the compiler has agreed to. It is a **test-only crate** with no library or binary target: the
+code lives under `tests/` as one integration-test binary per `docs/` section — `tests/concepts_tests.rs`
+pulls in the module tree `tests/concepts/`, and so on — one file per page, with the file name in
+`snake_case`, `docs/concepts/coherence.md` against
+[`tests/concepts/coherence.rs`](https://github.com/contextgeneric/contextgeneric.dev/blob/main/example-code/tests/concepts/coherence.rs),
+and inside a file one module per heading of the page, in the page's order. A page that shows no code
+gets no file. `cargo test` in that directory is the check; `cargo test --no-run` is the fast, run-nothing
+half of it, since a plain `cargo check` skips integration tests.
 
 The conventions live in the crate's own
 [README](https://github.com/contextgeneric/contextgeneric.dev/blob/main/example-code/README.md) rather
 than here, since they are read alongside the code. Four are worth knowing from this side. **Elided
 bodies are filled in**, each with a comment saying the page elided it, so a difference in a body is
 expected while a difference in a signature, bound, attribute, or wiring line is a defect in one side or
-the other. **Snippets a page deliberately rejects are `compile_fail` doctests**, which catch the
-regression that matters — a rejected snippet the compiler has started accepting — but do *not* verify
-which error is produced, since rustdoc accepts an error code after the annotation without enforcing it.
-**Duplication between files is wanted**, because each file has to answer for its page alone.
-And **a listing of *generated* code can only be shape-checked here**; `cargo cgp expand` remains the
-authority on its text, which is the same rule the reference port already follows.
+the other. **Snippets a page deliberately rejects are `trybuild` compile-fail fixtures** under
+`tests/compile_fail/`, each a complete failing program checked against a blessed `.stderr`; they catch
+the regression that matters — a rejected snippet the compiler has started accepting — and the `.stderr`
+files are re-blessed with `TRYBUILD=overwrite cargo test --test compile_fail_tests` after a toolchain or
+`cgp` bump. **Duplication between files is wanted**, because each file has to answer for its page alone.
+And **a listing of *generated* code can only be shape-checked here**; `cargo cgp expand`, run against the
+relevant test target, remains the authority on its text, which is the same rule the reference port
+already follows.
 
 It is filled in **lazily**, and the rule is in
 [AGENTS.md](AGENTS.md#verify-code-against-current-cgp-and-never-against-a-blog-post): a page gets its
 file when someone writes, revises, or reviews it. A missing file therefore means nobody has been
-through that page yet. **`docs/concepts/` is covered in full** — seventeen files, one per page that shows
-code. Under `src/reference/`, the written groups are mirrored as they are ported: `errors.rs`,
+through that page yet. **`docs/concepts/` is covered in full** — one file per page that shows code.
+Under `tests/reference/`, the written groups are mirrored as they are ported: `errors.rs`,
 `macros/delegate_components.rs`, all of `derives/`, the `traits/` pages that show checkable code, most
-of `providers/`, and all of `components/` (each of the seventeen component pages that shows code,
-including the `handler/` subsection), plus `src/cargo_cgp/check.rs`. The `types/` group is the largest
-remaining gap and closes page by page as the port proceeds. The crate pins `cgp = "0.8.0-alpha"`, which
-resolves from crates.io today and joins the tutorials' pin on the release checklist.
+of `providers/`, and all of `components/` (each component page that shows code, including the `handler/`
+subsection), plus the `docs/cargo-cgp/` pages under `tests/cargo_cgp/`. The rejected snippets from every
+section live together under `tests/compile_fail/`. The `types/` group is the largest remaining gap and
+closes page by page as the port proceeds. The crate pins `cgp = "0.8.0-alpha"`, which resolves from
+crates.io today and joins the tutorials' pin on the release checklist.
 
 ## Navigation and the announcement bar
 
@@ -397,9 +403,10 @@ The page type is specified in [writing-guides/tooling.md](writing-guides/tooling
 section because a program the reader runs fails differently from a construct they write, and the
 reference guide's rules do not cover it.
 
-Two pages show Rust, and both are backed by the website repository's `example-code/` crate under
-`src/cargo_cgp/`: the broken program the check page runs the tool on is a `compile_fail` doctest, and
-the fixed program the expand page expands is a live module with a test.
+Two pages show Rust, and both are backed by the website repository's `example-code/` crate: the broken
+program the check page runs the tool on is a `trybuild` compile-fail fixture under
+`tests/compile_fail/cargo_cgp/`, and the fixed program the expand page expands is a live module under
+`tests/cargo_cgp/` with a test.
 
 ### Where it diverges
 
@@ -661,7 +668,7 @@ since the generated machinery is the ordinary component expansion the attribute 
 tier already cover. The rule is in
 [writing-guides/reference.md](writing-guides/reference.md#the-layered-page). Five construct pages remain
 stubs: the untouched `types/` (five) group. The provider pages are mirrored in the
-`example-code` crate under `src/reference/providers/`: the singletons, the four `With…` alias pages
+`example-code` crate under `tests/reference/providers/`: the singletons, the four `With…` alias pages
 except `with_context` (which shows no wireable example), all of `error/`, `handler/`, and `monad/`, and
 all of `dispatch/`. The `dispatch/` group is now covered end to end, including the builder-side
 (`build_and_set_field`, `build_and_merge`, `build_with_handlers`, `build_and_merge_outputs`) and
@@ -697,12 +704,13 @@ catalog that defines them is not linkable from a public page. Two tables close t
 codes and one for dependency-tree codes.
 
 Its code is backed by
-[`src/reference/errors.rs`](https://github.com/contextgeneric/contextgeneric.dev/blob/main/example-code/src/reference/errors.rs),
+[`tests/reference/errors.rs`](https://github.com/contextgeneric/contextgeneric.dev/blob/main/example-code/tests/reference/errors.rs),
 which is unusual in the crate and worth knowing before editing: the page shows exactly one program, and
-that program is pinned in *both* directions. A live module proves the wiring block compiles — the page
-asserts that in bold, and it is the reason the error arrives elsewhere — and it deliberately omits the
-`check_components!` this crate otherwise adds to every wired context, because the check is precisely what
-the page withholds. Two `compile_fail` doctests then pin the checked failure and the hidden one.
+that program is pinned in *both* directions. A live module there proves the wiring block compiles — the
+page asserts that in bold, and it is the reason the error arrives elsewhere — and it deliberately omits
+the `check_components!` this crate otherwise adds to every wired context, because the check is precisely
+what the page withholds. Two `trybuild` compile-fail fixtures under `tests/compile_fail/reference/`
+(`errors_the_fix_1.rs` and `errors_the_fix_2.rs`) then pin the checked failure and the hidden one.
 
 Finishing `macros/` settled one thing about the template a later group should copy rather than rediscover:
 **the three argument-free macros get no grammar section** — `#[async_trait]`, `#[cgp_auto_dispatch]`, and
@@ -802,8 +810,9 @@ and leaves path keys, `=>` redirects, and every statement wired but silently unc
 
 That page is also the first under `docs/reference/` with a file in the
 [`example-code`](https://github.com/contextgeneric/contextgeneric.dev/tree/main/example-code) crate, at
-`src/reference/macros/delegate_components.rs`, so every form it shows is compiled with a
-`check_components!` assertion per wired context and its rejected snippet is a `compile_fail` doctest.
+`tests/reference/macros/delegate_components.rs`, so every form it shows is compiled with a
+`check_components!` assertion per wired context and its rejected snippet is a `trybuild` compile-fail
+fixture.
 Later pages in this section add their own files the same way; `derives/` covers all six and `traits/` covers the
 four whose pages show code a compiler can check, since a page that only displays a trait definition would be
 checking nothing about CGP by re-declaring it.
