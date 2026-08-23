@@ -624,9 +624,10 @@ come for, and it is the first thing a well-meaning trim targets.
 
 The reference is the site's largest surface and is [canonical](writing-guides/reference.md) rather than
 a supplement to docs.rs. It is a new top-level category at `docs/reference/`, position 5, with a
-hand-written index as its category link and seven subdirectories mirroring what a construct *is* —
-`macros/`, `attributes/`, `derives/`, `components/`, `providers/`, `traits/`, `types/` — each with a
-`generated-index` category page. A separate `errors.md` covers post-expansion compile errors.
+hand-written index as its category link and seven subdirectories mirroring what a construct *is*: `macros/`, `attributes/`, `derives/`,
+`components/`, `providers/`, `traits/`, and `types/`. The groups with a written Overview page
+(`macros/`, `attributes/`, `derives/`, and `providers/`) link to it as their category page, and the
+rest use a `generated-index`. A separate `errors.md` covers post-expansion compile errors.
 
 **Every page is scaffolded and the construct list is complete**, which matters more than it sounds: the
 completeness obligation is against the index rather than against the prose, so no construct is missing
