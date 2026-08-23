@@ -616,7 +616,8 @@ come for, and it is the first thing a well-meaning trim targets.
 
 - **URL** — <https://contextgeneric.dev/docs/reference/>
 - **Source** — [docs/reference/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/reference)
-- **Status** — Draft: the index and 104 construct pages are written, the remaining pages are stubs
+- **Status** — Draft: the index and 138 construct pages are written; only the `components/` and
+  `types/` groups remain stubs
 - **How it was made** — ported by an agent from [cgp/reference/](../cgp/reference/README.md); level one
   of the four in [ai-disclosure.md](../communication-strategy/ai-disclosure.md)
 
@@ -632,13 +633,19 @@ rest use a `generated-index`. A separate `errors.md` covers post-expansion compi
 **Every page is scaffolded and the construct list is complete**, which matters more than it sounds: the
 completeness obligation is against the index rather than against the prose, so no construct is missing
 from the site even while most pages are placeholders. Each stub carries its one-line description and an
-admonition saying it is unwritten. A hundred and four construct pages are written, plus the index and
-`errors.md`: `macros/` (twenty pages), `attributes/` (eight), `derives/` (eight), and `traits/`
-(fifty-seven) are finished end to end, and `providers/` is under way with eleven pages written — the
-eight singleton providers plus the `use_field` trio (`use_field`, `use_field_ref`, `use_fields`), the
-last two split off from `use_field` under the granularity rule. Eighteen construct pages remain stubs:
-the four `providers/` catalogues (dispatch, handler, monad, and error providers, each of which splits
-into one page per provider), and the untouched `components/` and `types/` groups.
+admonition saying it is unwritten. A hundred and thirty-eight construct pages are written, plus the
+index and `errors.md`: `macros/` (twenty pages), `attributes/` (eight), `derives/` (eight), `traits/`
+(fifty-seven), and `providers/` (forty-five) are finished end to end. The `providers/` group is now one
+page per provider: eleven singleton pages, plus four subsections — `error/`, `handler/`, `dispatch/`,
+and `monad/` — each carrying its own overview and one page per construct (error 7, handler 13, dispatch
+11, monad 3). The four former catalogue pages became those subsections, which is where the granularity
+rule's "one page per provider" for `providers/` lands. Fourteen construct pages remain stubs: the
+untouched `components/` (nine) and `types/` (five) groups. The provider pages are mirrored in the
+`example-code` crate under `src/reference/providers/` — the singletons, all of `error/`, `handler/`,
+and `monad/`, and the matcher-side of `dispatch/` (`match_with_handlers`, `match_with_value_handlers`,
+`match_with_field_handlers`, `extract_field_and_handle`, `handle_field_value`); the builder-side and
+advanced-matcher `dispatch/` pages (the `build_*` providers, `match_first_with_handlers`, and
+`downcast_and_handle`) are the group's remaining unmirrored item.
 
 ### The compile-errors page
 

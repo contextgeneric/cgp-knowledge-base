@@ -226,20 +226,19 @@ reader falls into. The spec and the porting procedure are in
   the author reads, so **that read is what remains**. It is also the section's completeness check —
   every construct has an entry here even where the page behind it is a stub — so a page added later is
   added to this index in the same change.
-- **R2 — port the construct pages.** A hundred and twenty-two pages under `docs/reference/`, all
-  **scaffolded** with a one-line description and a stub notice. **A hundred and four are written:
-  `macros/` (20), `attributes/` (8), `derives/` (8), and `traits/` (57) are complete, and `providers/`
-  has eleven written — the eight singletons and the `use_field` trio (`use_field`, `use_field_ref`,
-  `use_fields`).** Eighteen stubs remain, in `components/` (9), the four `providers/` catalogues, and
-  `types/` (5) — **and they will become more pages than that**, since their titles predate the
-  [granularity rule](writing-guides/reference.md#granularity-one-page-per-named-construct) and still
-  bundle: the four provider catalogues, `use_field.md`, and the component pages holding a sibling or a
-  by-reference variant each split. Enumerate each group against the source as you port it, and carry the
-  new counts into the three tracking documents. Two page-level conventions apply from the start: a
-  construct the macros generate opens with a
-  [*Generated machinery* notice](writing-guides/reference.md#say-when-a-construct-is-machinery-the-macros-generate),
-  which most of `providers/` will need, and a marker or an alias is documented on the construct it belongs
-  to with a row in the index's lookup table.
+- **R2 — port the construct pages.** All pages under `docs/reference/` are **scaffolded** with a
+  one-line description and a stub notice. **138 are written: `macros/` (20), `attributes/` (8),
+  `derives/` (8), `traits/` (57), and `providers/` (45) are complete.** The `providers/` group is now
+  one page per provider — eleven singletons plus four subsections (`error/` 7, `handler/` 13,
+  `dispatch/` 11, `monad/` 3), each with its own overview — which is where the four former catalogue
+  pages went. **Two groups remain stubs: `components/` (9) and `types/` (5)**, and the `components/`
+  titles still bundle a sibling or a by-reference variant, so they will split into more pages when
+  ported. Enumerate each group against the source as you port it, and carry the new counts into the
+  three tracking documents. Two page-level conventions apply from the start: a construct the macros
+  generate opens with a
+  [*Generated machinery* notice](writing-guides/reference.md#say-when-a-construct-is-machinery-the-macros-generate)
+  (the `providers/` promotion bundles and lifts carry one), and a marker or an alias is documented on
+  the construct it belongs to with a row in the index's lookup table.
   The settled conventions — anchors from heading text, the collapsed formal grammar,
   the shared provenance note, compiled snippets, the `context` gloss — are recorded in
   [site-structure.md](site-structure.md). Each remaining page is ported from its internal document by

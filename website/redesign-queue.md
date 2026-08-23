@@ -164,13 +164,12 @@ natural next part of the area-calculation family. *Spec in
 the reader who evaluates a technology by seeing a realistic system rather than a rectangle. The site has
 nothing in this register.
 
-**The construct reference is scaffolded and partly written** — a hundred and twenty pages under
-`docs/reference/`, of which ninety-three are written (`macros/`, `attributes/`, `derives/`, and
-`traits/`, complete) and twenty-seven carry a one-line description and a stub notice. Those twenty-seven
-become more pages than that when they are ported, since their titles still bundle several constructs
-each. This is still by
-far the largest item on the list and the one that sets the release date, since the relaunch waits for
-it. What the scaffold already buys is that the *index* is complete, so no construct is missing from the
+**The construct reference is scaffolded and mostly written** — the pages under `docs/reference/`, of
+which 138 are written (`macros/`, `attributes/`, `derives/`, `traits/`, and `providers/`, complete) and
+only the `components/` (9) and `types/` (5) groups carry a one-line description and a stub notice. The
+`components/` titles still bundle several constructs each, so they become more pages when ported. This
+is still by far the largest item on the list and the one that sets the release date, since the relaunch
+waits for it. What the scaffold already buys is that the *index* is complete, so no construct is missing from the
 site and no later page has to be retrofitted into the grouping; what remains is the prose, one
 subdirectory at a time. Spec and porting procedure in
 [writing-guides/reference.md](writing-guides/reference.md); the settled conventions and the current
