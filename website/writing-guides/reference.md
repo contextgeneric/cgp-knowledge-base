@@ -89,22 +89,27 @@ better than four; the sugar that builds them, `Symbol!`, `Product!`, `Sum!`, and
 each. And the **two low-level provider macros** `#[cgp_provider]` and `#[cgp_new_provider]` differ only
 in whether the struct is declared, and are forms a reader meets rather than writes.
 
-**The rule reaches the groups that are still stubs, and applying it there is part of porting them.**
-`components/`, `providers/`, and `types/` were scaffolded before the rule existed, so their stub files
-still carry the internal reference's groupings, and a page count taken off the current tree understates
-what those groups become. Three kinds of stub have to be split as they are written:
+**The rule reaches the groups scaffolded before it existed, and applying it there is part of porting
+them.** `providers/` and `components/` have since been ported and only `types/` remains scaffolded,
+carrying the internal reference's groupings; a page count taken off the current `types/` tree understates
+what it becomes. The splits already applied are the model for it:
 
 - **The four provider catalogues** — handler combinators, dispatch combinators, monad providers, error
-  providers — become one page per provider. They are the largest expansion on the list: the error
-  catalogue alone holds `RaiseFrom`, `ReturnError`, `RaiseInfallible`, `DebugError`, `DisplayError`,
-  `DiscardDetail`, and `PanicOnError`.
-- **`use_field.md`** becomes three, for `UseField`, `UseFieldRef`, and `UseFields`. The old guide kept
-  them together because they are chosen together; a reader choosing between them is served by each page's
-  *When to reach for it* and by the index.
-- **The component pages that bundle siblings** — `can_raise_error.md` holds two components,
-  `runner.md` and `has_runtime.md` two each, and `computer.md`, `try_computer.md`, and `handler.md` each
-  hold a component plus its by-reference and async variants. A *component* is one construct even though
-  it generates a consumer trait, a provider trait, and a marker; two components are two pages.
+  providers — became one page per provider. They were the largest expansion: the error catalogue alone
+  holds `RaiseFrom`, `ReturnError`, `RaiseInfallible`, `DebugError`, `DisplayError`, `DiscardDetail`, and
+  `PanicOnError`.
+- **`use_field.md`** became three, for `UseField`, `UseFieldRef`, and `UseFields`. The internal guide
+  kept them together because they are chosen together; a reader choosing between them is served by each
+  page's *When to reach for it* and by the index.
+- **The component docs that bundle more than one component** split by component: `can_raise_error.md`
+  into `CanRaiseError` and `CanWrapError`, `runner.md` into `CanRun` and `CanSendRun`, and
+  `has_runtime.md` into `HasRuntimeType` and `HasRuntime`. A *component* is one construct even though it
+  generates a consumer trait, a provider trait, and a marker; two components are two pages. **A
+  by-reference or async variant is itself a distinct component** — its own consumer trait, provider
+  trait, and marker — so it gets its own page too: `computer.md` fed `Computer`, `ComputerRef`,
+  `AsyncComputer`, and `AsyncComputerRef`; `try_computer.md` fed `TryComputer` and `TryComputerRef`; and
+  `handler.md` fed `Handler` and `HandlerRef`, all grouped under a `handler/` subsection for the
+  computation family.
 
 Enumerate each group against the source when you port it rather than trusting the stub's title, and
 update the counts in [site-structure.md](../site-structure.md),
@@ -162,6 +167,21 @@ what they need from *Overview* and *Usage* and stops, a working developer reads 
 examples and the *When to reach for it* judgement that follows them, and only an advanced reader
 continues into the machinery. Nobody has to read past their level to find their answer.
 
+**Built-in component pages use a variant of this descent.** A page for one of the components CGP ships —
+[`HasErrorType`](../../cgp/reference/components/has_error_type.md), the handler family, the runner and
+runtime pairs, and the rest under `components/` — documents a high-level construct rather than a macro a
+reader invokes, so it replaces *Under the hood* with a **Definition** section placed right after
+*Overview*. Definition shows the component's trait definition and then explains each attribute on it in a
+bullet linking the attribute's own page: `#[cgp_component]`, `#[cgp_type]`, `#[cgp_getter]`,
+`#[async_trait]`, `#[prefix]`, `#[derive_delegate]`, and `#[use_type]`. Two rules keep the bullets
+readable: **the key is the bare attribute name** — `#[prefix]`, not
+`#[prefix(@cgp.core.error in DefaultNamespace)]` — with the argument's meaning carried in the
+explanation, and **an attribute used more than once gets a single grouped bullet** (a component with a
+`UseDelegate<Code>` and a `UseInputDelegate<Input>` derive gets one `#[derive_delegate]` bullet covering
+both). These pages carry **no *Under the hood***, because the generated machinery is the ordinary
+component expansion that the attribute links and the [concepts tier](explanation.md) already explain, and
+re-deriving it per component would only repeat them. The other sections are unchanged.
+
 **Overview** — one or two paragraphs, readable by someone who has finished the first tutorial and
 nothing else. State the problem the construct solves before naming any mechanism, and gloss or link every
 term a newcomer will not have. This is the internal Purpose section rewritten for a reader who does not
@@ -207,9 +227,11 @@ so the page shows the thing, then argues about when to reach for it. The descent
 beginner still stops after *Usage* and *Examples*, and everything below *When to reach for it* is for
 a reader going deeper.
 
-**Under the hood** — the exact expansion, with before/after blocks. **This section stays**, and it is not
-optional: CGP's central credibility problem is that its constructs are macros, and a Rust programmer will
-not adopt what they cannot see through. It is the same commitment the
+**Under the hood** — the exact expansion, with before/after blocks. **This section stays** on a macro,
+attribute, derive, or trait page, and is not optional there: CGP's central credibility problem is that
+its constructs are macros, and a Rust programmer will not adopt what they cannot see through. The one
+exception is a built-in component page, which omits it and carries a *Definition* section instead, per
+the [component variant](#the-layered-page) above. It is the same commitment the
 [tutorial guide](tutorial.md) makes for the desugaring appendix and the
 [explanation guide](explanation.md) makes for *How CGP works*. The heading itself marks the section as
 internals a beginner may skip, so it carries no separate admonition note. Keep it faithful to current

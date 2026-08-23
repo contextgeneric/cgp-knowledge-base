@@ -82,3 +82,7 @@ The provider names neither the context nor its concrete error type. It requires 
 - `CanRaiseError` is defined in [crates/core/cgp-error/src/traits/can_raise_error.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-error/src/traits/can_raise_error.rs) and `CanWrapError` in [crates/core/cgp-error/src/traits/can_wrap_error.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-error/src/traits/can_wrap_error.rs).
 - Both build on `HasErrorType` from [crates/core/cgp-error/src/traits/has_error_type.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-error/src/traits/has_error_type.rs).
 - The pluggable providers that implement them live in [crates/standalone/error/](https://github.com/contextgeneric/cgp/tree/main/crates/standalone/error/).
+
+## Public pages derived from this document
+
+The public reference is organized one page per named construct, so this document feeds **2 pages**: [`can_raise_error`](https://contextgeneric.dev/docs/reference/components/can_raise_error) for `CanRaiseError` and [`can_wrap_error`](https://contextgeneric.dev/docs/reference/components/can_wrap_error) for its companion `CanWrapError`. A change here is propagated to both, per the [synchronization rule](../../../AGENTS.md#the-synchronization-rule); the granularity rule behind the split is recorded in [website/site-structure.md](../../../website/site-structure.md).

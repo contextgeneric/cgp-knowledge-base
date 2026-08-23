@@ -88,3 +88,7 @@ The function `run_with` works for any context that wires a handler for the given
 - `Handler` and `HandlerRef` are defined in [crates/extra/cgp-handler/src/components/handler.rs](https://github.com/contextgeneric/cgp/blob/main/crates/extra/cgp-handler/src/components/handler.rs).
 - The `ReturnInput` provider is in [crates/extra/cgp-handler/src/providers/return_input.rs](https://github.com/contextgeneric/cgp/blob/main/crates/extra/cgp-handler/src/providers/return_input.rs), and the promotion combinators that lift simpler providers into `Handler` are in [crates/extra/cgp-handler/src/providers/](https://github.com/contextgeneric/cgp/tree/main/crates/extra/cgp-handler/src/).
 - The components are re-exported through `cgp::extra::handler`.
+
+## Public pages derived from this document
+
+The public reference is organized one page per named construct, so this document feeds **2 pages** under the handler family: [`handler`](https://contextgeneric.dev/docs/reference/components/handler/handler) for `Handler` and [`handler_ref`](https://contextgeneric.dev/docs/reference/components/handler/handler_ref) for its by-reference variant `HandlerRef`. A change here is propagated to both, per the [synchronization rule](../../../AGENTS.md#the-synchronization-rule); the granularity rule behind the split is recorded in [website/site-structure.md](../../../website/site-structure.md).

@@ -99,3 +99,7 @@ The provider `ParseU64` returns its `u64` output or the context's abstract error
 - The `ReturnInput` provider is in [crates/extra/cgp-handler/src/providers/return_input.rs](https://github.com/contextgeneric/cgp/blob/main/crates/extra/cgp-handler/src/providers/return_input.rs), and the promotion combinators in [crates/extra/cgp-handler/src/providers/](https://github.com/contextgeneric/cgp/tree/main/crates/extra/cgp-handler/src/).
 - The components are re-exported through `cgp::extra::handler`.
 - For how it is generated and the index of tests, see the implementation document [implementation/entrypoints/cgp_computer](../../implementation/entrypoints/cgp_computer.md).
+
+## Public pages derived from this document
+
+The public reference is organized one page per named construct, so this document feeds **2 pages** under the handler family: [`try_computer`](https://contextgeneric.dev/docs/reference/components/handler/try_computer) for `TryComputer` and [`try_computer_ref`](https://contextgeneric.dev/docs/reference/components/handler/try_computer_ref) for its by-reference variant `TryComputerRef`. A change here is propagated to both, per the [synchronization rule](../../../AGENTS.md#the-synchronization-rule); the granularity rule behind the split is recorded in [website/site-structure.md](../../../website/site-structure.md).

@@ -112,3 +112,7 @@ The computer components are the infallible corner of the [handler family](../../
 - The `UseInputDelegate` dispatch type is in [crates/extra/cgp-handler/src/types.rs](https://github.com/contextgeneric/cgp/blob/main/crates/extra/cgp-handler/src/types.rs).
 - The components are re-exported through `cgp::extra::handler`.
 - For how it is generated and the index of tests, see the implementation document [implementation/entrypoints/cgp_computer](../../implementation/entrypoints/cgp_computer.md).
+
+## Public pages derived from this document
+
+The public reference is organized one page per named construct, so this document feeds **4 pages**, all under the handler family: [`computer`](https://contextgeneric.dev/docs/reference/components/handler/computer) for `Computer`, and its variant pages [`computer_ref`](https://contextgeneric.dev/docs/reference/components/handler/computer_ref) for `ComputerRef`, [`async_computer`](https://contextgeneric.dev/docs/reference/components/handler/async_computer) for `AsyncComputer`, and [`async_computer_ref`](https://contextgeneric.dev/docs/reference/components/handler/async_computer_ref) for `AsyncComputerRef`. A change here is propagated to each of them, per the [synchronization rule](../../../AGENTS.md#the-synchronization-rule); the granularity rule behind the split is recorded in [website/site-structure.md](../../../website/site-structure.md).

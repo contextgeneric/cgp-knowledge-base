@@ -105,3 +105,7 @@ The `Runner` family is most often paired with [`HasRuntime`](has_runtime.md): a 
 
 - `CanRun` / `Runner` and `CanSendRun` / `SendRunner` are defined together in [crates/extra/cgp-run/src/lib.rs](https://github.com/contextgeneric/cgp/blob/main/crates/extra/cgp-run/src/lib.rs), reached from the facade as `cgp::extra::run`.
 - The `#[cgp_component]` and `#[derive_delegate]` expansions they rely on live under [crates/macros/cgp-macro-core/src/](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-core/src/).
+
+## Public pages derived from this document
+
+The public reference is organized one page per named construct, so this document feeds **2 pages**: [`runner`](https://contextgeneric.dev/docs/reference/components/runner) for `CanRun`/`Runner` and [`send_runner`](https://contextgeneric.dev/docs/reference/components/send_runner) for the `Send`-future variant `CanSendRun`/`SendRunner`. A change here is propagated to both, per the [synchronization rule](../../../AGENTS.md#the-synchronization-rule); the granularity rule behind the split is recorded in [website/site-structure.md](../../../website/site-structure.md).

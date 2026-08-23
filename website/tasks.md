@@ -227,14 +227,15 @@ reader falls into. The spec and the porting procedure are in
   every construct has an entry here even where the page behind it is a stub — so a page added later is
   added to this index in the same change.
 - **R2 — port the construct pages.** All pages under `docs/reference/` are **scaffolded** with a
-  one-line description and a stub notice. **143 are written: `macros/` (20), `attributes/` (8),
-  `derives/` (8), `traits/` (57), and `providers/` (50) are complete.** The `providers/` group is now
-  one page per provider — sixteen singletons (including the five `With…` aliases) plus four subsections (`error/` 7, `handler/` 13,
-  `dispatch/` 11, `monad/` 3), each with its own overview — which is where the four former catalogue
-  pages went. **Two groups remain stubs: `components/` (9) and `types/` (5)**, and the `components/`
-  titles still bundle a sibling or a by-reference variant, so they will split into more pages when
-  ported. Enumerate each group against the source as you port it, and carry the new counts into the
-  three tracking documents. Two page-level conventions apply from the start: a construct the macros
+  one-line description and a stub notice. **160 are written: `macros/` (20), `attributes/` (8),
+  `derives/` (8), `traits/` (57), `providers/` (50), and `components/` (17) are complete.** The
+  `providers/` group is one page per provider — sixteen singletons (including the five `With…` aliases)
+  plus four subsections (`error/` 7, `handler/` 13, `dispatch/` 11, `monad/` 3), each with its own
+  overview — which is where the four former catalogue pages went. The `components/` group split the
+  three internal docs that bundled a sibling or a by-reference variant into **17 construct pages** —
+  eight at the top level plus a nine-page `handler/` subsection for the computation family — each with
+  an `example-code` mirror. **One group remains stubs: `types/` (5).** Enumerate it against the source
+  as you port it, and carry the new counts into the three tracking documents. Two page-level conventions apply from the start: a construct the macros
   generate opens with a
   [*Generated machinery* notice](writing-guides/reference.md#say-when-a-construct-is-machinery-the-macros-generate)
   (the `providers/` promotion bundles and lifts carry one); a marker is documented on the construct it

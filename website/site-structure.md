@@ -95,10 +95,12 @@ It is filled in **lazily**, and the rule is in
 [AGENTS.md](AGENTS.md#verify-code-against-current-cgp-and-never-against-a-blog-post): a page gets its
 file when someone writes, revises, or reviews it. A missing file therefore means nobody has been
 through that page yet. **`docs/concepts/` is covered in full** — seventeen files, one per page that shows
-code. Three files cover pages elsewhere: `src/cargo_cgp/check.rs`, and under `src/reference/`,
-`macros/delegate_components.rs` and `errors.rs`. The rest of the reference is uncovered, which is the
-largest remaining gap and closes page by page as the port proceeds. The crate pins `cgp = "0.8.0-alpha"`, which resolves
-from crates.io today and joins the tutorials' pin on the release checklist.
+code. Under `src/reference/`, the written groups are mirrored as they are ported: `errors.rs`,
+`macros/delegate_components.rs`, all of `derives/`, the `traits/` pages that show checkable code, most
+of `providers/`, and all of `components/` (each of the seventeen component pages that shows code,
+including the `handler/` subsection), plus `src/cargo_cgp/check.rs`. The `types/` group is the largest
+remaining gap and closes page by page as the port proceeds. The crate pins `cgp = "0.8.0-alpha"`, which
+resolves from crates.io today and joins the tutorials' pin on the release checklist.
 
 ## Navigation and the announcement bar
 
@@ -616,8 +618,8 @@ come for, and it is the first thing a well-meaning trim targets.
 
 - **URL** — <https://contextgeneric.dev/docs/reference/>
 - **Source** — [docs/reference/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/reference)
-- **Status** — Draft: the index and 138 construct pages are written; only the `components/` and
-  `types/` groups remain stubs
+- **Status** — Draft: the index and 160 construct pages are written; only the `types/` group remains
+  stub
 - **How it was made** — ported by an agent from [cgp/reference/](../cgp/reference/README.md); level one
   of the four in [ai-disclosure.md](../communication-strategy/ai-disclosure.md)
 
@@ -633,9 +635,9 @@ rest use a `generated-index`. A separate `errors.md` covers post-expansion compi
 **Every page is scaffolded and the construct list is complete**, which matters more than it sounds: the
 completeness obligation is against the index rather than against the prose, so no construct is missing
 from the site even while most pages are placeholders. Each stub carries its one-line description and an
-admonition saying it is unwritten. A hundred and forty-three construct pages are written, plus the
+admonition saying it is unwritten. A hundred and sixty construct pages are written, plus the
 index and `errors.md`: `macros/` (twenty pages), `attributes/` (eight), `derives/` (eight), `traits/`
-(fifty-seven), and `providers/` (fifty) are finished end to end. The `providers/` group is now one
+(fifty-seven), `providers/` (fifty), and `components/` (seventeen) are finished end to end. The `providers/` group is now one
 page per provider: sixteen singleton pages, plus four subsections — `error/`, `handler/`, `dispatch/`,
 and `monad/` — each carrying its own overview and one page per construct (error 7, handler 13, dispatch
 11, monad 3). The singleton pages include the five `With…` aliases — `WithContext`, `WithType`,
@@ -645,8 +647,20 @@ spelling a reader may look up by name, per the
 `WithFieldRef` and `WithDelegatedType`, whose inner provider is foundational, the alias page carries the
 wiring form and example while the inner provider's page keeps the mechanism. The four former catalogue
 pages became those subsections, which is where the granularity rule's "one page per provider" for
-`providers/` lands. Fourteen construct pages remain stubs: the
-untouched `components/` (nine) and `types/` (five) groups. The provider pages are mirrored in the
+`providers/` lands. The `components/` group is likewise one page per component: eight at the top level
+(`has_error_type`, `can_raise_error`, `can_wrap_error`, `has_type`, `has_runtime`, `has_runtime_type`,
+`runner`, `send_runner`) plus a nine-page `handler/` subsection for the computation family (`handler`,
+`computer`, `try_computer`, `producer`, and the `async_computer`, `computer_ref`, `try_computer_ref`,
+`handler_ref`, and `async_computer_ref` variants), each with its own overview. This split the three
+internal docs that bundled a sibling or a by-reference variant — `can_raise_error`, `runner`, and
+`has_runtime` each became two pages, and the computer, try-computer, and handler docs each grew a page
+per variant. **These component pages use the layered descent's built-in-component variant**: a
+*Definition* section right after *Overview* shows the component's trait definition and explains each
+attribute on it in a bullet linking the attribute's own page, and there is **no *Under the hood***,
+since the generated machinery is the ordinary component expansion the attribute links and the concepts
+tier already cover. The rule is in
+[writing-guides/reference.md](writing-guides/reference.md#the-layered-page). Five construct pages remain
+stubs: the untouched `types/` (five) group. The provider pages are mirrored in the
 `example-code` crate under `src/reference/providers/`: the singletons, the four `With…` alias pages
 except `with_context` (which shows no wireable example), all of `error/`, `handler/`, and `monad/`, and
 all of `dispatch/`. The `dispatch/` group is now covered end to end, including the builder-side
