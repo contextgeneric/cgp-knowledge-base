@@ -181,8 +181,10 @@ made those four a short reading path — which the section's index page is what 
   complete. The `providers/` group is one page per provider: sixteen singleton pages plus four
   subsections — `error/`, `handler/`, `dispatch/`, and `monad/` — each with its own overview. The
   `components/` group is likewise one page per component: eight at the top level plus a nine-page
-  `handler/` subsection for the computation family. Ported from the internal reference, and recorded in
-  [site-structure.md](site-structure.md).
+  `handler/` subsection for the computation family. The `traits/` group is organized into eleven
+  importance-ordered subdirectories by trait family, each with its own overview, and every trait
+  construct page carries a *Definition* section after its *Overview*. Ported from the internal reference,
+  and recorded in [site-structure.md](site-structure.md).
 - **The count will rise as the last group is ported**, because the `types/` stubs predate the
   [granularity rule](writing-guides/reference.md#granularity-one-page-per-named-construct). The final
   number comes from enumerating the group against the source when it is written, not from the current

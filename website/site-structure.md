@@ -104,7 +104,10 @@ Under `tests/reference/`, the written groups are mirrored as they are ported: `e
 `macros/delegate_components.rs`, all of `derives/`, the `traits/` pages that show checkable code, most
 of `providers/`, and all of `components/` (each component page that shows code, including the `handler/`
 subsection), plus the `docs/cargo-cgp/` pages under `tests/cargo_cgp/`. The rejected snippets from every
-section live together under `tests/compile_fail/`. The `types/` group is the largest remaining gap and
+section live together under `tests/compile_fail/`. The `traits/` mirror files stay flat under
+`tests/reference/traits/` rather than following the docs into their subdirectories, because a Rust module
+name cannot contain a hyphen; the mirror still resolves because every page's basename is unique. The
+`types/` group is the largest remaining gap and
 closes page by page as the port proceeds. The crate pins `cgp = "0.8.0-alpha"`, which resolves from
 crates.io today and joins the tutorials' pin on the release checklist.
 
@@ -666,7 +669,21 @@ per variant. **These component pages use the layered descent's built-in-componen
 attribute on it in a bullet linking the attribute's own page, and there is **no *Under the hood***,
 since the generated machinery is the ordinary component expansion the attribute links and the concepts
 tier already cover. The rule is in
-[writing-guides/reference.md](writing-guides/reference.md#the-layered-page). Five construct pages remain
+[writing-guides/reference.md](writing-guides/reference.md#the-layered-page).
+
+The `traits/` group is organized into eleven importance-ordered subdirectories, each grouping one trait
+family and carrying its own Overview: `wiring` (three pages), `field-access` (six), `shape` (five),
+`builder` (seven), `optional` (eight), `variant` (seven), `casting` (four), `type-level` (seven),
+`namespace` (three), `formatting` (three), and `monad` (four), whose boundaries mirror the internal
+reference's own trait families. A top-level `Traits` overview plus one Overview per subdirectory make
+twelve overview pages in all, the group's `_category_.json` links to the top-level overview rather than a
+`generated-index`, and `sidebar_position` on every page and subdirectory carries the importance ordering.
+**Every trait construct page adds a *Definition* section right after *Overview*** that shows the trait's
+own `pub trait` (or `pub struct`, associated const, or function) and explains each element. Unlike the
+built-in-component variant above, a trait page keeps its *Under the hood*: its Definition documents the
+trait itself, while *Under the hood* shows how the macros generate and consume it.
+
+Five construct pages remain
 stubs: the untouched `types/` (five) group. The provider pages are mirrored in the
 `example-code` crate under `tests/reference/providers/`: the singletons, the four `With…` alias pages
 except `with_context` (which shows no wireable example), all of `error/`, `handler/`, and `monad/`, and

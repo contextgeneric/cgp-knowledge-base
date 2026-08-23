@@ -182,6 +182,17 @@ both). These pages carry **no *Under the hood***, because the generated machiner
 component expansion that the attribute links and the [concepts tier](explanation.md) already explain, and
 re-deriving it per component would only repeat them. The other sections are unchanged.
 
+**Trait-group pages carry a *Definition* section too, but add it rather than substitute it.** Each page
+under `traits/` places a **Definition** section right after *Overview* that shows the trait's own
+`pub trait` — or `pub struct`, associated const, or function — and explains every element: its generic
+parameters, associated types, method receivers, supertraits, default parameters, and any
+`#[diagnostic::on_unimplemented]` attribute. Take the signature from the internal reference's Definition
+section so it matches the library. Unlike a built-in component page, a trait page **keeps its *Under the
+hood***: Definition documents the trait itself, while *Under the hood* shows how the macros generate and
+consume it. Move the definition out of *Overview* or *Usage* when it already appears there, so no page
+shows its own `pub trait` block twice. The macro, attribute, and derive groups have no Definition
+section; this variant belongs to `components/` and `traits/` alone.
+
 **Overview** — one or two paragraphs, readable by someone who has finished the first tutorial and
 nothing else. State the problem the construct solves before naming any mechanism, and gloss or link every
 term a newcomer will not have. This is the internal Purpose section rewritten for a reader who does not
