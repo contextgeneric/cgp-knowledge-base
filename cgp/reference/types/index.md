@@ -70,3 +70,7 @@ assert_eq!(Index::<2>.to_string(), "2");
 
 - `Index<const I: usize>` and its `Display` and `Debug` impls are defined in [crates/core/cgp-field/src/types/index.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/types/index.rs).
 - The `#[derive(HasField)]` codegen that tags tuple-struct fields with `Index<N>` lives under [crates/macros/cgp-macro-core/src/types/cgp_data/](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-core/src/types/cgp_data/), and the `HasField` trait it targets is in [crates/core/cgp-field/src/traits/has_field.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/traits/has_field.rs).
+
+## Public pages derived from this document
+
+This document feeds the public [`Index`](https://contextgeneric.dev/docs/reference/types/index_type) page, which is named `index_type` on the site because `index.md` there is the Types section overview. A change here is propagated to it, per the [synchronization rule](../../../AGENTS.md#the-synchronization-rule); the mapping is recorded in [website/site-structure.md](../../../website/site-structure.md).

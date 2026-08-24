@@ -107,8 +107,9 @@ subsection), plus the `docs/cargo-cgp/` pages under `tests/cargo_cgp/`. The reje
 section live together under `tests/compile_fail/`. The `traits/` mirror files stay flat under
 `tests/reference/traits/` rather than following the docs into their subdirectories, because a Rust module
 name cannot contain a hyphen; the mirror still resolves because every page's basename is unique. The
-`types/` group is the largest remaining gap and
-closes page by page as the port proceeds. The crate pins `cgp = "0.8.0-alpha"`, which resolves from
+`types/` group is now mirrored too, one file per type page under `tests/reference/types/` with the
+spines nested under `tests/reference/types/spines/`, so every written reference group has its
+`example-code` counterpart. The crate pins `cgp = "0.8.0-alpha"`, which resolves from
 crates.io today and joins the tutorials' pin on the release checklist.
 
 ## Navigation and the announcement bar
@@ -628,8 +629,8 @@ come for, and it is the first thing a well-meaning trim targets.
 
 - **URL** — <https://contextgeneric.dev/docs/reference/>
 - **Source** — [docs/reference/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/reference)
-- **Status** — Draft: the index and 160 construct pages are written; only the `types/` group remains
-  stub
+- **Status** — Current: the index and every construct page are written, and every written group,
+  `types/` included, has its `example-code` mirror
 - **How it was made** — ported by an agent from [cgp/reference/](../cgp/reference/README.md); level one
   of the four in [ai-disclosure.md](../communication-strategy/ai-disclosure.md)
 
@@ -645,9 +646,10 @@ rest use a `generated-index`. A separate `errors.md` covers post-expansion compi
 **Every page is scaffolded and the construct list is complete**, which matters more than it sounds: the
 completeness obligation is against the index rather than against the prose, so no construct is missing
 from the site even while most pages are placeholders. Each stub carries its one-line description and an
-admonition saying it is unwritten. A hundred and sixty construct pages are written, plus the
+admonition saying it is unwritten. Every construct page is written, plus the
 index and `errors.md`: `macros/` (twenty pages), `attributes/` (eight), `derives/` (eight), `traits/`
-(fifty-seven), `providers/` (fifty), and `components/` (seventeen) are finished end to end. The `providers/` group is now one
+(fifty-seven), `providers/` (fifty), `components/` (seventeen), and `types/` (eleven construct pages,
+plus a section overview and a spines-group overview) are finished end to end. The `providers/` group is now one
 page per provider: sixteen singleton pages, plus four subsections — `error/`, `handler/`, `dispatch/`,
 and `monad/` — each carrying its own overview and one page per construct (error 7, handler 13, dispatch
 11, monad 3). The singleton pages include the five `With…` aliases — `WithContext`, `WithType`,
@@ -683,8 +685,19 @@ own `pub trait` (or `pub struct`, associated const, or function) and explains ea
 built-in-component variant above, a trait page keeps its *Under the hood*: its Definition documents the
 trait itself, while *Under the hood* shows how the macros generate and consume it.
 
-Five construct pages remain
-stubs: the untouched `types/` (five) group. The provider pages are mirrored in the
+The `types/` group is now written, one page per type rather than the internal reference's
+`type_level_spines` consolidation. It carries five top-level singleton pages — `phantom_data`, `field`,
+`index_type` (the `Index` type, renamed because `index.md` is the section overview), `life`, and `mref`
+— and a `spines/` subdirectory with its own overview holding the six recursive lists: `cons`, `nil`,
+`either`, `void`, `chars`, and `path_cons`. It adds a `PhantomData` page, which the
+internal reference has no document for and which is authored on the site directly, because `PhantomData`
+is used heavily throughout CGP and is the mechanism the other markers rest on. The section
+and the spines subgroup are ordered by importance rather than alphabetically: PhantomData, Field,
+spines, Index, Life, MRef at the top level, and Cons, Nil, Either, Void, Chars, PathCons within the
+spines. Each type page that shows code has an `example-code` mirror under `tests/reference/types/`, so
+its snippets are compiler-checked like the other written groups rather than only ported; the two
+overview pages show no code and get no file. The provider pages are
+mirrored in the
 `example-code` crate under `tests/reference/providers/`: the singletons, the four `With…` alias pages
 except `with_context` (which shows no wireable example), all of `error/`, `handler/`, and `monad/`, and
 all of `dispatch/`. The `dispatch/` group is now covered end to end, including the builder-side
@@ -946,8 +959,8 @@ the six-section layered descent are in
 [writing-guides/reference.md](writing-guides/reference.md).
 
 **The mapping is one internal document to one or more public pages, and which is which depends on the
-group.** In `macros/`, `attributes/`, `components/`, `providers/`, and `types/` the file names match the
-internal ones and most relative links port unchanged. In `derives/` and `traits/` they do not: the
+group.** In `macros/`, `attributes/`, `components/`, and `providers/` the file names match the
+internal ones and most relative links port unchanged. In `derives/`, `traits/`, and `types/` they do not: the
 site is organized
 [one page per named construct](writing-guides/reference.md#granularity-one-page-per-named-construct),
 so one internal document that documents a family feeds several public pages —
@@ -959,11 +972,16 @@ synchronization knows where to look. Three public pages have no internal documen
 `attributes/default_impl.md` from
 [default_namespace.md](../cgp/reference/traits/default_namespace.md).
 
-Two [consolidations](writing-guides/reference.md#granularity-one-page-per-named-construct) survive:
-`cgp_provider.md` covers `#[cgp_new_provider]` too, and `type_level_spines.md` covers `Cons`/`Nil`,
-`Either`/`Void`, `Chars`, and `PathCons`. Among the titles that split, `use_field.md` has already become
-`use_field`, `use_field_ref`, and `use_fields`; the four provider catalogues and the `components/` pages
-that bundle a sibling or by-reference variant are the multi-construct titles still to split.
+One [consolidation](writing-guides/reference.md#granularity-one-page-per-named-construct) survives:
+`cgp_provider.md` covers `#[cgp_new_provider]` too. The `type_level_spines.md` consolidation does not:
+the `types/` port splits it into one page per type — `cons`, `nil`, `either`, `void`, `chars`, and
+`path_cons`, grouped under a `spines/` subdirectory with its own overview — so no title in `types/` now
+covers more than one construct. Three mapping wrinkles come with that. The internal `chars.md`, which
+documents both `Chars` and `Symbol`, feeds the site's `chars` page, and the `Symbol` type stays covered
+on the [`Symbol!`](../cgp/reference/macros/symbol.md) macro page. The internal `index.md` becomes
+`index_type.md` on the site, because `index.md` is the section overview. And the `PhantomData` page has
+no internal document, since it is a standard-library type authored on the site directly. Among the titles
+that split, `use_field.md` has already become `use_field`, `use_field_ref`, and `use_fields`.
 
 Two internal targets have no public counterpart by design: the [guides](../cgp/guides/README.md) are
 folded into each page's *When to use it* section, and implementation documents are replaced by

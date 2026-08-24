@@ -75,3 +75,7 @@ Because the encoding is a list, an empty string is `Symbol<0, Nil>` — a `Symbo
 - The `StaticFormat` impls that drive `Display` are in [crates/core/cgp-base-types/src/traits/static_format.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-base-types/src/traits/static_format.rs), and the const-decoding `StaticString` impl that consumes `LEN` is in [crates/core/cgp-field/src/traits/static_string.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/traits/static_string.rs).
 - The constructing macro is [`Symbol!`](../macros/symbol.md).
 - For how it is generated and the index of tests, see the implementation document [implementation/entrypoints/symbol.md](../../implementation/entrypoints/symbol.md).
+
+## Public pages derived from this document
+
+This document feeds the public [`Chars`](https://contextgeneric.dev/docs/reference/types/spines/chars) page under the `spines/` subdirectory. The `Symbol` type it also documents is covered on the [`Symbol!`](https://contextgeneric.dev/docs/reference/macros/symbol) macro page rather than a page of its own, so a change to `Symbol` here is propagated there. Both are bound by the [synchronization rule](../../../AGENTS.md#the-synchronization-rule); the mapping is recorded in [website/site-structure.md](../../../website/site-structure.md).

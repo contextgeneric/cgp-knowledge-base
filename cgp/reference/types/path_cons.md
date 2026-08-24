@@ -82,3 +82,7 @@ Here the lookup steps first through `MyBarComponent` and then through `BarProvid
 - The `ConcatPath` trait and its impls are in [crates/core/cgp-base-types/src/traits/concat_path.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-base-types/src/traits/concat_path.rs).
 - The constructing macro is [`Path!`](../macros/path.md) ([crates/macros/cgp-macro-lib/src/path.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-lib/src/path.rs)), whose fold over the segments lives in [crates/macros/cgp-macro-core/src/types/path/unipath.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/path/unipath.rs).
 - `RedirectLookup`, which consumes a path at resolution time, is in [crates/core/cgp-component/src/providers/redirect_lookup.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-component/src/providers/redirect_lookup.rs).
+
+## Public pages derived from this document
+
+This document feeds the public [`PathCons`](https://contextgeneric.dev/docs/reference/types/spines/path_cons) page under the `spines/` subdirectory, per the [synchronization rule](../../../AGENTS.md#the-synchronization-rule); the mapping is recorded in [website/site-structure.md](../../../website/site-structure.md).

@@ -226,16 +226,22 @@ reader falls into. The spec and the porting procedure are in
   the author reads, so **that read is what remains**. It is also the section's completeness check —
   every construct has an entry here even where the page behind it is a stub — so a page added later is
   added to this index in the same change.
-- **R2 — port the construct pages.** All pages under `docs/reference/` are **scaffolded** with a
-  one-line description and a stub notice. **160 are written: `macros/` (20), `attributes/` (8),
-  `derives/` (8), `traits/` (57), `providers/` (50), and `components/` (17) are complete.** The
+- **R2 — port the construct pages.** **Every group is now written**, so no page under
+  `docs/reference/` carries a stub notice: `macros/` (20), `attributes/` (8),
+  `derives/` (8), `traits/` (57), `providers/` (50), `components/` (17), and `types/` (11 construct
+  pages plus a section overview and a spines-group overview) are complete. The
   `providers/` group is one page per provider — sixteen singletons (including the five `With…` aliases)
   plus four subsections (`error/` 7, `handler/` 13, `dispatch/` 11, `monad/` 3), each with its own
   overview — which is where the four former catalogue pages went. The `components/` group split the
   three internal docs that bundled a sibling or a by-reference variant into **17 construct pages** —
   eight at the top level plus a nine-page `handler/` subsection for the computation family — each with
-  an `example-code` mirror. **One group remains stubs: `types/` (5).** Enumerate it against the source
-  as you port it, and carry the new counts into the three tracking documents. Two page-level conventions apply from the start: a construct the macros
+  an `example-code` mirror. The `types/` group was ported last, split one page per type rather than the
+  internal reference's `type_level_spines` consolidation: five top-level singletons (`phantom_data`,
+  `field`, `index_type`, `life`, `mref`) and a `spines/` subdirectory (`cons`, `nil`, `either`, `void`,
+  `chars`, `path_cons`) with its own overview, ordered by importance, and adding a `PhantomData` page the
+  internal reference has no document for. **Every type page that shows code has its `example-code`
+  mirror**, under `tests/reference/types/`, so the whole reference is compiler-checked rather than only
+  ported. Two page-level conventions apply from the start: a construct the macros
   generate opens with a
   [*Generated machinery* notice](writing-guides/reference.md#say-when-a-construct-is-machinery-the-macros-generate)
   (the `providers/` promotion bundles and lifts carry one); a marker is documented on the construct it
@@ -253,7 +259,9 @@ reader falls into. The spec and the porting procedure are in
   summarize the idea in a sentence on the page — was the better answer while that tier was stubs. That
   tier has since landed and **the linking sweep is done for all twenty-seven**, so each now closes with a
   short *The ideas behind it* list; a page written from here on carries that list from the start rather
-  than deferring it. *Done when:* no stub notice remains.
+  than deferring it. *Done when:* no stub notice remains — met, and every written page including
+  `types/` has its `example-code` mirror. The author read of the reference index (R1) is the one
+  residual, tracked there until the reference is signed off.
 ## D — The deep dives, and the code they quote
 
 **Post-release.** All three deep dives are still wanted, and none of them holds up the v0.8.0 release —

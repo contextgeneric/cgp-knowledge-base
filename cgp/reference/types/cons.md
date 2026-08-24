@@ -73,3 +73,7 @@ let row: Row = product![1, "hi".to_string(), true];
 
 - `Cons<Head, Tail>` is defined in [crates/core/cgp-base-types/src/types/cons.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-base-types/src/types/cons.rs) and `Nil` in [crates/core/cgp-base-types/src/types/nil.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-base-types/src/types/nil.rs).
 - The `Product!`/`product!` macros that fold elements onto this spine are driven by the constructs under [crates/macros/cgp-macro-core/src/types/product/](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-core/src/types/product/), and the `HasFields` machinery that recurses over it lives in [crates/core/cgp-field/src/traits/has_fields.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/traits/has_fields.rs).
+
+## Public pages derived from this document
+
+The public reference is organized one page per type, so this document feeds **2 pages** rather than one: [`Cons`](https://contextgeneric.dev/docs/reference/types/spines/cons) and [`Nil`](https://contextgeneric.dev/docs/reference/types/spines/nil), both under the `spines/` subdirectory. A change here is propagated to each of them, per the [synchronization rule](../../../AGENTS.md#the-synchronization-rule); the mapping and the granularity rule behind it are recorded in [website/site-structure.md](../../../website/site-structure.md).

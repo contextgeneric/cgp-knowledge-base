@@ -164,16 +164,16 @@ natural next part of the area-calculation family. *Spec in
 the reader who evaluates a technology by seeing a realistic system rather than a rectangle. The site has
 nothing in this register.
 
-**The construct reference is scaffolded and nearly written** — the pages under `docs/reference/`, of
-which 160 are written (`macros/`, `attributes/`, `derives/`, `traits/`, `providers/`, and `components/`
-complete) and only the `types/` (5) group carries a one-line description and a stub notice. The
-`components/` group split its bundled titles into 17 pages under a `handler/` subsection when ported.
-This is still by far the largest item on the list and the one that sets the release date, since the
-relaunch waits for it. What the scaffold already buys is that the *index* is complete, so no construct is missing from the
-site and no later page has to be retrofitted into the grouping; what remains is the prose, one
-subdirectory at a time. Spec and porting procedure in
-[writing-guides/reference.md](writing-guides/reference.md); the settled conventions and the current
-state are in [site-structure.md](site-structure.md). One dependency is worth repeating: the reference's
+**The construct reference is written** — every page under `docs/reference/` carries its prose and no
+stub notice remains, across `macros/`, `attributes/`, `derives/`, `traits/`, `providers/`,
+`components/`, and now `types/`. The `types/` group was the last ported, split one page per type rather
+than the `type_level_spines` consolidation: five top-level singletons and a `spines/` subdirectory,
+ordered by importance, with a `PhantomData` page added that the internal reference has no document for.
+Every type page that shows code now has its `example-code` mirror, so the whole reference is
+compiler-checked; the one outstanding sign-off is the author read of the reference index (R1). Spec and
+porting procedure in
+[writing-guides/reference.md](writing-guides/reference.md); the current state is in
+[site-structure.md](site-structure.md). One dependency is worth repeating: the reference's
 *When to use it* sections are where the internal [guides](../cgp/guides/README.md) reach the
 public site, since they have no public home of their own.
 
