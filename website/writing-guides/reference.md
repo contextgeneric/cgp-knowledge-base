@@ -293,6 +293,13 @@ rarely reached, and why. And **do not apply it to a construct whose methods a re
 whether the name appears in ordinary application or generic code: `HasBuilder` and `ExtractField` are
 generated too, but a reader calls `builder()` and `extract_field` by name, so they get no notice.
 
+**A section that is entirely generated machinery carries the framing once, in its overview, not on every
+page.** The `types/` section is that case: every page in it documents a type-level building block a
+reader recognizes rather than writes, and the section overview already says so for all of them. Repeating
+a *Generated machinery* notice on each page would only restate that framing, so the type pages omit it.
+The per-page notice stays the right device for a generated construct that sits among constructs a reader
+does write, as in `traits/`.
+
 ## Linking: three destinations, and one prohibition
 
 The prohibition first: **a reference page may never link into the knowledge base**. That is the
@@ -408,8 +415,9 @@ of a grammar is the normal failure here, and it is invisible from the page itsel
 [coverage rule](../AGENTS.md#layer-the-depth-do-not-omit-the-advanced-material).
 
 **Ask whether a reader would ever type this construct's name.** If not, the page needs the
-[*Generated machinery* notice](#say-when-a-construct-is-machinery-the-macros-generate), and if it has one,
-check that nothing further down contradicts it.
+[*Generated machinery* notice](#say-when-a-construct-is-machinery-the-macros-generate) — unless it is in
+the `types/` section, which carries that framing in its overview instead — and if it has one, check that
+nothing further down contradicts it.
 
 **Grep the page for links into the knowledge base.** One surviving `../../cgp/` link is a broken public
 page.
