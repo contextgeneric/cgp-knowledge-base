@@ -3,7 +3,7 @@
 `cargo-cgp` exists to read and rewrite the compiler's diagnostics, so it has to know how rustc builds
 those diagnostics and — the point of this document — where rustc deliberately *drops* information
 while building them. A CGP error is unusually vulnerable to that dropping: its types are enormous
-nested spines (`Symbol<6, Chars<'h', …>>`, `Cons<A, Cons<B, …>>`), and rustc's diagnostic machinery
+nested lists (`Symbol<6, Chars<'h', …>>`, `Cons<A, Cons<B, …>>`), and rustc's diagnostic machinery
 compresses long or repetitive types on the assumption that a human does not want to read them in
 full. For a downstream consumer trying to recover a root cause, that compression can erase the one
 fact that matters. This document maps the compiler code responsible, so the next agent can find a

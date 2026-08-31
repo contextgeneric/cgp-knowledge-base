@@ -58,7 +58,7 @@ documented individually as [`HasField`](../../cgp/reference/traits/has_field.md)
 [`HasBuilder`](../../cgp/reference/traits/has_builder.md) for the builder family,
 [`MapType`](../../cgp/reference/traits/map_type.md) for the presence markers,
 [`AppendProduct` / `MapFields`](../../cgp/reference/traits/product_ops.md) for the list algebra, and
-[`CanBuildFrom`](../../cgp/reference/traits/cast.md) for the merge. The spine types are
+[`CanBuildFrom`](../../cgp/reference/traits/cast.md) for the merge. The list types are
 [`Cons` / `Nil`](../../cgp/reference/types/cons.md) and [`Field`](../../cgp/reference/types/field.md).
 The dispatchers are in the [dispatch combinators](../../cgp/reference/providers/dispatch_combinators.md)
 and [handler combinators](../../cgp/reference/providers/handler_combinators.md). The derive is

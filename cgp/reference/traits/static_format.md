@@ -20,7 +20,7 @@ pub trait StaticFormat {
 }
 ```
 
-It is implemented by recursion over the [`Chars`](../types/chars.md) spine. Each `Chars<CHAR, Tail>` writes its own `CHAR` and then defers to `Tail`, and the terminating `Nil` writes nothing:
+It is implemented by recursion over the [`Chars`](../types/chars.md) list. Each `Chars<CHAR, Tail>` writes its own `CHAR` and then defers to `Tail`, and the terminating `Nil` writes nothing:
 
 ```rust
 impl<const CHAR: char, Tail> StaticFormat for Chars<CHAR, Tail>
@@ -54,7 +54,7 @@ pub trait ConcatPath<Other: ?Sized> {
 }
 ```
 
-It recurses over the [`PathCons`](../types/path_cons.md) spine just as `ConcatProduct` does over a product: each `PathCons<Head, Tail>` keeps its `Head` and concatenates `Other` onto the `Tail`, and the terminating `Nil` becomes `Other` itself, so the result is the first path's segments followed by the second's.
+It recurses over the [`PathCons`](../types/path_cons.md) list just as `ConcatProduct` does over a product: each `PathCons<Head, Tail>` keeps its `Head` and concatenates `Other` onto the `Tail`, and the terminating `Nil` becomes `Other` itself, so the result is the first path's segments followed by the second's.
 
 ## Behavior
 
@@ -95,7 +95,7 @@ step.
 
 ## Related constructs
 
-`StaticFormat` and `StaticString` decode the [`Chars`](../types/chars.md) chain and [`Symbol`](../macros/symbol.md) wrapper that the [`Symbol!`](../macros/symbol.md) macro builds from a string literal — the type-level string at the heart of CGP's field naming. `ConcatPath` operates on the [`PathCons`](../types/path_cons.md) spine constructed by the [`Path!`](../macros/path.md) macro, and is the path-level analogue of the product-level `ConcatProduct`. Together they let the names that drive [`HasField`](has_field.md) lookups and nested-getter composition surface as ordinary strings and paths.
+`StaticFormat` and `StaticString` decode the [`Chars`](../types/chars.md) chain and [`Symbol`](../macros/symbol.md) wrapper that the [`Symbol!`](../macros/symbol.md) macro builds from a string literal — the type-level string at the heart of CGP's field naming. `ConcatPath` operates on the [`PathCons`](../types/path_cons.md) list constructed by the [`Path!`](../macros/path.md) macro, and is the path-level analogue of the product-level `ConcatProduct`. Together they let the names that drive [`HasField`](has_field.md) lookups and nested-getter composition surface as ordinary strings and paths.
 
 ## Source
 

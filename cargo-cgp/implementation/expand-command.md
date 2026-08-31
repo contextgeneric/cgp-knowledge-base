@@ -3,7 +3,7 @@
 `cargo cgp expand` shows a CGP programmer the ordinary Rust their CGP macros generate: a full macro
 expansion in the style of `cargo-expand`, with CGP's type-level sugar resugared by the driver before
 the text is handed back, so a field name reads as `Symbol!("height")` rather than as a six-deep
-`Chars` spine.
+`Chars` list.
 
 **Status: implemented.** `cargo cgp expand` runs: the front-end launches a wrapped `cargo rustc`,
 the driver prints the expanded crate from `after_expansion`, and the rustc-free
@@ -52,7 +52,7 @@ where
 ```
 
 Without the resugaring, each of those bounds is a wall of characters that the compiler's own
-pretty-printer then line-breaks mid-spine:
+pretty-printer then line-breaks mid-list:
 
 ```rust
     __Context__: HasField<Symbol<6,
@@ -291,7 +291,7 @@ than a module of the error-processing crate because expansion output is not diag
 share no types.
 
 The pipeline inside it is four steps: parse the compiler's text with `syn::parse_file`, rewrite the
-CGP spines on the syntax tree, optionally strip CGP path qualifiers, and print with
+CGP lists on the syntax tree, optionally strip CGP path qualifiers, and print with
 `prettyplease::unparse`. When `syn` cannot parse the compiler's output — rare, but expansion can
 produce shapes `syn` does not accept — the crate returns the input text unchanged, so the command
 degrades to plain `cargo-expand` output rather than failing. `cargo-expand` has the same ladder, with
@@ -307,17 +307,17 @@ either confirmed or forced.
 The diagnostic post-processors are `&str -> Option<String>` functions written against rustc's
 *diagnostic* rendering; `prettyplease` breaks a long generic list across lines and ends it with a
 trailing comma before the closing `>`, which the `Symbol!` matcher's final `>` check rejects. On this
-document's own rectangle example that left `Symbol!("width")` resugared and `height` a raw spine,
+document's own rectangle example that left `Symbol!("width")` resugared and `height` a raw list,
 purely because the longer name was the one that got wrapped. Matching a parsed type is immune to
 formatting.
 
-**Its passes are separate whole-tree visits, and each spine is folded outermost-first.** The
+**Its passes are separate whole-tree visits, and each list is folded outermost-first.** The
 separation is the `Nil` overlap hazard [Resugaring](resugaring.md#the-rules-every-resugaring-follows)
 describes, at its sharpest here because a visitor recurses innermost-first: one combined visitor
 rewrites a `Symbol`'s terminating `Nil` to `Product![]` before examining the enclosing `Symbol`, and
 every field name silently stays raw. The direction is a second, subtler form of the same problem — a
-spine's *tail is itself a spine*, so folding the innermost cell first leaves a two-element list as
-`Cons<A, Product![B]>`. Each pass therefore folds a spine before recursing, and recurses into the
+list's *tail is itself a list*, so folding the innermost cell first leaves a two-element list as
+`Cons<A, Product![B]>`. Each pass therefore folds a list before recursing, and recurses into the
 elements it collected.
 
 **Only real syntax is emitted, so two diagnostic-only forms are deliberately not produced.** A

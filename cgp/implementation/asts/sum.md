@@ -1,6 +1,6 @@
 # The `sum` AST stack
 
-The `sum` stack is a single AST type, `SumType`, behind the `Sum!` macro. It parses a comma-separated list of types and folds it into an `Either`/`Void` chain — the same one-type, parse-then-`eval` shape as [`ProductType`](product.md), differing only in the spine it folds onto. The [entrypoint document](../entrypoints/sum.md) covers what the macro produces; this document covers the type.
+The `sum` stack is a single AST type, `SumType`, behind the `Sum!` macro. It parses a comma-separated list of types and folds it into an `Either`/`Void` chain — the same one-type, parse-then-`eval` shape as [`ProductType`](product.md), differing only in the list it folds onto. The [entrypoint document](../entrypoints/sum.md) covers what the macro produces; this document covers the type.
 
 ## `SumType`
 
@@ -18,7 +18,7 @@ The only thing that distinguishes this from `ProductType` is the terminator: a s
 ## Tests
 
 - [extensible_variants/sum_macro.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/sum_macro.rs) asserts `Sum![u32, String, bool]` is the identical type to the hand-written `Either<u32, Either<String, Either<bool, Void>>>`, pinning the fold directly.
-- [extensible_variants/has_fields_enum.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/has_fields_enum.rs) exercises the `Sum!` variant spine an enum derives through `#[derive(HasFields)]`.
+- [extensible_variants/has_fields_enum.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/has_fields_enum.rs) exercises the `Sum!` variant list an enum derives through `#[derive(HasFields)]`.
 
 ## Source
 

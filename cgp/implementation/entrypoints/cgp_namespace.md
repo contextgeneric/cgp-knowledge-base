@@ -38,7 +38,7 @@ impl<__Table__> DefaultShowComponents<__Table__> for String {
 }
 ```
 
-The `@`-path in a redirect desugars along the same rules as elsewhere in CGP: a lowercase segment (`@my_app`) becomes a `Symbol!` in the `PathCons` spine, an uppercase segment (`@MyApp`) stays a type name, and the segments nest right-to-left into `PathCons<…, Nil>`. An array key expands to one impl per component in the array, all sharing the same `Delegate`.
+The `@`-path in a redirect desugars along the same rules as elsewhere in CGP: a lowercase segment (`@my_app`) becomes a `Symbol!` in the `PathCons` list, an uppercase segment (`@MyApp`) stays a type name, and the segments nest right-to-left into `PathCons<…, Nil>`. An array key expands to one impl per component in the array, all sharing the same `Delegate`.
 
 The **inheritance impl** is what makes a namespace extend a parent. It is built through the same for-entry machinery `delegate_components!` uses, and lowers a parent-namespace clause into a blanket impl that reads each of the parent's entries and re-emits it under the child, so the child inherits every wiring the parent defines:
 
@@ -53,7 +53,7 @@ where
 }
 ```
 
-A `=>` entry in the child body then layers a *path-prefix rewrite* on top of the inheritance: an entry like `@cgp.core.error => @app` emits an impl keyed on the `PathCons` spine of the source prefix followed by a `__Wildcard__` tail, whose delegate redirects to the same wildcard under the rewritten prefix. This is how a child namespace shadows one branch of an inherited path without touching the rest.
+A `=>` entry in the child body then layers a *path-prefix rewrite* on top of the inheritance: an entry like `@cgp.core.error => @app` emits an impl keyed on the `PathCons` list of the source prefix followed by a `__Wildcard__` tail, whose delegate redirects to the same wildcard under the rewritten prefix. This is how a child namespace shadows one branch of an inherited path without touching the rest.
 
 ## Behavior and corner cases
 
@@ -93,7 +93,7 @@ Every `snapshot_cgp_namespace!` invocation across the suite is indexed here, sin
 
 - [namespaces/namespace_basic.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/namespaces/namespace_basic.rs) — a `new` namespace with one `=>` redirect to a bare component, showing the struct, trait, and single `RedirectLookup` impl over a two-element path.
 - [namespaces/namespace_symbol_path.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/namespaces/namespace_symbol_path.rs) — the same shape with a lowercase leading segment (`@my_app.…`), so the path's head is a `Symbol!` rather than a type name.
-- [namespaces/namespace_type_path.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/namespaces/namespace_type_path.rs) — an uppercase leading segment (`@MyApp.…`) that stays a type name in the `PathCons` spine.
+- [namespaces/namespace_type_path.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/namespaces/namespace_type_path.rs) — an uppercase leading segment (`@MyApp.…`) that stays a type name in the `PathCons` list.
 - [namespaces/namespace_multi.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/namespaces/namespace_multi.rs) — two namespaces defined in one module (`MyNamespace` with a type-path head, `OtherNamespace` with a symbol head), confirming distinct marker structs and traits.
 - [namespaces/extended.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/namespaces/extended.rs) — a `: DefaultNamespace` parent with a `@cgp.core.error => @app` prefix rewrite, capturing both the inheritance blanket impl and the wildcard-tail path-rewrite impl.
 - [namespaces/default_impls.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/namespaces/default_impls.rs) — an array-key direct-mapping namespace (`[String, u64]: ShowWithDisplay`) expanding to one impl per key, and an empty `: DefaultNamespace` extension emitting only the inheritance impl.

@@ -1,14 +1,14 @@
 # `Either` and `Void`
 
-`Either<Head, Tail>` and `Void` are the two cells of CGP's sum spine — a recursive, right-nested type-level choice that generic code walks to handle any enum's variants one branch at a time.
+`Either<Head, Tail>` and `Void` are the two cells of CGP's sum list — a recursive, right-nested type-level choice that generic code walks to handle any enum's variants one branch at a time.
 
 ## Purpose
 
-`Either` and `Void` exist to represent a choice among several types as a single type, so that the variants of an enum can be reasoned about generically. Where the product spine ([`Cons`/`Nil`](cons.md)) holds a value for *every* element at once, the sum spine holds a value for exactly *one* of its branches — a tagged union, or *anonymous sum type*. By branching at each step and terminating with an uninhabited marker, CGP builds a coproduct whose structure a provider can walk without knowing the concrete enum it came from.
+`Either` and `Void` exist to represent a choice among several types as a single type, so that the variants of an enum can be reasoned about generically. Where the product list ([`Cons`/`Nil`](cons.md)) holds a value for *every* element at once, the sum list holds a value for exactly *one* of its branches — a tagged union, or *anonymous sum type*. By branching at each step and terminating with an uninhabited marker, CGP builds a coproduct whose structure a provider can walk without knowing the concrete enum it came from.
 
-The sum spine is what makes structural, variant-by-variant operations possible across every enum uniformly. Because an enum's variants are exposed as one sum type through [`HasFields`](../traits/has_fields.md), a provider written once to recurse over the `Either`/`Void` branches can match, dispatch on, or construct *any* enum's variants. This is the basis for CGP's extensible-variant machinery: each variant is reached by walking the nested branches rather than by writing a hand-rolled `match` against a fixed enum.
+The sum list makes structural, variant-by-variant operations possible across every enum uniformly. Because an enum's variants are exposed as one sum type through [`HasFields`](../traits/has_fields.md), a provider written once to recurse over the `Either`/`Void` branches can match, dispatch on, or construct *any* enum's variants. This is the basis for CGP's extensible-variant machinery: each variant is reached by walking the nested branches rather than by writing a hand-rolled `match` against a fixed enum.
 
-`Either` and `Void` are the building blocks; the [`Sum!`](../macros/sum.md) macro is how a programmer writes a chain of them. `Sum![A, B, C]` is sugar for the right-nested `Either` chain terminated by `Void`. The branches are most often [`Field`](field.md) entries pairing a variant name with its payload, so an enum's shape becomes a `Sum!` of `Field` branches over this spine.
+`Either` and `Void` are the building blocks; the [`Sum!`](../macros/sum.md) macro is how a programmer writes a chain of them. `Sum![A, B, C]` is sugar for the right-nested `Either` chain terminated by `Void`. The branches are most often [`Field`](field.md) entries pairing a variant name with its payload, so an enum's shape becomes a `Sum!` of `Field` branches over this list.
 
 ## Definition
 
@@ -31,13 +31,13 @@ The `Head` parameter is the type of the current branch and `Tail` is the rest of
 
 A sum of any width is an `Either` chain ending in `Void`, nested to the right. The type `Sum![A, B, C]` is `Either<A, Either<B, Either<C, Void>>>`, and the empty `Sum![]` is just `Void`. A value selects exactly one branch by how deep it sits: `Left(a)` is an `A`, `Right(Left(b))` is a `B`, and `Right(Right(Left(c)))` is a `C`. Reaching the `Void` position would mean the value matched none of the listed branches — which is impossible, because `Void` has no values, so the chain is closed off at its end.
 
-Generic code consumes the sum by recursing on its two cases, mirroring how it folds the product spine but branching instead of pairing. A `Left` is handled directly as the head; a `Right` defers to a trait impl on the `Tail`, recursing until a `Left` is found. The base case is the `Void` terminator, and here the difference from the product spine matters: a product ends in [`Nil`](cons.md), a constructible empty record, but a sum ends in the *uninhabited* `Void`, because an empty choice has no value to pick. `Void` is functionally the never type, used specifically to mark the end of a sum.
+Generic code consumes the sum by recursing on its two cases, mirroring how it folds the product list but branching instead of pairing. A `Left` is handled directly as the head; a `Right` defers to a trait impl on the `Tail`, recursing until a `Left` is found. The base case is the `Void` terminator, and here the difference from the product list matters: a product ends in [`Nil`](cons.md), a constructible empty record, but a sum ends in the *uninhabited* `Void`, because an empty choice has no value to pick. `Void` is functionally the never type, used specifically to mark the end of a sum.
 
 The uninhabitedness of `Void` is load-bearing for the extractor machinery, where [`FinalizeExtract`](../traits/extract_field.md) relies on it to discharge the impossible remainder. After an extractor has tried every variant of a sum and matched none, the leftover value has type `Void` — a value that cannot exist. `FinalizeExtract for Void` turns that into any required type with an empty `match self {}`, since there are no cases to handle, so a fully-handled sum extraction is total at compile time with no unreachable runtime branch. A constructible terminator like `Nil` could not be discharged this way; only an uninhabited type lets the compiler accept the empty match.
 
 ## Examples
 
-The sum spine appears most visibly as the `Fields` of an enum that derives [`HasFields`](../derives/derive_has_fields.md), where the [`Sum!`](../macros/sum.md) sugar hides the `Either`/`Void` chain:
+The sum list appears most visibly as the `Fields` of an enum that derives [`HasFields`](../derives/derive_has_fields.md), where the [`Sum!`](../macros/sum.md) sugar hides the `Either`/`Void` chain:
 
 ```rust
 use cgp::prelude::*;
@@ -75,14 +75,14 @@ let t: Token = Either::Right(Either::Left("hi".to_string())); // the String bran
 
 ## Related constructs
 
-`Either`/`Void` are the sum (choice-like) spine; their product (record-like) counterpart is [`Cons`/`Nil`](cons.md), which shares the same right-nested shape but pairs a head with the rest at each step and terminates in the constructible `Nil` rather than the uninhabited `Void`. A chain of these cells is written with the [`Sum!`](../macros/sum.md) macro, and its branches are usually [`Field`](field.md) entries whose tags come from [`Symbol!`](../macros/symbol.md). The whole chain is what [`#[derive(HasFields)]`](../derives/derive_has_fields.md) assigns to an enum and what [`HasFields`](../traits/has_fields.md) exposes, and `Void`'s uninhabitedness is what the `FinalizeExtract` part of the [extractor family](../traits/extract_field.md) depends on to close a total variant match.
+`Either`/`Void` are the sum (choice-like) list; their product (record-like) counterpart is [`Cons`/`Nil`](cons.md), which shares the same right-nested shape but pairs a head with the rest at each step and terminates in the constructible `Nil` rather than the uninhabited `Void`. A chain of these cells is written with the [`Sum!`](../macros/sum.md) macro, and its branches are usually [`Field`](field.md) entries whose tags come from [`Symbol!`](../macros/symbol.md). The whole chain is what [`#[derive(HasFields)]`](../derives/derive_has_fields.md) assigns to an enum and what [`HasFields`](../traits/has_fields.md) exposes, and `Void`'s uninhabitedness is what the `FinalizeExtract` part of the [extractor family](../traits/extract_field.md) depends on to close a total variant match.
 
 ## Source
 
 - `Either<Head, Tail>` and `Void` are both defined in [crates/core/cgp-field/src/types/sum.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/types/sum.rs).
-- The `Sum!` macro that folds element types onto this spine is the `SumType` construct in [crates/macros/cgp-macro-core/src/types/sum.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/sum.rs).
+- The `Sum!` macro that folds element types onto this list is the `SumType` construct in [crates/macros/cgp-macro-core/src/types/sum.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/sum.rs).
 - `FinalizeExtract for Void`, which discharges the uninhabited remainder of a variant extraction, lives in [crates/core/cgp-field/src/traits/extract_field.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/traits/extract_field.rs), and the enum `HasFields` derive that emits a `Sum!` of `Field` branches is under [crates/macros/cgp-macro-core/src/types/cgp_data/derive_has_fields/sum.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/cgp_data/derive_has_fields/sum.rs).
 
 ## Public pages derived from this document
 
-The public reference is organized one page per type, so this document feeds **2 pages** rather than one: [`Either`](https://contextgeneric.dev/docs/reference/types/spines/either) and [`Void`](https://contextgeneric.dev/docs/reference/types/spines/void), both under the `spines/` subdirectory. A change here is propagated to each of them, per the [synchronization rule](../../../AGENTS.md#the-synchronization-rule); the mapping and the granularity rule behind it are recorded in [website/site-structure.md](../../../website/site-structure.md).
+The public reference is organized one page per type, so this document feeds **2 pages** rather than one: [`Either`](https://contextgeneric.dev/docs/reference/types/either) and [`Void`](https://contextgeneric.dev/docs/reference/types/void), both flat under `types/`. A change here is propagated to each of them, per the [synchronization rule](../../../AGENTS.md#the-synchronization-rule); the mapping and the granularity rule behind it are recorded in [website/site-structure.md](../../../website/site-structure.md).

@@ -22,7 +22,7 @@ There is no multi-stage transform. Both paths call a single codegen helper — `
 
 ## Generated items
 
-The derive emits five impls and leaves the type definition untouched. The load-bearing part is the `Fields` associated type: a struct's fields become a [`Product`](../../reference/macros/product.md) of [`Field<Tag, Value>`](../../reference/types/field.md) entries over the `Cons`/`Nil` spine, and an enum's variants become a [`Sum`](../../reference/macros/sum.md) of `Field<Symbol!("Variant"), Payload>` entries over the `Either`/`Void` spine. Named fields and variant names are keyed by [`Symbol!`](../../reference/macros/symbol.md); tuple fields by [`Index<N>`](../../reference/types/index.md).
+The derive emits five impls and leaves the type definition untouched. The load-bearing part is the `Fields` associated type: a struct's fields become a [`Product`](../../reference/macros/product.md) of [`Field<Tag, Value>`](../../reference/types/field.md) entries over the `Cons`/`Nil` list, and an enum's variants become a [`Sum`](../../reference/macros/sum.md) of `Field<Symbol!("Variant"), Payload>` entries over the `Either`/`Void` list. Named fields and variant names are keyed by [`Symbol!`](../../reference/macros/symbol.md); tuple fields by [`Index<N>`](../../reference/types/index.md).
 
 ```rust
 // struct → product
@@ -35,7 +35,7 @@ impl HasFields for Shape {
 }
 ```
 
-Alongside the shape type, the derive emits `HasFieldsRef` (the same product/sum with each value borrowed under a fresh `'__a` lifetime) and the three conversions: `ToFields` builds the product/sum from a value, `FromFields` destructures it back, and `ToFieldsRef` builds the borrowed form. For a struct the conversions read `self.<field>.into()` into a `Cons(…)` chain and pattern-match `Cons(…)` back into `Self { … }`; for an enum they match each concrete variant to its `Either` arm and back. The product spine is built by `item_fields_to_product_type` in the `product.rs` submodule and the sum spine by `variants_to_sum_type` in `sum.rs`; the entries are chained right-associatively.
+Alongside the shape type, the derive emits `HasFieldsRef` (the same product/sum with each value borrowed under a fresh `'__a` lifetime) and the three conversions: `ToFields` builds the product/sum from a value, `FromFields` destructures it back, and `ToFieldsRef` builds the borrowed form. For a struct the conversions read `self.<field>.into()` into a `Cons(…)` chain and pattern-match `Cons(…)` back into `Self { … }`; for an enum they match each concrete variant to its `Either` arm and back. The product list is built by `item_fields_to_product_type` in the `product.rs` submodule and the sum list by `variants_to_sum_type` in `sum.rs`; the entries are chained right-associatively.
 
 ## Behavior and corner cases
 

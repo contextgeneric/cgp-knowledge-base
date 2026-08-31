@@ -4,7 +4,7 @@
 
 ## Purpose
 
-`Product!` exists to represent an ordered sequence of types as a single type, so that a collection of fields can be reasoned about generically. CGP uses this to describe the *shape* of a struct: the list of its fields, in order, as one type. A type-level list is sometimes called an anonymous product type, because like a tuple it holds several things at once, but unlike a tuple it is built from a recursive `Cons`/`Nil` spine that generic code can take apart one element at a time.
+`Product!` exists to represent an ordered sequence of types as a single type, so that a collection of fields can be reasoned about generically. CGP uses this to describe the *shape* of a struct: the list of its fields, in order, as one type. A type-level list is sometimes called an anonymous product type, because like a tuple it holds several things at once, but unlike a tuple it is built from a recursive `Cons`/`Nil` list that generic code can take apart one element at a time.
 
 The list is what makes structural, field-by-field operations possible. Because the fields of a struct are exposed as a single list type through [`HasFields`](../traits/has_fields.md), a provider can be written once to iterate, transform, or rebuild *any* struct's fields without knowing the concrete struct, by recursing over the `Cons`/`Nil` structure. A plain tuple cannot be decomposed this way in generic code; the recursive list can.
 

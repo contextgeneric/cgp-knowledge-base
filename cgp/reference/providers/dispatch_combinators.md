@@ -115,7 +115,7 @@ The borrowed counterparts are `MatchWithFieldHandlersRef`/`MatchWithValueHandler
 
 ### `ToFieldHandlers`, `HasFieldHandlers`, and `MapFieldHandler`
 
-The convenience matchers turn a context's field list into a handler list through three cooperating traits. `MapFieldHandler` is a type-level function from a field's `Tag` to the adapter that should handle it; `ToFieldHandlers` walks the [`Either`](../types/either.md)-spine of a field list and applies that function to each field, producing a `Cons`-list of adapters; and `HasFieldHandlers` is the convenience entry point that reads a context's `HasFields::Fields` and runs `ToFieldHandlers` over it:
+The convenience matchers turn a context's field list into a handler list through three cooperating traits. `MapFieldHandler` is a type-level function from a field's `Tag` to the adapter that should handle it; `ToFieldHandlers` walks the [`Either`](../types/either.md)-list of a field list and applies that function to each field, producing a `Cons`-list of adapters; and `HasFieldHandlers` is the convenience entry point that reads a context's `HasFields::Fields` and runs `ToFieldHandlers` over it:
 
 ```rust
 pub trait MapFieldHandler {
@@ -139,7 +139,7 @@ where
 }
 ```
 
-`ToFieldHandlers` is implemented inductively over the sum spine: for `Either<Field<Tag, Value>, RestFields>` it produces `Cons<M::FieldHandler<Tag>, RestFields::Handlers>`, and for the terminating [`Void`](../types/either.md) it produces `Nil`. The two `MapFieldHandler` markers supplied by the crate are `MapExtractFieldAndHandle<Provider>`, whose `FieldHandler<Tag>` is `ExtractFieldAndHandle<Tag, Provider>`, and `MapExtractFirstFieldAndHandle<Provider>`, whose `FieldHandler<Tag>` is `ExtractFirstFieldAndHandle<Tag, Provider>`. Composing these is how `MatchWithValueHandlers` ends up running an `ExtractFieldAndHandle<Tag, HandleFieldValue<Provider>>` for each variant of the input enum without the user spelling out the list.
+`ToFieldHandlers` is implemented inductively over the sum list: for `Either<Field<Tag, Value>, RestFields>` it produces `Cons<M::FieldHandler<Tag>, RestFields::Handlers>`, and for the terminating [`Void`](../types/either.md) it produces `Nil`. The two `MapFieldHandler` markers supplied by the crate are `MapExtractFieldAndHandle<Provider>`, whose `FieldHandler<Tag>` is `ExtractFieldAndHandle<Tag, Provider>`, and `MapExtractFirstFieldAndHandle<Provider>`, whose `FieldHandler<Tag>` is `ExtractFirstFieldAndHandle<Tag, Provider>`. Composing these is how `MatchWithValueHandlers` ends up running an `ExtractFieldAndHandle<Tag, HandleFieldValue<Provider>>` for each variant of the input enum without the user spelling out the list.
 
 ### `BuildAndSetField` and `BuildAndMerge`
 

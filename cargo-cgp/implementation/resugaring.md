@@ -17,15 +17,15 @@ post-processes a printed crate is [The expand command](expand-command.md).
 
 Every CGP type-level macro is sugar over a nested type, and nothing downstream of the macro remembers
 the sugar. `Symbol!("height")` expands to a length and a right-folded character list; `Product![A, B]`
-to a `Cons` spine; `Path!(@app.Greeter)` to a `PathCons` chain. The macro emits the expanded form, the
+to a `Cons` list; `Path!(@app.Greeter)` to a `PathCons` chain. The macro emits the expanded form, the
 compiler interns it, and every later mention — a trait bound in an error, a wiring key in a coherence
 conflict, a type in a printed expansion — is that expanded form. A reader who never wrote it is then
 asked to read it, and the encodings are large: a six-character field name is a seven-level type, and
-the compiler will happily break it across four lines mid-spine.
+the compiler will happily break it across four lines mid-list.
 
 Resugaring is worth the machinery because the expanded form does not merely look bad, it *hides the
 fact the reader needs*. The whole point of a missing-field error is the field's name, and that name is
-the one thing a `Chars` chain buries — worse still when rustc elides part of the spine, which is why
+the one thing a `Chars` chain buries — worse still when rustc elides part of the list, which is why
 the driver also injects `--verbose` (see
 [rustc diagnostic internals](rustc-diagnostic-internals.md#the-suppression-points)). Un-eliding gets
 the characters into the text; resugaring turns them back into a name.
@@ -65,7 +65,7 @@ crate is therefore never resugared, whatever its shape, and this is what lets th
 liberal one: the `DefId` check does the discriminating, so the structural rules need only describe the
 shape rather than defend against coincidence.
 
-Two more things are available here and nowhere else. A character in a `Symbol!` spine is a **const
+Two more things are available here and nowhere else. A character in a `Symbol!` list is a **const
 generic argument**, which this pass reads out of its valtree as an exact `char` — the other two must
 parse a printed literal and give up on anything escaped. And an inference **placeholder is visible as
 such**, so the call-site anchor's stand-in for an untyped argument renders as the `_` a programmer
@@ -96,10 +96,10 @@ tail begins, skipping string literals so a `>` or `,` inside one does not mislea
 tolerating whatever whitespace and line breaks rustc's renderer inserted mid-type. The second is
 **name-collision defence**, since there is no `DefId` to ask: the list pass must check that a cell name
 stands alone rather than ending a longer identifier, or the `Cons<` at the tail of `PathCons<` would be
-read as a spine cell.
+read as a list cell.
 
 One hazard belongs to this approach alone. rustc splits a message into styled fragments, and its
-"similar impl" hint splits at *every difference between two types* — shredding a spine so that no
+"similar impl" hint splits at *every difference between two types* — shredding a list so that no
 fragment contains a whole construct to match. So the driver post-processes each fragment and then reads
 them again as the single line they render as (see
 [Error processing](error-processing.md#how-the-driver-applies-the-transforms)).
@@ -124,14 +124,14 @@ It cannot reuse the text pass either, and that is a measured result rather than 
 matchers were written against rustc's *diagnostic* rendering, and on printed source they are
 formatting-sensitive: `prettyplease` breaks a long generic list across lines and ends it with a trailing
 comma before the closing `>`, which the `Symbol!` matcher's final `>` check rejects. On a rectangle
-example that left `Symbol!("width")` resugared and `height` a raw spine, purely because the longer name
+example that left `Symbol!("width")` resugared and `height` a raw list, purely because the longer name
 was the one that got wrapped. Matching `syn::Type` is immune to formatting, because the structure is
 already parsed.
 
 Four demands are specific to this approach, and each shapes the code. Its **output must be a syntax
 node**, not a string: `Symbol!("height")` is built as a macro-call type the printer then formats, where
-the other two approaches simply emit text. Its passes must **fold each spine outermost-first**, because
-a visitor recurses innermost-first and a spine's tail is itself a spine — folding the inner cell first
+the other two approaches simply emit text. Its passes must **fold each list outermost-first**, because
+a visitor recurses innermost-first and a list's tail is itself a list — folding the inner cell first
 leaves a two-element list as `Cons<A, Product![B]>` — so each pass folds before recursing and then
 recurses into the elements it collected. That same innermost-first instinct is what makes the shared
 `Nil` overlap hazard bite hardest here, which is why the passes stay separate whole-tree visits (see
@@ -152,7 +152,7 @@ space and so cannot alter meaning.
 Two of the forms a diagnostic shows are **presentation-only**: the `Struct! { … }` / `Enum! { … }`
 record forms an all-field list folds to, and the trailing `.*` wildcard an open-ended path takes. No
 such CGP macros exist and neither would parse back. They earn their place in a diagnostic because the
-alternative is unreadable — a chain of `Field` cells, a raw `PathCons` spine — and a diagnostic is prose
+alternative is unreadable — a chain of `Field` cells, a raw `PathCons` list — and a diagnostic is prose
 about the program, not the program.
 
 Source output is different, and the syntax-tree pass therefore **does not emit either**. An expansion is
@@ -194,7 +194,7 @@ section.
 
 **Match exactly or decline.** Each transform reconstructs the surface form only when the type matches
 the expansion the macro produces, level for level, and leaves the raw type alone otherwise. Declining
-is a normal outcome, not a failure — an inference placeholder mid-spine, a wrong terminator, or a
+is a normal outcome, not a failure — an inference placeholder mid-list, a wrong terminator, or a
 same-named foreign type all take that path.
 
 **The order is fixed, because the transforms read each other's output.** Module qualifiers are
@@ -205,7 +205,7 @@ The text chain in
 sequences them in that order, and any other implementation must too.
 
 That ordering is load-bearing in one way that is easy to get wrong. **`Nil` terminates three different
-spines** — a `Symbol`'s character list, a `PathCons` path, and an empty `Cons` list — so a pass that
+lists** — a `Symbol`'s character list, a `PathCons` path, and an empty `Cons` list — so a pass that
 rewrites a bare `Nil` before the enclosing construct is examined destroys the enclosing match. On a
 syntax tree, where a visitor naturally recurses innermost-first, this bites immediately: one combined
 visitor turns a `Symbol`'s terminating `Nil` into `Product![]`, after which the `Symbol` no longer
@@ -214,12 +214,12 @@ keep the constructs apart, and no implementation may fold them into one traversa
 
 **A few surface forms are presentation-only.** `Struct! { … }`, `Enum! { … }`, and `Path!`'s trailing
 `.*` wildcard are not real CGP macros and would not parse back. They exist because the shape they
-describe reads far better than the spine, and they are the one place resugaring shows something other
+describe reads far better than the list, and they are the one place resugaring shows something other
 than what the programmer could have written — so they are shown in a *diagnostic* only, never in source
 output, per [only source output is held to real syntax](#only-source-output-is-held-to-real-syntax).
 Every other output is real, writable syntax everywhere.
 
-**An empty spine is left as its terminator.** A bare `Nil` or `Void` is not rewritten to `Product![]`
+**An empty list is left as its terminator.** A bare `Nil` or `Void` is not rewritten to `Product![]`
 or `Sum![]`: the terminator alone reads as the plain type it is, and resugaring it would mean claiming
 an empty list where a type was written. Both list implementations require a first cell before they
 begin.
@@ -259,7 +259,7 @@ root-cause lead reads better naming the field than the tag type.
 The match is exact in three ways, and any of them failing leaves the type as it stands. The **declared
 length must equal the decoded string's byte length**, because `Symbol!` bakes in `str::len()` rather
 than a character count, so a length that disagrees means this is not a `Symbol!` expansion. The
-**spine must be `Chars` all the way down to `Nil`**, with nothing else in the chain. And each `Chars`
+**list must be `Chars` all the way down to `Nil`**, with nothing else in the chain. And each `Chars`
 head must be a **single plain character literal**: an escaped or multi-character literal declines,
 rather than being decoded by guesswork. The empty string is a legitimate match — `Symbol<0, Nil>`
 resugars to `Symbol!("")`.
@@ -310,10 +310,10 @@ dispatches on (`Vec<u8>`, `&Coord`, `DateTime<Utc>`). A namespace path therefore
 PathCons<Symbol!("app"), PathCons<GreeterComponent, Nil>>   →   @app.GreeterComponent
 ```
 
-Two segment shapes decline, leaving the whole spine raw rather than risking a mangled path. A
+Two segment shapes decline, leaving the whole list raw rather than risking a mangled path. A
 **module-qualified** segment folds to its final identifier only when every part is a plain identifier
 and the tail is a type — the [module strip](#the-path-strips-that-run-first) normally removes the
-qualifier before this pass, so a residual `::` means the spine is not the bare form `Path!` writes. A
+qualifier before this pass, so a residual `::` means the list is not the bare form `Path!` writes. A
 **bare lowercase identifier** declines outright: `Path!` would have encoded it as a `Symbol`, so
 meeting one as a plain type is ambiguous.
 
@@ -326,7 +326,7 @@ placeholder `_` — the shape that appears in the conflicting-wiring `E0119` blo
 PathCons<Symbol!("foo"), PathCons<Symbol!("bar"), _>>   →   Path!(@foo.bar.*)
 ```
 
-`.*` is not `Path!` syntax and would not parse back, but it reads far better than the spine and says
+`.*` is not `Path!` syntax and would not parse back, but it reads far better than the list and says
 what the path means: it matches any continuation. Only a bare `_` triggers it, since `_` is never a
 concrete segment; any other non-`Nil` tail declines. Being presentation-only, it is a diagnostic form:
 the source pass leaves an open-ended chain raw.
@@ -335,9 +335,9 @@ The text implementation is
 [`resugar_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/resugar_path.rs),
 which also mirrors the macro's own `is_primitive_type` rule so the two classifications cannot drift.
 
-### `Product!` and `Sum!` — the list spines
+### `Product!` and `Sum!` — the lists
 
-`Product!` and `Sum!` encode a type list and a type sum, the spines behind every field list, variant
+`Product!` and `Sum!` encode a type list and a type sum, the lists behind every field list, variant
 list, and handler pipeline
 ([`Product!`](../../cgp/reference/macros/product.md),
 [`Sum!`](../../cgp/reference/macros/sum.md)). A wiring
@@ -351,7 +351,7 @@ delegate_components! {
 }
 ```
 
-Both expand to right-nested spines, a product through `Cons` to `Nil` and a sum through `Either` to
+Both expand to right-nested lists, a product through `Cons` to `Nil` and a sum through `Either` to
 `Void`, and resugaring folds each back to the flat list:
 
 ```text
@@ -360,23 +360,23 @@ Either<u64, Either<f64, Void>>      →   Sum![u64, f64]
 ```
 
 The value is highest in a dependency chain, where a recursive provider walks a list one cell at a
-time: without resugaring, each hop of the chain restates a slightly shorter spine and the reader has to
+time: without resugaring, each hop of the chain restates a slightly shorter list and the reader has to
 diff them to see progress; with it, each hop names the list it is working on.
 
-Three details make the match exact. The spine must **close on its own terminator** — `Nil` for a
-product, `Void` for a sum — so an open-ended or wrongly-terminated spine is left alone, and a tail
+Three details make the match exact. The list must **close on its own terminator** — `Nil` for a
+product, `Void` for a sum — so an open-ended or wrongly-terminated list is left alone, and a tail
 cell must be the *whole* remaining tail rather than something a trailing token follows. Elements are
 **resugared recursively**, so a `Sum!` nested inside a `Product!`, or a `Symbol!` inside an element,
 folds in turn. And the text pass takes one precaution the typed pass gets for free from its `DefId`
 check: it requires the cell name to stand alone rather than end a longer identifier, so the `Cons<` at
-the end of `PathCons<` is never mistaken for a spine cell.
+the end of `PathCons<` is never mistaken for a list cell.
 
 The typed implementation is `render_ty`'s `cgp_spine`; the text implementation is
 [`resugar_lists`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/resugar_list.rs).
 
 ### `Struct!` and `Enum!` — a list of named fields
 
-When every element of a list spine is a **named field**, the list is not really a list to the reader —
+When every element of a list is a **named field**, the list is not really a list to the reader —
 it is a record or a variant set, and resugaring folds it one step further. This is the shape
 `#[derive(HasFields)]` produces:
 
@@ -448,12 +448,12 @@ Three things a reader might expect to see resugared are deliberately not, and ea
 recording so nobody adds it as a "missing" transform.
 
 An **open-ended path** stays raw in source output, and this is the one construct a real expansion still
-shows as a spine. An `open` statement's per-key entry is generic over the rest of the path, so the impl
+shows as a list. An `open` statement's per-key entry is generic over the rest of the path, so the impl
 keys on `PathCons<Component, PathCons<Key, __Wildcard__>>` — a tail that is a named type parameter, not
 `Nil`. A diagnostic renders that tail as the `.*` wildcard; source output cannot, since `.*` would not
 parse, so the chain is left as written.
 
-An **empty spine** stays as its terminator, per the shared rule above: a bare `Nil` or `Void` is a
+An **empty list** stays as its terminator, per the shared rule above: a bare `Nil` or `Void` is a
 plain type in the reader's source too. A **type-level index** (`Index<0>`, the tuple-field tag) needs
 nothing — `Index<N>` *is* the surface form a programmer writes, so there is no expansion to reverse.
 And a **`Life<'a>` lifetime lift** is decoded rather than resugared: the resolver reads the region back
@@ -477,17 +477,17 @@ compiler, and the UI suite pins the typed pass end to end.
   wrong length and a foreign `Symbol` left alone, the `PathCons` → `@…`/`Path!(@…)` forms across symbol,
   type, primitive, generic-value, and reference-value segments, the open `_` tail folded to `.*`, the
   qualified-tail and lowercase-segment declines, the `Product!`/`Sum!` folds, the `Struct!`/`Enum!`
-  record forms, a mixed list kept as a plain product, a nested list, a non-terminating spine declined,
+  record forms, a mixed list kept as a plain product, a nested list, a non-terminating list declined,
   the `Cons`-inside-`PathCons` guard, the module and CGP-prefix strips (including the multi-byte
   box-drawing and string-literal cases), and the `postprocess_message` chain end to end.
 - [`tests/ui/acceptable/fields/base_area_1`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/fields/base_area_1.rs) — the
   typed `Symbol!` decode in a real diagnostic: the missing field is named `height` in the lead, where
-  raw rustc renders a `Chars` spine (and elides part of it).
+  raw rustc renders a `Chars` list (and elides part of it).
 - [`record_field_chain`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/missing-wiring/record_field_chain.rs) — the
   typed `Cons`/`Nil` → `Struct! { … }` fold, in a record provider's chain.
 - [`sum_variant_chain`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/missing-wiring/sum_variant_chain.rs) and
   [`enum_variant_chain`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/missing-wiring/enum_variant_chain.rs) — the sum
-  spine as a plain `Sum![…]` list of bare types, and as an `Enum! { … }` of named variants.
+  list as a plain `Sum![…]` list of bare types, and as an `Enum! { … }` of named variants.
 - The path fixtures —
   [`unregistered_prefix_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/resolution/unregistered_prefix_path.rs),
   [`qualified_prefix_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/qualified_prefix_path.rs)
@@ -504,7 +504,7 @@ compiler, and the UI suite pins the typed pass end to end.
 - Every fixture's `.expand.rs` snapshot in the [UI suite](testing.md#three-passes-per-fixture) pins the
   syntax-tree pass over *real* macro output, across the whole fixture tree. That is the widest coverage
   any of the three implementations has: across the current tree no expansion contains a raw `Chars<…>`
-  spine outside a fixture's own doc comment, which is the standing evidence that the pass reaches every
+  list outside a fixture's own doc comment, which is the standing evidence that the pass reaches every
   construct the fixtures produce.
 
 What is *not* guarded: no test asserts that the three implementations agree with each other on the same
@@ -541,10 +541,10 @@ whenever a rule here needs checking against the macro's own behaviour.
 - [`Symbol!`](../../cgp/reference/macros/symbol.md) — the
   length-plus-`Chars` encoding, including why the length is `str::len()`.
 - [`Path!`](../../cgp/reference/macros/path.md) — the
-  segment classification the `Path!` resugaring mirrors, and the `PathCons` spine.
+  segment classification the `Path!` resugaring mirrors, and the `PathCons` list.
 - [`Product!`](../../cgp/reference/macros/product.md) and
   [`Sum!`](../../cgp/reference/macros/sum.md) — the `Cons`/`Nil`
-  and `Either`/`Void` spines.
+  and `Either`/`Void` lists.
 - [`Field`](../../cgp/reference/types/field.md) and
   [`HasFields`](../../cgp/reference/traits/has_fields.md) —
   the named-field cell and the shape the `Struct!`/`Enum!` fold describes.

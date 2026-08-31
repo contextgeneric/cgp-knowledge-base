@@ -206,8 +206,8 @@ it stale.
 #### `cgp/reference/types/`
 
 - [chars.md](cgp/reference/types/chars.md) — the type-level character list behind `Symbol`.
-- [cons.md](cgp/reference/types/cons.md) — the `Cons`/`Nil` product (record) list spine.
-- [either.md](cgp/reference/types/either.md) — the `Either`/`Void` sum (variant) list spine.
+- [cons.md](cgp/reference/types/cons.md) — the `Cons`/`Nil` product (record) list.
+- [either.md](cgp/reference/types/either.md) — the `Either`/`Void` sum (variant) list.
 - [field.md](cgp/reference/types/field.md) — a value paired with its type-level name tag.
 - [index.md](cgp/reference/types/index.md) — a type-level natural number, tagging tuple-struct fields.
 - [life.md](cgp/reference/types/life.md) — a lifetime lifted into a type.

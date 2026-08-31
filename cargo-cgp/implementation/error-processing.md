@@ -101,7 +101,7 @@ passes through the post-processing transforms.
 
 The pass does two jobs depending on what came before it, and both keep raw CGP spellings out of the
 output. For a diagnostic the tool left **un-rewritten**, post-processing is the whole cleanup — it
-strips the `cgp::` prefixes, resugars the `Symbol!` and `Path!` spines, and rewords an unmet
+strips the `cgp::` prefixes, resugars the `Symbol!` and `Path!` lists, and rewords an unmet
 `HasField` bound, so a diagnostic the tool does not classify still reads cleanly. For a **rewritten**
 one, only the prefix strip and the `Symbol!`/`Path!` resugaring bite: they tidy the compiler-formatted
 CGP type names a rewrite embeds — a provider like `RedirectLookup<…, PathCons<Symbol<…>>>` in a coded
@@ -125,7 +125,7 @@ renderer concatenates; rustc splits a message that way to highlight part of it, 
 highlights is the *difference between two types* it splits at every difference. Its "similar impl"
 hint does exactly that, so a `Symbol<3, Chars<'B', …>>` in one of the two traits is shredded into a
 fragment per character and no fragment holds a whole construct to match — the header beside it would
-read `Symbol!("Bar")` while the hint still showed the raw spine. So the driver post-processes each
+read `Symbol!("Bar")` while the hint still showed the raw list. So the driver post-processes each
 fragment first, keeping rustc's highlighting, and then reads them as the one line they render as
 through
 [`postprocess_fragments`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/chain.rs).
@@ -168,7 +168,7 @@ today, in three groups:
   (`PathCons<Symbol!("app"), PathCons<GreeterComponent, Nil>>` → `@app.GreeterComponent`, or the
   `Path!(@…)` macro form when its `wrap` parameter is set), and
   [`resugar_lists`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/resugar_list.rs)
-  (`Cons`/`Either` spines → `Product![…]`/`Sum![…]`, or `Struct! { … }`/`Enum! { … }` when every
+  (`Cons`/`Either` lists → `Product![…]`/`Sum![…]`, or `Struct! { … }`/`Enum! { … }` when every
   element is a named field) — reverse a CGP type-level expansion back to the syntax the programmer
   wrote. They are one of the tool's [three resugaring implementations](resugaring.md), which
   **[Resugaring](resugaring.md)** documents in full: what each construct expands to and folds back to,
@@ -231,7 +231,7 @@ the transforms stay consistent with what the driver emits across the whole catal
 The transforms still ahead extend the per-diagnostic cleanup, each a new function added to the
 post-processing chain, each applying the same exact-match caution `resugar_symbol` sets the precedent
 for. The type-level encodings a CGP diagnostic carries are now all decoded — `Symbol!`, `Path!`, and
-the `Product!`/`Sum!` spines with their record and variant forms — so what remains on that front is
+the `Product!`/`Sum!` lists with their record and variant forms — so what remains on that front is
 whichever encoding a new CGP construct introduces, and the place to add it is
 [Resugaring](resugaring.md). Recognizing more error classes is the other direction, each rewriting its
 message the way the missing-field transform does.
@@ -271,10 +271,10 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   bound (header dropped, lead-less note), a provider header via the text rewrite, and the pluralized
   consumer header.
 - [`crates/cargo-cgp-error-processing/tests/tree.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/tree.rs) —
-  the `termtree`-backed `render_dependency_tree` (a spine, a branch); building and merging trees is
+  the `termtree`-backed `render_dependency_tree` (a list, a branch); building and merging trees is
   the graph's job, tested in `graph.rs`.
 - [`crates/cargo-cgp-error-processing/tests/graph.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/graph.rs) —
-  the `DependencyGraph` build-and-render, as `insta` inline snapshots: a spine, a shared-prefix
+  the `DependencyGraph` build-and-render, as `insta` inline snapshots: a list, a shared-prefix
   branch, a subsuming cascade, converging leaves, a diamond, a super-root, a within-path repeat, and
   the generic elision (see
   [Dependency-graph rendering](dependency-graph-rendering.md)).

@@ -8,7 +8,7 @@
 
 The tag is carried as a phantom type precisely because the name is needed only at compile time, for trait resolution and dispatch, never at run time. A `Field<Tag, Value>` is therefore exactly as large as its `Value` — the `PhantomData<Tag>` occupies no space — so encoding names this way costs nothing at run time while making field-by-field generic code possible. This is the same string-as-type trick that [`Symbol!`](../macros/symbol.md) provides for names and [`Index`](index.md) provides for tuple positions; `Field` is where that tag meets the value it labels.
 
-`Field` is the element type that fills both spines of structural data. In a product (a record), the [`HasFields`](../traits/has_fields.md) representation of a struct is a `Product!` of `Field` entries, one per field. In a sum (an enum), it is a [`Sum!`](../macros/sum.md) of `Field` entries, one per variant, where the `Value` is the variant's payload. The same `Field<Tag, Value>` shape names a field in a record and a variant in an enum.
+`Field` is the element type that fills both lists of structural data. In a product (a record), the [`HasFields`](../traits/has_fields.md) representation of a struct is a `Product!` of `Field` entries, one per field. In a sum (an enum), it is a [`Sum!`](../macros/sum.md) of `Field` entries, one per variant, where the `Value` is the variant's payload. The same `Field<Tag, Value>` shape names a field in a record and a variant in an enum.
 
 ## Definition
 
@@ -66,7 +66,7 @@ For a tuple-struct field, the tag is an [`Index`](index.md) rather than a `Symbo
 
 ## Related constructs
 
-`Field` is the element type of the two structural spines: it fills a [`Product!`](../macros/product.md) (built from `Cons`/`Nil`, see [`cons.md`](cons.md)) for a record and a [`Sum!`](../macros/sum.md) (built from `Either`/`Void`, see [`either.md`](either.md)) for an enum. Its `Tag` is produced by [`Symbol!`](../macros/symbol.md) for a named field and by [`Index`](index.md) for a tuple-struct position. The list of `Field` entries for a whole type is assigned by [`#[derive(HasFields)]`](../derives/derive_has_fields.md) and surfaced through the [`HasFields`](../traits/has_fields.md) trait, while single-field access against a matching tag is the job of [`HasField`](../traits/has_field.md), built per field by [`#[derive(HasField)]`](../derives/derive_has_field.md).
+`Field` is the element type of the two structural lists: it fills a [`Product!`](../macros/product.md) (built from `Cons`/`Nil`, see [`cons.md`](cons.md)) for a record and a [`Sum!`](../macros/sum.md) (built from `Either`/`Void`, see [`either.md`](either.md)) for an enum. Its `Tag` is produced by [`Symbol!`](../macros/symbol.md) for a named field and by [`Index`](index.md) for a tuple-struct position. The list of `Field` entries for a whole type is assigned by [`#[derive(HasFields)]`](../derives/derive_has_fields.md) and surfaced through the [`HasFields`](../traits/has_fields.md) trait, while single-field access against a matching tag is the job of [`HasField`](../traits/has_field.md), built per field by [`#[derive(HasField)]`](../derives/derive_has_field.md).
 
 ## Source
 

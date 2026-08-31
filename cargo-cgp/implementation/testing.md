@@ -106,8 +106,8 @@ driver applies every CGP transform in-process and renders the result, `.cgp.stde
 
 The expand pass normalizes less than the other two, deliberately. Only the absolute paths are replaced;
 none of the diagnostic normalization applies, and one piece of it would actively hide a defect — the
-`Chars<…>` spine collapse exists to absorb how rustc truncates a spine in a *diagnostic*, but in an
-expansion a raw `Chars<…>` spine means the resugaring declined, which is exactly what the snapshot is
+`Chars<…>` list collapse exists to absorb how rustc truncates a list in a *diagnostic*, but in an
+expansion a raw `Chars<…>` list means the resugaring declined, which is exactly what the snapshot is
 there to show. (Across the current tree, no expansion contains one outside a fixture's own doc
 comment.)
 

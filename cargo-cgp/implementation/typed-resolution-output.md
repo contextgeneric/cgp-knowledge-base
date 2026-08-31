@@ -275,7 +275,7 @@ drives the coded headers, the `root cause:` notes, and the derive `help`s;
 [`tests/coalesce.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/coalesce.rs)
 the underived-field coalescing and its boundaries;
 [`tests/graph.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/graph.rs)
-the graph build-and-render (spine, branch, diamond, super-root, within-path repeat, elision) as
+the graph build-and-render (list, branch, diamond, super-root, within-path repeat, elision) as
 `insta` inline snapshots; and
 [`tests/tree.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/tree.rs)
 the `cargo tree`-style renderer. The end-to-end fixture catalog lives in the parent document's

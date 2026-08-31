@@ -43,4 +43,4 @@ The remaining types support the multi-path, generic-carrying grammar that `#[cgp
 ## Source
 
 - The stack lives in [cgp-macro-core/src/types/path/](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-core/src/types/path/): `PathElement` in `path_element.rs`, `UniPath` in `unipath.rs`, `PrefixPath` in `prefix.rs`, `PathHead` in `path_head.rs`, `PathElementWithGenerics` in `path_element_with_generics.rs`, and the `PathHeadOrType`/`UniPathOrType` disambiguators in `path_head_or_type.rs` and `unipath_or_type.rs`.
-- The runtime spine `PathCons` is defined in [cgp-base-types](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-base-types/src/types/path.rs).
+- The runtime list `PathCons` is defined in [cgp-base-types](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-base-types/src/types/path.rs).

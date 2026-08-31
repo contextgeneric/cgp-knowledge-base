@@ -120,7 +120,7 @@ terms [vocabulary.md](../../communication-strategy/vocabulary.md) says to defer,
 with a plain-language definition on first use. **Add the motivation the concept document assumes**: a
 concept opens with what the idea *is*, whereas an explanation page opens with the problem that makes the
 idea worth having. And **remove the internal machinery** — `DelegateComponent`, `IsProviderFor`, the
-`Symbol<…>` spine — unless the page's subject *is* that machinery, in which case introduce it as the
+`Symbol<…>` list — unless the page's subject *is* that machinery, in which case introduce it as the
 mechanism behind the model rather than as the model.
 
 The synchronization rule applies unchanged in both directions: an explanation page's claims are bound to

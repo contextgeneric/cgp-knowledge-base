@@ -6,7 +6,7 @@
 
 `ChainGetters` exists to reach a field that does not live directly on the context but several hops inside it. A single [`UseField`](use_field.md) reads one field of one context. But CGP contexts often nest — a context holds a config, the config holds a connection, the connection holds a timeout — and a getter may need the innermost value. Writing one provider that walks the whole path by hand is tedious and couples the getter to the nesting. `ChainGetters<Getters>` takes a list of getters, applies them in order, and threads the reference from each step into the next, so the chain reads like the path it traverses: outer getter, then the next, then the next, ending at the target field.
 
-The list is a type-level [`Cons`](../types/cons.md) spine — `Cons<GetterA, Cons<GetterB, Nil>>` — where each element is itself a field getter for the value the previous step produced. `ChainGetters` recurses down this list, so it is naturally written with the [`Product!`](../macros/product.md) macro that builds such spines. Like every CGP provider, `ChainGetters<Getters>` carries no runtime value; it is a `PhantomData`-only marker named in wiring.
+The list is a type-level [`Cons`](../types/cons.md) list — `Cons<GetterA, Cons<GetterB, Nil>>` — where each element is itself a field getter for the value the previous step produced. `ChainGetters` recurses down this list, so it is naturally written with the [`Product!`](../macros/product.md) macro that builds such lists. Like every CGP provider, `ChainGetters<Getters>` carries no runtime value; it is a `PhantomData`-only marker named in wiring.
 
 ## Definition
 
@@ -53,7 +53,7 @@ impl<Context, Tag> FieldGetter<Context, Tag> for ChainGetters<Nil> {
 }
 ```
 
-So a chain of one getter resolves to that getter applied to the context (its tail being `Nil` returns the value unchanged), a chain of two applies the first then the second, and so on down the `Cons` spine.
+So a chain of one getter resolves to that getter applied to the context (its tail being `Nil` returns the value unchanged), a chain of two applies the first then the second, and so on down the `Cons` list.
 
 ## Examples
 
@@ -94,10 +94,10 @@ delegate_components! {
 
 ## Related constructs
 
-`ChainGetters` composes the same provider-side [`FieldGetter`](../traits/has_field.md) that [`UseField`](use_field.md) and [`UseFieldRef`](use_field_ref.md) implement, using each as a step in the path; it applies each step through [`FieldMapper`](../traits/has_field.md) to keep borrowed lifetimes inferring across hops. Its list of getters is a type-level [`Cons`](../types/cons.md)/`Nil` spine, most conveniently written with the [`Product!`](../macros/product.md) macro, and its steps read fields keyed by [`Symbol!`](../macros/symbol.md) on contexts deriving [`#[derive(HasField)]`](../derives/derive_has_field.md). It is wired as the provider for a getter defined with [`#[cgp_getter]`](../macros/cgp_getter.md).
+`ChainGetters` composes the same provider-side [`FieldGetter`](../traits/has_field.md) that [`UseField`](use_field.md) and [`UseFieldRef`](use_field_ref.md) implement, using each as a step in the path; it applies each step through [`FieldMapper`](../traits/has_field.md) to keep borrowed lifetimes inferring across hops. Its list of getters is a type-level [`Cons`](../types/cons.md)/`Nil` list, most conveniently written with the [`Product!`](../macros/product.md) macro, and its steps read fields keyed by [`Symbol!`](../macros/symbol.md) on contexts deriving [`#[derive(HasField)]`](../derives/derive_has_field.md). It is wired as the provider for a getter defined with [`#[cgp_getter]`](../macros/cgp_getter.md).
 
 ## Source
 
 - The `ChainGetters` struct and its two `FieldGetter` impls (the `Cons` recursion step and the `Nil` base case) are in [crates/core/cgp-field/src/impls/chain.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/impls/chain.rs).
 - The `FieldGetter` and `FieldMapper` traits it builds on are in [crates/core/cgp-field/src/traits/has_field.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/traits/has_field.rs) and [crates/core/cgp-field/src/traits/map_field.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/traits/map_field.rs).
-- The `Cons`/`Nil` spine it recurses over is defined in [crates/core/cgp-base-types/src/types/](https://github.com/contextgeneric/cgp/tree/main/crates/core/cgp-base-types/src/types/) (`cons.rs` and `nil.rs`).
+- The `Cons`/`Nil` list it recurses over is defined in [crates/core/cgp-base-types/src/types/](https://github.com/contextgeneric/cgp/tree/main/crates/core/cgp-base-types/src/types/) (`cons.rs` and `nil.rs`).

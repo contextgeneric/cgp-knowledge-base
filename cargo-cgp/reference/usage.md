@@ -112,7 +112,7 @@ word cannot be told from the value of a cargo flag (`--bin my_module`).
 Two things about the output are worth knowing. **Every macro is expanded**, not only CGP's, so
 `#[derive(Debug)]` and `println!` appear in their generated form too — the CGP-specific part is that
 CGP's own type-level constructs are resugared, so a field name reads `Symbol!("height")` rather than a
-six-level `Chars` spine. And the `cgp::macro_prelude::` qualifier the macros emit is stripped for
+six-level `Chars` list. And the `cgp::macro_prelude::` qualifier the macros emit is stripped for
 readability, which means the output is meant to be *read* rather than compiled.
 
 `expand` is not a check: the compilation stops once the crate is expanded, so no type analysis runs and

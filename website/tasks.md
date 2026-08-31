@@ -229,19 +229,20 @@ reader falls into. The spec and the porting procedure are in
 - **R2 — port the construct pages.** **Every group is now written**, so no page under
   `docs/reference/` carries a stub notice: `macros/` (20), `attributes/` (8),
   `derives/` (8), `traits/` (57), `providers/` (50), `components/` (17), and `types/` (11 construct
-  pages plus a section overview and a spines-group overview) are complete. The
+  pages plus a section overview and a lists-group overview) are complete. The
   `providers/` group is one page per provider — sixteen singletons (including the five `With…` aliases)
   plus four subsections (`error/` 7, `handler/` 13, `dispatch/` 11, `monad/` 3), each with its own
   overview — which is where the four former catalogue pages went. The `components/` group split the
   three internal docs that bundled a sibling or a by-reference variant into **17 construct pages** —
   eight at the top level plus a nine-page `handler/` subsection for the computation family — each with
   an `example-code` mirror. The `types/` group was ported last, split one page per type rather than the
-  internal reference's `type_level_spines` consolidation: five top-level singletons (`phantom_data`,
-  `field`, `index_type`, `life`, `mref`) and a `spines/` subdirectory (`cons`, `nil`, `either`, `void`,
-  `chars`, `path_cons`) with its own overview, ordered by importance, and adding a `PhantomData` page the
-  internal reference has no document for. **Every type page that shows code has its `example-code`
-  mirror**, under `tests/reference/types/`, so the whole reference is compiler-checked rather than only
-  ported. Two page-level conventions apply from the start: a construct the macros
+  internal reference's `type_level_spines` consolidation, and flat: all eleven construct pages sit
+  directly under `types/` — the markers `phantom_data`, `field`, `index_type`, `life`; the six recursive
+  lists `cons`, `nil`, `either`, `void`, `chars`, `path_cons`, whose family explanation lives on their
+  head cells; and `mref`, the ordinary runtime data type, last — ordered by importance, and adding a
+  `PhantomData` page the internal reference has no document for. **Every type page that shows code has
+  its `example-code` mirror**, flat under `tests/reference/types/`, so the whole reference is
+  compiler-checked rather than only ported. Two page-level conventions apply from the start: a construct the macros
   generate opens with a
   [*Generated machinery* notice](writing-guides/reference.md#say-when-a-construct-is-machinery-the-macros-generate)
   (the `providers/` promotion bundles and lifts carry one); a marker is documented on the construct it

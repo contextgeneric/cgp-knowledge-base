@@ -65,7 +65,7 @@ The concept is [extensible variants](../../cgp/concepts/extensible-variants.md),
 [`HasFields`](../../cgp/reference/traits/has_fields.md),
 [`MapType`](../../cgp/reference/traits/map_type.md) for the presence markers including the void one,
 [`CanUpcast` / `CanDowncast`](../../cgp/reference/traits/cast.md), and the
-[monad traits](../../cgp/reference/traits/monad.md). The spine types are
+[monad traits](../../cgp/reference/traits/monad.md). The list types are
 [`Either` / `Void`](../../cgp/reference/types/either.md) and
 [`Field`](../../cgp/reference/types/field.md). The dispatchers are the
 [dispatch combinators](../../cgp/reference/providers/dispatch_combinators.md), the promotion adapters

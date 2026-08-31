@@ -4,7 +4,7 @@
 
 ## Purpose
 
-`Sum!` exists to represent a choice among several types as a single type, so that the variants of an enum can be reasoned about generically. Where a [`Product!`](product.md) list holds a value for *every* element at once (a record), a `Sum!` holds a value for exactly *one* element (a tagged union). It is sometimes called an anonymous sum type or coproduct, and it is the structural mirror image of the product: both are right-nested chains over the same kind of spine, but the sum branches at each step instead of pairing.
+`Sum!` exists to represent a choice among several types as a single type, so that the variants of an enum can be reasoned about generically. Where a [`Product!`](product.md) list holds a value for *every* element at once (a record), a `Sum!` holds a value for exactly *one* element (a tagged union). It is sometimes called an anonymous sum type or coproduct, and it is the structural mirror image of the product: both are right-nested chains over the same kind of list, but the sum branches at each step instead of pairing.
 
 The sum is what makes structural, variant-by-variant operations possible. Because an enum's variants are exposed as a single sum type through [`HasFields`](../traits/has_fields.md), a provider can be written once to match, dispatch on, or construct *any* enum's variants without knowing the concrete enum, by recursing over the nested branch structure. This is the basis for CGP's extensible-variant machinery, where each variant is handled by walking the chain rather than by writing a hand-rolled `match` against a fixed enum.
 
@@ -45,7 +45,7 @@ Sum![A, B, C]
 Either<A, Either<B, Either<C, Void>>>
 ```
 
-The two building blocks are defined in `cgp-field` and differ from the product spine in being branching rather than pairing. `Either<Head, Tail>` is the sum cell, an enum with two cases — `Left(Head)` selects the head type, and `Right(Tail)` defers to the rest of the chain — so a value of `Either<A, Either<B, Either<C, Void>>>` is `Left` for an `A`, `Right(Left(..))` for a `B`, and `Right(Right(Left(..)))` for a `C`. The terminator is `Void`, an empty enum that can never be constructed, which closes the chain off: reaching the `Void` position would mean the value matched none of the listed types, which is impossible. An empty `Sum![]` is therefore just `Void`, a type with no values.
+The two building blocks are defined in `cgp-field` and differ from the product list in being branching rather than pairing. `Either<Head, Tail>` is the sum cell, an enum with two cases — `Left(Head)` selects the head type, and `Right(Tail)` defers to the rest of the chain — so a value of `Either<A, Either<B, Either<C, Void>>>` is `Left` for an `A`, `Right(Left(..))` for a `B`, and `Right(Right(Left(..)))` for a `C`. The terminator is `Void`, an empty enum that can never be constructed, which closes the chain off: reaching the `Void` position would mean the value matched none of the listed types, which is impossible. An empty `Sum![]` is therefore just `Void`, a type with no values.
 
 The choice of `Void` rather than `Nil` is the key difference from [`Product!`](product.md). A product terminates in `Nil` because an empty record is a valid, constructible value (the unit-like `Nil`); a sum terminates in `Void` because an empty choice is *uninhabited* — there is no value to pick. `Void` is functionally the never type, used here specifically to mark the end of a sum. The macro constructs the chain by folding the element types from right to left onto `Void`.
 

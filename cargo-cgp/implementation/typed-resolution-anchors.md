@@ -146,7 +146,7 @@ A **bare component marker** maps to `Ctx: Consumer` (its parameterless form). An
 redirect path** — `PathCons<Component, PathCons<Value, …>>`, the key an `@Component.Value:` entry
 emits — is decomposed, and the real dispatch value re-checked as `Ctx: Consumer<Value>`, so the
 failure is traced with the value the context actually wired (re-checking the raw `PathCons` key
-would report the internal spine as a bogus consumer bottoming out on `T: Sized` noise). Three keys
+would report the internal list as a bogus consumer bottoming out on `T: Sized` noise). Three keys
 are skipped: a bare marker that is *also* `open`-dispatched (its `()` form would report a spurious
 `@Component.()` redirect, while its real values are covered by the path entries); a generic
 catch-all whose recovered value still carries a free type parameter (`<'a, T> &'a T: SerializeDeref`

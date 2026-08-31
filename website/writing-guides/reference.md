@@ -82,17 +82,17 @@ to look.
 so they are documented as their trait's impls. The reference index's *Looking for a name you don't see?*
 table is what routes a reader who arrives holding one of those names.
 
-**Two consolidations survive, and both are of things that are not separately nameable constructs.** The
-**type-level spines** — `Cons`/`Nil`, `Either`/`Void`, `Chars`, and `PathCons` — are types a reader needs
-to *recognize in an error message*, never to write, and one page covering all four serves that reader
-better than four; the sugar that builds them, `Symbol!`, `Product!`, `Sum!`, and `Path!`, keeps a page
-each. And the **two low-level provider macros** `#[cgp_provider]` and `#[cgp_new_provider]` differ only
-in whether the struct is declared, and are forms a reader meets rather than writes.
+**One consolidation survives, of things that are not separately nameable constructs: the two low-level
+provider macros** `#[cgp_provider]` and `#[cgp_new_provider]`, which differ only in whether the struct is
+declared and are forms a reader meets rather than writes, so one page covers both. The **type-level
+lists** — `Cons`/`Nil`, `Either`/`Void`, `Chars`, and `PathCons` — get one page each instead, since each
+is a separately nameable construct a reader may look up by name; the `Cons`, `Either`, `Chars`, and
+`PathCons` head cells carry the family explanation the terminators and specializations link to. The sugar
+that builds them, `Symbol!`, `Product!`, `Sum!`, and `Path!`, keeps a page each too.
 
-**The rule reaches the groups scaffolded before it existed, and applying it there is part of porting
-them.** `providers/` and `components/` have since been ported and only `types/` remains scaffolded,
-carrying the internal reference's groupings; a page count taken off the current `types/` tree understates
-what it becomes. The splits already applied are the model for it:
+**The rule reaches the groups scaffolded before it existed, and applying it there was part of porting
+them.** `providers/`, `components/`, and `types/` have since been ported this way. The splits already
+applied are the model for it:
 
 - **The four provider catalogues** — handler combinators, dispatch combinators, monad providers, error
   providers — became one page per provider. They were the largest expansion: the error catalogue alone
@@ -384,7 +384,7 @@ are looking for. If a page starts walking a reader through building something, t
 [tutorial](tutorial.md).
 
 **No unmarked machinery in the top sections.** `DelegateComponent`, `IsProviderFor`, and the
-`Symbol<…>` spine may appear under *Under the hood*, and should not appear above it.
+`Symbol<…>` list may appear under *Under the hood*, and should not appear above it.
 
 **No internal vocabulary without a gloss.** "Impl-side dependency", "provider trait", and "context" are
 knowledge-base words before they are public ones; introduce each with a plain definition on first use,

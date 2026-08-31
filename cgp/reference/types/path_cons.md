@@ -1,14 +1,14 @@
 # `PathCons`
 
-`PathCons<Head, Tail>` is the type-level path spine — a recursive list of segments, where both the head and the tail may be unsized — that CGP uses to address an entry deep inside a delegation table.
+`PathCons<Head, Tail>` is the type-level path list — a recursive list of segments, where both the head and the tail may be unsized — that CGP uses to address an entry deep inside a delegation table.
 
 ## Purpose
 
 `PathCons` exists to express a *route* through nested delegation tables as a single type. Where a bare component name picks one entry out of a context's table, CGP sometimes needs to point at an entry that lives behind one or more layers of indirection — inside a namespace, behind another namespace it inherits from, under a prefix. A path is the type that names such a route: a list of segments read left to right, each segment narrowing the lookup one step further. `PathCons` is the cons cell of that list, and [`Nil`](cons.md) terminates it, so `PathCons<A, PathCons<B, Nil>>` is the two-step path "first `A`, then `B`."
 
-A path is a distinct spine from the [`Cons`](cons.md) product list even though both are right-nested and `Nil`-terminated, and the difference is the unsized bound. `PathCons` declares `Head: ?Sized` and `Tail: ?Sized`, which lets a path segment be a trait object or other unsized type and lets the whole path be manipulated without requiring its parts to have a known size. A product list keys a struct's fields and its elements are always sized values; a path keys a lookup and its segments are pure type-level markers that never need to be `Sized`.
+A path differs from the [`Cons`](cons.md) product list even though both are right-nested and `Nil`-terminated, and the difference is the unsized bound. `PathCons` declares `Head: ?Sized` and `Tail: ?Sized`, which lets a path segment be a trait object or other unsized type and lets the whole path be manipulated without requiring its parts to have a known size. A product list keys a struct's fields and its elements are always sized values; a path keys a lookup and its segments are pure type-level markers that never need to be `Sized`.
 
-The segments themselves are the same markers CGP uses elsewhere: a lowercase dotted name becomes a [`Symbol`](chars.md) type-level string, and a capitalized name becomes that named type (typically a component key such as `FooProviderComponent` or a namespace marker). A path is therefore an interleaving of symbols and component names — the form `@a.B.c` — assembled into a `PathCons` chain. Paths are written with the [`Path!`](../macros/path.md) macro rather than spelled by hand, so this document describes the runtime spine; the `@`-segment syntax and the expansion live in that macro's document.
+The segments themselves are the same markers CGP uses elsewhere: a lowercase dotted name becomes a [`Symbol`](chars.md) type-level string, and a capitalized name becomes that named type (typically a component key such as `FooProviderComponent` or a namespace marker). A path is therefore an interleaving of symbols and component names — the form `@a.B.c` — assembled into a `PathCons` chain. Paths are written with the [`Path!`](../macros/path.md) macro rather than spelled by hand, so this document describes the runtime list; the `@`-segment syntax and the expansion live in that macro's document.
 
 ## Definition
 
@@ -22,7 +22,7 @@ The `Head` is the first segment of the path and the `Tail` is the remainder, exp
 
 ## Behavior
 
-`PathCons` participates in path concatenation through the [`ConcatPath`](../traits/static_format.md) trait, which appends one path onto the end of another at the type level. The trait recurses down the spine: `PathCons<Head, Tail>` concatenates with `Other` by keeping `Head` and concatenating `Tail` with `Other`, while `Nil` concatenates with `Other` by simply becoming `Other`. The result is the expected behavior of list append, computed entirely as an associated-type projection:
+`PathCons` participates in path concatenation through the [`ConcatPath`](../traits/static_format.md) trait, which appends one path onto the end of another at the type level. The trait recurses down the list: `PathCons<Head, Tail>` concatenates with `Other` by keeping `Head` and concatenating `Tail` with `Other`, while `Nil` concatenates with `Other` by simply becoming `Other`. The result is the expected behavior of list append, computed entirely as an associated-type projection:
 
 ```rust
 pub trait ConcatPath<Other: ?Sized> {
@@ -74,7 +74,7 @@ Here the lookup steps first through `MyBarComponent` and then through `BarProvid
 
 ## Related constructs
 
-`PathCons` is the routing counterpart to the product spine [`Cons`](cons.md)/`Nil`; it shares the right-nested, `Nil`-terminated shape but its segments are `?Sized` markers rather than sized field values. Its segments are [`Symbol`](chars.md) type-level strings (for lowercase names) and named component or namespace types (for capitalized names). Paths are built by the [`Path!`](../macros/path.md) macro, appended through [`ConcatPath`](../traits/static_format.md), and walked by [`RedirectLookup`](../providers/redirect_lookup.md) when resolving a delegation. They are produced throughout [`#[cgp_namespace]`](../macros/cgp_namespace.md), which uses them to reroute namespace entries and to register prefixed components.
+`PathCons` is the routing counterpart to the product list [`Cons`](cons.md)/`Nil`; it shares the right-nested, `Nil`-terminated shape but its segments are `?Sized` markers rather than sized field values. Its segments are [`Symbol`](chars.md) type-level strings (for lowercase names) and named component or namespace types (for capitalized names). Paths are built by the [`Path!`](../macros/path.md) macro, appended through [`ConcatPath`](../traits/static_format.md), and walked by [`RedirectLookup`](../providers/redirect_lookup.md) when resolving a delegation. They are produced throughout [`#[cgp_namespace]`](../macros/cgp_namespace.md), which uses them to reroute namespace entries and to register prefixed components.
 
 ## Source
 
@@ -85,4 +85,4 @@ Here the lookup steps first through `MyBarComponent` and then through `BarProvid
 
 ## Public pages derived from this document
 
-This document feeds the public [`PathCons`](https://contextgeneric.dev/docs/reference/types/spines/path_cons) page under the `spines/` subdirectory, per the [synchronization rule](../../../AGENTS.md#the-synchronization-rule); the mapping is recorded in [website/site-structure.md](../../../website/site-structure.md).
+This document feeds the public [`PathCons`](https://contextgeneric.dev/docs/reference/types/path_cons) page under `types/`, per the [synchronization rule](../../../AGENTS.md#the-synchronization-rule); the mapping is recorded in [website/site-structure.md](../../../website/site-structure.md).

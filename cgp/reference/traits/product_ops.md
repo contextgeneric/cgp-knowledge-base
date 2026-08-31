@@ -4,13 +4,13 @@
 
 ## Purpose
 
-These three traits are the list algebra that CGP's structural machinery is built from. A struct's whole shape is a type-level product of fields — a [`Cons`](../types/cons.md) spine terminated by `Nil`, produced by [`#[derive(HasFields)]`](../derives/derive_has_fields.md) — and an enum's shape is the analogous [`Either`](../types/either.md) sum terminated by `Void`. To process such a shape generically, code needs to compute new shapes from old ones at the type level: add one field to the end of a product, splice two products together, or rewrite every entry uniformly. `AppendProduct`, `ConcatProduct`, and `MapFields` are exactly those three computations, each expressed as a trait whose recursion over the spine the compiler evaluates during type checking.
+These three traits are the list algebra that CGP's structural machinery is built from. A struct's whole shape is a type-level product of fields — a [`Cons`](../types/cons.md) list terminated by `Nil`, produced by [`#[derive(HasFields)]`](../derives/derive_has_fields.md) — and an enum's shape is the analogous [`Either`](../types/either.md) sum terminated by `Void`. To process such a shape generically, code needs to compute new shapes from old ones at the type level: add one field to the end of a product, splice two products together, or rewrite every entry uniformly. `AppendProduct`, `ConcatProduct`, and `MapFields` are exactly those three computations, each expressed as a trait whose recursion over the list the compiler evaluates during type checking.
 
 Because they operate purely on types, these operations carry no runtime cost and impose no ordering on the program — they are pure functions from type lists to type lists. They are the plumbing beneath higher-level constructs: building a record one field at a time appends to a product, merging two records concatenates them, and producing a partial-record representation maps a marker over every field.
 
 ## Definition
 
-`AppendProduct<Item>` adds a single entry to the end of a product, exposing the extended product as its `Output`. It recurses down the [`Cons`](../types/cons.md) spine, rebuilding each node, until it reaches `Nil`, where it inserts the new `Cons<Item, Nil>`:
+`AppendProduct<Item>` adds a single entry to the end of a product, exposing the extended product as its `Output`. It recurses down the [`Cons`](../types/cons.md) list, rebuilding each node, until it reaches `Nil`, where it inserts the new `Cons<Item, Nil>`:
 
 ```rust
 pub trait AppendProduct<Item: ?Sized> {
@@ -29,7 +29,7 @@ where
 }
 ```
 
-`ConcatProduct<Items>` splices a second product onto the end of the first. It has the same spine recursion, but at `Nil` it substitutes the entire `Items` list rather than a single element, so the result is the first product's entries followed by all of the second's:
+`ConcatProduct<Items>` splices a second product onto the end of the first. It has the same list recursion, but at `Nil` it substitutes the entire `Items` list rather than a single element, so the result is the first product's entries followed by all of the second's:
 
 ```rust
 pub trait ConcatProduct<Items> {
@@ -48,7 +48,7 @@ where
 }
 ```
 
-`MapFields<Mapper>` rewrites every entry of a list through a [`MapType`](map_type.md) marker, exposing the rewritten list as `Mapped`. Unlike the other two, it is defined over both spines: for the product spine it walks `Cons`/`Nil`, and for the sum spine it walks `Either`/`Void`, in each case applying `Mapper::Map` to the head and recursing on the tail:
+`MapFields<Mapper>` rewrites every entry of a list through a [`MapType`](map_type.md) marker, exposing the rewritten list as `Mapped`. Unlike the other two, it is defined over both lists: for the product list it walks `Cons`/`Nil`, and for the sum list it walks `Either`/`Void`, in each case applying `Mapper::Map` to the head and recursing on the tail:
 
 ```rust
 pub trait MapFields<Mapper> {
@@ -72,9 +72,9 @@ The `Either`/`Void` impls mirror these exactly, replacing `Cons` with `Either` a
 
 ## Behavior
 
-The defining behavior of all three is that they are evaluated at compile time by the trait resolver walking the spine. `AppendProduct` and `ConcatProduct` preserve every existing entry and differ only in what they graft on at the `Nil` terminator — one element versus a whole list — which makes append a special case of concat with a single-element tail. Neither touches the values' types beyond reordering them into a longer list.
+The defining behavior of all three is that they are evaluated at compile time by the trait resolver walking the list. `AppendProduct` and `ConcatProduct` preserve every existing entry and differ only in what they graft on at the `Nil` terminator — one element versus a whole list — which makes append a special case of concat with a single-element tail. Neither touches the values' types beyond reordering them into a longer list.
 
-`MapFields` is the transforming operation: it leaves the spine's length and shape unchanged but replaces each entry type `T` with `Mapper::Map<T>`. With `IsPresent` it is the identity; with `IsNothing` it collapses every entry to the unit type; with `IsOptional` it wraps every entry in `Option`. This is how a concrete product of field values becomes the field list of a partial-record representation, where each field is independently marked. Because `MapFields` covers both spines, the same marker turns a struct's product into a partial struct and an enum's sum into a partial enum.
+`MapFields` is the transforming operation: it leaves the list's length and shape unchanged but replaces each entry type `T` with `Mapper::Map<T>`. With `IsPresent` it is the identity; with `IsNothing` it collapses every entry to the unit type; with `IsOptional` it wraps every entry in `Option`. This is how a concrete product of field values becomes the field list of a partial-record representation, where each field is independently marked. Because `MapFields` covers both lists, the same marker turns a struct's product into a partial struct and an enum's sum into a partial enum.
 
 ## Examples
 
@@ -109,7 +109,7 @@ type Optional = <Fields as MapFields<IsOptional>>::Mapped;
 
 ## Related constructs
 
-These operations act on the [`Cons`](../types/cons.md)/`Nil` product spine and, for `MapFields`, the [`Either`](../types/either.md)/`Void` sum spine — the two type-level lists that [`#[derive(HasFields)]`](../derives/derive_has_fields.md) produces from structs and enums. The convenient surface syntax for those lists is the [`Product!`](../macros/product.md) macro. `MapFields` applies a [`MapType`](map_type.md) marker to every entry, which is the same per-field state vocabulary that the builder family in [`HasBuilder`](has_builder.md) and the extractor family in [`ExtractField`](extract_field.md) use to track presence; `AppendProduct` and `ConcatProduct` are the list-growing operations behind assembling and merging records.
+These operations act on the [`Cons`](../types/cons.md)/`Nil` product list and, for `MapFields`, the [`Either`](../types/either.md)/`Void` sum list — the two type-level lists that [`#[derive(HasFields)]`](../derives/derive_has_fields.md) produces from structs and enums. The convenient surface syntax for those lists is the [`Product!`](../macros/product.md) macro. `MapFields` applies a [`MapType`](map_type.md) marker to every entry, which is the same per-field state vocabulary that the builder family in [`HasBuilder`](has_builder.md) and the extractor family in [`ExtractField`](extract_field.md) use to track presence; `AppendProduct` and `ConcatProduct` are the list-growing operations behind assembling and merging records.
 
 ## Source
 

@@ -48,5 +48,5 @@ Each segment is first parsed as a full Rust `Type`, then reclassified: only a se
 
 - Entry point: `Path` in [cgp-macro-lib/src/path.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-lib/src/path.rs).
 - The `UniPath`, `PathElement`, and the wider path stack: [cgp-macro-core/src/types/path/](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-core/src/types/path/), documented in [asts/path.md](../asts/path.md).
-- Runtime spine `PathCons`: defined in [cgp-base-types](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-base-types/src/types/path.rs).
+- Runtime list `PathCons`: defined in [cgp-base-types](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-base-types/src/types/path.rs).
 - The [`RedirectLookup`](../../reference/providers/redirect_lookup.md) provider that walks a path: [cgp-component](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-component/src/providers/redirect_lookup.rs).

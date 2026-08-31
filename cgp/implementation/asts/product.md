@@ -28,7 +28,7 @@ Parsing the items as `Expr` and re-parsing the fold as `Expr` is what keeps `pro
 
 ## Tests
 
-- The `Cons`/`Nil` field spine is pinned as embedded output by the record derive snapshots ([extensible_records/person_record.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_records/person_record.rs), [extensible_records/record_derive.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_records/record_derive.rs)), which emit a `Product!` of `Field<Tag, Value>` entries.
+- The `Cons`/`Nil` field list is pinned as embedded output by the record derive snapshots ([extensible_records/person_record.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_records/person_record.rs), [extensible_records/record_derive.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_records/record_derive.rs)), which emit a `Product!` of `Field<Tag, Value>` entries.
 - [handlers/pipe_handlers.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/handlers/pipe_handlers.rs) exercises the type-level `Product![…]` as a list of provider types in a handler pipeline.
 - [extensible_records/product_value.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_records/product_value.rs) exercises the value-level `product!`: that expression items (a method call, an arithmetic expression) build the nested `Cons(..)`/`Nil` value, that the value's type is the matching `Product!`, and that the empty and trailing-comma forms work.
 

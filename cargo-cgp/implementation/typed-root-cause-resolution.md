@@ -83,7 +83,7 @@ check_components! {
 `HasField` but declares only `width`, so the wiring cannot be satisfied — the **root cause is the
 absent `height` field** — and `check_components!` fails. Left to rustc, the failure reads as an unmet
 `HasField<Symbol!("height")>` bound (often with the field name itself compressed to an unreadable
-`Symbol<6, Chars<'h', …>>` spine), routed through `IsProviderFor` and `CanUseComponent`. The resolver
+`Symbol<6, Chars<'h', …>>` list), routed through `IsProviderFor` and `CanUseComponent`. The resolver
 replaces all of that with:
 
 ```text
@@ -222,7 +222,7 @@ so a method call leads with the capability the programmer invoked.
 dependency graph — following only the CGP wiring vocabulary and obligations on the context itself,
 never `IsProviderFor`/`CanUseComponent` — to every terminal unmet bound, then decodes each terminal
 (a `Symbol!` field name read structurally, the struct and its `Deref` chain inspected, a missing
-wiring or dispatch entry named) and renders each hop as a tree label with the type-level spines
+wiring or dispatch entry named) and renders each hop as a tree label with the type-level lists
 resugared.
 
 **[The transformed diagnostic](typed-resolution-output.md)** is the output side: the coded
@@ -504,7 +504,7 @@ Each **leaf class** has fixtures for its field, wiring, and redirect shapes:
 - `record_field_chain` — a record provider building each field through the context over a recursive
   `Cons`/`Nil` handler (the modular-serialization `DeserializeRecordFields`/`HandleMapEntry` shape),
   whose tree entries also pin the `Cons`/`Nil` → `Struct! { … }` resugaring.
-- `sum_variant_chain` — the sum counterpart over a `Sum![u64, f64]` spine of bare types, pinning the
+- `sum_variant_chain` — the sum counterpart over a `Sum![u64, f64]` list of bare types, pinning the
   `Either`/`Void` → `Sum![…]` resugaring left as a plain list.
 - `enum_variant_chain` — a sum of *named* variants, pinning the `Enum! { Rect(u64), … }` form.
 - `unregistered_prefix_path`, `qualified_prefix_path` (a module-qualified path still folding to a clean
@@ -521,7 +521,7 @@ Several fixtures pin the **harder mechanics**:
 
 - `parallel_branches` — two independent missing fields under one provider, merged into one branching
   note whose two branches end at the distinct field leaves.
-- `deep_nesting` — higher-order providers nested four deep, one long spine.
+- `deep_nesting` — higher-order providers nested four deep, one long list.
 - `dependency_cascade` — a chain of providers each depending on the next, its intermediate consumers
   each a `[CGP-E101]` node.
 - `mixed_rust_error` — a CGP tree beside an untouched `E0308`.
@@ -679,7 +679,7 @@ independently of the compiler:
 - [`cargo-cgp-error-processing/tests/diagnosis.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/diagnosis.rs)
   — the coded headers, the `root cause:` notes, and the derive `help`s.
 - [`cargo-cgp-error-processing/tests/graph.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/graph.rs)
-  — the dependency-graph build-and-render (spine, branch, diamond, super-root, within-path repeat) as
+  — the dependency-graph build-and-render (list, branch, diamond, super-root, within-path repeat) as
   `insta` inline snapshots.
 - [`cargo-cgp-error-processing/tests/tree.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/tree.rs) —
   the `cargo tree`-style renderer.

@@ -163,7 +163,7 @@ their fixtures now live under `acceptable/`:
 - A **CGP construct rustc split across styled fragments** is resugared. rustc builds its "similar
   impl" hint from fragments split at every difference between the two traits, shredding a
   `Symbol<3, Chars<'B', …>>` so no fragment matches — the header would read `Symbol!("Bar")` while
-  the hint beside it showed the raw spine. The fragments are now read as the one line they render
+  the hint beside it showed the raw list. The fragments are now read as the one line they render
   as, and flattened only when that recovers something
   ([`upcast_missing_variant`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/extensible-data/upcast_missing_variant.rs)
   shows it on a declined diagnostic).

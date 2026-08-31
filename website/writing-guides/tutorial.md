@@ -274,7 +274,7 @@ that offers a choice leaves the reader stalled.
 
 **No internals for their own sake.** The desugaring section shows the plain Rust a construct generates,
 which the reader can read. It does not show `IsProviderFor`, the generated blanket impls, or the
-`Symbol<…>` spine, which the reader cannot yet.
+`Symbol<…>` list, which the reader cannot yet.
 
 **No unmotivated construct.** If a tutorial introduces something the reader has not been given a reason to
 want, either the motivation is missing or the construct does not belong in this tutorial.

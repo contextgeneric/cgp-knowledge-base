@@ -167,7 +167,7 @@ nothing in this register.
 **The construct reference is written** — every page under `docs/reference/` carries its prose and no
 stub notice remains, across `macros/`, `attributes/`, `derives/`, `traits/`, `providers/`,
 `components/`, and now `types/`. The `types/` group was the last ported, split one page per type rather
-than the `type_level_spines` consolidation: five top-level singletons and a `spines/` subdirectory,
+than the `type_level_spines` consolidation, flat: all eleven construct pages directly under `types/`,
 ordered by importance, with a `PhantomData` page added that the internal reference has no document for.
 Every type page that shows code now has its `example-code` mirror, so the whole reference is
 compiler-checked; the one outstanding sign-off is the author read of the reference index (R1). Spec and

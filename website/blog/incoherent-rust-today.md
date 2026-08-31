@@ -75,7 +75,7 @@ the CGP library becomes unnecessary — and that this was always the goal.
 
 ## How it relates to the knowledge base
 
-The post's technical spine is [coherence](../../cgp/concepts/coherence.md) and
+The post's technical list is [coherence](../../cgp/concepts/coherence.md) and
 [consumer and provider traits](../../cgp/concepts/consumer-and-provider-traits.md), with the two-level
 bypass it describes corresponding to the tiers of the
 [modularity hierarchy](../../cgp/concepts/modularity-hierarchy.md) — the provider-trait indirection

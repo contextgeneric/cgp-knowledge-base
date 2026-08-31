@@ -213,7 +213,7 @@ switch: not a cause the compiler never computes, but a cause the compiler comput
 while printing*.
 
 rustc compresses long or repetitive types in its diagnostics, and every one of those compressions is
-destructive to a CGP error, whose types are deep `Symbol` / `Cons` spines. When it reports "trait `X`
+destructive to a CGP error, whose types are deep `Symbol` / `Cons` lists. When it reports "trait `X`
 is not implemented … but trait `Y` is" it diffs the two traits and replaces every generic argument
 they share with `_`; when a type's printed form grows long it truncates it and writes the full form to
 a `long-type-*.txt` file; when more than nine impls could apply it collapses the rest to "and N

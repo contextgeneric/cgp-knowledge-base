@@ -45,7 +45,7 @@ The `LEN` const argument exists to work around stable Rust's inability to comput
 The `Symbol!` expansion has no snapshot macro of its own; its behavior is exercised through runtime round-trip tests and, indirectly, through the field-derive snapshots that embed `Symbol` in their output.
 
 - [field_access/symbol.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/field_access/symbol.rs) checks that a `Symbol!` value `Display`s back to its string and that `StaticString::VALUE` recovers the original literal, covering the empty string, a single character, a multi-word string, and a multi-byte Unicode string — the last pinning that the char chain, not `LEN`, drives the reconstruction.
-- [extensible_records/person_record.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_records/person_record.rs) pins, through a `snapshot_derive_cgp_data!` golden, how a multi-character field name such as `first_name` expands into its `Symbol<N, Chars<…>>` spine with the leading length.
+- [extensible_records/person_record.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_records/person_record.rs) pins, through a `snapshot_derive_cgp_data!` golden, how a multi-character field name such as `first_name` expands into its `Symbol<N, Chars<…>>` list with the leading length.
 
 ## Source
 

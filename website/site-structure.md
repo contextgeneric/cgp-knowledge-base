@@ -107,9 +107,8 @@ subsection), plus the `docs/cargo-cgp/` pages under `tests/cargo_cgp/`. The reje
 section live together under `tests/compile_fail/`. The `traits/` mirror files stay flat under
 `tests/reference/traits/` rather than following the docs into their subdirectories, because a Rust module
 name cannot contain a hyphen; the mirror still resolves because every page's basename is unique. The
-`types/` group is now mirrored too, one file per type page under `tests/reference/types/` with the
-spines nested under `tests/reference/types/spines/`, so every written reference group has its
-`example-code` counterpart. The crate pins `cgp = "0.8.0-alpha"`, which resolves from
+`types/` group is now mirrored too, one file per type page flat under `tests/reference/types/`, so
+every written reference group has its `example-code` counterpart. The crate pins `cgp = "0.8.0-alpha"`, which resolves from
 crates.io today and joins the tutorials' pin on the release checklist.
 
 ## Navigation and the announcement bar
@@ -387,7 +386,7 @@ pages: an **overview** carrying the argument, one page each for **check** and **
 index.
 
 The overview leads on the problem rather than the tool, with the same wiring mistake shown twice — once
-as plain `cargo check` reports it, a `Chars` spine the reader has to decode character by character, and
+as plain `cargo check` reports it, a `Chars` list the reader has to decode character by character, and
 once as `cargo cgp check` does, with the missing field named in English and the dependency chain drawn
 beneath it. That contrast is the page's whole argument, and both halves were produced by running the
 two commands rather than transcribed.
@@ -649,7 +648,7 @@ from the site even while most pages are placeholders. Each stub carries its one-
 admonition saying it is unwritten. Every construct page is written, plus the
 index and `errors.md`: `macros/` (twenty pages), `attributes/` (eight), `derives/` (eight), `traits/`
 (fifty-seven), `providers/` (fifty), `components/` (seventeen), and `types/` (eleven construct pages,
-plus a section overview and a spines-group overview) are finished end to end. The `providers/` group is now one
+plus a section overview and a lists-group overview) are finished end to end. The `providers/` group is now one
 page per provider: sixteen singleton pages, plus four subsections — `error/`, `handler/`, `dispatch/`,
 and `monad/` — each carrying its own overview and one page per construct (error 7, handler 13, dispatch
 11, monad 3). The singleton pages include the five `With…` aliases — `WithContext`, `WithType`,
@@ -686,17 +685,19 @@ built-in-component variant above, a trait page keeps its *Under the hood*: its D
 trait itself, while *Under the hood* shows how the macros generate and consume it.
 
 The `types/` group is now written, one page per type rather than the internal reference's
-`type_level_spines` consolidation. It carries five top-level singleton pages — `phantom_data`, `field`,
-`index_type` (the `Index` type, renamed because `index.md` is the section overview), `life`, and `mref`
-— and a `spines/` subdirectory with its own overview holding the six recursive lists: `cons`, `nil`,
-`either`, `void`, `chars`, and `path_cons`. It adds a `PhantomData` page, which the
-internal reference has no document for and which is authored on the site directly, because `PhantomData`
-is used heavily throughout CGP and is the mechanism the other markers rest on. The section
-and the spines subgroup are ordered by importance rather than alphabetically: PhantomData, Field,
-spines, Index, Life, MRef at the top level, and Cons, Nil, Either, Void, Chars, PathCons within the
-spines. Each type page that shows code has an `example-code` mirror under `tests/reference/types/`, so
-its snippets are compiler-checked like the other written groups rather than only ported; the two
-overview pages show no code and get no file. The provider pages are
+`type_level_spines` consolidation, and flat: all eleven construct pages sit directly under `types/` with
+no subdirectory. It carries the markers `phantom_data`, `field`, `index_type` (the `Index` type, renamed
+because `index.md` is the section overview), and `life`; the six recursive lists `cons`, `nil`, `either`,
+`void`, `chars`, and `path_cons`, whose family explanation lives on the `Cons`, `Either`, `Chars`, and
+`PathCons` head cells rather than on a group overview; and `mref`. It adds a `PhantomData` page, which
+the internal reference has no document for and which is authored on the site directly, because
+`PhantomData` is used heavily throughout CGP and is the mechanism the other markers rest on. The overview
+describes the whole section and frames `mref` as the one ordinary runtime data type among the type-level
+building blocks. The pages are ordered by importance rather than alphabetically: PhantomData, Field,
+Index, Life, then the six lists Cons, Nil, Either, Void, Chars, PathCons, then MRef last. Each type page
+that shows code has an `example-code` mirror flat under `tests/reference/types/`, so its snippets are
+compiler-checked like the other written groups rather than only ported; the overview page shows no code
+and gets no file. The provider pages are
 mirrored in the
 `example-code` crate under `tests/reference/providers/`: the singletons, the four `With…` alias pages
 except `with_context` (which shows no wireable example), all of `error/`, `handler/`, and `monad/`, and
@@ -906,7 +907,7 @@ appear by name in a diagnostic.
 Two coverage gaps in the library were closed alongside. **`AppendProduct`, `ConcatProduct`, and `MapFields` had
 no test anywhere** despite being public and carrying worked examples in the internal reference; they now have
 one, written as type equalities since they compute types rather than values, and covering `MapFields` over the
-sum spine as well as the product one. And **`DefaultImpls2` is reachable rather than declared-and-unusable** —
+sum list as well as the product one. And **`DefaultImpls2` is reachable rather than declared-and-unusable** —
 nothing in the library emits or consumes it, so a test establishes that `#[default_impl]` registers a two-type
 key and a `for … in` loop consumes it, which needed no new construct because the attribute accepts an arbitrary
 namespace path.
@@ -975,8 +976,8 @@ synchronization knows where to look. Three public pages have no internal documen
 One [consolidation](writing-guides/reference.md#granularity-one-page-per-named-construct) survives:
 `cgp_provider.md` covers `#[cgp_new_provider]` too. The `type_level_spines.md` consolidation does not:
 the `types/` port splits it into one page per type — `cons`, `nil`, `either`, `void`, `chars`, and
-`path_cons`, grouped under a `spines/` subdirectory with its own overview — so no title in `types/` now
-covers more than one construct. Three mapping wrinkles come with that. The internal `chars.md`, which
+`path_cons`, flat under `types/` with each family's explanation on its head cell — so no title in
+`types/` now covers more than one construct. Three mapping wrinkles come with that. The internal `chars.md`, which
 documents both `Chars` and `Symbol`, feeds the site's `chars` page, and the `Symbol` type stays covered
 on the [`Symbol!`](../cgp/reference/macros/symbol.md) macro page. The internal `index.md` becomes
 `index_type.md` on the site, because `index.md` is the section overview. And the `PhantomData` page has
@@ -1036,7 +1037,7 @@ rule the `#[cgp_fn]` port corrected, and again for the tail of an `@`-path key, 
 page and [the internal reference](../cgp/reference/macros/delegate_components.md) had asserted `Nil`
 where the macro emits a generic parameter. **Treat a remembered path expansion as suspect**, and note
 that `expand` resugars unevenly within a single expansion — an `open` header's redirect target comes
-back as `Path!(@Component)` while the per-entry key stays a raw `PathCons` spine — so a page showing
+back as `Path!(@Component)` while the per-entry key stays a raw `PathCons` list — so a page showing
 both should say so rather than quietly normalizing one.
 
 **Every reference page closes with a short *The ideas behind it* list linking the Concepts tier**, beneath

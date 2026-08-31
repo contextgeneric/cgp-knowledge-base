@@ -15,7 +15,7 @@ The body is parsed as a comma-separated list of types, so a malformed element fa
 
 ## Pipeline
 
-The macro is a parse-then-`eval` step with no further stages, mirroring `Product!` exactly but over a different spine. `SumType::parse` reads a `Punctuated<Type, Comma>`, and `eval` folds it into the chain and re-parses through [`parse_internal!`](../macros/parse_internal.md). The [`sum` AST document](../asts/sum.md) covers the type.
+The macro is a parse-then-`eval` step with no further stages, mirroring `Product!` exactly but over a different list. `SumType::parse` reads a `Punctuated<Type, Comma>`, and `eval` folds it into the chain and re-parses through [`parse_internal!`](../macros/parse_internal.md). The [`sum` AST document](../asts/sum.md) covers the type.
 
 ## Generated items
 
@@ -37,7 +37,7 @@ The only structural difference from `Product!` is the terminator: a sum folds on
 `Sum!` has no snapshot macro of its own; its expansion is exercised by a dedicated same-type assertion and by the enum field-derive that emits a `Sum!` of `Field<Tag, Value>` branches.
 
 - [extensible_variants/sum_macro.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/sum_macro.rs) writes `Sum![u32, String, bool]` and asserts it is the identical type to the hand-written `Either<u32, Either<String, Either<bool, Void>>>`, pinning the expansion directly, then builds values by nesting `Left`/`Right` to select each branch.
-- [extensible_variants/has_fields_enum.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/has_fields_enum.rs) exercises the `Sum!` variant spine an enum derives through `#[derive(HasFields)]`, where each branch is a `Field<Symbol!("Variant"), Payload>`.
+- [extensible_variants/has_fields_enum.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/has_fields_enum.rs) exercises the `Sum!` variant list an enum derives through `#[derive(HasFields)]`, where each branch is a `Field<Symbol!("Variant"), Payload>`.
 
 ## Source
 

@@ -217,7 +217,7 @@ Because the fingerprint carries all the correctness, **the remaining fields are 
 rather than injective.** They exist so a maintainer investigating a hit or a miss can dump the cache
 store and see, in plain text, which obligations were resolved and which were not — the context, the
 consumer or provider trait, its parameters — without decoding a wall of fingerprints. Since they never
-feed `Hash` or `Eq`, they may render ambiguous short names, resugared spines, whatever reads best; two
+feed `Hash` or `Eq`, they may render ambiguous short names, resugared lists, whatever reads best; two
 entries that happen to display alike are still distinct entries under their distinct fingerprints. This
 is the payoff of splitting the key: nothing hand-written has to be total or injective, so the hazard of
 a hand-rolled serializer silently merging two shapes — a *deterministic* wrong hit, worse than the

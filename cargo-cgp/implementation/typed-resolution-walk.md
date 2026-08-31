@@ -267,7 +267,7 @@ the reachable-set reuse check — is [Cached dependency resolution](cached-depen
 ## Decoding, classifying, and rendering a leaf
 
 **Decode the field name.** A `HasField` leaf carries the field name as a type-level `Symbol!`, a nested
-`Chars<'h', Chars<'e', …>>` spine. The resolver decodes it structurally — walking the spine and reading
+`Chars<'h', Chars<'e', …>>` list. The resolver decodes it structurally — walking the list and reading
 each `char` const argument until `Nil` — rather than un-sugaring the printed type. Reading the name from
 the type is why the replacement never needs the `--verbose` un-eliding the
 [text path depends on](driver.md#un-eliding-the-diagnostic): the characters are in the `Symbol`
@@ -329,7 +329,7 @@ user's own capability or getter trait — or a terminal ordinary bound — rende
   ahead of the context in a provider trait's argument list (`ReferenceGetter<'a, Ctx, T>`): indexing
   by raw argument position would land on the region and abort the compiler, while the type-position
   read skips lifetimes in the label the way ordinary Rust elision does (`ReferenceGetter<str>`).
-- **Type-level spines are resugared.** A rendered label's `Self` type has its `Cons`/`Either` spine read
+- **Type-level lists are resugared.** A rendered label's `Self` type has its `Cons`/`Either` list read
   back as the `Product![A, B]` or `Sum![A, B]` the programmer wrote — and one step further to
   `Struct! { name: Type, … }` or `Enum! { Name(Type), … }` when every element is a named field — so a
   field- or variant-list handler (the modular-serialization example's `FieldsSerializer` over a record's
@@ -374,7 +374,7 @@ the parent document's [Tests](typed-root-cause-resolution.md#tests) section.
   reads the type an owner supplies for any other projected associated type).
 - [`crates/cargo-cgp-driver/src/resolve/label/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/label) —
   `predicate_label.rs` (each hop as a structured `DepNode`, read off the obligation) and
-  `render_ty.rs` (the type-level spine resugaring).
+  `render_ty.rs` (the type-level list resugaring).
 
 The per-file map of the whole resolver lives in the parent document's
 [Source](typed-root-cause-resolution.md#source) section.

@@ -276,7 +276,7 @@ in a piece aimed at library authors rather than in a general hook.
 
 The pain that has done CGP the most adoption damage lives not in the language but in its errors: a
 context missing one field a provider needs expands into screens of diagnostics naming `IsProviderFor`,
-`CanUseComponent`, and a nested `Symbol<…>` spine the programmer never wrote, with the real cause
+`CanUseComponent`, and a nested `Symbol<…>` list the programmer never wrote, with the real cause
 buried or — in the worst class — suppressed entirely. A developer who meets that wall on their first
 mis-wire often concludes CGP is unusable and leaves, which is why this is the pain most worth showing
 removed. Under plain `cargo check` the failure is an `E0277`/`E0599` cascade naming the traits but not

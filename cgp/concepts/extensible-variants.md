@@ -10,7 +10,7 @@ The payoff is the **extensible visitor pattern**, where the logic for each varia
 
 ## An enum as a sum of named variants
 
-The shape of an enum is exposed by [`#[derive(HasFields)]`](../reference/derives/derive_has_fields.md), whose `Fields` associated type for an enum is a [`Sum!`](../reference/macros/sum.md) of [`Field<Symbol!("Variant"), Type>`](../reference/types/field.md) entries built on the [`Either`/`Void`](../reference/types/either.md) spine, mirroring the `Product!`/`Cons` spine that a record uses. The expression enum in the [expression interpreter](../../examples/expression-interpreter.md) example derives the three variant traits together:
+The shape of an enum is exposed by [`#[derive(HasFields)]`](../reference/derives/derive_has_fields.md), whose `Fields` associated type for an enum is a [`Sum!`](../reference/macros/sum.md) of [`Field<Symbol!("Variant"), Type>`](../reference/types/field.md) entries built on the [`Either`/`Void`](../reference/types/either.md) list, mirroring the `Product!`/`Cons` list that a record uses. The expression enum in the [expression interpreter](../../examples/expression-interpreter.md) example derives the three variant traits together:
 
 ```rust
 #[derive(HasFields, FromVariant, ExtractField)]

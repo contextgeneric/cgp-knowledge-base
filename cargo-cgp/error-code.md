@@ -510,7 +510,7 @@ owns it, and [Resugaring](implementation/resugaring.md) explains this and every 
 full.
 
 **`Product!` / `Sum!` resugaring** reverses a type-level list expansion back to its surface form, so
-`Cons<u64, Cons<String, Nil>>` becomes `Product![u64, String]` and an `Either`/`Void` spine becomes
+`Cons<u64, Cons<String, Nil>>` becomes `Product![u64, String]` and an `Either`/`Void` list becomes
 `Sum![…]`. A list whose elements are all named fields folds one step further to a `Struct! { … }` or
 `Enum! { … }` — presentation-only forms, not real CGP macros, chosen because a record reads far
 better than a chain of `Field` cells.
@@ -520,9 +520,9 @@ owns the text form and the driver's `render_ty` the typed one.
 **`Path!` resugaring** reverses a `Path!` type expansion back to its surface form, so
 `PathCons<Symbol!("app"), PathCons<GreeterComponent, Nil>>` becomes `Path!(@app.GreeterComponent)`.
 It restores the syntax the programmer wrote, save for one readable extension: an open-ended path
-whose spine ends in a generic parameter rustc prints as `_` gets a trailing `.*` wildcard segment
+whose list ends in a generic parameter rustc prints as `_` gets a trailing `.*` wildcard segment
 (`PathCons<Symbol!("foo"), PathCons<Symbol!("bar"), _>>` becomes `Path!(@foo.bar.*)`), which is not
-real `Path!` syntax but reads far better than the raw spine.
+real `Path!` syntax but reads far better than the raw list.
 [`resugar_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/resugar_path.rs)
 owns it.
 
