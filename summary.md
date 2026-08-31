@@ -570,6 +570,11 @@ it stale.
   (use, defer, avoid), the value/environmental/application context and self/parameter target qualifiers
   with the case that they are not jargon and the four misreadings they prevent, plus the glossary of the
   non-technical craft; the authority that resolves any phrasing disagreement.
+- [reader-simulation.md](communication-strategy/reader-simulation.md) — the theory-of-mind method for
+  writing CGP prose: the split-knowledge model reader, the predict-compare-repair loop, the six
+  mental-state variables (common ground, working memory, model under construction, expectation, stance,
+  energy), the placement and word-choice levers, the curse-of-knowledge de-biasing pass, and the reading
+  science that grounds it.
 - [formats.md](communication-strategy/formats.md) — per-artifact playbooks for the launch post,
   deep-dive, README, talk, thread, and comparison, the ready thread answers, the conversion ladder, and
   annotated model drafts.

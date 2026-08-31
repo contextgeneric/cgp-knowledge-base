@@ -12,6 +12,11 @@ the site, agent-drafted or not, because they read as generated in a reference do
 on a landing page. The last section is a stricter register for a narrower case, and it says where that
 narrower case starts.
 
+This document catalogues shapes to avoid. The method that chooses a word or a clause order by the
+mental state it leaves the reader in, rather than by the shapes here, is
+[reader-simulation.md](reader-simulation.md), and the word-choice guidance that goes beyond
+`point-first-writing` lives there.
+
 ## Say it straight: the real subject, doing the real thing
 
 **Prefer the direct statement of a claim: put the thing the sentence is about in the subject position,

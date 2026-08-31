@@ -6,6 +6,11 @@ skeptical. Its second half maps the comprehension barriers that stop a *willing*
 following, and the teaching moves that lower each one. The two halves are kept together because they
 are two questions about the same person: **who is this for**, and **what will they fail to follow**.
 
+This document is the static model: it says who the reader is. Its dynamic companion is
+[reader-simulation.md](reader-simulation.md), which runs a forward model of that reader's mental state
+as they move through a draft sentence by sentence, and it is the document to open when the question is
+not who the reader is but what a specific paragraph does to them.
+
 ## Naming the reader is the first decision in a piece
 
 Public writing about CGP lands only when it is written for a definite reader, because CGP's ideas are

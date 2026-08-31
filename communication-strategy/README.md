@@ -100,9 +100,9 @@ stage**. And **beware the pile-on**, whose defence is the same as the honest mov
 
 ## The catalog
 
-The section is deliberately small: ten documents, each dense, so a writer reads a whole subject in one
-place rather than assembling it from cross-links. Read the first nine in this order the first time; the
-tenth is a reference for a narrow question and is read when that question arises. The authoring rules
+The section is deliberately small: eleven documents, each dense, so a writer reads a whole subject in one
+place rather than assembling it from cross-links. Read the first ten in this order the first time; the
+eleventh is a reference for a narrow question and is read when that question arises. The authoring rules
 live in [AGENTS.md](AGENTS.md).
 
 - [The author's personality and preferences](author-personality.md) — who CGP's author is as a writer,
@@ -127,6 +127,11 @@ live in [AGENTS.md](AGENTS.md).
 - [Vocabulary](vocabulary.md) — the canonical word list: which term to use for each idea, which to defer,
   which to avoid and why; plus the glossary of the non-technical craft. This document resolves any
   phrasing disagreement between the others.
+- [Reader simulation](reader-simulation.md) — the method of modeling the reader's mind as you write:
+  the split-knowledge model reader, the predict-compare-repair loop, the six mental-state variables to
+  track sentence by sentence, the placement and word-choice levers that move them, the curse-of-knowledge
+  de-biasing pass, and the reading science that grounds all of it. The dynamic method that uses the
+  audience model, the word list, and the sentence shapes at once.
 - [Formats](formats.md) — per-artifact playbooks for the launch post, deep-dive, README, talk, thread,
   and comparison, the ready answers for a discussion thread, the conversion ladder, and annotated model
   drafts showing the whole apparatus at work.
