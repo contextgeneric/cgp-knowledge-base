@@ -20,7 +20,7 @@ This framing also explains which supertraits `#[extend(...)]` is for and why it 
 
 Each entry names a trait that becomes a supertrait of the generated trait, optionally with generic type arguments. A bare `HasScalarType` becomes a `: HasScalarType` supertrait; a parameterized form carries its arguments through. Multiple bounds may be listed in one attribute or spread across several `#[extend(...)]` attributes, and they accumulate.
 
-`#[extend(...)]` is accepted in [`#[cgp_fn]`](../macros/cgp_fn.md) and in [`#[cgp_component]`](../macros/cgp_component.md). It is not available in [`#[cgp_impl]`](../macros/cgp_impl.md), because a provider impl has no trait definition of its own to attach supertraits to — the supertraits belong to the component's trait, defined by `#[cgp_component]`.
+`#[extend(...)]` is accepted in [`#[cgp_fn]`](../macros/cgp_fn.md), in [`#[cgp_component]`](../macros/cgp_component.md), and in the macros built on it, [`#[cgp_type]`](../macros/cgp_type.md), [`#[cgp_getter]`](../macros/cgp_getter.md), and [`#[cgp_auto_getter]`](../macros/cgp_auto_getter.md), which run the same attribute collector. It is not available in [`#[cgp_impl]`](../macros/cgp_impl.md), because a provider impl has no trait definition of its own to attach supertraits to — the supertraits belong to the component's trait, defined by `#[cgp_component]`.
 
 ## Syntax Grammar
 

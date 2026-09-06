@@ -1,6 +1,6 @@
 # `#[use_type]`
 
-`#[use_type]` imports an abstract associated type into a `#[cgp_fn]`, `#[cgp_impl]`, or `#[cgp_component]` definition and rewrites every bare mention of that type into the fully-qualified `<Self as Trait>::AssocType` form, adding the trait as a supertrait or bound at the same time.
+`#[use_type]` imports an abstract associated type into a `#[cgp_fn]`, `#[cgp_impl]`, or `#[cgp_component]` definition (or into a `#[cgp_type]`, `#[cgp_getter]`, or `#[cgp_auto_getter]` trait, which share `#[cgp_component]`'s attribute collector) and rewrites every bare mention of that type into the fully-qualified `<Self as Trait>::AssocType` form, adding the trait as a supertrait or bound at the same time.
 
 ## Purpose
 
@@ -12,7 +12,7 @@ Beyond saving keystrokes, the fully-qualified rewrite removes ambiguity that the
 
 ## Syntax
 
-`#[use_type]` is applied as an outer attribute alongside the `#[cgp_fn]`, `#[cgp_impl]`, or `#[cgp_component]` attribute, and its argument names a trait and one or more of its associated types. A `.` separates the trait from the associated type — not `::` — which is what lets the trait itself be a full path or carry generic arguments without the parser confusing a path segment for the associated type. The simplest form imports a single type from a trait:
+`#[use_type]` is applied as an outer attribute alongside the `#[cgp_fn]`, `#[cgp_impl]`, or `#[cgp_component]` attribute (or one of the macros built on `#[cgp_component]`), and its argument names a trait and one or more of its associated types. A `.` separates the trait from the associated type — not `::` — which is what lets the trait itself be a full path or carry generic arguments without the parser confusing a path segment for the associated type. The simplest form imports a single type from a trait:
 
 ```rust
 #[use_type(HasScalarType.Scalar)]
