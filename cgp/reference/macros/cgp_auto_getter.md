@@ -184,6 +184,10 @@ The explicit form is more verbose but requires no understanding of `HasField` or
 
 `#[cgp_auto_getter]` is the blanket-impl counterpart to [`#[cgp_getter]`](cgp_getter.md): both read context fields through `HasField`, but `#[cgp_getter]` produces a full CGP component that can be wired to a [`UseField`](../providers/use_field.md) provider, allowing the field name to differ from the method name and the getter to be swapped per context. It builds directly on [`#[derive(HasField)]`](../derives/derive_has_field.md), which generates the per-field `HasField` impls keyed by [`Symbol!`](symbol.md). For field access inside a method body rather than through a dedicated trait, the [`#[implicit]`](../attributes/implicit.md) argument attribute follows the same field-reading semantics. When the only purpose of a getter's associated type is to serve as its return type, the associated-type form here overlaps with abstract-type components defined by [`#[cgp_type]`](cgp_type.md).
 
+## Known issues
+
+`#[prefix(...)]` and `#[derive_delegate(...)]` are accepted on a `#[cgp_auto_getter]` trait and dropped without an error. The macro runs the same attribute collector as [`#[cgp_component]`](cgp_component.md) so that [`#[extend]`](../attributes/extend.md) and [`#[use_type]`](../attributes/use_type.md) apply, but it does not generate a component, so the two attributes that need one register nothing and report nothing. A getter that must live in a namespace, or dispatch per type, is a [`#[cgp_getter]`](cgp_getter.md) component.
+
 ## Source
 
 - Entry point: `cgp_auto_getter` in [crates/macros/cgp-macro-lib/src/cgp_auto_getter.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-lib/src/cgp_auto_getter.rs), which rejects any attribute argument and runs `ItemCgpAutoGetter::preprocess(...).to_items()`.

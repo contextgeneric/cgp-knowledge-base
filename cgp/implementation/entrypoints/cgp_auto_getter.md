@@ -58,6 +58,10 @@ The conversions are exactly those `#[cgp_getter]` uses — `&str` reads a `Strin
 
 **Unsupported field-type combinations are deferred to the compiler.** The `Option` and slice shorthands each cover a single field shape; a combination CGP provides no rule for — most notably `Option<&[T]>` — is lowered literally rather than given a bespoke rule, so it reaches the compiler as invalid Rust rather than a macro-time rejection. `parse_field_type` applies the `Option<&T>` rule to `Option<&[T]>` and emits a `HasField` bound over the unsized `Option<[T]>`, which `rustc` rejects. This is a deliberate boundary shared by `#[cgp_getter]` and `#[cgp_fn]` implicits (all three call `parse_field_type`), pinned as an acceptable failure by the `cargo-cgp` UI fixture [`usability/lowering/option_slice.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/lowering/option_slice.rs) — filed under `usability/` because cargo-cgp passes rustc's `Sized` error through rather than rewriting it.
 
+## Known issues
+
+`ItemCgpAutoGetter::preprocess` runs `CgpComponentAttributes::preprocess` on the trait so that `#[extend]` and `#[use_type]` apply, then discards the returned `CgpComponentAttributes`. The collector strips `#[prefix]` and `#[derive_delegate]` off the trait along with the two it applies, so either attribute on a `#[cgp_auto_getter]` is accepted silently and emits nothing, because the macro does not generate a component to register into a namespace or to dispatch. Rejecting the two with a spanned error, as the macro already rejects an attribute argument, would be the cleaner behavior.
+
 ## Snapshots
 
 Every `snapshot_cgp_auto_getter!` invocation across the suite is indexed here, since these snapshots all belong to this entrypoint:

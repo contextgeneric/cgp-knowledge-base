@@ -68,6 +68,10 @@ The **marker struct's name span** is the provider identifier's span, not `Span::
 
 A **name clash on the derived marker** — a module that declares its own `GreeterComponent` alongside a `#[cgp_component(Greeter)]` that derives the same marker — defines the name twice and fails with `E0428`, the [conflicting wiring](../../errors/wiring/conflicting-wiring.md) error class. What this document pins is the **span**: the `E0428` "previous definition here" note lands on the `Greeter` provider name inside `#[cgp_component(..)]`, not on the whole attribute, per the marker-span behavior above. The `cargo-cgp` UI fixture [`acceptable/wiring/duplicate-keys/duplicate_component_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/duplicate-keys/duplicate_component_name.rs) is the regression test for that span, since a regression to `call_site` would move the note onto the attribute.
 
+## Known issues
+
+The namespace impl a `#[prefix]` attribute adds carries the macro `call_site` span. `PrefixAttribute::to_namespace_impl` builds it with `parse_internal!` and does not re-span the result, unlike the `#[default_impl]` registration (`override_item_span` onto its key) and the `delegate_components!` entries (`respan_impl`). Two `#[prefix]` attributes naming the same namespace therefore report their `E0119` with both carets on the `#[cgp_component]` attribute, and the message does not say which registration is the duplicate. Re-spanning the impl onto the attribute's path token would move the carets to the two `#[prefix]` lines; see [asts/attributes/prefix.md](../asts/attributes/prefix.md#known-issues).
+
 ## Snapshots
 
 Every `snapshot_cgp_component!` invocation across the suite is indexed here, since these snapshots all belong to this entrypoint:

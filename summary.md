@@ -444,6 +444,10 @@ it stale.
   generated trait.
 - [attributes/extend_where.md](cgp/implementation/asts/attributes/extend_where.md) — adding `where`
   predicates to a generated trait definition.
+- [attributes/impl_generics.md](cgp/implementation/asts/attributes/impl_generics.md) — adding generic
+  parameters to a `#[cgp_fn]` impl alone, and the failures the compiler catches for it.
+- [attributes/prefix.md](cgp/implementation/asts/attributes/prefix.md) — registering a component into
+  a namespace under a path prefix, and the `call_site` span its impl still carries.
 - [attributes/use_provider.md](cgp/implementation/asts/attributes/use_provider.md) — completing an
   inner provider's bound for a higher-order provider.
 - [attributes/uses.md](cgp/implementation/asts/attributes/uses.md) — importing `Self` trait bounds

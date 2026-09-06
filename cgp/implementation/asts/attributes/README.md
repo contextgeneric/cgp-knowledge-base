@@ -11,7 +11,9 @@ Each modifier has its own page in this directory:
 - [`#[use_provider]`](use_provider.md) — complete an inner provider's bound for a higher-order provider.
 - [`#[extend]`](extend.md) — add *supertrait* bounds to a generated trait.
 - [`#[extend_where]`](extend_where.md) — add `where` predicates to a generated trait definition.
+- [`#[impl_generics]`](impl_generics.md) — add generic parameters to a `#[cgp_fn]`'s impl alone.
 - [`#[derive_delegate]`](derive_delegate.md) — generate a `UseDelegate` dispatcher provider impl for a component.
+- [`#[prefix]`](prefix.md) — register a component into a namespace under a path prefix.
 - [`#[default_impl]`](default_impl.md) — register a provider as a namespace's per-path default.
 
 ## How a host collects a modifier
@@ -40,7 +42,7 @@ Which modifiers a host accepts differs, because a modifier is only meaningful on
 | `#[prefix]` | ✓ | | |
 | `#[impl_generics]` | | | ✓ |
 
-Two further modifiers the same collectors handle are documented elsewhere rather than here, because they belong to another construct's story. `CgpComponentAttributes` also collects `#[prefix(@path in Namespace)]`, which registers a component into a namespace and is documented with the [namespace machinery](../namespace.md). `FunctionAttributes` also collects `#[impl_generics(Param: Bound)]`, which adds a bounded generic parameter to a `#[cgp_fn]`'s impl alone and is documented with [`#[cgp_fn]`](../../entrypoints/cgp_fn.md). Both have reference documents of their own, [attributes/prefix.md](../../../reference/attributes/prefix.md) and [attributes/impl_generics.md](../../../reference/attributes/impl_generics.md), as does [`#[default_impl]`](../../../reference/attributes/default_impl.md).
+Two of the modifiers in the table above are lowered by their hosts rather than by the pipeline of a construct of their own. `CgpComponentAttributes` collects [`#[prefix(...)]`](prefix.md) into `PrefixAttribute` values, whose namespace impls the component pipeline in [entrypoints/cgp_component.md](../../entrypoints/cgp_component.md) appends after its standard provider impls; the namespace machinery those impls plug into is in [asts/namespace.md](../namespace.md). `FunctionAttributes` collects [`#[impl_generics(...)]`](impl_generics.md) as a bare list of generic parameters that the `#[cgp_fn]` pipeline in [entrypoints/cgp_fn.md](../../entrypoints/cgp_fn.md) injects into the impl's generic list. Each has a reference document of its own under [reference/attributes/](../../../reference/attributes/prefix.md), as `#[default_impl]` does.
 
 ## Source
 
