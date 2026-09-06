@@ -8,7 +8,7 @@ All snippets below wire an **environmental context** — `App` stands for the ap
 
 ## Start by inferring the type from a field
 
-**When the type appears only in [`#[implicit]`](../reference/attributes/implicit.md) arguments, declare it with [`#[impl_generics]`](../reference/macros/cgp_fn.md) and let the field's type supply it.** The parameter lands on the generated impl alone, so the trait is unparameterized and no caller mentions it:
+**When the type appears only in [`#[implicit]`](../reference/attributes/implicit.md) arguments, declare it with [`#[impl_generics]`](../reference/attributes/impl_generics.md) and let the field's type supply it.** The parameter lands on the generated impl alone, so the trait is unparameterized and no caller mentions it:
 
 ```rust
 #[cgp_fn]

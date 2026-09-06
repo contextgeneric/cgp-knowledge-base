@@ -10,7 +10,7 @@ The concepts each step demonstrates are documented in full in the reference; thi
 - async methods in traits — [`#[async_trait]`](../cgp/reference/macros/async_trait.md)
 - composing capabilities — [`#[uses]`](../cgp/reference/attributes/uses.md)
 - field access on contexts — [`#[derive(HasField)]`](../cgp/reference/derives/derive_has_field.md)
-- impl-only generic parameters — [`#[impl_generics]`](../cgp/reference/macros/cgp_fn.md)
+- impl-only generic parameters — [`#[impl_generics]`](../cgp/reference/attributes/impl_generics.md)
 - components and named providers — [`#[cgp_component]`](../cgp/reference/macros/cgp_component.md), [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md), and the [consumer/provider trait duality](../cgp/concepts/consumer-and-provider-traits.md)
 - wiring a context to providers — [`delegate_components!`](../cgp/reference/macros/delegate_components.md)
 
@@ -115,7 +115,7 @@ The names in `#[uses(GetUser, FetchStorageObject)]` are the traits `#[cgp_fn]` d
 
 ## Varying the database engine
 
-`get_user` above hardcodes `&PgPool`, which ties it to PostgreSQL. To let one implementation serve several database engines, introduce a type parameter that lives on the impl alone — never on the generated trait or its callers — with [`#[impl_generics]`](../cgp/reference/macros/cgp_fn.md). The implicit `database` field becomes `&Pool<Db>`, and the `where` clause carries the engine-specific bounds:
+`get_user` above hardcodes `&PgPool`, which ties it to PostgreSQL. To let one implementation serve several database engines, introduce a type parameter that lives on the impl alone — never on the generated trait or its callers — with [`#[impl_generics]`](../cgp/reference/attributes/impl_generics.md). The implicit `database` field becomes `&Pool<Db>`, and the `where` clause carries the engine-specific bounds:
 
 ```rust
 #[cgp_fn]

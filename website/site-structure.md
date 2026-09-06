@@ -646,7 +646,7 @@ rest use a `generated-index`. A separate `errors.md` covers post-expansion compi
 completeness obligation is against the index rather than against the prose, so no construct is missing
 from the site even while most pages are placeholders. Each stub carries its one-line description and an
 admonition saying it is unwritten. Every construct page is written, plus the
-index and `errors.md`: `macros/` (twenty pages), `attributes/` (eight), `derives/` (eight), `traits/`
+index and `errors.md`: `macros/` (twenty pages), `attributes/` (ten), `derives/` (eight), `traits/`
 (fifty-seven), `providers/` (fifty), `components/` (seventeen), and `types/` (eleven construct pages,
 plus a section overview and a lists-group overview) are finished end to end. The `providers/` group is now one
 page per provider: sixteen singleton pages, plus four subsections — `error/`, `handler/`, `dispatch/`,
@@ -792,7 +792,7 @@ be a **typed reference to another type** instead of `self`, which is the one get
 declare a getter at all; a getter method may take an optional second **`PhantomData<T>`** argument; and
 `MRef<'_, T>` is an accepted form both for a getter's return type and for an implicit argument's type,
 missing from both access-mode tables. `#[cgp_component]` accepts a fourth companion attribute,
-[`#[prefix(...)]`](../cgp/reference/macros/cgp_namespace.md), which only the namespace pages had mentioned.
+[`#[prefix(...)]`](../cgp/reference/attributes/prefix.md), which only the namespace pages had mentioned.
 
 Four are **rules the expansion follows that were unstated**. A provider trait's `IsProviderFor` params
 tuple lifts a lifetime into [`Life<'a>`](../cgp/reference/types/life.md) and takes the first *type* argument
@@ -938,7 +938,8 @@ trait** — `IsPresent` and the other six are types implementing `MapType` or `M
 so the index's *Looking for a name you don't see?* table routes them. **A construct documented inside
 another page moves to its own page in the directory its kind belongs to**, which is why
 `#[default_impl(...)]` left `default_namespace.md` for `attributes/`, taking that group from seven pages
-to eight. And **the `example-code` mirror splits with the pages**: `cast.rs` became four files and
+to eight, and why `#[impl_generics(...)]` and `#[prefix(...)]` later left `cgp_fn.md` and
+`cgp_namespace.md` for pages of their own, taking it to ten. And **the `example-code` mirror splits with the pages**: `cast.rs` became four files and
 `product_ops.rs` three, since a mirror file that names a page which no longer exists is worse than none.
 The split pages inherited their snippets already compiled, so the crate stayed green throughout — but
 **the pages created around them are not yet mirrored**, which is the round's one outstanding item.
@@ -967,11 +968,9 @@ site is organized
 so one internal document that documents a family feeds several public pages —
 `traits/has_builder.md` feeds seven, `traits/extract_field.md` six, `traits/optional_fields.md` eight.
 Each internal document records the public pages it feeds, in a note under its Source section, so a later
-synchronization knows where to look. Three public pages have no internal document of their own:
+synchronization knows where to look. Two public pages have no internal document of their own:
 `derives/derive_cgp_record.md` and `derives/derive_cgp_variant.md` both come from
-[derive_cgp_data.md](../cgp/reference/derives/derive_cgp_data.md), and
-`attributes/default_impl.md` from
-[default_namespace.md](../cgp/reference/traits/default_namespace.md).
+[derive_cgp_data.md](../cgp/reference/derives/derive_cgp_data.md).
 
 One [consolidation](writing-guides/reference.md#granularity-one-page-per-named-construct) survives:
 `cgp_provider.md` covers `#[cgp_new_provider]` too. The `type_level_spines.md` consolidation does not:

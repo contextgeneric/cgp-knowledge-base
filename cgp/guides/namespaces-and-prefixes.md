@@ -61,7 +61,7 @@ Every line here is necessary, and nothing about it is wrong. The problem is pure
 
 ## Technique 1: group components under path prefixes with `#[prefix]`
 
-The first move is to give each component a **path** — a dotted address like `@app.auth` or `@app.finance` — so that related components sort together instead of scattering through the table. The [`#[prefix(@path in Namespace)]`](../reference/macros/cgp_namespace.md) attribute on a component's [`#[cgp_component]`](../reference/macros/cgp_component.md) (or [`#[cgp_type]`](../reference/macros/cgp_type.md)) trait registers that component into a namespace under a path prefix, so that from then on the component is addressed by its path rather than by its bare marker name. The standard namespace to register into is the built-in [`DefaultNamespace`](../reference/traits/default_namespace.md), which every context can join.
+The first move is to give each component a **path** — a dotted address like `@app.auth` or `@app.finance` — so that related components sort together instead of scattering through the table. The [`#[prefix(@path in Namespace)]`](../reference/attributes/prefix.md) attribute on a component's [`#[cgp_component]`](../reference/macros/cgp_component.md) (or [`#[cgp_type]`](../reference/macros/cgp_type.md)) trait registers that component into a namespace under a path prefix, so that from then on the component is addressed by its path rather than by its bare marker name. The standard namespace to register into is the built-in [`DefaultNamespace`](../reference/traits/default_namespace.md), which every context can join.
 
 The abstract types divide cleanly by the layer that owns them, so they take a `types` sub-path under each layer:
 
@@ -141,7 +141,7 @@ These entries are the wirings that have no [`#[cgp_impl]`](../reference/macros/c
 
 ### Registering a provider with `#[default_impl]`
 
-The application's business logic *does* have `#[cgp_impl]` blocks — the mock backend implements password checking, hashed-password lookup, and balance querying — so those providers register themselves into the namespace from their own definition, with the [`#[default_impl(@path in Namespace)]`](../reference/traits/default_namespace.md) attribute:
+The application's business logic *does* have `#[cgp_impl]` blocks — the mock backend implements password checking, hashed-password lookup, and balance querying — so those providers register themselves into the namespace from their own definition, with the [`#[default_impl(@path in Namespace)]`](../reference/attributes/default_impl.md) attribute:
 
 ```rust
 #[cgp_impl(UseMockedApp)]

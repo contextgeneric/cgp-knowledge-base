@@ -227,7 +227,7 @@ reader falls into. The spec and the porting procedure are in
   every construct has an entry here even where the page behind it is a stub — so a page added later is
   added to this index in the same change.
 - **R2 — port the construct pages.** **Every group is now written**, so no page under
-  `docs/reference/` carries a stub notice: `macros/` (20), `attributes/` (8),
+  `docs/reference/` carries a stub notice: `macros/` (20), `attributes/` (10),
   `derives/` (8), `traits/` (57), `providers/` (50), `components/` (17), and `types/` (11 construct
   pages plus a section overview and a lists-group overview) are complete. The
   `providers/` group is one page per provider — sixteen singletons (including the five `With…` aliases)

@@ -11,7 +11,7 @@ The concepts each step demonstrates are documented in full in the reference; thi
 - importing a capability a provider depends on — [`#[uses]`](../cgp/reference/attributes/uses.md), an [impl-side dependency](../cgp/concepts/impl-side-dependencies.md)
 - a provider that wraps another provider — [higher-order providers](../cgp/concepts/higher-order-providers.md) and [`#[use_provider]`](../cgp/reference/attributes/use_provider.md)
 - wiring a context and bundling providers into reusable groups — [`delegate_components!`](../cgp/reference/macros/delegate_components.md)
-- grouping component keys so a context inherits a whole bundle at once — [namespaces](../cgp/concepts/namespaces.md), the [`#[prefix(...)]`](../cgp/reference/macros/cgp_component.md) attribute, and [`cgp_namespace!`](../cgp/reference/macros/cgp_namespace.md)
+- grouping component keys so a context inherits a whole bundle at once — [namespaces](../cgp/concepts/namespaces.md), the [`#[prefix(...)]`](../cgp/reference/attributes/prefix.md) attribute, and [`cgp_namespace!`](../cgp/reference/macros/cgp_namespace.md)
 - checking that a wiring is complete — [`check_components!`](../cgp/reference/macros/check_components.md)
 
 All snippets assume `use cgp::prelude::*;` and share a small set of domain types — the entities the service manipulates and the database handle the providers read:
@@ -276,7 +276,7 @@ The bundles read cleanly on their own, but the top-level table still has to spel
 
 ## Grouping component keys with namespaces
 
-A [namespace](../cgp/concepts/namespaces.md) gives a group of components a shared key, so a context can route the whole group with one entry instead of listing each name. A component joins a namespace under a dotted path with the [`#[prefix(...)]`](../cgp/reference/macros/cgp_component.md) attribute on its trait; here the three user components all register under `@app.core.user` in the built-in `DefaultNamespace`:
+A [namespace](../cgp/concepts/namespaces.md) gives a group of components a shared key, so a context can route the whole group with one entry instead of listing each name. A component joins a namespace under a dotted path with the [`#[prefix(...)]`](../cgp/reference/attributes/prefix.md) attribute on its trait; here the three user components all register under `@app.core.user` in the built-in `DefaultNamespace`:
 
 ```rust
 #[cgp_component(UserCreator)]

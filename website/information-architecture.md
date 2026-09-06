@@ -177,7 +177,7 @@ made those four a short reading path — which the section's index page is what 
 **Reference** (new category, plus an index) — present, and **complete**
 - One page per named construct, grouped as `macros/`, `attributes/`, `derives/`, `components/`,
   `providers/`, `traits/`, and `types/`. Every group is written — `macros/` (20),
-  `attributes/` (8), `derives/` (8), `traits/` (57), `providers/` (50), `components/` (17), and
+  `attributes/` (10), `derives/` (8), `traits/` (57), `providers/` (50), `components/` (17), and
   `types/` (11 construct pages plus two overviews) are complete. The `providers/` group is one page per provider: sixteen singleton pages plus four
   subsections — `error/`, `handler/`, `dispatch/`, and `monad/` — each with its own overview. The
   `components/` group is likewise one page per component: eight at the top level plus a nine-page

@@ -1,6 +1,6 @@
 # `#[default_impl]` — the AST stack
 
-`#[default_impl(@test.ShowImplComponent.u32 in ExtendedNamespace)]` on a `#[cgp_impl]` provider registers that provider as a namespace's default for one path. It is a modifier attribute collected by the impl host; this page covers its AST types and the registration impl it builds, and the shared collection mechanism lives in the [attribute-modifier overview](README.md). For the user-facing syntax and the namespace machinery it plugs into, read the reference document [`DefaultNamespace`](../../../reference/traits/default_namespace.md).
+`#[default_impl(@test.ShowImplComponent.u32 in ExtendedNamespace)]` on a `#[cgp_impl]` provider registers that provider as a namespace's default for one path. It is a modifier attribute collected by the impl host; this page covers its AST types and the registration impl it builds, and the shared collection mechanism lives in the [attribute-modifier overview](README.md). For the user-facing syntax, read the reference document [`#[default_impl]`](../../../reference/attributes/default_impl.md); the namespace machinery it plugs into is under [`DefaultNamespace`](../../../reference/traits/default_namespace.md).
 
 ## `DefaultImplAttribute`
 

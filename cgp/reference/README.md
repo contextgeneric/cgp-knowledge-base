@@ -20,7 +20,7 @@ A getter trait is the sparing alternative for the cases an implicit argument can
 
 ### Imports
 
-These attributes declare a provider's dependencies as if importing them, keeping the constraints off the public trait interface. [`#[uses]`](attributes/uses.md) adds `Self:` capability bounds that read like a `use` statement — the idiomatic replacement for a hand-written `where Self: Trait` clause — and [`#[use_provider]`](attributes/use_provider.md) completes an inner provider's bound in a higher-order provider by filling in the stray `<Self>` context argument the provider trait requires. [`#[extend]`](attributes/extend.md) adds a supertrait to the generated trait (the `pub use` counterpart of `#[uses]`, and the only way to add a supertrait in `#[cgp_fn]`), while [`#[extend_where]`](attributes/extend_where.md) promotes a `where` predicate onto a `#[cgp_fn]` trait's own definition rather than only its impl. The `#[impl_generics(...)]` attribute, which adds a bounded generic parameter to a `#[cgp_fn]` impl alone, is documented within [`#[cgp_fn]`](macros/cgp_fn.md).
+These attributes declare a provider's dependencies as if importing them, keeping the constraints off the public trait interface. [`#[uses]`](attributes/uses.md) adds `Self:` capability bounds that read like a `use` statement — the idiomatic replacement for a hand-written `where Self: Trait` clause — and [`#[use_provider]`](attributes/use_provider.md) completes an inner provider's bound in a higher-order provider by filling in the stray `<Self>` context argument the provider trait requires. [`#[extend]`](attributes/extend.md) adds a supertrait to the generated trait (the `pub use` counterpart of `#[uses]`, and the only way to add a supertrait in `#[cgp_fn]`), while [`#[extend_where]`](attributes/extend_where.md) promotes a `where` predicate onto a `#[cgp_fn]` trait's own definition rather than only its impl. [`#[impl_generics]`](attributes/impl_generics.md) declares a bounded generic parameter on a `#[cgp_fn]` impl alone, so a type the context fixes through a field is inferred rather than exposed as a trait parameter.
 
 ### Abstract types
 
@@ -36,7 +36,7 @@ CGP wiring is lazy, so a context can compile while wired wrong; these constructs
 
 ### Namespaces
 
-Namespaces are reusable, inheritable wiring tables — CGP's preset mechanism — for keeping top-level wiring short as component counts grow. [`cgp_namespace!`](macros/cgp_namespace.md) defines a namespace (optionally inheriting a parent); a context joins it with a `namespace` header inside [`delegate_components!`](macros/delegate_components.md), a component registers into one with the `#[prefix(...)]` attribute, and a provider registers as a per-type default with `#[default_impl(...)]` — the last two documented within `cgp_namespace!` and [`DefaultNamespace`](traits/default_namespace.md). The mechanism underneath is the [`RedirectLookup`](providers/redirect_lookup.md) provider, which re-routes a lookup along a type-level [`Path!`](macros/path.md) / [`PathCons`](types/path_cons.md), together with the [`DefaultNamespace` / `DefaultImpls`](traits/default_namespace.md) traits that resolve inherited and per-type defaults. The lightweight `open` statement of `delegate_components!` is a special case of the same redirection for per-type dispatch wired directly on one context.
+Namespaces are reusable, inheritable wiring tables — CGP's preset mechanism — for keeping top-level wiring short as component counts grow. [`cgp_namespace!`](macros/cgp_namespace.md) defines a namespace (optionally inheriting a parent); a context joins it with a `namespace` header inside [`delegate_components!`](macros/delegate_components.md), a component registers into one with the [`#[prefix(...)]`](attributes/prefix.md) attribute, and a provider registers as a per-type default with [`#[default_impl(...)]`](attributes/default_impl.md). The mechanism underneath is the [`RedirectLookup`](providers/redirect_lookup.md) provider, which re-routes a lookup along a type-level [`Path!`](macros/path.md) / [`PathCons`](types/path_cons.md), together with the [`DefaultNamespace` / `DefaultImpls`](traits/default_namespace.md) traits that resolve inherited and per-type defaults. The lightweight `open` statement of `delegate_components!` is a special case of the same redirection for per-type dispatch wired directly on one context.
 
 ### Handlers and computation
 
@@ -114,13 +114,10 @@ These attributes refine what the definition macros generate and are used inside 
 - [`#[use_provider]`](attributes/use_provider.md) — complete an inner provider's bound in higher-order providers.
 - [`#[extend]`](attributes/extend.md) — add supertrait bounds to a generated trait.
 - [`#[extend_where]`](attributes/extend_where.md) — add `where` clauses to a generated trait definition.
+- [`#[impl_generics]`](attributes/impl_generics.md) — declare a generic parameter on a `#[cgp_fn]` impl alone, inferred from an implicit argument's field.
+- [`#[prefix]`](attributes/prefix.md) — register a component into a namespace under a type-level path prefix.
+- [`#[default_impl]`](attributes/default_impl.md) — register a `#[cgp_impl]` provider as a namespace's default for a key.
 - [`#[derive_delegate]`](attributes/derive_delegate.md) — generate `UseDelegate` providers that dispatch on a generic parameter.
-
-Three further modifier attributes do not yet have their own page and are documented inside their host construct's document; each is a candidate for a dedicated page here.
-
-- `#[impl_generics(...)]` — add bounded generic parameters to a `#[cgp_fn]`'s impl only (not its trait); documented in [`#[cgp_fn]`](macros/cgp_fn.md).
-- `#[prefix(...)]` — register a `#[cgp_component]` trait into a namespace under a path; documented in [`#[cgp_namespace]`](macros/cgp_namespace.md).
-- `#[default_impl(...)]` — register a `#[cgp_impl]` provider as a namespace's per-type default; documented in [`DefaultNamespace`](traits/default_namespace.md).
 
 ## Data derives — [derives/](derives/)
 

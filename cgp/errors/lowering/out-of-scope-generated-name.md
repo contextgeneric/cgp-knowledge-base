@@ -6,7 +6,7 @@ An `#[impl_generics]` parameter is named in the capability's own signature, wher
 
 This class is a *lowering* failure: the name the author wrote is real and the construct they used is real, but the two do not meet, because the macro placed the name where it cannot resolve. It is not a wiring mistake — the failure precedes any trait solving, so no `IsProviderFor` or `DelegateComponent` frame appears anywhere in the output.
 
-[`#[impl_generics]`](../../reference/macros/cgp_fn.md) adds a generic parameter to the generated *impl* alone, which is what lets a context supply the type implicitly through the type of a field, with no parameter on the trait for a caller to thread. The generated trait therefore does not carry it, so a signature that names it refers to nothing:
+[`#[impl_generics]`](../../reference/attributes/impl_generics.md) adds a generic parameter to the generated *impl* alone, which is what lets a context supply the type implicitly through the type of a field, with no parameter on the trait for a caller to thread. The generated trait therefore does not carry it, so a signature that names it refers to nothing:
 
 ```rust
 #[cgp_fn]

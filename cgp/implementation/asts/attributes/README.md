@@ -37,8 +37,10 @@ Which modifiers a host accepts differs, because a modifier is only meaningful on
 | `#[extend_where]` | | | ✓ |
 | `#[derive_delegate]` | ✓ | | |
 | `#[default_impl]` | | ✓ | |
+| `#[prefix]` | ✓ | | |
+| `#[impl_generics]` | | | ✓ |
 
-Two further modifiers the same collectors handle are documented elsewhere rather than here, because they belong to another construct's story. `CgpComponentAttributes` also collects `#[prefix(@path in Namespace)]`, which registers a component into a namespace and is documented with the [namespace machinery](../namespace.md). `FunctionAttributes` also collects `#[impl_generics(Param: Bound)]`, which adds a bounded generic parameter to a `#[cgp_fn]`'s impl alone and is documented with [`#[cgp_fn]`](../../entrypoints/cgp_fn.md).
+Two further modifiers the same collectors handle are documented elsewhere rather than here, because they belong to another construct's story. `CgpComponentAttributes` also collects `#[prefix(@path in Namespace)]`, which registers a component into a namespace and is documented with the [namespace machinery](../namespace.md). `FunctionAttributes` also collects `#[impl_generics(Param: Bound)]`, which adds a bounded generic parameter to a `#[cgp_fn]`'s impl alone and is documented with [`#[cgp_fn]`](../../entrypoints/cgp_fn.md). Both have reference documents of their own, [attributes/prefix.md](../../../reference/attributes/prefix.md) and [attributes/impl_generics.md](../../../reference/attributes/impl_generics.md), as does [`#[default_impl]`](../../../reference/attributes/default_impl.md).
 
 ## Source
 

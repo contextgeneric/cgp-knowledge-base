@@ -40,7 +40,7 @@ cgp_namespace! {
 
 Here `ExtendedNamespace` inherits every entry of `DefaultNamespace` and additionally rewrites the `@cgp.core.error` path prefix to `@app`. The parent may itself be parameterized (it is parsed as a path with type arguments), and the entries in the child body layer on top of the inherited ones.
 
-Defining a namespace is only half of the pattern; a context joins a namespace through `delegate_components!` using a `namespace` header line, and individual components attach to a namespace through the `#[prefix(...)]` attribute on their trait. Those two constructs are where namespaces are consumed, and both are shown under Expansion and Examples below.
+Defining a namespace is only half of the pattern; a context joins a namespace through `delegate_components!` using a `namespace` header line, and individual components attach to a namespace through the [`#[prefix(...)]`](../attributes/prefix.md) attribute on their trait. Those two constructs are where namespaces are consumed, and both are shown under Expansion and Examples below.
 
 ### The shared body grammar, and what differs here
 
@@ -90,15 +90,7 @@ ForStmt       -> `for` `<` IDENTIFIER `,` IDENTIFIER `>` `in` TypePath WhereClau
                  `{` ( NormalMapping ( `,` NormalMapping )* `,`? )? `}`
 ```
 
-The `#[prefix(...)]` attribute, which is the other half of the pattern and is hosted by [`#[cgp_component]`](cgp_component.md), has a grammar of its own:
-
-```ebnf
-PrefixArgs    -> Path `in` NamespacePath
-
-NamespacePath -> TypePath GenericArgs?
-```
-
-`Path` is the `@`-prefixed dotted production [`Path!`](path.md) defines — segments take no generics and no grouping form is accepted, so a component registers under exactly one prefix per attribute. `NamespacePath` is the namespace to register into, which may itself be parameterized; the macro appends the components table as a further argument when it emits the impl. Both parts are required, and the attribute may be repeated to register one component into several namespaces.
+The `#[prefix(...)]` attribute, which is the other half of the pattern and is hosted by [`#[cgp_component]`](cgp_component.md), has a grammar of its own, `PrefixArgs`, defined in [`#[prefix]`](../attributes/prefix.md); its `Path` production is the one [`Path!`](path.md) defines.
 
 A `NamespaceStmt` forwards every lookup on the table through the named namespace. A `ForStmt` binds a key variable and a provider variable, reads each entry of the table named after `in`, and emits one mapping per entry — its body admits only the `` `:` `` form, which is why [`delegate_components!`](delegate_components.md) names that `NormalMapping` separately, and its `Key` and `ProviderValue` are that macro's shared productions. Its optional `WhereClause` is merged into every impl the loop generates, so a bound written there (`for <T, P> in Table where T: Clone { … }`) constrains which keys the loop wires, alongside the namespace bound the loop reconstructs. The third statement form, `OpenStmt`, is owned by [`delegate_components!`](delegate_components.md) because that is where it is written; it parses in a namespace body too, where it is another spelling of a `` `=>` `` entry. `TypePath` and `WhereClause` are Rust grammar productions.
 
@@ -162,28 +154,7 @@ where
 
 This says: for any `__Key__` the parent `DefaultNamespace` resolves, `ExtendedNamespace` resolves it to the same `__Value__`. The body entries of the child are emitted after this blanket impl and take precedence where their keys are more specific. The path-rewriting entry `@cgp.core.error => @app` becomes an impl keyed on the `cgp.core.error` path prefix whose `Delegate` is a `RedirectLookup` onto the `@app` prefix — rerouting an entire subtree of the parent's namespace rather than a single component.
 
-The other half of the pattern is what attaches a component to a namespace, via the `#[prefix(...)]` attribute on the component's trait. Given:
-
-```rust
-#[cgp_component(BarProvider)]
-#[prefix(@MyBarComponent in MyNamespace)]
-pub trait Bar {
-    fn bar(&self);
-}
-```
-
-`#[cgp_component]` emits its usual items, and `#[prefix]` adds one extra impl that registers `BarProviderComponent` into `MyNamespace` under the prefix path `@MyBarComponent`:
-
-```rust
-impl<__Components__> MyNamespace<__Components__> for BarProviderComponent {
-    type Delegate = RedirectLookup<
-        __Components__,
-        PathCons<MyBarComponent, PathCons<BarProviderComponent, Nil>>,
-    >;
-}
-```
-
-So `MyNamespace`, asked for `BarProviderComponent`, redirects the lookup to the path `MyBarComponent → BarProviderComponent`. A component may carry several `#[prefix]` attributes to register itself into several namespaces at once.
+The other half of the pattern is what attaches a component to a namespace: the [`#[prefix(...)]`](../attributes/prefix.md) attribute on the component's trait adds one impl of exactly this shape for the component's marker, with the path ending at the marker itself. `#[prefix(@MyBarComponent in MyNamespace)]` on a `Bar` component registers `BarProviderComponent` at `@MyBarComponent.BarProviderComponent`, so `MyNamespace`, asked for `BarProviderComponent`, redirects the lookup there. The attribute's document shows the emitted impl and every form the attribute accepts.
 
 Two details of the expansion are worth holding onto. The table parameter is literally named `__Table__` and the inheritance blanket impl uses `__Key__`/`__Value__`; the examples keep those names because they appear verbatim in compiler errors. And every path under `@` becomes a `PathCons`/`Symbol`/`Chars` type-level list — `@my_app.MyFooComponent` expands to `PathCons<Symbol<6, Chars<'m', …>>, PathCons<MyFooComponent, Nil>>`, with dotted lowercase segments becoming `Symbol` string literals and capitalized segments becoming the named type.
 
@@ -238,13 +209,13 @@ Inheritance composes the same way at the namespace level: `ExtendedNamespace: De
 
 ## Related constructs
 
-`cgp_namespace!` sits between component definitions and context wiring, so it relates to constructs on both sides. [`#[cgp_component]`](cgp_component.md) defines the components whose keys a namespace maps, and its [`#[prefix(...)]`](cgp_component.md) attribute is what registers a component into a namespace under a path. [`delegate_components!`](delegate_components.md) is where a context joins a namespace (via its `namespace` header) and where individual overrides are written; [`delegate_and_check_components!`](delegate_and_check_components.md) does the same and additionally checks the entries written directly in the block, though its derivation does not cover the components inherited through the namespace, so verifying the full merged wiring is left to a standalone [`check_components!`](check_components.md). The namespace's `Delegate` entries are resolved through [`RedirectLookup`](../providers/redirect_lookup.md), and per-type defaults are commonly expressed through [`use_delegate`](../providers/use_delegate.md)-style dispatch and the `DefaultNamespace` / `DefaultImpls1` traits in `cgp-component`. The underlying per-key table machinery is [`DelegateComponent`](../traits/delegate_component.md), which `RedirectLookup` walks at resolution time.
+`cgp_namespace!` sits between component definitions and context wiring, so it relates to constructs on both sides. [`#[cgp_component]`](cgp_component.md) defines the components whose keys a namespace maps, and its [`#[prefix(...)]`](../attributes/prefix.md) attribute is what registers a component into a namespace under a path. [`delegate_components!`](delegate_components.md) is where a context joins a namespace (via its `namespace` header) and where individual overrides are written; [`delegate_and_check_components!`](delegate_and_check_components.md) does the same and additionally checks the entries written directly in the block, though its derivation does not cover the components inherited through the namespace, so verifying the full merged wiring is left to a standalone [`check_components!`](check_components.md). The namespace's `Delegate` entries are resolved through [`RedirectLookup`](../providers/redirect_lookup.md), and per-type defaults are commonly expressed through [`use_delegate`](../providers/use_delegate.md)-style dispatch and the `DefaultNamespace` / `DefaultImpls1` traits in `cgp-component`. The underlying per-key table machinery is [`DelegateComponent`](../traits/delegate_component.md), which `RedirectLookup` walks at resolution time.
 
 ## Known issues
 
-A context that joins a namespace with `namespace N;` cannot also wire, directly on itself, a path that `N` already registers. The `namespace N;` header emits a blanket `impl<Key> DelegateComponent<Key> for Ctx where Key: N<Ctx>`, which already covers every path `N` resolves; a direct `@path: Provider` entry on the same context emits a second `DelegateComponent` impl for that path, and the compiler rejects the overlap with `E0119`. Overriding therefore works only on a path the namespace routes *to* but does not itself terminate: register the component's [`#[prefix]`](cgp_component.md) redirect in a base namespace the context inherits, and leave the leaf path unclaimed by the namespace so the context can supply it. A path the namespace registers with a `:` body entry or a `#[default_impl]` is not overridable on the context; change it in the namespace instead. The same restriction stops an inheriting namespace from redefining a key its parent binds. This is a whole-program coherence fact the macro cannot detect, so it is deferred to the compiler; its full anatomy is in the [namespace override conflict](../../errors/wiring/namespace-override-conflict.md) error class. A related overlap arises when a context emits *two* blanket forwardings — joining two namespaces, or a bare-key `for` loop (`for <Key, Value> in Table { Key: Value }`) alongside a `namespace` join, which is why a loop key must be embedded in a path (`@app.SomeComponent.Key: Value`) — the [overlapping namespace forwarding](../../errors/wiring/namespace-forwarding-conflict.md) error class.
+A context that joins a namespace with `namespace N;` cannot also wire, directly on itself, a path that `N` already registers. The `namespace N;` header emits a blanket `impl<Key> DelegateComponent<Key> for Ctx where Key: N<Ctx>`, which already covers every path `N` resolves; a direct `@path: Provider` entry on the same context emits a second `DelegateComponent` impl for that path, and the compiler rejects the overlap with `E0119`. Overriding therefore works only on a path the namespace routes *to* but does not itself terminate: register the component's [`#[prefix]`](../attributes/prefix.md) redirect in a base namespace the context inherits, and leave the leaf path unclaimed by the namespace so the context can supply it. A path the namespace registers with a `:` body entry or a [`#[default_impl]`](../attributes/default_impl.md) is not overridable on the context; change it in the namespace instead. The same restriction stops an inheriting namespace from redefining a key its parent binds. This is a whole-program coherence fact the macro cannot detect, so it is deferred to the compiler; its full anatomy is in the [namespace override conflict](../../errors/wiring/namespace-override-conflict.md) error class. A related overlap arises when a context emits *two* blanket forwardings — joining two namespaces, or a bare-key `for` loop (`for <Key, Value> in Table { Key: Value }`) alongside a `namespace` join, which is why a loop key must be embedded in a path (`@app.SomeComponent.Key: Value`) — the [overlapping namespace forwarding](../../errors/wiring/namespace-forwarding-conflict.md) error class.
 
-Two further whole-program failures are deferred to the compiler the same way. If a component is routed into a joined namespace by a `#[prefix]` but no entry ever *binds* a provider at its path — no `#[default_impl]`, body entry, or direct wiring — the redirect lands on an empty table slot, and a `check_components!` reports the lookup as unsatisfied (`E0277`); this is the [unregistered namespace path](../../errors/checks/unregistered-namespace-path.md) error class. And a circular parent chain is rejected eagerly at the `cgp_namespace!` definitions, though the two shapes of cycle fail differently and only one of them overflows. A chain through two or more namespaces — `new A: B` with `new B: A` — makes the inheritance blanket impl's `where` clause loop, reported as `E0275` overflow at both definitions (`overflow evaluating the requirement '__Key__: A<__BComponents>'`, with a note naming the other). A **self-inheriting** namespace, `new A: A`, does not overflow: the forwarding impl it emits has a value parameter nothing can determine, so the compiler rejects it with `E0207` instead (`the type parameter '__Value__' is not constrained by the impl trait, self type, or predicates`). Both mean the parent chain is not acyclic; only the first says so recognizably. This is the [namespace inheritance cycle](../../errors/wiring/namespace-inheritance-cycle.md) error class.
+Two further whole-program failures are deferred to the compiler the same way. If a component is routed into a joined namespace by a [`#[prefix]`](../attributes/prefix.md) but no entry ever *binds* a provider at its path — no `#[default_impl]`, body entry, or direct wiring — the redirect lands on an empty table slot, and a `check_components!` reports the lookup as unsatisfied (`E0277`); this is the [unregistered namespace path](../../errors/checks/unregistered-namespace-path.md) error class. And a circular parent chain is rejected eagerly at the `cgp_namespace!` definitions, though the two shapes of cycle fail differently and only one of them overflows. A chain through two or more namespaces — `new A: B` with `new B: A` — makes the inheritance blanket impl's `where` clause loop, reported as `E0275` overflow at both definitions (`overflow evaluating the requirement '__Key__: A<__BComponents>'`, with a note naming the other). A **self-inheriting** namespace, `new A: A`, does not overflow: the forwarding impl it emits has a value parameter nothing can determine, so the compiler rejects it with `E0207` instead (`the type parameter '__Value__' is not constrained by the impl trait, self type, or predicates`). Both mean the parent chain is not acyclic; only the first says so recognizably. This is the [namespace inheritance cycle](../../errors/wiring/namespace-inheritance-cycle.md) error class.
 
 ## Source
 

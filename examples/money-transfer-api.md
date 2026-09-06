@@ -11,7 +11,7 @@ The concepts each step demonstrates are documented in full elsewhere; this examp
 - an async, per-endpoint-dispatched component — [`#[cgp_component]`](../cgp/reference/macros/cgp_component.md) with [`#[async_trait]`](../cgp/reference/macros/async_trait.md)
 - handlers, and a business capability, that wrap another provider — [higher-order providers](../cgp/concepts/higher-order-providers.md) written with [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md) and [`#[use_provider]`](../cgp/reference/attributes/use_provider.md)
 - a backend reading context fields — [implicit field access](../cgp/concepts/implicit-arguments.md) via [`#[implicit]`](../cgp/reference/attributes/implicit.md) arguments, with [`#[cgp_auto_getter]`](../cgp/reference/macros/cgp_auto_getter.md) reserved for the request fields a handler reads through a `where` bound
-- organizing the wiring — path prefixes and a namespace, per the [namespaces-and-prefixes guide](../cgp/guides/namespaces-and-prefixes.md), backed by [`#[prefix]`](../cgp/reference/macros/cgp_namespace.md), [`#[default_impl]`](../cgp/reference/traits/default_namespace.md), and [`delegate_components!`](../cgp/reference/macros/delegate_components.md) with a [`check_components!`](../cgp/reference/macros/check_components.md) assertion
+- organizing the wiring — path prefixes and a namespace, per the [namespaces-and-prefixes guide](../cgp/guides/namespaces-and-prefixes.md), backed by [`#[prefix]`](../cgp/reference/attributes/prefix.md), [`#[default_impl]`](../cgp/reference/attributes/default_impl.md), and [`delegate_components!`](../cgp/reference/macros/delegate_components.md) with a [`check_components!`](../cgp/reference/macros/check_components.md) assertion
 - restoring a `Send` bound for the HTTP server — the [recovering `Send` bounds concept](../cgp/concepts/send-bounds.md)
 
 All snippets assume `use cgp::prelude::*;`. The service speaks in terms of a handful of domain types kept abstract so the same handlers work whatever concrete types a deployment chooses.
@@ -40,7 +40,7 @@ pub trait HasCurrencyType {
 }
 ```
 
-Keeping these abstract is what lets one balance-query handler serve a context whose currency is a rich enum and another whose currency is a bare string, without rewriting the handler. The authentication types `HasPasswordType` and `HasHashedPasswordType` are defined the same way under `@app.auth.types`. The [`#[prefix(@path in DefaultNamespace)]`](../cgp/reference/macros/cgp_namespace.md) attribute on each files the component under a path — `@app.auth.types`, `@app.finance.types` — that the wiring section uses to organize the table; a first-time reader can ignore it until then, or read the [namespaces-and-prefixes guide](../cgp/guides/namespaces-and-prefixes.md) for why the types sit on a `types` sub-path apart from the logic.
+Keeping these abstract is what lets one balance-query handler serve a context whose currency is a rich enum and another whose currency is a bare string, without rewriting the handler. The authentication types `HasPasswordType` and `HasHashedPasswordType` are defined the same way under `@app.auth.types`. The [`#[prefix(@path in DefaultNamespace)]`](../cgp/reference/attributes/prefix.md) attribute on each files the component under a path — `@app.auth.types`, `@app.finance.types` — that the wiring section uses to organize the table; a first-time reader can ignore it until then, or read the [namespaces-and-prefixes guide](../cgp/guides/namespaces-and-prefixes.md) for why the types sit on a `types` sub-path apart from the logic.
 
 ## Status-coded errors
 
@@ -280,7 +280,7 @@ where
 }
 ```
 
-The `#[implicit]` argument reads the same `user_balances` field a getter would, but as a `&Arc<Mutex<…>>` bound at the top of the method — the [preferred form](../cgp/guides/reading-context-fields.md) for a field a provider reads from its own context. The request-field getters `HasLoggedInUser` and `HasBasicAuthHeader`, by contrast, stay [`#[cgp_auto_getter]`](../cgp/reference/macros/cgp_auto_getter.md) traits, because they read from the *request* type and are required as `where` bounds on it (`Request: HasBasicAuthHeader<Self>`) — a case an implicit argument, which reads only from `self`, cannot cover. The [`#[default_impl]`](../cgp/reference/traits/default_namespace.md) attribute registers this provider into the application's namespace; that is a wiring concern, explained next.
+The `#[implicit]` argument reads the same `user_balances` field a getter would, but as a `&Arc<Mutex<…>>` bound at the top of the method — the [preferred form](../cgp/guides/reading-context-fields.md) for a field a provider reads from its own context. The request-field getters `HasLoggedInUser` and `HasBasicAuthHeader`, by contrast, stay [`#[cgp_auto_getter]`](../cgp/reference/macros/cgp_auto_getter.md) traits, because they read from the *request* type and are required as `where` bounds on it (`Request: HasBasicAuthHeader<Self>`) — a case an implicit argument, which reads only from `self`, cannot cover. The [`#[default_impl]`](../cgp/reference/attributes/default_impl.md) attribute registers this provider into the application's namespace; that is a wiring concern, explained next.
 
 A business capability can be wrapped the same way an API handler can. `NoTransferToSelf` is a [higher-order provider](../cgp/concepts/higher-order-providers.md) for `MoneyTransferrer` that rejects a self-transfer and otherwise delegates to an inner transfer provider:
 
@@ -343,7 +343,7 @@ cgp_namespace! {
 }
 ```
 
-The business-logic providers, which *do* have `#[cgp_impl]` blocks, register themselves into the same namespace from their own definition with the [`#[default_impl(@path in MockNamespace)]`](../cgp/reference/traits/default_namespace.md) attribute seen on `UseMockedApp`'s `UserBalanceQuerier` above — so `MockNamespace` resolves `@app.finance.UserBalanceQuerierComponent` to `UseMockedApp` without a line in its body. Registering the wiring next to the implementation it wires is what keeps the namespace body down to the handful of entries that have nowhere else to live.
+The business-logic providers, which *do* have `#[cgp_impl]` blocks, register themselves into the same namespace from their own definition with the [`#[default_impl(@path in MockNamespace)]`](../cgp/reference/attributes/default_impl.md) attribute seen on `UseMockedApp`'s `UserBalanceQuerier` above — so `MockNamespace` resolves `@app.finance.UserBalanceQuerierComponent` to `UseMockedApp` without a line in its body. Registering the wiring next to the implementation it wires is what keeps the namespace body down to the handful of entries that have nowhere else to live.
 
 The application's API surface is a separate reusable table keyed by the API marker, so any backend can pull it in:
 

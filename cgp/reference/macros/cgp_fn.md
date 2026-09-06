@@ -48,7 +48,7 @@ where
 }
 ```
 
-Here `Scalar` appears on both `RectangleArea<Scalar>` (the trait) and its impl, while `Scalar: Mul<Output = Scalar> + Copy` appears only on the impl. A bound that should apply to the impl but not be a trait parameter can instead be written with the `#[impl_generics(...)]` attribute, which adds generic parameters to the impl block alone:
+Here `Scalar` appears on both `RectangleArea<Scalar>` (the trait) and its impl, while `Scalar: Mul<Output = Scalar> + Copy` appears only on the impl. A bound that should apply to the impl but not be a trait parameter can instead be written with the [`#[impl_generics(...)]`](../attributes/impl_generics.md) attribute, which adds generic parameters to the impl block alone:
 
 ```rust
 #[cgp_fn]
@@ -60,7 +60,7 @@ pub fn greet(&self, #[implicit] name: &Name) -> String {
 
 One restriction is intentional: `#[cgp_fn]` does not support generics on the desugared *method* itself. Generics belong to the trait and impl, not to the generated method signature. Method-level generics are uncommon in CGP and, where genuinely needed, are considered an advanced case better written as an explicit blanket impl or a [`#[cgp_component]`](cgp_component.md) provider.
 
-Several companion attributes refine the generated code and are documented separately. [`#[uses(...)]`](../attributes/uses.md) adds trait bounds on `Self` as impl-side dependencies; [`#[use_type(...)]`](../attributes/use_type.md) imports an abstract type and rewrites its occurrences to fully-qualified form; [`#[use_provider(...)]`](../attributes/use_provider.md) supports higher-order providers; [`#[extend(...)]`](../attributes/extend.md) adds supertrait bounds to the generated trait; and [`#[extend_where(...)]`](../attributes/extend_where.md) adds `where` predicates to the generated trait definition.
+Several companion attributes refine the generated code and are documented separately. [`#[uses(...)]`](../attributes/uses.md) adds trait bounds on `Self` as impl-side dependencies; [`#[use_type(...)]`](../attributes/use_type.md) imports an abstract type and rewrites its occurrences to fully-qualified form; [`#[use_provider(...)]`](../attributes/use_provider.md) supports higher-order providers; [`#[extend(...)]`](../attributes/extend.md) adds supertrait bounds to the generated trait; [`#[extend_where(...)]`](../attributes/extend_where.md) adds `where` predicates to the generated trait definition; and [`#[impl_generics(...)]`](../attributes/impl_generics.md) declares generic parameters on the generated impl alone.
 
 ## Syntax Grammar
 
@@ -125,7 +125,7 @@ where
 }
 ```
 
-The bounds contributed by the companion attributes are layered into this same impl. `#[uses(Trait)]` and `#[extend(Trait)]` push a `Self: Trait` predicate onto the impl's `where` clause; `#[extend(Trait)]` additionally adds `Trait` as a supertrait of the generated trait, and `#[extend_where(...)]` adds its predicates to the trait's own `where` clause. `#[impl_generics(...)]` inserts its parameters into the impl generics only, and its argument is a comma-separated list of Rust `GenericParam` productions, so a lifetime and a const parameter are accepted there alongside a bounded type parameter. The implicit-argument bounds are always appended last, after the attribute-contributed predicates.
+The bounds contributed by the companion attributes are layered into this same impl. `#[uses(Trait)]` and `#[extend(Trait)]` push a `Self: Trait` predicate onto the impl's `where` clause; `#[extend(Trait)]` additionally adds `Trait` as a supertrait of the generated trait, and `#[extend_where(...)]` adds its predicates to the trait's own `where` clause. [`#[impl_generics(...)]`](../attributes/impl_generics.md) inserts its parameters into the impl generics only, after the function's own generics; its argument is a comma-separated list of Rust `GenericParam` productions, so a lifetime and a const parameter are accepted there alongside a bounded type parameter. The implicit-argument bounds are always appended last, after the attribute-contributed predicates.
 
 Two further placements are decided by the macro rather than written by the author. The **function's visibility moves to the generated trait**, and the method inside the impl is emitted with inherited visibility — so `pub fn rectangle_area` yields `pub trait RectangleArea` while a private `fn` yields a trait visible only in its own module. And an attribute the macro does **not** recognize is copied onto *both* generated items rather than one, which is what lets `#[allow(...)]`, `#[doc]`, and a doc comment on the function apply to the trait and its impl alike.
 
