@@ -138,9 +138,9 @@ and the feature grid in
 [src/components/HomepageFeatures/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/src/components/HomepageFeatures).
 Its feature illustrations under `static/img/features/` name six headline capabilities — bypassing
 coherence rules, a modular component system, highly expressive macros, type-safe composition, no-std
-friendliness, and zero-cost abstraction. Five of those are the set the [Overview](#overview) page
-expands; the sixth, bypassing coherence, appears only here, which means the site's two feature lists
-do not agree and should be reconciled.
+friendliness, and zero-cost abstraction. The [Overview](#overview) gives the broader capability tour,
+including implementation choice, abstract types, extensible data, and handlers. The front page needs
+the curated feature framing from [identity](../communication-strategy/identity.md).
 
 **The specification for what this page should become is
 [writing-guides/homepage.md](writing-guides/homepage.md), and it should be read before any change
@@ -176,125 +176,98 @@ leading with. The full divergence list and the page's replacement are in
 
 ## Introduction
 
+The Introduction orients readers and directs them to maintained learning material.
+
 - **URL** — <https://contextgeneric.dev/docs/>
 - **Source** — [docs/index.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/docs/index.md)
-- **Status** — Outdated in parts
+- **Status** — Current
+- **How it was made** — revised by an agent using this base; the footer records this revision
+  without attributing the original draft
 
 ### What it covers
 
-The Introduction is the docs tree's entry point and does three things in sequence. It opens by
-defining CGP as a way to bypass Rust's coherence restrictions, illustrated with the `Hash` example —
-annotating a trait with `#[cgp_component]`, writing an overlapping `#[cgp_impl]` named implementation
-for any `T: Display`, and enabling it for a type with `delegate_components!`. It then states the
-project's **current status** frankly, warning that CGP is in formative early stages with rough edges in
-documentation, tooling, debugging, and ecosystem, and that adopting it for mission-critical work
-carries risk. It closes with a **getting started** section that routes readers to the blog posts from
-v0.7.0 onward as the most current material, to the Hello World tutorial, and to the
-[CGP Patterns book](https://patterns.contextgeneric.dev/) with the caveat that the book has not been
-updated for a while.
+The page opens with the settled description of CGP and explains compile-time implementation choice
+through an application that sends email and a test application that records messages. It introduces
+contexts, providers, and wiring, then links to the consumer/provider explanation for the mechanism.
+It contains no Rust listings; the tutorials supply the working examples.
+
+The status section states the learning cost, young ecosystem, and limited support for adoption. It
+names cargo-cgp and the agent skill as help with specific costs, qualifies both, and recommends
+starting with a small part of a project. Getting Started leads with Hello World and area calculation,
+then routes readers to Overview, Concepts, Reference, and Resources. The book is framed as a
+first-principles resource whose examples can differ from current syntax; blog posts are dated records.
 
 ### How it relates to the knowledge base
 
-The `Hash` illustration is the [coherence](../cgp/concepts/coherence.md) strategy in miniature, and the
-three constructs it names are [`#[cgp_component]`](../cgp/reference/macros/cgp_component.md),
-[`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md), and
-[`delegate_components!`](../cgp/reference/macros/delegate_components.md). The honest maturity framing
-is exactly what the [boundary](../communication-strategy/message.md#when-not-to-reach-for-cgp) and
-[objection](../communication-strategy/message.md#the-objections-readers-bring) guidance prescribe for
-the evaluator profile in [readers.md](../communication-strategy/readers.md), and it is one of the site's
-strongest devrel assets — a page that concedes its own immaturity earns the trust that later claims
-spend. The routing advice in "Getting Started" is the conversion ladder from
-[formats.md](../communication-strategy/formats.md) applied to a docs landing page.
-
-### Where it diverges
-
-Three points are stale. The status section is dated "As of 2025" while CGP is now at v0.8.0, so the
-year should move or the phrasing should stop naming one. The page directs readers to blog posts as the
-most current resource, which was true when the tutorials did not exist but is weaker now that the
-[area-calculation series](tutorials/area-calculation.md) covers the same ground in maintained form.
-And the page predates [`cargo-cgp`](../cargo-cgp/README.md) entirely: the "mature tooling" and
-"streamlined debugging techniques" it lists among the rough edges now have a first-class answer that
-the page does not mention, which is the single most valuable addition available to it.
+[Identity](../communication-strategy/identity.md) governs the opening, and
+[the message](../communication-strategy/message.md) supplies the application/test example and adoption
+boundaries. The terminology comes from [vocabulary](../communication-strategy/vocabulary.md) and
+[consumer and provider traits](../cgp/concepts/consumer-and-provider-traits.md). The learning paths
+lead to the [Hello World](tutorials/hello-world.md) and
+[area-calculation](tutorials/area-calculation.md) teaching contracts.
 
 ### Maintaining it
 
-Preserve the frank maturity framing — it is doing real work and must not be softened into marketing.
-When updating the routing advice, keep the ladder shape: a low-commitment look first, depth after.
-Any revision that touches the opening definition must reconcile it with
-[identity.md](../communication-strategy/identity.md).
+Keep the maturity framing frank and the entry short. Define context as the application type in this
+example, preserve the distinction between plain trait implementations and providers, and direct new
+code toward maintained tutorials and reference pages. Describe tooling and agent support beside the
+costs they address, without promising that either eliminates them.
 
 ## Overview
 
+The Overview is the detailed feature tour and links each subject to its maintained explanation.
+
 - **URL** — <https://contextgeneric.dev/docs/overview>
 - **Source** — [docs/overview.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/docs/overview.md)
-- **Status** — Current in substance, dated in its pointers
+- **Status** — Current
+- **How it was made** — revised by an agent using this base; the footer records this revision
+  without attributing the original draft
 
 ### What it covers
 
-The Overview is the site's feature-and-benefit page, split into two halves. **Key Features** names
-five: the modular component system built on the consumer/provider trait split, highly expressive
-macros, type-safe composition with no `dyn`/`Any`/reflection, no-std friendliness, and zero-cost
-abstraction. **Problems Solved** then names five concrete pains: error handling not tied to one error
-crate, an abstract async runtime, overlapping implementations, the limits of dynamic dispatch and
-ad-hoc enum polymorphism, and monolithic traits that grow to dozens of methods and cannot be
-decomposed.
+Key Features explains pluggable implementations, zero-cost dispatch, type-safe wiring, dependency
+abstraction, gradual adoption, abstract types, extensible records and variants, and composable
+handlers. It states the conditions behind the benefits: wiring is lazy until used or checked,
+portability depends on selected providers, and associated types do not enforce distinct units when
+the concrete types coincide.
+
+Problems Solved develops error handling, runtime abstraction, overlapping implementations, static
+composition alongside runtime dispatch, large-trait decomposition, and repeated generic parameters.
+The page preserves the boundary with ordinary Rust tools: unchanged foreign traits still obey the
+orphan rule, runtime choices can use enums or trait objects, and simple cases can use plain traits
+and functions. The page links to Concepts and cargo-cgp rather than using the book for current syntax.
 
 ### How it relates to the knowledge base
 
-The two halves map almost one to one onto two communication-strategy documents:
-[identity.md](../communication-strategy/identity.md#the-headline-feature-set) governs the first and
-[message.md](../communication-strategy/message.md#the-problems-cgp-removes) the second, and any revision should
-reconcile the page against both. On the technical side, the component system is
-[consumer and provider traits](../cgp/concepts/consumer-and-provider-traits.md); the overlapping
-implementations claim is [coherence](../cgp/concepts/coherence.md); error handling is
-[modular error handling](../cgp/concepts/modular-error-handling.md) over
-[`HasErrorType`](../cgp/reference/components/has_error_type.md) and
-[`CanRaiseError`](../cgp/reference/components/can_raise_error.md); the abstract runtime is
-[`HasRuntime`](../cgp/reference/components/has_runtime.md); the enum-polymorphism answer is
-[extensible variants](../cgp/concepts/extensible-variants.md) and
-[dispatching](../cgp/concepts/dispatching.md); and the monolithic-traits answer is
-[impl-side dependencies](../cgp/concepts/impl-side-dependencies.md), with
-[modularity-hierarchy](../cgp/concepts/modularity-hierarchy.md) as the map of how far to decompose. The
-abstract-types claim about using `f64` for both `Distance` and `Weight` is
-[abstract types](../cgp/concepts/abstract-types.md).
+[Identity](../communication-strategy/identity.md#the-headline-feature-set) governs the core features,
+and [the message](../communication-strategy/message.md) supplies the problems and their limits. The
+feature tour expands beyond the front page's curated set, as specified by
+[information architecture](information-architecture.md#the-target-page-inventory).
 
-### Where it diverges
+The technical explanations come from these subjects:
 
-Nothing here is factually wrong, but the page's depth pointers all lead to the
-[CGP Patterns book](https://patterns.contextgeneric.dev/), which the Introduction itself describes as
-not recently updated. The error-handling section in particular links to a book chapter rather than to
-anything maintained. The page also predates `cargo-cgp` and the extensible-data work, so its
-"Dynamic Dispatch" section understates what CGP now offers for enums.
-
-Two things are **absent** rather than dated, and both concern abstract types. The Key Features half names
-five capabilities and abstract types is not among them, even though this page is where the front page's
-breadth section offloads — so the site's fullest feature tour is silent on one of the three capabilities
-the [breadth line](../communication-strategy/identity.md#the-pitch-that-follows-the-line) advertises. And
-the Problems Solved half has no entry for **generic-parameter threading**, the pain a reader with a deep
-call graph feels: a signature carrying an error type, a runtime, and a storage handle as parameters
-through layers that touch none of them. The two are separate additions on purpose, per
-[message.md](../communication-strategy/message.md)'s rule that a capability and the pain it removes are
-different views for different readers — one wants a type swappable, the other wants their signatures
-back. The capability entry should carry the payoff (*the layers that never touch a type never mention
-it*) rather than restating that the application chooses; the problem entry is the before/after
-[message.md](../communication-strategy/message.md#the-problems-cgp-removes) now carries.
+- [Consumer and provider traits](../cgp/concepts/consumer-and-provider-traits.md) and
+  [coherence](../cgp/concepts/coherence.md): implementation choice within Rust's rules.
+- [Check traits](../cgp/concepts/check-traits.md) and [cargo-cgp](../cargo-cgp/README.md): verification
+  and readable diagnostics.
+- [Abstract types](../cgp/concepts/abstract-types.md) and
+  [impl-side dependencies](../cgp/concepts/impl-side-dependencies.md): dependency abstraction.
+- [Modular error handling](../cgp/concepts/modular-error-handling.md),
+  [HasRuntime](../cgp/reference/components/has_runtime.md), and
+  [Send bounds](../cgp/concepts/send-bounds.md): error and runtime choices.
+- [Extensible records](../cgp/concepts/extensible-records.md),
+  [extensible variants](../cgp/concepts/extensible-variants.md),
+  [dispatching](../cgp/concepts/dispatching.md), and [handlers](../cgp/concepts/handlers.md): generic
+  data handling and computation.
+- [Modularity hierarchy](../cgp/concepts/modularity-hierarchy.md): choosing how far to decompose.
 
 ### Maintaining it
 
-**The page's job is the feature tour**, per
-[information-architecture.md](information-architecture.md#the-target-page-inventory): every high-level
-CGP capability walked through in more detail than any other surface carries, which is what the front
-page's capability beats and its breadth section offload to. Three consequences follow. It is **not** held
-to five features — the five-entry limit the
-[headline feature set](../communication-strategy/identity.md#the-headline-feature-set) argues for is the
-*front page's* constraint, and this page is where those five are expanded and the breadth capabilities
-(abstract types, extensible records and variants, the handler family) are added. And it stops competing
-with the front page's list rather than being made identical to it. And because it is the breadth
-section's destination, **every capability the breadth line names has to appear here** — which is what
-makes the missing abstract-types entry above a gap in this page's job rather than merely an omission.
-Keep each problem written as a pain the reader already feels rather than as a capability, which is the
-ordering the [problems catalog](../communication-strategy/message.md#the-problems-cgp-removes)
-prescribes.
+Keep the capability tour broader than the front page's feature set. Abstract types need both a
+capability explanation and a separate account of the repeated-parameter problem. Preserve the
+qualifications on compile-time checking, portability, runtime choice, and component sizing. Link to
+maintained explanations for depth rather than reproducing their tutorials or directing current-code
+questions to dated posts.
 
 ## Resources
 
@@ -448,8 +421,9 @@ When the tool's diagnostics change, the internal reference and these pages move 
 
 The AI section publishes CGP's agent skill for readers who want to hand it to an assistant. The index
 page explains what the skill is, states plainly that it teaches the assistant rather than the reader,
-gives the two ways to install it, and routes a human who is actually trying to *learn* CGP to the
-tutorials and concepts instead. It carries no skill content of its own.
+distinguishes attaching the primer from installing the complete skill, and routes learners to the
+tutorials and concepts. It explains that cloning downloads the files and that the assistant must be
+configured to discover them, with the entry point and references kept together. It carries no skill content of its own.
 
 The skill itself follows as sibling pages: `SKILL.md` and one page per file in `cgp/references/`.
 **These are symlinks, not copies.** The `cgp-skills` repository is a git submodule checked out at
@@ -1122,15 +1096,15 @@ front-page work rather than to the port, so it is left alone here.
 - **Status** — Current
 - **How it was made** — written by an agent from
   [ai-disclosure.md](../communication-strategy/ai-disclosure.md), which specifies it; level one of the
-  four it describes
+  four it describes. The revision awaits the author’s required pre-publication read; its footer
+  records agent authorship without claiming that review has happened.
 
 ### What it covers
 
-The page states how much of each part of CGP is written by AI and why the amount varies. It opens on
-the principle rather than the list, since four levels without one read as four excuses: two questions
-decide how much an agent writes — whether the artifact becomes part of a user's program, and whether it
-can be checked cheaply against something already true — and they point the same way, so the closer
-something sits to code a user compiles, the more of it is hand-written.
+The page opens with a summary of AI's roles and the author's design ownership, then explains why the
+division varies. Agents receive more writing responsibility when output can be checked against
+existing code and does not become part of a user's application. The section distinguishes checking
+an implementation from deciding what behavior the library should provide.
 
 Four sections then run from most AI to least. **Documentation and reference pages** is the longest,
 because it is the only level whose trustworthiness rests on a process rather than on a person: it
@@ -1140,7 +1114,8 @@ describes, and the per-commit model trailers that make the whole thing checkable
 tutorials** inverts the order — the author drafts, an agent revises. **Tooling and tests** covers
 `cargo-cgp` and the test suite under one rule, that neither becomes part of a user's program.
 **The CGP library** states that the design is entirely the author's and separates that from macro
-implementation work he directs and shares. Each level ends on its own honest limit. A short
+implementation work he directs and shares. The page states the limits of source verification, human
+review, and tests, including incorrect test expectations and missing cases. A short
 **Responsibility** section carries the page's single sentence in the author's own voice, and
 **How pages are marked** explains the provenance notes and why older pages do not carry them.
 

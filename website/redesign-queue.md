@@ -60,15 +60,6 @@ is where an evaluator looks for it. *Website repo, `docs/resources.md`.*
 `cgp-error-eyre` or `cgp-error-std`, and lists `cgp-serde` by GitHub URL rather than its crates.io entry.
 *Website repo, `docs/resources.md`.*
 
-**The Introduction's status section is dated "As of 2025".** CGP is now at v0.8.0. This is resolved by
-the *Project status* page below, but the year-stamp should go either way. *Website repo,
-`docs/index.md`.*
-
-**The Introduction routes newcomers to the blog as the most current material.** That was true before the
-tutorials existed and is now the weaker answer, since the blog is the least current body of writing on
-the site. Point at the tutorials first. *Website repo, `docs/index.md`; see
-[blog/README.md](blog/README.md) for the drift that makes this urgent.*
-
 **The Hermes SDK sits in a bare list at the bottom of Resources.** It is the real, non-trivial system CGP
 was built for and the strongest social proof available to the evaluator profile, and it is presented as
 one link among eight. *Website repo, `docs/resources.md`; see
@@ -79,8 +70,8 @@ one link among eight. *Website repo, `docs/resources.md`; see
 **The front page needs rebuilding against its guide.** It diverges in six concrete ways: the hero
 headline leads with "modular" and does not use the tag line; there is no reassurance line and no install
 command; the feature grid has six entries, two leading with retired words, and disagrees with the
-Overview's five; the code example does not show the implementation Rust rejects, so the reader never sees
-the contrast — **and it does not compile**, since it writes `#[cgp_impl(HashWithDisplay)]` without `new`
+Overview's capability tour; the code example does not show the implementation Rust rejects, so the
+reader never sees the contrast — **and it does not compile**, since it writes `#[cgp_impl(HashWithDisplay)]` without `new`
 and never declares the provider struct; the problem cards are generic and unanchored; and **there is no
 cost section at all**, which on a page for this audience is the most consequential omission of the six.
 The "Ready to Get Started?" block is template filler and should become the routing section. *Website
@@ -88,31 +79,10 @@ repo, `src/pages/index.tsx` and `src/components/HomepageFeatures/`; spec in
 [writing-guides/homepage.md](writing-guides/homepage.md), and the snippet defect recorded in
 [site-structure.md](site-structure.md).*
 
-**The site carries three disagreeing feature lists.** The front page names six capabilities, the Overview
-names five, and [identity.md](../communication-strategy/identity.md#the-headline-feature-set) curates a
-different five. The fix is not to make all three identical: the **front page** carries the curated five,
-and the **Overview** — whose job is the detailed feature tour, per
-[information-architecture.md](information-architecture.md#the-target-page-inventory) — expands each of
-them and adds the breadth capabilities, so it is not capped at five and stops competing with the front
-page rather than matching it. *Website repo, front page and `docs/overview.md`.*
-
-**The Overview's depth pointers all lead to the book,** which the Introduction itself describes as not
-recently updated — the error-handling section in particular links to a book chapter rather than to
-anything maintained. Repoint at the explanation pages once they exist. *Website repo,
-`docs/overview.md`.*
-
-**The Overview predates `cargo-cgp` and the extensible-data work,** so its "Dynamic Dispatch" section
-understates what CGP now offers for enums. *Website repo, `docs/overview.md`.*
-
-**The Overview names no abstract-types capability and no generic-parameter-threading pain.** These are
-absences rather than staleness, and the first is a gap in the page's *job*: it is where the front page's
-breadth section offloads, so a capability the breadth line advertises has to appear here, and abstract
-types do not. The second is the pain a reader with a deep call graph feels — a signature carrying an error
-type, a runtime, and a storage handle through layers that touch none of them — which no entry on the site
-currently names. The two are separate additions, one to each half of the page, because a capability and
-the pain it removes reach different readers. *Website repo, `docs/overview.md`; the capability payoff and
-the before/after are in [message.md](../communication-strategy/message.md), and the record of the gap in
-[site-structure.md](site-structure.md).*
+**The front page's feature list needs the settled framing.** Its six-feature list should become the
+five curated capabilities in [identity.md](../communication-strategy/identity.md#the-headline-feature-set),
+with links to the Overview for the broader tour. The Overview expands those capabilities and covers
+abstract types, extensible data, and handlers. *Website repo, front page.*
 
 **Neither tutorial teaches that wiring is lazy,** mentions
 [`check_components!`](../cgp/reference/macros/check_components.md), or mentions

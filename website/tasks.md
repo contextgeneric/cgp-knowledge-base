@@ -130,11 +130,6 @@ in [redesign-queue.md](redesign-queue.md#corrections--single-lines-wrong-today).
 - **C6 — Hermes SDK.** Promote it out of the bare list at the bottom; it is the real non-trivial system
   CGP was built for and the strongest social proof available to the evaluator, per
   [evidence.md](../communication-strategy/evidence.md). *Lands in:* `docs/resources.md`.
-- **C7 — the Introduction's year-stamp.** Drop "As of 2025". *Lands in:* `docs/index.md`. **Subsumed by
-  E1** if E1 lands first, since the whole status section moves.
-- **C8 — the Introduction's routing.** It sends newcomers to the blog as the most current material, which
-  was true before the tutorials existed and is now the weakest answer on the site. Point at the tutorials
-  first. *Lands in:* `docs/index.md`.
 
 ## E — The explanation tier
 
@@ -150,12 +145,11 @@ this group, and it is not a concept page:
 
 - **E1 — *Project status and adoption risk*.** Mostly a move: lift the "Current Status" section out of
   the Introduction so the homepage can link it from above the fold. Its frankness is the asset and must
-  survive the move; what changes is the year-stamp, the absence of `cargo-cgp`, the missing
-  incremental-adoption reassurance, and the agent-support note among the mitigations. **This page has no
-  settled home** — it is project meta rather than a CGP idea, so it does not belong under Concepts, and
+  survive the move. The section includes cargo-cgp, gradual adoption, and the agent skill among its
+  mitigations. **This page has no settled home** — it is project meta rather than a CGP idea, so it does not belong under Concepts, and
   under **Project** beside Contribute is the obvious alternative. Settle that before writing it.
   *Blocks:* F1's second call to action. *Done when:* the page stands alone, the Introduction links to
-  it, and C7 is moot.
+  it.
 
 ## F — The front page
 
@@ -167,26 +161,11 @@ this group, and it is not a concept page:
   `src/pages/index.tsx` and `src/components/HomepageFeatures/`. *Spec:*
   [writing-guides/homepage.md](writing-guides/homepage.md). *Blocked by:* C1, E1, F2, and O2 softly;
   E2 and E4 are done. *Done when:* the guide's five draft checks pass and the author has read it.
-- **F2 — reconcile the three feature lists.** The front page names six capabilities, the Overview names
-  five, and [identity.md](../communication-strategy/identity.md#the-headline-feature-set) curates a
-  different five. The reconciliation is not a merge: the **front page** carries the curated five as prose
-  beats, and the **Overview** expands each of them and adds the breadth capabilities, so the two lists
-  stop competing rather than being made identical. *Lands in:* the front page and the Overview.
-- **F3 — repurpose and repair the Overview.** Its job is the **feature tour**: every high-level CGP
-  capability walked through in more detail than any other surface carries, which makes it the destination
-  for both section 3 and section 4 of the homepage essay. Five changes: state that job and drop the
-  five-feature cap, since the cap belongs to the front page; **add the two abstract-types entries the page
-  is missing** — a Key Features capability whose payoff is that a type the application chooses *stops
-  being a parameter every layer carries*, and a Problems Solved entry for the threading pain itself, kept
-  separate because a capability and the pain it removes reach different readers (the copy for both is in
-  [message.md](../communication-strategy/message.md), and the gap is recorded in
-  [site-structure.md](site-structure.md)); repoint the depth pointers, which all
-  currently lead to the [CGP Patterns book](https://patterns.contextgeneric.dev/) that the Introduction
-  itself describes as not recently updated; refresh the "Dynamic Dispatch" section, which predates
-  `cargo-cgp` and the extensible-data work and understates what CGP now offers for enums. The page
-  **stays where it is** rather than moving into a category, so the `slug: /overview` this task once
-  carried is no longer needed. *Unblocked:* E2 and E4 are written, and are what the depth
-  pointers should point at instead of the book.
+- **F2 — align the front page with the settled feature set.** The front page still names six
+  capabilities. It needs the five curated in
+  [identity.md](../communication-strategy/identity.md#the-headline-feature-set), developed as prose
+  beats that link to the Overview for depth. The Overview supplies the broader tour, including
+  abstract types, extensible data, and handlers. *Lands in:* the front page.
 
 ## T — Teaching
 
@@ -376,7 +355,7 @@ somewhere to be tracked.
 - **O1 — write the orientation-page writing guide.** The site has no spec for the pages whose job is
   routing rather than teaching, and [writing-guides/README.md](writing-guides/README.md) defers it until
   the need arises. The need has arisen twice over: the Introduction and Resources are both being rewritten
-  by C4–C8 and E1, and O2 adds a page of a kind the site has not published, which
+  by C4–C6 and E1, and O2 adds a page of a kind the site has not published, which
   [AGENTS.md](AGENTS.md) requires a guide for **before** the page rather than after. It should cover the
   Introduction, Resources, and the Quickstart. *Blocked by:* nothing. *Blocks:* O2.
 - **O2 — the Quickstart page.** Install and one working program, with no concepts and nothing to
@@ -438,10 +417,9 @@ the [ordering](#the-ordering) for what to start on.
 
 | Task | Blocked by | Blocks |
 |---|---|---|
-| C1–C8 | nothing | C1 → F1; C2 and C3 completed by V1 |
+| C1–C6 | nothing | C1 → F1; C2 and C3 completed by V1 |
 | E1 | nothing | F1 |
 | F2 | nothing | F1 |
-| F3 | E1 | nothing |
 | F1 | C1, E1, F2, O2 (soft) | nothing |
 | T1 | nothing | nothing (superseded by T2) |
 | T2, T4 | nothing | nothing |
@@ -466,7 +444,7 @@ interrupt**: nothing publishes until it lands, so a task deferred is a release d
 
 ## The ordering
 
-**First, the corrections (C1–C8), in a single pass on the branch.** They cost minutes each and they stop
+**First, the corrections (C1–C6), in a single pass on the branch.** They cost minutes each and they stop
 every later task inheriting known-wrong copy.
 
 **A1 is drafted already**, which matters for the ordering rather than merely for the tally: it is what
@@ -485,9 +463,9 @@ unblocks the homepage's second call to action, but it cannot start until its hom
 **Then start R2, and keep it running.** It is long, mechanical, parallelizable, and it is the release
 date. Split it by subdirectory across sessions and let everything below run alongside it.
 
-**Then O1 and O2, then F2 and F3, then F1.** The orientation pages give the front page its first call to
-action a real destination; F2 and F3 settle what the Overview is before the front page is rebuilt against
-it; F1 is the largest single-page change and the one that most needs its destinations in place.
+**Then O1 and O2, then F2, then F1.** The orientation pages give the front page its first call to
+action a real destination. F2 aligns the front page with the Overview’s feature tour. F1 is the
+largest single-page change and the one that most needs its destinations in place.
 
 **Then T2, T3, and T4.** T2 is the highest-value teaching addition and the one that most directly answers
 the objection that has cost CGP the most readers; T3 is where a reader finally meets an application
