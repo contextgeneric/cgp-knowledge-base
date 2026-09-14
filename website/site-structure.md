@@ -989,8 +989,18 @@ which pages qualify are in
 it parses the braces as an expression and fails the build. Section headings are therefore link targets
 and cannot be reworded freely.
 
-**One shared provenance note** closes every page, in the wording the written pages use, linking
-[the disclaimer](AGENTS.md#disclosing-ai-use-on-a-page)'s documentation section.
+**One shared provenance note** closes every reference page and links to
+[the disclaimer](AGENTS.md#disclosing-ai-use-on-a-page)'s documentation section. The wording is:
+“An AI agent wrote this page using the CGP knowledge base. Its content was verified against the
+library's source. See How AI is used in this project.” The final phrase links to the documentation
+and reference pages section of the disclosure.
+
+The site's existing footers use this sentence structure while preserving their provenance. A page
+that records revision alone says “revised”; one that records both authorship and revision says
+“wrote and revised”. Tooling pages retain their specific claims about verification against the tool
+or examples produced by running it. Footer wording does not attribute verification to a person or
+agent when the existing record does not identify who performed it. Pages without a provenance note
+and the published skill snapshot are outside this wording convention's revision scope.
 
 **The formal grammar is its own `## Formal grammar` section**, placed after *Under the hood*, so a
 reader who needs it can find it while a beginner meets it only after the examples; it cites the Rust
