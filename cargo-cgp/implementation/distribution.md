@@ -360,8 +360,9 @@ Nix reconstructs by hand what a nightly bump would otherwise coordinate through 
 toolchain comes from [`oxalica/rust-overlay`](https://github.com/oxalica/rust-overlay), whose
 `fromRustupToolchainFile` reads the same
 [`rust-toolchain.toml`](https://github.com/contextgeneric/cargo-cgp/blob/main/rust-toolchain.toml)
-the `build.rs` scripts read — channel plus the `rustc-dev` and `llvm-tools` components — so the Nix
-toolchain cannot drift from the pinned one. That toolchain is passed to `makeRustPlatform`, and
+the `build.rs` scripts read — channel plus the `rustc-dev` and `llvm-tools` components the driver
+needs, and the `rust-src` the UI snapshots need (see [Testing](testing.md)) — so the Nix toolchain
+cannot drift from the pinned one. That toolchain is passed to `makeRustPlatform`, and
 `buildRustPackage` compiles the front-end and the driver together under it, exactly as `setup`'s
 `cargo +<pinned> install` does, so the driver embeds the same compiler whose sysroot and
 `librustc_driver` it will later be handed.
@@ -457,7 +458,7 @@ the code that links it and the diagnostics it prints. Three follow-ups round out
   `cargo test -p cargo-cgp-ui-tests --test ui -- --bless` and the diffs reviewed (see
   [Testing](testing.md)).
 - **Provision the new toolchain for the tool's own build.** On a rustup machine, `rustup` installs the
-  new dated nightly with its `rustc-dev`/`llvm-tools` components on first build of the toolchain file;
+  new dated nightly with the components the toolchain file lists on first build of it;
   under Nix, refresh the flake as below. A released tool then reaches its users through the
   `setup`/`update` flow, which installs whatever nightly the new release pins.
 

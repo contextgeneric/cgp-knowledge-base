@@ -198,15 +198,19 @@ the order is therefore completion order, not fixture order, which is why every l
 
 The `-q` removes most of the noise: it suppresses cargo's own progress lines (`Checking`,
 `Compiling`, `Finished`). What remains and must be normalized away is machine-specific or
-non-diagnostic: the absolute paths of the `cgp` checkout and the throwaway crate, the cargo
-build-failure summary (`could not compile …`, which is cargo's own output rather than part of any
-diagnostic), and a note pointing at a hash-named temp file when a long type is elided. The
+non-diagnostic: the absolute paths of the `cgp` checkout, the throwaway crate, and the toolchain
+sysroot, the cargo build-failure summary (`could not compile …`, which is cargo's own output rather
+than part of any diagnostic), and a note pointing at a hash-named temp file when a long type is
+elided. The
 driver's `--verbose` suppresses that elision, so the temp-file note never reaches a `.cgp.stderr`; but
 the rust-stderr pass runs plain `cargo check` *without* `--verbose`, so a long CGP type can be elided
 there and the note does arise in `.rust.stderr` — which is exactly why dropping it earns its keep. The
+sysroot arrives with any diagnostic that points into the standard library — an implicit `Sized` bound
+on `Option`, say — and its path carries the contributor's home directory, the pinned nightly's name,
+and the host target triple, so it is rewritten to `$SYSROOT`. The
 single `normalize` module handles the rendered stderr of both passes: it rewrites the paths to
-`$CGP`/`$DIR` and drops the summary and temp-file lines, so what is compared depends only on the
-diagnostic content. Normalization applies to the compared/blessed output only; `--print` shows the raw output untouched.
+`$CGP`/`$DIR`/`$SYSROOT` and drops the summary and temp-file lines, so what is compared depends only
+on the diagnostic content. Normalization applies to the compared/blessed output only; `--print` shows the raw output untouched.
 The harness finds the built `cargo-cgp` by walking up from its own test binary until an ancestor
 directory holds that binary, having first built both with `cargo build` (the front-end locates the
 driver as its sibling). Searching for the binary rather than counting parent directories keeps the
@@ -267,7 +271,18 @@ this rather than a shift, and it is never blessed without explaining it first.
 A snapshot is only reproducible against the toolchain it was blessed with, because it contains the
 compiler's diagnostic text. The harness builds and runs under the toolchain the repository pins in
 [`rust-toolchain.toml`](https://github.com/contextgeneric/cargo-cgp/blob/main/rust-toolchain.toml)
-(overridable with `RUSTUP_TOOLCHAIN`), and snapshots must be blessed under that same toolchain. A
+(overridable with `RUSTUP_TOOLCHAIN`), and snapshots must be blessed under that same toolchain.
+
+The pin covers the toolchain's *components* as well as its date, and one of them is there only for
+this suite. `rust-src` is no use to the driver, but rustc shows the `core`/`std` source line beneath a
+diagnostic that points into the standard library only when that component is present — so a fixture
+such as `usability/lowering/option_slice`, whose error cites `Option`'s definition, renders one way
+with it and another way without. Left unpinned, that turns on whichever components a contributor's
+toolchain happened to pick up (rustup installs them on demand, and other tools ask for `rust-src`),
+and the snapshot flips underneath an unrelated change. Pinning it in `rust-toolchain.toml` makes the
+diagnostic content a function of the toolchain file alone, which is what the rest of this section
+assumes. It is deliberately *not* added to what `cargo cgp setup` installs, since a user of the tool
+never runs this suite. A
 deliberate toolchain bump can therefore change the diagnostic wording and require a re-bless,
 exactly as it does for Clippy — a `.cgp.stderr` or `.rust.stderr` diff after a toolchain change is
 expected, not a regression. An `.expand.rs` is steadier, since it holds generated *source* rather
@@ -333,7 +348,9 @@ no dogfood test yet (see above).
   an explicit `-Znext-solver` override.
 - [`crates/cargo-cgp-ui-tests/tests/options.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/options.rs),
   [`crates/cargo-cgp-ui-tests/tests/normalize.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/normalize.rs)
-  — harness option/filter parsing and the output normalizer.
+  — harness option/filter parsing, and the output normalizer: the `$CGP`/`$DIR`/`$SYSROOT` path
+  rewrites, the dropped content-free lines, and the `Chars<…>` spine collapse across every
+  truncation depth.
 - [`crates/cargo-cgp-ui-tests/tests/paths.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/paths.rs)
   — the upward search for the built front-end, against both layouts cargo has put a test binary in
   (`<profile>/deps/` and `<profile>/build/<package>/<hash>/out/`), plus the nearest-ancestor rule, the
