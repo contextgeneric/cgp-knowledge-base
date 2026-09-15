@@ -703,7 +703,7 @@ the failing call is an associated-function call `Param::method(…)` on a generi
 enclosing provider-trait impl, the method belongs to a CGP provider trait, and the parameter is not
 already bounded by it. It is gated to the "item on an unbounded type parameter" `E0599` shape —
 reported during typeck of the calling body, where the detector's queries are cached, unlike the
-resolution-class `E0599` emitted mid-`predicates_of` — recognized by its plain-string help
+resolution-class `E0599` emitted mid-`clauses_of` — recognized by its plain-string help
 (`the type parameter is bounded by the trait`), since the `E0599`'s main message is a Fluent
 (non-string) message. Its wording is the rustc-free `plan_missing_use_provider` /
 `missing_use_provider_help` over the owned `MissingUseProvider`.

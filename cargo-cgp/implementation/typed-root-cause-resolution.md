@@ -414,7 +414,7 @@ marking.
 - [`crates/cargo-cgp-driver/src/emitter/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/emitter) — the `try_resolve`
   seam (gated by a cheap `mentions_wiring` scan, an `E0271`/`E0277` code, or a method-bounds `E0599`,
   with a resolution-class `E0599` excluded so the solver never runs on an error emitted
-  mid-`predicates_of`) that tries the seven anchors in turn (the by-capability anchor last, gated to
+  mid-`clauses_of`) that tries the seven anchors in turn (the by-capability anchor last, gated to
   `E0277`), and the `transform_resolved` mutation it
   feeds — mapping the rustc code to a `DiagKind` (overridden to the use-site kind for a call-anchored
   resolution), calling `plan_resolved`, and applying the plan to the
@@ -560,7 +560,7 @@ Several fixtures pin the **harder mechanics**:
   solver and panic rustc, now resolved through the placeholder instantiation.
 - `nested_higher_ranked_descent` — the same nested twice through the record machinery (the
   `MessagesArchive` shape), which used to decline to the raw fallback.
-- `enum_hasfields_lock` — a resolution-class `E0599` emitted mid-`predicates_of`, which the resolver
+- `enum_hasfields_lock` — a resolution-class `E0599` emitted mid-`clauses_of`, which the resolver
   must decline rather than run its solver on and re-enter the `DiagCtxt` lock.
 
 The **use-site paths** are pinned by the

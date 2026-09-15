@@ -357,7 +357,7 @@ pins the resulting shape). All of the merge and render is in the rustc-free
 
 The walk and its leaf classification carry most of the resolver's fixtures — the leaf classes
 (fields, wiring, redirects, dispatch tables, non-providers), the harder mechanics (parallel
-branches, deep nesting, higher-ranked descents, the mid-`predicates_of` decline), and the
+branches, deep nesting, higher-ranked descents, the mid-`clauses_of` decline), and the
 stalled-projection recoveries. The consolidated catalog, one entry per pinned behavior, lives in
 the parent document's [Tests](typed-root-cause-resolution.md#tests) section.
 

@@ -190,8 +190,8 @@ cannot even be called while the lock is held, and swapping the emitter would not
 panic is the borrow, not the emitter behind it.
 
 The trap is indirect, because the resolver does not emit diagnostics itself. It forces a **query**,
-and the query emits. Two query paths are known to do this. Forcing `predicates_of` on an impl whose
-`where`-clause has a type that fails to lower makes `gather_explicit_predicates_of` →
+and the query emits. Two query paths are known to do this. Forcing `clauses_of` on an impl whose
+`where`-clause has a type that fails to lower makes `gather_explicit_clauses_of` →
 `lower_ty` → `resolve_type_relative_path` report a resolution error (an `E0599` such as
 `no variant named …`) the first time it is computed; if the resolver forces that query while a
 diagnostic is being
@@ -206,7 +206,7 @@ that type-checking already visited. The danger is only a query computed for the 
 emission, which happens when the diagnostic being emitted was itself produced *during* that query —
 i.e. during the collection / type-lowering phase, not the later trait-solving phase. So the resolver
 **declines diagnostics from the collection phase**: a resolution-class `E0599` (`no variant named …`,
-`no associated item …`) is emitted mid-`predicates_of`, so `try_resolve` filters it out before running
+`no associated item …`) is emitted mid-`clauses_of`, so `try_resolve` filters it out before running
 the solver, keeping only the method-bounds `E0599` (which is reported during method resolution, after
 collection). The same reasoning bans forcing `tcx.typeck` from the emitter outright. `E0271`/`E0277`
 are trait-solving failures reported after collection, so the queries their resolution forces are
@@ -221,7 +221,7 @@ so any term the resolver hands to `ocx.eq` (or any inference relation) must have
 instantiated first.** `InferCtxt::generalize` in
 [`rustc_infer/src/infer/relate/generalize.rs`](../../../external/rust/compiler/rustc_infer/src/infer/relate/generalize.rs)
 asserts `!source_term.has_escaping_bound_vars()`. The natural mistake is to reach a `ty::TraitRef`
-out of a `ty::PolyTraitPredicate` with `skip_binder()` and relate it: for a higher-ranked obligation
+out of a `ty::PolyTraitClause` with `skip_binder()` and relate it: for a higher-ranked obligation
 such as `Self: for<'a> CanSerializeValue<&'a Value>` — the shape a recursive provider like
 `SerializeIterator` carries — `skip_binder()` leaves the `'a` bound variable escaping, and the
 relation panics mid-emit. The fix is to instantiate the binder before relating, with placeholders

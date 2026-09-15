@@ -55,7 +55,7 @@ though the components themselves are designed later.
 
 Every "this query is pure" claim rests on one invariant, and the design should state it plainly: the
 resolver runs at emit time, over compiler state that is frozen. The trait set, the impls, the
-`predicates_of`, the ADT field lists, the `Deref` targets — everything the resolver reads is fixed once
+`clauses_of`, the ADT field lists, the `Deref` targets — everything the resolver reads is fixed once
 the crate is lowered and is not mutated by the trait solving in progress (see
 [why resolution runs in the emitter](typed-root-cause-resolution.md#why-it-runs-in-the-emitter) and
 the [`after_analysis` unreachability](rustc-diagnostic-internals.md)). Frozen inputs are what make the
@@ -86,7 +86,7 @@ in
 and the label rendering in
 [`label/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/label).
 Underneath, these bottom out on rustc queries that are themselves memoized and pure — `item_name`,
-`crate_name`, `all_impls`, `trait_impls_of`, `predicates_of`, `impl_trait_ref`, `type_of`,
+`crate_name`, `all_impls`, `trait_impls_of`, `clauses_of`, `impl_trait_ref`, `type_of`,
 `associated_items`, and the ADT/const structural reads.
 
 **Class B — pure signature, stateful implementation.** These are the three solver-driven queries:

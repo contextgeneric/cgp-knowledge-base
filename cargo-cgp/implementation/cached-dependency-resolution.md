@@ -37,7 +37,7 @@ obligation once.
 
 The compiler memoizes none of that for us, and knowing which layer is already cached prevents building
 the wrong thing. rustc's query system memoizes each individual lookup the walk makes — the
-`predicates_of`, the `impl` list, the ADT fields — so the resolver inherits that for free (see
+`clauses_of`, the `impl` list, the ADT fields — so the resolver inherits that for free (see
 [The resolve context](resolve-context.md)). What nothing memoizes is the **composite walk**: the
 descent that assembles those lookups into one root-cause tree, whose result is the rustc-free owned
 value below. That layer is what this cache adds.
@@ -71,7 +71,7 @@ past the `ty::tls::with` closure that produced them, but the finished paths are 
 
 Caching the finished paths carries no staleness risk, for the same reason the name map does not. The
 resolver runs at emit time, over compiler state that is frozen — the trait set, the impls, the
-`predicates_of`, the ADT field lists are all fixed once the crate is lowered, and trait solving does
+`clauses_of`, the ADT field lists are all fixed once the crate is lowered, and trait solving does
 not mutate them (see [why resolution runs in the emitter](typed-root-cause-resolution.md#why-it-runs-in-the-emitter)
 and the [`after_analysis` unreachability](rustc-diagnostic-internals.md)). A subtree resolved once is
 therefore valid for the rest of the crate's compilation.

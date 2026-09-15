@@ -223,8 +223,8 @@ with no arguments prints a short description of the driver and these same flags 
 
 ```text
 cargo-cgp-driver 0.1.0-alpha
-pinned-toolchain: nightly-2026-07-16
-built-against-rustc: rustc 1.99.0-nightly (d0babd8b6 2026-07-15)
+pinned-toolchain: nightly-2026-09-14
+built-against-rustc: rustc 1.100.0-nightly (4b6d04e70 2026-09-13)
 ```
 
 A failure *before* that output — typically

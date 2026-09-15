@@ -207,8 +207,12 @@ there and the note does arise in `.rust.stderr` — which is exactly why droppin
 single `normalize` module handles the rendered stderr of both passes: it rewrites the paths to
 `$CGP`/`$DIR` and drops the summary and temp-file lines, so what is compared depends only on the
 diagnostic content. Normalization applies to the compared/blessed output only; `--print` shows the raw output untouched.
-The harness finds the built `cargo-cgp` beside its own test binary in `target/debug`, having first
-built both binaries with `cargo build` (the front-end locates the driver as its sibling).
+The harness finds the built `cargo-cgp` by walking up from its own test binary until an ancestor
+directory holds that binary, having first built both with `cargo build` (the front-end locates the
+driver as its sibling). Searching for the binary rather than counting parent directories keeps the
+lookup independent of where cargo puts a test executable, which differs between cargo versions
+(`target/debug/deps/` in some, a per-package directory under `target/debug/build/` in others); the
+front-end's own place in `target/debug` is the stable anchor.
 
 ### Running and blessing
 
@@ -330,6 +334,11 @@ no dogfood test yet (see above).
 - [`crates/cargo-cgp-ui-tests/tests/options.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/options.rs),
   [`crates/cargo-cgp-ui-tests/tests/normalize.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/normalize.rs)
   — harness option/filter parsing and the output normalizer.
+- [`crates/cargo-cgp-ui-tests/tests/paths.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/paths.rs)
+  — the upward search for the built front-end, against both layouts cargo has put a test binary in
+  (`<profile>/deps/` and `<profile>/build/<package>/<hash>/out/`), plus the nearest-ancestor rule, the
+  absent case, and the file-not-directory rule that keeps cargo's own `build/cargo-cgp/` directory from
+  being mistaken for the binary.
 - [`crates/cargo-cgp-ui-tests/tests/aux.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/aux.rs)
   — the `//@aux-build:` parser: one and several declared crates, a fixture declaring none, an
   unreadable fixture, and the malformed-directive guard from both sides — a space after the slashes
