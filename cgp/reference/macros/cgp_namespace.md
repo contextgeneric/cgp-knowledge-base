@@ -40,6 +40,16 @@ cgp_namespace! {
 
 Here `ExtendedNamespace` inherits every entry of `DefaultNamespace` and additionally rewrites the `@cgp.core.error` path prefix to `@app`. The parent may itself be parameterized (it is parsed as a path with type arguments), and the entries in the child body layer on top of the inherited ones.
 
+A namespace with no entries of its own may end at its header, with no brace pair after it. The form matters most for an inheriting namespace, which often exists only to emit its marker struct, its lookup trait, and the impl that forwards every key its parent resolves:
+
+```rust
+cgp_namespace! {
+    new AppNamespace: DefaultNamespace
+}
+```
+
+This expands to exactly what `new AppNamespace: DefaultNamespace { }` does, and `new AppNamespace` alone emits just the struct and the trait. The macro reads the missing body as the empty table only when nothing follows the header, so any other token in that position is reported as `expected curly braces`. Without `new`, a header-only `AppNamespace: DefaultNamespace` emits only the inheritance impl, so it compiles only where the `AppNamespace` trait and its `__AppNamespaceComponents` marker are already declared; the short form does not remove that requirement. The optional body is specific to `cgp_namespace!`: [`delegate_components!`](delegate_components.md), its nested tables, and the `for` loop keep their braces even when the body is empty.
+
 Defining a namespace is only half of the pattern; a context joins a namespace through `delegate_components!` using a `namespace` header line, and individual components attach to a namespace through the [`#[prefix(...)]`](../attributes/prefix.md) attribute on their trait. Those two constructs are where namespaces are consumed, and both are shown under Expansion and Examples below.
 
 ### The shared body grammar, and what differs here
@@ -68,10 +78,10 @@ The macro lifts `FooTable` out into its own struct and [`DelegateComponent`](../
 
 ## Syntax Grammar
 
-The body of `cgp_namespace!` is an optional generic list and `new` keyword, a namespace name, an optional parent namespace, and a brace-delimited table:
+The body of `cgp_namespace!` is an optional generic list and `new` keyword, a namespace name, an optional parent namespace, and an optional brace-delimited table:
 
 ```ebnf
-CgpNamespace    -> Generics? `new`? NamespaceName ( `:` ParentNamespace )? `{` NamespaceBody `}`
+CgpNamespace    -> Generics? `new`? NamespaceName ( `:` ParentNamespace )? ( `{` NamespaceBody `}` )?
 
 NamespaceName   -> IDENTIFIER GenericArgs?
 ParentNamespace -> TypePath GenericArgs?
@@ -79,7 +89,7 @@ ParentNamespace -> TypePath GenericArgs?
 NamespaceBody   -> Statement* ( Mapping ( `,` Mapping )* `,`? )?
 ```
 
-**`NamespaceBody` is [`delegate_components!`](delegate_components.md)'s `TableBody` production unchanged**, so its `Statement` and `Mapping` productions — every operator, every key form including the grouped `@`-paths, and every value form — are that macro's and are defined there rather than restated here. The two forms a namespace normally uses are the `` `=>` `` redirect to an `@`-`Path` and the `` `:` `` bind to a provider; the Syntax section above says what the others do here and which one fails to compile. The `` `:` `` between `NamespaceName` and `ParentNamespace` is the inheritance colon, distinct from a mapping's `:`. `NamespaceName` is an identifier with optional generic arguments (it becomes both a trait and, with `new`, a struct); `ParentNamespace` is a type path that may itself be parameterized.
+**`NamespaceBody` is [`delegate_components!`](delegate_components.md)'s `TableBody` production unchanged**, so its `Statement` and `Mapping` productions — every operator, every key form including the grouped `@`-paths, and every value form — are that macro's and are defined there rather than restated here. The two forms a namespace normally uses are the `` `=>` `` redirect to an `@`-`Path` and the `` `:` `` bind to a provider; the Syntax section above says what the others do here and which one fails to compile. The `` `:` `` between `NamespaceName` and `ParentNamespace` is the inheritance colon, distinct from a mapping's `:`. `NamespaceName` is an identifier with optional generic arguments (it becomes both a trait and, with `new`, a struct); `ParentNamespace` is a type path that may itself be parameterized. The braced table is optional: a header followed by nothing is parsed as an empty `NamespaceBody`, and a header followed by anything other than `{` is a parse error.
 
 Two of the three statement forms in that shared production are owned here rather than there, because they exist to join a context's table to a namespace:
 

@@ -4,7 +4,7 @@ The `namespace` stack is the pair of AST types that `cgp_namespace!` parses into
 
 ## `NamespaceTable`
 
-`NamespaceTable` is the parsed form of the whole macro body and the type that does the work. Its `Parse` impl reads, in order, an optional generic list, an optional `new` keyword, the namespace name (an identifier with optional type arguments), an optional `: parent` clause (parsed as a path with type arguments), and a brace-delimited entry table:
+`NamespaceTable` is the parsed form of the whole macro body and the type that does the work. Its `Parse` impl reads, in order, an optional generic list, an optional `new` keyword, the namespace name (an identifier with optional type arguments), an optional `: parent` clause (parsed as a path with type arguments), and an optional brace-delimited entry table:
 
 ```rust
 pub struct NamespaceTable {
@@ -16,7 +16,7 @@ pub struct NamespaceTable {
 }
 ```
 
-The `entries` field is a `DelegateEntries` — the same type `delegate_components!` parses its table into — so a namespace body accepts every mapping form, array key, and statement that a delegation table does. `NamespaceTable` carries a family of `build_*` methods, one per generated item: `build_item_trait` emits the `{Namespace}<__Table__>` lookup trait only when `new` is set, `build_namespace_struct` the `__{Namespace}Components` marker only when `new` is set, `build_item_impls` one impl per evaluated entry (each entry evaluated against the shared `__Table__` type), and `build_parent_namespace_impl` the inheritance impl when a parent is named. Its `eval` method runs all four and packages the results, inserting the inheritance impl ahead of the entry impls so it wins during resolution.
+The `entries` field is a `DelegateEntries` — the same type `delegate_components!` parses its table into — so a namespace body accepts every mapping form, array key, and statement that a delegation table does. When the input is exhausted right after the header, `entries` is `DelegateEntries::default()`, the table with no statements and no mappings, so a header-only namespace evaluates exactly as one written with an empty brace pair; any other token in that position reaches the `braced!` parse and is rejected there. `NamespaceTable` carries a family of `build_*` methods, one per generated item: `build_item_trait` emits the `{Namespace}<__Table__>` lookup trait only when `new` is set, `build_namespace_struct` the `__{Namespace}Components` marker only when `new` is set, `build_item_impls` one impl per evaluated entry (each entry evaluated against the shared `__Table__` type), and `build_parent_namespace_impl` the inheritance impl when a parent is named. Its `eval` method runs all four and packages the results, inserting the inheritance impl ahead of the entry impls so it wins during resolution.
 
 ## `InheritNamespaceStatement`
 
