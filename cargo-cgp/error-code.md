@@ -175,8 +175,10 @@ recognizes.
 
 These five codes all rewrite the same underlying failure — an `E0119` conflicting-implementation
 error on a wiring entry's impls, produced when a `delegate_components!` block wires one key (or
-overlapping keys) more than once, or a `cgp_namespace!` block registers one `@`-path twice (whose
-conflict lands on the user's own namespace trait rather than `DelegateComponent`). A generated
+overlapping keys) more than once, or when two namespace entries claim one key (whose conflict lands
+on the namespace's own lookup trait rather than `DelegateComponent`, and where an entry may come
+from a `cgp_namespace!` body, a provider's `#[default_impl(… in …)]`, or the inheritance blanket a
+`new Child: Parent` header emits). A generated
 pair's redundant `IsProviderFor` half is always suppressed — including the pair a duplicate
 *provider* definition produces, where the surviving conflict is on the provider trait itself — and
 the Rust code stays `E0119`. What differs, and why each has its own code, is the shape of the
@@ -187,13 +189,17 @@ bare `@a.b.*` notation (no `Path!(…)` wrapper), and the upstream reference is
 [namespace override conflict](../cgp/errors/wiring/namespace-override-conflict.md).
 
 - **`CGP-E004` — duplicate wiring.** `` [CGP-E004] duplicate wiring for <key> on `<Context>` `` — the
-  same key (a component marker, or an `@`-path) mapped twice. **Fix:** remove one of the two entries
-  the carets point at.
+  same key mapped twice. The key is a component marker, an `@`-path, or an ordinary type (a per-type
+  default's `String`), each worded as what it is; the subject is the context, or the namespace
+  lookup trait when the collision is inside a namespace
+  (`` on `DefaultImpls1<ShowImplComponent>` ``). **Fix:** remove one of the two entries the carets
+  point at.
 - **`CGP-E005` — overlapping wiring.** `` [CGP-E005] `<Context>` cannot wire <key> that is already
   set through <source> `` — two distinct but overlapping keys, where one cannot claim what the other
   already covers (a generic entry over a specific one, an `@`-path over a namespace forwarding, or a
-  path that is a prefix of another). **Fix:** remove or narrow the overlapping entry. (A *bare* key
-  the namespace resolves to a redirect is `CGP-E007` instead.)
+  path that is a prefix of another). A child namespace redefining a key it inherits takes this code
+  too, with the namespace as the subject and the parent as the source. **Fix:** remove or narrow the
+  overlapping entry. (A key the namespace resolves to a *redirect* is `CGP-E007` instead.)
 - **`CGP-E006` — multiple namespaces.** `` [CGP-E006] only one namespace can be used for each target
   type in `delegate_components!`, but `<Context>` uses both `<A>` and `<B>` `` — two blanket
   forwardings that each cover every key, from joining two namespaces (or a namespace plus a bare-key
@@ -201,10 +207,12 @@ bare `@a.b.*` notation (no `Path!(…)` wrapper), and the upstream reference is
   it, or move a bare `for` key into a path.
 - **`CGP-E007` — redirect collision.** `` [CGP-E007] <component> on `<Context>` is redirected to
   `<path>` `` — a direct wiring that collides with a redirect of the same key: an `open` header, an
-  explicit `=>` redirect, or a `namespace` that maps the key to a redirected path (recovered by
-  normalizing the namespace's `Delegate` for that key). The fix rides in a `help`:
-  `` wire the provider `<Provider>` with the key `<path>` ``. **Fix:** wire the direct entry's
-  provider under the redirected key rather than the bare key.
+  explicit `=>` redirect, a `namespace` join that maps the key to a redirected path, or — with a
+  namespace as the subject — a namespace binding a key its *inherited parent* redirects, the shape a
+  bare marker key produces for a component carrying a `#[prefix(...)]`. The last two are recovered
+  by normalizing the forwarded namespace's `Delegate` for that key. The fix rides in a `help`:
+  `` wire the provider `<Provider>` with the key `<path>` ``. **Fix:** wire the entry's provider
+  under the redirected path rather than the bare key.
 - **`CGP-E008` — duplicate redirect.** `` [CGP-E008] duplicate redirect for <component> on
   `<Context>` … `` (naming one redirect target, or both when they differ) — the same key redirected
   more than once: two `open`s or `=>` mappings on a context, or the same `@`-path registered twice

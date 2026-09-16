@@ -324,7 +324,7 @@ it stale.
 - [wiring/namespace-inheritance-cycle.md](cgp/errors/wiring/namespace-inheritance-cycle.md) — a
   namespace parent chain that loops, caught eagerly at the definitions.
 - [wiring/namespace-override-conflict.md](cgp/errors/wiring/namespace-override-conflict.md) — an entry
-  overriding a key its namespace already claims.
+  claiming a key its namespace already claims, by override or by bare-marker notation.
 - [wiring/orphan-rule.md](cgp/errors/wiring/orphan-rule.md) — registering into a foreign namespace
   with no local type (`E0210`/`E0117`).
 - [wiring/unconstrained-generic.md](cgp/errors/wiring/unconstrained-generic.md) — a per-entry generic

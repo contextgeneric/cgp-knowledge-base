@@ -40,11 +40,11 @@ The root cause is **present and precise**: the two carets name the two conflicti
 
 `cargo-cgp` keeps the `E0119` code but rewrites the headline to name the *kind* of collision and de-duplicates the pair into one message. Because this is a structural class, there is no `root cause:` tree: both `rustc` carets are preserved (they are already the answer), the redundant `IsProviderFor` half of a generated pair is suppressed so one duplicate reads as one conflict, and any `@`-path key is resugared to bare `@a.b.*` notation instead of the `PathCons<Symbol<…>>` list. Which `[CGP-E00x]` code it stamps distinguishes the four shapes this class produces:
 
-- A duplicate key or overlapping generic becomes **`[CGP-E004]` duplicate wiring** — `` [CGP-E004] duplicate wiring for component `GreeterComponent` on `Person` `` (or, for a `@`-path, `` duplicate wiring for `@cgp.core.error.ErrorTypeProviderComponent.*` on `App` ``).
-- An `open` header colliding with an explicit mapping becomes **`[CGP-E007]` redirect collision** — `` [CGP-E007] component `GreeterComponent` on `Person` is redirected to `@GreeterComponent` `` — carrying a `help:` that names the redirected key to wire the provider under (`` wire the provider `GreetHello` with the key `@GreeterComponent` ``).
+- A duplicate key or overlapping generic becomes **`[CGP-E004]` duplicate wiring** — `` [CGP-E004] duplicate wiring for component `GreeterComponent` on `Person` `` (or, for a `@`-path, `` duplicate wiring for `@cgp.core.error.ErrorTypeProviderComponent.*` on `App` ``). A collision inside a namespace reads the same way, with the lookup trait standing in for the context and an ordinary type key worded as a type: two `#[default_impl]`s on one per-type key give `` duplicate wiring for type `String` on `DefaultImpls1<ShowImplComponent>` ``.
+- An `open` header colliding with an explicit mapping becomes **`[CGP-E007]` redirect collision** — `` [CGP-E007] component `GreeterComponent` on `Person` is redirected to `@GreeterComponent` `` — carrying a `help:` that names the redirected key to wire the provider under (`` wire the provider `GreetHello` with the key `@GreeterComponent` ``). A registration that binds a *prefixed* component by its bare marker takes the same code, since the `#[prefix]` entry it collides with is itself a redirect, and the `help` then names the `@prefix.Component` path the registration should have used.
 - The same key redirected twice — two `=>` mappings on a context, or one `@`-path registered twice inside a `cgp_namespace!` block — becomes **`[CGP-E008]` duplicate redirect**, naming both targets when they differ (`` duplicate redirect for component `FooComponent` on `App`: redirected to both `@app.foo` and `@app.bar` ``).
 
-Two forms in this class are **pass-throughs** that `cargo-cgp` does not rewrite, so a reader sees the raw diagnostic above. The `E0428` name clashes (`duplicate_component_name`, `duplicate_provider_name`) keep `rustc`'s uncoded `E0428` — for a duplicate provider, the surviving `E0119` on the provider trait is kept too, with its `IsProviderFor` half suppressed — because `E0428` already points precisely at the two definitions. A duplicate `#[default_impl]` key is likewise uncoded: its lone `E0119` on the `DefaultImpls…` impl passes through, a small gap where the `[CGP-E004]` rewrite does not yet reach. The codes are defined in the [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
+One form in this class is a **pass-through** that `cargo-cgp` does not rewrite, so a reader sees the raw diagnostic above: the `E0428` name clashes (`duplicate_component_name`, `duplicate_provider_name`) keep `rustc`'s uncoded `E0428` — for a duplicate provider, the surviving `E0119` on the provider trait is kept too, with its `IsProviderFor` half suppressed — because `E0428` already points precisely at the two definitions. The codes are defined in the [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
 
 ## Resolving it
 
@@ -52,7 +52,7 @@ Remove one of the two entries. For a duplicate check-trait name from two tables 
 
 ## Notes for tooling
 
-`cargo-cgp` already does the collapsing and resugaring this class needs (above); what remains is the pass-through set — the `E0428` name clashes and the duplicate `#[default_impl]` key, all kept uncoded. Those are already precise enough to relay verbatim, but folding the `default_impl` `E0119` into `[CGP-E004]` would make the family complete.
+`cargo-cgp` already does the collapsing and resugaring this class needs (above); what remains uncoded is the `E0428` name-clash pair, which is precise enough to relay verbatim — the two carets name the two definitions and the code names the mistake.
 
 ## Backing fixtures
 
@@ -69,7 +69,8 @@ The two namespace collisions that are *not* duplicate declarations live with the
 
 The pass-through conflicts `cargo-cgp` leaves uncoded:
 
-- [`wiring/namespace-paths/duplicate_default_impl.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/duplicate_default_impl.rs) — two `#[default_impl]` registering the same key, a *single* `E0119` on the one `DefaultImpls1` impl; the `.cgp.stderr` matches the `.rust.stderr`, the gap noted above.
+- [`wiring/namespace-paths/duplicate_default_impl.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/duplicate_default_impl.rs) — two `#[default_impl]` registering the same key, a *single* `E0119` on the one `DefaultImpls1` impl; the `.cgp.stderr` pins the `[CGP-E004]` rewrite naming the type key and its table.
+- [`wiring/namespace-paths/default_impl_unprefixed_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/default_impl_unprefixed_key.rs) — a `#[default_impl]` binding a prefixed component's *bare marker* in the namespace its `#[prefix]` registers into, so the registration collides with the prefix's own redirect; the `.cgp.stderr` pins the `[CGP-E007]` rewrite and the `help` naming the `@app.GreeterComponent` path to register under.
 - [`wiring/duplicate-keys/duplicate_component_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/duplicate-keys/duplicate_component_name.rs) — a derived `…Component` marker clashing with a hand-declared type; `E0428` kept verbatim.
 - [`wiring/duplicate-keys/duplicate_provider_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/duplicate-keys/duplicate_provider_name.rs) — two `#[cgp_impl(new …)]` declaring the same provider struct; the `.cgp.stderr` keeps the `E0428` plus the surviving `E0119` on the provider trait `Greeter<_>` (its `IsProviderFor` half suppressed), all uncoded.
 

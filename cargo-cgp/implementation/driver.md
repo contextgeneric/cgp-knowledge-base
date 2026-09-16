@@ -559,17 +559,44 @@ typed resolver uses). Its header names only the redirected path; the *fix* — w
 provider under that key — rides in a separate `help`, kept out of the header so the headline stays
 one short sentence. Each key is rendered to its surface form off the types — a component marker to
 its name, a `PathCons<…>` to its bare `@…` path (a generic tail or `for`-loop key collapsing to
-`.*`), a blanket forwarding to the namespace/table trait that keys it — so the headline names what
-the programmer wrote. The message wording is decided by the rustc-free
+`.*`), an ordinary type key to its own rendering, a blanket forwarding to the namespace/table trait
+that keys it — so the headline names what the programmer wrote. A marker is told from an ordinary
+type structurally, by whether a provider trait's delegation blanket keys on it, so a per-type
+default's `String` reads as a type rather than as a component nobody defined. The message wording is
+decided by the rustc-free
 [`plan_wiring_conflict`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/wiring.rs)
 (and `wiring_conflict_help` for the redirect fix) over the owned `WiringConflict` the classifier
 fills in, so it is unit-tested without a compiler.
 
-An `E0119` naming *neither* internal trait can still be a wiring conflict: a duplicate entry inside
-a `cgp_namespace!` block conflicts on the user's own namespace trait
-(`conflicting implementations of trait \`MyNamespace<_>\` for type \`PathCons<…>\``). The classifier's namespace route recognizes that shape by the impls at the carets — a local impl of a [namespace lookup trait](typed-root-cause-resolution.md) (the single-`Delegate` fingerprint) whose `Self` is the entry's `@`-path — and words it through the same `WiringConflict` shapes, with the namespace trait as the subject: two `=>` entries on one path become a `[CGP-E008]` duplicate redirect naming both targets ([`namespace_duplicate_path_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/namespace_duplicate_path_key.rs)). A namespace conflict whose entry key is not a `PathCons`
-path (an inherited-override collision on a bare marker, say) is deliberately left to the fallback,
-where rustc's own header already names the namespace and the key.
+An `E0119` naming *neither* internal trait can still be a wiring conflict: an entry inside a
+namespace conflicts on that namespace's own lookup trait
+(`` conflicting implementations of trait `MyNamespace<_>` for type `PathCons<…>` ``). The
+classifier's namespace route recognizes that shape by the impls at the carets — a local impl of a
+[namespace lookup trait](typed-root-cause-resolution.md) (the single-`Delegate` fingerprint) — and
+words it through the same `WiringConflict` shapes, with the namespace trait as the subject, rendered
+with its leading arguments but without the components table the macro appends
+(`DefaultImpls1<ShowImplComponent>`). Four constructs emit such an impl, and all four are read the
+same way: a `cgp_namespace!` body entry, a component's `#[prefix(… in Namespace)]` route, a
+provider's `#[default_impl(… in Namespace)]` registration, and the inheritance blanket a
+`new Child: Parent` header emits. So two `=>` entries on one path become a `[CGP-E008]` duplicate
+redirect naming both targets
+([`namespace_duplicate_path_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/namespace_duplicate_path_key.rs)),
+two `#[default_impl]`s on one key a `[CGP-E004]` duplicate
+([`duplicate_default_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/duplicate_default_impl.rs)),
+and a child namespace binding a key its parent already binds a `[CGP-E005]` overlap naming the
+parent
+([`inherited_override_conflict`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/inherited_override_conflict.rs)).
+
+One mistake cuts across those shapes and earns its own message: binding a prefixed component by its
+bare marker, when the component is addressed by its path. Where the colliding entry is the
+`#[prefix]` route itself, its `Delegate` *is* the `RedirectLookup` and is read directly
+([`default_impl_unprefixed_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/default_impl_unprefixed_key.rs)).
+Where it is an inheritance blanket, whose `Delegate` is a projection rather than a written redirect,
+normalizing the parent's `Delegate` for the colliding key recovers the same path — exactly as the
+context-level route does for a `namespace …;` join
+([`namespace_inherited_unprefixed_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/namespace_inherited_unprefixed_key.rs)).
+Either way the collision reads as a `[CGP-E007]` redirect whose `help` names the entry to write
+instead.
 
 The transform is anchored to the genuine CGP traits (by `DefId`, like the rest of the resolver), so
 a same-named trait cannot drive it, and it declines a conflict whose carets carry none of the

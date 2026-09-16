@@ -64,6 +64,17 @@ their fixtures now live under `acceptable/`:
   and the `UseContext` cycle's `E0275` is rewritten into a `[CGP-E010]` headline with a `help`
   naming the usual cause
   ([`use_context_cycle`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/constraints/use_context_cycle.rs)).
+  A collision *inside a namespace* is reshaped on the same footing as one on a context, whatever
+  its key: a child namespace redefining a key it inherits reads as a `[CGP-E005]` naming the parent
+  ([`inherited_override_conflict`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/inherited_override_conflict.rs)),
+  two `#[default_impl]`s on one per-type key as a `[CGP-E004]` naming the type and its table
+  ([`duplicate_default_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/duplicate_default_impl.rs)),
+  and a prefixed component bound by its bare marker — a mis-written key rather than an override —
+  as a `[CGP-E007]` whose `help` names the path to write instead, whether the entry it collides with
+  is an inherited redirect
+  ([`namespace_inherited_unprefixed_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/namespace_inherited_unprefixed_key.rs))
+  or the component's own `#[prefix]` route
+  ([`default_impl_unprefixed_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/default_impl_unprefixed_key.rs)).
 - A **cross-context dependency** — one context's wiring depending on a *concrete* other context, so
   one obligation appears in two contexts' trees — is resolved cleanly on both sides. A provider's own
   `where Inner: CanCompute` clause is recovered as that consumer obligation (de-duplicating into
