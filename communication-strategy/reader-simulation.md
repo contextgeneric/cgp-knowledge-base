@@ -23,9 +23,11 @@ document for catching that.
 The method rests on a body of reading science rather than on taste, and the
 [grounding section](#the-science-this-rests-on) below cites it. That makes this the one strategy
 document whose external citations live in it rather than in [evidence.md](evidence.md), because its
-subject *is* that external science while evidence.md is scoped to facts about the CGP audience. The
-[AGENTS.md](AGENTS.md) rule to concentrate citations still holds for every audience claim; it does not
-reach the scientific foundation this document imports.
+subject *is* that external science and nearly every paragraph rests on a different study, so a
+citation beside each claim serves the reader better than a table elsewhere. Evidence.md lists the
+craft the rest of the section borrows; the [AGENTS.md](AGENTS.md) rule to concentrate citations still
+holds for every audience claim, and it does not reach the scientific foundation this document
+imports.
 
 ## The model reader you simulate
 

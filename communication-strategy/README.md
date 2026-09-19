@@ -113,17 +113,20 @@ arises. The authoring rules live in [AGENTS.md](AGENTS.md).
   the habits evidenced by his published work, and the preferences he has stated. **Read this first**;
   every other document is downstream of it, and where a rule elsewhere conflicts with it, this one wins.
 - [Voice and register](voice-and-register.md) — the layered voice model (project on the site, author on
-  the blog), the sentence-level register, the four structural moves that make CGP prose work, and the
-  habits that mark a draft as machine-written.
+  the blog), the sentence-level register, the four structural moves that make CGP prose work, the four
+  canonical examples with the diagram, diff, and code-sample rules, and the habits that mark a draft as
+  machine-written.
 - [Writing styles](writing-styles.md) — the sentence-level habits to catch when a shape is doing the
   work the point should: the directness principle (real subject, real action), the cleft-sentence
   inversion and the crutch em dash everywhere, plus a stricter plain-English register for agent-drafted
   pages specifically, each with a before/after and the check that finds it.
-- [Identity](identity.md) — the settled tag line analyzed word by word, the enhances-not-replaces frame,
-  the pitch that must follow the line, and the curated headline feature set for a front page.
+- [Identity](identity.md) — the positioning decided in five steps from alternatives to category, the
+  settled tag line analyzed word by word, the enhances-not-replaces frame, the pitch that must follow
+  the line, and the curated headline feature set for a front page.
 - [Readers](readers.md) — the audience model: who reads about CGP by Rust experience, by imported mental
-  model, and by role; plus the comprehension barriers that stop a willing reader from following, and the
-  teaching move that lowers each.
+  model, and by role; plus the comprehension barriers that stop a willing reader from following, the
+  teaching move that lowers each, and the friction-log and user-conversation practices that turn an
+  inferred profile into an observed one.
 - [The message](message.md) — everything a piece says about CGP: the concrete pains it removes, the
   strengths worth advertising, the objections readers bring and how to answer each, and the boundary
   beyond which a plainer tool wins. Four views of one reader, kept together so an edit to one checks the
@@ -137,11 +140,12 @@ arises. The authoring rules live in [AGENTS.md](AGENTS.md).
   de-biasing pass, and the reading science that grounds all of it. The dynamic method that uses the
   audience model, the word list, and the sentence shapes at once.
 - [Formats](formats.md) — per-artifact playbooks for the launch post, deep-dive, README, talk, thread,
-  and comparison, the ready answers for a discussion thread, the conversion ladder, and annotated model
-  drafts showing the whole apparatus at work.
+  and comparison, the titles-and-search rules for every page, the ready answers for a discussion
+  thread, the conversion ladder, and annotated model drafts showing the whole apparatus at work.
 - [Evidence](evidence.md) — the citable facts: what the Rust community measurably worries about and
-  rewards, which conversations draw attention, how CGP's own posts and talk were received, and the
-  lessons in that reception. The section's single home for external citations.
+  rewards, which conversations draw attention, how CGP's own posts and talk were received, the lessons
+  in that reception, and the signal watched at each stage of the funnel. The section's single home for
+  external citations, for the audience facts and for the craft the section borrows.
 - [AI disclosure](ai-disclosure.md) — what the project says about **how it is made**: the principle that
   decides how much of an artifact an agent may write, the four levels from agent-written documentation to
   the hand-written core library, how a disclosure is worded, the claim about review that is easiest to

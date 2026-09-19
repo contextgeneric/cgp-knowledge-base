@@ -652,6 +652,17 @@ agents* is what this section is about: a property of the technology, made where 
 [ai-disclosure.md](ai-disclosure.md) and made on the site's disclosure page. A piece that runs the two
 together makes the first read as an excuse for the second, which costs both.
 
+One surface on the site is a standing exception to the placement rule, and it is recorded as one
+rather than left to be rediscovered. The navigation bar gives "AI" one of its four entries, which is
+the most prominent mention of AI a first-time visitor meets. The current decision, owned by
+[information-architecture.md](../website/information-architecture.md#the-target-page-inventory), is to
+keep it, and the reasoning is that the entry is a label for a section rather than a hook or a claim:
+the section carries the published agent skill and the disclosure page, a reader looking for either
+looks under that word first, and the rule above governs what a piece leads with rather than what a
+menu is called. The cost is real and is stated there too. A quarter of the navigation names AI before
+the reader has seen a line of code, and the condition the exception sets is that nothing else above
+the fold does.
+
 ## When not to reach for CGP
 
 Drawing CGP's boundary in public is a positioning asset rather than a concession, because the instinct

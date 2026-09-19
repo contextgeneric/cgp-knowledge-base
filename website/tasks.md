@@ -409,6 +409,14 @@ to another project's README or documentation in the meantime.
   README carries the tag line, the reassurance line, and a short quick look; points at the site's
   reference rather than at the knowledge base; and the claim about rustdoc coverage is either true or
   gone. *Blocked by:* nothing, though it reads better once R1 and R2 give it a destination.
+- **X3 — the three canonical diagrams.** The wiring table, the consumer-and-provider split, and
+  coherence scoped, each drawn once as an SVG among the site's static assets and reused by every page
+  that explains the idea, per
+  [voice-and-register.md](../communication-strategy/voice-and-register.md#show-it-canonical-examples-diagrams-and-diffs).
+  Static images are not site machinery, so this stays inside the stock-Docusaurus policy; a diagram
+  plugin would not. *Lands in:* the website repository's `static/img/`, then the concept and tutorial
+  pages that use them. *Blocked by:* nothing. *Done when:* the three files exist, each idea's pages
+  reference the one drawing, and every page still reads correctly with the image missing.
 
 ## What depends on what
 
@@ -434,7 +442,7 @@ the [ordering](#the-ordering) for what to start on.
 | O1 | nothing | O2, and the Introduction narrowing (soft) |
 | O2 | O1 | F1's first call to action (soft) |
 | A1 | the author's read | every page-adding task's provenance note |
-| X1, X2 | nothing | nothing |
+| X1, X2, X3 | nothing | nothing |
 
 Three shapes in that graph are worth naming, because they are what make the ordering non-obvious. **R2 sets the
 release date**, so it is the one task worth starting before it is strictly next and worth running in
@@ -471,8 +479,9 @@ largest single-page change and the one that most needs its destinations in place
 the objection that has cost CGP the most readers; T3 is where a reader finally meets an application
 context; T4 is cheap enough to fold into the corrections pass. T1 is worth doing only if T2 is not.
 
-**X1 and X2 fit anywhere and are worth doing early** — a stale published skill misteaches every agent
-that reads it, and the crate's landing page is working against the project every day it stays as it is.
+**X1, X2, and X3 fit anywhere, and the first two are worth doing early** — a stale published skill
+misteaches every agent that reads it, and the crate's landing page is working against the project
+every day it stays as it is.
 
 **DC1–DC3 whenever there is capacity**, since they are independent of everything above and are the long
 lead time on the deep dives.

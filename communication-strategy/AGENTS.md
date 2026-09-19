@@ -50,10 +50,11 @@ that merely describes CGP without telling the writer how to *present* it has not
   able to act on the document without re-deriving the strategy.
 - **Ground every claim about audiences in the evidence.** Sentiment about what developers value and
   resent lives, cited, in the [related-work](../related-work/README.md) documents, and facts about what
-  the community measurably reads and how CGP has been received live in [evidence.md](evidence.md).
-  Draw on both rather than inventing reactions. External citations are concentrated in those two homes
-  so the strategy documents stay in one voice; add a new source there and link to it rather than
-  scattering raw URLs. Reception of CGP itself is the exception to the citation habit and is
+  the community measurably reads and how CGP has been received live in [evidence.md](evidence.md),
+  as does the published method on technical communication the section borrows. Draw on both rather
+  than inventing reactions. External citations are concentrated in those two homes so the strategy
+  documents stay in one voice; add a new source there and link to it rather than scattering raw
+  URLs. Reception of CGP itself is the exception to the citation habit and is
   distilled rather than linked, per the guardrail below.
 - **Keep every CGP claim true.** A feature CGP does not have, or a rebuttal promising behavior it does
   not deliver, is the most damaging kind of error here, because it is shown to the audience most able to

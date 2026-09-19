@@ -14,7 +14,8 @@ knows only the entry will misapply it at the first case the entry did not antici
 ## The line, and the two lines after it
 
 The tag line is settled, and every piece opens with it or echoes it. The two lines that follow are the
-order in which to spend a reader's next seconds. The full argument is in [identity.md](identity.md).
+order in which to spend a reader's next seconds. The full argument, and the five positioning decisions
+the line follows from, are in [identity.md](identity.md#the-positioning-in-the-order-it-was-decided).
 
 - **Tag line** — *A language extension for Rust, with pluggable trait implementations at
   compile-time.*
@@ -135,7 +136,7 @@ that most often go wrong.
 
 ## The rules that apply to every piece
 
-Four rules hold regardless of format, and each has a document behind it.
+Five rules hold regardless of format, and each has a document behind it.
 
 - **The website speaks as the project and the blog speaks as the author.** No first person on a docs
   page, no corporate "we" anywhere. [voice-and-register.md](voice-and-register.md).
@@ -147,6 +148,9 @@ Four rules hold regardless of format, and each has a document behind it.
 - **Say which shape an example is in when the shape changes.** A value context, an environmental
   context, or an application context, self-targeted or parameter-targeted. Nothing in a signature
   marks the difference. [vocabulary.md](vocabulary.md#qualifying-a-context-and-a-target).
+- **Reuse one of the four canonical examples before inventing one.** The encoder pair, the greeter,
+  the email swap, and the area calculation, each with its shape recorded.
+  [voice-and-register.md](voice-and-register.md#show-it-canonical-examples-diagrams-and-diffs).
 
 ## The four checks before publishing
 

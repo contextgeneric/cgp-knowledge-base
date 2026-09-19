@@ -16,7 +16,7 @@ appears to, because what a writer needs from a reaction is the pattern rather th
 
 A caution on reading it. Public engagement metrics are noisy, and absence of discussion is not proof
 of absence of interest. The findings are strong enough to steer framing decisions, but they are inputs
-to judgment rather than verdicts, and the closing section treats publication itself as the real
+to judgment rather than verdicts, and the section on reading the reaction treats publication itself as the real
 measurement. Community attention also moves, which makes this document a sync target in its own right:
 when the survey or the discourse shifts, the guidance resting on it must be revisited. **The planning
 of publication — what ships when, to which channel, and what came of it — is managed outside this
@@ -230,6 +230,53 @@ CGP does not solve. That is a rare and perishable opportunity rather than a stan
 exists only while a matching conversation is live — which is why the attachment points above are worth
 watching and why a piece written for one is worth writing while the conversation still is.
 
+## What we watch, and what counts as a result
+
+Publication is a measurement only if something is measured, so this section names one signal for each
+stage of the [conversion ladder](formats.md#the-conversion-ladder) and says how each is read. It
+defines the signals; the planning and the log of what shipped stay outside this repository, per the
+rule at the top. Developer-relations practice frames the stages as a funnel from awareness through
+activation and adoption to advocacy, and the sources are in
+[the craft sources below](#sources-for-the-craft-this-section-borrows).
+
+**Awareness: the question a hook draws.** A hook is working when the replies ask *how* CGP does
+something and failing when the top replies are the dismissals listed in
+[Reading the reaction](#reading-the-reaction). Read the first ten replies to a submission, sort them
+into how-questions and dismissals, and treat the ratio as the result. It needs no tooling, and it is
+the one measurement the project has taken so far.
+
+**Activation: time to a running program.** The standard first-contact measure for a developer tool is
+the time from landing on the documentation to a first working result. For CGP that is the Quickstart,
+and the target it should hold is **a reader with Rust installed reaches a running program in under
+ten minutes, following only the page**. The measure is a
+[friction log](readers.md#keeping-the-model-observed) taken on a clean machine, not an analytics event,
+and the orientation-page writing guide, task O1 in [the website plan](../website/tasks.md), owns the
+target once it exists. Hello World and the first tutorial part carry the same measure with a longer
+budget.
+
+**Adoption: what readers ask once they are writing code.** Questions in GitHub Discussions, the
+Discord server, and the subreddit say which construct or page fails a reader who got past first
+contact. Record them as patterns, per the distil rule, and read each recurring question as a defect in
+the page that should have answered it. A question that recurs after the page is fixed is a defect in
+the construct.
+
+**Advocacy: writing and components from other people.** The top rung of the ladder is a reader who
+publishes a CGP component or writes about CGP unprompted, as the Contribute page asks them to.
+Count these when they happen and record the pattern in what they chose to write about. They are the
+only signal here that measures conviction rather than attention.
+
+**Search: not measured, and said so.** Which pages readers land on from search would say which titles
+work and which pains readers search for in their own words. The site is a stock Docusaurus
+installation with no analytics, and adding any is a plugin decision that runs against the
+[site's stated policy](../website/site-structure.md), so this signal is unavailable rather than
+merely uncollected. Do not infer it from anything else. If the policy changes, this is the first
+measurement to add, and a privacy-respecting aggregate is the only acceptable form.
+
+Two rules keep the signals honest. **A signal is read against a baseline**, so the first reading of
+each is recorded as the baseline before any change is credited to a piece. And **a signal changes a
+conclusion above or it is not worth taking**: a measurement that only confirms a pattern needs no
+record, per [Reading the reaction](#reading-the-reaction).
+
 ## Reading the reaction
 
 Because attention is empirical, the real grade of any hook is the reaction it draws, so treat
@@ -278,3 +325,21 @@ row before quoting its claim in public, and update the date when you do.
 | [Rust traits and dependency injection](https://jmmv.dev/2022/04/rust-traits-and-dependency-injection.html) | trait-based injection leaks internal types into a public API | 2026-09-19, link resolved |
 | [RustLab 2025 recording](https://www.youtube.com/watch?v=gXIfP-W9074) | the talk exists and is public | 2026-09-19, link resolved |
 | [Hermes SDK](https://github.com/informalsystems/hermes-sdk/) | the flagship real system built with CGP | 2026-09-19, link resolved |
+
+### Sources for the craft this section borrows
+
+The strategy documents borrow method from published work on technical communication and developer
+relations, and those sources are concentrated here so the other documents stay in one voice. A
+document that leans on one links to this list rather than citing it inline. "Summary read" means a
+published summary of the source was read on that date rather than the source itself.
+
+| Source | Used for | Last checked |
+|---|---|---|
+| April Dunford, *Obviously Awesome*, summarized in [Lenny's Newsletter](https://www.lennysnewsletter.com/p/summary-april-dunford-on-product) | the five-step order of positioning in [identity.md](identity.md#the-positioning-in-the-order-it-was-decided) | 2026-09-19, summary read |
+| Phil Leggetter, [the AAARRRP framework](https://www.leggetter.co.uk/aaarrrp/) | the funnel stages behind [What we watch](#what-we-watch-and-what-counts-as-a-result) | 2026-09-19, summary read |
+| [Time to hello world](https://instruqt.com/glossary/time-to-hello-world) | the activation measure | 2026-09-19, summary read |
+| Nielsen Norman Group, [How Users Read on the Web](https://www.nngroup.com/articles/how-users-read-on-the-web/) and [Scrolling and Attention](https://www.nngroup.com/articles/scrolling-and-attention/) | the scanning and above-the-fold figures in the homepage guide | 2026-09-19, summary read |
+| Mark Baker, [Every Page is Page One](https://everypageispageone.com/the-book/) | the titles-and-search rules in [formats.md](formats.md#titles-first-lines-and-search) | 2026-09-19, summary read |
+| Richard Mayer's multimedia principles, summarized by [Devlin Peck](https://www.devlinpeck.com/content/mayers-principles-of-multimedia-learning) | the diagram rules in [voice-and-register.md](voice-and-register.md#show-it-canonical-examples-diagrams-and-diffs) | 2026-09-19, summary read |
+| Google, [code samples](https://developers.google.com/style/code-samples) and the [samples style guide](https://googlecloudplatform.github.io/samples-style-guide/) | the code-sample rules in voice-and-register.md | 2026-09-19, summary read |
+| *Docs for Developers* (Bhatti and others, 2021), described by the [publisher](https://www.ebooks.com/en-us/book/210383942/docs-for-developers/jared-bhatti/) | the friction-log practice in [readers.md](readers.md#keeping-the-model-observed) | 2026-09-19, summary read |

@@ -1,10 +1,10 @@
 # Voice and register
 
-This document fixes *how CGP sounds* — which voice each surface speaks in, and what the prose does at
-the sentence level — so that the site, the blog, and the READMEs read as one project written by
-people rather than as assembled copy. It is the craft companion to
-[author-personality.md](author-personality.md): that document records who the author is, and this one
-turns it into rules a writer can apply to a paragraph.
+This document fixes *how CGP sounds* — which voice each surface speaks in, what the prose does at the
+sentence level, and how a piece shows its point in code and pictures — so that the site, the blog,
+and the READMEs read as one project written by people rather than as assembled copy. It is the craft
+companion to [author-personality.md](author-personality.md): that document records who the author is,
+and this one turns it into rules a writer can apply to a paragraph.
 
 ## The layered voice
 
@@ -99,6 +99,64 @@ as part of describing the thing accurately. "This is more machinery than a plain
 a trait with one implementation a plain trait is the right tool" is the register. "While there
 is a modest learning curve, the benefits are substantial" is not — it concedes nothing and signals
 that something is being sold.
+
+## Show it: canonical examples, diagrams, and diffs
+
+Concrete beats abstract at the level of the whole piece as well as the sentence, and three habits
+carry it: reuse one running example rather than inventing one, draw the same diagram everywhere an
+idea appears, and let a before-and-after show its difference instead of asserting it. Each habit has a
+reason in reading research, cited in
+[evidence.md](evidence.md#sources-for-the-craft-this-section-borrows), and each is the message
+discipline [vocabulary.md](vocabulary.md#the-vocabulary-of-the-craft) asks for in words, applied to
+code and pictures.
+
+**Reuse one of four canonical examples before inventing a fifth.** A new example costs the reader a
+new domain and costs the project a new verification, and the site already carries four that between
+them cover every shape. Each is named here with the shape it is in, because the shape is invisible in
+the code and a piece that reuses two of them must say when it crosses.
+
+- **The encoder pair** — `CanEncode` implemented over `Display` and `AsRef<[u8]>`, rejected by Rust
+  with `E0119`, then legal under CGP with `EncodeAsText` and `EncodeAsBytes` wired per type. Value
+  context, self-targeted. The homepage hero and the coherence explanation. The launch-post draft in
+  [formats.md](formats.md#worked-model-drafts) moves the value into a parameter as `CanEncode<Value>`,
+  which is the parameter-targeted form of the same example, and it narrates the move.
+- **The greeter** — a `greet` method on a `Person`, reading an `#[implicit] name` argument, then a
+  second struct that gains the method unchanged. It is a `#[cgp_fn]` in Hello World and the `CanGreet`
+  component with a `GreetHello` provider in the README draft. Value context, self-targeted.
+- **The email swap** — `CanSendEmail` with `SendViaSmtp` wired on `App` and `RecordEmails` on
+  `TestApp`. Environmental context, self-targeted, and the shape most CGP code is in. The
+  Introduction and the consumer-and-provider explanation.
+- **The area calculation** — `Rectangle` and `Circle`, the `AreaCalculator` providers, and the
+  higher-order `ScaledAreaCalculator<Inner>`. Value context, self-targeted. The tutorial series and
+  the reference pages.
+
+The code for each lives verified in [examples/](../examples/README.md) and in the website's
+`example-code` crate, and a piece takes it from there rather than retyping it. When none of the four
+fits, say so in the piece's internal document and add the new example to this list in the same change.
+
+**Draw one diagram per idea, and reuse it.** Readers learn more from words and a picture together than
+from words alone, provided each label sits beside the thing it names and the picture carries nothing
+decorative. Three ideas want a picture and have none yet: the **wiring table**, a two-column table
+from component to provider that a call resolves through; the **consumer and provider split**, a caller
+reaching a consumer trait, the table, and the chosen provider, with the impl-side dependencies hanging
+off the provider; and **coherence scoped**, several providers coexisting globally while each context
+draws one. Each is drawn once, as an SVG among the site's static assets, and every page that explains
+the idea uses that one drawing, so a reader who has met it once recognizes it everywhere. Making them
+is website work, tracked as X3 in [the task plan](../website/tasks.md). A diagram never replaces the
+prose beside it, and a page must still read correctly with the image missing.
+
+**Let a before-and-after show its difference.** When a piece claims that only the annotations changed,
+the reader checks it, and the check is cheap if the bodies are shown and the changed lines are marked.
+Show identical bodies rather than eliding them, and mark the lines that differ with the code block's
+highlight comments, which stock Docusaurus renders without any plugin. The homepage guide states this
+for the hero block; it holds for every before-and-after on the site and in a post.
+
+**Code in public writing follows four rules.** It is copy-paste-runnable, or it is labelled as a
+fragment and says what was omitted, usually the imports. It uses the modern idioms the
+[guides](../cgp/guides/README.md) teach, since a snippet is the most-copied part of any piece. Its
+comments add what the code cannot say, above all the witness that makes a conflict real, such as the
+type that satisfies both bounds. And every compiler message it quotes is real output from the current
+release, never remembered or reconstructed.
 
 ## Words and habits to avoid
 

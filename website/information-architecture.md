@@ -253,6 +253,12 @@ pages; the unmerged rename to `docs/ai-assisted-development/` would move both UR
 alternative placement — the disclosure page under **Project** beside Contribute — is defensible and was
 not chosen, because a reader looking for provenance looks under AI first.
 
+The navigation bar's "AI" entry is the one place the site leads with the word, and the communication
+strategy's rule against leading with AI tolerates it as a label rather than a hook, for the reasons in
+[message.md](../communication-strategy/message.md#the-one-mitigation-that-spans-three-of-these). The
+cost it accepts is that a quarter of the navigation names AI before a reader has seen any code, and
+the condition it sets is that nothing else above the fold does.
+
 ## Navigation and sidebar order
 
 The navigation bar carries Tutorials, Docs, Blog, and AI, plus a GitHub link, and the redesign adds no

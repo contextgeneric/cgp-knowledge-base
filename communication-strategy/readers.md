@@ -5,6 +5,7 @@ readers public CGP writing must serve — what each already knows, what excites 
 skeptical. Its second half maps the comprehension barriers that stop a *willing* reader from
 following, and the teaching moves that lower each one. The two halves are kept together because they
 are two questions about the same person: **who is this for**, and **what will they fail to follow**.
+It closes by saying which of its claims are observed rather than inferred, and how to observe more.
 
 This document is the static model: it says who the reader is. Its dynamic companion is
 [reader-simulation.md](reader-simulation.md), which runs a forward model of that reader's mental state
@@ -486,3 +487,40 @@ One caveat specific to CGP cuts against a strict reading of progressive disclosu
 deliberate: Rust programmers do not trust generated code they have not seen through, so **showing the
 desugaring is itself a teaching move rather than a distraction**. The
 [tutorial writing guide](../website/writing-guides/tutorial.md) makes this concrete.
+
+## Keeping the model observed
+
+The profiles above are mostly inferred, and this section says which claims are observed, how to turn
+more of them into observations, and how to record what comes back. A profile built from the author's
+experience and the related-work sentiment is a good starting model and a poor stopping point, because
+the [curse of knowledge](vocabulary.md#the-vocabulary-of-the-craft) biases every inference in the same
+direction: toward a reader who knows more than they do.
+
+Three claims in this document are observed rather than inferred, and each rests on CGP's own
+reception as distilled in [evidence.md](evidence.md#cgps-own-reception-and-the-lessons-in-it): that
+readers ask what problem justifies the machinery, that they say the name obscures more than it
+conveys, and that teaching material showing only single-method components is read as a cap the macros
+impose. Everything else here is inferred until one of the two practices below confirms or corrects it.
+
+**The friction log.** Before a first-contact page ships or changes, someone follows it cold. The
+Quickstart, Hello World, the front page's routing, and the first part of a tutorial each qualify. The
+procedure is fixed so that results compare: a clean machine with only Rust installed; the page
+followed exactly, with no other tab open; a timestamped note at every stall, saying what the reader
+hesitated over, what they searched for, what they typed, and what the compiler said; and the time to a
+running program. A note is a stall in the page, not a fault in the reader. The author doing this on
+his own pages is the cheapest form and the most biased, so a second person, or an agent instructed to
+know only what the page has said so far, is worth the extra run. The log itself stays out of this
+repository. What it found goes into evidence.md as a pattern, and the page is fixed in the same change.
+
+**Conversations with people who have used CGP.** The project has users whose experience has never
+been recorded: the Hermes SDK team, users of hypershell and cgp-serde, and readers of the book. A
+short conversation asks four things. What did you try first? Where did you stop, and what did you do
+next? What would you tell a colleague CGP is? What did you expect it to do that it did not? Record the
+answers as patterns, never as attributed quotes, per
+[the public-repository rule](../AGENTS.md#this-repository-is-public), and mark in this document which
+inferred claim each pattern confirms or corrects.
+
+**Marking a claim.** When a practice confirms a claim above, add the word "observed" to it and point at
+the evidence.md pattern. When it corrects one, rewrite the claim rather than annotating it, per the
+base's [document-the-present rule](../AGENTS.md#document-the-present-not-the-history). The goal is that
+a writer can tell, reading any profile, whether a reader was met or imagined.

@@ -2,8 +2,56 @@
 
 This document fixes what CGP says about itself in one line, in one paragraph, and in one screen — the
 settled tag line, the pitch that must follow it, and the small curated feature set a front page
-shows. These three are one artifact at three lengths, which is why they are governed together: a
-feature title that contradicts the tag line's frame does as much damage as a wrong tag line.
+shows — and it opens with the positioning decisions all three follow from. The three are one artifact
+at three lengths, which is why they are governed together: a feature title that contradicts the tag
+line's frame does as much damage as a wrong tag line.
+
+## The positioning, in the order it was decided
+
+The tag line is the last thing positioning produces, not the first. Stating the decisions behind it in
+order lets a writer defend the line rather than repeat it. Product-marketing practice
+fixes that order as five questions, answered one after another: what a reader would use instead, what
+CGP does that those alternatives cannot, what that is worth, who cares enough to act on it, and which
+category makes the value obvious. The method is cited in
+[evidence.md](evidence.md#sources-for-the-craft-this-section-borrows). CGP's answers are below, and
+every later section of this document is a consequence of one of them.
+
+- **What a reader uses instead.** A plain trait with one implementation, or a trait-bounded generic.
+  An enum over a closed set of alternatives. `dyn Trait` when the set is open at runtime. A newtype
+  wrapper to get past the orphan rule, or a hand-rolled marker struct plus a helper trait to let two
+  blanket impls coexist. A dependency-injection crate. Waiting for a language feature. Each is the
+  right tool somewhere, and [message.md](message.md#when-not-to-reach-for-cgp) says where.
+- **What CGP does that they cannot.** Several overlapping implementations of one trait coexist, and
+  each context names the one it uses. A trait gains an implementation for a type its author does not
+  own, with no wrapper. A provider declares its dependencies on the implementation, so they never
+  reach the interface callers see. A type such as the error type is chosen by the context rather
+  than passed as a parameter through every layer. All of it resolves at compile time, on stable Rust,
+  as a superset of ordinary traits.
+- **What that is worth.** An implementation swapped per application with no runtime cost and one
+  greppable line to read. The orphan rule escaped without a newtype. Signatures that stop growing as
+  dependencies join. A core that names its runtime and error type abstractly and so stays
+  `no_std`-friendly. The strengths are argued in
+  [message.md](message.md#the-strengths-worth-advertising).
+- **Who cares enough to act.** A working developer who has more than one implementation of an
+  interface and is paying for it in `dyn`, generics, or feature flags. A library author extending
+  types they do not own, or writing code generic over a type's structure. A maintainer whose call
+  graph threads parameters no middle layer touches. The type-system reader who has wanted overlapping
+  instances made safe. Who does not: a codebase with one implementation per trait, a small closed
+  variant set, or a set of implementations known only at runtime. The profiles are in
+  [readers.md](readers.md).
+- **Which category makes the value obvious.** *A language extension for Rust.* "A dependency-injection
+  framework" is accurate in substance and imports the runtime-container baggage this audience
+  rejects. "A modular programming paradigm" is honest, undersold CGP for most of its life, and leads
+  with a word that repels. "A language" or "a superset of Rust" overclaims, since CGP adds no grammar.
+  "Type classes without the orphan rule" is right for the functional-programming reader and opaque to
+  everyone else, so it is a channel-specific frame rather than the category. "Extension" carries
+  the ambition, implies addition rather than replacement, and survives the reader most able to check
+  it.
+
+The line below follows from the last answer, its "pluggable" from the second, its "at compile-time"
+from the third, and the [frame](#the-frame-the-whole-identity-serves-enhances-not-replaces) from the
+fourth: a reader who already uses traits well is the reader CGP wants, and a claim to replace what
+they use loses them.
 
 ## The tag line
 

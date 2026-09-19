@@ -305,7 +305,8 @@ lets the playbooks in [formats.md](formats.md) stay short.
 
 - **Positioning** — the deliberate choice of the category a reader files you under, made before they
   choose a dismissive one ("oh, it's a DI framework"). A reader pattern-matches a new tool within
-  seconds, so positioning is picking that match for them.
+  seconds, so positioning is picking that match for them. CGP's is decided in five steps in
+  [identity.md](identity.md#the-positioning-in-the-order-it-was-decided).
 - **Framing** — the choice of angle and wording that decides how a reader reacts to a fact that is true
   either way. "Overlapping instances made safe" and "clever type-system trickery" describe the same
   feature; the frame is the message, not a decoration on it.

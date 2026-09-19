@@ -564,19 +564,20 @@ it stale.
   other one here is downstream of.
 - [voice-and-register.md](communication-strategy/voice-and-register.md) — the layered voice (project on
   the site, author on the blog), the sentence-level register, the four structural moves that make CGP
-  prose work, and the habits that mark a draft as machine-written.
+  prose work, the four canonical examples with the diagram, diff, and code-sample rules, and the habits
+  that mark a draft as machine-written.
 - [writing-styles.md](communication-strategy/writing-styles.md) — the directness principle (say it
   straight, with the real subject doing the real action), the cleft-sentence inversion and the crutch em
   dash everywhere, plus ASD-STE100-style plain English (no metaphors, idioms, jargon, or passive voice)
   for agent-drafted pages specifically; each habit named, shown as a before/after, and given a check.
-- [identity.md](communication-strategy/identity.md) — the settled tag line analyzed word by word, the
-  enhances-not-replaces frame, the layered pitch that follows the line, and the curated headline feature
-  set for a front page.
+- [identity.md](communication-strategy/identity.md) — the positioning decided in five steps from
+  alternatives to category, the settled tag line analyzed word by word, the enhances-not-replaces frame,
+  the layered pitch that follows the line, and the curated headline feature set for a front page.
 - [readers.md](communication-strategy/readers.md) — the audience model by Rust experience, imported
   mental model, and role — the last including the language-design reader, who is unreachable through the
   general channels — plus the comprehension barriers a willing reader hits, including the
-  application-context shape vanilla Rust gives them no reason to imagine, and the teaching move that
-  lowers each.
+  application-context shape vanilla Rust gives them no reason to imagine, the teaching move that
+  lowers each, and the friction-log and user-conversation practices that mark a profile observed.
 - [message.md](communication-strategy/message.md) — everything a piece says about CGP: the pains it
   removes, the strengths worth advertising, the objections readers bring, and the boundary where a
   plainer tool wins — four views of one reader.
@@ -591,12 +592,13 @@ it stale.
   energy), the placement and word-choice levers, the curse-of-knowledge de-biasing pass, and the reading
   science that grounds it.
 - [formats.md](communication-strategy/formats.md) — per-artifact playbooks for the launch post,
-  deep-dive, README, talk, thread, and comparison, the ready thread answers, the conversion ladder, and
-  annotated model drafts.
+  deep-dive, README, talk, thread, and comparison, the titles-and-search rules for every page, the ready
+  thread answers, the conversion ladder, and annotated model drafts.
 - [evidence.md](communication-strategy/evidence.md) — the citable facts: what the Rust community
   worries about and rewards, which conversations draw attention, and the distilled patterns in how CGP's
-  own posts and talk were received; the section's single home for external citations, each with the
-  date it was last checked, and the rule that reaction to CGP is summarized rather than linked.
+  own posts and talk were received, and the signal watched at each funnel stage; the section's single
+  home for external citations, audience facts and borrowed craft alike, each with the date it was last
+  checked, and the rule that reaction to CGP is summarized rather than linked.
 - [ai-disclosure.md](communication-strategy/ai-disclosure.md) — how the project discloses its own use of
   AI: the reach-and-verifiability principle behind the gradient, the four levels from agent-written
   documentation through revised drafts and non-imported code to the hand-written core library, the

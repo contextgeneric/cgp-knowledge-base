@@ -2,9 +2,9 @@
 
 This document turns the audience model and the message into per-artifact instructions: for each kind
 of public writing — a launch post, a blog deep-dive, a README, a talk, a thread, a comparison — the
-opening move, the length, the dismissal to preempt, and the next step to ask for. It ends with
-annotated model drafts, so a writer can watch the whole apparatus operate on finished copy rather than
-re-derive it from rules.
+opening move, the length, the dismissal to preempt, and the next step to ask for — and, for every
+page regardless of kind, how it is titled and found. It ends with annotated model drafts, so a writer
+can watch the whole apparatus operate on finished copy rather than re-derive it from rules.
 
 Two artifacts are governed elsewhere because they earned their own guides. The **website homepage** is
 [../website/writing-guides/homepage.md](../website/writing-guides/homepage.md) and the **website
@@ -125,6 +125,56 @@ This format suits the author's voice particularly well, because his instinct on 
 already to explain the other thing properly and to warn against flattering equivalences — "our
 approach differs enough from tagless final that I want to avoid people thinking they're identical" is
 the register to aim for.
+
+## Titles, first lines, and search
+
+Every page is somebody's first page, so its title and first paragraph are written for a reader who
+arrived from a search result or a shared link with no context, and they are the part of a piece most
+worth revising. The information architecture records that most readers never see the homepage; this
+section says what follows for the words at the top of each page. The principle is Mark Baker's, cited
+in [evidence.md](evidence.md#sources-for-the-craft-this-section-borrows).
+
+**Title a page for the reader's problem, in the reader's words.** A construct name tells a reader who
+does not know it nothing, and the paradigm name tells them less. The pains in
+[message.md](message.md#the-problems-cgp-removes) are already phrased as a reader would phrase them,
+and a title drawn from one of them is also what the reader typed into the search box.
+
+| Instead of | Write |
+|---|---|
+| Using `#[cgp_component]` | Give one trait several implementations |
+| Namespaces | Keep a growing wiring table short |
+| Abstract types | Swap your error type by changing one line |
+| Context-generic programming for library authors | Implement a trait for a type you don't own |
+
+The rule applies to tutorials, explanation pages, and blog posts. A reference page is the exception:
+its reader arrives holding the construct's name, so the name is the title, and the problem goes in the
+first sentence of its overview instead.
+
+**Orient in the first paragraph.** Before the page assumes anything, one sentence says what CGP is and
+links to the page that explains it, and one sentence says what this page covers. The tag line's
+descriptor is the sentence to use. A reader who already knows skips two lines; a reader who does not
+is kept.
+
+**Use the words readers search for, once, where they belong.** The problems CGP removes have names the
+Rust community already uses: the orphan rule, conflicting implementations, `E0119`, multiple
+implementations of one trait for the same type, dependency injection without a framework. A page
+about one of those pains says its name in the title or the first paragraph, because a reader
+searching for it will match on that name. Say it once and naturally. A page that repeats a phrase in order
+to be found reads as what it is, and this audience punishes it.
+
+**The bridge terms are for the body, qualified.** Readers have described CGP as structural typing or
+as duck typing for a static language. Those phrases meet a reader where they are and may appear in a
+first paragraph, always with the qualification that CGP is nominal and wired rather than structural,
+per [vocabulary.md](vocabulary.md#the-name-and-the-communitys-bridge-terms).
+
+**Set the summary a search result and a link preview show.** A Docusaurus page's `description` front
+matter is the text a search engine and a link preview display, and the blog index shows a post's
+excerpt above the truncate marker. Write each as one sentence a stranger can act on, in the same
+register as the title, and never leave it to be cut from the first paragraph.
+
+Aggregator titles are a different case and are covered in
+[the launch-post playbook](#the-link-aggregator-launch-post): there the title is the whole pitch and
+carries the "pluggable trait implementations" half of the tag line.
 
 ## Answering in threads
 
