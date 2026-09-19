@@ -2,9 +2,9 @@
 
 When an implementation needs a type it does not fix — a database handle, a transaction, a scalar, an error — that type has to live somewhere, and this guide is about choosing between the two places CGP offers instead of the one vanilla Rust offers.
 
-The decision matters because the obvious answer is the expensive one. A generic parameter on the trait works, and it makes every caller and every intermediate capability that never touches the type declare it anyway and repeat its bounds. The two CGP forms both avoid that, and they differ in what they let you *do* with the type afterwards, so picking between them is worth doing deliberately rather than by reaching for whichever construct is already in the file.
+The decision matters because the obvious answer is the expensive one. A generic parameter on the trait works, and it makes every caller and every intermediate operation that never touches the type declare it anyway and repeat its bounds. The two CGP forms both avoid that, and they differ in what they let you *do* with the type afterwards, so picking between them is worth doing deliberately rather than by reaching for whichever construct is already in the file.
 
-All snippets below wire an **environmental context** — `App` stands for the application and carries the database handle — and every capability is **self-targeted**. Nothing crosses into another shape, so the difference between the tiers is only where the type lives. The shapes themselves are the subject of [choosing a component's shape](choosing-a-component-shape.md).
+All snippets below wire an **environmental context** — `App` stands for the application and carries the database handle — and every component is **self-targeted**. Nothing crosses into another shape, so the difference between the tiers is only where the type lives. The shapes themselves are the subject of [choosing a component's shape](choosing-a-component-shape.md).
 
 ## Start by inferring the type from a field
 
@@ -24,13 +24,13 @@ The cost is that the type is **concealed rather than named**. It exists only whe
 
 **Climb to an abstract type when either of two things is true, and stay on `#[impl_generics]` when neither is.** Both conditions are about needing to *name* the type somewhere the inferred form cannot reach.
 
-The first is that **the type appears in the capability's public signature**. An impl-only parameter is not in scope in the generated trait, so a method that returns one does not compile — `fetch_row` returning `Db::Row` fails with `E0433: cannot find type 'Db' in this scope`, pointed at the return type. The same holds for an explicit (non-implicit) parameter. This is the condition that arrives the moment a capability hands a value of the type back to its caller: opening a transaction, producing a connection, returning a decoded row.
+The first is that **the type appears in the trait's public signature**. An impl-only parameter is not in scope in the generated trait, so a method that returns one does not compile — `fetch_row` returning `Db::Row` fails with `E0433: cannot find type 'Db' in this scope`, pointed at the return type. The same holds for an explicit (non-implicit) parameter. This is the condition that arrives the moment an operation hands a value of the type back to its caller: opening a transaction, producing a connection, returning a decoded row.
 
-The second is that **two types have to agree**. A transaction type only means anything relative to a database, so the capability that opens one and the capability that commits it must be talking about the same transaction. An inferred parameter cannot express that, because each impl infers its own.
+The second is that **two types have to agree**. A transaction type only means anything relative to a database, so the operation that opens one and the operation that commits it must be talking about the same transaction. An inferred parameter cannot express that, because each impl infers its own.
 
 ## Do not answer either condition with a trait generic
 
-**Declaring the type as a generic parameter on the capability is the form to avoid, and it is what vanilla Rust leaves you with.** A generic on a [`#[cgp_fn]`](../reference/macros/cgp_fn.md) goes onto the trait *and* the impl, so the type is nameable in the signature — and every capability built on top of it inherits the parameter and its bounds:
+**Declaring the type as a generic parameter on the trait is the form to avoid, and it is what vanilla Rust leaves you with.** A generic on a [`#[cgp_fn]`](../reference/macros/cgp_fn.md) goes onto the trait *and* the impl, so the type is nameable in the signature — and every operation built on top of it inherits the parameter and its bounds:
 
 ```rust
 #[cgp_fn]
@@ -94,7 +94,7 @@ where
 }
 ```
 
-The provider names both abstract types, reads the pool from a field whose type is expressed in terms of one of them, and stays generic over every context. Two payoffs follow from the same wiring. Every capability that mentions `Transaction` means the context's `Transaction`, so the starter and the committer agree with nothing to coordinate — the type-level counterpart of the way a shared [`HasErrorType`](../reference/components/has_error_type.md) makes every fallible provider agree on one error. And the intermediate capability that composes them names neither type:
+The provider names both abstract types, reads the pool from a field whose type is expressed in terms of one of them, and stays generic over every context. Two payoffs follow from the same wiring. Every trait that mentions `Transaction` means the context's `Transaction`, so the starter and the committer agree with nothing to coordinate — the type-level counterpart of the way a shared [`HasErrorType`](../reference/components/has_error_type.md) makes every fallible provider agree on one error. And the intermediate operation that composes them names neither type:
 
 ```rust
 #[cgp_fn]
@@ -144,7 +144,7 @@ Four details are easy to get wrong, and three of them are about naming rather th
 
 ## Related guides
 
-- [Choosing a component's shape](choosing-a-component-shape.md) — the decision that comes first: what goes in `Self`, and whether the capability targets `Self` or a parameter.
+- [Choosing a component's shape](choosing-a-component-shape.md) — the decision that comes first: what goes in `Self`, and whether the component targets `Self` or a parameter.
 - [Importing abstract types](importing-abstract-types.md) — the `#[use_type]` forms to use once you have decided a type should be abstract, including the `in Context` and equality forms.
 - [Reading context fields](reading-context-fields.md) — the value-level counterpart, where the same reasoning picks `#[implicit]` over a getter trait.
 - [Declaring a provider's dependencies](declaring-dependencies.md) — where a bound belongs once the type it constrains has a home.

@@ -1,12 +1,12 @@
 # Choosing a component's shape
 
-When you define a component you decide two things about it before you write a line of its body — what goes in the `Self` position, and whether the capability is about `Self` or about a type parameter — and this guide is about making that choice deliberately rather than by copying whichever example you read last.
+When you define a component you decide two things about it before you write a line of its body — what goes in the `Self` position, and whether its operation acts on `Self` or on a type parameter — and this guide is about making that choice deliberately rather than by copying whichever example you read last.
 
 The decision matters because it fixes how many independent choices the wiring can ever express, and because it cannot be revised later without a breaking change to the trait. It is also the decision most likely to be made by accident: the two arrangements look almost identical in a snippet, so an author who patterns a new component after a tutorial usually inherits the tutorial's shape without noticing there was an alternative.
 
-## Default to a capability about the application
+## Default to an operation about the application
 
-**Start by asking what the capability is *about*, and default to the answer "the application".** Most capabilities in a real program — send an email, query a user, run the server, load the config — are things the application does, so the natural `Self` is a type standing for the application and the capability targets that `Self`. This is the shape most CGP code is in, it needs no type parameter, and it already gives per-application choice:
+**Start by asking what the operation is *about*, and default to the answer "the application".** Most operations in a real program — send an email, query a user, run the server, load the config — are things the application does, so the natural `Self` is a type standing for the application and the component targets that `Self`. This is the shape most CGP code is in, it needs no type parameter, and it already gives per-application choice:
 
 ```rust
 #[cgp_component(EmailSender)]
@@ -26,9 +26,9 @@ delegate_components! { TestApp { EmailSenderComponent: RecordEmails } }
 
 `App` and `TestApp` are **environmental contexts** — types whose job is to carry choices and whatever data the providers need, frequently no data at all, so `pub struct App;` is a complete context. Because both are types you define, "one wiring per type" is not a limit: when one choice is not enough you define a second context. Reach for a parameter only when this shape genuinely cannot express the case, which the two sections below identify.
 
-## Reach for a value context when the capability belongs to the data
+## Reach for a value context when the operation belongs to the data
 
-Put the data in `Self` when the capability really is a property of the data rather than of the application — computing a shape's area, formatting a value — or when you are adding alternatives to an existing trait whose signature you cannot change. The wired type is then a **value context**, and the component is still self-targeted:
+Put the data in `Self` when the operation really is a property of the data rather than of the application — computing a shape's area, formatting a value — or when you are adding alternatives to an existing trait whose signature you cannot change. The wired type is then a **value context**, and the component is still self-targeted:
 
 ```rust
 #[cgp_component(AreaCalculator)]
@@ -43,7 +43,7 @@ The cost is the one thing this shape cannot do: **the wired type gets one provid
 
 ## Move the target into a parameter when the type is not yours
 
-**Add a `Value` parameter when the capability is about a type you do not own *and* different applications must treat it differently.** That combination is the only thing the parameter buys; if either half is missing, the shapes above are simpler and sufficient.
+**Add a `Value` parameter when the operation is about a type you do not own *and* different applications must treat it differently.** That combination is the only thing the parameter buys; if either half is missing, the shapes above are simpler and sufficient.
 
 Serialization is the canonical case: the encoded types are foreign, and two services genuinely need the same `Vec<u8>` sent as hexadecimal by one and base64 by the other. Making the component **parameter-targeted** leaves `Self` free to be an application:
 
@@ -121,7 +121,7 @@ The payoff is the last two blocks: `ApiServer` and `Firmware` encode the same `S
 
 ## Two traps
 
-**A type parameter does not make a component parameter-targeted.** The target is the type the capability *acts on*; a parameter may instead be a **selector** the wiring dispatches on. In [`CanCompute<Code, Input>`](../reference/components/computer.md) the target is `Input` while `Code` selects which computation runs, and [`CanRaiseError<SourceError>`](../reference/components/can_raise_error.md) dispatches on the source error. A component may carry both kinds at once, so count the roles rather than the parameters.
+**A type parameter does not make a component parameter-targeted.** The target is the type the operation *acts on*; a parameter may instead be a **selector** the wiring dispatches on. In [`CanCompute<Code, Input>`](../reference/components/computer.md) the target is `Input` while `Code` selects which computation runs, and [`CanRaiseError<SourceError>`](../reference/components/can_raise_error.md) dispatches on the source error. A component may carry both kinds at once, so count the roles rather than the parameters.
 
 **Do not climb to a parameter to get per-application choice**, which is the most common over-application of this decision. Per-application choice comes from the wired type being a type you define, so the self-targeted shape on an environmental context already has it. The parameter is for foreign *target* types, and reaching for it earlier buys wiring entries and a harder-to-read provider for nothing.
 

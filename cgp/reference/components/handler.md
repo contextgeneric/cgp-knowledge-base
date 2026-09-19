@@ -4,7 +4,7 @@
 
 ## Purpose
 
-`Handler` exists for the computations that need everything the family offers — to run asynchronously *and* to be able to fail. A handler that calls a remote service must await the response and must report failures, so it occupies the corner of the family that is both async and fallible. Every other handler component is a special case obtained by dropping one of these capabilities: drop the failure path and a `Handler` becomes an [`AsyncComputer`](computer.md), drop the asynchrony and it becomes a [`TryComputer`](try_computer.md), drop both and it becomes a [`Computer`](computer.md). `Handler` is therefore the component a generic consumer bounds against when it wants to accept *any* computation regardless of which capabilities the underlying provider actually uses, because every simpler provider can be promoted up to a `Handler`.
+`Handler` exists for the computations that need everything the family offers — to run asynchronously *and* to be able to fail. A handler that calls a remote service must await the response and must report failures, so it occupies the corner of the family that is both async and fallible. Every other handler component is a special case obtained by dropping one of these properties: drop the failure path and a `Handler` becomes an [`AsyncComputer`](computer.md), drop the asynchrony and it becomes a [`TryComputer`](try_computer.md), drop both and it becomes a [`Computer`](computer.md). `Handler` is therefore the component a generic consumer bounds against when it wants to accept *any* computation regardless of which of those properties the underlying provider actually has, because every simpler provider can be promoted up to a `Handler`.
 
 This generality is why the family promotes toward `Handler` rather than away from it. A pure synchronous computer can serve as a handler that neither awaits nor errors; a fallible computer can serve as a handler that awaits trivially; an async computer can serve as a handler that never errors. Each of these is a safe widening, and the combinators perform them automatically, so a provider author writes against the weakest variant that fits and the wiring lifts it to `Handler` wherever a handler is required. The reverse — using a `Handler` where only a `Computer` is wanted — is not possible, since a general computation cannot be assumed pure or synchronous.
 
@@ -59,7 +59,7 @@ Because `Handler` is the top of the promotion lattice, most `Handler` implementa
 
 ## Examples
 
-A generic consumer that bounds its context by `CanHandle` accepts any wired computation, whatever its underlying capabilities:
+A generic consumer that bounds its context by `CanHandle` accepts any wired computation, whatever its underlying properties:
 
 ```rust
 use core::marker::PhantomData;

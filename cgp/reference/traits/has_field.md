@@ -1,6 +1,6 @@
 # `HasField`
 
-`HasField<Tag>` is the consumer trait for reading a single named field out of a context by a type-level tag, with `HasFieldMut<Tag>` adding mutable access, the provider-side mirrors `FieldGetter` and `MutFieldGetter` supplying the same capability through CGP wiring, and the lifetime helpers `MapField`/`FieldMapper` letting chained field accesses borrow correctly.
+`HasField<Tag>` is the consumer trait for reading a single named field out of a context by a type-level tag, with `HasFieldMut<Tag>` adding mutable access, the provider-side mirrors `FieldGetter` and `MutFieldGetter` supplying the same access through CGP wiring, and the lifetime helpers `MapField`/`FieldMapper` letting chained field accesses borrow correctly.
 
 ## Purpose
 

@@ -121,7 +121,7 @@ live in [AGENTS.md](AGENTS.md).
   model, and by role; plus the comprehension barriers that stop a willing reader from following, and the
   teaching move that lowers each.
 - [The message](message.md) — everything a piece says about CGP: the concrete pains it removes, the
-  capabilities worth advertising, the objections readers bring and how to answer each, and the boundary
+  strengths worth advertising, the objections readers bring and how to answer each, and the boundary
   beyond which a plainer tool wins. Four views of one reader, kept together so an edit to one checks the
   others.
 - [Vocabulary](vocabulary.md) — the canonical word list: which term to use for each idea, which to defer,

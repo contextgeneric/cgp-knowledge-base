@@ -54,8 +54,8 @@ it stale.
   into a component (consumer trait, provider trait, marker, blanket impls).
 - [cgp_computer.md](cgp/reference/macros/cgp_computer.md) — define a `Computer` provider from a
   function, with the promotion tables that answer the rest of the handler family.
-- [cgp_fn.md](cgp/reference/macros/cgp_fn.md) — define a single-implementation capability as a
-  blanket-impl trait straight from a function; also documents `#[impl_generics]`.
+- [cgp_fn.md](cgp/reference/macros/cgp_fn.md) — define a trait with a single blanket implementation
+  straight from a function; also documents `#[impl_generics]`.
 - [cgp_getter.md](cgp/reference/macros/cgp_getter.md) — define a getter as a full component, so its
   source field is chosen by wiring.
 - [cgp_impl.md](cgp/reference/macros/cgp_impl.md) — write a provider in consumer-trait shape, the
@@ -95,7 +95,7 @@ it stale.
 - [derive_delegate.md](cgp/reference/attributes/derive_delegate.md) — generate the `UseDelegate`
   dispatcher impl for a component generic over a parameter (the legacy dispatch path).
 - [extend.md](cgp/reference/attributes/extend.md) — add supertrait bounds to a generated trait, the
-  preferred way to import a capability supertrait.
+  preferred way to import a supertrait that contributes methods.
 - [extend_where.md](cgp/reference/attributes/extend_where.md) — add `where` predicates to a
   `#[cgp_fn]` trait's own definition rather than only its impl.
 - [impl_generics.md](cgp/reference/attributes/impl_generics.md) — declare a generic parameter on a
@@ -106,7 +106,7 @@ it stale.
   type-level path prefix, from the component's own trait.
 - [use_provider.md](cgp/reference/attributes/use_provider.md) — complete an inner provider's bound in
   a higher-order provider by filling in the context argument.
-- [uses.md](cgp/reference/attributes/uses.md) — import `Self` capability bounds, reading like a `use`
+- [uses.md](cgp/reference/attributes/uses.md) — import `Self` trait bounds, reading like a `use`
   statement.
 - [use_type.md](cgp/reference/attributes/use_type.md) — import an abstract associated type as a bare
   alias, including the equality form that pins it to a concrete type.
@@ -138,7 +138,7 @@ it stale.
 - [handler.md](cgp/reference/components/handler.md) — the general async, fallible, error-aware
   computation component.
 - [has_error_type.md](cgp/reference/components/has_error_type.md) — the abstract error type every
-  fallible CGP capability names.
+  fallible CGP trait names.
 - [has_runtime.md](cgp/reference/components/has_runtime.md) — the abstract runtime type and its
   accessor.
 - [has_type.md](cgp/reference/components/has_type.md) — CGP's built-in abstract-type component.
@@ -247,7 +247,7 @@ it stale.
 - [higher-order-providers.md](cgp/concepts/higher-order-providers.md) — providers parameterized by
   other providers.
 - [impl-side-dependencies.md](cgp/concepts/impl-side-dependencies.md) — dependency injection through a
-  blanket impl's `where` clause, in its three legs: capabilities, values, and types — the last being why
+  blanket impl's `where` clause, in its three legs: traits, values, and types — the last being why
   an abstract type needs no generic parameter.
 - [implicit-arguments.md](cgp/concepts/implicit-arguments.md) — writing providers as ordinary
   functions whose arguments come from context fields.
@@ -271,12 +271,12 @@ it stale.
 - [README.md](cgp/guides/README.md) — the guide catalog plus a summary table condensing every
   recommendation into one cheat-sheet.
 - [choosing-a-component-shape.md](cgp/guides/choosing-a-component-shape.md) — what goes in `Self` and
-  whether the capability targets `Self` or a parameter, with the promotion refactoring worked and the
+  whether the component targets `Self` or a parameter, with the promotion refactoring worked and the
   two traps: a parameter is not always a target, and per-application choice needs no parameter.
 - [sizing-a-component.md](cgp/guides/sizing-a-component.md) — group the items one provider choice decides
   together, the two cases where several belong, the three costs of grouping unrelated decisions, and
   splitting a trait that has along the axis its contexts differ on.
-- [capability-supertraits.md](cgp/guides/capability-supertraits.md) — prefer `#[extend]` over native
+- [method-supertraits.md](cgp/guides/method-supertraits.md) — prefer `#[extend]` over native
   `:` supertrait syntax.
 - [debugging.md](cgp/guides/debugging.md) — reach for `cargo-cgp` first, then trace a wiring failure
   by hand: reading the error's shape, moving it to the wiring site, reducing it, and a decoder table.
@@ -288,7 +288,7 @@ it stale.
   over a supertrait plus `Self::Type`.
 - [naming-a-type-dependency.md](cgp/guides/naming-a-type-dependency.md) — infer a needed type from a
   field with `#[impl_generics]`, climb to an abstract type when it must be named or two types must
-  agree, and never thread it as a generic parameter on the capability.
+  agree, and never thread it as a generic parameter on the trait.
 - [namespaces-and-prefixes.md](cgp/guides/namespaces-and-prefixes.md) — keep a growing wiring table
   short with prefixes, namespaces, and per-type defaults, worked as a refactoring.
 - [reading-context-fields.md](cgp/guides/reading-context-fields.md) — prefer an `#[implicit]` argument
@@ -336,7 +336,7 @@ it stale.
 - [lowering/unresolved-imported-type.md](cgp/errors/lowering/unresolved-imported-type.md) — a
   `#[use_type]` import naming an associated type its trait does not declare (`E0576`).
 - [lowering/out-of-scope-generated-name.md](cgp/errors/lowering/out-of-scope-generated-name.md) — an
-  `#[impl_generics]` parameter named in the capability's own signature, where only the generated impl
+  `#[impl_generics]` parameter named in the trait's own signature, where only the generated impl
   declares it (`E0433`), plus the abstract type shadowing its own bound (`E0404`) and the enum variant
   colliding with a derive-generated associated type (`ambiguous associated item`).
 - [error_codes/README.md](cgp/errors/error_codes/README.md) — the forward index from a `rustc` error
@@ -574,10 +574,11 @@ it stale.
   application-context shape vanilla Rust gives them no reason to imagine, and the teaching move that
   lowers each.
 - [message.md](communication-strategy/message.md) — everything a piece says about CGP: the pains it
-  removes, the capabilities worth advertising, the objections readers bring, and the boundary where a
+  removes, the strengths worth advertising, the objections readers bring, and the boundary where a
   plainer tool wins — four views of one reader.
 - [vocabulary.md](communication-strategy/vocabulary.md) — the canonical word list for public writing
-  (use, defer, avoid), the value/environmental/application context and self/parameter target qualifiers
+  (use, defer, avoid — including why "capability" is retired for CGP's own constructs), the
+  value/environmental/application context and self/parameter target qualifiers
   with the case that they are not jargon and the four misreadings they prevent, plus the glossary of the
   non-technical craft; the authority that resolves any phrasing disagreement.
 - [reader-simulation.md](communication-strategy/reader-simulation.md) — the theory-of-mind method for

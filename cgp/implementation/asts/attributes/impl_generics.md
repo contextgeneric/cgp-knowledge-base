@@ -14,7 +14,7 @@ Nothing constrains the parameters except the `HasField<…, Value = T>` bounds t
 
 ## Tests
 
-- [generic_components/fn_impl_generics.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/generic_components/fn_impl_generics.rs) pins the expansion: the parameter on the impl with its inline bound, absent from the trait, and pinned by the implicit argument's field bound; a second `#[cgp_fn]` then consumes the capability through `#[uses]` and drives a runtime assertion.
+- [generic_components/fn_impl_generics.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/generic_components/fn_impl_generics.rs) pins the expansion: the parameter on the impl with its inline bound, absent from the trait, and pinned by the implicit argument's field bound; a second `#[cgp_fn]` then consumes the trait through `#[uses]` and drives a runtime assertion.
 - No library fixture pins the unconstrained-parameter (`E0207`), name-clash (`E0404`), or default-parameter rejections; each is a plain compiler error on the emitted impl.
 
 ## Source

@@ -136,9 +136,9 @@ The landing page is the only substantial React on the site, built from
 [src/pages/index.tsx](https://github.com/contextgeneric/contextgeneric.dev/blob/main/src/pages/index.tsx)
 and the feature grid in
 [src/components/HomepageFeatures/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/src/components/HomepageFeatures).
-Its feature illustrations under `static/img/features/` name six headline capabilities — bypassing
+Its feature illustrations under `static/img/features/` name six headline features — bypassing
 coherence rules, a modular component system, highly expressive macros, type-safe composition, no-std
-friendliness, and zero-cost abstraction. The [Overview](#overview) gives the broader capability tour,
+friendliness, and zero-cost abstraction. The [Overview](#overview) gives the broader feature tour,
 including implementation choice, abstract types, extensible data, and handlers. The front page needs
 the curated feature framing from [identity](../communication-strategy/identity.md).
 
@@ -263,8 +263,8 @@ The technical explanations come from these subjects:
 
 ### Maintaining it
 
-Keep the capability tour broader than the front page's feature set. Abstract types need both a
-capability explanation and a separate account of the repeated-parameter problem. Preserve the
+Keep the feature tour broader than the front page's feature set. Abstract types need both a
+feature explanation and a separate account of the repeated-parameter problem. Preserve the
 qualifications on compile-time checking, portability, runtime choice, and component sizing. Link to
 maintained explanations for depth rather than reproducing their tutorials or directing current-code
 questions to dated posts.
@@ -572,7 +572,7 @@ Their snippets have counterparts in the matching `example-code/tests/concepts/` 
 
 *Higher-order providers* separates static provider selection from runtime computation, explains
 that aliases do not verify a composition's requirements, and traces `UseContext` from a collection
-capability to its element capability. It marks the switch from shape contexts to an application
+trait to its element trait. It marks the switch from shape contexts to an application
 context and warns against routing an inner request back to the same wrapper. *Impl-side dependencies*
 distinguishes a stable generic caller contract from the requirements concrete contexts must satisfy.
 Its type-dependency example keeps public associated types in the interface and explains when runtime
@@ -727,7 +727,7 @@ rather than asserts. A revision re-reads the fixtures rather than editing the qu
 
 The page covers one group the internal catalog has **no classes for**, and the gap is recorded in
 [cgp/errors/README.md](../cgp/errors/README.md) rather than papered over here. `cargo-cgp`'s
-`CGP-E012`–`CGP-E016` rewrites — a capability used without `#[uses]`, an inner provider used without
+`CGP-E012`–`CGP-E016` rewrites — a trait used without `#[uses]`, an inner provider used without
 `#[use_provider]`, and the three consumer-versus-provider-trait confusions — are common, first-week
 mistakes with no upstream class document, so the public page carries them under *Using something you did
 not declare* on the strength of the tool's own catalog and its fixtures.
@@ -1074,7 +1074,7 @@ GitHub repository, which is where two pages had pointed while that section was u
 **Introduce "context" with a gloss on first use, on every page, above the advanced line.** It is a
 knowledge-base word before it is a public one, and a reference page is read on its own rather than in
 order, so no reader can be assumed to have met it already. One clause carries it — "the type the
-capability runs against, which supplies those values as its fields" — which is deliberately enough to read
+method runs on, which supplies the values it needs as its fields" — which is deliberately enough to read
 the page with and not an attempt at the full account; that lives on
 [the concept page](https://contextgeneric.dev/docs/concepts/consumer-and-provider-traits), reached through
 the sidebar rather than through an inline link, per the convention above. Two of the first four written
@@ -1086,10 +1086,14 @@ same group — it opens on why encoding a string as a type matters to a context,
 
 A mechanical check over this convention has to allow for three things, and missing any of them reports
 false failures. The phrase may be **split across a line wrap**, so a line-by-line grep fails on most pages
-that do carry it. The **wording varies**: the canonical clause is "the type the capability runs against,
-which supplies those values as its fields", but a page with nothing to say about fields shortens it — the
-four attribute pages that use the word write "the type the implementation runs against", "the type the code
-runs against", or "the type it runs against", all of which discharge the convention. And `MyContext` inside
+that do carry it. The **wording varies**: the canonical clause is "the type the method runs on, which
+supplies the values it needs as its fields", but a page with nothing to say about fields shortens it — the
+attribute pages that use the word write "the type the implementation runs against", "the type the code
+runs against", or "the type it runs against", and the abstract-type pages, which have no method to
+point at, write "the type that implements the trait"; all of these discharge the convention. The clause never
+says "capability", per
+[vocabulary.md](../communication-strategy/vocabulary.md#words-and-framings-to-avoid). And
+`MyContext` inside
 a code block is not a prose use of the word.
 
 **A written index carries the provenance note too.** The rule that a scaffolded stub carries no note
@@ -1193,7 +1197,7 @@ option here.
 
 ### The section holds two pages pointing in opposite directions
 
-Keeping them legibly apart is the section's design problem. The skill page is a **capability** — what
+Keeping them legibly apart is the section's design problem. The skill page is a **feature** — what
 CGP offers a reader who works with a coding assistant. The disclaimer page is a **fact about the
 project**. The category is labelled "AI Assisted Development", which covers both adequately, and the
 directory stays `docs/ai/`; the unmerged `rustlab-presentation` branch renames the directory to

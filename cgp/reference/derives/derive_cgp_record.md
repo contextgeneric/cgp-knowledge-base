@@ -8,7 +8,7 @@
 
 The derive is the struct-specific face of [`#[derive(CgpData)]`](derive_cgp_data.md). When `CgpData` is applied to a struct it emits exactly what `CgpRecord` emits; the two are the same code path. Use `CgpRecord` when the type is always a struct and you want the name to say so, or when you prefer a derive whose meaning is unambiguous at the use site. Using `CgpRecord` on an enum is a type error, since it parses its input as a struct.
 
-The defining capability a record gains is incremental construction. Beyond plain field access, the derive generates a *partial* companion type that tracks, in its type parameters, which fields are present and which are still absent. Generic code can start from an empty builder, set fields individually or copy them in bulk from other records that share field names, and finalize only once every field is present. This present/absent tracking happens entirely at the type level, so a missing field is a compile error, not a runtime panic.
+The defining operation a record gains is incremental construction. Beyond plain field access, the derive generates a *partial* companion type that tracks, in its type parameters, which fields are present and which are still absent. Generic code can start from an empty builder, set fields individually or copy them in bulk from other records that share field names, and finalize only once every field is present. This present/absent tracking happens entirely at the type level, so a missing field is a compile error, not a runtime panic.
 
 ## Syntax
 

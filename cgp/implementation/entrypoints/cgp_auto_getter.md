@@ -48,7 +48,7 @@ The conversions are exactly those `#[cgp_getter]` uses — `&str` reads a `Strin
 
 ## Behavior and corner cases
 
-**A supertrait on the getter trait becomes a context bound on the impl.** The trait's supertrait constraints are lowered to a `__Context__: Supertrait` predicate on the blanket impl, so a getter trait can require capabilities of any context that implements it without those constraints appearing on the impl's `Self` in trait position.
+**A supertrait on the getter trait becomes a context bound on the impl.** The trait's supertrait constraints are lowered to a `__Context__: Supertrait` predicate on the blanket impl, so a getter trait can require other traits of any context that implements it without those constraints appearing on the impl's `Self` in trait position.
 
 **A single associated return type is supported and inferred.** A getter trait may declare one `type Name;` used as its method's return type; the blanket impl adds `Name` as a generic parameter, sets `type Name = Name;`, and carries any bound on it (for example `Name: Display`, or a self-referential `Scalar: Mul<Output = Self::Scalar>`) onto the impl with `Self::Name` rewritten to the parameter. More than one associated type, or an associated type alongside more than one method, is rejected.
 

@@ -117,7 +117,7 @@ check_components! {
 }
 ```
 
-`app.greet()` looks up `GreeterComponent`. `App` does not wire it directly, so the lookup falls through to `DefaultNamespace`, which redirects to `@app.GreeterComponent`, and `App`'s own table binds that path to `GreetHello`. `App` is an **environmental context** and the capability is **self-targeted**. A second context joins the same namespace and binds a different provider at the same path, with nothing repeated between the two. The prefixes CGP's own components carry are wired the same way: a context joining `DefaultNamespace` chooses its error type with `@cgp.core.error.ErrorTypeProviderComponent: UseType<String>` and an error strategy with `@cgp.core.error.ErrorRaiserComponent.String: ReturnError`, the dispatch type written after the generic component's marker.
+`app.greet()` looks up `GreeterComponent`. `App` does not wire it directly, so the lookup falls through to `DefaultNamespace`, which redirects to `@app.GreeterComponent`, and `App`'s own table binds that path to `GreetHello`. `App` is an **environmental context** and the component is **self-targeted**. A second context joins the same namespace and binds a different provider at the same path, with nothing repeated between the two. The prefixes CGP's own components carry are wired the same way: a context joining `DefaultNamespace` chooses its error type with `@cgp.core.error.ErrorTypeProviderComponent: UseType<String>` and an error strategy with `@cgp.core.error.ErrorRaiserComponent.String: ReturnError`, the dispatch type written after the generic component's marker.
 
 ## Related constructs
 

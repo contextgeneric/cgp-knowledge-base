@@ -37,7 +37,7 @@ This is where CGP is actually discussed, so it is the format to get right first,
 pragmatic skimmer who will form and broadcast a snap judgment. It runs in the **author voice**, since
 these submissions are posted by a person and answered by them in the thread.
 
-Title it with the concrete-capability half of the tag line rather than the paradigm name —
+Title it with the "pluggable trait implementations" half of the tag line rather than the paradigm name —
 "pluggable trait implementations for Rust, at compile-time" over "context-generic programming" —
 because the title is the whole pitch for most of the audience. Open the body on a runnable example or
 a short before/after from [message.md](message.md); the one piece of feedback CGP's own launch
@@ -233,7 +233,7 @@ feels most sharply. And every CGP claim and snippet is bound by the
 > conflict. Everything resolves at compile time and compiles to a direct call: no trait objects, no
 > runtime container, and nothing in the binary for a provider you don't use.
 >
-> To be clear about the cost: this is more machinery than a single trait needs. If a capability has
+> To be clear about the cost: this is more machinery than a single trait needs. If a trait has
 > one implementation, use a plain trait — CGP would be over-engineering. It earns its keep when the
 > implementations genuinely multiply, when the choice must differ per context, or when the orphan rule
 > is blocking you.
@@ -243,7 +243,7 @@ feels most sharply. And every CGP claim and snippet is bound by the
 >
 > Quickstart: [link]
 
-**The moves.** The title is the concrete-capability half of the [tag line](identity.md), not the
+**The moves.** The title is the "pluggable trait implementations" half of the [tag line](identity.md), not the
 paradigm name. It opens on **the thing Rust rejects**, which is harder to answer with "just use a
 trait" than the mock-in-tests pain is, and it **explains why the rule is right before working around
 it** — the enhances-not-replaces frame and the author's characteristic move.
@@ -346,7 +346,7 @@ the runtime-framework baggage catalogued in [message.md](message.md#the-objectio
 > direct call.
 
 > **3/** It's a library on stable Rust and a superset of ordinary traits, so you can try it in one
-> module without rewriting anything. And if a capability has just one implementation, keep using a
+> module without rewriting anything. And if a trait has just one implementation, keep using a
 > plain trait — this earns its keep once they multiply. [link]
 
 **The moves.** The first post is one concrete constraint with no paradigm name, and it **grants that

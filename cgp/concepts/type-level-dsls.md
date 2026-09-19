@@ -41,11 +41,11 @@ pub trait CanHandle<Code, Input> {
 }
 ```
 
-Running a program is then one call to the consumer method, passing the program type as `PhantomData<Code>`. The `Code` tag carries no value precisely so that one context can host an interpreter for every fragment in the language, each keyed by a distinct `Code` type, and so that the wiring can dispatch on it. A DSL whose fragments never fail or never await can use a simpler member of the family — [`Computer`](../reference/components/computer.md) for pure synchronous fragments — and rely on the family's promotion combinators to lift it where a more capable interpreter is required; the choice of component is the choice of what capabilities the language's fragments are allowed to have.
+Running a program is then one call to the consumer method, passing the program type as `PhantomData<Code>`. The `Code` tag carries no value precisely so that one context can host an interpreter for every fragment in the language, each keyed by a distinct `Code` type, and so that the wiring can dispatch on it. A DSL whose fragments never fail or never await can use a simpler member of the family — [`Computer`](../reference/components/computer.md) for pure synchronous fragments — and rely on the family's promotion combinators to lift it where a more capable interpreter is required; the choice of component is the choice of what the language's fragments are allowed to do: fail, await, or neither.
 
 ## Providers as interpreters
 
-A provider interprets one fragment by pattern-matching on the `Code` parameter through its generic arguments. Written with [`#[cgp_impl]`](../reference/macros/cgp_impl.md), an interpreter reads like an ordinary method body while the context stays generic, and it states everything the fragment needs from the context as [impl-side dependencies](impl-side-dependencies.md) — capability bounds through [`#[uses(...)]`](../reference/attributes/uses.md) and the remaining structural bounds in the `where` clause:
+A provider interprets one fragment by pattern-matching on the `Code` parameter through its generic arguments. Written with [`#[cgp_impl]`](../reference/macros/cgp_impl.md), an interpreter reads like an ordinary method body while the context stays generic, and it states everything the fragment needs from the context as [impl-side dependencies](impl-side-dependencies.md) — trait bounds through [`#[uses(...)]`](../reference/attributes/uses.md) and the remaining structural bounds in the `where` clause:
 
 ```rust
 #[cgp_impl(new HandleStreamChecksum)]

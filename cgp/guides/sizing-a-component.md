@@ -19,7 +19,7 @@ pub trait CanSendEmail {
 }
 ```
 
-Most application capabilities are like this — create a user, calculate an area, load the config — which is why most components you write and read hold a single method. The count is a consequence of the principle, not the principle itself.
+Most application operations are like this — create a user, calculate an area, load the config — which is why most components you write and read hold a single method. The count is a consequence of the principle, not the principle itself.
 
 ## When several items belong in one component
 
@@ -85,7 +85,7 @@ impl UserManager {
 }
 ```
 
-The reverse holds too, which is the same cost read from the other side: there is no way to grant one method a capability without granting it to the whole component, so capability isolation becomes impossible. The [social media app](../../examples/social-media-app.md) example shows what the split buys — once deleting a post is its own component, code that should only read and write posts can be handed the getter and the updater and never receive the destructive delete.
+The reverse holds too, which is the same cost read from the other side: there is no way to give one method a dependency without giving it to the whole component, so a method cannot be limited to the dependencies it uses. The [social media app](../../examples/social-media-app.md) example shows what the split buys — once deleting a post is its own component, code that should only read and write posts can be handed the getter and the updater and never receive the destructive delete.
 
 **A [higher-order provider](../concepts/higher-order-providers.md) must implement every item, including the ones it does not care about.** This is the cost that arrives second and bites hardest, because wrapping is where CGP's composition pays. A component holding one decision wraps in four lines, and the wrapper composes over any inner provider:
 
@@ -147,13 +147,13 @@ A provider that only computes areas must now pick some `Angle` it never uses and
 
 **A trait grouping every operation of an entity is the natural design for anyone with an object-oriented background, and it is worth being honest that the recommendation here cuts against a habit most developers hold for good reasons.** `Shape` with `area`, `perimeter`, `scale`, and `rotate` describes a coherent thing, gives a team one word to talk about, and matches how most people were taught to model a domain. A behavior-named component like `AreaCalculator` feels thinner and less principled by comparison, so the entity trait is what an author writes unless something stops them — and CGP will compile it.
 
-The trait's own name is the cheapest signal that the grouping has gone past one decision. CGP's consumer traits read as verbs — `CanCreateUser`, `CanCalculateArea` — precisely because a capability is something a context *does*; a consumer trait named after a noun is usually several decisions sharing one component. The diagnostic behind the naming is more direct: **would any provider for this trait ever be reused, whole, by a second context?** If the honest answer is no, the trait's providers are not reusable units and the CGP machinery around them is not paying for itself — at which point implementing the trait directly on each concrete type, with no component at all, is the better design. That is a real outcome and not a failure: it is tier 2 of the [modularity hierarchy](../concepts/modularity-hierarchy.md), one implementation per type, chosen deliberately rather than settled for.
+The trait's own name is the cheapest signal that the grouping has gone past one decision. CGP's consumer traits read as verbs — `CanCreateUser`, `CanCalculateArea` — precisely because an operation is something a context *does*; a consumer trait named after a noun is usually several decisions sharing one component. The diagnostic behind the naming is more direct: **would any provider for this trait ever be reused, whole, by a second context?** If the honest answer is no, the trait's providers are not reusable units and the CGP machinery around them is not paying for itself — at which point implementing the trait directly on each concrete type, with no component at all, is the better design. That is a real outcome and not a failure: it is tier 2 of the [modularity hierarchy](../concepts/modularity-hierarchy.md), one implementation per type, chosen deliberately rather than settled for.
 
 ## Split an existing trait along the axis its contexts differ on
 
 **When a component has grown past one decision and it matters, do not redesign it in the abstract — split it along the axis on which the contexts you actually want differ.** A split only pays where it creates a choice, so the contexts decide where the seams go. The procedure is four steps.
 
-Start by **naming the contexts you want**, which usually means recognizing ones you already have: a production application and a test harness, two deployment targets, a mock and the real thing. Then **list what each method depends on** — which fields it reads, which capabilities it calls, which types it names. **Group the methods whose dependencies are the same across all of those contexts**; those become components with shared, context-generic providers, and they are where the reuse is. Finally, **give the methods that must differ per context their own components**, wired per context — or, where a provider would only ever be used by one context, implement the consumer trait directly on that context and skip the provider entirely.
+Start by **naming the contexts you want**, which usually means recognizing ones you already have: a production application and a test harness, two deployment targets, a mock and the real thing. Then **list what each method depends on** — which fields it reads, which traits it calls, which types it names. **Group the methods whose dependencies are the same across all of those contexts**; those become components with shared, context-generic providers, and they are where the reuse is. Finally, **give the methods that must differ per context their own components**, wired per context — or, where a provider would only ever be used by one context, implement the consumer trait directly on that context and skip the provider entirely.
 
 Worked on a service whose production and test contexts share a database but differ in their outbound integrations, the split falls out of step two. Both contexts hold the same `PostgresDb`, so the user operations are shared, while the email sending genuinely differs:
 
@@ -185,7 +185,7 @@ delegate_components! { ProductionApp { UserCreatorComponent: CreateUserWithPostg
 delegate_components! { TestApp       { UserCreatorComponent: CreateUserWithPostgres } }
 ```
 
-The email capability differs per context and has exactly one implementation on each side, so it needs no provider at all — a consumer trait is an ordinary trait, and implementing it directly is the lowest tier that expresses the case:
+The email operation differs per context and has exactly one implementation on each side, so it needs no provider at all — a consumer trait is an ordinary trait, and implementing it directly is the lowest tier that expresses the case:
 
 ```rust
 impl CanSendEmail for ProductionApp {
@@ -209,7 +209,7 @@ One observation makes the trade-off easier to hold: **a component holding exactl
 
 ## Related guides
 
-- [Choosing a component's shape](choosing-a-component-shape.md) — the decision that comes first: what goes in `Self`, and whether the capability targets `Self` or a type parameter.
+- [Choosing a component's shape](choosing-a-component-shape.md) — the decision that comes first: what goes in `Self`, and whether the component targets `Self` or a type parameter.
 - [Naming a type dependency](naming-a-type-dependency.md) — when an associated type belongs in its own abstract-type component rather than inside the component that produces it.
 - [Writing providers](writing-providers.md) — the `#[cgp_impl]` form each provider above is written in, including the `#[cgp_impl(Self)]` direct impl.
 - [Organizing wiring with namespaces and prefixes](namespaces-and-prefixes.md) — the answer to the component count a split produces.

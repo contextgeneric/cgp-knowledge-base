@@ -20,7 +20,7 @@ visitor — and tells readers from other language backgrounds that this brings
 [datatype-generic programming](https://wiki.haskell.org/index.php?title=Generics), structural typing,
 row polymorphism, and polymorphic variants to Rust.
 
-A **feature highlights** section demonstrates three capabilities in isolation. Safe *upcasting* lifts
+A **feature highlights** section demonstrates three features in isolation. Safe *upcasting* lifts
 a `Shape` value into a `ShapePlus` enum that is a superset of its variants, with the two enums needing
 no knowledge of each other. Safe *downcasting* goes the other way and returns a `Result` whose `Err`
 carries the unhandled remainder, which can be downcast again — so a chain of downcasts can exhaust an

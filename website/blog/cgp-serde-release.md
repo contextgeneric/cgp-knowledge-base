@@ -66,7 +66,7 @@ best worked answer to "what problem does this solve" for a reader who does not c
 because Serde is universally known and the orphan-rule pain around it is universally felt — which is
 what [message.md](../../communication-strategy/message.md#the-problems-cgp-removes) asks a lead to be. And the
 "you don't even need `#[derive(Serialize)]`" result is a genuine
-[selling point](../../communication-strategy/message.md#the-capabilities-worth-advertising) that no competing approach in Rust can
+[selling point](../../communication-strategy/message.md#the-strengths-worth-advertising) that no competing approach in Rust can
 match. The candid future-work section is the honesty that
 [message.md](../../communication-strategy/message.md#the-objections-readers-bring) requires be paired with those claims.
 

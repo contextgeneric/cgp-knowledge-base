@@ -27,7 +27,7 @@ The component and provider macros:
 
 Functions and getters:
 
-- [`#[cgp_fn]`](entrypoints/cgp_fn.md) — a single-implementation capability as a blanket-impl trait, with `#[implicit]` argument lowering.
+- [`#[cgp_fn]`](entrypoints/cgp_fn.md) — a trait with a single blanket implementation, with `#[implicit]` argument lowering.
 - [`#[cgp_getter]`](entrypoints/cgp_getter.md) — a getter component wired through CGP, adding `UseField`/`UseFields` provider impls.
 - [`#[cgp_auto_getter]`](entrypoints/cgp_auto_getter.md) — a getter as a blanket impl over `HasField`.
 

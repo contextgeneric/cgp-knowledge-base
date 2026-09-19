@@ -8,7 +8,7 @@
 
 The builder's distinguishing property is that field presence is tracked in the type, not at runtime. The derive generates a *partial* companion struct whose type parameters record, per field, whether that field is present, absent, or void. Generic builder providers advance those parameters as fields are added, and the finalize step is implemented only for the fully-present configuration. A premature finalize is therefore a compile error rather than a runtime failure.
 
-The capability is exposed through `BuildField`, which is not generated per type but defined once in the field crate as a blanket impl over the generated `UpdateField` impls. `build_field` sets one field on a partial value; the surrounding `HasBuilder`/`IntoBuilder`/`FinalizeBuild` traits start and end the build.
+The operation is exposed through `BuildField`, which is not generated per type but defined once in the field crate as a blanket impl over the generated `UpdateField` impls. `build_field` sets one field on a partial value; the surrounding `HasBuilder`/`IntoBuilder`/`FinalizeBuild` traits start and end the build.
 
 ## Syntax
 

@@ -64,7 +64,7 @@ is [the point]." Two examples, both caught in a single draft of
 
 Say it plainly instead, with the real actor as the grammatical subject:
 
-> `#[cgp_component]` makes it possible for several overlapping implementations of one capability to be
+> `#[cgp_component]` makes it possible for several overlapping implementations of one trait to be
 > defined at once, which an ordinary Rust trait flatly rejects.
 >
 > Moving `Self` out of the way lets more than one implementation coexist.
@@ -101,9 +101,9 @@ context what a period, colon, or conjunction would have told them directly.
 The fix is to name what the dash is actually doing and use the punctuation built for that job.
 
 - **A parenthetical aside**, a related but non-essential remark, reads better in parentheses, set off
-  by commas, or moved into its own sentence. *Before:* "the type the capability actually runs against —
+  by commas, or moved into its own sentence. *Before:* "the type the trait actually runs against —
   the **context**, which supplies whatever values an implementation needs as its own fields — then
-  picks the provider." *After:* "The type the capability actually runs against is called the
+  picks the provider." *After:* "The type the trait actually runs against is called the
   **context**. It supplies whatever values an implementation needs as its own fields, then picks the
   provider."
 - **A definitional appositive**, naming what the preceding noun is, reads better after a colon.
@@ -148,9 +148,9 @@ knows over one they would have to look up.
 Six habits follow from that discipline, and each is worth naming on its own because each is a specific
 thing to catch in a draft.
 
-- **No metaphors.** Say what a thing does, not what it resembles. "Unlock CGP's capabilities for a
+- **No metaphors.** Say what a thing does, not what it resembles. "Unlock CGP's features for a
   trait" describes the effect through a lock-and-key image the reader has to translate; "give a trait
-  CGP's capabilities" says the same thing directly.
+  CGP's features" says the same thing directly.
 - **No wordplay.** A pun depends on a reader already knowing two meanings of one word, which is exactly
   the kind of shared cultural knowledge a non-native reader may not have. If a phrase is doing double
   duty for cleverness, keep only the meaning the sentence needs.
@@ -177,11 +177,11 @@ thing to catch in a draft.
 - **No sentence that stacks several clauses with dashes and colons.** A colon may still introduce one
   plain clause or a short list, which is a normal use of a colon rather than a complex structure. What
   to avoid is chaining more than one dash- or colon-joined clause into a single sentence. *Before:* "A
-  component is self-targeted when the capability is about the `Self` type — `CanGreet`, `HasErrorType`,
+  component is self-targeted when the operation is about the `Self` type — `CanGreet`, `HasErrorType`,
   every getter — and parameter-targeted when it is about a type parameter while `Self` only decides:
   `CanEncodeValue<Value>`, `CanCalculateArea<Shape>`." *After:* "A component is self-targeted when the
-  capability is about the `Self` type. Examples are `CanGreet`, `HasErrorType`, and every getter. A
-  component is parameter-targeted when the capability is about a type parameter and `Self` only
+  operation is about the `Self` type. Examples are `CanGreet`, `HasErrorType`, and every getter. A
+  component is parameter-targeted when the operation is about a type parameter and `Self` only
   decides. Examples are `CanEncodeValue<Value>` and `CanCalculateArea<Shape>`."
 
 **The check**: before publishing agent-drafted content, read it for a figurative phrase (a metaphor, a

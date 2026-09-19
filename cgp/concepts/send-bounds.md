@@ -59,7 +59,7 @@ pub trait CanHandleApiSend<Api>:
 }
 ```
 
-`CanHandleApiSend` is a plain trait, not a [component](../reference/macros/cgp_component.md) — it adds nothing to the wiring and exists only to carry stronger bounds. It inherits the full capability from `CanHandleApi` as a supertrait, additionally requiring the request and response to be `Send` and the context itself to be `Send + Sync`, and it spells out `+ Send` on the future explicitly rather than through a clause on `handle_api`. A caller that holds `App: CanHandleApiSend<Api>` therefore knows the future is `Send` from the signature alone, with no RTN in sight. This is the bound a spawning handler can finally name:
+`CanHandleApiSend` is a plain trait, not a [component](../reference/macros/cgp_component.md) — it adds nothing to the wiring and exists only to carry stronger bounds. It inherits the full interface from `CanHandleApi` as a supertrait, additionally requiring the request and response to be `Send` and the context itself to be `Send + Sync`, and it spells out `+ Send` on the future explicitly rather than through a clause on `handle_api`. A caller that holds `App: CanHandleApiSend<Api>` therefore knows the future is `Send` from the signature alone, with no RTN in sight. This is the bound a spawning handler can finally name:
 
 ```rust
 where

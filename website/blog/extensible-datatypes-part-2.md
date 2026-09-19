@@ -62,10 +62,10 @@ section relies on is [check traits](../../cgp/concepts/check-traits.md).
 Two pieces of the post are strategy assets. The `serde::Visitor` analysis is the most concrete
 "here is a real library that hits this wall" argument the project has published, and belongs in
 [message.md](../../communication-strategy/message.md#the-problems-cgp-removes) territory. The closing
-observation — that CGP lets you defer implementing a capability without `unimplemented!()` stubs,
+observation — that CGP lets you defer implementing a trait without `unimplemented!()` stubs,
 because minimal traits plus lazy wiring mean only what is used is checked — is a genuine selling point
 against heavyweight-trait designs and is the kind of claim
-[message.md](../../communication-strategy/message.md#the-capabilities-worth-advertising) is built from.
+[message.md](../../communication-strategy/message.md#the-strengths-worth-advertising) is built from.
 
 ## Where it diverges from CGP v0.8.0
 

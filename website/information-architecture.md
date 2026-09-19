@@ -154,11 +154,11 @@ made those four a short reading path — which the section's index page is what 
   **Project** beside Contribute is the obvious placement and is not yet decided. The evaluator's page,
   and it must stay linkable directly from above the fold.
 - *Overview* — present, **repurposed**, and staying where it is. The feature tour: every high-level CGP
-  capability walked through in more detail than any other surface carries. This is the page the front
-  page's capability beats and its "it goes further than trait implementations" section offload to, which
+  feature walked through in more detail than any other surface carries. This is the page the front
+  page's feature beats and its "it goes further than trait implementations" section offload to, which
   is the job that keeps it from overlapping its neighbours — the concepts explain one idea each, and the
   Overview covers the breadth. It is no longer capped at five features, since the curated five are the
-  *front page's* constraint and this page is where they are expanded and the breadth capabilities added.
+  *front page's* constraint and this page is where they are expanded and the breadth features added.
   It is no longer moved into a new category, which also retires the `slug: /overview` requirement the
   move would have carried.
 
@@ -239,7 +239,7 @@ as they are written rather than planned into the target.
 **AI** — the section carries CGP's relationship with coding agents in both directions, and the two
 directions are different subjects that must be named apart rather than blended.
 - *Using CGP with coding agents* — present as the inlined skill copy, regenerated from `cgp-skills`
-  rather than edited. This is a **capability**: what CGP offers a reader who works with an assistant.
+  rather than edited. This is a **feature**: what CGP offers a reader who works with an assistant.
 - *AI disclaimer* — present. The disclosure page: the four levels from agent-written documentation
   through revised drafts and non-imported code to the hand-written core library, and the destination
   every AI-assisted page's provenance note links to. This is a **fact about the project**, and it is the

@@ -159,7 +159,7 @@ has nothing to do with CGP. The [new-website post](../website/blog/new-website.m
 used and was right to, because it was recounting a specific episode; a standing page describes what is
 done rather than what it is done with.
 
-**Do not make it a feature.** AI use is not a capability CGP offers, and it does not belong in the tag
+**Do not make it a feature.** AI use is not a feature CGP offers, and it does not belong in the tag
 line, the feature set, or a hook. This is a separate rule from the one about
 [agent support answering the cost objection](message.md#the-one-mitigation-that-spans-three-of-these),
 and the two are easy to conflate: *CGP works well with coding agents* is a claim about the technology and

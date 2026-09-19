@@ -85,7 +85,7 @@ The promotion combinators each take a single inner `Provider` and re-expose it u
 pub struct Promote<Provider>(pub PhantomData<Provider>);
 ```
 
-As a `Computer`, `Promote<Provider>` requires the inner `Provider: Producer<Context, Code>` and ignores its own input, calling `Provider::produce` — this is how a producer (which takes no input) is adapted to fill a computer slot (which is handed an input it does not need). As a `TryComputer`, it requires `Provider: Computer` and wraps the infallible result in `Ok`. As a `Handler`, it requires `Provider: AsyncComputer` and wraps the awaited result in `Ok`. In each case the promotion adds the missing capability — discarding an input, introducing an always-`Ok` result — without changing what the inner provider computes.
+As a `Computer`, `Promote<Provider>` requires the inner `Provider: Producer<Context, Code>` and ignores its own input, calling `Provider::produce` — this is how a producer (which takes no input) is adapted to fill a computer slot (which is handed an input it does not need). As a `TryComputer`, it requires `Provider: Computer` and wraps the infallible result in `Ok`. As a `Handler`, it requires `Provider: AsyncComputer` and wraps the awaited result in `Ok`. In each case the promotion adds the missing behavior — discarding an input, introducing an always-`Ok` result — without changing what the inner provider computes.
 
 `PromoteAsync<Provider>` lifts a synchronous provider into an asynchronous one:
 

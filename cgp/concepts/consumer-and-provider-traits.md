@@ -1,12 +1,12 @@
 # Consumer and provider traits
 
-The defining idea of CGP is that one trait definition becomes two traits — a consumer trait that callers use and a provider trait that implementers write — so that many independent implementations of the same capability can coexist without violating Rust's coherence rules.
+The defining idea of CGP is that one trait definition becomes two traits — a consumer trait that callers use and a provider trait that implementers write — so that many independent implementations of the same trait can coexist without violating Rust's coherence rules.
 
 ## The problem
 
-Rust conflates using a capability with implementing it, and its coherence rules then permit only one implementation per type. A plain `trait CanCalculateArea` is implemented by the same type that callers invoke `.area()` on, so a crate can supply at most one `area` behavior for a given context, and an implementation written in a downstream crate runs into the orphan rule. This is exactly the wall a programmer hits when they want two interchangeable strategies for the same operation, or want to define a behavior for a type they do not own.
+Rust conflates calling a trait's methods with implementing them, and its coherence rules then permit only one implementation per type. A plain `trait CanCalculateArea` is implemented by the same type that callers invoke `.area()` on, so a crate can supply at most one `area` behavior for a given context, and an implementation written in a downstream crate runs into the orphan rule. This is exactly the wall a programmer hits when they want two interchangeable strategies for the same operation, or want to define a behavior for a type they do not own.
 
-CGP's answer is to split the single trait into a pair. The capability is still declared once, but the declaration is compiled into two related traits whose roles are kept apart: one is what code *calls*, the other is what code *implements*. Pulling these two roles into separate traits is what lets an unlimited number of implementations live side by side, because the type that carries each implementation is no longer the context.
+CGP's answer is to split the single trait into a pair. The trait is still declared once, but the declaration is compiled into two related traits whose roles are kept apart: one is what code *calls*, the other is what code *implements*. Pulling these two roles into separate traits is what lets an unlimited number of implementations live side by side, because the type that carries each implementation is no longer the context.
 
 ## The duality
 
@@ -62,9 +62,9 @@ fn print_area(rect: &Rectangle) {
 }
 ```
 
-The context here is `Rectangle` — the shape whose area is being computed — which makes this a **value context**, the kind whose wired type *is* the data the capability operates on. That is the simplest arrangement to read and the reason it is used above, but it is not the common one: most CGP code wires an **environmental context**, a type standing for an application whose whole job is to carry choices, and which frequently has no fields at all. The distinction changes nothing about the trait split described here, and a great deal about how far one wiring choice reaches, which the [modularity hierarchy](modularity-hierarchy.md) works out. It is worth naming whenever a reader might generalize from one example to the other, because nothing in a signature marks the difference.
+The context here is `Rectangle` — the shape whose area is being computed — which makes this a **value context**, the kind whose wired type *is* the data the trait's methods operate on. That is the simplest arrangement to read and the reason it is used above, but it is not the common one: most CGP code wires an **environmental context**, a type standing for an application whose whole job is to carry choices, and which frequently has no fields at all. The distinction changes nothing about the trait split described here, and a great deal about how far one wiring choice reaches, which the [modularity hierarchy](modularity-hierarchy.md) works out. It is worth naming whenever a reader might generalize from one example to the other, because nothing in a signature marks the difference.
 
-A context can also implement a consumer trait directly, exactly as it would a vanilla Rust trait, when code reuse is not the goal. The consumer/provider split is a superset of ordinary traits, not a replacement: the provider machinery is what you opt into when a capability needs more than one implementation, and skipping it costs nothing for the simple case.
+A context can also implement a consumer trait directly, exactly as it would a vanilla Rust trait, when code reuse is not the goal. The consumer/provider split is a superset of ordinary traits, not a replacement: the provider machinery is what you opt into when a trait needs more than one implementation, and skipping it costs nothing for the simple case.
 
 A second provider mirrors the consumer relationship in reverse. [`UseContext`](../reference/providers/use_context.md) is a built-in provider that implements the provider trait *by routing back through the context's own consumer-trait implementation* — the dual of the consumer blanket impl, and the hook that lets a higher-order provider fall back to whatever the context already has wired.
 

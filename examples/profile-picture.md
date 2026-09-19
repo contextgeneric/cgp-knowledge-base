@@ -8,7 +8,7 @@ The concepts each step demonstrates are documented in full in the reference; thi
 
 - context-generic functions — [`#[cgp_fn]`](../cgp/reference/macros/cgp_fn.md) with [implicit arguments](../cgp/concepts/implicit-arguments.md)
 - async methods in traits — [`#[async_trait]`](../cgp/reference/macros/async_trait.md)
-- composing capabilities — [`#[uses]`](../cgp/reference/attributes/uses.md)
+- composing operations — [`#[uses]`](../cgp/reference/attributes/uses.md)
 - field access on contexts — [`#[derive(HasField)]`](../cgp/reference/derives/derive_has_field.md)
 - impl-only generic parameters — [`#[impl_generics]`](../cgp/reference/attributes/impl_generics.md)
 - components and named providers — [`#[cgp_component]`](../cgp/reference/macros/cgp_component.md), [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md), and the [consumer/provider trait duality](../cgp/concepts/consumer-and-provider-traits.md)
@@ -88,7 +88,7 @@ pub struct MinimalApp {
 
 ## Composing the steps
 
-The orchestration is itself a `#[cgp_fn]` that calls the two steps as methods on `self`. Because those calls are CGP capabilities rather than inherent methods, the function declares them with [`#[uses]`](../cgp/reference/attributes/uses.md), which adds each as a hidden bound on the context instead of a visible parameter:
+The orchestration is itself a `#[cgp_fn]` that calls the two steps as methods on `self`. Because those calls are CGP trait methods rather than inherent methods, the function declares them with [`#[uses]`](../cgp/reference/attributes/uses.md), which adds each as a hidden bound on the context instead of a visible parameter:
 
 ```rust
 #[cgp_fn]
@@ -154,7 +154,7 @@ pub struct EmbeddedApp {
 }
 ```
 
-`get_user_profile_picture` is unchanged: it depends on the `GetUser` capability, not on which engine satisfies it, so the same orchestration now runs on PostgreSQL and SQLite alike.
+`get_user_profile_picture` is unchanged: it depends on the `GetUser` trait, not on which engine satisfies it, so the same orchestration now runs on PostgreSQL and SQLite alike.
 
 ## Varying the storage backend
 
@@ -216,7 +216,7 @@ impl StorageObjectFetcher {
 
 `FetchS3Object` reads an `aws_sdk_s3::Client` from its `storage_client` field; `FetchGCloudObject` reads a `google_cloud_storage::client::Storage` from the same field name. The `new` keyword in each attribute defines the provider struct in place.
 
-The orchestration now imports the storage step by its *consumer* trait name, so it depends on the capability rather than on any one backend:
+The orchestration now imports the storage step by its *consumer* trait name, so it depends on the trait rather than on any one backend:
 
 ```rust
 #[cgp_fn]

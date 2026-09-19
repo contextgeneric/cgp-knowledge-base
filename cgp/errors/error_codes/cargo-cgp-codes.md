@@ -31,7 +31,7 @@ One per rendering template, riding at the start of each entry in a `root cause:`
 - **CGP-E102** — provider trait impl hop.
 - **CGP-E103** — non-terminal `HasField` accessor hop.
 - **CGP-E104** — redirect-lookup hop (a namespace or `open` `RedirectLookup`).
-- **CGP-E105** — a hop through any other trait impl (a user capability, or an ordinary bound restated).
+- **CGP-E105** — a hop through any other trait impl (a user's blanket trait, or an ordinary bound restated).
 - **CGP-E106** — leaf: a genuinely missing context field.
 - **CGP-E107** — leaf: the context wires no provider for a component (or terminates no namespace path).
 - **CGP-E108** — leaf: the struct has the field but did not derive `HasField`.

@@ -19,7 +19,7 @@ voice rather than the other way round.
 This matters because of how an agent fails at this task. The failure is rarely a false claim; it is
 **voicelessness** — fluent, confident, adjective-rich copy that could have been generated from the topic
 alone. Symptoms are specific and checkable: intensifiers stacked on true statements, tricolons of vague
-adjectives, a corporate "we" standing in for one person, enthusiasm attached to a capability rather than
+adjectives, a corporate "we" standing in for one person, enthusiasm attached to a feature rather than
 to sharing something, and a cost conceded as a hedge rather than stated plainly. Treat your own fluency
 as a bias to correct.
 
@@ -33,7 +33,7 @@ answer is a failure of the role the same way a wrong expansion is a failure in a
 Propose the pitch, name the framing, choose the words, and defend the choice.
 
 The two roles pull in complementary directions, and holding both is the point. The **marketing
-director** asks what makes CGP worth a reader's attention: which capability to lead with, which audience
+director** asks what makes CGP worth a reader's attention: which strength to lead with, which audience
 a piece targets, which framing lands. The **developer-relations lead** asks whether a developer will
 *trust* what they read: whether a claim survives contact with an expert, whether a cost is being hidden,
 whether the tone respects the reader's intelligence. Marketing without devrel produces hype the Rust
@@ -45,7 +45,7 @@ document here must satisfy both — and both must satisfy the voice rule above.
 Each document turns audience knowledge into concrete, usable guidance for a future writer. A document
 that merely describes CGP without telling the writer how to *present* it has not done its job.
 
-- **Be prescriptive, not descriptive.** Say what to do: which capability to lead with for which reader,
+- **Be prescriptive, not descriptive.** Say what to do: which strength to lead with for which reader,
   which objection to defuse first, which exact words to prefer and which to avoid. A writer should be
   able to act on the document without re-deriving the strategy.
 - **Ground every claim about audiences in the evidence.** Sentiment about what developers value and
@@ -55,7 +55,7 @@ that merely describes CGP without telling the writer how to *present* it has not
   so the strategy documents stay in one voice; add a new source there and link to it rather than
   scattering raw URLs. Reception of CGP itself is the exception to the citation habit and is
   distilled rather than linked, per the guardrail below.
-- **Keep every CGP claim true.** A capability CGP does not have, or a rebuttal promising behavior it does
+- **Keep every CGP claim true.** A feature CGP does not have, or a rebuttal promising behavior it does
   not deliver, is the most damaging kind of error here, because it is shown to the audience most able to
   catch it. Every factual claim is bound by the
   [synchronization rule](../AGENTS.md#the-synchronization-rule) exactly as a reference document's
@@ -79,7 +79,7 @@ CGP compares itself to — so an overclaim, a strawman of a competing tool, or a
 damage than saying nothing. The rule covers claims about **how the project is made** as well as claims
 about what it does, and that half has its own document: [ai-disclosure.md](ai-disclosure.md) fixes what
 is said about AI's role in CGP, level by level, and it is the one place where over-disclosing is as much
-an error as under-disclosing. The guidance therefore leads with a true, concrete capability, states it in
+an error as under-disclosing. The guidance therefore leads with a true, concrete strength, states it in
 the reader's vocabulary, and concedes the genuine trade-offs, because that is what actually persuades.
 When a piece of strategy tempts you toward exaggeration, treat the temptation as a signal that the honest
 version needs a better frame, not that the honest version needs abandoning.
@@ -113,7 +113,7 @@ clearest form — use it freely, but frame it, and let the prose around it carry
 
 **This section is deliberately consolidated into few, dense documents rather than many small ones**, and
 that is a rule rather than an accident of history. The reason is that its subjects overlap heavily: a
-capability, the pain it removes, the objection it provokes, and the boundary where it stops applying are
+strength, the pain it removes, the objection it provokes, and the boundary where it stops applying are
 four views of one reader, and splitting them across four files guaranteed that an edit to one left the
 others stale. So when you find yourself wanting a new document, first ask whether the material belongs
 inside an existing one — a new section in [message.md](message.md) or
@@ -123,7 +123,7 @@ change.
 
 Cross-link generously but purposefully: to [readers.md](readers.md) for the audience a piece of guidance
 targets, to the [related-work](../related-work/README.md) documents for the sentiment a claim rests on,
-to the [concepts](../cgp/concepts/README.md) for the CGP idea behind a capability, and to the
+to the [concepts](../cgp/concepts/README.md) for the CGP idea behind a strength, and to the
 [reference](../cgp/reference/README.md) for the exact construct a claim names. Where a link points to a
 specific part of a large document, link the section anchor rather than the file.
 
@@ -131,9 +131,9 @@ specific part of a large document, link the section anchor rather than the file.
 
 These documents sync against four moving targets, and a review checks all of them.
 
-First, **CGP's actual capabilities**: guidance resting on a feature the code no longer has, or missing
+First, **CGP's actual features**: guidance resting on a feature the code no longer has, or missing
 one newly added, is stale and must be corrected. Second, **the related-work sentiment**: community
-attitudes evolve, so when a related-work document's sentiment is revised, revisit the capabilities and
+attitudes evolve, so when a related-work document's sentiment is revised, revisit the strengths and
 objections that rest on it. Third, **the audience model**: [readers.md](readers.md) is what the rest
 builds on, so a change to who the readers are ripples into what to tell them. And fourth, **the author's
 own writing**: [author-personality.md](author-personality.md) is evidence-based, so a substantial new
@@ -141,8 +141,9 @@ post whose register differs from what is recorded there, or a stated preference 
 belongs in that document rather than in a one-off fix.
 
 Two internal couplings are tight enough to name. Within [message.md](message.md), the four halves are
-four views of one reader, so an edit to a capability should check its matching pain, objection, and
-boundary. And [vocabulary.md](vocabulary.md) is the consolidated authority on wording: a writer must
+four views of one reader, so an edit to a strength should check its matching pain, objection, and
+boundary. And [vocabulary.md](vocabulary.md) is the consolidated authority on wording, including the
+retired word "capability" for CGP's own constructs: a writer must
 never be told to prefer a phrase in one document that another warns against, and when two disagree, the
 vocabulary list resolves it.
 

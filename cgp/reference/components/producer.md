@@ -73,7 +73,7 @@ fn run(app: &App) -> u64 {
 }
 ```
 
-Here `MagicNumber` produces `42` from the `Code` tag alone, and `App` delegates `ProducerComponent` to it, giving `App` the `CanProduce<(), Output = u64>` capability. The [`#[cgp_producer]`](../macros/cgp_producer.md) macro turns a plain zero-argument function such as `fn magic_number() -> u64 { 42 }` into exactly this provider, and additionally wires `PromoteProducer<Self>` so the same function also answers the input-taking components — `MagicNumber::compute(&app, code, &input)` then returns `42` while ignoring `input`.
+Here `MagicNumber` produces `42` from the `Code` tag alone, and `App` delegates `ProducerComponent` to it, giving `App` the `CanProduce<(), Output = u64>` implementation. The [`#[cgp_producer]`](../macros/cgp_producer.md) macro turns a plain zero-argument function such as `fn magic_number() -> u64 { 42 }` into exactly this provider, and additionally wires `PromoteProducer<Self>` so the same function also answers the input-taking components — `MagicNumber::compute(&app, code, &input)` then returns `42` while ignoring `input`.
 
 ## Related constructs
 

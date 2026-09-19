@@ -8,7 +8,7 @@
 
 The derive is the enum-specific face of [`#[derive(CgpData)]`](derive_cgp_data.md). When `CgpData` is applied to an enum it emits exactly what `CgpVariant` emits; the two are the same code path. Use `CgpVariant` when the type is always an enum and you want the name to say so. Using `CgpVariant` on a struct is a type error, since it parses its input as an enum.
 
-The defining capability a variant gains is incremental extraction. Beyond constructing the enum from any single variant, the derive generates a *partial* companion enum that tracks, in its type parameters, which variants are still possible. Generic code can convert a value to its extractor and pull one variant out; on a match the value is returned, and on a miss the *remainder* — a partial enum with that variant marked impossible — is returned for the next attempt. When every variant has been ruled out the remainder becomes an empty type that can be discharged, so an exhaustive match is proven at the type level.
+The defining operation a variant gains is incremental extraction. Beyond constructing the enum from any single variant, the derive generates a *partial* companion enum that tracks, in its type parameters, which variants are still possible. Generic code can convert a value to its extractor and pull one variant out; on a match the value is returned, and on a miss the *remainder* — a partial enum with that variant marked impossible — is returned for the next attempt. When every variant has been ruled out the remainder becomes an empty type that can be discharged, so an exhaustive match is proven at the type level.
 
 ## Syntax
 

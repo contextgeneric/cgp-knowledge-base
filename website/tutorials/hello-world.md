@@ -24,7 +24,7 @@ A closing **"Behind the Scenes"** section, explicitly optional, shows the plain-
 `HasName for Person` — and then makes three points on top of it: that CGP macros are syntactic sugar
 over ordinary trait machinery with no hidden compile-time or runtime logic; that implicit-argument
 access is a plain field read and therefore zero cost; and that the real machinery uses the general
-`HasField` trait rather than a generated per-capability getter, which is what lets a function and a
+`HasField` trait rather than a generated per-trait getter, which is what lets a function and a
 struct in unrelated crates fit together in a third.
 
 ## The teaching contract
@@ -70,7 +70,7 @@ follows correctly.
 For framing, the reader it targets is the first-contact skimmer in
 [readers.md](../../communication-strategy/readers.md), and the "no hidden logic, no
 unsafe, no runtime cost" claims are the zero-cost selling point in
-[message.md](../../communication-strategy/message.md#the-capabilities-worth-advertising), backed by the survey evidence in
+[message.md](../../communication-strategy/message.md#the-strengths-worth-advertising), backed by the survey evidence in
 [evidence.md](../../communication-strategy/evidence.md) that the Rust
 community explicitly prizes runtime performance.
 

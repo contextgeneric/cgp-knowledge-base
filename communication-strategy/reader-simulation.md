@@ -255,7 +255,7 @@ it lands on nothing. The paragraph is accurate and nearly unreadable.
 
 The repair changes what put the reader in that state, not the tone:
 
-> A context lists which provider supplies each capability, in a small table you write with
+> A context lists which provider supplies each trait, in a small table you write with
 > `delegate_components!`. Rust resolves that table at compile time, so a call like `person.greet()`
 > compiles to a direct call to the chosen provider. Nothing is looked up while the program runs.
 

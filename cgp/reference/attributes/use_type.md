@@ -8,7 +8,7 @@
 
 The attribute lets you write the bare identifier `Scalar` everywhere and have the macro expand it for you. You declare the type once in the attribute — `#[use_type(HasScalarType.Scalar)]` — and the macro replaces each standalone `Scalar` type with `<Self as HasScalarType>::Scalar`, while also adding `HasScalarType` as a supertrait of the generated trait (for `#[cgp_component]`) or as a `where`-clause bound on the impl (for `#[cgp_impl]` and `#[cgp_fn]`). The bare identifier reads like a normal generic, but resolves to the qualified associated type.
 
-Beyond saving keystrokes, the fully-qualified rewrite removes ambiguity that the bare form cannot express. Because the macro always emits the `<Self as Trait>::Type` path, nested associated types compose without the author ever spelling out the path, foreign abstract types can be pulled from a type parameter rather than `Self`, and type-equality constraints between two imported types can be stated declaratively. These capabilities are why the `/cgp` skill recommends `#[use_type]` as the default way to import abstract types in all three macros.
+Beyond saving keystrokes, the fully-qualified rewrite removes ambiguity that the bare form cannot express. Because the macro always emits the `<Self as Trait>::Type` path, nested associated types compose without the author ever spelling out the path, foreign abstract types can be pulled from a type parameter rather than `Self`, and type-equality constraints between two imported types can be stated declaratively. These properties are why the `/cgp` skill recommends `#[use_type]` as the default way to import abstract types in all three macros.
 
 ## Syntax
 

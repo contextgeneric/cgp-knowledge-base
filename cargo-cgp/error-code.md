@@ -67,7 +67,7 @@ rewrite a whole-program coherence error into a CGP-framed one carrying its fix i
 orphan-rule namespace registration's `E0210`/`E0117` (recovered from the offending impl off the
 compiler, like the `E0119` family). The fifth group is the **lowering** codes `CGP-E012`–`CGP-E016`,
 each recovered off the compiler from the generated impl the failing token sits in and reworded with
-its fix in a `help`. Two concern a used-but-undeclared dependency: `CGP-E012` a capability used in a
+its fix in a `help`. Two concern a used-but-undeclared dependency: `CGP-E012` a trait used in a
 `#[cgp_fn]`/`#[cgp_impl]` body but not declared via `#[uses(…)]`, and `CGP-E016` an inner provider a
 higher-order provider calls but never imported via `#[use_provider]`. Three concern a trait named
 where a provider trait belongs: `CGP-E013`/`CGP-E014` a `#[cgp_impl]` header naming the component's
@@ -226,26 +226,26 @@ bare `@a.b.*` notation (no `Path!(…)` wrapper), and the upstream reference is
   trait" — cannot be implemented for the context, because a CGP component it depends on fails. Two
   shapes reach this code: a plain **wrapper trait** the programmer wrote (the transfer example's
   `CanHandleApiSend`, which adds a `Send` bound over a CGP consumer supertrait), and a `#[cgp_fn]` /
-  `#[blanket_trait]` **capability trait** (`impl<Context> Describe for Context where Self: …`), which
-  is a first-class core-CGP capability consumed like a consumer trait but is not a CGP *component*
+  `#[blanket_trait]` **blanket trait** (`impl<Context> Describe for Context where Self: …`), which
+  is a first-class core-CGP trait consumed like a consumer trait but is not a CGP *component*
   (it has no provider trait or `DelegateComponent`). Either way it is the
   [`CGP-E001`](#cgp-e001--consumer-trait-not-implemented) case for a trait that is not itself a CGP
   component.
 - **Triggered by:** a failure surfaced *inside* a `impl Wrapper for Context` block (its header, a
   method signature, or a forwarding call) — often as a raw `E0271`/`E0277`/`E0599` that names no CGP
   construct — which the resolver anchors on the enclosing impl and traces through the wrapper's CGP
-  consumer supertrait to the root cause; **or** a `#[cgp_fn]` / `#[blanket_trait]` capability the
+  consumer supertrait to the root cause; **or** a `#[cgp_fn]` / `#[blanket_trait]` blanket trait the
   context cannot satisfy, reached either by a direct method call (`app.describe()`, an `E0599` the
   [call-site anchor](implementation/typed-resolution-call-site.md) recovers from the call
-  expression) or through a `where` bound (`fn f<C: Describe>(…)`, an `E0277` the by-capability
+  expression) or through a `where` bound (`fn f<C: Describe>(…)`, an `E0277` the by-blanket-trait
   use-site anchor recovers). Whether the failing trait is a CGP consumer or one of these non-component traits is
   decided by its **fingerprint**: a CGP consumer carries a blanket impl routing to a provider trait,
-  while a wrapper has only its concrete impl and a `#[cgp_fn]` capability has a blanket impl over the
+  while a wrapper has only its concrete impl and a `#[cgp_fn]` trait has a blanket impl over the
   bare context with no provider.
 - **Fix:** follow the `root cause:` note to the CGP dependency the trait needs. The dependency tree
-  leads with the trait itself, then the capabilities it composes, down to the cause.
+  leads with the trait itself, then the traits it composes, down to the cause.
 - **Upstream class:** [check-trait failure](../cgp/errors/checks/check-trait-failure.md)
-  (reached through a hand-written wrapper or a `#[cgp_fn]` capability trait).
+  (reached through a hand-written wrapper or a `#[cgp_fn]` blanket trait).
 
 ### `CGP-E010` — wiring never resolves
 
@@ -282,26 +282,26 @@ bare `@a.b.*` notation (no `Path!(…)` wrapper), and the upstream reference is
   (`cgp_namespace! { new MyNamespace: <Namespace> { … } }`) rather than extending it in place.
 - **Upstream class:** [orphan-rule violation](../cgp/errors/wiring/orphan-rule.md).
 
-### `CGP-E012` — capability used but not declared
+### `CGP-E012` — trait used but not declared
 
-- **Message:** `` [CGP-E012] the capability `<Trait>` is used but not declared as a dependency ``,
+- **Message:** `` [CGP-E012] the trait `<Trait>` is used but not declared as a dependency ``,
   with a `help` naming the fix: `` declare it as a dependency with `#[uses(<Trait>)]` ``.
-- **Means:** a `#[cgp_fn]`/`#[cgp_impl]` body calls a CGP capability (a consumer trait, or a
-  `#[cgp_fn]`/`#[blanket_trait]` capability) on `self`, but the enclosing definition never declared
+- **Means:** a `#[cgp_fn]`/`#[cgp_impl]` body calls a CGP trait's method (a consumer trait, or a
+  `#[cgp_fn]`/`#[blanket_trait]` blanket trait) on `self`, but the enclosing definition never declared
   it. The macro lowers the body into a blanket impl over a generated generic context —
-  `impl<__Context__> Describe for __Context__ where __Context__: GetName` — so a capability the body
+  `impl<__Context__> Describe for __Context__ where __Context__: GetName` — so a trait the body
   uses must be a `where` bound on `__Context__`, added with `#[uses(…)]`. Omitted, the method cannot
   resolve on `__Context__`. This also covers a forgotten CGP *consumer* trait used the same way.
 - **Triggered by:** an `E0599` "the method `…` exists for reference `&__Context__`, but its trait
   bounds were not satisfied", whose note points at a transitive `HasField` bound. The resolver
   confirms it structurally: the failing call sits in a generated blanket impl whose `Self` is a bare
-  type parameter, the called method belongs to a CGP capability trait, and that trait is not among
+  type parameter, the called method belongs to a CGP trait, and that trait is not among
   the impl's `where` bounds. The Rust code stays `E0599`. Any `[T]: Sized` cascade the unresolved
   return type trails (in an `async` body especially) is left as rustc wrote it: those errors can
   land off the failing expression — on the binding pattern, or a later statement the unresolved type
   flows into — where suppressing them reliably would need type information the emitter cannot obtain
   without risking the suppression of an unrelated error.
-- **Fix (in the `help`):** add the capability to the definition's `#[uses(…)]` list (or a
+- **Fix (in the `help`):** add the trait to the definition's `#[uses(…)]` list (or a
   hand-written `where Self: <Trait>` bound), so it becomes a bound on the generated context.
 - **Upstream class:** the post-codegen face of a missing impl-side dependency; closest to the
   [hidden unsatisfied-dependency](../cgp/errors/hidden/unsatisfied-dependency.md)
@@ -382,8 +382,8 @@ bare `@a.b.*` notation (no `Path!(…)` wrapper), and the upstream reference is
 - **Means:** a higher-order provider's body calls an inner provider as an associated function —
   `<Inner>::method(self)` — that it never imported, so the inner parameter carries no provider-trait
   bound and the call cannot resolve. It is the higher-order-provider counterpart of
-  [`CGP-E012`](#cgp-e012--capability-used-but-not-declared): a used-but-undeclared dependency, here an
-  inner provider imported with `#[use_provider]` rather than a `#[uses]` capability.
+  [`CGP-E012`](#cgp-e012--trait-used-but-not-declared): a used-but-undeclared dependency, here an
+  inner provider imported with `#[use_provider]` rather than a `#[uses]` trait.
 - **Triggered by:** an `E0599` "no associated function … found for type parameter `<Inner>`" whose
   help names the "type parameter is bounded by the trait" shape. The resolver confirms it
   structurally: the failing call is `Param::method(…)` on a generic parameter of an enclosing
@@ -433,7 +433,7 @@ The codes divide into the inner chain-node templates and the terminal root-cause
   render this same text but are distinct nodes in the dependency graph (the key is part of a node's
   identity), so each keeps its own branch and leaf.
 - **`CGP-E105` — trait impl (general).** `` trait impl `<Trait>` for `<Type>` `` — a hop through any
-  other trait: a user capability trait, or an ordinary bound restated as an impl. This is the
+  other trait: a user's blanket trait, or an ordinary bound restated as an impl. This is the
   "rewritten non-CGP" form that is coded even though the trait itself may not be a CGP construct.
 - **`CGP-E106` — missing field (leaf).** `` missing field `<f>` on `<T>` `` — the chain bottoms out
   on a context field that is genuinely absent.

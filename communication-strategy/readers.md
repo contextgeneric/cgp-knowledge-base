@@ -52,7 +52,7 @@ that adoption is incremental.
 The risk is that the full paradigm buries them: the consumer/provider split, wiring tables, and any
 mention of coherence overwhelm someone still forming a model of traits, and CGP's long generated-type
 errors are demoralizing to a reader who cannot parse them. Write for them by leading with the
-gentlest on-ramp — a capability defined as a function, a context that gains it with no wiring at
+gentlest on-ramp — an operation defined as a function, a context that gains it with no wiring at
 all — keeping [`IsProviderFor`](../cgp/reference/traits/is_provider_for.md),
 [`DelegateComponent`](../cgp/reference/traits/delegate_component.md), and the generated blanket impls
 entirely out of sight, and reaching for familiar analogies such as a wiring table as a settings map.
@@ -244,7 +244,7 @@ answering an ability problem with a persuasion argument leaves the reader no bet
 next line.
 
 The encouraging fact is that CGP's own design already lowers most of these barriers, because its
-ergonomic constructs exist precisely to let a reader use a capability without first understanding the
+ergonomic constructs exist precisely to let a reader use a construct without first understanding the
 harder concept beneath it. That turns much of the job into *using those affordances well*, and doing
 so is not a simplification that misleads — the ergonomic forms are the
 [recommended way to write CGP](../cgp/guides/README.md), so leading with them shows the idiom rather
@@ -271,7 +271,7 @@ explicit context parameter, methods thread `Code` and `Input` parameters — so 
 generics bounces on CGP before any value lands.
 
 CGP answers this with constructs that let a reader write real CGP with no generic parameter in sight.
-[`#[cgp_fn]`](../cgp/reference/macros/cgp_fn.md) turns a capability into a plain function whose
+[`#[cgp_fn]`](../cgp/reference/macros/cgp_fn.md) turns an operation into a plain function whose
 simplest form shows no generics at all; [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md) lets a
 provider omit the context parameter and the `for Context` clause; and
 [`#[implicit]`](../cgp/reference/attributes/implicit.md) makes context values look like ordinary
@@ -377,8 +377,8 @@ everyday Rust and reads as machinery rather than intent. Two constructs lower it
 [`#[cgp_fn]`](../cgp/reference/macros/cgp_fn.md) needs no trait at all — the reader writes a function
 and never meets a trait definition — which makes it the gentlest possible entry point. And
 [`#[uses]`](../cgp/reference/attributes/uses.md) turns a `Self: Trait` dependency into a line that
-reads like a `use` import of a capability. Start the least experienced reader on `#[cgp_fn]` with no
-mention of traits, and introduce `#[uses]` as "importing a capability the code relies on", deferring
+reads like a `use` import of a trait. Start the least experienced reader on `#[cgp_fn]` with no
+mention of traits, and introduce `#[uses]` as "importing a trait the code relies on", deferring
 the `where`-clause reality until the reader cares.
 
 ### Traits that are "magically" implemented
@@ -407,9 +407,9 @@ only for a construct's own local associated type, where it genuinely belongs.
 
 Wiring raises a barrier of abstraction: a type-level lookup table,
 [`DelegateComponent`](../cgp/reference/traits/delegate_component.md), and component-name markers are
-all machinery a reader would otherwise have to absorb before believing a context "has" a capability.
+all machinery a reader would otherwise have to absorb before believing a context "has" a method.
 The surface is already simple — a [`delegate_components!`](../cgp/reference/macros/delegate_components.md)
-table is a compact list matching each capability to the implementation supplying it — so describe it
+table is a compact list matching each trait to the implementation supplying it — so describe it
 with a plain analogy, a settings map or a lookup table, and keep `DelegateComponent` and
 `IsProviderFor` out of a beginner's view, since they are the mechanism rather than the model.
 Mentioning that the table is resolved at compile time and compiles away doubles as the reassurance

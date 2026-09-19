@@ -25,9 +25,14 @@ consistently.
   coincide. The word needs qualifying more often than any other term here; see
   [Qualifying a context and a target](#qualifying-a-context-and-a-target) below, which is the single
   most load-bearing wording rule in this document.
-- **Component** — one capability, defined once, that can have many implementations. Introduce it as
+- **Component** — one trait, defined once, that can have many implementations. Introduce it as
   "an interface you can wire an implementation for", and reserve the detail that it is a consumer
   trait plus a provider trait for when the reader asks how it works.
+- **Trait** — the word for what a component, a `#[cgp_fn]` function, or a getter defines, and for
+  what `#[uses]` imports. It is the plain Rust word, it is accurate, and it carries the
+  enhances-not-replaces frame on its own. Where a sentence needs the individual thing a caller
+  invokes rather than the interface, say **method** or **operation**. Never say "capability" for any
+  of these; see the avoid list below for why.
 - **Consumer trait** and **provider trait** — the trait you *call* and the trait you *implement*.
   Introduce the pair only when a piece goes past the surface; for an introductory audience, "the trait
   you use" and "the code that implements it" carry the idea without the vocabulary.
@@ -40,11 +45,11 @@ consistently.
 - **Impl-side dependency** — a requirement a provider states in its own implementation rather than in
   the interface callers see. Introduce it as "the provider declares what it needs, and callers never
   see it", because the encapsulation benefit is the point and "impl-side" means nothing cold.
-- **Pluggable trait implementations** — the lead descriptor for the core capability, from
+- **Pluggable trait implementations** — the lead descriptor for what CGP does, from
   [identity.md](identity.md). Prefer "pluggable" as the novelty word and always pair it with "at
   compile-time", because the tension between the two is the pitch in miniature.
 - **Context-generic programming** — the name of the paradigm, never the pitch. Introduce it only after
-  a concrete capability has landed, always beside a plain descriptor.
+  a concrete benefit has landed, always beside a plain descriptor.
 - **`cargo-cgp`** — CGP's error toolchain. Refer to it as "cargo-cgp, CGP's error toolchain" and to
   its use as "running `cargo cgp check`". Introduce what it does as "a dedicated checker that leads
   with the root cause" — it un-hides the buried cause and names the missing field instead of printing
@@ -67,11 +72,12 @@ experiences as opposites, and public writing moves between them without saying s
 
 Two qualifiers fix it, and both are needed because they answer independent questions.
 
-- **Value context** — a context that *is* the data the capability operates on. The `String` in
+- **Value context** — a context that *is* the data the trait's methods operate on. The `String` in
   `String: CanEncode`, the `Rectangle` in `Rectangle: CanCalculateArea`. Introduce it as "here the type
   being encoded is also the type that carries the wiring — one type doing both jobs".
-- **Environmental context** — a context that exists to supply choices and capabilities rather than to be
-  operated on. Introduce it as "a type that stands for one set of choices", and say in the same breath
+- **Environmental context** — a context that exists to carry wiring choices and implement the traits
+  providers rely on, rather than to be operated on. Introduce it as "a type that stands for one set of
+  choices", and say in the same breath
   that **it often has no fields at all** — `struct AppA;` is a complete context — because a reader
   meeting an empty struct with traits on it has no other way to guess what it is for. Use the qualifier
   where the contrast with a value context matters, and plain "context" in running prose once the reader
@@ -87,14 +93,14 @@ Two qualifiers fix it, and both are needed because they answer independent quest
 
 A second, independent qualifier describes the **component** rather than its context.
 
-- **Self-targeted** — the capability is about the `Self` type: `CanEncode`, `CanGreet`, `HasErrorType`,
-  every getter.
-- **Parameter-targeted** — the capability is about a type parameter while `Self` only decides:
+- **Self-targeted** — the trait's methods act on the `Self` type: `CanEncode`, `CanGreet`,
+  `HasErrorType`, every getter.
+- **Parameter-targeted** — the methods act on a type parameter while `Self` only decides:
   `CanEncodeValue<Value>`, `CanCalculateArea<Shape>`.
 
 A parameter does not by itself make a component parameter-targeted. In `CanCompute<Code, Input>` the
 target is `Input` while `Code` is a **selector** the wiring dispatches on, and a component may carry
-both. The test is which type the capability acts on. Note also that the labels describe the *consumer*
+both. The test is which type the methods act on. Note also that the labels describe the *consumer*
 trait: on the provider side both shapes carry the context (`Encoder<Context>` versus
 `ValueSerializer<Context, Value>`), so the distinction is invisible in an expansion.
 
@@ -209,6 +215,23 @@ precise, smaller claim forecloses it and survives scrutiny — which, with this 
   When a piece needs to talk about whether a design absorbs variation into one type or separates it across
   several, the plain phrasings carry it with nothing to look up — **"a type standing for one set of
   choices"**, **"you already have two applications"**, **"which variations are worth their own type"**.
+- Avoid **"capability"** for what a component, a `#[cgp_fn]` function, or a getter defines, for what
+  `#[uses]` imports, and for the non-component blanket traits `cargo-cgp` recognizes. The word is
+  overloaded: it names a different thing in the object-capability model, where a capability is an
+  unforgeable reference that grants authority, and in the Rust
+  [context-and-capabilities](evidence.md#the-conversations-that-draw-attention) proposal and in effect
+  systems, where it is an ambient value a function declares it needs. Used for CGP's own construct it
+  invites the authority reading, which CGP cannot honor, since a declared trait bound is not a
+  sandbox. Say **"trait"** for the interface, **"method"** or **"operation"** for the thing a caller
+  invokes, **"trait dependency"** or **"the traits the body calls on `self`"** for what `#[uses]`
+  imports, **"a supertrait that contributes methods"** for what `#[extend]` adds, and **"blanket
+  trait"** for a `#[cgp_fn]` or `#[blanket_trait]` trait that is not a component. Do not use it for
+  what CGP offers as a product either, because a reader cannot tell that sense from the construct
+  sense in the same document: say **"feature"** for a front-page title and **"strength"** for what a
+  piece advertises. The word stays in
+  use for the *other* paradigms, in [related-work](../related-work/README.md) and
+  [evidence.md](evidence.md), where it names their construct and can then serve as a bridge: what
+  context-and-capabilities calls a capability, CGP expresses as a trait bound on the context.
 - Avoid overstating maturity — **"works on stable Rust today"** is true and worth saying, while
   **"production-proven at scale"** needs evidence the evaluator will notice is missing.
 - Avoid calling CGP's errors **"solved", "fixed",** or **"now as clear as any other Rust error's"**.
@@ -226,7 +249,7 @@ precise, smaller claim forecloses it and survives scrutiny — which, with this 
   coding agents* is about the project's provenance and belongs on the site's disclosure page, per
   [ai-disclosure.md](ai-disclosure.md). Use wording that says which — **"CGP ships an agent skill"** for
   the first, **"this page was written by an AI agent from a public knowledge base"** for the second —
-  because a sentence that could mean either makes the capability read as an excuse for the provenance.
+  because a sentence that could mean either makes the first claim read as an excuse for the second.
 
 Sentence-level habits to avoid — adjective inflation, hedge stacking, corporate "we", invented
 evidence — are a separate list and live in [voice-and-register.md](voice-and-register.md), because
@@ -308,7 +331,7 @@ lets the playbooks in [formats.md](formats.md) stay short.
   advocating for it: heard-of, curious, trying, adopting, advocating. Readers drop out at every stage,
   and a conversion is one reader taking the next step. Each stage wants a different call to action —
   the conversion ladder the [formats.md](formats.md) playbooks end on.
-- **Show, don't tell** — demonstrate a capability with running code rather than assert it with an
+- **Show, don't tell** — demonstrate a strength with running code rather than assert it with an
   adjective, because this audience trusts what it can run.
 - **The pile-on** (and **dunking**) — a public group dismissal, where a technical community turns on a
   post it reads as arrogant or dishonest. The defence is the same as the honest move: claim only what
@@ -320,7 +343,7 @@ Because this document consolidates wording rules the others also apply, the coup
 When a rule changes here, check the phrasings in [message.md](message.md), the feature titles in
 [identity.md](identity.md), and the register list in
 [voice-and-register.md](voice-and-register.md), because a writer told to prefer a phrase in one place
-must never be warned against it in another. When a CGP construct is renamed or a capability changes,
+must never be warned against it in another. When a CGP construct is renamed or a feature changes,
 the terms here are bound by the [synchronization rule](../AGENTS.md#the-synchronization-rule) exactly
 as a reference document is. And when you meet a term of the craft that is not defined above, add it in
 the same change and in the same shape — a plain definition and a programmer's anchor — so this stays

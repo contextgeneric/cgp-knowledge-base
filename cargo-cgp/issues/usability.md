@@ -118,13 +118,13 @@ their fixtures now live under `acceptable/`:
   already been drawn and its chain was then elided away entirely, leaving a bare `root causes:` list
   with no dependency chain
   ([`overlapping_cause_sets`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/duplication/overlapping_cause_sets.rs)).
-- A **capability used but not declared** — a `#[cgp_fn]`/`#[cgp_impl]` body that calls a CGP
-  capability (a consumer or `#[cgp_fn]`/`#[blanket_trait]` trait) on `self` without declaring it via
+- A **trait used but not declared** — a `#[cgp_fn]`/`#[cgp_impl]` body that calls a CGP
+  trait's method (a consumer or `#[cgp_fn]`/`#[blanket_trait]` trait) on `self` without declaring it via
   `#[uses(…)]`, so the method cannot resolve on the generated `__Context__` generic — is reshaped
   from rustc's vague `E0599` (which names `__Context__` and points at a transitive `HasField` bound,
-  the wrong fix) into a `[CGP-E012]` header naming the capability, with the `#[uses(…)]` fix in a
+  the wrong fix) into a `[CGP-E012]` header naming the trait, with the `#[uses(…)]` fix in a
   `help`
-  ([`undeclared_uses_capability`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/undeclared_uses_capability.rs)).
+  ([`undeclared_uses_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/undeclared_uses_trait.rs)).
   Any `[T]: Sized` cascade the unresolved return type trails is left as rustc wrote it — those errors
   can land off the failing expression, where suppressing them reliably would risk hiding an unrelated
   error.
@@ -164,13 +164,13 @@ their fixtures now live under `acceptable/`:
   over a root-cause tree, with a `help` naming the wiring entry to change
   ([`abstract_type_mismatch`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/types/abstract_type_mismatch.rs)).
 
-- A **capability published by a library** is reshaped like a local one. A
-  `#[cgp_fn]`/`#[blanket_trait]` capability is recognized by its blanket impl over a bare context,
+- A **blanket trait published by a library** is reshaped like a local one. A
+  `#[cgp_fn]`/`#[blanket_trait]` trait is recognized by its blanket impl over a bare context,
   and that signal alone is too broad (`ToString` and `Into` share it), so recognition was gated to
-  traits the checked crate defines — which excluded every *published* capability along with the std
+  traits the checked crate defines — which excluded every *published* blanket trait along with the std
   blankets it was aimed at, and stopped the `[CGP-E009]` reshaping at the crate boundary. A foreign
   trait now qualifies on evidence that its blanket depends on a CGP construct instead
-  ([`upstream_capability_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/upstream_capability_use_site.rs)).
+  ([`upstream_blanket_trait_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/upstream_blanket_trait_use_site.rs)).
 - A **CGP construct rustc split across styled fragments** is resugared. rustc builds its "similar
   impl" hint from fragments split at every difference between the two traits, shredding a
   `Symbol<3, Chars<'B', …>>` so no fragment matches — the header would read `Symbol!("Bar")` while

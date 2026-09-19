@@ -11,7 +11,7 @@ it from becoming any of those.
 - **Voice** — project voice throughout, per
   [voice-and-register.md](../../communication-strategy/voice-and-register.md)
 - **Governed by** — [identity.md](../../communication-strategy/identity.md) for the line, the frame, and
-  the features; [message.md](../../communication-strategy/message.md) for the pains and capabilities;
+  the features; [message.md](../../communication-strategy/message.md) for the pains and strengths;
   [readers.md](../../communication-strategy/readers.md) for who is reading
 
 ## What the page is for, stated precisely
@@ -31,7 +31,7 @@ why", while teaching answers "how do I do it" — and the moment the page starts
 type, it has crossed over.
 
 The page also carries the selling points, so comprehension is not its only output. The difference from a
-feature grid is that **each capability appears as a beat in the argument rather than as a card in a
+feature grid is that **each strength appears as a beat in the argument rather than as a card in a
 list**: the reader has just seen what CGP does, so "everything resolves at compile time and compiles to a
 direct call" lands as an answer to a question they now have rather than as a claim they have no way to
 evaluate.
@@ -173,7 +173,7 @@ thing developers try and are refused, and the escape they reach for — a newtyp
 struct plus a helper trait — is
 [independently reinvented and blogged](../../communication-strategy/evidence.md). The block's real job is
 recognition, so the CGP version arrives as relief from a workaround the reader has written rather than as
-a capability they must be talked into wanting.
+a feature they must be talked into wanting.
 
 **The bodies are shown rather than elided, and they are identical on both sides.** One line each costs
 almost nothing and buys the block's central proof: the *only* difference between the two programs is the
@@ -194,7 +194,7 @@ opened, answering "so which one does `String` get?" with "the one you name."
 
 **The bounds move into `#[uses]`, and that is a second small win.** `#[uses(Display)]` and
 `#[uses(AsRef<[u8]>)]` are what the [guides](../../cgp/guides/declaring-dependencies.md) prescribe, and
-they apply to ordinary Rust traits exactly as they do to CGP capabilities — which the block quietly
+they apply to ordinary Rust traits exactly as they do to CGP traits — which the block quietly
 demonstrates, since a reader who assumed the attribute was CGP-only machinery sees it carrying `Display`.
 Parity survives the move because the bound stays in the reader's eye-line, one line above the impl,
 naming the same trait they just read in `impl<T: Display>`. Do not rewrite it back to
@@ -209,10 +209,10 @@ imports are restored. A program the reader runs belongs in the Hello World tutor
 ### Which shape it is, and why that matters here
 
 **The block is the retrofit shape**: a value context — `String` and `u64` are the data being encoded —
-with the capability targeting `Self`. Say so in the meta record even though the page never uses the
+with the component targeting `Self`. Say so in the meta record even though the page never uses the
 terms, because it is the **least representative of CGP's three shapes** and a writer needs to know that
 deliberately. Most CGP code is the *application* shape, where `Self` is a type you define and the
-capability is about the application; and the fully modular shape moves the target into a parameter. The
+operation is about the application; and the fully modular shape moves the target into a parameter. The
 vocabulary is in
 [vocabulary.md](../../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target) and the
 technical account in the [modularity hierarchy](../../cgp/concepts/modularity-hierarchy.md).
@@ -308,13 +308,13 @@ reader can check. The two transitions and the reasoning behind them are specifie
 [vocabulary.md](../../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target) and the
 [comprehension barrier](../../communication-strategy/readers.md).
 
-**3. What that buys you.** Here the capabilities appear, as prose beats rather than cards, each two or
+**3. What that buys you.** Here the strengths appear, as prose beats rather than cards, each two or
 three sentences: many implementations chosen per application; no runtime cost, because a wired call
 monomorphizes to a direct call; dependencies that are explicit and compiler-checked; and still ordinary
 Rust, adopted incrementally. Prefer "per application" to "per context" throughout this section — it is
 concrete, it needs no vocabulary, and it is true of the shape section 2 has just introduced. Draw the
 wording from
-[message.md](../../communication-strategy/message.md#the-capabilities-worth-advertising) and keep each
+[message.md](../../communication-strategy/message.md#the-strengths-worth-advertising) and keep each
 beat anchored to something the reader has now seen.
 
 **4. It goes further than trait implementations.** One short section repaying the tag line's known debt —
@@ -333,7 +333,7 @@ it is an entry in [message.md](../../communication-strategy/message.md#the-probl
 piece that has room to show a before and after.
 
 **5. What it costs.** The cost section is not optional and is not softened. It is more machinery than a
-plain trait; for a capability with one implementation a plain trait is the right tool; the compile-time
+plain trait; for a trait with one implementation a plain trait is the right tool; the compile-time
 work is real; the raw diagnostics are verbose, `cargo cgp check` leads with the root cause for the
 classes it recognizes, and that tool is an early pre-release. This section is the single highest-trust
 element on the page, and the register to write it in is the author's own: state the cost as part of
@@ -344,7 +344,7 @@ budget. Three of the costs just named — the learning curve, the diagnostics, a
 are mechanical work over a written-down vocabulary, and CGP publishes an agent skill that reduces all
 three for a reader who works with an assistant. Say it as a smaller cost rather than a solved one, in
 the same breath as the cost itself, and link the skill rather than elaborating. It must not appear in
-the hero, the reassurance line, the capability beats, or a feature title: a landing page that leads on
+the hero, the reassurance line, the strength beats, or a feature title: a landing page that leads on
 AI in 2026 is read as chasing attention by exactly the audience this page is written for. The full
 rule is in
 [message.md](../../communication-strategy/message.md#the-one-mitigation-that-spans-three-of-these) and
@@ -398,11 +398,11 @@ carries a fuller spec for the first four than the summaries below — read it be
   what should change is the stale year-stamp and the absence of any mention of
   [`cargo-cgp`](../../cargo-cgp/README.md).
 - **Overview** — the fifth destination, and the one that already exists. It is the **feature tour**: every
-  high-level CGP capability walked through in more detail than any other surface carries, which makes it
+  high-level CGP feature walked through in more detail than any other surface carries, which makes it
   the destination for both section 3 and section 4 of the essay. That job resolves the site's three
   disagreeing feature lists rather than merely reconciling them: the front page carries the curated five
   from [identity.md](../../communication-strategy/identity.md#the-headline-feature-set) as prose beats,
-  and the Overview expands each one and adds the breadth capabilities the tag line only gestures at, so
+  and the Overview expands each one and adds the breadth features the tag line only gestures at, so
   it is not competing with the front page's list and is not capped at five. Its problems half stays
   anchored to [message.md](../../communication-strategy/message.md#the-problems-cgp-removes).
 

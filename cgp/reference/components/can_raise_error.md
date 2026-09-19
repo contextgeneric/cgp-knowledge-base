@@ -40,7 +40,7 @@ Here `wrap_error` takes the context's current `Error` and a `Detail` value and r
 
 ## Behavior
 
-A context gains these capabilities by wiring `ErrorRaiserComponent` and `ErrorWrapperComponent` to providers, exactly as for any other component. Because both traits delegate through `UseDelegate<SourceError>` and `UseDelegate<Detail>`, the natural wiring is a delegation table that maps each concrete source-error or detail type to a provider that knows how to handle it; a context can therefore raise a handful of unrelated error types into one abstract error, each through its own provider. The pluggable error backends (`cgp-error-anyhow`, `cgp-error-eyre`, `cgp-error-std`) supply providers that implement these traits for common cases, so an application usually wires a backend rather than writing the raise and wrap logic itself.
+A context gains these operations by wiring `ErrorRaiserComponent` and `ErrorWrapperComponent` to providers, exactly as for any other component. Because both traits delegate through `UseDelegate<SourceError>` and `UseDelegate<Detail>`, the natural wiring is a delegation table that maps each concrete source-error or detail type to a provider that knows how to handle it; a context can therefore raise a handful of unrelated error types into one abstract error, each through its own provider. The pluggable error backends (`cgp-error-anyhow`, `cgp-error-eyre`, `cgp-error-std`) supply providers that implement these traits for common cases, so an application usually wires a backend rather than writing the raise and wrap logic itself.
 
 Both traits being associated-function components means `raise_error` and `wrap_error` are called on the context *type* — `Context::raise_error(source)` — and produce the abstract error without borrowing the context value. This matches how errors are typically constructed deep inside generic code where only the type parameter is in scope.
 
@@ -75,7 +75,7 @@ The provider names neither the context nor its concrete error type. It requires 
 
 ## Related constructs
 
-`CanRaiseError` and `CanWrapError` both supertrait [`HasErrorType`](has_error_type.md), whose abstract `Self::Error` they produce and enrich. Their delegation is configured by [`#[derive_delegate(UseDelegate<...>)]`](../attributes/derive_delegate.md), so a context dispatches per source-error or detail type through a delegation table. Both are ordinary `#[cgp_component]` components, wired with `delegate_components!` and checked with `check_components!`. The [modular error handling](../../concepts/modular-error-handling.md) concept frames how these capabilities, the abstract error type, and the strategy providers combine into wiring-time error-handling decisions.
+`CanRaiseError` and `CanWrapError` both supertrait [`HasErrorType`](has_error_type.md), whose abstract `Self::Error` they produce and enrich. Their delegation is configured by [`#[derive_delegate(UseDelegate<...>)]`](../attributes/derive_delegate.md), so a context dispatches per source-error or detail type through a delegation table. Both are ordinary `#[cgp_component]` components, wired with `delegate_components!` and checked with `check_components!`. The [modular error handling](../../concepts/modular-error-handling.md) concept frames how these components, the abstract error type, and the strategy providers combine into wiring-time error-handling decisions.
 
 ## Source
 

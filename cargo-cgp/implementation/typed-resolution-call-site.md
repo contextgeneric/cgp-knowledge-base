@@ -4,7 +4,7 @@ This document covers the sixth anchor of the driver's
 [typed root-cause resolution](typed-root-cause-resolution.md): recovering a use-site failure's
 obligation from the failing call expression's own HIR, when its spans touch nothing the
 [span-matching anchors](typed-resolution-anchors.md) can read. (A seventh anchor,
-`resolve_use_site_capability`, is tried after it for a capability trait required as a `where` *bound*
+`resolve_use_site_blanket_trait`, is tried after it for a blanket trait required as a `where` *bound*
 rather than *called*; it is described in [anchoring the starting obligation](typed-resolution-anchors.md)
 and reuses this anchor's `contexts_at_spans`.)
 
@@ -146,14 +146,14 @@ generic context, whose type arguments are exactly what the missing typeck result
 supplied. The trait candidates come from the method *name*, and are of two kinds: every CGP
 **consumer trait** (recognized structurally, in any crate) declaring a `self` method of that name,
 tried first so a directly-wired consumer keeps its precise recovery; then every local `#[cgp_fn]` /
-`#[blanket_trait]` **capability trait** declaring such a method — a blanket-impl trait that is not a
+`#[blanket_trait]` **blanket trait** declaring such a method — a blanket-impl trait that is not a
 CGP component (no provider trait, no `DelegateComponent`), consumed like a consumer
 (`app.describe()`) and seeding the same walkable obligation `Ctx: Describe` whose `Self` is the
-context. A capability trait is not a CGP component, so its result is headed `[CGP-E009] the trait …`
+context. A blanket trait is not a CGP component, so its result is headed `[CGP-E009] the trait …`
 rather than `[CGP-E001] the consumer trait …` — the same wording the impl-site anchor gives such a
 trait reached through a wrapper — by clearing the `Resolved::consumers_are_cgp` flag the walk sets.
-This is what recovers a direct call to a `#[cgp_fn]` capability the context cannot satisfy: an
-`E0599` whose real cause (a field one composed capability reads) rustc buries in a mid-stack note
+This is what recovers a direct call to a `#[cgp_fn]` trait the context cannot satisfy: an
+`E0599` whose real cause (a field one composed blanket trait reads) rustc buries in a mid-stack note
 under its method-probe candidate list
 ([`cgp_fn_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/cgp_fn_use_site.rs)).
 
@@ -271,7 +271,7 @@ The anchor's fixtures live under
 [`tests/ui/acceptable/use-site/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/acceptable/use-site)
 — `cascade_after_use_site` (the worked example above), `generic_consumer_use_site` (the
 value-argument case), `call_site_tuple_input` (the partial tuple recovery), `cgp_fn_use_site` (the
-`#[cgp_fn]` capability call recovered as a `[CGP-E009]` block), and the `cascade_later_stage*`
+`#[cgp_fn]` trait call recovered as a `[CGP-E009]` block), and the `cascade_later_stage*`
 shapes whose pipeline stages the walk then descends — with the decline boundary pinned by
 `generic_consumer_unwritten_arg`. The consolidated catalog lives in the parent document's
 [Tests](typed-root-cause-resolution.md#tests) section.

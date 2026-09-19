@@ -4,9 +4,9 @@
 
 ## Purpose
 
-`HasRuntime` exists so that context-generic code can run asynchronous and effectful operations against a runtime without committing to a concrete one. A runtime in this sense is whatever object provides the capabilities an application needs at execution time — spawning tasks, sleeping, opening sockets, reading the clock — and different deployments want different runtimes (Tokio in production, a mock in tests, a single-threaded executor in a benchmark). Rather than thread a concrete runtime type through every signature, CGP lets the context name an abstract `Runtime` type and store one runtime value, and lets providers reach it generically through these two traits.
+`HasRuntime` exists so that context-generic code can run asynchronous and effectful operations against a runtime without committing to a concrete one. A runtime in this sense is whatever object provides the services an application needs at execution time — spawning tasks, sleeping, opening sockets, reading the clock — and different deployments want different runtimes (Tokio in production, a mock in tests, a single-threaded executor in a benchmark). Rather than thread a concrete runtime type through every signature, CGP lets the context name an abstract `Runtime` type and store one runtime value, and lets providers reach it generically through these two traits.
 
-The abstraction is split deliberately into a type component and a getter component because the two questions are independent. `HasRuntimeType` answers *what* the runtime type is — an abstract associated type chosen per context — while `HasRuntime` answers *how to obtain the runtime value* of that type from a borrow of the context. Some code is generic only over the runtime type (it never touches a runtime value, only names types the runtime exposes); that code needs `HasRuntimeType` alone. Code that actually performs effects needs `HasRuntime`, which supertraits `HasRuntimeType` so the value's type is always in scope. Keeping them separate means a context can declare its runtime type in one place and supply the value in another, and a bound asks for exactly the capability it uses.
+The abstraction is split deliberately into a type component and a getter component because the two questions are independent. `HasRuntimeType` answers *what* the runtime type is — an abstract associated type chosen per context — while `HasRuntime` answers *how to obtain the runtime value* of that type from a borrow of the context. Some code is generic only over the runtime type (it never touches a runtime value, only names types the runtime exposes); that code needs `HasRuntimeType` alone. Code that actually performs effects needs `HasRuntime`, which supertraits `HasRuntimeType` so the value's type is always in scope. Keeping them separate means a context can declare its runtime type in one place and supply the value in another, and a bound asks for exactly the trait it uses.
 
 This pair is the substrate beneath CGP's task-running components. The [`Runner`](runner.md) family expresses "run this task," and the providers that implement it typically reach the runtime through `HasRuntime` to spawn or await the work. `HasRuntime` is the seam where context-generic logic meets the concrete async machinery, which is why it underpins asynchronous execution across a CGP application.
 
@@ -70,7 +70,7 @@ delegate_components! {
 }
 ```
 
-Here `App` resolves `HasRuntimeType` with `Runtime = TokioRuntime` through `UseType`, so `RuntimeOf<App>` is `TokioRuntime`, and it resolves `HasRuntime` by reading its `runtime` field through `UseField`. A context-generic function can now demand only the capability it needs:
+Here `App` resolves `HasRuntimeType` with `Runtime = TokioRuntime` through `UseType`, so `RuntimeOf<App>` is `TokioRuntime`, and it resolves `HasRuntime` by reading its `runtime` field through `UseField`. A context-generic function can now demand only the trait it needs:
 
 ```rust
 fn runtime_of<Context>(context: &Context) -> &RuntimeOf<Context>

@@ -59,7 +59,7 @@ extension in ordinary usage, so the word keeps the ambition and stays honest.
 It is not "reusable", because to a Rust developer traits already *are* the reuse mechanism — one
 interface, many types — so "reusable trait implementations" describes something the reader believes
 they already have and points at the wrong axis. It is not "swappable", which says the right thing but
-reads as a coinage next to a term of art. "Pluggable" names the real capability: one interface with
+reads as a coinage next to a term of art. "Pluggable" names the real novelty: one interface with
 many interchangeable implementations, each chosen per context — the thing Rust's
 [coherence rules and the orphan rule](../cgp/concepts/coherence.md) normally forbid.
 
@@ -126,7 +126,7 @@ with a deep call graph feels. A generic parameter is an input the caller supplie
 through every intermediate signature, while an abstract type is determined by the context and
 propagates nowhere — the argument is developed in
 [impl-side dependencies](../cgp/concepts/impl-side-dependencies.md#type-dependencies-and-why-they-need-no-parameter)
-and sold in [message.md](message.md#the-capabilities-worth-advertising).
+and sold in [message.md](message.md#the-strengths-worth-advertising).
 
 The third rung, and the most persuasive, is a **concrete pain** the reader has already felt, stated
 before any mechanism — the overlapping impls Rust rejects, the orphan-rule newtype dance, the trait
@@ -134,26 +134,26 @@ that grew into a monolith. These live in [message.md](message.md), and one of th
 channel's dominant reader, should almost always precede the abstract description of what CGP *is*.
 
 The final rungs introduce the **owned name** and the **call to action**. Only after a concrete
-capability has landed should a piece name the paradigm — "this is what we call *context-generic
+benefit has landed should a piece name the paradigm — "this is what we call *context-generic
 programming*" — always beside a plain descriptor, so the name attaches to an understanding the reader
 now holds. The call to action is then matched to the reader's stage, per [formats.md](formats.md):
 never ask a reader who has known CGP for thirty seconds to bet a codebase on it.
 
 One rule governs the whole sequence: **concede the cost somewhere in it**. CGP is more machinery than
-a plain trait, and for a capability with a single implementation a plain trait is the better tool.
+a plain trait, and for a trait with a single implementation a plain trait is the better tool.
 Saying so is what makes the rest believable, and it costs nothing because it is true.
 
 ## The headline feature set
 
 A feature set is the identity at one screen's length: four to six titles, each with a sentence,
 scannable in the seconds a visitor gives a landing page. Its constraint is not coverage but
-ruthlessness — the full catalog of advertisable capabilities lives in [message.md](message.md) and a
+ruthlessness — the full catalog of advertisable strengths lives in [message.md](message.md) and a
 writer picks from it per piece, while this set is fixed, shown to everyone at once, and read as a
 whole. **A list of ten reads as a list of none**, and a reader remembers three.
 
 Three rules follow. Each feature is a title and one or two sentences, never a paragraph. There are
 four to six of them, never more. And each must be one of the strongest, broadest, most honest
-capabilities — which means above all that a **title must not lead with a word that repels** and a
+strengths — which means above all that a **title must not lead with a word that repels** and a
 **sentence must not overclaim to the audience most able to check it**.
 
 The five below are the set, ordered most-important first.
@@ -161,7 +161,7 @@ The five below are the set, ordered most-important first.
 - **One Interface, Many Implementations** — *"Write many interchangeable implementations of the same
   interface and choose between them per application, with the overlapping and orphan implementations
   Rust normally forbids made safe because every choice is explicit and local."* This is CGP's core
-  identity, naming the capability directly and grounding the
+  identity, naming the strength directly and grounding the
   [coherence](../cgp/concepts/coherence.md) advantage. It says **per application** rather than per
   context because a front page is first contact and "context" is the term that most reliably loses a
   reader who has not met it, per
@@ -207,7 +207,7 @@ sits on the page.
 
 ### Phrasing rules for feature titles
 
-Titles obey the tag line's discipline compressed to four rules. Lead with the **concrete capability,
+Titles obey the tag line's discipline compressed to four rules. Lead with the **concrete strength,
 not an abstraction or a mechanism**. Avoid **"modular", "macros", and "magic"** as lead words, each
 of which costs more attention than it wins. Use the **recognized Rust terms** — "zero-cost",
 "type-safe", "no-std" — where they are accurate, since familiarity aids scanning. And write each
@@ -238,6 +238,6 @@ name alone — are enforced in [vocabulary.md](vocabulary.md); the empirical cav
 the real measurement lives in [evidence.md](evidence.md); and the site surfaces the line touches are
 listed in the [homepage guide](../website/writing-guides/homepage.md) and
 [site-structure.md](../website/site-structure.md), including the stale tagline still in the
-Docusaurus configuration. When a feature's underlying capability changes, the
+Docusaurus configuration. When a feature's underlying behavior changes, the
 [synchronization rule](../AGENTS.md#the-synchronization-rule) binds its sentence exactly as it binds
 a reference document.

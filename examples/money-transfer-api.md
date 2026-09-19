@@ -9,7 +9,7 @@ The concepts each step demonstrates are documented in full elsewhere; this examp
 - abstract domain types — [`#[cgp_type]`](../cgp/reference/macros/cgp_type.md) and the [abstract-types concept](../cgp/concepts/abstract-types.md)
 - status-coded errors through an application-specific error component — [modular error handling](../cgp/concepts/modular-error-handling.md) over [`HasErrorType`](../cgp/reference/components/has_error_type.md)
 - an async, per-endpoint-dispatched component — [`#[cgp_component]`](../cgp/reference/macros/cgp_component.md) with [`#[async_trait]`](../cgp/reference/macros/async_trait.md)
-- handlers, and a business capability, that wrap another provider — [higher-order providers](../cgp/concepts/higher-order-providers.md) written with [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md) and [`#[use_provider]`](../cgp/reference/attributes/use_provider.md)
+- handlers, and a business operation, that wrap another provider — [higher-order providers](../cgp/concepts/higher-order-providers.md) written with [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md) and [`#[use_provider]`](../cgp/reference/attributes/use_provider.md)
 - a backend reading context fields — [implicit field access](../cgp/concepts/implicit-arguments.md) via [`#[implicit]`](../cgp/reference/attributes/implicit.md) arguments, with [`#[cgp_auto_getter]`](../cgp/reference/macros/cgp_auto_getter.md) reserved for the request fields a handler reads through a `where` bound
 - organizing the wiring — path prefixes and a namespace, per the [namespaces-and-prefixes guide](../cgp/guides/namespaces-and-prefixes.md), backed by [`#[prefix]`](../cgp/reference/attributes/prefix.md), [`#[default_impl]`](../cgp/reference/attributes/default_impl.md), and [`delegate_components!`](../cgp/reference/macros/delegate_components.md) with a [`check_components!`](../cgp/reference/macros/check_components.md) assertion
 - restoring a `Send` bound for the HTTP server — the [recovering `Send` bounds concept](../cgp/concepts/send-bounds.md)
@@ -119,7 +119,7 @@ pub struct QueryBalanceApi;
 
 ## Endpoint handlers
 
-Each endpoint is a provider for `ApiHandler` that depends on business capabilities rather than on any concrete backend. The transfer endpoint reads the logged-in sender and the transfer details from its request, then calls the `CanTransferMoney` capability — itself an abstract async component the context implements however it likes:
+Each endpoint is a provider for `ApiHandler` that depends on business operations rather than on any concrete backend. The transfer endpoint reads the logged-in sender and the transfer details from its request, then calls the `CanTransferMoney` trait — itself an abstract async component the context implements however it likes:
 
 ```rust
 #[cgp_impl(new HandleTransfer<Request>)]
@@ -145,7 +145,7 @@ where
 }
 ```
 
-The endpoint is generic over its request shape: `HandleTransfer<Request>` works for any `Request` that exposes a logged-in user and the transfer fields through the [getter traits](../cgp/reference/macros/cgp_auto_getter.md) named in its `where` clause, so the same logic serves whatever request struct a deployment decodes. The `Self: ...` capability bounds are [impl-side dependencies](../cgp/concepts/impl-side-dependencies.md) declared with [`#[uses]`](../cgp/guides/declaring-dependencies.md), holding the context to providing money-transfer and error-raising without those leaking into the consumer trait.
+The endpoint is generic over its request shape: `HandleTransfer<Request>` works for any `Request` that exposes a logged-in user and the transfer fields through the [getter traits](../cgp/reference/macros/cgp_auto_getter.md) named in its `where` clause, so the same logic serves whatever request struct a deployment decodes. The `Self: ...` trait bounds are [impl-side dependencies](../cgp/concepts/impl-side-dependencies.md) declared with [`#[uses]`](../cgp/guides/declaring-dependencies.md), holding the context to providing money-transfer and error-raising without those leaking into the consumer trait.
 
 The balance query has the same shape but returns a value, so it fixes a response type. Its `QueryBalanceResponse<App>` stays generic over the context's abstract `Quantity`, and `#[derive(Serialize)]` lets the JSON wrapper encode it:
 
@@ -211,7 +211,7 @@ where
 }
 ```
 
-`UseBasicAuth` authenticates before delegating, resolving a basic-auth header into a logged-in user and mutating the request in place; it depends on the `CanQueryUserHashedPassword` and `CanCheckPassword` capabilities:
+`UseBasicAuth` authenticates before delegating, resolving a basic-auth header into a logged-in user and mutating the request in place; it depends on the `CanQueryUserHashedPassword` and `CanCheckPassword` traits:
 
 ```rust
 #[cgp_impl(new UseBasicAuth<InHandler>)]
@@ -250,9 +250,9 @@ where
 
 `ResponseToJson` adapts in the other direction, wrapping whatever the inner handler returns in an Axum `Json` envelope. Because each wrapper is itself an `ApiHandler`, they nest into a pipeline: `HandleFromRequest<Raw, ResponseToJson<UseBasicAuth<HandleQueryBalance<Clean>>>>` reads outside-in as the stages a request passes through — decode the raw request, JSON-encode the response, authenticate, run the endpoint — with each layer adding exactly one concern and the endpoint at the center oblivious to all of them.
 
-## The backend behind the capabilities
+## The backend behind the operations
 
-The business capabilities are satisfied by a provider that reads its data from context fields. `UseMockedApp` is an in-memory backend that implements `UserBalanceQuerier`, `MoneyTransferrer`, and the auth capabilities by reaching into maps stored on the context, pulled in as [`#[implicit]`](../cgp/reference/attributes/implicit.md) arguments — the balances map is read by reference (`&Arc<Mutex<…>>`) with no clone and no getter trait to declare:
+The business operations are satisfied by a provider that reads its data from context fields. `UseMockedApp` is an in-memory backend that implements `UserBalanceQuerier`, `MoneyTransferrer`, and the auth traits by reaching into maps stored on the context, pulled in as [`#[implicit]`](../cgp/reference/attributes/implicit.md) arguments — the balances map is read by reference (`&Arc<Mutex<…>>`) with no clone and no getter trait to declare:
 
 ```rust
 #[cgp_impl(UseMockedApp)]
@@ -282,7 +282,7 @@ where
 
 The `#[implicit]` argument reads the same `user_balances` field a getter would, but as a `&Arc<Mutex<…>>` bound at the top of the method — the [preferred form](../cgp/guides/reading-context-fields.md) for a field a provider reads from its own context. The request-field getters `HasLoggedInUser` and `HasBasicAuthHeader`, by contrast, stay [`#[cgp_auto_getter]`](../cgp/reference/macros/cgp_auto_getter.md) traits, because they read from the *request* type and are required as `where` bounds on it (`Request: HasBasicAuthHeader<Self>`) — a case an implicit argument, which reads only from `self`, cannot cover. The [`#[default_impl]`](../cgp/reference/attributes/default_impl.md) attribute registers this provider into the application's namespace; that is a wiring concern, explained next.
 
-A business capability can be wrapped the same way an API handler can. `NoTransferToSelf` is a [higher-order provider](../cgp/concepts/higher-order-providers.md) for `MoneyTransferrer` that rejects a self-transfer and otherwise delegates to an inner transfer provider:
+A business operation can be wrapped the same way an API handler can. `NoTransferToSelf` is a [higher-order provider](../cgp/concepts/higher-order-providers.md) for `MoneyTransferrer` that rejects a self-transfer and otherwise delegates to an inner transfer provider:
 
 ```rust
 #[cgp_impl(new NoTransferToSelf<InHandler>)]
@@ -312,7 +312,7 @@ where
 }
 ```
 
-A real deployment would swap `UseMockedApp` for a database-backed provider. Since the backend is selected per context in the wiring, replacing it with a `UsePostgres` provider that implements the same capabilities changes which backend runs without touching a single endpoint or wrapper.
+A real deployment would swap `UseMockedApp` for a database-backed provider. Since the backend is selected per context in the wiring, replacing it with a `UsePostgres` provider that implements the same traits changes which backend runs without touching a single endpoint or wrapper.
 
 ## Organizing the wiring with a namespace
 

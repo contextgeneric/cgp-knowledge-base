@@ -18,7 +18,7 @@ The authoring rules for concept documents, including when a cross-cutting idea e
 - [Higher-order providers](higher-order-providers.md) — providers parameterized by other providers.
 - [Check traits](check-traits.md) — why wiring is lazy and how to verify it at compile time.
 - [Abstract types](abstract-types.md) — abstract associated types shared and swapped across contexts.
-- [Modular error handling](modular-error-handling.md) — an abstract error type plus raising and wrapping capabilities, with the error type and construction strategy chosen by wiring.
+- [Modular error handling](modular-error-handling.md) — an abstract error type plus raising and wrapping components, with the error type and construction strategy chosen by wiring.
 - [Aggregate providers](aggregate-providers.md) — bundling a group of component wirings into a reusable provider that contexts delegate to as a unit, and why such a bundle is a provider rather than a context.
 - [Namespaces](namespaces.md) — reusable, inheritable wiring tables and preset-style configuration.
 - [Handlers](handlers.md) — the Computer/Producer/Handler family of computation components and their sync/async/fallible/by-reference variants.

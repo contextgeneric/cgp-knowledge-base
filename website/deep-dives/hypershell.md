@@ -111,7 +111,7 @@ code the guides tell readers not to write.
 
 ### Required before the deep dive quotes the code
 
-**Adopt `#[uses(...)]` for capability dependencies.** The repository has **zero** `#[uses]` attributes
+**Adopt `#[uses(...)]` for trait dependencies.** The repository has **zero** `#[uses]` attributes
 and eight hand-written `Self:` `where` bounds. Every one is the form
 [declaring-dependencies](../../cgp/guides/declaring-dependencies.md) tells readers to replace, and page
 2 of the deep dive quotes a provider in full.
@@ -119,7 +119,8 @@ and eight hand-written `Self:` `where` bounds. Every one is the form
 **Adopt `#[implicit]` arguments for context fields.** The repository has zero, and one
 getter-trait declaration. Reading a provider's own context field through a getter is the pattern
 [reading-context-fields](../../cgp/guides/reading-context-fields.md) reserves for the cases an implicit
-argument cannot reach — a field on another type, or a named shared capability — and it should be
+argument cannot reach — a field on another type, or a named accessor other code requires — and it
+should be
 checked case by case rather than converted wholesale.
 
 **Replace the one live `UseDelegate` table.** `crates/hypershell-components/src/providers/pipe.rs`

@@ -114,7 +114,7 @@ down and mislabel the whole foreign-context subtree.
 A branch ends at a **terminal leaf**, and which obligations count as terminal is what keeps the tree
 honest. The descent follows only the CGP wiring vocabulary — any provider trait (a
 `ProvideFoo: Foo<App>` bound routes on to the provider's own dependencies), `DelegateComponent`, and
-any obligation whose `Self` is the context (its consumer, getter, and capability traits) — and treats
+any obligation whose `Self` is the context (its consumer, getter, and blanket traits) — and treats
 everything else as a leaf. It deliberately does *not* follow `IsProviderFor`/`CanUseComponent`, which
 are dropped as plumbing above. The leaf shapes are:
 
@@ -172,7 +172,7 @@ are dropped as plumbing above. The leaf shapes are:
   the real cause, with the `DelegateComponent` node itself dropped as a plumbing label.
 
 Two foreign bounds are exceptions the descent *does* follow, both for the same reason: they reach the
-context only deeper. The first is a **getter or capability trait on a non-context type whose satisfying
+context only deeper. The first is a **getter or blanket trait on a non-context type whose satisfying
 impl depends on the context** — a request struct's `HasBasicAuthHeader<Ctx>`, whose `#[cgp_auto_getter]`
 blanket impl requires `Ctx: HasPasswordType`. There the walk looks into that blanket impl and follows
 only its **context-side dependencies**, so the real cause on the context surfaces (and de-duplicates
@@ -313,7 +313,7 @@ impl (`consumer trait impl \`CanCalculateArea\` for context \`Rectangle\``), nam
 trait's own `DefId`; a provider-trait obligation `Provider: ProviderTrait<Ctx, Params…>` becomes the
 provider-trait impl, naming the provider trait's `DefId`, the context (the trait's leading argument),
 and the provider struct (the obligation's `Self`); a `HasField` becomes the field-trait impl; and a
-user's own capability or getter trait — or a terminal ordinary bound — renders as
+user's own blanket or getter trait — or a terminal ordinary bound — renders as
 `trait impl \`Trait\` for \`Self\``. Several details make the labels read well:
 
 - **Plumbing is dropped.** A provider-trait obligation *for the context itself* (the delegation

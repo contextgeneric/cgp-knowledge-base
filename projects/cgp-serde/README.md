@@ -3,7 +3,7 @@
 `cgp-serde` rebuilds [Serde](https://serde.rs/)'s `Serialize` and `Deserialize` as CGP components, so
 that how each value type is encoded stops being a fixed property of the type and becomes a per-context
 wiring choice — which makes overlapping and orphan serialization implementations legal, and lets a
-deserializer draw capabilities such as an arena allocator from the context it runs in.
+deserializer draw services such as an arena allocator from the context it runs in.
 
 - **Repository** — <https://github.com/contextgeneric/cgp-serde>
 - **Local checkout** — `../cgp-serde`, per [sibling-projects.md](../../sibling-projects.md)
@@ -83,7 +83,7 @@ project was also the live demonstration in the
 For the communication strategy this is the project's strongest argument, because Serde is universally
 known and the orphan-rule pain around it is universally felt; the framing belongs in
 [message.md](../../communication-strategy/message.md#the-problems-cgp-removes) and the derive-free result in
-[message.md](../../communication-strategy/message.md#the-capabilities-worth-advertising).
+[message.md](../../communication-strategy/message.md#the-strengths-worth-advertising).
 
 ## Status and gaps
 

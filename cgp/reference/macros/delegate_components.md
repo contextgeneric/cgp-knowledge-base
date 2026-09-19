@@ -506,7 +506,7 @@ delegate_components! {
 
 Three failure modes recur, and none of them reports itself as a wiring problem.
 
-**Wiring is lazy, so a wrong table still compiles.** A missing entry, or an entry naming a provider whose own dependencies are unmet, produces no error at the `delegate_components!` site — the failure surfaces wherever the capability is finally used, as an `E0277`/`E0599` cascade over generated types. This is the [hidden unsatisfied-dependency class](../../errors/hidden/unsatisfied-dependency.md), and the answer is to pair the table with [`check_components!`](check_components.md) so the failure is forced to the wiring site, and to read it through [`cargo cgp check`](../cargo-cgp.md), which un-hides the suppressed cause.
+**Wiring is lazy, so a wrong table still compiles.** A missing entry, or an entry naming a provider whose own dependencies are unmet, produces no error at the `delegate_components!` site — the failure surfaces wherever the trait is finally used, as an `E0277`/`E0599` cascade over generated types. This is the [hidden unsatisfied-dependency class](../../errors/hidden/unsatisfied-dependency.md), and the answer is to pair the table with [`check_components!`](check_components.md) so the failure is forced to the wiring site, and to read it through [`cargo cgp check`](../cargo-cgp.md), which un-hides the suppressed cause.
 
 **A value naming a provider struct that was never declared** reports as an unresolved type rather than as anything about wiring. The usual cause is a provider written with [`#[cgp_impl]`](cgp_impl.md) *without* the `new` keyword and never declared separately, since the bare form implements the provider trait for a struct the author is expected to have written.
 

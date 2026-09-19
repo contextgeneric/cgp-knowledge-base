@@ -4,11 +4,11 @@
 
 ## Purpose
 
-A `#[cgp_fn]` copies every generic parameter written on the function onto both the generated trait and the generated impl. That is the right placement for a parameter the caller chooses, and the wrong one for a type the body needs but nobody chooses: a database handle, a value that only has to be printable, a scalar read from a field. The context already fixes that type through the field the body reads, so a parameter on the trait would make every caller, and every capability built on top, declare the parameter and repeat its bounds for a type they never touch.
+A `#[cgp_fn]` copies every generic parameter written on the function onto both the generated trait and the generated impl. That is the right placement for a parameter the caller chooses, and the wrong one for a type the body needs but nobody chooses: a database handle, a value that only has to be printable, a scalar read from a field. The context already fixes that type through the field the body reads, so a parameter on the trait would make every caller, and every trait built on top, declare the parameter and repeat its bounds for a type they never touch.
 
-`#[impl_generics(...)]` is the third placement. Its parameters land on the impl's generic list only, so the trait stays free of them, and the compiler infers each one from the `HasField<…, Value = T>` bound that an [`#[implicit]`](implicit.md) argument of that type produces. The result is a capability that reads as "this works with any `name` field of a compatible type", without a trait parameter, a wiring line, or an associated-type declaration. It is the first form to reach for when a body needs a type it does not fix; [naming a type dependency](../../guides/naming-a-type-dependency.md) is the prescriptive account of when to stay here and when to climb to an [abstract type](../../concepts/abstract-types.md).
+`#[impl_generics(...)]` is the third placement. Its parameters land on the impl's generic list only, so the trait stays free of them, and the compiler infers each one from the `HasField<…, Value = T>` bound that an [`#[implicit]`](implicit.md) argument of that type produces. The result is a trait that reads as "this works with any `name` field of a compatible type", without a trait parameter, a wiring line, or an associated-type declaration. It is the first form to reach for when a body needs a type it does not fix; [naming a type dependency](../../guides/naming-a-type-dependency.md) is the prescriptive account of when to stay here and when to climb to an [abstract type](../../concepts/abstract-types.md).
 
-The cost is that the type is concealed rather than named. It exists only where a value of it flows through an implicit argument, so nothing else can refer to it: not the capability's own signature, not another capability, and not a second provider.
+The cost is that the type is concealed rather than named. It exists only where a value of it flows through an implicit argument, so nothing else can refer to it: not the trait's own signature, not another trait, and not a second provider.
 
 ## Syntax
 
@@ -68,7 +68,7 @@ The impl's `where` clause keeps the ordering [`#[cgp_fn]`](../macros/cgp_fn.md) 
 
 ## Examples
 
-A capability whose one type dependency each context fixes through a field, and a second capability built on it that never learns the type exists:
+A trait whose one type dependency each context fixes through a field, and a second trait built on it that never learns the type exists:
 
 ```rust
 use cgp::prelude::*;
@@ -97,17 +97,17 @@ pub struct Robot {
 }
 ```
 
-`Person` and `Robot` both implement `Greet` and `Announce` through the blanket impls, with nothing wired: the compiler resolves `Name` to `String` for one and to `u32` for the other. Both are **value contexts**, since the wired type is the data the greeting reads, and both capabilities are **self-targeted**. Had `greet` taken `Name` as a function generic, `announce` would have to declare `<Name>`, repeat `Name: Display`, and pass the parameter on to everything that calls it.
+`Person` and `Robot` both implement `Greet` and `Announce` through the blanket impls, with nothing wired: the compiler resolves `Name` to `String` for one and to `u32` for the other. Both are **value contexts**, since the wired type is the data the greeting reads, and both traits are **self-targeted**. Had `greet` taken `Name` as a function generic, `announce` would have to declare `<Name>`, repeat `Name: Display`, and pass the parameter on to everything that calls it.
 
 ## Related constructs
 
-`#[impl_generics(...)]` is specific to [`#[cgp_fn]`](../macros/cgp_fn.md), whose generics split it extends with a third placement. The parameter is pinned by an [`#[implicit]`](implicit.md) argument through the [`HasField`](../traits/has_field.md) bound it produces. [`#[extend_where]`](extend_where.md) is the trait-side counterpart, a predicate on the trait's own parameters that callers must see, and [`#[uses]`](uses.md) is the other kind of private requirement, a capability bound on `Self`. When the type must be named in a signature or shared by two capabilities, the form to climb to is an abstract type declared with [`#[cgp_type]`](../macros/cgp_type.md) and imported with [`#[use_type]`](use_type.md); [naming a type dependency](../../guides/naming-a-type-dependency.md) works out that decision.
+`#[impl_generics(...)]` is specific to [`#[cgp_fn]`](../macros/cgp_fn.md), whose generics split it extends with a third placement. The parameter is pinned by an [`#[implicit]`](implicit.md) argument through the [`HasField`](../traits/has_field.md) bound it produces. [`#[extend_where]`](extend_where.md) is the trait-side counterpart, a predicate on the trait's own parameters that callers must see, and [`#[uses]`](uses.md) is the other kind of private requirement, a trait bound on `Self`. When the type must be named in a signature or shared by two traits, the form to climb to is an abstract type declared with [`#[cgp_type]`](../macros/cgp_type.md) and imported with [`#[use_type]`](use_type.md); [naming a type dependency](../../guides/naming-a-type-dependency.md) works out that decision.
 
 ## Known issues
 
 A parameter absent from every implicit argument is rejected by the compiler with `E0207` (`the type parameter 'Name' is not constrained by the impl trait, self type, or predicates`), with the caret on the parameter inside the attribute. The macro lowers the impl faithfully and cannot tell the intended fix, which is either to read a field whose type mentions the parameter or, if the caller should choose the type, to make it a function generic instead.
 
-A parameter cannot appear in the capability's own signature, because only the impl declares it. Naming it in a return type or an explicit (non-implicit) parameter fails during name resolution: a qualified path such as `Db::Row` reports `E0433` with the label `use of undeclared type`, and a bare `Db` reports `E0425` with the label `not found in this scope`, both under the headline `cannot find type 'Db' in this scope`. This is the [out-of-scope generated name](../../errors/lowering/out-of-scope-generated-name.md) error class, and the condition that forces promotion to an abstract type.
+A parameter cannot appear in the trait's own signature, because only the impl declares it. Naming it in a return type or an explicit (non-implicit) parameter fails during name resolution: a qualified path such as `Db::Row` reports `E0433` with the label `use of undeclared type`, and a bare `Db` reports `E0425` with the label `not found in this scope`, both under the headline `cannot find type 'Db' in this scope`. This is the [out-of-scope generated name](../../errors/lowering/out-of-scope-generated-name.md) error class, and the condition that forces promotion to an abstract type.
 
 A parameter named after the function shadows the generated trait. `fn count` with `#[impl_generics(Count: Display)]` puts a trait `Count` and a parameter `Count` in scope together, and inside the generated impl the trait's name resolves to the parameter, so the compiler reports `E0404` (`expected trait, found type parameter 'Count'`) on the function name. Renaming the parameter, or the trait through `#[cgp_fn(CanCount)]`, resolves it.
 

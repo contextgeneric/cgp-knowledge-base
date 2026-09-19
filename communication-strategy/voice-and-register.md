@@ -96,7 +96,7 @@ colour.
 
 **Concede in the same passage as the claim, in plain words.** Not as a hedge appended to a pitch, but
 as part of describing the thing accurately. "This is more machinery than a plain trait needs, and for
-a capability with one implementation a plain trait is the right tool" is the register. "While there
+a trait with one implementation a plain trait is the right tool" is the register. "While there
 is a modest learning curve, the benefits are substantial" is not — it concedes nothing and signals
 that something is being sold.
 
@@ -107,7 +107,7 @@ replacement that is both truer and more persuasive with this audience.
 
 - **Adjective and adverb inflation** — "genuinely", "truly", "simply", "seamlessly", "powerful",
   "beautiful", "comprehensive". Delete the intensifier and keep the claim.
-- **Enthusiasm attached to a capability** — "blazingly fast", "incredibly flexible". The author's
+- **Enthusiasm attached to a feature** — "blazingly fast", "incredibly flexible". The author's
   enthusiasm attaches to sharing something, not to how good it is; keep the claim measurable.
 - **The tricolon of nothing** — "clean, modern, and maintainable". Three vague adjectives are weaker
   than one specific noun.

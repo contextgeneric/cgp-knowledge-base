@@ -25,7 +25,7 @@ Deriving `HasFields` gives the struct a `Fields` associated type that is a [`Pro
 type Fields = Product![Field<Symbol!("sqlite_pool"), SqlitePool>];
 ```
 
-Reading a single field by name is the older and simpler capability provided by [`#[derive(HasField)]`](../reference/derives/derive_has_field.md), which generates one [`HasField`](../reference/traits/has_field.md) impl per field keyed on a [`Symbol!`](../reference/macros/symbol.md) tag, and is what getter traits written with [`#[cgp_auto_getter]`](../reference/macros/cgp_auto_getter.md) resolve against. Reading is only half the story; constructing a struct field by field is what extensible records add on top.
+Reading a single field by name is the older and simpler operation provided by [`#[derive(HasField)]`](../reference/derives/derive_has_field.md), which generates one [`HasField`](../reference/traits/has_field.md) impl per field keyed on a [`Symbol!`](../reference/macros/symbol.md) tag, and is what getter traits written with [`#[cgp_auto_getter]`](../reference/macros/cgp_auto_getter.md) resolve against. Reading is only half the story; constructing a struct field by field is what extensible records add on top.
 
 ## Partial records and the builder traits
 

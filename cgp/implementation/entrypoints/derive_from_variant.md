@@ -54,7 +54,7 @@ The same impls also appear inside the variant expansion pinned by the `snapshot_
 
 ## Tests
 
-- [from_variant_derive.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/from_variant_derive.rs) calls `from_variant` from a function generic over the tag, which is the capability the derive exists for and which a concrete `Shape::Circle(..)` call site cannot express.
+- [from_variant_derive.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/from_variant_derive.rs) calls `from_variant` from a function generic over the tag, which is the use the derive exists for and which a concrete `Shape::Circle(..)` call site cannot express.
 - The behavioral variant tests in [crates/tests/cgp-tests/tests/extensible_variants/](https://github.com/contextgeneric/cgp/tree/main/crates/tests/cgp-tests/tests/extensible_variants/) — notably [variant_dispatch.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/variant_dispatch.rs) — construct enums through the generated `from_variant`.
 - [parser_rejections/derive_from_variant.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/derive_from_variant.rs) pins the single-unnamed-field requirement: the derive rejects a fieldless, a multi-field, and a struct-style variant.
 - [invalid_expansion/reserved_variant_names.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/invalid_expansion/reserved_variant_names.rs) pins the reserved-variant-name defect recorded under Known issues, capturing the emitted `Self::…` paths as a string snapshot so the test compiles even though the code it describes would not.

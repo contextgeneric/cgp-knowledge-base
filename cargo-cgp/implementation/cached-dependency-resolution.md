@@ -30,7 +30,7 @@ broken consumer, and each call — and the
 type produced eighteen identical root-cause trees this way. Today the emitter resolves every one of
 those to completion and only then drops the duplicates through the
 [`DedupLedger`](error-processing.md), so sixteen full walks are computed and thrown away. The second
-kind sits inside a single walk: a capability depended on by several providers (a shared getter,
+kind sits inside a single walk: a trait depended on by several providers (a shared getter,
 `HasErrorType`) is a diamond in the dependency graph, and its subtree is walked once per parent. The
 unified cache below closes both, because both reduce to the same primitive — resolve each distinct
 obligation once.
@@ -94,7 +94,7 @@ consumer obligation `Ctx: ConsumerTrait<Params…>` (or a wrapper trait from the
 seed is the root node of one walk, nothing more; it is keyed and looked up exactly like every other
 node. Both redundancies then close through the same lookup at different depths: the eighteen identical
 trees share a root node, so the first resolves it and the other seventeen hit the cache at the root,
-and the diamond's shared capability is a node reached from two parents, so the second parent hits the
+and the diamond's shared trait is a node reached from two parents, so the second parent hits the
 cache one level down.
 
 The stored value is the node's set of **root-cause sub-chains**, each an owned `Leaf` plus the label
@@ -291,7 +291,7 @@ its omission would be silent.
 One coverage ceiling rides on the key and is a limitation of hit rate, never of correctness. A
 [call-site seed](typed-resolution-call-site.md) carries rigid placeholders whose identities are part
 of the region-erased obligation and thus part of the fingerprint, so two different call sites of the same unknown-argument
-capability key distinctly and do not cross-hit. This is correct — distinct placeholders make distinct
+trait key distinctly and do not cross-hit. This is correct — distinct placeholders make distinct
 obligations — and even a coincidental cross-hit would be output-preserving, since both walks resolve
 the unknown identically; the ceiling is only that the cache misses where it harmlessly could hit.
 
@@ -377,9 +377,9 @@ The primary guard is met; the rest is coverage still to add.
   *resolves* rather than declining, so it pins the cut and the incomplete-flag propagation on a
   live tree.
 - **Diamond reuse** (met) —
-  [`acceptable/resolution/diamond_shared_capability`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/resolution/diamond_shared_capability.rs)
+  [`acceptable/resolution/diamond_shared_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/resolution/diamond_shared_trait.rs)
   routes two independent branches — `CanTop` depends on both `CanLeft` and `CanRight` — through one
-  shared `CanShared` capability whose provider needs a `name` field the context lacks. The walk
+  shared `CanShared` trait whose provider needs a `name` field the context lacks. The walk
   descends `App: CanShared` twice (once per branch), so the interior node is resolved under the first
   branch and consulted from the cache under the second; the two identical missing-field causes
   de-duplicate to one, and the tree shown is the first branch's. It pins that an interior cache hit is

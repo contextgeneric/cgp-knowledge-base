@@ -91,7 +91,7 @@ conversation borrows its energy — provided the attachment is honest.
   the existing trait ecosystem. Lead with what it *does* supply — a desugaring path that exists — and
   concede the rest in the same breath.
 - **AI-assisted development.** Not a conversation to attach a hook to, and worth naming here anyway,
-  because it changes the arithmetic behind CGP's most-cited costs rather than adding a capability. The
+  because it changes the arithmetic behind CGP's most-cited costs rather than adding a feature. The
   wiring volume, the vocabulary, and the diagnostics are the three things readers say deter them, and
   all three are mechanical work that an agent with the [`/cgp` skill](https://github.com/contextgeneric/cgp-skills)
   absorbs — which is a checkable claim, since the skill is published and a reader can attach it and see.
@@ -101,14 +101,14 @@ conversation borrows its energy — provided the attachment is honest.
 
 ## The pains are real — and developers already hand-roll the fix
 
-The most persuasive evidence for a capability is that developers reinvent CGP's mechanism on their own,
+The most persuasive evidence for a strength is that developers reinvent CGP's mechanism on their own,
 and for the central one they demonstrably do. The pattern CGP is built on — zero-sized marker types
 plus a helper trait, so several otherwise-overlapping blanket implementations can coexist — has been
 [independently discovered and blogged](https://www.greyblake.com/blog/alternative-blanket-implementations-for-single-rust-trait/)
 by a Rust author who reached it to work around the exact "no two blanket impls may overlap" limitation
 CGP exists to lift, describing the hand-rolled version as "3 extra lines to link things together".
 
-This is the single most useful fact in this document. The strongest capability to advertise is not one
+This is the single most useful fact in this document. The strongest thing to advertise is not one
 the reader must be talked into wanting, but one they have already built by hand and would rather not
 maintain. Point to the reinvention as evidence and the "isn't this over-engineered" reflex softens,
 because the reader recognizes their own workaround.

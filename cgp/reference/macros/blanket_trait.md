@@ -8,7 +8,7 @@
 
 The payoff is the impl-side-dependency, or dependency-injection, pattern in its purest form. A trait declared `pub trait FooBar: Foo + Bar` with a default `foo_bar` method exposes only `foo_bar` to its callers; the `Foo + Bar` requirements are carried by the generated blanket impl's `where` clause, so any context satisfying `Foo` and `Bar` automatically gains `FooBar` without naming those dependencies at the call site. This is the same constraint-hiding that the `/cgp` skill introduces as the core idea behind blanket traits, and it is preferred over a free generic function because transitive callers never have to repeat the `Foo + Bar` bounds.
 
-`#[blanket_trait]` is not a CGP component. It produces an ordinary Rust trait and an ordinary blanket impl, with no consumer/provider split, no component name, and no wiring. It is the tool to reach for when a capability has exactly one definition and you want the extension-trait ergonomics without committing to the full CGP component machinery. When a capability later needs multiple alternative implementations, the trait can be promoted to a [`#[cgp_component]`](cgp_component.md).
+`#[blanket_trait]` is not a CGP component. It produces an ordinary Rust trait and an ordinary blanket impl, with no consumer/provider split, no component name, and no wiring. It is the tool to reach for when an operation has exactly one definition and you want the extension-trait ergonomics without committing to the full CGP component machinery. When the operation later needs multiple alternative implementations, the trait can be promoted to a [`#[cgp_component]`](cgp_component.md).
 
 ## Syntax
 
@@ -130,7 +130,7 @@ When the associated type declares bounds, those bounds are moved into the impl's
 
 ## Examples
 
-A self-contained extension trait that hides two dependencies behind one method illustrates the everyday use. The `FooBar` capability is defined once, with its body, and applies to any context implementing both `Foo` and `Bar`:
+A self-contained extension trait that hides two dependencies behind one method illustrates the everyday use. The `FooBar` trait is defined once, with its body, and applies to any context implementing both `Foo` and `Bar`:
 
 ```rust
 use cgp::prelude::*;

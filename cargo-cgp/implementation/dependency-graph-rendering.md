@@ -20,9 +20,9 @@ linear spines — it has to be a graph, because real wiring produces three shape
 cannot represent. Each shape is a way two root→leaf paths relate to one another beyond simply sharing
 a prefix, and the graph is what lets the note show each correctly.
 
-The first is a **shared dependency** — a diamond. When two providers both depend on one capability
-and that capability is what fails, their two paths share a *suffix* (`… → C → missing`), not a
-prefix. The note should show the shared capability and its subtree once; a spine model that keys only
+The first is a **shared dependency** — a diamond. When two providers both depend on one trait
+and that trait is what fails, their two paths share a *suffix* (`… → C → missing`), not a
+prefix. The note should show the shared trait and its subtree once; a spine model that keys only
 on the root would repeat the whole subtree under each parent.
 
 The second is **independent consumers converging on one leaf**. Two unrelated components can both
@@ -91,7 +91,7 @@ pub struct Cause {
 }
 ```
 
-A leaf reached one way has a single path — the common case; a leaf reached through a shared capability
+A leaf reached one way has a single path — the common case; a leaf reached through a shared trait
 several providers depend on has several, one per parent. Holding several paths on one cause rather
 than one cause per path is deliberate: it preserves the **one cause per distinct leaf** invariant that
 the rest of the pipeline relies on. The de-duplication ledger's `cause_signature`, the grouping key,
@@ -235,8 +235,8 @@ drawn under each — a leaf hides no subtree, so no `(*)`:
     └─ [CGP-E106] missing field `height` on `Rectangle`
 ```
 
-A **diamond** — one shared capability reached through two branches
-([`diamond_shared_capability`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/resolution/diamond_shared_capability.rs),
+A **diamond** — one shared trait reached through two branches
+([`diamond_shared_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/resolution/diamond_shared_trait.rs),
 where `CanTop` depends on both `CanLeft` and `CanRight`, which both depend on `CanShared`, whose
 provider needs a `name` field the context lacks) — expands the shared `CanShared` subtree under the
 first branch and `(*)`-references it under the second, so the root cause is shown once:
@@ -378,14 +378,14 @@ case. The `(*)` convention is borrowed from `cargo tree` and is pinned in the fi
 described in [Typed root-cause resolution](typed-root-cause-resolution.md) and changed by this model
 only in the representation they emit.
 
-**A wide convergence repeats `(*)` once per parent, and that is not noise to collapse.** A capability
+**A wide convergence repeats `(*)` once per parent, and that is not noise to collapse.** A trait
 many providers share — an abstract type especially, since one binding serves the whole context — is a
 node with many parents, so its reference recurs once under each. It reads at a glance like repetition
 worth folding, and it is not: each `(*)` is the *terminator of a distinct branch* naming a distinct
 consumer, so dropping the repeats would leave those branches dangling with no explanation of why they
 are listed. Reproducing a six-way convergence makes this plain — the weight is the six two-line
 branches, which are genuine information, not the six markers that end them. The length is inherent to
-wiring in which six capabilities really do need one shared thing. What *is* worth collapsing is a
+wiring in which six traits really do need one shared thing. What *is* worth collapsing is a
 subtree drawn in another block, which is [the cross-block elision](#eliding-across-blocks) above.
 
 ## Tests
@@ -417,7 +417,7 @@ and the end-to-end behavior is pinned by the UI suite.
   associativity, and `headed_by` — including its commutation with the grouping, which is why heading
   needs no re-merge.
 - The UI fixtures the worked shapes above cite — `base_area_1`, `parallel_branches`, `density_3`,
-  `parallel_consumers`, `diamond_shared_capability`, and `redirect_distinct_keys` — plus
+  `parallel_consumers`, `diamond_shared_trait`, and `redirect_distinct_keys` — plus
   [`foreign_getter_missing_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/resolution/foreign_getter_missing_wiring.rs),
   a diamond converging on one missing wiring, exercise the graph end to end through the real compiler.
 

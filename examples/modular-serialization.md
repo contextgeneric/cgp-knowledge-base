@@ -1,16 +1,16 @@
 # Modular serialization
 
-This example rebuilds Serde's `Serialize` and `Deserialize` as CGP components, so that how each value type is encoded becomes a per-context wiring choice rather than a single fixed implementation baked into the type. It progresses from the two serialization components, through a family of overlapping providers that vanilla Rust would reject, to two application contexts that serialize the same nested data into different JSON formats by changing only a handful of wiring lines, and finally to a context-dependent deserializer that allocates into an arena. It is the template for any capability where the same type needs several interchangeable implementations selected per application, and where the orphan rule would otherwise force a library to derive the trait on every data type itself.
+This example rebuilds Serde's `Serialize` and `Deserialize` as CGP components, so that how each value type is encoded becomes a per-context wiring choice rather than a single fixed implementation baked into the type. It progresses from the two serialization components, through a family of overlapping providers that vanilla Rust would reject, to two application contexts that serialize the same nested data into different JSON formats by changing only a handful of wiring lines, and finally to a context-dependent deserializer that allocates into an arena. It is the template for any trait where the same type needs several interchangeable implementations selected per application, and where the orphan rule would otherwise force a library to derive the trait on every data type itself.
 
 The concepts each step demonstrates are documented in full in the reference; this example notes which one is in play and links to it:
 
 - splitting a trait so overlapping and orphan implementations are legal — [consumer and provider traits](../cgp/concepts/consumer-and-provider-traits.md) and the [coherence](../cgp/concepts/coherence.md) strategy behind it
 - defining the components — [`#[cgp_component]`](../cgp/reference/macros/cgp_component.md)
-- writing the providers — [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md), with [`#[uses]`](../cgp/reference/attributes/uses.md) for the capabilities they look up through the context
+- writing the providers — [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md), with [`#[uses]`](../cgp/reference/attributes/uses.md) for the traits they look up through the context
 - serializing a struct with no serialization-specific derive — [extensible records](../cgp/concepts/extensible-records.md) via [`#[derive(CgpData)]`](../cgp/reference/derives/derive_cgp_data.md)
 - selecting a provider per value type, inline in the context's own table — the `open` statement of [`delegate_components!`](../cgp/reference/macros/delegate_components.md) with [`@`-path keys](../cgp/concepts/namespaces.md)
 - verifying a context's wiring — [`check_components!`](../cgp/reference/macros/check_components.md)
-- pulling a capability from the context during deserialization — [`#[cgp_auto_getter]`](../cgp/reference/macros/cgp_auto_getter.md) over [`HasField`](../cgp/reference/traits/has_field.md), with the [`HasErrorType`](../cgp/reference/components/has_error_type.md) and [`CanRaiseError`](../cgp/reference/components/can_raise_error.md) error components wired through [modular error handling](../cgp/concepts/modular-error-handling.md)
+- pulling a service from the context during deserialization — [`#[cgp_auto_getter]`](../cgp/reference/macros/cgp_auto_getter.md) over [`HasField`](../cgp/reference/traits/has_field.md), with the [`HasErrorType`](../cgp/reference/components/has_error_type.md) and [`CanRaiseError`](../cgp/reference/components/can_raise_error.md) error components wired through [modular error handling](../cgp/concepts/modular-error-handling.md)
 
 All snippets assume `use cgp::prelude::*;` and use Serde's `Serializer`/`Deserializer` traits directly. The providers shown here serialize and deserialize, but the example builds up the serialization side first and then mirrors it for deserialization.
 
@@ -36,7 +36,7 @@ pub trait CanDeserializeValue<'de, Value> {
 
 `CanSerializeValue` and `CanDeserializeValue` are the [consumer traits](../cgp/concepts/consumer-and-provider-traits.md) callers use as `context.serialize(value, s)`; `ValueSerializer` and `ValueDeserializer` are the provider traits implementations are written against. The extra `&self` is the whole point — it gives every implementation access to the context, both to look up how to serialize nested values and, for deserialization, to pull runtime dependencies out of it. Because `Value` is a generic parameter rather than the `Self` type, a context can later wire a different provider for each concrete value type, which is the per-type dispatch set up when the contexts are wired below.
 
-Both components are therefore **parameter-targeted**, and every context in this example is an **environmental context** — the shape the [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md) places on tier 4. The example starts there rather than working up to it because serialization is the case that genuinely needs it: the encoded types are foreign, so a self-targeted component would give `Vec<u8>` one encoding for the whole program, and the two-applications payoff below would be impossible. A capability *about* the application, by contrast, needs no parameter at all.
+Both components are therefore **parameter-targeted**, and every context in this example is an **environmental context** — the shape the [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md) places on tier 4. The example starts there rather than working up to it because serialization is the case that genuinely needs it: the encoded types are foreign, so a self-targeted component would give `Vec<u8>` one encoding for the whole program, and the two-applications payoff below would be impossible. An operation *about* the application, by contrast, needs no parameter at all.
 
 ## Overlapping providers
 
@@ -82,7 +82,7 @@ In vanilla Rust these two blanket implementations could not both exist; as named
 
 ## Looking serialization up through the context
 
-A provider needs more than its own logic when it serializes by delegating to another encoding — and it gets that by asking the context. `SerializeWithDisplay` formats any `Display` value to a string and then serializes *that string through the context*, so the eventual byte-level representation of the string is itself a wiring choice rather than fixed here. The capability it depends on is declared with [`#[uses]`](../cgp/reference/attributes/uses.md), which adds the bound `Self: CanSerializeValue<String>` as an [impl-side dependency](../cgp/concepts/impl-side-dependencies.md):
+A provider needs more than its own logic when it serializes by delegating to another encoding — and it gets that by asking the context. `SerializeWithDisplay` formats any `Display` value to a string and then serializes *that string through the context*, so the eventual byte-level representation of the string is itself a wiring choice rather than fixed here. The trait it depends on is declared with [`#[uses]`](../cgp/reference/attributes/uses.md), which adds the bound `Self: CanSerializeValue<String>` as an [impl-side dependency](../cgp/concepts/impl-side-dependencies.md):
 
 ```rust
 #[cgp_impl(new SerializeWithDisplay)]
@@ -303,9 +303,9 @@ let json_b = serde_json::to_string_pretty(&SerializeWithContext::new(&AppB, &arc
 
 `json_a` encodes every byte field as hexadecimal and every date as an RFC 3339 string; `json_b` encodes the same archive with base64 and Unix timestamps. Nothing in the data types or the providers changed between the two — only which context wraps the value.
 
-## Deserializing with a context-supplied capability
+## Deserializing with a context-supplied service
 
-Deserialization mirrors serialization, and the extra `&self` becomes load-bearing in a way Serde cannot match: the context can supply runtime *capabilities* a provider pulls in by dependency injection. The motivating case is an [arena allocator](https://en.wikipedia.org/wiki/Region-based_memory_management) — deserializing many borrowed `&'a T` values into one arena instead of heap-allocating each. The context exposes the arena through a getter trait, written with [`#[cgp_auto_getter]`](../cgp/reference/macros/cgp_auto_getter.md) so any context with a matching field implements it automatically:
+Deserialization mirrors serialization, and the extra `&self` becomes load-bearing in a way Serde cannot match: the context can supply runtime *services* a provider pulls in by dependency injection. The motivating case is an [arena allocator](https://en.wikipedia.org/wiki/Region-based_memory_management) — deserializing many borrowed `&'a T` values into one arena instead of heap-allocating each. The context exposes the arena through a getter trait, written with [`#[cgp_auto_getter]`](../cgp/reference/macros/cgp_auto_getter.md) so any context with a matching field implements it automatically:
 
 ```rust
 use typed_arena::Arena;
@@ -316,7 +316,7 @@ pub trait HasArena<'a, T: 'a> {
 }
 ```
 
-The provider for the borrowed type then deserializes the owned value through the context and moves it into the arena fetched from the context. Both capabilities it needs — the arena and the ability to deserialize the owned `Value` — are declared with [`#[uses]`](../cgp/reference/attributes/uses.md):
+The provider for the borrowed type then deserializes the owned value through the context and moves it into the arena fetched from the context. Both dependencies it needs — the arena and the ability to deserialize the owned `Value` — are declared with [`#[uses]`](../cgp/reference/attributes/uses.md):
 
 ```rust
 #[cgp_impl(new DeserializeAndAllocate)]
@@ -404,4 +404,4 @@ let app = App { arena: &arena };
 let cluster: Cluster<'_> = app.deserialize_json_string(serialized).unwrap();
 ```
 
-The arena was never an argument to a deserialize function — Serde's `from_str` has no slot for one. It reached `DeserializeAndAllocate` through the context, which is how CGP supplies a capability to code nested arbitrarily deep without threading it explicitly, the [dependency-injection](../cgp/concepts/impl-side-dependencies.md) idea applied to deserialization.
+The arena was never an argument to a deserialize function — Serde's `from_str` has no slot for one. It reached `DeserializeAndAllocate` through the context, which is how CGP supplies a dependency to code nested arbitrarily deep without threading it explicitly, the [dependency-injection](../cgp/concepts/impl-side-dependencies.md) idea applied to deserialization.

@@ -166,7 +166,7 @@ traits: [`#[cgp_fn]`](../../cgp/reference/macros/cgp_fn.md) with
 [`#[implicit]`](../../cgp/reference/attributes/implicit.md) arguments and
 [`#[derive(HasField)]`](../../cgp/reference/derives/derive_has_field.md) are the gentlest possible entry,
 because the reader writes a function and a struct and gets a working program with no wiring at all. Then
-[`#[uses]`](../../cgp/reference/attributes/uses.md), read as importing a capability. Then, when a second
+[`#[uses]`](../../cgp/reference/attributes/uses.md), read as importing a trait. Then, when a second
 implementation is genuinely needed, [`#[cgp_component]`](../../cgp/reference/macros/cgp_component.md) and
 [`#[cgp_impl]`](../../cgp/reference/macros/cgp_impl.md), then
 [`delegate_components!`](../../cgp/reference/macros/delegate_components.md), and only after that the
@@ -199,10 +199,10 @@ which gloss.
 
 **Every tutorial states, in its own internal document, which of CGP's three shapes its running example
 uses**, and a tutorial that crosses from one to another says so in the prose. Both existing series use a
-**value context** whose capability targets `Self`: `Person` is the thing being greeted, `Rectangle` is the
+**value context** whose component targets `Self`: `Person` is the thing being greeted, `Rectangle` is the
 thing whose area is computed. That is the right choice for a first tutorial, because the wired type is
 something the reader can see and hold — but it is not the shape most CGP code is written in, which is an
-**environmental context**: a type standing for the application, with the capability about the application
+**environmental context**: a type standing for the application, with the operation about the application
 rather than about data.
 
 The obligation is narrow and cheap. A tutorial need not teach the qualifiers or use the words, and an

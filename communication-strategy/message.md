@@ -1,7 +1,7 @@
-# The message: pains, capabilities, objections, and limits
+# The message: pains, strengths, objections, and limits
 
 This document carries everything a piece actually *says* about CGP: the concrete problems it removes,
-the capabilities worth advertising, the objections readers bring, and the boundary beyond which a
+the strengths worth advertising, the objections readers bring, and the boundary beyond which a
 plainer tool wins. These four were once separate documents, and consolidating them is deliberate —
 they are four views of one reader. The person who feels "I can't swap my mock for the real thing",
 hears "compile-time dependency injection", asks "isn't DI heavy and magical?", and needs to be told
@@ -11,10 +11,10 @@ always needs the same edit in the other three.
 ## Lead with the pain, not the paradigm
 
 The ordering rule governs every piece and is worth stating before any content. **Open on a problem
-the reader already has, then let the capability arrive as relief.** "Here is the thing you fight every
+the reader already has, then let the fix arrive as relief.** "Here is the thing you fight every
 week, gone" persuades where "look what CGP can do" does not, and the difference is most pronounced
 with the pragmatic majority who are scanning for whether the machinery is justified. Reach for the
-problem that matches the reader, per [readers.md](readers.md), before reaching for any capability.
+problem that matches the reader, per [readers.md](readers.md), before reaching for any feature.
 
 Three habits make an entry work. Lead with the **workaround the reader recognizes**, not the
 mechanism, so the CGP version arrives as relief rather than as a new thing to learn. Keep the
@@ -103,7 +103,8 @@ theoretical — there is a repository cataloguing the rule's design problems, an
 the hand-rolled version "3 extra lines to link things together".
 
 CGP dissolves the rule because a provider implements the *provider* trait for its own marker, not the
-target trait for the foreign type, so a crate can add a capability to a type it does not own with no
+target trait for the foreign type, so a crate can add a trait implementation to a type it does not
+own with no
 wrapper. The pitch's power is recognition: the reader has written the three-line workaround and would
 rather not maintain it. This lands with the **working and advanced developer**, and the honest limit
 is that CGP does not repeal coherence globally — it keeps each choice explicit and per-context, and
@@ -215,9 +216,9 @@ A pain that arrives with a codebase's age rather than its domain is the trait th
 responsibilities until every implementor must supply the whole surface and every change touches all of
 them. This is where CGP itself came from — the `ChainHandle` trait with dozens of methods that
 prompted the author's original work (see [author-personality.md](author-personality.md)) — which makes
-it an entry with a true story behind it. CGP lets one large capability become a set of independently
+it an entry with a true story behind it. CGP lets one large trait become a set of independently
 wired components, each with its own providers, so an implementor supplies only what it uses and adding
-a capability is adding a wiring line rather than editing a shared trait. This is the decoupling pitch
+an operation is adding a wiring line rather than editing a shared trait. This is the decoupling pitch
 for the **framework author and the evaluator**, resting on the
 [consumer/provider split](../cgp/concepts/consumer-and-provider-traits.md).
 
@@ -256,7 +257,7 @@ where
 { /* this layer touches none of the three */ }
 ```
 
-The developer has felt every part of this: adding a fourth open type is a breaking change to every caller, the bounds get restated at each layer, and the function that actually uses `S` is four frames down. CGP makes those types **abstract types on the context**, so they are named where they are used and nowhere else — the intermediate layer above becomes `async fn run_job(&self) -> Result<(), Error>`, with `Error` imported by [`#[use_type]`](../cgp/reference/attributes/use_type.md) and the storage and runtime reached as capabilities. The count of types a context decides can then rise freely, because *deciding is not passing*.
+The developer has felt every part of this: adding a fourth open type is a breaking change to every caller, the bounds get restated at each layer, and the function that actually uses `S` is four frames down. CGP makes those types **abstract types on the context**, so they are named where they are used and nowhere else — the intermediate layer above becomes `async fn run_job(&self) -> Result<(), Error>`, with `Error` imported by [`#[use_type]`](../cgp/reference/attributes/use_type.md) and the storage and runtime reached through traits on the context. The count of types a context decides can then rise freely, because *deciding is not passing*.
 
 This is the entry for the **working developer with a deep call graph**, and it is the one pain here that is about code becoming unreadable rather than a rule being restrictive — which makes it the closest match to the community's own stated anxiety about growing complexity ([evidence.md](evidence.md)). It also has an unusually checkable payoff: adding a type dependency is one `#[use_type]` line and one wiring line, where adding a generic parameter is a signature change that propagates. **Environmental context, self-targeted.** The honest limit, in the same breath: a type that only ever flows through values the provider reads can stay an ordinary inferred parameter, and for a function with one or two open types a plain generic is clearer than a component — the boundary is worked out in [naming a type dependency](../cgp/guides/naming-a-type-dependency.md).
 
@@ -313,16 +314,16 @@ heard CGP's diagnostics are unusable. For a broad public audience, lead with the
 orphan-rule entries, because they show something Rust cannot do rather than something it does
 awkwardly, which is the hardest framing to dismiss as astronaut architecture.
 
-## The capabilities worth advertising
+## The strengths worth advertising
 
-A capability is worth advertising when it is **true**, **framed for a specific reader**, and
+A strength is worth advertising when it is **true**, **framed for a specific reader**, and
 **anchored to a pain above**. Dropping any of the three turns it into the kind of claim this audience
 punishes. Two habits separate a pitch that lands from one that invites a pile-on: pair the advantage
 with its cost whenever the audience is a skeptic, and prefer the concrete to the grand — "compiled to
 a direct call" outperforms "fast", and "one interface with many implementations" outperforms
 "flexible".
 
-**Zero runtime cost** is the strongest broad capability: all of CGP's flexibility is resolved at
+**Zero runtime cost** is the strongest broad strength: all of CGP's flexibility is resolved at
 compile time and erased before the program runs. There is no container holding a graph, no reflection,
 no vtable, no dynamic dispatch; a wired call monomorphizes to a direct function call, and a provider a
 context does not use is not in the binary. Say it as *"resolved at compile time and compiled away — a
@@ -334,13 +335,13 @@ is accurate but worn, so prefer the concrete phrasing outside a feature title.
 **Overlapping and orphan implementations, made safe** is the standout for the type-system audience,
 and it has a rare asset behind it: developers already reinvent CGP's mechanism by hand
 ([evidence.md](evidence.md)), so the pitch reminds a reader of a workaround they have written rather
-than a capability they must be talked into wanting. Say it as *"type classes without the orphan
-rule"*, *"implement a capability for a type you don't own, with no newtype wrapper"*, or *"the
+than a feature they must be talked into wanting. Say it as *"type classes without the orphan
+rule"*, *"implement a trait for a type you don't own, with no newtype wrapper"*, or *"the
 incoherence is deliberate at the definition level and disciplined at the use site — every choice is a
 line in a table, never a silent resolution"*. Never claim CGP is coherent or promise global
 uniqueness: uniqueness is *per context*, and that scoping is the point.
 
-**Swappable implementations chosen per context** is the most legible capability for the working
+**Swappable implementations chosen per context** is the most legible strength for the working
 developer, and its whole risk is implying the choice is automatic. Say *"one interface, many
 implementations — the application picks which one, and the choice is a line you can read"*, preferring
 "application" to "context" in public copy where the context is one, since it is concrete and needs no
@@ -356,7 +357,7 @@ the dependencies live in the implementation they never force internal types into
 Do not oversell the verification as effortless: the check is something you write, and its raw output
 is verbose.
 
-The same capability read from the maintenance side is **least privilege on a signature**, and it is worth
+The same strength read from the maintenance side is **least privilege on a signature**, and it is worth
 stating separately because it pays with a single context and therefore reaches a reader who has no second
 one yet. A `&self` method on a concrete application struct may read any field and call any other method,
 so nothing short of reading the body says which parts of the application it depends on; a provider's
@@ -366,7 +367,7 @@ reached through the context, not a sandbox, since any Rust function can still ca
 the finer-grained version in [sizing a component](../cgp/guides/sizing-a-component.md): a component per
 operation means code that should only read can be handed the reader and never the deleter.
 
-**First-class tooling for the errors** is the capability CGP could not honestly claim until recently,
+**First-class tooling for the errors** is the strength CGP could not honestly claim until recently,
 and it is bound by an unusually load-bearing honesty rule because the reader can `cargo install` and
 check within the hour. Say *"a dedicated checker that leads with the root cause — `cargo cgp check`
 names the missing field instead of a wall of generated types"*, and always in the same breath that it
@@ -374,7 +375,7 @@ is a **v0.1.0-alpha** reshaping the core wiring errors but not yet every class. 
 are "solved", "fixed", or "as clear as any other Rust error's".
 
 **It reads like ordinary Rust, and you adopt it gradually** is the enhances-not-replaces
-[frame](identity.md) as a capability, and it is what disarms the all-or-nothing fear. An `#[implicit]`
+[frame](identity.md) as a strength, and it is what disarms the all-or-nothing fear. An `#[implicit]`
 argument looks like a function parameter, a `#[cgp_impl]` provider looks like a trait impl, and a
 consumer trait can be implemented directly with no CGP machinery at all. Say *"a superset of ordinary
 traits — start with one component and leave the rest of your code unchanged"*. Do not claim "no
@@ -394,19 +395,19 @@ that each context fills in through the same wiring that selects behavior. Say *"
 type; the context chooses it"*. Do not conflate this with sealing — representation hiding is Rust's
 module privacy, a distinction the [ML-module reader](../related-work/ml-modules.md) will look for.
 
-**Type dependencies you never thread** is the same capability stated as the pain it removes, and it is
+**Type dependencies you never thread** is the same strength stated as the pain it removes, and it is
 worth advertising separately because the two land on different readers: the sentence above interests
 someone who wants a type *swappable*, while this one interests someone whose signatures have simply
 filled up. A generic parameter is an input the caller supplies, so it propagates through every
 intermediate layer; an abstract type is an output the context determines, so it propagates nowhere.
 Say *"the layers that don't touch your error type never mention it"* or *"adding a type dependency is
 one line, not a signature change to every caller"*. Two cautions. Do not say CGP "removes generics" — a
-component may still carry a parameter, deliberately, when the capability is *about* a type the context
+component may still carry a parameter, deliberately, when the operation is *about* a type the context
 does not own. And do not oversell the reach: a type that only ever flows through a value the provider
 reads can stay an ordinary inferred parameter, so the honest claim is about the types a signature has
 to *name*.
 
-**Generic over a type's structure, checked and free** is the framework author's capability: a type
+**Generic over a type's structure, checked and free** is the framework author's strength: a type
 opts in with a derive, its shape becomes type-level data, and generic code recurses over it with full
 static checking. Say *"reflection's payoff without the runtime cost or the stringly-typed failures"*,
 never "a reflection system", and state the opt-in derive requirement in the same breath.
@@ -418,7 +419,7 @@ scale" is a different claim that needs evidence the evaluator will notice is mis
 
 ### Audience-tuned one-liners
 
-The sharpest phrasings translate a capability into a reader's own idiom, letting them spend attention
+The sharpest phrasings translate a strength into a reader's own idiom, letting them spend attention
 only on what is new. Each is calibrated to one profile in [readers.md](readers.md) and grounded in the
 matching [related-work](../related-work/README.md) comparison; using one on the wrong audience
 misfires.
@@ -518,7 +519,7 @@ rather than a misunderstanding*: with one context the swappability payoff genuin
 because every wiring line has exactly one plausible value and every provider exactly one user. It is
 also the most likely reason a reader who got as far as trying CGP stops. Do not answer it by predicting
 that they will want a second context later, which asks them to spend now for a benefit they cannot
-check, and do not answer it by listing capabilities — the reader is holding a concrete codebase and
+check, and do not answer it by listing features — the reader is holding a concrete codebase and
 will measure any claim against it.
 
 Answer in three parts, in this order. **Concede that the per-context payoff is not available yet**: with
@@ -532,9 +533,9 @@ intermediate signature, which is worth something in one context and more in each
 harness is the cheapest and the one nobody argues about.
 
 Then concede the boundary, because it is real and stating it is what makes the rest believable. A
-codebase with one application, no capability needing more than one implementation, and no foreign type
+codebase with one application, no trait needing more than one implementation, and no foreign type
 to extend is one where CGP's central bargain does not pay — and the right recommendation there is
-[`#[cgp_fn]`](../cgp/reference/macros/cgp_fn.md) alone: a capability written as a plain function, no
+[`#[cgp_fn]`](../cgp/reference/macros/cgp_fn.md) alone: an operation written as a plain function, no
 wiring, nothing to reverse, and it keeps working unchanged if a second context ever arrives. A reader
 told that plainly comes back when they hit the second context; a reader who was oversold does not.
 
@@ -567,7 +568,8 @@ decides which axes are worth a type, and the tools the reader already uses handl
 The combination also has a payoff worth naming for a library author, because it turns the answer from
 defensive to positive. An enum that a crate exposes for its supported backends is normally the ceiling on
 what downstream users can have: a new variant means an upstream pull request or a fork. When the
-context-generic code is written against capabilities rather than against the enum, a downstream crate
+context-generic code is written against traits on the context rather than against the enum, a
+downstream crate
 defines its own wider enum and its own context and reuses everything, with nothing to petition for. So the
 fused axis stays fused for the people it suits and stops being a bottleneck for the people it does not.
 
@@ -621,7 +623,7 @@ imposes no runtime, so it does not lock a project into a framework's lifecycle. 
 softened.
 
 **"There's a learning curve."** Justified, and simply to be granted — denying it insults the reader.
-Shrink the *first step* rather than the whole curve: the first useful thing, a capability defined as a
+Shrink the *first step* rather than the whole curve: the first useful thing, an operation defined as a
 function and used with no wiring, takes only ordinary Rust knowledge, and the deeper machinery can be
 learned as needed. The curve is real but not a cliff.
 
@@ -635,7 +637,7 @@ working with an assistant meets a materially smaller version of all three. The c
 within the hour, which is the only reason it is worth making to this audience.
 
 Where it goes is the whole difficulty, and the rule is narrow. **Say it beside the cost, never as a
-capability and never near the top.** It belongs in a cost section, in the boundary discussion, and on
+feature and never near the top.** It belongs in a cost section, in the boundary discussion, and on
 the page an evaluator reads about maturity; it does not belong in the tag line, the feature set, a
 hook, or a thread's first post. A project that leads on AI in 2026 is heard as chasing attention, and
 this is the audience that punishes that hardest and remembers longest — which would cost more than the
@@ -654,20 +656,20 @@ together makes the first read as an excuse for the second, which costs both.
 
 Drawing CGP's boundary in public is a positioning asset rather than a concession, because the instinct
 to sell a tool as universally better is exactly the instinct this audience punishes. The one principle
-that settles most cases: **use CGP when a capability needs more than one implementation and the choice
+that settles most cases: **use CGP when a trait needs more than one implementation and the choice
 belongs to the context — not before.** The full account is the
 [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md); this is its compression.
 
 The recurring question is not "is CGP good" but "CGP or this other thing", so the guide below takes the
 alternatives a reader actually weighs and concedes each one's home ground first.
 
-- **A plain trait or generic.** Prefer it when a capability has one implementation, or one per type
+- **A plain trait or generic.** Prefer it when a trait has one implementation, or one per type
   with a single global choice — this is most code. Reach for CGP when the implementations multiply,
   when the choice must differ per context, or when threading a generic through every layer has begun
   to hurt. CGP is a *superset* of this approach, so it is a climb rather than a rejection.
 - **A direct impl on the context.** Prefer implementing the consumer trait straight onto the concrete
   context when a provider would have exactly one user. This line is finer than the one above and easy to
-  miss: the *capability* may genuinely need several implementations while each individual implementation
+  miss: the *trait* may genuinely need several implementations while each individual implementation
   serves a single context, and two contexts that each have their own single implementation need no
   providers and no wiring at all. Reach for a named provider when a second context wants the same
   implementation, or when the implementation should compose with a wrapper;
@@ -689,11 +691,11 @@ alternatives a reader actually weighs and concedes each one's home ground first.
   when you find yourself reinventing its mechanism — which developers demonstrably do.
 - **Waiting for a language feature.** Prefer waiting when a first-class facility would serve better and
   you can afford to; Rust's effects and reflection work is pursuing built-in versions of ground CGP
-  covers. Reach for CGP when you need the capability now, on stable Rust — and say that CGP is
+  covers. Reach for CGP when you need the feature now, on stable Rust — and say that CGP is
   complementary to what the language is building rather than a bet against it.
 
 A few cases are not trade-offs but clear misfits, and saying so plainly is the most trust-building move
-available. CGP cannot provide **runtime dynamism**. A capability with **exactly one implementation**
+available. CGP cannot provide **runtime dynamism**. A trait with **exactly one implementation**
 belongs in a plain trait. A **small closed variant set** belongs in an enum. And when a program
 genuinely wants **one instance program-wide** — a single globally consistent `Ord` for a map key —
 CGP's per-context choice is the wrong shape, and coherent type classes or a plain trait are safer.
@@ -710,7 +712,7 @@ solves your problem; CGP is a tier you adopt deliberately, not a default."*
 Every factual claim here is bound by the [synchronization rule](../AGENTS.md#the-synchronization-rule)
 exactly as a reference document's Expansion is: verify against the source and the `/cgp` skill before
 shipping, and prefer the idioms the [guides](../cgp/guides/README.md) teach. Because the four halves
-are four views of one reader, an edit to a capability should check whether its matching pain, its
+are four views of one reader, an edit to a strength should check whether its matching pain, its
 objection, and its boundary need the same edit. The wording rules the sections above apply are
 consolidated in [vocabulary.md](vocabulary.md), which resolves any disagreement; the sentiment behind
 each imported objection is cited in the [related-work](../related-work/README.md) documents, and the

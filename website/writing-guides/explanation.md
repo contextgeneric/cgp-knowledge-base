@@ -192,7 +192,7 @@ dispatch, no type that stands for an application, and none of the value-context 
 or self-targeted / parameter-targeted vocabulary. Coherence is the most basic idea in the section, and a
 reader meeting it should not have to hold the modularity hierarchy in their head to follow it.
 
-The examples are therefore all tier-3 retrofit: a self-targeted capability such as `CanEncode`, wired
+The examples are therefore all tier-3 retrofit: a self-targeted trait such as `CanEncode`, wired
 onto the concrete types that use it (`String`, `Vec<u8>`). That earns the whole point on its own, because
 overlapping providers become legal and each type coherently names one. How far the idea then scales,
 whether to one choice per application or one per type per application, is the
@@ -251,7 +251,7 @@ application still belongs on `#[cgp_fn]` alone, regardless of who writes the wir
 This page also carries a second decision the others do not: **which of CGP's three shapes to reach for.**
 Some readers will resist being taught three where they expected one, and the defence is to show that each
 answers a different question rather than representing a different amount of sophistication. Two questions
-settle it, and they should appear as questions rather than as a taxonomy: *is the capability about the
+settle it, and they should appear as questions rather than as a taxonomy: *is the operation about the
 data, or about the application?* — about the data means a value context and the retrofit shape, about the
 application means an environmental context. And *does it concern a type you don't own, which different
 applications must treat differently?* — if so the target moves into a parameter, and if not, self-targeting
@@ -283,7 +283,7 @@ rough edges the page lists; the missing incremental-adoption reassurance, that C
 ordinary traits and can be adopted in one corner and stepped back from; and a sentence on CGP's
 published agent skill among the mitigations, since the learning curve and the diagnostics this page is
 honest about are two of the three costs it reduces. That last one belongs here precisely because this is
-a page about risk — stated beside a cost it makes smaller, never as a capability, per
+a page about risk — stated beside a cost it makes smaller, never as a feature, per
 [message.md](../../communication-strategy/message.md#the-one-mitigation-that-spans-three-of-these).
 
 ## Placing them in the docs tree
@@ -328,7 +328,7 @@ already made the reader ask. `IsProviderFor` on *How CGP works* is earned; `IsPr
 exists* is not.
 
 **No claim without its cost.** These are the pages read end to end by the least credulous readers, so an
-unqualified capability claim does more damage here than anywhere else on the site.
+unqualified feature claim does more damage here than anywhere else on the site.
 
 ## Checking a draft
 

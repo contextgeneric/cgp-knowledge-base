@@ -82,12 +82,12 @@ fn bar(&self) -> Self::Foo {
 }
 ```
 
-The extra `#[use_type(HasFooType.Foo)]` re-adds `Self: HasFooType` — harmless, since it is already implied — and rewrites the bare `Foo` throughout, so the signature and body read the same way they would if the type were imported directly. `#[uses]` declares the *capability* dependency and `#[use_type]` declares the *type* dependency; naming both is clearer than making the type ride in silently on the other.
+The extra `#[use_type(HasFooType.Foo)]` re-adds `Self: HasFooType` — harmless, since it is already implied — and rewrites the bare `Foo` throughout, so the signature and body read the same way they would if the type were imported directly. `#[uses]` declares the *trait* dependency and `#[use_type]` declares the *type* dependency; naming both is clearer than making the type ride in silently on the other.
 
-When a capability supertrait has no associated type to import — a plain capability like `HasName` — add it with [`#[extend]`](capability-supertraits.md) rather than `#[use_type]`. Use `#[use_type]` when the signature names the trait's associated type; use `#[extend]` when it only calls the trait's methods.
+When a supertrait has no associated type to import — a plain method trait like `HasName` — add it with [`#[extend]`](method-supertraits.md) rather than `#[use_type]`. Use `#[use_type]` when the signature names the trait's associated type; use `#[extend]` when it only calls the trait's methods.
 
 ## Related guides
 
-- [Capability supertraits](capability-supertraits.md) — the companion for a supertrait that contributes a capability rather than a type.
+- [Method supertraits](method-supertraits.md) — the companion for a supertrait that contributes methods rather than a type.
 - [Declaring dependencies](declaring-dependencies.md) — where an abstract-type pin moves *from* (a `#[uses]` or hand-written `where`).
 - [Guides summary](README.md#summary) — the cheat-sheet across all the guides, with the local-associated-type exception restated among the other still-explicit cases.

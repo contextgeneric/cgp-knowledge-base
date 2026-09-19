@@ -204,19 +204,19 @@ from the impl's CGP consumer supertrait, and one inside an `impl … for Foreign
 descending its supertrait's `where`-clause hops to a consumer on the context; a consumer-method
 `E0599` is recovered from the context's own wired components, or from the consumer trait the
 diagnostic names (the anchor that reaches a namespace-joined context); and a `#[cgp_fn]` /
-`#[blanket_trait]` **capability trait** required through a `where` bound (an `E0277`) is recovered
-from the capability trait the diagnostic names and the context read off the failing expression.
+`#[blanket_trait]` **blanket trait** required through a `where` bound (an `E0277`) is recovered
+from the blanket trait the diagnostic names and the context read off the failing expression.
 
 **[The call-site anchor](typed-resolution-call-site.md)** is tried sixth, for the use-site
 failure whose spans touch nothing the span-matching anchors can read — a wiring that matches the
 called component unconditionally (an `E0277` on the call itself), or a call to a `#[cgp_fn]`
-capability method. It re-reads the failing call expression from HIR alone: the receiver carries the
+blanket-trait method. It re-reads the failing call expression from HIR alone: the receiver carries the
 context, the component's parameters come from unifying the call's *written* argument types against
 the method's own declared signature, and every parameter the call leaves to inference is seeded as a
 rigid placeholder the walk resolves around but never reports on. The seventh and last anchor,
-`resolve_use_site_capability`, is the by-consumer anchor's counterpart for a capability trait
+`resolve_use_site_blanket_trait`, is the by-consumer anchor's counterpart for a blanket trait
 required as a *bound* rather than *called* — gated to `E0277` and tried after the call-site anchor,
-so a method call leads with the capability the programmer invoked.
+so a method call leads with the trait the programmer invoked.
 
 **[Walking to the root cause](typed-resolution-walk.md)** descends the seeded obligation's
 dependency graph — following only the CGP wiring vocabulary and obligations on the context itself,
@@ -260,7 +260,7 @@ failing, so neither can fabricate a chain from an unrelated bound.
 
 One use-site shape is out of reach for a hard reason worth recording: a **consumer-method call whose
 failure is an `E0271`, not an `E0599`** — `app.deserialize_json_string::<Payload>(…)` on a context that
-cannot deserialize `Payload`, which fails as a type mismatch on the capability's output (the
+cannot deserialize `Payload`, which fails as a type mismatch on the trait's output (the
 modular-serialization arena test hits this). Its caret sits on the method call, naming no
 context-definition span, so neither use-site anchor finds a context; and recovering the obligation would
 need the compiler's **typeck results**, which the resolver cannot obtain. `tcx.typeck` replays its
@@ -269,7 +269,7 @@ panics — the re-entrant-emission hazard in
 [rustc diagnostic internals](rustc-diagnostic-internals.md#re-entering-the-diagnostic-context-lock-was-already-held).
 Only the fresh-`InferCtxt` trait solver is safe to re-enter mid-emit; a full query is not, and there is
 no hook between typeck and the fatal error to precompute the result. So this failure falls through to
-rustc's output, usually redundant with the `check_components!` failure for the same capability, which
+rustc's output, usually redundant with the `check_components!` failure for the same trait, which
 the resolver *does* reshape.
 
 A few parameter-recovery limits remain. The impl-site path recovers a generic component's concrete
@@ -290,7 +290,7 @@ that carry generic parameters. The resolver renders only leaves it can trust —
 (missing, underived, or type-mismatched), an associated type the owner supplies differently from
 what a provider requires, a missing wiring, a missing dispatch entry on a non-context delegation
 table, a namespace redirect the context does not terminate, an ordinary foreign bound, or a terminal
-capability bound — dropping pure wiring-plumbing dead-ends, so a diagnostic whose only recoverable
+blanket-trait bound — dropping pure wiring-plumbing dead-ends, so a diagnostic whose only recoverable
 leaf is one of those falls back. Parallel branches, deep nesting, and non-field leaves, by contrast,
 are all handled. The associated-type leaf is bounded in one way worth recording: it is reported only
 for a *trait* associated-type projection, since an opaque, inherent, or const alias has no
@@ -321,7 +321,7 @@ marking.
     impl's own wrapper trait — `[CGP-E001]` or `[CGP-E009]` by its blanket-impl fingerprint — through
     `wrapper_consumer_causes`, which seeds the supertrait directly when it is a CGP consumer *or* a
     `#[cgp_fn]`/`#[blanket_trait]` blanket-impl trait (`is_local_blanket_trait`), the latter
-    reshaping a `#[cgp_fn]` capability check whose cause is a missing field. `wrapper_chain.rs` is
+    reshaping a `#[cgp_fn]` blanket-trait check whose cause is a missing field. `wrapper_chain.rs` is
     the foreign-wrapper case, descending each hop's `where`-clauses via `wrapper_chain_children` read
     un-normalized so an associated-type bound descends to its base trait, until
     `consumer_handoff_causes` reaches a CGP consumer on the context, named plainly with
@@ -331,22 +331,22 @@ marking.
     `open_dispatch_target`, while skipping a raw path key, a redundant bare marker, a free-parameter
     catch-all, and a `namespace …;` blanket `__Key__` key. `use_site_consumer.rs` recovers a local,
     non-generic CGP consumer trait from the diagnostic's spans and walks `Ctx: Consumer` directly —
-    the anchor that reaches a namespace-joined context — and its by-capability sibling
-    `resolve_use_site_capability` (seventh, gated to `E0277`, tried after the call-site anchor) does
-    the same for a `#[cgp_fn]`/`#[blanket_trait]` capability trait required as a bound, reading
+    the anchor that reaches a namespace-joined context — and its by-blanket-trait sibling
+    `resolve_use_site_blanket_trait` (seventh, gated to `E0277`, tried after the call-site anchor) does
+    the same for a `#[cgp_fn]`/`#[blanket_trait]` blanket trait required as a bound, reading
     the context off the failing expression via the call-site anchor's `contexts_at_spans` and heading
-    the result `[CGP-E009]` by clearing `consumers_are_cgp`. A capability is recognized by
-    `is_capability_trait`: a blanket impl over a bare context, accepted outright for a trait the
+    the result `[CGP-E009]` by clearing `consumers_are_cgp`. A blanket trait is recognized by
+    `is_blanket_trait`: a blanket impl over a bare context, accepted outright for a trait the
     checked crate defines and, for a foreign one, only on evidence that the blanket depends on a CGP
-    construct — so a capability a library publishes is reached while `ToString` and `Into` are not.
+    construct — so a blanket trait a library publishes is reached while `ToString` and `Into` are not.
   - [`call_site/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/call_site) holds the sixth anchor,
     `resolve_call_site` — the HIR re-read of the failing call, one stage per file:
     `find_call.rs` (`method_calls_at`, the calls at, or inside an expression at, the diagnostic's
     spans — the latter for the await-desugar wrappers — and `traits_with_method`, the candidate
-    consumer traits *and* local `#[cgp_fn]`/`#[blanket_trait]` capability traits by method name, the
+    consumer traits *and* local `#[cgp_fn]`/`#[blanket_trait]` blanket traits by method name, the
     latter headed `[CGP-E009]` by clearing `consumers_are_cgp`), `receiver.rs` (`receiver_context`/`local_binding_context`, the receiver's type from its
     binding, annotation, parameter, literal, or constructor-call signature, plus `contexts_at_spans`,
-    the same reading applied to every expression at the diagnostic's spans — the by-capability
+    the same reading applied to every expression at the diagnostic's spans — the by-blanket-trait
     anchor's context source), `seed.rs`
     (`seed_from_call`, the signature unification: fresh variables for the method's item, `Self`
     pinned to the context, each written argument type unified with its declared input, the trait's
@@ -409,12 +409,12 @@ marking.
     `E0210`/`E0117` namespace registration — both separate coherence-class transforms documented in
     [The driver](driver.md#reshaping-a-duplicate-key-conflict). A sibling `cache.rs` memoizes the
     walk at every node — keyed on the region-erased obligation and context — so a wiring failure
-    re-reported at many sites, or a shared capability, is walked once (see
+    re-reported at many sites, or a shared trait, is walked once (see
     [Cached dependency resolution](cached-dependency-resolution.md)).
 - [`crates/cargo-cgp-driver/src/emitter/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/emitter) — the `try_resolve`
   seam (gated by a cheap `mentions_wiring` scan, an `E0271`/`E0277` code, or a method-bounds `E0599`,
   with a resolution-class `E0599` excluded so the solver never runs on an error emitted
-  mid-`clauses_of`) that tries the seven anchors in turn (the by-capability anchor last, gated to
+  mid-`clauses_of`) that tries the seven anchors in turn (the by-blanket-trait anchor last, gated to
   `E0277`), and the `transform_resolved` mutation it
   feeds — mapping the rustc code to a `DiagKind` (overridden to the use-site kind for a call-anchored
   resolution), calling `plan_resolved`, and applying the plan to the
@@ -551,7 +551,7 @@ Several fixtures pin the **harder mechanics**:
   request getter's blanket impl into its context-side dependency; the provider's two dependencies both
   reach the one missing `HasCredentialType` wiring, so the graph renders them converging on it (the
   second `(*)`-deduped), under a promoted `CGP-E001` header.
-- `diamond_shared_capability` — `CanTop` depends on both `CanLeft` and `CanRight`, which both depend on
+- `diamond_shared_trait` — `CanTop` depends on both `CanLeft` and `CanRight`, which both depend on
   the shared `CanShared` (missing `name`). One root cause reached by two paths, rendered as a diamond:
   the shared subtree drawn in full under the first branch and `(*)`-referenced under the second, both
   branches visible (see [Dependency-graph rendering](dependency-graph-rendering.md)).
@@ -630,28 +630,28 @@ fixtures:
   field a branch reads, where collapsing the tuple to one flat unknown used to leave the impl
   unmatched and decline. This is the shape a branching/comparison DSL interpreter hits — e.g. a real
   `If<Compare<…>, …>` program reading an unwired field inside its condition.
-- `cgp_fn_use_site` — a direct call to a `#[cgp_fn]` capability method (`app.describe()`) whose
-  context is missing a field one composed capability reads. Pins the call-site anchor's
-  *capability-trait* candidate: the called `Describe` is a `#[cgp_fn]`/`#[blanket_trait]` blanket-impl
+- `cgp_fn_use_site` — a direct call to a `#[cgp_fn]` trait method (`app.describe()`) whose
+  context is missing a field one composed blanket trait reads. Pins the call-site anchor's
+  *blanket-trait* candidate: the called `Describe` is a `#[cgp_fn]`/`#[blanket_trait]` blanket-impl
   trait, not a CGP consumer, so no span-matching anchor recovers it; the anchor finds it by method
   name, walks `App: Describe` to the missing field, and heads the block `[CGP-E009] the trait …`
   (clearing `consumers_are_cgp`) rather than declining to rustc's `E0599` with the cause buried under
   a method-probe candidate list. The use-site counterpart of the impl-site
   [`cgp_fn_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/fields/cgp_fn_missing_field.rs).
-- `upstream_capability_use_site` — the `cgp_fn_use_site` shape with the capability defined in an
-  *upstream* crate (via `//@aux-build`), the arrangement a library publishing capabilities produces.
-  Pins the foreign half of `is_capability_trait`: recognition once required the trait to be local, so
+- `upstream_blanket_trait_use_site` — the `cgp_fn_use_site` shape with the blanket trait defined in an
+  *upstream* crate (via `//@aux-build`), the arrangement a library publishing blanket traits produces.
+  Pins the foreign half of `is_blanket_trait`: recognition once required the trait to be local, so
   the `[CGP-E009]` reshaping stopped at the crate boundary and the failure fell through to rustc's
   `E0599`; the CGP-evidence rule (`Describe` → `HasName` → `HasField`) now reaches it.
-- `cgp_fn_where_bound` — the same `#[cgp_fn]` capability required through a `where` **bound**
+- `cgp_fn_where_bound` — the same `#[cgp_fn]` trait required through a `where` **bound**
   (`fn greet_all<Context: GetName>(…)`) rather than called, so the failure is an `E0277` on the call
-  with no method call to read. Pins the by-capability anchor (`resolve_use_site_capability`): it
+  with no method call to read. Pins the by-blanket-trait anchor (`resolve_use_site_blanket_trait`): it
   recovers `GetName` from the diagnostic's spans and the context `App` from the failing expression
   (rustc puts the "not implemented for `App`" span on the `#[derive(HasField)]` attribute, outside
   `App`'s item span), heading `[CGP-E009]` over the missing-field tree — where raw rustc mangles the
   field name to an unreadable `Symbol<4, Chars<..>>` in a `help`. Its decline-boundary sibling is
   [`generic_consumer_unwritten_arg`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/generic_consumer_unwritten_arg.rs),
-  an `E0599` whose deep capability bound stays declined because the anchor is gated to `E0277`.
+  an `E0599` whose deep blanket-trait bound stays declined because the anchor is gated to `E0277`.
 - `use_type_foreign_unsatisfied` and `use_type_nested_unsatisfied` — an unsatisfiable `#[use_type]`
   abstract-type import in a trait definition, recovered by the consumer-trait anchor into a
   `[CGP-E001]` missing-wiring tree instead of leaking generated `__…__` placeholder names.
@@ -667,7 +667,7 @@ The **impl-site and wrapper-chain paths** are pinned by:
   CGP consumer two hops down, the cause reached through a projection bound's base trait, headed by the
   `[CGP-E009]` foreign-plain form.
 - `cgp_fn_missing_field` (under [`acceptable/fields/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/acceptable/fields)) — a
-  `#[cgp_fn]` capability asserted through a wrapper (`pub trait CheckFormatName: FormatName {}` +
+  `#[cgp_fn]` trait asserted through a wrapper (`pub trait CheckFormatName: FormatName {}` +
   `impl CheckFormatName for App {}`) whose blanket-impl supertrait is not a CGP component, pinning the
   `is_local_blanket_trait` extension: the impl-site anchor walks the `#[cgp_fn]` blanket's `where`
   clause (and a `#[uses]`-chained sibling) to the `` missing field `name` `` cause instead of

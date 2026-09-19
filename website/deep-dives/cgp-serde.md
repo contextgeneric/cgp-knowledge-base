@@ -123,7 +123,7 @@ repository still resolves through one.
 
 **Check the two getter traits** against the implicit-argument rule in
 [reading-context-fields](../../cgp/guides/reading-context-fields.md). The arena getter is likely a
-legitimate exception — it carries an associated type and is required as a named capability — but the
+legitimate exception — it carries an associated type and is required as a named trait — but the
 second should be confirmed.
 
 **Ignore `target/package/`.** It holds packaged copies of 0.2.0 containing the old

@@ -8,7 +8,7 @@
 
 The extractor's distinguishing property is that remaining possibilities are tracked in the type. The derive generates *partial* companion enums whose type parameters record, per variant, whether that variant is still possible or has been ruled out. Each failed extraction returns a remainder with one more variant marked impossible; once all are impossible, the remainder is an empty type that can be discharged unconditionally. This is how a chain of extractions becomes a provably exhaustive match without a wildcard arm.
 
-The capability is exposed through `ExtractField`, generated per variant, together with `HasExtractor` (and its borrowed and mutable forms) to obtain an extractor, and `FinalizeExtract` to discharge the empty remainder.
+The operation is exposed through `ExtractField`, generated per variant, together with `HasExtractor` (and its borrowed and mutable forms) to obtain an extractor, and `FinalizeExtract` to discharge the empty remainder.
 
 ## Syntax
 
@@ -138,7 +138,7 @@ After the second extraction the remainder type has both markers `IsVoid`, so `fi
 
 ## Related constructs
 
-`#[derive(ExtractField)]` is one slice of the variant output of [`#[derive(CgpData)]`](derive_cgp_data.md) and [`#[derive(CgpVariant)]`](derive_cgp_variant.md); those derives include it alongside the [`#[derive(FromVariant)]`](derive_from_variant.md) constructors and [`#[derive(HasFields)]`](derive_has_fields.md) representation traits. Its struct analogue is [`#[derive(BuildField)]`](derive_build_field.md), the incremental builder. The capability it generates is the [`ExtractField`](../traits/extract_field.md) trait. The generated code stores variants in [`sum`](../macros/sum.md)-shaped partial enums ([`Either`/`Void`](../types/either.md)) and switches on the [`MapType`](../traits/map_type.md) markers `IsPresent`/`IsVoid`.
+`#[derive(ExtractField)]` is one slice of the variant output of [`#[derive(CgpData)]`](derive_cgp_data.md) and [`#[derive(CgpVariant)]`](derive_cgp_variant.md); those derives include it alongside the [`#[derive(FromVariant)]`](derive_from_variant.md) constructors and [`#[derive(HasFields)]`](derive_has_fields.md) representation traits. Its struct analogue is [`#[derive(BuildField)]`](derive_build_field.md), the incremental builder. The trait it generates is the [`ExtractField`](../traits/extract_field.md) trait. The generated code stores variants in [`sum`](../macros/sum.md)-shaped partial enums ([`Either`/`Void`](../types/either.md)) and switches on the [`MapType`](../traits/map_type.md) markers `IsPresent`/`IsVoid`.
 
 ## Known issues
 

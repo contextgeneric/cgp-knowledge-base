@@ -53,7 +53,7 @@ brief concept note pointing into the reference. Register the new document in the
 Say, in the opening summary or the first wiring section, **what kind of context the example wires and what
 its components target**, because an example is the raw material an agent quotes into a tutorial or a page
 and the shape has to travel with the code. A context is either a **value context**, where the wired type
-*is* the data the capability operates on, or an **environmental context**, a type standing for an
+*is* the data the operation acts on, or an **environmental context**, a type standing for an
 application; a component is either **self-targeted** or **parameter-targeted**. Both pairs are defined in
 the [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md).
 

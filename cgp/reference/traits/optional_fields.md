@@ -10,7 +10,7 @@ The whole layer is built by composing three core mechanisms rather than inventin
 
 ## Definition
 
-The layer splits into two complementary capabilities — defaulted finalization and optional fields — that share the same underlying transform pattern. Defaulted finalization fills any unset field from `Default` so a record can be completed without setting everything; the optional-field traits convert a builder so every field becomes an `Option`, allow those optional slots to be set and replaced individually, and finalize either by requiring presence with an error or by defaulting. The `TransformMap` markers `TransformMapDefault` and `TransformOptional` carry the actual per-field conversions, and the entry-point traits `CanBuildWithDefault`, `CanFinalizeWithDefault`, `HasOptionalBuilder`, `ToOptional`, `SetOptional`, and `FinalizeOptional` expose them as usable operations.
+The layer splits into two complementary operations — defaulted finalization and optional fields — that share the same underlying transform pattern. Defaulted finalization fills any unset field from `Default` so a record can be completed without setting everything; the optional-field traits convert a builder so every field becomes an `Option`, allow those optional slots to be set and replaced individually, and finalize either by requiring presence with an error or by defaulting. The `TransformMap` markers `TransformMapDefault` and `TransformOptional` carry the actual per-field conversions, and the entry-point traits `CanBuildWithDefault`, `CanFinalizeWithDefault`, `HasOptionalBuilder`, `ToOptional`, `SetOptional`, and `FinalizeOptional` expose them as usable operations.
 
 ### `TransformMapDefault` — filling unset fields from `Default`
 

@@ -85,7 +85,7 @@ where
 }
 ```
 
-This satisfies the `CanWrapError` capability without actually enriching the error, which is useful when a context's error type cannot carry extra context, or when the wrapping detail is deliberately not retained. It is the wrapping counterpart to a no-op: the error propagates as-is.
+This satisfies the `CanWrapError` trait without actually enriching the error, which is useful when a context's error type cannot carry extra context, or when the wrapping detail is deliberately not retained. It is the wrapping counterpart to a no-op: the error propagates as-is.
 
 ### `PanicOnError` — abort instead of producing an error
 

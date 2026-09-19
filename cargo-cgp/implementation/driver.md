@@ -120,19 +120,19 @@ front-end merely forwards what the driver renders — and it carries eight trans
 them reshape a specific compiler error into one coded CGP form: a duplicate-key conflict (`E0119`)
 is [reshaped into its coded `[CGP-E004]`–`[CGP-E008]` form](#reshaping-a-duplicate-key-conflict), an
 orphan-rule namespace registration (`E0210`/`E0117`) is [reshaped into its `[CGP-E011]`
-form](#reshaping-an-orphan-rule-namespace-registration), a capability used in a
+form](#reshaping-an-orphan-rule-namespace-registration), a trait used in a
 `#[cgp_fn]`/`#[cgp_impl]` body but not declared via `#[uses(…)]` — an `E0599` on the generated
-`__Context__` generic — is reshaped into a `[CGP-E012]` header naming the capability, with the
+`__Context__` generic — is reshaped into a `[CGP-E012]` header naming the trait, with the
 `#[uses(…)]` fix in a `help` (recovered by
-[`resolve::detect_undeclared_capability`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/undeclared.rs)
-and worded by the rustc-free `plan_undeclared_capability`), a `#[cgp_impl]` header — or a
+[`resolve::detect_undeclared_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/undeclared.rs)
+and worded by the rustc-free `plan_undeclared_trait`), a `#[cgp_impl]` header — or a
 higher-order provider's inner-provider bound — naming the wrong trait is [reshaped into its
 `[CGP-E013]`/`[CGP-E014]`/`[CGP-E015]` form](#reshaping-a-cgp_impl-provider-definition-mistake), and
 a higher-order provider calling an inner provider it never imported with `#[use_provider]` — an
 `E0599` on an unbounded type parameter — is reshaped into a `[CGP-E016]` header naming the inner
 provider, with the `#[use_provider(…)]` fix in a `help` (recovered by
 [`resolve::detect_missing_use_provider`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/missing_use_provider.rs)).
-Any `[T]: Sized` cascade the undeclared-capability case trails is left as rustc wrote it — those
+Any `[T]: Sized` cascade the undeclared-trait case trails is left as rustc wrote it — those
 errors can land off the failing expression, where suppressing them reliably would risk hiding an
 unrelated error. Otherwise the deepest transform, the
 [typed root-cause resolution](typed-root-cause-resolution.md), *replaces* a resolvable wiring
@@ -401,7 +401,7 @@ suppresses any later diagnostic whose **span-independent signature** the ledger 
 diagnostic is keyed by its recovered cause — the context, the failing consumer trait(s), and each
 root-cause leaf, via the rustc-free `cause_signature` — so the *same* consumer's failure re-reported
 at several spans collapses to one, while two *distinct* consumers that happen to share a cause keep
-separate signatures, so each survives de-duplication (no capability's failure is ever hidden) to be
+separate signatures, so each survives de-duplication (no trait's failure is ever hidden) to be
 *coalesced* at flush, described next. A diagnostic the resolver declined but the text rewrite still
 transformed is keyed by its rendered message text instead (`message_signature`), so the fallback
 re-reports coalesce too. A third key is the **coded main-message header**: a failure the resolver

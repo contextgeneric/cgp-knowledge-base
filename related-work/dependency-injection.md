@@ -81,7 +81,7 @@ A class then requests its dependencies by annotating its constructor with `@Inje
 
 ### Dependency injection without a framework (Rust)
 
-Rust practitioners generally hold that the language needs no DI framework, because traits and generics already provide the decoupling a container is built to deliver. A function that needs a capability takes a generic parameter bounded by a trait; a caller supplies any type implementing that trait; a test supplies a fake. Construction is separated from use by the ordinary discipline of taking collaborators as arguments rather than building them internally.
+Rust practitioners generally hold that the language needs no DI framework, because traits and generics already provide the decoupling a container is built to deliver. A function that needs a dependency takes a generic parameter bounded by a trait; a caller supplies any type implementing that trait; a test supplies a fake. Construction is separated from use by the ordinary discipline of taking collaborators as arguments rather than building them internally.
 
 ```rust
 trait StorageClient {
@@ -101,7 +101,7 @@ CGP performs dependency injection through two mechanisms working together: a pro
 
 ### Impl-side dependencies are the injected constructor parameters
 
-A provider states the collaborators and values it needs in a way that reads like declaring dependencies, and CGP satisfies them from the context rather than from a container. Where a Spring service lists `StorageClient` and `UserRepository` as constructor parameters, a CGP provider lists its capability dependencies with [`#[uses(...)]`](../cgp/reference/attributes/uses.md) and its value dependencies with [`#[implicit]`](../cgp/reference/attributes/implicit.md) arguments. A user-creation provider that needs a database connection and a censorship service declares both:
+A provider states the collaborators and values it needs in a way that reads like declaring dependencies, and CGP satisfies them from the context rather than from a container. Where a Spring service lists `StorageClient` and `UserRepository` as constructor parameters, a CGP provider lists its trait dependencies with [`#[uses(...)]`](../cgp/reference/attributes/uses.md) and its value dependencies with [`#[implicit]`](../cgp/reference/attributes/implicit.md) arguments. A user-creation provider that needs a database connection and a censorship service declares both:
 
 ```rust
 #[cgp_impl(new PostgresUserManager)]
@@ -122,7 +122,7 @@ impl UserManager {
 }
 ```
 
-The `#[uses(CanCensorUsername)]` line injects a *capability* — the same role a `UserRepository` collaborator plays in the Spring constructor — and the `#[implicit] database` argument injects a *value* pulled from the context's `database` field, the role a configuration bean plays. Neither dependency appears in the `CanManageUser` consumer trait a caller invokes, so, unlike a leaked generic bound, they do not cascade to callers — the decoupling a DI framework promises, delivered by hiding the requirements one level down in the provider's impl rather than in a container.
+The `#[uses(CanCensorUsername)]` line injects a *trait dependency* — the same role a `UserRepository` collaborator plays in the Spring constructor — and the `#[implicit] database` argument injects a *value* pulled from the context's `database` field, the role a configuration bean plays. Neither dependency appears in the `CanManageUser` consumer trait a caller invokes, so, unlike a leaked generic bound, they do not cascade to callers — the decoupling a DI framework promises, delivered by hiding the requirements one level down in the provider's impl rather than in a container.
 
 ### Wiring is the container configuration
 
@@ -147,7 +147,7 @@ delegate_components! {
 }
 ```
 
-`FetchS3Object` and `FetchGCloudObject` are interchangeable providers of the same capability — the CGP equivalent of two beans bound to one interface — and the wiring picks one per context. Because the selection is resolved during type-checking and monomorphized to a direct call, the `App` binary contains only the S3 code path and the `GCloudApp` binary only the GCloud one, with no runtime dispatch. A DI container makes the same substitution, but by holding both implementations and choosing at startup from configuration.
+`FetchS3Object` and `FetchGCloudObject` are interchangeable providers of the same trait — the CGP equivalent of two beans bound to one interface — and the wiring picks one per context. Because the selection is resolved during type-checking and monomorphized to a direct call, the `App` binary contains only the S3 code path and the `GCloudApp` binary only the GCloud one, with no runtime dispatch. A DI container makes the same substitution, but by holding both implementations and choosing at startup from configuration.
 
 ### Checking replaces the container's startup validation
 
@@ -161,7 +161,7 @@ check_components! {
 }
 ```
 
-If `FetchS3Object` needs a field or capability the `App` context does not supply, this fails to compile with the missing dependency named, rather than surfacing as a startup exception or a `NullPointerException` deep in a request. It is the same guarantee Dagger gives — the graph is verified before the program runs — reached through the trait system instead of an annotation processor. CGP wiring is [lazy](../cgp/concepts/check-traits.md), so this check is what turns a latent gap into an early, readable error.
+If `FetchS3Object` needs a field or trait the `App` context does not supply, this fails to compile with the missing dependency named, rather than surfacing as a startup exception or a `NullPointerException` deep in a request. It is the same guarantee Dagger gives — the graph is verified before the program runs — reached through the trait system instead of an annotation processor. CGP wiring is [lazy](../cgp/concepts/check-traits.md), so this check is what turns a latent gap into an early, readable error.
 
 ## What users like and dislike
 
@@ -177,7 +177,7 @@ The costs are just as real and should be stated plainly. CGP resolves everything
 
 ## Presenting CGP to someone who knows this
 
-A reader who knows dependency injection arrives with the right instinct — decouple what code needs from what supplies it — and the fastest way in is to map their vocabulary onto CGP's directly. A **provider** is a bean or a binding: an interchangeable implementation of a capability. **Wiring** with `delegate_components!` is the container configuration — the `@Configuration` class or the Guice module — the single place where interfaces are matched to implementations. An **impl-side dependency** is a constructor parameter: what a provider needs from the outside, declared where the implementation lives and never leaked to callers. And **`check_components!`** is the graph validation a container runs — the difference being *when* it runs. Leading with this dictionary lets the reader reuse everything they know about why DI decouples code, and spend their attention only on what is new.
+A reader who knows dependency injection arrives with the right instinct — decouple what code needs from what supplies it — and the fastest way in is to map their vocabulary onto CGP's directly. A **provider** is a bean or a binding: an interchangeable implementation of a trait. **Wiring** with `delegate_components!` is the container configuration — the `@Configuration` class or the Guice module — the single place where interfaces are matched to implementations. An **impl-side dependency** is a constructor parameter: what a provider needs from the outside, declared where the implementation lives and never leaked to callers. And **`check_components!`** is the graph validation a container runs — the difference being *when* it runs. Leading with this dictionary lets the reader reuse everything they know about why DI decouples code, and spend their attention only on what is new.
 
 The one analogy to defuse immediately is the runtime container. A DI-trained reader will assume there is an object somewhere holding the graph, resolving dependencies by reflection, choosing implementations at startup — and there is not. CGP's "container" is the type system, the "graph" is a set of trait impls, and the resolution happens during compilation and compiles away to direct calls. Say this explicitly, because leaving it unsaid invites the reader to imagine a runtime cost and a runtime failure mode that do not exist. The framing that lands is *Dagger, taken further*: a reader who knows Dagger already accepts compile-time-verified injection with no reflection, and CGP is that same bargain with per-context choice added — the same interface can resolve to different implementations in different contexts, which a single global binding graph cannot express.
 

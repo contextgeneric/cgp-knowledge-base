@@ -92,7 +92,7 @@ A `#[cgp_impl]` block with several methods differs from a `#[cgp_fn]` in one way
 
 ## Examples
 
-A complete `#[cgp_fn]` capability with implicit arguments needs only a context that derives [`HasField`](../derives/derive_has_field.md) and contains the named fields:
+A complete `#[cgp_fn]` trait with implicit arguments needs only a context that derives [`HasField`](../derives/derive_has_field.md) and contains the named fields:
 
 ```rust
 use cgp::prelude::*;
@@ -117,7 +117,7 @@ fn print_area(rect: &Rectangle) {
 
 ## Related constructs
 
-`#[implicit]` is most often used inside [`#[cgp_fn]`](../macros/cgp_fn.md), which turns a function into a single-implementation capability, and inside [`#[cgp_impl]`](../macros/cgp_impl.md), which writes a provider for an existing component. It relies on [`#[derive(HasField)]`](../derives/derive_has_field.md) on the context to supply the field accessors that the generated bounds require. Its access rules — `.clone()` for owned values, `.as_str()` for `&str`, and a plain `&T` read by reference with no clone — are shared with [`#[cgp_auto_getter]`](../macros/cgp_auto_getter.md), which defines a reusable getter *capability* trait. An implicit argument is the preferred, default way to read any field from a provider's own context; reserve `#[cgp_auto_getter]` for the cases an implicit argument cannot cover — a field that lives on a type other than the provider's context (a getter required as a `where` bound on that type), an accessor that must exist as a named capability other code depends on, or a getter carrying an associated type inferred from the field. To bring in other CGP capabilities alongside implicit arguments, combine `#[implicit]` with [`#[uses]`](uses.md).
+`#[implicit]` is most often used inside [`#[cgp_fn]`](../macros/cgp_fn.md), which turns a function into a trait with a single blanket implementation, and inside [`#[cgp_impl]`](../macros/cgp_impl.md), which writes a provider for an existing component. It relies on [`#[derive(HasField)]`](../derives/derive_has_field.md) on the context to supply the field accessors that the generated bounds require. Its access rules — `.clone()` for owned values, `.as_str()` for `&str`, and a plain `&T` read by reference with no clone — are shared with [`#[cgp_auto_getter]`](../macros/cgp_auto_getter.md), which defines a reusable getter trait. An implicit argument is the preferred, default way to read any field from a provider's own context; reserve `#[cgp_auto_getter]` for the cases an implicit argument cannot cover — a field that lives on a type other than the provider's context (a getter required as a `where` bound on that type), an accessor that must exist as a named trait other code depends on, or a getter carrying an associated type inferred from the field. To bring in other CGP traits alongside implicit arguments, combine `#[implicit]` with [`#[uses]`](uses.md).
 
 ## Source
 

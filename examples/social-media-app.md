@@ -8,7 +8,7 @@ The concepts each step demonstrates are documented in full in the reference; thi
 
 - consumer/provider trait pairs — [`#[cgp_component]`](../cgp/reference/macros/cgp_component.md) and [consumer and provider traits](../cgp/concepts/consumer-and-provider-traits.md)
 - providers that read context fields as method arguments — [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md) with [`#[implicit]`](../cgp/reference/attributes/implicit.md) arguments backed by [`#[derive(HasField)]`](../cgp/reference/derives/derive_has_field.md)
-- importing a capability a provider depends on — [`#[uses]`](../cgp/reference/attributes/uses.md), an [impl-side dependency](../cgp/concepts/impl-side-dependencies.md)
+- importing a trait a provider depends on — [`#[uses]`](../cgp/reference/attributes/uses.md), an [impl-side dependency](../cgp/concepts/impl-side-dependencies.md)
 - a provider that wraps another provider — [higher-order providers](../cgp/concepts/higher-order-providers.md) and [`#[use_provider]`](../cgp/reference/attributes/use_provider.md)
 - wiring a context and bundling providers into reusable groups — [`delegate_components!`](../cgp/reference/macros/delegate_components.md)
 - grouping component keys so a context inherits a whole bundle at once — [namespaces](../cgp/concepts/namespaces.md), the [`#[prefix(...)]`](../cgp/reference/attributes/prefix.md) attribute, and [`cgp_namespace!`](../cgp/reference/macros/cgp_namespace.md)
@@ -137,7 +137,7 @@ delegate_components! {
 }
 ```
 
-The [`#[derive(HasField)]`](../cgp/reference/derives/derive_has_field.md) is what makes the `#[implicit] database` arguments resolve, by exposing the `database` field for [`HasField`](../cgp/reference/traits/has_field.md) lookup. This wiring is compact, but it hides a strain that grows with the application: `PostgresUserManager` depends on `CanCensorUsername` even though only `create_user` uses it, so `get_user` and `update_user_data` carry a dependency they never touch. As managers accumulate methods, these spurious dependencies pile up, and there is no way to grant `create_user` more capabilities without granting them to the whole manager.
+The [`#[derive(HasField)]`](../cgp/reference/derives/derive_has_field.md) is what makes the `#[implicit] database` arguments resolve, by exposing the `database` field for [`HasField`](../cgp/reference/traits/has_field.md) lookup. This wiring is compact, but it hides a strain that grows with the application: `PostgresUserManager` depends on `CanCensorUsername` even though only `create_user` uses it, so `get_user` and `update_user_data` carry a dependency they never touch. As managers accumulate methods, these spurious dependencies pile up, and there is no way to give `create_user` another dependency without giving it to the whole manager.
 
 ## One trait per operation
 
@@ -183,7 +183,7 @@ impl UserGetter {
 }
 ```
 
-Splitting the traits also makes capability isolation possible: because deleting a post is its own `PostDeleter` component, code that should only read and write posts can be given the getter and updater without ever receiving the destructive `delete_post`. The price is that there are now seven CRUD components plus two content-safety ones to wire, where before there were four. This step is the decision [sizing a component](../cgp/guides/sizing-a-component.md) prescribes, and that guide carries the general form of both the payoff and the price.
+Splitting the traits also lets a method be limited to the dependencies it uses: because deleting a post is its own `PostDeleter` component, code that should only read and write posts can be given the getter and updater without ever receiving the destructive `delete_post`. The price is that there are now seven CRUD components plus two content-safety ones to wire, where before there were four. This step is the decision [sizing a component](../cgp/guides/sizing-a-component.md) prescribes, and that guide carries the general form of both the payoff and the price.
 
 ## Lifting the filter into a higher-order provider
 

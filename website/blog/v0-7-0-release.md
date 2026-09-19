@@ -17,9 +17,9 @@ The post opens on the two problems the release targets — explicit parameter th
 chains, and the tight coupling that follows from grouping values into one struct and writing methods
 on it — and then introduces the features as answers to them.
 
-**`#[cgp_fn]` with `#[implicit]` arguments** turns a plain function into a context-generic capability
+**`#[cgp_fn]` with `#[implicit]` arguments** turns a plain function into a context-generic trait
 whose marked arguments are fetched from the calling context's fields rather than passed. A struct
-opts in with `#[derive(HasField)]` and nothing else. **`#[uses]`** imports another CGP capability so a
+opts in with `#[derive(HasField)]` and nothing else. **`#[uses]`** imports another CGP trait so a
 function can call it on `self` without knowing its requirements, and **`#[extend]`** does the same
 while re-exporting it, which the post frames neatly as the `pub use` to `#[uses]`'s `use`.
 **`#[implicit]` in `#[cgp_impl]`** removes the getter-trait layer from provider implementations, and
@@ -65,7 +65,7 @@ Every feature here is current and documented:
 [abstract types](../../cgp/concepts/abstract-types.md) concepts. The guides that prescribe them are
 [reading-context-fields](../../cgp/guides/reading-context-fields.md),
 [declaring-dependencies](../../cgp/guides/declaring-dependencies.md),
-[capability-supertraits](../../cgp/guides/capability-supertraits.md), and
+[method-supertraits](../../cgp/guides/method-supertraits.md), and
 [importing-abstract-types](../../cgp/guides/importing-abstract-types.md). The renamed type component
 is [`HasType` / `TypeProvider`](../../cgp/reference/components/has_type.md), and the checking changes
 are in [`check_components!`](../../cgp/reference/macros/check_components.md) and

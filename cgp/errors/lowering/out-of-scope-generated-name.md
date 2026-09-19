@@ -1,6 +1,6 @@
 # Out-of-scope generated name
 
-An `#[impl_generics]` parameter is named in the capability's own signature, where the generated trait cannot see it, so the compiler rejects the generated code with `E0433` "cannot find type".
+An `#[impl_generics]` parameter is named in the trait's own signature, where the generated trait cannot see it, so the compiler rejects the generated code with `E0433` "cannot find type".
 
 ## What triggers it
 

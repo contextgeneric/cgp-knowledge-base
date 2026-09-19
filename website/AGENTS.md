@@ -112,7 +112,7 @@ order in which concepts may be introduced to that reader. Reach for
 the whole site reads as one voice, and [identity.md](../communication-strategy/identity.md) for any
 line that describes CGP in one sentence, for the enhances-not-replaces frame, and for the headline
 feature set. And reach for [message.md](../communication-strategy/message.md) whenever a page makes a
-claim about what CGP is good for — its four halves are the pain, the capability, the objection, and
+claim about what CGP is good for — its four halves are the pain, the strength, the objection, and
 the boundary, and a page should satisfy all four.
 
 The section's own governing rule applies unchanged: **honesty is the strategy**. Never publish an

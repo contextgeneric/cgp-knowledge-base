@@ -6,7 +6,7 @@
 
 `#[async_trait]` exists to make async methods in traits ergonomic to declare. Writing a bare `async fn` directly inside a trait definition compiles, but the compiler emits the `async_fn_in_trait` lint, because a bare `async fn` in a trait leaves the returned future's auto-traits unnameable by callers and is easy to misuse. The hand-written alternative — declaring the method as `fn name(&self) -> impl Future<Output = T>` — silences the lint but is verbose and obscures the intent. `#[async_trait]` lets the author write the natural `async fn` form and performs that rewrite mechanically, so the trait reads as async code while the generated declaration is the lint-clean `impl Future` form.
 
-The rewrite is a zero-cost desugaring to return-position `impl Trait` in traits: no boxing, no allocation, and no implicit `Send` bound are introduced. The returned future is exactly the one the method body produces. This is why the macro is used pervasively alongside [`#[cgp_component]`](cgp_component.md) and [`#[cgp_fn]`](cgp_fn.md) whenever a CGP capability is asynchronous — it is the standard way to spell an async method in a CGP trait.
+The rewrite is a zero-cost desugaring to return-position `impl Trait` in traits: no boxing, no allocation, and no implicit `Send` bound are introduced. The returned future is exactly the one the method body produces. This is why the macro is used pervasively alongside [`#[cgp_component]`](cgp_component.md) and [`#[cgp_fn]`](cgp_fn.md) whenever a CGP trait's methods are asynchronous — it is the standard way to spell an async method in a CGP trait.
 
 ## Syntax
 
@@ -121,11 +121,11 @@ impl StorageObjectFetcher {
 }
 ```
 
-Defining the same capability as a single implementation with [`#[cgp_fn]`](cgp_fn.md) needs `#[async_trait]` directly below it, as shown in the Syntax section. In both forms the author writes only `async fn`, and the lint-clean `impl Future` declaration is generated.
+Defining the same operation as a single implementation with [`#[cgp_fn]`](cgp_fn.md) needs `#[async_trait]` directly below it, as shown in the Syntax section. In both forms the author writes only `async fn`, and the lint-clean `impl Future` declaration is generated.
 
 ## Related constructs
 
-`#[async_trait]` is most often stacked with [`#[cgp_component]`](cgp_component.md), which builds the consumer and provider traits for an async capability, and with [`#[cgp_fn]`](cgp_fn.md), which generates an async trait and blanket impl from a function. Providers for an async component are written with [`#[cgp_impl]`](cgp_impl.md) using ordinary `async fn` bodies, since the macro's passthrough on impl blocks leaves those untouched. It is independent of CGP's wiring layer — [`delegate_components!`](delegate_components.md) and [`check_components!`](check_components.md) treat an async component exactly like a synchronous one.
+`#[async_trait]` is most often stacked with [`#[cgp_component]`](cgp_component.md), which builds the consumer and provider traits for an async component, and with [`#[cgp_fn]`](cgp_fn.md), which generates an async trait and blanket impl from a function. Providers for an async component are written with [`#[cgp_impl]`](cgp_impl.md) using ordinary `async fn` bodies, since the macro's passthrough on impl blocks leaves those untouched. It is independent of CGP's wiring layer — [`delegate_components!`](delegate_components.md) and [`check_components!`](check_components.md) treat an async component exactly like a synchronous one.
 
 ## Known issues
 

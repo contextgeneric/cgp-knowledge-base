@@ -79,7 +79,7 @@ pub trait HasQuantityType {
 }
 ```
 
-The capability components take the layer path directly, without the `types` segment, so the authentication logic sits under `@app.auth` and the finance logic under `@app.finance`:
+The operation components take the layer path directly, without the `types` segment, so the authentication logic sits under `@app.auth` and the finance logic under `@app.finance`:
 
 ```rust
 #[cgp_component(PasswordChecker)]

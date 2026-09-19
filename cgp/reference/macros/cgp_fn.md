@@ -1,14 +1,14 @@
 # `#[cgp_fn]`
 
-`#[cgp_fn]` turns a plain Rust function into a single-implementation CGP capability — it generates a trait and a blanket impl for every context from one function body, so a context gains the method with no separate wiring step.
+`#[cgp_fn]` turns a plain Rust function into a CGP trait with a single blanket implementation — it generates a trait and a blanket impl for every context from one function body, so a context gains the method with no separate wiring step.
 
 ## Purpose
 
-`#[cgp_fn]` exists to make the simplest, most common form of CGP reachable with nothing more than a function. Writing a capability by hand means defining a trait, writing a blanket impl over a generic context, and threading the dependencies the body needs through that impl's `where` clause. `#[cgp_fn]` collapses all of that into a single function: you write the body as if `self` were a concrete value, mark the values you want pulled from the context with `#[implicit]`, and the macro produces the trait and the blanket impl that wires it up.
+`#[cgp_fn]` exists to make the simplest, most common form of CGP reachable with nothing more than a function. Writing such a trait by hand means defining it, writing a blanket impl over a generic context, and threading the dependencies the body needs through that impl's `where` clause. `#[cgp_fn]` collapses all of that into a single function: you write the body as if `self` were a concrete value, mark the values you want pulled from the context with `#[implicit]`, and the macro produces the trait and the blanket impl that wires it up.
 
-The result is a capability that any context implements automatically, as long as the context can satisfy the impl-side dependencies. Because the generated impl is a blanket impl over a generic context, there is no `delegate_components!` call, no provider type, and no component name — the method simply becomes available on every type that has the fields the body reads. This is what makes `#[cgp_fn]` the recommended entry point for basic CGP: a reader only needs to understand plain Rust functions to use it, and the trait machinery stays hidden.
+The result is a trait that any context implements automatically, as long as the context can satisfy the impl-side dependencies. Because the generated impl is a blanket impl over a generic context, there is no `delegate_components!` call, no provider type, and no component name — the method simply becomes available on every type that has the fields the body reads. This is what makes `#[cgp_fn]` the recommended entry point for basic CGP: a reader only needs to understand plain Rust functions to use it, and the trait machinery stays hidden.
 
-The trade-off against [`#[cgp_component]`](cgp_component.md) is single versus multiple implementations. A `#[cgp_component]` trait can have many alternative providers, one chosen per context through wiring; that flexibility is exactly what costs the extra ceremony. `#[cgp_fn]` permits only one implementation — the function body — and in exchange removes the wiring entirely. Reach for `#[cgp_fn]` when a capability has a single natural definition, and graduate to `#[cgp_component]` only when a context genuinely needs to swap in a different implementation. The two interoperate: a `#[cgp_fn]` capability can depend on a `#[cgp_component]` one and vice versa through [`#[uses]`](../attributes/uses.md).
+The trade-off against [`#[cgp_component]`](cgp_component.md) is single versus multiple implementations. A `#[cgp_component]` trait can have many alternative providers, one chosen per context through wiring; that flexibility is exactly what costs the extra ceremony. `#[cgp_fn]` permits only one implementation — the function body — and in exchange removes the wiring entirely. Reach for `#[cgp_fn]` when an operation has a single natural definition, and graduate to `#[cgp_component]` only when a context genuinely needs to swap in a different implementation. The two interoperate: a `#[cgp_fn]` trait can depend on a `#[cgp_component]` one and vice versa through [`#[uses]`](../attributes/uses.md).
 
 ## Syntax
 
@@ -131,7 +131,7 @@ Two further placements are decided by the macro rather than written by the autho
 
 ## Examples
 
-A two-layer capability shows `#[cgp_fn]` composing with itself through `#[uses]`. The first function defines the base area calculation; the second builds a scaled version on top of it, declaring its dependency on the first with `#[uses(RectangleArea)]`:
+A two-layer operation shows `#[cgp_fn]` composing with itself through `#[uses]`. The first function defines the base area calculation; the second builds a scaled version on top of it, declaring its dependency on the first with `#[uses(RectangleArea)]`:
 
 ```rust
 use cgp::prelude::*;
@@ -148,7 +148,7 @@ pub fn scaled_rectangle_area(&self, #[implicit] scale_factor: f64) -> f64 {
 }
 ```
 
-A concrete context only needs the right fields; no wiring is required. Deriving `HasField` is enough for both capabilities to apply automatically:
+A concrete context only needs the right fields; no wiring is required. Deriving `HasField` is enough for both traits to apply automatically:
 
 ```rust
 #[derive(HasField)]
@@ -168,7 +168,7 @@ Because `Rectangle` derives `HasField` and carries `width`, `height`, and `scale
 
 ## Related constructs
 
-`#[cgp_fn]` is the lightweight counterpart to [`#[cgp_component]`](cgp_component.md): both produce a capability usable through a method call, but `#[cgp_fn]` allows a single implementation with no wiring, whereas `#[cgp_component]` allows many providers selected per context through [`delegate_components!`](delegate_components.md). It shares its `#[implicit]` argument mechanism with [`#[cgp_impl]`](cgp_impl.md), and the field-access semantics with [`#[cgp_auto_getter]`](cgp_auto_getter.md) and the underlying [`HasField`](../traits/has_field.md) trait. The companion attributes [`#[uses]`](../attributes/uses.md), [`#[use_type]`](../attributes/use_type.md), [`#[use_provider]`](../attributes/use_provider.md), [`#[extend]`](../attributes/extend.md), and [`#[extend_where]`](../attributes/extend_where.md) shape what the macro generates. Like a hand-written extension trait, the impl `#[cgp_fn]` emits is a blanket impl in the style of [`#[blanket_trait]`](blanket_trait.md); the difference is that `#[cgp_fn]` derives the trait and its body from a function rather than from a trait with default methods.
+`#[cgp_fn]` is the lightweight counterpart to [`#[cgp_component]`](cgp_component.md): both produce a trait usable through a method call, but `#[cgp_fn]` allows a single implementation with no wiring, whereas `#[cgp_component]` allows many providers selected per context through [`delegate_components!`](delegate_components.md). It shares its `#[implicit]` argument mechanism with [`#[cgp_impl]`](cgp_impl.md), and the field-access semantics with [`#[cgp_auto_getter]`](cgp_auto_getter.md) and the underlying [`HasField`](../traits/has_field.md) trait. The companion attributes [`#[uses]`](../attributes/uses.md), [`#[use_type]`](../attributes/use_type.md), [`#[use_provider]`](../attributes/use_provider.md), [`#[extend]`](../attributes/extend.md), and [`#[extend_where]`](../attributes/extend_where.md) shape what the macro generates. Like a hand-written extension trait, the impl `#[cgp_fn]` emits is a blanket impl in the style of [`#[blanket_trait]`](blanket_trait.md); the difference is that `#[cgp_fn]` derives the trait and its body from a function rather than from a trait with default methods.
 
 ## Source
 

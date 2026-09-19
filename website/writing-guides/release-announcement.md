@@ -112,7 +112,7 @@ believable.
 **Declare the length.** A long post opens with an estimated reading time and a section-by-section
 preview. Depth is welcome; ambushing the reader with it is not.
 
-**Enthusiasm attaches to sharing, not to the capability.** "I am thrilled to introduce" is the author's
+**Enthusiasm attaches to sharing, not to the feature.** "I am thrilled to introduce" is the author's
 own sentence and is fine. "Blazingly fast" and "incredibly powerful" are not, and the
 [avoid list](../../communication-strategy/vocabulary.md) applies to a release post exactly as it applies
 to a landing page.

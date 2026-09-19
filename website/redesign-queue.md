@@ -70,7 +70,7 @@ one link among eight. *Website repo, `docs/resources.md`; see
 **The front page needs rebuilding against its guide.** It diverges in six concrete ways: the hero
 headline leads with "modular" and does not use the tag line; there is no reassurance line and no install
 command; the feature grid has six entries, two leading with retired words, and disagrees with the
-Overview's capability tour; the code example does not show the implementation Rust rejects, so the
+Overview's feature tour; the code example does not show the implementation Rust rejects, so the
 reader never sees the contrast — **and it does not compile**, since it writes `#[cgp_impl(HashWithDisplay)]` without `new`
 and never declares the provider struct; the problem cards are generic and unanchored; and **there is no
 cost section at all**, which on a page for this audience is the most consequential omission of the six.
@@ -80,8 +80,8 @@ repo, `src/pages/index.tsx` and `src/components/HomepageFeatures/`; spec in
 [site-structure.md](site-structure.md).*
 
 **The front page's feature list needs the settled framing.** Its six-feature list should become the
-five curated capabilities in [identity.md](../communication-strategy/identity.md#the-headline-feature-set),
-with links to the Overview for the broader tour. The Overview expands those capabilities and covers
+five curated features in [identity.md](../communication-strategy/identity.md#the-headline-feature-set),
+with links to the Overview for the broader tour. The Overview expands those features and covers
 abstract types, extensible data, and handlers. *Website repo, front page.*
 
 **Neither tutorial teaches that wiring is lazy,** mentions

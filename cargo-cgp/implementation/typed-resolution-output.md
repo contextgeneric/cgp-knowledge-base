@@ -131,7 +131,7 @@ The `root cause:` lead is worded by *why* the leaf is unmet, and there are six l
   [`basic_missing_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/missing-wiring/basic_missing_wiring.rs)
   fixture is the shape: a provider `DoFooWithBar` declares `#[uses(CanUseBar)]`, so `App` can use it
   only if it also wires `BarProviderComponent`, but `App` wires only `FooProviderComponent`. The tree
-  bottoms out on the `CanUseBar` capability the unwired component would have supplied:
+  bottoms out on the `CanUseBar` trait the unwired component would have supplied:
 
   ```text
   error[E0277]: [CGP-E001] the consumer trait `CanUseFoo` is not implemented for context `App`
@@ -143,7 +143,7 @@ The `root cause:` lead is worded by *why* the leaf is unmet, and there are six l
                    └─ [CGP-E107] context `App` does not contain any delegate entry for `BarProviderComponent`
   ```
 
-  Note the nested `CanUseBar` node: because the walk descends the real capability the provider
+  Note the nested `CanUseBar` node: because the walk descends the real trait the provider
   `#[uses]`, an intermediate consumer trait reads as `consumer trait impl` (`CGP-E101`), not the
   generic `trait impl` (`CGP-E105`) a plain getter or bound gets.
 

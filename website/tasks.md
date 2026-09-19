@@ -162,7 +162,7 @@ this group, and it is not a concept page:
   [writing-guides/homepage.md](writing-guides/homepage.md). *Blocked by:* C1, E1, F2, and O2 softly;
   E2 and E4 are done. *Done when:* the guide's five draft checks pass and the author has read it.
 - **F2 — align the front page with the settled feature set.** The front page still names six
-  capabilities. It needs the five curated in
+  features. It needs the five curated in
   [identity.md](../communication-strategy/identity.md#the-headline-feature-set), developed as prose
   beats that link to the Overview for depth. The Overview supplies the broader tour, including
   abstract types, extensible data, and handlers. *Lands in:* the front page.
@@ -296,7 +296,7 @@ somewhere to be tracked.
   codebase can accumulate type dependencies without its signatures growing. *Lands in:* `blog/`, tagged
   `deepdive`, author voice, with an explicit `slug` and a `{/* truncate */}` marker per the
   [publication conventions](blog/README.md). *Spec:* the deep-dive playbook in
-  [formats.md](../communication-strategy/formats.md); the pain, the capability, and the audience-tuned
+  [formats.md](../communication-strategy/formats.md); the pain, the strength, and the audience-tuned
   one-liner are in [message.md](../communication-strategy/message.md), the mechanism in
   [impl-side dependencies](../cgp/concepts/impl-side-dependencies.md#type-dependencies-and-why-they-need-no-parameter)
   and [abstract types](../cgp/concepts/abstract-types.md), the prescriptive decision in
@@ -304,8 +304,8 @@ somewhere to be tracked.
   [implicit parameters](../related-work/implicit-parameters.md).
 
   Four things about its shape are already settled. **Not a release note**, for the reason in
-  [redesign-queue.md](redesign-queue.md): the capabilities are old, so a release framing would misreport
-  them as new and compete with namespaces for v0.8.0's one change. **Title in the concrete-capability
+  [redesign-queue.md](redesign-queue.md): the features are old, so a release framing would misreport
+  them as new and compete with namespaces for v0.8.0's one change. **Title in the concrete-feature
   register** with no paradigm name, per [vocabulary.md](../communication-strategy/vocabulary.md).
   **One running example the whole way through**, and the database-and-transaction scenario is the one to
   use: it is already verified as compiling code, it is the environmental/self-targeted shape most CGP code
@@ -389,7 +389,7 @@ to another project's README or documentation in the meantime.
   [namespaces](../cgp/concepts/namespaces.md) and `cargo-cgp`, carries the
   [context and target qualifiers](../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target),
   and now states that [`#[uses]`](../cgp/reference/attributes/uses.md) takes ordinary Rust traits as
-  readily as CGP capabilities. **The published copy on the website is the stale one** — it still states
+  readily as CGP traits. **The published copy on the website is the stale one** — it still states
   v0.7.0 and carries every defect that list describes, which is what the re-inline fixes. **Never edit the
   website copy directly**, since that would create a fourth version of the truth. *Lands in:* the website
   repository. *Blocked by:* nothing.

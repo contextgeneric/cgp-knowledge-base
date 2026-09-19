@@ -64,10 +64,10 @@ blanket-impl trait (`impl<Context> Trait for Context where Self: HasField<…>`,
 blanket impl but no provider — recognized by `is_local_blanket_trait`) **is** the obligation to walk —
 the resolver seeds it directly (`wrapper_consumer_causes`), with its concrete component parameter
 intact (`CanHandleApi<QueryBalanceApi>`, not the `()` a parameterless re-check would substitute), so no
-marker detour is needed. The blanket-impl case is what reshapes a `#[cgp_fn]` capability check
+marker detour is needed. The blanket-impl case is what reshapes a `#[cgp_fn]` blanket-trait check
 (`pub trait CheckGetUser: GetUser {}` + `impl CheckGetUser for App {}`, the tutorial idiom for
-asserting a capability holds) whose real cause is a field the context is missing: the walk descends
-the blanket's `where` clause — `Self: HasField<…>`, or a `#[uses]`-chained sibling capability — to the
+asserting a blanket trait holds) whose real cause is a field the context is missing: the walk descends
+the blanket's `where` clause — `Self: HasField<…>`, or a `#[uses]`-chained sibling trait — to the
 `` missing field `…` `` leaf, in place of rustc's misleading "`#[derive(HasField)]` is required" note.
 A plain supertrait such as `Send` is neither, so it is left alone.
 
@@ -181,7 +181,7 @@ context keeps the more precise per-component recovery.
 failure whose spans touch *nothing* the other anchors can read. Two shapes reach it. In the first,
 a context's wiring matches the called component unconditionally, so the method is *found*, the
 failure is an `E0277` rather than an `E0599`, and its spans never leave the call. In the second, the
-called method belongs to a `#[cgp_fn]`/`#[blanket_trait]` **capability trait** rather than a CGP
+called method belongs to a `#[cgp_fn]`/`#[blanket_trait]` **blanket trait** rather than a CGP
 consumer — a local blanket-impl trait that is not a component, so the by-consumer anchor (restricted
 to CGP consumers) declines its `E0599`; the anchor finds it by method name and heads the result
 `[CGP-E009] the trait …`. Either way it re-reads the failing call expression from
@@ -192,36 +192,36 @@ whose recovery works from the code the programmer wrote rather than from the dia
 its rationale, mechanics, and worked example have their own document:
 [Typed resolution: the call-site anchor](typed-resolution-call-site.md).
 
-**Recognizing a capability trait.** Three of the anchors below reach a
-`#[cgp_fn]`/`#[blanket_trait]` **capability** — a trait consumed like a consumer but which is not a
+**Recognizing a blanket trait.** Three of the anchors below reach a
+`#[cgp_fn]`/`#[blanket_trait]` **blanket trait** — a trait consumed like a consumer but which is not a
 component, so no marker or provider trait identifies it. The only structural mark it carries is a
 blanket impl over a bare context, and that alone is far too broad to key on: `ToString`, `Into`, and
 `Borrow` all have one, and reshaping their failures into CGP errors would be an over-reach. So
-`is_capability_trait` accepts a trait two ways. One the **checked crate defines** qualifies
+`is_blanket_trait` accepts a trait two ways. One the **checked crate defines** qualifies
 outright, since cargo-cgp runs on CGP workspaces and a failing local blanket trait is the shape
 `#[cgp_fn]` produces. A **foreign** one must show that its blanket genuinely depends on CGP — on a
 trait from cgp's own crates (`HasField` above all), on a CGP consumer trait, or on another
-capability that does, followed a few links through composed capabilities. That is what lets the
-reshaping reach a capability a *library* publishes, which is where capabilities normally live
-([`upstream_capability_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/upstream_capability_use_site.rs)),
+blanket trait that does, followed a few links through composed blanket traits. That is what lets the
+reshaping reach a blanket trait a *library* publishes, which is where such traits normally live
+([`upstream_blanket_trait_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/upstream_blanket_trait_use_site.rs)),
 while still excluding the std blankets the rule is aimed at.
 
-**From a use site, by capability trait.** The seventh and last anchor, `resolve_use_site_capability`,
-is the by-consumer anchor's counterpart for a `#[cgp_fn]`/`#[blanket_trait]` **capability trait** — a
-blanket-impl trait that is not a CGP component. It reaches the shape a capability required
+**From a use site, by blanket trait.** The seventh and last anchor, `resolve_use_site_blanket_trait`,
+is the by-consumer anchor's counterpart for a `#[cgp_fn]`/`#[blanket_trait]` **blanket trait** — a
+blanket-impl trait that is not a CGP component. It reaches the shape a blanket trait required
 through a `where` **bound** or supertrait produces (`fn greet_all<Context: GetName>(…)` called with a
-context missing the field): an `E0277` naming the capability, with no method call on a concrete
-context for the call-site anchor to read. It recovers the capability trait from the diagnostic's
+context missing the field): an `E0277` naming the blanket trait, with no method call on a concrete
+context for the call-site anchor to read. It recovers the blanket trait from the diagnostic's
 spans (as the by-consumer anchor recovers a consumer), and the context from the **failing expression
 itself** — the call argument whose type fails (`app`, read off its binding by the call-site anchor's
 `contexts_at_spans`) — because rustc puts its "not implemented for `App`" span on the context's
 `#[derive(HasField)]` attribute, *outside* the struct's item span, so no struct-definition span
-carries it. The walk then descends `Ctx: Capability` to the cause, and the result is headed
-`[CGP-E009] the trait …` (not `[CGP-E001] the consumer trait …`) since a capability trait is not a
+carries it. The walk then descends `Ctx: BlanketTrait` to the cause, and the result is headed
+`[CGP-E009] the trait …` (not `[CGP-E001] the consumer trait …`) since a blanket trait is not a
 component. It is gated to the `E0277` shape and tried **after** the call-site anchor deliberately: an
 `E0599` method call belongs to the call-site anchor, and a *generic-consumer* method call whose deep
-capability bound is unrecoverable (`generic_consumer_unwritten_arg`) must stay declined rather than
-latch onto that transitive capability.
+blanket-trait bound is unrecoverable (`generic_consumer_unwritten_arg`) must stay declined rather than
+latch onto that transitive trait.
 
 ## Tests
 
@@ -236,9 +236,9 @@ groups anchored here.
 - [`crates/cargo-cgp-driver/src/resolve/anchor/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/anchor)
   — one file per anchor (`check_failure.rs`, `impl_site.rs`, `wrapper_chain.rs`, `use_site.rs`, and
   `use_site_consumer.rs`, which holds both the by-consumer `resolve_use_site_consumer` and its
-  by-capability sibling `resolve_use_site_capability` over one shared helper) over the shared
+  by-blanket-trait sibling `resolve_use_site_blanket_trait` over one shared helper) over the shared
   `seed.rs` (the consumer-obligation builder) and `spans.rs` (the local items a diagnostic's spans
-  land on). The by-capability anchor recovers its context from the failing expression through the
+  land on). The by-blanket-trait anchor recovers its context from the failing expression through the
   call-site anchor's `contexts_at_spans`.
 - [`crates/cargo-cgp-driver/src/resolve/cgp_item.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/cgp_item.rs)
   — the DefId-anchored, `IsProviderFor`-free trait recognition every anchor relies on.

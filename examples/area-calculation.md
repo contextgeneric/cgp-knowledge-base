@@ -7,7 +7,7 @@ The contexts here are **value contexts** and the component is **self-targeted**:
 The concepts each step demonstrates are documented in full in the reference; this example only notes which one is in play and links to it:
 
 - context-generic functions — [`#[cgp_fn]`](../cgp/reference/macros/cgp_fn.md) with [implicit arguments](../cgp/concepts/implicit-arguments.md)
-- importing capabilities — [`#[uses]`](../cgp/reference/attributes/uses.md)
+- importing trait dependencies — [`#[uses]`](../cgp/reference/attributes/uses.md)
 - field access on contexts — [`#[derive(HasField)]`](../cgp/reference/derives/derive_has_field.md)
 - components and named providers — [`#[cgp_component]`](../cgp/reference/macros/cgp_component.md), [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md), and the [consumer/provider trait duality](../cgp/concepts/consumer-and-provider-traits.md)
 - wiring a context to providers — [`delegate_components!`](../cgp/reference/macros/delegate_components.md)
@@ -45,7 +45,7 @@ assert_eq!(area, 6.0);
 
 ## Building on another function
 
-A context-generic function can call another by importing it with [`#[uses]`](../cgp/reference/attributes/uses.md), which adds the imported capability as a hidden bound on the context rather than a visible parameter. Here `scaled_rectangle_area` reuses `rectangle_area` while contributing only its own `scale_factor` field:
+A context-generic function can call another by importing it with [`#[uses]`](../cgp/reference/attributes/uses.md), which adds the imported trait as a hidden bound on the context rather than a visible parameter. Here `scaled_rectangle_area` reuses `rectangle_area` while contributing only its own `scale_factor` field:
 
 ```rust
 #[cgp_fn]
