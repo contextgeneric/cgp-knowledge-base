@@ -555,6 +555,10 @@ it stale.
   marketing-director and devrel roles, what every document must do, honesty as the strategy and its
   three guardrails including distilling reaction to CGP rather than citing it, the consolidation rule,
   and the four sync targets.
+- [messaging-brief.md](communication-strategy/messaging-brief.md) — the strategy on one page: the tag
+  line and the two lines after it, the five features, the pain to lead with per reader, the objections
+  with one-line answers, the boundary and the costs to concede, the ask per stage, the words to avoid,
+  and the four checks before publishing; a summary of the other documents, never their source.
 - [author-personality.md](communication-strategy/author-personality.md) — who CGP's author is as a
   writer, the habits his published work evidences, and the preferences he has stated; the document every
   other one here is downstream of.
@@ -591,8 +595,8 @@ it stale.
   annotated model drafts.
 - [evidence.md](communication-strategy/evidence.md) — the citable facts: what the Rust community
   worries about and rewards, which conversations draw attention, and the distilled patterns in how CGP's
-  own posts and talk were received; the section's single home for external citations, and the rule that
-  reaction to CGP is summarized rather than linked.
+  own posts and talk were received; the section's single home for external citations, each with the
+  date it was last checked, and the rule that reaction to CGP is summarized rather than linked.
 - [ai-disclosure.md](communication-strategy/ai-disclosure.md) — how the project discloses its own use of
   AI: the reach-and-verifiability principle behind the gradient, the four levels from agent-written
   documentation through revised drafts and non-imported code to the hand-written core library, the

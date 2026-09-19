@@ -146,7 +146,7 @@ the providers need and nothing more — and `CanSendEmail` is **self-targeted**,
 something the application does. No parameter appears anywhere, which makes the point that per-application
 choice does not require one: it comes from the wired type being a type you define, so when one choice is
 not enough you define a second context. Readers arriving from an example that wires a *value* type will
-not have that idea yet, so introduce the context as "a type standing for this application, which is where
+not have that idea yet, so introduce the context as "a type that stands for this application, which is where
 its choices live" the first time it appears. Two cautions: the choice is a line *you* write rather than one
 CGP infers, and for a dependency with exactly one implementation a plain trait is still right. This
 entry is also the one most likely to draw "I already solved that", so pair it with one of the two

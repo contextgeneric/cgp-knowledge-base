@@ -84,9 +84,9 @@ pitch below rather than by cramming more into the line.
 ### The predecessor, and the lesson it left
 
 For most of the project's life CGP described itself as **"a modular programming paradigm for Rust."**
-That line was honest and overclaimed nothing, and it still appears in the site's Docusaurus
-configuration, which is an outstanding correction rather than a live choice. It underperformed for
-two separable reasons. It **undersold what CGP had become**, hiding behind "a paradigm" the abstract
+That line was honest and overclaimed nothing. Where it still appears on the live site is tracked in
+the website section's [redesign queue](../website/redesign-queue.md). It underperformed for two
+separable reasons. It **undersold what CGP had become**, hiding behind "a paradigm" the abstract
 types, extensible data, handlers, and namespaces that had accumulated. And its **lead word repelled
 part of the audience on contact**: "modularity" is not something a developer wakes up wanting,
 "paradigm" reads as academic, and for a large slice of the audience "modular" carries active baggage
@@ -198,12 +198,10 @@ decomposing large traits — stays out, because those are elaborations of the fi
 peers of them and belong in the longer material a reader reaches after the headlines have earned
 their attention.
 
-The current site does not yet match this set. Its front page shows six features including "Highly
-Expressive Macros" and a "Modular Component System", both of which lead with words this section
-retires, and its list disagrees with the [Overview page's](../website/site-structure.md). Reconciling
-both against this document is an outstanding correction, and the
-[homepage writing guide](../website/writing-guides/homepage.md) specifies where the reconciled set
-sits on the page.
+Where the live site departs from this set is recorded in the website section's
+[redesign queue](../website/redesign-queue.md), and the
+[homepage writing guide](../website/writing-guides/homepage.md) specifies where the set sits on the
+page.
 
 ### Phrasing rules for feature titles
 
@@ -232,12 +230,12 @@ Overview's feature tour, and the pain behind it is an entry in
 ## Keeping this document in sync
 
 Because the tag line is settled, a change to it ripples across the section and must be propagated in
-the same change. The line and its layered pitch appear as guidance in [formats.md](formats.md); the
+the same change. The line and its layered pitch appear as guidance in [formats.md](formats.md) and,
+compressed, in [messaging-brief.md](messaging-brief.md); the
 wording rules that justify it — retire "modular" as a lead word, prefer "extension", never ship the
 name alone — are enforced in [vocabulary.md](vocabulary.md); the empirical caveat that publication is
 the real measurement lives in [evidence.md](evidence.md); and the site surfaces the line touches are
 listed in the [homepage guide](../website/writing-guides/homepage.md) and
-[site-structure.md](../website/site-structure.md), including the stale tagline still in the
-Docusaurus configuration. When a feature's underlying behavior changes, the
+[site-structure.md](../website/site-structure.md). When a feature's underlying behavior changes, the
 [synchronization rule](../AGENTS.md#the-synchronization-rule) binds its sentence exactly as it binds
 a reference document.

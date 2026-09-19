@@ -121,6 +121,11 @@ inside an existing one — a new section in [message.md](message.md) or
 and register it in the [README.md](README.md) catalog and in [../summary.md](../summary.md) in the same
 change.
 
+One document is exempt from the rule because it is a summary rather than a subject.
+[messaging-brief.md](messaging-brief.md) compresses the settled decisions onto one page for a writer
+who is drafting, and it carries no reasoning of its own. When the brief and a fuller document disagree,
+the fuller document is right and the brief is corrected.
+
 Cross-link generously but purposefully: to [readers.md](readers.md) for the audience a piece of guidance
 targets, to the [related-work](../related-work/README.md) documents for the sentiment a claim rests on,
 to the [concepts](../cgp/concepts/README.md) for the CGP idea behind a strength, and to the
@@ -146,6 +151,10 @@ boundary. And [vocabulary.md](vocabulary.md) is the consolidated authority on wo
 retired word "capability" for CGP's own constructs: a writer must
 never be told to prefer a phrase in one document that another warns against, and when two disagree, the
 vocabulary list resolves it.
+
+The brief is coupled to all of these. [messaging-brief.md](messaging-brief.md) restates the settled
+line, the features, the objections and their answers, the boundary, and the word list, so an edit to
+any of those in its home document is checked against the brief in the same change.
 
 ## The website is this section's largest consumer
 

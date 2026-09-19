@@ -20,11 +20,19 @@ a reader moving between a blog post and the reference never reconciles two diale
 writing adds is the gloss: introduce a term with a plain-language definition on first use, then use it
 consistently.
 
-- **Context** — the concrete type an application wires and calls methods on. Introduce it as "the type
-  that owns the wiring", not as a bare `Self`, because a cold reader has no reason to know the two
-  coincide. The word needs qualifying more often than any other term here; see
-  [Qualifying a context and a target](#qualifying-a-context-and-a-target) below, which is the single
-  most load-bearing wording rule in this document.
+- **Context** — the concrete type an application wires and calls methods on. Gloss it on first use,
+  never as a bare `Self`, because a cold reader has no reason to know the two coincide. **The canonical
+  gloss is "the type the method runs on, which supplies the values it needs as its fields"**, and it
+  is the one the site's reference pages carry. Two variants are permitted and no others. A page that
+  has already introduced wiring may add "the type that owns the wiring" as a second clause, since
+  before wiring is introduced that clause means nothing to the reader. A page whose context stands for
+  an application uses the environmental gloss below instead. Shortening is not a variant: a page with
+  nothing to say about fields may cut the canonical clause to "the type the implementation runs
+  against", or shorter still to "the type the code runs against" or "the type it runs against", and an
+  abstract-type trait with no method to point at may write "the type that implements the trait". All
+  of these count as the canonical gloss. The word needs qualifying more often than any other term
+  here; see [Qualifying a context and a target](#qualifying-a-context-and-a-target) below, which is
+  the most important wording rule in this document.
 - **Component** — one trait, defined once, that can have many implementations. Introduce it as
   "an interface you can wire an implementation for", and reserve the detail that it is a consumer
   trait plus a provider trait for when the reader asks how it works.
@@ -76,8 +84,9 @@ Two qualifiers fix it, and both are needed because they answer independent quest
   `String: CanEncode`, the `Rectangle` in `Rectangle: CanCalculateArea`. Introduce it as "here the type
   being encoded is also the type that carries the wiring — one type doing both jobs".
 - **Environmental context** — a context that exists to carry wiring choices and implement the traits
-  providers rely on, rather than to be operated on. Introduce it as "a type that stands for one set of
-  choices", and say in the same breath
+  providers rely on, rather than to be operated on. Introduce it as "a type that stands for this
+  application, which is where its choices live", or as "a type that stands for one set of choices"
+  when the context is not an application, and say in the same breath
   that **it often has no fields at all** — `struct AppA;` is a complete context — because a reader
   meeting an empty struct with traits on it has no other way to guess what it is for. Use the qualifier
   where the contrast with a value context matters, and plain "context" in running prose once the reader
@@ -213,7 +222,7 @@ precise, smaller claim forecloses it and survives scrutiny — which, with this 
   specific: readers said "context-generic programming" obscures more than it conveys, so a second or third
   coinage costs more attention than it wins, however well it compresses the idea for whoever coined it.
   When a piece needs to talk about whether a design absorbs variation into one type or separates it across
-  several, the plain phrasings carry it with nothing to look up — **"a type standing for one set of
+  several, the plain phrasings carry it with nothing to look up — **"a type that stands for one set of
   choices"**, **"you already have two applications"**, **"which variations are worth their own type"**.
 - Avoid **"capability"** for what a component, a `#[cgp_fn]` function, or a getter defines, for what
   `#[uses]` imports, and for the non-component blanket traits `cargo-cgp` recognizes. The word is
@@ -341,8 +350,9 @@ lets the playbooks in [formats.md](formats.md) stay short.
 
 Because this document consolidates wording rules the others also apply, the coupling runs both ways.
 When a rule changes here, check the phrasings in [message.md](message.md), the feature titles in
-[identity.md](identity.md), and the register list in
-[voice-and-register.md](voice-and-register.md), because a writer told to prefer a phrase in one place
+[identity.md](identity.md), the word table in [messaging-brief.md](messaging-brief.md), and the
+register list in [voice-and-register.md](voice-and-register.md), because a writer told to prefer a
+phrase in one place
 must never be warned against it in another. When a CGP construct is renamed or a feature changes,
 the terms here are bound by the [synchronization rule](../AGENTS.md#the-synchronization-rule) exactly
 as a reference document is. And when you meet a term of the craft that is not defined above, add it in

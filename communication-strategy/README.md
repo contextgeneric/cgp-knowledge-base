@@ -100,11 +100,15 @@ stage**. And **beware the pile-on**, whose defence is the same as the honest mov
 
 ## The catalog
 
-The section is deliberately small: eleven documents, each dense, so a writer reads a whole subject in one
-place rather than assembling it from cross-links. Read the first ten in this order the first time; the
-eleventh is a reference for a narrow question and is read when that question arises. The authoring rules
-live in [AGENTS.md](AGENTS.md).
+The section is deliberately small: a one-page brief and eleven dense documents, so a writer reads a
+whole subject in one place rather than assembling it from cross-links. Read the brief before writing
+anything, read the next ten in this order the first time, and read the last when its narrow question
+arises. The authoring rules live in [AGENTS.md](AGENTS.md).
 
+- [The messaging brief](messaging-brief.md) — the strategy on one page: the line and the two lines
+  after it, the five features, the pain to lead with for each reader, the objections with one-line
+  answers, the boundary and the costs to concede, the ask for each stage, the words to avoid, and the
+  four checks before publishing. A summary of the documents below, corrected whenever they change.
 - [The author's personality and preferences](author-personality.md) — who CGP's author is as a writer,
   the habits evidenced by his published work, and the preferences he has stated. **Read this first**;
   every other document is downstream of it, and where a rule elsewhere conflicts with it, this one wins.

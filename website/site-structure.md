@@ -1073,9 +1073,10 @@ GitHub repository, which is where two pages had pointed while that section was u
 
 **Introduce "context" with a gloss on first use, on every page, above the advanced line.** It is a
 knowledge-base word before it is a public one, and a reference page is read on its own rather than in
-order, so no reader can be assumed to have met it already. One clause carries it — "the type the
-method runs on, which supplies the values it needs as its fields" — which is deliberately enough to read
-the page with and not an attempt at the full account; that lives on
+order, so no reader can be assumed to have met it already. One clause carries it, the canonical gloss
+fixed in [vocabulary.md](../communication-strategy/vocabulary.md#terms-to-use-and-how-to-introduce-each):
+"the type the method runs on, which supplies the values it needs as its fields". It is deliberately
+enough to read the page with and not an attempt at the full account; that lives on
 [the concept page](https://contextgeneric.dev/docs/concepts/consumer-and-provider-traits), reached through
 the sidebar rather than through an inline link, per the convention above. Two of the first four written
 pages had missed the gloss, which makes it the convention here most easily dropped.
@@ -1090,7 +1091,8 @@ that do carry it. The **wording varies**: the canonical clause is "the type the 
 supplies the values it needs as its fields", but a page with nothing to say about fields shortens it — the
 attribute pages that use the word write "the type the implementation runs against", "the type the code
 runs against", or "the type it runs against", and the abstract-type pages, which have no method to
-point at, write "the type that implements the trait"; all of these discharge the convention. The clause never
+point at, write "the type that implements the trait"; all of these discharge the convention, and they
+are the variants vocabulary.md permits, so a new one is added there first. The clause never
 says "capability", per
 [vocabulary.md](../communication-strategy/vocabulary.md#words-and-framings-to-avoid). And
 `MyContext` inside

@@ -41,8 +41,11 @@ evaluate.
 The page is built in two tiers with a hard boundary between them, because it serves two readers who share
 no patience budget.
 
-**Above the fold is a single screen that must stand entirely alone.** Roughly two-thirds of the readers
-who ever see this page will see only this, so it has to deliver the whole pitch: the tag line, one
+**Above the fold is a single screen that must stand entirely alone.** Most of the attention this page
+ever gets lands here: Nielsen Norman Group's
+[eyetracking research](https://www.nngroup.com/articles/scrolling-and-attention/) puts 57% of viewing
+time above the fold and 74% within the first two screenfuls, so this screen has to deliver the whole
+pitch: the tag line, one
 reassurance line, one piece of code that shows the novelty, and two links. Nothing above the fold may
 depend on anything below it.
 
@@ -90,9 +93,9 @@ not compete for the click.
 The example is settled: **a trait the snippet defines, implemented twice over two ordinary Rust bounds
 that overlap, then wired per type.** The concrete pair is `Display` and `AsRef<[u8]>` on a `CanEncode`
 trait, and the whole of it — both blocks, the caption, and the sentences that must sit around them — is
-below. It is the highest-leverage twenty lines on the site: two-thirds of the readers who ever see the
-homepage see this block and nothing beneath it, so it has to carry the pitch, the proof, and the
-pre-emption of the first objection on its own.
+below. It is the highest-leverage twenty lines on the site: most of the attention the homepage ever
+gets falls on this block, per the research cited above, so it has to carry the pitch, the proof, and
+the pre-emption of the first objection on its own.
 
 ### The code
 

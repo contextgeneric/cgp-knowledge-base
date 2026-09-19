@@ -25,11 +25,14 @@ repository**, so this document carries the distilled conclusions and never a cam
 ## What the Rust community worries about — and what it rewards
 
 The clearest signal is the annual survey, and it names two costs to concede and one benefit to lean on.
-The [2024 State of Rust survey](https://blog.rust-lang.org/2025/02/13/2024-State-Of-Rust-Survey-results/)
-reports that slow compile times remain the perennial top pain, that subpar debugging support is among
-the leading tooling complaints, and that 45.2% of respondents named the language's growing *complexity*
-as a worry for its future — while, asked to prioritize the project's work, developers ranked runtime
-performance second only to fixing compiler bugs. Three moves follow.
+The [2025 State of Rust survey](https://blog.rust-lang.org/2026/03/02/2025-State-Of-Rust-Survey-results),
+published in March 2026 from 7,156 responses, reports that slow compilation is still the leading
+productivity problem, named as a big problem by 27.9% of respondents, and that 41.6% worry the
+language may become too complex, down from 45.2% the year before. Debugging is still a top complaint,
+named as a big problem by 19.9%, though it slipped from second to fourth place among the problems. The
+[2024 survey](https://blog.rust-lang.org/2025/02/13/2024-State-Of-Rust-Survey-results/) also asked
+developers to prioritize the project's work, and they ranked runtime performance second only to fixing
+compiler bugs. Three moves follow.
 
 **Concede compile-time cost and verbose diagnostics early and plainly.** They are the community's live
 sore spots, and a reader is actively scanning a new abstraction for whether it worsens them. A piece
@@ -38,13 +41,13 @@ with a response — [`cargo-cgp`](../cgp/reference/cargo-cgp.md) reshapes the re
 lead with the root cause — though it remains a young pre-release, so the concession is paired with the
 fix rather than retired.
 
-**Treat "this adds complexity" as the most dangerous perception a piece can leave.** Complexity is the
-community's named fear for the language's future, so "still ordinary Rust", gradual adoption, and
-problem-first restraint are not merely pleasant framings — they are the direct answer to the audience's
-stated anxiety, and the empirical reason the
+**Treat "this adds complexity" as the most dangerous perception a piece can leave.** Complexity is one
+of the community's two most-named fears for the language's future, so "still ordinary Rust", gradual
+adoption, and problem-first restraint are not merely pleasant framings — they are the direct answer to
+the audience's stated anxiety, and the empirical reason the
 [enhances-not-replaces frame](identity.md) is the project's core positioning rather than a hedge.
 
-**Lean hard on zero runtime cost.** The survey shows the community explicitly prizes runtime
+**Lean hard on zero runtime cost.** The 2024 survey shows the community explicitly prizes runtime
 performance, so "resolved at compile time and compiled to a direct call" lands as an answer to
 something they already care about rather than as an abstract virtue.
 
@@ -97,7 +100,11 @@ conversation borrows its energy — provided the attachment is honest.
   absorbs — which is a checkable claim, since the skill is published and a reader can attach it and see.
   Where this belongs is beside the costs, per
   [message.md](message.md#the-objections-readers-bring), never as a lead: a project that opens on AI in
-  2026 is heard as chasing attention, and this audience punishes that faster than any other.
+  2026 is heard as chasing attention, and this audience punishes that faster than any other. The 2025
+  survey adds one observation that bears on the mitigation without moving where it belongs: attendance
+  at online and offline communities shifted by roughly three points, and the survey reads its open
+  answers as a hint that questions are moving to LLM tooling. If so, a growing share of readers can
+  check the claim for themselves.
 
 ## The pains are real — and developers already hand-roll the fix
 
@@ -198,8 +205,8 @@ large part of the audience treats DI *frameworks* as an unwanted import. And soc
 building: comparable success stories in adjacent ecosystems turned on a flagship adopter, so CGP's most
 convincing answer to the evaluator's "is anyone really using this" is a real, non-trivial system built
 with it and shown as a worked example, not more argument. The
-[Hermes SDK](https://github.com/informalsystems/hermes-sdk/) is that system, and it is currently
-undersold — it appears in a bare list at the bottom of the site's Resources page.
+[Hermes SDK](https://github.com/informalsystems/hermes-sdk/) is that system. How prominently the site
+presents it is tracked in the website section's [redesign queue](../website/redesign-queue.md).
 
 ## Where the profiles gather
 
@@ -246,3 +253,28 @@ other. Several pieces released at once compete for the same readers on the same 
 ranking is time-weighted, so a second post published beside a first mostly takes attention from it —
 which both wastes the smaller piece and makes each result unreadable as evidence. Space substantial
 publications out, and treat that spacing as part of the plan rather than as a delay in it.
+
+## Sources, and when each was last checked
+
+Every external source this document cites is listed here with the claim it supports and the date it
+was last checked. "Read" means the page was re-read and the claim confirmed against it on that date.
+"Link resolved" means only that the page still exists; the claim itself was not re-read. Re-check a
+row before quoting its claim in public, and update the date when you do.
+
+| Source | Supports | Last checked |
+|---|---|---|
+| [2025 State of Rust survey](https://blog.rust-lang.org/2026/03/02/2025-State-Of-Rust-Survey-results) | the compile-time, complexity, debugging, and LLM-tooling findings | 2026-09-19, read |
+| [2024 State of Rust survey](https://blog.rust-lang.org/2025/02/13/2024-State-Of-Rust-Survey-results/) | the runtime-performance priority and the 45.2% complexity figure | 2026-09-19, link resolved |
+| [Ixrec/rust-orphan-rules](https://github.com/Ixrec/rust-orphan-rules) | the orphan rule as a durable frustration | 2026-09-19, link resolved |
+| [Function-coloring debate](https://www.thecodedmessage.com/posts/async-colors/) | the async attachment point | 2026-09-19, link resolved |
+| [`Send` bounds and `dyn` issue](https://github.com/rust-lang/rust/issues/103854) | the async-trait friction | 2026-09-19, link resolved |
+| [Reflection and comptime project goal](https://rust-lang.github.io/rust-project-goals/2026/reflection-and-comptime.html) | reflection as an officially pursued area | 2026-09-19, link resolved |
+| [Dictionary-passing style](https://nadrieril.github.io/blog/2026/03/20/dictionary-passing-style.html) | the language-design conversation | 2026-09-19, link resolved |
+| [What if traits carried values](https://nadrieril.github.io/blog/2026/03/22/what-if-traits-carried-values.html) | the language-design conversation | 2026-09-19, link resolved |
+| [An Incoherent Rust](https://www.boxyuwu.blog/posts/an-incoherent-rust/) | the language-design conversation | 2026-09-19, link resolved |
+| [Context and capabilities](https://tmandry.gitlab.io/blog/posts/2021-12-21-context-capabilities/) | the language-design conversation | 2026-09-19, link resolved |
+| [cgp-skills](https://github.com/contextgeneric/cgp-skills) | the agent skill exists and is published | 2026-09-19, link resolved |
+| [Alternative blanket implementations](https://www.greyblake.com/blog/alternative-blanket-implementations-for-single-rust-trait/) | developers hand-roll CGP's marker-struct pattern | 2026-09-19, link resolved |
+| [Rust traits and dependency injection](https://jmmv.dev/2022/04/rust-traits-and-dependency-injection.html) | trait-based injection leaks internal types into a public API | 2026-09-19, link resolved |
+| [RustLab 2025 recording](https://www.youtube.com/watch?v=gXIfP-W9074) | the talk exists and is public | 2026-09-19, link resolved |
+| [Hermes SDK](https://github.com/informalsystems/hermes-sdk/) | the flagship real system built with CGP | 2026-09-19, link resolved |
