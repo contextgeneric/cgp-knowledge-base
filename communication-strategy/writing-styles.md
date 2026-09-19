@@ -117,13 +117,16 @@ The fix is to name what the dash is actually doing and use the punctuation built
   compile while wired wrong." *After:* "Wiring is lazy: a context can compile while wired wrong." A
   colon fits better than a period here, because the second clause explains the first rather than merely
   following it. Naming the relationship, not just removing the dash, is the actual fix.
-- **Setting up a list or an elaboration** reads better after a colon, which is what a colon is for.
+- **Setting up a list or an elaboration** reads better after a colon, which is the
+  colon's job.
 
-This is a rule for prose written from now on, not a mandate to sweep the base. Nearly every existing
-document here uses em dashes freely, including ones written before this rule existed, and rewriting them
-wholesale would be exactly the kind of unscoped sweep [../AGENTS.md](../AGENTS.md#prose-mechanics)
-already warns against for line-wrapping. Clean up an em dash when you are already revising the sentence
-it sits in; leave the rest alone.
+This is a rule for prose written from now on, not a mandate to sweep the base. The
+communication-strategy section itself has been brought into line with it, so the documents that
+prescribe the rule now also exemplify it, and a dash that reappears in one of them is a defect.
+Elsewhere in the base, documents written before this rule existed still use em dashes freely, and
+rewriting them wholesale would be exactly the kind of unscoped sweep
+[../AGENTS.md](../AGENTS.md#prose-mechanics) already warns against for line-wrapping. Clean up an em
+dash when you are already revising the sentence it sits in; leave the rest alone.
 
 ## Plain, direct English for agent-drafted content
 

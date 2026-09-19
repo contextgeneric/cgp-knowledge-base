@@ -81,7 +81,7 @@ often; the full set, with the reasoning behind each answer, is in
 | Why not just traits, generics, or an enum? | Often right. For one implementation, or a small closed set, the plain tool wins. CGP is the tier above, adopted deliberately. |
 | I can't tell which code runs on a call | There is one hop, and it is static. The wiring table is the one greppable place naming the provider for each component. |
 | What about compile times? | They go up, and no number is quoted without a source. Work done at compile time is work not done at runtime, or not checked at all. |
-| The errors are a wall of generated types | They are. A check localizes them and `cargo cgp check` leads with the root cause for the classes it recognizes, and the tool is a v0.1.0-alpha. |
+| The errors are a wall of generated types | They are. A check localizes them, and `cargo cgp check` leads with the root cause for the classes it recognizes, and the tool is a v0.1.0-alpha that does not yet reshape every class. |
 | It's immature | It is. It is also a superset of ordinary traits, so it can be adopted in one corner and stepped back from. |
 | There's a learning curve | There is. The first useful step, an operation written as a function and used with no wiring, needs only ordinary Rust. |
 
