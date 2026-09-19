@@ -499,13 +499,13 @@ Every page is verified the same way the reference pages are, and the verificatio
 session that did it: the code each page shows has a compiled counterpart in the
 [`example-code/` crate](#the-example-code-crate), one file per page, so `cargo test` there is the check
 rather than an agent's word. Eighteen pages show code; the index shows none.
-Every quoted error is what the compiler actually reports — including the three `E0119`s and the `E0117`
+Every quoted error is what the compiler actually reports — including the `E0119` and `E0117`
 on *Bypassing coherence*, the `E0599` / `CanUseComponent` / `[CGP-E001]` progression on *Checking your
 wiring*, and the two override conflicts on *Namespaces*.
 
 Three pages are worth knowing about individually. *Bypassing coherence* is the tier's opening argument and
-follows the guide's five-movement outline, staying at the basic tier and ending on the line the page
-exists to earn, that coherence is not repealed but scoped.
+follows the guide's five-movement outline and stays at the basic tier. It explains that distinct
+provider types satisfy Rust's coherence rules and that each wired type selects one provider.
 *Modularity Hierarchy* is a hybrid: it explains the five tiers of the hierarchy in a section each, with
 code shown as illustration, then closes with a decision-guide tail that leads with a rule of thumb and
 uses tables where prose would slow a reader who is deciding, every row of its alternatives table
@@ -531,7 +531,7 @@ Hierarchy* last, a workaround and the how-far-to-go hierarchy respectively.
 
 ### The page shape
 
-The written pages follow a shape the stubs will grow into, and it differs from a reference page's
+The concept pages follow an explanation structure that differs from a reference page's
 fixed template because an explanation is an argument rather than a specification. A page opens by naming
 the question it answers and saying where it ends; explains what ordinary Rust already does, and shows
 it *working*, before showing what it cannot share; develops the idea with code shown as illustration
@@ -549,6 +549,35 @@ And **the encoding example is shared with the front page**: the homepage hero's 
 over `Display` and `AsRef<[u8]>` is the same code *Bypassing coherence* opens its argument on, and the
 `EncodeAsText` provider name carries across, so a reader arriving from the front page meets one running
 example rather than two.
+
+The index groups reading links by the questions they answer. The opening concept pages use
+point-first paragraphs, preserve code as illustration, and keep costs beside the choices they qualify.
+*Abstract types* distinguishes shared type selection from provider compatibility and explains when a
+type dependency must appear in the interface. *Aggregate providers* checks bundles against actual
+contexts and states that namespace customization requires unbound paths. *Checking your wiring*
+distinguishes ordinary trait assertions, component checks, and diagnostic rewriting; its quoted
+output is abbreviated. *Consumer and provider traits* distinguishes context-style `Self` inside
+`#[cgp_impl]` from Rust's ordinary provider-side `Self` and permits multi-item components.
+
+The extensible-data pages distinguish compile-time guarantees from runtime operations.
+*Dispatching* checks handler selection and coverage statically while variant tests and handler calls
+run at runtime; it also explains dependencies between record-building steps and the wrapper needed
+for recursive matcher resolution. *Extensible records* presents generic assembly alongside ordinary
+constructors, requires every source field to match a target field, and distinguishes the strict
+builder from optional-field extensions. *Extensible variants* reuses handlers across separate closed
+enums, requires matching payload types for structural casts, and retains the single-payload derive
+restriction. *Handlers* compares the computation interfaces in a table and states promotion's error
+and borrowing requirements, sequential pipeline behavior, and the separate need for `Send` futures.
+Their snippets have counterparts in the matching `example-code/tests/concepts/` modules.
+
+*Higher-order providers* separates static provider selection from runtime computation, explains
+that aliases do not verify a composition's requirements, and traces `UseContext` from a collection
+capability to its element capability. It marks the switch from shape contexts to an application
+context and warns against routing an inner request back to the same wrapper. *Impl-side dependencies*
+distinguishes a stable generic caller contract from the requirements concrete contexts must satisfy.
+Its type-dependency example keeps public associated types in the interface and explains when runtime
+or storage requirements can remain on the implementation. Both pages retain their existing compiled
+examples and the separate cost and onward-reading sections.
 
 ### How it relates to the knowledge base
 
