@@ -244,7 +244,9 @@ precise, smaller claim forecloses it and survives scrutiny, and with this audien
   for what a piece advertises. The word stays in use for the *other* paradigms, in
   [related-work](../related-work/README.md) and [evidence.md](evidence.md), where it names their
   construct and can then serve as a bridge: what context-and-capabilities calls a capability, CGP
-  expresses as a trait bound on the context.
+  expresses as a trait bound on the context. The
+  [capabilities](../related-work/capabilities.md) comparison separates the senses of the word and
+  gives the concise framing to use with a reader who knows one of them.
 - Avoid overstating maturity. **"Works on stable Rust today"** is true and worth saying, while
   **"production-proven at scale"** needs evidence the evaluator will notice is missing.
 - Avoid calling CGP's errors **"solved", "fixed",** or **"now as clear as any other Rust error's"**.

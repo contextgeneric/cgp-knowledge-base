@@ -533,6 +533,10 @@ it stale.
   dictionary-passing account of traits, named and incoherent impls, contexts and capabilities, and
   Cairo's shipped named impls, and CGP as a stable-Rust desugaring of a fragment of each with two stated
   limits.
+- [capabilities.md](related-work/capabilities.md) — the five senses of "capability" (object
+  capabilities, OS and hardware capability security, Pony's reference capabilities and Linux privilege
+  bits, effects as capabilities, and the Rust community's uses), the properties that separate them, and
+  the concise framing of CGP as capability-like in the effects sense but not a capability system.
 - [policy-based-design.md](related-work/policy-based-design.md) — C++ policies and host classes, CRTP,
   and C++20 concepts, and CGP as the same compile-time composition with declared interfaces,
   definition-time checking, and one wired context.

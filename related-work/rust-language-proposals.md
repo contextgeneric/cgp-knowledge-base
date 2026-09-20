@@ -173,6 +173,8 @@ in scope, so a type may implement `Deserialize` inside a `with` block and not ou
 compiles to ordinary function arguments, so it is zero-cost, and it guarantees statically that the
 context is available. The open questions the post raises concern thread boundaries and scope validity
 ([Mandry, *Contexts and capabilities*](https://tmandry.gitlab.io/blog/posts/2021-12-21-context-capabilities/)).
+The proposal borrows the word "capability" from a security model whose other properties it does not
+claim; the [capabilities](capabilities.md) comparison separates the senses.
 Nadrieril's follow-up, *What If Traits Carried Values*, connects the two lines by extending dictionary
 passing so that a trait bound may carry a runtime value as well as methods, with the impl
 `impl<'a> Deserialize for &'a Foo where arena: &'a BasicArena` as the worked case. It names the

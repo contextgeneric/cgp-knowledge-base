@@ -201,7 +201,10 @@ down like a dictionary ([Xie & Leijen, *Generalized Evidence Passing for Effect 
 The Koka book says the same of its `fun` operations: the compiler "uses (generalized) evidence passing
 to pass down handler information to each call-site". So the efficient compilation of the exactly-once
 fragment of effect handlers *is* dictionary passing. That is the fragment CGP occupies, directly, with
-no dynamic search underneath and nothing else on top.
+no dynamic search underneath and nothing else on top. Effekt and Scala's capture checking describe this
+same fragment as *effects as capabilities*, a value the context must supply before an operation may run,
+and the [capabilities](capabilities.md) comparison places CGP against that reading and against the
+other senses of the word.
 
 ## How CGP expresses it
 

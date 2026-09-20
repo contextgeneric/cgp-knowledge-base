@@ -64,6 +64,14 @@ any other, so they are listed first; the rest are grouped by the tradition they 
   compile-time composition with the policy interface declared as a trait, the provider body checked at
   definition rather than at instantiation, and the choices gathered into one wired context rather than
   a parameter list.
+- [Capabilities](capabilities.md) — the five things the word names: object capabilities (E, Pony, seL4,
+  WASI, `cap-std`), capability-based security in operating systems and hardware, Pony's reference
+  capabilities and Linux privilege bits (which share only the word), effects as capabilities (Effekt,
+  Scala's `CanThrow` and capture checking), and the Rust community's implicit-value, sandboxing, and
+  ownership-token senses. CGP is capability-like in the effects sense (a provider declares what it
+  requires and the context supplies it, checked at compile time) and is not a capability system in the
+  object-capability sense: it does not remove ambient authority, its requirements are not unforgeable
+  tokens, and its provisioning is fixed per context type.
 - [Dependency injection](dependency-injection.md) — the IoC-container and constructor-injection model of
   Spring, Guice, Dagger, and their kin, and how CGP's impl-side dependencies and per-context wiring inject
   dependencies without a container, reflection, or runtime graph.
