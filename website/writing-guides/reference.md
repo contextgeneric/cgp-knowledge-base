@@ -142,15 +142,16 @@ page for this reason, and for the two whose inner provider is foundational and h
 form (`WithFieldRef`, `WithDelegatedType`), the alias page is where the wiring form and example live
 while the inner provider's page keeps the mechanism.
 
-Two pages are not constructs at all, and they go in opposite directions.
+Three pages are not constructs at all, and the first two go in opposite directions.
 [`cargo-cgp`](../../cgp/reference/cargo-cgp.md) documents the toolchain, and it does not belong under
 `reference/` on the public site, where every other page answers "what does this construct mean" — give
 the tool its own top-level docs section, alongside the reference rather than inside it. The **error
 catalog**, by contrast, belongs *inside* the reference, because a reader who hits a wiring failure is
 doing exactly what the reference is for: looking one thing up by a name they already have, in this case
-an error code or a message shape.
+an error code or a message shape. The **glossary** belongs inside it for the same reason, and is
+specified in [The glossary page](#the-glossary-page) below.
 
-That page is a consolidation of a different kind from the two above. The internal
+The error catalog is a consolidation of a different kind from the construct consolidations above. The internal
 [errors catalog](../../cgp/errors/README.md) is seventeen documents organized by class, and seventeen
 public pages would be a category no reader scans; one page, organized by the internal catalog's own
 **hidden-versus-surfaced** axis, is what a reader can actually use. It shows the small program behind
@@ -158,6 +159,144 @@ each class, says what the compiler reports, and says what `cargo cgp check` make
 being why it sits beside the tooling section conceptually even though it lives in the reference. Write
 it **before** the bulk of the port, because its existence is what lets every *Common Mistakes* section stay
 construct-specific instead of re-explaining the same failure.
+
+## The glossary page
+
+**The glossary is term lookup, where the index is construct lookup, and the difference is what keeps
+the two from overlapping.** The index's *Looking for a name you don't see?* table routes a reader who
+arrives holding a construct's name — `IsPresent`, `#[cgp_new_provider]` — to the page documenting it.
+The glossary routes a reader who arrives holding a *word* — environmental context, blanket
+implementation, type class — to the page that explains the idea. Both are lookup surfaces, and a
+reader who needs one is not served by the other.
+
+It earns a page because the site's vocabulary is used far more widely than it is defined. A term such
+as **environmental context** is glossed inline on every page that uses it and defined at length on
+exactly one, several sections deep into a concept page a reader reaches last; a term such as **blanket
+implementation** is used on most of the site and linked to Rust's own documentation on a minority of
+it. The per-page gloss is the right local answer and stays, but it leaves no destination, and the
+glossary is that destination.
+
+### Where it sits, and how a term becomes a link target
+
+The page is `docs/reference/glossary.md`, labelled **Glossary**, at `sidebar_position: 91` — beside the
+compile-errors page at 90, since those two are the section's only non-construct pages. The
+[reference index](#placement-navigation-and-completeness) links it in prose the way it already links
+the error catalog, because the index is the section's completeness check and a page it does not reach
+is a page nobody finds. **The six-section layered descent does not apply**: that is the shape of a
+construct page, and this one has no expansion, no grammar, and nothing to descend through.
+
+Living in the reference costs the page its discoverability for exactly the reader who needs it most,
+since a newcomer meeting an unfamiliar word is not browsing the construct reference. **Three further
+pages therefore link it**: the [Concepts index](explanation.md), the Introduction, and the
+[Comparisons index](related-work.md#the-index-page), each pointing a reader who has hit a word rather
+than a construct. That is the trade the placement accepts, and dropping those links reopens it.
+
+**Every term is an `###` heading directly under its section's `##`, and the sections carry no thematic
+sub-grouping.** This is forced rather than chosen. The site's MDX setup rejects the `{#custom-id}`
+syntax and Docusaurus anchors `h2` and `h3` only, so a term written as a table row, a bold list item,
+or an `h4` beneath a thematic sub-heading has no anchor — and a term with no anchor cannot be linked,
+which is the whole point of the page. Grouping terms by theme costs one heading level and therefore
+costs every term its link target, so the sections stay flat.
+
+Flat sections are then **ordered alphabetically**, because the page is looked up rather than read
+through, and a reader scanning for a word needs it where the alphabet says it is rather than where a
+taxonomy would have put it. Set `toc_max_heading_level: 2` in the front matter so the table of contents
+lists the three sections rather than sixty terms; the anchors are unaffected, since that setting
+controls what the table of contents displays rather than what is anchored.
+
+### The entry is a definition and a route, never an explanation
+
+**One or two sentences, then links.** This is the page's governing constraint and the one that decides
+whether it survives contact with the rest of the site. The base prefers one explanation plus a link
+over two explanations that will eventually disagree, and a glossary is structurally a second place
+every term is described — so an entry that explains *why* CGP works a given way has become a worse copy
+of a Concepts page and will drift away from it. Define the term, then send the reader to the page that
+owns the idea.
+
+Each entry is its heading, then the definition, then the links on a line of their own: the page that
+owns the idea, and the construct reference page where a construct embodies it. Two links is the norm
+and three is the ceiling, for the same reason the *The ideas behind it* lists are capped — a longer
+list stops being a route.
+
+### The three sections, and what each owes
+
+**CGP terms** are the section the page exists for, and
+[vocabulary.md](../../communication-strategy/vocabulary.md) is their source of truth: it owns the
+definitions, the context and target qualifiers, and the wording rules, and the glossary is its public
+rendering rather than a second opinion. Where a term has a canonical gloss there, copy it rather than
+paraphrasing. A term's entry links the Concepts page that argues the idea and the reference page for
+the construct that expresses it.
+
+**Rust terms are defined in one sentence and handed straight to Rust's own documentation.** The site
+does not re-teach Rust, and this section is where that rule is most easily broken, because every term
+in it is one an author could happily write three paragraphs about. The entry says what the term means
+in the narrowest useful way and links the destination fixed in
+[the external Rust documentation table](#linking-three-destinations-and-one-prohibition) above —
+the Rust Reference for precision, the Rust Book for teaching. Reuse that table rather than choosing a
+destination per entry, since the whole point of it is that the site links one place per concept. Where
+the term also carries a CGP-specific consequence, that is a clause and a link, not a paragraph.
+
+**Related concepts** define an idea from outside CGP in one or two sentences, in the vocabulary its own
+community uses, and carry **two links: the [comparison page](related-work.md) that places CGP against
+it, and the term's own canonical page** — the language's manual, the framework's documentation, the
+paper or proposal that introduced it. The external link is what makes the definition checkable by
+someone who knows the tool, and the comparison page is where CGP's relationship to it is argued, so
+**that relationship is a clause at most in the entry itself**. Take the external destination from the
+comparison page's own Sources section rather than choosing one, so the glossary and the page it routes
+to cite the same authority.
+
+**A term earns an entry only where a comparison page covers it.** The *In your terms* table on each
+comparison page is the inventory these entries are drawn from, and a word readers do reach for that no
+comparison document treats — aspect-oriented programming, COM — is left out rather than given an entry
+routing nowhere. Every term in this section has a page behind it, and that is what the section is for.
+
+Two rules from that guide reach here unchanged: never let a definition read as disparagement, and
+never call a CGP construct a capability, per
+[vocabulary.md](../../communication-strategy/vocabulary.md#words-and-framings-to-avoid). The second
+binds the guide's own prose rather than changing an entry's job: **`capability` gets an ordinary
+entry** saying what the word means to those who use it and that CGP's arrangement resembles it, then
+routing to the comparison page for how far the resemblance goes. Putting the prohibition on the page
+would answer a question no reader asked.
+
+### What the page does not do
+
+**It does not retire the per-page gloss.** A reference page introduces "context" with its canonical
+gloss on first use because the page is read standalone, and a reader who arrives from a search result
+has not passed through the glossary. The glossary gives that gloss somewhere to link; it does not give
+a page permission to drop it.
+
+**It shows no code**, which is what keeps it a lookup surface rather than a teaching one, and which is
+why it needs no [`example-code`](../site-structure.md#the-example-code-crate) mirror. A term whose
+definition seems to require a snippet is a term whose entry is trying to be an explanation.
+
+**It does not list constructs.** A construct has a page; the glossary names a construct only where a
+term is embodied by one, and then as a link.
+
+### Linking a term to it
+
+**Link the first use on a page, and leave the inline gloss alone.** The gloss serves the reader who
+does not click, the link serves the reader who wants the full account, and removing either to make
+room for the other loses a reader. Subsequent uses on the same page are not linked, which is the same
+convention the reference pages already follow for their own cross-links.
+
+Because `onBrokenLinks` is set to `throw`, the glossary must exist before any link into it lands, so
+the page and the sweep that links to it are one change rather than two.
+
+### Checking a draft
+
+**Read each entry and ask whether it defines or explains.** An entry longer than two sentences, or one
+that answers "why", belongs on the page it should have linked to.
+
+**Check the Rust section against the external documentation table.** Every entry links the destination
+the table fixes, and none of them teaches the concept.
+
+**Read the related-concepts entries as a practitioner of each tool.** A definition its own community
+would not accept as fair is cut or re-sourced, and a sentence about CGP's advantage over the tool
+belongs on the comparison page.
+
+**Check every term is reachable.** A term the site uses without defining is the gap the page exists to
+close, so the inventory is built by reading the pages rather than by transcribing
+[vocabulary.md](../../communication-strategy/vocabulary.md).
 
 ## The layered page
 
@@ -329,6 +468,8 @@ re-checking when a page is revised.
 | Trait implementations, coherence, the orphan rule | [Rust Reference: Implementations](https://doc.rust-lang.org/reference/items/implementations.html) |
 | Associated types and constants | [Rust Reference: Associated items](https://doc.rust-lang.org/reference/items/associated-items.html) |
 | Procedural macros | [Rust Reference: Procedural macros](https://doc.rust-lang.org/reference/procedural-macros.html) |
+| Supertraits | [Rust Reference: Traits](https://doc.rust-lang.org/reference/items/traits.html) |
+| Trait objects and dynamic dispatch | [Rust Reference: Trait objects](https://doc.rust-lang.org/reference/types/trait-object.html) |
 | `PhantomData` | [std: `PhantomData`](https://doc.rust-lang.org/std/marker/struct.PhantomData.html) |
 | The grammar notation used in a formal grammar | [Rust Reference: Notation](https://doc.rust-lang.org/reference/notation.html) |
 

@@ -704,8 +704,8 @@ it stale.
   publish the agent skill from its own repository, and the `example-code/` crate that holds the compiled
   counterparts of the code the site shows, plus one entry each for the front page, Introduction,
   Overview, Resources, Contribute, the `cargo-cgp` tooling section, the AI skills section and its
-  `cgp-skills` submodule, the Concepts section, the Comparisons section, the Reference section, and the
-  AI disclaimer.
+  `cgp-skills` submodule, the Concepts section, the Comparisons section, the Reference section including its
+  compile-errors and glossary pages, and the AI disclaimer.
 
 ### `website/writing-guides/` — how new pages should be written
 
@@ -737,7 +737,8 @@ it stale.
   from the internal one: why the site rather than docs.rs is canonical, the six-section layered descent
   serving beginner to advanced on one page, the obligation to cover every form the parser accepts and
   to enumerate against it, near-one-page-per-construct with four consolidations, the replacement for
-  every internal link target, and the external Rust documentation table.
+  every internal link target, the external Rust documentation table, and the glossary page — its three
+  sections, the definition-and-route entry, and the heading level every term needs to be linkable.
 - [related-work.md](website/writing-guides/related-work.md) — the comparison pages ported from the
   internal related-work documents: the four transformations of the port (retire the positioning section
   and apply it as structure, compress the refresher, re-point every link, keep Sources), the page shape

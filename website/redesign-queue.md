@@ -92,6 +92,14 @@ tutorial below; the interim fix is the short version in each tutorial that reach
 `delegate_components!`. *Website repo, `docs/tutorials/`; obligation stated in
 [writing-guides/tutorial.md](writing-guides/tutorial.md).*
 
+**Most of the vocabulary the site uses is still not linked to where it is defined.** The
+[glossary](site-structure.md) now defines the terms and the context-shape qualifiers are linked on
+first use across thirty-nine pages, but the rest of the vocabulary is still used bare. Two rules
+constrain the remainder rather than a single pass: a compound use is not the general term, so CGP's own
+*consumer blanket impl* and *provider blanket impl* must not link to the Rust Book; and the basic
+vocabulary every reference page already glosses by convention should not be linked as well. *Website
+repo, across `docs/`; the task is R4 in [tasks.md](tasks.md).*
+
 **The area-calculation series shows the non-idiomatic provider form first.** Presenting
 `impl<Context> AreaCalculator for Context` before simplifying to `impl AreaCalculator` is pedagogically
 deliberate and should stay, but a reader who stops early copies the wrong form — so the page must say

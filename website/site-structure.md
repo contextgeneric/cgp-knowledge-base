@@ -883,6 +883,38 @@ the `check_components!` this crate otherwise adds to every wired context, becaus
 what the page withholds. Two `trybuild` compile-fail fixtures under `tests/compile_fail/reference/`
 (`errors_the_fix_1.rs` and `errors_the_fix_2.rs`) then pin the checked failure and the hidden one.
 
+### The glossary page
+
+`glossary.md` is the section's second non-construct page, at `sidebar_position: 91` beside the
+compile-errors page. It defines the vocabulary the documentation uses — CGP's own terms, the Rust
+concepts the site assumes, and the borrowed terms the comparison pages trade in — in one or two
+sentences each, then routes onward. It is **term** lookup where the index is **construct** lookup, and
+the two do not overlap: the index's *Looking for a name you don't see?* table answers `IsPresent`,
+while the glossary answers *environmental context*.
+
+It exists because the site's vocabulary is used far more widely than it is defined, and the sizing is
+what [tasks.md](tasks.md)'s R4 sweep works through. *Environmental context* appears twenty-nine times
+across twenty-six pages — nine comparisons, seven `components/` and six `traits/` pages among them —
+each time with an inline gloss and none of them linked, while its only expository definition sits in a
+tier-3 subsection of *Modularity Hierarchy*, under a heading naming *application* contexts rather than
+environmental ones. *Blanket implementation* appears on fifty-three pages, of which fourteen link any
+Rust documentation. Those counts move as the sweep lands.
+
+Three conventions the page settles are worth copying. **Every term is an `###` heading directly under
+its section's `##`, with no thematic sub-grouping**, because this site's MDX rejects `{#custom-id}`
+and Docusaurus anchors `h2` and `h3` only — so grouping by theme would push terms to `h4` and cost
+every one of them its anchor, which is the whole point of the page. `toc_max_heading_level: 2` in the
+front matter then keeps the table of contents to the three sections rather than seventy terms.
+**Sections are alphabetical**, since the page is looked up rather than read through. And **every
+related-concept entry's external link is one the comparison page it routes to already cites**, taken
+from that page's Sources section so the two agree on the authority.
+
+The page shows no code, so it has no `example-code` mirror. Four pages route to it: the reference
+index beside the compile-errors link, the Concepts and Comparisons indexes, and the Introduction's
+routing list — the last three because living in the reference costs the page its discoverability for
+exactly the reader who needs it. The spec is in
+[writing-guides/reference.md](writing-guides/reference.md#the-glossary-page).
+
 Finishing `macros/` settled one thing about the template a later group should copy rather than rediscover:
 **the three argument-free macros get no grammar section** — `#[async_trait]`, `#[cgp_auto_dispatch]`, and
 `#[cgp_auto_getter]` — which matches the [internal rule](../cgp/AGENTS.md#syntax-grammar-conventions) and is

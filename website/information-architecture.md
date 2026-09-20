@@ -223,6 +223,10 @@ each page's two judging sections.
   wiring failure has somewhere on the site to look it up. One page rather than seventeen, drawn from
   [cgp/errors/](../cgp/errors/README.md), and the reason every reference page's *Gotchas* section can
   stay construct-specific instead of re-explaining the same failure.
+- A *glossary* page — present. The terms the documentation uses, CGP's own and the Rust and borrowed
+  ones alike, defined in a sentence or two each and routed onward. Term lookup where the index is
+  construct lookup, and the answer to vocabulary that was used across the site far more widely than it
+  was defined. Recorded in [site-structure.md](site-structure.md).
 - *Tooling* — present at `docs/cargo-cgp/`, labelled for the tool rather than the category, since it
   covers one. A sibling section rather than part of the reference: five pages, an overview plus one per
   command, plus installation and troubleshooting.

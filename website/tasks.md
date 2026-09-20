@@ -242,6 +242,21 @@ reader falls into. The spec and the porting procedure are in
   than deferring it. *Done when:* no stub notice remains — met, and every written page including
   `types/` has its `example-code` mirror. The author read of the reference index (R1) is the one
   residual, tracked there until the reference is signed off.
+- **R4 — link the remaining glossary terms from the pages that use them.** The **context-shape terms
+  are done**: *environmental*, *value* and *application context*, *self-targeted* and
+  *parameter-targeted* are linked on first use across thirty-nine pages, with the inline gloss left in
+  place beside each. What remains is the rest of the vocabulary, and it is **not a mechanical pass**.
+  Two findings from the first sweep decide how the rest is done. **A compound use is not the general
+  term**: most of the site's fifty-three *blanket impl* mentions are CGP's own generated impls — the
+  consumer blanket impl, the provider blanket impl — and linking those to the Rust Book would misinform
+  a reader, so only the generic sense is linked. And **the section's basic vocabulary is already
+  glossed**: every reference page introduces *context* by convention, so linking it as well adds noise
+  rather than a route. Link a term where a page uses it bare and does not own it. *Lands in:* the
+  website repository. *Spec:*
+  [writing-guides/reference.md](writing-guides/reference.md#the-glossary-page). *Blocked by:* nothing.
+  *Done when:* a term the glossary defines is linked on its first bare use wherever a page does not
+  itself explain it.
+
 ## D — The deep dives, and the code they quote
 
 **Post-release.** All three deep dives are still wanted, and none of them holds up the v0.8.0 release —

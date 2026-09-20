@@ -76,8 +76,9 @@ Register a new guide here in the same change that adds it, and in [../../summary
   about the error experience carries.
 - [reference.md](reference.md) — the canonical per-construct reference, ported from the knowledge
   base's internal reference: the layered descent that serves beginner through advanced on one page,
-  the granularity and the four consolidations, where every internal link is re-pointed, and the
-  external Rust documentation to link for concepts a page assumes.
+  the granularity and the four consolidations, where every internal link is re-pointed, the
+  external Rust documentation to link for concepts a page assumes, and the two non-construct pages the
+  section carries — the error catalog and the glossary.
 - [related-work.md](related-work.md) — the comparison pages, ported from the internal
   [related-work](../../related-work/README.md) documents for a reader who already knows type classes,
   dependency injection, ML modules, effects, or another related idea: the four transformations the port

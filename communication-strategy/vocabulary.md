@@ -254,6 +254,16 @@ Use these terms with evidence rather than predictions about every reader:
 - **Pile-on and dunking:** Group dismissal or mocking replies in public discussion. Avoid
   anticipating hostility as the reader's default; respond with accurate claims and fair comparisons.
 
+## The public page this feeds
+
+This document is the source of truth for the website's
+[glossary](https://contextgeneric.dev/docs/reference/glossary), which renders its definitions for a
+public reader: the CGP terms and the context and target qualifiers below, alongside the Rust concepts
+the site assumes and the borrowed terms the comparison pages use. The glossary defines and routes
+rather than explaining, so a change to a definition here belongs on that page in the same change, per
+the [synchronization rule](../AGENTS.md#the-synchronization-rule). Its shape is specified in
+[writing-guides/reference.md](../website/writing-guides/reference.md#the-glossary-page).
+
 ## Keeping the list in sync
 
 Check related guidance when terminology changes. [Message.md](message.md), [identity.md](identity.md),
