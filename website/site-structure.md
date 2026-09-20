@@ -559,6 +559,25 @@ distinguishes ordinary trait assertions, component checks, and diagnostic rewrit
 output is abbreviated. *Consumer and provider traits* distinguishes context-style `Self` inside
 `#[cgp_impl]` from Rust's ordinary provider-side `Self` and permits multi-item components.
 
+The dependency and configuration pages explain their requirements in point-first prose.
+*Implicit arguments* requires matching `HasField` implementations and distinguishes cloning from
+borrowing, named getters, and wireable field selection. *Modular error handling* separates raising
+from wrapping and states the conversion requirements when changing error backends. *Namespaces*
+distinguishes inherited routes from bound destinations and requires explicit checks for inherited
+components. *Modularity Hierarchy* preserves the tier walkthrough and decision guide while stating
+that every tier obeys Rust coherence, a single context can still justify providers, and generic
+context instantiations remain distinct types.
+
+The computation pages distinguish static selection from runtime execution. *Monadic handlers*
+limits the direct-composition mismatch to the `Computer` interface, explains the outer error
+propagation already supplied by fallible handlers, and gives the continuation cases for a nested
+result transformer. *Type-level DSLs* uses `#[cgp_impl]` for its addition provider and explains
+that trait resolution selects operations without evaluating ordinary function bodies. Its compiled
+counterpart uses the same provider form. *Recovering Send bounds* describes an absent signature
+guarantee rather than a removed auto-trait implementation, repeats the response bound at generic
+use sites, and distinguishes `Send` from executor lifetime and output requirements. Preserve these
+qualifications when revising the examples or shortening their explanations.
+
 The extensible-data pages distinguish compile-time guarantees from runtime operations.
 *Dispatching* checks handler selection and coverage statically while variant tests and handler calls
 run at runtime; it also explains dependencies between record-building steps and the wrapper needed
