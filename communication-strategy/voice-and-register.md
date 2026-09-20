@@ -1,213 +1,154 @@
 # Voice and register
 
-This document fixes *how CGP sounds*: which voice each surface speaks in, what the prose does at the
-sentence level, and how a piece shows its point in code and pictures, so that the site, the blog,
-and the READMEs read as one project written by people rather than as assembled copy. It is the craft
-companion to [author-personality.md](author-personality.md): that document records who the author
-is, and this one turns it into rules a writer can apply to a paragraph.
+Write CGP documentation in the project's voice and blog posts in the author's voice, using plain
+language, specific claims, and visible tradeoffs.
+
+[Author-personality.md](author-personality.md) records the author's preferences and observed habits.
+This document turns them into guidance for a passage. Use [writing-styles.md](writing-styles.md)
+for sentence revision and [vocabulary.md](vocabulary.md) for CGP terminology.
 
 ## The layered voice
 
-CGP speaks in two voices, and which one a piece uses is decided by its surface rather than by its
-subject. **The website speaks as the project; the blog speaks as the author.** This is a deliberate
-split rather than an accident of who wrote what, and getting it wrong is the most visible way a draft
-can be off-voice.
+Choose the voice according to the page. The website's documentation speaks as the project; the
+blog speaks as the author.
 
-**The project voice** is the one the homepage, the docs pages, the tutorials, and the READMEs use.
-It addresses the reader as "you", refers to the project as "CGP", and uses "we" only in the teaching
-sense a tutorial needs ("we start by defining the component"), never as a corporate collective
-speaking about its own achievements. It carries no first-person narration, no personal history, and
-no opinion attributed to a person. It is plain and unhurried, and it makes claims that anyone
-maintaining the project could stand behind, because those pages outlive any single author's framing.
+**Project voice** addresses the reader as “you” and names the project as “CGP.” Use it on the
+homepage, documentation, tutorials, and READMEs. Explain claims in terms another maintainer could
+verify. Keep personal history and first-person narration out of these pages, except for the
+explicit exceptions below. A tutorial may use “we” to mean the writer and reader working through
+an example together.
 
-**The author voice** is the one the blog uses, and it is first-person, personal, and candid. It says
-"I think", "I want to be transparent about", "I have a feeling that"; it recounts how something came
-about; it names uncertainties the project voice would have to state impersonally. This is where
-CGP's strongest trust-building material lives, and it should not be flattened into the project voice
-for consistency's sake. The inconsistency between a blog post and a docs page is a feature, because
-a reader can tell which one is a person talking.
+**Author voice** is personal and first-person. Blog posts may explain how an idea arose, express
+uncertainty, thank readers, or ask for direction. Preserve those choices when revising a human
+draft. Consistency across the site does not require making a personal account sound institutional.
 
-One page deliberately breaks the split and must keep breaking it. The
-[Contribute page's](https://contextgeneric.dev/docs/contribute) sponsorship section is written in
-the author's own voice and is frank about the project's finances, and that frankness is doing work
-no neutral phrasing could do. When a docs page genuinely needs a person to say something, such as an
-admission about capacity, a request for help, or a statement about the project's direction, the
-right move is to switch voice visibly for that passage rather than to launder it into project-speak.
+The [Contribute page's sponsorship section](https://contextgeneric.dev/docs/contribute) deliberately
+uses the author's voice. Preserve its personal account of capacity and support. If another docs
+passage requires a personal statement, make the change of voice explicit rather than attributing
+the statement to an impersonal project.
 
-Two mechanical rules keep the split clean. **Never write "we" where you mean the author**, because a
-plural that stands for one person reads as an institution pretending to be a team; write "CGP" for
-the project or switch to the author voice properly. And **never carry an opinion into the project
-voice without grounding it**: "CGP is the best way to model this" belongs to a person, while "CGP
-suits this case, and a plain trait suits that one" belongs to the project.
+Never use “we” to mean the author alone. Use “CGP” for a project claim or “I” in an appropriate
+personal passage. Ground judgments in project prose: explain which use case CGP fits and why,
+rather than calling it the best approach without a stated comparison.
 
 ## The register: plain, unhurried, and specific
 
-The register is the same in both voices, and the shortest description of it is *a knowledgeable
-colleague explaining something carefully, with no sales pressure and nothing to prove*. It is not
-terse, because CGP's ideas do not compress well and the author does not try to compress them, but
-every sentence is doing work. The three properties below make a draft sound right.
+Explain CGP as a knowledgeable colleague would: carefully, with familiar words and enough detail
+to understand the claim. Keep the same clarity in both voices while preserving the blog's personal
+character.
 
-**Plain words, said once.** Prefer the common word to the impressive one and let a true claim stand
-without an intensifier. "Redesigned the site" beats "a beautiful overhaul redesign"; "promising"
-beats "genuinely promising"; "replaced by newer patterns" beats "gracefully superseded by more
-intuitive and modern patterns". The test that catches nearly everything: if deleting an adjective or
-adverb leaves the sentence's meaning intact, delete it. Inflation is the single clearest signal that
-a sentence was machine-written, and this audience reads it as either padding or spin.
+Prefer specific facts to praise. “The compiler resolves provider selection” tells the reader more
+than “powerful, seamless modularity.” Remove an adjective or adverb when it adds neither meaning
+nor a necessary qualification.
 
-**Length where the idea needs it.** Brevity is not a virtue here. A long explanation is welcome when
-the idea is genuinely long, and the author's own posts run to many thousands of words. What is *not*
-welcome is ambushing the reader: a long piece states its length or its shape at the top, the way the
-Hypershell post gives an estimated reading time and a section-by-section preview. Say how far this
-goes, then go that far.
+Give an explanation the length its subject needs. A long piece should state its scope near the
+start so readers can decide where to focus. Simplify the entry without removing advanced material
+that belongs on the page; the [website rules](../website/AGENTS.md#layer-the-depth-do-not-omit-the-advanced-material)
+define that obligation by page type.
 
-**Concrete over abstract, always.** A named construct beats "the machinery"; a compiler error quoted
-verbatim beats "the errors can be confusing"; a wiring line the reader can grep for beats
-"explicit". When a passage starts reaching for abstractions such as flexibility, power, modularity,
-or elegance, it has usually lost hold of the specific thing it was describing, and the fix is to
-name that thing again.
+Name the construct, operation, or limitation behind an abstract claim. Show the wiring entry
+behind “explicit,” the generated call behind “static dispatch,” or a verified diagnostic behind
+“difficult errors.” The evidence makes the claim assessable.
 
 ## The moves that make CGP prose work
 
-Four structural habits recur throughout the author's best writing, and a piece that uses them will
-sound like CGP even if its sentences are ordinary.
+Introduce a construct as an answer to a problem the reader can recognize. Explain the ordinary
+Rust approach fairly, show where it becomes insufficient for the example, and then show what CGP
+changes. The [area tutorial](../website/tutorials/area-calculation.md) and
+[RustLab account](../website/blog/rustlab-2025-coherence.md) provide models for that progression.
 
-**Explain the existing thing properly before improving on it.** The reader is a Rust programmer who
-respects Rust, and an argument that opens by disparaging the trait system loses them in the first
-paragraph. The RustLab talk is the model: it explains that Rust's trait system doubles as a
-dependency-injection mechanism, that transitive resolution therefore requires globally unique
-instances, and that [coherence](../cgp/concepts/coherence.md) is *correct*, and only then works
-around it. Every CGP limitation story should be told this way, because CGP's whole frame is that it
-[enhances rather than replaces](identity.md) what Rust already does.
+Show expansions where they explain or justify the abstraction. A first-principles explanation can
+start with an explicit impl and then replace it with a macro. An applied introduction can start
+with the recommended syntax and explain the generated code after the reader has a working model.
+The [tutorial guide](../website/writing-guides/tutorial.md) supports both approaches; neither
+requires opening every introduction with raw provider traits.
 
-**Put the problem before the construct.** Show code that is unsatisfactory for a stated reason, then
-introduce the construct as the fix. This is the ordering the
-[area-calculation tutorial](../website/tutorials/area-calculation.md) is built on and the one the
-[v0.8.0 post](../website/blog/v0-8-0-release.md) uses for namespaces, and it stops a construct
-reading as ceremony. A reader who has felt the problem will forgive a lot of machinery; a reader who
-has not will forgive none.
+State a relevant cost beside the benefit it qualifies. “This adds a wiring table that callers
+must trace” describes a cost. “The modest learning curve is outweighed by substantial benefits”
+leaves both sides unspecified. Say when an ordinary trait or another tool is sufficient.
 
-**Show the explicit form before the sugar.** CGP's macros generate code, and Rust programmers do not
-trust generated code they have not seen through. The habit that answers this is to write the thing
-by hand first: call a provider by name before any wiring exists, implement the consumer trait
-manually before `delegate_components!` replaces it, and show the plain-Rust blanket impl that
-`#[cgp_fn]` produces. The sugar then arrives as an abbreviation for something the reader has already
-read. This is also why the desugaring appendix in the
-[Hello World tutorial](../website/tutorials/hello-world.md) is essential rather than optional
-colour.
-
-**Concede in the same passage as the claim, in plain words.** Not as a hedge appended to a pitch,
-but as part of describing the thing accurately. "This is more machinery than a plain trait needs,
-and for a trait with one implementation a plain trait is the right tool" is the register. "While
-there is a modest learning curve, the benefits are substantial" is not: it concedes nothing and
-signals that something is being sold.
+Use analogies to explain relationships, then state their limits. Wiring can be described as a
+settings table, provided the passage says the compiler resolves it without a runtime table lookup.
+An analogy should lead to the mechanism rather than replace it.
 
 ## Show it: canonical examples, diagrams, and diffs
 
-Concrete beats abstract at the level of the whole piece as well as the sentence, and three habits
-carry it: reuse one running example rather than inventing one, draw the same diagram everywhere an
-idea appears, and let a before-and-after show its difference instead of asserting it. Each habit has a
-reason in reading research, cited in
-[evidence.md](evidence.md#sources-for-the-craft-this-section-borrows), and each is the message
-discipline [vocabulary.md](vocabulary.md#the-vocabulary-of-the-craft) asks for in words, applied to
-code and pictures.
+Reuse established examples so readers can concentrate on the changing CGP idea. Choose among
+these before introducing another domain:
 
-**Reuse one of four canonical examples before inventing a fifth.** A new example costs the reader a
-new domain and costs the project a new verification, and the site already carries four that between
-them cover every shape. Each is named here with the shape it is in, because the shape is invisible in
-the code and a piece that reuses two of them must say when it crosses.
+- **Encoder pair:** `Display`-based and `AsRef<[u8]>`-based implementations motivate distinct
+  providers and per-type wiring. The basic example uses a value context and a self-targeted
+  component. If the value moves into a parameter, explain that change beside the code.
+- **Greeter:** A method reads an implicit `name` from `Person`, then works on another matching
+  context. Hello World uses `#[cgp_fn]`; component examples introduce `CanGreet` and a provider.
+- **Email swap:** `App` selects `SendViaSmtp`, while `TestApp` selects `RecordEmails`. These are
+  environmental contexts with a self-targeted component.
+- **Area calculation:** `Rectangle`, `Circle`, area providers, and a scaling wrapper introduce
+  provider reuse and higher-order composition.
 
-- **The encoder pair** — `CanEncode` implemented over `Display` and `AsRef<[u8]>`, rejected by Rust
-  with `E0119`, then legal under CGP with `EncodeAsText` and `EncodeAsBytes` wired per type. Value
-  context, self-targeted. The homepage hero and the coherence explanation. The launch-post draft in
-  [formats.md](formats.md#worked-model-drafts) moves the value into a parameter as `CanEncode<Value>`,
-  which is the parameter-targeted form of the same example, and it narrates the move.
-- **The greeter** — a `greet` method on a `Person`, reading an `#[implicit] name` argument, then a
-  second struct that gains the method unchanged. It is a `#[cgp_fn]` in Hello World and the `CanGreet`
-  component with a `GreetHello` provider in the README draft. Value context, self-targeted.
-- **The email swap** — `CanSendEmail` with `SendViaSmtp` wired on `App` and `RecordEmails` on
-  `TestApp`. Environmental context, self-targeted, and the shape most CGP code is in. The
-  Introduction and the consumer-and-provider explanation.
-- **The area calculation** — `Rectangle` and `Circle`, the `AreaCalculator` providers, and the
-  higher-order `ScaledAreaCalculator<Inner>`. Value context, self-targeted. The tutorial series and
-  the reference pages.
+Use the verified code in [examples/](../examples/README.md) and the website's `example-code`
+crate. When a different example is necessary, record why in the page's internal document and add
+it to this catalog. Identify the context and target whenever an example changes their roles.
 
-The code for each lives verified in [examples/](../examples/README.md) and in the website's
-`example-code` crate, and a piece takes it from there rather than retyping it. When none of the four
-fits, say so in the piece's internal document and add the new example to this list in the same change.
+Reuse a diagram when the same idea appears on several pages. Keep labels close to what they
+identify, omit decoration, and ensure the prose remains understandable without the image.
+The [website task plan](../website/tasks.md) tracks the shared diagrams for a wiring table, the
+consumer/provider split, and providers selected independently by contexts. Store these as SVGs
+among the site's static assets. The supporting reading research belongs in
+[evidence.md](evidence.md#sources-for-the-craft-this-section-borrows).
 
-**Draw one diagram per idea, and reuse it.** Readers learn more from words and a picture together than
-from words alone, provided each label sits beside the thing it names and the picture carries nothing
-decorative. Three ideas want a picture and have none yet: the **wiring table**, a two-column table
-from component to provider that a call resolves through; the **consumer and provider split**, a caller
-reaching a consumer trait, the table, and the chosen provider, with the impl-side dependencies hanging
-off the provider; and **coherence scoped**, several providers coexisting globally while each context
-draws one. Each is drawn once, as an SVG among the site's static assets, and every page that explains
-the idea uses that one drawing, so a reader who has met it once recognizes it everywhere. Making them
-is website work, tracked as X3 in [the task plan](../website/tasks.md). A diagram never replaces the
-prose beside it, and a page must still read correctly with the image missing.
+Make before-and-after examples directly comparable. If the claim is that only annotations change,
+show the unchanged bodies and highlight the changed lines using Docusaurus code comments.
+Do not elide the part readers need to verify the comparison.
 
-**Let a before-and-after show its difference.** When a piece claims that only the annotations changed,
-the reader checks it, and the check is cheap if the bodies are shown and the changed lines are marked.
-Show identical bodies rather than eliding them, and mark the lines that differ with the code block's
-highlight comments, which stock Docusaurus renders without any plugin. The homepage guide states this
-for the hero block; it holds for every before-and-after on the site and in a post.
+Public code examples must meet these requirements:
 
-**Code in public writing follows four rules.** It is copy-paste-runnable, or it is labelled as a
-fragment and says what was omitted, usually the imports. It uses the modern idioms the
-[guides](../cgp/guides/README.md) teach, since a snippet is the most-copied part of any piece. Its
-comments add what the code cannot say, above all the witness that makes a conflict real, such as the
-type that satisfies both bounds. And every compiler message it quotes is real output from the current
-release, never remembered or reconstructed.
+- **Declare their scope:** Make examples runnable or label them as fragments and identify omissions.
+- **Use current idioms:** Follow the [CGP guides](../cgp/guides/README.md).
+- **Explain what code alone cannot:** Comments should identify a relevant dependency, assumption,
+  or witness to an overlap rather than repeat the code.
+- **Verify diagnostics:** Quote actual compiler output from the relevant source and toolchain.
 
 ## Words and habits to avoid
 
-A short list of sentence-level failures accounts for most off-voice drafts, and each has a
-replacement that is both truer and more persuasive with this audience.
+Remove language that adds promotion without information. Common cases include:
 
-- **Adjective and adverb inflation** — "genuinely", "truly", "simply", "seamlessly", "powerful",
-  "beautiful", "comprehensive". Delete the intensifier and keep the claim.
-- **Enthusiasm attached to a feature** — "blazingly fast", "incredibly flexible". The author's
-  enthusiasm attaches to sharing something, not to how good it is; keep the claim measurable.
-- **The tricolon of nothing** — "clean, modern, and maintainable". Three vague adjectives are weaker
-  than one specific noun.
-- **Hedge stacking** — "may potentially help to improve". Say what it does, or say you do not know.
-- **Corporate "we"** for one person, and **"our users"** for an audience that is mostly still reading
-  rather than using.
-- **Claims nobody made** — invented benchmarks, adoption numbers, quotations, or "developers love".
-  If a number would strengthen a point, source it or drop the point.
-- **Disparaging another tool** to elevate CGP. Represent every alternative as its own users would
-  recognize it; the author does this consistently and it is one of his most credible habits.
+- **Inflated adjectives:** “Genuinely,” “seamlessly,” or “powerful” without a concrete meaning.
+- **Unmeasured performance praise:** “Blazingly fast” or unsupported comparisons.
+- **Vague adjective lists:** “Clean, modern, and maintainable” without explaining what changed.
+- **Stacked hedges:** “May potentially help” where “may help” preserves the claim.
+- **An institutional voice for one person:** A corporate “we” or unsupported claims about “our users.”
+- **Invented evidence:** Benchmarks, adoption figures, quotations, or claims that developers love a feature.
+- **Dismissive comparisons:** Describing another tool unfairly to make CGP look better.
 
-The words to avoid *about CGP specifically*, such as "magic", "automatically resolves", "no
-boilerplate", and "replaces traits", are a separate list, kept with their replacements in
-[vocabulary.md](vocabulary.md), because they concern accuracy rather than register.
+Preserve useful uncertainty and warmth. The author's pleasure in sharing work belongs in a blog
+post; an intensifier attached to a technical claim needs evidence. [Vocabulary.md](vocabulary.md)
+contains the accuracy rules for terms such as “capability,” “zero-cost,” and “AI-assisted.”
 
 ## Improving copy that is already published
 
-Much of the current site copy is placeholder in the exact sense the author uses: written or polished
-by an LLM, not defended, and open to replacement whenever a writer can do better. That is a licence
-to improve prose you are already editing, not a mandate to sweep the site; the same lazy-reflow
-discipline the base applies to line wrapping applies here.
+Improve unclear or inflated prose within the requested scope. Existing wording is not a reason to
+retain an unsupported claim, but a local revision is not permission to rewrite the whole site.
 
-Two constraints bound the licence, and both come from [the website rules](../website/AGENTS.md). A
-**published blog post is a dated artifact** and is not rewritten into agreement with either current
-CGP or current voice; leave it as it stands and record any drift in its internal document. A
-**docs page describes the present** and can be corrected in place freely, with no changelog note.
-And whichever you are touching, the passages written in the author's own voice, the sponsorship
-section and the frank maturity warning on the Introduction, are not placeholder and are not to be
-smoothed out.
+Docs pages describe current behavior and can be corrected in place. Published blog posts are dated
+records and follow the separate restrictions in [website/AGENTS.md](../website/AGENTS.md#do-not-rewrite-history).
+Record drift in their internal documents rather than silently updating historical code or claims.
+
+Preserve passages that deliberately carry the author's personal voice. The sponsorship section and
+personal statements about maturity or capacity are not generic copy to standardize. Follow the
+page's provenance record and [AI disclosure policy](ai-disclosure.md) when distinguishing revision
+from authorship.
 
 ## Checking a draft
 
-Run four checks before publishing anything, in this order, because the first two catch the failures
-that matter most.
+Review the draft in this order:
 
-Read the draft asking **whether a person wrote it**. If a paragraph could have been generated from
-the topic alone, it probably was, and the fix is to say the specific thing the paragraph was
-gesturing at. Then read it asking **whether the cost is stated**: find the honest limitation, and if
-there isn't one in the piece, either the piece is overselling or the limitation is somewhere the
-reader will find it before you tell them.
+1. **Specificity:** Does it sound like the project or author, with concrete claims instead of
+   generic praise?
+2. **Costs:** Are relevant limitations stated where the reader needs them?
+3. **Restraint:** Can intensifiers be removed without losing meaning, evidence, or uncertainty?
+4. **Voice:** Does the voice match the page, including its documented exceptions?
 
-Then check the mechanics. **Delete every intensifier** that can go without changing the meaning. And
-**check the voice matches the surface**: first-person on the blog, project voice on the site, and no
-accidental corporate "we" in either.
+Then use [writing-styles.md](writing-styles.md) for sentence checks and
+[reader-simulation.md](reader-simulation.md) to test whether the explanation follows from the
+reader's knowledge. Fluency alone does not establish accuracy or clarity.

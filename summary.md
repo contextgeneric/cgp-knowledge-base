@@ -576,30 +576,16 @@ it stale.
 - [author-personality.md](communication-strategy/author-personality.md) — who CGP's author is as a
   writer, the habits his published work evidences, and the preferences he has stated; the document every
   other one here is downstream of.
-- [voice-and-register.md](communication-strategy/voice-and-register.md) — the layered voice (project on
-  the site, author on the blog), the sentence-level register, the four structural moves that make CGP
-  prose work, the four canonical examples with the diagram, diff, and code-sample rules, and the habits
-  that mark a draft as machine-written.
-- [writing-styles.md](communication-strategy/writing-styles.md) — the directness principle (say it
-  straight, with the real subject doing the real action), the cleft-sentence inversion and the crutch em
-  dash everywhere, plus ASD-STE100-style plain English (no metaphors, idioms, jargon, or passive voice)
-  for agent-drafted pages specifically; each habit named, shown as a before/after, and given a check.
+- [voice-and-register.md](communication-strategy/voice-and-register.md) — project and author voices, specific claims and tradeoffs, teaching order, canonical examples, diagrams, code verification, and revision boundaries.
+- [writing-styles.md](communication-strategy/writing-styles.md) — direct subjects and verbs, point-first openings, meaning-preserving sentence edits, clear punctuation, and plain English for agent-drafted content.
 - [identity.md](communication-strategy/identity.md) — the positioning decided in five steps from
   alternatives to category, the settled tag line analyzed word by word, the enhances-not-replaces frame,
   the layered pitch that follows the line, and the curated headline feature set for a front page.
-- [readers.md](communication-strategy/readers.md) — the audience model by Rust experience, imported
-  mental model, and role — the last including the language-design reader, who is unreachable through the
-  general channels — plus the comprehension barriers a willing reader hits, including the
-  application-context shape vanilla Rust gives them no reason to imagine, the teaching move that
-  lowers each, and the friction-log and user-conversation practices that mark a profile observed.
+- [readers.md](communication-strategy/readers.md) — audience hypotheses by Rust experience, prior model, and task; comprehension barriers, teaching responses, and methods for testing the model against reader feedback.
 - [message.md](communication-strategy/message.md) — everything a piece says about CGP: the pains it
   removes, the strengths worth advertising, the objections readers bring, and the boundary where a
   plainer tool wins — four views of one reader.
-- [vocabulary.md](communication-strategy/vocabulary.md) — the canonical word list for public writing
-  (use, defer, avoid — including why "capability" is retired for CGP's own constructs), the
-  value/environmental/application context and self/parameter target qualifiers
-  with the case that they are not jargon and the four misreadings they prevent, plus the glossary of the
-  non-technical craft; the authority that resolves any phrasing disagreement.
+- [vocabulary.md](communication-strategy/vocabulary.md) — CGP definitions, context and target qualifiers, term introduction, wording to avoid, canonical cargo-cgp qualification, and communication terminology.
 - [reader-simulation.md](communication-strategy/reader-simulation.md) — the theory-of-mind method for
   writing CGP prose: the split-knowledge model reader, the predict-compare-repair loop, the six
   mental-state variables (common ground, working memory, model under construction, expectation, stance,

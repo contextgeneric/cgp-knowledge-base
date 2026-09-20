@@ -136,6 +136,9 @@ These objections recur and suggest specific responses:
 - **An uninformative name:** "Context-generic programming" does not explain its benefit to an
   unfamiliar reader. Pair the name with a plain description. Structural-typing analogies can help,
   provided the piece explains that CGP remains nominal and wired.
+- **An inferred single-item restriction:** Teaching feedback records readers interpreting
+  single-method examples as a limit on component traits. Show a working multi-item component
+  before discussing grouping, and distinguish macro support from advice about provider reuse.
 - **Overstated ergonomics:** Readers expect compiler errors to require understanding generated
   code. Teach the desugaring and present `cargo-cgp` as a response to that difficulty, with its
   limits intact. The canonical concession is: `cargo cgp check` leads with the root cause for the

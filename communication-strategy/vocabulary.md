@@ -1,370 +1,266 @@
-# Vocabulary: the words about CGP, and the words of the craft
+# Vocabulary: CGP terms and communication terms
 
-This document is the canonical word list, and it has two halves. The first governs the words used
-*about CGP* in public: which term to use for each idea, which to defer until a reader is ready, and
-which to avoid because it reliably creates a misreading. The second defines the words *of the
-craft*, the marketing, public-communication, and developer-relations terms of art the rest of the
-section uses, for a reader who is fluent in CGP and new to those disciplines. Both halves are
-lookups rather than arguments, and this document is the authority the others defer to: when a
-phrasing rule here and a rule elsewhere disagree, this one resolves it.
+Use consistent terms for CGP constructs, define unfamiliar words on first use, and qualify analogies
+where their meanings differ.
 
-The scope is deliberately narrow. This document governs *which word*, not *what to pitch* (that is
-[message.md](message.md)), not *how the prose should sound* (that is
-[voice-and-register.md](voice-and-register.md)), and not *how CGP describes itself in one line* (that
-is [identity.md](identity.md)).
+This document owns terminology. [Identity.md](identity.md) owns the project descriptor,
+[message.md](message.md) owns claims and positioning, and
+[voice-and-register.md](voice-and-register.md) owns the voice. Follow the author's stated
+preferences when resolving a conflict, and update inconsistent guidance in the same change.
 
 ## Terms to use, and how to introduce each
 
-The established CGP vocabulary is the same in public writing as in the rest of the knowledge base, so
-a reader moving between a blog post and the reference never reconciles two dialects. What public
-writing adds is the gloss: introduce a term with a plain-language definition on first use, then use it
-consistently.
+Use the same CGP vocabulary in public writing, the skill, and the knowledge base. Adjust how much
+explanation accompanies a term to the reader's knowledge.
 
-- **Context** — the concrete type an application wires and calls methods on. Gloss it on first use,
-  never as a bare `Self`, because a cold reader has no reason to know the two coincide. **The
-  canonical gloss is "the type the method runs on, which supplies the values it needs as its
-  fields"**, and it is the one the site's reference pages carry. Two variants are permitted and no
-  others. A page that has already introduced wiring may add "the type that owns the wiring" as a
-  second clause, since before wiring is introduced that clause means nothing to the reader. A page
-  whose context stands for an application uses the environmental gloss below instead. Shortening is
-  not a variant: a page with nothing to say about fields may cut the canonical clause to "the type
-  the implementation runs against", or shorter still to "the type the code runs against" or "the
-  type it runs against", and an abstract-type trait with no method to point at may write "the type
-  that implements the trait". All of these count as the canonical gloss. The word needs qualifying
-  more often than any other term here; see
-  [Qualifying a context and a target](#qualifying-a-context-and-a-target) below, which is the most
-  important wording rule in this document.
-- **Component** — one trait, defined once, that can have many implementations. Introduce it as "an
-  interface you can wire an implementation for", and reserve the detail that it is a consumer trait
-  plus a provider trait for when the reader asks how it works.
-- **Trait** — the word for what a component, a `#[cgp_fn]` function, or a getter defines, and for
-  what `#[uses]` imports. It is the plain Rust word, it is accurate, and it carries the
-  enhances-not-replaces frame on its own. Where a sentence needs the individual thing a caller
-  invokes rather than the interface, say **method** or **operation**. Never say "capability" for any
-  of these; see the avoid list below for why.
-- **Consumer trait** and **provider trait** — the trait you *call* and the trait you *implement*.
-  Introduce the pair only when a piece goes past the surface; for an introductory audience, "the
-  trait you use" and "the code that implements it" carry the idea without the vocabulary.
-- **Provider** — a named, swappable implementation of a component. Introduce it as "one
-  implementation you can choose"; avoid explaining that it is a zero-sized marker type until the
-  reader is reading generated code.
-- **Wiring** — choosing which provider implements each component for a context. Introduce it as "a
-  small table that says which implementation to use", and lean on the table image, which is the most
-  important analogy in CGP writing.
-- **Impl-side dependency** — a requirement a provider states in its own implementation rather than
-  in the interface callers see. Introduce it as "the provider declares what it needs, and callers
-  never see it", because the encapsulation benefit is the point and "impl-side" means nothing cold.
-- **Pluggable trait implementations** — the lead descriptor for what CGP does, from
-  [identity.md](identity.md). Prefer "pluggable" as the novelty word and always pair it with "at
-  compile-time", because the tension between the two is the pitch in miniature.
-- **Context-generic programming** — the name of the paradigm, never the pitch. Introduce it only
-  after a concrete benefit has landed, always beside a plain descriptor.
-- **`cargo-cgp`** — CGP's error toolchain. Refer to it as "cargo-cgp, CGP's error toolchain" and to
-  its use as "running `cargo cgp check`". Introduce what it does as "a dedicated checker that leads
-  with the root cause": it un-hides the buried cause and names the missing field instead of printing
-  a wall of generated types. Prefer the framing **readable, root-cause-first, dramatically better
-  and actively improving**. **The concession has one canonical sentence, and every document that
-  names the tool copies it rather than rewording it: "`cargo cgp check` leads with the root cause
-  for the classes it recognizes, and the tool is a v0.1.0-alpha that does not yet reshape every
-  class."** The reasoning behind the concession lives once, in
-  [readers.md](readers.md#reading-the-error-messages).
-- **The CGP agent skill** — the published skill that teaches a coding assistant to read and write
-  CGP. Call it "CGP's agent skill" and describe what it does in those exact terms: it teaches an
-  agent the vocabulary, not the reader. Introduce it only where a cost is being discussed, per
-  [message.md](message.md#the-one-mitigation-that-spans-three-of-these), which is the one home of
-  the rule, and say what it reduces (wiring volume, error decoding, the vocabulary a newcomer has to
-  hold) rather than that it makes CGP easy.
+| Term | Meaning and introductory wording |
+| --- | --- |
+| **Context** | The type the implementation runs against. Identify its role and any fields or wiring it supplies; see the qualifiers below. |
+| **Component** | An interface for which a context can select a provider. Explain the generated consumer trait, provider trait, and component key when discussing the mechanism. |
+| **Trait** | The interface defined by a component, `#[cgp_fn]`, or getter. Use **method** or **operation** for what the caller invokes. |
+| **Consumer trait** | The trait callers use on the context. |
+| **Provider trait** | The trait a provider implements, with the context as an explicit parameter in the generated form. |
+| **Provider** | A named implementation a context can select. Explain its zero-sized marker type when relevant to the code or expansion. |
+| **Wiring** | A table selecting a provider for a component on a context. State that Rust resolves it at compile time. |
+| **Impl-side dependency** | A requirement declared by an implementation without adding it to the consumer interface. |
+| **Blanket trait** | A trait with a blanket implementation, including non-component traits generated by `#[cgp_fn]` or `#[blanket_trait]`. |
+| **Context-generic programming** | The paradigm's name. Introduce it beside a concrete description, after showing what it does. |
+
+Use “pluggable trait implementations at compile-time” in the lead descriptor, as specified in
+[identity.md](identity.md). “Pluggable” distinguishes implementation choice from ordinary reuse;
+“at compile-time” prevents a runtime-plugin interpretation. “Reusable” remains appropriate when
+describing actual provider reuse, but does not convey the whole distinction by itself.
+
+Choose a context gloss that matches the example. For a context whose fields supply values, use
+“the type the method runs on, which supplies the values it needs as its fields.” Shorten this to
+“the type the implementation runs against” when fields are irrelevant. An abstract-type trait can
+use “the type that implements the trait.” Once wiring is introduced, “the type that owns the wiring”
+can clarify that role. Use the environmental gloss below when the context represents application
+choices rather than the target value.
+
+Describe **cargo-cgp** as “CGP's error toolchain” and refer to its checking command as
+`cargo cgp check`. Explain the concrete failure it helps diagnose rather than promising uniformly
+clear errors. Copy this qualification unchanged wherever the tool's diagnostic benefit is discussed:
+
+> `cargo cgp check` leads with the root cause for the classes it recognizes, and the tool is a v0.1.0-alpha that does not yet reshape every class.
+
+The [error-reading guidance](readers.md#reading-the-error-messages) explains how to teach that
+workflow. Command syntax and availability belong in the [tool reference](../cgp/reference/cargo-cgp.md).
+
+Call the published assistant guidance **CGP's agent skill**. It teaches an assistant to read and
+write CGP; it does not remove the human reviewer's need to understand the code. Describe assistance
+with wiring, vocabulary, and diagnostics beside those costs, following
+[message.md](message.md#the-one-mitigation-that-spans-three-of-these).
 
 ## Qualifying a context and a target
 
-**"Context" is the most overloaded word in CGP's vocabulary, and unqualified use of it is the most
-reliable way to lose a reader who was following.** The problem is not that the term is imprecise,
-since it means exactly the type in the `Self` position, but that the same word covers two situations
-a reader experiences as opposites, and public writing moves between them without saying so.
+Identify what the context represents and what the operation acts on. These are separate questions,
+and the same method syntax can support different answers.
 
-Two qualifiers fix it, and both are needed because they answer independent questions.
+Use these terms for the context's role:
 
-- **Value context** — a context that *is* the data the trait's methods operate on. The `String` in
-  `String: CanEncode`, the `Rectangle` in `Rectangle: CanCalculateArea`. Introduce it as "here the
-  type being encoded is also the type that carries the wiring: one type doing both jobs".
-- **Environmental context** — a context that exists to carry wiring choices and implement the traits
-  providers rely on, rather than to be operated on. Introduce it as "a type that stands for this
-  application, which is where its choices live", or as "a type that stands for one set of choices"
-  when the context is not an application, and say in the same breath that
-  **it often has no fields at all**, since `struct AppA;` is a complete context, because a reader
-  meeting an empty struct with traits on it has no other way to guess what it is for. Use the
-  qualifier where the contrast with a value context matters, and plain "context" in running prose
-  once the reader knows which is in play.
-- **Application context** — the typical environmental context, one standing for a whole application.
-  Already the base's established compound, and the friendliest specific form.
-- **Environment** — a simile, never a term. Spend it once on the readers whose prior model it
-  matches, the Scala `given`, `Reader`-monad, and implicits audience, as
-  [related-work does](../related-work/implicit-parameters.md): "CGP's context *is* their implicit
-  environment, made a first-class, explicitly-wired type". Do not promote it: the paradigm is called
-  *context*-generic programming, every diagnostic says `__Context__`, and "environment"
-  leans runtime in a way [identity.md](identity.md) works hard to prevent.
+- **Value context:** The context is the data being operated on, as in `String: CanEncode` or
+  `Rectangle: CanCalculateArea`. Explain that one type is both the target and the context.
+- **Environmental context:** The context supplies implementation choices and the dependencies
+  providers use. Introduce it as “a type that stands for one set of choices.” It may be fieldless,
+  as in `struct App;`, or hold runtime values such as clients and settings.
+- **Application context:** An environmental context representing an application's choices.
+  Introduce it as “a type that stands for this application, where its choices live.”
 
-A second, independent qualifier describes the **component** rather than its context.
+Use “environment” only as an explained analogy for readers familiar with implicit parameters or
+similar systems. Keep “context” as the CGP term. State that provider selection is static even when
+a context carries runtime state; [implicit parameters](../related-work/implicit-parameters.md)
+develops that comparison.
 
-- **Self-targeted** — the trait's methods act on the `Self` type: `CanEncode`, `CanGreet`,
-  `HasErrorType`, every getter.
-- **Parameter-targeted** — the methods act on a type parameter while `Self` only decides:
-  `CanEncodeValue<Value>`, `CanCalculateArea<Shape>`.
+Use these qualifiers for the component's target:
 
-A parameter does not by itself make a component parameter-targeted. In `CanCompute<Code, Input>` the
-target is `Input` while `Code` is a **selector** the wiring dispatches on, and a component may carry
-both. The test is which type the methods act on. Note also that the labels describe the *consumer*
-trait: on the provider side both shapes carry the context (`Encoder<Context>` versus
-`ValueSerializer<Context, Value>`), so the distinction is invisible in an expansion.
+- **Self-targeted:** The operation acts on, or describes, the consumer's `Self` type. Examples
+  include `CanGreet`, `HasErrorType`, and getters.
+- **Parameter-targeted:** A type parameter identifies the target while the context selects the
+  implementation. Examples include `CanEncodeValue<Value>` and `CanCalculateArea<Shape>`.
+- **Selector:** A parameter used to choose an implementation rather than identify the input being
+  operated on. In `CanCompute<Code, Input>`, `Code` is a selector and `Input` is the target.
+
+A generic parameter alone does not make a component parameter-targeted. Explain the parameter's
+role from the operation. These labels describe the consumer interface; raw provider traits carry
+an explicit context parameter in either arrangement.
 
 ### Why the qualifiers are not jargon
 
-Some readers will resist being taught three shapes where they expected one idea, and the answer to
-that resistance is not to hide the distinctions but to show that
-**Rust already has them and simply never had to name them.** Vanilla Rust idiomatically supports
-exactly one of the three: a value context whose `Self` is the target. That is what
-`impl Display for String` is, and it is so dominant that a Rust programmer has no reason to notice
-it *is* one option among several.
+Use qualifiers where they explain a real choice in the example. Once the role is established,
+plain “context” is sufficient until that role changes. A page does not need a complete taxonomy
+before showing a method call.
 
-The other two shapes are legal in vanilla Rust and merely unrewarding, and neither pays until CGP
-makes their implementations reusable. **That is the case to make: CGP's contribution is not
-legalizing these shapes but making their implementations reusable, which turns each one into a
-technique.** Once all three are worth using, a reader needs to be able to say which one they are in,
-so the qualifiers are the names of choices that only became choices recently, not complexity CGP
-added. State it that way and the reader stops hearing jargon and starts hearing an answer to "why
-three?". The argument is built from code, step by step, in
-[readers.md](readers.md#a-type-can-stand-for-your-whole-application), and the
-[modularity hierarchy](../cgp/concepts/modularity-hierarchy.md) carries the full account and the use
-case for each shape.
+These arrangements are possible in ordinary Rust. CGP supplies reusable providers and wiring for
+selecting them; it does not make application types or parameter-targeted traits legal for the first
+time. The [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md) explains when the added
+selection is useful, and [readers.md](readers.md#a-type-can-stand-for-your-whole-application)
+explains how to introduce the arrangement through code.
 
 ### The confusions these qualifiers prevent
 
-Four specific misreadings recur, and each is worth recognizing in a draft, because every one of them is
-produced by *correct* prose that omitted a qualifier.
+State the role change beside the example that introduces it. These common ambiguities suggest
+what needs explaining:
 
-**"The context is `String`?"** A reader given the usual gloss (the type that owns the wiring, your
-application) and then shown `String` as a context concludes they have misunderstood something. The
-fix is not to avoid the word but to say once that at the retrofit shape the target and the context
-are the same type, and that the fully modular shape separates them. Told forwards, the coincidence
-explains itself; discovered by the reader, it reads as an inconsistency.
-
-**"So a dedicated context is *less* general?"** Hearing "this provider works with any context" and then
-"now we define a dedicated context" invites exactly the wrong inference. What widened is *who chooses*:
-the choice moved from the type, which gets one, to you, who can define as many contexts as you like.
-Say that explicitly rather than leaving the reader to infer a narrowing.
-
-**Two examples on the same tier feeling like opposites.** `Person: CanGreet` and `String: CanEncode`
-are both value contexts, and calling `Person` a context is unremarkable while calling `String` one
-is jarring. A reader who forms their model on one and then meets the other loses it, so an
-introductory example should say which shape it is rather than leaving the reader to generalize from
-a single case.
-
-**The silent shift from data to application.** This is the worst of the four, because nothing signals
-it: moving from `String: CanEncode` to a web application's `App: CanQueryUser` changes no signature and
-adds no parameter, yet `Self` has stopped being data and become an environmental context. A piece that
-crosses that line must say so in a sentence, or the reader simply notices at some point that they no
-longer know what a context is.
+| Possible reading | Clarification |
+| --- | --- |
+| “A context must represent the application, so how can it be `String`?” | In this example, the value itself is the context and carries the provider choice. |
+| “Defining a concrete context makes the provider less general.” | The provider stays generic; the concrete context selects one compatible implementation. Separate contexts can select differently. |
+| “`Person` and `String` have different CGP roles because only one is an application-defined struct.” | Both can be value contexts. Ownership of a type and its role as a context are separate questions. |
+| “`Self` still means the data after the example switches to `App: CanQueryUser`.” | Here `App` supplies the application's choices and dependencies; it is an environmental context. |
 
 ## Terms to defer, and how to reveal them
 
-Some accurate terms are barriers rather than vocabulary for a reader low on the
-[prerequisite ladder](readers.md#the-comprehension-barriers), and leading with one loses them before
-the value lands. Defer these and reveal each only when the reader has a reason to want it, matching
-the depth to the profile so the advanced reader gets the real word immediately.
+Introduce advanced terms when they answer the reader's question. Follow the
+[prerequisite guidance](readers.md#the-comprehension-barriers), and give an advanced audience the
+precise term without unnecessary simplification.
 
-- **Coherence** and the **orphan rule** — the reason the consumer/provider split exists, but a
-  theory the reader does not need in order to adopt CGP. Defer them behind the concrete pain and
-  introduce them, when at all, *through* that pain. A piece should never open on coherence, with one
-  deliberate exception: a talk or long-form essay whose whole subject is the coherence argument,
-  where the [RustLab transcript](../website/blog/rustlab-2025-coherence.md) shows how to build it up
-  sympathetically first.
-- **Blanket implementation**, **monomorphization**, **higher-ranked trait bound**, **`PhantomData`** —
-  the machinery under the ergonomic surface. Withhold from introductory material; when the
-  runtime-cost question makes monomorphization worth naming, introduce it as "the compiler generates
-  a direct call", not as jargon.
-- **`DelegateComponent`**, **`IsProviderFor`**, the **type-level table** — the mechanism, not the
-  model. Keep them out of a beginner's view and describe the table with the settings-map analogy;
-  bring the real traits in only for a reader reading an expansion or a compiler error.
+- **Coherence and the orphan rule:** Explain them through the implementation conflict or ownership
+  constraint at issue. An introduction for newcomers need not start there; a page about coherence
+  should explain the rules and their purpose directly.
+- **Blanket implementation:** Introduce it when explaining how one impl applies to all types
+  satisfying its bounds.
+- **Monomorphization:** Name it when discussing compilation or generated code. Distinguish generating
+  code for concrete types from the narrower claim that a call uses static dispatch.
+- **Higher-ranked trait bounds and `PhantomData`:** Explain their specific role when the example
+  requires them rather than adding them to an introductory glossary.
+- **`DelegateComponent` and `IsProviderFor`:** Introduce these while reading expansions or
+  diagnostics. A wiring table can be understood before its implementing traits are named.
+- **Type-level table:** Begin with the mapping from component to provider, then explain that types
+  and trait impls represent it when the mechanism matters.
+
+Deferring a term controls teaching order. It does not permit omitting syntax or behavior that a
+reference page must cover.
 
 ## Words and framings to avoid
 
-A handful of words reliably create the misunderstandings the section spends its effort preventing.
-The through-line is that vague or grand wording lets the reader supply the worst reading, while a
-precise, smaller claim forecloses it and survives scrutiny, and with this audience it persuades
-*because* it survives.
+Replace broad claims with the mechanism and its scope. These wording choices prevent specific
+misunderstandings:
 
-- Avoid **"magic"**, even admiringly, because this audience reads it as a warning. Say
-  **"explicit"**, and point at the wiring table and the declared dependencies.
-- Avoid **"automatically resolves", "finds", or "figures out"** the implementation. It is the single
-  most common misframing, and the one that undercuts the coherence-freedom story. Say the provider
-  is **"named explicitly, in one readable place"**.
-- Avoid flatly calling CGP **"a DI framework", "a reflection system",** or **"an effect system"**,
-  because each makes the reader expect runtime behavior CGP does not have. Qualify each as
-  **"compile-time, reflection-free dependency injection"**,
-  **"compile-time structural reflection"**, or
-  **"the dynamic-binding fragment of effect handlers"**, and state the distinguishing limit in the
-  same breath.
-- Avoid implying **any runtime component**, even a fast one. Say the wiring is
-  **"resolved at compile time and compiled to a direct call"**.
-- Avoid **"zero-cost abstraction"** as a lead outside a feature title; it is accurate but worn.
-  Prefer **"compiled to a direct call, with no vtable and nothing in the binary for a provider you
-  don't use"**.
-- Avoid **"blazingly fast"** and any unbenchmarked **"faster than"**. Say
-  **"there is no runtime cost to compare"**, which is honest and stronger.
-- Avoid **"no boilerplate"**. Say CGP **"moves the wiring into one readable place"**, because there
-  is wiring and the reader will find it.
-- Avoid **"replaces traits"** or **"a new language"**. Say **"a superset of ordinary traits"**,
-  **"a library on stable Rust"**, and **"an extension"**. The
-  [enhances-not-replaces frame](identity.md) is the project's core positioning, so this pair is more
-  than a wording preference.
-- Avoid **"reusable"** as the word for the novelty, because to a Rust reader traits are already the
-  reuse mechanism, so "reusable trait implementations" names nothing new. Say **"pluggable"**.
-- Avoid **"just"** in a competitor's description. "Just macros" and "just another DI framework" are
-  the reader's dismissals, not ours, and echoing them concedes the frame.
-- Avoid **coining a new term for a distinction the list above already names.** The recorded lesson
-  is specific: readers said "context-generic programming" obscures more than it conveys, so a second
-  or third coinage costs more attention than it wins, however well it compresses the idea for
-  whoever coined it. When a piece needs to talk about whether a design absorbs variation into one
-  type or separates it across several, the plain phrasings carry it with nothing to look up:
-  **"a type that stands for one set of choices"**, **"you already have two applications"**,
-  **"which variations are worth their own type"**.
-- Avoid **"capability"** for what a component, a `#[cgp_fn]` function, or a getter defines, for what
-  `#[uses]` imports, and for the non-component blanket traits `cargo-cgp` recognizes. The word is
-  overloaded: it names a different thing in the object-capability model, where a capability is an
-  unforgeable reference that grants authority, and in the Rust
-  [context-and-capabilities](evidence.md#the-conversations-that-draw-attention) proposal and in
-  effect systems, where it is an ambient value a function declares it needs. Used for CGP's own
-  construct it invites the authority reading, which CGP cannot honor, since a declared trait bound
-  is not a sandbox. Say **"trait"** for the interface, **"method"** or **"operation"** for the thing
-  a caller invokes, **"trait dependency"** or **"the traits the body calls on `self`"** for what
-  `#[uses]` imports, **"a supertrait that contributes methods"** for what `#[extend]` adds, and
-  **"blanket trait"** for a `#[cgp_fn]` or `#[blanket_trait]` trait that is not a component. Do not
-  use it for what CGP offers as a product either, because a reader cannot tell that sense from the
-  construct sense in the same document: say **"feature"** for a front-page title and **"strength"**
-  for what a piece advertises. The word stays in use for the *other* paradigms, in
-  [related-work](../related-work/README.md) and [evidence.md](evidence.md), where it names their
-  construct and can then serve as a bridge: what context-and-capabilities calls a capability, CGP
-  expresses as a trait bound on the context. The
-  [capabilities](../related-work/capabilities.md) comparison separates the senses of the word and
-  gives the concise framing to use with a reader who knows one of them.
-- Avoid overstating maturity. **"Works on stable Rust today"** is true and worth saying, while
-  **"production-proven at scale"** needs evidence the evaluator will notice is missing.
-- Avoid calling CGP's errors **"solved", "fixed",** or **"now as clear as any other Rust error's"**.
-  Say a dedicated checker **"leads with the root cause"** for the classes it recognizes, and concede
-  the **v0.1.0-alpha**, in the canonical sentence given under `cargo-cgp` above.
-- Avoid **"AI-native", "AI-first", "built for the age of AI"**, and any framing that makes agent
-  support part of what CGP *is*. CGP is a language extension whose costs happen to be mechanical;
-  that is a fact about the costs, not an identity, and a reader who meets the identity version files
-  the project under trend-chasing and stops. Say **"CGP publishes an agent skill, and the wiring and
-  the diagnostics are the parts an assistant handles well"**, and say it beside the cost rather than
-  in a hook. Avoid too the implied promise that **"an agent writes the wiring for you"**, because
-  the wiring is still code somebody reviews.
-- Avoid letting **"AI-assisted"** cover two different claims. *CGP works well with coding agents* is
-  about the technology and belongs beside a cost, per [message.md](message.md); *CGP is partly built
-  by coding agents* is about the project's provenance and belongs on the site's disclosure page, per
-  [ai-disclosure.md](ai-disclosure.md). Use wording that says which, **"CGP ships an agent skill"**
-  for the first and **"this page was written by an AI agent from a public knowledge base"** for the
-  second, because a sentence that could mean either makes the first claim read as an excuse for the
-  second.
+| Avoid | Prefer, with the relevant qualification |
+| --- | --- |
+| “Magic” | Name the macro expansion, wiring entry, or declared dependency. |
+| “Finds the right implementation” or “figures out what you need” | The context selects a provider through explicit wiring or declared defaults. The compiler resolves that selection. |
+| “A DI framework” as an unqualified description | Compile-time dependency selection through Rust traits. CGP does not provide a runtime object container or lifecycle manager. |
+| “A reflection system” without scope | Compile-time structural reflection for types exposing their shape. It does not provide arbitrary runtime introspection. |
+| “An effect system” without scope | State the fragment being compared and its limits, following [algebraic effects](../related-work/algebraic-effects.md). CGP does not capture continuations. |
+| “Zero-cost” as an unexplained performance claim | Provider selection resolves at compile time without a runtime table lookup. The selected code still performs its own work. |
+| “Blazingly fast” or an unmeasured “faster than” | Describe static dispatch. Use measurements for claims about execution speed, compilation, or binary size. |
+| “No boilerplate” | Wiring records provider choices in a table. State what declarations and checks remain. |
+| “Replaces traits” or “a new language” | A language extension implemented as a library on stable Rust, using ordinary traits and impls. |
+| “Just” in a description of another tool | Describe what that tool does and where it is useful. |
+| “Production-proven at scale” without evidence | State the verified use, supported toolchain, and known limits. |
+| “Errors are solved” | Use the canonical cargo-cgp qualification above and show actual diagnostic output. |
+| “AI-native,” “AI-first,” or “built for the age of AI” | CGP publishes an agent skill. Discuss its help beside the costs it can reduce. |
 
-Sentence-level habits to avoid, such as adjective inflation, hedge stacking, corporate "we", and
-invented evidence, are a separate list and live in [voice-and-register.md](voice-and-register.md),
-because they concern how the prose sounds rather than whether it is accurate.
+Keep runtime-cost claims specific to provider selection. A context may contain runtime values or
+trait objects, a provider may allocate, and a handler may perform I/O. Static wiring does not remove
+those costs or guarantee a particular benchmark or binary size. “Zero-cost abstraction” can remain
+a feature title when the accompanying text explains what is eliminated.
+
+Do not use **capability** for CGP's constructs or product claims. The term has distinct meanings in
+object-capability models, context-and-capabilities proposals, and effect systems. A CGP trait bound
+does not establish a security boundary. Use the word appropriate to the subject:
+
+- **Interface:** Trait or consumer trait.
+- **Invocation:** Method or operation.
+- **`#[uses]` requirement:** Trait dependency or bound on the context.
+- **`#[extend]` relationship:** A supertrait that contributes methods.
+- **Non-component `#[cgp_fn]` or `#[blanket_trait]` interface:** Blanket trait.
+- **Product description:** Feature or strength.
+
+Retain “capability” when accurately describing another system's construct. The
+[capabilities comparison](../related-work/capabilities.md) separates those meanings and their limits.
+
+Keep assistant support separate from AI authorship. “CGP ships an agent skill” describes help for
+people using CGP. “An AI agent wrote this page from the knowledge base” describes provenance.
+Use [ai-disclosure.md](ai-disclosure.md) for the latter; “AI-assisted” alone may leave the role unclear.
+Neither claim promises that generated code can bypass review.
+
+Avoid inventing terms for distinctions ordinary wording already expresses. Phrases such as “a type
+that stands for one set of choices” and “which variations need separate types” can explain a design
+without adding another named abstraction. Use existing context and target qualifiers where useful.
+
+Sentence-level issues such as stacked hedges and decorative phrasing belong in
+[writing-styles.md](writing-styles.md); voice and tone belong in
+[voice-and-register.md](voice-and-register.md).
 
 ## The name, and the community's bridge terms
 
-The project's own name needs its own rule, because it is the term most likely to be misused as a
-pitch. Never ship **"context-generic programming"** as a standalone hook: it is opaque on first
-contact, and this is observed rather than hypothetical, since readers in CGP's own release
-discussions said the phrase obscures more than it conveys and reached instead for "structural
-typing" or "duck typing for statically-typed code" to name what they thought it was
-([evidence.md](evidence.md)). Always pair the name with a plain descriptor, and treat those
-community-supplied phrases as *bridge terms* for body copy: useful for meeting a reader where they
-are, but qualified, because CGP is nominal-and-wired rather than truly structural and a precise
-reader will catch an unqualified "structural typing".
+Pair “context-generic programming” with a plain description on first contact. The
+[reception summary](evidence.md#cgps-own-reception-and-the-lessons-in-it) records readers finding the
+name unclear and using familiar terms to interpret it. That finding supports explaining the name;
+it does not establish that every reader reacts the same way.
+
+Use terms such as “structural typing” or “duck typing” only as qualified comparisons. They can help
+readers recognize code written against required operations, but CGP still uses nominal Rust traits
+and explicit wiring. Do not turn a useful resemblance into a claim that Rust's type system changed.
 
 ## The vocabulary of the craft
 
-The rest of this document defines the non-technical terms of art the section uses, each anchored to an
-intuition a systems programmer already holds, so a reader fluent in CGP and new to marketing never has
-to guess what a word means. None of it is difficult or secret; it is a separate discipline with its
-own words, and this is the word list. Treat each analogy as a handhold rather than an equation.
+These terms name recurring decisions in communication. Use their plain meanings rather than
+requiring readers to learn marketing vocabulary to follow the guidance.
 
 ### The parts of a piece
 
-Every piece of public writing is built from a small set of named parts, and naming them once is what
-lets the playbooks in [formats.md](formats.md) stay short.
+Use these names to discuss a page's structure:
 
-- **Hook** — the opening line whose only job is to make the reader read the next line. It is the
-  fast path of a piece: nearly every reader hits it, most go no further, so if it is slow or unclear
-  nothing downstream ever runs.
-- **Tag line** — the compressed, one-line description of the whole project, usually the first thing
-  a reader learns and sometimes the only thing. It is the project's `--help` summary line. CGP's is
-  settled in [identity.md](identity.md).
-- **Subline** — the second line beneath a hook or tag line, carrying the honest mechanism the hook
-  left out. The hook earns the click; the subline heads off the reader's first objection before it
-  forms.
-- **Call to action (CTA)** — the single next step the piece asks for. Offer exactly one, the way a
-  good CLI has one obvious default action: a reader handed five next steps takes none.
-- **Above the fold** — what a reader sees before scrolling, borrowed from the top half of a folded
-  newspaper. On a landing page it must carry the tag line and ideally runnable code, because many
-  readers judge from it alone.
+- **Hook:** An opening that gives the reader a reason to continue, usually through a concrete
+  problem or benefit.
+- **Tag line:** A short description of the project, like a command's summary in `--help`.
+  [Identity.md](identity.md) fixes CGP's wording.
+- **Subline:** A supporting line beneath the opening that explains the mechanism or scope.
+- **Call to action (CTA):** The next step a piece asks the reader to take. Give a focused
+  announcement one primary action; a documentation index may route readers by task.
+- **Above the fold:** The part of a page visible before scrolling. Make the purpose clear there
+  without assuming a fixed screen size.
 
 ### Getting attention and choosing the category
 
-- **Positioning** — the deliberate choice of the category a reader files you under, made before they
-  choose a dismissive one ("oh, it's a DI framework"). A reader pattern-matches a new tool within
-  seconds, so positioning is picking that match for them. CGP's is decided in five steps in
-  [identity.md](identity.md#the-positioning-in-the-order-it-was-decided).
-- **Framing** — the choice of angle and wording that decides how a reader reacts to a fact that is
-  true either way. "Overlapping instances made safe" and "clever type-system trickery" describe the
-  same feature; the frame is the message, not a decoration on it.
-- **Value proposition** — the one-sentence answer to "what do I get, and why should I care?", stated
-  as a benefit rather than a feature list. If a reader cannot state it after your opening, the call
-  returned nothing.
-- **Differentiation** — what CGP does that the obvious alternative cannot. A reader who sees no
-  difference keeps what they have.
+These terms describe how a piece presents its subject:
+
+- **Positioning:** Choosing how to describe a tool's category and relevant differences.
+  [Identity.md](identity.md) sets CGP's positioning.
+- **Framing:** Selecting an accurate angle and wording for a fact, such as explaining provider
+  choice through a testing problem or a coherence problem.
+- **Value proposition:** A concise answer to what the reader gains and why it matters for their task.
+- **Differentiation:** A relevant difference from an alternative. State the use case and costs;
+  a difference is not automatically an advantage.
 
 ### Reaching people at scale, and sounding like one project
 
-- **Channel** — where a piece appears: Lobsters, the Rust subreddit, a conference talk, a thread,
-  the README. Each has its own audience, patience, and etiquette, so the channel is chosen before
-  the words; [evidence.md](evidence.md) records where CGP's readers actually gather.
-- **Curse of knowledge** — the expert's built-in inability to feel what a beginner does not yet
-  know, which makes deep CGP fluency the biggest risk to explaining CGP well. It is the reason a
-  compiler author writes the error message only they can read. It is answered construct by construct
-  in [readers.md](readers.md#the-comprehension-barriers).
-- **Message discipline** (or **one voice**) — using the same word for the same idea in every piece,
-  so scattered posts reinforce one another. It is API stability for prose.
-- **Clarity over completeness** — the rule that one idea a reader keeps beats five they forget. It
-  fights the specification writer's instinct, where completeness is the virtue. Note the
-  CGP-specific qualification in [voice-and-register.md](voice-and-register.md): this governs the
-  *entry* to a piece, not its depth, since long-form depth is part of the project's voice.
+These terms guide distribution and consistency:
+
+- **Channel:** Where a piece appears, such as a README, conference, or discussion forum.
+  Match its audience and conventions; [evidence.md](evidence.md) records the project's experience.
+- **Curse of knowledge:** The difficulty experts have recognizing what an unfamiliar reader still
+  needs explained. Explicit prerequisites and reader feedback help test those assumptions.
+- **Message discipline:** Using consistent words and claims across pieces so readers can connect
+  them. It serves a similar purpose to stable names in an API.
+- **Clarity over completeness:** Focus the opening on an understandable idea. This governs the
+  entry to a piece, not permission to omit required depth or reference coverage.
 
 ### Earning and keeping trust
 
-- **Social proof** — evidence from other people, especially peers and real running systems, that
-  persuades where self-praise cannot. A developer believes another developer's working code far more
-  than any adjective.
-- **The funnel** (and **conversion**) — the staged path a reader travels from first hearing of CGP
-  to advocating for it: heard-of, curious, trying, adopting, advocating. Readers drop out at every
-  stage, and a conversion is one reader taking the next step. Each stage wants a different call to
-  action, which is the conversion ladder the [formats.md](formats.md) playbooks end on.
-- **Show, don't tell** — demonstrate a strength with running code rather than assert it with an
-  adjective, because this audience trusts what it can run.
-- **The pile-on** (and **dunking**) — a public group dismissal, where a technical community turns on
-  a post it reads as arrogant or dishonest. The defence is the same as the honest move: claim only
-  what is true, and never disparage another tool to elevate CGP.
+Use these terms with evidence rather than predictions about every reader:
+
+- **Social proof:** Evidence from others' use, work, or reports that helps a reader assess a claim.
+  Cite only verified examples and respect the rules for discussing reactions to CGP.
+- **Funnel:** A model of stages from hearing about a tool to trying, using, and recommending it.
+  It describes possible paths rather than a required sequence for every reader.
+- **Conversion:** A reader taking a defined next step. A click, working example, and adoption are
+  different outcomes and must not be counted as the same result.
+- **Show, don't tell:** Demonstrate a claim with a checkable example instead of relying on praise.
+- **Pile-on and dunking:** Group dismissal or mocking replies in public discussion. Avoid
+  anticipating hostility as the reader's default; respond with accurate claims and fair comparisons.
 
 ## Keeping the list in sync
 
-Because this document consolidates wording rules the others also apply, the coupling runs both ways.
-When a rule changes here, check the phrasings in [message.md](message.md), the feature titles in
-[identity.md](identity.md), the word table in [messaging-brief.md](messaging-brief.md), and the
-register list in [voice-and-register.md](voice-and-register.md), because a writer told to prefer a
-phrase in one place must never be warned against it in another. When a CGP construct is renamed or a
-feature changes, the terms here are bound by the
-[synchronization rule](../AGENTS.md#the-synchronization-rule) exactly as a reference document is.
-And when you meet a term of the craft that is not defined above, add it in the same change and in
-the same shape, a plain definition and a programmer's anchor, so this stays the section's single
-home for the vocabulary.
+Check related guidance when terminology changes. [Message.md](message.md), [identity.md](identity.md),
+[messaging-brief.md](messaging-brief.md), and [voice-and-register.md](voice-and-register.md) must use
+compatible wording. Keep this document as the home of definitions and link to it rather than
+maintaining competing glossaries.
+
+Verify construct descriptions against the library and skill under the
+[synchronization rule](../AGENTS.md#the-synchronization-rule). Add a communication term here when
+another document needs it, with a brief definition and an example or analogy only if useful.
