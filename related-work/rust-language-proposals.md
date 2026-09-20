@@ -468,6 +468,11 @@ problem they have.
 
 ## Sources
 
+The public version of this document is the website's
+[rust-language-proposals comparison page](https://contextgeneric.dev/docs/comparisons/rust-language-proposals), ported per the
+[comparison page guide](../website/writing-guides/related-work.md); a change here updates that page
+in the same change.
+
 The account of the related work draws on the Rust Reference and RFCs, the specialization tracking
 issue, the design posts by Boxy, Nadrieril, and Tyler Mandry, the Cairo book, and the knowledge base's
 record of CGP's author's own engagement with the discussion. The CGP snippets are taken from the

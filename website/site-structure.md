@@ -627,6 +627,103 @@ construct and showing one use is explanation, listing its accepted forms is refe
 that construct's page. And **do not drop the cost section**; it is what the least credulous readers
 come for, and it is the first thing a well-meaning trim targets.
 
+## Comparisons
+
+- **URL** — <https://contextgeneric.dev/docs/comparisons/>
+- **Source** — [docs/comparisons/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/comparisons)
+- **Status** — Current: the index and all eleven pages are written, each with its `example-code` mirror
+- **How it was made** — ported by an agent from [related-work/](../related-work/README.md); level one
+  of the four in [ai-disclosure.md](../communication-strategy/ai-disclosure.md). The author's read of
+  each page's two judging sections, per the
+  [authorship rule](AGENTS.md#who-drafts-a-page-and-who-reads-it-before-it-publishes), is outstanding.
+
+### What it covers
+
+Comparisons is the section for a reader who arrives knowing a related idea and wants CGP placed in it:
+one page per internal related-work document, eleven in all, plus a hand-written index that routes by
+the reader's background. It is a top-level category at `docs/comparisons/`, labelled *Comparisons*, at
+position 5 between Concepts and Reference; adding it moved Reference, `cargo-cgp`, AI, Resources, and
+Contribute down one position each. The page type is specified in
+[writing-guides/related-work.md](writing-guides/related-work.md), and every page follows its shape: an
+orientation paragraph with the settled descriptor, an *In your terms* table that glosses "context" on
+first use, a compressed refresher of the compared idea, the CGP side beside it, a section on what each
+approach costs carrying the canonical `cargo cgp check` sentence, a section on where the other tool is
+the better choice, a section on what to expect that differs, onward routing, Sources opening with the
+toolchain sentence, and the provenance note in the comparison variant.
+
+The sidebar order is the order the internal catalog uses: the two pages a Rust reader compares CGP to
+first (*Rust's own proposals*, *Policy-based design*), then the type-theoretic family (*Type classes*,
+*ML modules*, *Implicit parameters*, *Algebraic effects*, *Row polymorphism*), then *Dependency
+injection*, *Dynamic dispatch*, *Reflection*, and *Capabilities*.
+
+The section's inbound links come from the Concepts tier. Fourteen concept pages end their *Where to go
+next* list with one entry per comparison that reads their idea against another paradigm, labelled
+*Comparison:* so a reader can tell it from the neighbouring concept and reference links; the four
+concept pages with no natural comparison (*Dispatching*, *Monadic handlers*, *Type-level DSLs*, and
+*Recovering `Send` bounds*) carry none.
+
+### How it relates to the knowledge base
+
+Each page is derived from the internal document of the same name under
+[related-work/](../related-work/README.md), which stays the source of truth and now carries a note
+under its Sources heading naming the page it feeds. The port applied the guide's four transformations.
+The internal *Presenting CGP to someone who knows this* sections were retired and applied as structure:
+their vocabulary maps became the *In your terms* tables and their corrected expectations became the
+*What to expect that differs* sections. The concept refreshers were compressed. Every internal link was
+re-pointed to a Concepts, reference, tutorial, or blog page, and the two documents that drew on the
+[unpublished incoherent-Rust draft](blog/incoherent-rust-today.md) state those points as the project's
+analysis or attribute them to the [RustLab transcript](blog/rustlab-2025-coherence.md), with no
+citation of the draft. Sources sections were kept.
+
+Two adaptations to the CGP code are worth recording, because a later synchronization of an internal
+document will find its snippets differ from the page's. **The encoder pair replaces `cgp-serde`'s
+providers.** Where the internal type-classes, implicit-parameters, and Rust-proposals documents show
+`UseSerde` and `SerializeBytes` on `cgp-serde`'s `ValueSerializer`, the pages show `EncodeWithDisplay`,
+`EncodeBytes`, and `EncodeAsHex` on the `CanEncode<Value>` component from
+[message.md](../communication-strategy/message.md#the-problems-cgp-removes), which is the site's shared
+running example and compiles without a `serde` dependency. **The reflection page's worked example is a
+local field writer**, `WriteFields` over a `FieldsWriter` recursion producing a JSON-like string,
+modeled line for line on `cgp-serde`'s `SerializeFields` and linking to it, rather than a quotation of
+the crate's source. The local `cgp-serde` checkout depends on `cgp` `0.7.0`, so the verification crate
+cannot depend on it beside `0.8.0-alpha` without two `cgp` versions, and a page whose snippet the crate
+cannot compile would break the rule that every snippet is checked. The dynamic-dispatch page's
+namespace example likewise uses the [namespaces concept](../cgp/concepts/namespaces.md)'s compiled
+open-slot shape rather than the internal document's `@cgp.core.error => @app` redirect.
+
+The foreign-language snippets are taken verbatim from the internal documents, whose Sources sections
+record the toolchain each was compiled with; the pages repeat that sentence. No foreign snippet was
+recompiled for the port.
+
+The context shapes are stated on every page in prose beside the code, per the standing rule. The
+encoder pair wires environmental, parameter-targeted contexts (`ApiServer`, `Firmware`, `AppA`,
+`AppB`); the greeter and error examples wire environmental, self-targeted ones; the area, rectangle,
+person, and cast examples wire value contexts.
+
+### Where it diverges
+
+Nothing on the pages is stale at the time of writing, and two things will decay on their own. The
+reflection page describes Rust's nightly `type_info` API and its tracking issue, both read on the day of
+writing and marked unstable on the page; a revision re-reads
+[tracking issue #146922](https://github.com/rust-lang/rust/issues/146922) and the project goal. And
+every page pins the toolchain versions that compiled its foreign snippets (GHC 9.10, Scala 3.8.4, OCaml
+5.5.0, Koka 3.2.3, Flix 0.76.0, Zig 0.16, PureScript 0.15.15, Agda 2.8.0, Lean 4.34.0, GCC 15.3,
+`cap-std` 3), which the internal documents own and which move when a language does.
+
+### Maintaining it
+
+The section is bound to the internal related-work documents by the
+[synchronization rule](../AGENTS.md#the-synchronization-rule) in both directions, and to the compared
+tools by the same rule: a change to how Scala resolves a `given` or to Rust's reflection API updates the
+internal document and the page together. The CGP code on every page has a mirror in the website
+repository's `example-code/tests/comparisons/`, one file per page, with the RFC 1210 specialization
+snippet pinned as a compile-fail fixture that confirms it is rejected on stable.
+
+Three things a revision must not do. **Do not reintroduce positioning prose**: a sentence telling the
+reader which of their intuitions to build on belongs to the internal document. **Do not soften the
+section where the other tool wins**, and do not fold it into the costs. And **do not let a sentence
+about another community's tool read as mockery**, however faithfully the internal document records the
+complaint; attribute the opinion with its citation or cut it.
+
 ## Reference
 
 - **URL** — <https://contextgeneric.dev/docs/reference/>
@@ -639,7 +736,7 @@ come for, and it is the first thing a well-meaning trim targets.
 ### What it covers
 
 The reference is the site's largest surface and is [canonical](writing-guides/reference.md) rather than
-a supplement to docs.rs. It is a new top-level category at `docs/reference/`, position 5, with a
+a supplement to docs.rs. It is a new top-level category at `docs/reference/`, position 6, with a
 hand-written index as its category link and seven subdirectories mirroring what a construct *is*: `macros/`, `attributes/`, `derives/`,
 `components/`, `providers/`, `traits/`, and `types/`. The groups with a written Overview page
 (`macros/`, `attributes/`, `derives/`, and `providers/`) link to it as their category page, and the
@@ -1127,12 +1224,12 @@ The reference is bound to the internal documents by the
 updates the code, the internal document, and the public page. A public page that disagrees with its
 internal document is a defect in the public page.
 
-One ordering wrinkle is outstanding rather than settled, and it is smaller than it used to be. Adding
-Concepts at position 4 pushed AI to 6, so Reference at position 5 now sits where
+One ordering wrinkle is outstanding rather than settled, and it is smaller than it used to be. With
+Concepts at position 4 and Comparisons at 5, Reference at position 6 sits where
 [information-architecture.md](information-architecture.md#navigation-and-sidebar-order) wants it —
-after Tutorials and Concepts. What remains is that AI at 6 precedes Resources at 8 and Contribute at 9,
-where the intended order puts AI last. Renumbering the existing sections belongs to the orientation and
-front-page work rather than to the port, so it is left alone here.
+after Tutorials, Concepts, and Comparisons. What remains is that AI at 8 precedes Resources at 9 and
+Contribute at 10, where the intended order puts AI last. Renumbering the existing sections belongs to
+the orientation and front-page work rather than to the port, so it is left alone here.
 
 ## AI disclaimer
 

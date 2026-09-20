@@ -344,6 +344,11 @@ conclusion, and the reader who values static safety will read it as a feature ra
 
 ## Sources
 
+The public version of this document is the website's
+[dependency-injection comparison page](https://contextgeneric.dev/docs/comparisons/dependency-injection), ported per the
+[comparison page guide](../website/writing-guides/related-work.md); a change here updates that page
+in the same change.
+
 The account of the related work draws on the official framework documentation and representative
 community writing. The CGP snippets are taken from the [social media app](../examples/social-media-app.md)
 and [profile picture](../examples/profile-picture.md) examples.

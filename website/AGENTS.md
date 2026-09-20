@@ -262,8 +262,7 @@ anywhere else. The disclosure page is on the list for a different reason: a wron
 false claim about the project rather than about CGP, and it is the page whose entire value is that it is
 accurate. The comparison sections are on it because they speak about other communities' tools, and a
 sentence that reads as disparagement there costs the project more than any wrong claim about CGP.
-Because the comparison pages land after the relaunch, the public disclosure page states this part of the
-arrangement in the same change that publishes the first of them, not before.
+The public disclosure page states this part of the arrangement alongside the rest.
 
 This list is the authoritative one, and it is quoted elsewhere — in
 [tasks.md](tasks.md) and in

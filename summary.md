@@ -718,7 +718,8 @@ it stale.
   publish the agent skill from its own repository, and the `example-code/` crate that holds the compiled
   counterparts of the code the site shows, plus one entry each for the front page, Introduction,
   Overview, Resources, Contribute, the `cargo-cgp` tooling section, the AI skills section and its
-  `cgp-skills` submodule, the Concepts section, the Reference section, and the AI disclaimer.
+  `cgp-skills` submodule, the Concepts section, the Comparisons section, the Reference section, and the
+  AI disclaimer.
 
 ### `website/writing-guides/` — how new pages should be written
 
@@ -755,8 +756,8 @@ it stale.
   internal related-work documents: the four transformations of the port (retire the positioning section
   and apply it as structure, compress the refresher, re-point every link, keep Sources), the page shape
   from the *In your terms* table to the section where the other tool wins, the rules for writing about
-  another community's tool, code verification in two languages, the index, and the post-release
-  placement after Concepts under the label *Comparisons*.
+  another community's tool, code verification in two languages, the index, and the placement after
+  Concepts under the label *Comparisons*.
 
 ### `website/blog/` — one document per published post
 

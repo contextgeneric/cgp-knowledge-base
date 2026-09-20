@@ -403,6 +403,11 @@ through a plugin will hear the trade as a good one.
 
 ## Sources
 
+The public version of this document is the website's
+[dynamic-dispatch comparison page](https://contextgeneric.dev/docs/comparisons/dynamic-dispatch), ported per the
+[comparison page guide](../website/writing-guides/related-work.md); a change here updates that page
+in the same change.
+
 The account of the related work draws on standard references for dynamic dispatch and object models,
 the primary literature on prototype-based programming, and cited community writing for sentiment. The
 CGP snippets are drawn from the knowledge base's [aggregate providers](../cgp/concepts/aggregate-providers.md),

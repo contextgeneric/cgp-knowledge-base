@@ -380,6 +380,11 @@ afternoon debugging an implicit resolution will hear the trade as a good one.
 
 ## Sources
 
+The public version of this document is the website's
+[implicit-parameters comparison page](https://contextgeneric.dev/docs/comparisons/implicit-parameters), ported per the
+[comparison page guide](../website/writing-guides/related-work.md); a change here updates that page
+in the same change.
+
 The account of the related work draws on the official language documentation, primary references on
 type-class semantics, and community writing on the ergonomics of implicits. The Haskell snippets were
 compiled with GHC 9.10 and the Scala snippets with Scala 3.8.4.

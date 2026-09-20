@@ -481,6 +481,11 @@ will hear the trade as considered rather than as a shortfall.
 
 ## Sources
 
+The public version of this document is the website's
+[algebraic-effects comparison page](https://contextgeneric.dev/docs/comparisons/algebraic-effects), ported per the
+[comparison page guide](../website/writing-guides/related-work.md); a change here updates that page
+in the same change.
+
 The account of the related work draws on the primary research literature on algebraic effects and their
 compilation, the official documentation of Koka, OCaml, and Flix, and cited community writing for
 sentiment. The Koka `ask` snippet was compiled with Koka 3.2.3 and the `choice` handler follows the

@@ -492,6 +492,11 @@ rule against it stands.
 
 ## Sources
 
+The public version of this document is the website's
+[capabilities comparison page](https://contextgeneric.dev/docs/comparisons/capabilities), ported per the
+[comparison page guide](../website/writing-guides/related-work.md); a change here updates that page
+in the same change.
+
 The account of the related work draws on the primary literature of the object-capability model, the
 documentation of the systems and languages that implement it, the effects-as-capabilities papers and
 the Scala reference, and the Rust community's own writing. The `cap-std` snippets were compiled with

@@ -395,6 +395,11 @@ lets it host the overlapping implementations coherence would forbid.
 
 ## Sources
 
+The public version of this document is the website's
+[ml-modules comparison page](https://contextgeneric.dev/docs/comparisons/ml-modules), ported per the
+[comparison page guide](../website/writing-guides/related-work.md); a change here updates that page
+in the same change.
+
 The account of the related work draws on the OCaml documentation, the primary literature on ML modules
 and their relationship to type classes, and the modular-implicits proposal and its implementation. The
 OCaml snippets were compiled with OCaml 5.5.0; the CGP snippets are drawn from the knowledge base's

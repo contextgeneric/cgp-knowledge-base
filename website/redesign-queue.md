@@ -155,15 +155,6 @@ source-code changes its tracked repository needs first. Two of those lists conta
 **adopting `#[uses]` and `#[implicit]` in `hypershell` and `cgp-examples/builder`**, and **publishing a
 `CgpSerdeNamespace`**, which is a library improvement rather than a documentation convenience.
 
-**A comparison section** — twelve pages under `docs/comparisons/`, labelled *Comparisons*, one per
-internal [related-work](../related-work/README.md) document, for the reader who arrives knowing type
-classes, dependency injection, ML modules, effects, or another related idea and wants CGP placed in it.
-Like the deep dives, **these land after the v0.8.0 relaunch**, and like the blog post below they are
-new content rather than a redesign defect, listed so the queue does not lose track of them. The
-[readers](../communication-strategy/readers.md#readers-by-prior-mental-model) they serve currently have
-no page on the site written for them. *Spec in
-[writing-guides/related-work.md](writing-guides/related-work.md); tasks W1–W4 in [tasks.md](tasks.md).*
-
 **A blog post on implicit type arguments** — the framing that an abstract type is an implicit *type*
 argument, so a type dependency stops being a parameter every layer threads. It is a `deepdive` rather
 than a release note: abstract types date to v0.3.0 and `#[use_type]` to v0.7.0, so putting it in the

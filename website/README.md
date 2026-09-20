@@ -46,14 +46,16 @@ of the `/cgp` agent skill beside the disclosure page. It also holds the redesign
 sections, both mirroring a catalog in this base one page at a time — **Concepts** at `docs/concepts/`,
 the explanation tier drawn from [cgp/concepts/](../cgp/concepts/README.md), and **Reference** at
 `docs/reference/`, the canonical construct reference drawn from
-[cgp/reference/](../cgp/reference/README.md). Both are scaffolded in full and being filled in. The
+[cgp/reference/](../cgp/reference/README.md). A third mirrored section, **Comparisons** at
+`docs/comparisons/`, ports the [related-work](../related-work/README.md) documents for readers who
+arrive knowing another paradigm. All three are written in full. The
 **`blog/` tree** holds every announcement, release note, deep dive, and talk transcript, each with an
 author and a tag drawn from a fixed set (`release`, `deepdive`, `walkthrough`). The **front page and
 static assets** live under `src/` and `static/`.
 
 This section mirrors that shape: [site-structure.md](site-structure.md) covers the configuration, the
-navigation, and every non-blog, non-tutorial page, including one entry each for Concepts and
-Reference; [blog/](blog/README.md) holds one document per blog post; and
+navigation, and every non-blog, non-tutorial page, including one entry each for Concepts,
+Comparisons, and Reference; [blog/](blog/README.md) holds one document per blog post; and
 [tutorials/](tutorials/README.md) holds one document per tutorial series. That mirroring describes the
 site as it stands; [information-architecture.md](information-architecture.md) describes the shape it is
 being rebuilt toward, which differs.

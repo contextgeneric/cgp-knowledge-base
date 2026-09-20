@@ -488,6 +488,11 @@ kind, opt-in per type so the complexity and the error-message tax are paid only 
 
 ## Sources
 
+The public version of this document is the website's
+[row-polymorphism comparison page](https://contextgeneric.dev/docs/comparisons/row-polymorphism), ported per the
+[comparison page guide](../website/writing-guides/related-work.md); a change here updates that page
+in the same change.
+
 The account of the related work draws on official language documentation, the primary research
 literature on row types, and cited community writing for sentiment. The PureScript snippet was compiled
 with PureScript 0.15.15 against the prelude and the OCaml snippet with OCaml 5.5.0; the CGP snippets are

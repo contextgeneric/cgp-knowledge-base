@@ -13,7 +13,7 @@ this guide fixes what changes in the port.
   [voice-and-register.md](../../communication-strategy/voice-and-register.md)
 - **Derived from** — [related-work/](../../related-work/README.md), one internal document per page,
   which stays the source of truth
-- **Scale** — twelve pages plus a hand-written index, landing after the v0.8.0 relaunch
+- **Scale** — eleven pages plus a hand-written index, shipped with the v0.8.0 relaunch
 - **Records** — one entry in [site-structure.md](../site-structure.md) for the whole section, per
   the [ported-catalog exception](../AGENTS.md#registering-a-document)
 
@@ -247,14 +247,13 @@ Page titles use the compared concept's name, because that is what the reader sea
 [formats.md](../../communication-strategy/formats.md#titles-first-lines-and-search) prescribes for
 explanations, do not fit here: the reader is not arriving with a problem but with a vocabulary.
 
-The section lands **after the v0.8.0 relaunch**, like the deep dives, because it is new content
-rather than a defect in an existing page and because twelve pages of this length compete with the
-release for the author's reading. Its tasks are the `W` group in [tasks.md](../tasks.md). Landing
-the section also changes a public claim: the author reads the *What each approach costs* and *Where
-the other tool is the better choice* sections of every comparison page in full before publication,
-per the [authorship rule](../AGENTS.md#who-drafts-a-page-and-who-reads-it-before-it-publishes), and
-the [disclosure page](../site-structure.md#ai-disclaimer) must say so in the same change that
-publishes the first comparison page.
+The section ships with the v0.8.0 relaunch. It is new content rather than a defect in an existing
+page, so it was planned as post-release work like the deep dives, and it was written on the release
+branch instead once the sources proved close enough to port in one pass. Publishing it changed a
+public claim: the author reads the *What each approach costs* and *Where the other tool is the better
+choice* sections of every comparison page in full before publication, per the
+[authorship rule](../AGENTS.md#who-drafts-a-page-and-who-reads-it-before-it-publishes), and the
+[disclosure page](../site-structure.md#ai-disclaimer) says so.
 
 ## What must not be on a comparison page
 
@@ -290,24 +289,19 @@ and link the [transcript](../blog/rustlab-2025-coherence.md) or post where he ma
 
 ## Where the current pages stand
 
-No comparison page exists on the site. The twelve internal documents are the sources, and each one
-already records its context shapes, its compiled toolchains, and its positioning guidance, so the
-port is a transformation rather than research. Two things about the sources are worth knowing before
-starting.
+All eleven pages and the index are written, and the section's record in
+[site-structure.md](../site-structure.md#comparisons) carries the current state: the two code
+adaptations the port made (the encoder pair in place of `cgp-serde`'s providers, and a local field
+writer in place of a quotation of `cgp-serde`'s source), the claims that will decay on their own, and
+the mirror layout. Fourteen Concepts pages route to the comparison for their idea from their onward
+reading. What remains against this guide is the author's read of each page's two judging sections.
 
-**Two documents depend on the unpublished incoherent-Rust draft.** The Rust proposals page takes its
-reading of Cairo, its context-as-dictionary framing, and its account of the single-context model's
-limits from that draft, and the algebraic-effects page takes its coeffects pointer from it. Both
-ports follow the rule under
-[Derived from the internal comparison](#derived-from-the-internal-comparison-and-what-changes):
-attribute to the RustLab transcript where possible, otherwise state as the project's analysis or
-defer to B2.
-
-**Two documents will decay on their own.** The reflection page tracks a nightly compiler feature
-through dated tracking issues and pull requests, and every page pins the toolchain versions that
-compiled its snippets. The section's entry in [site-structure.md](../site-structure.md) records
-which claims are version-bound so a revision knows where to look, and a version-bound claim on the
-page says how the reader can check it, in the way the [tooling guide](tooling.md) asks for.
+**Two sources depend on the unpublished incoherent-Rust draft**, and the pages ported from them follow
+the rule under [Derived from the internal comparison](#derived-from-the-internal-comparison-and-what-changes):
+the Rust proposals page states the Cairo reading, the context-as-dictionary framing, and the
+single-context limits as the project's analysis, and attributes to the RustLab transcript what the
+transcript makes; the algebraic-effects page keeps the coeffects pointer as a pointer. When B2
+publishes the post, both pages gain a citation.
 
 ## Checking a draft
 

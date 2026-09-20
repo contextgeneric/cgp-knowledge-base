@@ -478,6 +478,11 @@ instantiation. That is a claim a C++ programmer can verify in an afternoon, and 
 
 ## Sources
 
+The public version of this document is the website's
+[policy-based-design comparison page](https://contextgeneric.dev/docs/comparisons/policy-based-design), ported per the
+[comparison page guide](../website/writing-guides/related-work.md); a change here updates that page
+in the same change.
+
 The account of the related work draws on the standard references for the three C++ idioms and their
 documented costs. The C++ snippets are the reference examples from Wikipedia and cppreference, compiled
 with GCC 15.3 in C++23 mode; the CGP greeting examples, in both the context-wired and the higher-order

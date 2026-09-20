@@ -614,6 +614,11 @@ considered trade rather than a missing feature.
 
 ## Sources
 
+The public version of this document is the website's
+[reflection comparison page](https://contextgeneric.dev/docs/comparisons/reflection), ported per the
+[comparison page guide](../website/writing-guides/related-work.md); a change here updates that page
+in the same change.
+
 The account of the related work draws on the official documentation and primary write-ups of each
 reflection system, the Rust project's own tracking issues, pull requests, and library source for its
 compile-time-reflection effort, and cited community writing for sentiment. The Zig snippet was compiled

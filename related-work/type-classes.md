@@ -418,6 +418,11 @@ gave up.
 
 ## Sources
 
+The public version of this document is the website's
+[type-classes comparison page](https://contextgeneric.dev/docs/comparisons/type-classes), ported per the
+[comparison page guide](../website/writing-guides/related-work.md); a change here updates that page
+in the same change.
+
 The account of the related work draws on the primary literature on type classes and their coherence,
 the official documentation of GHC, Agda, and Lean, and cited community writing for sentiment. The
 Haskell snippets were compiled with GHC 9.10, the Agda snippet type-checked with Agda 2.8.0, and the
