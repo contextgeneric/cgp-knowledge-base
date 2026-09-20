@@ -61,8 +61,9 @@ any other, so they are listed first; the rest are grouped by the tradition they 
   limits: no inference from scope and no nested bindings.
 - [C++ policy-based design, CRTP, and concepts](policy-based-design.md) — Alexandrescu's policies and
   host classes, the curiously recurring template pattern, and C++20 concepts. CGP is the same
-  compile-time composition with the policy interface declared as a trait, the provider body checked at
-  definition rather than at instantiation, and the choices gathered into one wired context rather than
+  compile-time composition with the policy interface declared as a trait and the provider body checked
+  at definition rather than at instantiation. A host template with policy parameters is a higher-order
+  provider, and CGP adds the option of wiring the policies on one context instead of repeating them in
   a parameter list.
 - [Capabilities](capabilities.md) — the five things the word names: object capabilities (E, Pony, seL4,
   WASI, `cap-std`), capability-based security in operating systems and hardware, Pony's reference

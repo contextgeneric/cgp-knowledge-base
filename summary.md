@@ -539,7 +539,8 @@ it stale.
   the concise framing of CGP as capability-like in the effects sense but not a capability system.
 - [policy-based-design.md](related-work/policy-based-design.md) — C++ policies and host classes, CRTP,
   and C++20 concepts, and CGP as the same compile-time composition with declared interfaces,
-  definition-time checking, and one wired context.
+  definition-time checking, host templates as higher-order providers, and the option of one wired
+  context.
 - [algebraic-effects.md](related-work/algebraic-effects.md) — the operations-and-handlers model of
   Koka, OCaml, Flix, and Eff, and the exactly-once fragment CGP reproduces statically.
 - [dependency-injection.md](related-work/dependency-injection.md) — the IoC-container model of Spring,

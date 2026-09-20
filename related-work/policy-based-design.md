@@ -249,6 +249,81 @@ a direct call to the chosen `message` and `write`. The difference is in the decl
 "separately and manually", and `#[uses(HasMessage, CanWrite)]` is the host stating which policies its
 body relies on.
 
+### Policies as type parameters are higher-order providers
+
+The wiring table is not the only place CGP can put a policy choice. C++ passes policies as template
+parameters of the host, and CGP has the same form in the
+[higher-order provider](../cgp/concepts/higher-order-providers.md): a provider whose type parameters
+are other providers, bound with [`#[use_provider]`](../cgp/reference/attributes/use_provider.md). The
+`HelloWorld` host template translates almost token for token:
+
+```rust
+#[cgp_component(Runner)]
+pub trait CanRun {
+    fn run(&self);
+}
+
+#[cgp_impl(new HelloWorld<W, M>)]
+#[use_provider(W: Writer)]
+#[use_provider(M: MessageProvider)]
+impl<W, M> Runner {
+    fn run(&self) {
+        W::write(self, M::message(self))
+    }
+}
+
+pub struct App;
+
+delegate_components! {
+    App {
+        RunnerComponent: HelloWorld<WriteToStdout, GermanMessage>,
+    }
+}
+
+check_components! { App { RunnerComponent } }
+
+App.run();   // Hallo Welt!
+```
+
+The wiring entry names the C++ instantiation as a Rust type:
+`HelloWorld<WriteToStdout, GermanMessage>` on both sides. The `#[use_provider(W: Writer)]` bound is the
+concept the C++ version lacks, spelled out: it says `W` must implement the `Writer` provider trait for
+this context, and it fills in the context argument so the body can call `W::write(self, ...)` as an
+associated function. The policies in this form are not wired on the context at all. They are chosen
+where the type is written, exactly as template arguments are, and a context could wire the English and
+the German instantiation to two different components without either policy being a component of its
+own.
+
+The same shape works on a function, which is the closer reading of a C++ function template that takes
+policy types. A [`#[cgp_fn]`](../cgp/reference/macros/cgp_fn.md) may be generic over providers, and its
+generic parameters move onto the generated trait, so the caller instantiates it the way C++ instantiates
+a template:
+
+```rust
+#[cgp_fn]
+#[use_provider(W: Writer)]
+#[use_provider(M: MessageProvider)]
+pub fn hello<W, M>(&self) {
+    W::write(self, M::message(self))
+}
+
+<App as Hello<WriteToStdout, EnglishMessage>>::hello(&App);   // Hello, World!
+```
+
+CGP therefore offers both placements, and choosing between them is the design decision the rest of this
+document is about. Passing policies as type parameters keeps the choice at the instantiation site and
+repeats it wherever the type is named, which is the C++ arrangement with its costs and its flexibility.
+Wiring the policies as components on the context, as the first example does, names each choice once and
+lets generic code require only the traits it uses. The [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md)
+places the higher-order form at its top tier and recommends it for the cases where a provider must fix
+an inner choice locally rather than defer to the context. A higher-order provider may also give its
+inner parameter the default [`UseContext`](../cgp/reference/providers/use_context.md), which routes the
+inner call back to whatever the context wires for that component, per the
+[higher-order providers](../cgp/concepts/higher-order-providers.md) concept. That is a default template
+argument whose default is "whatever the host is wired with", and it has no C++ counterpart. The default
+is written on the struct declaration (`pub struct HelloWorld<W, M = UseContext>(PhantomData<(W, M)>)`),
+so a provider that wants one declares its struct by hand and drops the `new` keyword from `#[cgp_impl]`.
+
 ### `#[cgp_impl]` is CRTP with the cast done for you
 
 A CGP provider's body refers to the context as `self` and `Self`, which is exactly what CRTP arranges
@@ -292,12 +367,16 @@ neighbors and Zig's `comptime`.
 A policy-based host carries its policies in its type, so every place that names the host names the
 policies: `SmartPtr<Widget, RefCounted, NoChecking, DefaultStorage>` appears wherever such a pointer is
 declared, and a helper generic over the host repeats the parameter list. Alexandrescu's book spends
-effort on typedefs and default policies to contain this. In CGP the choices live in one
-`delegate_components!` table on a context type that is named once, and code generic over the context
-requires only the traits it uses through `#[uses]`. Adding a policy to a host is a new wiring line rather
-than a new template parameter threaded through every signature that mentions the host. The
+effort on typedefs and default policies to contain this. CGP can reproduce that arrangement with a
+higher-order provider, as the previous section shows, and it carries the same cost there: a
+`HelloWorld<WriteToStdout, GermanMessage>` is named wherever it is used. The alternative CGP adds is to
+wire the policies as components on the context, so the choices live in one `delegate_components!` table
+on a context type that is named once, and code generic over the context requires only the traits it uses
+through `#[uses]`. Adding a policy to a host is then a new wiring line rather than a new template
+parameter threaded through every signature that mentions the host. The
 [dependency injection](dependency-injection.md) comparison develops this centralization from the
-container side; here it is the answer to the parameter-list growth that policy-heavy C++ is known for.
+container side; here it is the answer to the parameter-list growth that policy-heavy C++ is known for,
+and the higher-order form remains available for the policy a provider must pin locally.
 
 ### What CGP does not do
 
@@ -346,7 +425,9 @@ place, the component, to document it. On *checking*, C++ checks a host body at i
 concepts improving the message but not the timing, where CGP checks a provider body at its definition
 against its `#[uses]` bounds and checks a context's completeness at its wiring with
 `check_components!`. On *composition*, C++ carries the policy choices in the host's type and repeats
-them wherever the host is named, where CGP gathers them into one wiring table on a context named once.
+them wherever the host is named. CGP can do the same through a higher-order provider, and it adds the
+option of gathering the choices into one wiring table on a context named once, with the
+higher-order form kept for a policy a provider must pin locally.
 
 The costs on CGP's side are real. A provider needs a component to implement, so CGP cannot accept an
 arbitrary existing type as a policy the way a template accepts any class with the right members. Its
@@ -366,9 +447,12 @@ are the better fit, and they come with the definition-time checking C++ template
 
 A C++ programmer who has used policy-based design already holds CGP's structure, so map the vocabulary
 and then name the two improvements. A **provider is a policy class**, a **component is the policy
-interface written down**, a **context is the host class**, the **wiring table is the template argument
-list**, `#[cgp_impl]` **is CRTP with the cast done for you**, and `check_components!` **is the concept
-check that also verifies the body**. Framed this way, CGP is the compile-time composition they trust
+interface written down**, a **context is the host class**, a **higher-order provider is a host class
+template with its policies as type parameters**, the **wiring table is the template argument list**,
+`#[cgp_impl]` **is CRTP with the cast done for you**, and `check_components!` **is the concept check
+that also verifies the body**. Show `HelloWorld<WriteToStdout, GermanMessage>` written as a
+higher-order provider early, because it is the one CGP construct this reader will recognize without any
+translation. Framed this way, CGP is the compile-time composition they trust
 from templates, with the same zero-cost result, and two things they have wanted from templates for
 twenty years: an explicit interface for each policy, and errors at the definition rather than the
 instantiation.
@@ -396,8 +480,9 @@ instantiation. That is a claim a C++ programmer can verify in an afternoon, and 
 
 The account of the related work draws on the standard references for the three C++ idioms and their
 documented costs. The C++ snippets are the reference examples from Wikipedia and cppreference, compiled
-with GCC 15.3 in C++23 mode; the CGP greeting example was compiled against the current `cgp` source at
-`0.8.0-alpha`, and the `GreetHello` provider is the
+with GCC 15.3 in C++23 mode; the CGP greeting examples, in both the context-wired and the higher-order
+form, were compiled and run against the current `cgp` source at `0.8.0-alpha`, and the `GreetHello`
+provider is the
 [Hello World tutorial](../website/tutorials/hello-world.md)'s example in `#[cgp_impl]` form.
 
 - [Wikipedia — *Modern C++ Design*](https://en.wikipedia.org/wiki/Modern_C%2B%2B_Design) — Alexandrescu's book, the policy and host-class vocabulary, the `SmartPtr` motivation, and the exponential-combinations argument.
