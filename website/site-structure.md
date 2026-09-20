@@ -909,6 +909,17 @@ front matter then keeps the table of contents to the three sections rather than 
 related-concept entry's external link is one the comparison page it routes to already cites**, taken
 from that page's Sources section so the two agree on the authority.
 
+**The terms are linked from the pages that use them**, first use per page with the inline gloss left
+beside it: 289 links across 136 pages, in page bodies rather than in the closing routing lists. Three rules decided what was left alone, and a later agent
+should read them as settled rather than as unfinished work. **A page that owns a term does not link
+it** — *Bypassing coherence* does not link *coherence*. **A compound use is not the general term**, so
+CGP's own *consumer blanket impl* and *provider blanket impl* keep their abbreviated spelling and only
+the full *blanket implementation* links. And **the basic vocabulary is already glossed**: every
+reference page introduces *context* by convention, and *component*, *provider*, *wiring* and the two
+trait names are the section's working words, so linking them as well would add noise rather than a
+route. Terms already linked to their concept page were left pointing there, which is why *extensible
+variant* and *impl-side dependency* gained few links despite appearing on dozens of pages.
+
 The page shows no code, so it has no `example-code` mirror. Four pages route to it: the reference
 index beside the compile-errors link, the Concepts and Comparisons indexes, and the Introduction's
 routing list — the last three because living in the reference costs the page its discoverability for

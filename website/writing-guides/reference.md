@@ -279,6 +279,12 @@ does not click, the link serves the reader who wants the full account, and remov
 room for the other loses a reader. Subsequent uses on the same page are not linked, which is the same
 convention the reference pages already follow for their own cross-links.
 
+**Keep the links in the body, never in a closing routing list.** A reference page's *Related
+constructs*, a concept page's *Where to go next*, and a comparison's *Sources* are curated routes
+carrying one destination per line, so a glossary link inside a description competes with the route it
+sits beside. Link the term's first use in the body; where a term appears only in a closing list, it
+gets no link at all.
+
 Because `onBrokenLinks` is set to `throw`, the glossary must exist before any link into it lands, so
 the page and the sweep that links to it are one change rather than two.
 
