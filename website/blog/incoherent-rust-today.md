@@ -88,9 +88,10 @@ stated for an audience that already knows what a dictionary is, and its capabili
 deserialization half of [modular serialization](../../examples/modular-serialization.md).
 
 Its related-work section overlaps [ML modules](../../related-work/ml-modules.md) and
-[implicit parameters](../../related-work/implicit-parameters.md), and its Cairo material has no internal
-counterpart — a related-work document on Cairo's trait-implementation model would be worth adding if
-the comparison is kept.
+[implicit parameters](../../related-work/implicit-parameters.md), and the proposals it engages, together
+with its Cairo material, are covered internally by
+[Rust's own proposals](../../related-work/rust-language-proposals.md), which draws on this draft's
+context-as-dictionary framing and its limitations section.
 
 On the strategy side it is governed by the deep-dive playbook in
 [formats.md](../../communication-strategy/formats.md) rather than the release-announcement guide, and by

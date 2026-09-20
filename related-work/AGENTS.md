@@ -26,6 +26,12 @@ Ground every factual claim about the related work in a real source. Cite officia
 
 Keep the account current and neutral. Describe the related work as it exists now, note the version or edition when behavior is version-specific (Scala 2 `implicit` versus Scala 3 `given`/`using`, for instance), and represent the concept as its proponents would recognize it before critiquing it.
 
+## Compile the foreign snippets, and record the toolchain
+
+A snippet in the related work's own language is a claim about that language, and it is checked the same way a CGP snippet is: by running it. Nix makes this cheap for most of the languages this section covers (`nix shell nixpkgs#ghc`, `nixpkgs#ocaml`, `nixpkgs#zig`, `nixpkgs#agda`, `nixpkgs#flix`, `nixpkgs#koka`, `nixpkgs#scala-cli`, `nixpkgs#purescript`, and `nixpkgs#elan` for Lean), so compile or type-check every snippet that can be compiled before publishing it, and adapt a documentation example that does not compile as written rather than reproducing its defect. When a snippet cannot be run, because the feature exists only as a research fork or an unmerged proposal, say so beside it and quote the proposal's own form.
+
+Record what was checked. Each document's **Sources** section opens with a sentence naming the toolchain and version each family of snippets was compiled with, so a later reviewer can tell a verified snippet from a transcribed one and can see when a language has moved on. A syntax that changed between versions (OCaml's `match ... with effect` in 5.3, Scala's colon-form `given` in 3.6, Zig's lowercase `std.builtin.Type` tags in 0.14) is noted where the snippet appears, with the older form named so a reader meeting it elsewhere is not misled.
+
 ## The CGP side must obey the synchronization rule
 
 Every CGP snippet here is bound by the [synchronization rule](../AGENTS.md#the-synchronization-rule) exactly as a reference document's Expansion section is, and a stale one does more damage here than anywhere else: it will be quoted into user-facing material and shown to the audience most able to scrutinize it. Invoke the `/cgp` skill before writing any CGP code, prefer the modern idioms it and the [guides](../cgp/guides/) recommend, and draw snippets from the [examples](../examples/) rather than inventing fresh contexts.

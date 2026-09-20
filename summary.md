@@ -527,7 +527,15 @@ it stale.
 - [README.md](related-work/README.md) — the catalog, why honesty is the section's whole value, and how
   related work differs from the inward-looking sections.
 - [AGENTS.md](related-work/AGENTS.md) — the rules: what every document must cover, the sourcing and
-  citation obligation, the CGP side's synchronization duty, and the document template.
+  citation obligation, compiling foreign snippets through Nix and recording the toolchain, the CGP
+  side's synchronization duty, and the document template.
+- [rust-language-proposals.md](related-work/rust-language-proposals.md) — specialization, the
+  dictionary-passing account of traits, named and incoherent impls, contexts and capabilities, and
+  Cairo's shipped named impls, and CGP as a stable-Rust desugaring of a fragment of each with two stated
+  limits.
+- [policy-based-design.md](related-work/policy-based-design.md) — C++ policies and host classes, CRTP,
+  and C++20 concepts, and CGP as the same compile-time composition with declared interfaces,
+  definition-time checking, and one wired context.
 - [algebraic-effects.md](related-work/algebraic-effects.md) — the operations-and-handlers model of
   Koka, OCaml, Flix, and Eff, and the exactly-once fragment CGP reproduces statically.
 - [dependency-injection.md](related-work/dependency-injection.md) — the IoC-container model of Spring,

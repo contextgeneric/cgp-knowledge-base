@@ -92,10 +92,11 @@ so the same running scenarios recur everywhere a reader looks.
 ### `related-work/` — CGP against the ideas it resembles
 
 [related-work/](related-work/README.md) looks outward instead of inward. Each document takes an
-external concept, framework, or language feature that resembles CGP — dependency injection, implicit
-parameters, type classes, algebraic effects, row polymorphism, ML modules, reflection, dynamic
-dispatch — explains it faithfully and with citations, weighs what its users like and dislike about it,
-and positions CGP against it. They exist to serve future user-facing writing, giving an agent who must
+external concept, framework, or language feature that resembles CGP — Rust's own specialization and
+coherence proposals, C++ policy-based design, dependency injection, implicit parameters, type classes,
+algebraic effects, row polymorphism, ML modules, reflection, dynamic dispatch — explains it faithfully
+and with citations, compiles its foreign snippets where a toolchain exists, weighs what its users like
+and dislike about it, and positions CGP against it. They exist to serve future user-facing writing, giving an agent who must
 explain CGP to readers of a particular background the honest comparison to build on.
 
 ### `communication-strategy/` — writing about CGP in public

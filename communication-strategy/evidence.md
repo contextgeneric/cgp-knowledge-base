@@ -74,7 +74,9 @@ measurements:
   proposal provide a relevant comparison for the
   [language-design reader](readers.md#the-language-design-and-compiler-team-reader). Present CGP
   as a working desugaring of part of this design space. It neither supplies the formalization
-  those efforts seek nor migrates the existing trait ecosystem.
+  those efforts seek nor migrates the existing trait ecosystem. The comparison itself, including
+  specialization and Cairo, is worked out in
+  [related-work/rust-language-proposals.md](../related-work/rust-language-proposals.md).
 - **AI-assisted development:** Discuss CGP's published
   [agent skill](https://github.com/contextgeneric/cgp-skills) beside the costs of wiring,
   vocabulary, and diagnostics, as prescribed in [message.md](message.md#the-objections-readers-bring).
