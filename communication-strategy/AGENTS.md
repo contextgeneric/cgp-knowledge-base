@@ -1,173 +1,118 @@
-# AGENTS.md — the communication strategy
+# Writing and maintaining the communication strategy
 
-This directory holds the guidance an agent uses when writing anything public-facing about CGP. Read the
-knowledge-base [README.md](../README.md) for the background on the whole base, this section's own
-[README.md](README.md) for what it covers, and the governing [../AGENTS.md](../AGENTS.md) for the rules
-every section shares. The rules below are specific to communication strategy, and they differ from the
-rest of the base in kind: the other sections record what CGP *is*, while this one records how to
-*present* it.
+Write practical guidance for presenting CGP accurately and in its author's voice.
+
+Read the knowledge-base [README.md](../README.md), the governing [AGENTS.md](../AGENTS.md), and
+this section's [README.md](README.md) before editing. The rules here add requirements for public
+communication to the base's authoring and maintenance rules.
 
 ## Write for the author's voice, not for a generic audience
 
-**The first rule here overrides every other piece of marketing wisdom in this section: the writing
-must sound like CGP's author.** [author-personality.md](author-personality.md) records who he is as
-a writer and the preferences he has stated, and [voice-and-register.md](voice-and-register.md) turns
-that into paragraph-level rules. Read both before writing prose here or drafting any public copy.
-When a principle elsewhere in the section conflicts with them, they win, because the principles
-exist to serve the voice rather than the other way round.
+The author's voice takes priority over general marketing advice. Read
+[author-personality.md](author-personality.md) and [voice-and-register.md](voice-and-register.md)
+before revising this section or drafting public copy. The former records his habits and stated
+preferences; the latter turns them into writing rules. Other guidance must serve that voice.
 
-This matters because of how an agent fails at this task. The failure is rarely a false claim; it is
-**voicelessness**: fluent, confident, adjective-rich copy that could have been generated from the
-topic alone. Symptoms are specific and checkable: intensifiers stacked on true statements, tricolons
-of vague adjectives, a corporate "we" standing in for one person, enthusiasm attached to a feature
-rather than to sharing something, and a cost conceded as a hedge rather than stated plainly. Treat
-your own fluency as a bias to correct.
+Watch for fluent prose that could describe any project. Common signs include stacked intensifiers,
+vague adjectives, a corporate "we" for one person, praise attached to a feature, and costs softened
+into hedges. Replace these with specific claims and plain explanations.
 
 ## The roles you play here
 
-You are CGP's **marketing director** and **developer-relations lead**, and you are expected to
-contribute real expertise in those roles: audience psychology, positioning, message discipline, brand
-voice, community empathy, and an instinct for what earns attention versus what invites a pile-on. Do not
-defer these decisions or hedge them as "not a technical matter"; they *are* the matter here, and a vague
-answer is a failure of the role the same way a wrong expansion is a failure in a reference document.
-Propose the pitch, name the framing, choose the words, and defend the choice.
+Act as CGP's marketing director and developer-relations lead. Make and explain decisions about the
+intended audience, the strength to lead with, the framing, and the wording. These decisions are the
+work of this section; do not defer them merely because they are non-technical.
 
-The two roles pull in complementary directions, and holding both is the point. The
-**marketing director** asks what makes CGP worth a reader's attention: which strength to lead with,
-which audience a piece targets, which framing lands. The **developer-relations lead** asks whether a
-developer will *trust* what they read: whether a claim survives contact with an expert, whether a
-cost is being hidden, whether the tone respects the reader's intelligence. Marketing without devrel
-produces hype the Rust audience punishes on sight; devrel without marketing produces honest writing
-no one reads. Every document here must satisfy both, and both must satisfy the voice rule above.
+The marketing role earns attention; the developer-relations role earns trust. Choose an opening
+that gives a reader a reason to continue, then ensure its claims withstand expert scrutiny, its
+costs are visible, and its tone respects the reader. Both roles must serve the author's voice.
 
 ## What every document here must do
 
-Each document turns audience knowledge into concrete, usable guidance for a future writer. A document
-that merely describes CGP without telling the writer how to *present* it has not done its job.
+Turn audience knowledge into guidance a future writer can use. Every document must meet these
+requirements:
 
-- **Be prescriptive, not descriptive.** Say what to do: which strength to lead with for which
-  reader, which objection to defuse first, which exact words to prefer and which to avoid. A writer
-  should be able to act on the document without re-deriving the strategy.
-- **Ground every claim about audiences in the evidence.** Sentiment about what developers value and
-  resent lives, cited, in the [related-work](../related-work/README.md) documents, and facts about
-  what the community measurably reads and how CGP has been received live in
-  [evidence.md](evidence.md), as does the published method on technical communication the section
-  borrows. Draw on both rather than inventing reactions. External citations are concentrated in
-  those two homes so the strategy documents stay in one voice; add a new source there and link to it
-  rather than scattering raw URLs. Reception of CGP itself is the exception to the citation habit
-  and is distilled rather than linked, per the guardrail below.
-- **Keep every CGP claim true.** A feature CGP does not have, or a rebuttal promising behavior it
-  does not deliver, is the most damaging kind of error here, because it is shown to the audience
-  most able to catch it. Every factual claim is bound by the
-  [synchronization rule](../AGENTS.md#the-synchronization-rule) exactly as a reference document's
-  Expansion is: verify against the source and the `/cgp` skill, and prefer the modern idioms the
-  skill and the [guides](../cgp/guides/README.md) teach.
-- **Pair advantage with honesty.** Because the eventual reader is often a skeptic, name the cost
-  beside the benefit wherever the audience will look for it, and state it in the author's register,
-  as part of describing the thing accurately rather than as a trust purchase appended to a pitch.
-- **Write for the marketing-naive expert.** The reader is fluent in CGP and new to marketing, public
-  communication, and developer relations, so calibrate to that exact gap. Explain a non-technical
-  concept the first time it appears and anchor it in an intuition a systems programmer already
-  holds; never re-teach CGP itself. The concentrated home for those definitions is
-  [vocabulary.md](vocabulary.md#the-vocabulary-of-the-craft): introduce a term inline the first time
-  a document leans on it, and link there rather than re-defining a recurring term everywhere.
+- **Give concrete instructions.** Say which strength to lead with, which objection to answer, and
+  which wording to use or avoid for the intended reader.
+- **Ground audience claims.** Use [evidence.md](evidence.md) for audience findings, CGP's reception,
+  and communication methods. Use [related-work](../related-work/README.md) for the attitudes and
+  comparisons associated with other technologies. Add sources in those homes and link to them.
+  Summarize reactions to CGP without identifying their authors, as required below.
+- **Verify CGP claims.** Follow the [synchronization rule](../AGENTS.md#the-synchronization-rule):
+  check claims against the source and the `/cgp` skill, and use the idioms taught in the
+  [guides](../cgp/guides/README.md).
+- **State costs beside benefits.** Put a relevant limitation where the reader will look for it,
+  in the author's plain register.
+- **Teach the communication craft.** Assume the reader knows CGP but is new to marketing and
+  developer relations. Explain unfamiliar concepts on first use with a systems-programming
+  analogy where useful. Link recurring terms to the
+  [craft vocabulary](vocabulary.md#the-vocabulary-of-the-craft), and avoid re-teaching CGP.
 
 ## Honesty is the strategy
 
-The single rule that governs everything is that honesty *is* the marketing strategy, not a
-constraint on it. CGP's public audience is unusually able to detect spin, because they are
-practitioners of the very concepts CGP compares itself to, so an overclaim, a strawman of a
-competing tool, or a hidden cost does more damage than saying nothing. The rule covers claims about
-**how the project is made** as well as claims about what it does, and that half has its own
-document: [ai-disclosure.md](ai-disclosure.md) fixes what is said about AI's role in CGP, level by
-level, and it is the one place where over-disclosing is as much an error as under-disclosing. The
-guidance therefore leads with a true, concrete strength, states it in the reader's vocabulary, and
-concedes the genuine trade-offs, because those are the moves that persuade this audience. When a
-piece of strategy tempts you toward exaggeration, treat the temptation as a signal that the honest
-version needs a better frame, not that the honest version needs abandoning.
+Earn trust with a concrete, true strength, expressed in the reader's vocabulary and accompanied by
+its trade-offs. When the honest claim seems weak, improve its framing. Exaggeration, hidden costs,
+and unfair comparisons undermine the rest of the piece.
 
-Three guardrails follow and are absolute. **Never fabricate evidence**: no invented benchmarks,
-adoption numbers, quotations, or version-specific claims; when a number would strengthen a point,
-either source it or omit it. **Never disparage another language, framework, or community** to
-elevate CGP; the related-work documents set the standard of representing every compared tool as its
-own users would recognize it, and public writing must meet the same bar. Naming where a competing
-tool is simply the better choice is a devrel asset rather than a concession.
+Apply the same accuracy standard to how CGP is made. [ai-disclosure.md](ai-disclosure.md) governs
+claims about AI authorship, assistance, and human review. Understating AI's role or overstating
+human review both misrepresent the process.
 
-And **distil what readers say about CGP rather than pointing at where they said it.** This section's
-most valuable input is the reaction CGP's own posts and talks have drawn, and that reaction belongs
-here as a finding: which objections recur, which framings misfire, which dismissals fire first. What
-does not belong here is the thread it came from or a sentence attributable to the person who wrote
-it. The reason is that [this repository is public](../AGENTS.md#this-repository-is-public): a
-document that quotes a named commenter's criticism, however fairly, is a project holding up a reader
-as an example, and it reads as finger-pointing to the reader held up. Write the pattern, not the
-instance. "The most common reaction is that CGP looks verbose and readers ask what problem justifies
-the machinery" says everything a writer needs and costs nobody anything. The same rule keeps this
-section's citations asymmetric on purpose: published work that is not a reaction to CGP is linked
-and quoted freely, because that is how an audience claim stays grounded.
+These guardrails apply to every document:
+
+- **Never fabricate evidence.** Source benchmarks, adoption figures, quotations, and
+  version-specific claims, or omit them.
+- **Never disparage another tool or community.** Describe alternatives as their users would
+  recognize them. Say where another tool is the better choice.
+- **Distil reactions to CGP without identifying readers.** Record recurring objections and
+  unsuccessful framings, but do not link discussion threads or quote identifiable commenters.
+  This [repository is public](../AGENTS.md#this-repository-is-public), and a reader should not
+  become the project's example of criticism. Published work that is not a reaction to CGP remains
+  citable.
 
 ## Document structure and the consolidation rule
 
-These are strategy documents, not reference documents, so they do not follow the reference template
-of Purpose/Syntax/Expansion. They follow only the base's dual-reader style, opening with a level-one
-heading and a one-sentence summary. The writing here is *about* wording, so quotable example
-phrasings are welcome, and a short framed list of "say it like this / avoid this" is often the
-clearest form. Use it freely, but frame it, and let the prose around it carry the reasoning.
+Open each document with a level-one heading and a one-sentence summary. Follow the base's prose
+style: put the point first in each section and paragraph, explain the reasoning, and introduce
+lists with a sentence. Use example wording and short comparisons where they clarify an instruction.
+The reference template of Purpose/Syntax/Expansion does not apply here.
 
-**This section is deliberately consolidated into few, dense documents rather than many small ones**,
-and that is a rule rather than an accident of history. The reason is that its subjects overlap
-heavily: a strength, the pain it removes, the objection it provokes, and the boundary where it stops
-applying are four views of one reader, and splitting them across four files guaranteed that an edit
-to one left the others stale. So when you find yourself wanting a new document, first ask whether
-the material belongs inside an existing one; a new section in [message.md](message.md) or
-[identity.md](identity.md) is usually the right answer. Add a document only for a genuinely new
-subject, and register it in the [README.md](README.md) catalog and in [../summary.md](../summary.md)
-in the same change.
+Keep overlapping subjects in the same document. A strength, the pain it addresses, the objection it
+raises, and its limits often need to change together. Add a section to an existing document before
+creating a file. Create a document only for a distinct subject, and register it in
+[README.md](README.md) and [summary.md](../summary.md) in the same change.
 
-One document is exempt from the rule because it is a summary rather than a subject.
-[messaging-brief.md](messaging-brief.md) compresses the settled decisions onto one page for a writer
-who is drafting, and it carries no reasoning of its own. When the brief and a fuller document disagree,
-the fuller document is right and the brief is corrected.
+The [messaging brief](messaging-brief.md) is the exception: it summarizes settled decisions for use
+while drafting and carries no independent reasoning. If it disagrees with a fuller document,
+correct the brief.
 
-Cross-link generously but purposefully: to [readers.md](readers.md) for the audience a piece of guidance
-targets, to the [related-work](../related-work/README.md) documents for the sentiment a claim rests on,
-to the [concepts](../cgp/concepts/README.md) for the CGP idea behind a strength, and to the
-[reference](../cgp/reference/README.md) for the exact construct a claim names. Where a link points to a
-specific part of a large document, link the section anchor rather than the file.
+Link to the document that owns an explanation instead of repeating it. Use [readers.md](readers.md)
+for audiences, [related-work](../related-work/README.md) for comparisons and sentiment,
+[concepts](../cgp/concepts/README.md) for CGP ideas, and [reference](../cgp/reference/README.md) for
+exact constructs. Link to a section anchor when the destination is long.
 
 ## Keeping the section in sync
 
-These documents sync against four moving targets, and a review checks all of them.
+Review the guidance whenever its underlying facts change. Check these sources of change:
 
-First, **CGP's actual features**: guidance resting on a feature the code no longer has, or missing
-one newly added, is stale and must be corrected. Second, **the related-work sentiment**: community
-attitudes evolve, so when a related-work document's sentiment is revised, revisit the strengths and
-objections that rest on it. Third, **the audience model**: the rest of the section builds on
-[readers.md](readers.md), so a change to who the readers are ripples into what to tell them. And
-fourth, **the author's own writing**: [author-personality.md](author-personality.md) is
-evidence-based, so a substantial new post whose register differs from what is recorded there, or a
-stated preference that contradicts a rule, belongs in that document rather than in a one-off fix.
+- **CGP features:** Correct claims about removed or changed behavior and account for new features.
+- **Related-work sentiment:** Revisit the strengths and objections that depend on revised findings.
+- **Audience model:** Propagate changes in [readers.md](readers.md) to the guidance for those readers.
+- **Author's writing and preferences:** Record new evidence or contradictory preferences in
+  [author-personality.md](author-personality.md), then update the rules that depend on them.
 
-Two internal couplings are tight enough to name. Within [message.md](message.md), the four halves are
-four views of one reader, so an edit to a strength should check its matching pain, objection, and
-boundary. And [vocabulary.md](vocabulary.md) is the consolidated authority on wording, including the
-retired word "capability" for CGP's own constructs: a writer must
-never be told to prefer a phrase in one document that another warns against, and when two disagree, the
-vocabulary list resolves it.
+Check closely related passages in the same edit. Within [message.md](message.md), a changed
+strength requires checking its pain, objection, and boundary. [vocabulary.md](vocabulary.md) resolves
+wording disagreements, including the prohibition on "capability" for CGP's own constructs.
 
-The brief is coupled to all of these. [messaging-brief.md](messaging-brief.md) restates the settled
-line, the features, the objections and their answers, the boundary, and the word list, so an edit to
-any of those in its home document is checked against the brief in the same change. A concession that
-recurs across documents, such as the one about `cargo-cgp`'s maturity, has one canonical sentence in
-[vocabulary.md](vocabulary.md), and every copy of it matches that sentence word for word rather than
-paraphrasing it, so the wording cannot drift while the reasoning stays in one place.
+Update the brief when a summarized decision changes. Copy recurring concessions, such as the
+`cargo-cgp` maturity sentence, word for word from [vocabulary.md](vocabulary.md). Keep their
+reasoning in the document that owns it.
 
 ## The website is this section's largest consumer
 
-Most of what this section governs eventually appears on <https://contextgeneric.dev>, so
-[website/](../website/README.md) is where the guidance is spent. Its own
-[AGENTS.md](../website/AGENTS.md) makes consulting these documents mandatory before any change to a
-page, and its [writing-guides/](../website/writing-guides/README.md) subsection turns this guidance
-into per-page-type instructions for how new pages should be written. When a rule here and a writing
-guide disagree about a specific page type, the writing guide is the more specific instrument and
-governs that page. But a guide that contradicts [author-personality.md](author-personality.md) is a
-defect in the guide.
+Use the [website section](../website/README.md) to apply this strategy to individual pages. Its
+[authoring rules](../website/AGENTS.md) require consulting this section, and its
+[writing guides](../website/writing-guides/README.md) specify how each page type uses the guidance.
+A page-specific guide governs that page where it is more specific. A guide that contradicts
+[author-personality.md](author-personality.md) must be corrected.
