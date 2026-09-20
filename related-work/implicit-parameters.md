@@ -21,19 +21,17 @@ CGP resolves the same tension with [impl-side dependencies](../cgp/concepts/impl
 and [implicit arguments](../cgp/concepts/implicit-arguments.md), which is why the comparison is
 illuminating rather than incidental. Both CGP and the implicit-parameter languages want code deep in a
 call graph to obtain what it needs from its surroundings without every caller in between having to
-know. They differ in *what the surroundings are* and *how the value is found*. Scala and Haskell search
-an implicit scope by type. CGP reads a field or resolves a wiring entry from the context that is already
+know. They differ in *what the surroundings are* and *how the value is found*. Scala searches for contextual values by type and scope; Haskell
+`ImplicitParams` selects named implicit bindings. CGP reads a field or resolves a wiring entry from the context that is already
 threaded through every provider. The heart of the comparison is showing a reader that CGP's context *is*
 their implicit environment, made a first-class and explicitly wired type.
 
 ## The concept in depth
 
-Implicit parameters appear in several forms that a reader may not distinguish, and the comparison to
-CGP is clearest when they are kept apart. There is the direct implicit *value* parameter (Scala's
-`using`, Haskell's `ImplicitParams`), and there is the type-class mechanism (Scala's `given` type
-classes, Haskell's `class` and `instance`), which is implicit resolution specialized to finding an
-implementation for a type. Both rest on the compiler searching a scope by type, and both are governed by
-*coherence*, the property that makes CGP's approach fundamentally different.
+Implicit value parameters and type-class dictionaries have different binding rules.
+Scala uses contextual search for `using` parameters, Haskell's `ImplicitParams` uses named bindings,
+and ordinary Haskell type classes select globally available instances. Keep those mechanisms
+separate when comparing them with context fields and wiring.
 
 ### Context parameters in Scala (`using` and `given`)
 
@@ -144,31 +142,21 @@ instance Ord Int where
   compare x y = ...   -- the compiler builds and passes an Ord Int dictionary
 ```
 
-The resolution is *type-directed and automatic*: the programmer names the constraint, and the compiler
-searches for the matching instance by type, with no explicit selection. This is exactly the convenience
-CGP gives up and the reason it can do something type classes cannot, so the next point is the pivot of
-the whole comparison. The [type classes](type-classes.md) comparison develops the mechanism and its
-extensions in full.
+Type-class resolution supplies dictionaries without an explicit argument at each call.
+Haskell ordinarily uses global instances; Scala also uses scope and priority rules. The
+[type classes](type-classes.md) comparison develops dictionary passing and the distinction between
+coherence and global instance uniqueness.
 
-### Coherence: one instance, globally
+### Coherence and instance selection
 
-*Coherence* governs type-class and implicit resolution, and CGP deliberately abandons it. Coherence
-means that for a given type there is exactly one instance, and every resolution anywhere in the program
-finds the same one. It is what makes automatic resolution safe. Because the compiler always finds the
-same `Ord Int`, it can inject it silently without the programmer worrying that a different `Ord Int`
-might be chosen elsewhere and make two pieces of code disagree. Haskell enforces this with the
-orphan-instance convention and by rejecting overlapping instances by default. Scala's implicits are
-coherent in the common case and rely on scoping and priority rules at the edges.
+Coherence concerns agreement between valid resolutions; global uniqueness is one way to support it.
+Haskell ordinarily favors a global instance for a class and its type arguments, while extensions
+control overlap. Orphan instances are permitted by GHC but discouraged, unlike Rust's orphan rule.
+Scala allows different givens for the same requested type in different scopes.
 
-The price of coherence is the price CGP was built to escape. Because there can be only one `Ord Int`,
-a program cannot have two legitimate orderings of `Int` as first-class instances. The standard
-workaround wraps the type in a `newtype` so a second instance attaches to a distinct type. And a module
-cannot add an instance for a type and class it does not own. These are the same overlap and orphan
-restrictions Rust's own coherence imposes, described from the CGP side in
-[bypassing coherence](../cgp/concepts/coherence.md). The comparison to CGP therefore comes down to a
-single trade. Implicit resolution buys automatic, type-directed selection at the cost of one global
-instance per type. CGP buys many overlapping per-context implementations at the cost of selecting them
-explicitly.
+CGP keeps Rust's coherence checks. Distinct provider types allow interchangeable implementations,
+and a context selects one through wiring. A second conflicting entry for the same context and key
+is still rejected. Compare selection mechanisms rather than describing CGP as incoherent.
 
 ## How CGP expresses it
 
@@ -249,25 +237,19 @@ This is the type-level face of the tension the value-level section above describ
 naming to a reader who has written `mtl`-style code: they already know why the functional dependency is
 there.
 
-Two differences follow the same axes as the value case. On *selection*, an `mtl` instance for a given
-monad is unique, so the environment type is fixed once for that monad program-wide, whereas CGP's is a
-wiring entry and two contexts may bind the same abstract type differently. On *propagation*, CGP hides
-more. Haskell's constraint list still grows outward, since a caller of a `MonadError e m =>` function
-carries that constraint too. A CGP consumer trait declares the abstract-type trait as a supertrait, so a
-caller bounding on the consumer gets it implied without restating it. The type stops propagating in both;
-in CGP the *bound* stops as well.
+Both Haskell monads and CGP contexts can determine associated choices. Different monads can
+select different error types, just as different contexts can. A CGP consumer trait can expose an
+abstract-type requirement as a supertrait so callers need not restate that bound. The type
+dependency remains, but it need not be an independent generic parameter.
 
-### Components and wiring are type classes without coherence
+### Components and wiring make instance selection explicit
 
-A CGP component is a type class, a provider is an instance, and wiring is the resolution step. Because
-a provider's `Self` is its own marker type, many providers for the same component coexist without
-violating coherence, which type-class instances cannot do. The `Comparator[Int]` that Scala can define
-only once, or the `Ord Int` that Haskell pins globally, becomes in CGP any number of interchangeable
-providers, each selected per context. The [modular serialization](../examples/modular-serialization.md)
-example makes the contrast concrete. `UseSerde`, `SerializeBytes`, and `SerializeWithDisplay` all
-serialize a `String` and overlap freely, where the equivalent overlapping type-class instances would be
-rejected. The `cgp-serde` source declares the first two provider structs separately, because each also
-implements a deserializer:
+A component's consumer trait plays the interface role, while providers supply interchangeable
+implementations selected through wiring. Separate provider marker types let implementations coexist
+without conflicting Rust impls. Scala can also select alternative givens by scope, while Haskell
+ordinarily uses a global instance. The [modular serialization](../examples/modular-serialization.md)
+example shows reusable providers for the same target. The provider structs are separate because
+each also implements a deserializer:
 
 ```rust
 pub struct UseSerde;
@@ -311,72 +293,61 @@ recurring Scala complaint is that a value appears "from nowhere", and tracking d
 selected, or why an expected one was not, is a notorious time sink. Scala 2's single overloaded
 `implicit` keyword made it worse, which is what Scala 3 split apart to address
 ([Baeldung, *Scala 3 Implicit Redesign*](https://www.baeldung.com/scala/scala-3-implicit-redesign)).
-Error messages when resolution fails are often opaque. Haskell's `ImplicitParams` is disliked enough to
-be effectively abandoned, for the concrete reasons above: the constraints leak into every signature, no
+Error messages when resolution fails are often opaque. Haskell's `ImplicitParams` has the documented restrictions above: the constraints leak into every signature, no
 default can be given, and the monomorphism restriction interferes. And coherence itself, though it makes
-resolution safe, is a persistent source of friction. The orphan rule forces awkward module structure, and
-the one-instance-per-type limit forces `newtype` wrappers whenever a second interpretation of a type is
-wanted.
+resolution safe, is a persistent source of friction. Global instance choices and orphan-instance conventions influence module structure in Haskell;
+`newtype` wrappers distinguish alternative interpretations. Scala uses different scope rules.
 
 ## How CGP compares
 
-CGP makes the opposite trade from implicit resolution on the two axes that matter. On *resolution*,
-implicit parameters are automatic and type-directed while CGP wiring is explicit: Scala and Haskell find
-the instance for you, and CGP asks you to name it in a table. On *coherence*, implicit parameters are
-coherent while CGP is not. The languages guarantee one instance per type and forbid overlap and orphans.
-CGP permits unlimited overlapping providers and per-context choice by moving `Self` to a provider
-marker. Each side pays for what the other gets. The implicit-parameter languages get zero-boilerplate
-resolution and pay with the one-instance restriction and the "where did this come from" opacity. CGP
-gets many local implementations and explicit, greppable wiring and pays with the wiring itself: there is
-no automatic search, so the choice must be written down.
+Implicit resolution reduces argument passing but requires readers to trace the selected binding.
+Scala's givens can come from local scope, imports, or implicit scope, so understanding a call may
+require following the search rules. The
+[Scala reference](https://docs.scala-lang.org/scala3/reference/contextual/using-clauses.html)
+describes how arguments are supplied. Haskell's `ImplicitParams` makes dependencies visible as
+constraints, which must propagate until a binding supplies them; its inference restrictions can
+also affect behavior. See the
+[GHC User's Guide](https://ghc.gitlab.haskell.org/ghc/doc/users_guide/exts/implicit_parameters.html).
 
-Neither trade is strictly better, and honest positioning names where each wins. When a program wants one
-canonical instance per type (one `Ord`, one `Show`, one serialization) and values automatic resolution
-above all, type classes are the better tool, and fighting their coherence with CGP-style machinery would
-be over-engineering. When a program needs several interchangeable implementations, per-deployment or
-per-context choice, or must implement a behavior for types and traits it does not own, CGP's explicit
-wiring is the better tool, and the coherence it discards was the very thing in the way. For CGP's
-intended audience, explicit resolution is also a feature rather than a cost. The wiring table is the one
-place selection is decided, so the "spooky" resolution that dogs implicits is replaced by a lookup a
-reader can point at.
+Global type-class instances favor a canonical interpretation of a type. In Haskell, an alternative
+ordering or rendering often needs a `newtype` to distinguish it from the existing instance.
+That trade differs from Scala's scoped selection. The
+[coherence analysis by Yang](https://blog.ezyang.com/2014/07/type-classes-confluence-coherence-global-uniqueness/)
+separates global uniqueness from coherence and confluence.
+
+CGP requires component declarations and provider selection through wiring or declared defaults.
+This adds code to maintain and trait-resolution work during compilation. Tracing a selection can
+also require following delegation through several tables. Raw diagnostics expose generated traits
+and types: [`cargo cgp check`](../cargo-cgp/reference/usage.md) leads with the root cause for the classes it
+recognizes, and the tool is a v0.1.0-alpha that does not yet reshape every class. The
+[Modularity Hierarchy](../cgp/concepts/modularity-hierarchy.md) weighs these costs against simpler forms.
+
+### Where the other approach fits
+
+Implicit resolution fits code that benefits from the surrounding language's instance conventions
+or local contextual bindings. Haskell type classes work well for a canonical ordering or rendering;
+Scala's givens support contextual choices without a separate CGP-style wiring table. Within Rust,
+an ordinary trait is sufficient when one implementation per type expresses the intended behavior.
+
+CGP helps when Rust code needs separately reusable implementations and explicit choices per context.
+Those benefits must justify its additional declarations. It does not replace the scope rules or
+inference mechanisms of Scala and Haskell.
 
 ## Presenting CGP to someone who knows this
 
-A reader fluent in implicits or type classes already holds most of CGP's conceptual furniture, so name
-the correspondence outright. A **component is a type class**, a **provider is an instance**, **wiring
-is instance resolution**, an **`#[implicit]` argument is a `using` parameter** whose value comes from a
-context field, and an **abstract type is a functional dependency or an associated type family**: the
-type the context determines rather than one a caller passes. The context itself is the implicit
-environment they already reason about, the `Reader` they thread or the set of `given`s in scope, reified
-as a single explicit type that every provider receives. Framed this way, CGP is their own implicit
-machinery with the resolution step made visible, not a foreign paradigm.
+Distinguish the binding rules before using the implicit-parameter analogy. Scala resolves givens
+through scope and priority rules, Haskell's `ImplicitParams` uses named bindings, and ordinary Haskell
+type classes favor global instances. Scala can select different implementations of the same requested
+type in different scopes; do not attribute Haskell's usual global uniqueness to Scala.
 
-Correct one expectation up front: automatic resolution. This reader will assume CGP finds the provider
-by type the way their compiler finds an instance, and it does not. Wiring is written by hand in a table.
-Present that as the deliberate consequence of the feature they will find most striking, rather than as a
-missing feature: because CGP does not resolve by type, it is free of coherence, so it can host the
-overlapping instances their language forbids. Lead with the pain coherence causes them, the `newtype`
-dance to get a second `Ord`, the orphan-rule contortions to add an instance for a foreign type, and the
-single global choice forced on unrelated code, and show that each disappears when providers are distinct
-marker types selected per context. For the Scala reader, the resonant pitch is "implicits without the
-mystery": the value still arrives without being threaded by hand, but *which* implementation was chosen
-is a line in a wiring table rather than the outcome of a scope search, so the debugging nightmare they
-know is designed out. For the Haskell reader, the pitch is "type classes without the orphan rule, and
-overlapping instances made legal".
+Explain CGP as selection through context types and wiring, not the removal of coherence. Separate
+provider types allow reusable alternatives to coexist while Rust still rejects overlapping impls.
+Wiring, defaults, and delegation determine the provider; the caller's lexical scope does not.
 
-One further move earns this reader disproportionately, because it shows CGP solving a problem they have
-solved themselves. Point at the *type* level and name the functional dependency. A reader who has
-written `MonadError e m | m -> e` knows exactly why the environment type must be determined by the monad
-rather than passed alongside it, and an abstract type is that discipline made the default and chosen per
-context. Framed that way, "one generic parameter instead of a dozen" restates a technique they already
-trust rather than claiming cleverness for CGP.
-
-Avoid promising that CGP "just finds the right implementation". It does not, and a reader sold on
-automatic resolution will feel misled the first time they write a `delegate_components!` entry. Set the
-expectation honestly (you name the provider, once, per context) and pair it with what that explicitness
-buys: no ambiguity, no hidden priority rules, no coherence straitjacket, and the same
-implementation-hiding decoupling delivered through a table they can read. A reader who has spent an
-afternoon debugging an implicit resolution will hear the trade as a good one.
+Use associated types and functional dependencies to explain a type determined by a context.
+Different Haskell monads can determine different error types, just as different CGP contexts can.
+The relationship avoids an independent parameter but does not erase the type dependency. Explicit
+wiring is traceable, though following several delegation layers can still take work.
 
 ## Sources
 
@@ -393,5 +364,5 @@ compiled with GHC 9.10 and the Scala snippets with Scala 3.8.4.
 - [Scala 3 Implicit Redesign (Baeldung)](https://www.baeldung.com/scala/scala-3-implicit-redesign) — the rename from Scala 2's overloaded `implicit` keyword to `given`/`using` and the reasons for it.
 - [GHC User's Guide — Implicit Parameters](https://ghc.gitlab.haskell.org/ghc/doc/users_guide/exts/implicit_parameters.html) and [Implicit parameters (HaskellWiki)](https://wiki.haskell.org/Implicit_parameters) — the `?x` constraint syntax, `let` binding, propagation, the class-context restriction, and the monomorphism-restriction interaction that keep the feature little used.
 - [Type class (Wikipedia)](https://en.wikipedia.org/wiki/Type_class) and [Implementing, and Understanding Type Classes (okmij.org)](https://okmij.org/ftp/Computation/typeclass.html) — type classes as dictionary-passing elaboration and how instances are resolved.
-- [Type classes: confluence, coherence and global uniqueness (ezyang's blog)](https://blog.ezyang.com/2014/07/type-classes-confluence-coherence-global-uniqueness/) and [Coherence of Type Class Resolution (Bottu et al.)](https://xnning.github.io/papers/coherence-class.pdf) — the definition of coherence and why it constrains instances to one per type.
+- [Type classes: confluence, coherence and global uniqueness (ezyang's blog)](https://blog.ezyang.com/2014/07/type-classes-confluence-coherence-global-uniqueness/) and [Coherence of Type Class Resolution (Bottu et al.)](https://xnning.github.io/papers/coherence-class.pdf) — the distinctions between coherence, confluence, and global instance uniqueness.
 - [`mtl` — `Control.Monad.Error.Class`](https://hackage.haskell.org/package/mtl/docs/Control-Monad-Error-Class.html) — the `MonadError e m | m -> e` functional dependency the abstract-type comparison rests on.

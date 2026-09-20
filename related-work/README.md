@@ -65,12 +65,10 @@ any other, so they are listed first; the rest are grouped by the tradition they 
   named impls. CGP is read as a library-level desugaring of a fragment of each, with providers as named
   impls, implicit arguments as capabilities, and the context as the root dictionary, and with two stated
   limits: no inference from scope and no nested bindings.
-- [C++ policy-based design, CRTP, and concepts](policy-based-design.md) — Alexandrescu's policies and
-  host classes, the curiously recurring template pattern, and C++20 concepts. CGP is the same
-  compile-time composition with the policy interface declared as a trait and the provider body checked
-  at definition rather than at instantiation. A host template with policy parameters is a higher-order
-  provider, and CGP adds the option of wiring the policies on one context instead of repeating them in
-  a parameter list.
+- [C++ policy-based design, CRTP, and concepts](policy-based-design.md) — policies and host classes,
+  CRTP, and C++20 concepts compared with providers, higher-order providers, and context wiring.
+  The comparison distinguishes constraint satisfaction from generic-body checking, acknowledges
+  aliases and defaults, and explains where structural policies and inheritance differ from CGP.
 - [Capabilities](capabilities.md) — the five things the word names: object capabilities (E, Pony, seL4,
   WASI, `cap-std`), capability-based security in operating systems and hardware, Pony's reference
   capabilities and Linux privilege bits (which share only the word), effects as capabilities (Effekt,
@@ -78,30 +76,30 @@ any other, so they are listed first; the rest are grouped by the tradition they 
   ownership-token senses. CGP is capability-like in the effects sense (a provider declares what it
   requires and the context supplies it, checked at compile time) and is not a capability system in the
   object-capability sense: it does not remove ambient authority, its requirements are not unforgeable
-  tokens, and its provisioning is fixed per context type.
+  tokens, and dependency checking does not enforce confinement. Wiring is static, while
+  authority-bearing values can vary at runtime.
 - [Dependency injection](dependency-injection.md) — the IoC-container and constructor-injection model of
   Spring, Guice, Dagger, and their kin, and how CGP's impl-side dependencies and per-context wiring inject
   dependencies without a container, reflection, or runtime graph.
 - [Implicit parameters](implicit-parameters.md) — the implicitly passed context arguments of Scala's
   `given`/`using` and Haskell's `ImplicitParams`, the type-class resolution both build on, and how CGP's
-  implicit arguments and context-threaded wiring achieve the same context propagation while trading
-  global coherence for per-context choice.
+  implicit arguments and context-threaded wiring supply dependencies through fields and provider
+  selection. Scala scope rules, Haskell global instances, and Rust coherence are kept distinct.
 - [Type classes](type-classes.md) — the principled ad-hoc polymorphism of Haskell, Agda, and Lean,
   dictionary passing and coherence, the overlapping and incoherent-instance extensions that strain
   against it, the diamond problem in dependently typed settings, and Dreyer, Harper, and Chakravarty's
   "modular type classes". CGP is a type-class system that removes global coherence and replaces implicit
   resolution with explicit per-context selection, which makes overlapping and incoherent instances
   ordinary and deterministic rather than exceptional and dangerous.
-- [ML modules and modular implicits](ml-modules.md) — the signatures, structures, and functors of OCaml
-  and Standard ML, and the modular-implicits extension that adds type-directed resolution over them. CGP
-  maps components to signatures, providers to structures, and higher-order providers to functors, and
-  replaces manual, ordered functor application with a declarative `delegate_components!` table resolved
-  per context.
+- [ML modules and modular implicits](ml-modules.md) — signatures, structures, and functors in OCaml
+  and Standard ML, plus the modular-implicits proposal. Components, providers, and higher-order
+  providers serve related composition roles; sealing, type identity, scoped implicit selection,
+  and the limits of the wiring analogy are treated separately.
 - [Algebraic effects and handlers](algebraic-effects.md) — the operations-and-handlers model of Koka,
   OCaml, Flix, and Eff, where a handler interprets an effect by capturing the continuation and resuming
-  it zero, one, or many times. CGP reproduces the effect/handler split only for the exactly-once
-  fragment the literature identifies as dynamic binding, resolved statically per context rather than
-  dynamically down a call stack, and extended to configuring abstract types.
+  it zero, one, or many times. CGP shares an operation/implementation structure with handlers
+  that resume in place, but uses static provider selection without continuation capture or effect
+  typing. Normal return, panic, and divergence retain their Rust meanings.
 - [Row polymorphism, structural typing, and extensible data types](row-polymorphism.md) — the
   field-and-variant-shape typing of PureScript's rows and OCaml's polymorphic variants, framed by Morris
   and McKinna's "rows by any other name" row-theory account. CGP brings the same extensible records and

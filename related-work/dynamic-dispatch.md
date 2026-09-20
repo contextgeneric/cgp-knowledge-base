@@ -70,24 +70,16 @@ arguments at once.
 
 ### Vtables and method dictionaries
 
-Compiled languages implement dynamic dispatch with a *virtual method table*: a per-class array of
-function pointers, one slot per virtual method, that each object reaches through a hidden vtable
-pointer. A virtual call loads the vtable pointer from the object, indexes to the method's slot, and
-calls the function pointer found there, an indirection resolved entirely at runtime
-([*Virtual method table*, Wikipedia](https://en.wikipedia.org/wiki/Virtual_method_table)). Rust's own
-dynamic dispatch works exactly this way. A `dyn Trait` value is a *fat pointer* pairing a data pointer
-with a vtable pointer, and the vtable is a statically built table holding the type's destructor, size,
-and alignment followed by its method pointers, so a call through `dyn Trait` loads the vtable, looks up
-the method, and calls it with the data pointer
-([geo-ant, *Rust Dyn Trait Objects and Fat Pointers*](https://geo-ant.github.io/blog/2023/rust-dyn-trait-objects-fat-pointers/);
-[*Trait objects*, The Rust Programming Language Book](https://doc.rust-lang.org/book/ch18-02-trait-objects.html)).
-The cost is real: an indirect call defeats inlining and adds a load per dispatch. Dynamically typed
-languages pay more, resolving a method by name through a dictionary up the class or prototype chain,
-which is why their implementations invest heavily in *inline caches* and *hidden classes*, techniques
-pioneered in the Self language's *maps* and *polymorphic inline caches* and inherited by V8
-([*Maps (Hidden Classes) in V8*](https://v8.dev/docs/hidden-classes)). The vtable is the enduring image:
-a table of function pointers, consulted at runtime, that maps an interface's methods to a type's
-implementations.
+A vtable stores the method implementations used for dynamic calls. Rust's trait-object pointers
+pair a pointer to the value with a pointer to a vtable containing the relevant method pointers.
+The call therefore follows an indirect route, as described in the
+[Rust Reference](https://doc.rust-lang.org/reference/types/trait-object.html).
+
+Indirect dispatch can limit optimization, but its cost depends on the call and compiler.
+Devirtualization can recover a direct call when the target is known. Dynamic-language runtimes
+also optimize property and method lookup; V8's hidden classes help it identify object layouts.
+The [V8 documentation](https://v8.dev/docs/hidden-classes) describes that mechanism. A comparison
+of dispatch mechanisms alone does not establish a performance ranking for whole programs.
 
 ### Prototypal inheritance and delegation
 
@@ -207,17 +199,14 @@ delegate_components! {
 // }
 ```
 
-The mapping to a vtable is exact on structure and opposite on timing. A context type plays the role of
-a class, a `DelegateComponent` impl is a vtable slot, and the provider it names is the function that
-slot points to. But the key is a *type* (the component marker) rather than a method offset, the compiler
-performs the lookup *once* rather than the CPU on every call, and the table is *erased* before the
-program runs rather than materialized as data an object points to. This is why the
-[`delegate_components!`](../cgp/reference/macros/delegate_components.md) reference introduces the table
-as analogous to a vtable resolved at compile time: the analogy is precise, and the qualification is the
-whole point. The honest cost of resolving the vtable away is that CGP loses the runtime heterogeneity a
-real vtable enables. A `Vec<Box<dyn CanCalculateArea>>` can hold different concrete shapes and dispatch
-each at runtime, whereas a CGP context is one monomorphic type resolved once. Mixing implementations in a
-single collection and choosing between them at runtime is the job of Rust's `dyn`, not of CGP.
+A wiring table resembles a vtable in its selection role, but its entries are trait impls mapping
+component keys to provider types. Components may contain several methods, associated types, and
+consts, so a component entry is not necessarily one method slot. The compiler resolves the table
+without a runtime lookup.
+
+Static wiring can coexist with runtime trait objects. A dyn-compatible consumer trait can be used
+as `dyn CanCalculateArea`, including in a heterogeneous collection of concrete CGP contexts.
+Each concrete context still uses its own static provider selection inside that dynamic call.
 
 ### Component delegation is delegation, with `self` bound
 
@@ -317,9 +306,8 @@ type checks are deferred, a mistake surfaces as a *runtime error* (an `Attribute
 makes refactoring hazardous and large systems harder to trust. The standard mitigation is to add tests,
 type annotations, or a `respond_to?` guard before the call
 ([DevGex, *Duck Typing*](https://devgex.com/en/article/00035033); [SitePoint](https://www.sitepoint.com/making-ruby-quack-why-we-love-duck-typing/)).
-Dynamic dispatch has a *performance cost*. The vtable indirection defeats inlining, and dictionary-based
-lookup in dynamic languages is worse, which is why so much engineering goes into inline caches and hidden
-classes to claw it back ([V8, *Hidden Classes*](https://v8.dev/docs/hidden-classes)). Prototypal
+Dynamic dispatch has a *performance cost*. Indirect calls can limit optimization, though devirtualization and inline caches may reduce the
+cost. Dynamic runtimes also use hidden classes to optimize property lookup ([V8, *Hidden Classes*](https://v8.dev/docs/hidden-classes)). Prototypal
 inheritance draws its own gripes: a mutable prototype chain is easy to get confused about, and
 JavaScript's `this` binding, the very self-binding that makes delegation work, is a notorious source of
 bugs when a method is detached from its receiver. And tooling suffers throughout, since an IDE cannot
@@ -327,79 +315,57 @@ reliably know what a value responds to when its type is not fixed.
 
 ## How CGP compares
 
-CGP takes the static end of every axis these mechanisms define, which is its central trade: it keeps
-the openness and gives up the runtime. On *dispatch*, CGP resolves at compile time and monomorphizes
-where a dynamic language resolves at runtime, so there is no vtable, no method-dictionary lookup, and no
-indirect call. A wired call is a direct one, and nothing about it survives into the running program. On
-*typing*, CGP writes duck-typed-looking provider code but checks it statically, so the missing-method
-failure that a dynamic language hits at runtime is a compile error at the wiring site, caught by
-`check_components!` rather than by a production stack trace. On *inheritance*, CGP's delegation and
-namespace chains are walked by the type checker, not by runtime property lookup, so they cost nothing
-and cannot go wrong through a mis-set prototype or a detached `this`. Each side pays for what the other
-gets. Dynamic languages get runtime malleability (heterogeneous collections, plugins loaded at startup,
-live redefinition, metaprogramming) and pay with runtime errors and dispatch overhead. CGP gets zero-cost
-dispatch and static guarantees and pays by fixing the wiring at compile time, so nothing about it can
-change while the program runs.
+Dynamic dispatch supports runtime choice, including mixed collections of implementations.
+Dynamically typed languages also allow programs to accept objects without an explicit interface
+declaration, and mutable object systems can change behavior while running. Those freedoms are
+useful for interactive work and runtime extensibility.
 
-The costs on CGP's side deserve plain statement, because they are exactly what dynamic dispatch exists
-to provide. CGP cannot hold a heterogeneous collection of implementations and choose among them at
-runtime. That is what Rust's own `dyn Trait` is for, and a program that needs it should reach for a
-trait object, not for CGP. It cannot load an implementation chosen at runtime from configuration or a
-plugin file, monkey-patch a live object, or synthesize a response to a message it was not built to
-handle, because there is no runtime object graph to mutate and no runtime dispatch to intercept. And its
-errors, though caught early, are the verbose generated-type messages the
-[check traits](../cgp/concepts/check-traits.md) exist to localize, rather than the direct
-`NoMethodError` a dynamic language reports. `cargo cgp check` leads with the root cause for the classes
-it recognizes, and the tool is a v0.1.0-alpha that does not yet reshape every class.
+Dynamic typing can defer unsupported-operation errors until execution. That cost does not apply
+to every form of dynamic dispatch: Rust checks a trait object's interface at compile time.
+Runtime lookup and indirect calls also have costs, though optimizations can reduce them.
+Prototype mutation and call-dependent `this` binding add separate reasoning demands, as the
+[MDN guide](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Inheritance_and_the_prototype_chain)
+explains.
 
-Neither is uniformly better, and honest positioning names where each wins. When a program needs runtime
-openness (plugins discovered at startup, objects of mixed types in one collection, behavior reshaped
-live, or the metaprogramming that proxies and DSLs rely on), dynamic dispatch is the right tool, and
-emulating it with CGP's compile-time wiring is impossible rather than merely awkward, since the whole
-point is deferral to runtime. When a program's set of implementations is known at build time and it
-wants the decoupling of dynamic dispatch with none of the cost or the runtime failure modes
-(polymorphism that inlines, duck-typed ergonomics that cannot throw `NoMethodError`, and inheritance
-the compiler resolves), CGP delivers that on stable Rust, as ordinary types with no runtime machinery at
-all.
+CGP moves implementation selection into compilation and requires declarations and wiring to express
+it. The learning cost includes tracing consumer traits through provider tables; the compile-time
+cost includes trait resolution and monomorphization. Static wiring itself cannot discover plugins,
+replace a provider on a live value, or handle an undeclared operation. Those features need other
+runtime mechanisms, which CGP code can use alongside its wiring.
+
+CGP's raw diagnostics expose generated traits and types.
+[`cargo cgp check`](../cargo-cgp/reference/usage.md) leads with the root cause for the classes it recognizes,
+and the tool is a v0.1.0-alpha that does not yet reshape every class. The
+[Modularity Hierarchy](../cgp/concepts/modularity-hierarchy.md) compares these costs with ordinary
+traits, generics, and trait objects.
+
+### Where the other approach fits
+
+Runtime dispatch fits implementations chosen while the program runs, such as mixed collections or
+runtime-selected services. Dynamic object systems additionally support changing object behavior
+and intercepting otherwise unknown messages. Plugin loading requires an appropriate loading and
+interface mechanism as well as dispatch; a vtable alone does not provide it.
+
+Rust's `dyn Trait` is useful for runtime polymorphism and can coexist with CGP. A context may hold a
+trait object, or a dyn-compatible consumer trait may be used as a trait object. CGP wiring fits
+implementation choices known at build time, where reusable providers justify the additional tables.
 
 ## Presenting CGP to someone who knows this
 
-A reader who thinks in objects, messages, and prototypes holds most of CGP's structure already, so map
-the vocabulary and then flag the one change. A **context is an object**, a **component is a message or
-method**, a **provider is a method implementation**, **wiring is the object's method table**,
-[`DelegateComponent`](../cgp/reference/traits/delegate_component.md) **is its vtable**, an **aggregate
-provider or namespace is a prototype** the object delegates to, and
-[`check_components!`](../cgp/reference/macros/check_components.md) **is the guarantee that the object
-responds to every message it will be sent**, `respond_to?` made total and moved to compile time. Reading
-a provider body, which sends messages to a context it never names, is reading duck-typed code. Framed
-this way, CGP is the mechanisms they already use (dispatch, vtables, delegation, duck typing) with the
-runtime taken out.
+Separate dynamic dispatch, dynamic typing, and prototype mutation before mapping them to CGP.
+Rust trait objects select implementations at runtime while checking their interfaces statically.
+A missing-method failure associated with duck typing is not a cost of every dynamically dispatched
+call.
 
-Correct the single expectation from which everything else follows: that any of this happens at runtime.
-This reader will assume a vtable is a data structure the program carries, that dispatch chooses at the
-moment of the call, that a prototype chain is walked when a property is missing, and that the object
-graph can change while the program runs. In CGP none of that is so. The table is erased after
-compilation, the type checker resolves the dispatch and the compiler inlines it, the chain is walked
-during type resolution, and the wiring is fixed once the program is built. Present "late binding"
-honestly: in CGP the binding is late to the *wiring site*, the place a context declares its providers,
-not to runtime, so the flexibility is real but it is spent at compile time. The pitch that lands for
-this audience is the pair of things they most wish their own tools had. *Duck typing that cannot blow up
-at runtime*, because a context missing a trait is a compile error rather than a 2 a.m. `NoMethodError`.
-And *dynamic dispatch that costs nothing*, because the polymorphism they rely on is resolved away instead
-of paid for on every call. For the prototype-minded reader, the resonant framing is that CGP's
-delegation keeps `self` bound to the original context exactly as theirs keeps `this` bound to the
-receiver: the same inheritance by delegation, but checked and free. Tell that reader one more thing
-before they reach for it: a namespace's bound entries cannot be shadowed the way an own property shadows
-a prototype's, so the inherit-and-customize pattern works through slots the namespace leaves open rather
-than through override.
+Use the vtable analogy for selection, with its limits stated immediately. CGP wiring maps component
+keys to provider types and is resolved statically; a component can group multiple items. Provider
+bodies run at runtime, and static calls are not guaranteed to inline. The receiver remains the
+original context through delegation, while namespaces customize unbound paths rather than shadowing
+bound entries.
 
-Avoid promising runtime behavior CGP does not have. A reader sold on heterogeneous collections, runtime
-plugins, or monkey-patching will feel misled the first time they reach for them and find the wiring
-frozen at compile time. Say plainly that those live on the runtime side of the line, where Rust's
-`dyn Trait` and the dynamic languages themselves remain the right tools. Sell CGP as what it is, the
-static resolution of the mechanisms they know, trading runtime malleability for zero cost and
-compile-time safety, and the reader who has debugged a `this`-binding bug or chased a `NoMethodError`
-through a plugin will hear the trade as a good one.
+Present static and dynamic dispatch as composable. A dyn-compatible consumer trait can be used as a
+trait object, and a context can hold runtime-selected services. CGP wiring itself does not implement
+plugin loading or live rebinding. Avoid blanket performance rankings without measurements.
 
 ## Sources
 

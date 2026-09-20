@@ -709,9 +709,30 @@ cannot compile would break the rule that every snippet is checked. The dynamic-d
 namespace example likewise uses the [namespaces concept](../cgp/concepts/namespaces.md)'s compiled
 open-slot shape rather than the internal document's `@cgp.core.error => @app` redirect.
 
-The foreign-language snippets are taken verbatim from the internal documents, whose Sources sections
-record the toolchain each was compiled with; the pages repeat that sentence. No foreign snippet was
-recompiled for the port.
+The overview and the effects, capabilities, dependency-injection, dynamic-dispatch, and
+implicit-parameter pages use point-first explanations with explicit limits on each analogy.
+The effects page distinguishes dependency checking from effect typing and normal return from a
+termination guarantee. The capabilities page separates fixed wiring from runtime authority and
+keeps confinement with the value type and enforcement environment. The DI page distinguishes
+provider selection from object construction and lifecycle management. The dispatch page keeps
+dynamic typing separate from runtime polymorphism and explains coexistence with trait objects.
+The implicit-parameter page separates Scala's scoped givens, Haskell's named implicit parameters,
+and ordinary global type-class instances; CGP retains Rust's coherence checks.
+
+The ML-modules and policy-based-design pages also use point-first explanations and distinguish
+role correspondences from language-feature equivalence. The ML page separates associated-type
+selection from sealing, preserves scoped selection in modular implicits, and limits the Functoria
+analogy to provider assembly. Its `ScaledArea` example requires an explicit inner provider; `new`
+does not introduce a `UseContext` default. The C++ page distinguishes nondependent checks at
+definition from dependent checks at instantiation, acknowledges concepts and policy aliases, and
+keeps const generics and runtime polymorphism available alongside CGP. Its greeting uses `this->`
+for dependent-base member lookup; all three C++ examples were compiled and run with GCC 15.2.0 in
+C++23 mode during this revision.
+
+The foreign-language snippets come from the internal documents, whose Sources sections record
+their verification toolchains and any documentation-only checks. The pages preserve those records;
+prose revisions do not imply that a foreign snippet was recompiled. The overview explicitly
+distinguishes compiled examples from documentation-checked or proposal examples.
 
 The context shapes are stated on every page in prose beside the code, per the standing rule. The
 encoder pair wires environmental, parameter-targeted contexts (`ApiServer`, `Firmware`, `AppA`,
@@ -725,7 +746,7 @@ reflection page describes Rust's nightly `type_info` API and its tracking issue,
 writing and marked unstable on the page; a revision re-reads
 [tracking issue #146922](https://github.com/rust-lang/rust/issues/146922) and the project goal. And
 every page pins the toolchain versions that compiled its foreign snippets (GHC 9.10, Scala 3.8.4, OCaml
-5.5.0, Koka 3.2.3, Flix 0.76.0, Zig 0.16, PureScript 0.15.15, Agda 2.8.0, Lean 4.34.0, GCC 15.3,
+5.5.0, Koka 3.2.3, Flix 0.76.0, Zig 0.16, PureScript 0.15.15, Agda 2.8.0, Lean 4.34.0, GCC 15.2.0,
 `cap-std` 3), which the internal documents own and which move when a language does.
 
 ### Maintaining it

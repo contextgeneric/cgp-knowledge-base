@@ -17,13 +17,10 @@ can pass fakes, a different deployment can pass different implementations, and t
 The cost is that something has to do the supplying, and in a large graph that "something" is elaborate
 enough that frameworks exist to run it.
 
-CGP's wiring addresses exactly this problem, which is why the comparison matters. A DI framework
-assembles an object graph by matching each dependency to a provider; CGP assembles a context by matching
-each component to a provider. The vocabulary rhymes and the goal is identical: decouple what a piece of
-code *needs* from what supplies it. The differences are all in the mechanism. A DI framework resolves
-the graph at runtime from reflection and configuration, while CGP resolves it at compile time through
-the trait system. A reader who understands why DI decouples code already understands why CGP does. The
-work is in showing them what changes when the resolution moves from runtime to types.
+CGP separates declared dependencies from selected implementations through traits and wiring.
+DI frameworks address the same decoupling problem, but differ in resolution and object management:
+Spring and Guice commonly assemble graphs at runtime, while Dagger generates wiring at compile time.
+CGP resolves provider selection statically and leaves runtime value construction to Rust code.
 
 ## The concept in depth
 
@@ -144,15 +141,11 @@ struct ProfilePictureService<S: StorageClient> {
 }
 ```
 
-This is dependency injection in the original sense: dependencies supplied from outside, interfaces
-instead of concrete types, with the compiler doing the checking and no runtime container involved. Its
-limitation is the one CGP exists to lift. A generic bound like `S: StorageClient` leaks into every
-caller's signature, and coherence permits only one `impl StorageClient` per type, so swapping
-implementations per application, or offering several interchangeable ones, runs into the walls that
-motivate CGP's [consumer/provider split](../cgp/concepts/coherence.md). Introduce CGP to a Rust audience
-as the next step along this line they already accept, not as an import of the container model they have
-rejected. A C++ programmer knows the same plain-code form as policy-based design, compared in
-[C++ policy-based design](policy-based-design.md).
+This design is often sufficient. Different storage types can implement `StorageClient`, so replacing
+one collaborator does not itself require CGP. The additional work appears when generic parameters
+spread through enclosing types, or when reusable implementations overlap for the same target type.
+CGP addresses those cases with a shared context and separately named providers. The
+[coherence explanation](../cgp/concepts/coherence.md) develops the latter problem.
 
 ## How CGP expresses it
 
@@ -230,12 +223,10 @@ delegate_components! {
 }
 ```
 
-`FetchS3Object` and `FetchGCloudObject` are interchangeable providers of the same trait, the CGP
-equivalent of two beans bound to one interface, and the wiring picks one per context. Because the
-selection is resolved during type checking and monomorphized to a direct call, the `App` binary contains
-only the S3 code path and the `GCloudApp` binary only the GCloud one, with no runtime dispatch. A DI
-container makes the same substitution, but by holding both implementations and choosing at startup from
-configuration.
+`FetchS3Object` and `FetchGCloudObject` are interchangeable providers selected per context.
+Calls through `App` route statically to the S3 provider, while calls through `GCloudApp` route to
+GCloud. One program can use either context or both. The wiring does not require separate binaries
+or guarantee that either provider is absent from a binary.
 
 ### Checking replaces the container's startup validation
 
@@ -286,61 +277,54 @@ Even proponents concede the learning curve is steep and the machinery is heavy f
 
 ## How CGP compares
 
-CGP takes the compile-time end of every axis the DI frameworks vary along, which is its central
-trade-off: it gives up runtime flexibility to gain static guarantees and zero runtime cost. Because
-wiring is resolved by the trait system and monomorphized, there is no container, no reflection, no
-runtime graph, and no dynamic dispatch. A wired call compiles to a direct function call, and an unused
-provider is not in the binary. A dependency that a context fails to satisfy is a compile error at the
-wiring site, not a startup exception, so the class of failures that field injection is criticized for
-cannot occur. And a provider's dependencies are never hidden. They are stated in its `#[uses]` and
-`#[implicit]` declarations and enforced by the compiler, which gives the explicitness the Spring
-community prizes in constructor injection by default.
+DI frameworks centralize object construction and wiring, but their automation takes work to trace.
+Field injection can hide dependencies from a class's constructor, and runtime graph assembly can
+report missing bindings only when that graph is built. Constructor injection makes dependencies
+visible; compile-time generation, as in Dagger, moves binding validation into the build. These costs
+therefore depend on the framework and injection style. The
+[Spring reference](https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-collaborators.html)
+explains the injection trade-offs, and
+[Shore's critique](https://www.jamesshore.com/v2/blog/2023/the-problem-with-dependency-injection-frameworks)
+argues that framework automation can make a dependency graph harder to follow.
 
-The costs are just as real and should be stated plainly. CGP resolves everything at compile time, so it
-cannot do what a runtime container does best: reconfigure an application without recompiling, load
-plugins chosen at startup from a config file, or build a graph whose shape is not known until the
-program runs. It is confined to Rust, whereas Spring anchors a vast cross-cutting ecosystem that
-injection is only the entry point to. Its machinery (the consumer/provider split,
-[coherence-bypassing](../cgp/concepts/coherence.md) wiring, type-level tables) has a learning curve of
-its own, and its raw error messages can be verbose. `cargo cgp check` leads with the root cause for the
-classes it recognizes, and the tool is a v0.1.0-alpha that does not yet reshape every class. A DI
-framework remains the better choice when the application needs runtime reconfiguration, when it lives in
-a JVM or .NET ecosystem whose libraries assume the container, or when the team's familiarity with the
-framework outweighs the benefits of static wiring. CGP wins where the graph is known at build time and
-the guarantees and zero cost matter: systems programming, latency-sensitive services, and libraries that
-must not impose a runtime.
+CGP requires declarations, wiring, and compile-time trait resolution. Developers must learn the
+consumer/provider split and trace dependencies through the context. Its wiring selects providers
+statically; runtime reconfiguration requires ordinary Rust mechanisms, such as enums or trait
+objects, inside or alongside that wiring. CGP also leaves object construction and lifecycle
+management to the application.
+
+CGP's raw errors can be difficult to read because they include generated traits and types.
+[`cargo cgp check`](../cargo-cgp/reference/usage.md) leads with the root cause for the classes it recognizes,
+and the tool is a v0.1.0-alpha that does not yet reshape every class. The
+[Modularity Hierarchy](../cgp/concepts/modularity-hierarchy.md) weighs the additional machinery against
+plain traits, generics, and other alternatives.
+
+### Where the other approach fits
+
+A DI framework fits applications that rely on its object lifecycle support, runtime configuration,
+or surrounding ecosystem. A JVM application built around Spring's bean model already has reasons
+to use that model beyond selecting implementations. Dagger is an option when that application wants
+compile-time graph validation.
+
+Plain Rust traits and generics fit dependencies that can be expressed without extensive parameter
+propagation or overlapping implementations. CGP becomes useful when reusable providers need
+independent implementation choices per context and static wiring justifies the extra declarations.
+A build-time dependency graph alone does not make CGP necessary.
 
 ## Presenting CGP to someone who knows this
 
-A reader who knows dependency injection arrives with the right instinct, to decouple what code needs
-from what supplies it, so map their vocabulary onto CGP's directly. A **provider** is a bean or a
-binding: an interchangeable implementation of a trait. **Wiring** with `delegate_components!` is the
-container configuration, the `@Configuration` class or the Guice module, the single place where
-interfaces are matched to implementations. An **impl-side dependency** is a constructor parameter: what a
-provider needs from the outside, declared where the implementation lives and never leaked to callers.
-And **`check_components!`** is the graph validation a container runs, with the difference being *when* it
-runs. Leading with this dictionary lets the reader reuse everything they know about why DI decouples
-code, and spend their attention only on what is new.
+Map a provider's declared requirements to constructor dependencies and its wiring to configuration.
+Distinguish selecting an implementation from constructing and managing runtime objects: CGP handles
+the former through traits, while ordinary Rust code handles values and lifetimes.
 
-Defuse the runtime-container analogy immediately. A DI-trained reader will assume there is an object
-somewhere holding the graph, resolving dependencies by reflection, and choosing implementations at
-startup, and there is not. CGP's "container" is the type system, the "graph" is a set of trait impls,
-and the resolution happens during compilation and compiles away to direct calls. Say this explicitly,
-because leaving it unsaid invites the reader to imagine a runtime cost and a runtime failure mode that do
-not exist. The framing that lands is *Dagger, taken further*. A reader who knows Dagger already accepts
-compile-time-verified injection with no reflection, and CGP is that same bargain with per-context choice
-added: the same interface can resolve to different implementations in different contexts, which a single
-global binding graph cannot express.
+Compare frameworks individually. Dagger already validates graphs at compile time, and DI frameworks
+can support multiple graphs or configurations. Do not imply that per-application choice belongs only
+to CGP, or that plain Rust generics cannot substitute different collaborator types.
 
-Foreground the advantages that answer this audience's own complaints. Dependencies are explicit and
-compiler-checked, so the hidden-dependency and `NullPointerException` failure modes that drove the
-community off field injection are gone by construction. There is no startup cost or reflection, so the
-performance objection that motivates Dagger is answered more completely. And nothing unused reaches the
-binary, which reads to this audience as automatic tree-shaking of the object graph. Address one
-expectation head-on: CGP asks for explicit wiring and cannot scan-and-discover. There is no classpath
-scanning, no `@Component` auto-registration, no runtime rebinding, and the graph must be known at compile
-time. Present that as the deliberate price of the guarantees, the same trade Dagger made carried to its
-conclusion, and the reader who values static safety will read it as a feature rather than a loss.
+Scope the guarantees to declared dependencies and static provider selection. Checks do not validate
+credentials or other runtime conditions. Contexts and providers can use enums, trait objects, and
+runtime configuration. Avoid claims that a provider necessarily disappears from a binary or that a
+CGP application cannot fail at runtime.
 
 ## Sources
 

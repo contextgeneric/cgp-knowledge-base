@@ -538,20 +538,20 @@ it stale.
   capabilities, OS and hardware capability security, Pony's reference capabilities and Linux privilege
   bits, effects as capabilities, and the Rust community's uses), the properties that separate them, and
   the concise framing of CGP as capability-like in the effects sense but not a capability system.
-- [policy-based-design.md](related-work/policy-based-design.md) — C++ policies and host classes, CRTP,
-  and C++20 concepts, and CGP as the same compile-time composition with declared interfaces,
-  definition-time checking, host templates as higher-order providers, and the option of one wired
-  context.
+- [policy-based-design.md](related-work/policy-based-design.md) — C++ policies, CRTP, and concepts
+  compared with CGP providers and wiring, separating generic-body checks from concrete dependency
+  checks and preserving the limits of the analogy.
 - [algebraic-effects.md](related-work/algebraic-effects.md) — the operations-and-handlers model of
-  Koka, OCaml, Flix, and Eff, and the exactly-once fragment CGP reproduces statically.
+  Koka, OCaml, Flix, and Eff, and the limits of comparing static providers with tail-resumptive handlers.
 - [dependency-injection.md](related-work/dependency-injection.md) — the IoC-container model of Spring,
   Guice, and Dagger, and injection without a container or reflection.
 - [dynamic-dispatch.md](related-work/dynamic-dispatch.md) — late binding, vtables, duck typing, and
-  prototypal delegation, all resolved statically by CGP.
+  prototypal delegation, compared with CGP static wiring and coexistence with trait objects.
 - [implicit-parameters.md](related-work/implicit-parameters.md) — Scala's `given`/`using` and Haskell's
-  `ImplicitParams`, and per-context choice in place of global coherence.
+  `ImplicitParams`, and CGP context fields and provider selection within Rust coherence.
 - [ml-modules.md](related-work/ml-modules.md) — signatures, structures, functors, and modular
-  implicits, mapped onto components, providers, and higher-order providers.
+  implicits compared with components and providers, with sealing, type identity, and selection
+  mechanisms kept distinct.
 - [reflection.md](related-work/reflection.md) — Bevy's runtime reflection, Zig's `comptime`, and Rust's
   reflection MVP against CGP's type-level shapes.
 - [row-polymorphism.md](related-work/row-polymorphism.md) — PureScript rows, polymorphic variants, and

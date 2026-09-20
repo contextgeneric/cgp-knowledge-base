@@ -1,53 +1,29 @@
 # ML modules and modular implicits
 
-ML modules are the signature, structure, and functor system of OCaml and Standard ML: interfaces that
-specify types and values, implementations that satisfy them, and functors that turn one module into
-another. *Modular implicits* is the OCaml extension that adds type-directed, type-class-style resolution
-on top of that system. CGP's components, providers, and higher-order providers line up closely with
-signatures, structures, and functors. CGP replaces the manual, ordered functor application that assembling
-a large ML program requires with a declarative wiring table the compiler resolves, which places it
-between raw functors and modular implicits, and it adds per-context selection that neither has.
+ML modules compose implementations through signatures, structures, and functors; CGP addresses similar assembly problems through traits, providers, and context wiring.
 
 ## Purpose
 
-ML modules solve the problem of building large programs out of interchangeable, separately specified
-parts with real type abstraction. A *signature* states what a component provides, some abstract types
-and some operations over them, without fixing their representation. A *structure* implements a
-signature. A *functor* is a module parameterized by another module, so a component can be written once
-against an interface and instantiated many ways. This is the ML answer to modularity, dependency
-injection, and data abstraction at once, and it is widely regarded as one of the most expressive module
-systems any language offers ([Dreyer, *Understanding and Evolving the ML Module System*](https://people.mpi-sws.org/~dreyer/thesis/main.pdf)).
+ML modules let a program separate interfaces from implementations, hide representations, and
+parameterize one module over another. CGP readers can use that vocabulary to understand component
+interfaces and provider composition, while keeping ML's module abstraction guarantees distinct from
+Rust's trait and privacy mechanisms.
 
-CGP occupies the same territory, which is why the comparison is close rather than incidental. A CGP
-[component](../cgp/reference/macros/cgp_component.md) is an interface, a
-[provider](../cgp/reference/macros/cgp_impl.md) is an implementation, a
-[higher-order provider](../cgp/concepts/higher-order-providers.md) is a parameterized implementation,
-and [abstract-type components](../cgp/concepts/abstract-types.md) are the abstract types a signature
-declares. The two paradigms diverge on *how a program is assembled from these parts* and *how the parts
-are selected*. ML makes you apply functors by hand in dependency order and select modules by name. CGP
-resolves the dependency graph through the trait system from a declarative table keyed on the context.
-Modular implicits sits between them: it keeps ML's modules but adds automatic, type-directed selection,
-so the honest comparison runs across all three. The comparison also connects to
-[dependency injection](dependency-injection.md), [implicit parameters](implicit-parameters.md),
-[type classes](type-classes.md), and [algebraic effects](algebraic-effects.md), because ML modules,
-type classes, implicits, and CGP are one family of answers to the question of how to choose an
-implementation.
+The comparison also includes modular implicits, a proposal for type-directed module selection in
+OCaml. Explicit functor arguments, scoped implicit resolution, and context wiring all allow
+alternative implementations; their difference is where choices are recorded and how dependencies
+are resolved.
 
 ## The concept in depth
 
-ML modules layer three constructs, signatures, structures, and functors, on top of the core language.
-They add abstract types and the sharing constraints that reconcile them, and they distinguish
-applicative from generative functor application. Modular implicits then adds implicit resolution over
-the whole thing. The subsections build up in that order, in OCaml syntax throughout, and close on the
-theoretical result that ties modules to type classes and thereby to CGP. The OCaml snippets were compiled
-with OCaml 5.5.0; the modular-implicits snippet follows the proposal paper, since that extension has
-never shipped in mainline OCaml.
+ML modules separate an implementation from the interface its clients can use. Signatures describe
+types and operations, structures supply them, and functors build modules from other modules. This
+separation supports reusable implementations and representation hiding.
 
 ### Signatures, structures, and abstract types
 
-A *signature* is an interface that specifies types and values, and a *structure* is an implementation
-that satisfies it. A signature's *abstract types* give true data abstraction. A signature that specifies
-an abstract type `t` and a `compare` over it, and a structure implementing it, read as:
+A signature can require operations on a type without exposing the type's representation. Here,
+`OrderedType` requires a type `t` and a comparison operation, while `StringCompare` supplies both:
 
 ```ocaml
 module type OrderedType = sig
@@ -61,17 +37,14 @@ module StringCompare = struct
 end
 ```
 
-The `type t` in the signature, left without a definition, is the crux of ML data abstraction. When a
-structure is *sealed* with a signature that keeps `t` abstract, clients cannot see the representation,
-so the module is free to change it, and the type system enforces representation independence
-([*Modules and Data Abstraction in OCaml*](https://cs.wellesley.edu/~cs251/s12/handouts/modules.pdf)).
-Sealing is a stronger form of abstraction than genericity: it hides a *known* type's representation
-rather than abstracting over an unknown one.
+`StringCompare.t` remains visibly equal to `string` in this example. Ascribing the structure to a
+signature that leaves `t` abstract would hide that equality from clients. This is the distinction
+between providing a type and sealing its representation behind an interface.
 
-### Functors: modules parameterized by modules
+### Functors
 
-A *functor* is a function from modules to modules, and it is how ML expresses a reusable, parameterized
-component. A functor takes a module of some signature and produces a module built on top of it:
+A functor makes a module depend on another module through a signature. The following skeleton
+shows the application shape; OCaml's `Set.Make` supplies the complete set implementation:
 
 ```ocaml
 module Make (O : OrderedType) = struct
@@ -81,47 +54,32 @@ end
 module StringSet = Make (StringCompare)
 ```
 
-The application `Make (StringCompare)` is explicit and by name: the programmer chooses the argument
-module and writes the application. Functors are the ML mechanism for dependency injection at the module
-level. `Make` depends on *some* ordered type without naming which, and OCaml's standard library uses
-this shape throughout, as in `Set.Make(String)` ([OCaml, *Functors*](https://ocaml.org/docs/functors)).
+`Make (StringCompare)` explicitly chooses the implementation of the dependency. When clients need
+to know that a result type equals an argument type, a signature can expose that equality with a
+constraint such as `with type elt = O.t`. These equalities let independently described modules
+exchange values of the same type. [OCaml's functor guide](https://ocaml.org/docs/functors) develops
+the set example and dependency injection through modules.
 
-### Sharing constraints and the applicative/generative distinction
+Functor application also determines which abstract types are equal. OCaml's applicative functors
+can preserve result type equality across applications to the same module path. Generative functors
+can introduce fresh type identities; OCaml provides unit-parameter functors for this purpose.
+Standard ML uses generative semantics, but an explicitly shared or manifest type need not become
+fresh at every application. The distinction concerns type identity, not merely the syntax for
+calling a functor. See the [OCaml manual on generative functors](https://ocaml.org/manual/5.5/generativefunctors.html).
 
-Two subtleties make functors harder to use than the shape above suggests. When a functor result's
-abstract type must be known to equal some other type, the programmer writes a *sharing constraint* with
-`with type`, as in `Make (O) : S with type t = O.t`, a construct widely found confusing and a recurring
-source of type errors. Separately, applying a functor twice raises the question of whether the two
-results' abstract types are equal. OCaml functors are *applicative* by default, so `Make(X).t` equals
-`Make(X).t` for the same `X`, while SML functors are *generative* and mint fresh incompatible types on
-each application. OCaml marks a functor generative by giving it a final `()` argument
-([OCaml manual, *First-class modules*](https://ocaml.org/manual/5.5/firstclassmodules.html);
-[practical example thread](https://discuss.ocaml.org/t/practical-example-of-applicative-vs-generative-functors/13777)).
-These fine-grained type-equality controls make ML modules powerful and also make them heavy.
+### Assembling a program
 
-### Assembling a program: manual functor plumbing
+A large graph of functor applications can require substantial configuration code. MirageOS uses
+Functoria to describe and assemble such graphs, including configuration choices. Its authors'
+[*Functor Driven Development*](https://arxiv.org/pdf/1905.02529) paper explains the application
+structure that motivated the tool. This is a useful comparison for CGP's wiring, though Functoria
+also handles concerns beyond selecting an implementation for an interface.
 
-Building a whole application from functors means applying each one by hand, in dependency order, and
-this plumbing is a documented pain point at scale. Because a functor argument must be supplied
-explicitly, a large program becomes a sequence of functor applications, `module A = MakeA (...)`,
-`module B = MakeB (A)`, `module C = MakeC (A) (B)`, that the programmer writes out and orders correctly.
-The MirageOS project makes the cost concrete. Its paper reports that the unikernel running the MirageOS
-website "contains more than 70 modules and a functor application depth of up to 10 for the devices it
-uses", and the community built a DSL, **Functoria**, whose purpose is to organize functor applications,
-because "OCaml's module language is much less flexible than its expression language" and cannot express
-the conditional, dependency-driven wiring such assembly needs
-([*Programming Unikernels in the Large via Functor Driven Development*](https://arxiv.org/pdf/1905.02529)).
-A mature ecosystem writing a configuration DSL to escape manual functor application is the sharpest
-evidence of the limitation CGP's wiring addresses.
+### Modular implicits
 
-### Modular implicits: type-directed resolution over modules
-
-*Modular implicits* extends OCaml so that module arguments can be marked implicit and resolved by type,
-bringing type-class-style ad-hoc polymorphism to the module system. Leo White, Frédéric Bour, and Jeremy
-Yallop introduced it. A function takes an implicit module parameter, written in braces, and the caller
-omits it; the compiler searches the implicit modules in scope for one of the required signature
-([White, Bour & Yallop, *Modular implicits*](https://arxiv.org/abs/1512.01895)). The paper's own
-running example is a `Show` signature:
+Modular implicits proposes automatic selection of module arguments from implicit modules in scope.
+The function declares an implicit module parameter, and resolution uses the signature and type
+constraints to find an argument:
 
 ```ocaml
 module type Show = sig
@@ -146,38 +104,32 @@ let () =
   print_endline (show [1; 2; 3])    (* resolves Show_list(Show_int) *)
 ```
 
-`Show_list` is an *implicit functor*: its `{S : Show}` parameter makes it applicable during resolution,
-so `show [1; 2; 3]` constructs the needed module by applying `Show_list` to `Show_int`. That recursive
-resolution is the module-system counterpart of Haskell resolving `Show [Int]` from `Show Int`. The
-proposal is motivated by OCaml's lack of ad-hoc polymorphism, the separate `+` and `+.` and the family of
-`print_*` functions, and it elaborates into OCaml's existing first-class functors, so it adds no new
-runtime mechanism. It remains an [experimental fork](https://github.com/ocamllabs/ocaml-modular-implicits)
-that has never merged into mainline OCaml.
+`Show_list` composes an implementation for lists from an implementation for their elements. In this
+example, resolution applies it to `Show_int`. The proposal allows different implementations in
+different scopes; it does not require a single global instance for each type. Resolution must
+still reject ambiguous choices. See [White, Bour, and Yallop's proposal](https://arxiv.org/abs/1512.01895).
 
-### Classes as signatures: the modular-type-classes result
+This syntax belongs to the modular-implicits proposal and its
+[experimental implementation](https://github.com/ocamllabs/ocaml-modular-implicits). It is not a
+standard OCaml example. The other OCaml snippets retain the verification record in Sources.
 
-The mapping this comparison rests on, component to signature, provider to structure, and higher-order
-provider to functor, is a known theoretical result. Dreyer, Harper, and Chakravarty's *Modular Type
-Classes* treats **classes as signatures and instances as structures and functors**, which is exactly the
-correspondence CGP reuses ([Dreyer, Harper & Chakravarty, *Modular Type Classes*](https://people.mpi-sws.org/~dreyer/papers/mtc/main-long.pdf)).
-The [type classes](type-classes.md) comparison develops that result in full, including the
-*canonicity*-versus-modularity tension it exposes and how CGP resolves it by abandoning canonicity for
-per-context selection. Here it is enough that the module side of the mapping has firm footing: a CGP
-component really can be read as a signature and a provider as a structure or functor.
+### Modules and type classes
+
+The relationship between module interfaces and type-class interfaces has a formal precedent.
+Dreyer, Harper, and Chakravarty's
+[*Modular Type Classes*](https://people.mpi-sws.org/~dreyer/papers/mtc/main-long.pdf) presents classes
+as signatures and instances through structures and functors. That work helps explain the analogy
+here; it is not a formal equivalence between ML modules and CGP. The
+[type classes](type-classes.md) comparison develops the related selection tradeoffs.
 
 ## How CGP expresses it
 
-CGP reproduces the signature, structure, and functor triad with its consumer/provider machinery, then
-replaces manual functor application with a declarative table. The correspondence is close enough to
-translate construct by construct. The two real differences, declarative wiring in place of ordered
-functor application and per-context selection in place of by-name linking or implicit search, are where
-CGP earns its keep.
+CGP uses Rust traits to declare interfaces and provider types to name implementations. A context's
+wiring selects those providers, while provider bounds state which other interfaces they require.
 
 ### Components are signatures; providers are structures
 
-A CGP component is a signature and a provider is a structure implementing it, matching the
-modular-type-classes mapping directly. Declaring a component states the interface, and a provider
-supplies the implementation:
+A component and its providers separate the interface from its named implementations:
 
 ```rust
 #[cgp_component(AreaCalculator)]
@@ -193,22 +145,24 @@ impl AreaCalculator {
 }
 ```
 
-`CanCalculateArea` is the signature, the operations a caller may invoke, and `RectangleArea` is a
-structure ascribing to it. The one piece with no ML counterpart is CGP's
-[consumer/provider duality](../cgp/concepts/consumer-and-provider-traits.md). CGP splits the trait into
-a consumer side callers use and a provider side implementers target, whereas an ML signature is a single
-interface used from both sides. The split exists because Rust has coherence and ML does not. ML lets a
-program hold many structures of one signature by *naming them*, so it never needs the maneuver
-CGP uses to escape the one-implementation-per-type rule. A CGP component is also typically a *small*
-signature with one operation, where an ML signature bundles many values and types. A rich ML signature
-corresponds to a bundle of CGP components combined through supertraits and
-[`#[uses]`](../cgp/reference/attributes/uses.md). This snippet is the
-[area calculation](../examples/area-calculation.md) example and wires a **value context**.
+`CanCalculateArea` is the interface callers use, and `RectangleArea` implements its generated
+provider trait, `AreaCalculator`. The provider reads `width` and `height` from the context through
+[implicit arguments](../cgp/concepts/implicit-arguments.md). A `Rectangle` wired to this provider is a
+**value context**: the value being measured also determines the implementation.
+
+The consumer/provider split is specific to CGP's use of Rust traits. Distinct provider types can
+implement the same provider trait for a context while respecting Rust's coherence rules; wiring
+then selects one for consumer calls. ML already names different structures satisfying a signature.
+The [Consumer and provider traits](../cgp/concepts/consumer-and-provider-traits.md) page explains this
+split in detail.
+
+Components can group multiple methods, associated types, and constants. This example uses one
+operation because it is independently replaceable. A larger ML signature may correspond to one
+component or several, depending on which choices should vary together.
 
 ### Abstract-type components are a signature's abstract types
 
-An [abstract-type component](../cgp/concepts/abstract-types.md) is CGP's version of a signature's
-abstract `type t`, defined with [`#[cgp_type]`](../cgp/reference/macros/cgp_type.md):
+An abstract-type component lets generic code use a type that the context supplies:
 
 ```rust
 #[cgp_type]
@@ -217,20 +171,19 @@ pub trait HasErrorType {
 }
 ```
 
-`HasErrorType` declares an abstract `Error` the way `OrderedType` declares an abstract `t`, and
-generic code imports it with `#[use_type(HasErrorType.Error)]` and names it as the bare `Error` without
-naming a concrete type, just as a functor body refers to `O.t`. The abstraction here is the
-*parametric* kind, generic code polymorphic over the type it is given, which matches how a functor body
-abstracts over its argument's types. What CGP does *not* reproduce is ML's *sealing*. Once a context
-wires `Error` to `anyhow::Error`, no type-system boundary hides that representation from other code, so
-CGP leaves representation hiding to Rust's ordinary module privacy rather than to the abstract-type
-mechanism. CGP abstract types defer and configure a type; ML abstract types can additionally seal one.
+`HasErrorType` declares an `Error` with a `Debug` bound. Generic code can import it through
+`#[use_type(HasErrorType.Error)]` and use the name `Error`, much as a functor uses `O.t` without
+knowing its representation. Wiring chooses the associated type for a concrete context.
+
+This mechanism does not itself seal the selected type. If wiring exposes an equality with a
+concrete public type, clients can use that equality. Rust's module privacy and types with private
+representations remain available for data abstraction. The
+[Abstract types](../cgp/concepts/abstract-types.md) page distinguishes configuring a type from hiding
+its representation.
 
 ### Higher-order providers are functors
 
-A [higher-order provider](../cgp/concepts/higher-order-providers.md) is a functor: a provider
-parameterized by another provider, exactly as a functor is a module parameterized by another module. A
-`ScaledArea` provider takes an inner calculator and builds on it:
+A higher-order provider composes behavior from another provider supplied as a type parameter:
 
 ```rust
 #[cgp_impl(new ScaledArea<InnerCalculator>)]
@@ -242,23 +195,25 @@ impl<InnerCalculator> AreaCalculator {
 }
 ```
 
-`ScaledArea<RectangleArea>` is `Make (StringCompare)` in CGP form: a parameterized implementation
-applied to a specific argument. Two differences distinguish it from a plain functor, and both favor CGP's
-ergonomics. First, a higher-order provider can default its inner parameter to
-[`UseContext`](../cgp/reference/providers/use_context.md), so an unparameterized `ScaledArea` falls back
-to whatever the context itself wires for that component. That is an *open, recursive* application a plain
-functor, which always demands its argument explicitly, cannot express without recursive modules. Second,
-CGP sidesteps the sharing-constraint problem. Where an ML functor needs `with type t = O.t` to make its
-result's abstract types line up with its argument's, CGP's abstract types are supplied by the *shared
-context*, so every provider in a context agrees on `Error` and `Scalar` with no sharing annotation to
-write.
+`ScaledArea<RectangleArea>` chooses `RectangleArea` as the inner implementation and uses the same
+context for both calls. Its `AreaCalculator` bound plays the role of a functor's parameter
+signature. The context supplies the rectangle dimensions and `scale_factor`.
 
-### `delegate_components!` replaces manual functor application
+The example requires an explicit `InnerCalculator` argument. A provider can separately declare a
+default parameter of [`UseContext`](../cgp/reference/providers/use_context.md), which forwards that
+dependency through the context's wiring. The macro's `new` form above does not add such a default.
+Forwarding also needs a dependency path that terminates: wiring an area wrapper back to itself
+through `UseContext` would not select a different inner area calculator.
 
-The decisive difference is that CGP wires a program declaratively where ML applies functors by hand in
-order. A context lists its component-to-provider choices in a
-[`delegate_components!`](../cgp/reference/macros/delegate_components.md) table, in any order, and the
-trait system resolves each provider's dependencies through the context:
+A shared context can reduce the need to repeat type equalities between providers. Providers that
+use the same context's `HasErrorType` refer to the same associated `Error`. Other relationships
+between associated types may still require equality bounds. This convenience does not replace
+ML's full account of sharing constraints or abstract type identity.
+
+### `delegate_components!` records the assembly choices
+
+A wiring table names the provider for each component without listing those entries in dependency
+order. Providers obtain their declared dependencies through the same context:
 
 ```rust
 use cgp::core::error::ErrorTypeProviderComponent;
@@ -272,145 +227,113 @@ delegate_components! {
 }
 ```
 
-This is CGP's built-in Functoria. Where MirageOS needed a separate DSL to organize functor applications
-up to ten deep, CGP resolves that dependency graph as ordinary trait resolution. A provider states what
-it needs as [impl-side dependencies](../cgp/concepts/impl-side-dependencies.md), and the compiler
-threads each requirement to whatever provider the context wires for it, with no application order to get
-right. The counterpart to ML's check that a functor argument satisfies its parameter signature is
-[`check_components!`](../cgp/reference/macros/check_components.md), which verifies at compile time that
-a context supplies every trait its providers transitively need. A reusable bundle of wirings is an
-[aggregate provider](../cgp/concepts/aggregate-providers.md) or a
-[namespace](../cgp/concepts/namespaces.md), CGP's way of packaging a sub-assembly the way a functor
-packages a parameterized structure. The `App` here is an **environmental context**, the `App` and
-`TestApp` pair from the [message](../communication-strategy/message.md#the-problems-cgp-removes)
-guidance, and the wired components are about the application rather than about data.
+`App` is an **environmental context** representing the application. Its `smtp_server` field supplies
+the runtime data used by `SendViaSmtp`, while the table selects behavior and the error type. The
+entry order has no execution meaning: the table does not construct objects or schedule startup.
+This is the part of functor assembly that the comparison covers, rather than all of Functoria's
+configuration and build functions.
 
-### Modular implicits and CGP wiring: the same problem, opposite selection
+Concrete wiring needs a dependency check as well as a provider selection. Rust checks each provider
+body against its declared bounds; [`check_components!`](../cgp/reference/macros/check_components.md)
+asserts that a specified context satisfies the selected components' transitive requirements.
+Writing a table alone does not force every entry to be usable. An
+[aggregate provider](../cgp/concepts/aggregate-providers.md) or
+[namespace](../cgp/concepts/namespaces.md) can package choices for reuse.
 
-Modular implicits and `delegate_components!` are two answers to the same limitation of raw ML modules,
-that assembling a program from functors is manual, but they select implementations by opposite means.
-Modular implicits resolves by *implicit search*: the compiler looks through the implicit modules and
-functors in scope for one matching the required signature, constructing it recursively. That is the
-type-class route, and it shares type classes' coherence-leaning character: a search can be ambiguous, and
-canonicity fights abstraction. CGP resolves by *explicit table*. A context names one provider per
-component, so there is no search and no ambiguity, and each context may choose differently, which is the
-per-context selection [coherence](../cgp/concepts/coherence.md) is built to allow. The deep mechanism the
-two share is *recursive composition*. An implicit functor like `Show_list {S : Show}` builds `Show` of a
-list from `Show` of its element, exactly as a higher-order provider builds its behavior from an inner
-provider resolved through the context. So the honest statement is not that modular implicits *is*
-`delegate_components!`, but that both automate the functor plumbing ML leaves manual, one by searching
-and one by tabulating, over the same recursive-composition core.
+### Modular implicits select by scope; CGP selects through the context
+
+Modular implicits and CGP both support composing implementations from other implementations. Their
+selection mechanisms differ: modular implicits searches the implicit modules in scope under type
+constraints, while CGP's wiring names a provider for a context and component. Both allow alternative
+implementations; they place the choice in different parts of the program.
+
+Explicit wiring makes CGP's selected provider visible, but Rust still resolves trait bounds and
+checks coherence. Wiring does not eliminate every possible ambiguity or trait-resolution failure.
+Likewise, an implicit functor's recursive resolution is only an analogy for provider composition;
+it is not CGP's implementation mechanism.
 
 ## What users like and dislike
 
-ML modules are admired for the abstraction and parameterization they were designed to provide, and the
-praise is long-standing. Practitioners value *genuine data abstraction* (sealing hides a representation
-and the type system enforces it), *functors* for writing reusable components against an interface,
-*separate compilation*, and *first-class modules* for the cases where an implementation must be chosen at
-runtime ([OCaml manual, *First-class modules*](https://ocaml.org/manual/5.5/firstclassmodules.html)).
-The module system is routinely described as one of the most expressive and principled in any language,
-and the theoretical work around it (applicative functors, 1ML, modular type classes) is a rich literature.
+ML modules give library authors precise control over interfaces and type equalities. The OCaml
+[functor guide](https://ocaml.org/docs/functors) shows reusable collections and dependency injection
+built on that separation. Signature sealing supports representation hiding, and first-class modules
+allow implementations to be packaged as runtime values.
 
-The complaints cluster around weight, plumbing, and the absence of implicit resolution. The most concrete
-is *functor boilerplate at scale*. Assembling a large application means applying functors by hand in
-dependency order, painful enough that MirageOS built Functoria to manage it, and rooted in the
-*stratification* of ML: the module language is a second, weaker language layered above the expression
-language, without the conditionals and flexible dependency handling ordinary code enjoys
-([*Functor Driven Development*](https://arxiv.org/pdf/1905.02529); [Rossberg, *1ML — core and modules united*](https://www.cambridge.org/core/journals/journal-of-functional-programming/article/1ml-core-and-modules-united/47B10882829E4B32F98FBA93B28CEF30)).
-*Sharing constraints* (`with type`) are a recurring source of confusion, and the
-*applicative/generative* distinction trips people. Above all, base ML has *no ad-hoc polymorphism*.
-Everything must be named and applied explicitly, the gap that motivated modular implicits, whose paper
-opens on OCaml's separate `+` and `+.` and its family of `print_*` functions
-([White, Bour & Yallop 2015](https://arxiv.org/abs/1512.01895)). Modular implicits itself is liked for
-bringing type-class ergonomics to OCaml by reusing the module system rather than bolting on a separate
-class construct, and for naturally supporting inheritance, constructor classes, and associated types.
-It is unavailable for the plainest of reasons: it remains an experimental fork, and its authors note that
-canonicity cannot be fully reconciled with modular abstraction.
+Large assemblies can make explicit functor application cumbersome. The MirageOS authors describe
+that experience and Functoria's response in
+[*Functor Driven Development*](https://arxiv.org/pdf/1905.02529). Rossberg's
+[*1ML*](https://www.cambridge.org/core/journals/journal-of-functional-programming/article/1ml-core-and-modules-united/47B10882829E4B32F98FBA93B28CEF30)
+examines the separation between the core and module languages. These are specific accounts of
+assembly and language-design costs, rather than evidence that explicit module application is
+universally undesirable.
 
 ## How CGP compares
 
-CGP keeps the ML module correspondence (component is signature, provider is structure, higher-order
-provider is functor) and changes the two things ML users complain about, at the cost of the one thing
-ML does best. On *assembly*, CGP is declarative where ML is manual. A `delegate_components!` table lists
-choices in any order and the compiler resolves the dependency graph, so there is no functor-application
-chain to write or order, and no need for a Functoria-style DSL because CGP's wiring already is one. On
-*selection*, CGP is per-context and coherence-free where ML is by-name and modular implicits is
-implicit-search. Two contexts wire the same component to different providers with no conflict, no
-ambiguity, and no canonicity constraint. On *stratification*, CGP has none. Providers and contexts are
-ordinary Rust types and traits, wired in ordinary Rust, so there is no separate, weaker module language
-above the expression language. What CGP gives up is ML's *sealing*. CGP's abstract types defer and
-configure a type but do not hide a representation behind a type-system boundary, so representation
-hiding falls to Rust's module privacy rather than to the abstraction mechanism itself.
+ML modules make interfaces, type abstraction, and module application explicit. That gives clients
+control over which type equalities and implementations are visible. Larger assemblies can require
+more module bindings and sharing constraints, and the distinction between applicative and generative
+functors adds another type-level concern. Tools such as Functoria organize that assembly work.
 
-The costs beyond sealing deserve plain statement. ML modules are separately compiled and their functor
-applications are simple, legible module expressions. CGP's wiring is trait resolution, which compiles to
-direct calls but produces the verbose, generated-type errors the
-[check traits](../cgp/concepts/check-traits.md) exist to tame. `cargo cgp check` leads with the root
-cause for the classes it recognizes, and the tool is a v0.1.0-alpha that does not yet reshape every
-class. ML's first-class modules let an implementation be chosen at runtime from a value; CGP resolves
-at compile time and monomorphizes, so a runtime-chosen implementation needs a different tool. And ML's
-explicit, by-name linking gives a control and predictability that some programs want, where CGP's
-table-driven resolution is more automatic but less locally obvious.
+CGP moves many assembly choices into a context, at the cost of generated traits and indirect
+dependency resolution. A reader may need to follow the wiring to find an implementation, and a
+failed bound can produce a long diagnostic. [`cargo cgp check`](../cargo-cgp/reference/usage.md) helps explain
+the error classes it recognizes. Monomorphization can also increase compile time and generated code;
+static provider selection permits direct calls but does not guarantee that every call is inlined.
 
-Neither is uniformly better, and honest positioning names where each wins. When a program needs true
-representation hiding enforced by the type system, separately compiled modules, runtime selection through
-first-class modules, or the explicit control of by-name linking, ML modules are the better tool, and
-reaching for CGP would forgo abstraction guarantees ML provides natively. When a program needs many
-interchangeable implementations chosen per deployment, a dependency graph the compiler wires rather than
-the programmer, abstract types unified into the same selection mechanism, and all of it in one language
-with no module stratum, and can accept Rust as the platform, CGP delivers the functor-and-signature
-style of modularity without the manual plumbing. It does so as a working library where modular implicits,
-the ML feature aimed at the same ergonomics, is still an unmerged fork.
+CGP wiring supplies neither ML sealing nor runtime module selection. Rust's ordinary abstraction
+and runtime-polymorphism tools can coexist with CGP, but they address those needs separately. The
+[Modularity Hierarchy](../cgp/concepts/modularity-hierarchy.md) helps decide when the wiring machinery
+is worth introducing.
+
+ML modules fit programs whose design relies on signature sealing, precise control of module type
+equalities, or explicit module application. In OCaml, first-class modules also package an
+implementation for use as a runtime value. Those are native module-system features, and CGP does
+not reproduce them as a bundle.
+
+CGP is useful in Rust when many providers share a context and applications need to vary the
+implementation choices independently. For a smaller Rust interface, ordinary traits and generic
+parameters may already express the needed dependency. The choice depends on the assembly problem
+as well as the language's abstraction facilities.
 
 ## Presenting CGP to someone who knows this
 
-A reader fluent in ML modules holds most of CGP's structure already, so translate the vocabulary and
-then flag the two changes. A **component is a signature**, a **provider is a structure**, a
-**higher-order provider is a functor**, an **abstract-type component is a signature's abstract `type t`**,
-and **`delegate_components!` is the functor-application configuration**, the thing they would otherwise
-write by hand or reach for Functoria to manage. **`check_components!`** is the check that a module
-satisfies the signature its consumer requires, moved to the wiring site. Framed this way, CGP is the
-signature/structure/functor style they know, with the assembly step turned from a manual functor chain
-into a declarative table.
+Build on the separation of signatures, implementations, and parameterized implementations. Show
+`ScaledArea<RectangleArea>` as a concrete higher-order provider, then explain why several providers
+may instead obtain dependencies through a shared context. Keep the analogy about composition:
+CGP's provider types are not ML structures with all of the module system's semantics.
 
-Correct two expectations up front, because an ML reader will carry both. The first is *application
-order*. This reader expects to apply functors themselves, in dependency order, and CGP does not work that
-way: the table is unordered and the compiler resolves each provider's dependencies through the context,
-so the "wire A before B before C" discipline does not exist. Present that as the payoff, not a loss of
-control: it is Functoria's job done by the type system. The second is *abstraction*. This reader expects
-an abstract type to be *sealed*, its representation hidden by the signature, and CGP's abstract types are
-not sealed. They defer and configure a type but do not hide a known one, so representation hiding is
-Rust's module privacy, separate from the abstract-type mechanism. Say this plainly, because a reader who
-assumes sealing will look for a guarantee CGP does not make through this feature.
+Explain type abstraction before presenting wiring as a convenience. `#[cgp_type]` supplies an
+associated type; it does not seal a public concrete equality. Rust still has module privacy and
+private representations. A shared context can reduce repeated equality constraints, but it does
+not eliminate every relationship between associated types or reproduce generative module identities.
 
-The analogy to reach for, especially with an OCaml reader who has felt the pain, is *functors with the
-plumbing automated*. If they have wired a MirageOS unikernel or wished for modular implicits, the pitch
-lands: CGP is the functor-and-signature discipline with declarative, compiler-resolved wiring,
-per-context selection instead of a canonical-instance search, and no separate module language, and
-unlike modular implicits it is a library on stable Rust rather than an experimental fork. For the reader
-who knows *Modular Type Classes*, the sharpest framing is that CGP takes that paper's mapping, classes
-as signatures and instances as structures and functors, and makes the *explicit-linking* default the
-whole design, dropping canonicity in favor of a per-context table. That is precisely the choice that
-lets it host the overlapping implementations coherence would forbid.
+Describe modular implicits as scoped selection with an ambiguity check. Do not claim ML lacks
+alternative implementations, that modular implicits enforces global canonicity, or that explicit
+CGP wiring removes Rust's coherence and trait-resolution rules. Distinguish provider selection
+from Functoria's broader configuration and build work.
+
+Keep the example's defaults accurate. `ScaledArea` as declared with `new` requires its inner
+provider argument. `UseContext` defaults need an explicit struct declaration and a dependency path
+that terminates. Do not present forwarding to the same wired wrapper as a usable inner choice.
 
 ## Sources
 
-The public version of this document is the website's
-[ml-modules comparison page](https://contextgeneric.dev/docs/comparisons/ml-modules), ported per the
-[comparison page guide](../website/writing-guides/related-work.md); a change here updates that page
-in the same change.
+The OCaml snippets were compiled with OCaml 5.5.0; the modular-implicits snippet follows the proposal
+paper, since the extension has not shipped. The CGP snippets were compiled against `cgp`
+`0.8.0-alpha` with a `check_components!` assertion per wired context.
 
-The account of the related work draws on the OCaml documentation, the primary literature on ML modules
-and their relationship to type classes, and the modular-implicits proposal and its implementation. The
-OCaml snippets were compiled with OCaml 5.5.0; the CGP snippets are drawn from the knowledge base's
-[consumer/provider](../cgp/concepts/consumer-and-provider-traits.md),
-[abstract types](../cgp/concepts/abstract-types.md), and
-[higher-order providers](../cgp/concepts/higher-order-providers.md) documents.
+These references support the module semantics and comparison:
 
-- [OCaml — *Functors*](https://ocaml.org/docs/functors) and [OCaml manual — *First-class modules* (5.5)](https://ocaml.org/manual/5.5/firstclassmodules.html) — the concrete syntax of signatures, structures, functors, functor application, `with type` sharing constraints, and the applicative/generative distinction.
-- [*Modules and Data Abstraction in OCaml* (Wellesley CS251)](https://cs.wellesley.edu/~cs251/s12/handouts/modules.pdf) and [*A Crash Course on ML Modules*](https://jozefg.bitbucket.io/posts/2015-01-08-modules.html) — signatures as interfaces, structures as implementations, and sealing for data abstraction.
-- [Dreyer, *Understanding and Evolving the ML Module System* (PhD thesis)](https://people.mpi-sws.org/~dreyer/thesis/main.pdf) and [Rossberg, *1ML — core and modules united*](https://www.cambridge.org/core/journals/journal-of-functional-programming/article/1ml-core-and-modules-united/47B10882829E4B32F98FBA93B28CEF30) — the depth of the ML module system and the critique of its stratification from the expression language.
-- [Dreyer, Harper & Chakravarty, *Modular Type Classes* (POPL 2007)](https://people.mpi-sws.org/~dreyer/papers/mtc/main-long.pdf) — classes as signatures, instances as structures and functors, canonical instances for implicit resolution, and the canonicity-versus-abstraction tension.
-- [White, Bour & Yallop, *Modular implicits* (ML Workshop 2014)](https://arxiv.org/abs/1512.01895) ([Cambridge PDF](https://www.cl.cam.ac.uk/~jdy22/papers/modular-implicits.pdf)), the [experimental fork](https://github.com/ocamllabs/ocaml-modular-implicits), and [tycon, *First-Class Modules and Modular Implicits in OCaml*](https://tycon.github.io/modular-implicits.html) — implicit module parameters, implicit functors, the `Show` running example, recursive resolution, and the ad-hoc-polymorphism motivation.
-- [*Programming Unikernels in the Large via Functor Driven Development* (MirageOS / Functoria)](https://arxiv.org/pdf/1905.02529) — the functor-application boilerplate at scale (more than 70 modules, depth up to 10) and the DSL built to manage it.
-- [Applicative vs. generative functors (OCaml discussion)](https://discuss.ocaml.org/t/practical-example-of-applicative-vs-generative-functors/13777) — the practical distinction and its type-equality consequences, tracing to Leroy's module design.
+- [OCaml manual, *Generative functors*](https://ocaml.org/manual/5.5/generativefunctors.html): unit-parameter functors and fresh result type identities.
+- [OCaml, *Functors*](https://ocaml.org/docs/functors) and [OCaml manual, *First-class modules* (5.5)](https://ocaml.org/manual/5.5/firstclassmodules.html): signatures, structures, functors, sharing constraints, and the applicative/generative distinction.
+- [*Modules and Data Abstraction in OCaml* (Wellesley CS251)](https://cs.wellesley.edu/~cs251/s12/handouts/modules.pdf): sealing for data abstraction.
+- [Dreyer, *Understanding and Evolving the ML Module System*](https://people.mpi-sws.org/~dreyer/thesis/main.pdf) and [Rossberg, *1ML*](https://www.cambridge.org/core/journals/journal-of-functional-programming/article/1ml-core-and-modules-united/47B10882829E4B32F98FBA93B28CEF30): the depth of the module system and the critique of its stratification.
+- [Dreyer, Harper & Chakravarty, *Modular Type Classes* (POPL 2007)](https://people.mpi-sws.org/~dreyer/papers/mtc/main-long.pdf): classes as signatures, instances as structures and functors.
+- [White, Bour & Yallop, *Modular implicits* (ML/OCaml 2014; published 2015)](https://arxiv.org/abs/1512.01895) and the [experimental fork](https://github.com/ocamllabs/ocaml-modular-implicits): implicit module parameters, implicit functors, and the `Show` example.
+- [*Programming Unikernels in the Large via Functor Driven Development*](https://arxiv.org/pdf/1905.02529): functor plumbing at scale in MirageOS and the Functoria DSL.
+- [Applicative vs. generative functors (OCaml discussion)](https://discuss.ocaml.org/t/practical-example-of-applicative-vs-generative-functors/13777): the practical distinction.
+
+
+The public [comparison page](https://contextgeneric.dev/docs/comparisons/ml-modules) follows the
+[comparison page guide](../website/writing-guides/related-work.md); factual and example corrections
+are kept in sync with this record.
