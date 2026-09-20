@@ -3,9 +3,10 @@
 Choose each piece's opening, depth, voice, and next step for its channel and intended reader.
 
 This document covers launch posts, blog deep dives, READMEs, talks, threads, and comparisons. The
-[homepage](../website/writing-guides/homepage.md) and
-[tutorial](../website/writing-guides/tutorial.md) guides own those website formats and govern where
-the guidance overlaps.
+[homepage](../website/writing-guides/homepage.md),
+[tutorial](../website/writing-guides/tutorial.md), and
+[comparison page](../website/writing-guides/related-work.md) guides own those website formats and
+govern where the guidance overlaps.
 
 ## Deciding in order
 
@@ -105,6 +106,12 @@ case rather than a universal verdict.
 
 Preserve the author's care with related work. Explain both the useful analogy and where it stops,
 especially for concepts such as type classes, ML modules, and effects.
+
+The website's comparison pages are the standing form of this piece, and the
+[comparison page guide](../website/writing-guides/related-work.md) governs them: it fixes how an
+internal related-work document is ported, above all that the document's positioning guidance is applied
+as page structure rather than published, and how another community's tool is written about in public.
+A comparison written for another channel follows the same rules for the compared tool.
 
 ## Titles, first lines, and search
 

@@ -78,13 +78,19 @@ Register a new guide here in the same change that adds it, and in [../../summary
   base's internal reference: the layered descent that serves beginner through advanced on one page,
   the granularity and the four consolidations, where every internal link is re-pointed, and the
   external Rust documentation to link for concepts a page assumes.
+- [related-work.md](related-work.md) — the comparison pages, ported from the internal
+  [related-work](../../related-work/README.md) documents for a reader who already knows type classes,
+  dependency injection, ML modules, effects, or another related idea: the four transformations the port
+  makes, above all retiring the positioning section and applying it as structure, the page shape from
+  the *In your terms* table to the section where the other tool wins, the rules for writing about
+  another community's tool, and the verification of code in two languages.
 
-The six guides above cover every page type the site publishes or plans. A seventh is now owed rather than
-merely possible: the site has no spec for its **orientation pages**, the Introduction and Resources,
-whose job is routing rather than teaching and changes once the [explanation tier](explanation.md)
-exists — and the redesign adds a Quickstart, which is a page of a kind the site has not published and
-which [AGENTS.md](../AGENTS.md) therefore requires a guide for *before* the page rather than after. It is
-task O1 in [tasks.md](../tasks.md).
+The guides above cover every page type the site publishes or plans, with one exception. The site has
+no spec for its **orientation pages**, the Introduction and Resources, whose job is routing rather than
+teaching and changes once the [explanation tier](explanation.md) exists — and the redesign adds a
+Quickstart, which is a page of a kind the site has not published and which [AGENTS.md](../AGENTS.md)
+therefore requires a guide for *before* the page rather than after. It is task O1 in
+[tasks.md](../tasks.md).
 
 Two planned pages are deliberately specified elsewhere rather than here, and knowing that stops a later
 agent hunting for a missing guide. *Project status* is specified inside

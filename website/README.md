@@ -100,8 +100,9 @@ record drift — live in [AGENTS.md](AGENTS.md).
   [homepage](writing-guides/homepage.md), the [explanation pages](writing-guides/explanation.md) it
   offloads to, the [tutorials](writing-guides/tutorial.md), the
   [release announcement](writing-guides/release-announcement.md), the
-  [deep dive](writing-guides/deep-dive.md), and the
-  [reference page](writing-guides/reference.md).
+  [deep dive](writing-guides/deep-dive.md), the
+  [reference page](writing-guides/reference.md), and the
+  [comparison page](writing-guides/related-work.md).
 - [site-structure.md](site-structure.md) — the site's configuration, navigation, deployment, and
   front page, plus one entry per standalone page: the Introduction, the Overview, Resources,
   Contribute, and the AI skills page.

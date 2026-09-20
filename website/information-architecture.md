@@ -92,6 +92,13 @@ works, and where each one stops paying. It carries one page per idea, mirroring 
 [cgp/concepts/](../cgp/concepts/README.md) catalog. Its spec is
 [writing-guides/explanation.md](writing-guides/explanation.md).
 
+The **comparisons** answer *how does this relate to what I already know* for a reader who arrives
+holding another paradigm's vocabulary: type classes, dependency injection, ML modules, effects, C++
+policies, reflection. Each page maps CGP into that vocabulary, shows the two side by side, states what
+each costs, and says where the reader's own tool is the better choice. It carries one page per idea,
+mirroring the internal [related-work](../related-work/README.md) catalog. Its spec is
+[writing-guides/related-work.md](writing-guides/related-work.md).
+
 The **tutorials** teach a reader to do something, in two registers: first-principles, which derives
 constructs from problems using deliberately simple examples, and applied, which builds something real
 and links out for the mechanism. Its spec is [writing-guides/tutorial.md](writing-guides/tutorial.md).
@@ -126,9 +133,9 @@ but under the wrong parent or doing the wrong job.
 **Almost all of it arrives at once.** The redesign is written on the website repository's `v0.8.0`
 branch and publishes when that branch merges alongside the v0.8.0 release, so the site does not pass
 through a state where half of this inventory exists — which is what makes a target this large safe to
-commit to. The one exception is the deep dives, which land afterwards. The mechanics are in
-[AGENTS.md](AGENTS.md#the-redesign-lands-on-a-release-branch-all-at-once) and the sequencing in
-[tasks.md](tasks.md).
+commit to. The two exceptions are the deep dives and the comparisons, which land afterwards. The
+mechanics are in [AGENTS.md](AGENTS.md#the-redesign-lands-on-a-release-branch-all-at-once) and the
+sequencing in [tasks.md](tasks.md).
 
 **Front page** — the hook and the bounded essay. Present, needs rewriting.
 
@@ -174,6 +181,21 @@ made those four a short reading path — which the section's index page is what 
 - *Checking and debugging* — **new**. Lazy wiring, `check_components!`, and `cargo cgp check`. The
   largest gap in the teaching material and the natural next part of the area-calculation family.
 
+**Comparisons** (new category, 12 pages plus an index) — **new, after the release**
+
+The pages for a reader who arrives knowing a related idea and wants CGP placed in it: Rust's own
+coherence proposals, C++ policy-based design, capabilities, dependency injection, implicit parameters,
+type classes, ML modules, algebraic effects, row polymorphism, dynamic dispatch, and reflection. The
+category sits at `docs/comparisons/`, labelled *Comparisons* because "related work" is the internal
+directory's name and the academic habit behind it rather than a reader's word, and it mirrors the
+internal [related-work](../related-work/README.md) catalog one page per document, the same relationship
+Concepts and Reference have to their catalogs. It is placed directly after Concepts because it is the
+same kind of reading, away from a keyboard, and because the Concepts pages route into it for the reader
+who holds a prior model. Its spec is [writing-guides/related-work.md](writing-guides/related-work.md),
+and it is the second part of the target the relaunch does not carry, for the same reason as the deep
+dives: it is new content rather than a defect, and twelve pages of this length would compete with the
+release for the author's reading.
+
 **Reference** (new category, plus an index) — present, and **complete**
 - One page per named construct, grouped as `macros/`, `attributes/`, `derives/`, `components/`,
   `providers/`, `traits/`, and `types/`. Every group is written — `macros/` (20),
@@ -205,7 +227,8 @@ made those four a short reading path — which the section's index page is what 
   covers one. A sibling section rather than part of the reference: five pages, an overview plus one per
   command, plus installation and troubleshooting.
 
-**Deep dives** (new category) — **after the release**, unlike everything else in this inventory
+**Deep dives** (new category) — **after the release**, like the comparisons and unlike everything else
+in this inventory
 - *Hypershell* — **new**, six pages. The type-level DSL.
 - *Extensible data types* — **new**, seven pages. Records, variants, and their internals.
 - *cgp-serde* — **new**, five pages. Serde as components.
@@ -269,10 +292,12 @@ directory tree and a new category is a directory with a `_category_.json` rather
 
 The sidebar order should follow the order a reader needs things rather than the order the project thinks
 about them: **Introduction**, **Quickstart**, **Overview**, then **Tutorials**, then **Concepts**, then
-**Reference**, then **Deep dives**, then **Tooling**, **Resources**, **Contribute**, and **AI**.
-Reference sits after Tutorials because a reader reaches for it once they are writing code rather than
-while learning. The Quickstart sits second because the Introduction is the docs root and cannot be
-displaced, and because a reader who wants to see CGP run should meet it before any argument.
+**Comparisons**, then **Reference**, then **Deep dives**, then **Tooling**, **Resources**,
+**Contribute**, and **AI**. Reference sits after Tutorials because a reader reaches for it once they are
+writing code rather than while learning. The Quickstart sits second because the Introduction is the docs
+root and cannot be displaced, and because a reader who wants to see CGP run should meet it before any
+argument. Comparisons sits beside Concepts because both are read away from the keyboard and a Concepts
+page is where a reader with a prior model discovers that a comparison exists for it.
 
 Concepts sits between Tutorials and Reference rather than before Tutorials, which is a departure from
 what this document originally planned and is worth stating with its reason. A four-page curated tier
@@ -312,8 +337,20 @@ can do for this reader is present the [Hermes SDK](https://github.com/informalsy
 the real system CGP was built for, rather than as one line at the bottom of a link list.
 
 The **type-system and functional-programming reader** wants the mechanism and the intellectual argument.
-Their path is *Why CGP exists* → *How CGP works* → the blog deep dives and the
-[RustLab transcript](blog/rustlab-2025-coherence.md), which is the best thing on the site for them.
+Their path is *Why CGP exists* → *How CGP works* → the comparison for the paradigm they know (type
+classes, ML modules, implicit parameters, effects, or rows) → the blog deep dives and the
+[RustLab transcript](blog/rustlab-2025-coherence.md), which is the best thing on the site for them. Until
+the comparisons land, the path skips that step, and the transcript carries the argument alone.
+
+The **language-design reader** wants a precise contribution to a live design question, and is reached
+only at that level. Their path is the *Rust's own proposals* comparison → the RustLab transcript → the
+incoherent-Rust post once B2 publishes it. The comparison page is this reader's only orientation surface
+on the site. If any comparison were pulled forward into the relaunch it would be this one; the plan
+in [tasks.md](tasks.md) keeps all of them after it.
+
+Readers who arrive from a **dependency-injection, dynamic-language, or C++ background** take the
+matching comparison as their first stop instead of *Why CGP exists*, since the comparison maps CGP into
+vocabulary they already hold, and then join the working developer's path at *Hello World*.
 
 The **framework and library author** wants to know whether CGP solves generic-over-structure code. Their
 path is the Overview's problems → the applied tutorial → the *Extensible data types* deep dive → the
@@ -330,8 +367,9 @@ Contribute page argues for.
 ## Placing a new page
 
 Three questions settle where a page goes, and asking them in order avoids most mistakes. **What is the
-reader doing while they read it?** Nothing → explanation tier; following along at a keyboard → tutorial;
-looking one thing up → not this site, use docs.rs. **Is it dated?** A statement about a moment — a
+reader doing while they read it?** Nothing → explanation tier, or Comparisons when the page's subject is
+an idea from outside CGP that the reader already holds; following along at a keyboard → tutorial;
+looking one thing up → the reference. **Is it dated?** A statement about a moment — a
 release, an announcement, a talk — is a blog post and becomes a historical record the day it publishes;
 a statement about how things are is a docs page and is corrected in place forever. **Whose voice?** The
 author's first person means the blog, with the Contribute page's sponsorship section as the one standing

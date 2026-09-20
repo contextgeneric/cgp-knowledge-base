@@ -254,11 +254,16 @@ built to prevent [voiceless machine prose](../communication-strategy/README.md) 
 roughly a hundred pages of it.
 
 **The author reads, in full, before publication:** the front page, every page of the *Concepts*
-explanation tier, the reference index, the AI disclosure page, and every blog post. Most of these
-carry the voice, make the argument, and are what a first-contact reader meets, so an off-voice paragraph
-in one of them costs more than a wrong sentence anywhere else. The disclosure page is on the list for a
-different reason: a wrong sentence there is a false claim about the project rather than about CGP, and
-it is the page whose entire value is that it is accurate.
+explanation tier, the reference index, the AI disclosure page, every blog post, and, on every
+*Comparisons* page, the two sections that judge another tool: *What each approach costs* and *Where the
+other tool is the better choice*. Most of these carry the voice, make the argument, and are what a
+first-contact reader meets, so an off-voice paragraph in one of them costs more than a wrong sentence
+anywhere else. The disclosure page is on the list for a different reason: a wrong sentence there is a
+false claim about the project rather than about CGP, and it is the page whose entire value is that it is
+accurate. The comparison sections are on it because they speak about other communities' tools, and a
+sentence that reads as disparagement there costs the project more than any wrong claim about CGP.
+Because the comparison pages land after the relaunch, the public disclosure page states this part of the
+arrangement in the same change that publishes the first of them, not before.
 
 This list is the authoritative one, and it is quoted elsewhere — in
 [tasks.md](tasks.md) and in
@@ -362,9 +367,9 @@ Adding a page to the website means adding its document here in that same change;
 internal document has no recorded provenance, which is the failure this section exists to prevent.
 
 **A ported catalog is the one exception, and it is recorded as one entry rather than one per page.**
-The Reference and Concepts sections each mirror a catalog in this base one page at a time, so a public
-page's provenance is already fully determined by the internal document it was ported from and the
-section's shared conventions — seventy-eight near-identical documents saying so would carry no
+The Reference, Concepts, and Comparisons sections each mirror a catalog in this base one page at a
+time, so a public page's provenance is already fully determined by the internal document it was ported
+from and the section's shared conventions — dozens of near-identical documents saying so would carry no
 information and would go stale as a body. Each section therefore gets a single entry in
 [site-structure.md](site-structure.md) covering the mapping, the conventions, and the current state,
 and a page that needs something said about it *specifically* gets a paragraph inside that entry. This

@@ -109,7 +109,9 @@ more here than anywhere else.
 
 Many readers arrive fluent in a paradigm CGP resembles, and the fastest way to reach them is through
 vocabulary they already own. Each profile names the disposition that background brings and points to
-the [related-work](../related-work/README.md) document carrying the full, cited comparison.
+the [related-work](../related-work/README.md) document carrying the full, cited comparison. The public
+pages written for these readers are the website's Comparisons section, one page per related-work
+document, specified by the [comparison page guide](../website/writing-guides/related-work.md).
 
 **The functional-programming and type-system practitioner** comes from Haskell, Scala, OCaml,
 PureScript, F#, or Lean, and holds type classes, implicit parameters, row types, effect handlers,

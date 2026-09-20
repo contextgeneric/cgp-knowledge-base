@@ -126,8 +126,11 @@ implementation. The review claim must be equally precise.
 The website's [authorship rule](../website/AGENTS.md#who-drafts-a-page-and-who-reads-it-before-it-publishes)
 is the authority on which pages receive full review. It requires the author to read the front page,
 every Concepts explanation page, the reference index, the AI disclosure page, and every blog post in
-full before publication. Other pages follow their writing guides and receive spot checks. Consult
-that rule when drafting a disclosure instead of reconstructing the list from memory.
+full before publication, and on every comparison page the two sections that judge another tool. Other
+pages follow their writing guides and receive spot checks. Consult that rule when drafting a disclosure
+instead of reconstructing the list from memory. The comparison pages publish after the relaunch, so
+the disclosure page adds that clause in the change that publishes the first of them; a claim about
+reviewing pages that do not yet exist is not a disclosure.
 
 The review policy reflects the kind of work each page requires. Construct reference pages are ports
 of source-checked documents into a fixed template, while argument and framing require close human

@@ -524,8 +524,9 @@ it stale.
 
 ## `related-work/` — CGP against the ideas it resembles
 
-- [README.md](related-work/README.md) — the catalog, why honesty is the section's whole value, and how
-  related work differs from the inward-looking sections.
+- [README.md](related-work/README.md) — the catalog, why honesty is the section's whole value, how
+  related work differs from the inward-looking sections, and the pointer to the website's Comparisons
+  section ported from these documents.
 - [AGENTS.md](related-work/AGENTS.md) — the rules: what every document must cover, the sourcing and
   citation obligation, compiling foreign snippets through Nix and recording the toolchain, the CGP
   side's synchronization duty, and the document template.
@@ -750,6 +751,12 @@ it stale.
   serving beginner to advanced on one page, the obligation to cover every form the parser accepts and
   to enumerate against it, near-one-page-per-construct with four consolidations, the replacement for
   every internal link target, and the external Rust documentation table.
+- [related-work.md](website/writing-guides/related-work.md) — the comparison pages ported from the
+  internal related-work documents: the four transformations of the port (retire the positioning section
+  and apply it as structure, compress the refresher, re-point every link, keep Sources), the page shape
+  from the *In your terms* table to the section where the other tool wins, the rules for writing about
+  another community's tool, code verification in two languages, the index, and the post-release
+  placement after Concepts under the label *Comparisons*.
 
 ### `website/blog/` — one document per published post
 

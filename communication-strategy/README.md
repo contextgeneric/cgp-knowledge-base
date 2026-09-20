@@ -101,8 +101,10 @@ in one place.
 
 The [website section](../website/README.md) turns this strategy into page-specific guidance and
 records of published work. Start with its [writing guides](../website/writing-guides/README.md)
-when drafting for the site. The [homepage](../website/writing-guides/homepage.md) and
-[tutorial](../website/writing-guides/tutorial.md) guides own those formats' detailed requirements.
+when drafting for the site. The [homepage](../website/writing-guides/homepage.md),
+[tutorial](../website/writing-guides/tutorial.md), and
+[comparison page](../website/writing-guides/related-work.md) guides own those formats' detailed
+requirements.
 
 Published pages also help test whether the guidance fits the author's work. The
 [RustLab transcript](../website/blog/rustlab-2025-coherence.md) provides a delivered talk to learn

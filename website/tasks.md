@@ -29,7 +29,7 @@ around that — including never committing redesign work to `main`, which deploy
 [canonical](writing-guides/reference.md), so it carries a completeness obligation, and that obligation
 is met on day one rather than deferred. R2 is therefore not a background task that runs alongside the
 release — it is the task that sets the release date, and it is the largest thing on this list by a wide
-margin. Everything except the deep dives is release-blocking.
+margin. Everything except the deep dives, the comparisons, and the two blog posts is release-blocking.
 
 **The work runs across many sessions, and the scope of each is assigned rather than inferred.** An
 agent picking up this document works on the tasks it has been given, not on whatever the ordering
@@ -40,9 +40,9 @@ handed over is actually startable.
 
 Every task has an ID so that dependencies can be stated without ambiguity, a **lands in** field naming
 the repository and path, and a **done when** condition. The IDs group by kind — `C` corrections, `E`
-explanation tier, `F` front page, `T` teaching, `R` reference, `D` deep dives, `B` the blog, `V` the
-version release, `O` orientation, `A` the AI disclosure, `X` cross-cutting — and they are stable, so a
-task removed on completion leaves its ID retired rather than renumbered.
+explanation tier, `F` front page, `T` teaching, `R` reference, `D` deep dives, `W` comparisons, `B` the
+blog, `V` the version release, `O` orientation, `A` the AI disclosure, `X` cross-cutting — and they are
+stable, so a task removed on completion leaves its ID retired rather than renumbered.
 
 Four obligations apply to **every** task that adds or moves a page, and they are stated once here rather
 than repeated in each entry, per [AGENTS.md](AGENTS.md). Adding a page means **adding or updating its
@@ -281,6 +281,50 @@ Each of DD1–DD3 finishes the same way: **a pointer to the deep dive is added a
 it grew out of** — four posts in DD2's case. That is the one sanctioned edit to a published post, since it
 adds a link and changes no claim; the post's slug and its snippets are untouched.
 
+## W — The comparisons
+
+**Post-release**, like the deep dives, and for the same reasons: the section is new content rather than
+a defect in an existing page, and twelve pages of this length would compete with the release for the
+author's reading. The pages are ported from the internal [related-work](../related-work/README.md)
+documents, one page per document, under `docs/comparisons/`, labelled *Comparisons* and placed after
+Concepts. The spec is [writing-guides/related-work.md](writing-guides/related-work.md), which is
+written; its four transformations, above all retiring each document's positioning section and applying
+it as page structure, are what the port consists of. The section registers as one entry in
+[site-structure.md](site-structure.md), per the ported-catalog exception, and every page puts its CGP
+code in `example-code/tests/comparisons/`.
+
+- **W1 — the index and the category.** The `_category_.json` labelled *Comparisons*, linked to a
+  hand-written index that routes by the reader's background, and the sidebar renumbering that moves
+  Reference, `cargo-cgp`, and AI down one. *Lands in:* `docs/comparisons/index.md` and the affected
+  `_category_.json` files. *Blocked by:* V1, since nothing in this group publishes before the relaunch.
+  *Done when:* the index routes to every planned page, including the ones still unwritten, and the
+  section's entry exists in `site-structure.md`.
+- **W2 — the two pages a Rust reader compares CGP to first.** *Rust's own proposals* and *C++
+  policy-based design*. The first is the only orientation surface for the language-design reader and
+  depends on how the unpublished incoherent-Rust draft is handled: attribute to the RustLab transcript
+  where it makes the point, state the rest as the project's analysis, or wait for B2. *Blocked by:*
+  W1; softly by B2 for the proposals page. *Done when:* both pages pass the guide's checks and the
+  author has read their two judging sections. **The first page in this group to publish also adds the
+  comparison clause to the public disclosure page**, per
+  [AGENTS.md](AGENTS.md#who-drafts-a-page-and-who-reads-it-before-it-publishes); until then the
+  disclosure describes the arrangement as it stands.
+- **W3 — the type-theoretic family.** Type classes, ML modules, implicit parameters, algebraic
+  effects, and row polymorphism, whose readers overlap and whose pages cross-link heavily, so they are
+  one session's unit. *Blocked by:* W1.
+- **W4 — the remaining five, and the linking sweep.** Dependency injection, dynamic dispatch,
+  reflection, and capabilities, then two sweeps once all twelve exist: each comparison page's *Where to
+  go next* names its neighbouring comparisons, and each Concepts page whose idea has a comparison gains
+  one entry for it in its own *Where to go next*, which is how a reader with a prior model discovers
+  the section from the sidebar's first stop. The reflection page carries the most version-bound
+  material and its `site-structure.md` paragraph records which claims will decay. *Blocked by:* W1.
+
+Each page finishes the same way: its CGP snippets compiled in the `example-code` mirror with a check per
+wired context, its foreign snippets compiled against the toolchain its Sources sentence names, its
+provenance note at the foot, and a paragraph in the section's `site-structure.md` entry only where the
+page needs something said about it specifically. Landing the whole group clears the **new** marker in
+[information-architecture.md](information-architecture.md) and adds the comparison step to the reader
+paths there that currently skip it.
+
 ## B — The blog
 
 Two posts, both **post-release**, and both deliberately spaced rather than bundled. Publishing several
@@ -437,7 +481,10 @@ the [ordering](#the-ordering) for what to start on.
 | R3 | nothing | nothing (C4, T2 point at it) |
 | DC1, DC2, DC3 | nothing | DD1, DD2, DD3 respectively |
 | DD1, DD2, DD3 | their DC task | nothing |
-| B1, B2 | nothing (both held until after V1) | nothing |
+| W1 | V1 | W2, W3, W4 |
+| W2 | W1; B2 (soft) | the disclosure page's comparison clause |
+| W3, W4 | W1 | nothing |
+| B1, B2 | nothing (both held until after V1) | W2 (soft, through B2) |
 | V1 | the v0.8.0 release, and every release-blocking task | completes C2 and C3; unblocks B1 and B2 |
 | O1 | nothing | O2, and the Introduction narrowing (soft) |
 | O2 | O1 | F1's first call to action (soft) |
@@ -488,7 +535,9 @@ lead time on the deep dives.
 
 **Then V1, and the merge.** Everything above ships at once.
 
-**Then, spaced out: DD1–DD3, B2, and B1.** Post-release work, published apart rather than together.
+**Then, spaced out: DD1–DD3, B2, B1, and W1–W4.** Post-release work, published apart rather than
+together. W2 reads better after B2, since the proposals page can then cite the incoherent-Rust post
+instead of paraphrasing it, so B2 before W2 is the natural order within this set.
 
 ## Keeping this document current
 
