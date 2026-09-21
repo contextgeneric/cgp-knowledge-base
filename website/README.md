@@ -92,11 +92,11 @@ record drift — live in [AGENTS.md](AGENTS.md).
 - [redesign-queue.md](redesign-queue.md) — the consolidated list of what is wrong with or missing from
   the site today, grouped by cost, with a pointer to the document that owns each item. Emptied as work
   lands, and deleted when empty.
-- [seo.md](seo.md) — the site's **search and agent discoverability** strategy: why the site ranks
-  badly for its own name, the pre-migration URLs that still 404, why the pages that do rank are the
-  stalest ones, which search terms the site can honestly win, how the settled tag line and headline
-  features map onto them, and how the same material reaches coding agents. A specification, like
-  information-architecture.md, rather than a page record.
+- [seo.md](seo.md) — the site's **search and agent discoverability** strategy, written against a
+  twelve-month Google Search Console export: why the measured problem is a 0.75% click-through rate
+  rather than a ranking one, what the data overturned, which terms the site can honestly win, how the
+  settled tag line and headline features map onto them, and how the same material reaches coding
+  agents. A specification, like information-architecture.md, rather than a page record.
 - [tasks.md](tasks.md) — the redesign's *plan*, where the queue is its *diagnosis*: that the whole site
   relaunches with the v0.8.0 release from a single branch, every remaining task with the repository it
   lands in, its dependencies, and its done-condition, which of them the release waits for, and the
@@ -110,6 +110,12 @@ record drift — live in [AGENTS.md](AGENTS.md).
   [deep dive](writing-guides/deep-dive.md), the
   [reference page](writing-guides/reference.md), and the
   [comparison page](writing-guides/related-work.md).
+- [patterns-book.md](patterns-book.md) — the record of and plan for the
+  [CGP Patterns book](https://patterns.contextgeneric.dev/), the project's second public documentation
+  property: the seven chapters that are still current against the twelve that are not, the single
+  outbound link the whole book carries, why CI's single version pin makes a gradual update impossible,
+  the map from each chapter to the page that now owns its material, and the six changes that route its
+  readers forward.
 - [site-structure.md](site-structure.md) — the site's configuration, navigation, deployment, and
   front page, plus one entry per standalone page: the Introduction, the Overview, Resources,
   Contribute, and the AI skills page.

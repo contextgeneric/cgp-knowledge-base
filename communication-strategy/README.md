@@ -92,8 +92,9 @@ in one place.
   and understand as a piece develops, then revising where those predictions fail.
 - [Formats](formats.md): Guidance for posts, READMEs, talks, threads, and comparisons, including
   titles, search, discussion replies, next steps, and model drafts.
-- [Evidence](evidence.md): Survey findings, relevant discussions, summarized CGP reception,
-  evaluation signals, and dated sources for audience claims and communication methods.
+- [Evidence](evidence.md): Survey findings, relevant discussions, summarized CGP reception, the
+  measured search demand from Search Console, evaluation signals, and dated sources for audience
+  claims and communication methods.
 - [AI disclosure](ai-disclosure.md): How to describe AI's role in documentation, revisions,
   tooling, tests, and the core library; review limits; and website provenance notes.
 

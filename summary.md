@@ -596,7 +596,7 @@ it stale.
   thread answers, the conversion ladder, and annotated model drafts.
 - [evidence.md](communication-strategy/evidence.md) — the citable facts: what the Rust community
   worries about and rewards, which conversations draw attention, and the distilled patterns in how CGP's
-  own posts and talk were received, and the signal watched at each funnel stage; the section's single
+  own posts and talk were received, and the measured search demand from Search Console and the signal watched at each funnel stage; the section's single
   home for external citations, audience facts and borrowed craft alike, each with the date it was last
   checked, and the rule that reaction to CGP is summarized rather than linked.
 - [ai-disclosure.md](communication-strategy/ai-disclosure.md) — how the project discloses its own use of
@@ -692,16 +692,23 @@ it stale.
   why most readers never see the homepage, the four routes in and why three fail, what each surface is
   for, the target page inventory including unwritten pages, the sidebar order, and each reader
   profile's path through the site.
+- [website/patterns-book.md](website/patterns-book.md) — the CGP Patterns book: its measured search
+  performance and the single chapter carrying 77% of it, the split between seven current chapters and
+  twelve stale ones, the one outbound link in nineteen chapters, the 28 unwritten entries the website
+  has since written instead, why CI's single `cgp` pin rules out a gradual update, the chapter-to-page
+  routing map and its knowledge-base mirror, and the six-change plan.
 - [website/redesign-queue.md](website/redesign-queue.md) — the consolidated list of what is wrong with
   or missing from the site, grouped into cheap corrections, page rewrites, and new pages; deleted when
   empty.
-- [website/seo.md](website/seo.md) — the site's search and agent discoverability strategy: the measured
-  diagnosis, led by the pre-migration URLs that still 404 and the 60 pages with missing or broken meta
-  descriptions; what good would look like; why the pages that rank are the stalest ones; the four other
-  properties ranking for CGP's terms; the map from the headline features to query families and the
-  pages that own them; the per-page title and description levers; the agent surfaces including the
-  evidence on `llms.txt`; what was checked and deliberately left alone; measurement without analytics;
-  and the ten-item work list.
+- [website/seo.md](website/seo.md) — the site's search and agent discoverability strategy, written
+  against a twelve-month Google Search Console export: what that data overturned, the 0.75%
+  click-through rate that reframes the problem as presentation rather than rank, the pages and
+  descriptions behind it, the dead pre-migration URLs still drawing impressions into 404s, the branded
+  terms that already rank first and have no volume, the blanket-implementation family that is the
+  project's one proven term, the map from the headline features to query families, the per-page title
+  and description levers, why adding a page is almost never the answer and which three query clusters
+  to consider, the agent surfaces including the evidence on `llms.txt`, what was checked and left
+  alone, and what to watch now that measurement exists.
 - [website/tasks.md](website/tasks.md) — the redesign's work plan: that the whole site relaunches with
   the v0.8.0 release from one branch, the four standing obligations every page-adding task carries,
   every remaining task with its repository, dependencies, and done-condition — including the AI

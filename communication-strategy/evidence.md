@@ -87,6 +87,27 @@ The 2025 survey suggests that some learning questions may be moving to LLM tools
 this from open answers and shifts in community participation. Treat that as context for agent
 support, not as a measurement of CGP users or evidence that the skill solves their difficulties.
 
+## What the search data shows about demand
+
+Google Search Console gives the project one measured view of what readers look for, and the
+finding worth carrying into public writing is which vocabulary they use. Over the twelve months to
+2026-09-18 the domain property drew 121,685 impressions and 970 clicks, and its largest non-branded
+term by far was the **blanket-implementation family**: six query variants totalling 1,781 impressions
+and 106 clicks at average positions between 4.0 and 5.1. The page earning most of them is a chapter of
+the [CGP Patterns book](https://patterns.contextgeneric.dev/).
+
+Two conclusions follow for this section, and both are narrow. **Blanket implementations are the
+entry point readers actually search for**, which supports leading with that idea for a general Rust
+audience and is independent evidence for the hand-rolled-workaround finding below. And **the
+project's own name has almost no search demand** — *context generic programming* and *cgp rust*
+together drew 112 impressions in a year, at average positions of 1.1 and 1.3 — which is measured
+support for [identity.md](identity.md#why-each-word-of-the-line-is-there)'s rule that the name always
+travels with a plain descriptor. The bare acronym drew 736 impressions and no clicks at all.
+
+These are Google figures for one property over one year. They describe what reached this site, not
+what the Rust community wants, and the query table is capped at 1,000 rows, so roughly nine
+impressions in ten are long-tail queries nobody can inspect.
+
 ## The pains are real — and developers already hand-roll the fix
 
 An independently published workaround shows that CGP addresses a problem developers encounter.
@@ -96,8 +117,8 @@ That resembles CGP's central mechanism and provides a concrete comparison for a 
 unnecessary abstraction.
 
 Use the workaround to explain the benefit of packaging a reusable technique. It establishes that
-someone needed the pattern; it does not establish broad demand or prove that CGP is the best
-solution for every instance.
+someone needed the pattern, and the search data above establishes that people look for the underlying
+idea in volume; neither proves that CGP is the best solution for every instance.
 
 Dependency injection provides another comparison, but the trade-offs depend on the design. A
 runtime container may use `Arc<dyn Trait>` to resolve an object graph. CGP instead selects providers
@@ -213,10 +234,12 @@ Track these signals where they are available:
 - **Advocacy: independent writing and components.** Count contributions and unsolicited writing
   when they occur, and record which subjects they cover. These indicate engagement beyond reading;
   they do not by themselves establish widespread adoption.
-- **Search: unavailable under the recorded site policy.** The site lacks analytics, and adding
-  them requires reconsidering its [plugin policy](../website/site-structure.md). Do not infer
-  search traffic from other signals. If the policy changes, prioritize privacy-respecting
-  aggregate measurements of landing pages and search entry points.
+- **Search: available through Google Search Console, for Google only.** The site has no analytics
+  and needs none for this: Search Console places no script on the site and reports what Google
+  already knows about its own index. A twelve-month export to 2026-09-18 is summarized below and
+  analyzed in the website section's [SEO strategy](../website/seo.md). Nothing equivalent exists for
+  Bing, Kagi, or Brave, so claims about those engines still rest on hand checks. Keep raw exports
+  outside this repository.
 
 Establish a baseline before attributing a change to a piece. Collect a signal only when it can
 inform a decision. Update the standing guidance when findings change it; repeated confirmation

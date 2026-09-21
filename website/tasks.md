@@ -41,8 +41,9 @@ handed over is actually startable.
 Every task has an ID so that dependencies can be stated without ambiguity, a **lands in** field naming
 the repository and path, and a **done when** condition. The IDs group by kind — `C` corrections, `E`
 explanation tier, `F` front page, `T` teaching, `R` reference, `D` deep dives, `W` comparisons, `B` the
-blog, `V` the version release, `O` orientation, `A` the AI disclosure, `X` cross-cutting — and they are
-stable, so a task removed on completion leaves its ID retired rather than renumbered.
+blog, `V` the version release, `O` orientation, `A` the AI disclosure, `S` search and agent
+discoverability, `X` cross-cutting — and they are stable, so a task removed on completion leaves its ID
+retired rather than renumbered.
 
 Four obligations apply to **every** task that adds or moves a page, and they are stated once here rather
 than repeated in each entry, per [AGENTS.md](AGENTS.md). Adding a page means **adding or updating its
@@ -269,7 +270,12 @@ are also independent of everything above, so they can start whenever there is ca
   and a genuine library improvement: without it every context spells out a dozen wiring entries, and the
   deep dive's payoff — two applications differing by a handful of lines — is far weaker. The attribute
   removals are breaking for downstream users and are accepted. *Lands in:* the `cgp-serde` repository.
-- **DD1 — the Hypershell deep dive.** Six pages. *Blocked by:* DC1. The explanation tier is where the
+- **DD1 — the Hypershell deep dive.** Six pages. *Blocked by:* DC1. **Do this one first of the
+  three.** It is the only deep dive with measured demand behind it: the post it grows from wins
+  *rust dsl* at 771 impressions and position 7.0, and a further 293 impressions across
+  *shell scripting vs rust* and its variants convert at zero, which is a comparison the deep dive can
+  serve and the post does not. See
+  [seo.md](seo.md#adding-a-page-is-almost-never-the-answer-and-the-data-says-which-three-cases-to-consider). The explanation tier is where the
   post's embedded CGP primer goes instead of being re-taught, and it now exists. **This task also creates the `Deep dives`
   category.**
 - **DD2 — the extensible data types deep dive.** Seven pages, from four blog posts and two example
@@ -381,6 +387,88 @@ Disclosure for the **other repositories** — `cargo-cgp` above all, whose sourc
 three — is deliberately out of scope here and happens after the redesign is published. Do not add notes
 to another project's README or documentation in the meantime.
 
+## S — Search and agent discoverability
+
+Eleven tasks, and the diagnosis behind every one of them is in [seo.md](seo.md), which is written
+against a twelve-month Google Search Console export and carries the reasoning, the measured numbers,
+and the rules that constrain the work. Do not restate them here; read that document before starting any
+of these.
+
+**The ordering inside this group is set by one measurement.** The property drew 121,685 impressions and
+970 clicks over twelve months — a **1.09% click-through rate** once an anomalous May 2026 is excluded,
+0.80% with it — at an average position between 7 and 17. The site is being shown and not chosen, so
+work that changes a title or a description outranks work that chases a rank, and S3 and S4 are
+therefore the group's largest items rather than its housekeeping. Both should land **before the branch
+merges**, because the merge is what fixes each new page's first impression in the index.
+
+- **S3 — a `description` on every page.** One line of front matter per page. Start with the 60 built
+  pages whose derived description is missing or under 50 characters — several are literal garbage, such
+  as the `#[cgp_component]` page's ``[cgp_component]` `` — and with the reference group, where coverage
+  is 1 page in 199. Concepts is 0 of 19 and the blog 0 of 17; Comparisons is already complete at 12 of
+  12, because its guide requires one. *Lands in:* `docs/`, `blog/`. *Blocked by:* nothing. *Done when:*
+  no built page falls back to a derived description. **Cheapest done per section while someone is
+  already in that section.**
+- **S4 — a search-facing `title` on the pages whose heading is a construct name.** Front-matter `title`
+  sets the metadata and may differ from the `h1`, so a reference page keeps its `#[cgp_component]`
+  heading and carries a title saying what the construct is for. Keep it under roughly 60 characters and
+  put the distinguishing word first. *Lands in:* `docs/reference/`, plus the concept pages whose title
+  does not use the reader's words — **`docs/concepts/coherence` above all**, whose subject is why Rust
+  rejects overlapping blanket implementations and whose title says neither of those words. The words
+  the data gives are *blanket implementation*: that family is 2,019 impressions a year at position 5.8,
+  against 11 for *rust conflicting implementations of trait*. The reasoning is in
+  [seo.md](seo.md#adding-a-page-is-almost-never-the-answer-and-the-data-says-which-three-cases-to-consider).
+  *Blocked by:* nothing.
+- **S2 — the dead-URL stubs.** Five pre-migration URLs still draw 1,934 impressions and 10 clicks a year
+  into a 404, at positions between 6.5 and 8: `/overview/`, `/tutorials/hello/`, `/resources/`,
+  `/contribute/`, and `/tutorials/`. Add a static HTML stub under `static/` for each, with a canonical
+  link and a meta refresh to the current address, plus `/feed/` and `/atom` while there. GitHub Pages
+  cannot issue a 301, so a stub is what is available without a plugin. *Lands in:* `static/`.
+  *Blocked by:* nothing.
+- **S7 — the off-site metadata.** Set `homepage` in the `cgp` crate's manifest, which is unset, so that
+  crates.io and lib.rs link the site at all; expand `keywords` from one to five; add `categories`.
+  Replace the GitHub repository description, which still carries the retired "modular programming
+  paradigm" line, and widen its topics. Give the sibling repositories a description and a homepage.
+  **Link the patterns book forward**: its `blanket-implementations.html` chapter is the single
+  best-performing page in the whole property, at 12,232 impressions and 237 clicks, and it sends its
+  readers nowhere current. That change and the rest of the book's plan are specified in
+  [patterns-book.md](patterns-book.md); only the forward links belong to this task. *Lands in:* the [`cgp`](https://github.com/contextgeneric/cgp) repository,
+  the [`cgp-patterns`](https://github.com/contextgeneric/cgp-patterns) repository, and the
+  organization's GitHub settings. *Blocked by:* nothing. **Cheapest item in the group**, and the only
+  one touching the properties that share the site's queries.
+- **S8 — `robots.txt`.** The site serves none, so nothing points a crawler at `/sitemap.xml`. *Lands
+  in:* `static/robots.txt`. *Blocked by:* nothing.
+- **S6 — the homepage's own metadata.** The hand-written `<meta name="description">` in
+  `src/pages/index.tsx` repeats the retired line, and the page passes the configured `tagline` as its
+  title. C1 repairs the title as a side effect; the description and the choice to use the tagline as a
+  title at all belong to **F1**, which is where this lands rather than as separate work.
+- **S5 — the first-paragraph orientation sweep.** Name CGP once in prose, with a link to the
+  Introduction, on every page that does not already. The justification is reader orientation, which
+  [formats.md](../communication-strategy/formats.md#titles-first-lines-and-search) already requires; the
+  search benefit is a by-product, since the name already ranks first. *Lands in:* `docs/`.
+- **S10 — the agent surfaces.** Add a `context7.json` to the `cgp` repository and resubmit, so the
+  indexed description stops carrying the retired line; optionally publish an `llms.txt` generated from
+  the sidebar, on the grounds [seo.md](seo.md#llmstxt-and-why-it-is-worth-a-file-but-not-an-argument)
+  states and no others. *Lands in:* the `cgp` repository, and `static/` if the file is published.
+- **S1 — the hand check on Bing and Kagi.** Search Console covers Google alone. The six queries and the
+  recording method are in [seo.md](seo.md#repeating-the-hand-check). *Blocked by:* nothing, and it
+  blocks nothing; it exists so the document's only unmeasured half gets measured.
+- **S9 — the relaunch-day submission.** On the day the branch merges: confirm `/sitemap.xml` serves all
+  292 URLs, take a Search Console export as the pre-relaunch baseline, and ping IndexNow if it is
+  adopted. *Blocked by:* V1. **This belongs on the release checklist** in
+  [writing-guides/release-announcement.md](writing-guides/release-announcement.md#publishing-and-what-happens-afterwards)
+  beside re-pinning the tutorials' `cgp` version, and is listed here so it is not lost between the two.
+- **S11 — Algolia DocSearch.** Accepted by the author, for **after the relaunch**: 292 pages with no way
+  to search them is the problem it solves. DocSearch is free for open-source documentation and ships
+  inside `preset-classic`, so it needs a DocSearch application and a `themeConfig.algolia` block rather
+  than a new dependency. *Lands in:* `docusaurus.config.ts`. *Blocked by:* V1, since the application is
+  submitted against the published site.
+
+Two things this group deliberately does not do. It does not add analytics: Search Console reports what
+Google already knows and places no script on the site, which is what makes it compatible with the
+site's posture, and the distinction is explained in [seo.md](seo.md#measurement). And it does not touch
+published blog posts, whose titles are among the worst offenders and whose
+[dated-artifact rule](AGENTS.md#do-not-rewrite-history) is unchanged.
+
 ## X — Cross-cutting
 
 - **X1 — re-inline the agent skill.** What remains here is the re-inlining, not the skill: the source in
@@ -442,6 +530,9 @@ the [ordering](#the-ordering) for what to start on.
 | O1 | nothing | O2, and the Introduction narrowing (soft) |
 | O2 | O1 | F1's first call to action (soft) |
 | A1 | the author's read | every page-adding task's provenance note |
+| S1–S5, S7, S8, S10 | nothing | nothing; S3 and S4 should precede V1 |
+| S6 | nothing | folded into F1 |
+| S9, S11 | V1 | nothing |
 | X1, X2, X3 | nothing | nothing |
 
 Three shapes in that graph are worth naming, because they are what make the ordering non-obvious. **R2 sets the
@@ -452,8 +543,10 @@ interrupt**: nothing publishes until it lands, so a task deferred is a release d
 
 ## The ordering
 
-**First, the corrections (C1–C6), in a single pass on the branch.** They cost minutes each and they stop
-every later task inheriting known-wrong copy.
+**First, the corrections (C1–C6), in a single pass on the branch**, and **S2, S7, and S8 with them**.
+They cost minutes each and they stop every later task inheriting known-wrong copy. The three search
+items belong in that pass for the same reason: S7 is one line of `Cargo.toml` plus a GitHub settings
+field, and S2 and S8 are static files that nothing else depends on.
 
 **A1 is drafted already**, which matters for the ordering rather than merely for the tally: it is what
 every subsequent page's provenance note links to, so no page added from here carries a dangling
@@ -471,6 +564,13 @@ unblocks the homepage's second call to action, but it cannot start until its hom
 **Then start R2, and keep it running.** It is long, mechanical, parallelizable, and it is the release
 date. Split it by subdirectory across sessions and let everything below run alongside it.
 
+**S3 and S4 ride along with it, subdirectory by subdirectory.** A description and a search-facing title
+are a few minutes per page while someone is already reading that page, and hours as a separate sweep
+over 291 of them. They are the search group's largest items and the measured failure they answer — a
+1.09% click-through rate on 81,117 impressions — is the one this project can fix without ranking
+better, so they should not be left to after the merge, which is when each page's first impression is
+already fixed.
+
 **Then O1 and O2, then F2, then F1.** The orientation pages give the front page its first call to
 action a real destination. F2 aligns the front page with the Overview’s feature tour. F1 is the
 largest single-page change and the one that most needs its destinations in place.
@@ -478,6 +578,10 @@ largest single-page change and the one that most needs its destinations in place
 **Then T2, T3, and T4.** T2 is the highest-value teaching addition and the one that most directly answers
 the objection that has cost CGP the most readers; T3 is where a reader finally meets an application
 context; T4 is cheap enough to fold into the corrections pass. T1 is worth doing only if T2 is not.
+
+**S1, S5, and S10 fit anywhere**, and none of them blocks anything: S5 is a prose sweep that reads
+better once a section is otherwise finished, S1 is a half-hour of hand searching on Bing and Kagi, and
+S10 is two small changes in the `cgp` repository.
 
 **X1, X2, and X3 fit anywhere, and the first two are worth doing early** — a stale published skill
 misteaches every agent that reads it, and the crate's landing page is working against the project
@@ -489,6 +593,8 @@ lead time on the deep dives.
 **Then V1, and the merge.** Everything above ships at once.
 
 **Then, spaced out: DD1–DD3, B2, and B1.** Post-release work, published apart rather than together.
+**S9 happens on merge day** and **S11 shortly after it**, since the DocSearch application is submitted
+against the published site.
 
 ## Keeping this document current
 
