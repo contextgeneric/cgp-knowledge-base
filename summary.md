@@ -695,6 +695,13 @@ it stale.
 - [website/redesign-queue.md](website/redesign-queue.md) — the consolidated list of what is wrong with
   or missing from the site, grouped into cheap corrections, page rewrites, and new pages; deleted when
   empty.
+- [website/seo.md](website/seo.md) — the site's search and agent discoverability strategy: the measured
+  diagnosis, led by the pre-migration URLs that still 404 and the 60 pages with missing or broken meta
+  descriptions; what good would look like; why the pages that rank are the stalest ones; the four other
+  properties ranking for CGP's terms; the map from the headline features to query families and the
+  pages that own them; the per-page title and description levers; the agent surfaces including the
+  evidence on `llms.txt`; what was checked and deliberately left alone; measurement without analytics;
+  and the ten-item work list.
 - [website/tasks.md](website/tasks.md) — the redesign's work plan: that the whole site relaunches with
   the v0.8.0 release from one branch, the four standing obligations every page-adding task carries,
   every remaining task with its repository, dependencies, and done-condition — including the AI

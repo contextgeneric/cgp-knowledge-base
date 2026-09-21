@@ -92,6 +92,11 @@ record drift — live in [AGENTS.md](AGENTS.md).
 - [redesign-queue.md](redesign-queue.md) — the consolidated list of what is wrong with or missing from
   the site today, grouped by cost, with a pointer to the document that owns each item. Emptied as work
   lands, and deleted when empty.
+- [seo.md](seo.md) — the site's **search and agent discoverability** strategy: why the site ranks
+  badly for its own name, the pre-migration URLs that still 404, why the pages that do rank are the
+  stalest ones, which search terms the site can honestly win, how the settled tag line and headline
+  features map onto them, and how the same material reaches coding agents. A specification, like
+  information-architecture.md, rather than a page record.
 - [tasks.md](tasks.md) — the redesign's *plan*, where the queue is its *diagnosis*: that the whole site
   relaunches with the v0.8.0 release from a single branch, every remaining task with the repository it
   lands in, its dependencies, and its done-condition, which of them the release waits for, and the
