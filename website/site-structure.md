@@ -1260,6 +1260,31 @@ on `attributes/derive_delegate.md`, and a page carries at most one of the two; t
 which pages qualify are in
 [writing-guides/reference.md](writing-guides/reference.md#say-when-a-construct-is-machinery-the-macros-generate).
 
+**Every page carries a `description`, and a page whose heading is a construct name also carries a
+search-facing `title`.** Docusaurus uses front-matter `title` for the page metadata and inserts it as
+a heading only when the Markdown has none, so a construct page keeps `# \`#[cgp_component]\`` as its
+`h1` — the name a reader scans for — while its `<title>` says what the construct is for. The
+`sidebar_label` is untouched.
+
+**A page whose heading is already what a reader searches needs no `title`,** which is why the
+Comparisons and Concepts pages carry a `description` and nothing else: *Type classes* and *Bypassing
+coherence* are the words themselves. Adding a title there would restate the heading. The split is the
+whole point — a title is for a page named `#[cgp_component]`, which nobody types into a search box. Without a `description`, Docusaurus derives one from the first line of
+content, which on a construct page is a heading made mostly of punctuation: the `#[cgp_component]`
+page's snippet was the four characters `` [cgp_component]` `` until this convention reached it. The
+reasoning and the measurement behind it are in [seo.md](seo.md).
+
+Four rules keep the sweep consistent. **Put the construct name first in the title**, because that is
+what the reader searched, and keep the whole title under roughly 45 characters so the site name is
+what truncates rather than the page's own words; a `description` has about 155 before a search result
+cuts it. **A page covering two constructs names both and drops the job phrase** — there is no room for
+all three, and the names are the searchable part, which is why `#[cgp_provider]` and
+`#[cgp_new_provider]` share a title with no verb in it. **Write each description from the page's own summary
+line** rather than from a template — a description that could belong to any page tells a reader
+nothing. And **escape apostrophes in single-quoted YAML**: `description: 'a context''s wiring table'`.
+An unescaped one fails the build with a YAML error naming the wrong line, which cost a build during
+the `macros/` pass and will recur on every page whose summary contains a possessive.
+
 **Anchors come from heading text**, because this site's MDX setup rejects the `{#custom-id}` syntax —
 it parses the braces as an expression and fails the build. Section headings are therefore link targets
 and cannot be reworded freely.

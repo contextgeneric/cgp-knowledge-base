@@ -342,14 +342,27 @@ work that changes a title or a description outranks work that chases a rank, and
 therefore the group's largest items rather than its housekeeping. Both should land **before the branch
 merges**, because the merge is what fixes each new page's first impression in the index.
 
-- **S3 — a `description` on every page.** One line of front matter per page. Start with the 60 built
-  pages whose derived description is missing or under 50 characters — several are literal garbage, such
-  as the `#[cgp_component]` page's ``[cgp_component]` `` — and with the reference group, where coverage
-  is 1 page in 199. Concepts is 0 of 19 and the blog 0 of 17; Comparisons is already complete at 12 of
-  12, because its guide requires one. *Lands in:* `docs/`, `blog/`. *Blocked by:* nothing. *Done when:*
-  no built page falls back to a derived description. **Cheapest done per section while someone is
-  already in that section.**
-- **S4 — a search-facing `title` on the pages whose heading is a construct name.** Front-matter `title`
+- **S3 — a `description` on every page.** **The half that mattered is done, and the remainder is worth
+  re-scoping rather than finishing mechanically.** Every page under `docs/` now renders a usable
+  description except the published skill snapshot, which is not ours to edit: the `macros/`,
+  `attributes/` and `derives/` groups were written by hand, the fourteen `traits/` and `types/` pages
+  whose derived description was a bare phrase or empty were written too, and the three generated
+  category indexes gained one through their `_category_.json`. Fifty-five pages in all.
+
+  What remains is the difference between a **derived** description — the page's own first sentence,
+  which Docusaurus uses when the front matter omits one — and a **written** one chosen to be read in a
+  search result. Roughly 160 reference pages, the 19 Concepts pages, and the blog posts are in that
+  state, minus the blog, whose seventeen posts have since been written because they carry three
+  quarters of the property's impressions and had the worst derived snippets on the site. What is left
+  is serviceable rather than broken, so the return is far below the first slices', and the next agent
+  should ask which pages carry impressions before sweeping the rest. The conventions,
+  including the YAML apostrophe that fails the build, are in
+  [site-structure.md](site-structure.md#conventions-the-port-must-follow). *Lands in:* `docs/`,
+  `blog/`.
+- **S4 — a search-facing `title` on the pages whose heading is a construct name.** **Done for
+  `macros/`, `attributes/`, `derives/`, and the fourteen `traits/` and `types/` pages S3 reached**,
+  always alongside S3, which is how the rest should be done: the two are the same edit to the same
+  front matter, and splitting them means reading every page twice. Front-matter `title`
   sets the metadata and may differ from the `h1`, so a reference page keeps its `#[cgp_component]`
   heading and carries a title saying what the construct is for. Keep it under roughly 60 characters and
   put the distinguishing word first. *Lands in:* `docs/reference/`, plus the concept pages whose title

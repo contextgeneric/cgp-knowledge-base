@@ -134,6 +134,31 @@ one or more tags from the fixed set in
 `release`, `deepdive`, `walkthrough` — and an explicit `slug`. A `{/* truncate */}` marker separates
 the excerpt shown on the index from the body, and Docusaurus warns on any post that omits it.
 
+**Every post carries a `description`, and adding one to a published post is not rewriting it.** The
+front matter is metadata rather than a claim: it changes no sentence in the post, moves no URL, and
+touches no snippet, so the [dated-artifact rule](../AGENTS.md#do-not-rewrite-history) does not reach
+it.
+
+**It does reach the feeds, though, which is worth knowing before adding one.** Docusaurus uses a
+post's `description` as its `<description>` in `rss.xml` and `atom.xml`, in place of the excerpt it
+would otherwise take from the text above the truncate marker — so a subscriber's reader may show the
+new summary for a post it already holds. The rendered blog index is unaffected and still shows each
+post's own excerpt, and the item's title, link, and date are untouched. The trade is acceptable
+because a written summary serves a subscriber better than a truncated opening paragraph, but it is a
+change to how a published artifact presents itself and should be made deliberately rather than
+discovered. Without one Docusaurus derives a description from the opening paragraph, which on a release post
+is a long announcement sentence that a search result cuts mid-clause, and which strips the backticks
+from identifiers — the v0.7.0 post's derived snippet advertised `#[cgpfn]` and `#[useprovider]`. The
+blog carries three quarters of the site's search impressions, so this is where a written description
+is worth most.
+
+Two rules govern the wording. **Write it self-dating**, naming the version or the moment, so a
+description for a post teaching a construct the library has since removed reads as a record rather
+than as current guidance: *"CGP v0.4.0, the release that made CGP debuggable"* rather than *"how to
+debug CGP"*. And **avoid backticks**, since the meta tag is plain text and a stripped backtick runs
+identifiers together. The length budget and the rest of the conventions are in
+[site-structure.md](../site-structure.md#conventions-the-port-must-follow).
+
 **Always set the `slug` on a new post.** Without one, Docusaurus does not derive a flat URL from the
 filename — it publishes the post under a *dated* path instead, so `2026-02-21-new-website.md` becomes
 `/blog/2026/02/21/new-website` rather than `/blog/new-website`. Exactly one post is in that state, the

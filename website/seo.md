@@ -146,10 +146,29 @@ built pages carry a missing or under-50-character description, and the failures 
 - `docs/reference/macros/cgp_provider` → ``[cgpprovider] & #[cgpnew_provider]` ``
 - `docs/reference/types/mref` → `'A`
 
-Per section, `description` coverage is 12 of 12 on Comparisons, 1 of 199 on Reference, 0 of 19 on
-Concepts, and 0 of 17 on the blog. The pattern is chronological rather than accidental: the Comparisons
-guide requires a `description` and the others do not, so the section written last is the only one that
-has them.
+Per section, `description` coverage was 12 of 12 on Comparisons, 1 of 199 on Reference, 0 of 19 on
+Concepts, and 0 of 17 on the blog. The pattern was chronological rather than accidental: the
+Comparisons guide requires a `description` and the others do not, so the section written last was the
+only one that had them. That gap is now closed where it was doing damage. **Every page under `docs/` renders a usable
+description**, except the published skill snapshot, which the site does not own. Fifty-five pages were
+written by hand — the `macros/`, `attributes/` and `derives/` groups, plus the fourteen `traits/` and
+`types/` pages whose derived description was a bare phrase or, in one case, empty — and three
+generated category indexes gained one through their `_category_.json`. The conventions are in
+[site-structure.md](site-structure.md#conventions-the-port-must-follow).
+
+**What is left is a smaller thing than it looks.** The remaining pages carry a *derived* description:
+their own first sentence, which Docusaurus uses when the front matter omits one. Replacing those with
+written sentences is a real gain but a much smaller one than replacing ``[cgp_component]` `` was, and
+it is worth spending on the pages that carry impressions rather than uniformly.
+
+**Which is why the blog was done next.** All seventeen posts now carry a written description, because
+the blog draws three quarters of the property's impressions and its derived snippets were the worst on
+the site: the second extensible-datatypes post, at 11,340 impressions and a 0.09% click-through rate,
+advertised itself as *"This is the second part of the blog series… You can read the first part here"*,
+and the v0.7.0 post's derived snippet stripped the backticks from its identifiers and offered
+`#[cgpfn]`. A post's description is metadata rather than a claim, so writing one does not reach the
+[dated-artifact rule](AGENTS.md#do-not-rewrite-history); the wording rules that keep it from implying
+currency are in [blog/README.md](blog/README.md#publication-conventions).
 
 A description does not rank a page. It supplies the snippet a human reads before deciding to click, and
 at 121,685 impressions a year the snippet is where the site's visibility is being spent.
