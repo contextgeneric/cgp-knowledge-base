@@ -243,6 +243,39 @@ zero clicks** at position 12.0, and a hand search returns a UK educational publi
 Publishing Office's catalog, and an EPA construction permit. It is shown and never chosen, and no
 on-site work changes that.
 
+**The acronym has seven times the impressions of the full term and a twelfth of the intent**, which is
+the sharpest way to read this data and the answer to whether the site should chase it. Queries
+containing *cgp* are 67 queries, 1,698 impressions and 23 clicks — a 1.4% click-through rate — while
+the six queries containing the full term are 245 impressions and 41 clicks, at 16.7%. The composition
+explains the gap: *cgp zero*, *char cgp*, *chap cgp*, *chapt cgp*, *zero cgp* and *cgp community
+edition* together draw some 430 impressions and **no clicks at all**, because they are people looking
+for a different CGP. The acronym queries that do convert, *cgp rust* and *cgp community*, already rank
+at 1.3 and 3.8.
+
+**So putting the acronym in the site title would optimize for impressions the site cannot convert, and
+it would not display anyway.** Seventy-two of 285 titles already exceed the roughly 60 characters a
+result shows, so the site-name suffix is being truncated already; appending `(CGP)` to the end of it
+puts the acronym in the first thing cut. On `#[cgp_component] — define a component | Context-Generic
+Prog…` it would never appear.
+
+**The author's decision was to put the acronym in the suffix anyway, in the one form that survives
+truncation.** The site title is now `CGP — Context-Generic Programming`, so every page renders as
+`{Page} | CGP — Context-Generic Programming` and the acronym sits immediately after the separator,
+where it is shown rather than cut. The full term follows it, so a search for the full term still
+matches even where the display truncates.
+
+That decision was taken against the recommendation above and is recorded as the author's, with the
+evidence intact, because the evidence remains what it is: the acronym's volume is mostly a different
+product. What the change buys is that a reader searching *cgp rust* or *cgp dsl* sees the term they
+typed in every result, which is a click-through argument rather than a matching one.
+
+**It also settled a question it created.** Fifteen reference titles had been given the acronym on the
+reasoning that a page's own title is the displayed part — `Symbol! — CGP type-level strings`. With the
+suffix carrying it, those rendered the acronym twice in one title, which reads as stuffing rather than
+information, so they were reverted. The titles that still carry it twice are the ones whose *subject*
+is CGP, such as the disclosure page and the published skill, where the repetition is in the boilerplate
+half and the page's own words are meaningful on their own.
+
 Several other high-impression queries are the same phenomenon — the site appearing for something it
 does not answer. *generic programming* drew 970 impressions and one click at position 13.4; *v0* 394
 and none; *implicit* 238 and none; *serde* 133 and none; *rust context* 453 impressions and two clicks.
@@ -280,12 +313,24 @@ published manifests inherit them from `[workspace.package]`.
 - **Every other repository in the organization has no description, no homepage, and no topics** —
   including `cargo-cgp`, `cgp-skills`, `cgp-knowledge-base`, and `contextgeneric.dev`.
 
-One piece of the site's own metadata sits in the same list. The homepage's title tag now carries the
-settled line, since `src/pages/index.tsx` passes the configured `tagline` as the page title and the
-tagline has been corrected — but that makes the title 110 characters, and the page's hand-written
-`<meta name="description">` still repeats the retired line. Both belong to
-[F1](tasks.md#f--the-front-page), which should choose the homepage's title deliberately rather than
-inherit it.
+The homepage's own metadata was the last of it and is now fixed. It had passed the configured
+`tagline` as its page title, which Docusaurus appends the site name to — a 119-character title whose
+every distinguishing word fell past what a result shows — and its hand-written description still
+carried the retired framing.
+
+**The front page is the one page that names the project first**, at the author's decision: its title
+is *Context-Generic Programming (CGP) - Pluggable trait implementations for Rust*, with no site-name
+suffix after it. Docusaurus's own formatter cannot produce that — passing `title` to `Layout` renders
+`{title} | {siteTitle}`, so the project name could only ever come last — so the page sets the tag
+directly with `@docusaurus/Head`, and sets `og:title` with it so a shared link carries the same words.
+That is React on the landing page, which is where the
+[stock-Docusaurus policy](site-structure.md#how-the-site-is-built) already allows it, and it changes
+no other page. The trade is that a result shows roughly the first sixty characters, so the name and
+the acronym display in full while the claim after them is cut; on a page that already ranks first for
+both branded queries, spending the visible characters on the name is a judgement about recognition
+rather than about matching. The description opens with the settled tag line verbatim.
+
+What remains for [F1](tasks.md#f--the-front-page) is the page itself rather than its metadata.
 
 ### The pages that would answer the high-intent queries are not published yet
 

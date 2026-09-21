@@ -142,6 +142,14 @@ friendliness, and zero-cost abstraction. The [Overview](#overview) gives the bro
 including implementation choice, abstract types, extensible data, and handlers. The front page needs
 the curated feature framing from [identity](../communication-strategy/identity.md).
 
+**The front page sets its own `<title>` rather than letting Docusaurus format one.** Every other page
+renders `{Page} | CGP — Context-Generic Programming`; the front page renders
+*Context-Generic Programming (CGP) - Pluggable trait implementations for Rust* with no suffix, because
+the project name belongs first there and the formatter can only append the site name. It does that
+with `@docusaurus/Head` in `src/pages/index.tsx`, setting `og:title` alongside so a shared link
+matches, and it is the only page on the site that does. Leave the `title` prop off `Layout` there:
+passing both would render two title tags.
+
 **The specification for what this page should become is
 [writing-guides/homepage.md](writing-guides/homepage.md), and it should be read before any change
 here.** That guide fixes the page's two-tier structure, the before/after code that carries the hook,
@@ -1277,7 +1285,13 @@ reasoning and the measurement behind it are in [seo.md](seo.md).
 Four rules keep the sweep consistent. **Put the construct name first in the title**, because that is
 what the reader searched, and keep the whole title under roughly 45 characters so the site name is
 what truncates rather than the page's own words; a `description` has about 155 before a search result
-cuts it. **A page covering two constructs names both and drops the job phrase** — there is no room for
+cuts it. **Do not name CGP in a page's own title; the suffix carries it.** The site title is
+`CGP — Context-Generic Programming`, so every page renders as `{Page} | CGP — Context-Generic
+Programming` and the acronym sits immediately after the separator, where a truncated result still
+shows it. Adding it to the page's own words then renders it twice, which reads as stuffing. The
+exception is a page whose *subject* is CGP — the disclosure page, the published skill — where the
+page's own words are meaningful on their own. **A page covering two constructs names both and drops
+the job phrase** — there is no room for
 all three, and the names are the searchable part, which is why `#[cgp_provider]` and
 `#[cgp_new_provider]` share a title with no verb in it. **Write each description from the page's own summary
 line** rather than from a template — a description that could belong to any page tells a reader

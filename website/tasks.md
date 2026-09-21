@@ -379,10 +379,6 @@ merges**, because the merge is what fixes each new page's first impression in th
   retired line, and its topics are three generic ones; the sibling repositories have no description,
   homepage, or topics at all. **Only the author can change these.** The forward links from the patterns
   book are B-1 in [patterns-book.md](patterns-book.md), and they wait on the merge.
-- **S6 — the homepage's own metadata.** The hand-written `<meta name="description">` in
-  `src/pages/index.tsx` repeats the retired line, and the page passes the configured `tagline` as its
-  title. C1 repairs the title as a side effect; the description and the choice to use the tagline as a
-  title at all belong to **F1**, which is where this lands rather than as separate work.
 - **S5 — the first-paragraph orientation sweep.** Name CGP once in prose, with a link to the
   Introduction, on every page that does not already. The justification is reader orientation, which
   [formats.md](../communication-strategy/formats.md#titles-first-lines-and-search) already requires; the
@@ -469,7 +465,6 @@ the [ordering](#the-ordering) for what to start on.
 | V1 | the v0.8.0 release, and every release-blocking task | completes C2 and C3; unblocks B1 and B2 |
 | A1 | the author's read | every page-adding task's provenance note |
 | S1, S3, S4, S5, S7, S10 | nothing | nothing; S3 and S4 should precede V1 |
-| S6 | nothing | folded into F1 |
 | S9, S11 | V1 | nothing |
 | X1, X2, X3 | nothing | nothing |
 
