@@ -717,7 +717,7 @@ it stale.
   bar, deployment, release-branch workflow, the three settings that depart from stock Docusaurus to
   publish the agent skill from its own repository, and the `example-code/` crate that holds the compiled
   counterparts of the code the site shows, plus one entry each for the front page, Introduction,
-  Overview, Resources, Contribute, the `cargo-cgp` tooling section, the AI skills section and its
+  the Quickstart, Overview, Resources, Contribute, the `cargo-cgp` tooling section, the AI skills section and its
   `cgp-skills` submodule, the Concepts section, the Comparisons section, the Reference section including its
   compile-errors and glossary pages, and the AI disclaimer.
 
@@ -747,6 +747,10 @@ it stale.
 - [tooling.md](website/writing-guides/tooling.md) — the pages documenting a program the reader runs
   rather than a construct they write: why a tool's page fails differently, the five-page section shape,
   quoting real output rather than remembered output, and the version concession.
+- [orientation.md](website/writing-guides/orientation.md) — the routing pages: what separates
+  orientation from persuading, teaching, arguing and specifying; the Introduction's three parts; the
+  Quickstart's ten-minute target, its one-context program, and the boundary against Hello World; the
+  Resources index; and what must never appear on any of them.
 - [reference.md](website/writing-guides/reference.md) — the canonical per-construct reference ported
   from the internal one: why the site rather than docs.rs is canonical, the six-section layered descent
   serving beginner to advanced on one page, the obligation to cover every form the parser accepts and

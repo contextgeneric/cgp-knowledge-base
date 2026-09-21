@@ -389,7 +389,8 @@ already ranks first: this is what
 page arriving cold orients its reader, it is what the Comparisons pages already do, and the search
 benefit is a by-product.
 
-Two constraints keep it honest. It is **one mention, not a density target**. And the sentence is the
+The sweep goes wrong in two ways, and both are cheap to avoid. It is **one mention, not a density
+target**. And the sentence is the
 settled descriptor from [identity.md](../communication-strategy/identity.md#the-tag-line) or a short
 paraphrase, not a line written to catch a query.
 
@@ -470,7 +471,8 @@ it is [plain text and carries no backticks](site-structure.md#conventions-the-po
 falls back to the first line of content when omitted, which is what produces the broken snippets above.
 It is one line per page and there is no substitute for writing it.
 
-Four rules make the sweep tractable across 291 pages. **Keep the title under roughly 60 characters**,
+Writing 291 titles and descriptions is tractable only with rules decided in advance, and these four
+are the ones the data supports. **Keep the title under roughly 60 characters**,
 which is what a result shows, and put the distinguishing word first. **Reference and construct pages
 get the construct name plus its job**, keeping the name first because that is what the reader searched.
 **Concept and tutorial pages get problem-oriented titles**, which
@@ -721,7 +723,8 @@ beside re-pinning the tutorials' `cgp` version.
 
 ## The decisions this needs
 
-Two are settled and one remains.
+The measurement and site-search questions this document originally asked are both settled. One
+question remains, and it concerns another property rather than this site.
 
 **Algolia DocSearch is accepted, for later.** The relaunch publishes roughly 292 pages with no way to
 search them, and DocSearch is free for open-source documentation and ships inside `preset-classic`

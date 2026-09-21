@@ -324,21 +324,6 @@ somewhere to be tracked.
   every release-blocking task above. *Completes:* C2 and C3. *Note:* this is the first post written from
   the release-announcement guide, so it is also the guide's first test — record what the spec got wrong.
 
-## O — Orientation
-
-- **O1 — write the orientation-page writing guide.** The site has no spec for the pages whose job is
-  routing rather than teaching, and [writing-guides/README.md](writing-guides/README.md) defers it until
-  the need arises. The need has arisen twice over: the Introduction and Resources are both being rewritten
-  by C4–C6 and E1, and O2 adds a page of a kind the site has not published, which
-  [AGENTS.md](AGENTS.md) requires a guide for **before** the page rather than after. It should cover the
-  Introduction, Resources, and the Quickstart. *Blocked by:* nothing. *Blocks:* O2.
-- **O2 — the Quickstart page.** Install and one working program, with no concepts and nothing to
-  understand: the low-commitment landing the front page's first call to action and every launch post ask
-  for. It is deliberately smaller than the [Hello World tutorial](tutorials/hello-world.md), which teaches
-  one durable idea — this page only proves the thing runs, which is why it is orientation rather than a
-  third tutorial. *Lands in:* `docs/`, second in the sidebar after the Introduction. *Blocked by:* O1.
-  *Blocks:* F1's first call to action, which points at Hello World until this exists.
-
 ## A — The AI disclosure
 
 - **A1 — the disclosure page.** Written and building at `docs/ai/disclaimer.md` on the release branch,
@@ -471,7 +456,7 @@ the [ordering](#the-ordering) for what to start on.
 |---|---|---|
 | E1 | nothing | F1 |
 | F2 | nothing | F1 |
-| F1 | E1, F2, O2 (soft) | nothing |
+| F1 | E1, F2 | nothing |
 | T1 | nothing | nothing (superseded by T2) |
 | T2, T4 | nothing | nothing |
 | T3 | nothing hard; reads better after R2 | nothing |
@@ -482,8 +467,6 @@ the [ordering](#the-ordering) for what to start on.
 | DD1, DD2, DD3 | their DC task | nothing |
 | B1, B2 | nothing (both held until after V1) | nothing |
 | V1 | the v0.8.0 release, and every release-blocking task | completes C2 and C3; unblocks B1 and B2 |
-| O1 | nothing | O2, and the Introduction narrowing (soft) |
-| O2 | O1 | F1's first call to action (soft) |
 | A1 | the author's read | every page-adding task's provenance note |
 | S1, S3, S4, S5, S7, S10 | nothing | nothing; S3 and S4 should precede V1 |
 | S6 | nothing | folded into F1 |
@@ -527,9 +510,15 @@ failure they answer — a 1.09% click-through rate on 81,117 impressions — is 
 fix without ranking better, so they should not be left until after the merge, which is when each page's
 first impression in the index is already fixed.
 
-**Then O1 and O2, then F2, then F1.** The orientation pages give the front page its first call to
-action a real destination. F2 aligns the front page with the Overview’s feature tour. F1 is the
-largest single-page change and the one that most needs its destinations in place.
+**O1 and O2 are done**: the orientation writing guide is written, and the Quickstart exists at
+`/docs/quickstart`, which gives the front page's first call to action a real destination instead of
+pointing at Hello World. Adding it was also the occasion to renumber the sidebar into its intended
+order, which [site-structure.md](site-structure.md) records as settled.
+
+**So the front-page chain is now E1, then F2, then F1.** F2 aligns the front page with the Overview's
+feature tour. F1 is the largest single-page change and the one that most needs its destinations in
+place — and E1 is the last of them, which is why settling *Project status*'s home is the decision
+that unblocks the rest.
 
 **Then T2, T3, and T4.** T2 is the highest-value teaching addition and the one that most directly answers
 the objection that has cost CGP the most readers; T3 is where a reader finally meets an application

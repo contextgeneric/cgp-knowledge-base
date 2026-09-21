@@ -243,9 +243,11 @@ v0.8.0 relaunch does not carry, because they are the largest discretionary body 
 their readers are already served, if imperfectly, by the posts they grow out of.
 
 **Orientation**
-- *Quickstart* — **new**. Install and one working program, with no concepts and nothing to understand:
-  the low-commitment landing the front page and every launch post ask for. It is deliberately smaller
-  than *Hello World*, which teaches an idea; this page only proves the thing runs.
+- *Quickstart* — present. Install and one working program, with no concepts and nothing to
+  understand: the low-commitment landing the front page and every launch post ask for. It is
+  deliberately smaller than *Hello World*, which teaches an idea; this page only proves the thing
+  runs, and its boundary against the tutorial is fixed in
+  [writing-guides/orientation.md](writing-guides/orientation.md).
 - *Introduction* — present, narrowed. Keeps the definition and the routing; loses the maturity section
   to *Project status* and stops sending newcomers to the blog.
 - *Resources* — present and current. The ecosystem index, now carrying `cargo-cgp`, the full crate

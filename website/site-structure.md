@@ -213,6 +213,72 @@ example, preserve the distinction between plain trait implementations and provid
 code toward maintained tutorials and reference pages. Describe tooling and agent support beside the
 costs they address, without promising that either eliminates them.
 
+## Quickstart
+
+The Quickstart gets a reader to a running CGP program without teaching them anything.
+
+- **URL** — <https://contextgeneric.dev/docs/quickstart>
+- **Source** — [docs/quickstart.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/docs/quickstart.md)
+- **Status** — Current
+- **How it was made** — written by an agent from this base; its program verified by compiling and
+  running it, its install path not yet verifiable (see below); level one of the four in
+  [ai-disclosure.md](../communication-strategy/ai-disclosure.md)
+
+### What it covers
+
+Four parts and nothing else: `cargo add cgp` with the version, one complete program for `src/main.rs`,
+the exact output to expect from `cargo run`, and one link to the Hello World tutorial. It opens with a
+single sentence saying what CGP is, because it may be a reader's first contact, and it states plainly
+that it explains nothing.
+
+The program is a `#[cgp_fn]` function with an `#[implicit]` argument reading a field from a
+`#[derive(HasField)]` struct — the gentlest entry CGP has, per the
+[comprehension barriers](../communication-strategy/readers.md#the-comprehension-barriers), because the
+reader writes a function and a struct and gets a working program with no wiring, no generics, and no
+trait to understand. It is a **value context, self-targeted**: `Person` is the thing being greeted.
+
+**It stops before the second context, and that is the whole boundary against
+[Hello World](tutorials/hello-world.md).** The tutorial's payoff is running `greet` unchanged on a
+second context, which is the idea it exists to teach; the Quickstart has no payoff and proves only
+that the thing runs. The two pages deliberately show similar code so that a reader arriving at the
+tutorial recognizes where they are and sees immediately what is new.
+
+### How it relates to the knowledge base
+
+The page type is specified in
+[writing-guides/orientation.md](writing-guides/orientation.md), which also owns the ten-minute
+activation target that [evidence.md](../communication-strategy/evidence.md) records as the site's
+activation signal. The construct choices come from
+[readers.md](../communication-strategy/readers.md#the-comprehension-barriers), the opening descriptor
+from [identity.md](../communication-strategy/identity.md#the-tag-line), and the program's shape from
+the [`#[cgp_fn]`](../cgp/reference/macros/cgp_fn.md) and
+[`#[implicit]`](../cgp/reference/attributes/implicit.md) references.
+
+Its program is compiled in the website repository's
+[`example-code` crate](#the-example-code-crate) at `tests/quickstart.rs`, which is the crate's one
+standalone test binary rather than a module under a section tree, since the Quickstart is a standalone
+page. The page's `fn main` is a `#[test]` there and nothing else differs.
+
+### Maintaining it
+
+**Do not let it grow.** A second example, an explanation of what `#[implicit]` does, or a note on what
+the macro generates each turn it into a worse copy of the tutorial. The guide's check is to run it on
+a clean machine and time it; over ten minutes means a step comes out rather than being explained
+faster.
+
+**Re-pin it with the release.** The install block names a version, so it is wrong the moment the
+library moves, and re-pinning is on the
+[release checklist](writing-guides/release-announcement.md#publishing-and-what-happens-afterwards)
+beside the tutorials.
+
+**Half of the guide's check cannot be run until the release ships, and that gap is worth naming.**
+The program is verified — it compiles and runs in the `example-code` mirror. The *install path* is
+not: `cgp = "0.8.0"` does not resolve on crates.io, which carries `0.8.0-alpha`, so `cargo add cgp`
+today produces something other than what the page shows. That is correct on a branch written as
+though v0.8.0 has shipped, and it means the guide's real check — paste the program into a fresh
+project on a clean machine and time the walk — belongs to the release rather than to writing the
+page. Run it then, before the branch merges if the crate is published first.
+
 ## Overview
 
 The Overview is the detailed feature tour and links each subject to its maintained explanation.
@@ -1307,12 +1373,12 @@ The reference is bound to the internal documents by the
 updates the code, the internal document, and the public page. A public page that disagrees with its
 internal document is a defect in the public page.
 
-One ordering wrinkle is outstanding rather than settled, and it is smaller than it used to be. With
-Concepts at position 4 and Comparisons at 5, Reference at position 6 sits where
-[information-architecture.md](information-architecture.md#navigation-and-sidebar-order) wants it —
-after Tutorials, Concepts, and Comparisons. What remains is that AI at 8 precedes Resources at 9 and
-Contribute at 10, where the intended order puts AI last. Renumbering the existing sections belongs to
-the orientation and front-page work rather than to the port, so it is left alone here.
+The sidebar ordering is settled. Adding the Quickstart at position 2 was the occasion to renumber
+the whole tree into the order
+[information-architecture.md](information-architecture.md#navigation-and-sidebar-order) wants:
+Introduction, Quickstart, Overview, Tutorials, Concepts, Comparisons, Reference, `cargo-cgp`,
+Resources, Contribute, and AI last. The deep dives take a position between Reference and `cargo-cgp`
+when they land, which renumbers everything below them.
 
 ## AI disclaimer
 

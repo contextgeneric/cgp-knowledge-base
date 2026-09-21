@@ -44,7 +44,7 @@ Its traffic is concentrated to an unusual degree:
 | `provider.html` | 330 | 6 | 1.82% | 12.3 |
 | every other chapter | 9,000 approx. | 18 total | — | 9–21 |
 
-Two notes on reading that table. The index **is** the introduction — mdBook renders `introduction.md`
+The table needs two things said about it before it is read. The index **is** the introduction — mdBook renders `introduction.md`
 as `index.html`, so they are one page rather than two. And **one chapter is 77% of the book**:
 *Blanket Implementations* also carries the term the whole project performs best on: the blanket-implementation query family is 2,019 impressions and 110 clicks at
 average position 5.8, and this page is what earns most of it.

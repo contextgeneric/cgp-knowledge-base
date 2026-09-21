@@ -79,6 +79,11 @@ Register a new guide here in the same change that adds it, and in [../../summary
   the granularity and the four consolidations, where every internal link is re-pointed, the
   external Rust documentation to link for concepts a page assumes, and the two non-construct pages the
   section carries — the error catalog and the glossary.
+- [orientation.md](orientation.md) — the pages whose job is routing rather than teaching: the
+  Introduction, the Quickstart, and Resources. What separates orientation from the homepage, a
+  tutorial, an explanation and a reference; what each of the three pages is for; the Quickstart's
+  ten-minute activation target and the boundary that keeps it from becoming a second Hello World;
+  and the version pin that ties it to the release.
 - [related-work.md](related-work.md) — the comparison pages, ported from the internal
   [related-work](../../related-work/README.md) documents for a reader who already knows type classes,
   dependency injection, ML modules, effects, or another related idea: the four transformations the port
@@ -86,12 +91,10 @@ Register a new guide here in the same change that adds it, and in [../../summary
   the *In your terms* table to the section where the other tool wins, the rules for writing about
   another community's tool, and the verification of code in two languages.
 
-The guides above cover every page type the site publishes or plans, with one exception. The site has
-no spec for its **orientation pages**, the Introduction and Resources, whose job is routing rather than
-teaching and changes once the [explanation tier](explanation.md) exists — and the redesign adds a
-Quickstart, which is a page of a kind the site has not published and which [AGENTS.md](../AGENTS.md)
-therefore requires a guide for *before* the page rather than after. It is task O1 in
-[tasks.md](../tasks.md).
+The guides above cover every page type the site publishes or plans. The most recent addition is
+[orientation.md](orientation.md), written before the Quickstart it specifies because
+[AGENTS.md](../AGENTS.md) requires a guide for a new *kind* of page ahead of the page rather than
+after it.
 
 Two planned pages are deliberately specified elsewhere rather than here, and knowing that stops a later
 agent hunting for a missing guide. *Project status* is specified inside
