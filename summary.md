@@ -701,14 +701,15 @@ it stale.
   or missing from the site, grouped into page rewrites and new pages now that the cheap corrections
   have landed; deleted when empty.
 - [website/seo.md](website/seo.md) — the site's search and agent discoverability strategy, written
-  against a twelve-month Google Search Console export: what that data overturned, the 0.75%
+  against a twelve-month Google Search Console export: what that data overturned, the 1.09%
   click-through rate that reframes the problem as presentation rather than rank, the pages and
-  descriptions behind it, the dead pre-migration URLs still drawing impressions into 404s, the branded
-  terms that already rank first and have no volume, the blanket-implementation family that is the
-  project's one proven term, the map from the headline features to query families, the per-page title
-  and description levers, why adding a page is almost never the answer and which three query clusters
-  to consider, the agent surfaces including the evidence on `llms.txt`, what was checked and left
-  alone, and what to watch now that measurement exists.
+  descriptions behind it, the dead pre-migration URLs that drew impressions into 404s until the
+  redirect stubs landed, the branded terms that already rank first and have no volume, the
+  blanket-implementation family that is the project's one proven term, the map from the headline
+  features to query families, the per-page title and description levers, why adding a page is almost
+  never the answer and which three query clusters to consider, the agent surfaces including the
+  evidence on `llms.txt`, what was checked and left alone, and what to watch now that measurement
+  exists.
 - [website/tasks.md](website/tasks.md) — the redesign's work plan: that the whole site relaunches with
   the v0.8.0 release from one branch, the four standing obligations every page-adding task carries,
   every remaining task with its repository, dependencies, and done-condition — including the AI

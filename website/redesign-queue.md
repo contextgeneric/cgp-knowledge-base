@@ -25,10 +25,9 @@ are in [`contextgeneric.dev`](https://github.com/contextgeneric/contextgeneric.d
 and a few are knowledge-base documents that need updating in the same change.
 
 Entries are grouped by cost rather than by page, because cost is what decides the order. The
-**corrections** are single-line changes that are wrong today and cheap to fix. The **rewrites** are
-existing pages whose content is sound but whose shape or framing is not. The **new pages** are the
-largest items and depend on the guides that specify them. Which of them to do first, and which depend on
-which, is in [tasks.md](tasks.md) rather than here.
+**rewrites** are existing pages whose content is sound but whose shape or framing is not; the **new
+pages** are the largest items and depend on the guides that specify them. Which of them to do first, and
+which depend on which, is in [tasks.md](tasks.md) rather than here.
 
 ## Rewrites — pages whose shape or framing is wrong
 
@@ -71,9 +70,7 @@ repo, `blog/2026-05-10-v0.8.0-release.md`; the material and the four mechanical 
 
 ## New pages
 
-Each of these is specified but unwritten. The explanation tier the homepage offloads to is no longer
-among them: the **Concepts** section is complete, eighteen pages plus its index, with every page that
-shows code backed by the website repository's `example-code/` crate.
+Each of these is specified but unwritten.
 
 **Project status and adoption risk** — lifted out of the Introduction so it can be linked from above the
 fold. Its frankness is the asset and must survive the move; what changes is the year-stamp, the absence
@@ -84,19 +81,6 @@ Contribute is the obvious alternative.
 **An applied-register tutorial** — building something real from an [example](../examples/README.md), for
 the reader who evaluates a technology by seeing a realistic system rather than a rectangle. The site has
 nothing in this register.
-
-**The construct reference is written** — every page under `docs/reference/` carries its prose and no
-stub notice remains, across `macros/`, `attributes/`, `derives/`, `traits/`, `providers/`,
-`components/`, and now `types/`. The `types/` group was the last ported, split one page per type rather
-than the `type_level_spines` consolidation, flat: all eleven construct pages directly under `types/`,
-ordered by importance, with a `PhantomData` page added that the internal reference has no document for.
-Every type page that shows code now has its `example-code` mirror, so the whole reference is
-compiler-checked; the one outstanding sign-off is the author read of the reference index (R1). Spec and
-porting procedure in
-[writing-guides/reference.md](writing-guides/reference.md); the current state is in
-[site-structure.md](site-structure.md). One dependency is worth repeating: the reference's
-*When to use it* sections are where the internal [guides](../cgp/guides/README.md) reach the
-public site, since they have no public home of their own.
 
 **Three deep dives** — Hypershell, extensible data types, and cgp-serde: multi-page living documents
 replacing the usefulness of the three longest blog posts, whose code is uniformly stale. **These land
@@ -145,5 +129,6 @@ housekeeping. Because the deep dives land after the relaunch, so does this.
 
 The order to do these in, the dependency graph behind that order, and which of them the v0.8.0 relaunch
 waits for are all in [tasks.md](tasks.md), which is the redesign's plan. Keeping them there rather than
-here is what stops the two documents disagreeing about what to do next. Nothing on this list is waiting
-on a decision.
+here is what stops the two documents disagreeing about what to do next. One item on this list waits on a
+decision rather than on work: *Project status and adoption risk* has no settled home, and the front-page
+rebuild cannot finish until it does.

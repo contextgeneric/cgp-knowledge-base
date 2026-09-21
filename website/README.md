@@ -93,7 +93,7 @@ record drift — live in [AGENTS.md](AGENTS.md).
   the site today, grouped by cost, with a pointer to the document that owns each item. Emptied as work
   lands, and deleted when empty.
 - [seo.md](seo.md) — the site's **search and agent discoverability** strategy, written against a
-  twelve-month Google Search Console export: why the measured problem is a 0.75% click-through rate
+  twelve-month Google Search Console export: why the measured problem is a 1.09% click-through rate
   rather than a ranking one, what the data overturned, which terms the site can honestly win, how the
   settled tag line and headline features map onto them, and how the same material reaches coding
   agents. A specification, like information-architecture.md, rather than a page record.

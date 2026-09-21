@@ -195,5 +195,13 @@ than section names, and it no longer sends newcomers to the blog.
 **Resources** is current. It carries `cargo-cgp` with its install path, the full crate list, and the
 Hermes SDK as a section rather than a list item.
 
-**The Quickstart does not exist.** It is [O2](../tasks.md), it is what the front page's first call
-to action points at once it does, and until then that link goes to Hello World.
+**The Quickstart is written**, at `/docs/quickstart`. It is the destination the front page's first
+call to action is specified to take — the current front page still sends that button to the
+Introduction and its second to Hello World, and repointing it is part of the front-page rebuild rather
+than something done ahead of it. The page holds the contract above: install, one program, the exact output, a route onward,
+no second example, and nothing explained. Two things are worth knowing before revising it. Its
+`cgp = "0.8.0"` pin names a version crates.io does not yet carry, which is correct only because the
+branch merges with the release — so the pin is right and the page must not publish before it. And **the
+ten-minute target has not been measured**: the program is compiled in `example-code`, but no one has
+walked the page on a clean machine with a friction log, which is what this guide asks for and the one
+check the page has not had.

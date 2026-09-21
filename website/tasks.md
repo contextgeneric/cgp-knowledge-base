@@ -25,11 +25,12 @@ publishes incrementally, every page is written as though v0.8.0 has already ship
 around that — including never committing redesign work to `main`, which deploys on push — are in
 [AGENTS.md](AGENTS.md#the-redesign-lands-on-a-release-branch-all-at-once).
 
-**The release waits for the complete reference.** The site reference is
-[canonical](writing-guides/reference.md), so it carries a completeness obligation, and that obligation
-is met on day one rather than deferred. R2 is therefore not a background task that runs alongside the
-release — it is the task that sets the release date, and it is the largest thing on this list by a wide
-margin. Everything except the deep dives and the two blog posts is release-blocking.
+**What sets the release date is the front page.** Everything except the deep dives and the two blog
+posts is release-blocking, and the reference — which used to set the date, because it is
+[canonical](writing-guides/reference.md) and so had to be complete on day one rather than
+deferred — now has a page for every construct. That obligation still binds: a page added from here
+is added with its index entry in the same change, because a construct with no page is a hole a reader
+falls into.
 
 **The work runs across many sessions, and the scope of each is assigned rather than inferred.** An
 agent picking up this document works on the tasks it has been given, not on whatever the ordering
@@ -109,8 +110,8 @@ code has a compiled counterpart in the website repository's
 [`example-code/` crate](site-structure.md#the-example-code-crate). What remains is **the author's read**,
 which every page in this tier is subject to.
 
-E3 is therefore retired along with E2 and E4, which unblocks the three deep dives. One task remains in
-this group, and it is not a concept page:
+The three deep dives are therefore unblocked. One task remains in this group, and it is not a concept
+page:
 
 - **E1 — *Project status and adoption risk*.** Mostly a move: lift the "Current Status" section out of
   the Introduction so the homepage can link it from above the fold. Its frankness is the asset and must
@@ -128,8 +129,9 @@ this group, and it is not a concept page:
   essay including the cost section, and the routing section replacing the "Ready to Get Started?" filler.
   The hero block's own snippet must be **compiled, not eyeballed**, per the guide. *Lands in:*
   `src/pages/index.tsx` and `src/components/HomepageFeatures/`. *Spec:*
-  [writing-guides/homepage.md](writing-guides/homepage.md). *Blocked by:* C1, E1, F2, and O2 softly;
-  E2 and E4 are done. *Done when:* the guide's five draft checks pass and the author has read it.
+  [writing-guides/homepage.md](writing-guides/homepage.md). *Blocked by:* E1, and softly by F2; every other
+  destination it routes to — the Quickstart, the concept pages, the reference — is written. *Done when:*
+  the guide's five draft checks pass and the author has read it.
 - **F2 — align the front page with the settled feature set.** The front page still names six
   features. It needs the five curated in
   [identity.md](../communication-strategy/identity.md#the-headline-feature-set), developed as prose
@@ -144,61 +146,26 @@ this group, and it is not a concept page:
   [the threads above](#two-threads-that-run-through-several-tasks). Draw the scenario from
   [examples/](../examples/README.md) rather than inventing one, and introduce the context as "a type
   that stands for this application, which is where its choices live" the first time it appears.
-  *Blocked by:* nothing hard; it links out to the reference, so it reads better once R2 exists.
+  *Blocked by:* nothing; it links out to the reference, which is complete.
 - **T4 — the area-calculation idiom note.** The series shows `impl<Context> AreaCalculator for Context`
   before simplifying to `impl AreaCalculator`, which is pedagogically deliberate and should stay — but
   the page must say plainly that the second form is the idiom, because a reader who stops early copies
   the first. *Lands in:* `docs/tutorials/area-calculation/static-dispatch.md`. *Blocked by:* nothing.
 
-## R — The reference, the tooling section, and the error catalog
+## R — The reference
 
-By far the largest item on the list, and the one that sets the release date, since the release waits for
-it. It carries a completeness obligation from the moment it starts: a construct with no page is a hole a
-reader falls into. The spec and the porting procedure are in
-[writing-guides/reference.md](writing-guides/reference.md).
+**The port is finished, along with the tooling section and the error catalog that used to sit in this
+group.** Every construct has a page, every group has its `example-code` mirror, and what the section
+carries now is the author's read of the index. The state of each group is recorded in
+[site-structure.md](site-structure.md#reference); the spec and the porting procedure a later page
+follows are in [writing-guides/reference.md](writing-guides/reference.md).
 
 - **R1 — the reference index.** Written, at `docs/reference/index.md`: it names the six constructs a
   newcomer needs, then groups the rest by the job they do. It is one of the surfaces
   the author reads, so **that read is what remains**. It is also the section's completeness check —
   every construct has an entry here even where the page behind it is a stub — so a page added later is
   added to this index in the same change.
-- **R2 — port the construct pages.** **Every group is now written**, so no page under
-  `docs/reference/` carries a stub notice: `macros/` (20), `attributes/` (10),
-  `derives/` (8), `traits/` (57), `providers/` (50), `components/` (17), and `types/` (11 construct
-  pages plus a section overview and a lists-group overview) are complete. The
-  `providers/` group is one page per provider — sixteen singletons (including the five `With…` aliases)
-  plus four subsections (`error/` 7, `handler/` 13, `dispatch/` 11, `monad/` 3), each with its own
-  overview — which is where the four former catalogue pages went. The `components/` group split the
-  three internal docs that bundled a sibling or a by-reference variant into **17 construct pages** —
-  eight at the top level plus a nine-page `handler/` subsection for the computation family — each with
-  an `example-code` mirror. The `types/` group was ported last, split one page per type rather than the
-  internal reference's `type_level_spines` consolidation, and flat: all eleven construct pages sit
-  directly under `types/` — the markers `phantom_data`, `field`, `index_type`, `life`; the six recursive
-  lists `cons`, `nil`, `either`, `void`, `chars`, `path_cons`, whose family explanation lives on their
-  head cells; and `mref`, the ordinary runtime data type, last — ordered by importance, and adding a
-  `PhantomData` page the internal reference has no document for. **Every type page that shows code has
-  its `example-code` mirror**, flat under `tests/reference/types/`, so the whole reference is
-  compiler-checked rather than only ported. Two page-level conventions apply from the start: a construct the macros
-  generate opens with a
-  [*Generated machinery* notice](writing-guides/reference.md#say-when-a-construct-is-machinery-the-macros-generate)
-  (the `providers/` promotion bundles and lifts carry one); a marker is documented on the construct it
-  belongs to with a row in the index's lookup table, while a provider alias gets its own page.
-  The settled conventions — anchors from heading text, the collapsed formal grammar,
-  the shared provenance note, compiled snippets, the `context` gloss — are recorded in
-  [site-structure.md](site-structure.md). Each remaining page is ported from its internal document by
-  the guide's four transformations: re-point every link, restructure into the layered descent, add
-  *When to use it*, and convert the Source section. Two things ride on this beyond the pages
-  themselves — the internal [guides](../cgp/guides/README.md) reach the public site **only** through
-  the *When to use it* sections, and every new page owes a provenance note. This group ships on
-  its guide plus a spot check rather than a full read, and a subdirectory is the natural unit for one
-  session. *Blocked by:* nothing — the error catalog page a *Gotchas* section defers to is written. **Not blocked by the explanation
-  tier**: the twenty-seven were written without a single link into it, because the guide's own fallback —
-  summarize the idea in a sentence on the page — was the better answer while that tier was stubs. That
-  tier has since landed and **the linking sweep is done for all twenty-seven**, so each now closes with a
-  short *The ideas behind it* list; a page written from here on carries that list from the start rather
-  than deferring it. *Done when:* no stub notice remains — met, and every written page including
-  `types/` has its `example-code` mirror. The author read of the reference index (R1) is the one
-  residual, tracked there until the reference is signed off.
+
 ## D — The deep dives, and the code they quote
 
 **Post-release.** All three deep dives are still wanted, and none of them holds up the v0.8.0 release —
@@ -309,7 +276,10 @@ somewhere to be tracked.
   merge. *Spec:* [writing-guides/release-announcement.md](writing-guides/release-announcement.md);
   material and the mechanical items in [blog/v0-8-0-release.md](blog/v0-8-0-release.md) and
   [releases/v0-8-0.md](../releases/v0-8-0.md). *Blocked by:* the `cgp` v0.8.0 release itself, and by
-  every release-blocking task above. *Completes:* C2 and C3. *Note:* this is the first post written from
+  every release-blocking task above. *Carries two items from*
+  [the release checklist](writing-guides/release-announcement.md): the announcement bar has to point at
+  the published post, and the tutorials' `cgp` pin has to name the released version rather than the
+  alpha. *Note:* this is the first post written from
   the release-announcement guide, so it is also the guide's first test — record what the spec got wrong.
 
 ## A — The AI disclosure
@@ -338,9 +308,10 @@ of these.
 **The ordering inside this group is set by one measurement.** The property drew 121,685 impressions and
 970 clicks over twelve months — a **1.09% click-through rate** once an anomalous May 2026 is excluded,
 0.80% with it — at an average position between 7 and 17. The site is being shown and not chosen, so
-work that changes a title or a description outranks work that chases a rank, and S3 and S4 are
-therefore the group's largest items rather than its housekeeping. Both should land **before the branch
-merges**, because the merge is what fixes each new page's first impression in the index.
+work that changes a title or a description outranks work that chases a rank, which is why S3 and S4
+came first and why their remainders are re-scoped rather than dropped. Anything that changes a title or
+a description should land **before the branch merges**, because the merge is what fixes each new page's
+first impression in the index.
 
 - **S3 — a `description` on every page.** **The half that mattered is done, and the remainder is worth
   re-scoping rather than finishing mechanically.** Every page under `docs/` now renders a usable
@@ -434,7 +405,7 @@ published blog posts, whose titles are among the worst offenders and whose
   which is the only reason nobody has owned it. *Lands in:* the `cgp` repository. *Done when:* the crate
   README carries the tag line, the reassurance line, and a short quick look; points at the site's
   reference rather than at the knowledge base; and the claim about rustdoc coverage is either true or
-  gone. *Blocked by:* nothing, though it reads better once R1 and R2 give it a destination.
+  gone. *Blocked by:* nothing; the reference is complete, so the destination exists.
 - **X3 — the three canonical diagrams.** The wiring table, the consumer-and-provider split, and
   coherence scoped, each drawn once as an SVG among the site's static assets and reused by every page
   that explains the idea, per
@@ -455,77 +426,51 @@ the [ordering](#the-ordering) for what to start on.
 | F2 | nothing | F1 |
 | F1 | E1, F2 | nothing |
 | T4 | nothing | nothing |
-| T3 | nothing hard; reads better after R2 | nothing |
-| R1 | nothing | R2 |
-| R2 | R1 | T3 (soft), X2 (soft) |
-| R3 | nothing | nothing (C4, T2 point at it) |
+| T3 | nothing | nothing |
+| R1 | the author's read | nothing |
 | DC1, DC2, DC3 | nothing | DD1, DD2, DD3 respectively |
 | DD1, DD2, DD3 | their DC task | nothing |
 | B1, B2 | nothing (both held until after V1) | nothing |
-| V1 | the v0.8.0 release, and every release-blocking task | completes C2 and C3; unblocks B1 and B2 |
+| V1 | the v0.8.0 release, and every release-blocking task | B1 and B2 |
 | A1 | the author's read | every page-adding task's provenance note |
 | S1, S3, S4, S5, S7, S10 | nothing | nothing; S3 and S4 should precede V1 |
 | S9, S11 | V1 | nothing |
 | X1, X2, X3 | nothing | nothing |
 
-Three shapes in that graph are worth naming, because they are what make the ordering non-obvious. **R2 sets the
-release date**, so it is the one task worth starting before it is strictly next and worth running in
-parallel with everything else. The **deep dives are gated on code** rather than on writing, so their long
-lead time starts with DC1–DC3 and those can run at any time. And **V1 is the terminus rather than an
-interrupt**: nothing publishes until it lands, so a task deferred is a release deferred.
+Two shapes in that graph are worth naming, because they are what make the ordering non-obvious. The
+**deep dives are gated on code** rather than on writing, so their long lead time starts with DC1–DC3
+and those can run at any time. And **V1 is the terminus rather than an interrupt**: nothing publishes
+until it lands, so a task deferred is a release deferred.
 
 ## The ordering
 
-**The corrections pass is done**, along with S2, S7's manifest half, and S8: the tag line, the
-announcement bar, the tutorial pin, the Resources page, the seven dead-URL stubs, `robots.txt`, and the
-crate metadata all landed on the branch. What it leaves is the GitHub repository settings, which only
-the author can change.
+**Settling where *Project status* lives unblocks more than anything else on this list.** E1 cannot start
+until that decision is taken, F1 waits on E1, and F1 is the largest single-page change here. The one
+link in that chain that can start today is F2, which aligns the front page with the Overview's feature
+tour, so that is what to hand over while the decision is outstanding.
 
-**A1 is drafted already**, which matters for the ordering rather than merely for the tally: it is what
-every subsequent page's provenance note links to, so no page added from here carries a dangling
-obligation. Its remaining step is the author's read.
+**Several things wait on the author rather than on an agent, and they are worth collecting into one
+handover rather than raised one at a time.** R1's reference index and A1's disclosure page are written
+and need a read. The two judging sections on each of the eleven comparison pages need the same read,
+against the standard in [writing-guides/related-work.md](writing-guides/related-work.md). What S7 has
+left needs repository settings no commit can change. And the Quickstart's ten-minute target has never
+been measured — it wants a friction log on a clean machine, per
+[writing-guides/orientation.md](writing-guides/orientation.md#the-quickstart). None of these blocks a
+writing task.
 
-**Then R3 and R1.** Because the release waits for the reference, the reference's *prerequisites* are the
-real critical path, and both are small: R3 is what C4, T2, and the homepage's cost section all point at,
-and R1 fixes the grouping that a hundred and twenty pages then slot into. The third prerequisite that used to sit here,
-the error catalog page, is written — which is what freed every later *Gotchas* section to stay
-construct-specific.
-
-**Then E1**, the last homepage-offload page left. It is mostly a move of text that already exists and
-unblocks the homepage's second call to action, but it cannot start until its home is settled.
-
-**R2 is finished**, which is what moved the release date off the reference and onto the front-page
-chain below. Its one residual is the author's read of the index, tracked at R1.
-
-**S3 and S4 are now the largest mechanical item left, and they are a standalone sweep.** They were
-planned to ride along with R2 section by section, which is no longer available: a description and a
-search-facing title are a few minutes per page while someone is already in that page, and hours across
-291 of them from a standing start. Split the sweep by section the way R2 was split. The measured
-failure they answer — a 1.09% click-through rate on 81,117 impressions — is the one this project can
-fix without ranking better, so they should not be left until after the merge, which is when each page's
-first impression in the index is already fixed.
-
-**O1 and O2 are done**: the orientation writing guide is written, and the Quickstart exists at
-`/docs/quickstart`, which gives the front page's first call to action a real destination instead of
-pointing at Hello World. Adding it was also the occasion to renumber the sidebar into its intended
-order, which [site-structure.md](site-structure.md) records as settled.
-
-**So the front-page chain is now E1, then F2, then F1.** F2 aligns the front page with the Overview's
-feature tour. F1 is the largest single-page change and the one that most needs its destinations in
-place — and E1 is the last of them, which is why settling *Project status*'s home is the decision
-that unblocks the rest.
-
-**T2 is done**: *Checking and debugging* is the fourth part of the area-calculation series, and it
-carries one mis-wiring through the raw call-site error, the checked error, and `cargo cgp check`, with
-every diagnostic produced by compiling the program rather than remembered. T1 goes with it, since the
-interim note it described was only worth having until T2 existed.
-
-**T3 and T4 remain.** T3 is where a reader finally meets an application context, and T4 is cheap
-enough to fold into any pass over the series.
+**T3 and T4 are the writing left in the tutorials.** T3 is where a reader finally meets an application
+context, and T4 is cheap enough to fold into any pass over the series.
 
 **S1, S5, and S10 fit anywhere**, and none of them blocks anything: S5 is a prose sweep that reads
 better once a section is otherwise finished, S1 is a half-hour of hand searching on Bing and Kagi, and
 S10 is two small changes in the `cgp` repository.
+
+**What is left of S3 and S4 has dropped down the list rather than off it.** Fifty-five reference pages
+and all seventeen blog posts now carry a written title or description, and those were where the measured
+failure — a 1.09% click-through rate on 81,117 impressions — was concentrated. The roughly 240 pages
+that remain render a derived description that is serviceable, so whoever returns to them should ask
+which pages carry impressions before sweeping, and should still land the edit before the merge, which is
+when each page's first impression in the index is fixed.
 
 **X1, X2, and X3 fit anywhere, and the first two are worth doing early** — a stale published skill
 misteaches every agent that reads it, and the crate's landing page is working against the project

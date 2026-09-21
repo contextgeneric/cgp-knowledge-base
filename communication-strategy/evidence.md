@@ -225,9 +225,9 @@ Track these signals where they are available:
   it is the only measurement recorded as used so far.
 - **Activation: time to a running program.** The Quickstart target is a reader with Rust installed
   reaching a working result in under ten minutes using only the page. Measure with a
-  [friction log](readers.md#keeping-the-model-observed) on a clean machine. The orientation-page
-  guide, task O1 in the [website plan](../website/tasks.md), owns the target once it exists.
-  Hello World and the first tutorial part use the same measure with longer budgets.
+  [friction log](readers.md#keeping-the-model-observed) on a clean machine. The target is owned by
+  [the orientation-page guide](../website/writing-guides/orientation.md), which the page is written
+  against. Hello World and the first tutorial part use the same measure with longer budgets.
 - **Adoption: recurring questions from people writing code.** Summarize patterns from GitHub
   Discussions, Discord, and the subreddit. Investigate the page that should answer each question.
   If confusion persists after a revision, examine both the explanation and the construct.

@@ -419,7 +419,7 @@ URL-additive.** The existing documentation paths — `/docs/overview`, `/docs/co
 [information-architecture.md](information-architecture.md#the-target-page-inventory) settled that the
 Overview stays where it is. The one page that moves is *Project status*, which has never had a URL of
 its own. So the relaunch adds history rather than breaking it, and the only broken history is the
-migration's, which [S2](#the-work-in-order) repairs.
+migration's, which the seven redirect stubs under `static/` have already repaired.
 
 ### The patterns book is the best-performing property, not a competitor
 
@@ -739,7 +739,8 @@ Four things are worth watching, and each maps to a target in
 - **Clicks on the problem queries** — `rust coherence`, conflicting implementations, dependency
   injection — which stand at zero today against 41 impressions, and which are the clearest test of
   whether the Concepts and Comparisons pages did their job.
-- **Whether the dead URLs stop appearing** once the stubs land, which is the check that S2 worked.
+- **Whether the dead URLs stop appearing** now that the stubs are in `static/`, which is the check
+  that the redirects work.
 
 **Establish the baseline before the relaunch merges**, because the relaunch changes the page count
 sevenfold and a before-and-after taken across it cannot be attributed to anything. Export once on the
@@ -763,19 +764,25 @@ changes the guidance into this document rather than into a log.
 
 ## The work, in order
 
-The tasks are **S1 to S11** in [tasks.md](tasks.md), which carries the plan: what each one lands in,
-what blocks it, and what done means. This section says only why they are ordered as they are.
+The tasks carry **S** identifiers in [tasks.md](tasks.md), which holds the plan: what each one lands
+in, what blocks it, and what done means. An identifier named here and missing there has landed, since
+that document removes an entry rather than marking it done. This section says only why they are ordered
+as they are.
 
-**The click-through work comes first and is the largest item**, because the data says presentation is
-what the site is losing on: S3 puts a description on every page and S4 puts a search-facing title on the
-pages whose heading is a construct name. Both are cheapest done section by section while someone is
-already in the section, and both must land before the merge, since the merge is what fixes each page's
-first impression.
+**The click-through work came first, because the data says presentation is what the site is losing
+on**, and its valuable half is done: every page in the `macros/`, `attributes/` and `derives/` groups,
+the fourteen `traits/` and `types/` pages whose derived snippet was unusable, and all seventeen blog
+posts now carry a written description, a search-facing title, or both — fifty-five pages plus the blog,
+chosen because they were where the impressions were. The pages left render a derived description that
+is serviceable, so the remainder of S3 and S4 is worth sorting by impressions rather than swept, and
+whatever of it gets done must land before the merge, since the merge is what fixes each page's first
+impression.
 
-**The cheap repairs are done.** S2 stubbed the seven dead URLs, S8 added `robots.txt`, and S7 set the
-crate's `homepage`, five keywords, and the `rust-patterns` and `no-std` categories across all 27
-published manifests. What is left of S7 is the GitHub repository settings, which only the author can
-change, and S6, which folds the homepage's own metadata into F1.
+**The metadata repairs are done.** The seven dead URLs are stubbed, `robots.txt` is published, the
+crate manifests carry `homepage`, five keywords, and the `rust-patterns` and `no-std` categories across
+all 27 published crates, and every page now renders as `{Page} | CGP — Context-Generic Programming`,
+with the homepage carrying its own hand-written title because it is the one page whose own name should
+come first. What is left is the GitHub repository settings, which only the author can change.
 
 **The sweeps and the surfaces follow.** S5 is the first-paragraph orientation pass, S10 the agent
 surfaces, S1 the hand check on Bing and Kagi. None of them blocks anything.
