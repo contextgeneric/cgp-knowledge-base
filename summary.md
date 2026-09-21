@@ -826,8 +826,9 @@ it stale.
   than a drift record, the catalog, and the document shape.
 - [hello-world.md](website/tutorials/hello-world.md) — the single-page first contact: one CGP
   function, two contexts, and an optional desugaring appendix.
-- [area-calculation.md](website/tutorials/area-calculation.md) — the three-part series from plain
-  functions to higher-order providers, its two load-bearing orderings, and the checking gap in it.
+- [area-calculation.md](website/tutorials/area-calculation.md) — the four-part series from plain
+  functions to higher-order providers and on to catching a mis-wiring, its two load-bearing orderings,
+  and the vocabulary extension part four makes.
 
 ## `releases/` — the version history
 

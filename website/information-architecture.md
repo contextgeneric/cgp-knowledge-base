@@ -178,8 +178,9 @@ made those four a short reading path — which the section's index page is what 
   code is actually in, so this is where a reader meets a type standing for an application before their
   habits form.
 - *Area calculation* (3 parts) — present. The first-principles series.
-- *Checking and debugging* — **new**. Lazy wiring, `check_components!`, and `cargo cgp check`. The
-  largest gap in the teaching material and the natural next part of the area-calculation family.
+- *Checking and debugging* — present, the fourth part of the area-calculation series. Lazy wiring,
+  `check_components!`, and `cargo cgp check`, with one mis-wiring carried through all three
+  diagnostics.
 
 **Comparisons** (new category, 11 pages plus an index) — present and **complete**
 

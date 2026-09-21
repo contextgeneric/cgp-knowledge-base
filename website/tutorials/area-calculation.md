@@ -1,13 +1,15 @@
 # Area calculation tutorial series
 
-The site's only sustained teaching material: a three-page series that carries a reader from ordinary
+The site's only sustained teaching material: a four-page series that carries a reader from ordinary
 Rust functions, through the coherence wall, to configurable compile-time dispatch with composable
-higher-order providers — using one running example the whole way.
+higher-order providers, and finally to catching a wiring mistake at the line that made it — using one
+running example the whole way.
 
 - **URL** — <https://contextgeneric.dev/docs/tutorials/area-calculation/>
 - **Source** — [docs/tutorials/area-calculation/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/tutorials/area-calculation)
 - **Pages** — an unnumbered `index.md` framing the problem, then
-  `context-generic-functions.md` (position 1) and `static-dispatch.md` (position 2)
+  `context-generic-functions.md` (position 1), `static-dispatch.md` (position 2), and
+  `checking.md` (position 3)
 - **Status** — Current
 
 ## What it teaches
@@ -49,6 +51,17 @@ a context, first by hand-writing the consumer impl and then by replacing that wi
 generalizing the per-shape scaled calculators, and a note that composed providers are just generic
 types that can be aliased.
 
+**Checking and Debugging** closes the series on the question the first three parts leave unasked: what
+happens when the wiring is wrong. It mis-wires `PlainCircle` to `RectangleAreaCalculator`, shows that
+the program still compiles, and names the reason — wiring is lazy, so an entry is checked when the
+component is used rather than when it is written. It then carries that one mistake through three
+diagnostics: the raw `E0599` at the call site, which names neither the missing field nor the provider
+and points at the line that is correct; the `E0277` that `check_components!` moves to the wiring site,
+which names the chain but spells the field name as a `Chars` list; and `cargo cgp check`, which leads
+with the missing fields in English. It fixes the wiring, shows the check passing, and closes with an
+optional *How it works* section giving the hand-written equivalent of a check — a trait whose
+supertrait is the consumer trait, and an impl that asserts it.
+
 The series makes a strong zero-cost argument in its own section: no vtables, no unsafe, no runtime
 resolution, all wiring inside Rust's own trait system, and no external compile-time processing.
 
@@ -66,7 +79,8 @@ rule; it teaches coherence from scratch when it hits it. It does not assume the 
 **Concept sequence.** Plain functions → concrete-context methods → `#[cgp_fn]` + `#[implicit]` →
 `#[uses]` → *(optional desugaring)* → a second shape → the need for a unified trait → the coherence
 error → `#[cgp_component]` → `#[cgp_impl]` → explicit provider calls → hand-written consumer impls →
-`delegate_components!` → `#[use_provider]` → higher-order providers.
+`delegate_components!` → `#[use_provider]` → higher-order providers → lazy wiring → the call-site
+failure → `check_components!` → `cargo cgp check` → *(optional desugaring)*.
 
 Two orderings in that sequence carry the series and must not be disturbed. **The problem always
 precedes the construct**: every step opens with code that is unsatisfactory for a stated reason, and
@@ -85,6 +99,12 @@ stops there.
 "component name," each introduced at the moment it becomes necessary — and never earlier. That
 matches the introduction order in
 [vocabulary.md](../../communication-strategy/vocabulary.md).
+
+**Part four extends the contract in one way, deliberately.** `CanUseComponent` and `IsProviderFor`
+appear there, where the first three parts never name them, because the diagnostics the page quotes
+name them and a page about reading errors cannot hide the words the errors use. They arrive last, in
+the optional desugaring section, framed as machinery that exists so a failure can explain itself
+rather than as anything a reader writes. `DelegateComponent` is still never named.
 
 ## How it relates to the knowledge base
 
@@ -114,36 +134,37 @@ is the working developer in [readers.md](../../communication-strategy/readers.md
 
 ## Where it diverges from CGP v0.8.0
 
-The code is current — the series was written for v0.7.0 and nothing it uses changed in v0.8.0 — but
-three gaps are worth knowing.
+The code is current — the series was written for v0.7.0 and nothing it uses changed in v0.8.0 — and
+one gap is worth knowing. The two that used to sit here, that checking was never mentioned and that
+`cargo-cgp` was never mentioned, are closed by part four.
 
 - **`#[cgp_impl]` appears in both forms.** Part two first shows
   `impl<Context> AreaCalculator for Context where Self: RectangleArea` and then simplifies to
   `impl AreaCalculator`. That is pedagogically deliberate, but only the second form is idiomatic per
   [writing-providers](../../cgp/guides/writing-providers.md), and a reader who stops reading early
   will copy the first.
-- **Checking is never mentioned.** No page calls
-  [`check_components!`](../../cgp/reference/macros/check_components.md) or explains that wiring is
-  lazy, so a reader who mis-wires a context meets the failure at the call site with no idea that a
-  compile-time assertion exists. Given that [check traits](../../cgp/concepts/check-traits.md) are
-  how CGP errors are made readable, this is the series' largest gap.
-- **`cargo-cgp` is never mentioned.** The series makes strong claims about compile-time safety without
-  telling the reader what a wiring failure looks like or that
-  [`cargo cgp check`](../../cargo-cgp/reference/usage.md) exists to make it readable — which
-  [formats.md](../../communication-strategy/formats.md) explicitly asks a tutorial to do, setting the
-  error-message expectation honestly *before* the reader hits one.
 
 ## Maintaining it
 
 Preserve the two orderings above — problem before construct, explicit before sugar — over anything
 else; they are what makes the series work, and they are what an unwary addition breaks.
 
-The clear next step is a **third part on checking and debugging**, covering lazy wiring,
-`check_components!`, and `cargo cgp check`, written from
-[check traits](../../cgp/concepts/check-traits.md), the
-[debugging guide](../../cgp/guides/debugging.md), and
-[cargo-cgp/reference/usage.md](../../cargo-cgp/reference/usage.md). That would close the largest gap
-without disturbing the existing ramp. A fourth part on namespaces, drawn from the
+**The series is sequential, and part four depends on that.** Its code blocks are fragments of the
+program part three ends with, and the line numbers in its quoted errors refer to that file — which the
+page says in its opening rather than leaving a reader to discover. The
+[tutorial guide](../writing-guides/tutorial.md) asks tutorials to stand alone; this series does not,
+and part four inherits the property rather than introducing it. The index describes all three parts
+and part three now routes forward to part four instead of closing the series.
+
+**Part four's diagnostics are quoted output, not remembered output**, and a revision that changes its
+program must re-run all three rather than editing the text: `cargo check` at the call site,
+`cargo check` with the assertion in place, and `cargo cgp check`. Its program and the mis-wired fixture are
+both in the website repository's `example-code` crate, at `tests/tutorials/` and
+`tests/compile_fail/tutorials/`, so the checked error the page quotes is pinned by a blessed
+`.stderr`. Note that rustc abbreviates the `Chars` list differently depending on how it is invoked, so
+the page's quote matches the pinned fixture rather than any one local run.
+
+A **fifth part on namespaces**, drawn from the
 [social media app example](../../examples/social-media-app.md), is the natural step after it — but
 namespaces only pay off once a wiring table is long, and this series' table has one entry, so it needs
 a bigger running example rather than a bolt-on section.

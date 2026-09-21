@@ -49,14 +49,6 @@ five curated features in [identity.md](../communication-strategy/identity.md#the
 with links to the Overview for the broader tour. The Overview expands those features and covers
 abstract types, extensible data, and handlers. *Website repo, front page.*
 
-**Neither tutorial teaches that wiring is lazy,** mentions
-[`check_components!`](../cgp/reference/macros/check_components.md), or mentions
-[`cargo-cgp`](../cgp/reference/cargo-cgp.md) — so a reader who mis-wires a context meets a wall of
-generated types at a call site with no idea that either mitigation exists. The full fix is the new
-tutorial below; the interim fix is the short version in each tutorial that reaches
-`delegate_components!`. *Website repo, `docs/tutorials/`; obligation stated in
-[writing-guides/tutorial.md](writing-guides/tutorial.md).*
-
 **The area-calculation series shows the non-idiomatic provider form first.** Presenting
 `impl<Context> AreaCalculator for Context` before simplifying to `impl AreaCalculator` is pedagogically
 deliberate and should stay, but a reader who stops early copies the wrong form — so the page must say
@@ -88,12 +80,6 @@ fold. Its frankness is the asset and must survive the move; what changes is the 
 of `cargo-cgp`, and the missing incremental-adoption reassurance. **Its home is unsettled**: it is
 project meta rather than a CGP idea, so it does not belong under Concepts, and under **Project** beside
 Contribute is the obvious alternative.
-
-**A checking and debugging tutorial** — lazy wiring, `check_components!`, and `cargo cgp check`, with one
-deliberate failure shown both raw and through the tool. The largest gap in the teaching material and the
-natural next part of the area-calculation family. *Spec in
-[writing-guides/tutorial.md](writing-guides/tutorial.md); material in
-[check traits](../cgp/concepts/check-traits.md) and the [debugging guide](../cgp/guides/debugging.md).*
 
 **An applied-register tutorial** — building something real from an [example](../examples/README.md), for
 the reader who evaluates a technology by seeing a realistic system rather than a rectangle. The site has

@@ -138,18 +138,6 @@ this group, and it is not a concept page:
 
 ## T — Teaching
 
-- **T1 — the interim checking note.** Every tutorial that reaches `delegate_components!` should say that
-  wiring is lazy, name `check_components!`, and name `cargo cgp check`. *Lands in:* `docs/tutorials/`.
-  *Blocked by:* nothing. *Superseded by:* T2, after which each tutorial keeps only a pointer — so this is
-  worth doing only if T2 is not being done in the same stretch.
-- **T2 — the *Checking and debugging* tutorial.** First-principles register, the natural fourth part of
-  the area-calculation family: lazy wiring, `check_components!`, and one deliberate failure shown both
-  raw and through `cargo cgp check`, with the tool's youth conceded honestly. The highest-value teaching
-  addition and the one that most directly answers the objection that has cost CGP the most readers.
-  *Lands in:* `docs/tutorials/area-calculation/`. *Material:*
-  [check traits](../cgp/concepts/check-traits.md), the
-  [debugging guide](../cgp/guides/debugging.md), and
-  [cargo-cgp/reference/usage.md](../cargo-cgp/reference/usage.md). *Blocked by:* nothing.
 - **T3 — the applied-register tutorial.** Release-blocking, and **second in the tutorial order rather
   than last**, because it is where a reader meets an application context after a homepage and a Hello
   World that both wire a value one — the reasoning is in
@@ -457,8 +445,7 @@ the [ordering](#the-ordering) for what to start on.
 | E1 | nothing | F1 |
 | F2 | nothing | F1 |
 | F1 | E1, F2 | nothing |
-| T1 | nothing | nothing (superseded by T2) |
-| T2, T4 | nothing | nothing |
+| T4 | nothing | nothing |
 | T3 | nothing hard; reads better after R2 | nothing |
 | R1 | nothing | R2 |
 | R2 | R1 | T3 (soft), X2 (soft) |
@@ -520,9 +507,13 @@ feature tour. F1 is the largest single-page change and the one that most needs i
 place — and E1 is the last of them, which is why settling *Project status*'s home is the decision
 that unblocks the rest.
 
-**Then T2, T3, and T4.** T2 is the highest-value teaching addition and the one that most directly answers
-the objection that has cost CGP the most readers; T3 is where a reader finally meets an application
-context; T4 is cheap enough to fold into the corrections pass. T1 is worth doing only if T2 is not.
+**T2 is done**: *Checking and debugging* is the fourth part of the area-calculation series, and it
+carries one mis-wiring through the raw call-site error, the checked error, and `cargo cgp check`, with
+every diagnostic produced by compiling the program rather than remembered. T1 goes with it, since the
+interim note it described was only worth having until T2 existed.
+
+**T3 and T4 remain.** T3 is where a reader finally meets an application context, and T4 is cheap
+enough to fold into any pass over the series.
 
 **S1, S5, and S10 fit anywhere**, and none of them blocks anything: S5 is a prose sweep that reads
 better once a section is otherwise finished, S1 is a half-hour of hand searching on Bing and Kagi, and
