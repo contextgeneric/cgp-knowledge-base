@@ -245,15 +245,15 @@ it earns its place below on that basis rather than on a search one.
 
 ### The off-site metadata is under-set
 
-The surfaces that share these queries are ones the project controls, and their metadata is thin.
-Checked on 2026-09-21:
+The surfaces that share these queries are ones the project controls, and their metadata was thin. The
+crate manifests have since been repaired: `homepage` now points at the site, so crates.io and lib.rs
+link it for the first time; the single `cgp` keyword has become five; and the crates carry the
+`rust-patterns` and `no-std` categories that place them in the browse-and-recommend surfaces. All 27
+published manifests inherit them from `[workspace.package]`.
 
-- **The `cgp` crate sets no `homepage`**, so neither crates.io nor lib.rs links `contextgeneric.dev` at
-  all. Those are high-authority pages with 103,133 total downloads behind them, and the link is one
-  line of `Cargo.toml`.
-- **It sets one keyword, `cgp`**, of the five crates.io permits, and **no `categories`**, which are
-  what place a crate in the browse-and-recommend surfaces of crates.io and lib.rs.
-- **The GitHub repository's description still reads "Context-Generic Programming: modular programming
+**What remains needs repository settings rather than a commit**, and only the author can change it:
+
+- **The `cgp` repository's description still reads "Context-Generic Programming: modular programming
   paradigm for Rust"** — the framing
   [identity.md](../communication-strategy/identity.md#using-modular-as-a-supporting-word) retires, on
   the project's most-linked property, with 248 stars behind it. Its topics are `functional-programming`,
@@ -261,12 +261,12 @@ Checked on 2026-09-21:
 - **Every other repository in the organization has no description, no homepage, and no topics** —
   including `cargo-cgp`, `cgp-skills`, `cgp-knowledge-base`, and `contextgeneric.dev`.
 
-The homepage's own metadata belongs in the same list. Its title tag reads *"Modular programming
-paradigm for Rust | Context-Generic Programming"*, because `src/pages/index.tsx` passes the configured
-`tagline` as the page title, and its hand-written `<meta name="description">` repeats the same retired
-line. [C1](tasks.md#c--corrections) replaces the configured tagline and so repairs the title as a side
-effect; the description and the decision to use the tagline as the title at all belong to
-[F1](tasks.md#f--the-front-page).
+One piece of the site's own metadata sits in the same list. The homepage's title tag now carries the
+settled line, since `src/pages/index.tsx` passes the configured `tagline` as the page title and the
+tagline has been corrected — but that makes the title 110 characters, and the page's hand-written
+`<meta name="description">` still repeats the retired line. Both belong to
+[F1](tasks.md#f--the-front-page), which should choose the homepage's title deliberately rather than
+inherit it.
 
 ### The pages that would answer the high-intent queries are not published yet
 
@@ -706,10 +706,10 @@ pages whose heading is a construct name. Both are cheapest done section by secti
 already in the section, and both must land before the merge, since the merge is what fixes each page's
 first impression.
 
-**The cheap repairs come next.** S2 stubs the five dead URLs; S7 sets the crate's `homepage`, keywords,
-and categories and fixes the GitHub metadata, which is the cheapest item on the list and the only one
-that touches the properties sharing the site's queries; S8 adds `robots.txt`; S6 folds the homepage's
-own metadata into F1.
+**The cheap repairs are done.** S2 stubbed the seven dead URLs, S8 added `robots.txt`, and S7 set the
+crate's `homepage`, five keywords, and the `rust-patterns` and `no-std` categories across all 27
+published manifests. What is left of S7 is the GitHub repository settings, which only the author can
+change, and S6, which folds the homepage's own metadata into F1.
 
 **The sweeps and the surfaces follow.** S5 is the first-paragraph orientation pass, S10 the agent
 surfaces, S1 the hand check on Bing and Kagi. None of them blocks anything.

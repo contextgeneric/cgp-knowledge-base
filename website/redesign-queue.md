@@ -30,41 +30,6 @@ existing pages whose content is sound but whose shape or framing is not. The **n
 largest items and depend on the guides that specify them. Which of them to do first, and which depend on
 which, is in [tasks.md](tasks.md) rather than here.
 
-## Corrections — single lines, wrong today
-
-These are the cheapest items on the list and several are actively misleading. None of them requires a
-decision.
-
-**The site tagline in the Docusaurus configuration still reads "Modular programming paradigm for
-Rust."** This is the retired framing, and "modular" as a lead word is specifically retired by
-[identity.md](../communication-strategy/identity.md). Replace with the settled line. *Website repo,
-`docusaurus.config.ts`; see [site-structure.md](site-structure.md).*
-
-**The announcement bar promotes the v0.7.0 release.** It is hardcoded rather than derived from the newest
-post, so it goes stale silently with every release, and it is the site's most prominent single piece of
-copy. *Website repo, `docusaurus.config.ts`.*
-
-**The Hello World tutorial pins `cgp = "0.7.0"`.** The site's material is written against
-[v0.8.0](../releases/v0-8-0.md), so `"0.8.0"` is the pin to carry. It does not resolve on crates.io until
-the release ships, which ties this correction to the release rather than making it wrong: the tutorials
-are correct the moment v0.8.0 is published, and until then a reader who wants to follow along needs a git
-dependency on `main`, which is how every ecosystem repository tracks the library. *Website repo,
-`docs/tutorials/hello.md`; see [tutorials/hello-world.md](tutorials/hello-world.md) and
-[tasks.md](tasks.md).*
-
-**The Resources page omits `cargo-cgp` entirely.** This is the most consequential single omission on the
-site: the error toolchain is the direct answer to the most-cited obstacle to adopting CGP, and Resources
-is where an evaluator looks for it. *Website repo, `docs/resources.md`.*
-
-**The Resources crate list is incomplete and inconsistent.** It names `cgp-error-anyhow` but not
-`cgp-error-eyre` or `cgp-error-std`, and lists `cgp-serde` by GitHub URL rather than its crates.io entry.
-*Website repo, `docs/resources.md`.*
-
-**The Hermes SDK sits in a bare list at the bottom of Resources.** It is the real, non-trivial system CGP
-was built for and the strongest social proof available to the evaluator profile, and it is presented as
-one link among eight. *Website repo, `docs/resources.md`; see
-[evidence.md](../communication-strategy/evidence.md).*
-
 ## Rewrites — pages whose shape or framing is wrong
 
 **The front page needs rebuilding against its guide.** It diverges in six concrete ways: the hero

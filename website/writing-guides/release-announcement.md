@@ -136,13 +136,21 @@ a draft written months ahead.
 
 ## Publishing, and what happens afterwards
 
-Five mechanical items go with publication, and the v0.8.0 draft's document records all five going wrong
-at once, which is why they are listed rather than assumed. **Set the real date in the filename**, since
-it fixes both the URL and the post's position in the index. **Set the `slug`.** **Repoint the
+Seven mechanical items go with publication, and the v0.8.0 draft's document records five of them going
+wrong at once, which is why they are listed rather than assumed. **Set the real date in the filename**,
+since it fixes both the URL and the post's position in the index. **Set the `slug`.** **Repoint the
 announcement bar** in `docusaurus.config.ts`, which is hardcoded and will otherwise keep promoting the
 previous release. **Add the discussion links** once the post is submitted. And **register the post's
 internal document** under [blog/](../blog/README.md) in the same change, per
 [AGENTS.md](../AGENTS.md) — a post with no document has no recorded provenance.
+
+Two further items belong to the release rather than to the post, and both are invisible until someone
+tries to follow the site. **Re-pin the `cgp` version wherever the site names it** — every tutorial's
+`Cargo.toml` snippet and the `example-code` crate, which tracks the resolvable pre-release until the
+real version exists on crates.io. A tutorial pinning a version crates.io does not yet carry is correct
+on the branch and broken the moment a reader copies it, so the pin and the release ship together. And
+**confirm the sitemap and submit it**, per
+[seo.md](../seo.md#the-work-in-order), which is the one search task that cannot be done early.
 
 A release is also the largest attention event the project gets, which has two consequences for what
 travels with it. **Whatever the announcement links to should be ready before it publishes**, because a

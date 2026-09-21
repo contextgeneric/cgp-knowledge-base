@@ -100,38 +100,6 @@ feature set, a hook, or a blog post's opening. The wording rules are in
 [message.md](../communication-strategy/message.md#the-one-mitigation-that-spans-three-of-these) and
 [vocabulary.md](../communication-strategy/vocabulary.md#words-and-framings-to-avoid).
 
-## C — Corrections
-
-Eight single-line changes, all in the website repository, none blocked by anything. Because the whole
-redesign lands with the release, these are corrections *on the branch* rather than fixes that reach
-readers today — several of them are then overtaken by a larger task, and they are still worth doing first
-because they are minutes each and they stop the branch carrying known-wrong copy. The detail for each is
-in [redesign-queue.md](redesign-queue.md#corrections--single-lines-wrong-today).
-
-- **C1 — the site tagline.** Replace "Modular programming paradigm for Rust." with the settled line from
-  [identity.md](../communication-strategy/identity.md). *Lands in:* `docusaurus.config.ts`. *Done when:*
-  the configuration, the front page hero, and the site's own copy all carry the same line.
-- **C2 — the announcement bar.** It promotes v0.7.0 and is hardcoded, so it goes stale silently with
-  every release. *Lands in:* `docusaurus.config.ts`. *Done when:* it points at the v0.8.0 post.
-  **Completed by V1** in practice; setting it early on the branch just stops the redesign carrying a
-  stale bar.
-- **C3 — the tutorial version pin.** Set it to `cgp = "0.8.0"`. Because the branch merges with the
-  release, this is simply correct rather than a promise about an unpublished version — which is the
-  whole reason the two events are coupled. *Lands in:* `docs/tutorials/hello.md`, every future
-  tutorial, and `example-code/Cargo.toml`, which pins the resolvable `0.8.0-alpha` until then.
-  *Done when:* the pin names the version the code is written against and re-pinning is on the
-  release checklist.
-- **C4 — `cargo-cgp` on Resources.** The single most consequential omission on the site: the error
-  toolchain is the direct answer to the most-cited obstacle to adopting CGP, and Resources is where an
-  evaluator looks for it. *Lands in:* `docs/resources.md`. *Done when:* the tool, its install command,
-  and its purpose appear. **Superseded in part by R3**, which gives the tool a real section; C4 is the
-  index entry and stays valuable afterwards.
-- **C5 — the crate list.** Add `cgp-error-eyre` and `cgp-error-std`; list `cgp-serde` by its crates.io
-  entry. *Lands in:* `docs/resources.md`.
-- **C6 — Hermes SDK.** Promote it out of the bare list at the bottom; it is the real non-trivial system
-  CGP was built for and the strongest social proof available to the evaluator, per
-  [evidence.md](../communication-strategy/evidence.md). *Lands in:* `docs/resources.md`.
-
 ## E — The explanation tier
 
 **Complete.** The **Concepts** section at `docs/concepts/` is written — eighteen pages plus a
@@ -418,25 +386,13 @@ merges**, because the merge is what fixes each new page's first impression in th
   against 11 for *rust conflicting implementations of trait*. The reasoning is in
   [seo.md](seo.md#adding-a-page-is-almost-never-the-answer-and-the-data-says-which-three-cases-to-consider).
   *Blocked by:* nothing.
-- **S2 — the dead-URL stubs.** Five pre-migration URLs still draw 1,934 impressions and 10 clicks a year
-  into a 404, at positions between 6.5 and 8: `/overview/`, `/tutorials/hello/`, `/resources/`,
-  `/contribute/`, and `/tutorials/`. Add a static HTML stub under `static/` for each, with a canonical
-  link and a meta refresh to the current address, plus `/feed/` and `/atom` while there. GitHub Pages
-  cannot issue a 301, so a stub is what is available without a plugin. *Lands in:* `static/`.
-  *Blocked by:* nothing.
-- **S7 — the off-site metadata.** Set `homepage` in the `cgp` crate's manifest, which is unset, so that
-  crates.io and lib.rs link the site at all; expand `keywords` from one to five; add `categories`.
-  Replace the GitHub repository description, which still carries the retired "modular programming
-  paradigm" line, and widen its topics. Give the sibling repositories a description and a homepage.
-  **Link the patterns book forward**: its `blanket-implementations.html` chapter is the single
-  best-performing page in the whole property, at 12,232 impressions and 237 clicks, and it sends its
-  readers nowhere current. That change and the rest of the book's plan are specified in
-  [patterns-book.md](patterns-book.md); only the forward links belong to this task. *Lands in:* the [`cgp`](https://github.com/contextgeneric/cgp) repository,
-  the [`cgp-patterns`](https://github.com/contextgeneric/cgp-patterns) repository, and the
-  organization's GitHub settings. *Blocked by:* nothing. **Cheapest item in the group**, and the only
-  one touching the properties that share the site's queries.
-- **S8 — `robots.txt`.** The site serves none, so nothing points a crawler at `/sitemap.xml`. *Lands
-  in:* `static/robots.txt`. *Blocked by:* nothing.
+- **S7 — the GitHub metadata.** The crate manifests are done: `homepage`, five `keywords`, and the
+  `rust-patterns` and `no-std` categories are set on `[workspace.package]` and inherited by all 27
+  published crates. What remains needs repository settings rather than a commit: the `cgp` repository's
+  description still reads "Context-Generic Programming: modular programming paradigm for Rust", the
+  retired line, and its topics are three generic ones; the sibling repositories have no description,
+  homepage, or topics at all. **Only the author can change these.** The forward links from the patterns
+  book are B-1 in [patterns-book.md](patterns-book.md), and they wait on the merge.
 - **S6 — the homepage's own metadata.** The hand-written `<meta name="description">` in
   `src/pages/index.tsx` repeats the retired line, and the page passes the configured `tagline` as its
   title. C1 repairs the title as a side effect; the description and the choice to use the tagline as a
@@ -513,10 +469,9 @@ the [ordering](#the-ordering) for what to start on.
 
 | Task | Blocked by | Blocks |
 |---|---|---|
-| C1–C6 | nothing | C1 → F1; C2 and C3 completed by V1 |
 | E1 | nothing | F1 |
 | F2 | nothing | F1 |
-| F1 | C1, E1, F2, O2 (soft) | nothing |
+| F1 | E1, F2, O2 (soft) | nothing |
 | T1 | nothing | nothing (superseded by T2) |
 | T2, T4 | nothing | nothing |
 | T3 | nothing hard; reads better after R2 | nothing |
@@ -530,7 +485,7 @@ the [ordering](#the-ordering) for what to start on.
 | O1 | nothing | O2, and the Introduction narrowing (soft) |
 | O2 | O1 | F1's first call to action (soft) |
 | A1 | the author's read | every page-adding task's provenance note |
-| S1–S5, S7, S8, S10 | nothing | nothing; S3 and S4 should precede V1 |
+| S1, S3, S4, S5, S7, S10 | nothing | nothing; S3 and S4 should precede V1 |
 | S6 | nothing | folded into F1 |
 | S9, S11 | V1 | nothing |
 | X1, X2, X3 | nothing | nothing |
@@ -543,10 +498,10 @@ interrupt**: nothing publishes until it lands, so a task deferred is a release d
 
 ## The ordering
 
-**First, the corrections (C1–C6), in a single pass on the branch**, and **S2, S7, and S8 with them**.
-They cost minutes each and they stop every later task inheriting known-wrong copy. The three search
-items belong in that pass for the same reason: S7 is one line of `Cargo.toml` plus a GitHub settings
-field, and S2 and S8 are static files that nothing else depends on.
+**The corrections pass is done**, along with S2, S7's manifest half, and S8: the tag line, the
+announcement bar, the tutorial pin, the Resources page, the seven dead-URL stubs, `robots.txt`, and the
+crate metadata all landed on the branch. What it leaves is the GitHub repository settings, which only
+the author can change.
 
 **A1 is drafted already**, which matters for the ordering rather than merely for the tally: it is what
 every subsequent page's provenance note links to, so no page added from here carries a dangling
@@ -561,15 +516,16 @@ construct-specific.
 **Then E1**, the last homepage-offload page left. It is mostly a move of text that already exists and
 unblocks the homepage's second call to action, but it cannot start until its home is settled.
 
-**Then start R2, and keep it running.** It is long, mechanical, parallelizable, and it is the release
-date. Split it by subdirectory across sessions and let everything below run alongside it.
+**R2 is finished**, which is what moved the release date off the reference and onto the front-page
+chain below. Its one residual is the author's read of the index, tracked at R1.
 
-**S3 and S4 ride along with it, subdirectory by subdirectory.** A description and a search-facing title
-are a few minutes per page while someone is already reading that page, and hours as a separate sweep
-over 291 of them. They are the search group's largest items and the measured failure they answer — a
-1.09% click-through rate on 81,117 impressions — is the one this project can fix without ranking
-better, so they should not be left to after the merge, which is when each page's first impression is
-already fixed.
+**S3 and S4 are now the largest mechanical item left, and they are a standalone sweep.** They were
+planned to ride along with R2 section by section, which is no longer available: a description and a
+search-facing title are a few minutes per page while someone is already in that page, and hours across
+291 of them from a standing start. Split the sweep by section the way R2 was split. The measured
+failure they answer — a 1.09% click-through rate on 81,117 impressions — is the one this project can
+fix without ranking better, so they should not be left until after the merge, which is when each page's
+first impression in the index is already fixed.
 
 **Then O1 and O2, then F2, then F1.** The orientation pages give the front page its first call to
 action a real destination. F2 aligns the front page with the Overview’s feature tour. F1 is the

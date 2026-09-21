@@ -248,7 +248,8 @@ their readers are already served, if imperfectly, by the posts they grow out of.
   than *Hello World*, which teaches an idea; this page only proves the thing runs.
 - *Introduction* — present, narrowed. Keeps the definition and the routing; loses the maturity section
   to *Project status* and stops sending newcomers to the blog.
-- *Resources* — present, needs correcting. The ecosystem index, currently omitting `cargo-cgp`.
+- *Resources* — present and current. The ecosystem index, now carrying `cargo-cgp`, the full crate
+  list, and the Hermes SDK as the evaluator's social proof rather than one link among eight.
 
 **Project**
 - *Contribute* — present and current.

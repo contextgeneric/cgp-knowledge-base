@@ -8,7 +8,8 @@ carries.
 - **URL** — <https://patterns.contextgeneric.dev/>
 - **Source** — [`cgp-patterns`](https://github.com/contextgeneric/cgp-patterns), an
   [mdBook](https://rust-lang.github.io/mdBook/) whose chapters live in `content/`
-- **Last updated** — 2025-05-09, "Update book content to v0.4.0 release"
+- **Last updated** — its content 2025-05-09, for the v0.4.0 release; its introduction revised since,
+  per B-2 below
 - **Library pin** — `cgp = "0.4.0"`, four releases behind the published library
 - **Status** — **Outdated** in part: 7 of 19 written chapters are current, 12 are not
 - **Written** — 19 chapters of a 47-entry table of contents; the other 28 entries link nowhere
@@ -89,16 +90,15 @@ them and nothing builds them.
 
 ### The book sends its readers nowhere
 
-**One chapter in nineteen links to the website, once.** The introduction's opening paragraph points at
-the project site; no other chapter links out at all. So the book's 308 annual clicks — including the
+**Eighteen chapters in nineteen link nowhere.** The introduction now points at the site three times,
+after B-2; every other chapter links out not at all. So the book's 308 annual clicks — including the
 237 that land on *Blanket Implementations*, a chapter one sentence away from CGP's central argument —
-arrive at a closed property and leave from it.
+still arrive at a closed property and leave from it.
 
-That link is also written to `https://www.contextgeneric.dev/`, the `www` host, which redirects to the
-apex. It works, and it is worth correcting while the file is open.
-
-This is the finding that makes B-1 below the highest-value change in this document, and it is
-independent of everything else here: it would be worth doing even if no chapter had gone stale.
+This is the finding that makes B-1 below the highest-value change left in this document, and it is
+independent of everything else here: it would be worth doing even if no chapter had gone stale. **It
+cannot be done yet**, because three of its four destinations are Concepts pages that return 404 until
+the `v0.8.0` branch merges — which is the one scheduling fact about this plan most easily got wrong.
 
 ### Why the book cannot be updated a chapter at a time
 
@@ -196,23 +196,22 @@ profile is recorded there and read back here.
 
 ## The work, in order
 
-Six changes, all in the `cgp-patterns` repository unless stated. They are ordered by value per minute,
-and the first two are worth doing on their own even if nothing else happens.
+Five changes remain, all in the `cgp-patterns` repository. They are ordered by value per minute. B-2
+has landed: the introduction's *Work In Progress* section, which promised a completed book that will
+not arrive, is now an honest account of which chapters are current and which predate the syntax, and
+the duplicated sentence fragment and the `www` link went with it.
 
-**B-1 — link forward from the four chapters that have readers.** *Blanket Implementations* (237
+**B-1 and B-3 both wait for the `v0.8.0` branch to merge**, because their destinations are Concepts
+pages that 404 until then. B-4, B-5, and B-6 do not.
+
+**B-1 — link forward from the four chapters that have readers.** *Waits for the merge*, since its
+destinations do not exist publicly until then. *Blanket Implementations* (237
 clicks), the introduction that renders as the index (27), *Provider Traits* (20), and *Provider* (6)
 carry 290 of the book's 308 annual clicks between them. Add a short "where this
 goes next" line to each, pointing at the site page from the map above. No banner and no apology on
 these four: they are current, and the link is an invitation rather than a warning. **This is the
 cheapest high-value change available to the project**, and it is the one
 [S7](tasks.md#s--search-and-agent-discoverability) refers to.
-
-**B-2 — rewrite the introduction's status section.** It currently reads "This book is currently a work
-in progress. A majority of the chapter is yet to be written. Please come back later to check out a
-completed version of this book." That promise is sixteen months old and will not be kept. Replace it
-with what is true: which chapters are current, which predate the library's current syntax, that the
-site is where current material lives, and that the unwritten chapters have been written there instead.
-While in the file, fix the duplicated sentence fragment at the end of *Who This Book Is For*.
 
 **B-3 — add the dated note to the twelve stale chapters.** One short block at the top of each, naming
 the constructs it predates and linking its row in the map above. Hand-written per chapter rather than

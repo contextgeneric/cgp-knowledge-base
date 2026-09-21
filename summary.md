@@ -698,8 +698,8 @@ it stale.
   has since written instead, why CI's single `cgp` pin rules out a gradual update, the chapter-to-page
   routing map and its knowledge-base mirror, and the six-change plan.
 - [website/redesign-queue.md](website/redesign-queue.md) — the consolidated list of what is wrong with
-  or missing from the site, grouped into cheap corrections, page rewrites, and new pages; deleted when
-  empty.
+  or missing from the site, grouped into page rewrites and new pages now that the cheap corrections
+  have landed; deleted when empty.
 - [website/seo.md](website/seo.md) — the site's search and agent discoverability strategy, written
   against a twelve-month Google Search Console export: what that data overturned, the 0.75%
   click-through rate that reframes the problem as presentation rather than rank, the pages and
