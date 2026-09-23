@@ -305,8 +305,8 @@ Cairo caller would have the compiler infer it. The difference is again where the
 author's draft compares the two directly and notes that assembling providers explicitly at every call
 site, Cairo-style, is possible in CGP but tedious, and that idiomatic CGP defers the assembly to the
 context, which is more verbose up front and more predictable at scale. Higher-order providers are the
-exception for the cases where a provider must override its inner choice locally, and they default their
-inner parameter to [`UseContext`](../cgp/reference/providers/use_context.md) so the context's wiring is
+exception for the cases where a provider must override its inner choice locally, and they often default
+their inner parameter to [`UseContext`](../cgp/reference/providers/use_context.md) so the context's wiring is
 the fallback.
 
 ### A capability is a context field; the `with` block is the context
@@ -350,8 +350,8 @@ takes an arena from its context is the same pattern at the scale of Mandry's own
 contexts-and-capabilities proposal. Two properties of the proposal carry over exactly: the binding is
 zero-cost, since a field read compiles to a load, and it is checked statically, since a missing field is
 a compile error that [`check_components!`](../cgp/reference/macros/check_components.md) names at the
-wiring site. The `App` here is an **environmental context** with one field, and `GreetHello` is
-self-targeted.
+wiring site. The `App` here is an **environmental context** with one field, and the `Greeter`
+component is self-targeted.
 
 ### The context is the dictionary
 
@@ -377,8 +377,10 @@ Nadrieril's *scoped impls* would let an inner scope override an outer impl for t
 CGP every binding lives at the one place the concrete context is defined, so an inner scope cannot
 shadow a provider without defining a new context type, and the author's draft observes that supporting
 it would push CGP toward something resembling inheritance between contexts. A third limit concerns
-ownership: a provider receives the context as `&self`, so a capability that must be `&mut` or owned
-needs interior mutability or cloning rather than the ownership-aware design the proposals discuss. The
+ownership: every provider shares one context value. A `&mut self` method can borrow one field mutably
+through a single mutable implicit argument, but the context cannot hand out several independent `&mut`
+or owned values at once, so such a capability needs interior mutability or cloning rather than the
+ownership-aware design the proposals discuss. The
 draft argues the first two restrictions are also a discipline, since all bindings for a context are
 readable in one place, but it presents them as restrictions.
 

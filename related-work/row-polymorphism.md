@@ -429,9 +429,10 @@ Jones qualified-types tradition rather than PureScript's built-in `Row` kind, wh
 grafts onto Rust's existing trait solver without any new type-system feature: a `HasField` bound is a row
 constraint, and constraint resolution is what traits already do. This is also CGP's largest advantage
 over pure structural typing. Because a provider still binds to a *context* it was wired for, the "area of
-a `Fish`" hazard mostly does not arise. A provider reads a context's fields structurally, but which
-providers a context has is a nominal, wired decision, so structure grants access without erasing
-identity. On **inference**, CGP is the weaker tool. A row system infers `{ firstName :: String | r }`
+a `Fish`" hazard mostly does not arise for components. A provider reads a context's fields structurally,
+but which providers a context has is a nominal, wired decision, so structure grants access without
+erasing identity. A `#[cgp_fn]` blanket trait such as `full_name` is the exception: its single blanket
+impl applies to any context with the named fields, exactly as a row-polymorphic function does. On **inference**, CGP is the weaker tool. A row system infers `{ firstName :: String | r }`
 and unifies rows automatically, while CGP asks you to derive the shape and name the wiring, with no
 residual row inferred or carried. On **evidence**, CGP is unusually explicit. The projection,
 concatenation, and injection code are ordinary traits and impls rather than compiler-internal
@@ -481,7 +482,7 @@ reappears, in CGP's own idiom, as verbose trait errors that
 **nominality**. This reader may expect structural typing to mean "any shape-compatible value works
 anywhere", and CGP deliberately does not. Structure grants a provider access to a context's fields, but a
 context still nominally chooses its providers by wiring, so the "area of a `Fish`" call their own tools
-permit is not automatically expressible. Frame that as the best of both, structural access where you want
+permit is not automatically expressible for a component (a `#[cgp_fn]` blanket trait is the exception). Frame that as the best of both, structural access where you want
 reuse and nominal identity where you want safety, and lead with the pitch that lands hardest for this
 audience: row polymorphism's extensibility, brought to a nominal systems language that never had a row
 kind, opt-in per type so the complexity and the error-message tax are paid only where the power is used.
