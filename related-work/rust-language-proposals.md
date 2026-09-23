@@ -375,8 +375,8 @@ pick an impl from those visible at a call site; CGP has no such search, and a co
 provider it uses. The second is *nested, dynamically scoped bindings*. Mandry's `with` blocks nest, and
 Nadrieril's *scoped impls* would let an inner scope override an outer impl for the code it encloses. In
 CGP every binding lives at the one place the concrete context is defined, so an inner scope cannot
-shadow a provider without defining a new context type, and the author's draft observes that supporting
-it would push CGP toward something resembling inheritance between contexts. A third limit concerns
+shadow the existing context's wiring. Another context type or a context adapter can provide a
+different selection. A third limit concerns
 ownership: every provider shares one context value. A `&mut self` method can borrow one field mutably
 through a single mutable implicit argument, but the context cannot hand out several independent `&mut`
 or owned values at once, so such a capability needs interior mutability or cloning rather than the
@@ -448,7 +448,7 @@ is written by hand. Present that as the reason CGP avoids the fragility the auth
 Cairo, where imports decide resolution and two call sites can disagree, and as the same move the
 [type classes](type-classes.md) comparison describes: incoherence made deterministic by naming. The
 second is *scope*. A reader who knows contexts and capabilities expects nested `with` blocks that shadow
-each other, and CGP's bindings are flat. Say so, and say that the author's own analysis treats this as
+each other, while CGP fixes provider selection on the context type. Say so, and say that the author's own analysis treats this as
 both a limitation and a discipline.
 
 For the language-design reader specifically, the concessions are the contribution. This reader wants to
@@ -474,6 +474,12 @@ The public version of this document is the website's
 [rust-language-proposals comparison page](https://contextgeneric.dev/docs/comparisons/rust-language-proposals), ported per the
 [comparison page guide](../website/writing-guides/related-work.md); a change here updates that page
 in the same change.
+
+The public page distinguishes proposal syntax from runnable Rust and identifies the declarations
+omitted from its CGP fragments. Its dictionary analogy describes dependency organization, not a
+runtime table. Provider selection is fixed per context and dispatch key; lexical imports do not
+select providers. A different context or context adapter can supply another selection without
+introducing dynamically scoped wiring.
 
 The account of the related work draws on the Rust Reference and RFCs, the specialization tracking
 issue, the design posts by Boxy, Nadrieril, and Tyler Mandry, the Cairo book, and the knowledge base's

@@ -461,19 +461,19 @@ once) and what it gains is *configurability* (the wiring), not binary size. And 
 derive the machinery, exactly the restriction the MVP is designed to remove for value-reflection
 consumers.
 
-### Checked when the code is written, not when it is instantiated
+### Checking generic code and concrete dependencies
 
-*When* generic-over-structure code is checked separates CGP from `comptime`, from C++ templates, and
-from const-fn reflection, and CGP checks it early. Zig's `comptime` and the MVP's `const fn` reflection
-are checked at *instantiation*: a `comptime` routine or a reflection-driven `const fn` is fully checked
-only when applied to a concrete type, so an error surfaces at the use site, per instantiation. CGP's
-generic code is checked at its *definition*. The `where` clause on the `FieldsSerializer` impl
-(`Tag: StaticString`, `Value: HasField<Tag>`, `Context: CanSerializeValue<FieldValue>`) is verified once
-against the bounds, and [`check_components!`](../cgp/reference/macros/check_components.md) verifies that
-a context supplies everything its wiring transitively needs. This is the modular type checking that
-[type classes](type-classes.md) give and templates do not, and CGP inherits it because its reflection is
-expressed as trait bounds the compiler checks up front rather than as code re-checked at each
-instantiation.
+Rust checks CGP generic implementations against their declared bounds at the definition site.
+For example, the `FieldsSerializer` implementation uses `Tag: StaticString`, `Value: HasField<Tag>`,
+and `Context: CanSerializeValue<FieldValue>` to justify its operations. Concrete dependencies are
+checked when an operation is used or when
+[`check_components!`](../cgp/reference/macros/check_components.md) asserts the selected components
+and parameters. A delegation entry alone does not force that check.
+
+Zig's generic `comptime` routines are checked for each instantiation. Rust's experimental reflection
+can also cause errors during constant evaluation for a concrete type, as its tracking issue notes.
+Rust still type-checks a `const fn` body against its declared types and bounds; the distinction is
+when type-dependent evaluation can fail, not whether the body receives ordinary type checking.
 
 ### Reflection that also selects behavior and configures types
 
@@ -582,7 +582,8 @@ MVP's field queries, except that it is a *type*, not a value. A generic impl rec
 **`inline for` over the fields**, resolved by the trait system instead of a `comptime` loop or a
 const-fn walk. `Tag::VALUE` is the reflected **field name**. And
 [`check_components!`](../cgp/reference/macros/check_components.md) guarantees that the generic code
-type-checks for this concrete type, discharged when the code is written rather than at instantiation.
+satisfies the listed concrete dependencies at the assertion site. The generic impl itself is checked
+against its declared bounds where it is defined.
 Framed this way, CGP is *compile-time reflection encoded in the type system*: the Zig `comptime` idea
 they know, expressed as trait resolution over type-level shapes, with the modular checking they may wish
 `comptime` and templates had.
@@ -618,6 +619,12 @@ The public version of this document is the website's
 [reflection comparison page](https://contextgeneric.dev/docs/comparisons/reflection), ported per the
 [comparison page guide](../website/writing-guides/related-work.md); a change here updates that page
 in the same change.
+
+The public page uses the field writer to distinguish metadata values from type-level field lists.
+Keep definition-site trait checking separate from checks of concrete wiring and from errors during
+constant evaluation. Its code is shown as fragments: the runnable counterpart supplies `App`,
+`WriteWithDebug`, field-access derives, values, and wiring assertions. The example illustrates
+traversal and provider selection, not a complete JSON serializer.
 
 The account of the related work draws on the official documentation and primary write-ups of each
 reflection system, the Rust project's own tracking issues, pull requests, and library source for its

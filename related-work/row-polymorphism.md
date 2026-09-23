@@ -494,6 +494,11 @@ The public version of this document is the website's
 [comparison page guide](../website/writing-guides/related-work.md); a change here updates that page
 in the same change.
 
+The public page organizes the CGP comparison around field requirements, builders, presence markers,
+and variant operations. These are correspondences with row theory, not a claim that Rust gains row
+inference. Preserve the distinction between automatically applicable blanket traits and explicitly
+selected providers. PureScript's move from row-typed effects leaves its row-typed records intact.
+
 The account of the related work draws on official language documentation, the primary research
 literature on row types, and cited community writing for sentiment. The PureScript snippet was compiled
 with PureScript 0.15.15 against the prelude and the OCaml snippet with OCaml 5.5.0; the CGP snippets are

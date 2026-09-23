@@ -212,7 +212,7 @@ be fully reconciled with modular abstraction. The design space is therefore a sp
 Haskell: fully implicit resolution, global coherence, one instance per type, no modularity of choice. In
 the middle sit modular type classes, modular implicits, Agda instance arguments, and Scala implicits:
 implicit resolution with canonicity scoped or dropped, paying in ambiguity and search subtleties. At the
-far end sits CGP: no canonicity at all, no search, and explicit per-context selection. That is the fully
+far end sits CGP: explicit per-context provider selection, checked through Rust trait resolution. That is the fully
 modular extreme, where the price of dropping canonicity is that selection must be written down, and the
 reward is that overlapping and orphan instances become ordinary rather than exceptional. CGP is what the
 modular-type-classes line of work looks like when canonicity is abandoned entirely rather than merely
@@ -357,7 +357,7 @@ wrong instance be chosen silently or a proof break. CGP's per-context table make
 and local, so incoherence never means indeterminism. Each side pays for what the other gets. Type
 classes get zero-boilerplate resolution and global uniqueness and pay with the newtype dance, the orphan
 rule, and the fragility of the overlap extensions. CGP gets many local instances, per-context choice, and
-freedom from orphans and diamonds, and pays with the wiring: there is no search, so the selection must be
+freedom from orphans and diamonds, and pays with the wiring: provider selection is explicit, so the choice must be
 written down.
 
 Neither is better in the abstract, and honest positioning names where each wins. When a program wants
@@ -422,6 +422,12 @@ The public version of this document is the website's
 [type-classes comparison page](https://contextgeneric.dev/docs/comparisons/type-classes), ported per the
 [comparison page guide](../website/writing-guides/related-work.md); a change here updates that page
 in the same change.
+
+The public page distinguishes explicit provider selection from Rust's continuing trait resolution.
+Separate marker types permit alternative providers while preserving Rust's coherence rules. Keep
+the value-context example's single choice separate from the environmental contexts' independent
+choices for the same value type. Wiring assertions check the listed components and parameters;
+a delegation entry alone does not establish that the provider's dependencies are satisfied.
 
 The account of the related work draws on the primary literature on type classes and their coherence,
 the official documentation of GHC, Agda, and Lean, and cited community writing for sentiment. The
