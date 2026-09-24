@@ -42,7 +42,8 @@ error[E0277]: [CGP-E001] the consumer trait `CanSerializeValue<Payload>` is not 
 ```
 
 The dependency chain the tool prints beneath the root cause walks from `SerializeFields` through the
-field list to the `data` field, so the missing type is named even when it is several levels deep. The fix is an entry for `Vec<u8>`.
+field list to the `data` field, so the missing type is named even when it is several levels deep. The
+fix is an entry for `Vec<u8>`.
 
 The same diagnostic, naming a different key, covers the two missing entries that are easiest to
 overlook because no field in the data has the type:

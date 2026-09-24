@@ -35,7 +35,7 @@ needs specific field traits:
 that works over fields, such as builders and structural casts, so one opt-in covers more than
 serialization. A type that has not derived the field traits, including any foreign type whose owner did
 not, cannot use the record providers; the [reflection comparison](../../../related-work/reflection.md)
-sets this against runtime reflection, which needs no opt-in.
+sets this against Rust's proposed compile-time reflection, which is designed to need no opt-in.
 
 ## What it gives up
 

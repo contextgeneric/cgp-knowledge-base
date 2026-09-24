@@ -130,8 +130,9 @@ among the serialization providers.
 
 **A context must wire every type the traversal reaches, including the intermediate ones.** Serializing
 a `MessagesByTopic` whose `messages` field is a `Vec<EncryptedMessage>` needs an entry for the vector
-as well as for `EncryptedMessage`, and serializing an `encrypted_data: Vec<u8>` field through `SerializeHex`
-needs an entry for `String`, because `SerializeHex` re-enters for the string it produces. The same
+as well as for `EncryptedMessage`, and serializing an `encrypted_data: Vec<u8>` field through
+`SerializeHex` needs an entry for `String`, because `SerializeHex` re-enters for the string it
+produces. The same
 reasoning explains an entry that is easy to miss: `SerializeTimestamp` re-enters for `i64`, so a context
 that encodes dates as timestamps must wire `i64` even if no field has that type.
 

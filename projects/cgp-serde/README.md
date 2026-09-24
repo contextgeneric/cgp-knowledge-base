@@ -45,8 +45,8 @@ The crates on crates.io and the repository's `main` branch are the 0.2.0 release
 branches offer the same components and providers and differ only in attribute syntax that `cgp`
 0.8.0-alpha changed, while the tests on `v0.8.0` wire per-type dispatch with the `open` statement
 where the release builds `UseDelegate` tables. So what these documents say a provider does holds for
-both, but code quoted from them compiles only against the `v0.8.0` branch. Source links point at that branch, per
-[../AGENTS.md](../AGENTS.md#a-project-section-documents-its-project-in-depth).
+both, but code quoted from them compiles only against the `v0.8.0` branch. Source links point at that
+branch, per [../AGENTS.md](../AGENTS.md#a-project-section-documents-its-project-in-depth).
 
 ## How it is organized
 
@@ -130,8 +130,8 @@ provider.
   - [records.md](reference/records.md) — `SerializeFields` and `DeserializeRecordFields`:
     serializing a struct as a map and reading one back through the optional builder, with no
     serialization-specific derive.
-  - [default-values.md](reference/default-values.md) — `DeserializeDefault`: the library's one
-    higher-order provider, which defaults a null value but not a missing field.
+  - [default-values.md](reference/default-values.md) — `DeserializeDefault`: the one higher-order
+    serialization provider, which defaults a null value but not a missing field.
   - [encodings.md](reference/encodings.md) — `SerializeHex`, `SerializeBase64`,
     `SerializeRfc3339Date`, and `SerializeTimestamp`: the per-application encodings in
     `cgp-serde-extra`, with their exact formats and errors.
@@ -141,7 +141,6 @@ provider.
   - [allocation.md](reference/allocation.md) — `CanAlloc`, `DeserializeAndAllocate`, `HasArena`, and
     `AllocateWithArena`: deserializing borrowed values into a context-supplied arena, layered so the
     allocator is a wiring choice.
-
 - [guides/](guides/README.md) — how to do one job with the library:
   - [wiring-a-context.md](guides/wiring-a-context.md) — building and checking a context's
     serialization table, including key syntax for references, lifetimes, and arrays.

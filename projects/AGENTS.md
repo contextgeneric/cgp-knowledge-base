@@ -94,7 +94,9 @@ what the item is, then:
 - **Known issues** — present only when there is something to record, linking to `issues.md`.
 
 A reference document opens with a short introduction to the family and ends with a **Source** section
-listing, one per bullet, the files the items live in.
+listing, one per bullet, the files the items live in. Material that spans several items of the family,
+such as how a context wires them together, goes in its own level-two section after the entries, so the
+entries stay uniform.
 
 ## Say what public material a document feeds
 

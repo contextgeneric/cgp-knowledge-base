@@ -33,11 +33,15 @@ spells out its full wiring.
 
 **A provider is a type-level name, so one struct can implement both components, and the library uses
 this whenever the two directions are one decision.** A context that wires `Vec<u8>` to `SerializeHex`
-for serializing wires the same name for deserializing, and the two are guaranteed to agree on the
-format because they are two impls on one struct. The convention in the names follows from it: a struct
-named `Serialize…` may implement both directions, while a struct named `Deserialize…` implements only
-deserialization. Where the two directions need different mechanisms, they are separate structs whose
-names describe the mechanism.
+for serializing wires the same name for deserializing, and the two impls are written together to agree
+on one format. The naming convention follows from this: a struct named `Serialize…` may implement both
+directions, while a struct named `Deserialize…` implements only deserialization. Where the two
+directions need different mechanisms, they are separate structs whose names describe the mechanism.
+
+Sharing a struct makes agreement the intent but does not enforce it. `SerializeBytes` is one struct
+whose two directions disagree under JSON, as its
+[known issues](../reference/strings-and-bytes.md#known-issues) record, so a context still has to test
+that what it writes it can read back.
 
 The table pairs every serializing provider with its deserializing counterpart:
 
@@ -59,8 +63,8 @@ The table pairs every serializing provider with its deserializing counterpart:
 The separate pairs differ because their two directions use different machinery rather than different
 decisions. `SerializeFields` reads each field through `HasField`, while `DeserializeRecordFields`
 builds the struct through CGP's optional builder; `SerializeIterator` borrows the collection and walks
-it, while `DeserializeExtend` starts from a default and extends it. Neither pair could share one impl
-body, so neither shares a name.
+it, while `DeserializeExtend` starts from a default and extends it. Each direction is therefore a
+different provider rather than one decision implemented twice, and each gets a name for its mechanism.
 
 ## The deserialization lifetime
 

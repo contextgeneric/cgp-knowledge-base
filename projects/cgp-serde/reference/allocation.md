@@ -206,8 +206,8 @@ arena, builds `App { arena: &arena }`, and deserializes; the resulting `Payload<
 arena. The error components are there because the JSON helper raises `serde_json` errors through the
 context; see [JSON providers](json.md).
 
-The repository's tests also carry a simplified form, which the announcement post and the
-[modular serialization example](../../../examples/modular-serialization.md) use. It defines its own
+The repository's tests also carry a simplified form, which the announcement post uses; the
+[modular serialization example](../../../examples/modular-serialization.md) uses the layered form. It defines its own
 `#[cgp_auto_getter]` `HasArena` and its own `DeserializeAndAllocate` that calls `self.arena().alloc`
 directly, with no `CanAlloc` layer and no allocator wiring. That form is shorter, but it fixes the
 allocator inside the deserializer, which the layered crates exist to avoid.

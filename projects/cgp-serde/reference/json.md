@@ -126,7 +126,7 @@ context, and calls `end` so that trailing input is an error: `"a" x` fails with
 `trailing characters at line 1 column 5`. Every `serde_json` error is converted with `raise_error`.
 
 It accepts any of `serde_json`'s readers, so a context can deserialize from a string, a byte slice, or
-an `io::Read`, which the announcement post predates. The reader's `'de` lifetime flows through to
+an `io::Read`. The reader's `'de` lifetime flows through to
 `CanDeserializeValue<'de, Value>`, so a borrowing reader such as `StrRead` can produce a value that
 borrows from the input, such as a `&str`; an `IoRead` cannot lend its input, so borrowing values fail
 there as they would in plain `serde_json`.

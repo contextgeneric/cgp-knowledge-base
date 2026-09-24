@@ -38,7 +38,7 @@ and whether the result borrows from it:
   [`DeserializeWithContext`](../reference/context-adapters.md#deserializewithcontext) seed with it, and
   call `end` to reject trailing input. Needs no error components at all.
 
-All three need the context's error components except the last; see
+The first two need the context's error components, and the seed needs none; see
 [wiring a context](wiring-a-context.md#wire-the-error-components-when-the-json-providers-are-used).
 
 ## Choose a format that fits the output

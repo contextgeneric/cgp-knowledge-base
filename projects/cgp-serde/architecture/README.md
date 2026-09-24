@@ -12,8 +12,8 @@ and are linked rather than re-explained, per [../../AGENTS.md](../../AGENTS.md#l
 serialization into a data model, the `Serializer` and `Deserializer` traits that formats implement, and
 the `Serialize` and `Deserialize` traits that data types implement. cgp-serde swaps out only that last
 layer. Its providers call the same `Serializer` and `Deserializer` methods a hand-written impl would,
-so a format needs no changes to work with it. Two of those calls differ from what Serde's derive emits,
-and they limit which formats accept the output: the record and sequence providers start a map or
+so a format needs no changes to work with it. Two of those calls differ from what Serde's own impls
+emit, and they limit which formats accept the output: the record and sequence providers start a map or
 sequence without declaring its length, which length-prefixed binary formats such as postcard reject,
 and records are written as maps rather than structs, so a format with distinct struct syntax, such as
 RON, shows a map. The two layers meet in both directions: `UseSerde` lets a context use a type's
@@ -39,12 +39,14 @@ data it sits inside. This is the mechanism the rest of the design depends on; se
 
 **One provider struct can serve both directions.** A provider is a type-level name, so a single struct
 may implement both `ValueSerializer` and `ValueDeserializer`, and a context names it once in each
-table. The library uses this for every encoding whose two directions are one decision: `UseSerde`, the
-string and byte providers, the conversion providers, and all four encodings in `cgp-serde-extra`.
+table. The library uses this for every encoding whose two directions are one decision: `UseSerde`,
+`SerializeString`, `SerializeBytes`, `SerializeFrom`, `TrySerializeFrom`, and all four encodings in
+`cgp-serde-extra`.
 Structs named `Serialize…` may implement both directions, while structs named `Deserialize…` implement
 only deserialization. Where the two directions need different mechanisms, they are separate structs:
 `SerializeFields` pairs with `DeserializeRecordFields`, and `SerializeIterator` with
-`DeserializeExtend`. The full pairing is in [component-design.md](component-design.md#one-struct-both-directions).
+`DeserializeExtend`. The full pairing is in
+[component-design.md](component-design.md#one-struct-both-directions).
 
 **A struct needs no serialization-specific derive.** `SerializeFields` walks a struct's field list
 through [`HasFields`](../../../cgp/reference/traits/has_fields.md), and `DeserializeRecordFields` fills
