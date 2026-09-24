@@ -19,7 +19,7 @@ this side in `website/`, because a published page may not link back here; and th
 | `cgp-skills` | <https://github.com/contextgeneric/cgp-skills> | `main` | The agent skills for CGP, deployed on their own — the `/cgp` skill among them. |
 | `cgp-website` | <https://github.com/contextgeneric/contextgeneric.dev> | `main` | The public website at <https://contextgeneric.dev>: a Docusaurus site holding the docs, tutorials, and blog. Documented in [website/](website/README.md). |
 | `hypershell` | <https://github.com/contextgeneric/hypershell> | `main` | A modular type-level DSL for shell-script-like programs, built with CGP. Documented in [projects/hypershell/](projects/hypershell/README.md). |
-| `cgp-serde` | <https://github.com/contextgeneric/cgp-serde> | `main` | Serde's `Serialize` and `Deserialize` rebuilt as CGP components. Documented in [projects/cgp-serde/](projects/cgp-serde/README.md). |
+| `cgp-serde` | <https://github.com/contextgeneric/cgp-serde> | `v0.8.0` | Serde's `Serialize` and `Deserialize` rebuilt as CGP components. Documented in [projects/cgp-serde/](projects/cgp-serde/README.md). |
 | `cgp-examples` | <https://github.com/contextgeneric/cgp-examples> | `main` | Runnable example crates — `builder`, `expression`, `greet`, `transfer`, `web-app` — several of which are the origin of the scenarios in [examples/](examples/README.md). |
 | `cgp-example-profile-picture` | <https://github.com/contextgeneric/cgp-example-profile-picture> | `main` | A single worked tutorial evolving one real application from a monolithic function to a modular CGP design; the origin of [examples/profile-picture.md](examples/profile-picture.md). |
 | `cgp-patterns` | <https://github.com/contextgeneric/cgp-patterns> | `main` | *Context-Generic Programming Patterns*, the mdBook published at <https://patterns.contextgeneric.dev>, pinned to `cgp` v0.4.0 and half written. Documented in [website/patterns-book.md](website/patterns-book.md). |
@@ -56,6 +56,12 @@ write a GitHub URL on the `main` branch (`https://github.com/contextgeneric/<pro
 rather than a relative `../<project>/...` path, so the link resolves for a reader who has only this
 repository checked out. A bare mention of a checkout's location, like the path `../cgp`, is a
 filesystem reference rather than a link and stays relative.
+
+One exception applies to the projects documented under [projects/](projects/README.md). When the table
+records a branch other than `main` for one of them, as it does for `cgp-serde`, whose current
+development lives on `v0.8.0`, its documents link to that branch, per
+[projects/AGENTS.md](projects/AGENTS.md#a-project-section-documents-its-project-in-depth), because
+`main` holds different code from the code they describe.
 
 ## Updating a revision
 

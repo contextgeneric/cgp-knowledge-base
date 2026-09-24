@@ -13,12 +13,12 @@ The sections with rules of their own are the two member directories and the outw
 [cargo-cgp/implementation/AGENTS.md](cargo-cgp/implementation/AGENTS.md)),
 [examples/AGENTS.md](examples/AGENTS.md) for the worked examples,
 [related-work/AGENTS.md](related-work/AGENTS.md) for the outward comparisons,
-[communication-strategy/AGENTS.md](communication-strategy/AGENTS.md) for public-facing writing, and
-[website/AGENTS.md](website/AGENTS.md) for the public site and the documents that track it. Read the
-one that owns what you are about to touch, after this file.
+[communication-strategy/AGENTS.md](communication-strategy/AGENTS.md) for public-facing writing,
+[website/AGENTS.md](website/AGENTS.md) for the public site and the documents that track it, and
+[projects/AGENTS.md](projects/AGENTS.md) for the libraries built with CGP. Read the one that owns what
+you are about to touch, after this file.
 
-Two sections have no rules of their own and are governed by this file alone:
-[projects/](projects/README.md), whose only addition is that its documents stay brief, and
+One section has no rules of its own and is governed by this file alone:
 [releases/](releases/README.md), which is the single exception to the document-the-present rule below
 and is otherwise bound by this file unchanged.
 

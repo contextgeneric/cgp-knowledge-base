@@ -863,10 +863,30 @@ it stale.
 
 ## `projects/` — the libraries built with CGP
 
-- [projects/README.md](projects/README.md) — what qualifies as an ecosystem project, why these
-  documents stay brief, and how each connects to an example, an announcement post, and a set of
-  constructs.
+- [projects/README.md](projects/README.md) — what qualifies as an ecosystem project, how a project
+  section grows from one README into the fixed shape, and how each connects to an example, an
+  announcement post, and a set of constructs.
 - [projects/hypershell/README.md](projects/hypershell/README.md) — the type-level shell-scripting
   DSL: its crate layout, its namespace-based assembly, and the CGP it exercises.
-- [projects/cgp-serde/README.md](projects/cgp-serde/README.md) — Serde rebuilt as CGP components:
-  its provider set, derive-free struct handling, lifetime-carrying components, and open gaps.
+- [projects/AGENTS.md](projects/AGENTS.md) — the rules for a project section: verified against the
+  project's source at the branch sibling-projects.md records, probes rather than reading alone, leaving
+  CGP itself to `cgp/`, the fixed section shape, the reference entry template, and naming the public
+  material each document feeds.
+- [projects/cgp-serde/README.md](projects/cgp-serde/README.md) — Serde rebuilt as CGP components: what
+  it is, which revision the documents describe (the unreleased `v0.8.0` branch against the published
+  0.2.0), the crate split, the confirmed gaps, the section catalog, and the public material the
+  documents feed.
+- [projects/cgp-serde/architecture/README.md](projects/cgp-serde/architecture/README.md) — the whole
+  design on one page: replacing only Serde's data-type layer, the value moved into a parameter,
+  re-entry, one struct for both directions, derive-free records, context-supplied services, and the
+  crate split.
+- [projects/cgp-serde/architecture/reentrant-providers.md](projects/cgp-serde/architecture/reentrant-providers.md)
+  — how composite providers hand nested values back to the context by direct call or through the
+  `SerializeWithContext`/`DeserializeWithContext` adapters, which providers re-enter for what, and why
+  wiring cycles and recursive data types fail with `E0275`.
+- [projects/cgp-serde/reference/README.md](projects/cgp-serde/reference/README.md) — the catalog, and
+  tables of every public item and provider with its crate, direction, bounds, context dependencies,
+  and import path.
+- [projects/cgp-serde/reference/records.md](projects/cgp-serde/reference/records.md) — `SerializeFields`
+  and `DeserializeRecordFields`: the minimum derives per direction, the map format, missing, duplicate,
+  and unknown fields, and the format limits of an unsized map.

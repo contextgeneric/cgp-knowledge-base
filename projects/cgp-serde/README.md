@@ -2,101 +2,143 @@
 
 `cgp-serde` rebuilds [Serde](https://serde.rs/)'s `Serialize` and `Deserialize` as CGP components, so
 that how each value type is encoded stops being a fixed property of the type and becomes a per-context
-wiring choice — which makes overlapping and orphan serialization implementations legal, and lets a
-deserializer draw services such as an arena allocator from the context it runs in.
+wiring choice. Overlapping and orphan serialization implementations become legal, and a deserializer
+can draw services such as an arena allocator from the context it runs in.
 
 - **Repository** — <https://github.com/contextgeneric/cgp-serde>
 - **Local checkout** — `../cgp-serde`, per [sibling-projects.md](../../sibling-projects.md)
-- **Crates** — `cgp-serde` and companions at 0.2.0
+- **Branch documented** — `v0.8.0`
+- **Crates** — `cgp-serde`, `cgp-serde-extra`, `cgp-serde-json`, `cgp-serde-alloc`,
+  `cgp-serde-typed-arena`, all at 0.2.0
 - **Tracks** — `cgp` 0.8.0-alpha
-- **Status** — Proof of concept; usable, with named gaps
+- **Status** — Proof of concept; see [Status and gaps](#status-and-gaps)
 
 ## What it is
 
-The library defines two components that mirror Serde's traits with one structural change:
-`CanSerializeValue<Value>` and `CanDeserializeValue<'de, Value>` move the original `Self` into an
-explicit `Value` parameter, leaving `Self` free to be a **context**. That single move buys two things
-at once. Because the implementing `Self` type is now a provider struct the library owns, overlapping
-implementations become legal — `UseSerde` for anything already implementing `Serialize`,
-`SerializeBytes` for anything `AsRef<[u8]>`, `SerializeWithDisplay` for anything `Display`, and
-`SerializeIterator` for anything iterable can all coexist, where any two of them as blanket `Serialize`
-impls would conflict. And because the methods now take `&self`, an implementation can reach into the
-context for runtime dependencies, which is what makes context-dependent deserialization possible.
+The library defines two components that mirror Serde's traits with one structural change.
+`CanSerializeValue<Value>` and `CanDeserializeValue<'de, Value>` move the type being encoded out of
+`Self` into an explicit `Value` parameter, leaving `Self` to be a **context** that carries the wiring.
+That move does two things at once. The implementing type of each provider is now a struct the library
+owns, so implementations that would overlap as blanket `Serialize` impls can coexist: `UseSerde` for
+anything that already implements `Serialize`, `SerializeBytes` for anything `AsRef<[u8]>`, and
+`SerializeWithDisplay` for anything `Display`. And every method now takes `&self`, so a provider can
+reach into the context: to ask how a nested value should be encoded, or to fetch a runtime service.
 
-The practical result is that two applications can wire different providers for `Vec<u8>` and
-`DateTime<Utc>` and produce structurally different JSON from the same value, differing only in a few
-lines of wiring. The library stays compatible with the existing Serde ecosystem in both directions: a
-`SerializeWithContext` wrapper pairs a value with its context to satisfy an ordinary `Serialize`
-bound, so `serde_json::to_string` works unchanged.
+Two results follow that plain Serde cannot deliver. Two applications can wire different providers for
+`Vec<u8>` and `DateTime<Utc>` and produce different JSON from the same value, differing only in a few
+wiring lines. And a data type needs **no serialization-specific derive**: deriving CGP's
+general-purpose field traits is enough for the generic record providers, so a library can expose
+serializable types without depending on `serde` or `cgp-serde` at all.
 
-Its most consequential property is that a data type needs **no serialization-specific derive at all**.
-A struct deriving [`CgpData`](../../cgp/reference/derives/derive_cgp_data.md) can be serialized by a
-generic `SerializeFields` provider, so a library can expose serializable types without depending on
-`serde` or `cgp-serde` — which is a direct structural answer to the orphan-rule pressure that pushes
-library authors into deriving every popular trait.
+cgp-serde replaces only Serde's `Serialize`/`Deserialize` layer. Serde's data model and its
+`Serializer` and `Deserializer` traits are used unchanged, and adapter types carry a context-aware value
+into any API that expects an ordinary `Serialize` or `DeserializeSeed`. Self-describing formats such
+as JSON and RON work with it; length-prefixed binary formats such as postcard do not yet, because the
+record and sequence providers do not declare a length. The design is set out in
+[architecture/](architecture/README.md).
+
+## Which revision these documents describe
+
+These documents describe the `v0.8.0` branch, which tracks `cgp` 0.8.0-alpha and is not yet released.
+The crates on crates.io and the repository's `main` branch are the 0.2.0 release, built against `cgp`
+0.7.0; the `v0.8.0` branch still carries version 0.2.0 in its manifests. The library crates on the two
+branches offer the same components and providers and differ only in attribute syntax that `cgp`
+0.8.0-alpha changed, while the tests on `v0.8.0` wire per-type dispatch with the `open` statement
+where the release builds `UseDelegate` tables. So what these documents say a provider does holds for
+both, but code quoted from them compiles only against the `v0.8.0` branch. Source links point at that branch, per
+[../AGENTS.md](../AGENTS.md#a-project-section-documents-its-project-in-depth).
 
 ## How it is organized
 
-`cgp-serde` holds the two components, the `SerializeWithContext` and `DeserializeWithContext` adapter
-types, and the core providers: `serde` for delegating to the original traits, `bytes`, `display`,
-`string`, `iterator`, `deref`, `from` and `try_from` for conversions, `fields` and `record` for
-datatype-generic struct handling, `default`, and `extend`. `cgp-serde-extra` adds the encoding
-providers the demos turn on — `hex`, `base64`, `date`, and `timestamp`. `cgp-serde-json` carries the
-JSON-specific helpers, `cgp-serde-alloc` the allocation traits and providers, and
-`cgp-serde-typed-arena` the [`typed-arena`](https://docs.rs/typed-arena/) binding behind the arena
-demonstration. `cgp-serde-tests` holds the worked examples, including the encrypted-messages and
-arena scenarios.
+The workspace holds five library crates and a test crate. The split follows external dependencies,
+so an application depends only on the crates whose providers its wiring names. Every library crate is
+`no_std` with `alloc`.
 
-## What CGP it exercises
-
-The library is the clearest available demonstration of
-[bypassing coherence](../../cgp/concepts/coherence.md) — so much so that the concept document uses
-`cgp-serde`'s own providers as its worked illustration. The trait split is
-[consumer and provider traits](../../cgp/concepts/consumer-and-provider-traits.md) via
-[`#[cgp_component]`](../../cgp/reference/macros/cgp_component.md), with implementations written as
-[`#[cgp_impl]`](../../cgp/reference/macros/cgp_impl.md) providers.
-
-Beyond that it exercises three things that few other codebases do. Derive-free struct handling rests
-on [extensible records](../../cgp/concepts/extensible-records.md) and
-[`HasFields`](../../cgp/reference/traits/has_fields.md), with deserialization using the optional
-builder from [optional fields](../../cgp/reference/traits/optional_fields.md) because a partial record
-being filled from dynamic input cannot change type on each field. Per-value-type routing is
-[dispatching](../../cgp/concepts/dispatching.md). And the arena deserializer requires **lifetimes in
-component parameters** — `CanDeserializeValue<'de, Value>` — which are lifted into
-[`Life`](../../cgp/reference/types/life.md) inside
-[`IsProviderFor`](../../cgp/reference/traits/is_provider_for.md) and must be named that way in a
-[`check_components!`](../../cgp/reference/macros/check_components.md) assertion; that is the least
-common corner of CGP any project currently uses. Errors go through
-[modular error handling](../../cgp/concepts/modular-error-handling.md), and the type-level string
-support that lets a generic provider hand a field name to Serde as a `&'static str` is
-[`StaticFormat` / `StaticString`](../../cgp/reference/traits/static_format.md).
-
-## How it relates to the rest of the base
-
-The [modular serialization example](../../examples/modular-serialization.md) re-derives the project's
-scenario in verified current syntax and is what other documents quote. The
-[announcement post](../../website/blog/cgp-serde-release.md) is the fullest published account, written
-against CGP v0.6.x with wiring that has since changed — that document records the specifics. The
-project was also the live demonstration in the
-[RustLab 2025 talk](../../website/blog/rustlab-2025-coherence.md).
-
-For the communication strategy this is the project's strongest argument, because Serde is universally
-known and the orphan-rule pain around it is universally felt; the framing belongs in
-[message.md](../../communication-strategy/message.md#the-problems-cgp-removes) and the derive-free result in
-[message.md](../../communication-strategy/message.md#the-strengths-worth-advertising).
+- **`cgp-serde`** — the two components, the two context adapters, and the core providers. Depends only
+  on `cgp` and `serde`.
+- **`cgp-serde-extra`** — the hex, base64, RFC 3339, and Unix-timestamp encodings, over `hex`, `base64`,
+  and `chrono`.
+- **`cgp-serde-json`** — `serde_json` providers built on CGP's `TryComputer` handler, and a
+  `deserialize_json_string` convenience method.
+- **`cgp-serde-alloc`** — an allocation component and the provider that deserializes a borrowed value
+  into it. Adds no external dependency.
+- **`cgp-serde-typed-arena`** — an implementation of the allocation component over `typed-arena`.
+- **`cgp-serde-tests`** — the test crate: a JSON round trip, the two-application serialization demo,
+  and the arena deserialization demo in its layered and simplified forms.
 
 ## Status and gaps
 
-The project tracks the current library at `cgp` 0.8.0-alpha and crate version 0.2.0, so its source is
-a reliable reference for current CGP. Four gaps are named by the project itself and remain open.
-Serialization providers for **enums and extensible variants** are not implemented, so only structs can
-be handled datatype-generically. JSON helpers are limited to deserializing from a string, with no
-`from_slice` or `from_value` equivalents. Other Serde formats are untested, though serialization
-through the `SerializeWithContext` wrapper should work with any of them. And no **benchmark** has been
-run — the open question being whether a generic field-matching implementation can match the
-`match`-on-string-literals code Serde's derive generates, which the project flags as the most likely
-place a gap would appear.
+The library handles named-field structs, the common scalar and collection types, and any type that
+already implements Serde's traits, but it is a proof of concept with gaps that have each been
+confirmed against the `v0.8.0` branch:
 
-Its documentation is thin: the README summarizes the components and points at the announcement post
-for everything else. Expanding it is an open task, and this document is deliberately brief pending
-that work.
+- **Enums** — no provider serializes an enum generically; an enum works only through `UseSerde`, from
+  its own `Serialize` or `Deserialize` impl.
+- **Recursive data types** — a type that contains itself, such as a tree node with a `Vec` of children,
+  fails to compile through the generic providers and needs a provider written for it; see
+  [re-entrant providers](architecture/reentrant-providers.md#what-re-entry-requires-of-a-context).
+- **Tuple structs** — the record providers accept only named fields.
+- **Binary formats** — length-prefixed formats such as postcard reject records and sequences, because
+  the providers do not declare a length.
+- **Serde's attributes** — fields cannot be renamed, skipped, flattened, or defaulted when missing.
+- **JSON helpers** — the JSON providers deserialize from any `serde_json` reader, but the only
+  convenience method takes a string; there is no counterpart for serializing.
+- **Evidence** — no benchmark has been run, the source has no rustdoc, and the tests assert little:
+  the two-application demo prints its output without checking it.
+
+## The documents
+
+The section follows the project shape in [../AGENTS.md](../AGENTS.md#the-shape-of-a-project-section).
+Start with the architecture for the ideas every provider shares, then use the reference to look up a
+provider.
+
+- [architecture/](architecture/README.md) — the design on one page, and one document per idea:
+  - [reentrant-providers.md](architecture/reentrant-providers.md) — how a provider hands each nested
+    value back to the context through the two adapter types, which is what makes wiring reach
+    arbitrarily deep.
+- [reference/](reference/README.md) — every public item, grouped by family, with a table of all
+  providers:
+  - [records.md](reference/records.md) — `SerializeFields` and `DeserializeRecordFields`, the
+    derive-free struct providers.
+
+## Public material derived from these documents
+
+These documents are the source for the project's public writing, and each one names what it feeds.
+Three artifacts are planned:
+
+- **The cgp-serde deep dive** on the website, specified in
+  [website/deep-dives/cgp-serde.md](../../website/deep-dives/cgp-serde.md). Its five pages draw on the
+  architecture for the component design, the reference and guides for providers and wiring, and the
+  comparison and issues documents for the page on what the library does not do.
+- **The repository README**, which currently summarizes the components in pre-0.8 syntax and defers to
+  the announcement post.
+- **Rustdoc for every public item.** The source carries no doc comments, so the crates' docs.rs pages
+  list items without explanation; the reference entries are written to be condensed into them.
+
+## How it relates to the rest of the base
+
+The [modular serialization example](../../examples/modular-serialization.md) develops the project's
+scenario end to end. The [announcement post](../../website/blog/cgp-serde-release.md) is the fullest
+published account, written against an earlier release; its document records what has drifted. The
+project was also the live demonstration in the
+[RustLab 2025 talk](../../website/blog/rustlab-2025-coherence.md).
+
+On the CGP side, the library is the clearest available demonstration of
+[bypassing coherence](../../cgp/concepts/coherence.md), whose worked illustration uses cgp-serde's own
+providers. Its per-type wiring uses the `open` statement of
+[`delegate_components!`](../../cgp/reference/macros/delegate_components.md), its record providers rest
+on [extensible records](../../cgp/concepts/extensible-records.md) and the
+[optional builder](../../cgp/reference/traits/optional_fields.md), its JSON helpers raise errors
+through [modular error handling](../../cgp/concepts/modular-error-handling.md), and its
+lifetime-carrying deserialization component is checked with [`Life`](../../cgp/reference/types/life.md)
+in [`check_components!`](../../cgp/reference/macros/check_components.md).
+
+Two related-work documents use the library as their CGP example.
+[Reflection](../../related-work/reflection.md) compares the record providers with Serde's derive and
+with runtime and compile-time reflection, and
+[Rust language proposals](../../related-work/rust-language-proposals.md) reads the arena deserializer
+as a library-level form of the context-and-capabilities proposal.
+
+For the communication strategy this is the ecosystem's strongest argument, because Serde is
+universally known and the orphan-rule pain around it is widely felt; the framing belongs in
+[message.md](../../communication-strategy/message.md#the-problems-cgp-removes).

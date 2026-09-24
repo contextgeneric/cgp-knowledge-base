@@ -24,17 +24,18 @@ runnable demonstrations rather than libraries anyone depends on — their docume
 [examples/](../examples/README.md), which re-derives their scenarios as self-contained worked examples,
 so they too are recorded only in [sibling-projects.md](../sibling-projects.md).
 
-The distinction from a **member project** matters for how the documents are written. A member
-directory documents its project exhaustively and every claim in it is verified against that project's
-source. These directories are deliberately **brief**: they record what the project is, how it is
-built, what CGP features it exercises, and which knowledge-base and website documents relate to it —
-enough for an agent to orient before opening the code, not a substitute for reading it. They will be
-expanded as the projects mature.
+The distinction from a **member project** is about what the project is, not how carefully it is
+documented. A member builds CGP itself; a project here is built with it. Both are verified against
+their own source, and a project section grows from a single orienting `README.md` into a fixed shape
+(architecture, reference, guides, tests, and open issues) as it is documented. That shape, and the
+rules for writing it, are in [AGENTS.md](AGENTS.md). A project document explains the project's own
+design and links to [cgp/](../cgp/README.md) for the CGP constructs it uses rather than re-explaining
+them.
 
 ## The catalog
 
-Two projects are documented so far. Both track the current CGP release and both have a public
-announcement post whose code has since gone stale, which is a recurring pattern worth expecting: the
+Two projects are documented so far. Both track the CGP version in development, 0.8.0-alpha, and both
+have a public announcement post whose code has since gone stale, which is a recurring pattern worth expecting: the
 project moves with the library while the post that announced it does not.
 
 - [hypershell/](hypershell/README.md) — a modular, type-level DSL for shell-script-like programs
@@ -43,6 +44,7 @@ project moves with the library while the post that announced it does not.
 - [cgp-serde/](cgp-serde/README.md) — Serde's `Serialize` and `Deserialize` rebuilt as CGP
   components, so that how each value type is encoded becomes a per-context wiring choice. The clearest
   demonstration of CGP's coherence workaround on a library every Rust developer already knows.
+  Documented in the full project shape, against its `v0.8.0` branch.
 
 ## How these relate to the rest of the base
 
@@ -63,10 +65,10 @@ and starts being a liability.
 
 ## Adding a project
 
-Create a directory named for the project with a `README.md` following the shape of the two existing
-ones: what it is, how it is organized, what CGP it uses, how it relates to the rest of the base, and
-its current status. Register it in the catalog above and in [../summary.md](../summary.md) in the same
-change, add it to [../sibling-projects.md](../sibling-projects.md) so its checkout and repository are
-findable, and check whether the website's Resources page should list it. There is no `AGENTS.md` here:
-the base-wide [../AGENTS.md](../AGENTS.md) governs these documents unchanged, and the brevity rule
-above is the only addition.
+Create a directory named for the project with a `README.md` following the front-door shape in
+[AGENTS.md](AGENTS.md#the-shape-of-a-project-section): what it is, which revision is documented, how it
+is organized, what CGP it uses, how it relates to the rest of the base, and its current status.
+Register it in the catalog above and in [../summary.md](../summary.md) in the same change, add it to
+[../sibling-projects.md](../sibling-projects.md) so its checkout and repository are findable, and check
+whether the website's Resources page should list it. The section then grows into
+the shape [AGENTS.md](AGENTS.md) fixes, with [cgp-serde/](cgp-serde/README.md) as the worked instance.

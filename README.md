@@ -145,10 +145,11 @@ release currently in preparation, since v0.8.0 is not yet out.
 
 [projects/](projects/README.md) documents the ecosystem projects that *use* CGP rather than being part
 of it — [hypershell](projects/hypershell/README.md), a type-level shell-scripting DSL, and
-[cgp-serde](projects/cgp-serde/README.md), Serde rebuilt as swappable components. These entries are
-deliberately brief: enough to orient an agent on what each project is, how it is structured, and which
-CGP constructs it exercises, with the verified code living in [examples/](examples/README.md) and the
-exhaustive semantics in the member sections.
+[cgp-serde](projects/cgp-serde/README.md), Serde rebuilt as swappable components. Each project
+section is verified against its project's source and grows from a single orienting `README.md` into a
+fixed shape: the project's architecture, a reference for its public items, guides, its tests, and its
+open issues. CGP's own constructs stay documented in the member sections and are linked rather than
+re-explained. cgp-serde's section follows that shape; Hypershell's is still a single `README.md`.
 
 ## Finding your way in
 
