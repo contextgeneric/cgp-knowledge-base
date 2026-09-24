@@ -501,8 +501,8 @@ it stale.
 - [README.md](examples/README.md) — the example catalog with the context shape each one wires, and how
   an example differs from a reference document.
 - [AGENTS.md](examples/AGENTS.md) — the rules: leave the mechanics to the reference, re-derive rather
-  than cite an outside source, the document shape, naming the context shape the example wires, and where
-  a missing concept belongs.
+  than cite an outside source, build on and link a sibling CGP project where one serves the use case,
+  the document shape, naming the context shape the example wires, and where a missing concept belongs.
 - [application-builder.md](examples/application-builder.md) — assembling an application context from
   independent per-subsystem builder providers via the extensible builder pattern.
 - [area-calculation.md](examples/area-calculation.md) — computing shape areas, from field-driven
@@ -512,7 +512,8 @@ it stale.
 - [extensible-shapes.md](examples/extensible-shapes.md) — operations over shapes modeled as enum
   variants, from auto-dispatch to context-wired visitor combinators.
 - [modular-serialization.md](examples/modular-serialization.md) — Serde's `Serialize`/`Deserialize`
-  rebuilt as CGP components, two contexts encoding the same data differently.
+  as CGP components, using the cgp-serde crates: two contexts encoding the same data differently, and
+  deserializing into a context-supplied arena.
 - [money-transfer-api.md](examples/money-transfer-api.md) — a balance-and-transfer web backend, from
   abstract domain types to a namespace-organized wiring served over HTTP.
 - [profile-picture.md](examples/profile-picture.md) — a profile-picture lookup across a database query
@@ -880,13 +881,84 @@ it stale.
   design on one page: replacing only Serde's data-type layer, the value moved into a parameter,
   re-entry, one struct for both directions, derive-free records, context-supplied services, and the
   crate split.
+- [projects/cgp-serde/architecture/serde-bridge.md](projects/cgp-serde/architecture/serde-bridge.md) —
+  the Serde layer cgp-serde replaces and the ones it keeps, `UseSerde` and the adapters as the two
+  directions of the bridge, errors reported through the format and raised at the JSON boundary, and the
+  map-not-struct and unsized-length output changes.
+- [projects/cgp-serde/architecture/component-design.md](projects/cgp-serde/architecture/component-design.md)
+  — the value moved out of `Self` as the modularity hierarchy's tier 4 and its costs, the
+  `Serialize…`/`Deserialize…` naming convention with the full serializer-deserializer pairing table,
+  and `'de` as a component parameter.
+- [projects/cgp-serde/architecture/derive-free-records.md](projects/cgp-serde/architecture/derive-free-records.md)
+  — replacing the per-trait derive with CGP's field traits, the derives each direction needs, and what
+  the approach gives up: attributes, per-field encodings, and tuple structs and enums.
+- [projects/cgp-serde/architecture/context-services.md](projects/cgp-serde/architecture/context-services.md)
+  — providers drawing services from the context, the deserializer/component/implementation layers of
+  the arena support against the simplified form, and the lifetimes that let values outlive the context.
+- [projects/cgp-serde/architecture/crate-layout.md](projects/cgp-serde/architecture/crate-layout.md) —
+  the five crates and their dependency graph, why allocation is two crates, the shared module names,
+  and the `no_std`, edition, and toolchain facts.
 - [projects/cgp-serde/architecture/reentrant-providers.md](projects/cgp-serde/architecture/reentrant-providers.md)
   — how composite providers hand nested values back to the context by direct call or through the
   `SerializeWithContext`/`DeserializeWithContext` adapters, which providers re-enter for what, and why
   wiring cycles and recursive data types fail with `E0275`.
-- [projects/cgp-serde/reference/README.md](projects/cgp-serde/reference/README.md) — the catalog, and
+- [projects/cgp-serde/guides/README.md](projects/cgp-serde/guides/README.md) — the guide catalog.
+- [projects/cgp-serde/guides/wiring-a-context.md](projects/cgp-serde/guides/wiring-a-context.md) —
+  opening the components, finding every type the traversal reaches, key syntax for references,
+  lifetimes, and arrays, the error components, checking with `Life<'de>`, and the missing namespace.
+- [projects/cgp-serde/guides/writing-a-provider.md](projects/cgp-serde/guides/writing-a-provider.md) —
+  one struct for both directions, direct and adapter re-entry, errors through `Error::custom`, and the
+  pitfalls the library's own defects show.
+- [projects/cgp-serde/guides/debugging-wiring.md](projects/cgp-serde/guides/debugging-wiring.md) —
+  missing nested, reference, and intermediate entries, a check without `Life<'de>`, the JSON helper
+  without error wiring, self-dependency and recursive types (`E0275`), and unparseable array keys,
+  each with its code and `cargo cgp check` output.
+- [projects/cgp-serde/guides/formats.md](projects/cgp-serde/guides/formats.md) — serializing with any
+  format, the three `serde_json` deserialization entry points, which formats fit the output, and
+  writing an entry point for another format.
+- [projects/cgp-serde/serde-comparison.md](projects/cgp-serde/serde-comparison.md) — what cgp-serde
+  keeps from Serde and adds to it, how Serde's idioms map onto wiring, what it lacks, and when plain
+  Serde is the better choice.
+- [projects/cgp-serde/testing.md](projects/cgp-serde/testing.md) — the four tests and their checks,
+  which providers are asserted, run, or never exercised, and the untested failure paths.
+- [projects/cgp-serde/issues.md](projects/cgp-serde/issues.md) — the confirmed defects (byte
+  round-trip, owned bytes, borrowed strings, undeclared lengths), missing features, and housekeeping.
+- [projects/cgp-serde/reference/README.md](projects/cgp-serde/reference/README.md) — the catalog,
+  and
   tables of every public item and provider with its crate, direction, bounds, context dependencies,
   and import path.
-- [projects/cgp-serde/reference/records.md](projects/cgp-serde/reference/records.md) — `SerializeFields`
+- [projects/cgp-serde/reference/components.md](projects/cgp-serde/reference/components.md) —
+  `CanSerializeValue` and `CanDeserializeValue`: the two components, the unsized `Value` no provider
+  accepts, the `'de` lifetime and `Life<'de>` in checks, and the legacy `UseDelegate` attribute.
+- [projects/cgp-serde/reference/context-adapters.md](projects/cgp-serde/reference/context-adapters.md)
+  — `SerializeWithContext` and `DeserializeWithContext`: the public adapters that start a
+  serialization through a context, and how to drive the seed with a format's deserializer.
+- [projects/cgp-serde/reference/use-serde.md](projects/cgp-serde/reference/use-serde.md) —
+  `UseSerde`: reusing a type's own Serde impls, and why the context's wiring stops at a value handed
+  to it.
+- [projects/cgp-serde/reference/strings-and-bytes.md](projects/cgp-serde/reference/strings-and-bytes.md)
+  — `SerializeString`, `SerializeBytes`, and `TryDeserializeBytes`: the leaf text and byte
+  providers, and why bytes do not round-trip through JSON.
+- [projects/cgp-serde/reference/conversions.md](projects/cgp-serde/reference/conversions.md) —
+  `SerializeWithDisplay`, `DeserializeWithFromStr`, `SerializeFrom`, `TrySerializeFrom`, and
+  `SerializeDeref`: encoding through a converted value, and the borrowed-string limit of
+  `DeserializeWithFromStr`.
+- [projects/cgp-serde/reference/collections.md](projects/cgp-serde/reference/collections.md) —
+  `SerializeIterator` and `DeserializeExtend`: sequences whose items follow the context, the
+  reference entry iteration needs, and maps as sequences of pairs.
+- [projects/cgp-serde/reference/default-values.md](projects/cgp-serde/reference/default-values.md) —
+  `DeserializeDefault`: the one higher-order serialization provider, which defaults a null value but
+  not a missing field.
+- [projects/cgp-serde/reference/encodings.md](projects/cgp-serde/reference/encodings.md) —
+  `SerializeHex`, `SerializeBase64`, `SerializeRfc3339Date`, and `SerializeTimestamp`: the
+  per-application encodings in `cgp-serde-extra`, with their exact formats and errors.
+- [projects/cgp-serde/reference/json.md](projects/cgp-serde/reference/json.md) — The
+  `cgp-serde-json` codes, providers, and `deserialize_json_string` method: JSON as wireable
+  `TryComputer` operations, readers, borrowing, and the error wiring they need.
+- [projects/cgp-serde/reference/allocation.md](projects/cgp-serde/reference/allocation.md) —
+  `CanAlloc`, `DeserializeAndAllocate`, `HasArena`, and `AllocateWithArena`: deserializing borrowed
+  values into a context-supplied arena, layered so the allocator is a wiring choice.
+- [projects/cgp-serde/reference/records.md](projects/cgp-serde/reference/records.md) —
+  `SerializeFields`
   and `DeserializeRecordFields`: the minimum derives per direction, the map format, missing, duplicate,
   and unknown fields, and the format limits of an unsized map.

@@ -38,6 +38,22 @@ copying the source's code verbatim, since the source may use older syntax or a d
 the example its own coherent narrative arc — usually a progression from the simplest form of the use
 case to the fully wired and composed version — rather than mirroring the source's structure.
 
+## Building on a sibling CGP project
+
+**An example may build on a sibling CGP project, and may say so.** The rule above concerns outside
+sources; a project listed in [../sibling-projects.md](../sibling-projects.md) is part of the same
+ecosystem, documented in this base, and verified against the same library. An example about a use case
+such a project already serves should use it rather than re-implement it: import the project's crates,
+use its components and providers, and link to the project's own documents under
+[../projects/](../projects/README.md) and to its source on GitHub, at the branch
+[../sibling-projects.md](../sibling-projects.md) records for it. The example then shows the use case,
+and the project documents own the providers' mechanics, exactly as the [reference](../cgp/reference/README.md)
+owns CGP's.
+
+Verify an example that imports a sibling project against that project's source at the recorded branch,
+by compiling its snippets in a scratch crate with path dependencies on the local checkout, and say near
+the top which crates and branch the snippets assume.
+
 ## Document structure
 
 Follow the shape of the existing examples. Open with a level-one heading naming the use case and a

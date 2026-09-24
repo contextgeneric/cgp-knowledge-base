@@ -49,7 +49,10 @@ field-tag comparison during deserialization.
 
 The scenario is re-derived in current syntax as the
 [modular serialization example](../../examples/modular-serialization.md), which is the source to
-quote. The project is documented at [projects/cgp-serde/](../../projects/cgp-serde/README.md).
+quote. The project is documented at [projects/cgp-serde/](../../projects/cgp-serde/README.md), whose
+[issues](../../projects/cgp-serde/issues.md) record which of the post's future-work items remain open
+on the `v0.8.0` branch: all five, with the JSON-helper item now narrower, since the reader provider
+accepts slices and `io::Read` input and only the convenience method is limited to strings.
 
 The central argument is [coherence](../../cgp/concepts/coherence.md) — indeed
 `UseSerde`/`SerializeBytes`/`SerializeWithDisplay` are the exact providers that concept document uses

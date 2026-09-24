@@ -81,8 +81,34 @@ allocation provider implements `CanAlloc`.
 Register each reference document here, in [../README.md](../README.md), and in
 [../../../summary.md](../../../summary.md) in the same change.
 
-- [records.md](records.md) — `SerializeFields` and `DeserializeRecordFields`: serializing a struct as a
-  map and reading one back through the optional builder, with no serialization-specific derive.
+- [components.md](components.md) — `CanSerializeValue` and `CanDeserializeValue`: the two
+  components, the unsized `Value` no provider accepts, the `'de` lifetime and `Life<'de>` in checks,
+  and the legacy `UseDelegate` attribute.
+- [context-adapters.md](context-adapters.md) — `SerializeWithContext` and `DeserializeWithContext`:
+  the public adapters that start a serialization through a context, and how to drive the seed with a
+  format's deserializer.
+- [use-serde.md](use-serde.md) — `UseSerde`: reusing a type's own Serde impls, and why the context's
+  wiring stops at a value handed to it.
+- [strings-and-bytes.md](strings-and-bytes.md) — `SerializeString`, `SerializeBytes`, and
+  `TryDeserializeBytes`: the leaf text and byte providers, and why bytes do not round-trip through
+  JSON.
+- [conversions.md](conversions.md) — `SerializeWithDisplay`, `DeserializeWithFromStr`,
+  `SerializeFrom`, `TrySerializeFrom`, and `SerializeDeref`: encoding through a converted value, and
+  the borrowed-string limit of `DeserializeWithFromStr`.
+- [collections.md](collections.md) — `SerializeIterator` and `DeserializeExtend`: sequences whose
+  items follow the context, the reference entry iteration needs, and maps as sequences of pairs.
+- [records.md](records.md) — `SerializeFields` and `DeserializeRecordFields`: serializing a struct
+  as a map and reading one back through the optional builder, with no serialization-specific derive.
+- [default-values.md](default-values.md) — `DeserializeDefault`: the one higher-order
+  serialization provider, which defaults a null value but not a missing field.
+- [encodings.md](encodings.md) — `SerializeHex`, `SerializeBase64`, `SerializeRfc3339Date`, and
+  `SerializeTimestamp`: the per-application encodings in `cgp-serde-extra`, with their exact formats
+  and errors.
+- [json.md](json.md) — The `cgp-serde-json` codes, providers, and `deserialize_json_string` method:
+  JSON as wireable `TryComputer` operations, readers, borrowing, and the error wiring they need.
+- [allocation.md](allocation.md) — `CanAlloc`, `DeserializeAndAllocate`, `HasArena`, and
+  `AllocateWithArena`: deserializing borrowed values into a context-supplied arena, layered so the
+  allocator is a wiring choice.
 
 ## Public material derived from this
 

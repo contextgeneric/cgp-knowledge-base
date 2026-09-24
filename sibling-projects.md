@@ -25,12 +25,12 @@ this side in `website/`, because a published page may not link back here; and th
 | `cgp-patterns` | <https://github.com/contextgeneric/cgp-patterns> | `main` | *Context-Generic Programming Patterns*, the mdBook published at <https://patterns.contextgeneric.dev>, pinned to `cgp` v0.4.0 and half written. Documented in [website/patterns-book.md](website/patterns-book.md). |
 | `cgp-anatomy` | <https://github.com/contextgeneric/cgp-anatomy> | `main` | *The Anatomy of Context-Generic Programming*, a book-length report on CGP and fission-driven development, together with the preserved record of how it was co-authored by the project's author and an LLM — the human draft, the instructions, each AI revision, and the methodology. |
 
-The two example repositories have no directory of their own here, and the reason is a rule rather than
-an oversight. [examples/AGENTS.md](examples/AGENTS.md) requires a worked example to be **self-contained
-and to cite no source**, re-derived in current vocabulary rather than copied — so an example document
-must not point back at the repository its scenario came from. Recording the relationship here instead
-keeps the provenance findable for an agent without putting a citation in the document. Both repositories
-track the same `cgp` version as the library, so they are reliable references for current syntax.
+The two example repositories have no directory of their own here, because they are collections of
+demonstrations rather than libraries, and their scenarios are documented as worked examples under
+[examples/](examples/README.md) instead. Recording the relationship here keeps each example's
+provenance findable. A worked example may build on and link to any project in this table, per
+[examples/AGENTS.md](examples/AGENTS.md#building-on-a-sibling-cgp-project). Both repositories track
+the same `cgp` version as the library, so they are reliable references for current syntax.
 
 Two entries need a note on their names. The website's local checkout is `../cgp-website` while its
 repository is named `contextgeneric.dev`, so the directory and the remote do not match — use the

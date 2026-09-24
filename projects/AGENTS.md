@@ -81,7 +81,10 @@ Each public item in a reference document gets its own level-two section in a fix
 reader can find the same fact in the same place for every provider. Open with one sentence saying
 what the item is, then:
 
-- **Definition** — the impl header and bounds as the source writes them, in a code block.
+- **Definition** — the item's declaration as the source writes it, in a code block: the struct, and
+  each impl's attributes, header, and bounds, with the body elided as `{ ... }`. Trait and inherent
+  method signatures and associated types stay, because they are the interface; what a body does
+  belongs in Behavior.
 - **Behavior** — what it does, in prose: what it produces on the wire or accepts from it, and how it
   fails.
 - **Context dependencies** — what it looks up through the context, since that is what a context must

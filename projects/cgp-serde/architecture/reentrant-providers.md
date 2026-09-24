@@ -33,7 +33,7 @@ context in an adapter.
 
 **A converting provider transforms the value and calls `self.serialize` or `self.deserialize` on the
 result.** `SerializeWithDisplay` formats a value to a `String` and then asks the context to serialize
-that `String`:
+that `String`, which its header declares as a dependency on the consumer trait:
 
 ```rust
 #[cgp_impl(new SerializeWithDisplay)]
@@ -41,22 +41,14 @@ that `String`:
 impl<Value> ValueSerializer<Value>
 where
     Value: Display,
-{
-    fn serialize<S>(&self, value: &Value, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        let str_value = value.to_string();
-        self.serialize(&str_value, serializer)
-    }
-}
+{ ... }
 ```
 
-The `serializer` is passed straight through, so no adapter is needed: the nested call happens inside
-this method, with the same serializer. The encoding of the resulting string is still a wiring choice —
-`UseSerde` and `SerializeString` both serialize a `String` as a string, but a context could choose
-otherwise. The deserializing direction mirrors it: `DeserializeWithFromStr` asks the context to
-deserialize a `&'de str` and parses the result.
+The provider passes its `serializer` straight through to the nested call, so no adapter is needed. The
+encoding of the resulting string is still a wiring choice: `UseSerde` and `SerializeString` both
+serialize a `String` as a string, but a context could choose otherwise. The deserializing direction
+mirrors it: `DeserializeWithFromStr` asks the context to deserialize a `&'de str` and parses the
+result.
 
 ### Adapter calls
 
@@ -65,57 +57,15 @@ value, so the provider wraps the value with the context.** Serde's compound seri
 `SerializeSeq::serialize_element` and `SerializeMap::serialize_entry`, take `&impl Serialize`. Its
 access traits, such as `SeqAccess::next_element_seed` and `MapAccess::next_value_seed`, take an
 `impl DeserializeSeed`. None of them accept a context. cgp-serde bridges the gap with two adapter types
-in `cgp_serde::types`.
+in `cgp_serde::types`, documented in [context adapters](../reference/context-adapters.md).
+`SerializeWithContext` borrows a context and a value and implements `Serialize` by calling the
+context's `CanSerializeValue`; `DeserializeWithContext` borrows a context, names a target type, and
+implements `DeserializeSeed`, Serde's mechanism for deserialization that needs state, by calling the
+context's `CanDeserializeValue`. In both, the context is the state Serde's own traits have no room for.
 
-`SerializeWithContext` pairs a borrowed context with a borrowed value, and implements Serde's
-`Serialize` by calling the context:
-
-```rust
-pub struct SerializeWithContext<'a, Context, T> {
-    pub context: &'a Context,
-    pub value: &'a T,
-}
-
-impl<'a, Context, T> serde::Serialize for SerializeWithContext<'a, Context, T>
-where
-    Context: CanSerializeValue<T>,
-{
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        self.context.serialize(self.value, serializer)
-    }
-}
-```
-
-`DeserializeWithContext` carries a borrowed context and the target type as `PhantomData`, and
-implements `DeserializeSeed`, which is Serde's own mechanism for deserialization that needs state. The
-context is that state:
-
-```rust
-pub struct DeserializeWithContext<'a, Context, Value> {
-    pub context: &'a Context,
-    pub phantom: PhantomData<Value>,
-}
-
-impl<'de, 'a, Context, Value> DeserializeSeed<'de> for DeserializeWithContext<'a, Context, Value>
-where
-    Context: CanDeserializeValue<'de, Value>,
-{
-    type Value = Value;
-
-    fn deserialize<D>(self, deserializer: D) -> Result<Self::Value, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        self.context.deserialize(deserializer)
-    }
-}
-```
-
-`SerializeIterator` shows the adapter in use. It opens a sequence and serializes each item through the
-context by wrapping it in `SerializeWithContext`:
+`SerializeIterator` shows the adapter in use. Its header asks the context to serialize each item type,
+and its body opens a sequence and passes each item to `serialize_element` wrapped in
+`SerializeWithContext`:
 
 ```rust
 #[cgp_impl(new SerializeIterator)]
@@ -123,23 +73,7 @@ impl<Value> ValueSerializer<Value>
 where
     for<'a> &'a Value: IntoIterator,
     Self: for<'a> CanSerializeValue<<&'a Value as IntoIterator>::Item>,
-{
-    fn serialize<S>(&self, value: &Value, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        let items = value.into_iter();
-        let mut serializer = serializer.serialize_seq(None)?;
-        for item in items {
-            serializer.serialize_element(&SerializeWithContext {
-                context: self,
-                value: &item,
-            })?
-        }
-
-        serializer.end()
-    }
-}
+{ ... }
 ```
 
 The item bound is written as a higher-ranked `Self: for<'a> CanSerializeValue<…>` in the `where` clause
@@ -180,7 +114,7 @@ associated types named in its bounds.
 | `DeserializeAndAllocate` | deserialize | the owned `Value` behind `&'a Value`, then allocates through `CanAlloc` | direct |
 | `DeserializeDefault<Provider>` | deserialize | nothing; calls `Provider` explicitly | higher-order |
 
-`DeserializeDefault` is the one provider that delegates without re-entering. It is a
+`DeserializeDefault` is the one serialization provider that delegates without re-entering. It is a
 [higher-order provider](../../../cgp/concepts/higher-order-providers.md): for a non-null input it calls
 its `Provider` parameter directly for the same `Value`, which it must, since re-entering the context
 for `Value` would resolve back to `DeserializeDefault` itself.
@@ -189,8 +123,8 @@ A higher-order provider is also the only way to bypass re-entry for one value wh
 context's wiring alone. The [modularity hierarchy](../../../cgp/concepts/modularity-hierarchy.md)
 illustrates its top tier with a `SerializeIteratorWith<Provider>` that serializes a collection's items
 through an explicit provider instead of the context. cgp-serde does not provide that provider:
-`SerializeIterator` always re-enters, and `DeserializeDefault` is the library's only higher-order
-provider.
+`SerializeIterator` always re-enters, and `DeserializeDefault` is the only higher-order provider
+among the serialization providers.
 
 ## What re-entry requires of a context
 

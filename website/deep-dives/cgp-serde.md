@@ -139,9 +139,29 @@ page 1 is [bypassing coherence](../../cgp/concepts/coherence.md) and
 [modularity hierarchy](../../cgp/concepts/modularity-hierarchy.md) explaining why the value moves out of
 `Self`. Page 3's mechanism is [namespaces](../../cgp/concepts/namespaces.md) and the `open` statement of
 [`delegate_components!`](../../cgp/reference/macros/delegate_components.md); page 2's derive-free result
-rests on [extensible records](../../cgp/concepts/extensible-records.md). The project entry is
-[projects/cgp-serde](../../projects/cgp-serde/README.md), which also records the crate's open gaps and is
-the source for page 5.
+rests on [extensible records](../../cgp/concepts/extensible-records.md).
+
+The project's own section, [projects/cgp-serde](../../projects/cgp-serde/README.md), documents the
+library itself against its `v0.8.0` branch, and each page draws on a part of it:
+
+- **Index and page 1** — the [architecture overview](../../projects/cgp-serde/architecture/README.md),
+  [component design](../../projects/cgp-serde/architecture/component-design.md), and
+  [the bridge to Serde](../../projects/cgp-serde/architecture/serde-bridge.md).
+- **Page 2** — [re-entrant providers](../../projects/cgp-serde/architecture/reentrant-providers.md),
+  [derive-free records](../../projects/cgp-serde/architecture/derive-free-records.md), the
+  [provider reference](../../projects/cgp-serde/reference/README.md), and
+  [writing a provider](../../projects/cgp-serde/guides/writing-a-provider.md).
+- **Page 3** — [wiring a context](../../projects/cgp-serde/guides/wiring-a-context.md), the
+  [context adapters](../../projects/cgp-serde/reference/context-adapters.md), and the
+  [encodings](../../projects/cgp-serde/reference/encodings.md).
+- **Page 4** — [context services](../../projects/cgp-serde/architecture/context-services.md) and the
+  [allocation reference](../../projects/cgp-serde/reference/allocation.md).
+- **Page 5** — [issues](../../projects/cgp-serde/issues.md) and the
+  [comparison with Serde](../../projects/cgp-serde/serde-comparison.md), which between them hold the
+  confirmed gaps and the cases where plain Serde is the better tool.
+
+The code-change items above are also tracked as issues there, where the namespace and the legacy
+attributes are recorded among the missing features and housekeeping.
 
 For framing, this deep dive is the worked instance of the
 [strongest lead pain](../../communication-strategy/message.md#the-problems-cgp-removes) — the

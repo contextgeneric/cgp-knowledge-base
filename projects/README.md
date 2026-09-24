@@ -49,10 +49,11 @@ project moves with the library while the post that announced it does not.
 ## How these relate to the rest of the base
 
 Each project connects outward in three directions, and the documents make all three explicit. It has
-a **worked example** in [examples/](../examples/README.md) that re-derives its scenario in verified
-current syntax — [shell-scripting DSL](../examples/shell-scripting-dsl.md) for Hypershell,
-[modular serialization](../examples/modular-serialization.md) for cgp-serde — and that example, not
-the project's announcement post, is what other documents quote. It has an **announcement post** with
+a **worked example** in [examples/](../examples/README.md) that develops its scenario in verified
+current syntax, building on the project's crates where it can: the
+[shell-scripting DSL](../examples/shell-scripting-dsl.md) for Hypershell, and
+[modular serialization](../examples/modular-serialization.md) for cgp-serde. That example and the
+project's own section, not the project's announcement post, are what other documents quote. It has an **announcement post** with
 an internal document under [website/blog/](../website/blog/README.md) recording how far that post has
 drifted. And it exercises a set of **CGP constructs and concepts**, linked per project so an agent
 can find the semantics behind anything it meets in the source.

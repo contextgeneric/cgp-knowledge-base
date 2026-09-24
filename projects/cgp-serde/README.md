@@ -52,7 +52,8 @@ both, but code quoted from them compiles only against the `v0.8.0` branch. Sourc
 
 The workspace holds five library crates and a test crate. The split follows external dependencies,
 so an application depends only on the crates whose providers its wiring names. Every library crate is
-`no_std` with `alloc`.
+`no_std`, and the three that need `String` or `Vec` also link `alloc`. The layout is worked through in
+[architecture/crate-layout.md](architecture/crate-layout.md).
 
 - **`cgp-serde`** — the two components, the two context adapters, and the core providers. Depends only
   on `cgp` and `serde`.
@@ -70,7 +71,8 @@ so an application depends only on the crates whose providers its wiring names. E
 
 The library handles named-field structs, the common scalar and collection types, and any type that
 already implements Serde's traits, but it is a proof of concept with gaps that have each been
-confirmed against the `v0.8.0` branch:
+confirmed against the `v0.8.0` branch. [issues.md](issues.md) records them in full, together with the
+defects and housekeeping items this summary leaves out:
 
 - **Enums** — no provider serializes an enum generically; an enum works only through `UseSerde`, from
   its own `Serialize` or `Deserialize` impl.
@@ -93,13 +95,66 @@ Start with the architecture for the ideas every provider shares, then use the re
 provider.
 
 - [architecture/](architecture/README.md) — the design on one page, and one document per idea:
+  - [serde-bridge.md](architecture/serde-bridge.md) — what cgp-serde replaces in Serde, what it
+    keeps, and how values and errors cross between the two.
+  - [component-design.md](architecture/component-design.md) — the value moved out of `Self`, one
+    struct for both directions, and the full pairing of serializers with deserializers.
   - [reentrant-providers.md](architecture/reentrant-providers.md) — how a provider hands each nested
     value back to the context through the two adapter types, which is what makes wiring reach
     arbitrarily deep.
+  - [derive-free-records.md](architecture/derive-free-records.md) — structs serialized through CGP's
+    field traits rather than a serialization derive, and what that gives up.
+  - [context-services.md](architecture/context-services.md) — providers drawing services such as an
+    arena from the context, and the layered allocation crates.
+  - [crate-layout.md](architecture/crate-layout.md) — the crates, their dependencies, and their
+    module layout.
 - [reference/](reference/README.md) — every public item, grouped by family, with a table of all
   providers:
-  - [records.md](reference/records.md) — `SerializeFields` and `DeserializeRecordFields`, the
-    derive-free struct providers.
+  - [components.md](reference/components.md) — `CanSerializeValue` and `CanDeserializeValue`: the
+    two components, the unsized `Value` no provider accepts, the `'de` lifetime and `Life<'de>` in
+    checks, and the legacy `UseDelegate` attribute.
+  - [context-adapters.md](reference/context-adapters.md) — `SerializeWithContext` and
+    `DeserializeWithContext`: the public adapters that start a serialization through a context, and
+    how to drive the seed with a format's deserializer.
+  - [use-serde.md](reference/use-serde.md) — `UseSerde`: reusing a type's own Serde impls, and why
+    the context's wiring stops at a value handed to it.
+  - [strings-and-bytes.md](reference/strings-and-bytes.md) — `SerializeString`, `SerializeBytes`,
+    and `TryDeserializeBytes`: the leaf text and byte providers, and why bytes do not round-trip
+    through JSON.
+  - [conversions.md](reference/conversions.md) — `SerializeWithDisplay`, `DeserializeWithFromStr`,
+    `SerializeFrom`, `TrySerializeFrom`, and `SerializeDeref`: encoding through a converted value,
+    and the borrowed-string limit of `DeserializeWithFromStr`.
+  - [collections.md](reference/collections.md) — `SerializeIterator` and `DeserializeExtend`:
+    sequences whose items follow the context, the reference entry iteration needs, and maps as
+    sequences of pairs.
+  - [records.md](reference/records.md) — `SerializeFields` and `DeserializeRecordFields`:
+    serializing a struct as a map and reading one back through the optional builder, with no
+    serialization-specific derive.
+  - [default-values.md](reference/default-values.md) — `DeserializeDefault`: the library's one
+    higher-order provider, which defaults a null value but not a missing field.
+  - [encodings.md](reference/encodings.md) — `SerializeHex`, `SerializeBase64`,
+    `SerializeRfc3339Date`, and `SerializeTimestamp`: the per-application encodings in
+    `cgp-serde-extra`, with their exact formats and errors.
+  - [json.md](reference/json.md) — The `cgp-serde-json` codes, providers, and
+    `deserialize_json_string` method: JSON as wireable `TryComputer` operations, readers, borrowing,
+    and the error wiring they need.
+  - [allocation.md](reference/allocation.md) — `CanAlloc`, `DeserializeAndAllocate`, `HasArena`, and
+    `AllocateWithArena`: deserializing borrowed values into a context-supplied arena, layered so the
+    allocator is a wiring choice.
+
+- [guides/](guides/README.md) — how to do one job with the library:
+  - [wiring-a-context.md](guides/wiring-a-context.md) — building and checking a context's
+    serialization table, including key syntax for references, lifetimes, and arrays.
+  - [writing-a-provider.md](guides/writing-a-provider.md) — writing a new provider pair that calls
+    back into the context and reports errors through Serde.
+  - [debugging-wiring.md](guides/debugging-wiring.md) — the common wiring mistakes, with the code
+    and the `cargo cgp check` output for each.
+  - [formats.md](guides/formats.md) — using a context with `serde_json` and other formats, and which
+    formats work.
+- [serde-comparison.md](serde-comparison.md) — what cgp-serde keeps from Serde, adds, and lacks, how
+  Serde's idioms map onto it, and when plain Serde is the better choice.
+- [testing.md](testing.md) — what the four tests and their checks pin, and what no test exercises.
+- [issues.md](issues.md) — the confirmed defects, missing features, and housekeeping items.
 
 ## Public material derived from these documents
 

@@ -33,15 +33,7 @@ impl<Value> ValueSerializer<Value>
 where
     Value: HasFields,
     Value::Fields: FieldsSerializer<Self, Value>,
-{
-    fn serialize<S>(&self, value: &Value, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        let s = serializer.serialize_map(None)?;
-        Value::Fields::serialize_fields(self, value, s)
-    }
-}
+{ ... }
 ```
 
 `FieldsSerializer` is a private trait implemented for CGP's type-level field list. Its `Cons` case
@@ -92,17 +84,7 @@ where
     Record: HasOptionalBuilder<Builder = Builder> + HasFields,
     Record::Fields: HandleMapEntry<'de, Self, Builder>,
     Builder: FinalizeOptional<Target = Record>,
-{
-    fn deserialize<D>(&self, deserializer: D) -> Result<Record, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        deserializer.deserialize_map(MapVisitor {
-            context: self,
-            phantom: PhantomData,
-        })
-    }
-}
+{ ... }
 ```
 
 `HasOptionalBuilder` and `FinalizeOptional` come from `cgp::extra::field::impls`, and `HasOptionalBuilder`
