@@ -48,7 +48,19 @@ where
 }
 ```
 
-The mechanism is one `DelegateComponent` lookup keyed on `__Path__` rather than on the component name. `RedirectLookup<Components, Path>` implements `Greeter` whenever `Components` maps `Path` to a delegate that itself implements `Greeter`, and the method forwards to that delegate. When the consumer trait carries generic type parameters, the impl additionally constrains `Path` with [`ConcatPath`](../traits/static_format.md) so the parameters are appended to the path before the lookup, letting the redirected key encode the generic arguments. As always, the impl is paired with a matching `IsProviderFor` impl so dependencies reach the [check traits](../../concepts/check-traits.md).
+The mechanism is one `DelegateComponent` lookup keyed on `__Path__` rather than on the component name. `RedirectLookup<Components, Path>` implements `Greeter` whenever `Components` maps `Path` to a delegate that itself implements `Greeter`, and the method forwards to that delegate. When the consumer trait carries generic type parameters, the impl additionally constrains `Path` with [`ConcatPath`](../traits/static_format.md) so the parameters are appended to the path before the lookup, letting the redirected key encode the generic arguments. **Every type parameter is appended, in declaration order**; lifetime and const parameters are skipped, since only types key the path. For `CanCompute<Code, Input>` the generated bound is `__Path__: ConcatPath<Path!(@Code.Input)>`, so a redirect rooted at `@ComputerComponent` looks up `@ComputerComponent.Code.Input`:
+
+```rust
+impl<__Context__, Code, Input, __Components__, __Path__> Computer<__Context__, Code, Input>
+    for RedirectLookup<__Components__, __Path__>
+where
+    __Path__: ConcatPath<PathCons<Code, PathCons<Input, Nil>>>,
+    __Components__: DelegateComponent<<__Path__ as ConcatPath<PathCons<Code, PathCons<Input, Nil>>>>::Output>,
+    /* … the delegate implements `Computer<__Context__, Code, Input>` */
+{ /* … forwards to the delegate */ }
+```
+
+A table entry can therefore dispatch on any of the parameters, not only the first: a key that stops after `Code` matches every `Input`, and one that continues matches a particular `Input` as well. The `open` statement of [`delegate_components!`](../macros/delegate_components.md) documents the key forms this allows, including dispatch on the input alone. As always, the impl is paired with a matching `IsProviderFor` impl so dependencies reach the [check traits](../../concepts/check-traits.md).
 
 The namespace attributes are what populate the path side. The `#[prefix(@path in Namespace)]` attribute on a component generates a namespace impl whose `Delegate` is `RedirectLookup<Components, Path>`, with the prefix path joined onto the component name — so resolving the component under that namespace follows the prefixed path into the table. The `DefaultNamespace` trait plays the same role for the default routing. Together these turn a path-addressed wiring entry into a concrete provider through `RedirectLookup`.
 

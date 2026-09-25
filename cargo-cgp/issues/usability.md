@@ -220,6 +220,76 @@ Only the second fix matches the actual mistake. Coalescing the pair — or at le
 misleading first suggestion — is the work here; it is the last of the wiring-conflict shapes that
 still passes through with only light post-processing.
 
+## A redirect inside an aggregate provider is attributed to the context
+
+When a context routes a component to an [aggregate provider](../../cgp/concepts/aggregate-providers.md)
+that `open`s the component in its own table, and that table lacks the entry a lookup needs, the
+dependency tree reports the missing entry as if it were the context's. The root cause and its path
+are right, but the tree misnames which table the path is missing from, and that is the fact the
+reader needs in order to fix it
+([`open_aggregate_missing_entry`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/wiring/redirect-tables/open_aggregate_missing_entry.rs)).
+The fixture's aggregate dispatches `Computer` on its *input*, the component's second parameter, with
+a two-segment path key, and the context routes one code to the aggregate:
+
+```rust
+delegate_components! {
+    new ByteSink {
+        open ComputerComponent;
+
+        @ComputerComponent.<Code> Code.Bytes: WriteBytes,
+    }
+}
+
+delegate_components! {
+    App {
+        open ComputerComponent;
+
+        @ComputerComponent.Sink: ByteSink,
+    }
+}
+
+check_components! {
+    App {
+        ComputerComponent: (Sink, Digest),
+    }
+}
+```
+
+`App` resolves `CanCompute<Sink, Digest>` through its redirect to `ByteSink`, whose own redirect,
+`RedirectLookup<ByteSink, Path!(@ComputerComponent)>`, finds no entry for the `Digest` input. The
+tool prints:
+
+```text
+error[E0277]: [CGP-E001] the consumer trait `CanCompute<Sink, Digest>` is not implemented for context `App`
+   = note: root cause: [CGP-E107] context `ByteSink` does not contain any delegate entry for `@ComputerComponent.Sink.Digest`
+           this is required through the dependency chain:
+             [CGP-E101] consumer trait impl `CanCompute<Sink, Digest>` for context `App`
+             └─ [CGP-E104] redirect lookup to `@ComputerComponent` in `App`
+               └─ [CGP-E102] provider trait impl `Computer<Sink, Digest>` with context `App` for provider `ByteSink`
+                 └─ [CGP-E104] redirect lookup to `@ComputerComponent` in `App`
+                   └─ [CGP-E107] context `ByteSink` does not contain any delegate entry for `@ComputerComponent.Sink.Digest`
+```
+
+Two labels are wrong, for two separate reasons in the source:
+
+- **The second `[CGP-E104]` hop names `App`, but runs in `ByteSink`.** The redirect-hop label takes
+  the walk's context rather than the first type argument of the `RedirectLookup<Table, Path>` it is
+  labeling (`label_for` in the driver's `resolve/label/predicate_label.rs`), so every hop reads
+  `in <context>` whichever table it redirects into. For a redirect the context itself `open`s, the
+  two coincide, which is why the label reads correctly in the common case.
+- **The leaf calls `ByteSink` a "context".** The leaf classifier checks for a `PathCons` key before it
+  checks whether the owner is the context (`classify_leaf` in `resolve/classify/leaf.rs`), so an
+  unmet `DelegateComponent<@…>` on any table becomes the redirect-wiring leaf, `[CGP-E107]`, worded
+  for a context. A missing key on a non-context table is otherwise the `[CGP-E110]` leaf,
+  `` provider `…` does not contain any delegate entry for … ``.
+
+Closing it means labeling each redirect hop with its own table, read from the `RedirectLookup`'s
+first argument, and choosing the leaf's wording by owner as well as by key: a path key missing from a
+table other than the context would read as a provider table missing a redirect entry. The same shape
+arises from any library that packages dispatch tables as aggregate providers, such as a
+[type-level DSL](../../cgp/concepts/type-level-dsls.md) whose input dispatchers are `open`-based
+aggregates, whenever a stage receives an input its dispatcher does not cover.
+
 ## Macro lowering errors point at the attribute, not the cause
 
 When a macro lowers accepted input into ill-formed Rust, the error lands on the macro attribute and

@@ -66,18 +66,17 @@ The visitor dispatcher turns a per-variant handler set into a single provider ov
 ```rust
 delegate_components! {
     Interpreter {
-        ComputerComponent:
-            UseInputDelegate<new EvalComponents {
-                MathExpr: DispatchEval,        // the whole enum → variant dispatcher
-                Plus<MathExpr>: EvalAdd,        // one provider per variant
-                Times<MathExpr>: EvalMultiply,
-                Literal<u64>: EvalLiteral,
-            }>,
+        open ComputerComponent;
+
+        @ComputerComponent.<Code> Code.MathExpr: DispatchEval,        // the whole enum → dispatcher
+        @ComputerComponent.<Code> Code.Plus<MathExpr>: EvalAdd,        // one provider per variant
+        @ComputerComponent.<Code> Code.Times<MathExpr>: EvalMultiply,
+        @ComputerComponent.<Code> Code.Literal<u64>: EvalLiteral,
     }
 }
 ```
 
-The `MathExpr` entry routes to `DispatchEval`, a thin context-specific provider that defers to `MatchWithValueHandlers`; that wrapper exists to break the trait-resolution cycle between the matcher and the per-variant providers it dispatches to. The routing mechanism is described in full in [dispatching](dispatching.md), and the monadic pipeline that sequences the per-variant steps in [monadic handlers](monadic-handlers.md).
+Each key dispatches on the input, the second parameter of `CanCompute<Code, Input>`, whatever the code, through the `open` statement of [`delegate_components!`](../reference/macros/delegate_components.md); existing code often wires the same table as a legacy `UseInputDelegate<new EvalComponents { … }>`. The `MathExpr` entry routes to `DispatchEval`, a thin context-specific provider that defers to `MatchWithValueHandlers`; that wrapper exists to break the trait-resolution cycle between the matcher and the per-variant providers it dispatches to. The routing mechanism is described in full in [dispatching](dispatching.md), and the monadic pipeline that sequences the per-variant steps in [monadic handlers](monadic-handlers.md).
 
 ## Related constructs
 

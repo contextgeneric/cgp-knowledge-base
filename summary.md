@@ -80,7 +80,8 @@ it stale.
 - [delegate_components.md](cgp/reference/macros/delegate_components.md) — build a context's wiring
   table, exhaustively: the `new` aggregate form and generic lists, the three operators (`:`, `->`,
   `=>`), the three key forms with the `[…]`/`{…}` path groups, the two value forms, the three
-  statements (`open`, `namespace`, `for`), and how they all combine in one block.
+  statements (`open`, `namespace`, `for`), `open` keys that dispatch on any of a component's type
+  parameters, and how they all combine in one block.
 - [path.md](cgp/reference/macros/path.md) — the type-level path macro behind namespaces and
   redirected lookups.
 - [product.md](cgp/reference/macros/product.md) — the type-level list type `Product!` and its
@@ -155,11 +156,12 @@ it stale.
 - [error_providers.md](cgp/reference/providers/error_providers.md) — `RaiseFrom`, `ReturnError`,
   `DebugError`, and the other error-component backends.
 - [handler_combinators.md](cgp/reference/providers/handler_combinators.md) — `ComposeHandlers`,
-  `PipeHandlers`, `ReturnInput`, and the `Promote*` lifts.
+  `PipeHandlers`, `ReturnInput`, the `Promote*` lifts, and dispatching on the input with `open`,
+  with `UseInputDelegate` as the legacy form.
 - [monad_providers.md](cgp/reference/providers/monad_providers.md) — `PipeMonadic`, `BindOk`,
   `BindErr`, and the identity/ok/err monad markers.
 - [redirect_lookup.md](cgp/reference/providers/redirect_lookup.md) — re-route a component lookup along
-  a type-level path; the namespace mechanism.
+  a type-level path extended by every type parameter; the namespace mechanism.
 - [use_context.md](cgp/reference/providers/use_context.md) — satisfy a provider trait through the
   context's own consumer impl, and its circular-dependency trap.
 - [use_default.md](cgp/reference/providers/use_default.md) — select a component's default method
@@ -283,7 +285,8 @@ it stale.
 - [declaring-dependencies.md](cgp/guides/declaring-dependencies.md) — prefer `#[uses]` and
   `#[use_provider]` over hand-written `where` bounds.
 - [dispatching-per-type.md](cgp/guides/dispatching-per-type.md) — prefer the `open` statement or a
-  namespace over a `UseDelegate` table.
+  namespace over a `UseDelegate` table, and a longer path key over a `UseInputDelegate` table when
+  dispatching on a later parameter.
 - [importing-abstract-types.md](cgp/guides/importing-abstract-types.md) — prefer `#[use_type]` aliases
   over a supertrait plus `Self::Type`.
 - [naming-a-type-dependency.md](cgp/guides/naming-a-type-dependency.md) — infer a needed type from a
@@ -818,8 +821,8 @@ it stale.
   CGP primer removed in favour of the explanation tier, presets replaced by namespaces, and the
   source changes the repository still needs, from `#[uses]` adoption to the stale example comments.
 - [extensible-datatypes.md](website/deep-dives/extensible-datatypes.md) — records and variants from four
-  posts and two example crates: a seven-page pattern-then-internals split, and why the expression
-  crate's `UseInputDelegate` tables are *not* `open` candidates.
+  posts and two example crates: a seven-page pattern-then-internals split, and the conversion of the
+  expression crate's `UseInputDelegate` tables to two-segment `open` keys.
 - [cgp-serde.md](website/deep-dives/cgp-serde.md) — Serde as components: a five-page split, the release
   framing removed, and the missing `CgpSerdeNamespace` that would make the two-application payoff land.
 

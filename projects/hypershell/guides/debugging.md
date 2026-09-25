@@ -32,7 +32,8 @@ failed. Two labels mislead. Every `[CGP-E104]` names the context as the table (`
 even for a redirect that runs inside a bundle such as `HypershellTokioProvider`. And a missing entry
 in an aggregate reached through `open`, such as an input dispatcher, is reported as a `[CGP-E107]`
 leaf that calls the aggregate a "context", rather than as the `[CGP-E110]` provider-table leaf the
-[error-code catalog](../../../cargo-cgp/error-code.md) defines for a provider's table.
+[error-code catalog](../../../cargo-cgp/error-code.md) defines for a provider's table. Both are an
+open [cargo-cgp issue](../../../cargo-cgp/issues/usability.md#a-redirect-inside-an-aggregate-provider-is-attributed-to-the-context).
 
 ## A context lacks a field
 

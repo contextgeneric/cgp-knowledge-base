@@ -140,9 +140,27 @@ delegate_components! {
 
 `PromoteHandler<Provider>` starts from the most general base, a provider that implements `Handler`. It routes `HandlerComponent` to `TryPromote<Provider>` and defers the async-ref components to `PromoteAsyncComputer<Provider>`.
 
-## Dispatching on the input type with `UseInputDelegate`
+## Dispatching on the input type
 
-`UseInputDelegate<Components>` is a delegate-style dispatcher analogous to [`UseDelegate`](use_delegate.md), but it keys its lookup table on the handler's `Input` type rather than on the `Code` type. It is defined as a one-parameter struct holding the lookup table:
+**The current way to choose a handler by the type of its input is the `open` statement with a two-segment path key.** The `RedirectLookup` impl behind `open` appends every type parameter of the consumer trait to the lookup path, so a handler component's path is `Code` then `Input`, and a key with a per-entry generic first segment dispatches on the input alone:
+
+```rust
+delegate_components! {
+    Interpreter {
+        open ComputerComponent;
+
+        @ComputerComponent.<Code> Code.MathExpr: DispatchEval,
+        @ComputerComponent.<Code> Code.Plus<MathExpr>: EvalAdd,
+        @ComputerComponent.<Code> Code.Literal<Value>: EvalLiteral,
+    }
+}
+```
+
+Replacing `<Code> Code` with a concrete code dispatches on both parameters, as in `@ComputerComponent.Eval.Plus<MathExpr>: EvalAdd`. The same form works inside an aggregate provider, which is how a reusable input dispatcher is packaged. The key forms and their one restriction, that a key cannot share a table with a longer key beneath it, are in the `open` section of [`delegate_components!`](../macros/delegate_components.md), and the lookup is explained under [`RedirectLookup`](redirect_lookup.md).
+
+### The legacy form: `UseInputDelegate`
+
+`UseInputDelegate<Components>` is the older, table-based dispatcher for the same job, and it remains common in existing code and in the [dispatch combinators](dispatch_combinators.md). It is a delegate-style dispatcher analogous to [`UseDelegate`](use_delegate.md), but it keys its lookup table on the handler's `Input` type rather than on the `Code` type. It is defined as a one-parameter struct holding the lookup table:
 
 ```rust
 pub struct UseInputDelegate<Components>(pub PhantomData<Components>);

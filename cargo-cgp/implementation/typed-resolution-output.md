@@ -161,7 +161,10 @@ The `root cause:` lead is worded by *why* the leaf is unmet, and there are six l
   owner, so an aggregate provider that `open`s a component and lacks an entry reads the same way,
   with the aggregate named as the "context": Hypershell's input dispatcher reports
   `` context `HandleToTokioAsyncRead` does not contain any delegate entry for `@HandlerComponent.StreamToStdout.GenericArray<u8, …>` ``,
-  not the missing-dispatch-entry leaf below. No fixture pins that aggregate case. The
+  not the missing-dispatch-entry leaf below; the redirect hop above it names the context too. Both
+  mislabels are an open [usability issue](../issues/usability.md#a-redirect-inside-an-aggregate-provider-is-attributed-to-the-context),
+  pinned by
+  [`open_aggregate_missing_entry`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/wiring/redirect-tables/open_aggregate_missing_entry.rs). The
   [`unregistered_prefix_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/resolution/unregistered_prefix_path.rs),
   [`qualified_prefix_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/qualified_prefix_path.rs),
   [`multi_redirect_missing`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/multi_redirect_missing.rs),

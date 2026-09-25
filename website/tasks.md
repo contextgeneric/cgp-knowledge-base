@@ -185,10 +185,10 @@ are also independent of everything above, so they can start whenever there is ca
   [issues](../projects/hypershell/issues.md) list the defects worth fixing in the same pass.
 - **DC2 — modernize the two `cgp-examples` crates.** The least modernized of the four: convert
   `builder`'s six getter traits to `#[implicit]` arguments, adopt `#[uses]` across both crates, and
-  replace the `Code`-keyed `UseDelegate` tables with `open`. **Leave the `UseInputDelegate` tables and
-  the `#[derive_delegate]` attribute they resolve through alone** — they key on `Input` and have no `open`
-  equivalent, so they are the correct current form, and this is the one exception to the
-  `#[derive_delegate]` removals in DC1 and DC3. *Lands in:* the `cgp-examples` repository.
+  replace both the `Code`-keyed `UseDelegate` tables and the `Input`-keyed `UseInputDelegate` tables
+  with `open`, the latter through two-segment path keys such as
+  `@ComputerComponent.<Code> Code.Plus<MathExpr>`; see
+  [the deep-dive plan](deep-dives/extensible-datatypes.md). *Lands in:* the `cgp-examples` repository.
 - **DC3 — publish a `CgpSerdeNamespace`, and drop the three `#[derive_delegate]` attributes.** The
   namespace is a design decision about what the defaults should be rather than a mechanical conversion,
   and a genuine library improvement: without it every context spells out a dozen wiring entries, and the
@@ -381,16 +381,14 @@ published blog posts, whose titles are among the worst offenders and whose
 
 ## X — Cross-cutting
 
-- **X1 — re-inline the agent skill.** What remains here is the re-inlining, not the skill: the source in
-  `cgp-skills` is current at v0.8.0, spells `#[use_type]` with `.`, leads with `open` over
-  [`#[derive_delegate]`](../cgp/reference/attributes/derive_delegate.md), covers
-  [namespaces](../cgp/concepts/namespaces.md) and `cargo-cgp`, carries the
-  [context and target qualifiers](../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target),
-  and now states that [`#[uses]`](../cgp/reference/attributes/uses.md) takes ordinary Rust traits as
-  readily as CGP traits. **The published copy on the website is the stale one** — it still states
-  v0.7.0 and carries every defect that list describes, which is what the re-inline fixes. **Never edit the
-  website copy directly**, since that would create a fourth version of the truth. *Lands in:* the website
-  repository. *Blocked by:* nothing.
+- **X1 — keep the published skill in step with `cgp-skills`.** The website publishes the skill
+  through symlinks into a `cgp-skills` git submodule, so there is no copy to re-inline and nothing to
+  edit on the site; see [site-structure.md](site-structure.md). The submodule is current at v0.8.0.
+  What remains is procedural: **bump the submodule pointer** each time a skill change lands in
+  `cgp-skills`, most recently for the dispatch-on-a-later-parameter guidance in
+  `references/wiring.md` and its siblings. **Never edit the skill through the website checkout**,
+  since the submodule is `cgp-skills` itself. *Lands in:* the website repository's submodule pointer.
+  *Blocked by:* the skill change being pushed.
 
   Two corrections landed in `cgp-skills` alongside the attributes port and are worth knowing about,
   because both had been recommending forms that do not compile: `#[use_provider]` takes **one attribute
@@ -416,6 +414,21 @@ published blog posts, whose titles are among the worst offenders and whose
   pages that use them. *Blocked by:* nothing. *Done when:* the three files exist, each idea's pages
   reference the one drawing, and every page still reads correctly with the image missing.
 
+- **X4 — convert the worked examples' input dispatch to `open`.** Two worked examples still wire
+  input-keyed dispatch through legacy `UseInputDelegate` tables:
+  [expression-interpreter.md](../examples/expression-interpreter.md), in every wiring step, including
+  its `UseDelegate`-around-`UseInputDelegate` two-layer tables, and
+  [extensible-shapes.md](../examples/extensible-shapes.md), in its context-wired dispatch. Both convert
+  to two-segment path keys under `open`, as in
+  `@ComputerComponent.<Code> Code.Plus<MathExpr>: EvalAdd` and
+  `@ComputerRefComponent.Eval.Plus<MathExpr>`. Probes ran the converted evaluator and shapes wiring,
+  and the reference, guide, and skill already teach the form. This is new work rather than a
+  correction, since each example's prose explains the table it wires. The `cgp` documents that quote
+  the same tables already use the `open` form. *Lands in:* this knowledge base's `examples/`.
+  *Blocked by:* nothing.
+  *Done when:* no worked example wires a `UseInputDelegate` table except where it names it as the
+  legacy form, and every converted snippet compiles.
+
 ## What depends on what
 
 The table below is the dependency graph in one view. Read it to check whether a task is startable; read
@@ -436,7 +449,7 @@ the [ordering](#the-ordering) for what to start on.
 | A1 | the author's read | every page-adding task's provenance note |
 | S1, S3, S4, S5, S7, S10 | nothing | nothing; S3 and S4 should precede V1 |
 | S9, S11 | V1 | nothing |
-| X1, X2, X3 | nothing | nothing |
+| X1, X2, X3, X4 | nothing | nothing |
 
 Two shapes in that graph are worth naming, because they are what make the ordering non-obvious. The
 **deep dives are gated on code** rather than on writing, so their long lead time starts with DC1–DC3
@@ -473,9 +486,9 @@ that remain render a derived description that is serviceable, so whoever returns
 which pages carry impressions before sweeping, and should still land the edit before the merge, which is
 when each page's first impression in the index is fixed.
 
-**X1, X2, and X3 fit anywhere, and the first two are worth doing early** — a stale published skill
-misteaches every agent that reads it, and the crate's landing page is working against the project
-every day it stays as it is.
+**X1–X4 fit anywhere, and the first two are worth doing early** — a published skill that lags
+`cgp-skills` misteaches every agent that reads it, and the crate's landing page is working against the
+project every day it stays as it is.
 
 **DC1–DC3 whenever there is capacity**, since they are independent of everything above and are the long
 lead time on the deep dives.

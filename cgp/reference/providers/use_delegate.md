@@ -54,7 +54,7 @@ where
 
 The mechanism is a single `DelegateComponent` lookup keyed on `SourceError`. `UseDelegate<Components>` implements `ErrorRaiser` for a given `SourceError` exactly when `Components` maps that `SourceError` to a `Delegate` that itself implements `ErrorRaiser` for that `SourceError`, and the method body forwards to that delegate. Only the parameter named inside `UseDelegate<...>` is used as the key — here `SourceError` alone — so the dispatch keys on one parameter while the rest pass through unchanged. As elsewhere in CGP, each provider impl is paired with an `IsProviderFor` impl so dependencies propagate to the [check traits](../../concepts/check-traits.md).
 
-A component may derive more than one dispatcher when different parameters should be routed differently. Passing a list to `derive_delegate` generates one impl per dispatcher — the default `UseDelegate<First>` keying on the first parameter, plus any custom dispatcher types keying on the others — so each parameter can be looked up through its own table.
+A component may derive more than one dispatcher when different parameters should be routed differently. Passing a list to `derive_delegate` generates one impl per dispatcher — the default `UseDelegate<First>` keying on the first parameter, plus any custom dispatcher types keying on the others — so each parameter can be looked up through its own table. The `open` statement covers the multi-parameter case without a second dispatcher type, since its redirect appends every type parameter to the lookup path and a key can name one segment per parameter; see [`delegate_components!`](../macros/delegate_components.md).
 
 ## Examples
 

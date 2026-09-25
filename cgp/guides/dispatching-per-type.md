@@ -37,6 +37,43 @@ Because `open` and namespaces ride `RedirectLookup`, **a new component you inten
 
 Choose between `open` and a namespace by scope. Prefer `open` for a self-contained context wiring its own components directly — it folds the per-type entries into the context's own table with no separate type. Reach for a [namespace](namespaces-and-prefixes.md) when a reusable, inheritable dispatch table is worth sharing across contexts, or when a single generic component is served by several providers whose per-type entries you want to merge into one flat table.
 
+## Dispatch on a later parameter with a longer path key, not `UseInputDelegate`
+
+Dispatch on a component's second or later type parameter with the same `open` statement, writing a path key with one segment per parameter, rather than the legacy [`UseInputDelegate`](../reference/providers/handler_combinators.md#the-legacy-form-useinputdelegate) table. The redirect appends every type parameter of the consumer trait to the path, so for `CanCompute<Code, Input>` the lookup follows `@ComputerComponent.Code.Input`, and a key whose first segment is a per-entry generic ignores the `Code` and dispatches on the input. The [expression interpreter](../../examples/expression-interpreter.md) wires its evaluator the legacy way:
+
+```rust
+delegate_components! {
+    Interpreter {
+        ComputerComponent:
+            UseInputDelegate<new EvalComponents {
+                MathExpr: DispatchEval,
+                Plus<MathExpr>: EvalAdd,
+                Times<MathExpr>: EvalMultiply,
+                Literal<Value>: EvalLiteral,
+            }>,
+    }
+}
+```
+
+and the same dispatch with `open` stores the entries on the context:
+
+```rust
+delegate_components! {
+    Interpreter {
+        open ComputerComponent;
+
+        @ComputerComponent.<Code> Code.MathExpr: DispatchEval,
+        @ComputerComponent.<Code> Code.Plus<MathExpr>: EvalAdd,
+        @ComputerComponent.<Code> Code.Times<MathExpr>: EvalMultiply,
+        @ComputerComponent.<Code> Code.Literal<Value>: EvalLiteral,
+    }
+}
+```
+
+Dispatch on two parameters at once needs no second layer of tables either. Where the legacy form nests a `UseInputDelegate` inside a `UseDelegate` keyed on the operation, a key with a concrete segment for each parameter says the same thing, as in `@ComputerRefComponent.Eval.Plus<MathExpr>: EvalAdd` beside `@ComputerRefComponent.ToLisp.Plus<MathExpr>: BinaryOpToLisp<Symbol!("+")>`.
+
+One rule constrains the conversion. Every path key ends in a wildcard, so a key covers every longer key that shares its segments: within one table, key a first-parameter value either on its own or per later parameter, never both, or the two entries conflict with `E0119`. Keep the shorter key when every value of the later parameter goes to the same provider, and write only the longer keys when they differ. The [Hypershell](../../projects/hypershell/README.md) crates dispatch every handler this way, including input dispatchers packaged as aggregate providers; see its [streams and input dispatch](../../projects/hypershell/architecture/streams-and-input-dispatch.md).
+
 ## Related guides
 
 - [Organizing wiring with namespaces and prefixes](namespaces-and-prefixes.md) — the full namespace treatment, including flattening multi-provider dispatch that `open` alone cannot.

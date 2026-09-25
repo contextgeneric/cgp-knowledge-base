@@ -443,7 +443,8 @@ The codes divide into the inner chain-node templates and the terminal root-cause
   table it is missing from, so an aggregate provider that `open`s a component and lacks the entry is
   also named here as the "context", as Hypershell's input dispatcher is in
   `` context `HandleToTokioAsyncRead` does not contain any delegate entry for `@HandlerComponent.…` ``;
-  see [typed-resolution-walk](implementation/typed-resolution-walk.md).
+  see [typed-resolution-walk](implementation/typed-resolution-walk.md) and the open
+  [usability issue](issues/usability.md#a-redirect-inside-an-aggregate-provider-is-attributed-to-the-context).
 - **`CGP-E108` — unimplemented accessor (leaf).** `` accessor trait `HasField` with field `<f>` is not
   implemented for `<T>` `` — the struct carries the field but has not derived `HasField` for it (the
   fix, a `#[derive(HasField)]`, rides in a separate `help`). Several such fields on *one* struct are

@@ -54,13 +54,6 @@ deliberate and should stay, but a reader who stops early copies the wrong form â
 plainly that the second form is the idiom. *Website repo,
 `docs/tutorials/area-calculation/static-dispatch.md`.*
 
-**The inlined agent skill is a version behind.** It states v0.7.0 while the library is at v0.8.0, teaches
-`#[use_type]` with `::` where current syntax uses `.`, presents `#[derive_delegate]` and nested
-`UseDelegate` tables where the current idiom is the `open` statement, does not mention
-[namespaces](../cgp/concepts/namespaces.md) at all, and omits `cargo-cgp`. **Fix this in `cgp-skills` and
-re-inline the result â€” never edit the website copy**, which would create a fourth version of the truth.
-*`cgp-skills` repo, then website repo; see [site-structure.md](site-structure.md).*
-
 **The v0.8.0 release post is an unfinished draft** that stops mid-argument, covers one feature of
 several, teaches an attribute name that changed twice during development, carries a placeholder date, and
 opens by claiming a release that has not happened. It must be finished before v0.8.0 ships. *Website

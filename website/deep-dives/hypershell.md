@@ -105,9 +105,11 @@ project voice and keeps the honesty.
 
 ## Source-code changes needed
 
-The repository is the most modernized of the four and its remaining gaps are localized. Nothing here
-blocks starting the deep dive, but items in the first group will otherwise force the deep dive to show
-code the guides tell readers not to write.
+The repository is the most modernized of the four and its remaining gaps are localized. Its
+dispatch is already current: every bundle `open`s its components, and input dispatch runs through
+two-segment path keys rather than `UseInputDelegate` tables. Nothing here blocks starting the deep
+dive, but items in the first group will otherwise force the deep dive to show code the guides tell
+readers not to write.
 
 ### Required before the deep dive quotes the code
 
@@ -183,8 +185,16 @@ interface is the [handler family](../../cgp/concepts/handlers.md) over
 [namespaces](../../cgp/concepts/namespaces.md) via
 [`cgp_namespace!`](../../cgp/reference/macros/cgp_namespace.md) and the `#[prefix(...)]` attribute;
 composition uses the [handler combinators](../../cgp/reference/providers/handler_combinators.md); and
-the `Send` question is [send-bounds](../../cgp/concepts/send-bounds.md). The project entry is
-[projects/hypershell](../../projects/hypershell/README.md).
+the `Send` question is [send-bounds](../../cgp/concepts/send-bounds.md).
+
+The project's own facts come from [projects/hypershell/](../../projects/hypershell/README.md), which is
+verified against the `v0.8.0` branch and is the deep dive's source for everything the post got wrong or
+never said. Its [architecture](../../projects/hypershell/architecture/README.md) documents feed the
+pages on programs as types, interpretation, and assembly; its
+[guides](../../projects/hypershell/guides/README.md) and
+[examples](../../projects/hypershell/examples/README.md) feed the extension page; and its
+[issues](../../projects/hypershell/issues.md) and [testing](../../projects/hypershell/testing.md)
+documents feed the trade-offs page. Each of those documents ends by naming the page it feeds.
 
 For framing, the trade-offs page is bound by
 [message.md](../../communication-strategy/message.md#the-objections-readers-bring), and the

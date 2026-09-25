@@ -128,7 +128,8 @@ are dropped as plumbing above. The leaf shapes are:
   `open`s a component. For an aggregate the leaf still calls the owner a "context", as in
   `` context `HandleToTokioAsyncRead` does not contain any delegate entry for `@HandlerComponent.…` ``
   from Hypershell's input dispatcher, rather than reporting it as the missing-dispatch-entry leaf
-  below.
+  below. This is an open
+  [usability issue](../issues/usability.md#a-redirect-inside-an-aggregate-provider-is-attributed-to-the-context).
 - An unmet **`DelegateComponent<Key>` on a *non-context* delegation table** is the missing-dispatch-entry
   leaf (`[CGP-E110]`): the owner is a provider that delegates — an aggregate provider missing a
   component wiring, or a `UseDelegate`/`UseInputDelegate` table missing a branch for the type it

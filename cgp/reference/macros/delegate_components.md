@@ -168,6 +168,23 @@ delegate_components! {
 
 This wires `MyApp` to calculate the area of a `Rectangle` through `RectangleArea` and a `Circle` through `CircleArea` without naming any separate table. The braces are optional when opening exactly one component, so `open AreaCalculatorComponent;` and `open { AreaCalculatorComponent };` are the same statement, while opening several at once requires the braced list — a braceless header listing more than one component is rejected. Under the hood `open` redirects the component's lookup along a path into the context's own table, resolved by the [`RedirectLookup`](../providers/redirect_lookup.md) impl that every [`#[cgp_component]`](cgp_component.md) generates, so `open`-based dispatch needs no [`#[derive_delegate]`](../attributes/derive_delegate.md) on the component. It is a lightweight form of the full [namespace](cgp_namespace.md) feature, suited to small applications and self-contained code where a context wires its own components directly; it does not combine with a joined namespace where the component carries a `#[prefix(...)]`, in which case the per-value entries must be written with the full prefixed path rather than through `open`.
 
+**An `open` key can dispatch on any of the component's type parameters, not only the first.** The redirect appends *every* type parameter of the consumer trait to the path, in declaration order, so a lookup of `CanCompute<Code, Input>` follows `@ComputerComponent.Code.Input`. A key that stops after one segment matches that first parameter with any value of the rest, and a key that continues dispatches on the later parameters too. A per-entry generic in the first segment dispatches on a later parameter alone, which is the `open` replacement for a `UseInputDelegate` table:
+
+```rust
+delegate_components! {
+    Interpreter {
+        open ComputerComponent;
+
+        @ComputerComponent.<Code> Code.MathExpr: DispatchEval,
+        @ComputerComponent.<Code> Code.Plus<MathExpr>: EvalAdd,
+        @ComputerComponent.<Code> Code.Times<MathExpr>: EvalMultiply,
+        @ComputerComponent.<Code> Code.Literal<Value>: EvalLiteral,
+    }
+}
+```
+
+Here `Interpreter` evaluates each variant of the [expression interpreter](../../../examples/expression-interpreter.md)'s `MathExpr` with its own provider, whatever `Code` the caller passes. Concrete segments throughout dispatch on both parameters at once, so `@ComputerComponent.Eval.Literal<u64>: EvalLiteral` and `@ComputerComponent.Show.Literal<u64>: ShowLiteral` give one input two operations. A per-entry generic may also carry a bound, as in `@HandlerComponent.<Handlers: WrapCall> Pipe<Handlers>: PipeHandlers<Handlers::Wrapped>`. The one restriction is that a shorter key covers every longer key beneath it: because each key ends in a wildcard, `@ComputerComponent.Eval` and `@ComputerComponent.Eval.Literal<u64>` in one table overlap and are rejected with `E0119`, so a first-parameter value is keyed either on its own or per later parameter, never both.
+
 **`namespace` joins the context to a [namespace](cgp_namespace.md)**, so that every lookup the table does not wire directly forwards through that namespace's trait. `namespace DefaultNamespace;` emits a single blanket `DelegateComponent` impl covering every key the namespace resolves, which is why a direct entry for a key the namespace itself *binds* conflicts with it — see Known issues.
 
 **`for` pulls entries out of another lookup table**, binding a key variable and a provider variable and emitting one mapping per entry of the table named after `in`. Its body holds only `:` mappings, and its optional `where` clause is merged into every impl the loop generates:
@@ -404,6 +421,19 @@ impl<__Wildcard__>
 
 The [`RedirectLookup`](../providers/redirect_lookup.md) impl that [`#[cgp_component]`](cgp_component.md) generates for `AreaCalculator` appends the dispatch parameter — here `Rectangle` — onto the redirect path and reads the result back, so `MyApp: CanCalculateArea<Rectangle>` resolves to `RectangleArea`. **The key's tail is a generic `__Wildcard__` parameter rather than `Nil`**, so the entry matches any path beginning with that component and dispatch type whatever the lookup appends after it; an entry written against a `Nil` tail would only answer a path of exactly that length. Note also that `cargo cgp expand` resugars the redirect target in the header impl to `Path!(@AreaCalculatorComponent)` while printing the per-entry key as the raw `PathCons` list, so one expansion shows the same type in both spellings. The lookup keys on the same `Shape` parameter the legacy `UseDelegate` form keys on; the difference is only that the per-value entries live on the context itself rather than in a separate table type.
 
+A component with several type parameters appends them all, in declaration order, through the `ConcatPath` bound on its `RedirectLookup` impl; lifetime and const parameters are not appended. So `@ComputerComponent.<Code> Code.Plus<MathExpr>: EvalAdd` expands to an impl generic over both the per-entry `Code` and the wildcard, and answers `CanCompute<Code, Plus<MathExpr>>` for every `Code`:
+
+```rust
+impl<Code, __Wildcard__>
+    DelegateComponent<PathCons<ComputerComponent, PathCons<Code, PathCons<Plus<MathExpr>, __Wildcard__>>>>
+    for Interpreter
+{
+    type Delegate = EvalAdd;
+}
+```
+
+Because the tail after the last written segment is always a wildcard, a key's impl covers every longer key that shares its segments, which is why a one-segment key and a two-segment key under it cannot share a table.
+
 ### Path groups expand to the cartesian product
 
 A grouped path key expands to one impl pair per combination, with the group's alternatives distributed over whatever follows. The entry `@app.[FooProviderComponent, BarProviderComponent].[u64, String]: DummyImpl` therefore emits four `DelegateComponent` impls, one per pair, each keyed on a full path prefix ending in `__Wildcard__`:
@@ -542,7 +572,7 @@ error: expected `:`
 
 The caret lands on the dot after the closing brace. Use a bracketed group when the path must continue past the alternatives — `@FooProviderComponent.[String, u32].bool` — and a braced group only at the end.
 
-Two conflicts are also worth anticipating, both reported by the compiler as `E0119` rather than by the macro. Two entries claiming the same key — including an `open` header colliding with an explicit mapping for the same component, and a generic `<T> Wrapper<T>` entry overlapping a specific `Wrapper<u64>` one — are the [conflicting wiring](../../errors/wiring/conflicting-wiring.md) class. And a direct entry for a path a joined namespace itself *binds* overlaps the blanket impl the `namespace` statement emits, which is the [namespace override conflict](../../errors/wiring/namespace-override-conflict.md) class; overriding works only on a path the namespace routes to without terminating.
+Two conflicts are also worth anticipating, both reported by the compiler as `E0119` rather than by the macro. Two entries claiming the same key — including an `open` header colliding with an explicit mapping for the same component, a generic `<T> Wrapper<T>` entry overlapping a specific `Wrapper<u64>` one, and a path key overlapping a longer path key beneath it, such as `@ComputerComponent.Eval` beside `@ComputerComponent.Eval.Literal<u64>` — are the [conflicting wiring](../../errors/wiring/conflicting-wiring.md) class. And a direct entry for a path a joined namespace itself *binds* overlaps the blanket impl the `namespace` statement emits, which is the [namespace override conflict](../../errors/wiring/namespace-override-conflict.md) class; overriding works only on a path the namespace routes to without terminating.
 
 ## Related constructs
 

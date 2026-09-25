@@ -27,6 +27,7 @@ The interpreter is a single CGP component whose `Code` type parameter is the pro
 ```rust
 #[async_trait]
 #[cgp_component(Handler)]
+#[prefix(@cgp.extra.handler in DefaultNamespace)]
 #[derive_delegate(UseDelegate<Code>)]
 #[derive_delegate(UseInputDelegate<Input>)]
 #[use_type(HasErrorType.Error)]
@@ -69,16 +70,24 @@ Matching `Handler<Checksum<Hasher>, …>` for any `Hasher` lets the one provider
 
 ## Assembling an interpreter by dispatching on the syntax
 
-A whole-language interpreter is assembled by routing each `Code` to its own provider, which is what [`UseDelegate`](../reference/providers/use_delegate.md) does. Because the handler components are declared `#[derive_delegate(UseDelegate<Code>)]`, a context can resolve the handler component through an inner type-level table keyed on the `Code` type, in the manner described in [dispatching](dispatching.md). Each entry maps a fragment type — its generic parameters bound by a leading `<…>` so the key matches every use — to the provider that interprets it:
+A whole-language interpreter is assembled by routing each `Code` to its own provider, with the `open` statement of [`delegate_components!`](../reference/macros/delegate_components.md). A table that `open`s the handler component resolves it through the [`RedirectLookup`](../reference/providers/redirect_lookup.md) impl every component carries, which appends the `Code` and then the `Input` to the lookup path. Each entry maps a fragment type — its generic parameters bound by a leading `<…>` so the key matches every use — to the provider that interprets it, and the table is usually an [aggregate provider](aggregate-providers.md) so that one backend's fragments can be wired as a unit:
 
 ```rust
-@HandlerComponent.<Path, Args> SimpleExec<Path, Args>:
-    HandleSimpleExec,
-@HandlerComponent.<Method, Url, Headers> SimpleHttpRequest<Method, Url, Headers>:
-    HandleSimpleHttpRequest,
+delegate_components! {
+    new HypershellTokioProvider {
+        open HandlerComponent;
+
+        @HandlerComponent.<Path, Args> SimpleExec<Path, Args>:
+            HandleSimpleExec,
+        @HandlerComponent.<Path, Args> StreamingExec<Path, Args>:
+            PipeHandlers<Product![HandleToTokioAsyncRead, HandleStreamingExec, WrapTokioAsyncRead]>,
+    }
+}
 ```
 
 Resolving the interpreter for a program then walks one extra step through this table: the context dispatches the handler component on the fragment type and finds its provider. Because the keys are types rather than values, a single entry can capture generic structure that a value-level lookup table never could, and the per-fragment providers stay completely independent of one another — adding a fragment is adding a row.
+
+The same path can dispatch on the *input* as well. A key that stops after the fragment matches it with any input, while a key that continues with a second segment matches only that input type, and a generic first segment ignores the fragment altogether. That is how a stage that must accept several stream types is wired without the program saying so: the `HandleToTokioAsyncRead` stage above is itself a table keyed `@HandlerComponent.<Code> Code.<S> TokioAsyncReadStream<S>` and so on, converting whatever arrives. The one restriction is that a fragment is keyed either on its own or per input within one table, never both. The legacy form of both kinds of dispatch, nested [`UseDelegate`](../reference/providers/use_delegate.md) and `UseInputDelegate` tables, still works; the [dispatching-per-type](../guides/dispatching-per-type.md) guide shows the conversion.
 
 ## Composing and extending the language
 
@@ -94,4 +103,4 @@ Interpreting at compile time is the pattern's strength and its limit at once. Th
 
 ## Related constructs
 
-A type-level DSL is an assembly of constructs documented on their own. The interpreter interface is a member of the [handler family](handlers.md) — usually [`Handler`](../reference/components/handler.md) or [`Computer`](../reference/components/computer.md) — which rests on the [consumer/provider trait duality](consumer-and-provider-traits.md). Fragment interpreters are providers written with [`#[cgp_impl]`](../reference/macros/cgp_impl.md) that draw their needs from the context as [impl-side dependencies](impl-side-dependencies.md), and a fragment parameterized by an abstract type uses [abstract types](abstract-types.md) to stay decoupled from concrete ones. The abstract syntax is built from type-level data — [`Product!`](../reference/macros/product.md) lists and [`Symbol!`](../reference/macros/symbol.md) strings — and dispatched on with [`UseDelegate`](../reference/providers/use_delegate.md) per [dispatching](dispatching.md). Composition uses the [handler combinators](../reference/providers/handler_combinators.md), and the language is bundled and extended through [namespaces](namespaces.md) defined with [`cgp_namespace!`](../reference/macros/cgp_namespace.md) and joined with [`delegate_components!`](../reference/macros/delegate_components.md). The [shell-scripting DSL example](../../examples/shell-scripting-dsl.md) is a complete worked instance of the whole pattern.
+A type-level DSL is an assembly of constructs documented on their own. The interpreter interface is a member of the [handler family](handlers.md) — usually [`Handler`](../reference/components/handler.md) or [`Computer`](../reference/components/computer.md) — which rests on the [consumer/provider trait duality](consumer-and-provider-traits.md). Fragment interpreters are providers written with [`#[cgp_impl]`](../reference/macros/cgp_impl.md) that draw their needs from the context as [impl-side dependencies](impl-side-dependencies.md), and a fragment parameterized by an abstract type uses [abstract types](abstract-types.md) to stay decoupled from concrete ones. The abstract syntax is built from type-level data — [`Product!`](../reference/macros/product.md) lists and [`Symbol!`](../reference/macros/symbol.md) strings — and dispatched on with the `open` statement of [`delegate_components!`](../reference/macros/delegate_components.md) through [`RedirectLookup`](../reference/providers/redirect_lookup.md), or with the legacy [`UseDelegate`](../reference/providers/use_delegate.md) tables. Composition uses the [handler combinators](../reference/providers/handler_combinators.md), and the language is bundled and extended through [namespaces](namespaces.md) defined with [`cgp_namespace!`](../reference/macros/cgp_namespace.md) and joined with [`delegate_components!`](../reference/macros/delegate_components.md). The [shell-scripting DSL example](../../examples/shell-scripting-dsl.md) is a complete worked instance of the whole pattern.

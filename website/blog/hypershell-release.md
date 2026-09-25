@@ -135,7 +135,10 @@ Leave it alone, and do not attempt a syntax refresh — the preset architecture 
 not translatable line-by-line into namespaces, so a partial update would be worse than none. When
 current material on this subject is needed, write from the
 [shell-scripting DSL example](../../examples/shell-scripting-dsl.md) and
-[type-level DSLs](../../cgp/concepts/type-level-dsls.md) instead.
+[type-level DSLs](../../cgp/concepts/type-level-dsls.md) instead, and take the facts about the
+project itself (its architecture, the behavior of each piece of syntax, what works and what does not)
+from [projects/hypershell/](../../projects/hypershell/README.md), which is verified against its
+source.
 
 If the project ever wants a current Hypershell article, the honest framing is a new post rather than a
 revision, and the [conference talk and deep-dive playbooks](../../communication-strategy/formats.md)

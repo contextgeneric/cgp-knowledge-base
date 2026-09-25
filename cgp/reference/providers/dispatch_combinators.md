@@ -230,18 +230,20 @@ let _area = MatchWithHandlers::<
 
 The list tries `Circle` first; if the runtime value is a circle, `ComputeArea` runs on the `Circle` payload and the loop stops. Otherwise the remainder carries `Circle` ruled out into the `Rectangle` adapter, which is the last arm, so its failure would leave an uninhabited remainder that `finalize_extract_result` discharges.
 
-The same dispatch is far shorter through `MatchWithValueHandlers`, which builds that list from the enum's own fields. Wiring it into a context's `Computer` component with [`UseInputDelegate`](use_delegate.md) lets the matcher be selected when the input is a `Shape`:
+The same dispatch is far shorter through `MatchWithValueHandlers`, which builds that list from the enum's own fields. Wiring it into a context's `Computer` component with the `open` statement of [`delegate_components!`](../macros/delegate_components.md), keyed on the input as the second path segment, lets the matcher be selected when the input is a `Shape`:
 
 ```rust
 delegate_components! {
     App {
-        ComputerComponent: UseInputDelegate<new AreaComputers {
-            [Circle, Rectangle, Triangle]: ComputeArea,
-            [Shape, ShapePlus]: MatchWithValueHandlers,
-        }>,
+        open ComputerComponent;
+
+        @ComputerComponent.<Code> Code.[Circle, Rectangle, Triangle]: ComputeArea,
+        @ComputerComponent.<Code> Code.[Shape, ShapePlus]: MatchWithValueHandlers,
     }
 }
 ```
+
+Existing code wires the same table in the legacy form, `ComputerComponent: UseInputDelegate<new AreaComputers { … }>`, described under [handler combinators](handler_combinators.md#the-legacy-form-useinputdelegate).
 
 Here a `Circle` input is handled directly by `ComputeArea`, while a `Shape` input is handled by `MatchWithValueHandlers`, which synthesizes `ExtractFieldAndHandle<Tag, HandleFieldValue<UseContext>>` for each variant and routes each payload back through the context's own `ComputerComponent` — so `Circle` and `Rectangle` payloads reach `ComputeArea` after all.
 

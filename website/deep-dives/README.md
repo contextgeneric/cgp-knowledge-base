@@ -42,8 +42,7 @@ context fields through getter traits where an `#[implicit]` argument is now the 
 dependencies as hand-written `where Self:` bounds.
 
 Each document below carries the concrete list. Where a change is uncertain, it is marked as such rather
-than asserted — one of them, the `UseInputDelegate` tables in the expression example, looks like an
-`open` candidate and is not.
+than asserted.
 
 ## The catalog
 

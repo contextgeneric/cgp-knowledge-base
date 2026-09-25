@@ -48,7 +48,7 @@ impl DelegateComponent<AreaCalculatorComponent> for MyApp {
 // keyed by the redirect path with a trailing wildcard, mapping to RectangleArea
 ```
 
-The per-value entries are ordinary `DelegateComponent`/`IsProviderFor` pairs whose key is the redirect path type; `RedirectLookup` appends the dispatch parameter onto the path at lookup time and reads the result back.
+The per-value entries are ordinary `DelegateComponent`/`IsProviderFor` pairs whose key is the redirect path type; `RedirectLookup` appends the component's type parameters onto the path at lookup time and reads the result back. It appends every type parameter, in declaration order and skipping lifetimes and consts, so a key may run one segment per parameter and dispatch on a later parameter as well as the first, as `@FooProviderComponent.String.u32` does for `Foo<'a, T, U>`. Because every key ends in a wildcard, a shorter key's impl covers every longer key beneath it, so a table holding both `@C.A` and `@C.A.B` fails coherence with `E0119`.
 
 ## Behavior and corner cases
 
