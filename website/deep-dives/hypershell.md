@@ -117,12 +117,14 @@ rest on `Context:` in the explicit `for Context` form. Every one is the form
 [declaring-dependencies](../../cgp/guides/declaring-dependencies.md) tells readers to replace, and page
 2 of the deep dive quotes a provider in full.
 
-**Adopt `#[implicit]` arguments for context fields.** The repository has zero, and one
-getter-trait declaration. Reading a provider's own context field through a getter is the pattern
-[reading-context-fields](../../cgp/guides/reading-context-fields.md) reserves for the cases an implicit
-argument cannot reach — a field on another type, or a named accessor other code requires — and it
-should be
-checked case by case rather than converted wholesale.
+**Decide whether the HTTP client becomes an `#[implicit]` argument.** The repository has zero
+implicit arguments, and the case-by-case check leaves one candidate. Every other field read names its
+field in the program (`FieldArg<Tag>`), which an implicit argument cannot express. The exception is
+`HasReqwestClient`, a `#[cgp_getter]` that the namespace wires to the `http_client` field for every
+context. [reading-context-fields](../../cgp/guides/reading-context-fields.md) reserves `#[cgp_getter]`
+for choosing the field per context, which nothing does here, but converting it also removes the option
+of supplying the client another way; see the project's
+[issues](../../projects/hypershell/issues.md#housekeeping).
 
 **Replace the one live `UseDelegate` table.** `crates/hypershell-components/src/providers/pipe.rs`
 still wires the pipe handler through a nested dispatch table:
@@ -163,6 +165,13 @@ equivalent attribute must stay.
 
 **Widen `#[use_type]` adoption.** Two uses exist against several places where an abstract type is
 named. Low priority, but it is what the deep dive's code should look like.
+
+**Fix the defects before quoting the programs they break.** The project's
+[issues](../../projects/hypershell/issues.md#defects) record confirmed defects, each with its fix. The
+one that bears on the deep dive is the streaming request's redirect defect, which makes the two
+compare examples fail; an extension page that shows `Compare` or `If` should either wait for that fix
+or use a URL that does not redirect. The rest belong on the trade-offs page as limitations until they
+are fixed.
 
 ## How it relates to the knowledge base
 

@@ -816,7 +816,7 @@ it stale.
   that the tracked code bases are ahead of the posts, the catalog, and the document shape.
 - [hypershell.md](website/deep-dives/hypershell.md) — the type-level DSL: a six-page split, the embedded
   CGP primer removed in favour of the explanation tier, presets replaced by namespaces, and the
-  `#[uses]`/`#[implicit]` adoption the repository still needs.
+  source changes the repository still needs, from `#[uses]` adoption to the stale example comments.
 - [extensible-datatypes.md](website/deep-dives/extensible-datatypes.md) — records and variants from four
   posts and two example crates: a seven-page pattern-then-internals split, and why the expression
   crate's `UseInputDelegate` tables are *not* `open` candidates.

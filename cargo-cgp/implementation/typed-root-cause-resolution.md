@@ -599,13 +599,15 @@ fixtures:
   recovery that reduces the earlier stage's fixed output by re-normalizing the projection with the
   unknown input treated as deferrable, so the later stage's `<output>: AsRef<[u8]>` becomes the
   reported cause.
-- `cascade_nested_projection` — the three-stage variant distilled from the `http_checksum_native`
-  hypershell example, where the later stage's input (an earlier stage's fixed, projection-typed output
-  produced by a nested `PipeHandlers`) reaches an **input dispatcher** (`UseInputDelegate`) that has no
+- `cascade_nested_projection` — the three-stage variant of the Hypershell checksum pipeline shape,
+  where the later stage's input (an earlier stage's fixed, projection-typed output produced by a
+  nested `PipeHandlers`) reaches an **input dispatcher** written as a `UseInputDelegate` table with no
   entry for it. Pins the `[CGP-E110]` missing-dispatch-entry leaf: the cause is an unmet
-  `DelegateComponent` on the dispatch *table* rather than the context, which the walk used to drop as
-  plumbing — declining the whole resolution — and now reports, leading with
+  `DelegateComponent` on the dispatch *table* rather than the context, which the walk reports rather
+  than dropping as plumbing, leading with
   `provider \`SinkHandlers\` does not contain any delegate entry for \`Tagged<Bytes>\`` over the chain.
+  Hypershell's own dispatchers are `open`-based aggregates, which reach the redirect-wiring leaf
+  instead; see [typed-resolution-walk](typed-resolution-walk.md).
 - `empty_dispatch_table` — the same missing-dispatch-entry leaf on an **empty** `UseInputDelegate`
   table, the case the owner-property check cannot see (no `DelegateComponent` impl to find). Pins the
   structural `is_dispatch_lookup` recognition: the unmet `DelegateComponent`'s owner is a proper part

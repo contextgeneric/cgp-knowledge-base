@@ -10,7 +10,7 @@ The three-digit space is split by *what* a code classifies.
 
 ## Main-message headlines — `CGP-E0xx`
 
-These lead a rewritten main message. `E001`–`E003` and `E009` come from the typed resolver and carry a `root cause:` note; `E004`–`E008` classify a duplicate-key `E0119` conflict (no root-cause note, both `rustc` carets kept); `E010` is a wiring-overflow rewrite of `E0275`.
+These lead a rewritten main message. `E001`–`E003`, `E009`, and `E017` come from the typed resolver and carry a dependency chain in their notes, led by a `root cause:` line except for the two mismatch codes `E003` and `E017`, whose message states the cause; `E004`–`E008` classify a duplicate-key `E0119` conflict (no root-cause note, both `rustc` carets kept); `E010` and `E011` reshape a whole-program coherence error; and `E012`–`E016` reword a macro-lowering error, each with its fix in a `help`.
 
 - **CGP-E001** — the consumer trait is not implemented for the context (missing wiring, or an unmet transitive dependency).
 - **CGP-E002** — the provider trait is not implemented for the provider (its impl-side `where` bounds do not hold).
@@ -22,6 +22,13 @@ These lead a rewritten main message. `E001`–`E003` and `E009` come from the ty
 - **CGP-E008** — duplicate redirect: the same key redirected more than once.
 - **CGP-E009** — a hand-written wrapper trait (not a CGP consumer) fails because a CGP component it depends on fails.
 - **CGP-E010** — the wiring never resolves (an `E0275` overflow whose requirement is a `CanUseComponent` bound; usually a `UseContext` cycle).
+- **CGP-E011** — an orphan-rule namespace registration: a foreign component or path registered into a foreign namespace (`E0210`/`E0117`).
+- **CGP-E012** — a trait used in a `#[cgp_fn]`/`#[cgp_impl]` body but not declared with `#[uses]`.
+- **CGP-E013** — a `#[cgp_impl]` header names the component's consumer trait where its provider trait belongs.
+- **CGP-E014** — `#[cgp_impl]` applied to a trait that is not a CGP component.
+- **CGP-E015** — an inner-provider bound names the consumer trait rather than the provider trait.
+- **CGP-E016** — an inner provider a higher-order provider calls but never imports with `#[use_provider]`.
+- **CGP-E017** — an abstract type has the wrong type (the owner supplies one type where a provider requires another).
 
 ## Dependency-tree entries — `CGP-E1xx`
 
@@ -29,15 +36,16 @@ One per rendering template, riding at the start of each entry in a `root cause:`
 
 - **CGP-E101** — consumer trait impl hop.
 - **CGP-E102** — provider trait impl hop.
-- **CGP-E103** — non-terminal `HasField` accessor hop.
+- **CGP-E103** — retired and never emitted; the number is left unused.
 - **CGP-E104** — redirect-lookup hop (a namespace or `open` `RedirectLookup`).
 - **CGP-E105** — a hop through any other trait impl (a user's blanket trait, or an ordinary bound restated).
 - **CGP-E106** — leaf: a genuinely missing context field.
-- **CGP-E107** — leaf: the context wires no provider for a component (or terminates no namespace path).
+- **CGP-E107** — leaf: the context wires no provider for a component (or terminates no namespace path). An `@`-path key missing from an aggregate reached through `open` also takes this code.
 - **CGP-E108** — leaf: the struct has the field but did not derive `HasField`.
 - **CGP-E109** — leaf: a field has the wrong type.
-- **CGP-E110** — leaf: a non-context delegation table (aggregate provider, `UseDelegate`/`UseInputDelegate`) is missing a key.
+- **CGP-E110** — leaf: a non-context delegation table (aggregate provider, `UseDelegate`/`UseInputDelegate`) is missing a key that is not an `@`-path.
 - **CGP-E111** — leaf: a non-provider was wired into a provider slot.
+- **CGP-E112** — leaf: an associated type the owner supplies differs from the one a provider requires (the leaf face of `CGP-E017`).
 
 ## Root-cause leads — `CGP-E2xx`
 

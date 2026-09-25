@@ -410,6 +410,6 @@ cause rather than at the call. The only change a context makes to speak the exte
 namespace name, and the whole resolution is settled at compile time.
 
 One kind of extension this approach does not allow is rebinding a syntax the inherited namespace
-already routes, such as giving `SimpleExec` a different provider; that conflicts with the inherited
-binding. The alternatives are in
+already binds, such as giving `SimpleExec` a different provider; the new entry conflicts with the
+inherited one. The alternatives are in
 [extending the language](../projects/hypershell/guides/extending-the-language.md#replace-the-interpretation-of-existing-syntax).

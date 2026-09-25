@@ -3,7 +3,7 @@
 The longest post on the site — roughly 16,500 words — announcing [Hypershell](../../projects/hypershell/README.md)
 and using it to teach, in one pass, both the type-level DSL technique and CGP's whole wiring model. It
 remains the fullest written account of building a DSL whose programs are Rust types, and its
-self-contained CGP introduction is still one of the best on the site, but its wiring code is two
+self-contained CGP introduction is still one of the best on the site, but its wiring code is four
 breaking releases out of date.
 
 - **URL** — <https://contextgeneric.dev/blog/hypershell-release>
@@ -86,7 +86,8 @@ that topic.
 ## Where it diverges from CGP v0.8.0
 
 The post's *ideas* are current; its *wiring code* is uniformly stale. It was written against CGP
-v0.4.1 and predates three breaking releases.
+v0.4.1 and predates four breaking releases, v0.5.0 through the in-preparation v0.8.0, each of which
+removed something the post uses.
 
 - **`#[cgp_context(MyAppComponents: HypershellPreset)]` no longer exists.** Both the macro and the
   `HasProvider`/`HasCgpProvider` trait it generated were removed. A context now carries its own
@@ -97,17 +98,28 @@ v0.4.1 and predates three breaking releases.
   [namespaces](../../cgp/concepts/namespaces.md). The post's four-level preset delegation trace —
   `HypershellPreset` → `HypershellHandlerPreset` → `TokioHandlerPreset` → `HandleSimpleExec` — is an
   accurate description of a mechanism that no longer exists.
-- **`HasAsyncErrorType` and the `Async` trait were removed** in v0.5.0. `CanHandle`'s `Send` bounds
-  come from elsewhere now; see [send-bounds](../../cgp/concepts/send-bounds.md).
+- **`HasAsyncErrorType` and the `Async` trait were removed** in v0.5.0. The current `CanHandle`
+  carries no `Send` bounds at all, and a caller that needs one recovers it; see
+  [send-bounds](../../cgp/concepts/send-bounds.md).
 - **Every provider is written inside-out** with `#[cgp_new_provider]` and an explicit
   `context: &Context` first parameter. The current form is
   [`#[cgp_impl]`](../../cgp/reference/macros/cgp_impl.md) with `self`.
 - **Dependencies are hand-written `where` bounds.** `Context: CanExtractCommandArg<CommandPath> + ...`
-  would today be [`#[uses(...)]`](../../cgp/reference/attributes/uses.md), and context fields would be
-  read with [`#[implicit]`](../../cgp/reference/attributes/implicit.md) arguments rather than getter
-  traits.
+  would today be [`#[uses(...)]`](../../cgp/reference/attributes/uses.md). Most field reads cannot
+  become [`#[implicit]`](../../cgp/reference/attributes/implicit.md) arguments, because `FieldArg`
+  reads a field the program names; the one candidate is the HTTP client getter, and whether to
+  convert it is open, per the project's [issues](../../projects/hypershell/issues.md#housekeeping).
 - **`UseDelegate` tables are the legacy dispatch form**, superseded by the `open` statement per
-  [dispatching-per-type](../../cgp/guides/dispatching-per-type.md).
+  [dispatching-per-type](../../cgp/guides/dispatching-per-type.md). The same holds for the input
+  axis: the "Input-Based Dispatch" exercise points readers at `UseInputDelegate`, while Hypershell
+  now dispatches on the input with two-segment path keys, and its `Checksum` wiring starts with the
+  `HandleToFuturesStream` dispatcher rather than the post's fixed adapter pipeline; see
+  [streams and input dispatch](../../projects/hypershell/architecture/streams-and-input-dispatch.md).
+- **The crate graph is drawn flatter than it is.** The post lists `hypershell-reqwest-components` as
+  depending only on `cgp`, `hypershell-components`, and `reqwest`, but it also depends on
+  `hypershell-tokio-components`, for the stream wrappers and input dispatchers; see
+  [crate layout](../../projects/hypershell/architecture/crate-layout.md). The inversion argument
+  itself holds.
 - **The install snippet pins `cgp = "0.4.1"` and `hypershell = "0.1.0"`.** Hypershell itself now
   tracks `cgp` 0.8.0-alpha.
 - **One claim has been overtaken.** The post says AI editors "are getting pretty good at deciphering

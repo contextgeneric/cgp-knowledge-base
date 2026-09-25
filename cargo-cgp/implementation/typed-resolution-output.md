@@ -157,7 +157,11 @@ The `root cause:` lead is worded by *why* the leaf is unmet, and there are six l
   when it dispatches a component with a bare `open` statement, the redirect looks the path up in the
   context's own table, so the failure is an unmet `DelegateComponent<PathCons<…>>` on the context —
   told apart from a plain missing component (whose key is a bare marker) by the `PathCons` key, and
-  rendered as the whole path rather than its flattened item name. The
+  rendered as the whole path rather than its flattened item name. The key is classified before the
+  owner, so an aggregate provider that `open`s a component and lacks an entry reads the same way,
+  with the aggregate named as the "context": Hypershell's input dispatcher reports
+  `` context `HandleToTokioAsyncRead` does not contain any delegate entry for `@HandlerComponent.StreamToStdout.GenericArray<u8, …>` ``,
+  not the missing-dispatch-entry leaf below. No fixture pins that aggregate case. The
   [`unregistered_prefix_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/resolution/unregistered_prefix_path.rs),
   [`qualified_prefix_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/qualified_prefix_path.rs),
   [`multi_redirect_missing`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/multi_redirect_missing.rs),
@@ -166,14 +170,14 @@ The `root cause:` lead is worded by *why* the leaf is unmet, and there are six l
 
 - A **missing dispatch entry** — a *non-context* delegation table missing a key — is the wiring
   counterpart for a provider table rather than the context. It reads as
-  `root cause: [CGP-E110] provider \`ToTokioAsyncReadHandlers\` does not contain any delegate entry for \`GenericArray<u8, …>\``
+  `root cause: [CGP-E110] provider \`SinkHandlers\` does not contain any delegate entry for \`Tagged<Bytes>\``
   and names the table and the key. The owner is either an aggregate provider missing a component
   wiring or a `UseDelegate`/`UseInputDelegate` dispatch table missing a branch for the type it
   dispatches on (a `Code` fragment or an `Input` value's type); the two are recognized alike, by the
-  owner carrying at least one `DelegateComponent` impl. This is the leaf a handler pipeline bottoms out
-  on when a stage's output is not a type a later stage's input dispatcher handles — the
-  `http_checksum_native` hypershell shape, where a raw `GenericArray` digest reaches an `AsyncRead`
-  sink's input dispatcher because a byte-encoding stage is missing. The tree shows the offending type
+  owner carrying at least one `DelegateComponent` impl, provided the key is not a redirect path. This
+  is the leaf a handler pipeline bottoms out on when a stage's output is not a type a later stage's
+  `UseInputDelegate` input dispatcher handles, as when a raw digest reaches an `AsyncRead` sink's
+  dispatcher because a byte-encoding stage is missing. The tree shows the offending type
   flowing into the stage, so a reader sees exactly what reached a stage that cannot handle it
   ([`cascade_nested_projection`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/cascade_nested_projection.rs) pins
   the shape; [`transitive_missing_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/missing-wiring/transitive_missing_wiring.rs)

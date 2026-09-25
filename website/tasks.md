@@ -176,12 +176,13 @@ tracks. **The code tasks are genuine library work, not documentation housekeepin
 a deep dive written against the current code would show forms the guides tell readers not to write. They
 are also independent of everything above, so they can start whenever there is capacity for them.
 
-- **DC1 — modernize `hypershell`.** Adopt `#[uses(...)]` for its eight hand-written `Self:` bounds and
-  `#[implicit]` for its context-field reads, replace the one live `UseDelegate` table in
-  `providers/pipe.rs` — verifying first whether `open` accepts a bounded generic key — drop the six
-  `#[derive_delegate(UseDelegate<Arg>)]` attributes, whose removal is breaking for downstream users and is
-  accepted, and fix the two example comments describing the removed `#[cgp_inherit]`. *Lands in:* the
-  `hypershell` repository.
+- **DC1 — modernize `hypershell`.** Adopt `#[uses(...)]` for its hand-written `where` bounds, and
+  decide whether the HTTP client getter becomes an `#[implicit]` argument, the only field read that
+  could. Replace the one live `UseDelegate` table in `providers/pipe.rs`; a probe confirmed that `open`
+  accepts its bounded generic key. Drop the six `#[derive_delegate(UseDelegate<Arg>)]` attributes,
+  whose removal is breaking for downstream users and is accepted, and fix the five example comments
+  describing the removed preset system. *Lands in:* the `hypershell` repository. The project's
+  [issues](../projects/hypershell/issues.md) list the defects worth fixing in the same pass.
 - **DC2 — modernize the two `cgp-examples` crates.** The least modernized of the four: convert
   `builder`'s six getter traits to `#[implicit]` arguments, adopt `#[uses]` across both crates, and
   replace the `Code`-keyed `UseDelegate` tables with `open`. **Leave the `UseInputDelegate` tables and

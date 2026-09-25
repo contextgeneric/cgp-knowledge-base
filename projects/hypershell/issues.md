@@ -212,9 +212,17 @@ source has no doc comments, so the crates' docs.rs pages list items with no expl
   rather than Hypershell's.
 - **Providers use the explicit form.** Almost every provider names the context and lists `Context:`
   bounds, and none uses [`#[uses]`](../../cgp/reference/attributes/uses.md). This is the form the
-  [declaring-dependencies](../../cgp/guides/declaring-dependencies.md) guide replaces. `#[implicit]`
-  does not apply, because the one field read with a fixed name, the HTTP client, is a getter wired by
-  the namespace, and every other field read is chosen by the program.
+  [declaring-dependencies](../../cgp/guides/declaring-dependencies.md) guide replaces.
+- **The HTTP client is read through `#[cgp_getter]`.** Every field read except one names its field in
+  the program (`FieldArg<Tag>`, `FieldArgs<Tag>`), so an
+  [`#[implicit]`](../../cgp/reference/attributes/implicit.md) argument cannot express it. The
+  exception is `HasReqwestClient`, a `#[cgp_getter]` component that `HypershellNamespace` wires to
+  `UseField<Symbol!("http_client")>` for every context. The
+  [reading-context-fields](../../cgp/guides/reading-context-fields.md) guide reserves `#[cgp_getter]`
+  for choosing the field per context, which nothing in the repository does, so an
+  `#[implicit] http_client: &Client` argument on `HandleCoreHttpRequest` would be the default form. It
+  would also remove the option of supplying the client some other way. Which to keep is a design
+  decision.
 - **`HandlePipe` uses a legacy `UseDelegate` table.** A probe confirmed that `open` accepts its
   bounded key, `<Handlers: WrapCall> Pipe<Handlers>`, so it can move to the form the
   [dispatching-per-type](../../cgp/guides/dispatching-per-type.md) guide prescribes.

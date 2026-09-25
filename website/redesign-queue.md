@@ -87,8 +87,9 @@ replacing the usefulness of the three longest blog posts, whose code is uniforml
 after the v0.8.0 relaunch rather than with it**, which is the one part of the target the relaunch does
 not carry. Each is planned in [deep-dives/](deep-dives/README.md), and each carries a list of
 source-code changes its tracked repository needs first. Two of those lists contain a substantial item:
-**adopting `#[uses]` and `#[implicit]` in `hypershell` and `cgp-examples/builder`**, and **publishing a
-`CgpSerdeNamespace`**, which is a library improvement rather than a documentation convenience.
+**adopting `#[uses]` in `hypershell`, and `#[uses]` and `#[implicit]` in `cgp-examples/builder`**, and
+**publishing a `CgpSerdeNamespace`**, which is a library improvement rather than a documentation
+convenience.
 
 **A blog post on implicit type arguments** — the framing that an abstract type is an implicit *type*
 argument, so a type dependency stops being a parameter every layer threads. It is a `deepdive` rather

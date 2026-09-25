@@ -120,9 +120,15 @@ are dropped as plumbing above. The leaf shapes are:
 
 - An unmet **`HasField`** is the field leaf.
 - An unmet **`DelegateComponent<Marker>` on the context** is the missing-wiring leaf: the context
-  delegates that component to no provider. (When the key is a `PathCons` path rather than a bare
-  marker — an `open`-dispatched value the context never wired — it is the missing-*redirect*-wiring
-  leaf, named by its whole path.)
+  delegates that component to no provider.
+- An unmet **`DelegateComponent<PathCons<…>>`**, whose key is a redirect path rather than a bare
+  marker, is the missing-*redirect*-wiring leaf (`[CGP-E107]`), named by its whole path. This check
+  runs on the key before any check on the owner, so it applies to whatever table the `open` statement
+  or namespace redirected into: the context's own table, and equally an aggregate provider that
+  `open`s a component. For an aggregate the leaf still calls the owner a "context", as in
+  `` context `HandleToTokioAsyncRead` does not contain any delegate entry for `@HandlerComponent.…` ``
+  from Hypershell's input dispatcher, rather than reporting it as the missing-dispatch-entry leaf
+  below.
 - An unmet **`DelegateComponent<Key>` on a *non-context* delegation table** is the missing-dispatch-entry
   leaf (`[CGP-E110]`): the owner is a provider that delegates — an aggregate provider missing a
   component wiring, or a `UseDelegate`/`UseInputDelegate` table missing a branch for the type it
@@ -140,12 +146,13 @@ are dropped as plumbing above. The leaf shapes are:
     structure is visible.
 
   This is the leaf a handler pipeline bottoms out on when a stage's output type is not one a later
-  stage's input dispatcher handles — the shape the `http_checksum_native` hypershell example produces
-  once a byte-encoding stage is removed and a raw `GenericArray` digest reaches an `AsyncRead` sink's
-  input dispatcher (distilled in
-  [`cascade_nested_projection`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/cascade_nested_projection.rs), with
-  the empty-table variant in
-  [`empty_dispatch_table`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/empty_dispatch_table.rs)).
+  stage's `UseInputDelegate` input dispatcher handles: a raw `GenericArray` digest, say, reaching an
+  `AsyncRead` sink's dispatcher because a byte-encoding stage is missing. The shape is distilled in
+  [`cascade_nested_projection`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/cascade_nested_projection.rs),
+  with the empty-table variant in
+  [`empty_dispatch_table`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/empty_dispatch_table.rs).
+  Hypershell's own dispatchers `open` their component instead, so the same mistake in its
+  `http_checksum_native` example reaches the redirect-wiring leaf above.
 - An unmet **`DelegateComponent<Marker>` on a type that is neither the context nor any table** is the
   **not-a-provider** leaf (`[CGP-E111]`): a type wired where a provider was expected that does not
   implement the provider trait at all (`UseBasicAuth<QueryBalanceRequest>`, a request type in a

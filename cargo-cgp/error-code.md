@@ -439,7 +439,11 @@ The codes divide into the inner chain-node templates and the terminal root-cause
   on a context field that is genuinely absent.
 - **`CGP-E107` — missing delegate entry (leaf).** `` context `<Ctx>` does not contain any delegate
   entry for `<key>` `` — the context wires no provider for a component, or terminates no namespace
-  path (the `<key>` is a component marker or an `@`-path).
+  path (the `<key>` is a component marker or an `@`-path). An `@`-path key takes this code whatever
+  table it is missing from, so an aggregate provider that `open`s a component and lacks the entry is
+  also named here as the "context", as Hypershell's input dispatcher is in
+  `` context `HandleToTokioAsyncRead` does not contain any delegate entry for `@HandlerComponent.…` ``;
+  see [typed-resolution-walk](implementation/typed-resolution-walk.md).
 - **`CGP-E108` — unimplemented accessor (leaf).** `` accessor trait `HasField` with field `<f>` is not
   implemented for `<T>` `` — the struct carries the field but has not derived `HasField` for it (the
   fix, a `#[derive(HasField)]`, rides in a separate `help`). Several such fields on *one* struct are
@@ -458,7 +462,9 @@ The codes divide into the inner chain-node templates and the terminal root-cause
   table missing a branch for the type it dispatches on (a `Code` fragment or an `Input` value's type).
   The sibling of `CGP-E107` for a provider table rather than the context: the fix is to add the entry
   to *that provider*, or to feed the stage a type the table already covers (the shape a handler
-  pipeline hits when a stage's output type is not one a later stage's input dispatcher handles).
+  pipeline hits when a stage's output type is not one a later stage's input dispatcher handles). It
+  applies when the missing key is a bare type or component marker; a table reached through `open`
+  is keyed by an `@`-path and reports as `CGP-E107` instead.
 - **`CGP-E111` — not a provider (leaf).** `` the provider trait `<T>` is not implemented for `<X>` ``
   — the chain bottoms out on a type wired where a *provider* was expected that does not implement the
   provider trait at all. The mistake is putting a non-provider (often a request or value type) into a
