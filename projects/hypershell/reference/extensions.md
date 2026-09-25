@@ -65,8 +65,8 @@ where
 ### Behavior
 
 The provider calls `hex::encode` and cannot fail. It ignores the `Code`, so it can answer for any
-syntax a bundle routes to it. The three checksum examples print the same digest as `sha256sum`
-through it.
+syntax a bundle routes to it. Through it, `http_checksum_native` prints the same digest that
+`sha256sum` produces in the other two checksum examples.
 
 ## `WebSocket` and `HandleWebsocket`
 

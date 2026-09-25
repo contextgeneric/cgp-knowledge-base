@@ -111,8 +111,9 @@ code the guides tell readers not to write.
 
 ### Required before the deep dive quotes the code
 
-**Adopt `#[uses(...)]` for trait dependencies.** The repository has **zero** `#[uses]` attributes
-and eight hand-written `Self:` `where` bounds. Every one is the form
+**Adopt `#[uses(...)]` for trait dependencies.** The repository has **zero** `#[uses]` attributes.
+Its providers state their trait dependencies as hand-written `where` bounds, three on `Self:` and the
+rest on `Context:` in the explicit `for Context` form. Every one is the form
 [declaring-dependencies](../../cgp/guides/declaring-dependencies.md) tells readers to replace, and page
 2 of the deep dive quotes a provider in full.
 
@@ -138,16 +139,16 @@ delegate_components! {
 ```
 
 The `open` statement with an `@`-path key is the current idiom per
-[dispatching-per-type](../../cgp/guides/dispatching-per-type.md). **Verify this one before changing
-it** — the key carries a bound on its generic parameter, and whether the `open` form accepts a bounded
-generic key should be confirmed against the
-[`delegate_components!` reference](../../cgp/reference/macros/delegate_components.md) rather than
-assumed.
+[dispatching-per-type](../../cgp/guides/dispatching-per-type.md). The key carries a bound on its
+generic parameter, and a probe confirmed that the `open` form accepts the bounded key
+`<Handlers: WrapCall> Pipe<Handlers>`, per the project's
+[issues](../../projects/hypershell/issues.md#housekeeping).
 
-**Fix two stale comments.** `crates/hypershell-examples/examples/hello_name.rs:21` and
-`github_issues.rs:21` both describe `#[cgp_inherit]`, a construct removed in v0.7.0, while the code
-beneath them correctly uses `namespace HypershellNamespace;`. These are the only preset-era references
-left in the repository and they will be read as current by anyone quoting the examples.
+**Fix five stale comments.** The header comments of `hello_name.rs`, `github_issues.rs`,
+`bluesky.rs`, `bluesky_websocket.rs`, and `http_checksum_native.rs` in
+`crates/hypershell-examples/examples/` describe `#[cgp_inherit]`, `HypershellPreset`, or a custom
+`MyAppPreset`, all removed, while the code beneath them uses namespaces. They will be read as current
+by anyone quoting the examples.
 
 **Drop the six `#[derive_delegate(UseDelegate<Arg>)]` attributes** on `command_arg.rs`,
 `method_arg.rs`, `url_arg.rs`, `string_arg.rs`, `update_builder.rs`, and `update_command.rs`. Since

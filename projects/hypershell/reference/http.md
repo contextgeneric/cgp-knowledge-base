@@ -105,9 +105,10 @@ directly; insert `ToTokioAsyncRead`, per [streams and I/O](streams-and-io.md).
 
 ### Known issues
 
-The request body is always a stream, and the streaming request does not follow redirects. A probe
-against a URL that answers 301 returned the redirect as an `ErrorResponse`, while
-`SimpleHttpRequest` to the same URL followed it. This breaks the `parallel_compare` and
+The request body is always a stream, and `reqwest` follows a redirect only when it can resend the
+body or the redirect discards it. So the streaming request does not follow a 301, 302, 307, or 308
+answering a GET. A probe against a URL that answers 301 returned the redirect as an `ErrorResponse`,
+while `SimpleHttpRequest` to the same URL followed it. This breaks the `parallel_compare` and
 `compare_and_branch` examples; see [issues.md](../issues.md#streaminghttprequest-does-not-follow-redirects).
 
 ## `CoreHttpRequest` and `HandleCoreHttpRequest`

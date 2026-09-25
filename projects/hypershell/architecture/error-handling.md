@@ -69,13 +69,13 @@ giving the exit code and the captured stderr.
 ## Every source error type is listed twice
 
 **Each source type appears in the namespace's route list and again in `HypershellErrorHandler`'s
-table, and a type in neither is a compile error at the first provider that raises it.** The route
-list routes the path `@cgp.core.error.ErrorRaiserComponent.<Type>` to the aggregate, and the
-aggregate maps the type to its strategy. An extension that raises a type the namespace has never
-seen must add a route for it, which is why the `bluesky_websocket` example wires
+table, and a type missing from either list is a compile error at the first provider that raises
+it.** The route list routes the path `@cgp.core.error.ErrorRaiserComponent.<Type>` to the aggregate,
+and the aggregate maps the type to its strategy. An extension that raises a type the namespace has
+never seen must add a route for it, which is why the `bluesky_websocket` example wires
 `@cgp.core.error.ErrorRaiserComponent.TungsteniteError: RaiseAnyhowError` on its context. A probe
-that raised an unregistered `TooLong` error from a custom handler failed with a
-`[CGP-E107]` root cause naming the missing path; see [debugging](../guides/debugging.md).
+that raised an unregistered `TooLong` error from a custom handler failed with a `[CGP-E107]` root
+cause naming the missing path; see [debugging](../guides/debugging.md).
 
 The duplication has a reason. The namespace entries are routes and the aggregate entries are
 choices, and keeping the choices in an aggregate lets a different namespace reuse them. But nothing

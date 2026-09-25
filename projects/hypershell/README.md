@@ -80,19 +80,21 @@ compiles only the libraries it interprets. The layout is worked through in
 
 ## Status and gaps
 
-The library runs every example except three, and its source is a reliable reference for current CGP.
-It is a proof of concept with gaps that have each been confirmed against the `v0.8.0` branch.
+Every example runs except the two compare examples, which fail on a redirect. `rust_playground` was
+not run, because running it publishes a public gist. The source is a reliable reference for current
+CGP, but the library is a proof of concept with gaps, each confirmed against the `v0.8.0` branch.
 [issues.md](issues.md) records them in full, together with the housekeeping items this summary leaves
 out:
 
 - **Broken syntax** — `ConvertTo` never resolves, and `PutMethod`, `DeleteMethod`, and `StreamToLines`
-  are unrouted, so a program using any of them fails to compile.
+  have providers but no routes, so a program using any of them fails to compile.
 - **Silent failures** — a streaming command's exit status and standard error are ignored, and a failed
   WebSocket connection panics.
-- **Redirects** — a streaming HTTP request does not follow redirects, which makes the two compare
-  examples fail.
+- **Redirects** — a streaming HTTP request sends even an empty body as a stream, which `reqwest`
+  cannot resend, so it does not follow a 301, 302, 307, or 308 answering a GET. This makes the two
+  compare examples fail.
 - **Overrides** — a context that joins `HypershellNamespace` cannot reinterpret a syntax the namespace
-  already routes; it must use `Use` in the program or restate the routes in its own namespace.
+  already binds; it must use `Use` in the program or restate the routes in its own namespace.
 - **The macro** — its expansion needs the prelude in scope, and it panics on unbalanced angle brackets.
 - **Evidence** — four tests, two of which assert nothing; no wiring checks; no rustdoc; no CI; and a
   workspace that builds only beside a local `cgp` checkout, on nightly with the new trait solver.

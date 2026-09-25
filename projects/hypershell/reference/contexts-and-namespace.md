@@ -109,8 +109,8 @@ delegate_components! {
 ### Behavior
 
 It runs any program whose arguments are all static. It is wired for the whole language, so an HTTP
-program or a `FieldArg` also type-checks against its wiring and fails only on the missing field, with
-a `[CGP-E106]` root cause such as "missing field `http_client` on `HypershellCli`".
+program or a `FieldArg` resolves through every route and fails only at the field read, with a
+`[CGP-E106]` root cause such as "missing field `http_client` on `HypershellCli`".
 
 ## `HypershellHttp`
 

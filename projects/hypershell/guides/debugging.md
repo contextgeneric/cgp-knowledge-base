@@ -28,9 +28,11 @@ The tree `cargo cgp check` prints follows the lookup described in
 [assembly](../architecture/assembly.md#one-lookup-end-to-end). Each namespace hop and each bundle's
 `open` redirect is a `[CGP-E104]` line, each provider a `[CGP-E102]`, and each consumer trait
 reached through a dependency a `[CGP-E101]`. Read from the bottom: the last lines name the leaf that
-failed. One labeling quirk: every `[CGP-E104]` names the context as the table (`in HypershellCli`),
-even for a redirect that runs inside a bundle such as `HypershellTokioProvider`, and a `[CGP-E107]`
-leaf calls a bundle a "context". This is tracked in cargo-cgp's issues.
+failed. Two labels mislead. Every `[CGP-E104]` names the context as the table (`in HypershellCli`),
+even for a redirect that runs inside a bundle such as `HypershellTokioProvider`. And a missing entry
+in an aggregate reached through `open`, such as an input dispatcher, is reported as a `[CGP-E107]`
+leaf that calls the aggregate a "context", rather than as the `[CGP-E110]` provider-table leaf the
+[error-code catalog](../../../cargo-cgp/error-code.md) defines for a provider's table.
 
 ## A context lacks a field
 
@@ -100,8 +102,9 @@ reports a missing `@HandlerComponent.StreamingExec<…>.&str` entry, and the fix
 
 ## A syntax has no route
 
-A syntax a bundle interprets but the namespace does not route fails at the route. `PutMethod` is
-implemented by `ExtractReqwestMethod` but routed nowhere:
+A syntax that no route reaches fails at the missing route, even when a provider for it exists.
+`PutMethod` is implemented by `ExtractReqwestMethod`, but neither the reqwest bundle nor the namespace
+lists it:
 
 ```rust
 pub type Program = hypershell! {

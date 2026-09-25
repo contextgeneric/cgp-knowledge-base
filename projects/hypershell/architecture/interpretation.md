@@ -143,29 +143,35 @@ the namespace routes `BytesToStream`.
 ## Recursion over type-level lists
 
 **A provider for a list syntax is one struct with two impls, one for `Cons` and one for `Nil`, and
-the `Cons` impl calls the same provider for the tail.** `WithArgs` is interpreted this way by
-`ExtractArgs`:
+the `Cons` impl handles the head and recurses on the tail.** `JoinArgs` is interpreted this way by
+`JoinStringArgs`:
 
 ```rust
-pub struct ExtractArgs;
+pub struct JoinStringArgs;
 
-#[cgp_impl(ExtractArgs)]
-impl<Context, Arg, Args> CommandUpdater<WithArgs<Cons<Arg, Args>>> for Context
+#[cgp_impl(JoinStringArgs)]
+impl<Context, Arg, Args> StringArgExtractor<JoinArgs<Cons<Arg, Args>>> for Context
 where
-    Context: CanExtractCommandArg<Arg>,
-    Context::CommandArg: AsRef<OsStr> + Send,
-    Self: CommandUpdater<Context, WithArgs<Args>>,
-{ /* extract the head through the context, then Self::update_command for the tail */ }
+    Context: CanExtractStringArg<Arg>,
+    JoinStringArgs: StringArgExtractor<Context, JoinArgs<Args>>,
+{ /* extract the head through the context, then call JoinStringArgs for the tail */ }
 
-#[cgp_impl(ExtractArgs)]
-impl<Context> CommandUpdater<WithArgs<Nil>> for Context { /* nothing to add */ }
+#[cgp_impl(JoinStringArgs)]
+impl<Context> StringArgExtractor<JoinArgs<Nil>> for Context { /* the empty string */ }
 ```
 
 The struct is declared by hand and each impl names it without `new`, since two impls share it. The
 head is resolved through the context, so each element may be any argument syntax the context
-routes. The tail is resolved through the provider itself, as `Self` in the `where` clause, so the
-recursion never re-enters the wiring for the list. `JoinStringArgs`, `JoinExtractArgs`, and
-`UpdateRequestHeaders` follow the same pattern for `JoinArgs` and `WithHeaders`.
+routes. The tail is resolved through the provider itself, named in the `where` clause, so the
+recursion never re-enters the wiring for the list. `JoinExtractArgs` and `UpdateRequestHeaders`
+follow the same pattern for `JoinArgs` as a path and for `WithHeaders`.
+
+`ExtractArgs`, which interprets `WithArgs`, recurses differently. It writes the tail bound as
+`Self: CommandUpdater<Context, WithArgs<Args>>`, and `#[cgp_impl]` reads `Self` as the context, so the
+bound expands to `Context: CommandUpdater<Context, WithArgs<Args>>` and the tail call to
+`Context::update_command`. Each tail is therefore looked up again through the context's wiring, and
+the recursion works only because the namespace routes every `WithArgs<Args>` back to `ExtractArgs`.
+The inconsistency is recorded in [issues.md](../issues.md#housekeeping).
 
 ## Control syntax
 

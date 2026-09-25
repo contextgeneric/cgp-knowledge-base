@@ -61,10 +61,35 @@ type Streaming = hypershell! {
 ```
 
 On `HypershellHttp`, `Simple` returned the 2.8 MB page and `Streaming` failed with the 301 response.
-The likely cause is that the streaming pipeline always sends its input as a streamed body through
-`StreamToBody`, and `reqwest` does not follow a redirect when it cannot replay the body; this is
-unconfirmed. The defect makes the `parallel_compare` and `compare_and_branch` examples fail, since
-their second URL lacks the trailing slash. See [HTTP](reference/http.md#streaminghttprequest-and-handlestreaminghttprequest).
+The cause is the body. The streaming pipeline always sends its input through `StreamToBody`, which
+builds a `reqwest::Body::wrap_stream`, even when the input is an empty `Vec<u8>`. The locked
+`reqwest` 0.12.28 follows redirects with `tower-http`'s `FollowRedirect`, which resends the request
+only with a clone of its body. A streamed body cannot be cloned, so the redirect response is returned
+unless the redirect itself discards the body, as a 303 does, or a 301 or 302 answering a POST. The
+simple request's `Vec<u8>` body is reusable, which is why it follows. The mechanism was read from the
+two crates' source, and the probe below confirms the consequence.
+
+The defect makes the `parallel_compare` and `compare_and_branch` examples fail, since their second URL
+lacks the trailing slash. The fix is to send a byte-buffer input as a buffered body instead of a
+stream. A probe ran the streaming request's inner providers directly on an empty `Vec<u8>`, skipping
+the input dispatcher and `StreamToBody`, and the request followed the redirect and returned the page:
+
+```rust
+type Buffered = Pipe<Product![
+    Use<
+        PipeHandlers<Product![HandleStreamingHttpRequest, WrapFuturesAsyncRead]>,
+        StreamingHttpRequest<GetMethod, Url, WithHeaders<Nil>>,
+    >,
+    ToTokioAsyncRead,
+    StreamToBytes,
+]>;
+```
+
+In the library, that means replacing the reqwest bundle's single `StreamingHttpRequest` entry with
+entries keyed per input, since a table cannot key one syntax both on its own and per input. The
+`Vec<u8>` and `String` entries would omit `HandleToTokioAsyncRead` and `StreamToBody`, and the reader
+entries would keep them. A streamed input still could not follow a redirect. See
+[HTTP](reference/http.md#streaminghttprequest-and-handlestreaminghttprequest).
 
 ### The WebSocket handler panics on a failed connection
 
@@ -115,8 +140,16 @@ beside `namespace HypershellNamespace;` fails with `[CGP-E005]`, "`App` cannot w
 behaves. It matters most for `CoreExec` and `CoreHttpRequest`, which exist so one entry can change how
 every command runs or every request is sent. The workarounds, `Use` in the program or a namespace
 that restates the routes, are in [extending the language](guides/extending-the-language.md#replace-the-interpretation-of-existing-syntax).
-A namespace that redirected each syntax to an overridable slot, rather than binding it, might allow
-overrides; the design is not worked out.
+
+The restriction is CGP's rule rather than Hypershell's: a namespace entry, once bound, cannot be
+overridden, so a default and an override cannot share a path; see the
+[namespace override conflict](../../cgp/errors/wiring/namespace-override-conflict.md). The pattern the
+[namespaces guide](../../cgp/guides/namespaces-and-prefixes.md) recommends is a base namespace that
+describes the structure and leaves the varying paths unbound, with each inheriting namespace binding
+them as one configuration. Applied here, `HypershellNamespace` would split into a base that binds
+every syntax meant to stay fixed, and a default configuration that binds the rest. A custom
+configuration would inherit the base and bind every varying syntax itself, including those it does
+not change. Which syntax should vary is not decided.
 
 ### `StreamToBytes` and `StreamToString` accept only Tokio readers
 
@@ -157,8 +190,8 @@ The macro works for every program in the repository, but four edges were confirm
 
 ### No wiring checks and no rustdoc
 
-Nothing in the repository uses `check_components!`, so a syntax that a bundle handles but the
-namespace does not route goes unnoticed; see [testing.md](testing.md#what-is-not-exercised). The
+Nothing in the repository uses `check_components!`, so a syntax that has a provider but no route goes
+unnoticed; see [testing.md](testing.md#what-is-not-exercised). The
 source has no doc comments, so the crates' docs.rs pages list items with no explanation.
 
 ## Housekeeping
@@ -177,8 +210,8 @@ source has no doc comments, so the crates' docs.rs pages list items with no expl
 - **The workspace builds only beside `../cgp`.** The root manifest patches `cgp` and
   `cgp-error-anyhow` to local paths, and its `repository` field points at the `cgp` repository
   rather than Hypershell's.
-- **Providers use the explicit form.** Every provider names the context and lists `Context:` bounds;
-  none uses [`#[uses]`](../../cgp/reference/attributes/uses.md). This is the form the
+- **Providers use the explicit form.** Almost every provider names the context and lists `Context:`
+  bounds, and none uses [`#[uses]`](../../cgp/reference/attributes/uses.md). This is the form the
   [declaring-dependencies](../../cgp/guides/declaring-dependencies.md) guide replaces. `#[implicit]`
   does not apply, because the one field read with a fixed name, the HTTP client, is a getter wired by
   the namespace, and every other field read is chosen by the program.
@@ -188,6 +221,15 @@ source has no doc comments, so the crates' docs.rs pages list items with no expl
 - **Six components carry an unused `#[derive_delegate(UseDelegate<…>)]`.** The four extractors and
   the two updaters generate a legacy dispatcher that nothing uses, since every bundle dispatches with
   `open`. Removing them is breaking for a downstream user who wires a `UseDelegate` table.
+- **`ExtractArgs` recurses through the wiring.** Its tail bound is written as
+  `Self: CommandUpdater<…>`, which `#[cgp_impl]` expands to a bound on the context, so `cargo cgp expand`
+  shows each tail of a `WithArgs` list resolved through the context's routes rather than by
+  `ExtractArgs` itself. `JoinStringArgs`, `JoinExtractArgs`, and `UpdateRequestHeaders` name
+  themselves instead. The recursion works only because the namespace routes every `WithArgs<Args>`
+  to the same provider; naming `ExtractArgs` in the bound, as the other three do, would make it direct.
+- **Two bundles open components they never wire.** `HypershellTokioProvider` opens the string and
+  URL extractors, and `HypershellReqwestProvider` the command and URL extractors, with no entries for
+  them. The namespace routes none of those paths to either bundle, so the extra `open`s are inert.
 - **`ReturnInput` duplicates CGP's.** `hypershell_components::providers::ReturnInput` has the same
   name and `Handler` bound as `cgp::extra::handler::ReturnInput`.
 - **A vestigial higher-ranked bound.** `HandleSimpleExec` requires `for<'a> CanRaiseError<ExecOutputError>`,

@@ -74,8 +74,9 @@ cgp_namespace! {
 A context joins the extended language by naming the new namespace; see
 [`http_checksum_native`](../examples/http-checksum-native.md). Two rules keep an extension working:
 
-- **List the syntax in both the bundle and the route.** Nothing connects the two, and a syntax listed
-  only in the bundle is unreachable, which is how `PutMethod` and `StreamToLines` are broken today.
+- **List the syntax in both the bundle and the route.** Nothing connects the two, and a syntax
+  missing from either is unreachable. `PutMethod`, `DeleteMethod`, and `StreamToLines` have providers
+  but appear in neither list, which is why they fail to compile.
 - **Put a dispatcher in front of a provider that accepts one input kind.** `HandleToTokioAsyncRead`
   and `HandleToFuturesStream` accept bytes and both reader wrappers, so the new stage chains after
   any existing one; see [streams and input dispatch](../architecture/streams-and-input-dispatch.md).

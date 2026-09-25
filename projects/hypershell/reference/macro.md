@@ -28,7 +28,7 @@ angle brackets as punctuation, and then applies four rules, recursively inside e
   `WithStaticArgs["a", "b"]` becomes `WithStaticArgs<Product![Symbol!("a"), Symbol!("b")]>`, and
   `WithHeaders[]` becomes `WithHeaders<Product![]>`, which is `WithHeaders<Nil>`.
 - **A string literal becomes `Symbol!("…")`.** Any other literal passes through unchanged, so a
-  number in type position is a parse error.
+  number is valid only where Rust accepts a const generic argument.
 - **Every other token passes through**, and every other group is emitted with its own delimiters.
 
 Because the rules recurse, a `|` inside angle brackets builds a nested pipeline. The compare examples

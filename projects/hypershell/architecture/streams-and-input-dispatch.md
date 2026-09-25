@@ -126,7 +126,7 @@ compile.** The table records what each handler syntax accepts under `HypershellN
 | `ReadFile` | `()` only | `TokioAsyncReadStream<File>` |
 | `WriteFile` | `Vec<u8>`, `String`, either reader wrapper | `()` |
 | `StreamToStdout` | `Vec<u8>`, `String`, either reader wrapper | `()` |
-| `StreamToBytes`, `StreamToString` | any `tokio::io::AsyncRead + Unpin`, so `TokioAsyncReadStream` only | `Vec<u8>`, `String` |
+| `StreamToBytes`, `StreamToString` | any `tokio::io::AsyncRead + Unpin`, which among stage outputs is `TokioAsyncReadStream` only | `Vec<u8>`, `String` |
 | `BytesToStream` | anything `AsRef<[u8]> + Unpin` | `TokioAsyncReadStream` |
 | `BytesToString` | anything `AsRef<[u8]>` | `String` |
 | `EncodeJson` | anything `Serialize` | `Vec<u8>` |
@@ -161,9 +161,9 @@ probes:
   returns. A command that wrote a megabyte to stderr completed without blocking, but the output was
   lost.
 
-Both handlers call `tokio::spawn`, as does `HandleWebsocket`, so a program with a streaming stage
-must run inside a Tokio runtime. All the examples use `#[tokio::main]`. The defects are in
-[issues.md](../issues.md#defects).
+`HandleStreamingExec` calls `tokio::spawn` for the copy task, as `HandleWebsocket` does for its
+forwarding task, so a program with either stage must run inside a Tokio runtime. All the examples use
+`#[tokio::main]`. The defects are in [issues.md](../issues.md#defects).
 
 ## Source
 
