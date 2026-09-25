@@ -148,8 +148,9 @@ of it — [hypershell](projects/hypershell/README.md), a type-level shell-script
 [cgp-serde](projects/cgp-serde/README.md), Serde rebuilt as swappable components. Each project
 section is verified against its project's source and grows from a single orienting `README.md` into a
 fixed shape: the project's architecture, a reference for its public items, guides, its tests, and its
-open issues. CGP's own constructs stay documented in the member sections and are linked rather than
-re-explained. cgp-serde's section follows that shape; Hypershell's is still a single `README.md`.
+open issues, with Hypershell adding one document per runnable example. CGP's own constructs stay
+documented in the member sections and are linked rather than re-explained. Both sections follow that
+shape, each documented against its project's `v0.8.0` branch.
 
 ## Finding your way in
 

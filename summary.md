@@ -519,7 +519,8 @@ it stale.
 - [profile-picture.md](examples/profile-picture.md) — a profile-picture lookup across a database query
   and an object-storage download.
 - [shell-scripting-dsl.md](examples/shell-scripting-dsl.md) — a type-level DSL whose programs are
-  types interpreted at compile time.
+  types interpreted at compile time, built on the Hypershell crates: bundles dispatching on syntax and
+  input, the assembling namespace, and an extension adding syntax and an error type.
 - [social-media-app.md](examples/social-media-app.md) — a users-and-posts CRUD backend, from coarse
   manager traits to provider bundles and namespace-grouped wiring.
 
@@ -868,11 +869,107 @@ it stale.
   section grows from one README into the fixed shape, and how each connects to an example, an
   announcement post, and a set of constructs.
 - [projects/hypershell/README.md](projects/hypershell/README.md) — the type-level shell-scripting
-  DSL: its crate layout, its namespace-based assembly, and the CGP it exercises.
+  DSL: what it is, which revision the documents describe (the unreleased `v0.8.0` branch, the only one
+  built on namespaces), the crate split, the confirmed gaps, the section catalog, and the public
+  material the documents feed.
+- [projects/hypershell/architecture/README.md](projects/hypershell/architecture/README.md) — the whole
+  design on one page: programs as types, interpretation by one provider per syntax, three wiring
+  layers, input dispatch through path keys, abstract errors, and the backend crate split.
+- [projects/hypershell/architecture/abstract-syntax.md](projects/hypershell/architecture/abstract-syntax.md)
+  — empty marker structs as syntax, the handler, argument, argument-list, and control syntax, the
+  internal core syntax, and the `hypershell!` surface layer.
+- [projects/hypershell/architecture/interpretation.md](projects/hypershell/architecture/interpretation.md)
+  — `Handler` as the interpreter, providers matching one syntax shape, the four extractors and two
+  updaters, calling back into the context and `Call`, recursion over type-level lists, and the control
+  syntax.
+- [projects/hypershell/architecture/assembly.md](projects/hypershell/architecture/assembly.md) — the
+  prefix scheme, backend bundles that `open` their components, `HypershellNamespace`'s routes, one-line
+  contexts and context entries, and one lookup traced end to end.
+- [projects/hypershell/architecture/streams-and-input-dispatch.md](projects/hypershell/architecture/streams-and-input-dispatch.md)
+  — the three stream wrapper types, two-segment `Code.Input` keys that dispatch on the input, adapters
+  built into a syntax's wiring, which stage accepts which input, and how streaming stages run.
+- [projects/hypershell/architecture/error-handling.md](projects/hypershell/architecture/error-handling.md)
+  — providers naming error sources and borrowed details, the anyhow wiring and raising aggregate, the
+  doubly listed error types, and the paths that escape the error type.
+- [projects/hypershell/architecture/crate-layout.md](projects/hypershell/architecture/crate-layout.md)
+  — the nine crates and their dependency graph, module layout and the prelude, and the build facts:
+  nightly with the new trait solver, and the local `cgp` patch.
+- [projects/hypershell/reference/README.md](projects/hypershell/reference/README.md) — the catalog,
+  the two template adaptations, and tables of every syntax type, component, provider, bundle, and
+  context with its crate, interpreter, route, and import path.
+- [projects/hypershell/reference/execution.md](projects/hypershell/reference/execution.md) —
+  `SimpleExec`, `StreamingExec`, `CoreExec`, the `CommandUpdater` component with `WithArgs` and
+  `FieldArgs`, and the execution error types.
+- [projects/hypershell/reference/arguments.md](projects/hypershell/reference/arguments.md) — the
+  string, command, and URL extractors and their abstract types, `StaticArg`, `FieldArg`, `JoinArgs`,
+  `UrlEncodeArg`, and the layered providers.
+- [projects/hypershell/reference/http.md](projects/hypershell/reference/http.md) — the simple,
+  streaming, and core requests, the method markers and extractor, headers, `HasReqwestClient`, and
+  `ErrorResponse`.
+- [projects/hypershell/reference/streams-and-io.md](projects/hypershell/reference/streams-and-io.md)
+  — the conversion syntax, `ReadFile` and `WriteFile`, the stream wrappers, the adapter providers, and
+  the two input dispatchers.
+- [projects/hypershell/reference/json.md](projects/hypershell/reference/json.md) — `EncodeJson` and
+  `DecodeJson`.
+- [projects/hypershell/reference/control.md](projects/hypershell/reference/control.md) — `Pipe`,
+  `Call`, `Use`, `ConvertTo` (which never resolves), `Box`, and `ReturnInput`.
+- [projects/hypershell/reference/extensions.md](projects/hypershell/reference/extensions.md) — the
+  checksum crate's `Checksum` and `BytesToHex`, and the tungstenite crate's `WebSocket`.
+- [projects/hypershell/reference/contexts-and-namespace.md](projects/hypershell/reference/contexts-and-namespace.md)
+  — `HypershellNamespace`'s full route table, `HypershellErrorHandler`, the bundles, `HypershellCli`,
+  `HypershellHttp`, and the prelude.
+- [projects/hypershell/reference/macro.md](projects/hypershell/reference/macro.md) — the rewriting
+  rules of `hypershell!` and its four confirmed edges.
+- [projects/hypershell/examples/README.md](projects/hypershell/examples/README.md) — the catalog of the
+  repository's runnable programs with what each needs and whether it works, the boundary with the
+  top-level example, and the examples library's `Compare`, `If`, and extension namespaces.
+- [projects/hypershell/examples/hello.md](projects/hypershell/examples/hello.md) — `echo hello world!`
+  on `HypershellCli`.
+- [projects/hypershell/examples/hello-name.md](projects/hypershell/examples/hello-name.md) — a runtime
+  argument read with `FieldArg` from a custom context.
+- [projects/hypershell/examples/http-checksum-cli.md](projects/hypershell/examples/http-checksum-cli.md)
+  — `curl | sha256sum | cut` as three streaming stages.
+- [projects/hypershell/examples/http-checksum-client.md](projects/hypershell/examples/http-checksum-client.md)
+  — the same with a native streaming request.
+- [projects/hypershell/examples/http-checksum-native.md](projects/hypershell/examples/http-checksum-native.md)
+  — the same with the checksum extension, joined by changing the namespace.
+- [projects/hypershell/examples/nix-manual.md](projects/hypershell/examples/nix-manual.md) — a native
+  request feeding `tr` and `grep`.
+- [projects/hypershell/examples/save-webpage.md](projects/hypershell/examples/save-webpage.md) — a
+  streaming request written to a file.
+- [projects/hypershell/examples/github-issues.md](projects/hypershell/examples/github-issues.md) — a
+  joined, encoded URL, a header, and JSON decoded into a Rust type.
+- [projects/hypershell/examples/rust-playground.md](projects/hypershell/examples/rust-playground.md)
+  — JSON in both directions on `HypershellHttp`; not run, since it publishes a gist.
+- [projects/hypershell/examples/bluesky.md](projects/hypershell/examples/bluesky.md) — an endless
+  stream from `websocat` under `nix-shell`.
+- [projects/hypershell/examples/bluesky-websocket.md](projects/hypershell/examples/bluesky-websocket.md)
+  — the same with the WebSocket extension wired on the context.
+- [projects/hypershell/examples/parallel-compare.md](projects/hypershell/examples/parallel-compare.md)
+  — two sub-pipelines compared concurrently; fails on a redirect.
+- [projects/hypershell/examples/compare-and-branch.md](projects/hypershell/examples/compare-and-branch.md)
+  — a comparison driving `If`; fails on the same redirect.
+- [projects/hypershell/guides/README.md](projects/hypershell/guides/README.md) — the guide catalog.
+- [projects/hypershell/guides/writing-a-program.md](projects/hypershell/guides/writing-a-program.md)
+  — the prelude and a context, fields as runtime values, simple against streaming stages, adapters
+  between stages, the input to pass, checking a program, and the toolchain.
+- [projects/hypershell/guides/extending-the-language.md](projects/hypershell/guides/extending-the-language.md)
+  — adding handler, argument, and control syntax, registering an error type, extension namespaces
+  against context entries, and the three ways to replace an interpretation the namespace already
+  binds.
+- [projects/hypershell/guides/debugging.md](projects/hypershell/guides/debugging.md) — checking before
+  reading errors, and a missing field, disagreeing stages, unrouted syntax and error types, an
+  unresolvable provider, a conflicting rebinding, and macro failures, each with its `cargo cgp check`
+  root cause.
+- [projects/hypershell/testing.md](projects/hypershell/testing.md) — the four tests, the compile-only
+  coverage the examples add, and the failure paths, checks, and syntax nothing exercises.
+- [projects/hypershell/issues.md](projects/hypershell/issues.md) — the confirmed defects (`ConvertTo`,
+  streaming exit status, redirects, the WebSocket panic, unrouted methods and `StreamToLines`),
+  missing features, and housekeeping.
 - [projects/AGENTS.md](projects/AGENTS.md) — the rules for a project section: verified against the
   project's source at the branch sibling-projects.md records, probes rather than reading alone, leaving
-  CGP itself to `cgp/`, the fixed section shape, the reference entry template, and naming the public
-  material each document feeds.
+  CGP itself to `cgp/`, the fixed section shape including the per-example documents, the reference
+  entry template, and naming the public material each document feeds.
 - [projects/cgp-serde/README.md](projects/cgp-serde/README.md) — Serde rebuilt as CGP components: what
   it is, which revision the documents describe (the unreleased `v0.8.0` branch against the published
   0.2.0), the crate split, the confirmed gaps, the section catalog, and the public material the

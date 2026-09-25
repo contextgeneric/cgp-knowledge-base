@@ -27,7 +27,8 @@ so they too are recorded only in [sibling-projects.md](../sibling-projects.md).
 The distinction from a **member project** is about what the project is, not how carefully it is
 documented. A member builds CGP itself; a project here is built with it. Both are verified against
 their own source, and a project section grows from a single orienting `README.md` into a fixed shape
-(architecture, reference, guides, tests, and open issues) as it is documented. That shape, and the
+(architecture, reference, guides, tests, and open issues, plus a document per example where the
+project ships runnable examples) as it is documented. That shape, and the
 rules for writing it, are in [AGENTS.md](AGENTS.md). A project document explains the project's own
 design and links to [cgp/](../cgp/README.md) for the CGP constructs it uses rather than re-explaining
 them.
@@ -40,7 +41,8 @@ project moves with the library while the post that announced it does not.
 
 - [hypershell/](hypershell/README.md) — a modular, type-level DSL for shell-script-like programs
   written as Rust types and interpreted at compile time. The project that drove the handler family
-  into existence, and the reference implementation of the type-level DSL technique.
+  into existence, and the reference implementation of the type-level DSL technique. Documented in the
+  full project shape, with one document per runnable example, against its `v0.8.0` branch.
 - [cgp-serde/](cgp-serde/README.md) — Serde's `Serialize` and `Deserialize` rebuilt as CGP
   components, so that how each value type is encoded becomes a per-context wiring choice. The clearest
   demonstration of CGP's coherence workaround on a library every Rust developer already knows.
