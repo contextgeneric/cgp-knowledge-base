@@ -155,7 +155,7 @@ it stale.
 - [dispatch_combinators.md](cgp/reference/providers/dispatch_combinators.md) — the variant-matching
   and record-assembling routing providers.
 - [error_providers.md](cgp/reference/providers/error_providers.md) — `RaiseFrom`, `ReturnError`,
-  `DebugError`, and the other error-component backends.
+  `DebugError`, and the other generic providers for the error components.
 - [handler_combinators.md](cgp/reference/providers/handler_combinators.md) — `ComposeHandlers`,
   `PipeHandlers`, `ReturnInput`, the `Promote*` lifts, and dispatching on the input with `open`,
   with `UseInputDelegate` as the legacy form.
@@ -904,7 +904,7 @@ it stale.
   doubly listed error types, and a streamed stage's failure arriving as an I/O error.
 - [projects/hypershell/architecture/crate-layout.md](projects/hypershell/architecture/crate-layout.md)
   — the nine crates and their dependency graph, module layout and the prelude, and the build facts:
-  nightly with the new trait solver, and the local `cgp` patch.
+  nightly with the new trait solver, and the git patch to `cgp` `main`.
 - [projects/hypershell/reference/README.md](projects/hypershell/reference/README.md) — the catalog,
   the two template adaptations, and tables of every syntax type, component, provider, bundle, and
   context with its crate, interpreter, route, and import path.

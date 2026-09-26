@@ -80,9 +80,11 @@ cause of the difference was not investigated further.
 Several example files and the test crate set `#![recursion_limit = "256"]` or `"512"`. Under the
 pinned toolchain they are not needed: the examples check and build without them.
 
-**The workspace builds only beside a local `cgp` checkout.** The root `Cargo.toml` patches `cgp` and
-`cgp-error-anyhow` to paths under `../cgp`, so a fresh clone of Hypershell alone does not build. The
-patch and the stale `repository` field are recorded in [issues.md](../issues.md#housekeeping).
+**The workspace builds against unreleased `cgp` from git.** The root `Cargo.toml` overrides `cgp`
+and `cgp-error-anyhow` in `[patch.crates-io]` with the `cgp` repository's `main` branch by git URL,
+and the lockfile pins the commit, so a fresh clone builds on its own and its first build fetches that
+repository. Commented-out entries with paths into `../cgp` replace them when testing against a local
+change to `cgp`. The stale `repository` field is recorded in [issues.md](../issues.md#housekeeping).
 
 ## Source
 

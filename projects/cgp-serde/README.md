@@ -10,7 +10,7 @@ can draw services such as an arena allocator from the context it runs in.
 - **Branch documented** — `v0.8.0`
 - **Crates** — `cgp-serde`, `cgp-serde-extra`, `cgp-serde-json`, `cgp-serde-alloc`,
   `cgp-serde-typed-arena`, all at 0.2.0
-- **Tracks** — `cgp` 0.8.0-alpha
+- **Tracks** — `cgp` 0.8.0-alpha, through a git patch to the `cgp` repository's `main` branch
 - **Status** — Proof of concept; see [Status and gaps](#status-and-gaps)
 
 ## What it is

@@ -382,9 +382,11 @@ published blog posts, whose titles are among the worst offenders and whose
   `cgp-skills`, most recently for the dispatch-on-a-later-parameter guidance in
   `references/wiring.md` and its siblings, and for the namespace changes in `SKILL.md` and
   `references/namespaces.md` (path-keyed bundles, and the correction that a context cannot override a
-  key its namespace binds). **Never edit the skill through the website checkout**,
-  since the submodule is `cgp-skills` itself. *Lands in:* the website repository's submodule pointer.
-  *Blocked by:* the skill change being pushed.
+  key its namespace binds), and for the new `references/error-backends.md` on the standalone error
+  backends. That file is a **new reference**, so the bump that picks it up must also add its symlink
+  beside the other reference pages, or the site will not publish it. **Never edit the skill through the
+  website checkout**, since the submodule is `cgp-skills` itself. *Lands in:* the website repository's
+  submodule pointer, and a symlink for each new reference. *Blocked by:* the skill change being pushed.
 
   Two corrections landed in `cgp-skills` alongside the attributes port and are worth knowing about,
   because both had been recommending forms that do not compile: `#[use_provider]` takes **one attribute

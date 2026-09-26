@@ -11,7 +11,7 @@ and its meaning can be extended without touching the core crates.
   `hypershell-reqwest-components`, `hypershell-json-components`, `hypershell-hash-components`,
   `hypershell-tungstenite-components`, `hypershell-macro`, all at 0.1.0, plus the unpublished
   `hypershell-examples`
-- **Tracks** — `cgp` 0.8.0-alpha
+- **Tracks** — `cgp` 0.8.0-alpha, through a git patch to the `cgp` repository's `main` branch
 - **Status** — Experimental proof of concept, stated as such by the project itself; see
   [Status and gaps](#status-and-gaps)
 
@@ -96,7 +96,7 @@ out:
   already binds; it must use `Use` in the program or restate the routes in its own namespace.
 - **The macro** — its expansion needs the prelude in scope, and it panics on unbalanced angle brackets.
 - **Evidence** — four tests, two of which assert nothing; no wiring checks; no rustdoc; no CI; and a
-  workspace that builds only beside a local `cgp` checkout, on nightly with the new trait solver.
+  workspace that builds against unreleased `cgp` from git, on nightly with the new trait solver.
 
 ## The documents
 

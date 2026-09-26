@@ -105,9 +105,8 @@ source has no doc comments, so the crates' docs.rs pages list items with no expl
 - **The branches diverge from the published crate.** The crates.io release, 0.1.0 (tag `v0.1.0`),
   was built against `cgp` 0.4.1, `main` tracks `cgp` 0.7.0, and `v0.8.0` tracks `cgp` 0.8.0-alpha.
   All three carry version 0.1.0.
-- **The workspace builds only beside `../cgp`.** The root manifest patches `cgp` and
-  `cgp-error-anyhow` to local paths, and its `repository` field points at the `cgp` repository
-  rather than Hypershell's.
+- **The `repository` field names `cgp`.** The root manifest's `repository` field points at the
+  `cgp` repository rather than Hypershell's.
 - **Providers use the explicit form.** Almost every provider names the context and lists `Context:`
   bounds, and none uses [`#[uses]`](../../cgp/reference/attributes/uses.md). This is the form the
   [declaring-dependencies](../../cgp/guides/declaring-dependencies.md) guide replaces.

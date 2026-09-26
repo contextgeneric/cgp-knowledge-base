@@ -32,9 +32,9 @@ Six files cover this crate:
 ## Downstream coverage
 
 Hypershell, cgp-serde, and cgp-examples depend on the crate, and each overrides it through its
-`[patch.crates-io]` section. cgp-serde and cgp-examples point that section at the `cgp` repository's
-`main` branch, and against commit `adc616c` the four cgp-serde tests and the three cgp-examples tests
-passed. Hypershell points it at a local `../cgp` checkout, and compiled against the same source. Which of their tests reach an error
+`[patch.crates-io]` section with the `cgp` repository's `main` branch. Against commit `adc616c`, the
+four Hypershell tests, the four cgp-serde tests, and the three cgp-examples tests passed, and every
+Hypershell target compiled. Which of their tests reach an error
 path is recorded in their own testing documents.
 
 ## What nothing tests
