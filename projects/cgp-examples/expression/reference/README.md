@@ -8,9 +8,8 @@ reader can find one by what it handles and see which contexts wire it. Read the
 
 ## Providers
 
-Every provider implements `Computer`, `ComputerRef`, or both for one input type. All are written with
-`#[cgp_impl]` except the per-operator bundles, which are aggregate providers declared with
-`delegate_components!`. The last column is what the provider requires of the context.
+Every provider is written with `#[cgp_impl]` and implements `Computer`, `ComputerRef`, or both for one
+input type. The last column is what the provider requires of the context.
 
 | Provider | Input | Implements | Wired in | Requires of the context |
 |---|---|---|---|---|
@@ -26,7 +25,6 @@ Every provider implements `Computer`, `ComputerRef`, or both for one input type.
 | [`BinaryOpToLisp<Operator>`](to-lisp-providers.md#binaryoptolisp) | any `BinarySubExpression` | `ComputerRef` | `add_mult_binary_op`, `add_mult_code` | `HasMathExprType`, `HasLispExprType`, and conversion of the operands |
 | [`DispatchEval`](dispatchers.md#dispatcheval-and-dispatchtolisp) | the language enum | varies by context | each context, its own | the context's evaluation wiring for every variant |
 | [`DispatchToLisp`](dispatchers.md#dispatcheval-and-dispatchtolisp) | the language enum | `ComputerRef` | the three converting contexts, each its own | the context's conversion wiring for every variant |
-| [`HandlePlus`, `HandleTimes`, `HandleLiteral`, `HandleMathExpr`](dispatchers.md#the-per-operator-bundles) | one input type each | `ComputerRef`, by delegation | `add_mult_code` | the providers they route to |
 
 ## Other items
 
@@ -54,8 +52,7 @@ each context is reached through its module path, such as
   `HasLispExprType`, and `BinarySubExpression`.
 - [eval-providers.md](eval-providers.md) — the six evaluation providers.
 - [to-lisp-providers.md](to-lisp-providers.md) — the four conversion providers.
-- [dispatchers.md](dispatchers.md) — the dispatch wrappers, the per-operator bundles, and the inner
-  tables.
+- [dispatchers.md](dispatchers.md) — the dispatch wrappers and the wiring keys that reach them.
 
 ## Public material derived from this
 

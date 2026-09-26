@@ -35,9 +35,9 @@ page in [examples/](examples/README.md), in teaching order:
 
 | Context | Module | Wires | Tests |
 |---|---|---|---|
-| `Interpreter` | `add_mult` | evaluation by value and conversion by reference, one table each | two |
+| `Interpreter` | `add_mult` | evaluation by value and conversion by reference, one component each | two |
 | `Interpreter` | `add_mult_binary_op` | the same, with one generic provider for both binary operators | none |
-| `Interpreter` | `add_mult_code` | both operations by reference in one table, keyed by input then by operation | none |
+| `Interpreter` | `add_mult_code` | both operations by reference in one component, keyed by operation and input together | none |
 | `InterpreterPlus` | `add_mult_neg` | evaluation only, over the extended `MathPlusExpr` with `i64` literals | one |
 
 A fifth module, `classic`, holds the closed `enum` and `match` form of the same interpreter, which the
@@ -45,24 +45,18 @@ crate keeps as the starting point it improves on and which no context uses.
 
 ## Idioms
 
-The providers are current `#[cgp_impl]` blocks, but the wiring is not. Every context dispatches with
-the legacy `UseInputDelegate` and `UseDelegate` nested tables rather than the `open` statement, the
-providers state their dependencies as hand-written `where Self: …` bounds rather than `#[uses]`, and
-the enums list `HasFields`, `FromVariant`, and `ExtractField` rather than deriving `CgpData`. The
-patterns are sound to learn from, but copy the wiring in its `open` form, which
-[dispatching per type](../../../cgp/guides/dispatching-per-type.md) shows for this very interpreter. The
-changes are listed in [issues.md](issues.md#modernization), and a probe confirmed the `open` form
-works for the crate's hardest case.
+The crate uses current CGP idioms throughout. Every context dispatches with the `open` statement and
+path keys, per [dispatching per type](../../../cgp/guides/dispatching-per-type.md), keying on the
+input alone or on the operation code and the input together. The providers import their
+dependencies with `#[uses]` and the two abstract types with `#[use_type]`, and the enums derive
+`CgpData`. The one getter trait, `BinarySubExpression`, stays a getter because it reads the
+provider's input rather than its context.
 
 ## Status and gaps
 
 The interpreter is a demonstration, and its gaps are each confirmed against the `v0.8.0` branch and
 recorded in full in [issues.md](issues.md):
 
-- **Legacy wiring** — every context uses the nested-table dispatch described above.
-- **Checks skip `Times` evaluation** — all four contexts' `check_components!` blocks omit evaluation of
-  their `Times` variant. A broken entry still fails the build, but inside the dispatch wrapper rather
-  than at the check.
 - **Two contexts have no test** — `add_mult_binary_op` and `add_mult_code` compile and pass their
   checks, and only a probe has run them.
 - **An unwired provider** — `EvalSubtractWithNegate` is defined and never wired.
@@ -94,7 +88,7 @@ Read the architecture first for the design, the examples for each context, and t
 up an item.
 
 - [architecture/](architecture/README.md) — the design on one page, and:
-  - [dispatch-layers.md](architecture/dispatch-layers.md) — how the four contexts layer their
+  - [dispatch-layers.md](architecture/dispatch-layers.md) — how the four contexts key their
     dispatch differently, and why each needs a context-specific dispatch wrapper.
 - [reference/](reference/README.md) — every public item, grouped by family:
   - [types.md](reference/types.md) — the operator structs, `List`, and `Ident`.
@@ -104,25 +98,23 @@ up an item.
     `EvalSubtractWithNegate`.
   - [to-lisp-providers.md](reference/to-lisp-providers.md) — the four conversion providers and the
     local sub-enums they upcast from.
-  - [dispatchers.md](reference/dispatchers.md) — the dispatch wrappers and the per-operator
-    bundles.
+  - [dispatchers.md](reference/dispatchers.md) — the dispatch wrappers and the wiring keys that
+    reach them.
 - [examples/](examples/README.md) — one document per context:
-  - [add-mult.md](examples/add-mult.md) — evaluation and conversion in two tables.
+  - [add-mult.md](examples/add-mult.md) — evaluation and conversion in two components.
   - [add-mult-binary-op.md](examples/add-mult-binary-op.md) — one conversion provider for both binary
     operators.
   - [add-mult-code.md](examples/add-mult-code.md) — both operations in one component, dispatched on
-    input and then on operation.
+    operation and input together.
   - [add-mult-neg.md](examples/add-mult-neg.md) — the extended language, with evaluation alone.
 - [testing.md](testing.md) — what the three tests and four check blocks pin, and what nothing tests.
-- [issues.md](issues.md) — the confirmed defects, missing features, modernization items, and
-  housekeeping.
+- [issues.md](issues.md) — the confirmed defects, missing features, and housekeeping.
 
 ## Public material derived from these documents
 
 These documents are the verified record behind page 3 of the planned
 [extensible data types deep dive](../../../website/deep-dives/extensible-datatypes.md), which uses this
-crate as its running code, and the source changes that page needs first are the
-[modernization items](issues.md#modernization).
+crate as its running code.
 
 ## How it relates to the rest of the base
 

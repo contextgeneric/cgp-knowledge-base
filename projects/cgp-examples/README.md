@@ -19,17 +19,18 @@ Each crate develops one scenario, and four of the five correspond to a worked ex
 [examples/](../../examples/README.md) that teaches the same patterns on its own. The crates are the
 code as it ships; the worked examples are where an agent learns the patterns, per
 [../../AGENTS.md](../../AGENTS.md#project-facts-and-cgp-patterns-have-separate-owners). The table
-records, for each crate, what kind of context it wires, which blog post presents its code, whether it
-runs, and whether its code uses current CGP idioms, since an agent may copy from it. A post that links
-the repository is marked as linking; the v0.8.0 post shows `web-app`'s code without linking it:
+records, for each crate, what kind of context it wires, which blog post presents its code, and whether
+it runs. A post that links the repository is marked as linking; the v0.8.0 post shows `web-app`'s code
+without linking it. Every crate uses current CGP idioms, so its code is safe to copy for the patterns
+it shows; `web-app` and `greet` are checked against that in full when their sections are written:
 
-| Subproject | Scenario | Context shape | Worked example | Blog post | Runs | Current idioms |
-|---|---|---|---|---|---|---|
-| [`transfer`](transfer/README.md) | balance and transfer endpoints served over HTTP | environmental; self-targeted, with one handler dispatched per endpoint | [money-transfer API](../../examples/money-transfer-api.md) | [v0.5.0 release](../../website/blog/v0-5-0-release.md), linking | yes, a server binary | yes, apart from four request getters |
-| [`expression`](expression/README.md) | an arithmetic interpreter open to new variants and operations | environmental; parameter-targeted | [expression interpreter](../../examples/expression-interpreter.md) | [extensible data types, part 2](../../website/blog/extensible-datatypes-part-2.md), linking | three unit tests | no: `UseInputDelegate` and `UseDelegate` tables |
-| `builder` | an application context assembled from per-subsystem builders | environmental; self-targeted | [application builder](../../examples/application-builder.md) | [extensible data types, part 1](../../website/blog/extensible-datatypes-part-1.md), linking | no entry point | no: getter traits and a `UseDelegate` table |
-| `web-app` | one social-media backend wired four ways, up to namespaces | environmental; self-targeted | [social media app](../../examples/social-media-app.md) | [v0.8.0 release](../../website/blog/v0-8-0-release.md) | compiles only | yes |
-| `greet` | a greeting written as a function, a component, and over an abstract type | value context; self-targeted | none | none | yes, three binaries | yes |
+| Subproject | Scenario | Context shape | Worked example | Blog post | Runs |
+|---|---|---|---|---|---|
+| [`transfer`](transfer/README.md) | balance and transfer endpoints served over HTTP | environmental; self-targeted, with one handler dispatched per endpoint | [money-transfer API](../../examples/money-transfer-api.md) | [v0.5.0 release](../../website/blog/v0-5-0-release.md), linking | yes, a server binary |
+| [`expression`](expression/README.md) | an arithmetic interpreter open to new variants and operations | environmental; parameter-targeted | [expression interpreter](../../examples/expression-interpreter.md) | [extensible data types, part 2](../../website/blog/extensible-datatypes-part-2.md), linking | three unit tests |
+| `builder` | an application context assembled from per-subsystem builders | environmental; self-targeted | [application builder](../../examples/application-builder.md) | [extensible data types, part 1](../../website/blog/extensible-datatypes-part-1.md), linking | no entry point |
+| `web-app` | one social-media backend wired four ways, up to namespaces | environmental; self-targeted | [social media app](../../examples/social-media-app.md) | [v0.8.0 release](../../website/blog/v0-8-0-release.md) | compiles only |
+| `greet` | a greeting written as a function, a component, and over an abstract type | value context; self-targeted | none | none | yes, three binaries |
 
 `transfer` and `expression` are documented so far. The other three rows record what each crate is, so
 the table stays accurate for the whole repository while their sections are written.
@@ -91,14 +92,14 @@ per [../AGENTS.md](../AGENTS.md#the-shape-of-a-project-section).
   - [issues.md](transfer/issues.md) — defects, missing features, and housekeeping.
 - [expression/](expression/README.md) — the modular arithmetic interpreter:
   - [architecture/](expression/architecture/README.md) — the design on one page, and
-    [dispatch-layers.md](expression/architecture/dispatch-layers.md) on the three dispatch
-    arrangements and the wrapper every context needs.
+    [dispatch-layers.md](expression/architecture/dispatch-layers.md) on the two ways the contexts key
+    their dispatch and the wrapper every context needs.
   - [reference/](expression/reference/README.md) — the types, abstract types, evaluation and
     conversion providers, and dispatchers.
   - [examples/](expression/examples/README.md) — one document per context, with its tests and checks.
   - [testing.md](expression/testing.md) — the three tests, the four check blocks, and what nothing
     tests.
-  - [issues.md](expression/issues.md) — missing features, modernization, and housekeeping.
+  - [issues.md](expression/issues.md) — missing features and housekeeping.
 
 ## Public material derived from these documents
 

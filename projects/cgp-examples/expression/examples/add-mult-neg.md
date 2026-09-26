@@ -10,23 +10,20 @@ and `Negate` to the base operators and uses `i64` literals, and wires no convers
 
 ## The context and its wiring
 
-`InterpreterPlus` wires only `ComputerRefComponent`, keyed by code first and by input second, with one
-code, `Eval`:
+`InterpreterPlus` opens only `ComputerRefComponent`, and every key fixes the one code it wires,
+`Eval`, along with the input:
 
 ```rust
 delegate_components! {
     InterpreterPlus {
-        ComputerRefComponent:
-            UseDelegate<new CodeComponents {
-                Eval: UseInputDelegate<new EvalComponents {
-                    MathPlusExpr: DispatchEval,
-                    Plus<MathPlusExpr>: EvalAdd,
-                    Times<MathPlusExpr>: EvalMultiply,
-                    Literal<Value>: EvalLiteral,
-                    Minus<MathPlusExpr>: EvalSubtract,
-                    Negate<MathPlusExpr>: EvalNegate,
-                }>,
-            }>
+        open ComputerRefComponent;
+
+        @ComputerRefComponent.Eval.MathPlusExpr: DispatchEval,
+        @ComputerRefComponent.Eval.Plus<MathPlusExpr>: EvalAdd,
+        @ComputerRefComponent.Eval.Times<MathPlusExpr>: EvalMultiply,
+        @ComputerRefComponent.Eval.Literal<Value>: EvalLiteral,
+        @ComputerRefComponent.Eval.Minus<MathPlusExpr>: EvalSubtract,
+        @ComputerRefComponent.Eval.Negate<MathPlusExpr>: EvalNegate,
     }
 }
 ```
@@ -43,7 +40,7 @@ checked only where it is used, so the evaluator compiles and runs with conversio
 
 `test_add_mult_neg` evaluates `2 + 3` to `5`, `2 * 3` to `6`, `2 - 3` to `-1`, and `-2 * (3 + 4)` to
 `-14`, all by reference with the `Eval` code. The `check_components!` block asserts evaluation of
-`MathPlusExpr`, `Literal`, `Plus`, `Negate`, and `Minus`.
+all six input types.
 
 ## What it demonstrates
 
@@ -51,12 +48,11 @@ checked only where it is used, so the evaluator compiles and runs with conversio
   [evaluation providers](../reference/eval-providers.md).
 - Leaving an operation unimplemented for a new language, relying on lazy wiring: see
   [check traits](../../../../cgp/concepts/check-traits.md).
-- Dispatch on code first and input second: see
-  [dispatch layers](../architecture/dispatch-layers.md#three-arrangements).
+- Dispatch keyed on the code and the input together: see
+  [dispatch layers](../architecture/dispatch-layers.md#two-arrangements).
 
 ## Known issues
 
-- **Legacy wiring** — both layers are nested tables; see [issues.md](../issues.md#modernization).
 - **`EvalSubtractWithNegate` is not wired here** — the alternative subtraction provider implements
   `Computer`, which this context does not wire; see
   [evaluation providers](../reference/eval-providers.md#evalsubtractwithnegate).

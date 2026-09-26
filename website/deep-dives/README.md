@@ -33,13 +33,12 @@ from the live code, with the remaining gaps closed first. All four repositories 
 provider form that every source post shows.
 
 They are not equally far along, and the difference decides how much work each deep dive carries.
-**Hypershell** is the most modernized: it has a real namespace with path-prefixed components and
-contexts that join it in one line, and its remaining gaps are localized. **cgp-serde** is the most
-idiomatic at the provider level — the heaviest user of `#[uses]` and `#[use_type]` of the four — and
-its tests already wire with `open` and `@`-paths, but it publishes no namespace, so every context
-spells out its whole table. The two **cgp-examples** crates are the least modernized: they still read
-context fields through getter traits where an `#[implicit]` argument is now the default, and declare
-dependencies as hand-written `where Self:` bounds.
+The two **cgp-examples** crates need no source changes: they read context fields as `#[implicit]`
+arguments, import dependencies with `#[uses]` and `#[use_type]`, and dispatch with `open`.
+**Hypershell** has a real namespace with path-prefixed components and contexts that join it in one
+line, and its remaining gaps are localized. **cgp-serde** is the most idiomatic at the provider level,
+a heavy user of `#[uses]` and `#[use_type]`, and its tests already wire with `open` and `@`-paths, but
+it publishes no namespace, so every context spells out its whole table.
 
 Each document below carries the concrete list. Where a change is uncertain, it is marked as such rather
 than asserted.

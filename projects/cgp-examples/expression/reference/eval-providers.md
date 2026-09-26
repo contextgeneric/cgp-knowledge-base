@@ -14,9 +14,9 @@ base-language providers implement both [`Computer`](../../../../cgp/reference/co
 
 ```rust
 #[cgp_impl(new EvalAdd)]
+#[uses(CanCompute<Code, MathExpr, Output = Output>)]
 impl<Code, MathExpr, Output> Computer<Code, Plus<MathExpr>>
 where
-    Self: CanCompute<Code, MathExpr, Output = Output>,
     Output: Add<Output = Output>,
 {
     type Output = Output;
@@ -29,9 +29,9 @@ where
 }
 
 #[cgp_impl(EvalAdd)]
+#[uses(CanComputeRef<Code, MathExpr, Output = Output>)]
 impl<Code, MathExpr, Output> ComputerRef<Code, Plus<MathExpr>>
 where
-    Self: CanComputeRef<Code, MathExpr, Output = Output>,
     Output: Add<Output = Output>,
 {
     type Output = Output;
@@ -65,9 +65,9 @@ that implements `Add`.
 
 ```rust
 #[cgp_impl(new EvalMultiply)]
+#[uses(CanCompute<Code, MathExpr, Output = Output>)]
 impl<Code, MathExpr, Output> Computer<Code, Times<MathExpr>>
 where
-    Self: CanCompute<Code, MathExpr, Output = Output>,
     Output: Mul<Output = Output>,
 {
     type Output = Output;
@@ -76,9 +76,9 @@ where
 }
 
 #[cgp_impl(EvalMultiply)]
+#[uses(CanComputeRef<Code, MathExpr, Output = Output>)]
 impl<Code, MathExpr, Output> ComputerRef<Code, Times<MathExpr>>
 where
-    Self: CanComputeRef<Code, MathExpr, Output = Output>,
     Output: Mul<Output = Output>,
 {
     type Output = Output;
@@ -142,9 +142,9 @@ None; the by-reference impl requires `T: Clone`.
 
 ```rust
 #[cgp_impl(new EvalSubtract)]
+#[uses(CanComputeRef<Code, MathExpr, Output = Output>)]
 impl<Code, MathExpr, Output> ComputerRef<Code, Minus<MathExpr>>
 where
-    Self: CanComputeRef<Code, MathExpr, Output = Output>,
     Output: Sub<Output = Output>,
 {
     type Output = Output;
@@ -174,9 +174,9 @@ why the extended language is wired only through `ComputerRef`.
 
 ```rust
 #[cgp_impl(new EvalNegate)]
+#[uses(CanComputeRef<Code, MathExpr, Output = Output>)]
 impl<Code, MathExpr, Output> ComputerRef<Code, Negate<MathExpr>>
 where
-    Self: CanComputeRef<Code, MathExpr, Output = Output>,
     Output: Neg<Output = Output>,
 {
     type Output = Output;
@@ -207,9 +207,9 @@ result.
 
 ```rust
 #[cgp_impl(new EvalSubtractWithNegate)]
+#[uses(CanCompute<Code, Plus<Expr>, Output = Output>)]
 impl<Code, Expr, Output> Computer<Code, Minus<Expr>>
 where
-    Self: CanCompute<Code, Plus<Expr>, Output = Output>,
     Expr: FromVariant<Symbol!("Negate"), Value = Negate<Expr>>,
 {
     type Output = Output;

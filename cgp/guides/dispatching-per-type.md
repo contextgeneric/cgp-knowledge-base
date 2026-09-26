@@ -39,7 +39,7 @@ Choose between `open` and a namespace by scope. Prefer `open` for a self-contain
 
 ## Dispatch on a later parameter with a longer path key, not `UseInputDelegate`
 
-Dispatch on a component's second or later type parameter with the same `open` statement, writing a path key with one segment per parameter, rather than the legacy [`UseInputDelegate`](../reference/providers/handler_combinators.md#the-legacy-form-useinputdelegate) table. The redirect appends every type parameter of the consumer trait to the path, so for `CanCompute<Code, Input>` the lookup follows `@ComputerComponent.Code.Input`, and a key whose first segment is a per-entry generic ignores the `Code` and dispatches on the input. The [expression interpreter](../../examples/expression-interpreter.md) wires its evaluator the legacy way:
+Dispatch on a component's second or later type parameter with the same `open` statement, writing a path key with one segment per parameter, rather than the legacy [`UseInputDelegate`](../reference/providers/handler_combinators.md#the-legacy-form-useinputdelegate) table. The redirect appends every type parameter of the consumer trait to the path, so for `CanCompute<Code, Input>` the lookup follows `@ComputerComponent.Code.Input`, and a key whose first segment is a per-entry generic ignores the `Code` and dispatches on the input. Written the legacy way, the [expression interpreter](../../examples/expression-interpreter.md)'s evaluator is:
 
 ```rust
 delegate_components! {

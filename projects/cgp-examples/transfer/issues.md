@@ -65,11 +65,6 @@ or misdescribed.
   wired, `ErrInternal` is never raised, and the `CanAddApiRoutes` alias in `contexts/app.rs` is never
   named; the binary imports `CanAddMainApiRoutes` instead. Each is either worth a use in the service or
   worth removing.
-- **Getter bounds in the older form** — `HasLoggedInUserMut`, `HasBasicAuthHeader`,
-  `HasQueryBalanceFields`, and `HasTransferMoneyFields` bound their `App` parameter by hand and write
-  `App::UserId` and the like, where `HasLoggedInUser` uses the preferred
-  `#[use_type(HasUserIdType.UserId in App)]`, per
-  [importing abstract types](../../../cgp/guides/importing-abstract-types.md#import-a-foreign-abstract-type-with-in-context).
 - **A comment gives the wrong reason** — the comment on `MockNamespace` in `namespaces/mock.rs` says
   its body holds "the pieces that have no `#[cgp_impl]` block of their own to attach a
   `#[default_impl]` to". `DisplayHttpError` has one; it is in the body because it is generic over

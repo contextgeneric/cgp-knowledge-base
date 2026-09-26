@@ -12,18 +12,11 @@ The base interpreter again, with the two per-operator conversion providers repla
 ## The context and its wiring
 
 The module defines its own `MathExpr`, `LispExpr`, `Interpreter`, and dispatch wrappers, identical to
-[`add_mult`](add-mult.md)'s. Only the conversion table differs:
+[`add_mult`](add-mult.md)'s. Only the two conversion keys for the binary operators differ:
 
 ```rust
-ComputerRefComponent:
-    UseInputDelegate<
-        new ToLispComponents {
-            MathExpr: DispatchToLisp,
-            Literal<Value>: LiteralToLisp,
-            Plus<MathExpr>: BinaryOpToLisp<Symbol!("+")>,
-            Times<MathExpr>: BinaryOpToLisp<Symbol!("*")>,
-        }
-    >,
+@ComputerRefComponent.<Code> Code.Plus<MathExpr>: BinaryOpToLisp<Symbol!("+")>,
+@ComputerRefComponent.<Code> Code.Times<MathExpr>: BinaryOpToLisp<Symbol!("*")>,
 ```
 
 [`BinaryOpToLisp`](../reference/to-lisp-providers.md#binaryoptolisp) reads the operands through the
@@ -33,8 +26,8 @@ context wires with `UseType<MathExpr>`.
 
 ## What the checks pin
 
-The `check_components!` block asserts the same entries as `add_mult`'s: evaluation of `MathExpr`,
-`Literal`, and `Plus`, and conversion of all four input types. Nothing runs the context at test time.
+The `check_components!` block asserts the same entries as `add_mult`'s: evaluation and conversion of
+all four input types. Nothing runs the context at test time.
 
 ## What it demonstrates
 
@@ -47,8 +40,6 @@ The `check_components!` block asserts the same entries as `add_mult`'s: evaluati
 
 - **No test** — the probe result above is the only runtime evidence; see
   [testing.md](../testing.md).
-- **The check skips `Times` evaluation** — a broken entry would still fail the build, in
-  `DispatchEval`'s body rather than at the check; see [issues.md](../issues.md#missing-features).
 
 ## Public material derived from this
 

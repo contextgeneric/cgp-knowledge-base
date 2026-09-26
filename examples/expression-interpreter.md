@@ -7,10 +7,10 @@ The contexts here are **environmental contexts** — `Interpreter` and its exten
 The concepts each step demonstrates are documented in full in the reference; this example only notes which one is in play and links to it:
 
 - handling each variant of an enum independently — [extensible variants](../cgp/concepts/extensible-variants.md) and the [extensible visitor pattern](../cgp/concepts/dispatching.md)
-- exposing an enum as a sum of named variants — [`#[derive(HasFields)]`](../cgp/reference/derives/derive_has_fields.md), [`#[derive(FromVariant)]`](../cgp/reference/derives/derive_from_variant.md), [`#[derive(ExtractField)]`](../cgp/reference/derives/derive_extract_field.md)
+- exposing an enum as a sum of named variants — [`#[derive(CgpData)]`](../cgp/reference/derives/derive_cgp_data.md)
 - the computation components — [`Computer` / `CanCompute`](../cgp/reference/components/computer.md) and its by-reference variant `ComputerRef`
-- writing a per-variant provider — [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md)
-- routing on the input variant and on the operation — [`UseDelegate`](../cgp/reference/providers/use_delegate.md) and [dispatching](../cgp/concepts/dispatching.md)
+- writing a per-variant provider — [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md), with its dependencies imported by [`#[uses]`](../cgp/reference/attributes/uses.md) and [`#[use_type]`](../cgp/reference/attributes/use_type.md)
+- routing on the input variant and on the operation — the `open` statement of [`delegate_components!`](../cgp/reference/macros/delegate_components.md), per [dispatching per type](../cgp/guides/dispatching-per-type.md)
 - the variant dispatcher — [`MatchWithValueHandlers`](../cgp/reference/providers/dispatch_combinators.md)
 - constructing part of a target enum — [`CanUpcast`](../cgp/reference/traits/cast.md)
 - abstract output types per context — [`#[cgp_type]`](../cgp/reference/macros/cgp_type.md) and [`UseType`](../cgp/reference/providers/use_type.md)
@@ -68,9 +68,9 @@ Evaluation is a [`Computer`](../cgp/reference/components/computer.md) — CGP's 
 
 ```rust
 #[cgp_impl(new EvalAdd)]
+#[uses(CanCompute<Code, MathExpr, Output = Output>)]
 impl<Code, MathExpr, Output> Computer<Code, Plus<MathExpr>>
 where
-    Self: CanCompute<Code, MathExpr, Output = Output>,
     Output: Add<Output = Output>,
 {
     type Output = Output;
@@ -83,7 +83,7 @@ where
 }
 ```
 
-`EvalAdd` is written with [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md) and is completely decoupled: it knows nothing of the concrete expression enum, only that the context can evaluate a nested `MathExpr` to some `Output` that supports `Add`. Multiplication is identical with `Mul`, and the literal case is the base of the recursion — it just returns its inner value, needing nothing from the context:
+`EvalAdd` is written with [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md) and is completely decoupled: it knows nothing of the concrete expression enum, only that the context can evaluate a nested `MathExpr` to some `Output` that supports `Add`, a dependency it imports with [`#[uses]`](../cgp/reference/attributes/uses.md). Multiplication is identical with `Mul`, and the literal case is the base of the recursion: it just returns its inner value, needing nothing from the context:
 
 ```rust
 #[cgp_impl(new EvalLiteral)]
@@ -105,7 +105,7 @@ The concrete enum wraps the standalone operator types and derives the [extensibl
 ```rust
 pub type Value = u64;
 
-#[derive(Debug, HasFields, FromVariant, ExtractField)]
+#[derive(Debug, CgpData)]
 pub enum MathExpr {
     Plus(Plus<MathExpr>),
     Times(Times<MathExpr>),
@@ -113,20 +113,19 @@ pub enum MathExpr {
 }
 ```
 
-The context is an empty struct whose only job is to wire each input type to its provider. [`UseInputDelegate`](../cgp/reference/providers/use_delegate.md) keys the `Computer` lookup on the *input* type, so `Plus<MathExpr>` routes to `EvalAdd`, `Literal<Value>` to `EvalLiteral`, and the whole enum to a dispatcher:
+The context is an empty struct whose only job is to wire each input type to its provider. It opens `ComputerComponent` for per-type dispatch with the [`open` statement](../cgp/reference/macros/delegate_components.md), and each path key names the component and then one segment per type parameter: the `Code`, then the *input* type. A per-entry generic `<Code>` as the first segment matches any code, so `Plus<MathExpr>` routes to `EvalAdd`, `Literal<Value>` to `EvalLiteral`, and the whole enum to a dispatcher, whatever operation code the caller passes:
 
 ```rust
 pub struct Interpreter;
 
 delegate_components! {
     Interpreter {
-        ComputerComponent:
-            UseInputDelegate<new EvalComponents {
-                MathExpr: DispatchEval,
-                Plus<MathExpr>: EvalAdd,
-                Times<MathExpr>: EvalMultiply,
-                Literal<Value>: EvalLiteral,
-            }>,
+        open ComputerComponent;
+
+        @ComputerComponent.<Code> Code.MathExpr: DispatchEval,
+        @ComputerComponent.<Code> Code.Plus<MathExpr>: EvalAdd,
+        @ComputerComponent.<Code> Code.Times<MathExpr>: EvalMultiply,
+        @ComputerComponent.<Code> Code.Literal<Value>: EvalLiteral,
     }
 }
 
@@ -153,9 +152,10 @@ pub trait HasLispExprType {
 }
 
 #[cgp_impl(new PlusToLisp)]
-impl<Code, MathExpr, LispExpr> ComputerRef<Code, Plus<MathExpr>>
+#[use_type(HasLispExprType.LispExpr)]
+#[uses(CanComputeRef<Code, MathExpr, Output = LispExpr>)]
+impl<Code, MathExpr> ComputerRef<Code, Plus<MathExpr>>
 where
-    Self: HasLispExprType<LispExpr = LispExpr> + CanComputeRef<Code, MathExpr, Output = LispExpr>,
     LispSubExpr<LispExpr>: CanUpcast<LispExpr>,
 {
     type Output = LispExpr;
@@ -170,42 +170,42 @@ where
 }
 ```
 
-`PlusToLisp` only needs to build two kinds of `LispExpr` — a list and an identifier — so rather than depend on the full target enum it defines a small local enum with just those variants and [upcasts](../cgp/reference/traits/cast.md) into the full `LispExpr`:
+[`#[use_type]`](../cgp/reference/attributes/use_type.md) imports the abstract `LispExpr` from the context, so the provider writes it as a bare type. `PlusToLisp` only needs to build two kinds of `LispExpr`, a list and an identifier, so rather than depend on the full target enum it defines a small local enum with just those variants and [upcasts](../cgp/reference/traits/cast.md) into the full `LispExpr`:
 
 ```rust
-#[derive(HasFields, ExtractField, FromVariant)]
+#[derive(CgpData)]
 enum LispSubExpr<Expr> {
     List(List<Expr>),
     Ident(Ident),
 }
 ```
 
-This is the variant-side analog of reading only the fields you need from a struct: `CanUpcast` constructs the parts of an enum a provider cares about without binding it to the entire definition. Wiring the new operation adds a `ComputerRefComponent` table and a `DispatchToLisp` wrapper alongside the existing evaluator, and binds the abstract `LispExpr` type to the concrete enum with [`UseType`](../cgp/reference/providers/use_type.md):
+This is the variant-side analog of reading only the fields you need from a struct: `CanUpcast` constructs the parts of an enum a provider cares about without binding it to the entire definition. Wiring the new operation opens `ComputerRefComponent` beside `ComputerComponent`, adds its keys and a `DispatchToLisp` wrapper alongside the existing evaluator, and binds the abstract `LispExpr` type to the concrete enum with [`UseType`](../cgp/reference/providers/use_type.md):
 
 ```rust
 delegate_components! {
     Interpreter {
-        MathExprTypeProviderComponent: UseType<MathExpr>,
-        LispExprTypeProviderComponent: UseType<LispExpr>,
-        ComputerComponent:
-            UseInputDelegate<new EvalComponents {
-                MathExpr: DispatchEval,
-                Plus<MathExpr>: EvalAdd,
-                Times<MathExpr>: EvalMultiply,
-                Literal<Value>: EvalLiteral,
-            }>,
-        ComputerRefComponent:
-            UseInputDelegate<new ToLispComponents {
-                MathExpr: DispatchToLisp,
-                Literal<Value>: LiteralToLisp,
-                Plus<MathExpr>: PlusToLisp,
-                Times<MathExpr>: TimesToLisp,
-            }>,
+        open { ComputerComponent, ComputerRefComponent };
+
+        MathExprTypeProviderComponent:
+            UseType<MathExpr>,
+        LispExprTypeProviderComponent:
+            UseType<LispExpr>,
+
+        @ComputerComponent.<Code> Code.MathExpr: DispatchEval,
+        @ComputerComponent.<Code> Code.Plus<MathExpr>: EvalAdd,
+        @ComputerComponent.<Code> Code.Times<MathExpr>: EvalMultiply,
+        @ComputerComponent.<Code> Code.Literal<Value>: EvalLiteral,
+
+        @ComputerRefComponent.<Code> Code.MathExpr: DispatchToLisp,
+        @ComputerRefComponent.<Code> Code.Literal<Value>: LiteralToLisp,
+        @ComputerRefComponent.<Code> Code.Plus<MathExpr>: PlusToLisp,
+        @ComputerRefComponent.<Code> Code.Times<MathExpr>: TimesToLisp,
     }
 }
 ```
 
-The evaluator wiring is untouched; the conversion is added purely by extension.
+The evaluator's keys are untouched; the conversion is added by extension, and the only shared line that changes is the `open` statement, which now lists both components.
 
 ## One provider for every binary operator
 
@@ -219,11 +219,10 @@ pub trait BinarySubExpression<Expr> {
 }
 
 #[cgp_impl(new BinaryOpToLisp<Operator>)]
-impl<Code, MathExpr, MathSubExpr, LispExpr, Operator> ComputerRef<Code, MathSubExpr>
+#[use_type(HasMathExprType.MathExpr, HasLispExprType.LispExpr)]
+#[uses(CanComputeRef<Code, MathExpr, Output = LispExpr>)]
+impl<Code, MathSubExpr, Operator> ComputerRef<Code, MathSubExpr>
 where
-    Self: HasMathExprType<MathExpr = MathExpr>
-        + HasLispExprType<LispExpr = LispExpr>
-        + CanComputeRef<Code, MathExpr, Output = LispExpr>,
     MathSubExpr: BinarySubExpression<MathExpr>,
     Operator: Default + Display,
     LispSubExpr<LispExpr>: CanUpcast<LispExpr>,
@@ -240,37 +239,44 @@ where
 }
 ```
 
-`BinaryOpToLisp<Operator>` works for any `MathSubExpr` whose `left` and `right` fields the [`#[cgp_auto_getter]`](../cgp/reference/macros/cgp_auto_getter.md) trait `BinarySubExpression` can read — which is why `Plus` and `Times` derived `HasField` earlier. Both operators now wire to the same provider with a different [`Symbol!`](../cgp/reference/macros/symbol.md) operator string:
+`BinaryOpToLisp<Operator>` works for any `MathSubExpr` whose `left` and `right` fields the [`#[cgp_auto_getter]`](../cgp/reference/macros/cgp_auto_getter.md) trait `BinarySubExpression` can read, which is why `Plus` and `Times` derived `HasField` earlier. The getter is a trait rather than an [`#[implicit]`](../cgp/reference/attributes/implicit.md) argument because it reads fields of the provider's input, not of its context. Since its input type no longer shows the expression type, the provider imports `MathExpr` from the context as well. Both operators now wire to the same provider with a different [`Symbol!`](../cgp/reference/macros/symbol.md) operator string:
 
 ```rust
-ComputerRefComponent:
-    UseInputDelegate<new ToLispComponents {
-        MathExpr: DispatchToLisp,
-        Literal<Value>: LiteralToLisp,
-        Plus<MathExpr>: BinaryOpToLisp<Symbol!("+")>,
-        Times<MathExpr>: BinaryOpToLisp<Symbol!("*")>,
-    }>,
+@ComputerRefComponent.<Code> Code.Plus<MathExpr>: BinaryOpToLisp<Symbol!("+")>,
+@ComputerRefComponent.<Code> Code.Times<MathExpr>: BinaryOpToLisp<Symbol!("*")>,
 ```
 
 ## Dispatching on the operation as well as the input
 
-Evaluation and conversion can share one component by adding a second layer of dispatch keyed on the *operation*. Marker types name the operations, and a per-variant provider routes on them with [`UseDelegate`](../cgp/reference/providers/use_delegate.md):
+Evaluation and conversion can share one component by keying the dispatch on the *operation* as well as the input. Marker types name the operations, and each path key fixes a concrete code as its first segment instead of a generic one, so one component routes a `Plus` to evaluation or conversion depending on the `Code`:
 
 ```rust
 pub struct Eval;
 pub struct ToLisp;
 
 delegate_components! {
-    new HandlePlus {
-        ComputerRefComponent: UseDelegate<new PlusHandlers {
-            Eval: EvalAdd,
-            ToLisp: BinaryOpToLisp<Symbol!("+")>,
-        }>
+    Interpreter {
+        open ComputerRefComponent;
+
+        MathExprTypeProviderComponent:
+            UseType<MathExpr>,
+        LispExprTypeProviderComponent:
+            UseType<LispExpr>,
+
+        @ComputerRefComponent.Eval.MathExpr: DispatchEval,
+        @ComputerRefComponent.Eval.Literal<Value>: EvalLiteral,
+        @ComputerRefComponent.Eval.Plus<MathExpr>: EvalAdd,
+        @ComputerRefComponent.Eval.Times<MathExpr>: EvalMultiply,
+
+        @ComputerRefComponent.ToLisp.MathExpr: DispatchToLisp,
+        @ComputerRefComponent.ToLisp.Literal<Value>: LiteralToLisp,
+        @ComputerRefComponent.ToLisp.Plus<MathExpr>: BinaryOpToLisp<Symbol!("+")>,
+        @ComputerRefComponent.ToLisp.Times<MathExpr>: BinaryOpToLisp<Symbol!("*")>,
     }
 }
 ```
 
-`HandlePlus` interprets a `Plus` as either evaluation or conversion depending on the `Code`, and `HandleTimes`, `HandleLiteral`, and `HandleMathExpr` follow the same shape. The context then dispatches first on the input type and second on the operation — a two-layer table whose order is a free choice that costs nothing at runtime, since all of it resolves through trait selection at compile time. Defining the operation routing through `delegate_components!` rather than separate `impl` blocks is what keeps the `Eval` and `ToLisp` logic free to live in different crates.
+Evaluation now runs through `ComputerRef`, so it uses the by-reference impls the evaluation providers also carry, and the dispatch wrappers fix their code: `DispatchEval` implements `ComputerRef<Eval, MathExpr>` and `DispatchToLisp` implements `ComputerRef<ToLisp, MathExpr>`. The keys can be grouped by operation, as here, or by operator; the grouping is a free choice that costs nothing at runtime, since all of it resolves through trait selection at compile time. Within one component a code is keyed per input throughout, never also on its own, because a shorter key would cover every longer key beneath it. Defining the operation routing through `delegate_components!` rather than separate `impl` blocks is what keeps the `Eval` and `ToLisp` logic free to live in different crates.
 
 ## Extending the language
 
@@ -287,9 +293,9 @@ pub struct Minus<Expr> {
 pub struct Negate<Expr>(pub Box<Expr>);
 
 #[cgp_impl(new EvalSubtract)]
+#[uses(CanComputeRef<Code, MathExpr, Output = Output>)]
 impl<Code, MathExpr, Output> ComputerRef<Code, Minus<MathExpr>>
 where
-    Self: CanComputeRef<Code, MathExpr, Output = Output>,
     Output: Sub<Output = Output>,
 {
     type Output = Output;
@@ -307,7 +313,7 @@ The extended enum reuses the original operator providers, now instantiated at a 
 ```rust
 pub type Value = i64;
 
-#[derive(Debug, HasFields, FromVariant, ExtractField)]
+#[derive(Debug, CgpData)]
 pub enum MathPlusExpr {
     Plus(Plus<MathPlusExpr>),
     Times(Times<MathPlusExpr>),
@@ -318,17 +324,14 @@ pub enum MathPlusExpr {
 
 delegate_components! {
     InterpreterPlus {
-        ComputerRefComponent:
-            UseDelegate<new CodeComponents {
-                Eval: UseInputDelegate<new EvalComponents {
-                    MathPlusExpr: DispatchEval,
-                    Plus<MathPlusExpr>: EvalAdd,
-                    Times<MathPlusExpr>: EvalMultiply,
-                    Literal<Value>: EvalLiteral,
-                    Minus<MathPlusExpr>: EvalSubtract,
-                    Negate<MathPlusExpr>: EvalNegate,
-                }>,
-            }>
+        open ComputerRefComponent;
+
+        @ComputerRefComponent.Eval.MathPlusExpr: DispatchEval,
+        @ComputerRefComponent.Eval.Plus<MathPlusExpr>: EvalAdd,
+        @ComputerRefComponent.Eval.Times<MathPlusExpr>: EvalMultiply,
+        @ComputerRefComponent.Eval.Literal<Value>: EvalLiteral,
+        @ComputerRefComponent.Eval.Minus<MathPlusExpr>: EvalSubtract,
+        @ComputerRefComponent.Eval.Negate<MathPlusExpr>: EvalNegate,
     }
 }
 ```

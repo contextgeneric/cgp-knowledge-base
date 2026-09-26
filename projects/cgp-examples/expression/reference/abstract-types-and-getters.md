@@ -19,9 +19,10 @@ pub trait HasLispExprType {
 
 ### Behavior
 
-The conversion providers bound `Self: HasLispExprType<LispExpr = LispExpr>` and build values of that
-type by upcasting, so they work for any target enum with the variants they construct. The contexts that
-convert wire `LispExprTypeProviderComponent: UseType<LispExpr>`. It registers no namespace prefix.
+The conversion providers import it with `#[use_type(HasLispExprType.LispExpr)]` and build values of
+that type by upcasting, so they work for any target enum with the variants they construct. The
+contexts that convert wire `LispExprTypeProviderComponent: UseType<LispExpr>`. It registers no
+namespace prefix.
 
 ### Context dependencies
 
@@ -42,10 +43,10 @@ pub trait HasMathExprType {
 
 ### Behavior
 
-Only `BinaryOpToLisp` uses it, to name the expression type its operands hold, since its input is any
-binary operator rather than a `Plus<MathExpr>` with the type in view. The contexts that convert wire
-`MathExprTypeProviderComponent: UseType<MathExpr>`; `add_mult` wires it too, although none of its
-providers reads it.
+Only `BinaryOpToLisp` imports it, with `#[use_type]`, to name the expression type its operands hold,
+since its input is any binary operator rather than a `Plus<MathExpr>` with the type in view. The
+contexts that convert wire `MathExprTypeProviderComponent: UseType<MathExpr>`; `add_mult` wires it
+too, although none of its providers reads it.
 
 ### Context dependencies
 

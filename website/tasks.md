@@ -171,8 +171,9 @@ follows are in [writing-guides/reference.md](writing-guides/reference.md).
 **Post-release.** All three deep dives are still wanted, and none of them holds up the v0.8.0 release —
 they are the largest discretionary body of work on the list and they serve readers who are currently
 served, if imperfectly, by the blog posts they grow out of. Each is planned in
-[deep-dives/](deep-dives/README.md) and each is blocked by modernization work in the repository it
-tracks. **The code tasks are genuine library work, not documentation housekeeping**, and they come first:
+[deep-dives/](deep-dives/README.md), and two are blocked by modernization work in the repository they
+track; the extensible data types deep dive is not, since its `cgp-examples` crates already use current
+idioms. **The code tasks are genuine library work, not documentation housekeeping**, and they come first:
 a deep dive written against the current code would show forms the guides tell readers not to write. They
 are also independent of everything above, so they can start whenever there is capacity for them.
 
@@ -183,16 +184,6 @@ are also independent of everything above, so they can start whenever there is ca
   whose removal is breaking for downstream users and is accepted, and fix the five example comments
   describing the removed preset system. *Lands in:* the `hypershell` repository. The project's
   [issues](../projects/hypershell/issues.md) list the defects worth fixing in the same pass.
-- **DC2 — modernize the two `cgp-examples` crates.** The least modernized of the four: convert
-  `builder`'s six getter traits to `#[implicit]` arguments, adopt `#[uses]` across both crates, and
-  replace both the `Code`-keyed `UseDelegate` tables and the `Input`-keyed `UseInputDelegate` tables
-  with `open`, the latter through two-segment path keys such as
-  `@ComputerComponent.<Code> Code.Plus<MathExpr>`. The `expression` items are listed under
-  [Modernization](../projects/cgp-examples/expression/issues.md#modernization) in its project section,
-  and the `builder` items in [the deep-dive plan](deep-dives/extensible-datatypes.md). The matching
-  worked examples, [expression-interpreter.md](../examples/expression-interpreter.md) and
-  [application-builder.md](../examples/application-builder.md), change in the same pass, since each
-  matches its crate. *Lands in:* the `cgp-examples` repository, and this knowledge base's `examples/`.
 - **DC3 — publish a `CgpSerdeNamespace`, and drop the three `#[derive_delegate]` attributes.** The
   namespace is a design decision about what the defaults should be rather than a mechanical conversion,
   and a genuine library improvement: without it every context spells out a dozen wiring entries, and the
@@ -207,7 +198,7 @@ are also independent of everything above, so they can start whenever there is ca
   post's embedded CGP primer goes instead of being re-taught, and it now exists. **This task also creates the `Deep dives`
   category.**
 - **DD2 — the extensible data types deep dive.** Seven pages, from four blog posts and two example
-  crates. *Blocked by:* DC2. Note that this is the deep dive serving the
+  crates. *Blocked by:* nothing. Note that this is the deep dive serving the
   [least well-served reader](information-architecture.md) — the framework and library author.
 - **DD3 — the cgp-serde deep dive.** Five pages. *Blocked by:* DC3.
 
@@ -418,22 +409,15 @@ published blog posts, whose titles are among the worst offenders and whose
   pages that use them. *Blocked by:* nothing. *Done when:* the three files exist, each idea's pages
   reference the one drawing, and every page still reads correctly with the image missing.
 
-- **X4 — convert the worked examples' input dispatch to `open`.** Two worked examples still wire
-  input-keyed dispatch through legacy `UseInputDelegate` tables:
-  [expression-interpreter.md](../examples/expression-interpreter.md), in every wiring step, including
-  its `UseDelegate`-around-`UseInputDelegate` two-layer tables, and
-  [extensible-shapes.md](../examples/extensible-shapes.md), in its context-wired dispatch. Both convert
+- **X4 — convert the extensible shapes example's input dispatch to `open`.** One worked example still
+  wires input-keyed dispatch through a legacy `UseInputDelegate` table:
+  [extensible-shapes.md](../examples/extensible-shapes.md), in its context-wired dispatch. It converts
   to two-segment path keys under `open`, as in
-  `@ComputerComponent.<Code> Code.Plus<MathExpr>: EvalAdd` and
-  `@ComputerRefComponent.Eval.Plus<MathExpr>`. Probes ran the converted evaluator and shapes wiring,
-  and the reference, guide, and skill already teach the form. This is new work rather than a
-  correction, since each example's prose explains the table it wires. The `cgp` documents that quote
-  the same tables already use the `open` form. *Lands in:* this knowledge base's `examples/`.
-  *Blocked by:* nothing for `extensible-shapes.md`, and DC2 for `expression-interpreter.md`: that
-  example reproduces the `cgp-examples` `expression` crate, and a document reproducing a project's
-  code matches it at the documented branch, per
-  [AGENTS.md](../AGENTS.md#project-facts-and-cgp-patterns-have-separate-owners), so it converts in the
-  same change as the crate.
+  `@ComputerComponent.<Code> Code.[Circle, Rectangle, Triangle]: ComputeArea`,
+  the form the [expression interpreter](../examples/expression-interpreter.md) example already uses.
+  A probe ran the converted shapes wiring, and the reference, guide, and skill already teach the form.
+  This is new work rather than a correction, since the example's prose explains the table it wires.
+  *Lands in:* this knowledge base's `examples/`. *Blocked by:* nothing.
   *Done when:* no worked example wires a `UseInputDelegate` table except where it names it as the
   legacy form, and every converted snippet compiles.
 
@@ -450,19 +434,19 @@ the [ordering](#the-ordering) for what to start on.
 | T4 | nothing | nothing |
 | T3 | nothing | nothing |
 | R1 | the author's read | nothing |
-| DC1, DC2, DC3 | nothing | DD1, DD2, DD3 respectively; DC2 also X4's interpreter half |
-| DD1, DD2, DD3 | their DC task | nothing |
+| DC1, DC3 | nothing | DD1 and DD3 respectively |
+| DD1, DD3 | their DC task | nothing |
+| DD2 | nothing | nothing |
 | B1, B2 | nothing (both held until after V1) | nothing |
 | V1 | the v0.8.0 release, and every release-blocking task | B1 and B2 |
 | A1 | the author's read | every page-adding task's provenance note |
 | S1, S3, S4, S5, S7, S10 | nothing | nothing; S3 and S4 should precede V1 |
 | S9, S11 | V1 | nothing |
-| X1, X2, X3 | nothing | nothing |
-| X4 | nothing, except DC2 for the interpreter example | nothing |
+| X1, X2, X3, X4 | nothing | nothing |
 
 Two shapes in that graph are worth naming, because they are what make the ordering non-obvious. The
-**deep dives are gated on code** rather than on writing, so their long lead time starts with DC1–DC3
-and those can run at any time. And **V1 is the terminus rather than an interrupt**: nothing publishes
+**deep dives are gated on code** rather than on writing, so the long lead time of two of them starts
+with DC1 and DC3, and those can run at any time. And **V1 is the terminus rather than an interrupt**: nothing publishes
 until it lands, so a task deferred is a release deferred.
 
 ## The ordering
@@ -499,8 +483,8 @@ when each page's first impression in the index is fixed.
 `cgp-skills` misteaches every agent that reads it, and the crate's landing page is working against the
 project every day it stays as it is.
 
-**DC1–DC3 whenever there is capacity**, since they are independent of everything above and are the long
-lead time on the deep dives.
+**DC1 and DC3 whenever there is capacity**, since they are independent of everything above and are the
+long lead time on the deep dives.
 
 **Then V1, and the merge.** Everything above ships at once.
 

@@ -1,8 +1,7 @@
 # `add_mult_code`
 
 The base interpreter with both operations served by one component, `ComputerRef`, and chosen by the
-operation code: the context dispatches on the input type first and on the `Eval` or `ToLisp` code
-second.
+operation code: each wiring key names the `Eval` or `ToLisp` code and the input type together.
 
 - **Source** — [contexts/add_mult_code.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/contexts/add_mult_code.rs)
 - **Run** — no test; the context is exercised only by its check block
@@ -12,56 +11,52 @@ second.
 
 ## The context and its wiring
 
-`Interpreter` wires only `ComputerRefComponent`, keyed by input type, and each entry is a
-[per-operator bundle](../reference/dispatchers.md#the-per-operator-bundles) that keys a second table by
-code:
+`Interpreter` opens only `ComputerRefComponent`, and each key fixes both the code and the input, so
+every operator has one entry per operation:
 
 ```rust
 delegate_components! {
     Interpreter {
+        open ComputerRefComponent;
+
         MathExprTypeProviderComponent:
             UseType<MathExpr>,
         LispExprTypeProviderComponent:
             UseType<LispExpr>,
-        ComputerRefComponent:
-            UseInputDelegate<
-                new ExprComputerComponents {
-                    MathExpr: HandleMathExpr,
-                    Literal<Value>: HandleLiteral,
-                    Plus<MathExpr>: HandlePlus,
-                    Times<MathExpr>: HandleTimes,
-                }
-            >,
+
+        @ComputerRefComponent.Eval.MathExpr: DispatchEval,
+        @ComputerRefComponent.Eval.Literal<Value>: EvalLiteral,
+        @ComputerRefComponent.Eval.Plus<MathExpr>: EvalAdd,
+        @ComputerRefComponent.Eval.Times<MathExpr>: EvalMultiply,
+
+        @ComputerRefComponent.ToLisp.MathExpr: DispatchToLisp,
+        @ComputerRefComponent.ToLisp.Literal<Value>: LiteralToLisp,
+        @ComputerRefComponent.ToLisp.Plus<MathExpr>: BinaryOpToLisp<Symbol!("+")>,
+        @ComputerRefComponent.ToLisp.Times<MathExpr>: BinaryOpToLisp<Symbol!("*")>,
     }
 }
 ```
 
-`HandlePlus` routes `Eval` to `EvalAdd` and `ToLisp` to `BinaryOpToLisp<Symbol!("+")>`, and the other
-bundles follow the same shape. Because evaluation now runs through `ComputerRef`, it uses the
-by-reference impls of the evaluation providers. The dispatch wrappers fix their code:
-`DispatchEval` implements `ComputerRef<Eval, MathExpr>` and `DispatchToLisp` implements
-`ComputerRef<ToLisp, MathExpr>`, and `HandleMathExpr` routes each code to its wrapper.
+Because evaluation runs through `ComputerRef`, it uses the by-reference impls of the evaluation
+providers. The dispatch wrappers fix their code to match their keys: `DispatchEval` implements
+`ComputerRef<Eval, MathExpr>` and `DispatchToLisp` implements `ComputerRef<ToLisp, MathExpr>`.
 
 ## What the checks pin
 
-The `check_components!` block asserts `ComputerRefComponent` for evaluation of `MathExpr`, `Literal`,
-and `Plus`, and for conversion of all four input types. Nothing runs the context at test time.
+The `check_components!` block asserts `ComputerRefComponent` for evaluation and conversion of all four
+input types. Nothing runs the context at test time.
 
 ## What it demonstrates
 
-- Dispatch on two parameters, input then code, through aggregate providers: see
-  [dispatch layers](../architecture/dispatch-layers.md#three-arrangements).
+- Dispatch on two parameters at once, with a concrete segment for each: see
+  [dispatch layers](../architecture/dispatch-layers.md#two-arrangements).
 - Operations selected by a type-level code rather than by which component is called: see the
   [`Eval` and `ToLisp` codes](../reference/README.md#other-items).
 
 ## Known issues
 
-- **Legacy wiring** — the two layers of nested tables are the case the `open` statement simplifies
-  most, to one key per input and code, such as `@ComputerRefComponent.Eval.Plus<MathExpr>: EvalAdd`.
-  A probe of that form compiled, passed a check that includes `Times`, and produced the same results;
-  see [issues.md](../issues.md#modernization).
-- **No test, and the check skips `Times` evaluation** — see
-  [issues.md](../issues.md#missing-features).
+- **No test** — the probe result above is the only runtime evidence; see
+  [testing.md](../testing.md).
 
 ## Public material derived from this
 

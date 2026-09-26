@@ -125,39 +125,35 @@ pub trait HasLoggedInUser<App> {
 }
 
 #[cgp_auto_getter]
-pub trait HasLoggedInUserMut<App>
-where
-    App: HasUserIdType,
-{
-    fn logged_in_user(&mut self) -> &mut Option<App::UserId>;
+#[use_type(HasUserIdType.UserId in App)]
+pub trait HasLoggedInUserMut<App> {
+    fn logged_in_user(&mut self) -> &mut Option<UserId>;
 }
 
 #[cgp_auto_getter]
-pub trait HasBasicAuthHeader<App>
-where
-    App: HasUserIdType + HasPasswordType,
-{
-    fn basic_auth_header(&self) -> &Option<(App::UserId, App::Password)>;
+#[use_type(HasUserIdType.UserId in App, HasPasswordType.Password in App)]
+pub trait HasBasicAuthHeader<App> {
+    fn basic_auth_header(&self) -> &Option<(UserId, Password)>;
 }
 
 #[cgp_auto_getter]
-pub trait HasQueryBalanceFields<App>
-where
-    App: HasCurrencyType,
-{
-    fn currency(&self) -> &App::Currency;
+#[use_type(HasCurrencyType.Currency in App)]
+pub trait HasQueryBalanceFields<App> {
+    fn currency(&self) -> &Currency;
 }
 
 #[cgp_auto_getter]
-pub trait HasTransferMoneyFields<App>
-where
-    App: HasUserIdType + HasCurrencyType + HasQuantityType,
-{
-    fn currency(&self) -> &App::Currency;
+#[use_type(
+    HasUserIdType.UserId in App,
+    HasCurrencyType.Currency in App,
+    HasQuantityType.Quantity in App,
+)]
+pub trait HasTransferMoneyFields<App> {
+    fn currency(&self) -> &Currency;
 
-    fn recipient(&self) -> &App::UserId;
+    fn recipient(&self) -> &UserId;
 
-    fn quantity(&self) -> &App::Quantity;
+    fn quantity(&self) -> &Quantity;
 }
 ```
 
@@ -168,9 +164,8 @@ reference for the endpoints and the second by mutable reference for
 [`UseBasicAuth`](wrappers.md#usebasicauth), which writes the authenticated user into it. The two
 declare a method of the same name, which works because each provider bounds its request by only one of
 them. `HasQueryBalanceFields` and `HasTransferMoneyFields` likewise both declare `currency`, and again
-no bound names both. Only `HasLoggedInUser` imports its type with `#[use_type(... in App)]`; the other
-four spell the bound and `App::…` by hand, which is the older form, recorded in
-[issues.md](../issues.md#housekeeping).
+no bound names both. Each imports the app's abstract types with `#[use_type(… in App)]`, which also
+supplies the `App` bounds, so the plain `<App>` parameter is enough.
 
 ### Context dependencies
 

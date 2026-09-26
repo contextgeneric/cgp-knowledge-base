@@ -42,10 +42,8 @@ The crate is written in current CGP idioms, so its code is safe to copy for the 
 providers are `#[cgp_impl]` blocks, dependencies are `#[uses]` and `#[use_provider]` imports,
 abstract types are imported with `#[use_type]` (including the equality form), fields are read as
 `#[implicit]` arguments, and the wiring is organized with prefixes, namespaces, `#[default_impl]`,
-and a `for` loop. One lag remains: four of the five request-getter traits bound their `App`
-parameter by hand (`where App: HasUserIdType` and `App::UserId`) where the fifth, `HasLoggedInUser`,
-uses the preferred `#[use_type(HasUserIdType.UserId in App)]`; see
-[issues.md](issues.md#housekeeping).
+and a `for` loop. The request getters import the app's abstract types with
+`#[use_type(… in App)]`.
 
 ## Status and gaps
 

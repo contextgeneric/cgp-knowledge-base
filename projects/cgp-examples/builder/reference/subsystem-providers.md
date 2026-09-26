@@ -1,46 +1,46 @@
 # Subsystem providers
 
 The subsystem providers are the nine builder providers, each a `Handler` that builds one subsystem's
-fields from the builder context's configuration, together with the struct each returns and the getter
-trait each reads its configuration through. Every provider is generic over `Code` and `Input` and
-ignores both, and every one returns `Self::Error`, the builder context's abstract error.
+fields from the builder context's configuration, together with the struct each returns. Every provider
+is generic over `Code` and `Input` and ignores both, and every one returns `Error`, the builder
+context's abstract error, imported with `#[use_type(HasErrorType.Error)]`.
 
 ## The output structs
 
 Each provider returns a small struct holding only the fields it built, and each struct derives the
-three record traits that let `BuildAndMergeOutputs` merge it into a target by field name.
+record traits that let `BuildAndMergeOutputs` merge it into a target by field name.
 
 ### Definition
 
 ```rust
-#[derive(HasField, HasFields, BuildField)]
+#[derive(CgpData)]
 pub struct SqliteClient {
     pub sqlite_pool: SqlitePool,
 }
 
-#[derive(HasField, HasFields, BuildField)]
+#[derive(CgpData)]
 pub struct PostgresClient {
     pub postgres_pool: PgPool,
 }
 
-#[derive(HasField, HasFields, BuildField)]
+#[derive(CgpData)]
 pub struct HttpClient {
     pub http_client: Client,
 }
 
-#[derive(HasField, HasFields, BuildField)]
+#[derive(CgpData)]
 pub struct OpenAiClient {
     pub open_ai_client: openai::Client,
     pub open_ai_agent: Agent<openai::CompletionModel>,
 }
 
-#[derive(HasField, HasFields, BuildField)]
+#[derive(CgpData)]
 pub struct AnthropicClient {
     pub anthropic_client: anthropic::Client,
     pub anthropic_agent: Agent<CompletionModel>,
 }
 
-#[derive(HasField, HasFields, BuildField)]
+#[derive(CgpData)]
 pub struct SqliteAndHttpClient {
     pub sqlite_pool: SqlitePool,
     pub http_client: Client,
@@ -50,73 +50,15 @@ pub struct SqliteAndHttpClient {
 ### Behavior
 
 The field names are the contract: a struct merges into any target with fields of the same names and
-types. `HasFields` is the derive the merge needs from a source, and `BuildField` the one it needs from
-a target, per [`HasBuilder`](../../../../cgp/reference/traits/has_builder.md); each struct derives
-both, so it could serve as either. The `Client` types are `reqwest::Client` and the `rig-core` 0.13
+types. A merge needs the field list from its source and the builder from its target, per
+[`HasBuilder`](../../../../cgp/reference/traits/has_builder.md), and
+[`#[derive(CgpData)]`](../../../../cgp/reference/derives/derive_cgp_data.md) supplies both, so each
+struct could serve as either. The `Client` types are `reqwest::Client` and the `rig-core` 0.13
 OpenAI and Anthropic clients.
 
 ### Context dependencies
 
 None; they are plain data.
-
-## The configuration getters
-
-The six getter traits read the builder context's configuration fields, one trait per subsystem
-configuration.
-
-### Definition
-
-```rust
-#[cgp_auto_getter]
-pub trait HasSqlitePath {
-    fn db_path(&self) -> &str;
-}
-
-#[cgp_auto_getter]
-pub trait HasSqliteOptions {
-    fn db_options(&self) -> &str;
-
-    fn db_journal_mode(&self) -> &str;
-}
-
-#[cgp_auto_getter]
-pub trait HasPostgresUrl {
-    fn postgres_url(&self) -> &str;
-}
-
-#[cgp_auto_getter]
-pub trait HasHttpClientConfig {
-    fn http_user_agent(&self) -> &str;
-}
-
-#[cgp_auto_getter]
-pub trait HasOpenAiConfig {
-    fn open_ai_key(&self) -> &str;
-
-    fn open_ai_model(&self) -> &str;
-
-    fn llm_preamble(&self) -> &str;
-}
-
-#[cgp_auto_getter]
-pub trait HasAnthropicConfig {
-    fn anthropic_key(&self) -> &str;
-
-    fn llm_preamble(&self) -> &str;
-}
-```
-
-### Behavior
-
-Each method reads a `String` field of the same name as a `&str`, so a builder context satisfies a
-getter by having those fields. `llm_preamble` appears in both AI getters, and a context with one
-`llm_preamble` field satisfies both. Every getter reads the provider's own context, which is the case
-[reading context fields](../../../../cgp/guides/reading-context-fields.md) says an `#[implicit]`
-argument should cover; see [issues.md](../issues.md#modernization).
-
-### Context dependencies
-
-The named `String` fields, through `HasField`.
 
 ## `BuildSqliteClient`
 
@@ -126,17 +68,18 @@ The named `String` fields, through `HasField`.
 
 ```rust
 #[cgp_impl(new BuildSqliteClient)]
-impl<Code, Input> Handler<Code, Input>
-where
-    Self: HasSqliteOptions + CanRaiseError<sqlx::Error>,
-{
+#[uses(CanRaiseError<sqlx::Error>)]
+#[use_type(HasErrorType.Error)]
+impl<Code, Input> Handler<Code, Input> {
     type Output = SqliteClient;
 
     async fn handle(
         &self,
         _code: PhantomData<Code>,
         _input: Input,
-    ) -> Result<Self::Output, Self::Error> { ... }
+        #[implicit] db_options: &str,
+        #[implicit] db_journal_mode: &str,
+    ) -> Result<Self::Output, Error> { ... }
 }
 ```
 
@@ -151,7 +94,7 @@ without `mode=rwc` fails with `unable to open database file`. Connecting needs a
 
 ### Context dependencies
 
-`HasSqliteOptions`, and `CanRaiseError<sqlx::Error>`.
+The `db_options` and `db_journal_mode` fields, and `CanRaiseError<sqlx::Error>`.
 
 ## `BuildDefaultSqliteClient`
 
@@ -161,17 +104,17 @@ without `mode=rwc` fails with `unable to open database file`. Connecting needs a
 
 ```rust
 #[cgp_impl(new BuildDefaultSqliteClient)]
-impl<Code, Input> Handler<Code, Input>
-where
-    Self: HasSqlitePath + CanRaiseError<sqlx::Error>,
-{
+#[uses(CanRaiseError<sqlx::Error>)]
+#[use_type(HasErrorType.Error)]
+impl<Code, Input> Handler<Code, Input> {
     type Output = SqliteClient;
 
     async fn handle(
         &self,
         _code: PhantomData<Code>,
         _input: Input,
-    ) -> Result<Self::Output, Self::Error> { ... }
+        #[implicit] db_path: &str,
+    ) -> Result<Self::Output, Error> { ... }
 }
 ```
 
@@ -182,7 +125,7 @@ valid path for an in-memory database.
 
 ### Context dependencies
 
-`HasSqlitePath`, and `CanRaiseError<sqlx::Error>`.
+The `db_path` field, and `CanRaiseError<sqlx::Error>`.
 
 ## `BuildPostgresClient`
 
@@ -192,17 +135,17 @@ valid path for an in-memory database.
 
 ```rust
 #[cgp_impl(new BuildPostgresClient)]
-impl<Code, Input> Handler<Code, Input>
-where
-    Self: HasPostgresUrl + CanRaiseError<sqlx::Error>,
-{
+#[uses(CanRaiseError<sqlx::Error>)]
+#[use_type(HasErrorType.Error)]
+impl<Code, Input> Handler<Code, Input> {
     type Output = PostgresClient;
 
     async fn handle(
         &self,
         _code: PhantomData<Code>,
         _input: Input,
-    ) -> Result<Self::Output, Self::Error> { ... }
+        #[implicit] postgres_url: &str,
+    ) -> Result<Self::Output, Error> { ... }
 }
 ```
 
@@ -214,7 +157,7 @@ after `sqlx`'s default pool timeout.
 
 ### Context dependencies
 
-`HasPostgresUrl`, and `CanRaiseError<sqlx::Error>`.
+The `postgres_url` field, and `CanRaiseError<sqlx::Error>`.
 
 ## `BuildHttpClient`
 
@@ -224,17 +167,17 @@ after `sqlx`'s default pool timeout.
 
 ```rust
 #[cgp_impl(new BuildHttpClient)]
-impl<Code, Input> Handler<Code, Input>
-where
-    Self: HasHttpClientConfig + CanRaiseError<reqwest::Error>,
-{
+#[uses(CanRaiseError<reqwest::Error>)]
+#[use_type(HasErrorType.Error)]
+impl<Code, Input> Handler<Code, Input> {
     type Output = HttpClient;
 
     async fn handle(
         &self,
         _code: PhantomData<Code>,
         _input: Input,
-    ) -> Result<Self::Output, Self::Error> { ... }
+        #[implicit] http_user_agent: &str,
+    ) -> Result<Self::Output, Error> { ... }
 }
 ```
 
@@ -245,7 +188,7 @@ It builds the client with the `http_user_agent` and a five-second connect timeou
 
 ### Context dependencies
 
-`HasHttpClientConfig`, and `CanRaiseError<reqwest::Error>`.
+The `http_user_agent` field, and `CanRaiseError<reqwest::Error>`.
 
 ## `BuildDefaultHttpClient`
 
@@ -255,23 +198,17 @@ It builds the client with the `http_user_agent` and a five-second connect timeou
 
 ```rust
 #[cgp_impl(new BuildDefaultHttpClient)]
-impl<Code, Input> Handler<Code, Input>
-where
-    Self: HasErrorType,
-{
+#[use_type(HasErrorType.Error)]
+impl<Code, Input> Handler<Code, Input> {
     type Output = HttpClient;
 
-    async fn handle(
-        &self,
-        _code: PhantomData<Code>,
-        _input: Input,
-    ) -> Result<Self::Output, Self::Error> { ... }
+    async fn handle(&self, _code: PhantomData<Code>, _input: Input) -> Result<Self::Output, Error> { ... }
 }
 ```
 
 ### Behavior
 
-It returns `reqwest::Client::new()` and cannot fail. It requires `HasErrorType` only so its signature
+It returns `reqwest::Client::new()` and cannot fail. It imports `HasErrorType` only so its signature
 has an error type to name.
 
 ### Context dependencies
@@ -286,17 +223,18 @@ has an error type to name.
 
 ```rust
 #[cgp_impl(new BuildOpenAiClient)]
-impl<Code, Input> Handler<Code, Input>
-where
-    Self: HasOpenAiConfig + HasErrorType,
-{
+#[use_type(HasErrorType.Error)]
+impl<Code, Input> Handler<Code, Input> {
     type Output = OpenAiClient;
 
     async fn handle(
         &self,
         _code: PhantomData<Code>,
         _input: Input,
-    ) -> Result<Self::Output, Self::Error> { ... }
+        #[implicit] open_ai_key: &str,
+        #[implicit] open_ai_model: &str,
+        #[implicit] llm_preamble: &str,
+    ) -> Result<Self::Output, Error> { ... }
 }
 ```
 
@@ -308,7 +246,7 @@ never fails.
 
 ### Context dependencies
 
-`HasOpenAiConfig`, and `HasErrorType`.
+The `open_ai_key`, `open_ai_model`, and `llm_preamble` fields, and `HasErrorType`.
 
 ## `BuildDefaultOpenAiClient`
 
@@ -318,17 +256,11 @@ never fails.
 
 ```rust
 #[cgp_impl(new BuildDefaultOpenAiClient)]
-impl<Code, Input> Handler<Code, Input>
-where
-    Self: HasErrorType,
-{
+#[use_type(HasErrorType.Error)]
+impl<Code, Input> Handler<Code, Input> {
     type Output = OpenAiClient;
 
-    async fn handle(
-        &self,
-        _code: PhantomData<Code>,
-        _input: Input,
-    ) -> Result<Self::Output, Self::Error> { ... }
+    async fn handle(&self, _code: PhantomData<Code>, _input: Input) -> Result<Self::Output, Error> { ... }
 }
 ```
 
@@ -354,17 +286,17 @@ It panics without the environment variable; see [issues.md](../issues.md#defects
 
 ```rust
 #[cgp_impl(new BuildDefaultAnthropicClient)]
-impl<Code, Input> Handler<Code, Input>
-where
-    Self: HasAnthropicConfig + HasErrorType,
-{
+#[use_type(HasErrorType.Error)]
+impl<Code, Input> Handler<Code, Input> {
     type Output = AnthropicClient;
 
     async fn handle(
         &self,
         _code: PhantomData<Code>,
         _input: Input,
-    ) -> Result<Self::Output, Self::Error> { ... }
+        #[implicit] anthropic_key: &str,
+        #[implicit] llm_preamble: &str,
+    ) -> Result<Self::Output, Error> { ... }
 }
 ```
 
@@ -376,7 +308,7 @@ default one. Nothing is sent, so it builds offline and never fails. It is the on
 
 ### Context dependencies
 
-`HasAnthropicConfig`, and `HasErrorType`.
+The `anthropic_key` and `llm_preamble` fields, and `HasErrorType`.
 
 ## `BuildDefaultSqliteAndHttpClient`
 
@@ -387,17 +319,17 @@ provider.
 
 ```rust
 #[cgp_impl(new BuildDefaultSqliteAndHttpClient)]
-impl<Code, Input> Handler<Code, Input>
-where
-    Self: HasSqlitePath + CanRaiseError<sqlx::Error>,
-{
+#[uses(CanRaiseError<sqlx::Error>)]
+#[use_type(HasErrorType.Error)]
+impl<Code, Input> Handler<Code, Input> {
     type Output = SqliteAndHttpClient;
 
     async fn handle(
         &self,
         _code: PhantomData<Code>,
         _input: Input,
-    ) -> Result<Self::Output, Self::Error> { ... }
+        #[implicit] db_path: &str,
+    ) -> Result<Self::Output, Error> { ... }
 }
 ```
 
@@ -408,24 +340,33 @@ shows that a provider may build several subsystems at once. No builder context w
 
 ### Context dependencies
 
-`HasSqlitePath`, and `CanRaiseError<sqlx::Error>`.
+The `db_path` field, and `CanRaiseError<sqlx::Error>`.
 
 ### Known issues
 
 Unused; see [issues.md](../issues.md#housekeeping).
 
+## How the providers read configuration
+
+Every configurable provider reads the builder context's fields as
+[`#[implicit]`](../../../../cgp/reference/attributes/implicit.md) arguments on `handle`, so a builder
+context satisfies a provider by having `String` fields of the argument names. Each argument is a
+`&str` read from a `String` field. `BuildOpenAiClient` and `BuildDefaultAnthropicClient` both read
+`llm_preamble`, and a context with one `llm_preamble` field serves both. `BuildDefaultHttpClient` and
+`BuildDefaultOpenAiClient` read no field and need only the error type.
+
 ## Source
 
 - [`providers/sqlite.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/providers/sqlite.rs)
-  — `HasSqlitePath`, `HasSqliteOptions`, `SqliteClient`, and the two SQLite providers.
+  — `SqliteClient` and the two SQLite providers.
 - [`providers/postgres.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/providers/postgres.rs)
-  — `HasPostgresUrl`, `PostgresClient`, and `BuildPostgresClient`.
+  — `PostgresClient` and `BuildPostgresClient`.
 - [`providers/http_client.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/providers/http_client.rs)
-  — `HasHttpClientConfig`, `HttpClient`, and the two HTTP providers.
+  — `HttpClient` and the two HTTP providers.
 - [`providers/chatgpt.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/providers/chatgpt.rs)
-  — `HasOpenAiConfig`, `OpenAiClient`, and the two OpenAI providers.
+  — `OpenAiClient` and the two OpenAI providers.
 - [`providers/anthropic.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/providers/anthropic.rs)
-  — `HasAnthropicConfig`, `AnthropicClient`, and `BuildDefaultAnthropicClient`.
+  — `AnthropicClient` and `BuildDefaultAnthropicClient`.
 - [`providers/sqlite_and_http.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/providers/sqlite_and_http.rs)
   — `SqliteAndHttpClient` and `BuildDefaultSqliteAndHttpClient`.
 

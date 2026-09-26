@@ -13,16 +13,17 @@ full type with [`CanUpcast`](../../../../cgp/reference/traits/cast.md).
 ### Definition
 
 ```rust
-#[derive(HasFields, ExtractField, FromVariant)]
+#[derive(CgpData)]
 enum LispSubExpr<Expr> {
     List(List<Expr>),
     Ident(Ident),
 }
 
 #[cgp_impl(new PlusToLisp)]
-impl<Code, MathExpr, LispExpr> ComputerRef<Code, Plus<MathExpr>>
+#[use_type(HasLispExprType.LispExpr)]
+#[uses(CanComputeRef<Code, MathExpr, Output = LispExpr>)]
+impl<Code, MathExpr> ComputerRef<Code, Plus<MathExpr>>
 where
-    Self: HasLispExprType<LispExpr = LispExpr> + CanComputeRef<Code, MathExpr, Output = LispExpr>,
     LispSubExpr<LispExpr>: CanUpcast<LispExpr>,
 {
     type Output = LispExpr;
@@ -56,15 +57,15 @@ has `List` and `Ident` variants of those types. Only `add_mult` wires these two;
 ### Definition
 
 ```rust
-#[derive(HasFields, ExtractField, FromVariant)]
+#[derive(CgpData)]
 enum LispSubExpr<T> {
     Literal(Literal<T>),
 }
 
 #[cgp_impl(new LiteralToLisp)]
-impl<Code, T, LispExpr> ComputerRef<Code, Literal<T>>
+#[use_type(HasLispExprType.LispExpr)]
+impl<Code, T> ComputerRef<Code, Literal<T>>
 where
-    Self: HasLispExprType<LispExpr = LispExpr>,
     LispSubExpr<T>: CanUpcast<LispExpr>,
     T: Clone,
 {
@@ -91,11 +92,10 @@ operator and the target variant, which is what lets the upcast match by variant 
 
 ```rust
 #[cgp_impl(new BinaryOpToLisp<Operator>)]
-impl<Code, MathExpr, MathSubExpr, LispExpr, Operator> ComputerRef<Code, MathSubExpr>
+#[use_type(HasMathExprType.MathExpr, HasLispExprType.LispExpr)]
+#[uses(CanComputeRef<Code, MathExpr, Output = LispExpr>)]
+impl<Code, MathSubExpr, Operator> ComputerRef<Code, MathSubExpr>
 where
-    Self: HasMathExprType<MathExpr = MathExpr>
-        + HasLispExprType<LispExpr = LispExpr>
-        + CanComputeRef<Code, MathExpr, Output = LispExpr>,
     MathSubExpr: BinarySubExpression<MathExpr>,
     Operator: Default + Display,
     LispSubExpr<LispExpr>: CanUpcast<LispExpr>,

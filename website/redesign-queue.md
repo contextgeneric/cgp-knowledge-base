@@ -79,10 +79,10 @@ nothing in this register.
 replacing the usefulness of the three longest blog posts, whose code is uniformly stale. **These land
 after the v0.8.0 relaunch rather than with it**, which is the one part of the target the relaunch does
 not carry. Each is planned in [deep-dives/](deep-dives/README.md), and each carries a list of
-source-code changes its tracked repository needs first. Two of those lists contain a substantial item:
-**adopting `#[uses]` in `hypershell`, and `#[uses]` and `#[implicit]` in `cgp-examples/builder`**, and
-**publishing a `CgpSerdeNamespace`**, which is a library improvement rather than a documentation
-convenience.
+source-code changes its tracked repository needs first, except the extensible data types deep dive,
+whose `cgp-examples` crates already use current idioms. The two remaining lists each contain a
+substantial item: **adopting `#[uses]` in `hypershell`**, and **publishing a `CgpSerdeNamespace`**,
+which is a library improvement rather than a documentation convenience.
 
 **A blog post on implicit type arguments** — the framing that an abstract type is an implicit *type*
 argument, so a type dependency stops being a parameter every layer threads. It is a `deepdive` rather
@@ -114,10 +114,10 @@ conversation that will not stay live. It is not a redesign defect and is listed 
 lose track of it; the record is [blog/incoherent-rust-today.md](blog/incoherent-rust-today.md) and the
 task is B2 in [tasks.md](tasks.md).
 
-**Four code bases need modernizing before their deep dives quote them.** The per-repository lists are in
-[deep-dives/](deep-dives/README.md); the work is in `hypershell`, `cgp-serde`, and the `builder` and
-`expression` crates of `cgp-examples`, and it is genuine library work rather than documentation
-housekeeping. Because the deep dives land after the relaunch, so does this.
+**Two code bases need modernizing before their deep dives quote them.** The per-repository lists are in
+[deep-dives/](deep-dives/README.md); the work is in `hypershell` and `cgp-serde`, and it is genuine
+library work rather than documentation housekeeping. Because the deep dives land after the relaunch,
+so does this.
 
 ## Where the ordering lives
 

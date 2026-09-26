@@ -29,12 +29,12 @@ what each context has and what running its tests produced on the `v0.8.0` branch
 
 The order is the order the contexts teach in, from two separate operations to an extended language.
 
-- [add-mult.md](add-mult.md) — evaluation by value and conversion by reference, each in its own
-  input-keyed table.
+- [add-mult.md](add-mult.md) — evaluation by value and conversion by reference, each keyed by
+  input in its own component.
 - [add-mult-binary-op.md](add-mult-binary-op.md) — the same, with `BinaryOpToLisp` replacing the two
   per-operator conversion providers.
-- [add-mult-code.md](add-mult-code.md) — both operations by reference in one component, keyed by input
-  and then by operation code.
+- [add-mult-code.md](add-mult-code.md) — both operations by reference in one component, keyed by
+  operation code and input together.
 - [add-mult-neg.md](add-mult-neg.md) — the extended language with subtraction and negation, wired for
   evaluation alone.
 

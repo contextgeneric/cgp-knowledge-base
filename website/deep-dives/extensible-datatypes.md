@@ -75,12 +75,12 @@ that all the series' `delegate_components!` blocks target. Both were removed in 
 `#[derive(HasFields, BuildField)]` and `#[derive(HasFields, FromVariant, ExtractField)]`; both still
 work, but the umbrella derive added in v0.5.0 is what current code writes.
 
-**Providers become `#[cgp_impl]`.** Every provider in the series is inside-out. Both example crates are
-already converted.
+**Providers become `#[cgp_impl]`.** Every provider in the series is inside-out. Both example crates
+already use `#[cgp_impl]`.
 
 **Getter traits become `#[implicit]` arguments** where the field is on the provider's own context —
 `HasSqlitePath`, `HasHttpClientConfig`, and `HasOpenAiConfig` in part 1 are the current guides' explicit
-anti-pattern. This is also the largest code item below.
+anti-pattern, and the `builder` crate already reads them as implicit arguments.
 
 **`CanRaiseAsyncError` and `HasAsyncErrorType` are gone**, removed in v0.5.0.
 
@@ -97,43 +97,13 @@ optional-field builder both arrived in v0.5.0, so what the series presents as fu
 
 ## Source-code changes needed
 
-The two example crates are the least modernized of the four repositories, and unlike Hypershell and
-cgp-serde their gaps are pervasive rather than localized. Both are small, so the work is modest.
-
-### `cgp-examples/builder`
-
-**Convert the getter traits to `#[implicit]` arguments.** The crate declares six
-`#[cgp_auto_getter]` traits — `HasSqlitePath`, `HasSqliteOptions`, and their HTTP, OpenAI, and Anthropic
-counterparts — and reads every configuration value through them. Each is read only from the provider's
-own context, which is exactly the case
-[reading-context-fields](../../cgp/guides/reading-context-fields.md) says an implicit argument should
-cover. `providers/sqlite.rs` is the clearest instance: `BuildSqliteClient` bounds
-`Self: HasSqliteOptions` and calls `self.db_journal_mode()`, where the current form is
-`#[implicit] db_journal_mode: &str`. **This is the single most visible modernization in the deep dive**,
-because page 1 quotes a builder provider in full.
-
-**Adopt `#[uses(...)]`.** The crate has zero `#[uses]` attributes and nine hand-written `Self:` bounds.
-`Self: HasSqliteOptions + CanRaiseError<sqlx::Error>` becomes `#[uses(CanRaiseError<sqlx::Error>)]`
-once the getter half is gone.
-
-**Replace the `UseDelegate` table.** `contexts/anthropic_and_chatgpt.rs` wires
-`HandlerComponent: UseDelegate<new BuilderHandlers { BuildChatGptApp: ..., BuildAnthropicApp: ... }>`.
-This dispatches on the handler's `Code` parameter, which is what `open` handles, so it becomes
-`open HandlerComponent;` with `@HandlerComponent.BuildChatGptApp: ...` entries. The
-[application builder example](../../examples/application-builder.md) teaches the same `UseDelegate`
-table the crate has, and since an example matches its project's documented branch, it changes in the
-same pass as the crate.
-
-**Consider `#[derive(CgpData)]`** on `App` and the per-subsystem output structs, which currently derive
-`HasField, HasFields, BuildField` individually. Cosmetic, but the deep dive teaches the umbrella derive.
-
-### `cgp-examples/expression`
-
-The changes are recorded, with the probe that confirms the `open` conversion, under
-[Modernization](../../projects/cgp-examples/expression/issues.md#modernization) in the crate's project
-section: replace its `UseInputDelegate` and `UseDelegate` tables with `open` and path keys, adopt
-`#[uses]` for its eleven hand-written bounds, and derive `CgpData`. Its one getter trait stays, since
-it reads the provider's input rather than its context.
+None for the patterns. Both crates use current CGP idioms, so the pages can quote them as they stand:
+`builder` reads its configuration with `#[implicit]` arguments and dispatches its multi-target builder
+with `open`, and `expression` wires every context with `open` path keys. Their remaining gaps are
+recorded in their project sections, [`builder`](../../projects/cgp-examples/builder/README.md#status-and-gaps)
+and [`expression`](../../projects/cgp-examples/expression/issues.md). The one that touches a page is
+`builder`'s missing `sqlx` runtime, which keeps its builders from running as shipped, so page 1 can
+show its code but not a run of it until that is fixed.
 
 ## How it relates to the knowledge base
 
@@ -166,6 +136,3 @@ Two structural properties are worth defending. The **pattern-then-internals spli
 what lets a reader stop halfway with something useful; collapsing it into four sequential chapters would
 lose that. And **page 6 must not be dropped** — it is the page the source series never wrote, and it is
 what stops the deep dive reading as an advertisement for the most advanced thing CGP does.
-
-When the code changes land in `cgp-examples`, update the lists above rather than leaving them as a
-record of a state that has passed.

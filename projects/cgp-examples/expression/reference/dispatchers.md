@@ -1,10 +1,8 @@
 # Dispatchers
 
-The dispatchers are the providers that route a computation to the per-operator providers: the
-context-specific wrappers that dispatch a whole language enum, the per-operator bundles that dispatch
-on the operation, and the inner tables the contexts declare in their wiring. Why the wrappers must
-exist, and how the contexts layer these pieces, is explained in
-[dispatch layers](../architecture/dispatch-layers.md).
+The dispatchers are the context-specific wrappers that route a whole language enum to the provider
+for its current variant. Why the wrappers must exist, and how the contexts key their dispatch, is
+explained in [dispatch layers](../architecture/dispatch-layers.md).
 
 ## `DispatchEval` and `DispatchToLisp`
 
@@ -53,67 +51,25 @@ different struct in each module.
 
 The context's wiring for every variant's payload type, under the same component and code.
 
-## The per-operator bundles
+## How the contexts reach them
 
-`HandlePlus`, `HandleTimes`, `HandleLiteral`, and `HandleMathExpr` are
-[aggregate providers](../../../../cgp/concepts/aggregate-providers.md) in `add_mult_code` that route one
-input type's `ComputerRef` by the operation code.
+Each context wires its language enum to its own wrappers with the same path keys it uses for the
+operators, so the wrappers need no wiring of their own:
 
-### Definition
+| Context | Key for the enum |
+|---|---|
+| `add_mult`, `add_mult_binary_op` | `@ComputerComponent.<Code> Code.MathExpr: DispatchEval` and `@ComputerRefComponent.<Code> Code.MathExpr: DispatchToLisp` |
+| `add_mult_code` | `@ComputerRefComponent.Eval.MathExpr: DispatchEval` and `@ComputerRefComponent.ToLisp.MathExpr: DispatchToLisp` |
+| `add_mult_neg` | `@ComputerRefComponent.Eval.MathPlusExpr: DispatchEval` |
 
-```rust
-delegate_components! {
-    new HandlePlus {
-        ComputerRefComponent: UseDelegate<
-            new PlusHandlers {
-                Eval: EvalAdd,
-                ToLisp: BinaryOpToLisp<Symbol!("+")>,
-            }>
-    }
-}
-
-```
-
-The other three bundles have the same shape and differ only in their providers:
-
-| Bundle | Inner table | `Eval` | `ToLisp` |
-|---|---|---|---|
-| `HandlePlus` | `PlusHandlers` | `EvalAdd` | `BinaryOpToLisp<Symbol!("+")>` |
-| `HandleTimes` | `TimesHandlers` | `EvalMultiply` | `BinaryOpToLisp<Symbol!("*")>` |
-| `HandleLiteral` | `LiteralHandlers` | `EvalLiteral` | `LiteralToLisp` |
-| `HandleMathExpr` | `MathExprHandlers` | `DispatchEval` | `DispatchToLisp` |
-
-### Behavior
-
-Each bundle is wired as the `ComputerRefComponent` entry for one input type, and its inner
-`UseDelegate` table then selects the provider by `Code`. They are wired with plain
-`delegate_components!` and checked through `Interpreter`, never as contexts of their own.
-
-### Context dependencies
-
-Those of the providers they route to.
-
-## The inner tables
-
-The `new` tables nested inside each context's wiring are public structs the macro declares, and they
-appear in compiler messages under these names:
-
-| Table | Context | Keyed by |
-|---|---|---|
-| `EvalComponents` | `add_mult`, `add_mult_binary_op` (as `Computer`), `add_mult_neg` (inside `CodeComponents`) | input type |
-| `ToLispComponents` | `add_mult`, `add_mult_binary_op` | input type |
-| `ExprComputerComponents` | `add_mult_code` | input type, to the bundles above |
-| `PlusHandlers`, `TimesHandlers`, `LiteralHandlers`, `MathExprHandlers` | `add_mult_code`, inside the bundles | code |
-| `CodeComponents` | `add_mult_neg` | code |
-
-Each is legacy nested-table wiring through `UseInputDelegate` or `UseDelegate`; the `open` form keys
-the same entries directly on the context and declares no tables, as
-[issues.md](../issues.md#modernization) records.
+The `open` statement declares no separate table types, so a compiler message about a missing entry
+names the context itself and the full lookup path, such as
+`ComputerComponent`, then `Code`, then `Times<MathExpr>`.
 
 ## Source
 
 - [`contexts/`](https://github.com/contextgeneric/cgp-examples/tree/v0.8.0/expression/src/contexts) —
-  the wrappers, the bundles, and the tables, one context per file.
+  the wrappers and their keys, one context per file.
 
 ## Public material derived from this
 

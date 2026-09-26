@@ -1,65 +1,49 @@
 # Dispatch layers
 
 Every `expression` context routes a computation by the type of its input, and two of them also route
-by the operation, but the four contexts nest those two layers in three different ways. This document
-records each arrangement and the one piece every arrangement needs: a context-specific wrapper that
-dispatches the whole language enum. The general technique of dispatching a component per type is in
-[dispatching per type](../../../../cgp/guides/dispatching-per-type.md), which shows the `open` form
-this crate does not yet use.
+by the operation, which the four contexts express with the `open` statement in two ways. This
+document records both arrangements and the one piece every context needs: a context-specific wrapper
+that dispatches the whole language enum. The general technique of dispatching a component per type,
+including the path-key forms used here, is in
+[dispatching per type](../../../../cgp/guides/dispatching-per-type.md).
 
-## Three arrangements
+## Two arrangements
 
-The contexts differ in which components they use and how they key them:
+The contexts differ in which components they use and how many segments their keys fix:
 
-| Context | Components | Layers |
+| Context | Components | Keys |
 |---|---|---|
-| `add_mult`, `add_mult_binary_op` | `Computer` for evaluation, `ComputerRef` for conversion | input only, one table per component; the component itself picks the operation |
-| `add_mult_code` | `ComputerRef` for both | input first, then operation, through a bundle per operator |
-| `add_mult_neg` | `ComputerRef` for evaluation | operation first, then input |
+| `add_mult`, `add_mult_binary_op` | `Computer` for evaluation, `ComputerRef` for conversion | input only; the component itself picks the operation |
+| `add_mult_code`, `add_mult_neg` | `ComputerRef` for every operation | operation code and input together |
 
-In the first arrangement the operation is decided by which component is called. `Interpreter` wires
-`ComputerComponent` and `ComputerRefComponent` to separate `UseInputDelegate` tables, so
-`compute` evaluates and `compute_ref` converts, and the `Code` passed in is ignored:
-
-```rust
-ComputerComponent:
-    UseInputDelegate<
-        new EvalComponents {
-            MathExpr: DispatchEval,
-            Plus<MathExpr>: EvalAdd,
-            Times<MathExpr>: EvalMultiply,
-            Literal<Value>: EvalLiteral,
-        }
-    >,
-```
-
-In the second, one component serves both operations, so the code must pick. `add_mult_code` keys its
-`ComputerRefComponent` table by input type, and each entry is a bundle, such as `HandlePlus`, that keys
-a second table by the `Eval` or `ToLisp` code:
+In the first arrangement the operation is decided by which component is called. `Interpreter` opens
+both components and keys each entry by input with a per-entry generic `Code`, so `compute` evaluates
+and `compute_ref` converts, and whatever code the caller passes is ignored:
 
 ```rust
-delegate_components! {
-    new HandlePlus {
-        ComputerRefComponent: UseDelegate<
-            new PlusHandlers {
-                Eval: EvalAdd,
-                ToLisp: BinaryOpToLisp<Symbol!("+")>,
-            }>
-    }
-}
+open { ComputerComponent, ComputerRefComponent };
+
+@ComputerComponent.<Code> Code.MathExpr: DispatchEval,
+@ComputerComponent.<Code> Code.Plus<MathExpr>: EvalAdd,
+@ComputerComponent.<Code> Code.Times<MathExpr>: EvalMultiply,
+@ComputerComponent.<Code> Code.Literal<Value>: EvalLiteral,
 ```
 
-The bundles are [aggregate providers](../../../../cgp/concepts/aggregate-providers.md): `HandlePlus`,
-`HandleTimes`, `HandleLiteral`, and `HandleMathExpr` are delegated to and never used as contexts, so
-each operator's two operations are grouped where the operator is wired.
+In the second, one component serves every operation, so the code must pick. `add_mult_code` fixes the
+code in each key's first segment, giving each operator one entry per operation:
 
-In the third, `add_mult_neg` reverses the order. `InterpreterPlus` keys an outer `UseDelegate` table by
-code, with one entry, `Eval`, whose value is a `UseInputDelegate` table by input. Adding conversion to
-the extended language would be a second entry in the outer table, grouping the wiring by operation
-rather than by operator.
+```rust
+@ComputerRefComponent.Eval.Plus<MathExpr>: EvalAdd,
+@ComputerRefComponent.ToLisp.Plus<MathExpr>: BinaryOpToLisp<Symbol!("+")>,
+```
 
-All three resolve at compile time, so the choice affects only how the wiring reads and where a new
-operator or a new operation is added.
+`add_mult_neg` uses the same form with only the `Eval` code, so adding conversion to the extended
+language would be a second group of `ToLisp` keys beside the first. Within one context, a code is
+keyed per input throughout and never also on its own, since a shorter key would cover every longer
+key beneath it.
+
+All of these resolve at compile time, so the choice affects only how the wiring reads and which
+component a caller invokes for which operation.
 
 ## The dispatch wrapper for the whole enum
 
@@ -80,17 +64,14 @@ impl<Code> Computer<Code, MathExpr> for Interpreter {
 The wrapper is required. `MatchWithValueHandlers` finds the variant and hands its payload back to the
 context, which dispatches it to `EvalAdd` or another operator provider, and those providers recurse
 into the context for `MathExpr` again. Wiring the dispatcher directly as the `MathExpr` entry makes
-that recursion part of the trait resolution itself. A probe wired `add_mult`'s evaluation table that
+that recursion part of the trait resolution itself. A probe wired `add_mult`'s evaluation keys that
 way on its own context, `Interp`, and evaluated a `Plus`:
 
 ```rust
-ComputerComponent:
-    UseInputDelegate<new EvalTable {
-        MathExpr: MatchWithValueHandlers,
-        Plus<MathExpr>: EvalAdd,
-        Times<MathExpr>: EvalMultiply,
-        Literal<u64>: EvalLiteral,
-    }>,
+@ComputerComponent.<Code> Code.MathExpr: MatchWithValueHandlers,
+@ComputerComponent.<Code> Code.Plus<MathExpr>: EvalAdd,
+@ComputerComponent.<Code> Code.Times<MathExpr>: EvalMultiply,
+@ComputerComponent.<Code> Code.Literal<u64>: EvalLiteral,
 ```
 
 The build failed on the recursion limit, because proving `Interp` can evaluate a `MathExpr` requires
@@ -139,7 +120,7 @@ the code selects the operation.
   [`add_mult_binary_op.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/contexts/add_mult_binary_op.rs),
   [`add_mult_code.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/contexts/add_mult_code.rs),
   and [`add_mult_neg.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/contexts/add_mult_neg.rs)
-  — the four arrangements and their wrappers.
+  — the two arrangements and each context's wrappers.
 - [`dsl.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/dsl.rs) — the
   `Eval` and `ToLisp` codes.
 

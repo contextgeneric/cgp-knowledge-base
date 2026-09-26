@@ -43,14 +43,11 @@ The reference qualifies them by module.
 
 ## Idioms
 
-The crate's providers are `#[cgp_impl]` blocks, but the rest is older than current CGP. The providers
-read their configuration through six `#[cgp_auto_getter]` traits although every field they read is on
-their own context, which is the case an `#[implicit]` argument covers; they state dependencies as
-hand-written `where Self: …` bounds and return `Self::Error`; the multi-target builder dispatches with
-a legacy `UseDelegate` table; and the structs list their derives rather than deriving `CgpData`. Copy
-the patterns from the [application builder](../../../examples/application-builder.md) worked example,
-which writes the providers with `#[uses]` and `#[use_type]`. The changes are listed in
-[issues.md](issues.md#modernization), and a probe confirmed the `open` form of the multi-target table.
+The crate uses current CGP idioms throughout. The providers read their configuration as
+[`#[implicit]`](../../../cgp/reference/attributes/implicit.md) arguments, import the traits they call
+with `#[uses]`, and name the builder context's error as a bare `Error` imported with
+`#[use_type(HasErrorType.Error)]`. The output and application structs derive `CgpData`, and the
+multi-target builder dispatches on its code with the `open` statement.
 
 ## Status and gaps
 
@@ -63,8 +60,6 @@ The crate demonstrates the pattern but cannot run as shipped. Its gaps are each 
 - **The `main` functions fail on a fresh checkout** — their SQLite options do not create the database
   file.
 - **Nothing runs it** — no binary, no test.
-- **Older idioms and a misspelled marker** — see Idioms above, and the `BuildAnthroicAndChatGptApp`
-  marker.
 
 ## Where the blog post's code lives
 
@@ -92,22 +87,20 @@ below says only where each section's code now lives:
 - [architecture/](architecture/README.md) — the design on one page: builders as handlers, name-driven
   merging, target selection by code, and where the pattern's internals are documented.
 - [reference/](reference/README.md) — every public item, grouped by family:
-  - [subsystem-providers.md](reference/subsystem-providers.md) — the nine builder providers, their
-    output structs, and their configuration getters.
+  - [subsystem-providers.md](reference/subsystem-providers.md) — the nine builder providers and their
+    output structs.
   - [application-contexts.md](reference/application-contexts.md) — the four application structs and
     the hand-written constructors.
   - [builder-contexts.md](reference/builder-contexts.md) — the five builder contexts and their target
     markers.
 - [testing.md](testing.md) — the compile-time checks, what a probe ran, and what nothing tests.
-- [issues.md](issues.md) — the confirmed defects, missing features, modernization items, and
-  housekeeping.
+- [issues.md](issues.md) — the confirmed defects, missing features, and housekeeping.
 
 ## Public material derived from these documents
 
 These documents are the verified record behind pages 1 and 2 of the planned
 [extensible data types deep dive](../../../website/deep-dives/extensible-datatypes.md), which uses this
-crate as its running code, and the source changes those pages need first are the
-[modernization items](issues.md#modernization).
+crate as its running code.
 
 ## How it relates to the rest of the base
 

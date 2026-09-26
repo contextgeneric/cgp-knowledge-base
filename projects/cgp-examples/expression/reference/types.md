@@ -114,14 +114,14 @@ its own copy. They wrap the structs above, instantiating each operator at the en
 ```rust
 pub type Value = u64;
 
-#[derive(Debug, HasFields, FromVariant, ExtractField)]
+#[derive(Debug, CgpData)]
 pub enum MathExpr {
     Plus(Plus<MathExpr>),
     Times(Times<MathExpr>),
     Literal(Literal<Value>),
 }
 
-#[derive(Eq, PartialEq, Debug, HasFields, FromVariant, ExtractField)]
+#[derive(Eq, PartialEq, Debug, CgpData)]
 pub enum LispExpr {
     List(List<LispExpr>),
     Literal(Literal<Value>),
@@ -135,7 +135,7 @@ defines the extended language instead, with `Value` as `i64`:
 ```rust
 pub type Value = i64;
 
-#[derive(Debug, HasFields, FromVariant, ExtractField)]
+#[derive(Debug, CgpData)]
 pub enum MathPlusExpr {
     Plus(Plus<MathPlusExpr>),
     Times(Times<MathPlusExpr>),
@@ -159,10 +159,9 @@ pub enum Expr {
 ### Behavior
 
 Each variant of `MathExpr`, `LispExpr`, and `MathPlusExpr` wraps exactly one payload type, which is
-what the `FromVariant` and `ExtractField` derives require. The three derives let
-`MatchWithValueHandlers` take the enum apart variant by variant and let a provider build a `LispExpr`
-by upcasting a smaller enum. They are listed individually rather than as `#[derive(CgpData)]`; see
-[issues.md](../issues.md#modernization). `LispExpr` also derives `Eq` and `PartialEq`, which the
+what [`#[derive(CgpData)]`](../../../../cgp/reference/derives/derive_cgp_data.md) requires of an enum.
+The derive lets `MatchWithValueHandlers` take the enum apart variant by variant and lets a provider
+build a `LispExpr` by upcasting a smaller enum. `LispExpr` also derives `Eq` and `PartialEq`, which the
 conversion test uses to compare trees.
 
 ### Context dependencies
