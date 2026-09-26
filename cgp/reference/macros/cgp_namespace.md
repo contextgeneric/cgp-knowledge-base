@@ -1,14 +1,14 @@
 # `#[cgp_namespace]`
 
-`cgp_namespace!` defines a *namespace* — a reusable, named lookup table that maps component keys to providers — so that a concrete context can inherit a whole group of wirings at once and still override individual entries.
+`cgp_namespace!` defines a *namespace* — a reusable, named lookup table that maps component keys to providers — so that a concrete context can inherit a whole group of wirings at once and supply only the entries the namespace leaves open.
 
 ## Purpose
 
 `cgp_namespace!` exists to make groups of component wirings reusable across contexts. With [`delegate_components!`](delegate_components.md) alone, every context spells out its own table entry by entry; two contexts that should share the same wiring must repeat it. A namespace lifts that table out of any single context and gives it a name, turning "this exact set of providers" into a thing other contexts can refer to and build on.
 
-The mechanism that makes this work is a layer of indirection between a context's delegation table and the actual providers. A namespace is not itself a context; it is a trait (named after the namespace) carrying a `Delegate` associated type, implemented per key. A context that opts into a namespace forwards every lookup through that trait, so the namespace's entries become the context's defaults. The forwarding is keyed by a *path* — a type-level list of symbols and component names — rather than by a bare component name, which is what lets one namespace inherit from another and lets a context shadow a single inherited entry without disturbing the rest.
+The mechanism that makes this work is a layer of indirection between a context's delegation table and the actual providers. A namespace is not itself a context; it is a trait (named after the namespace) carrying a `Delegate` associated type, implemented per key. A context that opts into a namespace forwards every lookup through that trait, so the namespace's entries become the context's defaults. The forwarding is keyed by a *path* — a type-level list of symbols and component names — rather than by a bare component name, which is what lets one namespace inherit from another and lets a context supply a single path the namespace leaves open without disturbing the rest.
 
-The payoff is preset-style configuration with selective override. A context can say "use everything in this namespace" and then add a handful of its own entries that win over the inherited ones, because a directly-wired entry on the context resolves before the namespace fallback is consulted. This is the same inheritance-with-override pattern presets rely on, expressed entirely through the trait system with no runtime cost.
+The payoff is preset-style configuration. A context can say "use everything in this namespace" and then add a handful of its own entries at the paths the namespace routes to but leaves unbound. It cannot replace an entry the namespace binds: that entry and the context's would both implement the same lookup, and the compiler rejects the overlap, as [Known issues](#known-issues) explains. So a namespace binds what every joining context shares and leaves open what each chooses, all expressed through the trait system with no runtime cost.
 
 ## Syntax
 
@@ -170,7 +170,7 @@ Two details of the expansion are worth holding onto. The table parameter is lite
 
 ## Examples
 
-A namespace becomes useful once a context joins it and overrides part of it. Start with a namespace that supplies default per-type providers, defined with `new`:
+A namespace becomes useful once a context joins it and fills in what it leaves open. Start with a namespace that supplies default per-type providers, defined with `new`:
 
 ```rust
 use cgp::prelude::*;
@@ -182,7 +182,7 @@ cgp_namespace! {
 }
 ```
 
-A context then opts into a namespace inside `delegate_components!` with a `namespace` header line, and may add its own entries that win over the namespace defaults. Joining `DefaultNamespace` and pulling defaults in through a `for` loop over `DefaultShowComponents`:
+A context then opts into a namespace inside `delegate_components!` with a `namespace` header line, and may add its own entries at paths the namespace does not bind. Joining `DefaultNamespace` and pulling defaults in through a `for` loop over `DefaultShowComponents`:
 
 ```rust
 pub struct AppB;
@@ -198,7 +198,7 @@ delegate_components! {
 }
 ```
 
-The `namespace DefaultNamespace;` line makes `AppB` forward every component lookup through `DefaultNamespace<AppB>`, and the `for … in DefaultShowComponents` block wires `AppB`'s `ShowImplComponent` entries by reading `DefaultShowComponents`'s `Delegate` for each type `T`. To override a single entry, a later direct line on the same context simply names a different provider for that key; because the context's own entry resolves before the namespace fallback, it shadows the inherited one without touching the others:
+The `namespace DefaultNamespace;` line makes `AppB` forward every component lookup through `DefaultNamespace<AppB>`, and the `for … in DefaultShowComponents` block wires `AppB`'s `ShowImplComponent` entries by reading `DefaultShowComponents`'s `Delegate` for each type `T`. A direct line on the same context can then supply a type the pulled-in defaults do not cover. The per-type registry `DefaultImpls1<ShowImplComponent>` in this example has a default only for `String`, so the `u64` entry sits beside it:
 
 ```rust
 delegate_components! {
@@ -210,16 +210,18 @@ delegate_components! {
         }
 
         @test.ShowImplComponent.u64:
-            ShowWithDisplay,   // overrides the inherited entry for u64
+            ShowWithDisplay,   // u64 has no registered default, so the context supplies one
     }
 }
 ```
+
+Had the registry carried a `u64` default too, the loop's impl and the direct entry would both cover that path, and the compiler would reject the pair with `E0119`.
 
 Inheritance composes the same way at the namespace level: `ExtendedNamespace: DefaultNamespace` produces a namespace that resolves everything `DefaultNamespace` does, plus the child's own entries, and any context joining `ExtendedNamespace` gets the merged result.
 
 ## Related constructs
 
-`cgp_namespace!` sits between component definitions and context wiring, so it relates to constructs on both sides. [`#[cgp_component]`](cgp_component.md) defines the components whose keys a namespace maps, and its [`#[prefix(...)]`](../attributes/prefix.md) attribute is what registers a component into a namespace under a path. [`delegate_components!`](delegate_components.md) is where a context joins a namespace (via its `namespace` header) and where individual overrides are written; [`delegate_and_check_components!`](delegate_and_check_components.md) does the same and additionally checks the entries written directly in the block, though its derivation does not cover the components inherited through the namespace, so verifying the full merged wiring is left to a standalone [`check_components!`](check_components.md). The namespace's `Delegate` entries are resolved through [`RedirectLookup`](../providers/redirect_lookup.md), and per-type defaults are commonly expressed through [`use_delegate`](../providers/use_delegate.md)-style dispatch and the `DefaultNamespace` / `DefaultImpls1` traits in `cgp-component`. The underlying per-key table machinery is [`DelegateComponent`](../traits/delegate_component.md), which `RedirectLookup` walks at resolution time.
+`cgp_namespace!` sits between component definitions and context wiring, so it relates to constructs on both sides. [`#[cgp_component]`](cgp_component.md) defines the components whose keys a namespace maps, and its [`#[prefix(...)]`](../attributes/prefix.md) attribute is what registers a component into a namespace under a path. [`delegate_components!`](delegate_components.md) is where a context joins a namespace (via its `namespace` header) and where the context's own entries are written; [`delegate_and_check_components!`](delegate_and_check_components.md) does the same and additionally checks the entries written directly in the block, though its derivation does not cover the components inherited through the namespace, so verifying the full merged wiring is left to a standalone [`check_components!`](check_components.md). The namespace's `Delegate` entries are resolved through [`RedirectLookup`](../providers/redirect_lookup.md), and per-type defaults are commonly expressed through [`use_delegate`](../providers/use_delegate.md)-style dispatch and the `DefaultNamespace` / `DefaultImpls1` traits in `cgp-component`. The underlying per-key table machinery is [`DelegateComponent`](../traits/delegate_component.md), which `RedirectLookup` walks at resolution time.
 
 ## Known issues
 

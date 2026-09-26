@@ -1,6 +1,6 @@
 # Namespaces
 
-A namespace is a reusable, named lookup table of component wirings that a context can inherit wholesale and then selectively override, giving CGP its preset-style configuration without any separate preset construct.
+A namespace is a reusable, named lookup table of component wirings that a context can inherit wholesale and then complete with the entries it leaves open, giving CGP its preset-style configuration without any separate preset construct.
 
 ## The idea
 
@@ -12,7 +12,7 @@ Crucially, a namespace is *not* a context. It is a trait — named after the nam
 
 ## Path-based redirection
 
-What lets one namespace inherit from another, and lets a context shadow a single inherited entry without disturbing the rest, is that the forwarding is keyed by a *path* rather than a bare component name. A path is a type-level list of symbols and component names — written with the `@` sigil as a dotted sequence like `@MyFooComponent`, `@app.ErrorRaiserComponent`, or `@cgp.core.error` — and each namespace entry redirects a key along such a path instead of naming a provider outright. The redirection is carried by the [`RedirectLookup`](../reference/providers/redirect_lookup.md) provider, which resolves a key by walking the given path inside whatever table it is handed:
+What lets one namespace inherit from another, and lets a context supply a single path the namespace leaves open without disturbing the rest, is that the forwarding is keyed by a *path* rather than a bare component name. A path is a type-level list of symbols and component names — written with the `@` sigil as a dotted sequence like `@MyFooComponent`, `@app.ErrorRaiserComponent`, or `@cgp.core.error` — and each namespace entry redirects a key along such a path instead of naming a provider outright. The redirection is carried by the [`RedirectLookup`](../reference/providers/redirect_lookup.md) provider, which resolves a key by walking the given path inside whatever table it is handed:
 
 ```rust
 cgp_namespace! {
@@ -58,7 +58,7 @@ delegate_components! {
         namespace DefaultNamespace;
 
         @test.ShowImplComponent.u64:
-            ShowWithDisplay,   // a direct entry overriding the namespace default
+            ShowWithDisplay,   // supplies the destination the namespace leaves unbound
     }
 }
 ```

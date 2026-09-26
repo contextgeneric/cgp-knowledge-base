@@ -4,7 +4,7 @@ Wiring claims a key or path that a namespace already claims — a context re-wir
 
 ## What triggers it
 
-This class is the failure of a natural-seeming intent: "the namespace sets this, but I want something different here." A namespace supplies entries as *defaults*, and the inheritance-with-override pattern lets a context shadow one — but only for a key the namespace *routes* to without *terminating*. A key the namespace itself binds (through a `:` body entry, a [`#[default_impl]`](../../reference/attributes/default_impl.md), or an inherited entry) is already covered by the namespace's blanket impl, so a second, more specific impl for that same key overlaps it. The overlap takes two shapes, by whether the specific entry sits on a context or inside a namespace, and the namespace one has a further face where the collision is an accident of notation rather than an override.
+This class is the failure of a natural-seeming intent: "the namespace sets this, but I want something different here." A namespace's entries cannot be replaced from below: a context, or a child namespace, may add an entry only for a key the namespace *routes* to without *terminating*. A key the namespace itself binds (through a `:` body entry, a [`#[default_impl]`](../../reference/attributes/default_impl.md), or an inherited entry) is already covered by the namespace's blanket impl, so a second, more specific impl for that same key overlaps it. The overlap takes two shapes, by whether the specific entry sits on a context or inside a namespace, and the namespace one has a further face where the collision is an accident of notation rather than an override.
 
 The **context-level** shape is a context that joins a namespace and then directly wires a path the namespace registers:
 

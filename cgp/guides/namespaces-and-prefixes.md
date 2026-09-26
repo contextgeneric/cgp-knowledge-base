@@ -134,7 +134,7 @@ delegate_components! {
 
 ## Technique 2: bind providers to a namespace so the context just joins it
 
-Prefixes organize the table, and bundles behind them shorten it, but every context still names each group it uses and every configuration needs its own set of bundles. The second technique lifts the wiring off the context entirely and into a reusable **namespace**, so that most contexts join the namespace with a single line and wire nothing directly. A namespace defined with [`cgp_namespace!`](../reference/macros/cgp_namespace.md) is a preset: a named table of default wirings a context inherits wholesale and then selectively overrides. (The [namespaces concept](../concepts/namespaces.md) explains the mechanism; this section is about how to *use* it to organize an application.)
+Prefixes organize the table, and bundles behind them shorten it, but every context still names each group it uses and every configuration needs its own set of bundles. The second technique lifts the wiring off the context entirely and into a reusable **namespace**, so that most contexts join the namespace with a single line and wire nothing directly. A namespace defined with [`cgp_namespace!`](../reference/macros/cgp_namespace.md) is a preset: a named table of default wirings a context inherits wholesale and then completes with the entries it leaves open. (The [namespaces concept](../concepts/namespaces.md) explains the mechanism; this section is about how to *use* it to organize an application.)
 
 Define one namespace for the application's mock backend, inheriting `DefaultNamespace` so a context that joins it also inherits every standard default:
 

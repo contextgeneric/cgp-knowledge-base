@@ -381,7 +381,9 @@ published blog posts, whose titles are among the worst offenders and whose
   edit on the site; see [site-structure.md](site-structure.md). The submodule is current at v0.8.0.
   What remains is procedural: **bump the submodule pointer** each time a skill change lands in
   `cgp-skills`, most recently for the dispatch-on-a-later-parameter guidance in
-  `references/wiring.md` and its siblings. **Never edit the skill through the website checkout**,
+  `references/wiring.md` and its siblings, and for the namespace changes in `SKILL.md` and
+  `references/namespaces.md` (path-keyed bundles, and the correction that a context cannot override a
+  key its namespace binds). **Never edit the skill through the website checkout**,
   since the submodule is `cgp-skills` itself. *Lands in:* the website repository's submodule pointer.
   *Blocked by:* the skill change being pushed.
 

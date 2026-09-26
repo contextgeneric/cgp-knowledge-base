@@ -4,9 +4,9 @@
 
 ## Purpose
 
-This family exists to give namespaces and presets a uniform, per-key lookup surface. A namespace is a reusable table of default wirings that a context can opt into and then selectively override; resolving such a default means asking, "for this key, what does the namespace delegate to?" The three traits are the answer-bearers, differing only in how many type parameters take part in the key. `DefaultNamespace` keys a default purely on the component name. `DefaultImpls1` keys it on the component name *and* one further type — the typical shape for a per-type default, where the same component resolves differently for `String` than for `u64`. `DefaultImpls2` does the same for two further types, for components parameterized by a pair.
+This family exists to give namespaces and presets a uniform, per-key lookup surface. A namespace is a reusable table of default wirings that a context can opt into and then complete; resolving such a default means asking, "for this key, what does the namespace delegate to?" The three traits are the answer-bearers, differing only in how many type parameters take part in the key. `DefaultNamespace` keys a default purely on the component name. `DefaultImpls1` keys it on the component name *and* one further type — the typical shape for a per-type default, where the same component resolves differently for `String` than for `u64`. `DefaultImpls2` does the same for two further types, for components parameterized by a pair.
 
-The reason to have all three rather than one variadic trait is that each fixes the arity of the key at the type level, which lets the projection `<Key as Trait<…, Delegate = Provider>>` resolve cleanly. A context that joins a namespace forwards its lookups into one of these traits, and a `for … in` loop that pulls per-type defaults reads them by projecting the `Delegate`. The whole mechanism is type-level and inheritance-with-override in spirit: a directly-wired entry on a context wins over a namespace fallback, exactly as a preset is meant to be customizable.
+The reason to have all three rather than one variadic trait is that each fixes the arity of the key at the type level, which lets the projection `<Key as Trait<…, Delegate = Provider>>` resolve cleanly. A context that joins a namespace forwards its lookups into one of these traits, and a `for … in` loop that pulls per-type defaults reads them by projecting the `Delegate`. The whole mechanism is type-level, and it is customized by completion rather than by override: a context's direct entries supply the paths the namespace leaves unbound, while an entry for a key the namespace already binds overlaps the forwarding impl and is rejected with `E0119`, the [namespace override conflict](../../errors/wiring/namespace-override-conflict.md).
 
 These traits are the plumbing beneath the [`#[cgp_namespace]`](../macros/cgp_namespace.md) macro and the `namespace` / `for … in` syntax of [`delegate_components!`](../macros/delegate_components.md). A user writing namespaces names them only in the namespace header and in the `for … in` loop target; the macros generate the impls and the forwarding.
 
@@ -50,7 +50,7 @@ The attribute's forms, the `where` clause it drops from the registration impl, a
 
 The hierarchical part is how a context consumes these defaults, which the [`delegate_components!`](../macros/delegate_components.md) `namespace` header and `for … in` syntax generate. A `namespace N;` header emits a blanket [`DelegateComponent`](delegate_component.md) impl on the context that forwards every key through `N`: `impl<Key, Value> DelegateComponent<Key> for App where Key: N<App, Delegate = Value> { type Delegate = Value; }`, paired with the matching [`IsProviderFor`](is_provider_for.md) forwarding so dependencies stay diagnosable. A `for <T, Provider> in DefaultImpls1<Component> { … }` loop emits a `DelegateComponent` impl keyed on a path whose `where` clause projects the default: `where T: DefaultImpls1<Component, App, Delegate = Provider>`. Reading the loop: for each type `T` that has a `DefaultImpls1` default, wire that path to the projected `Provider`. The same loop works against a `DefaultNamespace`-style table or any namespace trait by changing the `in` target.
 
-Inheritance and override compose on top. A namespace that inherits from a parent (`new Child: DefaultNamespace { … }`) emits a blanket impl forwarding any key the parent resolves to the child, so the child resolves everything the parent does plus its own entries. A context's directly-wired entry resolves before the namespace fallback, so it shadows the inherited default for that key without disturbing the rest — the inheritance-with-override pattern presets rely on, expressed entirely through these projections with no runtime cost.
+Inheritance composes on top. A namespace that inherits from a parent (`new Child: DefaultNamespace { … }`) emits a blanket impl forwarding any key the parent resolves to the child, so the child resolves everything the parent does plus its own entries. A context adds its own entries beside these, never over them: a direct entry covers a key the namespace and the context's loops leave open, and an entry for a key they already answer overlaps their impl and is rejected with `E0119`. That is the pattern presets rely on, expressed entirely through these projections with no runtime cost.
 
 ## Examples
 
@@ -76,7 +76,7 @@ impl ShowImpl<String> {
 }
 ```
 
-The `#[default_impl]` attribute emits `impl<Components> DefaultImpls1<ShowImplComponent, Components> for String { type Delegate = ShowString; }`, registering `ShowString` as the per-type default for `String`. A context then joins the namespace and pulls those defaults in with a `for … in` loop, optionally overriding one entry:
+The `#[default_impl]` attribute emits `impl<Components> DefaultImpls1<ShowImplComponent, Components> for String { type Delegate = ShowString; }`, registering `ShowString` as the per-type default for `String`. A context then joins the namespace, pulls those defaults in with a `for … in` loop, and adds an entry for a type the registry does not cover:
 
 ```rust
 pub struct App;
@@ -90,12 +90,12 @@ delegate_components! {
         }
 
         @test.ShowImplComponent.u64:
-            ShowWithDisplay, // overrides the inherited default for u64
+            ShowWithDisplay, // u64 has no registered default, so the context supplies one
     }
 }
 ```
 
-The `namespace DefaultNamespace;` line forwards `App`'s lookups through `DefaultNamespace<App>`, and the loop wires each `T` by projecting `T: DefaultImpls1<ShowImplComponent, App, Delegate = Provider>`. The direct `u64` line shadows whatever the namespace would otherwise supply for that type. A namespace can also be defined wholesale and used as the loop target:
+The `namespace DefaultNamespace;` line forwards `App`'s lookups through `DefaultNamespace<App>`, and the loop wires each `T` by projecting `T: DefaultImpls1<ShowImplComponent, App, Delegate = Provider>`. The direct `u64` line supplies a type the registry has no default for. Had `u64` a registered default as well, the loop's impl and the direct entry would both cover its path, and the compiler would reject the pair with `E0119`. A namespace can also be defined wholesale and used as the loop target:
 
 ```rust
 cgp_namespace! {
