@@ -16,8 +16,9 @@ it stale.
   consolidated here, and a summary of every top-level directory.
 - [AGENTS.md](AGENTS.md) — the authoring and maintenance rules for the whole base: the
   synchronization rule, verifying against the source, document-the-present, the rules that follow from
-  this repository being public, how links are written, registering a document, the prose mechanics, and
-  the committing rule.
+  this repository being public, how links are written, the separate owners of project facts
+  (`projects/`) and CGP patterns (`cgp/`, `examples/`) and matching a project's documented branch,
+  registering a document, the prose mechanics, and the committing rule.
 - [summary.md](summary.md) — this file.
 - [sibling-projects.md](sibling-projects.md) — the member projects, their repositories, the revision
   of each to read, and the rules for finding a sibling locally versus linking to it.
@@ -505,7 +506,9 @@ it stale.
   an example differs from a reference document.
 - [AGENTS.md](examples/AGENTS.md) — the rules: leave the mechanics to the reference, re-derive rather
   than cite an outside source, build on and link a sibling CGP project where one serves the use case,
-  the document shape, naming the context shape the example wires, and where a missing concept belongs.
+  standing alone while matching a source project's code at its documented branch and leaving its records
+  to `projects/`, the document shape, naming the context shape the example wires, and where a missing
+  concept belongs.
 - [application-builder.md](examples/application-builder.md) — assembling an application context from
   independent per-subsystem builder providers via the extensible builder pattern.
 - [area-calculation.md](examples/area-calculation.md) — computing shape areas, from field-driven
@@ -868,9 +871,10 @@ it stale.
 
 ## `projects/` — the libraries built with CGP
 
-- [projects/README.md](projects/README.md) — what qualifies as an ecosystem project, how a project
-  section grows from one README into the fixed shape, and how each connects to an example, an
-  announcement post, and a set of constructs.
+- [projects/README.md](projects/README.md) — what qualifies as an ecosystem project (a library, or a
+  demonstration repository such as cgp-examples), how a project section grows from one README into its
+  shape, one subdirectory per subproject where a project has several, and how each connects to an
+  example, a published post, and a set of constructs.
 - [projects/hypershell/README.md](projects/hypershell/README.md) — the type-level shell-scripting
   DSL: what it is, which revision the documents describe (the unreleased `v0.8.0` branch, the only one
   built on namespaces), the crate split, the confirmed gaps, the section catalog, and the public
@@ -971,9 +975,10 @@ it stale.
   missing features, and housekeeping.
 - [projects/AGENTS.md](projects/AGENTS.md) — the rules for a project section: verified against the
   project's source at the branch sibling-projects.md records, probes rather than reading alone, leaving
-  CGP itself to `cgp/`, the fixed section shape including the per-example documents that quote
-  snippets rather than whole programs, the reference entry template, and naming the public material
-  each document feeds.
+  CGP itself to `cgp/` and patterns to the worked example, the section as the primary source for its
+  project's facts, the section shape as a guide with per-subproject subdirectories and their own
+  `testing.md` and `issues.md`, the per-example documents that quote snippets rather than whole
+  programs, the reference entry template, and naming the public material each document feeds.
 - [projects/cgp-serde/README.md](projects/cgp-serde/README.md) — Serde rebuilt as CGP components: what
   it is, which revision the documents describe (the unreleased `v0.8.0` branch against the published
   0.2.0), the crate split, the confirmed gaps, the section catalog, and the public material the
@@ -1077,3 +1082,60 @@ it stale.
   `SerializeFields`
   and `DeserializeRecordFields`: the minimum derives per direction, the map format, missing, duplicate,
   and unknown fields, and the format limits of an unsized map.
+- [projects/cgp-examples/README.md](projects/cgp-examples/README.md) — the repository of five
+  independent example crates: what each demonstrates, its context shape, worked example, citing post,
+  whether it runs and uses current idioms, the `v0.8.0` branch against `main` and the unmerged
+  `profile-picture` branch, the build setup, workspace gaps, and the subproject catalog.
+- [projects/cgp-examples/transfer/README.md](projects/cgp-examples/transfer/README.md) — the
+  money-transfer HTTP service: its endpoints and seeded data, how to run it and what it returned, its
+  idioms, its confirmed gaps, the section catalog, and the worked example and techniques it applies.
+- [projects/cgp-examples/transfer/architecture/README.md](projects/cgp-examples/transfer/architecture/README.md)
+  — the design on one page: abstract types only, one endpoint component dispatched per marker, wrappers
+  nested per endpoint, status-typed errors, a one-struct backend, three wiring tables and one override,
+  and HTTP outside the components.
+- [projects/cgp-examples/transfer/architecture/module-layout.md](projects/cgp-examples/transfer/architecture/module-layout.md)
+  — the five modules, what each holds and depends on, and the three dependencies that cross the split.
+- [projects/cgp-examples/transfer/architecture/error-design.md](projects/cgp-examples/transfer/architecture/error-design.md)
+  — one `AppError` raised with status markers, the per-detail dispatch wired only for `String`, the
+  unwired anyhow provider, and the failures Axum answers itself.
+- [projects/cgp-examples/transfer/architecture/namespace-organization.md](projects/cgp-examples/transfer/architecture/namespace-organization.md)
+  — the prefix tree, what `MockNamespace` binds and why it cannot be partly overridden,
+  `DefaultApiHandlers` as a looped table, and the one transfer path `MockApp` wires itself.
+- [projects/cgp-examples/transfer/architecture/request-lifecycle.md](projects/cgp-examples/transfer/architecture/request-lifecycle.md)
+  — a balance query and a transfer traced through all nine steps, and the status and body recorded for
+  every path against the running server.
+- [projects/cgp-examples/transfer/reference/README.md](projects/cgp-examples/transfer/reference/README.md)
+  — tables of every component, provider, and other public item, with paths, bindings, requirements, and
+  modules.
+- [projects/cgp-examples/transfer/reference/domain-types.md](projects/cgp-examples/transfer/reference/domain-types.md)
+  — the five `#[cgp_type]` abstract types, their bounds, and their bindings.
+- [projects/cgp-examples/transfer/reference/components.md](projects/cgp-examples/transfer/reference/components.md)
+  — `CanHandleApi`, `CanRaiseHttpError`, the two auth and two finance components, and the endpoint and
+  status markers.
+- [projects/cgp-examples/transfer/reference/api-handlers.md](projects/cgp-examples/transfer/reference/api-handlers.md)
+  — `HandleQueryBalance`, `HandleTransfer`, `QueryBalanceResponse`, and the five request getters.
+- [projects/cgp-examples/transfer/reference/wrappers.md](projects/cgp-examples/transfer/reference/wrappers.md)
+  — `HandleFromRequest`, `HandleFromResponse`, `ResponseToJson`, `UseBasicAuth`, and
+  `NoTransferToSelf`.
+- [projects/cgp-examples/transfer/reference/error-providers.md](projects/cgp-examples/transfer/reference/error-providers.md)
+  — `IsStatusCode`, `DisplayHttpError`, `HandleHttpErrorWithAnyhow`, and `AppError`.
+- [projects/cgp-examples/transfer/reference/mock-backend.md](projects/cgp-examples/transfer/reference/mock-backend.md)
+  — `UseMockedApp`'s four impls, their `#[default_impl]` registrations, and the self-transfer defect.
+- [projects/cgp-examples/transfer/reference/wiring.md](projects/cgp-examples/transfer/reference/wiring.md)
+  — `MockNamespace`, `DefaultApiHandlers`, and `MockApp` with its seed data, wiring, and check.
+- [projects/cgp-examples/transfer/reference/http-layer.md](projects/cgp-examples/transfer/reference/http-layer.md)
+  — `CanHandleApiSend`, `CanAddRoute`, `CanAddMainApiRoutes`, `handle_api_error`, `CanAddApiRoutes`,
+  the request types, `DemoCurrency`, and the binary's startup.
+- [projects/cgp-examples/transfer/guides/README.md](projects/cgp-examples/transfer/guides/README.md)
+  — the two probe-verified guides.
+- [projects/cgp-examples/transfer/guides/adding-an-endpoint.md](projects/cgp-examples/transfer/guides/adding-an-endpoint.md)
+  — the six pieces a new endpoint needs and where each goes, and adding one from a downstream crate
+  through its own context.
+- [projects/cgp-examples/transfer/guides/swapping-the-backend.md](projects/cgp-examples/transfer/guides/swapping-the-backend.md)
+  — a new backend provider, the namespace it needs, the `[CGP-E005]` error from overriding
+  `MockNamespace`, and the context that joins it.
+- [projects/cgp-examples/transfer/testing.md](projects/cgp-examples/transfer/testing.md) — the
+  compile-time checks the crate relies on, the manual script, and what no test exercises.
+- [projects/cgp-examples/transfer/issues.md](projects/cgp-examples/transfer/issues.md) — the
+  self-transfer defect, missing features, housekeeping, and where the crate's README disagrees with the
+  code.

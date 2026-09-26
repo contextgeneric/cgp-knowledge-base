@@ -45,12 +45,28 @@ link to its document under [../cgp/](../cgp/README.md) and say only what the pro
 The test is whether the paragraph would still be true of a different project: if it would, it belongs
 in `cgp/`, and the project document links there.
 
+The same holds for the project's worked example. When [../examples/](../examples/README.md) develops
+the project's scenario as a teaching progression, the project documents link to it for the pattern
+and say only what the project's code does with it. In the other direction, **a project section is the
+primary source for its project's facts**: layout, current wiring, item behavior, design decisions,
+defects, test coverage, and run results live here, and other documents link here instead of
+restating them, per
+[../AGENTS.md](../AGENTS.md#project-facts-and-cgp-patterns-have-separate-owners).
+
 ## The shape of a project section
 
 A project starts as a single `README.md` and grows into the shape below as it is documented. The
-directories and files are fixed names, so an agent moving between projects finds the same kind of
-material in the same place. Omit what a project does not need, and add nothing outside this shape
-without raising it.
+shape is a guide rather than a template to fill: omit what a project does not need, and raise any
+addition outside it before making it. The directories and files that are used keep these names, so an
+agent moving between projects finds the same kind of material in the same place.
+
+**A project made of several independent subprojects gives each one its own subdirectory**, named for
+the subproject's directory in the repository. [cgp-examples](cgp-examples/README.md), a repository of
+unrelated example crates, is the instance. Each subproject follows the shape at its own scale: a small
+one may be a `README.md` and a few documents, and a larger one grows `architecture/`, `reference/`,
+and the rest. `testing.md` and `issues.md` belong to each subproject. The project's own `README.md`
+catalogs the subprojects and records only what they share, such as the build setup and
+repository-wide housekeeping.
 
 - **`README.md`** — the front door: the header block (repository, local checkout, the branch
   documented, crates, the `cgp` version tracked, status), what the project is, a present-tense

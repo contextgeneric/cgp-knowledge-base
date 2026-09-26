@@ -20,17 +20,20 @@ this side in `website/`, because a published page may not link back here; and th
 | `cgp-website` | <https://github.com/contextgeneric/contextgeneric.dev> | `main` | The public website at <https://contextgeneric.dev>: a Docusaurus site holding the docs, tutorials, and blog. Documented in [website/](website/README.md). |
 | `hypershell` | <https://github.com/contextgeneric/hypershell> | `v0.8.0` | A modular type-level DSL for shell-script-like programs, built with CGP. Documented in [projects/hypershell/](projects/hypershell/README.md). |
 | `cgp-serde` | <https://github.com/contextgeneric/cgp-serde> | `v0.8.0` | Serde's `Serialize` and `Deserialize` rebuilt as CGP components. Documented in [projects/cgp-serde/](projects/cgp-serde/README.md). |
-| `cgp-examples` | <https://github.com/contextgeneric/cgp-examples> | `main` | Runnable example crates — `builder`, `expression`, `greet`, `transfer`, `web-app` — several of which are the origin of the scenarios in [examples/](examples/README.md). |
+| `cgp-examples` | <https://github.com/contextgeneric/cgp-examples> | `v0.8.0` | Runnable example crates — `builder`, `expression`, `greet`, `transfer`, `web-app` — each documented as a subproject in [projects/cgp-examples/](projects/cgp-examples/README.md), and several the origin of the scenarios in [examples/](examples/README.md). |
 | `cgp-example-profile-picture` | <https://github.com/contextgeneric/cgp-example-profile-picture> | `main` | A single worked tutorial evolving one real application from a monolithic function to a modular CGP design; the origin of [examples/profile-picture.md](examples/profile-picture.md). |
 | `cgp-patterns` | <https://github.com/contextgeneric/cgp-patterns> | `main` | *Context-Generic Programming Patterns*, the mdBook published at <https://patterns.contextgeneric.dev>, pinned to `cgp` v0.4.0 and half written. Documented in [website/patterns-book.md](website/patterns-book.md). |
 | `cgp-anatomy` | <https://github.com/contextgeneric/cgp-anatomy> | `main` | *The Anatomy of Context-Generic Programming*, a book-length report on CGP and fission-driven development, together with the preserved record of how it was co-authored by the project's author and an LLM — the human draft, the instructions, each AI revision, and the methodology. |
 
-The two example repositories have no directory of their own here, because they are collections of
-demonstrations rather than libraries, and their scenarios are documented as worked examples under
-[examples/](examples/README.md) instead. Recording the relationship here keeps each example's
-provenance findable. A worked example may build on and link to any project in this table, per
+The two example repositories are documented differently. `cgp-examples` has a section under
+[projects/cgp-examples/](projects/cgp-examples/README.md), one subproject per crate, because blog posts
+cite its crates and agents work on them directly. `cgp-example-profile-picture` has no directory of
+its own, and its scenario is documented only as a worked example under
+[examples/](examples/README.md). Recording the relationship here keeps each example's provenance
+findable. A worked example may build on and link to any project in this table, per
 [examples/AGENTS.md](examples/AGENTS.md#building-on-a-sibling-cgp-project). Both repositories track
-the same `cgp` version as the library, so they are reliable references for current syntax.
+the same `cgp` version as the library, but a crate in them may still use an older idiom, so read the
+project section's note on idioms before copying from one.
 
 Two entries need a note on their names. The website's local checkout is `../cgp-website` while its
 repository is named `contextgeneric.dev`, so the directory and the remote do not match — use the
@@ -58,8 +61,8 @@ repository checked out. A bare mention of a checkout's location, like the path `
 filesystem reference rather than a link and stays relative.
 
 One exception applies to the projects documented under [projects/](projects/README.md). When the table
-records a branch other than `main` for one of them, as it does for `hypershell` and `cgp-serde`, whose
-current development lives on `v0.8.0`, its documents link to that branch, per
+records a branch other than `main` for one of them, as it does for `hypershell`, `cgp-serde`, and
+`cgp-examples`, whose current development lives on `v0.8.0`, its documents link to that branch, per
 [projects/AGENTS.md](projects/AGENTS.md#a-project-section-documents-its-project-in-depth), because
 `main` holds different code from the code they describe.
 

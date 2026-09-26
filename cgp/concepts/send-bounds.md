@@ -8,8 +8,8 @@ An async CGP method advertises a future whose auto-traits the caller cannot name
 
 ```rust
 #[cgp_component(ApiHandler)]
+#[prefix(@app.api in DefaultNamespace)]
 #[async_trait]
-#[derive_delegate(UseDelegate<Api>)]
 #[use_type(HasErrorType.Error)]
 pub trait CanHandleApi<Api> {
     type Request;

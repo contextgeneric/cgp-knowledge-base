@@ -89,7 +89,7 @@ where
 }
 ```
 
-`DisplayHttpError` is generic over both the code and the detail, so one provider serves every `raise_http_error` call whose detail is `Display`. It pins the abstract error to the concrete `AppError` with the [`#[use_type]` equality form](../cgp/guides/importing-abstract-types.md) — `HasErrorType.{Error = AppError}` — which is why the method can build an `AppError` directly. A sibling `HandleHttpErrorWithAnyhow` handles details that are already an `anyhow::Error`; the wiring picks between them per detail type.
+`DisplayHttpError` is generic over both the code and the detail, so one provider serves every `raise_http_error` call whose detail is `Display`. It pins the abstract error to the concrete `AppError` with the [`#[use_type]` equality form](../cgp/guides/importing-abstract-types.md) — `HasErrorType.{Error = AppError}` — which is why the method can build an `AppError` directly. Because `Detail` is a parameter of the component, the wiring chooses a provider per detail type; every error this service raises carries a `String` detail, so it wires `DisplayHttpError` for `String` alone.
 
 ## The dispatched API-handler component
 
@@ -134,11 +134,19 @@ where
 
     async fn handle_api(&self, _api: PhantomData<Api>, request: Request) -> Result<(), Error> {
         let sender = request.logged_in_user().as_ref().ok_or_else(|| {
-            Self::raise_http_error(ErrUnauthorized, "you must first login".into())
+            Self::raise_http_error(
+                ErrUnauthorized,
+                "you must first login to perform transfer".into(),
+            )
         })?;
 
-        self.transfer_money(sender, request.recipient(), request.currency(), request.quantity())
-            .await?;
+        self.transfer_money(
+            sender,
+            request.recipient(),
+            request.currency(),
+            request.quantity(),
+        )
+        .await?;
 
         Ok(())
     }
@@ -216,7 +224,7 @@ where
 ```rust
 #[cgp_impl(new UseBasicAuth<InHandler>)]
 #[uses(CanQueryUserHashedPassword, CanCheckPassword)]
-#[use_type(HasErrorType.Error)]
+#[use_type(HasUserIdType.UserId, HasErrorType.Error)]
 #[use_provider(InHandler: ApiHandler<Api>)]
 impl<Api, InHandler> ApiHandler<Api>
 where
@@ -272,10 +280,17 @@ where
         #[implicit] user_balances: &Arc<Mutex<BTreeMap<(UserId, Currency), Quantity>>>,
     ) -> Result<Quantity, Error> {
         let balances = user_balances.lock().await;
-        balances
+
+        let user_balance = balances
             .get(&(user.clone(), currency.clone()))
-            .cloned()
-            .ok_or_else(|| Self::raise_http_error(ErrNotFound, format!("user not found: {user}")))
+            .ok_or_else(|| {
+                Self::raise_http_error(
+                    ErrNotFound,
+                    format!("user not found in mocked database: {user}"),
+                )
+            })?;
+
+        Ok(user_balance.clone())
     }
 }
 ```
@@ -316,7 +331,7 @@ A real deployment would swap `UseMockedApp` for a database-backed provider. Sinc
 
 ## Organizing the wiring with a namespace
 
-A concrete context becomes the running application by resolving every abstract type and component. Rather than spell all of that out on the context, the application lifts it into a reusable **namespace** — the [namespaces-and-prefixes guide](../cgp/guides/namespaces-and-prefixes.md) develops this technique in full; the essentials are shown here. `MockNamespace` inherits the built-in `DefaultNamespace` and wires the pieces that have no `#[cgp_impl]` block of their own — the concrete error type, the per-detail HTTP-error dispatch, and the abstract type choices — as [namespace body entries](../cgp/reference/macros/cgp_namespace.md) keyed by the paths the `#[prefix]` attributes established:
+A concrete context becomes the running application by resolving every abstract type and component. Rather than spell all of that out on the context, the application lifts it into a reusable **namespace** — the [namespaces-and-prefixes guide](../cgp/guides/namespaces-and-prefixes.md) develops this technique in full; the essentials are shown here. `MockNamespace` inherits the built-in `DefaultNamespace` and wires the pieces that cannot register themselves with an attribute, as [namespace body entries](../cgp/reference/macros/cgp_namespace.md) keyed by the paths the `#[prefix]` attributes established. The concrete error type and the abstract type choices are library `UseType` providers, and `DisplayHttpError` is generic over its code and detail, which [`#[default_impl]`](../cgp/reference/attributes/default_impl.md#known-issues) cannot register:
 
 ```rust
 cgp_namespace! {
@@ -326,8 +341,6 @@ cgp_namespace! {
 
         @app.error.HttpErrorRaiserComponent.<Code> Code.String:
             DisplayHttpError,
-        @app.error.HttpErrorRaiserComponent.<Code> Code.anyhow::Error:
-            HandleHttpErrorWithAnyhow,
 
         @app.auth.types.{
             UserIdTypeProviderComponent,
@@ -450,3 +463,5 @@ where
 ```
 
 The `main` function then constructs a `MockApp`, builds the router with `add_main_api_routes`, and serves it — completing the path from a request on the wire, through the decode-authenticate-handle-encode pipeline the namespace wired, to a JSON response or a status-coded error.
+
+For an agent working on the service itself rather than learning its patterns, the runnable crate is documented as the [`transfer`](../projects/cgp-examples/transfer/README.md) subproject of cgp-examples.

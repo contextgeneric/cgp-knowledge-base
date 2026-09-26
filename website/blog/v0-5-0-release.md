@@ -48,7 +48,10 @@ arena-allocator deserialization example.
 
 The `Send`-recovery pattern is the durable contribution and is documented as
 [recovering `Send` bounds](../../cgp/concepts/send-bounds.md), with the components at
-[`CanRun` / `CanSendRun`](../../cgp/reference/components/runner.md). The derive is
+[`CanRun` / `CanSendRun`](../../cgp/reference/components/runner.md). The post's second example link
+points at an older commit of `cgp-examples`' `transfer/src/contexts/app.rs`; the two
+`CanHandleApiSend` impls it shows are unchanged in the current code, documented with the
+[`transfer` HTTP layer](../../projects/cgp-examples/transfer/reference/http-layer.md#canhandleapisend). The derive is
 [`#[derive(CgpData)]`](../../cgp/reference/derives/derive_cgp_data.md); the auto-dispatch macro is
 [`#[cgp_auto_dispatch]`](../../cgp/reference/macros/cgp_auto_dispatch.md), worked in the
 [extensible shapes example](../../examples/extensible-shapes.md). The builder extensions are

@@ -144,13 +144,16 @@ release currently in preparation, since v0.8.0 is not yet out.
 ### `projects/` — the libraries built with CGP
 
 [projects/](projects/README.md) documents the ecosystem projects that *use* CGP rather than being part
-of it — [hypershell](projects/hypershell/README.md), a type-level shell-scripting DSL, and
-[cgp-serde](projects/cgp-serde/README.md), Serde rebuilt as swappable components. Each project
-section is verified against its project's source and grows from a single orienting `README.md` into a
-fixed shape: the project's architecture, a reference for its public items, guides, its tests, its
-open issues, and one document per runnable example, which for cgp-serde means each of its tests.
-CGP's own constructs stay documented in the member sections and are linked rather than re-explained.
-Both sections follow that shape, each documented against its project's `v0.8.0` branch.
+of it: [hypershell](projects/hypershell/README.md), a type-level shell-scripting DSL,
+[cgp-serde](projects/cgp-serde/README.md), Serde rebuilt as swappable components, and
+[cgp-examples](projects/cgp-examples/README.md), a repository of independent example crates documented
+as one subproject per crate. Each project section is verified against its project's source at its
+`v0.8.0` branch and grows from a single orienting `README.md` into the shape its rules describe: the
+project's architecture, a reference for its public items, guides, its tests, its open issues, and one
+document per runnable example, which for cgp-serde means each of its tests. A project section is the
+primary source for its project's facts, so other documents link to it instead of restating them, while
+CGP's own constructs and patterns stay documented in `cgp/` and `examples/` and are linked rather than
+re-explained.
 
 ## Finding your way in
 
@@ -182,7 +185,8 @@ live in their own repositories because both are deployed to audiences that may n
 anything here, which is why [website/](website/README.md) documents the site from this side instead.
 The **ecosystem projects** are [`hypershell`](https://github.com/contextgeneric/hypershell) and
 [`cgp-serde`](https://github.com/contextgeneric/cgp-serde), libraries built with CGP rather than part
-of it, documented under [projects/](projects/README.md).
+of it, and [`cgp-examples`](https://github.com/contextgeneric/cgp-examples), a repository of runnable
+example crates, all documented under [projects/](projects/README.md).
 
 [sibling-projects.md](sibling-projects.md) records where each one lives; adding a repository means
 adding it there, giving it a directory here if it needs one, and registering that directory in this

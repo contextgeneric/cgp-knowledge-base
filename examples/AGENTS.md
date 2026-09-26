@@ -54,6 +54,27 @@ Verify an example that imports a sibling project against that project's source a
 by compiling its snippets in a scratch crate with path dependencies on the local checkout, and say near
 the top which crates and branch the snippets assume.
 
+## Stand alone, and leave project records to `projects/`
+
+**An example teaches its patterns completely on its own.** An agent learning CGP should get every key
+takeaway of the patterns an example uses by reading that one document, without opening a project
+section, the source repository, or anything the example points to at its end. Links into the
+[reference](../cgp/reference/README.md) are for the mechanics of a construct, per the rule above, not
+for understanding the example.
+
+When the scenario comes from a documented project, such as the crates of
+[cgp-examples](../projects/cgp-examples/README.md), the example may close with a one-line pointer to
+that project's section for an agent working on the project itself. Place the pointer after the
+teaching sections, never inside them. The example carries none of the project's records: no module
+layout, known defects, test coverage, run results, or pending changes, since those belong to the
+project section per [../AGENTS.md](../AGENTS.md#project-facts-and-cgp-patterns-have-separate-owners).
+Where the example reproduces the project's code, the code matches the project at the branch
+[../sibling-projects.md](../sibling-projects.md) records: the same item definitions, bounds, messages,
+and wiring entries, and nothing the branch does not have. The example may omit parts of the program
+and may abbreviate a repeated item with a comment, but it never shows a variant of the code that the
+branch does not contain. When the project uses an older idiom, record the change it needs in the
+project section's `issues.md` rather than modernizing the example alone, so the two converge.
+
 ## Document structure
 
 Follow the shape of the existing examples. Open with a level-one heading naming the use case and a

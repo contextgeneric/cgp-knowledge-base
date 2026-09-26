@@ -151,6 +151,28 @@ A **bare mention of a checkout's location** — the path `../cgp`, or a link int
 stays relative. These are directions for an agent working in a local environment, not URLs for a
 reader.
 
+## Project facts and CGP patterns have separate owners
+
+**Facts about a project built with CGP belong to its section under [projects/](projects/README.md),
+and every other document links there instead of restating them.** A project fact is anything true of
+the project's code as it stands: its module layout, its exact current wiring, what one of its items
+does, a design decision specific to it, a known defect, what its tests cover, what running it
+produces, and the changes it still needs. Record each such fact once, in the project section, and link
+to it from wherever else it matters, such as a blog-post record, a deep-dive plan, or a task list. A
+fact stated outside `projects/` has nothing tying it to the project's source, so it goes stale the next
+time the project changes.
+
+**The CGP patterns a project demonstrates belong to [cgp/](cgp/README.md) and
+[examples/](examples/README.md), and a project document links to them instead of re-teaching them.**
+A worked example may develop the same scenario as a project and still stands alone: an agent learning
+CGP reads the example and never needs the project section, which is written for an agent working on
+the project itself. Where any document here reproduces a project's code, it matches the project at
+the branch [sibling-projects.md](sibling-projects.md) records, so the teaching version and the running
+version never disagree. When the project expresses a pattern in an older idiom, the gap is recorded
+as a change the project needs, in its section's `issues.md`, rather than fixed in the example alone.
+A worked example still never presents itself as a description of the project, and it carries none of
+the project's records.
+
 ## Registering a document, and adding a section
 
 Every document registers itself in its section's `README.md` catalog in the same change that creates

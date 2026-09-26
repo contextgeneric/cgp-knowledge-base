@@ -19,7 +19,7 @@ pub trait CanFetchStorageObject {
 }
 ```
 
-Only the methods declared `async` are affected; non-async methods, associated types, and associated constants in the same trait pass through untouched. When `#[async_trait]` is stacked with a host macro, the ordering follows what that macro needs. With [`#[cgp_component]`](cgp_component.md), place `#[async_trait]` outermost (first) so it rewrites the trait before the component macro reads it:
+Only the methods declared `async` are affected; non-async methods, associated types, and associated constants in the same trait pass through untouched. When `#[async_trait]` is stacked with a host macro, the ordering follows what that macro needs. With [`#[cgp_component]`](cgp_component.md), the conventional placement is outermost (first), so it rewrites the trait before the component macro reads it; CGP's own async components are written this way:
 
 ```rust
 #[async_trait]
@@ -28,6 +28,8 @@ pub trait CanFetchStorageObject {
     async fn fetch_storage_object(&self, object_id: &str) -> anyhow::Result<Vec<u8>>;
 }
 ```
+
+Placing it after `#[cgp_component]` works too. The component macro forwards an attribute it does not recognize onto every item it generates, as its [Known issues](cgp_component.md#known-issues) record, so `#[async_trait]` reaches the consumer and provider traits and rewrites each of them, and passes through the generated impls unchanged. The components of the [`transfer`](../../../projects/cgp-examples/transfer/reference/components.md) example crate are written this way, below `#[cgp_component]` and `#[prefix]`, and build without the `async_fn_in_trait` lint firing.
 
 With [`#[cgp_fn]`](cgp_fn.md), which generates the trait from a function, `#[async_trait]` is written *below* `#[cgp_fn]` on the `async fn`; `#[cgp_fn]` copies it onto the trait and impl it generates:
 

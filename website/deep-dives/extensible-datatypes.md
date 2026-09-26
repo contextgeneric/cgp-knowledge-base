@@ -119,8 +119,10 @@ once the getter half is gone.
 **Replace the `UseDelegate` table.** `contexts/anthropic_and_chatgpt.rs` wires
 `HandlerComponent: UseDelegate<new BuilderHandlers { BuildChatGptApp: ..., BuildAnthropicApp: ... }>`.
 This dispatches on the handler's `Code` parameter, which is what `open` handles, so it becomes
-`open HandlerComponent;` with `@HandlerComponent.BuildChatGptApp: ...` entries — the form the
-[application builder example](../../examples/application-builder.md) already uses.
+`open HandlerComponent;` with `@HandlerComponent.BuildChatGptApp: ...` entries. The
+[application builder example](../../examples/application-builder.md) teaches the same `UseDelegate`
+table the crate has, and since an example matches its project's documented branch, it changes in the
+same pass as the crate.
 
 **Consider `#[derive(CgpData)]`** on `App` and the per-subsystem output structs, which currently derive
 `HasField, HasFields, BuildField` individually. Cosmetic, but the deep dive teaches the umbrella derive.

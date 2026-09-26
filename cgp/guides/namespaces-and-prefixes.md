@@ -20,8 +20,6 @@ delegate_components! {
 
         @HttpErrorRaiserComponent.<Code> Code.String:
             DisplayHttpError,
-        @HttpErrorRaiserComponent.<Code> Code.anyhow::Error:
-            HandleHttpErrorWithAnyhow,
 
         [
             UserIdTypeProviderComponent,
@@ -120,8 +118,6 @@ cgp_namespace! {
 
         @app.error.HttpErrorRaiserComponent.<Code> Code.String:
             DisplayHttpError,
-        @app.error.HttpErrorRaiserComponent.<Code> Code.anyhow::Error:
-            HandleHttpErrorWithAnyhow,
 
         @app.auth.types.{
             UserIdTypeProviderComponent,
@@ -137,7 +133,7 @@ cgp_namespace! {
 }
 ```
 
-These entries are the wirings that have no [`#[cgp_impl]`](../reference/macros/cgp_impl.md) block of their own to attach an attribute to: the concrete error type, the HTTP error dispatch, and the abstract-type choices are all built from library providers like [`UseType`](../reference/providers/use_type.md), so they are written directly in the namespace **body**, keyed by their full paths. The body of a namespace accepts exactly the same key and value forms as `delegate_components!`, including grouped keys (`@app.auth.types.{A, B, C}`) and generic-parameter dispatch keys (`@app.error.HttpErrorRaiserComponent.<Code> Code.String`).
+These entries are the wirings that cannot register themselves with an attribute. The concrete error type and the abstract-type choices are library providers like [`UseType`](../reference/providers/use_type.md), which the application has no [`#[cgp_impl]`](../reference/macros/cgp_impl.md) block for, and the HTTP error provider `DisplayHttpError` is generic over its code and detail, which [`#[default_impl]`](../reference/attributes/default_impl.md#known-issues) cannot register. So they are written directly in the namespace **body**, keyed by their full paths. The body of a namespace accepts exactly the same key and value forms as `delegate_components!`, including grouped keys (`@app.auth.types.{A, B, C}`) and generic-parameter dispatch keys (`@app.error.HttpErrorRaiserComponent.<Code> Code.String`).
 
 ### Registering a provider with `#[default_impl]`
 
@@ -157,7 +153,9 @@ where
         user_id: &UserId,
         #[implicit] user_passwords: &BTreeMap<UserId, HashedPassword>,
     ) -> Result<Option<HashedPassword>, Error> {
-        Ok(user_passwords.get(user_id).cloned())
+        let hashed_password = user_passwords.get(user_id).cloned();
+
+        Ok(hashed_password)
     }
 }
 ```
