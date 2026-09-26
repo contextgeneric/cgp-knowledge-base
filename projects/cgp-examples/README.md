@@ -26,13 +26,13 @@ the repository is marked as linking; the v0.8.0 post shows `web-app`'s code with
 | Subproject | Scenario | Context shape | Worked example | Blog post | Runs | Current idioms |
 |---|---|---|---|---|---|---|
 | [`transfer`](transfer/README.md) | balance and transfer endpoints served over HTTP | environmental; self-targeted, with one handler dispatched per endpoint | [money-transfer API](../../examples/money-transfer-api.md) | [v0.5.0 release](../../website/blog/v0-5-0-release.md), linking | yes, a server binary | yes, apart from four request getters |
-| `expression` | an arithmetic interpreter open to new variants and operations | environmental; parameter-targeted | [expression interpreter](../../examples/expression-interpreter.md) | [extensible data types, part 2](../../website/blog/extensible-datatypes-part-2.md), linking | three unit tests | no: `UseInputDelegate` and `UseDelegate` tables |
+| [`expression`](expression/README.md) | an arithmetic interpreter open to new variants and operations | environmental; parameter-targeted | [expression interpreter](../../examples/expression-interpreter.md) | [extensible data types, part 2](../../website/blog/extensible-datatypes-part-2.md), linking | three unit tests | no: `UseInputDelegate` and `UseDelegate` tables |
 | `builder` | an application context assembled from per-subsystem builders | environmental; self-targeted | [application builder](../../examples/application-builder.md) | [extensible data types, part 1](../../website/blog/extensible-datatypes-part-1.md), linking | no entry point | no: getter traits and a `UseDelegate` table |
 | `web-app` | one social-media backend wired four ways, up to namespaces | environmental; self-targeted | [social media app](../../examples/social-media-app.md) | [v0.8.0 release](../../website/blog/v0-8-0-release.md) | compiles only | yes |
 | `greet` | a greeting written as a function, a component, and over an abstract type | value context; self-targeted | none | none | yes, three binaries | yes |
 
-Only `transfer` is documented so far. The other four rows record what each crate is, so the table
-stays accurate for the whole repository while their sections are written.
+`transfer` and `expression` are documented so far. The other three rows record what each crate is, so
+the table stays accurate for the whole repository while their sections are written.
 
 ## Which revision these documents describe
 
@@ -89,6 +89,16 @@ per [../AGENTS.md](../AGENTS.md#the-shape-of-a-project-section).
   - [guides/](transfer/guides/README.md) — adding an endpoint, and swapping the backend.
   - [testing.md](transfer/testing.md) — what the checks pin, and what nothing tests.
   - [issues.md](transfer/issues.md) — defects, missing features, and housekeeping.
+- [expression/](expression/README.md) — the modular arithmetic interpreter:
+  - [architecture/](expression/architecture/README.md) — the design on one page, and
+    [dispatch-layers.md](expression/architecture/dispatch-layers.md) on the three dispatch
+    arrangements and the wrapper every context needs.
+  - [reference/](expression/reference/README.md) — the types, abstract types, evaluation and
+    conversion providers, and dispatchers.
+  - [examples/](expression/examples/README.md) — one document per context, with its tests and checks.
+  - [testing.md](expression/testing.md) — the three tests, the four check blocks, and what nothing
+    tests.
+  - [issues.md](expression/issues.md) — missing features, modernization, and housekeeping.
 
 ## Public material derived from these documents
 

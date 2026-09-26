@@ -129,30 +129,11 @@ same pass as the crate.
 
 ### `cgp-examples/expression`
 
-**Adopt `#[uses(...)]`.** Zero `#[uses]`, eleven hand-written `Self:` bounds.
-
-**Replace the `UseDelegate` tables where they key on `Code`.** `contexts/add_mult_neg.rs` has one and
-`contexts/add_mult_code.rs` has four; these are `open` candidates.
-
-**Replace the `UseInputDelegate` tables with two-segment `open` keys too.** `contexts/add_mult.rs`
-wires `ComputerComponent: UseInputDelegate<new EvalComponents { MathExpr: DispatchEval, ... }>` and a
-matching `ToLispComponents`, and `add_mult_binary_op.rs`, `add_mult_code.rs`, and `add_mult_neg.rs`
-nest the same tables. `open` covers them: the `RedirectLookup` impl every `#[cgp_component]` generates
-appends *every* type parameter to the lookup path, so a handler's path is `Code` then `Input`, and
-`@ComputerComponent.<Code> Code.Plus<MathExpr>: EvalAdd` dispatches on the input whatever the code, per
-the `open` section of [`delegate_components!`](../../cgp/reference/macros/delegate_components.md). A
-`UseDelegate` on the operation around `UseInputDelegate` tables, as in `add_mult_neg.rs`, becomes keys
-with a concrete first segment, `@ComputerRefComponent.Eval.Minus<MathPlusExpr>: EvalSubtract`. A probe
-ran the knowledge base's version of this evaluator converted this way. The one rule to respect is that a table cannot key a code both
-on its own and per input. The `#[derive_delegate(UseInputDelegate<Input>)]` attribute on CGP's own
-handler components stays in the library for existing wiring, which is not an ecosystem-code
-decision; the crates themselves carry no `#[derive_delegate]` to remove.
-
-**Consider `#[derive(CgpData)]`** on `MathExpr` and `LispExpr`, which derive
-`HasFields, FromVariant, ExtractField` individually.
-
-**One getter trait** exists and should be checked against the same implicit-argument rule as the builder
-crate's.
+The changes are recorded, with the probe that confirms the `open` conversion, under
+[Modernization](../../projects/cgp-examples/expression/issues.md#modernization) in the crate's project
+section: replace its `UseInputDelegate` and `UseDelegate` tables with `open` and path keys, adopt
+`#[uses]` for its eleven hand-written bounds, and derive `CgpData`. Its one getter trait stays, since
+it reads the provider's input rather than its context.
 
 ## How it relates to the knowledge base
 

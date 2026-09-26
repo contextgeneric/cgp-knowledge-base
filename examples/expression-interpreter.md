@@ -277,7 +277,13 @@ delegate_components! {
 A new language lives alongside the old one rather than replacing it, which is the whole point of keeping variants standalone. Subtraction and negation get their own types and evaluation providers, written exactly like the originals:
 
 ```rust
-pub struct Minus<Expr> { pub left: Box<Expr>, pub right: Box<Expr> }
+#[derive(Debug, Eq, PartialEq)]
+pub struct Minus<Expr> {
+    pub left: Box<Expr>,
+    pub right: Box<Expr>,
+}
+
+#[derive(Debug, Eq, PartialEq)]
 pub struct Negate<Expr>(pub Box<Expr>);
 
 #[cgp_impl(new EvalSubtract)]
@@ -328,3 +334,5 @@ delegate_components! {
 ```
 
 `EvalAdd` and `EvalMultiply` work unchanged because `i64` implements `Add` and `Mul` just as `u64` did — the providers never named a concrete numeric type. Equally telling is what is *absent*: `InterpreterPlus` wires only evaluation and simply omits a to-Lisp handler for `Minus` and `Negate`. Because CGP wiring is lazy and checked only where it is used, the evaluator compiles and runs without those handlers, so a new variant can be prototyped against one operation before the others catch up — the kind of partial extension a closed `enum` with exhaustive `match`es cannot express.
+
+For an agent working on the interpreter itself rather than learning its patterns, the runnable crate is documented as the [`expression`](../projects/cgp-examples/expression/README.md) subproject of cgp-examples.

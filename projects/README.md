@@ -57,7 +57,7 @@ expecting: the project moves with the library while the post that announced it d
 - [cgp-examples/](cgp-examples/README.md) — a repository of five independent example crates, each
   documented as its own subproject: an HTTP money-transfer service, a modular interpreter, an
   application builder, a web-app wiring study, and a greeting program. Documented against its `v0.8.0`
-  branch; the `transfer` subproject is written, and the other four are not yet.
+  branch; the `transfer` and `expression` subprojects are written, and the other three are not yet.
 
 ## How these relate to the rest of the base
 

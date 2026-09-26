@@ -43,6 +43,9 @@ clients, and finally a single builder that produces all three application types 
 
 The worked example is re-derived in current syntax as the
 [application builder example](../../examples/application-builder.md), which is the source to quote.
+The post's builder code lives on as the `builder` crate of cgp-examples, whose current form, and where
+each of the post's sections now sits in it, is documented in the
+[`builder` subproject](../../projects/cgp-examples/builder/README.md#where-the-blog-posts-code-lives).
 The concepts are [extensible records](../../cgp/concepts/extensible-records.md) for the builder side
 and [extensible variants](../../cgp/concepts/extensible-variants.md) for the casts, with
 [dispatching](../../cgp/concepts/dispatching.md) covering the visitor and builder dispatchers.

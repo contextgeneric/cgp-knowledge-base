@@ -1139,3 +1139,43 @@ it stale.
 - [projects/cgp-examples/transfer/issues.md](projects/cgp-examples/transfer/issues.md) — the
   self-transfer defect, missing features, housekeeping, and where the crate's README disagrees with the
   code.
+- [projects/cgp-examples/expression/README.md](projects/cgp-examples/expression/README.md) — the
+  modular arithmetic interpreter: its language and two operations, the four contexts, its legacy
+  wiring, its gaps, where the part 2 post's code now lives, and the section catalog.
+- [projects/cgp-examples/expression/architecture/README.md](projects/cgp-examples/expression/architecture/README.md)
+  — the design on one page: operators generic over the expression, one provider per operator and
+  operation, the two computation components, abstract output types, input dispatch with a wrapper,
+  and independent contexts.
+- [projects/cgp-examples/expression/architecture/dispatch-layers.md](projects/cgp-examples/expression/architecture/dispatch-layers.md)
+  — the three ways the contexts layer input and operation dispatch, the per-operator bundles, and the
+  `E0275` overflow the dispatch wrappers prevent.
+- [projects/cgp-examples/expression/reference/README.md](projects/cgp-examples/expression/reference/README.md)
+  — tables of every provider, with its input, component, wiring, and requirements, and of the other
+  items.
+- [projects/cgp-examples/expression/reference/types.md](projects/cgp-examples/expression/reference/types.md)
+  — the operator structs, `List` and `Ident`, the language enums, and the closed `classic` interpreter.
+- [projects/cgp-examples/expression/reference/abstract-types-and-getters.md](projects/cgp-examples/expression/reference/abstract-types-and-getters.md)
+  — `HasMathExprType`, `HasLispExprType`, and the `BinarySubExpression` getter.
+- [projects/cgp-examples/expression/reference/eval-providers.md](projects/cgp-examples/expression/reference/eval-providers.md)
+  — `EvalAdd`, `EvalMultiply`, `EvalLiteral`, `EvalSubtract`, `EvalNegate`, and the unwired
+  `EvalSubtractWithNegate`.
+- [projects/cgp-examples/expression/reference/to-lisp-providers.md](projects/cgp-examples/expression/reference/to-lisp-providers.md)
+  — `PlusToLisp`, `TimesToLisp`, `LiteralToLisp`, and `BinaryOpToLisp`, with the local sub-enums they
+  upcast from.
+- [projects/cgp-examples/expression/reference/dispatchers.md](projects/cgp-examples/expression/reference/dispatchers.md)
+  — the per-context `DispatchEval` and `DispatchToLisp` wrappers, the per-operator bundles, and the
+  inner tables.
+- [projects/cgp-examples/expression/examples/README.md](projects/cgp-examples/expression/examples/README.md)
+  — the four contexts in teaching order, with their tests and probe results.
+- [projects/cgp-examples/expression/examples/add-mult.md](projects/cgp-examples/expression/examples/add-mult.md)
+  — evaluation by value and conversion by reference in two input-keyed tables, and its two tests.
+- [projects/cgp-examples/expression/examples/add-mult-binary-op.md](projects/cgp-examples/expression/examples/add-mult-binary-op.md)
+  — the same with one generic `BinaryOpToLisp`, untested and probed.
+- [projects/cgp-examples/expression/examples/add-mult-code.md](projects/cgp-examples/expression/examples/add-mult-code.md)
+  — both operations in `ComputerRef`, keyed by input and then code through per-operator bundles.
+- [projects/cgp-examples/expression/examples/add-mult-neg.md](projects/cgp-examples/expression/examples/add-mult-neg.md)
+  — the extended language with subtraction and negation, evaluation only, and its test.
+- [projects/cgp-examples/expression/testing.md](projects/cgp-examples/expression/testing.md) — what the
+  three tests and four check blocks pin, the `Times` gap, and what nothing tests.
+- [projects/cgp-examples/expression/issues.md](projects/cgp-examples/expression/issues.md) — missing
+  features, the modernization items with the `open` probe, and housekeeping.

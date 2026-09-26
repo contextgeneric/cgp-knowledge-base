@@ -51,7 +51,11 @@ language can skip the to-Lisp implementations entirely and still compile.
 The scenario is re-derived in current syntax as the
 [expression interpreter example](../../examples/expression-interpreter.md) — quote that, not this
 post. The concepts are [extensible variants](../../cgp/concepts/extensible-variants.md) and
-[dispatching](../../cgp/concepts/dispatching.md); the components are
+[dispatching](../../cgp/concepts/dispatching.md). The post's code lives on as the `expression` crate
+of cgp-examples, whose current form, and where each of the post's sections now sits in it, is
+documented in the
+[`expression` subproject](../../projects/cgp-examples/expression/README.md#where-the-blog-posts-code-lives).
+The components are
 [`Computer` / `CanCompute`](../../cgp/reference/components/computer.md) and its by-reference variant;
 the dispatchers are in the [dispatch combinators](../../cgp/reference/providers/dispatch_combinators.md);
 the casts are [`CanUpcast`](../../cgp/reference/traits/cast.md); the abstract target type is

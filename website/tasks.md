@@ -187,8 +187,12 @@ are also independent of everything above, so they can start whenever there is ca
   `builder`'s six getter traits to `#[implicit]` arguments, adopt `#[uses]` across both crates, and
   replace both the `Code`-keyed `UseDelegate` tables and the `Input`-keyed `UseInputDelegate` tables
   with `open`, the latter through two-segment path keys such as
-  `@ComputerComponent.<Code> Code.Plus<MathExpr>`; see
-  [the deep-dive plan](deep-dives/extensible-datatypes.md). *Lands in:* the `cgp-examples` repository.
+  `@ComputerComponent.<Code> Code.Plus<MathExpr>`. The `expression` items are listed under
+  [Modernization](../projects/cgp-examples/expression/issues.md#modernization) in its project section,
+  and the `builder` items in [the deep-dive plan](deep-dives/extensible-datatypes.md). The matching
+  worked examples, [expression-interpreter.md](../examples/expression-interpreter.md) and
+  [application-builder.md](../examples/application-builder.md), change in the same pass, since each
+  matches its crate. *Lands in:* the `cgp-examples` repository, and this knowledge base's `examples/`.
 - **DC3 — publish a `CgpSerdeNamespace`, and drop the three `#[derive_delegate]` attributes.** The
   namespace is a design decision about what the defaults should be rather than a mechanical conversion,
   and a genuine library improvement: without it every context spells out a dozen wiring entries, and the
@@ -425,7 +429,11 @@ published blog posts, whose titles are among the worst offenders and whose
   and the reference, guide, and skill already teach the form. This is new work rather than a
   correction, since each example's prose explains the table it wires. The `cgp` documents that quote
   the same tables already use the `open` form. *Lands in:* this knowledge base's `examples/`.
-  *Blocked by:* nothing.
+  *Blocked by:* nothing for `extensible-shapes.md`, and DC2 for `expression-interpreter.md`: that
+  example reproduces the `cgp-examples` `expression` crate, and a document reproducing a project's
+  code matches it at the documented branch, per
+  [AGENTS.md](../AGENTS.md#project-facts-and-cgp-patterns-have-separate-owners), so it converts in the
+  same change as the crate.
   *Done when:* no worked example wires a `UseInputDelegate` table except where it names it as the
   legacy form, and every converted snippet compiles.
 
@@ -442,14 +450,15 @@ the [ordering](#the-ordering) for what to start on.
 | T4 | nothing | nothing |
 | T3 | nothing | nothing |
 | R1 | the author's read | nothing |
-| DC1, DC2, DC3 | nothing | DD1, DD2, DD3 respectively |
+| DC1, DC2, DC3 | nothing | DD1, DD2, DD3 respectively; DC2 also X4's interpreter half |
 | DD1, DD2, DD3 | their DC task | nothing |
 | B1, B2 | nothing (both held until after V1) | nothing |
 | V1 | the v0.8.0 release, and every release-blocking task | B1 and B2 |
 | A1 | the author's read | every page-adding task's provenance note |
 | S1, S3, S4, S5, S7, S10 | nothing | nothing; S3 and S4 should precede V1 |
 | S9, S11 | V1 | nothing |
-| X1, X2, X3, X4 | nothing | nothing |
+| X1, X2, X3 | nothing | nothing |
+| X4 | nothing, except DC2 for the interpreter example | nothing |
 
 Two shapes in that graph are worth naming, because they are what make the ordering non-obvious. The
 **deep dives are gated on code** rather than on writing, so their long lead time starts with DC1–DC3
