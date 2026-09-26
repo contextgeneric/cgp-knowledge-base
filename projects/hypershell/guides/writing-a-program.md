@@ -77,8 +77,9 @@ once, and consecutive streaming stages run in parallel, as in a shell.
 The choice affects error reporting. `SimpleExec` fails when the command exits with a non-zero status,
 and reports its standard error. `StreamingExec` ignores both, so a failing command in a streaming
 stage yields whatever it wrote to standard output; see
-[issues.md](../issues.md#streamingexec-ignores-the-exit-status-and-standard-error). Streaming HTTP
-requests also do not follow redirects, so give them the final URL.
+[issues.md](../issues.md#streamingexec-ignores-the-exit-status-and-standard-error). A streaming HTTP
+request whose body is a stream does not follow redirects, so give such a request the final URL; one
+whose input is a `Vec<u8>` or `String` follows them.
 
 ## Make adjacent stages agree
 

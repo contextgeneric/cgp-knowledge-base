@@ -11,7 +11,7 @@ library the crate carries, which two of the examples build on.
 [shell-scripting DSL example](../../../examples/shell-scripting-dsl.md) is the teaching progression
 to quote.** That example develops the language step by step for an agent writing a tutorial or a
 page, and imports the Hypershell crates to do it. The documents here each describe one program as the
-repository ships it, including its defects and stale comments, so an agent quoting a program knows
+repository ships it, including its defects, so an agent quoting a program knows
 what it is quoting. When the two overlap, as for the checksum extension, the top-level example owns
 the explanation and a document here links to it.
 
@@ -35,12 +35,8 @@ needs beyond that, and what happened when it was run against the `v0.8.0` branch
 | [`rust_playground`](rust-playground.md) | network | not run: it publishes a public gist |
 | [`bluesky`](bluesky.md) | network, `nix-shell` | streams matching firehose events until stopped |
 | [`bluesky_websocket`](bluesky-websocket.md) | network, `grep` | streams matching firehose events until stopped |
-| [`parallel_compare`](parallel-compare.md) | network | **fails**: a redirect is returned as an error |
-| [`compare_and_branch`](compare-and-branch.md) | network | **fails**: the same redirect |
-
-The two failures share one cause, recorded in
-[issues.md](../issues.md#streaminghttprequest-does-not-follow-redirects). Several examples open
-with a comment written for the removed preset system; each document notes it.
+| [`parallel_compare`](parallel-compare.md) | network | prints `equals: true` |
+| [`compare_and_branch`](compare-and-branch.md) | network | compiles; no confirmed run |
 
 ## The catalog
 

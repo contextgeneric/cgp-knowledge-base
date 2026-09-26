@@ -3,31 +3,10 @@
 This document records the open problems in Hypershell's `v0.8.0` branch, found while documenting it
 and each confirmed by a probe unless it says otherwise. They are grouped as defects, missing
 features, and housekeeping. Per [../AGENTS.md](../AGENTS.md#a-project-section-documents-its-project-in-depth),
-none has been fixed in the project's source; each is a separate change for the Hypershell repository,
-and an entry is removed in the same change that fixes it.
+each is a separate change for the Hypershell repository, and an entry is removed in the same change
+that fixes it.
 
 ## Defects
-
-### `ConvertTo` never resolves
-
-`ConvertTo<T>` is routed to `Promote<HandleConvert>`, but `HandleConvert` implements only `Computer`,
-and `Promote`'s `Handler` impl requires an `AsyncComputer`. Every use fails to compile:
-
-```rust
-check_components! {
-    #[check_trait(CheckHypershellCli)]
-    HypershellCli {
-        HandlerComponent: (ConvertTo<String>, &'static str),
-    }
-}
-```
-
-`cargo cgp check` reports a `[CGP-E111]` root cause, "the provider trait `AsyncComputer` is not
-implemented for `HandleConvert`". The fix is to wire the syntax to
-`Promote<PromoteAsync<HandleConvert>>`, where `PromoteAsync` lifts the `Computer` to an
-`AsyncComputer` and `Promote` lifts that to a `Handler`. A probe ran that provider through
-`Use<Promote<PromoteAsync<HandleConvert>>, ConvertTo<String>>` and converted a `&str` to a `String`.
-See [control](reference/control.md#convertto-and-handleconvert).
 
 ### `StreamingExec` ignores the exit status and standard error
 
@@ -45,51 +24,19 @@ This program returns `Ok("out\n")`. The stderr pipe closes when the handler retu
 writing a megabyte to stderr completed without blocking, and the output was lost. `SimpleExec` does
 check the status and reports stderr. See [execution](reference/execution.md#streamingexec-and-handlestreamingexec).
 
-### `StreamingHttpRequest` does not follow redirects
+### A streamed request body does not follow redirects
 
-A streaming request to a URL that answers with a redirect returns the redirect as an
-`ErrorResponse`, while a simple request to the same URL follows it:
+`StreamingHttpRequest` with a reader input sends the reader as a streamed body, and such a request
+returns a redirect as an `ErrorResponse` instead of following it. The locked `reqwest` 0.12.28
+follows redirects with `tower-http`'s `FollowRedirect`, which resends the request only with a clone
+of its body. A streamed body cannot be cloned, so the redirect response is returned unless the
+redirect itself discards the body, as a 303 does, or a 301 or 302 answering a POST. The mechanism was
+read from the two crates' source.
 
-```rust
-type Simple = hypershell! {
-    SimpleHttpRequest<GetMethod, StaticArg<"https://nixos.org/manual/nixpkgs/unstable">, WithHeaders[]>
-};
-type Streaming = hypershell! {
-    StreamingHttpRequest<GetMethod, StaticArg<"https://nixos.org/manual/nixpkgs/unstable">, WithHeaders[]>
-    | StreamToStdout
-};
-```
-
-On `HypershellHttp`, `Simple` returned the 2.8 MB page and `Streaming` failed with the 301 response.
-The cause is the body. The streaming pipeline always sends its input through `StreamToBody`, which
-builds a `reqwest::Body::wrap_stream`, even when the input is an empty `Vec<u8>`. The locked
-`reqwest` 0.12.28 follows redirects with `tower-http`'s `FollowRedirect`, which resends the request
-only with a clone of its body. A streamed body cannot be cloned, so the redirect response is returned
-unless the redirect itself discards the body, as a 303 does, or a 301 or 302 answering a POST. The
-simple request's `Vec<u8>` body is reusable, which is why it follows. The mechanism was read from the
-two crates' source, and the probe below confirms the consequence.
-
-The defect makes the `parallel_compare` and `compare_and_branch` examples fail, since their second URL
-lacks the trailing slash. The fix is to send a byte-buffer input as a buffered body instead of a
-stream. A probe ran the streaming request's inner providers directly on an empty `Vec<u8>`, skipping
-the input dispatcher and `StreamToBody`, and the request followed the redirect and returned the page:
-
-```rust
-type Buffered = Pipe<Product![
-    Use<
-        PipeHandlers<Product![HandleStreamingHttpRequest, WrapFuturesAsyncRead]>,
-        StreamingHttpRequest<GetMethod, Url, WithHeaders<Nil>>,
-    >,
-    ToTokioAsyncRead,
-    StreamToBytes,
-]>;
-```
-
-In the library, that means replacing the reqwest bundle's single `StreamingHttpRequest` entry with
-entries keyed per input, since a table cannot key one syntax both on its own and per input. The
-`Vec<u8>` and `String` entries would omit `HandleToTokioAsyncRead` and `StreamToBody`, and the reader
-entries would keep them. A streamed input still could not follow a redirect. See
-[HTTP](reference/http.md#streaminghttprequest-and-handlestreaminghttprequest).
+A byte-buffer input is not affected. The reqwest bundle sends a `Vec<u8>` or `String` as a buffered
+body, and a probe that sent an empty `Vec<u8>` to a URL answering 301 got the redirected page back.
+Following a redirect with a streamed body would need the stream buffered in full first, which defeats
+streaming. See [HTTP](reference/http.md#streaminghttprequest-and-handlestreaminghttprequest).
 
 ### The WebSocket handler panics on a failed connection
 
@@ -103,21 +50,6 @@ type Program = hypershell! { WebSocket<StaticArg<"ws://127.0.0.1:1/">, ()> | Str
 Run on a context that routes `WebSocket` and its error, as `bluesky_websocket` does, this panicked
 at `websocket.rs:37` with `called Result::unwrap() on an Err value: Io(… ConnectionRefused …)`. See
 [extensions](reference/extensions.md#websocket-and-handlewebsocket).
-
-### PUT and DELETE are implemented but unrouted
-
-`ExtractReqwestMethod` implements the method extractor for `PutMethod` and `DeleteMethod`, but
-neither `HypershellReqwestProvider` nor `HypershellNamespace` routes them:
-
-```rust
-type Program = hypershell! {
-    SimpleHttpRequest<PutMethod, StaticArg<"http://127.0.0.1:1/">, WithHeaders[]>
-};
-```
-
-A check on `HypershellHttp` fails with a `[CGP-E107]` root cause naming the missing
-`@hypershell.core.MethodArgExtractorComponent.PutMethod` entry. Adding both markers to the bundle's
-and the namespace's method lists fixes it. See [HTTP](reference/http.md).
 
 ### `StreamToLines` is unusable
 
@@ -196,11 +128,6 @@ source has no doc comments, so the crates' docs.rs pages list items with no expl
 
 ## Housekeeping
 
-- **Stale comments in five examples.** `hello_name.rs`, `github_issues.rs`, `bluesky.rs`,
-  `bluesky_websocket.rs`, and `http_checksum_native.rs` open with comments describing
-  `HypershellPreset`, `MyAppPreset`, `TungsteniteHandlerPreset`, or `#[cgp_inherit]`, all removed.
-  The code beneath each uses namespaces. The comments will be read as current by anyone quoting the
-  examples.
 - **The repository README is stale.** Its install snippet pins `cgp = "0.4.1"` and
   `reqwest = "0.11"`, it describes the assembly crate as defining "presets", and it defers to the
   announcement post, whose wiring code is several breaking releases old.

@@ -26,10 +26,9 @@ provider that interprets it under `HypershellNamespace`, and whether the namespa
 | `JoinArgs<Args>` | `hypershell-components` | `JoinStringArgs` (strings, URLs), `JoinExtractArgs` (paths) | yes | [arguments](arguments.md) |
 | `UrlEncodeArg<Arg>` | `hypershell-components` | `UrlEncodeStringArg` | strings only | [arguments](arguments.md) |
 | `SimpleHttpRequest<Method, Url, Params>` | `hypershell-components` | `HandleSimpleHttpRequest` | yes | [HTTP](http.md) |
-| `StreamingHttpRequest<Method, Url, Params>` | `hypershell-components` | four-stage pipeline ending in `HandleStreamingHttpRequest` | yes | [HTTP](http.md) |
+| `StreamingHttpRequest<Method, Url, Params>` | `hypershell-components` | per-input pipeline ending in `HandleStreamingHttpRequest` | yes | [HTTP](http.md) |
 | `CoreHttpRequest<Method, Url, Params>` | `hypershell-reqwest-components` | `HandleCoreHttpRequest` | yes | [HTTP](http.md) |
-| `GetMethod`, `PostMethod` | `hypershell-components` | `ExtractReqwestMethod` | yes | [HTTP](http.md) |
-| `PutMethod`, `DeleteMethod` | `hypershell-components` | `ExtractReqwestMethod` | **no** | [HTTP](http.md) |
+| `GetMethod`, `PostMethod`, `PutMethod`, `DeleteMethod` | `hypershell-components` | `ExtractReqwestMethod` | yes | [HTTP](http.md) |
 | `WithHeaders<Headers>`, `Header<Key, Value>` | `hypershell-components` | `UpdateRequestHeaders`, `UpdateRequestHeader` | yes | [HTTP](http.md) |
 | `StreamToBytes`, `StreamToString`, `StreamToStdout`, `BytesToStream`, `BytesToString` | `hypershell-components` | the adapter providers | yes | [streams and I/O](streams-and-io.md) |
 | `StreamToLines` | `hypershell-components` | `HandleStreamToLines` | **no** | [streams and I/O](streams-and-io.md) |
@@ -38,7 +37,7 @@ provider that interprets it under `HypershellNamespace`, and whether the namespa
 | `EncodeJson`, `DecodeJson<T>` | `hypershell-components` | `HandleEncodeJson`, `HandleDecodeJson` | yes | [JSON](json.md) |
 | `Pipe<Handlers>` | `hypershell-components` | `HandlePipe` | yes | [control](control.md) |
 | `Use<Provider, Code>` | `hypershell-components` | `HandleUseProvider` | yes | [control](control.md) |
-| `ConvertTo<T>` | `hypershell-components` | `Promote<HandleConvert>`, which does not resolve | yes | [control](control.md) |
+| `ConvertTo<T>` | `hypershell-components` | `Promote<PromoteAsync<HandleConvert>>` | yes | [control](control.md) |
 | `Box<Code>` | `std` | `BoxHandler<Call<Code>>` | yes | [control](control.md) |
 | `Checksum<Hasher>`, `BytesToHex` | `hypershell-hash-components` | `HandleStreamChecksum`, `HandleBytesToHex` | extension | [extensions](extensions.md) |
 | `WebSocket<Url, Params>` | `hypershell-components` | `HandleWebsocket`, per input | extension | [extensions](extensions.md) |

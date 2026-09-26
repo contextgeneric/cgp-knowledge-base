@@ -921,7 +921,7 @@ it stale.
 - [projects/hypershell/reference/json.md](projects/hypershell/reference/json.md) — `EncodeJson` and
   `DecodeJson`.
 - [projects/hypershell/reference/control.md](projects/hypershell/reference/control.md) — `Pipe`,
-  `Call`, `Use`, `ConvertTo` (which never resolves), `Box`, and `ReturnInput`.
+  `Call`, `Use`, `ConvertTo`, `Box`, and `ReturnInput`.
 - [projects/hypershell/reference/extensions.md](projects/hypershell/reference/extensions.md) — the
   checksum crate's `Checksum` and `BytesToHex`, and the tungstenite crate's `WebSocket`.
 - [projects/hypershell/reference/contexts-and-namespace.md](projects/hypershell/reference/contexts-and-namespace.md)
@@ -955,9 +955,9 @@ it stale.
 - [projects/hypershell/examples/bluesky-websocket.md](projects/hypershell/examples/bluesky-websocket.md)
   — the same with the WebSocket extension wired on the context.
 - [projects/hypershell/examples/parallel-compare.md](projects/hypershell/examples/parallel-compare.md)
-  — two sub-pipelines compared concurrently; fails on a redirect.
+  — two sub-pipelines compared concurrently, one through a redirect.
 - [projects/hypershell/examples/compare-and-branch.md](projects/hypershell/examples/compare-and-branch.md)
-  — a comparison driving `If`; fails on the same redirect.
+  — a comparison driving `If`; no confirmed run.
 - [projects/hypershell/guides/README.md](projects/hypershell/guides/README.md) — the guide catalog.
 - [projects/hypershell/guides/writing-a-program.md](projects/hypershell/guides/writing-a-program.md)
   — the prelude and a context, fields as runtime values, simple against streaming stages, adapters
@@ -972,9 +972,9 @@ it stale.
   root cause.
 - [projects/hypershell/testing.md](projects/hypershell/testing.md) — the four tests, the compile-only
   coverage the examples add, and the failure paths, checks, and syntax nothing exercises.
-- [projects/hypershell/issues.md](projects/hypershell/issues.md) — the confirmed defects (`ConvertTo`,
-  streaming exit status, redirects, the WebSocket panic, unrouted methods and `StreamToLines`),
-  missing features, and housekeeping.
+- [projects/hypershell/issues.md](projects/hypershell/issues.md) — the confirmed defects (streaming
+  exit status, a streamed body not following redirects, the WebSocket panic, the unusable
+  `StreamToLines`), missing features, and housekeeping.
 - [projects/AGENTS.md](projects/AGENTS.md) — the rules for a project section: verified against the
   project's source at the branch sibling-projects.md records, probes rather than reading alone, leaving
   CGP itself to `cgp/` and patterns to the worked example, the section as the primary source for its

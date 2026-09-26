@@ -145,9 +145,9 @@ cgp_namespace! {
 **Every piece of syntax is therefore listed twice: once in its bundle and once in a namespace
 route.** The bundle says which provider interprets it, and the route says which bundle to ask.
 Nothing connects the two lists, so a syntax missing from either one is unreachable from any context
-that joins the namespace, even when a provider for it exists. `PutMethod`, `DeleteMethod`, and
-`StreamToLines` are in that state: each has a provider, but neither its bundle nor the namespace lists
-it. See [issues.md](../issues.md#defects).
+that joins the namespace, even when a provider for it exists. `StreamToLines` is in that state: it
+has a provider, but neither its bundle nor the namespace lists it. See
+[issues.md](../issues.md#streamtolines-is-unusable).
 
 The one binding outside any bundle worth noting is `ReqwestClientGetterComponent`, which the
 namespace wires to [`UseField`](../../../cgp/reference/providers/use_field.md) over the field

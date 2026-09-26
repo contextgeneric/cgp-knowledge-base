@@ -64,12 +64,6 @@ required by the GitHub API. The program's output type is fixed by the last stage
 - Headers: see [HTTP](../reference/http.md#withheaders-header-and-the-request-builder-updater).
 - Decoding into a Rust type named in the program: see [JSON](../reference/json.md).
 
-## Known issues
-
-The header comment (lines 20–23) says the context uses `#[cgp_inherit]` and `HypershellPreset`,
-both removed; the code uses `namespace HypershellNamespace;`. See
-[issues.md](../issues.md#housekeeping).
-
 ## Public material derived from this
 
 None yet.

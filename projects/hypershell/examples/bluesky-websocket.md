@@ -89,9 +89,7 @@ ignores it.
 
 A failed connection panics rather than raising `TungsteniteError`, so the error entry this context
 adds is never reached for the connection itself; see
-[issues.md](../issues.md#the-websocket-handler-panics-on-a-failed-connection). The header comment
-(lines 18–27) describes `MyAppPreset`, `HypershellPreset`, and `TungsteniteHandlerPreset`, all
-removed; see [issues.md](../issues.md#housekeeping).
+[issues.md](../issues.md#the-websocket-handler-panics-on-a-failed-connection).
 
 ## Public material derived from this
 

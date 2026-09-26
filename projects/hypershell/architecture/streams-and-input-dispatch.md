@@ -102,15 +102,18 @@ stage accepts bytes or any stream kind without the program saying so.** The Toki
 ```
 
 The first provider normalizes the input, the middle one does the work, and the last one wraps the
-output so the *next* stage can dispatch on it. `WriteFile`, `StreamToStdout`, `StreamingHttpRequest`,
-and `WebSocket` follow the same shape. `Checksum` starts with the other dispatcher,
-`HandleToFuturesStream`, which converts the same inputs into a `FuturesStream`.
+output so the *next* stage can dispatch on it. `WriteFile`, `StreamToStdout`, and `WebSocket` follow
+the same shape. `Checksum` starts with the other dispatcher, `HandleToFuturesStream`, which converts
+the same inputs into a `FuturesStream`. `StreamingHttpRequest` is keyed per input in its bundle
+instead: its reader inputs take this shape, while a `Vec<u8>` or `String` skips the dispatcher and is
+sent as a buffered body, which `reqwest` can resend when it follows a redirect; see
+[HTTP](../reference/http.md#streaminghttprequest-and-handlestreaminghttprequest).
 
 The effect is that each accepting stage lists the input kinds it handles in its dispatcher, and a
 probe confirms the boundary is exact. `StreamingExec` accepts `Vec<u8>`, `String`,
 `TokioAsyncReadStream`, and `FuturesAsyncReadStream`. Given a `&'static str`, it fails with a
-[`[CGP-E107]`](../../../cargo-cgp/error-code.md) root cause naming the missing
-`@HandlerComponent.StreamingExec<…>.&str` entry in `HandleToTokioAsyncRead`.
+[`[CGP-E110]`](../../../cargo-cgp/error-code.md) root cause,
+`` provider `HandleToTokioAsyncRead` does not contain any delegate entry for `@HandlerComponent.StreamingExec<…>.&str` ``.
 
 ## Which stages accept which inputs
 

@@ -6,9 +6,7 @@ syntax, with the sub-pipeline written once as a generic type alias.
 - **Source** — [crates/hypershell-examples/examples/parallel_compare.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/parallel_compare.rs)
 - **Run** — `cargo run --example parallel_compare`
 - **Needs** — network
-- **Result** — **fails**. The second URL answers with a redirect, which the streaming request
-  returns as an `ErrorResponse`, so the program exits with that error instead of printing
-  `equals: true`.
+- **Result** — prints `equals: true`.
 
 ## The program
 
@@ -54,9 +52,9 @@ once and instantiated per URL. `HypershellCompareNamespace` adds `Compare` and `
 checksum namespace, and wires `Compare` through `BoxHandler`; see
 [the examples library](README.md#the-examples-library).
 
-The example demonstrates that the two URLs serve the same page. It fails because the URL without the
-slash answers 301, and `StreamingHttpRequest` does not follow redirects. A `SimpleHttpRequest` to the
-same URL does follow it.
+The example demonstrates that the two URLs serve the same page. The URL without the slash answers
+301, and the streaming request follows it because its `Vec<u8>` input is sent as a buffered body; see
+[HTTP](../reference/http.md#streaminghttprequest-and-handlestreaminghttprequest).
 
 ## What it demonstrates
 
@@ -66,7 +64,6 @@ same URL does follow it.
 
 ## Known issues
 
-The runtime failure is [a defect in the streaming request](../issues.md#streaminghttprequest-does-not-follow-redirects).
 The file sets `#![recursion_limit = "512"]`, which the pinned toolchain does not need. On stable Rust
 without the new trait solver, checking this example grew `rustc` to about 7 GB before it was killed;
 see [crate layout](../architecture/crate-layout.md#build-facts).

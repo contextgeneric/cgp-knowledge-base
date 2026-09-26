@@ -122,14 +122,10 @@ are dropped as plumbing above. The leaf shapes are:
 - An unmet **`DelegateComponent<Marker>` on the context** is the missing-wiring leaf: the context
   delegates that component to no provider.
 - An unmet **`DelegateComponent<PathCons<…>>`**, whose key is a redirect path rather than a bare
-  marker, is the missing-*redirect*-wiring leaf (`[CGP-E107]`), named by its whole path. This check
-  runs on the key before any check on the owner, so it applies to whatever table the `open` statement
-  or namespace redirected into: the context's own table, and equally an aggregate provider that
-  `open`s a component. For an aggregate the leaf still calls the owner a "context", as in
-  `` context `HandleToTokioAsyncRead` does not contain any delegate entry for `@HandlerComponent.…` ``
-  from Hypershell's input dispatcher, rather than reporting it as the missing-dispatch-entry leaf
-  below. This is an open
-  [usability issue](../issues/usability.md#a-redirect-inside-an-aggregate-provider-is-attributed-to-the-context).
+  marker, splits by owner. On the context it is the missing-*redirect*-wiring leaf (`[CGP-E107]`),
+  named by its whole path. On any other type it is the missing-dispatch-entry leaf below, since the
+  lookup ran in an aggregate provider that `open`s the component in its own table; the path is kept
+  whole as that leaf's key.
 - An unmet **`DelegateComponent<Key>` on a *non-context* delegation table** is the missing-dispatch-entry
   leaf (`[CGP-E110]`): the owner is a provider that delegates — an aggregate provider missing a
   component wiring, or a `UseDelegate`/`UseInputDelegate` table missing a branch for the type it
@@ -165,10 +161,12 @@ are dropped as plumbing above. The leaf shapes are:
   against `T` rather than a wiring key ([`non_provider_wired`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/providers/non_provider_wired.rs)
   pins it; [`cascade_after_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/cascade_after_use_site.rs) is
   the dead-end that must stay dropped).
-- An unmet **namespace-lookup bound** is a missing-redirect-wiring leaf too. It is recognized not by
-  name but by the trait's *fingerprint* — a single `Delegate` associated type, which `DefaultNamespace`,
-  the `DefaultImpls*` traits, and every user `cgp_namespace!` trait share — so a same-named user
-  namespace is caught without a `DefId` anchor.
+- An unmet **namespace-lookup bound** is a missing-redirect-wiring leaf too when its table, the
+  trait's last type argument, is the context. When the table is an aggregate provider that joins the
+  namespace itself, it is the missing-dispatch-entry leaf, as a path key on that provider is. The
+  bound is recognized not by name but by the trait's *fingerprint* — a single `Delegate` associated
+  type, which `DefaultNamespace`, the `DefaultImpls*` traits, and every user `cgp_namespace!` trait
+  share — so a same-named user namespace is caught without a `DefId` anchor.
 - An **ordinary bound on a foreign type** (`f64: Eq`) is a leaf, and the descent must not walk into
   whatever unrelated `std` blanket impl happens to match its `Self` (an `impl<F: FnPtr> Eq for F` would
   otherwise fabricate a misleading `f64: FnPtr` step). A **constrained `DelegateComponent` key** whose
@@ -327,9 +325,10 @@ user's own blanket or getter trait — or a terminal ordinary bound — renders 
 - **Plumbing is dropped.** A provider-trait obligation *for the context itself* (the delegation
   routing, as opposed to the real provider), the `DelegateComponent` table lookup, a namespace lookup,
   and any residual `CanUseComponent`/`IsProviderFor` obligation carry no information and return no
-  label, keeping the chain legible without losing a real step. A `RedirectLookup<Ctx, Path>` provider,
-  by contrast, renders as `redirect lookup to \`@Path\` in \`Ctx\``, so a chain of redirects reads as
-  its successive hops.
+  label, keeping the chain legible without losing a real step. A `RedirectLookup<Table, Path>` provider,
+  by contrast, renders as `redirect lookup to \`@Path\` in \`Table\``, so a chain of redirects reads as
+  its successive hops. `Table` is the lookup's own first type argument, not the walk's context, so a
+  hop inside an aggregate provider names the aggregate.
 - **Generic parameters are reattached.** A generic component's parameters are read from the trait
   obligation's own type arguments — the consumer's arguments after `Self`, the provider's after the
   leading context — so the trait reads as written (`CanCalculateArea<u32, u64, bool>`). The context

@@ -60,7 +60,7 @@ cases the resolver still reshapes, `use-site/` for consumer-method call failures
 the de-duplicated and coalesced multi-block cases, and `lowering/` and `wiring/` for the remaining
 classes (`wiring/orphan/` holding the cross-crate orphan-rule cases the tool now reshapes into
 `[CGP-E011]`). `usability/` is split by the kind of issue that remains — `extensible-data/`,
-`lowering/`, and `wiring/` (`constraints/` and `redirect-tables/`). Alongside the hand-curated examples
+`lowering/`, and `wiring/constraints/`. Alongside the hand-curated examples
 the tree includes the fixtures
 migrated from `cgp`'s former compile-fail suite (one per post-codegen error class), giving the tool
 a snapshot of its own transformed output for the whole [error catalog](../../cgp/errors/README.md) —

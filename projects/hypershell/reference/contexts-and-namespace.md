@@ -42,8 +42,9 @@ Its entries, grouped by the provider they route to, are:
 A key is the route followed by the syntax or source-error type, and each generic key binds its
 parameters, as in `<Path, Args> SimpleExec<Path, Args>`. Every path key ends in an open wildcard, so
 a handler entry matches its syntax with any input and leaves input dispatch to the bundle. The table
-is complete as listed: `PutMethod`, `DeleteMethod`, `StreamToLines`, `Checksum`, `BytesToHex`, and
-`WebSocket` have no route. See [issues.md](../issues.md#defects) for the first three.
+is complete as listed: `StreamToLines`, `Checksum`, `BytesToHex`, and `WebSocket` have no route.
+The last three are routed by the extension namespaces, and
+[issues.md](../issues.md#streamtolines-is-unusable) covers the first.
 
 ## `HypershellErrorHandler`
 

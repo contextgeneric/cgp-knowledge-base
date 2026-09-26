@@ -26,14 +26,13 @@ check_components! {
 
 The tree `cargo cgp check` prints follows the lookup described in
 [assembly](../architecture/assembly.md#one-lookup-end-to-end). Each namespace hop and each bundle's
-`open` redirect is a `[CGP-E104]` line, each provider a `[CGP-E102]`, and each consumer trait
-reached through a dependency a `[CGP-E101]`. Read from the bottom: the last lines name the leaf that
-failed. Two labels mislead. Every `[CGP-E104]` names the context as the table (`in HypershellCli`),
-even for a redirect that runs inside a bundle such as `HypershellTokioProvider`. And a missing entry
-in an aggregate reached through `open`, such as an input dispatcher, is reported as a `[CGP-E107]`
-leaf that calls the aggregate a "context", rather than as the `[CGP-E110]` provider-table leaf the
-[error-code catalog](../../../cargo-cgp/error-code.md) defines for a provider's table. Both are an
-open [cargo-cgp issue](../../../cargo-cgp/issues/usability.md#a-redirect-inside-an-aggregate-provider-is-attributed-to-the-context).
+`open` redirect is a `[CGP-E104]` line naming the table it looks in, each provider a `[CGP-E102]`,
+and each consumer trait reached through a dependency a `[CGP-E101]`. Read from the bottom: the last
+lines name the leaf that failed. The table names locate it. The context's own namespace hop reads
+`` in `HypershellCli` ``, a bundle's reads `` in `HypershellTokioProvider` ``, and an entry missing from
+a bundle or an input dispatcher is a `[CGP-E110]` leaf naming that provider, where one missing from
+the context is a `[CGP-E107]` leaf naming the context; see the
+[error-code catalog](../../../cargo-cgp/error-code.md).
 
 ## A context lacks a field
 
@@ -91,7 +90,7 @@ pub type Program = hypershell! {
 ```
 
 ```text
-  = note: root cause: [CGP-E107] context `HandleToTokioAsyncRead` does not contain any delegate entry for `@HandlerComponent.StreamToStdout.GenericArray<u8, …>`
+  = note: root cause: [CGP-E110] provider `HandleToTokioAsyncRead` does not contain any delegate entry for `@HandlerComponent.StreamToStdout.GenericArray<u8, …>`
 ```
 
 The path names the syntax and then the input type, which is exactly what the dispatcher could not
@@ -104,25 +103,26 @@ reports a missing `@HandlerComponent.StreamingExec<…>.&str` entry, and the fix
 ## A syntax has no route
 
 A syntax that no route reaches fails at the missing route, even when a provider for it exists.
-`PutMethod` is implemented by `ExtractReqwestMethod`, but neither the reqwest bundle nor the namespace
-lists it:
+`Checksum` has a provider in `hypershell-hash-components`, but `HypershellNamespace` does not route
+it, so a program using it fails on `HypershellCli`:
 
 ```rust
 pub type Program = hypershell! {
-    SimpleHttpRequest<PutMethod, StaticArg<"http://127.0.0.1:1/">, WithHeaders[]>
+        StreamingExec<StaticArg<"cat">, WithStaticArgs["Cargo.toml"]>
+    |   Checksum<Sha256>
 };
 ```
 
 ```text
-error[E0277]: [CGP-E001] the consumer trait `CanHandle<SimpleHttpRequest<PutMethod, …>, Vec<u8>>` is not implemented for context `HypershellHttp`
-  = note: root cause: [CGP-E107] context `HypershellHttp` does not contain any delegate entry for `@hypershell.core.MethodArgExtractorComponent.PutMethod`
+error[E0277]: [CGP-E001] the consumer trait `CanHandle<Pipe<…>, Vec<u8>>` is not implemented for context `HypershellCli`
+  = note: root cause: [CGP-E107] context `HypershellCli` does not contain any delegate entry for `@cgp.extra.handler.HandlerComponent.Checksum<…>`
 ```
 
-`StreamToLines` fails the same way at `@cgp.extra.handler.HandlerComponent.StreamToLines.…`, and so
-does `Checksum` or `WebSocket` on a context that joined only `HypershellNamespace`. **Fix:** add the
-route on the context or on an extension namespace; see
-[extending the language](extending-the-language.md). For `PutMethod`, `DeleteMethod`, and
-`StreamToLines` the route is missing from the library itself; see [issues.md](../issues.md#defects).
+`WebSocket` fails the same way on such a context, and `StreamToLines` fails at
+`@cgp.extra.handler.HandlerComponent.StreamToLines.…` on every context. **Fix:** add the route on the
+context or on an extension namespace, as `HypershellChecksumNamespace` does for `Checksum`; see
+[extending the language](extending-the-language.md). For `StreamToLines` the route is missing from
+the library itself; see [issues.md](../issues.md#streamtolines-is-unusable).
 
 ## A raised error type has no route
 
@@ -159,16 +159,40 @@ imported from `cgp::core::error`; see [error handling](../architecture/error-han
 
 ## A routed provider cannot resolve
 
-A route that exists can still lead to a provider whose own requirements fail. `ConvertTo` is routed
-to `Promote<HandleConvert>`, which does not implement `Handler`:
+A route that exists can still lead to a provider that does not implement `Handler`, as when a syntax
+is routed straight to a synchronous `Computer` provider. Here `App` routes a custom `Shout` syntax to
+`ShoutText`:
 
-```text
-error[E0277]: [CGP-E001] the consumer trait `CanHandle<ConvertTo<String>, &str>` is not implemented for context `HypershellCli`
-  = note: root cause: [CGP-E111] the provider trait `AsyncComputer` is not implemented for `HandleConvert`
+```rust
+pub struct Shout;
+
+#[cgp_impl(new ShoutText)]
+impl<Code> Computer<Code, String> {
+    type Output = String;
+
+    fn compute(&self, _code: PhantomData<Code>, input: String) -> String {
+        input.to_uppercase()
+    }
+}
+
+delegate_components! {
+    App {
+        namespace HypershellNamespace;
+
+        @cgp.extra.handler.HandlerComponent.Shout: ShoutText,
+    }
+}
 ```
 
-There is no fix in a program; `ConvertTo` is broken in the library. See
-[issues.md](../issues.md#convertto-never-resolves).
+```text
+error[E0277]: [CGP-E002] the provider trait `Handler<Shout, String>` with context `App` is not implemented for provider `ShoutText`
+  = note: root cause: [CGP-E111] the provider trait `Handler` is not implemented for `ShoutText`
+```
+
+**Fix:** lift the provider into a handler, as `Promote<PromoteAsync<ShoutText>>`, with both imported
+from `cgp::extra::handler`. `PromoteAsync` makes the `Computer` an `AsyncComputer`, and `Promote`
+makes that a `Handler`; `ConvertTo` is wired the same way. See the
+[handler combinators](../../../cgp/reference/providers/handler_combinators.md).
 
 ## Rebinding a syntax conflicts
 

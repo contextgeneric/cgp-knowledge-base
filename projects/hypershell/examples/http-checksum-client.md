@@ -61,12 +61,6 @@ reader. The program never says so; the conversion is part of `StreamingExec`'s w
   [streams and input dispatch](../architecture/streams-and-input-dispatch.md#adapters-built-into-a-syntaxs-wiring).
 - The client field convention: see [HTTP](../reference/http.md#hasreqwestclient).
 
-## Known issues
-
-`StreamingHttpRequest` does not follow redirects. The URL here ends in a slash and does not redirect,
-so the example works; the same program on the URL without the slash fails. See
-[issues.md](../issues.md#streaminghttprequest-does-not-follow-redirects).
-
 ## Public material derived from this
 
 The native-HTTP program in the planned

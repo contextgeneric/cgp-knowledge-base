@@ -181,8 +181,7 @@ are also independent of everything above, so they can start whenever there is ca
   decide whether the HTTP client getter becomes an `#[implicit]` argument, the only field read that
   could. Replace the one live `UseDelegate` table in `providers/pipe.rs`; a probe confirmed that `open`
   accepts its bounded generic key. Drop the six `#[derive_delegate(UseDelegate<Arg>)]` attributes,
-  whose removal is breaking for downstream users and is accepted, and fix the five example comments
-  describing the removed preset system. *Lands in:* the `hypershell` repository. The project's
+  whose removal is breaking for downstream users and is accepted. *Lands in:* the `hypershell` repository. The project's
   [issues](../projects/hypershell/issues.md) list the defects worth fixing in the same pass.
 - **DC3 — publish a `CgpSerdeNamespace`, and drop the three `#[derive_delegate]` attributes.** The
   namespace is a design decision about what the defaults should be rather than a mechanical conversion,

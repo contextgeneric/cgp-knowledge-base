@@ -558,8 +558,9 @@ concrete key the namespace maps to a `RedirectLookup` — recovered by normalizi
 typed resolver uses). Its header names only the redirected path; the *fix* — wire the direct entry's
 provider under that key — rides in a separate `help`, kept out of the header so the headline stays
 one short sentence. Each key is rendered to its surface form off the types — a component marker to
-its name, a `PathCons<…>` to its bare `@…` path (a generic tail or `for`-loop key collapsing to
-`.*`), an ordinary type key to its own rendering, a blanket forwarding to the namespace/table trait
+its name, a `PathCons<…>` to its bare `@…` path (a generic segment reading `*` in its own position,
+so `@ComputerComponent.*.u64.*` keeps the segments after it, and a generic tail reading `.*`, folded
+into a generic last segment so a `for`-loop key reads `@a.b.*`), an ordinary type key to its own rendering, a blanket forwarding to the namespace/table trait
 that keys it — so the headline names what the programmer wrote. A marker is told from an ordinary
 type structurally, by whether a provider trait's delegation blanket keys on it, so a per-type
 default's `String` reads as a type rather than as a component nobody defined. The message wording is

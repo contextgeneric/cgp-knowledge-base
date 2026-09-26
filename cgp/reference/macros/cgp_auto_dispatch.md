@@ -44,7 +44,7 @@ where
     __Variants__: HasExtractor,
 {
     fn area(&self) -> f64 {
-        MatchWithValueHandlersRef::<ComputeArea>::compute(
+        <MatchWithValueHandlersRef<ComputeArea> as Computer<_, _, _>>::compute(
             &(),
             ::core::marker::PhantomData::<()>,
             self,
@@ -53,7 +53,7 @@ where
 }
 ```
 
-The matcher struct the impl picks depends on the method's receiver and arguments, and every choice is from the value-handler matcher family so that the per-variant computer receives the bare payload. A method whose receiver and argument list determine the selection as follows: a `&self` method with no extra arguments uses `MatchWithValueHandlersRef`, a `&mut self` method with no extra arguments uses `MatchWithValueHandlersMut`, and a by-value `self` method with no extra arguments uses `MatchWithValueHandlers`. When the method takes additional arguments, the matcher switches to the first-argument family — `MatchFirstWithValueHandlersRef`, `MatchFirstWithValueHandlersMut`, or `MatchFirstWithValueHandlers` respectively — and the arguments are bundled into the matcher input as a tuple. The matcher is invoked with a unit context `&()` and unit code `PhantomData::<()>`, since the per-variant logic depends only on the payload, not on any surrounding context.
+The matcher struct the impl picks depends on the method's receiver and arguments, and every choice is from the value-handler matcher family so that the per-variant computer receives the bare payload. A method whose receiver and argument list determine the selection as follows: a `&self` method with no extra arguments uses `MatchWithValueHandlersRef`, a `&mut self` method with no extra arguments uses `MatchWithValueHandlersMut`, and a by-value `self` method with no extra arguments uses `MatchWithValueHandlers`. When the method takes additional arguments, the matcher switches to the first-argument family — `MatchFirstWithValueHandlersRef`, `MatchFirstWithValueHandlersMut`, or `MatchFirstWithValueHandlers` respectively — and the arguments are bundled into the matcher input as a tuple. The matcher is invoked with a unit context `&()` and unit code `PhantomData::<()>`, since the per-variant logic depends only on the payload, not on any surrounding context. The call names the provider trait with inferred arguments, `Computer<_, _, _>`, so it stays unambiguous in a module that also imports the consumer trait `CanCompute`.
 
 A method that takes arguments shows the first-argument form. For a `contains(&self, x: f64, y: f64) -> bool` method, the generated impl bundles the receiver and the arguments into the input tuple and selects `MatchFirstWithValueHandlersRef`:
 
@@ -61,7 +61,7 @@ A method that takes arguments shows the first-argument form. For a `contains(&se
 // where MatchFirstWithValueHandlersRef<ComputeContains>:
 //     for<'__a__> Computer<(), (), (&'__a__ __Variants__, (f64, f64)), Output = bool>
 fn contains(&self, arg_0: f64, arg_1: f64) -> bool {
-    MatchFirstWithValueHandlersRef::<ComputeContains>::compute(
+    <MatchFirstWithValueHandlersRef<ComputeContains> as Computer<_, _, _>>::compute(
         &(),
         ::core::marker::PhantomData::<()>,
         (self, (arg_0, arg_1)),
@@ -128,8 +128,6 @@ shape.scale(2.0);   // dispatches to Rectangle::scale through MatchFirstWithValu
 ## Known issues
 
 The macro rejects trait methods with non-lifetime generic parameters, so a dispatch trait cannot have a generic method even though an ordinary trait can. This is a deliberate limitation rather than an oversight: the generated blanket impl would need a quantified trait bound over the method's type parameter to guarantee every variant's payload satisfies the bound for all instantiations, and Rust has no such bound. A method that needs to be generic must be handled with the dispatch combinators directly instead of through this macro.
-
-The macro cannot be used in a module that imports `CanCompute`, by name or through a glob such as `cgp::extra::handler::*`. Its generated method calls the matcher's `compute` without naming the trait, and with both `CanCompute` and the prelude's `Computer` in scope the call is ambiguous, so each dispatch trait fails with `E0034` "multiple applicable items in scope" at the attribute. Keep `CanCompute` out of the module that defines the dispatch trait, or import it only inside the function that calls a context's `compute`. The cause and its fix are recorded in the [implementation document](../../implementation/entrypoints/cgp_auto_dispatch.md#known-issues).
 
 ## Related constructs
 

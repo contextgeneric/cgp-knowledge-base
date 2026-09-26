@@ -37,13 +37,13 @@ One per rendering template, riding at the start of each entry in a `root cause:`
 - **CGP-E101** — consumer trait impl hop.
 - **CGP-E102** — provider trait impl hop.
 - **CGP-E103** — retired and never emitted; the number is left unused.
-- **CGP-E104** — redirect-lookup hop (a namespace or `open` `RedirectLookup`).
+- **CGP-E104** — redirect-lookup hop (a namespace or `open` `RedirectLookup`), naming the table it looks the path up in.
 - **CGP-E105** — a hop through any other trait impl (a user's blanket trait, or an ordinary bound restated).
 - **CGP-E106** — leaf: a genuinely missing context field.
-- **CGP-E107** — leaf: the context wires no provider for a component (or terminates no namespace path). An `@`-path key missing from an aggregate reached through `open` also takes this code.
+- **CGP-E107** — leaf: the context wires no provider for a component (or terminates no namespace path).
 - **CGP-E108** — leaf: the struct has the field but did not derive `HasField`.
 - **CGP-E109** — leaf: a field has the wrong type.
-- **CGP-E110** — leaf: a non-context delegation table (aggregate provider, `UseDelegate`/`UseInputDelegate`) is missing a key that is not an `@`-path.
+- **CGP-E110** — leaf: a non-context delegation table (aggregate provider, `UseDelegate`/`UseInputDelegate`) is missing a key, including an `@`-path its own `open` redirected along.
 - **CGP-E111** — leaf: a non-provider was wired into a provider slot.
 - **CGP-E112** — leaf: an associated type the owner supplies differs from the one a provider requires (the leaf face of `CGP-E017`).
 

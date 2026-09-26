@@ -30,9 +30,9 @@ only place a context with a lifetime parameter is wired, with
 Every example builds as part of `cargo check --workspace --all-targets`, so the examples pin that
 their programs type-check against their contexts: HTTP, JSON, files, the checksum and WebSocket
 extensions, and the examples library's `Compare` and `If`. They assert nothing at run time, and most
-need the network. Running them by hand shows that all but three work. `rust_playground` was not run,
-because it publishes a gist, and `parallel_compare` and `compare_and_branch` fail on a redirect; see
-[the examples catalog](examples/README.md#running-an-example).
+need the network. Running them by hand shows that every example with a confirmed run works.
+`rust_playground` was not run, because it publishes a gist, and `compare_and_branch` has no
+confirmed run; see [the examples catalog](examples/README.md#running-an-example).
 
 ## What is exercised
 
@@ -55,15 +55,14 @@ Several things no test and no example reaches:
   WebSocket connection panics. See [issues.md](issues.md#defects).
 - **Wiring checks.** No `check_components!` appears anywhere, not for `HypershellCli`,
   `HypershellHttp`, or any bundle. A check over the two contexts and a representative program per
-  syntax would have caught the unroutable `PutMethod`, `DeleteMethod`, and `StreamToLines`, and the
-  unresolvable `ConvertTo`.
+  syntax would catch an unroutable syntax such as `StreamToLines`.
 - **Syntax nothing uses.** `ConvertTo`, `Use`, `Box`, `CoreExec` and `CoreHttpRequest` written
   directly, `PutMethod`, `DeleteMethod`, `StreamToLines`, and `ToTokioAsyncRead` appear in no test or
   example.
 - **The macro's edges.** Nothing pins the expansion of `hypershell!`, including the nested-pipe
   behavior the compare examples depend on.
-- **Redirects.** Nothing requests a URL that redirects, which is why the streaming request's redirect
-  defect was invisible until the compare examples were run.
+- **Redirects.** No test requests a URL that redirects. Only the compare examples do, and they need
+  the network.
 
 ## Public material derived from this
 

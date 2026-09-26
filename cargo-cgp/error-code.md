@@ -197,7 +197,7 @@ bare `@a.b.*` notation (no `Path!(…)` wrapper), and the upstream reference is
 - **`CGP-E005` — overlapping wiring.** `` [CGP-E005] `<Context>` cannot wire <key> that is already
   set through <source> `` — two distinct but overlapping keys, where one cannot claim what the other
   already covers (a generic entry over a specific one, an `@`-path over a namespace forwarding, or a
-  path that is a prefix of another). A child namespace redefining a key it inherits takes this code
+  path that covers another, as a prefix or through a generic segment rendered `*`). A child namespace redefining a key it inherits takes this code
   too, with the namespace as the subject and the parent as the source. **Fix:** remove or narrow the
   overlapping entry. (A key the namespace resolves to a *redirect* is `CGP-E007` instead.)
 - **`CGP-E006` — multiple namespaces.** `` [CGP-E006] only one namespace can be used for each target
@@ -428,8 +428,10 @@ The codes divide into the inner chain-node templates and the terminal root-cause
   obligation is always the chain's terminal root-cause leaf (coded `CGP-E106`/`CGP-E108`/`CGP-E109`),
   never an interior hop, so it was never emitted and has been removed. The number is left unused
   rather than reassigned, so the other codes stay stable.
-- **`CGP-E104` — redirect lookup.** `` redirect lookup to `@…` in `<Ctx>` `` — a hop through a
-  namespace or `open` `RedirectLookup`. Two lookups along the same route for different dispatch keys
+- **`CGP-E104` — redirect lookup.** `` redirect lookup to `@…` in `<Table>` `` — a hop through a
+  namespace or `open` `RedirectLookup<Table, Path>`, naming the table the path is looked up in: the
+  context for its own `open` or `namespace`, or an aggregate provider that `open`s a component in its
+  own table. Two lookups along the same route for different dispatch keys
   render this same text but are distinct nodes in the dependency graph (the key is part of a node's
   identity), so each keeps its own branch and leaf.
 - **`CGP-E105` — trait impl (general).** `` trait impl `<Trait>` for `<Type>` `` — a hop through any
@@ -439,12 +441,8 @@ The codes divide into the inner chain-node templates and the terminal root-cause
   on a context field that is genuinely absent.
 - **`CGP-E107` — missing delegate entry (leaf).** `` context `<Ctx>` does not contain any delegate
   entry for `<key>` `` — the context wires no provider for a component, or terminates no namespace
-  path (the `<key>` is a component marker or an `@`-path). An `@`-path key takes this code whatever
-  table it is missing from, so an aggregate provider that `open`s a component and lacks the entry is
-  also named here as the "context", as Hypershell's input dispatcher is in
-  `` context `HandleToTokioAsyncRead` does not contain any delegate entry for `@HandlerComponent.…` ``;
-  see [typed-resolution-walk](implementation/typed-resolution-walk.md) and the open
-  [usability issue](issues/usability.md#a-redirect-inside-an-aggregate-provider-is-attributed-to-the-context).
+  path (the `<key>` is a component marker or an `@`-path). The table is always the context; a key
+  missing from an aggregate provider is `CGP-E110`.
 - **`CGP-E108` — unimplemented accessor (leaf).** `` accessor trait `HasField` with field `<f>` is not
   implemented for `<T>` `` — the struct carries the field but has not derived `HasField` for it (the
   fix, a `#[derive(HasField)]`, rides in a separate `help`). Several such fields on *one* struct are
@@ -463,9 +461,11 @@ The codes divide into the inner chain-node templates and the terminal root-cause
   table missing a branch for the type it dispatches on (a `Code` fragment or an `Input` value's type).
   The sibling of `CGP-E107` for a provider table rather than the context: the fix is to add the entry
   to *that provider*, or to feed the stage a type the table already covers (the shape a handler
-  pipeline hits when a stage's output type is not one a later stage's input dispatcher handles). It
-  applies when the missing key is a bare type or component marker; a table reached through `open`
-  is keyed by an `@`-path and reports as `CGP-E107` instead.
+  pipeline hits when a stage's output type is not one a later stage's input dispatcher handles). The
+  key may also be an `@`-path, when the aggregate `open`s a component in its own table or joins a
+  namespace itself:
+  `` provider `ByteSink` does not contain any delegate entry for `@ComputerComponent.Sink.Digest` ``,
+  under a `CGP-E104` hop that reads `` in `ByteSink` ``.
 - **`CGP-E111` — not a provider (leaf).** `` the provider trait `<T>` is not implemented for `<X>` ``
   — the chain bottoms out on a type wired where a *provider* was expected that does not implement the
   provider trait at all. The mistake is putting a non-provider (often a request or value type) into a

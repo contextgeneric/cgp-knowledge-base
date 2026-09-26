@@ -87,29 +87,40 @@ where
 
 ### Behavior
 
-Under the reqwest bundle, the syntax is a four-stage pipeline:
+The reqwest bundle dispatches the syntax on its input, with one entry for byte buffers and one for
+readers. A `Vec<u8>` or `String` is sent as a buffered body:
 
 ```rust
 PipeHandlers<Product![
-    HandleToTokioAsyncRead,       // input → Tokio reader
-    StreamToBody,                 // Tokio reader → reqwest::Body::wrap_stream
     HandleStreamingHttpRequest,   // send, check status, return the body as a futures reader
     WrapFuturesAsyncRead,         // → FuturesAsyncReadStream
 ]>
 ```
 
-It accepts `Vec<u8>`, `String`, and either reader wrapper, and produces a `FuturesAsyncReadStream`.
+A `TokioAsyncReadStream` or `FuturesAsyncReadStream` is streamed as the body, through two more
+stages in front:
+
+```rust
+PipeHandlers<Product![
+    HandleToTokioAsyncRead,       // either reader → Tokio reader
+    StreamToBody,                 // Tokio reader → reqwest::Body::wrap_stream
+    HandleStreamingHttpRequest,
+    WrapFuturesAsyncRead,
+]>
+```
+
+Either way the output is a `FuturesAsyncReadStream`, the response body read as it arrives.
 A non-success status raises `ErrorResponse`, and stream errors surface as `std::io::Error` from the
 reader. The output is a futures reader, so `StreamToBytes` and `StreamToString` cannot follow it
 directly; insert `ToTokioAsyncRead`, per [streams and I/O](streams-and-io.md).
 
 ### Known issues
 
-The request body is always a stream, and `reqwest` follows a redirect only when it can resend the
-body or the redirect discards it. So the streaming request does not follow a 301, 302, 307, or 308
-answering a GET. A probe against a URL that answers 301 returned the redirect as an `ErrorResponse`,
-while `SimpleHttpRequest` to the same URL followed it. This breaks the `parallel_compare` and
-`compare_and_branch` examples; see [issues.md](../issues.md#streaminghttprequest-does-not-follow-redirects).
+A streamed body does not follow a redirect. `reqwest` follows one only when it can resend the body
+or the redirect discards it, and a streamed body cannot be resent, so a reader input does not follow
+a 301, 302, 307, or 308. A buffered body does: a probe sent an empty `Vec<u8>` to a URL that answers
+301 and got the redirected page back. See
+[issues.md](../issues.md#a-streamed-request-body-does-not-follow-redirects).
 
 ## `CoreHttpRequest` and `HandleCoreHttpRequest`
 
@@ -194,15 +205,13 @@ where
 
 ### Behavior
 
-`ExtractReqwestMethod` maps each marker to the matching `reqwest::Method` constant.
-`ExtractMethodFieldArg` would read a method from a context field instead.
+`ExtractReqwestMethod` maps each marker to the matching `reqwest::Method` constant, and the reqwest
+bundle and the namespace route all four markers to it. `ExtractMethodFieldArg` would read a method
+from a context field instead.
 
 ### Known issues
 
-The reqwest bundle and the namespace route only `GetMethod` and `PostMethod`, so a program using
-`PutMethod` or `DeleteMethod` fails to compile. The root cause is a `[CGP-E107]` naming the missing
-`@hypershell.core.MethodArgExtractorComponent.PutMethod` entry. `ExtractMethodFieldArg` is routed
-nowhere. See [issues.md](../issues.md#put-and-delete-are-implemented-but-unrouted).
+`ExtractMethodFieldArg` is routed nowhere. See [issues.md](../issues.md#defined-but-unrouted-providers).
 
 ## `WithHeaders`, `Header`, and the request-builder updater
 

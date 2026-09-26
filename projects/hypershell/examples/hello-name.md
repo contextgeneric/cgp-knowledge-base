@@ -64,12 +64,6 @@ field. `MyApp` joins the same namespace as `HypershellCli` and adds only the fie
 - Why a field read here is `HasField` rather than an `#[implicit]` argument: the program chooses
   the field name; see [arguments](../reference/arguments.md#fieldarg-and-extractfieldarg).
 
-## Known issues
-
-The header comment (lines 20–23) says the context is wired with `#[cgp_inherit]` and
-`HypershellPreset`, both removed. The code below it uses `namespace HypershellNamespace;`. See
-[issues.md](../issues.md#housekeeping).
-
 ## Public material derived from this
 
 The variable-parameter program in the planned

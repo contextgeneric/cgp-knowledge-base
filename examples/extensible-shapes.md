@@ -180,7 +180,7 @@ let circle = Shape::Circle(Circle { radius: 5.0 });
 let _area = MatchWithValueHandlers::<ComputeArea>::compute(&(), PhantomData::<()>, circle);
 ```
 
-The matcher is a `Computer` provider invoked with a unit context `&()`, because the per-variant logic depends only on the payload — and this `MatchWithValueHandlers::<ComputeArea>` call is the very body `#[cgp_auto_dispatch]` writes into the enum's generated `area` method.
+The matcher is a `Computer` provider invoked with a unit context `&()`, because the per-variant logic depends only on the payload — and this `MatchWithValueHandlers::<ComputeArea>` call is, up to naming the `Computer` trait, the body `#[cgp_auto_dispatch]` writes into the enum's generated `area` method.
 
 ## Wiring dispatch into a context
 

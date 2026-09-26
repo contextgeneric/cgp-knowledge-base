@@ -6,7 +6,10 @@ A comparison of two checksum sub-pipelines used as the condition of `If`, which 
 - **Source** — [crates/hypershell-examples/examples/compare_and_branch.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/compare_and_branch.rs)
 - **Run** — `cargo run --example compare_and_branch`
 - **Needs** — network, `echo`
-- **Result** — **fails** with the same redirect error as [`parallel_compare`](parallel-compare.md)
+- **Result** — compiles; no run is confirmed. It fetches the same two URLs as
+  [`parallel_compare`](parallel-compare.md), whose run succeeds. On a slow network, one run was
+  stopped after two minutes without output, and a copy with both URLs non-redirecting failed with a
+  connection timeout, so whether it prints its message is unconfirmed
 
 ## The program
 
@@ -61,7 +64,6 @@ The context is the same `MyApp` as in `parallel_compare`, joined to `HypershellC
 
 ## Known issues
 
-The runtime failure is [the streaming request's redirect defect](../issues.md#streaminghttprequest-does-not-follow-redirects).
 The success message reads "the checksums are equals". The file sets `#![recursion_limit = "512"]`,
 which the pinned toolchain does not need. See [issues.md](../issues.md#housekeeping).
 

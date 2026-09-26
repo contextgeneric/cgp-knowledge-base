@@ -94,7 +94,7 @@ test in the repository uses it.
 
 ## `ConvertTo` and `HandleConvert`
 
-`ConvertTo<T>` is meant to convert its input with `Into<T>`.
+`ConvertTo<T>` converts its input with `Into<T>`.
 
 ### Definition
 
@@ -110,14 +110,11 @@ where
 
 ### Behavior
 
-`HandleConvert` is a synchronous [`Computer`](../../../cgp/reference/components/computer.md), and the
-base bundle wires the syntax as `Promote<HandleConvert>`.
-
-### Known issues
-
-`Promote`'s `Handler` impl requires an `AsyncComputer`, which `HandleConvert` does not implement, so
-`ConvertTo` never resolves. A check reports a `[CGP-E111]` "provider trait `AsyncComputer` is not
-implemented for `HandleConvert`" root cause. See [issues.md](../issues.md#convertto-never-resolves).
+`HandleConvert` is a synchronous [`Computer`](../../../cgp/reference/components/computer.md), so the
+base bundle lifts it twice and wires the syntax as `Promote<PromoteAsync<HandleConvert>>`:
+`PromoteAsync` makes it an `AsyncComputer`, and `Promote` makes that a `Handler`; see the
+[handler combinators](../../../cgp/reference/providers/handler_combinators.md). A probe ran
+`ConvertTo<String>` on `HypershellCli` with a `&str` input and got the `String` back.
 
 ## `Box` and `BoxHandler`
 

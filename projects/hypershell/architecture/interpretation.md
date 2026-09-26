@@ -199,9 +199,11 @@ examples crate uses `BoxHandler` directly for its `Compare` syntax, with a comme
 comparison is much slower without boxing; the comment does not say whether it means compile time or
 run time.
 
-**`ConvertTo<T>` is wired but never resolves.** The base bundle maps it to `Promote<HandleConvert>`,
-and `HandleConvert` implements only `Computer`, while `Promote`'s `Handler` impl requires an
-`AsyncComputer`. A probe confirms the failure; see [issues.md](../issues.md#convertto-never-resolves).
+**`ConvertTo<T>` converts its input with `Into`, through a provider lifted twice.** Its provider,
+`HandleConvert`, implements only `Computer`, and the base bundle wires it as
+`Promote<PromoteAsync<HandleConvert>>`: `PromoteAsync` makes it an `AsyncComputer`, and `Promote`,
+whose `Handler` impl requires one, makes that a `Handler`. See
+[control](../reference/control.md#convertto-and-handleconvert).
 
 ## Source
 

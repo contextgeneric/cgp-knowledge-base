@@ -148,12 +148,6 @@ generic parameter, and a probe confirmed that the `open` form accepts the bounde
 `<Handlers: WrapCall> Pipe<Handlers>`, per the project's
 [issues](../../projects/hypershell/issues.md#housekeeping).
 
-**Fix five stale comments.** The header comments of `hello_name.rs`, `github_issues.rs`,
-`bluesky.rs`, `bluesky_websocket.rs`, and `http_checksum_native.rs` in
-`crates/hypershell-examples/examples/` describe `#[cgp_inherit]`, `HypershellPreset`, or a custom
-`MyAppPreset`, all removed, while the code beneath them uses namespaces. They will be read as current
-by anyone quoting the examples.
-
 **Drop the six `#[derive_delegate(UseDelegate<Arg>)]` attributes** on `command_arg.rs`,
 `method_arg.rs`, `url_arg.rs`, `string_arg.rs`, `update_builder.rs`, and `update_command.rs`. Since
 `open` resolves through the `RedirectLookup` impl that every `#[cgp_component]` generates, these are
@@ -168,12 +162,11 @@ equivalent attribute must stay.
 **Widen `#[use_type]` adoption.** Two uses exist against several places where an abstract type is
 named. Low priority, but it is what the deep dive's code should look like.
 
-**Fix the defects before quoting the programs they break.** The project's
-[issues](../../projects/hypershell/issues.md#defects) record confirmed defects, each with its fix. The
-one that bears on the deep dive is the streaming request's redirect defect, which makes the two
-compare examples fail; an extension page that shows `Compare` or `If` should either wait for that fix
-or use a URL that does not redirect. The rest belong on the trade-offs page as limitations until they
-are fixed.
+**Treat the remaining defects as limitations.** The project's
+[issues](../../projects/hypershell/issues.md#defects) record the confirmed defects that remain, such
+as a streaming command's ignored exit status and the WebSocket handler's panic. None of them is in
+the checksum and compare programs the extension page works through, so they belong on the trade-offs
+page as limitations until they are fixed.
 
 ## How it relates to the knowledge base
 

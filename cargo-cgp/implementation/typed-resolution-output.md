@@ -157,14 +157,8 @@ The `root cause:` lead is worded by *why* the leaf is unmet, and there are six l
   when it dispatches a component with a bare `open` statement, the redirect looks the path up in the
   context's own table, so the failure is an unmet `DelegateComponent<PathCons<…>>` on the context —
   told apart from a plain missing component (whose key is a bare marker) by the `PathCons` key, and
-  rendered as the whole path rather than its flattened item name. The key is classified before the
-  owner, so an aggregate provider that `open`s a component and lacks an entry reads the same way,
-  with the aggregate named as the "context": Hypershell's input dispatcher reports
-  `` context `HandleToTokioAsyncRead` does not contain any delegate entry for `@HandlerComponent.StreamToStdout.GenericArray<u8, …>` ``,
-  not the missing-dispatch-entry leaf below; the redirect hop above it names the context too. Both
-  mislabels are an open [usability issue](../issues/usability.md#a-redirect-inside-an-aggregate-provider-is-attributed-to-the-context),
-  pinned by
-  [`open_aggregate_missing_entry`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/wiring/redirect-tables/open_aggregate_missing_entry.rs). The
+  rendered as the whole path rather than its flattened item name. A path missing from any other
+  table is the missing-dispatch-entry leaf below instead. The
   [`unregistered_prefix_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/resolution/unregistered_prefix_path.rs),
   [`qualified_prefix_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/qualified_prefix_path.rs),
   [`multi_redirect_missing`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/multi_redirect_missing.rs),
@@ -177,7 +171,15 @@ The `root cause:` lead is worded by *why* the leaf is unmet, and there are six l
   and names the table and the key. The owner is either an aggregate provider missing a component
   wiring or a `UseDelegate`/`UseInputDelegate` dispatch table missing a branch for the type it
   dispatches on (a `Code` fragment or an `Input` value's type); the two are recognized alike, by the
-  owner carrying at least one `DelegateComponent` impl, provided the key is not a redirect path. This
+  owner carrying at least one `DelegateComponent` impl. The key may be a redirect path, when an
+  aggregate provider `open`s a component in its own table or joins a namespace itself: the leaf then
+  reads
+  `` provider `ByteSink` does not contain any delegate entry for `@ComputerComponent.Sink.Digest` ``,
+  and the `RedirectLookup` hop above it names `ByteSink` as its table, since each hop reads its table
+  off its own `RedirectLookup<Table, Path>`
+  ([`open_aggregate_missing_entry`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/missing-wiring/open_aggregate_missing_entry.rs),
+  and [`namespace_aggregate_missing_entry`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/missing-wiring/namespace_aggregate_missing_entry.rs)
+  for the namespace form). This
   is the leaf a handler pipeline bottoms out on when a stage's output is not a type a later stage's
   `UseInputDelegate` input dispatcher handles, as when a raw digest reaches an `AsyncRead` sink's
   dispatcher because a byte-encoding stage is missing. The tree shows the offending type

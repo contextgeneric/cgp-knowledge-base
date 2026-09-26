@@ -51,8 +51,7 @@ produces it. The first stage passes a whole shell command line as one literal ar
 
 ## Known issues
 
-The header comment (line 22) says the context inherits from `HypershellPreset`, which was removed. The
-file sets `#![recursion_limit = "256"]`, which the pinned toolchain does not need. See
+The file sets `#![recursion_limit = "256"]`, which the pinned toolchain does not need. See
 [issues.md](../issues.md#housekeeping).
 
 ## Public material derived from this

@@ -64,8 +64,7 @@ missing `@HandlerComponent.StreamToStdout.GenericArray<u8, …>` entry in `Handl
 
 ## Known issues
 
-The header comment (lines 21–27) describes a `MyAppPreset` extending `HypershellPreset`, both removed;
-the code uses `HypershellChecksumNamespace`. The file sets `#![recursion_limit = "256"]`, which the
+The file sets `#![recursion_limit = "256"]`, which the
 pinned toolchain does not need. See [issues.md](../issues.md#housekeeping).
 
 ## Public material derived from this

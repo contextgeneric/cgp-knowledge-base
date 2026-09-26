@@ -186,8 +186,9 @@ delegate_components! {
 ### Behavior
 
 Each dispatches on the input type alone, whatever the syntax, and converts the four accepted inputs
-to a Tokio reader or a futures stream. Any other input fails to resolve with a `[CGP-E107]` root
-cause naming the dispatcher and the missing `@HandlerComponent.<syntax>.<input>` entry. The
+to a Tokio reader or a futures stream. Any other input fails to resolve with a `[CGP-E110]` root
+cause naming the dispatcher as the provider and the missing `@HandlerComponent.<syntax>.<input>`
+entry. The
 `ReturnInput` here is Hypershell's own provider, documented in [control.md](control.md#returninput).
 
 ## Wiring
