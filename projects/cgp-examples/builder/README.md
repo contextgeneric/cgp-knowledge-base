@@ -9,10 +9,12 @@ types.
   `v0.8.0` branch; see [which revision](../README.md#which-revision-these-documents-describe)
 - **Run** — nothing: the crate has no binary and no test, and its two `main` functions are ordinary
   library functions nothing calls
-- **Needs** — a database file or server, and an `OPENAI_API_KEY` for the default builder
-- **Result** — as shipped, every builder that opens a database panics, because the crate's `sqlx`
-  dependency enables no async runtime. With the runtime enabled in a probe, every SQLite-based builder
-  assembled its application offline; see [testing.md](testing.md#what-a-probe-ran)
+- **Needs** — for the SQLite builders, a connection string that names an existing file or carries
+  `mode=rwc` to create one, as both `main` functions do; a Postgres server for the Postgres builder;
+  and `OPENAI_API_KEY` for the default builder
+- **Result** — a probe called every builder: each SQLite-based builder assembled its application
+  offline, and both `main` functions returned `Ok` in a directory with no database file; see
+  [testing.md](testing.md#what-a-probe-ran)
 - **Worked example** — [application builder](../../../examples/application-builder.md)
 - **Cited by** — [extensible data types, part 1](../../../website/blog/extensible-datatypes-part-1.md),
   which links the crate
@@ -51,15 +53,11 @@ multi-target builder dispatches on its code with the `open` statement.
 
 ## Status and gaps
 
-The crate demonstrates the pattern but cannot run as shipped. Its gaps are each confirmed against the
-`v0.8.0` branch and recorded in full in [issues.md](issues.md):
+The crate demonstrates the pattern, and every builder runs when called. Its gaps are each confirmed
+against the `v0.8.0` branch and recorded in full in [issues.md](issues.md):
 
-- **No async runtime for `sqlx`** — opening any SQLite or Postgres pool panics.
-- **A panicking default provider** — `BuildDefaultOpenAiClient` panics when `OPENAI_API_KEY` is unset
-  instead of raising an error.
-- **The `main` functions fail on a fresh checkout** — their SQLite options do not create the database
-  file.
-- **Nothing runs it** — no binary, no test.
+- **Nothing runs it** — no binary and no test; the `main` functions are library functions nothing
+  calls.
 
 ## Where the blog post's code lives
 
@@ -91,10 +89,11 @@ below says only where each section's code now lives:
     output structs.
   - [application-contexts.md](reference/application-contexts.md) — the four application structs and
     the hand-written constructors.
-  - [builder-contexts.md](reference/builder-contexts.md) — the five builder contexts and their target
-    markers.
-- [testing.md](testing.md) — the compile-time checks, what a probe ran, and what nothing tests.
-- [issues.md](issues.md) — the confirmed defects, missing features, and housekeeping.
+  - [builder-contexts.md](reference/builder-contexts.md) — the five builder contexts, their target
+    markers, and the two `main` functions.
+- [testing.md](testing.md) — what the compile-time checks catch, what a probe ran, and what nothing
+  tests.
+- [issues.md](issues.md) — the missing features and housekeeping.
 
 ## Public material derived from these documents
 

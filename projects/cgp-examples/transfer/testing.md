@@ -35,8 +35,8 @@ These behaviors have no test of any kind, and each is recorded from a probe or a
 - **Every error path** — no test sends a wrong password, an unknown recipient, an overdraft, or a bad
   query string, so none of the status codes or messages is pinned.
 - **The backend on its own** — `UseMockedApp`'s transfer is only ever run behind `NoTransferToSelf`,
-  so no test would catch its self-transfer defect; see
-  [issues.md](issues.md#usemockedapp-credits-a-self-transfer).
+  so nothing in the repository pins how it handles a self-transfer; a probe confirmed it leaves the
+  balance unchanged.
 - **Unused providers** — `HandleFromResponse` and `HandleHttpErrorWithAnyhow` are never wired, so the
   compiler checks their definitions but never checks them against a context.
 - **Concurrency** — no test runs overlapping transfers against the shared balance map.

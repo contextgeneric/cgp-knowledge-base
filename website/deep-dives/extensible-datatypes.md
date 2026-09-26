@@ -101,9 +101,8 @@ None for the patterns. Both crates use current CGP idioms, so the pages can quot
 `builder` reads its configuration with `#[implicit]` arguments and dispatches its multi-target builder
 with `open`, and `expression` wires every context with `open` path keys. Their remaining gaps are
 recorded in their project sections, [`builder`](../../projects/cgp-examples/builder/README.md#status-and-gaps)
-and [`expression`](../../projects/cgp-examples/expression/issues.md). The one that touches a page is
-`builder`'s missing `sqlx` runtime, which keeps its builders from running as shipped, so page 1 can
-show its code but not a run of it until that is fixed.
+and [`expression`](../../projects/cgp-examples/expression/issues.md), and none of them blocks a page:
+every builder runs when called, and the interpreter's tests pass.
 
 ## How it relates to the knowledge base
 

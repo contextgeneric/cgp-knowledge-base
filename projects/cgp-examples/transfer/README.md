@@ -50,8 +50,6 @@ and a `for` loop. The request getters import the app's abstract types with
 The service works as a demonstration and has no automated tests. Its gaps are each confirmed against
 the `v0.8.0` branch and recorded in full in [issues.md](issues.md):
 
-- **The backend credits a self-transfer** — `UseMockedApp` on its own adds the amount to a user who
-  transfers to themselves. `MockApp` is safe only because it wraps the backend in `NoTransferToSelf`.
 - **Unused items** — `HandleHttpErrorWithAnyhow`, `HandleFromResponse`, `ErrInternal`, and
   `CanAddApiRoutes` are defined and never wired or called.
 - **No request bodies** — the routing layer extracts requests with `FromRequestParts`, so an endpoint

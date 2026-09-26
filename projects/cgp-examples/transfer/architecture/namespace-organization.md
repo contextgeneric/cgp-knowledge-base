@@ -68,8 +68,10 @@ the blanket impl that `namespace MockNamespace;` generates, and the compiler wou
 
 A probe confirmed the other half of the rule: a context that joins `MockNamespace` and wires the same
 path to the bare `UseMockedApp` compiles and runs. So the choice to guard transfers belongs to the
-context and not to the namespace, which is why it can be removed by editing one line. Removing it is
-unsafe, though; see [issues.md](../issues.md#usemockedapp-credits-a-self-transfer).
+context and not to the namespace, which is why it can be removed by editing one line. Without it, a
+self-transfer succeeds and leaves the balance unchanged, as the
+[mock backend](../reference/mock-backend.md#moneytransferrer) records, instead of being rejected with
+`400`.
 
 ## Source
 

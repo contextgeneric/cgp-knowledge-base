@@ -155,9 +155,15 @@ where
 
 It holds the lock for the whole operation. It raises `ErrNotFound` if the sender's or the recipient's
 entry is missing, checked in that order, and `ErrBadRequest` if subtracting from the sender underflows
-(`sender {sender} has insufficient balance {balance} to transfer {quantity}`) or adding to the
-recipient overflows (`recipient already has too much money!`). Otherwise it writes the sender's new
-balance, then the recipient's.
+(`sender {sender} has insufficient balance {balance} to transfer {quantity}`). A transfer from a user
+to themselves then returns `Ok` without writing, so it leaves the balance unchanged. For two distinct
+users it raises `ErrBadRequest` if adding to the recipient overflows
+(`recipient already has too much money!`), and otherwise writes the sender's new balance, then the
+recipient's.
+
+A probe wired this impl without `NoTransferToSelf`. A self-transfer of 10 left a balance of 100 at 100,
+a self-transfer of 1000 was rejected for insufficient balance, and a transfer of 10 to another user
+moved the money.
 
 It carries no `#[default_impl]`, so `MockNamespace` leaves the transfer path open for `MockApp` to
 wire; a comment on the impl records why.
@@ -167,14 +173,6 @@ wire; a comment on the impl records why.
 A `user_balances` field as above, `CanRaiseHttpError<ErrNotFound, String>` and
 `CanRaiseHttpError<ErrBadRequest, String>`, and the four abstract types with the checked-arithmetic
 bounds.
-
-### Known issues
-
-A transfer from a user to themselves adds the amount to their balance. Both balances are read before
-either is written, and when sender and recipient are one key the second write, the recipient's
-`old + quantity`, is the one that lands. A probe that wired this impl without `NoTransferToSelf` turned
-a balance of 100 into 110 with a self-transfer of 10. See
-[issues.md](../issues.md#usemockedapp-credits-a-self-transfer).
 
 ## Source
 

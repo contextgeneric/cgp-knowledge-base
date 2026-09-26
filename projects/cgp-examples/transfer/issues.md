@@ -7,32 +7,7 @@ in the crate, per [../../AGENTS.md](../../AGENTS.md#the-shape-of-a-project-secti
 
 ## Defects
 
-A defect is behavior that is wrong for the input it is given.
-
-### `UseMockedApp` credits a self-transfer
-
-The mock backend's transfer reads both balances before writing either, so when sender and recipient
-are the same user the recipient's write lands last and the balance grows by the amount:
-
-```rust
-let old_sender_balance = balances.get(&sender_key)...;
-let old_recipient_balance = balances.get(&recipient_key)...;
-
-let new_sender_balance = old_sender_balance.checked_sub(quantity)...;
-let new_recipient_balance = old_recipient_balance.checked_add(quantity)...;
-
-balances.insert(sender_key, new_sender_balance);
-balances.insert(recipient_key, new_recipient_balance); // same key: overwrites the debit
-```
-
-A probe context that joined `MockNamespace` and wired
-`@app.finance.MoneyTransferrerComponent: UseMockedApp` directly turned a balance of 100 into 110 with
-a self-transfer of 10. The service itself is unaffected, because `MockApp` wraps the backend in
-`NoTransferToSelf`, which rejects the request with `400` first. The defect surfaces in any
-context that wires the backend's transfer without the guard, and nothing in the provider or its
-component says the guard is required. The fix is to
-reject `sender == recipient` in the provider itself, or to write the sender's balance before reading
-the recipient's. See [mock backend](reference/mock-backend.md#moneytransferrer).
+No defect has been confirmed. A defect is behavior that is wrong for the input it is given.
 
 ## Missing features
 

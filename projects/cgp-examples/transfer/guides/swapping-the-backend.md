@@ -125,8 +125,9 @@ The probe's context keeps `user_balances` because it still uses `UseMockedApp` f
 context that serves the endpoints over HTTP also needs one `CanHandleApiSend` impl per endpoint, as in
 [adding an endpoint](adding-an-endpoint.md).
 
-Keep `NoTransferToSelf` around any transfer provider that does not reject a self-transfer itself; the
-mock one does not, as [issues.md](../issues.md#usemockedapp-credits-a-self-transfer) records.
+Keep `NoTransferToSelf` around the transfer provider if the service should reject a self-transfer:
+the mock provider accepts one as a no-op, and a replacement backend decides for itself unless the
+guard decides first.
 
 ## Public material derived from this
 

@@ -1120,7 +1120,8 @@ it stale.
 - [projects/cgp-examples/transfer/reference/error-providers.md](projects/cgp-examples/transfer/reference/error-providers.md)
   — `IsStatusCode`, `DisplayHttpError`, `HandleHttpErrorWithAnyhow`, and `AppError`.
 - [projects/cgp-examples/transfer/reference/mock-backend.md](projects/cgp-examples/transfer/reference/mock-backend.md)
-  — `UseMockedApp`'s four impls, their `#[default_impl]` registrations, and the self-transfer defect.
+  — `UseMockedApp`'s four impls, their `#[default_impl]` registrations, and how its transfer treats a
+  self-transfer.
 - [projects/cgp-examples/transfer/reference/wiring.md](projects/cgp-examples/transfer/reference/wiring.md)
   — `MockNamespace`, `DefaultApiHandlers`, and `MockApp` with its seed data, wiring, and check.
 - [projects/cgp-examples/transfer/reference/http-layer.md](projects/cgp-examples/transfer/reference/http-layer.md)
@@ -1137,8 +1138,7 @@ it stale.
 - [projects/cgp-examples/transfer/testing.md](projects/cgp-examples/transfer/testing.md) — the
   compile-time checks the crate relies on, the manual script, and what no test exercises.
 - [projects/cgp-examples/transfer/issues.md](projects/cgp-examples/transfer/issues.md) — the
-  self-transfer defect, missing features, housekeeping, and where the crate's README disagrees with the
-  code.
+  missing features, housekeeping, and where the crate's README disagrees with the code.
 - [projects/cgp-examples/expression/README.md](projects/cgp-examples/expression/README.md) — the
   modular arithmetic interpreter: its language and two operations, the four contexts, its idioms, its
   gaps, where the part 2 post's code now lives, and the section catalog.
@@ -1179,3 +1179,23 @@ it stale.
   tests.
 - [projects/cgp-examples/expression/issues.md](projects/cgp-examples/expression/issues.md) — missing
   features and housekeeping.
+- [projects/cgp-examples/builder/README.md](projects/cgp-examples/builder/README.md) — the application
+  builder: application contexts assembled from per-subsystem builder providers, the five builder
+  contexts, its idioms, its gaps, where the part 1 post's code now lives, and the section catalog.
+- [projects/cgp-examples/builder/architecture/README.md](projects/cgp-examples/builder/architecture/README.md)
+  — the design on one page: builders as handlers, default and configurable builders, name-driven
+  merging, builder contexts as configuration plus wiring, target selection by code, and plain
+  application structs.
+- [projects/cgp-examples/builder/reference/README.md](projects/cgp-examples/builder/reference/README.md)
+  — tables of every provider, with its output, users, and requirements, and of the other items.
+- [projects/cgp-examples/builder/reference/subsystem-providers.md](projects/cgp-examples/builder/reference/subsystem-providers.md)
+  — the nine builder providers, their output structs, and how they read configuration.
+- [projects/cgp-examples/builder/reference/application-contexts.md](projects/cgp-examples/builder/reference/application-contexts.md)
+  — the four application structs and the SQLite `App`'s two hand-written constructors.
+- [projects/cgp-examples/builder/reference/builder-contexts.md](projects/cgp-examples/builder/reference/builder-contexts.md)
+  — the five builder contexts, the three target markers, and the two `main` functions.
+- [projects/cgp-examples/builder/testing.md](projects/cgp-examples/builder/testing.md) — what the five
+  check blocks catch, with probes of a missing field and a missing provider, what a probe ran against
+  every builder, and what nothing tests.
+- [projects/cgp-examples/builder/issues.md](projects/cgp-examples/builder/issues.md) — missing features
+  and housekeeping.

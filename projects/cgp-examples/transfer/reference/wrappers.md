@@ -198,8 +198,8 @@ where
 When `sender == recipient` it raises `ErrBadRequest` with the detail
 `cannot transfer with the same sender and recipient: {sender}`, and the inner provider is never called.
 Otherwise it forwards all four arguments to the inner provider. `MockApp` wires it around
-`UseMockedApp`, whose own transfer credits a self-transfer, so this wrapper is what keeps the service
-correct; see [issues.md](../issues.md#usemockedapp-credits-a-self-transfer).
+`UseMockedApp`, whose own transfer accepts a self-transfer as a no-op, so this wrapper is what turns
+that request into a `400` for the service.
 
 ### Context dependencies
 

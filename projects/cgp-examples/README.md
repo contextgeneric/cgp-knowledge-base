@@ -28,12 +28,12 @@ it shows; `web-app` and `greet` are checked against that in full when their sect
 |---|---|---|---|---|---|
 | [`transfer`](transfer/README.md) | balance and transfer endpoints served over HTTP | environmental; self-targeted, with one handler dispatched per endpoint | [money-transfer API](../../examples/money-transfer-api.md) | [v0.5.0 release](../../website/blog/v0-5-0-release.md), linking | yes, a server binary |
 | [`expression`](expression/README.md) | an arithmetic interpreter open to new variants and operations | environmental; parameter-targeted | [expression interpreter](../../examples/expression-interpreter.md) | [extensible data types, part 2](../../website/blog/extensible-datatypes-part-2.md), linking | three unit tests |
-| `builder` | an application context assembled from per-subsystem builders | environmental; self-targeted | [application builder](../../examples/application-builder.md) | [extensible data types, part 1](../../website/blog/extensible-datatypes-part-1.md), linking | no entry point |
+| [`builder`](builder/README.md) | an application context assembled from per-subsystem builders | environmental; self-targeted | [application builder](../../examples/application-builder.md) | [extensible data types, part 1](../../website/blog/extensible-datatypes-part-1.md), linking | no entry point |
 | `web-app` | one social-media backend wired four ways, up to namespaces | environmental; self-targeted | [social media app](../../examples/social-media-app.md) | [v0.8.0 release](../../website/blog/v0-8-0-release.md) | compiles only |
 | `greet` | a greeting written as a function, a component, and over an abstract type | value context; self-targeted | none | none | yes, three binaries |
 
-`transfer` and `expression` are documented so far. The other three rows record what each crate is, so
-the table stays accurate for the whole repository while their sections are written.
+`transfer`, `expression`, and `builder` are documented so far. The other two rows record what each
+crate is, so the table stays accurate for the whole repository while their sections are written.
 
 ## Which revision these documents describe
 
@@ -100,6 +100,13 @@ per [../AGENTS.md](../AGENTS.md#the-shape-of-a-project-section).
   - [testing.md](expression/testing.md) — the three tests, the four check blocks, and what nothing
     tests.
   - [issues.md](expression/issues.md) — missing features and housekeeping.
+- [builder/](builder/README.md) — the application builder:
+  - [architecture/](builder/architecture/README.md) — the design on one page.
+  - [reference/](builder/reference/README.md) — the subsystem providers, the application structs, and
+    the builder contexts.
+  - [testing.md](builder/testing.md) — what the checks catch, what a probe ran, and what nothing
+    tests.
+  - [issues.md](builder/issues.md) — missing features and housekeeping.
 
 ## Public material derived from these documents
 

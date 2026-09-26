@@ -89,8 +89,8 @@ It parses `db_journal_mode` with `SqliteJournalMode::from_str` and `db_options` 
 `SqliteConnectOptions::from_str`, sets the journal mode, and connects. Each step raises an
 `sqlx::Error` on failure: an unknown journal mode such as `NOPE` fails with
 ``unknown value "NOPE" for `journal_mode` ``, and a connection string that points at a missing file
-without `mode=rwc` fails with `unable to open database file`. Connecting needs an async runtime in
-`sqlx`, which the crate does not enable; see [issues.md](../issues.md#defects).
+without `mode=rwc` fails with `unable to open database file`. Connecting runs on the tokio runtime,
+which the crate enables through `sqlx`'s `runtime-tokio` feature.
 
 ### Context dependencies
 
@@ -256,6 +256,7 @@ The `open_ai_key`, `open_ai_model`, and `llm_preamble` fields, and `HasErrorType
 
 ```rust
 #[cgp_impl(new BuildDefaultOpenAiClient)]
+#[uses(CanRaiseError<VarError>)]
 #[use_type(HasErrorType.Error)]
 impl<Code, Input> Handler<Code, Input> {
     type Output = OpenAiClient;
@@ -266,17 +267,15 @@ impl<Code, Input> Handler<Code, Input> {
 
 ### Behavior
 
-It calls `openai::Client::from_env()`, which reads `OPENAI_API_KEY`, and builds a `gpt-4o` agent with
-no preamble. When the variable is unset, `rig-core` panics with `OPENAI_API_KEY not set` rather than
-returning an error, so the provider panics instead of raising into the context's error type.
+It reads `OPENAI_API_KEY` from the environment, raises the `VarError` if it is unset or not Unicode,
+and builds `openai::Client::new` with it and a `gpt-4o` agent with no preamble. With the variable
+unset, a probe's `DefaultAppBuilder` returned `Err(environment variable not found)`. The client is
+the one `rig-core`'s own `Client::from_env` would build, which reads the same variable but panics
+when it is missing.
 
 ### Context dependencies
 
-`HasErrorType`, and the `OPENAI_API_KEY` environment variable.
-
-### Known issues
-
-It panics without the environment variable; see [issues.md](../issues.md#defects).
+`CanRaiseError<VarError>`, and the `OPENAI_API_KEY` environment variable.
 
 ## `BuildDefaultAnthropicClient`
 
@@ -353,7 +352,8 @@ Every configurable provider reads the builder context's fields as
 context satisfies a provider by having `String` fields of the argument names. Each argument is a
 `&str` read from a `String` field. `BuildOpenAiClient` and `BuildDefaultAnthropicClient` both read
 `llm_preamble`, and a context with one `llm_preamble` field serves both. `BuildDefaultHttpClient` and
-`BuildDefaultOpenAiClient` read no field and need only the error type.
+`BuildDefaultOpenAiClient` read no field: the first needs only the error type, and the second reads
+its key from the environment instead.
 
 ## Source
 
