@@ -11,9 +11,9 @@ The concepts each step demonstrates are documented in full in the reference; thi
 - per-variant handlers as computers — [`#[cgp_computer]`](../cgp/reference/macros/cgp_computer.md) producing [`Computer`](../cgp/reference/components/computer.md) providers
 - widening and narrowing the variant set — [upcasting and downcasting](../cgp/reference/traits/cast.md)
 - the dispatch machinery underneath — the [dispatch combinators](../cgp/reference/providers/dispatch_combinators.md) and [dispatching](../cgp/concepts/dispatching.md)
-- wiring dispatch into a context — [`delegate_components!`](../cgp/reference/macros/delegate_components.md) with [`UseInputDelegate`](../cgp/reference/providers/use_delegate.md) and a [`check_components!`](../cgp/reference/macros/check_components.md) assertion
+- wiring dispatch into a context — the `open` statement of [`delegate_components!`](../cgp/reference/macros/delegate_components.md), keyed on the input per [dispatching per type](../cgp/guides/dispatching-per-type.md), and a [`check_components!`](../cgp/reference/macros/check_components.md) assertion
 
-All snippets assume `use cgp::prelude::*;`; the dispatch combinators come from `cgp::extra::dispatch`, `UseInputDelegate` from `cgp::extra::handler`, and the cast helpers from `cgp::core::field::impls`. Each shape is its own payload struct:
+All snippets assume `use cgp::prelude::*;`, which also brings `MatchWithValueHandlers`; the other dispatch combinators come from `cgp::extra::dispatch`, and the cast helpers from `cgp::core::field::impls`. Each shape is its own payload struct:
 
 ```rust
 #[derive(Debug, PartialEq)]
@@ -184,35 +184,26 @@ The matcher is a `Computer` provider invoked with a unit context `&()`, because 
 
 ## Wiring dispatch into a context
 
-Rather than implement the operation directly on the enum, the dispatch can be wired into a context's [`Computer`](../cgp/reference/components/computer.md) component, keyed on the *input* type with [`UseInputDelegate`](../cgp/reference/providers/use_delegate.md). A bare payload type routes straight to its computer, while an enum routes to the matcher, which dispatches each extracted payload back through the context's own wiring:
+Rather than implement the operation directly on the enum, the dispatch can be wired into a context's [`Computer`](../cgp/reference/components/computer.md) component, keyed on the *input* type. The `open` statement of [`delegate_components!`](../cgp/reference/macros/delegate_components.md) stores per-type entries on the context, and each path key names the component and then one segment per type parameter of `CanCompute<Code, Input>`. A per-entry generic `<Code>` as the first segment matches any code, so the second segment alone selects the provider. A bare payload type routes straight to its computer, while an enum routes to the matcher, which dispatches each extracted payload back through the context's own wiring:
 
 ```rust
-use cgp::extra::handler::UseInputDelegate;
-
 pub struct App;
 
 delegate_components! {
     App {
-        ComputerComponent: UseInputDelegate<new AreaComputers {
-            [
-                Circle,
-                Rectangle,
-                Triangle,
-            ]:
-                ComputeArea,
-            [
-                Shape,
-                ShapePlus,
-            ]:
-                MatchWithValueHandlers,
-        }>,
+        open ComputerComponent;
+
+        @ComputerComponent.<Code> Code.[Circle, Rectangle, Triangle]: ComputeArea,
+        @ComputerComponent.<Code> Code.[Shape, ShapePlus]: MatchWithValueHandlers,
     }
 }
 ```
 
+The brackets group alternatives for one segment, so each line wires several input types to one provider. Older code writes the same dispatch as a nested `UseInputDelegate` table, `ComputerComponent: UseInputDelegate<new AreaComputers { … }>`, which the [dispatching per type](../cgp/guides/dispatching-per-type.md) guide compares with this form.
+
 A `Circle` input resolves to `ComputeArea` directly. A `Shape` or `ShapePlus` input resolves to `MatchWithValueHandlers` — written here with no provider argument, so it defaults to [`UseContext`](../cgp/reference/providers/use_context.md) and dispatches each extracted payload *back through* `App`'s own `ComputerComponent` rather than to a fixed handler. That is why the payload types share the table: the matcher routes a `Circle` payload to whatever `App` wires for `Circle`, which here is `ComputeArea`.
 
-Routing through the context is what makes individual variants overridable. Swapping the handler for one shape — wiring `Circle` to an optimized provider, say — is a one-line change to the table that leaves the matcher and every other variant untouched, precisely because the matcher never names `ComputeArea` itself. Pinning the matcher to a concrete provider as `MatchWithValueHandlers<ComputeArea>` is the other option, used when the dispatch should bypass the context entirely, as in the unit-context calls earlier.
+Routing through the context is what makes individual variants overridable. Swapping the handler for one shape — wiring `Circle` to an optimized provider, say — is a change to one entry of the table that leaves the matcher and every other variant untouched, precisely because the matcher never names `ComputeArea` itself. Pinning the matcher to a concrete provider as `MatchWithValueHandlers<ComputeArea>` is the other option, used when the dispatch should bypass the context entirely, as in the unit-context calls earlier.
 
 Because shape handlers are leaves — `ComputeArea` never calls back into the dispatcher — the enums can wire `MatchWithValueHandlers` directly. A *recursive* visitor cannot: the [expression interpreter](expression-interpreter.md) routes its enum through a thin wrapper provider instead, to break the trait-resolution cycle that its self-recursive handlers would otherwise create. Because CGP wiring is [checked lazily](../cgp/concepts/check-traits.md), a [`check_components!`](../cgp/reference/macros/check_components.md) block asserts at compile time that both enums are fully dispatchable, listing each as a `(Code, Input)` pair for the generic `Computer` component:
 

@@ -66,7 +66,7 @@ Surfaced and cascading errors — [checks/](checks/):
 
 Structural wiring errors — [wiring/](wiring/):
 
-- [Conflicting wiring](wiring/conflicting-wiring.md) — the same key or name wired or declared twice, producing coherence (`E0119`) or duplicate-definition (`E0428`) errors.
+- [Conflicting wiring](wiring/conflicting-wiring.md) — the same key or name wired or declared twice, or a path key covering a longer one, producing coherence (`E0119`) or duplicate-definition (`E0428`) errors.
 - [Overlapping namespace forwarding](wiring/namespace-forwarding-conflict.md) — two blanket forwarding impls that each cover every key (joining two namespaces, or a namespace join plus a bare-key `for` loop), a fully-generic `E0119` with no downstream note.
 - [Namespace override conflict](wiring/namespace-override-conflict.md) — a specific entry that claims a key a namespace already claims (a context re-wiring a registered path, a child namespace redefining an inherited entry, or either binding a prefixed component by its bare marker), an `E0119` on a concrete key.
 - [Orphan-rule violation](wiring/orphan-rule.md) — a generated impl registering into a foreign namespace with no local type (`E0210`, or `E0117`), as when a `#[default_impl]` or a `cgp_namespace!` re-open targets a namespace and key the crate does not own.

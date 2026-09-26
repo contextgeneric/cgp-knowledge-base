@@ -324,7 +324,7 @@ it stale.
 - [checks/verbose-cascade.md](cgp/errors/checks/verbose-cascade.md) — one deep mistake reported at
   every dependent provider, and how to find the single root cause.
 - [wiring/conflicting-wiring.md](cgp/errors/wiring/conflicting-wiring.md) — the same key or name wired
-  twice, producing `E0119` or `E0428`.
+  twice, or a path key covering a longer one, producing `E0119` or `E0428`.
 - [wiring/namespace-forwarding-conflict.md](cgp/errors/wiring/namespace-forwarding-conflict.md) — two
   blanket forwarding impls that each cover every key.
 - [wiring/namespace-inheritance-cycle.md](cgp/errors/wiring/namespace-inheritance-cycle.md) — a

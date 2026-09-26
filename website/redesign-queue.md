@@ -61,6 +61,12 @@ repo, `blog/2026-05-10-v0.8.0-release.md`; the material and the four mechanical 
 [blog/v0-8-0-release.md](blog/v0-8-0-release.md), and the shape is now specified in
 [writing-guides/release-announcement.md](writing-guides/release-announcement.md).*
 
+**Input dispatch is taught in its legacy form.** The Dispatching and Handlers concept pages and the
+`MatchWithValueHandlers` reference page wire dispatch on a handler's input through a `UseInputDelegate`
+table, and the `delegate_components!` page never says that an `open` key takes one segment per type
+parameter, which is what replaces that table. *Website repo, `docs/concepts/` and `docs/reference/`;
+the detail is in [site-structure.md](site-structure.md), and the task is X5 in [tasks.md](tasks.md).*
+
 ## New pages
 
 Each of these is specified but unwritten.

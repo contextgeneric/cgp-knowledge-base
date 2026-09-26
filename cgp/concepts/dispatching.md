@@ -2,6 +2,8 @@
 
 Dispatching is the CGP pattern for handling an extensible-data value generically by routing it to per-field or per-variant handlers: given an enum, match its current variant to the handler for that variant; given a record, route each field to the handler that produces it.
 
+This page is about dispatching on the *value* of extensible data. Choosing a provider per *type* through wiring, as the `open` statement of [`delegate_components!`](../reference/macros/delegate_components.md#statements-open-namespace-and-for) and the legacy [`UseDelegate`](../reference/providers/use_delegate.md) tables do, is a different mechanism, covered by the [dispatching per type](../guides/dispatching-per-type.md) guide. The two often meet: a context can wire an enum's type to one of the matchers below through `open`.
+
 ## Purpose
 
 Dispatching solves the problem of writing a single piece of logic that works over a record or enum whose exact shape is not known where the logic is written. A concrete `match` on an enum names every variant in one place and calls a fixed function for each, and a struct literal supplies every field at once — both bake the data's shape into the code. Dispatching keeps the same per-variant and per-field structure but lets the shape and the handlers be chosen by type, so the same matcher can serve many enums and the same builder can serve many records, with each variant's or field's behavior wired separately like any other CGP component.
