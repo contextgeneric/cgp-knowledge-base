@@ -8,22 +8,6 @@ that fixes it.
 
 ## Defects
 
-### `StreamingExec` ignores the exit status and standard error
-
-`HandleStreamingExec` returns the child's standard output and drops the child, so the exit status is
-never read, and standard error is piped but never read. A failing command yields success:
-
-```rust
-type Program = hypershell! {
-    StreamingExec<StaticArg<"sh">, WithStaticArgs["-c", "echo out; echo err >&2; exit 3"]>
-    | StreamToString
-};
-```
-
-This program returns `Ok("out\n")`. The stderr pipe closes when the handler returns, so a command
-writing a megabyte to stderr completed without blocking, and the output was lost. `SimpleExec` does
-check the status and reports stderr. See [execution](reference/execution.md#streamingexec-and-handlestreamingexec).
-
 ### A streamed request body does not follow redirects
 
 `StreamingHttpRequest` with a reader input sends the reader as a streamed body, and such a request
@@ -37,19 +21,6 @@ A byte-buffer input is not affected. The reqwest bundle sends a `Vec<u8>` or `St
 body, and a probe that sent an empty `Vec<u8>` to a URL answering 301 got the redirected page back.
 Following a redirect with a streamed body would need the stream buffered in full first, which defeats
 streaming. See [HTTP](reference/http.md#streaminghttprequest-and-handlestreaminghttprequest).
-
-### The WebSocket handler panics on a failed connection
-
-`HandleWebsocket` calls `unwrap()` on `connect_async`, so a refused connection panics instead of
-raising `tungstenite::Error`:
-
-```rust
-type Program = hypershell! { WebSocket<StaticArg<"ws://127.0.0.1:1/">, ()> | StreamToStdout };
-```
-
-Run on a context that routes `WebSocket` and its error, as `bluesky_websocket` does, this panicked
-at `websocket.rs:37` with `called Result::unwrap() on an Err value: Io(… ConnectionRefused …)`. See
-[extensions](reference/extensions.md#websocket-and-handlewebsocket).
 
 ### `StreamToLines` is unusable
 

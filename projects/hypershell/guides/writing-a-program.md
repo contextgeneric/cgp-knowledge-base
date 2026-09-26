@@ -74,10 +74,11 @@ streaming stage for large data or concurrent processes.** `SimpleExec` and `Simp
 the whole output and produce bytes. `StreamingExec` and `StreamingHttpRequest` produce a stream at
 once, and consecutive streaming stages run in parallel, as in a shell.
 
-The choice affects error reporting. `SimpleExec` fails when the command exits with a non-zero status,
-and reports its standard error. `StreamingExec` ignores both, so a failing command in a streaming
-stage yields whatever it wrote to standard output; see
-[issues.md](../issues.md#streamingexec-ignores-the-exit-status-and-standard-error). A streaming HTTP
+The choice affects when a failure is reported. `SimpleExec` fails as soon as its command exits with a
+non-zero status, reporting its standard error. `StreamingExec` reports the same failure when its
+output stream ends, so the stage reading the stream fails with it, after any output the command
+wrote has flowed through the stages in between; see
+[execution](../reference/execution.md#streamingexec-and-handlestreamingexec). A streaming HTTP
 request whose body is a stream does not follow redirects, so give such a request the final URL; one
 whose input is a `Vec<u8>` or `String` follows them.
 

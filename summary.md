@@ -899,7 +899,7 @@ it stale.
   built into a syntax's wiring, which stage accepts which input, and how streaming stages run.
 - [projects/hypershell/architecture/error-handling.md](projects/hypershell/architecture/error-handling.md)
   — providers naming error sources and borrowed details, the anyhow wiring and raising aggregate, the
-  doubly listed error types, and the paths that escape the error type.
+  doubly listed error types, and a streamed stage's failure arriving as an I/O error.
 - [projects/hypershell/architecture/crate-layout.md](projects/hypershell/architecture/crate-layout.md)
   — the nine crates and their dependency graph, module layout and the prelude, and the build facts:
   nightly with the new trait solver, and the local `cgp` patch.
@@ -972,9 +972,8 @@ it stale.
   root cause.
 - [projects/hypershell/testing.md](projects/hypershell/testing.md) — the four tests, the compile-only
   coverage the examples add, and the failure paths, checks, and syntax nothing exercises.
-- [projects/hypershell/issues.md](projects/hypershell/issues.md) — the confirmed defects (streaming
-  exit status, a streamed body not following redirects, the WebSocket panic, the unusable
-  `StreamToLines`), missing features, and housekeeping.
+- [projects/hypershell/issues.md](projects/hypershell/issues.md) — the confirmed defects (a streamed
+  body not following redirects, the unusable `StreamToLines`), missing features, and housekeeping.
 - [projects/AGENTS.md](projects/AGENTS.md) — the rules for a project section: verified against the
   project's source at the branch sibling-projects.md records, probes rather than reading alone, leaving
   CGP itself to `cgp/` and patterns to the worked example, the section as the primary source for its

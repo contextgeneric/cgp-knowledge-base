@@ -63,12 +63,6 @@ accepts. `WithStaticArgs []` expands to an empty argument list.
 - Stage types lining up through the input dispatcher: see
   [streams and input dispatch](../architecture/streams-and-input-dispatch.md).
 
-## Known issues
-
-The streaming stages ignore exit status and standard error, so a failing `curl` produces the digest
-of whatever it wrote, possibly nothing, rather than an error; see
-[issues.md](../issues.md#streamingexec-ignores-the-exit-status-and-standard-error).
-
 ## Public material derived from this
 
 The streaming program in the planned [Hypershell deep dive](../../../website/deep-dives/hypershell.md).

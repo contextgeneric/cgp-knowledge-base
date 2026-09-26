@@ -113,14 +113,13 @@ The output is a futures reader, so `StreamToString` needs `ToTokioAsyncRead` bef
 ### Context dependencies
 
 The string extractor for the URL, raising `tungstenite::Error`, and, for the `Vec<u8>` branch, a
-route for `BytesToStream`.
+route for `BytesToStream`. A failed connection raises the `tungstenite::Error`: a probe against a
+refused local port got `IO error: Connection refused` back as the program's error.
 
 ### Known issues
 
-A connection failure panics: the provider calls `unwrap()` on `connect_async`, and a probe against a
-refused port panicked with `called Result::unwrap() on an Err value: Io(… ConnectionRefused …)`.
 The `Params` parameter is ignored, so headers cannot be set, and `String` input is not wired. See
-[issues.md](../issues.md#the-websocket-handler-panics-on-a-failed-connection).
+[issues.md](../issues.md#the-websocket-handler-ignores-its-parameters-and-string-input).
 
 ## Wiring
 

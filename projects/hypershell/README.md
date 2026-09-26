@@ -89,8 +89,6 @@ out:
 
 - **Unusable syntax** — `StreamToLines` has a provider but no route, and its output could not feed a
   later stage even if routed.
-- **Silent failures** — a streaming command's exit status and standard error are ignored, and a failed
-  WebSocket connection panics.
 - **Redirects** — a streaming HTTP request with a reader input sends it as a streamed body, which
   `reqwest` cannot resend, so it does not follow a 301, 302, 307, or 308. A byte-buffer input is sent
   buffered and follows it.

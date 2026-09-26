@@ -92,6 +92,7 @@ Most providers appear in the syntax table. These are the ones a wiring names dir
 | `HypershellCli`, `HypershellHttp` | contexts | `hypershell::prelude` | [contexts and namespace](contexts-and-namespace.md) |
 | `HypershellBaseProvider`, `HypershellTokioProvider`, `HypershellReqwestProvider`, `HypershellJsonProvider`, `HypershellTungsteniteProvider` | bundles | each crate's `providers` | [contexts and namespace](contexts-and-namespace.md#the-backend-bundles) |
 | `TokioAsyncReadStream`, `FuturesAsyncReadStream`, `FuturesStream` | stream wrappers | `hypershell_tokio_components::types` | [streams and I/O](streams-and-io.md) |
+| `ChildOutputStream`, `ChildExitError` | a streamed command's output, and its failure | `hypershell_tokio_components::types` | [execution](execution.md) |
 | `WrapCall`, `WrapStaticArg` | type-level list maps | `hypershell_components::traits` | [control](control.md), [execution](execution.md) |
 | `ExecOutputError`, `StdinPipeError`, `WaitWithOutputError`, `CommandNotFound`, `SpawnCommandFailure` | errors and details | `hypershell_tokio_components::providers` | [execution](execution.md#error-types) |
 | `ErrorResponse` | error | `hypershell_reqwest_components::providers` | [HTTP](http.md#errorresponse) |

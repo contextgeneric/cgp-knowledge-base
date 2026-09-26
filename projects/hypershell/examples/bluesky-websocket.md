@@ -85,12 +85,6 @@ ignores it.
   [streams and input dispatch](../architecture/streams-and-input-dispatch.md#dispatching-on-the-input-type).
 - The WebSocket extension: see [extensions](../reference/extensions.md#websocket-and-handlewebsocket).
 
-## Known issues
-
-A failed connection panics rather than raising `TungsteniteError`, so the error entry this context
-adds is never reached for the connection itself; see
-[issues.md](../issues.md#the-websocket-handler-panics-on-a-failed-connection).
-
 ## Public material derived from this
 
 None yet.

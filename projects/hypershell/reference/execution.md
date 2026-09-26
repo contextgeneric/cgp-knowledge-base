@@ -79,40 +79,56 @@ where
         CanHandle<CoreExec<CommandPath, Args>, (), Output = Child> + CanRaiseError<std::io::Error>,
     Input: Send + Unpin + AsyncRead + 'static,
 {
-    type Output = Either<ChildStdout, Empty>;
+    type Output = ChildOutputStream;
 
     async fn handle(
         context: &Context,
         _tag: PhantomData<StreamingExec<CommandPath, Args>>,
         mut input: Input,
-    ) -> Result<Either<ChildStdout, Empty>, Context::Error> { ... }
+    ) -> Result<ChildOutputStream, Context::Error> { ... }
+}
+
+pub struct ChildOutputStream { /* the child's stdout, and the tasks feeding stdin and awaiting exit */ }
+
+pub struct ChildExitError {
+    pub status: ExitStatus,
+    pub stderr: Vec<u8>,
 }
 ```
 
 ### Behavior
 
-The provider spawns the process through `CoreExec`, starts a Tokio task that copies the input into
-standard input, and returns the child's standard output at once, or an empty reader if the output
-was not captured. Errors from the copy task are ignored. Under the namespace's wiring, the provider
-sits between an input dispatcher and an output wrapper:
+The provider spawns the process through `CoreExec` and returns its standard output at once as a
+`ChildOutputStream`. Building the stream starts two Tokio tasks: one copies the input into the child's
+standard input, and one drains standard error and waits for the child to exit, so a child writing a
+lot to standard error cannot block. The stream reports a failure when its standard output ends:
+
+- **A failed input** ends the stream with the error from reading the previous stage's output, so an
+  upstream failure reaches the stage that reads this one. The copying task records the error before
+  it closes the child's standard input, so the error is in place before the child can react to the
+  end of its input. A child that exits before reading all of its input breaks the pipe, which is not
+  an error, and a copying task still waiting on input once the child has exited is aborted.
+- **A non-success exit** ends the stream with an `io::Error` carrying a `ChildExitError`, whose
+  message gives the exit code and standard error, as
+  `child process exited with non-success code Some(3), stderr: err`.
+
+The stage that reads the stream raises that error through its own `CanRaiseError<std::io::Error>`,
+so the program fails. A probe confirmed each case, including a command writing a megabyte to
+standard error, which completed, and a child that ignored an input stream which never ends, which
+finished once the child exited. Under the namespace's wiring, the provider sits between an input
+dispatcher and an output wrapper:
 
 ```rust
 PipeHandlers<Product![HandleToTokioAsyncRead, HandleStreamingExec, WrapTokioAsyncRead]>
 ```
 
 So the syntax accepts `Vec<u8>`, `String`, `TokioAsyncReadStream`, or `FuturesAsyncReadStream`, and
-produces `TokioAsyncReadStream<Either<ChildStdout, Empty>>`. The provider calls `tokio::spawn`, so it
-must run inside a Tokio runtime.
+produces `TokioAsyncReadStream<ChildOutputStream>`. The stream's tasks are started with
+`tokio::spawn`, so the stage must run inside a Tokio runtime.
 
 ### Context dependencies
 
 `CanHandle<CoreExec<CommandPath, Args>, ()>` with `Output = Child`, and `CanRaiseError<std::io::Error>`.
-
-### Known issues
-
-The child's exit status is never checked, and its standard error is piped but never read, so a
-failing command yields `Ok` with whatever it wrote to standard output. See
-[issues.md](../issues.md#streamingexec-ignores-the-exit-status-and-standard-error).
 
 ## `CoreExec` and `HandleCoreExec`
 
@@ -278,6 +294,11 @@ message:
 `ExecOutputError` is raised, so it needs an `ErrorRaiser` route, which `HypershellNamespace` gives it
 (`DebugAnyhowError`). The other four are details, handled by the namespace's single
 `ErrorWrapperComponent` binding. See [error handling](../architecture/error-handling.md).
+
+A sixth type, `ChildExitError { status: ExitStatus, stderr: Vec<u8> }` in
+`hypershell_tokio_components::types`, is not raised through the context. `ChildOutputStream` returns
+it inside an `io::Error` when a streamed command exits with a non-success status, with the same
+message as `ExecOutputError`, and the stage that reads the stream raises the `io::Error`.
 
 ## Wiring
 

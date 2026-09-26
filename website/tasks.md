@@ -409,24 +409,6 @@ published blog posts, whose titles are among the worst offenders and whose
   plugin would not. *Lands in:* the website repository's `static/img/`, then the concept and tutorial
   pages that use them. *Blocked by:* nothing. *Done when:* the three files exist, each idea's pages
   reference the one drawing, and every page still reads correctly with the image missing.
-- **X5 — carry dispatch on a later parameter into the site.** The knowledge base teaches that `open`
-  dispatches on every type parameter of a component, so a key such as
-  `@ComputerComponent.<Code> Code.Circle` replaces a `UseInputDelegate` table; see the `open` section
-  of [`delegate_components!`](../cgp/reference/macros/delegate_components.md#statements-open-namespace-and-for)
-  and [dispatching per type](../cgp/guides/dispatching-per-type.md). The site predates that. Its
-  `delegate_components!` reference page never says a key takes one segment per parameter, nor that a
-  shorter or generic key overlaps a longer one. Three pages wire input dispatch through a
-  `UseInputDelegate` table as the current form: the Dispatching and Handlers concept pages, and the
-  `MatchWithValueHandlers` reference page. The `UseInputDelegate` page itself does not call the table
-  legacy. The converted wiring is already verified in
-  [extensible-shapes.md](../examples/extensible-shapes.md) and
-  [dispatch_combinators.md](../cgp/reference/providers/dispatch_combinators.md). A page that states
-  the provider's own definition, such as `MatchWithValueHandlers` being a `UseInputDelegate` alias, or a
-  handler component's `#[derive_delegate(UseInputDelegate<Input>)]`, is correct as it stands.
-  *Lands in:* the website repository's `docs/concepts/` and `docs/reference/` pages and their
-  `example-code/` mirrors. *Blocked by:* nothing. *Done when:* no page presents a `UseInputDelegate`
-  table as the way to dispatch on the input, the `delegate_components!` page carries the
-  one-segment-per-parameter rule and its overlap restriction, and `example-code` passes.
 
 ## What depends on what
 
@@ -449,7 +431,7 @@ the [ordering](#the-ordering) for what to start on.
 | A1 | the author's read | every page-adding task's provenance note |
 | S1, S3, S4, S5, S7, S10 | nothing | nothing; S3 and S4 should precede V1 |
 | S9, S11 | V1 | nothing |
-| X1, X2, X3, X5 | nothing | nothing |
+| X1, X2, X3 | nothing | nothing |
 
 Two shapes in that graph are worth naming, because they are what make the ordering non-obvious. The
 **deep dives are gated on code** rather than on writing, so the long lead time of two of them starts

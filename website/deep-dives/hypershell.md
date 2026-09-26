@@ -164,7 +164,7 @@ named. Low priority, but it is what the deep dive's code should look like.
 
 **Treat the remaining defects as limitations.** The project's
 [issues](../../projects/hypershell/issues.md#defects) record the confirmed defects that remain, such
-as a streaming command's ignored exit status and the WebSocket handler's panic. None of them is in
+as a streamed request body not following redirects and the unusable `StreamToLines`. None of them is in
 the checksum and compare programs the extension page works through, so they belong on the trade-offs
 page as limitations until they are fixed.
 

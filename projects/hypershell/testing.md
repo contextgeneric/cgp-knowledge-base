@@ -50,9 +50,8 @@ Taken together, the tests and examples reach the following, in the ways listed:
 Several things no test and no example reaches:
 
 - **Every failure path.** No test runs a failing command, a missing command, a non-success HTTP
-  status, a bad URL, or invalid UTF-8, so none of the error messages is pinned. Probes found two
-  failure paths that are wrong: a streaming stage never reports a failing command, and a failed
-  WebSocket connection panics. See [issues.md](issues.md#defects).
+  status, a bad URL, or invalid UTF-8, so none of the error messages is pinned, including a streamed
+  command's failure.
 - **Wiring checks.** No `check_components!` appears anywhere, not for `HypershellCli`,
   `HypershellHttp`, or any bundle. A check over the two contexts and a representative program per
   syntax would catch an unroutable syntax such as `StreamToLines`.

@@ -81,15 +81,13 @@ The duplication has a reason. The namespace entries are routes and the aggregate
 choices, and keeping the choices in an aggregate lets a different namespace reuse them. But nothing
 checks that the two lists agree, and they agree today only because both were written by hand.
 
-## Where errors escape
+## Where errors travel as I/O errors
 
-Two failure paths bypass the error type entirely, both recorded as defects in
-[issues.md](../issues.md#defects):
-
-- `HandleWebsocket` calls `unwrap()` on the connection result, so a refused connection panics
-  instead of raising `tungstenite::Error`.
-- `HandleStreamingExec` ignores the child's exit status and discards its stderr, so a failing command
-  in a streaming stage produces no error at all.
+A streamed stage reports its failure through the stream rather than through its own result.
+`HandleStreamingExec` returns before its command finishes, so a non-success exit, or a failure
+reading its input, becomes an `io::Error` at the end of its output. The stage that reads the stream
+raises it as `std::io::Error`, so it reaches the context's error type through the raiser that type
+already has; see [execution](../reference/execution.md#streamingexec-and-handlestreamingexec).
 
 ## Source
 

@@ -709,15 +709,6 @@ for the tiers and the shapes, and on
 [message.md](../communication-strategy/message.md#when-not-to-reach-for-cgp) for the boundary in its
 decision-guide tail.
 
-### Where it diverges
-
-Two pages teach input dispatch in the form the internal documents call legacy. The Dispatching page
-wires its `Shape` example through a `UseInputDelegate` table, and the Handlers page names that table as
-the way to dispatch on the input. Their internal counterparts use `open` keys with a generic first
-segment, as in `@ComputerComponent.<Code> Code.Circle`, per
-[dispatching per type](../cgp/guides/dispatching-per-type.md). The fix is task X5 in
-[tasks.md](tasks.md).
-
 ### Maintaining it
 
 The section is bound to the internal concept documents by the
@@ -1414,15 +1405,6 @@ Docusaurus v3's own titled form, `:::info[Still being written]`, does render cor
 ignorance of the bracket syntax. The trade the heading form makes is that the title becomes a link target
 and an entry in the page's table of contents, which is the reason a stub's table of contents reads
 "Not written yet" and nothing else.
-
-### Where it diverges
-
-The `delegate_components!` page shows `open` only on a component with one type parameter. It lacks the rule that a key takes one segment per type parameter, and the restriction that a shorter
-or generic key overlaps a longer one; the internal
-[`delegate_components!`](../cgp/reference/macros/delegate_components.md#statements-open-namespace-and-for)
-document carries both. The `MatchWithValueHandlers` page wires its example through a
-`UseInputDelegate` table, and the `UseInputDelegate` page presents that table without calling it the
-legacy form. The fix is task X5 in [tasks.md](tasks.md).
 
 ### Maintaining it
 

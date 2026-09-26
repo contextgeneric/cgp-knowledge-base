@@ -73,7 +73,7 @@ pub type Program = hypershell! {
 ```
 
 ```text
-  = note: root cause: [CGP-E201] the trait bound `TokioAsyncReadStream<Either<ChildStdout, Empty>>: AsRef<[u8]>` is not satisfied
+  = note: root cause: [CGP-E201] the trait bound `TokioAsyncReadStream<ChildOutputStream>: AsRef<[u8]>` is not satisfied
 ```
 
 **Fix:** insert `StreamToBytes` between the two stages.

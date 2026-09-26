@@ -155,18 +155,16 @@ anything byte-like with one provider and needs no per-type routing.
 
 **`StreamingExec` spawns its process and returns its standard output immediately, copying the input
 into standard input on a spawned Tokio task.** Stages in a pipeline therefore run concurrently, as in
-a shell. Two behaviors follow from how `HandleStreamingExec` does it, and both were confirmed by
-probes:
+a shell. **A failure is reported when the stream ends rather than when the stage returns.** The
+returned reader, a `ChildOutputStream`, waits for the child at the end of its standard output and
+ends with an error if the child exited with a non-success status or if reading its input failed. The
+stage reading it raises that error, so a failing command anywhere in a streamed pipeline fails the
+program. Standard error is drained while the child runs and becomes part of the error's message; see
+[execution](../reference/execution.md#streamingexec-and-handlestreamingexec).
 
-- **The exit status is never checked.** A command that writes to stdout and exits with status 3
-  yields `Ok` with its output. Only `SimpleExec` turns a non-zero exit into an error.
-- **Standard error is discarded.** It is piped but never read, and the pipe closes when the handler
-  returns. A command that wrote a megabyte to stderr completed without blocking, but the output was
-  lost.
-
-`HandleStreamingExec` calls `tokio::spawn` for the copy task, as `HandleWebsocket` does for its
-forwarding task, so a program with either stage must run inside a Tokio runtime. All the examples use
-`#[tokio::main]`. The defects are in [issues.md](../issues.md#defects).
+`HandleStreamingExec`'s output stream starts its tasks with `tokio::spawn`, as `HandleWebsocket` does
+for its forwarding task, so a program with either stage must run inside a Tokio runtime. All the examples use
+`#[tokio::main]`.
 
 ## Source
 
