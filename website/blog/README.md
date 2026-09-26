@@ -77,8 +77,8 @@ the section's fixed vocabulary from [../AGENTS.md](../AGENTS.md).
   narrative anywhere of why coherence exists and how provider traits work around it.
 - [CGP v0.8.0: grouping components with namespaces](v0-8-0-release.md) — placeholder date
   2026-05-10, **draft for an unreleased version**. The namespace feature, unfinished: it stops
-  mid-argument, covers one feature of several, and teaches an attribute name that changed twice
-  during development. Begun as the v0.7.1 announcement before the release was renumbered.
+  without a conclusion, covers one feature of several, and writes its prefix attributes in forms that
+  do not compile. Begun as the v0.7.1 announcement before the release was renumbered.
 
 ## Drafts that live on branches
 

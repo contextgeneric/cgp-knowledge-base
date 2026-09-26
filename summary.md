@@ -230,7 +230,8 @@ it stale.
 - [abstract-types.md](cgp/concepts/abstract-types.md) — associated types each context chooses for
   itself, and why a determined type propagates nowhere while a parameter propagates everywhere.
 - [aggregate-providers.md](cgp/concepts/aggregate-providers.md) — bundling component wirings into a
-  reusable provider, and why such a bundle is a provider rather than a context.
+  reusable provider, why such a bundle is a provider rather than a context, and how a context
+  forwards a namespace path to one.
 - [check-traits.md](cgp/concepts/check-traits.md) — why wiring is lazy and how a compile-time
   assertion makes its failures readable.
 - [coherence.md](cgp/concepts/coherence.md) — what Rust's coherence rules forbid, the
@@ -294,7 +295,8 @@ it stale.
   field with `#[impl_generics]`, climb to an abstract type when it must be named or two types must
   agree, and never thread it as a generic parameter on the trait.
 - [namespaces-and-prefixes.md](cgp/guides/namespaces-and-prefixes.md) — keep a growing wiring table
-  short with prefixes, namespaces, and per-type defaults, worked as a refactoring.
+  short with prefixes, bundles behind them, namespaces, and per-type defaults, worked as a
+  refactoring.
 - [reading-context-fields.md](cgp/guides/reading-context-fields.md) — prefer an `#[implicit]` argument
   over a getter trait.
 - [writing-providers.md](cgp/guides/writing-providers.md) — prefer `#[cgp_impl]` in consumer-trait
@@ -1084,7 +1086,7 @@ it stale.
   and unknown fields, and the format limits of an unsized map.
 - [projects/cgp-examples/README.md](projects/cgp-examples/README.md) — the repository of five
   independent example crates: what each demonstrates, its context shape, worked example, citing post,
-  whether it runs and uses current idioms, the `v0.8.0` branch against `main` and the unmerged
+  whether it runs, the `v0.8.0` branch against `main` and the unmerged
   `profile-picture` branch, the build setup, workspace gaps, and the subproject catalog.
 - [projects/cgp-examples/transfer/README.md](projects/cgp-examples/transfer/README.md) — the
   money-transfer HTTP service: its endpoints and seeded data, how to run it and what it returned, its
@@ -1199,3 +1201,19 @@ it stale.
   every builder, and what nothing tests.
 - [projects/cgp-examples/builder/issues.md](projects/cgp-examples/builder/issues.md) — missing features
   and housekeeping.
+- [projects/cgp-examples/web-app/README.md](projects/cgp-examples/web-app/README.md) — the social-media
+  wiring study: one backend wired four ways, the four stages at a glance, its idioms, its gaps, where
+  the v0.8.0 post's code now lives, and the section catalog.
+- [projects/cgp-examples/web-app/coarse-grained.md](projects/cgp-examples/web-app/coarse-grained.md) —
+  the first stage: one manager trait per domain, and the filter dependency the whole manager carries.
+- [projects/cgp-examples/web-app/fine-grained.md](projects/cgp-examples/web-app/fine-grained.md) — one
+  component per operation, the two filter wrappers, and the three bundles wired by array keys.
+- [projects/cgp-examples/web-app/namespaces.md](projects/cgp-examples/web-app/namespaces.md) — the
+  prefix tree, the path-keyed bundles that must join the namespace, and `ProductionApp` and `TestApp`.
+- [projects/cgp-examples/web-app/default-impls.md](projects/cgp-examples/web-app/default-impls.md) —
+  the custom `DefaultAppComponents` namespace, its seven defaults, the one path the context wires, and
+  the `[CGP-E005]` an override meets.
+- [projects/cgp-examples/web-app/testing.md](projects/cgp-examples/web-app/testing.md) — the five
+  checked contexts, a probe of a missing extras entry, what probes ran, and what nothing tests.
+- [projects/cgp-examples/web-app/issues.md](projects/cgp-examples/web-app/issues.md) — missing
+  features and housekeeping.

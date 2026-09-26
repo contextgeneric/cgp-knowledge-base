@@ -173,6 +173,14 @@ as a change the project needs, in its section's `issues.md`, rather than fixed i
 A worked example still never presents itself as a description of the project, and it carries none of
 the project's records.
 
+**A concept page may use simplified code instead, when a reduced form explains its concept better.**
+This covers the documents under [cgp/concepts/](cgp/concepts/README.md) and the website's concept
+pages. Their code may borrow a project's names and scenario, such as `transfer`'s `MockApp`, and cut
+it down to the lines the concept needs. Such code is an illustration rather than a reproduction, so it
+need not match the project and is not recorded as drift. It is still bound by the
+[synchronization rule](#the-synchronization-rule): it uses current idioms, it compiles against
+current CGP once the items it leaves out are supplied, and it never claims to be the project's code.
+
 ## Registering a document, and adding a section
 
 Every document registers itself in its section's `README.md` catalog in the same change that creates

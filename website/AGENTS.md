@@ -165,7 +165,10 @@ Any code that appears on a website page is bound by the [synchronization rule](.
 exactly as a reference document's Expansion is: invoke the `/cgp` skill, verify the snippet against the
 `cgp` source or its tests, and prefer the idioms the [guides](../cgp/guides/README.md) teach. The
 richest source of already-verified snippets is [examples/](../examples/README.md), which exists partly
-to be quoted, so draw on it rather than writing new code that then needs its own verification.
+to be quoted, so draw on it rather than writing new code that then needs its own verification. A
+concept page may instead cut a project's scenario down to what its concept needs, per
+[../AGENTS.md](../AGENTS.md#project-facts-and-cgp-patterns-have-separate-owners); the simplified code
+still compiles, and it does not need to match the project.
 
 **The website repository carries a Rust crate whose job is to hold that verification, and a page you
 write or revise puts its code there.** `example-code/` is a crate mirroring the `docs/` tree one file

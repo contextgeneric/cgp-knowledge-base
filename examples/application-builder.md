@@ -371,3 +371,5 @@ let _anthropic_and_chat_gpt_app: AnthropicAndChatGptApp = builder
 ```
 
 The same builder, the same config, three different application contexts — selected by type, dispatched at compile time, with the builder pipeline for each one assembled from the same decoupled providers.
+
+For an agent working on the builders themselves rather than learning their patterns, the crate is documented as the [`builder`](../projects/cgp-examples/builder/README.md) subproject of cgp-examples.

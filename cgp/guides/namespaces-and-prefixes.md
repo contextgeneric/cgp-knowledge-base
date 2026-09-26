@@ -104,9 +104,37 @@ The prefix you choose depends less on how *this* application wires a component a
 
 The rule that follows is to **give components a separate sub-path whenever they are likely to need separate providers**, even when the current implementation happens to wire them the same way. The abstract types sit under `@app.auth.types` rather than sharing `@app.auth` with the logic, because a real backend would supply the auth *logic* (password checking, hashed-password lookup) very differently from how it supplies the auth *types* — the types are almost always plain `UseType<Concrete>` while the logic talks to a database. Keeping them on separate sub-paths means a production context can point `@app.auth` at a database provider while leaving `@app.auth.types` on the same concrete types, without either wiring disturbing the other. Grouping them together would have read fine today and forced them apart tomorrow.
 
+### Forwarding a path to a bundle
+
+A prefix also lets a context hand a whole path to an [aggregate provider](../concepts/aggregate-providers.md) in one entry, which is how prefixes shorten a table rather than only sorting it. The money-transfer service does not bundle its providers, so this step is shown on a users-and-posts service, the [social media app](../../examples/social-media-app.md) example, whose components sit under `@app.core.user`, `@app.core.post`, and `@app.extra.content_filter`. A bundle keyed by the bare component names serves one leaf path, and bundles keyed by paths group the leaves under a parent:
+
+```rust
+delegate_components! {
+    new PostgresCoreComponents {
+        namespace DefaultNamespace;
+
+        @app.core.user: PostgresUserComponents,
+        @app.core.post: PostgresPostComponents,
+    }
+}
+
+delegate_components! {
+    ProductionApp {
+        namespace DefaultNamespace;
+
+        @app.core: PostgresCoreComponents,
+        @app.extra: ProductionExtraComponents,
+    }
+}
+```
+
+`PostgresUserComponents` and `PostgresPostComponents` are plain bundles keyed by component name, and `ProductionExtraComponents` is written like `PostgresCoreComponents`, with the one path `@app.extra.content_filter`. Two contexts that differ only in their extras then differ in one line, which is the point of the arrangement.
+
+**A bundle keyed by paths must join the namespace itself**, as `PostgresCoreComponents` does. The lookup that reaches a bundle is keyed by the bare component name, so only the bundle's own `namespace` line redirects that name to the path its entries match. Leave the line out and the context's checks fail with the bundle reported as having no entry for the component, `[CGP-E110]`; the [aggregate providers](../concepts/aggregate-providers.md#aggregate-providers-behind-namespace-paths) concept traces why. A bundle keyed by bare names, at a leaf path, needs no `namespace` line.
+
 ## Technique 2: bind providers to a namespace so the context just joins it
 
-Prefixes organize the table but do not shorten it — the context still names every path. The second technique lifts the wiring off the context entirely and into a reusable **namespace**, so that most contexts join the namespace with a single line and wire nothing directly. A namespace defined with [`cgp_namespace!`](../reference/macros/cgp_namespace.md) is a preset: a named table of default wirings a context inherits wholesale and then selectively overrides. (The [namespaces concept](../concepts/namespaces.md) explains the mechanism; this section is about how to *use* it to organize an application.)
+Prefixes organize the table, and bundles behind them shorten it, but every context still names each group it uses and every configuration needs its own set of bundles. The second technique lifts the wiring off the context entirely and into a reusable **namespace**, so that most contexts join the namespace with a single line and wire nothing directly. A namespace defined with [`cgp_namespace!`](../reference/macros/cgp_namespace.md) is a preset: a named table of default wirings a context inherits wholesale and then selectively overrides. (The [namespaces concept](../concepts/namespaces.md) explains the mechanism; this section is about how to *use* it to organize an application.)
 
 Define one namespace for the application's mock backend, inheriting `DefaultNamespace` so a context that joins it also inherits every standard default:
 
@@ -303,7 +331,7 @@ The `@app.{ core.{ … }, reqwest.… }` shape reads as a directory listing: eve
 
 ## Choosing how far to go
 
-The three techniques form a ladder, and most applications should climb only as far as they need. Reach for `#[prefix]` as soon as a table has enough components that grouping helps a reader — it costs nothing and pays off immediately in navigability, and it is the one technique with no downstream restriction. Add a namespace with `#[default_impl]` once two contexts would share most of their wiring, or once a newcomer wants their impls to carry their own wiring instead of a central table, accepting that this ties the wiring to one crate. Split wiring across several namespaces with `for` loops, and flatten multi-provider dispatch into paths, when the application is large enough that different concerns — a backend, an API surface, a set of handlers — genuinely deserve their own reusable tables. Stop at the rung that makes the wiring clear; the goal is a table a reader can hold in their head, not the maximum use of the machinery.
+The three techniques form a ladder, and most applications should climb only as far as they need. Reach for `#[prefix]` as soon as a table has enough components that grouping helps a reader — it costs nothing and pays off immediately in navigability, and it is the one technique with no downstream restriction. Forward a prefix to a bundle once contexts combine whole groups of wiring in different ways, such as one core with production or test extras. Add a namespace with `#[default_impl]` once two contexts would share most of their wiring, or once a newcomer wants their impls to carry their own wiring instead of a central table, accepting that this ties the wiring to one crate. Split wiring across several namespaces with `for` loops, and flatten multi-provider dispatch into paths, when the application is large enough that different concerns — a backend, an API surface, a set of handlers — genuinely deserve their own reusable tables. Stop at the rung that makes the wiring clear; the goal is a table a reader can hold in their head, not the maximum use of the machinery.
 
 ## Related documentation
 

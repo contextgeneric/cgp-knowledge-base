@@ -22,18 +22,19 @@ code as it ships; the worked examples are where an agent learns the patterns, pe
 records, for each crate, what kind of context it wires, which blog post presents its code, and whether
 it runs. A post that links the repository is marked as linking; the v0.8.0 post shows `web-app`'s code
 without linking it. Every crate uses current CGP idioms, so its code is safe to copy for the patterns
-it shows; `web-app` and `greet` are checked against that in full when their sections are written:
+it shows; `greet` is checked against that in full when its section is written:
 
 | Subproject | Scenario | Context shape | Worked example | Blog post | Runs |
 |---|---|---|---|---|---|
 | [`transfer`](transfer/README.md) | balance and transfer endpoints served over HTTP | environmental; self-targeted, with one handler dispatched per endpoint | [money-transfer API](../../examples/money-transfer-api.md) | [v0.5.0 release](../../website/blog/v0-5-0-release.md), linking | yes, a server binary |
 | [`expression`](expression/README.md) | an arithmetic interpreter open to new variants and operations | environmental; parameter-targeted | [expression interpreter](../../examples/expression-interpreter.md) | [extensible data types, part 2](../../website/blog/extensible-datatypes-part-2.md), linking | three unit tests |
 | [`builder`](builder/README.md) | an application context assembled from per-subsystem builders | environmental; self-targeted | [application builder](../../examples/application-builder.md) | [extensible data types, part 1](../../website/blog/extensible-datatypes-part-1.md), linking | no entry point |
-| `web-app` | one social-media backend wired four ways, up to namespaces | environmental; self-targeted | [social media app](../../examples/social-media-app.md) | [v0.8.0 release](../../website/blog/v0-8-0-release.md) | compiles only |
+| [`web-app`](web-app/README.md) | one social-media backend wired four ways, up to namespace defaults | environmental; self-targeted | [social media app](../../examples/social-media-app.md) | [v0.8.0 release](../../website/blog/v0-8-0-release.md) | compiles only |
 | `greet` | a greeting written as a function, a component, and over an abstract type | value context; self-targeted | none | none | yes, three binaries |
 
-`transfer`, `expression`, and `builder` are documented so far. The other two rows record what each
-crate is, so the table stays accurate for the whole repository while their sections are written.
+`transfer`, `expression`, `builder`, and `web-app` are documented so far. The `greet` row records
+what that crate is, so the table stays accurate for the whole repository while its section is
+written.
 
 ## Which revision these documents describe
 
@@ -107,6 +108,15 @@ per [../AGENTS.md](../AGENTS.md#the-shape-of-a-project-section).
   - [testing.md](builder/testing.md) — what the checks catch, what a probe ran, and what nothing
     tests.
   - [issues.md](builder/issues.md) — missing features and housekeeping.
+- [web-app/](web-app/README.md) — the social-media wiring study, one document per stage:
+  - [coarse-grained.md](web-app/coarse-grained.md) — one manager trait per domain.
+  - [fine-grained.md](web-app/fine-grained.md) — one trait per operation, filter wrappers, and
+    bundles.
+  - [namespaces.md](web-app/namespaces.md) — the prefix tree and the production and test contexts.
+  - [default-impls.md](web-app/default-impls.md) — a custom namespace that supplies seven of the nine
+    components.
+  - [testing.md](web-app/testing.md) — what the checks pin and catch, and what nothing tests.
+  - [issues.md](web-app/issues.md) — missing features and housekeeping.
 
 ## Public material derived from these documents
 
@@ -114,7 +124,8 @@ These documents are the verified source for the repository's own READMEs, above 
 walkthrough, whose drift from the code is recorded in
 [transfer/issues.md](transfer/issues.md). They also feed the planned
 [extensible data types deep dive](../../website/deep-dives/extensible-datatypes.md), which uses
-`builder` and `expression` as its running code.
+`builder` and `expression` as its running code, and the unfinished
+[v0.8.0 release post](../../website/blog/v0-8-0-release.md), whose code follows `web-app`.
 
 ## How it relates to the rest of the base
 

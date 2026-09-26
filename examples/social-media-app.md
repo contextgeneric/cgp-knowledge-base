@@ -12,7 +12,7 @@ The concepts each step demonstrates are documented in full in the reference; thi
 - a provider that wraps another provider — [higher-order providers](../cgp/concepts/higher-order-providers.md) and [`#[use_provider]`](../cgp/reference/attributes/use_provider.md)
 - wiring a context and bundling providers into reusable groups — [`delegate_components!`](../cgp/reference/macros/delegate_components.md)
 - grouping component keys so a context inherits a whole bundle at once — [namespaces](../cgp/concepts/namespaces.md), the [`#[prefix(...)]`](../cgp/reference/attributes/prefix.md) attribute, and [`cgp_namespace!`](../cgp/reference/macros/cgp_namespace.md)
-- checking that a wiring is complete — [`check_components!`](../cgp/reference/macros/check_components.md)
+- checking that a wiring is complete — [`check_components!`](../cgp/reference/macros/check_components.md), or [`delegate_and_check_components!`](../cgp/reference/macros/delegate_and_check_components.md) for a basic table
 
 All snippets assume `use cgp::prelude::*;` and share a small set of domain types — the entities the service manipulates and the database handle the providers read:
 
@@ -117,9 +117,9 @@ impl UserManager {
 }
 ```
 
-`PostgresUserManager` is a provider written with [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md), so its body reads like methods on the context while staying generic over any context that supplies a `database` field and a `CanCensorUsername` implementation. The `PostManager` provider follows the same shape, thresholding `CanDetectSpamMessage` inside `create_post`. The content checks themselves get cheap stand-in providers for now — `DummyUserCensor` and `DummySpamMessageDetector` — that always pass.
+`PostgresUserManager` is a provider written with [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md), so its body reads like methods on the context while staying generic over any context that supplies a `database` field and a `CanCensorUsername` implementation. The `PostManager` provider follows the same shape, thresholding `CanDetectSpamMessage` inside `create_post`. The content checks themselves get stand-in providers for now, `DummyUserCensor` and `DummySpamMessageDetector`, which the AI-backed filters replace later.
 
-A concrete context ties it together. `ProductionApp` holds the database handle and names a provider for every component in one [`delegate_components!`](../cgp/reference/macros/delegate_components.md) table:
+A concrete context ties it together. `ProductionApp` holds the database handle and names a provider for every component in one [`delegate_and_check_components!`](../cgp/reference/macros/delegate_and_check_components.md) table, which also checks each entry as it wires it:
 
 ```rust
 #[derive(HasField)]
@@ -127,7 +127,7 @@ pub struct ProductionApp {
     pub database: PostgresDb,
 }
 
-delegate_components! {
+delegate_and_check_components! {
     ProductionApp {
         UserManagerComponent: PostgresUserManager,
         PostManagerComponent: PostgresPostManager,
@@ -388,3 +388,5 @@ delegate_components! {
 ```
 
 `ProductionApp` and `TestApp` share `@app.core` and differ only in `@app.extra`, so a reader sees immediately that the two run identical core logic and diverge only in their content filtering — a comparison that, with the flat per-component table, would mean scanning a dozen entries that may not even appear in the same order. A local-first variant would follow the same shape, keeping the production extras but pointing `@app.core` at an SQLite core bundle, and the one swapped line would again be the whole story.
+
+For an agent working on the application itself rather than learning its patterns, the crate is documented as the [`web-app`](../projects/cgp-examples/web-app/README.md) subproject of cgp-examples.

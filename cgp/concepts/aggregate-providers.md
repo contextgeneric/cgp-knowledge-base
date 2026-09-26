@@ -55,7 +55,45 @@ An aggregate provider is verified indirectly instead, at the place where it is a
 
 ## Aggregate providers versus namespaces
 
-An aggregate provider and a [namespace](namespaces.md) are the two ways CGP packages reusable wiring, and they differ in how a context adopts the package. A context adopts an aggregate provider by *delegating* named components to it explicitly — `[A, B]: TheBundle` — so the context spells out which components come from the bundle. A context adopts a namespace by *joining* it with a `namespace` header, inheriting every entry the namespace resolves and overriding only what it names. The aggregate provider is the more direct, table-to-table mechanism and is the natural choice for a small, explicitly-delegated bundle of behaviors; the namespace adds path-keyed lookup and inheritance-with-override for preset-style configuration that scales across many components. Both are resolved entirely at compile time through `DelegateComponent`, and both are providers-not-contexts in the checking sense.
+An aggregate provider and a [namespace](namespaces.md) are the two ways CGP packages reusable wiring, and they differ in how a context adopts the package. A context adopts an aggregate provider by *delegating* to it explicitly, either by naming the components in a key such as `[A, B]: TheBundle` or, as the next section shows, by naming a namespace path that holds them, so the context states which components come from the bundle. A context adopts a namespace by *joining* it with a `namespace` header, inheriting every entry the namespace resolves and overriding only what it names. The aggregate provider is the more direct, table-to-table mechanism and is the natural choice for a small, explicitly-delegated bundle of behaviors; the namespace adds path-keyed lookup and inheritance-with-override for preset-style configuration that scales across many components. Both are resolved entirely at compile time through `DelegateComponent`, and both are providers-not-contexts in the checking sense.
+
+## Aggregate providers behind namespace paths
+
+The two mechanisms combine: a context that joins a namespace can forward a whole path to an aggregate provider in one entry, so the bundle supplies every component registered under that path without the context naming any of them. With the user components registered under `@app.core.user` by [`#[prefix]`](../reference/attributes/prefix.md), a bundle keyed by the bare component names serves the whole path:
+
+```rust
+delegate_components! {
+    new UserComponents {
+        UserCreatorComponent: CreateUser,
+        UserGetterComponent: GetUser,
+    }
+}
+
+delegate_components! {
+    App {
+        namespace DefaultNamespace;
+
+        @app.core.user: UserComponents,
+    }
+}
+```
+
+The lookup that reaches the bundle is keyed by the bare component name. The namespace redirects `App`'s lookup of `UserCreatorComponent` to the path `@app.core.user.UserCreatorComponent`, the `@app.core.user` entry matches that path, and `UserComponents` is then asked for the provider trait of `UserCreatorComponent`, which its plain entry answers.
+
+That rule decides how a bundle one level up must be written. A bundle that groups several paths under a parent, so a context can forward `@app.core` to it, is itself keyed by paths, and a lookup arriving with the bare name matches none of them. It must therefore join the namespace too, which redirects the bare name to its path again inside the bundle:
+
+```rust
+delegate_components! {
+    new CoreComponents {
+        namespace DefaultNamespace;
+
+        @app.core.user: UserComponents,
+        @app.core.post: PostComponents,
+    }
+}
+```
+
+Without the `namespace` line, a context forwarding `@app.core` to this bundle fails its checks with the bundle reported as having no entry for the bare component name, `[CGP-E110]` in [`cargo-cgp`](../../cargo-cgp/error-code.md). The [namespaces and prefixes guide](../guides/namespaces-and-prefixes.md#forwarding-a-path-to-a-bundle) shows when to organize wiring this way.
 
 ## Related constructs
 

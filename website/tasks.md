@@ -266,8 +266,8 @@ somewhere to be tracked.
 
 - **V1 — finish the v0.8.0 release announcement, and merge the branch.** This is the campaign's last
   task rather than an interruption in it, because the release and the redesign publish together. The
-  draft stops mid-argument, covers one feature of several, teaches an attribute name that changed twice
-  during development, carries a placeholder date, and opens by claiming a release that has not happened.
+  draft stops without a conclusion, covers one feature of several, writes its prefix attributes in forms
+  that do not compile, carries a placeholder date, and opens by claiming a release that has not happened.
   Its motivation section is the strongest part and needs no change. *Lands in:* `blog/`, then the branch
   merge. *Spec:* [writing-guides/release-announcement.md](writing-guides/release-announcement.md);
   material and the mechanical items in [blog/v0-8-0-release.md](blog/v0-8-0-release.md) and

@@ -54,8 +54,8 @@ deliberate and should stay, but a reader who stops early copies the wrong form â
 plainly that the second form is the idiom. *Website repo,
 `docs/tutorials/area-calculation/static-dispatch.md`.*
 
-**The v0.8.0 release post is an unfinished draft** that stops mid-argument, covers one feature of
-several, teaches an attribute name that changed twice during development, carries a placeholder date, and
+**The v0.8.0 release post is an unfinished draft** that stops without a conclusion, covers one feature of
+several, writes its prefix attributes in forms that do not compile, carries a placeholder date, and
 opens by claiming a release that has not happened. It must be finished before v0.8.0 ships. *Website
 repo, `blog/2026-05-10-v0.8.0-release.md`; the material and the four mechanical items are listed in
 [blog/v0-8-0-release.md](blog/v0-8-0-release.md), and the shape is now specified in

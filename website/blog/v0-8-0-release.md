@@ -2,11 +2,13 @@
 
 The **in-preparation announcement for the unreleased v0.8.0**, and the only forward-looking page on
 the site. It builds a strong case for why flat wiring tables stop scaling and why the preset system
-failed to fix it, then introduces namespaces and stops mid-argument — and the attribute syntax it
-teaches was renamed twice during development.
+failed to fix it, then introduces namespaces and default implementations and stops without a
+conclusion. Its first namespace snippet still shows an attribute name that was renamed during
+development.
 
 - **URL** — <https://contextgeneric.dev/blog/v0.8.0-release>
-- **Source** — [blog/2026-05-10-v0.8.0-release.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/2026-05-10-v0.8.0-release.md)
+- **Source** — [blog/2026-05-10-v0.8.0-release.md](https://github.com/contextgeneric/contextgeneric.dev/blob/v0.8.0/blog/2026-05-10-v0.8.0-release.md),
+  on the website's `v0.8.0` branch; the post is not on `main`
 - **Dated** — 10 May 2026, tagged `release`; the date is a placeholder and must be set to the real
   release date before v0.8.0 ships
 - **Documents** — [releases/v0-8-0.md](../../releases/v0-8-0.md)
@@ -24,11 +26,10 @@ which is still in development at `0.8.0-alpha`. There is no v0.7.1 tag and there
 last shipped release is [v0.7.0](../../releases/v0-7-0.md). Anything in the base that attributes
 namespaces to "v0.7.1" is wrong.
 
-It is also unfinished. The git history shows it built up over several commits ending at "Add
-hierarchical delegation section," and the text stops after a paragraph comparing three contexts, with
-no conclusion, no migration guide, and no coverage of the custom namespaces it promises earlier ("as
-we will see in later sections"). It carries at least one uncorrected typo ("humen eyes"), and its
-opening sentence claims the release has already happened.
+It is also unfinished. The text stops after a section on the caveats of default implementations,
+with no conclusion and no migration guide, and an empty "Introducing cargo-cgp" heading sits at the
+top of the body. It carries at least one uncorrected typo ("humen eyes"), and its opening sentence
+claims the release has already happened.
 
 The rule in [../AGENTS.md](../AGENTS.md) against rewriting published posts therefore does **not**
 apply here. A draft for an unreleased version is live work, and editing it is the expected activity
@@ -55,8 +56,16 @@ types.
 
 The namespace introduction that follows shows components tagged with a hierarchical path prefix, a
 context opting in with a `namespace` statement, and `@`-path keys bulk-delegating a whole group to an
-aggregate provider — with the payoff that a three-line wiring for `ProductionApp`, `TestApp`, and
-`LocalApp` makes the differences between them readable at a glance. Then it stops.
+aggregate provider, with the payoff that a two-entry wiring for `ProductionApp`, `TestApp`, and
+`LocalApp` makes the differences between them readable at a glance. A section on default
+implementations then defines a custom namespace, `DefaultAppComponents`, that inherits
+`DefaultNamespace`, binds providers into it with `#[default_impl]` and with a `cgp_namespace!` block,
+and wires a `ProductionApp` that names only its content filters. It closes with the caveats: a default
+cannot be opted out of without leaving the namespace, and defaults suit a single-crate application.
+
+The post's code follows the `web-app` crate of cgp-examples, which the post does not link. Where each
+section's code lives in that crate is recorded in its
+[project section](../../projects/cgp-examples/web-app/README.md#where-the-blog-posts-code-lives).
 
 ## How it relates to the knowledge base
 
@@ -91,18 +100,22 @@ concedes the verbosity and then fixes it is better positioned than one that deni
 
 ## Where it diverges from the feature as built
 
-The syntax was renamed twice after this draft was written, so its namespace code does not compile.
+The draft's prefix attributes do not compile, and its prose disagrees with its own code in two
+places. Its contexts, aggregate providers, and default-implementation code use current syntax, and
+the namespace and default-implementation snippets match the `web-app` crate apart from the prefixes.
 
-- **`#[namespace(@app.core.user)]` is now `#[prefix(@app.core.user in SomeNamespace)]`.** The
-  attribute went from `#[use_namespace]` to `#[namespace]` and finally to `#[prefix]` during
-  development, and it now names the target namespace explicitly; see
-  [`cgp_namespace!`](../../cgp/reference/macros/cgp_namespace.md).
-- **`namespace default;` is now `namespace <Name>;`.** A context joins a *named* namespace defined
-  with [`cgp_namespace!`](../../cgp/reference/macros/cgp_namespace.md); there is no `default`
-  keyword. This is presumably what the unwritten later sections would have covered.
-- **The draft does not mention `cgp_namespace!` at all**, nor namespace inheritance, per-type
-  defaults via `#[default_impl(...)]`, or the lightweight `open` statement that handles per-type
-  dispatch without a full namespace. All are part of the shipped feature.
+- **The prefix attribute is written without its namespace.** The first snippet shows
+  `#[namespace(@app.core.user)]`, a name the attribute had during development, while the text
+  beside it calls the attribute `#[prefix]`; the later snippets write `#[prefix(@app.core.user)]`.
+  Neither compiles: a probe got ``cannot find attribute `namespace` in this scope`` for the first
+  and ``unexpected end of input, expected `in` `` for the second. The current form names the target
+  namespace, `#[prefix(@app.core.user in DefaultNamespace)]`; see
+  [`#[prefix]`](../../cgp/reference/attributes/prefix.md).
+- **The content-filter prefix is given two ways.** The text assigns `@app.core.content_filter` to
+  `UsernameCensor` and `SpamMessageDetector`, but every wiring snippet routes them under
+  `@app.extra.content_filter`, which is the path the crate uses.
+- **The draft does not mention the `for` statement**, which merges several namespaces into one
+  table and is part of the shipped namespace feature.
 - **It does not mention that presets are removed.** v0.8.0 deletes `cgp_preset!`,
   `#[cgp::re_export_imports]`, and `#[cgp_inherit]` outright, which is the release's largest breaking
   change and needs a migration guide the draft does not have.
@@ -121,7 +134,9 @@ The syntax was renamed twice after this draft was written, so its namespace code
   `delegate_components!` — a distinction the draft never explains and that
   [aggregate providers](../../cgp/concepts/aggregate-providers.md) covers.
 - **One copy-paste error in the source:** the `TestApp` section defines the struct `TestApp` but then
-  writes `delegate_components! { ProductionApp { ... } }`, wiring the wrong context.
+  writes `delegate_components! { ProductionApp { ... } }`, wiring the wrong context. Neither struct in
+  that section derives `HasField`, which the providers' implicit `database` arguments need, though
+  the earlier `ProductionApp` does.
 
 ## Maintaining it
 
