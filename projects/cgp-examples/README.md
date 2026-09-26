@@ -22,7 +22,7 @@ code as it ships; the worked examples are where an agent learns the patterns, pe
 records, for each crate, what kind of context it wires, which blog post presents its code, and whether
 it runs. A post that links the repository is marked as linking; the v0.8.0 post shows `web-app`'s code
 without linking it. Every crate uses current CGP idioms, so its code is safe to copy for the patterns
-it shows; `greet` is checked against that in full when its section is written:
+it shows, apart from `greet`'s hand-written expansion, which is not the macro's current output:
 
 | Subproject | Scenario | Context shape | Worked example | Blog post | Runs |
 |---|---|---|---|---|---|
@@ -30,11 +30,7 @@ it shows; `greet` is checked against that in full when its section is written:
 | [`expression`](expression/README.md) | an arithmetic interpreter open to new variants and operations | environmental; parameter-targeted | [expression interpreter](../../examples/expression-interpreter.md) | [extensible data types, part 2](../../website/blog/extensible-datatypes-part-2.md), linking | three unit tests |
 | [`builder`](builder/README.md) | an application context assembled from per-subsystem builders | environmental; self-targeted | [application builder](../../examples/application-builder.md) | [extensible data types, part 1](../../website/blog/extensible-datatypes-part-1.md), linking | no entry point |
 | [`web-app`](web-app/README.md) | one social-media backend wired four ways, up to namespace defaults | environmental; self-targeted | [social media app](../../examples/social-media-app.md) | [v0.8.0 release](../../website/blog/v0-8-0-release.md) | compiles only |
-| `greet` | a greeting written as a function, a component, and over an abstract type | value context; self-targeted | none | none | yes, three binaries |
-
-`transfer`, `expression`, `builder`, and `web-app` are documented so far. The `greet` row records
-what that crate is, so the table stays accurate for the whole repository while its section is
-written.
+| [`greet`](greet/README.md) | a greeting written as a function, a component, and over an abstract type | value context; self-targeted | none | none | yes, three binaries |
 
 ## Which revision these documents describe
 
@@ -75,7 +71,10 @@ rather than in a subproject's `issues.md`:
 ## The documents
 
 Each subproject has its own section, sized to its crate, with its own `testing.md` and `issues.md`,
-per [../AGENTS.md](../AGENTS.md#the-shape-of-a-project-section).
+per [../AGENTS.md](../AGENTS.md#the-shape-of-a-project-section). One document spans them:
+
+- [constructs.md](constructs.md) — each CGP construct the crates use, mapped to the subproject
+  documents that show it in running code.
 
 - [transfer/](transfer/README.md) — the money-transfer HTTP service:
   - [architecture/](transfer/architecture/README.md) — the design on one page, and:
@@ -117,6 +116,10 @@ per [../AGENTS.md](../AGENTS.md#the-shape-of-a-project-section).
     components.
   - [testing.md](web-app/testing.md) — what the checks pin and catch, and what nothing tests.
   - [issues.md](web-app/issues.md) — missing features and housekeeping.
+- [greet/](greet/README.md) — the greeting program, with its three binaries:
+  - [expansion.md](greet/expansion.md) — the hand-written expansion against the macro's output.
+  - [testing.md](greet/testing.md) — what running the binaries shows, and what nothing tests.
+  - [issues.md](greet/issues.md) — the missing check blocks and housekeeping.
 
 ## Public material derived from these documents
 

@@ -1088,6 +1088,8 @@ it stale.
   independent example crates: what each demonstrates, its context shape, worked example, citing post,
   whether it runs, the `v0.8.0` branch against `main` and the unmerged
   `profile-picture` branch, the build setup, workspace gaps, and the subproject catalog.
+- [projects/cgp-examples/constructs.md](projects/cgp-examples/constructs.md) — each CGP construct the
+  five crates use, mapped to the subproject documents that show it in running code.
 - [projects/cgp-examples/transfer/README.md](projects/cgp-examples/transfer/README.md) — the
   money-transfer HTTP service: its endpoints and seeded data, how to run it and what it returned, its
   idioms, its confirmed gaps, the section catalog, and the worked example and techniques it applies.
@@ -1217,3 +1219,13 @@ it stale.
   checked contexts, a probe of a missing extras entry, what probes ran, and what nothing tests.
 - [projects/cgp-examples/web-app/issues.md](projects/cgp-examples/web-app/issues.md) — missing
   features and housekeeping.
+- [projects/cgp-examples/greet/README.md](projects/cgp-examples/greet/README.md) — the greeting
+  program: its three binaries (a `#[cgp_fn]` function, a component with two providers, and a provider
+  over an abstract name type), the value context they wire, and the section catalog.
+- [projects/cgp-examples/greet/expansion.md](projects/cgp-examples/greet/expansion.md) — the
+  hand-written `greet_expanded.rs` against the macro's output, and the self-providing context that
+  compiles only under the macro.
+- [projects/cgp-examples/greet/testing.md](projects/cgp-examples/greet/testing.md) — what running the
+  three binaries shows, the expansion probe, and what nothing tests.
+- [projects/cgp-examples/greet/issues.md](projects/cgp-examples/greet/issues.md) — the missing check
+  blocks and housekeeping.
