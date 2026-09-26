@@ -60,11 +60,13 @@ parse failure's `Display` message as a Serde custom error. With `&'a str` wired 
 wired to this provider deserializes from the JSON string `"42"`, and `"x"` fails with
 `invalid digit found in string`.
 
-Asking for a borrowed string means the input must be able to lend one. A JSON string containing an
-escape sequence cannot be lent, because `serde_json` must unescape it into a new buffer, so
-`"\u0034\u0032"`, which spells `"42"` with escapes, fails with
-`invalid type: string "42", expected a borrowed string`. A deserializer that reads from an `io::Read`
-can never lend its input, so every string fails the same way there.
+Asking for a borrowed string means the input must be able to lend one, and the failure comes before
+any parsing. A JSON string that `serde_json` has to unescape into a new buffer cannot be lent: with the
+workspace's `serde_json` 1.0.143, `"4\"2"`, whose middle character is an escaped quote, fails with
+`invalid type: string "4\"2", expected a borrowed string`, and an escaped newline fails the same way.
+Not every escape triggers it: in the same probe, `"\u0034\u0032"` was accepted and parsed as `42`. A
+deserializer that reads from an `io::Read` can never lend its input, so there even the plain `"42"`
+fails with the same message.
 
 ### Context dependencies
 
@@ -76,9 +78,9 @@ The serializing counterpart is [`SerializeWithDisplay`](#serializewithdisplay).
 
 ### Known issues
 
-- **Escaped strings and reader input fail.** Re-entering for a borrowed `&'de str` rather than an owned
-  `String` rejects any string the deserializer cannot lend. Parsing needs only a temporary `&str`, so
-  the borrowed requirement is stricter than the provider's work demands.
+- **Some escaped strings, and all reader input, fail.** Re-entering for a borrowed `&'de str` rather
+  than an owned `String` rejects any string the deserializer cannot lend. Parsing needs only a
+  temporary `&str`, so the borrowed requirement is stricter than the provider's work demands.
 
 ## `SerializeFrom`
 

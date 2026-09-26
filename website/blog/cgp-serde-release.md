@@ -92,6 +92,10 @@ match. The candid future-work section is the honesty that
 - **One inconsistency to not copy:** the section on lookup-table implementation shows a
   `#[cgp_impl(Provider)]` block whose body still uses the inside-out `Provider::Delegate::serialize`
   form, mixing the two styles in one snippet.
+- **The two "Full Example" links point at the `main` branch**, whose `messages.rs` and
+  `arena_simplified.rs` are the 0.2.0 tests wired with `UseDelegate` tables. The `v0.8.0` versions,
+  wired with `open`, are recorded in
+  [projects/cgp-serde/examples/](../../projects/cgp-serde/examples/README.md).
 - **`cgp-serde` itself has moved on.** The repository now tracks `cgp` 0.8.0-alpha at crate version
   0.2.0, so the post describes the 0.1 release rather than the current library.
 

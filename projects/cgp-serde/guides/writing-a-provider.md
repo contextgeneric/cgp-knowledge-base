@@ -106,7 +106,7 @@ Several of the library's own providers have defects that a new provider can avoi
 
 - **Re-enter for owned intermediate types.** Ask the context for a `String` rather than a `&'de str`
   unless the result must borrow from the input. `DeserializeWithFromStr` asks for a borrowed string and
-  therefore rejects escaped JSON strings and all reader input.
+  therefore rejects JSON strings that must be unescaped, and all reader input.
 - **Accept owned data in visitors.** A visitor that implements `visit_borrowed_bytes` should also
   implement `visit_bytes`, and likewise for strings. `SerializeBytes` implements only the borrowed form
   and rejects anything the deserializer must copy.

@@ -46,7 +46,8 @@ project moves with the library while the post that announced it does not.
 - [cgp-serde/](cgp-serde/README.md) — Serde's `Serialize` and `Deserialize` rebuilt as CGP
   components, so that how each value type is encoded becomes a per-context wiring choice. The clearest
   demonstration of CGP's coherence workaround on a library every Rust developer already knows.
-  Documented in the full project shape, against its `v0.8.0` branch.
+  Documented in the full project shape, with one document per test, since its tests are its runnable
+  examples, against its `v0.8.0` branch.
 
 ## How these relate to the rest of the base
 

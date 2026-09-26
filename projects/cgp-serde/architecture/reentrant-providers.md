@@ -139,7 +139,8 @@ that encodes dates as timestamps must wire `i64` even if no field has that type.
 **`SerializeIterator` re-enters for references, so a context that uses it needs a reference entry.**
 The provider iterates `&Value`, and iterating a borrowed collection yields borrowed items, so
 serializing a `Vec<EncryptedMessage>` asks the context to serialize `&EncryptedMessage`. The test
-contexts answer with one generic entry that forwards every reference to the value behind it:
+contexts, such as the [two applications](../examples/messages.md), answer with one generic entry that
+forwards every reference to the value behind it:
 
 ```rust
 delegate_components! {

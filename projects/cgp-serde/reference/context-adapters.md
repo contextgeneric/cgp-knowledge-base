@@ -22,12 +22,13 @@ pub struct SerializeWithContext<'a, Context, T> {
 }
 
 impl<'a, Context, T> SerializeWithContext<'a, Context, T> {
-    pub fn new(context: &'a Context, value: &'a T) -> Self;
+    pub fn new(context: &'a Context, value: &'a T) -> Self { ... }
 }
 
 impl<'a, Context, T> serde::Serialize for SerializeWithContext<'a, Context, T>
 where
-    Context: CanSerializeValue<T>;
+    Context: CanSerializeValue<T>,
+{ ... }
 ```
 
 ### Behavior
@@ -44,9 +45,10 @@ let json_a = serde_json::to_string(&SerializeWithContext::new(&AppA, &archive)).
 let json_b = serde_json::to_string(&SerializeWithContext::new(&AppB, &archive)).unwrap();
 ```
 
-Nothing about the format has to know about CGP. The same adapter works with any function that accepts
-a `Serialize` value, subject to the format limits the record and sequence providers impose, recorded in
-[records](records.md#known-issues).
+The [two-application example](../examples/messages.md) does exactly this with
+`serde_json::to_string_pretty`. Nothing about the format has to know about CGP. The same adapter
+works with any function that accepts a `Serialize` value, subject to the format limits the record and
+sequence providers impose, recorded in [records](records.md#known-issues).
 
 ### Context dependencies
 
@@ -70,12 +72,13 @@ pub struct DeserializeWithContext<'a, Context, Value> {
 }
 
 impl<'a, Context, Value> DeserializeWithContext<'a, Context, Value> {
-    pub fn new(context: &'a Context) -> Self;
+    pub fn new(context: &'a Context) -> Self { ... }
 }
 
 impl<'de, 'a, Context, Value> DeserializeSeed<'de> for DeserializeWithContext<'a, Context, Value>
 where
-    Context: CanDeserializeValue<'de, Value>;
+    Context: CanDeserializeValue<'de, Value>,
+{ ... }
 ```
 
 ### Behavior

@@ -66,13 +66,16 @@ without raising it.
   table of every public item and the catalog.
 - **`guides/`** — prescriptive documents for using the project: how to write a new provider for it,
   how to wire a context, how to recognize and fix the common mistakes.
-- **`examples/`** — for a project that ships runnable example programs, one document per program,
-  named for it in kebab case, with a `README.md` that catalogs them in teaching order and documents
-  any library the examples crate carries. Each document opens with one sentence saying what the
-  program demonstrates and a header list (**Source**, **Run**, **Needs**, **Result**), then has The
-  program, Context and wiring, What it demonstrates, and, when there is something to record, Known
-  issues. **Result** says what running it produced, or why it was not run, so an agent quoting the
-  program knows whether it works. These documents record the project's own programs; a worked example
+- **`examples/`** — for a project that ships runnable example programs, or whose tests serve as its
+  examples, one document per program, named for it in kebab case, with a `README.md` that catalogs
+  them in teaching order and documents any library the examples crate carries. Each document opens
+  with one sentence saying what the program demonstrates and a header list (**Source**, **Run**,
+  **Needs**, **Result**), then walks through the program, its context and wiring, What it
+  demonstrates, and, when there is something to record, Known issues. **Result** says what running it
+  produced, or why it was not run, so an agent quoting the program knows whether it works. Quote the
+  snippets that carry the program's ideas and let the **Source** link lead to the rest: a program of a
+  few lines may be shown whole, but a long one is shown in the parts that matter, each under a heading
+  that names the idea it carries. These documents record the project's own programs; a worked example
   that teaches the project's scenario belongs in [../examples/](../examples/README.md), and the two
   link to each other.
 - **A comparison document**, named for what it compares against (`serde-comparison.md`), when the

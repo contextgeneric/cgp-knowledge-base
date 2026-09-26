@@ -65,7 +65,8 @@ so an application depends only on the crates whose providers its wiring names. E
   into it. Adds no external dependency.
 - **`cgp-serde-typed-arena`** — an implementation of the allocation component over `typed-arena`.
 - **`cgp-serde-tests`** — the test crate: a JSON round trip, the two-application serialization demo,
-  and the arena deserialization demo in its layered and simplified forms.
+  and the arena deserialization demo in its layered and simplified forms. The four tests are the
+  repository's only runnable examples, and each is documented in [examples/](examples/README.md).
 
 ## Status and gaps
 
@@ -150,6 +151,16 @@ provider.
     and the `cargo cgp check` output for each.
   - [formats.md](guides/formats.md) — using a context with `serde_json` and other formats, and which
     formats work.
+- [examples/](examples/README.md) — one document per test, in teaching order, with what running it
+  produces and the snippets that carry its ideas:
+  - [basic.md](examples/basic.md) — one struct round-tripped through JSON by the `TryComputer` JSON
+    providers, with its bytes as hex.
+  - [messages.md](examples/messages.md) — the two-application demo: the same nested archive encoded
+    two ways by contexts that differ in three entries.
+  - [arena-simplified.md](examples/arena-simplified.md) — borrowed values deserialized into a
+    context-supplied arena with a test-local getter and deserializer.
+  - [arena.md](examples/arena.md) — the same through the layered allocation crates, with the
+    allocator as a wiring entry.
 - [serde-comparison.md](serde-comparison.md) — what cgp-serde keeps from Serde, adds, and lacks, how
   Serde's idioms map onto it, and when plain Serde is the better choice.
 - [testing.md](testing.md) — what the four tests and their checks pin, and what no test exercises.
@@ -172,9 +183,11 @@ Three artifacts are planned:
 ## How it relates to the rest of the base
 
 The [modular serialization example](../../examples/modular-serialization.md) develops the project's
-scenario end to end. The [announcement post](../../website/blog/cgp-serde-release.md) is the fullest
-published account, written against an earlier release; its document records what has drifted. The
-project was also the live demonstration in the
+scenario end to end, and is the teaching version of what the repository's own tests, documented in
+[examples/](examples/README.md), show as they stand. The
+[announcement post](../../website/blog/cgp-serde-release.md) is the fullest published account, written
+against an earlier release; its document records what has drifted. The project was also the live
+demonstration in the
 [RustLab 2025 talk](../../website/blog/rustlab-2025-coherence.md).
 
 On the CGP side, the library is the clearest available demonstration of

@@ -28,13 +28,14 @@ any bytes the deserializer must copy are rejected. A JSON string with an escape 
 providers require `From<&'de [u8]>` or `TryFrom<&'de [u8]>`. See
 [strings and bytes](reference/strings-and-bytes.md#known-issues).
 
-### `DeserializeWithFromStr` rejects escaped strings and reader input
+### `DeserializeWithFromStr` rejects strings the input cannot lend
 
 `DeserializeWithFromStr` asks the context for a `&'de str` borrowed from the input, so any string the
-input cannot lend fails before parsing. With `u64` wired to `DeserializeWithFromStr` and `&'a str` to
-`UseSerde`, the JSON string `"42"` parses, but the same number written with an escape sequence fails
-with `invalid type: string "42", expected a borrowed string`, and every string read through an
-`IoRead` fails the same way. Re-entering for an owned `String` would accept them. See
+input cannot lend fails before parsing. With `u32` wired to `DeserializeWithFromStr` and `&'a str` to
+`UseSerde`, the JSON string `"42"` parses, but a string `serde_json` must unescape, such as `"4\"2"`
+with its escaped quote, fails with `invalid type: string "4\"2", expected a borrowed string`. Through a
+`serde_json::de::IoRead` even the plain `"42"` fails the same way. Re-entering for an owned `String`
+would accept them. See
 [conversions](reference/conversions.md#deserializewithfromstr).
 
 ### Records and sequences do not declare their length
@@ -100,6 +101,20 @@ Housekeeping items affect neither behavior nor features but mislead a reader or 
   defers everything else to the announcement post.
 - **Tests that assert nothing.** `messages.rs` prints both applications' JSON without checking it, and
   seven providers are never run; see [testing.md](testing.md).
+- **Dead wiring and a redundant check in the arena tests.** `arena.rs` opens `TryComputerComponent`
+  and wires `SerializeJson` and `DeserializeJson<T>`, but calls `deserialize_json_string`, which does
+  not use them; a probe without those entries built and passed. The `SerializeJson` entry could not
+  work if called, since the context wires no serializers. `arena_simplified.rs` has a `CanUseApp`
+  table checking `ValueDeserializerComponent` at `(Life<'a>, Coord)`, which its `CanDeserializeApp`
+  table already covers. See the [arena](examples/arena.md#known-issues) and
+  [simplified arena](examples/arena-simplified.md#known-issues) examples.
+- **A getter an implicit argument could replace.** `arena_simplified.rs` declares a
+  `#[cgp_auto_getter]` `HasArena` only so its local `DeserializeAndAllocate` can read the context's
+  `arena` field. A probe replaced the import with an `#[implicit] arena: &&'a Arena<Value>` argument
+  and deserialized the same value, which is the form the
+  [reading-context-fields guide](../../cgp/guides/reading-context-fields.md) prescribes. The library's
+  own `HasArena` in `cgp-serde-typed-arena` is a wired `#[cgp_getter]`, whose field a context chooses
+  per type, and is not affected.
 - **A duplicated seed.** `DeserializeExtend` defines a private seed identical in behavior to the public
   `DeserializeWithContext`.
 

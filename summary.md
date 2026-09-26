@@ -971,8 +971,9 @@ it stale.
   missing features, and housekeeping.
 - [projects/AGENTS.md](projects/AGENTS.md) — the rules for a project section: verified against the
   project's source at the branch sibling-projects.md records, probes rather than reading alone, leaving
-  CGP itself to `cgp/`, the fixed section shape including the per-example documents, the reference
-  entry template, and naming the public material each document feeds.
+  CGP itself to `cgp/`, the fixed section shape including the per-example documents that quote
+  snippets rather than whole programs, the reference entry template, and naming the public material
+  each document feeds.
 - [projects/cgp-serde/README.md](projects/cgp-serde/README.md) — Serde rebuilt as CGP components: what
   it is, which revision the documents describe (the unreleased `v0.8.0` branch against the published
   0.2.0), the crate split, the confirmed gaps, the section catalog, and the public material the
@@ -1016,11 +1017,25 @@ it stale.
 - [projects/cgp-serde/guides/formats.md](projects/cgp-serde/guides/formats.md) — serializing with any
   format, the three `serde_json` deserialization entry points, which formats fit the output, and
   writing an entry point for another format.
+- [projects/cgp-serde/examples/README.md](projects/cgp-serde/examples/README.md) — the catalog of the
+  repository's four tests as runnable examples, with how to run each and what it produced, the
+  environmental, parameter-targeted shape they all wire, and the boundary with the top-level example.
+- [projects/cgp-serde/examples/basic.md](projects/cgp-serde/examples/basic.md) — one struct
+  round-tripped through JSON by the `TryComputer` JSON providers, with bytes as hex and anyhow errors.
+- [projects/cgp-serde/examples/messages.md](projects/cgp-serde/examples/messages.md) — the
+  two-application demo, the three entries that differ, the entries the traversal needs, and the
+  missing-`i64` diagnostic.
+- [projects/cgp-serde/examples/arena-simplified.md](projects/cgp-serde/examples/arena-simplified.md)
+  — borrowed values allocated into a context-supplied arena by a test-local getter and deserializer;
+  a redundant check, and a getter an implicit argument could replace.
+- [projects/cgp-serde/examples/arena.md](projects/cgp-serde/examples/arena.md) — the same through the
+  layered allocation crates, the missing-allocator diagnostic, and the dead JSON handler wiring.
 - [projects/cgp-serde/serde-comparison.md](projects/cgp-serde/serde-comparison.md) — what cgp-serde
   keeps from Serde and adds to it, how Serde's idioms map onto wiring, what it lacks, and when plain
   Serde is the better choice.
 - [projects/cgp-serde/testing.md](projects/cgp-serde/testing.md) — the four tests and their checks,
-  which providers are asserted, run, or never exercised, and the untested failure paths.
+  the dead wiring and redundant check two of them carry, which providers are asserted, run, or never
+  exercised, and the untested failure paths.
 - [projects/cgp-serde/issues.md](projects/cgp-serde/issues.md) — the confirmed defects (byte
   round-trip, owned bytes, borrowed strings, undeclared lengths), missing features, and housekeeping.
 - [projects/cgp-serde/reference/README.md](projects/cgp-serde/reference/README.md) — the catalog,

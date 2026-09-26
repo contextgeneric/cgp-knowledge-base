@@ -28,7 +28,9 @@ delegate_components! {
 }
 ```
 
-Open several components at once with braces, as in
+This is the table of `AppA` in the repository's
+[two-application example](../examples/messages.md), condensed to one line per entry. Open several
+components at once with braces, as in
 `open { ValueSerializerComponent, ValueDeserializerComponent };`. Prefer `open` to the
 `UseDelegate<new … { … }>` tables of the published release and the announcement post, per
 [dispatching per type](../../../cgp/guides/dispatching-per-type.md).
@@ -110,8 +112,9 @@ check_components! {
 }
 ```
 
-Give each table its own `#[check_trait]` name when a module holds more than one check for the same
-context, since both would otherwise derive the same trait name. Use standalone checks rather than
+The repository's [`basic` example](../examples/basic.md) checks its context the same way. Give each
+table its own `#[check_trait]` name when a module holds more than one check for the same context,
+since both would otherwise derive the same trait name. Use standalone checks rather than
 `delegate_and_check_components!`, which derives checks only for plain entries and leaves every `open`
 dispatch unchecked.
 

@@ -121,10 +121,18 @@ these are needed only by a downstream user still building `UseDelegate<new ...>`
 **breaking change that removing them causes is accepted**. Confirm first that no table inside the
 repository still resolves through one.
 
-**Check the two getter traits** against the implicit-argument rule in
-[reading-context-fields](../../cgp/guides/reading-context-fields.md). The arena getter is likely a
-legitimate exception — it carries an associated type and is required as a named trait — but the
-second should be confirmed.
+**Replace the test-local getter with an implicit argument.** Checked against the implicit-argument
+rule in [reading-context-fields](../../cgp/guides/reading-context-fields.md), the two `HasArena`
+traits differ. The library's, in `cgp-serde-typed-arena`, is a wired `#[cgp_getter]` whose field a
+context chooses per type, which is the case that construct exists for. The one in
+`arena_simplified.rs` is a `#[cgp_auto_getter]` read only by a provider on its own context, and a
+probe confirmed an `#[implicit]` argument replaces it; see
+[issues](../../projects/cgp-serde/issues.md#housekeeping).
+
+**Clean up the two arena tests** before page 4 quotes them. `arena.rs` wires two JSON handler entries
+that its test never uses, and `arena_simplified.rs` repeats one of its deserialization checks in a
+second table; both are recorded in the [arena](../../projects/cgp-serde/examples/arena.md#known-issues)
+and [simplified arena](../../projects/cgp-serde/examples/arena-simplified.md#known-issues) examples.
 
 **Ignore `target/package/`.** It holds packaged copies of 0.2.0 containing the old
 `UseDelegate<new SerializerComponents { ... }>` tables, and a grep for legacy constructs will find them.
@@ -152,10 +160,15 @@ library itself against its `v0.8.0` branch, and each page draws on a part of it:
   [provider reference](../../projects/cgp-serde/reference/README.md), and
   [writing a provider](../../projects/cgp-serde/guides/writing-a-provider.md).
 - **Page 3** — [wiring a context](../../projects/cgp-serde/guides/wiring-a-context.md), the
-  [context adapters](../../projects/cgp-serde/reference/context-adapters.md), and the
-  [encodings](../../projects/cgp-serde/reference/encodings.md).
-- **Page 4** — [context services](../../projects/cgp-serde/architecture/context-services.md) and the
-  [allocation reference](../../projects/cgp-serde/reference/allocation.md).
+  [context adapters](../../projects/cgp-serde/reference/context-adapters.md), the
+  [encodings](../../projects/cgp-serde/reference/encodings.md), and the
+  [`basic`](../../projects/cgp-serde/examples/basic.md) and
+  [`messages`](../../projects/cgp-serde/examples/messages.md) examples, which record the tests this
+  page takes its code from.
+- **Page 4** — [context services](../../projects/cgp-serde/architecture/context-services.md), the
+  [allocation reference](../../projects/cgp-serde/reference/allocation.md), and the
+  [`arena`](../../projects/cgp-serde/examples/arena.md) example, the layered form the page should
+  teach.
 - **Page 5** — [issues](../../projects/cgp-serde/issues.md) and the
   [comparison with Serde](../../projects/cgp-serde/serde-comparison.md), which between them hold the
   confirmed gaps and the cases where plain Serde is the better tool.

@@ -195,9 +195,10 @@ The deserialization check lists each value type with a [`Life<'de>`](../../../cg
 in front, because the component's `'de` lifetime is one of its parameters and CGP lifts it into a type
 for the check.
 
-`Payload { quantity: 42, message: "hello".into(), data: vec![1, 2, 3] }` serializes to
-`{"quantity":42,"message":"hello","data":"010203"}` and deserializes back to the same value. The
-providers come from `cgp_serde::providers`, except `SerializeHex`, which comes from
+The wiring is the value half of the repository's [`basic` test](../examples/basic.md), which adds the
+JSON handler entries. `Payload { quantity: 42, message: "hello".into(), data: vec![1, 2, 3] }`
+serializes to `{"quantity":42,"message":"hello","data":"010203"}` and deserializes back to the same
+value. The providers come from `cgp_serde::providers`, except `SerializeHex`, which comes from
 `cgp_serde_extra::providers`.
 
 ## Related documents

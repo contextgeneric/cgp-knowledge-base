@@ -8,19 +8,27 @@ all four tests; the library crates carry no tests and no doc tests of their own.
 ## What each test pins
 
 Each test file defines its own data types and contexts, so the files double as the library's only
-worked examples in the repository:
+runnable examples, and each is documented as one in [examples/](examples/README.md):
 
 | File | Scenario | Runtime assertion | Compile-time checks |
 |---|---|---|---|
 | `basic.rs` | A `Payload` round-tripped through JSON by the `try_compute` JSON providers, with bytes as hex | the exact JSON string, and equality after the round trip | serializer and deserializer for all four value types |
 | `messages.rs` | The two-application demo: `AppA` with hex and RFC 3339, `AppB` with base64 and timestamps | none; both outputs are printed | serializer for all seven value types, for each context |
 | `arena.rs` | Deserializing a `Payload<'a>` into an arena through the layered allocation crates | equality with the expected value | the arena getter, and the deserializer for four value types |
-| `arena_simplified.rs` | The same with a test-local getter and `DeserializeAndAllocate`, as in the announcement post | equality with the expected value | the deserializer for four value types |
+| `arena_simplified.rs` | The same with a test-local getter and `DeserializeAndAllocate`, as in the announcement post | equality with the expected value | the deserializer for four value types, plus a second table repeating one of them |
 
 All four use `serde_json` as the format and `cgp-error-anyhow` for the error type where one is needed.
-The checks use [`check_components!`](../../cgp/reference/macros/check_components.md) with explicit
-`#[check_trait]` names, and list deserializer entries with `Life<'de>`, as
-[wiring a context](guides/wiring-a-context.md#check-every-value-type) recommends.
+The checks use [`check_components!`](../../cgp/reference/macros/check_components.md), and list
+deserializer entries with `Life<'de>`, as
+[wiring a context](guides/wiring-a-context.md#check-every-value-type) recommends. Where a module holds
+two tables for one context they carry explicit `#[check_trait]` names; `messages.rs` checks two
+different contexts and relies on the derived names.
+
+Two of the tests carry wiring or checks that add nothing. `arena.rs` opens `TryComputerComponent` and
+wires both JSON codes although it deserializes through `deserialize_json_string`, which bypasses them.
+`arena_simplified.rs` checks deserializing `Coord` in a table of its own that its second table already
+covers. The [arena](examples/arena.md#known-issues) and
+[simplified arena](examples/arena-simplified.md#known-issues) examples record both.
 
 ## What is exercised
 

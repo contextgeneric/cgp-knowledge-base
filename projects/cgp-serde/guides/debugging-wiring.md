@@ -45,15 +45,21 @@ The dependency chain the tool prints beneath the root cause walks from `Serializ
 field list to the `data` field, so the missing type is named even when it is several levels deep. The
 fix is an entry for `Vec<u8>`.
 
-The same diagnostic, naming a different key, covers the two missing entries that are easiest to
-overlook because no field in the data has the type:
+The same diagnostic, naming a different key, covers three missing entries that are easy to overlook
+because no field in the data has the type:
 
 - **The reference entry for `SerializeIterator`.** Wiring `Vec<u64>` to `SerializeIterator` without a
   reference entry reports a missing `@ValueSerializerComponent.&u64`, because iterating the vector by
   reference yields `&u64`. The fix is `@ValueSerializerComponent.<'a, T> &'a T: SerializeDeref`.
 - **The intermediate type of an encoding.** Wiring `DateTime<Utc>` to `SerializeTimestamp` without an
   `i64` entry reports a missing `@ValueSerializerComponent.i64`, because the timestamp encoding
-  serializes the number through the context. Hex, base64, and RFC 3339 need `String` the same way.
+  serializes the number through the context. Hex, base64, and RFC 3339 need `String` the same way;
+  the [two-application example](../examples/messages.md#entries-the-traversal-needs) shows the
+  `i64` case with its output.
+- **A service a provider takes from the context.** Wiring `&'a Coord` to `DeserializeAndAllocate`
+  without an `AllocatorComponent` entry reports that the context does not contain any delegate entry
+  for `AllocatorComponent`, because the provider allocates through the context's `CanAlloc`. The
+  [arena example](../examples/arena.md#wiring-the-three-layers) shows the code and the output.
 
 ## A deserialization check omits the lifetime
 
