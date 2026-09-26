@@ -124,12 +124,21 @@ feature unification turns it on here too and adds what anyhow's `std` mode bring
 capture. `cgp-error-std` is `#![no_std]` and needs only `alloc`. `cgp-error-eyre` is not `no_std`,
 because eyre itself requires `std`.
 
-`cgp-error-eyre` enables eyre's `auto-install` feature and leaves `track-caller` off. Without
+`cgp-error-eyre` enables eyre's `auto-install` and `track-caller` features. Without
 `auto-install`, eyre has no report handler until the application calls `eyre::set_hook`, and every
 report the crate builds panics. With it, eyre installs its default handler the first time a report
 is built, after which `set_hook` returns an error, so an application that wants `color-eyre` or
-another handler installs it before raising anything. `track-caller` stays off because it would
-record a location inside the backend; see [cgp-error-eyre/issues.md](cgp-error-eyre/issues.md).
+another handler installs it before raising anything.
+
+`track-caller` makes the handler record where a report was built, and the location is the caller's
+line because every function between the caller and eyre is `#[track_caller]`. `raise_error` and
+`wrap_error` are declared `#[track_caller]` in `cgp-error`, which Rust applies to every impl,
+including the forwarding impls CGP generates; see
+[`CanRaiseError`](../../cgp/reference/components/can_raise_error.md#behavior). Inside the providers,
+the calls that build a report, `Into::into` in `RaiseEyreError` and the `eyre!` macro in the
+formatting providers, are `#[track_caller]` too, so the location passes through them to eyre. The
+generic `RaiseFrom` converts with `Into::into` as well, so it records the caller's line for an eyre
+context in the same way.
 
 Each crate depends on `cgp-core` under the name `cgp` rather than on the `cgp` facade, which keeps
 `cgp-extra` out of its build. The name matters because CGP's macros emit paths through `::cgp`.

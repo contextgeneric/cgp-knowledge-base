@@ -24,7 +24,8 @@ Six files cover this crate:
   backend does, and re-raises an `anyhow::Error` through the reflexive `From`, which are the claims
   in [architecture.md](../architecture.md#what-a-backend-adds-over-the-generic-providers).
 - [`readme_anyhow.rs`](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/error_backends/readme_anyhow.rs)
-  — the crate README's example, copied verbatim, since the README marks it `ignore`.
+  — the crate README's example, which the `cgp-tests` build script turns into a test, since the
+  README marks it `ignore`.
 - [`swapping_backends.rs`](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/error_backends/swapping_backends.rs)
   — one provider generic over `CanRaiseError` and `CanWrapError` runs unchanged on an anyhow, an
   eyre, and a std context and produces the same messages from each.

@@ -79,8 +79,10 @@ Caused by:
    1: no file
 ```
 
-When `RUST_BACKTRACE` or `RUST_LIB_BACKTRACE` is set, the handler also captures a backtrace and
-appends it after the chain.
+After the chain the handler prints a `Location:` section with the file, line, and column that called
+`raise_error`, since the crate enables eyre's `track-caller` feature and `raise_error` is
+`#[track_caller]` through every impl; wrapping keeps that location. When `RUST_BACKTRACE` or
+`RUST_LIB_BACKTRACE` is set, the handler also captures a backtrace and appends it at the end.
 
 The raiser rejects any source that is not a standard error, and the wrapper rejects a borrowed
 detail, exactly as anyhow's do; see [debugging](../guides/debugging.md).

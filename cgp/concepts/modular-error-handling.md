@@ -30,6 +30,7 @@ Two further components give the abstract error its behavior, each parameterized 
 #[derive_delegate(UseDelegate<SourceError>)]
 #[use_type(HasErrorType.Error)]
 pub trait CanRaiseError<SourceError> {
+    #[track_caller]
     fn raise_error(error: SourceError) -> Error;
 }
 
@@ -37,9 +38,12 @@ pub trait CanRaiseError<SourceError> {
 #[derive_delegate(UseDelegate<Detail>)]
 #[use_type(HasErrorType.Error)]
 pub trait CanWrapError<Detail> {
+    #[track_caller]
     fn wrap_error(error: Error, detail: Detail) -> Error;
 }
 ```
+
+Both methods are `#[track_caller]`, which carries through every impl, so an error library that records where an error was built sees the caller's line; see [`CanRaiseError`](../reference/components/can_raise_error.md#behavior).
 
 These two operations cover the everyday error-handling motions: raise a foreign error into the abstract one, and wrap context onto it as it propagates. A provider that fails writes `Context::raise_error(source)` and `Context::wrap_error(err, detail)` — both associated functions, called on the context *type*, because constructing an error is a property of the context rather than of any value in scope. Crucially, the provider states which sources it raises and which details it wraps as [impl-side dependencies](impl-side-dependencies.md) in its `where` clause, so those requirements never leak into the consumer trait a caller bounds on. A loader, for example, needs only `Context: CanRaiseError<String> + CanWrapError<String>` to produce and enrich an error it knows nothing concrete about.
 

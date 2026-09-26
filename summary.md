@@ -52,7 +52,8 @@ it stale.
 - [cgp_auto_getter.md](cgp/reference/macros/cgp_auto_getter.md) — define a getter as a blanket impl
   over `HasField`, keyed by the method name.
 - [cgp_component.md](cgp/reference/macros/cgp_component.md) — the foundational macro: turn one trait
-  into a component (consumer trait, provider trait, marker, blanket impls).
+  into a component (consumer trait, provider trait, marker, blanket impls), and how trait and method
+  attributes such as `#[track_caller]` carry onto the generated items.
 - [cgp_computer.md](cgp/reference/macros/cgp_computer.md) — define a `Computer` provider from a
   function, with the promotion tables that answer the rest of the handler family.
 - [cgp_fn.md](cgp/reference/macros/cgp_fn.md) — define a trait with a single blanket implementation
@@ -1261,10 +1262,10 @@ it stale.
 - [projects/error/cgp-error-eyre/reference.md](projects/error/cgp-error-eyre/reference.md) —
   `UseEyreError`, `RaiseEyreError`, `DebugEyreError`, and `DisplayEyreError`, with the default
   handler's output.
-- [projects/error/cgp-error-eyre/testing.md](projects/error/cgp-error-eyre/testing.md) — the four
-  test files, the handler check they perform, and what nothing tests.
-- [projects/error/cgp-error-eyre/issues.md](projects/error/cgp-error-eyre/issues.md) — reports carry
-  no caller location, because `#[track_caller]` cannot pass through CGP's generated impls.
+- [projects/error/cgp-error-eyre/testing.md](projects/error/cgp-error-eyre/testing.md) — the five
+  test files, the handler and caller-location checks they perform, and what nothing tests.
+- [projects/error/cgp-error-eyre/issues.md](projects/error/cgp-error-eyre/issues.md) — no open
+  items of its own.
 - [projects/error/cgp-error-std/README.md](projects/error/cgp-error-std/README.md) — a boxed standard
   error as the context's error: the providers and types, and how its errors print a chain.
 - [projects/error/cgp-error-std/reference.md](projects/error/cgp-error-std/reference.md) —

@@ -18,6 +18,7 @@ Both traits import the context's shared abstract error type with [`#[use_type(Ha
 #[derive_delegate(UseDelegate<SourceError>)]
 #[use_type(HasErrorType.Error)]
 pub trait CanRaiseError<SourceError> {
+    #[track_caller]
     fn raise_error(error: SourceError) -> Error;
 }
 ```
@@ -32,6 +33,7 @@ The `SourceError` parameter is the concrete error being raised, and `raise_error
 #[derive_delegate(UseDelegate<Detail>)]
 #[use_type(HasErrorType.Error)]
 pub trait CanWrapError<Detail> {
+    #[track_caller]
     fn wrap_error(error: Error, detail: Detail) -> Error;
 }
 ```
@@ -41,6 +43,8 @@ Here `wrap_error` takes the context's current `Error` and a `Detail` value and r
 ## Behavior
 
 A context gains these operations by wiring `ErrorRaiserComponent` and `ErrorWrapperComponent` to providers, exactly as for any other component. Because both traits delegate through `UseDelegate<SourceError>` and `UseDelegate<Detail>`, the natural wiring is a delegation table that maps each concrete source-error or detail type to a provider that knows how to handle it; a context can therefore raise a handful of unrelated error types into one abstract error, each through its own provider. The pluggable [error backends](../../../projects/error/README.md) (`cgp-error-anyhow`, `cgp-error-eyre`, `cgp-error-std`) supply providers that implement these traits for common cases, so an application usually wires a backend rather than writing the raise and wrap logic itself.
+
+Both methods are declared `#[track_caller]`. Rust applies the attribute on a trait method declaration to every impl of that method, and `#[cgp_component]` copies it onto the provider trait's declaration, so it reaches the consumer blanket impl, the delegation blanket impl, the `UseDelegate` and `RedirectLookup` impls, and every provider. An error library that records `Location::caller()` when it builds an error, such as eyre with its `track-caller` feature, therefore records the line that called `raise_error` rather than a line inside the provider, whether the context wires the component directly, with `open`, or through a namespace path. The location survives only while every call between the caller and the library is `#[track_caller]`: `Into::into` and eyre's constructors are, but a helper function the provider calls needs the attribute too, or the library records the helper's line.
 
 Both traits being associated-function components means `raise_error` and `wrap_error` are called on the context *type* — `Context::raise_error(source)` — and produce the abstract error without borrowing the context value. This matches how errors are typically constructed deep inside generic code where only the type parameter is in scope.
 

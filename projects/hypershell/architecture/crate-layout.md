@@ -84,7 +84,7 @@ pinned toolchain they are not needed: the examples check and build without them.
 and `cgp-error-anyhow` in `[patch.crates-io]` with the `cgp` repository's `main` branch by git URL,
 and the lockfile pins the commit, so a fresh clone builds on its own and its first build fetches that
 repository. Commented-out entries with paths into `../cgp` replace them when testing against a local
-change to `cgp`. The stale `repository` field is recorded in [issues.md](../issues.md#housekeeping).
+change to `cgp`.
 
 ## Source
 

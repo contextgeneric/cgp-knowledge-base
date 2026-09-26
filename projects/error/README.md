@@ -52,8 +52,8 @@ ways that change behavior:
   builds panics unless the application has installed a hook with `eyre::set_hook`. This source
   enables `auto-install`.
 - **eyre locations.** Where the application enables eyre's default features, the published crate's
-  reports record a `Location:` inside the backend. This source does not enable `track-caller`, though
-  an application that enables it itself still gets that location.
+  reports record a `Location:` inside the backend. In this source `raise_error` and `wrap_error` are
+  `#[track_caller]` and the crate enables `track-caller`, so the location is the caller's line.
 - **std wrapping.** The published `RaiseBoxedStdError` implements only `ErrorRaiser`, so it cannot be
   wired as a wrapper. This source gives it an `ErrorWrapper` impl.
 - **std chains.** The published `WrapError` prints its source inside its own `Display` and also
@@ -74,7 +74,10 @@ reason the example in each crate's README is marked `ignore` rather than run as 
 crate's own doctests `cgp` names `cgp-core`, which has no `core` module, while the example imports
 from the `cgp` facade the way an application does. The tests live in the `cgp-tests` crate's
 `error_backends` target and run with the rest of the suite, which CI runs through
-`cargo nextest`; each crate's `testing.md` says what they pin.
+`cargo nextest`; each crate's `testing.md` says what they pin. So that the README examples are
+still checked, the `cgp-tests` build script reads each README, turns its `ignore` block into a test
+module, and the `readme_anyhow.rs`, `readme_eyre.rs`, and `readme_std.rs` files include it, which
+keeps the README the only copy of its example.
 
 These documents were verified against the `cgp` source on `main` at commit `adc616c`, with `rustc`
 1.98.1, where `cargo test --workspace --all-features` and both clippy configurations pass. One claim
@@ -85,14 +88,8 @@ crate for a bare-metal target either.
 
 ## Confirmed gaps
 
-The crates have no open defects. One limitation and two repository-wide housekeeping items remain:
+The crates have no open defects. One repository-wide housekeeping item remains:
 
-- **No caller location in eyre reports.** A report built through `cgp-error-eyre` cannot record where
-  the caller raised it; see [cgp-error-eyre/issues.md](cgp-error-eyre/issues.md).
-- **README examples are copied into tests.** Each crate's README example is marked `ignore`, for
-  the reason given under [Building and testing](#building-and-testing), so the `error_backends`
-  target carries a verbatim copy of each (`readme_anyhow.rs`, `readme_eyre.rs`, `readme_std.rs`)
-  that CI compiles and runs. The copy and the README must be kept in step by hand.
 - **No bare-metal build.** Nothing builds `cgp-error-anyhow` or `cgp-error-std` for a target without
   `std`, so their `no_std` status is not checked in CI.
 

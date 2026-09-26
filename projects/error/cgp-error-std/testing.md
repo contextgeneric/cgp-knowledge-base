@@ -20,7 +20,8 @@ Five files cover this crate:
 - [`swapping_backends.rs`](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/error_backends/swapping_backends.rs)
   — the same generic provider on a std context as on the anyhow and eyre ones.
 - [`readme_std.rs`](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/error_backends/readme_std.rs)
-  — the crate README's example, copied verbatim, since the README marks it `ignore`.
+  — the crate README's example, which the `cgp-tests` build script turns into a test, since the
+  README marks it `ignore`.
 
 ## What nothing tests
 
