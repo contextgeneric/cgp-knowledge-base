@@ -145,10 +145,11 @@ release currently in preparation, since v0.8.0 is not yet out.
 
 [projects/](projects/README.md) documents the ecosystem projects that *use* CGP rather than being part
 of it: [hypershell](projects/hypershell/README.md), a type-level shell-scripting DSL,
-[cgp-serde](projects/cgp-serde/README.md), Serde rebuilt as swappable components, and
+[cgp-serde](projects/cgp-serde/README.md), Serde rebuilt as swappable components,
 [cgp-examples](projects/cgp-examples/README.md), a repository of independent example crates documented
-as one subproject per crate. Each project section is verified against its project's source at its
-`v0.8.0` branch and grows from a single orienting `README.md` into the shape its rules describe: the
+as one subproject per crate, and the [error backends](projects/error/README.md), three opt-in crates
+that ship from the `cgp` repository without being part of the `cgp` crate. Each project section is
+verified against its project's source at the branch recorded for it and grows from a single orienting `README.md` into the shape its rules describe: the
 project's architecture, a reference for its public items, guides, its tests, its open issues, and one
 document per runnable example, which for cgp-serde means each of its tests. A project section is the
 primary source for its project's facts, so other documents link to it instead of restating them, while

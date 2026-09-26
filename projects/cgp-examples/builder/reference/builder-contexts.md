@@ -50,8 +50,11 @@ check_components! {
 ### Behavior
 
 `builder.handle(PhantomData::<()>, ())` runs the three configurable builders and merges their outputs
-into an `App`. The two error entries are the same in every builder context: `UseAnyhowError` sets the
-abstract error to `anyhow::Error`, and `RaiseAnyhowError` raises any standard error into it, which
+into an `App`. The two error entries are the same in every builder context:
+[`UseAnyhowError`](../../../error/cgp-error-anyhow/reference.md#useanyhowerror) sets the abstract
+error to `anyhow::Error`, and
+[`RaiseAnyhowError`](../../../error/cgp-error-anyhow/reference.md#raiseanyhowerror) raises any
+standard error into it, which
 satisfies each provider's `CanRaiseError<sqlx::Error>` or `CanRaiseError<reqwest::Error>`. The check
 asserts that `HandlerComponent` holds at the unit `Code` and `Input` the call uses, so a missing
 configuration field or provider fails the build at the check, as

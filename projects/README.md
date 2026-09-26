@@ -24,7 +24,13 @@ repository is inside the organization, but it is one tutorial program documented
 [profile picture](../examples/profile-picture.md) worked example, so it too is recorded only in
 [sibling-projects.md](../sibling-projects.md).
 [`cgp-examples`](https://github.com/contextgeneric/cgp-examples) does have a section here: its crates
-are cited by the blog, and agents work on them directly. The worked examples that teach the same
+are cited by the blog, and agents work on them directly.
+
+A project need not have a repository of its own. The [error backends](error/README.md) live in the
+`cgp` repository, but they are separate crates that an application adds on its own, and nothing in
+the `cgp` crate depends on them, so to a user they are a project built on CGP rather than part of it.
+They are documented here for that reason, while the traits they implement stay under
+[cgp/](../cgp/README.md). The worked examples that teach the same
 scenarios stay in [examples/](../examples/README.md), because an agent learning CGP should not need a
 project section to learn a pattern.
 
@@ -41,8 +47,8 @@ them.
 
 ## The catalog
 
-Three projects are documented so far. All three track the CGP version in development, 0.8.0-alpha,
-and each is cited by public posts whose code has since gone stale, which is a recurring pattern worth
+Four projects are documented so far. All four track the CGP version in development, 0.8.0-alpha,
+and most are cited by public posts whose code has since gone stale, which is a recurring pattern worth
 expecting: the project moves with the library while the post that announced it does not.
 
 - [hypershell/](hypershell/README.md) — a modular, type-level DSL for shell-script-like programs
@@ -58,6 +64,10 @@ expecting: the project moves with the library while the post that announced it d
   documented as its own subproject: an HTTP money-transfer service, a modular interpreter, an
   application builder, a web-app wiring study, and a greeting program. Documented against its `v0.8.0`
   branch, with all five subprojects written.
+- [error/](error/README.md) — the error backends `cgp-error-anyhow`, `cgp-error-eyre`, and
+  `cgp-error-std`, which each make one concrete type a context's abstract error. Documented with one
+  subdirectory per crate and a shared architecture and guides, against the `cgp` repository's `main`
+  branch, where they live under `crates/standalone/error/`.
 
 ## How these relate to the rest of the base
 

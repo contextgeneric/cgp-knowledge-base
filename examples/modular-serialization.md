@@ -399,8 +399,8 @@ The wiring opens the deserialization component and keys on the value type as bef
 `Coord` and `Cluster` to the record deserializer, the borrowed `&'a Coord` to the arena allocator, and
 the `Vec<&'a Coord>` to a sequence deserializer. It wires the allocation layers with two plain entries,
 and, because deserialization can fail, the [`HasErrorType`](../cgp/reference/components/has_error_type.md)
-and [`CanRaiseError`](../cgp/reference/components/can_raise_error.md) error components to an
-`anyhow`-backed backend:
+and [`CanRaiseError`](../cgp/reference/components/can_raise_error.md) error components to the
+[`anyhow` backend](../projects/error/cgp-error-anyhow/reference.md):
 
 ```rust
 use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};

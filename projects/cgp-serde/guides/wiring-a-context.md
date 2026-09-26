@@ -81,7 +81,8 @@ ErrorRaiserComponent: RaiseAnyhowError,
 ```
 
 These are plain entries, without `open`, imported from `cgp::core::error` and `cgp_error_anyhow`; see
-[modular error handling](../../../cgp/concepts/modular-error-handling.md). A context that only
+[modular error handling](../../../cgp/concepts/modular-error-handling.md), and the
+[`cgp-error-anyhow` reference](../../error/cgp-error-anyhow/reference.md) for the two providers. A context that only
 serializes through the adapters directly does not need them.
 
 ## Check every value type

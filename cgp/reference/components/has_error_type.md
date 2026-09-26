@@ -28,7 +28,7 @@ Because the trait is declared with `#[cgp_type]`, it is a full abstract-type com
 
 ## Behavior
 
-A context obtains its abstract error type either by implementing `HasErrorType` directly — `impl HasErrorType for App { type Error = anyhow::Error; }` — or, more commonly, by wiring its error-type component to a provider. Because `#[cgp_type]` generates the `UseType` impl, a context can name the concrete error type directly in its wiring with `UseType<E>`, and the standalone error backends (the `cgp-error-anyhow`, `cgp-error-eyre`, and `cgp-error-std` crates) provide ready-made providers that set `Error` to their respective error types. Once the context has `HasErrorType`, every component bounded by it shares that one `Self::Error`.
+A context obtains its abstract error type either by implementing `HasErrorType` directly — `impl HasErrorType for App { type Error = anyhow::Error; }` — or, more commonly, by wiring its error-type component to a provider. Because `#[cgp_type]` generates the `UseType` impl, a context can name the concrete error type directly in its wiring with `UseType<E>`, and the standalone [error backends](../../../projects/error/README.md) (the `cgp-error-anyhow`, `cgp-error-eyre`, and `cgp-error-std` crates) provide ready-made providers that set `Error` to their respective error types. Once the context has `HasErrorType`, every component bounded by it shares that one `Self::Error`.
 
 `HasErrorType` carries no methods of its own — it only declares the type. The behavior of producing errors lives in the traits that supertrait it: [`CanRaiseError`](can_raise_error.md) converts a source error into `Self::Error`, and [`CanWrapError`](can_raise_error.md) adds detail to an existing `Self::Error`. This separation keeps the type declaration independent of any particular way of constructing the error.
 
@@ -72,4 +72,4 @@ This direct form makes plain that `HasErrorType` is an ordinary trait with a `De
 
 - The trait and the `ErrorOf` alias are defined in [crates/core/cgp-error/src/traits/has_error_type.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-error/src/traits/has_error_type.rs).
 - The `#[cgp_type]` machinery it relies on lives in [crates/macros/cgp-macro-core/src/types/cgp_type/](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-core/src/types/cgp_type/), and the underlying `HasType`/`TypeProvider`/`UseType` definitions are in [crates/core/cgp-type/src/](https://github.com/contextgeneric/cgp/tree/main/crates/core/cgp-type/src/).
-- The pluggable concrete error backends are in [crates/standalone/error/](https://github.com/contextgeneric/cgp/tree/main/crates/standalone/error/).
+- The pluggable concrete error backends are in [crates/standalone/error/](https://github.com/contextgeneric/cgp/tree/main/crates/standalone/error/), documented in [projects/error/](../../../projects/error/README.md).

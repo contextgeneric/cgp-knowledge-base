@@ -357,7 +357,8 @@ cgp_namespace! {
 
 The `Checksum` entry wires a pipeline rather than a single provider: `HandleToFuturesStream` adapts
 whatever input arrives into the `TryStream` that `HandleStreamChecksum` folds into a digest. The
-namespace also routes the new error type, `FromHexError`, to a raising strategy, since
+namespace also routes the new error type, `FromHexError`, to
+[`RaiseAnyhowError`](../projects/error/cgp-error-anyhow/reference.md#raiseanyhowerror), since
 `HypershellNamespace` knows only the error types its own providers raise; the route's path names
 `ErrorRaiserComponent`, which must therefore be imported. A context joins the extended language by
 naming the new namespace:

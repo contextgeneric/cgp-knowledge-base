@@ -52,7 +52,7 @@ aggregate that picks a raising strategy per type.** The bindings are:
 
 `HypershellErrorHandler` is an aggregate provider that `open`s `ErrorRaiserComponent` and chooses a
 strategy from the [error providers](../../../cgp/reference/providers/error_providers.md) and
-`cgp-error-anyhow`:
+[`cgp-error-anyhow`](../../error/cgp-error-anyhow/reference.md):
 
 | Source error | Strategy |
 |---|---|

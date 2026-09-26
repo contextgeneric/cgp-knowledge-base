@@ -361,10 +361,11 @@ its [transcript post](blog/rustlab-2025-coherence.md)), books (the CGP Patterns 
 ### How it relates to the knowledge base
 
 This page is the site's index of the ecosystem, so it should mirror
-[sibling-projects.md](../sibling-projects.md) for anything public. Three of its entries have internal
+[sibling-projects.md](../sibling-projects.md) for anything public. Four of its entries have internal
 documents here: [hypershell](../projects/hypershell/README.md),
-[cgp-serde](../projects/cgp-serde/README.md), and
-[CGP Examples](../projects/cgp-examples/README.md). Hermes SDK is the flagship real-world adopter that
+[cgp-serde](../projects/cgp-serde/README.md),
+[CGP Examples](../projects/cgp-examples/README.md), and the error backends in
+[projects/error/](../projects/error/README.md), whose crates the page lists. Hermes SDK is the flagship real-world adopter that
 [evidence.md](../communication-strategy/evidence.md) argues is the
 strongest available social proof for the evaluator profile, so its placement in a bare list at the
 bottom undersells it.

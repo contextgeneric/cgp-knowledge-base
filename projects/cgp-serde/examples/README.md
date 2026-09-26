@@ -37,9 +37,10 @@ carries one field, the arena, because a provider draws it from the context durin
 
 Each example runs from the repository root with `cargo test -p cgp-serde-tests <filter>`. Add
 `-- --nocapture` to see what a test prints. The workspace pins Rust 1.98.1 in `rust-toolchain.toml` and
-takes `cgp` 0.8.0-alpha from crates.io, so it builds without a local `cgp` checkout; see
-[crate layout](../architecture/crate-layout.md#build-facts). None of the tests needs a network or any
-program outside the build. The table records what each did when run against the `v0.8.0` branch:
+overrides `cgp` and `cgp-error-anyhow` with the `cgp` repository's `main` branch through
+`[patch.crates-io]`, which the first build fetches; see
+[crate layout](../architecture/crate-layout.md#build-facts). Once built, none of the tests needs a
+network or any program outside the build. The table records what each did when run against the `v0.8.0` branch:
 
 | Example | Filter | Result |
 |---|---|---|

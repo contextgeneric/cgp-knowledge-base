@@ -869,12 +869,14 @@ it stale.
 - [v0-7-0.md](releases/v0-7-0.md) — 2026-02-28, the most recent shipped release: the attribute suite
   and the removal of `#[cgp_context]`; its changelog entry is mislabelled v0.6.2.
 - [v0-8-0.md](releases/v0-8-0.md) — **unreleased**, in development at `0.8.0-alpha`: namespaces and
-  paths, the `open` statement, the removal of presets, and why it is not v0.7.1.
+  paths, the `open` statement, the removal of presets, the error backends' behavior changes, and why
+  it is not v0.7.1.
 
 ## `projects/` — the libraries built with CGP
 
-- [projects/README.md](projects/README.md) — what qualifies as an ecosystem project (a library, or a
-  demonstration repository such as cgp-examples), how a project section grows from one README into its
+- [projects/README.md](projects/README.md) — what qualifies as an ecosystem project (a library, a
+  demonstration repository such as cgp-examples, or separate crates shipped from a member repository
+  such as the error backends), how a project section grows from one README into its
   shape, one subdirectory per subproject where a project has several, and how each connects to an
   example, a published post, and a set of constructs.
 - [projects/hypershell/README.md](projects/hypershell/README.md) — the type-level shell-scripting
@@ -978,7 +980,7 @@ it stale.
   project's source at the branch sibling-projects.md records, probes rather than reading alone, leaving
   CGP itself to `cgp/` and patterns to the worked example, the section as the primary source for its
   project's facts, the section shape as a guide with per-subproject subdirectories and their own
-  `testing.md` and `issues.md`, the per-example documents that quote snippets rather than whole
+  `testing.md` and `issues.md`, a shared design and guides when subprojects are near copies, the per-example documents that quote snippets rather than whole
   programs, the reference entry template, and naming the public material each document feeds.
 - [projects/cgp-serde/README.md](projects/cgp-serde/README.md) — Serde rebuilt as CGP components: what
   it is, which revision the documents describe (the unreleased `v0.8.0` branch against the published
@@ -1228,3 +1230,47 @@ it stale.
   three binaries shows, the expansion probe, and what nothing tests.
 - [projects/cgp-examples/greet/issues.md](projects/cgp-examples/greet/issues.md) — the missing check
   blocks and housekeeping.
+- [projects/error/README.md](projects/error/README.md) — the error backends `cgp-error-anyhow`,
+  `cgp-error-eyre`, and `cgp-error-std`: why they are a project rather than part of `cgp/`, the table
+  of their providers, the four ways the published 0.8.0-alpha differs from the source, building and
+  testing, the confirmed gaps, and the catalog.
+- [projects/error/architecture.md](projects/error/architecture.md) — the four roles every backend
+  fills, how the providers are written, what a backend adds over the generic providers, the
+  `Send + Sync + 'static` bounds, the `@cgp.core.error` paths, and the feature and `no_std` facts.
+- [projects/error/guides/README.md](projects/error/guides/README.md) — the guide catalog.
+- [projects/error/guides/choosing-a-backend.md](projects/error/guides/choosing-a-backend.md) — which
+  backend, when none is needed, routing each source and detail type including the context's own
+  error, the wiring forms, and testing a downstream project through `[patch.crates-io]`.
+- [projects/error/guides/debugging.md](projects/error/guides/debugging.md) — a message routed to the
+  raise provider, a raiser without its error type, two backends on one context, a `String` routed back
+  to itself (`E0275`), a borrowed detail (`E0477`), and an eyre handler installed too late, each with
+  its `cargo cgp check` output.
+- [projects/error/cgp-error-anyhow/README.md](projects/error/cgp-error-anyhow/README.md) —
+  `anyhow::Error` as the context's error: the providers, a verified wiring, and the projects that use
+  it.
+- [projects/error/cgp-error-anyhow/reference.md](projects/error/cgp-error-anyhow/reference.md) —
+  `UseAnyhowError`, `RaiseAnyhowError`, `DebugAnyhowError`, and `DisplayAnyhowError`, with what each
+  prints and whether the source survives.
+- [projects/error/cgp-error-anyhow/testing.md](projects/error/cgp-error-anyhow/testing.md) — the six
+  test files that cover it, the downstream builds, and what nothing tests.
+- [projects/error/cgp-error-anyhow/issues.md](projects/error/cgp-error-anyhow/issues.md) — no open
+  items of its own.
+- [projects/error/cgp-error-eyre/README.md](projects/error/cgp-error-eyre/README.md) — `eyre::Report`
+  as the context's error: the providers, the report handler that `auto-install` supplies, and its lack
+  of users.
+- [projects/error/cgp-error-eyre/reference.md](projects/error/cgp-error-eyre/reference.md) —
+  `UseEyreError`, `RaiseEyreError`, `DebugEyreError`, and `DisplayEyreError`, with the default
+  handler's output.
+- [projects/error/cgp-error-eyre/testing.md](projects/error/cgp-error-eyre/testing.md) — the four
+  test files, the handler check they perform, and what nothing tests.
+- [projects/error/cgp-error-eyre/issues.md](projects/error/cgp-error-eyre/issues.md) — reports carry
+  no caller location, because `#[track_caller]` cannot pass through CGP's generated impls.
+- [projects/error/cgp-error-std/README.md](projects/error/cgp-error-std/README.md) — a boxed standard
+  error as the context's error: the providers and types, and how its errors print a chain.
+- [projects/error/cgp-error-std/reference.md](projects/error/cgp-error-std/reference.md) —
+  `UseBoxedStdError`, `RaiseBoxedStdError`, `DebugBoxedStdError`, `DisplayBoxedStdError`, and the
+  `Error`, `StringError`, and `WrapError` types.
+- [projects/error/cgp-error-std/testing.md](projects/error/cgp-error-std/testing.md) — the five test
+  files, including the chain walk, and what nothing tests.
+- [projects/error/cgp-error-std/issues.md](projects/error/cgp-error-std/issues.md) — no open items of
+  its own.

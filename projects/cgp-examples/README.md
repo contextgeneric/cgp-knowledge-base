@@ -10,7 +10,7 @@ documents treat each one as its own subproject.
 - **Branch documented** — `v0.8.0`
 - **Crates** — `cgp-example-transfer`, `cgp-example-expression`, `cgp-example-builder`,
   `cgp-example-web-app`, and `cgp-example-greet`, all at 0.1.0 and unpublished
-- **Tracks** — `cgp` 0.8.0-alpha, through a path patch to the local `../cgp` checkout
+- **Tracks** — `cgp` 0.8.0-alpha, through a git patch to the `cgp` repository's `main` branch
 - **Status** — Demonstrations rather than libraries; see [Workspace gaps](#workspace-gaps)
 
 ## What it is
@@ -48,11 +48,12 @@ repository, taught as the [profile picture](../../examples/profile-picture.md) w
 
 ## Building
 
-The workspace builds only beside a `cgp` checkout, because its `[patch.crates-io]` section points
-`cgp` and `cgp-error-anyhow` at `../cgp`. It needs stable Rust 1.90 or later and uses the 2024
-edition, and the repository has no toolchain file. These documents were verified against the `cgp`
-checkout on `main` at commit `21bb137` (2026-09-21), with `rustc` 1.98.1, where
-`cargo test --workspace` passes. The only tests in the workspace are three unit tests in `expression`;
+The workspace builds against unreleased `cgp` code: its `[patch.crates-io]` section overrides `cgp`
+and `cgp-error-anyhow` with the `cgp` repository's `main` branch by git URL, and the lockfile pins the
+commit. To test against a local change to `cgp`, switch the same entries to the commented-out paths
+into `../cgp`. It needs stable Rust 1.90 or later and uses the 2024 edition, and the repository has no
+toolchain file. These documents were verified against `cgp` `main` at commit `adc616c`
+(2026-09-26), with `rustc` 1.98.1, where `cargo test --workspace` passes. The only tests in the workspace are three unit tests in `expression`;
 the other crates check their wiring at compile time with `check_components!` blocks, so a successful
 build is most of their verification.
 
@@ -65,8 +66,6 @@ rather than in a subproject's `issues.md`:
   crates. Only `transfer` has a README of its own.
 - **`main` lags `v0.8.0`** — a reader who clones the default branch gets the `cgp` 0.7.0 versions of
   four crates and no `web-app`.
-- **Local `cgp` required** — the path patch means the workspace cannot build from a fresh clone
-  alone.
 
 ## The documents
 

@@ -40,7 +40,7 @@ Here `wrap_error` takes the context's current `Error` and a `Detail` value and r
 
 ## Behavior
 
-A context gains these operations by wiring `ErrorRaiserComponent` and `ErrorWrapperComponent` to providers, exactly as for any other component. Because both traits delegate through `UseDelegate<SourceError>` and `UseDelegate<Detail>`, the natural wiring is a delegation table that maps each concrete source-error or detail type to a provider that knows how to handle it; a context can therefore raise a handful of unrelated error types into one abstract error, each through its own provider. The pluggable error backends (`cgp-error-anyhow`, `cgp-error-eyre`, `cgp-error-std`) supply providers that implement these traits for common cases, so an application usually wires a backend rather than writing the raise and wrap logic itself.
+A context gains these operations by wiring `ErrorRaiserComponent` and `ErrorWrapperComponent` to providers, exactly as for any other component. Because both traits delegate through `UseDelegate<SourceError>` and `UseDelegate<Detail>`, the natural wiring is a delegation table that maps each concrete source-error or detail type to a provider that knows how to handle it; a context can therefore raise a handful of unrelated error types into one abstract error, each through its own provider. The pluggable [error backends](../../../projects/error/README.md) (`cgp-error-anyhow`, `cgp-error-eyre`, `cgp-error-std`) supply providers that implement these traits for common cases, so an application usually wires a backend rather than writing the raise and wrap logic itself.
 
 Both traits being associated-function components means `raise_error` and `wrap_error` are called on the context *type* — `Context::raise_error(source)` — and produce the abstract error without borrowing the context value. This matches how errors are typically constructed deep inside generic code where only the type parameter is in scope.
 
@@ -81,7 +81,7 @@ The provider names neither the context nor its concrete error type. It requires 
 
 - `CanRaiseError` is defined in [crates/core/cgp-error/src/traits/can_raise_error.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-error/src/traits/can_raise_error.rs) and `CanWrapError` in [crates/core/cgp-error/src/traits/can_wrap_error.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-error/src/traits/can_wrap_error.rs).
 - Both build on `HasErrorType` from [crates/core/cgp-error/src/traits/has_error_type.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-error/src/traits/has_error_type.rs).
-- The pluggable providers that implement them live in [crates/standalone/error/](https://github.com/contextgeneric/cgp/tree/main/crates/standalone/error/).
+- The pluggable providers that implement them live in [crates/standalone/error/](https://github.com/contextgeneric/cgp/tree/main/crates/standalone/error/), documented in [projects/error/](../../../projects/error/README.md).
 
 ## Public pages derived from this document
 

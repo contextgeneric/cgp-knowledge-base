@@ -29,9 +29,12 @@ repository.
 ## Verify behavior with a probe, not by reading alone
 
 A claim about what a provider *does* at runtime (the JSON it writes, the input it rejects, the error
-message it produces) is checked by running it. Build a scratch crate in the session's scratchpad with
-path dependencies on the local checkout, copy the project's `Cargo.lock` and `rust-toolchain.toml` so
-the probe resolves the same versions, and exercise the behavior. A compile-time claim, such as which
+message it produces) is checked by running it. Build a scratch crate in the session's scratchpad that
+declares its dependencies by version, as a downstream project would, and overrides them with paths to
+the local checkout in its `[patch.crates-io]` section; copy the project's `Cargo.lock` and
+`rust-toolchain.toml` so the probe resolves the same versions, and exercise the behavior. The same
+override, pointing at the local `../cgp`, is how a project itself is built against an unreleased
+change: local paths while the change is tested, and the `cgp` git repository once it is committed. A compile-time claim, such as which
 derives a provider needs or which wiring mistake produces which error, is checked by building the
 probe, and with `cargo cgp check` where a diagnostic is quoted. State the result in your own words.
 The probe is evidence and is never linked from a document. A claim you could not confirm is written
@@ -66,7 +69,10 @@ unrelated example crates, is the instance. Each subproject follows the shape at 
 one may be a `README.md` and a few documents, and a larger one grows `architecture/`, `reference/`,
 and the rest. `testing.md` and `issues.md` belong to each subproject. The project's own `README.md`
 catalogs the subprojects and records only what they share, such as the build setup and
-repository-wide housekeeping.
+repository-wide housekeeping. When the subprojects are near copies of one design, as the
+[error backends](error/README.md) are, the design and the guides are written once at the project level
+and each subproject keeps only what differs; a subproject with a handful of public items may then
+carry a single `reference.md` in place of a `reference/` directory.
 
 - **`README.md`** — the front door: the header block (repository, local checkout, the branch
   documented, crates, the `cgp` version tracked, status), what the project is, a present-tense
