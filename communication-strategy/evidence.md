@@ -14,7 +14,7 @@ the whole community thinks, and silence does not prove a lack of interest. Disti
 findings, observed patterns, and strategic judgments. Revisit guidance when its evidence changes.
 Publication schedules and campaign results are managed outside this repository.
 
-## What the Rust community worries about — and what it rewards
+## What the Rust community worries about, and what it rewards
 
 Rust surveys support addressing compilation cost, debugging, and complexity directly. The
 [2025 survey](https://blog.rust-lang.org/2026/03/02/2025-State-Of-Rust-Survey-results/), published in
@@ -99,8 +99,8 @@ the [CGP Patterns book](https://patterns.contextgeneric.dev/).
 Two conclusions follow for this section, and both are narrow. **Blanket implementations are the
 entry point readers actually search for**, which supports leading with that idea for a general Rust
 audience and is independent evidence for the hand-rolled-workaround finding below. And **the
-project's own name has almost no search demand** — *context generic programming* and *cgp rust*
-together drew 112 impressions in a year, at average positions of 1.1 and 1.3 — which is measured
+project's own name has almost no search demand**: *context generic programming* and *cgp rust*
+together drew 112 impressions in a year, at average positions of 1.1 and 1.3. That is measured
 support for [identity.md](identity.md#why-each-word-of-the-line-is-there)'s rule that the name always
 travels with a plain descriptor. The bare acronym drew 736 impressions and no clicks at all.
 
@@ -108,7 +108,7 @@ These are Google figures for one property over one year. They describe what reac
 what the Rust community wants, and the query table is capped at 1,000 rows, so roughly nine
 impressions in ten are long-tail queries nobody can inspect.
 
-## The pains are real — and developers already hand-roll the fix
+## The pains are real, and developers already hand-roll the fix
 
 An independently published workaround shows that CGP addresses a problem developers encounter.
 The [alternative blanket implementations article](https://www.greyblake.com/blog/alternative-blanket-implementations-for-single-rust-trait/)
@@ -236,7 +236,7 @@ Track these signals where they are available:
   they do not by themselves establish widespread adoption.
 - **Search: available through Google Search Console, for Google only.** The site has no analytics
   and needs none for this: Search Console places no script on the site and reports what Google
-  already knows about its own index. A twelve-month export to 2026-09-18 is summarized below and
+  already knows about its own index. A twelve-month export to 2026-09-18 is summarized [above](#what-the-search-data-shows-about-demand) and
   analyzed in the website section's [SEO strategy](../website/seo.md). Nothing equivalent exists for
   Bing, Kagi, or Brave, so claims about those engines still rest on hand checks. Keep raw exports
   outside this repository.

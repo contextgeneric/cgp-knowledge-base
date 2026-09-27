@@ -93,7 +93,7 @@ can keep the value in `Self`, as the homepage does, but then a given value type 
 implementation program-wide. In either arrangement, providers add machinery that a single
 implementation may not need.
 
-### Implement a trait for a type you don't own — no newtype dance
+### Implement a trait for a type you don't own, with no newtype dance
 
 Explain the orphan-rule benefit through a provider that the implementing crate owns. Ordinary Rust
 forbids a foreign trait impl for a foreign type. A CGP provider instead implements a provider trait
@@ -105,7 +105,7 @@ Use this comparison for library authors and experienced Rust developers, support
 [coherence](../cgp/concepts/coherence.md) and the hand-written patterns in [evidence.md](evidence.md).
 A program that needs one globally consistent implementation may be better served by a plain trait.
 
-### Mock in tests, run the real thing in production — without `dyn` or a framework
+### Mock in tests, run the real thing in production, without `dyn` or a framework
 
 Show production and test contexts choosing different providers for the same operation. A trait
 object, a generic parameter, and CGP wiring are all valid ways to separate an interface from its
@@ -133,7 +133,7 @@ and required data. `CanSendEmail` is self-targeted because sending mail is an op
 application. Per-application choice does not require a target parameter. The choice is explicit,
 and a dependency with one implementation can remain a plain trait.
 
-### Your second application already exists — it is spelled as a feature flag
+### Your second application already exists: it is spelled as a feature flag
 
 Look for existing variation before proposing another context type. Feature-gated backends, a
 backend enum, a trait object, a generic application type, or a test harness can show that the
@@ -188,7 +188,7 @@ State the refactoring cost. Changing the interface affects its callers, and a sm
 with one implementation should usually stay as it is. A large component is legal; size alone does
 not establish that splitting it is worthwhile.
 
-### Write a framework over any type's structure — without runtime reflection
+### Write a framework over any type's structure, without runtime reflection
 
 Explain structural programming through types that expose their fields or variants to generic code.
 CGP derives encode that shape as type-level data, allowing reusable builders, serializers, and
