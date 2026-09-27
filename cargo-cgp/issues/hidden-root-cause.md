@@ -17,17 +17,16 @@ lost information, only a tool reading the compiler's own state can put it back.
 
 ## No reproduced cases remain
 
-There is currently **no reproduced hidden-root-cause case**. The two archetypes this category was
-built around are both defeated today, each by a flag the driver injects, so neither hides a cause the
-output cannot recover. Per the rule in [the issues README](README.md), under which a class with no reproducing
-fixture counts as resolved, this document keeps no open entry; it records the two defeated archetypes
-below so a future agent recognizes them, and states what a genuinely new case would have to look like
-to belong here.
+There is **no reproduced hidden-root-cause case**. The two archetypes this category is built around
+are both defeated, each by a flag the driver injects, so neither hides a cause the output cannot
+recover. Per the rule in [the issues README](README.md), under which a class with no reproducing
+fixture counts as resolved, this document keeps no open entry; it records the two defeated
+archetypes below so a future agent recognizes them, and states what a genuinely new case would have
+to look like to belong here.
 
 This is not merely the absence of a *known* case: every post-codegen compile-fail class CGP produces
-(the cases migrated from `cgp`'s former compile-fail suite into
-[`tests/ui/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui), across the
-`acceptable/` and `usability/` categories) has been run through cargo-cgp and snapshotted, and
+has a fixture under [`tests/ui/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui),
+across the `acceptable/` and `usability/` categories, run through cargo-cgp and snapshotted, and
 every reproducible class carries its root cause in the tool's output. So the CGP error catalog's own
 hidden class (an unsatisfied dependency reached by a consumer-method call) surfaces here too, and
 nothing across the catalog lands in this category. The one class that produces no usable diagnostic
@@ -38,16 +37,16 @@ suppressed.
 
 The two archetypes are defeated by *different* levers, and the distinction is the useful one to
 carry forward. A cause can be hidden because the compiler **never computed it** or because the
-compiler computed it and then **elided it while printing**: the first is a trait-solver problem,
-the second a diagnostic-printing problem, and they need different flags. Both levers are argument
+compiler computed it and then **elided it while printing**: the first is a trait-solver problem, the
+second a diagnostic-printing problem, and they need different flags. Both levers are argument
 injections documented in [The error pipeline](../implementation/error-pipeline.md); the printing
 side is mapped function-by-function in
 [rustc diagnostic internals](../implementation/rustc-diagnostic-internals.md).
 
 ### Defeated: a cause the default trait solver never computed
 
-The archetypal hidden failure was a wiring mistake exercised by a direct consumer-method call, where
-the compiler reported only that a method's bounds were unsatisfied (`E0599`) without ever naming the
+The archetypal hidden failure is a wiring mistake exercised by a direct consumer-method call, where
+the compiler reports only that a method's bounds are unsatisfied (`E0599`) without ever naming the
 failed dependency. On that path the *default* solver's method-resolution heuristic bottoms out at
 the provider trait and does not compute the real missing leaf bound at all, so no amount of text
 processing could recover it, since the leaf was never in the diagnostic. `cargo-cgp` defeats this by
@@ -61,20 +60,19 @@ than as a usability case.
 
 ### Defeated: a field name the printer elided a character from
 
-The second archetype was a field name the compiler printed with a character missing, so the name
-could not be read back from the diagnostic at all. When a provider needs a field the context lacks
-and the context has a *near-miss* field, rustc reports the unmet bound through its two-line "similar
+The second archetype is a field name the compiler prints with a character missing, so the name
+cannot be read back from the diagnostic at all. When a provider needs a field the context lacks and
+the context has a *near-miss* field, rustc reports the unmet bound through its two-line "similar
 impl exists" hint and, in that hint, diffs the two `HasField` symbols and replaces every generic
 argument they share with `_`. In
 [`base_area_1`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/fields/base_area_1.rs)
-a `Rectangle` that has `width` but not `height` made the two symbols share the character `'h'`, and
-that shared `'h'` was collapsed to `_` in *both* names (`h,e,i,g,_,t` for `height`), so the field
-name was absent from the text, not merely encoded. `cargo-cgp` defeats this by injecting
-`--verbose`, which turns off the compiler's matching-argument elision (along with two related
-compressions) so the full `Symbol` always prints. That fixture, too, now lives under
-[`acceptable/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/acceptable): the
-typed resolver reads the field name straight from the `Symbol!` and states it plainly, so the
-readability burden it once carried is gone as well.
+a `Rectangle` that has `width` but not `height` makes the two symbols share the character `'h'`, and
+that shared `'h'` is collapsed to `_` in *both* names (`h,e,i,g,_,t` for `height`), so without the
+flag below the field name is absent from the text, not merely encoded. `cargo-cgp` defeats this by
+injecting `--verbose`, which turns off the compiler's matching-argument elision (along with two
+related compressions) so the full `Symbol` always prints. That fixture, too, lives under
+[`acceptable/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/acceptable), because
+the typed resolver reads the field name straight from the `Symbol!` and states it plainly.
 
 ## What a new case would look like
 

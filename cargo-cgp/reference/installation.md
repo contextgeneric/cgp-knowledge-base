@@ -4,14 +4,14 @@
 all three in place and matched. The `cargo-cgp` front-end is the cargo subcommand you invoke; the
 `cargo-cgp-driver` it calls links the compiler's internals and so must be built against the nightly
 pinned in the project's `rust-toolchain.toml`. This document covers the ways to install that pair
-and how to keep it up to date. It is the usage-level summary for an agent; the design behind it
-(why the toolchain is pinned and how the binaries stay in lockstep) is in
+and how to keep it up to date. It is the usage-level summary for an agent; the design behind it (why
+the toolchain is pinned and how the binaries stay in lockstep) is in
 [Distribution](../implementation/distribution.md).
 
 If your goal is only to *run* the current tool (the usual case for an agent testing or demonstrating
 it), you do not install a release at all: use a local checkout through Nix or from source, as
-[Usage](usage.md#running-on-a-project-outside-this-repository) describes. The install paths below are
-for provisioning the tool as a durable command; prefer the local build over a published release
+[Usage](usage.md#running-on-a-project-outside-this-repository) describes. The install paths below
+are for provisioning the tool as a durable command; prefer the local build over a published release
 whenever a checkout is available, since it reflects the current code.
 
 ## Which path to use
@@ -66,8 +66,8 @@ cd /path/to/your/project     # a cargo package or workspace that uses `cgp`
 nix run github:contextgeneric/cargo-cgp/v0.1.0-alpha -- check
 ```
 
-The `/v0.1.0-alpha` suffix pins the flake to that Git tag; drop it (`github:contextgeneric/cargo-cgp`)
-to track the default branch instead.
+The `/v0.1.0-alpha` suffix pins the flake to that Git tag; drop it
+(`github:contextgeneric/cargo-cgp`) to track the default branch instead.
 
 To pin the tool in another project's own flake, add it as an input and take its `packages.default`:
 
@@ -103,8 +103,8 @@ doing any slow or stateful work itself.
 ## Installing from source
 
 To run the current tool from a checkout (the practical path today alongside Nix), clone the
-repository and build both binaries, which the pinned `rust-toolchain.toml` compiles under the correct
-nightly automatically:
+repository and build both binaries, which the pinned `rust-toolchain.toml` compiles under the
+correct nightly automatically:
 
 ```sh
 git clone https://github.com/contextgeneric/cargo-cgp
@@ -157,22 +157,22 @@ How you update matches how you installed. On the cargo path, `cargo cgp update` 
 cargo cgp update
 ```
 
-It reads the crates.io index for the front-end, picks the highest published version **in your current
-release channel** (a stable install never jumps to a pre-release, and a pre-release install stays on
-pre-releases) and does nothing if you already have the newest. When there is a newer version it
-reinstalls the front-end and re-runs the new `setup` to bring the driver and toolchain up to match.
-On Windows the running binary is locked and cannot replace itself, so `update` prints the two
-commands (`cargo install cargo-cgp` then `cargo cgp setup`) to run by hand from a shell where the
-tool is not running.
+It reads the crates.io index for the front-end, picks the highest published version **in your
+current release channel** (a stable install never jumps to a pre-release, and a pre-release install
+stays on pre-releases) and does nothing if you already have the newest. When there is a newer
+version it reinstalls the front-end and re-runs the new `setup` to bring the driver and toolchain up
+to match. On Windows the running binary is locked and cannot replace itself, so `update` prints the
+two commands (`cargo install cargo-cgp` then `cargo cgp setup`) to run by hand from a shell where
+the tool is not running.
 
 On the Nix path there is no `cargo cgp update`; you upgrade by refreshing the flake instead. For an
 installed profile, upgrade it (`nix profile upgrade`); for the tool pinned as an input in another
-flake, run `nix flake update cargo-cgp` there to pull the newer release. Each nightly bump ships as a
-new release of the flake, so updating the input is all that is needed.
+flake, run `nix flake update cargo-cgp` there to pull the newer release. Each nightly bump ships as
+a new release of the flake, so updating the input is all that is needed.
 
 ## Further reading
 
-- [Distribution](../implementation/distribution.md) — the design behind installation: why the
+- [Distribution](../implementation/distribution.md): the design behind installation: why the
   toolchain is pinned, how `setup`/`update`/the preflight work, how the two crates stay in lockstep,
   and the Nix packaging.
-- [Usage](usage.md) — how to run the tool once it is installed.
+- [Usage](usage.md): how to run the tool once it is installed.

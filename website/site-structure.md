@@ -469,12 +469,10 @@ program the check page runs the tool on is a `trybuild` compile-fail fixture und
 
 ### Where it diverges
 
-Writing the pages corrected one claim in the internal reference, found by running the command rather
-than transcribing it. [usage.md](../cargo-cgp/reference/usage.md) said `expand` answers `--help` itself
-rather than forwarding it, on the reasoning that `cargo rustc --help` could never mention `--item`. The
-tool forwards: `cargo cgp expand --help` prints cargo's help, and `--item` appears nowhere in it. The
-premise was right and the conclusion backwards — the flag is genuinely undiscoverable from the command
-line, which is an argument for documenting it, not evidence that the tool already does.
+`expand` answers `--help` itself: `cargo cgp expand --help` prints the tool's expand help, which
+documents `--item`, while `cargo cgp check --help` forwards to `cargo check`, per
+[usage.md](../cargo-cgp/reference/usage.md#expanding-a-target). Check such a claim by running the
+source-built command, since the published `v0.1.0-alpha` has no `expand` at all.
 
 Two further facts are release-dependent and will go out of date on their own. **`cargo cgp expand` is newer than the published `v0.1.0-alpha`**, so an install from
 crates.io does not carry it; both the installation and expand pages say so, and both notes should be

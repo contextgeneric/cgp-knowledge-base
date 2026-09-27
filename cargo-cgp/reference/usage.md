@@ -1,20 +1,20 @@
 # Usage
 
 `cargo-cgp` has two commands that read your code. `cargo cgp check` stands in for `cargo check` and
-re-presents CGP wiring errors with their root cause first; `cargo cgp expand` shows the ordinary Rust
-your CGP macros generate, with CGP's type-level constructs spelled the way you wrote them. You run
-either in a cargo project the way you run `cargo check`. This document covers running the check,
+re-presents CGP wiring errors with their root cause first; `cargo cgp expand` shows the ordinary
+Rust your CGP macros generate, with CGP's type-level constructs spelled the way you wrote them. You
+run either in a cargo project the way you run `cargo check`. This document covers running the check,
 reading its output, expanding a target, using the tool from an editor, and the switches that change
 its behavior. For installing it, see [Installation](installation.md).
 
-cargo-cgp is **optional**, and its job is developer-time readability. Its two reading commands compile
-your code only to inspect it (`check` re-checks it under the pinned nightly solely to reshape the
-diagnostics, and `expand` stops as soon as the macros are expanded), and there is no
-`cargo cgp build`, `run`, or `test` (`setup` and `update` only provision the tool).
-CGP is an ordinary library that builds on any **stable Rust ≥ 1.89**, so plain `cargo check`,
-`cargo build`, `cargo run`, and `cargo test` all work on a CGP project unchanged. Use `cargo cgp check`
-when you hit or expect a wiring error and want it readable; use plain `cargo check` when you do not;
-and always build, run, and test with ordinary cargo.
+cargo-cgp is **optional**, and its job is developer-time readability. Its two reading commands
+compile your code only to inspect it (`check` re-checks it under the pinned nightly solely to
+reshape the diagnostics, and `expand` stops as soon as the macros are expanded), and there is no
+`cargo cgp build`, `run`, or `test` (`setup` and `update` only provision the tool). CGP is an
+ordinary library that builds on any **stable Rust ≥ 1.89**, so plain `cargo check`, `cargo build`,
+`cargo run`, and `cargo test` all work on a CGP project unchanged. Use `cargo cgp check` when you
+hit or expect a wiring error and want it readable; use plain `cargo check` when you do not; and
+always build, run, and test with ordinary cargo.
 
 ## Running a check
 
@@ -32,26 +32,26 @@ subcommand at all, which prints the same overview).
 
 cargo-cgp does not interpret those forwarded flags itself; it appends them to `cargo check` and lets
 cargo own them. Three consequences follow. Every `cargo check` flag works exactly as it does under a
-plain `cargo check`, since that is literally what runs. **cargo**, not cargo-cgp, validates them, so an
-unknown flag produces cargo's own error (`error: unexpected argument '--nope' found`), not a cargo-cgp
-message. And `cargo cgp check --help` prints `cargo check`'s own help and exits *without* running a
-check: the flag is forwarded like any other, so what you see is cargo's flag list under a
+plain `cargo check`, since that is literally what runs. **cargo**, not cargo-cgp, validates them, so
+an unknown flag produces cargo's own error (`error: unexpected argument '--nope' found`), not a
+cargo-cgp message. And `cargo cgp check --help` prints `cargo check`'s own help and exits *without*
+running a check: the flag is forwarded like any other, so what you see is cargo's flag list under a
 `Usage: cargo check [OPTIONS]` banner, and the driver never runs. The one flag cargo-cgp inspects is
 `--target-dir`, which it looks for only to decide whether to inject its own default (below); every
-other flag it passes through untouched. (The pinned toolchain and the injected diagnostic flags in the
-next paragraph are applied *around* this forwarding, not by altering the flags you pass.)
+other flag it passes through untouched. (The pinned toolchain and the injected diagnostic flags in
+the next paragraph are applied *around* this forwarding, not by altering the flags you pass.)
 
-A check differs from a plain `cargo check` in three deliberate ways, all handled for you. It compiles
-your workspace under the tool's own **pinned nightly** rather than your project's toolchain, so the
-diagnostics are reproducible and the embedded compiler matches the driver; your project's own
-toolchain is left untouched for its ordinary builds. It turns on the **next-generation trait solver**
-(`-Znext-solver`), which is what surfaces the CGP dependency errors the default solver hides,
-reporting the real missing bound, such as `HasField<Symbol!("name")>`, instead of stopping at a
-generic "trait bounds were not satisfied". And it builds into an **isolated `target/cgp` directory**
-rather than your project's `target/`, so a check never invalidates your normal build cache and vice
-versa. Because these are diagnostic settings the tool chooses, `cargo cgp check` is a diagnostic pass
-rather than a reproduction of your project's own `cargo check`, much as Clippy runs under its own
-settings.
+A check differs from a plain `cargo check` in three deliberate ways, all handled for you. It
+compiles your workspace under the tool's own **pinned nightly** rather than your project's
+toolchain, so the diagnostics are reproducible and the embedded compiler matches the driver; your
+project's own toolchain is left untouched for its ordinary builds. It turns on the **next-generation
+trait solver** (`-Znext-solver`), which is what surfaces the CGP dependency errors the default
+solver hides, reporting the real missing bound, such as `HasField<Symbol!("name")>`, instead of
+stopping at a generic "trait bounds were not satisfied". And it builds into an **isolated
+`target/cgp` directory** rather than your project's `target/`, so a check never invalidates your
+normal build cache and vice versa. Because these are diagnostic settings the tool chooses,
+`cargo cgp check` is a diagnostic pass rather than a reproduction of your project's own
+`cargo check`, much as Clippy runs under its own settings.
 
 To send the check's artifacts somewhere other than `target/cgp`, pass `--target-dir` (or set
 `CARGO_TARGET_DIR`); either takes precedence over the default.
@@ -69,11 +69,11 @@ cargo cgp expand -p my-crate --lib
 ```
 
 Arguments are forwarded to `cargo rustc`, so target selection is cargo's own, and because it expands
-exactly one target, cargo asks you to choose when a package has several. That is worth knowing before
-your first run: a package with both a library and a binary needs `--lib` or `--bin <NAME>`, and without
-one cargo declines with *"extra arguments to `rustc` can only be passed to one target"*. Expanding a
-module of a library crate is therefore `cargo cgp expand --lib --item <path>`. The output goes to stdout, so
-it pipes and redirects like any other program's:
+exactly one target, cargo asks you to choose when a package has several. That is worth knowing
+before your first run: a package with both a library and a binary needs `--lib` or `--bin <NAME>`,
+and without one cargo declines with *"extra arguments to `rustc` can only be passed to one target"*.
+Expanding a module of a library crate is therefore `cargo cgp expand --lib --item <path>`. The
+output goes to stdout, so it pipes and redirects like any other program's:
 
 ```sh
 cargo cgp expand --lib > expanded.rs
@@ -81,10 +81,10 @@ cargo cgp expand --lib | rg 'Symbol!'
 cargo cgp expand --help                 # the expand options, including --item
 ```
 
-`--help` is forwarded like every other argument, so `cargo cgp expand --help` prints `cargo rustc`'s
-own help. That help does **not** list `--item`, which is the tool's flag rather than cargo's, so the
-option is not discoverable from the command line and has to be documented, which is what the line
-above and the public [Expand page](https://contextgeneric.dev/docs/cargo-cgp/expand) are for.
+`expand` answers `--help` (or `-h`) itself rather than forwarding it: `cargo cgp expand --help`
+prints the tool's own expand help, which documents `--item`, the forwarding to `cargo rustc`, and
+examples, and points at `cargo rustc --help` for the cargo options. This differs from `check`, which
+forwards `--help` to `cargo check`.
 
 **A whole crate's expansion is long, so `--item <path>` narrows it to one part.** The path is
 `::`-separated, and what it selects depends on what it names:
@@ -96,44 +96,44 @@ cargo cgp expand --lib --item AreaCalculator     # a trait: its definition and e
 ```
 
 The path names a module or item **inside the crate being expanded**, and a leading `crate::` is
-accepted, so `--item crate::contexts::app` and `--item contexts::app` are the same request. (`self::`
-and a bare leading `::` work too.)
+accepted, so `--item crate::contexts::app` and `--item contexts::app` are the same request.
+(`self::` and a bare leading `::` work too.)
 
 The trait form is usually what you want on CGP code, because a component's generated items *are*
 impls: `--item AreaCalculator` gives the provider trait together with the blanket impls, the
-`UseContext` impl, and each provider's impl of it. A type's form is the companion: `--item Rectangle`
-shows the struct with its `HasField` impls and its wiring. If the path matches nothing you get an
-error saying so, not a silent whole-crate expansion.
+`UseContext` impl, and each provider's impl of it. A type's form is the companion:
+`--item Rectangle` shows the struct with its `HasField` impls and its wiring. If the path matches
+nothing you get an error saying so, not a silent whole-crate expansion.
 
 The filter is the one argument `expand` does not forward to cargo. A bare positional path (the way
-`cargo-expand` takes it) is not accepted, because with everything else passed through untouched a bare
-word cannot be told from the value of a cargo flag (`--bin my_module`).
+`cargo-expand` takes it) is not accepted, because with everything else passed through untouched a
+bare word cannot be told from the value of a cargo flag (`--bin my_module`).
 
 Two things about the output are worth knowing. **Every macro is expanded**, not only CGP's, so
 `#[derive(Debug)]` and `println!` appear in their generated form too; the CGP-specific part is that
-CGP's own type-level constructs are resugared, so a field name reads `Symbol!("height")` rather than a
-six-level `Chars` list. And the `cgp::macro_prelude::` qualifier the macros emit is stripped for
+CGP's own type-level constructs are resugared, so a field name reads `Symbol!("height")` rather than
+a six-level `Chars` list. And the `cgp::macro_prelude::` qualifier the macros emit is stripped for
 readability, which means the output is meant to be *read* rather than compiled.
 
-`expand` is not a check: the compilation stops once the crate is expanded, so no type analysis runs and
-no CGP diagnostic is produced. A malformed macro invocation still fails, since that happens during
-expansion, but a wiring mistake does not. Use `check` for that.
+`expand` is not a check: the compilation stops once the crate is expanded, so no type analysis runs
+and no CGP diagnostic is produced. A malformed macro invocation still fails, since that happens
+during expansion, but a wiring mistake does not. Use `check` for that.
 
 ## Reading the output
 
-The output is ordinary rustc/cargo diagnostics, with the errors `cargo-cgp` recognizes rewritten into
-a clearer form. When the tool rewrites an error into a known CGP class, it stamps the message with a
-short code in square brackets:
+The output is ordinary rustc/cargo diagnostics, with the errors `cargo-cgp` recognizes rewritten
+into a clearer form. When the tool rewrites an error into a known CGP class, it stamps the message
+with a short code in square brackets:
 
 ```text
 error[E0277]: [CGP-E001] the consumer trait `CanCalculateArea` is not implemented for context `Rectangle`
 ```
 
-The `[CGP-Exxx]` code names one class of CGP mistake (what it means and how to fix it) and is
-looked up in the [CGP error-code catalog](../error-code.md). The diagnostic's own Rust code (`E0277`
-here) is always kept, so `rustc --explain` still works and nothing is reclassified away from rustc;
-the CGP code rides inside the message as a tag on the sentence it classifies. Errors the tool does
-not recognize pass through as the compiler wrote them.
+The `[CGP-Exxx]` code names one class of CGP mistake (what it means and how to fix it) and is looked
+up in the [CGP error-code catalog](../error-code.md). The diagnostic's own Rust code (`E0277` here)
+is always kept, so `rustc --explain` still works and nothing is reclassified away from rustc; the
+CGP code rides inside the message as a tag on the sentence it classifies. Errors the tool does not
+recognize pass through as the compiler wrote them.
 
 ## Editor integration (Rust Analyzer)
 
@@ -178,12 +178,12 @@ the check as usual. Running through the flake is what makes it work from *any* d
 wraps the front-end to force the pinned nightly and run unmanaged, so it needs no rustup and leaves
 the target project's own toolchain and `target/` untouched.
 
-When the local binaries are already built (`cargo build` in the checkout) *and* the pinned nightly is
-the active toolchain, as it is inside the `cargo-cgp` workspace itself, the built binaries can be
+When the local binaries are already built (`cargo build` in the checkout) *and* the pinned nightly
+is the active toolchain, as it is inside the `cargo-cgp` workspace itself, the built binaries can be
 driven directly with the environment overrides described under
-[Installing from source](installation.md#installing-from-source), skipping the flake build. That form
-relies on the ambient toolchain matching the driver's embedded compiler, which the flake otherwise
-guarantees, so reach for it only when that match holds. See
+[Installing from source](installation.md#installing-from-source), skipping the flake build. That
+form relies on the ambient toolchain matching the driver's embedded compiler, which the flake
+otherwise guarantees, so reach for it only when that match holds. See
 [Installation](installation.md#installing-with-nix) for the other Nix entry points.
 
 ## Environment overrides
@@ -193,8 +193,8 @@ setups. They are summarized here; the full contract is in
 [Distribution](../implementation/distribution.md#escape-hatches-for-local-development).
 
 - `CARGO_CGP_NO_MANAGE`: when set, skip the preflight and the toolchain forcing, and trust whatever
-  driver and toolchain the environment already provides. Used when running a source or Nix build that
-  is not provisioned through rustup.
+  driver and toolchain the environment already provides. Used when running a source or Nix build
+  that is not provisioned through rustup.
 - `CARGO_CGP_DRIVER`: an explicit path to the driver executable, bypassing the sibling lookup. Point
   it at a freshly built `target/debug/cargo-cgp-driver`.
 - `CARGO_CGP_TOOLCHAIN`: override the pinned nightly at runtime, for testing a toolchain bump;
@@ -229,12 +229,11 @@ built-against-rustc: rustc 1.100.0-nightly (4b6d04e70 2026-09-13)
 
 A failure *before* that output, typically
 `error while loading shared libraries: librustc_driver-<hash>.so: cannot open shared object file`,
-means the loader cannot find the
-compiler library, either because the dynamic-library path is not set or because the driver was built
-against a different nightly than the one installed. A Nix-built driver has that path baked into its
-wrapper, so `--version` works as-is; a from-source driver needs the pinned toolchain's `lib` directory
-on the loader path, which is what the front-end normally sets for it (`DYLD_FALLBACK_LIBRARY_PATH` on
-macOS, `LD_LIBRARY_PATH` elsewhere):
+means the loader cannot find the compiler library, either because the dynamic-library path is not
+set or because the driver was built against a different nightly than the one installed. A Nix-built
+driver has that path baked into its wrapper, so `--version` works as-is; a from-source driver needs
+the pinned toolchain's `lib` directory on the loader path, which is what the front-end normally sets
+for it (`DYLD_FALLBACK_LIBRARY_PATH` on macOS, `LD_LIBRARY_PATH` elsewhere):
 
 ```sh
 SYSROOT=$(rustc --print sysroot)                        # run under the pinned toolchain
@@ -243,8 +242,8 @@ LD_LIBRARY_PATH=$SYSROOT/lib cargo-cgp-driver --version
 
 When the driver comes from the [Nix flake](installation.md#installing-with-nix), run it through the
 flake instead, which needs no library-path setup at all: the flake bakes that path into the driver's
-wrapper. Bring the tool onto `PATH` in a throwaway shell (preferring a local checkout, as everywhere)
-and call the driver there:
+wrapper. Bring the tool onto `PATH` in a throwaway shell (preferring a local checkout, as
+everywhere) and call the driver there:
 
 ```sh
 nix shell /path/to/the/local/cargo-cgp -c cargo-cgp-driver --version
@@ -257,24 +256,26 @@ nix build /path/to/the/local/cargo-cgp   # then:
 ./result/bin/cargo-cgp-driver --version
 ```
 
-There is no `nix run` app for the driver: it is a second binary of the same package as the front-end,
-so it is reached through `nix shell` or the built `result/bin`, not `nix run …#cargo-cgp-driver`. The
-baked-in library path covers the load test above; to replay a full *compilation* with the Nix driver
-you still supply the sysroot (`CARGO_CGP_SYSROOT`) as in the reproduction below, and for that case
-running the whole check through the flake (`nix run … -- check -v`, above) is usually easier.
+There is no `nix run` app for the driver: it is a second binary of the same package as the
+front-end, so it is reached through `nix shell` or the built `result/bin`, not
+`nix run …#cargo-cgp-driver`. The baked-in library path covers the load test above; to replay a full
+*compilation* with the Nix driver you still supply the sysroot (`CARGO_CGP_SYSROOT`) as in the
+reproduction below, and for that case running the whole check through the flake
+(`nix run … -- check -v`, above) is usually easier.
 
 To debug an actual compilation, reproduce the exact command cargo hands the driver rather than
-building one by hand. Run the failing check verbosely and cargo prints each driver invocation in full:
+building one by hand. Run the failing check verbosely and cargo prints each driver invocation in
+full:
 
 ```sh
 cargo cgp check -v
 ```
 
 Each `Running …` line, showing a full `cargo-cgp-driver … rustc --crate-name …` command, is a
-complete, replayable invocation. (If none prints, the crate was cached; touch a source file or clean `target/cgp` to force a
-recompile.) Copy one and run it directly, with the two environment values the front-end passes
-reconstructed: the sysroot, which the driver reads from `CARGO_CGP_SYSROOT` to inject `--sysroot`,
-and the library path above:
+complete, replayable invocation. (If none prints, the crate was cached; touch a source file or clean
+`target/cgp` to force a recompile.) Copy one and run it directly, with the two environment values
+the front-end passes reconstructed: the sysroot, which the driver reads from `CARGO_CGP_SYSROOT` to
+inject `--sysroot`, and the library path above:
 
 ```sh
 SYSROOT=$(rustc --print sysroot)
@@ -293,9 +294,9 @@ prepares its argument vector and reaches the compiler is documented in
 
 ## Further reading
 
-- [Installation](installation.md) — installing and updating the tool.
-- [CGP error codes](../error-code.md) — the catalog of the `[CGP-Exxx]` codes in the output.
-- [Distribution](../implementation/distribution.md) — the design behind the check's toolchain
+- [Installation](installation.md): installing and updating the tool.
+- [CGP error codes](../error-code.md): the catalog of the `[CGP-Exxx]` codes in the output.
+- [Distribution](../implementation/distribution.md): the design behind the check's toolchain
   forcing, the isolated target directory, and the Rust Analyzer integration.
-- [The driver](../implementation/driver.md) — how the driver wraps rustc and transforms diagnostics,
+- [The driver](../implementation/driver.md): how the driver wraps rustc and transforms diagnostics,
   for when direct invocation surfaces a driver-side problem.
