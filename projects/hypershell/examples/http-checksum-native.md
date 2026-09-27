@@ -49,9 +49,20 @@ the examples crate's `HypershellChecksumProvider`; see [the examples library](RE
 `Checksum<Sha256>` names the algorithm type directly, so the program depends on `sha2`. The digest
 is raw bytes, which `BytesToHex` encodes for printing.
 
-Removing the `BytesToHex` stage makes a good diagnostic exercise. The raw `GenericArray` digest then
-reaches `StreamToStdout`, whose input dispatcher has no entry for it, and `cargo cgp check` names the
-missing `@HandlerComponent.StreamToStdout.GenericArray<u8, …>` entry in `HandleToTokioAsyncRead`; see
+## Try a change
+
+Removing the `BytesToHex` stage is the change the public page shows. The raw `GenericArray` digest then
+reaches `StreamToStdout`, whose input dispatcher has no entry for it. A probe checked the program on
+the same context with `HandlerComponent: (Program, Vec<u8>)`, and `cargo cgp check` built from source
+at commit `b6a6323` reported:
+
+```text
+error[E0277]: [CGP-E002] the provider trait `Handler<Pipe<…>, GenericArray<u8, …>>` with context `MyApp` is not implemented for provider `Call<StreamToStdout>`
+   = note: root cause: [CGP-E110] provider `HandleToTokioAsyncRead` does not contain any delegate entry for `@HandlerComponent.StreamToStdout.GenericArray<u8, …>`
+```
+
+The published `cargo-cgp` v0.1.0-alpha reports the same leaf as `[CGP-E107]`, calling
+`HandleToTokioAsyncRead` a context; the dedicated `[CGP-E110]` code is newer than that release. See
 [debugging](../guides/debugging.md#a-stage-cannot-accept-the-previous-stages-output).
 
 ## What it demonstrates

@@ -34,7 +34,7 @@ Its entries, grouped by the provider they route to, are:
 | `@hypershell.tokio.CommandUpdaterComponent` | `WithArgs`, `FieldArgs` | `HypershellTokioProvider` |
 | `@hypershell.core.HttpMethodTypeProviderComponent`, `@hypershell.core.UrlTypeProviderComponent` | — | `HypershellReqwestProvider` |
 | `@hypershell.core.StringArgExtractorComponent` | `UrlEncodeArg` | `HypershellReqwestProvider` |
-| `@hypershell.core.MethodArgExtractorComponent` | `GetMethod`, `PostMethod` | `HypershellReqwestProvider` |
+| `@hypershell.core.MethodArgExtractorComponent` | `GetMethod`, `PostMethod`, `PutMethod`, `DeleteMethod` | `HypershellReqwestProvider` |
 | `@hypershell.reqwest.RequestBuilderUpdaterComponent` | `WithHeaders`, `Header` | `HypershellReqwestProvider` |
 
 ### Behavior

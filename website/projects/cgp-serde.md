@@ -31,8 +31,10 @@ example page says so beside the code, since a reader arriving from Serde expects
 `Self`.
 
 **The index must say on its first screen that cgp-serde is a proof of concept**, which it describes
-itself as, with the gaps a Serde user will look for first: no generic enum support, no tuple
-structs, none of Serde's attributes, and no length-prefixed binary formats.
+itself as, and state its scope in the terms a Serde user asks about: that it replaces Serde's
+per-type implementations while keeping Serde's data model and formats, and that its generic
+providers cover structs with named fields and types that already implement Serde's traits. It does
+not list the features it lacks; those are records in the project's `issues.md`.
 
 ## The pages
 
@@ -103,9 +105,10 @@ gets a page. Enumerate against the source when porting; the groups are:
   Serde, what it adds, what it lacks, how Serde's idioms map onto wiring, and when plain Serde is
   the better choice. This page is the evaluator's destination from the index and must keep its last
   section.
-- **`limitations.md`** — from [issues.md](../../projects/cgp-serde/issues.md): the byte round-trip,
-  owned bytes, borrowed strings, and undeclared lengths, then the missing features, including
-  recursive data types, which fail to compile through the generic providers.
+- **`limitations.md`** — the high-level limits of the design and status, written from the README and
+  the architecture: a proof of concept, which part of Serde it replaces and which it keeps, the
+  kinds of data type its generic providers cover, and the formats that fit its output. It names no
+  bugs and no unimplemented features; those stay in [issues.md](../../projects/cgp-serde/issues.md).
 
 ## Prerequisites
 
@@ -146,7 +149,7 @@ since the settled rule covers the post a section grew out of.
 
 ## Maintaining it
 
-**The comparison and the limitations page change only as items are fixed**; neither is trimmed as
-the library matures. And if the namespace lands after the pages are written, revise `messages`,
-`basic`, and the wiring guide together rather than patching one, since the three show the same
-wiring.
+**The comparison and the limitations page change only where a limit stops being true**; neither is
+trimmed as the library matures. And if the namespace lands after the pages are written, revise
+`messages`, `basic`, and the wiring guide together rather than patching one, since the three show
+the same wiring.

@@ -148,5 +148,6 @@ source has no doc comments, so the crates' docs.rs pages list items with no expl
 
 ## Public material derived from this
 
-The defects and missing features on the `limitations` page of the planned [Hypershell project
-section](../../website/projects/hypershell.md), and the code prerequisites that plan lists.
+None on the public site: the website's pages state only high-level limits and name no bugs or
+missing features, per [the writing guide](../../website/writing-guides/project.md#the-limitations-page).
+The code prerequisites in the [Hypershell plan](../../website/projects/hypershell.md) draw on it.

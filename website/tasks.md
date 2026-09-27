@@ -197,19 +197,22 @@ replace. The code tasks are numbered DC, and DC1 and DC3 keep their IDs.
   in:* the `cgp-examples` repository. The detail is in
   [projects/cgp-examples.md](projects/cgp-examples.md#code-prerequisites).
 - **P1 — the cgp-examples pages, with the section index.** About 33 pages, and the pilot for the whole
-  section: write `expression` first and revise the writing guide from what it teaches. **This task also
-  creates the `Projects` category** at position 8, between Reference and `cargo-cgp`, which renumbers
-  everything below it, and writes the section index with its pattern-finding table. *Blocked by:* the
+  section: write `expression` first and revise the writing guide from what it teaches, and add the
+  cgp-examples rows to the section index's pattern-finding table. *Blocked by:* the
   `cgp-examples` `v0.8.0` branch becoming the default; the per-example records for `builder`,
   `transfer`, and `greet` in this base; and DC4 for the pages it names.
-- **P2 — the Hypershell pages.** About a hundred pages. **Do this one first of the libraries**: it is the
+- **P2 — the Hypershell pages.** About a hundred pages, of which the 21 that nothing blocks are written,
+  along with the `Projects` category, the sidebar renumbering it needed, and the section index; see
+  [projects/hypershell.md](projects/hypershell.md#what-is-written). What remains is the reference, five
+  pages that quote providers, and the comparison. **Do this one first of the libraries**: it is the
   only project with measured demand behind it, since the post it grows from wins *rust dsl* at 771
   impressions and position 7.0, and a further 293 impressions across *shell scripting vs rust* and its
   variants convert at zero, which the planned comparison with shell scripts can serve. See
   [seo.md](seo.md#adding-a-page-is-almost-never-the-answer-and-the-data-says-which-three-cases-to-consider).
-  Its index and the examples that show only a program and a context can start before DC1; the reference,
-  the interpretation page, and the extension pages cannot. *Blocked by:* DC1 for those pages; a Hypershell
-  release built on `cgp` 0.8.0, or a git dependency on the index; and the comparison document in this base.
+  *Blocked by:* DC1 for the reference, `architecture/interpretation`, `architecture/error-handling`,
+  `guides/extending-the-language`, and the two compare examples; a confirmed run of
+  `compare_and_branch`; and the comparison document in this base. The written index gives a git
+  dependency, pending a Hypershell release built on `cgp` 0.8.0.
 - **P3 — the cgp-serde pages.** About 48 pages. *Blocked by:* DC3 for the component pages and the two
   arena examples, and a cgp-serde release built on `cgp` 0.8.0.
 - **P4 — the error backend pages.** About 22 pages. *Blocked by:* the `cgp` 0.8.0 release, since the

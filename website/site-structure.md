@@ -1417,9 +1417,32 @@ internal document is a defect in the public page.
 The sidebar ordering is settled. Adding the Quickstart at position 2 was the occasion to renumber
 the whole tree into the order
 [information-architecture.md](information-architecture.md#navigation-and-sidebar-order) wants:
-Introduction, Quickstart, Overview, Tutorials, Concepts, Comparisons, Reference, `cargo-cgp`,
-Resources, Contribute, and AI last. The planned [Projects section](projects/README.md) takes a position
-between Reference and `cargo-cgp` when it lands, which renumbers everything below it.
+Introduction, Quickstart, Overview, Tutorials, Concepts, Comparisons, Reference, Projects,
+`cargo-cgp`, Resources, Contribute, and AI last. The [Projects](#projects) section took position 8,
+and `cargo-cgp` now sits at 9, Resources at 10, Contribute at 11, and AI at 12.
+
+## Projects
+
+- **URL** — <https://contextgeneric.dev/docs/projects/>
+- **Source** — [docs/projects/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/projects)
+- **Status** — Draft: the section index and 21 Hypershell pages are written on the `v0.8.0` branch;
+  the other three projects are planned
+- **How it was made** — ported by an agent from [projects/](../projects/README.md); level one of the
+  four in [ai-disclosure.md](../communication-strategy/ai-disclosure.md)
+
+The Projects section documents the projects built with CGP, one directory per project, with each
+project's runnable examples written as short tutorials. It is a top-level category at position 8,
+between Reference and `cargo-cgp`; adding it moved `cargo-cgp`, Resources, Contribute, and AI down one
+position each. A project is a subcategory whose `_category_.json` links its index, and inside it the
+order is examples, architecture, guides, and the limitations page last. Resources links the Hypershell
+section beside its repository.
+
+Because the section ports four catalogs rather than one, its record is kept one level down:
+[projects/](projects/README.md) holds the blueprint and one plan per project, and each plan becomes
+that project's record as its pages land, with what is written, what waits and why, and the revisions
+the pages were verified against. The page type and its conventions, including that a Projects page is
+verified against its project's repository rather than the `example-code` crate, are in
+[writing-guides/project.md](writing-guides/project.md).
 
 ## AI disclaimer
 

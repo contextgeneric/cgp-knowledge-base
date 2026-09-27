@@ -76,6 +76,21 @@ handler forwards its input to the socket and closes the socket when the input en
 `Vec<u8>` would end the stream immediately. The second parameter of `WebSocket` is `()`; the handler
 ignores it.
 
+## Try a change
+
+Removing the error route while keeping the `WebSocket` entry is the change the public page shows. A
+probe checked the program with `HandlerComponent: (Program, TokioAsyncReadStream<ReadHalf<SimplexStream>>)`,
+the input `main` builds, and `cargo cgp check` built from source at commit `b6a6323` reported:
+
+```text
+error[E0277]: [CGP-E002] the provider trait `Handler<Pipe<…>, TokioAsyncReadStream<ReadHalf<SimplexStream>>>` with context `MyApp` is not implemented for provider `ComposeHandlers<…>`
+   = note: root cause: [CGP-E107] context `MyApp` does not contain any delegate entry for `@cgp.core.error.ErrorRaiserComponent.Error`
+```
+
+The path's last segment is `tungstenite::Error` written by its own name, `Error`, so the message names
+the error type the provider raises rather than the context's `anyhow` error. With the route in place,
+the check passes.
+
 ## What it demonstrates
 
 - Adding a syntax and an error type on one context: see

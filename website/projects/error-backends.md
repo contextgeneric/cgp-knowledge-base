@@ -67,9 +67,9 @@ in all.
   `cgp_error_anyhow::Error` is a re-export of `anyhow::Error` rather than a construct, so it is
   mentioned on the anyhow index and gets no page.
 
-The crates have no open defects, so there is **no limitations page**. The one unverified claim, that
-`cgp-error-anyhow` and `cgp-error-std` build for a target without `std`, is stated as unverified on
-the architecture page rather than asserted.
+There is **no limitations page**: the backends are small, and their limits fit in a sentence on the
+index. The one unverified claim, that `cgp-error-anyhow` and `cgp-error-std` build for a target
+without `std`, is stated as unverified on the architecture page rather than asserted.
 
 ## Prerequisites
 
