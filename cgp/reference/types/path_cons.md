@@ -45,7 +45,7 @@ Beyond concatenation, a `PathCons` path is consumed by [`RedirectLookup`](../pro
 
 ## Examples
 
-Paths are produced by the [`Path!`](../macros/path.md) macro and most often appear inside the wirings emitted by [`#[cgp_namespace]`](../macros/cgp_namespace.md). A namespace entry that redirects one component key to a path desugars into a `RedirectLookup` over a `PathCons` chain:
+Paths are produced by the [`Path!`](../macros/path.md) macro and most often appear inside the wirings emitted by [`cgp_namespace!`](../macros/cgp_namespace.md). A namespace entry that redirects one component key to a path desugars into a `RedirectLookup` over a `PathCons` chain:
 
 ```rust
 use cgp::prelude::*;
@@ -74,7 +74,7 @@ Here the lookup steps first through `MyBarComponent` and then through `BarProvid
 
 ## Related constructs
 
-`PathCons` is the routing counterpart to the product list [`Cons`](cons.md)/`Nil`; it shares the right-nested, `Nil`-terminated shape but its segments are `?Sized` markers rather than sized field values. Its segments are [`Symbol`](chars.md) type-level strings (for lowercase names) and named component or namespace types (for capitalized names). Paths are built by the [`Path!`](../macros/path.md) macro, appended through [`ConcatPath`](../traits/static_format.md), and walked by [`RedirectLookup`](../providers/redirect_lookup.md) when resolving a delegation. They are produced throughout [`#[cgp_namespace]`](../macros/cgp_namespace.md), which uses them to reroute namespace entries and to register prefixed components.
+`PathCons` is the routing counterpart to the product list [`Cons`](cons.md)/`Nil`; it shares the right-nested, `Nil`-terminated shape but its segments are `?Sized` markers rather than sized field values. Its segments are [`Symbol`](chars.md) type-level strings (for lowercase names) and named component or namespace types (for capitalized names). Paths are built by the [`Path!`](../macros/path.md) macro, appended through [`ConcatPath`](../traits/static_format.md), and walked by [`RedirectLookup`](../providers/redirect_lookup.md) when resolving a delegation. They are produced throughout [`cgp_namespace!`](../macros/cgp_namespace.md), which uses them to reroute namespace entries and to register prefixed components.
 
 ## Source
 

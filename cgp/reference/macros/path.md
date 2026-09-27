@@ -6,7 +6,7 @@
 
 `Path!` exists to give a readable surface syntax for the `PathCons` list that CGP uses to address an entry behind layers of delegation. A path names a route, read left to right, where each segment narrows a lookup one step: through a namespace, through a prefix, down to a component key. Writing that route as a nested `PathCons<…, PathCons<…, Nil>>` by hand is unwieldy and obscures the intent, so `Path!` lets it be written the way it reads — a dotted name like `@app.error.ErrorRaiserComponent` — and folds it into the corresponding list.
 
-The macro is the path-shaped sibling of the other type-level construction macros. Where [`Symbol!`](symbol.md) turns a string literal into a single type-level string and [`Product!`](product.md)/`Sum!` build product and sum lists, `Path!` builds the routing list, sharing their right-nested, `Nil`-terminated shape. It is the construction half of the [`PathCons`](../types/path_cons.md) type, and the same `@`-path syntax it accepts is embedded directly inside [`#[cgp_namespace]`](cgp_namespace.md) entries and `#[prefix(...)]` attributes, which is where paths are most often written.
+The macro is the path-shaped sibling of the other type-level construction macros. Where [`Symbol!`](symbol.md) turns a string literal into a single type-level string and [`Product!`](product.md)/`Sum!` build product and sum lists, `Path!` builds the routing list, sharing their right-nested, `Nil`-terminated shape. It is the construction half of the [`PathCons`](../types/path_cons.md) type, and the same `@`-path syntax it accepts is embedded directly inside [`cgp_namespace!`](cgp_namespace.md) entries and `#[prefix(...)]` attributes, which is where paths are most often written.
 
 ## Syntax
 
@@ -32,7 +32,7 @@ PathInput   -> `@` PathSegment ( `.` PathSegment )*
 PathSegment -> Type
 ```
 
-The leading `` `@` `` is required and at least one segment must follow. Each `PathSegment` is parsed as a Rust `Type`, but its encoding is decided semantically (see Expansion): a single lowercase identifier that is not a primitive type name becomes a `Symbol` type-level string, while every other segment — a capitalized name or a primitive — is kept as the named type. This same `@`-path grammar is what [`#[cgp_namespace]`](cgp_namespace.md) entries and `#[prefix(...)]` attributes embed, where it appears as the `Path` production.
+The leading `` `@` `` is required and at least one segment must follow. Each `PathSegment` is parsed as a Rust `Type`, but its encoding is decided semantically (see Expansion): a single lowercase identifier that is not a primitive type name becomes a `Symbol` type-level string, while every other segment — a capitalized name or a primitive — is kept as the named type. This same `@`-path grammar is what [`cgp_namespace!`](cgp_namespace.md) entries and `#[prefix(...)]` attributes embed, where it appears as the `Path` production.
 
 ## Expansion
 
@@ -56,7 +56,7 @@ PathCons<
 
 The macro builds this by parsing the segments after the `@` into a list and folding them from right to left onto `Nil`, wrapping each segment in a `PathCons` whose tail is the accumulated rest. A single-segment path therefore becomes `PathCons<Segment, Nil>`, and because a lowercase symbol segment is itself a `Symbol`/`Chars`/`Nil` chain, the fully desugared form of `@app` is `PathCons<Symbol<3, Chars<'a', Chars<'p', Chars<'p', Nil>>>>, Nil>`.
 
-The same expansion appears verbatim inside the wirings that embed `@`-paths. A [`#[cgp_namespace]`](cgp_namespace.md) redirect entry `FooProviderComponent => @MyFooComponent` produces a `RedirectLookup<__Table__, PathCons<MyFooComponent, Nil>>`, and a `#[prefix(@MyBarComponent in MyNamespace)]` attribute produces a `PathCons<MyBarComponent, PathCons<BarProviderComponent, Nil>>` — the macro's fold is the same one driving those constructs.
+The same expansion appears verbatim inside the wirings that embed `@`-paths. A [`cgp_namespace!`](cgp_namespace.md) redirect entry `FooProviderComponent => @MyFooComponent` produces a `RedirectLookup<__Table__, PathCons<MyFooComponent, Nil>>`, and a `#[prefix(@MyBarComponent in MyNamespace)]` attribute produces a `PathCons<MyBarComponent, PathCons<BarProviderComponent, Nil>>` — the macro's fold is the same one driving those constructs.
 
 ## Examples
 
@@ -71,7 +71,7 @@ type ErrorRoute = Path!(@app.error.ErrorRaiserComponent);
 //                      PathCons<ErrorRaiserComponent, Nil>>>
 ```
 
-In practice the same syntax is more often embedded in a namespace table than written through the bare macro, since [`#[cgp_namespace]`](cgp_namespace.md) accepts `@`-paths directly in its entries:
+In practice the same syntax is more often embedded in a namespace table than written through the bare macro, since [`cgp_namespace!`](cgp_namespace.md) accepts `@`-paths directly in its entries:
 
 ```rust
 use cgp::prelude::*;
@@ -89,7 +89,7 @@ Either way the path is the same `PathCons` list; the macro and the namespace sim
 
 ## Related constructs
 
-`Path!` constructs the [`PathCons`](../types/path_cons.md) list, the type it desugars to, and its lowercase segments are [`Symbol!`](symbol.md) type-level strings. It is the routing-list counterpart to the product and sum construction macros [`Product!`](product.md) and [`Sum!`](sum.md), sharing their right-fold-onto-`Nil` shape. The paths it builds are consumed by [`RedirectLookup`](../providers/redirect_lookup.md) when resolving a delegation, and its `@`-path syntax is embedded throughout [`#[cgp_namespace]`](cgp_namespace.md), where namespace entries and `#[prefix(...)]` attributes use the same dotted form.
+`Path!` constructs the [`PathCons`](../types/path_cons.md) list, the type it desugars to, and its lowercase segments are [`Symbol!`](symbol.md) type-level strings. It is the routing-list counterpart to the product and sum construction macros [`Product!`](product.md) and [`Sum!`](sum.md), sharing their right-fold-onto-`Nil` shape. The paths it builds are consumed by [`RedirectLookup`](../providers/redirect_lookup.md) when resolving a delegation, and its `@`-path syntax is embedded throughout [`cgp_namespace!`](cgp_namespace.md), where namespace entries and `#[prefix(...)]` attributes use the same dotted form.
 
 ## Source
 

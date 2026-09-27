@@ -8,7 +8,7 @@ This family exists to give namespaces and presets a uniform, per-key lookup surf
 
 The reason to have all three rather than one variadic trait is that each fixes the arity of the key at the type level, which lets the projection `<Key as Trait<…, Delegate = Provider>>` resolve cleanly. A context that joins a namespace forwards its lookups into one of these traits, and a `for … in` loop that pulls per-type defaults reads them by projecting the `Delegate`. The whole mechanism is type-level, and it is customized by completion rather than by override: a context's direct entries supply the paths the namespace leaves unbound, while an entry for a key the namespace already binds overlaps the forwarding impl and is rejected with `E0119`, the [namespace override conflict](../../errors/wiring/namespace-override-conflict.md).
 
-These traits are the plumbing beneath the [`#[cgp_namespace]`](../macros/cgp_namespace.md) macro and the `namespace` / `for … in` syntax of [`delegate_components!`](../macros/delegate_components.md). A user writing namespaces names them only in the namespace header and in the `for … in` loop target; the macros generate the impls and the forwarding.
+These traits are the plumbing beneath the [`cgp_namespace!`](../macros/cgp_namespace.md) macro and the `namespace` / `for … in` syntax of [`delegate_components!`](../macros/delegate_components.md). A user writing namespaces names them only in the namespace header and in the `for … in` loop target; the macros generate the impls and the forwarding.
 
 ## Definition
 
@@ -109,7 +109,7 @@ Pointing a `for <T, Provider> in DefaultShowComponents { … }` loop at this nam
 
 ## Related constructs
 
-`DefaultNamespace`, `DefaultImpls1`, and `DefaultImpls2` are the lookup traits the [`#[cgp_namespace]`](../macros/cgp_namespace.md) macro builds on, and they are consumed by the `namespace` header and `for … in` loop of [`delegate_components!`](../macros/delegate_components.md). Their `Delegate` entries are commonly a [`RedirectLookup`](../providers/redirect_lookup.md), which re-routes a lookup along a type-level path rather than naming a provider outright. A context's `namespace` header forwards through these traits into a blanket [`DelegateComponent`](delegate_component.md) impl, with the matching [`IsProviderFor`](is_provider_for.md) forwarding so dependency errors stay readable. For the broader picture of how namespaces and presets fit together, see [namespaces](../../concepts/namespaces.md).
+`DefaultNamespace`, `DefaultImpls1`, and `DefaultImpls2` are the lookup traits the [`cgp_namespace!`](../macros/cgp_namespace.md) macro builds on, and they are consumed by the `namespace` header and `for … in` loop of [`delegate_components!`](../macros/delegate_components.md). Their `Delegate` entries are commonly a [`RedirectLookup`](../providers/redirect_lookup.md), which re-routes a lookup along a type-level path rather than naming a provider outright. A context's `namespace` header forwards through these traits into a blanket [`DelegateComponent`](delegate_component.md) impl, with the matching [`IsProviderFor`](is_provider_for.md) forwarding so dependency errors stay readable. For the broader picture of how namespaces and presets fit together, see [namespaces](../../concepts/namespaces.md).
 
 ## Source
 

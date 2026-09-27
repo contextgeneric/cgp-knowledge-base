@@ -115,4 +115,4 @@ A handful of specific compiler errors recur in CGP code, and each maps to a smal
 - [Check traits](../concepts/check-traits.md) — why wiring is lazy and how checks force a readable error at the wiring site.
 - [`check_components!`](../reference/macros/check_components.md) — the full checking surface, including `#[check_providers]` and checking generic components with concrete parameters.
 - [`IsProviderFor`](../reference/traits/is_provider_for.md) and [`DelegateComponent`](../reference/traits/delegate_component.md) — the two traits every wiring error is ultimately about.
-- [`#[cgp_namespace]`](../reference/macros/cgp_namespace.md) and [`DefaultNamespace`](../reference/traits/default_namespace.md) — the namespace-specific conflicts and orphan restrictions the decoder above references.
+- [`cgp_namespace!`](../reference/macros/cgp_namespace.md) and [`DefaultNamespace`](../reference/traits/default_namespace.md) — the namespace-specific conflicts and orphan restrictions the decoder above references.

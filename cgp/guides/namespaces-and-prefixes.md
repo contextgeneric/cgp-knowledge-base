@@ -335,7 +335,7 @@ The three techniques form a ladder, and most applications should climb only as f
 
 ## Related documentation
 
-- [`#[cgp_namespace]`](../reference/macros/cgp_namespace.md) — the full syntax of defining a namespace, the `namespace`/`for … in` statements, and the `#[prefix]` attribute.
+- [`cgp_namespace!`](../reference/macros/cgp_namespace.md) — the full syntax of defining a namespace, the `namespace`/`for … in` statements, and the `#[prefix]` attribute.
 - [`DefaultNamespace`, `DefaultImpls1`, `DefaultImpls2`](../reference/traits/default_namespace.md) — the lookup traits behind namespaces and the `#[default_impl]` attribute.
 - [`delegate_components!`](../reference/macros/delegate_components.md) — the wiring table these techniques restructure, including the `open` statement for the self-contained case.
 - [Namespaces](../concepts/namespaces.md) — the mechanism (inheritance, `RedirectLookup`, and paths) that makes the preset pattern work.

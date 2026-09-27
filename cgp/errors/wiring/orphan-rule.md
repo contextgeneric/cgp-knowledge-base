@@ -48,7 +48,7 @@ Own one end of the impl. Register the default from the crate that owns the names
 
 ## Notes for tooling
 
-`cargo-cgp` reshapes this class, as [How cargo-cgp presents it](#how-cargo-cgp-presents-it) describes: it recognizes the shape — a namespace trait (a `#[cgp_namespace]` trait, `DefaultNamespace`, or a `DefaultImpls…`, told apart by their single-`Delegate` fingerprint) implemented for a foreign component marker or a `PathCons<Symbol<…>>` list — and translates the generic orphan message into the CGP remedy: own one end, by keying the registration on a local component, registering it from the namespace's own crate, or (for a `cgp_namespace!` re-open) inheriting the namespace into a new local one. The raw diagnostic was accurate but framed a CGP wiring decision as a bare coherence rule, so the value the rewrite adds is the translation, not the extraction.
+`cargo-cgp` reshapes this class, as [How cargo-cgp presents it](#how-cargo-cgp-presents-it) describes: it recognizes the shape — a namespace trait (a `cgp_namespace!` trait, `DefaultNamespace`, or a `DefaultImpls…`, told apart by their single-`Delegate` fingerprint) implemented for a foreign component marker or a `PathCons<Symbol<…>>` list — and translates the generic orphan message into the CGP remedy: own one end, by keying the registration on a local component, registering it from the namespace's own crate, or (for a `cgp_namespace!` re-open) inheriting the namespace into a new local one. The raw diagnostic was accurate but framed a CGP wiring decision as a bare coherence rule, so the value the rewrite adds is the translation, not the extraction.
 
 ## Backing fixtures
 
@@ -64,5 +64,5 @@ The orphan-*safe* counterpart is the positive fixture [`ok/cross_crate_wiring.rs
 
 - [Conflicting wiring](conflicting-wiring.md), [Wiring cycle](wiring-cycle.md), [Unconstrained generic](unconstrained-generic.md) — the sibling structural classes.
 - [Overlapping namespace forwarding](namespace-forwarding-conflict.md), [Namespace override conflict](namespace-override-conflict.md), [Namespace inheritance cycle](namespace-inheritance-cycle.md), [Unregistered namespace path](../checks/unregistered-namespace-path.md) — the other namespace-specific failure classes.
-- [`DefaultNamespace`](../../reference/traits/default_namespace.md) and [`#[cgp_namespace]`](../../reference/macros/cgp_namespace.md) — the namespace mechanics behind the restriction.
+- [`DefaultNamespace`](../../reference/traits/default_namespace.md) and [`cgp_namespace!`](../../reference/macros/cgp_namespace.md) — the namespace mechanics behind the restriction.
 - [Debugging CGP compile errors](../../guides/debugging.md) — the `E0210`/`E0117` entry in the decoder.

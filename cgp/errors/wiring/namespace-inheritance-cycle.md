@@ -48,5 +48,5 @@ This is the **one class in the catalog with no `cargo-cgp` fixture**, because th
 
 - [Wiring cycle](wiring-cycle.md) — the sibling cycle class through [`UseContext`](../../reference/providers/use_context.md); both overflow with `E0275`, but that one is lazy (surfaces only when checked, hides as `E0599` when called) while this one is eager (caught at the namespace definitions).
 - [Conflicting wiring](conflicting-wiring.md), [Orphan-rule violation](orphan-rule.md), [Unconstrained generic](unconstrained-generic.md) — the sibling structural classes.
-- [`#[cgp_namespace]`](../../reference/macros/cgp_namespace.md) and [`DefaultNamespace`](../../reference/traits/default_namespace.md) — the inheritance blanket impl whose `where` clause the cycle poisons.
+- [`cgp_namespace!`](../../reference/macros/cgp_namespace.md) and [`DefaultNamespace`](../../reference/traits/default_namespace.md) — the inheritance blanket impl whose `where` clause the cycle poisons.
 - [Debugging CGP compile errors](../../guides/debugging.md) — the `E0275`/overflow entry in the decoder.

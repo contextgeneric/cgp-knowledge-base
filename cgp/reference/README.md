@@ -93,7 +93,7 @@ These macros connect components to providers on a concrete context and verify th
 - [`delegate_components!`](macros/delegate_components.md) — build a context's type-level table mapping components to providers.
 - [`check_components!`](macros/check_components.md) — assert at compile time that a context's wiring is complete.
 - [`delegate_and_check_components!`](macros/delegate_and_check_components.md) — delegate and check in one macro.
-- [`#[cgp_namespace]`](macros/cgp_namespace.md) — group components under a namespace for presets and inheritance.
+- [`cgp_namespace!`](macros/cgp_namespace.md) — group components under a namespace for presets and inheritance.
 
 ## Type-level construction macros — [macros/](macros/)
 

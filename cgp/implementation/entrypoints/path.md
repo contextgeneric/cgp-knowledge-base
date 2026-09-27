@@ -35,14 +35,14 @@ A lowercase segment expands further, since `Symbol!("app")` is itself a `Symbol<
 
 The leading `@` is required — `UniPath::parse` consumes an `At` token before anything else, so a body without it fails at parse time — and at least one segment must follow, because the segments are read with `parse_separated_nonempty`.
 
-Each segment is first parsed as a full Rust `Type`, then reclassified: only a segment that reduces to a single identifier beginning with a lowercase ASCII letter, and is not a primitive type name, becomes a `Symbol`; everything else stays the named type. The primitive exception means a lowercase name like `u32`, `bool`, `usize`, or `str` is kept as the primitive type rather than turned into a symbol. This is the same convention `#[cgp_namespace]` entries and `#[prefix(...)]` attributes embed, and those constructs reuse the same segment and fold machinery rather than the `Path!` entry function.
+Each segment is first parsed as a full Rust `Type`, then reclassified: only a segment that reduces to a single identifier beginning with a lowercase ASCII letter, and is not a primitive type name, becomes a `Symbol`; everything else stays the named type. The primitive exception means a lowercase name like `u32`, `bool`, `usize`, or `str` is kept as the primitive type rather than turned into a symbol. This is the same convention `cgp_namespace!` entries and `#[prefix(...)]` attributes embed, and those constructs reuse the same segment and fold machinery rather than the `Path!` entry function.
 
 ## Tests
 
-`Path!` has no snapshot macro of its own, and it is rarely written directly — the `@`-path syntax is almost always embedded inside `#[cgp_namespace]` entries and `#[prefix(...)]` attributes instead of the bare macro. Its expansion is therefore exercised indirectly through the namespace and prefix machinery that shares its parsing.
+`Path!` has no snapshot macro of its own, and it is rarely written directly — the `@`-path syntax is almost always embedded inside `cgp_namespace!` entries and `#[prefix(...)]` attributes instead of the bare macro. Its expansion is therefore exercised indirectly through the namespace and prefix machinery that shares its parsing.
 
 - [namespaces/redirect_lookup.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/namespaces/redirect_lookup.rs) pins, through a `snapshot_cgp_component!` golden, how a `#[prefix(@bar.baz in DefaultNamespace)]` attribute lowers a component lookup into a `RedirectLookup` over the `PathCons` chain the same segment fold produces.
-- [namespaces/namespace_symbol_path.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/namespaces/namespace_symbol_path.rs) and [namespaces/namespace_type_path.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/namespaces/namespace_type_path.rs) exercise the lowercase-symbol and capitalized-type segment classifications through `#[cgp_namespace]` `@`-paths.
+- [namespaces/namespace_symbol_path.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/namespaces/namespace_symbol_path.rs) and [namespaces/namespace_type_path.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/namespaces/namespace_type_path.rs) exercise the lowercase-symbol and capitalized-type segment classifications through `cgp_namespace!` `@`-paths.
 
 ## Source
 

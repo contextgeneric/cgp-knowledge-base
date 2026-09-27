@@ -31,14 +31,14 @@ PathCons<Symbol!("app"), PathCons<Symbol!("error"), PathCons<ErrorRaiserComponen
 
 ## `PathHead` and the branching forms
 
-The remaining types support the multi-path, generic-carrying grammar that `#[cgp_namespace]` and the `open` statement accept, which `Path!` does not: `PathHead` is a recursive parser for a path that can branch (a brace group of alternative sub-paths), carry a per-value group (a bracketed set sharing a tail), or attach generics, and its `into_paths` flattens such a tree into a list of `(ImplGenerics, UniPath)` pairs. `PathElementWithGenerics` pairs a `PathElement` with leading `ImplGenerics` so a segment can introduce a lifetime or type parameter. `PathHeadOrType` and `UniPathOrType` are the entry parsers that decide, by peeking for a leading `@`, whether an input is a path or a plain type — the disambiguation the namespace and wiring grammars need where either is allowed. These belong to the path stack because they reuse `PathElement` and the same `PathCons` fold, but they are driven by the namespace and wiring macros rather than by `Path!`.
+The remaining types support the multi-path, generic-carrying grammar that `cgp_namespace!` and the `open` statement accept, which `Path!` does not: `PathHead` is a recursive parser for a path that can branch (a brace group of alternative sub-paths), carry a per-value group (a bracketed set sharing a tail), or attach generics, and its `into_paths` flattens such a tree into a list of `(ImplGenerics, UniPath)` pairs. `PathElementWithGenerics` pairs a `PathElement` with leading `ImplGenerics` so a segment can introduce a lifetime or type parameter. `PathHeadOrType` and `UniPathOrType` are the entry parsers that decide, by peeking for a leading `@`, whether an input is a path or a plain type — the disambiguation the namespace and wiring grammars need where either is allowed. These belong to the path stack because they reuse `PathElement` and the same `PathCons` fold, but they are driven by the namespace and wiring macros rather than by `Path!`.
 
 ## Tests
 
 `Path!` is rarely written directly, so the stack is exercised mainly through the namespace and prefix machinery that reuses it.
 
 - [namespaces/redirect_lookup.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/namespaces/redirect_lookup.rs) pins, through a `snapshot_cgp_component!` golden, the `PathCons` chain a `#[prefix(@bar.baz in DefaultNamespace)]` attribute produces via `PrefixPath`.
-- [namespaces/namespace_symbol_path.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/namespaces/namespace_symbol_path.rs) and [namespaces/namespace_type_path.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/namespaces/namespace_type_path.rs) exercise the lowercase-symbol and capitalized-type segment classification of `PathElement` through `#[cgp_namespace]` `@`-paths.
+- [namespaces/namespace_symbol_path.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/namespaces/namespace_symbol_path.rs) and [namespaces/namespace_type_path.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/namespaces/namespace_type_path.rs) exercise the lowercase-symbol and capitalized-type segment classification of `PathElement` through `cgp_namespace!` `@`-paths.
 
 ## Source
 
