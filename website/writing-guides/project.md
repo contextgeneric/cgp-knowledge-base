@@ -244,7 +244,9 @@ program being fixed at compile time, belongs in *The pattern*, as its cost.
 
 **A *Where to go next* section** ends every example page with three kinds of link: the next example
 in the project's teaching order, the architecture page or guide that develops what this program
-touched, and the Concepts or tutorial page for the CGP idea behind it. A page that ends without
+touched, and the Concepts or tutorial page for the CGP idea behind it. Where a blog post presented
+the program, a fourth link goes to it, at the post's section for this program, per [Voice, costs, and
+the source posts](#voice-costs-and-the-source-posts). A page that ends without
 routing has dropped its reader, per
 [information-architecture.md](../information-architecture.md#most-readers-do-not-arrive-at-the-homepage).
 
@@ -496,10 +498,12 @@ how long it takes to compile where that is known, what the diagnostics look like
 wrong, and that the project is a proof of concept where it is one. Never state a benchmark, a
 compile time, or an adoption claim the project has not measured.
 
-**When a project section is published, a pointer to it goes at the top of the blog post it grew out
-of.** That is the one sanctioned edit to a published post, settled in
-[AGENTS.md](../AGENTS.md#do-not-rewrite-history): it adds a link and changes no claim. The project's
-plan names the posts that get one.
+**When a project section is written, each post that presents the project gets a notice at its top
+pointing to the section, and each example page links the post back.** The notice is the one
+sanctioned edit to a published post, settled in [AGENTS.md](../AGENTS.md#do-not-rewrite-history): it
+adds a link and changes no claim. The project's plan names the posts that get one. The link back sits
+in the example page's *Where to go next*, pointing at the section of the post that presents the
+program where there is one, and saying the post's code predates the current design where it does.
 
 ## What must not be on a Projects page
 

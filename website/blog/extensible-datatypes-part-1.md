@@ -10,6 +10,7 @@ providers.
 - **Published** — 7 July 2025, tagged `release` and `deepdive`
 - **Release** — [v0.4.2](../../releases/v0-4-2.md), announced across all four parts
 - **Status** — Historical
+- **Notice** — a note at the top of the post, written on the website's `v0.8.0` branch, links the *Extensible records* Concepts page and the [cgp-examples section](https://contextgeneric.dev/docs/projects/cgp-examples/), whose `builder` pages this post's code grew into are not yet written; per [projects/cgp-examples.md](../projects/cgp-examples.md); it is the sanctioned edit in [../AGENTS.md](../AGENTS.md#do-not-rewrite-history) and changes no claim
 
 ## What it covers
 
@@ -106,7 +107,8 @@ framing to reuse when writing about extensible records, from
 [extensible records](../../cgp/concepts/extensible-records.md) and the
 [application builder example](../../examples/application-builder.md).
 
-**One edit is already settled.** When the post's project section of the [planned Projects
-pages](../projects/cgp-examples.md) publishes, a pointer to the `builder` index in the cgp-examples
-section goes at the top of this post, per the [settled case](../AGENTS.md#do-not-rewrite-history).
-It adds a link and changes no claim, snippet, or slug; nothing else in the post changes with it.
+**The post carries its notice.** A note at the top links the *Extensible records* Concepts page and
+the [cgp-examples section](../projects/cgp-examples.md), per the [settled
+case](../AGENTS.md#do-not-rewrite-history). When the `builder` pages are written, the notice gains a
+link to the `builder` index. It adds a link and changes no claim, snippet, or slug; nothing else in
+the post changes with it.

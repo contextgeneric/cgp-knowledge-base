@@ -257,14 +257,17 @@ crate, per the [workspace gaps](../../projects/cgp-examples/README.md#workspace-
 
 ## The source posts
 
-Two blog posts grew out of these crates and get a pointer when their subsection publishes:
-[extensible data types, part 1](../blog/extensible-datatypes-part-1.md) to the `builder` index, and
-[part 2](../blog/extensible-datatypes-part-2.md) to the `expression` index. Parts 3 and 4 of that
-series explain the internals, which the site covers in the *Extensible records* and *Extensible
-variants* Concepts pages and the reference rather than in this section; whether they get a pointer
-to those pages is not settled by the pointer rule and is the author's decision. The unfinished
-[v0.8.0 release post](../blog/v0-8-0-release.md) develops `web-app`'s wiring and can link the
-section directly when it publishes, since it is not yet a published record.
+Every part of the extensible data types series carries a notice at its top, as the author settled.
+[Part 2](../blog/extensible-datatypes-part-2.md) links the `expression` pages, and each `expression`
+example page links the post back at the section that develops it.
+[Part 1](../blog/extensible-datatypes-part-1.md) links the *Extensible records* Concepts page and
+this section, and gains a link to the `builder` index when those pages are written. Parts
+[3](../blog/extensible-datatypes-part-3.md) and [4](../blog/extensible-datatypes-part-4.md), which
+explain the internals, link the Concepts pages and the reference, and part 4 the `expression` pages
+too. The unfinished [v0.8.0 release post](../blog/v0-8-0-release.md) gets no notice, since it
+describes the current design; the `web-app` pages link it at the section for each stage, and the
+post can link the section back when it is finished.
+
 
 ## Maintaining it
 

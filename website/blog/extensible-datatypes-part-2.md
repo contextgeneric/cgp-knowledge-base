@@ -9,6 +9,7 @@ every operation over the language is an independent, separately-compilable piece
 - **Published** — 9 July 2025, tagged `deepdive`
 - **Release** — [v0.4.2](../../releases/v0-4-2.md)
 - **Status** — Historical
+- **Notice** — a note at the top of the post, written on the website's `v0.8.0` branch, links the [`expression` pages](https://contextgeneric.dev/docs/projects/cgp-examples/expression/) and the *Extensible variants* Concepts page, per [projects/cgp-examples.md](../projects/cgp-examples.md); it is the sanctioned edit in [../AGENTS.md](../AGENTS.md#do-not-rewrite-history) and changes no claim
 
 ## What it covers
 
@@ -100,8 +101,7 @@ motivation, which does not depend on CGP syntax at all and is reusable verbatim 
 everything downstream of it should be rewritten from the
 [expression interpreter example](../../examples/expression-interpreter.md).
 
-**One edit is already settled.** When the post's project section of the [planned Projects
-pages](../projects/cgp-examples.md) publishes, a pointer to the `expression` index in the
-cgp-examples section goes at the top of this post, per the [settled
-case](../AGENTS.md#do-not-rewrite-history). It adds a link and changes no claim, snippet, or slug;
-nothing else in the post changes with it.
+**The post carries its notice.** A note at the top links the `expression` pages of the
+[cgp-examples section](../projects/cgp-examples.md) and the *Extensible variants* Concepts page, per
+the [settled case](../AGENTS.md#do-not-rewrite-history). It adds a link and changes no claim,
+snippet, or slug; nothing else in the post changes with it.

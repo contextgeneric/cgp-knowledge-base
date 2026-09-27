@@ -10,6 +10,7 @@ breaking releases out of date.
 - **Source** — [blog/2025-06-14-hypershell-release/index.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/2025-06-14-hypershell-release/index.md)
 - **Published** — 14 June 2025, tagged `release` and `deepdive`
 - **Status** — Historical
+- **Notice** — a note at the top of the post, written on the website's `v0.8.0` branch, links the [Hypershell pages](https://contextgeneric.dev/docs/projects/hypershell/), per [projects/hypershell.md](../projects/hypershell.md); it is the sanctioned edit in [../AGENTS.md](../AGENTS.md#do-not-rewrite-history) and changes no claim
 
 ## What it covers
 
@@ -145,7 +146,6 @@ revision, and the [conference talk and deep-dive playbooks](../../communication-
 apply. Two things from this post are worth carrying into any successor: the prototypal-inheritance
 bridge, and the disadvantages section, which is the reason readers trust the rest of it.
 
-**One edit is already settled.** When the post's project section of the [planned Projects
-pages](../projects/hypershell.md) publishes, a pointer to the Hypershell index goes at the top of
-this post, per the [settled case](../AGENTS.md#do-not-rewrite-history). It adds a link and changes
-no claim, snippet, or slug; nothing else in the post changes with it.
+**The post carries its notice.** A note at the top links the [Hypershell section](../projects/hypershell.md),
+per the [settled case](../AGENTS.md#do-not-rewrite-history). It adds a link and changes no claim,
+snippet, or slug; nothing else in the post changes with it.

@@ -12,6 +12,7 @@ that dates the release notes.
   [PDF of the deck](https://contextgeneric.dev/blog/rustlab-2025-coherence/cgp-rustlab-2025-slides.pdf)
 - **Recording** — <https://www.youtube.com/watch?v=gXIfP-W9074>
 - **Status** — Historical
+- **Notice** — a note at the top of the post, written on the website's `v0.8.0` branch, links the [cgp-serde pages](https://contextgeneric.dev/docs/projects/cgp-serde/), including the two-application demo the talk ran live, and the *Coherence* Concepts page; it is the sanctioned edit in [../AGENTS.md](../AGENTS.md#do-not-rewrite-history) and changes no claim
 
 ## What it covers
 
