@@ -897,8 +897,7 @@ it stale.
   demonstration repository such as cgp-examples, or separate crates shipped from a member repository
   such as the error backends), how a project section grows from one README into its
   shape, one subdirectory per subproject where a project has several, and how each connects to an
-  example, a published post, a set of constructs, and its planned section of the website's Projects
-  pages.
+  example, a published post, a set of constructs, and its section of the website's Projects pages.
 - [projects/hypershell/README.md](projects/hypershell/README.md) — the type-level shell-scripting
   DSL: what it is, which revision the documents describe (the unreleased `v0.8.0` branch, the only one
   built on namespaces), the crate split, the confirmed gaps, the section catalog, and the public
@@ -1014,8 +1013,8 @@ it stale.
   crate split.
 - [projects/cgp-serde/architecture/serde-bridge.md](projects/cgp-serde/architecture/serde-bridge.md) —
   the Serde layer cgp-serde replaces and the ones it keeps, `UseSerde` and the adapters as the two
-  directions of the bridge, errors reported through the format and raised at the JSON boundary, and the
-  map-not-struct and unsized-length output changes.
+  directions of the bridge, errors reported through the format and raised at the JSON boundary, and
+  the map-not-struct and undeclared-length output changes.
 - [projects/cgp-serde/architecture/component-design.md](projects/cgp-serde/architecture/component-design.md)
   — the value moved out of `Self` as the modularity hierarchy's tier 4 and its costs, the
   `Serialize…`/`Deserialize…` naming convention with the full serializer-deserializer pairing table,
@@ -1069,9 +1068,8 @@ it stale.
 - [projects/cgp-serde/issues.md](projects/cgp-serde/issues.md) — the confirmed defects (byte
   round-trip, owned bytes, borrowed strings, undeclared lengths), missing features, and housekeeping.
 - [projects/cgp-serde/reference/README.md](projects/cgp-serde/reference/README.md) — the catalog,
-  and
-  tables of every public item and provider with its crate, direction, bounds, context dependencies,
-  and import path.
+  and tables of every public item and provider with its crate, direction, bounds, context
+  dependencies, and import path.
 - [projects/cgp-serde/reference/components.md](projects/cgp-serde/reference/components.md) —
   `CanSerializeValue` and `CanDeserializeValue`: the two components, the unsized `Value` no provider
   accepts, the `'de` lifetime and `Life<'de>` in checks, and the legacy `UseDelegate` attribute.
@@ -1104,9 +1102,8 @@ it stale.
   `CanAlloc`, `DeserializeAndAllocate`, `HasArena`, and `AllocateWithArena`: deserializing borrowed
   values into a context-supplied arena, layered so the allocator is a wiring choice.
 - [projects/cgp-serde/reference/records.md](projects/cgp-serde/reference/records.md) —
-  `SerializeFields`
-  and `DeserializeRecordFields`: the minimum derives per direction, the map format, missing, duplicate,
-  and unknown fields, and the format limits of an unsized map.
+  `SerializeFields` and `DeserializeRecordFields`: the minimum derives per direction, the map format,
+  missing, duplicate, and unknown fields, and the format limits of a map without a declared length.
 - [projects/cgp-examples/README.md](projects/cgp-examples/README.md) — the repository of five
   independent example crates: what each demonstrates, its context shape, worked example, citing post,
   whether it runs, the `v0.8.0` branch against `main` and the unmerged

@@ -8,28 +8,29 @@ them.
 
 The sections with rules of their own are the two member directories and the outward-facing sections:
 [cgp/AGENTS.md](cgp/AGENTS.md) for the CGP library's documentation (and, nested under it,
-[cgp/implementation/AGENTS.md](cgp/implementation/AGENTS.md) and [cgp/errors/AGENTS.md](cgp/errors/AGENTS.md)),
-[cargo-cgp/AGENTS.md](cargo-cgp/AGENTS.md) for the toolchain's (with
-[cargo-cgp/implementation/AGENTS.md](cargo-cgp/implementation/AGENTS.md)),
+[cgp/implementation/AGENTS.md](cgp/implementation/AGENTS.md) and
+[cgp/errors/AGENTS.md](cgp/errors/AGENTS.md)), [cargo-cgp/AGENTS.md](cargo-cgp/AGENTS.md) for the
+toolchain's (with [cargo-cgp/implementation/AGENTS.md](cargo-cgp/implementation/AGENTS.md)),
 [examples/AGENTS.md](examples/AGENTS.md) for the worked examples,
 [related-work/AGENTS.md](related-work/AGENTS.md) for the outward comparisons,
 [communication-strategy/AGENTS.md](communication-strategy/AGENTS.md) for public-facing writing,
 [website/AGENTS.md](website/AGENTS.md) for the public site and the documents that track it, and
-[projects/AGENTS.md](projects/AGENTS.md) for the libraries built with CGP. Read the one that owns what
-you are about to touch, after this file.
+[projects/AGENTS.md](projects/AGENTS.md) for the libraries built with CGP. Read the one that owns
+what you are about to touch, after this file.
 
 One section has no rules of its own and is governed by this file alone:
-[releases/](releases/README.md), which is the single exception to the document-the-present rule below
-and is otherwise bound by this file unchanged.
+[releases/](releases/README.md), which is the single exception to the document-the-present rule
+below and is otherwise bound by this file unchanged.
 
 ## Orient before any task
 
-Load the CGP mental model before reasoning about any document here, because every section assumes it.
-**Invoke the `/cgp` skill**: it is the authoritative orientation on consumer and provider traits,
-`#[cgp_component]`/`#[cgp_impl]`/`#[cgp_fn]`, `delegate_components!`, `HasField`, `UseDelegate`,
-check traits, and the vocabulary the whole base is written in. Re-invoke it whenever you move into an
-unfamiliar construct. The skill lives in [`cgp-skills`](https://github.com/contextgeneric/cgp-skills)
-and is built from this base, so the two must always use the same words for the same ideas.
+Load the CGP mental model before reasoning about any document here, because every section assumes
+it. **Invoke the `/cgp` skill**: it is the authoritative orientation on consumer and provider
+traits, `#[cgp_component]`/`#[cgp_impl]`/`#[cgp_fn]`, `delegate_components!`, `HasField`,
+`UseDelegate`, check traits, and the vocabulary the whole base is written in. Re-invoke it whenever
+you move into an unfamiliar construct. The skill lives in
+[`cgp-skills`](https://github.com/contextgeneric/cgp-skills) and is built from this base, so the two
+must always use the same words for the same ideas.
 
 **Load the `/dual-reader-prose` skill whenever you write or revise prose here**, which is nearly
 every task, and follow its convention. A document in this base is read both by an agent scanning for
@@ -47,8 +48,8 @@ crosses a boundary.
 ## The synchronization rule
 
 **A document must stay in sync with the code it describes, and keeping it in sync is part of the
-change, not a follow-up.** The source in the member projects is the single source of truth, above any
-document here and above the skill. When a change alters a construct's syntax, its expansion, its
+change, not a follow-up.** The source in the member projects is the single source of truth, above
+any document here and above the skill. When a change alters a construct's syntax, its expansion, its
 defaults, its error behavior, or the way a tool is structured or behaves, revise the matching
 document in the same change. A document that describes behavior the code no longer has is worse than
 no document, because the next agent will trust it and be misled. Treat a stale document as a bug in
@@ -78,30 +79,32 @@ are the ones written from an earlier draft of themselves.
 
 Two kinds of read-only source sit outside the member projects and are worth naming. The Rust
 compiler and Clippy checkouts (`../external/rust`, `../external/rust-clippy`) are the ground truth
-for how `rustc_driver` and a cargo-wrapping tool actually behave, since those internals shift between
-nightlies; cite them, never edit them, and never create a dependency on them. A published crate's
-own documentation is the ground truth for its API. Prefer verifying against a source over reasoning
-about what it probably does.
+for how `rustc_driver` and a cargo-wrapping tool actually behave, since those internals shift
+between nightlies; cite them, never edit them, and never create a dependency on them. Where
+`../external/rust` is absent, the `rustc-dev` component of cargo-cgp's pinned nightly carries the
+same compiler source, under `~/.rustup/toolchains/<toolchain>/lib/rustlib/rustc-src/rust/compiler`.
+A published crate's own documentation is the ground truth for its API. Prefer verifying against a
+source over reasoning about what it probably does.
 
 ## Document the present, not the history
 
 Describe how the code works now, written as though it had always worked that way. Do not record how
 it reached its current state: no changelog entries, no version numbers attached to behavior, and no
-"renamed from", "previously", "used to", or "no longer" traces. These artifacts accumulate into noise
-that ages badly: a reader cannot tell which "recently" is which, and a comparison against a former
-state describes something that no longer exists. When you correct a discrepancy, rewrite the prose to
-state the current behavior and delete the old wording outright. Git history is where the evolution
-lives. The one place a document describes a deviation is a Known issues or limitations section, and
-even there the deviation is a current one.
+"renamed from", "previously", "used to", or "no longer" traces. These artifacts accumulate into
+noise that ages badly: a reader cannot tell which "recently" is which, and a comparison against a
+former state describes something that no longer exists. When you correct a discrepancy, rewrite the
+prose to state the current behavior and delete the old wording outright. Git history is where the
+evolution lives. The one place a document describes a deviation is a Known issues or limitations
+section, and even there the deviation is a current one.
 
-Two sections are exempt, and the exemption is narrow. [releases/](releases/README.md) exists to record
-the history this rule keeps out of everywhere else (when a construct arrived, what it was called at
-each point, and where it went), because a reader meeting `#[cgp_context]` in old code has nowhere else
-to look. [website/blog/](website/blog/README.md) records how far each published post has drifted from
-the current release, for the same reason. Neither exemption travels: a reference, concept, guide, or
-implementation document still describes only the present, and a construct that no longer exists is
-deleted from it rather than annotated. When you need to say what something *used* to be, link to the
-release document that says it.
+Two sections are exempt, and the exemption is narrow. [releases/](releases/README.md) exists to
+record the history this rule keeps out of everywhere else (when a construct arrived, what it was
+called at each point, and where it went), because a reader meeting `#[cgp_context]` in old code has
+nowhere else to look. [website/blog/](website/blog/README.md) records how far each published post
+has drifted from the current release, for the same reason. Neither exemption travels: a reference,
+concept, guide, or implementation document still describes only the present, and a construct that no
+longer exists is deleted from it rather than annotated. When you need to say what something *used*
+to be, link to the release document that says it.
 
 ## This repository is public
 
@@ -114,16 +117,17 @@ here. Write every document as though a member of the Rust community will find it
 Three consequences bind every section, and the first is the one an agent is most likely to breach
 without noticing. **Distil public discussion rather than pointing at it.** Community reaction to CGP
 is legitimate input to the [communication strategy](communication-strategy/README.md), and the
-conclusions drawn from it belong here. But a document records what the reaction *amounts to*, never a
-link to the thread it came from and never a quotation attributable to the person who wrote it.
+conclusions drawn from it belong here. But a document records what the reaction *amounts to*, never
+a link to the thread it came from and never a quotation attributable to the person who wrote it.
 Summarizing a recurring objection is analysis; naming the comment that raised it is finger-pointing,
-and it reads that way to the person named. Citations to *published work* that is not itself a reaction
-to CGP (a survey, an article, a repository of design notes) are unaffected and remain the way an
-audience claim is grounded.
+and it reads that way to the person named. Citations to *published work* that is not itself a
+reaction to CGP (a survey, an article, a repository of design notes) are unaffected and remain the
+way an audience claim is grounded.
 
-**Never disparage another project, and assume its maintainers are reading.** The rule already governs
-public writing; it governs these documents too, for the same reason and now also because they are
-visible. A criticism of another crate is fair only where it would be fair said to its author's face.
+**Never disparage another project, and assume its maintainers are reading.** The rule already
+governs public writing; it governs these documents too, for the same reason and now also because
+they are visible. A criticism of another crate is fair only where it would be fair said to its
+author's face.
 
 **Keep material out that would harm someone if read.** Unfinished work and known defects belong here
 and are the point of the base. Speculation about individuals, private correspondence, and anything
@@ -136,15 +140,15 @@ Where a link points decides how it is written, and the three cases are worth kee
 A link **inside this repository** is a relative path: a sibling document in the same directory is
 `name.md`, a document in another directory is `../that-dir/name.md`, and a section index is
 `../that-dir/README.md`. Cross-link generously: when a document mentions a construct, an error
-class, or an example that another document owns, link it rather than re-explaining it, and prefer one
-explanation plus a link over two explanations that will eventually disagree.
+class, or an example that another document owns, link it rather than re-explaining it, and prefer
+one explanation plus a link over two explanations that will eventually disagree.
 
 A link to **a member project's own tree** (its source, its tests, its manifests, its root
 `AGENTS.md`) is always a GitHub URL on the `main` branch
 (`https://github.com/contextgeneric/<project>/blob/main/<path>`, or `/tree/main/` for a directory),
-never a relative `../../cgp/...` path, so the link resolves for a reader who has only this repository
-checked out. When you *read* such a link yourself, prefer the local sibling checkout and fetch the
-URL only when it is absent, per [sibling-projects.md](sibling-projects.md).
+never a relative `../../cgp/...` path, so the link resolves for a reader who has only this
+repository checked out. When you *read* such a link yourself, prefer the local sibling checkout and
+fetch the URL only when it is absent, per [sibling-projects.md](sibling-projects.md).
 
 A **bare mention of a checkout's location** (the path `../cgp`, or a link into the read-only
 `../external/rust` compiler source) is a filesystem reference rather than a published link, and it
@@ -157,27 +161,27 @@ reader.
 and every other document links there instead of restating them.** A project fact is anything true of
 the project's code as it stands: its module layout, its exact current wiring, what one of its items
 does, a design decision specific to it, a known defect, what its tests cover, what running it
-produces, and the changes it still needs. Record each such fact once, in the project section, and link
-to it from wherever else it matters, such as a blog-post record, a website project plan, or a task
-list. A fact stated outside `projects/` has nothing tying it to the project's source, so it goes stale
-the next time the project changes.
+produces, and the changes it still needs. Record each such fact once, in the project section, and
+link to it from wherever else it matters, such as a blog-post record, a website project plan, or a
+task list. A fact stated outside `projects/` has nothing tying it to the project's source, so it
+goes stale the next time the project changes.
 
 **The CGP patterns a project demonstrates belong to [cgp/](cgp/README.md) and
 [examples/](examples/README.md), and a project document links to them instead of re-teaching them.**
-A worked example may develop the same scenario as a project and still stands alone: an agent learning
-CGP reads the example and never needs the project section, which is written for an agent working on
-the project itself. Where any document here reproduces a project's code, it matches the project at
-the branch [sibling-projects.md](sibling-projects.md) records, so the teaching version and the running
-version never disagree. When the project expresses a pattern in an older idiom, the gap is recorded
-as a change the project needs, in its section's `issues.md`, rather than fixed in the example alone.
-A worked example still never presents itself as a description of the project, and it carries none of
-the project's records.
+A worked example may develop the same scenario as a project and still stands alone: an agent
+learning CGP reads the example and never needs the project section, which is written for an agent
+working on the project itself. Where any document here reproduces a project's code, it matches the
+project at the branch [sibling-projects.md](sibling-projects.md) records, so the teaching version
+and the running version never disagree. When the project expresses a pattern in an older idiom, the
+gap is recorded as a change the project needs, in its section's `issues.md`, rather than fixed in
+the example alone. A worked example still never presents itself as a description of the project, and
+it carries none of the project's records.
 
 **A concept page may use simplified code instead, when a reduced form explains its concept better.**
 This covers the documents under [cgp/concepts/](cgp/concepts/README.md) and the website's concept
 pages. Their code may borrow a project's names and scenario, such as `transfer`'s `MockApp`, and cut
-it down to the lines the concept needs. Such code is an illustration rather than a reproduction, so it
-need not match the project and is not recorded as drift. It is still bound by the
+it down to the lines the concept needs. Such code is an illustration rather than a reproduction, so
+it need not match the project and is not recorded as drift. It is still bound by the
 [synchronization rule](#the-synchronization-rule): it uses current idioms, it compiles against
 current CGP once the items it leaves out are supplied, and it never claims to be the project's code.
 
@@ -185,21 +189,21 @@ current CGP once the items it leaves out are supplied, and it never claims to be
 
 Every document registers itself in its section's `README.md` catalog in the same change that creates
 it, so a catalog is never behind its tree, and it registers a one-line summary in
-[summary.md](summary.md) in that same change. When you move, rename, split, or delete a document, fix
-the catalog, the summary, and every cross-link to it. The change that leaves a dangling link is the
-change that broke it.
+[summary.md](summary.md) in that same change. When you move, rename, split, or delete a document,
+fix the catalog, the summary, and every cross-link to it. The change that leaves a dangling link is
+the change that broke it.
 
-Adding a whole section means creating its directory with a `README.md` that catalogs it, giving it an
-`AGENTS.md` if it needs rules of its own, registering it in the base [README.md](README.md), and
-adding its files to [summary.md](summary.md). When the new section documents a new **member project**,
-also add that project to [sibling-projects.md](sibling-projects.md), and to the matching file in
-every other member repository, which is what lets each project find the others.
+Adding a whole section means creating its directory with a `README.md` that catalogs it, giving it
+an `AGENTS.md` if it needs rules of its own, registering it in the base [README.md](README.md), and
+adding its files to [summary.md](summary.md). When the new section documents a new **member
+project**, also add that project to [sibling-projects.md](sibling-projects.md), and to the matching
+file in every other member repository, which is what lets each project find the others.
 
 ## Keeping summary.md honest
 
-[summary.md](summary.md) exists so an agent can learn, in one read, every file this base contains and
-what each one holds. That makes it the file most easily left behind, so treat it as part of the tree
-rather than a description of it: a document that is added, removed, renamed, or repurposed is
+[summary.md](summary.md) exists so an agent can learn, in one read, every file this base contains
+and what each one holds. That makes it the file most easily left behind, so treat it as part of the
+tree rather than a description of it: a document that is added, removed, renamed, or repurposed is
 reflected there in the same change. Keep each entry to one line that says what the document covers,
 in the same vocabulary the document itself uses, and let the section catalogs carry the fuller
 framing: the summary is an index, not a second set of introductions.
@@ -210,12 +214,13 @@ Two mechanical habits keep these documents rendering and reading correctly, and 
 break while editing.
 
 **Keep backticks well formed, and re-check them after every edit.** Keep the opening and closing
-backticks of an inline code span on the **same line**; a line break between them breaks the span. When a sentence with inline code would wrap awkwardly, wrap it elsewhere or
-let the line run long; do not split the span. Put the fences of a code block on their own lines with
-a blank line before the opening fence and after the closing one, so the block is recognized rather
-than folded into the surrounding paragraph. The same applies to a markdown link: never break a line
-inside its `](...)` destination. After editing any document, read the text back and confirm every
-backtick and every link is intact.
+backticks of an inline code span on the **same line**; a line break between them breaks the span.
+When a sentence with inline code would wrap awkwardly, wrap it elsewhere or let the line run long;
+do not split the span. Put the fences of a code block on their own lines with a blank line before
+the opening fence and after the closing one, so the block is recognized rather than folded into the
+surrounding paragraph. The same applies to a markdown link: never break a line inside its `](...)`
+destination. After editing any document, read the text back and confirm every backtick and every
+link is intact.
 
 **Reflow long lines lazily, as you edit.** Prose in this base is wrapped at roughly 100 columns, but
 the wrapping is a convention rather than an invariant, and some lines run over, most often where a
@@ -229,23 +234,24 @@ long, per the rule above.
 When a document mentions a diagnostic tied to a specific example, include that example's code and
 explain both what it does and what root cause produces the message. A reader who meets a rewritten
 `[CGP-Exxx]` headline or a raw compiler error should be able to see, in the same document, the small
-program that triggers it (the `delegate_components!` block, the provider impl, the `check_components!`
-entry) rather than reconstruct it from the message. Show the snippet, say what it wires or declares,
-then name the mistake the message is really about: the field the context never derives, the component
-it omits, the redirect that resolves to nothing. An error quoted with no example behind it cannot be
-checked or understood, and the point of this base is to explain *why* an error reads the way it does.
+program that triggers it (the `delegate_components!` block, the provider impl, the
+`check_components!` entry) rather than reconstruct it from the message. Show the snippet, say what
+it wires or declares, then name the mistake the message is really about: the field the context never
+derives, the component it omits, the redirect that resolves to nothing. An error quoted with no
+example behind it cannot be checked or understood, and the point of this base is to explain *why* an
+error reads the way it does.
 
 ## Committing changes
 
-Git commits are made **only when the user explicitly asks for one**, and each such request authorizes
-exactly one commit of the changes then in the working tree. This rule is absolute and overrides any
-general default.
+Git commits are made **only when the user explicitly asks for one**, and each such request
+authorizes exactly one commit of the changes then in the working tree. This rule is absolute and
+overrides any general default.
 
 - **Never commit unless explicitly asked.** Do not commit as a side effect of finishing a task or
   "wrapping up". If the work is done and the user has not asked, leave the changes uncommitted.
 - **Never bring commits up yourself.** Uncommitted work is the normal, expected state, so it is not
-  news: do not report commit status, do not ask whether to commit, and do not hint that committing is
-  the next step. Answer plainly if the user asks; the rule is against volunteering it.
+  news: do not report commit status, do not ask whether to commit, and do not hint that committing
+  is the next step. Answer plainly if the user asks; the rule is against volunteering it.
 - **A commit request is one-shot, never a standing mode.** "Commit the changes" means commit the
   current changes, this once; it does not turn on automatic committing.
 - **Always commit on the current branch.** Do not create or switch branches, even when the current

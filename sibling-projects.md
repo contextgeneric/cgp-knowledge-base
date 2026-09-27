@@ -10,7 +10,7 @@ The knowledge base documents these projects rather than duplicating them: `cgp/`
 each document one member's own subject, so every claim in them is verified against that member's
 source; the skills built from this base live in `cgp-skills`; the public website is documented from
 this side in `website/`, because a published page may not link back here; and the libraries built
-*with* CGP are documented briefly in `projects/`.
+*with* CGP are documented in depth in `projects/`.
 
 | Project | Repository | Branch/tag to read | What it is |
 |---|---|---|---|
@@ -23,13 +23,13 @@ this side in `website/`, because a published page may not link back here; and th
 | `cgp-examples` | <https://github.com/contextgeneric/cgp-examples> | `v0.8.0` | Runnable example crates (`builder`, `expression`, `greet`, `transfer`, `web-app`), each documented as a subproject in [projects/cgp-examples/](projects/cgp-examples/README.md), and several the origin of the scenarios in [examples/](examples/README.md). |
 | `cgp-error-*` | <https://github.com/contextgeneric/cgp>, under `crates/standalone/error/` | `main` | The error backends `cgp-error-anyhow`, `cgp-error-eyre`, and `cgp-error-std`: opt-in crates in the `cgp` repository that are not part of the `cgp` crate. Found locally at `../cgp/crates/standalone/error`. Documented in [projects/error/](projects/error/README.md). |
 | `cgp-example-profile-picture` | <https://github.com/contextgeneric/cgp-example-profile-picture> | `main` | A single worked tutorial evolving one real application from a monolithic function to a modular CGP design; the origin of [examples/profile-picture.md](examples/profile-picture.md). |
-| `cgp-patterns` | <https://github.com/contextgeneric/cgp-patterns> | `main` | *Context-Generic Programming Patterns*, the mdBook published at <https://patterns.contextgeneric.dev>, pinned to `cgp` v0.4.0 and half written. Documented in [website/patterns-book.md](website/patterns-book.md). |
+| `cgp-patterns` | <https://github.com/contextgeneric/cgp-patterns> | `main` | *Context-Generic Programming Patterns*, the mdBook published at <https://patterns.contextgeneric.dev>, pinned to `cgp` v0.4.0, with 19 of its 47 planned chapters written. Documented in [website/patterns-book.md](website/patterns-book.md). |
 | `cgp-anatomy` | <https://github.com/contextgeneric/cgp-anatomy> | `main` | *The Anatomy of Context-Generic Programming*, a book-length report on CGP and fission-driven development, together with the preserved record of how it was co-authored by the project's author and an LLM: the human draft, the instructions, each AI revision, and the methodology. |
 
 The two example repositories are documented differently. `cgp-examples` has a section under
-[projects/cgp-examples/](projects/cgp-examples/README.md), one subproject per crate, because blog posts
-cite its crates and agents work on them directly. `cgp-example-profile-picture` has no directory of
-its own, and its scenario is documented only as a worked example under
+[projects/cgp-examples/](projects/cgp-examples/README.md), one subproject per crate, because blog
+posts cite its crates and agents work on them directly. `cgp-example-profile-picture` has no
+directory of its own, and its scenario is documented only as a worked example under
 [examples/](examples/README.md). Recording the relationship here keeps each example's provenance
 findable. A worked example may build on and link to any project in this table, per
 [examples/AGENTS.md](examples/AGENTS.md#building-on-a-sibling-cgp-project). Both repositories track
@@ -40,8 +40,8 @@ Two entries need a note on their names. The website's project name is `cgp-websi
 repository is named `contextgeneric.dev`, and a local checkout may carry either name
 (`../contextgeneric.dev` or `../cgp-website`). Look for both when locating the checkout, and use the
 repository name when writing a link. And
-[Hermes SDK](https://github.com/informalsystems/hermes-sdk/), the first real-world adopter of CGP, is
-developed outside the contextgeneric organization and is not a sibling: read it as an external
+[Hermes SDK](https://github.com/informalsystems/hermes-sdk/), the first real-world adopter of CGP,
+is developed outside the contextgeneric organization and is not a sibling: read it as an external
 reference, never expect a local checkout of it, and do not edit it.
 
 ## Finding a sibling
@@ -55,23 +55,25 @@ instead, at the revision the table records.
 ## Reading a sibling versus linking to one
 
 Reading and linking follow different rules, and conflating them is the mistake to avoid. When you
-**read** a document or a source file from a sibling, use the branch or tag this table names, so every
-project sees the same revision of the others. When you **link** to one from a committed file here, always
-write a GitHub URL on the `main` branch (`https://github.com/contextgeneric/<project>/blob/main/<path>`)
-rather than a relative `../<project>/...` path, so the link resolves for a reader who has only this
-repository checked out. A bare mention of a checkout's location, like the path `../cgp`, is a
-filesystem reference rather than a link and stays relative.
+**read** a document or a source file from a sibling, use the branch or tag this table names, so
+every project sees the same revision of the others. When you **link** to one from a committed file
+here, always write a GitHub URL on the `main` branch
+(`https://github.com/contextgeneric/<project>/blob/main/<path>`) rather than a relative
+`../<project>/...` path, so the link resolves for a reader who has only this repository checked out.
+A bare mention of a checkout's location, like the path `../cgp`, is a filesystem reference rather
+than a link and stays relative.
 
-One exception applies to the projects documented under [projects/](projects/README.md). When the table
-records a branch other than `main` for one of them, as it does for `hypershell`, `cgp-serde`, and
-`cgp-examples`, whose current development lives on `v0.8.0`, its documents link to that branch, per
-[projects/AGENTS.md](projects/AGENTS.md#a-project-section-documents-its-project-in-depth), because
-`main` holds different code from the code they describe.
+One exception applies to the projects documented under [projects/](projects/README.md). When the
+table records a branch other than `main` for one of them, as it does for `hypershell`, `cgp-serde`,
+and `cgp-examples`, whose current development lives on `v0.8.0`, its documents link to that branch,
+per [projects/AGENTS.md](projects/AGENTS.md#a-project-section-documents-its-project-in-depth),
+because `main` holds different code from the code they describe.
 
 ## Updating a revision
 
 The branch or tag recorded above changes **only on explicit instruction**, such as when a project
-cuts an official release and the ecosystem should pin it. During ordinary development every entry
-stays `main`, and it deliberately does *not* track a feature branch in progress: work in flight is
-read from the local sibling checkout, not from a revision recorded here. The same rule governs the
-`main` in a cross-project link: update it only when told to, as part of a release.
+cuts an official release the ecosystem should pin, or when a project's current development lives on
+a release branch, as it does on `v0.8.0` for `hypershell`, `cgp-serde`, and `cgp-examples`. An entry
+does *not* otherwise track a feature branch in progress: work in flight is read from the local
+sibling checkout, not from a revision recorded here. The same rule governs the `main` in a
+cross-project link: update it only when told to, as part of a release.
