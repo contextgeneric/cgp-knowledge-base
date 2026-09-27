@@ -1,18 +1,40 @@
 # `StaticFormat`, `StaticString`, `ConcatPath`
 
-`StaticFormat`, `StaticString`, and `ConcatPath` turn CGP's type-level strings and paths back into runtime data, formatting a [`Chars`](../types/chars.md) chain character by character, decoding a [`Symbol!`](../macros/symbol.md) into a `&'static str` constant, and concatenating two type-level paths into one.
+`StaticFormat`, `StaticString`, and `ConcatPath` turn CGP's type-level strings and paths back into
+runtime data, formatting a [`Chars`](../types/chars.md) chain character by character, decoding a
+[`Symbol!`](../macros/symbol.md) into a `&'static str` constant, and concatenating two type-level
+paths into one.
 
 ## Purpose
 
-These traits close the loop between CGP's compile-time names and the runtime world. CGP encodes field and variant names as types, a [`Symbol!`](../macros/symbol.md) is a length plus a [`Chars`](../types/chars.md) list, one node per character, so that names can drive trait resolution. But a program eventually needs those names as ordinary strings: to print a field name in an error message, to build a key, or to render a navigation path. `StaticFormat` and `StaticString` are the two ways to recover the string, and `ConcatPath` is the corresponding type-level operation on paths.
+These traits close the loop between CGP's compile-time names and the runtime world. CGP encodes
+field and variant names as types, a [`Symbol!`](../macros/symbol.md) is a length plus a
+[`Chars`](../types/chars.md) list, one node per character, so that names can drive trait resolution.
+But a program eventually needs those names as ordinary strings: to print a field name in an error
+message, to build a key, or to render a navigation path. `StaticFormat` and `StaticString` are the
+two ways to recover the string, and `ConcatPath` is the corresponding type-level operation on paths.
 
-`StaticFormat` recovers the string lazily, by writing into a formatter; it is what backs the `Display` impl on `Symbol` and `Chars`, so a type-level string can be printed with `to_string()` or `{}`. `StaticString` recovers it eagerly, as a compile-time `&'static str` constant computed by const evaluation, so the decoded string is available wherever a `const` is needed and costs nothing at runtime. `ConcatPath` works one level up: a [`PathCons`](../types/path_cons.md) path is a type-level list of path segments, and joining two paths, the common operation when composing nested accessors, is splicing one such list onto another.
+`StaticFormat` recovers the string lazily, by writing into a formatter; it is what backs the
+`Display` impl on `Symbol` and `Chars`, so a type-level string can be printed with `to_string()` or
+`{}`. `StaticString` recovers it eagerly, as a compile-time `&'static str` constant computed by
+const evaluation, so the decoded string is available wherever a `const` is needed and costs nothing
+at runtime. `ConcatPath` works one level up: a [`PathCons`](../types/path_cons.md) path is a
+type-level list of path segments, and joining two paths, the common operation when composing nested
+accessors, is splicing one such list onto another.
 
 ## Definition
 
-The three differ in where they are imported from, and the split is worth stating before the definitions because no two of them agree. `ConcatPath` is in the prelude. `StaticString` comes from `cgp::core::field::traits`. And `StaticFormat`, which lives in the same crate as `ConcatPath`, comes from `cgp::core::base::traits`, the module through which `cgp-core` re-exports `cgp-base`; `cgp-base` in turn re-exports `cgp-base-types::*`, so the same module tree also reaches `cgp::core::base::types` for [`Chars`](../types/chars.md), [`Cons`](../types/cons.md), `Nil`, [`PathCons`](../types/path_cons.md), and `Symbol`.
+The three differ in where they are imported from, and the split is worth stating before the
+definitions because no two of them agree. `ConcatPath` is in the prelude. `StaticString` comes from
+`cgp::core::field::traits`. And `StaticFormat`, which lives in the same crate as `ConcatPath`, comes
+from `cgp::core::base::traits`, the module through which `cgp-core` re-exports `cgp-base`;
+`cgp-base` in turn re-exports `cgp-base-types::*`, so the same module tree also reaches
+`cgp::core::base::types` for [`Chars`](../types/chars.md), [`Cons`](../types/cons.md), `Nil`,
+[`PathCons`](../types/path_cons.md), and `Symbol`.
 
-`StaticFormat` is a trait with a single associated function that writes the type-level string into a `Formatter`. The implementor is the type-level string itself, so the function takes no `self`, there is no runtime value, only the type:
+`StaticFormat` is a trait with a single associated function that writes the type-level string into a
+`Formatter`. The implementor is the type-level string itself, so the function takes no `self`, there
+is no runtime value, only the type:
 
 ```rust
 pub trait StaticFormat {
@@ -20,7 +42,8 @@ pub trait StaticFormat {
 }
 ```
 
-It is implemented by recursion over the [`Chars`](../types/chars.md) list. Each `Chars<CHAR, Tail>` writes its own `CHAR` and then defers to `Tail`, and the terminating `Nil` writes nothing:
+It is implemented by recursion over the [`Chars`](../types/chars.md) list. Each `Chars<CHAR, Tail>`
+writes its own `CHAR` and then defers to `Tail`, and the terminating `Nil` writes nothing:
 
 ```rust
 impl<const CHAR: char, Tail> StaticFormat for Chars<CHAR, Tail>
@@ -44,9 +67,15 @@ pub trait StaticString {
 }
 ```
 
-It is implemented for every type via a blanket impl over an internal `StaticBytes` trait. `Symbol<LEN, Chars>` computes a `[u8; LEN]` byte array at const-evaluation time by walking the `Chars` list and UTF-8-encoding each character into the array, then `StaticString::VALUE` validates those bytes as UTF-8 and exposes the result as a `&'static str`. The `LEN` const parameter of the `Symbol` is the precomputed byte length that sizes this array, which is why `Symbol!` records a byte length rather than a character count.
+It is implemented for every type via a blanket impl over an internal `StaticBytes` trait.
+`Symbol<LEN, Chars>` computes a `[u8; LEN]` byte array at const-evaluation time by walking the
+`Chars` list and UTF-8-encoding each character into the array, then `StaticString::VALUE` validates
+those bytes as UTF-8 and exposes the result as a `&'static str`. The `LEN` const parameter of the
+`Symbol` is the precomputed byte length that sizes this array, which is why `Symbol!` records a byte
+length rather than a character count.
 
-`ConcatPath<Other>` joins two type-level paths, exposing the joined path as `Output`. Both the input and output may be unsized, since path types are markers:
+`ConcatPath<Other>` joins two type-level paths, exposing the joined path as `Output`. Both the input
+and output may be unsized, since path types are markers:
 
 ```rust
 pub trait ConcatPath<Other: ?Sized> {
@@ -54,17 +83,31 @@ pub trait ConcatPath<Other: ?Sized> {
 }
 ```
 
-It recurses over the [`PathCons`](../types/path_cons.md) list just as `ConcatProduct` does over a product: each `PathCons<Head, Tail>` keeps its `Head` and concatenates `Other` onto the `Tail`, and the terminating `Nil` becomes `Other` itself, so the result is the first path's segments followed by the second's.
+It recurses over the [`PathCons`](../types/path_cons.md) list just as `ConcatProduct` does over a
+product: each `PathCons<Head, Tail>` keeps its `Head` and concatenates `Other` onto the `Tail`, and
+the terminating `Nil` becomes `Other` itself, so the result is the first path's segments followed by
+the second's.
 
 ## Behavior
 
-`StaticFormat` and `StaticString` decode the same type-level string but differ in when and how. `StaticFormat` runs at the moment of formatting, recursing through the `Chars` nodes and emitting each character into the formatter; because both `Symbol` and `Chars` implement `Display` by delegating to it, any type-level string can be turned into an owned `String` or interpolated directly. `StaticString` instead produces the string once, in a `const` context, so `<Symbol!("name") as StaticString>::VALUE` is a plain `&'static str` with no per-call work, preferable when the name is needed as a constant or in a hot path. Both faithfully round-trip multi-byte Unicode: the byte length in `Symbol` accounts for UTF-8 width, and the empty symbol decodes to `""`.
+`StaticFormat` and `StaticString` decode the same type-level string but differ in when and how.
+`StaticFormat` runs at the moment of formatting, recursing through the `Chars` nodes and emitting
+each character into the formatter; because both `Symbol` and `Chars` implement `Display` by
+delegating to it, any type-level string can be turned into an owned `String` or interpolated
+directly. `StaticString` instead produces the string once, in a `const` context, so
+`<Symbol!("name") as StaticString>::VALUE` is a plain `&'static str` with no per-call work,
+preferable when the name is needed as a constant or in a hot path. Both faithfully round-trip
+multi-byte Unicode: the byte length in `Symbol` accounts for UTF-8 width, and the empty symbol
+decodes to `""`.
 
-`ConcatPath` is a pure type-level computation evaluated during trait resolution. It never touches values; it only names the combined path type, which a getter or accessor then uses to descend through nested fields.
+`ConcatPath` is a pure type-level computation evaluated during trait resolution. It never touches
+values; it only names the combined path type, which a getter or accessor then uses to descend
+through nested fields.
 
 ## Examples
 
-A type-level string can be recovered both ways. The `Display` route reconstructs it at runtime, and the `StaticString` route exposes it as a constant:
+A type-level string can be recovered both ways. The `Display` route reconstructs it at runtime, and
+the `StaticString` route exposes it as a constant:
 
 ```rust
 use cgp::prelude::*;
@@ -79,9 +122,11 @@ fn names() {
 }
 ```
 
-`to_string` goes through `Display`, which delegates to `StaticFormat`. `StaticString::VALUE` is a compile-time constant and handles multi-byte characters.
+`to_string` goes through `Display`, which delegates to `StaticFormat`. `StaticString::VALUE` is a
+compile-time constant and handles multi-byte characters.
 
-`ConcatPath` composes two paths into one at the type level, the operation behind chaining nested accessors:
+`ConcatPath` composes two paths into one at the type level, the operation behind chaining nested
+accessors:
 
 ```rust
 type Outer = Path!(@a.b);
@@ -89,18 +134,42 @@ type Inner = Path!(@c.d);
 type Joined = <Outer as ConcatPath<Inner>>::Output;
 ```
 
-`Joined` is the path `Path!(@a.b.c.d)`. Note the leading `@`: [`Path!`](../macros/path.md) requires it, so `Path!(a.b)` does not parse. The library itself uses a narrower shape: the generated code appends the trait's type parameters, as `__Path__: ConcatPath<PathCons<T, Nil>>`, which is how a redirected lookup extends the route it was given.
+`Joined` is the path `Path!(@a.b.c.d)`. Note the leading `@`: [`Path!`](../macros/path.md) requires
+it, so `Path!(a.b)` does not parse. The library itself uses a narrower shape: the generated code
+appends the trait's type parameters, as `__Path__: ConcatPath<PathCons<T, Nil>>`, which is how a
+redirected lookup extends the route it was given.
 
 ## Related constructs
 
-`StaticFormat` and `StaticString` decode the [`Chars`](../types/chars.md) chain and [`Symbol`](../macros/symbol.md) wrapper that the [`Symbol!`](../macros/symbol.md) macro builds from a string literal, the type-level string at the heart of CGP's field naming. `ConcatPath` operates on the [`PathCons`](../types/path_cons.md) list constructed by the [`Path!`](../macros/path.md) macro, and is the path-level analogue of the product-level `ConcatProduct`. Together they let the names that drive [`HasField`](has_field.md) lookups and nested-getter composition surface as ordinary strings and paths.
+`StaticFormat` and `StaticString` decode the [`Chars`](../types/chars.md) chain and
+[`Symbol`](../macros/symbol.md) wrapper that the [`Symbol!`](../macros/symbol.md) macro builds from
+a string literal, the type-level string at the heart of CGP's field naming. `ConcatPath` operates on
+the [`PathCons`](../types/path_cons.md) list constructed by the [`Path!`](../macros/path.md) macro,
+and is the path-level analogue of the product-level `ConcatProduct`. Together they let the names
+that drive [`HasField`](has_field.md) lookups and nested-getter composition surface as ordinary
+strings and paths.
 
 ## Source
 
-- `StaticFormat` and its `Chars`/`Nil` impls are defined in [crates/core/cgp-base-types/src/traits/static_format.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-base-types/src/traits/static_format.rs); the `Display` impls that delegate to it are on the [`Chars`](../types/chars.md) and [`Symbol`](../macros/symbol.md) types in [crates/core/cgp-base-types/src/types/](https://github.com/contextgeneric/cgp/tree/main/crates/core/cgp-base-types/src/types/).
-- `StaticString`, with its const-evaluated UTF-8 decoding, is in [crates/core/cgp-field/src/traits/static_string.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/traits/static_string.rs).
-- `ConcatPath` is in [crates/core/cgp-base-types/src/traits/concat_path.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-base-types/src/traits/concat_path.rs), and `PathCons` in [crates/core/cgp-base-types/src/types/path.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-base-types/src/types/path.rs).
+- `StaticFormat` and its `Chars`/`Nil` impls are defined in
+  [crates/core/cgp-base-types/src/traits/static_format.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-base-types/src/traits/static_format.rs);
+  the `Display` impls that delegate to it are on the [`Chars`](../types/chars.md) and
+  [`Symbol`](../macros/symbol.md) types in
+  [crates/core/cgp-base-types/src/types/](https://github.com/contextgeneric/cgp/tree/main/crates/core/cgp-base-types/src/types/).
+- `StaticString`, with its const-evaluated UTF-8 decoding, is in
+  [crates/core/cgp-field/src/traits/static_string.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/traits/static_string.rs).
+- `ConcatPath` is in
+  [crates/core/cgp-base-types/src/traits/concat_path.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-base-types/src/traits/concat_path.rs),
+  and `PathCons` in
+  [crates/core/cgp-base-types/src/types/path.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-base-types/src/types/path.rs).
 
 ## Public pages derived from this document
 
-The public reference is organized one page per named construct, so this document feeds **3 pages** rather than one: [`static_format`](https://contextgeneric.dev/docs/reference/traits/formatting/static_format), [`static_string`](https://contextgeneric.dev/docs/reference/traits/formatting/static_string), [`concat_path`](https://contextgeneric.dev/docs/reference/traits/formatting/concat_path). A change here is propagated to each of them, per the [synchronization rule](../../../AGENTS.md#the-synchronization-rule); the mapping and the granularity rule behind it are recorded in [website/site-structure.md](../../../website/site-structure.md).
+The public reference is organized one page per named construct, so this document feeds **3 pages**
+rather than one:
+[`static_format`](https://contextgeneric.dev/docs/reference/traits/formatting/static_format),
+[`static_string`](https://contextgeneric.dev/docs/reference/traits/formatting/static_string),
+[`concat_path`](https://contextgeneric.dev/docs/reference/traits/formatting/concat_path). A change
+here is propagated to each of them, per the
+[synchronization rule](../../../AGENTS.md#the-synchronization-rule); the mapping and the granularity
+rule behind it are recorded in [website/site-structure.md](../../../website/site-structure.md).

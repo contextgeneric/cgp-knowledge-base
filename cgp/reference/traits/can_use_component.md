@@ -1,12 +1,22 @@
 # `CanUseComponent`
 
-`CanUseComponent<Component, Params>` is the context-side check trait. It holds when a context delegates a component and the chosen provider is a valid provider for it, giving `check_components!` one bound to assert that yields readable wiring errors.
+`CanUseComponent<Component, Params>` is the context-side check trait. It holds when a context
+delegates a component and the chosen provider is a valid provider for it, giving `check_components!`
+one bound to assert that yields readable wiring errors.
 
 ## Purpose
 
-`CanUseComponent` asks whether a context can use a component with every dependency met, which is not the same as asking whether it implements the consumer trait. Asking about the consumer trait makes the compiler report only the outermost failure, usually that the provider trait is not implemented, and hide the reasoning, because the provider blanket impl competes with the real provider impl. The root cause, often one missing getter or abstract type, never appears.
+`CanUseComponent` asks whether a context can use a component with every dependency met, which is not
+the same as asking whether it implements the consumer trait. Asking about the consumer trait makes
+the compiler report only the outermost failure, usually that the provider trait is not implemented,
+and hide the reasoning, because the provider blanket impl competes with the real provider impl. The
+root cause, often one missing getter or abstract type, never appears.
 
-`CanUseComponent` routes the same question through [`IsProviderFor`](is_provider_for.md), which carries the provider's real `where` bounds on a path with no competing impl, so the compiler reports the failing bound. Application code never names the trait; it is the bound [`check_components!`](../macros/check_components.md) emits, so a wiring mistake is reported at the wiring site rather than at a distant call.
+`CanUseComponent` routes the same question through [`IsProviderFor`](is_provider_for.md), which
+carries the provider's real `where` bounds on a path with no competing impl, so the compiler reports
+the failing bound. Application code never names the trait; it is the bound
+[`check_components!`](../macros/check_components.md) emits, so a wiring mistake is reported at the
+wiring site rather than at a distant call.
 
 ## Definition
 
@@ -23,18 +33,30 @@ where
 }
 ```
 
-`Self` is the context being checked, `Component` is the component's marker, and `Params` holds the component's other generic parameters, as for `IsProviderFor`. The trait is in the prelude.
+`Self` is the context being checked, `Component` is the component's marker, and `Params` holds the
+component's other generic parameters, as for `IsProviderFor`. The trait is in the prelude.
 
 ## Behavior
 
-The blanket impl's two bounds are the two ways wiring can be wrong, and the error says which one failed:
+The blanket impl's two bounds are the two ways wiring can be wrong, and the error says which one
+failed:
 
-- **`Context: DelegateComponent<Component>`** requires a table entry. A context that never wired the component fails here, and the compiler reports ``the trait `DelegateComponent<FooComponent>` is not implemented for `App` ``. The fix is to add the entry.
-- **`Context::Delegate: IsProviderFor<Component, Context, Params>`** requires the delegate to be a valid provider for this context and these parameters. A context whose provider has an unmet dependency fails here, and the error is the provider's own unsatisfied bound, carried up through `IsProviderFor`. The fix is to supply the dependency.
+- **`Context: DelegateComponent<Component>`** requires a table entry. A context that never wired the
+  component fails here, and the compiler reports
+  ``the trait `DelegateComponent<FooComponent>` is not implemented for `App` ``. The fix is to add
+  the entry.
+- **`Context::Delegate: IsProviderFor<Component, Context, Params>`** requires the delegate to be a
+  valid provider for this context and these parameters. A context whose provider has an unmet
+  dependency fails here, and the error is the provider's own unsatisfied bound, carried up through
+  `IsProviderFor`. The fix is to supply the dependency.
 
-`CanUseComponent` mirrors `IsProviderFor`: it asks the same question indexed on the context rather than the provider. `check_components!` asserts `CanUseComponent` by default and switches to `IsProviderFor` for its `#[check_providers(...)]` form, which checks a named provider directly.
+`CanUseComponent` mirrors `IsProviderFor`: it asks the same question indexed on the context rather
+than the provider. `check_components!` asserts `CanUseComponent` by default and switches to
+`IsProviderFor` for its `#[check_providers(...)]` form, which checks a named provider directly.
 
-`check_components!` emits a private check trait whose supertrait is `CanUseComponent`, and one empty impl of it per checked entry. Each impl compiles only if its supertrait holds, so the whole table is a compile-time assertion that adds nothing to the binary.
+`check_components!` emits a private check trait whose supertrait is `CanUseComponent`, and one empty
+impl of it per checked entry. Each impl compiles only if its supertrait holds, so the whole table is
+a compile-time assertion that adds nothing to the binary.
 
 ## Examples
 
@@ -79,7 +101,10 @@ check_components! {
 }
 ```
 
-The check asserts `Person: CanUseComponent<GreeterComponent>`. The first bound holds through the wiring, but `GreetHello: IsProviderFor<GreeterComponent, Person, ()>` does not, because `GreetHello` needs `HasName` and `Person` has no `name` field. The compiler reports the missing field at the check, not at a later `person.greet()`. The same bound can be written by hand:
+The check asserts `Person: CanUseComponent<GreeterComponent>`. The first bound holds through the
+wiring, but `GreetHello: IsProviderFor<GreeterComponent, Person, ()>` does not, because `GreetHello`
+needs `HasName` and `Person` has no `name` field. The compiler reports the missing field at the
+check, not at a later `person.greet()`. The same bound can be written by hand:
 
 ```rust
 fn assert_wiring()
@@ -92,12 +117,21 @@ where
 
 These constructs are the ones `CanUseComponent` works with:
 
-- [`check_components!`](../macros/check_components.md) — the macro that asserts it.
-- [`DelegateComponent`](delegate_component.md) and [`IsProviderFor`](is_provider_for.md) — the two bounds of its blanket impl.
-- [`#[cgp_component]`](../macros/cgp_component.md) and [`delegate_components!`](../macros/delegate_components.md) — define and wire the components it checks.
+- [`check_components!`](../macros/check_components.md): the macro that asserts it.
+- [`DelegateComponent`](delegate_component.md) and [`IsProviderFor`](is_provider_for.md): the two
+  bounds of its blanket impl.
+- [`#[cgp_component]`](../macros/cgp_component.md) and
+  [`delegate_components!`](../macros/delegate_components.md): define and wire the components it
+  checks.
 
 ## Source
 
-- The trait and its sole blanket impl are defined in [crates/core/cgp-component/src/traits/can_use_component.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-component/src/traits/can_use_component.rs) and re-exported through [crates/core/cgp-component/src/macro_prelude.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-component/src/macro_prelude.rs).
-- The checks that assert it are generated by `check_components!`, whose codegen lives in [crates/macros/cgp-macro-core/src/types/check_components/](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-core/src/types/check_components/); `table.rs` chooses `CanUseComponent` versus `IsProviderFor` as the check trait's supertrait.
-- For how it is generated and the index of tests, see the implementation document [implementation/entrypoints/check_components.md](../../implementation/entrypoints/check_components.md).
+- The trait and its sole blanket impl are defined in
+  [crates/core/cgp-component/src/traits/can_use_component.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-component/src/traits/can_use_component.rs)
+  and re-exported through
+  [crates/core/cgp-component/src/macro_prelude.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-component/src/macro_prelude.rs).
+- The checks that assert it are generated by `check_components!`, whose codegen lives in
+  [crates/macros/cgp-macro-core/src/types/check_components/](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-core/src/types/check_components/);
+  `table.rs` chooses `CanUseComponent` versus `IsProviderFor` as the check trait's supertrait.
+- For how it is generated and the index of tests, see the implementation document
+  [implementation/entrypoints/check_components.md](../../implementation/entrypoints/check_components.md).
