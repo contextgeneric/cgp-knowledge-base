@@ -132,6 +132,6 @@ separates the two with the library's own crates, and the top-level
 
 ## Public material derived from this
 
-The contrast with the layered form on the "Arena-allocating deserialization" page of the planned
-[cgp-serde deep dive](../../../website/deep-dives/cgp-serde.md), which should teach the
-[layered form](arena.md) and use this one only to show what the layering buys.
+The `examples/arena-simplified` page of the planned [cgp-serde project
+section](../../../website/projects/cgp-serde.md), which presents this as the smaller form and says
+what the [layered form](arena.md) adds.

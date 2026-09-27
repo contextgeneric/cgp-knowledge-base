@@ -87,7 +87,7 @@ interoperate through `UseSerde` and the adapters, a project can use each for the
 
 ## Public material derived from this
 
-The page on what the library does not do in the planned
-[cgp-serde deep dive](../../website/deep-dives/cgp-serde.md), and any comparison with Serde in public
-writing, which [message.md](../../communication-strategy/message.md) requires to state where the
-simpler tool wins.
+The `serde-comparison` page of the planned [cgp-serde project
+section](../../website/projects/cgp-serde.md), and any comparison with Serde in public writing,
+which [message.md](../../communication-strategy/message.md) requires to state where the simpler tool
+wins.

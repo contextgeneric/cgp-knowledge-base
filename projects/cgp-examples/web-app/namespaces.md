@@ -135,5 +135,7 @@ each context.
 
 ## Public material derived from this
 
-The "Introducing CGP namespaces and paths" and "Hierarchical delegation" sections of the
-[v0.8.0 release post](../../../website/blog/v0-8-0-release.md).
+The "Introducing CGP namespaces and paths" and "Hierarchical delegation" sections of the [v0.8.0
+release post](../../../website/blog/v0-8-0-release.md). It also feeds the
+`web-app/examples/namespaces` page of the planned [cgp-examples project
+section](../../../website/projects/cgp-examples.md).

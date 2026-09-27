@@ -243,6 +243,6 @@ see [debugging](../guides/debugging.md).
 
 ## Public material derived from this
 
-Page 3, "Assembling the language with namespaces", of the planned
-[Hypershell deep dive](../../../website/deep-dives/hypershell.md), which should show the one-line
-`HypershellCli` early.
+The `architecture/assembly` page of the planned [Hypershell project
+section](../../../website/projects/hypershell.md), and the one-line `HypershellCli` its index shows
+early.

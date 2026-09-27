@@ -58,4 +58,5 @@ enough because the program reads no field other than the client.
 
 ## Public material derived from this
 
-The JSON program in the planned [Hypershell deep dive](../../../website/deep-dives/hypershell.md).
+The `examples/rust-playground` page of the planned [Hypershell project
+section](../../../website/projects/hypershell.md).

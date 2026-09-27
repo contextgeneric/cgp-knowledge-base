@@ -112,9 +112,9 @@ up an item.
 
 ## Public material derived from these documents
 
-These documents are the verified record behind page 3 of the planned
-[extensible data types deep dive](../../../website/deep-dives/extensible-datatypes.md), which uses this
-crate as its running code.
+These documents are the verified record behind the `expression` pages of the planned [cgp-examples
+project section](../../../website/projects/cgp-examples.md), which write this crate's four contexts
+as its pilot example pages.
 
 ## How it relates to the rest of the base
 

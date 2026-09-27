@@ -76,6 +76,5 @@ and the [reference](../reference/README.md) documents the rest of the providers 
 
 ## Public material derived from this
 
-The code for the "Wiring an application" and "Arena-allocating deserialization" pages of the planned
-[cgp-serde deep dive](../../../website/deep-dives/cgp-serde.md), and an examples section of the
-repository README.
+The `examples/index` page of the planned [cgp-serde project
+section](../../../website/projects/cgp-serde.md), and an examples section of the repository README.

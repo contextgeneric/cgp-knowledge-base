@@ -158,9 +158,9 @@ and every other document links there instead of restating them.** A project fact
 the project's code as it stands: its module layout, its exact current wiring, what one of its items
 does, a design decision specific to it, a known defect, what its tests cover, what running it
 produces, and the changes it still needs. Record each such fact once, in the project section, and link
-to it from wherever else it matters, such as a blog-post record, a deep-dive plan, or a task list. A
-fact stated outside `projects/` has nothing tying it to the project's source, so it goes stale the next
-time the project changes.
+to it from wherever else it matters, such as a blog-post record, a website project plan, or a task
+list. A fact stated outside `projects/` has nothing tying it to the project's source, so it goes stale
+the next time the project changes.
 
 **The CGP patterns a project demonstrates belong to [cgp/](cgp/README.md) and
 [examples/](examples/README.md), and a project document links to them instead of re-teaching them.**

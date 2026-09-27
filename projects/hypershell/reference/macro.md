@@ -68,5 +68,5 @@ Four edges were confirmed by probes, and each is recorded in [issues.md](../issu
 
 ## Public material derived from this
 
-The desugaring section of page 1 of the planned
-[Hypershell deep dive](../../../website/deep-dives/hypershell.md), and the macro's rustdoc.
+The `reference/hypershell_macro` page of the planned [Hypershell project
+section](../../../website/projects/hypershell.md), and the macro's rustdoc.

@@ -166,5 +166,6 @@ the same choices through `UseDelegate` tables.
 
 ## Public material derived from this
 
-The payoff of the "Wiring an application" page of the planned
-[cgp-serde deep dive](../../../website/deep-dives/cgp-serde.md).
+The `examples/messages` page of the planned [cgp-serde project
+section](../../../website/projects/cgp-serde.md), including its change to try, and the
+two-application result on the section's index.

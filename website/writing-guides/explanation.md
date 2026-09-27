@@ -139,10 +139,13 @@ reader who knows the shape navigates, and one who does not, abandons.
 **Develop the idea in as many sections as it takes**, with the argument's own headings rather than
 prescribed ones, and with code shown as illustration rather than as steps.
 
-**Close with two fixed sections, in this order.** *What it costs* names what the idea costs or where it
-stops applying, and is not optional — these are the pages a skeptic reads to the end. *Where to go next*
-routes to the neighbouring concept, the tutorial that puts the idea to work, and the reference pages
-that specify the constructs, rather than summarizing what the reader just read.
+**Close with two fixed sections, in this order.** *What it costs* names what the idea costs or where
+it stops applying, and is not optional — these are the pages a skeptic reads to the end. *Where to
+go next* routes to the neighbouring concept, the tutorial that puts the idea to work, and the
+reference pages that specify the constructs, rather than summarizing what the reader just read.
+Where a [Projects](project.md) example page shows the idea in a running program, the list ends with
+it, labelled *In practice:* the way a comparison is labelled *Comparison:*, once that page is
+published.
 
 The written [Consumer and provider traits](https://contextgeneric.dev/docs/concepts/consumer-and-provider-traits)
 page is the model, and it shows what the shape looks like when the argument is about a mechanism.

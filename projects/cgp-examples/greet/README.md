@@ -119,7 +119,8 @@ The three programs run and print what their code says. The crate's gaps are reco
 
 ## Public material derived from these documents
 
-None yet.
+The `greet` index and its three example pages, once each binary has its own record, in the planned
+[cgp-examples project section](../../../website/projects/cgp-examples.md).
 
 ## How it relates to the rest of the base
 

@@ -100,6 +100,16 @@ carry a single `reference.md` in place of a `reference/` directory.
   that names the idea it carries. These documents record the project's own programs; a worked example
   that teaches the project's scenario belongs in [../examples/](../examples/README.md), and the two
   link to each other.
+
+  **Each example document is also the record its public page is written from.** The website's
+  Projects section gives every runnable program its own page, per
+  [../website/writing-guides/project.md](../website/writing-guides/project.md#the-example-page), and
+  that page quotes only what the record verifies. So a program the site will show needs a document
+  of its own here, even where a project otherwise folds several programs into one document; the run
+  output the record gives is what the page quotes; and a **Try a change** section, when the record
+  has one, gives one small edit that shows the pattern working, such as swapping a wiring entry or
+  removing one, with the output or `cargo cgp check` diagnostic it produced. Record that change here
+  before the page describes it, since a change nobody has run cannot be published.
 - **A comparison document**, named for what it compares against (`serde-comparison.md`), when the
   project replaces or extends a well-known library: what it matches, what it lacks, and when the
   original is the better choice.
@@ -135,9 +145,10 @@ entries stay uniform.
 ## Say what public material a document feeds
 
 These documents are the source for public writing about the project: its repository README, its
-rustdoc, a deep dive on the website. End each document with a **Public material derived from this**
-line naming what it feeds, or `None yet` when nothing does. The README carries the full map, and the
-website's own planning documents under [../website/](../website/README.md) record the pages themselves.
+rustdoc, and the project's section of the website's Projects pages. End each document with a
+**Public material derived from this** line naming what it feeds, or `None yet` when nothing does.
+The README carries the full map, and the website's own planning documents under
+[../website/](../website/README.md) record the pages themselves.
 
 ## Registering a document
 

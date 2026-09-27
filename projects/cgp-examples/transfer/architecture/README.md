@@ -74,4 +74,6 @@ Each document below carries the mechanism and the code for one of the decisions 
 
 ## Public material derived from this
 
-The crate's own README, whose walkthrough follows the same decisions in the same order.
+The crate's own README, whose walkthrough follows the same decisions in the same order. It also
+feeds the `transfer/architecture/index` page of the planned [cgp-examples project
+section](../../../../website/projects/cgp-examples.md).

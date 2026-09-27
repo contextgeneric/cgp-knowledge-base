@@ -129,5 +129,5 @@ context join the shared defaults in one line and override only what differs; see
 
 ## Public material derived from this
 
-The "Wiring an application" page of the planned
-[cgp-serde deep dive](../../../website/deep-dives/cgp-serde.md).
+The `guides/wiring-a-context` page of the planned [cgp-serde project
+section](../../../website/projects/cgp-serde.md).

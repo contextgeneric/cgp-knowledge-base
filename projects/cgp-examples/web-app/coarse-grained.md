@@ -106,4 +106,6 @@ four entries as it wires it, so the manager's dependency on the filter is verifi
 ## Public material derived from this
 
 The "An example social media web app" and "Filtering usernames and post messages" sections of the
-[v0.8.0 release post](../../../website/blog/v0-8-0-release.md).
+[v0.8.0 release post](../../../website/blog/v0-8-0-release.md). It also feeds the
+`web-app/examples/coarse-grained` page of the planned [cgp-examples project
+section](../../../website/projects/cgp-examples.md).

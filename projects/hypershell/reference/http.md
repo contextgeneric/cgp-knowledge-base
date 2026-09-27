@@ -312,4 +312,5 @@ field.
 
 ## Public material derived from this
 
-Rustdoc for the HTTP items.
+Rustdoc for the HTTP items. It also feeds one page per construct in the `reference/` pages of the
+planned [Hypershell project section](../../../website/projects/hypershell.md).

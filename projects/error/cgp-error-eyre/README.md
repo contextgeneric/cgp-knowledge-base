@@ -54,4 +54,6 @@ are the tests.
 - [testing.md](testing.md) — what the tests pin, including the handler, and what nothing tests.
 - [issues.md](issues.md) — open items.
 
-**Public material derived from this:** the crate's README, which is its docs.rs front page.
+**Public material derived from this:** the crate's README, which is its docs.rs front page, and the
+`eyre` walkthrough of the planned [error backends project
+section](../../../website/projects/error-backends.md).

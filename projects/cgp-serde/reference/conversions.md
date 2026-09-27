@@ -220,6 +220,5 @@ the input directly.
 
 ## Public material derived from this
 
-The "Writing serializers" page of the planned
-[cgp-serde deep dive](../../../website/deep-dives/cgp-serde.md), and the rustdoc for the five
-providers.
+The five provider pages in the `reference/providers/` pages of the planned [cgp-serde project
+section](../../../website/projects/cgp-serde.md), and the rustdoc for the five providers.

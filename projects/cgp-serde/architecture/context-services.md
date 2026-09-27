@@ -57,5 +57,5 @@ than from the input.
 
 ## Public material derived from this
 
-The "Arena-allocating deserialization" page of the planned
-[cgp-serde deep dive](../../../website/deep-dives/cgp-serde.md).
+The `architecture/context-services` page of the planned [cgp-serde project
+section](../../../website/projects/cgp-serde.md).

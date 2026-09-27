@@ -175,6 +175,6 @@ for its forwarding task, so a program with either stage must run inside a Tokio 
 
 ## Public material derived from this
 
-Page 2 of the planned [Hypershell deep dive](../../../website/deep-dives/hypershell.md), on how
-stage types line up, and the input-dispatch example for the website's CGP reference page on the
-`open` statement.
+The `architecture/streams-and-input-dispatch` page of the planned [Hypershell project
+section](../../../website/projects/hypershell.md), and the input-dispatch example for the website's
+CGP reference page on the `open` statement.

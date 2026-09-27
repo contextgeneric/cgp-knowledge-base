@@ -1418,8 +1418,8 @@ The sidebar ordering is settled. Adding the Quickstart at position 2 was the occ
 the whole tree into the order
 [information-architecture.md](information-architecture.md#navigation-and-sidebar-order) wants:
 Introduction, Quickstart, Overview, Tutorials, Concepts, Comparisons, Reference, `cargo-cgp`,
-Resources, Contribute, and AI last. The deep dives take a position between Reference and `cargo-cgp`
-when they land, which renumbers everything below them.
+Resources, Contribute, and AI last. The planned [Projects section](projects/README.md) takes a position
+between Reference and `cargo-cgp` when it lands, which renumbers everything below it.
 
 ## AI disclaimer
 

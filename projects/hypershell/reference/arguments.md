@@ -274,4 +274,5 @@ command argument or a URL.
 
 ## Public material derived from this
 
-Rustdoc for the argument items.
+Rustdoc for the argument items. It also feeds one page per construct in the `reference/` pages of
+the planned [Hypershell project section](../../../website/projects/hypershell.md).

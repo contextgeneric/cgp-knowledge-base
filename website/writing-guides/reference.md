@@ -59,8 +59,8 @@ page that disagrees with its internal document is a defect in the public page.
 ## Granularity: one page per named construct
 
 The reference is organized **one page per construct**, because a reader arrives knowing a name and
-wanting a URL, and because a page per construct is what makes deep links from the tutorials, the deep
-dives, and compiler errors possible. The subdirectory layout mirrors what a construct *is* — `macros/`,
+wanting a URL, and because a page per construct is what makes deep links from the tutorials, the project
+pages, and compiler errors possible. The subdirectory layout mirrors what a construct *is* — `macros/`,
 `attributes/`, `derives/`, `components/`, `providers/`, `traits/`, `types/` — the same split the internal
 [reference index](../../cgp/reference/README.md) explains.
 
@@ -455,7 +455,7 @@ Links go to three places instead.
 
 **Elsewhere on the site**, which is where most re-pointed links land. Link to the
 [tutorial](tutorial.md) that teaches the construct in use, the
-[deep dive](deep-dive.md) that develops it at length, the
+[example page in the Projects section](project.md#the-example-page) that shows it in a real program, the
 [explanation page](explanation.md) that carries the idea behind it, and other reference pages. Prefer a
 tutorial link over an explanation link when a reader would rather see the construct working than
 understand why it exists.
@@ -498,8 +498,8 @@ material is summarized in a sentence on the reference page itself rather than le
 A link to a **guide** has no public destination, because the guides have no public counterpart. Fold the
 guide's recommendation into the page's *When to use it* section, which is what that section is for.
 
-A link to an **example** becomes a link to the tutorial or deep dive that carries the same scenario, or
-the example code is inlined.
+A link to an **example** becomes a link to the tutorial or Projects example page that carries the same
+scenario, or the example code is inlined.
 
 A link to an **error class** becomes a link to the section of the reference's
 [error catalog page](#granularity-one-page-per-named-construct) covering that class. This is the one

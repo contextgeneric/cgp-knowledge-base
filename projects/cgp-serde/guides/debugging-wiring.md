@@ -152,5 +152,6 @@ a type alias instead, as
 
 ## Public material derived from this
 
-A troubleshooting section of the repository README, and the wiring page of the planned
-[cgp-serde deep dive](../../../website/deep-dives/cgp-serde.md).
+The `guides/debugging-wiring` page of the planned [cgp-serde project
+section](../../../website/projects/cgp-serde.md), and a troubleshooting section of the repository
+README.

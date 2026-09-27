@@ -105,3 +105,8 @@ follows from Rust requiring every field of a struct at construction time — whi
 framing to reuse when writing about extensible records, from
 [extensible records](../../cgp/concepts/extensible-records.md) and the
 [application builder example](../../examples/application-builder.md).
+
+**One edit is already settled.** When the post's project section of the [planned Projects
+pages](../projects/cgp-examples.md) publishes, a pointer to the `builder` index in the cgp-examples
+section goes at the top of this post, per the [settled case](../AGENTS.md#do-not-rewrite-history).
+It adds a link and changes no claim, snippet, or slug; nothing else in the post changes with it.

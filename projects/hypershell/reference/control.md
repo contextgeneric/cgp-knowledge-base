@@ -185,4 +185,5 @@ the two share a name; see [issues.md](../issues.md#housekeeping).
 
 ## Public material derived from this
 
-Rustdoc for the control items.
+Rustdoc for the control items. It also feeds one page per construct in the `reference/` pages of the
+planned [Hypershell project section](../../../website/projects/hypershell.md).

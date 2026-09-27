@@ -129,11 +129,12 @@ recommends against.
 **One structural question is worth settling deliberately:** whether the CGP primer stays. It exists
 because the post must be self-contained for a reader who has never used CGP, and once the
 [explanation tier](../writing-guides/explanation.md) exists there is somewhere to link instead. The
-argument for keeping it is that this audience wants precision the explanation pages deliberately do not
-carry, and that a compiler-team reader will not follow a link out mid-argument. The argument for
-cutting it is the deep-dive rule that a piece teaches its own subject and nothing else. The primer is
-short and pitched at a different level from the explanation pages, so keeping it is probably right —
-but it should be a decision rather than an oversight.
+argument for keeping it is that this audience wants precision the explanation pages deliberately do
+not carry, and that a compiler-team reader will not follow a link out mid-argument. The argument for
+cutting it is the rule, stated for the [Projects pages](../writing-guides/project.md), that a piece
+teaches its own subject and nothing else. The primer is short and pitched at a different level from
+the explanation pages, so keeping it is probably right — but it should be a decision rather than an
+oversight.
 
 ## Maintaining it
 

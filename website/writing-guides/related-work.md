@@ -86,8 +86,8 @@ follow the comparison from it.
 **Re-point every link.** The internal documents link into concepts, the reference, examples, the
 communication strategy, and the website records, none of which a public page may link, per the
 [one-way rule](../AGENTS.md#the-one-way-link-rule). A concept link becomes its Concepts page, a
-reference link becomes its reference page, an example link becomes the tutorial or deep dive
-carrying the same scenario or the code is inlined, a blog record becomes the live post, and a
+reference link becomes its reference page, an example link becomes the tutorial or Projects example
+page carrying the same scenario or the code is inlined, a blog record becomes the live post, and a
 communication-strategy link is dropped. One case needs care: two internal documents draw on the
 [record of the unpublished incoherent-Rust draft](../blog/incoherent-rust-today.md), which cannot
 be cited. Attribute those points to the [RustLab transcript](../blog/rustlab-2025-coherence.md)
@@ -148,7 +148,7 @@ Each is followed by why CGP is arranged that way, so the difference reads as a d
 than a gap.
 
 **Where to go next.** Route to the Concepts page carrying the idea behind the comparison, the
-tutorial or deep dive that puts it to work, and the neighbouring comparison a reader of this one is
+tutorial or Projects example page that puts it to work, and the neighbouring comparison a reader of this one is
 likely to know.
 
 **Sources.** The framed list from the internal document, re-pointed where an entry was internal,
@@ -248,7 +248,7 @@ Page titles use the compared concept's name, because that is what the reader sea
 explanations, do not fit here: the reader is not arriving with a problem but with a vocabulary.
 
 The section ships with the v0.8.0 relaunch. It is new content rather than a defect in an existing
-page, so it was planned as post-release work like the deep dives, and it was written on the release
+page, so it was planned as post-release work like the Projects section, and it was written on the release
 branch instead once the sources proved close enough to port in one pass. Publishing it changed a
 public claim: the author reads the *What each approach costs* and *Where the other tool is the better
 choice* sections of every comparison page in full before publication, per the

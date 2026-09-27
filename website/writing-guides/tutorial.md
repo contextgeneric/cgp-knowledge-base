@@ -63,6 +63,14 @@ functions, one step at a time" versus "we will build a working balance-and-trans
 the details as we go". And **make the two discoverable from each other**, since the reader who bounces off
 one is exactly the reader the other was written for.
 
+The applied register also has a narrower use outside this section. The planned
+[Projects section](project.md#the-example-page) gives each program a project ships its own page,
+written as a short guided reading of code that already runs rather than as a tutorial that builds it.
+The two stay distinct: a tutorial is independent, named for an outcome, and constructs its program
+step by step; a Projects example page walks through an existing program and links here for the
+construction. An applied tutorial whose scenario a project also ships should end by linking that
+project's example page.
+
 Applied tutorials draw their scenarios from [examples/](../../examples/README.md), which is where the
 verified end-to-end programs live — the [money-transfer API](../../examples/money-transfer-api.md), the
 [social media app](../../examples/social-media-app.md), the

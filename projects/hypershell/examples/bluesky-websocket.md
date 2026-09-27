@@ -87,4 +87,5 @@ ignores it.
 
 ## Public material derived from this
 
-None yet.
+The `examples/bluesky-websocket` page of the planned [Hypershell project
+section](../../../website/projects/hypershell.md).

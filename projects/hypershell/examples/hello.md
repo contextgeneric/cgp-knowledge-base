@@ -49,5 +49,5 @@ bytes as well as streams, so no conversion stage is needed.
 
 ## Public material derived from this
 
-The opening program on the first page of the planned
-[Hypershell deep dive](../../../website/deep-dives/hypershell.md).
+The `examples/hello` page of the planned [Hypershell project
+section](../../../website/projects/hypershell.md), and the opening program on its index.

@@ -38,7 +38,7 @@ impl App {
 `FullAppBuilder`, `DefaultAppBuilder`, and the `BuildChatGptApp` target of
 `AnthropicAndChatGptAppBuilder` all build this struct. Its fields match the output structs of
 `BuildSqliteClient` or `BuildDefaultSqliteClient`, the HTTP builders, and the OpenAI builders by name,
-which is what lets [`BuildAndMergeOutputs`](../../../../cgp/reference/providers/dispatch_combinators.md#buildwithhandlers-and-buildandmergeoutputs)
+which is what lets [`BuildAndMergeOutputs`](../../../../cgp/reference/providers/dispatch_combinators.md#builders)
 merge them into it.
 
 The two constructors are the starting point the builders replace, each doing in one function what a
@@ -154,5 +154,6 @@ None.
 
 ## Public material derived from this
 
-The "Motivation for Extensible Builders" section of page 1 of the planned
-[extensible data types deep dive](../../../../website/deep-dives/extensible-datatypes.md).
+The motivation on the `builder` index of the planned [cgp-examples project
+section](../../../../website/projects/cgp-examples.md), and the application structs its example
+pages build.

@@ -99,3 +99,9 @@ Leave it alone. The part worth carrying forward into any new writing is the `ser
 motivation, which does not depend on CGP syntax at all and is reusable verbatim as an argument;
 everything downstream of it should be rewritten from the
 [expression interpreter example](../../examples/expression-interpreter.md).
+
+**One edit is already settled.** When the post's project section of the [planned Projects
+pages](../projects/cgp-examples.md) publishes, a pointer to the `expression` index in the
+cgp-examples section goes at the top of this post, per the [settled
+case](../AGENTS.md#do-not-rewrite-history). It adds a link and changes no claim, snippet, or slug;
+nothing else in the post changes with it.

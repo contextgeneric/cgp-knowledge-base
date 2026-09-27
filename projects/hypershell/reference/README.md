@@ -122,4 +122,6 @@ Register each reference document here, in [../README.md](../README.md), and in
 ## Public material derived from this
 
 Rustdoc for every public item. The source carries no doc comments, so the crates' docs.rs pages list
-items without explanation; the entries here are written to be condensed into them.
+items without explanation; the entries here are written to be condensed into them. It also feeds the
+`reference/index` page and its lookup table in the planned [Hypershell project
+section](../../../website/projects/hypershell.md).

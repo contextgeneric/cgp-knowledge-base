@@ -65,4 +65,5 @@ accepts. `WithStaticArgs []` expands to an empty argument list.
 
 ## Public material derived from this
 
-The streaming program in the planned [Hypershell deep dive](../../../website/deep-dives/hypershell.md).
+The `examples/http-checksum-cli` page of the planned [Hypershell project
+section](../../../website/projects/hypershell.md).

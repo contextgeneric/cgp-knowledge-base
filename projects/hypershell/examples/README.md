@@ -144,6 +144,6 @@ say whether "slower" means compile time or run time, and nothing measures it.
 
 ## Public material derived from this
 
-The worked extension on page 4, "Extending the language", of the planned
-[Hypershell deep dive](../../../website/deep-dives/hypershell.md), and the examples section of the
-repository README.
+The `examples/index` page of the planned [Hypershell project
+section](../../../website/projects/hypershell.md), which explains `Compare` and `If` on the two
+example pages that use them, and the examples section of the repository README.

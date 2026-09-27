@@ -322,5 +322,5 @@ to `ExtractFieldArgs` under `CommandUpdaterComponent`; and `CommandArgTypeProvid
 
 ## Public material derived from this
 
-Rustdoc for the execution items, and the worked provider on page 2 of the planned
-[Hypershell deep dive](../../../website/deep-dives/hypershell.md).
+Rustdoc for the execution items, and one page per construct in the `reference/` pages of the
+planned [Hypershell project section](../../../website/projects/hypershell.md).

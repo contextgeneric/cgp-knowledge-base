@@ -124,6 +124,6 @@ through a real format. The library's own gaps in both are recorded in [testing.m
 
 ## Public material derived from this
 
-The "Writing serializers" page of the planned
-[cgp-serde deep dive](../../../website/deep-dives/cgp-serde.md), and a contributor section of the
-repository README.
+The `guides/writing-a-provider` page of the planned [cgp-serde project
+section](../../../website/projects/cgp-serde.md), and a contributor section of the repository
+README.

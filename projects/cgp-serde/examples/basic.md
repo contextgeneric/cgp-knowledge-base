@@ -146,5 +146,5 @@ above nor any other failure is asserted; see [testing.md](../testing.md#what-is-
 
 ## Public material derived from this
 
-The "Wiring an application" page of the planned
-[cgp-serde deep dive](../../../website/deep-dives/cgp-serde.md), which takes its code from this test.
+The `examples/basic` page of the planned [cgp-serde project
+section](../../../website/projects/cgp-serde.md), which takes its code from this test.

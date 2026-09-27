@@ -96,5 +96,5 @@ already has; see [execution](../reference/execution.md#streamingexec-and-handles
 
 ## Public material derived from this
 
-The error-handling part of page 2 of the planned
-[Hypershell deep dive](../../../website/deep-dives/hypershell.md).
+The `architecture/error-handling` page of the planned [Hypershell project
+section](../../../website/projects/hypershell.md).

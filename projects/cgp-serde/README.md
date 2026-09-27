@@ -171,10 +171,11 @@ provider.
 These documents are the source for the project's public writing, and each one names what it feeds.
 Three artifacts are planned:
 
-- **The cgp-serde deep dive** on the website, specified in
-  [website/deep-dives/cgp-serde.md](../../website/deep-dives/cgp-serde.md). Its five pages draw on the
-  architecture for the component design, the reference and guides for providers and wiring, and the
-  comparison and issues documents for the page on what the library does not do.
+- **The cgp-serde section of the website's Projects pages**, planned in
+  [website/projects/cgp-serde.md](../../website/projects/cgp-serde.md). Each document here feeds the
+  public page of the same name: the examples become short tutorials, the architecture documents,
+  guides, and comparison are ported one to one, each reference family document is split into one page
+  per construct, and the issues document becomes the limitations page.
 - **The repository README**, which currently summarizes the components in pre-0.8 syntax and defers to
   the announcement post.
 - **Rustdoc for every public item.** The source carries no doc comments, so the crates' docs.rs pages

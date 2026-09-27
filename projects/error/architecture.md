@@ -151,5 +151,7 @@ Each crate depends on `cgp-core` under the name `cgp` rather than on the `cgp` f
 - [`crates/core/cgp-error/src/traits/`](https://github.com/contextgeneric/cgp/tree/main/crates/core/cgp-error/src/traits)
   — the components the providers implement
 
-**Public material derived from this:** the crates' READMEs, and
-the `/cgp` skill's [error backends](https://github.com/contextgeneric/cgp-skills/blob/main/cgp/references/error-backends.md) reference.
+**Public material derived from this:** the crates' READMEs, and the `/cgp` skill's [error
+backends](https://github.com/contextgeneric/cgp-skills/blob/main/cgp/references/error-backends.md)
+reference, and the `architecture` page of the planned [error backends project
+section](../../website/projects/error-backends.md).

@@ -96,10 +96,12 @@ Read the architecture first for how the pieces fit, then use the reference to lo
 ## Public material derived from these documents
 
 These documents are the source the crate's own README should be checked against, and the fixes it
-needs are listed in [issues.md](issues.md#the-crates-readme). They are also the verified record behind
-the `Send`-recovery snippets that the [v0.5.0 release post](../../../website/blog/v0-5-0-release.md)
-links to in an older commit of `contexts/app.rs`; the two `CanHandleApiSend` impls it points at are
-unchanged in the current code.
+needs are listed in [issues.md](issues.md#the-crates-readme). They are also the verified record
+behind the `Send`-recovery snippets that the [v0.5.0 release
+post](../../../website/blog/v0-5-0-release.md) links to in an older commit of `contexts/app.rs`; the
+two `CanHandleApiSend` impls it points at are unchanged in the current code. It also feeds the
+`transfer` index of the planned [cgp-examples project
+section](../../../website/projects/cgp-examples.md).
 
 ## How it relates to the rest of the base
 

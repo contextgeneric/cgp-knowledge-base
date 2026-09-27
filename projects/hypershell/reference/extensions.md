@@ -138,5 +138,5 @@ and `BytesToHex`, and `HypershellChecksumNamespace` routes both; see the
 
 ## Public material derived from this
 
-Rustdoc for the extension crates, and page 4, "Extending the language", of the planned
-[Hypershell deep dive](../../../website/deep-dives/hypershell.md).
+Rustdoc for the extension crates, and one page per construct in the `reference/` pages of the
+planned [Hypershell project section](../../../website/projects/hypershell.md).

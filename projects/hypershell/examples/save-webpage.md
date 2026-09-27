@@ -44,4 +44,5 @@ is relative, running the example from the repository root writes the file into t
 
 ## Public material derived from this
 
-None yet.
+The `examples/save-webpage` page of the planned [Hypershell project
+section](../../../website/projects/hypershell.md).

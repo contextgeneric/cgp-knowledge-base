@@ -115,9 +115,10 @@ single `reference.md` in place of a `reference/` directory.
 ## Public material derived from these documents
 
 These documents feed the crates' own READMEs, which are also their rustdoc front pages on docs.rs,
-the `/cgp` skill's
-[error backends](https://github.com/contextgeneric/cgp-skills/blob/main/cgp/references/error-backends.md)
-reference, and the website pages that name the backends: the Resources page, the modular-error-handling concept
-page, and the reference pages for `CanRaiseError`, `CanWrapError`, `HasErrorType`, and the error
-providers. The website records for those pages are in
-[website/site-structure.md](../../website/site-structure.md).
+the `/cgp` skill's [error
+backends](https://github.com/contextgeneric/cgp-skills/blob/main/cgp/references/error-backends.md)
+reference, and the website pages that name the backends: the Resources page, the
+modular-error-handling concept page, and the reference pages for `CanRaiseError`, `CanWrapError`,
+`HasErrorType`, and the error providers. The website records for those pages are in
+[website/site-structure.md](../../website/site-structure.md). It also feeds the index of the planned
+[error backends project section](../../website/projects/error-backends.md).

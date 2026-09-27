@@ -169,5 +169,7 @@ custom handler must be installed before any error is raised. `eyre::set_hook` re
 the result of `set_hook` rather than discarding it, since a discarded error leaves the default
 handler in place without any sign.
 
-**Public material derived from this:**
-the `/cgp` skill's [error backends](https://github.com/contextgeneric/cgp-skills/blob/main/cgp/references/error-backends.md) reference.
+**Public material derived from this:** the `/cgp` skill's [error
+backends](https://github.com/contextgeneric/cgp-skills/blob/main/cgp/references/error-backends.md)
+reference, and the `guides/debugging` page of the planned [error backends project
+section](../../../website/projects/error-backends.md).

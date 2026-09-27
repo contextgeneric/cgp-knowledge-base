@@ -161,4 +161,6 @@ lists only the crate's own two endpoints, and the `Send` impl is written for the
 ## Public material derived from this
 
 "The payoff" section of the crate's own README, whose summary of this change ("adding a handler
-provider and one line to `DefaultApiHandlers`") names two of the six pieces.
+provider and one line to `DefaultApiHandlers`") names two of the six pieces. It also feeds the
+`transfer/guides/adding-an-endpoint` page of the planned [cgp-examples project
+section](../../../../website/projects/cgp-examples.md).

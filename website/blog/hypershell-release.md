@@ -144,3 +144,8 @@ If the project ever wants a current Hypershell article, the honest framing is a 
 revision, and the [conference talk and deep-dive playbooks](../../communication-strategy/formats.md)
 apply. Two things from this post are worth carrying into any successor: the prototypal-inheritance
 bridge, and the disadvantages section, which is the reason readers trust the rest of it.
+
+**One edit is already settled.** When the post's project section of the [planned Projects
+pages](../projects/hypershell.md) publishes, a pointer to the Hypershell index goes at the top of
+this post, per the [settled case](../AGENTS.md#do-not-rewrite-history). It adds a link and changes
+no claim, snippet, or slug; nothing else in the post changes with it.

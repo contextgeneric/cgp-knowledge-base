@@ -69,5 +69,5 @@ pinned toolchain does not need. See [issues.md](../issues.md#housekeeping).
 
 ## Public material derived from this
 
-The extension program on page 4 of the planned
-[Hypershell deep dive](../../../website/deep-dives/hypershell.md).
+The `examples/http-checksum-native` page of the planned [Hypershell project
+section](../../../website/projects/hypershell.md).

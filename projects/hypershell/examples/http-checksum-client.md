@@ -63,5 +63,5 @@ reader. The program never says so; the conversion is part of `StreamingExec`'s w
 
 ## Public material derived from this
 
-The native-HTTP program in the planned
-[Hypershell deep dive](../../../website/deep-dives/hypershell.md).
+The `examples/http-checksum-client` page of the planned [Hypershell project
+section](../../../website/projects/hypershell.md).

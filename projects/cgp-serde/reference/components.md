@@ -140,5 +140,5 @@ nested values, as [re-entrant providers](../architecture/reentrant-providers.md)
 
 ## Public material derived from this
 
-The "Serialization as a component" page of the planned
-[cgp-serde deep dive](../../../website/deep-dives/cgp-serde.md), and the rustdoc for both traits.
+The two serialization component pages in the `reference/components/` pages of the planned [cgp-serde
+project section](../../../website/projects/cgp-serde.md), and the rustdoc for both traits.

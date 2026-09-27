@@ -126,5 +126,5 @@ the code selects the operation.
 
 ## Public material derived from this
 
-The "Dispatching Eval" and "Code-Based Dispatching" sections of page 3 of the planned
-[extensible data types deep dive](../../../../website/deep-dives/extensible-datatypes.md).
+The `expression/architecture/dispatch-layers` page of the planned [cgp-examples project
+section](../../../../website/projects/cgp-examples.md).

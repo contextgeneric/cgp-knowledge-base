@@ -70,4 +70,5 @@ see [crate layout](../architecture/crate-layout.md#build-facts).
 
 ## Public material derived from this
 
-None yet.
+The `examples/parallel-compare` page of the planned [Hypershell project
+section](../../../website/projects/hypershell.md).

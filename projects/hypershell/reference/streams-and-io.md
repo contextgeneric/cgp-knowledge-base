@@ -207,4 +207,5 @@ entry. The
 
 ## Public material derived from this
 
-Rustdoc for the stream and I/O items.
+Rustdoc for the stream and I/O items. It also feeds one page per construct in the `reference/` pages
+of the planned [Hypershell project section](../../../website/projects/hypershell.md).

@@ -75,6 +75,5 @@ JSON or RON works with the library as it stands; the complete list of gaps is in
 
 ## Public material derived from this
 
-The "Serialization as a component" page of the planned
-[cgp-serde deep dive](../../../website/deep-dives/cgp-serde.md), and the page on what the library does
-not do.
+The `architecture/serde-bridge` page of the planned [cgp-serde project
+section](../../../website/projects/cgp-serde.md), and its `limitations` page.
