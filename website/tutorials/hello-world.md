@@ -7,7 +7,7 @@ before showing the payoff.
 - **URL** — <https://contextgeneric.dev/docs/tutorials/hello>
 - **Source** — [docs/tutorials/hello.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/docs/tutorials/hello.md)
 - **Pages** — one, sitting at `sidebar_position: 2` in the tutorials category
-- **Status** — Current, with one stale version pin
+- **Status** — Current; the version pin is stale on `main` and updated on the `v0.8.0` branch
 
 ## What it teaches
 
@@ -79,10 +79,10 @@ whose opening steps cover the same constructs.
 
 ## Where it diverges from CGP v0.8.0
 
-Only one thing: the `Cargo.toml` snippet pins `cgp = "0.7.0"` while the page's code is written against
-[v0.8.0](../../releases/v0-8-0.md), so the pin should read `"0.8.0"`. That pin resolves once the release
-is published and not before, which makes it correct rather than broken — the page and the release land
-together. Everything else here is current: `#[cgp_fn]`, `#[implicit]`, and `#[derive(HasField)]` are
+Only one thing, and only on `main`: the published page's `Cargo.toml` snippet pins `cgp = "0.7.0"`
+while its code is written against [v0.8.0](../../releases/v0-8-0.md). The `v0.8.0` branch already
+pins `cgp = "0.8.0"`, which resolves once the release is published, so the page and the release land
+together when that branch merges. Everything else here is current: `#[cgp_fn]`, `#[implicit]`, and `#[derive(HasField)]` are
 unchanged, and the simplified desugaring in the appendix remains an accurate simplification.
 
 One caveat rather than a divergence: the appendix's `HasName` trait returns `&str` from a `String`

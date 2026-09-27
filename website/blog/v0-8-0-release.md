@@ -114,8 +114,9 @@ the namespace and default-implementation snippets match the `web-app` crate apar
 - **The content-filter prefix is given two ways.** The text assigns `@app.core.content_filter` to
   `UsernameCensor` and `SpamMessageDetector`, but every wiring snippet routes them under
   `@app.extra.content_filter`, which is the path the crate uses.
-- **The draft does not mention the `for` statement**, which merges several namespaces into one
-  table and is part of the shipped namespace feature.
+- **The draft does not mention the `for` statement**, which loops over the entries of another lookup
+  table (`for <Key, Value> in Table { … }`) to wire them into the context, and is part of the shipped
+  namespace feature; see [`delegate_components!`](../../cgp/reference/macros/delegate_components.md).
 - **It does not mention that presets are removed.** v0.8.0 deletes `cgp_preset!`,
   `#[cgp::re_export_imports]`, and `#[cgp_inherit]` outright, which is the release's largest breaking
   change and needs a migration guide the draft does not have.

@@ -9,7 +9,7 @@ running example the whole way.
 - **Source** — [docs/tutorials/area-calculation/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/tutorials/area-calculation)
 - **Pages** — an unnumbered `index.md` framing the problem, then
   `context-generic-functions.md` (position 1), `static-dispatch.md` (position 2), and
-  `checking.md` (position 3)
+  `checking.md` (position 3, on the `v0.8.0` branch only)
 - **Status** — Current
 
 ## What it teaches
@@ -134,9 +134,9 @@ is the working developer in [readers.md](../../communication-strategy/readers.md
 
 ## Where it diverges from CGP v0.8.0
 
-The code is current — the series was written for v0.7.0 and nothing it uses changed in v0.8.0 — and
-one gap is worth knowing. The two that used to sit here, that checking was never mentioned and that
-`cargo-cgp` was never mentioned, are closed by part four.
+The code is current (the series was written for v0.7.0 and nothing it uses changed in v0.8.0), and
+one gap is worth knowing. Checking and `cargo-cgp` are covered by `checking.md`, which is on the
+`v0.8.0` branch and not yet on `main`, so the published series still omits both.
 
 - **`#[cgp_impl]` appears in both forms.** Part two first shows
   `impl<Context> AreaCalculator for Context where Self: RectangleArea` and then simplifies to
