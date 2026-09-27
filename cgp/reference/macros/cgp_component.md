@@ -38,7 +38,7 @@ The three keys correspond to the three names the macro needs, and each has a def
 
 The trait body itself is unrestricted in the number of items it declares. A component trait may carry any number of methods, associated types, and associated consts, and every one of them is reproduced on the generated provider trait, so a provider implements the whole set — CGP's own [`CanCompute`](../components/computer.md) declares an associated `Output` beside its `compute` method, and a [getter trait](cgp_getter.md) commonly declares one method per field. The only rejected declaration is a **const generic parameter** on the trait, for the reason given under Known issues. Which items are worth grouping into one component is a design question rather than a limit of the macro, and it is answered in [sizing a component](../../guides/sizing-a-component.md): everything in one component is decided by one provider, so items that a single provider choice settles belong together while items that separate choices settle are better off in separate components.
 
-Four companion attributes extend the macro for special cases, and each is documented separately. [`#[extend(...)]`](../attributes/extend.md) adds supertrait bounds to the generated consumer trait; [`#[use_type(...)]`](../attributes/use_type.md) imports an abstract associated type, adding the owning trait as a supertrait and rewriting the bare alias throughout the signatures; [`#[derive_delegate(...)]`](../attributes/derive_delegate.md) generates `UseDelegate` providers that dispatch on a generic parameter; and [`#[prefix(@path in Namespace)]`](../attributes/prefix.md) registers the component into a namespace under a type-level path, emitting one namespace impl per attribute. Any of the four may be repeated, and `#[extend]`, `#[use_type]`, and `#[derive_delegate]` each accept a comma-separated list in one attribute.
+Four companion attributes extend the macro for special cases, and each is documented separately. [`#[extend(...)]`](../attributes/extend.md) adds supertrait bounds to the generated consumer trait; [`#[use_type(...)]`](../attributes/use_type.md) imports an abstract associated type, adding the owning trait as a supertrait and rewriting the bare alias throughout the signatures; [`#[derive_delegate(...)]`](../attributes/derive_delegate.md) generates `UseDelegate` providers that dispatch on a generic parameter; and [`#[prefix(@path in Namespace)]`](../attributes/prefix.md) registers the component into a namespace under a type-level path, emitting one namespace impl per attribute. Any of the four may be repeated. `#[extend]` and `#[use_type]` also accept a comma-separated list in one attribute, while `#[derive_delegate]` takes a single dispatch spec per attribute (whose parameter may itself be a parenthesized tuple), so a second dispatcher needs a second attribute.
 
 Three modifiers that host macros elsewhere accept are **not** accepted here, and the failure they produce is worth recognizing because the macro does not report it. `#[uses(...)]`, `#[extend_where(...)]`, and `#[use_provider(...)]` are meaningful only where there is a provider impl or a generated trait definition to attach them to, so the component collector does not match them; an unrecognized attribute is passed straight through onto the items the macro emits, where the compiler rejects it as `cannot find attribute … in this scope`. None of these modifiers is a standalone proc macro, so there is nothing else for the name to resolve to. The equivalent of `#[uses]` on a component is a supertrait, written with `#[extend]`.
 
@@ -62,10 +62,12 @@ KeyValueArg      -> `name` `:` ComponentName
                   | `provider` `:` IDENTIFIER
                   | `context` `:` IDENTIFIER
 
-ComponentName    -> IDENTIFIER GenericArgs?
+ComponentName    -> IDENTIFIER ( `<` NameParam ( `,` NameParam )* `,`? `>` )?
+
+NameParam        -> LIFETIME_OR_LABEL | IDENTIFIER
 ```
 
-`ProviderName` is the bare-identifier form and is shorthand for setting `provider` alone. In the key/value form each of the three keys may appear at most once and in any order, and `provider` is required — the other two have defaults (`context` is `__Context__`, `name` is the provider name with a `Component` suffix). `IDENTIFIER` is a Rust identifier token, and `GenericArgs` is the Rust grammar's `< … >` argument list (so the component name may carry generic parameters while the provider name may not). The attribute delimiter shown in Syntax — `(...)` for the bare form and `{...}` for the key/value form — is ordinary Rust attribute syntax; the argument tokens inside follow this grammar regardless of which delimiter is used.
+`ProviderName` is the bare-identifier form and is shorthand for setting `provider` alone. In the key/value form each of the three keys may appear at most once and in any order, and `provider` is required — the other two have defaults (`context` is `__Context__`, `name` is the provider name with a `Component` suffix). `IDENTIFIER` is a Rust identifier token. The component name may carry a list of bare generic parameter names, such as `name: ShapeComponent<Shape>`, which the marker struct then declares; a bound, a default, or a const parameter in that list is rejected with `invalid type generics syntax`, and a concrete type fails to parse at all. The provider name and the context name take no generics. The attribute delimiter shown in Syntax — `(...)` for the bare form and `{...}` for the key/value form — is ordinary Rust attribute syntax; the argument tokens inside follow this grammar regardless of which delimiter is used.
 
 ## Expansion
 
@@ -86,7 +88,7 @@ pub trait CanCalculateArea {
 }
 ```
 
-Second, it emits the **provider trait**, which is the consumer trait with `Self` replaced by an explicit leading `Context` type parameter and every `self`/`Self` reference rewritten to `context`/`Context`. The provider trait carries an [`IsProviderFor`](../traits/is_provider_for.md) supertrait that captures the component name and context so that unsatisfied dependencies surface as readable compiler errors. The supertrait's third argument is the `Params` tuple of the component's extra type parameters; for a component with no parameters beyond the context it is the empty `()`:
+Second, it emits the **provider trait**, which is the consumer trait with `Self` replaced by an explicit leading `Context` type parameter and every `self`/`Self` reference rewritten to the context value and type (literally `__context__` and `__Context__` in the emitted code). The provider trait carries an [`IsProviderFor`](../traits/is_provider_for.md) supertrait that captures the component name and context so that unsatisfied dependencies surface as readable compiler errors. The supertrait's third argument is the `Params` tuple of the component's extra type parameters; for a component with no parameters beyond the context it is the empty `()`:
 
 ```rust
 pub trait AreaCalculator<Context>:
@@ -156,14 +158,16 @@ pub struct AreaCalculatorComponent;
 
 Beyond these five items, the macro also generates standard provider impls that make the component usable in the patterns CGP relies on. Two are unconditional and two are one-per-attribute:
 
-- A [`UseContext`](../providers/use_context.md) impl, so that the provider trait can be satisfied by routing back through a context's own consumer-trait implementation. Its `where` clause is the single predicate `__Context__: CanCalculateArea`, and each method body forwards to the consumer method.
+- A [`UseContext`](../providers/use_context.md) impl, so that the provider trait can be satisfied by routing back through a context's own consumer-trait implementation. Its `where` clause adds `__Context__: CanCalculateArea` to any supertrait predicates the provider trait carries, and each method body forwards to the consumer method.
 - A [`RedirectLookup`](../providers/redirect_lookup.md) impl, which is what the `open` statement of [`delegate_components!`](delegate_components.md) and the [namespace](cgp_namespace.md) machinery resolve through. It is written for `RedirectLookup<__Components__, __Path__>` and looks the component up as `__Components__: DelegateComponent<__Path__>`.
 - One [`UseDelegate`](../providers/use_delegate.md) impl per [`#[derive_delegate(...)]`](../attributes/derive_delegate.md) attribute, dispatching on the named generic parameter.
-- One namespace impl per [`#[prefix(@path in Namespace)]`](../attributes/prefix.md) attribute, binding the component's key inside that namespace to a `RedirectLookup` down the given path.
+- One namespace impl per [`#[prefix(@path in Namespace)]`](../attributes/prefix.md) attribute, binding the component's key inside that namespace to a `RedirectLookup` down the given path with the component's own name appended.
 
-The `RedirectLookup` impl is where a component's own type parameters earn their place in a path, and it is the mechanism behind `@AreaCalculatorComponent.Rectangle`. When the component has type parameters, the impl does not look up `__Path__` directly: it requires `__Path__: ConcatPath<Shape>` and looks up the *extended* path `<__Path__ as ConcatPath<Shape>>::Output`, so the component's parameters are appended to whatever path the lookup arrived on. Only **type** parameters take part — lifetimes and const parameters are filtered out, since neither can key a path — and a component with no type parameters gets the simpler form that looks `__Path__` up unchanged.
+Each of the provider impls in the first three bullets is emitted together with a matching [`IsProviderFor`](../traits/is_provider_for.md) impl under the same `where` clause, so wiring a component to `UseContext`, `open`-ing it, or dispatching it through `UseDelegate` keeps the dependency-surfacing error messages. The `RedirectLookup` one additionally requires the redirected provider to be `IsProviderFor` the component, which is how a missing dependency is reported through an `open` entry or a namespace path. The namespace impls carry no `IsProviderFor` impl, since they are table entries rather than providers.
 
-Two details of the expansion are worth holding onto because they are easy to get wrong. The generated type parameters carry reserved names, not the readable ones used above: the context parameter is literally `__Context__` unless overridden, and the provider parameter in the provider blanket impl is `__Provider__`. The examples here use `Context` and `Provider` for legibility, but the emitted code uses the reserved names. And the generic parameters of a component with parameters of its own are appended *after* the context parameter in the provider trait — except lifetimes, which Rust requires to lead, so `HasReference<'a, T>` yields `ReferenceGetter<'a, __Context__, T>` — and are grouped into a parenthesized list in the `IsProviderFor` `Params` position. The tuple holds *types*, so each parameter is recorded by name and a **lifetime is lifted into [`Life<'a>`](../types/life.md)**: `CanCalculateArea<Shape>` gives `IsProviderFor<AreaCalculatorComponent, __Context__, (Shape)>`, a two-parameter component gives `(Shape, Scalar)`, and `HasReference<'a, T>` gives `(Life<'a>, T)`. Bounds and defaults are dropped, since the tuple only names the parameters positionally, and a const parameter has no representation at all — which is why it is rejected outright, per Known issues.
+The `RedirectLookup` impl is where a component's own type parameters earn their place in a path, and it is the mechanism behind `@AreaCalculatorComponent.Rectangle`. When the component has type parameters, the impl does not look up `__Path__` directly: it requires `__Path__: ConcatPath<PathCons<Shape, Nil>>` and looks up the *extended* path `<__Path__ as ConcatPath<PathCons<Shape, Nil>>>::Output`, so the component's parameters, gathered into a [`Path!`](path.md) in declaration order (`PathCons<Shape, PathCons<Scalar, Nil>>` for two), are appended to whatever path the lookup arrived on. Only **type** parameters take part — lifetimes and const parameters are filtered out, since neither can key a path — and a component with no type parameters gets the simpler form that looks `__Path__` up unchanged.
+
+A few details of the expansion are worth holding onto because they are easy to get wrong. The generated type parameters carry reserved names, not the readable ones used above: the context parameter is literally `__Context__` unless overridden, and the provider parameter in the provider blanket impl is `__Provider__`. The provider trait's receiver is likewise renamed to `__context__`, the snake-case form of the context identifier; a name that does not already start with an underscore is also wrapped in double underscores, so a `context: Ctx` override yields a `__ctx__` receiver. The examples here use `Context`, `context`, and `Provider` for legibility, but the emitted code uses the reserved names. And the generic parameters of a component with parameters of its own are appended *after* the context parameter in the provider trait — except lifetimes, which Rust requires to lead, so `HasReference<'a, T>` yields `ReferenceGetter<'a, __Context__, T>` — and are grouped into a parenthesized list in the `IsProviderFor` `Params` position. The tuple holds *types*, so each parameter is recorded by name and a **lifetime is lifted into [`Life<'a>`](../types/life.md)**: `CanCalculateArea<Shape>` gives `IsProviderFor<AreaCalculatorComponent, __Context__, (Shape)>`, a two-parameter component gives `(Shape, Scalar)`, and `HasReference<'a, T>` gives `(Life<'a>, T)`. The single-parameter `(Shape)` has no trailing comma, so it is the type `Shape` in parentheses rather than a one-element tuple; the same rule applies wherever the tuple is written, so the two sides always agree. Bounds and defaults are dropped, since the tuple only names the parameters positionally, and a const parameter has no representation at all — which is why it is rejected outright, per Known issues.
 
 ## Examples
 
@@ -177,19 +181,10 @@ pub trait CanCalculateArea {
     fn area(&self) -> f64;
 }
 
-#[cgp_auto_getter]
-pub trait HasDimensions {
-    fn width(&self) -> &f64;
-    fn height(&self) -> &f64;
-}
-
-#[cgp_impl(new RectangleArea)]
-impl AreaCalculator
-where
-    Self: HasDimensions,
-{
-    fn area(&self) -> f64 {
-        self.width() * self.height()
+#[cgp_impl(new RectangleAreaCalculator)]
+impl AreaCalculator {
+    fn area(&self, #[implicit] width: f64, #[implicit] height: f64) -> f64 {
+        width * height
     }
 }
 ```
@@ -205,16 +200,22 @@ pub struct Rectangle {
 
 delegate_components! {
     Rectangle {
-        AreaCalculatorComponent: RectangleArea,
+        AreaCalculatorComponent: RectangleAreaCalculator,
+    }
+}
+
+check_components! {
+    Rectangle {
+        AreaCalculatorComponent,
     }
 }
 
 fn print_area(rect: &Rectangle) {
-    println!("area = {}", rect.area()); // CanCalculateArea, via RectangleArea
+    println!("area = {}", rect.area()); // CanCalculateArea, via RectangleAreaCalculator
 }
 ```
 
-The call `rect.area()` resolves through the consumer blanket impl to `Rectangle::area(rect)`, which resolves through the provider blanket impl to `RectangleArea::area(rect)` because `Rectangle`'s table maps `AreaCalculatorComponent` to `RectangleArea`.
+The call `rect.area()` resolves through the consumer blanket impl to `Rectangle::area(rect)`, which resolves through the provider blanket impl to `RectangleAreaCalculator::area(rect)` because `Rectangle`'s table maps `AreaCalculatorComponent` to `RectangleAreaCalculator`. The implicit `width` and `height` arguments are read from `Rectangle`'s fields, which `#[derive(HasField)]` exposes, and the `check_components!` block makes a missing field fail at the wiring rather than at the call. `Rectangle` here is a value context: the wired type is the shape whose area is computed. This matches the [area calculation](../../../examples/area-calculation.md) example, which develops the same provider.
 
 ## Related constructs
 

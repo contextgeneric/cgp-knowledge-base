@@ -62,7 +62,7 @@ pub struct RectangleArea;
 
 The provider impl and the derived `IsProviderFor` impl are exactly what [`#[cgp_provider]`](cgp_provider.md) emits — see its Expansion section for how the component type, context type, and `Params` tuple are assembled. The one addition is `pub struct RectangleArea;`.
 
-The struct's shape is taken from the `Self` type of the impl. A plain provider name yields a unit struct as above. A generic provider yields a struct with a `PhantomData` field over its parameters, so the parameters are bound. For instance:
+The struct's shape is taken from the `Self` type of the impl, which must be a provider name followed by bare generic parameter names. A plain provider name yields a unit struct as above. A generic provider yields a tuple struct with one public `PhantomData` field over its parameters, so the parameters are bound: a single parameter gives `PhantomData<T>`, several give the tuple `PhantomData<(A, B)>`, and a lifetime parameter is lifted into [`Life<'a>`](../types/life.md) inside it, so `WithLife<'a>` gives `PhantomData<Life<'a>>`. For instance:
 
 ```rust
 #[cgp_new_provider]

@@ -106,9 +106,9 @@ where
 }
 ```
 
-The generated context type parameter is literally `__Context__`, not `Context` — the same reserved name `#[cgp_component]` uses — and references to it inside the impl appear as `Self`. The `Symbol!("...")` shorthand stands for the type-level string the macro actually emits (for `width`, `Symbol<5, Chars<'w', Chars<'i', Chars<'d', Chars<'t', Chars<'h', Nil>>>>>>`). Each implicit binding follows the same conversion rules as [`#[cgp_auto_getter]`](cgp_auto_getter.md): an owned value gets a trailing `.clone()`, and a `&str` return gets `.as_str()`, while a borrowed `&Name` is taken by reference with no conversion.
+The generated context type parameter is literally `__Context__`, not `Context` — the same reserved name `#[cgp_component]` uses — and references to it inside the impl appear as `Self`. The `Symbol!("...")` shorthand stands for the type-level string the macro actually emits (for `width`, `Symbol<5, Chars<'w', Chars<'i', Chars<'d', Chars<'t', Chars<'h', Nil>>>>>>`). Each implicit binding follows the same conversion rules as [`#[cgp_auto_getter]`](cgp_auto_getter.md): an owned value gets a trailing `.clone()`, an argument typed `&str` reads a `String` field through `.as_str()`, and a borrowed `&Name` is taken by reference with no conversion. The full set of forms, including options, slices, and mutable borrows, is in [`#[implicit]`](../attributes/implicit.md).
 
-Generics and the `where` clause expand according to the split described above. Given the `Scalar` example, the generic goes on both trait and impl while the function's `where` bound stays on the impl, ordered before the implicit `HasField` bounds — the implicit bounds are always appended last:
+Generics and the `where` clause expand according to the split described above. Given the `Scalar` example, the generic goes on both trait and impl while the function's `where` bound stays on the impl, ahead of the implicit `HasField` bounds:
 
 ```rust
 pub trait RectangleArea<Scalar> {
@@ -125,7 +125,9 @@ where
 }
 ```
 
-The bounds contributed by the companion attributes are layered into this same impl. `#[uses(Trait)]` and `#[extend(Trait)]` push a `Self: Trait` predicate onto the impl's `where` clause; `#[extend(Trait)]` additionally adds `Trait` as a supertrait of the generated trait, and `#[extend_where(...)]` adds its predicates to the trait's own `where` clause. [`#[impl_generics(...)]`](../attributes/impl_generics.md) inserts its parameters into the impl generics only, after the function's own generics; its argument is a comma-separated list of Rust `GenericParam` productions, so a lifetime and a const parameter are accepted there alongside a bounded type parameter. The implicit-argument bounds are always appended last, after the attribute-contributed predicates.
+The bounds contributed by the companion attributes are layered into this same impl. `#[extend(Trait)]` adds `Trait` as a supertrait of the generated trait, and `#[extend_where(...)]` adds its predicates to the trait's own `where` clause; both are repeated on the impl, which must satisfy whatever the trait requires. [`#[impl_generics(...)]`](../attributes/impl_generics.md) inserts its parameters into the impl generics only, after the function's own generics; its argument is a comma-separated list of Rust `GenericParam` productions, so a lifetime and a const parameter are accepted there alongside a bounded type parameter.
+
+The impl's `where` clause is assembled in a fixed order, which is worth knowing when reading an expansion. It starts with the function's own `where` clause, then a single `Self: …` predicate joining every `#[extend]` bound followed by every `#[uses]` bound, then the `#[extend_where]` predicates, then the implicit-argument `HasField` bounds, and finally the predicates `#[use_type]` and `#[use_provider]` contribute, in that order.
 
 Two further placements are decided by the macro rather than written by the author. The **function's visibility moves to the generated trait**, and the method inside the impl is emitted with inherited visibility — so `pub fn rectangle_area` yields `pub trait RectangleArea` while a private `fn` yields a trait visible only in its own module. And an attribute the macro does **not** recognize is copied onto *both* generated items rather than one, which is what lets `#[allow(...)]`, `#[doc]`, and a doc comment on the function apply to the trait and its impl alike.
 

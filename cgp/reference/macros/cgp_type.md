@@ -12,7 +12,7 @@ Direct implementation remains available and is often the clearest choice. An abs
 
 ## Syntax
 
-The macro is applied to a trait that contains exactly one associated type and no methods. The associated type may carry bounds, but it must not be generic or have a `where` clause. The simplest form takes no argument:
+The macro is applied to a trait that contains exactly one associated type and nothing else. Any other item count or kind fails with `type trait should contain exactly one associated type item`. The associated type may carry bounds, but a generic associated type or one with a `where` clause fails with `generic associated type and where clause are not supported`. The simplest form takes no argument:
 
 ```rust
 #[cgp_type]
@@ -46,7 +46,7 @@ The only difference from `#[cgp_component]` is the default applied when `provide
 
 ## Expansion
 
-`#[cgp_type]` expands to the full `#[cgp_component]` output for the trait, followed by two abstract-type provider impls. The component part is exactly what `#[cgp_component(ScalarTypeProvider)]` would produce for an associated-type trait — the consumer trait, the provider trait, the consumer and provider blanket impls, the `ScalarTypeProviderComponent` marker, and the standard `UseContext` and `RedirectLookup` provider impls. The difference from a behavioral component is that every blanket impl forwards the *associated type* rather than a method; see [`#[cgp_component]`](cgp_component.md) for that core shape.
+`#[cgp_type]` expands to the full `#[cgp_component]` output for the trait, followed by two abstract-type provider impls. The component part is exactly what `#[cgp_component(ScalarTypeProvider)]` would produce for an associated-type trait — the consumer trait, the provider trait, the consumer and provider blanket impls, the `ScalarTypeProviderComponent` marker, the standard `UseContext` and `RedirectLookup` provider impls, and one impl per [`#[derive_delegate]`](../attributes/derive_delegate.md) or [`#[prefix]`](../attributes/prefix.md) attribute, since the trait's companion attributes are collected exactly as `#[cgp_component]` collects them. The difference from a behavioral component is that every blanket impl forwards the *associated type* rather than a method; see [`#[cgp_component]`](cgp_component.md) for that core shape.
 
 The first extra construct is the [`UseType`](../providers/use_type.md) blanket impl, which is the heart of `#[cgp_type]`. It implements the provider trait for `UseType<Scalar>` by setting the abstract associated type to the generic parameter `Scalar`. Starting from:
 
@@ -103,6 +103,12 @@ delegate_components! {
     }
 }
 
+check_components! {
+    App {
+        ScalarTypeProviderComponent,
+    }
+}
+
 fn zero<Context>() -> Context::Scalar
 where
     Context: HasScalarType,
@@ -112,7 +118,7 @@ where
 }
 ```
 
-`App` wires `ScalarTypeProviderComponent` to `UseType<f64>`, so the generated `UseType` blanket impl makes `App` implement `HasScalarType` with `Scalar = f64`. The `Copy` bound on the associated type is enforced on `f64` at the wiring site.
+`App` wires `ScalarTypeProviderComponent` to `UseType<f64>`, so the generated `UseType` blanket impl makes `App` implement `HasScalarType` with `Scalar = f64`. The `Copy` bound on the associated type sits in the `UseType` impl's `where` clause, so it is enforced wherever `App: HasScalarType` is required, and the `check_components!` block requires it at the wiring. Without the check, wiring `UseType<String>` would compile until the first use, because wiring is lazy; with it, the mistake is reported as `String: Copy` not being satisfied.
 
 The abstract type can equally be implemented directly on a concrete context, bypassing both `delegate_components!` and `UseType`:
 
