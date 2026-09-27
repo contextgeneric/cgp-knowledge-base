@@ -758,7 +758,7 @@ it stale.
   the five mechanical items publication fixes.
 - [project.md](website/writing-guides/project.md) — the Projects section ported from the internal
   project sections: the seven page kinds, the example page as a short applied-register tutorial with
-  its *New to CGP?* orientation, walkthrough by idea, named pattern, and verified change to try, one
+  its *New to CGP?* orientation, the problem it solves and its cost without CGP, walkthrough by idea, named pattern, and verified change to try, one
   reference page per project construct and what folds onto another's page, a limitations page of
   high-level limits with no bugs or missing features on any public page, the link map and the rule against placeholder pages, project code verified against its own repository
   rather than `example-code`, and diagnostics quoted from the source-built `cargo-cgp`.

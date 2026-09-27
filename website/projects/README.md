@@ -27,7 +27,8 @@ their source, so the section is a port of that material rather than new writing.
 
 **The example pages carry it.** Each runnable program or test in a project gets one page, written as
 a short tutorial in the applied register: a short introduction with links for a reader who does not
-know CGP, the program run and its real output, a walkthrough whose headings name the ideas, the
+know CGP, the problem the program solves and what solving it takes without CGP, the program run and
+its real output, a walkthrough whose headings name the ideas, the
 pattern it demonstrates and what that costs, and a route onward. The architecture, guide, and
 reference pages exist so that an example page can name a construct and link to its full account, and
 so that a reader who adopts a library has somewhere to look things up. The page kinds and their

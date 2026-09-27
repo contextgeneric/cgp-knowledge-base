@@ -68,6 +68,10 @@ repository, and match the pages. The pages say the repository has no test for th
 - **The writing guide was revised from the pilot**, as this plan asks: a program with no runner gets
   a test to save, a wiring-only crate opens with *Check it*, and neighbouring designs make the same
   *Try a change*; see [the example page](../writing-guides/project.md#then-it-runs-the-program).
+- **Every example page has a *The problem* section before its code**, per [the writing
+  guide](../writing-guides/project.md#then-it-states-the-problem): the task, what makes it hard, and
+  a *Without CGP* part that concedes where a shell script, plain Rust, or Serde's derive is simpler
+  and names the requirement that tips the balance. A revision keeps it fair to the alternative.
 - **No public page lists the crates' defects or housekeeping.** The unwired
   `EvalSubtractWithNegate`, the unread type binding, and `web-app`'s commented-out tables stay in
   the crates' `issues.md`.

@@ -113,9 +113,10 @@ that behavior, and the name of the CGP pattern it shows.
 **An example page is not a tutorial, and the difference decides its shape.** A tutorial builds a
 program from nothing, one step at a time, so the reader types every line. An example page starts
 from a program that already exists and runs, and guides the reader through it in the order its ideas
-make sense. So it borrows the tutorial's obligations that fit a guided reading (destination first, a
-result early, one path, the context's shape stated), and it drops the ones that assume the reader is
-building (problem before construct, explicit form before sugar). A reader who wants the construction
+make sense. So it borrows the tutorial's obligations that fit a guided reading (destination first, the
+problem before the solution, a result early, one path, the context's shape stated), and it drops the
+ones that assume the reader is building (each construct introduced by the need for it, explicit form
+before sugar). A reader who wants the construction
 goes to the tutorials; the *New to CGP?* admonition below is how the page sends them there.
 
 ### It is a landing page, so it orients first
@@ -136,6 +137,34 @@ The first screen therefore does three things before any code:
   pattern the example shows) and says that the page can be read without them. That admonition is the
   "short introduction together with links" every example page owes, and it is what lets a reader who
   has never seen CGP know where to look next.
+
+### Then it states the problem
+
+**Before any of the program's code, a section titled *The problem* says what the example is trying
+to solve and why that is worth solving.** A reader who arrives from a search result knows what the
+program does from the first screen, but not yet why anyone would write it this way, and a
+walkthrough read without that reason is a tour of machinery. The section answers three questions, in
+a few short paragraphs:
+
+- **What is the task?** The job the program does, in the reader's terms: run a pipeline of
+  commands, encode a value for two applications, evaluate an expression.
+- **What makes it hard?** The requirement that turns an easy task into an interesting one: the
+  encoding must differ per application, the language must grow without edits, a check must apply to
+  one operation and not its neighbours.
+- **What does it take without CGP?** Where the example solves something plain Rust makes awkward,
+  how a reader would solve it without CGP, and what that costs: a wrapper type per encoding, a
+  `match` edited for every new variant, a manager trait that drags every dependency along. When the
+  project keeps the plain version, as `expression` keeps its `classic` module, quote it; otherwise
+  describe it in prose, since a sketch shown as code must compile and is one more thing to verify.
+  Omit this part only where there is no plain alternative worth naming.
+
+The section is fair to the alternative. Plain Rust, a shell script, or Serde's derive is often the
+right choice for the task as stated, and the section says so where it is, then names the requirement
+that tips the balance; the page's *The pattern* section states what the CGP version costs in return.
+It never disparages another tool, per
+[message.md](../../communication-strategy/message.md). A program that is deliberately trivial, such
+as a first `echo`, says that the task is trivial and that the problem is the shape of the program,
+not its output.
 
 ### Then it runs the program
 
@@ -495,6 +524,9 @@ plan names the posts that get one.
   them.
 - **Check each example page's closing links**: the next example, a page of the project's own that
   develops the idea, and a Concepts or tutorial page.
+- **Find the problem.** Every example page has a *The problem* section before its code, saying
+  what the program solves, what makes it hard, and, where there is one, what the plain-Rust or
+  non-CGP solution costs, without disparaging it.
 - **Read only the headings of an example page.** They should summarize how the program works.
 - **Find the pattern and its cost.** Every example page names one pattern, links the page that
   explains it, and states what it costs.
