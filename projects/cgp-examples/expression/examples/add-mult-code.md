@@ -58,7 +58,29 @@ input types. Nothing runs the context at test time.
 - **No test** — the probe result above is the only runtime evidence; see
   [testing.md](../testing.md).
 
+## The test the public page gives
+
+The public page runs this context with an integration test the reader saves as
+`expression/tests/code.rs`, which builds `2 * (3 + 4)`, converts it with `ToLisp`, and evaluates it
+with `Eval`, printing each result. A probe ran the same test from a crate with a path dependency on
+this one, and it printed `14` and then the Lisp tree:
+
+```text
+List(List([Ident(Ident("*")), Literal(Literal(2)), List(List([Ident(Ident("+")), Literal(Literal(3)), Literal(Literal(4))]))]))
+```
+
+With the line `@ComputerRefComponent.ToLisp.Plus<MathExpr>: BinaryOpToLisp<Symbol!("+")>` removed
+from a copy of the module, `cargo cgp check` built from the `cargo-cgp` source at commit `b6a6323`
+reported the change the public page shows:
+
+```text
+error[E0277]: [CGP-E001] the consumer trait `CanComputeRef<ToLisp, Plus<MathExpr>>` is not implemented for context `Interpreter`
+   = note: root cause: [CGP-E107] context `Interpreter` does not contain any delegate entry for `@ComputerRefComponent.ToLisp.Plus<MathExpr>`
+```
+
+Two `E0271` errors followed at the `ToLisp` wrapper's call to `MatchWithValueHandlersRef`.
+
 ## Public material derived from this
 
-The `expression/examples/add-mult-code` page of the planned [cgp-examples project
-section](../../../../website/projects/cgp-examples.md).
+The `expression/examples/add-mult-code` page of the [cgp-examples project
+section](../../../../website/projects/cgp-examples.md), including its test and its change to try.

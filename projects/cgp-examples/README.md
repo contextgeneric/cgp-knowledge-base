@@ -124,8 +124,8 @@ per [../AGENTS.md](../AGENTS.md#the-shape-of-a-project-section). One document sp
 
 These documents are the verified source for the repository's own READMEs, above all the `transfer`
 walkthrough, whose drift from the code is recorded in [transfer/issues.md](transfer/issues.md). They
-also feed the planned [cgp-examples section](../../website/projects/cgp-examples.md) of the
-website's Projects pages, which writes each crate's programs as example pages and whose section
+also feed the [cgp-examples section](../../website/projects/cgp-examples.md) of the website's
+Projects pages, of which the `expression` and `web-app` subsections are written, which writes each crate's programs as example pages and whose section
 index is built from [constructs.md](constructs.md), and the unfinished [v0.8.0 release
 post](../../website/blog/v0-8-0-release.md), whose code follows `web-app`.
 

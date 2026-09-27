@@ -53,5 +53,5 @@ context and a new enum next to the old ones, reusing the operator providers unch
 
 ## Public material derived from this
 
-The `expression/architecture/index` page and the `expression` index of the planned [cgp-examples
+The `expression/architecture/index` page and the `expression` index of the [cgp-examples
 project section](../../../../website/projects/cgp-examples.md).

@@ -57,7 +57,22 @@ all six input types.
   `Computer`, which this context does not wire; see
   [evaluation providers](../reference/eval-providers.md#evalsubtractwithnegate).
 
+## Try a change
+
+Asking for conversion is the change the public page shows. A probe copied the module, added `ToLisp`
+to its `dsl` import, and added `(ToLisp, MathPlusExpr)` to its check block. `cargo cgp check` built
+from the `cargo-cgp` source at commit `b6a6323` reported:
+
+```text
+error[E0277]: [CGP-E001] the consumer trait `CanComputeRef<ToLisp, MathPlusExpr>` is not implemented for context `InterpreterPlus`
+   = note: root cause: [CGP-E107] context `InterpreterPlus` does not contain any delegate entry for `@ComputerRefComponent.ToLisp.MathPlusExpr`
+```
+
+A call to `compute_ref` with `ToLisp`, without the check, reports the same root cause as a missing
+`@ComputerRefComponent.ToLisp`, with the input type shown as `_`, which is why the page uses the
+check.
+
 ## Public material derived from this
 
-The `expression/examples/add-mult-neg` page of the planned [cgp-examples project
-section](../../../../website/projects/cgp-examples.md).
+The `expression/examples/add-mult-neg` page of the [cgp-examples project
+section](../../../../website/projects/cgp-examples.md), including its change to try.

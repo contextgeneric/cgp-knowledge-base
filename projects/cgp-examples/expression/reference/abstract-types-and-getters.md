@@ -88,6 +88,6 @@ None; it is implemented on the operator types.
 
 ## Public material derived from this
 
-The items the `expression` example pages of the planned [cgp-examples project
+The items the `expression` example pages of the [cgp-examples project
 section](../../../../website/projects/cgp-examples.md) explain where they first appear, since that
 section carries no reference for demonstration crates.

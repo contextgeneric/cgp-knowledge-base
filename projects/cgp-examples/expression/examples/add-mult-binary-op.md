@@ -41,7 +41,22 @@ all four input types. Nothing runs the context at test time.
 - **No test** — the probe result above is the only runtime evidence; see
   [testing.md](../testing.md).
 
+## The test the public page gives
+
+The public page runs this context with an integration test the reader saves as
+`expression/tests/binary_op.rs`, which builds `2 * (3 + 4)`, converts it with `ToLisp`, and evaluates it
+with `Eval`, printing each result. A probe ran the same test from a crate with a path dependency on
+this one, and it printed the Lisp tree and then `14`:
+
+```text
+List(List([Ident(Ident("*")), Literal(Literal(2)), List(List([Ident(Ident("+")), Literal(Literal(3)), Literal(Literal(4))]))]))
+```
+
+With `Symbol!("+")` changed to `Symbol!("add")` in a copy of the module, the same test printed
+`List(List([Ident(Ident("*")), Literal(Literal(2)), List(List([Ident(Ident("add")), Literal(Literal(3)), Literal(Literal(4))]))]))`
+and `14`, the change the public page shows.
+
 ## Public material derived from this
 
-The `expression/examples/add-mult-binary-op` page of the planned [cgp-examples project
-section](../../../../website/projects/cgp-examples.md).
+The `expression/examples/add-mult-binary-op` page of the [cgp-examples project
+section](../../../../website/projects/cgp-examples.md), including its test and its change to try.

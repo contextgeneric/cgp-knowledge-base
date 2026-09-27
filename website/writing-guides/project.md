@@ -144,6 +144,17 @@ needs, and the output the program actually produced, quoted from a run rather th
 the internal record says the program was not run, or needs network access or a paid key, the page
 says so plainly instead of implying the output.
 
+Two kinds of program need a different first step, and the `expression` and `web-app` pilots settled
+both:
+
+- **A program the repository has no runner for**, such as a context with no test, gets the smallest
+  test that runs it, given as a file the reader saves, with the output a probe produced from that
+  exact file. The page says the repository has no test for it, as a fact about how to run it, not as
+  a gap.
+- **A crate that only wires**, whose provider bodies are `todo!()`, has nothing to run, so its pages
+  say so on the first screen and open with *Check it* instead: the check command, and what its
+  passing means for the stage on the page.
+
 ### Then it walks through the program, one idea per heading
 
 **The body quotes the program in the parts that carry its ideas, each under a heading that names the
@@ -185,6 +196,10 @@ wiring entry and seeing the output change, or removing one and reading the error
 reports, is the fastest way for a reader to believe the pattern rather than take it on trust. It
 also discharges the tutorial obligation to show a wiring failure before the reader causes one, per
 [tutorial.md](tutorial.md#errors-checking-and-the-tooling).
+
+**Where two pages show neighbouring designs, make the same change on both.** Removing one entry from
+a coarse-grained context and from its fine-grained successor, and quoting both errors, shows what the
+split buys more directly than any sentence can; each page links the other's *Try a change*.
 
 Every such change must have been made and run, and its output quoted as it was produced. The
 internal record is where that result is recorded first; a change nobody has run is left out rather

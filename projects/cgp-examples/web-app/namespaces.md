@@ -133,9 +133,23 @@ each context.
 - **The flat namespace step is a comment** — nothing compiles it; see
   [issues.md](issues.md#housekeeping).
 
+## Try a change
+
+Removing `TestApp`'s `@app.extra` entry is the change the public page shows. A probe made it on a copy
+of the module, and `cargo cgp check` built from the `cargo-cgp` source at commit `b6a6323` reported
+the same two errors as the `CoreOnlyApp` probe in [testing.md](testing.md#what-the-checks-catch), now
+naming `TestApp`:
+
+```text
+error[E0277]: [CGP-E001] the consumer traits `CanCreateUser` and `CanCensorUsername` are not implemented for context `TestApp`
+    = note: root cause: [CGP-E107] context `TestApp` does not contain any delegate entry for `@app.extra.content_filter.UsernameCensorComponent`
+error[E0277]: [CGP-E001] the consumer traits `CanCreatePost` and `CanDetectSpamMessage` are not implemented for context `TestApp`
+    = note: root cause: [CGP-E107] context `TestApp` does not contain any delegate entry for `@app.extra.content_filter.SpamMessageDetectorComponent`
+```
+
 ## Public material derived from this
 
 The "Introducing CGP namespaces and paths" and "Hierarchical delegation" sections of the [v0.8.0
 release post](../../../website/blog/v0-8-0-release.md). It also feeds the
-`web-app/examples/namespaces` page of the planned [cgp-examples project
+`web-app/examples/namespaces` page of the [cgp-examples project
 section](../../../website/projects/cgp-examples.md).
