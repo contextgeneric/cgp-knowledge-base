@@ -1,16 +1,16 @@
 # `#[cgp_auto_dispatch]`
 
-`#[cgp_auto_dispatch]` is an attribute macro that, given a trait implemented separately for each payload type, generates a blanket implementation of that trait for an enum by matching the enum's current variant and delegating to the implementation for that variant's payload.
+`#[cgp_auto_dispatch]` takes a trait implemented separately for each payload type and generates an implementation of it for any extensible enum of those types, which matches the current variant and calls the trait method on its payload.
 
 ## Purpose
 
-`#[cgp_auto_dispatch]` solves the common case of "I have a trait with one impl per type, and I want it to work on an enum of those types too." Without it, a programmer would write a `match` arm per variant by hand, or wire up the [dispatch combinators](../providers/dispatch_combinators.md) — a matcher, a per-variant computer, and the field-handler machinery — manually. The macro removes that boilerplate: it inspects the trait's methods and emits both the per-variant handler each method needs and the enum-level blanket impl that runs the matcher, so the only code the programmer writes is the trait, its per-payload impls, and the derive that makes the enum extensible.
+`#[cgp_auto_dispatch]` handles the common case of a trait with one impl per type that should also work on an enum of those types. Without it, a programmer writes a `match` arm per variant, or wires the [dispatch combinators](../providers/dispatch_combinators.md) by hand: a matcher, a per-variant computer, and the field-handler machinery. The macro generates both the per-variant computer each method needs and the enum-level blanket impl that runs the matcher. The programmer writes only the trait, its per-payload impls, and the derive that makes the enum extensible.
 
-The macro is the highest-level entry point to the [dispatching](../../concepts/dispatching.md) pattern. It is meant for the frequent situation where the per-variant behavior is exactly "call the same trait method on the payload," and it generates the same matcher wiring described in [`dispatch_combinators`](../providers/dispatch_combinators.md) so that the generated impl behaves identically to a hand-written one. When the per-variant behavior is more elaborate, or the dispatch needs to be wired into a context's components rather than implemented directly on the enum, the underlying combinators are used directly instead.
+The macro is the highest-level entry point to the [dispatching](../../concepts/dispatching.md) pattern, and it fits when the per-variant behavior is exactly "call the same method on the payload". It generates the same matcher wiring that [`dispatch_combinators`](../providers/dispatch_combinators.md) describes, so the result behaves like a hand-written dispatch. When the per-variant behavior is more elaborate, or the dispatch must be wired into a context's components rather than implemented on the enum, use the combinators directly.
 
 ## Syntax
 
-`#[cgp_auto_dispatch]` is written above a trait definition and takes no arguments. The trait may have generic parameters and supertraits, and each method may take `self` by value, by shared reference, or by mutable reference, may take additional value or reference arguments, and may be `async`:
+`#[cgp_auto_dispatch]` is written above a trait definition. It takes no arguments, and any tokens given as an argument are ignored:
 
 ```rust
 #[cgp_auto_dispatch]
@@ -19,11 +19,23 @@ pub trait HasArea {
 }
 ```
 
-Two restrictions apply, both enforced at expansion time. A trait method may not have non-lifetime generic parameters, because Rust lacks the quantified trait bounds the generated impl would need; lifetime parameters on a method are allowed. Every trait item must be a method — associated types and constants are rejected. Each method must have a `self` receiver, since the receiver is the enum value being matched.
+The trait may carry generic parameters. Each method may take `self` by value, by shared reference, or by mutable reference, may take further arguments by value or by reference, and may be `async`.
+
+The macro rejects three shapes at expansion time, each with its own message:
+
+- **A trait item other than a method** — an associated type or constant fails with `Only function items are allowed in a dispatch trait`.
+- **A method without a `self` receiver** — the receiver is the enum value being matched, so its absence fails with `Dispatcher method must have a self argument`.
+- **A method with a type or const generic parameter** — the generated impl would need a quantified bound Rust lacks, so it fails with `Dispatch trait methods cannot contain non-lifetime generic parameters …`. Lifetime parameters are allowed.
+
+Supertraits parse but break the expansion, as Known issues explains.
 
 ## Expansion
 
-The macro keeps the original trait unchanged and appends two kinds of generated code: one blanket impl of the trait for a fresh enum type parameter named `__Variants__`, and, for each method, one free function turned into a per-variant computer by [`#[cgp_computer]`](cgp_computer.md). Taking the `HasArea` trait above, the macro emits a per-variant computer for the `area` method:
+The macro keeps the trait unchanged and appends two kinds of item: one blanket impl of the trait for a fresh type parameter named `__Variants__`, and, for each method, one free function that [`#[cgp_computer]`](cgp_computer.md) turns into a per-variant computer.
+
+### The per-variant computer
+
+Each method becomes a function that calls the method on the payload. For the `HasArea` trait above, the macro emits:
 
 ```rust
 #[cgp_computer(ComputeArea)]
@@ -32,9 +44,11 @@ fn area<'__a__, __Variants__: HasArea>(__Variants__: &'__a__ __Variants__) -> f6
 }
 ```
 
-The computer's name is `Compute` followed by the method name in PascalCase, so `area` yields `ComputeArea`. Its body simply calls the trait method on the payload, which means the per-variant handler is "invoke `HasArea::area` on whatever payload type this variant holds." The function is bound by `__Variants__: HasArea` so it applies to every payload type that implements the trait, and it borrows the payload by a fresh lifetime `'__a__` to mirror the `&self` receiver.
+The computer is named `Compute` followed by the method name in PascalCase, so `area` yields `ComputeArea`. It is generic over any `__Variants__: HasArea`, so it applies to every payload type that implements the trait. It borrows the payload for a fresh lifetime `'__a__`, mirroring the `&self` receiver, and the same lifetime is given to any elided reference in the arguments or the return type.
 
-The macro then emits the enum-level blanket impl, which wires a matcher over `__Variants__`:
+### The enum-level blanket impl
+
+The blanket impl implements the trait for every `__Variants__` by running a matcher over the per-variant computer:
 
 ```rust
 impl<__Variants__> HasArea for __Variants__
@@ -53,9 +67,17 @@ where
 }
 ```
 
-The matcher struct the impl picks depends on the method's receiver and arguments, and every choice is from the value-handler matcher family so that the per-variant computer receives the bare payload. A method whose receiver and argument list determine the selection as follows: a `&self` method with no extra arguments uses `MatchWithValueHandlersRef`, a `&mut self` method with no extra arguments uses `MatchWithValueHandlersMut`, and a by-value `self` method with no extra arguments uses `MatchWithValueHandlers`. When the method takes additional arguments, the matcher switches to the first-argument family — `MatchFirstWithValueHandlersRef`, `MatchFirstWithValueHandlersMut`, or `MatchFirstWithValueHandlers` respectively — and the arguments are bundled into the matcher input as a tuple. The matcher is invoked with a unit context `&()` and unit code `PhantomData::<()>`, since the per-variant logic depends only on the payload, not on any surrounding context. The call names the provider trait with inferred arguments, `Computer<_, _, _>`, so it stays unambiguous in a module that also imports the consumer trait `CanCompute`.
+The impl always requires `__Variants__: HasExtractor`, because matching needs an extensible enum. It calls the matcher with a unit context `&()` and a unit code `PhantomData::<()>`, since the per-variant logic depends only on the payload. The call names the provider trait with inferred arguments, `Computer<_, _, _>`, so it stays unambiguous in a module that also imports the consumer trait `CanCompute`.
 
-A method that takes arguments shows the first-argument form. For a `contains(&self, x: f64, y: f64) -> bool` method, the generated impl bundles the receiver and the arguments into the input tuple and selects `MatchFirstWithValueHandlersRef`:
+The matcher comes from the value-handler family, so the per-variant computer receives the bare payload. The method's receiver and whether it takes further arguments decide which one:
+
+| Receiver | No further arguments | Further arguments |
+|---|---|---|
+| `&self` | `MatchWithValueHandlersRef` | `MatchFirstWithValueHandlersRef` |
+| `&mut self` | `MatchWithValueHandlersMut` | `MatchFirstWithValueHandlersMut` |
+| `self` | `MatchWithValueHandlers` | `MatchFirstWithValueHandlers` |
+
+A method with further arguments passes the matcher a pair of the receiver and a tuple of the arguments. For `contains(&self, x: f64, y: f64) -> bool`, the impl selects `MatchFirstWithValueHandlersRef`:
 
 ```rust
 // where MatchFirstWithValueHandlersRef<ComputeContains>:
@@ -69,11 +91,11 @@ fn contains(&self, arg_0: f64, arg_1: f64) -> bool {
 }
 ```
 
-For an `async` method the macro selects the `AsyncComputer` form of the bound and the matcher call instead of `Computer`, appends the method's lifetime handling for any reference arguments or reference return type by introducing the `'__a__` lifetime and a `for<'__a__>` quantifier where needed, and awaits the matcher result. The enum-level impl always carries the `__Variants__: HasExtractor` bound, since matching requires the enum to be extensible.
+An `async` method uses `AsyncComputer` in both the bound and the call, and `.await`s the result. A by-value `self` method with no borrowed argument or return needs no lifetime, so its bound has no `for<…>` quantifier.
 
 ## Examples
 
-The macro turns a per-type trait into one that also works on an enum of those types, with no hand-written matching. The enum derives `CgpData` so it is extensible, the trait carries `#[cgp_auto_dispatch]`, and each payload type implements the trait on its own:
+This example makes an enum extensible with `CgpData`, marks two traits with `#[cgp_auto_dispatch]`, and implements each trait on the payload types alone:
 
 ```rust
 use cgp::prelude::*;
@@ -100,14 +122,6 @@ impl HasArea for Rectangle {
     fn area(&self) -> f64 { self.width * self.height }
 }
 
-// HasArea is now also implemented for Shape, dispatching to the variant's impl:
-let shape = Shape::Rectangle(Rectangle { width: 2.0, height: 2.0 });
-assert_eq!(shape.area(), 4.0);
-```
-
-Because the generated impl is bound by `MatchWithValueHandlersRef<ComputeArea>: …`, it requires every variant's payload to implement `HasArea`; forgetting an impl for one variant is a compile error at the point the enum's `area` is used. A `&mut self` method dispatches the same way through the `Mut` matcher, so a single `#[cgp_auto_dispatch]` trait can mix reading and mutating methods:
-
-```rust
 #[cgp_auto_dispatch]
 pub trait CanScale {
     fn scale(&mut self, factor: f64);
@@ -121,17 +135,32 @@ impl CanScale for Rectangle {
     fn scale(&mut self, factor: f64) { self.width *= factor; self.height *= factor; }
 }
 
-let mut shape = Shape::Rectangle(Rectangle { width: 2.0, height: 2.0 });
-shape.scale(2.0);   // dispatches to Rectangle::scale through MatchFirstWithValueHandlersMut
+fn main() {
+    let mut shape = Shape::Rectangle(Rectangle { width: 2.0, height: 2.0 });
+    assert_eq!(shape.area(), 4.0); // MatchWithValueHandlersRef
+    shape.scale(2.0);              // MatchFirstWithValueHandlersMut
+    assert_eq!(shape.area(), 16.0);
+}
 ```
 
-## Known issues
-
-The macro rejects trait methods with non-lifetime generic parameters, so a dispatch trait cannot have a generic method even though an ordinary trait can. This is a deliberate limitation rather than an oversight: the generated blanket impl would need a quantified trait bound over the method's type parameter to guarantee every variant's payload satisfies the bound for all instantiations, and Rust has no such bound. A method that needs to be generic must be handled with the dispatch combinators directly instead of through this macro.
+`Shape` gains both traits without an impl of its own. The generated bound requires every variant's payload to implement the trait, so forgetting an impl for one variant is a compile error where the enum's method is used. The [extensible shapes](../../../examples/extensible-shapes.md) example develops this macro further, with argument-taking methods, and compares the generated wiring with the combinators used directly.
 
 ## Related constructs
 
-`#[cgp_auto_dispatch]` is the automated front end to the [dispatching](../../concepts/dispatching.md) pattern, and the providers it wires together are documented in [`dispatch_combinators`](../providers/dispatch_combinators.md) — specifically the value-handler matcher family (`MatchWithValueHandlers` and its `Ref`/`Mut` and `First` variants). It emits each per-variant handler with [`#[cgp_computer]`](cgp_computer.md), producing a [`Computer`](../components/computer.md) provider. The enum it dispatches over must be made extensible with a `CgpData`-style derive that supplies [`HasExtractor`](../traits/extract_field.md) and [`HasFields`](../traits/has_fields.md). For per-variant behavior that is not a direct method call, or for dispatch wired into a context's components rather than implemented on the enum, the combinators in [`dispatch_combinators`](../providers/dispatch_combinators.md) are used directly. The [extensible shapes](../../../examples/extensible-shapes.md) example develops this macro end to end — dispatching an `area` reader, a mutating `scale`, and argument-taking methods over an enum of shapes — and shows how the generated wiring relates to using the combinators directly.
+These constructs are the ones `#[cgp_auto_dispatch]` builds on:
+
+- [Dispatch combinators](../providers/dispatch_combinators.md) — the value-handler matchers it wires, `MatchWithValueHandlers` with its `Ref`/`Mut` and `First` variants; use them directly for richer per-variant behavior or context-wired dispatch.
+- [`#[cgp_computer]`](cgp_computer.md) — emits each per-variant function as a [`Computer`](../components/computer.md) provider.
+- [`#[derive(CgpData)]`](../derives/derive_cgp_data.md) — makes the enum extensible, supplying [`HasExtractor`](../traits/extract_field.md) and [`HasFields`](../traits/has_fields.md).
+- [Dispatching](../../concepts/dispatching.md) — the concept this macro automates.
+
+## Known issues
+
+Type and const generic parameters on a method are rejected by design. The blanket impl would need a bound quantified over the method's type parameter, guaranteeing that every payload satisfies it for every instantiation, and Rust has no such bound. A generic method must be dispatched with the combinators directly.
+
+A supertrait on the dispatch trait makes the expansion fail to compile. The blanket impl implements the trait for every `__Variants__` but never requires the supertrait, so Rust rejects it with `E0277` (the trait bound `__Variants__: Supertrait` is not satisfied) at the attribute, unless the supertrait already holds for every type. The correct behavior would be to add `__Variants__: Supertrait` to the blanket impl's `where` clause. Until then, declare the dependency on each method's payload impls instead of as a supertrait.
+
+A method whose signature needs two distinct lifetimes also fails to compile. The macro collects every lifetime the bound must quantify, such as a named `'a` on the receiver and the `'__a__` it assigns to an elided argument, but emits a `for<…>` quantifier for only the last one. So `fn lookup<'a>(&'a self, key: &str) -> &'a str` fails with `E0261` (use of undeclared lifetime name `'__a__`). The correct behavior would be a single `for<'a, '__a__>` quantifier over all of them. Naming every reference with the same lifetime, or eliding them all, avoids the problem.
 
 ## Source
 
