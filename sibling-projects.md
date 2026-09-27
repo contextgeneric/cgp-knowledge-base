@@ -2,9 +2,9 @@
 
 The Context-Generic Programming ecosystem is split across several repositories that are developed
 together, and this file records where each one lives and which revision of it to read. An agent
-working here routinely needs one of them — to verify a claim against another project's source, to
+working here routinely needs one of them (to verify a claim against another project's source, to
 revise a document a change here affects, or to keep a fixture and the prose that describes it in
-step — so treat this table as the authoritative list of what exists alongside this repository.
+step), so treat this table as the authoritative list of what exists alongside this repository.
 
 The knowledge base documents these projects rather than duplicating them: `cgp/` and `cargo-cgp/`
 each document one member's own subject, so every claim in them is verified against that member's
@@ -16,15 +16,15 @@ this side in `website/`, because a published page may not link back here; and th
 |---|---|---|---|
 | `cgp` | <https://github.com/contextgeneric/cgp> | `main` | The CGP library: the proc-macro suite and the runtime crates its expansions target. |
 | `cargo-cgp` | <https://github.com/contextgeneric/cargo-cgp> | `main` | CGP's first-class toolchain: the cargo subcommand that makes CGP compile errors readable and expands CGP macros. |
-| `cgp-skills` | <https://github.com/contextgeneric/cgp-skills> | `main` | The agent skills for CGP, deployed on their own — the `/cgp` skill among them. |
-| `cgp-website` | <https://github.com/contextgeneric/contextgeneric.dev> | `main` | The public website at <https://contextgeneric.dev>: a Docusaurus site holding the docs, tutorials, and blog. Documented in [website/](website/README.md). |
+| `cgp-skills` | <https://github.com/contextgeneric/cgp-skills> | `main` | The agent skills for CGP, deployed on their own, the `/cgp` skill among them. |
+| `cgp-website` | <https://github.com/contextgeneric/contextgeneric.dev> | `main` (published); the redesign is written on `v0.8.0` | The public website at <https://contextgeneric.dev>: a Docusaurus site holding the docs, tutorials, and blog. Documented in [website/](website/README.md). |
 | `hypershell` | <https://github.com/contextgeneric/hypershell> | `v0.8.0` | A modular type-level DSL for shell-script-like programs, built with CGP. Documented in [projects/hypershell/](projects/hypershell/README.md). |
 | `cgp-serde` | <https://github.com/contextgeneric/cgp-serde> | `v0.8.0` | Serde's `Serialize` and `Deserialize` rebuilt as CGP components. Documented in [projects/cgp-serde/](projects/cgp-serde/README.md). |
-| `cgp-examples` | <https://github.com/contextgeneric/cgp-examples> | `v0.8.0` | Runnable example crates — `builder`, `expression`, `greet`, `transfer`, `web-app` — each documented as a subproject in [projects/cgp-examples/](projects/cgp-examples/README.md), and several the origin of the scenarios in [examples/](examples/README.md). |
+| `cgp-examples` | <https://github.com/contextgeneric/cgp-examples> | `v0.8.0` | Runnable example crates (`builder`, `expression`, `greet`, `transfer`, `web-app`), each documented as a subproject in [projects/cgp-examples/](projects/cgp-examples/README.md), and several the origin of the scenarios in [examples/](examples/README.md). |
 | `cgp-error-*` | <https://github.com/contextgeneric/cgp>, under `crates/standalone/error/` | `main` | The error backends `cgp-error-anyhow`, `cgp-error-eyre`, and `cgp-error-std`: opt-in crates in the `cgp` repository that are not part of the `cgp` crate. Found locally at `../cgp/crates/standalone/error`. Documented in [projects/error/](projects/error/README.md). |
 | `cgp-example-profile-picture` | <https://github.com/contextgeneric/cgp-example-profile-picture> | `main` | A single worked tutorial evolving one real application from a monolithic function to a modular CGP design; the origin of [examples/profile-picture.md](examples/profile-picture.md). |
 | `cgp-patterns` | <https://github.com/contextgeneric/cgp-patterns> | `main` | *Context-Generic Programming Patterns*, the mdBook published at <https://patterns.contextgeneric.dev>, pinned to `cgp` v0.4.0 and half written. Documented in [website/patterns-book.md](website/patterns-book.md). |
-| `cgp-anatomy` | <https://github.com/contextgeneric/cgp-anatomy> | `main` | *The Anatomy of Context-Generic Programming*, a book-length report on CGP and fission-driven development, together with the preserved record of how it was co-authored by the project's author and an LLM — the human draft, the instructions, each AI revision, and the methodology. |
+| `cgp-anatomy` | <https://github.com/contextgeneric/cgp-anatomy> | `main` | *The Anatomy of Context-Generic Programming*, a book-length report on CGP and fission-driven development, together with the preserved record of how it was co-authored by the project's author and an LLM: the human draft, the instructions, each AI revision, and the methodology. |
 
 The two example repositories are documented differently. `cgp-examples` has a section under
 [projects/cgp-examples/](projects/cgp-examples/README.md), one subproject per crate, because blog posts
@@ -36,9 +36,10 @@ findable. A worked example may build on and link to any project in this table, p
 the same `cgp` version as the library, but a crate in them may still use an older idiom, so read the
 project section's note on idioms before copying from one.
 
-Two entries need a note on their names. The website's local checkout is `../cgp-website` while its
-repository is named `contextgeneric.dev`, so the directory and the remote do not match — use the
-directory name when locating the checkout and the repository name when writing a link. And
+Two entries need a note on their names. The website's project name is `cgp-website`, but its
+repository is named `contextgeneric.dev`, and a local checkout may carry either name
+(`../contextgeneric.dev` or `../cgp-website`). Look for both when locating the checkout, and use the
+repository name when writing a link. And
 [Hermes SDK](https://github.com/informalsystems/hermes-sdk/), the first real-world adopter of CGP, is
 developed outside the contextgeneric organization and is not a sibling: read it as an external
 reference, never expect a local checkout of it, and do not edit it.
@@ -47,7 +48,7 @@ reference, never expect a local checkout of it, and do not edit it.
 
 Look for a sibling in the parent directory first, at `../<project>`. Every project in this list,
 including this one, is expected to sit side by side under one parent directory in a local
-environment, so `../cgp` is the fastest and most current reference — it reflects uncommitted work
+environment, so `../cgp` is the fastest and most current reference: it reflects uncommitted work
 that GitHub does not. When the checkout is absent, fetch the file you need from the repository above
 instead, at the revision the table records.
 
@@ -73,4 +74,4 @@ The branch or tag recorded above changes **only on explicit instruction**, such 
 cuts an official release and the ecosystem should pin it. During ordinary development every entry
 stays `main`, and it deliberately does *not* track a feature branch in progress: work in flight is
 read from the local sibling checkout, not from a revision recorded here. The same rule governs the
-`main` in a cross-project link — update it only when told to, as part of a release.
+`main` in a cross-project link: update it only when told to, as part of a release.

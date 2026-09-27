@@ -45,8 +45,9 @@ Two mechanics follow from the base's [link conventions](../AGENTS.md#writing-lin
 published page is its live URL under `https://contextgeneric.dev`, since that is where a reader meets
 it. A link to a page's *source file* is a GitHub URL on `main` in the
 [`contextgeneric.dev`](https://github.com/contextgeneric/contextgeneric.dev) repository, never a
-relative `../../cgp-website/...` path; when you need to *read* that file, prefer the local sibling
-checkout at `../cgp-website`, per [sibling-projects.md](../sibling-projects.md).
+relative path into the checkout; when you need to *read* that file, prefer the local sibling
+checkout (`../contextgeneric.dev`, or `../cgp-website` where it is checked out under the project
+name), per [sibling-projects.md](../sibling-projects.md).
 
 ## The agent skill is published as a snapshot
 

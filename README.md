@@ -3,14 +3,14 @@
 Context-Generic Programming (CGP) is a language extension for Rust, with pluggable trait
 implementations at compile-time. In ordinary Rust a trait has one implementation per type; CGP lets
 one trait have many interchangeable implementations and lets each context choose which one it uses,
-through a small wiring table the compiler resolves statically — so the flexibility costs nothing at
+through a small wiring table the compiler resolves statically, so the flexibility costs nothing at
 runtime. It is an ordinary library on stable Rust that desugars to plain traits and impls, adopted
 one component at a time, and it reaches beyond swappable implementations to abstract types each
 context picks for itself, extensible records and variants, and a family of composable handlers.
 
 This repository is the **consolidated knowledge base for every project in the CGP ecosystem**,
 written by and for AI coding agents. Its purpose is to be the one place an agent goes to learn and to
-record what is known about CGP — the full semantics of every construct, the internals of the
+record what is known about CGP: the full semantics of every construct, the internals of the
 toolchain that reads CGP errors, the worked examples, the comparisons with related paradigms, and the
 strategy for writing about CGP publicly. Each member project keeps its code; the documentation for
 all of them lives here.
@@ -19,15 +19,15 @@ It is written for that audience but **published openly**, and the two facts pull
 often enough to be worth stating at the top. The documents assume the `/cgp` skill and record
 unfinished work and known defects, which is what makes them internal in the sense that matters; they
 are also readable by anyone, and the `cgp` crate's own documentation links here. The rules that follow
-from that — distil public discussion rather than citing it, never disparage another project, and keep
-out anything that would harm someone if read — are in
+from that (distil public discussion rather than citing it, never disparage another project, and keep
+out anything that would harm someone if read) are in
 [AGENTS.md](AGENTS.md#this-repository-is-public).
 
 ## Why this exists
 
 CGP's behavior is recorded as much in prose as in code, and the code is a poor place to learn it
 from. CGP is implemented almost entirely as procedural macros, so an agent reading the macro source
-sees token-stream manipulation and AST transforms rather than the meaning those transforms produce —
+sees token-stream manipulation and AST transforms rather than the meaning those transforms produce:
 "`#[cgp_component]` generates a consumer trait, a provider trait, and two blanket impls that connect
 them" has to be reconstructed by mentally running the macro. The same holds for the toolchain:
 reading `cargo-cgp`'s two binaries tells you what each function does, not why the split exists or
@@ -38,14 +38,14 @@ Gathering them into one repository answers a second problem. The documentation u
 each project, which meant an agent had to discover it repository by repository, every cross-project
 reference was a fragile URL into someone else's tree, and the same conventions were restated in
 several places and drifted apart. One base gives one place to look, one set of authoring rules, and
-one home for the relationships *between* projects — the error classes `cgp` produces and `cargo-cgp`
-reshapes, for instance, are now two directories apart rather than two repositories apart.
+one home for the relationships *between* projects. The error classes `cgp` produces and `cargo-cgp`
+reshapes, for instance, are two directories apart rather than two repositories apart.
 
 The knowledge base is also a contract. When an agent changes how a macro expands or how the tool
 presents an error, the matching document is where the intended new behavior is stated in plain
 language, so a reviewer can compare the prose against the code. Documentation that drifts out of
 sync with the code is worse than none, which is why keeping it accurate is part of the change that
-made it stale rather than a follow-up — see [AGENTS.md](AGENTS.md) for that rule and the rest of the
+made it stale rather than a follow-up; see [AGENTS.md](AGENTS.md) for that rule and the rest of the
 authoring conventions.
 
 ## How it is organized
@@ -57,11 +57,11 @@ its project and is verified against that project's source; a cross-cutting direc
 them. Each directory carries a `README.md` that catalogs its contents and, where it needs rules of
 its own, an `AGENTS.md`.
 
-### `cgp/` — the CGP library
+### `cgp/`: the CGP library
 
 [cgp/](cgp/README.md) documents the CGP language extension itself: what each construct means, what
 code it expands to, and how the macros that produce it are built. It is the largest section, and it
-divides into five parts — [reference/](cgp/reference/README.md), one self-contained document per
+divides into five parts: [reference/](cgp/reference/README.md), one self-contained document per
 construct and the ground truth to read before writing CGP; [concepts/](cgp/concepts/README.md), the
 cross-cutting overviews that span several constructs; [guides/](cgp/guides/README.md), which is
 prescriptive where the other two are descriptive and directs the choice between constructs;
@@ -70,18 +70,18 @@ organized by kind and built around whether the compiler surfaces or hides each c
 [implementation/](cgp/implementation/README.md), the macro internals plus every pointer into the test
 suite.
 
-### `cargo-cgp/` — the CGP toolchain
+### `cargo-cgp/`: the CGP toolchain
 
 [cargo-cgp/](cargo-cgp/README.md) documents the cargo subcommand that makes CGP's compiler errors
 readable and shows the Rust that CGP macros generate. [reference/](cargo-cgp/reference/README.md) is
-the usage side — installing the tool, running its commands, diagnosing one that will not run;
+the usage side (installing the tool, running its commands, diagnosing one that will not run);
 [implementation/](cargo-cgp/implementation/README.md) is the internals, from the two-executable split
 and the `rustc_driver` wrapping to the typed resolver that turns a wiring failure into a dependency
 tree; [issues/](cargo-cgp/issues/README.md) tracks the gaps the tool has not yet closed, each backed
 by a fixture that reproduces it; and [error-code.md](cargo-cgp/error-code.md) catalogs the
 `[CGP-Exxx]` codes it stamps on the messages it rewrites.
 
-### `examples/` — worked examples
+### `examples/`: worked examples
 
 [examples/](examples/README.md) holds self-contained worked examples, one realistic use case developed
 end to end per document, from its contexts and components through to the wiring that connects them.
@@ -89,21 +89,21 @@ They sit at the top level because they serve the whole base rather than one memb
 canonical source of the code snippets the reference, concept, guide, and related-work documents reuse,
 so the same running scenarios recur everywhere a reader looks.
 
-### `related-work/` — CGP against the ideas it resembles
+### `related-work/`: CGP against the ideas it resembles
 
 [related-work/](related-work/README.md) looks outward instead of inward. Each document takes an
-external concept, framework, or language feature that resembles CGP — Rust's own specialization and
+external concept, framework, or language feature that resembles CGP (Rust's own specialization and
 coherence proposals, C++ policy-based design, the several senses of capabilities, dependency injection,
 implicit parameters, type classes, algebraic effects, row polymorphism, ML modules, reflection, dynamic
-dispatch — explains it faithfully
+dispatch), explains it faithfully
 and with citations, compiles its foreign snippets where a toolchain exists, weighs what its users like
 and dislike about it, and positions CGP against it. They exist to serve future user-facing writing, giving an agent who must
 explain CGP to readers of a particular background the honest comparison to build on.
 
-### `communication-strategy/` — writing about CGP in public
+### `communication-strategy/`: writing about CGP in public
 
 [communication-strategy/](communication-strategy/README.md) turns that outward-facing material into
-guidance for *presenting* CGP — landing pages, tutorials, articles, blog posts, threads. Where a
+guidance for *presenting* CGP: landing pages, tutorials, articles, blog posts, threads. Where a
 related-work document compares CGP to one external idea, a communication-strategy document generalizes
 across those comparisons into audience-level strategy: which readers exist and what each already
 believes, which hooks earn attention, which misunderstandings CGP reliably provokes, and what
@@ -117,31 +117,31 @@ is as a writer, and [voice-and-register.md](communication-strategy/voice-and-reg
 that into rules, because the failure this section exists to prevent is not a false claim but
 voiceless copy that no human wrote and no reader trusts.
 
-### `website/` — the public website, page by page
+### `website/`: the public website, page by page
 
 [website/](website/README.md) is the meta-documentation for <https://contextgeneric.dev>, and it
 exists to bridge a deliberate asymmetry: the website is public and may never link into this internal
 base, so the map from a published page back to the material behind it has to live here. It holds two
 kinds of document. The **records** carry one document per blog post, one per tutorial series, and one
-covering the site's configuration and standalone pages — each recording what the page says, which
+covering the site's configuration and standalone pages, each recording what the page says, which
 knowledge-base documents own its content, and how far its code has drifted from the current release.
 That last point is why the section matters most: nearly every blog post predates v0.8.0, several teach
 constructs the compiler no longer accepts, and an agent needs to know which is which before quoting
 any of them. The **specifications** are the [writing guides](website/writing-guides/README.md), one
-per kind of page, which say how a page *should* be written rather than how it currently reads —
+per kind of page, which say how a page *should* be written rather than how it currently reads:
 forward-looking documents that serve the site's redesign.
 
-### `releases/` — the version history
+### `releases/`: the version history
 
 [releases/](releases/README.md) is the one section that deliberately looks backwards. Everywhere else
 the base [documents the present](AGENTS.md#document-the-present-not-the-history), which leaves no
 answer to a question an agent hits constantly: this code, blog post, or book chapter uses
-`#[cgp_context]` or `cgp_preset!` — when did that exist, and what replaced it? A document per released
+`#[cgp_context]` or `cgp_preset!`; when did that exist, and what replaced it? A document per released
 version records what it introduced, what it broke, and how much of it still stands, and a **removal
 ledger** in the index dates every construct that has been renamed or deleted. It also tracks the
 release currently in preparation, since v0.8.0 is not yet out.
 
-### `projects/` — the libraries built with CGP
+### `projects/`: the libraries built with CGP
 
 [projects/](projects/README.md) documents the ecosystem projects that *use* CGP rather than being part
 of it: [hypershell](projects/hypershell/README.md), a type-level shell-scripting DSL,
@@ -169,18 +169,18 @@ you know what exists, what the rules are, and where the code lives.
   registers itself, and how cross-project references are written.
 - [sibling-projects.md](sibling-projects.md) — the member projects, their repositories, and the
   revision of each to read, plus the rule for finding a sibling locally versus linking to it.
-- Each directory's own `README.md` — the catalog of that section, and the place a new document
+- Each directory's own `README.md`: the catalog of that section, and the place a new document
   registers itself.
 
 ## The projects it documents
 
 The knowledge base documents the whole CGP ecosystem, and the repositories fall into three groups.
-The **core** is [`cgp`](https://github.com/contextgeneric/cgp), the library — the proc-macro suite and
-the runtime crates its expansions target — together with
+The **core** is [`cgp`](https://github.com/contextgeneric/cgp), the library (the proc-macro suite and
+the runtime crates its expansions target), together with
 [`cargo-cgp`](https://github.com/contextgeneric/cargo-cgp), the first-class toolchain that rewrites
 CGP compile errors and expands CGP macros. The **outputs built from this base** are
-[`cgp-skills`](https://github.com/contextgeneric/cgp-skills), which holds the agent skills — the
-`/cgp` skill an agent loads before reading or writing CGP code — and
+[`cgp-skills`](https://github.com/contextgeneric/cgp-skills), which holds the agent skills (the
+`/cgp` skill an agent loads before reading or writing CGP code), and
 [`contextgeneric.dev`](https://github.com/contextgeneric/contextgeneric.dev), the public website; both
 live in their own repositories because both are deployed to audiences that may not link back to
 anything here, which is why [website/](website/README.md) documents the site from this side instead.
@@ -197,7 +197,7 @@ README.
 
 An agent working on CGP reads two things before it acts: the `/cgp` skill, for the mental model and
 the vocabulary the whole base assumes, and the document that owns whatever it is about to touch. The
-skill and the knowledge base are complementary rather than redundant — the skill teaches how to read
+skill and the knowledge base are complementary rather than redundant: the skill teaches how to read
 and write CGP, while the documents here carry the exhaustive per-construct semantics, the internals,
 and the corner cases the skill deliberately omits. Read the two together: the skill for the shape of
 the forest, a reference document for the individual tree.
@@ -206,6 +206,6 @@ Which document that is depends on the task, and [summary.md](summary.md) is the 
 it. Understanding or changing a construct means its reference document; changing the macro that
 implements it means its implementation document too; debugging a compile error means the error
 catalog and the guides; explaining CGP to someone means the related-work document for their
-background and the communication-strategy guidance for the format. When a task spans projects — a
-diagnostic change that touches both a `cgp` construct and a `cargo-cgp` fixture — read both members'
+background and the communication-strategy guidance for the format. When a task spans projects (a
+diagnostic change that touches both a `cgp` construct and a `cargo-cgp` fixture), read both members'
 documents, because keeping them in step is part of the change.
