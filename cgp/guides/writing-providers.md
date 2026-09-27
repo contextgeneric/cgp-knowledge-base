@@ -1,6 +1,6 @@
 # Writing providers
 
-A provider can be written at three levels of sugar over the same machinery, and this guide is about choosing the highest one — writing a provider that reads like an ordinary trait `impl` rather than the inside-out provider-trait form the macros desugar to.
+A provider can be written at three levels of sugar over the same machinery, and this guide is about choosing the highest one: writing a provider that reads like an ordinary trait `impl` rather than the inside-out provider-trait form the macros desugar to.
 
 This guide pairs with [declaring a provider's dependencies](declaring-dependencies.md) and [reading its context's fields](reading-context-fields.md), which cover what goes inside the provider once its header is written this way.
 
@@ -33,7 +33,7 @@ impl AreaCalculator {
 }
 ```
 
-`#[cgp_impl]` desugars back to `#[cgp_provider]`/`#[cgp_new_provider]`, so the raw forms are still what the reference documents show in their Expansion sections and what you read in generated code. Write the raw form yourself only when you specifically need the inside-out shape itself — for instance, to state a bound the sugar cannot express, or a construct `#[cgp_impl]`'s rewrite does not support. Neither a concrete (rather than generic) context nor a provider struct `new` cannot declare is by itself a reason: `#[cgp_impl]` reaches a concrete context through its explicit-context form, and a struct `new` cannot express is simply declared by hand and then targeted by `#[cgp_impl(ProviderName)]` without `new`.
+`#[cgp_impl]` desugars back to `#[cgp_provider]`/`#[cgp_new_provider]`, so the raw forms are still what the reference documents show in their Expansion sections and what you read in generated code. Write the raw form yourself only when you specifically need the inside-out shape itself, for instance to state a bound the sugar cannot express, or a construct `#[cgp_impl]`'s rewrite does not support. Neither a concrete (rather than generic) context nor a provider struct `new` cannot declare is by itself a reason: `#[cgp_impl]` reaches a concrete context through its explicit-context form, and a struct `new` cannot express is simply declared by hand and then targeted by `#[cgp_impl(ProviderName)]` without `new`.
 
 ## Omit the context parameter
 
@@ -51,7 +51,7 @@ where
 }
 ```
 
-only when you must name it — to bound it with a lifetime or higher-ranked bound the sugar cannot spell, or to refer to it by a readable name. Otherwise write the shorter form and declare the bound with [`#[uses(...)]`](declaring-dependencies.md):
+only when you must name it: to bound it with a lifetime or higher-ranked bound the sugar cannot spell, or to refer to it by a readable name. Otherwise write the shorter form and declare the bound with [`#[uses(...)]`](declaring-dependencies.md):
 
 ```rust
 #[cgp_impl(new RectangleArea)]
@@ -62,6 +62,10 @@ impl AreaCalculator {
     }
 }
 ```
+
+## Implement a consumer trait directly with `#[cgp_impl(Self)]`
+
+When a context has exactly one implementation of a consumer trait and no other context would reuse it, implement the trait directly on the context instead of writing a provider. A plain `impl CanSendEmail for TestApp` does this; [`#[cgp_impl(Self)]`](../reference/macros/cgp_impl.md) is the same direct impl written through the macro, so it can still take companion attributes such as `#[use_provider]` and `#[implicit]` arguments. It requires the `for Context` clause and generates no provider and no wiring entry. Switch to a named provider when a second context wants the same implementation.
 
 ## Related guides
 

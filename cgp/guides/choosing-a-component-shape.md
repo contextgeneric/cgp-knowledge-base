@@ -1,12 +1,12 @@
 # Choosing a component's shape
 
-When you define a component you decide two things about it before you write a line of its body — what goes in the `Self` position, and whether its operation acts on `Self` or on a type parameter — and this guide is about making that choice deliberately rather than by copying whichever example you read last.
+When you define a component you decide two things about it before you write a line of its body (what goes in the `Self` position, and whether its operation acts on `Self` or on a type parameter), and this guide is about making that choice deliberately rather than by copying whichever example you read last.
 
 The decision matters because it fixes how many independent choices the wiring can ever express, and because it cannot be revised later without a breaking change to the trait. It is also the decision most likely to be made by accident: the two arrangements look almost identical in a snippet, so an author who patterns a new component after a tutorial usually inherits the tutorial's shape without noticing there was an alternative.
 
 ## Default to an operation about the application
 
-**Start by asking what the operation is *about*, and default to the answer "the application".** Most operations in a real program — send an email, query a user, run the server, load the config — are things the application does, so the natural `Self` is a type standing for the application and the component targets that `Self`. This is the shape most CGP code is in, it needs no type parameter, and it already gives per-application choice:
+**Start by asking what the operation is *about*, and default to the answer "the application".** Most operations in a real program, such as sending an email, querying a user, running the server, or loading the config, are things the application does, so the natural `Self` is a type standing for the application and the component targets that `Self`. This is the shape most CGP code is in, it needs no type parameter, and it already gives per-application choice:
 
 ```rust
 #[cgp_component(EmailSender)]
@@ -24,11 +24,11 @@ delegate_components! { App     { EmailSenderComponent: SendViaSmtp } }
 delegate_components! { TestApp { EmailSenderComponent: RecordEmails } }
 ```
 
-`App` and `TestApp` are **environmental contexts** — types whose job is to carry choices and whatever data the providers need, frequently no data at all, so `pub struct App;` is a complete context. Because both are types you define, "one wiring per type" is not a limit: when one choice is not enough you define a second context. Reach for a parameter only when this shape genuinely cannot express the case, which the two sections below identify.
+`App` and `TestApp` are **environmental contexts**: types whose job is to carry choices and whatever data the providers need, frequently no data at all, so `pub struct App;` is a complete context. Because both are types you define, "one wiring per type" is not a limit: when one choice is not enough you define a second context. Reach for a parameter only when this shape genuinely cannot express the case, which the two sections below identify.
 
 ## Reach for a value context when the operation belongs to the data
 
-Put the data in `Self` when the operation really is a property of the data rather than of the application — computing a shape's area, formatting a value — or when you are adding alternatives to an existing trait whose signature you cannot change. The wired type is then a **value context**, and the component is still self-targeted:
+Put the data in `Self` when the operation really is a property of the data rather than of the application, such as computing a shape's area or formatting a value, or when you are adding alternatives to an existing trait whose signature you cannot change. The wired type is then a **value context**, and the component is still self-targeted:
 
 ```rust
 #[cgp_component(AreaCalculator)]
@@ -39,7 +39,7 @@ pub trait CanCalculateArea {
 delegate_components! { Rectangle { AreaCalculatorComponent: RectangleArea } }
 ```
 
-The cost is the one thing this shape cannot do: **the wired type gets one provider for the whole program.** That is fine for `Rectangle`, which you own and which has one sensible area. It is a real constraint for a foreign type — `Vec<u8>` wired to one encoder cannot be encoded differently by two applications, and the [orphan rule](../concepts/coherence.md) additionally requires the `delegate_components!` entry to live in a crate owning either the trait or the type. Choose this shape knowing that limit, not by inheriting it.
+The cost is the one thing this shape cannot do: **the wired type gets one provider for the whole program.** That is fine for `Rectangle`, which you own and which has one sensible area. It is a real constraint for a foreign type: `Vec<u8>` wired to one encoder cannot be encoded differently by two applications, and the [orphan rule](../concepts/coherence.md) additionally requires the `delegate_components!` entry to live in a crate owning either the trait or the type. Choose this shape knowing that limit, not by inheriting it.
 
 ## Move the target into a parameter when the type is not yours
 
@@ -61,6 +61,8 @@ The cost is threefold and worth weighing rather than accepting silently. The tra
 Promoting a self-targeted component to a parameter-targeted one is mechanical once the decision is made, and seeing it done shows exactly what changes. Start from the self-targeted form, wired on the values themselves:
 
 ```rust
+use core::fmt::Display;
+
 #[cgp_component(Encoder)]
 pub trait CanEncode {
     fn encode(&self) -> Vec<u8>;
@@ -75,7 +77,7 @@ impl Encoder {
 delegate_components! { String { EncoderComponent: EncodeAsText } }
 ```
 
-Four things change together, and none of them can be done alone. The **trait gains the parameter** and its method takes the value as an argument. The **provider's bound moves off `Self`** and onto that parameter — which means it stops being an [`#[uses]`](../reference/attributes/uses.md) import, since `#[uses]` adds `Self:` predicates and the constraint is now on `Value`, so it returns to an explicit `where` clause. The **body reads `value` instead of `self`**. And the **wiring moves to a context you define**, keyed per value type with the [`open` statement](../reference/macros/delegate_components.md):
+Four things change together, and none of them can be done alone. The **trait gains the parameter** and its method takes the value as an argument. The **provider's bound moves off `Self`** and onto that parameter, which means it stops being an [`#[uses]`](../reference/attributes/uses.md) import, since `#[uses]` adds `Self:` predicates and the constraint is now on `Value`, so it returns to an explicit `where` clause. The **body reads `value` instead of `self`**. And the **wiring moves to a context you define**, keyed per value type with the [`open` statement](../reference/macros/delegate_components.md):
 
 ```rust
 #[cgp_component(Encoder)]
@@ -117,7 +119,7 @@ delegate_components! {
 }
 ```
 
-The payoff is the last two blocks: `ApiServer` and `Firmware` encode the same `String` differently, which the self-targeted version could not express at any price. What did *not* change is worth noting too — the providers are the same two implementations with the same bounds, so the refactoring moves the choice rather than rewriting the logic.
+The payoff is the last two blocks: `ApiServer` and `Firmware` encode the same `String` differently, which the self-targeted version could not express at any price. What did *not* change is worth noting too: the providers are the same two implementations with the same bounds, so the refactoring moves the choice rather than rewriting the logic.
 
 ## Two traps
 

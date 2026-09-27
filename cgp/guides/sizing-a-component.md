@@ -1,10 +1,10 @@
 # Sizing a component
 
-What belongs in one component is the set of items a single provider choice should decide *together* — often one method, sometimes a method and the type it returns, and rarely a whole entity's surface — and this guide is about making that grouping deliberately, then splitting a trait that has already grouped too much.
+What belongs in one component is the set of items a single provider choice should decide *together* (often one method, sometimes a method and the type it returns, and rarely a whole entity's surface), and this guide is about making that grouping deliberately, then splitting a trait that has already grouped too much.
 
-**Nothing in CGP limits how many items a trait may declare.** A component's trait is an ordinary Rust trait: it can carry as many methods, associated types, and consts as you like, `#[cgp_component]` generates the provider trait from all of them, and a provider implements all of them. CGP's own library does this — [`CanCompute`](../reference/components/computer.md), [`CanHandle`](../reference/components/handler.md), and [`CanProduce`](../reference/components/producer.md) each declare an associated `Output` type alongside their method. So this guide is a cost curve rather than a rule, and the curve is what matters: items that share a provider choice cost nothing to group, while items that answer to different choices cost reuse in three specific ways worth knowing before you pay them.
+**Nothing in CGP limits how many items a trait may declare.** A component's trait is an ordinary Rust trait: it can carry as many methods, associated types, and consts as you like, `#[cgp_component]` generates the provider trait from all of them, and a provider implements all of them. CGP's own library does this: [`CanCompute`](../reference/components/computer.md), [`CanHandle`](../reference/components/handler.md), and [`CanProduce`](../reference/components/producer.md) each declare an associated `Output` type alongside their method. So this guide is a cost curve rather than a rule, and the curve is what matters: items that share a provider choice cost nothing to group, while items that answer to different choices cost reuse in three specific ways worth knowing before you pay them.
 
-The snippets below draw on two kinds of context, and the difference matters when reading them. The shape components are about the data, so their contexts are **value contexts** — a `Rectangle` *is* the thing whose area is computed — while the service components are about the application, so the contexts actually wired here are **environmental** ones: `CloudApp`, `ProductionApp`, and `TestApp` stand for a deployment or a test harness. Every component is self-targeted; nothing crosses into a target parameter. The shapes themselves are the subject of [choosing a component's shape](choosing-a-component-shape.md).
+The snippets below draw on two kinds of context, and the difference matters when reading them. The shape components are about the data, so their contexts are **value contexts** (a `Rectangle` *is* the thing whose area is computed), while the service components are about the application, so the contexts actually wired here are **environmental** ones: `CloudApp`, `ProductionApp`, and `TestApp` stand for a deployment or a test harness. Every component is self-targeted; nothing crosses into a target parameter. The shapes themselves are the subject of [choosing a component's shape](choosing-a-component-shape.md).
 
 ## Group the items one provider choice decides together
 
@@ -14,18 +14,19 @@ That principle is what makes the count vary rather than being fixed at one. Send
 
 ```rust
 #[cgp_component(EmailSender)]
+#[use_type(HasErrorType.Error)]
 pub trait CanSendEmail {
     fn send_email(&self, to: &str, body: &str) -> Result<(), Error>;
 }
 ```
 
-Most application operations are like this — create a user, calculate an area, load the config — which is why most components you write and read hold a single method. The count is a consequence of the principle, not the principle itself.
+Most application operations are like this, such as creating a user, calculating an area, or loading the config, which is why most components you write and read hold a single method. The count is a consequence of the principle, not the principle itself.
 
 ## When several items belong in one component
 
 **Two groupings recur, and in both the extra items are decided by the same choice as the method, so keeping them together is right rather than merely permitted.**
 
-The first is **a method together with the associated type it produces.** A provider that answers *how* also answers *what comes back*, so the type cannot be chosen separately. This is exactly what CGP's handler family does — `CanCompute` declares `type Output` beside `compute` — and it is equally right in your own code. Two providers here choose a database engine and, inescapably, the row type that engine returns:
+The first is **a method together with the associated type it produces.** A provider that answers *how* also answers *what comes back*, so the type cannot be chosen separately. This is exactly what CGP's handler family does (`CanCompute` declares `type Output` beside `compute`), and it is equally right in your own code. Two providers here choose a database engine and, inescapably, the row type that engine returns:
 
 ```rust
 #[cgp_component(DatabaseQuerier)]
@@ -53,7 +54,7 @@ delegate_components! { CloudApp    { DatabaseQuerierComponent: QueryWithPostgres
 delegate_components! { EmbeddedApp { DatabaseQuerierComponent: QueryWithSqlite } }
 ```
 
-Splitting `Row` into its own [`#[cgp_type]`](../reference/macros/cgp_type.md) component would be the wrong move *here*, because it would let a context wire the Postgres querier with the SQLite row type and only find out later. Reach for a separate abstract type when several components must agree on it — which is the case [naming a type dependency](naming-a-type-dependency.md) covers — and keep it local when one provider decides it alone.
+Splitting `Row` into its own [`#[cgp_type]`](../reference/macros/cgp_type.md) component would be the wrong move *here*, because it would let a context wire the Postgres querier with the SQLite row type and only find out later. Reach for a separate abstract type when several components must agree on it, which is the case [naming a type dependency](naming-a-type-dependency.md) covers, and keep it local when one provider decides it alone.
 
 The second is **a getter component grouping several field reads.** A getter is answered by the *method's own name* rather than by a strategy, so one [`UseFields`](../reference/providers/use_fields.md) provider satisfies every method of the trait at once by reading the same-named field for each, and there is no choice to split apart:
 
@@ -85,7 +86,7 @@ impl UserManager {
 }
 ```
 
-The reverse holds too, which is the same cost read from the other side: there is no way to give one method a dependency without giving it to the whole component, so a method cannot be limited to the dependencies it uses. The [social media app](../../examples/social-media-app.md) example shows what the split buys — once deleting a post is its own component, code that should only read and write posts can be handed the getter and the updater and never receive the destructive delete.
+The reverse holds too, which is the same cost read from the other side: there is no way to give one method a dependency without giving it to the whole component, so a method cannot be limited to the dependencies it uses. The [social media app](../../examples/social-media-app.md) example shows what the split buys: once deleting a post is its own component, code that should only read and write posts can be handed the getter and the updater and never receive the destructive delete.
 
 **A [higher-order provider](../concepts/higher-order-providers.md) must implement every item, including the ones it does not care about.** This is the cost that arrives second and bites hardest, because wrapping is where CGP's composition pays. A component holding one decision wraps in four lines, and the wrapper composes over any inner provider:
 
@@ -141,19 +142,19 @@ pub trait Shape {
 }
 ```
 
-A provider that only computes areas must now pick some `Angle` it never uses and write a `rotate` body it has no meaning for — in practice a placeholder type and an `unimplemented!()`. That pattern is common in real codebases, most often in the mock contexts written for tests, and it is a reliable sign that one component is carrying two decisions. Splitting `Angle` out with [`#[cgp_type]`](../reference/macros/cgp_type.md) and `rotate` into its own component lets an area-only context ignore both entirely.
+A provider that only computes areas must now pick some `Angle` it never uses and write a `rotate` body it has no meaning for, in practice a placeholder type and an `unimplemented!()`. That pattern is common in real codebases, most often in the mock contexts written for tests, and it is a reliable sign that one component is carrying two decisions. Splitting `Angle` out with [`#[cgp_type]`](../reference/macros/cgp_type.md) and `rotate` into its own component lets an area-only context ignore both entirely.
 
 ## The entity trait is the shape you will reach for anyway
 
-**A trait grouping every operation of an entity is the natural design for anyone with an object-oriented background, and it is worth being honest that the recommendation here cuts against a habit most developers hold for good reasons.** `Shape` with `area`, `perimeter`, `scale`, and `rotate` describes a coherent thing, gives a team one word to talk about, and matches how most people were taught to model a domain. A behavior-named component like `AreaCalculator` feels thinner and less principled by comparison, so the entity trait is what an author writes unless something stops them — and CGP will compile it.
+**A trait grouping every operation of an entity is the natural design for anyone with an object-oriented background, and it is worth being honest that the recommendation here cuts against a habit most developers hold for good reasons.** `Shape` with `area`, `perimeter`, `scale`, and `rotate` describes a coherent thing, gives a team one word to talk about, and matches how most people were taught to model a domain. A behavior-named component like `AreaCalculator` feels thinner and less principled by comparison, so the entity trait is what an author writes unless something stops them, and CGP will compile it.
 
-The trait's own name is the cheapest signal that the grouping has gone past one decision. CGP's consumer traits read as verbs — `CanCreateUser`, `CanCalculateArea` — precisely because an operation is something a context *does*; a consumer trait named after a noun is usually several decisions sharing one component. The diagnostic behind the naming is more direct: **would any provider for this trait ever be reused, whole, by a second context?** If the honest answer is no, the trait's providers are not reusable units and the CGP machinery around them is not paying for itself — at which point implementing the trait directly on each concrete type, with no component at all, is the better design. That is a real outcome and not a failure: it is tier 2 of the [modularity hierarchy](../concepts/modularity-hierarchy.md), one implementation per type, chosen deliberately rather than settled for.
+The trait's own name is the cheapest signal that the grouping has gone past one decision. CGP's consumer traits read as verbs (`CanCreateUser`, `CanCalculateArea`) precisely because an operation is something a context *does*; a consumer trait named after a noun is usually several decisions sharing one component. The diagnostic behind the naming is more direct: **would any provider for this trait ever be reused, whole, by a second context?** If the honest answer is no, the trait's providers are not reusable units and the CGP machinery around them is not paying for itself, and implementing the trait directly on each concrete type, with no component at all, is the better design. That is a real outcome and not a failure: it is tier 2 of the [modularity hierarchy](../concepts/modularity-hierarchy.md), one implementation per type, chosen deliberately rather than settled for.
 
 ## Split an existing trait along the axis its contexts differ on
 
-**When a component has grown past one decision and it matters, do not redesign it in the abstract — split it along the axis on which the contexts you actually want differ.** A split only pays where it creates a choice, so the contexts decide where the seams go. The procedure is four steps.
+**When a component has grown past one decision and it matters, do not redesign it in the abstract; split it along the axis on which the contexts you actually want differ.** A split only pays where it creates a choice, so the contexts decide where the seams go. The procedure is four steps.
 
-Start by **naming the contexts you want**, which usually means recognizing ones you already have: a production application and a test harness, two deployment targets, a mock and the real thing. Then **list what each method depends on** — which fields it reads, which traits it calls, which types it names. **Group the methods whose dependencies are the same across all of those contexts**; those become components with shared, context-generic providers, and they are where the reuse is. Finally, **give the methods that must differ per context their own components**, wired per context — or, where a provider would only ever be used by one context, implement the consumer trait directly on that context and skip the provider entirely.
+Start by **naming the contexts you want**, which usually means recognizing ones you already have: a production application and a test harness, two deployment targets, a mock and the real thing. Then **list what each method depends on**: which fields it reads, which traits it calls, which types it names. **Group the methods whose dependencies are the same across all of those contexts**; those become components with shared, context-generic providers, and they are where the reuse is. Finally, **give the methods that must differ per context their own components**, wired per context, or, where a provider would only ever be used by one context, implement the consumer trait directly on that context and skip the provider entirely.
 
 Worked on a service whose production and test contexts share a database but differ in their outbound integrations, the split falls out of step two. Both contexts hold the same `PostgresDb`, so the user operations are shared, while the email sending genuinely differs:
 
@@ -185,27 +186,27 @@ delegate_components! { ProductionApp { UserCreatorComponent: CreateUserWithPostg
 delegate_components! { TestApp       { UserCreatorComponent: CreateUserWithPostgres } }
 ```
 
-The email operation differs per context and has exactly one implementation on each side, so it needs no provider at all — a consumer trait is an ordinary trait, and implementing it directly is the lowest tier that expresses the case:
+The email operation differs per context and has exactly one implementation on each side, so it needs no provider at all: a consumer trait is an ordinary trait, and implementing it directly is the lowest tier that expresses the case:
 
 ```rust
 impl CanSendEmail for ProductionApp {
-    fn send_email(&self, to: &str, body: &str) -> Result<(), Error> { /* over SMTP */ }
+    fn send_email(&self, to: &str, body: &str) -> Result<(), Self::Error> { /* over SMTP */ }
 }
 
 impl CanSendEmail for TestApp {
-    fn send_email(&self, to: &str, body: &str) -> Result<(), Error> { /* record for assertions */ }
+    fn send_email(&self, to: &str, body: &str) -> Result<(), Self::Error> { /* record for assertions */ }
 }
 ```
 
-Reach for named providers and wiring on that half only when a second context wants the same implementation, or when the implementation should be composable — at which point `#[cgp_impl(new SendViaSmtp)]` and a wiring line replace the direct impl with no change to the trait or its callers. The direct impl is a starting point rather than a dead end.
+Reach for named providers and wiring on that half only when a second context wants the same implementation, or when the implementation should be composable. Then `#[cgp_impl(new SendViaSmtp)]` and a wiring line replace the direct impl with no change to the trait or its callers. The direct impl is a starting point rather than a dead end.
 
 ## What the split costs
 
-**Splitting a trait reaches every caller of it, and that cost is why the grouping is worth getting right before the trait is written rather than after.** The methods move to new traits, so every call site imports a different trait and every existing implementation is rewritten. On a trait most of a codebase depends on, that is a real refactoring with no partial credit, and a team may reasonably judge it too expensive to schedule — which is an argument for grouping by decision the first time, not an argument that the monolith was fine.
+**Splitting a trait reaches every caller of it, and that cost is why the grouping is worth getting right before the trait is written rather than after.** The methods move to new traits, so every call site imports a different trait and every existing implementation is rewritten. On a trait most of a codebase depends on, that is a real refactoring with no partial credit, and a team may reasonably judge it too expensive to schedule, which is an argument for grouping by decision the first time, not an argument that the monolith was fine.
 
 The second cost is arithmetic: one component per decision means more components to wire and to check, and a flat `delegate_components!` table stops being readable as they accumulate. Both halves of that growth have answers, which is why neither should decide the question. [Namespaces and prefixes](namespaces-and-prefixes.md) group components under paths and lift a backend's choices into a reusable table so the top-level wiring stays short, and a [`check_components!`](../reference/macros/check_components.md) block lists components in array form, so verifying twelve costs no more attention than verifying four. Weigh the split against the refactoring, not against the wiring, because the wiring is the part that has a remedy.
 
-One observation makes the trade-off easier to hold: **a component holding exactly one decision never needs splitting again.** A trait's definition is stable when it has nothing left to divide, so the discipline is to notice the moment a second decision arrives — a method whose dependencies diverge from its neighbours', or an associated type more than one provider would want to fix independently — and to split then, while the trait has few enough callers that splitting is cheap.
+One observation makes the trade-off easier to hold: **a component holding exactly one decision never needs splitting again.** A trait's definition is stable when it has nothing left to divide, so the discipline is to notice the moment a second decision arrives (a method whose dependencies diverge from its neighbours', or an associated type more than one provider would want to fix independently) and to split then, while the trait has few enough callers that splitting is cheap.
 
 ## Related guides
 

@@ -25,13 +25,13 @@ pub trait CanLoad {
 }
 ```
 
-One rule bounds the rewrite: it fires only on the bare identifier of an *imported* type. A construct's own **local associated type always stays qualified as `Self::Assoc`** — a handler that declares `type Output` writes `Self::Output`, never a bare `Output`, because `Output` is the trait's own type rather than one imported from another trait. A mixed signature such as `Result<Self::Output, Error>` is therefore exactly right: the local `Self::Output` stays qualified while the imported foreign `Error` is written bare.
+One rule bounds the rewrite: it fires only on the bare identifier of an *imported* type. A construct's own **local associated type always stays qualified as `Self::Assoc`**: a handler that declares `type Output` writes `Self::Output`, never a bare `Output`, because `Output` is the trait's own type rather than one imported from another trait. A mixed signature such as `Result<Self::Output, Error>` is therefore exactly right: the local `Self::Output` stays qualified while the imported foreign `Error` is written bare.
 
-When a definition imports types from several traits, combine them into one `#[use_type]` attribute by separating the trait paths with commas — `#[use_type(HasUserIdType.UserId, HasCurrencyType.Currency, HasErrorType.Error)]` — rather than stacking one attribute per trait; the combined form reads as a single import list. Several types from one trait use a braced list (`#[use_type(HasFooType.{Foo, Bar})]`).
+When a definition imports types from several traits, combine them into one `#[use_type]` attribute by separating the trait paths with commas, as in `#[use_type(HasUserIdType.UserId, HasCurrencyType.Currency, HasErrorType.Error)]`, rather than stacking one attribute per trait; the combined form reads as a single import list. Several types from one trait use a braced list (`#[use_type(HasFooType.{Foo, Bar})]`).
 
 ## Import a foreign abstract type with `in Context`
 
-Prefer `#[use_type]` even when the abstract type lives on *another* type rather than on `Self` — a type named by a generic parameter. Add a trailing `in Context` clause: it rewrites the bare alias to `<Context as Trait>::Assoc` and adds `Context: Trait` as a bound, so you write neither the bound nor the qualified path by hand. This is the recommended form for a getter or method that reads a type off a parameter. The verbose form
+Prefer `#[use_type]` even when the abstract type lives on *another* type rather than on `Self`, such as a type named by a generic parameter. Add a trailing `in Context` clause: it rewrites the bare alias to `<Context as Trait>::Assoc` and adds `Context: Trait` as a bound, so you write neither the bound nor the qualified path by hand. This is the recommended form for a getter or method that reads a type off a parameter. The verbose form
 
 ```rust
 #[cgp_auto_getter]
@@ -53,15 +53,15 @@ pub trait HasLoggedInUser<App> {
 }
 ```
 
-The `in App` clause supplies `App: HasUserIdType` on the generated trait, so the plain unbounded `<App>` parameter is enough, and the signature names the bare `UserId` instead of `App::UserId`. The same clause works on `#[cgp_fn]` and `#[cgp_impl]`, and it composes: an `in Context` may itself point at another imported alias to chain through several hops. The written order of such chained imports does not matter — only a cycle, where two contexts resolve through each other, has no valid order and is rejected by the compiler.
+The `in App` clause supplies `App: HasUserIdType` on the generated trait, so the plain unbounded `<App>` parameter is enough, and the signature names the bare `UserId` instead of `App::UserId`. The same clause works on `#[cgp_fn]` and `#[cgp_impl]`, and it composes: an `in Context` may itself point at another imported alias to chain through several hops. The written order of such chained imports does not matter; only a cycle, where two contexts resolve through each other, has no valid order and is rejected by the compiler.
 
 ## Pinning an abstract type to a concrete one
 
-On a `#[cgp_impl]` or `#[cgp_fn]`, `#[use_type]` also *pins* an abstract type to a concrete one with the equality form `{Assoc = Type}`, which is the replacement for a hand-written `where Self: HasXType<Assoc = Concrete>` clause. Writing `#[use_type(HasErrorType.{Error = AppError})]` emits `Self: HasErrorType<Error = AppError>` (and rewrites any bare `Error`), so a provider fixed to a concrete error type moves that pin out of its `where` clause and into the import. The right-hand side is substituted too, so an imported alias is grounded wherever it appears in it. Naming another alias outright *unifies* two abstract types — `#[use_type(HasPasswordType.Password, HasHashedPasswordType.{HashedPassword = Password})]` emits `Self: HasHashedPasswordType<HashedPassword = <Self as HasPasswordType>::Password>` — while an alias *inside* the type is grounded in place, so `#[use_type(HasDbType.Db, HasTransactionType.{Transaction = Tx<Db>})]` emits `Self: HasTransactionType<Transaction = Tx<<Self as HasDbType>::Db>>`. That second form is how a pin expresses "a transaction of *this* database" without naming a concrete engine. The equality form is rejected on `#[cgp_component]`, since a trait definition cannot carry the impl-side constraint it produces — this is the one place a pin stays in a hand-written `where` clause, and only for equality on a trait you would never `#[use_type]` from.
+On a `#[cgp_impl]` or `#[cgp_fn]`, `#[use_type]` also *pins* an abstract type to a concrete one with the equality form `{Assoc = Type}`, which is the replacement for a hand-written `where Self: HasXType<Assoc = Concrete>` clause. Writing `#[use_type(HasErrorType.{Error = AppError})]` emits `Self: HasErrorType<Error = AppError>` (and rewrites any bare `Error`), so a provider fixed to a concrete error type moves that pin out of its `where` clause and into the import. The right-hand side is substituted too, so an imported alias is grounded wherever it appears in it. Naming another alias outright *unifies* two abstract types (`#[use_type(HasPasswordType.Password, HasHashedPasswordType.{HashedPassword = Password})]` emits `Self: HasHashedPasswordType<HashedPassword = <Self as HasPasswordType>::Password>`), while an alias *inside* the type is grounded in place, so `#[use_type(HasDbType.Db, HasTransactionType.{Transaction = Tx<Db>})]` emits `Self: HasTransactionType<Transaction = Tx<<Self as HasDbType>::Db>>`. That second form is how a pin expresses "a transaction of *this* database" without naming a concrete engine. The equality form is rejected on `#[cgp_component]` with ``Type equality constraints cannot be used in component trait definition``, since a trait definition cannot carry the impl-side constraint it produces. This is the one place a pin stays in a hand-written `where` clause, and only for equality on a trait you would never `#[use_type]` from.
 
 ## Re-import a type that arrives through a supertrait
 
-Import an abstract type with `#[use_type]` even when it *already* reaches the definition transitively — as the supertrait of a trait you pulled in with [`#[uses]`](declaring-dependencies.md). Relying on the transitive path forces the qualified `Self::Assoc`, which only resolves when the supertrait is reachable and names the type unambiguously; a second `#[use_type]` gives you the bare alias directly and states the dependency where a reader can see it. When `CanCreateFoo` carries `HasFooType` as a supertrait, prefer
+Import an abstract type with `#[use_type]` even when it already reaches the implementation through the supertrait of a trait you pulled in with [`#[uses]`](declaring-dependencies.md). `#[uses]` bounds only the generated impl, so the type is reachable in the body but not in a signature the generated trait declares. When `CanCreateFoo` carries `HasFooType` as a supertrait, write:
 
 ```rust
 #[cgp_fn]
@@ -72,19 +72,19 @@ fn bar(&self) -> Foo {
 }
 ```
 
-over leaning on the transitive supertrait and writing the qualified path:
+Leaning on the transitive supertrait instead does not compile. In this `#[cgp_fn]`, the generated `Bar` trait has no `HasFooType` supertrait, so its signature cannot name the type:
 
 ```rust
 #[cgp_fn]
 #[uses(CanCreateFoo)]
-fn bar(&self) -> Self::Foo {
+fn bar(&self) -> Self::Foo {  // error[E0220]: associated type `Foo` not found for `Self`
     self.create_foo()
 }
 ```
 
-The extra `#[use_type(HasFooType.Foo)]` re-adds `Self: HasFooType` — harmless, since it is already implied — and rewrites the bare `Foo` throughout, so the signature and body read the same way they would if the type were imported directly. `#[uses]` declares the *trait* dependency and `#[use_type]` declares the *type* dependency; naming both is clearer than making the type ride in silently on the other.
+The `#[use_type(HasFooType.Foo)]` import adds `HasFooType` to the generated trait and rewrites the bare `Foo` throughout. `#[uses]` then declares the *trait* dependency and `#[use_type]` the *type* dependency, and naming both states each where a reader can see it.
 
-When a supertrait has no associated type to import — a plain method trait like `HasName` — add it with [`#[extend]`](method-supertraits.md) rather than `#[use_type]`. Use `#[use_type]` when the signature names the trait's associated type; use `#[extend]` when it only calls the trait's methods.
+When a supertrait has no associated type to import, as with a plain method trait like `HasName`, add it with [`#[extend]`](method-supertraits.md) rather than `#[use_type]`. Use `#[use_type]` when the signature names the trait's associated type; use `#[extend]` when it only calls the trait's methods.
 
 ## Related guides
 
