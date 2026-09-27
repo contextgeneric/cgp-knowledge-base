@@ -331,7 +331,7 @@ re-deriving it per component would only repeat them. The other sections are unch
 under `traits/` places a **Definition** section right after *Overview* that shows the trait's own
 `pub trait` — or `pub struct`, associated const, or function — and explains every element: its generic
 parameters, associated types, method receivers, supertraits, default parameters, and any
-`#[diagnostic::on_unimplemented]` attribute. Take the signature from the internal reference's Definition
+attribute the definition carries. Take the signature from the internal reference's Definition
 section so it matches the library. Unlike a built-in component page, a trait page **keeps its *Under the
 hood***: Definition documents the trait itself, while *Under the hood* shows how the macros generate and
 consume it. Move the definition out of *Overview* or *Usage* when it already appears there, so no page
