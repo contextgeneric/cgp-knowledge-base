@@ -148,7 +148,7 @@ user-visible side.
 The extractor codegen requires every variant to be a single-unnamed-field tuple variant (enforced by
 `get_variant_type` in the `derive_extractor/utils.rs` helper). A fieldless variant like `Empty`, a
 multi-field variant like `Pair(A, B)`, or a struct-style variant like `Named { x: A }` makes the
-macro fail with "Expected variant to contain exactly one unnamed field." There is no per-variant
+macro fail with "Expected variant to contain exactly one unnamed field". There is no per-variant
 opt-out, so an enum mixing variant shapes cannot derive the extractor at all; the same requirement
 applies to [`#[derive(FromVariant)]`](derive_from_variant.md) and therefore to
 `#[derive(CgpVariant)]`/`#[derive(CgpData)]` on such an enum. The reference document records the

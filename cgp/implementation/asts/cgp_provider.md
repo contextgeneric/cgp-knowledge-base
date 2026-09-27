@@ -1,10 +1,20 @@
 # The `cgp_provider` AST stack
 
-The `cgp_provider` stack is the sequence of AST types that both [`#[cgp_provider]`](../entrypoints/cgp_provider.md) and [`#[cgp_new_provider]`](../entrypoints/cgp_new_provider.md) parse into and lower through. The two macros share this stack entirely and differ only in whether the `new` flag is set. The argument type `ProviderArgs` and a `syn::ItemImpl` become an `ItemCgpProvider`, whose single `lower` step derives the `IsProviderFor` impl (via `ItemProviderImpl`) and the provider struct (via `EmptyStruct`), packaging all three items into a `LoweredCgpProvider` that renders them. The argument-splitting helper `ProviderImplArgs` supports the `IsProviderFor` derivation. The [`#[cgp_provider]` entrypoint](../entrypoints/cgp_provider.md) covers what the stage produces; this document covers the types.
+The `cgp_provider` stack is the sequence of AST types that both
+[`#[cgp_provider]`](../entrypoints/cgp_provider.md) and
+[`#[cgp_new_provider]`](../entrypoints/cgp_new_provider.md) parse into and lower through. The two
+macros share this stack entirely and differ only in whether the `new` flag is set. The argument type
+`ProviderArgs` and a `syn::ItemImpl` become an `ItemCgpProvider`, whose single `lower` step derives
+the `IsProviderFor` impl (via `ItemProviderImpl`) and the provider struct (via `EmptyStruct`),
+packaging all three items into a `LoweredCgpProvider` that renders them. The argument-splitting
+helper `ProviderImplArgs` supports the `IsProviderFor` derivation. The
+[`#[cgp_provider]` entrypoint](../entrypoints/cgp_provider.md) covers what the stage produces; this
+document covers the types.
 
 ## `ProviderArgs`
 
-`ProviderArgs` is the parsed attribute argument, shared by both macros: an optional `new` flag and an optional component-type override.
+`ProviderArgs` is the parsed attribute argument, shared by both macros: an optional `new` flag and
+an optional component-type override.
 
 ```rust
 pub struct ProviderArgs {
@@ -13,21 +23,40 @@ pub struct ProviderArgs {
 }
 ```
 
-The parser reads only the component type; it never parses the `new` flag from the attribute, so both macros' argument grammar is a bare `ComponentType?`. The `new` flag is set programmatically instead: `#[cgp_provider]` leaves it `None`, `#[cgp_new_provider]` forces it to `Some` after parsing, and when [`#[cgp_impl]`](cgp_impl.md#implargs) lowers to this stack it constructs a `ProviderArgs` from its own `ImplArgs`, copying the `new` and `component_type` fields. Keeping `new` out of the parser means a stray `#[cgp_provider(new Name)]` is not silently treated as a struct declaration: `new` parses as the component type and `Name` is left as an unexpected trailing token, so the attribute is rejected.
+The parser reads only the component type; it never parses the `new` flag from the attribute, so both
+macros' argument grammar is a bare `ComponentType?`. The `new` flag is set programmatically instead:
+`#[cgp_provider]` leaves it `None`, `#[cgp_new_provider]` forces it to `Some` after parsing, and
+when [`#[cgp_impl]`](cgp_impl.md#implargs) lowers to this stack it constructs a `ProviderArgs` from
+its own `ImplArgs`, copying the `new` and `component_type` fields. Keeping `new` out of the parser
+means a stray `#[cgp_provider(new Name)]` is not silently treated as a struct declaration: `new`
+parses as the component type and `Name` is left as an unexpected trailing token, so the attribute is
+rejected.
 
 ## `ItemCgpProvider`
 
-`ItemCgpProvider` is the input stage: the args and the provider-trait impl. Its `lower` step drives the whole macro in one pass, delegating to three helpers on itself:
+`ItemCgpProvider` is the input stage: the args and the provider-trait impl. Its `lower` step drives
+the whole macro in one pass, delegating to three helpers on itself:
 
-- `component_type` derives the component: it reads the provider trait's identifier and appends `Component` (so `AreaCalculator` gives `AreaCalculatorComponent`), unless the attribute supplied an explicit override. An inherent impl has no trait to read, so without an override it fails with `expect provider trait name to be present`.
+- `component_type` derives the component: it reads the provider trait's identifier and appends
+  `Component` (so `AreaCalculator` gives `AreaCalculatorComponent`), unless the attribute supplied
+  an explicit override. An inherent impl has no trait to read, so without an override it fails with
+  `expect provider trait name to be present`.
 - `ItemProviderImpl::to_is_provider_for_impl` derives the `IsProviderFor` impl.
 - `to_provider_struct` derives the provider struct, returning `None` when `new` is unset.
 
-It packages the original `item_impl` (emitted verbatim), the derived `IsProviderFor` impl, and the optional struct into a `LoweredCgpProvider`.
+It packages the original `item_impl` (emitted verbatim), the derived `IsProviderFor` impl, and the
+optional struct into a `LoweredCgpProvider`.
 
 ## `ItemProviderImpl` and the `IsProviderFor` derivation
 
-`ItemProviderImpl` pairs a component type with a provider impl and derives the `IsProviderFor` marker impl from it. `to_is_provider_for_impl` clones the provider impl, clears its body, associated types, attributes, `defaultness`, and `unsafety`, and swaps the trait for `IsProviderFor<Component, Context, (Params)>`, keeping the original generic parameters, `where` clause, and the provider impl's own `for` token so the marker holds under exactly the same conditions and none of its structural tokens fall back to the macro `call_site` span (the cloned `impl` keyword, generics, and self type already carry the user's spans; reusing the `for` token keeps the middle of the header from leaking too):
+`ItemProviderImpl` pairs a component type with a provider impl and derives the `IsProviderFor`
+marker impl from it. `to_is_provider_for_impl` clones the provider impl, clears its body, associated
+types, attributes, `defaultness`, and `unsafety`, and swaps the trait for
+`IsProviderFor<Component, Context, (Params)>`, keeping the original generic parameters, `where`
+clause, and the provider impl's own `for` token so the marker holds under exactly the same
+conditions and none of its structural tokens fall back to the macro `call_site` span (the cloned
+`impl` keyword, generics, and self type already carry the user's spans; reusing the `for` token
+keeps the middle of the header from leaking too):
 
 ```rust
 // from  impl<Context, Code, Input> ComputerRef<Context, Code, Input> for FirstNameToString where …
@@ -35,21 +64,56 @@ It packages the original `item_impl` (emitted verbatim), the derived `IsProvider
 //           for FirstNameToString where …  {}
 ```
 
-The derived **component reference**, the `Component` in that `IsProviderFor<Component, …>`, is spanned on `call_site`, not on the provider trait it is derived from. It appears only as this interior type argument, which anchors no error caret (a coherence conflict on the marker reports on the `impl` header, an unmet dependency on the `where`-clause bound), so a narrower span buys nothing at the compiler. It would, though, mislead the editor: rust-analyzer maps a source token to its expansion by source range, so had this reference borrowed the provider trait's span it would share that trait token's range, and go-to-definition on the provider trait a user wrote (in a `#[cgp_impl]` block or a hand-written provider impl) would then offer the component struct as a spurious second target. `call_site` shares no narrow user token's range, keeping the reference out of the editor's way. This is the reference-side dual of the [`#[cgp_component]` marker struct](../entrypoints/cgp_component.md#behavior-and-corner-cases), whose *definition* is instead spanned on the provider identifier so navigation to it lands cleanly; see the [Spans note](../README.md#spans-aim-generated-items-at-the-token-the-user-wrote).
+The derived **component reference**, the `Component` in that `IsProviderFor<Component, …>`, is
+spanned on `call_site`, not on the provider trait it is derived from. It appears only as this
+interior type argument, which anchors no error caret (a coherence conflict on the marker reports on
+the `impl` header, an unmet dependency on the `where`-clause bound), so a narrower span buys nothing
+at the compiler. It would, though, mislead the editor: rust-analyzer maps a source token to its
+expansion by source range, so had this reference borrowed the provider trait's span it would share
+that trait token's range, and go-to-definition on the provider trait a user wrote (in a
+`#[cgp_impl]` block or a hand-written provider impl) would then offer the component struct as a
+spurious second target. `call_site` shares no narrow user token's range, keeping the reference out
+of the editor's way. This is the reference-side dual of the
+[`#[cgp_component]` marker struct](../entrypoints/cgp_component.md#behavior-and-corner-cases), whose
+*definition* is instead spanned on the provider identifier so navigation to it lands cleanly; see
+the [Spans note](../README.md#spans-aim-generated-items-at-the-token-the-user-wrote).
 
-The trait arguments come from `ProviderImplArgs::from_generic_args`, and the derivation ends by running [`replace_provider_in_generics`](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/visitors/replace_provider.rs) with a map from the provider identifier to the component type, which rewrites a `Provider: SomeTrait<Context, …>` `where`-bound into an `IsProviderFor<…>` bound so a higher-order provider's inner-provider dependency shows up as an `IsProviderFor` obligation.
+The trait arguments come from `ProviderImplArgs::from_generic_args`, and the derivation ends by
+running
+[`replace_provider_in_generics`](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/visitors/replace_provider.rs)
+with a map from the provider identifier to the component type, which rewrites a
+`Provider: SomeTrait<Context, …>` `where`-bound into an `IsProviderFor<…>` bound so a higher-order
+provider's inner-provider dependency shows up as an `IsProviderFor` obligation.
 
 ## `ProviderImplArgs`
 
-`ProviderImplArgs` splits a provider trait's generic arguments into the context type and the `Params` tuple. Walking the arguments in order, it takes the first *type* argument as the context and collects the rest as `Params`; a lifetime always goes into `Params` (its `ToTokens` lifts it to `Life<'a>`) regardless of position, and a `const` argument is rejected with a spanned error. A trait path with no type argument at all is an error, since there is no context to place in the leading position.
+`ProviderImplArgs` splits a provider trait's generic arguments into the context type and the
+`Params` tuple. Walking the arguments in order, it takes the first *type* argument as the context
+and collects the rest as `Params`; a lifetime always goes into `Params` (its `ToTokens` lifts it to
+`Life<'a>`) regardless of position, and a `const` argument is rejected with a spanned error. A trait
+path with no type argument at all is an error, since there is no context to place in the leading
+position.
 
 ## `LoweredCgpProvider`
 
-`LoweredCgpProvider` is the output stage: a bag of the three emitted items. Its `ToTokens` renders them in order: the provider impl, the `IsProviderFor` impl, then the provider struct (which renders to nothing when `None`).
+`LoweredCgpProvider` is the output stage: a bag of the three emitted items. Its `ToTokens` renders
+them in order: the provider impl, the `IsProviderFor` impl, then the provider struct (which renders
+to nothing when `None`).
 
 ## `EmptyStruct`
 
-`EmptyStruct` is the provider struct, emitted only when `new` is set. `to_provider_struct` reads the shape from the impl's `Self` type: a plain name yields a unit `pub struct Name;`, while a generic provider yields a struct whose single `PhantomData` field binds every parameter, with bounds stripped. A lifetime parameter is bound as [`Life<'a>`](../../reference/types/life.md), which makes the struct invariant in that lifetime; a provider is never constructed, so the variance only affects how the type unifies. A const parameter is kept on the struct but not bound in the field. Two or more parameters are grouped into a `PhantomData` tuple; a lone parameter is bound directly (`PhantomData<InCode>`, not `PhantomData<(InCode)>`) to avoid a single-element parenthesized type, and a const-only provider gets `PhantomData<()>`. The struct's tokens carry the provider identifier's span, so two providers declared with the same name report `E0428` on the name. The same `EmptyStruct` also renders the `#[cgp_component]` marker struct, the `cgp_namespace!` marker struct, and the table structs that `delegate_components!` declares with `new`, top-level or nested.
+`EmptyStruct` is the provider struct, emitted only when `new` is set. `to_provider_struct` reads the
+shape from the impl's `Self` type: a plain name yields a unit `pub struct Name;`, while a generic
+provider yields a struct whose single `PhantomData` field binds every parameter, with bounds
+stripped. A lifetime parameter is bound as [`Life<'a>`](../../reference/types/life.md), which makes
+the struct invariant in that lifetime; a provider is never constructed, so the variance only affects
+how the type unifies. A const parameter is kept on the struct but not bound in the field. Two or
+more parameters are grouped into a `PhantomData` tuple; a lone parameter is bound directly
+(`PhantomData<InCode>`, not `PhantomData<(InCode)>`) to avoid a single-element parenthesized type,
+and a const-only provider gets `PhantomData<()>`. The struct's tokens carry the provider
+identifier's span, so two providers declared with the same name report `E0428` on the name. The same
+`EmptyStruct` also renders the `#[cgp_component]` marker struct, the `cgp_namespace!` marker struct,
+and the table structs that `delegate_components!` declares with `new`, top-level or nested.
 
 ```rust
 // generic provider Self type SpawnAndRun<InCode>
@@ -58,14 +122,30 @@ pub struct SpawnAndRun<InCode>(pub ::core::marker::PhantomData<InCode>);
 
 ## Known issues
 
-Two limitations belong to this stack and are described in the [entrypoint document's Known issues](../entrypoints/cgp_provider.md#known-issues): `ProviderImplArgs` rejects a const argument in the provider trait's arguments, and the `replace_provider` rewrite reads a bound's first generic argument as the context, so an inner-provider bound over a lifetime-carrying component gets no `IsProviderFor` counterpart.
+Two limitations belong to this stack and are described in the
+[entrypoint document's Known issues](../entrypoints/cgp_provider.md#known-issues):
+`ProviderImplArgs` rejects a const argument in the provider trait's arguments, and the
+`replace_provider` rewrite reads a bound's first generic argument as the context, so an
+inner-provider bound over a lifetime-carrying component gets no `IsProviderFor` counterpart.
 
 ## Tests
 
-- The stage transforms are exercised by the `snapshot_cgp_provider!` snapshots and the behavioral tests indexed in the [`#[cgp_provider]` entrypoint document](../entrypoints/cgp_provider.md); `#[cgp_new_provider]`'s direct coverage is indexed in [its entrypoint document](../entrypoints/cgp_new_provider.md).
+- The stage transforms are exercised by the `snapshot_cgp_provider!` snapshots and the behavioral
+  tests indexed in the [`#[cgp_provider]` entrypoint document](../entrypoints/cgp_provider.md);
+  `#[cgp_new_provider]`'s direct coverage is indexed in
+  [its entrypoint document](../entrypoints/cgp_new_provider.md).
 
 ## Source
 
-- The stack lives in [cgp-macro-core/src/types/cgp_provider/](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-core/src/types/cgp_provider/): `ProviderArgs` in `args.rs`, `ItemCgpProvider` and its helpers in `item.rs`, `LoweredCgpProvider` in `lower.rs`, and `ProviderImplArgs` in `provider_impl_args.rs`.
-- The `IsProviderFor` derivation (`ItemProviderImpl`) is in [cgp-macro-core/src/types/provider_impl.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/provider_impl.rs), the provider struct (`EmptyStruct`) in [cgp-macro-core/src/types/empty_struct.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/empty_struct.rs), and the provider-name rewrite in [cgp-macro-core/src/visitors/replace_provider.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/visitors/replace_provider.rs).
-- The consumer-style stack that hands off to this one is documented in [asts/cgp_impl.md](cgp_impl.md).
+- The stack lives in
+  [cgp-macro-core/src/types/cgp_provider/](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-core/src/types/cgp_provider/):
+  `ProviderArgs` in `args.rs`, `ItemCgpProvider` and its helpers in `item.rs`, `LoweredCgpProvider`
+  in `lower.rs`, and `ProviderImplArgs` in `provider_impl_args.rs`.
+- The `IsProviderFor` derivation (`ItemProviderImpl`) is in
+  [cgp-macro-core/src/types/provider_impl.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/provider_impl.rs),
+  the provider struct (`EmptyStruct`) in
+  [cgp-macro-core/src/types/empty_struct.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/empty_struct.rs),
+  and the provider-name rewrite in
+  [cgp-macro-core/src/visitors/replace_provider.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/visitors/replace_provider.rs).
+- The consumer-style stack that hands off to this one is documented in
+  [asts/cgp_impl.md](cgp_impl.md).

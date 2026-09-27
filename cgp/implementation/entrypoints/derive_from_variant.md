@@ -83,7 +83,7 @@ so an enum deriving the whole family has seven names it cannot use. Pinned by
 
 Like the extractor derive, `#[derive(FromVariant)]` requires every variant to be a
 single-unnamed-field tuple variant. A fieldless, multi-field, or struct-style variant makes the
-macro fail with "Expected variant to contain exactly one unnamed field," with no per-variant
+macro fail with "Expected variant to contain exactly one unnamed field", with no per-variant
 opt-out. The requirement is described alongside the extractor's in
 [`derive_extract_field`](derive_extract_field.md#known-issues), and the reference document records
 its user-visible form.

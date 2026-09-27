@@ -1,36 +1,70 @@
 # The attribute-modifier AST stacks
 
-The attribute modifiers (`#[uses]`, `#[use_type]`, `#[use_provider]`, `#[extend]`, `#[extend_where]`, `#[impl_generics]`, `#[derive_delegate]`, `#[prefix]`, and `#[default_impl]`) are not standalone macros; each is an `#[…]` attribute that a host macro strips off its input, parses into an AST type, and folds into the code it generates. This directory documents one modifier per page: each page covers that modifier's AST types, what it parses from, and what it injects into its host's output. This overview covers what the modifiers share (how a host collects them and which host accepts which) so the per-modifier pages can stay focused on their own types. For the user-facing syntax and expansion of each, read the reference documents in the [reference `attributes/` subdirectory](../../../reference/attributes/uses.md); for how the hosts drive them, see [entrypoints/cgp_component.md](../../entrypoints/cgp_component.md), [entrypoints/cgp_impl.md](../../entrypoints/cgp_impl.md), and [entrypoints/cgp_fn.md](../../entrypoints/cgp_fn.md).
+The attribute modifiers (`#[uses]`, `#[use_type]`, `#[use_provider]`, `#[extend]`,
+`#[extend_where]`, `#[impl_generics]`, `#[derive_delegate]`, `#[prefix]`, and `#[default_impl]`) are
+not standalone macros; each is an `#[…]` attribute that a host macro strips off its input, parses
+into an AST type, and folds into the code it generates. This directory documents one modifier per
+page: each page covers that modifier's AST types, what it parses from, and what it injects into its
+host's output. This overview covers what the modifiers share (how a host collects them and which
+host accepts which) so the per-modifier pages can stay focused on their own types. For the
+user-facing syntax and expansion of each, read the reference documents in the
+[reference `attributes/` subdirectory](../../../reference/attributes/uses.md); for how the hosts
+drive them, see [entrypoints/cgp_component.md](../../entrypoints/cgp_component.md),
+[entrypoints/cgp_impl.md](../../entrypoints/cgp_impl.md), and
+[entrypoints/cgp_fn.md](../../entrypoints/cgp_fn.md).
 
 ## The pages
 
 Each modifier has its own page in this directory:
 
-- [`#[uses]`](uses.md): import `Self` trait bounds onto a provider impl, reading like a `use` statement.
-- [`#[use_type]`](use_type.md): import an abstract associated type: rewrite the bare alias everywhere and add the owning trait as a bound.
-- [`#[use_provider]`](use_provider.md): complete an inner provider's bound for a higher-order provider.
+- [`#[uses]`](uses.md): import `Self` trait bounds onto a provider impl, reading like a `use`
+  statement.
+- [`#[use_type]`](use_type.md): import an abstract associated type: rewrite the bare alias
+  everywhere and add the owning trait as a bound.
+- [`#[use_provider]`](use_provider.md): complete an inner provider's bound for a higher-order
+  provider.
 - [`#[extend]`](extend.md): add *supertrait* bounds to a generated trait.
 - [`#[extend_where]`](extend_where.md): add `where` predicates to a generated trait definition.
 - [`#[impl_generics]`](impl_generics.md): add generic parameters to a `#[cgp_fn]`'s impl alone.
-- [`#[derive_delegate]`](derive_delegate.md): generate a `UseDelegate` dispatcher provider impl for a component.
+- [`#[derive_delegate]`](derive_delegate.md): generate a `UseDelegate` dispatcher provider impl for
+  a component.
 - [`#[prefix]`](prefix.md): register a component into a namespace under a path prefix.
 - [`#[default_impl]`](default_impl.md): register a provider as a namespace's per-path default.
 
 ## How a host collects a modifier
 
-The modifiers do not parse themselves out of the token stream on their own; a host collects them first. Each host macro owns a collector type that walks the item's attribute list once, matches the leading identifier (`uses`, `use_type`, …) of every attribute, parses that attribute's arguments into the corresponding AST type, and passes any unrecognized attribute through untouched onto the generated code. There are three collectors, one per host:
+The modifiers do not parse themselves out of the token stream on their own; a host collects them
+first. Each host macro owns a collector type that walks the item's attribute list once, matches the
+leading identifier (`uses`, `use_type`, …) of every attribute, parses that attribute's arguments
+into the corresponding AST type, and passes any unrecognized attribute through untouched onto the
+generated code. There are three collectors, one per host:
 
-- `CgpComponentAttributes` (in `cgp_component_attributes.rs`) collects the modifiers `#[cgp_component]` accepts, during its `preprocess` stage.
-- `CgpImplAttributes` (in `cgp_impl_attributes.rs`) collects the modifiers `#[cgp_impl]` accepts, during `ItemCgpImpl::lower`.
-- `FunctionAttributes` (in `function.rs`) collects the modifiers `#[cgp_fn]` accepts, during `ItemCgpFn::preprocess`.
+- `CgpComponentAttributes` (in `cgp_component_attributes.rs`) collects the modifiers
+  `#[cgp_component]` accepts, during its `preprocess` stage.
+- `CgpImplAttributes` (in `cgp_impl_attributes.rs`) collects the modifiers `#[cgp_impl]` accepts,
+  during `ItemCgpImpl::lower`.
+- `FunctionAttributes` (in `function.rs`) collects the modifiers `#[cgp_fn]` accepts, during
+  `ItemCgpFn::preprocess`.
 
-The macros built on the component pipeline reuse `CgpComponentAttributes`: `#[cgp_type]` and `#[cgp_getter]` through `ItemCgpComponent::preprocess`, and `#[cgp_auto_getter]` by calling `CgpComponentAttributes::preprocess` directly. `#[cgp_auto_getter]` generates no component, so it applies `#[extend]` and `#[use_type]` but discards `#[prefix]` and `#[derive_delegate]` without an error, as its [entrypoint document](../../entrypoints/cgp_auto_getter.md#known-issues) records.
+The macros built on the component pipeline reuse `CgpComponentAttributes`: `#[cgp_type]` and
+`#[cgp_getter]` through `ItemCgpComponent::preprocess`, and `#[cgp_auto_getter]` by calling
+`CgpComponentAttributes::preprocess` directly. `#[cgp_auto_getter]` generates no component, so it
+applies `#[extend]` and `#[use_type]` but discards `#[prefix]` and `#[derive_delegate]` without an
+error, as its [entrypoint document](../../entrypoints/cgp_auto_getter.md#known-issues) records.
 
-An unrecognized attribute is never an error: a collector that does not match an attribute's leading identifier pushes it back onto a `raw_attributes` list (or straight back onto the item, for the component collector), which the host re-attaches to the generated code. This is what lets `#[async_trait]`, `#[allow(...)]`, and any other foreign attribute ride through a host macro untouched.
+An unrecognized attribute is never an error: a collector that does not match an attribute's leading
+identifier pushes it back onto a `raw_attributes` list (or straight back onto the item, for the
+component collector), which the host re-attaches to the generated code. This is what lets
+`#[async_trait]`, `#[allow(...)]`, and any other foreign attribute ride through a host macro
+untouched.
 
 ## Which host accepts which modifier
 
-Which modifiers a host accepts differs, because a modifier is only meaningful on the construct that can consume it: `#[derive_delegate]` needs a component's provider trait to dispatch, `#[default_impl]` needs a provider to register, and `#[extend_where]` needs a generated trait whose own `where` clause it can extend. A modifier therefore appears only in the collectors of the hosts that consume it:
+Which modifiers a host accepts differs, because a modifier is only meaningful on the construct that
+can consume it: `#[derive_delegate]` needs a component's provider trait to dispatch,
+`#[default_impl]` needs a provider to register, and `#[extend_where]` needs a generated trait whose
+own `where` clause it can extend. A modifier therefore appears only in the collectors of the hosts
+that consume it:
 
 | Modifier | `#[cgp_component]`, `#[cgp_type]`, `#[cgp_getter]` | `#[cgp_impl]` | `#[cgp_fn]` |
 |---|:---:|:---:|:---:|
@@ -44,9 +78,25 @@ Which modifiers a host accepts differs, because a modifier is only meaningful on
 | `#[prefix]` | ✓ | | |
 | `#[impl_generics]` | | | ✓ |
 
-Two of the modifiers in the table above are lowered by their hosts rather than by the pipeline of a construct of their own. `CgpComponentAttributes` collects [`#[prefix(...)]`](prefix.md) into `PrefixAttribute` values, whose namespace impls the component pipeline in [entrypoints/cgp_component.md](../../entrypoints/cgp_component.md) appends after its standard provider impls; the namespace machinery those impls plug into is in [asts/namespace.md](../namespace.md). `FunctionAttributes` collects [`#[impl_generics(...)]`](impl_generics.md) as a bare list of generic parameters that the `#[cgp_fn]` pipeline in [entrypoints/cgp_fn.md](../../entrypoints/cgp_fn.md) injects into the impl's generic list. Each has a reference document of its own under [reference/attributes/](../../../reference/attributes/prefix.md), as `#[default_impl]` does.
+Two of the modifiers in the table above are lowered by their hosts rather than by the pipeline of a
+construct of their own. `CgpComponentAttributes` collects [`#[prefix(...)]`](prefix.md) into
+`PrefixAttribute` values, whose namespace impls the component pipeline in
+[entrypoints/cgp_component.md](../../entrypoints/cgp_component.md) appends after its standard
+provider impls; the namespace machinery those impls plug into is in
+[asts/namespace.md](../namespace.md). `FunctionAttributes` collects
+[`#[impl_generics(...)]`](impl_generics.md) as a bare list of generic parameters that the
+`#[cgp_fn]` pipeline in [entrypoints/cgp_fn.md](../../entrypoints/cgp_fn.md) injects into the impl's
+generic list. Each has a reference document of its own under
+[reference/attributes/](../../../reference/attributes/prefix.md), as `#[default_impl]` does.
 
 ## Source
 
-- The modifiers live in [cgp-macro-core/src/types/attributes/](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-core/src/types/attributes/), one module or submodule per modifier, re-exported from `mod.rs`.
-- The host collectors are `CgpComponentAttributes` in [cgp_component_attributes.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/attributes/cgp_component_attributes.rs), `CgpImplAttributes` in [cgp_impl_attributes.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/attributes/cgp_impl_attributes.rs), and `FunctionAttributes` in [function.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/attributes/function.rs).
+- The modifiers live in
+  [cgp-macro-core/src/types/attributes/](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-core/src/types/attributes/),
+  one module or submodule per modifier, re-exported from `mod.rs`.
+- The host collectors are `CgpComponentAttributes` in
+  [cgp_component_attributes.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/attributes/cgp_component_attributes.rs),
+  `CgpImplAttributes` in
+  [cgp_impl_attributes.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/attributes/cgp_impl_attributes.rs),
+  and `FunctionAttributes` in
+  [function.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/attributes/function.rs).
