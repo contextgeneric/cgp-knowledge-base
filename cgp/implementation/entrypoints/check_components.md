@@ -126,6 +126,15 @@ the conflict at the repeated component.
 
 ## Known issues
 
+The `#[check_providers(...)]` trait is built with the context type spelled out in its supertrait,
+`IsProviderFor<__Component__, #context_type, __Params__>`, while `eval` merges the table's
+`impl_generics` and `where` clause only onto the impls. A generic table,
+`#[check_providers(P)] <T> Gen<T> { … }`, therefore names `T` in a trait that never declares it,
+failing with `E0425`, and the impl's `T` is then unconstrained, `E0207`. The fix is to put the table's
+generics on the trait too, or to make the context a parameter of the trait; the
+[reference Known issues](../../reference/macros/check_components.md#known-issues) give the
+concrete-instantiation workaround.
+
 `derive_check_trait_ident` parses the context type as a `PathWithTypeArgs` to take its last
 identifier, so a context that is not a path, such as `&'a Person`, has no name to derive. Without
 `#[check_trait(...)]` the table fails with `expected identifier` at the context type, which does not

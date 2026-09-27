@@ -127,12 +127,27 @@ per element rather than one overriding the other. The merge follows these rules:
 - A `#[skip_check]` merged with a `#[check_params]` is refused with
   `cannot combine #[skip_check] with #[check_params]`, since the two ask for opposite things.
 
+The lists concatenate without deduplicating, so a parameter named at both levels produces its check
+impl twice, and the two identical impls conflict with `E0119`.
+
 Two forms produce no check without saying so. An empty `#[check_params()]` supplies no parameters,
 so it skips the entry exactly as `#[skip_check]` does; write `#[skip_check]` when that is the
-intent. A key that carries only generics and no attribute is still checked, with its generics bound
-on the check impl and unit parameters: `<I> FooKey<I>: FooProvider` derives
-`impl<I> __CanUseContext<FooKey<I>, ()> for Context {}`, which keeps the key's parameter from being
-unbound.
+intent. A table whose every entry is skipped, or that is empty, still emits the check trait, with no
+impls, and verifies nothing. A key that carries only generics and no attribute is still checked,
+with its generics bound on the check impl and unit parameters: `<I> FooKeyComponent<I>: AnyFoo`
+derives `impl<I> __CanUseApp<FooKeyComponent<I>, ()> for App {}`, which keeps the key's parameter
+from being unbound. For a component whose marker carries the trait's own parameter, declared as
+`name: FooKeyComponent<I>` on a `CanFoo<I>`, the unit parameters do not match what the provider
+implements, so that check fails with `E0277` on `AnyFoo: IsProviderFor<FooKeyComponent<I>, App>`;
+`#[check_params(I)]` names the key's generic as the parameter and passes.
+
+A component with type parameters and no `#[check_params(...)]` is checked at unit parameters too,
+which is the component with `()` in place of each parameter. A provider generic over every value of
+the parameter passes that check vacuously, proving nothing about the values the context uses. A
+provider written for particular values fails it, with an `E0277` on
+`RectangleArea: IsProviderFor<AreaCalculatorComponent, MyApp>` that reads like a broken provider.
+Only a help line hints at the cause, noting that the marker is implemented for `Rectangle` but not
+for `()`.
 
 ### Which forms are checked
 
@@ -280,21 +295,32 @@ delegate_and_check_components! {
 If `MyContext` lacked the `name` field, the derived check on `NameGetterComponent` would fail and
 report the missing `HasField` bound, instead of letting the gap reach a later call to `name()`.
 
-Mixing checked and skipped entries lets one delegation be verified elsewhere while the rest is
-checked inline:
+Mixing checked and skipped entries lets a nested provider stack be verified per layer elsewhere
+while the rest is checked inline:
 
 ```rust
 delegate_and_check_components! {
     ScaledRectangle {
-        AreaCalculatorComponent:
-            ScaledAreaCalculator<RectangleAreaCalculator>,
+        PerimeterCalculatorComponent:
+            RectanglePerimeterCalculator,
 
         #[skip_check]
-        TransformCalculatorComponent:
-            ComplexTransform<RectangleAreaCalculator>, // checked in a dedicated check_components! block
+        AreaCalculatorComponent:
+            ScaledAreaCalculator<RectangleAreaCalculator>,
+    }
+}
+
+check_components! {
+    #[check_providers(RectangleAreaCalculator, ScaledAreaCalculator<RectangleAreaCalculator>)]
+    ScaledRectangle {
+        AreaCalculatorComponent,
     }
 }
 ```
+
+The fused derivation can check only the context, so the skipped stack gets a standalone
+`#[check_providers(...)]` block: a dependency missing from the inner `RectangleAreaCalculator` fails
+on both providers, and one missing only from the wrapper fails on the wrapper alone.
 
 ## Related constructs
 

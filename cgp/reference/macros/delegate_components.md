@@ -57,7 +57,8 @@ delegate_components! {
 
 A `new` keyword before the target makes the macro declare the target struct as well.
 `new MyComponents { ... }` emits `pub struct MyComponents;`, or a generic struct with a
-`PhantomData` field when the target carries type parameters, alongside the table impls. This is how
+`PhantomData` field when the target carries lifetime or type parameters, alongside the table impls.
+A `const` parameter is not supported there, as Known issues records. This is how
 an aggregate provider is declared: a zero-sized provider whose table dispatches each component to a
 sub-provider, so other contexts can delegate a whole group of components to it at once.
 
@@ -136,7 +137,12 @@ a single key and may carry one.
 
 **A single key is one component-name type**, optionally preceded by the generics it introduces.
 `AreaCalculatorComponent: RectangleAreaCalculator` is the common case, and
-`<T2> BazKey<T1, T2>: BazProvider` adds a parameter to that entry's impls alone.
+`<T2> BazKey<T1, T2>: BazProvider` adds a parameter to that entry's impls alone. A generic key is
+either a plain lookup type or a component marker that carries the trait's parameters through the
+`name:` key of [`#[cgp_component]`](cgp_component.md), as in
+`<Shape> ShapeAreaCalculatorComponent<Shape>: SumAreas`; such a component's provider names the
+parameterized marker explicitly, as
+`#[cgp_impl(new SumAreas: ShapeAreaCalculatorComponent<Shape>)]`.
 
 **A list key is a bracketed list of single keys**, and it expands to one entry per element so that
 several components share one value:
@@ -155,9 +161,12 @@ delegate_components! {
 
 Each element is a full single key and may carry its own generics: in the table
 `<T1: Clone> GenericKeyComponents { [BarKey<T1>, <T2> BazKey<T1, T2>]: BarValue<T1>, … }`, only the
-second element introduces `T2`. The list is a key form, not an operator, so `[A, B] -> SomeTable`
-and `[A, B] => @somewhere` are as legal as `[A, B]: Provider`. The first adopts several of another
-table's entries at once, and the second points several components at one shared slot.
+second element introduces `T2`. The list itself takes no generic list: `<T> [BarKey<T>, BazKey]`
+fails with `expected square brackets` at the `<`, because the key parser peeks past the generics,
+sees the bracket, and hands the whole key to the list parser. The list is a key form, not an
+operator, so `[A, B] -> SomeTable` and `[A, B] => @somewhere` are as legal as `[A, B]: Provider`.
+The first adopts several of another table's entries at once, and the second points several
+components at one shared slot.
 
 **A path key is an `@`-prefixed route** rather than a component name, and it addresses an entry
 behind a redirect: the per-value slots an `open` statement opens, or the prefixed routes a namespace
@@ -219,7 +228,7 @@ to. One further form exists, and it is legacy.
 > Three details of the form are not visible in that example:
 >
 > - **The inner braces hold a full table body**, so an inner table accepts every form this section describes, including further nesting.
-> - **The wrapper is not fixed to `UseDelegate`.** Any wrapper named by a single identifier is accepted, and the macro substitutes the generated table type for the `new …` block. A component dispatched on a tuple of parameters is wired this way to a matching `UseDelegate2`.
+> - **The wrapper is not fixed to `UseDelegate`.** Any wrapper named by a single identifier is accepted, and the macro substitutes the generated table type for the `new …` block. So a component whose `#[derive_delegate]` names a wrapper of the user's own, such as a `UseDelegate2` keyed on a tuple of its parameters, is wired the same way. The wrapper must be a bare identifier: a qualified `cgp::prelude::UseDelegate<new Inner { … }>` fails the nested-table parse, falls back to a plain type, and reports ``expected `,` `` at the inner table's name.
 > - **The inner table's name may carry type generics**, which a per-entry generic on the outer key threads into:
 >
 > ```rust
@@ -427,11 +436,16 @@ The grammar needs a few notes beyond what the rules show:
   `invalid impl generics syntax`.
 - **An `InnerTable` names a fresh struct.** It is an identifier with an optional `BoundFreeGenerics`
   list rather than a full type, because the macro declares it. That list is a definition-position
-  list: no bounds and no defaults, and a `const` parameter is written as its bare name. Write any
-  bound on the entry's generics instead. A bound on the inner table is rejected, but with a
-  misleading message: the value parser tries the nested form speculatively and falls back to a plain
-  type, so `UseDelegate<new BarValue<T: Clone> { … }>` reports ``expected `,` `` at the inner
-  table's name.
+  list of lifetimes and type parameters: no bounds and no defaults. Write any bound on the entry's
+  generics instead. A bound on the inner table is rejected, but with a misleading message: the value
+  parser tries the nested form speculatively and falls back to a plain type, so
+  `UseDelegate<new BarValue<T: Clone> { … }>` reports ``expected `,` `` at the inner table's name.
+  A `const N: usize` parameter fails the same way, and a bare `N` declares a type parameter, so an
+  entry passing a const through it fails with `E0747`: an inner table cannot carry a const
+  parameter, as Known issues records.
+- **The nested-table wrapper is a bare `IDENTIFIER`.** A qualified path is not the nested form and
+  reports ``expected `,` `` like a bound does.
+- **A `MultiKey` takes no generics of its own**, only its elements do.
 - **Empty lists parse.** An empty `open { }`, list key, or path group is accepted and produces no
   entries.
 - **Statements lead.** Every `Statement` precedes every `Mapping`, as `TableBody` requires.
@@ -729,6 +743,39 @@ fn print_area(rect: &Rectangle) {
 }
 ```
 
+The payoff appears when a second context answers the same trait differently. It writes its own
+provider and its own entry, and code calling `area()`, including any function generic over
+`CanCalculateArea`, does not change:
+
+```rust
+#[cgp_impl(new SquareAreaCalculator)]
+impl AreaCalculator {
+    fn area(&self, #[implicit] side: f64) -> f64 {
+        side * side
+    }
+}
+
+#[derive(HasField)]
+pub struct Square {
+    pub side: f64,
+}
+
+delegate_components! {
+    Square {
+        AreaCalculatorComponent: SquareAreaCalculator,
+    }
+}
+
+check_components! {
+    Square {
+        AreaCalculatorComponent,
+    }
+}
+```
+
+Each context's choice stays one searchable line, and finding it tells a reader which implementation
+runs.
+
 An [aggregate provider](../../concepts/aggregate-providers.md) uses `new` to declare its own table
 type, which contexts can then delegate to as one unit:
 
@@ -786,10 +833,11 @@ Pair the table with [`check_components!`](check_components.md) so the failure is
 wiring, and read it through [`cargo cgp check`](../cargo-cgp.md), which recovers the cause the
 compiler hides.
 
-**A value naming a provider struct that was never declared** reports as an unresolved type rather
-than anything about wiring. The usual cause is a provider written with [`#[cgp_impl]`](cgp_impl.md)
-without the `new` keyword and never declared separately, since the bare form implements the provider
-trait for a struct the author is expected to write.
+**A value naming a provider struct that was never declared** reports as an unresolved type, `E0425`
+``cannot find type `SquareArea` in this scope``, rather than anything about wiring. The usual cause
+is a provider written with [`#[cgp_impl]`](cgp_impl.md) without the `new` keyword and never declared
+separately, since the bare form implements the provider trait for a struct the author is expected to
+write.
 
 **A statement placed after a mapping fails to parse**, and the message points somewhere misleading.
 Once the statements are consumed the parser expects only mappings, so it reads `open` as a key type,
@@ -833,6 +881,8 @@ the end.
 
 **Overlapping entries are reported by the compiler as `E0119`**, not by the macro. Two entries
 claiming the same key are the [conflicting wiring](../../errors/wiring/conflicting-wiring.md) class.
+The error arrives twice, once for the entry's `DelegateComponent` impl and once for its
+`IsProviderFor` impl, both on the later entry's key.
 The overlap can be indirect: an `open` statement colliding with an explicit mapping for the same
 component, a generic `<T> Wrapper<T>` entry overlapping a specific `Wrapper<u64>` one, or a path key
 overlapping a longer one beneath it, such as `@ComputerComponent.Eval` beside
@@ -841,6 +891,19 @@ entry for a path that a joined namespace itself binds overlaps the blanket impl 
 statement, which is the
 [namespace override conflict](../../errors/wiring/namespace-override-conflict.md) class. Overriding
 works only on a path the namespace routes onward without binding.
+
+**A table struct the macro declares cannot carry a `const` parameter.** A nested inner table's
+generic list admits only lifetimes and type parameters, so
+`UseDelegate<new ArrayTable<const N: usize> { … }>` fails to parse, reporting ``expected `,` `` at
+`ArrayTable` once the value parser falls back to a plain type. Writing the bare `N` parses, but
+declares `N` as a type parameter of the generated struct, so an entry keyed on
+`<const N: usize> ArrayKey<N>` that passes `N` through fails with `E0747`, a constant provided where
+a type was expected. A `new` target fails the same way: `<const N: usize> new ArrayTable<N> { … }`
+declares `ArrayTable<N>` with a type parameter and reports `E0747`, because the target's struct is
+read from its type arguments, which name `N` without its kind. The workaround is to declare the
+struct by hand, `pub struct ArrayTable<const N: usize>;`, wire it with its own block,
+`<const N: usize> ArrayTable<N> { … }`, and name it in the outer entry as
+`UseDelegate<ArrayTable<N>>`.
 
 ## Related constructs
 
@@ -868,6 +931,11 @@ from `:` and `->` mappings on single or list keys, so opened, redirected, and na
 wired but left unchecked there. Plain `delegate_components!` without any check is right only for
 [aggregate providers](../../concepts/aggregate-providers.md), which are providers rather than
 contexts.
+
+Two choices inside the table have a default. Prefer the `open` statement to the legacy nested
+`UseDelegate` table for per-type dispatch. And move to a [namespace](cgp_namespace.md) once the same
+wiring repeats across contexts, or once one table has grown too long to read; below that threshold
+the namespace's extra hop costs more than it saves.
 
 ## Source
 

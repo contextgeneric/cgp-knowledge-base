@@ -262,7 +262,9 @@ For any `__Key__` the parent resolves, `ExtendedNamespace` resolves it to the sa
 first bound, which asks the parent about the child's own marker struct, is what makes a cyclic
 parent chain fail at the definitions. The child's entries sit beside this blanket impl rather than
 overriding it, so they must be keyed on paths the parent does not resolve; a key both resolve is a
-conflict, as Known issues explains. The path-rewriting entry `@cgp.core.error => @app` qualifies: it
+conflict, as Known issues explains. Rust has no rule letting the more specific impl win, and a longer
+path beneath a key the parent resolves is covered by it too, because every path key ends in a
+wildcard. The path-rewriting entry `@cgp.core.error => @app` qualifies: it
 is keyed on the `cgp.core.error` path prefix, which `DefaultNamespace` routes to without binding,
 and its `Delegate` is a `RedirectLookup` onto the `@app` prefix. So it reroutes a whole subtree of
 the parent's routes rather than a single component.
@@ -343,6 +345,66 @@ Inheritance composes the same way at the namespace level. `ExtendedNamespace: De
 resolves everything `DefaultNamespace` does plus the child's own entries, and a context joining
 `ExtendedNamespace` gets the combined result.
 
+The pattern end to end has three parts: a component registered under a prefix, a namespace holding
+the route, and a context that joins it and supplies the provider at the prefixed path:
+
+```rust
+#[cgp_component(ShowImpl)]
+#[prefix(@show in AppNamespace)]
+pub trait CanShow {
+    fn show(&self) -> String;
+}
+
+#[cgp_impl(new ShowWithDebug)]
+#[uses(core::fmt::Debug)]
+impl ShowImpl {
+    fn show(&self) -> String {
+        format!("{:?}", self)
+    }
+}
+
+cgp_namespace! {
+    new AppNamespace {}
+}
+
+#[derive(Debug)]
+pub struct MyApp;
+
+delegate_components! {
+    MyApp {
+        namespace AppNamespace;
+
+        @show.ShowImplComponent: ShowWithDebug,
+    }
+}
+
+check_components! {
+    MyApp {
+        ShowImplComponent,
+    }
+}
+```
+
+`MyApp.show()` finds no direct entry for `ShowImplComponent`, falls through to `AppNamespace`, which
+redirects to `@show.ShowImplComponent`, and `MyApp`'s own table binds that path. The namespace owns
+the route and the context owns the provider, so a second context joins the same namespace and
+supplies a different provider at the same path.
+
+A context that joins a namespace can also forward a whole path to an
+[aggregate provider](../../concepts/aggregate-providers.md) in one entry, as
+`@app.core.user: UserComponents`, and the bundle answers every component registered under that path.
+The lookup reaches the bundle keyed by the bare component name, so a bundle keyed by bare names
+needs nothing more, while a bundle grouping several paths, such as a `CoreComponents` holding
+`@app.core.user: UserComponents`, is keyed by paths and must join the namespace itself; without the
+`namespace` line the check fails with `CoreComponents: DelegateComponent<GreeterComponent>`
+unsatisfied.
+
+A namespace is worth its extra hop once the same wiring is repeated across contexts or a top-level
+table has grown too long to read. Below that, a plain `delegate_components!` table is clearer; `open`
+is the lighter tool for per-type dispatch of one component on one context; and an aggregate provider
+suits a small, explicitly delegated bundle, while a namespace suits many components, inheritance, or
+a library publishing defaults for applications it does not know.
+
 ## Related constructs
 
 These constructs are the ones `cgp_namespace!` sits between:
@@ -385,7 +447,9 @@ error class.
 A component routed into a joined namespace by a [`#[prefix]`](../attributes/prefix.md), with no
 entry that ever binds a provider at its path, reaches an empty slot. No `#[default_impl]`, body
 entry, or direct wiring answers it, and a `check_components!` reports the lookup as unsatisfied
-(`E0277`). This is the
+(`E0277`), naming the route rather than a missing provider:
+`PathCons<Symbol<4, Chars<'s', …>>, PathCons<ShowImplComponent, Nil>>: AppNamespace<MyApp>` is not
+satisfied, where the `Symbol` is the `show` prefix. This is the
 [unregistered namespace path](../../errors/checks/unregistered-namespace-path.md) error class.
 
 A circular parent chain is rejected at the `cgp_namespace!` definitions, and its two shapes fail

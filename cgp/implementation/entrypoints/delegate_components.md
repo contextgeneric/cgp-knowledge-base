@@ -224,7 +224,23 @@ blaming the component rather than the misplaced statement. A braced path group f
 reports the same `expected ':'` on the trailing segment, and a bounded generic list on a nested
 table reports `expected ','`, because the value parser tries the nested-table form speculatively and
 falls back to reading the whole value as a plain type. All three are pinned as rejection cases (see
-[Tests](#tests)).
+[Tests](#tests)). The same fallback explains two further messages: a qualified wrapper such as
+`cgp::prelude::UseDelegate<new Inner { … }>` and a `const N: usize` parameter on the inner table
+both report `expected ','` at the inner table's name, since `DelegateValueWithInnerTable` reads the
+wrapper as a bare `Ident` and the inner table's generics as `TypeGenerics`. A generic list written
+before a list key, `<T> [A<T>, B]`, reports `expected square brackets`: `DelegateKey::parse` forks
+past the generics, sees the bracket, and hands the input, generics and all, to `MultiDelegateKey`,
+which parses no generics.
+
+**A declared table struct cannot carry a `const` parameter.** `TypeGenerics::parse` accepts a list
+only when it survives a round trip through `split_for_impl`'s type generics, which drops a const
+parameter's kind, so `new Inner<const N: usize> { … }` is rejected and a bare `new Inner<N>`
+declares a *type* parameter `N`. A `new` target has the same gap by another route:
+`DelegateTable::eval` reads the struct from the target's type arguments as an
+`IdentWithTypeGenerics`, and `N` there carries no kind either. Either way an entry passing a const
+through fails with `E0747`. `EmptyStruct` already skips const parameters when it builds the
+`PhantomData` field, so the fix is in the parsers alone: keep the const parameter's kind, from the
+table's own generic list for a `new` target, and admit `const` in the inner table's list.
 
 The `namespace` statement parses its namespace as a bare `Ident`, so a namespace from another module
 cannot be named by path: `namespace some_mod::MyNs;` fails with ``expected `;` `` at the `::`. The

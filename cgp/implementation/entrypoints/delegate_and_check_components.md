@@ -80,7 +80,9 @@ impls but no check impl.
 **The two attributes are mutually exclusive and merge across bracket levels.** `#[check_params]` and
 `#[skip_check]` cannot both apply to one key, and at most one of each may appear. For an array key,
 a block-level attribute on the bracket merges with each inner key's own attribute: two
-`#[check_params]` sets union, while combining `#[skip_check]` with `#[check_params]` is an error.
+`#[check_params]` lists concatenate, without deduplicating, so a parameter named at both levels
+yields two identical check impls and an `E0119`, while combining `#[skip_check]` with
+`#[check_params]` is an error.
 
 **A per-key generic list is threaded onto the derived check impl.** A delegation key that introduces
 its own generic parameters (`<I> FooKey<I>: …`) carries them into the check half, so the generated

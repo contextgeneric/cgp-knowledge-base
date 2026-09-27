@@ -69,7 +69,20 @@ check_components! {
 
 A table may also carry a leading `<...>` generic list and a `where` clause after the context type,
 to introduce and constrain generics the checked parameters use. A parameter may carry its own
-generic list as well, which is merged with the table's.
+generic list as well, which is merged with the table's, as in
+`AreaCalculatorComponent: <'a> &'a Rectangle`.
+
+A failed check is reported on the entry it came from, because the check impl re-spans the context
+type onto that entry. The caret lands on the component, or on the parameter when a bracketed value
+lists more parameters than its key names components, so `AreaCalculatorComponent: [Rectangle, Circle]`
+points at whichever shape failed.
+
+A component with generic parameters listed without a value is checked at unit parameters, which is
+the component with `()` in place of each parameter. A provider generic over every value passes that
+vacuously, and a provider written for particular values fails with
+`RectangleArea: IsProviderFor<AreaCalculatorComponent, MyApp>` not satisfied, where only a help line
+notes that the marker is implemented for `Rectangle` but not for `()`. Listing the same check twice,
+directly or through a bracketed list, emits two identical impls and fails with `E0119`.
 
 ### Attributes
 
@@ -84,8 +97,11 @@ Two attributes may head a table, in either order, each at most once:
   instead of checking the context. Each provider is asserted separately, which is how the layers of
   a higher-order provider are checked one by one. It must list at least one provider.
 
-Any other attribute is rejected by name with `Invalid attribute …`. An empty `#[check_providers()]`
-or a repeated attribute is also a compile error.
+Any other attribute is rejected by name, as `Invalid attribute #[allow(unused)]`. An empty
+`#[check_providers()]` fails with `` `#[check_providers(...)]` requires at least one provider type. ``,
+and a repeated attribute with ``Multiple `#[check_trait]` attributes found. Expected at most one.``
+or its `check_providers` twin. `#[check_providers(...)]` also needs a concrete context, as Known
+issues records.
 
 ## Syntax Grammar
 
@@ -261,10 +277,11 @@ check_components! {
 
 The `delegate_components!` block compiles on its own, because wiring is lazy. The
 `check_components!` block asserts `Person: CanUseComponent<GreeterComponent, ()>`, which fails with
-`E0277` at the `GreeterComponent` entry. The compiler's help names the cause:
-`HasField<Symbol!("name")>` is not implemented for `Person`, although the `first_name` field is. So
-the mismatch is reported at the wiring rather than at some distant call to `person.greet()`.
-[`cargo cgp check`](../cargo-cgp.md) condenses the same error into a root-cause tree.
+`E0277` at the `GreeterComponent` entry. The compiler's help names the cause: `Person` does not
+implement `HasField` for the `name` tag, which rustc prints as the nested
+`Symbol<4, Chars<'n', …>>` type. So the mismatch is reported at the wiring rather than at some
+distant call to `person.greet()`. [`cargo cgp check`](../cargo-cgp.md) condenses the same error into a root-cause
+tree ending in ``[CGP-E106] missing field `name` on `Person` ``.
 
 A check for a component with a generic parameter supplies the parameters explicitly:
 
@@ -303,6 +320,13 @@ individual provider layers through `#[check_providers(...)]`, which suits the
 [higher-order providers](../../concepts/higher-order-providers.md) such layers come from.
 
 ## Known issues
+
+`#[check_providers(...)]` does not work on a generic table. The generated trait names the context
+type in its supertrait, `IsProviderFor<__Component__, Gen<T>, __Params__>`, but the table's generics
+are merged only onto the impls, so `#[check_providers(RectangleArea)] <T> Gen<T> { … }` fails with
+`E0425`, ``cannot find type `T` in this scope``, and an `E0207` on the impl. The correct behavior
+would carry the table's generics onto the trait as well. Until then, check a concrete instantiation
+such as `Gen<u32>`.
 
 A context that is not a path, such as a reference `&'a Person`, cannot yield a derived check-trait
 name. Without `#[check_trait(...)]`, such a table fails to parse with `expected identifier`,
