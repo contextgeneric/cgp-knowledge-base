@@ -9,6 +9,7 @@ arena-allocating deserializer that realizes the context-and-capabilities proposa
 - **Source** — [blog/2025-11-03-cgp-serde-release.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/2025-11-03-cgp-serde-release.md)
 - **Published** — 3 November 2025, tagged `release`
 - **Status** — Historical
+- **Notice** — a note at the top of the post, written on the website's `v0.8.0` branch, links the [cgp-serde pages](https://contextgeneric.dev/docs/projects/cgp-serde/), per [projects/cgp-serde.md](../projects/cgp-serde.md); it is the sanctioned edit in [../AGENTS.md](../AGENTS.md#do-not-rewrite-history) and changes no claim
 
 ## What it covers
 
@@ -109,7 +110,6 @@ when a new piece needs that argument, rebuild it from the
 a documented release, a fresh post rather than a revision is the right form, and its future-work
 section should be re-checked against what has since been implemented rather than carried over.
 
-**One edit is already settled.** When the post's project section of the [planned Projects
-pages](../projects/cgp-serde.md) publishes, a pointer to the cgp-serde index goes at the top of this
-post, per the [settled case](../AGENTS.md#do-not-rewrite-history). It adds a link and changes no
-claim, snippet, or slug; nothing else in the post changes with it.
+**The post carries its notice.** A note at the top links the [cgp-serde section](../projects/cgp-serde.md),
+per the [settled case](../AGENTS.md#do-not-rewrite-history). It adds a link and changes no claim,
+snippet, or slug; nothing else in the post changes with it.

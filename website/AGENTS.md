@@ -227,9 +227,15 @@ the right choice for release notes, whose whole value is historical. When a post
 document for such a post says so explicitly.
 
 One case is settled and needs no further authorization: **when a project's section of the [Projects
-pages](projects/README.md) is published, a pointer to it is added at the top of the post it grew out
-of.** That edit adds a link and changes no claim, so it leaves the record intact while routing a
-reader who arrives from a search result to the maintained version. Two things are *not* settled by
+pages](projects/README.md) is written, a notice pointing to it is added at the top of each post that
+presents the project or a feature its pages document.** The author settled the scope: the post a
+section grew out of, the posts in the same series that explain the feature's internals, and a talk
+that used the project as its demonstration. That edit adds a link and changes no claim, so it leaves
+the record intact while routing a reader who arrives from a search result to the maintained version.
+The notice is a `:::note` admonition placed directly under the front matter, or under the post's own
+title where it has one, so it also shows in the blog's excerpt. It is written in the project voice,
+says the post's code predates the current design where it does, and links the project section and,
+where the feature has one, its Concepts page. Two things are *not* settled by
 it: a published post's **`slug` is never changed**, because moving a live URL breaks every inbound
 link to it, and no snippet in the post is rewritten.
 

@@ -50,8 +50,8 @@ its current source, and porting them is both more complete and more reliable tha
 Three things the deep dives got right carry over unchanged, and the [writing
 guide](../writing-guides/project.md) states each as a rule: a Projects page teaches its own subject
 and links to the Concepts tier instead of carrying a CGP primer; the candid account of costs
-survives the conversion from the author's voice to the project's; and the post a section grew out of
-gets a pointer to it at the top, the one sanctioned edit to a published post. The code prerequisites
+survives the conversion from the author's voice to the project's; and each post that presents a project
+gets a notice at its top pointing to the section, the one sanctioned edit to a published post. The code prerequisites
 the deep-dive plans found in `hypershell` and `cgp-serde` carry over too, as tasks DC1 and DC3 in
 [tasks.md](../tasks.md), which keep their IDs.
 
@@ -266,8 +266,8 @@ the work, and each is a task in [tasks.md](../tasks.md) rather than an afterthou
   where one does.
 - **Resources** lists each project's section rather than only its repository.
 
-The blog posts the sections grow out of get their pointer when each section publishes; each plan
-names which.
+The blog posts that present each project carry a notice at their top pointing to its section, and the
+example pages link those posts back; each plan names which.
 
 ## The document shape for a plan
 

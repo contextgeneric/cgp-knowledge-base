@@ -274,9 +274,11 @@ branch and says why. The `v0.8.0` branch must also be the default before source 
 
 ## The source post
 
-[Hypershell: a type-level DSL for shell-scripting](../blog/hypershell-release.md) gets a pointer to
-the Hypershell index when the section publishes. The post stays as it is, including its embedded CGP
-primer and its preset-based code; its record lists what has drifted.
+[Hypershell: a type-level DSL for shell-scripting](../blog/hypershell-release.md) carries a notice at
+its top linking the Hypershell section, and every Hypershell example page links the post back, at
+the post's section for that program where it has one. The post otherwise stays as it is, including
+its embedded CGP primer and its preset-based code; its record lists what has drifted.
+
 
 ## Maintaining it
 

@@ -222,10 +222,12 @@ point at it.
 
 ## The source post
 
-[cgp-serde: Serde as CGP components](../blog/cgp-serde-release.md) gets a pointer to the cgp-serde
-index when the section publishes. The [RustLab talk transcript](../blog/rustlab-2025-coherence.md)
-used the library as its live demonstration; whether it gets a pointer too is the author's decision,
-since the settled rule covers the post a section grew out of.
+[cgp-serde: Serde as CGP components](../blog/cgp-serde-release.md) carries a notice at its top linking
+the cgp-serde section, and so does the [RustLab talk transcript](../blog/rustlab-2025-coherence.md),
+which used the library as its live demonstration; the author settled that the talk gets one. The
+`basic` and `messages` pages link the announcement post back at the section that presents each, and
+`messages` also links the talk.
+
 
 ## Maintaining it
 

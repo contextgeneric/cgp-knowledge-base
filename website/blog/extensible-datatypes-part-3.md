@@ -10,6 +10,7 @@ closest thing the site has to implementation documentation.
 - **Published** — 12 July 2025, tagged `deepdive`
 - **Release** — [v0.4.2](../../releases/v0-4-2.md)
 - **Status** — Historical
+- **Notice** — a note at the top of the post, written on the website's `v0.8.0` branch, links the *Extensible records* Concepts page and the reference, since the post explains internals rather than a project; it is the sanctioned edit in [../AGENTS.md](../AGENTS.md#do-not-rewrite-history) and changes no claim
 
 ## What it covers
 

@@ -229,9 +229,11 @@ replace. The code tasks are numbered DC, and DC1 and DC3 keep their IDs.
   reference pages, each project section listed on Resources, and the applied tutorial (T3) routed to the
   project example that develops its scenario. *Blocked by:* the pages each link targets.
 
-Each of P1–P3 finishes the same way: **a pointer to the project section is added at the top of each blog
-post it grew out of**, which each project's plan names. That is the one sanctioned edit to a published
-post, since it adds a link and changes no claim; the post's slug and its snippets are untouched.
+Each of P1–P3 carries the same obligation: **a notice pointing to the project section is added at the top
+of each blog post that presents the project**, which each project's plan names, and each example page links
+its post back. That is the one sanctioned edit to a published post, since it adds a link and changes no
+claim; the post's slug and its snippets are untouched. The notices for the written sections are in place;
+part 1 of the extensible data types series gains its `builder` link when those pages are written.
 
 ## B — The blog
 
