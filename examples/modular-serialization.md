@@ -1,39 +1,51 @@
 # Modular serialization
 
-This example uses [cgp-serde](../projects/cgp-serde/README.md), which rebuilds Serde's `Serialize` and
-`Deserialize` as CGP components, so that how each value type is encoded becomes a per-application
-wiring choice rather than a single fixed implementation baked into the type. It progresses from the two
-serialization components, through the family of overlapping providers the library ships, to two
-application contexts that serialize the same nested data into different JSON formats by changing only a
-handful of wiring lines, and finally to a deserializer that allocates into an arena the context
-supplies. It is the template for any trait where the same type needs several interchangeable
-implementations chosen per application, and where the orphan rule would otherwise force a library to
-derive the trait on every data type itself.
+This example uses [cgp-serde](../projects/cgp-serde/README.md), which rebuilds Serde's `Serialize`
+and `Deserialize` as CGP components, so that how each value type is encoded becomes a
+per-application wiring choice rather than a single fixed implementation baked into the type. It
+progresses from the two serialization components, through the family of overlapping providers the
+library ships, to two application contexts that serialize the same nested data into different JSON
+formats by changing only a handful of wiring lines, and finally to a deserializer that allocates
+into an arena the context supplies. It is the template for any trait where the same type needs
+several interchangeable implementations chosen per application, and where the orphan rule would
+otherwise force a library to derive the trait on every data type itself.
 
-The concepts each step demonstrates are documented in full elsewhere; this example notes which one is
-in play and links to it:
+The concepts each step demonstrates are documented in full elsewhere; this example notes which one
+is in play and links to it:
 
-- splitting a trait so overlapping and orphan implementations are legal: [consumer and provider traits](../cgp/concepts/consumer-and-provider-traits.md) and the [coherence](../cgp/concepts/coherence.md) strategy behind it
-- the two components and why the value leaves `Self`: [cgp-serde's component design](../projects/cgp-serde/architecture/component-design.md)
-- providers that hand nested values back to the context: [re-entrant providers](../projects/cgp-serde/architecture/reentrant-providers.md)
-- serializing a struct with no serialization-specific derive: [extensible records](../cgp/concepts/extensible-records.md) via [`#[derive(CgpData)]`](../cgp/reference/derives/derive_cgp_data.md), and cgp-serde's [record providers](../projects/cgp-serde/reference/records.md)
-- selecting a provider per value type, inline in the context's own table: the `open` statement of [`delegate_components!`](../cgp/reference/macros/delegate_components.md)
+- splitting a trait so overlapping and orphan implementations are legal:
+  [consumer and provider traits](../cgp/concepts/consumer-and-provider-traits.md) and the
+  [coherence](../cgp/concepts/coherence.md) strategy behind it
+- the two components and why the value leaves `Self`:
+  [cgp-serde's component design](../projects/cgp-serde/architecture/component-design.md)
+- providers that hand nested values back to the context:
+  [re-entrant providers](../projects/cgp-serde/architecture/reentrant-providers.md)
+- serializing a struct with no serialization-specific derive:
+  [extensible records](../cgp/concepts/extensible-records.md) via
+  [`#[derive(CgpData)]`](../cgp/reference/derives/derive_cgp_data.md), and cgp-serde's
+  [record providers](../projects/cgp-serde/reference/records.md)
+- selecting a provider per value type, inline in the context's own table: the `open` statement of
+  [`delegate_components!`](../cgp/reference/macros/delegate_components.md)
 - verifying a context's wiring: [`check_components!`](../cgp/reference/macros/check_components.md)
-- pulling a service from the context during deserialization: cgp-serde's [context services](../projects/cgp-serde/architecture/context-services.md), with the [`HasErrorType`](../cgp/reference/components/has_error_type.md) and [`CanRaiseError`](../cgp/reference/components/can_raise_error.md) error components wired through [modular error handling](../cgp/concepts/modular-error-handling.md)
+- pulling a service from the context during deserialization: cgp-serde's
+  [context services](../projects/cgp-serde/architecture/context-services.md), with the
+  [`HasErrorType`](../cgp/reference/components/has_error_type.md) and
+  [`CanRaiseError`](../cgp/reference/components/can_raise_error.md) error components wired through
+  [modular error handling](../cgp/concepts/modular-error-handling.md)
 
 The snippets assume `use cgp::prelude::*;` and compile against the `v0.8.0` branch of
 [cgp-serde](https://github.com/contextgeneric/cgp-serde/tree/v0.8.0), using its `cgp-serde`,
-`cgp-serde-extra`, `cgp-serde-json`, `cgp-serde-alloc`, and `cgp-serde-typed-arena` crates. The imports
-each section needs are shown where it first needs them. The two applications and the layered arena
-context are re-derived from the repository's own tests, which are documented as they stand in
+`cgp-serde-extra`, `cgp-serde-json`, `cgp-serde-alloc`, and `cgp-serde-typed-arena` crates. The
+imports each section needs are shown where it first needs them. The two applications and the layered
+arena context are re-derived from the repository's own tests, which are documented as they stand in
 [cgp-serde's examples](../projects/cgp-serde/examples/README.md).
 
 ## The two serialization components
 
-The starting point is a context-generic restatement of Serde's two traits, which cgp-serde defines in
-`cgp_serde::components`. Each moves the type being serialized out of the `Self` position, where Serde
-keeps it, and into an explicit `Value` parameter, leaving `Self` to name a **context** that carries the
-wiring:
+The starting point is a context-generic restatement of Serde's two traits, which cgp-serde defines
+in `cgp_serde::components`. Each moves the type being serialized out of the `Self` position, where
+Serde keeps it, and into an explicit `Value` parameter, leaving `Self` to name a **context** that
+carries the wiring:
 
 ```rust
 #[cgp_component(ValueSerializer)]
@@ -51,27 +63,28 @@ pub trait CanDeserializeValue<'de, Value> {
 }
 ```
 
-`CanSerializeValue` and `CanDeserializeValue` are the [consumer traits](../cgp/concepts/consumer-and-provider-traits.md)
-callers use as `context.serialize(value, s)`; `ValueSerializer` and `ValueDeserializer` are the provider
-traits implementations are written against. The extra `&self` is the whole point: it gives every
+`CanSerializeValue` and `CanDeserializeValue` are the
+[consumer traits](../cgp/concepts/consumer-and-provider-traits.md) callers use as
+`context.serialize(value, s)`; `ValueSerializer` and `ValueDeserializer` are the provider traits
+implementations are written against. The extra `&self` is the whole point: it gives every
 implementation access to the context, both to ask how nested values are encoded and, for
 deserialization, to pull runtime services out of it. The library's definitions also carry a legacy
 `#[derive_delegate]` attribute that this example does not need; see
 [the components](../projects/cgp-serde/reference/components.md).
 
 Both components are therefore **parameter-targeted**, and every context in this example is an
-**environmental context**, the shape the [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md)
-places on tier 4. The example starts there rather than working up to it because serialization is the
-case that genuinely needs it: the encoded types are foreign, so a self-targeted component would give
-`Vec<u8>` one encoding for the whole program, and the two-applications payoff below would be
-impossible.
+**environmental context**, the shape the
+[modularity hierarchy](../cgp/concepts/modularity-hierarchy.md) places on tier 4. The example starts
+there rather than working up to it because serialization is the case that genuinely needs it: the
+encoded types are foreign, so a self-targeted component would give `Vec<u8>` one encoding for the
+whole program, and the two-applications payoff below would be impossible.
 
 ## Overlapping providers
 
-With the type moved off `Self`, several implementations of the same component can coexist even though
-they overlap. Each is written for its own zero-sized provider struct, which the defining crate owns, so
-the [coherence](../cgp/concepts/coherence.md) rules never apply. cgp-serde ships such a family in
-`cgp_serde::providers`, and their headers show the overlap:
+With the type moved off `Self`, several implementations of the same component can coexist even
+though they overlap. Each is written for its own zero-sized provider struct, which the defining
+crate owns, so the [coherence](../cgp/concepts/coherence.md) rules never apply. cgp-serde ships such
+a family in `cgp_serde::providers`, and their headers show the overlap:
 
 ```rust
 #[cgp_impl(UseSerde)]
@@ -94,21 +107,22 @@ where
 { ... }
 ```
 
-`UseSerde` defers to a type's existing Serde impl, `SerializeBytes` writes any byte container as bytes,
-and `SerializeWithDisplay` formats any `Display` value and serializes the resulting string. A `String`
-satisfies all three bounds, so as blanket `Serialize` impls any two would be rejected; as named
-providers they are simply entries a context may choose between. `SerializeWithDisplay` also shows the
-second property the design depends on: it does not decide how the string is written, but asks the
-context through the `CanSerializeValue<String>` dependency its `#[uses]` declares. The full family is
-listed in the [provider table](../projects/cgp-serde/reference/README.md#serialization-and-deserialization-providers).
+`UseSerde` defers to a type's existing Serde impl, `SerializeBytes` writes any byte container as
+bytes, and `SerializeWithDisplay` formats any `Display` value and serializes the resulting string. A
+`String` satisfies all three bounds, so as blanket `Serialize` impls any two would be rejected; as
+named providers they are simply entries a context may choose between. `SerializeWithDisplay` also
+shows the second property the design depends on: it does not decide how the string is written, but
+asks the context through the `CanSerializeValue<String>` dependency its `#[uses]` declares. The full
+family is listed in the
+[provider table](../projects/cgp-serde/reference/README.md#serialization-and-deserialization-providers).
 
 ## Encodings that call back into the context
 
-The providers that make the two applications differ live in `cgp_serde_extra::providers`. `SerializeHex`
-and `SerializeBase64` encode bytes as text, `SerializeRfc3339Date` and `SerializeTimestamp` encode a
-`DateTime<Utc>` as a string or a Unix timestamp, and each converts to an intermediate value that it
-serializes through the context, so the final representation of that string or number is itself a
-wiring choice:
+The providers that make the two applications differ live in `cgp_serde_extra::providers`.
+`SerializeHex` and `SerializeBase64` encode bytes as text, `SerializeRfc3339Date` and
+`SerializeTimestamp` encode a `DateTime<Utc>` as a string or a Unix timestamp, and each converts to
+an intermediate value that it serializes through the context, so the final representation of that
+string or number is itself a wiring choice:
 
 ```rust
 #[cgp_impl(SerializeHex)]
@@ -123,10 +137,10 @@ where
 impl ValueSerializer<DateTime<Utc>> { ... }
 ```
 
-Each also implements the deserializing direction on the same struct, so a context that wires `Vec<u8>`
-to `SerializeHex` reads hex back with the same entry; see the [encodings](../projects/cgp-serde/reference/encodings.md).
-Writing a provider of your own follows the same shape, as
-[writing a provider](../projects/cgp-serde/guides/writing-a-provider.md) shows.
+Each also implements the deserializing direction on the same struct, so a context that wires
+`Vec<u8>` to `SerializeHex` reads hex back with the same entry; see the
+[encodings](../projects/cgp-serde/reference/encodings.md). Writing a provider of your own follows
+the same shape, as [writing a provider](../projects/cgp-serde/guides/writing-a-provider.md) shows.
 
 ## Serializing collections and structs
 
@@ -151,14 +165,16 @@ where
 { ... }
 ```
 
-Each item and each field is handed to Serde wrapped with the context in a `SerializeWithContext`, so it
-re-enters the context's wiring; [re-entrant providers](../projects/cgp-serde/architecture/reentrant-providers.md)
-explains the mechanism. `SerializeFields` is available because the struct derives
+Each item and each field is handed to Serde wrapped with the context in a `SerializeWithContext`, so
+it re-enters the context's wiring;
+[re-entrant providers](../projects/cgp-serde/architecture/reentrant-providers.md) explains the
+mechanism. `SerializeFields` is available because the struct derives
 [`CgpData`](../cgp/reference/derives/derive_cgp_data.md) and so exposes its fields through
-[`HasFields`](../cgp/reference/traits/has_fields.md). This is the payoff for the orphan rule: a data type
-needs no serialization-specific derive and no dependency on `serde` or cgp-serde at all, so a library
-never has to implement a serialization trait on types it owns just because a downstream application
-wants to encode them; see [derive-free records](../projects/cgp-serde/architecture/derive-free-records.md).
+[`HasFields`](../cgp/reference/traits/has_fields.md). This is the payoff for the orphan rule: a data
+type needs no serialization-specific derive and no dependency on `serde` or cgp-serde at all, so a
+library never has to implement a serialization trait on types it owns just because a downstream
+application wants to encode them; see
+[derive-free records](../projects/cgp-serde/architecture/derive-free-records.md).
 
 ## The data types
 
@@ -191,16 +207,17 @@ pub struct MessagesArchive {
 
 ## Wiring an application context
 
-A context turns the pile of overlapping providers into one coherent scheme by choosing, per value type,
-which provider runs. The `open` statement in [`delegate_components!`](../cgp/reference/macros/delegate_components.md)
-opens the serialization component for per-type wiring directly in the context's own table; after it,
-an `@ValueSerializerComponent.<Type>: <Provider>` entry assigns a provider to each value type the
+A context turns the pile of overlapping providers into one coherent scheme by choosing, per value
+type, which provider runs. The `open` statement in
+[`delegate_components!`](../cgp/reference/macros/delegate_components.md) opens the serialization
+component for per-type wiring directly in the context's own table; after it, an
+`@ValueSerializerComponent.<Type>: <Provider>` entry assigns a provider to each value type the
 archive touches.
 
 `AppA` is a unit struct with no fields, and that is complete rather than a placeholder: an
-environmental context's whole job is to be a name the wiring table hangs off, so it carries data only
-when a provider needs data from it, as `App<'a>` does for the arena in the deserialization section
-below.
+environmental context's whole job is to be a name the wiring table hangs off, so it carries data
+only when a provider needs data from it, as `App<'a>` does for the arena in the deserialization
+section below.
 
 ```rust
 use cgp_serde::components::ValueSerializerComponent;
@@ -244,8 +261,9 @@ value behind the reference and is needed because `SerializeIterator` yields refe
 types fall back to plain Serde, which also writes the string `SerializeHex` produces; `Vec<u8>` is
 encoded as hexadecimal, `DateTime<Utc>` as an RFC 3339 string, the collections as sequences, and the
 structs as maps. Because the byte and date entries are the only ones that fix a *format*, a second
-application differs in only a few lines: base64 instead of hex, Unix timestamps instead of RFC 3339,
-plus an `i64` entry, because `SerializeTimestamp` serializes the timestamp through the context:
+application differs in only a few lines, using base64 instead of hex and Unix timestamps instead of
+RFC 3339, plus an `i64` entry because `SerializeTimestamp` serializes the timestamp through the
+context:
 
 ```rust
 use cgp_serde_extra::providers::{SerializeBase64, SerializeTimestamp};
@@ -283,11 +301,12 @@ delegate_components! {
 }
 ```
 
-The two contexts resolve `Vec<u8>` to overlapping providers, `SerializeHex` and `SerializeBase64`, with
-no conflict, because each choice is coherent only within its own context. CGP wiring is
-[checked lazily](../cgp/concepts/check-traits.md), so a [`check_components!`](../cgp/reference/macros/check_components.md)
-block asserts at compile time that each context can serialize every value type, listing them as the
-`Value` parameters of `ValueSerializerComponent`; `AppB` gets the same block:
+The two contexts resolve `Vec<u8>` to overlapping providers, `SerializeHex` and `SerializeBase64`,
+with no conflict, because each choice is coherent only within its own context. CGP wiring is
+[checked lazily](../cgp/concepts/check-traits.md), so a
+[`check_components!`](../cgp/reference/macros/check_components.md) block asserts at compile time
+that each context can serialize every value type, listing them as the `Value` parameters of
+`ValueSerializerComponent`; `AppB` gets the same block:
 
 ```rust
 check_components! {
@@ -307,10 +326,11 @@ check_components! {
 
 ## Producing JSON
 
-Because the providers ultimately call a real `serde::Serializer`, the existing JSON ecosystem still does
-the writing. The bridge is [`SerializeWithContext`](../projects/cgp-serde/reference/context-adapters.md),
-which pairs a context and a value into a type that implements Serde's `Serialize` by calling the
-context's `CanSerializeValue`:
+Because the providers ultimately call a real `serde::Serializer`, the existing JSON ecosystem still
+does the writing. The bridge is
+[`SerializeWithContext`](../projects/cgp-serde/reference/context-adapters.md), which pairs a context
+and a value into a type that implements Serde's `Serialize` by calling the context's
+`CanSerializeValue`:
 
 ```rust
 use cgp_serde::types::SerializeWithContext;
@@ -344,18 +364,19 @@ and out of `AppB` with base64 bytes and a Unix timestamp:
 }
 ```
 
-Nothing in the data types or the providers changed between the two, only which context wraps the value.
+Nothing in the data types or the providers changed between the two, only which context wraps the
+value.
 
 ## Deserializing with a context-supplied service
 
 Deserialization mirrors serialization, and the extra `&self` becomes essential in a way Serde cannot
-match: the context can supply runtime *services* that a provider pulls in by dependency injection. The
-motivating case is an [arena allocator](https://en.wikipedia.org/wiki/Region-based_memory_management),
-deserializing many borrowed `&'a T` values into one arena instead of heap-allocating each. cgp-serde
-splits the work into [layers](../projects/cgp-serde/architecture/context-services.md): a
-`DeserializeAndAllocate` provider deserializes the owned value through the context and hands it to a
-`CanAlloc` allocation component, and `AllocateWithArena` implements that component from an arena
-getter:
+match: the context can supply runtime *services* that a provider pulls in by dependency injection.
+The motivating case is an
+[arena allocator](https://en.wikipedia.org/wiki/Region-based_memory_management), deserializing many
+borrowed `&'a T` values into one arena instead of heap-allocating each. cgp-serde splits the work
+into [layers](../projects/cgp-serde/architecture/context-services.md). A `DeserializeAndAllocate`
+provider deserializes the owned value through the context and hands it to a `CanAlloc` allocation
+component, and `AllocateWithArena` implements that component from an arena getter:
 
 ```rust
 #[cgp_impl(new DeserializeAndAllocate)]
@@ -369,9 +390,10 @@ impl<'a, Value: 'a> Allocator<'a, Value>
 { ... }
 ```
 
-The data and the context complete the picture. The structs derive `CgpData` for generic field-by-field
-deserialization, and the context carries the arena as an ordinary field borrowed from outside, deriving
-[`HasField`](../cgp/reference/traits/has_field.md) so the arena getter can be wired to it:
+The data and the context complete the picture. The structs derive `CgpData` for generic
+field-by-field deserialization, and the context carries the arena as an ordinary field borrowed from
+outside, deriving [`HasField`](../cgp/reference/derives/derive_has_field.md) so the arena getter can
+be wired to it:
 
 ```rust
 use typed_arena::Arena;
@@ -395,11 +417,12 @@ pub struct App<'a> {
 }
 ```
 
-The wiring opens the deserialization component and keys on the value type as before, routing the bare
-`Coord` and `Cluster` to the record deserializer, the borrowed `&'a Coord` to the arena allocator, and
-the `Vec<&'a Coord>` to a sequence deserializer. It wires the allocation layers with two plain entries,
-and, because deserialization can fail, the [`HasErrorType`](../cgp/reference/components/has_error_type.md)
-and [`CanRaiseError`](../cgp/reference/components/can_raise_error.md) error components to the
+The wiring opens the deserialization component and keys on the value type as before, routing the
+bare `Coord` and `Cluster` to the record deserializer, the borrowed `&'a Coord` to the arena
+allocator, and the `Vec<&'a Coord>` to a sequence deserializer. It wires the allocation layers with
+two plain entries, and, because deserialization can fail, the
+[`HasErrorType`](../cgp/reference/components/has_error_type.md) and
+[`CanRaiseError`](../cgp/reference/components/can_raise_error.md) error components to the
 [`anyhow` backend](../projects/error/cgp-error-anyhow/reference.md):
 
 ```rust
@@ -453,8 +476,8 @@ check_components! {
 ```
 
 The check lists each value type with a [`Life<'de>`](../cgp/reference/types/life.md), because the
-deserialization component's `'de` lifetime is one of its parameters. With the context built around an
-arena, deserializing a JSON cluster allocates its coordinates into that arena, and the returned
+deserialization component's `'de` lifetime is one of its parameters. With the context built around
+an arena, deserializing a JSON cluster allocates its coordinates into that arena, and the returned
 `Cluster` borrows from it:
 
 ```rust
@@ -476,9 +499,9 @@ let app = App { arena: &arena };
 let cluster: Cluster<'_> = app.deserialize_json_string(serialized).unwrap();
 ```
 
-The arena was never an argument to a deserialize function; Serde's `from_str` has no slot for one. It
-reached `DeserializeAndAllocate` through the context, which is how CGP supplies a dependency to code
-nested arbitrarily deep without threading it explicitly, the
+The arena was never an argument to a deserialize function; Serde's `from_str` has no slot for one.
+It reached `DeserializeAndAllocate` through the context, which is how CGP supplies a dependency to
+code nested arbitrarily deep without threading it explicitly, the
 [dependency-injection](../cgp/concepts/impl-side-dependencies.md) idea applied to deserialization.
 Swapping the arena for another allocator means wiring `AllocatorComponent` to a different provider,
 without touching the deserializer.

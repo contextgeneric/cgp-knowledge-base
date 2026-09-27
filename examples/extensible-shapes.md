@@ -1,19 +1,42 @@
 # Extensible shapes
 
-This example computes properties of geometric shapes (area, scaling) modeled as the variants of an enum, dispatching each operation to a per-variant implementation without a hand-written `match`. It progresses from a per-type operation that is lifted onto an enum automatically, through mutating and argument-taking operations, to converting between related shape enums and finally wiring the dispatch into a context. It is a template for any use case where one operation has a separate implementation per case of a sum type, and the set of cases should stay open to extension: the *extensible visitor* counterpart to the per-context dispatch in [area calculation](area-calculation.md).
+This example computes properties of geometric shapes (area, scaling) modeled as the variants of an
+enum, dispatching each operation to a per-variant implementation without a hand-written `match`. It
+progresses from a per-type operation that is lifted onto an enum automatically, through mutating and
+argument-taking operations, to converting between related shape enums and finally wiring the
+dispatch into a context. It is a template for any use case where one operation has a separate
+implementation per case of a sum type, and the set of cases should stay open to extension: the
+*extensible visitor* counterpart to the per-context dispatch in
+[area calculation](area-calculation.md).
 
-The context here is an **environmental context** (`App` carries the wiring and nothing else) and the components are **parameter-targeted**, with the shape arriving as the handler's input. Contrast this with the [area calculation](area-calculation.md) example, which computes areas with the shape itself as a **value context**; the two arrangements solve the same-sounding problem differently, and the [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md) explains when each is right.
+The context here is an **environmental context** (`App` carries the wiring and nothing else) and the
+components are **parameter-targeted**, with the shape arriving as the handler's input. Contrast this
+with the [area calculation](area-calculation.md) example, which computes areas with the shape itself
+as a **value context**; the two arrangements solve the same-sounding problem differently, and the
+[modularity hierarchy](../cgp/concepts/modularity-hierarchy.md) explains when each is right.
 
-The concepts each step demonstrates are documented in full in the reference; this example only notes which one is in play and links to it:
+The concepts each step demonstrates are documented in full in the reference; this example only notes
+which one is in play and links to it:
 
-- shapes as the variants of an enum: [extensible variants](../cgp/concepts/extensible-variants.md) via [`#[derive(CgpData)]`](../cgp/reference/derives/derive_cgp_data.md)
-- dispatching an operation to per-variant implementations: [`#[cgp_auto_dispatch]`](../cgp/reference/macros/cgp_auto_dispatch.md)
-- per-variant handlers as computers: [`#[cgp_computer]`](../cgp/reference/macros/cgp_computer.md) producing [`Computer`](../cgp/reference/components/computer.md) providers
-- widening and narrowing the variant set: [upcasting and downcasting](../cgp/reference/traits/cast.md)
-- the dispatch machinery underneath: the [dispatch combinators](../cgp/reference/providers/dispatch_combinators.md) and [dispatching](../cgp/concepts/dispatching.md)
-- wiring dispatch into a context: the `open` statement of [`delegate_components!`](../cgp/reference/macros/delegate_components.md), keyed on the input per [dispatching per type](../cgp/guides/dispatching-per-type.md), and a [`check_components!`](../cgp/reference/macros/check_components.md) assertion
+- shapes as the variants of an enum: [extensible variants](../cgp/concepts/extensible-variants.md)
+  via [`#[derive(CgpData)]`](../cgp/reference/derives/derive_cgp_data.md)
+- dispatching an operation to per-variant implementations:
+  [`#[cgp_auto_dispatch]`](../cgp/reference/macros/cgp_auto_dispatch.md)
+- per-variant handlers as computers: [`#[cgp_computer]`](../cgp/reference/macros/cgp_computer.md)
+  producing [`Computer`](../cgp/reference/components/computer.md) providers
+- widening and narrowing the variant set:
+  [upcasting and downcasting](../cgp/reference/traits/cast.md)
+- the dispatch machinery underneath: the
+  [dispatch combinators](../cgp/reference/providers/dispatch_combinators.md) and
+  [dispatching](../cgp/concepts/dispatching.md)
+- wiring dispatch into a context: the `open` statement of
+  [`delegate_components!`](../cgp/reference/macros/delegate_components.md), keyed on the input per
+  [dispatching per type](../cgp/guides/dispatching-per-type.md), and a
+  [`check_components!`](../cgp/reference/macros/check_components.md) assertion
 
-All snippets assume `use cgp::prelude::*;`, which also brings `MatchWithValueHandlers`; the other dispatch combinators come from `cgp::extra::dispatch`, and the cast helpers from `cgp::core::field::impls`. Each shape is its own payload struct:
+All snippets assume `use cgp::prelude::*;`, which also brings `MatchWithValueHandlers`; the other
+dispatch combinators come from `cgp::extra::dispatch`, and the cast helpers from
+`cgp::core::field::impls`. Each shape is its own payload struct:
 
 ```rust
 #[derive(Debug, PartialEq)]
@@ -36,7 +59,10 @@ pub struct Triangle {
 
 ## A per-type operation, lifted onto enums
 
-The smallest unit is an ordinary trait with one implementation per shape type. Marking the trait with [`#[cgp_auto_dispatch]`](../cgp/reference/macros/cgp_auto_dispatch.md) is what later lets any *enum* of these shapes gain the operation for free, dispatched to the matching variant; but the per-type impls themselves are plain Rust:
+The smallest unit is an ordinary trait with one implementation per shape type. Marking the trait
+with [`#[cgp_auto_dispatch]`](../cgp/reference/macros/cgp_auto_dispatch.md) is what later lets any
+*enum* of these shapes gain the operation for free, dispatched to the matching variant; but the
+per-type impls themselves are plain Rust:
 
 ```rust
 #[cgp_auto_dispatch]
@@ -63,11 +89,17 @@ impl HasArea for Triangle {
 }
 ```
 
-`#[cgp_auto_dispatch]` leaves the trait and these impls untouched and generates, behind the scenes, the per-variant handler and the enum-level implementation that runs it. The operation reads like a normal method; the dispatch is what the macro supplies.
+`#[cgp_auto_dispatch]` leaves the trait and these impls untouched and generates, behind the scenes,
+the per-variant handler and the enum-level implementation that runs it. The operation reads like a
+normal method; the dispatch is what the macro supplies.
 
 ## An enum of shapes
 
-A concrete shape is one enum over the payload types, made [extensible](../cgp/concepts/extensible-variants.md) with [`#[derive(CgpData)]`](../cgp/reference/derives/derive_cgp_data.md) so it can be taken apart by the variant name generically. Each variant holds exactly one payload, the single-field tuple form the derive requires:
+A concrete shape is one enum over the payload types, made
+[extensible](../cgp/concepts/extensible-variants.md) with
+[`#[derive(CgpData)]`](../cgp/reference/derives/derive_cgp_data.md) so it can be taken apart by the
+variant name generically. Each variant holds exactly one payload, the single-field tuple form the
+derive requires:
 
 ```rust
 #[derive(Debug, PartialEq, CgpData)]
@@ -77,18 +109,23 @@ pub enum Shape {
 }
 ```
 
-Because `HasArea` carries `#[cgp_auto_dispatch]` and `Shape` is extensible, `Shape` now implements `HasArea` too, matching its current variant and delegating to that payload's `area`:
+Because `HasArea` carries `#[cgp_auto_dispatch]` and `Shape` is extensible, `Shape` now implements
+`HasArea` too, matching its current variant and delegating to that payload's `area`:
 
 ```rust
 let shape = Shape::Circle(Circle { radius: 5.0 });
 assert_eq!(shape.area(), 25.0 * core::f64::consts::PI);
 ```
 
-The dispatch is resolved at compile time, and forgetting an `impl HasArea` for one variant's payload is a compile error at the point `Shape::area` is used, not a runtime fallthrough.
+The dispatch is resolved at compile time, and forgetting an `impl HasArea` for one variant's payload
+is a compile error at the point `Shape::area` is used, not a runtime fallthrough.
 
 ## Operations that mutate or take arguments
 
-The same dispatch covers every method shape, not just a by-value reader. A `&mut self` method that also takes an argument (scaling a shape by a factor) dispatches identically; `#[cgp_auto_dispatch]` selects the matcher form that matches the receiver and threads the extra argument through to each variant's implementation:
+The same dispatch covers every method shape, not just a by-value reader. A `&mut self` method that
+also takes an argument (scaling a shape by a factor) dispatches identically; `#[cgp_auto_dispatch]`
+selects the matcher form that matches the receiver and threads the extra argument through to each
+variant's implementation:
 
 ```rust
 #[cgp_auto_dispatch]
@@ -121,11 +158,16 @@ shape.scale(2.0);
 assert_eq!(shape.area(), 16.0);
 ```
 
-A trait may mix reading and mutating methods, by-value and by-reference receivers, extra arguments, and `async` methods, all dispatched the same way; the [`#[cgp_auto_dispatch]`](../cgp/reference/macros/cgp_auto_dispatch.md) reference covers which matcher each shape selects.
+A trait may mix reading and mutating methods, by-value and by-reference receivers, extra arguments,
+and `async` methods, all dispatched the same way; the
+[`#[cgp_auto_dispatch]`](../cgp/reference/macros/cgp_auto_dispatch.md) reference covers which
+matcher each shape selects.
 
 ## Widening and narrowing the shape set
 
-Two enums that share variants interconvert with no hand-written conversion, through the [casting traits](../cgp/reference/traits/cast.md). A wider `ShapePlus` adds a `Triangle` case alongside the two `Shape` already has:
+Two enums that share variants interconvert with no hand-written conversion, through the
+[casting traits](../cgp/reference/traits/cast.md). A wider `ShapePlus` adds a `Triangle` case
+alongside the two `Shape` already has:
 
 ```rust
 #[derive(Debug, PartialEq, CgpData)]
@@ -136,7 +178,9 @@ pub enum ShapePlus {
 }
 ```
 
-Upcasting a `Shape` into `ShapePlus` always succeeds, since every `Shape` variant has a home in the wider enum; downcasting back may fail, returning the value untouched when its variant has no home in the narrower target:
+Upcasting a `Shape` into `ShapePlus` always succeeds, since every `Shape` variant has a home in the
+wider enum; downcasting back may fail, returning the value untouched when its variant has no home in
+the narrower target:
 
 ```rust
 let shape = Shape::Circle(Circle { radius: 5.0 });
@@ -147,7 +191,10 @@ let narrowed = ShapePlus::Circle(Circle { radius: 5.0 }).downcast(PhantomData::<
 assert_eq!(narrowed.ok(), Some(Shape::Circle(Circle { radius: 5.0 })));
 ```
 
-A `ShapePlus::Triangle` cannot narrow to `Shape`, so its `downcast` returns `Err(remainder)`. The remainder is the partial enum with the already-tried variants ruled out, and it can be narrowed again against another candidate with `downcast_fields`, narrowing a leftover `Triangle` into a `TriangleOnly` enum, which here cannot fail:
+A `ShapePlus::Triangle` cannot narrow to `Shape`, so its `downcast` returns `Err(remainder)`. The
+remainder is the partial enum with the already-tried variants ruled out, and it can be narrowed
+again against another candidate with `downcast_fields`, narrowing a leftover `Triangle` into a
+`TriangleOnly` enum, which here cannot fail:
 
 ```rust
 #[derive(Debug, PartialEq, CgpData)]
@@ -158,7 +205,12 @@ pub enum TriangleOnly {
 
 ## Under the hood: the dispatch combinators
 
-What `#[cgp_auto_dispatch]` writes for `Shape::area` is a [dispatch combinator](../cgp/reference/providers/dispatch_combinators.md), and the same dispatch can be assembled by hand. The macro turns each method into a per-variant [`Computer`](../cgp/reference/components/computer.md) provider with [`#[cgp_computer]`](../cgp/reference/macros/cgp_computer.md) (`area` yields a provider named `ComputeArea`) and then runs a *matcher* over the enum's variants:
+What `#[cgp_auto_dispatch]` writes for `Shape::area` is a
+[dispatch combinator](../cgp/reference/providers/dispatch_combinators.md), and the same dispatch can
+be assembled by hand. The macro turns each method into a per-variant
+[`Computer`](../cgp/reference/components/computer.md) provider with
+[`#[cgp_computer]`](../cgp/reference/macros/cgp_computer.md) (`area` yields a provider named
+`ComputeArea`) and then runs a *matcher* over the enum's variants:
 
 ```rust
 use cgp::extra::dispatch::{ExtractFieldAndHandle, HandleFieldValue, MatchWithHandlers};
@@ -171,20 +223,38 @@ let area = MatchWithHandlers::<Product![
 ]>::compute(&(), PhantomData::<()>, circle);
 ```
 
-Each `ExtractFieldAndHandle` tries one variant by its [`Symbol!`](../cgp/reference/macros/symbol.md) name and, on a match, hands the payload to `ComputeArea`; the list runs first-match-wins, and once every variant has been tried the remainder is uninhabited, so the match is provably exhaustive with no wildcard arm. The `ComputeArea` provider is what [`#[cgp_computer]`](../cgp/reference/macros/cgp_computer.md) produces from a function that forwards to the trait method (equivalent to `fn compute_area<S: HasArea>(s: S) -> f64 { s.area() }`) and it is exactly the per-variant handler `#[cgp_auto_dispatch]` generates.
+Each `ExtractFieldAndHandle` tries one variant by its [`Symbol!`](../cgp/reference/macros/symbol.md)
+name and, on a match, hands the payload to `ComputeArea`; the list runs first-match-wins, and once
+every variant has been tried the remainder is uninhabited, so the match is provably exhaustive with
+no wildcard arm. The `ComputeArea` provider is what
+[`#[cgp_computer]`](../cgp/reference/macros/cgp_computer.md) produces from a function that forwards
+to the trait method (equivalent to `fn compute_area<S: HasArea>(s: S) -> f64 { s.area() }`) and it
+is exactly the per-variant handler `#[cgp_auto_dispatch]` generates.
 
-Spelling out one adapter per variant is mechanical, so `MatchWithValueHandlers` is the shorthand that derives the same list from the enum's own variant list; naming the per-variant provider once dispatches the whole enum:
+Spelling out one adapter per variant is mechanical, so `MatchWithValueHandlers` is the shorthand
+that derives the same list from the enum's own variant list; naming the per-variant provider once
+dispatches the whole enum:
 
 ```rust
 let circle = Shape::Circle(Circle { radius: 5.0 });
 let _area = MatchWithValueHandlers::<ComputeArea>::compute(&(), PhantomData::<()>, circle);
 ```
 
-The matcher is a `Computer` provider invoked with a unit context `&()`, because the per-variant logic depends only on the payload, and this `MatchWithValueHandlers::<ComputeArea>` call is, up to naming the `Computer` trait, the body `#[cgp_auto_dispatch]` writes into the enum's generated `area` method.
+The matcher is a `Computer` provider invoked with a unit context `&()`, because the per-variant
+logic depends only on the payload, and this `MatchWithValueHandlers::<ComputeArea>` call is, up to
+naming the `Computer` trait, the body `#[cgp_auto_dispatch]` writes into the enum's generated `area`
+method.
 
 ## Wiring dispatch into a context
 
-Rather than implement the operation directly on the enum, the dispatch can be wired into a context's [`Computer`](../cgp/reference/components/computer.md) component, keyed on the *input* type. The `open` statement of [`delegate_components!`](../cgp/reference/macros/delegate_components.md) stores per-type entries on the context, and each path key names the component and then one segment per type parameter of `CanCompute<Code, Input>`. A per-entry generic `<Code>` as the first segment matches any code, so the second segment alone selects the provider. A bare payload type routes straight to its computer, while an enum routes to the matcher, which dispatches each extracted payload back through the context's own wiring:
+Rather than implement the operation directly on the enum, the dispatch can be wired into a context's
+[`Computer`](../cgp/reference/components/computer.md) component, keyed on the *input* type. The
+`open` statement of [`delegate_components!`](../cgp/reference/macros/delegate_components.md) stores
+per-type entries on the context, and each path key names the component and then one segment per type
+parameter of `CanCompute<Code, Input>`. A per-entry generic `<Code>` as the first segment matches
+any code, so the second segment alone selects the provider. A bare payload type routes straight to
+its computer, while an enum routes to the matcher, which dispatches each extracted payload back
+through the context's own wiring:
 
 ```rust
 pub struct App;
@@ -199,13 +269,33 @@ delegate_components! {
 }
 ```
 
-The brackets group alternatives for one segment, so each line wires several input types to one provider. Older code writes the same dispatch as a nested `UseInputDelegate` table, `ComputerComponent: UseInputDelegate<new AreaComputers { … }>`, which the [dispatching per type](../cgp/guides/dispatching-per-type.md) guide compares with this form.
+The brackets group alternatives for one segment, so each line wires several input types to one
+provider. Existing code often writes the same dispatch as a nested `UseInputDelegate` table,
+`ComputerComponent: UseInputDelegate<new AreaComputers { … }>`, which the
+[dispatching per type](../cgp/guides/dispatching-per-type.md) guide compares with this form.
 
-A `Circle` input resolves to `ComputeArea` directly. A `Shape` or `ShapePlus` input resolves to `MatchWithValueHandlers`, written here with no provider argument, so it defaults to [`UseContext`](../cgp/reference/providers/use_context.md) and dispatches each extracted payload *back through* `App`'s own `ComputerComponent` rather than to a fixed handler. That is why the payload types share the table: the matcher routes a `Circle` payload to whatever `App` wires for `Circle`, which here is `ComputeArea`.
+A `Circle` input resolves to `ComputeArea` directly. A `Shape` or `ShapePlus` input resolves to
+`MatchWithValueHandlers`, written here with no provider argument, so it defaults to
+[`UseContext`](../cgp/reference/providers/use_context.md) and dispatches each extracted payload
+*back through* `App`'s own `ComputerComponent` rather than to a fixed handler. That is why the
+payload types share the table: the matcher routes a `Circle` payload to whatever `App` wires for
+`Circle`, which here is `ComputeArea`.
 
-Routing through the context is what makes individual variants overridable. Swapping the handler for one shape (wiring `Circle` to an optimized provider, say) is a change to one entry of the table that leaves the matcher and every other variant untouched, precisely because the matcher never names `ComputeArea` itself. Pinning the matcher to a concrete provider as `MatchWithValueHandlers<ComputeArea>` is the other option, used when the dispatch should bypass the context entirely, as in the unit-context calls earlier.
+Routing through the context is what makes individual variants overridable. Swapping the handler for
+one shape (wiring `Circle` to an optimized provider, say) is a change to one entry of the table that
+leaves the matcher and every other variant untouched, precisely because the matcher never names
+`ComputeArea` itself. Pinning the matcher to a concrete provider as
+`MatchWithValueHandlers<ComputeArea>` is the other option, used when the dispatch should bypass the
+context entirely, as in the unit-context calls earlier.
 
-Because shape handlers are leaves (`ComputeArea` never calls back into the dispatcher) the enums can wire `MatchWithValueHandlers` directly. A *recursive* visitor cannot: the [expression interpreter](expression-interpreter.md) routes its enum through a thin wrapper provider instead, to break the trait-resolution cycle that its self-recursive handlers would otherwise create. Because CGP wiring is [checked lazily](../cgp/concepts/check-traits.md), a [`check_components!`](../cgp/reference/macros/check_components.md) block asserts at compile time that both enums are fully dispatchable, listing each as a `(Code, Input)` pair for the generic `Computer` component:
+Because shape handlers are leaves (`ComputeArea` never calls back into the dispatcher) the enums can
+wire `MatchWithValueHandlers` directly. A *recursive* visitor cannot: the
+[expression interpreter](expression-interpreter.md) routes its enum through a thin wrapper provider
+instead, to break the trait-resolution cycle that its self-recursive handlers would otherwise
+create. Because CGP wiring is [checked lazily](../cgp/concepts/check-traits.md), a
+[`check_components!`](../cgp/reference/macros/check_components.md) block asserts at compile time
+that both enums are fully dispatchable, listing each as a `(Code, Input)` pair for the generic
+`Computer` component:
 
 ```rust
 check_components! {
