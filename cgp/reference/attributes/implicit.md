@@ -1,18 +1,18 @@
 # `#[implicit]`
 
-`#[implicit]` marks a function argument as an implicit dependency: instead of being passed by the caller, the value is read from a same-named field on the context, and the argument disappears from the public signature.
+`#[implicit]` marks a function argument as an implicit dependency: instead of being passed by the caller, the value is read from a same-named field of the context, and the argument disappears from the public signature.
 
 ## Purpose
 
-`#[implicit]` exists to make field-based dependency injection look like an ordinary function parameter. In plain CGP, a provider that needs a `width` value from its context declares a `HasField<Symbol!("width"), Value = f64>` bound in its `where` clause and calls `self.get_field(PhantomData)` inside the body. That works, but it forces the author to understand `HasField`, type-level symbols, and `PhantomData` tags before writing even the simplest provider. `#[implicit]` hides all of that behind a normal-looking parameter.
+`#[implicit]` makes field-based dependency injection look like an ordinary function parameter. Without it, a provider that needs a `width` from its context declares a `HasField<Symbol!("width"), Value = f64>` bound and calls `self.get_field(PhantomData)` in its body. That works, but it makes the author learn `HasField`, type-level symbols, and `PhantomData` tags before writing the simplest provider. `#[implicit]` hides all of it behind a normal-looking parameter.
 
-The argument named `width: f64` with `#[implicit]` reads as "this function needs a `width` of type `f64`," which is exactly the intuition a Rust programmer already has. The macro then does the mechanical work: it removes the argument from the signature, adds the matching `HasField` bound, and binds a local variable to the field value at the top of the body. The result is code that looks like a function taking arguments but behaves like a provider injecting dependencies from its context.
+An argument `#[implicit] width: f64` reads as "this function needs a `width` of type `f64`", the intuition a Rust programmer already has. The macro does the mechanical work: it removes the argument from the signature, adds the matching `HasField` bound, and binds a local variable to the field's value at the top of the body. The result looks like a function taking arguments and behaves like a provider injecting dependencies from its context.
 
-This is why `#[implicit]` is the recommended starting point for basic CGP. It lets a newcomer write providers in [`#[cgp_fn]`](../macros/cgp_fn.md) and [`#[cgp_impl]`](../macros/cgp_impl.md) using only familiar function syntax, deferring the `HasField` machinery until they actually need to understand it.
+This makes `#[implicit]` the recommended starting point for basic CGP, and the default way to read any field of a provider's own context. A newcomer writes providers in [`#[cgp_fn]`](../macros/cgp_fn.md) and [`#[cgp_impl]`](../macros/cgp_impl.md) with only familiar function syntax, and meets the `HasField` machinery later, when it is actually needed.
 
 ## Syntax
 
-`#[implicit]` is written as a bare marker attribute on a typed function argument, and the argument must have a plain identifier name. It takes no arguments in any form — a list or name-value spelling such as `#[implicit(foo)]` or `#[implicit = "foo"]` is rejected with a spanned error rather than silently ignored:
+`#[implicit]` is a bare marker attribute on a typed function argument whose pattern is a plain identifier. It takes no arguments, and a list or name-value spelling such as `#[implicit(foo)]` or `#[implicit = "foo"]` is rejected with `` `#[implicit]` does not take any arguments; write it as a bare `#[implicit]` ``:
 
 ```rust
 fn area(&self, #[implicit] width: f64, #[implicit] height: f64) -> f64 {
@@ -20,15 +20,43 @@ fn area(&self, #[implicit] width: f64, #[implicit] height: f64) -> f64 {
 }
 ```
 
-The argument name doubles as the field name. Here `width` and `height` name both the local variables used in the body and the context fields the values are read from, via `Symbol!("width")` and `Symbol!("height")`. The argument type is the type the body sees, and it determines how the field is accessed (described under Expansion).
+The argument's name is also the field's name: `width` and `height` are both the locals the body uses and the context fields the values come from, as `Symbol!("width")` and `Symbol!("height")`. A raw identifier is read by its logical name, so `#[implicit] r#type: String` reads the field `type`. The argument's type is the type the body sees, and it decides how the field is read, as the next section describes.
 
-Three rules constrain where `#[implicit]` may appear. The function must take `self` as its first argument, because the field is read from `self`; a function with implicit arguments but no receiver is rejected. The argument pattern must be a bare identifier, not a destructuring or `mut` pattern — to get a mutable local, clone the injected value explicitly inside the body. And a *mutable* implicit argument — one whose type carries a `&mut`, whether the outer reference of a `&mut T`/`&mut [T]` or the inner reference of an `Option<&mut T>` — must be the *only* implicit argument on its function, and requires a `&mut self` receiver: it is read through `get_field_mut`, which borrows the whole context exclusively, so it cannot coexist with any other field read. Immutable implicit arguments carry no such restriction — they are shared borrows and combine freely, in any number, on either a `&self` or a `&mut self` receiver.
+`#[implicit]` is meaningful only where CGP rewrites a function body: in [`#[cgp_fn]`](../macros/cgp_fn.md) and in the methods of a [`#[cgp_impl]`](../macros/cgp_impl.md) block. It is not a standalone macro, so anywhere else, such as a method of a [`#[cgp_component]`](../macros/cgp_component.md) trait, it is left in place and fails with ``cannot find attribute `implicit` in this scope``.
 
-`#[implicit]` is usable wherever CGP rewrites function bodies into providers: inside [`#[cgp_fn]`](../macros/cgp_fn.md) and inside the methods of a [`#[cgp_impl]`](../macros/cgp_impl.md) block. It is not a standalone macro — it is only meaningful as an argument attribute consumed by those macros.
+### Rules
+
+Three rules constrain an implicit argument, each rejected with a spanned error:
+
+- **The function must take `self` first**, because the field is read from `self`. Otherwise it fails with ``The first argument of a function with implicit arguments must be `self` ``.
+- **The pattern must be a bare identifier**, not a destructuring pattern (`Expected an identifier`) or a `mut` binding. For a mutable local, clone the injected value in the body.
+- **A mutable implicit argument must be alone.** An argument whose type contains a `&mut`, whether the outer reference of `&mut T` or the inner one of `Option<&mut T>`, is read through `get_field_mut`, which borrows the whole context exclusively. It therefore requires a `&mut self` receiver and must be the function's only implicit argument; otherwise the error says ``a `&mut` implicit argument must be the only implicit argument, …``.
+
+Immutable implicit arguments have no such limit: they are shared borrows and combine freely, in any number, on a `&self` or a `&mut self` receiver.
+
+### Access forms
+
+The argument's type decides the field type the bound requires and the conversion applied to the read. The forms are shared with [`#[cgp_auto_getter]`](../macros/cgp_auto_getter.md):
+
+| Argument type | Field type | Conversion |
+|---|---|---|
+| an owned type (a path, tuple, or array) | the same type | `.clone()` |
+| `&T` | `T` | none |
+| `&str` | `String` | `.as_str()` |
+| `Option<&T>` | `Option<T>` | `.as_ref()` |
+| `Option<&str>` | `Option<String>` | `.as_deref()` |
+| `&[T]` | any `'static` value implementing `AsRef<[T]>` | `.as_ref()` |
+| [`MRef<'_, T>`](../types/mref.md) | `T` | wrapped as `MRef::Ref(…)` |
+
+Each reference form has a mutable mirror, read through [`HasFieldMut`](../traits/has_field.md) and `get_field_mut`: `&mut T`, `&mut str` (a `String` field, via `.as_mut_str()`), `&mut [T]` (a field implementing `AsMut<[T]>`, via `.as_mut()`), `Option<&mut T>` (via `.as_mut()`), and `Option<&mut str>` (via `.as_deref_mut()`). Every mutable form needs a `&mut self` receiver and must be alone, per the rules above.
+
+The mutability of the read follows the argument's own type, not the receiver. An immutable argument, including a `&[T]` slice, reads through `HasField` even on a `&mut self` receiver. This is the one rule that differs from a getter trait, which takes its mode from the receiver instead.
+
+`MRef` has no mutable mirror. It borrows the field as a shared value, so it reads through `HasField` whatever the receiver. It suits a body that wants a value that may be owned or borrowed, without committing the field to either. The form is recognized by shape, not by name resolution: a single-segment path named `MRef` with exactly a lifetime and a type argument. A differently shaped `MRef`, or one reached through a qualified path, falls through to the owned-and-cloned case.
 
 ## Expansion
 
-`#[implicit]` rewrites each marked argument into a `HasField` bound plus a `let` binding, leaving the rest of the function untouched. Starting from a `#[cgp_fn]` definition:
+`#[implicit]` rewrites each marked argument into a `HasField` bound plus a `let` binding and leaves the rest of the function alone. Given a `#[cgp_fn]` definition:
 
 ```rust
 #[cgp_fn]
@@ -37,14 +65,14 @@ fn rectangle_area(&self, #[implicit] width: f64, #[implicit] height: f64) -> f64
 }
 ```
 
-the macro produces a trait whose method takes no extra arguments, and an impl whose `where` clause carries one `HasField` bound per implicit argument:
+the macro produces a trait whose method takes no extra arguments, and an impl whose `where` clause requires one `HasField` bound per implicit argument:
 
 ```rust
 pub trait RectangleArea {
     fn rectangle_area(&self) -> f64;
 }
 
-impl<Context> RectangleArea for Context
+impl<__Context__> RectangleArea for __Context__
 where
     Self: HasField<Symbol!("width"), Value = f64>
         + HasField<Symbol!("height"), Value = f64>,
@@ -58,27 +86,12 @@ where
 }
 ```
 
-The two `let` bindings are inserted at the top of the body in argument order, before any of the original statements, so the names are in scope for the rest of the function. The generated context type parameter is literally named `__Context__` in the emitted code; the examples here use `Context` for readability.
+The `let` bindings are inserted at the top of the body in argument order, before the original statements, so the names are in scope throughout. Each binding's type is the argument's declared type, and its value is the read with the conversion from the table. For `#[implicit] name: &str`, for example, the bound is `HasField<Symbol!("name"), Value = String>` and the binding is `let name: &str = self.get_field(PhantomData::<Symbol!("name")>).as_str();`, so the field holds a `String` while the body works with a `&str`.
 
-The access expression depends on the argument type, following the same rules as [`#[cgp_auto_getter]`](../macros/cgp_auto_getter.md). An owned type — a path type such as `f64` or `String`, or a tuple or array — is read by reference and `.clone()`d, so the body receives an owned value; a plain `&T` is taken by reference with no conversion. Four forms are special: `&str` is backed by a `String` field and read with `.as_str()`; `&[T]` reads any field whose value implements `AsRef<[T]>` and calls `.as_ref()`; `Option<&T>` reads an `Option<T>` field via `.as_ref()`; and `Option<&str>` reads an `Option<String>` field via `.as_deref()`. The mutability of the access follows the *argument's* own type, not the receiver's: an argument carrying a `&mut` reads through `HasFieldMut`/`get_field_mut`, while every immutable argument — a `&[T]` slice included — reads through `HasField`/`get_field` even on a `&mut self` receiver. Each reference form has a mutable mirror: a `&mut [T]` reads a field implementing `AsMut<[T]>` via `.as_mut()`, an `Option<&mut T>` reads an `Option<T>` field via `.as_mut()`, and an `Option<&mut str>` reads an `Option<String>` field via `.as_deref_mut()`. Every mutable form requires a `&mut self` receiver, as described under Syntax.
-
-One further form has no mutable mirror at all. An [`MRef<'a, T>`](../types/mref.md) argument reads a `T` field and wraps the borrow as `MRef::Ref(…)`, and because `MRef` borrows the field as a shared value its access mode never depends on the receiver — a `&mut self` method reads an `MRef` argument through `HasField` like any other. It is the form to reach for when a body wants a value that may be either owned or borrowed without committing the field to one of the two. The parse is shape-directed rather than name-resolved: a single-segment path named `MRef` with exactly a lifetime argument and a type argument is treated as this form, so a differently-shaped `MRef` — or one reached through a qualified path — falls through to the owned-and-cloned case instead.
-
-Concretely:
+Inside a [`#[cgp_impl]`](../macros/cgp_impl.md) block the rewrite is the same: the bounds are added to the impl's `where` clause and the bindings are prepended to the method's body. Given:
 
 ```rust
-#[cgp_fn]
-fn greet(&self, #[implicit] name: &str) {
-    println!("Hello, {}!", name);
-}
-```
-
-expands so that the bound is `HasField<Symbol!("name"), Value = String>` and the binding is `let name: &str = self.get_field(PhantomData::<Symbol!("name")>).as_str();`. The field is a `String`, but the argument the body works with is a borrowed `&str`.
-
-Inside a [`#[cgp_impl]`](../macros/cgp_impl.md) block the rewrite is identical — the same `HasField` bounds are added to the impl's `where` clause and the same `let` bindings are prepended to the method body. For example:
-
-```rust
-#[cgp_impl(new RectangleArea)]
+#[cgp_impl(new RectangleAreaCalculator)]
 impl AreaCalculator {
     fn area(&self, #[implicit] width: f64, #[implicit] height: f64) -> f64 {
         width * height
@@ -86,13 +99,13 @@ impl AreaCalculator {
 }
 ```
 
-gains `Self: HasField<Symbol!("width"), Value = f64> + HasField<Symbol!("height"), Value = f64>` on the impl, with `width` and `height` bound from the context at the top of `area`.
+the impl gains `__Context__: HasField<Symbol!("width"), Value = f64> + HasField<Symbol!("height"), Value = f64>`, and `area` binds `width` and `height` at its top.
 
-A `#[cgp_impl]` block with several methods differs from a `#[cgp_fn]` in one way, because it is the only host where the difference is observable: the bounds are gathered across *every* method of the block and de-duplicated before being added, so two methods each taking `#[implicit] name: &str` contribute a single `HasField<Symbol!("name"), Value = String>` bound rather than repeating it. The de-duplication compares the whole field specification — name, required field type, access mode, and mutability — so two methods reading the same field at *different* argument types each contribute their own bound, which is what makes a body taking `&str` and another taking `String` from one field a conflicting pair of requirements rather than a silent merge. The `let` bindings are unaffected and are still emitted once per method.
+A `#[cgp_impl]` block with several methods gathers the bounds of every method and removes duplicates before adding them, since all methods share one impl. Two methods that each take `#[implicit] name: &str` contribute one `HasField<Symbol!("name"), Value = String>` bound. The comparison covers the whole specification (name, argument type, field type, access form, and mutability), so two methods reading the same field at different types each contribute a bound. A `&str` in one method and a `String` in another therefore require two conflicting `Value` types rather than merging silently. The `let` bindings are still emitted once per method.
 
 ## Examples
 
-A complete `#[cgp_fn]` trait with implicit arguments needs only a context that derives [`HasField`](../derives/derive_has_field.md) and contains the named fields:
+A `#[cgp_fn]` with implicit arguments needs only a context that derives [`HasField`](../derives/derive_has_field.md) and has the named fields:
 
 ```rust
 use cgp::prelude::*;
@@ -113,15 +126,29 @@ fn print_area(rect: &Rectangle) {
 }
 ```
 
-`Rectangle` derives `HasField` for `width` and `height`, which satisfies the two bounds the macro added, so `RectangleArea` is implemented for `Rectangle` through the generated blanket impl. The call `rect.rectangle_area()` reads both fields from `rect` and multiplies them — no arguments are passed, because both were declared implicit and are sourced from the context.
+`Rectangle` derives `HasField` for `width` and `height`, which satisfies both bounds, so the blanket impl gives it `RectangleArea`. The call `rect.rectangle_area()` passes no arguments, because both are read from `rect`.
+
+A mutable implicit argument modifies a field in place, alone and under `&mut self`:
+
+```rust
+#[cgp_fn]
+pub fn shout(&mut self, #[implicit] name: &mut str) {
+    name.make_ascii_uppercase();
+}
+```
 
 ## Related constructs
 
-`#[implicit]` is most often used inside [`#[cgp_fn]`](../macros/cgp_fn.md), which turns a function into a trait with a single blanket implementation, and inside [`#[cgp_impl]`](../macros/cgp_impl.md), which writes a provider for an existing component. It relies on [`#[derive(HasField)]`](../derives/derive_has_field.md) on the context to supply the field accessors that the generated bounds require. Its access rules — `.clone()` for owned values, `.as_str()` for `&str`, and a plain `&T` read by reference with no clone — are shared with [`#[cgp_auto_getter]`](../macros/cgp_auto_getter.md), which defines a reusable getter trait. An implicit argument is the preferred, default way to read any field from a provider's own context; reserve `#[cgp_auto_getter]` for the cases an implicit argument cannot cover — a field that lives on a type other than the provider's context (a getter required as a `where` bound on that type), an accessor that must exist as a named trait other code depends on, or a getter carrying an associated type inferred from the field. To bring in other CGP traits alongside implicit arguments, combine `#[implicit]` with [`#[uses]`](uses.md).
+These constructs are the ones `#[implicit]` works with:
+
+- [`#[cgp_fn]`](../macros/cgp_fn.md) and [`#[cgp_impl]`](../macros/cgp_impl.md) — the two hosts that consume the attribute.
+- [`#[derive(HasField)]`](../derives/derive_has_field.md) — supplies the field access the generated bounds require.
+- [`#[cgp_auto_getter]`](../macros/cgp_auto_getter.md) — shares the access forms, and is the choice only where an implicit argument cannot reach: a field on another type, an accessor other code depends on by name, or a getter with an associated type inferred from the field.
+- [`#[uses]`](uses.md) — brings in other traits alongside implicit arguments.
 
 ## Source
 
-- Parsing: implicit-argument parsing lives in [crates/macros/cgp-macro-core/src/functions/implicits/parse.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/functions/implicits/parse.rs), which extracts `#[implicit]`-marked arguments, validates the `self`/`mut` rules, and rejects a malformed (non-bare) `#[implicit]` attribute.
-- Per-argument model: [crates/macros/cgp-macro-core/src/types/implicits/](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-core/src/types/implicits/) — `arg_field.rs` builds the `HasField` bound and the `let` binding, and `arg_fields.rs` adds the bounds to the impl generics and prepends the bindings to the body.
-- Field-type-to-access-mode mapping (`.clone()`, `.as_str()`, `.as_deref()`, and the reference/option/slice cases): [crates/macros/cgp-macro-core/src/functions/field/parse.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/functions/field/parse.rs) and [crates/macros/cgp-macro-core/src/types/getter/get_field_with_mode_expr.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/getter/get_field_with_mode_expr.rs).
-- Implementation document (how `#[implicit]` arguments are parsed and lowered into `HasField` bounds and `let` bindings, and the index of tests): [implementation/entrypoints/cgp_fn.md](../../implementation/entrypoints/cgp_fn.md).
+- Parsing: [crates/macros/cgp-macro-core/src/functions/implicits/parse.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/functions/implicits/parse.rs) extracts `#[implicit]` arguments, enforces the `self`, identifier, `mut`, and mutable-exclusivity rules, and rejects a non-bare attribute.
+- Per-argument model: [crates/macros/cgp-macro-core/src/types/implicits/](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-core/src/types/implicits/) — `arg_field.rs` builds the `HasField` bound and the `let` binding, and `arg_fields.rs` adds the bounds, prepends the bindings, and removes duplicate bounds across a `#[cgp_impl]` block's methods.
+- Argument-type-to-access mapping: [crates/macros/cgp-macro-core/src/functions/field/parse.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/functions/field/parse.rs), with the conversions in [crates/macros/cgp-macro-core/src/types/getter/field_mode.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/getter/field_mode.rs).
+- Implementation document (how implicit arguments are parsed and lowered, and the index of tests): [implementation/entrypoints/cgp_fn.md](../../implementation/entrypoints/cgp_fn.md).

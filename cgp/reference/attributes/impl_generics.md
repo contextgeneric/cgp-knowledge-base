@@ -64,7 +64,7 @@ The `Value = Name` binding makes the impl legal: it is the associated-type bindi
 
 The impl's generic list is ordered: `__Context__` first, then the function's own generics, then the `#[impl_generics]` parameters. A `fn scale<Scalar>` carrying `#[impl_generics(Db)]` emits `impl<__Context__, Scalar, Db>`. Rust requires lifetimes to lead a generic list, and the emitted list keeps that order regardless of where a lifetime was declared, because `syn` prints lifetime parameters first.
 
-The impl's `where` clause keeps the ordering [`#[cgp_fn]`](../macros/cgp_fn.md) documents: the function's own predicates, then the predicates the companion attributes contribute, then the `HasField` bounds from the implicit arguments last.
+The impl's `where` clause keeps the order [`#[cgp_fn]`](../macros/cgp_fn.md#expansion) documents: the function's own predicates, then the `#[extend]` and `#[uses]` bounds, the `#[extend_where]` predicates, the `HasField` bounds of the implicit arguments, and finally any `#[use_type]` and `#[use_provider]` predicates.
 
 ## Examples
 
