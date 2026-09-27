@@ -5,7 +5,8 @@ encode that type instead. `SerializeWithDisplay` and `DeserializeWithFromStr` go
 `SerializeFrom` and `TrySerializeFrom` go through any type related by `Into` or `TryInto`, and
 `SerializeDeref` goes through the value a smart pointer points to. Each is a
 [direct re-entry](../architecture/reentrant-providers.md#direct-calls): the converted value is
-encoded by whatever the context wires for its type, so the final representation stays a wiring choice.
+encoded by whatever the context wires for its type, so the final representation stays a wiring
+choice.
 
 ## `SerializeWithDisplay`
 
@@ -24,19 +25,19 @@ where
 
 ### Behavior
 
-The provider formats the value with `to_string` and serializes the result through the context's wiring
-for `String`. A `Celsius(21.5)` whose `Display` writes `21.5C` serializes to the JSON string `"21.5C"`.
-The formatted string is always allocated.
+The provider formats the value with `to_string` and serializes the result through the context's
+wiring for `String`. A `Celsius(21.5)` whose `Display` writes `21.5C` serializes to the JSON string
+`"21.5C"`. The formatted string is always allocated.
 
 ### Context dependencies
 
-`CanSerializeValue<String>`. Wiring `String` itself to `SerializeWithDisplay` makes the provider depend
-on itself, which fails to compile with `E0275`.
+`CanSerializeValue<String>`. Wiring `String` itself to `SerializeWithDisplay` makes the provider
+depend on itself, which fails to compile with `E0275`.
 
 ### Pairing
 
-The deserializing counterpart is [`DeserializeWithFromStr`](#deserializewithfromstr), which parses the
-string back with `FromStr`.
+The deserializing counterpart is [`DeserializeWithFromStr`](#deserializewithfromstr), which parses
+the string back with `FromStr`.
 
 ## `DeserializeWithFromStr`
 
@@ -56,17 +57,17 @@ where
 ### Behavior
 
 The provider asks the context for a `&'de str` borrowed from the input, then parses it, reporting a
-parse failure's `Display` message as a Serde custom error. With `&'a str` wired to `UseSerde`, a `u64`
-wired to this provider deserializes from the JSON string `"42"`, and `"x"` fails with
+parse failure's `Display` message as a Serde custom error. With `&'a str` wired to `UseSerde`, a
+`u64` wired to this provider deserializes from the JSON string `"42"`, and `"x"` fails with
 `invalid digit found in string`.
 
 Asking for a borrowed string means the input must be able to lend one, and the failure comes before
-any parsing. A JSON string that `serde_json` has to unescape into a new buffer cannot be lent: with the
-workspace's `serde_json` 1.0.143, `"4\"2"`, whose middle character is an escaped quote, fails with
-`invalid type: string "4\"2", expected a borrowed string`, and an escaped newline fails the same way.
-Not every escape triggers it: in the same probe, `"\u0034\u0032"` was accepted and parsed as `42`. A
-deserializer that reads from an `io::Read` can never lend its input, so there even the plain `"42"`
-fails with the same message.
+any parsing. A JSON string that `serde_json` has to unescape into a new buffer cannot be lent: with
+the workspace's `serde_json` 1.0.143, `"4\"2"`, whose middle character is an escaped quote, fails
+with `invalid type: string "4\"2", expected a borrowed string`, and an escaped newline fails the
+same way. Not every escape triggers it: in the same probe, `"\u0034\u0032"` was accepted and parsed
+as `42`. A deserializer that reads from an `io::Read` can never lend its input, so there even the
+plain `"42"` fails with the same message.
 
 ### Context dependencies
 
@@ -84,8 +85,8 @@ The serializing counterpart is [`SerializeWithDisplay`](#serializewithdisplay).
 
 ## `SerializeFrom`
 
-`SerializeFrom<Target>` serializes a value by converting it into `Target`, and deserializes a value by
-converting from `Target`.
+`SerializeFrom<Target>` serializes a value by converting it into `Target`, and deserializes a value
+by converting from `Target`.
 
 ### Definition
 
@@ -112,10 +113,10 @@ where
 Serializing clones the value, converts the clone with `Into`, and serializes the result through the
 context. The clone is needed because `Into` consumes its input while the provider holds only a
 reference. Deserializing reads a `Target` through the context and converts it with `Into`. The type
-parameter plays opposite roles in the two directions: a `u32` serialized as `SerializeFrom<u64>` goes
-through `u64`, while a `u32` deserialized as `SerializeFrom<u8>` reads a `u8` and widens it. A context
-wiring the same type in both directions usually needs two different parameters, since `Into` rarely
-holds both ways.
+parameter plays opposite roles in the two directions: a `u32` serialized as `SerializeFrom<u64>`
+goes through `u64`, while a `u32` deserialized as `SerializeFrom<u8>` reads a `u8` and widens it. A
+context wiring the same type in both directions usually needs two different parameters, since `Into`
+rarely holds both ways.
 
 ### Context dependencies
 
@@ -158,8 +159,8 @@ where
 ### Behavior
 
 The directions mirror `SerializeFrom`, with the conversion's `Display` message reported through the
-serializer's or deserializer's `Error::custom`. A `u16` serialized as `TrySerializeFrom<u8>` writes `7`
-for `7`, and for `300` fails with `out of range integral type conversion attempted`; an `i8`
+serializer's or deserializer's `Error::custom`. A `u16` serialized as `TrySerializeFrom<u8>` writes
+`7` for `7`, and for `300` fails with `out of range integral type conversion attempted`; an `i8`
 deserialized as `TrySerializeFrom<u64>` reads `5`, and fails on `500` with the same message.
 
 ### Context dependencies
@@ -198,8 +199,8 @@ context's wiring for the referenced type. [`SerializeIterator`](collections.md) 
 because iterating a borrowed collection yields references; see
 [re-entrant providers](../architecture/reentrant-providers.md#what-re-entry-requires-of-a-context).
 
-The target must be sized, because no provider accepts an unsized value, so `&str` and `&[T]` cannot be
-forwarded this way; see [the components](components.md#canserializevalue).
+The target must be sized, because no provider accepts an unsized value, so `&str` and `&[T]` cannot
+be forwarded this way; see [the components](components.md#canserializevalue).
 
 ### Context dependencies
 
@@ -208,17 +209,22 @@ forwarded this way; see [the components](components.md#canserializevalue).
 ### Pairing
 
 No deserializing counterpart. Deserializing into a reference needs somewhere for the value to live,
-which is the job of [`DeserializeAndAllocate`](allocation.md) or of a borrowed type deserialized from
-the input directly.
+which is the job of [`DeserializeAndAllocate`](allocation.md) or of a borrowed type deserialized
+from the input directly.
 
 ## Source
 
-- [`crates/cgp-serde/src/providers/display.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/display.rs) — `SerializeWithDisplay` and `DeserializeWithFromStr`.
-- [`crates/cgp-serde/src/providers/from.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/from.rs) — `SerializeFrom`.
-- [`crates/cgp-serde/src/providers/try_from.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/try_from.rs) — `TrySerializeFrom`.
-- [`crates/cgp-serde/src/providers/deref.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/deref.rs) — `SerializeDeref`.
+- [`crates/cgp-serde/src/providers/display.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/display.rs):
+  `SerializeWithDisplay` and `DeserializeWithFromStr`.
+- [`crates/cgp-serde/src/providers/from.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/from.rs):
+  `SerializeFrom`.
+- [`crates/cgp-serde/src/providers/try_from.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/try_from.rs):
+  `TrySerializeFrom`.
+- [`crates/cgp-serde/src/providers/deref.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/deref.rs):
+  `SerializeDeref`.
 
 ## Public material derived from this
 
-The five provider pages in the `reference/providers/` pages of the [cgp-serde project
-section](../../../website/projects/cgp-serde.md), and the rustdoc for the five providers.
+The five provider pages in the `reference/providers/` pages of the
+[cgp-serde project section](../../../website/projects/cgp-serde.md), and the rustdoc for the five
+providers.

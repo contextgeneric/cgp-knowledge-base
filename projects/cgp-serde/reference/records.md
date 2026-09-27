@@ -1,29 +1,33 @@
 # Record providers
 
-The record providers serialize and deserialize a struct generically, by walking its fields, so a struct
-needs no serialization-specific derive and no dependency on `serde` or `cgp-serde`. `SerializeFields`
-writes a struct as a map and `DeserializeRecordFields` reads one back. They are separate structs rather
-than one provider serving both directions, because they walk the struct through different CGP traits.
+The record providers serialize and deserialize a struct generically, by walking its fields, so a
+struct needs no serialization-specific derive and no dependency on `serde` or `cgp-serde`.
+`SerializeFields` writes a struct as a map and `DeserializeRecordFields` reads one back. They are
+separate structs rather than one provider serving both directions, because they walk the struct
+through different CGP traits.
 
-Both rest on CGP's [extensible records](../../../cgp/concepts/extensible-records.md). A struct's field
-list comes from [`HasFields`](../../../cgp/reference/traits/has_fields.md), and each field's name is a
-type-level string that the providers turn into a `&'static str` through
-[`StaticString`](../../../cgp/reference/traits/static_format.md). The derives each direction needs are:
+Both rest on CGP's [extensible records](../../../cgp/concepts/extensible-records.md). A struct's
+field list comes from [`HasFields`](../../../cgp/reference/traits/has_fields.md), and each field's
+name is a type-level string that the providers turn into a `&'static str` through
+[`StaticString`](../../../cgp/reference/traits/static_format.md). The derives each direction needs
+are:
 
-- **Serializing**: `HasFields` and `HasField`, so the provider can list the fields and read each one.
+- **Serializing**: `HasFields` and `HasField`, so the provider can list the fields and read each
+  one.
 - **Deserializing**: `HasFields` and `BuildField`, so the provider can list the fields and fill them
   in through the optional builder.
 - **Both**: [`#[derive(CgpData)]`](../../../cgp/reference/derives/derive_cgp_data.md), which derives
   all three.
 
 Only structs with named fields work. A tuple struct keys its fields by `Index<N>`, which does not
-implement `StaticString`, so wiring one to either provider fails to compile. No provider in the library
-handles an enum generically; an enum is encoded only through `UseSerde`, from its own Serde impl.
+implement `StaticString`, so wiring one to either provider fails to compile. No provider in the
+library handles an enum generically; an enum is encoded only through `UseSerde`, from its own Serde
+impl.
 
 ## `SerializeFields`
 
-`SerializeFields` serializes a struct as a map from each field's name to its value, serializing every
-value through the context.
+`SerializeFields` serializes a struct as a map from each field's name to its value, serializing
+every value through the context.
 
 ### Definition
 
@@ -44,12 +48,12 @@ requires, for each `Field<Tag, FieldValue>` in the list, that `Tag: StaticString
 ### Behavior
 
 The provider opens a map without declaring its length and writes one entry per field, in declaration
-order. Each key is the Rust field name exactly as written, and each value is the field's value wrapped
-in [`SerializeWithContext`](../architecture/reentrant-providers.md#adapter-calls), so the context
-chooses its encoding. With JSON, a struct `Rec { a: 1, b: "x".into() }` whose field types are wired to
-`UseSerde` serializes to `{"a":1,"b":"x"}`. The provider writes a map through `serialize_map` rather
-than a struct through `serialize_struct`, which is what a derived `Serialize` impl calls, and every
-field is written under its Rust name.
+order. Each key is the Rust field name exactly as written, and each value is the field's value
+wrapped in [`SerializeWithContext`](../architecture/reentrant-providers.md#adapter-calls), so the
+context chooses its encoding. With JSON, a struct `Rec { a: 1, b: "x".into() }` whose field types
+are wired to `UseSerde` serializes to `{"a":1,"b":"x"}`. The provider writes a map through
+`serialize_map` rather than a struct through `serialize_struct`, which is what a derived `Serialize`
+impl calls, and every field is written under its Rust name.
 
 ### Context dependencies
 
@@ -58,20 +62,20 @@ means an entry in its serialization table for each field type the struct uses.
 
 ### Pairing
 
-The deserializing counterpart is [`DeserializeRecordFields`](#deserializerecordfields). The two agree
-on the format: a map keyed by Rust field names.
+The deserializing counterpart is [`DeserializeRecordFields`](#deserializerecordfields). The two
+agree on the format: a map keyed by Rust field names.
 
 ### Known issues
 
-- **Length-prefixed formats reject the output.** The map is started without a length, so postcard fails
-  with `SerializeSeqLengthUnknown` on every struct.
+- **Length-prefixed formats reject the output.** The map is started without a length, so postcard
+  fails with `SerializeSeqLengthUnknown` on every struct.
 - **Formats with struct syntax see a map.** RON writes `{"a":1,"b":"x"}` rather than `(a:1,b:"x")`.
 - **Serde's field attributes have no equivalent.** No field can be renamed, skipped, or flattened.
 
 ## `DeserializeRecordFields`
 
-`DeserializeRecordFields` deserializes a struct from a map, deserializing each field's value through the
-context and collecting the fields in CGP's optional builder until every one is present.
+`DeserializeRecordFields` deserializes a struct from a map, deserializing each field's value through
+the context and collecting the fields in CGP's optional builder until every one is present.
 
 ### Definition
 
@@ -87,20 +91,20 @@ where
 { ... }
 ```
 
-`HasOptionalBuilder` and `FinalizeOptional` come from `cgp::extra::field::impls`, and `HasOptionalBuilder`
-is implemented for every type that has a builder, which `#[derive(BuildField)]` provides. The optional
-builder holds each field as an `Option`, so its type stays the same as fields arrive in whatever order
-the input gives them. `HandleMapEntry` and `MapVisitor` are private. `HandleMapEntry`'s `Cons` case
-requires, for each field, that `Tag: StaticString`, that the context implements
-`CanDeserializeValue<'de, FieldValue>`, and that the builder can set that field.
+`HasOptionalBuilder` and `FinalizeOptional` come from `cgp::extra::field::impls`, and
+`HasOptionalBuilder` is implemented for every type that has a builder, which `#[derive(BuildField)]`
+provides. The optional builder holds each field as an `Option`, so its type stays the same as fields
+arrive in whatever order the input gives them. `HandleMapEntry` and `MapVisitor` are private.
+`HandleMapEntry`'s `Cons` case requires, for each field, that `Tag: StaticString`, that the context
+implements `CanDeserializeValue<'de, FieldValue>`, and that the builder can set that field.
 
 ### Behavior
 
-The provider asks the deserializer for a map and reads it entry by entry. For each key it compares the
-key against each field name in declaration order. On a match it deserializes the value through
-[`DeserializeWithContext`](../architecture/reentrant-providers.md#adapter-calls) and stores it in the
-builder; if no field matches, it skips the value. When the map ends it finalizes the builder, which
-succeeds only if every field was set. The input's key order does not matter.
+The provider asks the deserializer for a map and reads it entry by entry. For each key it compares
+the key against each field name in declaration order. On a match it deserializes the value through
+[`DeserializeWithContext`](../architecture/reentrant-providers.md#adapter-calls) and stores it in
+the builder; if no field matches, it skips the value. When the map ends it finalizes the builder,
+which succeeds only if every field was set. The input's key order does not matter.
 
 The provider rejects input in these cases, each with a Serde custom error:
 
@@ -128,11 +132,12 @@ The serializing counterpart is [`SerializeFields`](#serializefields).
 
 ### Known issues
 
-- **A missing field is always an error.** CGP's optional builder can also finalize by defaulting unset
-  fields, through `CanFinalizeWithDefault` in
-  [optional fields](../../../cgp/reference/traits/optional_fields.md), but the provider finalizes with
-  `FinalizeOptional` and offers no way to choose the other. cgp-serde's own `DeserializeDefault` does
-  not help, because it substitutes the default for a `null` value rather than for an absent field.
+- **A missing field is always an error.** CGP's optional builder can also finalize by defaulting
+  unset fields, through `CanFinalizeWithDefault` in
+  [optional fields](../../../cgp/reference/traits/optional_fields.md), but the provider finalizes
+  with `FinalizeOptional` and offers no way to choose the other. cgp-serde's own
+  `DeserializeDefault` does not help, because it substitutes the default for a `null` value rather
+  than for an absent field.
 - **Unknown keys cannot be rejected.** There is no equivalent of Serde's `deny_unknown_fields`.
 - **The sequence form of a struct is rejected.** Serde's derive also accepts a struct written as a
   sequence of its field values in declaration order.
@@ -142,9 +147,9 @@ The serializing counterpart is [`SerializeFields`](#serializefields).
 ## Wiring the pair
 
 A context wires both providers per struct type with the `open` statement of
-[`delegate_components!`](../../../cgp/reference/macros/delegate_components.md), alongside an entry for
-every field type. This context round-trips a `Payload` through JSON, encoding its `Vec<u8>` field as
-hex:
+[`delegate_components!`](../../../cgp/reference/macros/delegate_components.md), alongside an entry
+for every field type. This context round-trips a `Payload` through JSON, encoding its `Vec<u8>`
+field as hex:
 
 ```rust
 #[derive(CgpData)]
@@ -194,31 +199,33 @@ check_components! {
 }
 ```
 
-The deserialization check lists each value type with a [`Life<'de>`](../../../cgp/reference/types/life.md)
-in front, because the component's `'de` lifetime is one of its parameters and CGP lifts it into a type
-for the check.
+The deserialization check lists each value type with a
+[`Life<'de>`](../../../cgp/reference/types/life.md) in front, because the component's `'de` lifetime
+is one of its parameters and CGP lifts it into a type for the check.
 
-The wiring is the value half of the repository's [`basic` test](../examples/basic.md), which adds the
-JSON handler entries. `Payload { quantity: 42, message: "hello".into(), data: vec![1, 2, 3] }`
+The wiring is the value half of the repository's [`basic` test](../examples/basic.md), which adds
+the JSON handler entries. `Payload { quantity: 42, message: "hello".into(), data: vec![1, 2, 3] }`
 serializes to `{"quantity":42,"message":"hello","data":"010203"}` and deserializes back to the same
 value. The providers come from `cgp_serde::providers`, except `SerializeHex`, which comes from
 `cgp_serde_extra::providers`.
 
 ## Related documents
 
-- [Reflection](../../../related-work/reflection.md) compares `SerializeFields` with Serde's derive, facet,
-  and Rust's reflection proposal, including the observation that the field-list recursion still
-  monomorphizes per struct, so it saves authoring duplication rather than binary size.
+- [Reflection](../../../related-work/reflection.md) compares `SerializeFields` with Serde's derive,
+  facet, and Rust's reflection proposal, including the observation that the field-list recursion
+  still monomorphizes per struct, so it saves authoring duplication rather than binary size.
 - [Re-entrant providers](../architecture/reentrant-providers.md) explains the adapter both providers
   use to hand each field back to the context.
 
 ## Source
 
-- [`crates/cgp-serde/src/providers/fields.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/fields.rs) — `SerializeFields` and `FieldsSerializer`.
-- [`crates/cgp-serde/src/providers/record.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/record.rs) — `DeserializeRecordFields`, `MapVisitor`, and `HandleMapEntry`.
+- [`crates/cgp-serde/src/providers/fields.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/fields.rs):
+  `SerializeFields` and `FieldsSerializer`.
+- [`crates/cgp-serde/src/providers/record.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/record.rs):
+  `DeserializeRecordFields`, `MapVisitor`, and `HandleMapEntry`.
 
 ## Public material derived from this
 
-The two provider pages in the `reference/providers/` pages of the [cgp-serde project
-section](../../../website/projects/cgp-serde.md), and the rustdoc for `SerializeFields` and
-`DeserializeRecordFields`.
+The two provider pages in the `reference/providers/` pages of the
+[cgp-serde project section](../../../website/projects/cgp-serde.md), and the rustdoc for
+`SerializeFields` and `DeserializeRecordFields`.

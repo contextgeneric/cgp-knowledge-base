@@ -2,11 +2,11 @@
 
 This directory documents every public item in the cgp-serde crates, grouped by family, with one
 document per family following the entry template in
-[../../AGENTS.md](../../AGENTS.md#reference-entries). The tables below list every item so a reader can
-find a provider by what it handles, see what a context must wire for it, and know where to import it
-from. Read the [architecture](../architecture/README.md) first for the ideas the providers share,
-above all [re-entry](../architecture/reentrant-providers.md), which is what the "Re-enters for" column
-refers to.
+[../../AGENTS.md](../../AGENTS.md#reference-entries). The tables below list every item so a reader
+can find a provider by what it handles, see what a context must wire for it, and know where to
+import it from. Read the [architecture](../architecture/README.md) first for the ideas the providers
+share, above all [re-entry](../architecture/reentrant-providers.md), which is what the "Re-enters
+for" column refers to.
 
 ## Components, adapters, and other public items
 
@@ -32,9 +32,10 @@ generates the legacy `UseDelegate` dispatch impl. Contexts on the `v0.8.0` branc
 
 ## Serialization and deserialization providers
 
-Every provider below implements `ValueSerializer`, `ValueDeserializer`, or both. The "Handles" column
-gives the bounds on the value type, split by direction where a provider serves both. The "Re-enters
-for" column is what the provider asks of the context, and so what the context must also wire.
+Every provider below implements `ValueSerializer`, `ValueDeserializer`, or both. The "Handles"
+column gives the bounds on the value type, split by direction where a provider serves both. The
+"Re-enters for" column is what the provider asks of the context, and so what the context must also
+wire.
 
 | Provider | Crate | Direction | Handles | Re-enters for |
 |---|---|---|---|---|
@@ -59,8 +60,8 @@ for" column is what the provider asks of the context, and so what the context mu
 | `DeserializeAndAllocate` | `cgp-serde-alloc` | de | `&'a Value` | owned `Value`, plus `CanAlloc<'a, Value>` |
 
 Where a bound names an error type, such as `TryFrom`'s or `FromStr`'s, that error must implement
-`Display`, because the provider reports it through Serde's `Error::custom`. Every provider is imported
-from its crate's `providers` module, such as `cgp_serde::providers::SerializeFields` or
+`Display`, because the provider reports it through Serde's `Error::custom`. Every provider is
+imported from its crate's `providers` module, such as `cgp_serde::providers::SerializeFields` or
 `cgp_serde_extra::providers::SerializeHex`.
 
 ## Other providers
@@ -73,7 +74,7 @@ allocation provider implements `CanAlloc`.
 |---|---|---|---|
 | `SerializeToJsonString` | `cgp-serde-json` | `TryComputer<Code, &Value>`, output `String` | `CanSerializeValue<Value>`, `CanRaiseError<serde_json::Error>` |
 | `DeserializeFromJsonReader` | `cgp-serde-json` | `TryComputer<DeserializeJson<Value>, R>` for a `serde_json` reader `R` | `CanDeserializeValue<'de, Value>`, `CanRaiseError<serde_json::Error>` |
-| `DeserializeFromJsonString<In = DeserializeFromJsonReader>` | `cgp-serde-json` | `TryComputer<Code, S>` for `S: AsRef<str>` | whatever `In` requires |
+| `DeserializeFromJsonString<InDeserializer = DeserializeFromJsonReader>` | `cgp-serde-json` | `TryComputer<Code, S>` for `S: AsRef<str>` | whatever `InDeserializer` requires |
 | `AllocateWithArena` | `cgp-serde-typed-arena` | `Allocator<'a, Value>` | `HasArena<'a, Value>` |
 
 ## The catalog
@@ -81,32 +82,32 @@ allocation provider implements `CanAlloc`.
 Register each reference document here, in [../README.md](../README.md), and in
 [../../../summary.md](../../../summary.md) in the same change.
 
-- [components.md](components.md) — `CanSerializeValue` and `CanDeserializeValue`: the two
-  components, the unsized `Value` no provider accepts, the `'de` lifetime and `Life<'de>` in checks,
-  and the legacy `UseDelegate` attribute.
-- [context-adapters.md](context-adapters.md) — `SerializeWithContext` and `DeserializeWithContext`:
+- [components.md](components.md): `CanSerializeValue` and `CanDeserializeValue`: the two components,
+  the unsized `Value` no provider accepts, the `'de` lifetime and `Life<'de>` in checks, and the
+  legacy `UseDelegate` attribute.
+- [context-adapters.md](context-adapters.md): `SerializeWithContext` and `DeserializeWithContext`:
   the public adapters that start a serialization through a context, and how to drive the seed with a
   format's deserializer.
-- [use-serde.md](use-serde.md) — `UseSerde`: reusing a type's own Serde impls, and why the context's
+- [use-serde.md](use-serde.md): `UseSerde`: reusing a type's own Serde impls, and why the context's
   wiring stops at a value handed to it.
-- [strings-and-bytes.md](strings-and-bytes.md) — `SerializeString`, `SerializeBytes`, and
+- [strings-and-bytes.md](strings-and-bytes.md): `SerializeString`, `SerializeBytes`, and
   `TryDeserializeBytes`: the leaf text and byte providers, and why bytes do not round-trip through
   JSON.
-- [conversions.md](conversions.md) — `SerializeWithDisplay`, `DeserializeWithFromStr`,
+- [conversions.md](conversions.md): `SerializeWithDisplay`, `DeserializeWithFromStr`,
   `SerializeFrom`, `TrySerializeFrom`, and `SerializeDeref`: encoding through a converted value, and
   the borrowed-string limit of `DeserializeWithFromStr`.
-- [collections.md](collections.md) — `SerializeIterator` and `DeserializeExtend`: sequences whose
+- [collections.md](collections.md): `SerializeIterator` and `DeserializeExtend`: sequences whose
   items follow the context, the reference entry iteration needs, and maps as sequences of pairs.
-- [records.md](records.md) — `SerializeFields` and `DeserializeRecordFields`: serializing a struct
-  as a map and reading one back through the optional builder, with no serialization-specific derive.
-- [default-values.md](default-values.md) — `DeserializeDefault`: the one higher-order
-  serialization provider, which defaults a null value but not a missing field.
-- [encodings.md](encodings.md) — `SerializeHex`, `SerializeBase64`, `SerializeRfc3339Date`, and
+- [records.md](records.md): `SerializeFields` and `DeserializeRecordFields`: serializing a struct as
+  a map and reading one back through the optional builder, with no serialization-specific derive.
+- [default-values.md](default-values.md): `DeserializeDefault`: the one higher-order serialization
+  provider, which defaults a null value but not a missing field.
+- [encodings.md](encodings.md): `SerializeHex`, `SerializeBase64`, `SerializeRfc3339Date`, and
   `SerializeTimestamp`: the per-application encodings in `cgp-serde-extra`, with their exact formats
   and errors.
-- [json.md](json.md) — The `cgp-serde-json` codes, providers, and `deserialize_json_string` method:
+- [json.md](json.md): The `cgp-serde-json` codes, providers, and `deserialize_json_string` method:
   JSON as wireable `TryComputer` operations, readers, borrowing, and the error wiring they need.
-- [allocation.md](allocation.md) — `CanAlloc`, `DeserializeAndAllocate`, `HasArena`, and
+- [allocation.md](allocation.md): `CanAlloc`, `DeserializeAndAllocate`, `HasArena`, and
   `AllocateWithArena`: deserializing borrowed values into a context-supplied arena, layered so the
   allocator is a wiring choice.
 

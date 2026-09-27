@@ -8,17 +8,17 @@ lifetimes that make it sound. The items are documented in [allocation](../refere
 ## A provider can ask the context for more than serialization
 
 **A provider's impl-side dependencies are not limited to the serialization components.** Any trait
-the context implements can appear in a provider's `#[uses]` list, and the provider calls it on `self`
-like any method. This is ordinary CGP
+the context implements can appear in a provider's `#[uses]` list, and the provider calls it on
+`self` like any method. This is ordinary CGP
 [impl-side dependency injection](../../../cgp/concepts/impl-side-dependencies.md); what makes it
-notable here is that Serde has nowhere to put such a dependency. Serde's `Deserialize` has no receiver,
-and `serde_json::from_str` has no argument for extra state, so a deserializer that needs an allocator,
-a lookup table, or a configuration value cannot receive one. A cgp-serde provider receives the context,
-and the context can carry any of them.
+notable here is that Serde has nowhere to put such a dependency. Serde's `Deserialize` has no
+receiver, and `serde_json::from_str` has no argument for extra state, so a deserializer that needs
+an allocator, a lookup table, or a configuration value cannot receive one. A cgp-serde provider
+receives the context, and the context can carry any of them.
 
 The arena deserializer is the worked instance. Deserializing many values as `&'a T` into one arena,
-rather than as a `Box<T>` each, needs the arena during deserialization, and the provider takes it from
-the context. The pattern corresponds to the motivating example of the context-and-capabilities
+rather than as a `Box<T>` each, needs the arena during deserialization, and the provider takes it
+from the context. The pattern corresponds to the motivating example of the context-and-capabilities
 proposal for Rust, which [Rust language proposals](../../../related-work/rust-language-proposals.md)
 compares with CGP; the word "capability" belongs to that proposal, not to CGP's own constructs.
 
@@ -35,15 +35,16 @@ layers, so the allocator is a wiring choice.**
   `typed_arena::Arena` the context's `HasArena` getter returns, and the getter is wired to a field.
 
 A context wires all three, with the getter pointed at the field that holds the arena. Swapping the
-allocator means wiring `AllocatorComponent` to a different provider, and giving a second type its own
-arena means one more getter entry keyed on that type; neither touches the deserializer.
+allocator means wiring `AllocatorComponent` to a different provider, and giving a second type its
+own arena means one more getter entry keyed on that type; neither touches the deserializer.
 
 The repository's [arena test](../examples/arena.md) wires the three layers. Its
-[simplified test](../examples/arena-simplified.md), which the announcement post follows, collapses them:
-a local `DeserializeAndAllocate` calls a local `#[cgp_auto_getter]` `HasArena` directly. That form is
-shorter to read and fixes the allocator inside the deserializer, which is the dependency the layered
-form removes. The [modular serialization example](../../../examples/modular-serialization.md) teaches
-the layered form.
+[simplified test](../examples/arena-simplified.md), which the announcement post follows, collapses
+them: a local `DeserializeAndAllocate` calls a local `#[cgp_auto_getter]` `HasArena` directly. That
+form is shorter to read and fixes the allocator inside the deserializer, which is the dependency the
+layered form removes. The
+[modular serialization example](../../../examples/modular-serialization.md) teaches the layered
+form.
 
 ## The lifetimes
 
@@ -51,11 +52,11 @@ the layered form.
 such as `App<'a>` holds a `&'a Arena<Coord>` field, created by the caller before the context and
 passed in. `CanAlloc<'a, T>` returns `&'a mut T`, tied to that outer lifetime rather than to the
 context, so a deserialized `Payload<'a>` holding `&'a Coord` values stays valid after the context is
-dropped, for as long as the arena lives. The deserialization lifetime `'de` is independent of `'a`: the
-input can be discarded once deserialization finishes, because the values borrow from the arena rather
-than from the input.
+dropped, for as long as the arena lives. The deserialization lifetime `'de` is independent of `'a`:
+the input can be discarded once deserialization finishes, because the values borrow from the arena
+rather than from the input.
 
 ## Public material derived from this
 
-The `architecture/context-services` page of the [cgp-serde project
-section](../../../website/projects/cgp-serde.md).
+The `architecture/context-services` page of the
+[cgp-serde project section](../../../website/projects/cgp-serde.md).

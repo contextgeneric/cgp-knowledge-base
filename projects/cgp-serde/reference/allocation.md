@@ -1,9 +1,9 @@
 # Allocation providers
 
-The allocation crates deserialize a borrowed `&'a T` by deserializing an owned `T` and moving it into
-an allocator that the context supplies. They split the work into layers so the allocator is a wiring
-choice: `cgp-serde-alloc` defines an allocation component, `CanAlloc`, and the deserializer that uses
-it, `DeserializeAndAllocate`; `cgp-serde-typed-arena` implements the component over
+The allocation crates deserialize a borrowed `&'a T` by deserializing an owned `T` and moving it
+into an allocator that the context supplies. They split the work into layers so the allocator is a
+wiring choice: `cgp-serde-alloc` defines an allocation component, `CanAlloc`, and the deserializer
+that uses it, `DeserializeAndAllocate`; `cgp-serde-typed-arena` implements the component over
 [`typed-arena`](https://docs.rs/typed-arena/) with an arena getter and `AllocateWithArena`. Why a
 provider can draw a service from its context at all is the subject of the
 [architecture](../architecture/README.md); this document records the items and how they are wired.
@@ -56,9 +56,9 @@ impl<'de, 'a, Value> ValueDeserializer<'de, &'a Value>
 ### Behavior
 
 The provider deserializes the owned value through the context, passes it to `alloc`, and returns the
-resulting `&'a mut Value` as a `&'a Value`. The lifetime `'a` is independent of the input's `'de`, so
-the returned reference outlives the input and borrows from the allocator instead. Wired for `&'a Coord`,
-it lets a `Cluster<'a>` whose `coords: Vec<&'a Coord>` field is read through
+resulting `&'a mut Value` as a `&'a Value`. The lifetime `'a` is independent of the input's `'de`,
+so the returned reference outlives the input and borrows from the allocator instead. Wired for
+`&'a Coord`, it lets a `Cluster<'a>` whose `coords: Vec<&'a Coord>` field is read through
 [`DeserializeExtend`](collections.md#deserializeextend) fill itself with references into an arena.
 
 ### Context dependencies
@@ -84,8 +84,8 @@ pub trait HasArena<'a, T: 'a> {
 }
 ```
 
-It lives in `cgp_serde_typed_arena::traits`, with the provider trait `ArenaGetter` and the wiring key
-`ArenaGetterComponent`.
+It lives in `cgp_serde_typed_arena::traits`, with the provider trait `ArenaGetter` and the wiring
+key `ArenaGetterComponent`.
 
 ### Behavior
 
@@ -96,8 +96,8 @@ reference because the getter returns a reference to the field, and the field its
 `&'a Arena<T>` borrowed from outside the context. That outer borrow is what lets allocated values
 outlive the context.
 
-A context with arenas for several types wires the getter per type with the `open` statement, keyed on
-`T`:
+A context with arenas for several types wires the getter per type with the `open` statement, keyed
+on `T`:
 
 ```rust
 #[derive(HasField)]
@@ -143,8 +143,8 @@ impl<'a, Value: 'a> Allocator<'a, Value>
 
 ### Behavior
 
-The provider calls `self.arena().alloc(value)`, so the value is moved into the arena and lives as long
-as the arena's borrow. All values are freed together when the arena is dropped.
+The provider calls `self.arena().alloc(value)`, so the value is moved into the arena and lives as
+long as the arena's borrow. All values are freed together when the arena is dropped.
 
 ### Context dependencies
 
@@ -202,26 +202,31 @@ check_components! {
 ```
 
 The context carries the arena as an ordinary field borrowed from outside, so the caller creates the
-arena, builds `App { arena: &arena }`, and deserializes; the resulting `Payload<'_>` borrows from the
-arena. The error components are there because the JSON helper raises `serde_json` errors through the
-context; see [JSON providers](json.md).
+arena, builds `App { arena: &arena }`, and deserializes; the resulting `Payload<'_>` borrows from
+the arena. The error components are there because the JSON helper raises `serde_json` errors through
+the context; see [JSON providers](json.md).
 
 This wiring is drawn from the repository's [arena test](../examples/arena.md), and the
 [modular serialization example](../../../examples/modular-serialization.md) teaches the same layered
 form. The repository also carries a [simplified form](../examples/arena-simplified.md), which the
-announcement post uses. The simplified form defines its own `#[cgp_auto_getter]` `HasArena` and its own
-`DeserializeAndAllocate` that calls `self.arena().alloc` directly, with no `CanAlloc` layer and no
-allocator wiring. It is shorter, but it fixes the allocator inside the deserializer, which the layered
-crates exist to avoid.
+announcement post uses. The simplified form defines its own `#[cgp_auto_getter]` `HasArena` and its
+own `DeserializeAndAllocate` that calls `self.arena().alloc` directly, with no `CanAlloc` layer and
+no allocator wiring. It is shorter, but it fixes the allocator inside the deserializer, which the
+layered crates exist to avoid.
 
 ## Source
 
-- [`crates/cgp-serde-alloc/src/traits/alloc.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-alloc/src/traits/alloc.rs) — `CanAlloc`.
-- [`crates/cgp-serde-alloc/src/providers/alloc_deserialize.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-alloc/src/providers/alloc_deserialize.rs) — `DeserializeAndAllocate`.
-- [`crates/cgp-serde-typed-arena/src/traits/has_arena.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-typed-arena/src/traits/has_arena.rs) — `HasArena`.
-- [`crates/cgp-serde-typed-arena/src/providers/alloc.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-typed-arena/src/providers/alloc.rs) — `AllocateWithArena`.
+- [`crates/cgp-serde-alloc/src/traits/alloc.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-alloc/src/traits/alloc.rs):
+  `CanAlloc`.
+- [`crates/cgp-serde-alloc/src/providers/alloc_deserialize.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-alloc/src/providers/alloc_deserialize.rs):
+  `DeserializeAndAllocate`.
+- [`crates/cgp-serde-typed-arena/src/traits/has_arena.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-typed-arena/src/traits/has_arena.rs):
+  `HasArena`.
+- [`crates/cgp-serde-typed-arena/src/providers/alloc.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-typed-arena/src/providers/alloc.rs):
+  `AllocateWithArena`.
 
 ## Public material derived from this
 
-The allocation pages in the `reference/` pages of the [cgp-serde project
-section](../../../website/projects/cgp-serde.md), and the rustdoc for both crates.
+The allocation pages in the `reference/` pages of the
+[cgp-serde project section](../../../website/projects/cgp-serde.md), and the rustdoc for both
+crates.

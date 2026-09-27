@@ -1,9 +1,10 @@
 # Testing
 
-cgp-serde's tests live in one crate, `cgp-serde-tests`, and consist of four runtime tests, each paired
-with compile-time wiring checks. This document records what each test pins, what the checks assert, and
-which parts of the library no test exercises. On the `v0.8.0` branch, `cargo test --workspace` passes
-all four tests; the library crates carry no tests and no doc tests of their own.
+cgp-serde's tests live in one crate, `cgp-serde-tests`, and consist of four runtime tests, each
+paired with compile-time wiring checks. This document records what each test pins, what the checks
+assert, and which parts of the library no test exercises. On the `v0.8.0` branch,
+`cargo test --workspace` passes all four tests; the library crates carry no tests and no doc tests
+of their own.
 
 ## What each test pins
 
@@ -17,17 +18,17 @@ runnable examples, and each is documented as one in [examples/](examples/README.
 | `arena.rs` | Deserializing a `Payload<'a>` into an arena through the layered allocation crates | equality with the expected value | the arena getter, and the deserializer for four value types |
 | `arena_simplified.rs` | The same with a test-local getter and `DeserializeAndAllocate`, as in the announcement post | equality with the expected value | the deserializer for four value types, plus a second table repeating one of them |
 
-All four use `serde_json` as the format and `cgp-error-anyhow` for the error type where one is needed.
-The checks use [`check_components!`](../../cgp/reference/macros/check_components.md), and list
-deserializer entries with `Life<'de>`, as
-[wiring a context](guides/wiring-a-context.md#check-every-value-type) recommends. Where a module holds
-two tables for one context they carry explicit `#[check_trait]` names; `messages.rs` checks two
-different contexts and relies on the derived names.
+All four use `serde_json` as the format and `cgp-error-anyhow` for the error type where one is
+needed. The checks use [`check_components!`](../../cgp/reference/macros/check_components.md), and
+list deserializer entries with `Life<'de>`, as
+[wiring a context](guides/wiring-a-context.md#check-every-value-type) recommends. Where a module
+holds two tables for one context they carry explicit `#[check_trait]` names; `messages.rs` checks
+two different contexts and relies on the derived names.
 
-Two of the tests carry wiring or checks that add nothing. `arena.rs` opens `TryComputerComponent` and
-wires both JSON codes although it deserializes through `deserialize_json_string`, which bypasses them.
-`arena_simplified.rs` checks deserializing `Coord` in a table of its own that its second table already
-covers. The [arena](examples/arena.md#known-issues) and
+Two of the tests carry wiring or checks that add nothing. `arena.rs` opens `TryComputerComponent`
+and wires both JSON codes although it deserializes through `deserialize_json_string`, which bypasses
+them. `arena_simplified.rs` checks deserializing `Coord` in a table of its own that its second table
+already covers. The [arena](examples/arena.md#known-issues) and
 [simplified arena](examples/arena-simplified.md#known-issues) examples record both.
 
 ## What is exercised
@@ -35,8 +36,8 @@ covers. The [arena](examples/arena.md#known-issues) and
 The tests run these providers, in the directions listed:
 
 - **Asserted output**: `UseSerde`, `SerializeString` (serializing), `SerializeHex`,
-  `SerializeFields`, `DeserializeRecordFields`, `DeserializeExtend`, `DeserializeAndAllocate` in both
-  forms, `AllocateWithArena` with `HasArena` wired through `UseField`, `SerializeToJsonString`,
+  `SerializeFields`, `DeserializeRecordFields`, `DeserializeExtend`, `DeserializeAndAllocate` in
+  both forms, `AllocateWithArena` with `HasArena` wired through `UseField`, `SerializeToJsonString`,
   `DeserializeFromJsonString` over `DeserializeFromJsonReader`, and `deserialize_json_string`.
 - **Run but not asserted**: `SerializeDeref`, `SerializeIterator`, and the serializing side of
   `SerializeBase64`, `SerializeRfc3339Date`, and `SerializeTimestamp`, all in `messages.rs`. A
@@ -58,15 +59,16 @@ the repository's own tests:
 - **Compile failures**: there are no compile-fail tests, so the diagnostics in
   [debugging wiring](guides/debugging-wiring.md) are not pinned either.
 
-Several of the defects in [issues.md](issues.md) sit in exactly these untested providers, which is how
-they went unnoticed.
+Several of the defects in [issues.md](issues.md) sit in exactly these untested providers, which is
+how they went unnoticed.
 
 ## Source
 
-- [`crates/cgp-serde-tests/src/tests/`](https://github.com/contextgeneric/cgp-serde/tree/v0.8.0/crates/cgp-serde-tests/src/tests)
-  — the four test files.
+- [`crates/cgp-serde-tests/src/tests/`](https://github.com/contextgeneric/cgp-serde/tree/v0.8.0/crates/cgp-serde-tests/src/tests):
+  the four test files.
 
 ## Public material derived from this
 
-The one sentence on the `limitations` page of the [cgp-serde project
-section](../../website/projects/cgp-serde.md) saying that the library is lightly tested.
+The one sentence on the `limitations` page of the
+[cgp-serde project section](../../website/projects/cgp-serde.md) saying that the library is lightly
+tested.

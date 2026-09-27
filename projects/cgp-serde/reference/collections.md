@@ -1,10 +1,10 @@
 # Collection providers
 
-The collection providers encode a collection as a Serde sequence, handing each item back to the context
-so the items follow the context's wiring. `SerializeIterator` writes anything iterable by reference, and
-`DeserializeExtend` reads a sequence into any collection that can be extended item by item. Both are
-[adapter re-entries](../architecture/reentrant-providers.md#adapter-calls): they pass each item to a
-Serde compound API wrapped together with the context.
+The collection providers encode a collection as a Serde sequence, handing each item back to the
+context so the items follow the context's wiring. `SerializeIterator` writes anything iterable by
+reference, and `DeserializeExtend` reads a sequence into any collection that can be extended item by
+item. Both are [adapter re-entries](../architecture/reentrant-providers.md#adapter-calls): they pass
+each item to a Serde compound API wrapped together with the context.
 
 ## `SerializeIterator`
 
@@ -40,12 +40,14 @@ and sets yield `&T`, so the context needs an entry for `&T`, conventionally the 
 `<'a, T> &'a T: SerializeDeref` that forwards every reference to the context's wiring for `T`; see
 [re-entrant providers](../architecture/reentrant-providers.md#what-re-entry-requires-of-a-context).
 A map yields a tuple of references, so a `BTreeMap<String, u64>` asks the context to serialize
-`(&String, &u64)`. The library has no provider for tuples, so the tuple has to be wired to `UseSerde`,
-and the map is written as a sequence of pairs, `[["a",1]]`, whose keys and values bypass the context.
+`(&String, &u64)`. The library has no provider for tuples, so the tuple has to be wired to
+`UseSerde`, and the map is written as a sequence of pairs, `[["a",1]]`, whose keys and values bypass
+the context.
 
 ### Context dependencies
 
-`CanSerializeValue<I>` for each item type `I` the collection yields by reference, for every lifetime.
+`CanSerializeValue<I>` for each item type `I` the collection yields by reference, for every
+lifetime.
 
 ### Pairing
 
@@ -53,8 +55,8 @@ The deserializing counterpart is [`DeserializeExtend`](#deserializeextend).
 
 ### Known issues
 
-- **Length-prefixed formats reject the output.** The sequence is started without a length, so postcard
-  fails with `SerializeSeqLengthUnknown`, even for collections whose length is known.
+- **Length-prefixed formats reject the output.** The sequence is started without a length, so
+  postcard fails with `SerializeSeqLengthUnknown`, even for collections whose length is known.
 - **Maps are written as sequences of pairs.** No provider serializes a map as a Serde map, and the
   pairs need a tuple provider the library does not have.
 - **Recursive collections fail to compile.** A type that contains a collection of itself makes the
@@ -79,19 +81,20 @@ where
 ```
 
 `DeserializeExtendVisitor` and the seed it uses for each item, `DeserializeExtendSeed`, are private.
-The seed has the same shape as [`DeserializeWithContext`](context-adapters.md#deserializewithcontext).
-The `IntoIterator` bound only names the collection's item type; the provider never iterates.
+The seed has the same shape as
+[`DeserializeWithContext`](context-adapters.md#deserializewithcontext). The `IntoIterator` bound
+only names the collection's item type; the provider never iterates.
 
 ### Behavior
 
 The provider asks the deserializer for a sequence, starts from `Value::default()`, and extends the
 collection with each item as it is deserialized, one at a time. Any collection meeting the bounds
-works: a `Vec<u64>`, and also a `BTreeSet<u64>`, where `[3,1,3]` deserializes to `{1, 3}` because the
-set's own `Extend` discards the duplicate. Input that is not a sequence fails with the deserializer's
-type error; with JSON, an object gives `invalid type: map, expected sequence`.
+works: a `Vec<u64>`, and also a `BTreeSet<u64>`, where `[3,1,3]` deserializes to `{1, 3}` because
+the set's own `Extend` discards the duplicate. Input that is not a sequence fails with the
+deserializer's type error; with JSON, an object gives `invalid type: map, expected sequence`.
 
-The items are deserialized through the context, so a `Vec<&'a Coord>` whose `&'a Coord` items are wired
-to [`DeserializeAndAllocate`](allocation.md) fills itself with references into an arena.
+The items are deserialized through the context, so a `Vec<&'a Coord>` whose `&'a Coord` items are
+wired to [`DeserializeAndAllocate`](allocation.md) fills itself with references into an arena.
 
 ### Context dependencies
 
@@ -104,16 +107,19 @@ The serializing counterpart is [`SerializeIterator`](#serializeiterator).
 ### Known issues
 
 - **Maps are read as sequences of pairs.** A map's `IntoIterator` item is a key-value tuple, so a
-  `BTreeMap<String, u64>` reads `[["a",1]]` once the tuple `(String, u64)` is wired to `UseSerde`, and
-  rejects the JSON object `{"a":1}` with `invalid type: map, expected sequence`. This matches what
-  `SerializeIterator` writes, but not the map form a Serde-derived type uses.
+  `BTreeMap<String, u64>` reads `[["a",1]]` once the tuple `(String, u64)` is wired to `UseSerde`,
+  and rejects the JSON object `{"a":1}` with `invalid type: map, expected sequence`. This matches
+  what `SerializeIterator` writes, but not the map form a Serde-derived type uses.
 
 ## Source
 
-- [`crates/cgp-serde/src/providers/iterator.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/iterator.rs) — `SerializeIterator`.
-- [`crates/cgp-serde/src/providers/extend.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/extend.rs) — `DeserializeExtend`, its visitor, and its seed.
+- [`crates/cgp-serde/src/providers/iterator.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/iterator.rs):
+  `SerializeIterator`.
+- [`crates/cgp-serde/src/providers/extend.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/extend.rs):
+  `DeserializeExtend`, its visitor, and its seed.
 
 ## Public material derived from this
 
-The two provider pages in the `reference/providers/` pages of the [cgp-serde project
-section](../../../website/projects/cgp-serde.md), and the rustdoc for both providers.
+The two provider pages in the `reference/providers/` pages of the
+[cgp-serde project section](../../../website/projects/cgp-serde.md), and the rustdoc for both
+providers.

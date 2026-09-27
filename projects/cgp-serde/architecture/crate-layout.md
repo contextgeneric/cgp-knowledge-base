@@ -1,8 +1,8 @@
 # Crate layout
 
 cgp-serde is split into five library crates so that each external dependency lives in its own crate,
-and an application compiles only the dependencies its wiring actually names. This document records the
-crates, what depends on what, and why the allocation support is two crates rather than one.
+and an application compiles only the dependencies its wiring actually names. This document records
+the crates, what depends on what, and why the allocation support is two crates rather than one.
 
 ## The dependency graph
 
@@ -18,24 +18,24 @@ dependencies of its own providers and nothing else:
 | `cgp-serde-alloc` | `cgp-serde` | the `CanAlloc` component and `DeserializeAndAllocate` |
 | `cgp-serde-typed-arena` | `cgp-serde`, `cgp-serde-alloc`, `typed-arena` | the arena getter and `AllocateWithArena` |
 
-The test crate, `cgp-serde-tests`, depends on all five, on `cgp-error-anyhow` for a concrete error type,
-and on Serde's `derive` feature. No library crate depends on `cgp-error-anyhow`: the JSON providers
-name only `HasErrorType` and `CanRaiseError`, and the application chooses the error type.
+The test crate, `cgp-serde-tests`, depends on all five, on `cgp-error-anyhow` for a concrete error
+type, and on Serde's `derive` feature. No library crate depends on `cgp-error-anyhow`: the JSON
+providers name only `HasErrorType` and `CanRaiseError`, and the application chooses the error type.
 
 The graph is the practical form of the design's main promise. A crate that defines data types needs
 only `cgp`, to derive the field traits the record providers read, and depends on neither `serde` nor
-any cgp-serde crate; see [derive-free records](derive-free-records.md). An application depends on the
-cgp-serde crates whose providers it wires, so choosing hex over base64 is also choosing to compile
-`hex` and not `base64`.
+any cgp-serde crate; see [derive-free records](derive-free-records.md). An application depends on
+the cgp-serde crates whose providers it wires, so choosing hex over base64 is also choosing to
+compile `hex` and not `base64`.
 
 ## Why allocation is two crates
 
 **The allocation component and its arena implementation are separate crates so that the allocator is
 a wiring choice rather than a dependency of the deserializer.** `cgp-serde-alloc` defines what
 allocation means, `CanAlloc<'a, T>`, and the provider that deserializes a borrowed value through it,
-and it adds no external dependency. `cgp-serde-typed-arena` is one implementation of `CanAlloc`, over
-`typed-arena`. An application using a different allocator would implement the component itself and
-depend on `cgp-serde-alloc` alone. The layering is described in
+and it adds no external dependency. `cgp-serde-typed-arena` is one implementation of `CanAlloc`,
+over `typed-arena`. An application using a different allocator would implement the component itself
+and depend on `cgp-serde-alloc` alone. The layering is described in
 [context services](context-services.md).
 
 ## Module layout
@@ -56,21 +56,21 @@ the file, as in `cgp_serde::providers::SerializeFields`.
 
 ## Build facts
 
-Every library crate declares `#![no_std]`. All but `cgp-serde-alloc` and `cgp-serde-typed-arena` also
-link `alloc`, for `String` and `Vec`. The workspace uses edition 2024 with a minimum Rust version of
-1.90, pins its development toolchain to Rust 1.98.1 in `rust-toolchain.toml`, and depends on `cgp`
-0.8.0-alpha, with a `[patch.crates-io]` section that overrides `cgp` and `cgp-error-anyhow` with the
-`cgp` repository's `main` branch by git URL, pinned to a commit in the lockfile. So the workspace
-builds against unreleased `cgp` code rather than the published 0.8.0-alpha, and its first build
-fetches that repository. To test against a local change to `cgp`, the same entries switch to the
-commented-out paths into `../cgp`. All five crates carry version 0.2.0.
+Every library crate declares `#![no_std]`. All but `cgp-serde-alloc` and `cgp-serde-typed-arena`
+also link `alloc`, for `String` and `Vec`. The workspace uses edition 2024 with a minimum Rust
+version of 1.90, pins its development toolchain to Rust 1.98.1 in `rust-toolchain.toml`, and depends
+on `cgp` 0.8.0-alpha, with a `[patch.crates-io]` section that overrides `cgp` and `cgp-error-anyhow`
+with the `cgp` repository's `main` branch by git URL, pinned to a commit in the lockfile. So the
+workspace builds against unreleased `cgp` code rather than the published 0.8.0-alpha, and its first
+build fetches that repository. To test against a local change to `cgp`, the same entries switch to
+the commented-out paths into `../cgp`. All five crates carry version 0.2.0.
 
 ## Source
 
-- [`Cargo.toml`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/Cargo.toml) — the workspace
+- [`Cargo.toml`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/Cargo.toml): the workspace
   members and shared dependencies.
-- [`crates/`](https://github.com/contextgeneric/cgp-serde/tree/v0.8.0/crates) — one directory per crate,
-  each with its own `Cargo.toml`.
+- [`crates/`](https://github.com/contextgeneric/cgp-serde/tree/v0.8.0/crates): one directory per
+  crate, each with its own `Cargo.toml`.
 
 ## Public material derived from this
 

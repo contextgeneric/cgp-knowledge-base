@@ -33,15 +33,15 @@ where
 { ... }
 ```
 
-`ToHex` and `FromHex` are the `hex` crate's traits, implemented for byte containers such as `Vec<u8>`
-and, for `FromHex`, fixed-size byte arrays.
+`ToHex` and `FromHex` are the `hex` crate's traits, implemented for byte containers such as
+`Vec<u8>` and, for `FromHex`, fixed-size byte arrays.
 
 ### Behavior
 
 Serializing writes the bytes as lowercase hexadecimal through the context's wiring for `String`, so
-`b"hi"` becomes `"6869"`. Deserializing reads a `String` through the context and decodes it, reporting
-the `hex` crate's error message on bad input: `"6G"` fails with `Invalid character 'G' at position 1`.
-Uppercase input is accepted, as the `hex` crate accepts it.
+`b"hi"` becomes `"6869"`. Deserializing reads a `String` through the context and decodes it,
+reporting the `hex` crate's error message on bad input: `"6G"` fails with
+`Invalid character 'G' at position 1`. Uppercase input is accepted, as the `hex` crate accepts it.
 
 ### Context dependencies
 
@@ -54,7 +54,8 @@ The same struct implements both directions, and the two round-trip.
 
 ## `SerializeBase64`
 
-`SerializeBase64` encodes bytes as a standard, padded base64 string and decodes them into a `Vec<u8>`.
+`SerializeBase64` encodes bytes as a standard, padded base64 string and decodes them into a
+`Vec<u8>`.
 
 ### Definition
 
@@ -89,8 +90,8 @@ The same struct implements both directions, and the two round-trip for `Vec<u8>`
 
 ### Known issues
 
-- **Only the standard padded alphabet is supported.** There is no URL-safe or unpadded variant, and no
-  way to choose one.
+- **Only the standard padded alphabet is supported.** There is no URL-safe or unpadded variant, and
+  no way to choose one.
 
 ## `SerializeRfc3339Date`
 
@@ -150,34 +151,40 @@ impl<'de> ValueDeserializer<'de, DateTime<Utc>> { ... }
 ### Behavior
 
 Serializing writes the number of whole seconds since the Unix epoch through the context's wiring for
-`i64`, so 14:15 UTC on 3 November 2025 becomes `1762179300`. Any sub-second part is dropped, so a value
-with 250 milliseconds serializes to the same number and does not round-trip exactly. Deserializing
-reads an `i64` and builds the instant; a timestamp outside the range `chrono` can represent fails with
-`invalid timestamp`.
+`i64`, so 14:15 UTC on 3 November 2025 becomes `1762179300`. Any sub-second part is dropped, so a
+value with 250 milliseconds serializes to the same number and does not round-trip exactly.
+Deserializing reads an `i64` and builds the instant; a timestamp outside the range `chrono` can
+represent fails with `invalid timestamp`.
 
 ### Context dependencies
 
-`CanSerializeValue<i64>` and `CanDeserializeValue<'de, i64>`. A context that has no `i64` field still
-needs an `i64` entry, which is why the demo's second application wires `i64` where the first does not.
+`CanSerializeValue<i64>` and `CanDeserializeValue<'de, i64>`. A context that has no `i64` field
+still needs an `i64` entry, which is why the demo's second application wires `i64` where the first
+does not.
 
 ### Pairing
 
-The same struct implements both directions, and the two round-trip for values with no sub-second part.
+The same struct implements both directions, and the two round-trip for values with no sub-second
+part.
 
 ### Known issues
 
-- **Sub-second precision is lost.** The timestamp is whole seconds, with no millisecond or nanosecond
-  variant.
+- **Sub-second precision is lost.** The timestamp is whole seconds, with no millisecond or
+  nanosecond variant.
 
 ## Source
 
-- [`crates/cgp-serde-extra/src/providers/hex.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-extra/src/providers/hex.rs) — `SerializeHex`.
-- [`crates/cgp-serde-extra/src/providers/base64.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-extra/src/providers/base64.rs) — `SerializeBase64`.
-- [`crates/cgp-serde-extra/src/providers/date.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-extra/src/providers/date.rs) — `SerializeRfc3339Date`.
-- [`crates/cgp-serde-extra/src/providers/timestamp.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-extra/src/providers/timestamp.rs) — `SerializeTimestamp`.
+- [`crates/cgp-serde-extra/src/providers/hex.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-extra/src/providers/hex.rs):
+  `SerializeHex`.
+- [`crates/cgp-serde-extra/src/providers/base64.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-extra/src/providers/base64.rs):
+  `SerializeBase64`.
+- [`crates/cgp-serde-extra/src/providers/date.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-extra/src/providers/date.rs):
+  `SerializeRfc3339Date`.
+- [`crates/cgp-serde-extra/src/providers/timestamp.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-extra/src/providers/timestamp.rs):
+  `SerializeTimestamp`.
 
 ## Public material derived from this
 
-The four provider pages in the `reference/providers/` pages of the [cgp-serde project
-section](../../../website/projects/cgp-serde.md), the `messages` example page, where the two
-applications differ by these providers, and the rustdoc for all four.
+The four provider pages in the `reference/providers/` pages of the
+[cgp-serde project section](../../../website/projects/cgp-serde.md), the `messages` example page,
+where the two applications differ by these providers, and the rustdoc for all four.
