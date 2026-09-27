@@ -5,18 +5,18 @@ two AI clients, from independent per-subsystem builder providers that know nothi
 or of each other, and wires five builder contexts that combine those providers into four application
 types.
 
-- **Source** — [builder/](https://github.com/contextgeneric/cgp-examples/tree/v0.8.0/builder), on the
+- **Source**: [builder/](https://github.com/contextgeneric/cgp-examples/tree/v0.8.0/builder), on the
   `v0.8.0` branch; see [which revision](../README.md#which-revision-these-documents-describe)
-- **Run** — nothing: the crate has no binary and no test, and its two `main` functions are ordinary
+- **Run**: nothing: the crate has no binary and no test, and its two `main` functions are ordinary
   library functions nothing calls
-- **Needs** — for the SQLite builders, a connection string that names an existing file or carries
+- **Needs**: for the SQLite builders, a connection string that names an existing file or carries
   `mode=rwc` to create one, as both `main` functions do; a Postgres server for the Postgres builder;
   and `OPENAI_API_KEY` for the default builder
-- **Result** — a probe called every builder: each SQLite-based builder assembled its application
+- **Result**: a probe called every builder: each SQLite-based builder assembled its application
   offline, and both `main` functions returned `Ok` in a directory with no database file; see
   [testing.md](testing.md#what-a-probe-ran)
-- **Worked example** — [application builder](../../../examples/application-builder.md)
-- **Cited by** — [extensible data types, part 1](../../../website/blog/extensible-datatypes-part-1.md),
+- **Worked example**: [application builder](../../../examples/application-builder.md)
+- **Cited by**: [extensible data types, part 1](../../../website/blog/extensible-datatypes-part-1.md),
   which links the crate
 
 ## What it is
@@ -56,7 +56,7 @@ multi-target builder dispatches on its code with the `open` statement.
 The crate demonstrates the pattern, and every builder runs when called. Its gaps are each confirmed
 against the `v0.8.0` branch and recorded in full in [issues.md](issues.md):
 
-- **Nothing runs it** — no binary and no test; the `main` functions are library functions nothing
+- **Nothing runs it**: no binary and no test; the `main` functions are library functions nothing
   calls.
 
 ## Where the blog post's code lives

@@ -48,11 +48,11 @@ The mistake is the missing `@app.extra` entry, and the root cause names the full
 routes each filter to. The other five checks passed, since the getters, updaters, and deleter need
 nothing from the extras. Three further probes are recorded with the stage they concern:
 
-- **A bundle that does not join the namespace** — `[CGP-E110]` at the check lines; see
+- **A bundle that does not join the namespace**: `[CGP-E110]` at the check lines; see
   [namespaces.md](namespaces.md#the-bundles).
-- **A default-impls context without its filter entry** — `[CGP-E107]` at the creator's check; see
+- **A default-impls context without its filter entry**: `[CGP-E107]` at the creator's check; see
   [default-impls.md](default-impls.md#the-context).
-- **A context or child namespace that overrides a default** — `[CGP-E005]` at the entry; see
+- **A context or child namespace that overrides a default**: `[CGP-E005]` at the entry; see
   [default-impls.md](default-impls.md#a-default-cannot-be-overridden).
 
 ## What a probe ran
@@ -71,11 +71,11 @@ any database code.
 
 These have no test, and the probes above are the only evidence beyond the build:
 
-- **Every method** — each provider body is `todo!()`, so no call returns.
-- **The filter thresholds** — nothing exercises the rejection above a score of 0.8, since the filters
+- **Every method**: each provider body is `todo!()`, so no call returns.
+- **The filter thresholds**: nothing exercises the rejection above a score of 0.8, since the filters
   that would supply a score are `todo!()` as well.
-- **The commented steps** — the build does not compile them; only the probe did.
-- **Compile failures** — there are no compile-fail tests.
+- **The commented steps**: the build does not compile them; only the probe did.
+- **Compile failures**: there are no compile-fail tests.
 
 ## Public material derived from this
 

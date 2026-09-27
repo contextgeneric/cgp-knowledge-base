@@ -4,13 +4,13 @@
 a provider over an abstract name type, each in its own binary on a `Person` struct with a `name`
 field. Its library holds only a hand-written expansion of the component.
 
-- **Source** — [greet/](https://github.com/contextgeneric/cgp-examples/tree/v0.8.0/greet), on the
+- **Source**: [greet/](https://github.com/contextgeneric/cgp-examples/tree/v0.8.0/greet), on the
   `v0.8.0` branch; see [which revision](../README.md#which-revision-these-documents-describe)
-- **Run** — `cargo run -p cgp-example-greet --bin <name>`, with `greet-function`, `greet-component`,
+- **Run**: `cargo run -p cgp-example-greet --bin <name>`, with `greet-function`, `greet-component`,
   or `greet-abstract-type`
-- **Needs** — nothing
-- **Result** — each binary printed `Hello, Alice!`
-- **Worked example** — none; the closest teaching material is the
+- **Needs**: nothing
+- **Result**: each binary printed `Hello, Alice!`
+- **Worked example**: none; the closest teaching material is the
   [area calculation](../../../examples/area-calculation.md) example, which also wires a value context
 
 ## What it is
@@ -107,8 +107,8 @@ library's hand-written expansion shows an older shape.
 The three programs run and print what their code says. The crate's gaps are recorded in full in
 [issues.md](issues.md):
 
-- **No check blocks** — no binary asserts its wiring with `check_components!`.
-- **An outdated expansion** — `greet_expanded.rs` differs from what the macro generates.
+- **No check blocks**: no binary asserts its wiring with `check_components!`.
+- **An outdated expansion**: `greet_expanded.rs` differs from what the macro generates.
 
 ## The documents
 

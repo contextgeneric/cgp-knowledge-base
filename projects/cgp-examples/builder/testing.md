@@ -79,11 +79,11 @@ builds them offline.
 
 These have no test, and the first was exercised only by the probe above:
 
-- **Every build** — nothing in the repository calls a builder, a constructor, or a `main` function.
-- **`BuildDefaultSqliteAndHttpClient`** — never wired, so never run; see
+- **Every build**: nothing in the repository calls a builder, a constructor, or a `main` function.
+- **`BuildDefaultSqliteAndHttpClient`**: never wired, so never run; see
   [issues.md](issues.md#housekeeping).
-- **A live service** — no run connected to Postgres or sent a request to an AI provider.
-- **Compile failures** — there are no compile-fail tests.
+- **A live service**: no run connected to Postgres or sent a request to an AI provider.
+- **Compile failures**: there are no compile-fail tests.
 
 ## Public material derived from this
 

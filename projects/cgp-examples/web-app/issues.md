@@ -13,7 +13,7 @@ can use, and each probe call ended in the `todo!()` its code reaches; see
 
 ## Missing features
 
-- **Nothing runs the crate** — it has no binary and no test, and every provider body is `todo!()`, so
+- **Nothing runs the crate**: it has no binary and no test, and every provider body is `todo!()`, so
   no method returns. The crate demonstrates wiring, which the build verifies, but a test that
   exercised a filter would need stand-in bodies for the dummy filters and the Postgres providers. It
   would also need `Error` to derive `Debug` before a test could unwrap a result. See
@@ -21,12 +21,12 @@ can use, and each probe call ended in the `todo!()` its code reaches; see
 
 ## Housekeeping
 
-- **Two wiring steps are comments** — the flat nine-entry table in `fine_grained.rs` and the flat
+- **Two wiring steps are comments**: the flat nine-entry table in `fine_grained.rs` and the flat
   namespace table in `namespace.rs` are commented-out blocks, so the build does not check them and
   they can drift from the code around them. A probe compiled both, on contexts of their own, and both
   passed a check of all nine components. Wiring each on a context of its own in the crate, as the
   probe did, would keep them compiled; see [testing.md](testing.md#what-a-probe-ran).
-- **Unwired providers** — `fine_grained.rs` and `default_impls.rs` each define `DummyUserCensor` and
+- **Unwired providers**: `fine_grained.rs` and `default_impls.rs` each define `DummyUserCensor` and
   `DummySpamMessageDetector`, and no context in either module wires them. The dummies that are wired
   are separate definitions in `coarse_grained.rs` and, through `DummyContentFilterComponents`, in
   `namespace.rs`.

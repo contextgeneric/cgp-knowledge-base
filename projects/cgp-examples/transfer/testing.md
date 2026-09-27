@@ -32,15 +32,15 @@ produced by hand against the running server for these documents; the repository 
 
 These behaviors have no test of any kind, and each is recorded from a probe or a manual run instead:
 
-- **Every error path** — no test sends a wrong password, an unknown recipient, an overdraft, or a bad
+- **Every error path**: no test sends a wrong password, an unknown recipient, an overdraft, or a bad
   query string, so none of the status codes or messages is pinned.
-- **The backend on its own** — `UseMockedApp`'s transfer is only ever run behind `NoTransferToSelf`,
+- **The backend on its own**: `UseMockedApp`'s transfer is only ever run behind `NoTransferToSelf`,
   so nothing in the repository pins how it handles a self-transfer; a probe confirmed it leaves the
   balance unchanged.
-- **Unused providers** — `HandleFromResponse` and `HandleHttpErrorWithAnyhow` are never wired, so the
+- **Unused providers**: `HandleFromResponse` and `HandleHttpErrorWithAnyhow` are never wired, so the
   compiler checks their definitions but never checks them against a context.
-- **Concurrency** — no test runs overlapping transfers against the shared balance map.
-- **Compile failures** — there are no compile-fail tests, so the diagnostic in
+- **Concurrency**: no test runs overlapping transfers against the shared balance map.
+- **Compile failures**: there are no compile-fail tests, so the diagnostic in
   [swapping the backend](guides/swapping-the-backend.md) is not pinned either.
 
 ## Public material derived from this

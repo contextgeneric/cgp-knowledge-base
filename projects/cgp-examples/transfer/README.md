@@ -4,16 +4,16 @@
 two users, served over HTTP by Axum, with every domain type, every business operation, and every
 cross-cutting concern expressed as a swappable CGP component.
 
-- **Source** — [transfer/](https://github.com/contextgeneric/cgp-examples/tree/v0.8.0/transfer), on
+- **Source**: [transfer/](https://github.com/contextgeneric/cgp-examples/tree/v0.8.0/transfer), on
   the `v0.8.0` branch; see [which revision](../README.md#which-revision-these-documents-describe)
-- **Run** — `cargo run --bin server` from the repository root, then `transfer/example.sh` in a second
+- **Run**: `cargo run --bin server` from the repository root, then `transfer/example.sh` in a second
   terminal
-- **Needs** — port 8080 free; `curl` and `base64` for the script
-- **Result** — serves on `0.0.0.0:8080`. `example.sh` returned `{"balance":100}` for Alice,
+- **Needs**: port 8080 free; `curl` and `base64` for the script
+- **Result**: serves on `0.0.0.0:8080`. `example.sh` returned `{"balance":100}` for Alice,
   `{"balance":200}` for Bob, and an empty `200` for the transfer; every error path returned its
   status and message, as recorded in [request-lifecycle.md](architecture/request-lifecycle.md)
-- **Worked example** — [money-transfer API](../../../examples/money-transfer-api.md)
-- **Cited by** — the [v0.5.0 release post](../../../website/blog/v0-5-0-release.md)
+- **Worked example**: [money-transfer API](../../../examples/money-transfer-api.md)
+- **Cited by**: the [v0.5.0 release post](../../../website/blog/v0-5-0-release.md)
 
 ## What it is
 
@@ -50,11 +50,11 @@ and a `for` loop. The request getters import the app's abstract types with
 The service works as a demonstration and has no automated tests. Its gaps are each confirmed against
 the `v0.8.0` branch and recorded in full in [issues.md](issues.md):
 
-- **Unused items** — `HandleHttpErrorWithAnyhow`, `HandleFromResponse`, `ErrInternal`, and
+- **Unused items**: `HandleHttpErrorWithAnyhow`, `HandleFromResponse`, `ErrInternal`, and
   `CanAddApiRoutes` are defined and never wired or called.
-- **No request bodies** — the routing layer extracts requests with `FromRequestParts`, so an endpoint
+- **No request bodies**: the routing layer extracts requests with `FromRequestParts`, so an endpoint
   cannot read a body.
-- **The walkthrough has drifted** — the crate's README describes a per-detail error wiring the code no
+- **The walkthrough has drifted**: the crate's README describes a per-detail error wiring the code no
   longer has, and calls components "capabilities" throughout.
 
 ## The documents

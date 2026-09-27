@@ -4,10 +4,10 @@
 `CanGreet`, but it is a simplified, older form: its consumer blanket impl routes through the wiring
 table instead of through the provider trait, and it leaves out two of the macro's provider impls.
 
-- **Source** — [src/greet_expanded.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/greet/src/greet_expanded.rs)
-- **Run** — nothing uses it; it is the library's only module, and no binary imports it
-- **Needs** — nothing
-- **Result** — compiles. A probe wired a context through it and printed `Hello, Alice!`, and a second
+- **Source**: [src/greet_expanded.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/greet/src/greet_expanded.rs)
+- **Run**: nothing uses it; it is the library's only module, and no binary imports it
+- **Needs**: nothing
+- **Result**: compiles. A probe wired a context through it and printed `Hello, Alice!`, and a second
   probe showed where it and the macro part ways
 
 ## What it defines
@@ -75,7 +75,7 @@ macro implements it for any context that provides the component, wired or not.
 
 ## Known issues
 
-- **It does not match the macro** — see [issues.md](issues.md#housekeeping).
+- **It does not match the macro**: see [issues.md](issues.md#housekeeping).
 
 ## Public material derived from this
 

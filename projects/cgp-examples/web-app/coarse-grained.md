@@ -3,10 +3,10 @@
 `coarse_grained.rs` is the first stage: one manager trait per domain, with the content filters as
 two small components of their own, wired on `ProductionApp` in four entries.
 
-- **Source** — [coarse_grained.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/web-app/src/coarse_grained.rs)
-- **Run** — no test; the context is exercised only by the check its wiring macro derives
-- **Needs** — nothing
-- **Result** — compiles and passes its checks. A probe called `get_user` and `create_user` on
+- **Source**: [coarse_grained.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/web-app/src/coarse_grained.rs)
+- **Run**: no test; the context is exercised only by the check its wiring macro derives
+- **Needs**: nothing
+- **Result**: compiles and passes its checks. A probe called `get_user` and `create_user` on
   `ProductionApp`, and both panicked with `not yet implemented`
 
 ## The components

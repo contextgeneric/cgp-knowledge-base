@@ -4,10 +4,10 @@
 `DefaultAppComponents`, so that its `ProductionApp` joins that namespace and wires only its content
 filters.
 
-- **Source** — [default_impls.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/web-app/src/default_impls.rs)
-- **Run** — no test; the context is exercised only by its check block
-- **Needs** — nothing
-- **Result** — compiles and passes its check. A probe called `delete_post` on `ProductionApp`, which
+- **Source**: [default_impls.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/web-app/src/default_impls.rs)
+- **Run**: no test; the context is exercised only by its check block
+- **Needs**: nothing
+- **Result**: compiles and passes its check. A probe called `delete_post` on `ProductionApp`, which
   panicked with `not yet implemented`
 
 ## The components and providers
@@ -125,7 +125,7 @@ binds is final. A context that needs a different getter must use a namespace oth
 
 ## Known issues
 
-- **Unwired providers** — `DummyUserCensor` and `DummySpamMessageDetector`; see
+- **Unwired providers**: `DummyUserCensor` and `DummySpamMessageDetector`; see
   [issues.md](issues.md#housekeeping).
 
 ## Try a change

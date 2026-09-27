@@ -4,14 +4,14 @@
 application changes as its component count grows: coarse manager traits, fine-grained per-operation
 traits with provider bundles, namespace-grouped wiring, and namespace default implementations.
 
-- **Source** — [web-app/](https://github.com/contextgeneric/cgp-examples/tree/v0.8.0/web-app), on the
+- **Source**: [web-app/](https://github.com/contextgeneric/cgp-examples/tree/v0.8.0/web-app), on the
   `v0.8.0` branch; see [which revision](../README.md#which-revision-these-documents-describe)
-- **Run** — nothing: the crate has no binary and no test, and every provider body is `todo!()`
-- **Needs** — nothing beyond the workspace build
-- **Result** — compiles, and every check block passes. A probe called a method on the contexts of
+- **Run**: nothing: the crate has no binary and no test, and every provider body is `todo!()`
+- **Needs**: nothing beyond the workspace build
+- **Result**: compiles, and every check block passes. A probe called a method on the contexts of
   three stages, and each call panicked with `not yet implemented`; see
   [testing.md](testing.md#what-a-probe-ran)
-- **Worked example** — [social media app](../../../examples/social-media-app.md)
+- **Worked example**: [social media app](../../../examples/social-media-app.md)
 
 ## What it is
 
@@ -49,8 +49,8 @@ namespace defaults with [`#[default_impl]`](../../../cgp/reference/attributes/de
 The crate demonstrates wiring only, and nothing in it runs. Its gaps are each confirmed against the
 `v0.8.0` branch and recorded in full in [issues.md](issues.md):
 
-- **Nothing runs it** — no binary and no test, and every provider body is `todo!()`.
-- **Two wiring steps are comments** — the flat nine-entry table and the flat namespace table exist
+- **Nothing runs it**: no binary and no test, and every provider body is `todo!()`.
+- **Two wiring steps are comments**: the flat nine-entry table and the flat namespace table exist
   only as commented-out blocks, so the compiler does not check them.
 
 ## Where the blog post's code lives

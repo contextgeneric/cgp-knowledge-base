@@ -32,9 +32,9 @@ macro's component; see [expansion.md](expansion.md#how-it-differs-from-the-macro
 
 These have no test, and the runs and probe above are the only evidence:
 
-- **`GreetHi`** — no context wires it, so its message is never printed.
-- **`greet_expanded.rs`** — nothing in the repository uses it; only the probe did.
-- **Compile failures** — there are no compile-fail tests.
+- **`GreetHi`**: no context wires it, so its message is never printed.
+- **`greet_expanded.rs`**: nothing in the repository uses it; only the probe did.
+- **Compile failures**: there are no compile-fail tests.
 
 ## Public material derived from this
 

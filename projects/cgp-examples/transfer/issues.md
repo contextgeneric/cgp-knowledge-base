@@ -13,12 +13,12 @@ No defect has been confirmed. A defect is behavior that is wrong for the input i
 
 A missing feature is behavior the crate does not attempt.
 
-- **No automated tests** — the crate has no `#[test]`, and `example.sh` prints without checking. See
+- **No automated tests**: the crate has no `#[test]`, and `example.sh` prints without checking. See
   [testing.md](testing.md).
-- **No request bodies** — `CanAddRoute` requires the request to implement `FromRequestParts`, so an
+- **No request bodies**: `CanAddRoute` requires the request to implement `FromRequestParts`, so an
   endpoint reads only the URI and headers, and the transfer endpoint takes its arguments from the
   query string. See [the HTTP layer](reference/http-layer.md#canaddroute).
-- **The type choices cannot be shared between backends** — the error type, the five abstract types, and
+- **The type choices cannot be shared between backends**: the error type, the five abstract types, and
   the HTTP error provider are bound in `MockNamespace` together with the mock providers. A namespace
   binding cannot be overridden by an inheriting namespace, so a second backend cannot inherit
   `MockNamespace` and replace only its providers; it must repeat every type choice in a namespace of
@@ -28,7 +28,7 @@ A missing feature is behavior the crate does not attempt.
   `MockBackendNamespace: AppTypesNamespace` binding only the three backend paths, and a context
   joining the latter compiled and passed the same check as `MockApp`. See
   [namespace organization](architecture/namespace-organization.md).
-- **Routes serve only `AppError`** — the routing traits require `HasErrorType<Error = AppError>`, so a
+- **Routes serve only `AppError`**: the routing traits require `HasErrorType<Error = AppError>`, so a
   context with a different error type cannot be served without new routing impls.
 
 ## Housekeeping
@@ -36,18 +36,18 @@ A missing feature is behavior the crate does not attempt.
 Housekeeping items are neither defects nor features: code that is unused, inconsistent with the rest,
 or misdescribed.
 
-- **Unused items** — `HandleHttpErrorWithAnyhow` and `HandleFromResponse` are defined and never
+- **Unused items**: `HandleHttpErrorWithAnyhow` and `HandleFromResponse` are defined and never
   wired, `ErrInternal` is never raised, and the `CanAddApiRoutes` alias in `contexts/app.rs` is never
   named; the binary imports `CanAddMainApiRoutes` instead. Each is either worth a use in the service or
   worth removing.
-- **A comment gives the wrong reason** — the comment on `MockNamespace` in `namespaces/mock.rs` says
+- **A comment gives the wrong reason**: the comment on `MockNamespace` in `namespaces/mock.rs` says
   its body holds "the pieces that have no `#[cgp_impl]` block of their own to attach a
   `#[default_impl]` to". `DisplayHttpError` has one; it is in the body because it is generic over
   `Code` and `Detail`, which `#[default_impl]` cannot register.
-- **"Capability" in comments** — the code comments in `interfaces/`, `contexts/app.rs`, and
+- **"Capability" in comments**: the code comments in `interfaces/`, `contexts/app.rs`, and
   `bin/server.rs` call components "capabilities", a word the base avoids for CGP's own constructs, per
   the `/cgp` skill's vocabulary.
-- **A stray lockfile** — `transfer/Cargo.lock` is tracked, but `transfer` is a workspace member, so
+- **A stray lockfile**: `transfer/Cargo.lock` is tracked, but `transfer` is a workspace member, so
   Cargo uses the root `Cargo.lock` and ignores this one.
 
 ### The crate's README

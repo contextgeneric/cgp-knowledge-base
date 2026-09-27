@@ -67,14 +67,14 @@ error[E0277]: [CGP-E001] the consumer trait `CanCompute<Eval, Times<MathExpr>>` 
 
 These have no test, and the first two were exercised by a probe for these documents instead:
 
-- **Two whole contexts** — `add_mult_binary_op` and `add_mult_code` have no test. A probe evaluated
+- **Two whole contexts**: `add_mult_binary_op` and `add_mult_code` have no test. A probe evaluated
   and converted `2 * (3 + 4)` through each and got `14` and `(* 2 (+ 3 4))`, so `BinaryOpToLisp` and
   the code-keyed wiring work, but nothing in the repository pins it.
-- **The dispatch wrappers' necessity** — nothing records that wiring `MatchWithValueHandlers`
+- **The dispatch wrappers' necessity**: nothing records that wiring `MatchWithValueHandlers`
   directly overflows; a probe did, as [dispatch layers](architecture/dispatch-layers.md) records.
-- **`EvalSubtractWithNegate`** — never wired, so never run.
-- **The `classic` module** — its `eval` and `expr_to_string` have no test.
-- **Compile failures** — there are no compile-fail tests.
+- **`EvalSubtractWithNegate`**: never wired, so never run.
+- **The `classic` module**: its `eval` and `expr_to_string` have no test.
+- **Compile failures**: there are no compile-fail tests.
 
 ## Public material derived from this
 

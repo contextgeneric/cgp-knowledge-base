@@ -3,10 +3,10 @@
 The base interpreter again, with the two per-operator conversion providers replaced by one generic
 `BinaryOpToLisp` that takes the operator symbol as a type-level string.
 
-- **Source** — [contexts/add_mult_binary_op.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/contexts/add_mult_binary_op.rs)
-- **Run** — no test; the context is exercised only by its check block
-- **Needs** — nothing
-- **Result** — compiles and passes its check. A probe evaluated `2 * (3 + 4)` to `14` by value and
+- **Source**: [contexts/add_mult_binary_op.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/contexts/add_mult_binary_op.rs)
+- **Run**: no test; the context is exercised only by its check block
+- **Needs**: nothing
+- **Result**: compiles and passes its check. A probe evaluated `2 * (3 + 4)` to `14` by value and
   converted it to `(* 2 (+ 3 4))`
 
 ## The context and its wiring
@@ -38,7 +38,7 @@ all four input types. Nothing runs the context at test time.
 
 ## Known issues
 
-- **No test** — the probe result above is the only runtime evidence; see
+- **No test**: the probe result above is the only runtime evidence; see
   [testing.md](../testing.md).
 
 ## The test the public page gives

@@ -4,10 +4,10 @@
 so that its two contexts, `ProductionApp` and `TestApp`, each wire the whole application in two path
 entries and differ in one of them.
 
-- **Source** — [namespace.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/web-app/src/namespace.rs)
-- **Run** — no test; the contexts are exercised only by their check blocks
-- **Needs** — nothing
-- **Result** — compiles and passes its checks. A probe called `create_post` on `TestApp`, which
+- **Source**: [namespace.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/web-app/src/namespace.rs)
+- **Run**: no test; the contexts are exercised only by their check blocks
+- **Needs**: nothing
+- **Result**: compiles and passes its checks. A probe called `create_post` on `TestApp`, which
   panicked with `not yet implemented`, and compiled the commented-out flat namespace step on a
   context of its own, which passed all nine checks
 
@@ -130,7 +130,7 @@ each context.
 
 ## Known issues
 
-- **The flat namespace step is a comment** — nothing compiles it; see
+- **The flat namespace step is a comment**: nothing compiles it; see
   [issues.md](issues.md#housekeeping).
 
 ## Try a change

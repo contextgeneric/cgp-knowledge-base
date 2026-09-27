@@ -4,10 +4,10 @@
 into higher-order providers that wrap a creator, and groups the providers into three bundles that
 `ProductionApp` forwards to with array keys.
 
-- **Source** — [fine_grained.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/web-app/src/fine_grained.rs)
-- **Run** — no test; the context is exercised only by its check block
-- **Needs** — nothing
-- **Result** — compiles and passes its check. A probe compiled the commented-out flat table on a
+- **Source**: [fine_grained.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/web-app/src/fine_grained.rs)
+- **Run**: no test; the context is exercised only by its check block
+- **Needs**: nothing
+- **Result**: compiles and passes its check. A probe compiled the commented-out flat table on a
   context of its own, and it passed the same nine checks
 
 ## The components
@@ -122,8 +122,8 @@ comment. The dummy filter providers are defined here but not wired.
 
 ## Known issues
 
-- **The flat table is a comment** — nothing compiles it; see [issues.md](issues.md#housekeeping).
-- **Unwired providers** — `DummyUserCensor` and `DummySpamMessageDetector`; see
+- **The flat table is a comment**: nothing compiles it; see [issues.md](issues.md#housekeeping).
+- **Unwired providers**: `DummyUserCensor` and `DummySpamMessageDetector`; see
   [issues.md](issues.md#housekeeping).
 
 ## Try a change

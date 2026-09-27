@@ -3,10 +3,10 @@
 The extended language: an `InterpreterPlus` context that evaluates `MathPlusExpr`, which adds `Minus`
 and `Negate` to the base operators and uses `i64` literals, and wires no conversion to Lisp at all.
 
-- **Source** — [contexts/add_mult_neg.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/contexts/add_mult_neg.rs)
-- **Run** — `cargo test -p cgp-example-expression add_mult_neg::`
-- **Needs** — nothing
-- **Result** — `test_add_mult_neg` passes
+- **Source**: [contexts/add_mult_neg.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/contexts/add_mult_neg.rs)
+- **Run**: `cargo test -p cgp-example-expression add_mult_neg::`
+- **Needs**: nothing
+- **Result**: `test_add_mult_neg` passes
 
 ## The context and its wiring
 
@@ -53,7 +53,7 @@ all six input types.
 
 ## Known issues
 
-- **`EvalSubtractWithNegate` is not wired here** — the alternative subtraction provider implements
+- **`EvalSubtractWithNegate` is not wired here**: the alternative subtraction provider implements
   `Computer`, which this context does not wire; see
   [evaluation providers](../reference/eval-providers.md#evalsubtractwithnegate).
 

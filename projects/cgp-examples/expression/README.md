@@ -5,14 +5,14 @@ generic type, each operation over the language is a set of per-operator provider
 contexts wire those pieces into interpreters of increasing reach, from evaluation alone to an extended
 language with subtraction and negation.
 
-- **Source** — [expression/](https://github.com/contextgeneric/cgp-examples/tree/v0.8.0/expression), on
+- **Source**: [expression/](https://github.com/contextgeneric/cgp-examples/tree/v0.8.0/expression), on
   the `v0.8.0` branch; see [which revision](../README.md#which-revision-these-documents-describe)
-- **Run** — `cargo test -p cgp-example-expression` from the repository root
-- **Needs** — nothing beyond the workspace build
-- **Result** — three unit tests pass: `test_add_mult`, `test_add_mult_to_lisp`, and
+- **Run**: `cargo test -p cgp-example-expression` from the repository root
+- **Needs**: nothing beyond the workspace build
+- **Result**: three unit tests pass: `test_add_mult`, `test_add_mult_to_lisp`, and
   `test_add_mult_neg`
-- **Worked example** — [expression interpreter](../../../examples/expression-interpreter.md)
-- **Cited by** — [extensible data types, part 2](../../../website/blog/extensible-datatypes-part-2.md),
+- **Worked example**: [expression interpreter](../../../examples/expression-interpreter.md)
+- **Cited by**: [extensible data types, part 2](../../../website/blog/extensible-datatypes-part-2.md),
   which links the crate
 
 ## What it is
@@ -57,9 +57,9 @@ provider's input rather than its context.
 The interpreter is a demonstration, and its gaps are each confirmed against the `v0.8.0` branch and
 recorded in full in [issues.md](issues.md):
 
-- **Two contexts have no test** — `add_mult_binary_op` and `add_mult_code` compile and pass their
+- **Two contexts have no test**: `add_mult_binary_op` and `add_mult_code` compile and pass their
   checks, and only a probe has run them.
-- **An unwired provider** — `EvalSubtractWithNegate` is defined and never wired.
+- **An unwired provider**: `EvalSubtractWithNegate` is defined and never wired.
 
 ## Where the blog post's code lives
 

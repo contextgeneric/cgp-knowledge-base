@@ -5,13 +5,13 @@ one area of CGP in use: an HTTP service, a modular interpreter, an application b
 wiring at scale, and a greeting program. The crates share a workspace and nothing else, so these
 documents treat each one as its own subproject.
 
-- **Repository** — <https://github.com/contextgeneric/cgp-examples>
-- **Local checkout** — `../cgp-examples`, per [sibling-projects.md](../../sibling-projects.md)
-- **Branch documented** — `v0.8.0`
-- **Crates** — `cgp-example-transfer`, `cgp-example-expression`, `cgp-example-builder`,
+- **Repository**: <https://github.com/contextgeneric/cgp-examples>
+- **Local checkout**: `../cgp-examples`, per [sibling-projects.md](../../sibling-projects.md)
+- **Branch documented**: `v0.8.0`
+- **Crates**: `cgp-example-transfer`, `cgp-example-expression`, `cgp-example-builder`,
   `cgp-example-web-app`, and `cgp-example-greet`, all at 0.1.0 and unpublished
-- **Tracks** — `cgp` 0.8.0-alpha, through a git patch to the `cgp` repository's `main` branch
-- **Status** — Demonstrations rather than libraries; see [Workspace gaps](#workspace-gaps)
+- **Tracks**: `cgp` 0.8.0-alpha, through a git patch to the `cgp` repository's `main` branch
+- **Status**: Demonstrations rather than libraries; see [Workspace gaps](#workspace-gaps)
 
 ## What it is
 
@@ -62,9 +62,9 @@ build is most of their verification.
 These gaps belong to the repository as a whole rather than to one crate, so they are recorded here
 rather than in a subproject's `issues.md`:
 
-- **Empty root README** — the repository's `README.md` is empty, so a visitor finds no index of the
+- **Empty root README**: the repository's `README.md` is empty, so a visitor finds no index of the
   crates. Only `transfer` has a README of its own.
-- **`main` lags `v0.8.0`** — a reader who clones the default branch gets the `cgp` 0.7.0 versions of
+- **`main` lags `v0.8.0`**: a reader who clones the default branch gets the `cgp` 0.7.0 versions of
   four crates and no `web-app`.
 
 ## The documents
