@@ -144,7 +144,22 @@ because both check the same context in one module, as the
 The test pins only the success path. It feeds no invalid input, so neither the missing-field message
 above nor any other failure is asserted; see [testing.md](../testing.md#what-is-untested).
 
+## Try a change
+
+Switching the bytes from hex to base64 is the change the public page shows. A probe copied the test,
+replaced `SerializeHex` with `SerializeBase64` in both `Vec<u8>` entries, and imported it from
+`cgp_serde_extra::providers`. The first assertion then failed with the new JSON:
+
+```text
+assertion `left == right` failed
+  left: "{\"quantity\":42,\"message\":\"hello\",\"data\":\"AQID\"}"
+ right: "{\"quantity\":42,\"message\":\"hello\",\"data\":\"010203\"}"
+```
+
+With the expected string changed to `"AQID"`, the test passed, reading the base64 back into the same
+`Payload`. The missing-field message quoted above was re-run in the same probe and matched.
+
 ## Public material derived from this
 
-The `examples/basic` page of the planned [cgp-serde project
-section](../../../website/projects/cgp-serde.md), which takes its code from this test.
+The `examples/basic` page of the [cgp-serde project section](../../../website/projects/cgp-serde.md),
+which takes its code from this test and quotes the change above.

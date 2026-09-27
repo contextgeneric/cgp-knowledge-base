@@ -57,5 +57,5 @@ than from the input.
 
 ## Public material derived from this
 
-The `architecture/context-services` page of the planned [cgp-serde project
+The `architecture/context-services` page of the [cgp-serde project
 section](../../../website/projects/cgp-serde.md).

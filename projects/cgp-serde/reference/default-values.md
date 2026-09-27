@@ -60,6 +60,6 @@ other.
 
 ## Public material derived from this
 
-The `DeserializeDefault` page in the `reference/providers/` pages of the planned [cgp-serde project
+The `DeserializeDefault` page in the `reference/providers/` pages of the [cgp-serde project
 section](../../../website/projects/cgp-serde.md), its `limitations` page, and the rustdoc for
 `DeserializeDefault`.

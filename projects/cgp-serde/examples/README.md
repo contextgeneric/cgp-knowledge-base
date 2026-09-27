@@ -76,5 +76,5 @@ and the [reference](../reference/README.md) documents the rest of the providers 
 
 ## Public material derived from this
 
-The `examples/index` page of the planned [cgp-serde project
+The `examples/index` page of the [cgp-serde project
 section](../../../website/projects/cgp-serde.md), and an examples section of the repository README.

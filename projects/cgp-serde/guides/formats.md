@@ -75,6 +75,6 @@ the format's error with `CanRaiseError`.
 
 ## Public material derived from this
 
-The `guides/formats` page of the planned [cgp-serde project
+The `guides/formats` page of the [cgp-serde project
 section](../../../website/projects/cgp-serde.md), the format list on its `limitations` page, and the
 usage section of the repository README.

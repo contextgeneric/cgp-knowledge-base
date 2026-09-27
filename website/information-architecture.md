@@ -242,7 +242,7 @@ each page's two judging sections.
 
 **Projects** (new category, roughly two hundred pages) — **after the release**, unlike everything else
 in this inventory
-- *Index* — present, with Hypershell as its only project so far. The projects introduced honestly,
+- *Index* — present, with Hypershell and cgp-serde as its projects so far. The projects introduced honestly,
   libraries apart from demonstrations, and a pattern-finding table that routes a reader from an idea
   to the example page showing it.
 - *cgp-examples* — **new**, about 33 pages. Five demonstration crates, almost all example pages: the
@@ -252,7 +252,8 @@ in this inventory
   limitations that nothing blocks. Still **new**: the reference, the pages that quote providers, and a
   comparison with shell scripts. The type-level DSL: thirteen examples, its design and guides, one
   reference page per construct, the comparison, and its limitations.
-- *cgp-serde* — **new**, about 48 pages. Serde as components: four examples, its design and guides, one
+- *cgp-serde* — partly present: 45 of 50 pages, everything but the two arena examples and three
+  component pages, which wait on DC3. Serde as components: four examples, its design and guides, one
   reference page per construct, the comparison with Serde, and its limitations.
 - *Error backends* — **new**, about 22 pages. One walkthrough per crate, the shared design and guides, and
   one reference page per provider.

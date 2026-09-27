@@ -75,5 +75,5 @@ JSON or RON works with the library as it stands; the complete list of gaps is in
 
 ## Public material derived from this
 
-The `architecture/serde-bridge` page of the planned [cgp-serde project
+The `architecture/serde-bridge` page of the [cgp-serde project
 section](../../../website/projects/cgp-serde.md), and its `limitations` page.

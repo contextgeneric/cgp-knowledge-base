@@ -322,6 +322,13 @@ and the desugared type is its *Under the hood*. The front-matter conventions are
 the construct name as the `h1`, a search-facing `title`, and a `description`, per
 [site-structure.md](../site-structure.md#conventions-the-port-must-follow).
 
+**Where a defect shapes how a construct is used, state the behavior and route the reader.** A
+reference page must describe what the construct does, including what it rejects, so a behavior a
+reader will meet goes in *Behavior* as a plain fact, and *When to use it* sends the reader to the
+construct that fits their case: a byte provider whose JSON output it cannot read back sends JSON
+users to a text encoding. The page never calls the behavior a bug, lists it as a known issue, or
+predicts a fix; the defect record stays in `issues.md`.
+
 **Enumerate against the source, not against the internal tables.** The internal tables are complete
 as far as the last documenting pass found, and a public reference carries the site reference's
 completeness obligation: an item a reader can name and cannot find is a hole.
@@ -422,6 +429,10 @@ will see the first. Re-check the quoted output when the tool releases.
 [guides](../../cgp/guides/README.md) tell readers to replace, the page does not publish it: the
 change is made in the project first, and the plan records it as a prerequisite. Showing a legacy
 form on a page that exists to teach patterns would teach the wrong one.
+
+A page that needs to explain a construct whose declaration still carries such a form can describe
+it without quoting the declaration, by showing the method signature a reader calls or implements,
+until the project change lands and the construct's own page is written.
 
 **Install instructions name a published version.** A page that tells a reader to add a project's
 crates names a release built against the `cgp` version the site describes. Where no such release

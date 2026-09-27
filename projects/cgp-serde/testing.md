@@ -68,5 +68,5 @@ they went unnoticed.
 
 ## Public material derived from this
 
-The one sentence on the `limitations` page of the planned [cgp-serde project
+The one sentence on the `limitations` page of the [cgp-serde project
 section](../../website/projects/cgp-serde.md) saying that the library is lightly tested.

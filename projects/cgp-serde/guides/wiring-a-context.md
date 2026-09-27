@@ -121,13 +121,53 @@ dispatch unchecked.
 
 ## Share wiring between contexts
 
-**cgp-serde publishes no namespace of defaults yet**, so every context spells out its full table, and
-two applications that differ in two encodings still repeat every other entry. The demo's `AppA` and
-`AppB` differ in three entries and repeat the rest. A namespace, as Hypershell publishes one, would let a
-context join the shared defaults in one line and override only what differs; see
-[namespaces and prefixes](../../../cgp/guides/namespaces-and-prefixes.md) for the mechanism.
+**cgp-serde publishes no namespace of defaults**, so the library gives two applications nothing to
+share, and the demo's `AppA` and `AppB` repeat every entry but the three that differ. An application
+can define a namespace of its own with
+[`cgp_namespace!`](../../../cgp/reference/macros/cgp_namespace.md), put the shared `@` entries in it,
+and have each context join it and add only its differences. A probe confirmed this form against the
+`v0.8.0` branch, with the demo reduced to `EncryptedMessage` and `MessagesByTopic`:
+
+```rust
+cgp_namespace! {
+    new MessagesNamespace {
+        @ValueSerializerComponent.<'a, T> &'a T:
+            SerializeDeref,
+        @ValueSerializerComponent.[i64, u64, String]:
+            UseSerde,
+        @ValueSerializerComponent.Vec<EncryptedMessage>:
+            SerializeIterator,
+        @ValueSerializerComponent.[MessagesByTopic, EncryptedMessage]:
+            SerializeFields,
+    }
+}
+
+pub struct AppA;
+
+delegate_components! {
+    AppA {
+        namespace MessagesNamespace;
+        open ValueSerializerComponent;
+
+        @ValueSerializerComponent.Vec<u8>: SerializeHex,
+        @ValueSerializerComponent.DateTime<Utc>: SerializeRfc3339Date,
+    }
+}
+```
+
+`AppB` is the same with `SerializeBase64` and `SerializeTimestamp`, and the two produced hex and RFC
+3339 dates from one and base64 and timestamps from the other, as the full demo does. Two facts
+constrain the form. **Each context still opens the component**: without its `open` statement, every
+check fails with a trait bound that is not satisfied,
+`ValueSerializerComponent: MessagesNamespace<AppA>`. And **a context cannot rebind an entry the
+namespace makes**: adding `@ValueSerializerComponent.u64: UseSerde` to `AppA` fails with
+`[CGP-E005]`, saying that `AppA` cannot wire `@ValueSerializerComponent.u64.*` because it is already
+set through `MessagesNamespace`. So the namespace holds only what every joining context shares, and
+each point of difference stays in the contexts. The
+mechanism is in [namespaces and prefixes](../../../cgp/guides/namespaces-and-prefixes.md). The website's
+wiring guide shows this form as its last step.
 
 ## Public material derived from this
 
-The `guides/wiring-a-context` page of the planned [cgp-serde project
+The `guides/wiring-a-context` page of the [cgp-serde project
 section](../../../website/projects/cgp-serde.md).

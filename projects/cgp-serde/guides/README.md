@@ -24,5 +24,5 @@ Register each guide here, in [../README.md](../README.md), and in
 
 ## Public material derived from this
 
-The four guide pages of the planned [cgp-serde project
+The four guide pages of the [cgp-serde project
 section](../../../website/projects/cgp-serde.md), and the usage sections of the repository README.

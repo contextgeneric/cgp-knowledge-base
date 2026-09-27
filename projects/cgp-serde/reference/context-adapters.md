@@ -114,5 +114,5 @@ The serializing counterpart is [`SerializeWithContext`](#serializewithcontext).
 
 ## Public material derived from this
 
-The two adapter pages in the `reference/types/` pages of the planned [cgp-serde project
+The two adapter pages in the `reference/types/` pages of the [cgp-serde project
 section](../../../website/projects/cgp-serde.md), and the rustdoc for both types.

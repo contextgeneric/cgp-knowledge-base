@@ -54,6 +54,6 @@ saves writing the code rather than compiling it.
 
 ## Public material derived from this
 
-The `architecture/derive-free-records` page of the planned [cgp-serde project
+The `architecture/derive-free-records` page of the [cgp-serde project
 section](../../../website/projects/cgp-serde.md), and the derive-free argument in the repository
 README.
