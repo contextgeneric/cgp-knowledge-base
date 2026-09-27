@@ -15,7 +15,15 @@ the macro builds the provider struct and impl around it. Where `#[cgp_computer]`
 A single producer serves the whole handler family, because a handler that ignores its input behaves
 like a producer. The macro therefore wires the generated provider into every member of the family.
 One `#[cgp_producer]` function answers `produce`, `compute`, `try_compute`, `compute_async`,
-`handle`, and the `…Ref` variants, and each returns the same produced value.
+`handle`, and the `…Ref` variants, and each returns the same produced value. Its usual place is the
+first step of a pipeline, as in `PipeHandlers<Product![MagicNumber, Double]>`, where it seeds the
+value the later steps transform.
+
+**The function cannot reach its context**, since it has no parameters at all, so a producer that
+reads a field, names an abstract type, or calls another trait is a `Producer` provider written with
+[`#[cgp_impl]`](cgp_impl.md). That covers most real producers, which leaves this macro for
+constants and pure seeds. A step that should pass its input through unchanged is
+[`ReturnInput`](../providers/handler_combinators.md) rather than a producer.
 
 ## Syntax
 
@@ -116,7 +124,12 @@ produced value, whatever input it is given.
 
 The expansion has one form. Unlike `#[cgp_computer]`, the macro does not look for a `Result` return,
 so there is one base trait and one bundle for every `#[cgp_producer]` function. A `Result` output is
-returned as a plain value, wrapped in `Ok` by the fallible shapes.
+returned as a plain value, wrapped in `Ok` by the fallible shapes, so a producer returning
+`Err("nope")` gives `try_compute` the value `Ok(Err("nope"))`: a success carrying an error, which
+short-circuits nothing downstream. A production that can fail is a `TryComputer` or `Handler`
+provider written by hand. The fallible shapes also need the context to wire
+`ErrorTypeProviderComponent`, imported from `cgp::core::error`, while `produce` and `compute` do
+not.
 
 ## Examples
 

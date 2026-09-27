@@ -133,6 +133,18 @@ method must read the associated type itself, most often as `&Self::Name`. A seco
 a generic associated type, a second method, or a return type that reads some other field type is
 rejected.
 
+A trait may carry generic parameters, which stay on the blanket impl and flow into the field bound,
+so `trait HasValue<T> { fn value(&self) -> &T; }` reads a `value` field of any type. The companion
+attributes [`#[extend]`](../attributes/extend.md) and [`#[use_type]`](../attributes/use_type.md)
+apply, since the macro runs `#[cgp_component]`'s attribute collector; Expansion shows where their
+bounds land.
+
+**`Option<&[T]>` has no rule of its own.** The `Option<&T>` rule applies and asks for an unsized
+`Option<[T]>` field, so the compiler rejects the impl with `E0277` (the size of `[T]` cannot be
+known) rather than the macro rejecting the method. Return `Option<&Vec<T>>` from an
+`Option<Vec<T>>` field, or `&Option<Vec<T>>`, instead. This is a deliberate boundary shared with
+`#[cgp_getter]` and `#[implicit]` arguments.
+
 ### Rejected methods
 
 A getter method is a plain signature, and the macro rejects anything more with a message naming the
@@ -281,6 +293,12 @@ These constructs are the ones `#[cgp_auto_getter]` relates to:
   form overlaps with when the type exists only as the getter's return type.
 
 ## Known issues
+
+**The field name is fixed to the method name, and a mismatch reads as a missing method.** A context
+storing the value under another name fails the blanket impl's bound, so a call reports
+``E0599: the method `name` exists for reference `&Person`, but its trait bounds were not satisfied``
+rather than naming the field. The trait must also be in scope to call its method, as for any Rust
+trait. Rename the field, implement the trait by hand, or use [`#[cgp_getter]`](cgp_getter.md).
 
 A `&mut self` getter that returns a shared `Option<&T>` or `Option<&str>` does not compile. The body
 picks its conversion from the receiver, so it emits `.as_mut()` or `.as_deref_mut()` and produces an

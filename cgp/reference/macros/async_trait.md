@@ -6,10 +6,10 @@
 ## Purpose
 
 `#[async_trait]` lets a trait declare async methods in their natural form. A bare `async fn` in a
-trait definition compiles, but the compiler warns with the `async_fn_in_trait` lint, because callers
-cannot name the auto-traits, such as `Send`, of the future it returns. The lint-clean alternative,
-`fn name(&self) -> impl Future<Output = T>`, is verbose and hides the intent. The macro lets the
-author write `async fn` and rewrites the declaration into the `impl Future` form.
+public trait definition compiles, but the compiler warns with the `async_fn_in_trait` lint, because
+callers cannot name the auto-traits, such as `Send`, of the future it returns. The lint-clean
+alternative, `fn name(&self) -> impl Future<Output = T>`, is verbose and hides the intent. The macro
+lets the author write `async fn` and rewrites the declaration into the `impl Future` form.
 
 The rewrite costs nothing at runtime. It is a plain desugaring to return-position `impl Trait` in
 traits, with no boxing, no allocation, and no added `Send` bound, so the returned future is exactly
@@ -186,13 +186,21 @@ signature. It strips `async` and changes the return type to `impl Future`, but l
 verbatim instead of wrapping it in an `async { … }` block. The result is a non-async method whose
 body returns a plain value and may use `.await`, which fails to compile. The case is rare, because
 async trait methods are almost always declarations and providers supply the behavior, but a
-default-bodied `async fn` in an `#[async_trait]` trait is not supported.
+default-bodied `async fn` in an `#[async_trait]` trait is not supported. A body returning a plain
+`1` fails with ``E0277: `{integer}` is not a future``, which names the body's type rather than the
+rewrite; wrap the body in an `async { … }` block by hand, or move it to a provider.
 
 The generated future carries no `Send` bound. The rewrite produces a bare `impl Future<Output = T>`,
 so the future is `Send` only when the concrete future happens to be, and the trait cannot require
 it. Code that spawns the future on a multi-threaded executor, which demands `Send` futures, must
 recover the bound by other means, as described in
-[recovering `Send` bounds](../../concepts/send-bounds.md).
+[recovering `Send` bounds](../../concepts/send-bounds.md). The bound one would write,
+Return Type Notation (`App: CanFetch<fetch(..): Send>`), is unstable, and stable Rust rejects it
+with `E0658: return type notation is experimental`.
+
+**The attribute arguments are discarded, so a typo'd option gives no feedback.**
+`#[async_trait(anything)]` compiles exactly as `#[async_trait]` does, and on an `impl` block the
+attribute is a no-op, which can wrongly suggest a provider needed it.
 
 ## Source
 

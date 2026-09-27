@@ -19,6 +19,10 @@ It generates the same matcher wiring that
 [`dispatch_combinators`](../providers/dispatch_combinators.md) describes, so the result behaves like
 a hand-written dispatch. When the per-variant behavior is more elaborate, or the dispatch must be
 wired into a context's components rather than implemented on the enum, use the combinators directly.
+The generated impl calls its matcher with a unit context and code, so no context can override how
+one variant is handled. The macro is for retrofitting an existing per-type trait onto an enum; an
+operation designed from the start to be configured per context is a
+[`#[cgp_component]`](cgp_component.md) wired with the combinators.
 
 ## Syntax
 
@@ -200,6 +204,24 @@ These constructs are the ones `#[cgp_auto_dispatch]` builds on:
 - [Dispatching](../../concepts/dispatching.md): the concept this macro automates.
 
 ## Known issues
+
+**The per-method helper function takes the method's name.** Each method's per-variant function is
+emitted as a free function with the method's own name (`fn area`) in the module that declares the
+trait, so a module that already holds an item of that name fails with
+``E0428: the name `area` is defined multiple times``, followed by argument-count and type errors
+from the clash. The correct behavior would be to emit the helper under a generated name that
+cannot collide, since only the `ComputeArea` provider needs to be visible. Until then,
+declare the trait in a module without a clashing item.
+
+**The blanket impl covers every type implementing `HasExtractor`.** A hand-written impl of the
+trait for a type outside that set, such as each payload struct, coexists with it, but one for
+another extensible enum fails with ``E0119: conflicting implementations of trait `HasArea` ``.
+
+**A missing variant impl or derive is reported at the call, not at its cause.** Omitting the impl
+for one payload fails where the enum's method is called, with
+``E0599: the method `area` exists for reference `&Shape`, but its trait bounds were not satisfied``,
+whose notes list the matcher's unsatisfied `Computer` bounds without naming the variant. Omitting
+`#[derive(CgpData)]` gives the same headline, with a note that `HasExtractor` must be implemented.
 
 Type and const generic parameters on a method are rejected by design. The blanket impl would need a
 bound quantified over the method's type parameter, guaranteeing that every payload satisfies it for

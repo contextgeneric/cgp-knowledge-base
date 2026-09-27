@@ -105,7 +105,8 @@ enum's method is used, not at the trait definition.
 
 ## Known issues
 
-Two defects in `derive_blanket_impl` make valid traits fail to compile; the
+Three defects make valid traits fail to compile, two in `derive_blanket_impl` and one in
+`derive_method_computer`; the
 [reference Known issues](../../reference/macros/cgp_auto_dispatch.md#known-issues) give the
 user-facing workarounds.
 
@@ -118,6 +119,11 @@ user-facing workarounds.
   lifetimes, such as `fn lookup<'a>(&'a self, key: &str) -> &'a str`, quantifies only the last one
   in the set's order and fails with `E0261` on the other. The fix is a single `for<…>` over all of
   them.
+- **The per-variant helper takes the method's name.** `derive_method_computer` emits a free
+  function named `#method_ident` beside the trait, so a module that already declares an item of
+  that name fails with `E0428`, followed by `E0061` and `E0308` from the clash. The fix is to emit
+  the helper under a generated name the user cannot collide with, since only the `Compute{Method}`
+  provider needs to be nameable. No test pins it yet.
 
 The macro also **rejects a trait method with non-lifetime generic parameters** with a spanned
 `syn::Error` ("Dispatch trait methods cannot contain non-lifetime generic parameters due to the lack

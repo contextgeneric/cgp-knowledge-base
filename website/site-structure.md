@@ -96,21 +96,21 @@ relevant test target, remains the authority on its text, which is the same rule 
 already follows.
 
 It is filled in **lazily**, and the rule is in
-[AGENTS.md](AGENTS.md#verify-code-against-current-cgp-and-never-against-a-blog-post): a page gets its
-file when someone writes, revises, or reviews it. A missing file therefore means nobody has been
+[AGENTS.md](AGENTS.md#verify-code-against-current-cgp-and-never-against-a-blog-post): a page gets
+its file when someone writes, revises, or reviews it. A missing file therefore means nobody has been
 through that page yet. On the `v0.8.0` branch the crate has one test target per section:
 `tests/concepts/` covers every concept page that shows code, `tests/comparisons/` every comparison
 page, `tests/tutorials/` the ported tutorial parts, `tests/quickstart.rs` the Quickstart, and
 `tests/cargo_cgp/` the `docs/cargo-cgp/` pages. Under `tests/reference/`, the written groups are
-mirrored as they are ported: `errors.rs`, `macros/` (`cgp_component.rs`, `cgp_impl.rs`,
-`cgp_provider.rs`, `cgp_fn.rs`, `cgp_type.rs`, `delegate_components.rs`, and `cgp_namespace.rs`),
-`attributes/` (`default_impl.rs`, `impl_generics.rs`, and `prefix.rs`), all of
-`derives/`, the `traits/` pages that show checkable code, most of `providers/`, all of `components/`
-(including the `handler/` subsection), and `types/`, one file per type page. The rejected snippets
-from every section live together under `tests/compile_fail/`. The `traits/` and `types/` mirror files
-stay flat rather than following the docs into their subdirectories, because a Rust module name cannot
-contain a hyphen; the mirror still resolves because every page's basename is unique. The crate
-depends on `cgp = "0.8.0-alpha"` and patches it to the `cgp` repository's git `main` through
+mirrored as they are ported: `errors.rs`, `macros/` (every construct page except `check_components`,
+`delegate_and_check_components`, and the four type-level construction macros), `attributes/`
+(`default_impl.rs`, `impl_generics.rs`, and `prefix.rs`), all of `derives/`, the `traits/` pages
+that show checkable code, most of `providers/`, all of `components/` (including the `handler/`
+subsection), and `types/`, one file per type page. The rejected snippets from every section live
+together under `tests/compile_fail/`. The `traits/` and `types/` mirror files stay flat rather than
+following the docs into their subdirectories, because a Rust module name cannot contain a hyphen;
+the mirror still resolves because every page's basename is unique. The crate depends on
+`cgp = "0.8.0-alpha"` and patches it to the `cgp` repository's git `main` through
 `[patch.crates-io]`, so it tests the pages against unreleased `cgp`; the version pin joins the
 tutorials' pin on the release checklist.
 

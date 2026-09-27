@@ -24,6 +24,14 @@ impl, with no consumer and provider split, no component name, and no wiring. It 
 with exactly one definition that should still read as a method. When the operation later needs
 alternative implementations, promote the trait to a [`#[cgp_component]`](cgp_component.md).
 
+**The discriminator against [`#[cgp_fn]`](cgp_fn.md) is what the body depends on.** Both produce a
+single-implementation trait with no wiring; `#[cgp_fn]` suits dependencies on context *fields*,
+read through `#[implicit]` arguments, while `#[blanket_trait]` suits dependencies on other traits,
+stated as supertraits. The empty-body form stands in for trait aliases, which stable Rust lacks,
+and is worth it only where writing the bounds out at the use site reads badly. A plain generic
+function is simpler still when no caller is generic over the type, since then the propagation of
+its `where` clause never arises.
+
 ## Syntax
 
 `#[blanket_trait]` is not in the prelude, unlike the other macros in this section, so it must be
@@ -57,7 +65,9 @@ pub trait FooBar: Foo + Bar { /* ... */ }
 The trait may carry generic parameters and associated types. Its generic parameters are copied onto
 the impl, with the context parameter after them, so `pub trait Scaled<T: Copy>: Foo` gets
 `impl<T: Copy, __Context__> Scaled<T> for __Context__`. Each associated type becomes a further
-generic parameter on the impl, bound through the supertraits, as Expansion shows.
+generic parameter on the impl, bound through the supertraits, as Expansion shows. A trait with no
+supertraits still gets the `__Context__:` predicate, with an empty bound list, so its impl covers
+every type.
 
 ## Syntax Grammar
 
@@ -161,7 +171,10 @@ where
 
 Bounds on an associated type move into the impl's `where` clause as predicates on its parameter, so
 `type FooBar: Clone` adds `FooBar: Clone` after the supertrait requirement. An associated type needs
-no default, because the macro writes the assignment itself.
+no default, because the macro writes the assignment itself. The rewrite of `Self::FooBar` to the
+parameter covers the whole trait, method signatures and bodies included, so a default method such as
+`fn clone_foo(value: &Self::FooBar) -> Self::FooBar` reads the impl's `FooBar` parameter in the
+impl's copy.
 
 ### Associated constants
 

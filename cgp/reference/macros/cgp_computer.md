@@ -20,6 +20,13 @@ it picks a base trait to implement and a [promotion bundle](../providers/handler
 that derives the other traits from that base. The resulting provider answers `compute`,
 `try_compute`, `compute_async`, `handle`, and their `…Ref` variants.
 
+**The function cannot reach its context.** It has no receiver and no context parameter, so
+`#[implicit]` arguments and `#[uses]` have nothing to attach to, and it can only transform its
+inputs. A computation that needs a field, an abstract type, or another trait of the context is a
+`Computer` or `Handler` provider written with [`#[cgp_impl]`](cgp_impl.md). A computation with no
+input is a [`#[cgp_producer]`](cgp_producer.md), and an operation called as a method on the context
+rather than composed as a pipeline step is a [`#[cgp_fn]`](cgp_fn.md).
+
 ## Syntax
 
 `#[cgp_computer]` is applied to a free function and takes an optional provider name:
@@ -126,11 +133,14 @@ gives `(u64)`, which is the type `u64` itself rather than a one-element tuple, s
 computer is called with the bare value. No parameters give `()`.
 
 The `#[cgp_new_provider]` attribute declares the `Add` struct and derives its `IsProviderFor` impl,
-as it does for any provider. The context and code parameters use the reserved names `__Context__`
-and `__Code__`. The `delegate_components!` block forwards every other handler component to
-[`PromoteComputer<Self>`](../providers/handler_combinators.md), which derives `TryComputer`,
-`AsyncComputer`, `Handler`, and the `…Ref` variants from the `Computer` impl. So `Add` answers
-`compute`, `try_compute`, `compute_async`, and `handle`, each computing `a + b`.
+as it does for any provider, with the params tuple `(__Code__, (u64, u64))`. The wiring uses the
+`->` operator rather than `:`, so each listed key resolves to `PromoteComputer<Self>`'s own entry
+for that key rather than to the bundle itself, and `ComputerComponent` is absent from the list
+because `Add` implements it directly. The context and code parameters use the reserved names
+`__Context__` and `__Code__`. The `delegate_components!` block forwards every other handler
+component to [`PromoteComputer<Self>`](../providers/handler_combinators.md), which derives
+`TryComputer`, `AsyncComputer`, `Handler`, and the `…Ref` variants from the `Computer` impl. So
+`Add` answers `compute`, `try_compute`, `compute_async`, and `handle`, each computing `a + b`.
 
 ### Returning a `Result`
 
@@ -231,6 +241,10 @@ These constructs are the ones `#[cgp_computer]` builds on or parallels:
   [`delegate_components!`](delegate_components.md) to fill in the family.
 
 ## Known issues
+
+**The fallible forms need an error type on the context.** `try_compute` and `handle` name the
+context's abstract error, so a context without an `ErrorTypeProviderComponent` wiring fails on those
+members while `compute` works. The key is not in the prelude and comes from `cgp::core::error`.
 
 The choice between the value and `Result` bundles is made from the return type's tokens, not its
 meaning. A return type counts as a `Result` only when it is written as the bare path `Result<T, E>`,

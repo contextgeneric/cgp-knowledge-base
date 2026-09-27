@@ -89,7 +89,9 @@ The macro then adds three getter providers:
 
 The two single-method providers presuppose one field to read, which is why a trait with several
 methods gets only `UseFields`. The macro emits `UseFields` first, then `UseField` and
-`WithProvider`.
+`WithProvider`. A context reaches `WithProvider` by wiring it around a field-getter provider, as in
+`WithProvider<UseField<Symbol!("display_name")>>` (the `WithField` alias), or around a
+hand-written `FieldGetter` that supplies the value some other way.
 
 ### `UseField`
 
@@ -227,6 +229,19 @@ These constructs are the ones `#[cgp_getter]` relates to:
   type.
 
 ## Known issues
+
+**A multi-method getter wired to `UseField` reports only an unmet provider bound.** The trait gets
+no `UseField` impl, so wiring `UseField<Symbol!("width")>` fails at the check with
+``E0277: the trait bound `UseField<Symbol<5, Chars<'w', …>>>: IsProviderFor<DimensionsGetterComponent, Rectangle>` is not satisfied``,
+which never says the trait had too many methods. Wire `UseFields`, or split the trait into one
+component per field.
+
+**The field's type must match what the return type calls for, whatever the tag.** `UseField`
+chooses the field, not the conversion, so a `&str` getter wired to a `&'static str` field fails
+with ``E0271: type mismatch resolving `<Person as HasField<Symbol<10, …>>>::Value == String` ``.
+
+**A context wiring `UseFields` means the component was not needed.** If no context names a
+different field, [`#[cgp_auto_getter]`](cgp_auto_getter.md) gives the same getter with no wiring.
 
 The getter providers share their method synthesis with [`#[cgp_auto_getter]`](cgp_auto_getter.md),
 so they share its defect. A `&mut self` getter returning a shared `Option<&T>` or `Option<&str>`
