@@ -2,9 +2,9 @@
 
 The crate's four providers each implement one role of the
 [shared design](../architecture.md#the-four-roles) for a boxed standard error, and every one but the
-type provider pins the context's error to `cgp_error_std::Error` through `#[use_type]`. The providers
-build two error types of the crate's own, `StringError` for a formatted message and `WrapError` for a
-detail around another error, which are documented after the providers.
+type provider pins the context's error to `cgp_error_std::Error` through `#[use_type]`. The
+providers build two error types of the crate's own, `StringError` for a formatted message and
+`WrapError` for a detail around another error, which are documented after the providers.
 
 ## `UseBoxedStdError`
 
@@ -62,14 +62,14 @@ where
 
 ### Behavior
 
-Raising boxes the source, so `downcast_ref::<E>()` on the boxed error finds it and the error prints as
-the source prints.
+Raising boxes the source, so `downcast_ref::<E>()` on the boxed error finds it and the error prints
+as the source prints.
 
 Wrapping converts the detail with `to_string` and boxes a `WrapError` holding it and the wrapped
 error. The result downcasts to `WrapError`, prints the detail with `{}`, and prints the chain with
 `{:#}` or `{:?}`: wrapping `"while loading"` and then `String::from("while starting")` around an
 `io::Error` reading `no file` prints `while starting` and `while starting: while loading: no file`.
-Because the detail is copied, any `Display` detail works, borrowed or not.
+Because the detail is formatted into a `String`, any `Display` detail works, borrowed or not.
 
 ### Context dependencies
 
@@ -107,8 +107,8 @@ where
 ### Behavior
 
 Raising formats the value with `{:?}` and boxes a `StringError` holding the message, so the boxed
-error downcasts to `StringError` and never to the original type. Raising `Rejected { code: 7 }` gives
-a `StringError` whose `message` is `Rejected { code: 7 }`; a string keeps its quotation marks.
+error downcasts to `StringError` and never to the original type. Raising `Rejected { code: 7 }`
+gives a `StringError` whose `message` is `Rejected { code: 7 }`; a string keeps its quotation marks.
 Wrapping formats the detail with `{:?}` into a `WrapError`.
 
 ### Context dependencies
@@ -117,8 +117,8 @@ Wrapping formats the detail with `{:?}` into a `WrapError`.
 
 ## `DisplayBoxedStdError`
 
-`DisplayBoxedStdError` raises any `Display` value as a `StringError` formatted with `{}`, and wraps a
-`Display` detail in a `WrapError` the same way.
+`DisplayBoxedStdError` raises any `Display` value as a `StringError` formatted with `{}`, and wraps
+a `Display` detail in a `WrapError` the same way.
 
 ### Definition
 
@@ -147,8 +147,8 @@ where
 ### Behavior
 
 Raising converts the value with `to_string` into a boxed `StringError`, the provider to use for a
-`String` or another message. Wrapping does the same with the detail into a `WrapError`. As a
-wrapper it behaves exactly like `RaiseBoxedStdError`'s, which has the same bound.
+`String` or another message. Wrapping does the same with the detail into a `WrapError`. As a wrapper
+it behaves exactly like `RaiseBoxedStdError`'s, which has the same bound.
 
 ### Context dependencies
 
@@ -190,8 +190,8 @@ impl Error for StringError {}
 
 ### Behavior
 
-Both `{}` and `{:?}` print the message unquoted, and `source()` returns `None`. It is constructed from
-a `String` with `From`.
+Both `{}` and `{:?}` print the message unquoted, and `source()` returns `None`. It is constructed
+from a `String` with `From`.
 
 ## `WrapError`
 
@@ -218,13 +218,13 @@ impl StdError for WrapError {
 `source()` returns the wrapped error. `{}` prints the detail alone, so a reporter that walks
 `source()` prints each message once. `{:#}` and `{:?}` print the detail followed by the `Display` of
 every error down the chain, each joined by `": "`; a three-level chain reading `outer`, `middle`,
-`inner` prints `outer` and `outer: middle: inner`. The chain form prints each link with plain `{}`, so
-a nested `WrapError` contributes its detail alone and the walk continues past it.
+`inner` prints `outer` and `outer: middle: inner`. The chain form prints each link with plain `{}`,
+so a nested `WrapError` contributes its detail alone and the walk continues past it.
 
 ## Source
 
-- [`src/lib.rs`](https://github.com/contextgeneric/cgp/blob/main/crates/standalone/error/cgp-error-std/src/lib.rs)
-  — the re-exports
+- [`src/lib.rs`](https://github.com/contextgeneric/cgp/blob/main/crates/standalone/error/cgp-error-std/src/lib.rs):
+  the re-exports
 - [`src/types/error.rs`](https://github.com/contextgeneric/cgp/blob/main/crates/standalone/error/cgp-error-std/src/types/error.rs)
 - [`src/types/string.rs`](https://github.com/contextgeneric/cgp/blob/main/crates/standalone/error/cgp-error-std/src/types/string.rs)
 - [`src/types/wrap.rs`](https://github.com/contextgeneric/cgp/blob/main/crates/standalone/error/cgp-error-std/src/types/wrap.rs)
@@ -234,5 +234,5 @@ a nested `WrapError` contributes its detail alone and the walk continues past it
 - [`src/impls/display_error.rs`](https://github.com/contextgeneric/cgp/blob/main/crates/standalone/error/cgp-error-std/src/impls/display_error.rs)
 
 **Public material derived from this:** the crate's README, and the item docs in its source, and one
-page per construct under `std/` in the planned [error backends project
-section](../../../website/projects/error-backends.md).
+page per construct under `std/` in the planned
+[error backends project section](../../../website/projects/error-backends.md).

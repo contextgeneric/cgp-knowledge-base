@@ -1,16 +1,18 @@
 # cgp-error-anyhow
 
 `cgp-error-anyhow` makes `anyhow::Error` a CGP context's abstract error type, and supplies the
-providers that raise errors into it and add context to it. It is the backend the ecosystem's projects
-wire, and the one to reach for first.
+providers that raise errors into it and add context to it. It is the backend the ecosystem's
+projects wire, and the one to reach for first.
 
-- **Source**: [`crates/standalone/error/cgp-error-anyhow/`](https://github.com/contextgeneric/cgp/tree/main/crates/standalone/error/cgp-error-anyhow)
-  in the `cgp` repository, on `main`; see [which revision](../README.md#which-revision-these-documents-describe)
+- **Source**:
+  [`crates/standalone/error/cgp-error-anyhow/`](https://github.com/contextgeneric/cgp/tree/main/crates/standalone/error/cgp-error-anyhow)
+  in the `cgp` repository, on `main`; see
+  [which revision](../README.md#which-revision-these-documents-describe)
 - **Crate**: `cgp-error-anyhow` 0.8.0-alpha, depending on `cgp-core` and `anyhow` 1.0.104 without
   default features
 - **`no_std`**: yes, using anyhow's `no_std` mode
-- **Tests**: the `anyhow_*` files, `readme_anyhow.rs`, and three shared files of the `error_backends`
-  target; see [testing.md](testing.md)
+- **Tests**: the `anyhow_*` files, `readme_anyhow.rs`, and three shared files of the
+  `error_backends` target; see [testing.md](testing.md)
 
 ## What it provides
 
@@ -47,11 +49,11 @@ delegate_components! {
 }
 ```
 
-With that wiring, raising `std::io::Error::other("disk full")` and wrapping it with
-`"while saving"` gives an error whose `{}` is `while saving` and whose `{:#}` is
-`while saving: disk full`, and `downcast_ref::<std::io::Error>()` still finds the original. This is
-the example in the crate's own README, which asserts the `{:#}` form and which `readme_anyhow.rs`
-compiles and runs; `anyhow_raise_and_wrap.rs` pins the other two facts.
+With that wiring, raising `std::io::Error::other("disk full")` and wrapping it with `"while saving"`
+gives an error whose `{}` is `while saving` and whose `{:#}` is `while saving: disk full`, and
+`downcast_ref::<std::io::Error>()` still finds the original. This is the example in the crate's own
+README, which asserts the `{:#}` form and which `readme_anyhow.rs` compiles and runs;
+`anyhow_raise_and_wrap.rs` pins the other two facts.
 
 ## Who uses it
 
@@ -72,10 +74,10 @@ The worked examples [modular serialization](../../../examples/modular-serializat
 
 ## The catalog
 
-- [reference.md](reference.md) — the four providers and the `Error` re-export.
-- [testing.md](testing.md) — what the tests pin and what nothing tests.
-- [issues.md](issues.md) — open items.
+- [reference.md](reference.md): the four providers and the `Error` re-export.
+- [testing.md](testing.md): what the tests pin and what nothing tests.
+- [issues.md](issues.md): open items.
 
 **Public material derived from this:** the crate's README, which is its docs.rs front page, and the
-`anyhow` walkthrough of the planned [error backends project
-section](../../../website/projects/error-backends.md).
+`anyhow` walkthrough of the planned
+[error backends project section](../../../website/projects/error-backends.md).

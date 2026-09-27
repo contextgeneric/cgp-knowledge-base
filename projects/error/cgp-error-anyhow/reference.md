@@ -2,9 +2,9 @@
 
 The crate's four providers each implement one role of the
 [shared design](../architecture.md#the-four-roles) for `anyhow::Error`, and every one but the type
-provider pins the context's error to `anyhow::Error` through `#[use_type]`. The crate also re-exports
-`anyhow::Error` as `cgp_error_anyhow::Error`, so a project can name its error type without depending
-on anyhow directly.
+provider pins the context's error to `anyhow::Error` through `#[use_type]`. The crate also
+re-exports `anyhow::Error` as `cgp_error_anyhow::Error`, so a project can name its error type
+without depending on anyhow directly.
 
 ## `UseAnyhowError`
 
@@ -68,12 +68,13 @@ finds it, and it is the first link of `chain()`. The error's `{}` is the source'
 Wrapping calls `anyhow::Error::context` with the detail. The result prints the outermost detail with
 `{}`, the whole chain joined by `": "` with `{:#}`, and the outermost detail followed by a
 `Caused by:` list with `{:?}`. A wrapped error still downcasts to the original source. Wrapping
-`"while loading"` and then `String::from("while starting")` around an `io::Error` reading
-`no file` gives `while starting: while loading: no file` under `{:#}`.
+`"while loading"` and then `String::from("while starting")` around an `io::Error` reading `no file`
+gives `while starting: while loading: no file` under `{:#}`.
 
 The raiser rejects any source that is not a standard error, `String` included, and the wrapper
-rejects a borrowed detail; see [debugging](../guides/debugging.md#a-message-routed-to-the-raise-provider)
-and [a borrowed detail](../guides/debugging.md#a-borrowed-detail).
+rejects a borrowed detail; see
+[debugging](../guides/debugging.md#a-message-routed-to-the-raise-provider) and
+[a borrowed detail](../guides/debugging.md#a-borrowed-detail).
 
 ### Context dependencies
 
@@ -81,8 +82,8 @@ and [a borrowed detail](../guides/debugging.md#a-borrowed-detail).
 
 ## `DebugAnyhowError`
 
-`DebugAnyhowError` raises any `Debug` value as a new anyhow message formatted with `{:?}`, and wraps a
-`Debug` detail the same way.
+`DebugAnyhowError` raises any `Debug` value as a new anyhow message formatted with `{:?}`, and wraps
+a `Debug` detail the same way.
 
 ### Definition
 
@@ -115,8 +116,8 @@ link and the source value cannot be recovered. Raising `Rejected { code: 7 }` pr
 `Rejected { code: 7 }`, and raising the string `"quoted message"` prints `"quoted message"` with its
 quotation marks, since that is a string's `Debug` form.
 
-Wrapping formats the detail with `{:?}` and adds the resulting `String` with `context`, which accepts
-any `Debug` detail, borrowed or not. Wrapping `42u32` prints `42`.
+Wrapping formats the detail with `{:?}` and adds the resulting `String` with `context`, which
+accepts any `Debug` detail, borrowed or not. Wrapping `42u32` prints `42`.
 
 ### Context dependencies
 
@@ -124,8 +125,8 @@ any `Debug` detail, borrowed or not. Wrapping `42u32` prints `42`.
 
 ## `DisplayAnyhowError`
 
-`DisplayAnyhowError` raises any `Display` value as a new anyhow message formatted with `{}`, and wraps
-a `Display` detail the same way.
+`DisplayAnyhowError` raises any `Display` value as a new anyhow message formatted with `{}`, and
+wraps a `Display` detail the same way.
 
 ### Definition
 
@@ -154,8 +155,8 @@ where
 ### Behavior
 
 Raising builds `anyhow!("{e}")`, which is the provider to use for a `String` or another message:
-raising `String::from("plain message")` prints `plain message`. Like `DebugAnyhowError`, it keeps only
-the message, so a standard error raised through it loses its type and its own source chain.
+raising `String::from("plain message")` prints `plain message`. Like `DebugAnyhowError`, it keeps
+only the message, so a standard error raised through it loses its type and its own source chain.
 
 Wrapping converts the detail with `to_string` and adds it with `context`, so it accepts a borrowed
 detail that `RaiseAnyhowError` would reject.
@@ -166,13 +167,13 @@ detail that `RaiseAnyhowError` would reject.
 
 ## Source
 
-- [`src/lib.rs`](https://github.com/contextgeneric/cgp/blob/main/crates/standalone/error/cgp-error-anyhow/src/lib.rs)
-  — the re-exports
+- [`src/lib.rs`](https://github.com/contextgeneric/cgp/blob/main/crates/standalone/error/cgp-error-anyhow/src/lib.rs):
+  the re-exports
 - [`src/impls/use_anyhow_error.rs`](https://github.com/contextgeneric/cgp/blob/main/crates/standalone/error/cgp-error-anyhow/src/impls/use_anyhow_error.rs)
 - [`src/impls/raise_anyhow_error.rs`](https://github.com/contextgeneric/cgp/blob/main/crates/standalone/error/cgp-error-anyhow/src/impls/raise_anyhow_error.rs)
 - [`src/impls/debug_error.rs`](https://github.com/contextgeneric/cgp/blob/main/crates/standalone/error/cgp-error-anyhow/src/impls/debug_error.rs)
 - [`src/impls/display_error.rs`](https://github.com/contextgeneric/cgp/blob/main/crates/standalone/error/cgp-error-anyhow/src/impls/display_error.rs)
 
 **Public material derived from this:** the crate's README, and the item docs in its source, and one
-page per provider under `anyhow/` in the planned [error backends project
-section](../../../website/projects/error-backends.md).
+page per provider under `anyhow/` in the planned
+[error backends project section](../../../website/projects/error-backends.md).

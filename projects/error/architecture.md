@@ -21,16 +21,16 @@ builds or extends it change.
 | Format with `{:?}` | `ErrorRaiser`, `ErrorWrapper` | `DebugAnyhowError` | `DebugEyreError` | `DebugBoxedStdError` |
 | Format with `{}` | `ErrorRaiser`, `ErrorWrapper` | `DisplayAnyhowError` | `DisplayEyreError` | `DisplayBoxedStdError` |
 
-The type provider decides the context's `Error`. The other three work only on a context whose `Error`
-is already the crate's type, so a context wires the type provider alongside whichever raisers and
-wrappers it uses; wiring a raiser without it fails, as
+The type provider decides the context's `Error`. The other three work only on a context whose
+`Error` is already the crate's type, so a context wires the type provider alongside whichever
+raisers and wrappers it uses; wiring a raiser without it fails, as
 [the debugging guide](guides/debugging.md#a-raiser-without-its-error-type) shows.
 
 The raise role keeps the source error. `RaiseAnyhowError` converts through `From`, `RaiseEyreError`
 the same, and `RaiseBoxedStdError` boxes the value, so in all three the original error stays
 reachable with `downcast_ref` and as the first link of the error chain. The two formatting roles
-throw the value away: they render it into a string and build a fresh error from the string, which
-is how they accept values that are not standard errors at all, such as `String` or a plain
+throw the value away: they render it into a string and build a fresh error from the string, which is
+how they accept values that are not standard errors at all, such as `String` or a plain
 `#[derive(Debug)]` struct. A context therefore routes each source type by what that type is, and
 [choosing-a-backend.md](guides/choosing-a-backend.md#routing-each-source-type) gives the table.
 
@@ -38,8 +38,8 @@ is how they accept values that are not standard errors at all, such as `String` 
 
 Every provider is a unit struct declared on its own with a `///` comment, followed by one
 `#[cgp_impl]` block per component it implements. The error type is imported with the equality form
-of `#[use_type]`, which both pins the context's error to the crate's type and lets the signature name
-it as the bare `Error`:
+of `#[use_type]`, which both pins the context's error to the crate's type and lets the signature
+name it as the bare `Error`:
 
 ```rust
 pub struct RaiseAnyhowError;
@@ -57,10 +57,10 @@ where
 ```
 
 The `#[use_type]` pin becomes the impl-side dependency `Self: HasErrorType<Error = anyhow::Error>`,
-which is why a context must set its error type to the crate's own. The bounds on `E` and `Detail` stay
-in ordinary `where` clauses, since they constrain the source or detail type rather than the context.
-The type providers need no pin and write `type Error = anyhow::Error;` directly. The attribute
-forms are documented in [`#[cgp_impl]`](../../cgp/reference/macros/cgp_impl.md) and
+which is why a context must set its error type to the crate's own. The bounds on `E` and `Detail`
+stay in ordinary `where` clauses, since they constrain the source or detail type rather than the
+context. The type providers need no pin and write `type Error = anyhow::Error;` directly. The
+attribute forms are documented in [`#[cgp_impl]`](../../cgp/reference/macros/cgp_impl.md) and
 [`#[use_type]`](../../cgp/reference/attributes/use_type.md).
 
 ## What a backend adds over the generic providers
@@ -74,11 +74,11 @@ re-raises a value that is already the context's error, which the backend raisers
 neither `anyhow::Error`, `eyre::Report`, nor a boxed `dyn Error` is itself a standard error. The
 `error_backends` tests pin both facts. What a backend adds is the rest:
 
-- **Attaching a detail.** No generic provider stores a detail in the error by itself: `DiscardDetail`
-  drops it, and the generic `DebugError` and `DisplayError` format it and forward the `String` to the
-  context's own `CanWrapError<String>`, which still needs a provider. Each backend's wrappers attach
-  it with the library's own mechanism (`anyhow::Error::context`, `eyre::Report::wrap_err`, or a
-  `WrapError`), so they can be that provider.
+- **Attaching a detail.** No generic provider stores a detail in the error by itself:
+  `DiscardDetail` drops it, and the generic `DebugError` and `DisplayError` format it and forward
+  the `String` to the context's own `CanWrapError<String>`, which still needs a provider. Each
+  backend's wrappers attach it with the library's own mechanism (`anyhow::Error::context`,
+  `eyre::Report::wrap_err`, or a `WrapError`), so they can be that provider.
 - **Formatting straight into the concrete type.** The generic
   [`DebugError` and `DisplayError`](../../cgp/reference/providers/error_providers.md) format a value
   and hand the string back to the context's own `CanRaiseError<String>`, so they still need some
@@ -124,11 +124,11 @@ feature unification turns it on here too and adds what anyhow's `std` mode bring
 capture. `cgp-error-std` is `#![no_std]` and needs only `alloc`. `cgp-error-eyre` is not `no_std`,
 because eyre itself requires `std`.
 
-`cgp-error-eyre` enables eyre's `auto-install` and `track-caller` features. Without
-`auto-install`, eyre has no report handler until the application calls `eyre::set_hook`, and every
-report the crate builds panics. With it, eyre installs its default handler the first time a report
-is built, after which `set_hook` returns an error, so an application that wants `color-eyre` or
-another handler installs it before raising anything.
+`cgp-error-eyre` enables eyre's `auto-install` and `track-caller` features. Without `auto-install`,
+eyre has no report handler until the application calls `eyre::set_hook`, and every report the crate
+builds panics. With it, eyre installs its default handler the first time a report is built, after
+which `set_hook` returns an error, so an application that wants `color-eyre` or another handler
+installs it before raising anything.
 
 `track-caller` makes the handler record where a report was built, and the location is the caller's
 line because every function between the caller and eyre is `#[track_caller]`. `raise_error` and
@@ -148,10 +148,10 @@ Each crate depends on `cgp-core` under the name `cgp` rather than on the `cgp` f
 - [`crates/standalone/error/cgp-error-anyhow/`](https://github.com/contextgeneric/cgp/tree/main/crates/standalone/error/cgp-error-anyhow)
 - [`crates/standalone/error/cgp-error-eyre/`](https://github.com/contextgeneric/cgp/tree/main/crates/standalone/error/cgp-error-eyre)
 - [`crates/standalone/error/cgp-error-std/`](https://github.com/contextgeneric/cgp/tree/main/crates/standalone/error/cgp-error-std)
-- [`crates/core/cgp-error/src/traits/`](https://github.com/contextgeneric/cgp/tree/main/crates/core/cgp-error/src/traits)
-  — the components the providers implement
+- [`crates/core/cgp-error/src/traits/`](https://github.com/contextgeneric/cgp/tree/main/crates/core/cgp-error/src/traits):
+  the components the providers implement
 
-**Public material derived from this:** the crates' READMEs, and the `/cgp` skill's [error
-backends](https://github.com/contextgeneric/cgp-skills/blob/main/cgp/references/error-backends.md)
-reference, and the `architecture` page of the planned [error backends project
-section](../../website/projects/error-backends.md).
+**Public material derived from this:** the crates' READMEs, and the `/cgp` skill's
+[error backends](https://github.com/contextgeneric/cgp-skills/blob/main/cgp/references/error-backends.md)
+reference, and the `architecture` page of the planned
+[error backends project section](../../website/projects/error-backends.md).

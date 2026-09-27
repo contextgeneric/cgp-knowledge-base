@@ -29,11 +29,10 @@ check_components! {
 ```
 
 `cargo cgp check` reports `E0277`, "the trait bound `String: Error` is not satisfied", on the check
-entry, with the chain running from `CanRaiseError<String>` for `App` through
-`ErrorRaiser<String>` for `RaiseAnyhowError`. The root cause is the provider's
-`E: StdError + Send + Sync + 'static` bound, which `String` does not meet. Route `String` to the
-formatting provider instead, with `open ErrorRaiserComponent;` and
-`@ErrorRaiserComponent.String: DisplayAnyhowError`.
+entry, with the chain running from `CanRaiseError<String>` for `App` through `ErrorRaiser<String>`
+for `RaiseAnyhowError`. The root cause is the provider's `E: StdError + Send + Sync + 'static`
+bound, which `String` does not meet. Route `String` to the formatting provider instead, with
+`open ErrorRaiserComponent;` and `@ErrorRaiserComponent.String: DisplayAnyhowError`.
 
 ## A raiser without its error type
 
@@ -80,12 +79,12 @@ check_components! {
 }
 ```
 
-`cargo cgp check` reports `E0271` tagged `[CGP-E017]`: the abstract type `Error` of `HasErrorType` on
-`App` was expected to be `Error` but is `Box<dyn Error + Send + Sync>`. The first `Error` is
-`anyhow::Error` with its path stripped by the tool's resugaring, which makes the message read
-oddly; its help line suggests wiring `UseType<Error>` for the same reason. The root cause is the
-`#[use_type(HasErrorType.{Error = anyhow::Error})]` pin on `RaiseAnyhowError`. Use the raiser from the
-same crate as the type provider, here `RaiseBoxedStdError`.
+`cargo cgp check` reports `E0271` tagged `[CGP-E017]`: the abstract type `Error` of `HasErrorType`
+on `App` was expected to be `Error` but is `Box<dyn Error + Send + Sync>`. The first `Error` is
+`anyhow::Error` with its path stripped by the tool's resugaring, which makes the message read oddly;
+its help line suggests wiring `UseType<Error>` for the same reason. The root cause is the
+`#[use_type(HasErrorType.{Error = anyhow::Error})]` pin on `RaiseAnyhowError`. Use the raiser from
+the same crate as the type provider, here `RaiseBoxedStdError`.
 
 ## A `String` routed back to itself
 
@@ -112,10 +111,10 @@ check_components! {
 ```
 
 `cargo cgp check` reports `E0275` tagged `[CGP-E010]`: the wiring for `CanRaiseError<ParseIntError>`
-never resolves, because the lookup recurses. `DebugError` for `String` needs `CanRaiseError<String>`,
-which is `DebugError` for `String` again. The tool's help text names the most common cause of a
-recursing lookup, a component delegated back to the context, which is the same shape here in a less
-obvious place. Route `String` to a provider that builds the error itself:
+never resolves, because the lookup recurses. `DebugError` for `String` needs
+`CanRaiseError<String>`, which is `DebugError` for `String` again. The tool's help text names the
+most common cause of a recursing lookup, a component delegated back to the context, which is the
+same shape here in a less obvious place. Route `String` to a provider that builds the error itself:
 `@ErrorRaiserComponent.String: DisplayAnyhowError`. The generic `DebugError` for `ParseIntError`
 then works, or the backend's `DebugAnyhowError` can replace it and skip the round trip.
 
@@ -169,7 +168,7 @@ custom handler must be installed before any error is raised. `eyre::set_hook` re
 the result of `set_hook` rather than discarding it, since a discarded error leaves the default
 handler in place without any sign.
 
-**Public material derived from this:** the `/cgp` skill's [error
-backends](https://github.com/contextgeneric/cgp-skills/blob/main/cgp/references/error-backends.md)
-reference, and the `guides/debugging` page of the planned [error backends project
-section](../../../website/projects/error-backends.md).
+**Public material derived from this:** the `/cgp` skill's
+[error backends](https://github.com/contextgeneric/cgp-skills/blob/main/cgp/references/error-backends.md)
+reference, and the `guides/debugging` page of the planned
+[error backends project section](../../../website/projects/error-backends.md).
