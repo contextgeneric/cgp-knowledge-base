@@ -1,11 +1,11 @@
 # The `cgp` library
 
 This directory documents the CGP language extension itself: the `cgp` crates, their macros, and the
-constructs those macros generate. It is one member section of the [CGP knowledge base](../README.md),
-and its subject is what CGP *means*: what each construct does, what code it expands into, how the
-pieces fit together, and how the macros that produce them are built. The corresponding member project
-is [`cgp`](https://github.com/contextgeneric/cgp), and every claim here is verified against that
-project's source.
+constructs those macros generate. It is one member section of the
+[CGP knowledge base](../README.md), and its subject is what CGP *means*: what each construct does,
+what code it expands into, how the pieces fit together, and how the macros that produce them are
+built. The corresponding member project is [`cgp`](https://github.com/contextgeneric/cgp), and every
+claim here is verified against that project's source.
 
 Context-Generic Programming (CGP) is a language extension for Rust, with pluggable trait
 implementations at compile-time. In ordinary Rust a trait has one implementation per type; CGP lets
@@ -20,23 +20,23 @@ goes deeper and stays in sync with the code. Read the two together.
 
 ## Why this exists
 
-The base's [README](../README.md#why-this-exists) makes the general case that CGP's meaning has to be
-recorded in prose because the macro source does not show it. This section is where that reconstruction
-lives for the library: an agent reading
+The base's [README](../README.md#why-this-exists) makes the general case that CGP's meaning has to
+be recorded in prose because the macro source does not show it. This section is where that
+reconstruction lives for the library: an agent reading
 [crates/macros/cgp-macro-core](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-core)
-sees token-stream manipulation and AST transforms, not the meaning they produce. The meaning, such as
-"`#[cgp_component]` generates a consumer trait, a provider trait, and two blanket impls that connect
-them", has to be reconstructed by mentally running the macro. Documented once, it is read rather than
-re-derived on every visit.
+sees token-stream manipulation and AST transforms, not the meaning they produce. The meaning, such
+as "`#[cgp_component]` generates a consumer trait, a provider trait, and two blanket impls that
+connect them", has to be reconstructed by mentally running the macro. Documented once, it is read
+rather than re-derived on every visit.
 
-What makes that documentation checkable is a third artifact. A reference document's Expansion section
-states the intended generated code in plain language, and the expansion snapshots, inline
+What makes that documentation checkable is a third artifact. A reference document's Expansion
+section states the intended generated code in plain language, and the expansion snapshots, inline
 `snapshot_*!` blocks in the tests under
 [crates/tests/cgp-tests](https://github.com/contextgeneric/cgp/tree/main/crates/tests/cgp-tests),
 pin what the macro really emits. A reviewer can hold the prose, the code, and the snapshot against
-each other and see whether all three agree. Keeping them agreeing is a hard requirement of any change;
-see [AGENTS.md](AGENTS.md) for this section's rules and [../AGENTS.md](../AGENTS.md) for the ones the
-whole base shares.
+each other and see whether all three agree. Keeping them agreeing is a hard requirement of any
+change; see [AGENTS.md](AGENTS.md) for this section's rules and [../AGENTS.md](../AGENTS.md) for the
+ones the whole base shares.
 
 ## How it is organized
 
@@ -51,8 +51,8 @@ exact code it desugars to, worked examples, and links to the constructs it relat
 [reference index](reference/README.md) lists every construct.
 
 The [concepts/](concepts/README.md) directory holds the cross-cutting conceptual overviews that span
-multiple constructs, such as the consumer/provider duality, dependency injection, namespaces, and the
-handler family, each explaining one idea and linking down into the reference documents for the
+multiple constructs, such as the consumer/provider duality, dependency injection, namespaces, and
+the handler family, each explaining one idea and linking down into the reference documents for the
 mechanics. Where the reference explains the individual trees, the concepts explain the shape of the
 forest.
 
@@ -66,29 +66,29 @@ construct's vanilla-looking form over its explicit equivalent, keeping wiring ta
 namespaces, and debugging a wiring that will not compile all live here.
 
 The [errors/](errors/README.md) directory catalogs the compiler errors CGP produces *after* codegen,
-from input a macro accepts and lowers to Rust that then fails to compile, organized by the kind of error
-rather than by the macro that produced it. Each document records the anatomy of one class: the mistake
-that triggers it, the shape of the diagnostic, whether the compiler *surfaces* or *hides* the root
-cause, and how [`cargo-cgp`](reference/cargo-cgp.md) reshapes it. That axis and the dividing line
-against the failures a macro raises by *rejecting* its input are explained in the
+from input a macro accepts and lowers to Rust that then fails to compile, organized by the kind of
+error rather than by the macro that produced it. Each document records the anatomy of one class: the
+mistake that triggers it, the shape of the diagnostic, whether the compiler *surfaces* or *hides*
+the root cause, and how [`cargo-cgp`](reference/cargo-cgp.md) reshapes it. That axis and the
+dividing line against the failures a macro raises by *rejecting* its input are explained in the
 [catalog's README](errors/README.md).
 
 The [implementation/](implementation/README.md) directory documents the *internals* of the macros:
-how each one is built, as opposed to what it does for a user: its entry function, the pipeline stages
-it drives, the AST types it parses into, the helper functions that synthesize each generated item, its
-corner cases and known limitations, and every pointer into the test suite. An agent asked to review,
-debug, or extend the macro source reads here first.
+how each one is built, as opposed to what it does for a user: its entry function, the pipeline
+stages it drives, the AST types it parses into, the helper functions that synthesize each generated
+item, its corner cases and known limitations, and every pointer into the test suite. An agent asked
+to review, debug, or extend the macro source reads here first.
 
 ## What lives elsewhere
 
-Three parts of CGP's documentation serve the whole ecosystem rather than this section, so they sit at
-the base's top level: the worked [examples/](../examples/README.md) these documents quote their
-snippets from, the [related-work/](../related-work/README.md) comparisons with the ideas CGP resembles,
-and the [communication-strategy/](../communication-strategy/README.md) guidance for writing about CGP
-in public. A fourth view lives outside this repository entirely: the `/cgp` skill, in
-[`cgp-skills`](https://github.com/contextgeneric/cgp-skills), because a skill is deployed on its own
-and may not link back to anything here. All four are bound by the same synchronization rule as this
-section, so a construct change propagates into whichever of them shows it.
+Three parts of CGP's documentation serve the whole ecosystem rather than this section, so they sit
+at the base's top level: the worked [examples/](../examples/README.md) these documents quote their
+snippets from, the [related-work/](../related-work/README.md) comparisons with the ideas CGP
+resembles, and the [communication-strategy/](../communication-strategy/README.md) guidance for
+writing about CGP in public. A fourth view lives outside this repository entirely: the `/cgp` skill,
+in [`cgp-skills`](https://github.com/contextgeneric/cgp-skills), because a skill is deployed on its
+own and may not link back to anything here. All four are bound by the same synchronization rule as
+this section, so a construct change propagates into whichever of them shows it.
 
 ## How to use it
 

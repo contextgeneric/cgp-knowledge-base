@@ -1,88 +1,294 @@
-# AGENTS.md — the `cgp` member of the knowledge base
+# AGENTS.md: the `cgp` member of the knowledge base
 
-This directory documents the CGP language extension — agent-maintained documentation whose job is to record the full semantics of every CGP construct and the internals of the macros that produce them. Read [README.md](README.md) for the background and motivation behind it, and the base-wide [../AGENTS.md](../AGENTS.md) for the rules every section shares: the synchronization rule, verifying against the source, the dual-reader prose style, document-the-present, how links are written, how a document registers itself, and the prose mechanics. The rules below add only what is specific to documenting `cgp`.
+This directory documents the CGP language extension. It is agent-maintained documentation whose job
+is to record the full semantics of every CGP construct and the internals of the macros that produce
+them. Read [README.md](README.md) for the background and motivation behind it, and the base-wide
+[../AGENTS.md](../AGENTS.md) for the rules every section shares: the synchronization rule, verifying
+against the source, the dual-reader prose style, document-the-present, how links are written, how a
+document registers itself, and the prose mechanics. The rules below add only what is specific to
+documenting `cgp`.
 
-The member project is [`cgp`](https://github.com/contextgeneric/cgp), and [../sibling-projects.md](../sibling-projects.md) says where to find it and which revision to read.
+The member project is [`cgp`](https://github.com/contextgeneric/cgp), and
+[../sibling-projects.md](../sibling-projects.md) says where to find it and which revision to read.
 
 ## What the synchronization rule means here
 
-The base-wide [synchronization rule](../AGENTS.md#the-synchronization-rule) lands on a specific set of artifacts in this section. Whenever you modify a CGP construct — its accepted syntax, the code it expands to, its defaults, its error behavior, or its relationships to other constructs — update the matching reference document in the same change. If you add a construct, add its reference document and register it in the [reference index](reference/README.md); if you remove one, remove or supersede its document and update the index; if you change an expansion, revise the "Expansion" section so the desugaring shown still matches what the macro emits.
+The base-wide [synchronization rule](../AGENTS.md#the-synchronization-rule) lands on a specific set
+of artifacts in this section. Whenever you modify a CGP construct (its accepted syntax, the code it
+expands to, its defaults, its error behavior, or its relationships to other constructs), update the
+matching reference document in the same change. If you add a construct, add its reference document
+and register it in the [reference index](reference/README.md); if you remove one, remove or
+supersede its document and update the index; if you change an expansion, revise the "Expansion"
+section so the desugaring shown still matches what the macro emits.
 
-The implementation in [crates/macros/cgp-macro-core](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-core), the expansion snapshots (inline `snapshot_*!` blocks in the behavioral tests under [crates/tests/cgp-tests](https://github.com/contextgeneric/cgp/tree/main/crates/tests/cgp-tests)), the reference documents here, the implementation documents under [implementation/](implementation/README.md), and the `/cgp` skill are five views of the same truth. When they disagree, that disagreement is a defect, and the source wins. The snapshots are the most mechanical check on whether a document's "Expansion" section is honest — when you doubt what a macro emits, generate or read the snapshot rather than guessing.
+The implementation in
+[crates/macros/cgp-macro-core](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-core),
+the expansion snapshots (inline `snapshot_*!` blocks in the behavioral tests under
+[crates/tests/cgp-tests](https://github.com/contextgeneric/cgp/tree/main/crates/tests/cgp-tests)),
+the reference documents here, the implementation documents under
+[implementation/](implementation/README.md), and the `/cgp` skill are five views of the same truth.
+When they disagree, that disagreement is a defect, and the source wins. The snapshots are the most
+mechanical check on whether a document's "Expansion" section is honest. When you doubt what a macro
+emits, generate or read the snapshot rather than guessing.
 
-The skill is the most distilled view and therefore the easiest to leave stale, and it lives outside this repository, in [`cgp-skills`](https://github.com/contextgeneric/cgp-skills), because it is deployed on its own. Propagating a change to it is part of the same change: revise the affected file under `cgp/references/`, the router and reading cheat-sheet in `cgp/SKILL.md` when the change touches a core construct, and the triggering `description` when you add or rename a construct an agent should recognize by name. When a form becomes legacy — as `UseDelegate`/`#[derive_delegate]` did when the `open` statement became the preferred dispatch — the skill leads with the current form and keeps the legacy one only as a clearly-labeled note for *reading* existing code, mirroring how the reference documents treat it. That repository's [`AGENTS.md`](https://github.com/contextgeneric/cgp-skills/blob/main/AGENTS.md) carries the rest of the skill's rules; when its checkout is absent, say plainly what needs updating there.
+The skill is the most distilled view and therefore the easiest to leave stale, and it lives outside
+this repository, in [`cgp-skills`](https://github.com/contextgeneric/cgp-skills), because it is
+deployed on its own. Propagating a change to it is part of the same change: revise the affected file
+under `cgp/references/`, the router and reading cheat-sheet in `cgp/SKILL.md` when the change
+touches a core construct, and the triggering `description` when you add or rename a construct an
+agent should recognize by name. When a form becomes legacy, as `UseDelegate`/`#[derive_delegate]`
+did when the `open` statement became the preferred dispatch, the skill leads with the current form
+and keeps the legacy one only as a clearly-labeled note for *reading* existing code, mirroring how
+the reference documents treat it. That repository's
+[`AGENTS.md`](https://github.com/contextgeneric/cgp-skills/blob/main/AGENTS.md) carries the rest of
+the skill's rules; when its checkout is absent, say plainly what needs updating there.
 
 ## Authoring conventions
 
-Invoke the `/cgp` skill before writing or revising any document here. The skill is the authoritative source for CGP semantics and terminology, and these documents must use the same vocabulary (consumer trait, provider trait, provider, wiring, impl-side dependency, and so on) so that a reader moving between the skill and the documents never has to reconcile two dialects. One word is excluded from that vocabulary: never call what a component, a `#[cgp_fn]` function, or a getter defines a "capability" — say trait, method, or operation — because the word names a different construct in the object-capability model and in Rust's context-and-capabilities proposal; the reasoning and the replacement per sub-use are in [vocabulary.md](../communication-strategy/vocabulary.md#words-and-framings-to-avoid). Use code blocks freely — showing the exact expansion is the whole point — but let the prose around them carry the meaning on its own.
+Invoke the `/cgp` skill before writing or revising any document here. The skill is the authoritative
+source for CGP semantics and terminology, and these documents must use the same vocabulary (consumer
+trait, provider trait, provider, wiring, impl-side dependency, and so on) so that a reader moving
+between the skill and the documents never has to reconcile two dialects. One word is excluded from
+that vocabulary: never call what a component, a `#[cgp_fn]` function, or a getter defines a
+"capability" (say trait, method, or operation), because the word names a different construct in the
+object-capability model and in Rust's context-and-capabilities proposal; the reasoning and the
+replacement per sub-use are in
+[vocabulary.md](../communication-strategy/vocabulary.md#words-and-framings-to-avoid). Use code
+blocks freely, since showing the exact expansion is the whole point, but let the prose around them
+carry the meaning on its own.
 
-Prefer code snippets that match the worked examples in [../examples/](../examples/). When a document's Examples section (or any illustrative snippet) needs running code, draw on the contexts, components, and providers an example already uses rather than inventing a fresh scenario, so the same vocabulary and the same running use cases recur across the whole base. When a review turns up a snippet built on an ad-hoc scenario that an example covers better, replace it with the example-aligned version as part of that review.
+Prefer code snippets that match the worked examples in [../examples/](../examples/). When a
+document's Examples section (or any illustrative snippet) needs running code, draw on the contexts,
+components, and providers an example already uses rather than inventing a fresh scenario, so the
+same vocabulary and the same running use cases recur across the whole base. When a review turns up a
+snippet built on an ad-hoc scenario that an example covers better, replace it with the
+example-aligned version as part of that review.
 
-Verify against the source before writing, not from memory. Read the construct's implementation in `cgp-macro-core` (its `types/<construct>/` module and the `cgp-macro-lib` entry that drives it) and any tests that exercise it. The "Expansion" section is a claim about generated code, so it must reflect what the macro produces today, including the real default identifiers — `#[cgp_component]` defaults the context type to `__Context__` and the component name to `{Provider}Component` — rather than idealized names used for teaching.
+Verify against the source before writing, not from memory. Read the construct's implementation in
+`cgp-macro-core` (its `types/<construct>/` module and the `cgp-macro-lib` entry that drives it) and
+any tests that exercise it. The "Expansion" section is a claim about generated code, so it must
+reflect what the macro produces today, including the real default identifiers (`#[cgp_component]`
+defaults the context type to `__Context__` and the component name to `{Provider}Component`) rather
+than idealized names used for teaching.
 
 ## Which rules govern which directory
 
-This file carries the rules for the three directories that have no `AGENTS.md` of their own — [reference/](reference/README.md), [concepts/](concepts/README.md), and [guides/](guides/README.md) — in the sections below. Two directories carry their own rules because their documents are a different kind of thing: [errors/AGENTS.md](errors/AGENTS.md) governs the error catalog, whose defining rule is that a document records the *anatomy* of a class rather than pasting verbatim output, and [implementation/AGENTS.md](implementation/AGENTS.md) governs the macro internals, with a document template per kind and the Tests and Snapshots sections that index the test suite. Each directory's `README.md` describes what it holds and is the catalog a new document registers itself in.
+This file carries, in the sections below, the rules for the three directories that have no
+`AGENTS.md` of their own: [reference/](reference/README.md), [concepts/](concepts/README.md), and
+[guides/](guides/README.md). Two directories carry their own rules because their documents are a
+different kind of thing: [errors/AGENTS.md](errors/AGENTS.md) governs the error catalog, whose
+defining rule is that a document records the *anatomy* of a class rather than pasting verbatim
+output, and [implementation/AGENTS.md](implementation/AGENTS.md) governs the macro internals, with a
+document template per kind and the Tests and Snapshots sections that index the test suite. Each
+directory's `README.md` describes what it holds and is the catalog a new document registers itself
+in.
 
-The knowledge base's shared sections sit outside this one and carry their own rules: the worked [examples/](../examples/AGENTS.md) these documents quote, and the outward-looking [related-work/](../related-work/AGENTS.md) and [communication-strategy/](../communication-strategy/AGENTS.md). All three draw on this section for the CGP side of what they say, so a construct change can ripple into them — a snippet that no longer compiles is as much a bug there as here.
+The knowledge base's shared sections sit outside this one and carry their own rules: the worked
+[examples/](../examples/AGENTS.md) these documents quote, and the outward-looking
+[related-work/](../related-work/AGENTS.md) and
+[communication-strategy/](../communication-strategy/AGENTS.md). All three draw on this section for
+the CGP side of what they say, so a construct change can ripple into them: a snippet that no longer
+compiles is as much a bug there as here.
 
 ## Reference documents
 
-Each reference document explains one construct completely and follows the same shape, so readers can navigate any of them by habit. Open with a level-one heading naming the construct and a one-sentence summary of what it is, then proceed through these sections, using the same headings:
+Each reference document explains one construct completely and follows the same shape, so readers can
+navigate any of them by habit. Open with a level-one heading naming the construct and a one-sentence
+summary of what it is, then proceed through these sections, using the same headings:
 
-- **Purpose** — the problem the construct solves and why it exists, in prose.
-- **Syntax** — the accepted forms of the construct, with the meaning of each argument and option.
-- **Syntax Grammar** — present only for a macro that has custom syntax (a bespoke attribute argument or macro-body grammar that is not just a plain Rust item); a formal grammar of that syntax in the Rust Reference's notation. Omit the heading entirely for a macro whose invocation is a plain Rust item with no arguments. See the grammar conventions below for the notation and what counts as custom syntax.
-- **Expansion** — the exact code the construct desugars to, shown with before/after code blocks. This is the heart of the document and the part most likely to drift; keep it faithful to the current macro output.
-- **Examples** — at least one realistic, self-contained example showing the construct in use.
-- **Related constructs** — links to the reference documents for constructs commonly used with this one, with a phrase explaining each relationship.
-- **Known issues** — optional; present only when the construct has corner cases, surprising behavior, or open bugs worth warning a reader about. Omit the heading entirely when there is nothing to record. See the review workflow below for what belongs here.
-- **Source** — pointers to the implementing modules in `cgp-macro-core` and `cgp-macro-lib`, and a link to the construct's implementation document under [implementation/](implementation/README.md), so a reader can drop from prose into the code and its internal walkthrough. A reference document never points at a test file; all test pointers live in the implementation document instead. Write this section as a bullet list — one pointer per bullet — rather than a flowing paragraph; a short lead-in sentence is optional, but each source pointer is its own bullet.
-- **Public pages derived from this document** — optional, and present only where the public reference splits this document across several pages. The public site is organized [one page per named construct](../website/writing-guides/reference.md#granularity-one-page-per-named-construct), so a document covering a family of traits feeds several pages, and a change here has to reach all of them. List the pages by their live URLs, since a reference document may not assume the reader has the website checked out. Omit the heading entirely when the mapping is one to one, which it is for most documents.
+- **Purpose**: the problem the construct solves and why it exists, in prose.
+- **Syntax**: the accepted forms of the construct, with the meaning of each argument and option.
+- **Syntax Grammar**: present only for a macro that has custom syntax (a bespoke attribute argument
+  or macro-body grammar that is not just a plain Rust item); a formal grammar of that syntax in the
+  Rust Reference's notation. Omit the heading entirely for a macro whose invocation is a plain Rust
+  item with no arguments. See the grammar conventions below for the notation and what counts as
+  custom syntax.
+- **Expansion**: the exact code the construct desugars to, shown with before/after code blocks. This
+  is the heart of the document and the part most likely to drift; keep it faithful to the current
+  macro output.
+- **Examples**: at least one realistic, self-contained example showing the construct in use.
+- **Related constructs**: links to the reference documents for constructs commonly used with this
+  one, with a phrase explaining each relationship.
+- **Known issues**: optional; present only when the construct has corner cases, surprising behavior,
+  or open bugs worth warning a reader about. Omit the heading entirely when there is nothing to
+  record. See the review workflow below for what belongs here.
+- **Source**: pointers to the implementing modules in `cgp-macro-core` and `cgp-macro-lib`, and a
+  link to the construct's implementation document under [implementation/](implementation/README.md),
+  so a reader can drop from prose into the code and its internal walkthrough. A reference document
+  never points at a test file; all test pointers live in the implementation document instead. Write
+  this section as a bullet list, one pointer per bullet, rather than a flowing paragraph; a short
+  lead-in sentence is optional, but each source pointer is its own bullet.
+- **Public pages derived from this document**: optional, and present only where the public reference
+  splits this document across several pages. The public site is organized
+  [one page per named construct](../website/writing-guides/reference.md#granularity-one-page-per-named-construct),
+  so a document covering a family of traits feeds several pages, and a change here has to reach all
+  of them. List the pages by their live URLs, since a reference document may not assume the reader
+  has the website checked out. Omit the heading entirely when the mapping is one to one, which it is
+  for most documents.
 
-Place each document in the subdirectory that matches what the construct *is*: `macros/` for procedural macros a programmer invokes (including the type-level construction macros), `derives/` for the `#[derive(...)]` family, `attributes/` for modifier attributes consumed by a host macro, `components/` for the built-in CGP components, `providers/` for the zero-sized provider structs a context delegates to, `traits/` for the runtime traits that are *not* themselves components, and `types/` for the type-level building-block types. A trait belongs in `components/` rather than `traits/` precisely when it is a CGP component with a generated provider trait and `…Component` marker. The [reference index](reference/README.md) describes the layout in full and is the catalog you register a new document in.
+Place each document in the subdirectory that matches what the construct *is*: `macros/` for
+procedural macros a programmer invokes (including the type-level construction macros), `derives/`
+for the `#[derive(...)]` family, `attributes/` for modifier attributes consumed by a host macro,
+`components/` for the built-in CGP components, `providers/` for the zero-sized provider structs a
+context delegates to, `traits/` for the runtime traits that are *not* themselves components, and
+`types/` for the type-level building-block types. A trait belongs in `components/` rather than
+`traits/` precisely when it is a CGP component with a generated provider trait and `…Component`
+marker. The [reference index](reference/README.md) describes the layout in full and is the catalog
+you register a new document in.
 
-**A reference document is exhaustive, and that is not in tension with readability.** Every form the construct's parser accepts belongs in Syntax and in the grammar, including the forms that are rare, advanced, or legacy — a form that parses and is not documented is a hole, and the next agent will conclude it does not exist. Enumerate against the parser rather than against the document's previous draft, since the usual way a page comes to cover four of a macro's six forms is that it was written from something that covered four. Where a grammar has independent axes — an operator, a key form, a value form — name the axes and take them in turn rather than listing forms flat, and say explicitly when they combine, because a document that treats each form in its own subsection otherwise implies they are alternatives. Nothing here is withheld for a beginner's sake: these documents are written for agents, so depth is ordered rather than omitted. The public site has the same obligation for a different reason and states it separately, in [website/AGENTS.md](../website/AGENTS.md#layer-the-depth-do-not-omit-the-advanced-material).
+**A reference document is exhaustive, and that is not in tension with readability.** Every form the
+construct's parser accepts belongs in Syntax and in the grammar, including the forms that are rare,
+advanced, or legacy. A form that parses and is not documented is a hole, and the next agent will
+conclude it does not exist. Enumerate against the parser rather than against the document's previous
+draft, since the usual way a page comes to cover four of a macro's six forms is that it was written
+from something that covered four. Where a grammar has independent axes (an operator, a key form, a
+value form), name the axes and take them in turn rather than listing forms flat, and say explicitly
+when they combine, because a document that treats each form in its own subsection otherwise implies
+they are alternatives. Nothing here is withheld for a beginner's sake: these documents are written
+for agents, so depth is ordered rather than omitted. The public site has the same obligation for a
+different reason and states it separately, in
+[website/AGENTS.md](../website/AGENTS.md#layer-the-depth-do-not-omit-the-advanced-material).
 
-Cross-link generously. When a document mentions another construct, link to its reference document so a reader can follow the thread. A mention of a construct that is not yet documented is a useful signal of what to write next; record it as a gap in the [reference index](reference/README.md), as an entry without a link in the section where its document would belong, rather than leaving a dangling link.
+Cross-link generously. When a document mentions another construct, link to its reference document so
+a reader can follow the thread. A mention of a construct that is not yet documented is a useful
+signal of what to write next; record it as a gap in the [reference index](reference/README.md), as
+an entry without a link in the section where its document would belong, rather than leaving a
+dangling link.
 
 ## Syntax grammar conventions
 
-Every macro with custom syntax carries a **Syntax Grammar** section that formalizes what its Syntax section describes in prose, and the two must agree. "Custom syntax" means the macro's invocation accepts a bespoke grammar — an attribute argument with its own structure (`#[cgp_component]`, `#[cgp_impl]`), or a function-like macro body with a table, list, or path grammar (`delegate_components!`, `cgp_namespace!`, `Symbol!`, `Path!`). A macro whose invocation is just a plain Rust item with no arguments — `#[async_trait]`, `#[cgp_auto_dispatch]`, `#[cgp_auto_getter]` — has no custom syntax and gets no grammar section; an attribute that takes only a single optional identifier still does, because that identifier is the macro's own grammar. The grammar describes the *tokens the macro itself parses*: the attribute-argument tokens for an attribute macro, or the body tokens for a function-like macro — not the surrounding `#[...]` or `name!{...}` delimiters, and not the plain Rust item the attribute is applied to.
+Every macro with custom syntax carries a **Syntax Grammar** section that formalizes what its Syntax
+section describes in prose, and the two must agree. "Custom syntax" means the macro's invocation
+accepts a bespoke grammar: an attribute argument with its own structure (`#[cgp_component]`,
+`#[cgp_impl]`), or a function-like macro body with a table, list, or path grammar
+(`delegate_components!`, `cgp_namespace!`, `Symbol!`, `Path!`). A macro whose invocation is just a
+plain Rust item with no arguments (`#[async_trait]`, `#[cgp_auto_dispatch]`, `#[cgp_auto_getter]`)
+has no custom syntax and gets no grammar section; an attribute that takes only a single optional
+identifier still does, because that identifier is the macro's own grammar. The grammar describes the
+*tokens the macro itself parses*: the attribute-argument tokens for an attribute macro, or the body
+tokens for a function-like macro, not the surrounding `#[...]` or `name!{...}` delimiters, and not
+the plain Rust item the attribute is applied to.
 
-Write the grammar in the notation of the [Rust Reference](https://doc.rust-lang.org/nightly/reference/notation.html), using the production-rule flavor of its [grammar dev-guide](https://rust-lang.github.io/reference/dev-guide/grammar.html). The rules are:
+Write the grammar in the notation of the
+[Rust Reference](https://doc.rust-lang.org/nightly/reference/notation.html), using the
+production-rule flavor of its
+[grammar dev-guide](https://rust-lang.github.io/reference/dev-guide/grammar.html). The rules are:
 
-- A production is written `Name -> Expression`, one rule per line, placed inside a fenced ` ```ebnf ` code block.
-- A **nonterminal** is a CamelCase name referring to another production. A CamelCase name that the section does not define itself — `Type`, `Expression`, `Generics`, `GenericArgs`, `WhereClause`, `TypePath` — is a production of the Rust grammar, reused rather than re-specified. An `ALL_CAPS` name — `IDENTIFIER`, `STRING_LITERAL` — is a lexer token of the Rust grammar.
-- A **terminal** is the exact characters to match, written in backticks: `` `new` ``, `` `:` ``, `` `=>` ``, `` `@` ``.
-- `x?` is optional (zero or one); `x*` is zero or more; `x+` is one or more; `A | B` is alternation; `( … )` groups for precedence; juxtaposition is an ordered sequence. The less-common forms — character ranges `` [`a`-`z`] ``, exclusions `` ~[ … ] ``, negative lookahead `!x`, and `// line comments` — follow the Rust Reference and are used only when a construct genuinely needs them.
+- A production is written `Name -> Expression`, one rule per line, placed inside a fenced
+  ` ```ebnf ` code block.
+- A **nonterminal** is a CamelCase name referring to another production. A CamelCase name that the
+  section does not define itself (`Type`, `Expression`, `Generics`, `GenericArgs`, `WhereClause`,
+  `TypePath`) is a production of the Rust grammar, reused rather than re-specified. An `ALL_CAPS`
+  name (`IDENTIFIER`, `STRING_LITERAL`) is a lexer token of the Rust grammar.
+- A **terminal** is the exact characters to match, written in backticks: `` `new` ``, `` `:` ``,
+  `` `=>` ``, `` `@` ``.
+- `x?` is optional (zero or one); `x*` is zero or more; `x+` is one or more; `A | B` is alternation;
+  `( … )` groups for precedence; juxtaposition is an ordered sequence. The less-common forms
+  (character ranges `` [`a`-`z`] ``, exclusions `` ~[ … ] ``, negative lookahead `!x`, and
+  `// line comments`) follow the Rust Reference and are used only when a construct genuinely needs
+  them.
 
-Keep each grammar honest the same way the Expansion section is kept honest: it is a claim about what the macro's parser accepts, so verify it against the argument and body parsers in `cgp-macro-core` (the `args.rs`, `table.rs`, `key/`, `value/`, and `statement/` modules under `types/<macro>/`) rather than transcribing the prose. When a macro shares a sub-grammar with another — `delegate_and_check_components!` reuses `delegate_components!`'s mappings and keys, and `cgp_namespace!` reuses the same key and path forms — define the shared production once in the macro that owns it and reference it by name from the others, so the two grammars cannot drift apart. Open the section with a sentence naming what the grammar covers, then the code block, then a short paragraph explaining any nonterminal or constraint a reader could not infer from the rules alone: which keys are required, which options are mutually exclusive, and what default fills an omitted value.
+Keep each grammar honest the same way the Expansion section is kept honest: it is a claim about what
+the macro's parser accepts, so verify it against the argument and body parsers in `cgp-macro-core`
+(the `args.rs`, `table.rs`, `key/`, `value/`, and `statement/` modules under `types/<macro>/`)
+rather than transcribing the prose. When a macro shares a sub-grammar with another, as
+`delegate_and_check_components!` reuses `delegate_components!`'s mappings and keys and
+`cgp_namespace!` reuses the same key and path forms, define the shared production once in the macro
+that owns it and reference it by name from the others, so the two grammars cannot drift apart. Open
+the section with a sentence naming what the grammar covers, then the code block, then a short
+paragraph explaining any nonterminal or constraint a reader could not infer from the rules alone:
+which keys are required, which options are mutually exclusive, and what default fills an omitted
+value.
 
 ## Concept and guide documents
 
-A **concept** document explains one idea that spans several constructs — the consumer/provider duality, dependency injection, namespaces, the handler family — and carries only enough mechanism to make the idea legible, linking down to the reference for the rest. An idea earns its own page when no single construct owns it and a reader would have to assemble it from three reference documents otherwise; when the detail belongs to one construct after all, it goes in that construct's reference document instead. Register a new page in the [concepts index](concepts/README.md).
+A **concept** document explains one idea that spans several constructs (the consumer/provider
+duality, dependency injection, namespaces, the handler family) and carries only enough mechanism to
+make the idea legible, linking down to the reference for the rest. An idea earns its own page when
+no single construct owns it and a reader would have to assemble it from three reference documents
+otherwise; when the detail belongs to one construct after all, it goes in that construct's reference
+document instead. Register a new page in the [concepts index](concepts/README.md).
 
-A **guide** is prescriptive where the reference and concepts are descriptive: it names a default form, states the trade-offs of the alternatives, and usually walks a concrete before/after refactoring so the recommendation is grounded in real code rather than asserted. Keep a guide focused on the decision and the migration path — link to the reference for the exact syntax of every construct it recommends, to the concepts for the mechanism behind a recommendation, and to the examples for a fuller worked scenario. When a guide starts explaining at length what a construct *is*, move that explanation into the reference or a concept and link to it. A recommendation that names a syntax, expansion, or default the code no longer has is a bug in the change that made it stale, and every snippet a guide shows must compile against current CGP. Register a new guide in the [guides index](guides/README.md), which also carries the cheat-sheet summarizing every recommendation.
+A **guide** is prescriptive where the reference and concepts are descriptive: it names a default
+form, states the trade-offs of the alternatives, and usually walks a concrete before/after
+refactoring so the recommendation is grounded in real code rather than asserted. Keep a guide
+focused on the decision and the migration path. Link to the reference for the exact syntax of every
+construct it recommends, to the concepts for the mechanism behind a recommendation, and to the
+examples for a fuller worked scenario. When a guide starts explaining at length what a construct
+*is*, move that explanation into the reference or a concept and link to it. A recommendation that
+names a syntax, expansion, or default the code no longer has is a bug in the change that made it
+stale, and every snippet a guide shows must compile against current CGP. Register a new guide in the
+[guides index](guides/README.md), which also carries the cheat-sheet summarizing every
+recommendation.
 
 ## Say which shape an example wires
 
-**A document whose examples wire more than one kind of context says which is which, because nothing in a signature marks the difference.** A context is either a **value context** — the wired type *is* the data the operation acts on, as `Rectangle` is in `Rectangle: CanCalculateArea` — or an **environmental context**, a type standing for an application whose job is to carry choices and which often has no fields at all. Crossing between them silently is the most reliable way to leave a reader unable to say what a context is, and it happens easily: no parameter appears and no signature changes, so the shift from `String: CanEncode` to `App: CanQueryUser` is invisible in the code.
+**A document whose examples wire more than one kind of context says which is which, because nothing
+in a signature marks the difference.** A context is either a **value context**, where the wired type
+*is* the data the operation acts on, as `Rectangle` is in `Rectangle: CanCalculateArea`, or an
+**environmental context**, a type standing for an application whose job is to carry choices and
+which often has no fields at all. Crossing between them silently is the most reliable way to leave a
+reader unable to say what a context is, and it happens easily: no parameter appears and no signature
+changes, so the shift from `String: CanEncode` to `App: CanQueryUser` is invisible in the code.
 
-The companion distinction belongs to the component rather than its context. A component is **self-targeted** when its operation acts on `Self` and **parameter-targeted** when it acts on a type parameter that `Self` only decides for; a parameter alone does not settle it, since a component may carry a selector such as the `Code` of `CanCompute<Code, Input>` alongside its real target. Both labels are defined and worked through in the [modularity hierarchy](concepts/modularity-hierarchy.md), which also carries the reason the distinctions are needed at all: vanilla Rust idiomatically supports only one of the three resulting shapes, so a Rust programmer arrives with no vocabulary for the others and no reason to have imagined them.
+The companion distinction belongs to the component rather than its context. A component is
+**self-targeted** when its operation acts on `Self` and **parameter-targeted** when it acts on a
+type parameter that `Self` only decides for; a parameter alone does not settle it, since a component
+may carry a selector such as the `Code` of `CanCompute<Code, Input>` alongside its real target. Both
+labels are defined and worked through in the
+[modularity hierarchy](concepts/modularity-hierarchy.md), which also carries the reason the
+distinctions are needed at all: vanilla Rust idiomatically supports only one of the three resulting
+shapes, so a Rust programmer arrives with no vocabulary for the others and no reason to have
+imagined them.
 
-Neither label has to appear on the page. What has to be true is that a reader can tell which arrangement they are looking at, and that a document introducing a second one says so in a sentence rather than leaving the reader to notice. The decision itself — which shape to write when defining a component — is prescriptive and therefore lives in a guide, [choosing a component's shape](guides/choosing-a-component-shape.md); link there rather than re-arguing it.
+Neither label has to appear on the page. What has to be true is that a reader can tell which
+arrangement they are looking at, and that a document introducing a second one says so in a sentence
+rather than leaving the reader to notice. The decision itself, which shape to write when defining a
+component, is prescriptive and therefore lives in a guide,
+[choosing a component's shape](guides/choosing-a-component-shape.md); link there rather than
+re-arguing it.
 
 ## Reviewing and updating a document
 
-Reviewing a document means checking it against the code and then improving it, not just reading it. Approach a review in two passes: first confirm that every claim is still true, then improve how the document reads. The two passes are separate concerns — correctness is non-negotiable, while readability is a judgment call — and conflating them leads to polished prose that is subtly wrong.
+Reviewing a document means checking it against the code and then improving it, not just reading it.
+Approach a review in two passes: first confirm that every claim is still true, then improve how the
+document reads. The two passes are separate concerns (correctness is non-negotiable, while
+readability is a judgment call), and conflating them leads to polished prose that is subtly wrong.
 
-When the document, the `/cgp` skill, and the implementation disagree, the implementation wins every time. The skill is a teaching aid whose simplified examples can lag the parser, so do not let it — or the document's own prior wording — override what the macro actually does; confirm any contested detail directly against `cgp-macro-core` and fix whichever artifact disagrees, starting with the document you are reviewing.
+When the document, the `/cgp` skill, and the implementation disagree, the implementation wins every
+time. The skill is a teaching aid whose simplified examples can lag the parser, so do not let it, or
+the document's own prior wording, override what the macro actually does; confirm any contested
+detail directly against `cgp-macro-core` and fix whichever artifact disagrees, starting with the
+document you are reviewing.
 
-Verify specific behavior against the tests and snapshots, then state the behavior in your own words without citing the test. The behavioral tests in [crates/tests/cgp-tests](https://github.com/contextgeneric/cgp/tree/main/crates/tests/cgp-tests), with the expansion snapshots inline in them, and the parser rejection cases in [crates/tests/cgp-macro-tests](https://github.com/contextgeneric/cgp/tree/main/crates/tests/cgp-macro-tests) are the most reliable evidence of what a macro does in a corner case, but they are your evidence, not the reader's: write "a tuple struct keys its fields by `Index<N>`," never "the test `tuple_struct.rs` shows that…". A reference document does not link to a test at all — those pointers live in the construct's [implementation document](implementation/README.md), whose Tests and Snapshots sections are the canonical index of coverage.
+Verify specific behavior against the tests and snapshots, then state the behavior in your own words
+without citing the test. The behavioral tests in
+[crates/tests/cgp-tests](https://github.com/contextgeneric/cgp/tree/main/crates/tests/cgp-tests),
+with the expansion snapshots inline in them, and the parser rejection cases in
+[crates/tests/cgp-macro-tests](https://github.com/contextgeneric/cgp/tree/main/crates/tests/cgp-macro-tests)
+are the most reliable evidence of what a macro does in a corner case, but they are your evidence,
+not the reader's: write "a tuple struct keys its fields by `Index<N>`," never "the test
+`tuple_struct.rs` shows that…". A reference document does not link to a test at all. Those pointers
+live in the construct's [implementation document](implementation/README.md), whose Tests and
+Snapshots sections are the canonical index of coverage.
 
-Record corner cases and confirmed bugs under the document's **Known issues** section. When a review uncovers behavior that is surprising, a sharp edge a user could trip on, or an outright bug, add a short prose note there describing what happens and, for a bug, what the correct behavior would be. Add the heading if the document lacks one, and place it just before Source. A known issue documents reality, so describe the behavior as it currently is even when it is wrong — and remove the note in the same change that fixes the code.
+Record corner cases and confirmed bugs under the document's **Known issues** section. When a review
+uncovers behavior that is surprising, a sharp edge a user could trip on, or an outright bug, add a
+short prose note there describing what happens and, for a bug, what the correct behavior would be.
+Add the heading if the document lacks one, and place it just before Source. A known issue documents
+reality, so describe the behavior as it currently is even when it is wrong, and remove the note in
+the same change that fixes the code.
 
-Improve flow, and deduplicate, when a review finds the document hard to follow. A document that has been patched repeatedly drifts from the dual-reader style: topic sentences stop matching their paragraphs, the same concept gets explained in two places, and sections lose their order. Rewrite or reorganize the affected sections rather than adding another patch, and collapse a repeated explanation into the one document that owns the concept, replacing the duplicate with a cross-link — two documents explaining the same mechanism in slightly different words will eventually disagree.
+Improve flow, and deduplicate, when a review finds the document hard to follow. A document that has
+been patched repeatedly drifts from the dual-reader style: topic sentences stop matching their
+paragraphs, the same concept gets explained in two places, and sections lose their order. Rewrite or
+reorganize the affected sections rather than adding another patch, and collapse a repeated
+explanation into the one document that owns the concept, replacing the duplicate with a cross-link:
+two documents explaining the same mechanism in slightly different words will eventually disagree.
 
-Re-check the document's place in the whole section, not just its contents. If a document keeps explaining another construct at length, that construct probably needs its own file and a cross-link. Ask whether the file is still in the right subdirectory and whether the set of files still divides cleanly; a subdirectory that has grown unwieldy is a signal to reorganize. When you add, move, or split a document, update the [reference index](reference/README.md), [../summary.md](../summary.md), and the affected cross-links in the same change.
+Re-check the document's place in the whole section, not just its contents. If a document keeps
+explaining another construct at length, that construct probably needs its own file and a cross-link.
+Ask whether the file is still in the right subdirectory and whether the set of files still divides
+cleanly; a subdirectory that has grown unwieldy is a signal to reorganize. When you add, move, or
+split a document, update the [reference index](reference/README.md), [../summary.md](../summary.md),
+and the affected cross-links in the same change.
