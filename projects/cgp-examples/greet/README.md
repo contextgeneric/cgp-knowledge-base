@@ -11,14 +11,15 @@ field. Its library holds only a hand-written expansion of the component.
 - **Needs**: nothing
 - **Result**: each binary printed `Hello, Alice!`
 - **Worked example**: none; the closest teaching material is the
-  [area calculation](../../../examples/area-calculation.md) example, which also wires a value context
+  [area calculation](../../../examples/area-calculation.md) example, which also wires a value
+  context
 
 ## What it is
 
-The crate is the smallest program in the repository, and the only one that wires a **value context**:
-`Person` is the data the greeting reads, and it carries the wiring itself. Every component is
-self-targeted. The three binaries are independent, each declaring its own traits, providers, and
-`Person`, and none of them uses the library:
+The crate is the smallest program in the repository, and the only one that wires a **value
+context**: `Person` is the data the greeting reads, and it carries the wiring itself. Every
+component is self-targeted. The three binaries are independent, each declaring its own traits,
+providers, and `Person`, and none of them uses the library:
 
 | Binary | Source | Defines | How `Person` gets `greet` |
 |---|---|---|---|
@@ -43,16 +44,16 @@ pub fn greet(&self, #[implicit] name: &str) {
 }
 ```
 
-[`#[cgp_fn]`](../../../cgp/reference/macros/cgp_fn.md) turns it into a `Greet` trait with one blanket
-impl for any context whose `name` field is a `String`, which is what the
-[`#[implicit]`](../../../cgp/reference/attributes/implicit.md) `&str` form requires. `Person` derives
-`HasField` and needs no wiring.
+[`#[cgp_fn]`](../../../cgp/reference/macros/cgp_fn.md) turns it into a `Greet` trait with one
+blanket impl for any context whose `name` field is a `String`, which is what the
+[`#[implicit]`](../../../cgp/reference/attributes/implicit.md) `&str` form requires. `Person`
+derives `HasField` and needs no wiring.
 
 ### `greet-component`
 
 The greeting becomes a [component](../../../cgp/reference/macros/cgp_component.md), `CanGreet` with
-the provider trait `Greeter`, so that a context can choose how it greets. Two providers read the same
-field and differ in their message:
+the provider trait `Greeter`, so that a context can choose how it greets. Two providers read the
+same field and differ in their message:
 
 ```rust
 #[cgp_impl(new GreetHello)]
@@ -99,8 +100,8 @@ clearest choice.
 ## Idioms
 
 The binaries use current CGP idioms: fields are read as `#[implicit]` arguments, providers are
-`#[cgp_impl]` blocks, and the abstract type is imported with `#[use_type]` and written bare. Only the
-library's hand-written expansion shows an older shape.
+`#[cgp_impl]` blocks, and the abstract type is imported with `#[use_type]` and written bare. Only
+the library's hand-written expansion shows an older shape.
 
 ## Status and gaps
 
@@ -112,15 +113,15 @@ The three programs run and print what their code says. The crate's gaps are reco
 
 ## The documents
 
-- [expansion.md](expansion.md) — `greet_expanded.rs` compared with the macro's output, and what the
+- [expansion.md](expansion.md): `greet_expanded.rs` compared with the macro's output, and what the
   difference changes.
-- [testing.md](testing.md) — what running the binaries shows, and what nothing tests.
-- [issues.md](issues.md) — the missing feature and housekeeping.
+- [testing.md](testing.md): what running the binaries shows, and what nothing tests.
+- [issues.md](issues.md): the missing feature and housekeeping.
 
 ## Public material derived from these documents
 
-The `greet` index and its three example pages, once each binary has its own record, in the planned
-[cgp-examples project section](../../../website/projects/cgp-examples.md).
+The `greet` index and its three example pages, once each binary has its own record, in the
+[cgp-examples project section](../../../website/projects/cgp-examples.md), not yet written.
 
 ## How it relates to the rest of the base
 

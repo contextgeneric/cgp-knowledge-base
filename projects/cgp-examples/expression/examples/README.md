@@ -2,21 +2,21 @@
 
 This directory documents each of the crate's four contexts as the program it is: what it wires, what
 its checks and tests pin, and what it demonstrates. The crate has no binary, so each context runs
-only through its tests, and two of the four have none; those two were run in a probe crate for
-these documents.
+only through its tests, and two of the four have none; those two were run in a probe crate for these
+documents.
 
 ## How these differ from the worked example
 
 **These documents record the contexts as the crate ships them; the
-[expression interpreter](../../../../examples/expression-interpreter.md) worked example is the teaching
-progression to learn from.** The worked example develops the same interpreter in the same order and
-stands alone. The documents here each describe one context module with its checks, its tests, and its
-gaps, so an agent changing the crate knows what it is changing.
+[expression interpreter](../../../../examples/expression-interpreter.md) worked example is the
+teaching progression to learn from.** The worked example develops the same interpreter in the same
+order and stands alone. The documents here each describe one context module with its checks, its
+tests, and its gaps, so an agent changing the crate knows what it is changing.
 
 ## Running them
 
-The tests run from the repository root with `cargo test -p cgp-example-expression`. The table records
-what each context has and what running its tests produced on the `v0.8.0` branch:
+The tests run from the repository root with `cargo test -p cgp-example-expression`. The table
+records what each context has and what running its tests produced on the `v0.8.0` branch:
 
 | Context | Test | Result |
 |---|---|---|
@@ -29,16 +29,16 @@ what each context has and what running its tests produced on the `v0.8.0` branch
 
 The order is the order the contexts teach in, from two separate operations to an extended language.
 
-- [add-mult.md](add-mult.md) — evaluation by value and conversion by reference, each keyed by
-  input in its own component.
-- [add-mult-binary-op.md](add-mult-binary-op.md) — the same, with `BinaryOpToLisp` replacing the two
+- [add-mult.md](add-mult.md): evaluation by value and conversion by reference, each keyed by input
+  in its own component.
+- [add-mult-binary-op.md](add-mult-binary-op.md): the same, with `BinaryOpToLisp` replacing the two
   per-operator conversion providers.
-- [add-mult-code.md](add-mult-code.md) — both operations by reference in one component, keyed by
+- [add-mult-code.md](add-mult-code.md): both operations by reference in one component, keyed by
   operation code and input together.
-- [add-mult-neg.md](add-mult-neg.md) — the extended language with subtraction and negation, wired for
+- [add-mult-neg.md](add-mult-neg.md): the extended language with subtraction and negation, wired for
   evaluation alone.
 
 ## Public material derived from this
 
-The `expression/examples/index` page of the [cgp-examples project
-section](../../../../website/projects/cgp-examples.md).
+The `expression/examples/index` page of the
+[cgp-examples project section](../../../../website/projects/cgp-examples.md).

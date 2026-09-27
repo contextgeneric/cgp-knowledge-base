@@ -1,7 +1,7 @@
 # Testing
 
-`transfer` has no tests: `cargo test --workspace` compiles its library and its server binary and runs
-no test in either. What the crate verifies, it verifies at compile time, through one
+`transfer` has no tests: `cargo test --workspace` compiles its library and its server binary and
+runs no test in either. What the crate verifies, it verifies at compile time, through one
 `check_components!` block, the two `CanHandleApiSend` impls, and the binary's route setup. This
 document records what those pin and what nothing exercises.
 
@@ -9,13 +9,14 @@ document records what those pin and what nothing exercises.
 
 Three parts of the code are compile-time assertions, and each covers a different property.
 
-- **The check block** in `contexts/app.rs` asserts that `MockApp` can use `QuantityTypeProviderComponent`,
-  `UserBalanceQuerierComponent`, `MoneyTransferrerComponent`, and `ApiHandlerComponent` for both
-  `QueryBalanceApi` and `TransferApi`. Because a
+- **The check block** in `contexts/app.rs` asserts that `MockApp` can use
+  `QuantityTypeProviderComponent`, `UserBalanceQuerierComponent`, `MoneyTransferrerComponent`, and
+  `ApiHandlerComponent` for both `QueryBalanceApi` and `TransferApi`. Because a
   [`check_components!`](../../../cgp/reference/macros/check_components.md) entry follows each
-  provider's own dependencies, the two handler entries also cover every component the pipelines call:
-  the password lookup and check, the balance query, the transfer through `NoTransferToSelf`, the error
-  raiser for each status the providers raise, and all five abstract types and the error type.
+  provider's own dependencies, the two handler entries also cover every component the pipelines
+  call: the password lookup and check, the balance query, the transfer through `NoTransferToSelf`,
+  the error raiser for each status the providers raise, and all five abstract types and the error
+  type.
 - **The `CanHandleApiSend` impls** compile only if each endpoint's future is `Send`, which is the
   property Axum's multi-threaded runtime needs and the check block cannot express.
 - **The binary** compiles only if `Router<Arc<MockApp>>` satisfies `CanAddMainApiRoutes`, which
@@ -23,8 +24,8 @@ Three parts of the code are compile-time assertions, and each covers a different
 
 ## What runs
 
-Nothing runs automatically. `example.sh` is a manual script: it queries Alice's and Bob's balances and
-transfers 10 EUR, printing the responses without checking them. The responses recorded in
+Nothing runs automatically. `example.sh` is a manual script: it queries Alice's and Bob's balances
+and transfers 10 EUR, printing the responses without checking them. The responses recorded in
 [the request lifecycle](architecture/request-lifecycle.md), including every error path, were
 produced by hand against the running server for these documents; the repository pins none of them.
 

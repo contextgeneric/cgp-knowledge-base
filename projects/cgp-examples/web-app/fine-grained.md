@@ -4,7 +4,8 @@
 into higher-order providers that wrap a creator, and groups the providers into three bundles that
 `ProductionApp` forwards to with array keys.
 
-- **Source**: [fine_grained.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/web-app/src/fine_grained.rs)
+- **Source**:
+  [fine_grained.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/web-app/src/fine_grained.rs)
 - **Run**: no test; the context is exercised only by its check block
 - **Needs**: nothing
 - **Result**: compiles and passes its check. A probe compiled the commented-out flat table on a
@@ -13,9 +14,9 @@ into higher-order providers that wrap a creator, and groups the providers into t
 ## The components
 
 The module defines nine components, none with a namespace prefix: `UserCreator`, `UserGetter`, and
-`UserUpdater` for users, `PostCreator`, `PostGetter`, `PostUpdater`, and `PostDeleter` for posts, and
-the same `UsernameCensor` and `SpamMessageDetector` as the coarse stage. Each operation component has
-the one method its coarse manager had, with the same signature:
+`UserUpdater` for users, `PostCreator`, `PostGetter`, `PostUpdater`, and `PostDeleter` for posts,
+and the same `UsernameCensor` and `SpamMessageDetector` as the coarse stage. Each operation
+component has the one method its coarse manager had, with the same signature:
 
 ```rust
 #[cgp_component(UserCreator)]
@@ -56,8 +57,8 @@ impl<InnerCreator> UserCreator {
 ```
 
 `FilterSpamMessage` does the same for `create_post`, returning `Error::InvalidMessage`. The Postgres
-creators check nothing themselves, since the wiring always wraps them. Every provider body other than
-the two wrappers' is `todo!()`.
+creators check nothing themselves, since the wiring always wraps them. Every provider body other
+than the two wrappers' is `todo!()`.
 
 ## The bundles and the context
 
@@ -80,7 +81,8 @@ delegate_components! {
 
 `PostgresPostComponents` wires the four post components, with
 `FilterSpamMessage<CreatePostWithPostgres>` as the creator, and `AiContentFilterComponents` wires
-`AiUserCensor` and `AiSpamMessageDetector`. `ProductionApp` forwards each component to its bundle, listing the keys in three arrays:
+`AiUserCensor` and `AiSpamMessageDetector`. `ProductionApp` forwards each component to its bundle,
+listing the keys in three arrays:
 
 ```rust
 delegate_components! {
@@ -108,15 +110,16 @@ delegate_components! {
 ```
 
 A separate `check_components!` block asserts all nine components on `ProductionApp`. Above the
-bundles, the module keeps the same wiring written as a flat nine-entry table on `ProductionApp`, as a
-comment. The dummy filter providers are defined here but not wired.
+bundles, the module keeps the same wiring written as a flat nine-entry table on `ProductionApp`, as
+a comment. The dummy filter providers are defined here but not wired.
 
 ## What it demonstrates
 
 - Fine-grained components, which let each provider carry only the dependencies its one method uses;
   see [sizing a component](../../../cgp/guides/sizing-a-component.md).
-- A check moved out of a provider into a [higher-order provider](../../../cgp/concepts/higher-order-providers.md)
-  that wraps any inner creator.
+- A check moved out of a provider into a
+  [higher-order provider](../../../cgp/concepts/higher-order-providers.md) that wraps any inner
+  creator.
 - [Aggregate providers](../../../cgp/concepts/aggregate-providers.md) that group related wiring, and
   the cost that remains: the context still names every component key.
 
@@ -128,9 +131,9 @@ comment. The dummy filter providers are defined here but not wired.
 
 ## Try a change
 
-Removing `UsernameCensorComponent` from `ProductionApp`'s third key list is the change the public page
-shows. A probe made it on a copy of the module, and `cargo cgp check` built from the `cargo-cgp`
-source at commit `b6a6323` failed only the creator and the censor:
+Removing `UsernameCensorComponent` from `ProductionApp`'s third key list is the change the public
+page shows. A probe made it on a copy of the module, and `cargo cgp check` built from the
+`cargo-cgp` source at commit `b6a6323` failed only the creator and the censor:
 
 ```text
 error[E0277]: [CGP-E001] the consumer traits `CanCreateUser` and `CanCensorUsername` are not implemented for context `ProductionApp`
@@ -142,6 +145,7 @@ The getter and updater checks passed, since their providers need only the databa
 ## Public material derived from this
 
 The "Fine grained traits", "Higher-order providers", "Too much wiring with fine grained traits", and
-"The challenges of grouping delegate component keys" sections of the [v0.8.0 release
-post](../../../website/blog/v0-8-0-release.md). It also feeds the `web-app/examples/fine-grained`
-page of the [cgp-examples project section](../../../website/projects/cgp-examples.md).
+"The challenges of grouping delegate component keys" sections of the
+[v0.8.0 release post](../../../website/blog/v0-8-0-release.md). It also feeds the
+`web-app/examples/fine-grained` page of the
+[cgp-examples project section](../../../website/projects/cgp-examples.md).

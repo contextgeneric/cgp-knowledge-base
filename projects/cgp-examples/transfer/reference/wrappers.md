@@ -1,9 +1,10 @@
 # Wrappers
 
-The wrappers are the five [higher-order providers](../../../../cgp/concepts/higher-order-providers.md)
-in `transfer`: four for `ApiHandler`, which each take an inner handler and add one concern around it,
-and one for `MoneyTransferrer`, which guards the business operation. Each declares its inner provider
-with [`#[use_provider]`](../../../../cgp/reference/attributes/use_provider.md) and calls it as an
+The wrappers are the five
+[higher-order providers](../../../../cgp/concepts/higher-order-providers.md) in `transfer`: four for
+`ApiHandler`, which each take an inner handler and add one concern around it, and one for
+`MoneyTransferrer`, which guards the business operation. Each declares its inner provider with
+[`#[use_provider]`](../../../../cgp/reference/attributes/use_provider.md) and calls it as an
 associated function, so the inner call goes to the named provider rather than back through the
 context's wiring. How the endpoints nest them is traced in
 [the request lifecycle](../architecture/request-lifecycle.md).
@@ -113,8 +114,8 @@ impl<Api, InHandler> ApiHandler<Api> {
 
 The response becomes a JSON body when Axum turns it into an HTTP response, which requires the inner
 response to implement `Serialize`; the provider itself places no bound on it, so the requirement
-surfaces at the route. Only the balance endpoint uses it, because the transfer returns `()`. It lives
-in `providers/axum` because it names an Axum type.
+surfaces at the route. Only the balance endpoint uses it, because the transfer returns `()`. It
+lives in `providers/axum` because it names an Axum type.
 
 ### Context dependencies
 
@@ -151,11 +152,11 @@ where
 ### Behavior
 
 When the request has no logged-in user and carries a `(user, password)` header, it looks up the
-stored password and, if one exists and `check_password` accepts it, writes the user into the request's
-`logged_in_user`. It then calls the inner handler with the request whatever the outcome. It never
-raises an authentication error itself: a missing header, an unknown user, and a wrong password all
-leave the user unset, and the endpoint below reports `401`. An error from the password lookup is
-propagated. A request that already has a logged-in user skips the lookup.
+stored password and, if one exists and `check_password` accepts it, writes the user into the
+request's `logged_in_user`. It then calls the inner handler with the request whatever the outcome.
+It never raises an authentication error itself: a missing header, an unknown user, and a wrong
+password all leave the user unset, and the endpoint below reports `401`. An error from the password
+lookup is propagated. A request that already has a logged-in user skips the lookup.
 
 ### Context dependencies
 
@@ -196,8 +197,8 @@ where
 ### Behavior
 
 When `sender == recipient` it raises `ErrBadRequest` with the detail
-`cannot transfer with the same sender and recipient: {sender}`, and the inner provider is never called.
-Otherwise it forwards all four arguments to the inner provider. `MockApp` wires it around
+`cannot transfer with the same sender and recipient: {sender}`, and the inner provider is never
+called. Otherwise it forwards all four arguments to the inner provider. `MockApp` wires it around
 `UseMockedApp`, whose own transfer accepts a self-transfer as a no-op, so this wrapper is what turns
 that request into a `400` for the service.
 
@@ -208,16 +209,16 @@ inner provider's own.
 
 ## Source
 
-- [`providers/api_handlers/from_request.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/api_handlers/from_request.rs)
-  — `HandleFromRequest` and `HandleFromResponse`.
-- [`providers/axum/json.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/axum/json.rs)
-  — `ResponseToJson`.
-- [`providers/api_handlers/basic_auth.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/api_handlers/basic_auth.rs)
-  — `UseBasicAuth`.
-- [`providers/finance.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/finance.rs)
-  — `NoTransferToSelf`.
+- [`providers/api_handlers/from_request.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/api_handlers/from_request.rs):
+  `HandleFromRequest` and `HandleFromResponse`.
+- [`providers/axum/json.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/axum/json.rs):
+  `ResponseToJson`.
+- [`providers/api_handlers/basic_auth.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/api_handlers/basic_auth.rs):
+  `UseBasicAuth`.
+- [`providers/finance.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/finance.rs):
+  `NoTransferToSelf`.
 
 ## Public material derived from this
 
-Section 5, "Reusable wrappers as higher-order providers", and the end of section 6 of the crate's own
-README.
+Section 5, "Reusable wrappers as higher-order providers", and the end of section 6 of the crate's
+own README.

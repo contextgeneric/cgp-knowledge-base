@@ -83,8 +83,8 @@ return type.
 
 ## `QueryBalanceResponse`
 
-`QueryBalanceResponse<App>` is the balance endpoint's output, generic over the context so its field is
-the context's abstract quantity.
+`QueryBalanceResponse<App>` is the balance endpoint's output, generic over the context so its field
+is the context's abstract quantity.
 
 ### Definition
 
@@ -108,8 +108,8 @@ Serialized as JSON by `ResponseToJson`, it becomes `{"balance":100}` for a `u64`
 
 ## The request getters
 
-The five getter traits read fields off a request value rather than off the context, which is why they
-are [`#[cgp_auto_getter]`](../../../../cgp/reference/macros/cgp_auto_getter.md) traits and not
+The five getter traits read fields off a request value rather than off the context, which is why
+they are [`#[cgp_auto_getter]`](../../../../cgp/reference/macros/cgp_auto_getter.md) traits and not
 `#[implicit]` arguments: an implicit argument reads only from `self`. Each is generic over the
 context, `App`, so its return types can name the context's abstract types, and each is implemented
 automatically for any request type with a field of the method's name. The request types in
@@ -162,10 +162,10 @@ pub trait HasTransferMoneyFields<App> {
 `HasLoggedInUser` and `HasLoggedInUserMut` read the same `logged_in_user` field, the first by shared
 reference for the endpoints and the second by mutable reference for
 [`UseBasicAuth`](wrappers.md#usebasicauth), which writes the authenticated user into it. The two
-declare a method of the same name, which works because each provider bounds its request by only one of
-them. `HasQueryBalanceFields` and `HasTransferMoneyFields` likewise both declare `currency`, and again
-no bound names both. Each imports the app's abstract types with `#[use_type(… in App)]`, which also
-supplies the `App` bounds, so the plain `<App>` parameter is enough.
+declare a method of the same name, which works because each provider bounds its request by only one
+of them. `HasQueryBalanceFields` and `HasTransferMoneyFields` likewise both declare `currency`, and
+again no bound names both. Each imports the app's abstract types with `#[use_type(… in App)]`, which
+also supplies the `App` bounds, so the plain `<App>` parameter is enough.
 
 ### Context dependencies
 
@@ -173,14 +173,14 @@ The abstract types each return type names, on `App`.
 
 ## Source
 
-- [`providers/api_handlers/query_balance.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/api_handlers/query_balance.rs)
-  — `HandleQueryBalance`, `QueryBalanceResponse`, and `HasQueryBalanceFields`.
-- [`providers/api_handlers/transfer.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/api_handlers/transfer.rs)
-  — `HandleTransfer` and `HasTransferMoneyFields`.
-- [`providers/api_handlers/basic_auth.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/api_handlers/basic_auth.rs)
-  — `HasBasicAuthHeader`.
-- [`interfaces/auth.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/interfaces/auth.rs)
-  — `HasLoggedInUser` and `HasLoggedInUserMut`.
+- [`providers/api_handlers/query_balance.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/api_handlers/query_balance.rs):
+  `HandleQueryBalance`, `QueryBalanceResponse`, and `HasQueryBalanceFields`.
+- [`providers/api_handlers/transfer.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/api_handlers/transfer.rs):
+  `HandleTransfer` and `HasTransferMoneyFields`.
+- [`providers/api_handlers/basic_auth.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/api_handlers/basic_auth.rs):
+  `HasBasicAuthHeader`.
+- [`interfaces/auth.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/interfaces/auth.rs):
+  `HasLoggedInUser` and `HasLoggedInUserMut`.
 
 ## Public material derived from this
 

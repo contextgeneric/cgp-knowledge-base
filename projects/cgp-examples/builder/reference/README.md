@@ -9,8 +9,8 @@ reader can find one by what it builds and see which builder contexts use it. Rea
 ## Providers
 
 Every provider is a `#[cgp_impl]` block implementing `Handler<Code, Input>` for any `Code` and
-`Input`, and returns a small output struct that `BuildAndMergeOutputs` merges into the target. The last
-column is what the provider requires of the builder context.
+`Input`, and returns a small output struct that `BuildAndMergeOutputs` merges into the target. The
+last column is what the provider requires of the builder context.
 
 | Provider | Output | Used by | Requires of the context |
 |---|---|---|---|
@@ -49,11 +49,11 @@ its module path, such as `cgp_example_builder::contexts::full_builder::FullAppBu
 
 ## The catalog
 
-- [subsystem-providers.md](subsystem-providers.md) — the nine builder providers and their output
+- [subsystem-providers.md](subsystem-providers.md): the nine builder providers and their output
   structs.
-- [application-contexts.md](application-contexts.md) — the four application structs and the
+- [application-contexts.md](application-contexts.md): the four application structs and the
   hand-written constructors.
-- [builder-contexts.md](builder-contexts.md) — the five builder contexts, their target markers, and
+- [builder-contexts.md](builder-contexts.md): the five builder contexts, their target markers, and
   the `main` functions.
 
 ## Public material derived from this

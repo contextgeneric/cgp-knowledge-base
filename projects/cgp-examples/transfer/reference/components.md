@@ -1,11 +1,11 @@
 # Components
 
 The components are the six operations of the service, each defined with
-[`#[cgp_component]`](../../../../cgp/reference/macros/cgp_component.md) and registered under a path in
-`DefaultNamespace`, together with the zero-sized marker types two of them take. Every component
-imports the abstract types it names with [`#[use_type]`](../../../../cgp/reference/attributes/use_type.md),
-and the three async ones declare their methods under
-[`#[async_trait]`](../../../../cgp/reference/macros/async_trait.md).
+[`#[cgp_component]`](../../../../cgp/reference/macros/cgp_component.md) and registered under a path
+in `DefaultNamespace`, together with the zero-sized marker types two of them take. Every component
+imports the abstract types it names with
+[`#[use_type]`](../../../../cgp/reference/attributes/use_type.md), and the four async ones declare
+their methods under [`#[async_trait]`](../../../../cgp/reference/macros/async_trait.md).
 
 ## `CanHandleApi`
 
@@ -40,9 +40,9 @@ pub struct QueryBalanceApi;
 `Api` selects the provider and carries no data; the call passes `PhantomData`. Because `Request` and
 `Response` are associated types, each endpoint's provider fixes its own input and output, and a
 wrapper can change one of them: `HandleFromRequest` sets `Request` to the raw Axum tuple and
-`ResponseToJson` sets `Response` to `Json<…>`. The provider trait is `ApiHandler`, and the wiring key
-is `ApiHandlerComponent`, dispatched per marker at `@app.api.ApiHandlerComponent.<Api>`. The returned
-future carries no `Send` bound, which is why the HTTP layer restates the method in
+`ResponseToJson` sets `Response` to `Json<…>`. The provider trait is `ApiHandler`, and the wiring
+key is `ApiHandlerComponent`, dispatched per marker at `@app.api.ApiHandlerComponent.<Api>`. The
+returned future carries no `Send` bound, which is why the HTTP layer restates the method in
 [`CanHandleApiSend`](http-layer.md#canhandleapisend).
 
 ### Context dependencies
@@ -51,7 +51,8 @@ future carries no `Send` bound, which is why the HTTP layer restates the method 
 
 ## `CanRaiseHttpError`
 
-`CanRaiseHttpError<Code, Detail>` builds the context's error from a status marker and a detail value.
+`CanRaiseHttpError<Code, Detail>` builds the context's error from a status marker and a detail
+value.
 
 ### Definition
 
@@ -76,9 +77,10 @@ pub struct ErrInternal;
 
 The method is an associated function, called as `Self::raise_http_error(ErrNotFound, detail)`. The
 four markers name the status classes the crate uses; each implements
-[`IsStatusCode`](error-providers.md#isstatuscode). No provider raises `ErrInternal`. The wiring key is
-`HttpErrorRaiserComponent`, dispatched on both parameters at
-`@app.error.HttpErrorRaiserComponent.<Code>.<Detail>`; see [error design](../architecture/error-design.md).
+[`IsStatusCode`](error-providers.md#isstatuscode). No provider raises `ErrInternal`. The wiring key
+is `HttpErrorRaiserComponent`, dispatched on both parameters at
+`@app.error.HttpErrorRaiserComponent.<Code>.<Detail>`; see
+[error design](../architecture/error-design.md).
 
 ### Context dependencies
 
@@ -202,15 +204,15 @@ The component says nothing about a transfer to oneself; that rule is supplied by
 
 ## Source
 
-- [`interfaces/api.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/interfaces/api.rs)
-  — `CanHandleApi` and the endpoint markers.
-- [`interfaces/error.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/interfaces/error.rs)
-  — `CanRaiseHttpError` and the status markers.
-- [`interfaces/auth.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/interfaces/auth.rs)
-  — `CanCheckPassword`, `CanQueryUserHashedPassword`, and the two logged-in-user getters, which are
+- [`interfaces/api.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/interfaces/api.rs):
+  `CanHandleApi` and the endpoint markers.
+- [`interfaces/error.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/interfaces/error.rs):
+  `CanRaiseHttpError` and the status markers.
+- [`interfaces/auth.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/interfaces/auth.rs):
+  `CanCheckPassword`, `CanQueryUserHashedPassword`, and the two logged-in-user getters, which are
   documented with the [API handlers](api-handlers.md#the-request-getters).
-- [`interfaces/finance.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/interfaces/finance.rs)
-  — `CanQueryUserBalance` and `CanTransferMoney`.
+- [`interfaces/finance.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/interfaces/finance.rs):
+  `CanQueryUserBalance` and `CanTransferMoney`.
 
 ## Public material derived from this
 

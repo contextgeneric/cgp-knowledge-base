@@ -4,7 +4,8 @@
 `DefaultAppComponents`, so that its `ProductionApp` joins that namespace and wires only its content
 filters.
 
-- **Source**: [default_impls.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/web-app/src/default_impls.rs)
+- **Source**:
+  [default_impls.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/web-app/src/default_impls.rs)
 - **Run**: no test; the context is exercised only by its check block
 - **Needs**: nothing
 - **Result**: compiles and passes its check. A probe called `delete_post` on `ProductionApp`, which
@@ -18,9 +19,9 @@ registered in `DefaultNamespace`, and the thirteen providers are the same as the
 
 ## The namespace
 
-[`cgp_namespace!`](../../../cgp/reference/macros/cgp_namespace.md) declares `DefaultAppComponents` as
-a child of `DefaultNamespace`, in a block with no body, and a second block without `new` then binds
-the two creators, each wrapped in its filter:
+[`cgp_namespace!`](../../../cgp/reference/macros/cgp_namespace.md) declares `DefaultAppComponents`
+as a child of `DefaultNamespace`, in a block with no body, and a second block without `new` then
+binds the two creators, each wrapped in its filter:
 
 ```rust
 cgp_namespace! {
@@ -40,8 +41,8 @@ cgp_namespace! {
 
 The other five bindings sit on the providers themselves. `GetUserWithPostgres`,
 `UpdateUserWithPostgres`, `GetPostWithPostgres`, `UpdatePostWithPostgres`, and
-`DeletePostWithPostgres` each register as the namespace's default for their component's full path with
-[`#[default_impl]`](../../../cgp/reference/attributes/default_impl.md):
+`DeletePostWithPostgres` each register as the namespace's default for their component's full path
+with [`#[default_impl]`](../../../cgp/reference/attributes/default_impl.md):
 
 ```rust
 #[cgp_impl(new GetUserWithPostgres)]
@@ -54,8 +55,8 @@ impl UserGetter {
 ```
 
 The creators are bound in the block rather than by attribute, because their default is a wrapper
-around the provider, not the provider alone. So the namespace binds every core path, and binds nothing
-under `@app.extra`.
+around the provider, not the provider alone. So the namespace binds every core path, and binds
+nothing under `@app.extra`.
 
 ## The context
 
@@ -86,8 +87,8 @@ error[E0277]: [CGP-E001] the consumer trait `CanCreateUser` is not implemented f
 
 ## A default cannot be overridden
 
-A context that joins `DefaultAppComponents` cannot replace one of its defaults. A probe added a direct
-entry for one bound path beside the namespace line:
+A context that joins `DefaultAppComponents` cannot replace one of its defaults. A probe added a
+direct entry for one bound path beside the namespace line:
 
 ```rust
 delegate_components! {
@@ -142,7 +143,7 @@ error[E0119]: [CGP-E005] `ProductionApp` cannot wire `@app.core.user.UserGetterC
 
 ## Public material derived from this
 
-The "Default implementations" and "Caveats with default implementations" sections of the [v0.8.0
-release post](../../../website/blog/v0-8-0-release.md). It also feeds the
-`web-app/examples/default-impls` page of the [cgp-examples project
-section](../../../website/projects/cgp-examples.md).
+The "Default implementations" and "Caveats with default implementations" sections of the
+[v0.8.0 release post](../../../website/blog/v0-8-0-release.md). It also feeds the
+`web-app/examples/default-impls` page of the
+[cgp-examples project section](../../../website/projects/cgp-examples.md).

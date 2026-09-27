@@ -1,15 +1,15 @@
 # Testing
 
-`greet` has no tests and no check blocks, so the only verification the repository carries is that the
-crate builds and its binaries run. On the `v0.8.0` branch all three build, and each prints
+`greet` has no tests and no check blocks, so the only verification the repository carries is that
+the crate builds and its binaries run. On the `v0.8.0` branch all three build, and each prints
 `Hello, Alice!` for a `Person` named Alice. This document records what that shows and what nothing
 exercises.
 
 ## What running the binaries shows
 
 Each binary's `main` constructs one `Person` and calls `greet`, so a run confirms three things per
-program: the wiring resolves, the implicit `name` argument reads the field, and the provider's message
-is the one printed.
+program: the wiring resolves, the implicit `name` argument reads the field, and the provider's
+message is the one printed.
 
 | Binary | Printed | So the run confirms |
 |---|---|---|
@@ -25,8 +25,8 @@ programs fails at that call rather than at the wiring, which is the gap recorded
 
 A probe crate compiled and called the library's hand-written expansion, which no binary uses. A
 context wired through it greeted as expected, and a context that implements the provider trait for
-itself without a wiring entry did not compile against it, while the same context compiles against the
-macro's component; see [expansion.md](expansion.md#how-it-differs-from-the-macro).
+itself without a wiring entry did not compile against it, while the same context compiles against
+the macro's component; see [expansion.md](expansion.md#how-it-differs-from-the-macro).
 
 ## What is untested
 

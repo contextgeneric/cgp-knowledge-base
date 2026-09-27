@@ -19,10 +19,11 @@ Each crate develops one scenario, and four of the five correspond to a worked ex
 [examples/](../../examples/README.md) that teaches the same patterns on its own. The crates are the
 code as it ships; the worked examples are where an agent learns the patterns, per
 [../../AGENTS.md](../../AGENTS.md#project-facts-and-cgp-patterns-have-separate-owners). The table
-records, for each crate, what kind of context it wires, which blog post presents its code, and whether
-it runs. A post that links the repository is marked as linking; the v0.8.0 post shows `web-app`'s code
-without linking it. Every crate uses current CGP idioms, so its code is safe to copy for the patterns
-it shows, apart from `greet`'s hand-written expansion, which is not the macro's current output:
+records, for each crate, what kind of context it wires, which blog post presents its code, and
+whether it runs. A post that links the repository is marked as linking; the v0.8.0 post shows
+`web-app`'s code without linking it. Every crate uses current CGP idioms, so its code is safe to
+copy for the patterns it shows, apart from `greet`'s hand-written expansion, which is not the
+macro's current output:
 
 | Subproject | Scenario | Context shape | Worked example | Blog post | Runs |
 |---|---|---|---|---|---|
@@ -34,14 +35,13 @@ it shows, apart from `greet`'s hand-written expansion, which is not the macro's 
 
 ## Which revision these documents describe
 
-These documents describe the `v0.8.0` branch, which tracks `cgp` 0.8.0-alpha. It is 13 commits ahead
-of `main`, which builds against the published `cgp` 0.7.0 and has no `web-app` crate, no namespace
-wiring in `transfer`, and no `transfer` README. None of the crates is published. Source links point at
-the `v0.8.0` branch, per
-[../AGENTS.md](../AGENTS.md#a-project-section-documents-its-project-in-depth).
+These documents describe the `v0.8.0` branch, which tracks `cgp` 0.8.0-alpha. It is ahead of `main`,
+which builds against the published `cgp` 0.7.0 and has no `web-app` crate, no namespace wiring in
+`transfer`, and no `transfer` README. None of the crates is published. Source links point at the
+`v0.8.0` branch, per [../AGENTS.md](../AGENTS.md#a-project-section-documents-its-project-in-depth).
 
-The repository also carries an unmerged `profile-picture` branch, which adds a `profile-picture` crate
-and drops `web-app`. Nothing on that branch is documented here; the published version of that
+The repository also carries an unmerged `profile-picture` branch, which adds a `profile-picture`
+crate and drops `web-app`. Nothing on that branch is documented here; the published version of that
 scenario is the separate
 [cgp-example-profile-picture](https://github.com/contextgeneric/cgp-example-profile-picture)
 repository, taught as the [profile picture](../../examples/profile-picture.md) worked example.
@@ -49,13 +49,13 @@ repository, taught as the [profile picture](../../examples/profile-picture.md) w
 ## Building
 
 The workspace builds against unreleased `cgp` code: its `[patch.crates-io]` section overrides `cgp`
-and `cgp-error-anyhow` with the `cgp` repository's `main` branch by git URL, and the lockfile pins the
-commit. To test against a local change to `cgp`, switch the same entries to the commented-out paths
-into `../cgp`. It needs stable Rust 1.90 or later and uses the 2024 edition, and the repository has no
-toolchain file. These documents were verified against `cgp` `main` at commit `adc616c`
-(2026-09-26), with `rustc` 1.98.1, where `cargo test --workspace` passes. The only tests in the workspace are three unit tests in `expression`;
-the other crates check their wiring at compile time with `check_components!` blocks, so a successful
-build is most of their verification.
+and `cgp-error-anyhow` with the `cgp` repository's `main` branch by git URL, and the lockfile pins
+the commit. To test against a local change to `cgp`, switch the same entries to the commented-out
+paths into `../cgp`. It needs stable Rust 1.90 or later and uses the 2024 edition, and the
+repository has no toolchain file. These documents were verified against `cgp` `main` at commit
+`adc616c` (2026-09-26), with `rustc` 1.98.1, where `cargo test --workspace` passes. The only tests
+in the workspace are three unit tests in `expression`; the other crates check their wiring at
+compile time with `check_components!` blocks, so a successful build is most of their verification.
 
 ## Workspace gaps
 
@@ -72,62 +72,63 @@ rather than in a subproject's `issues.md`:
 Each subproject has its own section, sized to its crate, with its own `testing.md` and `issues.md`,
 per [../AGENTS.md](../AGENTS.md#the-shape-of-a-project-section). One document spans them:
 
-- [constructs.md](constructs.md) — each CGP construct the crates use, mapped to the subproject
+- [constructs.md](constructs.md): each CGP construct the crates use, mapped to the subproject
   documents that show it in running code.
 
-- [transfer/](transfer/README.md) — the money-transfer HTTP service:
-  - [architecture/](transfer/architecture/README.md) — the design on one page, and:
-    - [module-layout.md](transfer/architecture/module-layout.md) — the five modules and which kind of
+- [transfer/](transfer/README.md): the money-transfer HTTP service:
+  - [architecture/](transfer/architecture/README.md): the design on one page, and:
+    - [module-layout.md](transfer/architecture/module-layout.md): the five modules and which kind of
       item each holds.
-    - [error-design.md](transfer/architecture/error-design.md) — status-code markers, one error
-      type, and the per-detail dispatch of the error provider.
-    - [namespace-organization.md](transfer/architecture/namespace-organization.md) — the prefix tree,
+    - [error-design.md](transfer/architecture/error-design.md): status-code markers, one error type,
+      and the per-detail dispatch of the error provider.
+    - [namespace-organization.md](transfer/architecture/namespace-organization.md): the prefix tree,
       the two tables the context draws on, and the one path it overrides.
-    - [request-lifecycle.md](transfer/architecture/request-lifecycle.md) — one balance query traced
+    - [request-lifecycle.md](transfer/architecture/request-lifecycle.md): one balance query traced
       through every layer, with the recorded responses.
-  - [reference/](transfer/reference/README.md) — every public item, grouped by family.
-  - [guides/](transfer/guides/README.md) — adding an endpoint, and swapping the backend.
-  - [testing.md](transfer/testing.md) — what the checks pin, and what nothing tests.
-  - [issues.md](transfer/issues.md) — defects, missing features, and housekeeping.
-- [expression/](expression/README.md) — the modular arithmetic interpreter:
-  - [architecture/](expression/architecture/README.md) — the design on one page, and
-    [dispatch-layers.md](expression/architecture/dispatch-layers.md) on the two ways the contexts key
-    their dispatch and the wrapper every context needs.
-  - [reference/](expression/reference/README.md) — the types, abstract types, evaluation and
+  - [reference/](transfer/reference/README.md): every public item, grouped by family.
+  - [guides/](transfer/guides/README.md): adding an endpoint, and swapping the backend.
+  - [testing.md](transfer/testing.md): what the checks pin, and what nothing tests.
+  - [issues.md](transfer/issues.md): defects, missing features, and housekeeping.
+- [expression/](expression/README.md): the modular arithmetic interpreter:
+  - [architecture/](expression/architecture/README.md): the design on one page, and
+    [dispatch-layers.md](expression/architecture/dispatch-layers.md) on the two ways the contexts
+    key their dispatch and the wrapper every context needs.
+  - [reference/](expression/reference/README.md): the types, abstract types, evaluation and
     conversion providers, and dispatchers.
-  - [examples/](expression/examples/README.md) — one document per context, with its tests and checks.
-  - [testing.md](expression/testing.md) — the three tests, the four check blocks, and what nothing
+  - [examples/](expression/examples/README.md): one document per context, with its tests and checks.
+  - [testing.md](expression/testing.md): the three tests, the four check blocks, and what nothing
     tests.
-  - [issues.md](expression/issues.md) — missing features and housekeeping.
-- [builder/](builder/README.md) — the application builder:
-  - [architecture/](builder/architecture/README.md) — the design on one page.
-  - [reference/](builder/reference/README.md) — the subsystem providers, the application structs, and
+  - [issues.md](expression/issues.md): missing features and housekeeping.
+- [builder/](builder/README.md): the application builder:
+  - [architecture/](builder/architecture/README.md): the design on one page.
+  - [reference/](builder/reference/README.md): the subsystem providers, the application structs, and
     the builder contexts.
-  - [testing.md](builder/testing.md) — what the checks catch, what a probe ran, and what nothing
+  - [testing.md](builder/testing.md): what the checks catch, what a probe ran, and what nothing
     tests.
-  - [issues.md](builder/issues.md) — missing features and housekeeping.
-- [web-app/](web-app/README.md) — the social-media wiring study, one document per stage:
-  - [coarse-grained.md](web-app/coarse-grained.md) — one manager trait per domain.
-  - [fine-grained.md](web-app/fine-grained.md) — one trait per operation, filter wrappers, and
+  - [issues.md](builder/issues.md): missing features and housekeeping.
+- [web-app/](web-app/README.md): the social-media wiring study, one document per stage:
+  - [coarse-grained.md](web-app/coarse-grained.md): one manager trait per domain.
+  - [fine-grained.md](web-app/fine-grained.md): one trait per operation, filter wrappers, and
     bundles.
-  - [namespaces.md](web-app/namespaces.md) — the prefix tree and the production and test contexts.
-  - [default-impls.md](web-app/default-impls.md) — a custom namespace that supplies seven of the nine
+  - [namespaces.md](web-app/namespaces.md): the prefix tree and the production and test contexts.
+  - [default-impls.md](web-app/default-impls.md): a custom namespace that supplies seven of the nine
     components.
-  - [testing.md](web-app/testing.md) — what the checks pin and catch, and what nothing tests.
-  - [issues.md](web-app/issues.md) — missing features and housekeeping.
-- [greet/](greet/README.md) — the greeting program, with its three binaries:
-  - [expansion.md](greet/expansion.md) — the hand-written expansion against the macro's output.
-  - [testing.md](greet/testing.md) — what running the binaries shows, and what nothing tests.
-  - [issues.md](greet/issues.md) — the missing check blocks and housekeeping.
+  - [testing.md](web-app/testing.md): what the checks pin and catch, and what nothing tests.
+  - [issues.md](web-app/issues.md): missing features and housekeeping.
+- [greet/](greet/README.md): the greeting program, with its three binaries:
+  - [expansion.md](greet/expansion.md): the hand-written expansion against the macro's output.
+  - [testing.md](greet/testing.md): what running the binaries shows, and what nothing tests.
+  - [issues.md](greet/issues.md): the missing check blocks and housekeeping.
 
 ## Public material derived from these documents
 
 These documents are the verified source for the repository's own READMEs, above all the `transfer`
 walkthrough, whose drift from the code is recorded in [transfer/issues.md](transfer/issues.md). They
 also feed the [cgp-examples section](../../website/projects/cgp-examples.md) of the website's
-Projects pages, of which the `expression` and `web-app` subsections are written, which writes each crate's programs as example pages and whose section
-index is built from [constructs.md](constructs.md), and the unfinished [v0.8.0 release
-post](../../website/blog/v0-8-0-release.md), whose code follows `web-app`.
+Projects pages, of which the `expression` and `web-app` subsections are written, which writes each
+crate's programs as example pages and whose section index is built from
+[constructs.md](constructs.md), and the unfinished
+[v0.8.0 release post](../../website/blog/v0-8-0-release.md), whose code follows `web-app`.
 
 ## How it relates to the rest of the base
 

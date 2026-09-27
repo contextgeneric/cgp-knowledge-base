@@ -1,9 +1,9 @@
 # HTTP layer
 
 The HTTP layer is everything that connects the components to Axum: the request types the extractors
-produce, the currency type they deserialize, the trait that recovers a `Send` future, and the routing
-traits that mount the endpoints. None of it is a CGP component; it is ordinary Rust that reaches the
-components through their consumer traits. The pattern behind `CanHandleApiSend` is
+produce, the currency type they deserialize, the trait that recovers a `Send` future, and the
+routing traits that mount the endpoints. None of it is a CGP component; it is ordinary Rust that
+reaches the components through their consumer traits. The pattern behind `CanHandleApiSend` is
 [recovering `Send` bounds](../../../../cgp/concepts/send-bounds.md).
 
 ## `CanHandleApiSend`
@@ -31,11 +31,11 @@ impl CanHandleApiSend<TransferApi> for MockApp { ... }
 
 ### Behavior
 
-Each impl forwards to `self.handle_api(api, request).await`. The impls are written per endpoint on the
-concrete `MockApp` because only there is the awaited future a concrete type the compiler can check for
-`Send`; a single blanket impl over every context fails to prove it. The trait is declared in
-`interfaces/api.rs` and implemented in `contexts/app.rs`, and a new endpoint needs a new impl; see
-[adding an endpoint](../guides/adding-an-endpoint.md).
+Each impl forwards to `self.handle_api(api, request).await`. The impls are written per endpoint on
+the concrete `MockApp` because only there is the awaited future a concrete type the compiler can
+check for `Send`; a single blanket impl over every context fails to prove it. The trait is declared
+in `interfaces/api.rs` and implemented in `contexts/app.rs`, and a new endpoint needs a new impl;
+see [adding an endpoint](../guides/adding-an-endpoint.md).
 
 ### Context dependencies
 
@@ -73,14 +73,14 @@ where
 
 ### Behavior
 
-Each impl mounts a closure on `path` with `get` or `post`. The closure extracts the shared context and
-the endpoint's request, calls `handle_api_send`, and maps an error through `handle_api_error`. The two
-impls differ only in the Axum method router they call.
+Each impl mounts a closure on `path` with `get` or `post`. The closure extracts the shared context
+and the endpoint's request, calls `handle_api_send`, and maps an error through `handle_api_error`.
+The two impls differ only in the Axum method router they call.
 
-The request must implement `FromRequestParts`, not `FromRequest`, so an endpoint's request can be built
-only from the URI and headers, never from a body; the transfer endpoint takes its arguments from the
-query string for that reason. The context's error must be `AppError`, so the routes serve only a
-deployment that wires that error type.
+The request must implement `FromRequestParts`, not `FromRequest`, so an endpoint's request can be
+built only from the URI and headers, never from a body; the transfer endpoint takes its arguments
+from the query string for that reason. The context's error must be `AppError`, so the routes serve
+only a deployment that wires that error type.
 
 ### Context dependencies
 
@@ -162,8 +162,8 @@ Unused; see [issues.md](../issues.md#housekeeping).
 
 ## The request types
 
-The request types come in pairs per endpoint: a raw tuple that Axum extracts, and a domain struct the
-endpoint handler reads through its getters.
+The request types come in pairs per endpoint: a raw tuple that Axum extracts, and a domain struct
+the endpoint handler reads through its getters.
 
 ### Definition
 
@@ -216,8 +216,8 @@ impl From<AxumTransferRequest> for TransferRequest { ... }
 The raw tuples implement `FromRequestParts` through Axum's tuple and `Option` extractors: the query
 string must deserialize, and the `Authorization: Basic` header is optional. Each `From` impl copies
 the query fields, turns the header into a `(user, password)` pair, and sets `logged_in_user` to
-`None` for `UseBasicAuth` to fill. The domain structs derive `HasField`, which is what implements the
-[request getters](api-handlers.md#the-request-getters) for them. They name `String`, `u64`, and
+`None` for `UseBasicAuth` to fill. The domain structs derive `HasField`, which is what implements
+the [request getters](api-handlers.md#the-request-getters) for them. They name `String`, `u64`, and
 `DemoCurrency` directly, so they fit only a context whose abstract types are those.
 
 ### Context dependencies
@@ -264,23 +264,23 @@ let router = <Router<Arc<MockApp>>>::new()
 
 It then binds `0.0.0.0:8080` and calls `axum::serve`, unwrapping both, so a busy port panics. The
 error path runs from a provider's `raise_http_error` to `handle_api_error` inside the route closure;
-[error design](../architecture/error-design.md#where-the-status-reaches-the-client) follows it end to
-end.
+[error design](../architecture/error-design.md#where-the-status-reaches-the-client) follows it end
+to end.
 
 ## Source
 
-- [`interfaces/api.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/interfaces/api.rs)
-  — `CanHandleApiSend`.
-- [`contexts/app.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/contexts/app.rs)
-  — the `CanHandleApiSend` impls and `CanAddApiRoutes`.
-- [`providers/axum/routes.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/axum/routes.rs)
-  — the method markers, `CanAddRoute`, `CanAddMainApiRoutes`, and `handle_api_error`.
-- [`types/requests/`](https://github.com/contextgeneric/cgp-examples/tree/v0.8.0/transfer/src/types/requests)
-  — the request types.
-- [`types/currency.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/types/currency.rs)
-  — `DemoCurrency`.
-- [`bin/server.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/bin/server.rs)
-  — the binary.
+- [`interfaces/api.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/interfaces/api.rs):
+  `CanHandleApiSend`.
+- [`contexts/app.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/contexts/app.rs):
+  the `CanHandleApiSend` impls and `CanAddApiRoutes`.
+- [`providers/axum/routes.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/axum/routes.rs):
+  the method markers, `CanAddRoute`, `CanAddMainApiRoutes`, and `handle_api_error`.
+- [`types/requests/`](https://github.com/contextgeneric/cgp-examples/tree/v0.8.0/transfer/src/types/requests):
+  the request types.
+- [`types/currency.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/types/currency.rs):
+  `DemoCurrency`.
+- [`bin/server.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/bin/server.rs):
+  the binary.
 
 ## Public material derived from this
 

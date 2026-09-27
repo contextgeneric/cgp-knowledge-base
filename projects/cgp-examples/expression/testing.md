@@ -34,8 +34,8 @@ The per-operator entries are what report a broken operator entry at the wiring s
 the enum alone would not: it resolves to the dispatch wrapper, which has no `where` clause for the
 check to evaluate. A broken operator entry fails the build whether or not it is checked, because the
 wrapper's body calls `MatchWithValueHandlers` over every variant, but without its check entry the
-only error lands in the wrapper. A probe showed this on a copy of `add_mult`'s evaluation wiring with
-the `Times` key removed and only the enum, `Literal`, and `Plus` checked:
+only error lands in the wrapper. A probe showed this on a copy of `add_mult`'s evaluation wiring
+with the `Times` key removed and only the enum, `Literal`, and `Plus` checked:
 
 ```rust
 @ComputerComponent.<Code> Code.MathExpr: DispatchEval,
@@ -56,8 +56,9 @@ Its `help` note spells out the elided path as `ComputerComponent`, then `Code`, 
 `Times<MathExpr>`. `cargo cgp check` folds the chain into one `[CGP-E002]` error at the same call,
 naming the matcher step for `Times` that fails.
 
-Adding `(Eval, Times<MathExpr>)` to the probe's check block kept the wrapper's error and added one at
-the check line, which `cargo cgp check` reports in terms of the component rather than the matcher:
+Adding `(Eval, Times<MathExpr>)` to the probe's check block kept the wrapper's error and added one
+at the check line, which `cargo cgp check` reports in terms of the component rather than the
+matcher:
 
 ```text
 error[E0277]: [CGP-E001] the consumer trait `CanCompute<Eval, Times<MathExpr>>` is not implemented for context `Interp`

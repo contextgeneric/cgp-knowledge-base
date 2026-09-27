@@ -1,10 +1,10 @@
 # Constructs by subproject
 
-This document maps each CGP construct the five crates use to the subproject documents that show it in
-running code, so an agent looking for a real use of a construct can find one without reading every
-section. Each row links the construct's reference document for its semantics; the subproject links
-say only where the crate uses it. A construct that no crate uses is absent from the tables, and the
-survey behind it is a search of the crates' `src/` and `bin/` trees on the `v0.8.0` branch.
+This document maps each CGP construct the five crates use to the subproject documents that show it
+in running code, so an agent looking for a real use of a construct can find one without reading
+every section. Each row links the construct's reference document for its semantics; the subproject
+links say only where the crate uses it. A construct that no crate uses is absent from the tables,
+and the survey behind it is a search of the crates' `src/` and `bin/` trees on the `v0.8.0` branch.
 
 ## Defining components and providers
 
@@ -78,5 +78,5 @@ The remaining constructs are specific to one or two crates:
 
 ## Public material derived from this
 
-The pattern-finding table on the Projects section index, specified in the [cgp-examples
-project section](../../website/projects/cgp-examples.md).
+The pattern-finding table on the Projects section index, specified in the
+[cgp-examples project section](../../website/projects/cgp-examples.md).

@@ -2,16 +2,16 @@
 
 A new endpoint touches six places in `transfer`, not only a handler and a table entry: the endpoint
 needs a marker, request types, a handler, a pipeline, a `Send` impl, and a route, plus an entry in
-the context's check. This guide lists each piece and where it goes, using a
-`GET /whoami` endpoint that returns the logged-in user as the running example. Every snippet below
-compiled and ran in a downstream probe crate against the `v0.8.0` branch, where the endpoint answered
-`alice` for Alice's credentials.
+the context's check. This guide lists each piece and where it goes, using a `GET /whoami` endpoint
+that returns the logged-in user as the running example. Every snippet below compiled and ran in a
+downstream probe crate against the `v0.8.0` branch, where the endpoint answered `alice` for Alice's
+credentials.
 
 ## The six pieces
 
 Each piece has a home in the crate's [module layout](../architecture/module-layout.md), and the list
-gives it. A downstream crate that cannot edit `transfer` places all six in its own crate instead, with
-the differences noted in [the last section](#from-a-downstream-crate).
+gives it. A downstream crate that cannot edit `transfer` places all six in its own crate instead,
+with the differences noted in [the last section](#from-a-downstream-crate).
 
 1. **A marker** in `interfaces/api.rs`, which selects the provider:
 
@@ -19,10 +19,10 @@ the differences noted in [the last section](#from-a-downstream-crate).
    pub struct WhoAmIApi;
    ```
 
-2. **Request types** in `types/requests/`: a query struct Axum deserializes, the raw extractor tuple,
-   a domain struct that derives `HasField`, and a `From` impl between the last two. The domain struct
-   must carry `basic_auth_header` and `logged_in_user` fields if the pipeline authenticates, since
-   `UseBasicAuth` reads and writes them through its getters:
+2. **Request types** in `types/requests/`: a query struct Axum deserializes, the raw extractor
+   tuple, a domain struct that derives `HasField`, and a `From` impl between the last two. The
+   domain struct must carry `basic_auth_header` and `logged_in_user` fields if the pipeline
+   authenticates, since `UseBasicAuth` reads and writes them through its getters:
 
    ```rust
    #[derive(Deserialize)]
@@ -51,8 +51,8 @@ the differences noted in [the last section](#from-a-downstream-crate).
    The raw type must implement `FromRequestParts`, so it can read the URI and headers but not a
    request body; see [the HTTP layer](../reference/http-layer.md#canaddroute).
 
-3. **A handler** in `providers/api_handlers/`, an `ApiHandler` provider generic over its request, that
-   names only the components it calls:
+3. **A handler** in `providers/api_handlers/`, an `ApiHandler` provider generic over its request,
+   that names only the components it calls:
 
    ```rust
    #[derive(Serialize)]
@@ -123,11 +123,11 @@ so a missing dependency of the new pipeline is reported at the wiring rather tha
 
 The check entry and the `Send` impl are the two places a mistake surfaces. A pipeline whose request
 type lacks a field a getter needs, or whose handler calls a component the context does not wire,
-fails the `check_components!` entry. A handler whose future holds something that is not `Send` across
-an `.await` fails the `CanHandleApiSend` impl, since that impl is the only place the future's `Send`
-is proven. A route whose request cannot be extracted from the URI and headers fails the `CanAddRoute`
-bound in `CanAddMainApiRoutes`. These locations follow from where each bound is written; the probe
-exercised only the passing case, so the exact messages are not recorded here.
+fails the `check_components!` entry. A handler whose future holds something that is not `Send`
+across an `.await` fails the `CanHandleApiSend` impl, since that impl is the only place the future's
+`Send` is proven. A route whose request cannot be extracted from the URI and headers fails the
+`CanAddRoute` bound in `CanAddMainApiRoutes`. These locations follow from where each bound is
+written; the probe exercised only the passing case, so the exact messages are not recorded here.
 
 ## From a downstream crate
 
@@ -155,12 +155,13 @@ delegate_components! {
 
 The direct entry and the loop do not overlap, because the loop covers only the markers
 `DefaultApiHandlers` binds. The probe's context joined its own namespace, `ConstNamespace`, from
-[swapping the backend](swapping-the-backend.md), rather than `MockNamespace`. The route is added by calling `add_route` on the router directly, since `CanAddMainApiRoutes`
-lists only the crate's own two endpoints, and the `Send` impl is written for the new context.
+[swapping the backend](swapping-the-backend.md), rather than `MockNamespace`. The route is added by
+calling `add_route` on the router directly, since `CanAddMainApiRoutes` lists only the crate's own
+two endpoints, and the `Send` impl is written for the new context.
 
 ## Public material derived from this
 
 "The payoff" section of the crate's own README, whose summary of this change ("adding a handler
 provider and one line to `DefaultApiHandlers`") names two of the six pieces. It also feeds the
-`transfer/guides/adding-an-endpoint` page of the planned [cgp-examples project
-section](../../../../website/projects/cgp-examples.md).
+`transfer/guides/adding-an-endpoint` page of the
+[cgp-examples project section](../../../../website/projects/cgp-examples.md), not yet written.

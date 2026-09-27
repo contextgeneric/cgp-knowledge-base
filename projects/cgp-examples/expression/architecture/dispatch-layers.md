@@ -29,8 +29,8 @@ open { ComputerComponent, ComputerRefComponent };
 @ComputerComponent.<Code> Code.Literal<Value>: EvalLiteral,
 ```
 
-In the second, one component serves every operation, so the code must pick. `add_mult_code` fixes the
-code in each key's first segment, giving each operator one entry per operation:
+In the second, one component serves every operation, so the code must pick. `add_mult_code` fixes
+the code in each key's first segment, giving each operator one entry per operation:
 
 ```rust
 @ComputerRefComponent.Eval.Plus<MathExpr>: EvalAdd,
@@ -61,11 +61,11 @@ impl<Code> Computer<Code, MathExpr> for Interpreter {
 }
 ```
 
-The wrapper is required. `MatchWithValueHandlers` finds the variant and hands its payload back to the
-context, which dispatches it to `EvalAdd` or another operator provider, and those providers recurse
-into the context for `MathExpr` again. Wiring the dispatcher directly as the `MathExpr` entry makes
-that recursion part of the trait resolution itself. A probe wired `add_mult`'s evaluation keys that
-way on its own context, `Interp`, and evaluated a `Plus`:
+The wrapper is required. `MatchWithValueHandlers` finds the variant and hands its payload back to
+the context, which dispatches it to `EvalAdd` or another operator provider, and those providers
+recurse into the context for `MathExpr` again. Wiring the dispatcher directly as the `MathExpr`
+entry makes that recursion part of the trait resolution itself. A probe wired `add_mult`'s
+evaluation keys that way on its own context, `Interp`, and evaluated a `Plus`:
 
 ```rust
 @ComputerComponent.<Code> Code.MathExpr: MatchWithValueHandlers,
@@ -90,8 +90,8 @@ Through a check, `cargo cgp check` reshapes the cycle. A second probe made the s
 of `add_mult` with its full check block, wiring
 `@ComputerComponent.<Code> Code.MathExpr: MatchWithValueHandlers`, and `cargo cgp check` built from
 the `cargo-cgp` source at commit `b6a6323` reported three `[CGP-E010]` errors at the check lines,
-for `MathExpr`, `Plus<MathExpr>`, and `Times<MathExpr>`, followed by two raw `E0275` overflows on the
-dispatcher:
+for `MathExpr`, `Plus<MathExpr>`, and `Times<MathExpr>`, followed by two raw `E0275` overflows on
+the dispatcher:
 
 ```text
 error[E0275]: [CGP-E010] the wiring for the consumer trait `CanCompute<Eval, MathExpr>` on context `Interpreter` never resolves — the lookup recurses without terminating
@@ -103,10 +103,10 @@ the [cgp-examples plan](../../../../website/projects/cgp-examples.md#what-is-wri
 
 What breaks the loop is that the wrapper's impl has no `where` clause. It names the concrete context
 and a concrete `Output` and bounds nothing, so the compiler can accept
-`Interpreter: CanCompute<Code, MathExpr>` from the impl header alone, and resolves the dispatcher only
-when it type-checks the body. Two probes point at the `where` clause as the difference. Each kept the
-wrapper and moved the dispatcher's requirement into a `where` clause, once on a wrapper generic over
-the context and once on the concrete context:
+`Interpreter: CanCompute<Code, MathExpr>` from the impl header alone, and resolves the dispatcher
+only when it type-checks the body. Two probes point at the `where` clause as the difference. Each
+kept the wrapper and moved the dispatcher's requirement into a `where` clause, once on a wrapper
+generic over the context and once on the concrete context:
 
 ```rust
 #[cgp_impl(new ConcreteWhereDispatch)]
@@ -134,12 +134,13 @@ the code selects the operation.
 - [`contexts/add_mult.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/contexts/add_mult.rs),
   [`add_mult_binary_op.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/contexts/add_mult_binary_op.rs),
   [`add_mult_code.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/contexts/add_mult_code.rs),
-  and [`add_mult_neg.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/contexts/add_mult_neg.rs)
-  — the two arrangements and each context's wrappers.
-- [`dsl.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/dsl.rs) — the
+  and
+  [`add_mult_neg.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/contexts/add_mult_neg.rs):
+  the two arrangements and each context's wrappers.
+- [`dsl.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/dsl.rs): the
   `Eval` and `ToLisp` codes.
 
 ## Public material derived from this
 
-The `expression/architecture/dispatch-layers` page of the [cgp-examples project
-section](../../../../website/projects/cgp-examples.md).
+The `expression/architecture/dispatch-layers` page of the
+[cgp-examples project section](../../../../website/projects/cgp-examples.md).

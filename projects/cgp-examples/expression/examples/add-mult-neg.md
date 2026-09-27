@@ -1,9 +1,11 @@
 # `add_mult_neg`
 
-The extended language: an `InterpreterPlus` context that evaluates `MathPlusExpr`, which adds `Minus`
-and `Negate` to the base operators and uses `i64` literals, and wires no conversion to Lisp at all.
+The extended language: an `InterpreterPlus` context that evaluates `MathPlusExpr`, which adds
+`Minus` and `Negate` to the base operators and uses `i64` literals, and wires no conversion to Lisp
+at all.
 
-- **Source**: [contexts/add_mult_neg.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/contexts/add_mult_neg.rs)
+- **Source**:
+  [contexts/add_mult_neg.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/contexts/add_mult_neg.rs)
 - **Run**: `cargo test -p cgp-example-expression add_mult_neg::`
 - **Needs**: nothing
 - **Result**: `test_add_mult_neg` passes
@@ -74,5 +76,6 @@ check.
 
 ## Public material derived from this
 
-The `expression/examples/add-mult-neg` page of the [cgp-examples project
-section](../../../../website/projects/cgp-examples.md), including its change to try.
+The `expression/examples/add-mult-neg` page of the
+[cgp-examples project section](../../../../website/projects/cgp-examples.md), including its change
+to try.

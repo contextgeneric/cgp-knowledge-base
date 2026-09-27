@@ -3,7 +3,8 @@
 `coarse_grained.rs` is the first stage: one manager trait per domain, with the content filters as
 two small components of their own, wired on `ProductionApp` in four entries.
 
-- **Source**: [coarse_grained.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/web-app/src/coarse_grained.rs)
+- **Source**:
+  [coarse_grained.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/web-app/src/coarse_grained.rs)
 - **Run**: no test; the context is exercised only by the check its wiring macro derives
 - **Needs**: nothing
 - **Result**: compiles and passes its checks. A probe called `get_user` and `create_user` on
@@ -63,10 +64,10 @@ impl UserManager {
 }
 ```
 
-`PostgresPostManager` has the same shape: it imports `CanDetectSpamMessage`, and `create_post` returns
-`Error::InvalidMessage` when `message_is_spam` scores above 0.8. The filters have one provider each,
-`DummyUserCensor` and `DummySpamMessageDetector`, whose bodies are `todo!()`. The AI-backed filters
-first appear in the next stage.
+`PostgresPostManager` has the same shape: it imports `CanDetectSpamMessage`, and `create_post`
+returns `Error::InvalidMessage` when `message_is_spam` scores above 0.8. The filters have one
+provider each, `DummyUserCensor` and `DummySpamMessageDetector`, whose bodies are `todo!()`. The
+AI-backed filters first appear in the next stage.
 
 ## The context and its wiring
 
@@ -99,8 +100,8 @@ four entries as it wires it, so the manager's dependency on the filter is verifi
   `update_user_data` through `PostgresUserManager` only if it implements `CanCensorUsername`, though
   neither method calls it. The
   [social media app](../../../examples/social-media-app.md#one-manager-per-domain) example develops
-  this strain, and [sizing a component](../../../cgp/guides/sizing-a-component.md) is the guide to the
-  decision it motivates.
+  this strain, and [sizing a component](../../../cgp/guides/sizing-a-component.md) is the guide to
+  the decision it motivates.
 - A basic context wired and checked in one macro, which suits a table of plain entries.
 
 ## Try a change
@@ -121,5 +122,5 @@ beside the same change in the [fine-grained stage](fine-grained.md#try-a-change)
 
 The "An example social media web app" and "Filtering usernames and post messages" sections of the
 [v0.8.0 release post](../../../website/blog/v0-8-0-release.md). It also feeds the
-`web-app/examples/coarse-grained` page of the [cgp-examples project
-section](../../../website/projects/cgp-examples.md).
+`web-app/examples/coarse-grained` page of the
+[cgp-examples project section](../../../website/projects/cgp-examples.md).

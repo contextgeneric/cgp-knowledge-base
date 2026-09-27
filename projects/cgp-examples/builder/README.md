@@ -1,9 +1,9 @@
 # `builder`
 
-`builder` assembles application contexts, structs holding a database pool, an HTTP client, and one or
-two AI clients, from independent per-subsystem builder providers that know nothing of the final struct
-or of each other, and wires five builder contexts that combine those providers into four application
-types.
+`builder` assembles application contexts, structs holding a database pool, an HTTP client, and one
+or two AI clients, from independent per-subsystem builder providers that know nothing of the final
+struct or of each other, and wires five builder contexts that combine those providers into four
+application types.
 
 - **Source**: [builder/](https://github.com/contextgeneric/cgp-examples/tree/v0.8.0/builder), on the
   `v0.8.0` branch; see [which revision](../README.md#which-revision-these-documents-describe)
@@ -16,8 +16,9 @@ types.
   offline, and both `main` functions returned `Ok` in a directory with no database file; see
   [testing.md](testing.md#what-a-probe-ran)
 - **Worked example**: [application builder](../../../examples/application-builder.md)
-- **Cited by**: [extensible data types, part 1](../../../website/blog/extensible-datatypes-part-1.md),
-  which links the crate
+- **Cited by**:
+  [extensible data types, part 1](../../../website/blog/extensible-datatypes-part-1.md), which links
+  the crate
 
 ## What it is
 
@@ -25,8 +26,9 @@ An application context is an ordinary struct, such as `App` with a `sqlite_pool`
 an `open_ai_client`, and an `open_ai_agent`. Instead of one constructor that sets every field, each
 subsystem has its own builder provider, a [`Handler`](../../../cgp/reference/components/handler.md)
 that reads its configuration from a **builder context** and returns a small struct holding just its
-own fields, such as `SqliteClient { sqlite_pool }`. A builder context wires a list of those providers
-into `BuildAndMergeOutputs<App, …>`, which runs each one and merges its fields into the target by name.
+own fields, such as `SqliteClient { sqlite_pool }`. A builder context wires a list of those
+providers into `BuildAndMergeOutputs<App, …>`, which runs each one and merges its fields into the
+target by name.
 
 The crate has four application structs and five builder contexts, one per combination it
 demonstrates:
@@ -40,14 +42,14 @@ demonstrates:
 | `AnthropicAndChatGptAppBuilder` | `anthropic_and_chatgpt` | `App`, `AnthropicApp`, or `AnthropicAndChatGptApp`, by code | SQLite, HTTP, and either or both AI providers |
 
 Two names repeat across modules: `App` is both the SQLite application in `contexts/app.rs` and the
-Postgres one in `contexts/postgres.rs`, and `AppBuilder` is both the Postgres and the Anthropic builder.
-The reference qualifies them by module.
+Postgres one in `contexts/postgres.rs`, and `AppBuilder` is both the Postgres and the Anthropic
+builder. The reference qualifies them by module.
 
 ## Idioms
 
 The crate uses current CGP idioms throughout. The providers read their configuration as
-[`#[implicit]`](../../../cgp/reference/attributes/implicit.md) arguments, import the traits they call
-with `#[uses]`, and name the builder context's error as a bare `Error` imported with
+[`#[implicit]`](../../../cgp/reference/attributes/implicit.md) arguments, import the traits they
+call with `#[uses]`, and name the builder context's error as a bare `Error` imported with
 `#[use_type(HasErrorType.Error)]`. The output and application structs derive `CgpData`, and the
 multi-target builder dispatches on its code with the `open` statement.
 
@@ -82,30 +84,31 @@ below says only where each section's code now lives:
 
 ## The documents
 
-- [architecture/](architecture/README.md) — the design on one page: builders as handlers, name-driven
+- [architecture/](architecture/README.md): the design on one page: builders as handlers, name-driven
   merging, target selection by code, and where the pattern's internals are documented.
-- [reference/](reference/README.md) — every public item, grouped by family:
-  - [subsystem-providers.md](reference/subsystem-providers.md) — the nine builder providers and their
+- [reference/](reference/README.md): every public item, grouped by family:
+  - [subsystem-providers.md](reference/subsystem-providers.md): the nine builder providers and their
     output structs.
-  - [application-contexts.md](reference/application-contexts.md) — the four application structs and
+  - [application-contexts.md](reference/application-contexts.md): the four application structs and
     the hand-written constructors.
-  - [builder-contexts.md](reference/builder-contexts.md) — the five builder contexts, their target
+  - [builder-contexts.md](reference/builder-contexts.md): the five builder contexts, their target
     markers, and the two `main` functions.
-- [testing.md](testing.md) — what the compile-time checks catch, what a probe ran, and what nothing
+- [testing.md](testing.md): what the compile-time checks catch, what a probe ran, and what nothing
   tests.
-- [issues.md](issues.md) — the missing features and housekeeping.
+- [issues.md](issues.md): the missing features and housekeeping.
 
 ## Public material derived from these documents
 
-These documents are the verified record behind the `builder` pages of the planned [cgp-examples
-project section](../../../website/projects/cgp-examples.md), which write one example page per
-builder context.
+These documents are the verified record behind the `builder` pages of the
+[cgp-examples project section](../../../website/projects/cgp-examples.md), not yet written, which
+will write one example page per builder context.
 
 ## How it relates to the rest of the base
 
 The [application builder](../../../examples/application-builder.md) worked example teaches the
 crate's pattern and stands alone. The pattern itself is
 [extensible records](../../../cgp/concepts/extensible-records.md), the merge dispatcher and its
-internals are in the [dispatch combinators](../../../cgp/reference/providers/dispatch_combinators.md),
-the builder trait family is [`HasBuilder`](../../../cgp/reference/traits/has_builder.md), and the
-merging is `CanBuildFrom` from the [casts](../../../cgp/reference/traits/cast.md).
+internals are in the
+[dispatch combinators](../../../cgp/reference/providers/dispatch_combinators.md), the builder trait
+family is [`HasBuilder`](../../../cgp/reference/traits/has_builder.md), and the merging is
+`CanBuildFrom` from the [casts](../../../cgp/reference/traits/cast.md).

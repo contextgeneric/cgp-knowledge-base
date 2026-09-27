@@ -1,11 +1,12 @@
 # Domain types
 
 The domain types are the five abstract types every handler, wrapper, and backend in `transfer` names
-instead of a concrete type. Each is a one-associated-type [`#[cgp_type]`](../../../../cgp/reference/macros/cgp_type.md)
-component with a path in `DefaultNamespace`, and `MockNamespace` binds all five with `UseType`.
-Together with CGP's own [`HasErrorType`](../../../../cgp/reference/components/has_error_type.md), they
-are the only domain types the handlers and the backend refer to; the concrete types they resolve to
-are named only in the wiring and the HTTP layer.
+instead of a concrete type. Each is a one-associated-type
+[`#[cgp_type]`](../../../../cgp/reference/macros/cgp_type.md) component with a path in
+`DefaultNamespace`, and `MockNamespace` binds all five with `UseType`. Together with CGP's own
+[`HasErrorType`](../../../../cgp/reference/components/has_error_type.md), they are the only domain
+types the handlers and the backend refer to; the concrete types they resolve to are named only in
+the wiring and the HTTP layer.
 
 ## `HasUserIdType`
 
@@ -58,8 +59,8 @@ None; it is bound directly with `UseType<String>`.
 
 ## `HasHashedPasswordType`
 
-`HasHashedPasswordType` is the abstract type of a stored password, which the backend looks up and the
-checker compares against the cleartext one.
+`HasHashedPasswordType` is the abstract type of a stored password, which the backend looks up and
+the checker compares against the cleartext one.
 
 ### Definition
 
@@ -75,8 +76,8 @@ pub trait HasHashedPasswordType {
 
 The name anticipates a real hashed store, but `MockNamespace` binds it to `String` and the mock
 backend stores passwords in the clear. The mock checker unifies it with `Password` through a
-`#[use_type]` equality, as recorded in [mock backend](mock-backend.md#passwordchecker). Its wiring key
-is `HashedPasswordTypeProviderComponent`.
+`#[use_type]` equality, as recorded in [mock backend](mock-backend.md#passwordchecker). Its wiring
+key is `HashedPasswordTypeProviderComponent`.
 
 ### Context dependencies
 
@@ -98,9 +99,10 @@ pub trait HasQuantityType {
 
 ### Behavior
 
-`MockNamespace` binds it to `u64`. The mock transfer adds `CheckedAdd + CheckedSub` from `num-traits`
-in its own bounds, so an overflow or an overdraft is detected rather than wrapping. The balance
-response serializes the quantity directly. Its wiring key is `QuantityTypeProviderComponent`.
+`MockNamespace` binds it to `u64`. The mock transfer adds `CheckedAdd + CheckedSub` from
+`num-traits` in its own bounds, so an overflow or an overdraft is detected rather than wrapping. The
+balance response serializes the quantity directly. Its wiring key is
+`QuantityTypeProviderComponent`.
 
 ### Context dependencies
 
@@ -131,10 +133,10 @@ None; it is bound directly with `UseType<DemoCurrency>`.
 
 ## Source
 
-- [`interfaces/types.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/interfaces/types.rs)
-  — the five types.
-- [`namespaces/mock.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/namespaces/mock.rs)
-  — their bindings.
+- [`interfaces/types.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/interfaces/types.rs):
+  the five types.
+- [`namespaces/mock.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/namespaces/mock.rs):
+  their bindings.
 
 ## Public material derived from this
 

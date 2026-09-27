@@ -77,9 +77,9 @@ where
 
 ### Behavior
 
-It returns `password == hashed_password`. The `#[use_type]` equality form requires the stored-password
-type to be the cleartext type, which is what makes the comparison type-check; the mock stores
-passwords in the clear.
+It returns `password == hashed_password`. The `#[use_type]` equality form requires the
+stored-password type to be the cleartext type, which is what makes the comparison type-check; the
+mock stores passwords in the clear.
 
 ### Context dependencies
 
@@ -153,17 +153,17 @@ where
 
 ### Behavior
 
-It holds the lock for the whole operation. It raises `ErrNotFound` if the sender's or the recipient's
-entry is missing, checked in that order, and `ErrBadRequest` if subtracting from the sender underflows
-(`sender {sender} has insufficient balance {balance} to transfer {quantity}`). A transfer from a user
-to themselves then returns `Ok` without writing, so it leaves the balance unchanged. For two distinct
-users it raises `ErrBadRequest` if adding to the recipient overflows
+It holds the lock for the whole operation. It raises `ErrNotFound` if the sender's or the
+recipient's entry is missing, checked in that order, and `ErrBadRequest` if subtracting from the
+sender underflows (`sender {sender} has insufficient balance {balance} to transfer {quantity}`). A
+transfer from a user to themselves then returns `Ok` without writing, so it leaves the balance
+unchanged. For two distinct users it raises `ErrBadRequest` if adding to the recipient overflows
 (`recipient already has too much money!`), and otherwise writes the sender's new balance, then the
 recipient's.
 
-A probe wired this impl without `NoTransferToSelf`. A self-transfer of 10 left a balance of 100 at 100,
-a self-transfer of 1000 was rejected for insufficient balance, and a transfer of 10 to another user
-moved the money.
+A probe wired this impl without `NoTransferToSelf`. A self-transfer of 10 left a balance of 100 at
+100, a self-transfer of 1000 was rejected for insufficient balance, and a transfer of 10 to another
+user moved the money.
 
 It carries no `#[default_impl]`, so `MockNamespace` leaves the transfer path open for `MockApp` to
 wire; a comment on the impl records why.
@@ -176,8 +176,8 @@ bounds.
 
 ## Source
 
-- [`providers/mocked.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/mocked.rs)
-  — the struct and all four impls.
+- [`providers/mocked.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/mocked.rs):
+  the struct and all four impls.
 
 ## Public material derived from this
 

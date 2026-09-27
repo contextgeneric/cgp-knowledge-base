@@ -31,8 +31,8 @@ component that takes them.
 
 ## Providers
 
-Each provider implements one component, except `UseMockedApp`, which implements four. The last column
-is what the provider requires of the context, and so what a context must also wire for it.
+Each provider implements one component, except `UseMockedApp`, which implements four. The last
+column is what the provider requires of the context, and so what a context must also wire for it.
 
 | Provider | Implements | Wired for | Requires of the context |
 |---|---|---|---|
@@ -49,8 +49,8 @@ is what the provider requires of the context, and so what a context must also wi
 
 ## Other items
 
-The rest are ordinary Rust items: the types the configuration plugs in, the traits of the HTTP layer,
-the request getters, and the wiring itself.
+The rest are ordinary Rust items: the types the configuration plugs in, the traits of the HTTP
+layer, the request getters, and the wiring itself.
 
 | Item | Kind | Module |
 |---|---|---|
@@ -74,15 +74,15 @@ such as `cgp_example_transfer::providers::UseBasicAuth`.
 
 ## The catalog
 
-- [domain-types.md](domain-types.md) — the five abstract types and their bounds.
-- [components.md](components.md) — the six components and the marker types they take.
-- [api-handlers.md](api-handlers.md) — the two endpoint handlers, the balance response, and the
+- [domain-types.md](domain-types.md): the five abstract types and their bounds.
+- [components.md](components.md): the six components and the marker types they take.
+- [api-handlers.md](api-handlers.md): the two endpoint handlers, the balance response, and the
   request getters.
-- [wrappers.md](wrappers.md) — the five higher-order providers.
-- [error-providers.md](error-providers.md) — `IsStatusCode`, the two error providers, and `AppError`.
-- [mock-backend.md](mock-backend.md) — `UseMockedApp` and its four impls.
-- [wiring.md](wiring.md) — `MockNamespace`, `DefaultApiHandlers`, and `MockApp`.
-- [http-layer.md](http-layer.md) — `CanHandleApiSend`, the routing traits, the request types, and
+- [wrappers.md](wrappers.md): the five higher-order providers.
+- [error-providers.md](error-providers.md): `IsStatusCode`, the two error providers, and `AppError`.
+- [mock-backend.md](mock-backend.md): `UseMockedApp` and its four impls.
+- [wiring.md](wiring.md): `MockNamespace`, `DefaultApiHandlers`, and `MockApp`.
+- [http-layer.md](http-layer.md): `CanHandleApiSend`, the routing traits, the request types, and
   `DemoCurrency`.
 
 ## Public material derived from this

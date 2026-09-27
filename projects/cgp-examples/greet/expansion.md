@@ -4,7 +4,8 @@
 `CanGreet`, but it is a simplified, older form: its consumer blanket impl routes through the wiring
 table instead of through the provider trait, and it leaves out two of the macro's provider impls.
 
-- **Source**: [src/greet_expanded.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/greet/src/greet_expanded.rs)
+- **Source**:
+  [src/greet_expanded.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/greet/src/greet_expanded.rs)
 - **Run**: nothing uses it; it is the library's only module, and no binary imports it
 - **Needs**: nothing
 - **Result**: compiles. A probe wired a context through it and printed `Hello, Alice!`, and a second
@@ -30,8 +31,8 @@ where
 
 ## How it differs from the macro
 
-`cargo cgp expand -p cgp-example-greet --bin greet-component` shows what the macro emits for the same
-trait. Three differences matter:
+`cargo cgp expand -p cgp-example-greet --bin greet-component` shows what the macro emits for the
+same trait. Three differences matter:
 
 | Item | `greet_expanded.rs` | The macro |
 |---|---|---|
@@ -40,7 +41,8 @@ trait. Three differences matter:
 | `RedirectLookup` impl of `Greeter` | absent | present, which `open` and namespaces rely on |
 
 The macro also emits the marker last rather than first, which changes nothing. The full list of
-generated items is in [`#[cgp_component]`](../../../cgp/reference/macros/cgp_component.md#expansion).
+generated items is in
+[`#[cgp_component]`](../../../cgp/reference/macros/cgp_component.md#expansion).
 
 The consumer impl is the difference a reader can observe. For a context that delegates the component
 the two forms agree: the probe wired a `Person` to a hand-written `GreetHello` through the module's

@@ -1,10 +1,11 @@
 # Evaluation providers
 
 The evaluation providers compute a number from an expression, one provider per operator. Each is
-generic over the context, the `Code`, and the expression type, and recurses into its operands through
-the context's own evaluation, so none of them names a language enum or a numeric type. The three
-base-language providers implement both [`Computer`](../../../../cgp/reference/components/computer.md) and
-`ComputerRef` on one struct; the two extended-language providers implement `ComputerRef` only.
+generic over the context, the `Code`, and the expression type, and recurses into its operands
+through the context's own evaluation, so none of them names a language enum or a numeric type. The
+three base-language providers implement both
+[`Computer`](../../../../cgp/reference/components/computer.md) and `ComputerRef` on one struct; the
+two extended-language providers implement `ComputerRef` only.
 
 ## `EvalAdd`
 
@@ -47,15 +48,15 @@ where
 ### Behavior
 
 The by-value impl consumes the `Plus`, unboxes each operand, and calls `self.compute` on it with the
-same `Code`; the by-reference impl borrows through the boxes and calls `self.compute_ref`. Both return
-the sum. The output type is whatever the context evaluates the operand to, so the same provider adds
-`u64` in the base language and `i64` in the extended one. The second block names the existing struct
-without `new`, since the first declared it.
+same `Code`; the by-reference impl borrows through the boxes and calls `self.compute_ref`. Both
+return the sum. The output type is whatever the context evaluates the operand to, so the same
+provider adds `u64` in the base language and `i64` in the extended one. The second block names the
+existing struct without `new`, since the first declared it.
 
 ### Context dependencies
 
-`CanCompute<Code, MathExpr>` or `CanComputeRef<Code, MathExpr>` for the operand type, with an `Output`
-that implements `Add`.
+`CanCompute<Code, MathExpr>` or `CanComputeRef<Code, MathExpr>` for the operand type, with an
+`Output` that implements `Add`.
 
 ## `EvalMultiply`
 
@@ -159,8 +160,8 @@ where
 
 ### Behavior
 
-It evaluates both operands by reference and returns `left - right`. It has no by-value impl, which is
-why the extended language is wired only through `ComputerRef`.
+It evaluates both operands by reference and returns `left - right`. It has no by-value impl, which
+is why the extended language is wired only through `ComputerRef`.
 
 ### Context dependencies
 
@@ -221,11 +222,11 @@ where
 ### Behavior
 
 It wraps the right operand in a `Negate`, builds the enum's `Negate` variant through
-[`FromVariant`](../../../../cgp/reference/traits/from_variant.md) without naming the enum, and evaluates
-`Plus { left, right: negated }` through the context. So it delegates to whatever provider the context
-wires for `Plus<Expr>`, and requires the language to have a `Negate` variant. It implements `Computer`
-only, and no context wires it: `InterpreterPlus` evaluates through `ComputerRef`, so it could not use
-this provider without also wiring by-value evaluation.
+[`FromVariant`](../../../../cgp/reference/traits/from_variant.md) without naming the enum, and
+evaluates `Plus { left, right: negated }` through the context. So it delegates to whatever provider
+the context wires for `Plus<Expr>`, and requires the language to have a `Negate` variant. It
+implements `Computer` only, and no context wires it: `InterpreterPlus` evaluates through
+`ComputerRef`, so it could not use this provider without also wiring by-value evaluation.
 
 ### Context dependencies
 
@@ -238,12 +239,12 @@ Never wired or exercised; see [issues.md](../issues.md#housekeeping).
 
 ## Source
 
-- [`providers/eval/`](https://github.com/contextgeneric/cgp-examples/tree/v0.8.0/expression/src/providers/eval)
-  — one file per operator: `add.rs`, `multiply.rs`, `literal.rs`, `subtract.rs` (with
+- [`providers/eval/`](https://github.com/contextgeneric/cgp-examples/tree/v0.8.0/expression/src/providers/eval):
+  one file per operator: `add.rs`, `multiply.rs`, `literal.rs`, `subtract.rs` (with
   `EvalSubtractWithNegate`), and `negate.rs`.
 
 ## Public material derived from this
 
-The providers the `expression` example pages of the [cgp-examples project
-section](../../../../website/projects/cgp-examples.md) explain where they first appear, since that
-section carries no reference for demonstration crates.
+The providers the `expression` example pages of the
+[cgp-examples project section](../../../../website/projects/cgp-examples.md) explain where they
+first appear, since that section carries no reference for demonstration crates.

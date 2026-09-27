@@ -1,7 +1,7 @@
 # Wiring
 
-The wiring is the two tables in `namespaces` and the one context in `contexts`, which together choose
-a provider for every component. How the three divide the work is explained in
+The wiring is the two tables in `namespaces` and the one context in `contexts`, which together
+choose a provider for every component. How the three divide the work is explained in
 [namespace organization](../architecture/namespace-organization.md); this document records each
 table's entries.
 
@@ -49,8 +49,8 @@ components and CGP's own error paths. Beyond the body above, the `#[default_impl
 
 It leaves `@app.finance.MoneyTransferrerComponent` and `@app.api.ApiHandlerComponent` unbound, so a
 context that joins it must supply both. A comment in `namespaces/mock.rs` says the body holds "the
-pieces that have no `#[cgp_impl]` block of their own"; `DisplayHttpError` does have one, and is in the
-body because it is generic; see [issues.md](../issues.md#housekeeping).
+pieces that have no `#[cgp_impl]` block of their own"; `DisplayHttpError` does have one, and is in
+the body because it is generic; see [issues.md](../issues.md#housekeeping).
 
 ### Context dependencies
 
@@ -92,7 +92,8 @@ Every dependency of the providers in the two pipelines.
 
 ## `MockApp`
 
-`MockApp` is the application context: two in-memory maps, and the wiring that selects every provider.
+`MockApp` is the application context: two in-memory maps, and the wiring that selects every
+provider.
 
 ### Definition
 
@@ -138,16 +139,16 @@ check_components! {
 
 The field types are the concrete forms of the abstract types the backend's `#[implicit]` arguments
 name, which is what lets `MockApp` satisfy them: `(String, DemoCurrency)` to `u64` for balances, and
-`String` to `String` for passwords. `new_with_dummy_data` seeds Alice (`wonderland`; 100 EUR, 50 USD)
-and Bob (`sponge`; 200 EUR, 150 USD); `Default` gives two empty maps.
+`String` to `String` for passwords. `new_with_dummy_data` seeds Alice (`wonderland`; 100 EUR, 50
+USD) and Bob (`sponge`; 200 EUR, 150 USD); `Default` gives two empty maps.
 
 The wiring joins `MockNamespace`, copies both `DefaultApiHandlers` entries onto the `ApiHandler`
-dispatch path, and binds the transfer to `NoTransferToSelf<UseMockedApp>`. The check asserts the four
-listed components, the handler once per endpoint; [testing.md](../testing.md) records what that
+dispatch path, and binds the transfer to `NoTransferToSelf<UseMockedApp>`. The check asserts the
+four listed components, the handler once per endpoint; [testing.md](../testing.md) records what that
 covers transitively.
 
-The same file implements `CanHandleApiSend` for each endpoint and declares `CanAddApiRoutes`; both are
-documented with the [HTTP layer](http-layer.md).
+The same file implements `CanHandleApiSend` for each endpoint and declares `CanAddApiRoutes`; both
+are documented with the [HTTP layer](http-layer.md).
 
 ### Context dependencies
 
@@ -155,12 +156,12 @@ None; it is the context.
 
 ## Source
 
-- [`namespaces/mock.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/namespaces/mock.rs)
-  — `MockNamespace`.
-- [`namespaces/api_handlers.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/namespaces/api_handlers.rs)
-  — `DefaultApiHandlers`.
-- [`contexts/app.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/contexts/app.rs)
-  — `MockApp`, its wiring, and its check.
+- [`namespaces/mock.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/namespaces/mock.rs):
+  `MockNamespace`.
+- [`namespaces/api_handlers.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/namespaces/api_handlers.rs):
+  `DefaultApiHandlers`.
+- [`contexts/app.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/contexts/app.rs):
+  `MockApp`, its wiring, and its check.
 
 ## Public material derived from this
 

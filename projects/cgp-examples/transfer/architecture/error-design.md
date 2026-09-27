@@ -7,11 +7,11 @@ works in the crate. The general technique of an abstract error type plus raising
 
 ## One error type, raised with a status marker
 
-The crate has one concrete error, [`AppError`](../reference/error-providers.md#apperror), a status code
-paired with an `anyhow::Error` detail, and it reaches the rest of the code only as the context's
-abstract `HasErrorType::Error`. `MockNamespace` fixes that abstract type to `AppError`, and every
-handler and backend imports it as a bare `Error` with `#[use_type(HasErrorType.Error)]`, so none of
-them names `AppError`.
+The crate has one concrete error, [`AppError`](../reference/error-providers.md#apperror), a status
+code paired with an `anyhow::Error` detail, and it reaches the rest of the code only as the
+context's abstract `HasErrorType::Error`. `MockNamespace` fixes that abstract type to `AppError`,
+and every handler and backend imports it as a bare `Error` with `#[use_type(HasErrorType.Error)]`,
+so none of them names `AppError`.
 
 Providers raise errors through the crate's own component, not through CGP's `CanRaiseError`:
 
@@ -59,23 +59,23 @@ which returns the `(StatusCode, String)` pair Axum sends: the stored status, and
 as `404` with `recipient not found in mocked database: carol`.
 
 Two kinds of failure never pass through `CanRaiseHttpError`. A request whose query string does not
-deserialize, such as `currency=GBP`, is rejected by Axum's `Query` extractor before any handler runs,
-with Axum's own `400` message. And an HTTP method with no route, such as `GET /transfer`, gets Axum's
-`405`. [The request lifecycle](request-lifecycle.md) records the response for each path.
+deserialize, such as `currency=GBP`, is rejected by Axum's `Query` extractor before any handler
+runs, with Axum's own `400` message. And an HTTP method with no route, such as `GET /transfer`, gets
+Axum's `405`. [The request lifecycle](request-lifecycle.md) records the response for each path.
 
 ## Source
 
-- [`interfaces/error.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/interfaces/error.rs)
-  — the component and the four markers.
-- [`providers/error.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/error.rs)
-  — `IsStatusCode` and the two providers.
-- [`types/error.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/types/error.rs)
-  — `AppError`.
-- [`namespaces/mock.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/namespaces/mock.rs)
-  — the error wiring.
+- [`interfaces/error.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/interfaces/error.rs):
+  the component and the four markers.
+- [`providers/error.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/error.rs):
+  `IsStatusCode` and the two providers.
+- [`types/error.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/types/error.rs):
+  `AppError`.
+- [`namespaces/mock.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/namespaces/mock.rs):
+  the error wiring.
 
 ## Public material derived from this
 
 Section 2, "Status-coded errors", of the crate's own README. It also feeds the
-`transfer/architecture/error-design` page of the planned [cgp-examples project
-section](../../../../website/projects/cgp-examples.md).
+`transfer/architecture/error-design` page of the
+[cgp-examples project section](../../../../website/projects/cgp-examples.md), not yet written.

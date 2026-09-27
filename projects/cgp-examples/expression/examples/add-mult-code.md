@@ -3,11 +3,12 @@
 The base interpreter with both operations served by one component, `ComputerRef`, and chosen by the
 operation code: each wiring key names the `Eval` or `ToLisp` code and the input type together.
 
-- **Source**: [contexts/add_mult_code.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/contexts/add_mult_code.rs)
+- **Source**:
+  [contexts/add_mult_code.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/contexts/add_mult_code.rs)
 - **Run**: no test; the context is exercised only by its check block
 - **Needs**: nothing
-- **Result**: compiles and passes its check. A probe evaluated `2 * (3 + 4)` to `14` and converted it
-  to `(* 2 (+ 3 4))`, both by reference
+- **Result**: compiles and passes its check. A probe evaluated `2 * (3 + 4)` to `14` and converted
+  it to `(* 2 (+ 3 4))`, both by reference
 
 ## The context and its wiring
 
@@ -43,8 +44,8 @@ providers. The dispatch wrappers fix their code to match their keys: `DispatchEv
 
 ## What the checks pin
 
-The `check_components!` block asserts `ComputerRefComponent` for evaluation and conversion of all four
-input types. Nothing runs the context at test time.
+The `check_components!` block asserts `ComputerRefComponent` for evaluation and conversion of all
+four input types. Nothing runs the context at test time.
 
 ## What it demonstrates
 
@@ -55,8 +56,7 @@ input types. Nothing runs the context at test time.
 
 ## Known issues
 
-- **No test**: the probe result above is the only runtime evidence; see
-  [testing.md](../testing.md).
+- **No test**: the probe result above is the only runtime evidence; see [testing.md](../testing.md).
 
 ## The test the public page gives
 
@@ -82,5 +82,6 @@ Two `E0271` errors followed at the `ToLisp` wrapper's call to `MatchWithValueHan
 
 ## Public material derived from this
 
-The `expression/examples/add-mult-code` page of the [cgp-examples project
-section](../../../../website/projects/cgp-examples.md), including its test and its change to try.
+The `expression/examples/add-mult-code` page of the
+[cgp-examples project section](../../../../website/projects/cgp-examples.md), including its test and
+its change to try.

@@ -28,8 +28,9 @@ pub struct Times<Expr> {
 ### Behavior
 
 The operands are boxed so a language enum can contain them recursively. Both derive `HasField`,
-which is what implements the [`BinarySubExpression`](abstract-types-and-getters.md#binarysubexpression)
-getter for them and lets `BinaryOpToLisp` read `left` and `right` without naming the struct.
+which is what implements the
+[`BinarySubExpression`](abstract-types-and-getters.md#binarysubexpression) getter for them and lets
+`BinaryOpToLisp` read `left` and `right` without naming the struct.
 
 ### Context dependencies
 
@@ -97,8 +98,8 @@ pub struct Ident(pub String);
 
 ### Behavior
 
-A `List` is an S-expression, a sequence of boxed sub-expressions, and an `Ident` is an operator symbol
-such as `+`. `(+ 2 3)` is a `List` of an `Ident` and two `Literal`s.
+A `List` is an S-expression, a sequence of boxed sub-expressions, and an `Ident` is an operator
+symbol such as `+`. `(+ 2 3)` is a `List` of an `Ident` and two `Literal`s.
 
 ### Context dependencies
 
@@ -129,8 +130,8 @@ pub enum LispExpr {
 }
 ```
 
-`add_mult`, `add_mult_binary_op`, and `add_mult_code` each define these two identically. `add_mult_neg`
-defines the extended language instead, with `Value` as `i64`:
+`add_mult`, `add_mult_binary_op`, and `add_mult_code` each define these two identically.
+`add_mult_neg` defines the extended language instead, with `Value` as `i64`:
 
 ```rust
 pub type Value = i64;
@@ -159,10 +160,10 @@ pub enum Expr {
 ### Behavior
 
 Each variant of `MathExpr`, `LispExpr`, and `MathPlusExpr` wraps exactly one payload type, which is
-what [`#[derive(CgpData)]`](../../../../cgp/reference/derives/derive_cgp_data.md) requires of an enum.
-The derive lets `MatchWithValueHandlers` take the enum apart variant by variant and lets a provider
-build a `LispExpr` by upcasting a smaller enum. `LispExpr` also derives `Eq` and `PartialEq`, which the
-conversion test uses to compare trees.
+what [`#[derive(CgpData)]`](../../../../cgp/reference/derives/derive_cgp_data.md) requires of an
+enum. The derive lets `MatchWithValueHandlers` take the enum apart variant by variant and lets a
+provider build a `LispExpr` by upcasting a smaller enum. `LispExpr` also derives `Eq` and
+`PartialEq`, which the conversion test uses to compare trees.
 
 ### Context dependencies
 
@@ -170,15 +171,15 @@ None.
 
 ## Source
 
-- [`types/`](https://github.com/contextgeneric/cgp-examples/tree/v0.8.0/expression/src/types) — the
+- [`types/`](https://github.com/contextgeneric/cgp-examples/tree/v0.8.0/expression/src/types): the
   operator structs, `List`, and `Ident`.
-- [`contexts/`](https://github.com/contextgeneric/cgp-examples/tree/v0.8.0/expression/src/contexts) —
+- [`contexts/`](https://github.com/contextgeneric/cgp-examples/tree/v0.8.0/expression/src/contexts):
   the language enums.
-- [`classic/add_mult.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/classic/add_mult.rs)
-  — the closed `Expr`.
+- [`classic/add_mult.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/classic/add_mult.rs):
+  the closed `Expr`.
 
 ## Public material derived from this
 
-The items the `expression` example pages of the [cgp-examples project
-section](../../../../website/projects/cgp-examples.md) explain where they first appear, since that
-section carries no reference for demonstration crates.
+The items the `expression` example pages of the
+[cgp-examples project section](../../../../website/projects/cgp-examples.md) explain where they
+first appear, since that section carries no reference for demonstration crates.

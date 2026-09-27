@@ -55,10 +55,11 @@ where
 
 It sets the status from `Code::status_code()` and formats the detail into the error with
 `anyhow!("{detail}")`, so the response body is the detail's `Display` text. The
-[`#[use_type]` equality form](../../../../cgp/reference/attributes/use_type.md) requires the context's
-error to be `AppError`, which is what lets the body construct one. `MockNamespace` wires it for every
-`Code` with a `String` detail, which covers every call site in the crate. Because the impl is generic,
-it cannot register itself with `#[default_impl]` and is wired in the namespace body instead.
+[`#[use_type]` equality form](../../../../cgp/reference/attributes/use_type.md) requires the
+context's error to be `AppError`, which is what lets the body construct one. `MockNamespace` wires
+it for every `Code` with a `String` detail, which covers every call site in the crate. Because the
+impl is generic, it cannot register itself with `#[default_impl]` and is wired in the namespace body
+instead.
 
 ### Context dependencies
 
@@ -112,9 +113,9 @@ pub struct AppError {
 
 ### Behavior
 
-It satisfies `HasErrorType`'s `Debug` bound through the derive. The routing layer's `handle_api_error`
-turns it into the `(StatusCode, String)` pair Axum sends, using the detail's `Display` text as the
-body; see the [HTTP layer](http-layer.md#the-axum-routing-traits).
+It satisfies `HasErrorType`'s `Debug` bound through the derive. The routing layer's
+`handle_api_error` turns it into the `(StatusCode, String)` pair Axum sends, using the detail's
+`Display` text as the body; see the [HTTP layer](http-layer.md#the-axum-routing-traits).
 
 ### Context dependencies
 
@@ -122,10 +123,10 @@ None; it is plain data.
 
 ## Source
 
-- [`providers/error.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/error.rs)
-  — `IsStatusCode`, `DisplayHttpError`, and `HandleHttpErrorWithAnyhow`.
-- [`types/error.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/types/error.rs)
-  — `AppError`.
+- [`providers/error.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/error.rs):
+  `IsStatusCode`, `DisplayHttpError`, and `HandleHttpErrorWithAnyhow`.
+- [`types/error.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/types/error.rs):
+  `AppError`.
 
 ## Public material derived from this
 

@@ -29,8 +29,8 @@ impl UserBalanceQuerier {
 
 A real backend would take a database handle as its `#[implicit]` argument instead. The components it
 must cover are the four `UseMockedApp` implements: `UserHashedPasswordQuerier`, `PasswordChecker`,
-`UserBalanceQuerier`, and `MoneyTransferrer`. It may replace only some of them and keep `UseMockedApp`
-for the rest, as the probe did for authentication.
+`UserBalanceQuerier`, and `MoneyTransferrer`. It may replace only some of them and keep
+`UseMockedApp` for the rest, as the probe did for authentication.
 
 ## Give it a namespace of its own
 
@@ -89,8 +89,8 @@ keep live in the same namespace as the mock providers it replaces; see
 
 ## Wire a context
 
-The new context carries the fields its providers read, joins the new namespace, pulls in the same API
-surface, and wires the transfer path itself, exactly as `MockApp` does:
+The new context carries the fields its providers read, joins the new namespace, pulls in the same
+API surface, and wires the transfer path itself, exactly as `MockApp` does:
 
 ```rust
 #[derive(HasField)]
@@ -122,8 +122,8 @@ check_components! {
 ```
 
 The probe's context keeps `user_balances` because it still uses `UseMockedApp` for transfers. A
-context that serves the endpoints over HTTP also needs one `CanHandleApiSend` impl per endpoint, as in
-[adding an endpoint](adding-an-endpoint.md).
+context that serves the endpoints over HTTP also needs one `CanHandleApiSend` impl per endpoint, as
+in [adding an endpoint](adding-an-endpoint.md).
 
 Keep `NoTransferToSelf` around the transfer provider if the service should reject a self-transfer:
 the mock provider accepts one as a no-op, and a replacement backend decides for itself unless the
@@ -133,5 +133,5 @@ guard decides first.
 
 "The payoff" section of the crate's own README, whose summary of this change ("writing one backend
 provider and changing one wiring entry") holds only for a backend whose namespace is written afresh.
-It also feeds the `transfer/guides/swapping-the-backend` page of the planned [cgp-examples project
-section](../../../../website/projects/cgp-examples.md).
+It also feeds the `transfer/guides/swapping-the-backend` page of the
+[cgp-examples project section](../../../../website/projects/cgp-examples.md), not yet written.

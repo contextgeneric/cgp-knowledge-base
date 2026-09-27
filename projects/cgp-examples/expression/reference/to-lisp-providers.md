@@ -1,10 +1,11 @@
 # Conversion providers
 
-The conversion providers turn an expression into a Lisp S-expression tree, one provider per operator,
-all by reference through `ComputerRef`. Each builds its output without naming the target enum: the
-context supplies the type through [`HasLispExprType`](abstract-types-and-getters.md#haslispexprtype),
-and the provider constructs only the variants it needs in a small local enum, then upcasts it into the
-full type with [`CanUpcast`](../../../../cgp/reference/traits/cast.md).
+The conversion providers turn an expression into a Lisp S-expression tree, one provider per
+operator, all by reference through `ComputerRef`. Each builds its output without naming the target
+enum: the context supplies the type through
+[`HasLispExprType`](abstract-types-and-getters.md#haslispexprtype), and the provider constructs only
+the variants it needs in a small local enum, then upcasts it into the full type with
+[`CanUpcast`](../../../../cgp/reference/traits/cast.md).
 
 ## `PlusToLisp` and `TimesToLisp`
 
@@ -36,15 +37,16 @@ where
 }
 ```
 
-`TimesToLisp` is the same, over `Times<MathExpr>`, in its own file with its own copy of `LispSubExpr`.
+`TimesToLisp` is the same, over `Times<MathExpr>`, in its own file with its own copy of
+`LispSubExpr`.
 
 ### Behavior
 
 It converts both operands through the context, builds an `Ident("+")` (or `"*"`) and a `List` of the
-identifier and the two operands, and upcasts each through the local enum. For `Plus(2, 3)` the result is
-`(+ 2 3)`: `List([Ident("+"), Literal(2), Literal(3)])`. The upcast succeeds for any target enum that
-has `List` and `Ident` variants of those types. Only `add_mult` wires these two; the later contexts use
-`BinaryOpToLisp`.
+identifier and the two operands, and upcasts each through the local enum. For `Plus(2, 3)` the
+result is `(+ 2 3)`: `List([Ident("+"), Literal(2), Literal(3)])`. The upcast succeeds for any
+target enum that has `List` and `Ident` variants of those types. Only `add_mult` wires these two;
+the later contexts use `BinaryOpToLisp`.
 
 ### Context dependencies
 
@@ -77,8 +79,8 @@ where
 
 ### Behavior
 
-It clones the value into a new `Literal` and upcasts it. The same `Literal` struct is both the source
-operator and the target variant, which is what lets the upcast match by variant name.
+It clones the value into a new `Literal` and upcasts it. The same `Literal` struct is both the
+source operator and the target variant, which is what lets the upcast match by variant name.
 
 ### Context dependencies
 
@@ -108,12 +110,13 @@ where
 
 ### Behavior
 
-It reads the operands through [`BinarySubExpression`](abstract-types-and-getters.md#binarysubexpression),
-so its input is any struct with `left` and `right` fields, and it renders the symbol with
+It reads the operands through
+[`BinarySubExpression`](abstract-types-and-getters.md#binarysubexpression), so its input is any
+struct with `left` and `right` fields, and it renders the symbol with
 `Operator::default().to_string()`, which for a `Symbol!("+")` is `+`. It needs `HasMathExprType` to
 name the operand type, since its input type no longer shows it. `add_mult_binary_op` and
-`add_mult_code` wire it as `BinaryOpToLisp<Symbol!("+")>` for `Plus` and `BinaryOpToLisp<Symbol!("*")>`
-for `Times`, replacing the two hand-written providers above.
+`add_mult_code` wire it as `BinaryOpToLisp<Symbol!("+")>` for `Plus` and
+`BinaryOpToLisp<Symbol!("*")>` for `Times`, replacing the two hand-written providers above.
 
 ### Context dependencies
 
@@ -122,15 +125,16 @@ for `Times`, replacing the two hand-written providers above.
 ## Source
 
 - [`providers/to_lisp/add.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/providers/to_lisp/add.rs)
-  and [`multiply.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/providers/to_lisp/multiply.rs)
-  — `PlusToLisp` and `TimesToLisp`.
-- [`providers/to_lisp/literal.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/providers/to_lisp/literal.rs)
-  — `LiteralToLisp`.
-- [`providers/to_lisp/binary.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/providers/to_lisp/binary.rs)
-  — `BinaryOpToLisp`.
+  and
+  [`multiply.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/providers/to_lisp/multiply.rs):
+  `PlusToLisp` and `TimesToLisp`.
+- [`providers/to_lisp/literal.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/providers/to_lisp/literal.rs):
+  `LiteralToLisp`.
+- [`providers/to_lisp/binary.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/providers/to_lisp/binary.rs):
+  `BinaryOpToLisp`.
 
 ## Public material derived from this
 
-The providers the `expression` example pages of the [cgp-examples project
-section](../../../../website/projects/cgp-examples.md) explain where they first appear, since that
-section carries no reference for demonstration crates.
+The providers the `expression` example pages of the
+[cgp-examples project section](../../../../website/projects/cgp-examples.md) explain where they
+first appear, since that section carries no reference for demonstration crates.

@@ -68,12 +68,12 @@ pub trait BinarySubExpression<Expr> {
 
 ### Behavior
 
-The blanket impl covers any type with `left` and `right` fields of type `Box<Expr>`, which `Plus` and
-`Times` satisfy through their `HasField` derive. It is a getter trait rather than an `#[implicit]`
-argument because it reads fields of the provider's *input*, not of its context, which is the case
-[`#[cgp_auto_getter]`](../../../../cgp/reference/macros/cgp_auto_getter.md) is kept for. Its `&Box<Expr>`
-return type is the only `&Box` in any signature in the crate, which is the pattern the crate-level
-`#![allow(clippy::borrowed_box)]` in `lib.rs` silences.
+The blanket impl covers any type with `left` and `right` fields of type `Box<Expr>`, which `Plus`
+and `Times` satisfy through their `HasField` derive. It is a getter trait rather than an
+`#[implicit]` argument because it reads fields of the provider's *input*, not of its context, which
+is the case [`#[cgp_auto_getter]`](../../../../cgp/reference/macros/cgp_auto_getter.md) is kept for.
+Its `&Box<Expr>` return type is the only `&Box` in any signature in the crate, which is the pattern
+the crate-level `#![allow(clippy::borrowed_box)]` in `lib.rs` silences.
 
 ### Context dependencies
 
@@ -81,13 +81,13 @@ None; it is implemented on the operator types.
 
 ## Source
 
-- [`components/expression.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/components/expression.rs)
-  — the two abstract types.
-- [`providers/to_lisp/binary.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/providers/to_lisp/binary.rs)
-  — `BinarySubExpression`.
+- [`components/expression.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/components/expression.rs):
+  the two abstract types.
+- [`providers/to_lisp/binary.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/providers/to_lisp/binary.rs):
+  `BinarySubExpression`.
 
 ## Public material derived from this
 
-The items the `expression` example pages of the [cgp-examples project
-section](../../../../website/projects/cgp-examples.md) explain where they first appear, since that
-section carries no reference for demonstration crates.
+The items the `expression` example pages of the
+[cgp-examples project section](../../../../website/projects/cgp-examples.md) explain where they
+first appear, since that section carries no reference for demonstration crates.

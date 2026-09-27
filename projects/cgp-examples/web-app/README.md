@@ -1,8 +1,9 @@
 # `web-app`
 
-`web-app` wires one social-media backend four times, once per module, to show how the wiring of a CGP
-application changes as its component count grows: coarse manager traits, fine-grained per-operation
-traits with provider bundles, namespace-grouped wiring, and namespace default implementations.
+`web-app` wires one social-media backend four times, once per module, to show how the wiring of a
+CGP application changes as its component count grows: coarse manager traits, fine-grained
+per-operation traits with provider bundles, namespace-grouped wiring, and namespace default
+implementations.
 
 - **Source**: [web-app/](https://github.com/contextgeneric/cgp-examples/tree/v0.8.0/web-app), on the
   `v0.8.0` branch; see [which revision](../README.md#which-revision-these-documents-describe)
@@ -15,14 +16,14 @@ traits with provider bundles, namespace-grouped wiring, and namespace default im
 
 ## What it is
 
-The application manages users and posts and filters their content. Each module holds one stage of
-it and is self-contained: it declares its own components, its own providers, and its own
-`ProductionApp`, so the same names recur in all four modules. The modules share only `types.rs`, which
-holds unit structs for the domain (`User`, `UserId`, `Post`, and the rest), a `PostgresDb` handle, a
-two-variant `Error` enum, and a `Probability` score. The crate root carries `#![allow(unused)]`,
-which hides 84 unused-variable warnings from the arguments the `todo!()` bodies never read, and
-nothing else. The implicit arguments cannot be renamed with a leading underscore to silence them,
-because each one's name is the context field it reads.
+The application manages users and posts and filters their content. Each module holds one stage of it
+and is self-contained: it declares its own components, its own providers, and its own
+`ProductionApp`, so the same names recur in all four modules. The modules share only `types.rs`,
+which holds unit structs for the domain (`User`, `UserId`, `Post`, and the rest), a `PostgresDb`
+handle, a two-variant `Error` enum, and a `Probability` score. The crate root carries
+`#![allow(unused)]`, which hides 84 unused-variable warnings from the arguments the `todo!()` bodies
+never read, and nothing else. The implicit arguments cannot be renamed with a leading underscore to
+silence them, because each one's name is the context field it reads.
 
 | Stage | Module | Components | Contexts | How the context is wired |
 |---|---|---|---|---|
@@ -55,9 +56,9 @@ The crate demonstrates wiring only, and nothing in it runs. Its gaps are each co
 
 ## Where the blog post's code lives
 
-The [v0.8.0 release post](../../../website/blog/v0-8-0-release.md) develops this application section by
-section, but it does not link the repository. How its code diverges from current CGP is recorded in
-the post's own document; the table below says only where each section's code now lives:
+The [v0.8.0 release post](../../../website/blog/v0-8-0-release.md) develops this application section
+by section, but it does not link the repository. How its code diverges from current CGP is recorded
+in the post's own document; the table below says only where each section's code now lives:
 
 | Post section | Current code |
 |---|---|
@@ -73,17 +74,17 @@ the post's own document; the table below says only where each section's code now
 
 ## The documents
 
-- [coarse-grained.md](coarse-grained.md) — one manager trait per domain, and the dependency the whole
+- [coarse-grained.md](coarse-grained.md): one manager trait per domain, and the dependency the whole
   manager inherits from one method.
-- [fine-grained.md](fine-grained.md) — one trait per operation, the two filter wrappers, and the three
-  provider bundles.
-- [namespaces.md](namespaces.md) — the prefix tree, the bundles that join the namespace, and the
+- [fine-grained.md](fine-grained.md): one trait per operation, the two filter wrappers, and the
+  three provider bundles.
+- [namespaces.md](namespaces.md): the prefix tree, the bundles that join the namespace, and the
   production and test contexts.
-- [default-impls.md](default-impls.md) — the custom namespace, how its seven defaults are registered,
+- [default-impls.md](default-impls.md): the custom namespace, how its seven defaults are registered,
   and the one path the context still wires.
-- [testing.md](testing.md) — what the check blocks pin, what probes showed they catch, and what
+- [testing.md](testing.md): what the check blocks pin, what probes showed they catch, and what
   nothing tests.
-- [issues.md](issues.md) — the missing features and housekeeping.
+- [issues.md](issues.md): the missing features and housekeeping.
 
 ## Public material derived from these documents
 

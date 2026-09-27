@@ -3,8 +3,8 @@
 The builder contexts are the five structs that hold configuration and wire the subsystem providers
 into `BuildAndMergeOutputs`, together with the three target markers the multi-target builder
 dispatches on and the two `main` functions that call a builder. Every builder context derives
-`HasField`, so the providers' `#[implicit]` arguments read its fields, and `Deserialize`, so it can be
-loaded from a configuration file.
+`HasField`, so the providers' `#[implicit]` arguments read its fields, and `Deserialize`, so it can
+be loaded from a configuration file.
 
 ## `FullAppBuilder`
 
@@ -49,17 +49,17 @@ check_components! {
 
 ### Behavior
 
-`builder.handle(PhantomData::<()>, ())` runs the three configurable builders and merges their outputs
-into an `App`. The two error entries are the same in every builder context:
+`builder.handle(PhantomData::<()>, ())` runs the three configurable builders and merges their
+outputs into an `App`. The two error entries are the same in every builder context:
 [`UseAnyhowError`](../../../error/cgp-error-anyhow/reference.md#useanyhowerror) sets the abstract
 error to `anyhow::Error`, and
 [`RaiseAnyhowError`](../../../error/cgp-error-anyhow/reference.md#raiseanyhowerror) raises any
-standard error into it, which
-satisfies each provider's `CanRaiseError<sqlx::Error>` or `CanRaiseError<reqwest::Error>`. The check
-asserts that `HandlerComponent` holds at the unit `Code` and `Input` the call uses, so a missing
-configuration field or provider fails the build at the check, as
-[testing.md](../testing.md#what-the-checks-pin) shows. A probe built an `App` with a `mode=rwc` SQLite
-connection string, and an unknown journal mode such as `NOPE` returned the `sqlx` parse error.
+standard error into it, which satisfies each provider's `CanRaiseError<sqlx::Error>` or
+`CanRaiseError<reqwest::Error>`. The check asserts that `HandlerComponent` holds at the unit `Code`
+and `Input` the call uses, so a missing configuration field or provider fails the build at the
+check, as [testing.md](../testing.md#what-the-checks-pin) shows. A probe built an `App` with a
+`mode=rwc` SQLite connection string, and an unknown journal mode such as `NOPE` returned the `sqlx`
+parse error.
 
 ### Context dependencies
 
@@ -67,8 +67,8 @@ None beyond its own fields; it is the context the providers depend on.
 
 ## `DefaultAppBuilder`
 
-`DefaultAppBuilder` builds the same SQLite `App` from a single database path, using the three default
-providers.
+`DefaultAppBuilder` builds the same SQLite `App` from a single database path, using the three
+default providers.
 
 ### Definition
 
@@ -102,8 +102,8 @@ Its check block asserts `HandlerComponent: ((), ())`, as `FullAppBuilder`'s does
 
 It shows the same target built by a different set of providers from different configuration. The
 OpenAI key comes from the environment rather than a field. A probe built an `App` with
-`db_path = "sqlite::memory:"` and `OPENAI_API_KEY` set, and got `Err(environment variable not found)`
-with the variable unset.
+`db_path = "sqlite::memory:"` and `OPENAI_API_KEY` set, and got
+`Err(environment variable not found)` with the variable unset.
 
 ### Context dependencies
 
@@ -111,8 +111,8 @@ The `OPENAI_API_KEY` environment variable, through `BuildDefaultOpenAiClient`.
 
 ## `AppBuilder` in `contexts/postgres.rs`
 
-The Postgres `AppBuilder` builds the Postgres `App`, swapping `BuildPostgresClient` in for the SQLite
-builder.
+The Postgres `AppBuilder` builds the Postgres `App`, swapping `BuildPostgresClient` in for the
+SQLite builder.
 
 ### Definition
 
@@ -206,12 +206,13 @@ None beyond its own fields.
 
 ### Known issues
 
-It shares the name `AppBuilder` with the Postgres builder; see [issues.md](../issues.md#housekeeping).
+It shares the name `AppBuilder` with the Postgres builder; see
+[issues.md](../issues.md#housekeeping).
 
 ## `AnthropicAndChatGptAppBuilder` and its markers
 
-`AnthropicAndChatGptAppBuilder` builds one of three applications, chosen by a marker type passed as the
-`Code`.
+`AnthropicAndChatGptAppBuilder` builds one of three applications, chosen by a marker type passed as
+the `Code`.
 
 ### Definition
 
@@ -270,9 +271,9 @@ SQLite, HTTP, and OpenAI for `App`; and SQLite, HTTP, and Anthropic for `Anthrop
 The builder opens `HandlerComponent` with the `open` statement and keys each target by its marker, a
 one-segment path key that matches the `Code` and any `Input`; see
 [dispatching per type](../../../../cgp/guides/dispatching-per-type.md). Calling
-`builder.handle(PhantomData::<BuildChatGptApp>, ())` builds an `App`, and the other two markers build
-their own targets from the same configuration. The markers are empty structs used only as codes. One
-`llm_preamble` field serves both AI providers. A probe built all three targets offline.
+`builder.handle(PhantomData::<BuildChatGptApp>, ())` builds an `App`, and the other two markers
+build their own targets from the same configuration. The markers are empty structs used only as
+codes. One `llm_preamble` field serves both AI providers. A probe built all three targets offline.
 
 ### Context dependencies
 
@@ -311,8 +312,8 @@ pub async fn main() -> Result<(), Error> {
 
 Both use the connection string `sqlite:./db.sqlite?mode=rwc`, whose `mode=rwc` creates the database
 file in the working directory when it is missing. A probe called each in a directory with no
-`db.sqlite`: both returned `Ok`, and the file appeared. They are `pub async fn` in the library, so nothing runs them
-unless another crate calls them.
+`db.sqlite`: both returned `Ok`, and the file appeared. They are `pub async fn` in the library, so
+nothing runs them unless another crate calls them.
 
 ### Context dependencies
 
@@ -320,19 +321,19 @@ A writable working directory.
 
 ## Source
 
-- [`contexts/full_builder.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/contexts/full_builder.rs)
-  — `FullAppBuilder` and its `main`.
-- [`contexts/default_builder.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/contexts/default_builder.rs)
-  — `DefaultAppBuilder`.
-- [`contexts/postgres.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/contexts/postgres.rs)
-  — the Postgres `AppBuilder`.
-- [`contexts/anthropic.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/contexts/anthropic.rs)
-  — the Anthropic `AppBuilder`.
-- [`contexts/anthropic_and_chatgpt.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/contexts/anthropic_and_chatgpt.rs)
-  — `AnthropicAndChatGptAppBuilder`, its three markers, and its `main`.
+- [`contexts/full_builder.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/contexts/full_builder.rs):
+  `FullAppBuilder` and its `main`.
+- [`contexts/default_builder.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/contexts/default_builder.rs):
+  `DefaultAppBuilder`.
+- [`contexts/postgres.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/contexts/postgres.rs):
+  the Postgres `AppBuilder`.
+- [`contexts/anthropic.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/contexts/anthropic.rs):
+  the Anthropic `AppBuilder`.
+- [`contexts/anthropic_and_chatgpt.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/contexts/anthropic_and_chatgpt.rs):
+  `AnthropicAndChatGptAppBuilder`, its three markers, and its `main`.
 
 ## Public material derived from this
 
-The five `builder` example pages of the planned [cgp-examples project
-section](../../../../website/projects/cgp-examples.md), one per builder context, once each has its
-own record under an `examples/` directory here.
+The five `builder` example pages of the
+[cgp-examples project section](../../../../website/projects/cgp-examples.md), not yet written, one
+per builder context, once each has its own record under an `examples/` directory here.

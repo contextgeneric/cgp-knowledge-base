@@ -16,9 +16,10 @@ Every context is checked for every component it can use:
 | `namespace` | `ProductionApp` and `TestApp` | one `check_components!` block | all nine, on each |
 | `default_impls` | `ProductionApp` | `check_components!` | all nine |
 
-A check covers a component's whole provider chain, so a check of `UserCreatorComponent` also verifies
-that the context implements `CanCensorUsername`, which the creator's filter wrapper uses. That is why
-the probes below report a missing filter at the creator's check as well as at the filter's own.
+A check covers a component's whole provider chain, so a check of `UserCreatorComponent` also
+verifies that the context implements `CanCensorUsername`, which the creator's filter wrapper uses.
+That is why the probes below report a missing filter at the creator's check as well as at the
+filter's own.
 
 ## What the checks catch
 
@@ -57,9 +58,9 @@ nothing from the extras. Three further probes are recorded with the stage they c
 
 ## What a probe ran
 
-A probe crate with a path dependency on the crate compiled the two wiring steps the crate keeps only as
-comments, each on a context of its own: the flat nine-entry table of `fine_grained.rs` and the flat
-namespace table of `namespace.rs`. Both passed a check of all nine components.
+A probe crate with a path dependency on the crate compiled the two wiring steps the crate keeps only
+as comments, each on a context of its own: the flat nine-entry table of `fine_grained.rs` and the
+flat namespace table of `namespace.rs`. Both passed a check of all nine components.
 
 The same crate called one method on a context of three stages: `get_user` and `create_user` on the
 coarse `ProductionApp`, `create_post` on the namespace stage's `TestApp`, and `delete_post` on the

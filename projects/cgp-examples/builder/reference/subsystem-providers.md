@@ -1,9 +1,9 @@
 # Subsystem providers
 
 The subsystem providers are the nine builder providers, each a `Handler` that builds one subsystem's
-fields from the builder context's configuration, together with the struct each returns. Every provider
-is generic over `Code` and `Input` and ignores both, and every one returns `Error`, the builder
-context's abstract error, imported with `#[use_type(HasErrorType.Error)]`.
+fields from the builder context's configuration, together with the struct each returns. Every
+provider is generic over `Code` and `Input` and ignores both, and every one returns `Error`, the
+builder context's abstract error, imported with `#[use_type(HasErrorType.Error)]`.
 
 ## The output structs
 
@@ -120,8 +120,8 @@ impl<Code, Input> Handler<Code, Input> {
 
 ### Behavior
 
-It calls `SqlitePool::connect(db_path)` and raises the `sqlx::Error` on failure. `sqlite::memory:` is a
-valid path for an in-memory database.
+It calls `SqlitePool::connect(db_path)` and raises the `sqlx::Error` on failure. `sqlite::memory:`
+is a valid path for an in-memory database.
 
 ### Context dependencies
 
@@ -302,8 +302,9 @@ impl<Code, Input> Handler<Code, Input> {
 ### Behavior
 
 It builds the client from `anthropic_key` with the latest API version, and an agent for
-`CLAUDE_3_7_SONNET` with `llm_preamble`. The model is fixed in the provider, which is what makes it the
-default one. Nothing is sent, so it builds offline and never fails. It is the only Anthropic builder.
+`CLAUDE_3_7_SONNET` with `llm_preamble`. The model is fixed in the provider, which is what makes it
+the default one. Nothing is sent, so it builds offline and never fails. It is the only Anthropic
+builder.
 
 ### Context dependencies
 
@@ -348,30 +349,31 @@ Unused; see [issues.md](../issues.md#housekeeping).
 ## How the providers read configuration
 
 Every configurable provider reads the builder context's fields as
-[`#[implicit]`](../../../../cgp/reference/attributes/implicit.md) arguments on `handle`, so a builder
-context satisfies a provider by having `String` fields of the argument names. Each argument is a
-`&str` read from a `String` field. `BuildOpenAiClient` and `BuildDefaultAnthropicClient` both read
-`llm_preamble`, and a context with one `llm_preamble` field serves both. `BuildDefaultHttpClient` and
-`BuildDefaultOpenAiClient` read no field: the first needs only the error type, and the second reads
-its key from the environment instead.
+[`#[implicit]`](../../../../cgp/reference/attributes/implicit.md) arguments on `handle`, so a
+builder context satisfies a provider by having `String` fields of the argument names. Each argument
+is a `&str` read from a `String` field. `BuildOpenAiClient` and `BuildDefaultAnthropicClient` both
+read `llm_preamble`, and a context with one `llm_preamble` field serves both.
+`BuildDefaultHttpClient` and `BuildDefaultOpenAiClient` read no field: the first needs only the
+error type, and the second reads its key from the environment instead.
 
 ## Source
 
-- [`providers/sqlite.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/providers/sqlite.rs)
-  — `SqliteClient` and the two SQLite providers.
-- [`providers/postgres.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/providers/postgres.rs)
-  — `PostgresClient` and `BuildPostgresClient`.
-- [`providers/http_client.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/providers/http_client.rs)
-  — `HttpClient` and the two HTTP providers.
-- [`providers/chatgpt.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/providers/chatgpt.rs)
-  — `OpenAiClient` and the two OpenAI providers.
-- [`providers/anthropic.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/providers/anthropic.rs)
-  — `AnthropicClient` and `BuildDefaultAnthropicClient`.
-- [`providers/sqlite_and_http.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/providers/sqlite_and_http.rs)
-  — `SqliteAndHttpClient` and `BuildDefaultSqliteAndHttpClient`.
+- [`providers/sqlite.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/providers/sqlite.rs):
+  `SqliteClient` and the two SQLite providers.
+- [`providers/postgres.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/providers/postgres.rs):
+  `PostgresClient` and `BuildPostgresClient`.
+- [`providers/http_client.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/providers/http_client.rs):
+  `HttpClient` and the two HTTP providers.
+- [`providers/chatgpt.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/providers/chatgpt.rs):
+  `OpenAiClient` and the two OpenAI providers.
+- [`providers/anthropic.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/providers/anthropic.rs):
+  `AnthropicClient` and `BuildDefaultAnthropicClient`.
+- [`providers/sqlite_and_http.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/providers/sqlite_and_http.rs):
+  `SqliteAndHttpClient` and `BuildDefaultSqliteAndHttpClient`.
 
 ## Public material derived from this
 
-The providers the `builder` example pages of the planned [cgp-examples project
-section](../../../../website/projects/cgp-examples.md) explain where they first appear, since that
-section carries no reference for demonstration crates.
+The `builder` example pages of the
+[cgp-examples project section](../../../../website/projects/cgp-examples.md), not yet written, which
+will explain each provider where it first appears, since that section carries no reference for
+demonstration crates.

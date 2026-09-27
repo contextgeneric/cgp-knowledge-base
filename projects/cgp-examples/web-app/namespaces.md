@@ -4,7 +4,8 @@
 so that its two contexts, `ProductionApp` and `TestApp`, each wire the whole application in two path
 entries and differ in one of them.
 
-- **Source**: [namespace.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/web-app/src/namespace.rs)
+- **Source**:
+  [namespace.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/web-app/src/namespace.rs)
 - **Run**: no test; the contexts are exercised only by their check blocks
 - **Needs**: nothing
 - **Result**: compiles and passes its checks. A probe called `create_post` on `TestApp`, which
@@ -37,8 +38,8 @@ redefined in this module with the same bounds.
 
 ## The bundles
 
-The module builds its wiring in two layers of bundles. The lower layer is four plain bundles keyed by
-component name, like those of the fine-grained stage: `PostgresUserComponents`,
+The module builds its wiring in two layers of bundles. The lower layer is four plain bundles keyed
+by component name, like those of the fine-grained stage: `PostgresUserComponents`,
 `PostgresPostComponents`, `AiContentFilterComponents`, and `DummyContentFilterComponents`, the last
 wiring `DummyUserCensor` and `DummySpamMessageDetector`.
 
@@ -63,8 +64,8 @@ delegate_components! {
 }
 ```
 
-`DummyExtraComponents` is `ProductionExtraComponents` with `DummyContentFilterComponents` in place of
-the AI bundle. The `namespace` line in these bundles is required. A probe wired a copy of
+`DummyExtraComponents` is `ProductionExtraComponents` with `DummyContentFilterComponents` in place
+of the AI bundle. The `namespace` line in these bundles is required. A probe wired a copy of
 `PostgresCoreComponents` without it and checked two user components on a context that forwarded
 `@app.core` to the copy:
 
@@ -92,7 +93,8 @@ concept traces the lookup.
 
 ## The contexts
 
-Both contexts hold the database handle, join `DefaultNamespace`, and forward the two top-level paths:
+Both contexts hold the database handle, join `DefaultNamespace`, and forward the two top-level
+paths:
 
 ```rust
 delegate_components! {
@@ -135,10 +137,10 @@ each context.
 
 ## Try a change
 
-Removing `TestApp`'s `@app.extra` entry is the change the public page shows. A probe made it on a copy
-of the module, and `cargo cgp check` built from the `cargo-cgp` source at commit `b6a6323` reported
-the same two errors as the `CoreOnlyApp` probe in [testing.md](testing.md#what-the-checks-catch), now
-naming `TestApp`:
+Removing `TestApp`'s `@app.extra` entry is the change the public page shows. A probe made it on a
+copy of the module, and `cargo cgp check` built from the `cargo-cgp` source at commit `b6a6323`
+reported the same two errors as the `CoreOnlyApp` probe in
+[testing.md](testing.md#what-the-checks-catch), now naming `TestApp`:
 
 ```text
 error[E0277]: [CGP-E001] the consumer traits `CanCreateUser` and `CanCensorUsername` are not implemented for context `TestApp`
@@ -149,7 +151,7 @@ error[E0277]: [CGP-E001] the consumer traits `CanCreatePost` and `CanDetectSpamM
 
 ## Public material derived from this
 
-The "Introducing CGP namespaces and paths" and "Hierarchical delegation" sections of the [v0.8.0
-release post](../../../website/blog/v0-8-0-release.md). It also feeds the
-`web-app/examples/namespaces` page of the [cgp-examples project
-section](../../../website/projects/cgp-examples.md).
+The "Introducing CGP namespaces and paths" and "Hierarchical delegation" sections of the
+[v0.8.0 release post](../../../website/blog/v0-8-0-release.md). It also feeds the
+`web-app/examples/namespaces` page of the
+[cgp-examples project section](../../../website/projects/cgp-examples.md).

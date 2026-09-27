@@ -34,8 +34,8 @@ pub struct NoPreambleBuilder {
 }
 ```
 
-With the same `HandlerComponent: ((), ())` check, `cargo cgp check` failed at the check line and named
-the field, through the chain from `BuildAndMergeOutputs` down to `BuildOpenAiClient`, whose
+With the same `HandlerComponent: ((), ())` check, `cargo cgp check` failed at the check line and
+named the field, through the chain from `BuildAndMergeOutputs` down to `BuildOpenAiClient`, whose
 `#[implicit] llm_preamble` argument needs it:
 
 ```text
@@ -44,8 +44,8 @@ error[E0271]: [CGP-E001] the consumer trait `CanHandle<(), ()>` is not implement
 ```
 
 A second probe kept every field and left `BuildHttpClient` out of the list, wiring
-`BuildAndMergeOutputs<App, Product![BuildSqliteClient, BuildOpenAiClient]>`. The check failed because
-the partial `App` cannot be finalized with its second field, `http_client`, still absent:
+`BuildAndMergeOutputs<App, Product![BuildSqliteClient, BuildOpenAiClient]>`. The check failed
+because the partial `App` cannot be finalized with its second field, `http_client`, still absent:
 
 ```text
 error[E0277]: the trait bound `__PartialApp<IsPresent, IsNothing, IsPresent, IsPresent>: FinalizeBuild` is not satisfied
@@ -72,8 +72,8 @@ A probe crate with a path dependency on the crate called every builder, both con
 | `App::new_with_default("sqlite::memory:")`, with `OPENAI_API_KEY` set, then unset | `App` built, then error: `environment variable not found` |
 | `full_builder::main` and `anthropic_and_chatgpt::main` | both `Ok`, creating `db.sqlite` |
 
-No builder contacts OpenAI or Anthropic: the AI builders only construct clients and agents, so any key
-builds them offline.
+No builder contacts OpenAI or Anthropic: the AI builders only construct clients and agents, so any
+key builds them offline.
 
 ## What is untested
 

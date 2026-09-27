@@ -8,8 +8,8 @@ reader can find one by what it handles and see which contexts wire it. Read the
 
 ## Providers
 
-Every provider is written with `#[cgp_impl]` and implements `Computer`, `ComputerRef`, or both for one
-input type. The last column is what the provider requires of the context.
+Every provider is written with `#[cgp_impl]` and implements `Computer`, `ComputerRef`, or both for
+one input type. The last column is what the provider requires of the context.
 
 | Provider | Input | Implements | Wired in | Requires of the context |
 |---|---|---|---|---|
@@ -47,12 +47,12 @@ each context is reached through its module path, such as
 
 ## The catalog
 
-- [types.md](types.md) — the operator structs, the Lisp target structs, and the language enums.
-- [abstract-types-and-getters.md](abstract-types-and-getters.md) — `HasMathExprType`,
+- [types.md](types.md): the operator structs, the Lisp target structs, and the language enums.
+- [abstract-types-and-getters.md](abstract-types-and-getters.md): `HasMathExprType`,
   `HasLispExprType`, and `BinarySubExpression`.
-- [eval-providers.md](eval-providers.md) — the six evaluation providers.
-- [to-lisp-providers.md](to-lisp-providers.md) — the four conversion providers.
-- [dispatchers.md](dispatchers.md) — the dispatch wrappers and the wiring keys that reach them.
+- [eval-providers.md](eval-providers.md): the six evaluation providers.
+- [to-lisp-providers.md](to-lisp-providers.md): the four conversion providers.
+- [dispatchers.md](dispatchers.md): the dispatch wrappers and the wiring keys that reach them.
 
 ## Public material derived from this
 

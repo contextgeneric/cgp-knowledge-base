@@ -6,8 +6,8 @@ explained in [dispatch layers](../architecture/dispatch-layers.md).
 
 ## `DispatchEval` and `DispatchToLisp`
 
-`DispatchEval` and `DispatchToLisp` dispatch a language enum to the provider for its current variant,
-one pair per context module.
+`DispatchEval` and `DispatchToLisp` dispatch a language enum to the provider for its current
+variant, one pair per context module.
 
 ### Definition
 
@@ -33,19 +33,19 @@ impl<Code> ComputerRef<Code, MathExpr> for Interpreter {
 }
 ```
 
-In `add_mult_code`, where the code picks the operation, both are `ComputerRef` impls with `Code` fixed
-to `Eval` and `ToLisp`, and in `add_mult_neg` there is one, `ComputerRef<Eval, MathPlusExpr>` for
-`InterpreterPlus`, with `Output = i64`.
+In `add_mult_code`, where the code picks the operation, both are `ComputerRef` impls with `Code`
+fixed to `Eval` and `ToLisp`, and in `add_mult_neg` there is one, `ComputerRef<Eval, MathPlusExpr>`
+for `InterpreterPlus`, with `Output = i64`.
 
 ### Behavior
 
-Each body calls `MatchWithValueHandlers` (by value) or `MatchWithValueHandlersRef` (by reference) from
-the [dispatch combinators](../../../../cgp/reference/providers/dispatch_combinators.md), which extracts
-the enum's current variant and hands its payload back to the context's own `Computer` or `ComputerRef`
-wiring, so a `Plus` payload reaches `EvalAdd`. The impls name the concrete context, which is written
-in the explicit `impl … for Interpreter` form of `#[cgp_impl]`, and fix `Output` to the context's
-value or target type. Each context module declares its own pair, so the name `DispatchEval` denotes a
-different struct in each module.
+Each body calls `MatchWithValueHandlers` (by value) or `MatchWithValueHandlersRef` (by reference)
+from the [dispatch combinators](../../../../cgp/reference/providers/dispatch_combinators.md), which
+extracts the enum's current variant and hands its payload back to the context's own `Computer` or
+`ComputerRef` wiring, so a `Plus` payload reaches `EvalAdd`. The impls name the concrete context,
+which is written in the explicit `impl … for Interpreter` form of `#[cgp_impl]`, and fix `Output` to
+the context's value or target type. Each context module declares its own pair, so the name
+`DispatchEval` denotes a different struct in each module.
 
 ### Context dependencies
 
@@ -63,16 +63,16 @@ operators, so the wrappers need no wiring of their own:
 | `add_mult_neg` | `@ComputerRefComponent.Eval.MathPlusExpr: DispatchEval` |
 
 The `open` statement declares no separate table types, so a compiler message about a missing entry
-names the context itself and the full lookup path, such as
-`ComputerComponent`, then `Code`, then `Times<MathExpr>`.
+names the context itself and the full lookup path, such as `ComputerComponent`, then `Code`, then
+`Times<MathExpr>`.
 
 ## Source
 
-- [`contexts/`](https://github.com/contextgeneric/cgp-examples/tree/v0.8.0/expression/src/contexts) —
+- [`contexts/`](https://github.com/contextgeneric/cgp-examples/tree/v0.8.0/expression/src/contexts):
   the wrappers and their keys, one context per file.
 
 ## Public material derived from this
 
-The dispatchers the `expression` example pages of the [cgp-examples project
-section](../../../../website/projects/cgp-examples.md) explain where they first appear, since that
-section carries no reference for demonstration crates.
+The dispatchers the `expression` example pages of the
+[cgp-examples project section](../../../../website/projects/cgp-examples.md) explain where they
+first appear, since that section carries no reference for demonstration crates.
