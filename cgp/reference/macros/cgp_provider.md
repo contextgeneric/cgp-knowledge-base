@@ -1,18 +1,35 @@
 # `#[cgp_provider]`
 
-`#[cgp_provider]` is applied to a provider-trait implementation written directly on a named provider struct, and it auto-generates the matching [`IsProviderFor`](../traits/is_provider_for.md) impl from that implementation's `where` clause.
+`#[cgp_provider]` is applied to a provider-trait implementation written directly on a named provider
+struct, and it generates the matching [`IsProviderFor`](../traits/is_provider_for.md) impl from that
+implementation's `where` clause.
 
 ## Purpose
 
-`#[cgp_provider]` exists to remove the one piece of boilerplate that every hand-written provider impl would otherwise have to repeat: the `IsProviderFor` marker impl. CGP requires that, alongside a provider's implementation of a provider trait, the provider also implement `IsProviderFor<Component, Context, Params>` under exactly the same constraints. This marker is what lets the compiler produce a readable error — naming the missing dependency — when a context's wiring is incomplete, instead of a terse "trait not implemented" message. Writing it by hand means duplicating the impl's generic parameters and entire `where` clause, and keeping the two copies in sync forever.
+`#[cgp_provider]` removes the one piece of boilerplate every hand-written provider impl would
+otherwise repeat: the `IsProviderFor` marker impl. Alongside a provider's implementation of a
+provider trait, CGP requires the provider to implement `IsProviderFor<Component, Context, Params>`
+under exactly the same constraints. This marker is what lets the compiler produce a readable error,
+naming the missing dependency, when a context's wiring is incomplete, instead of a terse "trait not
+implemented" message. Writing it by hand means duplicating the impl's generic parameters and its
+whole `where` clause, and keeping the two copies in sync forever.
 
-`#[cgp_provider]` writes that second impl for you. You write only the real provider impl — `impl AreaCalculator<Context> for RectangleArea where ...` — and the macro emits a copy of it with the body stripped, the trait swapped to `IsProviderFor`, and the same `where` clause preserved. The dependencies are captured automatically and can never drift out of sync, because they are derived from the impl rather than restated.
+`#[cgp_provider]` writes that second impl for you. You write only the real provider impl, such as
+`impl AreaCalculator<Context> for RectangleArea where ...`, and the macro emits a copy of it with the
+body stripped, the trait swapped to `IsProviderFor`, and the same `where` clause preserved. The
+dependencies are captured automatically and can never drift out of sync, because they are derived
+from the impl rather than restated.
 
-This is the form to reach for when you are working in the provider trait's native vocabulary — implementing the provider trait directly, with an explicit `Context` type parameter and a static-method signature that takes `context: &Context` rather than `&self`. It is the lower-level counterpart to [`#[cgp_impl]`](cgp_impl.md), which presents the same implementation in consumer-trait clothing and then desugars down to `#[cgp_provider]`.
+**This is the form for working in the provider trait's native vocabulary**: implementing the
+provider trait directly, with an explicit `Context` type parameter and a static-method signature that
+takes `context: &Context` rather than `&self`. It is the lower-level counterpart to
+[`#[cgp_impl]`](cgp_impl.md), which presents the same implementation in consumer-trait clothing and
+then desugars down to `#[cgp_provider]`.
 
 ## Syntax
 
-`#[cgp_provider]` is applied to an `impl` block that implements a provider trait for a provider struct, and its attribute argument is an optional component type:
+`#[cgp_provider]` is applied to an `impl` block that implements a provider trait for a provider
+struct, and its attribute argument is an optional component type:
 
 ```rust
 #[cgp_provider]
@@ -26,9 +43,17 @@ where
 }
 ```
 
-The impl header is a normal provider-trait impl. The provider trait carries an explicit leading `Context` type parameter, the `Self` type is the provider struct (`RectangleArea`), and methods take the context as an ordinary parameter rather than as a `self` receiver. The provider struct must already exist; `#[cgp_provider]` does not define it. Use [`#[cgp_new_provider]`](cgp_new_provider.md) when you want the struct declared for you.
+The impl header is a normal provider-trait impl. The provider trait carries an explicit leading
+`Context` type parameter, the `Self` type is the provider struct (`RectangleArea`), and methods take
+the context as an ordinary parameter rather than as a `self` receiver. **The provider struct must
+already exist**; `#[cgp_provider]` does not define it. Use
+[`#[cgp_new_provider]`](cgp_new_provider.md) when you want the struct declared for you.
 
-The attribute takes one optional argument, the **component type** used in the generated `IsProviderFor` impl. When omitted, the component defaults to the provider trait's name with a `Component` suffix, so implementing `AreaCalculator` targets `AreaCalculatorComponent`. Pass the component explicitly when the provider trait's name does not follow that convention or when a provider implements a trait under a differently named component:
+The attribute takes one optional argument, the **component type** used in the generated
+`IsProviderFor` impl. When omitted, the component defaults to the provider trait's name with a
+`Component` suffix, so implementing `AreaCalculator` targets `AreaCalculatorComponent`. Pass the
+component explicitly when the provider trait's name does not follow that convention, or when a
+provider implements a trait under a differently named component:
 
 ```rust
 #[cgp_provider(RunnerComponent)]
@@ -52,11 +77,14 @@ CgpProviderArgs -> ComponentType?
 ComponentType   -> Type
 ```
 
-When the argument is omitted the component defaults to the provider trait's name with a `Component` suffix; when present, that `Type` is substituted into the first position of the generated `IsProviderFor` impl. `Type` is the Rust type production.
+When the argument is omitted, the component defaults to the provider trait's name with a `Component`
+suffix; when present, that `Type` is substituted into the first position of the generated
+`IsProviderFor` impl. `Type` is the Rust type production.
 
 ## Expansion
 
-`#[cgp_provider]` emits two items: the provider impl, passed through unchanged, and an `IsProviderFor` impl derived from it. Starting from:
+`#[cgp_provider]` emits two items: the provider impl, passed through unchanged, and an
+`IsProviderFor` impl derived from it. Starting from:
 
 ```rust
 #[cgp_provider]
@@ -93,11 +121,31 @@ where
 {}
 ```
 
-The derived impl is the original impl with its body and associated types removed and its trait replaced. It keeps the same generic parameters (`Context, Code, Input`) and — with one exception below — the same `where` clause, so it holds under precisely the conditions that the provider impl holds. Its trait arguments are assembled from the provider trait's arguments: the first is the **component type** (`ComputerRefComponent`, the default derived from the `ComputerRef` trait name); the second is the **context type**; and the third is the **`Params` tuple** holding everything left over — here `(Code, Input)`. For a provider trait with no arguments beyond the context, the `Params` tuple is the empty `()`.
+**The derived impl is the original impl with its body and associated types removed and its trait
+replaced.** It keeps the same generic parameters (`Context, Code, Input`) and, with one exception
+below, the same `where` clause, so it holds under precisely the conditions that the provider impl
+holds. Its trait arguments are assembled from the provider trait's arguments:
 
-Two rules govern how the argument list is split, and both matter for a provider trait that carries a lifetime. The context is the **first *type* argument** rather than the first argument, because Rust requires lifetime arguments to come first and a lifetime cannot be a context. And a lifetime is **lifted into [`Life<'a>`](../types/life.md)** to take its place in the tuple, since the tuple holds types. So a provider for `ReferenceGetter<'a, Context, T>` — a component declared as `HasReference<'a, T>` — derives `IsProviderFor<ReferenceGetterComponent, Context, (Life<'a>, T)>`, with `'a` lifted and appearing ahead of `T` in the order it was written. The same lifting is what the component's own provider trait does in its `IsProviderFor` supertrait, which is why the two agree.
+1. the **component type** (`ComputerRefComponent`, the default derived from the `ComputerRef` trait
+   name);
+2. the **context type**;
+3. the **`Params` tuple** holding everything left over, here `(Code, Input)`. For a provider trait
+   with no arguments beyond the context, the `Params` tuple is the empty `()`.
 
-**One kind of bound is augmented rather than copied**, and it is the mechanism that keeps a nested provider stack diagnosable. A bound naming *this component's own provider trait* — the inner-provider bound of a [higher-order provider](../../concepts/higher-order-providers.md) — gains its `IsProviderFor` counterpart alongside it, whether it is written in the `where` clause or inline on the impl's type parameter. So
+**Two rules govern how the argument list is split, and both matter for a provider trait that carries
+a lifetime.** The context is the **first *type* argument** rather than the first argument, because
+Rust requires lifetime arguments to come first and a lifetime cannot be a context. And a lifetime is
+**lifted into [`Life<'a>`](../types/life.md)** to take its place in the tuple, since the tuple holds
+types. So a provider for `ReferenceGetter<'a, Context, T>` (a component declared as
+`HasReference<'a, T>`) derives `IsProviderFor<ReferenceGetterComponent, Context, (Life<'a>, T)>`,
+with `'a` lifted and appearing ahead of `T` in the order it was written. The component's own provider
+trait does the same lifting in its `IsProviderFor` supertrait, which is why the two agree.
+
+**One kind of bound is augmented rather than copied, and it is the mechanism that keeps a nested
+provider stack diagnosable.** A bound naming *this component's own provider trait*, the
+inner-provider bound of a [higher-order provider](../../concepts/higher-order-providers.md), gains its
+`IsProviderFor` counterpart alongside it, whether it is written in the `where` clause or inline on
+the impl's type parameter. So
 
 ```rust
 #[cgp_new_provider]
@@ -116,15 +164,37 @@ where
 {}
 ```
 
-That added bound is what carries a requirement from the inner provider outward through the wrapper, so a field missing several layers down still reaches the context where the component is finally checked — and it is why `#[check_providers(...)]` can localize which layer of a stack is broken. Bounds of every other kind are copied verbatim, with no counterpart: an ordinary `Context: Clone` and a consumer-trait bound such as `Context: CanPerimeter` both pass through unchanged.
+That added bound carries a requirement from the inner provider outward through the wrapper, so a
+field missing several layers down still reaches the context where the component is finally checked.
+It is also why `#[check_providers(...)]` can localize which layer of a stack is broken. Bounds of
+every other kind are copied verbatim, with no counterpart: an ordinary `Context: Clone` and a
+consumer-trait bound such as `Context: CanPerimeter` both pass through unchanged.
 
-The component-type argument is the only thing the attribute argument changes. Passing `#[cgp_provider(RunnerComponent)]` substitutes that type into the first position of the `IsProviderFor` impl in place of the default `{Trait}Component`; everything else about the expansion is unchanged.
+The component-type argument is the only thing the attribute argument changes. Passing
+`#[cgp_provider(RunnerComponent)]` substitutes that type into the first position of the
+`IsProviderFor` impl in place of the default `{Trait}Component`; everything else about the expansion
+is unchanged.
 
-Four shapes of input are rejected rather than lowered, each with a message naming what was missing. An **inherent impl** — one with no trait — has no provider trait to read the component and the context out of. It fails with `expect provider trait name to be present` when the component is left to its default, since deriving that default is the first step to need the trait, and with `provider impl should contain trait path` when a component type is given explicitly. A **provider trait carrying no type argument** leaves nothing to serve as the context, and fails with `provider impl should contain trait path containing at least one generic type parameter`. A **const argument** in the provider trait's argument list has no representation in the type-only `Params` tuple, and fails with `const arguments are not supported in provider impl trait arguments` — the argument-position counterpart of the const-generic rejection on [`#[cgp_component]`](cgp_component.md), and unrelated to a const generic on the *provider struct*, which flows through untouched. And an item that is **not an impl** at all is refused by the parser. `#[cgp_new_provider]` shares this stack and rejects the same four.
+**Four shapes of input are rejected rather than lowered**, each with a message naming what was
+missing, and `#[cgp_new_provider]` shares this stack and rejects the same four:
+
+- **An inherent impl**, one with no trait, has no provider trait to read the component and the
+  context out of. It fails with `expect provider trait name to be present` when the component is left
+  to its default, since deriving that default is the first step to need the trait, and with
+  `provider impl should contain trait path` when a component type is given explicitly.
+- **A provider trait carrying no type argument** leaves nothing to serve as the context, and fails
+  with `provider impl should contain trait path containing at least one generic type parameter`.
+- **A const argument** in the provider trait's argument list has no representation in the type-only
+  `Params` tuple, and fails with `const arguments are not supported in provider impl trait arguments`.
+  This is the argument-position counterpart of the const-generic rejection on
+  [`#[cgp_component]`](cgp_component.md), and unrelated to a const generic on the *provider struct*,
+  which flows through untouched.
+- **An item that is not an impl** at all is refused by the parser.
 
 ## Examples
 
-A self-contained provider for the `AreaCalculator` component, with its struct declared separately and its `IsProviderFor` impl generated, shows the construct in context:
+A self-contained provider for the `AreaCalculator` component, with its struct declared separately
+and its `IsProviderFor` impl generated, shows the construct in context:
 
 ```rust
 use cgp::prelude::*;
@@ -153,23 +223,64 @@ where
 }
 ```
 
-The macro expands this into the provider impl above plus `impl<Context> IsProviderFor<AreaCalculatorComponent, Context, ()> for RectangleArea where Context: HasDimensions {}`. A concrete context wires the component to `RectangleArea` exactly as it would for any provider, through [`delegate_components!`](delegate_components.md), and the `IsProviderFor` impl ensures that a context missing the `HasDimensions` dependency produces an error naming that dependency rather than an opaque one.
+The macro expands this into the provider impl above plus
+`impl<Context> IsProviderFor<AreaCalculatorComponent, Context, ()> for RectangleArea where Context: HasDimensions {}`.
+A concrete context wires the component to `RectangleArea` exactly as it would for any provider,
+through [`delegate_components!`](delegate_components.md), and the `IsProviderFor` impl ensures that a
+context missing the `HasDimensions` dependency produces an error naming that dependency rather than
+an opaque one.
 
-In most code, the same provider would be written more concisely with [`#[cgp_impl]`](cgp_impl.md), which lets the body use `self`/`Self` and omit the explicit `Context` parameter. `#[cgp_provider]` is the right choice when you prefer to work directly in the provider trait's own form, or when reading code that another tool or macro has already lowered to that form.
+In most code, the same provider would be written more concisely with [`#[cgp_impl]`](cgp_impl.md),
+which lets the body use `self`/`Self` and omit the explicit `Context` parameter. `#[cgp_provider]` is
+the right choice when you prefer to work directly in the provider trait's own form, or when reading
+code that another tool or macro has already lowered to that form.
 
 ## Related constructs
 
-`#[cgp_provider]` implements a provider trait generated by [`#[cgp_component]`](cgp_component.md). It is the lower-level form that [`#[cgp_impl]`](cgp_impl.md) desugars to; prefer `#[cgp_impl]` for new code and reach for `#[cgp_provider]` when working in the native provider-trait shape. [`#[cgp_new_provider]`](cgp_new_provider.md) behaves identically but also declares the provider struct. The generated [`IsProviderFor`](../traits/is_provider_for.md) impl is the same marker that [`check_components!`](check_components.md) relies on to verify wiring, and a provider is connected to a context through [`delegate_components!`](delegate_components.md).
+`#[cgp_provider]` implements a provider trait generated by [`#[cgp_component]`](cgp_component.md),
+and it relates to these constructs:
+
+- [`#[cgp_impl]`](cgp_impl.md) desugars to it; prefer `#[cgp_impl]` for new code, and reach for
+  `#[cgp_provider]` when working in the native provider-trait shape.
+- [`#[cgp_new_provider]`](cgp_new_provider.md) behaves identically but also declares the provider
+  struct.
+- The generated [`IsProviderFor`](../traits/is_provider_for.md) impl is the same marker
+  [`check_components!`](check_components.md) relies on to verify wiring.
+- [`delegate_components!`](delegate_components.md) connects a provider to a context.
 
 ## Known issues
 
-**The `new` keyword is not part of this attribute's grammar**, even though `#[cgp_impl(new …)]` accepts one and `#[cgp_new_provider]` behaves as though one were given. Writing `#[cgp_provider(new RectangleArea)]` is a parse failure rather than a way to declare the struct: the argument grammar holds a component type alone, and the struct declaration is controlled by *which macro is invoked* rather than by a keyword. Use `#[cgp_new_provider]` to declare the struct.
+**The `new` keyword is not part of this attribute's grammar**, even though `#[cgp_impl(new …)]`
+accepts one and `#[cgp_new_provider]` behaves as though one were given. Writing
+`#[cgp_provider(new RectangleArea)]` is a parse failure rather than a way to declare the struct: the
+argument grammar holds a component type alone, and the struct declaration is controlled by *which
+macro is invoked* rather than by a keyword. Use `#[cgp_new_provider]` to declare the struct.
 
-**A higher-order provider whose component carries a lifetime loses the inner-provider `IsProviderFor` bound.** The augmentation described above finds the context by reading the inner bound's first generic argument, and on a lifetime-carrying provider trait that argument is a lifetime rather than the context — so the rewrite finds nothing to build a counterpart from and leaves the bound alone. A wrapper over `ReferenceGetter<'a, Context, T>` therefore derives `IsProviderFor<ReferenceGetterComponent, Context, (Life<'a>, T)>` with a `where` clause carrying only `Inner: ReferenceGetter<'a, Context, T>`, and no `Inner: IsProviderFor<…>` beside it. The consequence is a weaker diagnostic rather than broken code — the stack still compiles and still works — but a dependency unmet inside the inner provider no longer propagates outward, so [`#[check_providers(...)]`](check_components.md) cannot localize which layer of such a stack is at fault. The correct behavior would be to skip the leading lifetime arguments when locating the context, exactly as the impl's own `IsProviderFor` path already does.
+**A higher-order provider whose component carries a lifetime loses the inner-provider
+`IsProviderFor` bound.** The augmentation described above finds the context by reading the inner
+bound's first generic argument, and on a lifetime-carrying provider trait that argument is a lifetime
+rather than the context, so the rewrite finds nothing to build a counterpart from and leaves the
+bound alone. A wrapper over `ReferenceGetter<'a, Context, T>` therefore derives
+`IsProviderFor<ReferenceGetterComponent, Context, (Life<'a>, T)>` with a `where` clause carrying only
+`Inner: ReferenceGetter<'a, Context, T>`, and no `Inner: IsProviderFor<…>` beside it. The consequence
+is a weaker diagnostic rather than broken code: the stack still compiles and still works, but a
+dependency unmet inside the inner provider no longer propagates outward, so
+[`#[check_providers(...)]`](check_components.md) cannot localize which layer of such a stack is at
+fault. The correct behavior would be to skip the leading lifetime arguments when locating the
+context, exactly as the impl's own `IsProviderFor` path already does.
 
 ## Source
 
-- Entry point: `cgp_provider` in [crates/macros/cgp-macro-lib/src/cgp_provider.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-lib/src/cgp_provider.rs), which parses the optional component argument, lowers the impl, and emits the result.
-- Logic: [crates/macros/cgp-macro-core/src/types/cgp_provider/](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-core/src/types/cgp_provider/) — attribute argument parsing (the optional component type) in `args.rs`; the lowering that derives the component default, the provider struct, and the `IsProviderFor` impl in `item.rs`; the emitted-token assembly in `lower.rs`; and the splitting of provider-trait arguments into context and `Params` tuple in `provider_impl_args.rs`.
-- `IsProviderFor` derivation: [crates/macros/cgp-macro-core/src/types/provider_impl.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/provider_impl.rs).
-- Internal walkthrough (pipeline, generated items, corner cases, and the index of tests and snapshots): [implementation/entrypoints/cgp_provider.md](../../implementation/entrypoints/cgp_provider.md).
+- Entry point: `cgp_provider` in
+  [crates/macros/cgp-macro-lib/src/cgp_provider.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-lib/src/cgp_provider.rs),
+  which parses the optional component argument, lowers the impl, and emits the result.
+- Logic:
+  [crates/macros/cgp-macro-core/src/types/cgp_provider/](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-core/src/types/cgp_provider/):
+  attribute argument parsing (the optional component type) in `args.rs`; the lowering that derives
+  the component default, the provider struct, and the `IsProviderFor` impl in `item.rs`; the
+  emitted-token assembly in `lower.rs`; and the splitting of provider-trait arguments into context
+  and `Params` tuple in `provider_impl_args.rs`.
+- `IsProviderFor` derivation:
+  [crates/macros/cgp-macro-core/src/types/provider_impl.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/provider_impl.rs).
+- Internal walkthrough (pipeline, generated items, corner cases, and the index of tests and
+  snapshots): [implementation/entrypoints/cgp_provider.md](../../implementation/entrypoints/cgp_provider.md).
