@@ -83,7 +83,8 @@ Less than any other release note, but the gaps are real and one of them is easy 
   `#[use_type(HasScalarType.Scalar)]`. This is the single most likely thing to be copied wrong from
   this post, because everything around it still compiles. See
   [`#[use_type]`](../../cgp/reference/attributes/use_type.md) for the current grammar, including the
-  equality form `#[use_type(HasErrorType.{Error = AppError})]` that did not exist here.
+  equality form `#[use_type(HasErrorType.{Error = AppError})]`, which this release shipped with the
+  `::` separator but the post does not show.
 - **Namespaces did not exist yet.** Nothing in the post is wrong for it, but its wiring examples show
   flat `delegate_components!` tables, and a real application would now group them per
   [namespaces](../../cgp/concepts/namespaces.md) and the
@@ -98,10 +99,10 @@ Less than any other release note, but the gaps are real and one of them is easy 
   `Scalar` bare inside its own definition rather than as `Self::Scalar`. It is a slip in the post, not
   a syntax that ever worked.
 - **The post's breaking-change note that owned getter and implicit values "now require `Copy` rather
-  than `Clone`" no longer describes the library.** As of v0.8.0 both read the field by reference and
-  call `.clone()`, so `Clone` is the requirement and a `String` field satisfies an owned `String`
-  argument, as the expansion confirms. Do not carry the `Copy` claim forward into
-  any current page.
+  than `Clone`" never described the published crate.** The release renamed the macro's internal field
+  mode but kept the generated `.clone()` call with no `Copy` bound, so both at this tag and in v0.8.0
+  `Clone` is the requirement and a `String` field satisfies an owned `String` argument; a probe
+  against `cgp` 0.7.0 compiles one. Do not carry the `Copy` claim forward into any current page.
 
 ## Maintaining it
 

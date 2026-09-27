@@ -135,10 +135,12 @@ is the working developer in [readers.md](../../communication-strategy/readers.md
 
 ## Where it diverges from CGP v0.8.0
 
-The code is current (the series was written for v0.7.0 and nothing it uses changed in v0.8.0), and
-one gap is worth knowing. Checking and `cargo-cgp` are covered by `checking.md`, which is on the
-`v0.8.0` branch and not yet on `main`, so the published series still omits both.
+The code is current (the series was written for v0.7.0 and nothing it uses changed in v0.8.0).
+Checking and `cargo-cgp` are covered by `checking.md`, which is on the `v0.8.0` branch and not yet
+on `main`, so the published series still omits both. Two smaller points are worth knowing:
 
+- **Context-Generic Functions says an owned implicit argument needs `Copy`** on the live site; the
+  expansion calls `.clone()`, so `Clone` is the requirement, and the `v0.8.0` branch's page says so.
 - **`#[cgp_impl]` appears in both forms.** Static Dispatch first shows
   `impl<Context> AreaCalculator for Context where Self: RectangleArea` and then simplifies to
   `impl AreaCalculator`. That is pedagogically deliberate, but only the second form is idiomatic per

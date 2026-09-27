@@ -39,6 +39,7 @@ the [`cgp`](https://github.com/contextgeneric/cgp) source at the relevant tag.
 | `DelegateTo` | [v0.2.0](v0-2-0.md) | Renamed `UseDelegate` within [v0.2.0](v0-2-0.md) |
 | `symbol!` (lowercase) | [v0.2.0](v0-2-0.md) | Renamed `Symbol!` in [v0.5.0](v0-5-0.md) |
 | `cgp_type!` (function macro) | [v0.3.0](v0-3-0.md) | Became the `#[cgp_type]` attribute in [v0.4.0](v0-4-0.md) |
+| `ErrorTypeComponent` / `ProvideErrorType` | [v0.3.0](v0-3-0.md) | Renamed `ErrorTypeProviderComponent` / `ErrorTypeProvider` in [v0.4.0](v0-4-0.md) |
 | `HasAsyncErrorType`, `CanRaiseAsyncError`, `CanWrapAsyncError` | [v0.3.0](v0-3-0.md)/[v0.3.1](v0-3-1.md) | Removed in [v0.5.0](v0-5-0.md) with `Async` |
 | `HasComponents` | pre-[v0.4.0](v0-4-0.md) | Renamed `HasProvider` then `HasCgpProvider` in [v0.4.0](v0-4-0.md), removed in [v0.6.0](v0-6-0.md) |
 | `#[trait_alias]` | [v0.4.0](v0-4-0.md) | Renamed `#[blanket_trait]` within [v0.4.0](v0-4-0.md) |
@@ -72,32 +73,32 @@ to [`#[implicit]`](../cgp/reference/attributes/implicit.md) arguments in [v0.7.0
 Twelve documents, oldest first. Each names its git tag and date, links to its announcement post and
 that post's [internal document](../website/blog/README.md), and closes with what still stands.
 
-- [v0.1.0](v0-1-0.md) — 2 September 2024. The first publication to crates.io, three months before the
+- [v0.1.0](v0-1-0.md): 2 September 2024. The first publication to crates.io, three months before the
   paradigm was announced. Components, wiring, fields, and errors are all recognizably present under
   older names.
-- [v0.2.0](v0-2-0.md) — 8 December 2024. The pre-launch cleanup: `#[derive_component]` becomes
+- [v0.2.0](v0-2-0.md): 8 December 2024. The pre-launch cleanup: `#[derive_component]` becomes
   `#[cgp_component]`, and the type-level vocabulary (`Cons`/`Nil`, `Either`/`Void`, `Field`,
   `Product!`, `Sum!`) arrives essentially in its final form.
-- [v0.3.0](v0-3-0.md) — 8 January 2025. The first release after the public launch: abstract types,
+- [v0.3.0](v0-3-0.md): 8 January 2025. The first release after the public launch: abstract types,
   the getter macros, `CanWrapError`, and the error and runtime crates.
-- [v0.3.1](v0-3-1.md) — 16 January 2025. A patch release adding the async error aliases, all of which
+- [v0.3.1](v0-3-1.md): 16 January 2025. A patch release adding the async error aliases, all of which
   were removed two releases later.
-- [v0.4.0](v0-4-0.md) — 9 May 2025. The release that made CGP debuggable, and the largest by change
+- [v0.4.0](v0-4-0.md): 9 May 2025. The release that made CGP debuggable, and the largest by change
   count: `IsProviderFor`, `check_components!`, presets, `#[cgp_context]`, and the first
   datatype-generic support.
-- [v0.4.1](v0-4-1.md) — 14 June 2025. The `cgp-handler` crate, introducing the computation family
+- [v0.4.1](v0-4-1.md): 14 June 2025. The `cgp-handler` crate, introducing the computation family
   that most of CGP's later abstractions are built on.
-- [v0.4.2](v0-4-2.md) — 7 July 2025. Extensible records and variants: the builder and visitor
+- [v0.4.2](v0-4-2.md): 7 July 2025. Extensible records and variants: the builder and visitor
   patterns, and safe enum upcasting and downcasting.
-- [v0.5.0](v0-5-0.md) — 12 October 2025. The stabilization release: `#[derive(CgpData)]`,
+- [v0.5.0](v0-5-0.md): 12 October 2025. The stabilization release: `#[derive(CgpData)]`,
   `#[cgp_auto_dispatch]`, monadic computation, and the removal of the `Async` trait.
-- [v0.6.0](v0-6-0.md) — 26 October 2025. `#[cgp_impl]` and direct delegation on the context, which
+- [v0.6.0](v0-6-0.md): 26 October 2025. `#[cgp_impl]` and direct delegation on the context, which
   together are why current CGP reads like ordinary Rust.
-- [v0.6.1](v0-6-1.md) — 1 February 2026. Implicit context types, `#[check_providers]`, and associated
+- [v0.6.1](v0-6-1.md): 1 February 2026. Implicit context types, `#[check_providers]`, and associated
   types in getter traits.
-- [v0.7.0](v0-7-0.md) — 28 February 2026. The ergonomics release: `#[cgp_fn]`, `#[implicit]`,
+- [v0.7.0](v0-7-0.md): 28 February 2026. The ergonomics release: `#[cgp_fn]`, `#[implicit]`,
   `#[uses]`, `#[extend]`, `#[use_provider]`, `#[use_type]`, and the removal of `#[cgp_context]`.
-- [v0.8.0](v0-8-0.md) — **unreleased**, in development at `0.8.0-alpha`. Namespaces and paths, the
+- [v0.8.0](v0-8-0.md): **unreleased**, in development at `0.8.0-alpha`. Namespaces and paths, the
   `open` statement, the removal of presets, and the adoption of `cargo-cgp`.
 
 There is **no v0.7.1**. It was planned as a minor namespace release, grew past that, and was
@@ -112,12 +113,14 @@ published version. The pre-release tags (`v0.4.1-alpha`, the four `v0.5.0` betas
 shipped in.
 
 Every claim in these documents is verified against the tag rather than taken from a summary, because
-the summaries disagree with the code in at least two places. The repository's
+the summaries disagree with the code in at least three places. The repository's
 [CHANGELOG.md](https://github.com/contextgeneric/cgp/blob/main/CHANGELOG.md) heads its most recent
 entry **"v0.6.2 (2026-03-01)"** for work that actually shipped as **v0.7.0 on 2026-02-28**: the
 release was renumbered when its breaking changes were counted, and the heading was never updated. And
 that same changelog credits v0.5.0 with a `MatchStr` trait that had already been deleted before the
-tag was cut. Read the changelog for the shape of a release and the tagged source for what it contains.
+tag was cut. And both the changelog and the v0.7.0 announcement say owned getter and implicit values
+require `Copy` from that release, while the published macro still calls `.clone()` with no `Copy`
+bound. Read the changelog for the shape of a release and the tagged source for what it contains.
 
 ## Adding a release document
 

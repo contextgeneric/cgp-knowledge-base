@@ -863,7 +863,7 @@ it stale.
 ## `releases/`: the version history
 
 - [releases/README.md](releases/README.md) — why the base keeps one historical section, the **removal
-  ledger** dating every renamed or deleted construct, the catalog of releases, and the two places the
+  ledger** dating every renamed or deleted construct, the catalog of releases, and the three places the
   upstream changelog disagrees with the tags.
 - [v0-1-0.md](releases/v0-1-0.md) — 2024-09-02, the first crates.io publication, predating the public
   announcement; every idea present, almost every name since changed.
