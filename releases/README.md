@@ -1,7 +1,7 @@
 # CGP release history
 
-This directory holds one document per official CGP release: what it introduced, what it broke, and —
-the question the whole section exists to answer: **how much of it still stands today**. A construct
+This directory holds one document per official CGP release: what it introduced, what it broke, and
+**how much of it still stands today**, which is the question the whole section exists to answer. A construct
 that shipped in v0.3.0 may be current, may have been renamed twice, or may have been deleted
 outright, and an agent reading old code, an old blog post, or an old book chapter needs to know which
 before it can interpret what it is looking at.
@@ -20,7 +20,7 @@ answer lives.
 
 So this section is the base's one sanctioned home for the historical view. The rule elsewhere is
 unchanged: a reference document still describes only current behavior, and a construct that no longer
-exists is deleted from it rather than annotated. What a release document adds is the **timeline** —
+exists is deleted from it rather than annotated. What a release document adds is the **timeline**:
 when a construct arrived, what it was called at each point, and where it went.
 
 ## The removal ledger

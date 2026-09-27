@@ -15,7 +15,7 @@ Three things must line up for a check to run, and each is a place a failure can 
 **front-end** (`cargo-cgp`) is the cargo subcommand you invoke; it locates the **driver**
 (`cargo-cgp-driver`) as a sibling in the same directory (or via the `CARGO_CGP_DRIVER` override) and
 wires it in as cargo's compiler wrapper. The driver links the compiler's internal `librustc_driver`
-dynamically, so that library — belonging to the **pinned nightly** the driver was built against —
+dynamically, so that library, belonging to the **pinned nightly** the driver was built against,
 must be on the loader's search path when the driver runs, and the sysroot handed to it must belong
 to that same nightly. The full contract is in
 [Executable structure](../implementation/executable-structure.md#the-environment-contract); the
@@ -33,7 +33,7 @@ load test:
 cargo-cgp-driver --version
 ```
 
-If that fails, the problem is the driver or its library path, not the front-end — jump to
+If that fails, the problem is the driver or its library path, not the front-end; jump to
 [The driver cannot load the compiler library](#the-driver-cannot-load-the-compiler-library). If it
 succeeds, run the check verbosely to see exactly how the front-end invokes the driver and where it
 stops:
@@ -42,7 +42,7 @@ stops:
 cargo cgp check -v
 ```
 
-The `Running` lines — each showing a `cargo-cgp-driver … rustc …` command — are the driver being
+The `Running` lines, each showing a `cargo-cgp-driver … rustc …` command, are the driver being
 called; an error before them is a front-end or preflight problem, and an error from one of them is a
 driver or compiler problem. [Usage](usage.md#calling-the-driver-directly-debugging) covers running that printed command
 in isolation.
@@ -58,7 +58,7 @@ cargo-cgp: unknown cargo-cgp subcommand `frobnicate` (expected `check`, `setup`,
 ```
 
 The fix is to use `check`, `setup`, or `update`. Note that `cargo cgp check` reaches the same
-entrypoint as a direct `cargo-cgp check` — cargo inserts the `cgp` token, which the front-end strips.
+entrypoint as a direct `cargo-cgp check`: cargo inserts the `cgp` token, which the front-end strips.
 
 If the check runs outside a cargo package, the error comes from cargo, not `cargo-cgp`, because the
 front-end forwards to `cargo check`:
@@ -77,7 +77,7 @@ failed to run `cargo check` (is cargo on PATH?)
 ## The front-end cannot find the driver
 
 The front-end expects the driver beside it, so a driver that is missing, or a `CARGO_CGP_DRIVER`
-override pointing at the wrong path, fails at the point the driver would be launched — but the message
+override pointing at the wrong path, fails at the point the driver would be launched, but the message
 differs by mode. In **managed** mode the preflight catches it first and names `cargo cgp setup`:
 
 ```text
@@ -86,7 +86,7 @@ cargo-cgp: failed to run the cargo-cgp-driver at /path/to/cargo-cgp-driver: No s
 Run `cargo cgp setup`.
 ```
 
-In **unmanaged** mode (`CARGO_CGP_NO_MANAGE` set — the from-source and Nix paths) there is no
+In **unmanaged** mode (`CARGO_CGP_NO_MANAGE` set, as on the from-source and Nix paths) there is no
 preflight, so the bad path reaches cargo, which reports it as a wrapper it could not execute:
 
 ```text
@@ -115,7 +115,7 @@ The driver links `librustc_driver-<hash>.so` from the pinned nightly, and the `<
 build time to that exact nightly. The error means the loader cannot find *that* library, which has one
 of two causes.
 
-The first cause is that **the library path is simply not set** — you ran the driver directly without
+The first cause is that **the library path is simply not set**: you ran the driver directly without
 the search-path setup the front-end normally provides. A Nix-built driver has the path baked into its
 wrapper and does not hit this; a from-source driver run by hand does. Provide the pinned toolchain's
 `lib` directory on the loader path (`DYLD_FALLBACK_LIBRARY_PATH` on macOS, `LD_LIBRARY_PATH`
@@ -129,7 +129,7 @@ LD_LIBRARY_PATH=$SYSROOT/lib cargo-cgp-driver --version
 The second cause is a **toolchain mismatch**: the library path is set, but to a *different* toolchain
 than the one the driver was built against, so the exact `librustc_driver-<hash>.so` is absent from it.
 This is what happens when an unmanaged check runs under a toolchain that is not the driver's pinned
-nightly — the driver embeds, say, `nightly-2026-09-14`, but the ambient toolchain is `stable`, so cargo's
+nightly: the driver embeds, say, `nightly-2026-09-14`, but the ambient toolchain is `stable`, so cargo's
 first probe of the wrapper aborts:
 
 ```text
@@ -160,14 +160,14 @@ The distinctive part is that the *same command run by hand succeeds*, and that i
 projects. Both follow from one cause: **a foreign toolchain's library directory reaching the Nix
 toolchain's binaries.** Invoked as `cargo cgp check`, the entry point is rustup's `cargo` shim, which
 exports the project's active toolchain's `lib` directory on the loader path for everything it
-spawns — including the Nix `cargo-cgp`, and in turn the Nix `rustc` it probes. The loader searches
+spawns, including the Nix `cargo-cgp`, and in turn the Nix `rustc` it probes. The loader searches
 that directory ahead of the binary's own `RUNPATH`.
 
 Whether that matters depends on the project, because a rustc shared library is named for its Rust
 version rather than by a content hash. A project on a *different* version is harmless: its
 `libLLVM.so.21.1-rust-1.91.1-stable` collides with nothing. A project pinning the **same** version as
 the tool's own nightly is not: rustup's `libLLVM.so.22.1-rust-1.99.0-nightly` has exactly the name the
-Nix `rustc` is looking for, so it is loaded instead — and being an FHS build, it then wants a system
+Nix `rustc` is looking for, so it is loaded instead, and being an FHS build it then wants a system
 `libz.so.1` the Nix loader cannot resolve. So the failure appears in whichever project happens to
 track the same Rust version as the tool, which is the *opposite* of the intuition that a closely
 matched toolchain is the safe case.
@@ -175,7 +175,7 @@ matched toolchain is the safe case.
 The fix ships in the flake, whose wrapper prefixes the pinned toolchain's `lib` so its own libraries
 win that lookup; upgrade the installed tool (`nix profile upgrade cargo-cgp`, or remove and re-add it)
 and the probe resolves the Nix copy again. To confirm the diagnosis on an un-upgraded install, run the
-probe with the toolchain's own `lib` in front — it should succeed where the bare command failed:
+probe with the toolchain's own `lib` in front; it should succeed where the bare command failed:
 
 ```sh
 NIX_RUSTC=/nix/store/…-rust-minimal-…/bin/rustc
@@ -184,7 +184,7 @@ LD_LIBRARY_PATH=$(dirname "$NIX_RUSTC")/../lib "$NIX_RUSTC" --print sysroot
 
 A rustup-managed (non-Nix) install does not hit this. Its probe runs rustup's own `rustc` shim, which
 sets the library path to the toolchain being queried, and the front-end then *prepends* the pinned
-sysroot's `lib` for the driver — so the pinned toolchain wins every lookup by construction.
+sysroot's `lib` for the driver, so the pinned toolchain wins every lookup by construction.
 
 ## The managed preflight rejects the setup
 
@@ -201,8 +201,8 @@ cargo-cgp: toolchain `nightly-2026-09-14` is not available (exit status: 1)
 The pinned toolchain is not installed. Run `cargo cgp setup`.
 ```
 
-If the toolchain is present but the driver cannot run under it — almost always a driver built against
-a *different* nightly than the one now installed — the preflight reports the load failure as a driver
+If the toolchain is present but the driver cannot run under it (almost always a driver built against
+a *different* nightly than the one now installed), the preflight reports the load failure as a driver
 problem, having already confirmed the toolchain exists:
 
 ```text
@@ -210,7 +210,7 @@ cargo-cgp: the cargo-cgp-driver could not run under toolchain `nightly-2026-09-1
 ```
 
 If the driver runs but reports a version or a build identity that does not match, the two are out of
-lockstep — a partial upgrade, or a stale binary earlier on `PATH`:
+lockstep: a partial upgrade, or a stale binary earlier on `PATH`:
 
 ```text
 the installed cargo-cgp-driver is version 0.1.0, but this cargo-cgp is 0.2.0 (the two are out of lockstep)
@@ -227,7 +227,7 @@ Run `cargo cgp setup`.
 Every one of these is resolved by `cargo cgp setup`, which reinstalls the pinned toolchain and
 rebuilds the driver against it at the front-end's own version. If you are deliberately running an
 unprovisioned build (from source, or a hand-picked toolchain), set `CARGO_CGP_NO_MANAGE` to skip the
-preflight and trust the environment instead — but then the toolchain-match responsibility is yours,
+preflight and trust the environment instead, but then the toolchain-match responsibility is yours,
 per the section above.
 
 ## Provisioning fails

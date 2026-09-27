@@ -2,21 +2,21 @@
 
 `cargo-cgp` assigns a stable error code to every main message it rewrites into a CGP-specific one and
 to every entry of the dependency tree it renders, and this document is the catalog of those codes. A
-code names one recognized class of CGP mistake or one dependency-chain step — what it means, what
-triggers it, and how to fix it — so that a reader who sees a code in the tool's output can look it up
+code names one recognized class of CGP mistake or one dependency-chain step (what it means, what
+triggers it, and how to fix it) so that a reader who sees a code in the tool's output can look it up
 here, and so that the tool's own tests and future JSON output can refer to a class by a short, stable
 identifier rather than by its prose.
 
 The three-digit space is split by *what* a code classifies. The **`CGP-E0xx`** range names **main
-messages** — the diagnostic's headline. The **`CGP-E1xx`** range names **dependency-tree entries** —
+messages**: the diagnostic's headline. The **`CGP-E1xx`** range names **dependency-tree entries**:
 each node of a `root cause:` note's `cargo tree`, one code per distinct rendering template. Keeping
 the ranges apart lets a reader tell at a glance whether a code tags the error's headline or one hop of
 the chain beneath it.
 
 ## The scheme, and why it looks unlike a Rust code
 
-A CGP error code is the letters `CGP-E` followed by three digits — `CGP-E001`, `CGP-E002`, and so
-on — shown in square brackets at the start of the rewritten main message:
+A CGP error code is the letters `CGP-E` followed by three digits (`CGP-E001`, `CGP-E002`, and so
+on) shown in square brackets at the start of the rewritten main message:
 
 ```text
 error[E0277]: [CGP-E001] the consumer trait `CanCalculateArea` is not implemented for context `Rectangle`
@@ -24,7 +24,7 @@ error[E0277]: [CGP-E001] the consumer trait `CanCalculateArea` is not implemente
 
 The `CGP-E` prefix is deliberately unlike Rust's own `E0277` shape, so a reader never mistakes one
 namespace for the other: `E0277` is a Rust code you explain with `rustc --explain`, while
-`[CGP-E001]` is a CGP code you look up here. The two coexist on the same line by design — **the
+`[CGP-E001]` is a CGP code you look up here. The two coexist on the same line by design: **the
 diagnostic's own Rust code is always kept**. A rewritten message restates the same error more
 readably; it does not reclassify the error away from rustc, so `error[E0277]:` (or `error[E0599]:`
 at a consumer-call use site, or `error[E0271]:` at a field-type mismatch) stays in the header, the
@@ -36,12 +36,12 @@ confirming a class need only search the output for `CGP-E001`.
 
 A code is assigned only when two things are both true: `cargo-cgp` **rewrote the main message**,
 and that main message was **identified as a class of CGP error**. The rewrite preserves the
-semantics of the original message — an unsatisfied `CanUseComponent<AreaCalculatorComponent>` bound
-*is* the consumer trait `CanCalculateArea` failing to be implemented — and the code is the handle
+semantics of the original message (an unsatisfied `CanUseComponent<AreaCalculatorComponent>` bound
+*is* the consumer trait `CanCalculateArea` failing to be implemented) and the code is the handle
 for the class it was recognized as.
 
 Everything else is uncoded by design. A diagnostic whose main message is not a CGP class keeps
-rustc's own message and plain `error[E0277]:` header even when its *sub-messages* were rewritten —
+rustc's own message and plain `error[E0277]:` header even when its *sub-messages* were rewritten;
 the root-cause notes, renamed obligation chains, and resugared type names are supporting detail of
 one error, not classifications of their own. The [uncoded rewrites](#uncoded-rewrites) section
 below records each such rewrite, so the absence of a code on them is documented rather than merely
@@ -51,9 +51,9 @@ implied.
 
 The catalog today holds the classes the driver's emitter recognizes in a main message, in five
 groups. The **check-failure** codes `CGP-E001`–`CGP-E003`, `CGP-E009`, and `CGP-E017` come from the
-typed resolver; each carries the root cause in the accompanying `note`s — one per recovered cause,
+typed resolver; each carries the root cause in the accompanying `note`s, one per recovered cause,
 each opening `root cause: …` over its dependency chain (see
-[Typed root-cause resolution](implementation/typed-root-cause-resolution.md)) — except the two
+[Typed root-cause resolution](implementation/typed-root-cause-resolution.md)), except the two
 mismatch codes `CGP-E003` and `CGP-E017`, whose main messages already state their cause in full and
 so carry the chain alone. (`CGP-E009` is the check-failure code for a hand-written wrapper trait
 rather than a CGP consumer, and `CGP-E017` the abstract-type counterpart of `CGP-E003`; both are
@@ -77,38 +77,38 @@ consumer trait rather than the provider trait. Each entry below gives the rewrit
 mistake behind it, the fix, and the [CGP error catalog](../cgp/errors/README.md) class it
 recognizes.
 
-### `CGP-E001` — consumer trait not implemented
+### `CGP-E001`: consumer trait not implemented
 
 - **Message:** `` [CGP-E001] the consumer trait `<Consumer>` is not implemented for context
   `<Context>` `` (pluralized when a use-site failure spans several components).
-- **Means:** the context cannot use a component it is expected to use — the wiring is missing,
+- **Means:** the context cannot use a component it is expected to use: the wiring is missing,
   or a transitive dependency of the wired provider is unmet, so the blanket impl that would give
   the context its consumer trait does not apply.
-- **Triggered by:** an unsatisfied `Context: CanUseComponent<Marker, Params>` bound — a
-  `check_components!` / `delegate_and_check_components!` entry failing — or a consumer-method call
+- **Triggered by:** an unsatisfied `Context: CanUseComponent<Marker, Params>` bound, a
+  `check_components!` / `delegate_and_check_components!` entry failing, or a consumer-method call
   (`E0599`) on a context that cannot use a component it wires. The Rust code stays whatever rustc
   assigned (`E0277` at a check, `E0599` at a call site).
 - **Fix:** follow the `root cause:` note(s): add the missing field or derive, wire the missing
   component, or satisfy the ordinary bound the chain bottoms out on.
 - **Upstream class:** [check-trait failure](../cgp/errors/checks/check-trait-failure.md).
 
-### `CGP-E002` — provider trait not implemented
+### `CGP-E002`: provider trait not implemented
 
 - **Message:** `` [CGP-E002] the provider trait `<Provider trait>` with context `<Context>` is not
   implemented for provider `<Provider>` ``.
-- **Means:** a specific provider fails to implement its provider trait for the context — its
-  impl-side `where`-clause dependencies do not hold — as asserted by `IsProviderFor`.
-- **Triggered by:** an unsatisfied `Provider: IsProviderFor<Marker, Context, Params>` bound — a
+- **Means:** a specific provider fails to implement its provider trait for the context: its
+  impl-side `where`-clause dependencies do not hold, as asserted by `IsProviderFor`.
+- **Triggered by:** an unsatisfied `Provider: IsProviderFor<Marker, Context, Params>` bound, a
   `#[check_providers(...)]` assertion, or a wiring step (such as a namespace `RedirectLookup`)
   whose provider-side failure rustc chose as the primary error.
 - **Fix:** follow the `root cause:` note(s) to the dependency the provider is missing.
 - **Upstream class:** [check-trait failure](../cgp/errors/checks/check-trait-failure.md)
   (its provider-side face).
 
-### `CGP-E003` — field has the wrong type
+### `CGP-E003`: field has the wrong type
 
 - **Message:** `` [CGP-E003] expected a `<field>` field of type `<expected>` on `<Context>`, but
-  found `<actual>` `` — with `` `<expected>` (`<normalized>`) `` in place of `` `<expected>` ``
+  found `<actual>` ``, with `` `<expected>` (`<normalized>`) `` in place of `` `<expected>` ``
   when the required type projects through the context's own wiring (below).
 - **Means:** a context field the wiring reads is present and derives `HasField`, but its type is
   not the type a provider needs. The `HasField<Symbol!("<field>")>` trait bound holds; only the
@@ -116,19 +116,19 @@ recognizes.
   fails. The expected type is read from the failing projection, and the actual type is queried from
   the struct itself (by `DefId`, so a same-named struct in another module is never read).
 - **The required type is shown in both forms when they differ.** A provider reading a field whose
-  type is expressed through an [abstract type](../cgp/concepts/abstract-types.md) it imports —
-  `#[implicit] database: &Pool<Db>` under `#[use_type(HasDbType.Db)]` — requires
+  type is expressed through an [abstract type](../cgp/concepts/abstract-types.md) it imports
+  (`#[implicit] database: &Pool<Db>` under `#[use_type(HasDbType.Db)]`) requires
   `Pool<<Context as HasDbType>::Db>`, a projection through the context's own wiring rather than a
   constant. The message keeps that un-normalized form, because it names *where* the requirement comes
   from and points the reader at the wiring entry, and appends what it reduces to in parentheses,
   because that is what the reader compares against the field:
   `` expected a `database` field of type `Pool<<App as HasDbType>::Db>` (`Pool<Postgres>`) on `App`, but found `Pool<Sqlite>` ``.
-  Neither form alone is enough — the projection does not say what it resolves to, and the reduction
-  does not say where it came from — so both are carried. A required type that is already concrete
+  Neither form alone is enough: the projection does not say what it resolves to, and the reduction
+  does not say where it came from, so both are carried. A required type that is already concrete
   normalizes to itself and gets no parenthetical.
 - **Triggered by:** a `` type mismatch resolving `<Context as HasField<Symbol!("<field>")>>::Value == <expected>` ``
   (`E0271`) that the typed resolver traced through CGP wiring to a `HasField`
-  projection — a `check_components!` entry whose provider reads the field with the wrong type. The
+  projection, a `check_components!` entry whose provider reads the field with the wrong type. The
   Rust code stays `E0271`.
 - **Fix:** change the field's type on the struct to the expected type (or change the provider to
   accept the actual type). The accompanying `note` shows the dependency chain the field is read
@@ -136,18 +136,18 @@ recognizes.
 - **Upstream class:** [check-trait failure](../cgp/errors/checks/check-trait-failure.md)
   (its projection-mismatch face).
 
-### `CGP-E017` — abstract type has the wrong type
+### `CGP-E017`: abstract type has the wrong type
 
 - **Message:** `` [CGP-E017] expected the abstract type `<assoc>` of `<Trait>` on `<Owner>` to be
-  `<expected>`, but found `<actual>` `` — reading `associated type` in place of `abstract type` when
+  `<expected>`, but found `<actual>` ``, reading `associated type` in place of `abstract type` when
   the trait is not a CGP abstract-type component.
 - **Means:** the owner supplies one concrete type for an associated type while a provider the wiring
   reaches requires another. The archetype is a CGP
   [abstract type](../cgp/concepts/abstract-types.md): a
   context binds `HasErrorType::Error` by wiring `ErrorTypeProviderComponent` to `UseType<String>`,
   while a provider pins the same type with `#[use_type(HasErrorType.{Error = AppError})]`. As with
-  [`CGP-E003`](#cgp-e003--field-has-the-wrong-type), the trait bound itself holds — the context *does*
-  implement `HasErrorType` — and only the associated-type projection
+  [`CGP-E003`](#cgp-e003-field-has-the-wrong-type), the trait bound itself holds: the context *does*
+  implement `HasErrorType`, and only the associated-type projection
   `<Ctx as HasErrorType>::Error == AppError` fails. The expected type is read from the failing
   projection, and the actual type by normalizing the projection, so a `UseType<T>` wiring and a
   hand-written `impl HasErrorType for Ctx` are read the same way.
@@ -155,14 +155,14 @@ recognizes.
   typed resolver traced through CGP wiring to a projection other than `HasField`'s. The Rust code
   stays `E0271`.
 - **The required type is shown in both forms when they differ,** on the same rule as
-  [`CGP-E003`](#cgp-e003--field-has-the-wrong-type). A provider can pin an abstract type to a type that
-  *projects through another one* — `#[use_type(HasDbType.Db, HasTransactionType.{Transaction = Tx<Db>})]`
-  requires `Tx<<App as HasDbType>::Db>` — so the message keeps that form, which names the wiring the
+  [`CGP-E003`](#cgp-e003-field-has-the-wrong-type). A provider can pin an abstract type to a type that
+  *projects through another one* (`#[use_type(HasDbType.Db, HasTransactionType.{Transaction = Tx<Db>})]`
+  requires `Tx<<App as HasDbType>::Db>`) so the message keeps that form, which names the wiring the
   requirement flows from, and appends what it reduces to: `` to be `Tx<<App as HasDbType>::Db>`
   (`Tx<Postgres>`) ``. A pin to a concrete type normalizes to itself and gets no parenthetical.
-- **Fix:** reconcile the two sides. For a `#[cgp_type]` component a `help` names both ways —
+- **Fix:** reconcile the two sides. For a `#[cgp_type]` component a `help` names both ways:
   `` wire `<Marker>` to `UseType<<expected>>` in the wiring for `<Owner>`, or change the provider to
-  work with `<actual>` `` — with the component marker recovered from the trait, so the reader is
+  work with `<actual>` ``, with the component marker recovered from the trait, so the reader is
   pointed at the wiring entry rather than left to find it. **The `help` uses the *reduced* type where
   the header uses both**, because it prescribes an edit the reader types rather than describing the
   requirement: `` UseType<Tx<Postgres>> `` is a wiring entry, while `` UseType<Tx<<App as HasDbType>::Db>> ``
@@ -171,69 +171,69 @@ recognizes.
 - **Upstream class:** [check-trait failure](../cgp/errors/checks/check-trait-failure.md)
   (its abstract-type projection-mismatch face).
 
-### `CGP-E004`–`CGP-E008` — the duplicate-key wiring-conflict family
+### `CGP-E004`–`CGP-E008`: the duplicate-key wiring-conflict family
 
-These five codes all rewrite the same underlying failure — an `E0119` conflicting-implementation
+These five codes all rewrite the same underlying failure: an `E0119` conflicting-implementation
 error on a wiring entry's impls, produced when a `delegate_components!` block wires one key (or
 overlapping keys) more than once, or when two namespace entries claim one key (whose conflict lands
 on the namespace's own lookup trait rather than `DelegateComponent`, and where an entry may come
 from a `cgp_namespace!` body, a provider's `#[default_impl(… in …)]`, or the inheritance blanket a
 `new Child: Parent` header emits). A generated
-pair's redundant `IsProviderFor` half is always suppressed — including the pair a duplicate
-*provider* definition produces, where the surviving conflict is on the provider trait itself — and
+pair's redundant `IsProviderFor` half is always suppressed, including the pair a duplicate
+*provider* definition produces, where the surviving conflict is on the provider trait itself, and
 the Rust code stays `E0119`. What differs, and why each has its own code, is the shape of the
-collision — and so the message and the fix. In every case an `@`-path key renders in
+collision, and so the message and the fix. In every case an `@`-path key renders in
 bare `@a.b.*` notation (no `Path!(…)` wrapper), and the upstream reference is
 [conflicting wiring](../cgp/errors/wiring/conflicting-wiring.md) with its two namespace faces
 [overlapping namespace forwarding](../cgp/errors/wiring/namespace-forwarding-conflict.md) and
 [namespace override conflict](../cgp/errors/wiring/namespace-override-conflict.md).
 
-- **`CGP-E004` — duplicate wiring.** `` [CGP-E004] duplicate wiring for <key> on `<Context>` `` — the
+- **`CGP-E004`: duplicate wiring.** `` [CGP-E004] duplicate wiring for <key> on `<Context>` ``: the
   same key mapped twice. The key is a component marker, an `@`-path, or an ordinary type (a per-type
   default's `String`), each worded as what it is; the subject is the context, or the namespace
   lookup trait when the collision is inside a namespace
   (`` on `DefaultImpls1<ShowImplComponent>` ``). **Fix:** remove one of the two entries the carets
   point at.
-- **`CGP-E005` — overlapping wiring.** `` [CGP-E005] `<Context>` cannot wire <key> that is already
-  set through <source> `` — two distinct but overlapping keys, where one cannot claim what the other
+- **`CGP-E005`: overlapping wiring.** `` [CGP-E005] `<Context>` cannot wire <key> that is already
+  set through <source> ``: two distinct but overlapping keys, where one cannot claim what the other
   already covers (a generic entry over a specific one, an `@`-path over a namespace forwarding, or a
   path that covers another, as a prefix or through a generic segment rendered `*`). A child namespace redefining a key it inherits takes this code
   too, with the namespace as the subject and the parent as the source. **Fix:** remove or narrow the
   overlapping entry. (A key the namespace resolves to a *redirect* is `CGP-E007` instead.)
-- **`CGP-E006` — multiple namespaces.** `` [CGP-E006] only one namespace can be used for each target
-  type in `delegate_components!`, but `<Context>` uses both `<A>` and `<B>` `` — two blanket
+- **`CGP-E006`: multiple namespaces.** `` [CGP-E006] only one namespace can be used for each target
+  type in `delegate_components!`, but `<Context>` uses both `<A>` and `<B>` ``: two blanket
   forwardings that each cover every key, from joining two namespaces (or a namespace plus a bare-key
   `for` loop, which desugars the same way). **Fix:** join one namespace and inherit the others into
   it, or move a bare `for` key into a path.
-- **`CGP-E007` — redirect collision.** `` [CGP-E007] <component> on `<Context>` is redirected to
-  `<path>` `` — a direct wiring that collides with a redirect of the same key: an `open` header, an
-  explicit `=>` redirect, a `namespace` join that maps the key to a redirected path, or — with a
-  namespace as the subject — a namespace binding a key its *inherited parent* redirects, the shape a
+- **`CGP-E007`: redirect collision.** `` [CGP-E007] <component> on `<Context>` is redirected to
+  `<path>` ``: a direct wiring that collides with a redirect of the same key: an `open` header, an
+  explicit `=>` redirect, a `namespace` join that maps the key to a redirected path, or, with a
+  namespace as the subject, a namespace binding a key its *inherited parent* redirects, the shape a
   bare marker key produces for a component carrying a `#[prefix(...)]`. The last two are recovered
   by normalizing the forwarded namespace's `Delegate` for that key. The fix rides in a `help`:
   `` wire the provider `<Provider>` with the key `<path>` ``. **Fix:** wire the entry's provider
   under the redirected path rather than the bare key.
-- **`CGP-E008` — duplicate redirect.** `` [CGP-E008] duplicate redirect for <component> on
-  `<Context>` … `` (naming one redirect target, or both when they differ) — the same key redirected
+- **`CGP-E008`: duplicate redirect.** `` [CGP-E008] duplicate redirect for <component> on
+  `<Context>` … `` (naming one redirect target, or both when they differ): the same key redirected
   more than once: two `open`s or `=>` mappings on a context, or the same `@`-path registered twice
   inside one `cgp_namespace!` block (where the subject is the namespace trait rather than a
   context). **Fix:** keep a single redirect.
 
-### `CGP-E009` — wrapper trait not implemented
+### `CGP-E009`: wrapper trait not implemented
 
 - **Message:** `` [CGP-E009] the trait `<Wrapper>` is not implemented for context `<Context>` ``.
-- **Means:** a trait that is *not* a CGP consumer trait — so it reads "the trait", not "the consumer
-  trait" — cannot be implemented for the context, because a CGP component it depends on fails. Two
+- **Means:** a trait that is *not* a CGP consumer trait (so it reads "the trait", not "the consumer
+  trait") cannot be implemented for the context, because a CGP component it depends on fails. Two
   shapes reach this code: a plain **wrapper trait** the programmer wrote (the transfer example's
   `CanHandleApiSend`, which adds a `Send` bound over a CGP consumer supertrait), and a `#[cgp_fn]` /
   `#[blanket_trait]` **blanket trait** (`impl<Context> Describe for Context where Self: …`), which
   is a first-class core-CGP trait consumed like a consumer trait but is not a CGP *component*
   (it has no provider trait or `DelegateComponent`). Either way it is the
-  [`CGP-E001`](#cgp-e001--consumer-trait-not-implemented) case for a trait that is not itself a CGP
+  [`CGP-E001`](#cgp-e001-consumer-trait-not-implemented) case for a trait that is not itself a CGP
   component.
 - **Triggered by:** a failure surfaced *inside* a `impl Wrapper for Context` block (its header, a
-  method signature, or a forwarding call) — often as a raw `E0271`/`E0277`/`E0599` that names no CGP
-  construct — which the resolver anchors on the enclosing impl and traces through the wrapper's CGP
+  method signature, or a forwarding call), often as a raw `E0271`/`E0277`/`E0599` that names no CGP
+  construct, which the resolver anchors on the enclosing impl and traces through the wrapper's CGP
   consumer supertrait to the root cause; **or** a `#[cgp_fn]` / `#[blanket_trait]` blanket trait the
   context cannot satisfy, reached either by a direct method call (`app.describe()`, an `E0599` the
   [call-site anchor](implementation/typed-resolution-call-site.md) recovers from the call
@@ -247,10 +247,10 @@ bare `@a.b.*` notation (no `Path!(…)` wrapper), and the upstream reference is
 - **Upstream class:** [check-trait failure](../cgp/errors/checks/check-trait-failure.md)
   (reached through a hand-written wrapper or a `#[cgp_fn]` blanket trait).
 
-### `CGP-E010` — wiring never resolves
+### `CGP-E010`: wiring never resolves
 
 - **Message:** `` [CGP-E010] the wiring for the consumer trait `<Consumer>` on context `<Context>`
-  never resolves — the lookup recurses without terminating ``, with a `help` naming the usual
+  never resolves: the lookup recurses without terminating ``, with a `help` naming the usual
   cause and the two fixes.
 - **Means:** resolving the component's wiring recurses without bottoming out. This almost always
   means the wiring routes the component back to the context itself: a component delegated to
@@ -262,10 +262,10 @@ bare `@a.b.*` notation (no `Path!(…)` wrapper), and the upstream reference is
   context, so the lookup terminates.
 - **Upstream class:** [wiring cycle](../cgp/errors/wiring/wiring-cycle.md).
 
-### `CGP-E011` — orphan-rule namespace registration
+### `CGP-E011`: orphan-rule namespace registration
 
 - **Message:** `` [CGP-E011] cannot register the foreign <key> into the foreign namespace
-  `<Namespace>` `` — where `<key>` is `` component `<Marker>` `` or `` path `@…` `` — with a `help`
+  `<Namespace>` ``, where `<key>` is `` component `<Marker>` `` or `` path `@…` ``, with a `help`
   naming the ownership-based fix.
 - **Means:** the crate is registering wiring into a namespace it does not own, keyed on a component
   (or `@`-path) it does not own either. A registration lowers to `impl Namespace<_> for Key`, and
@@ -273,7 +273,7 @@ bare `@a.b.*` notation (no `Path!(…)` wrapper), and the upstream reference is
   namespace and the key foreign the impl is an orphan.
 - **Triggered by:** an `E0210` (or its sibling `E0117`) whose generated impl is a foreign
   [namespace lookup trait](../cgp/reference/traits/default_namespace.md)
-  implemented for a foreign key — a `#[default_impl(… in Namespace)]` or `#[prefix(… in Namespace)]`
+  implemented for a foreign key: a `#[default_impl(… in Namespace)]` or `#[prefix(… in Namespace)]`
   registration (naming `__Components__`), or a `cgp_namespace!` block re-opening a foreign namespace
   (naming `__Table__`). The Rust code stays `E0210`/`E0117`.
 - **Fix (in the `help`):** own one end of the wiring. For a registration, key it on a component your
@@ -282,14 +282,14 @@ bare `@a.b.*` notation (no `Path!(…)` wrapper), and the upstream reference is
   (`cgp_namespace! { new MyNamespace: <Namespace> { … } }`) rather than extending it in place.
 - **Upstream class:** [orphan-rule violation](../cgp/errors/wiring/orphan-rule.md).
 
-### `CGP-E012` — trait used but not declared
+### `CGP-E012`: trait used but not declared
 
 - **Message:** `` [CGP-E012] the trait `<Trait>` is used but not declared as a dependency ``,
   with a `help` naming the fix: `` declare it as a dependency with `#[uses(<Trait>)]` ``.
 - **Means:** a `#[cgp_fn]`/`#[cgp_impl]` body calls a CGP trait's method (a consumer trait, or a
   `#[cgp_fn]`/`#[blanket_trait]` blanket trait) on `self`, but the enclosing definition never declared
-  it. The macro lowers the body into a blanket impl over a generated generic context —
-  `impl<__Context__> Describe for __Context__ where __Context__: GetName` — so a trait the body
+  it. The macro lowers the body into a blanket impl over a generated generic context,
+  `impl<__Context__> Describe for __Context__ where __Context__: GetName`, so a trait the body
   uses must be a `where` bound on `__Context__`, added with `#[uses(…)]`. Omitted, the method cannot
   resolve on `__Context__`. This also covers a forgotten CGP *consumer* trait used the same way.
 - **Triggered by:** an `E0599` "the method `…` exists for reference `&__Context__`, but its trait
@@ -298,8 +298,8 @@ bare `@a.b.*` notation (no `Path!(…)` wrapper), and the upstream reference is
   type parameter, the called method belongs to a CGP trait, and that trait is not among
   the impl's `where` bounds. The Rust code stays `E0599`. Any `[T]: Sized` cascade the unresolved
   return type trails (in an `async` body especially) is left as rustc wrote it: those errors can
-  land off the failing expression — on the binding pattern, or a later statement the unresolved type
-  flows into — where suppressing them reliably would need type information the emitter cannot obtain
+  land off the failing expression (on the binding pattern, or a later statement the unresolved type
+  flows into) where suppressing them reliably would need type information the emitter cannot obtain
   without risking the suppression of an unrelated error.
 - **Fix (in the `help`):** add the trait to the definition's `#[uses(…)]` list (or a
   hand-written `where Self: <Trait>` bound), so it becomes a bound on the generated context.
@@ -307,7 +307,7 @@ bare `@a.b.*` notation (no `Path!(…)` wrapper), and the upstream reference is
   [hidden unsatisfied-dependency](../cgp/errors/hidden/unsatisfied-dependency.md)
   class, but here the fix is declaring the dependency rather than satisfying it.
 
-### `CGP-E013` — consumer trait used in a provider impl
+### `CGP-E013`: consumer trait used in a provider impl
 
 - **Message:** `` [CGP-E013] `<Consumer>` is a consumer trait, but a `#[cgp_impl]` provider must
   implement its provider trait `<Provider>` ``, with a `help` naming the fix: `` change the impl
@@ -328,18 +328,18 @@ bare `@a.b.*` notation (no `Path!(…)` wrapper), and the upstream reference is
   code stays `E0107`.
 - **Fix (in the `help`):** change the impl header to name the provider trait the component pairs the
   consumer with.
-- **Upstream class:** a macro-lowering mistake with no upstream error-catalog class of its own — the
+- **Upstream class:** a macro-lowering mistake with no upstream error-catalog class of its own; the
   provider/consumer duality is described in
   [consumer and provider traits](../cgp/concepts/consumer-and-provider-traits.md).
 
-### `CGP-E014` — `#[cgp_impl]` on a non-CGP trait
+### `CGP-E014`: `#[cgp_impl]` on a non-CGP trait
 
 - **Message:** `` [CGP-E014] `#[cgp_impl]` can only implement a CGP component's provider trait, but
   `<Trait>` is not a CGP component ``, with a `help`: `` define `<Trait>` as a component with
   `#[cgp_component]`, or drop `#[cgp_impl]` and write a plain `impl` if it is an ordinary trait ``.
-- **Means:** `#[cgp_impl]` is applied to a trait that is not a CGP component at all — neither a
-  consumer nor a provider trait — so there is no provider trait to implement. Distinct from
-  [`CGP-E013`](#cgp-e013--consumer-trait-used-in-a-provider-impl), where the trait *is* a component
+- **Means:** `#[cgp_impl]` is applied to a trait that is not a CGP component at all (neither a
+  consumer nor a provider trait) so there is no provider trait to implement. Distinct from
+  [`CGP-E013`](#cgp-e013-consumer-trait-used-in-a-provider-impl), where the trait *is* a component
   and only the wrong half was named: here the fix is to make the trait a component or to abandon
   `#[cgp_impl]`, not to name a different trait.
 - **Triggered by:** the same `E0107` shape and structural gate as `CGP-E013` (the `__Context__`
@@ -351,7 +351,7 @@ bare `@a.b.*` notation (no `Path!(…)` wrapper), and the upstream reference is
   [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md)
   for what the macro requires of its target trait.
 
-### `CGP-E015` — consumer trait in an inner-provider bound
+### `CGP-E015`: consumer trait in an inner-provider bound
 
 - **Message:** `` [CGP-E015] `<Consumer>` is a consumer trait and cannot bound an inner provider; a
   higher-order provider imports its provider trait `<Provider>` ``, with a `help`: `` name the
@@ -361,28 +361,28 @@ bare `@a.b.*` notation (no `Path!(…)` wrapper), and the upstream reference is
   where its *provider* trait belongs, most often through `#[use_provider]`.
   [`#[use_provider]`](../cgp/reference/attributes/use_provider.md)
   fills the leading context argument in, so `#[use_provider(Inner: CanCalculateArea)]` generates the
-  bound `Inner: CanCalculateArea<Self>` — but the consumer trait takes no context parameter, so it is
+  bound `Inner: CanCalculateArea<Self>`, but the consumer trait takes no context parameter, so it is
   given one argument too many. It is the inner-bound sibling of
-  [`CGP-E013`](#cgp-e013--consumer-trait-used-in-a-provider-impl) (the same consumer/provider
+  [`CGP-E013`](#cgp-e013-consumer-trait-used-in-a-provider-impl) (the same consumer/provider
   confusion, in the impl header).
 - **Triggered by:** the `E0107` on the consumer trait in the bound, confirmed structurally: an inner
   bound of a `#[cgp_impl]` provider impl whose trait is a CGP *consumer* trait (its consumer↔provider
   fingerprint yields the provider trait to suggest). The `E0308` body cascade the malformed bound
-  trails — recognizable by its mention of the generated `__Context__` — is suppressed. The Rust code
+  trails (recognizable by its mention of the generated `__Context__`) is suppressed. The Rust code
   stays `E0107`.
 - **Fix (in the `help`):** name the provider trait in the bound, idiomatically through
   `#[use_provider]`.
-- **Upstream class:** a macro-lowering mistake with no upstream error-catalog class of its own — see
+- **Upstream class:** a macro-lowering mistake with no upstream error-catalog class of its own; see
   [higher-order providers](../cgp/concepts/higher-order-providers.md).
 
-### `CGP-E016` — inner provider used but not imported
+### `CGP-E016`: inner provider used but not imported
 
 - **Message:** `` [CGP-E016] the inner provider `<Inner>` is used but not imported ``, with a `help`:
   `` import it with `#[use_provider(<Inner>: <ProviderTrait>)]` ``.
-- **Means:** a higher-order provider's body calls an inner provider as an associated function —
-  `<Inner>::method(self)` — that it never imported, so the inner parameter carries no provider-trait
+- **Means:** a higher-order provider's body calls an inner provider as an associated function
+  (`<Inner>::method(self)`) that it never imported, so the inner parameter carries no provider-trait
   bound and the call cannot resolve. It is the higher-order-provider counterpart of
-  [`CGP-E012`](#cgp-e012--trait-used-but-not-declared): a used-but-undeclared dependency, here an
+  [`CGP-E012`](#cgp-e012-trait-used-but-not-declared): a used-but-undeclared dependency, here an
   inner provider imported with `#[use_provider]` rather than a `#[uses]` trait.
 - **Triggered by:** an `E0599` "no associated function … found for type parameter `<Inner>`" whose
   help names the "type parameter is bounded by the trait" shape. The resolver confirms it
@@ -393,13 +393,13 @@ bare `@a.b.*` notation (no `Path!(…)` wrapper), and the upstream reference is
   The Rust code stays `E0599`.
 - **Fix (in the `help`):** import the inner provider with `#[use_provider(<Inner>: <ProviderTrait>)]`,
   which supplies the leading context argument the provider trait needs.
-- **Upstream class:** a macro-lowering mistake with no upstream error-catalog class of its own — see
+- **Upstream class:** a macro-lowering mistake with no upstream error-catalog class of its own; see
   [higher-order providers](../cgp/concepts/higher-order-providers.md)
   and [`#[use_provider]`](../cgp/reference/attributes/use_provider.md).
 
 ## Dependency-tree entry codes (`CGP-E1xx`)
 
-The `CGP-E1xx` range codes the entries of a `root cause:` note's dependency tree — one code per
+The `CGP-E1xx` range codes the entries of a `root cause:` note's dependency tree, one code per
 distinct rendering template, so a reader can name a chain step (and a downstream tool can key on it)
 just as with a main message. The code rides at the start of each tree entry:
 
@@ -412,50 +412,50 @@ just as with a main message. The code rides at the start of each tree entry:
               └─ [CGP-E106] missing field `name` on `App`
 ```
 
-A tree entry that merely *passes a non-CGP message through* in rustc's own phrasing — the
-ordinary-bound restatement `` the trait bound `f64: Eq` is not satisfied `` — is uncoded, while an
+A tree entry that merely *passes a non-CGP message through* in rustc's own phrasing: the
+ordinary-bound restatement `` the trait bound `f64: Eq` is not satisfied ``, is uncoded, while an
 entry the tool *rewrote* into its own template (including the general `` trait impl `Trait` for
-`Type` ``) is coded. The `root cause:` note lead — the summary above the tree — carries a code of its
+`Type` ``) is coded. The `root cause:` note lead (the summary above the tree) carries a code of its
 own, from the separate `CGP-E2xx` range (see below).
 
 The codes divide into the inner chain-node templates and the terminal root-cause leaves.
 
-- **`CGP-E101` — consumer trait impl.** `` consumer trait impl `<Trait>` for context `<Ctx>` `` — a
+- **`CGP-E101`: consumer trait impl.** `` consumer trait impl `<Trait>` for context `<Ctx>` ``: a
   hop through the context's own consumer-trait impl (a `CanUseComponent` step).
-- **`CGP-E102` — provider trait impl.** `` provider trait impl `<Trait>` with context `<Ctx>` for
-  provider `<Provider>` `` — a hop through a provider's provider-trait impl (an `IsProviderFor` step).
-- **`CGP-E103` — retired.** This code named a mid-chain `HasField` accessor hop, but a `HasField`
+- **`CGP-E102`: provider trait impl.** `` provider trait impl `<Trait>` with context `<Ctx>` for
+  provider `<Provider>` ``: a hop through a provider's provider-trait impl (an `IsProviderFor` step).
+- **`CGP-E103`: retired.** This code named a mid-chain `HasField` accessor hop, but a `HasField`
   obligation is always the chain's terminal root-cause leaf (coded `CGP-E106`/`CGP-E108`/`CGP-E109`),
   never an interior hop, so it was never emitted and has been removed. The number is left unused
   rather than reassigned, so the other codes stay stable.
-- **`CGP-E104` — redirect lookup.** `` redirect lookup to `@…` in `<Table>` `` — a hop through a
+- **`CGP-E104`: redirect lookup.** `` redirect lookup to `@…` in `<Table>` ``: a hop through a
   namespace or `open` `RedirectLookup<Table, Path>`, naming the table the path is looked up in: the
   context for its own `open` or `namespace`, or an aggregate provider that `open`s a component in its
   own table. Two lookups along the same route for different dispatch keys
   render this same text but are distinct nodes in the dependency graph (the key is part of a node's
   identity), so each keeps its own branch and leaf.
-- **`CGP-E105` — trait impl (general).** `` trait impl `<Trait>` for `<Type>` `` — a hop through any
+- **`CGP-E105`: trait impl (general).** `` trait impl `<Trait>` for `<Type>` ``: a hop through any
   other trait: a user's blanket trait, or an ordinary bound restated as an impl. This is the
   "rewritten non-CGP" form that is coded even though the trait itself may not be a CGP construct.
-- **`CGP-E106` — missing field (leaf).** `` missing field `<f>` on `<T>` `` — the chain bottoms out
+- **`CGP-E106`: missing field (leaf).** `` missing field `<f>` on `<T>` ``: the chain bottoms out
   on a context field that is genuinely absent.
-- **`CGP-E107` — missing delegate entry (leaf).** `` context `<Ctx>` does not contain any delegate
-  entry for `<key>` `` — the context wires no provider for a component, or terminates no namespace
+- **`CGP-E107`: missing delegate entry (leaf).** `` context `<Ctx>` does not contain any delegate
+  entry for `<key>` ``: the context wires no provider for a component, or terminates no namespace
   path (the `<key>` is a component marker or an `@`-path). The table is always the context; a key
   missing from an aggregate provider is `CGP-E110`.
-- **`CGP-E108` — unimplemented accessor (leaf).** `` accessor trait `HasField` with field `<f>` is not
-  implemented for `<T>` `` — the struct carries the field but has not derived `HasField` for it (the
+- **`CGP-E108`: unimplemented accessor (leaf).** `` accessor trait `HasField` with field `<f>` is not
+  implemented for `<T>` ``: the struct carries the field but has not derived `HasField` for it (the
   fix, a `#[derive(HasField)]`, rides in a separate `help`). Several such fields on *one* struct are
-  one mistake — the derive emits an impl per field — so they coalesce into a single root cause under
+  one mistake: the derive emits an impl per field, so they coalesce into a single root cause under
   the same code, `` accessor trait `HasField` is not implemented for the fields `<f>` and `<g>` of
   `<T>` ``, over one merged tree whose branches still end at the per-field leaves.
-- **`CGP-E109` — field type mismatch (leaf).** `` field `<f>` on `<T>` has type `<actual>`, but
-  `<expected>` is required `` — the field is present and derived but has the wrong type (the leaf face
+- **`CGP-E109`: field type mismatch (leaf).** `` field `<f>` on `<T>` has type `<actual>`, but
+  `<expected>` is required ``: the field is present and derived but has the wrong type (the leaf face
   of the `CGP-E003` main message). The required type is rendered by the same helper as that headline,
   so a wiring-derived requirement reads `` but `Pool<<App as HasDbType>::Db>` (`Pool<Postgres>`) is
   required `` here too and the two can never state one requirement two ways.
-- **`CGP-E110` — missing dispatch entry (leaf).** `` provider `<T>` does not contain any delegate
-  entry for `<key>` `` — the chain bottoms out on a *non-context* delegation table missing a key: an
+- **`CGP-E110`: missing dispatch entry (leaf).** `` provider `<T>` does not contain any delegate
+  entry for `<key>` ``: the chain bottoms out on a *non-context* delegation table missing a key: an
   [aggregate provider](../cgp/concepts/aggregate-providers.md) missing a component wiring, or
   a [`UseDelegate`/`UseInputDelegate`](../cgp/reference/providers/use_delegate.md) dispatch
   table missing a branch for the type it dispatches on (a `Code` fragment or an `Input` value's type).
@@ -466,15 +466,15 @@ The codes divide into the inner chain-node templates and the terminal root-cause
   namespace itself:
   `` provider `ByteSink` does not contain any delegate entry for `@ComputerComponent.Sink.Digest` ``,
   under a `CGP-E104` hop that reads `` in `ByteSink` ``.
-- **`CGP-E111` — not a provider (leaf).** `` the provider trait `<T>` is not implemented for `<X>` ``
-  — the chain bottoms out on a type wired where a *provider* was expected that does not implement the
+- **`CGP-E111`: not a provider (leaf).** `` the provider trait `<T>` is not implemented for `<X>` ``:
+  the chain bottoms out on a type wired where a *provider* was expected that does not implement the
   provider trait at all. The mistake is putting a non-provider (often a request or value type) into a
-  provider slot — e.g. `UseBasicAuth<QueryBalanceRequest>` with the endpoint handler omitted, so the
+  provider slot (e.g. `UseBasicAuth<QueryBalanceRequest>` with the endpoint handler omitted, so the
   request type sits where an `ApiHandler` belongs. Distinct from `CGP-E110`: the owner is not a table
   missing one entry, so the fix is to use an actual provider (wrap it in the handler), not to add a
   wiring entry.
-- **`CGP-E112` — associated type mismatch (leaf).** `` abstract type `<assoc>` of `<Trait>` on
-  `<Owner>` is `<actual>`, but `<expected>` is required `` — the chain bottoms out on an associated
+- **`CGP-E112`: associated type mismatch (leaf).** `` abstract type `<assoc>` of `<Trait>` on
+  `<Owner>` is `<actual>`, but `<expected>` is required ``: the chain bottoms out on an associated
   type the owner supplies differently from what a provider requires (the leaf face of the
   `CGP-E017` main message). It reads `associated type` in place of `abstract type` when the trait is
   not a CGP abstract-type component, and renders its required type through the same helper as
@@ -484,15 +484,15 @@ The codes divide into the inner chain-node templates and the terminal root-cause
 
 ## Root-cause lead codes (`CGP-E2xx`)
 
-The `root cause:` line that heads a note — the plain-sentence summary above the dependency tree —
+The `root cause:` line that heads a note, the plain-sentence summary above the dependency tree,
 also carries a code. It **reuses the terminal leaf's `CGP-E1xx` code** where the leaf has one, so the
 lead and the tree's terminal show the same code (`` root cause: [CGP-E106] missing field `name` on
 `App` `` over a tree that ends in `` [CGP-E106] missing field `name` on `App` ``). The `CGP-E2xx`
 range exists for the one case that needs a code of its own: a leaf that is an uncoded pass-through
 bound, whose lead still names a classified root cause.
 
-- **`CGP-E201` — ordinary-bound root cause.** `` root cause: the trait bound `<S: Trait>` is not
-  satisfied `` — the failure bottoms out on an ordinary (non-CGP) trait bound. The terminal tree
+- **`CGP-E201`: ordinary-bound root cause.** `` root cause: the trait bound `<S: Trait>` is not
+  satisfied ``: the failure bottoms out on an ordinary (non-CGP) trait bound. The terminal tree
   entry passes the bound through uncoded, but the `root cause:` lead takes this code so every root
   cause the tool states is tagged.
 
@@ -527,7 +527,7 @@ full.
 **`Product!` / `Sum!` resugaring** reverses a type-level list expansion back to its surface form, so
 `Cons<u64, Cons<String, Nil>>` becomes `Product![u64, String]` and an `Either`/`Void` list becomes
 `Sum![…]`. A list whose elements are all named fields folds one step further to a `Struct! { … }` or
-`Enum! { … }` — presentation-only forms, not real CGP macros, chosen because a record reads far
+`Enum! { … }`: presentation-only forms, not real CGP macros, chosen because a record reads far
 better than a chain of `Field` cells.
 [`resugar_lists`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/resugar_list.rs)
 owns the text form and the driver's `render_ty` the typed one.
@@ -547,7 +547,7 @@ owns it.
 
 **Method-probe advice removal** drops rustc's "this is an associated function, not a method" framing
 and "use associated function syntax instead" suggestion from a consumer-method `E0599` the resolver
-declined — both artifacts of CGP's `self`-less provider methods, the second actively wrong — so the
+declined, both artifacts of CGP's `self`-less provider methods, the second actively wrong, so the
 unmet wiring bound the diagnostic also names leads. It only removes noise, adding no classification;
 [`is_method_probe_advice_text`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/signals.rs)
 recognizes the phrasings and the driver's emitter applies the drop.
@@ -558,7 +558,7 @@ This catalog is bound by the same synchronization rule as the rest of the knowle
 ([cargo-cgp/AGENTS.md](AGENTS.md)): the codes are defined in the code, so this document must track
 them. The constants live in the
 [`code`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/code.rs)
-module of the error-processing crate, and are stamped by the main-message rewrites — all rustc-free,
+module of the error-processing crate, and are stamped by the main-message rewrites, all rustc-free,
 in that same crate. The text forms are stamped by
 [`rewrite_trait_bound` and `rewrite_wiring_overflow`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/rewrite/message.rs),
 the typed check-failure form by
@@ -584,6 +584,6 @@ constant for an uncoded leaf. When a new main-message class is recognized, or a 
 root-cause template is added, assign it the next number in the matching range (`CGP-E0xx` for a
 headline, `CGP-E1xx` for a tree entry, `CGP-E2xx` for a root-cause lead the leaf codes cannot
 cover), add the constant, and register it here in the same change. When a rewrite does not classify
-its message — a kept rustc header, or a pass-through tree entry — add it to
-[uncoded rewrites](#uncoded-rewrites) instead, or leave the tree entry bare — do not spend a code on
+its message (a kept rustc header, or a pass-through tree entry) add it to
+[uncoded rewrites](#uncoded-rewrites) instead, or leave the tree entry bare: do not spend a code on
 it.

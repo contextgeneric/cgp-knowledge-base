@@ -2,12 +2,12 @@
 
 This directory is the reference an AI agent consults to install and use `cargo-cgp`: how to get the
 tool running and how to drive its commands. Like the rest of this knowledge base, it is written
-by and for coding agents — it is **not** end-user documentation; the separate guides written for
+by and for coding agents; it is **not** end-user documentation; the separate guides written for
 human readers live outside the knowledge base. Its concern is *using* the tool, in contrast to the sibling
 [implementation/](../implementation/README.md) category, which documents how the tool is built and
 maintained for an agent changing its source. That usage-versus-internals split mirrors the one in
 the `cgp` section, whose [construct reference](../../cgp/reference/README.md) documents how to
-*use* each CGP construct while its implementation directory documents how each is *built* — here the
+*use* each CGP construct while its implementation directory documents how each is *built*; here the
 subject is the `cargo-cgp` command line rather than a set of macros. Each document is
 self-contained, so read the one that matches your need rather than reading in order.
 
@@ -18,7 +18,7 @@ tool needs. The install and usage documents both call out where to prefer the lo
 
 ## Overview
 
-Using `cargo-cgp` has two phases — getting it onto your machine, then running it — and the two
+Using `cargo-cgp` has two phases: getting it onto your machine, then running it, and the two
 reference documents cover one each. Today the tool has two commands that read your code, both
 compiling it through a custom `rustc` wrapper: `cargo cgp check` presents CGP wiring errors with the
 root cause first, instead of the wall of generated-type errors the plain compiler prints, and
@@ -32,28 +32,28 @@ beside it. [installation.md](installation.md) covers the two ways to satisfy thi
 where you install the front-end and then run `cargo cgp setup` to provision the pinned nightly and
 build the matching driver through rustup; and the Nix path, where a flake builds both binaries
 against the pinned nightly for you and needs no rustup at all. It also covers keeping the tool
-current — `cargo cgp update` for the cargo path, a flake update for Nix.
+current: `cargo cgp update` for the cargo path, a flake update for Nix.
 
 Once the tool is installed, running it is deliberately close to running `cargo check`.
 [usage.md](usage.md) covers `cargo cgp check`: how it forwards its arguments straight to
 `cargo check`, why it forces the pinned nightly and builds into an isolated `target/cgp` directory so
-it never disturbs the checked project's normal builds, and how to read the output — in particular the
+it never disturbs the checked project's normal builds, and how to read the output, in particular the
 `[CGP-Exxx]` codes it stamps on the errors it recognizes. It also covers wiring the tool in as a Rust
-Analyzer check backend and running it against a project outside this repository — through Nix,
-preferring a local `cargo-cgp` checkout over a published release — along with the environment
+Analyzer check backend and running it against a project outside this repository, through Nix,
+preferring a local `cargo-cgp` checkout over a published release, along with the environment
 variables that override its default behavior.
 
 When a run goes wrong, [troubleshooting.md](troubleshooting.md) is the diagnostic companion to the
 other two. Because the tool is two binaries plus a pinned compiler in separate locations, a failure
-can sit at any of several seams — the front-end not finding the driver, the driver not loading the
-compiler library, a toolchain or version mismatch, or the check being run in the wrong place — and
+can sit at any of several seams (the front-end not finding the driver, the driver not loading the
+compiler library, a toolchain or version mismatch, or the check being run in the wrong place) and
 the document pairs the exact error message each failure prints with its cause and fix, so an agent can
 match a symptom and act rather than guess.
 
 The tool is at an early stage, so the documents describe what exists now and note plainly where a
 path is intended but not yet available. For the reasoning *behind* the behavior these documents
-describe — why the toolchain is pinned, how the two binaries stay in lockstep, how the driver
-reaches the compiler — follow the links into the [implementation/](../implementation/README.md)
+describe: why the toolchain is pinned, how the two binaries stay in lockstep, how the driver
+reaches the compiler, follow the links into the [implementation/](../implementation/README.md)
 category, which is the authoritative source those references summarize.
 
 ## Index
@@ -74,7 +74,7 @@ document, register it here in the same change.
   environment variables that override its behavior.
 - [Troubleshooting](troubleshooting.md) — how to diagnose a `cargo-cgp` that will not run. Covers
   isolating the failing seam (the driver `--version` load test, `cargo cgp check -v`) and the common
-  failures with the exact error each prints — command and cargo-project errors, the front-end failing
+  failures with the exact error each prints (command and cargo-project errors, the front-end failing
   to find the driver, the driver failing to load `librustc_driver` (unset library path or a toolchain
-  mismatch), the managed preflight's toolchain/driver/version verdicts, and a missing rustup — plus a
+  mismatch), the managed preflight's toolchain/driver/version verdicts, and a missing rustup) plus a
   symptom-to-section index.

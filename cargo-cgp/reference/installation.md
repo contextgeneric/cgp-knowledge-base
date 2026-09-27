@@ -4,12 +4,12 @@
 all three in place and matched. The `cargo-cgp` front-end is the cargo subcommand you invoke; the
 `cargo-cgp-driver` it calls links the compiler's internals and so must be built against the nightly
 pinned in the project's `rust-toolchain.toml`. This document covers the ways to install that pair
-and how to keep it up to date. It is the usage-level summary for an agent; the design behind it —
-why the toolchain is pinned and how the binaries stay in lockstep — is in
+and how to keep it up to date. It is the usage-level summary for an agent; the design behind it
+(why the toolchain is pinned and how the binaries stay in lockstep) is in
 [Distribution](../implementation/distribution.md).
 
-If your goal is only to *run* the current tool — the usual case for an agent testing or demonstrating
-it — you do not install a release at all: use a local checkout through Nix or from source, as
+If your goal is only to *run* the current tool (the usual case for an agent testing or demonstrating
+it), you do not install a release at all: use a local checkout through Nix or from source, as
 [Usage](usage.md#running-on-a-project-outside-this-repository) describes. The install paths below are
 for provisioning the tool as a durable command; prefer the local build over a published release
 whenever a checkout is available, since it reflects the current code.
@@ -35,7 +35,7 @@ directly. The cargo path is the intended primary distribution for a machine with
 
 One command is newer than that release: **`cargo cgp expand`** (see
 [Usage](usage.md#expanding-a-target)) landed after `v0.1.0-alpha` was tagged, so an install from
-crates.io — or from the pinned Nix reference — does not carry it. Until the next release, get it from
+crates.io, or from the pinned Nix reference, does not carry it. Until the next release, get it from
 the Nix flake with the tag dropped, which tracks `main`
 (`nix run github:contextgeneric/cargo-cgp -- expand --lib`), or from a
 [source checkout](#installing-from-source). `cargo cgp check` is unaffected.
@@ -44,7 +44,7 @@ the Nix flake with the tag dropped, which tracks `main`
 
 The flake at the repository root builds both binaries against the pinned nightly and wraps them so
 they run without rustup, which makes it the simplest way to install the current tool. It provisions
-the compiler as a build-time fact, so a machine that has only Nix — no rustup, no nightly — can run
+the compiler as a build-time fact, so a machine that has only Nix (no rustup, no nightly) can run
 the tool, and the project you check needs no toolchain of its own. The details of how the flake does
 this are in [Installing with Nix](../implementation/distribution.md#installing-with-nix).
 
@@ -55,10 +55,10 @@ nix profile install github:contextgeneric/cargo-cgp
 ```
 
 This puts both `cargo-cgp` and `cargo-cgp-driver` in your Nix profile, side by side as the front-end
-requires. Append a released tag to pin an exact pre-release rather than the default branch — for the
-current pre-release, `nix profile install github:contextgeneric/cargo-cgp/v0.1.0-alpha` — which is
-the form to prefer for a reproducible install. To run the tool once without installing it — for
-example in CI or to try it on a project — run the flake's default app from the project directory
+requires. Append a released tag to pin an exact pre-release rather than the default branch (for the
+current pre-release, `nix profile install github:contextgeneric/cargo-cgp/v0.1.0-alpha`), which is
+the form to prefer for a reproducible install. To run the tool once without installing it (for
+example in CI or to try it on a project), run the flake's default app from the project directory
 instead:
 
 ```sh
@@ -102,7 +102,7 @@ doing any slow or stateful work itself.
 
 ## Installing from source
 
-To run the current tool from a checkout — the practical path today alongside Nix — clone the
+To run the current tool from a checkout (the practical path today alongside Nix), clone the
 repository and build both binaries, which the pinned `rust-toolchain.toml` compiles under the correct
 nightly automatically:
 
@@ -126,7 +126,7 @@ environment overrides for you.
 ## Uninstalling
 
 How you uninstall matches how you installed, and there is no dedicated `cargo cgp uninstall`
-subcommand — you remove the binaries with the same package manager that placed them.
+subcommand: you remove the binaries with the same package manager that placed them.
 
 On the **Nix path**, remove the tool from your profile:
 
@@ -158,8 +158,8 @@ cargo cgp update
 ```
 
 It reads the crates.io index for the front-end, picks the highest published version **in your current
-release channel** — a stable install never jumps to a pre-release, and a pre-release install stays on
-pre-releases — and does nothing if you already have the newest. When there is a newer version it
+release channel** (a stable install never jumps to a pre-release, and a pre-release install stays on
+pre-releases) and does nothing if you already have the newest. When there is a newer version it
 reinstalls the front-end and re-runs the new `setup` to bring the driver and toolchain up to match.
 On Windows the running binary is locked and cannot replace itself, so `update` prints the two
 commands (`cargo install cargo-cgp` then `cargo cgp setup`) to run by hand from a shell where the
