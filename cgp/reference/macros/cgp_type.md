@@ -71,12 +71,13 @@ with ``E0425: cannot find type `HasScalarTypeComponent` in this scope``.
 **The trait may carry generic parameters**, handled exactly as `#[cgp_component]` handles them: they
 follow the context in the provider trait, enter the `IsProviderFor` params tuple, and extend the
 `RedirectLookup` path, so a context chooses the type per parameter value through `open` or
-[`#[derive_delegate]`](../attributes/derive_delegate.md). `pub trait HasLabelType<Kind> { type Label; }`
-lets a context wire `@LabelTypeProviderComponent.u32: UseType<String>`. A `?Sized` parameter is
-accepted and threaded through every item, though `open` cannot key an unsized type, since a path
-segment must be sized. The companion attributes of `#[cgp_component]` apply unchanged, so
-[`#[prefix(...)]`](../attributes/prefix.md) registers the abstract type into a namespace, as CGP's
-own [`HasErrorType`](../components/has_error_type.md) does.
+[`#[derive_delegate]`](../attributes/derive_delegate.md).
+`pub trait HasLabelType<Kind> { type Label; }` lets a context that declares
+`open LabelTypeProviderComponent;` wire `@LabelTypeProviderComponent.u32: UseType<String>`. A
+`?Sized` parameter is accepted and threaded through every item, though `open` cannot key an unsized
+type, since a path segment must be sized. The companion attributes of `#[cgp_component]` apply
+unchanged, so [`#[prefix(...)]`](../attributes/prefix.md) registers the abstract type into a
+namespace, as CGP's own [`HasErrorType`](../components/has_error_type.md) does.
 
 A bound on the associated type is preserved everywhere the type appears in the expansion. For
 example, `type Scalar: Copy;` carries the `Copy` bound onto the generated provider trait and into the

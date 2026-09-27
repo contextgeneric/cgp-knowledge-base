@@ -42,9 +42,9 @@ carries that decision.
 ## Syntax
 
 `#[cgp_fn]` is applied as an attribute on a free function whose first parameter is normally `&self`
-(or `&mut self`). The function name, in snake case, becomes the generated method name, and the trait name
-defaults to that function name converted to PascalCase. A receiver is required once any parameter is
-`#[implicit]`, and omitting it then fails with
+(or `&mut self`). The function name, in snake case, becomes the generated method name, and the trait
+name defaults to that function name converted to PascalCase. A receiver is required once any
+parameter is `#[implicit]`, and omitting it then fails with
 `` The first argument of a function with implicit arguments must be `self` ``. A function with no
 receiver and no implicit argument is accepted and yields a trait whose item is an associated
 function, called as `<Context as Trait>::name()`; it reads nothing from the context, so it computes
@@ -124,12 +124,12 @@ Several companion attributes refine the generated code, and each is documented s
 - [`#[impl_generics(...)]`](../attributes/impl_generics.md) declares generic parameters on the
   generated impl alone.
 
-Each may be repeated, and each parses a comma-separated list inside one attribute.
-`#[use_provider]` is the exception in practice, since its argument ends in a bound list that
-swallows a following entry. `#[uses]` takes ordinary Rust traits as readily as CGP ones. An
-[`#[async_trait]`](async_trait.md) written beneath `#[cgp_fn]` on an `async fn` is not a companion
-attribute but is copied onto both generated items like any unrecognized attribute, so the trait
-declares `-> impl Future` and the impl keeps its `async fn`.
+Each may be repeated, and each parses a comma-separated list inside one attribute. `#[use_provider]`
+is the exception: its argument ends in a `+`-joined bound list, so a comma after it fails with
+``expected `+` `` and a second binding needs a second attribute. `#[uses]` takes ordinary Rust
+traits as readily as CGP ones. An [`#[async_trait]`](async_trait.md) written beneath `#[cgp_fn]` on
+an `async fn` is not a companion attribute but is copied onto both generated items like any
+unrecognized attribute, so the trait declares `-> impl Future` and the impl keeps its `async fn`.
 
 ## Syntax Grammar
 

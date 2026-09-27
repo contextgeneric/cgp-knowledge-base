@@ -57,7 +57,10 @@ The attribute argument has three parts, of which only the provider name is requi
 - **`: ComponentType`** is an optional suffix that overrides the component name used in the
   generated [`IsProviderFor`](../traits/is_provider_for.md) impl. When omitted, the component defaults
   to the provider trait's name with a `Component` suffix, so implementing `AreaCalculator` targets
-  `AreaCalculatorComponent`.
+  `AreaCalculatorComponent`. The override is not checked against the trait: a component that is not
+  the provider trait's own makes the trait's `IsProviderFor` supertrait reject the generated impl,
+  as for [`#[cgp_provider]`](cgp_provider.md), with
+  ``E0277: the trait bound `Wrong: IsProviderFor<AreaCalculatorComponent, __Context__>` is not satisfied``.
 
 Without `new`, the provider struct must already be declared, and a wiring entry naming a struct
 nothing declares fails at the wiring. Only one block may declare a given struct: a provider that
@@ -137,8 +140,9 @@ second attribute, and `#[default_impl]` parses a single `Key in Namespace` spec.
 extend. An attribute the collector does not match is not an error: it is re-attached to the emitted
 provider impl, which is what lets `#[allow(...)]` and other foreign attributes ride through. So a
 misplaced `#[extend(...)]` surfaces as ``cannot find attribute `extend` in this scope``, reported on
-the attribute's own line because the copy keeps its span, rather than as a message from the macro. A bound that really is impl-side goes in the block's
-own `where` clause, which passes through untouched.
+the attribute's own line because the copy keeps its span, rather than as a message from the macro. A
+bound the implementation needs goes in `#[uses]`, or in the block's own `where` clause, which passes
+through untouched.
 
 ## Syntax Grammar
 
