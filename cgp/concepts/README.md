@@ -1,6 +1,6 @@
 # CGP Concepts
 
-This directory holds the high-level conceptual overviews that tie the CGP constructs together — the consumer/provider duality, dependency injection, namespaces, handlers, and so on. Each document explains one cross-cutting idea and points down into the [reference documents](../reference/README.md) for the per-construct mechanics, so a reader can grasp the shape of an idea here and follow the links for the precise semantics.
+This directory holds the high-level conceptual overviews that tie the CGP constructs together, such as the consumer/provider duality, dependency injection, namespaces, and handlers. Each document explains one cross-cutting idea and points down into the [reference documents](../reference/README.md) for the per-construct mechanics, so a reader can grasp the shape of an idea here and follow the links for the precise semantics.
 
 ## How concepts differ from reference documents and examples
 

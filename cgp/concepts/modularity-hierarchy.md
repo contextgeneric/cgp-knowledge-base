@@ -12,9 +12,9 @@ The hierarchy is illustrated throughout with one running operation, serializing 
 
 Two independent questions decide which tier an operation sits on, and naming them before the tiers makes the whole hierarchy legible: the tier numbers describe *consequences*, while these two questions describe the *causes*.
 
-**What is the `Self` type?** It is either a **value context** — the data the operation acts on, such as the `Vec<u8>` being serialized — or an **environmental context**, a type that exists to carry wiring choices and implement the traits providers rely on, rather than to be operated on, such as an application. Both are contexts in the ordinary CGP sense: both sit in the `Self` position and both carry a wiring table. They differ in what they *are*, and the difference decides how much freedom the wiring has.
+**What is the `Self` type?** It is either a **value context**, the data the operation acts on, such as the `Vec<u8>` being serialized, or an **environmental context**, a type that exists to carry wiring choices and implement the traits providers rely on, rather than to be operated on, such as an application. Both are contexts in the ordinary CGP sense: both sit in the `Self` position and both carry a wiring table. They differ in what they *are*, and the difference decides how much freedom the wiring has.
 
-**What does the component target?** It is either **self-targeted**, meaning the operation acts on the `Self` type — `CanEncode`, `CanGreet`, `HasErrorType` — or **parameter-targeted**, meaning it is about a type parameter while `Self` only decides — `CanEncodeValue<Value>`, `CanSerializeValue<Value>`, `CanCalculateArea<Shape>`. A parameter is not automatically a target: in `CanCompute<Code, Input>` the target is `Input` and `Code` is a *selector* the wiring dispatches on, and a component may carry both. The test is which type the operation acts on, not whether a parameter is present.
+**What does the component target?** It is either **self-targeted**, meaning the operation acts on the `Self` type (`CanEncode`, `CanGreet`, `HasErrorType`), or **parameter-targeted**, meaning it is about a type parameter while `Self` only decides (`CanEncodeValue<Value>`, `CanSerializeValue<Value>`, `CanCalculateArea<Shape>`). A parameter is not automatically a target: in `CanCompute<Code, Input>` the target is `Input` and `Code` is a *selector* the wiring dispatches on, and a component may carry both. The test is which type the operation acts on, not whether a parameter is present.
 
 Crossed, the two questions describe three shapes that occur in practice, and one that does not earn its keep.
 
@@ -28,11 +28,11 @@ A value context with a target parameter is legal and uninteresting, since the op
 
 ### Why the qualifications are needed at all
 
-**Vanilla Rust idiomatically supports exactly one of these three shapes, which is why it never needed the vocabulary — and why CGP does.** The distinctions are not terminology CGP invented for its own sake; they are the names of choices that only become choices once alternatives are viable.
+**Vanilla Rust idiomatically supports exactly one of these three shapes, which is why it never needed the vocabulary, and why CGP does.** The distinctions are not terminology CGP invented for its own sake; they are the names of choices that only become choices once alternatives are viable.
 
 The **retrofit** shape is what every ordinary Rust trait is: `impl Display for String`, `impl Iterator for Chars`. The data is `Self`, the operation acts on it, and coherence gives it exactly one implementation. This shape is so dominant that a Rust programmer has no reason to notice it *is* a shape.
 
-The **application** shape is legal and does occur — `impl Handler for MyApp` — but vanilla Rust gives it no leverage. Each application type must write its own method bodies, because the moment two implementations are factored into blanket impls they overlap:
+The **application** shape is legal and does occur, as in `impl Handler for MyApp`, but vanilla Rust gives it no leverage. Each application type must write its own method bodies, because the moment two implementations are factored into blanket impls they overlap:
 
 ```rust
 impl<T: HasSmtpConfig>      CanSendEmail for T { /* ... */ }
@@ -52,15 +52,15 @@ impl CanEncodeValue<Vec<u8>> for ApiServer { /* hex */ }
 impl CanEncodeValue<Vec<u8>> for Firmware  { /* raw bytes */ }
 ```
 
-Two application types, the same value type, different encodings — with no CGP at all. What fails is reuse: every `(context, target type)` pair needs its own hand-written body, and factoring one into `impl<V: Display> CanEncodeValue<V> for ApiServer` collides with any sibling. The shape is therefore available and unrewarding, which is why almost nobody writes it and why "application context" tends to land on a reader as an unfamiliar noun rather than a familiar arrangement.
+Two application types, the same value type, different encodings, with no CGP at all. What fails is reuse: every `(context, target type)` pair needs its own hand-written body, and factoring one into `impl<V: Display> CanEncodeValue<V> for ApiServer` collides with any sibling. The shape is therefore available and unrewarding, which is why almost nobody writes it and why "application context" tends to land on a reader as an unfamiliar noun rather than a familiar arrangement.
 
-**CGP's contribution is not that it legalizes these shapes — two of the three are already legal — but that it makes the implementations reusable, which is what turns each shape into a technique.** Named providers replace hand-written bodies, so a per-pair decision becomes a wiring line. Once all three shapes are worth using, a reader has to be able to say which one they are in, and that is what the qualifiers are for.
+**CGP's contribution is not that it legalizes these shapes (two of the three are already legal) but that it makes the implementations reusable, which is what turns each shape into a technique.** Named providers replace hand-written bodies, so a per-pair decision becomes a wiring line. Once all three shapes are worth using, a reader has to be able to say which one they are in, and that is what the qualifiers are for.
 
 ### Which restriction each shape escapes
 
 The most consequential thing the two axes reveal is that **the escape from coherence happens when `Self` becomes a type you own, not when a parameter appears**. This is easy to miss, because the parameter is the visible change.
 
-At the retrofit shape the wired type is data you often do not own, so coherence still binds: `Vec<u8>` gets one wiring for the whole program, and no amount of provider machinery changes that. At the application shape `Self` is a type you define, so when one wiring per type is not enough you simply define another type — which is why `App` and `TestApp` can each choose their own `CanSendEmail` provider with no parameter anywhere. The fully modular shape then extends that same freedom to target types you do *not* own, which is the only thing the parameter adds.
+At the retrofit shape the wired type is data you often do not own, so coherence still binds: `Vec<u8>` gets one wiring for the whole program, and no amount of provider machinery changes that. At the application shape `Self` is a type you define, so when one wiring per type is not enough you simply define another type, which is why `App` and `TestApp` can each choose their own `CanSendEmail` provider with no parameter anywhere. The fully modular shape then extends that same freedom to target types you do *not* own, which is the only thing the parameter adds.
 
 That ordering matters when explaining the hierarchy, because it means the application shape is the common case rather than an intermediate step, and the parameter is a response to a specific need rather than the point.
 
@@ -80,7 +80,7 @@ impl<Value: AsRef<[u8]>> CanSerializeBytes for Value {
 }
 ```
 
-A blanket trait is preferred over a bare generic function because it hides the `AsRef<[u8]>` bound behind a clean interface rather than leaking it to every transitive caller — the [impl-side dependency](impl-side-dependencies.md) idea in its simplest form. The limitation is absolute, though: this is the *only* way `CanSerializeBytes` is ever implemented. There is no room for a second strategy, so this tier fits an operation that genuinely has one implementation for all types, and nothing more.
+A blanket trait is preferred over a bare generic function because it hides the `AsRef<[u8]>` bound behind a clean interface rather than leaking it to every transitive caller: the [impl-side dependency](impl-side-dependencies.md) idea in its simplest form. The limitation is absolute, though: this is the *only* way `CanSerializeBytes` is ever implemented. There is no room for a second strategy, so this tier fits an operation that genuinely has one implementation for all types, and nothing more.
 
 ## Tier 2: one implementation per type
 
@@ -100,11 +100,11 @@ impl<'a> Serialize for &'a [u8] {
 }
 ```
 
-The gain over tier 1 is per-type variation; the cost is that each type needs its own explicit impl even when several share logic, and the [overlap rule](coherence.md) forbids any blanket impl that would collide. Reusable building blocks can still be factored out — both bodies above could call the tier-1 `serialize_bytes` — but the trait itself admits no alternatives: once `Serialize for Vec<u8>` is chosen, that choice is global and final. This is where Rust's coherence guarantee delivers its value and also where it starts to bind: a type gets exactly one implementation of a trait, no matter what a particular application would prefer.
+The gain over tier 1 is per-type variation; the cost is that each type needs its own explicit impl even when several share logic, and the [overlap rule](coherence.md) forbids any blanket impl that would collide. Reusable building blocks can still be factored out (both bodies above could call the tier-1 `serialize_bytes`), but the trait itself admits no alternatives: once `Serialize for Vec<u8>` is chosen, that choice is global and final. This is where Rust's coherence guarantee delivers its value and also where it starts to bind: a type gets exactly one implementation of a trait, no matter what a particular application would prefer.
 
 ## Tier 3: many implementations, one wiring per type
 
-The first CGP tier keeps the type in the `Self` position but splits the trait into a consumer/provider pair, so many overlapping implementations can coexist as named providers while each type still commits to one of them globally. The component is therefore **self-targeted**, which the names below say out loud — `CanSerializeSelf` here against the `CanSerializeValue<Value>` of tier 4, which is a *different* component rather than a revision of this one. Applying [`#[cgp_component]`](../reference/macros/cgp_component.md) to the trait and writing providers with [`#[cgp_impl]`](../reference/macros/cgp_impl.md) lets `SerializeSelfAsBytes` and a `Serialize`-deferring `UseSerdeForSelf` both exist, overlapping freely on any type that is both `AsRef<[u8]>` and `Serialize`:
+The first CGP tier keeps the type in the `Self` position but splits the trait into a consumer/provider pair, so many overlapping implementations can coexist as named providers while each type still commits to one of them globally. The component is therefore **self-targeted**, which the names below say out loud: `CanSerializeSelf` here against the `CanSerializeValue<Value>` of tier 4, which is a *different* component rather than a revision of this one. Applying [`#[cgp_component]`](../reference/macros/cgp_component.md) to the trait and writing providers with [`#[cgp_impl]`](../reference/macros/cgp_impl.md) lets `SerializeSelfAsBytes` and a `Serialize`-deferring `UseSerdeForSelf` both exist, overlapping freely on any type that is both `AsRef<[u8]>` and `Serialize`:
 
 ```rust
 #[cgp_component(SelfSerializer)]
@@ -121,7 +121,7 @@ impl SelfSerializer {
 }
 ```
 
-A type then picks one provider with a [`delegate_components!`](../reference/macros/delegate_components.md) entry — `Vec<u8>` becomes its own context, wiring its serializer component to `SerializeSelfAsBytes`:
+A type then picks one provider with a [`delegate_components!`](../reference/macros/delegate_components.md) entry: `Vec<u8>` becomes its own context, wiring its serializer component to `SerializeSelfAsBytes`:
 
 ```rust
 delegate_components! {
@@ -131,7 +131,7 @@ delegate_components! {
 }
 ```
 
-This tier's advantage is backward compatibility: the original trait is extended without changing its interface, a type can still implement it directly, and many reusable providers replace the hand-copied logic of tier 2. Its limitation is that coherence is only partly lifted. The wiring still keys on the type in the `Self` position, so `Vec<u8>` commits to one provider globally — there can be no separate wiring for a generic `Vec<T>` that would overlap it, and the [orphan rule](coherence.md) still applies, since `delegate_components!` for `Vec<u8>` must live in a crate that owns either the trait or `Vec`.
+This tier's advantage is backward compatibility: the original trait is extended without changing its interface, a type can still implement it directly, and many reusable providers replace the hand-copied logic of tier 2. Its limitation is that coherence is only partly lifted. The wiring still keys on the type in the `Self` position, so `Vec<u8>` commits to one provider globally: there can be no separate wiring for a generic `Vec<T>` that would overlap it, and the [orphan rule](coherence.md) still applies, since `delegate_components!` for `Vec<u8>` must live in a crate that owns either the trait or `Vec`.
 
 ### The tier holds two shapes, and only one of them is limited
 
@@ -139,18 +139,18 @@ This tier's advantage is backward compatibility: the original trait is extended 
 
 Wired on a **value context**, the limitation bites exactly as described. `Vec<u8>` is data, it is not yours, and one wiring is all you get; this is the **retrofit** shape, and it is the right choice when an operation genuinely belongs to the data or when an existing trait's signature cannot be changed.
 
-Wired on an **environmental context**, the same tier behaves very differently, because the constraint "one wiring per type" stops being a constraint when you control how many types there are. The operation there is about the application rather than about data — `CanSendEmail` rather than `CanSerializeSelf` — so the component is still self-targeted and still on this tier. `App` and `TestApp` are both yours, so each wires its own provider and the same trait resolves differently in production and in tests:
+Wired on an **environmental context**, the same tier behaves very differently, because the constraint "one wiring per type" stops being a constraint when you control how many types there are. The operation there is about the application rather than about data (`CanSendEmail` rather than `CanSerializeSelf`), so the component is still self-targeted and still on this tier. `App` and `TestApp` are both yours, so each wires its own provider and the same trait resolves differently in production and in tests:
 
 ```rust
 delegate_components! { App     { EmailSenderComponent: SendViaSmtp } }
 delegate_components! { TestApp { EmailSenderComponent: RecordEmails } }
 ```
 
-No parameter is involved, and nothing has been worked around. This is the **application** shape, and it is where most CGP code lives: an operation about the application itself — send an email, query a user, run the server — wired per application. Reading tier 3 as merely "the retrofit tier" therefore undersells it substantially, and reading tier 4 as the first tier with per-application choice is simply wrong.
+No parameter is involved, and nothing has been worked around. This is the **application** shape, and it is where most CGP code lives: an operation about the application itself, such as sending an email, querying a user, or running the server, wired per application. Reading tier 3 as merely "the retrofit tier" therefore undersells it substantially, and reading tier 4 as the first tier with per-application choice is simply wrong.
 
 ## Tier 4: many implementations, one wiring per type per context
 
-This tier moves the type being implemented out of `Self` and into an explicit parameter, so the `Self` position is always an environmental context — which lifts the orphan rule and lets each context choose providers **per target type** independently. What it adds over the application shape of tier 3 is precise and worth stating narrowly: tier 3 already lets each context you define make its own choice, so what tier 4 buys is the ability to make that choice **about types you do not own**. The trait gains a `Value` parameter, leaving `Self` free to be any application context:
+This tier moves the type being implemented out of `Self` and into an explicit parameter, so the `Self` position is always an environmental context, which lifts the orphan rule and lets each context choose providers **per target type** independently. What it adds over the application shape of tier 3 is precise and worth stating narrowly: tier 3 already lets each context you define make its own choice, so what tier 4 buys is the ability to make that choice **about types you do not own**. The trait gains a `Value` parameter, leaving `Self` free to be any application context:
 
 ```rust
 #[cgp_component(ValueSerializer)]
@@ -161,7 +161,7 @@ pub trait CanSerializeValue<Value: ?Sized> {
 }
 ```
 
-Now two application contexts can serialize the *same* type differently, each coherent within itself, by opening the component and keying on the value type — `AppA` encoding `Vec<u8>` as hexadecimal where `AppB` uses base64:
+Now two application contexts can serialize the *same* type differently, each coherent within itself, by opening the component and keying on the value type, with `AppA` encoding `Vec<u8>` as hexadecimal where `AppB` uses base64:
 
 ```rust
 delegate_components! {
@@ -179,7 +179,7 @@ delegate_components! {
 }
 ```
 
-This tier nearly eliminates the coherence restrictions. Because the wiring keys on the context rather than on `Vec<u8>`, a crate that owns neither the trait nor `Vec` can still wire a serializer for `Vec<u8>` as long as it owns the context, so the orphan rule no longer bites and overlapping providers coexist without any global commitment. The cost is that the trait must be designed with the extra context parameter from the start — it cannot be retrofitted onto an existing trait like `serde::Serialize` without a breaking change — and wiring must be spelled out for every value type a context uses. This is the tier the [modular serialization](../../examples/modular-serialization.md) and [money-transfer API](../../examples/money-transfer-api.md) examples build on, and the tier to reach for whenever a foreign type must be treated differently per application, though the *bulk* of CGP code still sits on tier 3's application shape, as [choosing a tier](#choosing-a-tier) says; the per-type dispatch it relies on is the subject of [dispatching](dispatching.md), wired through the [`open` statement](../reference/macros/delegate_components.md) over [namespaces](namespaces.md).
+This tier nearly eliminates the coherence restrictions. Because the wiring keys on the context rather than on `Vec<u8>`, a crate that owns neither the trait nor `Vec` can still wire a serializer for `Vec<u8>` as long as it owns the context, so the orphan rule no longer bites and overlapping providers coexist without any global commitment. The cost is that the trait must be designed with the extra context parameter from the start (it cannot be retrofitted onto an existing trait like `serde::Serialize` without a breaking change), and wiring must be spelled out for every value type a context uses. This is the tier the [modular serialization](../../examples/modular-serialization.md) and [money-transfer API](../../examples/money-transfer-api.md) examples build on, and the tier to reach for whenever a foreign type must be treated differently per application, though the *bulk* of CGP code still sits on tier 3's application shape, as [choosing a tier](#choosing-a-tier) says; the per-type dispatch it relies on is the subject of [dispatching](dispatching.md), wired through the [`open` statement](../reference/macros/delegate_components.md) over [namespaces](namespaces.md).
 
 ## Tier 5: many implementations, wiring per type per provider
 
@@ -201,7 +201,7 @@ where
 }
 ```
 
-With this in hand a context can fix the element encoding for one collection while leaving others to the context's general wiring — serializing a `Vec<Vec<u8>>` whose inner byte vectors are hexadecimal even though plain `Vec<u8>` elsewhere is encoded as raw bytes:
+With this in hand a context can fix the element encoding for one collection while leaving others to the context's general wiring, serializing a `Vec<Vec<u8>>` whose inner byte vectors are hexadecimal even though plain `Vec<u8>` elsewhere is encoded as raw bytes:
 
 ```rust
 delegate_components! {
@@ -222,8 +222,8 @@ The guiding rule is to settle at the lowest tier that expresses the use case, be
 
 Two questions settle it faster than working through the tiers one by one. **Is the operation about the data, or about the application?** About the data means a value context and the retrofit shape; about the application means an environmental context. **Does the operation concern a type you do not own, and must different applications treat it differently?** If yes, the target moves into a parameter and you are on tier 4; if no, self-targeting is enough. Each shape is the right answer to a different question rather than a different amount of sophistication, which is why none of them is an intermediate step to be outgrown.
 
-This document is descriptive; the prescriptive companion is [choosing a component's shape](../guides/choosing-a-component-shape.md), which carries the default to reach for, the cost of each alternative, the refactoring that promotes a self-targeted component to a parameter-targeted one, and the two traps — that a parameter is not always a target, and that per-application choice needs no parameter at all. A tier says nothing about which items belong in one component, and that decision cuts across all of them: [sizing a component](../guides/sizing-a-component.md) covers grouping the items one provider choice decides together, why grouping decisions a context would want to make separately collects less reuse at every tier, and why a trait whose providers no second context could reuse whole belongs back at tier 2.
+This document is descriptive; the prescriptive companion is [choosing a component's shape](../guides/choosing-a-component-shape.md), which carries the default to reach for, the cost of each alternative, the refactoring that promotes a self-targeted component to a parameter-targeted one, and the two traps: that a parameter is not always a target, and that per-application choice needs no parameter at all. A tier says nothing about which items belong in one component, and that decision cuts across all of them: [sizing a component](../guides/sizing-a-component.md) covers grouping the items one provider choice decides together, why grouping decisions a context would want to make separately collects less reuse at every tier, and why a trait whose providers no second context could reuse whole belongs back at tier 2.
 
 ## Related constructs
 
-The mechanism that makes tiers 3 through 5 possible — splitting a trait into a [consumer and provider trait](consumer-and-provider-traits.md) so overlapping and orphan implementations become legal — is the subject of [bypassing coherence](coherence.md), and the dependency threading every tier relies on is [impl-side dependencies](impl-side-dependencies.md). The constructs the tiers introduce are [`#[cgp_component]`](../reference/macros/cgp_component.md) and [`#[cgp_impl]`](../reference/macros/cgp_impl.md) for the trait split, [`delegate_components!`](../reference/macros/delegate_components.md) for the wiring, the [`open` statement](../reference/macros/delegate_components.md) over [namespaces](namespaces.md) and the [dispatching](dispatching.md) idea for per-type selection, and [higher-order providers](higher-order-providers.md) with the [`UseContext` provider](../reference/providers/use_context.md) for the top tier. The whole progression is worked through on a real operation in the [modular serialization](../../examples/modular-serialization.md) example.
+The mechanism that makes tiers 3 through 5 possible, splitting a trait into a [consumer and provider trait](consumer-and-provider-traits.md) so overlapping and orphan implementations become legal, is the subject of [bypassing coherence](coherence.md), and the dependency threading every tier relies on is [impl-side dependencies](impl-side-dependencies.md). The constructs the tiers introduce are [`#[cgp_component]`](../reference/macros/cgp_component.md) and [`#[cgp_impl]`](../reference/macros/cgp_impl.md) for the trait split, [`delegate_components!`](../reference/macros/delegate_components.md) for the wiring, the [`open` statement](../reference/macros/delegate_components.md) over [namespaces](namespaces.md) and the [dispatching](dispatching.md) idea for per-type selection, and [higher-order providers](higher-order-providers.md) with the [`UseContext` provider](../reference/providers/use_context.md) for the top tier. The whole progression is worked through on a real operation in the [modular serialization](../../examples/modular-serialization.md) example.

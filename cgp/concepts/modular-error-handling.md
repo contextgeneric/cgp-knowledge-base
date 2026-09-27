@@ -1,12 +1,12 @@
 # Modular error handling
 
-CGP handles errors modularly by splitting error handling into three independent decisions — what the abstract error type is, how a foreign error is turned into it, and how detail is attached to it — each made by wiring rather than baked into the code that fails.
+CGP handles errors modularly by splitting error handling into three independent decisions (what the abstract error type is, how a foreign error is turned into it, and how detail is attached to it), each made by wiring rather than baked into the code that fails.
 
 ## The problem with a fixed error type
 
-Generic code must be able to fail without committing to a concrete error type. A provider deep in a call graph encounters a parse error, an I/O error, or a domain rule violation, and it has to return *some* error — but it is generic over the context and cannot decide whether the application wants `anyhow::Error`, `std::io::Error`, a boxed trait object, or a hand-rolled enum. Hard-coding any of these into the provider would tie every caller to that choice, and converting between them by hand at each boundary is the boilerplate that error-handling crates exist to remove.
+Generic code must be able to fail without committing to a concrete error type. A provider deep in a call graph encounters a parse error, an I/O error, or a domain rule violation, and it has to return *some* error, but it is generic over the context and cannot decide whether the application wants `anyhow::Error`, `std::io::Error`, a boxed trait object, or a hand-rolled enum. Hard-coding any of these into the provider would tie every caller to that choice, and converting between them by hand at each boundary is the boilerplate that error-handling crates exist to remove.
 
-CGP turns the choice of error type, and the choice of how errors are constructed, into wiring decisions that live in one place per application. The code that fails refers only to an abstract error and to the operations of raising and wrapping; a concrete context supplies the error type and the construction strategy when it is assembled. Swapping `anyhow` for `eyre`, or routing one source error through `From` while formatting another into a string, changes a few wiring lines and touches no provider. This is the same [coherence](coherence.md)-bypassing move CGP applies everywhere — keep the implementations open and decide locally per context — applied specifically to error handling.
+CGP turns the choice of error type, and the choice of how errors are constructed, into wiring decisions that live in one place per application. The code that fails refers only to an abstract error and to the operations of raising and wrapping; a concrete context supplies the error type and the construction strategy when it is assembled. Swapping `anyhow` for `eyre`, or routing one source error through `From` while formatting another into a string, changes a few wiring lines and touches no provider. This is the same [coherence](coherence.md)-bypassing move CGP applies everywhere (keep the implementations open and decide locally per context), applied specifically to error handling.
 
 ## The abstract error type
 
@@ -19,7 +19,7 @@ pub trait HasErrorType {
 }
 ```
 
-Centralizing the error on one trait is what lets errors compose across components. If each fallible component declared its own associated `Error`, a context bounded by several of them would face several unrelated error types with no way to unify them; by having every fallible trait supertrait `HasErrorType`, they all refer to the *same* `Self::Error`. The `Debug` bound is the only requirement the abstract error carries, enough for `.unwrap()` and logging, and it propagates to whatever concrete type a context eventually wires in. A context fixes that type either directly — `impl HasErrorType for App { type Error = anyhow::Error; }` — or, more commonly, by wiring its error-type component to a provider such as `UseType<AppError>`, since `#[cgp_type]` makes `HasErrorType` an abstract-type component built on [`HasType`/`TypeProvider`](../reference/components/has_type.md).
+Centralizing the error on one trait is what lets errors compose across components. If each fallible component declared its own associated `Error`, a context bounded by several of them would face several unrelated error types with no way to unify them; by having every fallible trait supertrait `HasErrorType`, they all refer to the *same* `Self::Error`. The `Debug` bound is the only requirement the abstract error carries, enough for `.unwrap()` and logging, and it propagates to whatever concrete type a context eventually wires in. A context fixes that type either directly, `impl HasErrorType for App { type Error = anyhow::Error; }`, or, more commonly, by wiring its error-type component to a provider such as `UseType<AppError>`, since `#[cgp_type]` makes `HasErrorType` an abstract-type component built on [`HasType`/`TypeProvider`](../reference/components/has_type.md).
 
 ## Raising and wrapping as operations
 
@@ -27,6 +27,7 @@ Two further components give the abstract error its behavior, each parameterized 
 
 ```rust
 #[cgp_component(ErrorRaiser)]
+#[prefix(@cgp.core.error in DefaultNamespace)]
 #[derive_delegate(UseDelegate<SourceError>)]
 #[use_type(HasErrorType.Error)]
 pub trait CanRaiseError<SourceError> {
@@ -35,6 +36,7 @@ pub trait CanRaiseError<SourceError> {
 }
 
 #[cgp_component(ErrorWrapper)]
+#[prefix(@cgp.core.error in DefaultNamespace)]
 #[derive_delegate(UseDelegate<Detail>)]
 #[use_type(HasErrorType.Error)]
 pub trait CanWrapError<Detail> {
@@ -45,7 +47,7 @@ pub trait CanWrapError<Detail> {
 
 Both methods are `#[track_caller]`, which carries through every impl, so an error library that records where an error was built sees the caller's line; see [`CanRaiseError`](../reference/components/can_raise_error.md#behavior).
 
-These two operations cover the everyday error-handling motions: raise a foreign error into the abstract one, and wrap context onto it as it propagates. A provider that fails writes `Context::raise_error(source)` and `Context::wrap_error(err, detail)` — both associated functions, called on the context *type*, because constructing an error is a property of the context rather than of any value in scope. Crucially, the provider states which sources it raises and which details it wraps as [impl-side dependencies](impl-side-dependencies.md) in its `where` clause, so those requirements never leak into the consumer trait a caller bounds on. A loader, for example, needs only `Context: CanRaiseError<String> + CanWrapError<String>` to produce and enrich an error it knows nothing concrete about.
+These two operations cover the everyday error-handling motions: raise a foreign error into the abstract one, and wrap context onto it as it propagates. A provider that fails writes `Context::raise_error(source)` and `Context::wrap_error(err, detail)`, both associated functions, called on the context *type*, because constructing an error is a property of the context rather than of any value in scope. Crucially, the provider states which sources it raises and which details it wraps as [impl-side dependencies](impl-side-dependencies.md) in its `where` clause, so those requirements never leak into the consumer trait a caller bounds on. A loader, for example, needs only `Context: CanRaiseError<String> + CanWrapError<String>` to produce and enrich an error it knows nothing concrete about.
 
 ## Strategies as interchangeable providers
 
@@ -61,9 +63,10 @@ The full list and the exact bound each provider places on the context live in th
 
 ## Pluggable concrete backends
 
-Sitting alongside the generic strategy providers are the standalone backends, each pinning the abstract error to one concrete library type and supplying the raisers and wrappers that go with it. The `cgp-error-anyhow`, `cgp-error-eyre`, and `cgp-error-std` crates each export a type-setting provider — `UseAnyhowError` sets `Self::Error` to `anyhow::Error`, for instance — together with providers like `RaiseAnyhowError` and `DebugAnyhowError` that raise and wrap into that concrete type. Wiring a backend is what makes the abstract error concrete:
+Sitting alongside the generic strategy providers are the standalone backends, each pinning the abstract error to one concrete library type and supplying the raisers and wrappers that go with it. The `cgp-error-anyhow`, `cgp-error-eyre`, and `cgp-error-std` crates each export a type-setting provider, `UseAnyhowError` sets `Self::Error` to `anyhow::Error`, for instance, together with providers like `RaiseAnyhowError` and `DebugAnyhowError` that raise and wrap into that concrete type. Wiring a backend is what makes the abstract error concrete:
 
 ```rust
+use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent, ErrorWrapperComponent};
 use cgp_error_anyhow::{RaiseAnyhowError, UseAnyhowError};
 
 delegate_components! {
@@ -78,20 +81,21 @@ The backend is opt-in and confined to these wiring lines, which is the whole poi
 
 ## Dispatching per source error type
 
-The reason `CanRaiseError` and `CanWrapError` are parameterized rather than monomorphic is that a single context usually raises several unrelated source errors, each best handled differently — and the per-type dispatch each component derives is what lets one component fan out to a provider per source. Because both carry `#[derive_delegate(UseDelegate<SourceError>)]`, a context can open the component and assign a provider to each source error type directly in its own table, the same per-type wiring used for [dispatching](dispatching.md) any generic parameter:
+The reason `CanRaiseError` and `CanWrapError` are parameterized rather than monomorphic is that a single context usually raises several unrelated source errors, each best handled differently. A context fans the component out to one provider per source type with the `open` statement, assigning a provider to each source error type in its own table, the same per-type wiring used for any component with a type parameter. The components' `#[derive_delegate(UseDelegate<…>)]` attributes support the legacy nested-table form of the same dispatch. With `String` as the context's error type:
 
 ```rust
 delegate_components! {
     App {
         open ErrorRaiserComponent;
 
+        ErrorTypeProviderComponent: UseType<String>,
         @ErrorRaiserComponent.String: RaiseFrom,
         @ErrorRaiserComponent.ParseIntError: DebugError,
     }
 }
 ```
 
-Here a raised `String` is converted straight into the abstract error by `RaiseFrom`, while a `ParseIntError` is formatted with `Debug` and then forwarded back through the `String` entry — which `RaiseFrom` handles — so two different sources collapse into one coherent error type. The `open` statement and its `@`-path keys are the [namespace](namespaces.md)-based wiring form; the older [`UseDelegate`](../reference/providers/use_delegate.md) provider expresses the same dispatch through a separate nested table. Either way, the context decides the routing, and the formatting providers like `DebugError` compose with the converting ones rather than replacing them.
+Here a raised `String` is converted straight into the abstract error by `RaiseFrom`, while a `ParseIntError` is formatted with `Debug` and then forwarded back through the `String` entry, which `RaiseFrom` handles, so two different sources collapse into one coherent error type. The `open` statement and its `@`-path keys are a lightweight form of [namespace](namespaces.md) wiring; the older [`UseDelegate`](../reference/providers/use_delegate.md) provider expresses the same dispatch through a separate nested table. Either way, the context decides the routing, and the formatting providers like `DebugError` compose with the converting ones rather than replacing them.
 
 ## Application-specific error components
 
@@ -105,7 +109,7 @@ pub trait CanRaiseHttpError<Code, Detail> {
 }
 ```
 
-The markers `ErrUnauthorized`, `ErrNotFound`, and the like are empty structs that map to status codes, and a provider such as `DisplayHttpError` builds the concrete application error from the code and a `Display` detail. The context then wires this custom component exactly as it wires the built-in ones — opening it and routing each detail type to a provider — so a handler deep in the request pipeline writes `Self::raise_http_error(ErrUnauthorized, "you must first login".into())` without knowing the concrete error type or how status codes are attached. This is the modular error-handling pattern carried up to the application's own vocabulary: the same split between an abstract error, a raising operation, and a wiring choice, applied to errors that are richer than a plain message.
+The markers `ErrUnauthorized`, `ErrNotFound`, and the like are empty structs that map to status codes, and a provider such as `DisplayHttpError` builds the concrete application error from the code and a `Display` detail. The context then wires this custom component exactly as it wires the built-in ones, opening it and routing each detail type to a provider, so a handler deep in the request pipeline writes `Self::raise_http_error(ErrUnauthorized, "you must first login".into())` without knowing the concrete error type or how status codes are attached. This is the modular error-handling pattern carried up to the application's own vocabulary: the same split between an abstract error, a raising operation, and a wiring choice, applied to errors that are richer than a plain message.
 
 ## Related constructs
 
