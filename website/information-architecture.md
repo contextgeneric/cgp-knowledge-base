@@ -6,9 +6,9 @@ document the [writing guides](writing-guides/README.md) assume: each of those sp
 page, and this one holds the shape they add up to.
 
 It is deliberately distinct from [site-structure.md](site-structure.md), and the pair is easy to
-confuse. **site-structure.md records the site as built** — the Docusaurus configuration, the current
+confuse. **site-structure.md records the site as built**: the Docusaurus configuration, the current
 navigation, the deployment, and one entry per page that exists today. **This document states the site as
-intended** — including pages that do not exist yet and jobs that are currently done by the wrong page.
+intended**, including pages that do not exist yet and jobs that are currently done by the wrong page.
 Where they disagree, that disagreement is the redesign, and the work it implies is listed in
 [redesign-queue.md](redesign-queue.md).
 
@@ -21,14 +21,14 @@ currently lead somewhere unmaintained.
 
 Four public properties carry CGP's documentation, and each owns something the others should not
 duplicate. **contextgeneric.dev** is the front door and the home of orientation, teaching, the project's
-public argument for itself, and — a recent decision — the **canonical construct reference**.
+public argument for itself, and, by a recent decision, the **canonical construct reference**.
 **[docs.rs/cgp](https://docs.rs/cgp)** carries the crate's API signatures, but documenting the `cgp`
 crate has been an open goal since the [launch post](blog/early-preview-announcement.md) and the entry is
 thin, so the site does not defer to it; see
 [writing-guides/reference.md](writing-guides/reference.md). The
 **[CGP Patterns book](https://patterns.contextgeneric.dev/)** teaches CGP from first principles without
 reference to the `cgp` crate's specific constructs, which makes it the depth a motivated reader
-graduates into — though it has not been updated for some time, and the site currently says so.
+graduates into, though it has not been updated for some time, and the site currently says so.
 **[cgp-skills](https://github.com/contextgeneric/cgp-skills)** is the agent skill, published on the site
 as a copy under `docs/ai/` whose source of truth lives elsewhere.
 
@@ -47,8 +47,8 @@ else has interested them, or never.
 Two design consequences follow, and they shape everything below.
 
 **Every page is a landing page.** A blog post, a tutorial, or an explanation page may be a reader's
-first contact with CGP, so each must orient a cold reader in its first screen — what CGP is, in one
-sentence, with a link — before assuming any context. This is cheap to do and currently done unevenly.
+first contact with CGP, so each must orient a cold reader in its first screen (what CGP is, in one
+sentence, with a link) before assuming any context. This is cheap to do and currently done unevenly.
 
 **Routing matters more than hierarchy.** A reader who lands mid-site will not go looking for a sidebar;
 they follow links in the prose. So the architecture is carried by deliberate onward links at the end of
@@ -60,7 +60,7 @@ reader wherever they happened to stop.
 A reader who wants to learn CGP currently has four routes, and only one is maintained. This is the
 architecture's central defect and the redesign's main target.
 
-The **Introduction** is orientation and routing — it defines CGP with the `Hash` example, states the
+The **Introduction** is orientation and routing: it defines CGP with the `Hash` example, states the
 project's maturity frankly, and points onward. It works, except that it currently points readers at the
 blog as the most current material, which was true before the tutorials existed.
 
@@ -73,7 +73,7 @@ The **book** teaches from first principles and has not been updated for a while,
 itself concedes.
 
 The **tutorials** are the only maintained, sequenced teaching material on the site, which makes them
-where a newcomer should be sent first — and there are two of them.
+where a newcomer should be sent first, and there are two of them.
 
 The redesign's answer is not to fix the blog, which is a dated record and must not be rewritten, but to
 **stop routing newcomers into it** and to build out the two tiers that can carry them: the tutorials,
@@ -86,7 +86,7 @@ Nine surfaces make up the site, and each has one job. A page that does two jobs 
 The **front page** makes the idea click and carries the selling points, then routes. It teaches nothing
 and specifies nothing. Its spec is [writing-guides/homepage.md](writing-guides/homepage.md).
 
-The **explanation tier** — a new category, `Concepts` — answers *why* for a reader who is not writing
+The **explanation tier**, a new category named `Concepts`, answers *why* for a reader who is not writing
 code: why Rust cannot share these implementations, what CGP actually generates, how each of its ideas
 works, and where each one stops paying. It carries one page per idea, mirroring the internal
 [cgp/concepts/](../cgp/concepts/README.md) catalog. Its spec is
@@ -120,10 +120,10 @@ they need. It is by far the largest surface on the site at roughly a hundred and
 knowledge base's internal reference rather than written fresh, and it is canonical rather than a
 supplement to rustdoc. Its spec is [writing-guides/reference.md](writing-guides/reference.md).
 
-**Orientation pages** — the Introduction and Resources — route rather than teach. Their readers arrive
+**Orientation pages** (the Introduction and Resources) route rather than teach. Their readers arrive
 already interested and want to be sent somewhere, not persuaded.
 
-**Project pages** — Contribute, the planned Project status, and the planned AI disclosure page — speak
+**Project pages** (Contribute, the planned Project status, and the AI disclosure page) speak
 about the project rather than about CGP. Contribute is the one page carrying the author's own voice on
 the site, in its sponsorship section, and that must stay; the disclosure page carries the second
 permitted instance, for the sentence taking responsibility for what the project publishes, since
@@ -140,19 +140,19 @@ but under the wrong parent or doing the wrong job.
 
 **Almost all of it arrives at once.** The redesign is written on the website repository's `v0.8.0`
 branch and publishes when that branch merges alongside the v0.8.0 release, so the site does not pass
-through a state where half of this inventory exists — which is what makes a target this large safe to
+through a state where half of this inventory exists, which is what makes a target this large safe to
 commit to. The one exception is the Projects section, which lands afterwards. The mechanics are in
 [AGENTS.md](AGENTS.md#the-redesign-lands-on-a-release-branch-all-at-once) and the sequencing in
 [tasks.md](tasks.md).
 
-**Front page** — the hook and the bounded essay. Present, needs rewriting.
+**Front page**: the hook and the bounded essay. Present, needs rewriting.
 
-**Concepts** (new category, 18 pages plus an index) — present and **complete**
+**Concepts** (new category, 18 pages plus an index): present and **complete**
 
 This is the explanation tier, and its shape is now **one page per idea** rather than the four curated
 pages this document originally planned. The category is labelled *Concepts*, sits at `docs/concepts/`
 between Tutorials and Reference, and mirrors the internal
-[cgp/concepts/](../cgp/concepts/README.md) catalog one to one — the same relationship the reference
+[cgp/concepts/](../cgp/concepts/README.md) catalog one to one, the same relationship the reference
 section has to `cgp/reference/`. All eighteen are written, and the code on each is backed by the website
 repository's `example-code/` crate; the current state is recorded in
 [site-structure.md](site-structure.md).
@@ -162,35 +162,35 @@ artifacts: *Why CGP exists* is **Bypassing coherence**, *How CGP works* is **Con
 traits** together with **Impl-side dependencies**, and *When to use CGP, and when not* is **Modularity
 Hierarchy**, the modularity hierarchy rendered as an explanation with a decision-guide tail. The trade is that the tier now
 covers every idea rather than the four a homepage essay offloads to, at the cost of the curation that
-made those four a short reading path — which the section's index page is what restores.
+made those four a short reading path, which the section's index page restores.
 
-- *Project status and adoption risk* — **moved**, out of the Introduction, and now **without a settled
+- *Project status and adoption risk*: **moved**, out of the Introduction, and now **without a settled
   home**: it is project meta rather than a CGP idea, so it does not belong among the concepts. Under
   **Project** beside Contribute is the obvious placement and is not yet decided. The evaluator's page,
   and it must stay linkable directly from above the fold.
-- *Overview* — present, **repurposed**, and staying where it is. The feature tour: every high-level CGP
+- *Overview*: present, **repurposed**, and staying where it is. The feature tour: every high-level CGP
   feature walked through in more detail than any other surface carries. This is the page the front
   page's feature beats and its "it goes further than trait implementations" section offload to, which
-  is the job that keeps it from overlapping its neighbours — the concepts explain one idea each, and the
+  is the job that keeps it from overlapping its neighbours: the concepts explain one idea each, and the
   Overview covers the breadth. It is no longer capped at five features, since the curated five are the
   *front page's* constraint and this page is where they are expanded and the breadth features added.
   It is no longer moved into a new category, which also retires the `slug: /overview` requirement the
   move would have carried.
 
 **Tutorials**, in the order a reader meets them rather than the order they were written
-- *Hello World* — present. First contact, five minutes, one durable idea.
-- *An applied tutorial* — **new**, and second on purpose. Building something real from an
+- *Hello World*: present. First contact, five minutes, one durable idea.
+- *An applied tutorial*: **new**, and second on purpose. Building something real from an
   [example](../examples/README.md), for the reader who evaluates a technology by seeing a realistic
   system in it. It sits here rather than last because it is the site's first **environmental context**:
   the front page's hero block and Hello World both wire a value context, which is the shape least CGP
   code is actually in, so this is where a reader meets a type standing for an application before their
   habits form.
-- *Area calculation* (3 parts) — present. The first-principles series.
-- *Checking and debugging* — present, the fourth part of the area-calculation series. Lazy wiring,
+- *Area calculation* (3 parts): present. The first-principles series.
+- *Checking and debugging*: present, the fourth part of the area-calculation series. Lazy wiring,
   `check_components!`, and `cargo cgp check`, with one mis-wiring carried through all three
   diagnostics.
 
-**Comparisons** (new category, 11 pages plus an index) — present and **complete**
+**Comparisons** (new category, 11 pages plus an index): present and **complete**
 
 The pages for a reader who arrives knowing a related idea and wants CGP placed in it: Rust's own
 coherence proposals, C++ policy-based design, type classes, ML modules, implicit parameters, algebraic
@@ -205,59 +205,59 @@ and the current state is recorded in [site-structure.md](site-structure.md). Fou
 route to the comparison for their idea from their onward reading. What remains is the author's read of
 each page's two judging sections.
 
-**Reference** (new category, plus an index) — present, and **complete**
+**Reference** (new category, plus an index): present, and **complete**
 - One page per named construct, grouped as `macros/`, `attributes/`, `derives/`, `components/`,
-  `providers/`, `traits/`, and `types/`. Every group is written — `macros/` (20),
+  `providers/`, `traits/`, and `types/`. Every group is written: `macros/` (20),
   `attributes/` (10), `derives/` (8), `traits/` (57), `providers/` (50), `components/` (17), and
-  `types/` (11 construct pages plus two overviews) are complete. The `providers/` group is one page per provider: sixteen singleton pages plus four
-  subsections — `error/`, `handler/`, `dispatch/`, and `monad/` — each with its own overview. The
+  `types/` (11 construct pages plus an overview) are complete. The `providers/` group is one page per provider: sixteen singleton pages plus four
+  subsections (`error/`, `handler/`, `dispatch/`, and `monad/`), each with its own overview. The
   `components/` group is likewise one page per component: eight at the top level plus a nine-page
   `handler/` subsection for the computation family. The `traits/` group is organized into eleven
   importance-ordered subdirectories by trait family, each with its own overview, and every trait
   construct page carries a *Definition* section after its *Overview*. Ported from the internal reference,
   and recorded in [site-structure.md](site-structure.md).
-- **The `types/` group is now ported**, split one page per type rather than the internal reference's
+- **The `types/` group is split one page per type** rather than the internal reference's
   `type_level_spines` consolidation, per the
   [granularity rule](writing-guides/reference.md#granularity-one-page-per-named-construct), and flat:
-  all eleven construct pages sit directly under `types/` — the markers `phantom_data`, `field`,
+  all eleven construct pages sit directly under `types/`, namely the markers `phantom_data`, `field`,
   `index_type`, `life`; the six recursive lists `cons`, `nil`, `either`, `void`, `chars`, `path_cons`,
-  whose family explanation lives on their head cells; and `mref`, the ordinary runtime data type, last —
+  whose family explanation lives on their head cells; and `mref`, the ordinary runtime data type, last,
   ordered by importance and adding a `PhantomData` page. Every type page that shows code has its
   `example-code` mirror.
 - A hand-written *index* page that names the handful of constructs a newcomer needs before listing the
-  rest by job — present, and not an autogenerated list. It is also where the section's completeness is
+  rest by job: present, and not an autogenerated list. It is also where the section's completeness is
   visible, since every construct is reachable from it, including the ones documented on a shared page.
-- An *error catalog* page — scaffolded, **still to be written**. The compile errors CGP produces after
+- An *error catalog* page: present. The compile errors CGP produces after
   codegen, organized by the internal catalog's hidden-versus-surfaced axis, so a reader who hits a
   wiring failure has somewhere on the site to look it up. One page rather than seventeen, drawn from
   [cgp/errors/](../cgp/errors/README.md), and the reason every reference page's *Gotchas* section can
   stay construct-specific instead of re-explaining the same failure.
-- A *glossary* page — present. The terms the documentation uses, CGP's own and the Rust and borrowed
+- A *glossary* page: present. The terms the documentation uses, CGP's own and the Rust and borrowed
   ones alike, defined in a sentence or two each and routed onward. Term lookup where the index is
   construct lookup, and the answer to vocabulary that was used across the site far more widely than it
   was defined. Recorded in [site-structure.md](site-structure.md).
-- *Tooling* — present at `docs/cargo-cgp/`, labelled for the tool rather than the category, since it
+- *Tooling*: present at `docs/cargo-cgp/`, labelled for the tool rather than the category, since it
   covers one. A sibling section rather than part of the reference: five pages, an overview plus one per
   command, plus installation and troubleshooting.
 
-**Projects** (new category, roughly two hundred pages) — **after the release**, unlike everything else
+**Projects** (new category, roughly two hundred pages): **after the release**, unlike everything else
 in this inventory
-- *Index* — present, with Hypershell, cgp-serde, and cgp-examples as its projects so far. The projects introduced honestly,
+- *Index*: present, with Hypershell, cgp-serde, and cgp-examples as its projects so far. The projects introduced honestly,
   libraries apart from demonstrations, and a pattern-finding table that routes a reader from an idea
   to the example page showing it.
-- *cgp-examples* — partly present: 14 of about 33 pages, the section's index and the `expression`
+- *cgp-examples*: partly present: 14 of about 33 pages, the section's index and the `expression`
   and `web-app` subsections. Still **new**: `builder`, `transfer`, and `greet`. Five demonstration
   crates, almost all example pages: the extensible visitor and builder patterns, a
   namespace-organized web service, a wiring study at four scales, and a greeting. No reference, since
   nobody depends on the crates.
-- *Hypershell* — partly present: 21 of about a hundred pages, the examples, design, guides, and
+- *Hypershell*: partly present: 21 of about a hundred pages, the examples, design, guides, and
   limitations that nothing blocks. Still **new**: the reference, the pages that quote providers, and a
   comparison with shell scripts. The type-level DSL: thirteen examples, its design and guides, one
   reference page per construct, the comparison, and its limitations.
-- *cgp-serde* — partly present: 45 of 50 pages, everything but the two arena examples and three
+- *cgp-serde*: partly present: 45 of 50 pages, everything but the two arena examples and three
   component pages, which wait on DC3. Serde as components: four examples, its design and guides, one
   reference page per construct, the comparison with Serde, and its limitations.
-- *Error backends* — **new**, about 22 pages. One walkthrough per crate, the shared design and guides, and
+- *Error backends*: **new**, about 22 pages. One walkthrough per crate, the shared design and guides, and
   one reference page per provider.
 
 The section takes the place of three deep dives planned before the project sections existed, and each
@@ -269,33 +269,33 @@ meantime by the Concepts pages and the posts. The page type is specified in
 [writing-guides/project.md](writing-guides/project.md).
 
 **Orientation**
-- *Quickstart* — present. Install and one working program, with no concepts and nothing to
+- *Quickstart*: present. Install and one working program, with no concepts and nothing to
   understand: the low-commitment landing the front page and every launch post ask for. It is
   deliberately smaller than *Hello World*, which teaches an idea; this page only proves the thing
   runs, and its boundary against the tutorial is fixed in
   [writing-guides/orientation.md](writing-guides/orientation.md).
-- *Introduction* — present, narrowed. Keeps the definition and the routing; loses the maturity section
+- *Introduction*: present, narrowed. Keeps the definition and the routing; loses the maturity section
   to *Project status* and stops sending newcomers to the blog.
-- *Resources* — present and current. The ecosystem index, now carrying `cargo-cgp`, the full crate
+- *Resources*: present and current. The ecosystem index, now carrying `cargo-cgp`, the full crate
   list, and the Hermes SDK as the evaluator's social proof rather than one link among eight.
 
 **Project**
-- *Contribute* — present and current.
+- *Contribute*: present and current.
 
-**Further depth** — links out to the [book](https://patterns.contextgeneric.dev/) and the
+**Further depth**: links out to the [book](https://patterns.contextgeneric.dev/) and the
 repositories. [docs.rs](https://docs.rs/cgp) is linked once from Resources rather than from each
 reference page.
 
-**Blog** — 17 posts, plus the unfinished v0.8.0 draft, one draft on a branch, and one planned post; the
+**Blog**: 16 published posts, plus the unfinished v0.8.0 draft, one draft on a branch, and one planned post; the
 owed writing is B1 and B2 in [tasks.md](tasks.md). The blog is the one surface this inventory does not
 try to specify in advance: a post is a dated statement rather than a page with a job, so posts are listed
 as they are written rather than planned into the target.
 
-**AI** — the section carries CGP's relationship with coding agents in both directions, and the two
+**AI**: the section carries CGP's relationship with coding agents in both directions, and the two
 directions are different subjects that must be named apart rather than blended.
-- *Using CGP with coding agents* — present as the inlined skill copy, regenerated from `cgp-skills`
+- *Using CGP with coding agents*: present as the inlined skill copy, regenerated from `cgp-skills`
   rather than edited. This is a **feature**: what CGP offers a reader who works with an assistant.
-- *AI disclaimer* — present. The disclosure page: the four levels from agent-written documentation
+- *AI disclaimer*: present. The disclosure page: the four levels from agent-written documentation
   through revised drafts and non-imported code to the hand-written core library, and the destination
   every AI-assisted page's provenance note links to. This is a **fact about the project**, and it is the
   answer a reader wants before they trust the rest of the site. Specified in
@@ -305,7 +305,7 @@ directions are different subjects that must be named apart rather than blended.
 
 The section stays at `docs/ai/`, labelled "AI Assisted Development", which reads correctly for both
 pages; the unmerged rename to `docs/ai-assisted-development/` would move both URLs to no benefit. The
-alternative placement — the disclosure page under **Project** beside Contribute — is defensible and was
+alternative placement (the disclosure page under **Project** beside Contribute) is defensible and was
 not chosen, because a reader looking for provenance looks under AI first.
 
 The navigation bar's "AI" entry is the one place the site leads with the word, and the communication
@@ -317,7 +317,7 @@ the condition it sets is that nothing else above the fold does.
 ## Navigation and sidebar order
 
 The navigation bar carries Tutorials, Docs, Blog, and AI, plus a GitHub link, and the redesign adds no
-new top-level entry — the explanation tier sits under Docs, because a reader looking for "why" looks in
+new top-level entry: the explanation tier sits under Docs, because a reader looking for "why" looks in
 the documentation rather than in a fifth menu. Keeping the bar at four also respects the
 [stock-Docusaurus policy](site-structure.md), since the sidebar is autogenerated from the `docs/`
 directory tree and a new category is a directory with a `_category_.json` rather than site machinery.
@@ -340,7 +340,7 @@ project can least afford to give. Placing the section after Tutorials makes it w
 for once a construct has raised a question, and its index page is what preserves the short reading path
 the curated four would have been.
 
-Two naming rules follow. **Do not label the category "Explanation"** — that is vocabulary for the people
+Two naming rules follow. **Do not label the category "Explanation"**, since that is vocabulary for the people
 organizing documentation, not for the people reading it, and Diátaxis advises against exposing its own
 terms in navigation. And **prefer *Concepts* to *Understanding CGP*** now that the section mirrors an
 idea catalog rather than carrying four essays: it names the same thing more plainly, and it matches the
@@ -358,12 +358,12 @@ World*. Everything else on the site is downstream of a decision they have not ma
 the Quickstart, which exists precisely because this reader will spend two minutes and not twenty.
 
 The **working developer** arrives with a problem and wants to know whether CGP solves it. Their path is
-front page → *Why CGP exists* → *Hello World* → *Area calculation* → *Checking and debugging* → the
+front page → *Bypassing coherence* → *Hello World* → *Area calculation* → *Checking and debugging* → the
 reference, which is where they live once they are writing code. The checking tutorial is
 load-bearing on this path: it is where a reader either learns to read a CGP error or decides the
 language is not worth it.
 
-The **evaluator** reads for risk. Their path is front page → *Project status* → *When to use CGP* →
+The **evaluator** reads for risk. Their path is front page → *Project status* → *Modularity Hierarchy* →
 Resources → the Projects index and the two library sections' limitations pages, and what persuades them
 is candour plus social proof. The single most valuable thing the site can do for this reader is present
 the [Hermes SDK](https://github.com/informalsystems/hermes-sdk/) as the real system CGP was built for,
@@ -371,7 +371,7 @@ rather than as one line at the bottom of a link list; the Projects section is th
 host itself.
 
 The **type-system and functional-programming reader** wants the mechanism and the intellectual argument.
-Their path is *Why CGP exists* → *How CGP works* → the comparison for the paradigm they know (type
+Their path is *Bypassing coherence* → *Consumer and provider traits* → the comparison for the paradigm they know (type
 classes, ML modules, implicit parameters, effects, or rows) → the Hypershell project section, the blog's
 deep-dive posts, and the [RustLab transcript](blog/rustlab-2025-coherence.md), which is the best thing on
 the site for them.
@@ -382,7 +382,7 @@ incoherent-Rust post once B2 publishes it. The comparison page is this reader's 
 on the site.
 
 Readers who arrive from a **dependency-injection, dynamic-language, or C++ background** take the
-matching comparison as their first stop instead of *Why CGP exists*, since the comparison maps CGP into
+matching comparison as their first stop instead of *Bypassing coherence*, since the comparison maps CGP into
 vocabulary they already hold, and then join the working developer's path at *Hello World*.
 
 The **framework and library author** wants to know whether CGP solves generic-over-structure code. Their
@@ -404,8 +404,8 @@ Three questions settle where a page goes, and asking them in order avoids most m
 reader doing while they read it?** Nothing → explanation tier, or Comparisons when the page's subject is
 an idea from outside CGP that the reader already holds; following along at a keyboard → tutorial, or
 Projects when the subject is a program a project ships; looking one thing up → the reference, or a
-project's reference when the name belongs to that project. **Is it dated?** A statement about a moment — a
-release, an announcement, a talk — is a blog post and becomes a historical record the day it publishes;
+project's reference when the name belongs to that project. **Is it dated?** A statement about a moment (a
+release, an announcement, a talk) is a blog post and becomes a historical record the day it publishes;
 a statement about how things are is a docs page and is corrected in place forever. **Whose voice?** The
 author's first person means the blog, with the Contribute page's sponsorship section as the one standing
 exception.
@@ -416,13 +416,13 @@ page of a *kind* the site has not published before means writing its
 [writing guide](writing-guides/README.md) first, since the guide is what later revisions are checked
 against. And a page written with AI assistance carries a
 [provenance note](AGENTS.md#disclosing-ai-use-on-a-page) at its foot, with the level recorded in its
-document — new pages only, never a retroactive sweep.
+document, on new pages only and never as a retroactive sweep.
 
 ## What this document does not decide
 
 Visual design, the feature illustrations, and the theme are outside its scope; the project's
 [stated policy](blog/new-website.md) is to keep the Docusaurus installation stock and spend the time on
-Markdown instead. It also does not decide the *content* of any page — that belongs to the writing guides
+Markdown instead. It also does not decide the *content* of any page, which belongs to the writing guides
 and to [communication-strategy/](../communication-strategy/README.md). What it decides is which pages
 exist, what each is for, and where a reader goes next.
 
@@ -431,7 +431,7 @@ exist, what each is for, and where a reader goes next.
 This document leads the site rather than following it, so it goes stale in a particular way: not when the
 site changes, but when a page is added, moved, or repurposed **without** the change being reflected here
 first. Revisit it whenever a page's job changes, whenever a new page type appears, and whenever a reader
-path is found not to work — the last of which is evidence from
+path is found not to work; the last of these is evidence from
 [evidence.md](../communication-strategy/evidence.md) rather than a matter of taste. As entries in
 [redesign-queue.md](redesign-queue.md) are completed, the corresponding "new" and "moved" markers above
 should disappear, and when the inventory here matches [site-structure.md](site-structure.md) the redesign

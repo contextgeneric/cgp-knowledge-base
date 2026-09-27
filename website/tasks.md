@@ -6,8 +6,8 @@ roughly a hundred pages, and the question an agent or a maintainer actually arri
 wrong with the site" but "what should I start on now, and what will I break if I start there".
 
 It is deliberately a plan rather than a diagnosis, and that division matters because two documents both
-listing outstanding work would drift apart. [redesign-queue.md](redesign-queue.md) owns the **diagnosis**
-— what is wrong with each page today, why it is wrong, and which document carries the detail.
+listing outstanding work would drift apart. [redesign-queue.md](redesign-queue.md) owns the **diagnosis**:
+what is wrong with each page today, why it is wrong, and which document carries the detail.
 [information-architecture.md](information-architecture.md) owns the **target**, and the
 [writing guides](writing-guides/README.md) own the **specification** for each kind of page. This document
 owns only the plan: one short entry per task naming where the change lands, what blocks it, and what
@@ -22,13 +22,13 @@ make sense.
 **The redesign and the v0.8.0 release are one event.** The whole site is rewritten on the website
 repository's `v0.8.0` branch and goes live when that branch merges, alongside the release. Nothing
 publishes incrementally, every page is written as though v0.8.0 has already shipped, and the rules
-around that — including never committing redesign work to `main`, which deploys on push — are in
+around that (including never committing redesign work to `main`, which deploys on push) are in
 [AGENTS.md](AGENTS.md#the-redesign-lands-on-a-release-branch-all-at-once).
 
 **What sets the release date is the front page.** Everything except the Projects section and the two
-blog posts is release-blocking, and the reference — which used to set the date, because it is
-[canonical](writing-guides/reference.md) and so had to be complete on day one rather than
-deferred — now has a page for every construct. That obligation still binds: a page added from here
+blog posts is release-blocking. The reference, which is
+[canonical](writing-guides/reference.md) and so must be complete on day one rather than
+deferred, has a page for every construct. That obligation still binds: a page added from here
 is added with its index entry in the same change, because a construct with no page is a hole a reader
 falls into.
 
@@ -40,11 +40,11 @@ handed over is actually startable.
 ## How to read a task
 
 Every task has an ID so that dependencies can be stated without ambiguity, a **lands in** field naming
-the repository and path, and a **done when** condition. The IDs group by kind — `C` corrections, `E`
+the repository and path, and a **done when** condition. The IDs group by kind (`C` corrections, `E`
 explanation tier, `F` front page, `T` teaching, `R` reference, `P` the Projects section, with `DC` for the
 project code they quote, `W` comparisons, `B` the
 blog, `V` the version release, `O` orientation, `A` the AI disclosure, `S` search and agent
-discoverability, `X` cross-cutting — and they are stable, so a task removed on completion leaves its ID
+discoverability, `X` cross-cutting), and they are stable, so a task removed on completion leaves its ID
 retired rather than renumbered.
 
 Four obligations apply to **every** task that adds or moves a page, and they are stated once here rather
@@ -55,7 +55,7 @@ marking it done, and deleting that document once it is empty. Landing a task mea
 matching `new` or `moved` marker** in [information-architecture.md](information-architecture.md), since
 the redesign is finished when that inventory and [site-structure.md](site-structure.md) agree. And a page
 written with AI assistance carries **one provenance note at its foot**, linking the section of the
-disclosure page that matches how it was made, with the level recorded in its internal document — the
+disclosure page that matches how it was made, with the level recorded in its internal document; the
 mechanics are in [AGENTS.md](AGENTS.md#disclosing-ai-use-on-a-page), and this one applies from the moment
 A1 lands and never retroactively.
 
@@ -67,8 +67,8 @@ against the `cgp` source and the `/cgp` skill, prefer code already verified in
 shows code also puts that code in the website repository's
 [`example-code/` crate](site-structure.md#the-example-code-crate), at the mirrored path, so the
 verification survives the session that did it. Every page
-that shows CGP code **says which of the three shapes its example is in** — a value context or an
-environmental one, self-targeted or parameter-targeted — because the site's examples span all three and a
+that shows CGP code **says which of the three shapes its example is in** (a value context or an
+environmental one, self-targeted or parameter-targeted), because the site's examples span all three and a
 reader who generalizes from one and then meets another without being told has no way to say what a context
 is; the qualifiers and the four misreadings they prevent are in
 [vocabulary.md](../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target), and an
@@ -84,19 +84,19 @@ Two decisions are not tasks of their own because they change several pages each,
 here so that a page written without them has to be revisited.
 
 **The application shape is taught second.** A reader's first contact is the front page's hero block,
-which is a value context and stays that way — it earns its place by showing a real `E0119` with nothing
+which is a value context and stays that way: it earns its place by showing a real `E0119` with nothing
 but the annotations changed. Everything after it should reach the shape most CGP code is actually in.
 On the explanation path that is already handled: the homepage essay's section 2 marks the transition and
-*Why CGP exists* builds the application-context idea out of plain Rust. On the teaching path it is not,
+*Bypassing coherence* builds the application-context idea out of plain Rust. On the teaching path it is not,
 because both existing tutorials wire a value context and the checking tutorial continues that family. The
-answer is **T3**, the applied tutorial, which is naturally environmental — so it is release-blocking and
+answer is **T3**, the applied tutorial, which is naturally environmental, so it is release-blocking and
 sits second in the tutorial order rather than last. The reasoning is the comprehension barrier in
 [readers.md](../communication-strategy/readers.md#the-comprehension-barriers).
 
-**Agent support answers the cost objection, and appears nowhere else.** Three of CGP's loudest costs —
-the learning curve, the generated-type cascade, and the volume of wiring — are mechanical work over a
+**Agent support answers the cost objection, and appears nowhere else.** Three of CGP's loudest costs
+(the learning curve, the generated-type cascade, and the volume of wiring) are mechanical work over a
 written-down vocabulary, which is what CGP's published agent skill reduces. That belongs in the
-homepage's cost section, in *When to use CGP*, in *Project status*, and on Resources, stated beside the
+homepage's cost section, in *Modularity Hierarchy*, in *Project status*, and on Resources, stated beside the
 cost and framed as a smaller cost rather than a solved one. It does **not** belong in the tag line, the
 feature set, a hook, or a blog post's opening. The wording rules are in
 [message.md](../communication-strategy/message.md#the-one-mitigation-that-spans-three-of-these) and
@@ -104,7 +104,7 @@ feature set, a hook, or a blog post's opening. The wording rules are in
 
 ## E — The explanation tier
 
-**Complete.** The **Concepts** section at `docs/concepts/` is written — eighteen pages plus a
+**Complete.** The **Concepts** section at `docs/concepts/` is written: eighteen pages plus a
 hand-written index, mirroring the internal [cgp/concepts/](../cgp/concepts/README.md) catalog one to
 one, specified by [writing-guides/explanation.md](writing-guides/explanation.md). Every page that shows
 code has a compiled counterpart in the website repository's
@@ -114,26 +114,26 @@ which every page in this tier is subject to.
 The Projects section, which links to these pages instead of re-teaching them, is therefore unblocked.
 One task remains in this group, and it is not a concept page:
 
-- **E1 — *Project status and adoption risk*.** Mostly a move: lift the "Current Status" section out of
+- **E1: *Project status and adoption risk*.** Mostly a move: lift the "Current Status" section out of
   the Introduction so the homepage can link it from above the fold. Its frankness is the asset and must
   survive the move. The section includes cargo-cgp, gradual adoption, and the agent skill among its
-  mitigations. **This page has no settled home** — it is project meta rather than a CGP idea, so it does not belong under Concepts, and
+  mitigations. **This page has no settled home**: it is project meta rather than a CGP idea, so it does not belong under Concepts, and
   under **Project** beside Contribute is the obvious alternative. Settle that before writing it.
   *Blocks:* F1's second call to action. *Done when:* the page stands alone, the Introduction links to
   it.
 
 ## F — The front page
 
-- **F1 — rebuild the front page against its guide.** The largest single-page change on the list, and the
+- **F1: rebuild the front page against its guide.** The largest single-page change on the list, and the
   one that most needs its destinations to exist first: the hero and tag line, the reassurance line and
   install command, the settled before/after example and the copy that sells it, the six-section bounded
   essay including the cost section, and the routing section replacing the "Ready to Get Started?" filler.
   The hero block's own snippet must be **compiled, not eyeballed**, per the guide. *Lands in:*
   `src/pages/index.tsx` and `src/components/HomepageFeatures/`. *Spec:*
   [writing-guides/homepage.md](writing-guides/homepage.md). *Blocked by:* E1, and softly by F2; every other
-  destination it routes to — the Quickstart, the concept pages, the reference — is written. *Done when:*
+  destination it routes to (the Quickstart, the concept pages, the reference) is written. *Done when:*
   the guide's five draft checks pass and the author has read it.
-- **F2 — align the front page with the settled feature set.** The front page still names six
+- **F2: align the front page with the settled feature set.** The front page still names six
   features. It needs the five curated in
   [identity.md](../communication-strategy/identity.md#the-headline-feature-set), developed as prose
   beats that link to the Overview for depth. The Overview supplies the broader tour, including
@@ -141,30 +141,29 @@ One task remains in this group, and it is not a concept page:
 
 ## T — Teaching
 
-- **T3 — the applied-register tutorial.** Release-blocking, and **second in the tutorial order rather
+- **T3: the applied-register tutorial.** Release-blocking, and **second in the tutorial order rather
   than last**, because it is where a reader meets an application context after a homepage and a Hello
-  World that both wire a value one — the reasoning is in
+  World that both wire a value one; the reasoning is in
   [the threads above](#two-threads-that-run-through-several-tasks). Draw the scenario from
   [examples/](../examples/README.md) rather than inventing one, and introduce the context as "a type
   that stands for this application, which is where its choices live" the first time it appears.
   *Blocked by:* nothing; it links out to the reference, which is complete.
-- **T4 — the area-calculation idiom note.** The series shows `impl<Context> AreaCalculator for Context`
-  before simplifying to `impl AreaCalculator`, which is pedagogically deliberate and should stay — but
+- **T4: the area-calculation idiom note.** The series shows `impl<Context> AreaCalculator for Context`
+  before simplifying to `impl AreaCalculator`, which is pedagogically deliberate and should stay, but
   the page must say plainly that the second form is the idiom, because a reader who stops early copies
   the first. *Lands in:* `docs/tutorials/area-calculation/static-dispatch.md`. *Blocked by:* nothing.
 
 ## R — The reference
 
-**The port is finished, along with the tooling section and the error catalog that used to sit in this
-group.** Every construct has a page, every group has its `example-code` mirror, and what the section
-carries now is the author's read of the index. The state of each group is recorded in
+**The port is finished, and so are the tooling section and the error catalog.** Every construct has a
+page, every group has its `example-code` mirror, and what remains is the author's read of the index. The state of each group is recorded in
 [site-structure.md](site-structure.md#reference); the spec and the porting procedure a later page
 follows are in [writing-guides/reference.md](writing-guides/reference.md).
 
-- **R1 — the reference index.** Written, at `docs/reference/index.md`: it names the six constructs a
+- **R1: the reference index.** Written, at `docs/reference/index.md`: it names the six constructs a
   newcomer needs, then groups the rest by the job they do. It is one of the surfaces
-  the author reads, so **that read is what remains**. It is also the section's completeness check —
-  every construct has an entry here even where the page behind it is a stub — so a page added later is
+  the author reads, so **that read is what remains**. It is also the section's completeness check
+  (every construct has an entry here even where the page behind it is a stub), so a page added later is
   added to this index in the same change.
 
 ## P — The Projects section, and the code it quotes
@@ -180,30 +179,30 @@ the Concepts pages and the posts. The blueprint, the page lists, and every prere
 they block a page: a page that exists to teach patterns must not show a form the guides tell readers to
 replace. The code tasks are numbered DC, and DC1 and DC3 keep their IDs.
 
-- **DC1 — modernize `hypershell`.** Adopt `#[uses(...)]` for its hand-written `where` bounds, and
+- **DC1: modernize `hypershell`.** Adopt `#[uses(...)]` for its hand-written `where` bounds, and
   decide whether the HTTP client getter becomes an `#[implicit]` argument, the only field read that
   could. Replace the one live `UseDelegate` table in `providers/pipe.rs`; a probe confirmed that `open`
   accepts its bounded generic key. Drop the six `#[derive_delegate(UseDelegate<Arg>)]` attributes,
   whose removal is breaking for downstream users and is accepted. *Lands in:* the `hypershell` repository.
   The project's [issues](../projects/hypershell/issues.md) list the defects worth fixing in the same pass.
-- **DC3 — drop cgp-serde's three `#[derive_delegate]` attributes, clean up its arena tests, and consider
+- **DC3: drop cgp-serde's three `#[derive_delegate]` attributes, clean up its arena tests, and consider
   a `CgpSerdeNamespace`.** The attribute removals are breaking for downstream users and are accepted. The
   namespace is a design decision about what the defaults should be rather than a mechanical conversion,
   and it is recommended rather than required: without it every context spells out a dozen wiring
   entries, and the two-application payoff of the `messages` example is weaker. *Lands in:* the `cgp-serde`
   repository. The detail is in [projects/cgp-serde.md](projects/cgp-serde.md#code-prerequisites).
-- **DC4 — make the cgp-examples crates runnable and checked.** Give `builder` an entry point, add check
+- **DC4: make the cgp-examples crates runnable and checked.** Give `builder` an entry point, add check
   blocks to `greet`'s component binaries, and replace "capability" in `transfer`'s code comments. *Lands
   in:* the `cgp-examples` repository. The detail is in
   [projects/cgp-examples.md](projects/cgp-examples.md#code-prerequisites).
-- **P1 — the cgp-examples pages, with the section index.** About 33 pages, of which 14 are written:
+- **P1: the cgp-examples pages, with the section index.** About 33 pages, of which 14 are written:
   the cgp-examples index, the pilot `expression` subsection, and `web-app`, with the section index's
   pattern-finding table gaining their rows and the writing guide revised from the pilot; see
   [projects/cgp-examples.md](projects/cgp-examples.md#what-is-written). What remains is `builder`,
   `transfer`, and `greet`. *Blocked by:* the per-example records for those three crates in this base,
   and DC4 for the pages it names. All of it assumes the `cgp-examples` `v0.8.0` branch becomes the
   default before the pages publish.
-- **P2 — the Hypershell pages.** About a hundred pages, of which the 21 that nothing blocks are written,
+- **P2: the Hypershell pages.** About a hundred pages, of which the 21 that nothing blocks are written,
   along with the `Projects` category, the sidebar renumbering it needed, and the section index; see
   [projects/hypershell.md](projects/hypershell.md#what-is-written). What remains is the reference, five
   pages that quote providers, and the comparison. **Do this one first of the libraries**: it is the
@@ -215,16 +214,16 @@ replace. The code tasks are numbered DC, and DC1 and DC3 keep their IDs.
   `guides/extending-the-language`, and the two compare examples; a confirmed run of
   `compare_and_branch`; and the comparison document in this base. The written index gives a git
   dependency, pending a Hypershell release built on `cgp` 0.8.0.
-- **P3 — the cgp-serde pages.** Fifty pages, of which the 45 that DC3 does not block are written, with
+- **P3: the cgp-serde pages.** Fifty pages, of which the 45 that DC3 does not block are written, with
   cgp-serde added to the section index and Resources; see
   [projects/cgp-serde.md](projects/cgp-serde.md#what-is-written). What remains is the two arena
   examples and the pages for `CanSerializeValue`, `CanDeserializeValue`, and `HasArena`. *Blocked by:*
   DC3 for those five pages. The written index gives a git dependency, pending a cgp-serde release
   built on `cgp` 0.8.0.
-- **P4 — the error backend pages.** About 22 pages. *Blocked by:* the `cgp` 0.8.0 release, since the
+- **P4: the error backend pages.** About 22 pages. *Blocked by:* the `cgp` 0.8.0 release, since the
   published 0.8.0-alpha crates behave differently from the source the pages describe, and a verified
   wiring with its output in the eyre and std records in this base, which only the anyhow record has.
-- **P5 — the links into the section.** An *In practice:* entry in each Concepts page's *Where to go next*
+- **P5: the links into the section.** An *In practice:* entry in each Concepts page's *Where to go next*
   that has a matching example page, the error backends linked from the error-handling concept and
   reference pages, each project section listed on Resources, and the applied tutorial (T3) routed to the
   project example that develops its scenario. *Blocked by:* the pages each link targets.
@@ -239,12 +238,12 @@ part 1 of the extensible data types series gains its `builder` link when those p
 
 Two posts, both **post-release**, and both deliberately spaced rather than bundled. Publishing several
 substantial pieces at once makes them compete for the same readers on the same day in channels whose
-ranking is time-weighted, so the second mostly takes attention from the first — which wastes the smaller
+ranking is time-weighted, so the second mostly takes attention from the first, which wastes the smaller
 piece and makes neither reception readable as evidence. Neither post blocks anything, and neither is a
 redesign defect; the group exists so that writing which is neither a release note nor a Projects page has
 somewhere to be tracked.
 
-- **B1 — the implicit-type-arguments post.** The framing that an abstract type is an implicit *type*
+- **B1: the implicit-type-arguments post.** The framing that an abstract type is an implicit *type*
   argument: a generic parameter is an input the caller supplies and so propagates through every
   intermediate signature, while an abstract type is determined by the context and propagates nowhere, so a
   codebase can accumulate type dependencies without its signatures growing. *Lands in:* `blog/`, tagged
@@ -263,18 +262,18 @@ somewhere to be tracked.
   register** with no paradigm name, per [vocabulary.md](../communication-strategy/vocabulary.md).
   **One running example the whole way through**, and the database-and-transaction scenario is the one to
   use: it is already verified as compiling code, it is the environmental/self-targeted shape most CGP code
-  is in, and `Db` → `Transaction` is a two-step climb that motivates the *second* forcing condition — two
-  types that must agree — rather than only the first. And **reuse the v0.7.0 post's "Isn't this just Scala
+  is in, and `Db` → `Transaction` is a two-step climb that motivates the *second* forcing condition (two
+  types that must agree) rather than only the first. And **reuse the v0.7.0 post's "Isn't this just Scala
   implicits?" section** rather than reinventing it, which [formats.md](../communication-strategy/formats.md)
   already names as the model of concede-then-distinguish.
 
-  One decision remains open: whether to include the **`mtl` functional-dependency comparison** —
-  `class MonadReader r m | m -> r` fixes the environment type *by* the monad, which is the same
-  output-not-input move — since it is the strongest argument for the functional-programming reader,
+  One decision remains open: whether to include the **`mtl` functional-dependency comparison**
+  (`class MonadReader r m | m -> r` fixes the environment type *by* the monad, which is the same
+  output-not-input move), since it is the strongest argument for the functional-programming reader,
   showing CGP reaching for a discipline they already trust rather than a novelty, but costs a paragraph
   most readers will skip; the suggestion is to include it late, after the payoff has landed.
 
-- **B2 — the incoherent-Rust post.** A substantial draft already exists on the website repository's
+- **B2: the incoherent-Rust post.** A substantial draft already exists on the website repository's
   `incoherent-rust` branch, at `blog/2026-03-30-incoherent-rust-today.md`, and it is the only piece of
   CGP writing aimed squarely at the [language-design
   reader](../communication-strategy/readers.md#the-language-design-and-compiler-team-reader). It reads
@@ -286,14 +285,14 @@ somewhere to be tracked.
 
   Three things it needs before publication. A **currency pass**: the draft is dated against posts from
   March, so the upstream discussion has to be re-read and the framing adjusted to where it now stands
-  rather than where it stood. The **publication mechanics** the draft is missing — a `slug` and a `tags`
+  rather than where it stood. The **publication mechanics** the draft is missing: a `slug` and a `tags`
   entry, per the [conventions](blog/README.md). And a **check that the concessions are still the
   strongest part**, since what this reader values is the boundary: what CGP does not solve, which is the
   formalization goal and the migration of the existing trait ecosystem.
 
 ## V — The version release
 
-- **V1 — finish the v0.8.0 release announcement, and merge the branch.** This is the campaign's last
+- **V1: finish the v0.8.0 release announcement, and merge the branch.** This is the campaign's last
   task rather than an interruption in it, because the release and the redesign publish together. The
   draft stops without a conclusion, covers one feature of several, writes its prefix attributes in forms
   that do not compile, carries a placeholder date, and opens by claiming a release that has not happened.
@@ -305,22 +304,22 @@ somewhere to be tracked.
   [the release checklist](writing-guides/release-announcement.md): the announcement bar has to point at
   the published post, and the tutorials' `cgp` pin has to name the released version rather than the
   alpha. *Note:* this is the first post written from
-  the release-announcement guide, so it is also the guide's first test — record what the spec got wrong.
+  the release-announcement guide, so it is also the guide's first test; record what the spec got wrong.
 
 ## A — The AI disclosure
 
-- **A1 — the disclosure page.** Written and building at `docs/ai/disclaimer.md` on the release branch,
+- **A1: the disclosure page.** Written and building at `docs/ai/disclaimer.md` on the release branch,
   and recorded in [site-structure.md](site-structure.md). What remains is **the author's read**, which
   is the task's real gate rather than a formality: this is the one page where a wrong sentence is a
-  false public claim about the project rather than about CGP. Two things to check in particular — that
+  false public claim about the project rather than about CGP. Two things to check in particular: that
   the review claim still matches the
   [authorship rule](AGENTS.md#who-drafts-a-page-and-who-reads-it-before-it-publishes) rather than
   flattening it, and that the library section still separates the design from the macro implementation,
   since the `cgp` commit trailers make the blunter version disprovable. *Spec:*
   [ai-disclosure.md](../communication-strategy/ai-disclosure.md).
 
-Disclosure for the **other repositories** — `cargo-cgp` above all, whose source sits wholly at level
-three — is deliberately out of scope here and happens after the redesign is published. Do not add notes
+Disclosure for the **other repositories** (`cargo-cgp` above all, whose source sits wholly at level
+three) is deliberately out of scope here and happens after the redesign is published. Do not add notes
 to another project's README or documentation in the meantime.
 
 ## S — Search and agent discoverability
@@ -331,22 +330,22 @@ and the rules that constrain the work. Do not restate them here; read that docum
 of these.
 
 **The ordering inside this group is set by one measurement.** The property drew 121,685 impressions and
-970 clicks over twelve months — a **1.09% click-through rate** once an anomalous May 2026 is excluded,
-0.80% with it — at an average position between 7 and 17. The site is being shown and not chosen, so
+970 clicks over twelve months (a **1.09% click-through rate** once an anomalous May 2026 is excluded,
+0.80% with it) at an average position between 7 and 17. The site is being shown and not chosen, so
 work that changes a title or a description outranks work that chases a rank, which is why S3 and S4
 came first and why their remainders are re-scoped rather than dropped. Anything that changes a title or
 a description should land **before the branch merges**, because the merge is what fixes each new page's
 first impression in the index.
 
-- **S3 — a `description` on every page.** **The half that mattered is done, and the remainder is worth
+- **S3: a `description` on every page.** **The half that mattered is done, and the remainder is worth
   re-scoping rather than finishing mechanically.** Every page under `docs/` now renders a usable
   description except the published skill snapshot, which is not ours to edit: the `macros/`,
   `attributes/` and `derives/` groups were written by hand, the fourteen `traits/` and `types/` pages
   whose derived description was a bare phrase or empty were written too, and the three generated
   category indexes gained one through their `_category_.json`. Fifty-five pages in all.
 
-  What remains is the difference between a **derived** description — the page's own first sentence,
-  which Docusaurus uses when the front matter omits one — and a **written** one chosen to be read in a
+  What remains is the difference between a **derived** description (the page's own first sentence,
+  which Docusaurus uses when the front matter omits one) and a **written** one chosen to be read in a
   search result. Roughly 160 reference pages, the 19 Concepts pages, and the blog posts are in that
   state, minus the blog, whose seventeen posts have since been written because they carry three
   quarters of the property's impressions and had the worst derived snippets on the site. What is left
@@ -355,43 +354,43 @@ first impression in the index.
   including the YAML apostrophe that fails the build, are in
   [site-structure.md](site-structure.md#conventions-the-port-must-follow). *Lands in:* `docs/`,
   `blog/`.
-- **S4 — a search-facing `title` on the pages whose heading is a construct name.** **Done for
+- **S4: a search-facing `title` on the pages whose heading is a construct name.** **Done for
   `macros/`, `attributes/`, `derives/`, and the fourteen `traits/` and `types/` pages S3 reached**,
   always alongside S3, which is how the rest should be done: the two are the same edit to the same
   front matter, and splitting them means reading every page twice. Front-matter `title`
   sets the metadata and may differ from the `h1`, so a reference page keeps its `#[cgp_component]`
   heading and carries a title saying what the construct is for. Keep it under roughly 60 characters and
   put the distinguishing word first. *Lands in:* `docs/reference/`, plus the concept pages whose title
-  does not use the reader's words — **`docs/concepts/coherence` above all**, whose subject is why Rust
+  does not use the reader's words, **`docs/concepts/coherence` above all**, whose subject is why Rust
   rejects overlapping blanket implementations and whose title says neither of those words. The words
   the data gives are *blanket implementation*: that family is 2,019 impressions a year at position 5.8,
   against 11 for *rust conflicting implementations of trait*. The reasoning is in
   [seo.md](seo.md#adding-a-page-is-almost-never-the-answer-and-the-data-says-which-three-cases-to-consider).
   *Blocked by:* nothing.
-- **S7 — the GitHub metadata.** The crate manifests are done: `homepage`, five `keywords`, and the
-  `rust-patterns` and `no-std` categories are set on `[workspace.package]` and inherited by all 27
-  published crates. What remains needs repository settings rather than a commit: the `cgp` repository's
+- **S7: the GitHub metadata.** The crate manifests are done: `homepage`, five `keywords`, and the
+  `rust-patterns` and `no-std` categories are set on `[workspace.package]` and inherited by all 28
+  publishable crates. What remains needs repository settings rather than a commit: the `cgp` repository's
   description still reads "Context-Generic Programming: modular programming paradigm for Rust", the
   retired line, and its topics are three generic ones; the sibling repositories have no description,
   homepage, or topics at all. **Only the author can change these.** The forward links from the patterns
   book are B-1 in [patterns-book.md](patterns-book.md), and they wait on the merge.
-- **S5 — the first-paragraph orientation sweep.** Name CGP once in prose, with a link to the
+- **S5: the first-paragraph orientation sweep.** Name CGP once in prose, with a link to the
   Introduction, on every page that does not already. The justification is reader orientation, which
   [formats.md](../communication-strategy/formats.md#titles-first-lines-and-search) already requires; the
   search benefit is a by-product, since the name already ranks first. *Lands in:* `docs/`.
-- **S10 — the agent surfaces.** Add a `context7.json` to the `cgp` repository and resubmit, so the
+- **S10: the agent surfaces.** Add a `context7.json` to the `cgp` repository and resubmit, so the
   indexed description stops carrying the retired line; optionally publish an `llms.txt` generated from
   the sidebar, on the grounds [seo.md](seo.md#llmstxt-and-why-it-is-worth-a-file-but-not-an-argument)
   states and no others. *Lands in:* the `cgp` repository, and `static/` if the file is published.
-- **S1 — the hand check on Bing and Kagi.** Search Console covers Google alone. The six queries and the
+- **S1: the hand check on Bing and Kagi.** Search Console covers Google alone. The six queries and the
   recording method are in [seo.md](seo.md#repeating-the-hand-check). *Blocked by:* nothing, and it
   blocks nothing; it exists so the document's only unmeasured half gets measured.
-- **S9 — the relaunch-day submission.** On the day the branch merges: confirm `/sitemap.xml` serves all
+- **S9: the relaunch-day submission.** On the day the branch merges: confirm `/sitemap.xml` serves all
   292 URLs, take a Search Console export as the pre-relaunch baseline, and ping IndexNow if it is
   adopted. *Blocked by:* V1. **This belongs on the release checklist** in
   [writing-guides/release-announcement.md](writing-guides/release-announcement.md#publishing-and-what-happens-afterwards)
   beside re-pinning the tutorials' `cgp` version, and is listed here so it is not lost between the two.
-- **S11 — Algolia DocSearch.** Accepted by the author, for **after the relaunch**: 292 pages with no way
+- **S11: Algolia DocSearch.** Accepted by the author, for **after the relaunch**: 292 pages with no way
   to search them is the problem it solves. DocSearch is free for open-source documentation and ships
   inside `preset-classic`, so it needs a DocSearch application and a `themeConfig.algolia` block rather
   than a new dependency. *Lands in:* `docusaurus.config.ts`. *Blocked by:* V1, since the application is
@@ -405,14 +404,15 @@ published blog posts, whose titles are among the worst offenders and whose
 
 ## X — Cross-cutting
 
-- **X1 — keep the published skill in step with `cgp-skills`.** The website publishes the skill
+- **X1: keep the published skill in step with `cgp-skills`.** The website publishes the skill
   through symlinks into a `cgp-skills` git submodule, so there is no copy to re-inline and nothing to
-  edit on the site; see [site-structure.md](site-structure.md). The submodule is current at v0.8.0.
-  What remains is procedural: **bump the submodule pointer** each time a skill change lands in
-  `cgp-skills`, most recently for the dispatch-on-a-later-parameter guidance in
-  `references/wiring.md` and its siblings, and for the namespace changes in `SKILL.md` and
+  edit on the site; see [site-structure.md](site-structure.md). The submodule pins a v0.8.0 revision.
+  What remains is procedural, and **the pointer bump is the author's**, per
+  [AGENTS.md](AGENTS.md#the-agent-skill-is-published-as-a-snapshot): an agent never advances it. The
+  skill changes waiting for the next bump are the dispatch-on-a-later-parameter guidance in
+  `references/wiring.md` and its siblings; the namespace changes in `SKILL.md` and
   `references/namespaces.md` (path-keyed bundles, and the correction that a context cannot override a
-  key its namespace binds), and for the new `references/error-backends.md` on the standalone error
+  key its namespace binds); and the new `references/error-backends.md` on the standalone error
   backends. That file is a **new reference**, so the bump that picks it up must also add its symlink
   beside the other reference pages, or the site will not publish it. **Never edit the skill through the
   website checkout**, since the submodule is `cgp-skills` itself. *Lands in:* the website repository's
@@ -423,7 +423,7 @@ published blog posts, whose titles are among the worst offenders and whose
   per inner provider** rather than a comma-separated list, which the skill had advised in four places; and
   a predicate promoted by [`#[extend_where]`](../cgp/reference/attributes/extend_where.md) is a
   precondition callers must prove rather than a bound they inherit.
-- **X2 — the crate's own landing page.** `crates/main/cgp/README.md` is what crates.io and docs.rs
+- **X2: the crate's own landing page.** `crates/main/cgp/README.md` is what crates.io and docs.rs
   display for the `cgp` crate, and it is a thirteen-line stub that says CGP's constructs are "still
   mostly undocumented within Rustdoc", routes readers to the book the site itself describes as not
   recently updated, and links the public into this knowledge base. Meanwhile the repository's own
@@ -433,7 +433,7 @@ published blog posts, whose titles are among the worst offenders and whose
   README carries the tag line, the reassurance line, and a short quick look; points at the site's
   reference rather than at the knowledge base; and the claim about rustdoc coverage is either true or
   gone. *Blocked by:* nothing; the reference is complete, so the destination exists.
-- **X3 — the three canonical diagrams.** The wiring table, the consumer-and-provider split, and
+- **X3: the three canonical diagrams.** The wiring table, the consumer-and-provider split, and
   coherence scoped, each drawn once as an SVG among the site's static assets and reused by every page
   that explains the idea, per
   [voice-and-register.md](../communication-strategy/voice-and-register.md#show-it-canonical-examples-diagrams-and-diffs).
@@ -484,7 +484,7 @@ handover rather than raised one at a time.** R1's reference index and A1's discl
 and need a read. The two judging sections on each of the eleven comparison pages need the same read,
 against the standard in [writing-guides/related-work.md](writing-guides/related-work.md). What S7 has
 left needs repository settings no commit can change. And the Quickstart's ten-minute target has never
-been measured — it wants a friction log on a clean machine, per
+been measured; it wants a friction log on a clean machine, per
 [writing-guides/orientation.md](writing-guides/orientation.md#the-quickstart). None of these blocks a
 writing task.
 
@@ -497,12 +497,12 @@ S10 is two small changes in the `cgp` repository.
 
 **What is left of S3 and S4 has dropped down the list rather than off it.** Fifty-five reference pages
 and all seventeen blog posts now carry a written title or description, and those were where the measured
-failure — a 1.09% click-through rate on 81,117 impressions — was concentrated. The roughly 240 pages
+failure (a 1.09% click-through rate on 81,117 impressions) was concentrated. The roughly 240 pages
 that remain render a derived description that is serviceable, so whoever returns to them should ask
 which pages carry impressions before sweeping, and should still land the edit before the merge, which is
 when each page's first impression in the index is fixed.
 
-**The X tasks fit anywhere, and X1 and X2 are worth doing early** — a published skill that lags
+**The X tasks fit anywhere, and X1 and X2 are worth doing early**: a published skill that lags
 `cgp-skills` misteaches every agent that reads it, and the crate's landing page is working against the
 project every day it stays as it is.
 
@@ -528,7 +528,7 @@ keeping a list of answers here.
 Two documents are updated alongside every landing rather than after it, and both are named in the
 [standing obligations](#how-to-read-a-task) above: [redesign-queue.md](redesign-queue.md), whose matching
 entry is removed, and [information-architecture.md](information-architecture.md), whose `new` and `moved`
-markers are cleared. **When this document is empty the redesign is finished, and it is deleted** — as is
+markers are cleared. **When this document is empty the redesign is finished, and it is deleted**, as is
 redesign-queue.md, and at that point the inventory in `information-architecture.md` matches
 [site-structure.md](site-structure.md).
 

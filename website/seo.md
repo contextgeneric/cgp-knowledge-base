@@ -8,7 +8,7 @@ coding agents that are now a second audience for it.
 It is a **specification** rather than a page record, in the sense
 [README.md](README.md#two-kinds-of-document-here) draws: it describes what should be true of the site
 rather than what is true of one page today. It sits beside
-[information-architecture.md](information-architecture.md) — that document decides which pages exist
+[information-architecture.md](information-architecture.md): that document decides which pages exist
 and where a reader goes next, and this one decides how a reader who is not already on the site ever
 arrives.
 
@@ -20,9 +20,9 @@ headline features belong to [identity.md](../communication-strategy/identity.md)
 [vocabulary.md](../communication-strategy/vocabulary.md), and the titles-and-search rules for a page
 already exist in
 [formats.md](../communication-strategy/formats.md#titles-first-lines-and-search). This document
-decides where that settled wording is *placed* — which page owns which question, what goes in a title
+decides where that settled wording is *placed* (which page owns which question, what goes in a title
 tag, what goes in a meta description, which first paragraph orients a reader who arrived from a search
-result — and it covers the surfaces outside the site that the communication strategy does not reach at
+result), and it covers the surfaces outside the site that the communication strategy does not reach at
 all.
 
 Three of the base's standing rules bind it especially tightly, and a recommendation that breaks one is
@@ -34,7 +34,7 @@ answer it, and claims about search performance beyond what the data shows are al
 
 **The site stays a stock Docusaurus installation.** Everything recommended below as work is front
 matter, Markdown, static files, or configuration already present. The one addition the project has
-accepted — [Algolia DocSearch](#the-decisions-this-needs) — is a decision the author has taken rather
+accepted, [Algolia DocSearch](#the-decisions-this-needs), is a decision the author has taken rather
 than one an agent applied, which is the rule
 [site-structure.md](site-structure.md#how-the-site-is-built) sets.
 
@@ -45,7 +45,7 @@ written for machines.
 ## What was measured
 
 **The project has Google Search Console, and this document is written against twelve months of its
-data** — a performance export covering **2025-09-19 to 2026-09-18**, Web search, for a domain property
+data**: a performance export covering **2025-09-19 to 2026-09-18**, Web search, for a domain property
 that includes `patterns.contextgeneric.dev` and the `www` host as well as the main site. That export
 is the evidence every ranking claim below rests on, and it is worth saying plainly that it replaced an
 earlier draft's guesses: several conclusions reached by searching the web by hand were **wrong**, and
@@ -56,8 +56,8 @@ The export is raw measurement, so it stays out of this repository under the rule
 the findings. Two limits on it matter when reading the numbers. **The query table is capped at 1,000
 rows**, which account for 12,266 of the property's 130,836 impressions, so roughly nine impressions in
 ten come from long-tail or anonymized queries that cannot be inspected. And **Search Console's tables
-disagree by aggregation** — the Pages table totals 980 clicks against 130,836 impressions where the
-Devices and daily tables total 970 against 121,685 — so each figure below is cited with the table it
+disagree by aggregation** (the Pages table totals 980 clicks against 130,836 impressions where the
+Devices and daily tables total 970 against 121,685), so each figure below is cited with the table it
 came from rather than reconciled. Site-wide rates use the daily table; per-page figures use the Pages
 table.
 
@@ -66,7 +66,7 @@ Everything about the site itself was checked against the repository and the live
 under `build/`, and the counts were taken over the `docs/` and `blog/` trees on the `v0.8.0` branch.
 Three denominators recur and they are not the same number: **278** Markdown sources under `docs/` and
 `blog/`, **291** built HTML pages, and **292** sitemap URLs. The difference is the pages Docusaurus
-generates without a source file — the front page, the blog index and its pagination, the tag and
+generates without a source file: the front page, the blog index and its pagination, the tag and
 author listings, and three category indexes. The external sources cited below were read on the same
 day.
 
@@ -103,13 +103,13 @@ one the whole strategy turns on, and it is not a ranking problem.
 
 ### The site is shown constantly and clicked rarely
 
-**The property drew 121,685 impressions and 970 clicks over twelve months — a click-through rate of
+**The property drew 121,685 impressions and 970 clicks over twelve months, a click-through rate of
 0.80%.** That is the headline number, and it reframes everything: CGP's pages are being *put in front
 of people* at scale and are not being chosen. Average position was 13.07 on desktop, which carries
 110,290 of those impressions, against 8.22 on mobile.
 
 **One month distorts that figure and the honest version is better.** May 2026 alone contributed 40,568
-impressions — a third of the year — at a 0.21% click-through rate and an average position of 17.1,
+impressions (a third of the year) at a 0.21% click-through rate and an average position of 17.1,
 which is the signature of Google briefly showing the site for a mass of queries it does not answer.
 **Excluding May, the year runs at 1.09%**: 886 clicks against 81,117 impressions. Use 1.09% as the
 baseline the work below is measured against, and read the annual 0.80% as depressed by an event nobody
@@ -151,8 +151,8 @@ Concepts, and 0 of 17 on the blog. The pattern was chronological rather than acc
 Comparisons guide requires a `description` and the others do not, so the section written last was the
 only one that had them. That gap is now closed where it was doing damage. **Every page under `docs/` renders a usable
 description**, except the published skill snapshot, which the site does not own. Fifty-five pages were
-written by hand — the `macros/`, `attributes/` and `derives/` groups, plus the fourteen `traits/` and
-`types/` pages whose derived description was a bare phrase or, in one case, empty — and three
+written by hand (the `macros/`, `attributes/` and `derives/` groups, plus the fourteen `traits/` and
+`types/` pages whose derived description was a bare phrase or, in one case, empty), and three
 generated category indexes gained one through their `_category_.json`. The conventions are in
 [site-structure.md](site-structure.md#conventions-the-port-must-follow).
 
@@ -178,13 +178,13 @@ at 121,685 impressions a year the snippet is where the site's visibility is bein
 Page titles run to **161 characters** at the extreme, against an average of 48. The four longest all
 belong to the posts with the worst click-through rates above:
 
-- *CGP v0.5.0 Release: Auto dispatchers, extensible datatype improvements, monadic computation, RTN emulation, modular serde, and more* — 161 characters
-- *Programming Extensible Data Types in Rust with CGP - Part 1: Modular App Construction and Extensible Builders* — 139
+- *CGP v0.5.0 Release: Auto dispatchers, extensible datatype improvements, monadic computation, RTN emulation, modular serde, and more* (161 characters)
+- *Programming Extensible Data Types in Rust with CGP - Part 1: Modular App Construction and Extensible Builders* (139)
 
 A search result shows roughly the first 60. A reader scanning ten results sees *"Programming
 Extensible Data Types in Rust with CGP - Part 1: Modular…"* and has to work out whether it answers
 their question from a fragment that is mostly setup. These are published blog posts, so their titles
-are [not rewritten](AGENTS.md#do-not-rewrite-history) — but every page the relaunch adds is a chance
+are [not rewritten](AGENTS.md#do-not-rewrite-history), but every page the relaunch adds is a chance
 not to repeat it, and a front-matter `title` can differ from a page's heading, which is the lever
 [below](#titles-and-descriptions-are-the-per-page-levers-and-docusaurus-separates-them).
 
@@ -192,7 +192,7 @@ not to repeat it, and a front-matter `title` can differ from a page's heading, w
 
 **The blog is 61 of the 110 pages with impressions, 90,978 of the impressions, and 336 of the clicks;
 the entire `docs/` tree is 19 pages, 2,624 impressions, and 18 clicks.** Search traffic to this project
-is, to a first approximation, blog traffic — and
+is, to a first approximation, blog traffic, and
 [blog/README.md](blog/README.md#reading-the-drift-at-a-glance) records that of seventeen posts, eight
 write every provider inside-out, seven show the removed `#[cgp_context]`, and four use the removed
 `Async` trait.
@@ -221,7 +221,7 @@ fetched on 2026-09-21:
 | `/contribute/` | 236 | 5 | 6.55 | 404 | `/docs/contribute` |
 | `/tutorials/` | 24 | 0 | 6.58 | 404 | `/docs/tutorials/hello` |
 
-That is **1,934 impressions and 10 clicks a year landing on a 404**, at positions between 6.5 and 8 —
+That is **1,934 impressions and 10 clicks a year landing on a 404**, at positions between 6.5 and 8,
 better positions than most of the site earns. The `www` host adds three more of the same paths at 94
 impressions each; `www` itself redirects correctly, so those are the same pre-migration URLs seen under
 a second hostname rather than a live duplicate-host problem. The blog's URLs survived the migration
@@ -245,7 +245,7 @@ on-site work changes that.
 
 **The acronym has seven times the impressions of the full term and a twelfth of the intent**, which is
 the sharpest way to read this data and the answer to whether the site should chase it. Queries
-containing *cgp* are 67 queries, 1,698 impressions and 23 clicks — a 1.4% click-through rate — while
+containing *cgp* are 67 queries, 1,698 impressions and 23 clicks (a 1.4% click-through rate), while
 the six queries containing the full term are 245 impressions and 41 clicks, at 16.7%. The composition
 explains the gap: *cgp zero*, *char cgp*, *chap cgp*, *chapt cgp*, *zero cgp* and *cgp community
 edition* together draw some 430 impressions and **no clicks at all**, because they are people looking
@@ -270,13 +270,13 @@ product. What the change buys is that a reader searching *cgp rust* or *cgp dsl*
 typed in every result, which is a click-through argument rather than a matching one.
 
 **It also settled a question it created.** Fifteen reference titles had been given the acronym on the
-reasoning that a page's own title is the displayed part — `Symbol! — CGP type-level strings`. With the
+reasoning that a page's own title is the displayed part, as in `Symbol! — CGP type-level strings`. With the
 suffix carrying it, those rendered the acronym twice in one title, which reads as stuffing rather than
 information, so they were reverted. The titles that still carry it twice are the ones whose *subject*
 is CGP, such as the disclosure page and the published skill, where the repetition is in the boilerplate
 half and the page's own words are meaningful on their own.
 
-Several other high-impression queries are the same phenomenon — the site appearing for something it
+Several other high-impression queries are the same phenomenon: the site appearing for something it
 does not answer. *generic programming* drew 970 impressions and one click at position 13.4; *v0* 394
 and none; *implicit* 238 and none; *serde* 133 and none; *rust context* 453 impressions and two clicks.
 **Roughly 2,900 impressions a year are spent on queries the site cannot serve**, which is worth knowing
@@ -300,28 +300,28 @@ it earns its place below on that basis rather than on a search one.
 The surfaces that share these queries are ones the project controls, and their metadata was thin. The
 crate manifests have since been repaired: `homepage` now points at the site, so crates.io and lib.rs
 link it for the first time; the single `cgp` keyword has become five; and the crates carry the
-`rust-patterns` and `no-std` categories that place them in the browse-and-recommend surfaces. All 27
-published manifests inherit them from `[workspace.package]`.
+`rust-patterns` and `no-std` categories that place them in the browse-and-recommend surfaces. All 28
+publishable manifests inherit them from `[workspace.package]`.
 
 **What remains needs repository settings rather than a commit**, and only the author can change it:
 
 - **The `cgp` repository's description still reads "Context-Generic Programming: modular programming
-  paradigm for Rust"** — the framing
+  paradigm for Rust"**, the framing
   [identity.md](../communication-strategy/identity.md#using-modular-as-a-supporting-word) retires, on
   the project's most-linked property, with 248 stars behind it. Its topics are `functional-programming`,
   `modular-programming`, `rust`.
-- **Every other repository in the organization has no description, no homepage, and no topics** —
+- **Every other repository in the organization has no description, no homepage, and no topics**:
   including `cargo-cgp`, `cgp-skills`, `cgp-knowledge-base`, and `contextgeneric.dev`.
 
 The homepage's own metadata was the last of it and is now fixed. It had passed the configured
-`tagline` as its page title, which Docusaurus appends the site name to — a 119-character title whose
-every distinguishing word fell past what a result shows — and its hand-written description still
+`tagline` as its page title, which Docusaurus appends the site name to (a 119-character title whose
+every distinguishing word fell past what a result shows), and its hand-written description still
 carried the retired framing.
 
 **The front page is the one page that names the project first**, at the author's decision: its title
 is *Context-Generic Programming (CGP) - Pluggable trait implementations for Rust*, with no site-name
-suffix after it. Docusaurus's own formatter cannot produce that — passing `title` to `Layout` renders
-`{title} | {siteTitle}`, so the project name could only ever come last — so the page sets the tag
+suffix after it. Docusaurus's own formatter cannot produce that: passing `title` to `Layout` renders
+`{title} | {siteTitle}`, so the project name could only ever come last. The page therefore sets the tag
 directly with `@docusaurus/Head`, and sets `og:title` with it so a shared link carries the same words.
 That is React on the landing page, which is where the
 [stock-Docusaurus policy](site-structure.md#how-the-site-is-built) already allows it, and it changes
@@ -348,7 +348,7 @@ result and concluded there was none:
 
 Two readings of that table are both available and the export cannot separate them. **Search Console
 only records a query where the site actually appeared**, so a small impression count means the site
-rarely showed for it — which may be because the query is rare, or because the site ranks too low to be
+rarely showed for it, which may be because the query is rare, or because the site ranks too low to be
 seen for a common one. Nothing here establishes that few people search for `E0119`; it establishes that
 CGP is barely in front of the ones who do.
 
@@ -360,7 +360,7 @@ The pages that would answer them properly are also **not published yet**: `/docs
 and `/docs/reference/` both return 404 on the live site, because they exist only on the `v0.8.0`
 branch. The live site publishes 40 URLs; the branch builds 292. The entire `docs/` tree currently earns
 18 clicks a year against the blog's 336, so the relaunch is not adding pages to a section that is
-already working — it is the first serious attempt to make the documentation half of the site findable
+already working; it is the first serious attempt to make the documentation half of the site findable
 at all.
 
 ## The strategy
@@ -376,8 +376,8 @@ outcomes that the Search Console export can actually confirm a year from now:
   the project's control, and nothing about it requires ranking better.
 - **The `docs/` tree stops being a rounding error.** Eighteen clicks a year against the blog's 336 is
   the gap the relaunch exists to close.
-- **A reader searching the problem rather than the project** — conflicting implementations, `E0119`,
-  compile-time dependency injection, foreign trait for a foreign type — **finds a page on the site that
+- **A reader searching the problem rather than the project**: conflicting implementations, `E0119`,
+  compile-time dependency injection, foreign trait for a foreign type, **finds a page on the site that
   answers it**, where today none of those queries returns one.
 - **A reader arriving from any of those searches lands on a page that is current**, rather than on a
   2025 post teaching `#[cgp_context]`.
@@ -389,15 +389,15 @@ asserting unmeasured search claims still binds everything else.
 
 ### Raise the click-through rate before trying to raise the rank
 
-**This is the strategy's organizing decision, and the data supports it — with a ceiling worth stating
+**This is the strategy's organizing decision, and the data supports it, with a ceiling worth stating
 in the same breath.** At 81,117 impressions and 1.09% outside the May anomaly, the site's problem is
 not only that Google withholds visibility; a large part of the visibility already granted is being
 wasted, and recovering it needs no links, no authority, and no ranking change. It needs a title a
 reader can parse and a description that says what the page is for.
 
 The ceiling is that **not every impression is winnable.** At least 2,900 impressions a year, in the
-visible part of the query table alone, come from queries the site cannot answer — *generic
-programming*, *cgp*, *v0*, *serde* — and no title changes those into clicks. The invisible nine tenths
+visible part of the query table alone, come from queries the site cannot answer (*generic
+programming*, *cgp*, *v0*, *serde*), and no title changes those into clicks. The invisible nine tenths
 of the impressions almost certainly contain far more of the same. So the target below is a better
 click-through rate, not a specific multiple of today's traffic, and a projection of the form "0.80% to
 2% would triple it" is arithmetic rather than a forecast.
@@ -410,16 +410,16 @@ both; and the redirect stubs, the off-site metadata, and the agent surfaces are 
 
 **The site is about to go from 40 published URLs to roughly 292, all of them new.** The pages will be
 crawled in the state they merge in, and the title and description they carry that day is what a reader
-sees for as long as nobody revisits them — which, on the evidence of the blog, is years. Every
+sees for as long as nobody revisits them, which, on the evidence of the blog, is years. Every
 recommendation below is cheaper before the merge than after.
 
 One property of the relaunch removes a risk that would otherwise dominate this document: **it is
-URL-additive.** The existing documentation paths — `/docs/overview`, `/docs/contribute`,
-`/docs/resources`, `/docs/tutorials/hello` — are unchanged by the redesign, and
+URL-additive.** The existing documentation paths (`/docs/overview`, `/docs/contribute`,
+`/docs/resources`, `/docs/tutorials/hello`) are unchanged by the redesign, and
 [information-architecture.md](information-architecture.md#the-target-page-inventory) settled that the
 Overview stays where it is. The one page that moves is *Project status*, which has never had a URL of
 its own. So the relaunch adds history rather than breaking it, and the only broken history is the
-migration's, which the seven redirect stubs under `static/` have already repaired.
+migration's, which the seven redirect stubs under `static/` on the `v0.8.0` branch repair when it merges.
 
 ### The patterns book is the best-performing property, not a competitor
 
@@ -430,7 +430,7 @@ successful page in the whole property. The book's own record and the plan for it
 property to route around but the one piece of CGP writing that has demonstrably found its audience.
 
 Three consequences follow, and the first is the one to resist. **Do not redirect it or fold it into the
-site** — whatever it is doing, it works, and the reference section has no page that would inherit those
+site**: whatever it is doing, it works, and the reference section has no page that would inherit those
 readers. **Do link it forward**: a reader landing on the book's blanket-implementations chapter should
 be offered the current page for the same idea, which is a change in the `cgp-patterns` repository and
 the cheapest high-value link on this list. And **read it as evidence about titles**: a chapter called
@@ -484,22 +484,22 @@ shows real volume, it is given.
 | Abstract Over Every Dependency | abstract error type, generic over the runtime, `no_std` core | not yet ranking | `docs/concepts/modular-error-handling` |
 
 **The blanket-implementation family is the proven one and it belongs to "Still Ordinary Rust"**, which
-is the feature the strategy added last and for the most defensive reason. Six query variants —
-*rust blanket implementation*, *rust blanket impl*, *blanket implementation rust*, *blanket
-implementation*, *blanket implementations*, *rust blanket implementations* — total 1,781 impressions
+is the feature the strategy added last and for the most defensive reason. Six query variants
+(*rust blanket implementation*, *rust blanket impl*, *blanket implementation rust*, *blanket
+implementation*, *blanket implementations*, *rust blanket implementations*) total 1,781 impressions
 and 106 clicks at positions 4.0 to 5.1. That is the one term where the project is a recognized answer,
 and the new Concepts page and glossary entry should be written to inherit it rather than to compete
 with the book for it.
 
 Two further families have no feature to hang off and matter as much. **The orphan rule and the newtype
 dance** belongs to `docs/concepts/coherence` alongside the first row. And **the comparison vocabulary**
-— type classes, ML modules, implicit parameters, algebraic effects, policy-based design — is eleven
+(type classes, ML modules, implicit parameters, algebraic effects, policy-based design) is eleven
 queries the site now answers and nothing else in Rust does.
 
 One more family shows in the data and has no page: **`rust dsl` drew 771 impressions and 25 clicks at
 position 7.0**, plus *dsl rust* and *dsl in rust* for another 314 impressions. The Hypershell post is
 what ranks, and the index of the [Hypershell project section](projects/hypershell.md) is the page that
-should inherit it when it lands — which is a reason to write that section first among the libraries.
+should inherit it when it lands, which is a reason to write that section first among the libraries.
 
 The discipline the table imposes is **one page per question**. Where two pages could answer a query,
 one answers it and the other links, which is the same rule
@@ -528,7 +528,7 @@ documentation on 2026-09-21.
 a title at the top of a document only when the Markdown has no heading of its own, so a page that keeps
 its `#[cgp_component]` heading can carry a `title` written for a search result. That is the lever the
 reference section needs: the heading a reader wants when they already know the name, and a title tag
-that says what the construct is for when they do not. `sidebar_label` remains separate and unchanged —
+that says what the construct is for when they do not. `sidebar_label` remains separate and unchanged:
 it is [plain text and carries no backticks](site-structure.md#conventions-the-port-must-follow).
 
 **A page's front-matter `description` sets both `meta name="description"` and `og:description`**, and
@@ -541,7 +541,7 @@ which is what a result shows, and put the distinguishing word first. **Reference
 get the construct name plus its job**, keeping the name first because that is what the reader searched.
 **Concept and tutorial pages get problem-oriented titles**, which
 [formats.md](../communication-strategy/formats.md#titles-first-lines-and-search) already prescribes.
-And **every description is a sentence about that page, written once, not a template** — a description
+And **every description is a sentence about that page, written once, not a template**: a description
 that could belong to any page tells a reader nothing and will be replaced by the engine with a fragment
 of the text.
 
@@ -553,7 +553,7 @@ biggest term it is no.** The test a new page has to pass is the one
 that query has a question the site answers and no page owns, never by query volume alone. Applied to
 the three query clusters that carry real traffic, it produces three different answers.
 
-**Blanket implementations — 25 queries, 2,019 impressions, 110 clicks, average position 5.8 — needs no
+**Blanket implementations (25 queries, 2,019 impressions, 110 clicks, average position 5.8) needs no
 new page.** It is the project's largest non-branded term by a wide margin, and three things already
 answer it. The [patterns book's chapter](https://patterns.contextgeneric.dev/blanket-implementations.html)
 wins the query today and is the property's best-performing page. `docs/concepts/coherence` is *about*
@@ -566,7 +566,7 @@ places. **The book chapter should link forward** to the current page for the ide
 cheapest high-value link available, is part of [S7](tasks.md#s--search-and-agent-discoverability), and
 is specified as B-1 in [patterns-book.md](patterns-book.md#the-work-in-order).
 And **the coherence page needs a title carrying the reader's words**, which is
-[S4](tasks.md#s--search-and-agent-discoverability) — with one correction to what that task originally
+[S4](tasks.md#s--search-and-agent-discoverability), with one correction to what that task originally
 assumed. The words are *blanket implementation*, not `E0119`: the blanket family is 2,019 impressions a
 year against 11 for *rust conflicting implementations of trait*. A page arguing that Rust allows only
 one blanket implementation per trait can say so in its title honestly, because that is what it argues.
@@ -579,7 +579,7 @@ and the glossary already handles by linking Rust's own documentation. It would a
 internal concept document covers it. The reader arriving on that query is better served by a page that
 answers the question *behind* it.
 
-**Domain-specific languages — 20 queries, 1,432 impressions, 36 clicks, average position 7.7 — has a
+**Domain-specific languages (20 queries, 1,432 impressions, 36 clicks, average position 7.7) has a
 page planned and should have it sooner.** The Hypershell post wins *rust dsl* (771 impressions,
 position 7.0) and converts at 3.2%, and 293 of those impressions are a comparison intent it serves
 badly: *shell scripting vs rust*, *rust vs shell scripting*, and *cargo vs shell scripting* together
@@ -592,8 +592,8 @@ evidently looking for.
 **The context cluster is a watch item, not a page.** *rust context* draws 453 impressions at position
 7.1 and converts at 0.44%, and the intent behind it cannot be read from the export: it may be
 context-generic programming, an async context, a context object, or something unrelated. The one signal
-worth keeping is *rust context pattern* — 11 impressions, 3 clicks, **27% click-through at position
-4.0** — which suggests a reader using those words does find CGP relevant. That is a handful of
+worth keeping is *rust context pattern* (11 impressions, 3 clicks, **27% click-through at position
+4.0**), which suggests a reader using those words does find CGP relevant. That is a handful of
 impressions and no basis for building. Watch it in the next export and decide then.
 
 **Nothing else in the data supports a page.** The serde, comparison-vocabulary, provider-pattern, and
@@ -631,7 +631,7 @@ matter and they behave differently.
 found it, and needs to write correct code. Four surfaces serve it today:
 
 - **docs.rs** is the default surface for any Rust crate, and CGP's is weak by the project's own
-  admission — it reports 50% of the crate documented, and the crate README tells readers the constructs
+  admission: it reports 50% of the crate documented, and the crate README tells readers the constructs
   are "still mostly undocumented within Rustdoc". [X2](tasks.md#x--cross-cutting) already owns fixing
   the README; the rustdoc gap behind it is larger and is the project's own call.
 - **Context7** already carries CGP as `/contextgeneric/cgp` with 528 indexed snippets, drawn from the
@@ -659,7 +659,7 @@ the mechanism that makes a model's recall of CGP consistent too.
 **The evidence is that almost nothing reads it.** Ahrefs analysed 137,210 domains in May 2026 and found
 that 28% publish an `llms.txt`, that **97% of those files received zero traffic that month**, and that
 96% of the requests which did arrive came from bots rather than people. The sample is sites using
-Ahrefs' own analytics, so it is skewed toward the search-aware end of the web — which makes the finding
+Ahrefs' own analytics, so it is skewed toward the search-aware end of the web, which makes the finding
 stronger rather than weaker, since those are the sites most likely to have published the file
 deliberately. Google's own
 [guidance on optimizing for generative AI features](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide)
@@ -718,9 +718,8 @@ taken deliberately, as [Algolia DocSearch](#the-decisions-this-needs) was.
 ## Measurement
 
 **Search Console is in place, so the question is no longer whether to measure but what to watch.**
-[evidence.md](../communication-strategy/evidence.md) records search data as unavailable under the
-site's no-analytics policy; that entry is now wrong and is corrected in the same change as this
-document, per the [synchronization rule](../AGENTS.md#the-synchronization-rule).
+[evidence.md](../communication-strategy/evidence.md) summarizes this export for the communication
+strategy and records why Search Console fits the site's no-analytics policy.
 
 The distinction that makes this compatible with the site's posture is worth keeping written down.
 **Search Console is not analytics.** It places no script on the site, sees no visitor, and changes
@@ -736,11 +735,11 @@ Four things are worth watching, and each maps to a target in
   work paid off. Take **1.09%** as the baseline, not the raw annual 0.80%, and check whether a future
   period carries its own anomaly before comparing.
 - **Clicks to `/docs/`.** Eighteen a year today, against the blog's 336.
-- **Clicks on the problem queries** — `rust coherence`, conflicting implementations, dependency
-  injection — which stand at zero today against 41 impressions, and which are the clearest test of
+- **Clicks on the problem queries**: `rust coherence`, conflicting implementations, dependency
+  injection, which stand at zero today against 41 impressions, and which are the clearest test of
   whether the Concepts and Comparisons pages did their job.
-- **Whether the dead URLs stop appearing** now that the stubs are in `static/`, which is the check
-  that the redirects work.
+- **Whether the dead URLs stop appearing** once the stubs in `static/` reach the live site at the
+  merge, which is the check that the redirects work.
 
 **Establish the baseline before the relaunch merges**, because the relaunch changes the page count
 sevenfold and a before-and-after taken across it cannot be attributed to anything. Export once on the
@@ -772,7 +771,7 @@ as they are.
 **The click-through work came first, because the data says presentation is what the site is losing
 on**, and its valuable half is done: every page in the `macros/`, `attributes/` and `derives/` groups,
 the fourteen `traits/` and `types/` pages whose derived snippet was unusable, and all seventeen blog
-posts now carry a written description, a search-facing title, or both — fifty-five pages plus the blog,
+posts now carry a written description, a search-facing title, or both: fifty-five pages plus the blog,
 chosen because they were where the impressions were. The pages left render a derived description that
 is serviceable, so the remainder of S3 and S4 is worth sorting by impressions rather than swept, and
 whatever of it gets done must land before the merge, since the merge is what fixes each page's first
@@ -780,7 +779,7 @@ impression.
 
 **The metadata repairs are done.** The seven dead URLs are stubbed, `robots.txt` is published, the
 crate manifests carry `homepage`, five keywords, and the `rust-patterns` and `no-std` categories across
-all 27 published crates, and every page now renders as `{Page} | CGP — Context-Generic Programming`,
+all 28 publishable crates, and every page now renders as `{Page} | CGP — Context-Generic Programming`,
 with the homepage carrying its own hand-written title because it is the one page whose own name should
 come first. What is left is the GitHub repository settings, which only the author can change.
 
@@ -807,7 +806,7 @@ it needs a DocSearch application and a configuration block when it happens. It i
 Bing Webmaster Tools is not, and adding it is the same shape of decision with the same argument behind
 it: no script, no visitor data, and the only view of the engines Google's data cannot see.
 
-**What remains open is `maybevoid.com/projects/cgp/`** — whether the author's older site redirects,
+**What remains open is `maybevoid.com/projects/cgp/`**: whether the author's older site redirects,
 links forward, or stays as it is. It is a small thing, it belongs to the author alone, and nothing in
 the work list waits on it.
 
@@ -818,7 +817,7 @@ every figure above carries the export or the date it came from, and a re-check r
 rather than appending to it, per
 [document-the-present](../AGENTS.md#document-the-present-not-the-history). **Its techniques expire
 faster than most of this base's subject matter**, because search engines change and the surfaces agents
-read are two years old at most — so a recommendation resting on a cited study should be re-read against
+read are two years old at most, so a recommendation resting on a cited study should be re-read against
 its source before it is acted on a second time.
 
 Revisit it when the relaunch merges, which is when most of the work either happened or did not; when a

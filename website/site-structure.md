@@ -120,17 +120,17 @@ and the footer repeats the docs entry points alongside the community channels: G
 [Discord](https://discord.gg/Hgk3rCw6pQ), and the [r/cgp subreddit](https://www.reddit.com/r/cgp/).
 The whole site is licensed CC BY-SA 4.0.
 
-Above all of that sits a dismissible **announcement bar**, which currently promotes the v0.7.0 release
-post. It is the site's most prominent single piece of copy and the one most likely to go stale: it is
+Above all of that sits a dismissible **announcement bar**, which on the live site promotes the v0.7.0
+release post; the `v0.8.0` branch already points it at the v0.8.0 post. It is the site's most prominent single piece of copy and the one most likely to go stale: it is
 hardcoded in `docusaurus.config.ts` rather than derived from the newest post, so it must be updated by
 hand with every release announcement. Its wording is a one-line pitch and is therefore governed by
 [identity.md](../communication-strategy/identity.md).
 
-The site's tagline in the configuration reads "Modular programming paradigm for Rust." This is the
+The live site's configured tagline reads "Modular programming paradigm for Rust." This is the
 **retired** framing. [identity.md](../communication-strategy/identity.md) analyzes it as historical
 background and fixes the current line as *"a language extension for Rust, with pluggable trait
-implementations at compile-time."* Bringing the configuration in line with the chosen tag line is an
-outstanding, low-risk correction.
+implementations at compile-time,"* which the `v0.8.0` branch's configuration already carries and
+which reaches the live site when that branch merges.
 
 ## The front page
 
@@ -349,16 +349,20 @@ questions to dated posts.
 
 - **URL** — <https://contextgeneric.dev/docs/resources>
 - **Source** — [docs/resources.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/docs/resources.md)
-- **Status** — Outdated
+- **Status** — Current on the `v0.8.0` branch; the live page is the older list described under *Where it diverges*
 
 ### What it covers
 
-A short link directory in five groups: crates (`cgp`, `cgp-error-anyhow`, `cgp-serde`), tutorials
+A link directory in seven groups on the `v0.8.0` branch: crates (`cgp`, the three error backends
+`cgp-error-anyhow`, `cgp-error-eyre`, and `cgp-error-std`, and `cgp-serde`, each by its crates.io
+entry), tooling (`cargo-cgp`, with its install steps and the canonical qualification), tutorials
 (Hello World and Area Calculation), videos (an embedded player for the RustLab 2025 talk, linking to
-its [transcript post](blog/rustlab-2025-coherence.md)), books (the CGP Patterns book), and projects
-([CGP Examples](https://github.com/contextgeneric/cgp-examples),
-[Hypershell](../projects/hypershell/README.md), and
-[Hermes SDK](https://github.com/informalsystems/hermes-sdk/)).
+its [transcript post](blog/rustlab-2025-coherence.md)), books (the CGP Patterns book, described as
+current in its early chapters and dated in its later ones), a *CGP in production* section presenting
+the [Hermes SDK](https://github.com/informalsystems/hermes-sdk/) as the system CGP was built for, and
+projects ([CGP Examples](https://github.com/contextgeneric/cgp-examples) and
+[Hypershell](../projects/hypershell/README.md)). The cgp-serde, CGP Examples, and Hypershell entries
+link their sections of the Projects pages.
 
 ### How it relates to the knowledge base
 
@@ -367,23 +371,24 @@ This page is the site's index of the ecosystem, so it should mirror
 documents here: [hypershell](../projects/hypershell/README.md),
 [cgp-serde](../projects/cgp-serde/README.md),
 [CGP Examples](../projects/cgp-examples/README.md), and the error backends in
-[projects/error/](../projects/error/README.md), whose crates the page lists. Hermes SDK is the flagship real-world adopter that
-[evidence.md](../communication-strategy/evidence.md) argues is the
-strongest available social proof for the evaluator profile, so its placement in a bare list at the
-bottom undersells it.
+[projects/error/](../projects/error/README.md), whose crates the page lists. The Hermes SDK section is
+the evaluator's social proof that [evidence.md](../communication-strategy/evidence.md) argues for, and
+the tooling section follows [vocabulary.md](../communication-strategy/vocabulary.md) for the
+`cargo-cgp` wording.
 
 ### Where it diverges
 
-The page **omits [`cargo-cgp`](../cargo-cgp/README.md) entirely**, which is the most significant gap
-anywhere on the site: the error toolchain is the direct answer to the most-cited obstacle to adopting
-CGP, and the resources page is where an evaluator would look for it. The crate list is also
-incomplete — it names `cgp-error-anyhow` but not `cgp-error-eyre` or `cgp-error-std` — and
-`cgp-serde` is listed under crates by GitHub URL rather than by its crates.io entry.
+The live page on `main` is an older, shorter list. It omits `cargo-cgp`, names `cgp-error-anyhow` but
+not `cgp-error-eyre` or `cgp-error-std`, lists `cgp-serde` by GitHub URL, and puts the Hermes SDK in a
+bare list at the bottom. The `v0.8.0` page fixes all four, and the fixes reach readers when the branch
+merges.
 
 ### Maintaining it
 
-Add `cargo-cgp` before anything else. Keep the page a genuine index rather than a pitch; its readers
-arrive already interested and want to be routed, not persuaded.
+Keep the page a genuine index rather than a pitch; its readers arrive already interested and want to
+be routed, not persuaded. Add each new crate, tool, or Projects section in the same change that
+publishes it, and keep the book's description in step with
+[patterns-book.md](patterns-book.md).
 
 ## Contribute
 
@@ -504,8 +509,8 @@ tutorials and concepts. It explains that cloning downloads the files and that th
 configured to discover them, with the entry point and references kept together. It carries no skill content of its own.
 
 The skill itself follows as sibling pages: `SKILL.md` and one page per file in `cgp/references/`.
-**These are symlinks, not copies.** The `cgp-skills` repository is a git submodule checked out at
-`docs/ai/skills/cgp-skills/`, and each published page is a symlink into it, so the site serves the
+**These are symlinks, not copies.** The `cgp-skills` repository is a git submodule checked out at the
+repository root's `cgp-skills/`, and each published page is a symlink into it, so the site serves the
 skill's own bytes at a pinned revision.
 
 ### How it relates to the knowledge base
@@ -514,7 +519,7 @@ The skill is built from this base and is one of the [five views](../cgp/AGENTS.m
 the [synchronization rule](../AGENTS.md#the-synchronization-rule) already governs it. What the
 submodule changes is that the *site* is no longer a further view: it renders the skill repository
 rather than a transcription of it, so the page cannot drift from the skill, and correcting the skill
-is the only way to correct the page. That removes the failure this entry previously had to warn about.
+is the only way to correct the page.
 
 Three consequences are worth knowing before touching this section.
 
@@ -564,10 +569,9 @@ reference will publish it only once someone adds that link.
 
 Concepts is the site's **explanation tier**: one page per cross-cutting CGP idea, read away from a
 keyboard, answering *why does CGP work this way* rather than *how do I write it*. It is a new
-top-level category at `docs/concepts/`, position 4, sitting between Tutorials and Reference, with a
-hand-written index as its category link. Placing it there moved the AI section from position 4 to 6,
-which also brings the sidebar closer to the order
-[information-architecture.md](information-architecture.md#navigation-and-sidebar-order) wants.
+top-level category at `docs/concepts/`, position 5, sitting between Tutorials and Comparisons, with a
+hand-written index as its category link, in the order
+[information-architecture.md](information-architecture.md#navigation-and-sidebar-order) sets.
 
 **The section is complete**: eighteen pages, one per document under
 [cgp/concepts/](../cgp/concepts/README.md), plus a hand-written index. The file names match the internal
@@ -739,8 +743,7 @@ come for, and it is the first thing a well-meaning trim targets.
 Comparisons is the section for a reader who arrives knowing a related idea and wants CGP placed in it:
 one page per internal related-work document, eleven in all, plus a hand-written index that routes by
 the reader's background. It is a top-level category at `docs/comparisons/`, labelled *Comparisons*, at
-position 5 between Concepts and Reference; adding it moved Reference, `cargo-cgp`, AI, Resources, and
-Contribute down one position each. The page type is specified in
+position 6 between Concepts and Reference. The page type is specified in
 [writing-guides/related-work.md](writing-guides/related-work.md), and every page follows its shape: an
 orientation paragraph with the settled descriptor, an *In your terms* table that glosses "context" on
 first use, a compressed refresher of the compared idea, the CGP side beside it, a section on what each
@@ -781,8 +784,8 @@ providers.** Where the internal type-classes, implicit-parameters, and Rust-prop
 running example and compiles without a `serde` dependency. **The reflection page's worked example is a
 local field writer**, `WriteFields` over a `FieldsWriter` recursion producing a JSON-like string,
 modeled line for line on `cgp-serde`'s `SerializeFields` and linking to it, rather than a quotation of
-the crate's source. The local `cgp-serde` checkout depends on `cgp` `0.7.0`, so the verification crate
-cannot depend on it beside `0.8.0-alpha` without two `cgp` versions, and a page whose snippet the crate
+the crate's source. The published `cgp-serde` crate and its `main` branch depend on `cgp` `0.7.0`, so the verification
+crate cannot depend on it beside `0.8.0-alpha` without two `cgp` versions, and a page whose snippet the crate
 cannot compile would break the rule that every snippet is checked. The dynamic-dispatch page's
 namespace example likewise uses the [namespaces concept](../cgp/concepts/namespaces.md)'s compiled
 open-slot shape rather than the internal document's `@cgp.core.error => @app` redirect.
@@ -854,19 +857,18 @@ complaint; attribute the opinion with its citation or cut it.
 ### What it covers
 
 The reference is the site's largest surface and is [canonical](writing-guides/reference.md) rather than
-a supplement to docs.rs. It is a new top-level category at `docs/reference/`, position 6, with a
+a supplement to docs.rs. It is a new top-level category at `docs/reference/`, position 7, with a
 hand-written index as its category link and seven subdirectories mirroring what a construct *is*: `macros/`, `attributes/`, `derives/`,
 `components/`, `providers/`, `traits/`, and `types/`. The groups with a written Overview page
 (`macros/`, `attributes/`, `derives/`, and `providers/`) link to it as their category page, and the
 rest use a `generated-index`. A separate `errors.md` covers post-expansion compile errors.
 
-**Every page is scaffolded and the construct list is complete**, which matters more than it sounds: the
-completeness obligation is against the index rather than against the prose, so no construct is missing
-from the site even while most pages are placeholders. Each stub carries its one-line description and an
-admonition saying it is unwritten. Every construct page is written, plus the
+**The construct list is complete, and every page on it is written**, which matters more than it
+sounds: the completeness obligation is against the index rather than against the prose, so no
+construct is missing from the site. Every construct page is written, plus the
 index and `errors.md`: `macros/` (twenty pages), `attributes/` (ten), `derives/` (eight), `traits/`
 (fifty-seven), `providers/` (fifty), `components/` (seventeen), and `types/` (eleven construct pages,
-plus a section overview and a lists-group overview) are finished end to end. The `providers/` group is now one
+plus a section overview) are finished end to end. The `providers/` group is now one
 page per provider: sixteen singleton pages, plus four subsections — `error/`, `handler/`, `dispatch/`,
 and `monad/` — each carrying its own overview and one page per construct (error 7, handler 13, dispatch
 11, monad 3). The singleton pages include the five `With…` aliases — `WithContext`, `WithType`,
@@ -921,8 +923,7 @@ mirrored in the
 except `with_context` (which shows no wireable example), all of `error/`, `handler/`, and `monad/`, and
 all of `dispatch/`. The `dispatch/` group is now covered end to end, including the builder-side
 (`build_and_set_field`, `build_and_merge`, `build_with_handlers`, `build_and_merge_outputs`) and
-advanced-matcher (`match_first_with_handlers`, `downcast_and_handle`) pages that were previously the
-group's remaining gap. `UseFieldRef` and `UseDelegatedType` carry no mirror of their own, since their
+advanced-matcher (`match_first_with_handlers`, `downcast_and_handle`) pages. `UseFieldRef` and `UseDelegatedType` carry no mirror of their own, since their
 wireable example lives on their alias page (`with_field_ref`, `with_delegated_type`).
 
 ### The compile-errors page
@@ -970,13 +971,12 @@ sentences each, then routes onward. It is **term** lookup where the index is **c
 the two do not overlap: the index's *Looking for a name you don't see?* table answers `IsPresent`,
 while the glossary answers *environmental context*.
 
-It exists because the site's vocabulary is used far more widely than it is defined, and the sizing is
-what [tasks.md](tasks.md)'s R4 sweep works through. *Environmental context* appears twenty-nine times
-across twenty-six pages — nine comparisons, seven `components/` and six `traits/` pages among them —
-each time with an inline gloss and none of them linked, while its only expository definition sits in a
-tier-3 subsection of *Modularity Hierarchy*, under a heading naming *application* contexts rather than
-environmental ones. *Blanket implementation* appears on fifty-three pages, of which fourteen link any
-Rust documentation. Those counts move as the sweep lands.
+It exists because the site's vocabulary is used far more widely than it is defined. *Environmental
+context* appears on some twenty-six pages (nine comparisons, seven `components/` and six `traits/`
+pages among them), and its only expository definition outside the glossary sits in a tier-3
+subsection of *Modularity Hierarchy*, under a heading naming *application* contexts rather than
+environmental ones. *Blanket implementation* appears on some fifty-three pages. The glossary gives
+each such term one definition those pages link to.
 
 Three conventions the page settles are worth copying. **Every term is an `###` heading directly under
 its section's `##`, with no thematic sub-grouping**, because this site's MDX rejects `{#custom-id}`
@@ -1389,9 +1389,7 @@ a code block is not a prose use of the word.
 
 **A written index carries the provenance note too.** The rule that a scaffolded stub carries no note
 covers placeholders rather than hand-written prose, and both section indexes are substantial written
-pages. Both also announce their own incompleteness through
-the same `:::info` / `### Still being written` admonition, placed after the introduction rather than at
-the foot, so a reader learns the state before working through a catalog of mostly-placeholder links.
+pages.
 
 **Sidebar labels carry no backticks.** A `sidebar_label` is plain text rather than Markdown, so
 `` `#[cgp_impl]` `` renders with its backticks visible in the navigation. Write `#[cgp_impl]` in the

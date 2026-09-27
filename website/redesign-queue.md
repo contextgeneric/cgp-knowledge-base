@@ -1,8 +1,8 @@
 # Redesign queue
 
 This document is the consolidated list of what is currently wrong with, or missing from, the CGP
-website. Everything in it is recorded somewhere else already — in a page's own document, in a writing
-guide, or in [information-architecture.md](information-architecture.md) — and gathering it here answers
+website. Everything in it is recorded somewhere else already (in a page's own document, in a writing
+guide, or in [information-architecture.md](information-architecture.md)), and gathering it here answers
 a question none of those can: *what is the next thing to do, and how much does it cost?*
 
 It exists because the redesign spans four kinds of change across several repositories, and a defect
@@ -29,13 +29,13 @@ Entries are grouped by cost rather than by page, because cost is what decides th
 pages** are the largest items and depend on the guides that specify them. Which of them to do first, and
 which depend on which, is in [tasks.md](tasks.md) rather than here.
 
-## Rewrites — pages whose shape or framing is wrong
+## Rewrites: pages whose shape or framing is wrong
 
 **The front page needs rebuilding against its guide.** It diverges in six concrete ways: the hero
 headline leads with "modular" and does not use the tag line; there is no reassurance line and no install
 command; the feature grid has six entries, two leading with retired words, and disagrees with the
 Overview's feature tour; the code example does not show the implementation Rust rejects, so the
-reader never sees the contrast — **and it does not compile**, since it writes `#[cgp_impl(HashWithDisplay)]` without `new`
+reader never sees the contrast, **and it does not compile**, since it writes `#[cgp_impl(HashWithDisplay)]` without `new`
 and never declares the provider struct; the problem cards are generic and unanchored; and **there is no
 cost section at all**, which on a page for this audience is the most consequential omission of the six.
 The "Ready to Get Started?" block is template filler and should become the routing section. *Website
@@ -50,7 +50,7 @@ abstract types, extensible data, and handlers. *Website repo, front page.*
 
 **The area-calculation series shows the non-idiomatic provider form first.** Presenting
 `impl<Context> AreaCalculator for Context` before simplifying to `impl AreaCalculator` is pedagogically
-deliberate and should stay, but a reader who stops early copies the wrong form — so the page must say
+deliberate and should stay, but a reader who stops early copies the wrong form, so the page must say
 plainly that the second form is the idiom. *Website repo,
 `docs/tutorials/area-calculation/static-dispatch.md`.*
 
@@ -63,29 +63,30 @@ repo, `blog/2026-05-10-v0.8.0-release.md`; the material and the four mechanical 
 
 ## New pages
 
-Each of these is specified but unwritten.
+Each of these is specified, and all but the Projects section are unwritten.
 
-**Project status and adoption risk** — lifted out of the Introduction so it can be linked from above the
+**Project status and adoption risk**: lifted out of the Introduction so it can be linked from above the
 fold. Its frankness is the asset and must survive the move; what changes is the year-stamp, the absence
 of `cargo-cgp`, and the missing incremental-adoption reassurance. **Its home is unsettled**: it is
 project meta rather than a CGP idea, so it does not belong under Concepts, and under **Project** beside
 Contribute is the obvious alternative.
 
-**An applied-register tutorial** — building something real from an [example](../examples/README.md), for
+**An applied-register tutorial**: building something real from an [example](../examples/README.md), for
 the reader who evaluates a technology by seeing a realistic system rather than a rectangle. The site has
 nothing in this register.
 
-**The Projects section** — the four project sections of this base ported to the site, with each
+**The Projects section**: the four project sections of this base ported to the site, with each
 project's example programs expanded into short tutorials that show CGP's design patterns in running
 code, and one reference page per construct for the two libraries and the error backends. It takes the
 place of three planned deep dives, whose material now has a home there or in the Concepts and Reference
-sections. **It lands after the v0.8.0 relaunch rather than with it**, which is the one part of the target
+sections. Its Hypershell, cgp-serde, and cgp-examples pages are partly written on the website's
+`v0.8.0` branch. **It lands after the v0.8.0 relaunch rather than with it**, which is the one part of the target
 the relaunch does not carry. The blueprint and one plan per project are in
 [projects/](projects/README.md), and each plan lists what its repository and this base need first. Two
 of those lists carry a substantial code item: **adopting `#[uses]` in `hypershell`**, and **deciding on a
 `CgpSerdeNamespace`**, which is a library improvement rather than a documentation convenience.
 
-**A blog post on implicit type arguments** — the framing that an abstract type is an implicit *type*
+**A blog post on implicit type arguments**: the framing that an abstract type is an implicit *type*
 argument, so a type dependency stops being a parameter every layer threads. It is a `deepdive` rather
 than a release note: abstract types date to v0.3.0 and `#[use_type]` to v0.7.0, so putting it in the
 v0.8.0 announcement would present a reframing as new and set it competing with namespaces, against that
@@ -103,7 +104,7 @@ crates.io and docs.rs display, and it is a thirteen-line stub telling readers th
 "still mostly undocumented within Rustdoc", routing them to the book the site itself describes as not
 recently updated, and linking the public into this knowledge base. The repository's own root `README.md`
 already carries the settled tag line and the curated five features and is visible only on GitHub. This is
-a first-contact surface, the fix is small, and it is not a website task — which is the only reason nobody
+a first-contact surface, the fix is small, and it is not a website task, which is the only reason nobody
 has owned it. *`cgp` repo.*
 
 **The release-announcement guide is written but untested**, in the sense that no post has yet been
