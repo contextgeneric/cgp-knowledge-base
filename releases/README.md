@@ -1,7 +1,7 @@
 # CGP release history
 
 This directory holds one document per official CGP release: what it introduced, what it broke, and —
-the question the whole section exists to answer — **how much of it still stands today**. A construct
+the question the whole section exists to answer: **how much of it still stands today**. A construct
 that shipped in v0.3.0 may be current, may have been renamed twice, or may have been deleted
 outright, and an agent reading old code, an old blog post, or an old book chapter needs to know which
 before it can interpret what it is looking at.
@@ -76,8 +76,8 @@ that post's [internal document](../website/blog/README.md), and closes with what
   paradigm was announced. Components, wiring, fields, and errors are all recognizably present under
   older names.
 - [v0.2.0](v0-2-0.md) — 8 December 2024. The pre-launch cleanup: `#[derive_component]` becomes
-  `#[cgp_component]`, and the type-level vocabulary — `Cons`/`Nil`, `Either`/`Void`, `Field`,
-  `Product!`, `Sum!` — arrives essentially in its final form.
+  `#[cgp_component]`, and the type-level vocabulary (`Cons`/`Nil`, `Either`/`Void`, `Field`,
+  `Product!`, `Sum!`) arrives essentially in its final form.
 - [v0.3.0](v0-3-0.md) — 8 January 2025. The first release after the public launch: abstract types,
   the getter macros, `CanWrapError`, and the error and runtime crates.
 - [v0.3.1](v0-3-1.md) — 16 January 2025. A patch release adding the async error aliases, all of which
@@ -107,14 +107,14 @@ renumbered to v0.8.0; the draft announcement written under the old number is doc
 ## What counts as a release, and where the facts come from
 
 A document exists here for every tag in [`cgp`](https://github.com/contextgeneric/cgp) that names a
-published version. The pre-release tags — `v0.4.1-alpha`, the four `v0.5.0` betas, `v0.6.0-beta`,
-`v0.8.0-alpha` — get no document of their own; the work in them is recorded against the release it
+published version. The pre-release tags (`v0.4.1-alpha`, the four `v0.5.0` betas, `v0.6.0-beta`,
+`v0.8.0-alpha`) get no document of their own; the work in them is recorded against the release it
 shipped in.
 
 Every claim in these documents is verified against the tag rather than taken from a summary, because
 the summaries disagree with the code in at least two places. The repository's
 [CHANGELOG.md](https://github.com/contextgeneric/cgp/blob/main/CHANGELOG.md) heads its most recent
-entry **"v0.6.2 (2026-03-01)"** for work that actually shipped as **v0.7.0 on 2026-02-28** — the
+entry **"v0.6.2 (2026-03-01)"** for work that actually shipped as **v0.7.0 on 2026-02-28**: the
 release was renumbered when its breaking changes were counted, and the heading was never updated. And
 that same changelog credits v0.5.0 with a `MatchStr` trait that had already been deleted before the
 tag was cut. Read the changelog for the shape of a release and the tagged source for what it contains.
@@ -127,5 +127,5 @@ removed**, and **how it relates to the current release**. Update the removal led
 anything the release renamed or deleted, add the entry to the catalog, register the document in
 [../summary.md](../summary.md), and add or revise the announcement post's document under
 [../website/blog/](../website/blog/README.md) so the two point at each other. There is no `AGENTS.md`
-here — the base-wide [../AGENTS.md](../AGENTS.md) governs these documents, with the single exception
+here: the base-wide [../AGENTS.md](../AGENTS.md) governs these documents, with the single exception
 that this is the one section allowed to describe the past.
