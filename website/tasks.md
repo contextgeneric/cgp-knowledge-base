@@ -196,11 +196,13 @@ replace. The code tasks are numbered DC, and DC1 and DC3 keep their IDs.
   blocks to `greet`'s component binaries, and replace "capability" in `transfer`'s code comments. *Lands
   in:* the `cgp-examples` repository. The detail is in
   [projects/cgp-examples.md](projects/cgp-examples.md#code-prerequisites).
-- **P1 — the cgp-examples pages, with the section index.** About 33 pages, and the pilot for the whole
-  section: write `expression` first and revise the writing guide from what it teaches, and add the
-  cgp-examples rows to the section index's pattern-finding table. *Blocked by:* the
-  `cgp-examples` `v0.8.0` branch becoming the default; the per-example records for `builder`,
-  `transfer`, and `greet` in this base; and DC4 for the pages it names.
+- **P1 — the cgp-examples pages, with the section index.** About 33 pages, of which 14 are written:
+  the cgp-examples index, the pilot `expression` subsection, and `web-app`, with the section index's
+  pattern-finding table gaining their rows and the writing guide revised from the pilot; see
+  [projects/cgp-examples.md](projects/cgp-examples.md#what-is-written). What remains is `builder`,
+  `transfer`, and `greet`. *Blocked by:* the per-example records for those three crates in this base,
+  and DC4 for the pages it names. All of it assumes the `cgp-examples` `v0.8.0` branch becomes the
+  default before the pages publish.
 - **P2 — the Hypershell pages.** About a hundred pages, of which the 21 that nothing blocks are written,
   along with the `Projects` category, the sidebar renumbering it needed, and the section index; see
   [projects/hypershell.md](projects/hypershell.md#what-is-written). What remains is the reference, five

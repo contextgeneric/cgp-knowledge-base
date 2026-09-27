@@ -5,12 +5,72 @@ made almost entirely of example pages: the extensible visitor and builder patter
 namespace-organized web service, a wiring study at four scales, and the smallest possible greeting.
 The recommended first project section to write, with `expression` as its pilot.
 
-- **Planned URL** — `https://contextgeneric.dev/docs/projects/cgp-examples/`
+- **URL** — <https://contextgeneric.dev/docs/projects/cgp-examples/>
+- **Source** —
+  [docs/projects/cgp-examples/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/projects/cgp-examples),
+  written on the website's `v0.8.0` branch and not yet published
 - **Ports** — [projects/cgp-examples/](../../projects/cgp-examples/README.md), one subproject per
   crate
 - **Repository** — [`cgp-examples`](https://github.com/contextgeneric/cgp-examples), documented on
   its `v0.8.0` branch; the pages describe it once that branch is the default
-- **Status** — planned; no page written
+- **Verified against** — `cgp-examples` `v0.8.0` at commit `0c633ad`, with `cgp` `main` at `adc616c`
+  through the workspace's patch, and `cargo-cgp` built from its source at commit `b6a6323`
+- **Status** — Draft: 14 pages written, the section index and the `expression` and `web-app`
+  subsections, listed in [What is written](#what-is-written); `builder`, `transfer`, and `greet`
+  wait on their records in this base and on DC4
+- **How it was made** — written by an agent from the project section; level one of the four in
+  [ai-disclosure.md](../../communication-strategy/ai-disclosure.md)
+
+## What is written
+
+**Fourteen pages are written, all the pages that nothing blocks**, and the Projects section index
+gained cgp-examples in its project list, eight rows in its pattern table, and a line in its routes.
+Resources links the section beside the repository. `yarn build` passes with them. They are:
+
+- **Section** — `cgp-examples/index.md`, with a table of all five crates, linking the two that have
+  pages and naming the other three without a link.
+- **`expression`, the pilot** — the index; `examples/index.md` and the four example pages
+  `add-mult`, `add-mult-binary-op`, `add-mult-code`, and `add-mult-neg`; and
+  `architecture/index.md` and `architecture/dispatch-layers.md`.
+- **`web-app`** — the index and the four stage pages, `coarse-grained`, `fine-grained`,
+  `namespaces`, and `default-impls`, under an unlinked `Stages` category rather than an examples
+  index, since the crate index already lists the stages.
+
+**The pages not yet written** wait on this base or on DC4, and none is scaffolded as a stub:
+
+- `builder`, `transfer`, and `greet` need their per-example records first, per [Knowledge-base
+  prerequisites](#knowledge-base-prerequisites), and `builder` and `greet` also need DC4's entry
+  point and check blocks. `transfer`'s pages quote code whose comments DC4 changes.
+
+The writing turned up several facts a later revision must respect:
+
+- **Every run and diagnostic was re-produced.** `expression`'s three tests were run offline and
+  passed; `web-app` was checked with `cargo cgp check`. Each *Try a change* result, and each test
+  the pages ask a reader to add, was run in a probe crate with a path dependency on the crate, with
+  sources kept under `reports/probes/cgp-examples-pages/` in the workspace. The results are recorded
+  in each example's record.
+- **Two contexts have no test, so their pages give one.** The `add_mult_binary_op` and
+  `add_mult_code` pages open their *Run it* with an integration test the reader saves under
+  `expression/tests/`, and its output; both files were run as integration tests in a copy of the
+repository, and match the pages. The pages say the repository has no test for the context;
+  they do not call it a gap. If DC4 adds the tests, the pages switch to running them.
+- **`web-app`'s pages check rather than run.** Each says on its first screen that every provider
+  body is `todo!()`, and its *Check it* step is `cargo check`. Each *Try a change* removes or adds
+  one entry and quotes `cargo cgp check`; the coarse and fine-grained pages make the same change so
+  the reader sees the coarse manager lose every method where the fine-grained stage loses one.
+- **The dispatch wrapper's reason is stated as the likeliest explanation.** The knowledge base
+  records the `where`-clause experiments as evidence rather than proof, and `dispatch-layers` keeps
+  that uncertainty. Wiring the dispatcher directly now reports `[CGP-E010]` through the context's
+  check, which the [dispatch layers
+  record](../../projects/cgp-examples/expression/architecture/dispatch-layers.md) is corrected to.
+- **Source links point at `main`**, per the writing guide, so until the `v0.8.0` branch merges they
+  show the older code, and `web-app` does not exist there.
+- **The writing guide was revised from the pilot**, as this plan asks: a program with no runner gets
+  a test to save, a wiring-only crate opens with *Check it*, and neighbouring designs make the same
+  *Try a change*; see [the example page](../writing-guides/project.md#then-it-runs-the-program).
+- **No public page lists the crates' defects or housekeeping.** The unwired
+  `EvalSubtractWithNegate`, the unread type binding, and `web-app`'s commented-out tables stay in
+  the crates' `issues.md`.
 
 ## What it covers
 

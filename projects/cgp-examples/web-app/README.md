@@ -88,7 +88,7 @@ the post's own document; the table below says only where each section's code now
 ## Public material derived from these documents
 
 The [v0.8.0 release post](../../../website/blog/v0-8-0-release.md), whose code follows this crate
-and which must be finished before the release. It also feeds the `web-app` index of the planned
+and which must be finished before the release. It also feeds the `web-app` index of the
 [cgp-examples project section](../../../website/projects/cgp-examples.md).
 
 ## How it relates to the rest of the base

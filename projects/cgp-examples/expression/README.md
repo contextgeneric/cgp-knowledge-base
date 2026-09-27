@@ -112,7 +112,7 @@ up an item.
 
 ## Public material derived from these documents
 
-These documents are the verified record behind the `expression` pages of the planned [cgp-examples
+These documents are the verified record behind the `expression` pages of the [cgp-examples
 project section](../../../website/projects/cgp-examples.md), which write this crate's four contexts
 as its pilot example pages.
 

@@ -103,9 +103,23 @@ four entries as it wires it, so the manager's dependency on the filter is verifi
   decision it motivates.
 - A basic context wired and checked in one macro, which suits a table of plain entries.
 
+## Try a change
+
+Removing the censor's entry, `UsernameCensorComponent: DummyUserCensor,`, is the change the public
+page shows. A probe copied the module into a crate with a path dependency on this one, removed the
+line, and ran `cargo cgp check` built from the `cargo-cgp` source at commit `b6a6323`:
+
+```text
+error[E0277]: [CGP-E001] the consumer trait `CanManageUser` is not implemented for context `ProductionApp`
+    = note: root cause: [CGP-E107] context `ProductionApp` does not contain any delegate entry for `UsernameCensorComponent`
+```
+
+The whole user manager fails, `get_user` and `update_user_data` with it, which the public page sets
+beside the same change in the [fine-grained stage](fine-grained.md#try-a-change).
+
 ## Public material derived from this
 
 The "An example social media web app" and "Filtering usernames and post messages" sections of the
 [v0.8.0 release post](../../../website/blog/v0-8-0-release.md). It also feeds the
-`web-app/examples/coarse-grained` page of the planned [cgp-examples project
+`web-app/examples/coarse-grained` page of the [cgp-examples project
 section](../../../website/projects/cgp-examples.md).

@@ -128,9 +128,21 @@ binds is final. A context that needs a different getter must use a namespace oth
 - **Unwired providers** — `DummyUserCensor` and `DummySpamMessageDetector`; see
   [issues.md](issues.md#housekeeping).
 
+## Try a change
+
+Overriding the user getter on `ProductionApp` itself is the change the public page shows. A probe
+added a `GetCachedUser` provider with no implicit argument to a copy of the module and wired
+`@app.core.user.UserGetterComponent: GetCachedUser` beside the namespace line; `cargo cgp check`
+built from the `cargo-cgp` source at commit `b6a6323` reported the conflict, as for `CachedApp`
+above:
+
+```text
+error[E0119]: [CGP-E005] `ProductionApp` cannot wire `@app.core.user.UserGetterComponent.*` that is already set through `DefaultAppComponents`
+```
+
 ## Public material derived from this
 
 The "Default implementations" and "Caveats with default implementations" sections of the [v0.8.0
 release post](../../../website/blog/v0-8-0-release.md). It also feeds the
-`web-app/examples/default-impls` page of the planned [cgp-examples project
+`web-app/examples/default-impls` page of the [cgp-examples project
 section](../../../website/projects/cgp-examples.md).

@@ -242,12 +242,14 @@ each page's two judging sections.
 
 **Projects** (new category, roughly two hundred pages) — **after the release**, unlike everything else
 in this inventory
-- *Index* — present, with Hypershell and cgp-serde as its projects so far. The projects introduced honestly,
+- *Index* — present, with Hypershell, cgp-serde, and cgp-examples as its projects so far. The projects introduced honestly,
   libraries apart from demonstrations, and a pattern-finding table that routes a reader from an idea
   to the example page showing it.
-- *cgp-examples* — **new**, about 33 pages. Five demonstration crates, almost all example pages: the
-  extensible visitor and builder patterns, a namespace-organized web service, a wiring study at four
-  scales, and a greeting. No reference, since nobody depends on the crates.
+- *cgp-examples* — partly present: 14 of about 33 pages, the section's index and the `expression`
+  and `web-app` subsections. Still **new**: `builder`, `transfer`, and `greet`. Five demonstration
+  crates, almost all example pages: the extensible visitor and builder patterns, a
+  namespace-organized web service, a wiring study at four scales, and a greeting. No reference, since
+  nobody depends on the crates.
 - *Hypershell* — partly present: 21 of about a hundred pages, the examples, design, guides, and
   limitations that nothing blocks. Still **new**: the reference, the pages that quote providers, and a
   comparison with shell scripts. The type-level DSL: thirteen examples, its design and guides, one

@@ -73,6 +73,6 @@ names the context itself and the full lookup path, such as
 
 ## Public material derived from this
 
-The dispatchers the `expression` example pages of the planned [cgp-examples project
+The dispatchers the `expression` example pages of the [cgp-examples project
 section](../../../../website/projects/cgp-examples.md) explain where they first appear, since that
 section carries no reference for demonstration crates.

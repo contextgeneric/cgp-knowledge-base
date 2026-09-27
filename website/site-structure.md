@@ -1427,8 +1427,8 @@ and `cargo-cgp` now sits at 9, Resources at 10, Contribute at 11, and AI at 12.
 
 - **URL** — <https://contextgeneric.dev/docs/projects/>
 - **Source** — [docs/projects/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/projects)
-- **Status** — Draft: the section index, 21 Hypershell pages, and 45 cgp-serde pages are written on
-  the `v0.8.0` branch; the other two projects are planned
+- **Status** — Draft: the section index, 21 Hypershell pages, 45 cgp-serde pages, and 14 cgp-examples
+  pages are written on the `v0.8.0` branch; the error backends are planned
 - **How it was made** — ported by an agent from [projects/](../projects/README.md); level one of the
   four in [ai-disclosure.md](../communication-strategy/ai-disclosure.md)
 
@@ -1437,7 +1437,8 @@ project's runnable examples written as short tutorials. It is a top-level catego
 between Reference and `cargo-cgp`; adding it moved `cargo-cgp`, Resources, Contribute, and AI down one
 position each. A project is a subcategory whose `_category_.json` links its index, and inside it the
 order is examples, architecture, guides, the reference, a comparison, and the limitations page last.
-Resources links the Hypershell and cgp-serde sections beside their repository and crate.
+Resources links the Hypershell, cgp-serde, and cgp-examples sections beside their repositories and
+crate.
 
 Because the section ports four catalogs rather than one, its record is kept one level down:
 [projects/](projects/README.md) holds the blueprint and one plan per project, and each plan becomes

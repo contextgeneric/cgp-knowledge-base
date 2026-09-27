@@ -833,9 +833,10 @@ it stale.
   for, why it supersedes the three deep dives and where each deep-dive page's material went, the public
   tree, the internal-document-to-page mapping, the section index and its pattern-finding table, the four
   gating conditions, the recommended order with `expression` as pilot, and the inbound links.
-- [cgp-examples.md](website/projects/cgp-examples.md) — the five demonstration crates as about 18
-  example pages with no reference, the per-example records `builder`, `transfer`, and `greet` need
-  first, and the DC4 code changes.
+- [cgp-examples.md](website/projects/cgp-examples.md) — the plan and record of the cgp-examples
+  section: the 14 pages written for the section index, `expression`, and `web-app`, the revisions
+  they were verified against, the per-example records `builder`, `transfer`, and `greet` need first,
+  and the DC4 code changes.
 - [hypershell.md](website/projects/hypershell.md) — the plan and record of the Hypershell section: the
   21 pages written and the revisions they were verified against, what each unwritten page waits on,
   the thirteen examples and about 75 construct pages planned, the comparison with shell scripts, and

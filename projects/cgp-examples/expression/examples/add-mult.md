@@ -59,7 +59,23 @@ block asserts both evaluation and conversion of all four input types.
 - Building a target enum from a local sub-enum: see [conversion providers](../reference/to-lisp-providers.md).
 - The dispatch wrapper for the whole enum: see [dispatch layers](../architecture/dispatch-layers.md#the-dispatch-wrapper-for-the-whole-enum).
 
+## Try a change
+
+Removing the evaluation entry for `Times` is the change the public page shows. A probe copied the
+module into a crate with a path dependency on this one, dropped the line
+`@ComputerComponent.<Code> Code.Times<MathExpr>: EvalMultiply`, and kept the full check block, then
+ran `cargo cgp check` built from the `cargo-cgp` source at commit `b6a6323`:
+
+```text
+error[E0277]: [CGP-E001] the consumer trait `CanCompute<Eval, Times<MathExpr>>` is not implemented for context `Interpreter`
+   = note: root cause: [CGP-E107] context `Interpreter` does not contain any delegate entry for `@ComputerComponent.Eval.Times<MathExpr>`
+```
+
+A second error, `[CGP-E002]`, lands at the wrapper's `<MatchWithValueHandlers>::compute` call, naming
+the dispatcher's step for `Times`; this is the check-and-wrapper pair
+[testing.md](../testing.md#what-the-checks-pin) records on a reduced context.
+
 ## Public material derived from this
 
-The `expression/examples/add-mult` page of the planned [cgp-examples project
-section](../../../../website/projects/cgp-examples.md).
+The `expression/examples/add-mult` page of the [cgp-examples project
+section](../../../../website/projects/cgp-examples.md), including its change to try.

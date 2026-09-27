@@ -244,6 +244,6 @@ Never wired or exercised; see [issues.md](../issues.md#housekeeping).
 
 ## Public material derived from this
 
-The providers the `expression` example pages of the planned [cgp-examples project
+The providers the `expression` example pages of the [cgp-examples project
 section](../../../../website/projects/cgp-examples.md) explain where they first appear, since that
 section carries no reference for demonstration crates.

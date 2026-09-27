@@ -86,6 +86,21 @@ error[E0275]: overflow evaluating the requirement `Interp: CanCompute<Eval, Math
 A plain `cargo build` reports a single `E0275` from inside the cycle instead, on the requirement
 `EvalAdd: Computer<Interp, Eval, Plus<MathExpr>>`.
 
+Through a check, `cargo cgp check` reshapes the cycle. A second probe made the same change on a copy
+of `add_mult` with its full check block, wiring
+`@ComputerComponent.<Code> Code.MathExpr: MatchWithValueHandlers`, and `cargo cgp check` built from
+the `cargo-cgp` source at commit `b6a6323` reported three `[CGP-E010]` errors at the check lines,
+for `MathExpr`, `Plus<MathExpr>`, and `Times<MathExpr>`, followed by two raw `E0275` overflows on the
+dispatcher:
+
+```text
+error[E0275]: [CGP-E010] the wiring for the consumer trait `CanCompute<Eval, MathExpr>` on context `Interpreter` never resolves — the lookup recurses without terminating
+```
+
+The tool's help line points at a component delegated back to the context, as with `UseContext`,
+which is not this cycle's cause, and the public dispatch-layers page says so beside the quote; see
+the [cgp-examples plan](../../../../website/projects/cgp-examples.md#what-is-written).
+
 What breaks the loop is that the wrapper's impl has no `where` clause. It names the concrete context
 and a concrete `Output` and bounds nothing, so the compiler can accept
 `Interpreter: CanCompute<Code, MathExpr>` from the impl header alone, and resolves the dispatcher only
@@ -126,5 +141,5 @@ the code selects the operation.
 
 ## Public material derived from this
 
-The `expression/architecture/dispatch-layers` page of the planned [cgp-examples project
+The `expression/architecture/dispatch-layers` page of the [cgp-examples project
 section](../../../../website/projects/cgp-examples.md).

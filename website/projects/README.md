@@ -10,9 +10,10 @@ replaces](#what-the-section-replaces).
   Reference and `cargo-cgp` in the sidebar
 - **Derived from** — [projects/](../../projects/README.md), which stays the source of truth
 - **Page-type spec** — [../writing-guides/project.md](../writing-guides/project.md); read it first
-- **Status** — in progress: the section index, 21 Hypershell pages, and 45 cgp-serde pages are
-  written on the website's `v0.8.0` branch, per [hypershell.md](hypershell.md#what-is-written) and
-  [cgp-serde.md](cgp-serde.md#what-is-written); the other two projects are planned. Post-release, per [Ordering](#ordering)
+- **Status** — in progress: the section index, 21 Hypershell pages, 45 cgp-serde pages, and 14
+  cgp-examples pages are written on the website's `v0.8.0` branch, per
+  [hypershell.md](hypershell.md#what-is-written), [cgp-serde.md](cgp-serde.md#what-is-written), and
+  [cgp-examples.md](cgp-examples.md#what-is-written); the error backends are planned. Post-release, per [Ordering](#ordering)
 
 ## What the section is
 
@@ -160,7 +161,8 @@ the projects honestly, saying which are libraries a reader could depend on and w
 demonstrations, and that the two libraries are proofs of concept. And it carries a **pattern-finding
 table**, the public form of [constructs.md](../../projects/cgp-examples/constructs.md) widened to
 all four projects, which routes a reader who arrives knowing an idea to the example page that shows
-it. Its first rows are these, each to be checked against the example pages as they are written:
+it. These were its planned first rows; the live table on the section index, written row by row
+with each project's example pages, is now the record, and these stay as the starting plan:
 
 | Pattern | Example pages that show it |
 |---|---|

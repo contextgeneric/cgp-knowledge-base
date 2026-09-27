@@ -126,9 +126,22 @@ comment. The dummy filter providers are defined here but not wired.
 - **Unwired providers** — `DummyUserCensor` and `DummySpamMessageDetector`; see
   [issues.md](issues.md#housekeeping).
 
+## Try a change
+
+Removing `UsernameCensorComponent` from `ProductionApp`'s third key list is the change the public page
+shows. A probe made it on a copy of the module, and `cargo cgp check` built from the `cargo-cgp`
+source at commit `b6a6323` failed only the creator and the censor:
+
+```text
+error[E0277]: [CGP-E001] the consumer traits `CanCreateUser` and `CanCensorUsername` are not implemented for context `ProductionApp`
+    = note: root cause: [CGP-E107] context `ProductionApp` does not contain any delegate entry for `UsernameCensorComponent`
+```
+
+The getter and updater checks passed, since their providers need only the database.
+
 ## Public material derived from this
 
 The "Fine grained traits", "Higher-order providers", "Too much wiring with fine grained traits", and
 "The challenges of grouping delegate component keys" sections of the [v0.8.0 release
 post](../../../website/blog/v0-8-0-release.md). It also feeds the `web-app/examples/fine-grained`
-page of the planned [cgp-examples project section](../../../website/projects/cgp-examples.md).
+page of the [cgp-examples project section](../../../website/projects/cgp-examples.md).
