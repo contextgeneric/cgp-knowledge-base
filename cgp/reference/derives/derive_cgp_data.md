@@ -1,20 +1,43 @@
 # `#[derive(CgpData)]`
 
-`#[derive(CgpData)]` is the umbrella derive for extensible data: applied to a struct or an enum, it generates every CGP trait impl that lets the type be taken apart, rebuilt, and converted to and from a generic field representation.
+`#[derive(CgpData)]` is the umbrella derive for extensible data: applied to a struct or an enum, it
+generates every CGP trait impl that lets the type be taken apart, rebuilt, and converted to and from
+a generic field representation.
 
 ## Purpose
 
-`#[derive(CgpData)]` turns an ordinary struct or enum into *extensible data* — a type whose fields can be enumerated, accessed, built up incrementally, and matched generically at the type level, rather than only through hand-written field-by-field code. The motivation is the same one that drives the rest of CGP: a concrete `struct Person { first_name, last_name }` is opaque to generic code, because nothing about it can be referred to by a type parameter. `#[derive(CgpData)]` exposes the type's shape as type-level data so that generic providers can operate over any data type uniformly.
+`#[derive(CgpData)]` turns an ordinary struct or enum into *extensible data*: a type whose fields
+can be enumerated, accessed, built up incrementally, and matched generically at the type level,
+rather than only through hand-written field-by-field code. The motivation is the same one that
+drives the rest of CGP: a concrete `struct Person { first_name, last_name }` is opaque to generic
+code, because nothing about it can be referred to by a type parameter. `#[derive(CgpData)]` exposes
+the type's shape as type-level data so that generic providers can operate over any data type
+uniformly.
 
-The derive does this by generating two complementary views of the type. The first is a *representation* view: the type's fields become a type-level product (for structs) or sum (for enums) of named [`Field`](../types/field.md) entries, reachable through [`HasFields`](../traits/has_fields.md) and convertible with `FromFields`/`ToFields`. The second is an *incremental* view: a generated partial type that holds each field in a present-or-absent state, so that values can be assembled one field at a time (for structs) or peeled apart one variant at a time (for enums). Together these are what make data "extensible" — generic code can add a field to a partial struct, or remove a variant from a partial enum, without naming the concrete type.
+The derive does this by generating two complementary views of the type. The first is a
+*representation* view: the type's fields become a type-level product (for structs) or sum (for
+enums) of named [`Field`](../types/field.md) entries, reachable through
+[`HasFields`](../traits/has_fields.md) and convertible with `FromFields`/`ToFields`. The second is
+an *incremental* view: a generated partial type that holds each field in a present-or-absent state,
+so that values can be assembled one field at a time (for structs) or peeled apart one variant at a
+time (for enums). Together these are what make data "extensible": generic code can add a field to a
+partial struct, or remove a variant from a partial enum, without naming the concrete type.
 
-The practical payoff is that data becomes the subject of CGP wiring, not just behavior. Builders that merge several source structs into a target struct, dispatchers that match an enum variant and route it to a handler, and casts that widen or narrow between related enums all work generically because `#[derive(CgpData)]` supplied the field-level machinery they consume. Behavior-only components never need this derive; it is for the data types that flow through them.
+The practical payoff is that data becomes the subject of CGP wiring, not just behavior. Builders
+that merge several source structs into a target struct, dispatchers that match an enum variant and
+route it to a handler, and casts that widen or narrow between related enums all work generically
+because `#[derive(CgpData)]` supplied the field-level machinery they consume. Behavior-only
+components never need this derive; it is for the data types that flow through them.
 
-`#[derive(CgpData)]` is the high-level entry point. It dispatches on whether the annotated item is a struct or an enum and emits exactly what [`#[derive(CgpRecord)]`](derive_cgp_record.md) or [`#[derive(CgpVariant)]`](derive_cgp_variant.md) would emit for that shape — so the two shape-specific derives are simply `CgpData` restricted to one kind of type.
+`#[derive(CgpData)]` is the high-level entry point. It dispatches on whether the annotated item is a
+struct or an enum and emits exactly what [`#[derive(CgpRecord)]`](derive_cgp_record.md) or
+[`#[derive(CgpVariant)]`](derive_cgp_variant.md) would emit for that shape, so the two
+shape-specific derives are simply `CgpData` restricted to one kind of type.
 
 ## Syntax
 
-The derive is applied like any other derive macro, on a `struct` or an `enum`, and takes no arguments; any other item fails with `expect body to be either a struct or enum`:
+The derive is applied like any other derive macro, on a `struct` or an `enum`, and takes no
+arguments; any other item fails with `expect body to be either a struct or enum`:
 
 ```rust
 use cgp::prelude::*;
@@ -32,17 +55,36 @@ pub enum Shape {
 }
 ```
 
-What the derive generates depends entirely on the kind of item. For a struct it produces the record machinery (field getters, the field representation, and the incremental builder); for an enum it produces the variant machinery (the field representation, variant constructors, and the incremental extractor). The two paths share the `HasFields`/`FromFields`/`ToFields` representation traits but otherwise emit different impls, so the sections below treat them separately.
+What the derive generates depends entirely on the kind of item. For a struct it produces the record
+machinery (field getters, the field representation, and the incremental builder); for an enum it
+produces the variant machinery (the field representation, variant constructors, and the incremental
+extractor). The two paths share the `HasFields`/`FromFields`/`ToFields` representation traits but
+otherwise emit different impls, so the sections below treat them separately.
 
-Field tags drive everything. A named struct field or an enum variant becomes a type-level string [`Symbol!`](../macros/symbol.md), and an unnamed field of a tuple struct becomes a positional [`Index<N>`](../types/index.md); that tag is what addresses the field in the generated impls. Struct field types and single-field variant payload types become the field values. Generic parameters on the type are carried through onto the generated impls.
+Field tags drive everything. A named struct field or an enum variant becomes a type-level string
+[`Symbol!`](../macros/symbol.md), and an unnamed field of a tuple struct becomes a positional
+[`Index<N>`](../types/index.md); that tag is what addresses the field in the generated impls. Struct
+field types and single-field variant payload types become the field values. Generic parameters on
+the type are carried through onto the generated impls.
 
-**On an enum, every variant must carry exactly one unnamed payload.** The requirement comes from the extractor and `FromVariant` slices, which each have to name one payload type per variant, and a fieldless, multi-field, or struct-style variant fails with `Expected variant to contain exactly one unnamed field`. Wrap a richer payload in its own struct so the variant's value stays a single nameable type. [`#[derive(HasFields)]`](derive_has_fields.md) is the exception in the family and accepts all four variant shapes, so an enum that cannot take this derive can still have a structural representation.
+**On an enum, every variant must carry exactly one unnamed payload.** The requirement comes from the
+extractor and `FromVariant` slices, which each have to name one payload type per variant, and a
+fieldless, multi-field, or struct-style variant fails with
+`Expected variant to contain exactly one unnamed field`. Wrap a richer payload in its own struct so
+the variant's value stays a single nameable type. [`#[derive(HasFields)]`](derive_has_fields.md) is
+the exception in the family and accepts all four variant shapes, so an enum that cannot take this
+derive can still have a structural representation.
 
-The degenerate shapes are accepted rather than rejected. A fieldless struct yields a partial companion type with no `MapType` parameters, so `builder()` is already finalizable, and a variantless enum yields bare partial enums with no parameters at all.
+The degenerate shapes are accepted rather than rejected. A fieldless struct yields a partial
+companion type with no `MapType` parameters, so `builder()` is already finalizable, and a
+variantless enum yields bare partial enums with no parameters at all.
 
 ## Expansion
 
-`#[derive(CgpData)]` expands into a fixed set of impls determined by whether the input is a struct or an enum. The exact generated code is verbose because every field name is spelled out as its full `Symbol<Len, Chars<...>>` form; the blocks below abbreviate those symbols as `Symbol!("name")` for readability, matching how the expansion snapshots read once collapsed.
+`#[derive(CgpData)]` expands into a fixed set of impls determined by whether the input is a struct
+or an enum. The exact generated code is verbose because every field name is spelled out as its full
+`Symbol<Len, Chars<...>>` form; the blocks below abbreviate those symbols as `Symbol!("name")` for
+readability, matching how the expansion snapshots read once collapsed.
 
 For a struct, the derive emits the record expansion. Given:
 
@@ -54,7 +96,9 @@ pub struct Person {
 }
 ```
 
-it generates per-field [`HasField`](../traits/has_field.md)/`HasFieldMut` getters, the representation traits, and the builder machinery. The representation traits expose the struct as a product of named fields:
+it generates per-field [`HasField`](../traits/has_field.md)/`HasFieldMut` getters, the
+representation traits, and the builder machinery. The representation traits expose the struct as a
+product of named fields:
 
 ```rust
 impl HasFields for Person {
@@ -74,7 +118,9 @@ impl ToFields for Person { /* self -> Cons(...) */ }
 // plus HasFieldsRef and ToFieldsRef for borrowed access
 ```
 
-The builder half generates a partial companion struct `__PartialPerson`, whose each field is wrapped in a `MapType` marker so the field can be present (`IsPresent`), absent (`IsNothing`), or void (`IsVoid`):
+The builder half generates a partial companion struct `__PartialPerson`, whose each field is wrapped
+in a `MapType` marker so the field can be present (`IsPresent`), absent (`IsNothing`), or void
+(`IsVoid`):
 
 ```rust
 pub struct __PartialPerson<__F0__: MapType, __F1__: MapType> {
@@ -90,7 +136,11 @@ impl HasBuilder for Person {
 impl FinalizeBuild for __PartialPerson<IsPresent, IsPresent> { /* -> Person */ }
 ```
 
-This builder expansion — `__Partial{Name}`, `HasBuilder`, `IntoBuilder`, `PartialData`, `FinalizeBuild`, the per-field `UpdateField` impls (which `BuildField` is built on), and the per-field `HasField` impls on the partial type — is exactly what [`#[derive(BuildField)]`](derive_build_field.md) produces on its own. See that document for the full builder breakdown.
+This builder expansion (`__Partial{Name}`, `HasBuilder`, `IntoBuilder`, `PartialData`,
+`FinalizeBuild`, the per-field `UpdateField` impls, which `BuildField` is built on, and the
+per-field `HasField` impls on the partial type) is exactly what
+[`#[derive(BuildField)]`](derive_build_field.md) produces on its own. See that document for the full
+builder breakdown.
 
 For an enum, the derive emits the variant expansion instead. Given:
 
@@ -102,7 +152,9 @@ pub enum Shape {
 }
 ```
 
-it generates the representation traits (now over a sum), the [`FromVariant`](../traits/from_variant.md) constructors, and the extractor machinery. The representation is a sum of named fields terminated by [`Void`](../types/either.md):
+it generates the representation traits (now over a sum), the
+[`FromVariant`](../traits/from_variant.md) constructors, and the extractor machinery. The
+representation is a sum of named fields terminated by [`Void`](../types/either.md):
 
 ```rust
 impl HasFields for Shape {
@@ -121,7 +173,10 @@ impl FromVariant<Symbol!("Circle")> for Shape {
 // plus FromVariant for Rectangle, and FromFields/ToFields/ToFieldsRef
 ```
 
-The extractor half generates partial enums `__PartialShape` and `__PartialRefShape`, plus `HasExtractor`/`HasExtractorRef`/`HasExtractorMut`, `FinalizeExtract`, and per-variant [`ExtractField`](../traits/extract_field.md) impls that peel one variant off and return the remaining variants:
+The extractor half generates partial enums `__PartialShape` and `__PartialRefShape`, plus
+`HasExtractor`/`HasExtractorRef`/`HasExtractorMut`, `FinalizeExtract`, and per-variant
+[`ExtractField`](../traits/extract_field.md) impls that peel one variant off and return the
+remaining variants:
 
 ```rust
 pub enum __PartialShape<__F0__: MapType, __F1__: MapType> {
@@ -135,13 +190,26 @@ impl HasExtractor for Shape {
 }
 ```
 
-This extractor expansion is exactly what [`#[derive(ExtractField)]`](derive_extract_field.md) produces, and the `FromVariant` impls are what [`#[derive(FromVariant)]`](derive_from_variant.md) produces. `#[derive(CgpData)]` on an enum is the union of those two building-block derives plus the shared representation traits.
+This extractor expansion is exactly what [`#[derive(ExtractField)]`](derive_extract_field.md)
+produces, and the `FromVariant` impls are what [`#[derive(FromVariant)]`](derive_from_variant.md)
+produces. `#[derive(CgpData)]` on an enum is the union of those two building-block derives plus the
+shared representation traits.
 
-Two details of the expansion are worth holding onto. The partial type is named `__Partial{Name}` (and `__PartialRef{Name}` for the borrowed extractor), with reserved double-underscore names so they do not collide with user types. And the `Tag` that keys each field follows the same rule as [`#[derive(HasField)]`](derive_has_field.md): a named field or enum variant is keyed by the [`Symbol!`](../macros/symbol.md) of its identifier, while an unnamed field of a tuple struct is keyed by its positional [`Index<N>`](../types/index.md). A tuple-struct record therefore uses `UpdateField<Index<0>, _>` impls in its builder, not symbol tags, and a tuple struct with two or more fields exposes `Field<Index<N>, _>` entries in its `Fields` product. A tuple struct with exactly one field is the exception there: its `Fields` is the bare field type, with no `Field` wrapper, as [`#[derive(HasFields)]`](derive_has_fields.md) describes.
+Two details of the expansion are worth holding onto. The partial type is named `__Partial{Name}`
+(and `__PartialRef{Name}` for the borrowed extractor), with reserved double-underscore names so they
+do not collide with user types. And the `Tag` that keys each field follows the same rule as
+[`#[derive(HasField)]`](derive_has_field.md): a named field or enum variant is keyed by the
+[`Symbol!`](../macros/symbol.md) of its identifier, while an unnamed field of a tuple struct is
+keyed by its positional [`Index<N>`](../types/index.md). A tuple-struct record therefore uses
+`UpdateField<Index<0>, _>` impls in its builder, not symbol tags, and a tuple struct with two or
+more fields exposes `Field<Index<N>, _>` entries in its `Fields` product. A tuple struct with
+exactly one field is the exception there: its `Fields` is the bare field type, with no `Field`
+wrapper, as [`#[derive(HasFields)]`](derive_has_fields.md) describes.
 
 ## Examples
 
-A struct example shows the builder view end to end. Because `Person` derives `CgpData`, it gains a builder that can be filled field by field and from other structs that share field names:
+A struct example shows the builder view end to end. Because `Person` derives `CgpData`, it gains a
+builder that can be filled field by field and from other structs that share field names:
 
 ```rust
 use cgp::prelude::*;
@@ -168,7 +236,9 @@ fn make_employee(person: Person) -> Employee {
 }
 ```
 
-An enum example shows the extractor view. Because `Shape` derives `CgpData`, a value can be converted to its extractor and have one variant pulled out, with the remainder carrying the still-unmatched variants:
+An enum example shows the extractor view. Because `Shape` derives `CgpData`, a value can be
+converted to its extractor and have one variant pulled out, with the remainder carrying the
+still-unmatched variants:
 
 ```rust
 use cgp::prelude::*;
@@ -193,25 +263,72 @@ fn area(shape: Shape) -> f64 {
 }
 ```
 
-These two views are what higher-level constructs build on: builders and field-dispatch handlers consume the struct machinery, while variant dispatch and the `upcast`/`downcast` casts consume the enum machinery.
+These two views are what higher-level constructs build on: builders and field-dispatch handlers
+consume the struct machinery, while variant dispatch and the `upcast`/`downcast` casts consume the
+enum machinery.
 
 ## Related constructs
 
-`#[derive(CgpData)]` is the umbrella over a family of shape- and operation-specific derives. [`#[derive(CgpRecord)]`](derive_cgp_record.md) and [`#[derive(CgpVariant)]`](derive_cgp_variant.md) are `CgpData` restricted to structs and enums respectively, useful when you want to document intent or when only one shape is valid. The building-block derives generate slices of the same output: [`#[derive(BuildField)]`](derive_build_field.md) emits just the struct builder, [`#[derive(ExtractField)]`](derive_extract_field.md) just the enum extractor, and [`#[derive(FromVariant)]`](derive_from_variant.md) just the variant constructors. [`#[derive(HasFields)]`](derive_has_fields.md) emits just the representation traits, and [`#[derive(HasField)]`](derive_has_field.md) just the plain field getters. The generated types reference [`Field`](../types/field.md), the [`product`](../macros/product.md) (`Cons`/`Nil`) and [`sum`](../macros/sum.md) (`Either`/`Void`) type-level lists, and the `MapType` markers `IsPresent`/`IsNothing`/`IsVoid`.
+`#[derive(CgpData)]` is the umbrella over a family of shape- and operation-specific derives.
+[`#[derive(CgpRecord)]`](derive_cgp_record.md) and [`#[derive(CgpVariant)]`](derive_cgp_variant.md)
+are `CgpData` restricted to structs and enums respectively, useful when you want to document intent
+or when only one shape is valid. The building-block derives generate slices of the same output:
+[`#[derive(BuildField)]`](derive_build_field.md) emits just the struct builder,
+[`#[derive(ExtractField)]`](derive_extract_field.md) just the enum extractor, and
+[`#[derive(FromVariant)]`](derive_from_variant.md) just the variant constructors.
+[`#[derive(HasFields)]`](derive_has_fields.md) emits just the representation traits, and
+[`#[derive(HasField)]`](derive_has_field.md) just the plain field getters. The generated types
+reference [`Field`](../types/field.md), the [`product`](../macros/product.md) (`Cons`/`Nil`) and
+[`sum`](../macros/sum.md) (`Either`/`Void`) type-level lists, and the `MapType` markers
+`IsPresent`/`IsNothing`/`IsVoid`.
 
 ## Known issues
 
-**Seven variant names are reserved on an enum, and using one fails to compile.** Because `CgpData` runs the representation, constructor, and extractor codegen together, an enum deriving it inherits every reserved name each of those slices introduces: `Fields` and `FieldsRef` from [`#[derive(HasFields)]`](derive_has_fields.md), and `Value`, `Remainder`, `Extractor`, `ExtractorRef`, and `ExtractorMut` from [`#[derive(ExtractField)]`](derive_extract_field.md) and [`#[derive(FromVariant)]`](derive_from_variant.md). A variant with any of those names makes the generated `Self::…` path ambiguous, reported as `ambiguous associated item` with its headline on the derive attribute. Whether the message also names the variant depends on which slice collided: the representation and constructor impls are written for your enum, so their notes point at the real variant, while the extractor's are written for the generated companions and point back at the derive. A struct's field names are unaffected. The per-slice entries carry the mechanism and the correct fix.
+**Seven variant names are reserved on an enum, and using one fails to compile.** Because `CgpData`
+runs the representation, constructor, and extractor codegen together, an enum deriving it inherits
+every reserved name each of those slices introduces: `Fields` and `FieldsRef` from
+[`#[derive(HasFields)]`](derive_has_fields.md), and `Value`, `Remainder`, `Extractor`,
+`ExtractorRef`, and `ExtractorMut` from [`#[derive(ExtractField)]`](derive_extract_field.md) and
+[`#[derive(FromVariant)]`](derive_from_variant.md). A variant with any of those names makes the
+generated `Self::…` path ambiguous, reported as `ambiguous associated item` with its headline on the
+derive attribute. Whether the message also names the variant depends on which slice collided: the
+representation and constructor impls are written for your enum, so their notes point at the real
+variant, while the extractor's are written for the generated companions and point back at the
+derive. A struct's field names are unaffected. The per-slice entries carry the mechanism and the
+correct fix.
 
-**A field or variant attribute that belongs to another derive breaks the build.** The builder's companion struct keeps each field's attributes and the extractor's companion enums keep each variant's, so a helper attribute such as `#[serde(rename = "x")]` beside `#[derive(Serialize, CgpData)]` lands on a generated type that does not derive `Serialize` and fails with ``cannot find attribute `serde` in this scope``. [`#[derive(BuildField)]`](derive_build_field.md) and [`#[derive(ExtractField)]`](derive_extract_field.md) record the defect and the fix.
+**A field or variant attribute that belongs to another derive breaks the build.** The builder's
+companion struct keeps each field's attributes and the extractor's companion enums keep each
+variant's, so a helper attribute such as `#[serde(rename = "x")]` beside
+`#[derive(Serialize, CgpData)]` lands on a generated type that does not derive `Serialize` and fails
+with
+``cannot find attribute `serde` in this scope``. [`#[derive(BuildField)]`](derive_build_field.md) and [`#[derive(ExtractField)]`](derive_extract_field.md)
+record the defect and the fix.
 
 ## Source
 
-- Entry point: `derive_cgp_data` in [crates/macros/cgp-macro-lib/src/cgp_data.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-lib/src/cgp_data.rs), which parses the input into `ItemCgpData` and calls `to_items()`.
-- Shape dispatch: struct vs. enum in [crates/macros/cgp-macro-core/src/types/cgp_data/item.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/cgp_data/item.rs); the record path is in `record.rs` and the variant path in `variant.rs` in the same directory, which delegate to the `derive_has_fields/`, `derive_builder/`, `derive_extractor/`, and `derive_from_variant.rs` submodules.
-- Runtime traits: [crates/core/cgp-field/src/traits/](https://github.com/contextgeneric/cgp/tree/main/crates/core/cgp-field/src/traits/); the `MapType` markers in `crates/core/cgp-field/src/impls/map_type.rs`.
-- Internal walkthrough (the shape dispatch, the record and variant codegen it composes, the corner-case handling, and the index of tests and expansion snapshots): [implementation/entrypoints/derive_cgp_data.md](../../implementation/entrypoints/derive_cgp_data.md).
+- Entry point: `derive_cgp_data` in
+  [crates/macros/cgp-macro-lib/src/cgp_data.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-lib/src/cgp_data.rs),
+  which parses the input into `ItemCgpData` and calls `to_items()`.
+- Shape dispatch: struct vs. enum in
+  [crates/macros/cgp-macro-core/src/types/cgp_data/item.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/cgp_data/item.rs);
+  the record path is in `record.rs` and the variant path in `variant.rs` in the same directory,
+  which delegate to the `derive_has_fields/`, `derive_builder/`, `derive_extractor/`, and
+  `derive_from_variant.rs` submodules.
+- Runtime traits:
+  [crates/core/cgp-field/src/traits/](https://github.com/contextgeneric/cgp/tree/main/crates/core/cgp-field/src/traits/);
+  the `MapType` markers in `crates/core/cgp-field/src/impls/map_type.rs`.
+- Internal walkthrough (the shape dispatch, the record and variant codegen it composes, the
+  corner-case handling, and the index of tests and expansion snapshots):
+  [implementation/entrypoints/derive_cgp_data.md](../../implementation/entrypoints/derive_cgp_data.md).
 
 ## Public pages derived from this document
 
-The public reference is organized one page per named construct, so this document feeds **3 pages** rather than one: [`derive_cgp_data`](https://contextgeneric.dev/docs/reference/derives/derive_cgp_data), [`derive_cgp_record`](https://contextgeneric.dev/docs/reference/derives/derive_cgp_record), [`derive_cgp_variant`](https://contextgeneric.dev/docs/reference/derives/derive_cgp_variant). A change here is propagated to each of them, per the [synchronization rule](../../../AGENTS.md#the-synchronization-rule); the mapping and the granularity rule behind it are recorded in [website/site-structure.md](../../../website/site-structure.md).
+The public reference is organized one page per named construct, so this document feeds **3 pages**
+rather than one:
+[`derive_cgp_data`](https://contextgeneric.dev/docs/reference/derives/derive_cgp_data),
+[`derive_cgp_record`](https://contextgeneric.dev/docs/reference/derives/derive_cgp_record),
+[`derive_cgp_variant`](https://contextgeneric.dev/docs/reference/derives/derive_cgp_variant). A
+change here is propagated to each of them, per the
+[synchronization rule](../../../AGENTS.md#the-synchronization-rule); the mapping and the granularity
+rule behind it are recorded in [website/site-structure.md](../../../website/site-structure.md).

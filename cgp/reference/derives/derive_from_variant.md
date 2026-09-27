@@ -1,12 +1,24 @@
 # `#[derive(FromVariant)]`
 
-`#[derive(FromVariant)]` derives just the variant-construction machinery for an enum: one `FromVariant` impl per variant, so the enum can be built generically from any single variant addressed by name.
+`#[derive(FromVariant)]` derives just the variant-construction machinery for an enum: one
+`FromVariant` impl per variant, so the enum can be built generically from any single variant
+addressed by name.
 
 ## Purpose
 
-`#[derive(FromVariant)]` lets generic code construct an enum from one of its variants without naming the concrete variant constructor. It is the smallest building block of the extensible-variant family — the *construction* counterpart to the extractor's deconstruction. Where a plain `Shape::Circle(circle)` hard-codes both the enum and the variant, `FromVariant` lets a generic provider write `Shape::from_variant(tag, value)` with the variant chosen by a type-level `Symbol!` tag, so the same code can target any variant of any enum that derives it.
+`#[derive(FromVariant)]` lets generic code construct an enum from one of its variants without naming
+the concrete variant constructor. It is the smallest building block of the extensible-variant
+family, the *construction* counterpart to the extractor's deconstruction. Where a plain
+`Shape::Circle(circle)` hard-codes both the enum and the variant, `FromVariant` lets a generic
+provider write `Shape::from_variant(tag, value)` with the variant chosen by a type-level `Symbol!`
+tag, so the same code can target any variant of any enum that derives it.
 
-The derive exists as a standalone because variant construction is sometimes wanted on its own — for example, by the casts and dispatchers that build a value into a target enum after matching. Most code, however, reaches for [`#[derive(CgpVariant)]`](derive_cgp_variant.md) or [`#[derive(CgpData)]`](derive_cgp_data.md), which include these impls alongside the extractor and the field representation. This is the simplest derive in the family: it generates no companion types and no presence tracking, only a direct constructor per variant.
+The derive exists as a standalone because variant construction is sometimes wanted on its own, for
+example by the casts and dispatchers that build a value into a target enum after matching. Most
+code, however, reaches for [`#[derive(CgpVariant)]`](derive_cgp_variant.md) or
+[`#[derive(CgpData)]`](derive_cgp_data.md), which include these impls alongside the extractor and
+the field representation. This is the simplest derive in the family: it generates no companion types
+and no presence tracking, only a direct constructor per variant.
 
 ## Syntax
 
@@ -22,11 +34,18 @@ pub enum Shape {
 }
 ```
 
-Each variant's name becomes a type-level string `Symbol!` used as the variant's `Tag`, and its payload type becomes the constructor's value type. Every variant must carry exactly one unnamed payload — a single-field tuple variant such as `Circle(Circle)`; a fieldless, multi-field, or struct-style variant is a compile error. Generic parameters on the enum are carried onto the generated impls. The derive emits exactly the `FromVariant` impls that the variant path of [`#[derive(CgpData)]`](derive_cgp_data.md) emits — that slice in isolation.
+Each variant's name becomes a type-level string `Symbol!` used as the variant's `Tag`, and its
+payload type becomes the constructor's value type. Every variant must carry exactly one unnamed
+payload, a single-field tuple variant such as `Circle(Circle)`; a fieldless, multi-field, or
+struct-style variant is a compile error. Generic parameters on the enum are carried onto the
+generated impls. The derive emits exactly the `FromVariant` impls that the variant path of
+[`#[derive(CgpData)]`](derive_cgp_data.md) emits: that slice in isolation.
 
 ## Expansion
 
-`#[derive(FromVariant)]` expands into one [`FromVariant`](../traits/from_variant.md) impl per variant and nothing else. The symbols below are abbreviated as `Symbol!("Name")` in place of the full `Symbol<Len, Chars<...>>` form. Starting from:
+`#[derive(FromVariant)]` expands into one [`FromVariant`](../traits/from_variant.md) impl per
+variant and nothing else. The symbols below are abbreviated as `Symbol!("Name")` in place of the
+full `Symbol<Len, Chars<...>>` form. Starting from:
 
 ```rust
 #[derive(FromVariant)]
@@ -36,7 +55,8 @@ pub enum Shape {
 }
 ```
 
-the derive emits a constructor keyed by each variant's name symbol, with the payload type as the associated `Value`:
+the derive emits a constructor keyed by each variant's name symbol, with the payload type as the
+associated `Value`:
 
 ```rust
 impl FromVariant<Symbol!("Circle")> for Shape {
@@ -54,7 +74,11 @@ impl FromVariant<Symbol!("Rectangle")> for Shape {
 }
 ```
 
-The `FromVariant` trait is defined in the field crate; the derive only supplies the per-variant impls. There is no partial type, no `MapType` marker, and no state tracking — each impl simply wraps the value in its variant. The `Tag` is the variant name's type-level string, and the `PhantomData<Tag>` argument exists solely to let the caller pick which variant to build when several `FromVariant` impls are in scope.
+The `FromVariant` trait is defined in the field crate; the derive only supplies the per-variant
+impls. There is no partial type, no `MapType` marker, and no state tracking; each impl simply wraps
+the value in its variant. The `Tag` is the variant name's type-level string, and the
+`PhantomData<Tag>` argument exists solely to let the caller pick which variant to build when several
+`FromVariant` impls are in scope.
 
 ## Examples
 
@@ -74,21 +98,51 @@ fn wrap_circle(circle: Circle) -> Shape {
 }
 ```
 
-The call is equivalent to `Shape::Circle(circle)`, but the variant is selected by the type-level tag, so generic code that is parameterized over the tag can construct whichever variant it was asked for.
+The call is equivalent to `Shape::Circle(circle)`, but the variant is selected by the type-level
+tag, so generic code that is parameterized over the tag can construct whichever variant it was asked
+for.
 
 ## Related constructs
 
-`#[derive(FromVariant)]` is one slice of the variant output of [`#[derive(CgpData)]`](derive_cgp_data.md) and [`#[derive(CgpVariant)]`](derive_cgp_variant.md); those derives include it alongside the [`#[derive(ExtractField)]`](derive_extract_field.md) extractor and the [`#[derive(HasFields)]`](derive_has_fields.md) representation traits. Its closest relative is [`ExtractField`](../traits/extract_field.md), the reverse operation that takes a variant out rather than putting one in. For structs, the analogous field-setting building block is [`#[derive(BuildField)]`](derive_build_field.md). The generated constructors correspond to the arms of the enum's [`sum`](../macros/sum.md) representation ([`Either`/`Void`](../types/either.md)).
+`#[derive(FromVariant)]` is one slice of the variant output of
+[`#[derive(CgpData)]`](derive_cgp_data.md) and [`#[derive(CgpVariant)]`](derive_cgp_variant.md);
+those derives include it alongside the [`#[derive(ExtractField)]`](derive_extract_field.md)
+extractor and the [`#[derive(HasFields)]`](derive_has_fields.md) representation traits. Its closest
+relative is [`ExtractField`](../traits/extract_field.md), the reverse operation that takes a variant
+out rather than putting one in. For structs, the analogous field-setting building block is
+[`#[derive(BuildField)]`](derive_build_field.md). The generated constructors correspond to the arms
+of the enum's [`sum`](../macros/sum.md) representation ([`Either`/`Void`](../types/either.md)).
 
 ## Known issues
 
-**A variant named `Value` fails to compile.** The generated `from_variant` signature names the payload as `Self::Value`, so a variant of that name makes the path ambiguous between the variant and the associated type, and the compiler reports `ambiguous associated item` with its headline on the `#[derive(FromVariant)]` attribute and a `note: "Value" could refer to the variant defined here` pointing at the offending variant, so the error is readable once the note is followed. Writing the projection as `<Self as FromVariant<Tag>>::Value` in the codegen would remove the ambiguity; until then, renaming the variant is the only fix. `Value` is the only name this derive reserves, but [`#[derive(ExtractField)]`](derive_extract_field.md) reserves it along with four more and [`#[derive(HasFields)]`](derive_has_fields.md) two others, so an enum deriving the whole family must avoid all seven.
+**A variant named `Value` fails to compile.** The generated `from_variant` signature names the
+payload as `Self::Value`, so a variant of that name makes the path ambiguous between the variant and
+the associated type, and the compiler reports `ambiguous associated item` with its headline on the
+`#[derive(FromVariant)]` attribute and a `note: "Value" could refer to the variant defined here`
+pointing at the offending variant, so the error is readable once the note is followed. Writing the
+projection as `<Self as FromVariant<Tag>>::Value` in the codegen would remove the ambiguity; until
+then, renaming the variant is the only fix. `Value` is the only name this derive reserves, but
+[`#[derive(ExtractField)]`](derive_extract_field.md) reserves it along with four more and
+[`#[derive(HasFields)]`](derive_has_fields.md) two others, so an enum deriving the whole family must
+avoid all seven.
 
-The derive only accepts enums whose every variant is a single-field tuple variant. A fieldless variant like `Empty`, a multi-field variant like `Pair(A, B)`, or a struct-style variant like `Named { x: A }` causes the macro to fail with `Expected variant to contain exactly one unnamed field`. There is no way to opt a variant out of the requirement, so an enum that mixes shapes cannot derive the constructor at all.
+The derive only accepts enums whose every variant is a single-field tuple variant. A fieldless
+variant like `Empty`, a multi-field variant like `Pair(A, B)`, or a struct-style variant like
+`Named { x: A }` causes the macro to fail with
+`Expected variant to contain exactly one unnamed field`. There is no way to opt a variant out of the
+requirement, so an enum that mixes shapes cannot derive the constructor at all.
 
 ## Source
 
-- Entry point: `derive_from_variant` in [crates/macros/cgp-macro-lib/src/derive_from_variant.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-lib/src/derive_from_variant.rs), which builds an `ItemCgpVariant` and calls `to_from_variant_impls()`.
-- Codegen: that method, in [crates/macros/cgp-macro-core/src/types/cgp_data/variant.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/cgp_data/variant.rs), delegates to `derive_from_variant_from_enum` in [crates/macros/cgp-macro-core/src/types/cgp_data/derive_from_variant.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/cgp_data/derive_from_variant.rs).
-- `FromVariant` trait: [crates/core/cgp-field/src/traits/from_variant.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/traits/from_variant.rs).
-- Internal walkthrough (the per-variant codegen, the corner-case handling, and the index of tests and expansion snapshots): [implementation/entrypoints/derive_from_variant.md](../../implementation/entrypoints/derive_from_variant.md).
+- Entry point: `derive_from_variant` in
+  [crates/macros/cgp-macro-lib/src/derive_from_variant.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-lib/src/derive_from_variant.rs),
+  which builds an `ItemCgpVariant` and calls `to_from_variant_impls()`.
+- Codegen: that method, in
+  [crates/macros/cgp-macro-core/src/types/cgp_data/variant.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/cgp_data/variant.rs),
+  delegates to `derive_from_variant_from_enum` in
+  [crates/macros/cgp-macro-core/src/types/cgp_data/derive_from_variant.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/cgp_data/derive_from_variant.rs).
+- `FromVariant` trait:
+  [crates/core/cgp-field/src/traits/from_variant.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/traits/from_variant.rs).
+- Internal walkthrough (the per-variant codegen, the corner-case handling, and the index of tests
+  and expansion snapshots):
+  [implementation/entrypoints/derive_from_variant.md](../../implementation/entrypoints/derive_from_variant.md).

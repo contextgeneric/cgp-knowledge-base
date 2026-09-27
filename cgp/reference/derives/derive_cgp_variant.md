@@ -1,14 +1,30 @@
 # `#[derive(CgpVariant)]`
 
-`#[derive(CgpVariant)]` derives the extensible-data machinery for an enum: the type-level field representation, variant constructors, and an incremental extractor, so the enum can be enumerated, built from a single variant, and matched one variant at a time.
+`#[derive(CgpVariant)]` derives the extensible-data machinery for an enum: the type-level field
+representation, variant constructors, and an incremental extractor, so the enum can be enumerated,
+built from a single variant, and matched one variant at a time.
 
 ## Purpose
 
-`#[derive(CgpVariant)]` makes an enum into an *extensible variant* — a sum of named variants that generic CGP code can address, construct, and take apart one variant at a time. A plain Rust enum is opaque to generic code: there is no way to refer to "the `Circle` variant" or "an enum with these variants" through a type parameter. This derive exposes the enum's variants as type-level data so that generic providers — variant dispatchers, the `upcast`/`downcast` casts, match handlers — can operate over any enum uniformly.
+`#[derive(CgpVariant)]` makes an enum into an *extensible variant*: a sum of named variants that
+generic CGP code can address, construct, and take apart one variant at a time. A plain Rust enum is
+opaque to generic code: there is no way to refer to "the `Circle` variant" or "an enum with these
+variants" through a type parameter. This derive exposes the enum's variants as type-level data so
+that generic providers (variant dispatchers, the `upcast`/`downcast` casts, match handlers) can
+operate over any enum uniformly.
 
-The derive is the enum-specific face of [`#[derive(CgpData)]`](derive_cgp_data.md). When `CgpData` is applied to an enum it emits exactly what `CgpVariant` emits; the two are the same code path. Use `CgpVariant` when the type is always an enum and you want the name to say so. Using `CgpVariant` on a struct fails to parse with ``expected `enum` ``, since it reads its input as an enum.
+The derive is the enum-specific face of [`#[derive(CgpData)]`](derive_cgp_data.md). When `CgpData`
+is applied to an enum it emits exactly what `CgpVariant` emits; the two are the same code path. Use
+`CgpVariant` when the type is always an enum and you want the name to say so. Using `CgpVariant` on
+a struct fails to parse with ``expected `enum` ``, since it reads its input as an enum.
 
-The defining operation a variant gains is incremental extraction. Beyond constructing the enum from any single variant, the derive generates a *partial* companion enum that tracks, in its type parameters, which variants are still possible. Generic code can convert a value to its extractor and pull one variant out; on a match the value is returned, and on a miss the *remainder* — a partial enum with that variant marked impossible — is returned for the next attempt. When every variant has been ruled out the remainder becomes an empty type that can be discharged, so an exhaustive match is proven at the type level.
+The defining operation a variant gains is incremental extraction. Beyond constructing the enum from
+any single variant, the derive generates a *partial* companion enum that tracks, in its type
+parameters, which variants are still possible. Generic code can convert a value to its extractor and
+pull one variant out; on a match the value is returned, and on a miss the *remainder* (a partial
+enum with that variant marked impossible) is returned for the next attempt. When every variant has
+been ruled out the remainder becomes an empty type that can be discharged, so an exhaustive match is
+proven at the type level.
 
 ## Syntax
 
@@ -24,11 +40,19 @@ pub enum Shape {
 }
 ```
 
-Each variant must carry exactly one unnamed payload, as `Circle(Circle)` does; a unit, multi-field, or struct-style variant fails with `Expected variant to contain exactly one unnamed field`, because the constructor and extractor slices must name one payload type. A variant's name becomes a type-level string `Symbol!` used as its `Tag`, and its payload type becomes its value type. Generic parameters on the enum are carried onto the generated impls. The derive accepts the same enums that [`#[derive(CgpData)]`](derive_cgp_data.md) accepts for the variant path; the only difference is that `CgpVariant` refuses non-enum inputs outright.
+Each variant must carry exactly one unnamed payload, as `Circle(Circle)` does; a unit, multi-field,
+or struct-style variant fails with `Expected variant to contain exactly one unnamed field`, because
+the constructor and extractor slices must name one payload type. A variant's name becomes a
+type-level string `Symbol!` used as its `Tag`, and its payload type becomes its value type. Generic
+parameters on the enum are carried onto the generated impls. The derive accepts the same enums that
+[`#[derive(CgpData)]`](derive_cgp_data.md) accepts for the variant path; the only difference is that
+`CgpVariant` refuses non-enum inputs outright.
 
 ## Expansion
 
-`#[derive(CgpVariant)]` expands into three groups of impls: the representation traits, the variant constructors, and the extractor machinery. The symbols below are abbreviated as `Symbol!("Name")` in place of the full `Symbol<Len, Chars<...>>` spelling the macro actually emits. Starting from:
+`#[derive(CgpVariant)]` expands into three groups of impls: the representation traits, the variant
+constructors, and the extractor machinery. The symbols below are abbreviated as `Symbol!("Name")` in
+place of the full `Symbol<Len, Chars<...>>` spelling the macro actually emits. Starting from:
 
 ```rust
 #[derive(CgpVariant)]
@@ -38,7 +62,9 @@ pub enum Shape {
 }
 ```
 
-the derive first emits the representation traits, exposing the enum as a type-level sum of named [`Field`](../types/field.md) entries terminated by [`Void`](../types/either.md), with whole-value conversions — the [`#[derive(HasFields)]`](derive_has_fields.md) output for enums:
+the derive first emits the representation traits, exposing the enum as a type-level sum of named
+[`Field`](../types/field.md) entries terminated by [`Void`](../types/either.md), with whole-value
+conversions, the [`#[derive(HasFields)]`](derive_has_fields.md) output for enums:
 
 ```rust
 impl HasFields for Shape {
@@ -52,7 +78,8 @@ impl FromFields for Shape { /* match each Either arm back to a variant */ }
 // plus ToFields, HasFieldsRef, ToFieldsRef
 ```
 
-Second, it emits one [`FromVariant`](../traits/from_variant.md) impl per variant, so the enum can be constructed generically from any single variant by name:
+Second, it emits one [`FromVariant`](../traits/from_variant.md) impl per variant, so the enum can be
+constructed generically from any single variant by name:
 
 ```rust
 impl FromVariant<Symbol!("Circle")> for Shape {
@@ -62,7 +89,10 @@ impl FromVariant<Symbol!("Circle")> for Shape {
 // plus FromVariant<Symbol!("Rectangle")>
 ```
 
-Third, it emits the extractor machinery — the [`#[derive(ExtractField)]`](derive_extract_field.md) output. This centers on two partial companion enums: `__PartialShape` for owned extraction and `__PartialRefShape` for borrowed extraction. Each arm's payload is wrapped in a `MapType` marker, so a variant can be present (`IsPresent`) or ruled out (`IsVoid`):
+Third, it emits the extractor machinery, the [`#[derive(ExtractField)]`](derive_extract_field.md)
+output. This centers on two partial companion enums: `__PartialShape` for owned extraction and
+`__PartialRefShape` for borrowed extraction. Each arm's payload is wrapped in a `MapType` marker, so
+a variant can be present (`IsPresent`) or ruled out (`IsVoid`):
 
 ```rust
 pub enum __PartialShape<__F0__: MapType, __F1__: MapType> {
@@ -81,13 +111,25 @@ impl FinalizeExtract for __PartialShape<IsVoid, IsVoid> {       // no variants l
 }
 ```
 
-It then emits, per variant, an `ExtractField` impl available only when that variant's marker is `IsPresent`; calling it returns `Ok(value)` if the runtime value is that variant, or `Err(remainder)` where the remainder has that variant's marker flipped to `IsVoid`. The borrowed `__PartialRefShape` enum carries an extra `MapTypeRef` parameter and backs `HasExtractorRef`/`HasExtractorMut`. The full per-variant detail is documented in [`#[derive(ExtractField)]`](derive_extract_field.md).
+It then emits, per variant, an `ExtractField` impl available only when that variant's marker is
+`IsPresent`; calling it returns `Ok(value)` if the runtime value is that variant, or
+`Err(remainder)` where the remainder has that variant's marker flipped to `IsVoid`. The borrowed
+`__PartialRefShape` enum carries an extra `MapTypeRef` parameter and backs
+`HasExtractorRef`/`HasExtractorMut`. The full per-variant detail is documented in
+[`#[derive(ExtractField)]`](derive_extract_field.md).
 
-The single most important fact about the expansion is that *possibility is encoded in the type*. `to_extractor` yields `__PartialShape<IsPresent, IsPresent>`; each failed `extract_field` returns a remainder with one more `IsVoid`; and once every marker is `IsVoid` the value inhabits `FinalizeExtract`, which can produce any type because the enum is uninhabited. This is how a chain of `extract_field` calls becomes a provably exhaustive match. The partial type names are the reserved `__Partial{Name}` and `__PartialRef{Name}`.
+The single most important fact about the expansion is that *possibility is encoded in the type*.
+`to_extractor` yields `__PartialShape<IsPresent, IsPresent>`; each failed `extract_field` returns a
+remainder with one more `IsVoid`; and once every marker is `IsVoid` the value inhabits
+`FinalizeExtract`, which can produce any type because the enum is uninhabited. This is how a chain
+of `extract_field` calls becomes a provably exhaustive match. The partial type names are the
+reserved `__Partial{Name}` and `__PartialRef{Name}`.
 
 ## Examples
 
-A variant is most useful when matching generically with a guaranteed-exhaustive fallthrough. Because `Shape` derives the variant machinery, the match can be expressed as a chain of `extract_field` calls, with `finalize_extract_result` discharging the impossible remainder:
+A variant is most useful when matching generically with a guaranteed-exhaustive fallthrough. Because
+`Shape` derives the variant machinery, the match can be expressed as a chain of `extract_field`
+calls, with `finalize_extract_result` discharging the impossible remainder:
 
 ```rust
 use cgp::prelude::*;
@@ -112,21 +154,52 @@ fn area(shape: Shape) -> f64 {
 }
 ```
 
-Because each `extract_field` narrows the remainder type, the compiler knows after the second extraction that no variants remain, so `finalize_extract_result` is accepted without a wildcard arm.
+Because each `extract_field` narrows the remainder type, the compiler knows after the second
+extraction that no variants remain, so `finalize_extract_result` is accepted without a wildcard arm.
 
 ## Related constructs
 
-`#[derive(CgpVariant)]` is the enum restriction of [`#[derive(CgpData)]`](derive_cgp_data.md), which dispatches to this same path; [`#[derive(CgpRecord)]`](derive_cgp_record.md) is the struct counterpart. Its output decomposes into [`#[derive(HasFields)]`](derive_has_fields.md) (the representation traits), [`#[derive(FromVariant)]`](derive_from_variant.md) (the variant constructors), and [`#[derive(ExtractField)]`](derive_extract_field.md) (the incremental extractor) — derive those individually when you need only one slice. The generated types reference [`Field`](../types/field.md), the [`sum`](../macros/sum.md) type-level list (`Either`/`Void`), and the `MapType` markers `IsPresent`/`IsVoid`.
+`#[derive(CgpVariant)]` is the enum restriction of [`#[derive(CgpData)]`](derive_cgp_data.md), which
+dispatches to this same path; [`#[derive(CgpRecord)]`](derive_cgp_record.md) is the struct
+counterpart. Its output decomposes into [`#[derive(HasFields)]`](derive_has_fields.md) (the
+representation traits), [`#[derive(FromVariant)]`](derive_from_variant.md) (the variant
+constructors), and [`#[derive(ExtractField)]`](derive_extract_field.md) (the incremental extractor);
+derive those individually when you need only one slice. The generated types reference
+[`Field`](../types/field.md), the [`sum`](../macros/sum.md) type-level list (`Either`/`Void`), and
+the `MapType` markers `IsPresent`/`IsVoid`.
 
 ## Known issues
 
-**Seven variant names are reserved, and using one fails to compile.** `CgpVariant` runs the representation, constructor, and extractor codegen together, so it inherits every reserved name those slices introduce: `Fields` and `FieldsRef` from [`#[derive(HasFields)]`](derive_has_fields.md), `Value` from [`#[derive(FromVariant)]`](derive_from_variant.md), and `Value`, `Remainder`, `Extractor`, `ExtractorRef`, and `ExtractorMut` from [`#[derive(ExtractField)]`](derive_extract_field.md). A variant with any of those names makes the generated `Self::…` path ambiguous, reported as `ambiguous associated item` with its headline on the derive attribute. Whether the message also names the variant depends on which slice collided: the extractor's impls target the generated companions and so point back at the derive, while the representation and constructor impls point at the real variant.
+**Seven variant names are reserved, and using one fails to compile.** `CgpVariant` runs the
+representation, constructor, and extractor codegen together, so it inherits every reserved name
+those slices introduce: `Fields` and `FieldsRef` from
+[`#[derive(HasFields)]`](derive_has_fields.md), `Value` from
+[`#[derive(FromVariant)]`](derive_from_variant.md), and `Value`, `Remainder`, `Extractor`,
+`ExtractorRef`, and `ExtractorMut` from [`#[derive(ExtractField)]`](derive_extract_field.md). A
+variant with any of those names makes the generated `Self::…` path ambiguous, reported as
+`ambiguous associated item` with its headline on the derive attribute. Whether the message also
+names the variant depends on which slice collided: the extractor's impls target the generated
+companions and so point back at the derive, while the representation and constructor impls point at
+the real variant.
 
-**A variant attribute that belongs to another derive breaks the build.** The extractor slice keeps each variant's attributes on the `__Partial{Name}` companion enums, so a helper attribute such as `#[serde(rename = "x")]` beside `#[derive(Serialize, CgpVariant)]` fails with ``cannot find attribute `serde` in this scope``, as [`#[derive(ExtractField)]`](derive_extract_field.md) records.
+**A variant attribute that belongs to another derive breaks the build.** The extractor slice keeps
+each variant's attributes on the `__Partial{Name}` companion enums, so a helper attribute such as
+`#[serde(rename = "x")]` beside `#[derive(Serialize, CgpVariant)]` fails with
+``cannot find attribute `serde` in this scope``, as [`#[derive(ExtractField)]`](derive_extract_field.md)
+records.
 
 ## Source
 
-- Entry point: `derive_cgp_variant` in [crates/macros/cgp-macro-lib/src/cgp_variant.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-lib/src/cgp_variant.rs), which parses an `ItemCgpVariant` and calls `to_items()`.
-- Variant codegen: [crates/macros/cgp-macro-core/src/types/cgp_data/variant.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/cgp_data/variant.rs), which composes `derive_has_fields_impls_from_enum`, `derive_from_variant_from_enum`, and the extractor helpers in the `derive_extractor/` submodule.
-- Runtime traits: `HasExtractor`, `HasExtractorRef`, `HasExtractorMut`, `ExtractField`, `FinalizeExtract`, `FromVariant`, `HasFields`, `FromFields`, `ToFields` in [crates/core/cgp-field/src/traits/](https://github.com/contextgeneric/cgp/tree/main/crates/core/cgp-field/src/traits/).
-- Internal walkthrough (the codegen it composes, the corner-case handling, and the index of tests and expansion snapshots): [implementation/entrypoints/derive_cgp_variant.md](../../implementation/entrypoints/derive_cgp_variant.md).
+- Entry point: `derive_cgp_variant` in
+  [crates/macros/cgp-macro-lib/src/cgp_variant.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-lib/src/cgp_variant.rs),
+  which parses an `ItemCgpVariant` and calls `to_items()`.
+- Variant codegen:
+  [crates/macros/cgp-macro-core/src/types/cgp_data/variant.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/cgp_data/variant.rs),
+  which composes `derive_has_fields_impls_from_enum`, `derive_from_variant_from_enum`, and the
+  extractor helpers in the `derive_extractor/` submodule.
+- Runtime traits: `HasExtractor`, `HasExtractorRef`, `HasExtractorMut`, `ExtractField`,
+  `FinalizeExtract`, `FromVariant`, `HasFields`, `FromFields`, `ToFields` in
+  [crates/core/cgp-field/src/traits/](https://github.com/contextgeneric/cgp/tree/main/crates/core/cgp-field/src/traits/).
+- Internal walkthrough (the codegen it composes, the corner-case handling, and the index of tests
+  and expansion snapshots):
+  [implementation/entrypoints/derive_cgp_variant.md](../../implementation/entrypoints/derive_cgp_variant.md).
