@@ -28,7 +28,7 @@ pub enum Shape {
 }
 ```
 
-For a struct the generated `Fields` type is a product; for an enum it is a sum. Named fields within either are tagged by [`Symbol!`](../macros/symbol.md), and unnamed (tuple) fields by [`Index<N>`](../types/index.md), exactly as in `HasField`. A single-field tuple struct (a newtype) is treated specially: its `Fields` is the inner type directly, not wrapped in a one-element product, and a unit struct is the empty case, whose `Fields` is `Nil`. Applying the derive to anything other than a struct or enum is a compile error.
+For a struct the generated `Fields` type is a product; for an enum it is a sum. Named fields within either are tagged by [`Symbol!`](../macros/symbol.md), and unnamed (tuple) fields by [`Index<N>`](../types/index.md), exactly as in `HasField`. A single-field tuple struct (a newtype) is treated specially: its `Fields` is the inner type directly, not wrapped in a one-element product, and a unit struct is the empty case, whose `Fields` is `Nil`. Applying the derive to anything other than a struct or enum fails with `expect body to be either a struct or enum`.
 
 ### Every variant shape is accepted
 

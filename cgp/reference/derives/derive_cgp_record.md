@@ -6,7 +6,7 @@
 
 `#[derive(CgpRecord)]` makes a struct into an *extensible record* — a product of named fields that generic CGP code can address, convert, and build up one field at a time. A plain Rust struct is opaque to generic code: there is no way to refer to "the `first_name` field" or "a struct with these fields" through a type parameter. This derive exposes the struct's fields as type-level data so that generic providers — builders, field mergers, field-dispatch handlers — can operate over any record uniformly.
 
-The derive is the struct-specific face of [`#[derive(CgpData)]`](derive_cgp_data.md). When `CgpData` is applied to a struct it emits exactly what `CgpRecord` emits; the two are the same code path. Use `CgpRecord` when the type is always a struct and you want the name to say so, or when you prefer a derive whose meaning is unambiguous at the use site. Using `CgpRecord` on an enum is a type error, since it parses its input as a struct.
+The derive is the struct-specific face of [`#[derive(CgpData)]`](derive_cgp_data.md). When `CgpData` is applied to a struct it emits exactly what `CgpRecord` emits; the two are the same code path. Use `CgpRecord` when the type is always a struct and you want the name to say so, or when you prefer a derive whose meaning is unambiguous at the use site. Using `CgpRecord` on an enum fails to parse with ``expected `struct` ``, since it reads its input as a struct.
 
 The defining operation a record gains is incremental construction. Beyond plain field access, the derive generates a *partial* companion type that tracks, in its type parameters, which fields are present and which are still absent. Generic code can start from an empty builder, set fields individually or copy them in bulk from other records that share field names, and finalize only once every field is present. This present/absent tracking happens entirely at the type level, so a missing field is a compile error, not a runtime panic.
 
@@ -131,6 +131,10 @@ If a field were left unset before `finalize_build`, the call would not compile �
 ## Related constructs
 
 `#[derive(CgpRecord)]` is the struct restriction of [`#[derive(CgpData)]`](derive_cgp_data.md), which dispatches to this same path; [`#[derive(CgpVariant)]`](derive_cgp_variant.md) is the enum counterpart. Its output decomposes into [`#[derive(HasField)]`](derive_has_field.md) (per-field getters), [`#[derive(HasFields)]`](derive_has_fields.md) (the representation traits), and [`#[derive(BuildField)]`](derive_build_field.md) (the incremental builder) — derive those individually when you need only one slice. The generated types reference [`Field`](../types/field.md), the [`product`](../macros/product.md) type-level list (`Cons`/`Nil`), and the `MapType` markers `IsPresent`/`IsNothing`/`IsVoid`.
+
+## Known issues
+
+The record derive inherits the reserved-name and attribute limits of its slices. Its builder slice copies each field's attributes onto the `__Partial{Name}` companion struct, so a field helper attribute of another derive, such as `#[serde(rename = "x")]` beside `#[derive(Serialize, CgpRecord)]`, fails with ``cannot find attribute `serde` in this scope``, as [`#[derive(BuildField)]`](derive_build_field.md) records. A struct's field names are otherwise unrestricted, since fields do not share a namespace with the generated associated types.
 
 ## Source
 

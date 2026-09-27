@@ -105,7 +105,7 @@ Neither `BuildField` nor its reverse is emitted by the derive. Both are defined 
 
 The key takeaway is that `builder()` yields `__PartialPerson<IsNothing, IsNothing>`, each `build_field` flips one marker to `IsPresent`, and `finalize_build` exists only at `__PartialPerson<IsPresent, IsPresent>` — so an incomplete build cannot be finalized.
 
-Two properties of the generated companion struct are worth knowing before reaching for it directly. It **keeps the original struct's visibility**, and each field keeps its own, so a `pub struct` yields a `pub struct __PartialPerson` whose fields can be read and written positionally. But it **carries none of the original's attributes**: the derive clears them, so a `#[derive(Debug, Clone)]` on the input does not reach the partial type and a partially-built value can be neither printed nor cloned. The per-field `HasField` impls on the partial type are the supported way to read a field back out mid-build.
+Two properties of the generated companion struct are worth knowing before reaching for it directly. It **keeps the original struct's visibility**, and each field keeps its own, so a `pub struct` yields a `pub struct __PartialPerson` whose fields can be read and written positionally. But it **carries none of the struct's own attributes**: the derive clears them, so a `#[derive(Debug, Clone)]` on the input does not reach the partial type and a partially-built value can be neither printed nor cloned. Each field's attributes, by contrast, are copied onto the matching field of the partial struct, which Known issues shows is a problem for another derive's helper attributes. The per-field `HasField` impls on the partial type are the supported way to read a field back out mid-build.
 
 ## Examples
 
@@ -135,6 +135,10 @@ Each step changes the partial type, and only after the last field is set does th
 ## Related constructs
 
 `#[derive(BuildField)]` is one slice of the record output of [`#[derive(CgpData)]`](derive_cgp_data.md) and [`#[derive(CgpRecord)]`](derive_cgp_record.md); those derives include it alongside the [`#[derive(HasField)]`](derive_has_field.md) getters and [`#[derive(HasFields)]`](derive_has_fields.md) representation traits. Its enum analogues are [`#[derive(ExtractField)]`](derive_extract_field.md) for incremental matching and [`#[derive(FromVariant)]`](derive_from_variant.md) for variant construction. The entry and exit points it generates target the [`HasBuilder`](../traits/has_builder.md) family of traits, which also carries `TakeField`, the present-to-absent counterpart of `BuildField` that the same generated `UpdateField` impls satisfy; bulk merging through `CanBuildFrom` is documented with the other [structural casts](../traits/cast.md). The generated code reads back fields through [`HasField`](../traits/has_field.md), stores them in the [`product`](../macros/product.md)-shaped partial struct, and switches on the [`MapType`](../traits/map_type.md) markers `IsPresent`/`IsNothing`/`IsVoid`.
+
+## Known issues
+
+A field attribute that belongs to another derive breaks the build. The partial struct is a copy of the input with the struct's attributes cleared but each field's attributes kept, so a helper attribute such as `#[serde(rename = "x")]` lands on a field of `__PartialPerson`, a struct that does not derive `Serialize`. The compiler then rejects it with ``cannot find attribute `serde` in this scope``, pointing at the attribute on the original struct. A struct therefore cannot combine `#[derive(BuildField)]`, or `CgpRecord` or `CgpData`, with a derive whose field helper attributes it uses. The correct behavior would be to clear field attributes on the partial struct as well, keeping only those that make sense there, such as `#[cfg]` or documentation. Plain attributes such as `#[doc]` and `#[allow]` are harmless.
 
 ## Source
 

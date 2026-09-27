@@ -1,14 +1,14 @@
 # `#[derive(HasField)]`
 
-`#[derive(HasField)]` is the derive macro that gives a struct field-level getters: for every field it generates a `HasField<Tag>` (and `HasFieldMut<Tag>`) implementation keyed by a type-level name, so that providers can read fields out of a context by name without the field ever appearing in a trait interface.
+`#[derive(HasField)]` gives a struct field-level getters: for every field it generates a `HasField<Tag>` and a `HasFieldMut<Tag>` implementation keyed by a type-level name, so providers can read fields out of a context by name without the field appearing in any trait interface.
 
 ## Purpose
 
-`#[derive(HasField)]` exists to turn the concrete fields of a struct into type-level entries that CGP's dependency-injection machinery can look up. The recurring problem in CGP is that a provider needs a value from the context — a `name`, a `width`, a configuration handle — but the provider is generic over the context type and cannot name the concrete struct. `HasField` solves this by indexing each field with a *tag type* that stands in for the field's name, so a provider can demand `Context: HasField<Symbol!("name"), Value = String>` and receive the field without knowing what the context actually is.
+`#[derive(HasField)]` turns a struct's fields into type-level entries that CGP's dependency injection can look up. A provider often needs a value from its context, such as a `name`, a `width`, or a configuration handle, but it is generic over the context and cannot name the concrete struct. `HasField` solves this by keying each field with a tag type that stands for its name, so a provider can require `Context: HasField<Symbol!("name"), Value = String>` and receive the field without knowing what the context is.
 
-The reason this matters is that it makes field access an impl-side dependency rather than part of any public interface. A provider expresses "I need a `String` field called `name`" purely in its `where` clause; any context that derives `HasField` and happens to have such a field satisfies it automatically. The derive is the bridge between an ordinary Rust struct and that constraint-based access — without it, the struct's fields are invisible to the trait system, and every getter would have to be hand-written.
+This makes field access an impl-side dependency rather than part of a public interface. A provider states "I need a `String` field called `name`" in its `where` clause alone, and any context that derives `HasField` and has such a field satisfies it. The derive is the bridge between an ordinary struct and that bound; without it, the struct's fields are invisible to the trait system.
 
-The trait being implemented is small. It carries the field's type as an associated `Value` and returns a reference to the field, with a `PhantomData<Tag>` parameter that exists only to tell the compiler which field is meant when several `HasField` impls are in scope:
+The trait being implemented is small. It carries the field's type as `Value` and returns a reference to the field, with a `PhantomData<Tag>` argument that tells the compiler which field is meant when several `HasField` impls apply:
 
 ```rust
 pub trait HasField<Tag> {
@@ -18,11 +18,11 @@ pub trait HasField<Tag> {
 }
 ```
 
-Higher-level constructs are built directly on these generated impls. [`#[cgp_auto_getter]`](../macros/cgp_auto_getter.md) and [`#[cgp_getter]`](../macros/cgp_getter.md) (through the [`UseField`](../providers/use_field.md) provider) generate blanket impls whose `where` clauses are `HasField` bounds, and the [`#[implicit]`](../attributes/implicit.md) argument form desugars function parameters into `get_field` calls. All of them assume the context has derived `HasField`; this derive is what makes them work.
+Higher-level constructs are built on these impls. [`#[implicit]`](../attributes/implicit.md) arguments turn function parameters into `get_field` calls, and [`#[cgp_auto_getter]`](../macros/cgp_auto_getter.md) and [`#[cgp_getter]`](../macros/cgp_getter.md), through [`UseField`](../providers/use_field.md), generate impls whose `where` clauses are `HasField` bounds. All of them assume the context derives `HasField`.
 
 ## Syntax
 
-The macro is applied as a derive on a struct definition and takes no arguments:
+The derive is applied to a struct and takes no arguments:
 
 ```rust
 #[derive(HasField)]
@@ -32,25 +32,15 @@ pub struct Person {
 }
 ```
 
-It applies to structs with named fields and to structs with unnamed (tuple) fields. The two cases differ only in how each field's tag is computed: a named field is keyed by [`Symbol!("field_name")`](../macros/symbol.md), the type-level string of its identifier, while a tuple field is keyed by [`Index<N>`](../types/index.md), the type-level natural number of its position. Unit structs produce no impls because they have no fields.
+It accepts structs with named fields and tuple structs, which differ only in how each field's tag is computed. A named field is keyed by [`Symbol!("field_name")`](../macros/symbol.md), the type-level string of its identifier, and a tuple field by [`Index<N>`](../types/index.md), its position. A unit struct produces no impls, since it has no fields, and an enum is rejected with ``expected `struct` ``.
 
-A raw-identifier field is keyed by its logical name, with the `r#` prefix stripped: a field written `r#type` is keyed by `Symbol!("type")`, so it is addressed by the tag `Symbol!("type")` rather than `Symbol!("r#type")`. The generated accessor still borrows the real field, `&self.r#type`.
+A raw-identifier field is keyed by its logical name: a field written `r#type` is keyed by `Symbol!("type")`, while the generated accessor still borrows `&self.r#type`.
 
-The derive concerns itself only with the *field-level* view. To obtain the whole-struct view as a single type-level [`Product`](../macros/product.md), derive [`HasFields`](derive_has_fields.md) instead; the two are complementary and frequently derived together.
+The derive gives only the field-level view. The whole-struct view as a single type-level list comes from [`#[derive(HasFields)]`](derive_has_fields.md), and the two are often derived together.
 
 ## Expansion
 
-`#[derive(HasField)]` emits one `HasField` impl and one `HasFieldMut` impl per field, leaving the struct definition itself untouched. Starting from a named-field struct:
-
-```rust
-#[derive(HasField)]
-pub struct Person {
-    pub name: String,
-    pub age: u8,
-}
-```
-
-the macro generates a pair of impls for each field, with the field's identifier turned into a `Symbol!` tag and the field's type used as `Value`:
+`#[derive(HasField)]` emits one `HasField` impl and one `HasFieldMut` impl per field and leaves the struct untouched. Given the named-field struct above, it generates a pair of impls per field, with the identifier as a `Symbol!` tag and the field's type as `Value`:
 
 ```rust
 impl HasField<Symbol!("name")> for Person {
@@ -82,16 +72,16 @@ impl HasFieldMut<Symbol!("age")> for Person {
 }
 ```
 
-The `HasFieldMut` impls come from the same derive and provide mutable access; `HasFieldMut<Tag>` is a supertrait extension of `HasField<Tag>` that adds a `get_field_mut` method returning `&mut Self::Value`. Most CGP code only reads through `HasField`, but the mutable counterpart is always generated alongside it.
+[`HasFieldMut<Tag>`](../traits/has_field.md) has `HasField<Tag>` as its supertrait and adds `get_field_mut`, returning `&mut Self::Value`. Most CGP code reads through `HasField`, but the mutable impl is always generated beside it, which is what mutable [`#[implicit]`](../attributes/implicit.md) arguments and `&mut self` getters rely on.
 
-A tuple struct expands the same way, except that each field's tag is its positional `Index<N>` rather than a `Symbol!`. Starting from:
+A tuple struct expands the same way, with each tag its position. Given:
 
 ```rust
 #[derive(HasField)]
 pub struct Rectangle(pub f64, pub f64);
 ```
 
-the macro generates:
+the derive generates:
 
 ```rust
 impl HasField<Index<0>> for Rectangle {
@@ -123,13 +113,13 @@ impl HasFieldMut<Index<1>> for Rectangle {
 }
 ```
 
-When the struct has generic parameters, the impls carry them through faithfully: the macro splits the struct's generics into impl-generics, type-generics, and `where` clause, so `struct Wrapper<T> { pub value: T }` yields `impl<T> HasField<Symbol!("value")> for Wrapper<T>` with `Value = T`.
+A generic struct's parameters and `where` clause are carried onto every impl, so `struct Wrapper<T> { pub value: T }` yields `impl<T> HasField<Symbol!("value")> for Wrapper<T>` with `Value = T`. Each impl is re-spanned onto its field, so a conflict with a hand-written `HasField` impl for the same tag is reported at that field rather than at the whole derive.
 
-Field access also threads through smart pointers without an explicit derive. `HasField<Tag>` and `HasFieldMut<Tag>` have blanket impls for any type whose `Deref`/`DerefMut` target implements them, so a `Box<Person>` or a newtype that dereferences to `Person` resolves `get_field` to the inner struct's field. These blanket impls carry a `#[diagnostic::do_not_recommend]` attribute so the compiler does not suggest them in error messages, keeping the missing-field diagnostic pointed at the underlying struct.
+Field access also passes through smart pointers without a derive. `HasField` and `HasFieldMut` have blanket impls for any type whose `Deref` or `DerefMut` target implements them, so a `Box<Person>`, or a newtype that dereferences to `Person`, answers `get_field` from the inner struct. These blanket impls carry `#[diagnostic::do_not_recommend]`, so a missing-field error points at the underlying struct rather than suggesting them. The mutable one requires the target to be `'static`.
 
 ## Examples
 
-A provider that needs a value from its context expresses the need as a `HasField` bound, and the derive is what lets a concrete context satisfy it. First a provider for a greeting component, asking for a `String` field named `name`:
+A provider that needs a value from its context declares it, and the derive is what lets a concrete context supply it. Here the need is written as an [`#[implicit]`](../attributes/implicit.md) argument, which generates the `HasField<Symbol!("name"), Value = String>` bound:
 
 ```rust
 use cgp::prelude::*;
@@ -140,19 +130,12 @@ pub trait CanGreet {
 }
 
 #[cgp_impl(new GreetHello)]
-impl Greeter
-where
-    Self: HasField<Symbol!("name"), Value = String>,
-{
-    fn greet(&self) {
-        println!("Hello, {}!", self.get_field(PhantomData));
+impl Greeter {
+    fn greet(&self, #[implicit] name: &str) {
+        println!("Hello, {name}!");
     }
 }
-```
 
-Then a context that derives `HasField` and wires the component to that provider:
-
-```rust
 #[derive(HasField)]
 pub struct Person {
     pub name: String,
@@ -163,19 +146,33 @@ delegate_components! {
         GreeterComponent: GreetHello,
     }
 }
+
+check_components! {
+    Person {
+        GreeterComponent,
+    }
+}
 ```
 
-Because `Person` derives `HasField`, it implements `HasField<Symbol!("name"), Value = String>`, which is exactly the bound `GreetHello` requires; the wiring therefore type-checks and `person.greet()` prints the person's name.
-
-In practice the explicit `HasField` bound is rarely written by hand. The same `name` access is more idiomatically expressed with [`#[cgp_auto_getter]`](../macros/cgp_auto_getter.md) (`fn name(&self) -> &str`) or with an [`#[implicit]`](../attributes/implicit.md) argument (`fn greet(&self, #[implicit] name: String)`), both of which generate the `HasField` bound for you. The derive is the foundation those forms stand on.
+`Person` derives `HasField`, so it implements `HasField<Symbol!("name"), Value = String>`, exactly the bound `GreetHello` requires. The wiring checks, and `person.greet()` prints the person's name. The same bound can be written by hand as `where Self: HasField<Symbol!("name"), Value = String>` with a `self.get_field(PhantomData)` call, which is what the implicit argument expands to.
 
 ## Related constructs
 
-`#[derive(HasField)]` underpins most value-level dependency injection in CGP. [`#[cgp_auto_getter]`](../macros/cgp_auto_getter.md) turns a getter-trait method into a blanket impl backed by a `HasField` bound, and [`#[cgp_getter]`](../macros/cgp_getter.md) does the same through the [`UseField`](../providers/use_field.md) provider, which reads an arbitrary field by tag. The [`#[implicit]`](../attributes/implicit.md) argument form desugars context parameters into `get_field` calls against these impls. The tags it generates are documented in [`Symbol!`](../macros/symbol.md) (named fields) and [`Index<N>`](../types/index.md) (tuple fields). For the aggregate view of all fields at once, see [`#[derive(HasFields)]`](derive_has_fields.md), which is commonly derived alongside this one and is itself the basis for [`#[derive(CgpData)]`](derive_cgp_data.md).
+These constructs are the ones `#[derive(HasField)]` supports:
+
+- [`HasField` and `HasFieldMut`](../traits/has_field.md) — the traits it implements.
+- [`#[implicit]`](../attributes/implicit.md) — the default way providers read the fields it exposes.
+- [`#[cgp_auto_getter]`](../macros/cgp_auto_getter.md) and [`#[cgp_getter]`](../macros/cgp_getter.md), with [`UseField`](../providers/use_field.md) — getter traits built on its impls.
+- [`Symbol!`](../macros/symbol.md) and [`Index<N>`](../types/index.md) — the tags for named and tuple fields.
+- [`#[derive(HasFields)]`](derive_has_fields.md) — the whole-struct view, commonly derived alongside, and part of [`#[derive(CgpData)]`](derive_cgp_data.md).
+
+## Known issues
+
+A struct that implements `Deref` cannot derive a `HasField` impl for a field name its `Deref` target also exposes. The `Deref` blanket impl already implements `HasField<Tag>` for the struct wherever the target does, so a derived impl for the same tag overlaps it and fails with `E0119` (conflicting implementations of `HasField<Symbol<…>>` for the struct). Fields whose names the target lacks derive without trouble. Rename the colliding field, drop the `Deref` impl, or write the needed accessors by hand.
 
 ## Source
 
-- Entry point: `derive_has_field` in [crates/macros/cgp-macro-lib/src/derive_has_field.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-lib/src/derive_has_field.rs), registered as the `HasField` proc-macro derive in [crates/macros/cgp-macro/src/lib.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro/src/lib.rs). It parses the input as a `syn::ItemStruct`, wraps it in an `ItemCgpRecord` ([crates/macros/cgp-macro-core/src/types/cgp_data/record.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/cgp_data/record.rs)), and calls `to_has_field_impls`.
-- Codegen: `derive_has_field_impls_from_struct` in [crates/macros/cgp-macro-core/src/types/cgp_data/derive_has_field.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/cgp_data/derive_has_field.rs) — this is where named fields are mapped to `Symbol` tags and unnamed fields to `Index` tags, and where both the `HasField` and `HasFieldMut` impls are emitted.
-- Traits: [crates/core/cgp-field/src/traits/has_field.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/traits/has_field.rs) and [crates/core/cgp-field/src/traits/has_field_mut.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/traits/has_field_mut.rs).
-- Internal walkthrough (the codegen helper that synthesizes each impl, the corner-case handling, and the index of tests and expansion snapshots): [implementation/entrypoints/derive_has_field.md](../../implementation/entrypoints/derive_has_field.md).
+- Entry point: `derive_has_field` in [crates/macros/cgp-macro-lib/src/derive_has_field.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-lib/src/derive_has_field.rs), registered as the `HasField` derive in [crates/macros/cgp-macro/src/lib.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro/src/lib.rs). It parses the input as a `syn::ItemStruct`, wraps it in an `ItemCgpRecord` ([crates/macros/cgp-macro-core/src/types/cgp_data/record.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/cgp_data/record.rs)), and calls `to_has_field_impls`.
+- Codegen: `derive_has_field_impls_from_struct` in [crates/macros/cgp-macro-core/src/types/cgp_data/derive_has_field.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/cgp_data/derive_has_field.rs), which maps named fields to `Symbol` tags and tuple fields to `Index` tags and emits both impls per field.
+- Traits and the `Deref` blanket impls: [crates/core/cgp-field/src/traits/has_field.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/traits/has_field.rs) and [crates/core/cgp-field/src/traits/has_field_mut.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/traits/has_field_mut.rs).
+- Internal walkthrough (the codegen helper, the corner cases, and the index of tests and expansion snapshots): [implementation/entrypoints/derive_has_field.md](../../implementation/entrypoints/derive_has_field.md).

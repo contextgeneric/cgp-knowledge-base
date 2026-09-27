@@ -6,7 +6,7 @@
 
 `#[derive(CgpVariant)]` makes an enum into an *extensible variant* — a sum of named variants that generic CGP code can address, construct, and take apart one variant at a time. A plain Rust enum is opaque to generic code: there is no way to refer to "the `Circle` variant" or "an enum with these variants" through a type parameter. This derive exposes the enum's variants as type-level data so that generic providers — variant dispatchers, the `upcast`/`downcast` casts, match handlers — can operate over any enum uniformly.
 
-The derive is the enum-specific face of [`#[derive(CgpData)]`](derive_cgp_data.md). When `CgpData` is applied to an enum it emits exactly what `CgpVariant` emits; the two are the same code path. Use `CgpVariant` when the type is always an enum and you want the name to say so. Using `CgpVariant` on a struct is a type error, since it parses its input as an enum.
+The derive is the enum-specific face of [`#[derive(CgpData)]`](derive_cgp_data.md). When `CgpData` is applied to an enum it emits exactly what `CgpVariant` emits; the two are the same code path. Use `CgpVariant` when the type is always an enum and you want the name to say so. Using `CgpVariant` on a struct fails to parse with ``expected `enum` ``, since it reads its input as an enum.
 
 The defining operation a variant gains is incremental extraction. Beyond constructing the enum from any single variant, the derive generates a *partial* companion enum that tracks, in its type parameters, which variants are still possible. Generic code can convert a value to its extractor and pull one variant out; on a match the value is returned, and on a miss the *remainder* — a partial enum with that variant marked impossible — is returned for the next attempt. When every variant has been ruled out the remainder becomes an empty type that can be discharged, so an exhaustive match is proven at the type level.
 
@@ -24,7 +24,7 @@ pub enum Shape {
 }
 ```
 
-Each variant is expected to carry a single payload (a newtype variant); its name becomes a type-level string `Symbol!` used as the variant's `Tag`, and its payload type becomes the variant's value type. Generic parameters on the enum are carried onto the generated impls. The derive accepts the same enums that [`#[derive(CgpData)]`](derive_cgp_data.md) accepts for the variant path; the only difference is that `CgpVariant` refuses non-enum inputs outright.
+Each variant must carry exactly one unnamed payload, as `Circle(Circle)` does; a unit, multi-field, or struct-style variant fails with `Expected variant to contain exactly one unnamed field`, because the constructor and extractor slices must name one payload type. A variant's name becomes a type-level string `Symbol!` used as its `Tag`, and its payload type becomes its value type. Generic parameters on the enum are carried onto the generated impls. The derive accepts the same enums that [`#[derive(CgpData)]`](derive_cgp_data.md) accepts for the variant path; the only difference is that `CgpVariant` refuses non-enum inputs outright.
 
 ## Expansion
 
@@ -120,7 +120,9 @@ Because each `extract_field` narrows the remainder type, the compiler knows afte
 
 ## Known issues
 
-**Seven variant names are reserved, and using one fails to compile.** `CgpVariant` runs the representation, constructor, and extractor codegen together, so it inherits every reserved name those slices introduce: `Fields` and `FieldsRef` from [`#[derive(HasFields)]`](derive_has_fields.md), `Value` from [`#[derive(FromVariant)]`](derive_from_variant.md), and `Value`, `Remainder`, `Extractor`, `ExtractorRef`, and `ExtractorMut` from [`#[derive(ExtractField)]`](derive_extract_field.md). A variant with any of those names makes the generated `Self::…` path ambiguous, reported as `ambiguous associated item` with its headline on the derive attribute. Whether the message also names the variant depends on which slice collided — the extractor's impls target the generated companions and so point back at the derive, while the representation and constructor impls point at the real variant.
+**Seven variant names are reserved, and using one fails to compile.** `CgpVariant` runs the representation, constructor, and extractor codegen together, so it inherits every reserved name those slices introduce: `Fields` and `FieldsRef` from [`#[derive(HasFields)]`](derive_has_fields.md), `Value` from [`#[derive(FromVariant)]`](derive_from_variant.md), and `Value`, `Remainder`, `Extractor`, `ExtractorRef`, and `ExtractorMut` from [`#[derive(ExtractField)]`](derive_extract_field.md). A variant with any of those names makes the generated `Self::…` path ambiguous, reported as `ambiguous associated item` with its headline on the derive attribute. Whether the message also names the variant depends on which slice collided: the extractor's impls target the generated companions and so point back at the derive, while the representation and constructor impls point at the real variant.
+
+**A variant attribute that belongs to another derive breaks the build.** The extractor slice keeps each variant's attributes on the `__Partial{Name}` companion enums, so a helper attribute such as `#[serde(rename = "x")]` beside `#[derive(Serialize, CgpVariant)]` fails with ``cannot find attribute `serde` in this scope``, as [`#[derive(ExtractField)]`](derive_extract_field.md) records.
 
 ## Source
 
