@@ -205,9 +205,10 @@ choice is keyed on the context type. A profile-picture service backed by differe
 different deployments is two wiring tables:
 
 ```rust
+#[async_trait]
 #[cgp_component(StorageObjectFetcher)]
 pub trait CanFetchStorageObject {
-    fn fetch_storage_object(&self, object_id: &str) -> anyhow::Result<Vec<u8>>;
+    async fn fetch_storage_object(&self, object_id: &str) -> anyhow::Result<Vec<u8>>;
 }
 
 delegate_components! {
@@ -337,8 +338,8 @@ The account of the related work draws on the official framework documentation an
 community writing. The CGP snippets are taken from the [social media app](../examples/social-media-app.md)
 and [profile picture](../examples/profile-picture.md) examples.
 
-- [Spring Framework reference — Dependency Injection](https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-collaborators.html) — the authoritative description of the IoC container, beans, and the constructor and setter injection mechanisms.
-- [Baeldung — Inversion of Control and Dependency Injection in Spring](https://www.baeldung.com/inversion-control-and-dependency-injection-in-spring) — the distinction between IoC and DI and the `@Autowired` autowiring-by-type behavior.
-- [Comparing Dependency Injection Frameworks — Spring, Guice, Dagger, and Micronaut](https://medium.com/@AlexanderObregon/comparing-dependency-injection-frameworks-spring-guice-and-dagger-a614dccd5859) and [Dagger vs Guice](https://www.hackingnote.com/en/versus/dagger-vs-guice/) — the runtime-versus-compile-time split and the reflection-versus-generated-code trade-off across frameworks.
-- [Field injection is not recommended (Marc Nuri)](https://blog.marcnuri.com/field-injection-is-not-recommended) and [James Shore — The Problem With Dependency Injection Frameworks](https://www.jamesshore.com/v2/blog/2023/the-problem-with-dependency-injection-frameworks) — the hidden-dependency, runtime-failure, and "magic" criticisms, and the case for constructor injection.
+- [Spring Framework reference: Dependency Injection](https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-collaborators.html) — the authoritative description of the IoC container, beans, and the constructor and setter injection mechanisms.
+- [Baeldung: Inversion of Control and Dependency Injection in Spring](https://www.baeldung.com/inversion-control-and-dependency-injection-in-spring) — the distinction between IoC and DI and the `@Autowired` autowiring-by-type behavior.
+- [Comparing Dependency Injection Frameworks: Spring, Guice, Dagger, and Micronaut](https://medium.com/@AlexanderObregon/comparing-dependency-injection-frameworks-spring-guice-and-dagger-a614dccd5859) and [Dagger vs Guice](https://www.hackingnote.com/en/versus/dagger-vs-guice/) — the runtime-versus-compile-time split and the reflection-versus-generated-code trade-off across frameworks.
+- [Field injection is not recommended (Marc Nuri)](https://blog.marcnuri.com/field-injection-is-not-recommended) and [James Shore: The Problem With Dependency Injection Frameworks](https://www.jamesshore.com/v2/blog/2023/the-problem-with-dependency-injection-frameworks) — the hidden-dependency, runtime-failure, and "magic" criticisms, and the case for constructor injection.
 - [Rust traits and dependency injection (jmmv.dev)](https://jmmv.dev/2022/04/rust-traits-and-dependency-injection.html) — the position that Rust performs dependency injection through traits and generics without a framework.
