@@ -1,20 +1,20 @@
 # Profile picture lookup
 
-This example fetches a user's profile picture — a real-world operation that queries a database for a user record and, if one is set, downloads and decodes the image from object storage. It progresses from two field-driven async functions to a fully wired application that swaps its database engine and its storage backend per context without touching the orchestration logic. It is a template for any use case where one business operation composes several infrastructure steps, each of which may have more than one implementation.
+This example fetches a user's profile picture, a real-world operation that queries a database for a user record and, if one is set, downloads and decodes the image from object storage. It progresses from two field-driven async functions to a fully wired application that swaps its database engine and its storage backend per context without touching the orchestration logic. It is a template for any use case where one business operation composes several infrastructure steps, each of which may have more than one implementation.
 
-The contexts here are **environmental contexts** — `App` and `GCloudApp` stand for the application, carrying the database handle and the wiring — and the components are **self-targeted**, since fetching a profile picture is something the application does rather than a property of any value. That is the shape most CGP code is in; see the [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md).
+The contexts here are **environmental contexts** (`App` and `GCloudApp` stand for the application, carrying the database handle and the wiring), and the components are **self-targeted**, since fetching a profile picture is something the application does rather than a property of any value. That is the shape most CGP code is in; see the [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md).
 
 The concepts each step demonstrates are documented in full in the reference; this example only notes which one is in play and links to it:
 
-- context-generic functions — [`#[cgp_fn]`](../cgp/reference/macros/cgp_fn.md) with [implicit arguments](../cgp/concepts/implicit-arguments.md)
-- async methods in traits — [`#[async_trait]`](../cgp/reference/macros/async_trait.md)
-- composing operations — [`#[uses]`](../cgp/reference/attributes/uses.md)
-- field access on contexts — [`#[derive(HasField)]`](../cgp/reference/derives/derive_has_field.md)
-- impl-only generic parameters — [`#[impl_generics]`](../cgp/reference/attributes/impl_generics.md)
-- components and named providers — [`#[cgp_component]`](../cgp/reference/macros/cgp_component.md), [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md), and the [consumer/provider trait duality](../cgp/concepts/consumer-and-provider-traits.md)
-- wiring a context to providers — [`delegate_components!`](../cgp/reference/macros/delegate_components.md)
+- context-generic functions: [`#[cgp_fn]`](../cgp/reference/macros/cgp_fn.md) with [implicit arguments](../cgp/concepts/implicit-arguments.md)
+- async methods in traits: [`#[async_trait]`](../cgp/reference/macros/async_trait.md)
+- composing operations: [`#[uses]`](../cgp/reference/attributes/uses.md)
+- field access on contexts: [`#[derive(HasField)]`](../cgp/reference/derives/derive_has_field.md)
+- impl-only generic parameters: [`#[impl_generics]`](../cgp/reference/attributes/impl_generics.md)
+- components and named providers: [`#[cgp_component]`](../cgp/reference/macros/cgp_component.md), [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md), and the [consumer/provider trait duality](../cgp/concepts/consumer-and-provider-traits.md)
+- wiring a context to providers: [`delegate_components!`](../cgp/reference/macros/delegate_components.md)
 
-All snippets assume `use cgp::prelude::*;`. The operation works over two domain types — a `UserId` newtype and a `User` row that may carry the storage key of a profile picture:
+All snippets assume `use cgp::prelude::*;`. The operation works over two domain types: a `UserId` newtype and a `User` row that may carry the storage key of a profile picture:
 
 ```rust
 pub struct UserId(pub u64);
@@ -68,7 +68,7 @@ pub async fn fetch_storage_object(
 }
 ```
 
-`get_user` reads one implicit field, `database`; `fetch_storage_object` reads two, `storage_client` and `bucket_id`, in addition to its explicit `object_id`. A context becomes eligible for each function purely by deriving [`HasField`](../cgp/reference/derives/derive_has_field.md) for fields whose names and types match the implicit arguments — no per-context implementation is written:
+`get_user` reads one implicit field, `database`; `fetch_storage_object` reads two, `storage_client` and `bucket_id`, in addition to its explicit `object_id`. A context becomes eligible for each function purely by deriving [`HasField`](../cgp/reference/derives/derive_has_field.md) for fields whose names and types match the implicit arguments, with no per-context implementation written:
 
 ```rust
 #[derive(HasField)]
@@ -111,11 +111,11 @@ pub async fn get_user_profile_picture(
 }
 ```
 
-The names in `#[uses(GetUser, FetchStorageObject)]` are the traits `#[cgp_fn]` derives from the two step functions — a function `foo_bar` generates a trait `FooBar`. The body reads as plain method calls; `#[uses]` threads the trait bounds behind the scenes so that only a context carrying every required field gains `get_user_profile_picture`. `App` does; `MinimalApp` does not, and the gap is a compile error rather than a runtime failure.
+The names in `#[uses(GetUser, FetchStorageObject)]` are the traits `#[cgp_fn]` derives from the two step functions: a function `foo_bar` generates a trait `FooBar`. The body reads as plain method calls; `#[uses]` threads the trait bounds behind the scenes so that only a context carrying every required field gains `get_user_profile_picture`. `App` does; `MinimalApp` does not, and the gap is a compile error rather than a runtime failure.
 
 ## Varying the database engine
 
-`get_user` above hardcodes `&PgPool`, which ties it to PostgreSQL. To let one implementation serve several database engines, introduce a type parameter that lives on the impl alone — never on the generated trait or its callers — with [`#[impl_generics]`](../cgp/reference/attributes/impl_generics.md). The implicit `database` field becomes `&Pool<Db>`, and the `where` clause carries the engine-specific bounds:
+`get_user` above hardcodes `&PgPool`, which ties it to PostgreSQL. To let one implementation serve several database engines, introduce a type parameter that lives on the impl alone, never on the generated trait or its callers, with [`#[impl_generics]`](../cgp/reference/attributes/impl_generics.md). The implicit `database` field becomes `&Pool<Db>`, and the `where` clause carries the engine-specific bounds:
 
 ```rust
 #[cgp_fn]
@@ -143,7 +143,7 @@ where
 }
 ```
 
-Each context supplies `Db` implicitly through the type of its `database` field. An `App` carrying a `PgPool` resolves `Db = Postgres`, while an embedded context carrying a `SqlitePool` resolves `Db = Sqlite` — `SqlitePool` is `Pool<Sqlite>` under the hood — and both satisfy the sqlx bounds independently:
+Each context supplies `Db` implicitly through the type of its `database` field. An `App` carrying a `PgPool` resolves `Db = Postgres`, while an embedded context carrying a `SqlitePool` resolves `Db = Sqlite` (`SqlitePool` is `Pool<Sqlite>` under the hood), and both satisfy the sqlx bounds independently:
 
 ```rust
 #[derive(HasField)]
@@ -158,7 +158,7 @@ pub struct EmbeddedApp {
 
 ## Varying the storage backend
 
-A single `#[cgp_fn]` defines exactly one implementation, so it cannot offer the storage fetch in more than one flavor. When a step needs interchangeable implementations — say Amazon S3 in one deployment and Google Cloud Storage in another — promote it to a [component](../cgp/concepts/consumer-and-provider-traits.md) with [`#[cgp_component]`](../cgp/reference/macros/cgp_component.md). The annotated `CanFetchStorageObject` trait is the *consumer trait* callers use; the `StorageObjectFetcher` argument names the generated *provider trait* that implementations target:
+A single `#[cgp_fn]` defines exactly one implementation, so it cannot offer the storage fetch in more than one flavor. When a step needs interchangeable implementations (say Amazon S3 in one deployment and Google Cloud Storage in another), promote it to a [component](../cgp/concepts/consumer-and-provider-traits.md) with [`#[cgp_component]`](../cgp/reference/macros/cgp_component.md). The annotated `CanFetchStorageObject` trait is the *consumer trait* callers use; the `StorageObjectFetcher` argument names the generated *provider trait* that implementations target:
 
 ```rust
 #[async_trait]
@@ -241,7 +241,7 @@ pub async fn get_user_profile_picture(
 
 ## Wiring contexts to backends
 
-Defining a provider does not attach it to any context; a context chooses its provider by wiring with [`delegate_components!`](../cgp/reference/macros/delegate_components.md). Each entry maps the component — keyed by its generated `…Component` name — to the provider that implements it for that context. An `App` carrying an S3 client wires to `FetchS3Object`, while a `GCloudApp` carrying a GCloud client wires to `FetchGCloudObject`:
+Defining a provider does not attach it to any context; a context chooses its provider by wiring with [`delegate_components!`](../cgp/reference/macros/delegate_components.md). Each entry maps the component (keyed by its generated `…Component` name) to the provider that implements it for that context. An `App` carrying an S3 client wires to `FetchS3Object`, while a `GCloudApp` carrying a GCloud client wires to `FetchGCloudObject`:
 
 ```rust
 #[derive(HasField)]
@@ -264,6 +264,6 @@ delegate_components! {
 }
 ```
 
-Both contexts remain plain data structs with `#[derive(HasField)]`; all backend selection happens in the wiring block, resolved at compile time with no runtime dispatch. The S3 binary contains only the S3 code path and the GCloud binary only the GCloud one. Adding a third backend — Azure Blob Storage, say — is a new `#[cgp_impl(new FetchAzureObject)]` provider and one more `delegate_components!` entry; `get_user`, `get_user_profile_picture`, and every existing context stay untouched.
+Both contexts remain plain data structs with `#[derive(HasField)]`; all backend selection happens in the wiring block, resolved at compile time with no runtime dispatch. The S3 binary contains only the S3 code path and the GCloud binary only the GCloud one. Adding a third backend, Azure Blob Storage say, is a new `#[cgp_impl(new FetchAzureObject)]` provider and one more `delegate_components!` entry; `get_user`, `get_user_profile_picture`, and every existing context stay untouched.
 </content>
 </invoke>

@@ -26,14 +26,14 @@ re-explaining them.
 The concepts each step demonstrates are documented in full in the reference; this example only notes
 which one is in play and links to it:
 
-- the computation component the DSL is built on — [`Handler` / `CanHandle`](../cgp/reference/components/handler.md) in the [handler family](../cgp/concepts/handlers.md)
-- writing a provider that interprets one syntax — [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md) with [`#[uses]`](../cgp/reference/attributes/uses.md) and [`#[use_type]`](../cgp/reference/attributes/use_type.md)
-- raising source errors into the context's abstract error — [`CanRaiseError`](../cgp/reference/components/can_raise_error.md)
-- dispatching on the program and on the input — the `open` statement of [`delegate_components!`](../cgp/reference/macros/delegate_components.md) and [`RedirectLookup`](../cgp/reference/providers/redirect_lookup.md)
-- bundling wiring into a reusable provider — [aggregate providers](../cgp/concepts/aggregate-providers.md)
-- routing the language and inheriting it — [namespaces](../cgp/concepts/namespaces.md) with [`cgp_namespace!`](../cgp/reference/macros/cgp_namespace.md) and [`#[prefix]`](../cgp/reference/attributes/prefix.md)
-- composing handlers into a pipeline provider — [`PipeHandlers`](../cgp/reference/providers/handler_combinators.md)
-- reading runtime values from the context — [`#[derive(HasField)]`](../cgp/reference/derives/derive_has_field.md)
+- the computation component the DSL is built on: [`Handler` / `CanHandle`](../cgp/reference/components/handler.md) in the [handler family](../cgp/concepts/handlers.md)
+- writing a provider that interprets one syntax: [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md) with [`#[uses]`](../cgp/reference/attributes/uses.md) and [`#[use_type]`](../cgp/reference/attributes/use_type.md)
+- raising source errors into the context's abstract error: [`CanRaiseError`](../cgp/reference/components/can_raise_error.md)
+- dispatching on the program and on the input: the `open` statement of [`delegate_components!`](../cgp/reference/macros/delegate_components.md) and [`RedirectLookup`](../cgp/reference/providers/redirect_lookup.md)
+- bundling wiring into a reusable provider: [aggregate providers](../cgp/concepts/aggregate-providers.md)
+- routing the language and inheriting it: [namespaces](../cgp/concepts/namespaces.md) with [`cgp_namespace!`](../cgp/reference/macros/cgp_namespace.md) and [`#[prefix]`](../cgp/reference/attributes/prefix.md)
+- composing handlers into a pipeline provider: [`PipeHandlers`](../cgp/reference/providers/handler_combinators.md)
+- reading runtime values from the context: [`#[derive(HasField)]`](../cgp/reference/derives/derive_has_field.md)
 
 ## A program is a type
 

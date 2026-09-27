@@ -1,19 +1,19 @@
 # Application builder
 
-This example assembles an application context — a struct holding a database pool, an HTTP client, and an AI agent — from independent builder providers that each construct one subsystem and know nothing of the final struct or of each other. It progresses from a hand-written constructor that grows unmanageably, through a builder provider per subsystem, to a builder context that merges them all, and finally to swapping subsystems and producing several application variants from one builder. It is a template for any use case where a context is configured from independently-evolving parts that should compose without a central constructor.
+This example assembles an application context, a struct holding a database pool, an HTTP client, and an AI agent, from independent builder providers that each construct one subsystem and know nothing of the final struct or of each other. It progresses from a hand-written constructor that grows unmanageably, through a builder provider per subsystem, to a builder context that merges them all, and finally to swapping subsystems and producing several application variants from one builder. It is a template for any use case where a context is configured from independently-evolving parts that should compose without a central constructor.
 
 The contexts here are **environmental contexts** and the components are **self-targeted**: each builder context stands for the application under construction, and building a subsystem is something that context does. Note that the *product* of the build is also an application context, so the example has environmental contexts on both sides of the pattern; see the [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md).
 
 The concepts each step demonstrates are documented in full in the reference; this example only notes which one is in play and links to it:
 
-- assembling a struct from independent contributions — [extensible records](../cgp/concepts/extensible-records.md) and the [extensible builder pattern](../cgp/concepts/dispatching.md)
-- a struct that can be built field by field and merged — [`#[derive(CgpData)]`](../cgp/reference/derives/derive_cgp_data.md), and `build_from` from [casting](../cgp/reference/traits/cast.md)
-- each subsystem builder is a handler — [`Handler` / `CanHandle`](../cgp/reference/components/handler.md) in the [handler family](../cgp/concepts/handlers.md)
-- writing a builder provider — [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md) reading config as [`#[implicit]`](../cgp/reference/attributes/implicit.md) arguments
-- the abstract error and raising into it — [`HasErrorType`](../cgp/reference/components/has_error_type.md) and [`CanRaiseError`](../cgp/reference/components/can_raise_error.md)
-- merging builder outputs into the target — [`BuildAndMergeOutputs`](../cgp/reference/providers/dispatch_combinators.md)
-- wiring and checking a context — [`delegate_components!`](../cgp/reference/macros/delegate_components.md) and [`check_components!`](../cgp/reference/macros/check_components.md)
-- choosing among build targets at the type level — the `open` statement of [`delegate_components!`](../cgp/reference/macros/delegate_components.md)
+- assembling a struct from independent contributions: [extensible records](../cgp/concepts/extensible-records.md) and the [extensible builder pattern](../cgp/concepts/extensible-records.md#the-extensible-builder-pattern)
+- a struct that can be built field by field and merged: [`#[derive(CgpData)]`](../cgp/reference/derives/derive_cgp_data.md), and `build_from` from [casting](../cgp/reference/traits/cast.md)
+- each subsystem builder is a handler: [`Handler` / `CanHandle`](../cgp/reference/components/handler.md) in the [handler family](../cgp/concepts/handlers.md)
+- writing a builder provider: [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md) reading config as [`#[implicit]`](../cgp/reference/attributes/implicit.md) arguments
+- the abstract error and raising into it: [`HasErrorType`](../cgp/reference/components/has_error_type.md) and [`CanRaiseError`](../cgp/reference/components/can_raise_error.md)
+- merging builder outputs into the target: [`BuildAndMergeOutputs`](../cgp/reference/providers/dispatch_combinators.md)
+- wiring and checking a context: [`delegate_components!`](../cgp/reference/macros/delegate_components.md) and [`check_components!`](../cgp/reference/macros/check_components.md)
+- choosing among build targets at the type level: the `open` statement of [`delegate_components!`](../cgp/reference/macros/delegate_components.md)
 
 All snippets assume `use cgp::prelude::*;`, the handler items come from `cgp::extra::handler`, and the builder dispatcher from `cgp::extra::dispatch`.
 
@@ -215,9 +215,9 @@ check_components! {
 }
 ```
 
-`BuildAndMergeOutputs<App, Product![...]>` is the heart of the [extensible builder pattern](../cgp/concepts/extensible-records.md): it starts an empty `App` builder, runs each provider in the list, merges each output struct into the builder with `build_from` from [casting](../cgp/reference/traits/cast.md), and finalizes the complete `App`. The merge is name-driven, so `SqliteClient`'s `sqlite_pool` field lands in `App`'s `sqlite_pool` field with no conversion written. The error wiring picks `anyhow::Error` as the abstract error through `UseAnyhowError` and lets the source errors raise into it through `RaiseAnyhowError`, satisfying the `CanRaiseError` bounds the providers declared. The [`check_components!`](../cgp/reference/macros/check_components.md) block asserts at compile time that the handler is wired for the unit `Code` and `Input` the build is invoked with — if any provider's required field were missing from `FullAppBuilder`, this would fail to compile rather than at runtime. The two error entries wire the [`anyhow` backend](../projects/error/cgp-error-anyhow/reference.md): `UseAnyhowError` sets the error type and `RaiseAnyhowError` raises each builder's standard errors into it.
+`BuildAndMergeOutputs<App, Product![...]>` is the heart of the [extensible builder pattern](../cgp/concepts/extensible-records.md): it starts an empty `App` builder, runs each provider in the list, merges each output struct into the builder with `build_from` from [casting](../cgp/reference/traits/cast.md), and finalizes the complete `App`. The merge is name-driven, so `SqliteClient`'s `sqlite_pool` field lands in `App`'s `sqlite_pool` field with no conversion written. The [`check_components!`](../cgp/reference/macros/check_components.md) block asserts at compile time that the handler is wired for the unit `Code` and `Input` the build is invoked with; if any provider's required field were missing from `FullAppBuilder`, this would fail to compile rather than at runtime. The two error entries wire the [`anyhow` backend](../projects/error/cgp-error-anyhow/reference.md): `UseAnyhowError` sets `anyhow::Error` as the abstract error, and `RaiseAnyhowError` raises each builder's standard errors into it, satisfying the `CanRaiseError` bounds the providers declared.
 
-Building the `App` is then one call. The builder is constructed from its config fields — or deserialized from a file, since it derives `Deserialize` — and `handle` runs the whole pipeline:
+Building the `App` is then one call. The builder is constructed from its config fields (or deserialized from a file, since it derives `Deserialize`) and `handle` runs the whole pipeline:
 
 ```rust
 pub async fn main() -> Result<(), Error> {
@@ -360,7 +360,7 @@ delegate_components! {
 }
 ```
 
-Each marker selects a different target struct and provider list, and the `llm_preamble` field is shared by both the Anthropic and OpenAI builders with no coordination — a value-level dependency injected once and read by every provider that needs it. Choosing a variant is then a matter of which `Code` is passed to `handle`:
+Each marker selects a different target struct and provider list, and the `llm_preamble` field is shared by both the Anthropic and OpenAI builders with no coordination, a value-level dependency injected once and read by every provider that needs it. Choosing a variant is then a matter of which `Code` is passed to `handle`:
 
 ```rust
 let _chat_gpt_app: App = builder.handle(PhantomData::<BuildChatGptApp>, ()).await?;
@@ -370,6 +370,6 @@ let _anthropic_and_chat_gpt_app: AnthropicAndChatGptApp = builder
     .await?;
 ```
 
-The same builder, the same config, three different application contexts — selected by type, dispatched at compile time, with the builder pipeline for each one assembled from the same decoupled providers.
+The same builder, the same config, three different application contexts, selected by type, dispatched at compile time, with the builder pipeline for each one assembled from the same decoupled providers.
 
 For an agent working on the builders themselves rather than learning their patterns, the crate is documented as the [`builder`](../projects/cgp-examples/builder/README.md) subproject of cgp-examples.

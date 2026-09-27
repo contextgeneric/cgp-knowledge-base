@@ -1,17 +1,17 @@
 # Area calculation
 
-This example computes the area of several shapes, progressing from a single field-driven function to a unified, wireable area-calculation component whose implementations compose through higher-order providers. It is a template for any use case where one operation has several interchangeable implementations chosen per context — the shapes here stand in for whatever set of variants an application needs to treat uniformly.
+This example computes the area of several shapes, progressing from a single field-driven function to a unified, wireable area-calculation component whose implementations compose through higher-order providers. It is a template for any use case where one operation has several interchangeable implementations chosen per context; the shapes here stand in for whatever set of variants an application needs to treat uniformly.
 
-The contexts here are **value contexts** and the component is **self-targeted**: the wired types are the shapes themselves, and `CanCalculateArea` is about the shape it is called on. That is the simplest arrangement to follow, which is why this example is the one the website's teaching material is built from, but it is the least common one in real CGP code — [eight of the nine examples](README.md#which-shape-each-example-wires) here wire an **environmental context** instead, a type standing for an application. Nothing in a signature marks the difference, so a document that draws on this example alongside one of the others has to say when it crosses over; the two arrangements and the reason both exist are worked out in the [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md).
+The contexts here are **value contexts** and the component is **self-targeted**: the wired types are the shapes themselves, and `CanCalculateArea` is about the shape it is called on. That is the simplest arrangement to follow, which is why this example is the one the website's teaching material is built from, but it is the least common one in real CGP code: [eight of the nine examples](README.md#which-shape-each-example-wires) here wire an **environmental context** instead, a type standing for an application. Nothing in a signature marks the difference, so a document that draws on this example alongside one of the others has to say when it crosses over; the two arrangements and the reason both exist are worked out in the [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md).
 
 The concepts each step demonstrates are documented in full in the reference; this example only notes which one is in play and links to it:
 
-- context-generic functions — [`#[cgp_fn]`](../cgp/reference/macros/cgp_fn.md) with [implicit arguments](../cgp/concepts/implicit-arguments.md)
-- importing trait dependencies — [`#[uses]`](../cgp/reference/attributes/uses.md)
-- field access on contexts — [`#[derive(HasField)]`](../cgp/reference/derives/derive_has_field.md)
-- components and named providers — [`#[cgp_component]`](../cgp/reference/macros/cgp_component.md), [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md), and the [consumer/provider trait duality](../cgp/concepts/consumer-and-provider-traits.md)
-- wiring a context to providers — [`delegate_components!`](../cgp/reference/macros/delegate_components.md)
-- composing providers — [higher-order providers](../cgp/concepts/higher-order-providers.md) with [`#[use_provider]`](../cgp/reference/attributes/use_provider.md)
+- context-generic functions: [`#[cgp_fn]`](../cgp/reference/macros/cgp_fn.md) with [implicit arguments](../cgp/concepts/implicit-arguments.md)
+- importing trait dependencies: [`#[uses]`](../cgp/reference/attributes/uses.md)
+- field access on contexts: [`#[derive(HasField)]`](../cgp/reference/derives/derive_has_field.md)
+- components and named providers: [`#[cgp_component]`](../cgp/reference/macros/cgp_component.md), [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md), and the [consumer/provider trait duality](../cgp/concepts/consumer-and-provider-traits.md)
+- wiring a context to providers: [`delegate_components!`](../cgp/reference/macros/delegate_components.md)
+- composing providers: [higher-order providers](../cgp/concepts/higher-order-providers.md) with [`#[use_provider]`](../cgp/reference/attributes/use_provider.md)
 
 All snippets assume `use cgp::prelude::*;`.
 
@@ -58,7 +58,7 @@ pub fn scaled_rectangle_area(
 }
 ```
 
-The imported name `RectangleArea` is the trait `#[cgp_fn]` derives from the `rectangle_area` function — a function `foo` generates a trait `Foo`. A context that adds the extra field can use both functions, while the original `PlainRectangle` keeps working with `rectangle_area` alone:
+The imported name `RectangleArea` is the trait `#[cgp_fn]` derives from the `rectangle_area` function: a function `foo` generates a trait `Foo`. A context that adds the extra field can use both functions, while the original `PlainRectangle` keeps working with `rectangle_area` alone:
 
 ```rust
 #[derive(HasField)]
@@ -84,7 +84,7 @@ pub trait CanCalculateArea {
 }
 ```
 
-Each implementation is a *named provider* written with [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md). Unlike a blanket `impl`, named providers may overlap freely — a rectangle calculator and a circle calculator can both exist even though a context could in principle have the fields for either. Implicit arguments work here just as in `#[cgp_fn]`, so the field-reading logic can be inlined directly:
+Each implementation is a *named provider* written with [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md). Unlike a blanket `impl`, named providers may overlap freely: a rectangle calculator and a circle calculator can both exist even though a context could in principle have the fields for either. Implicit arguments work here just as in `#[cgp_fn]`, so the field-reading logic can be inlined directly:
 
 ```rust
 #[cgp_impl(new RectangleAreaCalculator)]
@@ -104,7 +104,7 @@ impl AreaCalculator {
 
 ## Wiring contexts to providers
 
-Defining a provider does not attach it to any context; a context chooses its provider by wiring with [`delegate_components!`](../cgp/reference/macros/delegate_components.md). Each entry maps the component — keyed by its generated `…Component` name — to the provider that should implement it for that context:
+Defining a provider does not attach it to any context; a context chooses its provider by wiring with [`delegate_components!`](../cgp/reference/macros/delegate_components.md). Each entry maps the component (keyed by its generated `…Component` name) to the provider that should implement it for that context:
 
 ```rust
 #[derive(HasField)]
@@ -134,7 +134,7 @@ assert_eq!(PlainCircle { radius: 4.0 }.area(), 16.0 * core::f64::consts::PI);
 
 ## Composing providers
 
-Scaling applies to every shape the same way, so writing a separate scaled provider per shape would duplicate the same logic. A [higher-order provider](../cgp/concepts/higher-order-providers.md) captures the transformation once and takes the base calculation as a provider parameter — `InnerCalculator`, declared as an impl generic. The [`#[use_provider]`](../cgp/reference/attributes/use_provider.md) attribute supplies that inner provider's bound, filling in the leading context argument a provider trait carries, while the body invokes it as an associated function:
+Scaling applies to every shape the same way, so writing a separate scaled provider per shape would duplicate the same logic. A [higher-order provider](../cgp/concepts/higher-order-providers.md) captures the transformation once and takes the base calculation as a provider parameter, `InnerCalculator`, declared as an impl generic. The [`#[use_provider]`](../cgp/reference/attributes/use_provider.md) attribute supplies that inner provider's bound, filling in the leading context argument a provider trait carries, while the body invokes it as an associated function:
 
 ```rust
 #[cgp_impl(new ScaledAreaCalculator<InnerCalculator>)]
@@ -174,5 +174,5 @@ let c = ScaledCircle { radius: 3.0, scale_factor: 2.0 };
 assert_eq!(c.area(), 36.0 * core::f64::consts::PI);
 ```
 
-Because providers are plain type-level markers, a long composition can be given a shorter name with an ordinary type alias — `pub type ScaledRectangleAreaCalculator = ScaledAreaCalculator<RectangleAreaCalculator>;` — and used anywhere the expanded form would be.
+Because providers are plain type-level markers, a long composition can be given a shorter name with an ordinary type alias, `pub type ScaledRectangleAreaCalculator = ScaledAreaCalculator<RectangleAreaCalculator>;`, and used anywhere the expanded form would be.
 </content>

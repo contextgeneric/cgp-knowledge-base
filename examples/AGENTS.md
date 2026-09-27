@@ -1,9 +1,9 @@
-# AGENTS.md — the worked examples
+# AGENTS.md: the worked examples
 
-This directory holds the knowledge base's self-contained worked examples — one document per use case,
+This directory holds the knowledge base's self-contained worked examples, one document per use case,
 each developing a realistic scenario from its contexts and components through to the wiring that
 connects them. Read [README.md](README.md) for the catalog and what an example is for, and the
-base-wide [../AGENTS.md](../AGENTS.md) for the rules every section shares — the synchronization rule,
+base-wide [../AGENTS.md](../AGENTS.md) for the rules every section shares: the synchronization rule,
 the dual-reader prose style, document-the-present, and how a document registers itself. The rules
 below add what is specific to examples.
 
@@ -19,14 +19,14 @@ whether it covers every detail.
 [README.md](README.md) explains why an example and a reference document are complementary; the rule
 that follows is to keep the prose in an example light. Give enough to make the code legible, a short
 note on which CGP concept each step demonstrates, and a link to the reference document that owns that
-concept — and never re-explain a construct the example uses. Examples are bound by the
+concept, and never re-explain a construct the example uses. Examples are bound by the
 [synchronization rule](../AGENTS.md#the-synchronization-rule) like everything else, so verify every
 snippet against the source the way you would a reference document's Expansion section, and invoke the
 `/cgp` skill before writing any CGP code here.
 
 ## Adding an example from an outside source
 
-To add a new example from a source — example code, an article, a tutorial, or any external write-up —
+To add a new example from a source (example code, an article, a tutorial, or any external write-up),
 treat the source as a *reference for the scenario and the patterns*, then write a fresh,
 self-contained example document that stands on its own. Do not cite, name, link, or otherwise point
 back to the original source; the example must read as native knowledge-base material with no
@@ -35,8 +35,8 @@ dependency on where the idea came from. This is the one place the base deliberat
 document's credibility rests on being traceable, while an example's rests on being self-contained.
 Re-derive the code in current CGP vocabulary and verify it against the implementation rather than
 copying the source's code verbatim, since the source may use older syntax or a different dialect. Give
-the example its own coherent narrative arc — usually a progression from the simplest form of the use
-case to the fully wired and composed version — rather than mirroring the source's structure.
+the example its own coherent narrative arc, usually a progression from the simplest form of the use
+case to the fully wired and composed version, rather than mirroring the source's structure.
 
 ## Building on a sibling CGP project
 
@@ -95,16 +95,16 @@ application; a component is either **self-targeted** or **parameter-targeted**. 
 the [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md).
 
 The catalog in [README.md](README.md) records the shape for every existing example, and the distribution is
-worth knowing before writing a new one: eight of the nine wire an environmental context, and the ninth —
-[area calculation](area-calculation.md) — is the one both website tutorials are built from. So a reader who
+worth knowing before writing a new one: eight of the nine wire an environmental context, and the ninth,
+[area calculation](area-calculation.md), is the one both website tutorials are built from. So a reader who
 learns CGP from the teaching material meets the least common shape first, which is exactly why an example
 must not leave its own shape implicit.
 
 ## When an example needs a concept the base does not cover
 
 Document the concept where it belongs rather than explaining it inside the example. Add the missing
-detail to the relevant [reference document](../cgp/reference/README.md), or — when the concept is a
-cross-cutting idea that ties several constructs together — add a new page under
+detail to the relevant [reference document](../cgp/reference/README.md), or, when the concept is a
+cross-cutting idea that ties several constructs together, add a new page under
 [cgp/concepts/](../cgp/concepts/) and register it in the [concepts index](../cgp/concepts/README.md).
 The example then links to that documentation like any other, keeping itself focused on the use case
 rather than on teaching a new construct.

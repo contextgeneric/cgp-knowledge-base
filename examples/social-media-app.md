@@ -1,20 +1,20 @@
 # Social media app
 
-This example builds the CRUD backend for a small social media service — managing users and posts — and follows it as the wiring grows from a handful of components into something a real application would have. It progresses from one coarse manager trait per domain, through fine-grained per-operation traits and a higher-order provider that adds input filtering, to provider bundles and finally namespace-grouped wiring that keeps the top-level configuration short even as the component count climbs. It is a template for any application whose component count grows past the point where a flat delegation table stays readable.
+This example builds the CRUD backend for a small social media service (managing users and posts) and follows it as the wiring grows from a handful of components into something a real application would have. It progresses from one coarse manager trait per domain, through fine-grained per-operation traits and a higher-order provider that adds input filtering, to provider bundles and finally namespace-grouped wiring that keeps the top-level configuration short even as the component count climbs. It is a template for any application whose component count grows past the point where a flat delegation table stays readable.
 
-The contexts here are **environmental contexts** — `ProductionApp` stands for the running service, holding its database handle and its wiring — and every component is **self-targeted**, since creating a user or filtering a post is something the application does. No target parameter appears anywhere, which is worth noticing: this example gets its per-application swappability entirely from the wired type being one the program defines. See the [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md).
+The contexts here are **environmental contexts** (`ProductionApp` stands for the running service, holding its database handle and its wiring) and every component is **self-targeted**, since creating a user or filtering a post is something the application does. No target parameter appears anywhere, which is worth noticing: this example gets its per-application swappability entirely from the wired type being one the program defines. See the [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md).
 
 The concepts each step demonstrates are documented in full in the reference; this example only notes which one is in play and links to it:
 
-- consumer/provider trait pairs — [`#[cgp_component]`](../cgp/reference/macros/cgp_component.md) and [consumer and provider traits](../cgp/concepts/consumer-and-provider-traits.md)
-- providers that read context fields as method arguments — [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md) with [`#[implicit]`](../cgp/reference/attributes/implicit.md) arguments backed by [`#[derive(HasField)]`](../cgp/reference/derives/derive_has_field.md)
-- importing a trait a provider depends on — [`#[uses]`](../cgp/reference/attributes/uses.md), an [impl-side dependency](../cgp/concepts/impl-side-dependencies.md)
-- a provider that wraps another provider — [higher-order providers](../cgp/concepts/higher-order-providers.md) and [`#[use_provider]`](../cgp/reference/attributes/use_provider.md)
-- wiring a context and bundling providers into reusable groups — [`delegate_components!`](../cgp/reference/macros/delegate_components.md)
-- grouping component keys so a context inherits a whole bundle at once — [namespaces](../cgp/concepts/namespaces.md), the [`#[prefix(...)]`](../cgp/reference/attributes/prefix.md) attribute, and [`cgp_namespace!`](../cgp/reference/macros/cgp_namespace.md)
-- checking that a wiring is complete — [`check_components!`](../cgp/reference/macros/check_components.md), or [`delegate_and_check_components!`](../cgp/reference/macros/delegate_and_check_components.md) for a basic table
+- consumer/provider trait pairs: [`#[cgp_component]`](../cgp/reference/macros/cgp_component.md) and [consumer and provider traits](../cgp/concepts/consumer-and-provider-traits.md)
+- providers that read context fields as method arguments: [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md) with [`#[implicit]`](../cgp/reference/attributes/implicit.md) arguments backed by [`#[derive(HasField)]`](../cgp/reference/derives/derive_has_field.md)
+- importing a trait a provider depends on: [`#[uses]`](../cgp/reference/attributes/uses.md), an [impl-side dependency](../cgp/concepts/impl-side-dependencies.md)
+- a provider that wraps another provider: [higher-order providers](../cgp/concepts/higher-order-providers.md) and [`#[use_provider]`](../cgp/reference/attributes/use_provider.md)
+- wiring a context and bundling providers into reusable groups: [`delegate_components!`](../cgp/reference/macros/delegate_components.md)
+- grouping component keys so a context inherits a whole bundle at once: [namespaces](../cgp/concepts/namespaces.md), the [`#[prefix(...)]`](../cgp/reference/attributes/prefix.md) attribute, and [`cgp_namespace!`](../cgp/reference/macros/cgp_namespace.md)
+- checking that a wiring is complete: [`check_components!`](../cgp/reference/macros/check_components.md), or [`delegate_and_check_components!`](../cgp/reference/macros/delegate_and_check_components.md) for a basic table
 
-All snippets assume `use cgp::prelude::*;` and share a small set of domain types — the entities the service manipulates and the database handle the providers read:
+All snippets assume `use cgp::prelude::*;` and share a small set of domain types: the entities the service manipulates and the database handle the providers read:
 
 ```rust
 pub struct Email(pub String);
@@ -69,7 +69,7 @@ pub trait CanManagePost {
 }
 ```
 
-Each trait is an ordinary trait turned into a CGP component by [`#[cgp_component]`](../cgp/reference/macros/cgp_component.md), which names the provider trait (`UserManager`, `PostManager`) that implementers write against. The service also needs two content-safety checks — rejecting banned usernames and spam posts — so those become components of their own, each returning a `Probability` the managers can threshold:
+Each trait is an ordinary trait turned into a CGP component by [`#[cgp_component]`](../cgp/reference/macros/cgp_component.md), which names the provider trait (`UserManager`, `PostManager`) that implementers write against. The service also needs two content-safety checks, rejecting banned usernames and spam posts, so those become components of their own, each returning a `Probability` the managers can threshold:
 
 ```rust
 #[cgp_component(UsernameCensor)]
@@ -83,7 +83,7 @@ pub trait CanDetectSpamMessage {
 }
 ```
 
-The production manager talks to PostgreSQL. Its provider reads the database handle straight out of the context as an [`#[implicit]`](../cgp/reference/attributes/implicit.md) argument — CGP extracts the `database` field from the context rather than threading it through every call site — and pulls in `CanCensorUsername` with [`#[uses]`](../cgp/reference/attributes/uses.md) so `create_user` can reject censored names before writing:
+The production manager talks to PostgreSQL. Its provider reads the database handle straight out of the context as an [`#[implicit]`](../cgp/reference/attributes/implicit.md) argument: CGP extracts the `database` field from the context rather than threading it through every call site, and pulls in `CanCensorUsername` with [`#[uses]`](../cgp/reference/attributes/uses.md) so `create_user` can reject censored names before writing:
 
 ```rust
 #[cgp_impl(new PostgresUserManager)]
@@ -160,7 +160,7 @@ pub trait CanUpdateUser {
 }
 ```
 
-The post manager splits the same way into `PostCreator`, `PostGetter`, `PostUpdater`, and `PostDeleter`. Each operation now has its own provider, and the providers that do not need a content check no longer mention one. `GetUserWithPostgres` reads only the database; `CreateUserWithPostgres` adds nothing else either, because — as the next step shows — the censoring will move out of it entirely:
+The post manager splits the same way into `PostCreator`, `PostGetter`, `PostUpdater`, and `PostDeleter`. Each operation now has its own provider, and the providers that do not need a content check no longer mention one. `GetUserWithPostgres` reads only the database; `CreateUserWithPostgres` adds nothing else either, because, as the next step shows, the censoring will move out of it entirely:
 
 ```rust
 #[cgp_impl(new CreateUserWithPostgres)]
@@ -187,7 +187,7 @@ Splitting the traits also lets a method be limited to the dependencies it uses: 
 
 ## Lifting the filter into a higher-order provider
 
-With creation isolated in its own trait, the username check no longer belongs inside the database provider — it can become a separate provider that wraps any user creator. `FilterCensoredUsername` is a [higher-order provider](../cgp/concepts/higher-order-providers.md): it takes an inner `UserCreator` as a type parameter, runs the censor check, and forwards to the inner provider only if the name is allowed:
+With creation isolated in its own trait, the username check no longer belongs inside the database provider: it can become a separate provider that wraps any user creator. `FilterCensoredUsername` is a [higher-order provider](../cgp/concepts/higher-order-providers.md): it takes an inner `UserCreator` as a type parameter, runs the censor check, and forwards to the inner provider only if the name is allowed:
 
 ```rust
 #[cgp_impl(new FilterCensoredUsername<InnerCreator>)]
@@ -204,11 +204,11 @@ impl<InnerCreator> UserCreator {
 }
 ```
 
-The [`#[use_provider]`](../cgp/reference/attributes/use_provider.md) attribute is what keeps the inner type readable: `InnerCreator: UserCreator` declares that `InnerCreator` must itself be a user-creation provider for this context, and `InnerCreator::create_user(self, …)` dispatches through it. `FilterCensoredUsername` knows nothing about databases, and `CreateUserWithPostgres` now knows nothing about censoring — the two compose only when wired together as `FilterCensoredUsername<CreateUserWithPostgres>`. Because the wrapper is generic, the same filter applies to any creator: a SQLite-backed `CreateUserWithSqlite`, were one added, would gain censoring through `FilterCensoredUsername<CreateUserWithSqlite>` with no new code. The post side gets the matching `FilterSpamMessage<InnerCreator>` wrapper around any post creator.
+The [`#[use_provider]`](../cgp/reference/attributes/use_provider.md) attribute is what keeps the inner type readable: `InnerCreator: UserCreator` declares that `InnerCreator` must itself be a user-creation provider for this context, and `InnerCreator::create_user(self, …)` dispatches through it. `FilterCensoredUsername` knows nothing about databases, and `CreateUserWithPostgres` now knows nothing about censoring; the two compose only when wired together as `FilterCensoredUsername<CreateUserWithPostgres>`. Because the wrapper is generic, the same filter applies to any creator: a SQLite-backed `CreateUserWithSqlite`, were one added, would gain censoring through `FilterCensoredUsername<CreateUserWithSqlite>` with no new code. The post side gets the matching `FilterSpamMessage<InnerCreator>` wrapper around any post creator.
 
 ## Grouping providers into bundles
 
-A [`delegate_components!`](../cgp/reference/macros/delegate_components.md) table with `new` defines a standalone provider — a bundle — whose only job is to hold a sub-table other contexts can reuse as a unit. Grouping the user providers, the post providers, and the AI-backed content filters each into their own bundle keeps related wiring together:
+A [`delegate_components!`](../cgp/reference/macros/delegate_components.md) table with `new` defines a standalone provider (a bundle) whose only job is to hold a sub-table other contexts can reuse as a unit. Grouping the user providers, the post providers, and the AI-backed content filters each into their own bundle keeps related wiring together:
 
 ```rust
 delegate_components! {
@@ -272,7 +272,7 @@ delegate_components! {
 }
 ```
 
-The bundles read cleanly on their own, but the top-level table still has to spell out every component name to route it to a bundle. The grouping exists in the bundle definitions, yet the context cannot refer to "all the user components" as one thing — it must list them.
+The bundles read cleanly on their own, but the top-level table still has to spell out every component name to route it to a bundle. The grouping exists in the bundle definitions, yet the context cannot refer to "all the user components" as one thing; it must list them.
 
 ## Grouping component keys with namespaces
 
@@ -353,7 +353,7 @@ delegate_components! {
 }
 ```
 
-The top-level context drops to two entries — its essential core behavior and its swappable extras:
+The top-level context drops to two entries: its essential core behavior and its swappable extras:
 
 ```rust
 delegate_components! {
@@ -387,6 +387,6 @@ delegate_components! {
 }
 ```
 
-`ProductionApp` and `TestApp` share `@app.core` and differ only in `@app.extra`, so a reader sees immediately that the two run identical core logic and diverge only in their content filtering — a comparison that, with the flat per-component table, would mean scanning a dozen entries that may not even appear in the same order. A local-first variant would follow the same shape, keeping the production extras but pointing `@app.core` at an SQLite core bundle, and the one swapped line would again be the whole story.
+`ProductionApp` and `TestApp` share `@app.core` and differ only in `@app.extra`, so a reader sees immediately that the two run identical core logic and diverge only in their content filtering, a comparison that, with the flat per-component table, would mean scanning a dozen entries that may not even appear in the same order. A local-first variant would follow the same shape, keeping the production extras but pointing `@app.core` at an SQLite core bundle, and the one swapped line would again be the whole story.
 
 For an agent working on the application itself rather than learning its patterns, the crate is documented as the [`web-app`](../projects/cgp-examples/web-app/README.md) subproject of cgp-examples.

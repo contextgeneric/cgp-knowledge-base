@@ -13,13 +13,13 @@ derive the trait on every data type itself.
 The concepts each step demonstrates are documented in full elsewhere; this example notes which one is
 in play and links to it:
 
-- splitting a trait so overlapping and orphan implementations are legal — [consumer and provider traits](../cgp/concepts/consumer-and-provider-traits.md) and the [coherence](../cgp/concepts/coherence.md) strategy behind it
-- the two components and why the value leaves `Self` — [cgp-serde's component design](../projects/cgp-serde/architecture/component-design.md)
-- providers that hand nested values back to the context — [re-entrant providers](../projects/cgp-serde/architecture/reentrant-providers.md)
-- serializing a struct with no serialization-specific derive — [extensible records](../cgp/concepts/extensible-records.md) via [`#[derive(CgpData)]`](../cgp/reference/derives/derive_cgp_data.md), and cgp-serde's [record providers](../projects/cgp-serde/reference/records.md)
-- selecting a provider per value type, inline in the context's own table — the `open` statement of [`delegate_components!`](../cgp/reference/macros/delegate_components.md)
-- verifying a context's wiring — [`check_components!`](../cgp/reference/macros/check_components.md)
-- pulling a service from the context during deserialization — cgp-serde's [context services](../projects/cgp-serde/architecture/context-services.md), with the [`HasErrorType`](../cgp/reference/components/has_error_type.md) and [`CanRaiseError`](../cgp/reference/components/can_raise_error.md) error components wired through [modular error handling](../cgp/concepts/modular-error-handling.md)
+- splitting a trait so overlapping and orphan implementations are legal: [consumer and provider traits](../cgp/concepts/consumer-and-provider-traits.md) and the [coherence](../cgp/concepts/coherence.md) strategy behind it
+- the two components and why the value leaves `Self`: [cgp-serde's component design](../projects/cgp-serde/architecture/component-design.md)
+- providers that hand nested values back to the context: [re-entrant providers](../projects/cgp-serde/architecture/reentrant-providers.md)
+- serializing a struct with no serialization-specific derive: [extensible records](../cgp/concepts/extensible-records.md) via [`#[derive(CgpData)]`](../cgp/reference/derives/derive_cgp_data.md), and cgp-serde's [record providers](../projects/cgp-serde/reference/records.md)
+- selecting a provider per value type, inline in the context's own table: the `open` statement of [`delegate_components!`](../cgp/reference/macros/delegate_components.md)
+- verifying a context's wiring: [`check_components!`](../cgp/reference/macros/check_components.md)
+- pulling a service from the context during deserialization: cgp-serde's [context services](../projects/cgp-serde/architecture/context-services.md), with the [`HasErrorType`](../cgp/reference/components/has_error_type.md) and [`CanRaiseError`](../cgp/reference/components/can_raise_error.md) error components wired through [modular error handling](../cgp/concepts/modular-error-handling.md)
 
 The snippets assume `use cgp::prelude::*;` and compile against the `v0.8.0` branch of
 [cgp-serde](https://github.com/contextgeneric/cgp-serde/tree/v0.8.0), using its `cgp-serde`,
