@@ -658,7 +658,7 @@ it stale.
 - [typed-resolution-anchors.md](cargo-cgp/implementation/typed-resolution-anchors.md) — the
   span-matching anchors that recover the real consumer obligation.
 - [typed-resolution-call-site.md](cargo-cgp/implementation/typed-resolution-call-site.md) — the
-  last-resort HIR re-read of the failing call expression.
+  HIR re-read of the failing call expression, the sixth of the seven anchors.
 - [typed-resolution-walk.md](cargo-cgp/implementation/typed-resolution-walk.md) — the descent to every
   terminal unmet bound, and each leaf's decoding and classification.
 - [typed-resolution-output.md](cargo-cgp/implementation/typed-resolution-output.md) — the coded
@@ -667,7 +667,7 @@ it stale.
   per-node resolver cache, its soundness reasoning, and why cacheability is a statelessness proof.
 - [dependency-graph-rendering.md](cargo-cgp/implementation/dependency-graph-rendering.md) — folding
   per-cause paths into one DAG and rendering it `cargo tree`-style with shared subtrees.
-- [resolve-context.md](cargo-cgp/implementation/resolve-context.md) — the planned `ResolveCtx` hosting
+- [resolve-context.md](cargo-cgp/implementation/resolve-context.md) — the partly built `ResolveCtx` hosting
   the caches, config, and compiler access behind a mockable interface.
 - [resugaring.md](cargo-cgp/implementation/resugaring.md) — reversing CGP's type-level expansions
   across three inputs (typed, text, syntax tree) that must agree.

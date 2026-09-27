@@ -6,7 +6,7 @@ string-level logic that does the turning lives in one rustc-free crate,
 This document records what that crate holds, why it is kept apart from the driver, how the driver
 drives it, and how it is tested.
 
-The crate is **driven entirely by the driver**; the front-end no longer touches diagnostics. It
+The crate is **driven entirely by the driver**; the front-end never touches diagnostics. It
 exists as a separate crate for one reason: it links no compiler internals, so it builds and its
 tests run on any toolchain, without the driver's `rustc_private` linkage. The driver depends on it
 and calls into it from its emitter; the crate never depends on the driver or the front-end. Keeping
@@ -15,13 +15,13 @@ compiler, no cargo, and no `cargo-cgp` process in the loop.
 
 ## What the crate holds
 
-The crate has six tenants, all driven by the driver's emitter. Grouping them here, apart from the
+The crate's tenants are listed below, all driven by the driver's emitter. Grouping them here, apart from the
 driver, is what keeps them unit-testable.
 
 - **Post-processing** ([`postprocess`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/postprocess)) is
   the set of fallback text transforms the driver applies to a diagnostic's messages so raw CGP
-  constructs do not look confusing. Each is a pure `&str -> Option<String>` — `Some` when it changed
-  the text — and
+  constructs do not look confusing. Each is a pure `&str -> Option<String>` (`Some` when it changed
+  the text), and
   [`postprocess_message`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/chain.rs) chains
   them.
 - **The wiring rewrite** ([`rewrite`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/rewrite)) is the
@@ -32,17 +32,17 @@ driver, is what keeps them unit-testable.
   [The driver](driver.md#naming-the-traits-behind-a-component-marker).
 - **The diagnosis model and its wording**
   ([`diagnosis`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/diagnosis)) is the rustc-free root-cause
-  model — the `Resolved` failure the driver's typed resolver produces, in owned `String` form — and
+  model (the `Resolved` failure the driver's typed resolver produces, in owned `String` form) and
   the wording that turns it into diagnostic text. Two pure cause-list transforms run ahead of the
   wording: `Causes::union` folds duplicate copies of one leaf into a single cause holding
   every path (what the emitter's coalesced block needs, since its members were grouped for sharing a
   cause), and `coalesce_underived_fields` then merges the *distinct* underived fields of one struct
   into the single derive fix they share. `plan_resolved` runs the latter and composes the rewritten header, the
   fix `help`s, and the `root cause:` note into a `DiagnosisPlan`, which the emitter only maps onto
-  rustc's `DiagInner`. The note travels as an unrendered `PendingNote` — the causes and the
-  header-stated leaf — because rendering it needs the emission order only the emitter's flush knows;
-  keeping one representation rather than a rendered string alongside is what stops the tests pinning
-  one note while the emitter shows another. keeping every piece rustc-free is what makes the whole
+  rustc's `DiagInner`. The note travels as an unrendered `PendingNote` (the causes and the
+  header-stated leaf), because rendering it needs the emission order only the emitter's flush knows.
+  Keeping one representation rather than a rendered string alongside is what stops the tests pinning
+  one note while the emitter shows another, and keeping every piece rustc-free is what makes the whole
   diagnosis-to-text layer unit-testable without a `TyCtxt`. The same module holds the structured
   dependency-graph nodes and their rendering (`node.rs`) and the graph that merges and renders them
   (`graph.rs`), so every node template and the whole merge/render live here. It is documented in
@@ -50,10 +50,16 @@ driver, is what keeps them unit-testable.
   [Dependency-graph rendering](dependency-graph-rendering.md). The module also holds the
   duplicate-key conflict wording (`wiring.rs`): the `WiringConflict` model and `plan_wiring_conflict`,
   which words the `[CGP-E004]`–`[CGP-E008]` headers (one per conflict shape) the driver's `resolve::conflict` classifier feeds it (see
-  [The driver](driver.md#reshaping-a-duplicate-key-conflict)).
+  [The driver](driver.md#reshaping-a-duplicate-key-conflict)). Three more models word the driver's
+  other reshapes, each with a `plan_*` header and a `*_help` fix: `orphan.rs` (`OrphanConflict`,
+  the `[CGP-E011]` orphan-rule namespace registration), `undeclared.rs` (`UndeclaredTrait`, the
+  `[CGP-E012]` trait a `#[cgp_fn]`/`#[cgp_impl]` body calls without declaring it), and
+  `cgp_impl_misuse.rs` (`CgpImplMisuse` for the `[CGP-E013]`–`[CGP-E015]` provider-definition
+  mistakes, and `MissingUseProvider` for the `[CGP-E016]` inner provider never imported). They are
+  documented where the driver detects them, in [The driver](driver.md#the-drivers-diagnostic-transformations).
 - **The dependency-tree renderer**
   ([`tree`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/tree.rs)) is the `DependencyTree` type and its
-  `cargo tree`-style renderer over the tiny `termtree` crate — the render target the
+  `cargo tree`-style renderer over the tiny `termtree` crate. It is the render target the
   [dependency graph](dependency-graph-rendering.md) expands into. The graph itself (in `diagnosis`)
   does the merging: the driver's resolver hands over one path of structured nodes per way a cause is
   reached, and the graph fuses the nodes several paths share into a DAG with `(*)`-marked shared
@@ -62,8 +68,8 @@ driver, is what keeps them unit-testable.
   [Dependency-graph rendering](dependency-graph-rendering.md).
 - **The de-duplication ledger** ([`dedup`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/dedup.rs)) is
   the `DedupLedger` the emitter records each transformed diagnostic in, so the re-reports one
-  lazy-wiring mistake produces at many sites are suppressed. The key scheme — the recovered cause,
-  the rendered text, and the coded header — lives with the ledger, documented in
+  lazy-wiring mistake produces at many sites are suppressed. The key scheme (the recovered cause,
+  the rendered text, and the coded header) lives with the ledger, documented in
   [The driver](driver.md#naming-the-traits-behind-a-component-marker).
 - **The signature keys** ([`signature`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/wording/signature.rs))
   are the two span-independent keys the emitter groups failures on: `cause_signature` (context,
@@ -72,17 +78,17 @@ driver, is what keeps them unit-testable.
   the rendered-message keys it falls back to for a declined diagnostic. The emitter's coalescing groups
   on a *structural* key instead, through `group_by_shared_cause`
   ([`group`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/group.rs)), which partitions the
-  coalescible failures into the connected components of the shares-a-cause relation — keyed on each
-  cause's context and `Leaf` rather than on the lead that leaf words, so grouping does not shift when a
-  lead is reworded, and per cause rather than per whole failure, because one mistake surfaces at several
-  depths and each depth reaches a different *subset* of its causes, so demanding two identical sets
-  grouped none of them. Both are pure functions over the `Resolved` model.
+  coalescible failures into the connected components of the shares-a-cause relation. The key is each
+  cause's context and `Leaf` rather than the lead that leaf words, so grouping does not shift when a
+  lead is reworded. It is taken per cause rather than per whole failure, because one mistake surfaces
+  at several depths and each depth reaches a different *subset* of its causes, so demanding two
+  identical sets would group none of them. Both are pure functions over the `Resolved` model.
 - **The text signals** ([`signals`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/signals.rs)) are the
-  stable rustc phrasings the emitter's candidate checks key on — the wiring-trait mention that makes
+  stable rustc phrasings the emitter's candidate checks key on: the wiring-trait mention that makes
   a diagnostic a resolution candidate, the method-bounds `E0599` shape the resolver may safely run
   on, the method-probe advice the emitter strips, the orphan-parameter `E0210` shape, the
   `?`-operator cascade wording, and the trailing "detailed explanations" footer the emitter rebuilds
-  (both recognizing the line and reading the codes it names) — each a pure function, so the wording
+  (both recognizing the line and reading the codes it names). Each is a pure function, so the wording
   dependence on rustc's phrasing is documented and tested in one place.
 
 A further module,
@@ -100,12 +106,12 @@ that declines, it renames the CGP wiring messages it recognizes; then, either wa
 passes through the post-processing transforms.
 
 The pass does two jobs depending on what came before it, and both keep raw CGP spellings out of the
-output. For a diagnostic the tool left **un-rewritten**, post-processing is the whole cleanup — it
+output. For a diagnostic the tool left **un-rewritten**, post-processing is the whole cleanup: it
 strips the `cgp::` prefixes, resugars the `Symbol!` and `Path!` lists, and rewords an unmet
 `HasField` bound, so a diagnostic the tool does not classify still reads cleanly. For a **rewritten**
 one, only the prefix strip and the `Symbol!`/`Path!` resugaring bite: they tidy the compiler-formatted
-CGP type names a rewrite embeds — a provider like `RedirectLookup<…, PathCons<Symbol<…>>>` in a coded
-header, folded to `RedirectLookup<…, Path!(@…)>`, say — while the missing-field reword finds nothing
+CGP type names a rewrite embeds, such as a provider like `RedirectLookup<…, PathCons<Symbol<…>>>` in
+a coded header, folded to `RedirectLookup<…, Path!(@…)>`. The missing-field reword finds nothing
 to match, because the resolver's tree never carries the `` `HasField<…>` is not implemented `` clause
 the reword keys on.
 
@@ -114,7 +120,7 @@ the reword keys on.
 The driver applies post-processing over a `DiagInner` before its inner emitter renders it, so the
 rendered output reflects the change. Each transform is a text function, and the driver runs
 [`postprocess_message`] over every plain-string message and span label of the diagnostic and its
-children — the same reach the compiler's renderer has, so the caret label, the notes, and the header
+children. That is the same reach the compiler's renderer has, so the caret label, the notes, and the header
 are all covered. Editing the structured `DiagInner` rather than a rendered blob means the transform
 never touches the source snippets the emitter pulls from the `SourceMap`, so it cannot corrupt a line
 of the user's own code the way a whole-text rewrite could.
@@ -124,14 +130,14 @@ fragments read together.** `Diag::highlighted_*` stores one entry per `StringPar
 renderer concatenates; rustc splits a message that way to highlight part of it, and when what it
 highlights is the *difference between two types* it splits at every difference. Its "similar impl"
 hint does exactly that, so a `Symbol<3, Chars<'B', …>>` in one of the two traits is shredded into a
-fragment per character and no fragment holds a whole construct to match — the header beside it would
+fragment per character and no fragment holds a whole construct to match. The header beside it would
 read `Symbol!("Bar")` while the hint still showed the raw list. So the driver post-processes each
 fragment first, keeping rustc's highlighting, and then reads them as the one line they render as
 through
 [`postprocess_fragments`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/chain.rs).
 When that recovers something the per-fragment pass could not, the message collapses to that single
 unstyled string. Matching on the concatenation is matching on what the reader actually sees, and the
-highlighting is given up only when there was a construct to recover — never merely because a
+highlighting is given up only when there was a construct to recover, never merely because a
 fragment was tidied on its own.
 
 One transform needs a fact about the whole diagnostic rather than one message, and the driver
@@ -149,19 +155,19 @@ the order matters. Module-path stripping runs first so the later transforms matc
 (`Symbol`, `Chars`, …) rather than their fully-qualified forms; `Symbol!` resugaring runs before
 `Path!` resugaring (which reads the already-resugared `Symbol!("…")` segments), before list resugaring
 (which reads a `Field`'s `Symbol!("…")` tag when naming a struct field or enum variant), and before
-the field rewrite (which matches the resugared `HasField<Symbol!("…")>` form). Six transforms run
-today, in three groups:
+the field rewrite (which matches the resugared `HasField<Symbol!("…")>` form). Six transforms run,
+in three groups:
 
-- **The two path strips** —
+- **The two path strips**:
   [`strip_module_paths`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/strip_modules.rs),
   which collapses every `a::b::C` identifier run to its final segment (`contexts::app::MockApp` →
   `MockApp`, `f64: std::cmp::Eq` → `f64: Eq`), and
   [`strip_cgp_prefixes`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/strip_prefixes.rs),
   which removes the CGP re-export paths in `CGP_PREFIXES` (`cgp::prelude::Chars` → `Chars`) and is
-  largely redundant now that the general strip runs first. They lead the chain because everything after
+  largely redundant because the general strip runs first. They lead the chain because everything after
   them matches bare type names; [Resugaring](resugaring.md#the-path-strips-that-run-first) covers what
   each leaves alone and why.
-- **The three resugaring transforms** —
+- **The three resugaring transforms**,
   [`resugar_symbol`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/resugar_symbol.rs)
   (`Symbol<2, Chars<'x', Chars<'y', Nil>>>` → `Symbol!("xy")`),
   [`resugar_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/resugar_path.rs)
@@ -169,7 +175,7 @@ today, in three groups:
   `Path!(@…)` macro form when its `wrap` parameter is set), and
   [`resugar_lists`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/resugar_list.rs)
   (`Cons`/`Either` lists → `Product![…]`/`Sum![…]`, or `Struct! { … }`/`Enum! { … }` when every
-  element is a named field) — reverse a CGP type-level expansion back to the syntax the programmer
+  element is a named field), reverse a CGP type-level expansion back to the syntax the programmer
   wrote. They are one of the tool's [three resugaring implementations](resugaring.md), which
   **[Resugaring](resugaring.md)** documents in full: what each construct expands to and folds back to,
   the exact-match rule that makes each decline rather than guess, why this text implementation needs
@@ -187,19 +193,19 @@ today, in three groups:
   rewritten *main* message (see [error-code.md](../error-code.md)). The tell that separates the two
   cases is rustc's "similar impl" landmark, which the CGP
   [check-trait-failure catalog entry](../../cgp/errors/checks/check-trait-failure.md) documents:
-  its presence — either inline (`but trait `HasField<…>` is implemented for it`, one other field) or as
-  a separate `` `Context` implements trait `HasField<…>` `` note (several other fields) — means a single
-  missing field; its absence means the missing derive.
+  its presence, either inline (`` but trait `HasField<…>` is implemented for it ``, one other field) or
+  as a separate `` `Context` implements trait `HasField<…>` `` note (several other fields), means a
+  single missing field; its absence means the missing derive.
 
   **The empty-derived-struct case is fine, not a defect.** The single-vs-derive classification is
   exact except for one degenerate input, and that input needs no fix. A context that derives
   `HasField` but declares **no fields at all** gets the missing-derive message even though the derive
-  is present — but that is correct, because `#[derive(HasField)]` emits one impl per field, so on a
+  is present. That is correct, because `#[derive(HasField)]` emits one impl per field, so on a
   fieldless struct it emits *nothing*, identical to no derive at all. A fieldless derive leaves no
   trace in the generated program, so it is genuinely impossible to tell whether it was written; the
   two are the same program wherever `HasField` is concerned.
 
-In practice the missing-field reword rarely fires today, because the [typed root-cause
+In practice the missing-field reword rarely fires, because the [typed root-cause
 resolver](typed-root-cause-resolution.md) recovers most missing-field failures from the compiler and
 replaces them with a dependency tree before this fallback is reached. The transform remains for the
 diagnostics the resolver declines, where the text clause is all there is to work with.
@@ -211,7 +217,7 @@ test drives one transform over the case under test and asserts on the returned `
 nothing compiles, no driver runs, and the test is fast and deterministic, so a whole catalog of
 cases can be exercised as ordinary library tests. This is what the rustc-free design buys.
 [`tests/postprocess.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/postprocess.rs)
-drives each transform — a stripped prefix, an exactly-matched `Symbol!`, a wrong length or foreign
+drives each transform: a stripped prefix, an exactly-matched `Symbol!`, a wrong length or foreign
 type left alone, the single-field (inline and separate-note landmark) versus missing-derive
 branches, and the `postprocess_message` chain end to end. The diagnosis wording is tested the same
 way, only over a hand-built `Resolved` rather than a string:
@@ -223,24 +229,26 @@ field-type-mismatch, use-site, kept-ordinary-bound, and provider-header cases, a
 The [UI snapshot suite](testing.md) exercises the transforms a second way, over real diagnostics:
 every fixture's `.cgp.stderr` is what the driver rendered after applying them, so a change to a
 transform that affects an emitted diagnostic shows up as a snapshot diff. The two levels guard
-different seams — this crate's tests pin a transform on a curated input, while the UI suite proves
+different seams: this crate's tests pin a transform on a curated input, while the UI suite proves
 the transforms stay consistent with what the driver emits across the whole catalog.
 
 ## Planned work
 
 The transforms still ahead extend the per-diagnostic cleanup, each a new function added to the
 post-processing chain, each applying the same exact-match caution `resugar_symbol` sets the precedent
-for. The type-level encodings a CGP diagnostic carries are now all decoded — `Symbol!`, `Path!`, and
-the `Product!`/`Sum!` lists with their record and variant forms — so what remains on that front is
+for. The type-level encodings a CGP diagnostic carries are all decoded (`Symbol!`, `Path!`, and
+the `Product!`/`Sum!` lists with their record and variant forms), so what remains on that front is
 whichever encoding a new CGP construct introduces, and the place to add it is
 [Resugaring](resugaring.md). Recognizing more error classes is the other direction, each rewriting its
 message the way the missing-field transform does.
 
-One larger transformation is deliberately out of scope for this crate: collapsing a *cascade* — the
-one deep mistake reported at every transitively dependent provider — into a single root cause. That
-is a cross-diagnostic transform, and it can only be decided by looking at the whole diagnostic set,
-which this crate's per-string transforms never see. It would have to live in the driver's emitter,
-which would need to buffer the compilation's diagnostics before emitting them; it does not exist yet.
+One larger transformation is deliberately out of scope for this crate's per-string transforms:
+collapsing a *cascade*, the one deep mistake reported at every transitively dependent provider, into
+a single root cause. That is a cross-diagnostic transform, and it can only be decided by looking at
+the whole diagnostic set. It lives in the driver's emitter, which buffers the compilation's
+diagnostics and coalesces the failures that share a cause at flush (see
+[The driver](driver.md#naming-the-traits-behind-a-component-marker)). This crate supplies the pure
+pieces it runs on: `group_by_shared_cause`, `Causes::union`, and the `DedupLedger`.
 
 ## Comparison with Clippy
 
@@ -249,7 +257,7 @@ diagnostic type of its own and never rewrites a diagnostic: it reuses rustc's `D
 machinery and emits its lints through the compiler's own emitters, so its output is rustc's,
 unmodified
 ([`clippy_utils/src/diagnostics.rs`](../../../external/rust-clippy/clippy_utils/src/diagnostics.rs)).
-`cargo-cgp` does the opposite — it *rewrites* the diagnostics rustc already produced — which is why
+`cargo-cgp` does the opposite, *rewriting* the diagnostics rustc already produced, which is why
 it needs a body of string transforms Clippy has no equivalent of. Keeping those transforms in a
 rustc-free crate is the design that makes them testable without the compiler, precisely because
 Clippy's "just use the compiler's emitter" approach is not open to a tool that rewrites.
@@ -275,8 +283,8 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   the graph's job, tested in `graph.rs`.
 - [`crates/cargo-cgp-error-processing/tests/graph.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/graph.rs) —
   the `DependencyGraph` build-and-render, as `insta` inline snapshots: a list, a shared-prefix
-  branch, a subsuming cascade, converging leaves, a diamond, a super-root, a within-path repeat, and
-  the generic elision (see
+  branch, a subsuming cascade, converging leaves, a diamond, a super-root, a within-path repeat,
+  repeated generics rendered in full, and the cross-block elision (see
   [Dependency-graph rendering](dependency-graph-rendering.md)).
 - [`crates/cargo-cgp-error-processing/tests/wiring.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/wiring.rs) —
   `plan_wiring_conflict` and `wiring_conflict_help` over hand-built `WiringConflict` values: the
@@ -295,7 +303,7 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   the `Causes` set: one leaf reached by three consumers collecting into one cause with all three paths,
   the repeated-underived-field lead the invariant prevents, distinct leaves kept apart, an exact repeat
   of a path dropped, `from_sub_chains` grouping, `union` folding a shared cause while keeping every
-  route (and its associativity), and `headed_by` prefixing every path — plus its commutation with the
+  route (and its associativity), and `headed_by` prefixing every path, plus its commutation with the
   grouping, which is why heading needs no re-merge.
 - [`crates/cargo-cgp-error-processing/tests/dedup.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/dedup.rs) —
   the `DedupLedger` key scheme: a re-reported cause suppressed, distinct causes kept, the text key,
@@ -303,8 +311,15 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
 - [`crates/cargo-cgp-error-processing/tests/signals.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/signals.rs) —
   the text signals: the wording each matches and the near-miss it must not (the two `E0599` shapes,
   the method-probe artifacts, the orphan marker-plus-phrase pair, the `?`-cascade phrasing, and both
-  footer forms — including the reworded line that yields no codes, the case the rebuild must decline
+  footer forms, including the reworded line that yields no codes, the case the rebuild must decline
   on rather than delete the footer).
+- [`crates/cargo-cgp-error-processing/tests/orphan.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/orphan.rs) —
+  `plan_orphan_conflict` and `orphan_conflict_help` over hand-built conflicts: a component key and a
+  path key registered, and the reopen trigger's inheritance fix.
+- [`crates/cargo-cgp-error-processing/tests/cgp_impl_misuse.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/cgp_impl_misuse.rs) —
+  the `#[cgp_impl]` misuse wording: a consumer trait in the header (naming the provider to use), a
+  trait that is not a CGP component, a consumer trait in a provider bound, and an inner provider not
+  imported.
 - The [UI snapshot suite](testing.md) exercises the transforms over every fixture's real diagnostics:
   each `.cgp.stderr` is what the driver rendered after applying them.
 
@@ -316,12 +331,13 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   into styled fragments as the one line it renders as), `strip_modules.rs` (`strip_module_paths`, the UTF-8-safe
   module-qualifier collapse), `strip_prefixes.rs` (`strip_cgp_prefixes` and the `CGP_PREFIXES`
   constant), `resugar_symbol.rs` (the exact-match `Symbol!` parser), `resugar_path.rs` (the
-  `PathCons` → `@…`/`Path!(@…)` resugarer, the form chosen by its `wrap` parameter), and
+  `PathCons` → `@…`/`Path!(@…)` resugarer, the form chosen by its `wrap` parameter),
+  `resugar_list.rs` (`resugar_lists`, the `Product!`/`Sum!` and `Struct!`/`Enum!` resugarer), and
   `missing_field.rs` (`rewrite_missing_fields`, `context_has_hasfield_impls`, and the
   single-field-vs-missing-derive classification).
 - [`crates/cargo-cgp-error-processing/src/rewrite/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/rewrite) —
   the wiring-message rewrite and `ComponentNameMap` the driver drives: `mod.rs` (re-exports),
-  `message.rs` (`rewrite_message` and the note/header forms — the code-stamping
+  `message.rs` (`rewrite_message` and the note/header forms: the code-stamping
   `rewrite_trait_bound` and the `E0275` `rewrite_wiring_overflow` with its `wiring_overflow_help`),
   `names.rs` (`ComponentNameMap`/`ComponentTraitNames`), `parse.rs`
   (`parse_trait_bound`), and `text.rs` (the segment/generics splitters). See
@@ -332,14 +348,14 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   distinct leaf by construction, through `from_sub_chains`/`union`/`headed_by` over a private field;
   and `Resolved`), `node.rs` (`DepNode` /
   `ChainNode`, the structured chain nodes and their rendering) and `graph.rs` (`DependencyGraph`,
-  the DAG build-and-render), the `wording/` directory — `header.rs` (`consumer_header`,
+  the DAG build-and-render), the `wording/` directory (`header.rs` (`consumer_header`,
   `field_mismatch_header`, `assoc_mismatch_header`), `lead.rs` (`root_cause_lead` and the leaf codes),
   `note.rs`
   (`cause_notes`, which folds every cause's paths into one graph and words the heading over it, and
   `cause_notes_seen`, the same against a `seen` set shared with the compilation's other notes),
-  `help.rs` (`fix_help_messages` over `derive_help_messages` and `assoc_mismatch_help_messages` — the
+  `help.rs` (`fix_help_messages` over `derive_help_messages` and `assoc_mismatch_help_messages`, the
   one entry point both the streaming plan and the emitter's coalesced block build their `help`s
-  through, so a merged block carries the same fixes), and `signature.rs` (`cause_signature`) —
+  through, so a merged block carries the same fixes), and `signature.rs` (`cause_signature`)),
   `group.rs` (`group_by_shared_cause`, partitioning the coalescible failures into the connected
   components of the shares-a-cause relation, keyed structurally on each context-scoped `Leaf`),
   `coalesce.rs`
@@ -347,7 +363,9 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   `DiagnosisPlan`, the unrendered `PendingNote` and its `render`, and `plan_resolved` with its
   `categorized_header`), and `wiring.rs`
   (`WiringConflict`/`WiringKey`, `plan_wiring_conflict` for the `[CGP-E004]`–`[CGP-E008]`
-  duplicate-key headers, and `wiring_conflict_help` for the redirect fix). See
+  duplicate-key headers, and `wiring_conflict_help` for the redirect fix), plus `orphan.rs`,
+  `undeclared.rs`, and `cgp_impl_misuse.rs` (the `[CGP-E011]`–`[CGP-E016]` reshape models and their
+  wording). See
   [Typed root-cause resolution](typed-root-cause-resolution.md) and
   [The driver](driver.md#reshaping-a-duplicate-key-conflict).
 - [`crates/cargo-cgp-error-processing/src/tree.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/tree.rs) —
