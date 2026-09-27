@@ -86,7 +86,7 @@ It implements [`MapType`](../traits/map_type.md), so `MapFields` applies it to e
 
 ## Examples
 
-These examples come from the `monadic_handlers` tests. `Increment` is built from a function returning `Result`:
+This `Increment` computer is built from a function returning `Result`:
 
 ```rust
 use cgp::prelude::*;

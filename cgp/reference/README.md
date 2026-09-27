@@ -10,7 +10,7 @@ This section summarizes every documented construct, grouped by the job it does a
 
 These are the constructs behind almost every CGP program: defining a component, writing a provider for it, and wiring a context to the provider it uses. [`#[cgp_component]`](macros/cgp_component.md) turns one trait into a component — the consumer trait callers invoke, the provider trait implementers target, and the blanket impls plus component-name marker that connect them. A provider is then written with [`#[cgp_impl]`](macros/cgp_impl.md), the idiomatic form that keeps `self`/`Self` and consumer-trait signatures and desugars into the inside-out provider-trait shape; its lower-level layers [`#[cgp_provider]`](macros/cgp_provider.md) and [`#[cgp_new_provider]`](macros/cgp_new_provider.md) implement the provider trait directly (the latter also declaring the provider struct) and are mostly what you read rather than write. When a trait has a single implementation and needs no wiring, [`#[cgp_fn]`](macros/cgp_fn.md) generates a blanket-impl trait straight from a function, and [`#[blanket_trait]`](macros/blanket_trait.md) does the same from a trait with default methods and supertrait dependencies; [`#[async_trait]`](macros/async_trait.md) rewrites a trait's `async fn` declarations into the lint-clean `-> impl Future` form that CGP's async methods use.
 
-Wiring is where a concrete context chooses its providers. [`delegate_components!`](macros/delegate_components.md) builds a context's type-level table mapping each component to a provider — read its document for the whole body grammar, which is larger than the plain `Key: Provider` entry suggests and is reused wholesale by [`delegate_and_check_components!`](macros/delegate_and_check_components.md) and [`cgp_namespace!`](macros/cgp_namespace.md): three mapping operators, three key forms including `@`-paths with their two grouping syntaxes, the aggregate-provider (`new`) and generic-list headers, and the `open`, `namespace`, and `for` statements, all of which combine in one block — and that table is the [`DelegateComponent`](traits/delegate_component.md) trait underneath, a compile-time key→value map that both ordinary wiring and inner dispatch tables share. Two providers appear directly in wiring: [`UseContext`](providers/use_context.md) satisfies a provider trait by routing back through the context's own consumer-trait impl (and is the default inner provider of a higher-order provider), and [`UseDefault`](providers/use_default.md) selects a component's default method bodies. To dispatch one component per value of a generic parameter, prefer the `open` statement of `delegate_components!`; the legacy path is the [`UseDelegate`](providers/use_delegate.md) provider and the [`#[derive_delegate]`](attributes/derive_delegate.md) attribute that generates its dispatch impl, which you still meet in existing code and in CGP's own error and handler components.
+Wiring is where a concrete context chooses its providers. [`delegate_components!`](macros/delegate_components.md) builds a context's type-level table mapping each component to a provider — read its document for the whole body grammar, which is larger than the plain `Key: Provider` entry suggests and is reused wholesale by [`delegate_and_check_components!`](macros/delegate_and_check_components.md) and [`cgp_namespace!`](macros/cgp_namespace.md): three mapping operators, three key forms including `@`-paths with their two grouping syntaxes, the aggregate-provider (`new`) and generic-list headers, and the `open`, `namespace`, and `for` statements, all of which combine in one block — and that table is the [`DelegateComponent`](traits/delegate_component.md) trait underneath, a compile-time key→value map that both ordinary wiring and inner dispatch tables share. Two general providers recur: [`UseDefault`](providers/use_default.md), wired directly, selects a component's default method bodies, and [`UseContext`](providers/use_context.md) routes a provider trait back through the context's own consumer-trait impl, which makes it the usual default inner provider of a higher-order provider (it is never wired for the very component it serves, which would be a cycle). To dispatch one component per value of a generic parameter, prefer the `open` statement of `delegate_components!`; the legacy path is the [`UseDelegate`](providers/use_delegate.md) provider and the [`#[derive_delegate]`](attributes/derive_delegate.md) attribute that generates its dispatch impl, which you still meet in existing code and in CGP's own error and handler components.
 
 ### Basic field access
 
@@ -28,7 +28,7 @@ Use these when generic code must name a type — an error type, a scalar, a runt
 
 ### Error handling
 
-CGP makes the error type abstract so fallible generic code never names a concrete error, and these components carry that strategy. [`HasErrorType`](components/has_error_type.md) gives a context one shared `Error` type (an abstract-type component, so wired with `UseType`), and [`CanRaiseError` / `CanWrapError`](components/can_raise_error.md) construct that error from a source error and attach detail to it, dispatching per source or detail type. The interchangeable strategies that satisfy them — the [error providers](providers/error_providers.md) `RaiseFrom`, `ReturnError`, `RaiseInfallible`, `DebugError`/`DisplayError`, `DiscardDetail`, and `PanicOnError` — stay generic over the context's error type, while the concrete backends (`cgp-error-anyhow`, `cgp-error-eyre`, `cgp-error-std`) are opt-in and named in their own crates, documented as the [error backends](../../projects/error/README.md) project. The wiring keys and backend providers are deliberately not in the prelude and must be imported from `cgp::core::error` / `cgp::extra::error`.
+CGP makes the error type abstract so fallible generic code never names a concrete error, and these components carry that strategy. [`HasErrorType`](components/has_error_type.md) gives a context one shared `Error` type (an abstract-type component, so wired with `UseType`), and [`CanRaiseError` / `CanWrapError`](components/can_raise_error.md) construct that error from a source error and attach detail to it, dispatching per source or detail type. The interchangeable strategies that satisfy them — the [error providers](providers/error_providers.md) `RaiseFrom`, `ReturnError`, `RaiseInfallible`, `DebugError`/`DisplayError`, `DiscardDetail`, and `PanicOnError` — stay generic over the context's error type, while the concrete backends (`cgp-error-anyhow`, `cgp-error-eyre`, `cgp-error-std`) are opt-in and named in their own crates, documented as the [error backends](../../projects/error/README.md) project. The wiring keys and the error providers are not in the prelude: the keys come from `cgp::core::error` and the providers from `cgp::extra::error`.
 
 ### Checks and debugging
 
@@ -157,14 +157,14 @@ These are the zero-sized provider structs a context delegates components to. The
 - [`UseFieldRef`](providers/use_field_ref.md) — implement a getter by reading a field through `AsRef`/`AsMut`.
 - [`UseFields`](providers/use_fields.md) — getter provider keyed by the method name.
 - [`UseType`](providers/use_type.md) — supply a concrete type for an abstract-type component.
-- [`UseDefault`](providers/use_default.md) — marker provider selecting default implementations.
-- [`WithProvider`](providers/with_provider.md) — adapt a foundational provider into a component (and the `WithContext`/`WithType`/`WithField` aliases).
+- [`UseDefault`](providers/use_default.md) — marker provider selecting a component's default method bodies.
+- [`WithProvider`](providers/with_provider.md) — adapt a foundational provider into a component (and its `With…` aliases).
 - [`RedirectLookup`](providers/redirect_lookup.md) — re-route a lookup along a type-level path; the namespace mechanism.
 - [`ChainGetters`](providers/chain_getters.md) — chain field getters to reach into nested contexts.
 - [Handler combinators](providers/handler_combinators.md) — `ComposeHandlers`, `PipeHandlers`, `ReturnInput`, and the `Promote*` adapters that build and lift handlers.
 - [Dispatch combinators](providers/dispatch_combinators.md) — `MatchWithHandlers`, `MatchWithValueHandlers`, `ExtractFieldAndHandle`, and the rest of the cgp-dispatch routing providers.
 - [Monad providers](providers/monad_providers.md) — `PipeMonadic`, `BindOk`, `BindErr`, and the identity/ok/err monad markers.
-- [Error providers](providers/error_providers.md) — `DebugError`, `DisplayError`, `RaiseFrom`, `ReturnError`, and the other backends for the error components.
+- [Error providers](providers/error_providers.md) — `RaiseFrom`, `ReturnError`, `DebugError`, `DisplayError`, and the other generic providers of the error components.
 
 ## Runtime traits — [traits/](traits/)
 
@@ -172,7 +172,7 @@ These are the runtime traits the macros expand into — the traits a programmer 
 
 - [`DelegateComponent`](traits/delegate_component.md) — the per-context type-level table mapping a component key to a provider.
 - [`IsProviderFor`](traits/is_provider_for.md) — the marker supertrait that surfaces missing-dependency errors.
-- [`CanUseComponent`](traits/can_use_component.md) — the consumer-side check that a context can use a component.
+- [`CanUseComponent`](traits/can_use_component.md) — the context-side check that a context can use a component.
 - [`HasField`](traits/has_field.md) — tag-keyed field access (with `HasFieldMut` and the provider-side `FieldGetter`).
 - [`HasFields`](traits/has_fields.md) — the whole-shape field representation and its conversions.
 - [`HasBuilder`](traits/has_builder.md) — the incremental-builder trait family (`BuildField`, `UpdateField`, `FinalizeBuild`, …).
@@ -184,7 +184,7 @@ These are the runtime traits the macros expand into — the traits a programmer 
 - [`DefaultNamespace`](traits/default_namespace.md) — the namespace/preset default-resolution traits.
 - [`StaticFormat`](traits/static_format.md) — runtime formatting of type-level strings and path concatenation.
 - [Monad traits](traits/monad.md) — `MonadicTrans`, `MonadicBind`, `LiftValue`, and `ContainsValue`, the trait layer behind monadic handler composition.
-- [Optional fields](traits/optional_fields.md) — the cgp-field-extra builder/extractor traits for optional and defaulted fields.
+- [Optional fields](traits/optional_fields.md) — the cgp-field-extra builder traits for optional and defaulted fields.
 
 ## Type-level types — [types/](types/)
 
