@@ -1,30 +1,32 @@
 # `Life`
 
-`Life<'a>` is a zero-sized type that lifts a lifetime into a type, so that a lifetime parameter from a CGP trait can travel through machinery that only accepts types.
+`Life<'a>` is a zero-sized type that lifts a lifetime into a type, so a lifetime parameter of a CGP trait can travel through machinery that accepts only types.
 
 ## Purpose
 
-`Life` exists because CGP's wiring is parameterized by *types*, not lifetimes, yet a CGP trait may carry a lifetime generic of its own. The marker that surfaces a provider's dependencies, [`IsProviderFor`](../traits/is_provider_for.md), takes a tuple of the trait's generic parameters as a single type argument so that the compiler can match a provider against the exact instantiation it is asked for. A lifetime cannot appear directly in that tuple — a tuple is a type and its members must be types — so any lifetime parameter on the trait must first be turned into a type. `Life<'a>` is that conversion: it packages the lifetime `'a` as a concrete type that can sit alongside the trait's other type parameters.
+`Life` exists because CGP's wiring is parameterized by types, yet a CGP trait may carry a lifetime parameter of its own. The dependency marker [`IsProviderFor`](../traits/is_provider_for.md) takes a tuple of the trait's generic parameters as one type argument, so the compiler can match a provider against the exact instantiation it is asked about. A lifetime cannot sit directly in that tuple, since a tuple's members must be types, so each lifetime parameter is first turned into a type. `Life<'a>` is that conversion.
 
-Without this lift, a consumer or provider trait that borrows — one declaring `fn get_reference(&self) -> &'a T` — could not record its `'a` in the dependency marker, and the wiring would be unable to distinguish one lifetime instantiation from another. `Life` lets the lifetime ride through `IsProviderFor` as `(Life<'a>, T)`, preserving it as part of the provider's identity while keeping the marker's argument a plain type. The macros insert `Life` automatically when generating provider traits for lifetime-carrying components; a user rarely writes it by hand but will see it in generated code and in compiler errors about provider resolution.
+Without it, a component that borrows, such as one declaring `fn get_reference(&self) -> &'a T`, could not record its `'a` in the marker, and the wiring could not tell one lifetime instantiation from another. `Life` lets the lifetime ride through `IsProviderFor` as `(Life<'a>, T)`. The macros insert it automatically for lifetime-carrying components, so a user rarely writes it but sees it in generated code and in errors about provider resolution.
 
 ## Definition
 
-`Life` is a tuple struct wrapping a single `PhantomData` over a raw pointer to a borrowed unit:
+`Life` is a tuple struct wrapping one `PhantomData` over a raw pointer to a borrowed unit:
 
 ```rust
 pub struct Life<'a>(pub PhantomData<*mut &'a ()>);
 ```
 
-The struct holds no runtime data — it is a zero-sized marker whose only job is to carry the lifetime `'a` in the type system. The choice of `PhantomData<*mut &'a ()>` for the phantom type is deliberate and controls how `Life<'a>` relates to other lifetimes under subtyping. A `*mut T` is *invariant* in `T`, so wrapping `&'a ()` behind a `*mut` makes `Life<'a>` invariant in `'a`: a `Life<'long>` is neither a subtype nor a supertype of a `Life<'short>`. Invariance is the correct choice here because the lifetime is being used as an exact identity in the dependency marker — two providers wired for different lifetimes must be treated as wired for genuinely different things, and a variant `Life` would let the compiler silently coerce one instantiation into another and pick the wrong provider. The raw pointer also keeps `Life<'a>` from carrying any auto-trait obligations tied to an actual borrow, since it does not own or reference a real value.
+It holds no runtime data; it only carries `'a` in the type system. The phantom type `*mut &'a ()` is chosen for how `Life<'a>` behaves under subtyping. A `*mut T` is invariant in `T`, so `Life<'a>` is invariant in `'a`: a `Life<'long>` is neither a subtype nor a supertype of a `Life<'short>`. Invariance is right here because the lifetime serves as an exact identity in the marker, and a variant `Life` would let the compiler coerce one instantiation into another and pick the wrong provider.
+
+The raw pointer has a side effect: `Life<'a>` is neither `Send` nor `Sync`, and neither is any struct holding a `PhantomData<Life<'a>>`, such as the provider struct `#[cgp_new_provider]` declares for a lifetime-generic provider. This rarely matters, because `Life` and provider structs appear only at the type level and are never sent between threads, but a bound like `Provider: Send` on such a provider fails.
 
 ## Behavior
 
-`Life` has no methods and implements no CGP traits of its own; its entire behavior is to occupy a type position. In a generated provider trait for a component with a lifetime, the lifetime is collected into the `IsProviderFor` argument tuple as `Life<'a>` so that the provider's dependency obligation reads the same way it would for any type parameter. The provider trait, its blanket forwarding impl, and the impls that satisfy it all agree on the same `(Life<'a>, T)` shape, which is what lets a borrowing component be wired and checked exactly like a non-borrowing one.
+`Life` has no methods and implements no traits; its behavior is to occupy a type position. In a component with a lifetime, the lifetime is collected into the `IsProviderFor` tuple as `Life<'a>`, so the provider's dependency reads the same way it would for a type parameter. The provider trait, its blanket impl, and every impl that satisfies it agree on the same `(Life<'a>, T)` shape, which is what lets a borrowing component be wired and checked like any other.
 
 ## Examples
 
-`Life` appears in the wiring generated for a component whose consumer trait carries a lifetime. Given a borrowing getter component:
+`Life` appears in the code generated for a component whose consumer trait carries a lifetime. Given a borrowing getter component:
 
 ```rust
 use cgp::prelude::*;
@@ -35,7 +37,7 @@ pub trait HasReference<'a, T: 'a + ?Sized> {
 }
 ```
 
-the generated provider trait records the lifetime in its dependency marker through `Life`, so its `IsProviderFor` bound names the lifetime as the type `Life<'a>` rather than as a bare `'a`:
+the generated provider trait records the lifetime in its marker as the type `Life<'a>` rather than a bare `'a`:
 
 ```rust
 // generated, in readable form:
@@ -46,14 +48,18 @@ the generated provider trait records the lifetime in its dependency marker throu
 // }
 ```
 
-Every impl that wires this component — whether through `UseContext`, a `UseField` getter, or a hand-written provider — carries the same `(Life<'a>, T)` tuple, so the lifetime is preserved end to end through the resolution machinery.
+Every impl that wires this component, whether `UseContext`, a field getter, or a hand-written provider, carries the same `(Life<'a>, T)` tuple, so the lifetime is preserved through resolution. A `check_components!` entry for it writes the parameters the same way, as `ReferenceGetterComponent: (Life<'a>, str)`.
 
 ## Related constructs
 
-`Life` is consumed by [`IsProviderFor`](../traits/is_provider_for.md), whose final type argument is the tuple of a component's generic parameters and into which a lifetime parameter is lifted as `Life<'a>`. It is emitted by the component-defining macros, principally [`#[cgp_component]`](../macros/cgp_component.md), when a consumer trait declares a lifetime. Conceptually it sits alongside the other type-level markers CGP uses to make non-type things addressable in trait resolution — [`Index`](index.md) lifts a `usize` and [`Symbol`](chars.md) lifts a string the way `Life` lifts a lifetime.
+These constructs are the ones `Life` relates to:
+
+- [`IsProviderFor`](../traits/is_provider_for.md) — whose parameter tuple receives each lifetime as `Life<'a>`.
+- [`#[cgp_component]`](../macros/cgp_component.md) and the provider macros — emit `Life` when a trait or provider declares a lifetime.
+- [`Index`](index.md) and [`Symbol`](chars.md) — the other lifts that make a non-type addressable in trait resolution, a `usize` and a string.
 
 ## Source
 
 - The type is defined in [crates/core/cgp-field/src/types/life.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/types/life.rs).
-- The macro logic that wraps a trait's lifetime parameters in `Life` when building the `IsProviderFor` argument tuple is in [crates/macros/cgp-macro-core/src/functions/is_provider_params.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/functions/is_provider_params.rs), with related placement in [crates/macros/cgp-macro-core/src/types/empty_struct.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/empty_struct.rs) and [crates/macros/cgp-macro-core/src/types/cgp_provider/provider_impl_args.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/cgp_provider/provider_impl_args.rs).
+- The macro logic that wraps a trait's lifetime parameters in `Life` for the `IsProviderFor` tuple is in [crates/macros/cgp-macro-core/src/functions/is_provider_params.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/functions/is_provider_params.rs), with the same lifting in a provider struct's `PhantomData` in [crates/macros/cgp-macro-core/src/types/empty_struct.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/empty_struct.rs) and in a provider impl's `IsProviderFor` in [crates/macros/cgp-macro-core/src/types/cgp_provider/provider_impl_args.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/cgp_provider/provider_impl_args.rs).
 - For how it is generated and the index of tests, see the implementation document [implementation/functions/parse/is_provider_params.md](../../implementation/functions/parse/is_provider_params.md).

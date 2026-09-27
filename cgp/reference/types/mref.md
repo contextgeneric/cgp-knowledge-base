@@ -1,16 +1,16 @@
 # `MRef`
 
-`MRef<'a, T>` is a "maybe-reference" — an enum that holds either a borrow of a `T` or an owned `T` — so a getter can return whichever it has without committing every implementor to one or the other.
+`MRef<'a, T>` is a "maybe reference": an enum holding either a borrow of a `T` or an owned `T`, so a getter can return whichever it has without committing every implementor to one or the other.
 
 ## Purpose
 
-`MRef` exists to let a single getter signature accommodate both the context that already stores a value and the context that must produce one on the fly. A getter that returns `&'a T` forces every context to keep a `T` it can lend out; a getter that returns `T` forces every context to hand over ownership, cloning even when it has a perfectly good reference to share. `MRef<'a, T>` removes that dilemma by being either case at runtime: a context with the value in a field returns `MRef::Ref` and lends it, while a context that computes or assembles the value returns `MRef::Owned` and gives it away. The caller treats both uniformly because `MRef` derefs to `T`.
+`MRef` lets one getter signature serve both a context that stores a value and a context that must produce one. A getter returning `&'a T` forces every context to keep a `T` it can lend; a getter returning `T` forces every context to hand over ownership, cloning even when a reference would do. `MRef<'a, T>` can be either at runtime: a context with the value in a field returns `MRef::Ref` and lends it, while a context that computes the value returns `MRef::Owned` and gives it away. The caller treats both the same way, because `MRef` dereferences to `T`.
 
-The type earns its keep in CGP's getter machinery, where the return type chosen for a getter method decides what body the macro generates. When a getter is declared to return `MRef<'a, T>` and takes `&self`, the generated field accessor wraps the borrowed field as `MRef::Ref(...)`, so the common case — reading a stored field — costs nothing extra, while the same interface still permits a provider elsewhere to return an owned value. This is what lets a getter abstract over "do I have this value, or do I make it?" without splitting into two traits.
+The type is used in CGP's getter machinery, where a getter's return type decides the body the macro generates. A getter declared to return `MRef<'a, T>` reads its field and wraps the borrow as `MRef::Ref(...)`, so reading a stored field costs nothing extra, while the same signature still lets a hand-written provider return an owned value. So one getter can abstract over whether the value is stored or made, without splitting into two traits.
 
 ## Definition
 
-`MRef` is a two-variant enum parameterized by a lifetime and an element type:
+`MRef` is a two-variant enum over a lifetime and an element type:
 
 ```rust
 pub enum MRef<'a, T> {
@@ -19,17 +19,21 @@ pub enum MRef<'a, T> {
 }
 ```
 
-The `Ref` variant borrows a `T` for the lifetime `'a`; the `Owned` variant carries a `T` by value. The lifetime applies only to the borrowed case, so an `MRef` built from an owned value is effectively unbounded in `'a`. The enum is an ordinary owned value — there is nothing type-level about it — and it is the runtime payload a getter passes back to its caller.
+`Ref` borrows a `T` for `'a`, and `Owned` carries a `T` by value. The lifetime constrains only the borrowed case, so an `MRef` built from an owned value is effectively unconstrained in `'a`. Nothing about the enum is type-level; it is the ordinary value a getter passes back to its caller.
 
 ## Behavior
 
-`MRef` behaves like a smart pointer to `T`, which is what makes the two variants interchangeable at the call site. It implements `Deref<Target = T>` by matching on the variant and returning a `&T` either way, so `&*my_ref` and any method call that auto-derefs work regardless of which case is inside. It also implements `AsRef<T>` over the same logic, giving an explicit `as_ref()` for code that prefers it.
+`MRef` behaves like a smart pointer to `T`, which is what makes its two variants interchangeable at the call site. The surface has three parts:
 
-Constructing an `MRef` is frictionless because it implements `From` in both directions: `From<T>` builds the `Owned` variant and `From<&'a T>` builds the `Ref` variant, so a value or a reference converts with `.into()`. When a caller needs to take ownership unconditionally, `get_or_clone` resolves the enum to a plain `T` — returning the owned value as is, or cloning the borrowed one — and is available whenever `T: Clone`. These three pieces — transparent `Deref`/`AsRef`, the two `From` impls, and `get_or_clone` — are the whole surface; a borrowed `MRef` is read cheaply and promoted to ownership only when explicitly asked.
+- **`Deref<Target = T>` and `AsRef<T>`** return a `&T` from either variant, so `&*value`, auto-dereferencing method calls, and `as_ref()` all work whichever case is inside.
+- **Two `From` impls** make construction easy: `From<T>` builds `Owned` and `From<&'a T>` builds `Ref`, so a value or a reference converts with `.into()`.
+- **`get_or_clone`**, available when `T: Clone`, resolves the enum to a plain `T`, moving the owned value or cloning the borrowed one.
+
+A borrowed `MRef` is therefore read cheaply and promoted to ownership only when asked.
 
 ## Examples
 
-`MRef` is used as the return type of a getter that should work whether the context stores the value or produces it. The following getter reads a borrowed field and hands it back as a borrowing `MRef`:
+Both variants share one type and are consumed the same way; only construction differs:
 
 ```rust
 use cgp::prelude::*;
@@ -49,13 +53,18 @@ let owned: String = borrowed.get_or_clone();
 assert_eq!(owned, "hello");
 ```
 
-Both `borrowed` and `made` have the same type and are consumed the same way; only the construction differs, and `get_or_clone` clones the borrowed case while moving the owned one.
+`get_or_clone` clones in the borrowed case and moves in the owned case.
 
 ## Related constructs
 
-`MRef` is one of the getter return modes recognized by the field-getter macros: a getter declared to return `MRef<'a, T>` over `&self` generates a borrowing accessor, parallel to how returning `&T`, `Option<&T>`, or `&str` selects other accessor shapes. It is therefore commonly seen with [`#[cgp_getter]`](../macros/cgp_getter.md) and the [`HasField`](../traits/has_field.md) access it builds on, and with the [`UseField`](../providers/use_field.md) provider that wires those getters. Its lifetime is an ordinary borrow lifetime and is unrelated to the type-level lifetime lift [`Life`](life.md), which serves a different purpose in provider wiring.
+These constructs are the ones `MRef` relates to:
+
+- [`#[cgp_auto_getter]`](../macros/cgp_auto_getter.md) and [`#[cgp_getter]`](../macros/cgp_getter.md) — recognize an `MRef<'_, T>` return type and read a `T` field, alongside the `&T`, `Option<&T>`, and `&str` forms.
+- [`#[implicit]`](../attributes/implicit.md) — accepts the same `MRef` form for an argument.
+- [`HasField`](../traits/has_field.md) and [`UseField`](../providers/use_field.md) — the field access and the provider those getters build on.
+- [`Life`](life.md) — an unrelated type-level lifetime lift; `MRef`'s lifetime is an ordinary borrow lifetime.
 
 ## Source
 
-- The type is defined in [crates/core/cgp-field/src/types/mref.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/types/mref.rs), including its `Deref`, `AsRef`, the two `From` impls, and `get_or_clone`.
-- The macro logic that recognizes an `MRef<'a, T>` getter return type is in [crates/macros/cgp-macro-core/src/functions/field/parse.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/functions/field/parse.rs) (the `MRef` field mode), and the `MRef::Ref(...)` body is emitted by the shared field-mode conversion in [crates/macros/cgp-macro-core/src/types/getter/field_mode.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/getter/field_mode.rs), which fully-qualifies `MRef` through the `crate::exports` markers.
+- The type is defined in [crates/core/cgp-field/src/types/mref.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/types/mref.rs), with its `Deref`, `AsRef`, the two `From` impls, and `get_or_clone`.
+- The macro logic that recognizes an `MRef<'a, T>` return type is in [crates/macros/cgp-macro-core/src/functions/field/parse.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/functions/field/parse.rs) (the `MRef` field mode), and the `MRef::Ref(...)` body is emitted by the shared conversion in [crates/macros/cgp-macro-core/src/types/getter/field_mode.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/getter/field_mode.rs).

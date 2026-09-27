@@ -1,41 +1,42 @@
 # `Index`
 
-`Index<const I: usize>` encodes a `usize` at the type level, giving a tuple-struct field a type-level name based on its position the way [`Symbol!`](../macros/symbol.md) names a field by its string.
+`Index<const I: usize>` encodes a `usize` at the type level, giving a tuple-struct field a type-level name based on its position, the way [`Symbol!`](../macros/symbol.md) names a field by its string.
 
 ## Purpose
 
-`Index` exists because CGP's getter mechanism keys every field by a *type* tag, and a tuple-struct field has no string name to turn into a [`Symbol!`](../macros/symbol.md) — it has only a position. To make positional fields participate in the same trait-resolution machinery as named fields, the position itself must become a type. `Index<I>` is that type: it carries a `usize` as a const-generic parameter and nothing else, so `Index<0>`, `Index<1>`, and `Index<2>` are three distinct types standing in for the first, second, and third fields of a tuple struct.
+`Index` exists because CGP keys every field by a type tag, and a tuple-struct field has only a position, not a name to turn into a [`Symbol!`](../macros/symbol.md). For positional fields to use the same trait-resolution machinery as named ones, the position must become a type. `Index<I>` is that type: it carries a `usize` as a const parameter and nothing else, so `Index<0>`, `Index<1>`, and `Index<2>` are three distinct types standing for the first, second, and third fields.
 
-Encoding the position as a type is what lets positional field access resolve through traits. Because `Index<0>` is a type, a context can carry a `HasField<Index<0>>` impl for its first field and a `HasField<Index<1>>` impl for its second side by side, and the compiler selects the right one purely from the tag — exactly as it would for two differently-named `Symbol!` tags. `Index` is therefore the numeric counterpart to `Symbol!`: a field is keyed by a `Symbol!` when it has a name and by an `Index` when it has only a position.
+Encoding the position as a type lets positional access resolve through traits. A context can carry a `HasField<Index<0>>` impl for its first field beside a `HasField<Index<1>>` impl for its second, and the compiler picks the right one from the tag, exactly as it would for two different `Symbol!` names. A field is keyed by `Symbol!` when it has a name and by `Index` when it has only a position.
 
-`Index` carries no runtime data of its own; it is a zero-sized marker. Its sole job is to make a number available at the type level, so it can appear as a [`HasField`](../traits/has_field.md) tag, as the `Tag` of a [`Field`](field.md) entry inside a tuple struct's [`HasFields`](../traits/has_fields.md) list, and inside `PhantomData` wherever a positional name is needed at compile time.
+`Index` is a zero-sized marker whose only job is to make a number available at the type level. It appears as a [`HasField`](../traits/has_field.md) tag, as the `Tag` of a [`Field`](field.md) entry in a tuple struct's [`HasFields`](../traits/has_fields.md) list, and inside `PhantomData` wherever a positional name is needed at compile time.
 
 ## Definition
 
-`Index` is a zero-sized struct parameterized only by a const-generic `usize`:
+`Index` is a zero-sized struct with a single const parameter:
 
 ```rust
 #[derive(Eq, PartialEq, Clone, Copy, Default)]
 pub struct Index<const I: usize>;
 ```
 
-The single const parameter `I` is the position the type represents — `Index<0>` for the field at offset zero, and so on. The struct has no fields, so a value of `Index<I>` carries no data; the number lives entirely in the type. The derived `Default`, `Clone`, and `Copy` make a value trivially available when one is needed (for instance as a `PhantomData`-free tag value), and `Eq`/`PartialEq` compare two values of the same `Index<I>` as always equal, since there is nothing to differ.
+`I` is the position the type stands for, so `Index<0>` is the field at offset zero. The struct has no fields, so the number lives entirely in the type. The derived `Default`, `Clone`, and `Copy` make a value trivially available, and `Eq`/`PartialEq` treat any two values of the same `Index<I>` as equal, since there is nothing to differ.
 
-`Index<I>` implements both `Display` and `Debug`, and both print the underlying number `I` — `Index<0>` displays as `0`. The number a tag stands for is therefore visible directly in formatted output and in compiler diagnostics.
+`Index<I>` implements `Display` and `Debug`, and both print `I`, so `Index<0>` displays as `0`.
 
 ## Behavior
 
-A tuple struct keys each of its fields by `Index<N>`, counting from zero, so the field at position `N` is read through the tag `Index<N>`. When a tuple struct derives [`HasField`](../derives/derive_has_field.md), the generated impl uses `Index<0>` for the `.0` field, `Index<1>` for `.1`, and so on, mapping each `get_field(PhantomData::<Index<N>>)` call to the corresponding positional access. The same `Index<N>` tags then appear as the `Tag` of each [`Field`](field.md) entry in the tuple struct's [`HasFields`](../traits/has_fields.md) representation, so generic code walking the field list reads positions where it would read `Symbol!` names for a named struct.
+A tuple struct keys each field by `Index<N>`, counting from zero. When it derives [`HasField`](../derives/derive_has_field.md), the generated impls use `Index<0>` for `.0`, `Index<1>` for `.1`, and so on. A tuple struct with two or more fields also uses these tags in its [`HasFields`](../traits/has_fields.md) representation, a `Product!` of `Field<Index<N>, _>` entries. A tuple struct with exactly one field is the exception there: its `Fields` is the field's type itself, with no `Field<Index<0>, _>` wrapper, although its `HasField<Index<0>>` impl still exists.
 
-Because `Index<I>` is zero-sized and the position lives in the type, accessing a field by index resolves entirely at compile time: there is no array bound check and no runtime indexing. Selecting the wrong index is a type error, not a runtime panic, because `Index<5>` on a three-field struct simply has no matching `HasField` impl.
+Access by index resolves entirely at compile time, because the position lives in the type. There is no bounds check and no runtime indexing, and an out-of-range index is a type error rather than a panic: `Index<5>` on a three-field struct simply has no matching `HasField` impl.
 
 ## Examples
 
-When a tuple struct derives `HasField`, each positional field is tagged by an `Index`:
+A tuple struct that derives `HasField` gets one impl per position:
 
 ```rust
 use cgp::prelude::*;
 
+#[derive(HasField)]
 pub struct Pair(pub u32, pub String);
 
 // generated for the first field:
@@ -47,7 +48,7 @@ pub struct Pair(pub u32, pub String);
 // }
 ```
 
-A field can then be read by supplying the `Index` tag, and the chosen position is fixed at compile time:
+A field is then read by passing its `Index` tag, with the position fixed at compile time:
 
 ```rust
 use cgp::prelude::*;
@@ -56,7 +57,7 @@ let pair = Pair(7, "hi".to_string());
 assert_eq!(*pair.get_field(PhantomData::<Index<0>>), 7);
 ```
 
-The number an `Index` carries is also visible through its `Display` impl, which prints the position:
+The number an `Index` carries is also visible through `Display`:
 
 ```rust
 assert_eq!(Index::<2>.to_string(), "2");
@@ -64,12 +65,16 @@ assert_eq!(Index::<2>.to_string(), "2");
 
 ## Related constructs
 
-`Index` is the field-position half of CGP's tagging scheme; [`Symbol!`](../macros/symbol.md) is the field-name half, used for named struct fields and enum variants. The tags it produces are consumed by [`HasField`](../traits/has_field.md) for single-field access — built per field by [`#[derive(HasField)]`](../derives/derive_has_field.md) — and appear as the `Tag` of [`Field`](field.md) entries inside the [`HasFields`](../traits/has_fields.md) list of a tuple struct. Both `Index` and `Symbol!` encode a primitive at the type level: `Index` a `usize`, `Symbol!` a string.
+These constructs are the ones `Index` relates to:
+
+- [`Symbol!`](../macros/symbol.md) — the name tag for named fields and enum variants, the counterpart of a position.
+- [`HasField`](../traits/has_field.md), derived by [`#[derive(HasField)]`](../derives/derive_has_field.md) — single-field access keyed by the tag.
+- [`Field`](field.md) and [`HasFields`](../traits/has_fields.md) — where the tag names each entry of a multi-field tuple struct's list.
 
 ## Source
 
 - `Index<const I: usize>` and its `Display` and `Debug` impls are defined in [crates/core/cgp-field/src/types/index.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/types/index.rs).
-- The `#[derive(HasField)]` codegen that tags tuple-struct fields with `Index<N>` lives under [crates/macros/cgp-macro-core/src/types/cgp_data/](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-core/src/types/cgp_data/), and the `HasField` trait it targets is in [crates/core/cgp-field/src/traits/has_field.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/traits/has_field.rs).
+- The `#[derive(HasField)]` codegen that tags tuple-struct fields with `Index<N>` is under [crates/macros/cgp-macro-core/src/types/cgp_data/](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-core/src/types/cgp_data/), and the `HasField` trait it targets is in [crates/core/cgp-field/src/traits/has_field.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/traits/has_field.rs).
 
 ## Public pages derived from this document
 

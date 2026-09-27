@@ -1,30 +1,30 @@
 # `Product!` and `product!`
 
-`Product![A, B, C]` is the type macro that builds a type-level list — a heterogeneous list of types encoded entirely in the type system — and the lowercase `product![a, b, c]` is its value-level counterpart that builds an actual value of that type.
+`Product![A, B, C]` builds a type-level list, a heterogeneous list of types encoded in the type system, and the lowercase `product![a, b, c]` builds a value of that type.
 
 ## Purpose
 
-`Product!` exists to represent an ordered sequence of types as a single type, so that a collection of fields can be reasoned about generically. CGP uses this to describe the *shape* of a struct: the list of its fields, in order, as one type. A type-level list is sometimes called an anonymous product type, because like a tuple it holds several things at once, but unlike a tuple it is built from a recursive `Cons`/`Nil` list that generic code can take apart one element at a time.
+`Product!` represents an ordered sequence of types as a single type, so a collection of fields can be handled generically. CGP uses it to describe the shape of a struct: its fields, in order, as one type. Such a list is sometimes called an anonymous product type, because like a tuple it holds several things at once. Unlike a tuple, it is a recursive `Cons`/`Nil` list that generic code can take apart one element at a time.
 
-The list is what makes structural, field-by-field operations possible. Because the fields of a struct are exposed as a single list type through [`HasFields`](../traits/has_fields.md), a provider can be written once to iterate, transform, or rebuild *any* struct's fields without knowing the concrete struct, by recursing over the `Cons`/`Nil` structure. A plain tuple cannot be decomposed this way in generic code; the recursive list can.
+That recursion is what makes field-by-field operations possible. A struct's fields are exposed as one list type through [`HasFields`](../traits/has_fields.md), so a provider can iterate over, transform, or rebuild any struct's fields without knowing the struct, by recursing over `Cons` and `Nil`. Generic code cannot take a plain tuple apart this way.
 
-`Product!` and `product!` are two halves of the same idea, split across the type and value levels. `Product!` produces a *type* and is used in type position — associated types, bounds, `type` aliases. `product!` produces a *value* of a matching type and is used in expression position. The uppercase/lowercase convention mirrors Rust's own split between, say, a struct type and a struct literal.
+`Product!` and `product!` are the type and value halves of the same idea. `Product!` produces a type and is used in type position, such as an associated type, a bound, or a `type` alias. `product!` produces a value of the matching type and is used in expression position. The uppercase and lowercase names mirror Rust's split between a struct type and a struct literal.
 
 ## Syntax
 
-Both macros take a comma-separated list of elements and may be empty. `Product!` takes types and is used wherever a type is expected; `product!` takes expressions and is used wherever a value is expected:
+Both macros take a comma-separated list, which may be empty. `Product!` takes types, and `product!` takes expressions:
 
 ```rust
-Product![u32, String, bool]   // a type
-product![1u32, "hi".to_string(), true]   // a value of that type
-Product![]   // the empty list type
+Product![u32, String, bool]                // a type
+product![1u32, "hi".to_string(), true]     // a value of that type
+Product![]                                 // the empty list type
 ```
 
-The element lists line up positionally, so the value built by `product!` has the type built by `Product!` over the corresponding element types.
+The two lists line up by position, so the value `product!` builds has the type `Product!` builds over the corresponding element types.
 
 ## Syntax Grammar
 
-The two macros take a possibly-empty, comma-separated list — of types for `Product!` and of expressions for `product!`:
+The two macros take a possibly empty, comma-separated list, of types for `Product!` and of expressions for `product!`:
 
 ```ebnf
 ProductInput -> ( Type ( `,` Type )* `,`? )?
@@ -32,11 +32,11 @@ ProductInput -> ( Type ( `,` Type )* `,`? )?
 ProductExpr  -> ( Expression ( `,` Expression )* `,`? )?
 ```
 
-`ProductInput` is the grammar of the type macro `Product!`, used in type position; `ProductExpr` is the grammar of the value macro `product!`, used in expression position. `Type` and `Expression` are the Rust grammar's productions, and both lists may be empty (`Product![]`, `product![]`) or carry a trailing comma. The element lists line up positionally, so a `product!` value has the type the corresponding `Product!` builds.
+`ProductInput` is the grammar of the type macro `Product!`, and `ProductExpr` that of the value macro `product!`. `Type` and `Expression` are Rust grammar productions, and both lists may be empty or end with a trailing comma.
 
 ## Expansion
 
-`Product!` expands to a right-nested chain of `Cons`, terminated by `Nil`. The three-element list desugars as follows:
+`Product!` expands to a right-nested chain of `Cons` ending in `Nil`:
 
 ```rust
 // before
@@ -48,9 +48,9 @@ Product![A, B, C]
 Cons<A, Cons<B, Cons<C, Nil>>>
 ```
 
-The two building blocks are defined in `cgp-base-types`. `Cons<Head, Tail>` is a pair holding the first element and the rest of the list as `Cons<Head, Tail>(pub Head, pub Tail)`; chaining it through `Tail` and terminating with the empty `Nil` struct produces a list of any length. An empty `Product![]` is simply `Nil`. The macro constructs the chain by folding the elements from right to left onto `Nil`.
+Both building blocks come from `cgp-base-types`. [`Cons<Head, Tail>`](../types/cons.md) is the tuple struct `Cons<Head, Tail>(pub Head, pub Tail)`, holding the first element and the rest of the list; chaining it through `Tail` and ending with the unit struct `Nil` gives a list of any length. The macro folds the elements from right to left onto `Nil`, so an empty `Product![]` is `Nil`.
 
-The value macro `product!` expands the same way but produces a value rather than a type, using the tuple-struct constructor of `Cons`:
+The value macro `product!` expands the same way, using the `Cons` tuple-struct constructor:
 
 ```rust
 // before
@@ -62,11 +62,11 @@ product![a, b, c]
 Cons(a, Cons(b, Cons(c, Nil)))
 ```
 
-Because `Cons` is a real tuple struct and `Nil` a real unit struct, the value built by `product!` is an ordinary owned value whose type is exactly what `Product!` builds over the same elements' types.
+Because `Cons` is a real tuple struct and `Nil` a real unit struct, the result is an ordinary owned value whose type is exactly what `Product!` builds over the elements' types.
 
 ## Examples
 
-The most common appearance of `Product!` is as the `Fields` of a struct that derives [`HasFields`](../derives/derive_has_fields.md), where each element is a `Field<Tag, Value>` pairing a field name with its type:
+`Product!` most often appears as the `Fields` of a struct that derives [`HasFields`](../derives/derive_has_fields.md), where each element is a [`Field<Tag, Value>`](../types/field.md) pairing a field name with its type:
 
 ```rust
 use cgp::prelude::*;
@@ -86,9 +86,9 @@ pub struct Person {
 // }
 ```
 
-The field names here are type-level strings — see [`Symbol!`](symbol.md) — so the whole `Product!` is a fully type-level description of `Person`'s layout. Generic code can then walk that list to build, read, or transform a `Person` without being written against `Person` specifically.
+The field names are [`Symbol!`](symbol.md) type-level strings, so the whole list is a type-level description of `Person`'s layout that generic code can walk to build, read, or transform a `Person`.
 
-A standalone list and a matching value can also be written directly:
+A list type and a matching value can also be written directly:
 
 ```rust
 type Row = Product![u32, String, bool];
@@ -97,12 +97,19 @@ let row: Row = product![1, "hi".to_string(), true];
 
 ## Related constructs
 
-`Product!` is the product (record-like) counterpart to [`Sum!`](sum.md), which builds the coproduct used for enum variants; the two share the same right-nested shape but `Sum!` terminates in `Void` rather than `Nil`. The list elements are most often [`Field`](../types/field.md) entries whose tags are [`Symbol!`](symbol.md) field names or [`Index`](../types/index.md) positions. The list type as a whole is what [`#[derive(HasFields)]`](../derives/derive_has_fields.md) assigns to a struct, building on the per-field [`#[derive(HasField)]`](../derives/derive_has_field.md). The `Chars` list inside `Symbol!` is a specialized version of this same `Cons`/`Nil` structure.
+These constructs are the ones `Product!` relates to:
+
+- [`Sum!`](sum.md) — the counterpart for enum variants, with the same right-nested shape but branching with `Either` and ending in `Void`.
+- [`Cons`](../types/cons.md) — the list cell `Product!` expands to, with its terminator `Nil`.
+- [`Field`](../types/field.md) — the usual element type, tagged by a [`Symbol!`](symbol.md) name or an [`Index`](../types/index.md) position.
+- [`#[derive(HasFields)]`](../derives/derive_has_fields.md) — assigns a struct its `Product!` of fields; the per-field tags come from [`#[derive(HasField)]`](../derives/derive_has_field.md).
+- [`Chars`](../types/chars.md) — the character list inside `Symbol!`, a specialized form of this `Cons`/`Nil` structure.
+- [Product operations](../traits/product_ops.md) — `AppendProduct`, `ConcatProduct`, and `MapFields`, which transform product lists at the type level.
 
 ## Source
 
 - Entry points: `Product` and `product` in [crates/macros/cgp-macro-lib/src/product.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-lib/src/product.rs).
 - Type form: the `ProductType` construct in [crates/macros/cgp-macro-core/src/types/product/product_type.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/product/product_type.rs), whose `eval` right-folds the elements with `Cons` onto `Nil`.
-- Value form: `ProductExpr` in [crates/macros/cgp-macro-core/src/types/product/product_expr.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/product/product_expr.rs), which does the same fold using the `Cons(..)` constructor.
+- Value form: `ProductExpr` in [crates/macros/cgp-macro-core/src/types/product/product_expr.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/product/product_expr.rs), which does the same fold with the `Cons(..)` constructor.
 - Runtime types: [crates/core/cgp-base-types/src/types/cons.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-base-types/src/types/cons.rs) (`Cons<Head, Tail>`) and [crates/core/cgp-base-types/src/types/nil.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-base-types/src/types/nil.rs) (`Nil`).
 - Internal walkthrough (the parse-and-`eval` pipeline shared by both forms, the right-fold onto `Nil`, and the index of tests): [implementation/entrypoints/product.md](../../implementation/entrypoints/product.md).

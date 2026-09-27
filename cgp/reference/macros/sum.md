@@ -1,39 +1,39 @@
 # `Sum!`
 
-`Sum![A, B, C]` is the type macro that builds a type-level sum type — a coproduct encoded in the type system whose value is exactly one of the listed types — used by CGP to represent the variants of an enum the way [`Product!`](product.md) represents the fields of a struct.
+`Sum![A, B, C]` builds a type-level sum type, a coproduct whose value is exactly one of the listed types, which CGP uses to represent an enum's variants the way [`Product!`](product.md) represents a struct's fields.
 
 ## Purpose
 
-`Sum!` exists to represent a choice among several types as a single type, so that the variants of an enum can be reasoned about generically. Where a [`Product!`](product.md) list holds a value for *every* element at once (a record), a `Sum!` holds a value for exactly *one* element (a tagged union). It is sometimes called an anonymous sum type or coproduct, and it is the structural mirror image of the product: both are right-nested chains over the same kind of list, but the sum branches at each step instead of pairing.
+`Sum!` represents a choice among several types as a single type, so an enum's variants can be handled generically. A [`Product!`](product.md) list holds a value for every element at once, like a record; a `Sum!` holds a value for exactly one element, like a tagged union. It is sometimes called an anonymous sum type or coproduct, and it mirrors the product: both are right-nested chains, but the sum branches at each step where the product pairs.
 
-The sum is what makes structural, variant-by-variant operations possible. Because an enum's variants are exposed as a single sum type through [`HasFields`](../traits/has_fields.md), a provider can be written once to match, dispatch on, or construct *any* enum's variants without knowing the concrete enum, by recursing over the nested branch structure. This is the basis for CGP's extensible-variant machinery, where each variant is handled by walking the chain rather than by writing a hand-rolled `match` against a fixed enum.
+That structure is what makes variant-by-variant operations possible. An enum's variants are exposed as one sum type through [`HasFields`](../traits/has_fields.md), so a provider can match, dispatch on, or construct any enum's variants without knowing the enum, by recursing over the branches. This is the basis of CGP's [extensible variants](../../concepts/extensible-variants.md), where each variant is handled by walking the chain rather than by a `match` against a fixed enum.
 
-`Sum!` is the variant-level analogue of `Product!`, and the two are used together. A struct's fields desugar to a `Product!`; an enum's variants desugar to a `Sum!` of the same `Field<Tag, Value>` entries. Knowing one shape tells you the other.
+`Sum!` and `Product!` are used together. A struct's fields become a `Product!`, and an enum's variants become a `Sum!` of the same kind of `Field<Tag, Value>` entries, so knowing one shape tells you the other.
 
 ## Syntax
 
-The macro takes a comma-separated list of types and may be empty. It is used wherever a type is expected:
+The macro takes a comma-separated list of types, which may be empty, and is used wherever a type is expected:
 
 ```rust
 Sum![u32, String, bool]
 Sum![]   // the empty sum
 ```
 
-Each listed type is one possible variant of the sum; a value of the sum type carries exactly one of them.
+Each listed type is one possible alternative, and a value of the sum carries exactly one of them.
 
 ## Syntax Grammar
 
-The input to `Sum!` is a possibly-empty, comma-separated list of types:
+The input is a possibly empty, comma-separated list of types:
 
 ```ebnf
 SumInput -> ( Type ( `,` Type )* `,`? )?
 ```
 
-`Type` is the Rust grammar's type production, and the list may be empty (`Sum![]`) or carry a trailing comma. The macro is used in type position, and each listed type is one possible variant of the sum.
+`Type` is the Rust grammar's type production, and the list may be empty or end with a trailing comma.
 
 ## Expansion
 
-`Sum!` expands to a right-nested chain of `Either`, terminated by `Void`. The three-element sum desugars as follows:
+`Sum!` expands to a right-nested chain of `Either` ending in `Void`:
 
 ```rust
 // before
@@ -41,17 +41,17 @@ Sum![A, B, C]
 ```
 
 ```rust
-// after — readable form
+// after
 Either<A, Either<B, Either<C, Void>>>
 ```
 
-The two building blocks are defined in `cgp-field` and differ from the product list in being branching rather than pairing. `Either<Head, Tail>` is the sum cell, an enum with two cases — `Left(Head)` selects the head type, and `Right(Tail)` defers to the rest of the chain — so a value of `Either<A, Either<B, Either<C, Void>>>` is `Left` for an `A`, `Right(Left(..))` for a `B`, and `Right(Right(Left(..)))` for a `C`. The terminator is `Void`, an empty enum that can never be constructed, which closes the chain off: reaching the `Void` position would mean the value matched none of the listed types, which is impossible. An empty `Sum![]` is therefore just `Void`, a type with no values.
+Both building blocks come from `cgp-field`, and they branch rather than pair. [`Either<Head, Tail>`](../types/either.md) is an enum with two cases: `Left(Head)` selects the head type, and `Right(Tail)` defers to the rest of the chain. So a value of `Either<A, Either<B, Either<C, Void>>>` is `Left(..)` for an `A`, `Right(Left(..))` for a `B`, and `Right(Right(Left(..)))` for a `C`. The chain ends in `Void`, an empty enum with no values, because reaching that position would mean the value matched none of the alternatives. The macro folds the types from right to left onto `Void`, so an empty `Sum![]` is `Void` itself, a type with no values.
 
-The choice of `Void` rather than `Nil` is the key difference from [`Product!`](product.md). A product terminates in `Nil` because an empty record is a valid, constructible value (the unit-like `Nil`); a sum terminates in `Void` because an empty choice is *uninhabited* — there is no value to pick. `Void` is functionally the never type, used here specifically to mark the end of a sum. The macro constructs the chain by folding the element types from right to left onto `Void`.
+Ending in `Void` rather than `Nil` is the essential difference from [`Product!`](product.md). An empty record is a valid value, the unit struct `Nil`, but an empty choice is uninhabited, since there is nothing to choose. `Void` plays the role of the never type here, marking the end of a sum.
 
 ## Examples
 
-The primary appearance of `Sum!` is as the `Fields` of an enum that derives [`HasFields`](../derives/derive_has_fields.md), where each branch is a `Field<Tag, Value>` pairing a variant name with its payload:
+`Sum!` most often appears as the `Fields` of an enum that derives [`HasFields`](../derives/derive_has_fields.md), where each branch is a [`Field<Tag, Value>`](../types/field.md) pairing a variant name with its payload:
 
 ```rust
 use cgp::prelude::*;
@@ -62,7 +62,7 @@ pub enum Shape {
     Rectangle { width: f64, height: f64 },
 }
 
-// generated (schematically):
+// generated:
 // impl HasFields for Shape {
 //     type Fields = Sum![
 //         Field<Symbol!("Circle"), f64>,
@@ -74,9 +74,9 @@ pub enum Shape {
 // }
 ```
 
-The variant names are type-level strings — see [`Symbol!`](symbol.md) — and a struct-like variant nests a [`Product!`](product.md) of its own fields, so an enum's full shape is a `Sum!` of variants whose payloads may themselves be `Product!` records. Generic code walks the `Sum!` to dispatch on which variant a value holds, and walks any nested `Product!` to reach that variant's fields.
+The variant names are [`Symbol!`](symbol.md) strings. A variant's payload follows its fields: a single unnamed field is the payload type itself, a struct-like variant nests a [`Product!`](product.md) of its named fields, several unnamed fields nest a `Product!` keyed by [`Index`](../types/index.md), and a unit variant's payload is `Nil`. Generic code walks the `Sum!` to find which variant a value holds, and walks a nested `Product!` to reach that variant's fields.
 
-A standalone sum type can also be written directly:
+A sum type can also be written directly:
 
 ```rust
 type Token = Sum![u32, String, bool];
@@ -84,11 +84,17 @@ type Token = Sum![u32, String, bool];
 
 ## Related constructs
 
-`Sum!` is the coproduct counterpart to [`Product!`](product.md): the two share a right-nested shape, but `Sum!` branches with [`Either`](../types/either.md) and terminates in the uninhabited `Void`, while `Product!` pairs with [`Cons`](../types/cons.md) and terminates in `Nil`. Its branches are typically [`Field`](../types/field.md) entries whose tags are [`Symbol!`](symbol.md) variant names. The sum type as a whole is what [`#[derive(HasFields)]`](../derives/derive_has_fields.md) assigns to an enum, and it underpins the extensible-variant derives [`#[derive(CgpVariant)]`](../derives/derive_cgp_variant.md) and [`#[derive(FromVariant)]`](../derives/derive_from_variant.md), which build and consume individual `Either` branches. For struct fields, the per-field tags are produced by [`#[derive(HasField)]`](../derives/derive_has_field.md).
+These constructs are the ones `Sum!` relates to:
+
+- [`Product!`](product.md) — the record counterpart, pairing with [`Cons`](../types/cons.md) and ending in `Nil`.
+- [`Either`](../types/either.md) — the sum cell `Sum!` expands to, with its terminator `Void`.
+- [`Field`](../types/field.md) — the usual branch type, tagged by a [`Symbol!`](symbol.md) variant name.
+- [`#[derive(HasFields)]`](../derives/derive_has_fields.md) — assigns an enum its `Sum!` of variants.
+- [`#[derive(CgpVariant)]`](../derives/derive_cgp_variant.md) and [`#[derive(FromVariant)]`](../derives/derive_from_variant.md) — the extensible-variant derives that build on this representation.
 
 ## Source
 
-- Entry point: `Sum` in [crates/macros/cgp-macro-lib/src/sum.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-lib/src/sum.rs), forwarding to the `SumType` construct in [crates/macros/cgp-macro-core/src/types/sum.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/sum.rs), whose `eval` right-folds the element types with `Either` onto `Void`.
-- Runtime types: `Either<Head, Tail>` and the uninhabited `Void`, both defined in [crates/core/cgp-field/src/types/sum.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/types/sum.rs).
-- Enum `HasFields` derive that emits a `Sum!` of `Field<Symbol!("..."), _>` branches: [crates/macros/cgp-macro-core/src/types/cgp_data/derive_has_fields/sum.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/cgp_data/derive_has_fields/sum.rs).
+- Entry point: `Sum` in [crates/macros/cgp-macro-lib/src/sum.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-lib/src/sum.rs), forwarding to the `SumType` construct in [crates/macros/cgp-macro-core/src/types/sum.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/sum.rs), whose `eval` right-folds the types with `Either` onto `Void`.
+- Runtime types: `Either<Head, Tail>` and `Void`, both in [crates/core/cgp-field/src/types/sum.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/types/sum.rs).
+- The enum `HasFields` derive that emits a `Sum!` of `Field<Symbol!("..."), _>` branches: [crates/macros/cgp-macro-core/src/types/cgp_data/derive_has_fields/sum.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/cgp_data/derive_has_fields/sum.rs).
 - Internal walkthrough (the parse-and-`eval` pipeline, the right-fold onto `Void`, and the index of tests): [implementation/entrypoints/sum.md](../../implementation/entrypoints/sum.md).

@@ -1,14 +1,14 @@
 # `PathCons`
 
-`PathCons<Head, Tail>` is the type-level path list — a recursive list of segments, where both the head and the tail may be unsized — that CGP uses to address an entry deep inside a delegation table.
+`PathCons<Head, Tail>` is the type-level path list, a recursive list of segments whose head and tail may both be unsized, that CGP uses to address an entry behind layers of delegation.
 
 ## Purpose
 
-`PathCons` exists to express a *route* through nested delegation tables as a single type. Where a bare component name picks one entry out of a context's table, CGP sometimes needs to point at an entry that lives behind one or more layers of indirection — inside a namespace, behind another namespace it inherits from, under a prefix. A path is the type that names such a route: a list of segments read left to right, each segment narrowing the lookup one step further. `PathCons` is the cons cell of that list, and [`Nil`](cons.md) terminates it, so `PathCons<A, PathCons<B, Nil>>` is the two-step path "first `A`, then `B`."
+`PathCons` expresses a route through nested delegation tables as a single type. A bare component name picks one entry out of a context's table, but CGP sometimes needs an entry that sits behind indirection: inside a namespace, behind a namespace it inherits from, or under a prefix. A path names such a route as a list of segments read left to right. `PathCons` is the cell of that list and [`Nil`](cons.md) ends it, so `PathCons<A, PathCons<B, Nil>>` is the two-step path "first `A`, then `B`".
 
-A path differs from the [`Cons`](cons.md) product list even though both are right-nested and `Nil`-terminated, and the difference is the unsized bound. `PathCons` declares `Head: ?Sized` and `Tail: ?Sized`, which lets a path segment be a trait object or other unsized type and lets the whole path be manipulated without requiring its parts to have a known size. A product list keys a struct's fields and its elements are always sized values; a path keys a lookup and its segments are pure type-level markers that never need to be `Sized`.
+A path differs from the [`Cons`](cons.md) product list, although both are right-nested and end in `Nil`, in its unsized bounds. `PathCons` declares `Head: ?Sized` and `Tail: ?Sized`, so a segment can be an unsized type such as `str`, and a whole path can be handled without requiring its parts to have a known size. A product list holds a struct's field values, which are always sized; a path's segments are markers that never need to be.
 
-The segments themselves are the same markers CGP uses elsewhere: a lowercase dotted name becomes a [`Symbol`](chars.md) type-level string, and a capitalized name becomes that named type (typically a component key such as `FooProviderComponent` or a namespace marker). A path is therefore an interleaving of symbols and component names — the form `@a.B.c` — assembled into a `PathCons` chain. Paths are written with the [`Path!`](../macros/path.md) macro rather than spelled by hand, so this document describes the runtime list; the `@`-segment syntax and the expansion live in that macro's document.
+The segments are the markers CGP uses elsewhere. A lowercase identifier becomes a [`Symbol`](chars.md) type-level string, and a capitalized name, usually a component key such as `FooProviderComponent` or a namespace marker, stays that type. Paths are written with the [`Path!`](../macros/path.md) macro or embedded in wiring as `@a.B.c`, rather than spelled by hand; that macro's document covers the syntax and the segment rule, and this one covers the runtime list.
 
 ## Definition
 
@@ -18,11 +18,11 @@ The segments themselves are the same markers CGP uses elsewhere: a lowercase dot
 pub struct PathCons<Head: ?Sized, Tail: ?Sized>(pub PhantomData<Head>, pub PhantomData<Tail>);
 ```
 
-The `Head` is the first segment of the path and the `Tail` is the remainder, expected to be either another `PathCons` or `Nil` at the end. Both bounds are `?Sized` so that any type — sized or not — can occupy a segment. The struct carries no runtime data; like the other type-level building blocks it exists purely so that a route can be named and matched in trait resolution.
+`Head` is the path's first segment and `Tail` the remainder, another `PathCons` or `Nil` at the end. The struct carries no runtime data and exists so a route can be named and matched in trait resolution.
 
 ## Behavior
 
-`PathCons` participates in path concatenation through the [`ConcatPath`](../traits/static_format.md) trait, which appends one path onto the end of another at the type level. The trait recurses down the list: `PathCons<Head, Tail>` concatenates with `Other` by keeping `Head` and concatenating `Tail` with `Other`, while `Nil` concatenates with `Other` by simply becoming `Other`. The result is the expected behavior of list append, computed entirely as an associated-type projection:
+`PathCons` supports concatenation through the [`ConcatPath`](../traits/static_format.md) trait, which appends one path to another at the type level. The trait recurses down the list: `PathCons<Head, Tail>` concatenated with `Other` keeps `Head` and concatenates `Tail` with `Other`, and `Nil` concatenated with `Other` becomes `Other`. The result is list append, computed as an associated-type projection:
 
 ```rust
 pub trait ConcatPath<Other: ?Sized> {
@@ -41,11 +41,11 @@ impl<Other: ?Sized> ConcatPath<Other> for Nil {
 }
 ```
 
-Beyond concatenation, a `PathCons` path is consumed by [`RedirectLookup`](../providers/redirect_lookup.md), the provider that resolves a delegation by walking a context's table along a path. When a namespace or a prefixed component re-routes a lookup, it does so by producing a `RedirectLookup<Components, Path>` whose `Path` is a `PathCons` chain; `RedirectLookup` follows the chain segment by segment until it lands on a concrete provider. The path itself never names a provider — it only describes where to look — so the same path can resolve to different providers depending on the table it is walked against.
+A path is consumed by [`RedirectLookup`](../providers/redirect_lookup.md), the provider a redirect or a namespace entry names as `RedirectLookup<Components, Path>`. Its impl, which [`#[cgp_component]`](../macros/cgp_component.md) generates for each component, extends `Path` with the component's type parameters through `ConcatPath` and looks the whole extended path up as one key in `Components`, as `Components: DelegateComponent<Path>`. The path therefore never names a provider itself; it says which key to look up, so the same path can resolve to different providers in different tables, and the entry it reaches may redirect again.
 
 ## Examples
 
-Paths are produced by the [`Path!`](../macros/path.md) macro and most often appear inside the wirings emitted by [`cgp_namespace!`](../macros/cgp_namespace.md). A namespace entry that redirects one component key to a path desugars into a `RedirectLookup` over a `PathCons` chain:
+Paths most often appear inside the entries emitted by [`cgp_namespace!`](../macros/cgp_namespace.md). A namespace entry that redirects a component key to a path becomes a `RedirectLookup` over a `PathCons` list:
 
 ```rust
 use cgp::prelude::*;
@@ -63,24 +63,31 @@ cgp_namespace! {
 // }
 ```
 
-A path with both a lowercase symbol segment and a capitalized component segment interleaves the two marker kinds. Registering a component into a namespace under a prefix produces a two-segment path:
+A path can interleave symbol and type segments. Registering a `Bar` component into a namespace with `#[prefix(@app in MyNamespace)]` produces a path of a symbol followed by the component's own marker:
 
 ```rust
-// @MyBarComponent.BarProviderComponent  expands to
-// PathCons<MyBarComponent, PathCons<BarProviderComponent, Nil>>
+// @app.BarProviderComponent  expands to
+// PathCons<Symbol!("app"), PathCons<BarProviderComponent, Nil>>
 ```
 
-Here the lookup steps first through `MyBarComponent` and then through `BarProviderComponent` before resolving. A single-segment path is `PathCons<Segment, Nil>`, and the empty path is `Nil` alone.
+A single-segment path is `PathCons<Segment, Nil>`, and the empty path is `Nil` alone.
 
 ## Related constructs
 
-`PathCons` is the routing counterpart to the product list [`Cons`](cons.md)/`Nil`; it shares the right-nested, `Nil`-terminated shape but its segments are `?Sized` markers rather than sized field values. Its segments are [`Symbol`](chars.md) type-level strings (for lowercase names) and named component or namespace types (for capitalized names). Paths are built by the [`Path!`](../macros/path.md) macro, appended through [`ConcatPath`](../traits/static_format.md), and walked by [`RedirectLookup`](../providers/redirect_lookup.md) when resolving a delegation. They are produced throughout [`cgp_namespace!`](../macros/cgp_namespace.md), which uses them to reroute namespace entries and to register prefixed components.
+These constructs are the ones `PathCons` relates to:
+
+- [`Cons`/`Nil`](cons.md) — the product list, with the same right-nested shape but sized field values as elements.
+- [`Symbol`](chars.md) — the encoding of a lowercase segment.
+- [`Path!`](../macros/path.md) — the macro that builds a path.
+- [`ConcatPath`](../traits/static_format.md) — appends one path to another.
+- [`RedirectLookup`](../providers/redirect_lookup.md) — looks a path up in a table.
+- [`delegate_components!`](../macros/delegate_components.md) and [`cgp_namespace!`](../macros/cgp_namespace.md) — produce paths for redirects, `open` dispatch, and prefixed components; a `delegate_components!` path key ends in a wildcard parameter instead of `Nil`.
 
 ## Source
 
 - The runtime type is defined in [crates/core/cgp-base-types/src/types/path.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-base-types/src/types/path.rs) (`PathCons<Head: ?Sized, Tail: ?Sized>`), with `Nil` in [crates/core/cgp-base-types/src/types/nil.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-base-types/src/types/nil.rs).
 - The `ConcatPath` trait and its impls are in [crates/core/cgp-base-types/src/traits/concat_path.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-base-types/src/traits/concat_path.rs).
-- The constructing macro is [`Path!`](../macros/path.md) ([crates/macros/cgp-macro-lib/src/path.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-lib/src/path.rs)), whose fold over the segments lives in [crates/macros/cgp-macro-core/src/types/path/unipath.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/path/unipath.rs).
+- The constructing macro is [`Path!`](../macros/path.md) ([crates/macros/cgp-macro-lib/src/path.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-lib/src/path.rs)), whose fold over the segments is in [crates/macros/cgp-macro-core/src/types/path/unipath.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/path/unipath.rs).
 - `RedirectLookup`, which consumes a path at resolution time, is in [crates/core/cgp-component/src/providers/redirect_lookup.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-component/src/providers/redirect_lookup.rs).
 
 ## Public pages derived from this document
