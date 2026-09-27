@@ -1,16 +1,27 @@
 # `Handler`
 
-`Handler` and `HandlerRef` are the most general members of the [handler family](../../concepts/handlers.md): async, fallible components that turn an `Input` into an `Output` under a phantom `Code` tag and return a `Result` in the context's abstract error type.
+`Handler` and `HandlerRef` are the most general members of the
+[handler family](../../concepts/handlers.md): async, fallible components that turn an `Input` into
+an `Output` under a phantom `Code` tag and return a `Result` in the context's abstract error type.
 
 ## Purpose
 
-`Handler` is for computations that must both await and fail, such as a call to a remote service. Every other member of the family drops one of these properties: without failure a `Handler` is an [`AsyncComputer`](computer.md), without asynchrony it is a [`TryComputer`](try_computer.md), and without both it is a [`Computer`](computer.md).
+`Handler` is for computations that must both await and fail, such as a call to a remote service.
+Every other member of the family drops one of these properties: without failure a `Handler` is an
+[`AsyncComputer`](computer.md), without asynchrony it is a [`TryComputer`](try_computer.md), and
+without both it is a [`Computer`](computer.md).
 
-That generality makes `Handler` the bound for generic code that should accept any computation. Every simpler provider can be promoted to a `Handler`: a computer becomes a handler that neither awaits nor fails, a fallible computer becomes one that does not await, and an async computer becomes one that never fails. The reverse is impossible, because a general computation cannot be assumed synchronous or infallible. So a provider author implements the weakest member that fits, and the wiring lifts it to `Handler` where a handler is needed.
+That generality makes `Handler` the bound for generic code that should accept any computation. Every
+simpler provider can be promoted to a `Handler`: a computer becomes a handler that neither awaits
+nor fails, a fallible computer becomes one that does not await, and an async computer becomes one
+that never fails. The reverse is impossible, because a general computation cannot be assumed
+synchronous or infallible. So a provider author implements the weakest member that fits, and the
+wiring lifts it to `Handler` where a handler is needed.
 
 ## Definition
 
-`Handler` is a `#[cgp_component]` under [`#[async_trait]`](../macros/async_trait.md) that imports the abstract error with [`#[use_type(HasErrorType.Error)]`](../attributes/use_type.md):
+`Handler` is a `#[cgp_component]` under [`#[async_trait]`](../macros/async_trait.md) that imports
+the abstract error with [`#[use_type(HasErrorType.Error)]`](../attributes/use_type.md):
 
 ```rust
 #[async_trait]
@@ -28,17 +39,27 @@ pub trait CanHandle<Code, Input> {
 
 The parts are these:
 
-- **`handle`** is the async counterpart of `try_compute` and the fallible counterpart of `compute_async`. `#[async_trait]` rewrites it to return `impl Future<Output = Result<Self::Output, Error>>`, with no boxing and no added `Send` bound. The provider trait is `Handler<Context, Code, Input>`, wired with `HandlerComponent`.
-- **`#[use_type(HasErrorType.Error)]`** adds `HasErrorType` as a supertrait and rewrites the bare `Error` to `<Self as HasErrorType>::Error`.
-- **The `#[derive_delegate(...)]` and [`#[prefix(...)]`](../attributes/prefix.md) attributes** are the same as on every handler-family component: legacy delegation tables on `Code` and `Input`, and registration under `@cgp.extra.handler` in `DefaultNamespace`.
+- **`handle`** is the async counterpart of `try_compute` and the fallible counterpart of
+  `compute_async`. `#[async_trait]` rewrites it to return
+  `impl Future<Output = Result<Self::Output, Error>>`, with no boxing and no added `Send` bound. The
+  provider trait is `Handler<Context, Code, Input>`, wired with `HandlerComponent`.
+- **`#[use_type(HasErrorType.Error)]`** adds `HasErrorType` as a supertrait and rewrites the bare
+  `Error` to `<Self as HasErrorType>::Error`.
+- **The `#[derive_delegate(...)]` and [`#[prefix(...)]`](../attributes/prefix.md) attributes** are
+  the same as on every handler-family component: legacy delegation tables on `Code` and `Input`, and
+  registration under `@cgp.extra.handler` in `DefaultNamespace`.
 
-`HandlerRef`, with consumer trait `CanHandleRef`, is identical except that `handle_ref` takes `input: &Input`.
+`HandlerRef`, with consumer trait `CanHandleRef`, is identical except that `handle_ref` takes
+`input: &Input`.
 
-The prelude exports the provider trait `Handler` and the keys `HandlerComponent` and `HandlerRefComponent`. The consumer traits `CanHandle` and `CanHandleRef` and the provider trait `HandlerRef` are imported from `cgp::extra::handler`.
+The prelude exports the provider trait `Handler` and the keys `HandlerComponent` and
+`HandlerRefComponent`. The consumer traits `CanHandle` and `CanHandleRef` and the provider trait
+`HandlerRef` are imported from `cgp::extra::handler`.
 
 ## Implementations
 
-A `Handler` provider implements the provider trait for a generic context with an error type. The crate's `ReturnInput` shows the minimal shape, awaiting nothing and succeeding with its input:
+A `Handler` provider implements the provider trait for a generic context with an error type. The
+crate's `ReturnInput` shows the minimal shape, awaiting nothing and succeeding with its input:
 
 ```rust
 #[cgp_provider]
@@ -58,14 +79,19 @@ where
 }
 ```
 
-Most `Handler` impls come from the [promotion providers](../providers/handler_combinators.md) rather than from hand-written code. Each promotion takes one step:
+Most `Handler` impls come from the [promotion providers](../providers/handler_combinators.md) rather
+than from hand-written code. Each promotion takes one step:
 
-- **`PromoteAsync<P>`** makes a `Handler` from a `TryComputer` by running it inside an `async` method.
+- **`PromoteAsync<P>`** makes a `Handler` from a `TryComputer` by running it inside an `async`
+  method.
 - **`Promote<P>`** makes a `Handler` from an `AsyncComputer` by wrapping its awaited output in `Ok`.
-- **`TryPromote<P>`** makes a `Handler` from an `AsyncComputer` whose `Output` is already `Result<T, Context::Error>`.
-- **`PromoteRef<P>`** converts between `Handler` and `HandlerRef`, dereferencing an owned input or passing a borrow through.
+- **`TryPromote<P>`** makes a `Handler` from an `AsyncComputer` whose `Output` is already
+  `Result<T, Context::Error>`.
+- **`PromoteRef<P>`** converts between `Handler` and `HandlerRef`, dereferencing an owned input or
+  passing a borrow through.
 
-A plain `Computer` takes two steps, as `PromoteAsync<Promote<P>>`. The promotion bundles and [`#[cgp_computer]`](../macros/cgp_computer.md) chain these steps for the author.
+A plain `Computer` takes two steps, as `PromoteAsync<Promote<P>>`. The promotion bundles and
+[`#[cgp_computer]`](../macros/cgp_computer.md) chain these steps for the author.
 
 ## Examples
 
@@ -87,24 +113,42 @@ where
 }
 ```
 
-`run_with` works for any context whose `HandlerComponent` answers the given `Code` with a `String` input. The provider behind it may be a genuine `Handler` or a simpler provider lifted by promotion, such as a `Computer` wired as `PromoteAsync<Promote<MyComputer>>`, or one generated by [`#[cgp_computer]`](../macros/cgp_computer.md) or [`#[cgp_producer]`](../macros/cgp_producer.md), which wire their own promotions.
+`run_with` works for any context whose `HandlerComponent` answers the given `Code` with a `String`
+input. The provider behind it may be a genuine `Handler` or a simpler provider lifted by promotion,
+such as a `Computer` wired as `PromoteAsync<Promote<MyComputer>>`, or one generated by
+[`#[cgp_computer]`](../macros/cgp_computer.md) or [`#[cgp_producer]`](../macros/cgp_producer.md),
+which wire their own promotions.
 
 ## Related constructs
 
 These constructs are the ones `Handler` works with:
 
-- [`Computer`, `AsyncComputer`](computer.md), and [`TryComputer`](try_computer.md) — the simpler members it generalizes, and [`Producer`](producer.md), the no-input member.
-- [`HasErrorType`](has_error_type.md) — the supertrait whose error it returns.
-- [Handler combinators](../providers/handler_combinators.md) — promotion, composition, and piping.
-- [Monadic handlers](../../concepts/monadic-handlers.md) — chaining handlers into pipelines.
-- [`delegate_components!`](../macros/delegate_components.md) — its `open` statement dispatches on `Code` or `Input`, replacing the legacy [`UseDelegate`](../providers/use_delegate.md) and `UseInputDelegate` tables described in the [dispatching-per-type](../../guides/dispatching-per-type.md) guide.
+- [`Computer`, `AsyncComputer`](computer.md), and [`TryComputer`](try_computer.md): the simpler
+  members it generalizes, and [`Producer`](producer.md), the no-input member.
+- [`HasErrorType`](has_error_type.md): the supertrait whose error it returns.
+- [Handler combinators](../providers/handler_combinators.md): promotion, composition, and piping.
+- [Monadic handlers](../../concepts/monadic-handlers.md): chaining handlers into pipelines.
+- [`delegate_components!`](../macros/delegate_components.md): its `open` statement dispatches on
+  `Code` or `Input`, replacing the legacy [`UseDelegate`](../providers/use_delegate.md) and
+  `UseInputDelegate` tables described in the
+  [dispatching-per-type](../../guides/dispatching-per-type.md) guide.
 
 ## Source
 
-- `Handler` and `HandlerRef` are defined in [crates/extra/cgp-handler/src/components/handler.rs](https://github.com/contextgeneric/cgp/blob/main/crates/extra/cgp-handler/src/components/handler.rs).
-- The `ReturnInput` provider is in [crates/extra/cgp-handler/src/providers/return_input.rs](https://github.com/contextgeneric/cgp/blob/main/crates/extra/cgp-handler/src/providers/return_input.rs), and the promotion combinators that lift simpler providers into `Handler` are in [crates/extra/cgp-handler/src/providers/](https://github.com/contextgeneric/cgp/tree/main/crates/extra/cgp-handler/src/).
+- `Handler` and `HandlerRef` are defined in
+  [crates/extra/cgp-handler/src/components/handler.rs](https://github.com/contextgeneric/cgp/blob/main/crates/extra/cgp-handler/src/components/handler.rs).
+- The `ReturnInput` provider is in
+  [crates/extra/cgp-handler/src/providers/return_input.rs](https://github.com/contextgeneric/cgp/blob/main/crates/extra/cgp-handler/src/providers/return_input.rs),
+  and the promotion combinators that lift simpler providers into `Handler` are in
+  [crates/extra/cgp-handler/src/providers/](https://github.com/contextgeneric/cgp/tree/main/crates/extra/cgp-handler/src/).
 - The components are re-exported through `cgp::extra::handler`.
 
 ## Public pages derived from this document
 
-The public reference is organized one page per named construct, so this document feeds **2 pages** under the handler family: [`handler`](https://contextgeneric.dev/docs/reference/components/handler/handler) for `Handler` and [`handler_ref`](https://contextgeneric.dev/docs/reference/components/handler/handler_ref) for its by-reference variant `HandlerRef`. A change here is propagated to both, per the [synchronization rule](../../../AGENTS.md#the-synchronization-rule); the granularity rule behind the split is recorded in [website/site-structure.md](../../../website/site-structure.md).
+The public reference is organized one page per named construct, so this document feeds **2 pages**
+under the handler family:
+[`handler`](https://contextgeneric.dev/docs/reference/components/handler/handler) for `Handler` and
+[`handler_ref`](https://contextgeneric.dev/docs/reference/components/handler/handler_ref) for its
+by-reference variant `HandlerRef`. A change here is propagated to both, per the
+[synchronization rule](../../../AGENTS.md#the-synchronization-rule); the granularity rule behind the
+split is recorded in [website/site-structure.md](../../../website/site-structure.md).
