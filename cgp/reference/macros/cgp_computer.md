@@ -46,9 +46,10 @@ fn add(a: u64, b: u64) -> u64 {
 The provider's name defaults to the function name in PascalCase, so `add` produces `Add`, and an
 explicit argument is used verbatim. The rest of the function maps onto the handler in these ways:
 
-- **Parameters** become the handler's input.
+- **Parameters** become the handler's input. Only their types are read, since each input is
+  rebound as `arg_i`, so a destructuring pattern such as `(a, b): (u64, u64)` is accepted.
 - **The return type** becomes the handler's output, and decides between the value and `Result`
-  bundles.
+  bundles. An omitted return type is `()`.
 - **Generic parameters and the `where` clause** carry over to the generated impl.
 - **`async`** selects the asynchronous base trait.
 
@@ -245,6 +246,12 @@ These constructs are the ones `#[cgp_computer]` builds on or parallels:
 **The fallible forms need an error type on the context.** `try_compute` and `handle` name the
 context's abstract error, so a context without an `ErrorTypeProviderComponent` wiring fails on those
 members while `compute` works. The key is not in the prelude and comes from `cgp::core::error`.
+
+**A `Result` function's error type must equal the context's error type.** The fallible bundles pass
+the `Err` through unconverted, so a function returning `Result<u64, String>` wired on a context
+whose `HasErrorType::Error` is anything but `String` fails its fallible members with
+``E0271: type mismatch resolving `<App as HasErrorType>::Error == String` ``. Convert inside the
+function, or write a `TryComputer` provider by hand that raises through the context.
 
 The choice between the value and `Result` bundles is made from the return type's tokens, not its
 meaning. A return type counts as a `Result` only when it is written as the bare path `Result<T, E>`,

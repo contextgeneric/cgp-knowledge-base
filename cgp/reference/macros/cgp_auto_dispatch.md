@@ -214,8 +214,9 @@ cannot collide, since only the `ComputeArea` provider needs to be visible. Until
 declare the trait in a module without a clashing item.
 
 **The blanket impl covers every type implementing `HasExtractor`.** A hand-written impl of the
-trait for a type outside that set, such as each payload struct, coexists with it, but one for
-another extensible enum fails with ``E0119: conflicting implementations of trait `HasArea` ``.
+trait for a type outside that set, such as each payload struct, coexists with it, but one for any
+extensible enum, the dispatched `Shape` included, fails with
+``E0119: conflicting implementations of trait `HasArea` ``.
 
 **A missing variant impl or derive is reported at the call, not at its cause.** Omitting the impl
 for one payload fails where the enum's method is called, with

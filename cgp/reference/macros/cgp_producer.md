@@ -43,7 +43,7 @@ fn magic_number() -> u64 {
 
 The provider's name defaults to the function name in PascalCase, so `magic_number` produces
 `MagicNumber`, and an explicit argument is used verbatim. The return type becomes the producer's
-output.
+output, and an omitted return type is `()`.
 
 The function must have the shape a producer can take, and the macro rejects each departure with an
 error pointing at the offending part of the signature:
