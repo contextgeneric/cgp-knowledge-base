@@ -1,10 +1,10 @@
-# `#[use_provider]` — the AST stack
+# `#[use_provider]`: the AST stack
 
 `#[use_provider(Inner: AreaCalculator)]` completes an inner provider's bound for a higher-order provider: the one thing it does is finish the bound by inserting the context as its leading type argument, so the user's `: AreaCalculator` becomes `AreaCalculator<Self>`, and move the completed bound onto the impl's `where` clause. It is a modifier attribute collected by a host macro; this page covers its AST types and what it injects, and the shared collection mechanism lives in the [attribute-modifier overview](README.md). For the user-facing syntax and expansion, read the reference document [reference/attributes/use_provider.md](../../../reference/attributes/use_provider.md).
 
 ## `UseProviderAttribute`
 
-The attribute parses into a `UseProviderAttribute` per entry: a `context_type` (always `Self`), a `provider_type` (the inner provider parameter, e.g. `Inner`), a colon, and a `+`-separated list of provider-trait paths as `provider_trait_bounds` (each a `PathWithTypeArgs`). Parsing is straightforward — the context is fixed to `Self`, then the provider type, the colon, and the terminated `+`-list of bounds.
+The attribute parses into a `UseProviderAttribute` per entry: a `context_type` (always `Self`), a `provider_type` (the inner provider parameter, e.g. `Inner`), a colon, and a `+`-separated list of provider-trait paths as `provider_trait_bounds` (each a `PathWithTypeArgs`). Parsing is straightforward: the context is fixed to `Self`, then the provider type, the colon, and the terminated `+`-list of bounds.
 
 The completion happens in two methods. `to_type_param_bounds(context_type)` walks each provider-trait bound, clones it, and **inserts the context at index 0 of the bound's angle-bracketed arguments**, so `AreaCalculator` becomes `AreaCalculator<Self>` and a bound that already carries parameters keeps them after the context. Position 0 sits ahead of any lifetime argument, which would be invalid Rust on its own; the method re-parses each completed bound through `parse_internal!`, and that `syn` round-trip re-emits lifetimes first, normalizing the order (see [Generic-parameter insertion and lifetime ordering](../../README.md#generic-parameter-insertion-and-lifetime-ordering)). `to_provider_bounds(context_type)` then wraps the completed bounds into a single `provider_type: bounds` `where` predicate:
 
@@ -31,7 +31,7 @@ The behavioral tests exercise both hosts and a full higher-order provider:
 
 The rejection cases pin the one-provider-per-attribute rule, which is what makes this modifier the exception to the comma-separated convention its siblings follow:
 
-- [parser_rejections/use_provider.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/use_provider.rs) checks that a comma-separated list of provider-and-trait pairs is refused on both hosts, and — as the counterpart that stops the rejection being read too broadly — that `+`-separated bounds on *one* provider are accepted.
+- [parser_rejections/use_provider.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/use_provider.rs) checks that a comma-separated list of provider-and-trait pairs is refused on both hosts, and, as the counterpart that stops the rejection being read too broadly, that `+`-separated bounds on *one* provider are accepted.
 
 ## Source
 

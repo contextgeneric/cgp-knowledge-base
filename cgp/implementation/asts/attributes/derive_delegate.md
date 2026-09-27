@@ -1,18 +1,18 @@
-# `#[derive_delegate]` — the AST stack
+# `#[derive_delegate]`: the AST stack
 
 `#[derive_delegate(UseDelegate<Shape>)]` on a `#[cgp_component]` trait generates a dispatcher provider impl, so the component can be wired to a `UseDelegate` table that dispatches on a generic parameter. It is a modifier attribute collected by the component host; this page covers its AST types and the impl it builds, and the shared collection mechanism lives in the [attribute-modifier overview](README.md). For the user-facing syntax and expansion, read the reference document [reference/attributes/derive_delegate.md](../../../reference/attributes/derive_delegate.md).
 
 ## `DeriveDelegateAttribute`
 
-The attribute parses into a `DeriveDelegateAttribute` — a `wrapper` identifier (`UseDelegate`) and its angle-bracketed key, held as a `Punctuated<Ident, Comma>` of `params`. The parser reads the wrapper identifier, a `<`, then either a single identifier or a parenthesized tuple of identifiers, then a `>`. An empty parenthesized tuple is rejected with a spanned "expect non-empty tuple list of identifiers in use_delegate_spec" error, so `UseDelegate<()>` cannot slip through as a keyless dispatcher.
+The attribute parses into a `DeriveDelegateAttribute`: a `wrapper` identifier and its angle-bracketed key, held as a `Punctuated<Ident, Comma>` of `params`. The wrapper is any identifier, not only `UseDelegate`, so a component can generate a dispatcher for a custom wrapper struct such as `UseDelegate2`. The parser reads the wrapper identifier, a `<`, then either a single identifier or a parenthesized tuple of identifiers, then a `>`. An empty parenthesized tuple is rejected with a spanned "expect non-empty tuple list of identifiers in use_delegate_spec" error, so `UseDelegate<()>` cannot slip through as a keyless dispatcher.
 
 ## `DeriveDelegateAttributes`
 
-`DeriveDelegateAttributes` is the thin collection wrapper — a `Vec<DeriveDelegateAttribute>` — that `CgpComponentAttributes` fills, one entry per `#[derive_delegate]` attribute on the trait. The host emits one dispatcher impl per entry alongside the component's standard provider impls, during `to_items`.
+`DeriveDelegateAttributes` is the thin collection wrapper, a `Vec<DeriveDelegateAttribute>`, that `CgpComponentAttributes` fills, one entry per `#[derive_delegate]` attribute on the trait. The host emits one dispatcher impl per entry alongside the component's standard provider impls, during `to_items`.
 
-## `to_provider_impl` — the generated impl
+## `to_provider_impl`: the generated impl
 
-`DeriveDelegateAttribute::to_provider_impl(provider_trait)` builds one impl of the provider trait for `Wrapper<__Components__>` that forwards each method to a delegate looked up through `DelegateComponent`. It clones the provider trait's own generics and appends two synthetic parameters — `__Components__` (the table type) and `__Delegate__` (the resolved delegate) — then adds two `where` bounds: the table lookup that resolves the key to a delegate, and the delegate's own provider-trait bound. Each trait method is forwarded through the shared [delegated-impl helpers](../../functions/derive/delegated_impls.md), so the dispatcher's bodies read as `<__Delegate__>::method(context, …)`:
+`DeriveDelegateAttribute::to_provider_impl(provider_trait)` builds one impl of the provider trait for `Wrapper<__Components__>` that forwards each method to a delegate looked up through `DelegateComponent`. It clones the provider trait's own generics and appends two synthetic parameters, `__Components__` (the table type) and `__Delegate__` (the resolved delegate), then adds two `where` bounds: the table lookup that resolves the key to a delegate, and the delegate's own provider-trait bound. Each trait method is forwarded through the shared [delegated-impl helpers](../../functions/derive/delegated_impls.md), so the dispatcher's bodies read as `<__Delegate__>::method(context, …)`:
 
 ```rust
 impl<__Context__, __Components__, __Delegate__> AreaCalculator<__Context__>
@@ -23,7 +23,7 @@ where
 { /* each method forwards to __Delegate__ */ }
 ```
 
-The key in the `DelegateComponent<(…)>` lookup is the parenthesized `params` the attribute parsed, so a single-identifier key becomes `(Shape)` and a tuple key `(A, B)`. The impl keeps the component's own generics ahead of the two synthetic parameters, and reuses the provider trait's type generics (via `split_for_impl`) for both the delegate bound and the forwarded projections.
+The key in the `DelegateComponent<(…)>` lookup is the `params` the attribute parsed, wrapped in parentheses. A single-identifier key becomes `(Shape)`, which is the type `Shape` itself, and a tuple key becomes `(A, B)`; a written `(A,)` keeps its trailing comma and so keys on the one-element tuple. The impl keeps the component's own generics ahead of the two synthetic parameters, reuses the provider trait's type generics (via `split_for_impl`) for both the delegate bound and the forwarded projections, and copies the provider trait's attributes and `unsafe` marker. `EvaluatedCgpComponent` pairs it with an `IsProviderFor` impl carrying the same bounds.
 
 ## Behavior and corner cases
 

@@ -1,12 +1,12 @@
 # The `cgp_type` AST stack
 
-The `cgp_type` stack is thin: `#[cgp_type]` reuses the whole [`cgp_component` AST stack](cgp_component.md) to derive the component and adds a single wrapper type, `ItemCgpType`, that carries the finished `EvaluatedCgpComponent` and appends the two abstract-type provider impls. There is no bespoke argument type — the attribute is parsed as `CgpComponentArgs`, with the provider-name default patched in the [entrypoint function](../entrypoints/cgp_type.md) before the pipeline runs. This document covers `ItemCgpType` and the `ItemProviderImpl`/`ItemProviderImpls` helpers it renders through; the [entrypoint document](../entrypoints/cgp_type.md) covers what each item produces.
+The `cgp_type` stack is thin: `#[cgp_type]` reuses the whole [`cgp_component` AST stack](cgp_component.md) to derive the component and adds a single wrapper type, `ItemCgpType`, that carries the finished `EvaluatedCgpComponent` and appends the two abstract-type provider impls. There is no bespoke argument type: the attribute is parsed as `CgpComponentRawArgs`, the [entrypoint function](../entrypoints/cgp_type.md) fills in the `{Type}TypeProvider` default when no provider is named, and only then converts to `CgpComponentArgs`. This document covers `ItemCgpType` and the `ItemProviderImpl`/`ItemProviderImpls` helpers it renders through; the [entrypoint document](../entrypoints/cgp_type.md) covers what each item produces.
 
 ## `ItemCgpType`
 
-`ItemCgpType` is the final rendering stage. It holds a single field, the `EvaluatedCgpComponent` produced by the shared `preprocess → eval` pipeline, and exists only to emit the extra impls on top of the standard component output. Its `to_items` first calls the wrapped component's own `to_items` (the five core items plus the `UseContext` and `RedirectLookup` provider impls) and then extends that vector with the abstract-type impls.
+`ItemCgpType` is the final rendering stage. It holds a single field, the `EvaluatedCgpComponent` produced by the shared `preprocess` and `eval` stages, and exists only to emit the extra impls on top of the standard component output. Its `to_items` first calls the wrapped component's own `to_items` (the five core items plus the `UseContext` and `RedirectLookup` provider impls) and then extends that vector with the abstract-type impls.
 
-The extra impls are built by `to_item_provider_impls`, which reads the component's args, provider trait, and single associated type (via `extract_item_type_from_trait`, which also validates that the trait body is exactly one non-generic associated type) and produces two `ItemProviderImpl`s: the `UseType<Type>` impl and the `WithProvider<__Provider__>` impl. It clones the provider trait's generics for each, inserts the associated-type name (and `__Provider__` for the `WithProvider` case) as leading impl parameters, and moves any associated-type bound onto both impls with `Self::<Type>` rewritten to the free parameter. The shapes of the two impls are shown in the [entrypoint document](../entrypoints/cgp_type.md).
+The extra impls are built by `to_item_provider_impls`, which reads the component's args, provider trait, and single associated type (via `extract_item_type_from_trait`, which also validates that the trait body is exactly one non-generic associated type) and produces two `ItemProviderImpl`s: the `UseType<Type>` impl and the `WithProvider<__Provider__>` impl. It clones the provider trait's generics, inserts the associated-type name as the leading impl parameter, and adds any associated-type bound as a predicate with `Self::<Type>` rewritten to the free parameter. The `WithProvider` impl extends the same generics, inserting `__Provider__` ahead of the type parameter and adding the `__Provider__: TypeProvider<…, Type = …>` bound, so it keeps the associated-type bound as well. The shapes of the two impls are shown in the [entrypoint document](../entrypoints/cgp_type.md).
 
 ## `ItemProviderImpl` and `ItemProviderImpls`
 
@@ -14,7 +14,8 @@ The extra impls are built by `to_item_provider_impls`, which reads the component
 
 ## Tests
 
-- The stage is exercised end-to-end by the expansion snapshots indexed in the [entrypoint document's Snapshots section](../entrypoints/cgp_type.md); the trait-shape rejection in `extract_item_type_from_trait` has no dedicated `cgp-macro-tests` failure case yet.
+- The stage is exercised end to end by the expansion snapshots indexed in the [entrypoint document's Snapshots section](../entrypoints/cgp_type.md#snapshots).
+- [parser_rejections/cgp_type.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/cgp_type.rs) pins the trait-shape rejections in `extract_item_type_from_trait`: an empty trait, a method, two associated types, a generic associated type, and a `where`-bounded one.
 
 ## Source
 

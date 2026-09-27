@@ -1,4 +1,4 @@
-# `#[extend]` — the AST stack
+# `#[extend]`: the AST stack
 
 `#[extend(Trait)]` adds *supertrait* bounds to a generated trait, widening the trait's public interface rather than adding a hidden impl-side dependency. It is a modifier attribute collected by a host macro; this page covers what it parses into and what it injects, and the shared collection mechanism lives in the [attribute-modifier overview](README.md). For the user-facing syntax and expansion, read the reference document [reference/attributes/extend.md](../../../reference/attributes/extend.md).
 
@@ -11,7 +11,7 @@
 `#[extend]` is accepted on `#[cgp_component]` and `#[cgp_fn]`, and the two hosts treat it differently because a `#[cgp_component]` trait can already declare supertraits natively while a `#[cgp_fn]` trait cannot:
 
 - On **`#[cgp_component]`**, `preprocess` appends the bounds to the consumer trait's supertraits (`item_trait.supertraits.extend(attributes.extend.clone())`) before the later stages transform the trait. It is the preferred way to add a *non-type* supertrait; an abstract-type supertrait should instead use [`#[use_type]`](use_type.md), which adds the bound *and* rewrites the type.
-- On **`#[cgp_fn]`**, the bounds are pushed onto *both* the generated trait's supertraits and the impl's `where` clause. This dual placement exists because it is the only way to add a supertrait to a `#[cgp_fn]` trait — a `#[cgp_fn]`'s own `where` clauses are reserved for impl-side dependencies, so there is no other channel through which a supertrait can reach the generated trait.
+- On **`#[cgp_fn]`**, the bounds are pushed onto *both* the generated trait's supertraits and the impl's `where` clause. This dual placement exists because it is the only way to add a supertrait to a `#[cgp_fn]` trait: a `#[cgp_fn]`'s own `where` clauses are reserved for impl-side dependencies, so there is no other channel through which a supertrait can reach the generated trait.
 
 The contrast with [`#[uses]`](uses.md) is the reason both exist: `#[uses]` lands its bound on the impl's `Self` alone, hidden from callers, while `#[extend]` makes the bound a supertrait that every caller sees. And the contrast with [`#[extend_where]`](extend_where.md) is placement: `#[extend]` adds a *supertrait* (a bound on the trait's own `Self`), while `#[extend_where]` adds a full `where` predicate that may bound any type.
 

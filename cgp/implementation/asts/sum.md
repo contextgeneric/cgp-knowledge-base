@@ -1,6 +1,6 @@
 # The `sum` AST stack
 
-The `sum` stack is a single AST type, `SumType`, behind the `Sum!` macro. It parses a comma-separated list of types and folds it into an `Either`/`Void` chain — the same one-type, parse-then-`eval` shape as [`ProductType`](product.md), differing only in the list it folds onto. The [entrypoint document](../entrypoints/sum.md) covers what the macro produces; this document covers the type.
+The `sum` stack is a single AST type, `SumType`, behind the `Sum!` macro. It parses a comma-separated list of types and folds it into an `Either`/`Void` chain, the same one-type, parse-then-`eval` shape as [`ProductType`](product.md), differing only in the list it folds onto. The [entrypoint document](../entrypoints/sum.md) covers what the macro produces; this document covers the type.
 
 ## `SumType`
 
@@ -13,7 +13,7 @@ Either<A, Either<B, Either<C, Void>>>
 Void
 ```
 
-The only thing that distinguishes this from `ProductType` is the terminator: a sum folds onto `Void` — the uninhabited empty enum — rather than `Nil`, so an empty sum is a type with no values while an empty product is the unit-like `Nil`. `Either` and `Void` come from the [export markers](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/exports.rs).
+The only thing that distinguishes this from `ProductType` is the terminator: a sum folds onto `Void`, the uninhabited empty enum, rather than `Nil`, so an empty sum is a type with no values while an empty product is the unit-like `Nil`. `Either` and `Void` come from the [export markers](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/exports.rs).
 
 ## Tests
 

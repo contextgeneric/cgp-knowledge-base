@@ -6,21 +6,37 @@ This stack covers the two getter macros together, because they share the getter-
 
 Both macros turn a getter trait's methods into `GetterField`s through the shared `parse_getter_fields` helper, which is the single source of truth for what a getter signature means. A `GetterField` records the field name (the method name), the field type to require, the return type, the receiver mutability, an optional `PhantomData` phantom-argument type, the field mode, and the receiver mode.
 
-The parser enforces the getter-method contract and resolves the two shorthands a reader most needs to know. A getter method must be a plain (non-const, non-async, non-unsafe, non-generic) method whose first argument is a reference — either `&self` (`ReceiverMode::SelfReceiver`) or a typed `&SomeType` receiver (`ReceiverMode::Type`), the latter letting a getter read a field out of a type other than the context, with `Self` rewritten to the context. The return type then determines the field type, the *field mode* — the conversion the getter body applies — and whether the read borrows the field mutably, all through the shared `parse_field_type`, which returns the field type, the `FieldMode`, and an `Option<Mut>` for the access mutability: a `&str` return reads a `String` field (`FieldMode::Str`, `.as_str()`), an `Option<&T>` reads `Option<T>` (`FieldMode::OptionRef`, `.as_ref()`), an `Option<&str>` reads `Option<String>` (`FieldMode::OptionStr`, `.as_deref()`), a `&[T]` reads an `AsRef<[T]>` field (`FieldMode::Slice`, `.as_ref()`), an `MRef<'_, T>` wraps the borrow (`FieldMode::MRef`, `MRef::Ref(...)`), a plain `&T` is a bare `FieldMode::Reference`, and any other owned return — a path type, a tuple, or an array — is `FieldMode::Copy` (`.clone()`). A `&mut` in the type — the outer reference of `&mut T`/`&mut [T]` or the inner reference of `Option<&mut T>` — sets the access mutability, reusing the same `FieldMode` but selecting the `HasFieldMut`/`get_field_mut` read and the mutable conversion (`.as_mut()`, `.as_deref_mut()`, or an `AsMut<[T]>` bound for a mutable slice); a mutable read requires a `&mut self` receiver. Because the mutability is keyed off the type's own reference rather than the receiver, the same helper serves the `#[implicit]` case where an argument's mutability is independent of the receiver — a getter discards the returned mutability and keys off its receiver instead. `parse_getter_fields` also extracts an optional single associated return type and checks that, when present, the trait has exactly one method whose return type matches it.
+The parser enforces the getter-method contract. A getter must be a plain method (not `const`, `async`, `unsafe`, or generic) whose first argument is a reference: either `&self`/`&mut self` (`ReceiverMode::SelfReceiver`) or a typed receiver such as `foo: &Self::Foo` (`ReceiverMode::Type`), which reads the field out of that type instead of the context, with `Self` rewritten to the context.
+
+The return type decides the field type and the *field mode*, the conversion the body applies, through the shared `parse_field_type`:
+
+| Return type | Field type | `FieldMode` | Conversion |
+|---|---|---|---|
+| `&str` | `String` | `Str` | `.as_str()` |
+| `Option<&T>` | `Option<T>` | `OptionRef` | `.as_ref()` |
+| `Option<&str>` | `Option<String>` | `OptionStr` | `.as_deref()` |
+| `&[T]` | any `AsRef<[T]>` | `Slice` | `.as_ref()` |
+| `MRef<'_, T>` | `T` | `MRef` | `MRef::Ref(...)` |
+| `&T` | `T` | `Reference` | none |
+| any owned type | the type | `Copy` | `.clone()` |
+
+`parse_field_type` also returns an `Option<Mut>` taken from a `&mut` in the type itself (the outer reference of `&mut T` or `&mut [T]`, or the inner one of `Option<&mut T>`), which selects the `HasFieldMut`/`get_field_mut` read and the mutable conversions (`.as_mut_str()`, `.as_mut()`, `.as_deref_mut()`, or an `AsMut<[T]>` bound). A mutable return requires a `&mut self` receiver. The `#[implicit]` extraction in the [`cgp_fn` stack](cgp_fn.md) keeps that type-derived mutability, but a getter discards it and keys the read off its receiver, which is the source of the `Option<&T>`-under-`&mut self` defect under Known issues.
+
+`parse_getter_fields` also extracts an optional single associated return type and checks that, when present, the trait has exactly one method whose return type is that type.
 
 The getter-method body itself is built by `derive_getter_method` from the `types/getter/` module, which emits `receiver.get_field(PhantomData::<Tag>) <conversion>` for the field's mode. The conversion suffix is chosen by `FieldMode::apply`, the single function that maps a field mode and mutability to the trailing `.as_str()`/`.as_ref()`/`MRef::Ref(...)`/etc.; the `#[implicit]` bindings in the [`cgp_fn` stack](cgp_fn.md) reach the same function through `GetFieldWithModeExpr`, which is why the two families convert fields identically.
 
 ## `ItemCgpAutoGetter`
 
-`ItemCgpAutoGetter` is the whole AST for `#[cgp_auto_getter]` — a single struct holding the cleaned trait. Its `preprocess` associated function strips the CGP modifier attributes off the trait (discarding them, since the auto getter has no component to configure) and keeps the trait; there is no multi-stage pipeline because the macro emits no component.
+`ItemCgpAutoGetter` is the whole AST for `#[cgp_auto_getter]`: a single struct holding the cleaned trait. Its `preprocess` associated function strips the CGP modifier attributes off the trait (discarding them, since the auto getter has no component to configure) and keeps the trait; there is no multi-stage pipeline because the macro emits no component.
 
-Its `to_items` emits the trait unchanged plus one blanket impl, built by `to_blanket_impl` → `derive_blanket_impl`. That impl fixes the context type to `__Context__`, adds each getter method reading its like-named field, and requires the corresponding `HasField` bound; a trait supertrait becomes a `__Context__: Supertrait` predicate, a trait generic parameter is preserved onto the impl, and a single associated return type is added as an extra parameter set to itself with its bounds carried over. The shape of the emitted impl is shown in the [entrypoint document](../entrypoints/cgp_auto_getter.md).
+Its `to_items` emits the trait unchanged plus one blanket impl, built by `to_blanket_impl`, which calls `derive_blanket_impl`. That impl fixes the context type to `__Context__`, adds each getter method reading its like-named field, and requires the corresponding `HasField` bound; a trait supertrait becomes a `__Context__: Supertrait` predicate, a trait generic parameter is preserved onto the impl, and a single associated return type is added as an extra parameter set to itself with its bounds carried over. The shape of the emitted impl is shown in the [entrypoint document](../entrypoints/cgp_auto_getter.md).
 
 ## `EvaluatedCgpComponent` (reused) and `ItemCgpGetter`
 
 `#[cgp_getter]` produces no getter-specific parse stage of its own; it drives the `#[cgp_component]` pipeline to an `EvaluatedCgpComponent` (documented in the [`cgp_component` AST stack](cgp_component.md)) and then wraps that in `ItemCgpGetter`. The `TryFrom<EvaluatedCgpComponent>` conversion is where the getter fields are parsed: it runs `parse_getter_fields` over the consumer trait and stores the resulting `GetterField`s and optional associated type alongside the evaluated component.
 
-`ItemCgpGetter`'s `to_items` emits the component's own items first — the five core items plus the standard `UseContext`/`RedirectLookup` provider impls — and then appends the three getter-specific provider impls, each carrying its own `IsProviderFor` impl:
+`ItemCgpGetter`'s `to_items` emits the component's own items first (the five core items plus the standard `UseContext`/`RedirectLookup` provider impls) and then appends the three getter-specific provider impls, each carrying its own `IsProviderFor` impl:
 
 - `to_use_fields_impl` builds the `UseFields` impl, keyed by method name: for each field it emits the getter-method body reading `Symbol!("field_name")` and requires the matching `HasField` bound on the receiver type. Always emitted.
 - `to_use_field_impl` builds the `UseField<__Tag__>` impl, where `__Tag__` is a *free* generic parameter added to the impl generics, so the getter reads whatever field the wiring supplies. Emitted only for a single-getter trait.
@@ -28,9 +44,15 @@ Its `to_items` emits the trait unchanged plus one blanket impl, built by `to_bla
 
 Each of these threads the optional associated type through as an extra generic parameter, exactly as the auto-getter blanket impl does, keeping the three impls consistent with the consumer trait.
 
+## Known issues
+
+`GetterField` in `types/getter/method.rs` chooses the option conversion from the receiver's mutability rather than from the return type's, so a `&mut self` getter returning a shared `Option<&T>` or `Option<&str>` emits `.as_mut()` or `.as_deref_mut()` and fails with `E0308`. Both getter macros share the defect; it is described with its fix in [entrypoints/cgp_auto_getter.md](../entrypoints/cgp_auto_getter.md#known-issues).
+
+`ItemCgpAutoGetter::preprocess` discards the collected attributes, so `#[prefix]` and `#[derive_delegate]` on a `#[cgp_auto_getter]` trait are dropped without an error, as the same document records.
+
 ## Tests
 
-- The stage transforms are exercised end-to-end by the expansion snapshots indexed in the two entrypoint documents' Snapshots sections — the [`#[cgp_getter]` snapshots](../entrypoints/cgp_getter.md) and the [`#[cgp_auto_getter]` snapshots](../entrypoints/cgp_auto_getter.md).
+- The stage transforms are exercised end to end by the expansion snapshots indexed in the two entrypoint documents: the [`#[cgp_getter]` snapshots](../entrypoints/cgp_getter.md#snapshots) and the [`#[cgp_auto_getter]` snapshots](../entrypoints/cgp_auto_getter.md#snapshots).
 - [parser_rejections/getters.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/getters.rs) pins the getter-method contract checks in `parse_getter_fields`, driven through the shared `cgp_auto_getter` entrypoint: it rejects const, async, unsafe, and generic getter methods, a by-value `self` receiver, a `&mut` return under a `&self` receiver, more than one associated type, an associated type alongside a second method, and a non-getter trait item, plus `#[cgp_auto_getter]`'s rejection of any attribute argument.
 
 ## Source

@@ -17,7 +17,7 @@ Returning a validated `syn::Type` rather than a raw token stream is what lets th
 
 ## `ProductExpr`
 
-`ProductExpr` is the value-level form. It holds the parsed element list as `exprs: Punctuated<Expr, Comma>` and parses with `parse_terminated`, so each element is a full Rust expression — a literal, a method call, an arithmetic expression — not merely a path that also happens to parse as a type. Its `eval` folds the elements right-to-left onto `Nil` with the tuple-struct constructor form `Cons(expr, acc)`, then re-parses the accumulated tokens into a `syn::Expr` through [`parse_internal!`](../macros/parse_internal.md):
+`ProductExpr` is the value-level form. It holds the parsed element list as `exprs: Punctuated<Expr, Comma>` and parses with `parse_terminated`, so each element is a full Rust expression (a literal, a method call, an arithmetic expression), not merely a path that also happens to parse as a type. Its `eval` folds the elements right-to-left onto `Nil` with the tuple-struct constructor form `Cons(expr, acc)`, then re-parses the accumulated tokens into a `syn::Expr` through [`parse_internal!`](../macros/parse_internal.md):
 
 ```rust
 // product![a, b, c] evals to

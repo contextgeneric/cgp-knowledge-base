@@ -1,6 +1,6 @@
 # The `namespace` AST stack
 
-The `namespace` stack is the pair of AST types that `cgp_namespace!` parses into and renders from — `NamespaceTable`, which holds the parsed header and entries and carries all the derivation logic, and `EvaluatedNamespaceTable`, the bag of finished `syn` items it produces. A supporting type, `InheritNamespaceStatement`, lowers a parent-namespace clause into the inheritance entry. The data flows in one direction: the macro body parses into `NamespaceTable`, whose `eval` builds an `EvaluatedNamespaceTable` that a `ToTokens` impl renders. The [entrypoint document](../entrypoints/cgp_namespace.md) covers what each generated item looks like; this document covers the types.
+The `namespace` stack is the pair of AST types that `cgp_namespace!` parses into and renders from: `NamespaceTable`, which holds the parsed header and entries and carries all the derivation logic, and `EvaluatedNamespaceTable`, the bag of finished `syn` items it produces. A supporting type, `InheritNamespaceStatement`, lowers a parent-namespace clause into the inheritance entry. The data flows in one direction: the macro body parses into `NamespaceTable`, whose `eval` builds an `EvaluatedNamespaceTable` that a `ToTokens` impl renders. The [entrypoint document](../entrypoints/cgp_namespace.md) covers what each generated item looks like; this document covers the types.
 
 ## `NamespaceTable`
 
@@ -16,15 +16,15 @@ pub struct NamespaceTable {
 }
 ```
 
-The `entries` field is a `DelegateEntries` — the same type `delegate_components!` parses its table into — so a namespace body accepts every mapping form, array key, and statement that a delegation table does. When the input is exhausted right after the header, `entries` is `DelegateEntries::default()`, the table with no statements and no mappings, so a header-only namespace evaluates exactly as one written with an empty brace pair; any other token in that position reaches the `braced!` parse and is rejected there. `NamespaceTable` carries a family of `build_*` methods, one per generated item: `build_item_trait` emits the `{Namespace}<__Table__>` lookup trait only when `new` is set, `build_namespace_struct` the `__{Namespace}Components` marker only when `new` is set, `build_item_impls` one impl per evaluated entry (each entry evaluated against the shared `__Table__` type), and `build_parent_namespace_impl` the inheritance impl when a parent is named. Its `eval` method runs all four and packages the results, inserting the inheritance impl ahead of the entry impls so it wins during resolution.
+The `entries` field is a `DelegateEntries`, the same type `delegate_components!` parses its table into, so a namespace body accepts every mapping form, array key, and statement that a delegation table does. When the input is exhausted right after the header, `entries` is `DelegateEntries::default()`, the table with no statements and no mappings, so a header-only namespace evaluates exactly as one written with an empty brace pair; any other token in that position reaches the `braced!` parse and is rejected there. `NamespaceTable` carries a family of `build_*` methods, one per generated item: `build_item_trait` emits the `{Namespace}<__Table__>` lookup trait only when `new` is set, `build_namespace_struct` the `__{Namespace}Components` marker only when `new` is set, `build_item_impls` one impl per evaluated entry (each entry evaluated against the shared `__Table__` type), and `build_parent_namespace_impl` the inheritance impl when a parent is named. Its `eval` method runs all four and packages the results, inserting the inheritance impl ahead of the entry impls. The order only fixes how the snapshots read, since Rust's trait resolution does not depend on the order impls appear in.
 
 ## `InheritNamespaceStatement`
 
-`InheritNamespaceStatement` is the intermediary that turns a `: parent` clause into an inheritance entry; the user never writes it. It pairs the parent namespace path with the child's own marker-struct identifier, and its `eval_for_entry` builds a for-entry — the same `EvaluatedForEntry` shape `delegate_components!` uses — whose `where` clause bounds a key on the parent namespace over the child's local table. That for-entry then evaluates to the blanket impl that reads each parent entry and re-emits it under the child (the `__Key__`/`__Value__`/`DefaultNamespace` shape shown in the entrypoint document). Routing inheritance through the shared for-entry machinery is what keeps a namespace's parent lookup consistent with an ordinary delegation table's.
+`InheritNamespaceStatement` is the intermediary that turns a `: parent` clause into an inheritance entry; the user never writes it. It pairs the parent namespace path with the child's own marker-struct identifier, and its `eval_for_entry` builds a for-entry (the same `EvaluatedForEntry` shape `delegate_components!` uses) whose `where` clause bounds a key on the parent namespace over the child's local table. That for-entry then evaluates to the blanket impl that reads each parent entry and re-emits it under the child (the `__Key__`/`__Value__`/`DefaultNamespace` shape shown in the entrypoint document). Routing inheritance through the shared for-entry machinery is what keeps a namespace's parent lookup consistent with an ordinary delegation table's.
 
 ## `EvaluatedNamespaceTable`
 
-`EvaluatedNamespaceTable` is the final stage — a bag holding the optional trait, the optional struct, and the vector of impls:
+`EvaluatedNamespaceTable` is the final stage: a bag holding the optional trait, the optional struct, the structs of lifted inner tables, and the vector of impls:
 
 ```rust
 pub struct EvaluatedNamespaceTable {
@@ -35,13 +35,17 @@ pub struct EvaluatedNamespaceTable {
 }
 ```
 
-Its only behavior is a `ToTokens` impl that renders the items in a fixed order — the namespace struct first, then the trait, then the structs of any lifted inner tables, then every impl — which is the order the canonical snapshots pin. Because the inheritance impl was inserted at the front of `item_impls` during `eval`, it renders ahead of the per-entry impls.
+Its only behavior is a `ToTokens` impl that renders the items in a fixed order (the namespace struct, then the trait, then the structs of any lifted inner tables, then every impl), which is the order the canonical snapshots pin. Because the inheritance impl was inserted at the front of `item_impls` during `eval`, it renders ahead of the per-entry impls.
 
 `inner_structs` mirrors `EvaluatedDelegateTable::item_structs`: a namespace body accepts the legacy `Wrapper<new Inner { … }>` value like any delegation table, so `eval` runs the same `ExtractInnerDelegateTables` walk and appends each lifted table's own `DelegateComponent` impls to `item_impls`. Without it the entry's `Delegate` would name a struct nothing declares.
 
+## Known issues
+
+The body inherits the two sharp edges of `DelegateEntries` recorded in the [entrypoint document's Known issues](../entrypoints/cgp_namespace.md#known-issues): a `namespace` statement names its namespace by a bare identifier, and every list in the grammar accepts being empty.
+
 ## Tests
 
-- The stack is exercised end-to-end by the expansion snapshots and behavioral tests indexed in the [entrypoint document](../entrypoints/cgp_namespace.md), which pin each entry form (redirect, direct mapping, array key, inheritance, and path-prefix rewrite) and the wiring they produce.
+- The stack is exercised end to end by the expansion snapshots and behavioral tests indexed in the [entrypoint document](../entrypoints/cgp_namespace.md), which pin each entry form (redirect, direct mapping, array key, inheritance, and path-prefix rewrite) and the wiring they produce.
 
 ## Source
 

@@ -1,4 +1,4 @@
-# `#[prefix]` — the AST stack
+# `#[prefix]`: the AST stack
 
 `#[prefix(@app in DefaultNamespace)]` on a `#[cgp_component]` trait registers the component into a namespace under a path prefix. It is a modifier attribute collected by the component host; this page covers its AST type and the namespace impl it builds, and the shared collection mechanism lives in the [attribute-modifier overview](README.md). For the user-facing syntax and expansion, read the reference document [reference/attributes/prefix.md](../../../reference/attributes/prefix.md).
 
@@ -6,7 +6,7 @@
 
 The attribute parses into a `PrefixAttribute`: a `path` (a `UniPath`, the `@`-sigil dotted path whose segments are `PathElement`s, without per-segment generics or grouping forms), the `in` keyword, and a `namespace` (a `PathWithTypeArgs`, so the namespace may be a qualified path and may carry generic arguments). Parsing reads the three in order. `CgpComponentAttributes::parse` collects one `PrefixAttribute` per `#[prefix]` attribute into its `prefixes` vector during the host's `preprocess` stage, which is why the attribute repeats.
 
-## `to_namespace_impl` — the registration impl
+## `to_namespace_impl`: the registration impl
 
 `PrefixAttribute::to_namespace_impl(component_name)` emits one impl of the namespace trait for the component marker, whose `Delegate` is a `RedirectLookup` down the prefix path with the marker appended:
 

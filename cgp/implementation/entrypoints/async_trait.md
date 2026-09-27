@@ -38,11 +38,12 @@ The macro **mishandles an async method that carries a default body**. It strips 
 
 The macro is exercised through its interaction with the constructs it stacks onto rather than on its own:
 
-- [async_and_send/cgp_fn_async.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/async_and_send/cgp_fn_async.rs) — a `snapshot_cgp_fn!` over an async `#[cgp_fn]` that also carries `#[async_trait]`, pinning the rewritten trait declaration; this snapshot is owned by the `#[cgp_fn]` feature, not by `#[async_trait]`.
+- [async_and_send/cgp_fn_async.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/async_and_send/cgp_fn_async.rs) — a `snapshot_cgp_fn!` over an async `#[cgp_fn]` that also carries `#[async_trait]`, pinning that the attribute is copied onto both the generated trait and its impl; the snapshot is owned by the `#[cgp_fn]` feature.
+- [async_and_send/component_async.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/async_and_send/component_async.rs) — the same for `#[cgp_component]`, pinning `#[async_trait]` on every generated trait and impl beside the `.await`-forwarding bodies.
 - [async_and_send/spawn.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/async_and_send/spawn.rs) — async components declared with `#[async_trait]` whose futures are handed to a `Send + 'static`-demanding executor.
-- [dispatching/auto_dispatch_async_self_ref_only.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/dispatching/auto_dispatch_async_self_ref_only.rs) and the other `auto_dispatch_async_*` files — `#[async_trait]` stacked with [`#[cgp_auto_dispatch]`](cgp_auto_dispatch.md) on async dispatch traits.
+- [dispatching/auto_dispatch_async_self_ref_only.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/dispatching/auto_dispatch_async_self_ref_only.rs) and the other `auto_dispatch_async_*` files: `#[async_trait]` stacked with [`#[cgp_auto_dispatch]`](cgp_auto_dispatch.md) on async dispatch traits.
 
-There is no dedicated `snapshot_async_trait!` macro; the rewrite is only pinned incidentally through the `#[cgp_fn]` snapshot above.
+No test pins the rewrite itself. A `snapshot_*!` macro records its host macro's output before `#[async_trait]` runs, so the snapshots above show the attribute still in place and `async fn` unrewritten; the `impl Future` form is checked only by those files compiling.
 
 ## Source
 

@@ -125,7 +125,7 @@ The behavioral tests confirm the generated namespaces wire correctly:
 
 The cross-crate coverage confirming the orphan-safe direction of the default-impl coherence rule now lives in `cargo-cgp` (its auxiliary crates `cgp-test-crate-a`/`-b`, migrated out of this repository):
 
-- [`ok/cross_crate_wiring.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/ok/cross_crate_wiring.rs) builds `cgp-test-crate-b`, which registers a *local* component into `cgp-test-crate-a`'s foreign `AppNamespace` with `#[default_impl(FarewellComponent in AppNamespace)]` — legal because the crate owns the component key — and resolves it through a local context that joins the namespace. Its failing orphan-rule counterparts are the `acceptable/wiring/orphan/` fixtures cataloged under [orphan-rule](../../errors/wiring/orphan-rule.md).
+- [`ok/cross_crate_wiring.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/ok/cross_crate_wiring.rs) builds `cgp-test-crate-b`, which registers a *local* component into `cgp-test-crate-a`'s foreign `AppNamespace` with `#[default_impl(FarewellComponent in AppNamespace)]`, legal because the crate owns the component key, and resolves it through a local context that joins the namespace. Its failing orphan-rule counterparts are the `acceptable/wiring/orphan/` fixtures cataloged under [orphan-rule](../../errors/wiring/orphan-rule.md).
 
 The rejection cases in `cgp-macro-tests` pin the attribute rejection and the edge of the header-only form:
 

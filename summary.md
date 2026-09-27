@@ -480,6 +480,8 @@ it stale.
   both checking macros.
 - [delegate_component.md](cgp/implementation/asts/delegate_component.md) — the wiring-table AST types
   and the impls they lower to.
+- [ident.md](cgp/implementation/asts/ident.md) — the restricted argument and parameter types that
+  replace `syn`'s lenient generic lists.
 - [namespace.md](cgp/implementation/asts/namespace.md) — the namespace table and its evaluated form.
 - [path.md](cgp/implementation/asts/path.md) — the AST family that parses and emits type-level paths.
 - [product.md](cgp/implementation/asts/product.md) — the type- and value-level product AST pair.

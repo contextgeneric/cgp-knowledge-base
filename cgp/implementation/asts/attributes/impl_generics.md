@@ -1,4 +1,4 @@
-# `#[impl_generics]` — the AST stack
+# `#[impl_generics]`: the AST stack
 
 `#[impl_generics(Name: Display)]` on a `#[cgp_fn]` adds generic parameters to the generated blanket impl alone, so a type a context fixes through a field is inferred rather than exposed on the trait. It is a modifier attribute collected by the function host; this page covers how it is parsed and what the host injects, and the shared collection mechanism lives in the [attribute-modifier overview](README.md). For the user-facing syntax and expansion, read the reference document [reference/attributes/impl_generics.md](../../../reference/attributes/impl_generics.md).
 
