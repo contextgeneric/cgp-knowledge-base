@@ -1,24 +1,24 @@
 # Writing the homepage
 
-The CGP homepage has one job: **make the idea click, and make the reader want it** — leaving them able
+The CGP homepage has one job: **make the idea click, and make the reader want it**, leaving them able
 to say what CGP does and why it might matter to them, then routed to the page that teaches it. It is not
 a tutorial, not a reference, and not a feature catalogue, and this guide's central discipline is keeping
 it from becoming any of those.
 
-- **URL** — <https://contextgeneric.dev/>
-- **Source** — [src/pages/index.tsx](https://github.com/contextgeneric/contextgeneric.dev/blob/main/src/pages/index.tsx)
+- **URL**: <https://contextgeneric.dev/>
+- **Source**: [src/pages/index.tsx](https://github.com/contextgeneric/contextgeneric.dev/blob/main/src/pages/index.tsx)
   and [src/components/HomepageFeatures/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/src/components/HomepageFeatures)
-- **Voice** — project voice throughout, per
+- **Voice**: project voice throughout, per
   [voice-and-register.md](../../communication-strategy/voice-and-register.md)
-- **Governed by** — [identity.md](../../communication-strategy/identity.md) for the line, the frame, and
+- **Governed by**: [identity.md](../../communication-strategy/identity.md) for the line, the frame, and
   the features; [message.md](../../communication-strategy/message.md) for the pains and strengths;
   [readers.md](../../communication-strategy/readers.md) for who is reading
 
 ## What the page is for, stated precisely
 
 The homepage's success condition is **comprehension that converts**, not conversion alone. A reader who
-leaves able to explain CGP to a colleague — "it lets one trait have several implementations and each type
-picks one, resolved at compile time" — has been served even if they do not click anything, because that
+leaves able to explain CGP to a colleague ("it lets one trait have several implementations and each type
+picks one, resolved at compile time") has been served even if they do not click anything, because that
 reader is the one who comes back and the one who repeats the description accurately. A reader who clicks
 through excited but unable to say what CGP does will bounce off the first tutorial, and will describe CGP
 wrongly in the meantime.
@@ -27,7 +27,7 @@ Two consequences follow, and they set this page apart from a conventional develo
 page must **actually explain something**, which means prose and code rather than a grid of adjectives.
 And it must **not try to teach**, because the tutorials do that better and a homepage that starts
 teaching becomes a bad tutorial. The line between the two is that explaining answers "what is this and
-why", while teaching answers "how do I do it" — and the moment the page starts telling the reader what to
+why", while teaching answers "how do I do it", and the moment the page starts telling the reader what to
 type, it has crossed over.
 
 The page also carries the selling points, so comprehension is not its only output. The difference from a
@@ -49,7 +49,7 @@ pitch: the tag line, one
 reassurance line, one piece of code that shows the novelty, and two links. Nothing above the fold may
 depend on anything below it.
 
-**Below the fold is a bounded essay** for the reader who kept scrolling — the one who is interested
+**Below the fold is a bounded essay** for the reader who kept scrolling, the one who is interested
 enough to want the argument. It runs the idea from the constraint to the payoff to the cost, in a fixed
 number of sections, and it hands off to dedicated pages the moment a section wants to go deeper. Its
 length is capped by structure rather than by willpower, which is what the offload rule below is for.
@@ -60,14 +60,15 @@ Four elements, in this order, and nothing else.
 
 **The tag line, verbatim.** *"A language extension for Rust, with pluggable trait implementations at
 compile-time."* It sits beneath the project name and is not paraphrased, reworded for the hero, or
-replaced by something snappier. The current hero headline — *"Build modular Rust applications with
-zero-cost abstractions"* — leads with the word
+replaced by something snappier. The current hero headline (*"Build modular Rust applications with
+zero-cost abstractions"*) leads with the word
 [identity.md](../../communication-strategy/identity.md) retires and must go.
 
 **The reassurance line.** One sentence that heads off the two misreadings the tag line invites: that
 "language extension" means a new language to learn, and that "pluggable" means a runtime framework.
-*"Still ordinary Rust — a library on the stable toolchain, with no runtime cost, adopted one trait at a
-time."* Put the install line (`cargo add cgp`) here too, because the evaluator is scanning for the
+*"Still ordinary Rust: a library on the stable toolchain, with provider selection resolved at compile
+time, adopted one trait at a time."*, verbatim from
+[identity.md](../../communication-strategy/identity.md#the-pitch-that-follows-the-line). Put the install line (`cargo add cgp`) here too, because the evaluator is scanning for the
 toolchain gamble and finding it immediately is worth more than the space it costs.
 
 **The before/after code block.** This is the hook, and its content is fixed: **show the implementations
@@ -80,10 +81,9 @@ section of this guide because the block carries more of the page's weight than e
 **Two links, no more.** The **Quickstart** for the reader ready to try, and the honest
 [project status page](explanation.md#project-status-and-adoption-risk) for the reader deciding on risk.
 Two calls to action are the maximum, matched to the two readers who reach this page in numbers; a third
-dilutes both. Do not add a third for the enthusiast — they will find the blog. The Quickstart is a page
-the redesign creates — install and one working program, no concepts — and it is deliberately smaller than
-the [Hello World tutorial](../tutorials/hello-world.md), which teaches an idea. Until it exists, this link
-points at Hello World.
+dilutes both. Do not add a third for the enthusiast, who will find the blog. The Quickstart is install
+and one working program with no concepts, and it is deliberately smaller than the
+[Hello World tutorial](../tutorials/hello-world.md), which teaches an idea.
 
 The current page's GitHub star widget may stay; it is social proof rather than a call to action and does
 not compete for the click.
@@ -92,7 +92,7 @@ not compete for the click.
 
 The example is settled: **a trait the snippet defines, implemented twice over two ordinary Rust bounds
 that overlap, then wired per type.** The concrete pair is `Display` and `AsRef<[u8]>` on a `CanEncode`
-trait, and the whole of it — both blocks, the caption, and the sentences that must sit around them — is
+trait, and the whole of it (both blocks, the caption, and the sentences that must sit around them) is
 below. It is the highest-leverage twenty lines on the site: most of the attention the homepage ever
 gets falls on this block, per the research cited above, so it has to carry the pitch, the proof, and
 the pre-emption of the first objection on its own.
@@ -149,16 +149,16 @@ delegate_components! { Vec<u8> { EncoderComponent: EncodeAsBytes } }
 **The block does not work without its caption, and the caption is two sentences.** The first names what
 changed, the second pre-empts the informed objection:
 
-> Both implementations compile, because each one now has a name — and each type names the one it uses, so
+> Both implementations compile, because each one now has a name, and each type names the one it uses, so
 > a call to `encode()` is as unambiguous as it ever was. Coherence is not repealed; it is scoped.
 
-That is the whole sell above the fold. Everything else a writer wants to add here — why coherence exists,
-what the wiring table is, what it costs at runtime — belongs to the essay below or to
+That is the whole sell above the fold. Everything else a writer wants to add here (why coherence exists,
+what the wiring table is, what it costs at runtime) belongs to the essay below or to
 [*Why CGP exists*](explanation.md#why-cgp-exists), and adding it here is the most common way this block
 gets ruined.
 
 Three properties of the *copy* matter as much as the code. **Label the first block as a refusal, not as a
-mistake** — the reader must feel that the program is reasonable and the language is saying no, because
+mistake**: the reader must feel that the program is reasonable and the language is saying no, because
 that is the feeling the whole page converts. **Say `String` out loud in the comment**, since naming the
 witness is what turns "impls might overlap" into a fact the reader checks in their head in one second.
 And **quote `error[E0119]` verbatim**, because it is the detail that makes the claim checkable and a
@@ -167,13 +167,13 @@ reader who has hit it recognizes it instantly.
 ### Why this example and not another
 
 **The overlap is visceral and needs no domain.** Every Rust programmer knows `String` is both `Display`
-and `AsRef<[u8]>`, so the conflict is self-evident from bounds the reader already holds — no invented
+and `AsRef<[u8]>`, so the conflict is self-evident from bounds the reader already holds, with no invented
 domain types, no crate to introduce, nothing to take on trust. An example built on a plausible business
 trait would spend half its lines establishing the setup before the conflict could even be seen.
 
 **The reader has wanted this.** "Encode anything printable one way and anything byte-like another" is a
-thing developers try and are refused, and the escape they reach for — a newtype per case, or a marker
-struct plus a helper trait — is
+thing developers try and are refused, and the escape they reach for (a newtype per case, or a marker
+struct plus a helper trait) is
 [independently reinvented and blogged](../../communication-strategy/evidence.md). The block's real job is
 recognition, so the CGP version arrives as relief from a workaround the reader has written rather than as
 a feature they must be talked into wanting.
@@ -185,19 +185,19 @@ reader wondering what was quietly changed inside, which is exactly the suspicion
 remove.
 
 **The trait's shape is unchanged across the pair.** The example stays on tier 3 of the
-[modularity hierarchy](../../cgp/concepts/modularity-hierarchy.md) — the encoded value stays in `Self` —
+[modularity hierarchy](../../cgp/concepts/modularity-hierarchy.md), where the encoded value stays in `Self`,
 so the before and after differ only by the machinery. Any change beyond that reads as sleight of hand to
 a reader comparing two versions of one program, and above the fold there is no room to narrate one.
 
 **Three wiring lines, not two.** Two entries prove the first provider was not simply discarded; the third
 does two further jobs. One provider serving both `u64` and `String` shows that a provider is reusable
 logic rather than a renamed per-type impl, which forecloses "I could have written two ordinary impls".
-And wiring `String` — the very type whose ambiguity caused the error — closes the loop the first block
+And wiring `String`, the very type whose ambiguity caused the error, closes the loop the first block
 opened, answering "so which one does `String` get?" with "the one you name."
 
 **The bounds move into `#[uses]`, and that is a second small win.** `#[uses(Display)]` and
 `#[uses(AsRef<[u8]>)]` are what the [guides](../../cgp/guides/declaring-dependencies.md) prescribe, and
-they apply to ordinary Rust traits exactly as they do to CGP traits — which the block quietly
+they apply to ordinary Rust traits exactly as they do to CGP traits, which the block quietly
 demonstrates, since a reader who assumed the attribute was CGP-only machinery sees it carrying `Display`.
 Parity survives the move because the bound stays in the reader's eye-line, one line above the impl,
 naming the same trait they just read in `impl<T: Display>`. Do not rewrite it back to
@@ -206,12 +206,12 @@ CGP-specific is worth a line of the page's most valuable space.
 
 **It is a fragment rather than a program.** The imports are omitted and no `main` or call site is shown,
 because a complete example would need half again the vertical space and bury the contrast. That is a
-presentation choice rather than a licence to be approximate — the fragment still has to compile once the
+presentation choice rather than a licence to be approximate: the fragment still has to compile once the
 imports are restored. A program the reader runs belongs in the Hello World tutorial.
 
 ### Which shape it is, and why that matters here
 
-**The block is the retrofit shape**: a value context — `String` and `u64` are the data being encoded —
+**The block is the retrofit shape**, a value context (`String` and `u64` are the data being encoded)
 with the component targeting `Self`. Say so in the meta record even though the page never uses the
 terms, because it is the **least representative of CGP's three shapes** and a writer needs to know that
 deliberately. Most CGP code is the *application* shape, where `Self` is a type you define and the
@@ -227,7 +227,7 @@ representativeness, and it costs two transitions that the essay below must then 
 
 **The site pays that cost back by teaching the application shape second.** Because the hero is a value
 context and so is the Hello World tutorial, a reader's first two contacts both show the shape least CGP
-code is in — so the surfaces immediately downstream are where the common shape has to arrive. On the
+code is in, so the surfaces immediately downstream are where the common shape has to arrive. On the
 explanation path that is essay section 2 and [*How CGP works*](explanation.md#how-cgp-works), where
 the `App`/`TestApp` example is environmental; on the teaching path it is the applied tutorial,
 which is placed second in the tutorial order for this reason and is naturally environmental. Keeping
@@ -235,7 +235,7 @@ the hero as it is depends on those two doing their job, so a change to either is
 trade.
 
 **Do not use the word "context" anywhere in the hero.** At the retrofit shape the context and the target
-are the same type, so calling `String` a context — while true — contradicts the gloss every other page
+are the same type, so calling `String` a context, while true, contradicts the gloss every other page
 gives, and a reader who meets that contradiction concludes they have misunderstood something. "Each type
 names the implementation it uses" says everything the block needs.
 
@@ -254,7 +254,7 @@ rule forbids, and it adds `open` and `@`-path wiring syntax the reader has no gr
 because a post has the paragraph of narration this block does not.
 
 **The orphan rule dissolved.** The block quietly wires three types the snippet does not own, which is
-legal because the snippet owns the trait — and that is exactly the limit of tier 3: the wiring must live
+legal because the snippet owns the trait. That is exactly the limit of tier 3: the wiring must live
 in a crate owning either the trait or the type. CGP dissolves that too, by moving the value out of `Self`,
 and that is one sentence in the essay rather than a second code block.
 
@@ -275,7 +275,7 @@ the reader can name without being told**. The **trait's shape is identical** acr
 **bodies are identical** across the pair, and short enough to show. The wiring shows **at least two
 providers with at least one of them used twice**. And the **real error code** appears verbatim.
 
-A replacement must be compiled before it ships, not eyeballed — the current one was, together with a
+A replacement must be compiled before it ships, not eyeballed; the current one was, together with a
 `check_components!` assertion per wired type, which is how the wiring is confirmed to resolve rather than
 merely parse.
 
@@ -286,8 +286,8 @@ rather than required headings, but the order is not negotiable, because it is th
 questions occur to a reader.
 
 **1. Why Rust only lets you do this once.** Explain, sympathetically and correctly, that Rust's trait
-system doubles as a dependency-injection mechanism — a generic impl can require `where T: Display`
-without the caller naming it, and the compiler resolves that and everything beneath it — and that this
+system doubles as a dependency-injection mechanism (a generic impl can require `where T: Display`
+without the caller naming it, and the compiler resolves that and everything beneath it), and that this
 only works if every lookup finds the same implementation. Coherence is therefore *correct*, and the
 overlap and orphan rules are what buy it. This section is where the enhances-not-replaces frame is
 earned: a reader who believes the page respects Rust will follow the rest.
@@ -296,15 +296,15 @@ earned: a reader who believes the page respects Rust will follow the rest.
 implementing crate always owns, so a provider implements *its own* named type rather than a foreign
 trait, and neither rule bites. Then the other half, which matters just as much: **coherence is restored
 locally**, because each wired type names exactly one provider, so a call site is as unambiguous as it ever
-was. State it as "coherence is not repealed — it is scoped", because that sentence pre-empts the informed
+was. State it as "coherence is not repealed; it is scoped", because that sentence pre-empts the informed
 objection in eight words.
 
 **This section is also where the page crosses from the retrofit shape to the application shape, and it
 must say so.** Everything above it wires the *data*; every other page on the site wires an *application*,
-and nothing in a signature marks the change — no parameter appears, so a reader simply notices at some
+and nothing in a signature marks the change: no parameter appears, so a reader simply notices at some
 point that they no longer know what is being wired. One sentence closes it: *"so far the wired type has
 been the data, which gets one choice for the whole program; the move that makes the choice yours is to
-wire a type you define to stand for your application — and because it is yours, you can define as many as
+wire a type you define to stand for your application, and because it is yours, you can define as many as
 you like."* That sentence is also the first legitimate use of the word **context** on the page, and it
 should be introduced there rather than earlier, because this is the point at which it means something the
 reader can check. The two transitions and the reasoning behind them are specified in
@@ -314,13 +314,13 @@ reader can check. The two transitions and the reasoning behind them are specifie
 **3. What that buys you.** Here the strengths appear, as prose beats rather than cards, each two or
 three sentences: many implementations chosen per application; no runtime cost, because a wired call
 monomorphizes to a direct call; dependencies that are explicit and compiler-checked; and still ordinary
-Rust, adopted incrementally. Prefer "per application" to "per context" throughout this section — it is
+Rust, adopted incrementally. Prefer "per application" to "per context" throughout this section: it is
 concrete, it needs no vocabulary, and it is true of the shape section 2 has just introduced. Draw the
 wording from
 [message.md](../../communication-strategy/message.md#the-strengths-worth-advertising) and keep each
 beat anchored to something the reader has now seen.
 
-**4. It goes further than trait implementations.** One short section repaying the tag line's known debt —
+**4. It goes further than trait implementations.** One short section repaying the tag line's known debt,
 that "trait implementations" undersells the reach. One sentence each for abstract types a context chooses
 for itself, extensible records and variants, and the composable handler family. Resist elaborating; each
 of the three is a linked page's worth of material and none of it belongs here.
@@ -331,7 +331,7 @@ type the application chooses means an error type or a runtime *stops being a par
 carry*. "A context chooses it for itself" describes the construct and lands on a reader who already wants
 a type swappable; the parameter clause names what it removes and lands on a reader whose signatures have
 filled up, which is the larger group and the one this section is otherwise silent for. One clause is
-enough — the [Overview](../site-structure.md) is where the argument is made in full, and the pain behind
+enough: the [Overview](../site-structure.md) is where the argument is made in full, and the pain behind
 it is an entry in [message.md](../../communication-strategy/message.md#the-problems-cgp-removes) for a
 piece that has room to show a before and after.
 
@@ -343,7 +343,7 @@ element on the page, and the register to write it in is the author's own: state 
 describing the thing accurately, not as a hedge appended to a pitch.
 
 This is also **the only place on the page where agent support may be mentioned**, and one clause is the
-budget. Three of the costs just named — the learning curve, the diagnostics, and the volume of wiring —
+budget. Three of the costs just named (the learning curve, the diagnostics, and the volume of wiring)
 are mechanical work over a written-down vocabulary, and CGP publishes an agent skill that reduces all
 three for a reader who works with an assistant. Say it as a smaller cost rather than a solved one, in
 the same breath as the cost itself, and link the skill rather than elaborating. It must not appear in
@@ -370,37 +370,41 @@ section 3 rather than a replacement for it, and if both exist the feature strip 
 **A section that wants a second code block, a second example, or a paragraph of mechanism has outgrown
 the homepage.** When that happens, the material moves to a dedicated documentation page and the homepage
 section keeps one paragraph plus a link. This is the rule that keeps the essay bounded, and it only works
-if the destination pages exist — so the redesign must create them rather than discovering the need
+if the destination pages exist, so the redesign must create them rather than discovering the need
 mid-draft.
 
-Five pages are the destinations, and two of them exist today in some form. Together they form an
-**explanation** tier the docs tree currently lacks, distinct from the tutorials that teach and the
-reference that specifies. **[explanation.md](explanation.md) is the guide for writing them**, and it
-carries a fuller spec for the first four than the summaries below — read it before drafting any of them.
+Five pages are the destinations. Three are pages of the site's **explanation** tier, the Concepts
+section, distinct from the tutorials that teach and the reference that specifies; one is still to be
+lifted out of the Introduction; and the Overview already exists. **[explanation.md](explanation.md) is
+the guide for writing the first four**, and it carries a fuller spec for each than the summaries below,
+together with which Concepts page plays each role.
 
-- **Why CGP exists** — the long-form version of sections 1 and 2: how Rust's trait system resolves
-  dependencies, why coherence is necessary, what the overlap and orphan rules cost in practice, the
-  workarounds developers reach for, and the `Self`-becomes-a-parameter move with local coherence
-  restored. Built from [coherence](../../cgp/concepts/coherence.md) and
+- **Why CGP exists**, published as *Bypassing coherence*: the long-form version of sections 1 and 2,
+  covering how Rust's trait system resolves dependencies, why coherence is necessary, what the overlap
+  and orphan rules cost in practice, the workarounds developers reach for, and the
+  `Self`-becomes-a-parameter move with local coherence restored. Built from
+  [coherence](../../cgp/concepts/coherence.md) and
   [consumer and provider traits](../../cgp/concepts/consumer-and-provider-traits.md), with the
-  [RustLab transcript](../blog/rustlab-2025-coherence.md) as the model for how to build the argument. This
-  is the page the homepage links to most often and the most valuable one missing from the site.
-- **How CGP works** — the mechanism for a reader who wants to see through the macros: the two generated
+  [RustLab transcript](../blog/rustlab-2025-coherence.md) as the model for how to build the argument.
+  This is the page the homepage links to most often.
+- **How CGP works**, published as *Consumer and provider traits* with *Impl-side dependencies* beside
+  it: the mechanism for a reader who wants to see through the macros, covering the two generated
   traits, the wiring table, and the plain Rust an expansion produces, ending on why none of it costs
   anything at runtime. Built from the same two concepts plus
   [impl-side dependencies](../../cgp/concepts/impl-side-dependencies.md), and the natural home for a
   [`cargo cgp expand`](../../cgp/reference/cargo-cgp.md) output.
-- **When to use CGP, and when not** — the boundary as a page the homepage can point a skeptic at, taken
-  from [message.md](../../communication-strategy/message.md#when-not-to-reach-for-cgp) and the
-  [modularity hierarchy](../../cgp/concepts/modularity-hierarchy.md). Nothing on the site currently
-  carries this, and its absence is why the cost section on the homepage has nowhere to hand off to.
-- **Project status and adoption risk** — the maturity discussion the evaluator arrives looking for. This
-  already exists as the "Current Status" section of the
+- **When to use CGP, and when not**, published as *Modularity Hierarchy*: the boundary as a page the
+  homepage can point a skeptic at, taken from
+  [message.md](../../communication-strategy/message.md#when-not-to-reach-for-cgp) and the
+  [modularity hierarchy](../../cgp/concepts/modularity-hierarchy.md). It is where the cost section on
+  the homepage hands off to.
+- **Project status and adoption risk**, not yet a page of its own: the maturity discussion the
+  evaluator arrives looking for. It exists as the "Current Status" section of the
   [Introduction page](../site-structure.md) and should become a page of its own so it can be linked
-  directly from above the fold. Its frankness is a genuine asset and must not be softened when it moves;
-  what should change is the stale year-stamp and the absence of any mention of
-  [`cargo-cgp`](../../cargo-cgp/README.md).
-- **Overview** — the fifth destination, and the one that already exists. It is the **feature tour**: every
+  directly from above the fold. Its frankness is a genuine asset and must not be softened when it
+  moves; [explanation.md](explanation.md#project-status-and-adoption-risk) says what the move keeps and
+  adds.
+- **Overview**: the fifth destination, and the one that already exists. It is the **feature tour**: every
   high-level CGP feature walked through in more detail than any other surface carries, which makes it
   the destination for both section 3 and section 4 of the essay. That job resolves the site's three
   disagreeing feature lists rather than merely reconciling them: the front page carries the curated five
@@ -421,14 +425,14 @@ tells the reader what to type, it is competing with the tutorials and losing.
 to know what `#[uses]` does is past the homepage.
 
 **No paradigm name as the hook.** "Context-generic programming" may appear once the reader understands
-what CGP does — late in the essay, beside a plain descriptor — and never in the hero.
+what CGP does (late in the essay, beside a plain descriptor) and never in the hero.
 
 **No coherence theory above the fold.** Section 1 explains coherence because the reader has just seen an
 `E0119` and wants to know why the rule exists. Opening on it, before the code that motivates it, loses
 the pragmatist immediately.
 
 **No feature the strategy retires.** In particular, "Modular Component System" and "Highly Expressive
-Macros" — both currently on the page — lead with words that cost more attention than they win, and
+Macros", both currently on the page, lead with words that cost more attention than they win, and
 "modular" as a lead word is
 [specifically retired](../../communication-strategy/identity.md).
 
@@ -438,7 +442,7 @@ The current homepage is a stock Docusaurus landing page and diverges from this g
 ways, listed here so a redesign has a checklist rather than an impression. The **hero headline** leads
 with "modular" and does not use the tag line. There is **no reassurance line and no install command**.
 The **feature grid has six entries**, two of which lead with retired words, and it disagrees with the
-Overview page. The **code example is the `std::Hash` illustration** — a good provocation, but it does not
+Overview page. The **code example is the `std::Hash` illustration**, a good provocation, but it does not
 show the rejected impl, so the reader never sees what Rust refuses, and it elides so much that the wiring
 line carries no weight. The **problem cards are generic** ("No More Monolithic Traits", "Decouple
 Dependencies") and are not anchored to anything the reader has seen. And there is **no cost section at
@@ -460,7 +464,7 @@ captions are copy and are governed by this guide.
 
 Run five checks, in this order.
 
-**Read only above the fold and ask whether it stands alone** — tag line, reassurance, the contrast, two
+**Read only above the fold and ask whether it stands alone**: tag line, reassurance, the contrast, two
 links. If a reader stopping there could not say what CGP does, the hook has failed and nothing below
 matters.
 

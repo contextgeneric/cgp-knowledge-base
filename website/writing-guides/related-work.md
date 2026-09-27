@@ -7,14 +7,14 @@ code, states what each costs, and says plainly where the reader's own tool is th
 pages are ported from the internal [related-work](../../related-work/README.md) comparisons, and
 this guide fixes what changes in the port.
 
-- **Where they live** — `docs/comparisons/`, a top-level category labelled **Comparisons**, placed
+- **Where they live**: `docs/comparisons/`, a top-level category labelled **Comparisons**, placed
   directly after Concepts in the sidebar
-- **Voice** — project voice, per
+- **Voice**: project voice, per
   [voice-and-register.md](../../communication-strategy/voice-and-register.md)
-- **Derived from** — [related-work/](../../related-work/README.md), one internal document per page,
+- **Derived from**: [related-work/](../../related-work/README.md), one internal document per page,
   which stays the source of truth
-- **Scale** — eleven pages plus a hand-written index, shipped with the v0.8.0 relaunch
-- **Records** — one entry in [site-structure.md](../site-structure.md) for the whole section, per
+- **Scale**: eleven pages plus a hand-written index, shipped with the v0.8.0 relaunch
+- **Records**: one entry in [site-structure.md](../site-structure.md) for the whole section, per
   the [ported-catalog exception](../AGENTS.md#registering-a-document)
 
 ## What the page is for
@@ -142,8 +142,8 @@ internal document names these cases, and they are the sentences that earn the pa
 with both audiences.
 
 **What to expect that differs.** The expectations the internal positioning section says to correct,
-written as plain facts about CGP: it does not infer a provider from scope, a provider returns
-exactly once, the structure is a type rather than a descriptor, the container is the type system.
+written as plain facts about CGP: it does not infer a provider from scope, a provider receives
+the context rather than a continuation, the structure is a type rather than a descriptor, the container is the type system.
 Each is followed by why CGP is arranged that way, so the difference reads as a design choice rather
 than a gap.
 
@@ -173,9 +173,8 @@ its own limits**: GHC's manual warns that overlapping instances can give rise to
 quoting the manual is fairer than paraphrasing a complaint. **Cut the sentence that reads as
 mockery** even when it is true. The internal document may keep it; the page does not.
 
-**The enhances-not-replaces frame must survive the comparison.** Phrases that are accurate
-internally, such as "a type-class system without coherence" or "dependency injection without a
-container", can read on the site as CGP replacing the reader's tool or replacing Rust's traits.
+**The enhances-not-replaces frame must survive the comparison.** Shorthand that works
+internally, such as "dependency injection without a container", can read on the site as CGP replacing the reader's tool or replacing Rust's traits.
 Every page states in its orientation that CGP is a library on stable Rust, that a consumer trait is
 an ordinary trait, and that the comparison is about where the ideas meet rather than which to
 abandon. The frame is settled in [identity.md](../../communication-strategy/identity.md).
@@ -184,7 +183,7 @@ abandon. The frame is settled in [identity.md](../../communication-strategy/iden
 and "effect system" are the words readers reach for, and each names something CGP does only in part.
 Use them to meet the reader and qualify them in the same sentence, per
 [vocabulary.md](../../communication-strategy/vocabulary.md#words-and-framings-to-avoid):
-compile-time structural reflection, the exactly-once fragment of effect handlers, compile-time and
+compile-time structural reflection, the resume-in-place fragment of effect handlers, compile-time and
 reflection-free dependency injection.
 
 **Hold the vocabulary line.** Introduce the compared tool's term once, in the refresher, and then
@@ -236,8 +235,7 @@ where their tool wins.
 
 The section is a new top-level category at `docs/comparisons/`, labelled **Comparisons** in its
 `_category_.json` and linked to its index page rather than a generated index. It sits directly after
-Concepts, which moves Reference, `cargo-cgp`, and AI down one position each; the renumbering lands
-with the section. The label and the URL both use the reader's word, matching `concepts` and
+Concepts, at position 6. The label and the URL both use the reader's word, matching `concepts` and
 `tutorials` beside them; "related work" names the internal directory and the academic habit it
 borrows from, and stays there. The order and the reader paths it serves are in
 [information-architecture.md](../information-architecture.md).
@@ -247,9 +245,7 @@ Page titles use the compared concept's name, because that is what the reader sea
 [formats.md](../../communication-strategy/formats.md#titles-first-lines-and-search) prescribes for
 explanations, do not fit here: the reader is not arriving with a problem but with a vocabulary.
 
-The section ships with the v0.8.0 relaunch. It is new content rather than a defect in an existing
-page, so it was planned as post-release work like the Projects section, and it was written on the release
-branch instead once the sources proved close enough to port in one pass. Publishing it changed a
+The section ships with the v0.8.0 relaunch, written on the release branch. Publishing it adds a
 public claim: the author reads the *What each approach costs* and *Where the other tool is the better
 choice* sections of every comparison page in full before publication, per the
 [authorship rule](../AGENTS.md#who-drafts-a-page-and-who-reads-it-before-it-publishes), and the

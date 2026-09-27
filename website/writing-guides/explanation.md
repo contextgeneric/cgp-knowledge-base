@@ -2,29 +2,29 @@
 
 An explanation page exists to make a reader **understand** something about CGP that they were not going
 to reach by following a tutorial or looking up a construct. Its reader is not doing anything while they
-read — no editor open, no compiler running — so the page's whole job is to leave them holding an idea
+read (no editor open, no compiler running), so the page's whole job is to leave them holding an idea
 they did not have before, and able to repeat it.
 
-This is a **new page type** on the site. The docs tree previously held orientation (the Introduction),
-a feature-and-benefit summary (the Overview), a link directory, a contribution page, the tutorials, and
-an inlined copy of the agent skill — none of which explain CGP's ideas at length to a public reader. The
-tier exists for two reasons at once. The [homepage guide](homepage.md) offloads to it, so everything
+This page type is the site's **Concepts** tier. The rest of the docs tree holds orientation (the
+Introduction), a feature-and-benefit summary (the Overview), a link directory, a contribution page, the
+tutorials, the reference, and the published agent skill, and none of them explains CGP's ideas at length
+to a public reader. The tier exists for two reasons at once. The [homepage guide](homepage.md) offloads to it, so everything
 that outgrows a homepage section becomes one of these pages; and the site needs a public counterpart to
 the internal [cgp/concepts/](../../cgp/concepts/README.md) catalog, so that every cross-cutting CGP idea
 has somewhere a reader can be sent.
 
 The second reason decides the tier's shape: it is the **Concepts** section, with **one page per idea**,
-mirroring the internal catalog one to one — eighteen pages plus a hand-written index. The four pages the
+mirroring the internal catalog one to one: eighteen pages plus a hand-written index. The four pages the
 homepage offloads to are four of those eighteen rather than the whole tier; which concept page plays
 each role is recorded in [information-architecture.md](../information-architecture.md), and the current
 state of the section in [site-structure.md](../site-structure.md).
 
-- **Where they live** — `docs/concepts/`; see
+- **Where they live**: `docs/concepts/`; see
   [Placing them in the docs tree](#placing-them-in-the-docs-tree)
-- **Voice** — project voice, per
+- **Voice**: project voice, per
   [voice-and-register.md](../../communication-strategy/voice-and-register.md), with one real tension
   worked out below
-- **Raw material** — [cgp/concepts/](../../cgp/concepts/README.md), rewritten rather than copied
+- **Raw material**: [cgp/concepts/](../../cgp/concepts/README.md), rewritten rather than copied
 
 ## What an explanation page is not
 
@@ -40,7 +40,7 @@ A **reference page** specifies a construct completely and is read in fragments b
 thing up. Its published home is the site's own reference tier, which is
 [canonical rather than a supplement to rustdoc](reference.md) and is ported from the exhaustive internal
 [cgp/reference/](../../cgp/reference/README.md). An explanation page names constructs but never
-enumerates their syntax — the moment it starts listing accepted forms, it has become a bad reference.
+enumerates their syntax: the moment it starts listing accepted forms, it has become a bad reference.
 
 The **homepage** makes the idea click in one screen and one bounded essay. An explanation page is where
 that essay's material goes when it needs room. The relationship is one-directional and worth keeping
@@ -52,7 +52,7 @@ attention, because they have already given it.
 Six obligations hold across the tier.
 
 **Answer "why", not "how do I".** The organizing question of the page is a question a reader would
-actually ask out loud — *why can't Rust do this?*, *what is actually generated?*, *should I use this?* —
+actually ask out loud (*why can't Rust do this?*, *what is actually generated?*, *should I use this?*),
 and the page is finished when that question is answered. If the natural next sentence is "now add this to
 your `Cargo.toml`", the material belongs in a tutorial.
 
@@ -60,7 +60,7 @@ your `Cargo.toml`", the material belongs in a tutorial.
 author's most consistent habit: CGP
 [enhances Rust's trait system rather than replacing it](../../communication-strategy/identity.md), so a
 page that opens by describing coherence as a limitation has the argument backwards. The
-[RustLab transcript](../blog/rustlab-2025-coherence.md) is the model — roughly ten slides establishing
+[RustLab transcript](../blog/rustlab-2025-coherence.md) is the model: roughly ten slides establishing
 that the trait system's global lookup gives Rust free transitive dependency injection, and that
 coherence is therefore *correct*, before a word about working around it.
 
@@ -70,7 +70,7 @@ the way the [Hypershell post](../blog/hypershell-release.md) opens with a readin
 section-by-section preview. A reader who knows the shape navigates; a reader who does not, abandons.
 
 **Show code as illustration, not as steps.** Snippets on an explanation page exist to make an argument
-concrete — this is the impl Rust rejects, this is what the macro generates — and are read rather than
+concrete (this is the impl Rust rejects, this is what the macro generates) and are read rather than
 typed. They may elide bodies with `/* ... */`, they need not build to a runnable program, and they
 should never be numbered or sequenced as instructions.
 
@@ -92,7 +92,7 @@ and judgement**, which reference and tutorial do not.
 Two divergences matter, and both are consequences of decisions made elsewhere.
 
 **Opinion is allowed but must not be personal.** Diátaxis is right that explanation is where a project
-says what it thinks, but the website speaks in the **project voice** — the first-person, personally
+says what it thinks, but the website speaks in the **project voice**, and the first-person, personally
 candid register belongs to the blog. Resolve this by grounding the judgement rather than attributing it:
 "this is more machinery than a plain trait needs" rather than "I think this is more machinery than a
 plain trait needs". Where an argument genuinely depends on the author having made a choice and having
@@ -101,7 +101,7 @@ he makes it in his own voice.
 
 **The reference boundary is softer here than Diátaxis draws it.** Diátaxis keeps mechanism out of
 explanation, but CGP's central credibility problem is that its macros generate code, and a Rust
-programmer will not adopt what they cannot see through — the same reason
+programmer will not adopt what they cannot see through, the same reason
 [a tutorial must show the desugaring](tutorial.md). So *How CGP works* is deliberately a page about
 mechanism, and any explanation page may show generated code where showing it is the argument. The line
 that still holds is enumeration: showing what a macro produces is explanation, listing every form it
@@ -119,8 +119,8 @@ Three transformations turn one into the other. **Apply the vocabulary schedule**
 terms [vocabulary.md](../../communication-strategy/vocabulary.md) says to defer, and introduce the rest
 with a plain-language definition on first use. **Add the motivation the concept document assumes**: a
 concept opens with what the idea *is*, whereas an explanation page opens with the problem that makes the
-idea worth having. And **remove the internal machinery** — `DelegateComponent`, `IsProviderFor`, the
-`Symbol<…>` list — unless the page's subject *is* that machinery, in which case introduce it as the
+idea worth having. And **remove the internal machinery** (`DelegateComponent`, `IsProviderFor`, the
+`Symbol<…>` list) unless the page's subject *is* that machinery, in which case introduce it as the
 mechanism behind the model rather than as the model.
 
 The synchronization rule applies unchanged in both directions: an explanation page's claims are bound to
@@ -133,14 +133,14 @@ because an explanation is an argument rather than a specification, and firmer th
 reader who has read one page should be able to skim the next by habit.
 
 **Open by naming the question and saying where the page ends.** A sentence or two: what the page
-answers, and what it closes on. This is the declared-length habit at the scale of a single page — a
+answers, and what it closes on. This is the declared-length habit at the scale of a single page: a
 reader who knows the shape navigates, and one who does not, abandons.
 
 **Develop the idea in as many sections as it takes**, with the argument's own headings rather than
 prescribed ones, and with code shown as illustration rather than as steps.
 
 **Close with two fixed sections, in this order.** *What it costs* names what the idea costs or where
-it stops applying, and is not optional — these are the pages a skeptic reads to the end. *Where to
+it stops applying, and is not optional, since these are the pages a skeptic reads to the end. *Where to
 go next* routes to the neighbouring concept, the tutorial that puts the idea to work, and the
 reference pages that specify the constructs, rather than summarizing what the reader just read.
 Where a [Projects](project.md) example page shows the idea in a running program, the list ends with
@@ -158,16 +158,16 @@ works* is **Consumer and provider traits** with **Impl-side dependencies** besid
 CGP* is **Modularity Hierarchy**. The fourth, *Project status*, is project meta rather than a CGP idea
 and does not belong among the concepts; its home is unsettled, per
 [information-architecture.md](../information-architecture.md). The specifications below still stand for
-the pages they describe — read each one as the spec for the concept page that plays its role.
+the pages they describe, so read each one as the spec for the concept page that plays its role.
 
 ### Why CGP exists
 
-**The most valuable page missing from the site**, and the one the homepage links to most. Its organizing
+**The page the homepage links to most**, published as *Bypassing coherence*. Its organizing
 question is *why can't Rust do this already?*, and it is the long-form version of the homepage's first
 two essay sections.
 
 The argument runs in five movements. Establish that **Rust's trait system doubles as a
-dependency-injection mechanism** — a generic impl can require `where T: Display` without any caller
+dependency-injection mechanism**: a generic impl can require `where T: Display` without any caller
 naming it, and the compiler resolves that bound and every transitive bound beneath it. Show that this
 **only works if every lookup finds the same implementation**, which is what the overlap rule and the
 orphan rule buy, so coherence is a guarantee rather than a restriction. Then show **what the guarantee
@@ -176,7 +176,7 @@ knows which should apply, and a trait cannot be implemented for a type from anot
 **workarounds**: the newtype dance, and the marker-struct-plus-helper-trait pattern developers
 [reinvent independently](../../communication-strategy/evidence.md), which the page names rather than
 teaches, because recognizing the hand-rolled pattern sets up the move. Finally the **move**: the
-implementation's `Self` becomes a type the implementing crate owns, so neither rule applies; and coherence
+implementation's `Self` becomes a type the implementing crate owns, so both rules are satisfied; and coherence
 is **restored locally**, because each type names exactly one provider, so no call site is ambiguous.
 "Coherence is not repealed; it is scoped" is the sentence the page exists to earn.
 
@@ -216,14 +216,14 @@ overlap legal; the **wiring table** as a compile-time lookup, described with the
 before any trait name; **what a call actually resolves to**, traced once end to end; the **plain Rust** a
 small example expands into, ideally straight from
 [`cargo cgp expand`](../../cgp/reference/cargo-cgp.md) so the reader can reproduce it; and **why none of
-it costs anything at runtime** — no vtable, no container, nothing in the binary for an unused provider.
+it costs anything at runtime**: no vtable, no container, nothing in the binary for an unused provider.
 It should also explain, briefly, that **wiring is lazy** and that this is why a check exists, which is
 the honest setup for the errors discussion.
 
 Built from [consumer and provider traits](../../cgp/concepts/consumer-and-provider-traits.md),
 [impl-side dependencies](../../cgp/concepts/impl-side-dependencies.md), and
 [check traits](../../cgp/concepts/check-traits.md). This is the one page in the tier where
-`DelegateComponent` and `IsProviderFor` may be named, because the page's subject is the mechanism — but
+`DelegateComponent` and `IsProviderFor` may be named, because the page's subject is the mechanism, but
 they arrive late, after the model has landed, and are introduced as the machinery behind it.
 
 ### When to use CGP, and when not
@@ -238,7 +238,7 @@ the site draws CGP's boundary in public.
 The tail is [message.md](../../communication-strategy/message.md#when-not-to-reach-for-cgp) rendered for
 a public reader: the rule of thumb, the alternative-by-alternative guide with each alternative's home
 ground conceded first, and the cases where CGP is simply the wrong tool. Two rules bind it especially
-tightly. **Never disparage the alternative** — represent each as its own users would recognize it. And
+tightly. **Never disparage the alternative**: represent each as its own users would recognize it. And
 **if a table is used, every row must concede a case where the other tool wins**; a table showing CGP
 winning everything reads as a strawman and loses the reader it was written for. The tier sections that
 open the page are built from the [modularity hierarchy](../../cgp/concepts/modularity-hierarchy.md)
@@ -248,16 +248,16 @@ Because the page's whole subject is where CGP's costs outweigh its benefits, it 
 places the **agent-support mitigation** belongs: the learning curve, the diagnostics, and the wiring
 volume are three of the costs a reader is weighing here, and CGP's published agent skill genuinely
 changes their size. State it where those costs are discussed, as a smaller cost rather than a
-disappearing one, and do not let it soften a boundary — a codebase that will only ever have one
+disappearing one, and do not let it soften a boundary, since a codebase that will only ever have one
 application still belongs on `#[cgp_fn]` alone, regardless of who writes the wiring.
 
 This page also carries a second decision the others do not: **which of CGP's three shapes to reach for.**
 Some readers will resist being taught three where they expected one, and the defence is to show that each
 answers a different question rather than representing a different amount of sophistication. Two questions
 settle it, and they should appear as questions rather than as a taxonomy: *is the operation about the
-data, or about the application?* — about the data means a value context and the retrofit shape, about the
+data, or about the application?* About the data means a value context and the retrofit shape, about the
 application means an environmental context. And *does it concern a type you don't own, which different
-applications must treat differently?* — if so the target moves into a parameter, and if not, self-targeting
+applications must treat differently?* If so the target moves into a parameter, and if not, self-targeting
 is enough.
 
 Presented that way the shapes read as a decision the reader is already equipped to make. Presented as
@@ -265,29 +265,29 @@ three named forms to learn first, they read as the complexity the page exists to
 that the application shape is where most CGP code lives, so the reader knows the common case rather than
 inferring that the most elaborate shape is the intended destination.
 
-Since the [coherence page](#why-cgp-exists) stays at the basic tier and no longer introduces these
+Since the [coherence page](#why-cgp-exists) stays at the basic tier and does not introduce these
 shapes, this page is where a reader first meets them: introduce the application-context idea rather than
 assuming it, building it from code the way the
 [comprehension barrier](../../communication-strategy/readers.md) describes.
 
 ### Project status and adoption risk
 
-**Also not an explanation page** — it is project meta, and it is the page an evaluator arrives looking
+**Also not an explanation page**: it is project meta, and it is the page an evaluator arrives looking
 for. Most of it already exists as the "Current Status" section of the
 [Introduction](../site-structure.md) and should be lifted into a page of its own so the homepage can link
 it directly from above the fold.
 
-**Its frankness is the asset and must survive the move.** It currently tells readers that CGP is in
-formative early stages, that the rough edges are real, and that adopting it for mission-critical work
-carries risk — and that candour is doing more persuasive work for the evaluator profile than any claim on
-the site. Do not soften it into marketing. Four things should change: the stale year-stamp; the absence
-of any mention of [`cargo-cgp`](../../cgp/reference/cargo-cgp.md), which directly answers two of the
-rough edges the page lists; the missing incremental-adoption reassurance, that CGP is a superset of
-ordinary traits and can be adopted in one corner and stepped back from; and a sentence on CGP's
-published agent skill among the mitigations, since the learning curve and the diagnostics this page is
-honest about are two of the three costs it reduces. That last one belongs here precisely because this is
-a page about risk — stated beside a cost it makes smaller, never as a feature, per
+**Its frankness is the asset and must survive the move.** The section tells readers that CGP is in
+active development with a young ecosystem, that learning its patterns takes time and its errors can be
+hard to read, and that a mission-critical adopter should expect to investigate problems alone. That
+candour does more persuasive work for the evaluator profile than any claim on the site, so do not soften
+it into marketing. On the `v0.8.0` branch the section already carries what the page needs: it names
+[`cargo-cgp`](../../cgp/reference/cargo-cgp.md) and CGP's published agent skill beside the costs they
+reduce, and it recommends starting with a small part of a project. The skill belongs here precisely
+because this is a page about risk, stated beside a cost it makes smaller and never as a feature, per
 [message.md](../../communication-strategy/message.md#the-one-mitigation-that-spans-three-of-these).
+Keep all of it in the move, and add the incremental-adoption reassurance that CGP is a superset of
+ordinary traits and can be adopted in one corner and stepped back from.
 
 ## Placing them in the docs tree
 
@@ -301,18 +301,16 @@ vocabulary in navigation. The category is labelled **Concepts**, which names the
 matches the word the knowledge base already uses for these documents, so the internal and public names
 agree.
 
-The section sits at `docs/concepts/`, between Tutorials and Reference, and its pages are ordered in the
+The section sits at `docs/concepts/`, between Tutorials and Comparisons, and its pages are ordered in the
 sidebar as a reader meets the ideas rather than as the internal catalog lists them: the coherence
 problem and the trait split first, then the three faces of dependency injection, then composition and
 scale, then the applied ideas, with the `Send`-bound workaround and the how-far-to-go decision guide
 last. The order and its reasoning are recorded in
 [information-architecture.md](../information-architecture.md#navigation-and-sidebar-order).
 
-Two consequences for neighbouring pages follow and should land in the same change. The
-[Introduction](../site-structure.md) currently carries both the maturity discussion and the routing
-advice; once *Project status* exists, the Introduction keeps the routing and links to it. And the
-Introduction's "Getting Started" section currently sends readers to blog posts as the most current
-material, which was true before the tutorials existed and is now the weaker answer.
+One consequence for a neighbouring page follows and should land in the same change. The
+[Introduction](../site-structure.md) carries both the maturity discussion and the routing advice; once
+*Project status* exists, the Introduction keeps the routing and links to it.
 
 ## What must not be on an explanation page
 
@@ -335,7 +333,7 @@ unqualified feature claim does more damage here than anywhere else on the site.
 
 ## Checking a draft
 
-**State the page's organizing question and check the page answers it** — and only it. A page answering
+**State the page's organizing question and check the page answers it**, and only it. A page answering
 two questions is two pages, and the second one is the essay that should have been offloaded.
 
 **Check the frame.** Does the page explain what Rust already does, correctly and sympathetically, before

@@ -1,15 +1,15 @@
 # Writing a tooling page
 
 A tooling page documents a **program the reader runs**, not a construct they write. The site has one
-such subject — [`cargo-cgp`](https://contextgeneric.dev/docs/cargo-cgp/) — and its section is the model
+such subject, [`cargo-cgp`](https://contextgeneric.dev/docs/cargo-cgp/), and its section is the model
 this guide describes.
 
-- **Where they live** — `docs/cargo-cgp/`, a top-level category beside the reference
-- **Voice** — project voice, per
+- **Where they live**: `docs/cargo-cgp/`, a top-level category beside the reference
+- **Voice**: project voice, per
   [voice-and-register.md](../../communication-strategy/voice-and-register.md)
-- **Derived from** — [cargo-cgp/reference/](../../cargo-cgp/reference/README.md), which stays the source
+- **Derived from**: [cargo-cgp/reference/](../../cargo-cgp/reference/README.md), which stays the source
   of truth
-- **Scale** — five pages: an overview, then one per command, plus installation and troubleshooting
+- **Scale**: five pages, namely an overview, then one per command, plus installation and troubleshooting
 
 ## Why this is its own kind of page
 
@@ -18,8 +18,8 @@ rules rather than borrowing the reference guide's.
 
 A [reference page](reference.md) documents a construct whose behavior is fixed by the source: get the
 expansion right and the page is right. A tooling page documents a program whose behavior depends on
-**the reader's machine** — which toolchain is active, which package manager installed it, which version
-they have — so the same command produces different results for different readers, and most of the page
+**the reader's machine** (which toolchain is active, which package manager installed it, which version
+they have), so the same command produces different results for different readers, and most of the page
 exists to handle that. Installation is a decision tree rather than a command. Troubleshooting is a
 substantial page rather than a *Gotchas* section, because the interesting failures happen before the
 tool does anything.
@@ -45,8 +45,8 @@ sections of one page because a reader arrives wanting one of them.
 **Installation**, which is a decision before it is a command: lead with a table matching what the reader
 *has* to the path they should take, then one section per path.
 
-**Troubleshooting**, which opens with a **symptom index** — a table from the distinctive fragment of an
-error to the section that explains it — because a reader arrives holding an error message and nothing
+**Troubleshooting**, which opens with a **symptom index** (a table from the distinctive fragment of an
+error to the section that explains it), because a reader arrives holding an error message and nothing
 else. Then one section per failure, each quoting the exact text.
 
 ## What every tooling page owes its reader
@@ -66,12 +66,14 @@ which is which; a reader debugging the wrong program wastes real time.
 
 **Concede the version.** The tool is a `v0.1.0-alpha` that reshapes the classes it recognizes and passes
 the rest through. Per
-[vocabulary.md](../../communication-strategy/vocabulary.md), the framing is *dramatically better and
-actively improving*, never *solved* — and never *fixed*. A reader who hits an unreshaped error having
+[vocabulary.md](../../communication-strategy/vocabulary.md#terms-to-use-and-how-to-introduce-each),
+copy the canonical sentence unchanged: `cargo cgp check` leads with the root cause for the classes it
+recognizes, and the tool is a v0.1.0-alpha that does not yet reshape every class. Never call the
+problem *solved* or *fixed*. A reader who hits an unreshaped error having
 been told the problem was solved trusts nothing else on the page.
 
-**Pin a claim to the thing that can be checked.** Where a fact depends on the release — which commands
-exist, which version is published — say how the reader can check it themselves rather than asserting a
+**Pin a claim to the thing that can be checked.** Where a fact depends on the release (which commands
+exist, which version is published), say how the reader can check it themselves rather than asserting a
 number that will age.
 
 ## What must not be on one
@@ -82,7 +84,7 @@ documents that must not follow the material onto the site.
 
 **No implementation detail as explanation.** How the two executables find each other and how the driver
 reaches the compiler belong in the internal documents. They appear here only where a reader needs them
-to *fix* something — the sibling-path lookup earns its place on the troubleshooting page because it is
+to *fix* something: the sibling-path lookup earns its place on the troubleshooting page because it is
 why a driver goes missing, and nowhere else.
 
 **No instructions the page cannot stand behind.** If a path has not been run, do not present it as
@@ -97,7 +99,7 @@ should find their path without reading the other's.
 
 **Grep for `solved`, `fixed`, and `no longer`** in anything said about the error experience.
 
-**Check the boundary is present on every page** — what the command does not do, and what to use instead.
+**Check the boundary is present on every page**: what the command does not do, and what to use instead.
 
 **Check the symptom index covers every error the troubleshooting page quotes**, since the index is how
 readers enter that page and an unindexed section is an unread one.

@@ -1,15 +1,16 @@
 # Writing a release announcement
 
 A release announcement tells readers what changed and why it matters. It is the site's most repeated
-artifact — nine of the seventeen published posts are version releases — and it is the **first page type
-specified here that speaks in the author's voice** rather than the project's, which changes more about
+artifact (seven of the sixteen published posts are version releases, and the v0.8.0 draft makes
+eight), and it is the **only page type specified here that speaks in the author's voice** rather than
+the project's, which changes more about
 how it is written than the subject does.
 
-- **Where it lives** — `blog/<date>-v<version>-release.md`, or a directory with an `index.md` when the
+- **Where it lives**: `blog/<date>-v<version>-release.md`, or a directory with an `index.md` when the
   post carries images
-- **Voice** — the author's, first-person, per
+- **Voice**: the author's, first-person, per
   [voice-and-register.md](../../communication-strategy/voice-and-register.md)
-- **Status once published** — a dated historical record; see
+- **Status once published**: a dated historical record; see
   [Publishing, and what happens afterwards](#publishing-and-what-happens-afterwards)
 
 ## The two readers, and the tension between them
@@ -24,12 +25,12 @@ an introduction to CGP.
 The **first-contact reader** arrives from a link aggregator, where the release post *is* the submission,
 and has never heard of CGP. Every substantial post CGP has published was submitted to the Rust subreddit,
 Lobsters, and Hacker News ([evidence.md](../../communication-strategy/evidence.md)), so a release
-announcement is routinely somebody's first page — and the reception of those threads is where most of
+announcement is routinely somebody's first page, and the reception of those threads is where most of
 what the project knows about its own framing comes from.
 
 The tension is real and cannot be resolved by writing for the average of the two. The resolution is
 **structural**: a release post opens on the *problem* the release addresses, which serves both readers at
-once — the newcomer meets a concrete Rust pain rather than a changelog, and the existing user learns
+once: the newcomer meets a concrete Rust pain rather than a changelog, and the existing user learns
 immediately what the release is about. Orientation for the newcomer is then **one paragraph and a link**,
 never a re-introduction to the paradigm. Migration detail for the existing user is a clearly-marked
 section they can jump to. Neither reader is asked to wade through the other's material.
@@ -38,8 +39,8 @@ section they can jump to. Neither reader is asked to wade through the other's ma
 
 **A release post is about one thing.** Even when a release contains a dozen changes, the post leads with
 the single most important one and treats the rest as a list at the end. This is the site's existing and
-correct habit — the v0.8.0 draft is titled *"Grouping components with namespaces and paths"* and spends
-its length on that one feature — and it is what makes a release post readable rather than a rendered
+correct habit (the v0.8.0 draft is titled *"Grouping components with namespaces and paths"* and spends
+its length on that one feature), and it is what makes a release post readable rather than a rendered
 changelog.
 
 Length follows the size of that one change rather than the size of the release: the v0.4.1 post runs
@@ -56,7 +57,7 @@ often all they read.
 Seven parts, in this order. Only the front matter and the discussion links are mechanical; the rest is
 the argument.
 
-**Front matter.** `slug` (always — without one, Docusaurus publishes under a dated path rather than a
+**Front matter.** `slug` (always; without one, Docusaurus publishes under a dated path rather than a
 flat URL), `authors: [soares]`, and `tags: [release]`. A post that is also a deep dive carries
 `deepdive` too. The full conventions, including the tag set, are in
 [blog/README.md](../blog/README.md).
@@ -72,8 +73,8 @@ arrives later finds the conversation, and it is what makes the reception traceab
 
 **The problem.** The heart of the post, and the part to spend effort on. Show what was painful before the
 release, in code, at enough length that the reader feels it. The v0.8.0 draft does this best on the
-site — it builds a social-media app's wiring table until it is visibly unmanageable, and only then
-introduces namespaces — and its own internal document notes that this motivation section is the strongest
+site (it builds a social-media app's wiring table until it is visibly unmanageable, and only then
+introduces namespaces), and its own internal document notes that this motivation section is the strongest
 part of the draft and needs no change. **Problem before construct** is the same ordering every other CGP
 surface uses, and it matters most here, because a feature announced without its motivation reads as
 churn.
@@ -84,27 +85,27 @@ Name the constructs, link to the reference or docs.rs for their full syntax, and
 paradigm around them.
 
 **Breaking changes and migration.** A clearly-marked section naming every removal and rename with what
-replaced it, taken from the release's entry in [releases/](../../releases/README.md) — whose **removal
+replaced it, taken from the release's entry in [releases/](../../releases/README.md), whose **removal
 ledger** dates every renamed or deleted construct and is the source of truth for this section. State
 breakage plainly. A reader who discovers a removal from a compiler error rather than from the
 announcement has been let down in the way that costs the most trust.
 
 **What's next, and what is unfinished.** The author's closing register: what the release does not yet do,
-what is coming, and what he would like input on. This is not filler — it is where several of the site's
+what is coming, and what he would like input on. This is not filler: it is where several of the site's
 best passages live, and it is the part that invites the reader into the project rather than at it.
 
 ## The voice, and what it permits here
 
-This is the first guide for a page written in the **author's voice**, and the difference from the project
+This is the only guide for a page written in the **author's voice**, and the difference from the project
 voice is not decoration. Read [author-personality.md](../../communication-strategy/author-personality.md)
 before drafting; four of its habits matter especially here.
 
 **First person, and personal where it is true.** "I want to be transparent about", "I have a feeling
-that", "here is a little backstory" — these belong in a release post and would be wrong on a docs page.
+that", "here is a little backstory": these belong in a release post and would be wrong on a docs page.
 The Hypershell post's aside about naming the project after a 2012 experiment is the register.
 
 **Concede at length, not tactically.** The Hypershell post's Disadvantages section names the learning
-curve, the error messages, the inability to load programs dynamically, and slow compile times — and on
+curve, the error messages, the inability to load programs dynamically, and slow compile times, and on
 the last one admits the evidence is only "rough experiments". A release post that names what the release
 does not fix, and says plainly where the author is uncertain, is doing the thing that makes the rest
 believable.
@@ -142,10 +143,10 @@ since it fixes both the URL and the post's position in the index. **Set the `slu
 announcement bar** in `docusaurus.config.ts`, which is hardcoded and will otherwise keep promoting the
 previous release. **Add the discussion links** once the post is submitted. And **register the post's
 internal document** under [blog/](../blog/README.md) in the same change, per
-[AGENTS.md](../AGENTS.md) — a post with no document has no recorded provenance.
+[AGENTS.md](../AGENTS.md), since a post with no document has no recorded provenance.
 
 Two further items belong to the release rather than to the post, and both are invisible until someone
-tries to follow the site. **Re-pin the `cgp` version wherever the site names it** — every tutorial's
+tries to follow the site. **Re-pin the `cgp` version wherever the site names it**: every tutorial's
 `Cargo.toml` snippet and the `example-code` crate, which tracks the resolvable pre-release until the
 real version exists on crates.io. A tutorial pinning a version crates.io does not yet carry is correct
 on the branch and broken the moment a reader copies it, so the pin and the release ship together. And
@@ -154,7 +155,7 @@ on the branch and broken the moment a reader copies it, so the pin and the relea
 
 A release is also the largest attention event the project gets, which has two consequences for what
 travels with it. **Whatever the announcement links to should be ready before it publishes**, because a
-release post is routinely a first-contact reader's landing page and the traffic does not come back — this
+release post is routinely a first-contact reader's landing page and the traffic does not come back, and this
 is the reason the v0.8.0 announcement and the site relaunch are
 [one event](../AGENTS.md#the-redesign-lands-on-a-release-branch-all-at-once) rather than two. And
 **nothing substantial publishes beside it.** Two significant pieces released together compete for the
@@ -185,11 +186,11 @@ before the pain it addresses, the post reads as churn.
 **Find the breaking-changes section** and check it against the removal ledger in
 [releases/](../../releases/README.md). A missing removal is the most damaging omission available here.
 
-**Check that a newcomer is oriented in one paragraph** — not zero, and not five.
+**Check that a newcomer is oriented in one paragraph**, not zero and not five.
 
 **Check the voice is the author's**, and that the closing section says something honest about what is
 unfinished.
 
-**Verify every snippet** against the source and the `/cgp` skill, and prefer the modern idioms — a
-release post's code is the most widely copied on the site, and eight of the seventeen existing posts now
-teach a provider form the project no longer recommends.
+**Verify every snippet** against the source and the `/cgp` skill, and prefer the modern idioms, since a
+release post's code is the most widely copied on the site, and eight of the seventeen posts on the release
+branch teach a provider form the project does not recommend.

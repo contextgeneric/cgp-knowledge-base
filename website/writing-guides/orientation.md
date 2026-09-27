@@ -5,10 +5,10 @@ It does not teach, and it does not persuade. Its reader has already decided CGP 
 minutes and wants either the shortest route to what they came for or the shortest proof that it
 works.
 
-- **Where they live** — `docs/index.md`, `docs/quickstart.md`, `docs/resources.md`
-- **Voice** — project voice, per
+- **Where they live**: `docs/index.md`, `docs/quickstart.md`, `docs/resources.md`
+- **Voice**: project voice, per
   [voice-and-register.md](../../communication-strategy/voice-and-register.md)
-- **Governed by** — [information-architecture.md](../information-architecture.md) for what each
+- **Governed by**: [information-architecture.md](../information-architecture.md) for what each
   surface is for and where a reader goes next;
   [formats.md](../../communication-strategy/formats.md#the-conversion-ladder) for matching the next
   step to the reader
@@ -52,7 +52,7 @@ answers rather than by the section's title: *how its ideas work* rather than *Co
 
 **Carry a `description` in the front matter.** These are among the most-linked pages on the site,
 Docusaurus derives a useless one from the first line otherwise, and the measured failure the site
-has is that pages are shown and not chosen — the reasoning is in [seo.md](../seo.md). One sentence
+has is that pages are shown and not chosen; the reasoning is in [seo.md](../seo.md). One sentence
 saying what the page is for.
 
 **Say only what has been checked.** An orientation page is mostly claims about other things: that a
@@ -68,7 +68,7 @@ question.
 
 It carries a definition, a first step, and a routing list. **A definition**, two or three paragraphs: the settled
 descriptor, one concrete example of the same interface with two implementations, and the vocabulary
-a reader needs to read any other page — *context*, *provider*, *wiring*, *component* — each glossed
+a reader needs to read any other page (*context*, *provider*, *wiring*, *component*), each glossed
 in a clause rather than explained. **A first step**, naming the tutorials, because a reader who wants
 to write code should not have to find them. And **a routing list**, one line per destination, keyed
 on the question the reader has rather than on what the section is called.
@@ -76,7 +76,7 @@ on the question the reader has rather than on what the section is called.
 Its boundaries are settled, and a revision should not reopen them. It **keeps the vocabulary
 introduction**, which is the one teaching-shaped thing an orientation page does, because every other
 page assumes those four words. It **does not carry the maturity discussion**, which is *Project
-status*'s job — an evaluator needs to reach that from above the fold on the front page, not by
+status*'s job: an evaluator needs to reach that from above the fold on the front page, not by
 scrolling the docs root. And it **does not route newcomers to the blog**; the blog is named as a
 record of releases and talks, with the caveat that older posts describe the library as it was.
 
@@ -95,9 +95,9 @@ which records it as the site's activation signal, and this guide owns it. A draf
 walked in ten minutes is too long, and the fix is to remove a step rather than to explain it faster.
 
 The page installs the crate, shows one program, states the output to expect, and routes onward.
-**Install** — the `cargo` command and the version, with nothing about
+**Install**: the `cargo` command and the version, with nothing about
 toolchains, since CGP compiles on stable. **One program**, complete and copyable, that a reader can
-paste into `main.rs` and run. **What to expect** — the exact output, so the reader knows whether it
+paste into `main.rs` and run. **What to expect**: the exact output, so the reader knows whether it
 worked. And **one link onward**, to the Hello World tutorial.
 
 ### What the program is, and where it stops
@@ -111,13 +111,13 @@ with no wiring, no generics, and no trait to understand.
 **It stops before the second context, and that boundary is the whole distinction from Hello World.**
 The [Hello World tutorial](../tutorials/hello-world.md) uses the same constructs and is a genuinely
 different page, because its payoff is the moment the same function works unchanged on a second
-context — that is the idea it exists to teach. The Quickstart has no payoff and teaches no idea. It
+context, which is the idea it exists to teach. The Quickstart has no payoff and teaches no idea. It
 proves the thing compiles and runs, and hands the reader to Hello World for the reason it matters.
 
 So the two pages **deliberately show similar code**, which is not duplication
 to be resolved: a reader arriving at Hello World from the Quickstart should recognize where they are
 and immediately see what is new. And the Quickstart **must not grow a second example**, an
-explanation of what `#[implicit]` does, or a note about what the macro generates — each is a step
+explanation of what `#[implicit]` does, or a note about what the macro generates, since each is a step
 toward becoming a worse copy of the tutorial.
 
 ### The version pin, and why it is fragile
@@ -132,12 +132,11 @@ pin crates.io does not yet carry is a reader's first experience of CGP failing t
 ## Resources
 
 **The ecosystem index, for a reader who wants something that is not on this site.** Its reader
-arrives already interested and wants to be routed, not persuaded — so it is a list, and the prose
+arrives already interested and wants to be routed, not persuaded, so it is a list, and the prose
 around each entry says what the thing is and who it is for, in one line.
 
 It earns its place by covering what the site does not. **The entries are the crates, the toolchain,
-the book, the talks, and the projects built with CGP**: the crates, the toolchain, the book,
-the talks, and the projects built with CGP. A link to another page of this site belongs in the
+the book, the talks, and the projects built with CGP.** A link to another page of this site belongs in the
 Introduction's routing list instead, where a reader looks for it. And **one entry is not a list
 item**: the real system built with CGP is the strongest evidence an evaluator can be given, per
 [evidence.md](../../communication-strategy/evidence.md), so it gets a short section of its own
@@ -175,7 +174,7 @@ reader it serves.** If the page ends without a next step, it has failed at the o
 **Read the first paragraph alone** and ask whether someone who has never heard of CGP knows what it
 is and what this page is for.
 
-**For the Quickstart, run it on a clean machine and time it.** Not read it — run it. Paste the
+**For the Quickstart, run it on a clean machine and time it.** Not read it: run it. Paste the
 program as the page gives it, run the command the page gives, and check the output matches what the
 page promised. Over ten minutes means a step comes out.
 
@@ -190,18 +189,18 @@ four words of vocabulary. Anything else has drifted.
 **The Introduction** is current and close to this guide. Its one divergence is that it still carries
 the *Current Status* section, which [E1](../tasks.md) moves to *Project status*; when that lands,
 the Introduction keeps a one-line pointer to it. Its routing list already keys on questions rather
-than section names, and it no longer sends newcomers to the blog.
+than section names, and it does not send newcomers to the blog.
 
 **Resources** is current. It carries `cargo-cgp` with its install path, the full crate list, and the
 Hermes SDK as a section rather than a list item.
 
 **The Quickstart is written**, at `/docs/quickstart`. It is the destination the front page's first
-call to action is specified to take — the current front page still sends that button to the
+call to action is specified to take, though the current front page still sends that button to the
 Introduction and its second to Hello World, and repointing it is part of the front-page rebuild rather
 than something done ahead of it. The page holds the contract above: install, one program, the exact output, a route onward,
 no second example, and nothing explained. Two things are worth knowing before revising it. Its
 `cgp = "0.8.0"` pin names a version crates.io does not yet carry, which is correct only because the
-branch merges with the release — so the pin is right and the page must not publish before it. And **the
+branch merges with the release, so the pin is right and the page must not publish before it. And **the
 ten-minute target has not been measured**: the program is compiled in `example-code`, but no one has
 walked the page on a clean machine with a friction log, which is what this guide asks for and the one
 check the page has not had.
