@@ -2,7 +2,7 @@
 
 This directory holds one internal document per post published on the
 [CGP blog](https://contextgeneric.dev/blog). Each document records what its post covers, which
-knowledge-base material owns that content, and — crucially — exactly how the post's code and claims
+knowledge-base material owns that content, and, crucially, exactly how the post's code and claims
 diverge from CGP as it stands at v0.8.0. Read [../README.md](../README.md) for why this section exists
 and [../AGENTS.md](../AGENTS.md) for the rules that govern it, including the prohibition on rewriting
 a published post into agreement with the current library.
@@ -10,13 +10,13 @@ a published post into agreement with the current library.
 ## Why the drift matters more here than anywhere else
 
 The blog is the site's largest and most-read body of writing, and it is also the least current. The
-[Introduction page](https://contextgeneric.dev/docs/) still directs newcomers to the blog as the most
-up-to-date resource, so a reader following that advice lands on posts teaching syntax the compiler no
+[Introduction page](https://contextgeneric.dev/docs/) on the live site still directs newcomers to the
+blog as the most up-to-date resource (the `v0.8.0` branch's Introduction does not), so a reader following that advice lands on posts teaching syntax the compiler no
 longer accepts. Of the seventeen posts, eight write every provider inside-out with
 `#[cgp_provider]`/`#[cgp_new_provider]`, seven show `#[cgp_context]` on a context definition, and four
-use the removed `Async` trait or one of its aliases. The posts remain valuable — their *ideas* are
+use the removed `Async` trait or one of its aliases. The posts remain valuable (their *ideas* are
 current even where their *code* is not, and several are the only prose anywhere on the design
-questions they work through — but they can only be mined safely by an agent who knows which parts are
+questions they work through), but they can only be mined safely by an agent who knows which parts are
 dead.
 
 Each document below therefore carries a "Where it diverges from CGP v0.8.0" section listing the
@@ -29,53 +29,53 @@ The posts are listed in publication order, oldest first, which is also roughly t
 reliability. Each entry gives the post's slug, its date, and a one-line summary; the status word is
 the section's fixed vocabulary from [../AGENTS.md](../AGENTS.md).
 
-- [Announcing Context-Generic Programming](early-preview-announcement.md) — 2024-12-19, *historical*.
+- [Announcing Context-Generic Programming](early-preview-announcement.md): 2024-12-19, *historical*.
   The launch post: what CGP is, how it grew out of the Hermes relayer, and a plan for 2025 whose items
   have since been resolved in ways the post could not anticipate.
-- [CGP v0.3.0 release](v0-3-0-release.md) — 2025-01-09, *historical*. Abstract types via the
+- [CGP v0.3.0 release](v0-3-0-release.md): 2025-01-09, *historical*. Abstract types via the
   now-removed `cgp_type!` function macro, the first getter macros, `CanWrapError`, and the
   `cgp-error-anyhow` and `cgp-runtime` crates.
-- [CGP v0.4.0 release](v0-4-0-release.md) — 2025-05-09, *historical*. The release that made CGP
+- [CGP v0.4.0 release](v0-4-0-release.md): 2025-05-09, *historical*. The release that made CGP
   debuggable: `IsProviderFor`, `CanUseComponent`, `check_components!`, plus `#[cgp_context]`, the
   preset system, and the first datatype-generic support.
-- [CGP v0.4.1 release](v0-4-1-release.md) — 2025-06-14, *historical*. The `cgp-handler` crate
+- [CGP v0.4.1 release](v0-4-1-release.md): 2025-06-14, *historical*. The `cgp-handler` crate
   introducing `Handler`, `Computer`, and `Producer`, and preset improvements built for Hypershell.
-- [Hypershell: a type-level DSL for shell-scripting](hypershell-release.md) — 2025-06-14,
+- [Hypershell: a type-level DSL for shell-scripting](hypershell-release.md): 2025-06-14,
   *historical*. The longest post on the site and still the fullest account of building a DSL whose
   programs are types; also the site's best standalone introduction to CGP's wiring model.
-- [Extensible data types, part 1: builders](extensible-datatypes-part-1.md) — 2025-07-07,
+- [Extensible data types, part 1: builders](extensible-datatypes-part-1.md): 2025-07-07,
   *historical*. Extensible records, safe enum upcasting and downcasting, and modular application
   construction from independent builder providers.
-- [Extensible data types, part 2: interpreters](extensible-datatypes-part-2.md) — 2025-07-09,
+- [Extensible data types, part 2: interpreters](extensible-datatypes-part-2.md): 2025-07-09,
   *historical*. Extensible variants applied to the expression problem, building a modular arithmetic
   interpreter with two independent operations over one language.
-- [Extensible data types, part 3: implementing records](extensible-datatypes-part-3.md) — 2025-07-12,
+- [Extensible data types, part 3: implementing records](extensible-datatypes-part-3.md): 2025-07-12,
   *historical*. The internals: partial records, the `MapType` markers, `BuildField`/`TakeField`, and
   the builder dispatchers built on them.
-- [Extensible data types, part 4: implementing variants](extensible-datatypes-part-4.md) — 2025-07-30,
+- [Extensible data types, part 4: implementing variants](extensible-datatypes-part-4.md): 2025-07-30,
   *historical*. The dual internals: partial variants, `Void`, `ExtractField`, the cast implementations,
   and the monadic visitor dispatchers.
-- [CGP v0.5.0 release](v0-5-0-release.md) — 2025-10-12, *historical*. `#[derive(CgpData)]`,
+- [CGP v0.5.0 release](v0-5-0-release.md): 2025-10-12, *historical*. `#[derive(CgpData)]`,
   `#[cgp_auto_dispatch]`, the optional builder, monadic computation, and the removal of the `Async`
   trait in favor of the `Send`-recovery proxy pattern.
-- [CGP v0.6.0 release](v0-6-0-release.md) — 2025-10-26, *historical*. `#[cgp_impl]`, direct
-  delegation on the context type, and the removal of `HasCgpProvider` — the release that made CGP
+- [CGP v0.6.0 release](v0-6-0-release.md): 2025-10-26, *historical*. `#[cgp_impl]`, direct
+  delegation on the context type, and the removal of `HasCgpProvider`: the release that made CGP
   code start to look like ordinary Rust.
-- [Announcing cgp-serde](cgp-serde-release.md) — 2025-11-03, *historical*. Serde's traits rebuilt as
+- [Announcing cgp-serde](cgp-serde-release.md): 2025-11-03, *historical*. Serde's traits rebuilt as
   CGP components, with two applications encoding the same data differently and an arena-allocating
   deserializer demonstrating context-and-capabilities.
-- [CGP v0.6.1 release](v0-6-1-release.md) — 2026-02-01, *historical*. Implicit context types in
+- [CGP v0.6.1 release](v0-6-1-release.md): 2026-02-01, *historical*. Implicit context types in
   `#[cgp_impl]`, the `#[check_providers]` attribute, and associated types in getter traits.
-- [A new website, and why we moved from Zola to Docusaurus](new-website.md) — 2026-02-21, *current*.
+- [A new website, and why we moved from Zola to Docusaurus](new-website.md): 2026-02-21, *current*.
   A meta post about the site itself and the project's use of LLM assistance; the only post whose
   subject is the website.
-- [CGP v0.7.0 release](v0-7-0-release.md) — 2026-02-28, *historical*. The largest ergonomics release:
+- [CGP v0.7.0 release](v0-7-0-release.md): 2026-02-28, *historical*. The largest ergonomics release:
   `#[cgp_fn]`, `#[implicit]`, `#[uses]`, `#[extend]`, `#[use_provider]`, `#[use_type]`, and the
   removal of `#[cgp_context]`.
-- [RustLab 2025: how to stop fighting with coherence](rustlab-2025-coherence.md) — 2026-03-07,
+- [RustLab 2025: how to stop fighting with coherence](rustlab-2025-coherence.md): 2026-03-07,
   *historical*. A full slide-by-slide transcript of CGP's first conference talk, and the clearest
   narrative anywhere of why coherence exists and how provider traits work around it.
-- [CGP v0.8.0: grouping components with namespaces](v0-8-0-release.md) — placeholder date
+- [CGP v0.8.0: grouping components with namespaces](v0-8-0-release.md): placeholder date
   2026-05-10, **draft for an unreleased version**. The namespace feature, unfinished: it stops
   without a conclusion, covers one feature of several, and writes its prefix attributes in forms that
   do not compile. Begun as the v0.7.1 announcement before the release was renumbered.
@@ -83,20 +83,20 @@ the section's fixed vocabulary from [../AGENTS.md](../AGENTS.md).
 ## Drafts that live on branches
 
 Not every unpublished post is on the branch its release is being written on, and a post that exists
-only on a feature branch is invisible to anyone reading `main` — which is how one of them went
+only on a feature branch is invisible to anyone reading `main`, which is how one of them went
 unrecorded here for months. **A draft substantial enough to be worth finishing gets a document here as
 soon as it exists**, with its branch named, so that the catalog is the inventory of CGP's writing
 rather than of its published writing.
 
-- [Using an incoherent, dictionary-passing style Rust today](incoherent-rust-today.md) — on the
+- [Using an incoherent, dictionary-passing style Rust today](incoherent-rust-today.md): on the
   `incoherent-rust` branch, dated 2026-03-30, *draft*. Roughly 12,800 words reading CGP against the
   dictionary-passing, incoherent-traits, and context-and-capabilities discussion, and arguing that CGP
   is a working implementation strategy for a fragment of it on stable Rust today. The only post aimed
   at the language-design reader, and the only one whose value decays with time.
 
-Two further branches carry material rather than posts and are recorded in
-[site-structure.md](../site-structure.md): the notes an earlier drafting effort left under `notes/`,
-and the slide assets for the RustLab transcript.
+One further branch carries material rather than a post, the `rustlab-presentation` branch with the
+RustLab transcript's slide assets, and [site-structure.md](../site-structure.md) records it beside
+the `notes/` tree of working notes that sits on `main`.
 
 ## Reading the drift at a glance
 
@@ -109,7 +109,8 @@ old form.
   it writes `impl<Context> Greeter<Context> for GreetHello` with `#[cgp_new_provider]`; the current
   form is `#[cgp_impl(new GreetHello)] impl Greeter`, per
   [writing-providers](../../cgp/guides/writing-providers.md).
-- **`#[cgp_context]` and `HasCgpProvider` are gone** (deprecated v0.6.0, removed v0.7.0). Contexts now
+- **`#[cgp_context]` and `HasCgpProvider` are gone** (`HasCgpProvider` removed in v0.6.0;
+  `#[cgp_context]` deprecated in v0.6.0 and removed in v0.7.0). Contexts now
   carry their own wiring table directly; every `#[cgp_context]` and every `{Context}Components` struct
   in an older post is dead syntax.
 - **The `Async` trait and `HasAsyncErrorType` were removed** (v0.5.0, October 2025), replaced by the
@@ -130,8 +131,8 @@ Posts live at `blog/<date>-<name>.md`, or in a directory with an `index.md` when
 Front matter sets the author (always `soares`, defined in
 [blog/authors.yml](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/authors.yml)),
 one or more tags from the fixed set in
-[blog/tags.yml](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/tags.yml) —
-`release`, `deepdive`, `walkthrough` — and an explicit `slug`. A `{/* truncate */}` marker separates
+[blog/tags.yml](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/tags.yml)
+(`release`, `deepdive`, `walkthrough`), and an explicit `slug`. A `{/* truncate */}` marker separates
 the excerpt shown on the index from the body, and Docusaurus warns on any post that omits it.
 
 **Every post carries a `description`, and adding one to a published post is not rewriting it.** The
@@ -141,14 +142,14 @@ it.
 
 **It does reach the feeds, though, which is worth knowing before adding one.** Docusaurus uses a
 post's `description` as its `<description>` in `rss.xml` and `atom.xml`, in place of the excerpt it
-would otherwise take from the text above the truncate marker — so a subscriber's reader may show the
+would otherwise take from the text above the truncate marker, so a subscriber's reader may show the
 new summary for a post it already holds. The rendered blog index is unaffected and still shows each
 post's own excerpt, and the item's title, link, and date are untouched. The trade is acceptable
 because a written summary serves a subscriber better than a truncated opening paragraph, but it is a
 change to how a published artifact presents itself and should be made deliberately rather than
 discovered. Without one Docusaurus derives a description from the opening paragraph, which on a release post
 is a long announcement sentence that a search result cuts mid-clause, and which strips the backticks
-from identifiers — the v0.7.0 post's derived snippet advertised `#[cgpfn]` and `#[useprovider]`. The
+from identifiers: the v0.7.0 post's derived snippet advertised `#[cgpfn]` and `#[useprovider]`. The
 blog carries three quarters of the site's search impressions, so this is where a written description
 is worth most.
 
@@ -160,7 +161,7 @@ identifiers together. The length budget and the rest of the conventions are in
 [site-structure.md](../site-structure.md#conventions-the-port-must-follow).
 
 **Always set the `slug` on a new post.** Without one, Docusaurus does not derive a flat URL from the
-filename — it publishes the post under a *dated* path instead, so `2026-02-21-new-website.md` becomes
+filename; it publishes the post under a *dated* path instead, so `2026-02-21-new-website.md` becomes
 `/blog/2026/02/21/new-website` rather than `/blog/new-website`. Exactly one post is in that state, the
 [new-website post](new-website.md), and its URL is inconsistent with every other post as a result.
 **Leave it.** A published post's slug is not changed, because changing it moves a live URL and breaks
@@ -175,10 +176,10 @@ of these URLs.
 
 ## Where the release history lives
 
-These documents record what each *post* said. What each *release* actually shipped — and how much of
-it survives — is tracked separately in [releases/](../../releases/README.md), one document per tag,
+These documents record what each *post* said. What each *release* actually shipped (and how much of
+it survives) is tracked separately in [releases/](../../releases/README.md), one document per tag,
 with a removal ledger dating every construct that has been renamed or deleted. Each release document
 links to its announcement post and to the document here that covers it; read the pair together when a
 post's claims need checking against what the release really contained. Two of the release documents
 have no post at all ([v0.1.0](../../releases/v0-1-0.md) and [v0.3.1](../../releases/v0-3-1.md)), and
-one post — the [v0.8.0 draft](v0-8-0-release.md) — covers a release that has not happened yet.
+one post, the [v0.8.0 draft](v0-8-0-release.md), covers a release that has not happened yet.

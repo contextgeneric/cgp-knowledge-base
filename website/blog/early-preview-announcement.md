@@ -1,21 +1,21 @@
 # Announcing Context-Generic Programming (Early Preview)
 
 CGP's launch post, introducing the paradigm to the public for the first time and laying out a year of
-planned work — nearly all of which has since been done, in several cases by mechanisms the post did
+planned work, nearly all of which has since been done, in several cases by mechanisms the post did
 not foresee.
 
-- **URL** — <https://contextgeneric.dev/blog/early-preview-announcement>
-- **Source** — [blog/2024-12-19-early-preview-announcement.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/2024-12-19-early-preview-announcement.md)
-- **Published** — 19 December 2024, tagged `release`
-- **Release** — describes [v0.2.0](../../releases/v0-2-0.md), the version current at launch
-- **Status** — Historical
+- **URL**: <https://contextgeneric.dev/blog/early-preview-announcement>
+- **Source**: [blog/2024-12-19-early-preview-announcement.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/2024-12-19-early-preview-announcement.md)
+- **Published**: 19 December 2024, tagged `release`
+- **Release**: describes [v0.2.0](../../releases/v0-2-0.md), the version current at launch
+- **Status**: Historical
 
 ## What it covers
 
 The post is a project announcement rather than a technical piece, and it contains almost no code. It
-opens with a prose overview of what CGP is — context-generic programs that work with any `Self` type,
+opens with a prose overview of what CGP is (context-generic programs that work with any `Self` type,
 provider traits that lift the coherence restrictions, and an expressiveness comparison to OOP patterns
-like inheritance and mixins — while conceding up front that CGP programs "may look very different from
+like inheritance and mixins), while conceding up front that CGP programs "may look very different from
 regular Rust programs, and appear intimidating to even experienced Rust programmers."
 
 The middle section is the project's origin story, and it is the only place this history is written
@@ -28,12 +28,10 @@ needed. Those techniques were gradually extracted into the
 [Hermes SDK](https://github.com/informalsystems/hermes-sdk), which the post offers as evidence that
 the approach scales: the two codebases implement the same functionality and look almost nothing alike.
 
-The remainder is a plan for 2025 in seven parts — finish the book, improve error diagnostics, document
+The remainder is a plan for 2025 in eight parts: finish the book, improve error diagnostics, document
 the `cgp` crate, speak at conferences, improve the macros, build developer tooling, implement
-extensible records and variants, and write more documentation. It closes with links to the launch
-discussions on [Reddit](https://www.reddit.com/r/rust/comments/1hkzaiu/announcing_contextgeneric_programming_a_new/),
-[Lobsters](https://lobste.rs/s/a5wfid/context_generic_programming), and
-[Hacker News](https://news.ycombinator.com/item?id=42498176).
+extensible records and variants, and write more documentation. It closes with links to its launch
+discussions on Reddit, Lobsters, and Hacker News.
 
 ## How it relates to the knowledge base
 
@@ -44,11 +42,11 @@ the concrete problem CGP was built to solve, and Hermes SDK is the flagship real
 strongest available social proof. The dependency-injection-through-blanket-impls technique the post
 describes discovering is [impl-side dependencies](../../cgp/concepts/impl-side-dependencies.md).
 
-The launch discussions this post links to are the primary evidence base for CGP's public reception,
-analyzed in [evidence.md](../../communication-strategy/evidence.md) —
-the "verbose / over-engineered," "isn't this just X reinvented," and "the name does not communicate"
-patterns all come from this thread. Anyone revising CGP's framing should read the linked discussions
-alongside that analysis rather than only the summary.
+The launch discussions the post links to are part of the evidence base for CGP's public reception,
+which [evidence.md](../../communication-strategy/evidence.md) summarizes without linking or quoting
+them, per the [public-repository rule](../../AGENTS.md#this-repository-is-public). The "verbose or
+over-engineered", "prior work reinvented", and "the name does not communicate" patterns it records
+appear in them. Revise CGP's framing from that summary.
 
 ## Where it diverges from CGP v0.8.0
 
@@ -61,7 +59,7 @@ and every item on it has moved:
   [`cargo-cgp`](../../cargo-cgp/README.md), a cargo subcommand that rewrites CGP errors outside the
   compiler, plus the [`IsProviderFor`](../../cgp/reference/traits/is_provider_for.md) technique
   shipped in v0.4.0 that made the causes visible in the first place. **No fork of the Rust compiler
-  is needed, and never became needed** — the post's advice on this point is the most actively
+  is needed, and never became needed**, and the post's advice on this point is the most actively
   misleading thing on the site if read as current.
 - **Developer tooling.** The post speculates about analyzers and IDE features "similar to Rust
   Analyzer," estimating over a year. `cargo-cgp` delivered the diagnostic half, and its
@@ -84,7 +82,7 @@ and every item on it has moved:
 
 Leave the post alone. It is a dated announcement whose value is precisely that it records what the
 project believed in December 2024, and rewriting the plan section would erase the evidence of how far
-the project has come. If the compiler-fork advice is judged actively harmful — it is the one claim a
-reader could act on to their cost — the right remedy is a dated editor's note at the top pointing to
+the project has come. If the compiler-fork advice is judged actively harmful (it is the one claim a
+reader could act on to their cost), the right remedy is a dated editor's note at the top pointing to
 [`cargo-cgp`](../../cargo-cgp/reference/installation.md), not an edit to the body. That is a call for
 the user to make.

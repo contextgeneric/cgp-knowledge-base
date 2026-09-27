@@ -4,11 +4,11 @@ A large release with equally large breaking changes. It adds `#[derive(CgpData)]
 `#[cgp_auto_dispatch]`, the optional builder, and monadic computation; and it removes the `Async`
 trait, replacing it with the `Send`-recovery proxy pattern that CGP still uses today.
 
-- **URL** — <https://contextgeneric.dev/blog/v0-5-0-release>
-- **Source** — [blog/2025-10-12-v0.5.0-release.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/2025-10-12-v0.5.0-release.md)
-- **Published** — 12 October 2025, tagged `release`
-- **Release** — [v0.5.0](../../releases/v0-5-0.md)
-- **Status** — Historical
+- **URL**: <https://contextgeneric.dev/blog/v0-5-0-release>
+- **Source**: [blog/2025-10-12-v0.5.0-release.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/2025-10-12-v0.5.0-release.md)
+- **Published**: 12 October 2025, tagged `release`
+- **Release**: [v0.5.0](../../releases/v0-5-0.md)
+- **Status**: Historical
 
 ## What it covers
 
@@ -16,11 +16,11 @@ The new features cluster around extensible data. `#[derive(CgpData)]` becomes th
 replacing the previous need to list `HasField`, `HasFields`, `BuildField`, `FromVariant`, and
 `ExtractField` individually. `#[cgp_auto_dispatch]` lifts a plain per-type trait onto an enum whose
 variants all implement it, so `HasArea` implemented for `Circle` and `Rectangle` is automatically
-implemented for `Shape` — and does so across crate boundaries, with neither the trait nor the enum
+implemented for `Shape`, across crate boundaries, with neither the trait nor the enum
 knowing about the other. `UpdateField` generalizes field mutation on a partial record, with
 `BuildField` becoming a blanket impl over it. Two builder extensions follow: `finalize_with_default`
 fills uninitialized fields from `Default`, and the new `IsOptional` marker gives a builder whose type
-does not change as fields are set, so a partial record can be filled dynamically — the form
+does not change as fields are set, so a partial record can be filled dynamically, the form
 `cgp-serde` uses for deserialization. The visitor dispatchers grow to six, adding mutable and
 tuple-input variants. `AsyncComputer` arrives as the async counterpart of `Computer`, making `Handler`
 the async counterpart of `TryComputer`. The `cgp-monad` crate lands, with a retroactive treatment of
@@ -31,7 +31,7 @@ The breaking changes are led by the **removal of `Async`**, and the post's expla
 most important thing in it. `Async` had been an alias for `Send + Sync`, sprinkled through CGP so that
 futures returned by generic async methods would be `Send` enough for `tokio::spawn`. Return Type
 Notation would have solved this properly but is not close to stabilizing. The alternative CGP found is
-to define a *proxy trait* — `CanSendRun` alongside `CanRun` — whose method promises a `Send` future,
+to define a *proxy trait* (`CanSendRun` alongside `CanRun`) whose method promises a `Send` future,
 implement it by hand on the concrete context, and let the trait solver see through to the concrete
 types. Providers stay free of `Send` bounds; the guarantee is recovered exactly where it is needed.
 
@@ -97,7 +97,7 @@ documented at [projects/cgp-serde/](../../projects/cgp-serde/README.md).
 
 Leave it alone. The `Async`-removal section is the most substantive prose the project has published on
 the `Send`-bound problem in async Rust, and the reasoning transfers cleanly even though its code does
-not — [send-bounds](../../cgp/concepts/send-bounds.md) is where that reasoning now lives in current
+not; [send-bounds](../../cgp/concepts/send-bounds.md) is where that reasoning now lives in current
 form. Anything written publicly about CGP and async should be checked against the survey evidence in
 [evidence.md](../../communication-strategy/evidence.md), which warns
 that async and function coloring is a high-attention topic where the honest attachment is narrow.

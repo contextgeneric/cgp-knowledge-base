@@ -2,23 +2,23 @@
 
 The site's only sustained teaching material: a four-page series that carries a reader from ordinary
 Rust functions, through the coherence wall, to configurable compile-time dispatch with composable
-higher-order providers, and finally to catching a wiring mistake at the line that made it — using one
+higher-order providers, and finally to catching a wiring mistake at the line that made it, using one
 running example the whole way.
 
-- **URL** — <https://contextgeneric.dev/docs/tutorials/area-calculation/>
-- **Source** — [docs/tutorials/area-calculation/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/tutorials/area-calculation)
-- **Pages** — an unnumbered `index.md` framing the problem, then
+- **URL**: <https://contextgeneric.dev/docs/tutorials/area-calculation/>
+- **Source**: [docs/tutorials/area-calculation/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/tutorials/area-calculation)
+- **Pages**: an unnumbered `index.md` framing the problem, then
   `context-generic-functions.md` (position 1), `static-dispatch.md` (position 2), and
   `checking.md` (position 3, on the `v0.8.0` branch only)
-- **Status** — Current
+- **Status**: Current
 
 ## What it teaches
 
 The **index** teaches no CGP at all, and that is deliberate. It writes `rectangle_area(width, height)`
 as a plain function, then `scaled_rectangle_area(width, height, scale_factor)` which must accept and
 forward parameters it does not use, and names the first problem: explicit parameter threading grows
-with the call chain. It then tries the conventional fix — group the fields into a `Rectangle` struct
-and write methods — and names the second problem: the methods are now coupled to one concrete type, so
+with the call chain. It then tries the conventional fix (group the fields into a `Rectangle` struct
+and write methods) and names the second problem: the methods are now coupled to one concrete type, so
 adding `color`, `pos_x`, and `pos_y` makes calling `rectangle_area` tedious, and a third party wanting
 `pos_z` must ask upstream or fork. The page closes by stating what would fix both, without naming any
 construct.
@@ -42,7 +42,7 @@ from Scala's scope-based type resolution.
 trait. Implementing it per context is boilerplate; implementing it with two blanket impls fails, and
 the tutorial *shows the compiler error* and explains it with a struct that has `width`, `height`,
 **and** `radius`, so the reader sees why Rust cannot choose. `#[cgp_component]` then introduces the
-provider trait, `#[cgp_impl]` gives implementations names, and — importantly — the tutorial shows
+provider trait, `#[cgp_impl]` gives implementations names, and, importantly, the tutorial shows
 providers being called *explicitly* as `RectangleAreaCalculator::area(&rectangle)` before any wiring
 exists, including calling both providers on the ambiguous struct. Only then does it bind a provider to
 a context, first by hand-writing the consumer impl and then by replacing that with
@@ -51,15 +51,15 @@ a context, first by hand-writing the consumer impl and then by replacing that wi
 generalizing the per-shape scaled calculators, and a note that composed providers are just generic
 types that can be aliased.
 
-**Checking and Debugging** closes the series on the question the first three parts leave unasked: what
+**Checking and Debugging** closes the series on the question the earlier pages leave unasked: what
 happens when the wiring is wrong. It mis-wires `PlainCircle` to `RectangleAreaCalculator`, shows that
-the program still compiles, and names the reason — wiring is lazy, so an entry is checked when the
+the program still compiles, and names the reason: wiring is lazy, so an entry is checked when the
 component is used rather than when it is written. It then carries that one mistake through three
 diagnostics: the raw `E0599` at the call site, which names neither the missing field nor the provider
 and points at the line that is correct; the `E0277` that `check_components!` moves to the wiring site,
 which names the chain but spells the field name as a `Chars` list; and `cargo cgp check`, which leads
 with the missing fields in English. It fixes the wiring, shows the check passing, and closes with an
-optional *How it works* section giving the hand-written equivalent of a check — a trait whose
+optional *How it works* section giving the hand-written equivalent of a check: a trait whose
 supertrait is the consumer trait, and an impl that asserts it.
 
 The series makes a strong zero-cost argument in its own section: no vtables, no unsafe, no runtime
@@ -69,7 +69,7 @@ resolution, all wiring inside Rust's own trait system, and no external compile-t
 
 **Objective.** A reader finishes able to define a component, write two named implementations that
 would otherwise conflict, wire each context to the one it needs, and compose implementations with a
-higher-order provider — and able to say why each step was necessary.
+higher-order provider, and able to say why each step was necessary.
 
 **Prerequisites.** Basic Rust, and "a basic familiarity with Rust traits will be helpful" per the
 index. The series does *not* assume knowledge of blanket implementations, coherence, or the orphan
@@ -90,18 +90,19 @@ called by name before wiring exists, and the consumer trait is implemented by ha
 something they have already written rather than as magic.
 
 **Level of explanation.** Deeper than [Hello World](hello-world.md) but still gated. Desugaring lives
-in explicitly-marked optional sections in part one and is largely absent from part two;
+in explicitly-marked optional sections in Context-Generic Functions and is largely absent from
+Static Dispatch;
 `IsProviderFor`, `DelegateComponent`, and the generated blanket impls are never named, though the
 lookup they perform is described. The series says a table is built and consulted at compile time, and
 stops there.
 
 **Vocabulary.** It uses "consumer trait," "provider trait," "provider," "named implementation," and
-"component name," each introduced at the moment it becomes necessary — and never earlier. That
+"component name," each introduced at the moment it becomes necessary and never earlier. That
 matches the introduction order in
 [vocabulary.md](../../communication-strategy/vocabulary.md).
 
-**Part four extends the contract in one way, deliberately.** `CanUseComponent` and `IsProviderFor`
-appear there, where the first three parts never name them, because the diagnostics the page quotes
+**Checking and Debugging extends the contract in one way, deliberately.** `CanUseComponent` and
+`IsProviderFor` appear there, where the earlier pages never name them, because the diagnostics the page quotes
 name them and a page about reading errors cannot hide the words the errors use. They arrive last, in
 the optional desugaring section, framed as machinery that exists so a failure can explain itself
 rather than as anything a reader writes. `DelegateComponent` is still never named.
@@ -138,7 +139,7 @@ The code is current (the series was written for v0.7.0 and nothing it uses chang
 one gap is worth knowing. Checking and `cargo-cgp` are covered by `checking.md`, which is on the
 `v0.8.0` branch and not yet on `main`, so the published series still omits both.
 
-- **`#[cgp_impl]` appears in both forms.** Part two first shows
+- **`#[cgp_impl]` appears in both forms.** Static Dispatch first shows
   `impl<Context> AreaCalculator for Context where Self: RectangleArea` and then simplifies to
   `impl AreaCalculator`. That is pedagogically deliberate, but only the second form is idiomatic per
   [writing-providers](../../cgp/guides/writing-providers.md), and a reader who stops reading early
@@ -146,17 +147,17 @@ one gap is worth knowing. Checking and `cargo-cgp` are covered by `checking.md`,
 
 ## Maintaining it
 
-Preserve the two orderings above — problem before construct, explicit before sugar — over anything
+Preserve the two orderings above (problem before construct, explicit before sugar) over anything
 else; they are what makes the series work, and they are what an unwary addition breaks.
 
-**The series is sequential, and part four depends on that.** Its code blocks are fragments of the
-program part three ends with, and the line numbers in its quoted errors refer to that file — which the
-page says in its opening rather than leaving a reader to discover. The
+**The series is sequential, and Checking and Debugging depends on that.** Its code blocks are
+fragments of the program Static Dispatch ends with, and the line numbers in its quoted errors refer
+to that file, which the page says in its opening rather than leaving a reader to discover. The
 [tutorial guide](../writing-guides/tutorial.md) asks tutorials to stand alone; this series does not,
-and part four inherits the property rather than introducing it. The index describes all three parts
-and part three now routes forward to part four instead of closing the series.
+and Checking and Debugging inherits the property rather than introducing it. The index describes all
+three tutorials, and Static Dispatch ends by routing forward to Checking and Debugging.
 
-**Part four's diagnostics are quoted output, not remembered output**, and a revision that changes its
+**Checking and Debugging's diagnostics are quoted output, not remembered output**, and a revision that changes its
 program must re-run all three rather than editing the text: `cargo check` at the call site,
 `cargo check` with the assertion in place, and `cargo cgp check`. Its program and the mis-wired fixture are
 both in the website repository's `example-code` crate, at `tests/tutorials/` and
@@ -164,7 +165,7 @@ both in the website repository's `example-code` crate, at `tests/tutorials/` and
 `.stderr`. Note that rustc abbreviates the `Chars` list differently depending on how it is invoked, so
 the page's quote matches the pinned fixture rather than any one local run.
 
-A **fifth part on namespaces**, drawn from the
-[social media app example](../../examples/social-media-app.md), is the natural step after it — but
+A **further tutorial on namespaces**, drawn from the
+[social media app example](../../examples/social-media-app.md), is the natural step after it. But
 namespaces only pay off once a wiring table is long, and this series' table has one entry, so it needs
 a bigger running example rather than a bolt-on section.

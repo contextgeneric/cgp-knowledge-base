@@ -4,12 +4,12 @@ The second part of the extensible-data-types series, applying extensible variant
 problem. It builds a modular interpreter for a toy arithmetic language in which every operator and
 every operation over the language is an independent, separately-compilable piece.
 
-- **URL** — <https://contextgeneric.dev/blog/extensible-datatypes-part-2>
-- **Source** — [blog/2025-07-09-extensible-datatypes-part-2.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/2025-07-09-extensible-datatypes-part-2.md)
-- **Published** — 9 July 2025, tagged `deepdive`
-- **Release** — [v0.4.2](../../releases/v0-4-2.md)
-- **Status** — Historical
-- **Notice** — a note at the top of the post, written on the website's `v0.8.0` branch, links the [`expression` pages](https://contextgeneric.dev/docs/projects/cgp-examples/expression/) and the *Extensible variants* Concepts page, per [projects/cgp-examples.md](../projects/cgp-examples.md); it is the sanctioned edit in [../AGENTS.md](../AGENTS.md#do-not-rewrite-history) and changes no claim
+- **URL**: <https://contextgeneric.dev/blog/extensible-datatypes-part-2>
+- **Source**: [blog/2025-07-09-extensible-datatypes-part-2.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/2025-07-09-extensible-datatypes-part-2.md)
+- **Published**: 9 July 2025, tagged `deepdive`
+- **Release**: [v0.4.2](../../releases/v0-4-2.md)
+- **Status**: Historical
+- **Notice**: a note at the top of the post, written on the website's `v0.8.0` branch, links the [`expression` pages](https://contextgeneric.dev/docs/projects/cgp-examples/expression/) and the *Extensible variants* Concepts page, per [projects/cgp-examples.md](../projects/cgp-examples.md); it is the sanctioned edit in [../AGENTS.md](../AGENTS.md#do-not-rewrite-history) and changes no claim
 
 ## What it covers
 
@@ -18,29 +18,29 @@ traditional visitor pattern is closed for extension, using `serde`'s `Visitor` t
 study. Because the trait fixes its set of visit methods, a format that wants to deserialize a `U256`
 cannot extend it, while a format like `postcard` that supports fewer types than JSON must reject
 unsupported cases at *runtime* despite the type formally implementing `Deserialize`. The post's
-framing — that the pattern is either too restrictive or too permissive, and that what is wanted is for
-both sides to state their requirements at compile time — is a clean statement of the problem CGP's
+framing (that the pattern is either too restrictive or too permissive, and that what is wanted is for
+both sides to state their requirements at compile time) is a clean statement of the problem CGP's
 dispatchers solve.
 
 It then narrows to the [expression problem](https://en.wikipedia.org/wiki/Expression_problem) proper.
-A `MathExpr` enum with `Literal`, `Plus`, and `Times` variants forces every function over it —
-`eval`, `expr_to_string` — to be updated whenever a variant is added, and the recursion makes the
+A `MathExpr` enum with `Literal`, `Plus`, and `Times` variants forces every function over it
+(`eval`, `expr_to_string`) to be updated whenever a variant is added, and the recursion makes the
 coupling impossible to break by extracting helpers. The CGP answer is to make each operator its own
 generic struct (`Plus<Expr>`, `Times<Expr>`, `Literal<T>`) and each per-operator evaluation step its
 own `Computer` provider, recursing through the context rather than through a concrete type. Wiring
 maps each input type to its provider, with the enum itself routed to a dispatcher.
 
-The post then adds a *second* operation — converting the expression tree to a Lisp S-expression —
+The post then adds a *second* operation, converting the expression tree to a Lisp S-expression,
 which it calls a "double expression problem," since the logic must be decoupled from both the source
 and the target type. This introduces `ComputerRef` for borrowed input, an abstract `LispExpr` type
 supplied by wiring, and a neat use of upcasting: a provider constructs values through a small local
-`LispSubExpr` enum containing only the variants it needs, then upcasts into the full target — the
+`LispSubExpr` enum containing only the variants it needs, then upcasts into the full target, the
 construction-side counterpart of reading a field you do not own.
 
 Two advanced sections follow. A generic `BinaryOpToLisp<Operator>` provider collapses the near-identical
 `PlusToLisp` and `TimesToLisp` into one, parameterized by a `Symbol!` operator string. And
 **code-based dispatching** uses the `Code` parameter to select between `Eval` and `ToLisp` for the
-same input type, giving a two-layer dispatch — first on input type, then on operation — that the post
+same input type, giving a two-layer dispatch (first on input type, then on operation) that the post
 notes can be nested in either order at no runtime cost.
 
 The post closes by extending the language with `Minus` and `Negate` in a second enum, reusing the
@@ -50,7 +50,7 @@ language can skip the to-Lisp implementations entirely and still compile.
 ## How it relates to the knowledge base
 
 The scenario is re-derived in current syntax as the
-[expression interpreter example](../../examples/expression-interpreter.md) — quote that, not this
+[expression interpreter example](../../examples/expression-interpreter.md); quote that, not this
 post. The concepts are [extensible variants](../../cgp/concepts/extensible-variants.md) and
 [dispatching](../../cgp/concepts/dispatching.md). The post's code lives on as the `expression` crate
 of cgp-examples, whose current form, and where each of the post's sections now sits in it, is
@@ -67,8 +67,8 @@ section relies on is [check traits](../../cgp/concepts/check-traits.md).
 Two pieces of the post are strategy assets. The `serde::Visitor` analysis is the most concrete
 "here is a real library that hits this wall" argument the project has published, and belongs in
 [message.md](../../communication-strategy/message.md#the-problems-cgp-removes) territory. The closing
-observation — that CGP lets you defer implementing a trait without `unimplemented!()` stubs,
-because minimal traits plus lazy wiring mean only what is used is checked — is a genuine selling point
+observation (that CGP lets you defer implementing a trait without `unimplemented!()` stubs,
+because minimal traits plus lazy wiring mean only what is used is checked) is a genuine selling point
 against heavyweight-trait designs and is the kind of claim
 [message.md](../../communication-strategy/message.md#the-strengths-worth-advertising) is built from.
 
@@ -85,9 +85,9 @@ against heavyweight-trait designs and is the kind of claim
   [`delegate_components!`](../../cgp/reference/macros/delegate_components.md), per
   [dispatching-per-type](../../cgp/guides/dispatching-per-type.md).
 - **`#[cgp_auto_getter] pub trait BinarySubExpression`** reads `left` and `right` through a getter
-  trait; because these are fields on the *input* rather than on the provider's own context, this
-  remains one of the cases a getter trait is still right for — see
-  [reading-context-fields](../../cgp/guides/reading-context-fields.md) — but the trait would now be
+  trait. These are fields on the *input* rather than on the provider's own context, so this
+  remains one of the cases a getter trait is still right for (see
+  [reading-context-fields](../../cgp/guides/reading-context-fields.md)), but the trait would now be
   written with the modern attribute forms.
 - **Several code blocks are internally inconsistent**, mixing an earlier `Expr` name with the later
   `MathExpr`: the first wiring block maps `Expr: DispatchEval` beside `Plus<MathExpr>: EvalAdd`, and

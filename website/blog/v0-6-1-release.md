@@ -4,11 +4,11 @@ A focused three-feature release: `#[cgp_impl]` gains implicit context types, `ch
 the `#[check_providers]` attribute for isolating a broken layer of a composed provider, and getter
 traits gain their own associated types. All three survive in current CGP.
 
-- **URL** — <https://contextgeneric.dev/blog/v0-6-1-release>
-- **Source** — [blog/2026-02-01-v0.6.1-release.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/2026-02-01-v0.6.1-release.md)
-- **Published** — 1 February 2026, tagged `release`
-- **Release** — [v0.6.1](../../releases/v0-6-1.md)
-- **Status** — Historical
+- **URL**: <https://contextgeneric.dev/blog/v0-6-1-release>
+- **Source**: [blog/2026-02-01-v0.6.1-release.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/2026-02-01-v0.6.1-release.md)
+- **Published**: 1 February 2026, tagged `release`
+- **Release**: [v0.6.1](../../releases/v0-6-1.md)
+- **Status**: Historical
 
 ## What it covers
 
@@ -32,7 +32,7 @@ per context previously needed a separate `#[cgp_type]` trait alongside it; now t
 `#[cgp_getter]`.
 
 The post carries an **AI disclaimer** at the top, stating that it was co-authored by Claude Haiku from
-a human draft and reviewed by the human author — the only post that does so explicitly, though the
+a human draft and reviewed by the human author, the only post that does so explicitly, though the
 [new-website post](new-website.md) discusses the practice generally.
 
 ## How it relates to the knowledge base
@@ -50,14 +50,14 @@ associated types are covered in
 [`#[cgp_getter]`](../../cgp/reference/macros/cgp_getter.md). The composed provider in the running
 example is a [higher-order provider](../../cgp/concepts/higher-order-providers.md).
 
-The post's stated motivation — that generic syntax is a barrier for readers from an OOP background —
+The post's stated motivation (that generic syntax is a barrier for readers from an OOP background)
 is the same argument [readers.md](../../communication-strategy/readers.md#the-comprehension-barriers) makes
 about the prerequisite ladder, and the release is a good illustration of the project responding to it
 in the design rather than only in the prose.
 
 ## Where it diverges from CGP v0.8.0
 
-Little, which makes this the most quotable release note on the site — though not quotable enough to
+Little, which makes this the most quotable release note on the site, though not quotable enough to
 skip checking.
 
 - **The `#[cgp_impl]` "before" snippets are the stale ones.** The post's before-and-after contrast
@@ -69,7 +69,7 @@ skip checking.
 - **`Self: HasRectangleFields` in the `where` clause** is now
   [`#[uses(HasRectangleFields)]`](../../cgp/reference/attributes/uses.md), and the getter trait itself
   would usually be replaced by [`#[implicit]`](../../cgp/reference/attributes/implicit.md) arguments
-  reading `width` and `height` directly — both changes arriving in v0.7.0, one release later.
+  reading `width` and `height` directly, both changes arriving in v0.7.0, one release later.
 - **`check_components! { CanUseRectangle for Rectangle { ... } }`** uses the pre-v0.7.0 syntax; the
   current form names the context alone with an optional `#[check_trait(...)]` attribute.
 - **The abstract-type example writes `Self::Name`**, where
@@ -80,5 +80,5 @@ skip checking.
 
 Leave it alone. Its `#[check_providers]` explanation is the clearest published statement of a
 debugging technique that is easy to miss, and it is worth pointing at from any future writing about
-diagnosing composed providers — alongside [`cargo-cgp`](../../cargo-cgp/README.md), which did not
+diagnosing composed providers, alongside [`cargo-cgp`](../../cargo-cgp/README.md), which did not
 exist when this was written and is now the first tool to reach for.

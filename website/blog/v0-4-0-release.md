@@ -1,14 +1,14 @@
 # CGP v0.4.0 Release: Unlocking Easier Debugging, Extensible Presets, and More
 
 The release that made CGP debuggable. It introduces `IsProviderFor`, `CanUseComponent`, and
-`check_components!` — the machinery that still underpins every readable CGP error today — alongside
+`check_components!`, the machinery that still underpins every readable CGP error today, alongside
 the preset system and the first datatype-generic support, both of which have since been replaced.
 
-- **URL** — <https://contextgeneric.dev/blog/v0-4-0-release>
-- **Source** — [blog/2025-05-09-v0.4.0-release.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/2025-05-09-v0.4.0-release.md)
-- **Published** — 9 May 2025, tagged `release`
-- **Release** — [v0.4.0](../../releases/v0-4-0.md)
-- **Status** — Historical
+- **URL**: <https://contextgeneric.dev/blog/v0-4-0-release>
+- **Source**: [blog/2025-05-09-v0.4.0-release.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/2025-05-09-v0.4.0-release.md)
+- **Published**: 9 May 2025, tagged `release`
+- **Release**: [v0.4.0](../../releases/v0-4-0.md)
+- **Status**: Historical
 
 ## What it covers
 
@@ -56,7 +56,7 @@ error story this release opened is now carried further by
 
 The preset section is the origin of what is now [namespaces](../../cgp/concepts/namespaces.md), and
 its framing of component delegation as a mergeable type-level lookup table is still the right mental
-model — only the mechanism changed. The nested-getter example is
+model; only the mechanism changed. The nested-getter example is
 [`ChainGetters`](../../cgp/reference/providers/chain_getters.md) with
 [`WithProvider`](../../cgp/reference/providers/with_provider.md). `#[derive(HasFields)]` is now
 [`#[derive(HasFields)]`](../../cgp/reference/derives/derive_has_fields.md) under
@@ -74,7 +74,8 @@ model — only the mechanism changed. The nested-getter example is
   [`delegate_components!`](../../cgp/reference/macros/delegate_components.md). The
   [v0.8.0 draft](v0-8-0-release.md) explains why: presets supported only single inheritance into a
   context, and the macro-based multiple inheritance was fragile because macros cannot see types.
-- **`#[cgp_context]` and `HasCgpProvider` are gone.** Deprecated in v0.6.0, removed in v0.7.0. A
+- **`#[cgp_context]` and `HasCgpProvider` are gone.** `HasCgpProvider` was removed in v0.6.0, and
+  `#[cgp_context]` was deprecated in v0.6.0 and removed in v0.7.0. A
   context now implements [`DelegateComponent`](../../cgp/reference/traits/delegate_component.md)
   directly, so the `{Context}Components` struct this release introduced is no longer generated or
   needed.
@@ -88,13 +89,14 @@ model — only the mechanism changed. The nested-getter example is
   `confusable_idents` warning, and `Char` was renamed [`Chars`](../../cgp/reference/types/chars.md).
 - **`Async` was removed entirely** in v0.5.0, not merely relaxed; see
   [send-bounds](../../cgp/concepts/send-bounds.md) for the pattern that replaced it.
-- **One typo to not copy:** the `#[blanket_trait]` example is annotated `#[trait_alias]`, a name that
-  never existed.
+- **One stale name to not copy:** the `#[blanket_trait]` example is annotated `#[trait_alias]`, the
+  macro's name during development before v0.4.0 shipped it as `#[blanket_trait]`; no release carries
+  it.
 
 ## Maintaining it
 
-Leave it alone. Of all the release notes this is the one whose *ideas* have aged best — the
+Leave it alone. Of all the release notes this is the one whose *ideas* have aged best (the
 `IsProviderFor` explanation is still accurate and is arguably clearer than any other prose on why the
-trait exists — but its code is uniformly pre-`#[cgp_impl]`, pre-namespace, and pre-`#[cgp_fn]`, so
+trait exists), but its code is uniformly pre-`#[cgp_impl]`, pre-namespace, and pre-`#[cgp_fn]`, so
 nothing in it should be quoted as current. When a piece needs to explain why CGP errors are readable,
 draw the explanation from [check traits](../../cgp/concepts/check-traits.md) and write fresh code.

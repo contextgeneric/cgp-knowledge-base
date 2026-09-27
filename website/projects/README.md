@@ -2,12 +2,13 @@
 
 This directory holds the blueprint for the website's **Projects** section, which publishes the
 [projects/](../../projects/README.md) sections of this base as public documentation, one directory
-per project, with the projects' example programs expanded into short tutorials. None of it is
-written yet. It takes the place of three planned deep dives, for the reasons in [What the section
+per project, with the projects' example programs expanded into short tutorials. Eighty of its pages
+and the section index are written on the website's `v0.8.0` branch, and the rest are planned. It
+takes the place of three planned deep dives, for the reasons in [What the section
 replaces](#what-the-section-replaces).
 
-- **Planned location** — `https://contextgeneric.dev/docs/projects/`, a `Projects` category between
-  Reference and `cargo-cgp` in the sidebar
+- **Location** — `https://contextgeneric.dev/docs/projects/` once the `v0.8.0` branch publishes, a
+  `Projects` category between Reference and `cargo-cgp` in the sidebar
 - **Derived from** — [projects/](../../projects/README.md), which stays the source of truth
 - **Page-type spec** — [../writing-guides/project.md](../writing-guides/project.md); read it first
 - **Status** — in progress: the section index, 21 Hypershell pages, 45 cgp-serde pages, and 14

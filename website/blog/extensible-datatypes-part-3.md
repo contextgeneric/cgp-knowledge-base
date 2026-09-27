@@ -5,22 +5,22 @@ records, the `MapType` presence markers, the build and take traits, and the type
 merges one struct into another. It is the most detailed published account of this mechanism and the
 closest thing the site has to implementation documentation.
 
-- **URL** — <https://contextgeneric.dev/blog/extensible-datatypes-part-3>
-- **Source** — [blog/2025-07-12-extensible-datatypes-part-3.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/2025-07-12-extensible-datatypes-part-3.md)
-- **Published** — 12 July 2025, tagged `deepdive`
-- **Release** — [v0.4.2](../../releases/v0-4-2.md)
-- **Status** — Historical
-- **Notice** — a note at the top of the post, written on the website's `v0.8.0` branch, links the *Extensible records* Concepts page and the reference, since the post explains internals rather than a project; it is the sanctioned edit in [../AGENTS.md](../AGENTS.md#do-not-rewrite-history) and changes no claim
+- **URL**: <https://contextgeneric.dev/blog/extensible-datatypes-part-3>
+- **Source**: [blog/2025-07-12-extensible-datatypes-part-3.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/2025-07-12-extensible-datatypes-part-3.md)
+- **Published**: 12 July 2025, tagged `deepdive`
+- **Release**: [v0.4.2](../../releases/v0-4-2.md)
+- **Status**: Historical
+- **Notice**: a note at the top of the post, written on the website's `v0.8.0` branch, links the *Extensible records* Concepts page and the reference, since the post explains internals rather than a project; it is the sanctioned edit in [../AGENTS.md](../AGENTS.md#do-not-rewrite-history) and changes no claim
 
 ## What it covers
 
-The post opens with the theory it draws on — datatype-generic programming in Haskell and the paper
-[*Abstracting extensible data types: or, rows by any other name*](https://dl.acm.org/doi/10.1145/3290325) —
+The post opens with the theory it draws on (datatype-generic programming in Haskell and the paper
+[*Abstracting extensible data types: or, rows by any other name*](https://dl.acm.org/doi/10.1145/3290325))
 and then states the problem CGP's version solves that those approaches leave open: **constraint
 propagation**. Two generic functions each carrying their own row constraint cannot be composed into a
 third that inherits both, because Rust has no constraint kinds; the caller must restate every
 constraint by hand, and a composed function cannot be exported as a top-level value at all. CGP's
-answer is to represent functions as *types* — providers — so that composing two providers into
+answer is to represent functions as *types* (providers) so that composing two providers into
 `ConcatOutputs<FirstNameToString, LastNameToString>` is a type alias whose constraints are inferred
 and enforced lazily at the point of use. This is the sharpest statement anywhere of *why* CGP
 represents computations as types, and it generalizes far beyond extensible records.
@@ -43,7 +43,7 @@ the source and building into the target one field at a time until the list is `N
 trace of `Employee::builder().build_from(person)` shows every intermediate type.
 
 The final section covers the builder dispatchers. `BuildWithHandlers` initializes an empty partial
-record, pipes it through a list of handlers with `PipeHandlers`, and finalizes the result — reusing
+record, pipes it through a list of handlers with `PipeHandlers`, and finalizes the result, reusing
 the same piping mechanism as Hypershell. `BuildAndMerge` and `BuildAndSetField` adapt a provider to
 contribute a whole record or a single field, `MapFields` maps a type-level list, and
 `BuildAndMergeOutputs` is assembled from those pieces. The post closes with a technique worth
@@ -88,8 +88,8 @@ constraint kinds. The constraint-hiding technique at the end is the reasoning be
   [`#[derive(CgpData)]`](../../cgp/reference/derives/derive_cgp_data.md).
 - **Every provider is inside-out**, written with `#[cgp_provider]`/`#[cgp_new_provider]` rather than
   [`#[cgp_impl]`](../../cgp/reference/macros/cgp_impl.md).
-- **The post's "future extensions" have largely shipped** — defaults, overriding, and the optional
-  builder all arrived in v0.5.0 — so read that section as a historical wish list rather than as a
+- **The post's "future extensions" have largely shipped**: defaults, overriding, and the optional
+  builder all arrived in v0.5.0, so read that section as a historical wish list rather than as a
   statement of current gaps.
 - **One typo:** the `build_from` walkthrough annotates the final `.finalize_build()` with `// Person`
   where the value being built is an `Employee`.

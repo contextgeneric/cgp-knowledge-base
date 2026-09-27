@@ -5,11 +5,11 @@ RustLab talk. It rebuilds Serde's `Serialize` and `Deserialize` as CGP component
 applications encoding the same nested data into different JSON, and demonstrates an
 arena-allocating deserializer that realizes the context-and-capabilities proposal on stable Rust.
 
-- **URL** — <https://contextgeneric.dev/blog/cgp-serde-release>
-- **Source** — [blog/2025-11-03-cgp-serde-release.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/2025-11-03-cgp-serde-release.md)
-- **Published** — 3 November 2025, tagged `release`
-- **Status** — Historical
-- **Notice** — a note at the top of the post, written on the website's `v0.8.0` branch, links the [cgp-serde pages](https://contextgeneric.dev/docs/projects/cgp-serde/), per [projects/cgp-serde.md](../projects/cgp-serde.md); it is the sanctioned edit in [../AGENTS.md](../AGENTS.md#do-not-rewrite-history) and changes no claim
+- **URL**: <https://contextgeneric.dev/blog/cgp-serde-release>
+- **Source**: [blog/2025-11-03-cgp-serde-release.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/2025-11-03-cgp-serde-release.md)
+- **Published**: 3 November 2025, tagged `release`
+- **Status**: Historical
+- **Notice**: a note at the top of the post, written on the website's `v0.8.0` branch, links the [cgp-serde pages](https://contextgeneric.dev/docs/projects/cgp-serde/), per [projects/cgp-serde.md](../projects/cgp-serde.md); it is the sanctioned edit in [../AGENTS.md](../AGENTS.md#do-not-rewrite-history) and changes no claim
 
 ## What it covers
 
@@ -18,19 +18,19 @@ The post is structured as demonstration first, mechanism second.
 It begins by redefining the two Serde traits as CGP components: `CanSerializeValue<Value>` and
 `CanDeserializeValue<'de, Value>` move the original `Self` into an explicit `Value` parameter, leaving
 `Self` free to be a *context* that the method can read dependencies from. It then writes four
-deliberately overlapping providers — `UseSerde` for anything already implementing `Serialize`,
+deliberately overlapping providers (`UseSerde` for anything already implementing `Serialize`,
 `SerializeWithDisplay`, `SerializeBytes` for anything `AsRef<[u8]>`, and `SerializeIterator` for
-anything iterable — and points out that any two of them would be rejected as conflicting blanket impls
+anything iterable) and points out that any two of them would be rejected as conflicting blanket impls
 of `Serialize`, while all four coexist as providers.
 
 The **serialization demo** is the strongest concrete argument in the post. An encrypted-messaging
 library defines three nested data types deriving only `CgpData`. Two applications then wire different
-providers for `Vec<u8>` and `DateTime<Utc>` — hex and RFC 3339 versus base64 and Unix timestamps —
+providers for `Vec<u8>` and `DateTime<Utc>` (hex and RFC 3339 versus base64 and Unix timestamps)
 and produce structurally different JSON from the same value, with the two wiring tables differing by
 three lines. The post shows both JSON outputs in full. Its sharpest observation is that the library
 needs neither `serde` nor `cgp-serde` as a dependency: deriving `CgpData` is enough, because
 `SerializeFields` is generic over any struct that does, which the post frames as the real answer to
-the orphan rule — library authors stop being asked to derive third-party traits at all.
+the orphan rule: library authors stop being asked to derive third-party traits at all.
 
 The **deserialization demo** implements the [context and capabilities](https://tmandry.gitlab.io/blog/posts/2021-12-21-context-capabilities/)
 proposal's own motivating example. A `DeserializeAndAllocate` provider deserializes an owned value and
@@ -42,7 +42,7 @@ The **implementation** section explains provider traits, the `#[cgp_impl]` desug
 lookup tables, tracing a full recursive resolution of `CanSerializeValue<Vec<EncryptedMessage>>`
 through `UseDelegate` down to `SerializeFields`. The **future work** section is candid: enum variants
 are not yet supported for serialization, only `deserialize_json_string` exists as a JSON helper, other
-formats are untested, documentation is thin, and no benchmark has been run — with a specific
+formats are untested, documentation is thin, and no benchmark has been run, with a specific
 hypothesis that `serde`'s macro-generated `match` on string literals may beat `cgp-serde`'s sequential
 field-tag comparison during deserialization.
 
@@ -55,7 +55,7 @@ quote. The project is documented at [projects/cgp-serde/](../../projects/cgp-ser
 on the `v0.8.0` branch: all five, with the JSON-helper item now narrower, since the reader provider
 accepts slices and `io::Read` input and only the convenience method is limited to strings.
 
-The central argument is [coherence](../../cgp/concepts/coherence.md) — indeed
+The central argument is [coherence](../../cgp/concepts/coherence.md); indeed
 `UseSerde`/`SerializeBytes`/`SerializeWithDisplay` are the exact providers that concept document uses
 to illustrate incoherent implementations. The trait split is
 [consumer and provider traits](../../cgp/concepts/consumer-and-provider-traits.md); the derive-free
@@ -67,7 +67,7 @@ parameters are [`Life`](../../cgp/reference/types/life.md).
 
 Two things make this post disproportionately useful to the communication strategy. It is the project's
 best worked answer to "what problem does this solve" for a reader who does not care about paradigms,
-because Serde is universally known and the orphan-rule pain around it is universally felt — which is
+because Serde is universally known and the orphan-rule pain around it is universally felt, which is
 what [message.md](../../communication-strategy/message.md#the-problems-cgp-removes) asks a lead to be. And the
 "you don't even need `#[derive(Serialize)]`" result is a genuine
 [selling point](../../communication-strategy/message.md#the-strengths-worth-advertising) that no competing approach in Rust can
@@ -76,7 +76,7 @@ match. The candid future-work section is the honesty that
 
 ## Where it diverges from CGP v0.8.0
 
-- **`#[cgp_impl]` is used with an explicit generic context** — `impl<Context, Value> ValueSerializer<Value> for Context` —
+- **`#[cgp_impl]` is used with an explicit generic context** (`impl<Context, Value> ValueSerializer<Value> for Context`),
   which v0.6.1 made unnecessary. The current form omits the generic and writes `impl ValueSerializer<Value>`
   with `Self` bounds.
 - **`derive_delegate: UseDelegate<Value>` with nested tables is the legacy dispatch form.** The
@@ -102,8 +102,8 @@ match. The candid future-work section is the honesty that
 
 ## Maintaining it
 
-Leave it alone. Of all the posts on the site this is the one whose *argument* is most worth reusing —
-a widely-known library, a pain every Rust developer has met, and a result no alternative delivers — so
+Leave it alone. Of all the posts on the site this is the one whose *argument* is most worth reusing
+(a widely-known library, a pain every Rust developer has met, and a result no alternative delivers), so
 when a new piece needs that argument, rebuild it from the
 [modular serialization example](../../examples/modular-serialization.md) and
 [coherence](../../cgp/concepts/coherence.md) rather than quoting this post's code. If `cgp-serde` cuts

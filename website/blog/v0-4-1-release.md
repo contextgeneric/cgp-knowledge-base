@@ -1,14 +1,14 @@
 # CGP v0.4.1 Release: new cgp-handler crate, improved preset macros, and more
 
-A short release note introducing the `cgp-handler` crate — the `Handler`, `Computer`, and `Producer`
-components that the whole computation family grew from — together with preset and `UseDelegate`
+A short release note introducing the `cgp-handler` crate (the `Handler`, `Computer`, and `Producer`
+components that the whole computation family grew from), together with preset and `UseDelegate`
 improvements made to support Hypershell.
 
-- **URL** — <https://contextgeneric.dev/blog/v0-4-1-release>
-- **Source** — [blog/2025-06-14-v0.4.1-release.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/2025-06-14-v0.4.1-release.md)
-- **Published** — 14 June 2025, tagged `release`
-- **Release** — [v0.4.1](../../releases/v0-4-1.md)
-- **Status** — Historical
+- **URL**: <https://contextgeneric.dev/blog/v0-4-1-release>
+- **Source**: [blog/2025-06-14-v0.4.1-release.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/2025-06-14-v0.4.1-release.md)
+- **Published**: 14 June 2025, tagged `release`
+- **Release**: [v0.4.1](../../releases/v0-4-1.md)
+- **Status**: Historical
 
 ## What it covers
 
@@ -16,7 +16,7 @@ The post is brief and covers three things. The first and most consequential is t
 crate**, introducing three components with a shared shape: `Handler` for asynchronous fallible
 operations, `Computer` for pure synchronous transforms, and `Producer` for input-free production of a
 value. All three carry a phantom `Code` parameter, which the post explains is for building type-level
-DSLs and for dispatching in API handlers — the mechanism that
+DSLs and for dispatching in API handlers, the mechanism that
 [Hypershell](hypershell-release.md) is built on, and the reason the crate was written.
 
 The second is preset support for `#[wrap_provider]`, letting a preset's `Provider` type be wrapped in
@@ -65,6 +65,6 @@ string is [`StaticFormat` / `StaticString`](../../cgp/reference/traits/static_fo
 ## Maintaining it
 
 Leave it alone. Its one enduring contribution is the framing of `Handler`/`Computer`/`Producer` as a
-family distinguished by whether a computation is async, fallible, and input-taking — an idea that
+family distinguished by whether a computation is async, fallible, and input-taking, an idea that
 survived intact and is now stated properly in [handlers](../../cgp/concepts/handlers.md), which is
 where a piece needing that explanation should draw from.

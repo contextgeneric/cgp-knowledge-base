@@ -1,4 +1,4 @@
-# CGP v0.8.0 — Grouping components with namespaces and paths
+# CGP v0.8.0 - Grouping components with namespaces and paths
 
 The **in-preparation announcement for the unreleased v0.8.0**, and the only forward-looking page on
 the site. It builds a strong case for why flat wiring tables stop scaling and why the preset system
@@ -6,13 +6,13 @@ failed to fix it, then introduces namespaces and default implementations and sto
 conclusion. Its first namespace snippet still shows an attribute name that was renamed during
 development.
 
-- **URL** — <https://contextgeneric.dev/blog/v0.8.0-release>
-- **Source** — [blog/2026-05-10-v0.8.0-release.md](https://github.com/contextgeneric/contextgeneric.dev/blob/v0.8.0/blog/2026-05-10-v0.8.0-release.md),
+- **URL**: <https://contextgeneric.dev/blog/v0.8.0-release>
+- **Source**: [blog/2026-05-10-v0.8.0-release.md](https://github.com/contextgeneric/contextgeneric.dev/blob/v0.8.0/blog/2026-05-10-v0.8.0-release.md),
   on the website's `v0.8.0` branch; the post is not on `main`
-- **Dated** — 10 May 2026, tagged `release`; the date is a placeholder and must be set to the real
+- **Dated**: 10 May 2026, tagged `release`; the date is a placeholder and must be set to the real
   release date before v0.8.0 ships
-- **Documents** — [releases/v0-8-0.md](../../releases/v0-8-0.md)
-- **Status** — **Draft**, for an unreleased version
+- **Documents**: [releases/v0-8-0.md](../../releases/v0-8-0.md)
+- **Status**: **Draft**, for an unreleased version
 
 ## Why this one is different
 
@@ -20,8 +20,8 @@ Every other post on the site is a finished artifact whose only defect is age. Th
 finished nor about a shipped release.
 
 It was **drafted as the v0.7.1 announcement**, when namespaces were expected to be a minor addition.
-The work grew — namespaces required a new path system, the `open` statement, per-type defaults, and
-ultimately the removal of the entire preset mechanism — so the release was renumbered to **v0.8.0**,
+The work grew (namespaces required a new path system, the `open` statement, per-type defaults, and
+ultimately the removal of the entire preset mechanism), so the release was renumbered to **v0.8.0**,
 which is still in development at `0.8.0-alpha`. There is no v0.7.1 tag and there will not be one; the
 last shipped release is [v0.7.0](../../releases/v0-7-0.md). Anything in the base that attributes
 namespaces to "v0.7.1" is wrong.
@@ -33,14 +33,14 @@ claims the release has already happened.
 
 The rule in [../AGENTS.md](../AGENTS.md) against rewriting published posts therefore does **not**
 apply here. A draft for an unreleased version is live work, and editing it is the expected activity
-rather than a violation — indeed finishing it is part of preparing the release.
+rather than a violation; finishing it is part of preparing the release.
 
 ## What it covers
 
 The post is at its best in its motivation, which is the fullest published argument for CGP's
 scalability problem. It builds a social-media backend with coarse `CanManageUser` and `CanManagePost`
 traits, adds content-filtering dependencies, and then splits the coarse traits into fine-grained
-per-operation ones — showing that fine-grained traits let a dependency like `CanCensorUsername` reach
+per-operation ones. It shows that fine-grained traits let a dependency like `CanCensorUsername` reach
 only the one provider that needs it, and that higher-order providers can lift the filtering out into
 `FilterCensoredUsername<CreateUserWithPostgres>` so the database provider does nothing but build SQL.
 Then it counts the cost: nine wiring entries for a deliberately minimal application, and "dozens if
@@ -76,7 +76,7 @@ The feature is [namespaces](../../cgp/concepts/namespaces.md), documented per co
 [`DefaultNamespace`](../../cgp/reference/traits/default_namespace.md), with the `namespace` and
 `@`-path statements in
 [`delegate_components!`](../../cgp/reference/macros/delegate_components.md). The prescriptive
-counterpart — how to actually refactor a growing table — is
+counterpart, how to actually refactor a growing table, is
 [namespaces-and-prefixes](../../cgp/guides/namespaces-and-prefixes.md), which is the document to write
 from. The release as a whole is tracked in [releases/v0-8-0.md](../../releases/v0-8-0.md), which lists
 everything else v0.8.0 carries that this draft does not yet mention.
@@ -95,7 +95,7 @@ climbing" demonstration is a real, self-inflicted pain narrated honestly, which 
 presets were tried and did not work is exactly the candour
 [message.md](../../communication-strategy/message.md#the-objections-readers-bring) argues buys credibility. It also speaks
 directly to the "verbose / over-engineered" reflex recorded in
-[evidence.md](../../communication-strategy/evidence.md) — a post that
+[evidence.md](../../communication-strategy/evidence.md): a post that
 concedes the verbosity and then fixes it is better positioned than one that denies it.
 
 ## Where it diverges from the feature as built
@@ -121,18 +121,18 @@ the namespace and default-implementation snippets match the `web-app` crate apar
   `#[cgp::re_export_imports]`, and `#[cgp_inherit]` outright, which is the release's largest breaking
   change and needs a migration guide the draft does not have.
 - **It covers only one of the release's features.** [releases/v0-8-0.md](../../releases/v0-8-0.md)
-  lists the rest — the `open` statement, `#[impl_generics]`, the `#[use_type]` separator change from
+  lists the rest (the `open` statement, `#[impl_generics]`, the `#[use_type]` separator change from
   `::` to `.`, the adoption of [`cargo-cgp`](../../cargo-cgp/README.md), and the move of all
-  documentation into this knowledge base — none of which appear here.
+  documentation into this knowledge base), none of which appear here.
 - **The wiring examples omit checking.** A context wired this way should carry a
   [`check_components!`](../../cgp/reference/macros/check_components.md) assertion, and namespaces
-  introduce their own failure modes — see
+  introduce their own failure modes; see
   [unregistered-namespace-path](../../cgp/errors/checks/unregistered-namespace-path.md),
   [namespace-override-conflict](../../cgp/errors/wiring/namespace-override-conflict.md), and
   [namespace-inheritance-cycle](../../cgp/errors/wiring/namespace-inheritance-cycle.md).
 - **`delegate_and_check_components!` is used on `ProductionApp`**, which is correct for that simple
   case, but the later aggregate providers (`PostgresUserComponents`) are correctly wired with plain
-  `delegate_components!` — a distinction the draft never explains and that
+  `delegate_components!`, a distinction the draft never explains and that
   [aggregate providers](../../cgp/concepts/aggregate-providers.md) covers.
 - **One copy-paste error in the source:** the `TestApp` section defines the struct `TestApp` but then
   writes `delegate_components! { ProductionApp { ... } }`, wiring the wrong context. Neither struct in
@@ -149,15 +149,15 @@ the release's contents and its breaking changes from
 [releases/v0-8-0.md](../../releases/v0-8-0.md); and keep the motivation section as it stands, since it
 is the best part of the draft and needs no change.
 
-Four mechanical items go with it. The **placeholder date** in the filename must become the real
-release date, which also sets the post's URL and its position in the blog index. The **announcement
-bar** in `docusaurus.config.ts` still promotes v0.7.0 and must be repointed, per
-[site-structure.md](../site-structure.md). The **opening sentence** claims the release has already
-happened and must not go out before it has. And the [Introduction page](../site-structure.md), which
-tells readers that posts from v0.7.0 onward are the most current material, should be re-checked once
-this one exists.
+Two mechanical items go with it. The **placeholder date** in the filename must become the real
+release date, which also sets its position in the blog index (the explicit `slug` fixes the URL).
+The **opening sentence** claims the release has already happened and must not go out before it has.
+The site-wide pointers are already in place on the website's `v0.8.0` branch: its **announcement
+bar** in `docusaurus.config.ts` links this post (the live site's still promotes v0.7.0), and its
+[Introduction page](../site-structure.md) drops the live page's advice that posts from v0.7.0
+onward are the most current material; see [site-structure.md](../site-structure.md).
 
 The [launch-post playbook](../../communication-strategy/formats.md) governs the finished result, and
 because this is a major release with breaking changes, its migration guide should follow the shape the
-[v0.7.0 post](v0-7-0-release.md) used — each change stated with its before and after, and a plain
+[v0.7.0 post](v0-7-0-release.md) used: each change stated with its before and after, and a plain
 statement of what a reader must do.

@@ -1,14 +1,14 @@
 # CGP v0.6.0 Release: Major ergonomic improvements for provider and context implementations
 
 The release that made CGP code start to look like ordinary Rust. It introduces `#[cgp_impl]`, lets a
-context own its wiring table directly, and removes `HasCgpProvider` — three changes that together
+context own its wiring table directly, and removes `HasCgpProvider`, three changes that together
 retired the two constructs most responsible for CGP looking alien.
 
-- **URL** — <https://contextgeneric.dev/blog/v0-6-0-release>
-- **Source** — [blog/2025-10-26-v0.6.0-release.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/2025-10-26-v0.6.0-release.md)
-- **Published** — 26 October 2025, tagged `release`
-- **Release** — [v0.6.0](../../releases/v0-6-0.md)
-- **Status** — Historical
+- **URL**: <https://contextgeneric.dev/blog/v0-6-0-release>
+- **Source**: [blog/2025-10-26-v0.6.0-release.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/2025-10-26-v0.6.0-release.md)
+- **Published**: 26 October 2025, tagged `release`
+- **Release**: [v0.6.0](../../releases/v0-6-0.md)
+- **Status**: Historical
 
 ## What it covers
 
@@ -17,7 +17,7 @@ Three connected changes, each explained with a before-and-after.
 **`#[cgp_impl]`** lets a provider be written as if it were a blanket impl of the consumer trait: the
 context stays in the `Self` position, methods keep `&self` and their consumer-trait signatures, and
 the macro rewrites everything into the provider-trait shape. The post is explicit that this is
-presentation rather than mechanism — it expands to the same thing `#[cgp_provider]` produced — but
+presentation rather than mechanism (it expands to the same thing `#[cgp_provider]` produced), but
 that the presentation is the point.
 
 **Direct delegation on the context** removes the separate `{Context}Components` provider struct.
@@ -26,8 +26,9 @@ post notes a small compile-time benefit from removing a level of indirection, an
 because the consumer-trait blanket impl no longer goes through a per-context provider, a context can
 now implement a consumer trait *directly* for components it has not delegated, mixing hand-written
 impls with wired ones. This in turn is what makes it safe to apply `#[cgp_component]` to almost any
-existing trait without breaking its existing implementations — the `Hash` example the site's
-[Introduction](../site-structure.md) still leads with.
+existing trait without breaking its existing implementations: the `Hash` example the live site's
+[Introduction](../site-structure.md) leads with (the `v0.8.0` branch's Introduction opens on an
+email example instead).
 
 **Removing `HasCgpProvider`** is what enabled the above. Consumer-trait blanket impls now route
 through [`DelegateComponent`](../../cgp/reference/traits/delegate_component.md) exactly as provider
@@ -38,7 +39,7 @@ compatibility was preserved by making `#[cgp_context]` emit a blanket
 way for a context to inherit a preset.
 
 The migration guide deprecates both `#[cgp_context]` and `#[cgp_provider]`, recommending removal of
-the former and migration to `#[cgp_impl]` for the latter — with a note that mixing the two provider
+the former and migration to `#[cgp_impl]` for the latter, with a note that mixing the two provider
 styles confuses contributors unfamiliar with CGP.
 
 ## How it relates to the knowledge base
@@ -53,8 +54,8 @@ and the distinction between a context and an aggregate provider that the change 
 [aggregate providers](../../cgp/concepts/aggregate-providers.md). The blanket impls that changed are
 described in [consumer and provider traits](../../cgp/concepts/consumer-and-provider-traits.md).
 
-The post's `Hash` example is the origin of the framing the
-[Introduction page](../site-structure.md) still opens with, and it is a strong one for
+The post's `Hash` example is the origin of the framing the live
+[Introduction page](../site-structure.md) opens with, and it is a strong one for
 [message.md](../../communication-strategy/message.md#the-strengths-worth-advertising): CGP can be added to an existing
 trait without breaking a single existing implementation, which is the most direct answer available to
 the incremental-adoption question in
@@ -63,7 +64,7 @@ the incremental-adoption question in
 ## Where it diverges from CGP v0.8.0
 
 - **`#[cgp_context]` was removed outright in v0.7.0**, so the backward-compatibility mechanism this
-  post introduces — the blanket `DelegateComponent` impl it generates — no longer exists either. The
+  post introduces (the blanket `DelegateComponent` impl it generates) no longer exists either. The
   post's advice to remove `#[cgp_context]` when upgrading is now mandatory rather than recommended.
 - **`#[cgp_inherit]` is gone.** It was the preset-inheritance replacement introduced here, and it went
   with the presets; a context now joins a namespace with a `namespace` statement inside
@@ -85,6 +86,6 @@ the incremental-adoption question in
 
 Leave it alone. This is the most consequential release note for understanding *why* current CGP looks
 the way it does, and the `HasCgpProvider` history section is the only published account of that
-design's origin — worth reading before anyone proposes reintroducing shared context providers. For
+design's origin, worth reading before anyone proposes reintroducing shared context providers. For
 current guidance on the choice it settled, use
 [writing-providers](../../cgp/guides/writing-providers.md).

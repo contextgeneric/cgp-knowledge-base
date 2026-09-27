@@ -29,14 +29,14 @@ matters more: a tutorial that is technically flawless and introduces the consume
 page one has failed, while one that defers a mechanism until the reader has a reason to want it has
 succeeded even if it says less. The judgment involved is what
 [readers.md](../../communication-strategy/readers.md#the-comprehension-barriers) calls progressive
-disclosure, and it is the easiest thing for a well-meaning revision to destroy — an agent asked to
+disclosure, and it is the easiest thing for a well-meaning revision to destroy: an agent asked to
 "add namespaces to the tutorial" can wreck a carefully built ramp in one edit.
 
 So each document below fixes four things that a revision must preserve unless the user says otherwise.
 The **objective** is what a reader can do at the end. The **prerequisites** are what the tutorial
 assumes and, just as importantly, what it deliberately does not assume. The **concept sequence** is
 the order in which ideas are introduced, with the reason for that order where it is not obvious. And
-the **level of explanation** is how deep the tutorial goes when a mechanism must be mentioned —
+the **level of explanation** is how deep the tutorial goes when a mechanism must be mentioned:
 whether it shows the desugaring, gestures at it, or stays silent.
 
 Adding to a tutorial therefore means finding the right rung, not appending to the end. A concept that
@@ -49,13 +49,15 @@ Two tutorial series are published, and they overlap deliberately: both teach `#[
 multi-part progression. Read both documents before changing either, since a change to the shared
 ground affects the other's assumptions.
 
-- [Hello World](hello-world.md) — the single-page first contact. A `greet` function with one implicit
+- [Hello World](hello-world.md): the single-page first contact. A `greet` function with one implicit
   argument, run on two different context structs, plus an optional "behind the scenes" section showing
   the plain-Rust equivalent. Its whole job is to get a reader to a working program before they meet
   any CGP vocabulary.
-- [Area calculation](area-calculation.md) — the three-part series that carries a reader from plain
-  Rust functions to configurable static dispatch with higher-order providers. It is the site's only
-  sustained teaching material and the place a reader is sent after Hello World.
+- [Area calculation](area-calculation.md): the series that carries a reader from plain Rust
+  functions to configurable static dispatch with higher-order providers, in an index and two
+  tutorials on the live site, and on to catching a mis-wiring in a third tutorial on the website's
+  `v0.8.0` branch. It is the site's only sustained teaching material and the place a reader is sent
+  after Hello World.
 
 ## Where tutorials sit among the site's material
 
@@ -75,8 +77,8 @@ verification.
 ## The document shape
 
 Follow the shape of the two existing documents. Open with a level-one heading naming the series and a
-one-sentence statement of what a reader can do at the end. Give the identifying facts — URL, source
-path, page list, status — as a short framed list. Then cover, in prose: **what it teaches**, walking
+one-sentence statement of what a reader can do at the end. Give the identifying facts (URL, source
+path, page list, status) as a short framed list. Then cover, in prose: **what it teaches**, walking
 the sequence; **the teaching contract**, stating objective, prerequisites, concept order, and
 explanation level; **how it relates to the knowledge base**, linking the reference, concept, example,
 and communication-strategy documents behind it; **where it diverges from current CGP**, if anywhere;

@@ -4,16 +4,16 @@ The final part of the series and its dual: how extensible variants work, mirrori
 step. It covers partial variants and the uninhabited `Void` type, the cast implementations, the
 monadic visitor dispatchers, and the reference-based variants layered on top of the owned ones.
 
-- **URL** — <https://contextgeneric.dev/blog/extensible-datatypes-part-4>
-- **Source** — [blog/2025-07-30-extensible-datatypes-part-4.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/2025-07-30-extensible-datatypes-part-4.md)
-- **Published** — 30 July 2025, tagged `deepdive`
-- **Release** — [v0.4.2](../../releases/v0-4-2.md)
-- **Status** — Historical
-- **Notice** — a note at the top of the post, written on the website's `v0.8.0` branch, links the *Extensible variants* Concepts page, the reference, and the [`expression` pages](https://contextgeneric.dev/docs/projects/cgp-examples/expression/); it is the sanctioned edit in [../AGENTS.md](../AGENTS.md#do-not-rewrite-history) and changes no claim
+- **URL**: <https://contextgeneric.dev/blog/extensible-datatypes-part-4>
+- **Source**: [blog/2025-07-30-extensible-datatypes-part-4.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/2025-07-30-extensible-datatypes-part-4.md)
+- **Published**: 30 July 2025, tagged `deepdive`
+- **Release**: [v0.4.2](../../releases/v0-4-2.md)
+- **Status**: Historical
+- **Notice**: a note at the top of the post, written on the website's `v0.8.0` branch, links the *Extensible variants* Concepts page, the reference, and the [`expression` pages](https://contextgeneric.dev/docs/projects/cgp-examples/expression/); it is the sanctioned edit in [../AGENTS.md](../AGENTS.md#do-not-rewrite-history) and changes no claim
 
 ## What it covers
 
-The post frames variants as the categorical dual of records — products and coproducts — and predicts
+The post frames variants as the categorical dual of records (products and coproducts) and predicts
 that most of part 3's machinery will carry over inverted. It then does exactly that.
 
 `FromVariant` constructs an enum from a tagged value, the mirror of `HasField` reading one. The post
@@ -21,29 +21,29 @@ states the shape restriction plainly: CGP supports only "sums of products," mean
 carry exactly one unnamed field, because anything else would make the `Value` type unwieldy; wrap
 richer payloads in a struct. **Partial variants** mirror partial records, but where absence in a
 record is `IsNothing` mapping to `()`, absence in a variant is `IsVoid` mapping to the empty enum
-`Void` — a variant that has been extracted becomes impossible to construct, so the compiler can prove
+`Void`: a variant that has been extracted becomes impossible to construct, so the compiler can prove
 it unreachable. `HasExtractor` converts an enum into its all-present partial form and `ExtractField`
 removes one variant, returning `Result<Value, Remainder>` where the `Err` carries what is left.
 
 The consequence is the post's most striking result: a chain of extractions narrows the remainder until
 its type is `PartialShape<IsVoid, IsVoid>`, which is uninhabited, so the final `Err` arm can simply be
-omitted and the compiler accepts the match as exhaustive — no `unreachable!()`, no runtime assertion.
+omitted and the compiler accepts the match as exhaustive, with no `unreachable!()` and no runtime assertion.
 `FinalizeExtract` generalizes this with an empty `match self {}` over an uninhabited type, and
 `FinalizeExtractResult` wraps it for ergonomics.
 
-A short digression introduces a fictional `⸮` operator — the mirror of `?`, short-circuiting on `Ok`
-and threading the changing `Err` remainder — as a way to make the control flow legible. This
+A short digression introduces a fictional `⸮` operator (the mirror of `?`, short-circuiting on `Ok`
+and threading the changing `Err` remainder) as a way to make the control flow legible. This
 pseudo-operator is the clearest explanation the project has published of what the visitor dispatchers
 actually do, and it recurs later.
 
 The casts are then built from the same parts. `HasFields` for an enum is a type-level `Sum!` over
 `Either`/`Void` rather than a `Product!` over `Cons`/`Nil`, and a shared `FieldsExtractor` helper
 recurses over it. `CanUpcast` iterates the *source's* fields and requires an empty remainder;
-`CanDowncast` iterates the *target's* and returns the remainder — the same machinery, differing only
+`CanDowncast` iterates the *target's* and returns the remainder: the same machinery, differing only
 in which side supplies the field list.
 
 The visitor dispatchers follow. `MatchWithHandlers` converts an input to its extractor form, pipes it
-through `DispatchMatchers` — which is `PipeMonadic<OkMonadic, Providers>`, the `⸮` operator realized —
+through `DispatchMatchers` (which is `PipeMonadic<OkMonadic, Providers>`, the `⸮` operator realized)
 and finalizes. The post includes a genuinely useful plain-language explanation of monads for a Rust
 audience, framing `?` and `.await` as bind operations. `ExtractFieldAndHandle` and `HandleFieldValue`
 adapt providers to tagged fields; `ToFieldHandlers` and `HasFieldHandlers` generate the handler list
@@ -80,7 +80,7 @@ explains. The worked scenario in current syntax is the
 Two passages are reusable as explanations rather than as code. The `⸮` operator is a teaching device
 worth keeping in the toolkit [readers.md](../../communication-strategy/readers.md#the-comprehension-barriers)
 assembles, because it makes an unfamiliar control flow legible by analogy to one every Rust programmer
-knows. And the monad explanation — monads as containers, `?` and `.await` as bind — is a rare instance
+knows. And the monad explanation (monads as containers, `?` and `.await` as bind) is a rare instance
 of introducing a functional-programming concept without the jargon that
 [vocabulary.md](../../communication-strategy/vocabulary.md) warns against.
 
@@ -88,8 +88,8 @@ of introducing a functional-programming concept without the jargon that
 
 - **Partial variant types are now prefixed.** `PartialShape` and `PartialRefShape` became
   `__PartialShape` and `__PartialRefShape` in v0.5.0.
-- **The dispatcher family grew.** v0.5.0 added the mutable and tuple-input matchers —
-  `MatchWithValueHandlersMut`, `MatchFirstWithValueHandlers` and its ref and mut forms — so the
+- **The dispatcher family grew.** v0.5.0 added the mutable and tuple-input matchers
+  (`MatchWithValueHandlersMut`, `MatchFirstWithValueHandlers` and its ref and mut forms), so the
   post's list is incomplete; see the
   [dispatch combinators](../../cgp/reference/providers/dispatch_combinators.md).
 - **`AsyncComputer` did not exist yet.** Added in v0.5.0, it is the async counterpart of `Computer`
@@ -105,9 +105,9 @@ of introducing a functional-programming concept without the jargon that
   appears on the `App` context in the `UseContext` section and no longer exists.
 - **Every provider is inside-out**, written with `#[cgp_provider]`/`#[cgp_new_provider]` rather than
   [`#[cgp_impl]`](../../cgp/reference/macros/cgp_impl.md).
-- **The promised fifth part was never written.** The post says the computation hierarchy —
-  `Computer`, `ComputerRef`, `TryComputer`, `Handler`, the `Promote` adapters, `PipeHandlers` versus
-  `PipeMonadic` — would get its own post or series. It has not been published, which leaves
+- **The promised fifth part was never written.** The post says the computation hierarchy
+  (`Computer`, `ComputerRef`, `TryComputer`, `Handler`, the `Promote` adapters, `PipeHandlers` versus
+  `PipeMonadic`) would get its own post or series. It has not been published, which leaves
   [handlers](../../cgp/concepts/handlers.md) and
   [monadic handlers](../../cgp/concepts/monadic-handlers.md) as the only accounts of it, and makes
   that post an obvious gap in the site's coverage.
@@ -117,6 +117,6 @@ of introducing a functional-programming concept without the jargon that
 ## Maintaining it
 
 Leave it alone. Note the unwritten fifth part as a real gap rather than an oversight to correct in
-this post — the computation hierarchy deserves its own piece, and
+this post: the computation hierarchy deserves its own piece, and
 [handlers](../../cgp/concepts/handlers.md) is the material it would be written from. The `⸮` device
 and the monad explanation are the passages to carry forward.

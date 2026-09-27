@@ -1,19 +1,19 @@
 # CGP Updates: v0.3.0 Release and New Chapters
 
 The first release announcement after launch, introducing abstract types, the getter macros, error
-wrapping, and the standalone error and runtime crates — almost all of it through syntax that has since
+wrapping, and the standalone error and runtime crates, almost all of it through syntax that has since
 been replaced.
 
-- **URL** — <https://contextgeneric.dev/blog/v0-3-0-release>
-- **Source** — [blog/2025-01-09-v0.3.0-release.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/2025-01-09-v0.3.0-release.md)
-- **Published** — 9 January 2025, tagged `release`
-- **Release** — [v0.3.0](../../releases/v0-3-0.md)
-- **Status** — Historical
+- **URL**: <https://contextgeneric.dev/blog/v0-3-0-release>
+- **Source**: [blog/2025-01-09-v0.3.0-release.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/2025-01-09-v0.3.0-release.md)
+- **Published**: 9 January 2025, tagged `release`
+- **Release**: [v0.3.0](../../releases/v0-3-0.md)
+- **Status**: Historical
 
 ## What it covers
 
 The post is split between new book chapters and new library features. The book half summarizes three
-chapters — associated types, error handling, and field accessors — and is mainly of interest now as a
+chapters (associated types, error handling, and field accessors) and is mainly of interest now as a
 record of what the [CGP Patterns book](https://patterns.contextgeneric.dev/) covers.
 
 The library half introduces five things. The `cgp_type!` **function-like macro** collapsed an
@@ -26,7 +26,7 @@ raising a tuple, `CanRaiseError<(Self::Error, Detail)>`. And two crates shipped:
 and `cgp-error-std`, and `cgp-runtime`, standardizing an abstract runtime interface.
 
 The post closes by acknowledging that the getter macros were motivated by user feedback that direct
-use of `HasField` was too complex for beginners — an early instance of the ergonomics pressure that
+use of `HasField` was too complex for beginners, an early instance of the ergonomics pressure that
 shaped every release since.
 
 ## How it relates to the knowledge base
@@ -42,8 +42,8 @@ Every construct the post introduces is documented in current form. Abstract type
 [modular error handling](../../cgp/concepts/modular-error-handling.md). The runtime interface is
 [`HasRuntime` / `HasRuntimeType`](../../cgp/reference/components/has_runtime.md).
 
-The post's own framing — that the launch audience read CGP as "primarily a dependency injection
-framework in Rust," and that abstract types were the answer — is a documented reception fact worth
+The post's own framing (that the launch audience read CGP as "primarily a dependency injection
+framework in Rust," and that abstract types were the answer) is a documented reception fact worth
 knowing, and it matches the DI-framework objection recorded in
 [message.md](../../communication-strategy/message.md#the-objections-readers-bring).
 

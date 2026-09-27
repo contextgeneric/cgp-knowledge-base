@@ -25,8 +25,10 @@ account of what the proof of concept does not do. The project with measured sear
 **Twenty-one Hypershell pages and the section index are written**, all the pages that nothing
 blocks. `yarn build` passes with them, so every link they carry resolves. They are:
 
-- **Section and project** — `docs/projects/index.md`, the section index, with Hypershell as its only
-  project and a pattern-finding table of Hypershell rows; and `hypershell/index.md`.
+- **Section and project** — `docs/projects/index.md`, the section index, written with this section
+  and since joined by the cgp-serde and cgp-examples entries and rows, per
+  [cgp-serde.md](cgp-serde.md#what-is-written) and [cgp-examples.md](cgp-examples.md#what-is-written);
+  and `hypershell/index.md`.
 - **Examples** — the index and eleven pages: `hello`, `hello-name`, `http-checksum-cli`,
   `http-checksum-client`, `http-checksum-native`, `nix-manual`, `save-webpage`, `github-issues`,
   `rust-playground`, `bluesky`, and `bluesky-websocket`.

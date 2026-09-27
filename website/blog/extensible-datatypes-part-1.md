@@ -5,26 +5,26 @@ demonstrates safe enum upcasting and downcasting, incremental struct building, a
 realistic use case: assembling an application context from independent per-subsystem builder
 providers.
 
-- **URL** — <https://contextgeneric.dev/blog/extensible-datatypes-part-1>
-- **Source** — [blog/2025-07-07-extensible-datatypes-part-1.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/2025-07-07-extensible-datatypes-part-1.md)
-- **Published** — 7 July 2025, tagged `release` and `deepdive`
-- **Release** — [v0.4.2](../../releases/v0-4-2.md), announced across all four parts
-- **Status** — Historical
-- **Notice** — a note at the top of the post, written on the website's `v0.8.0` branch, links the *Extensible records* Concepts page and the [cgp-examples section](https://contextgeneric.dev/docs/projects/cgp-examples/), whose `builder` pages this post's code grew into are not yet written; per [projects/cgp-examples.md](../projects/cgp-examples.md); it is the sanctioned edit in [../AGENTS.md](../AGENTS.md#do-not-rewrite-history) and changes no claim
+- **URL**: <https://contextgeneric.dev/blog/extensible-datatypes-part-1>
+- **Source**: [blog/2025-07-07-extensible-datatypes-part-1.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/2025-07-07-extensible-datatypes-part-1.md)
+- **Published**: 7 July 2025, tagged `release` and `deepdive`
+- **Release**: [v0.4.2](../../releases/v0-4-2.md), announced across all four parts
+- **Status**: Historical
+- **Notice**: a note at the top of the post, written on the website's `v0.8.0` branch, links the *Extensible records* Concepts page and the [cgp-examples section](https://contextgeneric.dev/docs/projects/cgp-examples/), whose `builder` pages this post's code grew into are not yet written; per [projects/cgp-examples.md](../projects/cgp-examples.md); it is the sanctioned edit in [../AGENTS.md](../AGENTS.md#do-not-rewrite-history) and changes no claim
 
 ## What it covers
 
 The post opens by positioning the release: CGP could already *read* a field from any struct through
 `HasField`, and v0.4.2 adds the ability to *construct* fields and to operate over enum variants
-generically. It names the two patterns this unlocks — the extensible builder and the extensible
-visitor — and tells readers from other language backgrounds that this brings
+generically. It names the two patterns this unlocks (the extensible builder and the extensible
+visitor) and tells readers from other language backgrounds that this brings
 [datatype-generic programming](https://wiki.haskell.org/index.php?title=Generics), structural typing,
 row polymorphism, and polymorphic variants to Rust.
 
 A **feature highlights** section demonstrates three features in isolation. Safe *upcasting* lifts
 a `Shape` value into a `ShapePlus` enum that is a superset of its variants, with the two enums needing
 no knowledge of each other. Safe *downcasting* goes the other way and returns a `Result` whose `Err`
-carries the unhandled remainder, which can be downcast again — so a chain of downcasts can exhaust an
+carries the unhandled remainder, which can be downcast again, so a chain of downcasts can exhaust an
 enum, and the compiler knows when no variant is left and lets the final `Err` arm be omitted. Safe
 *struct building* merges smaller structs into a larger one: `Employee::builder().build_from(person).build_from(employee_id).finalize_build()`.
 
@@ -32,8 +32,8 @@ The bulk of the post is the **motivation and worked example**. It starts from an
 constructor holding a SQLite pool and an HTTP client, grows it with two OpenAI fields, then grows it
 again into a six-parameter monster, and argues that the conventional builder pattern does not fix this
 because a builder is tightly coupled to one target struct and cannot be extended without editing it.
-The CGP answer is one `Handler` provider per subsystem — `BuildSqliteClient`, `BuildHttpClient`,
-`BuildOpenAiClient` — each generic over a *builder context* that supplies its configuration through
+The CGP answer is one `Handler` provider per subsystem (`BuildSqliteClient`, `BuildHttpClient`,
+`BuildOpenAiClient`), each generic over a *builder context* that supplies its configuration through
 `#[cgp_auto_getter]` traits, each returning a small wrapper struct, and all of them merged by the
 `BuildAndMergeOutputs` dispatcher. The post then shows the payoff by varying the result: a minimal
 default builder, a Postgres variant, an Anthropic variant, a dual-agent variant carrying both AI
@@ -81,8 +81,8 @@ concrete answer to the feature-flag alternative that
   would today be [`#[cgp_impl]`](../../cgp/reference/macros/cgp_impl.md).
 - **`CanRaiseAsyncError` and `HasAsyncErrorType` were removed** in v0.5.0; see
   [send-bounds](../../cgp/concepts/send-bounds.md).
-- **Configuration is read through `#[cgp_auto_getter]` traits** — `HasSqlitePath`,
-  `HasHttpClientConfig`, `HasOpenAiConfig`. The current default for reading a builder context's own
+- **Configuration is read through `#[cgp_auto_getter]` traits** (`HasSqlitePath`,
+  `HasHttpClientConfig`, `HasOpenAiConfig`). The current default for reading a builder context's own
   fields is [`#[implicit]`](../../cgp/reference/attributes/implicit.md) arguments, per
   [reading-context-fields](../../cgp/guides/reading-context-fields.md).
 - **`UseDelegate<new BuilderHandlers { ... }>`** in the multi-context builder is the legacy dispatch
@@ -93,16 +93,13 @@ concrete answer to the feature-flag alternative that
 - **The post's "future extensions" have shipped.** Filling uninitialized fields with defaults
   (`finalize_with_default`) and the optional-field builder arrived in v0.5.0; see
   [optional fields](../../cgp/reference/traits/optional_fields.md).
-- **One error in the prose.** The exhaustive-downcast example calls `downcast_fields`, a method name
-  that does not exist — the remainder is narrowed with `extract_field`, as
-  [part 4](extensible-datatypes-part-4.md) shows correctly.
 
 ## Maintaining it
 
 Leave it alone. The series is a coherent, cross-referenced whole and cannot be partially updated
-without breaking the links between its four parts. Its enduring value is the *motivation* — the
+without breaking the links between its four parts. Its enduring value is the *motivation* (the
 argument that the conventional builder pattern cannot be extended without editing it, and that this
-follows from Rust requiring every field of a struct at construction time — which is exactly the
+follows from Rust requiring every field of a struct at construction time), which is exactly the
 framing to reuse when writing about extensible records, from
 [extensible records](../../cgp/concepts/extensible-records.md) and the
 [application builder example](../../examples/application-builder.md).

@@ -1,24 +1,24 @@
 # Hypershell: A Type-Level DSL for Shell-Scripting in Rust
 
-The longest post on the site — roughly 16,500 words — announcing [Hypershell](../../projects/hypershell/README.md)
+The longest post on the site (roughly 16,500 words), announcing [Hypershell](../../projects/hypershell/README.md)
 and using it to teach, in one pass, both the type-level DSL technique and CGP's whole wiring model. It
 remains the fullest written account of building a DSL whose programs are Rust types, and its
 self-contained CGP introduction is still one of the best on the site, but its wiring code is four
 breaking releases out of date.
 
-- **URL** — <https://contextgeneric.dev/blog/hypershell-release>
-- **Source** — [blog/2025-06-14-hypershell-release/index.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/2025-06-14-hypershell-release/index.md)
-- **Published** — 14 June 2025, tagged `release` and `deepdive`
-- **Status** — Historical
-- **Notice** — a note at the top of the post, written on the website's `v0.8.0` branch, links the [Hypershell pages](https://contextgeneric.dev/docs/projects/hypershell/), per [projects/hypershell.md](../projects/hypershell.md); it is the sanctioned edit in [../AGENTS.md](../AGENTS.md#do-not-rewrite-history) and changes no claim
+- **URL**: <https://contextgeneric.dev/blog/hypershell-release>
+- **Source**: [blog/2025-06-14-hypershell-release/index.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/2025-06-14-hypershell-release/index.md)
+- **Published**: 14 June 2025, tagged `release` and `deepdive`
+- **Status**: Historical
+- **Notice**: a note at the top of the post, written on the website's `v0.8.0` branch, links the [Hypershell pages](https://contextgeneric.dev/docs/projects/hypershell/), per [projects/hypershell.md](../projects/hypershell.md); it is the sanctioned edit in [../AGENTS.md](../AGENTS.md#do-not-rewrite-history) and changes no claim
 
 ## What it covers
 
 The post has five parts, and its own table of contents estimates one to two hours of reading.
 
 The **overview** teaches Hypershell by example. A program is a Rust *type* written with the
-`hypershell!` macro, whose shell-like surface syntax — a pipe operator, bracketed variadic argument
-lists, bare string literals — desugars into `Pipe<Product![...]>` over `Symbol!` type-level strings.
+`hypershell!` macro, whose shell-like surface syntax (a pipe operator, bracketed variadic argument
+lists, bare string literals) desugars into `Pipe<Product![...]>` over `Symbol!` type-level strings.
 It works through hello world, then variable parameters via `FieldArg<"name">` read from a custom
 context, then streaming execution that pipes one child process's `STDOUT` into the next's `STDIN`,
 then a native `reqwest`-backed HTTP handler replacing `curl` in the same pipeline, and finally JSON
@@ -30,7 +30,7 @@ distinctive move is a sustained comparison to **JavaScript prototypal inheritanc
 diagrams, arguing that CGP's wiring is prototype lookup resolved at compile time.
 
 The **implementation** section is the technical core. A syntax type like
-`SimpleExec<CommandPath, Args>` is a bare `PhantomData` struct with no impls — abstract syntax, wholly
+`SimpleExec<CommandPath, Args>` is a bare `PhantomData` struct with no impls: abstract syntax, wholly
 decoupled from how it is interpreted. A provider then implements `Handler` for that shape,
 pattern-matching the `Code` parameter to destructure it, and pulls everything it needs from the
 context by dependency injection: `CanExtractCommandArg` for the command path, `CanUpdateCommand` for
@@ -39,7 +39,7 @@ section makes an argument about crate structure that generalizes well beyond DSL
 from abstract implementations and names concrete types last, the dependency graph inverts, and
 `hypershell-tokio-components` can build without `reqwest` in its tree.
 
-The **extension** section adds two new syntaxes — `Checksum<Hasher>` and `BytesToHex` — with their
+The **extension** section adds two new syntaxes, `Checksum<Hasher>` and `BytesToHex`, with their
 providers and a preset that layers them onto the base language, making the point that a language
 extension needs no upstream coordination and no fork.
 
@@ -53,7 +53,7 @@ DSLs for lambda calculus, HTML, parsers, and monadic computation.
 
 The technique the post teaches is [type-level DSLs](../../cgp/concepts/type-level-dsls.md), and the
 running scenario is re-derived in current syntax as the
-[shell-scripting DSL example](../../examples/shell-scripting-dsl.md) — **that example, not this post,
+[shell-scripting DSL example](../../examples/shell-scripting-dsl.md), and **that example, not this post,
 is the source to quote from.** The project itself is documented in
 [projects/hypershell/](../../projects/hypershell/README.md).
 
@@ -76,7 +76,7 @@ injection; [modular error handling](../../cgp/concepts/modular-error-handling.md
 Two of its arguments are strategy assets rather than technical ones. The prototypal-inheritance
 comparison is a genuine teaching bridge for the OOP-background reader in
 [readers.md](../../communication-strategy/readers.md), and belongs in the toolkit
-[readers.md](../../communication-strategy/readers.md#the-comprehension-barriers) assembles — with the
+[readers.md](../../communication-strategy/readers.md#the-comprehension-barriers) assembles, with the
 caveat the post itself states, that the lookup is compile-time and zero-cost, which
 [vocabulary.md](../../communication-strategy/vocabulary.md) requires be said explicitly whenever a
 runtime-flavored analogy is used. The candid disadvantages section is a model of the
@@ -93,11 +93,11 @@ removed something the post uses.
 - **`#[cgp_context(MyAppComponents: HypershellPreset)]` no longer exists.** Both the macro and the
   `HasProvider`/`HasCgpProvider` trait it generated were removed. A context now carries its own
   wiring table, and namespace inheritance replaces preset inheritance. Every context definition in
-  the post — `MyApp`, `HypershellCli`, `HypershellHttp` — is dead syntax.
+  the post (`MyApp`, `HypershellCli`, `HypershellHttp`) is dead syntax.
 - **The whole preset system is gone.** `cgp_preset!`, `#[cgp::re_export_imports]`, `override`,
   `#[wrap_provider(UseDelegate)]`, and `Preset::Provider` were replaced by
-  [namespaces](../../cgp/concepts/namespaces.md). The post's four-level preset delegation trace —
-  `HypershellPreset` → `HypershellHandlerPreset` → `TokioHandlerPreset` → `HandleSimpleExec` — is an
+  [namespaces](../../cgp/concepts/namespaces.md). The post's four-level preset delegation trace
+  (`HypershellPreset` → `HypershellHandlerPreset` → `TokioHandlerPreset` → `HandleSimpleExec`) is an
   accurate description of a mechanism that no longer exists.
 - **`HasAsyncErrorType` and the `Async` trait were removed** in v0.5.0. The current `CanHandle`
   carries no `Send` bounds at all, and a caller that needs one recovers it; see
@@ -132,7 +132,7 @@ removed something the post uses.
 
 ## Maintaining it
 
-Leave it alone, and do not attempt a syntax refresh — the preset architecture it traces in detail is
+Leave it alone, and do not attempt a syntax refresh: the preset architecture it traces in detail is
 not translatable line-by-line into namespaces, so a partial update would be worse than none. When
 current material on this subject is needed, write from the
 [shell-scripting DSL example](../../examples/shell-scripting-dsl.md) and

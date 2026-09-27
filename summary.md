@@ -829,10 +829,11 @@ it stale.
 
 ### `website/projects/`: the blueprint and one plan per project section
 
-- [README.md](website/projects/README.md) — the blueprint for the planned Projects section: what it is
-  for, why it supersedes the three deep dives and where each deep-dive page's material went, the public
-  tree, the internal-document-to-page mapping, the section index and its pattern-finding table, the four
-  gating conditions, the recommended order with `expression` as pilot, and the inbound links.
+- [README.md](website/projects/README.md) — the blueprint for the Projects section, eighty pages of
+  which are written on the website's `v0.8.0` branch: what it is for, why it supersedes the three
+  deep dives and where each deep-dive page's material went, the public tree, the
+  internal-document-to-page mapping, the section index and its pattern-finding table, the four gating
+  conditions, the recommended order with `expression` as pilot, and the inbound links.
 - [cgp-examples.md](website/projects/cgp-examples.md) — the plan and record of the cgp-examples
   section: the 14 pages written for the section index, `expression`, and `web-app`, the revisions
   they were verified against, the per-example records `builder`, `transfer`, and `greet` need first,
@@ -855,9 +856,9 @@ it stale.
   than a drift record, the catalog, and the document shape.
 - [hello-world.md](website/tutorials/hello-world.md) — the single-page first contact: one CGP
   function, two contexts, and an optional desugaring appendix.
-- [area-calculation.md](website/tutorials/area-calculation.md) — the four-part series from plain
+- [area-calculation.md](website/tutorials/area-calculation.md) — the four-page series from plain
   functions to higher-order providers and on to catching a mis-wiring, its two load-bearing orderings,
-  and the vocabulary extension part four makes.
+  and the vocabulary extension its Checking and Debugging page makes.
 
 ## `releases/`: the version history
 
