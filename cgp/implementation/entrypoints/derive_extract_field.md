@@ -1,10 +1,19 @@
 # `#[derive(ExtractField)]`: implementation
 
-`#[derive(ExtractField)]` emits just the incremental-extractor slice of the variant machinery: the owned and borrowed `__Partial{Name}` companion enums plus the `HasExtractor`/`HasExtractorRef`/`HasExtractorMut`, `PartialData`, `FinalizeExtract`, and per-variant `ExtractField` impls that peel an enum apart one variant at a time. This document covers how that codegen works; for the accepted syntax and the full expansion, read the reference document [reference/derives/derive_extract_field.md](../../reference/derives/derive_extract_field.md).
+`#[derive(ExtractField)]` emits just the incremental-extractor slice of the variant machinery: the
+owned and borrowed `__Partial{Name}` companion enums plus the
+`HasExtractor`/`HasExtractorRef`/`HasExtractorMut`, `PartialData`, `FinalizeExtract`, and
+per-variant `ExtractField` impls that peel an enum apart one variant at a time. This document covers
+how that codegen works; for the accepted syntax and the full expansion, read the reference document
+[reference/derives/derive_extract_field.md](../../reference/derives/derive_extract_field.md).
 
 ## Entry point
 
-The macro is driven by the `derive_extract_field` function in [cgp-macro-lib/src/derive_extract_field.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-lib/src/derive_extract_field.rs). It parses the input into a `syn::ItemEnum`, wraps it in an `ItemCgpVariant`, and calls `to_extract_field_items`, the same method the enum path of `#[derive(CgpData)]` uses for its extractor slice:
+The macro is driven by the `derive_extract_field` function in
+[cgp-macro-lib/src/derive_extract_field.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-lib/src/derive_extract_field.rs).
+It parses the input into a `syn::ItemEnum`, wraps it in an `ItemCgpVariant`, and calls
+`to_extract_field_items`, the same method the enum path of `#[derive(CgpData)]` uses for its
+extractor slice:
 
 ```rust
 let variant = ItemCgpVariant { item_enum };
@@ -15,11 +24,21 @@ Applying the derive to a non-enum item fails at `syn::parse2`.
 
 ## Pipeline
 
-There is no multi-stage transform. `ItemCgpVariant::to_extract_field_items` names two companion enums, `__Partial{ContextName}` (owned) and `__PartialRef{ContextName}` (borrowed), and composes the helpers in the [`derive_extractor/`](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-core/src/types/cgp_data/derive_extractor/) submodule. Most helpers run twice, once for each companion enum, selected by a `bool` that adds the borrowing `'__a__`/`MapTypeRef` generics for the ref form. The [`cgp_data` AST stack](../asts/cgp_data.md) documents `ItemCgpVariant` and the field-tag types.
+There is no multi-stage transform. `ItemCgpVariant::to_extract_field_items` names two companion
+enums, `__Partial{ContextName}` (owned) and `__PartialRef{ContextName}` (borrowed), and composes the
+helpers in the
+[`derive_extractor/`](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-core/src/types/cgp_data/derive_extractor/)
+submodule. Most helpers run twice, once for each companion enum, selected by a `bool` that adds the
+borrowing `'__a__`/`MapTypeRef` generics for the ref form. The
+[`cgp_data` AST stack](../asts/cgp_data.md) documents `ItemCgpVariant` and the field-tag types.
 
 ## Generated items
 
-The derive centers on two partial companion enums. `__Partial{Name}` is a clone of the input enum that gains one `MapType` parameter per variant and wraps each payload in that parameter's `Map`; `IsPresent` keeps the payload and `IsVoid` maps it to the empty `Void`, so a variant's remaining-possibility is encoded in the type. `__PartialRef{Name}` adds a `'__a__` lifetime and a `MapTypeRef` parameter that selects a shared or mutable borrow of each payload:
+The derive centers on two partial companion enums. `__Partial{Name}` is a clone of the input enum
+that gains one `MapType` parameter per variant and wraps each payload in that parameter's `Map`;
+`IsPresent` keeps the payload and `IsVoid` maps it to the empty `Void`, so a variant's
+remaining-possibility is encoded in the type. `__PartialRef{Name}` adds a `'__a__` lifetime and a
+`MapTypeRef` parameter that selects a shared or mutable borrow of each payload:
 
 ```rust
 pub enum __PartialShape<__F0__: MapType, __F1__: MapType> {
@@ -28,7 +47,14 @@ pub enum __PartialShape<__F0__: MapType, __F1__: MapType> {
 }
 ```
 
-Around the enums the derive emits: `PartialData` for each (both target the original enum); `HasExtractor` (owned, all variants `IsPresent`) with `to_extractor`/`from_extractor` that map each concrete variant across, plus `HasExtractorRef` (over `__PartialRef…<'__a__, IsRef, …>`) and `HasExtractorMut` (over `IsMut`); a `FinalizeExtract` impl for the all-`IsVoid` configuration of each enum, whose body is `match self {}` because that configuration is uninhabited; and, per variant, an `ExtractField<Tag>` impl in scope only when that variant's marker is `IsPresent`. The extract impl returns `Ok(value)` on a match and `Err(remainder)` on a miss, where the remainder flips that variant's marker to `IsVoid`:
+Around the enums the derive emits: `PartialData` for each (both target the original enum);
+`HasExtractor` (owned, all variants `IsPresent`) with `to_extractor`/`from_extractor` that map each
+concrete variant across, plus `HasExtractorRef` (over `__PartialRef…<'__a__, IsRef, …>`) and
+`HasExtractorMut` (over `IsMut`); a `FinalizeExtract` impl for the all-`IsVoid` configuration of
+each enum, whose body is `match self {}` because that configuration is uninhabited; and, per
+variant, an `ExtractField<Tag>` impl in scope only when that variant's marker is `IsPresent`. The
+extract impl returns `Ok(value)` on a match and `Err(remainder)` on a miss, where the remainder
+flips that variant's marker to `IsVoid`:
 
 ```rust
 impl<__F1__: MapType> ExtractField<Symbol!("Circle")> for __PartialShape<IsPresent, __F1__> {
@@ -38,53 +64,152 @@ impl<__F1__: MapType> ExtractField<Symbol!("Circle")> for __PartialShape<IsPrese
 }
 ```
 
-Each failed extraction narrows the remainder by one `IsVoid`, so a chain of `extract_field` calls becomes a provably exhaustive match: once every marker is `IsVoid`, the value inhabits `FinalizeExtract` and can be discharged without a wildcard. The `FinalizeExtract` and `FinalizeExtractResult` traits are defined in the field crate; the derive supplies only the all-void impl.
+Each failed extraction narrows the remainder by one `IsVoid`, so a chain of `extract_field` calls
+becomes a provably exhaustive match: once every marker is `IsVoid`, the value inhabits
+`FinalizeExtract` and can be discharged without a wildcard. The `FinalizeExtract` and
+`FinalizeExtractResult` traits are defined in the field crate; the derive supplies only the all-void
+impl.
 
 ## Behavior and corner cases
 
-A variant's name is keyed by the [`Symbol!`](../../reference/macros/symbol.md) of its identifier, and the enum's generic parameters are threaded onto every impl and onto both companion enums, with the ref enum additionally bounding the type parameters by its `'__a__` lifetime. The reserved `'__a__` name (rather than a bare `'a`) is what lets the derive apply to an enum whose own lifetime parameter is named `'a` without the two colliding. The `HasExtractorRef`/`HasExtractorMut` associated types carry the `where Self: '__a__` bound that a borrowed extractor needs.
+A variant's name is keyed by the [`Symbol!`](../../reference/macros/symbol.md) of its identifier,
+and the enum's generic parameters are threaded onto every impl and onto both companion enums, with
+the ref enum additionally bounding the type parameters by its `'__a__` lifetime. The reserved
+`'__a__` name (rather than a bare `'a`) is what lets the derive apply to an enum whose own lifetime
+parameter is named `'a` without the two colliding. The `HasExtractorRef`/`HasExtractorMut`
+associated types carry the `where Self: '__a__` bound that a borrowed extractor needs.
 
-A variantless enum is special-cased so its degenerate expansion still compiles. Because such an enum is uninhabited and borrows nothing, the borrowed partial enum `__PartialRef{Name}` is emitted as a bare empty enum with neither the `'__a__` lifetime nor the `__R__: MapTypeRef` selector, since leaving them in would make both unused parameters (`E0392`). Every borrowed accessor (`extractor_ref`/`extractor_mut`, and the sibling `HasFields` `to_fields_ref`) matches the dereferenced place with `match *self {}` rather than `match self {}`, since a bare match over `&Self` is non-exhaustive when `Self` is uninhabited (a reference is always considered inhabited, `E0004`). The owned side needs no special case: `to_extractor`, `from_extractor`, and the owned `FinalizeExtract` all match owned uninhabited values directly. The `HasExtractorRef`/`HasExtractorMut` GATs keep their `'__a__` parameter because the trait declares it, but the empty partial enum on the right-hand side takes no arguments.
+A variantless enum is special-cased so its degenerate expansion still compiles. Because such an enum
+is uninhabited and borrows nothing, the borrowed partial enum `__PartialRef{Name}` is emitted as a
+bare empty enum with neither the `'__a__` lifetime nor the `__R__: MapTypeRef` selector, since
+leaving them in would make both unused parameters (`E0392`). Every borrowed accessor
+(`extractor_ref`/`extractor_mut`, and the sibling `HasFields` `to_fields_ref`) matches the
+dereferenced place with `match *self {}` rather than `match self {}`, since a bare match over
+`&Self` is non-exhaustive when `Self` is uninhabited (a reference is always considered inhabited,
+`E0004`). The owned side needs no special case: `to_extractor`, `from_extractor`, and the owned
+`FinalizeExtract` all match owned uninhabited values directly. The
+`HasExtractorRef`/`HasExtractorMut` GATs keep their `'__a__` parameter because the trait declares
+it, but the empty partial enum on the right-hand side takes no arguments.
 
-This derive emits no `HasFields` representation impls and no `FromVariant` constructors, which come from [`#[derive(HasFields)]`](derive_has_fields.md) and [`#[derive(FromVariant)]`](derive_from_variant.md). `ExtractField` is purely the deconstruction slice, included wholesale by [`#[derive(CgpVariant)]`](derive_cgp_variant.md) and [`#[derive(CgpData)]`](derive_cgp_data.md).
+This derive emits no `HasFields` representation impls and no `FromVariant` constructors, which come
+from [`#[derive(HasFields)]`](derive_has_fields.md) and
+[`#[derive(FromVariant)]`](derive_from_variant.md). `ExtractField` is purely the deconstruction
+slice, included wholesale by [`#[derive(CgpVariant)]`](derive_cgp_variant.md) and
+[`#[derive(CgpData)]`](derive_cgp_data.md).
 
 ## Error spans
 
-Each generated impl is re-spanned onto the token it derives from, so a compiler error points at that token rather than at the whole `#[derive(ExtractField)]`. The per-variant `ExtractField` impls are aimed at the variant they match, and the whole-enum `HasExtractor`/`HasExtractorRef`/`HasExtractorMut`/`FinalizeExtract`/`PartialData` impls at the enum name. Each goes through [`override_item_span`](../README.md#spans-aim-generated-items-at-the-token-the-user-wrote), moving only the `impl`/`{ … }` boundary, the mechanism the [`#[derive(HasField)]`](derive_has_field.md#error-spans) doc explains in full. The `__Partial{Name}`/`__PartialRef{Name}` companion enums are cloned from the user's own enum, so their tokens already carry meaningful spans and need no re-spanning.
+Each generated impl is re-spanned onto the token it derives from, so a compiler error points at that
+token rather than at the whole `#[derive(ExtractField)]`. The per-variant `ExtractField` impls are
+aimed at the variant they match, and the whole-enum
+`HasExtractor`/`HasExtractorRef`/`HasExtractorMut`/`FinalizeExtract`/`PartialData` impls at the enum
+name. Each goes through
+[`override_item_span`](../README.md#spans-aim-generated-items-at-the-token-the-user-wrote), moving
+only the `impl`/`{ … }` boundary, the mechanism the
+[`#[derive(HasField)]`](derive_has_field.md#error-spans) doc explains in full. The
+`__Partial{Name}`/`__PartialRef{Name}` companion enums are cloned from the user's own enum, so their
+tokens already carry meaningful spans and need no re-spanning.
 
 ## Known issues
 
-**The codegen names its associated types as `Self::…`, so five variant names make the expansion invalid.** The `extract_field` impls return `Result<Self::Value, Self::Remainder>` and the three accessors return `Self::Extractor`, `Self::ExtractorRef`, and `Self::ExtractorMut`; inside an impl for an enum each of those paths can resolve to either the associated type or a variant of the same name, so a variant called `Value`, `Remainder`, `Extractor`, `ExtractorRef`, or `ExtractorMut` is rejected with `ambiguous associated item`. This derive's diagnostic is the opaque one in the family: both the headline and the `"could refer to the variant defined here"` note land on the derive attribute, because these impls target the generated `__Partial…` companions and `derive_extractor_enum` rebuilds their variant identifiers, so those idents carry the derive's span rather than a user token. `derive_has_fields` and `derive_from_variant` write their impls `for` the user's enum, so their notes do point at the real variant, which makes this the one collision a reader cannot resolve from the output alone. Writing each as a fully qualified projection, such as `<Self as ExtractField<Tag>>::Value`, would remove the ambiguity and is the fix. [`#[derive(FromVariant)]`](derive_from_variant.md#known-issues) shares the `Value` collision and [`#[derive(HasFields)]`](derive_has_fields.md) adds `Fields` and `FieldsRef`, so an enum deriving the whole family has seven reserved names. Pinned by [invalid_expansion/reserved_variant_names.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/invalid_expansion/reserved_variant_names.rs).
+**The codegen names its associated types as `Self::…`, so five variant names make the expansion
+invalid.** The `extract_field` impls return `Result<Self::Value, Self::Remainder>` and the three
+accessors return `Self::Extractor`, `Self::ExtractorRef`, and `Self::ExtractorMut`; inside an impl
+for an enum each of those paths can resolve to either the associated type or a variant of the same
+name, so a variant called `Value`, `Remainder`, `Extractor`, `ExtractorRef`, or `ExtractorMut` is
+rejected with `ambiguous associated item`. This derive's diagnostic is the opaque one in the family:
+both the headline and the `"could refer to the variant defined here"` note land on the derive
+attribute, because these impls target the generated `__Partial…` companions and
+`derive_extractor_enum` rebuilds their variant identifiers, so those idents carry the derive's span
+rather than a user token. `derive_has_fields` and `derive_from_variant` write their impls `for` the
+user's enum, so their notes do point at the real variant, which makes this the one collision a
+reader cannot resolve from the output alone. Writing each as a fully qualified projection, such as
+`<Self as ExtractField<Tag>>::Value`, would remove the ambiguity and is the fix.
+[`#[derive(FromVariant)]`](derive_from_variant.md#known-issues) shares the `Value` collision and
+[`#[derive(HasFields)]`](derive_has_fields.md) adds `Fields` and `FieldsRef`, so an enum deriving
+the whole family has seven reserved names. Pinned by
+[invalid_expansion/reserved_variant_names.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/invalid_expansion/reserved_variant_names.rs).
 
-**The partial enums carry none of the input's attributes**, for the same reason and with the same consequence as the [record companion](derive_build_field.md#behavior-and-corner-cases): `derive_extractor_enum` clones the input enum and clears its attributes, so a `Result<Value, Remainder>` from `extract_field` is neither `Debug` nor `PartialEq` however the original enum is derived, and cannot be compared or printed whole.
+**The partial enums carry none of the input's attributes**, for the same reason and with the same
+consequence as the [record companion](derive_build_field.md#behavior-and-corner-cases):
+`derive_extractor_enum` clones the input enum and clears its attributes, so a
+`Result<Value, Remainder>` from `extract_field` is neither `Debug` nor `PartialEq` however the
+original enum is derived, and cannot be compared or printed whole.
 
-**A variant helper attribute that belongs to another derive breaks the build.** `derive_extractor_enum` and `derive_extractor_enum_ref` clear the enum's attributes but keep each variant's, so an attribute such as `#[serde(rename = "x")]` lands on a companion that does not derive `Serialize` and fails with ``cannot find attribute `serde` in this scope``. The fix is to filter variant attributes the same way, keeping only those that make sense on the companion, such as `#[cfg]` and documentation; the [reference Known issues](../../reference/derives/derive_extract_field.md#known-issues) describe the user-visible side.
+**A variant helper attribute that belongs to another derive breaks the build.**
+`derive_extractor_enum` and `derive_extractor_enum_ref` clear the enum's attributes but keep each
+variant's, so an attribute such as `#[serde(rename = "x")]` lands on a companion that does not
+derive `Serialize` and fails with ``cannot find attribute `serde` in this scope``. The fix is to
+filter variant attributes the same way, keeping only those that make sense on the companion, such as
+`#[cfg]` and documentation; the
+[reference Known issues](../../reference/derives/derive_extract_field.md#known-issues) describe the
+user-visible side.
 
-The extractor codegen requires every variant to be a single-unnamed-field tuple variant (enforced by `get_variant_type` in the `derive_extractor/utils.rs` helper). A fieldless variant like `Empty`, a multi-field variant like `Pair(A, B)`, or a struct-style variant like `Named { x: A }` makes the macro fail with "Expected variant to contain exactly one unnamed field." There is no per-variant opt-out, so an enum mixing variant shapes cannot derive the extractor at all; the same requirement applies to [`#[derive(FromVariant)]`](derive_from_variant.md) and therefore to `#[derive(CgpVariant)]`/`#[derive(CgpData)]` on such an enum. The reference document records the user-visible form of this limitation in its own Known issues.
+The extractor codegen requires every variant to be a single-unnamed-field tuple variant (enforced by
+`get_variant_type` in the `derive_extractor/utils.rs` helper). A fieldless variant like `Empty`, a
+multi-field variant like `Pair(A, B)`, or a struct-style variant like `Named { x: A }` makes the
+macro fail with "Expected variant to contain exactly one unnamed field." There is no per-variant
+opt-out, so an enum mixing variant shapes cannot derive the extractor at all; the same requirement
+applies to [`#[derive(FromVariant)]`](derive_from_variant.md) and therefore to
+`#[derive(CgpVariant)]`/`#[derive(CgpData)]` on such an enum. The reference document records the
+user-visible form of this limitation in its own Known issues.
 
 ## Snapshots
 
-`snapshot_derive_extract_field!` pins this derive's output on its own, which is what makes the slice claim checkable rather than asserted: the snapshot shows both partial enums and their impls and *no* representation impls or `FromVariant` constructors:
+`snapshot_derive_extract_field!` pins this derive's output on its own, which is what makes the slice
+claim checkable rather than asserted: the snapshot shows both partial enums and their impls and *no*
+representation impls or `FromVariant` constructors:
 
-- [extensible_variants/extract_field_derive.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/extract_field_derive.rs) — the canonical two-variant extractor slice in isolation, owned and borrowed.
+- [extensible_variants/extract_field_derive.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/extract_field_derive.rs):
+  the canonical two-variant extractor slice in isolation, owned and borrowed.
 
-The same items also appear inside the variant expansion pinned by the `snapshot_derive_cgp_data!` snapshots indexed in [derive_cgp_data.md's Snapshots section](derive_cgp_data.md#snapshots), which is where the generic, struct-payload, and variantless enum shapes are covered.
+The same items also appear inside the variant expansion pinned by the `snapshot_derive_cgp_data!`
+snapshots indexed in [derive_cgp_data.md's Snapshots section](derive_cgp_data.md#snapshots), which
+is where the generic, struct-payload, and variantless enum shapes are covered.
 
 ## Tests
 
-The behavioral extractor tests in [crates/tests/cgp-tests/tests/extensible_variants/](https://github.com/contextgeneric/cgp/tree/main/crates/tests/cgp-tests/tests/extensible_variants/) exercise the machinery:
+The behavioral extractor tests in
+[crates/tests/cgp-tests/tests/extensible_variants/](https://github.com/contextgeneric/cgp/tree/main/crates/tests/cgp-tests/tests/extensible_variants/)
+exercise the machinery:
 
-- [extract_field_derive.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/extract_field_derive.rs) drives the slice on its own: both outcomes of a two-step extraction chain closed by `finalize_extract_result`, the borrowed and mutable extractors, and the `to_extractor`/`from_extractor` round trip.
-- [shape_dispatch.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/shape_dispatch.rs) drives the owned extractor.
-- [shape_dispatch_ref.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/shape_dispatch_ref.rs) drives the borrowed extractor.
-- [variant_dispatch.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/variant_dispatch.rs) drives the extract-and-dispatch flow.
-- [derive_cgp_data_empty.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/derive_cgp_data_empty.rs) snapshots the variantless-enum expansion, pinning the empty-enum special case: bare `__PartialNever`/`__PartialRefNever` enums with no parameters and `match *self {}` in the borrowed accessors.
-- The single-unnamed-field requirement (Known issues) has no dedicated failure case in `cgp-macro-tests`, but is covered end-to-end through the variant derives by [parser_rejections/derive_from_variant.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/derive_from_variant.rs).
-- The reserved-`'__a__` lifetime is exercised against a lifetime-parameterized enum by [derive_cgp_data_lifetime.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/derive_cgp_data_lifetime.rs), which derives `#[derive(CgpData)]` on an `enum Message<'a>` and drives the owned, borrowed, and mutable extractors.
-- [invalid_expansion/reserved_variant_names.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/invalid_expansion/reserved_variant_names.rs) pins the reserved-variant-name defect recorded under Known issues, capturing the emitted `Self::…` paths as a string snapshot so the test compiles even though the code it describes would not.
+- [extract_field_derive.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/extract_field_derive.rs)
+  drives the slice on its own: both outcomes of a two-step extraction chain closed by
+  `finalize_extract_result`, the borrowed and mutable extractors, and the
+  `to_extractor`/`from_extractor` round trip.
+- [shape_dispatch.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/shape_dispatch.rs)
+  drives the owned extractor.
+- [shape_dispatch_ref.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/shape_dispatch_ref.rs)
+  drives the borrowed extractor.
+- [variant_dispatch.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/variant_dispatch.rs)
+  drives the extract-and-dispatch flow.
+- [derive_cgp_data_empty.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/derive_cgp_data_empty.rs)
+  snapshots the variantless-enum expansion, pinning the empty-enum special case: bare
+  `__PartialNever`/`__PartialRefNever` enums with no parameters and `match *self {}` in the borrowed
+  accessors.
+- The single-unnamed-field requirement (Known issues) has no dedicated failure case in
+  `cgp-macro-tests`, but is covered end-to-end through the variant derives by
+  [parser_rejections/derive_from_variant.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/derive_from_variant.rs).
+- The reserved-`'__a__` lifetime is exercised against a lifetime-parameterized enum by
+  [derive_cgp_data_lifetime.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/derive_cgp_data_lifetime.rs),
+  which derives `#[derive(CgpData)]` on an `enum Message<'a>` and drives the owned, borrowed, and
+  mutable extractors.
+- [invalid_expansion/reserved_variant_names.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/invalid_expansion/reserved_variant_names.rs)
+  pins the reserved-variant-name defect recorded under Known issues, capturing the emitted `Self::…`
+  paths as a string snapshot so the test compiles even though the code it describes would not.
 
 ## Source
 
-- Entry point: `derive_extract_field` in [cgp-macro-lib/src/derive_extract_field.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-lib/src/derive_extract_field.rs).
-- Codegen: `ItemCgpVariant::to_extract_field_items` in [cgp-macro-core/src/types/cgp_data/variant.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/cgp_data/variant.rs), which composes the [derive_extractor/](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-core/src/types/cgp_data/derive_extractor/) helpers (`extractor_enum.rs`, `partial_data.rs`, `has_extractor_impl.rs`, `finalize_extract_impl.rs`, `extract_field_impls.rs`, `utils.rs`); the AST types are documented in [asts/cgp_data.md](../asts/cgp_data.md).
-- The `ExtractField`, `HasExtractor`/`HasExtractorRef`/`HasExtractorMut`, `FinalizeExtract`, `FinalizeExtractResult`, and `PartialData` traits and the `MapType`/`MapTypeRef` markers live under [crates/core/cgp-field/src/](https://github.com/contextgeneric/cgp/tree/main/crates/core/cgp-field/src/).
+- Entry point: `derive_extract_field` in
+  [cgp-macro-lib/src/derive_extract_field.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-lib/src/derive_extract_field.rs).
+- Codegen: `ItemCgpVariant::to_extract_field_items` in
+  [cgp-macro-core/src/types/cgp_data/variant.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/cgp_data/variant.rs),
+  which composes the
+  [derive_extractor/](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-core/src/types/cgp_data/derive_extractor/)
+  helpers (`extractor_enum.rs`, `partial_data.rs`, `has_extractor_impl.rs`,
+  `finalize_extract_impl.rs`, `extract_field_impls.rs`, `utils.rs`); the AST types are documented in
+  [asts/cgp_data.md](../asts/cgp_data.md).
+- The `ExtractField`, `HasExtractor`/`HasExtractorRef`/`HasExtractorMut`, `FinalizeExtract`,
+  `FinalizeExtractResult`, and `PartialData` traits and the `MapType`/`MapTypeRef` markers live
+  under
+  [crates/core/cgp-field/src/](https://github.com/contextgeneric/cgp/tree/main/crates/core/cgp-field/src/).
