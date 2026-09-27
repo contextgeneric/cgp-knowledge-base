@@ -71,6 +71,10 @@ The writing turned up several facts a later revision must respect:
   show the release's `UseDelegate` tables.
 - **The install instructions assume the merge too.** The index tells a reader to depend on the
   crates from the repository by git, since the crates.io release is built on an older CGP.
+- **Every example page has a *The problem* section before its code**, per [the writing
+  guide](../writing-guides/project.md#then-it-states-the-problem): the task, what makes it hard, and
+  a *Without CGP* part that concedes where a shell script, plain Rust, or Serde's derive is simpler
+  and names the requirement that tips the balance. A revision keeps it fair to the alternative.
 - **No public page lists cgp-serde's defects or missing features.** Where a defect shapes how a
   provider is used, the provider's page states the behavior and routes the reader in *When to use
   it*: `SerializeBytes` sends JSON users to the text encodings, and `DeserializeWithFromStr` states

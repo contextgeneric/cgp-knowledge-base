@@ -80,6 +80,10 @@ The writing turned up several facts a later revision must respect:
   redirect, `StreamToLines`, WebSocket, and macro defects stay in the project's
   [issues](../../projects/hypershell/issues.md), per the [writing
   guide](../writing-guides/project.md#the-limitations-page).
+- **Every example page has a *The problem* section before its code**, per [the writing
+  guide](../writing-guides/project.md#then-it-states-the-problem): the task, what makes it hard, and
+  a *Without CGP* part that concedes where a shell script, plain Rust, or Serde's derive is simpler
+  and names the requirement that tips the balance. A revision keeps it fair to the alternative.
 - **The `Try a change` results** are recorded in the example records for `hello_name`,
   `http_checksum_native`, and `bluesky_websocket` before the pages quote them.
 
