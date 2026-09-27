@@ -1,4 +1,4 @@
-# `#[derive(CgpData)]` — implementation
+# `#[derive(CgpData)]`: implementation
 
 `#[derive(CgpData)]` is the umbrella extensible-data derive: applied to a struct it emits the full record machinery, applied to an enum the full variant machinery, dispatching on shape and reusing the same codegen as the shape-specific `#[derive(CgpRecord)]` and `#[derive(CgpVariant)]`. This document covers how that composition works; for the accepted syntax and the full expansion, read the reference document [reference/derives/derive_cgp_data.md](../../reference/derives/derive_cgp_data.md).
 
@@ -11,7 +11,7 @@ let data: ItemCgpData = parse2(body)?;
 let items = data.to_items()?;
 ```
 
-`ItemCgpData` is an enum of `Record(ItemCgpRecord)` or `Variant(ItemCgpVariant)`; its `Parse` impl routes a `struct` to the record arm and an `enum` to the variant arm, rejecting anything else with "expect body to be either a struct or enum". Its `to_items` forwards to the wrapped type's `to_items`, so `CgpData` on a struct emits exactly what `#[derive(CgpRecord)]` emits and `CgpData` on an enum exactly what `#[derive(CgpVariant)]` emits — the two shape-specific derives are `CgpData` restricted to one shape. See the [`cgp_data` AST stack](../asts/cgp_data.md) for those types.
+`ItemCgpData` is an enum of `Record(ItemCgpRecord)` or `Variant(ItemCgpVariant)`; its `Parse` impl routes a `struct` to the record arm and an `enum` to the variant arm, rejecting anything else with "expect body to be either a struct or enum". Its `to_items` forwards to the wrapped type's `to_items`, so `CgpData` on a struct emits exactly what `#[derive(CgpRecord)]` emits and `CgpData` on an enum exactly what `#[derive(CgpVariant)]` emits. The two shape-specific derives are `CgpData` restricted to one shape. See the [`cgp_data` AST stack](../asts/cgp_data.md) for those types.
 
 ## Pipeline
 
@@ -24,7 +24,7 @@ Each slice is documented in the entrypoint linked beside it; because `CgpData` r
 
 ## Generated items
 
-For a struct, the fixed emission order is: the `HasField`/`HasFieldMut` getters per field, then `HasFields`, `HasFieldsRef`, `FromFields`, `ToFields`, `ToFieldsRef`, then the builder block — the `__Partial{Name}` struct, `HasBuilder`, `IntoBuilder`, `PartialData`, `FinalizeBuild`, then the per-field `UpdateField` and `HasField` impls. For an enum: `HasFields`, `HasFieldsRef`, `FromFields`, `ToFields`, `ToFieldsRef`, then one `FromVariant` per variant, then the extractor block — the `__Partial{Name}` and `__PartialRef{Name}` enums, `PartialData` for each, `HasExtractor`/`HasExtractorRef`/`HasExtractorMut`, `FinalizeExtract` for each, then the per-variant `ExtractField` impls for both.
+For a struct, the fixed emission order is: the `HasField`/`HasFieldMut` getters per field, then `HasFields`, `HasFieldsRef`, `FromFields`, `ToFields`, `ToFieldsRef`, then the builder block: the `__Partial{Name}` struct, `HasBuilder`, `IntoBuilder`, `PartialData`, `FinalizeBuild`, then the per-field `UpdateField` and `HasField` impls. For an enum: `HasFields`, `HasFieldsRef`, `FromFields`, `ToFields`, `ToFieldsRef`, then one `FromVariant` per variant, then the extractor block: the `__Partial{Name}` and `__PartialRef{Name}` enums, `PartialData` for each, `HasExtractor`/`HasExtractorRef`/`HasExtractorMut`, `FinalizeExtract` for each, then the per-variant `ExtractField` impls for both.
 
 The two views this composes are the *representation* view (the `HasFields` product or sum, convertible with `FromFields`/`ToFields`) and the *incremental* view (the `__Partial…` companion type that tracks per-field presence or per-variant possibility in its type parameters). The reserved companion names are `__Partial{Name}` and, for the borrowed extractor, `__PartialRef{Name}`. The full item shapes live in the building-block entrypoint documents linked above.
 
@@ -34,11 +34,13 @@ Field tagging follows the same rule as the whole family: a named struct field or
 
 The shape-specific corner cases are inherited from the building blocks rather than introduced here: a single-field tuple struct is special-cased in the `HasFields` product (see [`derive_has_fields`](derive_has_fields.md)), and an enum whose variants are not each single-unnamed-field tuple variants fails in the extractor and `FromVariant` codegen (see [`derive_extract_field`](derive_extract_field.md) and [`derive_from_variant`](derive_from_variant.md)). `CgpData` on such an enum therefore fails the same way, because it runs the same helpers.
 
-Error spans are inherited the same way. Because `CgpData` runs exactly the slice helpers, each generated impl is already re-spanned onto the token it derives from — a per-field impl onto its field, a per-variant impl onto its variant, and a whole-type impl onto the struct or enum name — so a coherence conflict points at that token rather than at the whole `#[derive(CgpData)]`. The mechanism is documented under [`#[derive(HasField)]`](derive_has_field.md#error-spans) and repeated in each slice's Error spans section.
+Error spans are inherited the same way. Because `CgpData` runs exactly the slice helpers, each generated impl is already re-spanned onto the token it derives from (a per-field impl onto its field, a per-variant impl onto its variant, and a whole-type impl onto the struct or enum name), so a coherence conflict points at that token rather than at the whole `#[derive(CgpData)]`. The mechanism is documented under [`#[derive(HasField)]`](derive_has_field.md#error-spans) and repeated in each slice's Error spans section.
 
 ## Known issues
 
-**Seven variant names are reserved on an enum, inherited from the slices this derive composes.** Because the generated impls name their associated types through `Self::…`, a variant called `Fields` or `FieldsRef` (from [`derive_has_fields`](derive_has_fields.md#known-issues)), or `Value`, `Remainder`, `Extractor`, `ExtractorRef`, or `ExtractorMut` (from [`derive_extract_field`](derive_extract_field.md#known-issues) and [`derive_from_variant`](derive_from_variant.md#known-issues)), makes that path ambiguous and the expansion is rejected with `ambiguous associated item`, headlined at the derive attribute. Whether a note also names the variant depends on the slice: the representation and constructor impls target the user's enum and so point at the real variant, while the extractor's target the generated companions and point back at the derive. The fix belongs in each slice's codegen — a fully qualified projection in place of `Self::…` — rather than here, since this derive introduces no paths of its own. A struct's field names are unaffected. Pinned by [invalid_expansion/reserved_variant_names.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/invalid_expansion/reserved_variant_names.rs).
+**Seven variant names are reserved on an enum, inherited from the slices this derive composes.** Because the generated impls name their associated types through `Self::…`, a variant called `Fields` or `FieldsRef` (from [`derive_has_fields`](derive_has_fields.md#known-issues)), or `Value`, `Remainder`, `Extractor`, `ExtractorRef`, or `ExtractorMut` (from [`derive_extract_field`](derive_extract_field.md#known-issues) and [`derive_from_variant`](derive_from_variant.md#known-issues)), makes that path ambiguous and the expansion is rejected with `ambiguous associated item`, headlined at the derive attribute. Whether a note also names the variant depends on the slice: the representation and constructor impls target the user's enum and so point at the real variant, while the extractor's target the generated companions and point back at the derive. The fix belongs in each slice's codegen, a fully qualified projection in place of `Self::…`, rather than here, since this derive introduces no paths of its own. A struct's field names are unaffected. Pinned by [invalid_expansion/reserved_variant_names.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/invalid_expansion/reserved_variant_names.rs).
+
+**A field or variant helper attribute that belongs to another derive breaks the build.** The builder slice's `__Partial{Name}` struct and the extractor slice's companion enums clear the type's attributes but keep each field's or variant's, so an attribute such as `#[serde(rename = "x")]` lands on a companion that does not run that derive and fails with ``cannot find attribute `serde` in this scope``. The fix belongs in the two slices, recorded in [`derive_build_field`](derive_build_field.md#known-issues) and [`derive_extract_field`](derive_extract_field.md#known-issues).
 
 ## Snapshots
 
@@ -61,7 +63,7 @@ Every `snapshot_derive_cgp_data!` invocation across the suite is indexed here, s
 The snapshot tests above also carry runtime assertions that exercise the composed machinery:
 
 - `person_record.rs` builds an `Employee` from a `Person` via the builder.
-- `optional_builder.rs` drives the optional builder (`set`/`finalize_optional`/`finalize_with_default`).
+- `optional_builder.rs` drives the optional builder (`set`/`finalize_optional`/`finalize_with_default`), including the error path where `finalize_optional` names the last missing field in declaration order.
 - `point_cast.rs` casts a smaller record up into a larger one.
 - The `derive_cgp_data*` variant snapshots run the extractor and the upcast/downcast casts.
 

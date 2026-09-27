@@ -1,4 +1,4 @@
-# `delegate_and_check_components!` — implementation
+# `delegate_and_check_components!`: implementation
 
 `delegate_and_check_components!` wires a context and asserts the wiring in one step, by parsing the shared `DelegateTable`, evaluating its delegation half, and deriving a `CheckComponentsTable` from the delegation keys. This document covers how that fusion works internally; for the accepted syntax and the complete expansion a user sees, read the reference document [reference/macros/delegate_and_check_components.md](../../reference/macros/delegate_and_check_components.md).
 
@@ -22,7 +22,7 @@ The macro reuses two existing pipelines rather than defining its own. The delega
 
 ## Generated items
 
-The macro emits the delegation impls first — a `DelegateComponent` impl and an `IsProviderFor` forwarding impl per entry, exactly as `delegate_components!` produces — then the check trait and one impl per non-skipped entry, exactly as `check_components!` produces. The derived check trait defaults to `__CanUse{Context}` (not `__Check{Context}`), so a `delegate_and_check_components!` and a `check_components!` block can coexist once each in the same module:
+The macro emits the delegation impls first (a `DelegateComponent` impl and an `IsProviderFor` forwarding impl per entry, exactly as `delegate_components!` produces), then the check trait and one impl per non-skipped entry, exactly as `check_components!` produces. The derived check trait defaults to `__CanUse{Context}` (not `__Check{Context}`), so a `delegate_and_check_components!` and a `check_components!` block can coexist once each in the same module:
 
 ```rust
 // delegate_and_check_components! { MyContext { NameGetterComponent: UseField<Symbol!("name")> } }
@@ -49,7 +49,7 @@ A table-level `#[check_trait(Name)]` overrides the derived name. A generic table
 
 **`#[check_params(...)]` supplies the parameters the check needs.** A component with generic parameters has a parameter-generic `DelegateComponent` impl but a check that needs concrete parameters, so `#[check_params(...)]` provides them: each listed parameter becomes its own check impl, while the single delegation impl stays generic. `#[skip_check]` contributes the delegation impls but no check impl.
 
-**The two attributes are mutually exclusive and merge across bracket levels.** `#[check_params]` and `#[skip_check]` cannot both apply to one key, and at most one of each may appear. For an array key, a block-level attribute on the bracket merges with each inner key's own attribute — two `#[check_params]` sets union, while combining `#[skip_check]` with `#[check_params]` is an error.
+**The two attributes are mutually exclusive and merge across bracket levels.** `#[check_params]` and `#[skip_check]` cannot both apply to one key, and at most one of each may appear. For an array key, a block-level attribute on the bracket merges with each inner key's own attribute: two `#[check_params]` sets union, while combining `#[skip_check]` with `#[check_params]` is an error.
 
 **A per-key generic list is threaded onto the derived check impl.** A delegation key that introduces its own generic parameters (`<I> FooKey<I>: …`) carries them into the check half, so the generated check impl binds them (`impl<I> __CanUse…<FooKey<I>, …> for Context {}`) rather than referencing them unbound. `KeyWithCheckParams` attaches the key's generics to every check value it produces: a bare `#[check_params(…)]`-less key gets a unit-params value carrying the generics, and each `#[check_params(…)]` parameter carries them too, so the merge in `CheckComponentsTable::eval` binds them alongside the table-level generics.
 
@@ -57,9 +57,13 @@ A table-level `#[check_trait(Name)]` overrides the derived name. A generic table
 
 ## Failure modes
 
-Because the macro reuses the `delegate_components!` and `check_components!` pipelines, its accepted-but-uncompilable inputs are the same ones those macros defer to the compiler. A **duplicate key** produces `E0119` on the wiring side (and, if checked, the check side too) — the [conflicting wiring](../../errors/wiring/conflicting-wiring.md) error class. A **missing impl-side dependency** is what the check half exists to surface — the [check-trait failure](../../errors/checks/check-trait-failure.md) error class, reported at the wiring site rather than lazily at the call site.
+Because the macro reuses the `delegate_components!` and `check_components!` pipelines, its accepted-but-uncompilable inputs are the same ones those macros defer to the compiler. A **duplicate key** produces `E0119` on the wiring side (and, if checked, the check side too), the [conflicting wiring](../../errors/wiring/conflicting-wiring.md) error class. A **missing impl-side dependency** is what the check half exists to surface: the [check-trait failure](../../errors/checks/check-trait-failure.md) error class, reported at the wiring site rather than lazily at the call site.
 
-A table whose every entry is `#[skip_check]` (or an empty table) still emits the check trait but no check impls, so it verifies nothing; this parallels the empty `#[check_providers()]` that `check_components!` rejects, but here it is accepted because skipping every entry is a legitimate, if degenerate, request.
+A table whose every entry is `#[skip_check]` (or an empty table, or one whose only key is an empty array) still emits the check trait but no check impls, so it verifies nothing; this parallels the empty `#[check_providers()]` that `check_components!` rejects, but here it is accepted because skipping every entry is a legitimate, if degenerate, request.
+
+## Known issues
+
+The attribute check does not reach nested tables. `delegate_components!` runs `validate_attributes`, which recurses through mapping values, but this macro validates only the keys its conversion walks, and the conversion never descends into a `UseDelegate<new Inner { … }>` value. An attribute on an inner key, such as `#[skip_check]` or `#[check_params(...)]`, is therefore dropped without an error. It could not take effect anyway, since only the outer key becomes a check entry. The correct behavior is to run the same recursive validator over the whole table so the inner attribute is rejected; the [reference Known issues](../../reference/macros/delegate_and_check_components.md#known-issues) describe the user-visible side.
 
 ## Snapshots
 
@@ -70,13 +74,12 @@ Every `snapshot_delegate_and_check_components!` invocation across the suite is i
 - [checking/delegate_and_check_params.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/checking/delegate_and_check_params.rs) — `#[check_params(...)]` supplying parameter tuples, an array key wiring several components to one provider, and a block-level `#[check_params(...)]` on the bracket merged with each entry's own.
 - [checking/delegate_and_check_generic_key.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/checking/delegate_and_check_generic_key.rs) — a delegation key carrying its own generic parameters (`<I> BarGetterAtComponent<I>`) whose generics are threaded onto the derived check impl, with a `#[check_params((I, Index<0>))]` value that mentions the key generic.
 - [dispatching/use_delegate_getter.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/dispatching/use_delegate_getter.rs) — a `UseDelegate`-table value wired and checked in one step, exercising the legacy nested-table form through this macro.
-
-One variant has no snapshot: a `#[skip_check]` entry alongside checked entries, which the reference shows but no snapshot pins.
+- [checking/delegate_and_check_skip.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/checking/delegate_and_check_skip.rs) — a `#[skip_check]` entry beside two checked ones: the skipped key keeps its delegation impls and gets no check impl, and since the context lacks the skipped getter's field, the file compiling shows the skip took effect.
 
 ## Tests
 
 - The snapshot files above are compile-only tests, so a successful build is the passing assertion for both the wiring and the derived check.
-- [parser_rejections/delegate_and_check_components.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/delegate_and_check_components.rs) covers the check attributes the macro refuses: a `#[skip_check]` merged with a `#[check_params]` across a list key and its element — the case that only exists once the two are merged, so neither attribute is wrong on its own — two check attributes on one key, `#[skip_check]` given arguments, an unrecognized per-entry attribute, and `#[check_providers]` on the table, which belongs to the standalone `check_components!`.
+- [parser_rejections/delegate_and_check_components.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/delegate_and_check_components.rs) covers the check attributes the macro refuses: a `#[skip_check]` merged with a `#[check_params]` across a list key and its element (the case that only exists once the two are merged, so neither attribute is wrong on its own), two check attributes on one key, `#[skip_check]` given arguments, an unrecognized per-entry attribute, and `#[check_providers]` on the table, which belongs to the standalone `check_components!`.
 
 ## Source
 

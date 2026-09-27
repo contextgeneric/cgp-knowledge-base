@@ -1,6 +1,6 @@
-# `Symbol!` — implementation
+# `Symbol!`: implementation
 
-`Symbol!` is a function-like macro that expands a string literal into a type-level string — the `Symbol<LEN, Chars<…>>` type CGP uses to name a field at compile time. This document covers how the macro parses the literal and emits that type; for the accepted syntax and the full expansion a user sees, read the reference document [reference/macros/symbol.md](../../reference/macros/symbol.md).
+`Symbol!` is a function-like macro that expands a string literal into a type-level string, the `Symbol<LEN, Chars<…>>` type CGP uses to name a field at compile time. This document covers how the macro parses the literal and emits that type; for the accepted syntax and the full expansion a user sees, read the reference document [reference/macros/symbol.md](../../reference/macros/symbol.md).
 
 ## Entry point
 
@@ -11,7 +11,7 @@ let symbol: Symbol = parse2(body)?;
 Ok(symbol.to_token_stream())
 ```
 
-There is no multi-stage pipeline here — a single `Parse` reads the literal and a single `ToTokens` emits the type, so all the logic lives in the one [`Symbol` AST type](../asts/symbol.md). A body that is not a string literal fails while parsing `Symbol`, since its `Parse` impl expects a `LitStr`.
+There is no multi-stage pipeline here: a single `Parse` reads the literal and a single `ToTokens` emits the type, so all the logic lives in the one [`Symbol` AST type](../asts/symbol.md). A body that is not a string literal fails while parsing `Symbol`, since its `Parse` impl expects a `LitStr`.
 
 ## Pipeline
 
@@ -30,21 +30,25 @@ The chain is built by folding the characters right-to-left onto `Nil`, so an emp
 
 ## Behavior and corner cases
 
-The leading `LEN` argument is the string's **byte** length, taken from `str::len()`, not its character count. For an ASCII string the two coincide, but a multi-byte string diverges: `Symbol!("世界你好")` records `12`, while the `Chars` chain has one node per Unicode scalar value, so four `Chars` nodes. This split is deliberate — the char count lives in the chain's shape and the byte length lives in `LEN`.
+The leading `LEN` argument is the string's **byte** length, taken from `str::len()`, not its character count. For an ASCII string the two coincide, but a multi-byte string diverges: `Symbol!("世界你好")` records `12`, while the `Chars` chain has one node per Unicode scalar value, so four `Chars` nodes. This split is deliberate: the char count lives in the chain's shape and the byte length lives in `LEN`.
 
 Every emitted token carries the literal's span (via `quote_spanned!`), so a downstream type error points back at the `Symbol!` invocation rather than at the macro internals.
 
-The `Symbol` type is also constructed from a bare identifier rather than a literal by the data derives and the [`Path!` stack](../asts/path.md): a struct field, enum variant, or lowercase path segment becomes a `Symbol` through `Symbol::from_ident`, which reuses the same `ToTokens` emission. That constructor calls `Ident::unraw` first, so a raw-identifier field such as `r#type` is tagged by its logical name — `Symbol!("type")`, not the literal `r#type` — which is what lets a `Symbol!("type")` bound match it. This path does not go through this macro's `Parse` impl, which only accepts a `LitStr` and records its value verbatim (so `Symbol!("r#type")` would encode the literal `r#type`).
+The `Symbol` type is also constructed from a bare identifier rather than a literal by the data derives and the [`Path!` stack](../asts/path.md): a struct field, enum variant, or lowercase path segment becomes a `Symbol` through `Symbol::from_ident`, which reuses the same `ToTokens` emission. That constructor calls `Ident::unraw` first, so a raw-identifier field such as `r#type` is tagged by its logical name, `Symbol!("type")` rather than the literal `r#type`, which is what lets a `Symbol!("type")` bound match it. This path does not go through this macro's `Parse` impl, which only accepts a `LitStr` and records its value verbatim (so `Symbol!("r#type")` would encode the literal `r#type`).
 
 ## Known issues
 
 The `LEN` const argument exists to work around stable Rust's inability to compute the length of a `Chars` chain inside a const-generic context. Rather than deriving the length from the character list at the type level, the macro precomputes it and bakes it in as a separate parameter. This is why the length appears redundantly in every `Symbol` type and why it is a byte length rather than a character count; it is a limitation of the encoding, not a bug.
 
+## Snapshots
+
+`Symbol!` has no `snapshot_*!` macro, since it emits a single type rather than items. Its output appears in every golden that names a field, such as the `snapshot_derive_cgp_data!` golden listed under Tests.
+
 ## Tests
 
-The `Symbol!` expansion has no snapshot macro of its own; its behavior is exercised through runtime round-trip tests and, indirectly, through the field-derive snapshots that embed `Symbol` in their output.
+The behavior is exercised through runtime round-trip tests and, indirectly, through the field-derive snapshots that embed `Symbol` in their output.
 
-- [field_access/symbol.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/field_access/symbol.rs) checks that a `Symbol!` value `Display`s back to its string and that `StaticString::VALUE` recovers the original literal, covering the empty string, a single character, a multi-word string, and a multi-byte Unicode string — the last pinning that the char chain, not `LEN`, drives the reconstruction.
+- [field_access/symbol.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/field_access/symbol.rs) checks that a `Symbol!` value `Display`s back to its string and that `StaticString::VALUE` recovers the original literal, covering the empty string, a single character, a multi-word string, and a multi-byte Unicode string, the last pinning that the char chain, not `LEN`, drives the reconstruction.
 - [extensible_records/person_record.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_records/person_record.rs) pins, through a `snapshot_derive_cgp_data!` golden, how a multi-character field name such as `first_name` expands into its `Symbol<N, Chars<…>>` list with the leading length.
 
 ## Source

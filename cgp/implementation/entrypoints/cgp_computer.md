@@ -1,4 +1,4 @@
-# `#[cgp_computer]` — implementation
+# `#[cgp_computer]`: implementation
 
 `#[cgp_computer]` turns a plain function into a [`Computer`](../../reference/components/computer.md) (or `AsyncComputer`) provider by emitting a `#[cgp_new_provider]` impl that calls the function and a `delegate_components!` block that promotes the rest of the handler family from that base. This document covers how the macro is built; for the accepted syntax and the full expansion a user sees, read the reference document [reference/macros/cgp_computer.md](../../reference/macros/cgp_computer.md).
 
@@ -12,12 +12,12 @@ The provider name comes from the attribute: when the attribute is empty the func
 
 There is no staged AST pipeline; the function branches on two independent axes read off the signature and emits the three items in one pass.
 
-- **Sync vs. async** — `fn_sig.asyncness` selects between a [`Computer`](../../reference/components/computer.md) base (the `compute` method) and an `AsyncComputer` base (an `async fn compute_async` that `.await`s the call).
-- **Value vs. `Result`** — the function's return type is re-parsed as a [`MaybeResultType`](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-extra-macro-lib/src/parse/maybe_result.rs), a small speculative parser that reports whether the output is written as `Result<_, E>`. This choice does not change the base impl (the `Output` associated type is the return type verbatim); it only selects which promotion bundle the `delegate_components!` block wires the rest of the family to.
+- **Sync vs. async**: `fn_sig.asyncness` selects between a [`Computer`](../../reference/components/computer.md) base (the `compute` method) and an `AsyncComputer` base (an `async fn compute_async` that `.await`s the call).
+- **Value vs. `Result`**: the function's return type is re-parsed as a [`MaybeResultType`](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-extra-macro-lib/src/parse/maybe_result.rs), a small speculative parser that reports whether the output is written as `Result<_, E>`. This choice does not change the base impl (the `Output` associated type is the return type verbatim); it only selects which promotion bundle the `delegate_components!` block wires the rest of the family to.
 
 ## Generated items
 
-The macro emits three items in order: the original function unchanged, a `#[cgp_new_provider]` impl of the base trait, and a `delegate_components!` block. The base impl collects the function's parameters into a single input tuple and destructures it back into positional `arg_0, arg_1, …` bindings inside the method body before calling the function:
+The macro emits three items in order: the original function unchanged, a `#[cgp_new_provider]` impl of the base trait, and a `delegate_components!` block. The base impl writes the function's parameter types inside parentheses as the input type and destructures it back into positional `arg_0, arg_1, …` bindings inside the method body before calling the function:
 
 ```rust
 // #[cgp_computer] fn add(a: u64, b: u64) -> u64 { a + b }
@@ -42,13 +42,24 @@ The async branches delegate fewer components because the synchronous members of 
 
 ## Behavior and corner cases
 
-A **`self` receiver** is rejected with a spanned `syn::Error` ("Computer functions cannot have a receiver"); every other parameter is treated as part of the input tuple. Parameter *patterns* are discarded — each input is rebound positionally as `arg_i`, so a destructuring pattern in the source signature is replaced by a plain binding.
+A **`self` receiver** is rejected with a spanned `syn::Error` ("Computer functions cannot have a receiver"); every other parameter is treated as part of the input tuple. Parameter *patterns* are discarded: each input is rebound positionally as `arg_i`, so a destructuring pattern in the source signature is replaced by a plain binding.
 
-A **reference parameter** is kept verbatim in the input-tuple type, so `fn f(value: &Value)` yields an input tuple `(&Value)`; the `PromoteComputer` bundle's `…Ref` entries then make the provider serve the `…Ref` components as well.
+The **input type is parenthesized, not always a tuple**. The parameter types are joined with commas and no trailing comma, so two parameters give the tuple `(u64, u64)`, a single parameter gives `(u64)`, which is the type `u64` itself, and no parameters give `()`. A one-argument computer therefore takes the bare value, and its `(arg_0)` pattern is a parenthesized binding rather than a tuple pattern.
 
-The **`Result` detection is purely syntactic**. `MaybeResultType` forks the token stream and checks whether the return type's leading identifier is literally `Result`; a type-aliased result or a `Result` under a different name reads as the value case and wires `PromoteComputer` rather than `PromoteTryComputer`.
+A **reference parameter** is kept verbatim, so `fn f(value: &Value)` has the input type `&Value`. The `PromoteComputer` bundle's `…Ref` entries then make the provider serve the `…Ref` components as well.
+
+The **`Result` detection is purely syntactic**. `MaybeResultType` forks the token stream and checks whether the return type's first token is the identifier `Result`. If it is, the parser then demands `<`, a type, `,`, a type, and `>`; otherwise it parses any type as the value case. The two consequences are recorded under Known issues.
 
 An **omitted return type** defaults to `()`, so a unit-returning function produces a value-case `Computer` with `Output = ()`.
+
+## Known issues
+
+Both defects come from `MaybeResultType` and are described for users, with workarounds, in the [reference Known issues](../../reference/macros/cgp_computer.md#known-issues):
+
+- A qualified `Result`, such as `core::result::Result<u64, String>`, `io::Result<u64>` or `anyhow::Result<u64>`, starts with an identifier other than `Result`, so it reads as the value case and wires `PromoteComputer` rather than `PromoteTryComputer`. The error is then wrapped in `Ok` instead of propagated.
+- A one-argument alias written `Result<u64>` starts with `Result`, so the parser demands a comma after the first argument and fails with ``expected `,` ``.
+
+A fix would resolve the `Result` shape semantically, for example by letting the attribute name the error type, rather than by the leading token.
 
 ## Tests
 
@@ -60,7 +71,11 @@ The behavioral tests exercise the generated provider across the handler family:
 - [dispatching/compose.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/dispatching/compose.rs) — `#[cgp_computer]` field-reader providers composed into a higher-order provider.
 - [monadic_handlers/ok_monadic.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/monadic_handlers/ok_monadic.rs), [monadic_handlers/err_monadic.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/monadic_handlers/err_monadic.rs), [monadic_handlers/ok_err_monadic_trans.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/monadic_handlers/ok_err_monadic_trans.rs) — `#[cgp_computer]` providers chained through the monadic combinators.
 
-There is no dedicated `snapshot_cgp_computer!` macro; the macro's expansion is not pinned by a snapshot and is exercised only behaviorally.
+The failure cases pin the inputs `#[cgp_computer]` refuses during expansion, each asserting the entrypoint returns `Err`:
+
+- [parser_rejections/cgp_computer.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/cgp_computer.rs) covers a `self` receiver and the one-argument `Result<u64>` alias from the Known issues.
+
+There is no `snapshot_cgp_computer!` macro in `cgp-macro-test-util`, because `#[cgp_computer]` lives in `cgp-extra-macro-lib`, so its expansion is not pinned by a snapshot and is exercised only behaviorally.
 
 ## Source
 

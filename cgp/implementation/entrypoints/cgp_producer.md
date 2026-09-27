@@ -1,4 +1,4 @@
-# `#[cgp_producer]` — implementation
+# `#[cgp_producer]`: implementation
 
 `#[cgp_producer]` turns a no-argument function into a [`Producer`](../../reference/components/producer.md) provider by emitting a `#[cgp_new_provider]` impl that calls the function and a `delegate_components!` block that promotes the whole handler family from it. This document covers how the macro is built; for the accepted syntax and the full expansion, read the reference document [reference/macros/cgp_producer.md](../../reference/macros/cgp_producer.md).
 
@@ -8,11 +8,11 @@ The macro is the `cgp_producer` function in [cgp-extra-macro-lib/src/entrypoints
 
 ## Pipeline
 
-There is no staged AST pipeline and, unlike `#[cgp_computer]`, no branching — a producer has exactly one shape. The function validates the signature against the producer's constraints and then emits a fixed set of three items. The three constraints are each checked before any code is generated:
+There is no staged AST pipeline and, unlike `#[cgp_computer]`, no branching: a producer has exactly one shape. The function validates the signature against the producer's constraints and then emits a fixed set of three items. The three constraints are each checked before any code is generated:
 
-- **no parameters** — a producer takes no input and no `self` receiver.
-- **not `async`** — the `Producer` trait is synchronous.
-- **no generic parameters** — the producer impl introduces only the reserved context and code parameters.
+- **No parameters**: a producer takes no input and no `self` receiver ("Producer functions cannot have parameters").
+- **Not `async`**: the `Producer` trait is synchronous ("Producer functions cannot be async").
+- **No generic parameters**, lifetimes included: the producer impl introduces only the reserved context and code parameters ("Producer functions must have empty generic parameters").
 
 Each violation returns a spanned `syn::Error` pointing at the offending part of the signature.
 
@@ -32,7 +32,7 @@ impl<__Context__, __Code__> Producer<__Context__, __Code__> for MagicNumber {
 }
 ```
 
-The `delegate_components!` block then routes all eight handler components — including `ComputerComponent`, which `#[cgp_computer]` never delegates because the computer *is* its own base — to the single `PromoteProducer<Self>` bundle. Because a producer ignores its input, that bundle lets every handler shape yield the produced value regardless of any input it is handed. There is no `Result` analysis: the `Output` associated type is the return type verbatim, whether or not it is a `Result`.
+The `delegate_components!` block then routes all eight handler components to the single `PromoteProducer<Self>` bundle. Because a producer ignores its input, that bundle lets every handler shape yield the produced value regardless of any input it is handed. The eight include `ComputerComponent`, which `#[cgp_computer]` never delegates because there the computer *is* the base. There is no `Result` analysis: the `Output` associated type is the return type verbatim, whether or not it is a `Result`.
 
 ## Behavior and corner cases
 
@@ -46,7 +46,11 @@ The behavioral test exercises the generated provider across the handler family:
 
 - [handlers/producer_macro.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/handlers/producer_macro.rs) — an input-free function called as `produce`, `compute`, `try_compute`, `compute_async`, and `handle` plus their `…Ref` variants, all yielding the same value.
 
-There is no dedicated `snapshot_cgp_producer!` macro; the macro's expansion is not pinned by a snapshot and is exercised only behaviorally.
+The failure cases pin the signature checks, each asserting the entrypoint returns `Err`:
+
+- [parser_rejections/cgp_producer.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/cgp_producer.rs) covers a parameter, a `self` receiver, an `async` function, and a generic parameter.
+
+There is no `snapshot_cgp_producer!` macro in `cgp-macro-test-util`, so the expansion is not pinned by a snapshot and is exercised only behaviorally.
 
 ## Source
 

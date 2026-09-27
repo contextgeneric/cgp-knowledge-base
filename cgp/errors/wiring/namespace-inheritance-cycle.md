@@ -1,6 +1,6 @@
 # Namespace inheritance cycle
 
-Two namespaces that inherit from each other (or one that inherits itself) make resolving any key chase the inheritance chain forever, so the trait solver overflows with `E0275`, reported *at the `cgp_namespace!` definitions themselves*.
+Two namespaces that inherit from each other make resolving any key chase the inheritance chain forever, so the trait solver overflows with `E0275`, reported *at the `cgp_namespace!` definitions themselves*. A namespace that inherits itself fails differently, with `E0207`, as described below.
 
 ## What triggers it
 
@@ -16,7 +16,7 @@ cgp_namespace! {
 }
 ```
 
-`new NamespaceA: NamespaceB` emits the inheritance blanket impl `impl<Table, Key, Value> NamespaceA<Table> for Key where Key: NamespaceB<…>, Key: NamespaceB<Table, Delegate = Value>`, and `new NamespaceB: NamespaceA` emits the mirror. A self-inheriting `new A: A {}` collapses the two into one impl whose bound requires the trait it defines. CGP cannot see the parent chain is circular from one macro invocation (each `cgp_namespace!` knows only its own parent) so it lowers each namespace faithfully and defers the contradiction to the compiler.
+`new NamespaceA: NamespaceB` emits the inheritance blanket impl `impl<Table, Key, Value> NamespaceA<Table> for Key where Key: NamespaceB<…>, Key: NamespaceB<Table, Delegate = Value>`, and `new NamespaceB: NamespaceA` emits the mirror. A self-inheriting `new A: A {}` is not part of this class: its one inheritance impl bounds `Key: A<Table, Delegate = Value>`, a projection of the very trait it implements, which the compiler does not count as determining `Value`, so the impl fails with `E0207` (the type parameter `__Value__` is not constrained) instead of overflowing. CGP cannot see the parent chain is circular from one macro invocation (each `cgp_namespace!` knows only its own parent) so it lowers each namespace faithfully and defers the contradiction to the compiler.
 
 ## The raw diagnostic
 

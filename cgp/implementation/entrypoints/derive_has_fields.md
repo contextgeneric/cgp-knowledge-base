@@ -1,6 +1,6 @@
-# `#[derive(HasFields)]` — implementation
+# `#[derive(HasFields)]`: implementation
 
-`#[derive(HasFields)]` gives a struct or enum a whole-shape view by emitting the representation impls — `HasFields`, `HasFieldsRef`, `FromFields`, `ToFields`, `ToFieldsRef` — that describe the type as a single type-level product (for a struct) or sum (for an enum). This document covers how that codegen works; for the accepted syntax and the full expansion, read the reference document [reference/derives/derive_has_fields.md](../../reference/derives/derive_has_fields.md).
+`#[derive(HasFields)]` gives a struct or enum a whole-shape view by emitting the representation impls (`HasFields`, `HasFieldsRef`, `FromFields`, `ToFields`, `ToFieldsRef`) that describe the type as a single type-level product (for a struct) or sum (for an enum). This document covers how that codegen works; for the accepted syntax and the full expansion, read the reference document [reference/derives/derive_has_fields.md](../../reference/derives/derive_has_fields.md).
 
 ## Entry point
 
@@ -18,18 +18,18 @@ The struct path goes through `ItemCgpRecord`; the enum path calls the enum codeg
 
 ## Pipeline
 
-There is no multi-stage transform. Both paths call a single codegen helper — `derive_has_fields_impls_from_struct` for a struct, `derive_has_fields_impls_from_enum` for an enum — that emits the five representation impls. The [`cgp_data` AST stack](../asts/cgp_data.md) documents `ItemCgpRecord` and the `Symbol`/`Index` field-tag types.
+There is no multi-stage transform. Both paths call a single codegen helper, `derive_has_fields_impls_from_struct` for a struct or `derive_has_fields_impls_from_enum` for an enum, that emits the five representation impls. The [`cgp_data` AST stack](../asts/cgp_data.md) documents `ItemCgpRecord` and the `Symbol`/`Index` field-tag types.
 
 ## Generated items
 
 The derive emits five impls and leaves the type definition untouched. The load-bearing part is the `Fields` associated type: a struct's fields become a [`Product`](../../reference/macros/product.md) of [`Field<Tag, Value>`](../../reference/types/field.md) entries over the `Cons`/`Nil` list, and an enum's variants become a [`Sum`](../../reference/macros/sum.md) of `Field<Symbol!("Variant"), Payload>` entries over the `Either`/`Void` list. Named fields and variant names are keyed by [`Symbol!`](../../reference/macros/symbol.md); tuple fields by [`Index<N>`](../../reference/types/index.md).
 
 ```rust
-// struct → product
+// struct: a product
 impl HasFields for Person {
     type Fields = Cons<Field<Symbol!("name"), String>, Cons<Field<Symbol!("age"), u8>, Nil>>;
 }
-// enum → sum, terminated by Void
+// enum: a sum, terminated by Void
 impl HasFields for Shape {
     type Fields = Either<Field<Symbol!("Circle"), Circle>, Either<Field<Symbol!("Rectangle"), Rectangle>, Void>>;
 }
@@ -39,21 +39,21 @@ Alongside the shape type, the derive emits `HasFieldsRef` (the same product/sum 
 
 ## Behavior and corner cases
 
-A **single-field tuple struct** (a newtype) is special-cased: its `Fields` is the inner type directly, not a one-element `Cons<Field<Index<0>, _>, Nil>`, and the conversions pass the single value straight through. A tuple struct with more than one field is not special-cased — its fields are keyed by `Index<N>` and chained into the usual product.
+A **single-field tuple struct** (a newtype) is special-cased: its `Fields` is the inner type directly, not a one-element `Cons<Field<Index<0>, _>, Nil>`, and the conversions pass the single value straight through. A tuple struct with more than one field is not special-cased: its fields are keyed by `Index<N>` and chained into the usual product.
 
 A **unit struct** produces `Nil` as its `Fields`, and its conversions round-trip through the empty product.
 
-The type's **generic parameters and `where` clause** are threaded onto all five impls. A borrowed field type appears verbatim in the product, and `HasFieldsRef` layers its own `'__a` borrow on top — so a field of type `&'a Name` becomes `&'__a &'a Name` in `FieldsRef<'__a>`. The `HasFieldsRef` associated type carries the `where Self: '__a` bound that every borrowed representation needs.
+The type's **generic parameters and `where` clause** are threaded onto all five impls. A borrowed field type appears verbatim in the product, and `HasFieldsRef` layers its own `'__a` borrow on top, so a field of type `&'a Name` becomes `&'__a &'a Name` in `FieldsRef<'__a>`. The `HasFieldsRef` associated type carries the `where Self: '__a` bound that every borrowed representation needs.
 
 An **enum** accepts every variant shape, because the `HasFields` path only *describes* a variant rather than deconstructing it, and so does not impose the single-unnamed-field requirement that the extractor and `FromVariant` derives do. `variants_to_sum_type` runs each variant's own `syn::Fields` through the same `item_fields_to_product_type` helper the struct path uses, which is what makes the four shapes fall out of one rule: a unit variant becomes `Nil`, a single-unnamed-field variant becomes its payload type directly (the newtype special case applied inside a variant), a multi-field tuple variant becomes a product keyed by `Index<N>`, and a named-field variant becomes a product keyed by `Symbol!`. The conversions follow: `derive_from_field_params` and `extract_variant_args` destructure and rebuild whichever shape each variant has, so a mixed-shape enum round-trips. The consequence worth stating is that `#[derive(HasFields)]` alone succeeds on an enum where the umbrella `#[derive(CgpData)]` would fail.
 
 ## Error spans
 
-All five impls are keyed on the whole type, so each is re-spanned onto the struct or enum name the user wrote rather than left at the derive's `call_site` span. A coherence conflict (`E0119`) — a hand-written `HasFields` impl clashing with the derived one — therefore lands its caret on the type name instead of on the whole `#[derive(HasFields)]`. `derive_has_fields_impls_from_struct` and `derive_has_fields_impls_from_enum` pass each finished impl through [`override_item_span`](../README.md#spans-aim-generated-items-at-the-token-the-user-wrote), which moves only the `impl`/`{ … }` boundary — the mechanism the [`#[derive(HasField)]`](derive_has_field.md#error-spans) doc explains in full.
+All five impls are keyed on the whole type, so each is re-spanned onto the struct or enum name the user wrote rather than left at the derive's `call_site` span. A coherence conflict (`E0119`), such as a hand-written `HasFields` impl clashing with the derived one, therefore lands its caret on the type name instead of on the whole `#[derive(HasFields)]`. `derive_has_fields_impls_from_struct` and `derive_has_fields_impls_from_enum` pass each finished impl through [`override_item_span`](../README.md#spans-aim-generated-items-at-the-token-the-user-wrote), which moves only the `impl`/`{ … }` boundary, the mechanism the [`#[derive(HasField)]`](derive_has_field.md#error-spans) doc explains in full.
 
 ## Known issues
 
-**The codegen names its associated types as `Self::Fields` and `Self::FieldsRef`, so those two variant names make the enum expansion invalid.** `from_fields` takes `rest: Self::Fields` and `to_fields_ref` returns `Self::FieldsRef<'__a>`; inside an impl for an enum either path can resolve to a variant of the same name, so `rustc` rejects the expansion with `ambiguous associated item`, with its headline on the derive attribute and a `note` pointing at the user's own variant — because these impls are written `for` the user's enum, the colliding variant keeps its own span and the error stays actionable, unlike the extractor's. Writing each as `<Self as HasFields>::Fields` would remove the ambiguity and is the fix. The variant derives add five further reserved names — see [`#[derive(ExtractField)]`](derive_extract_field.md#known-issues) — so an enum deriving the whole family has seven. A struct's *field* names are unaffected, since a field is not in the same namespace as an associated type. Pinned by [invalid_expansion/reserved_variant_names.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/invalid_expansion/reserved_variant_names.rs).
+**The codegen names its associated types as `Self::Fields` and `Self::FieldsRef`, so those two variant names make the enum expansion invalid.** `from_fields` takes `rest: Self::Fields` and `to_fields_ref` returns `Self::FieldsRef<'__a>`; inside an impl for an enum either path can resolve to a variant of the same name, so `rustc` rejects the expansion with `ambiguous associated item`, with its headline on the derive attribute and a `note` pointing at the user's own variant. Because these impls are written `for` the user's enum, the colliding variant keeps its own span and the error stays actionable, unlike the extractor's. Writing each as `<Self as HasFields>::Fields` would remove the ambiguity and is the fix. The variant derives add five further reserved names, listed in [`#[derive(ExtractField)]`](derive_extract_field.md#known-issues), so an enum deriving the whole family has seven. A struct's *field* names are unaffected, since a field is not in the same namespace as an associated type. Pinned by [invalid_expansion/reserved_variant_names.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/invalid_expansion/reserved_variant_names.rs).
 
 ## Snapshots
 

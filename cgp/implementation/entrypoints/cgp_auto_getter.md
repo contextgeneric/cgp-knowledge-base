@@ -1,4 +1,4 @@
-# `#[cgp_auto_getter]` — implementation
+# `#[cgp_auto_getter]`: implementation
 
 `#[cgp_auto_getter]` derives a single blanket getter impl over `HasField` from a trait's method names, so any context whose field names match the getters gains the trait with no wiring. This document covers how that works internally; for the accepted syntax and the complete expansion a user sees, read the reference document [reference/macros/cgp_auto_getter.md](../../reference/macros/cgp_auto_getter.md).
 
@@ -11,7 +11,7 @@ let item = ItemCgpAutoGetter::preprocess(&item_trait)?;
 let items = item.to_items()?;
 ```
 
-The macro rejects any attribute argument up front with a spanned error — unlike `#[cgp_getter]`, it has no provider name, component, or keys to accept. Applying it to a non-trait item fails at `parse2::<ItemTrait>`. All real logic lives in `cgp-macro-core`.
+The macro rejects any attribute argument up front with "#[cgp_auto_getter] does not accept any attribute argument", because unlike `#[cgp_getter]` it has no provider name, component, or keys to accept. Applying it to a non-trait item fails at `parse2::<ItemTrait>`. All real logic lives in `cgp-macro-core`.
 
 ## Pipeline
 
@@ -22,7 +22,7 @@ The macro moves through two short steps, both methods on `ItemCgpAutoGetter`, do
 
 ## Generated items
 
-`#[cgp_auto_getter]` emits exactly two items: the trait as written, and a single blanket impl over `__Context__` that implements every getter by reading the like-named field. Unlike `#[cgp_getter]`, there is no provider trait, no component marker, and no `UseField`/`UseFields`/`WithProvider` impls — the field each getter reads is fixed to the method name, so nothing is left to wire.
+`#[cgp_auto_getter]` emits exactly two items: the trait as written, and a single blanket impl over `__Context__` that implements every getter by reading the like-named field. Unlike `#[cgp_getter]`, there is no provider trait, no component marker, and no `UseField`/`UseFields`/`WithProvider` impls: the field each getter reads is fixed to the method name, so nothing is left to wire.
 
 Each getter body reads its field with `get_field(PhantomData::<Symbol!("...")>)` and appends the field-mode conversion for its return type, and the field itself becomes a `HasField` bound on the impl:
 
@@ -44,7 +44,7 @@ where
 }
 ```
 
-The conversions are exactly those `#[cgp_getter]` uses — `&str` reads a `String` field and appends `.as_str()`, `Option<&T>` reads `Option<T>` and appends `.as_ref()`, `&[T]` reads an `AsRef<[T]>` field, `MRef<'_, T>` wraps the borrow in `MRef::Ref`, an owned return appends `.clone()`, and a plain `&T` is taken by reference — plus the mutable mirrors selected by a `&mut self` receiver (`&mut [T]` reads an `AsMut<[T]>` field via `.as_mut()`, `Option<&mut T>` via `.as_mut()`, `Option<&mut str>` via `.as_deref_mut()`) — because both macros share the [getter-field parsing](../asts/cgp_getter.md). The difference is only that `#[cgp_auto_getter]` emits a blanket impl on `__Context__` while `#[cgp_getter]` emits provider impls.
+The conversions are exactly those `#[cgp_getter]` uses, because both macros share the [getter-field parsing](../asts/cgp_getter.md). A `&str` return reads a `String` field and appends `.as_str()`, `Option<&T>` reads `Option<T>` and appends `.as_ref()`, `&[T]` reads an `AsRef<[T]>` field, `MRef<'_, T>` wraps the borrow in `MRef::Ref`, an owned return appends `.clone()`, and a plain `&T` is taken by reference. A `&mut self` receiver selects the mutable mirrors: a plain `&mut T` is a bare `get_field_mut`, `&mut str` appends `.as_mut_str()`, `&mut [T]` reads an `AsMut<[T]>` field via `.as_mut()`, `Option<&mut T>` appends `.as_mut()`, and `Option<&mut str>` appends `.as_deref_mut()`. The difference is only that `#[cgp_auto_getter]` emits a blanket impl on `__Context__` while `#[cgp_getter]` emits provider impls.
 
 ## Behavior and corner cases
 
@@ -56,9 +56,11 @@ The conversions are exactly those `#[cgp_getter]` uses — `&str` reads a `Strin
 
 **A getter can read a field of another type.** A method with a typed receiver (`fn foo_bar(foo: &Self::Foo) -> &Self::Bar`) reads the field out of that receiver type; `Self` in the receiver is rewritten to the context, and the `HasField` bound lands on the receiver type rather than the context.
 
-**Unsupported field-type combinations are deferred to the compiler.** The `Option` and slice shorthands each cover a single field shape; a combination CGP provides no rule for — most notably `Option<&[T]>` — is lowered literally rather than given a bespoke rule, so it reaches the compiler as invalid Rust rather than a macro-time rejection. `parse_field_type` applies the `Option<&T>` rule to `Option<&[T]>` and emits a `HasField` bound over the unsized `Option<[T]>`, which `rustc` rejects. This is a deliberate boundary shared by `#[cgp_getter]` and `#[cgp_fn]` implicits (all three call `parse_field_type`), pinned as an acceptable failure by the `cargo-cgp` UI fixture [`usability/lowering/option_slice.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/lowering/option_slice.rs) — filed under `usability/` because cargo-cgp passes rustc's `Sized` error through rather than rewriting it.
+**Unsupported field-type combinations are deferred to the compiler.** The `Option` and slice shorthands each cover a single field shape; a combination CGP provides no rule for, most notably `Option<&[T]>`, is lowered literally rather than given a bespoke rule, so it reaches the compiler as invalid Rust rather than a macro-time rejection. `parse_field_type` applies the `Option<&T>` rule to `Option<&[T]>` and emits a `HasField` bound over the unsized `Option<[T]>`, which `rustc` rejects. This is a deliberate boundary shared by `#[cgp_getter]` and `#[cgp_fn]` implicits (all three call `parse_field_type`), pinned as an acceptable failure by the `cargo-cgp` UI fixture [`usability/lowering/option_slice.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/lowering/option_slice.rs), filed under `usability/` because cargo-cgp passes rustc's `Sized` error through rather than rewriting it.
 
 ## Known issues
+
+A `&mut self` getter returning a shared `Option<&T>` or `Option<&str>` fails with `E0308`. `GetterField` in [types/getter/method.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/getter/method.rs) chooses the option conversion from the receiver's mutability rather than from the return type's, so it emits `.as_mut()` or `.as_deref_mut()` and produces an `Option<&mut T>` that does not coerce to the declared type. The fix is to key the conversion off the return type, as `#[cgp_fn]` implicits already do; see the [reference Known issues](../../reference/macros/cgp_auto_getter.md#known-issues) for the workaround.
 
 `ItemCgpAutoGetter::preprocess` runs `CgpComponentAttributes::preprocess` on the trait so that `#[extend]` and `#[use_type]` apply, then discards the returned `CgpComponentAttributes`. The collector strips `#[prefix]` and `#[derive_delegate]` off the trait along with the two it applies, so either attribute on a `#[cgp_auto_getter]` is accepted silently and emits nothing, because the macro does not generate a component to register into a namespace or to dispatch. Rejecting the two with a spanned error, as the macro already rejects an attribute argument, would be the cleaner behavior.
 
@@ -75,13 +77,16 @@ Every `snapshot_cgp_auto_getter!` invocation across the suite is indexed here, s
 - [getters/mut_str_auto.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/getters/mut_str_auto.rs) — a `&mut self` getter returning `&mut str`, reading the `String` field through `HasFieldMut`/`get_field_mut` and calling `.as_mut_str()`.
 - [getters/mut_slice_auto.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/getters/mut_slice_auto.rs) — a `&mut self` getter returning `&mut [u32]`, bounding the field by `AsMut<[u32]> + 'static` and calling `.as_mut()`.
 - [getters/mut_option_auto.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/getters/mut_option_auto.rs) — a `&mut self` getter returning `Option<&mut u32>`, reading the `Option<u32>` field via `.as_mut()`.
+- [getters/mut_option_str_auto.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/getters/mut_option_str_auto.rs) — a `&mut self` getter returning `Option<&mut str>`, reading the `Option<String>` field via `.as_deref_mut()`, the mutable mirror of `option_str_auto.rs`.
+- [getters/mut_ref_auto.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/getters/mut_ref_auto.rs) — a `&mut self` getter returning a plain `&mut u32`, a bare `get_field_mut` with no conversion.
 - [getters/non_self_auto.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/getters/non_self_auto.rs) — a non-`self` getter reading a field out of another type (`&Self::Foo`).
 - [getters/auto_getter_generic.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/getters/auto_getter_generic.rs) — a trait generic over a type parameter, keyed by a `PhantomData<Foo>` tag.
+- [abstract_types/use_type_foreign_getter.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/abstract_types/use_type_foreign_getter.rs) imports a foreign abstract type with `#[use_type(HasUserIdType.UserId in App)]`, so the getter's return type is `<App as HasUserIdType>::UserId` and the trait gains the `App: HasUserIdType` bound.
 - [getters/assoc_type_auto_getter.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/getters/assoc_type_auto_getter.rs) — a local associated return type inferred from the field, with a `Display` bound carried onto the impl.
 - [getters/assoc_type_self_referential_auto.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/getters/assoc_type_self_referential_auto.rs) — a self-referential associated-type bound surviving onto the impl with `Self::Scalar` rewritten to the parameter.
 - [getters/abstract_type_extend.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/getters/abstract_type_extend.rs), [getters/abstract_type_use_type.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/getters/abstract_type_use_type.rs) — getters whose return type is an abstract type imported via `#[extend]` and `#[use_type]`; each file pins both the auto and the full getter variant.
 
-Coverage is broad across return shapes and both receiver mutabilities. The two mutable conversions with no dedicated snapshot yet are a plain `&mut T` return (a bare `get_field_mut` with no conversion) and an `Option<&mut str>` return (read via `.as_deref_mut()`, the mutable mirror of `option_str_auto.rs`).
+Each conversion listed under Generated items has a snapshot; the plain `&T` form is covered by the associated-type and non-`self` getters, which return `&Self::Name` and `&Self::Bar`.
 
 ## Tests
 

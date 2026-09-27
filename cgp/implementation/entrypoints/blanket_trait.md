@@ -1,10 +1,10 @@
-# `#[blanket_trait]` — implementation
+# `#[blanket_trait]`: implementation
 
 `#[blanket_trait]` turns a trait whose items carry default definitions into an extension trait by emitting the trait unchanged and generating the blanket impl that forwards those defaults, hiding the trait's supertraits behind its `where` clause. This document covers how that works internally; for the accepted syntax and the full expansion, read the reference document [reference/macros/blanket_trait.md](../../reference/macros/blanket_trait.md).
 
 ## Entry point
 
-The macro is driven by the `blanket_trait` function in [cgp-macro-lib/src/blanket_trait.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-lib/src/blanket_trait.rs). It parses the attribute argument as an optional context identifier — defaulting to the reserved `__Context__` when the attribute is empty — and the item as a `syn::ItemTrait`, then builds an `ItemBlanketTrait` and renders it directly.
+The macro is driven by the `blanket_trait` function in [cgp-macro-lib/src/blanket_trait.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-lib/src/blanket_trait.rs). It parses the attribute argument as an optional context identifier, defaulting to the reserved `__Context__` when the attribute is empty, and the item as a `syn::ItemTrait`, then builds an `ItemBlanketTrait` and renders it directly.
 
 ```rust
 let context_ident = if attr.is_empty() {
@@ -16,7 +16,7 @@ let item_blanket_impl = ItemBlanketTrait { context_ident, item_trait };
 let items = item_blanket_impl.to_items()?;
 ```
 
-Two failures surface here: a non-identifier attribute argument fails at `parse2`, and a non-trait item fails at `syn::parse2::<ItemTrait>`. Unlike `#[cgp_component]`, this macro has no multi-stage pipeline — the single `to_items` call does all the work.
+Two failures surface here: a non-identifier attribute argument fails at `parse2`, and a non-trait item fails at `syn::parse2::<ItemTrait>`. Unlike `#[cgp_component]`, this macro has no multi-stage pipeline: the single `to_items` call does all the work.
 
 ## Pipeline
 
@@ -62,7 +62,11 @@ A **bound on an associated type** is moved onto the lifted parameter in the impl
 
 The **supertraits** of the trait become the hidden dependency: they are cloned into a single `#context: <supertraits>` `where`-predicate on the impl, which is what shields callers from naming `Foo + Bar`. The trait keeps its supertraits in the declaration too, since the trait is emitted unchanged.
 
-Any trait item other than a type, method, or constant — a macro invocation, say — is rejected with an "unsupported trait item" error.
+Any trait item other than a type, method, or constant, such as a macro invocation, is rejected with an "unsupported trait item" error.
+
+## Known issues
+
+None beyond the pattern's own limits, which the [reference Known issues](../../reference/macros/blanket_trait.md#known-issues) describe: the three rejected item shapes above, and the `E0119` conflict any hand-written impl of the trait meets against the blanket impl.
 
 ## Snapshots
 
@@ -72,15 +76,14 @@ Every `snapshot_blanket_trait!` invocation across the suite is indexed here; all
 - [blanket_traits/with_method.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/blanket_traits/with_method.rs) — a default method body copied verbatim into the blanket impl.
 - [blanket_traits/associated_type.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/blanket_traits/associated_type.rs) — a local associated type lifted into an impl generic and tied to a supertrait's associated type via `Foo = Self::FooBar`.
 - [blanket_traits/associated_type_bounded.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/blanket_traits/associated_type_bounded.rs) — the same, plus a bound (`type FooBar: Clone`) moved onto the lifted parameter in the `where` clause.
-
-Two variants have no snapshot yet: an associated *constant* forwarded from its default expression, and the `#[blanket_trait(Ctx)]` form overriding the default context identifier.
+- [blanket_traits/const_custom_context.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/blanket_traits/const_custom_context.rs) — `#[blanket_trait(Ctx)]` renaming the context parameter, with an associated constant whose default expression is forwarded into the impl beside a default method.
 
 ## Tests
 
 The snapshot files double as behavioral tests:
 
 - [blanket_traits/basic.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/blanket_traits/basic.rs) and the others each wire a concrete `Context` and assert through a `CanUse…` check trait that the generated blanket impl applies.
-- No `cgp-macro-tests` failure case pins the "missing default body" error path, which is a candidate to add.
+- [parser_rejections/blanket_trait.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/blanket_trait.rs) pins the three rejections: a method without a default body, a constant without a default expression, and a macro item.
 
 ## Source
 

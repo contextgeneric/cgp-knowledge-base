@@ -1,6 +1,6 @@
-# `#[cgp_getter]` — implementation
+# `#[cgp_getter]`: implementation
 
-`#[cgp_getter]` builds a full getter component — everything `#[cgp_component]` produces — and then appends three field-reading provider impls (`UseFields`, `UseField<Tag>`, `WithProvider<Provider>`) so a context can bind each getter to a source field by wiring rather than by method name. This document covers how that works internally; for the accepted syntax and the complete expansion a user sees, read the reference document [reference/macros/cgp_getter.md](../../reference/macros/cgp_getter.md).
+`#[cgp_getter]` builds a full getter component (everything `#[cgp_component]` produces) and then appends three field-reading provider impls (`UseFields`, `UseField<Tag>`, `WithProvider<Provider>`) so a context can bind each getter to a source field by wiring rather than by method name. This document covers how that works internally; for the accepted syntax and the complete expansion a user sees, read the reference document [reference/macros/cgp_getter.md](../../reference/macros/cgp_getter.md).
 
 ## Entry point
 
@@ -12,13 +12,13 @@ let item_getter = ItemCgpGetter::try_from(evaluated)?;
 let items = item_getter.to_items()?;
 ```
 
-Before building the component, the entry function derives the default provider name specific to getters: if the user gave no provider identifier and the trait name begins with `Has`, the provider defaults to the remainder plus `Getter` (so `HasName` yields `NameGetter`, component `NameGetterComponent`). Only after that does it hand off to the shared component args conversion. Applying the macro to a non-trait item fails at `parse2::<ItemTrait>`, and a malformed attribute is rejected by the `CgpComponentRawArgs` parser.
+Before building the component, the entry function derives the default provider name specific to getters: if the user gave no provider identifier and the trait name begins with `Has`, the provider defaults to the remainder plus `Getter` (so `HasName` yields `NameGetter`, component `NameGetterComponent`). Only after that does it hand off to the shared component args conversion, so a trait whose name does not start with `Has`, or is exactly `Has`, and that names no provider fails there with "the `provider` key must be given". Applying the macro to a non-trait item fails at `parse2::<ItemTrait>`, and a malformed attribute is rejected by the `CgpComponentRawArgs` parser.
 
 ## Pipeline
 
 The macro runs the entire `#[cgp_component]` pipeline and then a getter-specific emit stage; the getter-side AST types are documented in the [`cgp_getter` AST stack](../asts/cgp_getter.md) and the component stages in the [`cgp_component` AST stack](../asts/cgp_component.md).
 
-- **preprocess → eval** are the `#[cgp_component]` stages unchanged: they strip the CGP modifier attributes off the trait, then derive the provider trait, the two routing blanket impls, and the component marker, producing an `EvaluatedCgpComponent`.
+- **preprocess, then eval** are the `#[cgp_component]` stages unchanged: they strip the CGP modifier attributes off the trait, then derive the provider trait, the two routing blanket impls, and the component marker, producing an `EvaluatedCgpComponent`.
 - **parse getter fields** happens in `ItemCgpGetter::try_from`, which parses each method of the consumer trait into a `GetterField` (its field name, field type, return type, receiver mode, and field mode) and captures an optional single associated return type.
 - **to_items** emits the component's own items first, then appends the three getter provider impls.
 
@@ -26,11 +26,11 @@ The macro runs the entire `#[cgp_component]` pipeline and then a getter-specific
 
 `#[cgp_getter]` emits the five core `#[cgp_component]` items plus the standard `UseContext`/`RedirectLookup` provider impls, and then adds three more provider impls that all read from `HasField`. The reference document shows the full expansion; the point worth understanding here is what distinguishes the three added impls.
 
-- **`UseFields`** implements the getter by reading the field named after the method — the same behavior a `#[cgp_auto_getter]` blanket impl gives, but expressed as a provider a context can wire.
+- **`UseFields`** implements the getter by reading the field named after the method. That is the same behavior a `#[cgp_auto_getter]` blanket impl gives, but expressed as a provider a context can wire.
 - **`UseField<__Tag__>`** implements the getter by reading the field named `__Tag__`, a *free* generic parameter, so wiring `UseField<Symbol!("first_name")>` makes the getter read `first_name` regardless of the method name. This is the whole reason `#[cgp_getter]` exists rather than `#[cgp_auto_getter]`.
 - **`WithProvider<__Provider__>`** implements the getter by delegating to an inner `FieldGetter`/`MutFieldGetter` provider, so the field access itself can be supplied by another provider.
 
-Each of these reads the field through the same getter-method body the auto-getter uses — a `get_field(PhantomData::<Tag>)` call with the field-mode conversion appended. The `UseField` impl keys on `__Tag__`:
+Each of these reads the field through the same getter-method body the auto-getter uses: a `get_field(PhantomData::<Tag>)` call with the field-mode conversion appended. The `UseField` impl keys on `__Tag__`:
 
 ```rust
 // for `fn foo(&self) -> &str` reading a String field
@@ -50,11 +50,15 @@ Every provider-trait impl is paired with a matching `IsProviderFor` impl carryin
 
 **The `UseField` and `WithProvider` impls are only emitted for a single-getter trait.** Both `to_use_field_impl` and `to_with_provider_impl` return `None` when the trait declares more than one getter method, because a per-field tag or per-field inner provider is meaningless once several fields are in play; the `UseFields` impl, keyed by method name, is always emitted.
 
-**A getter can read a field of a type other than the context.** When a method takes a typed receiver rather than `&self` — `fn foo_bar(foo: &Self::Foo) -> &Self::Bar` — the receiver's `Self` is rewritten to the context and the generated impls read the field out of that receiver type instead of the context. The provider impls then bound that receiver type, not the context, with the `HasField` requirement.
+**A getter can read a field of a type other than the context.** When a method takes a typed receiver rather than `&self`, as in `fn foo_bar(foo: &Self::Foo) -> &Self::Bar`, the receiver's `Self` is rewritten to the context and the generated impls read the field out of that receiver type instead of the context. The provider impls then bound that receiver type, not the context, with the `HasField` requirement.
 
 **A single associated return type is supported and inferred from the field.** A getter trait may declare one `type Name;` used as the return type; the associated type is added as an extra generic parameter to each provider impl, set to itself via `type Name = Name;`, and any bound on it (for example `Name: Display`) is carried onto the impl with `Self::Name` rewritten to the parameter. More than one associated type, or an associated type alongside more than one method, is rejected during field parsing.
 
-**The return-type shorthands are shared with the auto-getter.** The `&str`-reads-`String`, `Option<&T>`-reads-`Option<T>`, `&[T]`-reads-`AsRef<[T]>`, `MRef<'_, T>`, and owned-`.clone()` conversions, along with their mutable mirrors under a `&mut self` receiver (`&mut [T]`-reads-`AsMut<[T]>`, `Option<&mut T>` via `.as_mut()`), all come from the shared field-mode parsing, so `#[cgp_getter]` and [`#[cgp_auto_getter]`](cgp_auto_getter.md) treat a given signature identically — they differ only in the items they emit around the shared getter-method body.
+**The return-type shorthands are shared with the auto-getter.** The `&str`-reads-`String`, `Option<&T>`-reads-`Option<T>`, `&[T]`-reads-`AsRef<[T]>`, `MRef<'_, T>`, and owned-`.clone()` conversions, along with their mutable mirrors under a `&mut self` receiver (`&mut [T]`-reads-`AsMut<[T]>`, `Option<&mut T>` via `.as_mut()`, `Option<&mut str>` via `.as_deref_mut()`), all come from the shared field-mode parsing, so `#[cgp_getter]` and [`#[cgp_auto_getter]`](cgp_auto_getter.md) treat a given signature identically. They differ only in the items they emit around the shared getter-method body.
+
+## Known issues
+
+The shared getter-method body has the defect recorded for [`#[cgp_auto_getter]`](cgp_auto_getter.md#known-issues): a `&mut self` getter returning a shared `Option<&T>` or `Option<&str>` fails with `E0308`, because `GetterField` picks the option conversion from the receiver's mutability. It affects the `UseFields`, `UseField`, and `WithProvider` impls alike. The [reference Known issues](../../reference/macros/cgp_getter.md#known-issues) give the workaround.
 
 ## Snapshots
 
@@ -88,7 +92,7 @@ The getter snapshot files also wire concrete contexts and assert the getters res
 
 ## Source
 
-- Entry point: `cgp_getter` in [cgp-macro-lib/src/cgp_getter.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-lib/src/cgp_getter.rs), which derives the `Has…` → `…Getter` default name and reuses the component pipeline.
+- Entry point: `cgp_getter` in [cgp-macro-lib/src/cgp_getter.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-lib/src/cgp_getter.rs), which derives the `…Getter` default name from a `Has…` trait name and reuses the component pipeline.
 - Getter-specific stack: [cgp-macro-core/src/types/cgp_getter/](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-core/src/types/cgp_getter/), documented in [asts/cgp_getter.md](../asts/cgp_getter.md): `item.rs` assembles the items, `to_use_fields_impl.rs`/`use_field.rs`/`with_provider.rs` build the three added provider impls.
 - Component stages it reuses: [cgp-macro-core/src/types/cgp_component/](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-core/src/types/cgp_component/), documented in [asts/cgp_component.md](../asts/cgp_component.md).
 - Getter-method parsing and the return-type shorthands, shared with `#[cgp_auto_getter]`: [cgp-macro-core/src/functions/getter/parse.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/functions/getter/parse.rs) and [cgp-macro-core/src/functions/field/parse.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/functions/field/parse.rs).

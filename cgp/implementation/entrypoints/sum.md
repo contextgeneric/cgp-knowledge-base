@@ -1,6 +1,6 @@
-# `Sum!` — implementation
+# `Sum!`: implementation
 
-`Sum!` is a function-like macro that expands a comma-separated list of types into an `Either`/`Void` chain — the type-level coproduct CGP uses to represent an enum's variants. This document covers how the macro parses its list and emits the chain; for the accepted syntax and the full expansion a user sees, read the reference document [reference/macros/sum.md](../../reference/macros/sum.md).
+`Sum!` is a function-like macro that expands a comma-separated list of types into an `Either`/`Void` chain, the type-level coproduct CGP uses to represent an enum's variants. This document covers how the macro parses its list and emits the chain; for the accepted syntax and the full expansion a user sees, read the reference document [reference/macros/sum.md](../../reference/macros/sum.md).
 
 ## Entry point
 
@@ -30,11 +30,15 @@ The chain is built by folding right-to-left onto `Void`, so an empty `Sum![]` is
 
 ## Behavior and corner cases
 
-The only structural difference from `Product!` is the terminator: a sum folds onto `Void` rather than `Nil`. This is what makes an empty sum uninhabited — `Void` is an empty enum with no values, so an empty choice cannot be constructed, whereas an empty product (`Nil`) is a valid unit-like value. Otherwise the parsing is identical: a trailing comma is accepted through `parse_terminated`, and an empty body is valid.
+The only structural difference from `Product!` is the terminator: a sum folds onto `Void` rather than `Nil`. This is what makes an empty sum uninhabited: `Void` is an empty enum with no values, so an empty choice cannot be constructed, whereas an empty product (`Nil`) is a valid unit-like value. Otherwise the parsing is identical: a trailing comma is accepted through `parse_terminated`, and an empty body is valid.
+
+## Snapshots
+
+`Sum!` has no `snapshot_*!` macro, since it emits a single type. Its chain appears in the goldens of every derived enum variant list.
 
 ## Tests
 
-`Sum!` has no snapshot macro of its own; its expansion is exercised by a dedicated same-type assertion and by the enum field-derive that emits a `Sum!` of `Field<Tag, Value>` branches.
+The expansion is exercised by a dedicated same-type assertion and by the enum field-derive that emits a `Sum!` of `Field<Tag, Value>` branches.
 
 - [extensible_variants/sum_macro.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/sum_macro.rs) writes `Sum![u32, String, bool]` and asserts it is the identical type to the hand-written `Either<u32, Either<String, Either<bool, Void>>>`, pinning the expansion directly, then builds values by nesting `Left`/`Right` to select each branch.
 - [extensible_variants/has_fields_enum.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/has_fields_enum.rs) exercises the `Sum!` variant list an enum derives through `#[derive(HasFields)]`, where each branch is a `Field<Symbol!("Variant"), Payload>`.

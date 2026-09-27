@@ -1,10 +1,10 @@
-# `#[cgp_type]` — implementation
+# `#[cgp_type]`: implementation
 
 `#[cgp_type]` builds an abstract-type component by running the `#[cgp_component]` pipeline over a trait carrying one associated type, then appending the two provider impls (`UseType` and `WithProvider`) that let a context choose the concrete type through wiring. This document covers how that works internally; for the accepted syntax and the full expansion, read the reference document [reference/macros/cgp_type.md](../../reference/macros/cgp_type.md).
 
 ## Entry point
 
-The macro is driven by the `cgp_type` function in [cgp-macro-lib/src/cgp_type.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-lib/src/cgp_type.rs). It follows the canonical entry-point shape but with one preparatory step unique to this macro: after parsing the attribute into `CgpComponentRawArgs` and the item into a `syn::ItemTrait`, it extracts the trait's single associated type and, when the user gave no provider name, defaults `provider_ident` to `{Type}TypeProvider` — keyed off the *associated type's* identifier, not the trait's. It then feeds the args and trait into the shared `#[cgp_component]` pipeline and wraps the result in an `ItemCgpType` for the extra codegen.
+The macro is driven by the `cgp_type` function in [cgp-macro-lib/src/cgp_type.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-lib/src/cgp_type.rs). It follows the canonical entry-point shape but with one preparatory step unique to this macro: after parsing the attribute into `CgpComponentRawArgs` and the item into a `syn::ItemTrait`, it extracts the trait's single associated type and, when the user gave no provider name, defaults `provider_ident` to `{Type}TypeProvider`, keyed off the *associated type's* identifier rather than the trait's. It then feeds the args and trait into the shared `#[cgp_component]` pipeline and wraps the result in an `ItemCgpType` for the extra codegen.
 
 ```rust
 if raw_args.provider_ident.is_none() {
@@ -19,18 +19,18 @@ let item_cgp_type = ItemCgpType { item_component: evaluated };
 let items = item_cgp_type.to_items()?;
 ```
 
-Three failures surface here: a malformed attribute is rejected while parsing `CgpComponentRawArgs`; a non-trait item fails at `syn::parse2::<ItemTrait>`; and a trait whose body is not exactly one plain (non-generic, `where`-free) associated type is rejected by `extract_item_type_from_trait`.
+Three failures surface here: a malformed attribute is rejected while parsing `CgpComponentRawArgs`; a non-trait item fails at `syn::parse2::<ItemTrait>`; and a trait whose body is not exactly one plain (non-generic, `where`-free) associated type is rejected by `extract_item_type_from_trait`, with "type trait should contain exactly one associated type item" or, for a generic or `where`-bounded associated type, "generic associated type and where clause are not supported".
 
 ## Pipeline
 
 `#[cgp_type]` reuses the `#[cgp_component]` pipeline for the component itself and adds a final rendering step of its own. The two shared stages, `preprocess` and `eval`, are exactly the ones documented for the [`cgp_component` entrypoint](cgp_component.md) and are owned by the [`cgp_component` AST stack](../asts/cgp_component.md); this macro does not re-implement them.
 
-- **preprocess → eval** run the standard `#[cgp_component]` derivation over the associated-type trait, producing an `EvaluatedCgpComponent` — the consumer trait, provider trait, both blanket impls, and the component marker.
+- **preprocess → eval** run the standard `#[cgp_component]` derivation over the associated-type trait, producing an `EvaluatedCgpComponent`: the consumer trait, provider trait, both blanket impls, and the component marker.
 - **to_items** is where `#[cgp_type]` diverges: `ItemCgpType::to_items` first calls the evaluated component's own `to_items` (emitting the five core items plus the `UseContext` and `RedirectLookup` provider impls), then appends the `UseType` and `WithProvider` provider impls. The [`cgp_type` AST stack](../asts/cgp_type.md) documents `ItemCgpType`.
 
 ## Generated items
 
-The macro emits the entire `#[cgp_component]` output for the trait — described in the [`cgp_component` entrypoint document](cgp_component.md), except that every blanket impl forwards an *associated type* rather than a method body — followed by two abstract-type provider impls. Each of the two extra impls is paired with a matching `IsProviderFor` impl carrying the same bounds, produced through the shared [`ItemProviderImpl`/`ItemProviderImpls`](../asts/cgp_type.md) machinery.
+The macro emits the entire `#[cgp_component]` output for the trait, followed by two abstract-type provider impls. The component output is the one described in the [`cgp_component` entrypoint document](cgp_component.md), except that every blanket impl forwards an *associated type* rather than a method body. Each of the two extra impls is paired with a matching `IsProviderFor` impl carrying the same bounds, produced through the shared [`ItemProviderImpl`/`ItemProviderImpls`](../asts/cgp_type.md) machinery.
 
 The first extra impl is the `UseType` blanket impl, the heart of the macro. It implements the provider trait for `UseType<Type>` by setting the abstract associated type to the free generic parameter, so wiring a component to `UseType<f64>` supplies `f64` as the type with no bespoke provider:
 
@@ -58,11 +58,11 @@ A **bound on the associated type** is threaded not only into the provider trait 
 
 **Generic parameters** on the trait are handled entirely by the shared component pipeline and then reused: `to_item_provider_impls` clones the provider trait's generics and inserts the associated-type name (and, for `WithProvider`, `__Provider__`) as leading impl parameters, so a `?Sized` or otherwise-bounded parameter carries through onto the extra impls unchanged.
 
-The **provider-name default** is the one behavior `#[cgp_type]` adds ahead of the pipeline: an omitted provider name becomes `{Type}TypeProvider` (from the associated type), where a bare `#[cgp_component]` would instead reject a missing name. A supplied name — `#[cgp_type(ProvideFooType)]` — overrides this exactly as it does for `#[cgp_component]`.
+The **provider-name default** is the one behavior `#[cgp_type]` adds ahead of the pipeline: an omitted provider name becomes `{Type}TypeProvider` (from the associated type), where a bare `#[cgp_component]` would instead reject a missing name with "the `provider` key must be given". A supplied name such as `#[cgp_type(ProvideFooType)]` overrides this exactly as it does for `#[cgp_component]`.
 
 ## Failure modes
 
-One acceptable failure is worth recording because the expansion is what shapes its wording. Naming the abstract type after the trait that bounds it — `type Db: Database` written instead as `type Database: Database` — makes the bound resolve to the associated type being declared rather than to the trait in scope, since a nearer binding wins:
+One acceptable failure is worth recording because the expansion is what shapes its wording. Naming the abstract type after the trait that bounds it (writing `type Database: Database` instead of `type Db: Database`) makes the bound resolve to the associated type being declared rather than to the trait in scope, since a nearer binding wins:
 
 ```rust
 #[cgp_type]
@@ -92,6 +92,10 @@ The behavioral tests confirm the generated wiring and the `UseType` route work:
 - [abstract_types/cgp_type_bounded.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/abstract_types/cgp_type_bounded.rs) wires a context whose abstract type is itself an abstract-type component and checks the bound is enforced.
 - [abstract_types/cgp_type_self_referential.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/abstract_types/cgp_type_self_referential.rs) wires a self-referentially bounded type through `delegate_components!` and passes its check.
 - [abstract_types/cgp_type_unsized.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/abstract_types/cgp_type_unsized.rs) exercises a `?Sized` abstract type together with a dependent getter.
+
+The failure cases pin the inputs `#[cgp_type]` refuses during expansion, each asserting the entrypoint returns `Err`:
+
+- [parser_rejections/cgp_type.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/cgp_type.rs) covers a non-trait item, an empty trait, a trait whose only item is a method, a trait with two associated types, a generic associated type, and an associated type with a `where` clause.
 
 ## Source
 
