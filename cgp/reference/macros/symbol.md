@@ -124,6 +124,12 @@ delegate_components! {
         NameGetterComponent: UseField<Symbol!("first_name")>,
     }
 }
+
+check_components! {
+    Person {
+        NameGetterComponent,
+    }
+}
 ```
 
 So write `Symbol!` by hand when the field name is a wiring decision, with
