@@ -1,16 +1,16 @@
 # `CanRaiseError`
 
-`CanRaiseError<SourceError>` is the consumer trait for turning a concrete source error into a context's abstract `Self::Error`, with the companion `CanWrapError<Detail>` adding detail to an existing abstract error; both build on [`HasErrorType`](has_error_type.md).
+`CanRaiseError<SourceError>` turns a concrete source error into a context's abstract `Self::Error`, and its companion `CanWrapError<Detail>` adds detail to an existing abstract error. Both build on [`HasErrorType`](has_error_type.md).
 
 ## Purpose
 
-`CanRaiseError` exists so that generic CGP code can produce its context's abstract error from any concrete error it encounters. A provider that calls a fallible operation gets back a specific error type — a parse error, an I/O error, a string message — but it must return the context's abstract `Self::Error`, whose concrete identity it does not know. `CanRaiseError<SourceError>` bridges the gap: it converts a value of the concrete `SourceError` into `Self::Error`, so generic code can write `Context::raise_error(source)` and let the context decide how that source maps into its chosen error type. Because the trait is parameterized by `SourceError`, a single context can know how to raise many different source errors into the one abstract error.
+`CanRaiseError` lets generic code produce its context's abstract error from whatever concrete error it meets. A provider that calls a fallible operation gets back a specific error, such as a parse error, an I/O error, or a message string, but it must return `Self::Error`, whose concrete type it does not know. `Context::raise_error(source)` converts the source error, and the context decides how. Because the trait is generic over `SourceError`, one context can raise many unrelated source errors into its one abstract error.
 
-`CanWrapError` solves the complementary problem of enriching an error as it propagates. Rather than converting a foreign error in, it takes an error the context already holds and attaches a piece of `Detail` to it — a context message, a span, a path — producing an enriched `Self::Error`. The two together cover the common error-handling motions in CGP: raise a foreign error into the abstract one, and wrap context onto it as it bubbles up.
+`CanWrapError` enriches an error as it propagates. It takes an error the context already holds and attaches a `Detail`, such as a message, a span, or a path. Together the two traits cover the common motions: raise a foreign error into the abstract one, then wrap context onto it on the way up.
 
 ## Definition
 
-Both traits import the context's shared abstract error type with [`#[use_type(HasErrorType.Error)]`](../attributes/use_type.md), so a bare `Error` in either signature stands for the context's error rather than being written as `Self::Error`. Each is a `#[cgp_component]`, making it a full component with a generated provider trait. `CanRaiseError` converts a source error into the abstract error:
+Both traits are `#[cgp_component]`s that import the abstract error with [`#[use_type(HasErrorType.Error)]`](../attributes/use_type.md), which adds `HasErrorType` as a supertrait and lets the signatures write a bare `Error` for `<Self as HasErrorType>::Error`:
 
 ```rust
 #[cgp_component(ErrorRaiser)]
@@ -21,13 +21,7 @@ pub trait CanRaiseError<SourceError> {
     #[track_caller]
     fn raise_error(error: SourceError) -> Error;
 }
-```
 
-The `SourceError` parameter is the concrete error being raised, and `raise_error` is an associated function — it takes the source error by value and returns the abstract `Error`, without needing a `self` receiver, because raising an error is a property of the context type rather than of any particular value. `#[use_type(HasErrorType.Error)]` adds `HasErrorType` as a supertrait and rewrites the bare `Error` to `<Self as HasErrorType>::Error`. The `#[cgp_component(ErrorRaiser)]` attribute names the provider trait `ErrorRaiser`, and [`#[derive_delegate(UseDelegate<SourceError>)]`](../attributes/derive_delegate.md) wires `UseDelegate` so the raise behavior can be dispatched per source-error type through a delegation table — a context can handle each `SourceError` with a different provider.
-
-`CanWrapError` has the same shape but takes an existing error plus a detail:
-
-```rust
 #[cgp_component(ErrorWrapper)]
 #[prefix(@cgp.core.error in DefaultNamespace)]
 #[derive_delegate(UseDelegate<Detail>)]
@@ -38,19 +32,29 @@ pub trait CanWrapError<Detail> {
 }
 ```
 
-Here `wrap_error` takes the context's current `Error` and a `Detail` value and returns a new `Error` with the detail folded in. Its provider trait is `ErrorWrapper`, and it delegates per `Detail` type, so wrapping a string message and wrapping a structured detail can be handled by different providers.
+The two traits share one shape:
+
+- **The methods are associated functions**, with no `self` receiver, because building an error depends on the context type, not on a context value. Generic code calls `Context::raise_error(source)` or `Self::wrap_error(error, detail)` where only the type parameter is in scope.
+- **The provider traits are `ErrorRaiser` and `ErrorWrapper`**, wired with the keys `ErrorRaiserComponent` and `ErrorWrapperComponent`.
+- **[`#[derive_delegate(UseDelegate<...>)]`](../attributes/derive_delegate.md)** generates the `UseDelegate` impl for the legacy delegation table that picks a provider per `SourceError` or per `Detail`.
+- **[`#[prefix(@cgp.core.error in DefaultNamespace)]`](../attributes/prefix.md)** registers both components in `DefaultNamespace` under `@cgp.core.error`.
+
+`CanRaiseError` and `CanWrapError` are in the prelude. The provider traits and component keys are not, and are imported from `cgp::core::error`.
 
 ## Behavior
 
-A context gains these operations by wiring `ErrorRaiserComponent` and `ErrorWrapperComponent` to providers, exactly as for any other component. Because both traits delegate through `UseDelegate<SourceError>` and `UseDelegate<Detail>`, the natural wiring is a delegation table that maps each concrete source-error or detail type to a provider that knows how to handle it; a context can therefore raise a handful of unrelated error types into one abstract error, each through its own provider. The pluggable [error backends](../../../projects/error/README.md) (`cgp-error-anyhow`, `cgp-error-eyre`, `cgp-error-std`) supply providers that implement these traits for common cases, so an application usually wires a backend rather than writing the raise and wrap logic itself.
+A context gains these operations by wiring `ErrorRaiserComponent` and `ErrorWrapperComponent` to providers. Most contexts wire ready-made ones rather than writing their own:
 
-Both methods are declared `#[track_caller]`. Rust applies the attribute on a trait method declaration to every impl of that method, and `#[cgp_component]` copies it onto the provider trait's declaration, so it reaches the consumer blanket impl, the delegation blanket impl, the `UseDelegate` and `RedirectLookup` impls, and every provider. An error library that records `Location::caller()` when it builds an error, such as eyre with its `track-caller` feature, therefore records the line that called `raise_error` rather than a line inside the provider, whether the context wires the component directly, with `open`, or through a namespace path. The location survives only while every call between the caller and the library is `#[track_caller]`: `Into::into` and eyre's constructors are, but a helper function the provider calls needs the attribute too, or the library records the helper's line.
+- **The [error backends](../../../projects/error/README.md)** `cgp-error-anyhow`, `cgp-error-eyre`, and `cgp-error-std` provide raisers and wrappers for their concrete error types, such as `RaiseAnyhowError`.
+- **The [in-tree error providers](../providers/error_providers.md)** in `cgp-error-extra` capture strategies independent of the error type, such as `RaiseFrom`, which converts with `Into`.
 
-Both traits being associated-function components means `raise_error` and `wrap_error` are called on the context *type* — `Context::raise_error(source)` — and produce the abstract error without borrowing the context value. This matches how errors are typically constructed deep inside generic code where only the type parameter is in scope.
+Different source errors often need different providers, and a context dispatches on the source type in either of two ways. The recommended form is `open ErrorRaiserComponent;` followed by one entry per source type, such as `@ErrorRaiserComponent.String: DisplayEyreError`. The legacy form is a `UseDelegate` table keyed by source type. A context that joins `DefaultNamespace` writes the same entries under the prefix, as `@cgp.core.error.ErrorRaiserComponent.io::Error: RaiseEyreError`.
+
+Both methods are `#[track_caller]`, and the attribute survives every layer of CGP forwarding. Rust applies `#[track_caller]` on a trait method declaration to every impl of that method, and `#[cgp_component]` keeps it on the provider trait's declaration. It therefore covers the consumer blanket impl, the delegation impl, the `UseDelegate` and `RedirectLookup` impls, and every provider. An error library that records `Location::caller()`, such as eyre with its `track-caller` feature, records the line that called `raise_error`, whether the component is wired directly, with `open`, or through a namespace path. The location survives only while every call between the caller and the library is `#[track_caller]`. `Into::into` and eyre's constructors are, but a helper function inside a provider needs the attribute too, or the library records the helper's line.
 
 ## Examples
 
-A provider raises a concrete error into the abstract one and wraps a message onto it as it propagates:
+A provider raises a message into the abstract error and wraps context onto it:
 
 ```rust
 use cgp::prelude::*;
@@ -75,11 +79,16 @@ impl Loader {
 }
 ```
 
-The provider names neither the context nor its concrete error type. It requires `CanRaiseError<String>` to turn a `String` message into the abstract error and `CanWrapError<String>` to attach further context, and any wired context that satisfies those bounds — typically by plugging in an error backend — makes `load` produce errors in that context's chosen error type.
+The provider names neither the context nor its error type. It requires `CanRaiseError<String>` to turn a message into the abstract error and `CanWrapError<String>` to attach context. Any context that meets both bounds, typically by wiring an error backend, makes `load` fail with that context's own error type.
 
 ## Related constructs
 
-`CanRaiseError` and `CanWrapError` both supertrait [`HasErrorType`](has_error_type.md), whose abstract `Self::Error` they produce and enrich. Their delegation is configured by [`#[derive_delegate(UseDelegate<...>)]`](../attributes/derive_delegate.md), so a context dispatches per source-error or detail type through a delegation table. Both are ordinary `#[cgp_component]` components, wired with `delegate_components!` and checked with `check_components!`. The [modular error handling](../../concepts/modular-error-handling.md) concept frames how these components, the abstract error type, and the strategy providers combine into wiring-time error-handling decisions.
+These constructs are the ones `CanRaiseError` and `CanWrapError` work with:
+
+- [`HasErrorType`](has_error_type.md) — the supertrait whose abstract `Error` they produce and enrich.
+- [`#[derive_delegate]`](../attributes/derive_delegate.md) and [`delegate_components!`](../macros/delegate_components.md) — the legacy and the `open` forms of per-type dispatch.
+- [In-tree error providers](../providers/error_providers.md) and the [error backends](../../../projects/error/README.md) — ready-made providers.
+- [Modular error handling](../../concepts/modular-error-handling.md) — how these components combine into CGP's error strategy.
 
 ## Source
 

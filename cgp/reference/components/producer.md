@@ -1,16 +1,16 @@
 # `Producer`
 
-`Producer` is the no-input member of the [handler family](../../concepts/handlers.md): a synchronous, infallible component that produces an `Output` from the context and a phantom `Code` tag alone, with no `Input`.
+`Producer` is the no-input member of the [handler family](../../concepts/handlers.md): a synchronous, infallible component that produces an `Output` from the context and a phantom `Code` tag alone.
 
 ## Purpose
 
-`Producer` exists for computations that take nothing to compute and simply yield a value. A handler that supplies a default configuration, a constant, or a value read entirely from the context has no `Input` to transform — it only needs the context and a `Code` tag to know which value to produce. The rest of the handler family threads an `Input` through every method; `Producer` is the degenerate case where that input is absent. It is the simplest component in the family: synchronous, infallible, and inputless, producing an `Output` directly.
+`Producer` is for computations that take no input and yield a value, such as a default configuration, a constant, or a value read entirely from the context. The rest of the family threads an `Input` through every method; `Producer` is the case where that input is absent. It is the simplest member: synchronous, infallible, and inputless.
 
-Being inputless does not isolate `Producer` from the family — it makes it the natural source of values that flow into the other handlers. A producer can be promoted into any computer or handler by ignoring whatever input that variant supplies and returning the produced value regardless. This is exactly how a constant or a context-derived value enters a computation pipeline: it is produced once, independent of the input, and the promotion machinery adapts it to the input-taking shape the pipeline expects.
+A producer still feeds the rest of the family. Promotion turns it into any computer or handler by ignoring the input that member supplies, which is how a constant or a context-derived value enters a pipeline of input-taking handlers.
 
 ## Definition
 
-`Producer` is a CGP component defined with `#[cgp_component]`, and its consumer trait `CanProduce` differs from the rest of the family only in carrying no `Input` parameter:
+`Producer` is a `#[cgp_component]` whose consumer trait `CanProduce` has no `Input` parameter:
 
 ```rust
 #[cgp_component(Producer)]
@@ -23,11 +23,17 @@ pub trait CanProduce<Code> {
 }
 ```
 
-The consumer trait `CanProduce<Code>` takes only a `Code` tag, not an `Input`. Its `produce` method takes `&self` (the context) and a `PhantomData<Code>` naming which value to produce, returning the associated `Output`. The component is wired through the generated `ProducerComponent` marker, and the macro generates the provider trait `Producer<Context, Code>` with the context moved into an explicit first parameter. Because there is no input to dispatch on, `Producer` carries only the single `#[derive_delegate(UseDelegate<Code>)]` attribute — dispatch is on the `Code` tag alone, with no `UseInputDelegate` counterpart. Like the rest of the handler family it also carries `#[prefix(@cgp.extra.handler in DefaultNamespace)]`, registering it into that namespace path. `Producer` does not supertrait `HasErrorType`: like `Computer`, it is infallible and synchronous, returning its `Output` directly rather than a `Result`.
+The parts are these:
+
+- **`produce`** takes the context as `&self` and a `PhantomData<Code>` naming which value to produce, and returns the associated `Output`. The provider trait is `Producer<Context, Code>`, wired with `ProducerComponent`.
+- **`#[derive_delegate(UseDelegate<Code>)]`** generates the `UseDelegate` impl for the legacy table that dispatches on `Code`. There is no `UseInputDelegate`, since there is no input.
+- **`#[prefix(@cgp.extra.handler in DefaultNamespace)]`** registers the component under `@cgp.extra.handler`, like the rest of the family.
+
+`Producer` does not import `HasErrorType`, because it cannot fail. The prelude exports `Producer` and `ProducerComponent`; the consumer trait `CanProduce` is imported from `cgp::extra::handler`.
 
 ## Implementations
 
-A `Producer` provider is a zero-sized struct implementing the provider trait for a generic context, choosing the `Output` it yields. A producer that ignores the context and returns a constant has the minimal shape:
+A `Producer` provider implements the provider trait for a generic context and chooses its `Output`. A constant producer has the minimal shape:
 
 ```rust
 #[cgp_new_provider]
@@ -40,16 +46,18 @@ impl<Context, Code> Producer<Context, Code> for MagicNumber {
 }
 ```
 
-A producer is promoted into every other handler component by discarding the input that the target variant supplies and returning the produced value unchanged. The `Promote` combinator lifts a `Producer` into a [`Computer`](computer.md): the resulting computer takes an input, ignores it, and returns `Producer::produce(context, code)`. From there the rest of the promotion lattice carries the value up to the fallible, async, and by-reference variants. The bundled `PromoteProducer` table wires every other handler component to the appropriate promoter, so delegating a context's whole handler surface to `PromoteProducer<Self>` makes one producer answer `CanCompute`, `CanTryCompute`, `CanComputeAsync`, `CanHandle`, and their `Ref` forms. These combinators are documented in [handler combinators](../providers/handler_combinators.md).
+Promotion lifts a producer into the input-taking members. `Promote<P>` makes a [`Computer`](computer.md) from a producer: it accepts an input of any type, ignores it, and returns `P::produce(context, code)`. The `PromoteProducer<P>` bundle wires `ComputerComponent` to `Promote<P>` and every other handler component to `PromoteComputer<P>`, which derives them from that computer. Because the promoted computer accepts any input type, including a borrow, the `…Ref` members work too.
+
+Like the other bundles, `PromoteProducer<P>` expects `P` to be wired to the bundle itself, as [`#[cgp_producer]`](../macros/cgp_producer.md) wires its provider to `PromoteProducer<Self>`. Its `ComputerComponent` entry works for any producer, but its fallible and async entries reach `P` through the other components and fail if `P` answers only `Producer`. The promotions are documented in [handler combinators](../providers/handler_combinators.md).
 
 ## Examples
 
-A producer wired into a context, then invoked both directly and as an input-ignoring computer, illustrates how it joins the rest of the family:
+A context wires a producer and calls it:
 
 ```rust
 use core::marker::PhantomData;
 use cgp::prelude::*;
-use cgp::extra::handler::{CanProduce, Producer, ProducerComponent};
+use cgp::extra::handler::CanProduce;
 
 #[cgp_new_provider]
 impl<Context, Code> Producer<Context, Code> for MagicNumber {
@@ -69,15 +77,20 @@ delegate_components! {
 }
 
 fn run(app: &App) -> u64 {
-    app.produce(PhantomData::<()>) // returns 42
+    app.produce(PhantomData::<()>)
 }
 ```
 
-Here `MagicNumber` produces `42` from the `Code` tag alone, and `App` delegates `ProducerComponent` to it, giving `App` the `CanProduce<(), Output = u64>` implementation. The [`#[cgp_producer]`](../macros/cgp_producer.md) macro turns a plain zero-argument function such as `fn magic_number() -> u64 { 42 }` into exactly this provider, and additionally wires `PromoteProducer<Self>` so the same function also answers the input-taking components — `MagicNumber::compute(&app, code, &input)` then returns `42` while ignoring `input`.
+`App` delegates `ProducerComponent` to `MagicNumber`, so it implements `CanProduce<(), Output = u64>` and `run` returns `42`. The [`#[cgp_producer]`](../macros/cgp_producer.md) macro writes this provider from `fn magic_number() -> u64 { 42 }` and also wires `PromoteProducer<Self>`, so the generated `MagicNumber` answers `compute`, `compute_ref`, and the rest of the family with `42`, whatever input it is given.
 
 ## Related constructs
 
-`Producer` is the no-input member of the [handler family](../../concepts/handlers.md), where the broader `Code`/`Input`/`Output` model and its axes are explained. Its input-taking counterparts are [`Computer`](computer.md) for the synchronous infallible case, [`TryComputer`](try_computer.md) for the fallible case, and [`Handler`](handler.md) for the general async-and-fallible case; a producer promotes into any of them by ignoring the supplied input. The combinators that perform those promotions, including the `Promote` provider and the `PromoteProducer` table, are documented in [handler combinators](../providers/handler_combinators.md). The macro that generates a producer from a zero-argument function is [`#[cgp_producer]`](../macros/cgp_producer.md), and dispatching a producer on its `Code` tag uses [`UseDelegate`](../providers/use_delegate.md), per [dispatching](../../concepts/dispatching.md).
+These constructs are the ones `Producer` works with:
+
+- [`Computer`](computer.md), [`TryComputer`](try_computer.md), and [`Handler`](handler.md) — the input-taking members a producer promotes into, in the [handler family](../../concepts/handlers.md).
+- [Handler combinators](../providers/handler_combinators.md) — `Promote` and the `PromoteProducer` bundle.
+- [`#[cgp_producer]`](../macros/cgp_producer.md) — builds a producer from a zero-argument function.
+- [`delegate_components!`](../macros/delegate_components.md) — its `open` statement dispatches on `Code`, replacing the legacy [`UseDelegate`](../providers/use_delegate.md) table described in [dispatching](../../concepts/dispatching.md).
 
 ## Source
 

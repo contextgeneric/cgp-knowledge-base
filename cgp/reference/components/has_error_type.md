@@ -1,16 +1,16 @@
 # `HasErrorType`
 
-`HasErrorType` is the abstract-type component that gives a context a single, shared abstract `Error` type, decoupling CGP code from any concrete error implementation, with `ErrorOf<Context>` as the alias for the resolved type.
+`HasErrorType` is the abstract-type component that gives a context one shared abstract `Error` type, so CGP code can fail without naming a concrete error type. `ErrorOf<Context>` is the alias for the resolved type.
 
 ## Purpose
 
-`HasErrorType` exists so that generic CGP code can fail without naming a concrete error type. A provider that may error needs to produce *some* error, but it is generic over the context and cannot commit to `anyhow::Error`, `std::io::Error`, or any other concrete choice; that choice belongs to the application assembling the context. `HasErrorType` resolves this by giving the context one abstract `Self::Error` type that every fallible operation refers to. Generic code returns `Result<T, Self::Error>` (or `ErrorOf<Context>`), and the concrete error type is decided once, at wiring time, by whichever error backend the context plugs in.
+`HasErrorType` lets generic code return errors while the application chooses the error type. A provider that can fail must produce some error, but it is generic over the context and cannot commit to `anyhow::Error`, `std::io::Error`, or any other concrete type. Generic code therefore returns `Result<T, Self::Error>`, or `ErrorOf<Context>`, and the context decides the concrete type once, when it is wired.
 
-Centralizing the error type on one trait also avoids ambiguity. If each context trait declared its own associated `Error`, a context bounded by several of them would face multiple distinct `Self::Error` types with no way to unify them. By having context traits supertrait `HasErrorType`, every fallible component refers to the *same* `Self::Error`, so errors compose across components. This single shared abstract error is the anchor that [`CanRaiseError`](can_raise_error.md) and [`CanWrapError`](can_raise_error.md) build on.
+Putting the error type on one trait is what lets errors compose across components. If each trait declared its own associated `Error`, a context bounded by several of them would have several unrelated error types. Instead every fallible trait imports the same `HasErrorType::Error`, so all of them agree on one type. [`CanRaiseError` and `CanWrapError`](can_raise_error.md) build on this shared type.
 
 ## Definition
 
-`HasErrorType` is an abstract-type component: a trait with one associated type, defined with [`#[cgp_type]`](../macros/cgp_type.md). Its source is:
+`HasErrorType` is defined with [`#[cgp_type]`](../macros/cgp_type.md):
 
 ```rust
 #[cgp_type]
@@ -22,22 +22,32 @@ pub trait HasErrorType {
 pub type ErrorOf<Context> = <Context as HasErrorType>::Error;
 ```
 
-The associated `Error` type is the context's abstract error, and its `Debug` bound is required so that `Self::Error` can be used in `.unwrap()` calls and in straightforward error logging without a separate constraint. The `ErrorOf<Context>` alias is the convenient spelling of `<Context as HasErrorType>::Error`, used wherever writing the full associated-type path would be noise.
+The parts are these:
 
-Because the trait is declared with `#[cgp_type]`, it is a full abstract-type component rather than a plain trait: the macro generates a provider trait (`ErrorTypeProvider`), the component marker, the consumer and provider blanket impls, and a [`UseType`](../providers/use_type.md) blanket impl. The `Debug` bound on `Error` is carried through every generated construct, so any concrete error wired in must implement `Debug`. The `#[prefix(...)]` attribute places the generated names in the error namespace.
+- **`Error`** is the context's abstract error. Its `Debug` bound lets generic code call `.unwrap()` and log errors without adding a constraint, and every concrete error wired in must implement `Debug`.
+- **`#[cgp_type]`** makes the trait a full abstract-type component. It generates the provider trait `ErrorTypeProvider`, the key `ErrorTypeProviderComponent`, the blanket impls, and a [`UseType`](../providers/use_type.md) impl, all carrying the `Debug` bound.
+- **[`#[prefix(@cgp.core.error in DefaultNamespace)]`](../attributes/prefix.md)** registers the component in `DefaultNamespace` under the path `@cgp.core.error`, so a context that joins that namespace can bind the error type at `@cgp.core.error.ErrorTypeProviderComponent`.
+- **`ErrorOf<Context>`** is the short spelling of `<Context as HasErrorType>::Error`.
+
+`HasErrorType` is in the prelude. `ErrorOf`, `ErrorTypeProvider`, and `ErrorTypeProviderComponent` are not, and are imported from `cgp::core::error`.
 
 ## Behavior
 
-A context obtains its abstract error type either by implementing `HasErrorType` directly — `impl HasErrorType for App { type Error = anyhow::Error; }` — or, more commonly, by wiring its error-type component to a provider. Because `#[cgp_type]` generates the `UseType` impl, a context can name the concrete error type directly in its wiring with `UseType<E>`, and the standalone [error backends](../../../projects/error/README.md) (the `cgp-error-anyhow`, `cgp-error-eyre`, and `cgp-error-std` crates) provide ready-made providers that set `Error` to their respective error types. Once the context has `HasErrorType`, every component bounded by it shares that one `Self::Error`.
+A context sets its error type in one of three ways:
 
-`HasErrorType` carries no methods of its own — it only declares the type. The behavior of producing errors lives in the traits that supertrait it: [`CanRaiseError`](can_raise_error.md) converts a source error into `Self::Error`, and [`CanWrapError`](can_raise_error.md) adds detail to an existing `Self::Error`. This separation keeps the type declaration independent of any particular way of constructing the error.
+- **Implement the trait directly**, as in `impl HasErrorType for App { type Error = anyhow::Error; }`.
+- **Wire `UseType<E>`**, as in `ErrorTypeProviderComponent: UseType<anyhow::Error>`, which the generated `UseType` impl supports.
+- **Wire a backend provider** from the [error backends](../../../projects/error/README.md). `cgp-error-anyhow`, `cgp-error-eyre`, and `cgp-error-std` each provide a provider for this component, such as `UseAnyhowError`, that sets `Error` to the backend's type.
+
+`HasErrorType` has no methods; it only declares the type. Constructing errors belongs to the traits that import it: [`CanRaiseError`](can_raise_error.md) converts a source error into `Self::Error`, and [`CanWrapError`](can_raise_error.md) adds detail to an existing one. Keeping the declaration apart from construction lets a context choose its error type and its raising strategy independently.
 
 ## Examples
 
-A context declares its abstract error and generic code returns it without naming a concrete type:
+A component imports the abstract error, and a context fixes it to `String`:
 
 ```rust
 use cgp::prelude::*;
+use cgp::core::error::ErrorTypeProviderComponent;
 
 #[cgp_component(Validator)]
 #[use_type(HasErrorType.Error)]
@@ -54,7 +64,7 @@ delegate_components! {
 }
 ```
 
-Here [`#[use_type(HasErrorType.Error)]`](../attributes/use_type.md) adds `HasErrorType` as a supertrait of `CanValidate` and rewrites the bare `Error` to `<Self as HasErrorType>::Error`, so `validate` returns the context's shared abstract error without writing `Self::Error`. `App` wires its error-type component to `UseType<String>`, fixing that error to `String` (which satisfies the `Debug` bound). The same abstract error can equally be implemented directly:
+[`#[use_type(HasErrorType.Error)]`](../attributes/use_type.md) adds `HasErrorType` as a supertrait of `CanValidate` and rewrites the bare `Error` to `<Self as HasErrorType>::Error`. `App` wires the error type to `String`, which satisfies the `Debug` bound. The same choice can be written as a direct impl:
 
 ```rust
 impl HasErrorType for App {
@@ -62,11 +72,15 @@ impl HasErrorType for App {
 }
 ```
 
-This direct form makes plain that `HasErrorType` is an ordinary trait with a `Debug`-bounded associated type.
-
 ## Related constructs
 
-`HasErrorType` is defined with [`#[cgp_type]`](../macros/cgp_type.md), which makes it an abstract-type component and generates its `UseType` provider; it is therefore a concrete instance of the [`HasType`/`TypeProvider`](has_type.md) machinery that `#[cgp_type]` builds every abstract type on. The traits that give the abstract error its behavior are [`CanRaiseError`](can_raise_error.md), which raises a source error into `Self::Error`, and [`CanWrapError`](can_raise_error.md), which wraps additional detail onto it — both supertrait `HasErrorType`. The [modular error handling](../../concepts/modular-error-handling.md) concept ties this trait together with those components and the providers that satisfy them into the wider error-handling strategy.
+These constructs are the ones `HasErrorType` works with:
+
+- [`#[cgp_type]`](../macros/cgp_type.md) — defines it and generates its `UseType` impl.
+- [`CanRaiseError` and `CanWrapError`](can_raise_error.md) — construct and enrich the abstract error.
+- [`HasType`](has_type.md) — the tag-indexed abstract-type component whose `TypeProvider`s can also back this one through the generated `WithProvider` impl.
+- [Error providers](../providers/error_providers.md) and the [error backends](../../../projects/error/README.md) — ready-made providers.
+- [Modular error handling](../../concepts/modular-error-handling.md) — how these pieces form CGP's error strategy.
 
 ## Source
 

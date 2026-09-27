@@ -1,16 +1,16 @@
 # `HasType`
 
-`HasType<Tag>` is CGP's single built-in abstract-type component: a consumer trait that gives a context an abstract type named by a tag, with `TypeProvider` as its provider trait and `TypeOf<Context, Tag>` as the alias for the resolved type.
+`HasType<Tag>` is CGP's built-in abstract-type component: it gives a context one abstract type per tag, with `TypeProvider` as its provider trait and `TypeOf<Context, Tag>` as the alias for the resolved type.
 
 ## Purpose
 
-`HasType` exists to let generic code refer to a type that is chosen per context without committing to a concrete one. An abstract type in CGP is a trait with a single associated type, and `HasType<Tag>` is the foundational, tag-indexed instance of that pattern: a context can carry many distinct abstract types — one per `Tag` — and resolve each to a concrete type through wiring. Generic code names `Self::Type` (or `TypeOf<Context, Tag>`), the concrete type stays hidden behind the tag, and any context that wires the tag to a type satisfies the bound. See [abstract types](../../concepts/abstract-types.md) for how this generalizes across a codebase.
+`HasType<Tag>` lets generic code name a type that each context chooses. It is an abstract type indexed by a tag: a context can carry one abstract type per `Tag`, and wiring resolves each to a concrete type. Generic code writes `<Self as HasType<Tag>>::Type`, or `TypeOf<Context, Tag>`, and never names the concrete type. See [abstract types](../../concepts/abstract-types.md) for how abstract types are used across a codebase.
 
-What makes `HasType` special is that it is the *only* abstract-type component built into CGP, and it is the machinery that [`#[cgp_type]`](../macros/cgp_type.md) defers to. Every named abstract-type component a user defines with `#[cgp_type]` is wired on top of this one through a generated `WithProvider` impl, so the same [`UseType<T>`](../providers/use_type.md) marker that resolves `HasType` also resolves any `#[cgp_type]` component. `HasType` is the common substrate; `#[cgp_type]` is the ergonomic layer that gives each abstract type its own named trait.
+It is the only abstract-type component built into CGP, but most code defines named abstract types with [`#[cgp_type]`](../macros/cgp_type.md) instead. A named trait such as `HasScalarType` reads better than `HasType<ScalarTag>` and has its own component key. The two meet at the provider level: `#[cgp_type]` generates a `WithProvider` impl that lets any `TypeProvider` back the named component, so a provider written once for `HasType` also serves every `#[cgp_type]` trait.
 
 ## Definition
 
-`HasType<Tag>` is declared with `#[cgp_component]`, which makes it a full component — a consumer trait paired with a generated provider trait — rather than a plain trait. Its source is the entire definition:
+`HasType<Tag>` is a `#[cgp_component]` whose whole source is:
 
 ```rust
 #[cgp_component(TypeProvider)]
@@ -22,36 +22,55 @@ pub trait HasType<Tag> {
 pub type TypeOf<Context, Tag> = <Context as HasType<Tag>>::Type;
 ```
 
-The `Tag` parameter is the type-level name that distinguishes one abstract type from another within the same context, and `Type` is the associated type it resolves to. The `#[cgp_component(TypeProvider)]` attribute names the provider trait `TypeProvider`, so the provider-side mirror of `HasType<Tag>` is `TypeProvider<Context, Tag>` with a `type Type`. The [`#[derive_delegate(UseDelegate<Tag>)]`](../attributes/derive_delegate.md) attribute wires `UseDelegate` so a type lookup can be dispatched per tag through a delegation table. The `TypeOf<Context, Tag>` alias is the convenient spelling of the resolved type, used wherever writing `<Context as HasType<Tag>>::Type` in full would be noise.
+The parts are these:
+
+- **`Tag`** is the type-level name that tells one abstract type from another in the same context.
+- **`Type`** is the concrete type the tag resolves to.
+- **`TypeProvider<Context, Tag>`** is the provider trait, named by `#[cgp_component(TypeProvider)]`, and `TypeProviderComponent` is its component key.
+- **[`#[derive_delegate(UseDelegate<Tag>)]`](../attributes/derive_delegate.md)** generates the `UseDelegate` impl for the legacy per-tag delegation table.
+- **`TypeOf<Context, Tag>`** is the short spelling of the resolved type.
+
+None of these names except `HasType` and `TypeProvider` is in the prelude. `TypeProviderComponent` and `TypeOf` are imported from `cgp::core::types`.
 
 ## Behavior
 
-Because `HasType` is a `#[cgp_component]`, it carries the standard component machinery: a consumer blanket impl that forwards `HasType<Tag>` to whatever provider the context wires for `TypeProviderComponent`, the generated `TypeProvider` provider trait, and the usual `UseContext` and `RedirectLookup` provider impls. A context obtains an abstract type either by implementing `HasType<Tag>` directly or, more commonly, by wiring `TypeProviderComponent` to a provider in `delegate_components!`.
+A context gets an abstract type by implementing `HasType<Tag>` directly or by wiring `TypeProviderComponent` to a provider. As a `#[cgp_component]`, `HasType` has the standard machinery: a consumer blanket impl that forwards to the wired provider, and the `UseContext` and `RedirectLookup` provider impls.
 
-The provider that makes wiring ergonomic is [`UseType`](../providers/use_type.md), a zero-sized marker `UseType<Type>(PhantomData<Type>)` that carries no runtime value. It implements `TypeProvider` for any context and tag by setting the abstract type to its own parameter:
+The usual provider is [`UseType<Type>`](../providers/use_type.md), a zero-sized marker that sets the abstract type to its own parameter for any context and any tag:
 
 ```rust
+#[cgp_provider(TypeProviderComponent)]
 impl<Context, Tag, Type> TypeProvider<Context, Tag> for UseType<Type> {
     type Type = Type;
 }
 ```
 
-This single impl is what lets a context name a concrete type in its wiring rather than write a bespoke provider. Wiring `TypeProviderComponent: UseType<String>` makes the context resolve `HasType<Tag>` to `Type = String` for that tag. The same `UseType<T>` is reused by every `#[cgp_type]` component: `#[cgp_type]` generates a `WithProvider` impl whose `where` clause requires the wired provider to be a `TypeProvider`, so `UseType<T>` — being a `TypeProvider` — satisfies both the built-in `HasType` and any user-defined abstract-type component at once. The [`#[use_type]`](../attributes/use_type.md) attribute is the related but distinct construct that rewrites bare type names and adds `HasType` bounds inside `#[cgp_fn]`/`#[cgp_impl]` definitions; it is an attribute, not this provider.
+Because the impl ignores the tag, a single `TypeProviderComponent: UseType<T>` entry answers every tag with the same `T`. To give different tags different types, dispatch on the tag:
+
+- **With `open`**, the recommended form, write `open TypeProviderComponent;` and then one entry per tag, such as `@TypeProviderComponent.ScalarTag: UseType<f64>`.
+- **With a delegation table**, the legacy form, wire `TypeProviderComponent` to `UseDelegate<Table>`, whose table maps each tag to a provider such as `UseType<f64>`, or to [`UseDelegatedType<Table>`](../providers/use_delegated_type.md), whose table maps each tag straight to its type.
+
+Do not confuse the `UseType` provider with the [`#[use_type]`](../attributes/use_type.md) attribute. The attribute rewrites bare type names inside a definition and adds a bound on the abstract-type trait it names, such as `HasScalarType`.
 
 ## Examples
 
-A direct use defines no new component and resolves an abstract type by tag through `UseType`:
+This context resolves two tags to two types through `open`:
 
 ```rust
 use cgp::prelude::*;
+use cgp::core::types::{TypeOf, TypeProviderComponent};
 
 pub struct ScalarTag;
+pub struct NameTag;
 
 pub struct App;
 
 delegate_components! {
     App {
-        TypeProviderComponent: UseType<f64>,
+        open TypeProviderComponent;
+
+        @TypeProviderComponent.ScalarTag: UseType<f64>,
+        @TypeProviderComponent.NameTag: UseType<String>,
     }
 }
 
@@ -64,11 +83,19 @@ where
 }
 ```
 
-`App` wires `TypeProviderComponent` to `UseType<f64>`, so the `UseType` impl makes `App` implement `HasType<ScalarTag>` with `Type = f64`. In most code you would not use `HasType<Tag>` directly; you would define a named abstract type with [`#[cgp_type]`](../macros/cgp_type.md) — `#[cgp_type] trait HasScalarType { type Scalar; }` — which gives a readable `Self::Scalar` and its own provider, all resolving down to this `HasType` substrate.
+`App` implements `HasType<ScalarTag>` with `Type = f64` and `HasType<NameTag>` with `Type = String`, so `zero::<App>()` returns `0.0`. With the single entry `TypeProviderComponent: UseType<f64>` instead, both tags would resolve to `f64`.
+
+In most code the same need is met by a named abstract type, `#[cgp_type] pub trait HasScalarType { type Scalar; }`, which gives the readable `Self::Scalar` and its own component key.
 
 ## Related constructs
 
-`HasType` is the foundation that [`#[cgp_type]`](../macros/cgp_type.md) builds every named abstract-type component on, via a generated `WithProvider` impl that adapts a `TypeProvider`. Its ergonomic provider is [`UseType`](../providers/use_type.md), the zero-sized marker that supplies a concrete type to the abstract one — not to be confused with the [`#[use_type]`](../attributes/use_type.md) attribute, which rewrites type names in definitions. The general idea of context-chosen types is covered in [abstract types](../../concepts/abstract-types.md). [`HasErrorType`](has_error_type.md) is a concrete abstract-type component defined with `#[cgp_type]` on top of this machinery.
+These constructs are the ones `HasType` works with:
+
+- [`#[cgp_type]`](../macros/cgp_type.md) — defines named abstract-type components, whose generated `WithProvider` impl accepts any `TypeProvider`.
+- [`UseType`](../providers/use_type.md) and [`UseDelegatedType`](../providers/use_delegated_type.md) — its providers.
+- [`#[use_type]`](../attributes/use_type.md) — the attribute with a similar name, which rewrites type names in definitions.
+- [`HasErrorType`](has_error_type.md) — the best-known named abstract type, defined with `#[cgp_type]`.
+- [Abstract types](../../concepts/abstract-types.md) — the concept.
 
 ## Source
 
