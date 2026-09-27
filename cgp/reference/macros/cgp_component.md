@@ -20,7 +20,20 @@ overlap restrictions do not bite, and a crate can define many alternative provid
 component. A concrete context then picks one provider per component through wiring (see
 [`delegate_components!`](delegate_components.md)), and the generated blanket impls route the
 consumer-trait call through that choice. Without `#[cgp_component]`, a trait is just a vanilla Rust
-trait and takes no part in this mechanism.
+trait and takes no part in this mechanism. The choice costs nothing at run time: the compiler
+resolves the provider while it type-checks the call and monomorphizes it into a direct, statically
+dispatched call, with no runtime table or vtable.
+
+**A component is worth its cost only when a trait needs more than one implementation and the
+choice belongs to the type using it.** A component is a consumer trait, a provider trait, a marker,
+and a wiring line per context. A trait with one implementation ever is better written with
+[`#[cgp_fn]`](cgp_fn.md), which can later be promoted to a component without touching its call
+sites. One implementation per type chosen program-wide is what a plain Rust trait already does, a
+trait whose implementations each serve one concrete type can be implemented directly on that type,
+and a small closed set of variants reads better as an `enum` and a `match`. Named providers pay once
+a second context wants the same implementation, or once an implementation should compose with a
+wrapper. The [modularity hierarchy](../../concepts/modularity-hierarchy.md) and
+[sizing a component](../../guides/sizing-a-component.md) carry the full argument.
 
 **Whether a component is self-targeted or parameter-targeted belongs to the trait, and it decides
 how much the wiring can vary.** A component is *self-targeted* when its operation acts on the `Self`
@@ -46,8 +59,9 @@ pub trait CanCalculateArea {
 ```
 
 Here `CanCalculateArea` is the consumer trait, named in verb form (`CanDoSomething`), and
-`AreaCalculator` is the provider trait, named in noun form. When more control is needed, the macro
-accepts a key/value form instead of a bare identifier:
+`AreaCalculator` is the provider trait, named in noun form (`SomethingDoer`, or with a `Provider`
+suffix when a noun does not fit). When more control is needed, the macro accepts a key/value form
+instead of a bare identifier:
 
 ```rust
 #[cgp_component {
@@ -145,22 +159,30 @@ KeyValueArg      -> `name` `:` ComponentName
 
 ComponentName    -> IDENTIFIER ( `<` NameParam ( `,` NameParam )* `,`? `>` )?
 
-NameParam        -> LIFETIME_OR_LABEL | IDENTIFIER
+NameParam        -> LIFETIME_OR_LABEL
+                  | IDENTIFIER
+                  | `const` IDENTIFIER `:` Type
 ```
 
 `ProviderName` is the bare-identifier form and is shorthand for setting `provider` alone. In the
 key/value form each of the three keys may appear at most once and in any order, and `provider` is
 required; the other two have defaults (`context` is `__Context__`, and `name` is the provider name
-with a `Component` suffix). `IDENTIFIER` is a Rust identifier token.
+with a `Component` suffix). The parser rejects a repeated key with `duplicate key is not allowed`,
+an unrecognized one with `unknown key <key>`, and a missing `provider` with
+``the `provider` key must be given``. `IDENTIFIER` is a Rust identifier token.
 
 **The component name may carry a list of bare generic parameter names**, such as
-`name: ShapeComponent<Shape>`, which the marker struct then declares. Anything more is rejected:
+`name: ShapeComponent<Shape>`, which the marker struct then declares. Each must be one of the
+trait's own parameters, because the macro writes the name, parameters included, wherever the
+component appears; Known issues records what an undeclared one does. Anything more is rejected:
 
-- a bound fails with ``trait bounds (`A: Clone`) are not allowed in type generics``;
+- a bound fails with ``trait bounds (`A: Clone`) are not allowed in type generics``, and a lifetime
+  bound with ``lifetime bounds (`'a: 'b`) are not allowed in type generics``;
 - a default fails with ``default type parameters (`A = B`) are not allowed in type generics``;
-- a concrete type fails to parse at all;
-- a const parameter (`const N: usize`) parses but then fails inside the macro, as Known issues
-  records.
+- a type that is not a single identifier, such as `Vec<u8>`, fails to parse (``expected `,` ``),
+  while a single identifier such as `u32` is read as a parameter *name*, not as the type;
+- a const parameter (`const N: usize`) parses, which is why `NameParam` lists it, but then fails
+  inside the macro, as Known issues records.
 
 A provider for such a component written with [`#[cgp_impl]`](cgp_impl.md) must name the component
 explicitly, as in `#[cgp_impl(new SquareArea: AreaCalculatorComponent<Square>)]`, because the
@@ -208,6 +230,13 @@ pub trait AreaCalculator<Context>:
 }
 ```
 
+**An associated type the trait declares for itself is the one `Self` the rewrite leaves alone.** The
+provider trait keeps the declaration, so a `Self::Output` in the consumer trait stays `Self::Output`
+in the provider trait, where it names the provider's own `Output`, and each provider chooses the
+type it returns. The consumer blanket impl then sets
+`type Output = <Context as OutputProducer<Context>>::Output`, and the provider blanket impl reads the
+same projection through its delegate.
+
 **The provider trait's supertrait list is replaced by `IsProviderFor` rather than extended with it,
 and the consumer trait's own supertraits become a `where` predicate on the context.** That holds for
 supertraits written natively, added by [`#[extend]`](../attributes/extend.md), or added by
@@ -239,7 +268,7 @@ of the body as well, the same duplication [`#[blanket_trait]`](blanket_trait.md)
 
 The payoff is that an **empty provider impl inherits the default**, which is how
 [`UseDefault`](../providers/use_default.md) works and the reason a provider can be declared with
-nothing in its block:
+nothing in its block. `UseDefault` is not in the prelude and comes from `cgp::core::component`:
 
 ```rust
 #[cgp_impl(UseDefault)]
@@ -433,20 +462,32 @@ generic parameter, and is supplied by a const-generic provider struct (for examp
 `UseConstant<const CONSTANT: u64>`) in the usual way.
 
 **The macro must be applied to a trait**, and anything else is rejected at parse time rather than
-lowered into non-compiling code: applying it to a struct, an enum, or a free function fails with a
-parse error naming the trait item it expected. Two rejections come from `#[use_type]` and are worth
-knowing here, because a component definition is where a reader most often meets them: the equality
-form described under Syntax, and two imports that resolve to the same bare alias, which would make
-the substitution silently pick one and drop the other.
+lowered into non-compiling code: applying it to a struct, an enum, or a free function fails with
+``expected `trait` ``. Three rejections come from `#[use_type]` and are worth knowing here, because
+a component definition is where a reader most often meets them: the equality form described under
+Syntax; two imports that resolve to the same bare alias, which would make the substitution silently
+pick one and drop the other, rejected with
+`Multiple abstract types cannot share the same identifier or alias`; and imports that resolve
+through one another in a cycle. [`#[use_type]`](../attributes/use_type.md) documents all three.
 
-**A modifier the component collector does not recognize is forwarded onto every generated item
+**A modifier the component collector does not recognize is forwarded onto the generated items
 rather than rejected.** The unmatched attribute is re-attached to the consumer trait, and from there
-it is cloned onto the provider trait and onto the impls built from each: the two blanket impls and
-the `UseContext` and `RedirectLookup` provider impls. That is what lets `#[allow(...)]` or a doc
-comment apply where it should. It also means a misplaced `#[uses(...)]` surfaces as a *cannot find
-attribute* resolution error repeated once per generated item, none of which mentions
-`#[cgp_component]`. A genuine typo in an attribute name produces the same shape of error, several
-times over.
+it is cloned onto the provider trait and onto the impls built from each: the two blanket impls, the
+`UseContext` and `RedirectLookup` provider impls, and any `UseDelegate` impl. The marker struct, the
+namespace impls, and the `IsProviderFor` impls do not receive it. That is what lets `#[allow(...)]`
+or a doc comment apply where it should. It also means a misplaced `#[uses(...)]` surfaces as a
+``cannot find attribute `uses` in this scope`` resolution error that does not mention
+`#[cgp_component]`. Every copy carries the attribute's own span, so rustc deduplicates them into one
+error on the attribute's line, and its help may suggest a similarly named built-in (`#[used]` for
+`#[uses]`), which leads away from the fix. A genuine typo in an attribute name produces the same
+error.
+
+**A `name:` parameter that the trait does not declare is accepted and fails downstream.**
+`#[cgp_component { provider: Shape, name: ShapeComponent<T> }]` on a trait without a `T` parses,
+and the compiler then reports ``error[E0425]: cannot find type `T` in this scope`` at the `T`,
+followed by an `E0034` about the generated impls, because the name is written into impl positions
+where `T` is not in scope. The correct behavior would be a spanned error from the macro naming the
+parameter the trait lacks.
 
 **Attributes on a trait *method* follow a different path.** Each is kept on the consumer trait's
 method and copied onto the matching method declaration of the provider trait, while the generated

@@ -23,7 +23,9 @@ impls share one struct.
 `#[cgp_new_provider]` is applied to a provider-trait impl and accepts the same optional
 component-type argument as [`#[cgp_provider]`](cgp_provider.md). The only requirement beyond
 `#[cgp_provider]` is that the provider struct must *not* already be declared, since the macro
-declares it:
+declares it. Declaring it as well fails with
+``E0428: the name `RectangleArea` is defined multiple times``, which is the usual result of
+converting a `#[cgp_provider]` block without deleting the declaration:
 
 ```rust
 #[cgp_new_provider]

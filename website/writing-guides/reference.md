@@ -56,6 +56,13 @@ construct now has a public page as well as an internal document, and the base's
 the code, the internal document, *and* the public page, in that order and in the same change. A public
 page that disagrees with its internal document is a defect in the public page.
 
+**The sync runs both ways.** A detail a public page carries and its internal document lacks, such as
+a form, a default, an error message, a corner case, an expansion rule, or a *When to use it*
+judgement drawn from a guide, is added to the internal document in the same change, after it is
+checked against the source. A page may simplify or reorder what its internal document says, but it
+never knows more, because the internal document is the complete record the next port and every
+agent start from. A fact found only on the public page is a fact the base has lost.
+
 ## Granularity: one page per named construct
 
 The reference is organized **one page per construct**, because a reader arrives knowing a name and

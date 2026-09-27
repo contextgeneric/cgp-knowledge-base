@@ -150,6 +150,13 @@ any `#[derive_delegate]` impl all share the path. The fix is to generate a fresh
 parameter; the [reference Known issues](../../reference/macros/cgp_component.md#known-issues) give
 the workaround.
 
+A `name:` parameter the trait does not declare is not checked. `TypeGenericParam` accepts any bare
+identifier, and nothing compares the name's parameters with the trait's generics, so
+`#[cgp_component { provider: Shape, name: ShapeComponent<T> }]` on a trait without `T` emits
+`ShapeComponent<T>` into impl positions where `T` is unbound, and the compiler reports `E0425` at
+the `T` followed by an `E0034`. The fix is a spanned error in `CgpComponentArgs` (or at `eval`)
+naming each name parameter missing from the trait's generics. No rejection test pins it yet.
+
 The namespace impl a `#[prefix]` attribute adds carries the macro `call_site` span.
 `PrefixAttribute::to_namespace_impl` builds it with `parse_internal!` and does not re-span the
 result, unlike the `#[default_impl]` registration (`override_item_span` onto its key) and the

@@ -25,15 +25,31 @@ A `#[cgp_component]` trait can have many alternative providers, one chosen per c
 wiring, and that flexibility is exactly what costs the extra ceremony. `#[cgp_fn]` permits only one
 implementation, the function body, and in exchange removes the wiring entirely. Reach for `#[cgp_fn]`
 when an operation has a single natural definition, and graduate to `#[cgp_component]` only when a
-context genuinely needs to swap in a different implementation. The two interoperate: a `#[cgp_fn]`
-trait can depend on a `#[cgp_component]` one, and vice versa, through
-[`#[uses]`](../attributes/uses.md).
+context genuinely needs to swap in a different implementation. Starting with `#[cgp_fn]` costs
+nothing if that happens: the trait keeps its name and method, so promoting it to a component leaves
+every call site unchanged. The two interoperate: a `#[cgp_fn]` trait can depend on a
+`#[cgp_component]` one, and vice versa, through [`#[uses]`](../attributes/uses.md).
+
+Two neighbours cover what `#[cgp_fn]` does not. When the body's dependencies are other traits
+rather than fields, [`#[blanket_trait]`](blanket_trait.md) builds the same single-implementation,
+wiring-free trait from a trait with supertraits and default bodies. And a type the body needs lives
+best in [`#[impl_generics]`](../attributes/impl_generics.md) while it flows only through implicit
+arguments, climbing to an abstract type once it must appear in the trait's signature or two traits
+must agree on it; a plain generic on the function is the form to avoid, since it lands on the trait
+and every caller repeats it. [Naming a type dependency](../../guides/naming-a-type-dependency.md)
+carries that decision.
 
 ## Syntax
 
-`#[cgp_fn]` is applied as an attribute on a free function whose first parameter is `&self` (or
-`&mut self`). The function name, in snake case, becomes the generated method name, and the trait name
-defaults to that function name converted to PascalCase.
+`#[cgp_fn]` is applied as an attribute on a free function whose first parameter is normally `&self`
+(or `&mut self`). The function name, in snake case, becomes the generated method name, and the trait name
+defaults to that function name converted to PascalCase. A receiver is required once any parameter is
+`#[implicit]`, and omitting it then fails with
+`` The first argument of a function with implicit arguments must be `self` ``. A function with no
+receiver and no implicit argument is accepted and yields a trait whose item is an associated
+function, called as `<Context as Trait>::name()`; it reads nothing from the context, so it computes
+the same result for every context. A `&mut self` function can take a mutable implicit argument and
+write through it, provided that argument is the only implicit one, as Known issues records.
 
 ```rust
 #[cgp_fn]
@@ -107,6 +123,13 @@ Several companion attributes refine the generated code, and each is documented s
   trait definition.
 - [`#[impl_generics(...)]`](../attributes/impl_generics.md) declares generic parameters on the
   generated impl alone.
+
+Each may be repeated, and each parses a comma-separated list inside one attribute.
+`#[use_provider]` is the exception in practice, since its argument ends in a bound list that
+swallows a following entry. `#[uses]` takes ordinary Rust traits as readily as CGP ones. An
+[`#[async_trait]`](async_trait.md) written beneath `#[cgp_fn]` on an `async fn` is not a companion
+attribute but is copied onto both generated items like any unrecognized attribute, so the trait
+declares `-> impl Future` and the impl keeps its `async fn`.
 
 ## Syntax Grammar
 
@@ -273,6 +296,21 @@ to these constructs:
 - [`#[blanket_trait]`](blanket_trait.md) emits the same style of blanket impl; the difference is that
   `#[cgp_fn]` derives the trait and its body from a function rather than from a trait with default
   methods.
+
+## Known issues
+
+**A mutable implicit argument must be the only implicit argument.** Its `get_field_mut` read borrows
+the whole context exclusively for the rest of the body, so it cannot coexist with another field
+read, and the macro rejects the combination with
+`` a `&mut` implicit argument must be the only implicit argument, since its mutable borrow of the context conflicts with reading any other field ``.
+Any number of immutable implicit arguments combine freely.
+
+**An `#[impl_generics]` parameter cannot appear in the trait's own signature.** Only the generated
+impl declares it, so a return type or an explicit parameter that names it is unresolved in the
+trait: a bare `Db` fails with ``E0425: cannot find type `Db` in this scope`` and a qualified
+`Db::Row` with ``E0433: cannot find type `Db` in this scope``. The fix is to keep the type out of the
+signature or to make it an abstract type; [`#[impl_generics]`](../attributes/impl_generics.md)
+records this and its other deferred failures.
 
 ## Source
 

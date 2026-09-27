@@ -52,20 +52,32 @@ already exist**; `#[cgp_provider]` does not define it. Use
 The attribute takes one optional argument, the **component type** used in the generated
 `IsProviderFor` impl. When omitted, the component defaults to the provider trait's name with a
 `Component` suffix, so implementing `AreaCalculator` targets `AreaCalculatorComponent`. Pass the
-component explicitly when the provider trait's name does not follow that convention, or when a
-provider implements a trait under a differently named component:
+component explicitly when the component's marker does not follow that convention, as when the
+component renamed it with [`#[cgp_component]`](cgp_component.md)'s `name:` key:
 
 ```rust
-#[cgp_provider(RunnerComponent)]
-impl<Context, Code> Runner<Context, Code> for RunWithFooBar
-where
-    Context: CanFetchFoo + CanFetchBar + CanRunFooBar,
-{
-    fn run(context: &Context, _code: PhantomData<Code>) -> Result<(), Context::Error> {
-        /* ... */
+#[cgp_component {
+    name: AreaComponent,
+    provider: AreaCalculator,
+}]
+pub trait CanCalculateArea {
+    fn area(&self) -> f64;
+}
+
+#[cgp_provider(AreaComponent)]
+impl<Context> AreaCalculator<Context> for UnitArea {
+    fn area(_context: &Context) -> f64 {
+        1.0
     }
 }
 ```
+
+**The macro does not check the argument against the trait.** A component that is not the provider
+trait's own produces a marker impl for the wrong key, and the provider trait's `IsProviderFor`
+supertrait, which names the real component, then rejects the provider impl itself with
+``E0277: the trait bound `UnitArea: IsProviderFor<AreaCalculatorComponent, Context>` is not satisfied``.
+The same holds for the `: ComponentType` suffix of [`#[cgp_impl]`](cgp_impl.md), which feeds this
+argument.
 
 ## Syntax Grammar
 
@@ -84,7 +96,8 @@ suffix; when present, that `Type` is substituted into the first position of the 
 ## Expansion
 
 `#[cgp_provider]` emits two items: the provider impl, passed through unchanged, and an
-`IsProviderFor` impl derived from it. Starting from:
+`IsProviderFor` impl derived from it. Starting from this provider for `ComputerRef` (which, with its
+`ComputerRefComponent` marker, is imported from `cgp::extra::handler`):
 
 ```rust
 #[cgp_provider]
@@ -253,8 +266,18 @@ and it relates to these constructs:
 **The `new` keyword is not part of this attribute's grammar**, even though `#[cgp_impl(new …)]`
 accepts one and `#[cgp_new_provider]` behaves as though one were given. Writing
 `#[cgp_provider(new RectangleArea)]` is a parse failure rather than a way to declare the struct: the
-argument grammar holds a component type alone, and the struct declaration is controlled by *which
-macro is invoked* rather than by a keyword. Use `#[cgp_new_provider]` to declare the struct.
+argument grammar holds a component type alone, so `new` is read as that type and `RectangleArea`
+fails with `unexpected token`. The struct declaration is controlled by *which macro is invoked*
+rather than by a keyword. Use `#[cgp_new_provider]` to declare the struct.
+
+**A provider's own associated const or type is ambiguous as `Self::ITEM` inside the impl.** Here
+`Self` is the provider struct and nothing rewrites it, but the provider struct is also a context: the
+consumer blanket impl gives it the consumer trait, which declares the same item. `Self::LIMIT`
+therefore fails with `E0034: multiple applicable items in scope`, naming one candidate in the
+provider trait impl and one in the consumer trait's blanket impl. Name the provider trait to
+disambiguate, as `<Self as RateLimiter<Context>>::LIMIT`. This differs from
+[`#[cgp_impl]`](cgp_impl.md), where `Self` is the context and the qualified path names the provider
+struct instead.
 
 **A higher-order provider whose component carries a lifetime loses the inner-provider
 `IsProviderFor` bound.** The augmentation described above finds the context by reading the inner

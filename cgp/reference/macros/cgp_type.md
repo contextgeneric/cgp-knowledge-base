@@ -27,6 +27,15 @@ be implemented straight on a concrete context through its consumer trait, which 
 than wiring `UseType`, and is the most transparent way to show that a CGP abstract type is nothing
 more than a vanilla Rust trait with an associated type.
 
+**Choose an abstract type deliberately.** A type that only flows through a field a provider reads
+is better inferred with [`#[impl_generics]`](../attributes/impl_generics.md) on a `#[cgp_fn]`, which
+declares and wires nothing; an abstract type is needed once the type must appear in a trait's own
+signature, or once two traits must agree on it. A trait carrying a method beside the type it
+produces is an ordinary [`#[cgp_component]`](cgp_component.md), and a type whose only job is to be a
+getter's return type is shorter as an associated type on a
+[`#[cgp_auto_getter]`](cgp_auto_getter.md) trait. [Naming a type
+dependency](../../guides/naming-a-type-dependency.md) carries the full decision.
+
 ## Syntax
 
 **The macro is applied to a trait that contains exactly one associated type and nothing else.** Any
@@ -54,6 +63,20 @@ pub trait HasScalarType {
     type Scalar;
 }
 ```
+
+**A wiring key guessed from the trait name does not exist.** `HasScalarType` yields
+`ScalarTypeProviderComponent`, not `HasScalarTypeComponent`, so an entry naming the latter fails
+with ``E0425: cannot find type `HasScalarTypeComponent` in this scope``.
+
+**The trait may carry generic parameters**, handled exactly as `#[cgp_component]` handles them: they
+follow the context in the provider trait, enter the `IsProviderFor` params tuple, and extend the
+`RedirectLookup` path, so a context chooses the type per parameter value through `open` or
+[`#[derive_delegate]`](../attributes/derive_delegate.md). `pub trait HasLabelType<Kind> { type Label; }`
+lets a context wire `@LabelTypeProviderComponent.u32: UseType<String>`. A `?Sized` parameter is
+accepted and threaded through every item, though `open` cannot key an unsized type, since a path
+segment must be sized. The companion attributes of `#[cgp_component]` apply unchanged, so
+[`#[prefix(...)]`](../attributes/prefix.md) registers the abstract type into a namespace, as CGP's
+own [`HasErrorType`](../components/has_error_type.md) does.
 
 A bound on the associated type is preserved everywhere the type appears in the expansion. For
 example, `type Scalar: Copy;` carries the `Copy` bound onto the generated provider trait and into the
@@ -220,6 +243,16 @@ the associated type. It relates to these constructs:
   imports it into other definitions.
 - [`#[cgp_auto_getter]`](cgp_auto_getter.md) can declare an abstract type inline when its only role is
   to be a getter's return type.
+
+## Known issues
+
+**An associated type named after the trait that bounds it shadows that trait.** In
+`type Database: Database`, the bound resolves to the associated type being declared, a nearer
+binding, rather than to the trait in scope. Because the generated `UseType` and `WithProvider` impls
+lift the associated type into a free parameter, the compiler reports
+``E0404: expected trait, found type parameter `Database` ``, which reads as though the author had
+written a generic parameter. This is ordinary Rust name resolution rather than a macro defect; name
+the two apart, as in `type Db: Database`.
 
 ## Source
 

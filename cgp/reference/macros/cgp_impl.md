@@ -28,6 +28,12 @@ and it has no fields you can read. The macro converts every `self` to the contex
 `Self` to the context type precisely because the context is the only value that exists when the
 method runs.
 
+**Reach for a different construct when no provider is needed.** A trait with one implementation ever
+is better written with [`#[cgp_fn]`](cgp_fn.md), which needs no component, provider, or wiring, and
+a consumer trait implemented for one concrete type alone is better written as a direct impl, through
+the `#[cgp_impl(Self)]` form below. A named provider pays once a second context wants the same
+implementation; [writing providers](../../guides/writing-providers.md) carries the recommendation.
+
 ## Syntax
 
 `#[cgp_impl]` is applied to an `impl` block, and its attribute argument names the provider. The
@@ -52,6 +58,17 @@ The attribute argument has three parts, of which only the provider name is requi
   generated [`IsProviderFor`](../traits/is_provider_for.md) impl. When omitted, the component defaults
   to the provider trait's name with a `Component` suffix, so implementing `AreaCalculator` targets
   `AreaCalculatorComponent`.
+
+Without `new`, the provider struct must already be declared, and a wiring entry naming a struct
+nothing declares fails at the wiring. Only one block may declare a given struct: a provider that
+implements several components carries `new` on one of its `#[cgp_impl]` blocks and names the same
+struct without `new` on the rest, or declares the struct by hand above all of them. Writing `new` on
+two blocks for the same struct declares it twice and fails with `E0428`. `new` can emit only the two
+shapes [`#[cgp_new_provider]`](cgp_new_provider.md) declares (a unit struct, or a tuple struct with
+one `pub` `PhantomData` field over all the generic parameters, always `pub` and without defaults), so
+any other shape, such as a defaulted inner parameter
+`pub struct ScaledAreaCalculator<InnerCalculator = UseContext>(PhantomData<InnerCalculator>);`, is
+declared by hand and targeted with `#[cgp_impl(ScaledAreaCalculator<InnerCalculator>)]`.
 
 **The `for Context` clause is optional, and omitting it is the preferred form**, since the
 unqualified `impl AreaCalculator` is what makes a provider read like an ordinary trait impl. When
@@ -119,8 +136,8 @@ second attribute, and `#[default_impl]` parses a single `Key in Namespace` spec.
 [`#[cgp_component]`](cgp_component.md)); a provider impl has no trait definition of its own to
 extend. An attribute the collector does not match is not an error: it is re-attached to the emitted
 provider impl, which is what lets `#[allow(...)]` and other foreign attributes ride through. So a
-misplaced `#[extend(...)]` surfaces as a *cannot find attribute* resolution error on the generated
-impl rather than as a message from the macro. A bound that really is impl-side goes in the block's
+misplaced `#[extend(...)]` surfaces as ``cannot find attribute `extend` in this scope``, reported on
+the attribute's own line because the copy keeps its span, rather than as a message from the macro. A bound that really is impl-side goes in the block's
 own `where` clause, which passes through untouched.
 
 ## Syntax Grammar
@@ -243,8 +260,11 @@ that tuple, so the impl reads `IsProviderFor<ComputerRefComponent, Context, (Cod
 
 **Writing `#[cgp_impl(Self)]` bypasses the provider rewrite entirely**, emitting the `impl` block
 unchanged as an ordinary consumer-trait implementation on the concrete context. This requires the
-`for Context` clause, and it is useful when you want to implement a consumer trait directly while
-still applying companion attributes such as [`#[use_provider]`](../attributes/use_provider.md).
+`for Context` clause, and omitting it fails with `Expected context type to be specified`. The form
+is useful when you want to implement a consumer trait directly while still applying companion
+attributes: the macro processes them before it branches on the provider type, so
+[`#[implicit]`](../attributes/implicit.md) arguments, `#[uses]`, `#[use_type]`, and
+[`#[use_provider]`](../attributes/use_provider.md) all apply to the direct impl.
 Because no provider struct is generated in this form, the `new` keyword and the `: ComponentType`
 override have no effect when the provider is `Self`:
 
@@ -260,7 +280,8 @@ impl CanCalculateArea for Rectangle {
 
 Because this is an ordinary impl of the consumer trait, it competes with the consumer blanket impl
 `#[cgp_component]` generates, so the context must not also wire the same component in
-`delegate_components!`; doing both makes the two impls overlap and fails with `E0119`.
+`delegate_components!`; doing both makes the two impls overlap and fails with `E0119`
+(*conflicting implementations of trait `CanCalculateArea`*).
 
 ## Examples
 
