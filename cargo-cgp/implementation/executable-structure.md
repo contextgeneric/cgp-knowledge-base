@@ -1,8 +1,8 @@
 # Executable structure
 
 `cargo-cgp` is two cooperating executables, a front-end that wraps `cargo` and a driver that wraps
-`rustc`, so that it can watch a real compilation through the compiler's own `rustc_driver` API
-while presenting an ordinary cargo subcommand to the user.
+`rustc`, so that it can watch a real compilation through the compiler's own `rustc_driver` API while
+presenting an ordinary cargo subcommand to the user.
 
 ## Why two executables
 
@@ -21,22 +21,22 @@ normal tool, and the heavyweight linkage is confined to the process that actuall
 This is the same split Clippy uses, `cargo-clippy` to `clippy-driver`, and for the same reason. Two
 library-only crates hold the driver's rustc-free logic.
 [`cargo-cgp-error-processing`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing)
-holds the string helpers: the wiring rename, the text post-processing, the diagnosis wording, and the
-dependency-tree rendering (see [Error processing](error-processing.md)).
+holds the string helpers: the wiring rename, the text post-processing, the diagnosis wording, and
+the dependency-tree rendering (see [Error processing](error-processing.md)).
 [`cargo-cgp-expand`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-expand)
 holds the syntax-tree resugaring and item selection behind `cargo cgp expand` (see
 [The expand command](expand-command.md)). Neither links compiler internals, so the driver drives
-them while keeping them out of its `rustc_private` linkage and buildable on any toolchain. The mechanism that connects the two executables is cargo's
-wrapper protocol, described next.
+them while keeping them out of its `rustc_private` linkage and buildable on any toolchain. The
+mechanism that connects the two executables is cargo's wrapper protocol, described next.
 
 ## Wrapping cargo: the front-end
 
 The front-end's whole job is to run cargo with the driver installed as the compiler cargo uses for
 the user's own crates: `cargo check` for a check, `cargo rustc` for an expansion (see
-[The expand command](expand-command.md)). It does this with the `RUSTC_WORKSPACE_WRAPPER` environment
-variable, which tells cargo to invoke a wrapper in place of `rustc` for each *workspace* crate while
-leaving dependencies to compile with the normal compiler. Scoping to the workspace is deliberate:
-the point of the tool is the user's code, not their dependency tree.
+[The expand command](expand-command.md)). It does this with the `RUSTC_WORKSPACE_WRAPPER`
+environment variable, which tells cargo to invoke a wrapper in place of `rustc` for each *workspace*
+crate while leaving dependencies to compile with the normal compiler. Scoping to the workspace is
+deliberate: the point of the tool is the user's code, not their dependency tree.
 
 The entrypoint is
 [`run::run`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/run.rs),
@@ -70,8 +70,8 @@ runs (`expand` builds on the same function; see [The expand command](expand-comm
 `RUSTC_WORKSPACE_WRAPPER` to the driver's path, which
 [`launch::driver_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/driver_path.rs)
 locates as a sibling of the running front-end executable, since cargo and rustup lay the two
-binaries down together. It hands the driver the two further things it needs through the environment
-(the next section).
+binaries down together (falling back to the bare name, resolved on `PATH`, when no sibling exists).
+It hands the driver the two further things it needs through the environment (the next section).
 
 The front-end passes cargo's output straight through rather than reshaping it. It inherits cargo's
 stdio (`command.status()`) and touches nothing on the diagnostic stream, so cargo's progress lines
@@ -79,8 +79,8 @@ and the compiler's diagnostics appear live at the terminal, exactly as a plain `
 Every CGP transform happens inside the driver's emitter, which renders the finished diagnostics in
 whatever format the invocation asks for (human text by default, JSON when the caller requests it),
 so the front-end never sees, parses, or re-emits a diagnostic itself. Throughout, the exit code of
-the `cargo` process is propagated, so a failed check fails the command. The [error
-pipeline](error-pipeline.md) documents where the transforms happen.
+the `cargo` process is propagated, so a failed check fails the command. The
+[error pipeline](error-pipeline.md) documents where the transforms happen.
 
 ## Wrapping rustc: the driver
 
@@ -103,10 +103,9 @@ sysroot and the diagnostic flags), runs the compiler under `catch_with_exit_code
 custom emitter that transforms the diagnostics and renders them as human text or JSON, matching
 whatever format the invocation asks for, like vanilla `rustc`.
 
-All of that (the argument preparation, the `rustc_private` compiler-API access, and the
-diagnostic transformations) is the subject of the [driver deep dive](driver.md). This document
-covers only how the driver sits between cargo and the compiler, and the environment contract it needs
-to do so.
+All of that (the argument preparation, the `rustc_private` compiler-API access, and the diagnostic
+transformations) is the subject of the [driver deep dive](driver.md). This document covers only how
+the driver sits between cargo and the compiler, and the environment contract it needs to do so.
 
 ## The environment contract
 
@@ -118,8 +117,9 @@ directory), so the compiler cannot infer from the driver's own location things i
 Underneath both, the front-end forces `RUSTUP_TOOLCHAIN` to the pinned nightly for the wrapped
 `cargo check`, so the sysroot it discovers and the `librustc_driver` the driver loads both belong to
 the nightly the driver embeds, whatever toolchain the project itself pins. That forcing, and the
-preflight that precedes it, are part of [Distribution](distribution.md#the-pinned-toolchain-is-an-internal-detail);
-this section covers the two pieces of state the forcing then makes coherent.
+preflight that precedes it, are part of
+[Distribution](distribution.md#the-pinned-toolchain-is-an-internal-detail); this section covers the
+two pieces of state the forcing then makes coherent.
 
 The front-end passes the **sysroot** through `CARGO_CGP_SYSROOT`. It discovers the value by running
 `rustc --print sysroot`
@@ -132,15 +132,16 @@ two crates declare the variable name independently; the shared string is the con
 The front-end also prepends the sysroot's `lib` directory to the OS **dynamic-library search path**
 (`LD_LIBRARY_PATH`, or its platform equivalent;
 [`launch::command`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/command.rs)),
-so the loader can find `librustc_driver` when cargo spawns the driver. The driver links that
-library dynamically from the sysroot, and nothing else would put it on the search path.
+so the loader can find `librustc_driver` when cargo spawns the driver. The driver links that library
+dynamically from the sysroot, and nothing else would put it on the search path.
 
 ## Accessing the Rust compiler API
 
-The driver links the compiler's internal crates from the sysroot through the `rustc_private` feature,
-which is what its in-process access to the compiler rests on. How that linkage works (the
+The driver links the compiler's internal crates from the sysroot through the `rustc_private`
+feature, which is what its in-process access to the compiler rests on. How that linkage works (the
 `extern crate` declarations, the feature gate needed on both the library and the binary, and the
-pinned-nightly requirement) is part of the [driver deep dive](driver.md#accessing-the-rust-compiler-api).
+pinned-nightly requirement) is part of the
+[driver deep dive](driver.md#accessing-the-rust-compiler-api).
 
 ## Comparison with Clippy
 
@@ -171,23 +172,25 @@ will likely grow toward it. The one that is a front-end concern lives here. The 
 (argument reading, driver front-matter, info-query handling, and the `Callbacks` set) are catalogued
 in the [driver deep dive](driver.md#comparison-with-clippy).
 
-- **Front-end argument forwarding.** `cargo-cgp` forwards extra arguments straight to `cargo check`.
-  Clippy packs its own arguments into a `CLIPPY_ARGS` variable with a separator hack and chooses
-  between the `check` and `fix` cargo subcommands; `cargo-cgp` has no tool-specific arguments and
-  only `check`, so it needs none of that.
+- **Front-end argument forwarding.** `cargo-cgp` forwards extra arguments straight to `cargo check`
+  (or `cargo rustc` for `expand`). Clippy packs its own arguments into a `CLIPPY_ARGS` variable with
+  a separator hack and chooses between the `check` and `fix` cargo subcommands. `cargo-cgp`'s one
+  tool-specific argument, `expand`'s `--item`, is taken out of the forwarded list by the front-end
+  and handed to the driver as a `--cgp-expand-item` flag after cargo's `--`, where only the expanded
+  target's rustc invocation sees it, so it needs no environment packing either.
 
 ## Further reading
 
 The wrapper-and-driver approach is not unique to this tool, and the two mechanisms it rests on
 (cargo's compiler-wrapper protocol and the `rustc_driver` API) are documented authoritatively
-elsewhere in more depth than this document repeats. Read these when you need the full contract behind
-a behavior described above.
+elsewhere in more depth than this document repeats. Read these when you need the full contract
+behind a behavior described above.
 
 - [Environment Variables, in The Cargo Book](https://doc.rust-lang.org/cargo/reference/environment-variables.html),
-  defines `RUSTC_WORKSPACE_WRAPPER` and `RUSTC_WRAPPER`: cargo runs the wrapper with the real `rustc`
-  path as its first argument, the workspace variant applies only to workspace members, and it affects
-  the artifact hash so wrapped builds cache separately. This is the exact protocol the front-end
-  drives and the driver decodes in wrapper mode.
+  defines `RUSTC_WORKSPACE_WRAPPER` and `RUSTC_WRAPPER`: cargo runs the wrapper with the real
+  `rustc` path as its first argument, the workspace variant applies only to workspace members, and
+  it affects the artifact hash so wrapped builds cache separately. This is the exact protocol the
+  front-end drives and the driver decodes in wrapper mode.
 
 The authoritative references for the compiler-side mechanisms (`rustc_driver`, the `Callbacks`
 trait, custom emitters, and the `rustc_private` feature) are collected in the
@@ -200,16 +203,16 @@ end-to-end wrapping is exercised by the UI snapshot suite, which runs every fixt
 front-end. The full testing picture is its own document, [Testing](testing.md). The driver's own
 argument and rewrite tests are listed in the [driver deep dive](driver.md#tests).
 
-- [`crates/cargo-cgp/tests/args.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/args.rs) — `strip_subcommand` across
-  the invocation forms.
-- [`crates/cargo-cgp/tests/dispatch.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/dispatch.rs)
-  — `dispatch`'s side-effect-free branches: an unknown subcommand errors, and no subcommand or a help
+- [`crates/cargo-cgp/tests/args.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/args.rs):
+  `strip_subcommand` across the invocation forms.
+- [`crates/cargo-cgp/tests/dispatch.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/dispatch.rs):
+  `dispatch`'s side-effect-free branches: an unknown subcommand errors, and no subcommand or a help
   flag shows the help text.
-- [`crates/cargo-cgp/tests/help.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/help.rs)
-  — the help texts list the subcommands and options, the help flags are recognized, and the top-level
+- [`crates/cargo-cgp/tests/help.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/help.rs):
+  the help texts list the subcommands and options, the help flags are recognized, and the top-level
   help points at both subcommand helps.
-- [`crates/cargo-cgp/tests/sysroot.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/sysroot.rs)
-  — `format_stderr`, which appends a failed sysroot probe's stderr (a loader failure, empty output,
+- [`crates/cargo-cgp/tests/sysroot.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/sysroot.rs):
+  `format_stderr`, which appends a failed sysroot probe's stderr (a loader failure, empty output,
   non-UTF-8 bytes) to its error message.
 
 ## Source
@@ -217,31 +220,34 @@ argument and rewrite tests are listed in the [driver deep dive](driver.md#tests)
 The front-end's modules are listed here; the driver's are in the
 [driver deep dive](driver.md#source).
 
-- [`crates/cargo-cgp/src/run.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/run.rs) — front-end entrypoint and
-  subcommand dispatch (`check`, `expand`, `setup`, `update`).
-- [`crates/cargo-cgp/src/args.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/args.rs) — process-argument
-  normalization.
-- [`crates/cargo-cgp/src/launch/command.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/command.rs) — builds the
-  wrapped cargo command both reading subcommands run: it runs the preflight and forces the toolchain
-  (when managed), and sets the environment contract and the isolated target directory.
-- [`crates/cargo-cgp/src/check.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/check.rs) — runs that command for
-  `cargo check`, inheriting cargo's stdio so its output streams through untouched, and propagates the
-  exit code.
-- [`crates/cargo-cgp/src/expand/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp/src/expand) — the `expand` subcommand over
-  the same launch (see [The expand command](expand-command.md)).
-- [`crates/cargo-cgp/src/launch/driver_path.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/driver_path.rs) —
-  locates the driver via the `CARGO_CGP_DRIVER` override or as a sibling.
-- [`crates/cargo-cgp/src/launch/preflight.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/preflight.rs) — the
-  read-only pre-check of the driver and toolchain (see [Distribution](distribution.md)).
-- [`crates/cargo-cgp/src/launch/sysroot.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/sysroot.rs) — discovers
-  the toolchain sysroot, optionally under a forced toolchain.
-- [`crates/cargo-cgp/src/launch/dylib.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/dylib.rs) — the OS
-  dynamic-library search path.
+- [`crates/cargo-cgp/src/run.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/run.rs):
+  front-end entrypoint and subcommand dispatch (`check`, `expand`, `setup`, `update`).
+- [`crates/cargo-cgp/src/args.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/args.rs):
+  process-argument normalization.
+- [`crates/cargo-cgp/src/launch/command.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/command.rs):
+  builds the wrapped cargo command both reading subcommands run: it runs the preflight and forces
+  the toolchain (when managed), and sets the environment contract and the isolated target directory.
+- [`crates/cargo-cgp/src/check.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/check.rs):
+  runs that command for `cargo check`, inheriting cargo's stdio so its output streams through
+  untouched, and propagates the exit code.
+- [`crates/cargo-cgp/src/expand/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp/src/expand):
+  the `expand` subcommand over the same launch (see [The expand command](expand-command.md)).
+- [`crates/cargo-cgp/src/launch/target_dir.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/target_dir.rs):
+  the isolated `target/cgp` directory a wrapped build uses unless `--target-dir` is forwarded.
+- [`crates/cargo-cgp/src/launch/driver_path.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/driver_path.rs):
+  locates the driver via the `CARGO_CGP_DRIVER` override, as a sibling, or failing both on `PATH`.
+- [`crates/cargo-cgp/src/launch/preflight.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/preflight.rs):
+  the read-only pre-check of the driver and toolchain (see [Distribution](distribution.md)).
+- [`crates/cargo-cgp/src/launch/sysroot.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/sysroot.rs):
+  discovers the toolchain sysroot, optionally under a forced toolchain.
+- [`crates/cargo-cgp/src/launch/dylib.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/dylib.rs):
+  the OS dynamic-library search path.
 - [`crates/cargo-cgp/src/toolchain.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/toolchain.rs),
   [`setup.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/setup.rs),
-  [`update.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/update.rs) — toolchain resolution and the `setup`/`update`
-  subcommands (see [Distribution](distribution.md)).
-- [`crates/cargo-cgp/src/config.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/config.rs) — the front-end's shared
-  names, including the baked-in `PINNED_TOOLCHAIN` and the management environment variables.
-- [`crates/cargo-cgp/build.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/build.rs) — bakes `PINNED_TOOLCHAIN` in from
-  `rust-toolchain.toml`.
+  [`update.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/update.rs):
+  toolchain resolution and the `setup`/`update` subcommands (see [Distribution](distribution.md)).
+- [`crates/cargo-cgp/src/config.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/config.rs):
+  the front-end's shared names, including the baked-in `PINNED_TOOLCHAIN` and the management
+  environment variables.
+- [`crates/cargo-cgp/build.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/build.rs):
+  bakes `PINNED_TOOLCHAIN` in from `rust-toolchain.toml`.

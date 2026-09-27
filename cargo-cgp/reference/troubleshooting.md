@@ -100,8 +100,10 @@ Caused by:
 Either way the fix is to make the driver reachable: run `cargo cgp setup` to reinstall it beside the
 front-end (managed), point `CARGO_CGP_DRIVER` at the real driver binary (for a from-source build,
 `target/debug/cargo-cgp-driver`), or run through the Nix flake, which places both binaries together.
-The driver and front-end **must** live in the same directory unless `CARGO_CGP_DRIVER` says
-otherwise, because the front-end finds the driver relative to its own executable.
+Keep the driver and front-end in the same directory unless `CARGO_CGP_DRIVER` says otherwise: the
+front-end looks for the driver beside its own executable first, and only when none is there falls
+back to whatever `cargo-cgp-driver` the `PATH` resolves, which may be a stale one from another
+install.
 
 ## The driver cannot load the compiler library
 

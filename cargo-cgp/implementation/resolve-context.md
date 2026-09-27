@@ -1,15 +1,16 @@
 # The resolve context
 
-The typed resolver threads a bare `TyCtxt` and a scatter of config constants through every stage, and
-this document specifies replacing that with one **resolve context**. The context is a struct that
-hosts the dependency caches, the config, and the compiler-query access behind a pure interface, so the
-resolution core can eventually run, and be tested, without a real compiler.
+The typed resolver threads a bare `TyCtxt` and a scatter of config constants through every stage,
+and this document specifies replacing that with one **resolve context**. The context is a struct
+that hosts the dependency caches, the config, and the compiler-query access behind a pure interface,
+so the resolution core can eventually run, and be tested, without a real compiler.
 
 **Status: blueprint, partly implemented.** The long-lived cache store exists as `ResolveCache` on
 `CgpEmitter`; the `ResolveCtx` and `ResolveConfig` structs do not, and every resolver stage still
 takes a bare `TyCtxt` plus `&ResolveCache`. The document records the motivation, the query taxonomy,
-and the design decisions agreed for the work, so a later agent can carry out the rest. It is the companion to [Cached dependency resolution](cached-dependency-resolution.md),
-which specifies the caches this context houses, and it builds on
+and the design decisions agreed for the work, so a later agent can carry out the rest. It is the
+companion to [Cached dependency resolution](cached-dependency-resolution.md), which specifies the
+caches this context houses, and it builds on
 [Typed root-cause resolution](typed-root-cause-resolution.md) and
 [its walk stage](typed-resolution-walk.md), whose queries are the surface being abstracted.
 
@@ -20,37 +21,37 @@ compiler access they all share. Passing `tcx` plus loose parameters into every `
 works, but it gives the new caches nowhere natural to live and leaves the resolver's dependencies
 implicit. A single `ResolveCtx` that carries the compiler-query access, the
 [dependency caches](cached-dependency-resolution.md), and the config names (`CGP_COMPONENT_CRATE`,
-`DELEGATE_COMPONENT_TRAIT`, the rest) makes those dependencies explicit and threads one value where a
-handful travel today.
+`DELEGATE_COMPONENT_TRAIT`, the rest) makes those dependencies explicit and threads one value where
+a handful travel today.
 
 The larger reason is the payoff that cohesion unlocks: **making the resolution core rustc-free and
 mockable.** The `cargo-cgp-error-processing` crate already proves the resolver's *output* half (the
-`Resolved` model, the wording, the tree, the dedup) can live without a compiler and be unit-tested on
-any toolchain. The *input* half, the anchoring and the walk that fill in `Resolved`, is still bound
-to `rustc_private`, so its dense, subtle decision logic (which leaf is reportable, which owner is a
-dispatch table, how a `Deref` chain classifies a field) is pinned only by whole-program UI fixtures
-that must run a real compiler. If the resolver's compiler interactions sit behind an interface hosted
-by the context, that decision logic can be exercised against a hand-built stand-in that is fast,
-hermetic, and able to reach corners that are awkward to reproduce as real CGP programs. The mechanism for that
-is **deferred to later work and is deliberately not designed here**: the resolver's compiler
-interactions will become **CGP components**, which this rustc-backed `ResolveCtx` implements, and a
-**separate context type** implements the same components as a rustc-free stand-in. The driver would
-dogfood CGP to abstract its own use of the compiler. This document specifies only the rustc-backed
-context and the properties that make that later abstraction possible; the components themselves, and
-the stand-in context, are out of scope.
+`Resolved` model, the wording, the tree, the dedup) can live without a compiler and be unit-tested
+on any toolchain. The *input* half, the anchoring and the walk that fill in `Resolved`, is still
+bound to `rustc_private`, so its dense, subtle decision logic (which leaf is reportable, which owner
+is a dispatch table, how a `Deref` chain classifies a field) is pinned only by whole-program UI
+fixtures that must run a real compiler. If the resolver's compiler interactions sit behind an
+interface hosted by the context, that decision logic can be exercised against a hand-built stand-in
+that is fast, hermetic, and able to reach corners that are awkward to reproduce as real CGP
+programs. The mechanism for that is **deferred to later work and is deliberately not designed
+here**: the resolver's compiler interactions will become **CGP components**, which this rustc-backed
+`ResolveCtx` implements, and a **separate context type** implements the same components as a
+rustc-free stand-in. The driver would dogfood CGP to abstract its own use of the compiler. This
+document specifies only the rustc-backed context and the properties that make that later abstraction
+possible; the components themselves, and the stand-in context, are out of scope.
 
 ## The organizing equivalence: cacheable is stateless is mockable
 
 The single idea that makes this tractable is that **cacheability, statelessness, and mockability are
-one property seen three ways.** A query you can cache is a pure function of its explicit typed inputs;
-a pure function has no hidden state; and a pure function is exactly what a rustc-free stand-in
-implements. The cache key *is* the stand-in's input and the cache value *is* its output. So the
-[caching work](cached-dependency-resolution.md) is not a prerequisite to be gotten out of the way. It
-is the discovery procedure for where the later component boundary falls. Proving each query cacheable
-proves it stand-in-able and names its complete input; a query that resists caching without an extra
-parameter has hidden state, and that parameter is the thing the later boundary must make explicit or
-keep on the rustc side. Building the caches now is therefore how the component boundary is found, even
-though the components themselves are designed later.
+one property seen three ways.** A query you can cache is a pure function of its explicit typed
+inputs; a pure function has no hidden state; and a pure function is exactly what a rustc-free
+stand-in implements. The cache key *is* the stand-in's input and the cache value *is* its output. So
+the [caching work](cached-dependency-resolution.md) is not a prerequisite to be gotten out of the
+way. It is the discovery procedure for where the later component boundary falls. Proving each query
+cacheable proves it stand-in-able and names its complete input; a query that resists caching without
+an extra parameter has hidden state, and that parameter is the thing the later boundary must make
+explicit or keep on the rustc side. Building the caches now is therefore how the component boundary
+is found, even though the components themselves are designed later.
 
 ## Emit-time frozen state is what licenses purity
 
@@ -59,10 +60,11 @@ resolver runs at emit time, over compiler state that is frozen. Everything the r
 trait set, the impls, the `clauses_of`, the ADT field lists, the `Deref` targets) is fixed once the
 crate is lowered and is not mutated by the trait solving in progress (see
 [why resolution runs in the emitter](typed-root-cause-resolution.md#why-it-runs-in-the-emitter) and
-the [`after_analysis` unreachability](rustc-diagnostic-internals.md)). Frozen inputs are what make the
-schema queries observationally pure and therefore cacheable and mockable. Had the resolver run in an
-earlier phase where the graph could still change, none of this would hold. The placement forced by
-`after_analysis` being unreachable is the same placement that makes the abstraction possible.
+the [`after_analysis` unreachability](rustc-diagnostic-internals.md)). Frozen inputs are what make
+the schema queries observationally pure and therefore cacheable and mockable. Had the resolver run
+in an earlier phase where the graph could still change, none of this would hold. The placement
+forced by `after_analysis` being unreachable is the same placement that makes the abstraction
+possible.
 
 ## The query taxonomy
 
@@ -107,8 +109,8 @@ and both the cache value and the mock's answer must be stable modulo those place
 **Class C: genuinely stateful or contextual.** Two different kinds of state live here, and they
 belong in two different places. The first is the **cycle-guarded subtree**: `resolve_node` in
 [`walk/leaves.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/walk/leaves.rs)
-carries the ancestor `prefix` as a real parameter. The prefix is the ancestor-set input that makes the
-walk a function of `(node, ancestor-set)` rather than the node alone, which the
+carries the ancestor `prefix` as a real parameter. The prefix is the ancestor-set input that makes
+the walk a function of `(node, ancestor-set)` rather than the node alone, which the
 [cache](cached-dependency-resolution.md#why-a-node-key-is-not-automatically-a-complete-key) handles
 with an incomplete-subtree flag at population and a reachable-set disjointness check at
 consultation. But this is *not a compiler query*; it is the resolver's own traversal state, so it
@@ -129,19 +131,19 @@ abstraction:
 
 - The **per-compilation** context, `ResolveCtx`, holds the compiler-query access (the Class A and
   Class B operations that become components later), the
-  [dependency caches](cached-dependency-resolution.md), and the config constants. This is the shape a
-  rustc-free stand-in context will later mirror.
+  [dependency caches](cached-dependency-resolution.md), and the config constants. This is the shape
+  a rustc-free stand-in context will later mirror.
 - The **per-diagnostic** anchoring inputs (the diagnostic, its spans, HIR access) are passed as
-  *inputs* to a resolution call, not stored in the context, because they are Class C contextual state
-  and the rustc-coupled edge.
+  *inputs* to a resolution call, not stored in the context, because they are Class C contextual
+  state and the rustc-coupled edge.
 
-The walk and classification hang off the context, while anchoring is the thin rustc-coupled step that
-turns a diagnostic into a **seed** (`Ctx: ConsumerTrait<Params…>`). The later stand-in tests bypass
-anchoring and feed a seed directly. That is sound and desirable, because the seed is already the natural
-rustc-free hand-off point and is what `resolve_leaves`, the part most worth testing, consumes. So the
-honest scope of the later abstraction is: **the walk, the classification, and the labeling can be made
-fully rustc-free; the anchoring cannot, need not, and should not. The seam between them is the seed
-the resolver already produces.**
+The walk and classification hang off the context, while anchoring is the thin rustc-coupled step
+that turns a diagnostic into a **seed** (`Ctx: ConsumerTrait<Params…>`). The later stand-in tests
+bypass anchoring and feed a seed directly. That is sound and desirable, because the seed is already
+the natural rustc-free hand-off point and is what `resolve_leaves`, the part most worth testing,
+consumes. So the honest scope of the later abstraction is: **the walk, the classification, and the
+labeling can be made fully rustc-free; the anchoring cannot, need not, and should not. The seam
+between them is the seed the resolver already produces.**
 
 ## The struct outline and its lifetimes
 
@@ -150,20 +152,20 @@ reused context that carries the `TyCtxt`, but there is one reused *store*, so no
 The reason there cannot be a single long-lived context holding the compiler is the same fact that
 shaped [`ComponentNameMap`](driver.md#naming-the-traits-behind-a-component-marker). `CgpEmitter` is
 constructed at session setup, *before any `TyCtxt` exists*, so it cannot name `'tcx`; and the tcx is
-only reachable during emission through `rustc_middle::ty::tls::with`, which hands out a
-`TyCtxt<'a>` for a fresh lifetime bounded by the closure. A `TyCtxt<'tcx>` therefore cannot be stored
-past the `with` closure that produced it: the borrow checker forbids it, not merely discourages it.
+only reachable during emission through `rustc_middle::ty::tls::with`, which hands out a `TyCtxt<'a>`
+for a fresh lifetime bounded by the closure. A `TyCtxt<'tcx>` therefore cannot be stored past the
+`with` closure that produced it: the borrow checker forbids it, not merely discourages it.
 Constructing a fresh context per resolution is thus forced, not a choice.
 
 That construction is cheap, and it does not lose the cache, because the two kinds of state are split
-by lifetime. The **long-lived, owned, lifetime-free state** (the [caches](cached-dependency-resolution.md)
-and the config anchors) lives on the emitter and is reused across every resolution in the
-compilation. The **short-lived, `'tcx`-scoped state**, the `TyCtxt` handle or the rustc-backed query
-provider that holds it, is bundled into a per-resolution `ResolveCtx` built *inside* each
-`ty::tls::with` closure, which **borrows** the long-lived store rather than owning it. So each
-resolution gets a fresh binding to the compiler while the cache entries persist on the emitter behind
-the borrow. Building the per-resolution context is a copy plus two borrows (`TyCtxt` is `Copy`), so
-the per-resolution cost is negligible.
+by lifetime. The **long-lived, owned, lifetime-free state** (the
+[caches](cached-dependency-resolution.md) and the config anchors) lives on the emitter and is reused
+across every resolution in the compilation. The **short-lived, `'tcx`-scoped state**, the `TyCtxt`
+handle or the rustc-backed query provider that holds it, is bundled into a per-resolution
+`ResolveCtx` built *inside* each `ty::tls::with` closure, which **borrows** the long-lived store
+rather than owning it. So each resolution gets a fresh binding to the compiler while the cache
+entries persist on the emitter behind the borrow. Building the per-resolution context is a copy plus
+two borrows (`TyCtxt` is `Copy`), so the per-resolution cost is negligible.
 
 The rough shape is two structs, one per lifetime class:
 
@@ -194,47 +196,48 @@ struct ResolveCtx<'a, 'tcx> {
 
 The later CGP-component work does not change this split. It only changes what stands in the `tcx`
 field's place. The rustc-backed context keeps the `TyCtxt<'tcx>` (staying `'tcx`-scoped and
-per-resolution), while the separate stand-in context needs no compiler lifetime at all; the cache and
-config are borrowed the same way in both. That component design is out of this document's scope; what
-matters here is that the lifetime split already accommodates it.
+per-resolution), while the separate stand-in context needs no compiler lifetime at all; the cache
+and config are borrowed the same way in both. That component design is out of this document's scope;
+what matters here is that the lifetime split already accommodates it.
 
 Reuse across `ty::tls::with` entries is sound for the same reason the name map's is: one crate
-compilation is one `GlobalCtxt`, so every entry yields a handle to the *same* underlying tcx, and the
-cache's keys are tcx-free while its values are owned. An entry written under one entry is valid, and
-correct, under any later one. The store outlives the individual `ResolveCtx` values that borrow it, and
-the compilation outlives the store.
+compilation is one `GlobalCtxt`, so every entry yields a handle to the *same* underlying tcx, and
+the cache's keys are tcx-free while its values are owned. An entry written under one entry is valid,
+and correct, under any later one. The store outlives the individual `ResolveCtx` values that borrow
+it, and the compilation outlives the store.
 
 ## Deferred: the CGP-component abstraction
 
-The rustc-free stand-in and the CGP components it implements are designed later, so this section only
-records what the current work must carry forward for that later design. It does not specify the
+The rustc-free stand-in and the CGP components it implements are designed later, so this section
+only records what the current work must carry forward for that later design. It does not specify the
 components. Three facts are worth handing off.
 
 First, **the compiler-query surface is small and enumerable, which is what will make the abstraction
 tractable.** The resolver already restricts itself to the CGP wiring vocabulary and DefId-anchors
 everything, the same discipline that made it independent of `IsProviderFor` (see
 [the walk](typed-resolution-walk.md)). So the Class A and Class B operations are a bounded set, not
-"all of rustc." The [query catalog](#the-first-artifact-the-query-catalog) the cache work produces is
-the concrete enumeration.
+"all of rustc." The [query catalog](#the-first-artifact-the-query-catalog) the cache work produces
+is the concrete enumeration.
 
 Second, **the load-bearing difficulty is the type vocabulary, not the operation count.** The
-operations traffic in `Ty<'tcx>`, `DefId`, `TraitRef<'tcx>`, and `GenericArgs<'tcx>`, and those types
-cannot be inhabited without a live `TyCtxt`: a rustc-free stand-in cannot construct a `Ty<'tcx>`. So
-the later components must be defined over an *abstracted* vocabulary (an owned model, or CGP abstract
-types) rather than over rustc's types directly. That same choice relates to the
-[cache key](cached-dependency-resolution.md#the-cache-key), which keys each obligation by a `StableHash`
-fingerprint (carrying readable fields alongside for debugging); moving the walk itself onto an owned
-model would let structural equality on owned types replace the fingerprint as the key's identity.
+operations traffic in `Ty<'tcx>`, `DefId`, `TraitRef<'tcx>`, and `GenericArgs<'tcx>`, and those
+types cannot be inhabited without a live `TyCtxt`: a rustc-free stand-in cannot construct a
+`Ty<'tcx>`. So the later components must be defined over an *abstracted* vocabulary (an owned model,
+or CGP abstract types) rather than over rustc's types directly. That same choice relates to the
+[cache key](cached-dependency-resolution.md#the-cache-key), which keys each obligation by a
+`StableHash` fingerprint (carrying readable fields alongside for debugging); moving the walk itself
+onto an owned model would let structural equality on owned types replace the fingerprint as the
+key's identity.
 
 Third, **a stand-in validates the resolver's logic, not rustc's behavior.** For the Class A schema
 operations a hand-built graph is a faithful substitute. For the Class B solver operations it is a
 ceiling. The subtle paths (`resolve_fixed_projections` recovering a stalled projection, the
-higher-ranked binder instantiation, the placeholder fold for later pipeline stages, all documented in
-[the walk](typed-resolution-walk.md)) exist *because* rustc's solver does something non-obvious, and
-a stand-in faithful enough to reproduce them is reproducing the very behavior in question. So the UI
-snapshot suite stays ground truth for solver fidelity; the later stand-in tests cover the decision
-logic and the corner cases awkward to build as whole programs, and must not breed confidence on the
-paths that most need the real compiler.
+higher-ranked binder instantiation, the placeholder fold for later pipeline stages, all documented
+in [the walk](typed-resolution-walk.md)) exist *because* rustc's solver does something non-obvious,
+and a stand-in faithful enough to reproduce them is reproducing the very behavior in question. So
+the UI snapshot suite stays ground truth for solver fidelity; the later stand-in tests cover the
+decision logic and the corner cases awkward to build as whole programs, and must not breed
+confidence on the paths that most need the real compiler.
 
 ## Sequencing
 
@@ -242,9 +245,9 @@ The work this document specifies is the first two steps; the CGP components and 
 are the deferred later work, out of scope here.
 
 1. **Land the caches with the purity taxonomy made explicit.** The cache has landed (see
-   [Cached dependency resolution](cached-dependency-resolution.md)); the query catalog below, with its
-   per-query proof of complete input, has not been produced. It is the artifact the later component
-   boundary is drawn from.
+   [Cached dependency resolution](cached-dependency-resolution.md)); the query catalog below, with
+   its per-query proof of complete input, has not been produced. It is the artifact the later
+   component boundary is drawn from.
 2. **Introduce `ResolveCtx` as a rustc-backed struct** homing `tcx`, the caches, and the config,
    threaded in place of the loose parameters. A mechanical, low-risk, output-preserving refactor.
 3. **(Later, out of scope.)** Define the resolver's compiler operations as CGP components over an
@@ -261,18 +264,18 @@ carries a hidden parameter. It turns "abstract the compiler" from a judgment int
 
 ## Comparison with Clippy
 
-Clippy does not abstract the compiler for testing, so there is no Clippy design to follow here, and the
-divergence is instructive. Clippy's own tests are UI tests over real compilation. It never needs a
-mock `TyCtxt` because its lint passes run only on type-checking code and it has no rustc-free core to
-exercise in isolation. cargo-cgp is pushed the other way by two facts particular to it: it re-runs
-compiler work from inside the emitter (so its logic is unusually dense and error-prone, and worth
-unit-testing), and it already keeps half of that logic rustc-free in `cargo-cgp-error-processing`. This
-context type extends that existing rustc-free discipline leftward over the resolver's input half.
-Where Clippy leans entirely on the compiler's query memoization, cargo-cgp inherits that same
-memoization for its Class A queries and adds, on top, the resolver-level
-[cache](cached-dependency-resolution.md) and, in the deferred later work, the CGP-component boundary
-that a rustc-free stand-in can implement. Clippy has no need for these layers because it adds
-diagnostics rather than reshaping them.
+Clippy does not abstract the compiler for testing, so there is no Clippy design to follow here, and
+the divergence is instructive. Clippy's own tests are UI tests over real compilation. It never needs
+a mock `TyCtxt` because its lint passes run only on type-checking code and it has no rustc-free core
+to exercise in isolation. cargo-cgp is pushed the other way by two facts particular to it: it
+re-runs compiler work from inside the emitter (so its logic is unusually dense and error-prone, and
+worth unit-testing), and it already keeps half of that logic rustc-free in
+`cargo-cgp-error-processing`. This context type extends that existing rustc-free discipline leftward
+over the resolver's input half. Where Clippy leans entirely on the compiler's query memoization,
+cargo-cgp inherits that same memoization for its Class A queries and adds, on top, the
+resolver-level [cache](cached-dependency-resolution.md) and, in the deferred later work, the
+CGP-component boundary that a rustc-free stand-in can implement. Clippy has no need for these layers
+because it adds diagnostics rather than reshaping them.
 
 ## Tests (planned)
 
@@ -284,9 +287,9 @@ the intent.
   `tests/ui/acceptable/` snapshots unchanged; the refactor is behavior-preserving.
 - **Stand-in decision-logic unit tests (later)**: once the components exist, exercise
   `is_reportable_leaf`, `is_dispatch_lookup`, `owner_has_impl_of`, the `field_issue` `Deref`-chain
-  classification, and the label rendering over a hand-built graph, covering the branch corners (empty
-  dispatch table, not-a-provider vs dead-end, present-via-`Deref`) that are awkward to reproduce as
-  whole CGP programs today.
+  classification, and the label rendering over a hand-built graph, covering the branch corners
+  (empty dispatch table, not-a-provider vs dead-end, present-via-`Deref`) that are awkward to
+  reproduce as whole CGP programs today.
 - **Parity spot-checks (later)**: a handful of fixtures whose stand-in-predicted resolution is
   compared against the real rustc-backed resolution, guarding that the stand-in's assumptions about
   Class B answers match the compiler on the shapes it claims to cover.
@@ -295,15 +298,15 @@ the intent.
 
 Existing modules the context reorganizes:
 
-- [`crates/cargo-cgp-driver/src/resolve/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve) — the whole
-  resolver, whose stages currently take `TyCtxt` directly; `cgp_item.rs`, `classify/`, `walk/`, and
-  `label/` are the Class A + Class B surface the later components would cover, while `anchor/` and
-  `call_site/` stay the rustc-coupled edge.
-- [`crates/cargo-cgp-driver/src/config.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/config.rs) — the crate
-  and trait-name constants the context carries.
-- [`crates/cargo-cgp-error-processing/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing) — the existing
-  rustc-free crate whose discipline this extends; the natural home for the abstracted vocabulary and
-  the decision core once the later work moves them off `rustc_private`.
+- [`crates/cargo-cgp-driver/src/resolve/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve):
+  the whole resolver, whose stages currently take `TyCtxt` directly; `cgp_item.rs`, `classify/`,
+  `walk/`, and `label/` are the Class A + Class B surface the later components would cover, while
+  `anchor/` and `call_site/` stay the rustc-coupled edge.
+- [`crates/cargo-cgp-driver/src/config.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/config.rs):
+  the crate and trait-name constants the context carries.
+- [`crates/cargo-cgp-error-processing/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing):
+  the existing rustc-free crate whose discipline this extends; the natural home for the abstracted
+  vocabulary and the decision core once the later work moves them off `rustc_private`.
 
 Planned additions (near-term):
 
@@ -314,5 +317,5 @@ Planned additions (near-term):
   carries the `TyCtxt` and borrows the store.
 - The query catalog artifact.
 
-Deferred (later work, out of scope here): the CGP components over an abstracted type vocabulary and the
-separate rustc-free stand-in context that implements them.
+Deferred (later work, out of scope here): the CGP components over an abstracted type vocabulary and
+the separate rustc-free stand-in context that implements them.

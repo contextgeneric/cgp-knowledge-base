@@ -1272,7 +1272,7 @@ which pages qualify are in
 
 **Every page carries a `description`, and a page whose heading is a construct name also carries a
 search-facing `title`.** Docusaurus uses front-matter `title` for the page metadata and inserts it as
-a heading only when the Markdown has none, so a construct page keeps `# \`#[cgp_component]\`` as its
+a heading only when the Markdown has none, so a construct page keeps `` # `#[cgp_component]` `` as its
 `h1` — the name a reader scans for — while its `<title>` says what the construct is for. The
 `sidebar_label` is untouched.
 

@@ -30,8 +30,8 @@ progress output reaches the user unchanged.
 A CGP macro expands to ordinary Rust, so most CGP mistakes are caught not by the macro but by the
 compiler type-checking the generated code, where the diagnostic is shaped by CGP's machinery in ways
 that make it hard to read: a single mistake can cascade across generated types the programmer never
-wrote, and the real cause is often buried or hidden entirely. The [CGP error
-catalog](../../cgp/errors/README.md) maps those classes: which hide the root cause, which
+wrote, and the real cause is often buried or hidden entirely. The
+[CGP error catalog](../../cgp/errors/README.md) maps those classes: which hide the root cause, which
 surface it, and where the cause sits. `cargo-cgp`'s job is to take rustc's output for those classes
 and re-present it with the cause first. This document maps the stages that do so, and
 [The driver](driver.md) is the running account of the transformations themselves.
@@ -41,19 +41,20 @@ and re-present it with the cause first. This document maps the stages that do so
 Every transformation happens in the driver's custom emitter, because that is the one place with the
 compiler state the transforms need. The driver runs the real compiler in-process through
 `rustc_driver`, so its emitter reaches the live `TyCtxt` (from thread-local scope, valid because a
-wiring message is built during trait solving). That access is what lets it name the consumer and provider
-traits behind a component marker and re-run a check obligation to recover its root cause. A front-end
-that only saw cargo's serialized output could do none of that, which is why the whole layer lives in
-the driver.
+wiring message is built during trait solving). That access is what lets it name the consumer and
+provider traits behind a component marker and re-run a check obligation to recover its root cause. A
+front-end that only saw cargo's serialized output could do none of that, which is why the whole
+layer lives in the driver.
 
 The emitter transforms each diagnostic in two tiers, then post-processes the result. When the
-diagnostic is a resolvable CGP wiring failure, the [typed root-cause resolver](typed-root-cause-resolution.md)
-replaces it with its dependency tree(s) and a coded main message. Otherwise a text
-[wiring-message rewrite](driver.md#naming-the-traits-behind-a-component-marker) renames the CGP wiring
-notes it recognizes. Either way, the diagnostic then passes through the
+diagnostic is a resolvable CGP wiring failure, the
+[typed root-cause resolver](typed-root-cause-resolution.md) replaces it with its dependency tree(s)
+and a coded main message. Otherwise a text
+[wiring-message rewrite](driver.md#naming-the-traits-behind-a-component-marker) renames the CGP
+wiring notes it recognizes. Either way, the diagnostic then passes through the
 [post-processing](error-processing.md) transforms (stripping CGP path prefixes, resugaring `Symbol!`
-and `Path!`, rewording an unmet `HasField` bound), so a diagnostic the tool did not fully rewrite still reads
-cleanly, and the compiler-formatted CGP type names a rewrite embeds are tidied too.
+and `Path!`, rewording an unmet `HasField` bound), so a diagnostic the tool did not fully rewrite
+still reads cleanly, and the compiler-formatted CGP type names a rewrite embeds are tidied too.
 
 ## Configuring rustc
 
@@ -72,22 +73,22 @@ inner emitter and wraps whichever the compiler's own `default_emitter` would bui
 error format: a `JsonEmitter` for `--message-format=json`, an `AnnotateSnippetEmitter` for the
 default human format. The emitter mutates the compiler's `DiagInner` in place before handing it to
 that inner emitter, so the transform reaches both a JSON diagnostic's structured `children` and its
-regenerated `rendered` field, and a human diagnostic's rendered text, with no re-parsing. Because the
-inner emitter is the compiler's own, `cargo-cgp-driver`'s output matches plain `rustc`'s apart from
-the CGP transforms. That is also why a fixture's `.cgp.stderr` and its plain-`cargo check`
+regenerated `rendered` field, and a human diagnostic's rendered text, with no re-parsing. Because
+the inner emitter is the compiler's own, `cargo-cgp-driver`'s output matches plain `rustc`'s apart
+from the CGP transforms. That is also why a fixture's `.cgp.stderr` and its plain-`cargo check`
 `.rust.stderr` baseline share a renderer, so their diff is purely the tool's work (see
 [Testing](testing.md)).
 
 ## Comparison with Clippy
 
 Clippy is also a diagnostic tool built on this integration, but its pipeline has a different shape
-because its aim is different: Clippy *adds* diagnostics, whereas `cargo-cgp` *rewrites and clarifies*
-the ones rustc already produced. Both do their work inside the compilation (Clippy through lint
-passes, `cargo-cgp` through a rewriting emitter), and both let cargo carry the output out unchanged,
-so neither needs a front-end processing stage. The difference is that Clippy's emitter is the
-compiler's default, while `cargo-cgp` wraps that default in one that edits each diagnostic first. How
-the two diverge in the driver (Clippy registering lints where `cargo-cgp` installs a rewriting
-emitter, and the flag levers `cargo-cgp` adds) is compared in the
+because its aim is different: Clippy *adds* diagnostics, whereas `cargo-cgp` *rewrites and
+clarifies* the ones rustc already produced. Both do their work inside the compilation (Clippy
+through lint passes, `cargo-cgp` through a rewriting emitter), and both let cargo carry the output
+out unchanged, so neither needs a front-end processing stage. The difference is that Clippy's
+emitter is the compiler's default, while `cargo-cgp` wraps that default in one that edits each
+diagnostic first. How the two diverge in the driver (Clippy registering lints where `cargo-cgp`
+installs a rewriting emitter, and the flag levers `cargo-cgp` adds) is compared in the
 [driver deep dive](driver.md#comparison-with-clippy).
 
 ## Tests
@@ -105,11 +106,11 @@ passes.
 ## Source
 
 - The driver-side configure, transform, and render stages are in
-  [`crates/cargo-cgp-driver/src`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src); see the
-  [driver deep dive](driver.md#source) for the per-module list.
-- [`crates/cargo-cgp/src/launch/command.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/command.rs) — the
-  front-end's whole role: run the wrapped `cargo check` with the driver installed and forward its
-  output untouched.
-- [`crates/cargo-cgp-error-processing/src`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src) — the
-  rustc-free rewrite, post-processing, diagnosis-wording, and tree-rendering helpers the driver's
-  transforms are built on.
+  [`crates/cargo-cgp-driver/src`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src);
+  see the [driver deep dive](driver.md#source) for the per-module list.
+- [`crates/cargo-cgp/src/launch/command.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/command.rs):
+  the front-end's whole role: run the wrapped `cargo check` with the driver installed and forward
+  its output untouched.
+- [`crates/cargo-cgp-error-processing/src`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src):
+  the rustc-free rewrite, post-processing, diagnosis-wording, and tree-rendering helpers the
+  driver's transforms are built on.

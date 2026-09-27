@@ -1,44 +1,44 @@
 # Dependency-graph rendering
 
 The dependency tree beneath a `root cause:` note is built by folding the resolver's per-cause paths
-into one rustc-free **dependency graph** and rendering it `cargo tree`-style. The resolver emits, for
-each way it reaches a root cause, a flat path of structured nodes; error-processing merges every node
-that several paths reach in common into a directed acyclic graph, then renders that graph with a
-`(*)` marker on any subtree already drawn elsewhere. All the merging and rendering is a pure function
-over owned data, so every shape is unit-tested without a compiler in the loop.
+into one rustc-free **dependency graph** and rendering it `cargo tree`-style. The resolver emits,
+for each way it reaches a root cause, a flat path of structured nodes; error-processing merges every
+node that several paths reach in common into a directed acyclic graph, then renders that graph with
+a `(*)` marker on any subtree already drawn elsewhere. All the merging and rendering is a pure
+function over owned data, so every shape is unit-tested without a compiler in the loop.
 
-The whole layer exists because cargo-cgp *reshapes* a diagnostic the compiler already built rather than
-emitting a new one of its own. A tool that only adds lints hands its findings to rustc's standard
-emitter and never reconstructs a failed obligation's chain, so it has nothing to merge into a graph or
-lay out as a tree; every decision below follows from having that chain in hand and owing the reader a
-readable account of it.
+The whole layer exists because cargo-cgp *reshapes* a diagnostic the compiler already built rather
+than emitting a new one of its own. A tool that only adds lints hands its findings to rustc's
+standard emitter and never reconstructs a failed obligation's chain, so it has nothing to merge into
+a graph or lay out as a tree; every decision below follows from having that chain in hand and owing
+the reader a readable account of it.
 
 ## Why a graph rather than a chain per cause
 
 A single failure's root causes do not form independent chains, so the note cannot be a stack of
 linear spines. It has to be a graph, because real wiring produces three shapes a per-cause spine
-cannot represent. Each shape is a way two root→leaf paths relate to one another beyond simply sharing
-a prefix, and the graph is what lets the note show each correctly.
+cannot represent. Each shape is a way two root→leaf paths relate to one another beyond simply
+sharing a prefix, and the graph is what lets the note show each correctly.
 
-The first is a **shared dependency**: a diamond. When two providers both depend on one trait
-and that trait is what fails, their two paths share a *suffix* (`… → C → missing`), not a
-prefix. The note should show the shared trait and its subtree once; a spine model that keys only
-on the root would repeat the whole subtree under each parent.
+The first is a **shared dependency**: a diamond. When two providers both depend on one trait and
+that trait is what fails, their two paths share a *suffix* (`… → C → missing`), not a prefix. The
+note should show the shared trait and its subtree once; a spine model that keys only on the root
+would repeat the whole subtree under each parent.
 
 The second is **independent consumers converging on one leaf**. Two unrelated components can both
 read the same missing field, so their paths meet only at the terminal leaf. The note names that one
-cause once in its heading, yet must still show both consumers' chains, because both are real and both
-need the same fix.
+cause once in its heading, yet must still show both consumers' chains, because both are real and
+both need the same fix.
 
-The third is **subsumption**: one consumer's chain running *through* another. When `CanCalculateDensity`
-depends on `CanCalculateArea`, the density chain contains the area chain as a sub-path. The note
-should lead with the deeper chain and show the area consumer in its rightful place inside it, not as a
-second top-level entry.
+The third is **subsumption**: one consumer's chain running *through* another. When
+`CanCalculateDensity` depends on `CanCalculateArea`, the density chain contains the area chain as a
+sub-path. The note should lead with the deeper chain and show the area consumer in its rightful
+place inside it, not as a second top-level entry.
 
 A graph whose nodes have structural identity handles all three: a node several paths reach in common
-is one node with several parents or children, so a shared dependency is stored once, a converging leaf
-is one node, and a subsumed consumer is a node that is both a path head and another node's child. The
-rest of this document is how that graph is built, ruled, and rendered.
+is one node with several parents or children, so a shared dependency is stored once, a converging
+leaf is one node, and a subsumed consumer is a node that is both a path head and another node's
+child. The rest of this document is how that graph is built, ruled, and rendered.
 
 ## Structured nodes
 
@@ -58,11 +58,11 @@ pub enum DepNode {
 ```
 
 There is no `CGP-E103` hop: a `HasField` obligation is always a terminal root cause in the walk,
-never a mid-chain hop, so the code that would have carried it is retired (see
+never a mid-chain hop, so the code that would carry it stays unassigned (see
 [error-code.md](../error-code.md)). The terminal root cause is the existing
 [`Leaf`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/leaf.rs),
-unchanged, since it already carries the field, wiring, dispatch, and bound classifications the leads and
-codes are worded from. A graph node is therefore either a hop or a leaf:
+unchanged, since it already carries the field, wiring, dispatch, and bound classifications the leads
+and codes are worded from. A graph node is therefore either a hop or a leaf:
 
 ```rust
 pub enum ChainNode {
@@ -73,11 +73,12 @@ pub enum ChainNode {
 
 Each variant renders to exactly the label its `CGP-E1xx` template dictates
 (`` consumer trait impl `…` for context `…` `` and the rest), with the trait reference stored *with*
-its generic arguments (`CanCalculateArea<f64>`), since rendering them is a rustc-free concern. Node identity is
-whole-node structural equality (`Eq`/`Hash` derived on the enum), which is faithful even where the
-rendered label is not: the `Redirect` node holds the dispatched `key` (`Left` versus `Right`) though it
-renders only the route and its table (`` `@ValueBuilderComponent` in `App` ``), so two lookups along one route for different keys
-stay distinct nodes rather than merging into a false diamond.
+its generic arguments (`CanCalculateArea<f64>`), since rendering them is a rustc-free concern. Node
+identity is whole-node structural equality (`Eq`/`Hash` derived on the enum), which is faithful even
+where the rendered label is not: the `Redirect` node holds the dispatched `key` (`Left` versus
+`Right`) though it renders only the route and its table (`` `@ValueBuilderComponent` in `App` ``),
+so two lookups along one route for different keys stay distinct nodes rather than merging into a
+false diamond.
 
 ## A cause is a leaf and the paths that reach it
 
@@ -94,10 +95,10 @@ pub struct Cause {
 
 A leaf reached one way has a single path, the common case; a leaf reached through a shared trait
 several providers depend on has several, one per parent. Holding several paths on one cause rather
-than one cause per path is deliberate: it preserves the **one cause per distinct leaf** invariant that
-the rest of the pipeline relies on. The de-duplication ledger's `cause_signature`, the grouping key,
-the consumer coalescing, and `derive_help_messages` all read a cause list expecting each leaf once;
-only the *rendering* consumes the extra paths.
+than one cause per path is deliberate: it preserves the **one cause per distinct leaf** invariant
+that the rest of the pipeline relies on. The de-duplication ledger's `cause_signature`, the grouping
+key, the consumer coalescing, and `derive_help_messages` all read a cause list expecting each leaf
+once; only the *rendering* consumes the extra paths.
 
 That invariant is held **by the type**, not by discipline.
 [`Causes`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/resolved.rs)
@@ -111,12 +112,13 @@ by-component use-site anchor, and the emitter's coalesced block) get it for free
 It is worth making structural because getting it wrong fails in two directions, and a site that
 re-established it by hand could fall into either. **Merging nothing** states one mistake once per
 contributor: three consumers failing on one underived field would produce
-`` accessor trait `HasField` is not implemented for the fields `name`, `name`, and `name` ``, with the
-underived-field coalescing below faithfully reporting three causes it should never have been given.
-**De-duplicating by leaf but dropping the duplicate's paths** loses a chain instead: a use-site
-failure across several wired components that share a cause would keep only the first component's
-route, so the header would name a consumer whose chain appears nowhere in the note. Neither announces
-itself, so a new construction site that forgot the normalizing call would be a real hazard.
+`` accessor trait `HasField` is not implemented for the fields `name`, `name`, and `name` ``, with
+the underived-field coalescing below faithfully reporting three causes it should never have been
+given. **De-duplicating by leaf but dropping the duplicate's paths** loses a chain instead: a
+use-site failure across several wired components that share a cause would keep only the first
+component's route, so the header would name a consumer whose chain appears nowhere in the note.
+Neither announces itself, so a new construction site that forgot the normalizing call would be a
+real hazard.
 
 Coalescing several present-but-underived fields on one struct is the one case where a cause's
 heading leaf differs from its paths' terminal leaves.
@@ -138,20 +140,20 @@ children.
 Node identity is **cross-path only**. A label that repeats *within a single path* is kept a distinct
 node, because a linear descent can pass through two hops that render identically yet mean different
 things (a recursive `RedirectLookup` resolving `Outer` then `Inner`, whose rendered label omits the
-key), and merging those would fold the spine into a false cycle. `from_paths` enforces this by tracking
-the ids already placed on the current path and registering only a label's first occurrence in the
-lookup index: a within-path repeat gets a fresh, unregistered node, while a later path still finds the
-canonical one.
+key), and merging those would fold the spine into a false cycle. `from_paths` enforces this by
+tracking the ids already placed on the current path and registering only a label's first occurrence
+in the lookup index: a within-path repeat gets a fresh, unregistered node, while a later path still
+finds the canonical one.
 
 ## Roots and subsumption
 
 A path head is a **top-level root only if it is not also some other node's child.** This one rule
 gives subsumption for free. When one consumer's chain passes through another
-(`CanCalculateDensity → DensityCalculator → CanCalculateArea → …`), the head `CanCalculateArea` from the
-shorter path is also a child inside the longer one, so it is not rendered as a second top-level entry;
-it still appears, once, in its place inside the deeper chain. When neither consumer subsumes the other,
-both heads stay roots and both render. If every head is a child (a pathological all-cyclic input),
-`roots` falls back to every head, so rendering never yields nothing.
+(`CanCalculateDensity → DensityCalculator → CanCalculateArea → …`), the head `CanCalculateArea` from
+the shorter path is also a child inside the longer one, so it is not rendered as a second top-level
+entry; it still appears, once, in its place inside the deeper chain. When neither consumer subsumes
+the other, both heads stay roots and both render. If every head is a child (a pathological
+all-cyclic input), `roots` falls back to every head, so rendering never yields nothing.
 
 ## Rendering
 
@@ -161,8 +163,8 @@ convention `cargo tree` uses for a dependency already shown elsewhere. One `expa
 the roots, so a node expanded under one root is `(*)`-referenced under the next, and because each
 node is expanded at most once the walk terminates even if the data ever contains a cycle. A **leaf**
 carries no subtree to hide, so a leaf reached by several paths is drawn in full each time rather
-than marked, so the root cause reads the same wherever a chain bottoms out on it. The render produces
-one
+than marked, so the root cause reads the same wherever a chain bottoms out on it. The render
+produces one
 [`DependencyTree`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/tree.rs)
 per root, stacked into the note.
 
@@ -171,9 +173,9 @@ parent's still prints its whole generic list, even in a dispatch chain that rest
 `Code` type at every step. Shortening it to `<…>` would hide the very type the reader is tracing,
 and leave them unable to tell a genuine repeat from a hop whose parameters differ without
 re-deriving it. A chain step always names its trait and its parameters as written. The verbosity is
-real on a DSL-sized program and is accepted: the chain is there to be read precisely, and a reader who wants it shorter is better served by the
-[cross-block elision](#eliding-across-blocks) below, which drops whole subtrees a previous block
-already drew rather than obscuring individual types.
+real on a DSL-sized program and is accepted: the chain is there to be read precisely, and a reader
+who wants it shorter is better served by the [cross-block elision](#eliding-across-blocks) below,
+which drops whole subtrees a previous block already drew rather than obscuring individual types.
 
 ## Worked shapes
 
@@ -206,9 +208,10 @@ a `Person` missing both name fields):
 ```
 
 A **subsuming cascade**, where `CanCalculateDensity` depends on `CanCalculateArea` and both are
-checked ([`density_3`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/duplication/density_3.rs)),
-renders as the single deeper chain, because the area consumer's head is a descendant of the
-density chain and so is not a second root:
+checked
+([`density_3`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/duplication/density_3.rs)),
+renders as the single deeper chain, because the area consumer's head is a descendant of the density
+chain and so is not a second root:
 
 ```text
 [CGP-E101] consumer trait impl `CanCalculateDensity` for context `Rectangle`
@@ -275,46 +278,46 @@ redirect:
 
 ## Eliding across blocks
 
-The `(*)` convention reaches past one note: one `seen` set threaded through a compilation's blocks in
-emission order lets a later block truncate at a subtree an earlier one already drew. This exists
-because CGP wiring is lazy, so one mistake surfaces in several diagnostics that legitimately do *not*
-de-duplicate (a hand-written wrapper trait is a distinct trait from the consumer it reduces to, so it
-keeps its own block), and their chains can share everything below their own first few hops. In the
-money-transfer example, the second block's chain is almost entirely the first block's plus a short
-routing prefix, so eliding the shared remainder shrinks it to a few lines.
+The `(*)` convention reaches past one note: one `seen` set threaded through a compilation's blocks
+in emission order lets a later block truncate at a subtree an earlier one already drew. This exists
+because CGP wiring is lazy, so one mistake surfaces in several diagnostics that legitimately do
+*not* de-duplicate (a hand-written wrapper trait is a distinct trait from the consumer it reduces
+to, so it keeps its own block), and their chains can share everything below their own first few
+hops. In the money-transfer example, the second block's chain is almost entirely the first block's
+plus a short routing prefix, so eliding the shared remainder shrinks it to a few lines.
 
 [`render_seen`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/graph.rs)
 is `render` against a caller-owned `seen`, and three rules keep it honest.
 
-**An elided branch still bottoms out at the root cause.** A chain exists to lead the reader from what
-they wrote down to the mistake, so stopping one step short of it is the one thing it may never do.
-A cross-block `(*)` points into *another* block, which a reader may not have to hand. So a branch
-elided across renders keeps the marker on the hop and appends the distinct leaves reachable beneath it
-(`leaves_below`): the intervening hops are elided, the terminus is not. A branch elided *within* one
-render needs no such terminator, and keeps the bare `(*)` it always had, because the subtree it points
-at, root cause included, is right above it in the same note.
+**An elided branch still bottoms out at the root cause.** A chain exists to lead the reader from
+what they wrote down to the mistake, so stopping one step short of it is the one thing it may never
+do. A cross-block `(*)` points into *another* block, which a reader may not have to hand. So a
+branch elided across renders keeps the marker on the hop and appends the distinct leaves reachable
+beneath it (`leaves_below`): the intervening hops are elided, the terminus is not. A branch elided
+*within* one render needs no such terminator, and keeps the bare `(*)` it always had, because the
+subtree it points at, root cause included, is right above it in the same note.
 
-**A render consults only what *earlier* renders drew.** The nodes it draws itself are collected apart
-and folded in at the end, because `seen` is keyed by node value while a label repeating *within* one
-path is deliberately a distinct node. A set the current render were also filling would mark the second
-occurrence `(*)` and fold a linear descent into a false cycle. Within a render, only the id-keyed
-`expanded` elides.
+**A render consults only what *earlier* renders drew.** The nodes it draws itself are collected
+apart and folded in at the end, because `seen` is keyed by node value while a label repeating
+*within* one path is deliberately a distinct node. A set the current render were also filling would
+mark the second occurrence `(*)` and fold a linear descent into a false cycle. Within a render, only
+the id-keyed `expanded` elides.
 
 **A block with no distinct prefix of its own renders in full instead of eliding.** `fully_elided_by`
-reports every top-level root already drawn, and such a block is rendered against a *fresh* `seen` set
-rather than truncated. The elision exists to trim a long shared *tail* hanging under a block's own
-prefix; a block whose every root was already drawn has no prefix to hang it under, so eliding removes
-the whole derivation and leaves the block asserting a cause with no account of where it came from.
-Such a block has already survived [de-duplication](driver.md), so it is a *different* failure that
-merely runs through ground another one covered (a hand-written wrapper trait and the CGP consumer it
-reduces to, say), and it earns its own chain. The cost is bounded: a wholly-contained graph is by
-construction no larger than the one containing it. Its nodes still join `seen`, so later blocks elide
-against it as usual.
+reports every top-level root already drawn, and such a block is rendered against a *fresh* `seen`
+set rather than truncated. The elision exists to trim a long shared *tail* hanging under a block's
+own prefix; a block whose every root was already drawn has no prefix to hang it under, so eliding
+removes the whole derivation and leaves the block asserting a cause with no account of where it came
+from. Such a block has already survived [de-duplication](driver.md), so it is a *different* failure
+that merely runs through ground another one covered (a hand-written wrapper trait and the CGP
+consumer it reduces to, say), and it earns its own chain. The cost is bounded: a wholly-contained
+graph is by construction no larger than the one containing it. Its nodes still join `seen`, so later
+blocks elide against it as usual.
 
 An elided block stays actionable read on its own: its header, its fix `help`, and its `root cause:`
 lead all still name the cause, so what is elided is chain *detail*, never what failed or how to fix
-it. That is what makes the elision safe for a consumer that sees one diagnostic at a time, such as an
-editor reading the JSON output.
+it. That is what makes the elision safe for a consumer that sees one diagnostic at a time, such as
+an editor reading the JSON output.
 
 ## The note over the graph
 
@@ -331,11 +334,11 @@ header restating the ordinary bound), leaving the graph alone under its heading.
 
 The emitter's coalesced block builds the same graph-backed note rather than assembling a tree of its
 own. When several consumer failures share a cause and coalesce into one `[CGP-E001]` block (see
-[The driver](driver.md)), that block's note folds *every* member's causes
-into one graph, so a consumer whose chain runs through another collapses into it while independent
-chains to the shared cause render side by side, and no member's chain is dropped. Its causes pass
-through `Causes::union`, so the heading names each distinct cause once however many members reached
-it, while the merged cause still carries every member's path into the graph.
+[The driver](driver.md)), that block's note folds *every* member's causes into one graph, so a
+consumer whose chain runs through another collapses into it while independent chains to the shared
+cause render side by side, and no member's chain is dropped. Its causes pass through
+`Causes::union`, so the heading names each distinct cause once however many members reached it,
+while the merged cause still carries every member's path into the graph.
 
 ## How the resolver feeds the graph
 
@@ -373,44 +376,46 @@ A few edges of the model are worth recording. Node identity is whole-node struct
 is faithful in both directions: within a single path a repeated label stays distinct, so a recursive
 descent never folds into a false cycle, and across paths the fields a node carries capture what
 distinguishes it even where the rendered label does not, the `Redirect` key being the load-bearing
-case. The `(*)` convention is borrowed from `cargo tree` and is pinned in the fixtures. This document covers rendering only; the resolver's walk, anchors, and cache are
-described in [Typed root-cause resolution](typed-root-cause-resolution.md); this model shapes only
-the representation they emit.
+case. The `(*)` convention is borrowed from `cargo tree` and is pinned in the fixtures. This
+document covers rendering only; the resolver's walk, anchors, and cache are described in
+[Typed root-cause resolution](typed-root-cause-resolution.md); this model shapes only the
+representation they emit.
 
 **A wide convergence repeats `(*)` once per parent, and that is not noise to collapse.** A trait
 many providers share (an abstract type especially, since one binding serves the whole context) is a
-node with many parents, so its reference recurs once under each. It reads at a glance like repetition
-worth folding, and it is not: each `(*)` is the *terminator of a distinct branch* naming a distinct
-consumer, so dropping the repeats would leave those branches dangling with no explanation of why they
-are listed. Reproducing a six-way convergence makes this plain: the weight is the six two-line
-branches, which are genuine information, not the six markers that end them. The length is inherent to
-wiring in which six traits really do need one shared thing. What *is* worth collapsing is a
-subtree drawn in another block, which is [the cross-block elision](#eliding-across-blocks) above.
+node with many parents, so its reference recurs once under each. It reads at a glance like
+repetition worth folding, and it is not: each `(*)` is the *terminator of a distinct branch* naming
+a distinct consumer, so dropping the repeats would leave those branches dangling with no explanation
+of why they are listed. Reproducing a six-way convergence makes this plain: the weight is the six
+two-line branches, which are genuine information, not the six markers that end them. The length is
+inherent to wiring in which six traits really do need one shared thing. What *is* worth collapsing
+is a subtree drawn in another block, which is [the cross-block elision](#eliding-across-blocks)
+above.
 
 ## Tests
 
-Because the graph is a pure function over structured data, every shape is a unit test with no compiler,
-and the end-to-end behavior is pinned by the UI suite.
+Because the graph is a pure function over structured data, every shape is a unit test with no
+compiler, and the end-to-end behavior is pinned by the UI suite.
 
-- [`crates/cargo-cgp-error-processing/tests/graph.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/graph.rs)
-  — the build-and-render as `insta` inline snapshots: a linear spine, a shared-prefix branch, a
-  subsuming cascade, converging independent roots on one leaf, a diamond, a super-root, a within-path
-  label repeat kept linear, cross-path redirects distinct by key versus merged by key, a repeated
-  trait and a differing one both rendered in full, a cyclic input terminating with a `(*)`
+- [`crates/cargo-cgp-error-processing/tests/graph.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/graph.rs):
+  the build-and-render as `insta` inline snapshots: a linear spine, a shared-prefix branch, a
+  subsuming cascade, converging independent roots on one leaf, a diamond, a super-root, a
+  within-path label repeat kept linear, cross-path redirects distinct by key versus merged by key, a
+  repeated trait and a differing one both rendered in full, a cyclic input terminating with a `(*)`
   mark, and an empty path set rendering empty. The cross-block elision has four of its own: a second
   graph truncating at what the first drew while keeping its own prefix *and still ending at the root
   cause*, the within-render reference staying bare by contrast, a wholly-redundant graph reporting
   itself `fully_elided_by`, and a leaf-only graph never doing so (a leaf hides no subtree).
-- [`crates/cargo-cgp-error-processing/tests/diagnosis.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/diagnosis.rs)
-  — the note assembly over the graph: the singular `root cause:` lead, its drop when the header states
-  that leaf (either mismatch class, or a kept-header bound) and its retention under a header that does
-  not, the `root causes:` list for distinct leaves, the shared-prefix merge
-  into one branching note, and independent-root causes folding into one note with stacked chains.
-- [`crates/cargo-cgp-error-processing/tests/coalesce.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/coalesce.rs)
-  — `coalesce_underived_fields` keeping every field's path while merging the heading into one
+- [`crates/cargo-cgp-error-processing/tests/diagnosis.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/diagnosis.rs):
+  the note assembly over the graph: the singular `root cause:` lead, its drop when the header states
+  that leaf (either mismatch class, or a kept-header bound) and its retention under a header that
+  does not, the `root causes:` list for distinct leaves, the shared-prefix merge into one branching
+  note, and independent-root causes folding into one note with stacked chains.
+- [`crates/cargo-cgp-error-processing/tests/coalesce.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/coalesce.rs):
+  `coalesce_underived_fields` keeping every field's path while merging the heading into one
   `UnderivedFields` cause.
-- [`crates/cargo-cgp-error-processing/tests/causes.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/causes.rs)
-  — the `Causes` set: one leaf reached by three consumers collecting to one cause holding all three
+- [`crates/cargo-cgp-error-processing/tests/causes.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/causes.rs):
+  the `Causes` set: one leaf reached by three consumers collecting to one cause holding all three
   paths, the underived-field lead that repetition would otherwise produce, distinct leaves staying
   apart, an exact repeat of a path dropped, `from_sub_chains` grouping, `union`'s fold and its
   associativity, and `headed_by`, including its commutation with the grouping, which is why heading
@@ -418,42 +423,45 @@ and the end-to-end behavior is pinned by the UI suite.
 - The UI fixtures the worked shapes above cite (`base_area_1`, `parallel_branches`, `density_3`,
   `parallel_consumers`, `diamond_shared_trait`, and `redirect_distinct_keys`), plus
   [`foreign_getter_missing_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/resolution/foreign_getter_missing_wiring.rs),
-  a diamond converging on one missing wiring, exercise the graph end to end through the real compiler.
+  a diamond converging on one missing wiring, exercise the graph end to end through the real
+  compiler.
 
 ## Source
 
-- [`crates/cargo-cgp-error-processing/src/diagnosis/node.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/node.rs)
-  — the `DepNode` and `ChainNode` structured nodes and their rendering (the `CGP-E1xx` label
+- [`crates/cargo-cgp-error-processing/src/diagnosis/node.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/node.rs):
+  the `DepNode` and `ChainNode` structured nodes and their rendering (the `CGP-E1xx` label
   templates).
-- [`crates/cargo-cgp-error-processing/src/diagnosis/graph.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/graph.rs)
-  — `DependencyGraph`, `from_paths` (the cross-path-only merge), the root rule, the `(*)`-dedup
-  renderer (every construct rendered in full), and `render_seen`/`leaves_below`/`fully_elided_by` (the
-  cross-block elision and the terminus it keeps).
-- [`crates/cargo-cgp-error-processing/src/diagnosis/resolved.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/resolved.rs)
-  — `Cause { leaf, paths }`, and the `Causes` set that holds the one-cause-per-distinct-leaf invariant
+- [`crates/cargo-cgp-error-processing/src/diagnosis/graph.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/graph.rs):
+  `DependencyGraph`, `from_paths` (the cross-path-only merge), the root rule, the `(*)`-dedup
+  renderer (every construct rendered in full), and `render_seen`/`leaves_below`/`fully_elided_by`
+  (the cross-block elision and the terminus it keeps).
+- [`crates/cargo-cgp-error-processing/src/diagnosis/resolved.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/resolved.rs):
+  `Cause { leaf, paths }`, and the `Causes` set that holds the one-cause-per-distinct-leaf invariant
   by construction, so every cause-list builder gets it for free: the walk's `compute_leaves`, the
   `impl_site` and `wrapper_chain` anchors, the by-component `use_site` anchor, and the emitter's
   coalesced block.
-- [`crates/cargo-cgp-error-processing/src/diagnosis/wording/note.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/wording/note.rs)
-  — `cause_notes`, folding every cause's paths into one graph and wording the heading over it.
-- [`crates/cargo-cgp-error-processing/src/diagnosis/coalesce.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/coalesce.rs)
-  — `coalesce_underived_fields`, merging underived fields into one heading cause while keeping their
+- [`crates/cargo-cgp-error-processing/src/diagnosis/wording/note.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/wording/note.rs):
+  `cause_notes`, folding every cause's paths into one graph and wording the heading over it.
+- [`crates/cargo-cgp-error-processing/src/diagnosis/coalesce.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/coalesce.rs):
+  `coalesce_underived_fields`, merging underived fields into one heading cause while keeping their
   paths.
-- [`crates/cargo-cgp-error-processing/src/tree.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/tree.rs)
-  — the `DependencyTree` type and its `termtree`-backed renderer, the target the graph expands into.
+- [`crates/cargo-cgp-error-processing/src/tree.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/tree.rs):
+  the `DependencyTree` type and its `termtree`-backed renderer, the target the graph expands into.
 - [`crates/cargo-cgp-driver/src/resolve/label`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/label),
-  [`walk`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/walk), and the `impl_site` / `wrapper_chain`
-  anchors, which emit `DepNode` hop-paths and group by leaf; the cache in
-  [`cache.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/cache.rs) stores them.
-- [`crates/cargo-cgp-driver/src/emitter/cgp_emitter.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/cgp_emitter.rs)
-  — the flush that renders every resolution's note against one shared `seen`, and the coalesced block
+  [`walk`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/walk),
+  and the `impl_site` / `wrapper_chain` anchors, which emit `DepNode` hop-paths and group by leaf;
+  the cache in
+  [`cache.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/cache.rs)
+  stores them.
+- [`crates/cargo-cgp-driver/src/emitter/cgp_emitter.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/cgp_emitter.rs):
+  the flush that renders every resolution's note against one shared `seen`, and the coalesced block
   whose note is built from the same graph.
 
 ## Further reading
 
-- [Typed root-cause resolution](typed-root-cause-resolution.md) — the resolver whose walk fills the
+- [Typed root-cause resolution](typed-root-cause-resolution.md): the resolver whose walk fills the
   paths this document renders, and the anchors that prepend to them.
-- [Error processing](error-processing.md) — the rustc-free crate this rendering lives in, alongside the
-  wording, plan, and de-duplication it feeds.
-- [The driver](driver.md) — the emitter that applies the plan and builds the coalesced block's note
+- [Error processing](error-processing.md): the rustc-free crate this rendering lives in, alongside
+  the wording, plan, and de-duplication it feeds.
+- [The driver](driver.md): the emitter that applies the plan and builds the coalesced block's note
   from the same graph.
