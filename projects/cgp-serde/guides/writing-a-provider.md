@@ -71,10 +71,10 @@ on; see [re-entrant providers](../architecture/reentrant-providers.md).
 
 There are two ways to do it, and the choice depends on who performs the nested call:
 
-- **Converting to another type** — call `self.serialize(&converted, serializer)` or
+- **Converting to another type**: call `self.serialize(&converted, serializer)` or
   `self.deserialize(deserializer)` directly, and declare the dependency with `#[uses]`, as
   `SerializeMillis` does for `u64`.
-- **Passing items to a Serde compound API** — wrap each one in
+- **Passing items to a Serde compound API**: wrap each one in
   [`SerializeWithContext`](../reference/context-adapters.md#serializewithcontext) for
   `serialize_element` or `serialize_entry`, or pass a
   [`DeserializeWithContext`](../reference/context-adapters.md#deserializewithcontext) seed to

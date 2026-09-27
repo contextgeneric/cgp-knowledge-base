@@ -26,15 +26,15 @@ which produces compact JSON only.
 `serde_json` has three entry points in cgp-serde, and the choice depends on where the input comes from
 and whether the result borrows from it:
 
-- **`deserialize_json_string`** — the convenience method from
+- **`deserialize_json_string`**: the convenience method from
   [`CanDeserializeJsonString`](../reference/json.md#candeserializejsonstring). Takes a `&str`, needs no
   handler wiring, and cannot produce a value that borrows from the input string. Annotate the result's
   type, since the method takes no turbofish.
-- **`DeserializeFromJsonReader`** — the [reader provider](../reference/json.md#deserializefromjsonreader),
+- **`DeserializeFromJsonReader`**: the [reader provider](../reference/json.md#deserializefromjsonreader),
   wired under `@TryComputerComponent.<T> DeserializeJson<T>` and called with `try_compute`. Takes any
   `serde_json` reader: a `StrRead` for strings, a `SliceRead` for bytes, or an `IoRead` for an
   `io::Read`, and can borrow from a `StrRead` or `SliceRead` input.
-- **The seed directly** — build a `serde_json::Deserializer`, drive a
+- **The seed directly**: build a `serde_json::Deserializer`, drive a
   [`DeserializeWithContext`](../reference/context-adapters.md#deserializewithcontext) seed with it, and
   call `end` to reject trailing input. Needs no error components at all.
 

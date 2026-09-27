@@ -5,10 +5,10 @@ arena getter and the allocating deserializer defined in the test itself. This is
 announcement post shows, and the post's "Full Example" link leads to the `main` branch's version of
 the test, which wires the same choices through a `UseDelegate` table.
 
-- **Source** — [crates/cgp-serde-tests/src/tests/arena_simplified.rs](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-tests/src/tests/arena_simplified.rs)
-- **Run** — `cargo test -p cgp-serde-tests arena_simplified`
-- **Needs** — nothing beyond the build
-- **Result** — passes; asserts that the deserialized `Cluster` has id 8 and the two expected
+- **Source**: [crates/cgp-serde-tests/src/tests/arena_simplified.rs](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-tests/src/tests/arena_simplified.rs)
+- **Run**: `cargo test -p cgp-serde-tests arena_simplified`
+- **Needs**: nothing beyond the build
+- **Result**: passes; asserts that the deserialized `Cluster` has id 8 and the two expected
   coordinates
 
 ## A deserializer that takes the arena from its context

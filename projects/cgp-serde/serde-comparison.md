@@ -55,16 +55,16 @@ cgp-serde's choices are per type:
 Serde's derive carries a large set of behaviors cgp-serde has no equivalent for, and a project that
 relies on them cannot move those types to cgp-serde yet:
 
-- **Field and container attributes** — `rename`, `rename_all`, `skip`, `flatten`, `default`,
+- **Field and container attributes**: `rename`, `rename_all`, `skip`, `flatten`, `default`,
   `deny_unknown_fields`, and the rest. Every field is written under its Rust name and must be present.
-- **Enums** — Serde derives all four enum representations; cgp-serde has no generic enum provider.
-- **Tuple structs and tuples** — Serde derives them; cgp-serde's record providers reject tuple structs,
+- **Enums**: Serde derives all four enum representations; cgp-serde has no generic enum provider.
+- **Tuple structs and tuples**: Serde derives them; cgp-serde's record providers reject tuple structs,
   and no provider handles tuples.
-- **Recursive types** — Serde derives them without difficulty; cgp-serde's generic providers fail to
+- **Recursive types**: Serde derives them without difficulty; cgp-serde's generic providers fail to
   compile for them.
-- **Binary formats** — Serde's derived impls declare lengths and struct names, which formats such as
+- **Binary formats**: Serde's derived impls declare lengths and struct names, which formats such as
   postcard rely on; cgp-serde's record and sequence providers do neither.
-- **Maturity** — Serde is extensively tested, documented, and benchmarked; cgp-serde is a proof of
+- **Maturity**: Serde is extensively tested, documented, and benchmarked; cgp-serde is a proof of
   concept with thin tests, no rustdoc, and no benchmark. See [issues.md](issues.md) and
   [testing.md](testing.md).
 

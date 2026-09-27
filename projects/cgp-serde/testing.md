@@ -34,11 +34,11 @@ covers. The [arena](examples/arena.md#known-issues) and
 
 The tests run these providers, in the directions listed:
 
-- **Asserted output** — `UseSerde`, `SerializeString` (serializing), `SerializeHex`,
+- **Asserted output**: `UseSerde`, `SerializeString` (serializing), `SerializeHex`,
   `SerializeFields`, `DeserializeRecordFields`, `DeserializeExtend`, `DeserializeAndAllocate` in both
   forms, `AllocateWithArena` with `HasArena` wired through `UseField`, `SerializeToJsonString`,
   `DeserializeFromJsonString` over `DeserializeFromJsonReader`, and `deserialize_json_string`.
-- **Run but not asserted** — `SerializeDeref`, `SerializeIterator`, and the serializing side of
+- **Run but not asserted**: `SerializeDeref`, `SerializeIterator`, and the serializing side of
   `SerializeBase64`, `SerializeRfc3339Date`, and `SerializeTimestamp`, all in `messages.rs`. A
   regression in any of them would still pass, as long as the output serialized at all.
 
@@ -47,15 +47,15 @@ The tests run these providers, in the directions listed:
 No test exercises these, so their behavior is recorded in the reference from probes rather than from
 the repository's own tests:
 
-- **Providers never run** — `SerializeBytes`, `TryDeserializeBytes`, `SerializeWithDisplay`,
+- **Providers never run**: `SerializeBytes`, `TryDeserializeBytes`, `SerializeWithDisplay`,
   `DeserializeWithFromStr`, `SerializeFrom`, `TrySerializeFrom`, and `DeserializeDefault`.
-- **Directions never run** — deserializing with `SerializeString`, `SerializeBase64`,
+- **Directions never run**: deserializing with `SerializeString`, `SerializeBase64`,
   `SerializeRfc3339Date`, and `SerializeTimestamp`.
-- **Inputs never used** — `DeserializeFromJsonReader` with a `SliceRead` or `IoRead`, and any format
+- **Inputs never used**: `DeserializeFromJsonReader` with a `SliceRead` or `IoRead`, and any format
   other than JSON.
-- **Failure paths** — no test feeds invalid input, so none of the error messages recorded in the
+- **Failure paths**: no test feeds invalid input, so none of the error messages recorded in the
   reference (missing and duplicate fields, invalid hex, out-of-range conversions) is pinned.
-- **Compile failures** — there are no compile-fail tests, so the diagnostics in
+- **Compile failures**: there are no compile-fail tests, so the diagnostics in
   [debugging wiring](guides/debugging-wiring.md) are not pinned either.
 
 Several of the defects in [issues.md](issues.md) sit in exactly these untested providers, which is how

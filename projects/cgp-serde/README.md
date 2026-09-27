@@ -5,13 +5,13 @@ that how each value type is encoded stops being a fixed property of the type and
 wiring choice. Overlapping and orphan serialization implementations become legal, and a deserializer
 can draw services such as an arena allocator from the context it runs in.
 
-- **Repository** — <https://github.com/contextgeneric/cgp-serde>
-- **Local checkout** — `../cgp-serde`, per [sibling-projects.md](../../sibling-projects.md)
-- **Branch documented** — `v0.8.0`
-- **Crates** — `cgp-serde`, `cgp-serde-extra`, `cgp-serde-json`, `cgp-serde-alloc`,
+- **Repository**: <https://github.com/contextgeneric/cgp-serde>
+- **Local checkout**: `../cgp-serde`, per [sibling-projects.md](../../sibling-projects.md)
+- **Branch documented**: `v0.8.0`
+- **Crates**: `cgp-serde`, `cgp-serde-extra`, `cgp-serde-json`, `cgp-serde-alloc`,
   `cgp-serde-typed-arena`, all at 0.2.0
-- **Tracks** — `cgp` 0.8.0-alpha, through a git patch to the `cgp` repository's `main` branch
-- **Status** — Proof of concept; see [Status and gaps](#status-and-gaps)
+- **Tracks**: `cgp` 0.8.0-alpha, through a git patch to the `cgp` repository's `main` branch
+- **Status**: Proof of concept; see [Status and gaps](#status-and-gaps)
 
 ## What it is
 
@@ -55,16 +55,16 @@ so an application depends only on the crates whose providers its wiring names. E
 `no_std`, and the three that need `String` or `Vec` also link `alloc`. The layout is worked through in
 [architecture/crate-layout.md](architecture/crate-layout.md).
 
-- **`cgp-serde`** — the two components, the two context adapters, and the core providers. Depends only
+- **`cgp-serde`**: the two components, the two context adapters, and the core providers. Depends only
   on `cgp` and `serde`.
-- **`cgp-serde-extra`** — the hex, base64, RFC 3339, and Unix-timestamp encodings, over `hex`, `base64`,
+- **`cgp-serde-extra`**: the hex, base64, RFC 3339, and Unix-timestamp encodings, over `hex`, `base64`,
   and `chrono`.
-- **`cgp-serde-json`** — `serde_json` providers built on CGP's `TryComputer` handler, and a
+- **`cgp-serde-json`**: `serde_json` providers built on CGP's `TryComputer` handler, and a
   `deserialize_json_string` convenience method.
-- **`cgp-serde-alloc`** — an allocation component and the provider that deserializes a borrowed value
+- **`cgp-serde-alloc`**: an allocation component and the provider that deserializes a borrowed value
   into it. Adds no external dependency.
-- **`cgp-serde-typed-arena`** — an implementation of the allocation component over `typed-arena`.
-- **`cgp-serde-tests`** — the test crate: a JSON round trip, the two-application serialization demo,
+- **`cgp-serde-typed-arena`**: an implementation of the allocation component over `typed-arena`.
+- **`cgp-serde-tests`**: the test crate: a JSON round trip, the two-application serialization demo,
   and the arena deserialization demo in its layered and simplified forms. The four tests are the
   repository's only runnable examples, and each is documented in [examples/](examples/README.md).
 
@@ -75,18 +75,18 @@ already implements Serde's traits, but it is a proof of concept with gaps that h
 confirmed against the `v0.8.0` branch. [issues.md](issues.md) records them in full, together with the
 defects and housekeeping items this summary leaves out:
 
-- **Enums** — no provider serializes an enum generically; an enum works only through `UseSerde`, from
+- **Enums**: no provider serializes an enum generically; an enum works only through `UseSerde`, from
   its own `Serialize` or `Deserialize` impl.
-- **Recursive data types** — a type that contains itself, such as a tree node with a `Vec` of children,
+- **Recursive data types**: a type that contains itself, such as a tree node with a `Vec` of children,
   fails to compile through the generic providers and needs a provider written for it; see
   [re-entrant providers](architecture/reentrant-providers.md#what-re-entry-requires-of-a-context).
-- **Tuple structs** — the record providers accept only named fields.
-- **Binary formats** — length-prefixed formats such as postcard reject records and sequences, because
+- **Tuple structs**: the record providers accept only named fields.
+- **Binary formats**: length-prefixed formats such as postcard reject records and sequences, because
   the providers do not declare a length.
-- **Serde's attributes** — fields cannot be renamed, skipped, flattened, or defaulted when missing.
-- **JSON helpers** — the JSON providers deserialize from any `serde_json` reader, but the only
+- **Serde's attributes**: fields cannot be renamed, skipped, flattened, or defaulted when missing.
+- **JSON helpers**: the JSON providers deserialize from any `serde_json` reader, but the only
   convenience method takes a string; there is no counterpart for serializing.
-- **Evidence** — no benchmark has been run, the source has no rustdoc, and the tests assert little:
+- **Evidence**: no benchmark has been run, the source has no rustdoc, and the tests assert little:
   the two-application demo prints its output without checking it.
 
 ## The documents

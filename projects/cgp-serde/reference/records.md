@@ -10,10 +10,10 @@ list comes from [`HasFields`](../../../cgp/reference/traits/has_fields.md), and 
 type-level string that the providers turn into a `&'static str` through
 [`StaticString`](../../../cgp/reference/traits/static_format.md). The derives each direction needs are:
 
-- **Serializing** — `HasFields` and `HasField`, so the provider can list the fields and read each one.
-- **Deserializing** — `HasFields` and `BuildField`, so the provider can list the fields and fill them
+- **Serializing**: `HasFields` and `HasField`, so the provider can list the fields and read each one.
+- **Deserializing**: `HasFields` and `BuildField`, so the provider can list the fields and fill them
   in through the optional builder.
-- **Both** — [`#[derive(CgpData)]`](../../../cgp/reference/derives/derive_cgp_data.md), which derives
+- **Both**: [`#[derive(CgpData)]`](../../../cgp/reference/derives/derive_cgp_data.md), which derives
   all three.
 
 Only structs with named fields work. A tuple struct keys its fields by `Index<N>`, which does not
@@ -104,12 +104,12 @@ succeeds only if every field was set. The input's key order does not matter.
 
 The provider rejects input in these cases, each with a Serde custom error:
 
-- **A field is missing** — `missing field: b`, raised after the whole map is read. A field whose type
+- **A field is missing**: `missing field: b`, raised after the whole map is read. A field whose type
   is an `Option` is no exception: a probe reading `{"a":1}` into a struct with `a: u64` and
   `b: Option<u64>` failed with `missing field: b at line 1 column 7`, while `{"a":1,"b":null}` read
   `b` as `None`.
-- **A field appears twice** — `duplicate field: a`, raised at the second occurrence.
-- **The input is not a map** — the deserializer's own type error; with JSON, an array gives
+- **A field appears twice**: `duplicate field: a`, raised at the second occurrence.
+- **The input is not a map**: the deserializer's own type error; with JSON, an array gives
   `invalid type: sequence, expected map`.
 
 An unknown key is accepted silently, and its value is skipped without being deserialized. Every key

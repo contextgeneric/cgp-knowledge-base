@@ -3,10 +3,10 @@
 Borrowed `&'a Coord` values deserialized from JSON into an arena, through the library's layered
 allocation crates, so that the allocator is a wiring entry rather than code inside the deserializer.
 
-- **Source** — [crates/cgp-serde-tests/src/tests/arena.rs](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-tests/src/tests/arena.rs)
-- **Run** — `cargo test -p cgp-serde-tests arena::`
-- **Needs** — nothing beyond the build
-- **Result** — passes; asserts that the deserialized `Payload` has id 8 and the two expected
+- **Source**: [crates/cgp-serde-tests/src/tests/arena.rs](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-tests/src/tests/arena.rs)
+- **Run**: `cargo test -p cgp-serde-tests arena::`
+- **Needs**: nothing beyond the build
+- **Result**: passes; asserts that the deserialized `Payload` has id 8 and the two expected
   coordinates
 
 ## The same scenario, with the library's providers

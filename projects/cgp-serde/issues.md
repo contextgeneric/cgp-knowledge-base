@@ -49,36 +49,36 @@ when the length is known, so a format that must write a length before the elemen
 
 A missing feature is behavior the library does not attempt. Each is documented where it applies.
 
-- **Enums** — no provider serializes or deserializes an enum generically; an enum works only through
+- **Enums**: no provider serializes or deserializes an enum generically; an enum works only through
   `UseSerde`. See [the project README](README.md#status-and-gaps).
-- **Recursive data types** — a type that contains itself fails to compile with `E0275` through the
+- **Recursive data types**: a type that contains itself fails to compile with `E0275` through the
   generic providers and needs a hand-written provider. See
   [re-entrant providers](architecture/reentrant-providers.md#what-re-entry-requires-of-a-context).
-- **Tuple structs** — the record providers reject them, because `Index<N>` tags do not implement
+- **Tuple structs**: the record providers reject them, because `Index<N>` tags do not implement
   `StaticString`. See [records](reference/records.md).
-- **Serde's field attributes** — there is no equivalent of renaming, skipping, flattening,
+- **Serde's field attributes**: there is no equivalent of renaming, skipping, flattening,
   `#[serde(default)]`, or `deny_unknown_fields`, and CGP's defaulting finalize is not offered for
   missing fields. See [`DeserializeRecordFields`](reference/records.md#deserializerecordfields) and
   [derive-free records](architecture/derive-free-records.md#what-it-gives-up).
-- **Struct and map forms** — records are written with `serialize_map` rather than `serialize_struct`,
+- **Struct and map forms**: records are written with `serialize_map` rather than `serialize_struct`,
   maps are written and read as sequences of pairs, and tuples have no provider. See
   [collections](reference/collections.md).
-- **Unsized values** — `CanSerializeValue` admits `?Sized` values, but no provider accepts one, so
+- **Unsized values**: `CanSerializeValue` admits `?Sized` values, but no provider accepts one, so
   `str` and slices cannot be wired. See [components](reference/components.md#canserializevalue).
-- **Encoding variants** — base64 has no URL-safe or unpadded variant, and timestamps have no sub-second
+- **Encoding variants**: base64 has no URL-safe or unpadded variant, and timestamps have no sub-second
   variant. See [encodings](reference/encodings.md).
-- **JSON conveniences** — there is no serializing convenience method, no pretty-printing or
+- **JSON conveniences**: there is no serializing convenience method, no pretty-printing or
   `io::Write` provider, and the string helper cannot produce values that borrow from its input. See
   [JSON providers](reference/json.md).
-- **Other formats** — no format other than JSON has providers or helpers. See
+- **Other formats**: no format other than JSON has providers or helpers. See
   [formats](guides/formats.md).
-- **A namespace of defaults** — the library publishes no namespace, so every context spells out its
+- **A namespace of defaults**: the library publishes no namespace, so every context spells out its
   full wiring. The website's plan tracks this as task DC3 in
   [tasks.md](../../website/tasks.md).
-- **Performance evidence** — no benchmark has been run. The likeliest cost is in
+- **Performance evidence**: no benchmark has been run. The likeliest cost is in
   `DeserializeRecordFields`, which allocates each key as a `String` and compares it against each field
   name in turn.
-- **Documentation in the code** — no public item has a doc comment, so the docs.rs pages list items
+- **Documentation in the code**: no public item has a doc comment, so the docs.rs pages list items
   without explanation.
 
 ## Housekeeping

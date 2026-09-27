@@ -43,13 +43,13 @@ depend on `cgp-serde-alloc` alone. The layering is described in
 Every crate uses the same small set of module names, so a reader can find the kind of item they want
 by its module:
 
-- **`components`** — CGP components defined by the crate (`cgp-serde` only).
-- **`traits`** — components and getters that support a provider rather than being serialization
+- **`components`**: CGP components defined by the crate (`cgp-serde` only).
+- **`traits`**: components and getters that support a provider rather than being serialization
   components themselves (`cgp-serde-alloc`, `cgp-serde-typed-arena`).
-- **`providers`** — provider structs, one file per family.
-- **`types`** — public non-provider types, the two context adapters (`cgp-serde` only).
-- **`code`** — `Code` types that key handler wiring (`cgp-serde-json` only).
-- **`impls`** — blanket traits built with `#[cgp_fn]` (`cgp-serde-json` only).
+- **`providers`**: provider structs, one file per family.
+- **`types`**: public non-provider types, the two context adapters (`cgp-serde` only).
+- **`code`**: `Code` types that key handler wiring (`cgp-serde-json` only).
+- **`impls`**: blanket traits built with `#[cgp_fn]` (`cgp-serde-json` only).
 
 Each module re-exports its files with `pub use`, so an item is imported from the module rather than
 the file, as in `cgp_serde::providers::SerializeFields`.

@@ -27,8 +27,8 @@ a dependency on `cgp` alone, and each application wires its own serialization fo
 The approach removes the serialization-specific derive, not the derive altogether. Each direction
 needs specific field traits:
 
-- **Serializing** — `HasFields` to list the fields and `HasField` to read each one.
-- **Deserializing** — `HasFields` to list the fields and `BuildField` to fill them through the optional
+- **Serializing**: `HasFields` to list the fields and `HasField` to read each one.
+- **Deserializing**: `HasFields` to list the fields and `BuildField` to fill them through the optional
   builder.
 
 `#[derive(CgpData)]` provides all three. The same derive also serves every other generic CGP provider

@@ -3,10 +3,10 @@
 One struct serialized to a JSON string and read back through the same context, showing a complete
 round trip in which the struct derives only `CgpData` and its bytes are encoded as hex by wiring.
 
-- **Source** — [crates/cgp-serde-tests/src/tests/basic.rs](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-tests/src/tests/basic.rs)
-- **Run** — `cargo test -p cgp-serde-tests basic`
-- **Needs** — nothing beyond the build
-- **Result** — passes; asserts the exact JSON `{"quantity":42,"message":"hello","data":"010203"}` and
+- **Source**: [crates/cgp-serde-tests/src/tests/basic.rs](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-tests/src/tests/basic.rs)
+- **Run**: `cargo test -p cgp-serde-tests basic`
+- **Needs**: nothing beyond the build
+- **Result**: passes; asserts the exact JSON `{"quantity":42,"message":"hello","data":"010203"}` and
   that deserializing it gives back the original value
 
 ## A struct with no serialization derive

@@ -4,10 +4,10 @@ The two-application demo: one nested archive of encrypted messages serialized by
 differ in three wiring entries, producing JSON with hex bytes and RFC 3339 dates from one and base64
 bytes and Unix timestamps from the other.
 
-- **Source** — [crates/cgp-serde-tests/src/tests/messages.rs](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-tests/src/tests/messages.rs)
-- **Run** — `cargo test -p cgp-serde-tests messages -- --nocapture`
-- **Needs** — nothing beyond the build
-- **Result** — passes; prints both JSON documents, shown under [Output](#output), and asserts nothing
+- **Source**: [crates/cgp-serde-tests/src/tests/messages.rs](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-tests/src/tests/messages.rs)
+- **Run**: `cargo test -p cgp-serde-tests messages -- --nocapture`
+- **Needs**: nothing beyond the build
+- **Result**: passes; prints both JSON documents, shown under [Output](#output), and asserts nothing
 
 ## Nested data that derives only `CgpData`
 
