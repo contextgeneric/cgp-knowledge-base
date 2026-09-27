@@ -1,6 +1,7 @@
 # C++ policy-based design, CRTP, and concepts
 
-C++ policy-based design composes host behavior from policy types, making it a close comparison for CGP providers, higher-order providers, and context wiring.
+C++ policy-based design composes host behavior from policy types, making it a close comparison for
+CGP providers, higher-order providers, and context wiring.
 
 ## Purpose
 
@@ -9,17 +10,17 @@ interface or a hand-written class for every combination. A host template chooses
 operations such as ownership, checking, or output. CRTP supplies a related way for reusable behavior
 to access the host, and concepts can express the requirements on template arguments.
 
-CGP offers comparable static selection in Rust. The useful differences are declared provider
-traits, generic-body checking under bounds, and dependencies obtained through a shared context.
-Those differences should be explained without implying that C++ lacks named constraints, aliases,
-default policies, or host-aware composition.
+CGP offers comparable static selection in Rust. The useful differences are declared provider traits,
+generic-body checking under bounds, and dependencies obtained through a shared context. Those
+differences should be explained without implying that C++ lacks named constraints, aliases, default
+policies, or host-aware composition.
 
 ## The concept in depth
 
 Policy-based design lets a host class vary independent aspects of its behavior through template
-arguments. A smart pointer might parameterize ownership and checking, while a greeting program
-might parameterize its message and output destination. The resulting types fix those choices at
-compile time, avoiding virtual dispatch for the policy calls.
+arguments. A smart pointer might parameterize ownership and checking, while a greeting program might
+parameterize its message and output destination. The resulting types fix those choices at compile
+time, avoiding virtual dispatch for the policy calls.
 
 ### Policies and the host class
 
@@ -61,10 +62,10 @@ int main() {
 }
 ```
 
-The English and German instantiations are distinct types with different message implementations.
-The `this->` qualifiers make the member lookups depend on the template instantiation, where the
-compiler can find the inherited policy members. The calls can be inlined, but choosing policies
-statically does not itself guarantee inlining.
+The English and German instantiations are distinct types with different message implementations. The
+`this->` qualifiers make the member lookups depend on the template instantiation, where the compiler
+can find the inherited policy members. The calls can be inlined, but choosing policies statically
+does not itself guarantee inlining.
 
 ### Policy interfaces can be implicit or constrained
 
@@ -99,9 +100,9 @@ mixin can use the same technique when it needs access to its host. The cast reli
 having the expected derived type. C++23's explicit object parameters offer another way to express
 some of these member functions, without repeating the CRTP inheritance pattern.
 
-The two base instantiations do not form a shared runtime interface. A heterogeneous collection
-needs another representation, such as a virtual interface, type erasure, or a `std::variant` for a
-closed set of alternatives. CRTP alone does not choose that representation.
+The two base instantiations do not form a shared runtime interface. A heterogeneous collection needs
+another representation, such as a virtual interface, type erasure, or a `std::variant` for a closed
+set of alternatives. CRTP alone does not choose that representation.
 
 ### Concepts state requirements without fully checking a generic body
 
@@ -118,23 +119,23 @@ template<Hashable T>
 void f(T) {}
 ```
 
-Constraint satisfaction determines whether a candidate is eligible for particular arguments.
-It does not prove that every operation in the template body follows from the stated constraints.
-A body can use an additional dependent member that works for one argument and fails for another.
-C++ checks nondependent constructs when the template is defined; dependent checks can wait until
-instantiation. The [C++ draft's template name-resolution rules](https://eel.is/c++draft/temp.res)
-describe that split.
+Constraint satisfaction determines whether a candidate is eligible for particular arguments. It does
+not prove that every operation in the template body follows from the stated constraints. A body can
+use an additional dependent member that works for one argument and fails for another. C++ checks
+nondependent constructs when the template is defined; dependent checks can wait until instantiation.
+The [C++ draft's template name-resolution rules](https://eel.is/c++draft/temp.res) describe that
+split.
 
 ## How CGP expresses it
 
 CGP declares policy interfaces as traits and supplies implementations through provider types.
-Applications can select providers through context wiring or pass them explicitly as type
-parameters. Rust checks the generic implementation against its declared bounds in either form.
+Applications can select providers through context wiring or pass them explicitly as type parameters.
+Rust checks the generic implementation against its declared bounds in either form.
 
 ### Providers are policies; the context is the host
 
-The greeting can declare its message and output interfaces separately, then implement each choice
-as a provider:
+The greeting can declare its message and output interfaces separately, then implement each choice as
+a provider:
 
 ```rust
 #[cgp_component(MessageProvider)]
@@ -245,8 +246,8 @@ delegate_components! {
 App.run();   // Hallo Welt!
 ```
 
-`W` must implement `Writer` for the context, and `M` must implement `MessageProvider` for it.
-The `#[use_provider]` attributes declare those bounds and allow calls such as `W::write(self, ...)`.
+`W` must implement `Writer` for the context, and `M` must implement `MessageProvider` for it. The
+`#[use_provider]` attributes declare those bounds and allow calls such as `W::write(self, ...)`.
 Only `RunnerComponent` is wired on `App`; the inner provider choices are explicit arguments to
 `HelloWorld`.
 
@@ -266,8 +267,8 @@ pub fn hello<W, M>(&self) {
 
 Explicit parameters suit a provider that must fix an inner choice locally. Context wiring suits
 dependencies that several providers should obtain from the application's shared choices. The
-[Modularity Hierarchy](../cgp/concepts/modularity-hierarchy.md) explains when the additional control of
-a higher-order provider is useful.
+[Modularity Hierarchy](../cgp/concepts/modularity-hierarchy.md) explains when the additional control
+of a higher-order provider is useful.
 
 A manually declared provider struct can default an inner parameter to
 [`UseContext`](../cgp/reference/providers/use_context.md), forwarding that dependency through the
@@ -299,16 +300,16 @@ relationship or base-to-derived cast in this correspondence.
 
 ### Generic bodies and concrete wiring have separate checks
 
-Rust checks a generic provider body using the bounds available at its definition. For example,
-`run` can rely on the `HasMessage` and `CanWrite` bounds declared by `#[uses]`. If it calls an
-operation that needs an additional bound, the generic definition must supply that requirement.
-This is stronger than merely checking whether particular C++ arguments satisfy a concept whose
-requirements may not cover the body's dependent uses.
+Rust checks a generic provider body using the bounds available at its definition. For example, `run`
+can rely on the `HasMessage` and `CanWrite` bounds declared by `#[uses]`. If it calls an operation
+that needs an additional bound, the generic definition must supply that requirement. This is
+stronger than merely checking whether particular C++ arguments satisfy a concept whose requirements
+may not cover the body's dependent uses.
 
 A valid generic provider may still be unusable with a particular context. The context might lack a
 field, another component, or a required relationship between associated types.
-[`check_components!`](../cgp/reference/macros/check_components.md) forces that dependency check for the
-listed components. A wiring table alone does not validate every possible use, and the resulting
+[`check_components!`](../cgp/reference/macros/check_components.md) forces that dependency check for
+the listed components. A wiring table alone does not validate every possible use, and the resulting
 diagnostics can still involve generated traits and Rust's trait solver.
 
 ### Wiring gathers choices under a context type
@@ -317,19 +318,18 @@ Context wiring lets generic consumers name the interfaces they need without enum
 application's provider types. Adding another independently selected component can leave those
 consumer signatures unchanged. The choices remain visible together in `delegate_components!`.
 
-C++ aliases and default template arguments already reduce repetition in policy-heavy types.
-CGP's distinction is how dependencies are addressed: a provider can ask the shared context for a
-component while the application selects its implementation elsewhere. Explicit provider parameters
-remain available when that indirection is undesirable. The
-[dependency injection](dependency-injection.md) comparison examines this arrangement from the
-application's side.
+C++ aliases and default template arguments already reduce repetition in policy-heavy types. CGP's
+distinction is how dependencies are addressed: a provider can ask the shared context for a component
+while the application selects its implementation elsewhere. Explicit provider parameters remain
+available when that indirection is undesirable. The [dependency injection](dependency-injection.md)
+comparison examines this arrangement from the application's side.
 
 ## What users like and dislike
 
 Policy-based design is valued for independently configurable behavior without virtual dispatch.
-Alexandrescu's *Modern C++ Design* develops that approach through policy-based library designs;
-the [book overview](https://en.wikipedia.org/wiki/Modern_C%2B%2B_Design) summarizes the motivation.
-CRTP serves reusable static behavior, while concepts make argument requirements visible in code.
+Alexandrescu's *Modern C++ Design* develops that approach through policy-based library designs; the
+[book overview](https://en.wikipedia.org/wiki/Modern_C%2B%2B_Design) summarizes the motivation. CRTP
+serves reusable static behavior, while concepts make argument requirements visible in code.
 
 Implicit policy requirements and errors inside instantiated bodies are recurring concerns in
 accounts of the technique, including the
@@ -346,11 +346,10 @@ mechanism rather than an automatically repaired form of inheritance.
 
 ## How CGP compares
 
-C++ policies compose structurally, so existing classes with compatible operations can often be
-used directly. Concepts improve the interface declaration and diagnostics, but dependent errors
-can still appear during body instantiation. Many policy combinations can increase compilation
-work and code size. Aliases and defaults contain long parameter lists without changing the
-underlying types.
+C++ policies compose structurally, so existing classes with compatible operations can often be used
+directly. Concepts improve the interface declaration and diagnostics, but dependent errors can still
+appear during body instantiation. Many policy combinations can increase compilation work and code
+size. Aliases and defaults contain long parameter lists without changing the underlying types.
 
 CGP requires declared provider traits and implementations for them. That gives generic bodies
 checked contracts, but adapting an existing type can require an impl or wrapper. Wiring introduces
@@ -359,8 +358,8 @@ also require reading several component and provider mappings.
 
 CGP shares the costs of monomorphized generic code, including compilation work and potentially
 larger binaries. Its generated types can make trait errors difficult to read;
-[`cargo cgp check`](../cargo-cgp/reference/usage.md) explains the error classes it recognizes. These costs
-belong alongside the benefits of independently selected implementations.
+[`cargo cgp check`](../cargo-cgp/reference/usage.md) explains the error classes it recognizes. These
+costs belong alongside the benefits of independently selected implementations.
 
 A C++ host with a few policies and a convenient alias may already provide all the needed
 composition. Templates also support inheritance-based contributions to object layout and C++'s
@@ -369,11 +368,11 @@ reproduce that language's template system.
 
 Rust still supplies const generics and constant evaluation when CGP is in use. The boundary is
 therefore not that CGP programs can compute only with types; it is that CGP's provider wiring is a
-particular composition mechanism within Rust. For a small Rust API, ordinary traits and generics
-can be the simpler choice.
+particular composition mechanism within Rust. For a small Rust API, ordinary traits and generics can
+be the simpler choice.
 
-Runtime selection needs an additional representation in either language. Virtual interfaces or
-type erasure in C++, and trait objects in Rust, can support open sets of runtime implementations.
+Runtime selection needs an additional representation in either language. Virtual interfaces or type
+erasure in C++, and trait objects in Rust, can support open sets of runtime implementations.
 Variants and enums can represent closed sets. The [dynamic dispatch](dynamic-dispatch.md) page
 explains how static wiring and runtime polymorphism can coexist.
 
@@ -384,41 +383,51 @@ alternative of wiring independent choices on a context. A provider plays a polic
 component supplies its declared interface, and a context supplies runtime data and application
 choices. These are role mappings, not exact equivalences between templates and traits.
 
-Use checking to explain the difference precisely. Concepts can name policy requirements and
-reject unsuitable arguments; nondependent template constructs are checked at definition.
-Dependent body uses can still require instantiation, and a concept need not describe all of them.
-Rust checks a generic provider body against available bounds, while `check_components!` checks
-whether a concrete context supplies the transitive requirements. Do not promise uniformly short
-diagnostics or imply that wiring alone validates every component.
+Use checking to explain the difference precisely. Concepts can name policy requirements and reject
+unsuitable arguments; nondependent template constructs are checked at definition. Dependent body
+uses can still require instantiation, and a concept need not describe all of them. Rust checks a
+generic provider body against available bounds, while `check_components!` checks whether a concrete
+context supplies the transitive requirements. Do not promise uniformly short diagnostics or imply
+that wiring alone validates every component.
 
 State the tradeoffs beside the benefits. CGP requires provider trait impls, does not inherit
-provider fields into the context, and introduces declarations that a small generic API may not
-need. Rust const generics and constant evaluation remain available. C++ aliases, defaults, and
-host-aware policies already solve related problems; `UseContext` is a CGP convention, not a
-capability impossible to express in C++.
+provider fields into the context, and introduces declarations that a small generic API may not need.
+Rust const generics and constant evaluation remain available. C++ aliases, defaults, and host-aware
+policies already solve related problems; `UseContext` is a CGP convention, not a capability
+impossible to express in C++.
 
-Explain runtime choices separately. Neither static policy selection nor CGP wiring alone provides
-a heterogeneous runtime interface, but both can coexist with dynamic dispatch or a closed sum of
+Explain runtime choices separately. Neither static policy selection nor CGP wiring alone provides a
+heterogeneous runtime interface, but both can coexist with dynamic dispatch or a closed sum of
 alternatives. Static selection removes a dispatch requirement; it does not guarantee inlining or
 identical machine code.
 
 ## Sources
 
 The C++ snippets are adapted from the reference examples from Wikipedia and cppreference. They were
-compiled and run with GCC 15.2.0 in C++23 mode, with standard-library headers and small drivers added
-where omitted. The greeting qualifies inherited member calls with `this->` for dependent-base lookup.
-The CGP snippets were compiled against `cgp` `0.8.0-alpha` with a `check_components!` assertion per
-wired context.
+compiled and run with GCC 15.2.0 in C++23 mode, with standard-library headers and small drivers
+added where omitted. The greeting qualifies inherited member calls with `this->` for dependent-base
+lookup. The CGP snippets were compiled against `cgp` `0.8.0-alpha` with a `check_components!`
+assertion per wired context.
 
 These references support the C++ mechanisms and example origins:
 
-- [C++ working draft, *Name resolution*](https://eel.is/c++draft/temp.res) and [*Constraints and concepts*](https://eel.is/c++draft/temp.constr): dependent lookup, template checking, and constraint satisfaction.
-- [Wikipedia, *Modern C++ Design*](https://en.wikipedia.org/wiki/Modern_C%2B%2B_Design): Alexandrescu's book, the policy and host-class vocabulary, and the exponential-combinations argument.
-- [Wikipedia, *Policy-based design*](https://en.wikipedia.org/wiki/Policy-based_design): the `HelloWorld` example, policies as a compile-time strategy pattern, and implicit interfaces in unconstrained hosts.
-- [Wikipedia, *Curiously recurring template pattern*](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern) and [cppreference, *CRTP*](https://en.cppreference.com/w/cpp/language/crtp): the pattern's mechanism, static polymorphism, the C++23 deducing-`this` alternative, and the distinct types produced by CRTP instantiations.
-- [cppreference, *Constraints and concepts*](https://en.cppreference.com/w/cpp/language/constraints): concept syntax, satisfaction checked at instantiation, and the improvement in diagnostics.
+- [C++ working draft, *Name resolution*](https://eel.is/c++draft/temp.res) and
+  [*Constraints and concepts*](https://eel.is/c++draft/temp.constr): dependent lookup, template
+  checking, and constraint satisfaction.
+- [Wikipedia, *Modern C++ Design*](https://en.wikipedia.org/wiki/Modern_C%2B%2B_Design):
+  Alexandrescu's book, the policy and host-class vocabulary, and the exponential-combinations
+  argument.
+- [Wikipedia, *Policy-based design*](https://en.wikipedia.org/wiki/Policy-based_design): the
+  `HelloWorld` example, policies as a compile-time strategy pattern, and implicit interfaces in
+  unconstrained hosts.
+- [Wikipedia, *Curiously recurring template pattern*](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern)
+  and [cppreference, *CRTP*](https://en.cppreference.com/w/cpp/language/crtp): the pattern's
+  mechanism, static polymorphism, the C++23 deducing-`this` alternative, and the distinct types
+  produced by CRTP instantiations.
+- [cppreference, *Constraints and concepts*](https://en.cppreference.com/w/cpp/language/constraints):
+  concept syntax, satisfaction checked at instantiation, and the improvement in diagnostics.
 
 
-The public [comparison page](https://contextgeneric.dev/docs/comparisons/policy-based-design) follows the
-[comparison page guide](../website/writing-guides/related-work.md); factual and example corrections
-are kept in sync with this record.
+The public [comparison page](https://contextgeneric.dev/docs/comparisons/policy-based-design)
+follows the [comparison page guide](../website/writing-guides/related-work.md); factual and example
+corrections are kept in sync with this record.
