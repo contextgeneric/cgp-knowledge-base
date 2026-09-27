@@ -69,19 +69,19 @@ delegate_components! {
 
 The bundles are:
 
-- **`HypershellBaseProvider`** (`hypershell-components`) — the control syntax (`Pipe`, `Use`,
+- **`HypershellBaseProvider`** (`hypershell-components`): the control syntax (`Pipe`, `Use`,
   `ConvertTo`, `Box`), `BytesToString`, and the string, command, and URL extractors for
   `StaticArg`, `FieldArg`, and `JoinArgs`.
-- **`HypershellTokioProvider`** (`hypershell-tokio-components`) — process execution, files, the stream
+- **`HypershellTokioProvider`** (`hypershell-tokio-components`): process execution, files, the stream
   conversions, `JoinArgs` for command paths, the command updaters, and `CommandArg = PathBuf`.
-- **`HypershellReqwestProvider`** (`hypershell-reqwest-components`) — the HTTP syntax, the method
+- **`HypershellReqwestProvider`** (`hypershell-reqwest-components`): the HTTP syntax, the method
   extractor, `UrlEncodeArg`, the header updaters, and `Url = url::Url`, `HttpMethod = reqwest::Method`.
-- **`HypershellJsonProvider`** (`hypershell-json-components`) — `EncodeJson` and `DecodeJson`.
-- **`HypershellTungsteniteProvider`** (`hypershell-tungstenite-components`) — `WebSocket`, per input
+- **`HypershellJsonProvider`** (`hypershell-json-components`): `EncodeJson` and `DecodeJson`.
+- **`HypershellTungsteniteProvider`** (`hypershell-tungstenite-components`): `WebSocket`, per input
   type.
-- **`HypershellErrorHandler`** (`hypershell`) — the raising strategy per source error type; see
+- **`HypershellErrorHandler`** (`hypershell`): the raising strategy per source error type; see
   [error-handling.md](error-handling.md).
-- **`HypershellChecksumProvider`** (`hypershell-examples`) — `Checksum` and `BytesToHex`, wired from
+- **`HypershellChecksumProvider`** (`hypershell-examples`): `Checksum` and `BytesToHex`, wired from
   `hypershell-hash-components`, which ships providers but no bundle of its own.
 
 Three smaller aggregates sit inside the bundles and are named as providers by their entries:

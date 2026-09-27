@@ -3,10 +3,10 @@
 `echo` with one argument read from a field of a custom context, showing how a program that is a type
 reads a runtime value it cannot hold itself.
 
-- **Source** — [crates/hypershell-examples/examples/hello_name.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/hello_name.rs)
-- **Run** — `cargo run --example hello_name`
-- **Needs** — `echo`
-- **Result** — prints `Hello, Alice`
+- **Source**: [crates/hypershell-examples/examples/hello_name.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/hello_name.rs)
+- **Run**: `cargo run --example hello_name`
+- **Needs**: `echo`
+- **Result**: prints `Hello, Alice`
 
 ## The program
 

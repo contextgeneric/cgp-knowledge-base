@@ -38,10 +38,10 @@ confirmed run; see [the examples catalog](examples/README.md#running-an-example)
 
 Taken together, the tests and examples reach the following, in the ways listed:
 
-- **Asserted at run time** — `SimpleExec` with `StaticArg`, `WithStaticArgs`, and `FieldArgs`.
-- **Run but not asserted** — `JoinArgs` as a path, `ReadFile`, `StreamToBytes`, `BytesToString`, and
+- **Asserted at run time**: `SimpleExec` with `StaticArg`, `WithStaticArgs`, and `FieldArgs`.
+- **Run but not asserted**: `JoinArgs` as a path, `ReadFile`, `StreamToBytes`, `BytesToString`, and
   `Pipe` written by hand.
-- **Type-checked only, and run by hand while documenting** — `StreamingExec`, `StreamToStdout`,
+- **Type-checked only, and run by hand while documenting**: `StreamingExec`, `StreamToStdout`,
   `SimpleHttpRequest`, `StreamingHttpRequest`, `WriteFile`, `EncodeJson`, `DecodeJson`, headers,
   `UrlEncodeArg`, `Checksum`, `BytesToHex`, `WebSocket`, `Compare`, and `If`.
 

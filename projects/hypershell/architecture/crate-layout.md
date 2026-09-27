@@ -45,12 +45,12 @@ show; see [extending the language](../guides/extending-the-language.md).
 The library crates share a small set of module names, so a reader can find the kind of item they want
 by its module:
 
-- **`dsl`** — syntax types (`hypershell-components`, and the core or extension syntax of the Tokio,
+- **`dsl`**: syntax types (`hypershell-components`, and the core or extension syntax of the Tokio,
   reqwest, and hash crates).
-- **`components`** — CGP components defined by the crate.
-- **`providers`** — provider structs, one file per family, with the crate's bundle in `combined.rs`.
-- **`types`** — the stream wrapper types (`hypershell-tokio-components` only).
-- **`traits`** — `WrapCall` and `WrapStaticArg`, type-level list maps (`hypershell-components` only).
+- **`components`**: CGP components defined by the crate.
+- **`providers`**: provider structs, one file per family, with the crate's bundle in `combined.rs`.
+- **`types`**: the stream wrapper types (`hypershell-tokio-components` only).
+- **`traits`**: `WrapCall` and `WrapStaticArg`, type-level list maps (`hypershell-components` only).
 
 The assembly crate uses `contexts`, `namespaces`, `providers` (for the error aggregate), and
 `prelude`. Each module re-exports its files with `pub use`, so an item is imported from the module,

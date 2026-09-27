@@ -3,10 +3,10 @@
 A request to the GitHub API whose URL is joined from fields and literals, with URL encoding, a
 header, and the JSON response decoded into a Rust type.
 
-- **Source** — [crates/hypershell-examples/examples/github_issues.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/github_issues.rs)
-- **Run** — `cargo run --example github_issues`
-- **Needs** — network, unauthenticated access to `api.github.com`, which is rate-limited
-- **Result** — prints the open issues of `rust-lang/rust` as `Issue` values
+- **Source**: [crates/hypershell-examples/examples/github_issues.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/github_issues.rs)
+- **Run**: `cargo run --example github_issues`
+- **Needs**: network, unauthenticated access to `api.github.com`, which is rate-limited
+- **Result**: prints the open issues of `rust-lang/rust` as `Issue` values
 
 ## The program
 

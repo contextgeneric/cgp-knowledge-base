@@ -3,10 +3,10 @@
 A long-running stream: the Bluesky firehose read by `websocat`, provisioned on the fly by
 `nix-shell`, and filtered by `grep` for a keyword from the context.
 
-- **Source** — [crates/hypershell-examples/examples/bluesky.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/bluesky.rs)
-- **Run** — `cargo run --example bluesky`, stopped with Ctrl-C
-- **Needs** — network, `nix-shell` (which fetches `websocat` on first use), `grep`
-- **Result** — streams firehose events containing `love` until stopped; about 45 KB in two minutes
+- **Source**: [crates/hypershell-examples/examples/bluesky.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/bluesky.rs)
+- **Run**: `cargo run --example bluesky`, stopped with Ctrl-C
+- **Needs**: network, `nix-shell` (which fetches `websocat` on first use), `grep`
+- **Result**: streams firehose events containing `love` until stopped; about 45 KB in two minutes
   when probed
 
 ## The program

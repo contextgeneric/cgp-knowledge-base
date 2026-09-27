@@ -80,15 +80,15 @@ of types must match the namespace's route list; nothing checks that it does.
 Each backend crate's bundle is an aggregate provider declared with `delegate_components! { new … }`
 that `open`s the components it serves. Their entries are documented with the items they route:
 
-- **`HypershellBaseProvider`** (`hypershell_components::providers`) — [control](control.md),
+- **`HypershellBaseProvider`** (`hypershell_components::providers`): [control](control.md),
   [arguments](arguments.md), and `BytesToString` in [streams and I/O](streams-and-io.md).
-- **`HypershellTokioProvider`** (`hypershell_tokio_components::providers`) —
+- **`HypershellTokioProvider`** (`hypershell_tokio_components::providers`):
   [execution](execution.md), [streams and I/O](streams-and-io.md), and `JoinArgs` in
   [arguments](arguments.md).
-- **`HypershellReqwestProvider`** (`hypershell_reqwest_components::providers`) — [HTTP](http.md) and
+- **`HypershellReqwestProvider`** (`hypershell_reqwest_components::providers`): [HTTP](http.md) and
   `UrlEncodeArg` in [arguments](arguments.md).
-- **`HypershellJsonProvider`** (`hypershell_json_components::providers`) — [JSON](json.md).
-- **`HypershellTungsteniteProvider`** (`hypershell_tungstenite_components::providers`) —
+- **`HypershellJsonProvider`** (`hypershell_json_components::providers`): [JSON](json.md).
+- **`HypershellTungsteniteProvider`** (`hypershell_tungstenite_components::providers`):
   [extensions](extensions.md#websocket-and-handlewebsocket).
 
 ## `HypershellCli`

@@ -58,11 +58,11 @@ delegate_components! {
 Name the client field `http_client`; the namespace reads the client from a field of exactly that name.
 Then reach the fields from the program with the argument syntax:
 
-- **`FieldArg<"name">`** — one value, formatted with `Display`, wherever an argument is expected.
-- **`FieldArgs<"args">`** — every item of an iterable field, as a command's whole argument list.
-- **`JoinArgs[…]`** — several arguments joined into one. For a URL or header this concatenates,
+- **`FieldArg<"name">`**: one value, formatted with `Display`, wherever an argument is expected.
+- **`FieldArgs<"args">`**: every item of an iterable field, as a command's whole argument list.
+- **`JoinArgs[…]`**: several arguments joined into one. For a URL or header this concatenates,
   and for a command path or file path it joins path segments with `PathBuf::join`.
-- **`UrlEncodeArg<…>`** — a value encoded for a URL; use it inside the `JoinArgs` that builds the
+- **`UrlEncodeArg<…>`**: a value encoded for a URL; use it inside the `JoinArgs` that builds the
   URL, since it is routed only as a string argument.
 
 The details of each are in [arguments](../reference/arguments.md).
@@ -88,11 +88,11 @@ whose input is a `Vec<u8>` or `String` follows them.
 lists.** Most stages accept bytes or any stream, so they chain freely. Three boundaries need an
 adapter:
 
-- **A streaming stage before a simple stage** — insert `StreamToBytes`, as in
+- **A streaming stage before a simple stage**: insert `StreamToBytes`, as in
   `StreamingExec<…> | StreamToBytes | SimpleExec<…>`.
-- **An HTTP or WebSocket stream before `StreamToBytes` or `StreamToString`** — insert
+- **An HTTP or WebSocket stream before `StreamToBytes` or `StreamToString`**: insert
   `ToTokioAsyncRead`, imported from `hypershell_tokio_components::dsl`.
-- **Raw bytes to print as text** — `BytesToString` decodes UTF-8, and `BytesToHex` encodes bytes such
+- **Raw bytes to print as text**: `BytesToString` decodes UTF-8, and `BytesToHex` encodes bytes such
   as a digest.
 
 The full table of what each stage accepts and produces is in

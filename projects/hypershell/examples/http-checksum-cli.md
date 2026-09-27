@@ -3,10 +3,10 @@
 The shell pipeline `curl $url | sha256sum | cut -d ' ' -f 1`, written as three streaming stages
 that run concurrently.
 
-- **Source** — [crates/hypershell-examples/examples/http_checksum_cli.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/http_checksum_cli.rs)
-- **Run** — `cargo run --example http_checksum_cli`
-- **Needs** — network, `curl`, `sha256sum`, `cut`
-- **Result** — prints the SHA-256 digest of the Nixpkgs manual page, the same digest as
+- **Source**: [crates/hypershell-examples/examples/http_checksum_cli.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/http_checksum_cli.rs)
+- **Run**: `cargo run --example http_checksum_cli`
+- **Needs**: network, `curl`, `sha256sum`, `cut`
+- **Result**: prints the SHA-256 digest of the Nixpkgs manual page, the same digest as
   `http_checksum_client` and `http_checksum_native`
 
 ## The program

@@ -3,10 +3,10 @@
 A comparison of two checksum sub-pipelines used as the condition of `If`, which runs one of two
 `echo` commands.
 
-- **Source** — [crates/hypershell-examples/examples/compare_and_branch.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/compare_and_branch.rs)
-- **Run** — `cargo run --example compare_and_branch`
-- **Needs** — network, `echo`
-- **Result** — compiles; no run is confirmed. It fetches the same two URLs as
+- **Source**: [crates/hypershell-examples/examples/compare_and_branch.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/compare_and_branch.rs)
+- **Run**: `cargo run --example compare_and_branch`
+- **Needs**: network, `echo`
+- **Result**: compiles; no run is confirmed. It fetches the same two URLs as
   [`parallel_compare`](parallel-compare.md), whose run succeeds. On a slow network, one run was
   stopped after two minutes without output, and a copy with both URLs non-redirecting failed with a
   connection timeout, so whether it prints its message is unconfirmed

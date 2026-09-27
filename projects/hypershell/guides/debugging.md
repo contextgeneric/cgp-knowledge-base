@@ -218,10 +218,10 @@ namespace trait. **Fix:** see [replacing an interpretation](extending-the-langua
 
 Three `hypershell!` failures come from the macro rather than the wiring, and none mentions CGP:
 
-- **"cannot find macro `Product` in this scope"** or **"cannot find type `Pipe` in this scope"** —
+- **"cannot find macro `Product` in this scope"** or **"cannot find type `Pipe` in this scope"**:
   the prelude is not imported. Import `hypershell::prelude::*`.
-- **"proc macro panicked … mismatch > at the end of token stream"** — an unbalanced `<`.
-- **"expected one of `!`, `(`, `,`, `::`, `<`, or `>`, found `<eof>`"** — a `->` inside the program,
+- **"proc macro panicked … mismatch > at the end of token stream"**: an unbalanced `<`.
+- **"expected one of `!`, `(`, `,`, `::`, `<`, or `>`, found `<eof>`"**: a `->` inside the program,
   whose `>` the macro reads as closing a group. Write that type outside the macro and refer to it by
   an alias.
 

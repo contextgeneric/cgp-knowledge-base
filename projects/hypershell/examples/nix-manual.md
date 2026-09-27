@@ -3,10 +3,10 @@
 A native HTTP request feeding two external commands, with a static URL and an argument list that
 mixes a literal with a field.
 
-- **Source** — [crates/hypershell-examples/examples/nix_manual.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/nix_manual.rs)
-- **Run** — `cargo run --example nix_manual`
-- **Needs** — network, `tr`, `grep`
-- **Result** — prints the lines of the Nixpkgs manual containing `Nix`, in upper case
+- **Source**: [crates/hypershell-examples/examples/nix_manual.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/nix_manual.rs)
+- **Run**: `cargo run --example nix_manual`
+- **Needs**: network, `tr`, `grep`
+- **Result**: prints the lines of the Nixpkgs manual containing `Nix`, in upper case
 
 ## The program
 

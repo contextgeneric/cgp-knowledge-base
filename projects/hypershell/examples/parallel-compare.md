@@ -3,10 +3,10 @@
 Two checksum sub-pipelines run concurrently and compared with the examples library's `Compare`
 syntax, with the sub-pipeline written once as a generic type alias.
 
-- **Source** — [crates/hypershell-examples/examples/parallel_compare.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/parallel_compare.rs)
-- **Run** — `cargo run --example parallel_compare`
-- **Needs** — network
-- **Result** — prints `equals: true`.
+- **Source**: [crates/hypershell-examples/examples/parallel_compare.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/parallel_compare.rs)
+- **Run**: `cargo run --example parallel_compare`
+- **Needs**: network
+- **Result**: prints `equals: true`.
 
 ## The program
 

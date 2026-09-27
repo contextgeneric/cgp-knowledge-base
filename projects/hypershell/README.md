@@ -4,15 +4,15 @@ Hypershell is a modular, type-level DSL for writing shell-script-like programs i
 an ordinary Rust type, and the context that runs it is the interpreter, so both the language's syntax
 and its meaning can be extended without touching the core crates.
 
-- **Repository** — <https://github.com/contextgeneric/hypershell>
-- **Local checkout** — `../hypershell`, per [sibling-projects.md](../../sibling-projects.md)
-- **Branch documented** — `v0.8.0`
-- **Crates** — `hypershell`, `hypershell-components`, `hypershell-tokio-components`,
+- **Repository**: <https://github.com/contextgeneric/hypershell>
+- **Local checkout**: `../hypershell`, per [sibling-projects.md](../../sibling-projects.md)
+- **Branch documented**: `v0.8.0`
+- **Crates**: `hypershell`, `hypershell-components`, `hypershell-tokio-components`,
   `hypershell-reqwest-components`, `hypershell-json-components`, `hypershell-hash-components`,
   `hypershell-tungstenite-components`, `hypershell-macro`, all at 0.1.0, plus the unpublished
   `hypershell-examples`
-- **Tracks** — `cgp` 0.8.0-alpha, through a git patch to the `cgp` repository's `main` branch
-- **Status** — Experimental proof of concept, stated as such by the project itself; see
+- **Tracks**: `cgp` 0.8.0-alpha, through a git patch to the `cgp` repository's `main` branch
+- **Status**: Experimental proof of concept, stated as such by the project itself; see
   [Status and gaps](#status-and-gaps)
 
 ## What it is
@@ -64,18 +64,18 @@ The workspace holds eight library crates and an examples crate. The split follow
 compiles only the libraries it interprets. The layout is worked through in
 [architecture/crate-layout.md](architecture/crate-layout.md).
 
-- **`hypershell-components`** — the syntax types, the argument-extractor components, the control
+- **`hypershell-components`**: the syntax types, the argument-extractor components, the control
   providers, and the base bundle. Depends only on `cgp`.
-- **`hypershell-tokio-components`** — processes, files, streams, the stream wrapper types, and the
+- **`hypershell-tokio-components`**: processes, files, streams, the stream wrapper types, and the
   input dispatchers, on Tokio.
-- **`hypershell-reqwest-components`** — HTTP on `reqwest`.
-- **`hypershell-json-components`** — JSON on `serde_json`.
-- **`hypershell-hash-components`** — the checksum extension, on `sha2` and `hex`.
-- **`hypershell-tungstenite-components`** — the WebSocket extension, on `tokio-tungstenite`.
-- **`hypershell-macro`** — the `hypershell!` macro.
-- **`hypershell`** — `HypershellNamespace`, the error wiring, the `HypershellCli` and `HypershellHttp`
+- **`hypershell-reqwest-components`**: HTTP on `reqwest`.
+- **`hypershell-json-components`**: JSON on `serde_json`.
+- **`hypershell-hash-components`**: the checksum extension, on `sha2` and `hex`.
+- **`hypershell-tungstenite-components`**: the WebSocket extension, on `tokio-tungstenite`.
+- **`hypershell-macro`**: the `hypershell!` macro.
+- **`hypershell`**: `HypershellNamespace`, the error wiring, the `HypershellCli` and `HypershellHttp`
   contexts, and the prelude.
-- **`hypershell-examples`** — the runnable examples, the four tests, and a small library adding
+- **`hypershell-examples`**: the runnable examples, the four tests, and a small library adding
   `Compare` and `If` and the extension namespaces.
 
 ## Status and gaps
@@ -87,15 +87,15 @@ CGP, but the library is a proof of concept with gaps, each confirmed against the
 [issues.md](issues.md) records them in full, together with the housekeeping items this summary leaves
 out:
 
-- **Unusable syntax** — `StreamToLines` has a provider but no route, and its output could not feed a
+- **Unusable syntax**: `StreamToLines` has a provider but no route, and its output could not feed a
   later stage even if routed.
-- **Redirects** — a streaming HTTP request with a reader input sends it as a streamed body, which
+- **Redirects**: a streaming HTTP request with a reader input sends it as a streamed body, which
   `reqwest` cannot resend, so it does not follow a 301, 302, 307, or 308. A byte-buffer input is sent
   buffered and follows it.
-- **Overrides** — a context that joins `HypershellNamespace` cannot reinterpret a syntax the namespace
+- **Overrides**: a context that joins `HypershellNamespace` cannot reinterpret a syntax the namespace
   already binds; it must use `Use` in the program or restate the routes in its own namespace.
-- **The macro** — its expansion needs the prelude in scope, and it panics on unbalanced angle brackets.
-- **Evidence** — four tests, two of which assert nothing; no wiring checks; no rustdoc; no CI; and a
+- **The macro**: its expansion needs the prelude in scope, and it panics on unbalanced angle brackets.
+- **Evidence**: four tests, two of which assert nothing; no wiring checks; no rustdoc; no CI; and a
   workspace that builds against unreleased `cgp` from git, on nightly with the new trait solver.
 
 ## The documents

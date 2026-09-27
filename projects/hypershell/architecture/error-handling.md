@@ -44,10 +44,10 @@ each with its provider.
 **`HypershellNamespace` binds all three error components, routing every source error type to one
 aggregate that picks a raising strategy per type.** The bindings are:
 
-- **`ErrorTypeProviderComponent`** — `UseAnyhowError`, so the error type is `anyhow::Error`, which
+- **`ErrorTypeProviderComponent`**: `UseAnyhowError`, so the error type is `anyhow::Error`, which
   the prelude re-exports as `Error`.
-- **`ErrorRaiserComponent`** — for each listed source type, `HypershellErrorHandler`.
-- **`ErrorWrapperComponent`** — `DebugAnyhowError` for every detail, which formats the detail with
+- **`ErrorRaiserComponent`**: for each listed source type, `HypershellErrorHandler`.
+- **`ErrorWrapperComponent`**: `DebugAnyhowError` for every detail, which formats the detail with
   `Debug` and attaches it as `anyhow` context.
 
 `HypershellErrorHandler` is an aggregate provider that `open`s `ErrorRaiserComponent` and chooses a
@@ -56,10 +56,10 @@ strategy from the [error providers](../../../cgp/reference/providers/error_provi
 
 | Source error | Strategy |
 |---|---|
-| `anyhow::Error` | `ReturnError` — already the context's error |
+| `anyhow::Error` | `ReturnError`: already the context's error |
 | `Infallible` | `RaiseInfallible` |
-| `std::io::Error`, `Utf8Error`, `reqwest::Error`, `url::ParseError`, `InvalidHeaderName`, `InvalidHeaderValue`, `serde_json::Error` | `RaiseAnyhowError` — convert through `std::error::Error` |
-| `ExecOutputError`, `ErrorResponse` | `DebugAnyhowError` — neither implements `std::error::Error`, so format with `Debug` |
+| `std::io::Error`, `Utf8Error`, `reqwest::Error`, `url::ParseError`, `InvalidHeaderName`, `InvalidHeaderValue`, `serde_json::Error` | `RaiseAnyhowError`: convert through `std::error::Error` |
+| `ExecOutputError`, `ErrorResponse` | `DebugAnyhowError`: neither implements `std::error::Error`, so format with `Debug` |
 
 `ErrorResponse` derives `Debug`, so the error for a non-success response is the `Debug` of the entire
 `reqwest::Response`, headers included. A probe of a redirected request printed a single line

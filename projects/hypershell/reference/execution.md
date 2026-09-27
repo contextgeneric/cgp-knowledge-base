@@ -281,14 +281,14 @@ and replaces the whole `WithArgs`: `SimpleExec<StaticArg<"echo">, FieldArgs<"arg
 The execution providers define five error and detail types, each with a `Debug` impl that writes its
 message:
 
-- **`ExecOutputError { output: Output }`** — raised by `HandleSimpleExec` for a non-zero exit;
+- **`ExecOutputError { output: Output }`**: raised by `HandleSimpleExec` for a non-zero exit;
   `child process exited with non-success code {code:?}, stderr: {stderr}`.
-- **`StdinPipeError`** — wraps a failed write to standard input;
+- **`StdinPipeError`**: wraps a failed write to standard input;
   `error piping input to stdin of child process`.
-- **`WaitWithOutputError`** — wraps a failed wait; `error waiting for output from child process`.
-- **`CommandNotFound<'a> { command: &'a Command }`** — wraps a spawn failure of kind `NotFound`;
+- **`WaitWithOutputError`**: wraps a failed wait; `error waiting for output from child process`.
+- **`CommandNotFound<'a> { command: &'a Command }`**: wraps a spawn failure of kind `NotFound`;
   `command not found: {program}`.
-- **`SpawnCommandFailure<'a> { command: &'a Command }`** — wraps every spawn failure;
+- **`SpawnCommandFailure<'a> { command: &'a Command }`**: wraps every spawn failure;
   `error executing command: {program} {args}`.
 
 `ExecOutputError` is raised, so it needs an `ErrorRaiser` route, which `HypershellNamespace` gives it

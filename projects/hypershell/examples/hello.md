@@ -3,10 +3,10 @@
 The smallest Hypershell program: `echo hello world!` with the output streamed to standard output, run
 on the predefined empty context.
 
-- **Source** — [crates/hypershell-examples/examples/hello.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/hello.rs)
-- **Run** — `cargo run --example hello`
-- **Needs** — `echo`
-- **Result** — prints `hello world!`
+- **Source**: [crates/hypershell-examples/examples/hello.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/hello.rs)
+- **Run**: `cargo run --example hello`
+- **Needs**: `echo`
+- **Result**: prints `hello world!`
 
 ## The program
 

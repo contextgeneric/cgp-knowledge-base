@@ -3,10 +3,10 @@
 The checksum pipeline with `curl` replaced by a native streaming HTTP request, mixing a native stage
 with two external commands in one stream.
 
-- **Source** — [crates/hypershell-examples/examples/http_checksum_client.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/http_checksum_client.rs)
-- **Run** — `cargo run --example http_checksum_client`
-- **Needs** — network, `sha256sum`, `cut`
-- **Result** — prints the same digest as `http_checksum_cli`
+- **Source**: [crates/hypershell-examples/examples/http_checksum_client.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/http_checksum_client.rs)
+- **Run**: `cargo run --example http_checksum_client`
+- **Needs**: network, `sha256sum`, `cut`
+- **Result**: prints the same digest as `http_checksum_cli`
 
 ## The program
 

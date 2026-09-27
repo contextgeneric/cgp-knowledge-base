@@ -3,10 +3,10 @@
 The Bluesky firehose read with the native WebSocket extension instead of `websocat`, wired onto the
 context with two entries rather than through an extension namespace.
 
-- **Source** — [crates/hypershell-examples/examples/bluesky_websocket.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/bluesky_websocket.rs)
-- **Run** — `cargo run --example bluesky_websocket`, stopped with Ctrl-C
-- **Needs** — network, `grep`
-- **Result** — streams firehose events containing `love` until stopped
+- **Source**: [crates/hypershell-examples/examples/bluesky_websocket.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/bluesky_websocket.rs)
+- **Run**: `cargo run --example bluesky_websocket`, stopped with Ctrl-C
+- **Needs**: network, `grep`
+- **Result**: streams firehose events containing `love` until stopped
 
 ## The program
 

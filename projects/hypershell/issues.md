@@ -72,10 +72,10 @@ example passes `()`. The bundle wires `Vec<u8>` and the two reader wrappers as i
 
 Three providers are public but routed nowhere, and no example uses them:
 
-- **`ExtractUrlFieldArg`** — reads a pre-parsed `Url` from a field, as an alternative to parsing a
+- **`ExtractUrlFieldArg`**: reads a pre-parsed `Url` from a field, as an alternative to parsing a
   string.
-- **`ExtractMethodFieldArg`** — reads a `reqwest::Method` from a field.
-- **`TokioToFuturesAsyncRead`** — converts a Tokio reader to a futures reader.
+- **`ExtractMethodFieldArg`**: reads a `reqwest::Method` from a field.
+- **`TokioToFuturesAsyncRead`**: converts a Tokio reader to a futures reader.
 
 Each is either a missing route or dead code; the source does not say which.
 

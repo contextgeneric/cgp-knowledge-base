@@ -102,10 +102,10 @@ a pipe it never writes.
 `HypershellTungsteniteProvider` wires one pipeline per input kind under the same syntax, keyed on
 both segments of the path:
 
-- **`FuturesAsyncReadStream<S>`** — `FuturesToTokioAsyncRead`, then `HandleWebsocket`, then
+- **`FuturesAsyncReadStream<S>`**: `FuturesToTokioAsyncRead`, then `HandleWebsocket`, then
   `WrapFuturesAsyncRead`.
-- **`TokioAsyncReadStream<S>`** — `HandleWebsocket`, then `WrapFuturesAsyncRead`.
-- **`Vec<u8>`** — `Call<BytesToStream>`, then `HandleWebsocket`, then `WrapFuturesAsyncRead`.
+- **`TokioAsyncReadStream<S>`**: `HandleWebsocket`, then `WrapFuturesAsyncRead`.
+- **`Vec<u8>`**: `Call<BytesToStream>`, then `HandleWebsocket`, then `WrapFuturesAsyncRead`.
 
 The output is a futures reader, so `StreamToString` needs `ToTokioAsyncRead` before it, while
 `StreamingExec` and `StreamToStdout` accept it directly.

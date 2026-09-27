@@ -47,14 +47,14 @@ and `WebSocket<Url, Params>`.
 by one of four extractor components rather than by `Handler`. It is a small language inside the
 handler syntax:
 
-- `StaticArg<Arg>` — a literal, usually a `Symbol!`, formatted through `Default` and `Display`.
-- `FieldArg<Tag>` — the value of the context field named `Tag`, read through
+- `StaticArg<Arg>`: a literal, usually a `Symbol!`, formatted through `Default` and `Display`.
+- `FieldArg<Tag>`: the value of the context field named `Tag`, read through
   [`HasField`](../../../cgp/reference/traits/has_field.md). This is how a program reads a runtime
   value it cannot hold itself.
-- `JoinArgs<Args>` — a `Product!` list of arguments joined into one. What "joined" means depends on
+- `JoinArgs<Args>`: a `Product!` list of arguments joined into one. What "joined" means depends on
   the extractor: concatenation for a string or URL, `PathBuf::join` for a command path.
-- `UrlEncodeArg<Arg>` — an argument percent-encoded for a URL query.
-- `GetMethod`, `PostMethod`, `PutMethod`, `DeleteMethod` — HTTP method markers.
+- `UrlEncodeArg<Arg>`: an argument percent-encoded for a URL query.
+- `GetMethod`, `PostMethod`, `PutMethod`, `DeleteMethod`: HTTP method markers.
 
 **Argument-list syntax configures a process or a request** rather than producing one value, and is
 interpreted by an updater component: `WithArgs<Args>` appends each argument to a command,
