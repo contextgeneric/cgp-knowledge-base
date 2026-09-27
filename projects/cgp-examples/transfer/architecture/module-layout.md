@@ -61,4 +61,6 @@ downstream crate can reuse any piece, as the probes behind the [guides](../guide
 
 ## Public material derived from this
 
-The "Map of the code" section of the crate's own README.
+The "Map of the code" section of the crate's own README. It also feeds the
+`transfer/architecture/module-layout` page of the planned [cgp-examples project
+section](../../../../website/projects/cgp-examples.md).

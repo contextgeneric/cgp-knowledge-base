@@ -43,5 +43,5 @@ all four input types. Nothing runs the context at test time.
 
 ## Public material derived from this
 
-The "Binary Operator Provider" section of page 3 of the planned
-[extensible data types deep dive](../../../../website/deep-dives/extensible-datatypes.md).
+The `expression/examples/add-mult-binary-op` page of the planned [cgp-examples project
+section](../../../../website/projects/cgp-examples.md).

@@ -86,9 +86,12 @@ these before introducing another domain:
 - **Area calculation:** `Rectangle`, `Circle`, area providers, and a scaling wrapper introduce
   provider reuse and higher-order composition.
 
-Use the verified code in [examples/](../examples/README.md) and the website's `example-code`
-crate. When a different example is necessary, record why in the page's internal document and add
-it to this catalog. Identify the context and target whenever an example changes their roles.
+Use the verified code in [examples/](../examples/README.md) and the website's `example-code` crate.
+When a different example is necessary, record why in the page's internal document and add it to this
+catalog. The website's [Projects pages](../website/writing-guides/project.md) are the standing
+exception: each shows its own project's programs, because showing real programs is that section's
+purpose, and they do not need an entry here. Identify the context and target whenever an example
+changes their roles.
 
 Reuse a diagram when the same idea appears on several pages. Keep labels close to what they
 identify, omit decoration, and ensure the prose remains understandable without the image.

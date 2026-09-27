@@ -60,5 +60,6 @@ other.
 
 ## Public material derived from this
 
-The rustdoc for `DeserializeDefault`, and the page on what the library does not do in the planned
-[cgp-serde deep dive](../../../website/deep-dives/cgp-serde.md).
+The `DeserializeDefault` page in the `reference/providers/` pages of the planned [cgp-serde project
+section](../../../website/projects/cgp-serde.md), its `limitations` page, and the rustdoc for
+`DeserializeDefault`.

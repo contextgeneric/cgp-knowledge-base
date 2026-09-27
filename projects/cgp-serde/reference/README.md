@@ -112,5 +112,5 @@ Register each reference document here, in [../README.md](../README.md), and in
 
 ## Public material derived from this
 
-The provider catalog of the repository README, and the "Writing serializers" page of the planned
-[cgp-serde deep dive](../../../website/deep-dives/cgp-serde.md).
+The provider catalog of the repository README, and the `reference/index` page of the planned
+[cgp-serde project section](../../../website/projects/cgp-serde.md).

@@ -133,3 +133,5 @@ guard decides first.
 
 "The payoff" section of the crate's own README, whose summary of this change ("writing one backend
 provider and changing one wiring entry") holds only for a backend whose namespace is written afresh.
+It also feeds the `transfer/guides/swapping-the-backend` page of the planned [cgp-examples project
+section](../../../../website/projects/cgp-examples.md).

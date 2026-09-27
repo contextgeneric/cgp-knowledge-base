@@ -48,7 +48,9 @@ the explanation tier drawn from [cgp/concepts/](../cgp/concepts/README.md), and 
 `docs/reference/`, the canonical construct reference drawn from
 [cgp/reference/](../cgp/reference/README.md). A third mirrored section, **Comparisons** at
 `docs/comparisons/`, ports the [related-work](../related-work/README.md) documents for readers who
-arrive knowing another paradigm. All three are written in full. The
+arrive knowing another paradigm. All three are written in full. A fourth, **Projects** at
+`docs/projects/`, will port the [projects/](../projects/README.md) sections, with each project's example
+programs expanded into short tutorials; it is planned rather than written. The
 **`blog/` tree** holds every announcement, release note, deep dive, and talk transcript, each with an
 author and a tag drawn from a fixed set (`release`, `deepdive`, `walkthrough`). The **front page and
 static assets** live under `src/` and `static/`.
@@ -107,7 +109,7 @@ record drift — live in [AGENTS.md](AGENTS.md).
   [homepage](writing-guides/homepage.md), the [explanation pages](writing-guides/explanation.md) it
   offloads to, the [tutorials](writing-guides/tutorial.md), the
   [release announcement](writing-guides/release-announcement.md), the
-  [deep dive](writing-guides/deep-dive.md), the
+  [Projects section](writing-guides/project.md), the
   [reference page](writing-guides/reference.md), and the
   [comparison page](writing-guides/related-work.md).
 - [patterns-book.md](patterns-book.md) — the record of and plan for the
@@ -126,10 +128,12 @@ record drift — live in [AGENTS.md](AGENTS.md).
 - [tutorials/](tutorials/README.md) — one internal document per tutorial series, recording the
   series' objective, the concepts it introduces in order, the prerequisites it assumes, and the level
   of explanation it pitches at, so a revision keeps the same teaching contract.
-- [deep-dives/](deep-dives/README.md) — one internal document per planned deep dive: the multi-page
-  living documents that grow out of the longest blog posts. Each records the page split, what changes
-  from the source post, and the concrete list of source-code changes the tracked repository needs
-  first. None of the three is written yet, so these are plans rather than records.
+- [projects/](projects/README.md) — the blueprint for the planned **Projects** section, which ports the
+  [projects/](../projects/README.md) sections of this base to the site with their example programs
+  expanded into short tutorials, and one plan per project: the page list and the internal document
+  behind each page, the code and knowledge-base prerequisites, and the posts that get a pointer. It
+  supersedes the three deep dives planned before the project sections existed. None of it is written
+  yet, so these are plans rather than records.
 
 ## Reading a page's document before changing the page
 

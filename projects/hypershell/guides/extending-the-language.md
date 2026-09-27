@@ -167,5 +167,5 @@ gap is recorded in [issues.md](../issues.md#missing-features).
 
 ## Public material derived from this
 
-Page 4, "Extending the language", of the planned
-[Hypershell deep dive](../../../website/deep-dives/hypershell.md).
+The `guides/extending-the-language` page of the planned [Hypershell project
+section](../../../website/projects/hypershell.md).

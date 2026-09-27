@@ -94,6 +94,5 @@ change to `cgp`.
 
 ## Public material derived from this
 
-The crate-structure argument on page 2 of the planned
-[Hypershell deep dive](../../../website/deep-dives/hypershell.md), and the crate list in the
-repository README.
+The `architecture/crate-layout` page of the planned [Hypershell project
+section](../../../website/projects/hypershell.md), and the crate list in the repository README.

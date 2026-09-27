@@ -372,4 +372,6 @@ its key from the environment instead.
 
 ## Public material derived from this
 
-Page 1 of the planned [extensible data types deep dive](../../../../website/deep-dives/extensible-datatypes.md).
+The providers the `builder` example pages of the planned [cgp-examples project
+section](../../../../website/projects/cgp-examples.md) explain where they first appear, since that
+section carries no reference for demonstration crates.

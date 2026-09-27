@@ -68,4 +68,5 @@ they went unnoticed.
 
 ## Public material derived from this
 
-None yet.
+The sentences on what is and is not exercised on the `limitations` page of the planned [cgp-serde
+project section](../../website/projects/cgp-serde.md).

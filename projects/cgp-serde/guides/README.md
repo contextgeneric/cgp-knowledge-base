@@ -24,6 +24,5 @@ Register each guide here, in [../README.md](../README.md), and in
 
 ## Public material derived from this
 
-The "Wiring an application" page of the planned
-[cgp-serde deep dive](../../../website/deep-dives/cgp-serde.md), and the usage sections of the
-repository README.
+The four guide pages of the planned [cgp-serde project
+section](../../../website/projects/cgp-serde.md), and the usage sections of the repository README.

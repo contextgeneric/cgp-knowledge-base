@@ -178,5 +178,6 @@ each node, compiles and produces the expected nested JSON.
 
 ## Public material derived from this
 
-The "Writing serializers" page of the planned [cgp-serde deep dive](../../../website/deep-dives/cgp-serde.md),
-and the rustdoc for `SerializeWithContext` and `DeserializeWithContext`.
+The `architecture/reentrant-providers` page of the planned [cgp-serde project
+section](../../../website/projects/cgp-serde.md), and the rustdoc for `SerializeWithContext` and
+`DeserializeWithContext`.

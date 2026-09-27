@@ -244,5 +244,6 @@ Never wired or exercised; see [issues.md](../issues.md#housekeeping).
 
 ## Public material derived from this
 
-The "Evaluator Computer" and "Implementing Eval Providers" sections of page 3 of the planned
-[extensible data types deep dive](../../../../website/deep-dives/extensible-datatypes.md).
+The providers the `expression` example pages of the planned [cgp-examples project
+section](../../../../website/projects/cgp-examples.md) explain where they first appear, since that
+section carries no reference for demonstration crates.

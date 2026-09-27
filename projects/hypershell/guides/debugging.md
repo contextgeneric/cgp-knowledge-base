@@ -229,5 +229,5 @@ See [the macro reference](../reference/macro.md#known-issues).
 
 ## Public material derived from this
 
-The diagnostics section of the planned trade-offs page of the
-[Hypershell deep dive](../../../website/deep-dives/hypershell.md).
+The `guides/debugging` page of the planned [Hypershell project
+section](../../../website/projects/hypershell.md).

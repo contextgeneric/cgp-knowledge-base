@@ -14,4 +14,5 @@ crate's README summarizes.
 ## Public material derived from this
 
 The closing "The payoff" section of the crate's own README, whose one-line summaries of both changes
-these guides expand.
+these guides expand. It also feeds the two `transfer` guide pages of the planned [cgp-examples
+project section](../../../../website/projects/cgp-examples.md).

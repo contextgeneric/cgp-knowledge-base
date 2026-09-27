@@ -120,6 +120,6 @@ Housekeeping items affect neither behavior nor features but mislead a reader or 
 
 ## Public material derived from this
 
-The page on what the library does not do in the planned
-[cgp-serde deep dive](../../website/deep-dives/cgp-serde.md), which the deep-dive plan requires to be
-kept rather than trimmed as the library matures.
+The defects and missing features on the `limitations` page of the planned [cgp-serde project
+section](../../website/projects/cgp-serde.md), which the plan requires to be kept rather than
+trimmed as the library matures.

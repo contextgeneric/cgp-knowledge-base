@@ -66,4 +66,5 @@ required by the GitHub API. The program's output type is fixed by the last stage
 
 ## Public material derived from this
 
-None yet.
+The `examples/github-issues` page of the planned [Hypershell project
+section](../../../website/projects/hypershell.md).

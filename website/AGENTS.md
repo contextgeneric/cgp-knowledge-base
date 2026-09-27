@@ -188,6 +188,14 @@ shape of. And **it is the website's alone** — the knowledge base's own snippet
 there, since they are verified against the source directly and a second copy would be one more thing
 to keep in step.
 
+**Pages in the Projects section are the one exception to the crate**, because their code is not written for the
+site. A [Projects page](writing-guides/project.md#code-on-a-projects-page) quotes a project's own
+source, which that project's repository already compiles and tests, and the projects need what the
+crate does not carry, such as Hypershell's nightly toolchain and network-bound backends. So a
+Projects page is verified against the project's repository at the revision its
+[plan](projects/README.md) records, by comparing each snippet with the source and running each
+program, and it gets no `example-code` file.
+
 **Never take current syntax from an existing blog post.** Almost every post on the site predates
 v0.8.0, and the drift is not cosmetic: posts published as recently as 2026 still show
 `#[cgp_context]`, `cgp_preset!`, `#[cgp_inherit]`, `HasCgpProvider`, the `Async` trait, `ProvideType`,
@@ -217,12 +225,12 @@ the right choice for release notes, whose whole value is historical. When a post
 **published draft** rather than a finished artifact, the ordinary editing rules apply again; the
 document for such a post says so explicitly.
 
-One case is settled and needs no further authorization: **when a [deep dive](deep-dives/README.md) is
-published, a pointer to it is added at the top of the post it grew out of.** That edit adds a link and
-changes no claim, so it leaves the record intact while routing a reader who arrives from a search result
-to the maintained version. Two things are *not* settled by it: a published post's **`slug` is never
-changed**, because moving a live URL breaks every inbound link to it, and no snippet in the post is
-rewritten.
+One case is settled and needs no further authorization: **when a project's section of the [Projects
+pages](projects/README.md) is published, a pointer to it is added at the top of the post it grew out
+of.** That edit adds a link and changes no claim, so it leaves the record intact while routing a
+reader who arrives from a search result to the maintained version. Two things are *not* settled by
+it: a published post's **`slug` is never changed**, because moving a live URL breaks every inbound
+link to it, and no snippet in the post is rewritten.
 
 Pages under `docs/` are the opposite case: they describe CGP as it is now, carry no date, and are
 covered by document-the-present in full. Correct them in place, without a changelog note.
@@ -377,6 +385,11 @@ information and would go stale as a body. Each section therefore gets a single e
 and a page that needs something said about it *specifically* gets a paragraph inside that entry. This
 exception reaches a section built by porting a catalog; it does not reach a page written on its own,
 which still gets its own document.
+
+**The Projects section is recorded one level down**, because it ports four catalogs rather than one:
+each project gets a plan in [projects/](projects/README.md), which becomes that project's record
+once its pages land, and [site-structure.md](site-structure.md) carries a short entry pointing there
+once the section exists.
 
 Adding a page of a *kind* the site has not published before means adding a writing guide for it too,
 before the page rather than after, since the guide is what a later revision is checked against.

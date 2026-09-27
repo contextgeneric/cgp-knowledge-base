@@ -66,5 +66,5 @@ field. `MyApp` joins the same namespace as `HypershellCli` and adds only the fie
 
 ## Public material derived from this
 
-The variable-parameter program in the planned
-[Hypershell deep dive](../../../website/deep-dives/hypershell.md).
+The `examples/hello-name` page of the planned [Hypershell project
+section](../../../website/projects/hypershell.md).

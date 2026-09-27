@@ -111,4 +111,6 @@ Axum's. Every other error body is a message a provider formatted and raised thro
 
 ## Public material derived from this
 
-Sections 5 and 8 of the crate's own README, and its "How to run it" section.
+Sections 5 and 8 of the crate's own README, and its "How to run it" section. It also feeds the
+`transfer` example pages `query-balance` and `transfer-funds`, once each has its own record, in the
+planned [cgp-examples project section](../../../../website/projects/cgp-examples.md).

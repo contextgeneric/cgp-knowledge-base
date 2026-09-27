@@ -498,8 +498,8 @@ queries the site now answers and nothing else in Rust does.
 
 One more family shows in the data and has no page: **`rust dsl` drew 771 impressions and 25 clicks at
 position 7.0**, plus *dsl rust* and *dsl in rust* for another 314 impressions. The Hypershell post is
-what ranks, and the [Hypershell deep dive](deep-dives/hypershell.md) is the page that should inherit it
-when it lands — which is a reason to prefer it over the other two deep dives when capacity appears.
+what ranks, and the index of the [Hypershell project section](projects/hypershell.md) is the page that
+should inherit it when it lands — which is a reason to write that section first among the libraries.
 
 The discipline the table imposes is **one page per question**. Where two pages could answer a query,
 one answers it and the other links, which is the same rule
@@ -583,11 +583,11 @@ answers the question *behind* it.
 page planned and should have it sooner.** The Hypershell post wins *rust dsl* (771 impressions,
 position 7.0) and converts at 3.2%, and 293 of those impressions are a comparison intent it serves
 badly: *shell scripting vs rust*, *rust vs shell scripting*, and *cargo vs shell scripting* together
-earn zero clicks. The owner is the [Hypershell deep dive](deep-dives/hypershell.md), which is
-[DD1](tasks.md#d--the-deep-dives-and-the-code-they-quote) and post-release. **This is the strongest
-evidence available for doing DD1 before DD2 and DD3**, which is otherwise a free choice, and it is a
-reason to give one of its pages the shell-scripting comparison the post's readers are evidently
-looking for.
+earn zero clicks. The owner is the [Hypershell project section](projects/hypershell.md), which is
+[P2](tasks.md#p--the-projects-section-and-the-code-it-quotes) and post-release. **This is the strongest
+evidence available for writing Hypershell first among the libraries**, which is otherwise a free choice,
+and it is why that section plans a comparison with shell scripts, the page the post's readers are
+evidently looking for.
 
 **The context cluster is a watch item, not a page.** *rust context* draws 453 impressions at position
 7.1 and converts at 0.44%, and the intent behind it cannot be read from the export: it may be

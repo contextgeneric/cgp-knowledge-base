@@ -69,4 +69,5 @@ which the pinned toolchain does not need. See [issues.md](../issues.md#housekeep
 
 ## Public material derived from this
 
-None yet.
+The `examples/compare-and-branch` page, once a run is recorded here, of the planned [Hypershell
+project section](../../../website/projects/hypershell.md).

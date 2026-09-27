@@ -94,5 +94,5 @@ Register each architecture document here, in [../README.md](../README.md), and i
 
 ## Public material derived from this
 
-The first page of the planned [cgp-serde deep dive](../../../website/deep-dives/cgp-serde.md), and
-the opening of the repository README.
+The `architecture/index` page and the index of the planned [cgp-serde project
+section](../../../website/projects/cgp-serde.md), and the opening of the repository README.

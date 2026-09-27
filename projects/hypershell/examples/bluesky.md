@@ -56,4 +56,5 @@ The file sets `#![recursion_limit = "256"]`, which the pinned toolchain does not
 
 ## Public material derived from this
 
-None yet.
+The `examples/bluesky` page of the planned [Hypershell project
+section](../../../website/projects/hypershell.md).

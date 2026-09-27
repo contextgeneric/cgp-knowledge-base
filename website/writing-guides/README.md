@@ -66,10 +66,11 @@ Register a new guide here in the same change that adds it, and in [../../summary
   page type here written in the *author's* voice: the two readers a release post serves, the
   one-change rule, the seven-part shape, the breaking-changes obligation, and what publication fixes
   permanently.
-- [deep-dive.md](deep-dive.md) — the multi-page living documents that grow out of the longest blog
-  posts: why they are new artifacts rather than edits, how the author's voice converts to the
-  project's without losing the concessions, how to split into pages, and the obligation to track the
-  live code base rather than the post.
+- [project.md](project.md) — the Projects section, which ports the internal project sections to the
+  site: the seven page kinds, the example page written as a short tutorial with its orientation block,
+  walkthrough, named pattern, and verified change to try, one reference page per project construct, the
+  limitations page, the link map, and why project code is verified against its own repository rather
+  than the `example-code` crate.
 - [tooling.md](tooling.md) — the pages documenting a program the reader *runs* rather than a construct
   they write: why a tool's page fails differently from a construct's, the five-page section shape, the
   obligation to quote real output rather than remembered output, and the version concession every claim
@@ -92,7 +93,7 @@ Register a new guide here in the same change that adds it, and in [../../summary
   another community's tool, and the verification of code in two languages.
 
 The guides above cover every page type the site publishes or plans. The most recent addition is
-[orientation.md](orientation.md), written before the Quickstart it specifies because
+[project.md](project.md), written before any of the Projects pages it specifies because
 [AGENTS.md](../AGENTS.md) requires a guide for a new *kind* of page ahead of the page rather than
 after it.
 

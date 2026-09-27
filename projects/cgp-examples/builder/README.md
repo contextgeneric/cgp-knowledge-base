@@ -97,9 +97,9 @@ below says only where each section's code now lives:
 
 ## Public material derived from these documents
 
-These documents are the verified record behind pages 1 and 2 of the planned
-[extensible data types deep dive](../../../website/deep-dives/extensible-datatypes.md), which uses this
-crate as its running code.
+These documents are the verified record behind the `builder` pages of the planned [cgp-examples
+project section](../../../website/projects/cgp-examples.md), which write one example page per
+builder context.
 
 ## How it relates to the rest of the base
 

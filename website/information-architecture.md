@@ -81,7 +81,7 @@ and a new explanation tier that gives a reader the argument without requiring th
 
 ## The surfaces and what each is for
 
-Six surfaces make up the site, and each has one job. A page that does two jobs is usually two pages.
+Nine surfaces make up the site, and each has one job. A page that does two jobs is usually two pages.
 
 The **front page** makes the idea click and carries the selling points, then routes. It teaches nothing
 and specifies nothing. Its spec is [writing-guides/homepage.md](writing-guides/homepage.md).
@@ -106,10 +106,14 @@ and links out for the mechanism. Its spec is [writing-guides/tutorial.md](writin
 The **blog** is the author's voice and the project's record: releases, announcements, and talk
 transcripts. It is where depth and candour live, and once published a post is a dated artifact.
 
-The **deep dives** are the multi-page living documents that grow out of the longest posts. They differ
-from the blog in the two ways that matter: they are under `docs/`, so they are corrected in place
-forever, and they are split into pages a reader can finish. The post they grow from is not edited. Their
-spec is [writing-guides/deep-dive.md](writing-guides/deep-dive.md).
+The **Projects section** shows CGP's design patterns working in real programs: one section per
+library or demonstration built with CGP, ported from the internal [projects/](../projects/README.md)
+sections, with each project's example programs expanded into short tutorials. It answers *what does
+this look like in a system someone would actually run* for the pattern learner, and *does CGP hold
+up past a toy* for the evaluator. It is under `docs/`, so its pages are corrected in place, unlike
+the blog posts several of its projects were announced in, which are not edited beyond a pointer. Its
+spec is [writing-guides/project.md](writing-guides/project.md), and the blueprint is
+[projects/README.md](projects/README.md).
 
 The **reference** explains one construct completely, for a reader who already knows the name of what
 they need. It is by far the largest surface on the site at roughly a hundred and twenty pages, it is derived from the
@@ -125,6 +129,10 @@ the site, in its sponsorship section, and that must stay; the disclosure page ca
 permitted instance, for the sentence taking responsibility for what the project publishes, since
 accountability is something a person can say and a project cannot.
 
+The two similar names are distinct surfaces. **Project pages** speak about the CGP project itself;
+the **Projects section** documents other libraries built with CGP. Keep the names apart in prose: a
+page under `docs/projects/` is a *Projects page*, never a *project page*.
+
 ## The target page inventory
 
 The table below is the site as intended. Pages marked **new** do not exist; pages marked **moved** exist
@@ -133,7 +141,7 @@ but under the wrong parent or doing the wrong job.
 **Almost all of it arrives at once.** The redesign is written on the website repository's `v0.8.0`
 branch and publishes when that branch merges alongside the v0.8.0 release, so the site does not pass
 through a state where half of this inventory exists — which is what makes a target this large safe to
-commit to. The one exception is the deep dives, which land afterwards. The mechanics are in
+commit to. The one exception is the Projects section, which lands afterwards. The mechanics are in
 [AGENTS.md](AGENTS.md#the-redesign-lands-on-a-release-branch-all-at-once) and the sequencing in
 [tasks.md](tasks.md).
 
@@ -232,16 +240,27 @@ each page's two judging sections.
   covers one. A sibling section rather than part of the reference: five pages, an overview plus one per
   command, plus installation and troubleshooting.
 
-**Deep dives** (new category) — **after the release**, unlike everything else in this inventory
-- *Hypershell* — **new**, six pages. The type-level DSL.
-- *Extensible data types* — **new**, seven pages. Records, variants, and their internals.
-- *cgp-serde* — **new**, five pages. Serde as components.
+**Projects** (new category, roughly two hundred pages) — **after the release**, unlike everything else
+in this inventory
+- *Index* — **new**. The projects introduced honestly, libraries apart from demonstrations, and a
+  pattern-finding table that routes a reader from an idea to the example page showing it.
+- *cgp-examples* — **new**, about 33 pages. Five demonstration crates, almost all example pages: the
+  extensible visitor and builder patterns, a namespace-organized web service, a wiring study at four
+  scales, and a greeting. No reference, since nobody depends on the crates.
+- *Hypershell* — **new**, about a hundred pages. The type-level DSL: thirteen examples, its design and
+  guides, one reference page per construct, a comparison with shell scripts, and its limitations.
+- *cgp-serde* — **new**, about 48 pages. Serde as components: four examples, its design and guides, one
+  reference page per construct, the comparison with Serde, and its limitations.
+- *Error backends* — **new**, about 22 pages. One walkthrough per crate, the shared design and guides, and
+  one reference page per provider.
 
-Each grows out of a long blog post that stays where it is; the plans are in
-[deep-dives/](deep-dives/README.md) and the page type is specified in
-[writing-guides/deep-dive.md](writing-guides/deep-dive.md). They are the one part of the target the
-v0.8.0 relaunch does not carry, because they are the largest discretionary body of work on the list and
-their readers are already served, if imperfectly, by the posts they grow out of.
+The section takes the place of three deep dives planned before the project sections existed, and each
+of their pages has a home here or in the Concepts and Reference sections; the mapping is in
+[projects/README.md](projects/README.md#what-the-section-replaces). It is the one part of the target the
+v0.8.0 relaunch does not carry, because it is the largest discretionary body of work on the list, its
+projects need their own branches merged and their own releases first, and its readers are served in the
+meantime by the Concepts pages and the posts. The page type is specified in
+[writing-guides/project.md](writing-guides/project.md).
 
 **Orientation**
 - *Quickstart* — present. Install and one working program, with no concepts and nothing to
@@ -299,7 +318,7 @@ directory tree and a new category is a directory with a `_category_.json` rather
 
 The sidebar order should follow the order a reader needs things rather than the order the project thinks
 about them: **Introduction**, **Quickstart**, **Overview**, then **Tutorials**, then **Concepts**, then
-**Comparisons**, then **Reference**, then **Deep dives**, then **Tooling**, **Resources**,
+**Comparisons**, then **Reference**, then **Projects**, then **Tooling**, **Resources**,
 **Contribute**, and **AI**. Reference sits after Tutorials because a reader reaches for it once they are
 writing code rather than while learning. The Quickstart sits second because the Introduction is the docs
 root and cannot be displaced, and because a reader who wants to see CGP run should meet it before any
@@ -339,14 +358,17 @@ load-bearing on this path: it is where a reader either learns to read a CGP erro
 language is not worth it.
 
 The **evaluator** reads for risk. Their path is front page → *Project status* → *When to use CGP* →
-Resources, and what persuades them is candour plus social proof. The single most valuable thing the site
-can do for this reader is present the [Hermes SDK](https://github.com/informalsystems/hermes-sdk/) as
-the real system CGP was built for, rather than as one line at the bottom of a link list.
+Resources → the Projects index and the two library sections' limitations pages, and what persuades them
+is candour plus social proof. The single most valuable thing the site can do for this reader is present
+the [Hermes SDK](https://github.com/informalsystems/hermes-sdk/) as the real system CGP was built for,
+rather than as one line at the bottom of a link list; the Projects section is the evidence the site can
+host itself.
 
 The **type-system and functional-programming reader** wants the mechanism and the intellectual argument.
 Their path is *Why CGP exists* → *How CGP works* → the comparison for the paradigm they know (type
-classes, ML modules, implicit parameters, effects, or rows) → the blog deep dives and the
-[RustLab transcript](blog/rustlab-2025-coherence.md), which is the best thing on the site for them.
+classes, ML modules, implicit parameters, effects, or rows) → the Hypershell project section, the blog's
+deep-dive posts, and the [RustLab transcript](blog/rustlab-2025-coherence.md), which is the best thing on
+the site for them.
 
 The **language-design reader** wants a precise contribution to a live design question, and is reached
 only at that level. Their path is the *Rust's own proposals* comparison → the RustLab transcript → the
@@ -358,12 +380,13 @@ matching comparison as their first stop instead of *Why CGP exists*, since the c
 vocabulary they already hold, and then join the working developer's path at *Hello World*.
 
 The **framework and library author** wants to know whether CGP solves generic-over-structure code. Their
-path is the Overview's problems → the applied tutorial → the *Extensible data types* deep dive → the
-[examples](../examples/README.md). This is the least well-served reader, because that material lives
-only in four blog posts whose code has drifted, and they stay under-served through the relaunch: the
-deep dive is what fixes it properly and it lands afterwards. Until then the applied tutorial is what
-this reader gets, which is a reason to draw its scenario from an example that exercises extensible
-data rather than from an arbitrary one.
+path is the Overview's problems → the applied tutorial → the *Extensible records* and *Extensible
+variants* Concepts pages → the `builder` and `expression` example pages in the Projects section. This is
+the least well-served reader today, because outside the Concepts pages the material lives only in four
+blog posts whose code has drifted, and they stay partly under-served through the relaunch: the example
+pages are what fix it and they land afterwards. Until then the applied tutorial and the two Concepts pages
+are what this reader gets, which is a reason to draw the tutorial's scenario from an example that
+exercises extensible data rather than from an arbitrary one.
 
 The **enthusiast** is ready to go deep and contribute. Their path is the blog → the book → Contribute,
 and the top rung of that ladder is publishing components of their own, which is the outcome the
@@ -373,8 +396,9 @@ Contribute page argues for.
 
 Three questions settle where a page goes, and asking them in order avoids most mistakes. **What is the
 reader doing while they read it?** Nothing → explanation tier, or Comparisons when the page's subject is
-an idea from outside CGP that the reader already holds; following along at a keyboard → tutorial;
-looking one thing up → the reference. **Is it dated?** A statement about a moment — a
+an idea from outside CGP that the reader already holds; following along at a keyboard → tutorial, or
+Projects when the subject is a program a project ships; looking one thing up → the reference, or a
+project's reference when the name belongs to that project. **Is it dated?** A statement about a moment — a
 release, an announcement, a talk — is a blog post and becomes a historical record the day it publishes;
 a statement about how things are is a docs page and is corrected in place forever. **Whose voice?** The
 author's first person means the blog, with the Contribute page's sponsorship section as the one standing

@@ -148,6 +148,5 @@ source has no doc comments, so the crates' docs.rs pages list items with no expl
 
 ## Public material derived from this
 
-The limitations section of the planned trade-offs page of the
-[Hypershell deep dive](../../website/deep-dives/hypershell.md), and the "Source-code changes needed"
-list in that plan.
+The defects and missing features on the `limitations` page of the planned [Hypershell project
+section](../../website/projects/hypershell.md), and the code prerequisites that plan lists.

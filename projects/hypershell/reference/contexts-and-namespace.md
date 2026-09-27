@@ -172,5 +172,6 @@ compile. It does not re-export `HypershellNamespace`, which a custom context imp
 
 ## Public material derived from this
 
-Rustdoc for the `hypershell` crate, and the one-line-context demonstration early in the planned
-[Hypershell deep dive](../../../website/deep-dives/hypershell.md).
+Rustdoc for the `hypershell` crate, one page per construct in the `reference/namespace/` pages of
+the planned [Hypershell project section](../../../website/projects/hypershell.md), and the one-line
+context on its index.

@@ -692,13 +692,15 @@ it stale.
 - [website/README.md](website/README.md) — what this section documents, the one-way link asymmetry
   that makes it necessary, how the Docusaurus site is organized, and its catalog.
 - [website/AGENTS.md](website/AGENTS.md) — the rules: the one-way link rule and its two exceptions,
-  the published agent skill as a pinned snapshot that agents never edit, bump, or read from, consulting
-  communication-strategy before writing public prose, covering every supported form by layering the
-  depth rather than omitting the advanced material, never taking current syntax from a blog post,
-  the prohibition on rewriting published history, the release-branch model the redesign lands through,
-  who drafts a page and who reads it before it publishes, disclosing AI use on a page, the document
-  template, the status vocabulary, and how a ported catalog registers as one entry rather than one
-  document per page.
+  the published agent skill as a pinned snapshot that agents never edit, bump, or read from,
+  consulting communication-strategy before writing public prose, covering every supported form by
+  layering the depth rather than omitting the advanced material, never taking current syntax from a
+  blog post, the `example-code` crate and the Projects pages' exception to it, the prohibition on
+  rewriting published history and the settled pointer from a post to the project section it grew
+  into, the release-branch model the redesign lands through, who drafts a page and who reads it
+  before it publishes, disclosing AI use on a page, the document template, the status vocabulary,
+  and how a ported catalog registers as one entry rather than one document per page, with the
+  Projects section recorded one plan per project.
 - [website/information-architecture.md](website/information-architecture.md) — the site as intended:
   why most readers never see the homepage, the four routes in and why three fail, what each surface is
   for, the target page inventory including unwritten pages, the sidebar order, and each reader
@@ -724,7 +726,8 @@ it stale.
 - [website/tasks.md](website/tasks.md) — the redesign's work plan: that the whole site relaunches with
   the v0.8.0 release from one branch, the four standing obligations every page-adding task carries,
   every remaining task with its repository, dependencies, and done-condition — including the AI
-  disclosure page — which of them the release waits for, and the ordering; deleted when empty.
+  disclosure page and the post-release Projects pages with the code changes they need — which of them
+  the release waits for, and the ordering; deleted when empty.
 - [website/site-structure.md](website/site-structure.md) — the site's build, navigation, announcement
   bar, deployment, release-branch workflow, the three settings that depart from stock Docusaurus to
   publish the agent skill from its own repository, and the `example-code/` crate that holds the compiled
@@ -753,9 +756,11 @@ it stale.
   artifact and the only page type specified in the author's voice: the two readers it serves, the
   one-change rule, the seven-part shape, the breaking-changes obligation from the removal ledger, and
   the five mechanical items publication fixes.
-- [deep-dive.md](website/writing-guides/deep-dive.md) — the multi-page living documents grown from the
-  longest blog posts: why they are new artifacts rather than edits, converting the author's voice to
-  the project's without losing the concessions, the page split, and tracking the live code base.
+- [project.md](website/writing-guides/project.md) — the Projects section ported from the internal
+  project sections: the seven page kinds, the example page as a short applied-register tutorial with
+  its *New to CGP?* orientation, walkthrough by idea, named pattern, and verified change to try, one
+  reference page per project construct and what folds onto another's page, the limitations page, the
+  link map, and project code verified against its own repository rather than `example-code`.
 - [tooling.md](website/writing-guides/tooling.md) — the pages documenting a program the reader runs
   rather than a construct they write: why a tool's page fails differently, the five-page section shape,
   quoting real output rather than remembered output, and the version concession.
@@ -819,18 +824,24 @@ it stale.
   `incoherent-rust` branch reading CGP against the dictionary-passing and incoherent-traits discussion,
   and what it needs before it can be published.
 
-### `website/deep-dives/` — one document per planned deep dive
+### `website/projects/` — the blueprint and one plan per project section
 
-- [README.md](website/deep-dives/README.md) — why a deep dive rather than a revised blog post, the fact
-  that the tracked code bases are ahead of the posts, the catalog, and the document shape.
-- [hypershell.md](website/deep-dives/hypershell.md) — the type-level DSL: a six-page split, the embedded
-  CGP primer removed in favour of the explanation tier, presets replaced by namespaces, and the
-  source changes the repository still needs, from `#[uses]` adoption to the stale example comments.
-- [extensible-datatypes.md](website/deep-dives/extensible-datatypes.md) — records and variants from four
-  posts and two example crates: a seven-page pattern-then-internals split, over crates that already
-  use current idioms.
-- [cgp-serde.md](website/deep-dives/cgp-serde.md) — Serde as components: a five-page split, the release
-  framing removed, and the missing `CgpSerdeNamespace` that would make the two-application payoff land.
+- [README.md](website/projects/README.md) — the blueprint for the planned Projects section: what it is
+  for, why it supersedes the three deep dives and where each deep-dive page's material went, the public
+  tree, the internal-document-to-page mapping, the section index and its pattern-finding table, the four
+  gating conditions, the recommended order with `expression` as pilot, and the inbound links.
+- [cgp-examples.md](website/projects/cgp-examples.md) — the five demonstration crates as about 18
+  example pages with no reference, the per-example records `builder`, `transfer`, and `greet` need
+  first, and the DC4 code changes.
+- [hypershell.md](website/projects/hypershell.md) — thirteen example pages, the design and guides,
+  about 75 construct pages, a comparison with shell scripts that needs an internal document first, the
+  pages DC1 blocks, and the release the install instructions need.
+- [cgp-serde.md](website/projects/cgp-serde.md) — four example pages led by `messages`, the design and
+  guides, about 30 construct pages, the comparison with Serde, and DC3's attribute removals, arena-test
+  cleanups, and recommended namespace.
+- [error-backends.md](website/projects/error-backends.md) — one walkthrough per crate, the shared design
+  and guides, 15 construct pages, no limitations page, the verified wiring the eyre and std records
+  still need, and publication gated on the `cgp` release.
 
 ### `website/tutorials/` — one document per tutorial series
 
@@ -879,7 +890,8 @@ it stale.
   demonstration repository such as cgp-examples, or separate crates shipped from a member repository
   such as the error backends), how a project section grows from one README into its
   shape, one subdirectory per subproject where a project has several, and how each connects to an
-  example, a published post, and a set of constructs.
+  example, a published post, a set of constructs, and its planned section of the website's Projects
+  pages.
 - [projects/hypershell/README.md](projects/hypershell/README.md) — the type-level shell-scripting
   DSL: what it is, which revision the documents describe (the unreleased `v0.8.0` branch, the only one
   built on namespaces), the crate split, the confirmed gaps, the section catalog, and the public
@@ -981,8 +993,10 @@ it stale.
   project's source at the branch sibling-projects.md records, probes rather than reading alone, leaving
   CGP itself to `cgp/` and patterns to the worked example, the section as the primary source for its
   project's facts, the section shape as a guide with per-subproject subdirectories and their own
-  `testing.md` and `issues.md`, a shared design and guides when subprojects are near copies, the per-example documents that quote snippets rather than whole
-  programs, the reference entry template, and naming the public material each document feeds.
+  `testing.md` and `issues.md`, a shared design and guides when subprojects are near copies, the
+  per-example documents that quote snippets rather than whole programs and serve as the records their
+  public Projects pages are written from, with any *Try a change* run recorded there first, the
+  reference entry template, and naming the public material each document feeds.
 - [projects/cgp-serde/README.md](projects/cgp-serde/README.md) — Serde rebuilt as CGP components: what
   it is, which revision the documents describe (the unreleased `v0.8.0` branch against the published
   0.2.0), the crate split, the confirmed gaps, the section catalog, and the public material the

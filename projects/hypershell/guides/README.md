@@ -23,5 +23,5 @@ Register each guide here, in [../README.md](../README.md), and in
 
 ## Public material derived from this
 
-The user-facing and extension pages of the planned
-[Hypershell deep dive](../../../website/deep-dives/hypershell.md).
+The three guide pages of the planned [Hypershell project
+section](../../../website/projects/hypershell.md).

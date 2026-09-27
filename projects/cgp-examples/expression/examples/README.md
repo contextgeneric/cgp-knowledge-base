@@ -40,4 +40,5 @@ The order is the order the contexts teach in, from two separate operations to an
 
 ## Public material derived from this
 
-None yet.
+The `expression/examples/index` page of the planned [cgp-examples project
+section](../../../../website/projects/cgp-examples.md).

@@ -214,5 +214,5 @@ whose `Handler` impl requires one, makes that a `Handler`. See
 
 ## Public material derived from this
 
-Page 2, "Interpreting a program", of the planned
-[Hypershell deep dive](../../../website/deep-dives/hypershell.md).
+The `architecture/interpretation` page of the planned [Hypershell project
+section](../../../website/projects/hypershell.md).

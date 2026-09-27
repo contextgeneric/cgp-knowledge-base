@@ -132,4 +132,5 @@ adds syntax without touching it, and it never needs to know what a piece of synt
 
 ## Public material derived from this
 
-Page 1, "Programs as types", of the planned [Hypershell deep dive](../../../website/deep-dives/hypershell.md).
+The `architecture/abstract-syntax` page of the planned [Hypershell project
+section](../../../website/projects/hypershell.md).

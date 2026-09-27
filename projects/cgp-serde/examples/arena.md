@@ -148,5 +148,5 @@ test does, and the resulting `Payload<'_>` borrows its coordinates from the aren
 
 ## Public material derived from this
 
-The "Arena-allocating deserialization" page of the planned
-[cgp-serde deep dive](../../../website/deep-dives/cgp-serde.md), which should teach this form.
+The `examples/arena` page of the planned [cgp-serde project
+section](../../../website/projects/cgp-serde.md), which teaches this form.

@@ -61,5 +61,5 @@ block asserts both evaluation and conversion of all four input types.
 
 ## Public material derived from this
 
-The "Evaluating Concrete Expressions" and "Wiring To-Lisp Handlers" sections of page 3 of the planned
-[extensible data types deep dive](../../../../website/deep-dives/extensible-datatypes.md).
+The `expression/examples/add-mult` page of the planned [cgp-examples project
+section](../../../../website/projects/cgp-examples.md).

@@ -114,6 +114,5 @@ The serializing counterpart is [`SerializeWithContext`](#serializewithcontext).
 
 ## Public material derived from this
 
-The "Wiring an application" page of the planned
-[cgp-serde deep dive](../../../website/deep-dives/cgp-serde.md), where the two applications produce
-their JSON, and the rustdoc for both types.
+The two adapter pages in the `reference/types/` pages of the planned [cgp-serde project
+section](../../../website/projects/cgp-serde.md), and the rustdoc for both types.

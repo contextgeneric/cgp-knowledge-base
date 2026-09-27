@@ -87,4 +87,6 @@ self-transfer succeeds and leaves the balance unchanged, as the
 
 ## Public material derived from this
 
-Section 7, "Assembling the app with namespaces", of the crate's own README.
+Section 7, "Assembling the app with namespaces", of the crate's own README. It also feeds the
+`transfer/architecture/namespace-organization` page of the planned [cgp-examples project
+section](../../../../website/projects/cgp-examples.md).

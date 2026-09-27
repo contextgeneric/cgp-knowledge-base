@@ -333,6 +333,6 @@ A writable working directory.
 
 ## Public material derived from this
 
-The "Builder Context", "Default Builder", "Postgres App", "Anthropic App", and "Multi-Context Builder"
-sections of pages 1 and 2 of the planned
-[extensible data types deep dive](../../../../website/deep-dives/extensible-datatypes.md).
+The five `builder` example pages of the planned [cgp-examples project
+section](../../../../website/projects/cgp-examples.md), one per builder context, once each has its
+own record under an `examples/` directory here.

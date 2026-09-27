@@ -127,5 +127,7 @@ Use local paths while the change is being tested and switch the same entries to 
 repository when the change is committed. When the change raises a minimum dependency version, the
 project's lockfile may pin an older one and fail to resolve until `cargo update -p <crate>` moves it.
 
-**Public material derived from this:**
-the `/cgp` skill's [error backends](https://github.com/contextgeneric/cgp-skills/blob/main/cgp/references/error-backends.md) reference.
+**Public material derived from this:** the `/cgp` skill's [error
+backends](https://github.com/contextgeneric/cgp-skills/blob/main/cgp/references/error-backends.md)
+reference, and the `guides/choosing-a-backend` page of the planned [error backends project
+section](../../../website/projects/error-backends.md).

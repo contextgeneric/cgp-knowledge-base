@@ -223,5 +223,5 @@ crates exist to avoid.
 
 ## Public material derived from this
 
-The "Arena-allocating deserialization" page of the planned
-[cgp-serde deep dive](../../../website/deep-dives/cgp-serde.md), and the rustdoc for both crates.
+The allocation pages in the `reference/` pages of the planned [cgp-serde project
+section](../../../website/projects/cgp-serde.md), and the rustdoc for both crates.

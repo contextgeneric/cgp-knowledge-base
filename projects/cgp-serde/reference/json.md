@@ -242,5 +242,5 @@ No serializing counterpart. Serializing to a string is done with `SerializeToJso
 
 ## Public material derived from this
 
-The "Wiring an application" and "Arena-allocating deserialization" pages of the planned
-[cgp-serde deep dive](../../../website/deep-dives/cgp-serde.md), and the rustdoc for the crate.
+The three JSON provider pages and the `CanDeserializeJsonString` page of the planned [cgp-serde
+project section](../../../website/projects/cgp-serde.md), and the rustdoc for the crate.

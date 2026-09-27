@@ -75,14 +75,15 @@ Contribute is the obvious alternative.
 the reader who evaluates a technology by seeing a realistic system rather than a rectangle. The site has
 nothing in this register.
 
-**Three deep dives** — Hypershell, extensible data types, and cgp-serde: multi-page living documents
-replacing the usefulness of the three longest blog posts, whose code is uniformly stale. **These land
-after the v0.8.0 relaunch rather than with it**, which is the one part of the target the relaunch does
-not carry. Each is planned in [deep-dives/](deep-dives/README.md), and each carries a list of
-source-code changes its tracked repository needs first, except the extensible data types deep dive,
-whose `cgp-examples` crates already use current idioms. The two remaining lists each contain a
-substantial item: **adopting `#[uses]` in `hypershell`**, and **publishing a `CgpSerdeNamespace`**,
-which is a library improvement rather than a documentation convenience.
+**The Projects section** — the four project sections of this base ported to the site, with each
+project's example programs expanded into short tutorials that show CGP's design patterns in running
+code, and one reference page per construct for the two libraries and the error backends. It takes the
+place of three planned deep dives, whose material now has a home there or in the Concepts and Reference
+sections. **It lands after the v0.8.0 relaunch rather than with it**, which is the one part of the target
+the relaunch does not carry. The blueprint and one plan per project are in
+[projects/](projects/README.md), and each plan lists what its repository and this base need first. Two
+of those lists carry a substantial code item: **adopting `#[uses]` in `hypershell`**, and **deciding on a
+`CgpSerdeNamespace`**, which is a library improvement rather than a documentation convenience.
 
 **A blog post on implicit type arguments** — the framing that an abstract type is an implicit *type*
 argument, so a type dependency stops being a parameter every layer threads. It is a `deepdive` rather
@@ -114,10 +115,10 @@ conversation that will not stay live. It is not a redesign defect and is listed 
 lose track of it; the record is [blog/incoherent-rust-today.md](blog/incoherent-rust-today.md) and the
 task is B2 in [tasks.md](tasks.md).
 
-**Two code bases need modernizing before their deep dives quote them.** The per-repository lists are in
-[deep-dives/](deep-dives/README.md); the work is in `hypershell` and `cgp-serde`, and it is genuine
-library work rather than documentation housekeeping. Because the deep dives land after the relaunch,
-so does this.
+**Three code bases need changes before their Projects pages quote them.** The per-repository lists are in
+the [project plans](projects/README.md); the work is in `hypershell`, `cgp-serde`, and `cgp-examples`,
+and it is genuine library work rather than documentation housekeeping. Because the Projects pages land
+after the relaunch, so does this.
 
 ## Where the ordering lives
 

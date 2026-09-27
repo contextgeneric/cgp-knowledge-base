@@ -12,4 +12,5 @@ crates, whose design is shared and set out in [../architecture.md](../architectu
   detail, and a custom eyre hook installed too late, each with its snippet and `cargo cgp check`
   output.
 
-**Public material derived from this:** None yet.
+**Public material derived from this:** The two guide pages of the planned [error backends project
+section](../../../website/projects/error-backends.md).

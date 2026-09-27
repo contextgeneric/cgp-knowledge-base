@@ -145,5 +145,6 @@ examples carry are not needed with the pinned toolchain.
 
 ## Public material derived from this
 
-The user-facing part of the planned [Hypershell deep dive](../../../website/deep-dives/hypershell.md),
-and the getting-started section of the repository README.
+The `guides/writing-a-program` page of the planned [Hypershell project
+section](../../../website/projects/hypershell.md), and the getting-started section of the repository
+README.

@@ -71,4 +71,5 @@ The crate's bundle maps `EncodeJson` to `HandleEncodeJson` and `DecodeJson<Value
 
 ## Public material derived from this
 
-Rustdoc for the JSON items.
+Rustdoc for the JSON items. It also feeds one page per construct in the `reference/` pages of the
+planned [Hypershell project section](../../../website/projects/hypershell.md).

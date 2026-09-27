@@ -54,6 +54,6 @@ saves writing the code rather than compiling it.
 
 ## Public material derived from this
 
-The "Writing serializers" page of the planned
-[cgp-serde deep dive](../../../website/deep-dives/cgp-serde.md), and the derive-free argument in the
-repository README.
+The `architecture/derive-free-records` page of the planned [cgp-serde project
+section](../../../website/projects/cgp-serde.md), and the derive-free argument in the repository
+README.

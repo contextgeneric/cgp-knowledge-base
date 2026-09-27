@@ -78,4 +78,5 @@ The remaining constructs are specific to one or two crates:
 
 ## Public material derived from this
 
-None yet.
+The pattern-finding table on the Projects section index, specified in the planned [cgp-examples
+project section](../../website/projects/cgp-examples.md).

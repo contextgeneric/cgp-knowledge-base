@@ -115,5 +115,5 @@ The serializing counterpart is [`SerializeIterator`](#serializeiterator).
 
 ## Public material derived from this
 
-The "Writing serializers" page of the planned
-[cgp-serde deep dive](../../../website/deep-dives/cgp-serde.md), and the rustdoc for both providers.
+The two provider pages in the `reference/providers/` pages of the planned [cgp-serde project
+section](../../../website/projects/cgp-serde.md), and the rustdoc for both providers.

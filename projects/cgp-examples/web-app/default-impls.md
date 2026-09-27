@@ -130,5 +130,7 @@ binds is final. A context that needs a different getter must use a namespace oth
 
 ## Public material derived from this
 
-The "Default implementations" and "Caveats with default implementations" sections of the
-[v0.8.0 release post](../../../website/blog/v0-8-0-release.md).
+The "Default implementations" and "Caveats with default implementations" sections of the [v0.8.0
+release post](../../../website/blog/v0-8-0-release.md). It also feeds the
+`web-app/examples/default-impls` page of the planned [cgp-examples project
+section](../../../website/projects/cgp-examples.md).

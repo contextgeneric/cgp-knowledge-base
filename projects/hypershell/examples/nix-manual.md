@@ -56,4 +56,5 @@ literal and a field in one `WithArgs` list.
 
 ## Public material derived from this
 
-None yet.
+The `examples/nix-manual` page of the planned [Hypershell project
+section](../../../website/projects/hypershell.md).

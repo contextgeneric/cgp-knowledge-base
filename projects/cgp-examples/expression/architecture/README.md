@@ -53,4 +53,5 @@ context and a new enum next to the old ones, reusing the operator providers unch
 
 ## Public material derived from this
 
-Page 3 of the planned [extensible data types deep dive](../../../../website/deep-dives/extensible-datatypes.md).
+The `expression/architecture/index` page and the `expression` index of the planned [cgp-examples
+project section](../../../../website/projects/cgp-examples.md).

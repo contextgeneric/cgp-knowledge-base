@@ -152,10 +152,12 @@ item, and the examples to see a program run.
 These documents are the source for the project's public writing, and each one names what it feeds.
 Three artifacts are planned:
 
-- **The Hypershell deep dive** on the website, specified in
-  [website/deep-dives/hypershell.md](../../website/deep-dives/hypershell.md). Its pages draw on the
-  architecture for programs as types, interpretation, and assembly; on the guides and examples for
-  extension; and on the issues and testing documents for the trade-offs page.
+- **The Hypershell section of the website's Projects pages**, planned in
+  [website/projects/hypershell.md](../../website/projects/hypershell.md). Each document here feeds the
+  public page of the same name: the examples become short tutorials, the architecture documents and
+  guides are ported one to one, each reference family document is split into one page per construct,
+  and the issues document becomes the limitations page. A comparison with shell scripts, which that
+  plan also calls for, has no document here yet.
 - **The repository README**, which pins `cgp` 0.4.1 in its install snippet, still speaks of presets,
   and defers to the announcement post for everything else.
 - **Rustdoc for every public item.** The source carries no doc comments, so the crates' docs.rs pages

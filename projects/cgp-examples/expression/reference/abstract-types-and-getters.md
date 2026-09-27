@@ -88,5 +88,6 @@ None; it is implemented on the operator types.
 
 ## Public material derived from this
 
-The "Binary Operator Provider" section of page 3 of the planned
-[extensible data types deep dive](../../../../website/deep-dives/extensible-datatypes.md).
+The items the `expression` example pages of the planned [cgp-examples project
+section](../../../../website/projects/cgp-examples.md) explain where they first appear, since that
+section carries no reference for demonstration crates.

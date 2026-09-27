@@ -76,4 +76,6 @@ with Axum's own `400` message. And an HTTP method with no route, such as `GET /t
 
 ## Public material derived from this
 
-Section 2, "Status-coded errors", of the crate's own README.
+Section 2, "Status-coded errors", of the crate's own README. It also feeds the
+`transfer/architecture/error-design` page of the planned [cgp-examples project
+section](../../../../website/projects/cgp-examples.md).

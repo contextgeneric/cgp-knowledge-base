@@ -4,7 +4,7 @@
 here. The pattern behind them, the extensible builder, is taught in the
 [application builder](../../../../examples/application-builder.md) worked example, and its internals
 (partial records, `BuildWithHandlers`, `BuildAndMerge`) are documented under
-[cgp/](../../../../cgp/reference/providers/dispatch_combinators.md#buildwithhandlers-and-buildandmergeoutputs),
+[cgp/](../../../../cgp/reference/providers/dispatch_combinators.md#builders),
 so this page says only what the crate does with it.
 
 ## The design on one page
@@ -48,5 +48,5 @@ keeps two hand-written constructors, the starting point the pattern replaces. Se
 
 ## Public material derived from this
 
-Pages 1 and 2 of the planned
-[extensible data types deep dive](../../../../website/deep-dives/extensible-datatypes.md).
+The `builder/architecture` page and the `builder` index of the planned [cgp-examples project
+section](../../../../website/projects/cgp-examples.md).

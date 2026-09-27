@@ -65,4 +65,5 @@ Several things no test and no example reaches:
 
 ## Public material derived from this
 
-None yet.
+The sentences on what is and is not exercised on the `limitations` page of the planned [Hypershell
+project section](../../website/projects/hypershell.md).

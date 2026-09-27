@@ -123,11 +123,11 @@ per [../AGENTS.md](../AGENTS.md#the-shape-of-a-project-section). One document sp
 ## Public material derived from these documents
 
 These documents are the verified source for the repository's own READMEs, above all the `transfer`
-walkthrough, whose drift from the code is recorded in
-[transfer/issues.md](transfer/issues.md). They also feed the planned
-[extensible data types deep dive](../../website/deep-dives/extensible-datatypes.md), which uses
-`builder` and `expression` as its running code, and the unfinished
-[v0.8.0 release post](../../website/blog/v0-8-0-release.md), whose code follows `web-app`.
+walkthrough, whose drift from the code is recorded in [transfer/issues.md](transfer/issues.md). They
+also feed the planned [cgp-examples section](../../website/projects/cgp-examples.md) of the
+website's Projects pages, which writes each crate's programs as example pages and whose section
+index is built from [constructs.md](constructs.md), and the unfinished [v0.8.0 release
+post](../../website/blog/v0-8-0-release.md), whose code follows `web-app`.
 
 ## How it relates to the rest of the base
 

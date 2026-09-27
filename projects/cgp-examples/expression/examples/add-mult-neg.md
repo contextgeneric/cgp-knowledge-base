@@ -59,5 +59,5 @@ all six input types.
 
 ## Public material derived from this
 
-The "Extending `MathExpr`" and "Omitting To-Lisp Implementations" sections of page 3 of the planned
-[extensible data types deep dive](../../../../website/deep-dives/extensible-datatypes.md).
+The `expression/examples/add-mult-neg` page of the planned [cgp-examples project
+section](../../../../website/projects/cgp-examples.md).

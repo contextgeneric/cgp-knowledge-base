@@ -82,6 +82,5 @@ Register each architecture document here, in [../README.md](../README.md), and i
 
 ## Public material derived from this
 
-The pages on programs as types, interpretation, and assembly in the planned
-[Hypershell deep dive](../../../website/deep-dives/hypershell.md), and the opening of the repository
-README.
+The `architecture/index` page and the index of the planned [Hypershell project
+section](../../../website/projects/hypershell.md), and the opening of the repository README.

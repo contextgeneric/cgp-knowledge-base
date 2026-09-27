@@ -25,8 +25,8 @@ publishes incrementally, every page is written as though v0.8.0 has already ship
 around that — including never committing redesign work to `main`, which deploys on push — are in
 [AGENTS.md](AGENTS.md#the-redesign-lands-on-a-release-branch-all-at-once).
 
-**What sets the release date is the front page.** Everything except the deep dives and the two blog
-posts is release-blocking, and the reference — which used to set the date, because it is
+**What sets the release date is the front page.** Everything except the Projects section and the two
+blog posts is release-blocking, and the reference — which used to set the date, because it is
 [canonical](writing-guides/reference.md) and so had to be complete on day one rather than
 deferred — now has a page for every construct. That obligation still binds: a page added from here
 is added with its index entry in the same change, because a construct with no page is a hole a reader
@@ -41,7 +41,8 @@ handed over is actually startable.
 
 Every task has an ID so that dependencies can be stated without ambiguity, a **lands in** field naming
 the repository and path, and a **done when** condition. The IDs group by kind — `C` corrections, `E`
-explanation tier, `F` front page, `T` teaching, `R` reference, `D` deep dives, `W` comparisons, `B` the
+explanation tier, `F` front page, `T` teaching, `R` reference, `P` the Projects section, with `DC` for the
+project code they quote, `W` comparisons, `B` the
 blog, `V` the version release, `O` orientation, `A` the AI disclosure, `S` search and agent
 discoverability, `X` cross-cutting — and they are stable, so a task removed on completion leaves its ID
 retired rather than renumbered.
@@ -110,8 +111,8 @@ code has a compiled counterpart in the website repository's
 [`example-code/` crate](site-structure.md#the-example-code-crate). What remains is **the author's read**,
 which every page in this tier is subject to.
 
-The three deep dives are therefore unblocked. One task remains in this group, and it is not a concept
-page:
+The Projects section, which links to these pages instead of re-teaching them, is therefore unblocked.
+One task remains in this group, and it is not a concept page:
 
 - **E1 — *Project status and adoption risk*.** Mostly a move: lift the "Current Status" section out of
   the Introduction so the homepage can link it from above the fold. Its frankness is the asset and must
@@ -166,44 +167,62 @@ follows are in [writing-guides/reference.md](writing-guides/reference.md).
   every construct has an entry here even where the page behind it is a stub — so a page added later is
   added to this index in the same change.
 
-## D — The deep dives, and the code they quote
+## P — The Projects section, and the code it quotes
 
-**Post-release.** All three deep dives are still wanted, and none of them holds up the v0.8.0 release —
-they are the largest discretionary body of work on the list and they serve readers who are currently
-served, if imperfectly, by the blog posts they grow out of. Each is planned in
-[deep-dives/](deep-dives/README.md), and two are blocked by modernization work in the repository they
-track; the extensible data types deep dive is not, since its `cgp-examples` crates already use current
-idioms. **The code tasks are genuine library work, not documentation housekeeping**, and they come first:
-a deep dive written against the current code would show forms the guides tell readers not to write. They
-are also independent of everything above, so they can start whenever there is capacity for them.
+**Post-release.** The Projects section ports the internal [projects/](../projects/README.md) sections to
+the site, with each project's example programs expanded into short tutorials, and it takes the place of
+the three deep dives planned before those sections existed. None of it holds up the v0.8.0 release: it
+is the largest discretionary body of work on the list, three of its four projects need their own
+branches merged and the two libraries their own releases, and its readers are served in the meantime by
+the Concepts pages and the posts. The blueprint, the page lists, and every prerequisite are in
+[projects/](projects/README.md); the page type is [writing-guides/project.md](writing-guides/project.md).
+**The code tasks are genuine library work, not documentation housekeeping**, and they come first where
+they block a page: a page that exists to teach patterns must not show a form the guides tell readers to
+replace. The code tasks are numbered DC, and DC1 and DC3 keep their IDs.
 
 - **DC1 — modernize `hypershell`.** Adopt `#[uses(...)]` for its hand-written `where` bounds, and
   decide whether the HTTP client getter becomes an `#[implicit]` argument, the only field read that
   could. Replace the one live `UseDelegate` table in `providers/pipe.rs`; a probe confirmed that `open`
   accepts its bounded generic key. Drop the six `#[derive_delegate(UseDelegate<Arg>)]` attributes,
-  whose removal is breaking for downstream users and is accepted. *Lands in:* the `hypershell` repository. The project's
-  [issues](../projects/hypershell/issues.md) list the defects worth fixing in the same pass.
-- **DC3 — publish a `CgpSerdeNamespace`, and drop the three `#[derive_delegate]` attributes.** The
+  whose removal is breaking for downstream users and is accepted. *Lands in:* the `hypershell` repository.
+  The project's [issues](../projects/hypershell/issues.md) list the defects worth fixing in the same pass.
+- **DC3 — drop cgp-serde's three `#[derive_delegate]` attributes, clean up its arena tests, and consider
+  a `CgpSerdeNamespace`.** The attribute removals are breaking for downstream users and are accepted. The
   namespace is a design decision about what the defaults should be rather than a mechanical conversion,
-  and a genuine library improvement: without it every context spells out a dozen wiring entries, and the
-  deep dive's payoff — two applications differing by a handful of lines — is far weaker. The attribute
-  removals are breaking for downstream users and are accepted. *Lands in:* the `cgp-serde` repository.
-- **DD1 — the Hypershell deep dive.** Six pages. *Blocked by:* DC1. **Do this one first of the
-  three.** It is the only deep dive with measured demand behind it: the post it grows from wins
-  *rust dsl* at 771 impressions and position 7.0, and a further 293 impressions across
-  *shell scripting vs rust* and its variants convert at zero, which is a comparison the deep dive can
-  serve and the post does not. See
-  [seo.md](seo.md#adding-a-page-is-almost-never-the-answer-and-the-data-says-which-three-cases-to-consider). The explanation tier is where the
-  post's embedded CGP primer goes instead of being re-taught, and it now exists. **This task also creates the `Deep dives`
-  category.**
-- **DD2 — the extensible data types deep dive.** Seven pages, from four blog posts and two example
-  crates. *Blocked by:* nothing. Note that this is the deep dive serving the
-  [least well-served reader](information-architecture.md) — the framework and library author.
-- **DD3 — the cgp-serde deep dive.** Five pages. *Blocked by:* DC3.
+  and it is recommended rather than required: without it every context spells out a dozen wiring
+  entries, and the two-application payoff of the `messages` example is weaker. *Lands in:* the `cgp-serde`
+  repository. The detail is in [projects/cgp-serde.md](projects/cgp-serde.md#code-prerequisites).
+- **DC4 — make the cgp-examples crates runnable and checked.** Give `builder` an entry point, add check
+  blocks to `greet`'s component binaries, and replace "capability" in `transfer`'s code comments. *Lands
+  in:* the `cgp-examples` repository. The detail is in
+  [projects/cgp-examples.md](projects/cgp-examples.md#code-prerequisites).
+- **P1 — the cgp-examples pages, with the section index.** About 33 pages, and the pilot for the whole
+  section: write `expression` first and revise the writing guide from what it teaches. **This task also
+  creates the `Projects` category** at position 8, between Reference and `cargo-cgp`, which renumbers
+  everything below it, and writes the section index with its pattern-finding table. *Blocked by:* the
+  `cgp-examples` `v0.8.0` branch becoming the default; the per-example records for `builder`,
+  `transfer`, and `greet` in this base; and DC4 for the pages it names.
+- **P2 — the Hypershell pages.** About a hundred pages. **Do this one first of the libraries**: it is the
+  only project with measured demand behind it, since the post it grows from wins *rust dsl* at 771
+  impressions and position 7.0, and a further 293 impressions across *shell scripting vs rust* and its
+  variants convert at zero, which the planned comparison with shell scripts can serve. See
+  [seo.md](seo.md#adding-a-page-is-almost-never-the-answer-and-the-data-says-which-three-cases-to-consider).
+  Its index and the examples that show only a program and a context can start before DC1; the reference,
+  the interpretation page, and the extension pages cannot. *Blocked by:* DC1 for those pages; a Hypershell
+  release built on `cgp` 0.8.0, or a git dependency on the index; and the comparison document in this base.
+- **P3 — the cgp-serde pages.** About 48 pages. *Blocked by:* DC3 for the component pages and the two
+  arena examples, and a cgp-serde release built on `cgp` 0.8.0.
+- **P4 — the error backend pages.** About 22 pages. *Blocked by:* the `cgp` 0.8.0 release, since the
+  published 0.8.0-alpha crates behave differently from the source the pages describe, and a verified
+  wiring with its output in the eyre and std records in this base, which only the anyhow record has.
+- **P5 — the links into the section.** An *In practice:* entry in each Concepts page's *Where to go next*
+  that has a matching example page, the error backends linked from the error-handling concept and
+  reference pages, each project section listed on Resources, and the applied tutorial (T3) routed to the
+  project example that develops its scenario. *Blocked by:* the pages each link targets.
 
-Each of DD1–DD3 finishes the same way: **a pointer to the deep dive is added at the top of the blog post
-it grew out of** — four posts in DD2's case. That is the one sanctioned edit to a published post, since it
-adds a link and changes no claim; the post's slug and its snippets are untouched.
+Each of P1–P3 finishes the same way: **a pointer to the project section is added at the top of each blog
+post it grew out of**, which each project's plan names. That is the one sanctioned edit to a published
+post, since it adds a link and changes no claim; the post's slug and its snippets are untouched.
 
 ## B — The blog
 
@@ -211,7 +230,7 @@ Two posts, both **post-release**, and both deliberately spaced rather than bundl
 substantial pieces at once makes them compete for the same readers on the same day in channels whose
 ranking is time-weighted, so the second mostly takes attention from the first — which wastes the smaller
 piece and makes neither reception readable as evidence. Neither post blocks anything, and neither is a
-redesign defect; the group exists so that writing which is neither a release note nor a deep dive has
+redesign defect; the group exists so that writing which is neither a release note nor a Projects page has
 somewhere to be tracked.
 
 - **B1 — the implicit-type-arguments post.** The framing that an abstract type is an implicit *type*
@@ -425,9 +444,11 @@ the [ordering](#the-ordering) for what to start on.
 | T4 | nothing | nothing |
 | T3 | nothing | nothing |
 | R1 | the author's read | nothing |
-| DC1, DC3 | nothing | DD1 and DD3 respectively |
-| DD1, DD3 | their DC task | nothing |
-| DD2 | nothing | nothing |
+| DC1, DC3, DC4 | nothing | parts of P2, P3, and P1 respectively |
+| P1 | V1, its project's branch, its knowledge-base records, DC4 | P5 |
+| P2, P3 | V1, their DC task, their project's release | P5 |
+| P4 | V1, the eyre and std records | P5 |
+| P5 | the pages it links | nothing |
 | B1, B2 | nothing (both held until after V1) | nothing |
 | V1 | the v0.8.0 release, and every release-blocking task | B1 and B2 |
 | A1 | the author's read | every page-adding task's provenance note |
@@ -436,8 +457,8 @@ the [ordering](#the-ordering) for what to start on.
 | X1, X2, X3 | nothing | nothing |
 
 Two shapes in that graph are worth naming, because they are what make the ordering non-obvious. The
-**deep dives are gated on code** rather than on writing, so the long lead time of two of them starts
-with DC1 and DC3, and those can run at any time. And **V1 is the terminus rather than an interrupt**: nothing publishes
+**Projects pages are gated on code and on the projects' own releases** rather than on writing alone, so the
+long lead time of three of them starts with DC1, DC3, and DC4, and those can run at any time. And **V1 is the terminus rather than an interrupt**: nothing publishes
 until it lands, so a task deferred is a release deferred.
 
 ## The ordering
@@ -474,12 +495,13 @@ when each page's first impression in the index is fixed.
 `cgp-skills` misteaches every agent that reads it, and the crate's landing page is working against the
 project every day it stays as it is.
 
-**DC1 and DC3 whenever there is capacity**, since they are independent of everything above and are the
-long lead time on the deep dives.
+**DC1, DC3, and DC4 whenever there is capacity**, since they are independent of everything above and are
+the long lead time on the Projects pages.
 
 **Then V1, and the merge.** Everything above ships at once.
 
-**Then, spaced out: DD1–DD3, B2, and B1.** Post-release work, published apart rather than together.
+**Then, spaced out: P1–P5, B2, and B1.** Post-release work, published apart rather than together, with the
+project sections in the order [projects/README.md](projects/README.md#ordering) recommends.
 **S9 happens on merge day** and **S11 shortly after it**, since the DocSearch application is submitted
 against the published site.
 

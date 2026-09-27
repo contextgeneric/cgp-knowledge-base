@@ -233,4 +233,6 @@ a nested `WrapError` contributes its detail alone and the walk continues past it
 - [`src/impls/debug_error.rs`](https://github.com/contextgeneric/cgp/blob/main/crates/standalone/error/cgp-error-std/src/impls/debug_error.rs)
 - [`src/impls/display_error.rs`](https://github.com/contextgeneric/cgp/blob/main/crates/standalone/error/cgp-error-std/src/impls/display_error.rs)
 
-**Public material derived from this:** the crate's README, and the item docs in its source.
+**Public material derived from this:** the crate's README, and the item docs in its source, and one
+page per construct under `std/` in the planned [error backends project
+section](../../../website/projects/error-backends.md).

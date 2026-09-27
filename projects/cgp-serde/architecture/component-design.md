@@ -77,5 +77,5 @@ value type as `(Life<'de>, T)`. The serializing component has no lifetime, and i
 
 ## Public material derived from this
 
-The "Serialization as a component" page of the planned
-[cgp-serde deep dive](../../../website/deep-dives/cgp-serde.md).
+The `architecture/component-design` page of the planned [cgp-serde project
+section](../../../website/projects/cgp-serde.md).
