@@ -4,12 +4,12 @@
 providers that raise errors into it and add context to it. It is the backend the ecosystem's projects
 wire, and the one to reach for first.
 
-- **Source** — [`crates/standalone/error/cgp-error-anyhow/`](https://github.com/contextgeneric/cgp/tree/main/crates/standalone/error/cgp-error-anyhow)
+- **Source**: [`crates/standalone/error/cgp-error-anyhow/`](https://github.com/contextgeneric/cgp/tree/main/crates/standalone/error/cgp-error-anyhow)
   in the `cgp` repository, on `main`; see [which revision](../README.md#which-revision-these-documents-describe)
-- **Crate** — `cgp-error-anyhow` 0.8.0-alpha, depending on `cgp-core` and `anyhow` 1.0.104 without
+- **Crate**: `cgp-error-anyhow` 0.8.0-alpha, depending on `cgp-core` and `anyhow` 1.0.104 without
   default features
-- **`no_std`** — yes, using anyhow's `no_std` mode
-- **Tests** — the `anyhow_*` files, `readme_anyhow.rs`, and three shared files of the `error_backends`
+- **`no_std`**: yes, using anyhow's `no_std` mode
+- **Tests**: the `anyhow_*` files, `readme_anyhow.rs`, and three shared files of the `error_backends`
   target; see [testing.md](testing.md)
 
 ## What it provides
@@ -50,19 +50,20 @@ delegate_components! {
 With that wiring, raising `std::io::Error::other("disk full")` and wrapping it with
 `"while saving"` gives an error whose `{}` is `while saving` and whose `{:#}` is
 `while saving: disk full`, and `downcast_ref::<std::io::Error>()` still finds the original. This is
-the example in the crate's own README, which `readme_anyhow.rs` compiles and runs.
+the example in the crate's own README, which asserts the `{:#}` form and which `readme_anyhow.rs`
+compiles and runs; `anyhow_raise_and_wrap.rs` pins the other two facts.
 
 ## Who uses it
 
 Three projects wire it, each documented in its own section:
 
-- **hypershell** — its namespace sets `UseAnyhowError`, raises standard errors with
+- **hypershell**: its namespace sets `UseAnyhowError`, raises standard errors with
   `RaiseAnyhowError` and two non-standard ones with `DebugAnyhowError`, and wraps every detail with
   `DebugAnyhowError`; see [error handling](../../hypershell/architecture/error-handling.md). Its
   prelude re-exports `cgp_error_anyhow::Error`.
-- **cgp-serde** — three of its tests wire `UseAnyhowError` and `RaiseAnyhowError`; see
+- **cgp-serde**: three of its tests wire `UseAnyhowError` and `RaiseAnyhowError`; see
   [wiring a context](../../cgp-serde/guides/wiring-a-context.md).
-- **cgp-examples** — every `builder` context wires the same two; see
+- **cgp-examples**: every `builder` context wires the same two; see
   [builder contexts](../../cgp-examples/builder/reference/builder-contexts.md).
 
 The worked examples [modular serialization](../../../examples/modular-serialization.md),

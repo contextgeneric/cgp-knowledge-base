@@ -3,7 +3,8 @@
 The crate has no tests of its own; it is tested by the `error_backends` target of the `cgp-tests`
 crate, which runs with the rest of the `cgp` workspace suite. No test in that target calls
 `eyre::set_hook`, so every eyre test also checks that the crate's `auto-install` feature supplies a
-handler: with the feature removed, both eyre tests fail with the handler panic.
+handler: with the feature removed, every test that builds an eyre report fails with the handler
+panic.
 
 ## What the tests pin
 

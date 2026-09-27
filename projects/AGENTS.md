@@ -1,4 +1,4 @@
-# AGENTS.md — the ecosystem projects
+# AGENTS.md: the ecosystem projects
 
 This directory documents the libraries built *with* CGP, one section per project. Read
 [README.md](README.md) for what qualifies as a project here, and the base-wide
@@ -29,15 +29,17 @@ repository.
 ## Verify behavior with a probe, not by reading alone
 
 A claim about what a provider *does* at runtime (the JSON it writes, the input it rejects, the error
-message it produces) is checked by running it. Build a scratch crate in the session's scratchpad that
-declares its dependencies by version, as a downstream project would, and overrides them with paths to
+message it produces) is checked by running it. Build a scratch crate that declares its dependencies
+by version, as a downstream project would, and overrides them with paths to
 the local checkout in its `[patch.crates-io]` section; copy the project's `Cargo.lock` and
 `rust-toolchain.toml` so the probe resolves the same versions, and exercise the behavior. The same
 override, pointing at the local `../cgp`, is how a project itself is built against an unreleased
 change: local paths while the change is tested, and the `cgp` git repository once it is committed. A compile-time claim, such as which
 derives a provider needs or which wiring mistake produces which error, is checked by building the
 probe, and with `cargo cgp check` where a diagnostic is quoted. State the result in your own words.
-The probe is evidence and is never linked from a document. A claim you could not confirm is written
+Keep the probe and its `CARGO_TARGET_DIR` outside the session's scratchpad, which is too small for a
+build (`~/.cache/cgp-probes/` is the usual place). The probe is evidence and is never linked from a
+document. A claim you could not confirm is written
 as unconfirmed.
 
 ## Leave CGP itself to `cgp/`
@@ -74,21 +76,21 @@ repository-wide housekeeping. When the subprojects are near copies of one design
 and each subproject keeps only what differs; a subproject with a handful of public items may then
 carry a single `reference.md` in place of a `reference/` directory.
 
-- **`README.md`** — the front door: the header block (repository, local checkout, the branch
+- **`README.md`**: the front door: the header block (repository, local checkout, the branch
   documented, crates, the `cgp` version tracked, status), what the project is, a present-tense
   paragraph stating which revision the documents describe and how the published crate differs from
   it, a short list of the project's confirmed gaps that links to `issues.md` for the detail, the
   catalog of every document in the section, and the map from those documents to the public material
   they will feed.
-- **`architecture/`** — the project's own design, one idea per document: how the crates divide, the
+- **`architecture/`**: the project's own design, one idea per document: how the crates divide, the
   decisions that shape every provider, and the mechanisms a reader must understand before the
   reference makes sense. Its `README.md` states the whole design on one page and catalogs the rest.
-- **`reference/`** — what each public item does, grouped by family rather than one document per
+- **`reference/`**: what each public item does, grouped by family rather than one document per
   item, since a project's providers usually come in closely related sets. Its `README.md` carries a
   table of every public item and the catalog.
-- **`guides/`** — prescriptive documents for using the project: how to write a new provider for it,
+- **`guides/`**: prescriptive documents for using the project: how to write a new provider for it,
   how to wire a context, how to recognize and fix the common mistakes.
-- **`examples/`** — for a project that ships runnable example programs, or whose tests serve as its
+- **`examples/`**: for a project that ships runnable example programs, or whose tests serve as its
   examples, one document per program, named for it in kebab case, with a `README.md` that catalogs
   them in teaching order and documents any library the examples crate carries. Each document opens
   with one sentence saying what the program demonstrates and a header list (**Source**, **Run**,
@@ -113,8 +115,8 @@ carry a single `reference.md` in place of a `reference/` directory.
 - **A comparison document**, named for what it compares against (`serde-comparison.md`), when the
   project replaces or extends a well-known library: what it matches, what it lacks, and when the
   original is the better choice.
-- **`testing.md`** — what the project's tests pin, which checks they assert, and what is untested.
-- **`issues.md`** — the open defects, missing features, and housekeeping items, grouped in that order.
+- **`testing.md`**: what the project's tests pin, which checks they assert, and what is untested.
+- **`issues.md`**: the open defects, missing features, and housekeeping items, grouped in that order.
   Each defect shows the code that triggers it and what happens, per
   [../AGENTS.md](../AGENTS.md#show-the-example-behind-an-error-message). Remove an entry in the same
   change that fixes it.
@@ -125,17 +127,17 @@ Each public item in a reference document gets its own level-two section in a fix
 reader can find the same fact in the same place for every provider. Open with one sentence saying
 what the item is, then:
 
-- **Definition** — the item's declaration as the source writes it, in a code block: the struct, and
+- **Definition**: the item's declaration as the source writes it, in a code block: the struct, and
   each impl's attributes, header, and bounds, with the body elided as `{ ... }`. Trait and inherent
   method signatures and associated types stay, because they are the interface; what a body does
   belongs in Behavior.
-- **Behavior** — what it does, in prose: what it produces on the wire or accepts from it, and how it
+- **Behavior**: what it does, in prose: what it produces on the wire or accepts from it, and how it
   fails.
-- **Context dependencies** — what it looks up through the context, since that is what a context must
+- **Context dependencies**: what it looks up through the context, since that is what a context must
   wire for it to work.
-- **Pairing** — for a project with both directions of an operation, which item handles the other
+- **Pairing**: for a project with both directions of an operation, which item handles the other
   direction, or that none does.
-- **Known issues** — present only when there is something to record, linking to `issues.md`.
+- **Known issues**: present only when there is something to record, linking to `issues.md`.
 
 A reference document opens with a short introduction to the family and ends with a **Source** section
 listing, one per bullet, the files the items live in. Material that spans several items of the family,

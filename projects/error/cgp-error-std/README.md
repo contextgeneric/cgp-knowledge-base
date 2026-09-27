@@ -5,11 +5,11 @@ context's abstract error type, and supplies the providers that raise errors into
 to it, together with the two error types those providers build. It needs nothing beyond `alloc`, so
 it suits a library or a `no_std` context that wants an open-ended error type.
 
-- **Source** — [`crates/standalone/error/cgp-error-std/`](https://github.com/contextgeneric/cgp/tree/main/crates/standalone/error/cgp-error-std)
+- **Source**: [`crates/standalone/error/cgp-error-std/`](https://github.com/contextgeneric/cgp/tree/main/crates/standalone/error/cgp-error-std)
   in the `cgp` repository, on `main`; see [which revision](../README.md#which-revision-these-documents-describe)
-- **Crate** — `cgp-error-std` 0.8.0-alpha, depending only on `cgp-core`
-- **`no_std`** — yes, with `alloc`
-- **Tests** — the `std_*` files, `readme_std.rs`, and the shared `swapping_backends.rs` of the
+- **Crate**: `cgp-error-std` 0.8.0-alpha, depending only on `cgp-core`
+- **`no_std`**: yes, with `alloc`
+- **Tests**: the `std_*` files, `readme_std.rs`, and the shared `swapping_backends.rs` of the
   `error_backends` target; see [testing.md](testing.md)
 
 ## What it provides

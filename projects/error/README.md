@@ -5,14 +5,14 @@ that each fix a CGP context's abstract error type to one concrete type and suppl
 raise errors into it and add detail to it. Generic code is written against `HasErrorType`,
 `CanRaiseError`, and `CanWrapError`; a backend is what a context wires to make those traits concrete.
 
-- **Repository** — <https://github.com/contextgeneric/cgp>, under
+- **Repository**: <https://github.com/contextgeneric/cgp>, under
   [`crates/standalone/error/`](https://github.com/contextgeneric/cgp/tree/main/crates/standalone/error)
-- **Local checkout** — `../cgp/crates/standalone/error`, per
+- **Local checkout**: `../cgp/crates/standalone/error`, per
   [sibling-projects.md](../../sibling-projects.md)
-- **Branch documented** — `main`
-- **Crates** — `cgp-error-anyhow`, `cgp-error-eyre`, and `cgp-error-std`, all at 0.8.0-alpha
-- **Tracks** — `cgp` 0.8.0-alpha, through a path dependency on `cgp-core`
-- **Status** — Small and complete for what they cover; tested by the `error_backends` target of
+- **Branch documented**: `main`
+- **Crates**: `cgp-error-anyhow`, `cgp-error-eyre`, and `cgp-error-std`, all at 0.8.0-alpha
+- **Tracks**: `cgp` 0.8.0-alpha, through a path dependency on `cgp-core`
+- **Status**: Small and complete for what they cover; tested by the `error_backends` target of
   `cgp-tests`
 
 ## What they are
@@ -61,8 +61,10 @@ ways that change behavior:
   prints the detail alone with `{}`.
 
 The published crates also depend on anyhow 1.0.95 and eyre 0.6.12, where this source requires anyhow
-1.0.104 and eyre 0.6.14, and they write their providers in the explicit provider-trait forms that
-`#[cgp_impl]` with `#[use_type]` replaces here. Source links point at `main`, which is the branch
+1.0.104 and eyre 0.6.14. They write their providers in older forms (`#[cgp_impl]` blocks with an
+explicit `impl<Context> … for Context` header and a `Context: HasErrorType<Error = …>` bound,
+`#[cgp_provider]`, and `#[cgp_new_provider]`) that the concise `#[cgp_impl]` with `#[use_type]`
+replaces here. Source links point at `main`, which is the branch
 [sibling-projects.md](../../sibling-projects.md) records for this project.
 
 ## Building and testing
@@ -79,8 +81,9 @@ still checked, the `cgp-tests` build script reads each README, turns its `ignore
 module, and the `readme_anyhow.rs`, `readme_eyre.rs`, and `readme_std.rs` files include it, which
 keeps the README the only copy of its example.
 
-These documents were verified against the `cgp` source on `main` at commit `adc616c`, with `rustc`
-1.98.1, where `cargo test --workspace --all-features` and both clippy configurations pass. One claim
+These documents were verified against the `cgp` source on `main` at commit `bc5febb`, with `rustc`
+1.98.1: the `error_backends` target passes, and clippy is clean for the three crates and `cgp-tests`
+in both CI configurations (`--all-features` and `--no-default-features`, with `-D warnings`). One claim
 could not be checked by building: that `cgp-error-anyhow` and `cgp-error-std` compile for a target
 without `std`, because no such target was installed. The `no_std` column above therefore rests on the crates'
 source and on anyhow declaring itself `no_std`, and the `cgp` repository's CI does not build any

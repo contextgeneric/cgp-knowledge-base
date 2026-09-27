@@ -90,7 +90,7 @@ each document feeds. A project document's *Public material derived from this* li
 
 For the communication strategy these projects are the ecosystem's most concrete social proof, which
 [evidence.md](../communication-strategy/evidence.md) argues is what
-the evaluator profile actually wants — a real system built with CGP rather than another argument. That
+the evaluator profile actually wants: a real system built with CGP rather than another argument. That
 value depends on them staying current, so a project that falls behind the library stops being evidence
 and starts being a liability.
 

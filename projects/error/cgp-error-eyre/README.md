@@ -4,12 +4,12 @@
 that raise errors into it and add context to it. It suits an application that wants eyre's
 customizable reports; no project in the ecosystem wires it yet.
 
-- **Source** — [`crates/standalone/error/cgp-error-eyre/`](https://github.com/contextgeneric/cgp/tree/main/crates/standalone/error/cgp-error-eyre)
+- **Source**: [`crates/standalone/error/cgp-error-eyre/`](https://github.com/contextgeneric/cgp/tree/main/crates/standalone/error/cgp-error-eyre)
   in the `cgp` repository, on `main`; see [which revision](../README.md#which-revision-these-documents-describe)
-- **Crate** — `cgp-error-eyre` 0.8.0-alpha, depending on `cgp-core` and `eyre` 0.6.14 with the
+- **Crate**: `cgp-error-eyre` 0.8.0-alpha, depending on `cgp-core` and `eyre` 0.6.14 with the
   `auto-install` and `track-caller` features
-- **`no_std`** — no, because eyre requires `std`
-- **Tests** — the `eyre_*` files, `readme_eyre.rs`, and the shared `swapping_backends.rs` of the
+- **`no_std`**: no, because eyre requires `std`
+- **Tests**: the `eyre_*` files, `readme_eyre.rs`, and the shared `swapping_backends.rs` of the
   `error_backends` target; see [testing.md](testing.md)
 
 ## What it provides
