@@ -3,7 +3,8 @@
 The Bluesky firehose read with the native WebSocket extension instead of `websocat`, wired onto the
 context with two entries rather than through an extension namespace.
 
-- **Source**: [crates/hypershell-examples/examples/bluesky_websocket.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/bluesky_websocket.rs)
+- **Source**:
+  [crates/hypershell-examples/examples/bluesky_websocket.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/bluesky_websocket.rs)
 - **Run**: `cargo run --example bluesky_websocket`, stopped with Ctrl-C
 - **Needs**: network, `grep`
 - **Result**: streams firehose events containing `love` until stopped
@@ -79,17 +80,18 @@ ignores it.
 ## Try a change
 
 Removing the error route while keeping the `WebSocket` entry is the change the public page shows. A
-probe checked the program with `HandlerComponent: (Program, TokioAsyncReadStream<ReadHalf<SimplexStream>>)`,
-the input `main` builds, and `cargo cgp check` built from source at commit `b6a6323` reported:
+probe checked the program with
+`HandlerComponent: (Program, TokioAsyncReadStream<ReadHalf<SimplexStream>>)`, the input `main`
+builds, and `cargo cgp check` built from source at commit `b6a6323` reported:
 
 ```text
 error[E0277]: [CGP-E002] the provider trait `Handler<Pipe<…>, TokioAsyncReadStream<ReadHalf<SimplexStream>>>` with context `MyApp` is not implemented for provider `ComposeHandlers<…>`
    = note: root cause: [CGP-E107] context `MyApp` does not contain any delegate entry for `@cgp.core.error.ErrorRaiserComponent.Error`
 ```
 
-The path's last segment is `tungstenite::Error` written by its own name, `Error`, so the message names
-the error type the provider raises rather than the context's `anyhow` error. With the route in place,
-the check passes.
+The path's last segment is `tungstenite::Error` written by its own name, `Error`, so the message
+names the error type the provider raises rather than the context's `anyhow` error. With the route in
+place, the check passes.
 
 ## What it demonstrates
 
@@ -98,9 +100,10 @@ the check passes.
   [error handling](../architecture/error-handling.md#every-source-error-type-is-listed-twice).
 - Per-input dispatch under one syntax: see
   [streams and input dispatch](../architecture/streams-and-input-dispatch.md#dispatching-on-the-input-type).
-- The WebSocket extension: see [extensions](../reference/extensions.md#websocket-and-handlewebsocket).
+- The WebSocket extension: see
+  [extensions](../reference/extensions.md#websocket-and-handlewebsocket).
 
 ## Public material derived from this
 
-The `examples/bluesky-websocket` page of the planned [Hypershell project
-section](../../../website/projects/hypershell.md).
+The `examples/bluesky-websocket` page of the
+[Hypershell project section](../../../website/projects/hypershell.md).

@@ -29,9 +29,9 @@ The tree `cargo cgp check` prints follows the lookup described in
 `open` redirect is a `[CGP-E104]` line naming the table it looks in, each provider a `[CGP-E102]`,
 and each consumer trait reached through a dependency a `[CGP-E101]`. Read from the bottom: the last
 lines name the leaf that failed. The table names locate it. The context's own namespace hop reads
-`` in `HypershellCli` ``, a bundle's reads `` in `HypershellTokioProvider` ``, and an entry missing from
-a bundle or an input dispatcher is a `[CGP-E110]` leaf naming that provider, where one missing from
-the context is a `[CGP-E107]` leaf naming the context; see the
+`` in `HypershellCli` ``, a bundle's reads `` in `HypershellTokioProvider` ``, and an entry missing
+from a bundle or an input dispatcher is a `[CGP-E110]` leaf naming that provider, where one missing
+from the context is a `[CGP-E107]` leaf naming the context; see the
 [error-code catalog](../../../cargo-cgp/error-code.md).
 
 ## A context lacks a field
@@ -94,11 +94,12 @@ pub type Program = hypershell! {
 ```
 
 The path names the syntax and then the input type, which is exactly what the dispatcher could not
-match; see [streams and input dispatch](../architecture/streams-and-input-dispatch.md#dispatching-on-the-input-type).
-**Fix:** convert the value into one of the dispatcher's input types, here with `BytesToHex`. The same
-form appears for an input the program's caller passes: `StreamingExec` given a `&'static str`
-reports a missing `@HandlerComponent.StreamingExec<…>.&str` entry, and the fix is to pass a
-`String` or `Vec<u8>`.
+match; see
+[streams and input dispatch](../architecture/streams-and-input-dispatch.md#dispatching-on-the-input-type).
+**Fix:** convert the value into one of the dispatcher's input types, here with `BytesToHex`. The
+same form appears for an input the program's caller passes: `StreamingExec` given a `&'static str`
+reports a missing `@HandlerComponent.StreamingExec<…>.&str` entry, and the fix is to pass a `String`
+or `Vec<u8>`.
 
 ## A syntax has no route
 
@@ -119,8 +120,8 @@ error[E0277]: [CGP-E001] the consumer trait `CanHandle<Pipe<…>, Vec<u8>>` is n
 ```
 
 `WebSocket` fails the same way on such a context, and `StreamToLines` fails at
-`@cgp.extra.handler.HandlerComponent.StreamToLines.…` on every context. **Fix:** add the route on the
-context or on an extension namespace, as `HypershellChecksumNamespace` does for `Checksum`; see
+`@cgp.extra.handler.HandlerComponent.StreamToLines.…` on every context. **Fix:** add the route on
+the context or on an extension namespace, as `HypershellChecksumNamespace` does for `Checksum`; see
 [extending the language](extending-the-language.md). For `StreamToLines` the route is missing from
 the library itself; see [issues.md](../issues.md#streamtolines-is-unusable).
 
@@ -137,20 +138,23 @@ pub struct TooLong;
 #[use_type(HasErrorType.Error)]
 impl<Input> Handler<CheckLength, Input>
 where
-    Input: AsRef<[u8]>,
+    Input: Send + AsRef<[u8]>,
 { /* … */ }
 ```
 
+`App` joins `HypershellNamespace` and routes `CheckLength` to `HandleCheckLength`, and a check keyed
+on `(CheckLength, Vec<u8>)` reports:
+
 ```text
-error[E0277]: [CGP-E001] the consumer trait `CanHandle<CheckLength, _>` is not implemented for context `App`
-  = note: root cause: [CGP-E107] context `App` does not contain any delegate entry for `@cgp.core.error.ErrorRaiserComponent.TooLong`
-          this is required through the dependency chain:
-            [CGP-E101] consumer trait impl `CanHandle<CheckLength, _>` for context `App`
-            └─ [CGP-E104] redirect lookup to `@cgp.extra.handler.HandlerComponent` in `App`
-              └─ [CGP-E102] provider trait impl `Handler<CheckLength, _>` with context `App` for provider `HandleCheckLength`
-                └─ [CGP-E101] consumer trait impl `CanRaiseError<TooLong>` for context `App`
-                  └─ [CGP-E104] redirect lookup to `@cgp.core.error.ErrorRaiserComponent` in `App`
-                    └─ [CGP-E107] context `App` does not contain any delegate entry for `@cgp.core.error.ErrorRaiserComponent.TooLong`
+error[E0277]: [CGP-E001] the consumer trait `CanHandle<CheckLength, Vec<u8>>` is not implemented for context `App`
+   = note: root cause: [CGP-E107] context `App` does not contain any delegate entry for `@cgp.core.error.ErrorRaiserComponent.TooLong`
+           this is required through the dependency chain:
+             [CGP-E101] consumer trait impl `CanHandle<CheckLength, Vec<u8>>` for context `App`
+             └─ [CGP-E104] redirect lookup to `@cgp.extra.handler.HandlerComponent` in `App`
+               └─ [CGP-E102] provider trait impl `Handler<CheckLength, Vec<u8>>` with context `App` for provider `HandleCheckLength`
+                 └─ [CGP-E101] consumer trait impl `CanRaiseError<TooLong>` for context `App`
+                   └─ [CGP-E104] redirect lookup to `@cgp.core.error.ErrorRaiserComponent` in `App`
+                     └─ [CGP-E107] context `App` does not contain any delegate entry for `@cgp.core.error.ErrorRaiserComponent.TooLong`
 ```
 
 **Fix:** route the type to a raiser, as
@@ -160,8 +164,8 @@ imported from `cgp::core::error`; see [error handling](../architecture/error-han
 ## A routed provider cannot resolve
 
 A route that exists can still lead to a provider that does not implement `Handler`, as when a syntax
-is routed straight to a synchronous `Computer` provider. Here `App` routes a custom `Shout` syntax to
-`ShoutText`:
+is routed straight to a synchronous `Computer` provider. Here `App` routes a custom `Shout` syntax
+to `ShoutText`:
 
 ```rust
 pub struct Shout;
@@ -212,7 +216,8 @@ error[E0119]: [CGP-E005] `App` cannot wire `@cgp.extra.handler.HandlerComponent.
 ```
 
 The same entry in a namespace that inherits `HypershellNamespace` fails with a plain `E0119` on the
-namespace trait. **Fix:** see [replacing an interpretation](extending-the-language.md#replace-the-interpretation-of-existing-syntax).
+namespace trait. **Fix:** see
+[replacing an interpretation](extending-the-language.md#replace-the-interpretation-of-existing-syntax).
 
 ## The macro fails
 
@@ -229,5 +234,5 @@ See [the macro reference](../reference/macro.md#known-issues).
 
 ## Public material derived from this
 
-The `guides/debugging` page of the planned [Hypershell project
-section](../../../website/projects/hypershell.md).
+The `guides/debugging` page of the
+[Hypershell project section](../../../website/projects/hypershell.md).

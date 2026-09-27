@@ -146,10 +146,10 @@ where
 
 `BoxHandler` pins the inner provider's future as `Pin<Box<dyn Future<…>>>` and returns it, erasing
 the future's type. The base bundle maps `Box<Code>` to `BoxHandler<Call<Code>>`, so
-`Box<hypershell!{ … }>` is a sub-program run behind a box. A probe ran one successfully. The examples
-crate wires its `Compare` syntax to `BoxHandler<HandleCompare>` directly, noting that the comparison
-is much slower otherwise. The boxed future is not `Send`, since the `dyn Future` carries no `Send`
-bound.
+`Box<hypershell!{ … }>` is a sub-program run behind a box. A probe ran one successfully. The
+examples crate wires its `Compare` syntax to `BoxHandler<HandleCompare>` directly, noting that the
+comparison is much slower otherwise. The boxed future is not `Send`, since the `dyn Future` carries
+no `Send` bound.
 
 ## `ReturnInput`
 
@@ -174,16 +174,20 @@ where
 
 ### Known issues
 
-It duplicates `cgp::extra::handler::ReturnInput`, which implements `Handler` with the same bound, and
-the two share a name; see [issues.md](../issues.md#housekeeping).
+It duplicates `cgp::extra::handler::ReturnInput`, which implements `Handler` with the same bound,
+and the two share a name; see [issues.md](../issues.md#housekeeping).
 
 ## Source
 
-- [crates/hypershell-components/src/dsl/pipe.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/dsl/pipe.rs), [use.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/dsl/use.rs), and [convert.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/dsl/convert.rs)
-- [crates/hypershell-components/src/providers/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-components/src/providers): `pipe.rs`, `call.rs`, `use.rs`, `convert.rs`, `box_async.rs`, `return.rs`
+- [crates/hypershell-components/src/dsl/pipe.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/dsl/pipe.rs),
+  [use.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/dsl/use.rs),
+  and
+  [convert.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/dsl/convert.rs)
+- [crates/hypershell-components/src/providers/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-components/src/providers):
+  `pipe.rs`, `call.rs`, `use.rs`, `convert.rs`, `box_async.rs`, `return.rs`
 - [crates/hypershell-components/src/traits/wrap_call.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/traits/wrap_call.rs)
 
 ## Public material derived from this
 
 Rustdoc for the control items. It also feeds one page per construct in the `reference/` pages of the
-planned [Hypershell project section](../../../website/projects/hypershell.md).
+[Hypershell project section](../../../website/projects/hypershell.md), not yet written.

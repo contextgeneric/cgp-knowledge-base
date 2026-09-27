@@ -102,11 +102,13 @@ stage accepts bytes or any stream kind without the program saying so.** The Toki
 ```
 
 The first provider normalizes the input, the middle one does the work, and the last one wraps the
-output so the *next* stage can dispatch on it. `WriteFile`, `StreamToStdout`, and `WebSocket` follow
-the same shape. `Checksum` starts with the other dispatcher, `HandleToFuturesStream`, which converts
-the same inputs into a `FuturesStream`. `StreamingHttpRequest` is keyed per input in its bundle
-instead: its reader inputs take this shape, while a `Vec<u8>` or `String` skips the dispatcher and is
-sent as a buffered body, which `reqwest` can resend when it follows a redirect; see
+output so the *next* stage can dispatch on it. `WriteFile` and `StreamToStdout` follow the same
+shape. `Checksum` starts with the other dispatcher, `HandleToFuturesStream`, which converts the same
+inputs into a `FuturesStream`. `WebSocket` and `StreamingHttpRequest` are keyed per input in their
+bundles instead, with one pipeline per input kind, as the `WebSocket` entries above show.
+`StreamingHttpRequest`'s reader inputs start with `HandleToTokioAsyncRead`, while a `Vec<u8>` or
+`String` skips the dispatcher and is sent as a buffered body, which `reqwest` can resend when it
+follows a redirect; see
 [HTTP](../reference/http.md#streaminghttprequest-and-handlestreaminghttprequest).
 
 The effect is that each accepting stage lists the input kinds it handles in its dispatcher, and a
@@ -154,27 +156,33 @@ anything byte-like with one provider and needs no per-type routing.
 ## How a streaming stage runs
 
 **`StreamingExec` spawns its process and returns its standard output immediately, copying the input
-into standard input on a spawned Tokio task.** Stages in a pipeline therefore run concurrently, as in
-a shell. **A failure is reported when the stream ends rather than when the stage returns.** The
+into standard input on a spawned Tokio task.** Stages in a pipeline therefore run concurrently, as
+in a shell. **A failure is reported when the stream ends rather than when the stage returns.** The
 returned reader, a `ChildOutputStream`, waits for the child at the end of its standard output and
 ends with an error if the child exited with a non-success status or if reading its input failed. The
 stage reading it raises that error, so a failing command anywhere in a streamed pipeline fails the
 program. Standard error is drained while the child runs and becomes part of the error's message; see
 [execution](../reference/execution.md#streamingexec-and-handlestreamingexec).
 
-`HandleStreamingExec`'s output stream starts its tasks with `tokio::spawn`, as `HandleWebsocket` does
-for its forwarding task, so a program with either stage must run inside a Tokio runtime. All the examples use
-`#[tokio::main]`.
+`HandleStreamingExec`'s output stream starts its tasks with `tokio::spawn`, as `HandleWebsocket`
+does for its forwarding task, so a program with either stage must run inside a Tokio runtime. All
+the examples use `#[tokio::main]`.
 
 ## Source
 
-- The wrapper types: [crates/hypershell-tokio-components/src/types/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-tokio-components/src/types)
-- The dispatchers: [async_read.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-tokio-components/src/providers/async_read.rs) and [futures_stream.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-tokio-components/src/providers/futures_stream.rs)
-- The adapter providers: [crates/hypershell-tokio-components/src/providers/stream.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-tokio-components/src/providers/stream.rs)
-- The per-input WebSocket wiring: [crates/hypershell-tungstenite-components/src/providers/combined.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-tungstenite-components/src/providers/combined.rs)
+- The wrapper types:
+  [crates/hypershell-tokio-components/src/types/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-tokio-components/src/types)
+- The dispatchers:
+  [async_read.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-tokio-components/src/providers/async_read.rs)
+  and
+  [futures_stream.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-tokio-components/src/providers/futures_stream.rs)
+- The adapter providers:
+  [crates/hypershell-tokio-components/src/providers/stream.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-tokio-components/src/providers/stream.rs)
+- The per-input WebSocket wiring:
+  [crates/hypershell-tungstenite-components/src/providers/combined.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-tungstenite-components/src/providers/combined.rs)
 
 ## Public material derived from this
 
-The `architecture/streams-and-input-dispatch` page of the planned [Hypershell project
-section](../../../website/projects/hypershell.md), and the input-dispatch example for the website's
-CGP reference page on the `open` statement.
+The `architecture/streams-and-input-dispatch` page of the
+[Hypershell project section](../../../website/projects/hypershell.md), and the input-dispatch
+example for the website's CGP reference page on the `open` statement.

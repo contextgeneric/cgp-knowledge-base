@@ -178,7 +178,8 @@ They feed three artifacts:
   written. Each document here feeds the public page of the same name: the examples become short
   tutorials, the architecture documents, guides, and comparison are ported one to one, and each
   reference family document is split into one page per construct. The limitations page is written
-  from this README and the architecture, and the issues and testing documents feed no page.
+  from this README and the architecture, with one sentence from the testing document, and the
+  issues document feeds no page.
 - **The repository README**, which currently summarizes the components in pre-0.8 syntax and defers
   to the announcement post.
 - **Rustdoc for every public item.** The source carries no doc comments, so the crates' docs.rs

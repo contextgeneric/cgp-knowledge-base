@@ -10,10 +10,10 @@ library the crate carries, which two of the examples build on.
 **These documents are records of the repository's programs; the top-level
 [shell-scripting DSL example](../../../examples/shell-scripting-dsl.md) is the teaching progression
 to quote.** That example develops the language step by step for an agent writing a tutorial or a
-page, and imports the Hypershell crates to do it. The documents here each describe one program as the
-repository ships it, including its defects, so an agent quoting a program knows
-what it is quoting. When the two overlap, as for the checksum extension, the top-level example owns
-the explanation and a document here links to it.
+page, and imports the Hypershell crates to do it. The documents here each describe one program as
+the repository ships it, including its defects, so an agent quoting a program knows what it is
+quoting. When the two overlap, as for the checksum extension, the top-level example owns the
+explanation and a document here links to it.
 
 ## Running an example
 
@@ -42,24 +42,24 @@ needs beyond that, and what happened when it was run against the `v0.8.0` branch
 
 The order is the order the examples teach in, from a static command to a language extension.
 
-- [hello.md](hello.md) — `echo hello world!` on the empty `HypershellCli` context.
-- [hello-name.md](hello-name.md) — a runtime argument read from a context field with `FieldArg`.
-- [http-checksum-cli.md](http-checksum-cli.md) — `curl | sha256sum | cut` as three streaming stages.
-- [http-checksum-client.md](http-checksum-client.md) — the same with a native streaming HTTP request.
-- [http-checksum-native.md](http-checksum-native.md) — the same with the checksum extension instead
+- [hello.md](hello.md): `echo hello world!` on the empty `HypershellCli` context.
+- [hello-name.md](hello-name.md): a runtime argument read from a context field with `FieldArg`.
+- [http-checksum-cli.md](http-checksum-cli.md): `curl | sha256sum | cut` as three streaming stages.
+- [http-checksum-client.md](http-checksum-client.md): the same with a native streaming HTTP request.
+- [http-checksum-native.md](http-checksum-native.md): the same with the checksum extension instead
   of the two commands.
-- [nix-manual.md](nix-manual.md) — a native request feeding two commands, with a mixed argument list.
-- [save-webpage.md](save-webpage.md) — a streaming request written to a file.
-- [github-issues.md](github-issues.md) — a URL built from joined and encoded fields, a header, and
+- [nix-manual.md](nix-manual.md): a native request feeding two commands, with a mixed argument list.
+- [save-webpage.md](save-webpage.md): a streaming request written to a file.
+- [github-issues.md](github-issues.md): a URL built from joined and encoded fields, a header, and
   JSON decoding into a Rust type.
-- [rust-playground.md](rust-playground.md) — a Rust value encoded to JSON, posted, and decoded, on
+- [rust-playground.md](rust-playground.md): a Rust value encoded to JSON, posted, and decoded, on
   `HypershellHttp`.
-- [bluesky.md](bluesky.md) — a long-running stream from a command provisioned by `nix-shell`.
-- [bluesky-websocket.md](bluesky-websocket.md) — the same with the WebSocket extension, wired on the
+- [bluesky.md](bluesky.md): a long-running stream from a command provisioned by `nix-shell`.
+- [bluesky-websocket.md](bluesky-websocket.md): the same with the WebSocket extension, wired on the
   context.
-- [parallel-compare.md](parallel-compare.md) — two sub-pipelines run concurrently and compared, with
+- [parallel-compare.md](parallel-compare.md): two sub-pipelines run concurrently and compared, with
   the examples library's `Compare`.
-- [compare-and-branch.md](compare-and-branch.md) — a comparison driving `If` to choose between two
+- [compare-and-branch.md](compare-and-branch.md): a comparison driving `If` to choose between two
   commands.
 
 ## The examples library
@@ -139,11 +139,11 @@ cgp_namespace! {
 `HypershellChecksumProvider` is the bundle the hash crate does not ship: it `open`s
 `HandlerComponent` and wires `Checksum` to
 `PipeHandlers<Product![HandleToFuturesStream, HandleStreamChecksum]>` and `BytesToHex` to
-`HandleBytesToHex`. The comment on `Compare` does not
-say whether "slower" means compile time or run time, and nothing measures it.
+`HandleBytesToHex`. The comment on `Compare` does not say whether "slower" means compile time or run
+time, and nothing measures it.
 
 ## Public material derived from this
 
-The `examples/index` page of the planned [Hypershell project
-section](../../../website/projects/hypershell.md), which explains `Compare` and `If` on the two
-example pages that use them, and the examples section of the repository README.
+The `examples/index` page of the
+[Hypershell project section](../../../website/projects/hypershell.md), which explains `Compare` and
+`If` on the two example pages that use them, and the examples section of the repository README.

@@ -39,8 +39,8 @@ Each syntax is interpreted by the provider its bundle routes it to:
 | `ToTokioAsyncRead` | `HandleToTokioAsyncRead` | `Vec<u8>`, `String`, either reader wrapper | `TokioAsyncReadStream` |
 | `StreamToLines` | none | — | — |
 
-`StreamToStdout` copies its input to the program's standard output with `tokio::io::copy`, raising
-a `std::io::Error` on failure. `BytesToString` decodes UTF-8, raising a `Utf8Error` wrapped with a
+`StreamToStdout` copies its input to the program's standard output with `tokio::io::copy`, raising a
+`std::io::Error` on failure. `BytesToString` decodes UTF-8, raising a `Utf8Error` wrapped with a
 `DecodeUtf8InputError` detail that borrows the raw bytes. `ToTokioAsyncRead` is the explicit form of
 the input dispatcher, for a program that must put a futures reader in front of a stage that accepts
 only Tokio readers:
@@ -52,8 +52,8 @@ StreamingHttpRequest<GetMethod, FieldArg<"url">, WithHeaders[]> | ToTokioAsyncRe
 ### Known issues
 
 `StreamToBytes` and `StreamToString` accept a Tokio reader only, so they cannot follow the HTTP or
-WebSocket stages without `ToTokioAsyncRead`, which the prelude does not export. `StreamToLines` has a
-provider, `HandleStreamToLines`, but no bundle or namespace route, so a program using it fails to
+WebSocket stages without `ToTokioAsyncRead`, which the prelude does not export. `StreamToLines` has
+a provider, `HandleStreamToLines`, but no bundle or namespace route, so a program using it fails to
 compile. See [issues.md](../issues.md#defects).
 
 ## `ReadFile`, `WriteFile`, and their providers
@@ -142,13 +142,13 @@ These providers convert between bytes and the stream kinds. Every one implements
 ### Behavior
 
 Conversions that read the whole input (`…ToBytes`, `…ToString`) raise `std::io::Error`; the others
-cannot fail. The `Wrap…` providers only tag a reader with its wrapper type, and are the last stage of
-the pipelines that produce streams.
+cannot fail. The `Wrap…` providers only tag a reader with its wrapper type, and are the last stage
+of the pipelines that produce streams.
 
 ### Known issues
 
-`TokioToFuturesAsyncRead` and `HandleStreamToLines` are routed nowhere. `HandleStreamToLines`
-also returns a `Box<dyn Stream<…>>` with no `Unpin` bound on the trait object. `futures` implements
+`TokioToFuturesAsyncRead` and `HandleStreamToLines` are routed nowhere. `HandleStreamToLines` also
+returns a `Box<dyn Stream<…>>` with no `Unpin` bound on the trait object. `futures` implements
 `Stream` for `Box<S>` only when `S: Unpin`, so the box is not itself a stream a later stage could
 consume, and it carries no wrapper type for a dispatcher to match. See
 [issues.md](../issues.md#defined-but-unrouted-providers).
@@ -188,8 +188,8 @@ delegate_components! {
 Each dispatches on the input type alone, whatever the syntax, and converts the four accepted inputs
 to a Tokio reader or a futures stream. Any other input fails to resolve with a `[CGP-E110]` root
 cause naming the dispatcher as the provider and the missing `@HandlerComponent.<syntax>.<input>`
-entry. The
-`ReturnInput` here is Hypershell's own provider, documented in [control.md](control.md#returninput).
+entry. The `ReturnInput` here is Hypershell's own provider, documented in
+[control.md](control.md#returninput).
 
 ## Wiring
 
@@ -199,13 +199,17 @@ entry. The
 
 ## Source
 
-- [crates/hypershell-components/src/dsl/convert.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/dsl/convert.rs), [file.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/dsl/file.rs), and [out.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/dsl/out.rs)
+- [crates/hypershell-components/src/dsl/convert.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/dsl/convert.rs),
+  [file.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/dsl/file.rs),
+  and
+  [out.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/dsl/out.rs)
 - [crates/hypershell-components/src/providers/convert.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/providers/convert.rs)
 - [crates/hypershell-tokio-components/src/dsl/stream.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-tokio-components/src/dsl/stream.rs)
 - [crates/hypershell-tokio-components/src/types/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-tokio-components/src/types)
-- [crates/hypershell-tokio-components/src/providers/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-tokio-components/src/providers): `stream.rs`, `file.rs`, `out.rs`, `line.rs`, `async_read.rs`, `futures_stream.rs`
+- [crates/hypershell-tokio-components/src/providers/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-tokio-components/src/providers):
+  `stream.rs`, `file.rs`, `out.rs`, `line.rs`, `async_read.rs`, `futures_stream.rs`
 
 ## Public material derived from this
 
 Rustdoc for the stream and I/O items. It also feeds one page per construct in the `reference/` pages
-of the planned [Hypershell project section](../../../website/projects/hypershell.md).
+of the [Hypershell project section](../../../website/projects/hypershell.md), not yet written.

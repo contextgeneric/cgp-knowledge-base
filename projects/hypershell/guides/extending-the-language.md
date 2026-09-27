@@ -9,8 +9,8 @@ and [assembly](../architecture/assembly.md); the repository's own extensions are
 
 ## Add handler syntax
 
-**A new pipeline stage needs a syntax type, a provider that matches it, a bundle entry, and a route.**
-The hash crate is the worked case. Its syntax is an empty struct:
+**A new pipeline stage needs a syntax type, a provider that matches it, a bundle entry, and a
+route.** The hash crate is the worked case. Its syntax is an empty struct:
 
 ```rust
 pub struct Checksum<Hasher>(pub PhantomData<Hasher>);
@@ -137,21 +137,21 @@ nothing, since the namespace wraps every detail with `DebugAnyhowError`.
 
 ## Choose between an extension namespace and context entries
 
-**Publish a namespace when several contexts share the extension, and add context entries for a single
-context.** A namespace that inherits `HypershellNamespace` layers routes onto the whole language, and
-namespaces chain: `HypershellCompareNamespace` inherits the checksum namespace, which inherits the
-base. Context entries beside `namespace HypershellNamespace;` do the same for one context without a
-new type. Either way, write the full prefixed path, since the `open` statement does not combine with a
-joined namespace when the component carries a `#[prefix]`.
+**Publish a namespace when several contexts share the extension, and add context entries for a
+single context.** A namespace that inherits `HypershellNamespace` layers routes onto the whole
+language, and namespaces chain: `HypershellCompareNamespace` inherits the checksum namespace, which
+inherits the base. Context entries beside `namespace HypershellNamespace;` do the same for one
+context without a new type. Either way, write the full prefixed path, since the `open` statement
+does not combine with a joined namespace when the component carries a `#[prefix]`.
 
 ## Replace the interpretation of existing syntax
 
-**A context or child namespace cannot rebind a syntax that `HypershellNamespace` already routes.** The
-namespace binds each syntax path to a bundle, and a second binding for the same path conflicts with
-the inherited one. Probes confirmed both forms fail with `E0119`: an entry for `SimpleExec` beside
-`namespace HypershellNamespace;`, and the same entry in a namespace inheriting it. This is the
-[namespace override conflict](../../../cgp/errors/wiring/namespace-override-conflict.md) class. Three
-routes remain, and a probe confirmed the first two:
+**A context or child namespace cannot rebind a syntax that `HypershellNamespace` already routes.**
+The namespace binds each syntax path to a bundle, and a second binding for the same path conflicts
+with the inherited one. Probes confirmed both forms fail with `E0119`: an entry for `SimpleExec`
+beside `namespace HypershellNamespace;`, and the same entry in a namespace inheriting it. This is
+the [namespace override conflict](../../../cgp/errors/wiring/namespace-override-conflict.md) class.
+Three routes remain, and a probe confirmed the first two:
 
 - **Choose the provider in the program with `Use`.** `Use<MyProvider, SimpleExec<…>>` runs
   `MyProvider` for that stage on any context. The choice then lives in the program rather than the
@@ -167,5 +167,5 @@ gap is recorded in [issues.md](../issues.md#missing-features).
 
 ## Public material derived from this
 
-The `guides/extending-the-language` page of the planned [Hypershell project
-section](../../../website/projects/hypershell.md).
+The `guides/extending-the-language` page of the
+[Hypershell project section](../../../website/projects/hypershell.md), not yet written.

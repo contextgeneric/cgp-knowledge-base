@@ -3,7 +3,8 @@
 A native HTTP request feeding two external commands, with a static URL and an argument list that
 mixes a literal with a field.
 
-- **Source**: [crates/hypershell-examples/examples/nix_manual.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/nix_manual.rs)
+- **Source**:
+  [crates/hypershell-examples/examples/nix_manual.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/nix_manual.rs)
 - **Run**: `cargo run --example nix_manual`
 - **Needs**: network, `tr`, `grep`
 - **Result**: prints the lines of the Nixpkgs manual containing `Nix`, in upper case
@@ -51,10 +52,12 @@ literal and a field in one `WithArgs` list.
 
 ## What it demonstrates
 
-- A static URL through the layered URL extractor: see [arguments](../reference/arguments.md#extractstringcommandarg-extractstringurlarg-and-extracturlfieldarg).
-- Writing the expanded form by hand next to the sugared form: see [the macro reference](../reference/macro.md).
+- A static URL through the layered URL extractor: see
+  [arguments](../reference/arguments.md#extractstringcommandarg-extractstringurlarg-and-extracturlfieldarg).
+- Writing the expanded form by hand next to the sugared form: see
+  [the macro reference](../reference/macro.md).
 
 ## Public material derived from this
 
-The `examples/nix-manual` page of the planned [Hypershell project
-section](../../../website/projects/hypershell.md).
+The `examples/nix-manual` page of the
+[Hypershell project section](../../../website/projects/hypershell.md).

@@ -8,11 +8,11 @@ raises a new kind of error must add. The CGP side is
 
 ## Providers name the error sources, never the error type
 
-**A provider requires `CanRaiseError<E>` for each source error it can produce and
-`CanWrapError<D>` for each detail it attaches.** `Handler` returns `Result<Output, Error>` against
-the context's [`HasErrorType`](../../../cgp/reference/components/has_error_type.md), so no provider
-names `anyhow::Error` or any other concrete type. `HandleCoreExec` shows the full pattern: it raises
-the `std::io::Error` from spawning a process, then wraps it with a `CommandNotFound` detail when the
+**A provider requires `CanRaiseError<E>` for each source error it can produce and `CanWrapError<D>`
+for each detail it attaches.** `Handler` returns `Result<Output, Error>` against the context's
+[`HasErrorType`](../../../cgp/reference/components/has_error_type.md), so no provider names
+`anyhow::Error` or any other concrete type. `HandleCoreExec` shows the full pattern: it raises the
+`std::io::Error` from spawning a process, then wraps it with a `CommandNotFound` detail when the
 kind is `NotFound`, and with a `SpawnCommandFailure` detail in every case.
 
 ```rust
@@ -33,8 +33,8 @@ Caused by:
     1: No such file or directory (os error 2)
 ```
 
-The error types a provider raises from its own logic are defined next to it: `ExecOutputError`
-(a non-zero exit from `SimpleExec`, carrying the whole `Output`), `ErrorResponse` (a non-success HTTP
+The error types a provider raises from its own logic are defined next to it: `ExecOutputError` (a
+non-zero exit from `SimpleExec`, carrying the whole `Output`), `ErrorResponse` (a non-success HTTP
 status, carrying the whole `Response`), and the detail structs `StdinPipeError`,
 `WaitWithOutputError`, and `DecodeUtf8InputError`. The [reference](../reference/README.md) lists
 each with its provider.
@@ -61,8 +61,8 @@ strategy from the [error providers](../../../cgp/reference/providers/error_provi
 | `std::io::Error`, `Utf8Error`, `reqwest::Error`, `url::ParseError`, `InvalidHeaderName`, `InvalidHeaderValue`, `serde_json::Error` | `RaiseAnyhowError`: convert through `std::error::Error` |
 | `ExecOutputError`, `ErrorResponse` | `DebugAnyhowError`: neither implements `std::error::Error`, so format with `Debug` |
 
-`ErrorResponse` derives `Debug`, so the error for a non-success response is the `Debug` of the entire
-`reqwest::Response`, headers included. A probe of a redirected request printed a single line
+`ErrorResponse` derives `Debug`, so the error for a non-success response is the `Debug` of the
+entire `reqwest::Response`, headers included. A probe of a redirected request printed a single line
 carrying the URL, status, and every response header. `ExecOutputError` writes its own `Debug`,
 giving the exit code and the captured stderr.
 
@@ -91,10 +91,18 @@ already has; see [execution](../reference/execution.md#streamingexec-and-handles
 
 ## Source
 
-- The error wiring: [crates/hypershell/src/namespaces/handlers.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell/src/namespaces/handlers.rs) and [crates/hypershell/src/providers/error.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell/src/providers/error.rs)
-- The error types and details: [crates/hypershell-tokio-components/src/providers/core_exec.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-tokio-components/src/providers/core_exec.rs), [simple_exec.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-tokio-components/src/providers/simple_exec.rs), [crates/hypershell-reqwest-components/src/providers/simple_request.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-reqwest-components/src/providers/simple_request.rs), and [crates/hypershell-components/src/providers/convert.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/providers/convert.rs)
+- The error wiring:
+  [crates/hypershell/src/namespaces/handlers.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell/src/namespaces/handlers.rs)
+  and
+  [crates/hypershell/src/providers/error.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell/src/providers/error.rs)
+- The error types and details:
+  [crates/hypershell-tokio-components/src/providers/core_exec.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-tokio-components/src/providers/core_exec.rs),
+  [simple_exec.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-tokio-components/src/providers/simple_exec.rs),
+  [crates/hypershell-reqwest-components/src/providers/simple_request.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-reqwest-components/src/providers/simple_request.rs),
+  and
+  [crates/hypershell-components/src/providers/convert.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/providers/convert.rs)
 
 ## Public material derived from this
 
-The `architecture/error-handling` page of the planned [Hypershell project
-section](../../../website/projects/hypershell.md).
+The `architecture/error-handling` page of the
+[Hypershell project section](../../../website/projects/hypershell.md), not yet written.

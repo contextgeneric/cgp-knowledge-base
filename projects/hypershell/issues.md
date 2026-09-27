@@ -2,9 +2,9 @@
 
 This document records the open problems in Hypershell's `v0.8.0` branch, found while documenting it
 and each confirmed by a probe unless it says otherwise. They are grouped as defects, missing
-features, and housekeeping. Per [../AGENTS.md](../AGENTS.md#a-project-section-documents-its-project-in-depth),
-each is a separate change for the Hypershell repository, and an entry is removed in the same change
-that fixes it.
+features, and housekeeping. Per
+[../AGENTS.md](../AGENTS.md#a-project-section-documents-its-project-in-depth), each is a separate
+change for the Hypershell repository, and an entry is removed in the same change that fixes it.
 
 ## Defects
 
@@ -14,13 +14,14 @@ that fixes it.
 returns a redirect as an `ErrorResponse` instead of following it. The locked `reqwest` 0.12.28
 follows redirects with `tower-http`'s `FollowRedirect`, which resends the request only with a clone
 of its body. A streamed body cannot be cloned, so the redirect response is returned unless the
-redirect itself discards the body, as a 303 does, or a 301 or 302 answering a POST. The mechanism was
-read from the two crates' source.
+redirect itself discards the body, as a 303 does, or a 301 or 302 answering a POST. The mechanism
+was read from the two crates' source.
 
 A byte-buffer input is not affected. The reqwest bundle sends a `Vec<u8>` or `String` as a buffered
 body, and a probe that sent an empty `Vec<u8>` to a URL answering 301 got the redirected page back.
-Following a redirect with a streamed body would need the stream buffered in full first, which defeats
-streaming. See [HTTP](reference/http.md#streaminghttprequest-and-handlestreaminghttprequest).
+Following a redirect with a streamed body would need the stream buffered in full first, which
+defeats streaming. See
+[HTTP](reference/http.md#streaminghttprequest-and-handlestreaminghttprequest).
 
 ### `StreamToLines` is unusable
 
@@ -40,17 +41,18 @@ namespace that inherits it can route one syntax to a different provider. An entr
 beside `namespace HypershellNamespace;` fails with `[CGP-E005]`, "`App` cannot wire
 `@cgp.extra.handler.HandlerComponent.SimpleExec.*` that is already set through
 `HypershellNamespace`". This undercuts the design's claim that a context can change how a syntax
-behaves. It matters most for `CoreExec` and `CoreHttpRequest`, which exist so one entry can change how
-every command runs or every request is sent. The workarounds, `Use` in the program or a namespace
-that restates the routes, are in [extending the language](guides/extending-the-language.md#replace-the-interpretation-of-existing-syntax).
+behaves. It matters most for `CoreExec` and `CoreHttpRequest`, which exist so one entry can change
+how every command runs or every request is sent. The workarounds, `Use` in the program or a
+namespace that restates the routes, are in
+[extending the language](guides/extending-the-language.md#replace-the-interpretation-of-existing-syntax).
 
 The restriction is CGP's rule rather than Hypershell's: a namespace entry, once bound, cannot be
 overridden, so a default and an override cannot share a path; see the
-[namespace override conflict](../../cgp/errors/wiring/namespace-override-conflict.md). The pattern the
-[namespaces guide](../../cgp/guides/namespaces-and-prefixes.md) recommends is a base namespace that
-describes the structure and leaves the varying paths unbound, with each inheriting namespace binding
-them as one configuration. Applied here, `HypershellNamespace` would split into a base that binds
-every syntax meant to stay fixed, and a default configuration that binds the rest. A custom
+[namespace override conflict](../../cgp/errors/wiring/namespace-override-conflict.md). The pattern
+the [namespaces guide](../../cgp/guides/namespaces-and-prefixes.md) recommends is a base namespace
+that describes the structure and leaves the varying paths unbound, with each inheriting namespace
+binding them as one configuration. Applied here, `HypershellNamespace` would split into a base that
+binds every syntax meant to stay fixed, and a default configuration that binds the rest. A custom
 configuration would inherit the base and bind every varying syntax itself, including those it does
 not change. Which syntax should vary is not decided.
 
@@ -64,8 +66,8 @@ compile, and the workaround, `ToTokioAsyncRead`, is not in the prelude. Wiring b
 
 ### The WebSocket handler ignores its parameters and `String` input
 
-`WebSocket<Url, Params>` ignores `Params`, so a program cannot set headers or subprotocols, and every
-example passes `()`. The bundle wires `Vec<u8>` and the two reader wrappers as inputs but not
+`WebSocket<Url, Params>` ignores `Params`, so a program cannot set headers or subprotocols, and
+every example passes `()`. The bundle wires `Vec<u8>` and the two reader wrappers as inputs but not
 `String`, which every other streaming stage accepts.
 
 ### Defined but unrouted providers
@@ -84,8 +86,8 @@ Each is either a missing route or dead code; the source does not say which.
 The macro works for every program in the repository, but four edges were confirmed by probes; see
 [the macro reference](reference/macro.md#known-issues):
 
-- **The expansion is unhygienic.** It emits `Pipe`, `Product!`, and `Symbol!` unqualified, so it fails
-  without the prelude in scope. Emitting paths through the Hypershell crates would fix it.
+- **The expansion is unhygienic.** It emits `Pipe`, `Product!`, and `Symbol!` unqualified, so it
+  fails without the prelude in scope. Emitting paths through the Hypershell crates would fix it.
 - **An unbalanced `<` panics the macro** instead of producing a spanned compile error.
 - **`|` splits at the token level**, so `WithArgs[a, b | c]` becomes one pipeline rather than two
   elements.
@@ -93,9 +95,9 @@ The macro works for every program in the repository, but four edges were confirm
 
 ### No wiring checks and no rustdoc
 
-Nothing in the repository uses `check_components!`, so a syntax that has a provider but no route goes
-unnoticed; see [testing.md](testing.md#what-is-not-exercised). The
-source has no doc comments, so the crates' docs.rs pages list items with no explanation.
+Nothing in the repository uses `check_components!`, so a syntax that has a provider but no route
+goes unnoticed; see [testing.md](testing.md#what-is-not-exercised). The source has no doc comments,
+so the crates' docs.rs pages list items with no explanation.
 
 ## Housekeeping
 
@@ -108,40 +110,42 @@ source has no doc comments, so the crates' docs.rs pages list items with no expl
 - **Providers use the explicit form.** Almost every provider names the context and lists `Context:`
   bounds, and none uses [`#[uses]`](../../cgp/reference/attributes/uses.md). This is the form the
   [declaring-dependencies](../../cgp/guides/declaring-dependencies.md) guide replaces.
-- **The HTTP client is read through `#[cgp_getter]`.** Every field read except one names its field in
-  the program (`FieldArg<Tag>`, `FieldArgs<Tag>`), so an
+- **The HTTP client is read through `#[cgp_getter]`.** Every field read except one names its field
+  in the program (`FieldArg<Tag>`, `FieldArgs<Tag>`), so an
   [`#[implicit]`](../../cgp/reference/attributes/implicit.md) argument cannot express it. The
   exception is `HasReqwestClient`, a `#[cgp_getter]` component that `HypershellNamespace` wires to
   `UseField<Symbol!("http_client")>` for every context. The
-  [reading-context-fields](../../cgp/guides/reading-context-fields.md) guide reserves `#[cgp_getter]`
-  for choosing the field per context, which nothing in the repository does, so an
-  `#[implicit] http_client: &Client` argument on `HandleCoreHttpRequest` would be the default form. It
-  would also remove the option of supplying the client some other way. Which to keep is a design
+  [reading-context-fields](../../cgp/guides/reading-context-fields.md) guide reserves
+  `#[cgp_getter]` for choosing the field per context, which nothing in the repository does, so an
+  `#[implicit] http_client: &Client` argument on `HandleCoreHttpRequest` would be the default form.
+  It would also remove the option of supplying the client some other way. Which to keep is a design
   decision.
 - **`HandlePipe` uses a legacy `UseDelegate` table.** A probe confirmed that `open` accepts its
   bounded key, `<Handlers: WrapCall> Pipe<Handlers>`, so it can move to the form the
   [dispatching-per-type](../../cgp/guides/dispatching-per-type.md) guide prescribes.
 - **Six components carry an unused `#[derive_delegate(UseDelegate<…>)]`.** The four extractors and
-  the two updaters generate a legacy dispatcher that nothing uses, since every bundle dispatches with
-  `open`. Removing them is breaking for a downstream user who wires a `UseDelegate` table.
+  the two updaters generate a legacy dispatcher that nothing uses, since every bundle dispatches
+  with `open`. Removing them is breaking for a downstream user who wires a `UseDelegate` table.
 - **`ExtractArgs` recurses through the wiring.** Its tail bound is written as
-  `Self: CommandUpdater<…>`, which `#[cgp_impl]` expands to a bound on the context, so `cargo cgp expand`
-  shows each tail of a `WithArgs` list resolved through the context's routes rather than by
-  `ExtractArgs` itself. `JoinStringArgs`, `JoinExtractArgs`, and `UpdateRequestHeaders` name
-  themselves instead. The recursion works only because the namespace routes every `WithArgs<Args>`
-  to the same provider; naming `ExtractArgs` in the bound, as the other three do, would make it direct.
+  `Self: CommandUpdater<…>`, which `#[cgp_impl]` expands to a bound on the context, so
+  `cargo cgp expand` shows each tail of a `WithArgs` list resolved through the context's routes
+  rather than by `ExtractArgs` itself. `JoinStringArgs`, `JoinExtractArgs`, and
+  `UpdateRequestHeaders` name themselves instead. The recursion works only because the namespace
+  routes every `WithArgs<Args>` to the same provider; naming `ExtractArgs` in the bound, as the
+  other three do, would make it direct.
 - **Two bundles open components they never wire.** `HypershellTokioProvider` opens the string and
-  URL extractors, and `HypershellReqwestProvider` the command and URL extractors, with no entries for
-  them. The namespace routes none of those paths to either bundle, so the extra `open`s are inert.
+  URL extractors, and `HypershellReqwestProvider` the command and URL extractors, with no entries
+  for them. The namespace routes none of those paths to either bundle, so the extra `open`s are
+  inert.
 - **`ReturnInput` duplicates CGP's.** `hypershell_components::providers::ReturnInput` has the same
   name and `Handler` bound as `cgp::extra::handler::ReturnInput`.
-- **A vestigial higher-ranked bound.** `HandleSimpleExec` requires `for<'a> CanRaiseError<ExecOutputError>`,
-  and nothing uses `'a`.
-- **Unneeded recursion limits.** Four examples and the test crate set `#![recursion_limit]`, which the
-  pinned toolchain does not need.
-- **Two unclear or mistyped strings.** The compare namespace's comment says `Compare` is "much slower"
-  unboxed without saying whether it means compile time or run time, and `compare_and_branch` prints
-  "the checksums are equals".
+- **A vestigial higher-ranked bound.** `HandleSimpleExec` requires
+  `for<'a> CanRaiseError<ExecOutputError>`, and nothing uses `'a`.
+- **Unneeded recursion limits.** Four examples and the test crate set `#![recursion_limit]`, which
+  the pinned toolchain does not need.
+- **Two unclear or mistyped strings.** The compare namespace's comment says `Compare` is "much
+  slower" unboxed without saying whether it means compile time or run time, and `compare_and_branch`
+  prints "the checksums are equals".
 - **The HTTP error message is the whole response.** `ErrorResponse` derives `Debug` and is raised
   through `DebugAnyhowError`, so its message is the `Debug` of the `reqwest::Response`, every header
   included.
@@ -149,5 +153,6 @@ source has no doc comments, so the crates' docs.rs pages list items with no expl
 ## Public material derived from this
 
 None on the public site: the website's pages state only high-level limits and name no bugs or
-missing features, per [the writing guide](../../website/writing-guides/project.md#the-limitations-page).
-The code prerequisites in the [Hypershell plan](../../website/projects/hypershell.md) draw on it.
+missing features, per
+[the writing guide](../../website/writing-guides/project.md#the-limitations-page). The code
+prerequisites in the [Hypershell plan](../../website/projects/hypershell.md) draw on it.

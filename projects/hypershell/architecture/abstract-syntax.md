@@ -1,10 +1,10 @@
 # Abstract syntax
 
-A Hypershell program is an ordinary Rust type assembled from empty marker structs, and that
-decision is what lets the same program run differently under different contexts. This document
-describes the kinds of syntax the language has, how they nest, and the `hypershell!` macro that sits
-on top of them. The per-item detail is in the [reference](../reference/README.md); the general
-technique is [type-level DSLs](../../../cgp/concepts/type-level-dsls.md).
+A Hypershell program is an ordinary Rust type assembled from empty marker structs, and that decision
+is what lets the same program run differently under different contexts. This document describes the
+kinds of syntax the language has, how they nest, and the `hypershell!` macro that sits on top of
+them. The per-item detail is in the [reference](../reference/README.md); the general technique is
+[type-level DSLs](../../../cgp/concepts/type-level-dsls.md).
 
 ## Every piece of syntax is an empty marker
 
@@ -35,13 +35,13 @@ argument of `handle`, and the only runtime value that flows is the program's inp
 The syntax types fall into four groups. The groups differ in which component interprets them, which
 is why the distinction matters when adding syntax.
 
-**Handler syntax is a pipeline stage**, interpreted by the `Handler` component. It takes an input and
-produces an output: `SimpleExec` and `StreamingExec` run a command, `SimpleHttpRequest` and
+**Handler syntax is a pipeline stage**, interpreted by the `Handler` component. It takes an input
+and produces an output: `SimpleExec` and `StreamingExec` run a command, `SimpleHttpRequest` and
 `StreamingHttpRequest` send a request, `ReadFile` and `WriteFile` touch the file system,
 `EncodeJson` and `DecodeJson<T>` convert JSON, and the stream conversions (`StreamToBytes`,
 `StreamToString`, `StreamToStdout`, `BytesToString`, `BytesToStream`, `StreamToLines`) adapt one
-stage's output into another stage's input. The extension crates add `Checksum<Hasher>`, `BytesToHex`,
-and `WebSocket<Url, Params>`.
+stage's output into another stage's input. The extension crates add `Checksum<Hasher>`,
+`BytesToHex`, and `WebSocket<Url, Params>`.
 
 **Argument syntax is an expression that produces a string, a path, a URL, or a method**, interpreted
 by one of four extractor components rather than by `Handler`. It is a small language inside the
@@ -74,16 +74,18 @@ runs `Code` behind a boxed future; see [interpretation.md](interpretation.md#con
 back to the context.** `CoreExec<Path, Args>` in `hypershell-tokio-components` spawns a configured
 child process, and `CoreHttpRequest<Method, Url, Params>` in `hypershell-reqwest-components` builds
 and sends a request. The user-facing `SimpleExec` and `StreamingExec` both call `CoreExec`, and both
-HTTP syntaxes call `CoreHttpRequest`, through the context:
+HTTP syntaxes call `CoreHttpRequest`, through the context. `HandleSimpleExec` makes the call with
+the tag's type inferred as `PhantomData<CoreExec<CommandPath, Args>>` from its
+`CanHandle<CoreExec<CommandPath, Args>, ()>` bound:
 
 ```rust
-let mut child = context.handle(PhantomData::<CoreExec<CommandPath, Args>>, ()).await?;
+let mut child = context.handle(PhantomData, ()).await?;
 ```
 
 Making the shared step a piece of syntax, rather than a helper function, means a context can rewire
-it. A context that wants every command spawned differently replaces the `CoreExec` provider once, and
-both execution syntaxes follow. The namespace routes both core syntaxes like any other, so they can
-also be written in a program, though nothing documents them for that use.
+it. A context that wants every command spawned differently replaces the `CoreExec` provider once,
+and both execution syntaxes follow. The namespace routes both core syntaxes like any other, so they
+can also be written in a program, though nothing documents them for that use.
 
 ## The surface syntax
 
@@ -115,22 +117,28 @@ pub type Program = Pipe<Product![
 ```
 
 The rules apply recursively inside every group, so a `|` inside angle brackets builds a nested
-`Pipe`, which is how the examples write a sub-pipeline as a type argument. The macro has sharp edges.
-It emits `Pipe`, `Product!`, and `Symbol!` unqualified, it panics rather than reporting an error on
-an unbalanced `<`, and a `|` splits at the token level, so it flattens a comma list around it. The
-exact rules and those edges are in [the macro reference](../reference/macro.md).
+`Pipe`, which is how the examples write a sub-pipeline as a type argument. The macro has sharp
+edges. It emits `Pipe`, `Product!`, and `Symbol!` unqualified, it panics rather than reporting an
+error on an unbalanced `<`, and a `|` splits at the token level, so it flattens a comma list around
+it. The exact rules and those edges are in [the macro reference](../reference/macro.md).
 
-Keeping the macro this thin is deliberate. The language remains fully usable without it, an extension
-adds syntax without touching it, and it never needs to know what a piece of syntax means.
+Keeping the macro this thin is deliberate. The language remains fully usable without it, an
+extension adds syntax without touching it, and it never needs to know what a piece of syntax means.
 
 ## Source
 
-- The syntax types: [crates/hypershell-components/src/dsl/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-components/src/dsl)
-- `WrapStaticArg`: [crates/hypershell-components/src/traits/wrap_static_arg.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/traits/wrap_static_arg.rs)
-- The core syntax: [crates/hypershell-tokio-components/src/dsl/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-tokio-components/src/dsl) and [crates/hypershell-reqwest-components/src/dsl/mod.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-reqwest-components/src/dsl/mod.rs)
-- The macro: [crates/hypershell-macro/src/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-macro/src)
+- The syntax types:
+  [crates/hypershell-components/src/dsl/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-components/src/dsl)
+- `WrapStaticArg`:
+  [crates/hypershell-components/src/traits/wrap_static_arg.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/traits/wrap_static_arg.rs)
+- The core syntax:
+  [crates/hypershell-tokio-components/src/dsl/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-tokio-components/src/dsl)
+  and
+  [crates/hypershell-reqwest-components/src/dsl/mod.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-reqwest-components/src/dsl/mod.rs)
+- The macro:
+  [crates/hypershell-macro/src/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-macro/src)
 
 ## Public material derived from this
 
-The `architecture/abstract-syntax` page of the planned [Hypershell project
-section](../../../website/projects/hypershell.md).
+The `architecture/abstract-syntax` page of the
+[Hypershell project section](../../../website/projects/hypershell.md).

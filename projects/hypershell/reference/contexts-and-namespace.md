@@ -42,8 +42,8 @@ Its entries, grouped by the provider they route to, are:
 A key is the route followed by the syntax or source-error type, and each generic key binds its
 parameters, as in `<Path, Args> SimpleExec<Path, Args>`. Every path key ends in an open wildcard, so
 a handler entry matches its syntax with any input and leaves input dispatch to the bundle. The table
-is complete as listed: `StreamToLines`, `Checksum`, `BytesToHex`, and `WebSocket` have no route.
-The last three are routed by the extension namespaces, and
+is complete as listed: `StreamToLines`, `Checksum`, `BytesToHex`, and `WebSocket` have no route. The
+last three are routed by the extension namespaces, and
 [issues.md](../issues.md#streamtolines-is-unusable) covers the first.
 
 ## `HypershellErrorHandler`
@@ -157,9 +157,9 @@ pub use crate::contexts::{HypershellCli, HypershellHttp};
 
 ### Behavior
 
-The prelude brings the `hypershell!` macro together with the `Pipe`, `Product!`, and `Symbol!`
-names its expansion uses unqualified, which is why a file that imports the macro alone fails to
-compile. It does not re-export `HypershellNamespace`, which a custom context imports from
+The prelude brings the `hypershell!` macro together with the `Pipe`, `Product!`, and `Symbol!` names
+its expansion uses unqualified, which is why a file that imports the macro alone fails to compile.
+It does not re-export `HypershellNamespace`, which a custom context imports from
 `hypershell::namespaces`, nor `ToTokioAsyncRead` and the core syntax, which live in
 `hypershell_tokio_components::dsl` and `hypershell_reqwest_components::dsl`.
 
@@ -173,5 +173,5 @@ compile. It does not re-export `HypershellNamespace`, which a custom context imp
 ## Public material derived from this
 
 Rustdoc for the `hypershell` crate, one page per construct in the `reference/namespace/` pages of
-the planned [Hypershell project section](../../../website/projects/hypershell.md), and the one-line
-context on its index.
+the [Hypershell project section](../../../website/projects/hypershell.md), not yet written, and the
+one-line context on its index.

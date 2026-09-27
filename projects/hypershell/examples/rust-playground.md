@@ -1,9 +1,10 @@
 # `rust_playground`
 
-A Rust value encoded to JSON, posted to the Rust Playground's gist API, and the JSON response decoded
-back into a Rust type, on the predefined `HypershellHttp` context.
+A Rust value encoded to JSON, posted to the Rust Playground's gist API, and the JSON response
+decoded back into a Rust type, on the predefined `HypershellHttp` context.
 
-- **Source**: [crates/hypershell-examples/examples/rust_playground.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/rust_playground.rs)
+- **Source**:
+  [crates/hypershell-examples/examples/rust_playground.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/rust_playground.rs)
 - **Run**: `cargo run --example rust_playground`
 - **Needs**: network
 - **Result**: not run while documenting, because running it publishes a public GitHub gist of the
@@ -52,11 +53,13 @@ enough because the program reads no field other than the client.
 
 ## What it demonstrates
 
-- A program whose input and output are Rust types: see [interpretation](../architecture/interpretation.md#handler-is-the-interpreter-interface).
-- `HypershellHttp`: see [contexts and namespace](../reference/contexts-and-namespace.md#hypershellhttp).
+- A program whose input and output are Rust types: see
+  [interpretation](../architecture/interpretation.md#handler-is-the-interpreter-interface).
+- `HypershellHttp`: see
+  [contexts and namespace](../reference/contexts-and-namespace.md#hypershellhttp).
 - JSON in both directions: see [JSON](../reference/json.md).
 
 ## Public material derived from this
 
-The `examples/rust-playground` page of the planned [Hypershell project
-section](../../../website/projects/hypershell.md).
+The `examples/rust-playground` page of the
+[Hypershell project section](../../../website/projects/hypershell.md).

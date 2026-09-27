@@ -2,9 +2,9 @@
 
 The HTTP family sends requests with `reqwest`. As with processes, a simple and a streaming syntax
 differ in whether the response is buffered or streamed, and both delegate the request itself to an
-internal `CoreHttpRequest` step. Methods, headers, and the client come from their own components. The
-providers are in `hypershell-reqwest-components`; the syntax types and the method extractor are in
-`hypershell-components`.
+internal `CoreHttpRequest` step. Methods, headers, and the client come from their own components.
+The providers are in `hypershell-reqwest-components`; the syntax types and the method extractor are
+in `hypershell-components`.
 
 ## `SimpleHttpRequest` and `HandleSimpleHttpRequest`
 
@@ -109,8 +109,8 @@ PipeHandlers<Product![
 ]>
 ```
 
-Either way the output is a `FuturesAsyncReadStream`, the response body read as it arrives.
-A non-success status raises `ErrorResponse`, and stream errors surface as `std::io::Error` from the
+Either way the output is a `FuturesAsyncReadStream`, the response body read as it arrives. A
+non-success status raises `ErrorResponse`, and stream errors surface as `std::io::Error` from the
 reader. The output is a futures reader, so `StreamToBytes` and `StreamToString` cannot follow it
 directly; insert `ToTokioAsyncRead`, per [streams and I/O](streams-and-io.md).
 
@@ -124,8 +124,8 @@ a 301, 302, 307, or 308. A buffered body does: a probe sent an empty `Vec<u8>` t
 
 ## `CoreHttpRequest` and `HandleCoreHttpRequest`
 
-`CoreHttpRequest<Method, Url, Params>` is the internal step both HTTP syntaxes delegate to: it builds
-the request from the method, URL, and header syntax, attaches the body, and sends it.
+`CoreHttpRequest<Method, Url, Params>` is the internal step both HTTP syntaxes delegate to: it
+builds the request from the method, URL, and header syntax, attaches the body, and sends it.
 
 ### Definition
 
@@ -157,8 +157,8 @@ the method type to `reqwest::Method`, which the reqwest bundle's `UseType` entri
 
 ### Context dependencies
 
-The client getter, the URL and method extractors, the request-builder updater for the header
-syntax, and raising `reqwest::Error`.
+The client getter, the URL and method extractors, the request-builder updater for the header syntax,
+and raising `reqwest::Error`.
 
 ## Method markers, `CanExtractMethodArg`, and `ExtractReqwestMethod`
 
@@ -211,7 +211,8 @@ from a context field instead.
 
 ### Known issues
 
-`ExtractMethodFieldArg` is routed nowhere. See [issues.md](../issues.md#defined-but-unrouted-providers).
+`ExtractMethodFieldArg` is routed nowhere. See
+[issues.md](../issues.md#defined-but-unrouted-providers).
 
 ## `WithHeaders`, `Header`, and the request-builder updater
 
@@ -296,9 +297,9 @@ with `DebugAnyhowError`, so its message is the `Debug` of the `Response`, header
 
 ## Wiring
 
-`HypershellReqwestProvider` maps the three request syntaxes, `GetMethod` and `PostMethod` under the
-method extractor, `UrlEncodeArg` under the string extractor, and `WithHeaders` and `Header` under the
-request-builder updater, and fixes `HttpMethod = reqwest::Method` and `Url = url::Url`.
+`HypershellReqwestProvider` maps the three request syntaxes, the four method markers under the
+method extractor, `UrlEncodeArg` under the string extractor, and `WithHeaders` and `Header` under
+the request-builder updater, and fixes `HttpMethod = reqwest::Method` and `Url = url::Url`.
 `HypershellNamespace` routes each to the bundle, and wires `ReqwestClientGetterComponent` to
 `UseField<Symbol!("http_client")>` itself. `HypershellHttp` is the ready-made context with that
 field.
@@ -306,11 +307,13 @@ field.
 ## Source
 
 - [crates/hypershell-components/src/dsl/http.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/dsl/http.rs)
-- [crates/hypershell-components/src/components/method_arg.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/components/method_arg.rs) and [providers/method_arg.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/providers/method_arg.rs)
+- [crates/hypershell-components/src/components/method_arg.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/components/method_arg.rs)
+  and
+  [providers/method_arg.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/providers/method_arg.rs)
 - [crates/hypershell-reqwest-components/src/components/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-reqwest-components/src/components)
 - [crates/hypershell-reqwest-components/src/providers/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-reqwest-components/src/providers)
 
 ## Public material derived from this
 
 Rustdoc for the HTTP items. It also feeds one page per construct in the `reference/` pages of the
-planned [Hypershell project section](../../../website/projects/hypershell.md).
+[Hypershell project section](../../../website/projects/hypershell.md), not yet written.

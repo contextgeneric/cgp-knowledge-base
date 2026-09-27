@@ -1,9 +1,10 @@
 # `hello`
 
-The smallest Hypershell program: `echo hello world!` with the output streamed to standard output, run
-on the predefined empty context.
+The smallest Hypershell program: `echo hello world!` with the output streamed to standard output,
+run on the predefined empty context.
 
-- **Source**: [crates/hypershell-examples/examples/hello.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/hello.rs)
+- **Source**:
+  [crates/hypershell-examples/examples/hello.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/hello.rs)
 - **Run**: `cargo run --example hello`
 - **Needs**: `echo`
 - **Result**: prints `hello world!`
@@ -49,5 +50,6 @@ bytes as well as streams, so no conversion stage is needed.
 
 ## Public material derived from this
 
-The `examples/hello` page of the planned [Hypershell project
-section](../../../website/projects/hypershell.md), and the opening program on its index.
+The `examples/hello` page of the
+[Hypershell project section](../../../website/projects/hypershell.md), and the opening program on
+its index.

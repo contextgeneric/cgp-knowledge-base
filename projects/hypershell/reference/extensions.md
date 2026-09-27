@@ -32,11 +32,12 @@ where
 The provider folds every chunk of a `TryStream` into the hasher and returns the finished digest as a
 fixed-size byte array, raising the stream's own error type. It covers every hash algorithm with one
 impl, since `Hasher` is any `Digest`, and a program names the algorithm type directly, as in
-`Checksum<sha2::Sha256>`, which makes `sha2` a dependency of the program. The digest is raw bytes, so
-a program that prints it follows it with `BytesToHex`. Under the examples crate's wiring the syntax
-is a two-stage pipeline, `PipeHandlers<Product![HandleToFuturesStream, HandleStreamChecksum]>`, so it
-accepts bytes or either reader wrapper. With a streaming HTTP input, the stream error is
-`std::io::Error`, which the namespace already routes.
+`Checksum<sha2::Sha256>`, which makes `sha2` a dependency of the program. The digest is raw bytes,
+so a program that prints it follows it with `BytesToHex`. Under the examples crate's wiring the
+syntax is a two-stage pipeline,
+`PipeHandlers<Product![HandleToFuturesStream, HandleStreamChecksum]>`, so it accepts bytes or either
+reader wrapper. With a streaming HTTP input, the stream error is `std::io::Error`, which the
+namespace already routes.
 
 ### Context dependencies
 
@@ -91,13 +92,13 @@ where
 
 ### Behavior
 
-The syntax type lives in `hypershell-components`; the provider and its bundle live in the tungstenite
-crate. The URL is a string argument, not a URL argument, so it is not parsed by `url`. The provider
-connects with `tokio_tungstenite::connect_async`, spawns a Tokio task that forwards the input to the
-socket as binary messages, and returns a reader over the incoming messages. A text message is
-emitted with a trailing newline, and any other message as its raw payload. When the input ends, the
-forwarding task closes the socket, which is why the `bluesky_websocket` example passes a reader over
-a pipe it never writes.
+The syntax type lives in `hypershell-components`; the provider and its bundle live in the
+tungstenite crate. The URL is a string argument, not a URL argument, so it is not parsed by `url`.
+The provider connects with `tokio_tungstenite::connect_async`, spawns a Tokio task that forwards the
+input to the socket as binary messages, and returns a reader over the incoming messages. A text
+message is emitted with a trailing newline, and any other message as its raw payload. When the input
+ends, the forwarding task closes the socket, which is why the `bluesky_websocket` example passes a
+reader over a pipe it never writes.
 
 `HypershellTungsteniteProvider` wires one pipeline per input kind under the same syntax, keyed on
 both segments of the path:
@@ -134,9 +135,10 @@ and `BytesToHex`, and `HypershellChecksumNamespace` routes both; see the
 
 - [crates/hypershell-hash-components/src/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-hash-components/src)
 - [crates/hypershell-tungstenite-components/src/providers/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-tungstenite-components/src/providers)
-- [crates/hypershell-components/src/dsl/http.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/dsl/http.rs) (the `WebSocket` syntax)
+- [crates/hypershell-components/src/dsl/http.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/dsl/http.rs)
+  (the `WebSocket` syntax)
 
 ## Public material derived from this
 
 Rustdoc for the extension crates, and one page per construct in the `reference/` pages of the
-planned [Hypershell project section](../../../website/projects/hypershell.md).
+[Hypershell project section](../../../website/projects/hypershell.md), not yet written.

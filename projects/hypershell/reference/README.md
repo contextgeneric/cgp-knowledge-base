@@ -48,7 +48,8 @@ All the `hypershell-components` syntax is re-exported by `hypershell::prelude`. 
 ## Components
 
 Each component is defined with `#[cgp_component]`, `#[cgp_type]`, or `#[cgp_getter]`, so it also has
-a provider trait and a `…Component` wiring key, and each carries a `#[prefix]` into `DefaultNamespace`.
+a provider trait and a `…Component` wiring key, and each carries a `#[prefix]` into
+`DefaultNamespace`.
 
 | Consumer trait | Provider trait | Prefix | Import from | Reference |
 |---|---|---|---|---|
@@ -104,24 +105,24 @@ Most providers appear in the syntax table. These are the ones a wiring names dir
 Register each reference document here, in [../README.md](../README.md), and in
 [../../../summary.md](../../../summary.md) in the same change.
 
-- [execution.md](execution.md) — `SimpleExec`, `StreamingExec`, `CoreExec`, the command updater and
+- [execution.md](execution.md): `SimpleExec`, `StreamingExec`, `CoreExec`, the command updater and
   its list syntax, and the execution error types.
-- [arguments.md](arguments.md) — the string, command, and URL extractors and their abstract types,
+- [arguments.md](arguments.md): the string, command, and URL extractors and their abstract types,
   `StaticArg`, `FieldArg`, `JoinArgs`, `UrlEncodeArg`, and the layered providers.
-- [http.md](http.md) — the three request syntaxes, the method markers and extractor, headers, the
+- [http.md](http.md): the three request syntaxes, the method markers and extractor, headers, the
   client getter, and `ErrorResponse`.
-- [streams-and-io.md](streams-and-io.md) — the conversion syntax, files and standard output, the
+- [streams-and-io.md](streams-and-io.md): the conversion syntax, files and standard output, the
   stream wrappers, the adapters, and the input dispatchers.
-- [json.md](json.md) — `EncodeJson` and `DecodeJson`.
-- [control.md](control.md) — `Pipe`, `Call`, `Use`, `ConvertTo`, `Box`, and `ReturnInput`.
-- [extensions.md](extensions.md) — the checksum and WebSocket extension crates.
-- [contexts-and-namespace.md](contexts-and-namespace.md) — the full route table of
+- [json.md](json.md): `EncodeJson` and `DecodeJson`.
+- [control.md](control.md): `Pipe`, `Call`, `Use`, `ConvertTo`, `Box`, and `ReturnInput`.
+- [extensions.md](extensions.md): the checksum and WebSocket extension crates.
+- [contexts-and-namespace.md](contexts-and-namespace.md): the full route table of
   `HypershellNamespace`, the error aggregate, the bundles, the two contexts, and the prelude.
-- [macro.md](macro.md) — the rewriting rules of `hypershell!` and its edges.
+- [macro.md](macro.md): the rewriting rules of `hypershell!` and its edges.
 
 ## Public material derived from this
 
 Rustdoc for every public item. The source carries no doc comments, so the crates' docs.rs pages list
 items without explanation; the entries here are written to be condensed into them. It also feeds the
-`reference/index` page and its lookup table in the planned [Hypershell project
-section](../../../website/projects/hypershell.md).
+`reference/index` page and its lookup table in the
+[Hypershell project section](../../../website/projects/hypershell.md), not yet written.

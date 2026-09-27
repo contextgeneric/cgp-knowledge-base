@@ -1,7 +1,7 @@
 # Writing a program
 
-This guide is for someone using Hypershell rather than extending it: how to write a program, choose a
-context, feed it input, and check it before running it. The syntax is listed in the
+This guide is for someone using Hypershell rather than extending it: how to write a program, choose
+a context, feed it input, and check it before running it. The syntax is listed in the
 [reference](../reference/README.md), and the running programs in [examples](../examples/README.md)
 show each step in context.
 
@@ -55,13 +55,13 @@ delegate_components! {
 }
 ```
 
-Name the client field `http_client`; the namespace reads the client from a field of exactly that name.
-Then reach the fields from the program with the argument syntax:
+Name the client field `http_client`; the namespace reads the client from a field of exactly that
+name. Then reach the fields from the program with the argument syntax:
 
 - **`FieldArg<"name">`**: one value, formatted with `Display`, wherever an argument is expected.
 - **`FieldArgs<"args">`**: every item of an iterable field, as a command's whole argument list.
-- **`JoinArgs[…]`**: several arguments joined into one. For a URL or header this concatenates,
-  and for a command path or file path it joins path segments with `PathBuf::join`.
+- **`JoinArgs[…]`**: several arguments joined into one. For a URL or header this concatenates, and
+  for a command path or file path it joins path segments with `PathBuf::join`.
 - **`UrlEncodeArg<…>`**: a value encoded for a URL; use it inside the `JoinArgs` that builds the
   URL, since it is routed only as a string argument.
 
@@ -70,12 +70,12 @@ The details of each are in [arguments](../reference/arguments.md).
 ## Choose simple or streaming stages
 
 **Use a simple stage when the data is small or a command must finish before the next starts, and a
-streaming stage for large data or concurrent processes.** `SimpleExec` and `SimpleHttpRequest` buffer
-the whole output and produce bytes. `StreamingExec` and `StreamingHttpRequest` produce a stream at
-once, and consecutive streaming stages run in parallel, as in a shell.
+streaming stage for large data or concurrent processes.** `SimpleExec` and `SimpleHttpRequest`
+buffer the whole output and produce bytes. `StreamingExec` and `StreamingHttpRequest` produce a
+stream at once, and consecutive streaming stages run in parallel, as in a shell.
 
-The choice affects when a failure is reported. `SimpleExec` fails as soon as its command exits with a
-non-zero status, reporting its standard error. `StreamingExec` reports the same failure when its
+The choice affects when a failure is reported. `SimpleExec` fails as soon as its command exits with
+a non-zero status, reporting its standard error. `StreamingExec` reports the same failure when its
 output stream ends, so the stage reading the stream fails with it, after any output the command
 wrote has flowed through the stages in between; see
 [execution](../reference/execution.md#streamingexec-and-handlestreamingexec). A streaming HTTP
@@ -141,13 +141,13 @@ check.
 ## Toolchain
 
 The Hypershell workspace pins nightly Rust with the new trait solver (`-Z next-solver=globally`). A
-crate whose programs nest sub-programs should do the same. On stable Rust the simpler examples check,
-but the two largest exhausted memory while type-checking; see
+crate whose programs nest sub-programs should do the same. On stable Rust the simpler examples
+check, but the two largest exhausted memory while type-checking; see
 [crate layout](../architecture/crate-layout.md#build-facts). The `recursion_limit` attributes some
 examples carry are not needed with the pinned toolchain.
 
 ## Public material derived from this
 
-The `guides/writing-a-program` page of the planned [Hypershell project
-section](../../../website/projects/hypershell.md), and the getting-started section of the repository
-README.
+The `guides/writing-a-program` page of the
+[Hypershell project section](../../../website/projects/hypershell.md), and the getting-started
+section of the repository README.

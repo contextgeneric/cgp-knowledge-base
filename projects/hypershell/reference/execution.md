@@ -3,8 +3,8 @@
 The execution family runs external commands on Tokio. Two user-facing syntaxes, `SimpleExec` and
 `StreamingExec`, differ in whether the process's input and output are buffered or streamed, and both
 delegate spawning to an internal `CoreExec` step. The command's arguments are applied by the
-`CommandUpdater` component. Everything here lives in `hypershell-tokio-components`, except the syntax
-types, which are in `hypershell-components`. The design is in
+`CommandUpdater` component. Everything here lives in `hypershell-tokio-components`, except the
+syntax types, which are in `hypershell-components`. The design is in
 [interpretation](../architecture/interpretation.md) and
 [streams and input dispatch](../architecture/streams-and-input-dispatch.md).
 
@@ -99,9 +99,10 @@ pub struct ChildExitError {
 ### Behavior
 
 The provider spawns the process through `CoreExec` and returns its standard output at once as a
-`ChildOutputStream`. Building the stream starts two Tokio tasks: one copies the input into the child's
-standard input, and one drains standard error and waits for the child to exit, so a child writing a
-lot to standard error cannot block. The stream reports a failure when its standard output ends:
+`ChildOutputStream`. Building the stream starts two Tokio tasks: one copies the input into the
+child's standard input, and one drains standard error and waits for the child to exit, so a child
+writing a lot to standard error cannot block. The stream reports a failure when its standard output
+ends:
 
 - **A failed input** ends the stream with the error from reading the previous stage's output, so an
   upstream failure reaches the stage that reads this one. The copying task records the error before
@@ -128,7 +129,8 @@ produces `TokioAsyncReadStream<ChildOutputStream>`. The stream's tasks are start
 
 ### Context dependencies
 
-`CanHandle<CoreExec<CommandPath, Args>, ()>` with `Output = Child`, and `CanRaiseError<std::io::Error>`.
+`CanHandle<CoreExec<CommandPath, Args>, ()>` with `Output = Child`, and
+`CanRaiseError<std::io::Error>`.
 
 ## `CoreExec` and `HandleCoreExec`
 
@@ -201,8 +203,8 @@ The method mutates the command in place and cannot fail. The interface is tied t
 
 ## `WithArgs`, `WithStaticArgs`, and `ExtractArgs`
 
-`WithArgs<Args>` appends each argument in a `Product!` list to the command, and `WithStaticArgs<Args>`
-is shorthand for a list of literals.
+`WithArgs<Args>` appends each argument in a `Product!` list to the command, and
+`WithStaticArgs<Args>` is shorthand for a list of literals.
 
 ### Definition
 
@@ -291,8 +293,8 @@ message:
 - **`SpawnCommandFailure<'a> { command: &'a Command }`**: wraps every spawn failure;
   `error executing command: {program} {args}`.
 
-`ExecOutputError` is raised, so it needs an `ErrorRaiser` route, which `HypershellNamespace` gives it
-(`DebugAnyhowError`). The other four are details, handled by the namespace's single
+`ExecOutputError` is raised, so it needs an `ErrorRaiser` route, which `HypershellNamespace` gives
+it (`DebugAnyhowError`). The other four are details, handled by the namespace's single
 `ErrorWrapperComponent` binding. See [error handling](../architecture/error-handling.md).
 
 A sixth type, `ChildExitError { status: ExitStatus, stderr: Vec<u8> }` in
@@ -323,4 +325,4 @@ to `ExtractFieldArgs` under `CommandUpdaterComponent`; and `CommandArgTypeProvid
 ## Public material derived from this
 
 Rustdoc for the execution items, and one page per construct in the `reference/` pages of the
-planned [Hypershell project section](../../../website/projects/hypershell.md).
+[Hypershell project section](../../../website/projects/hypershell.md), not yet written.

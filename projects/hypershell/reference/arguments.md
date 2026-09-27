@@ -5,7 +5,8 @@ fields, joined segments, and URL-encoded values, each interpreted by an extracto
 than by `Handler`. Three extractors produce a string, a command argument, and a URL; the fourth, for
 HTTP methods, is in [http.md](http.md). The components and most providers are in
 `hypershell-components`, with `JoinExtractArgs` in the Tokio crate and `UrlEncodeStringArg` in the
-reqwest crate. The design is in [interpretation](../architecture/interpretation.md#arguments-have-their-own-components).
+reqwest crate. The design is in
+[interpretation](../architecture/interpretation.md#arguments-have-their-own-components).
 
 ## `CanExtractStringArg` and `StringArgExtractor`
 
@@ -55,7 +56,8 @@ pub trait CanExtractCommandArg<Arg>: HasCommandArgType {
 
 The extractor is infallible. The Tokio bundle fixes `CommandArg` to `PathBuf` with `UseType`, and
 every consumer bounds it as `AsRef<OsStr>` or `AsRef<Path>`. The components are registered at
-`@hypershell.core.CommandArgTypeProviderComponent` and `@hypershell.core.CommandArgExtractorComponent`.
+`@hypershell.core.CommandArgTypeProviderComponent` and
+`@hypershell.core.CommandArgExtractorComponent`.
 
 ## `CanExtractUrlArg` and `HasUrlType`
 
@@ -126,11 +128,11 @@ where
 ### Behavior
 
 The provider reads the field through [`HasField`](../../../cgp/reference/traits/has_field.md) and
-formats it with `Display`, so the field may be a `String` or any displayable value. The field name is
-chosen by the program, not by the provider, which is why this read cannot be an
-[`#[implicit]`](../../../cgp/reference/attributes/implicit.md) argument. A context missing the
-field fails to compile; through a check, `cargo cgp check` reports a `[CGP-E106]` root cause,
-"missing field `name` on `HypershellCli`".
+formats it with `Display`, so the field may be a `String` or any displayable value. The field name
+is chosen by the program, not by the provider, which is why this read cannot be an
+[`#[implicit]`](../../../cgp/reference/attributes/implicit.md) argument. A context missing the field
+fails to compile; through a check, `cargo cgp check` reports a `[CGP-E106]` root cause, "missing
+field `name` on `HypershellCli`".
 
 ### Context dependencies
 
@@ -211,7 +213,8 @@ which encodes a space as `+`, the form encoding, rather than `%20`. The provider
 
 ## `ExtractStringCommandArg`, `ExtractStringUrlArg`, and `ExtractUrlFieldArg`
 
-These providers build the command and URL extractors from the string extractor, or from a typed field.
+These providers build the command and URL extractors from the string extractor, or from a typed
+field.
 
 ### Definition
 
@@ -267,12 +270,16 @@ command argument or a URL.
 ## Source
 
 - [crates/hypershell-components/src/components/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-components/src/components)
-- [crates/hypershell-components/src/dsl/arg.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/dsl/arg.rs) and [args.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/dsl/args.rs)
-- [crates/hypershell-components/src/providers/string_arg.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/providers/string_arg.rs) and [url_arg.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/providers/url_arg.rs)
+- [crates/hypershell-components/src/dsl/arg.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/dsl/arg.rs)
+  and
+  [args.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/dsl/args.rs)
+- [crates/hypershell-components/src/providers/string_arg.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/providers/string_arg.rs)
+  and
+  [url_arg.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/providers/url_arg.rs)
 - [crates/hypershell-tokio-components/src/providers/join_args.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-tokio-components/src/providers/join_args.rs)
 - [crates/hypershell-reqwest-components/src/providers/url_encode.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-reqwest-components/src/providers/url_encode.rs)
 
 ## Public material derived from this
 
 Rustdoc for the argument items. It also feeds one page per construct in the `reference/` pages of
-the planned [Hypershell project section](../../../website/projects/hypershell.md).
+the [Hypershell project section](../../../website/projects/hypershell.md), not yet written.

@@ -3,7 +3,8 @@
 A request to the GitHub API whose URL is joined from fields and literals, with URL encoding, a
 header, and the JSON response decoded into a Rust type.
 
-- **Source**: [crates/hypershell-examples/examples/github_issues.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/github_issues.rs)
+- **Source**:
+  [crates/hypershell-examples/examples/github_issues.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/github_issues.rs)
 - **Run**: `cargo run --example github_issues`
 - **Needs**: network, unauthenticated access to `api.github.com`, which is rate-limited
 - **Result**: prints the open issues of `rust-lang/rust` as `Issue` values
@@ -60,11 +61,12 @@ required by the GitHub API. The program's output type is fixed by the last stage
 
 ## What it demonstrates
 
-- `JoinArgs` as concatenation and `UrlEncodeArg`: see [arguments](../reference/arguments.md#joinargs-joinstringargs-and-joinextractargs).
+- `JoinArgs` as concatenation and `UrlEncodeArg`: see
+  [arguments](../reference/arguments.md#joinargs-joinstringargs-and-joinextractargs).
 - Headers: see [HTTP](../reference/http.md#withheaders-header-and-the-request-builder-updater).
 - Decoding into a Rust type named in the program: see [JSON](../reference/json.md).
 
 ## Public material derived from this
 
-The `examples/github-issues` page of the planned [Hypershell project
-section](../../../website/projects/hypershell.md).
+The `examples/github-issues` page of the
+[Hypershell project section](../../../website/projects/hypershell.md).

@@ -30,10 +30,10 @@ worth knowing, because the announcement post describes the graph as flatter than
 - **The reqwest and tungstenite crates depend on the Tokio crate**, for the stream wrapper types and
   the input dispatchers their wiring composes. An HTTP backend without Tokio would need its own
   adapters, not only its own client.
-- **`hypershell-hash-components` depends on neither `hypershell-components` nor Tokio.** Its
-  syntax and providers name only CGP's `Handler`, so the crate could serve any DSL built on the
-  handler family. It ships no bundle; the one in `hypershell-examples` wires it together with the
-  Tokio crate's `HandleToFuturesStream`.
+- **`hypershell-hash-components` depends on neither `hypershell-components` nor Tokio.** Its syntax
+  and providers name only CGP's `Handler`, so the crate could serve any DSL built on the handler
+  family. It ships no bundle; the one in `hypershell-examples` wires it together with the Tokio
+  crate's `HandleToFuturesStream`.
 
 **The `hypershell` crate does not include the extensions.** Neither the hash nor the tungstenite
 crate is a dependency of `hypershell`, and `HypershellNamespace` routes neither `Checksum` nor
@@ -42,8 +42,8 @@ show; see [extending the language](../guides/extending-the-language.md).
 
 ## Module layout
 
-The library crates share a small set of module names, so a reader can find the kind of item they want
-by its module:
+The library crates share a small set of module names, so a reader can find the kind of item they
+want by its module:
 
 - **`dsl`**: syntax types (`hypershell-components`, and the core or extension syntax of the Tokio,
   reqwest, and hash crates).
@@ -60,7 +60,8 @@ as in `hypershell_tokio_components::providers::HandleSimpleExec`.
 `PhantomData`, `CanHandle`, the anyhow `Error`, every syntax type in `hypershell_components::dsl`,
 the `hypershell!` macro, and the two contexts. It does not re-export `HypershellNamespace`, which a
 custom context imports from `hypershell::namespaces`, nor the Tokio crate's `ToTokioAsyncRead`
-adapter syntax. The macro depends on the prelude being in scope; see [the macro reference](../reference/macro.md).
+adapter syntax. The macro depends on the prelude being in scope; see
+[the macro reference](../reference/macro.md).
 
 ## Build facts
 
@@ -71,9 +72,9 @@ other crates use `std`. The workspace uses edition 2024 and declares a minimum R
 `rust-toolchain.toml` selects `nightly`, and `.cargo/config.toml` passes `-Z next-solver=globally`.
 Probes show the setting matters for the largest programs. On stable Rust 1.98.1 without the new
 solver, the library crates and most examples check, but `parallel_compare` and `compare_and_branch`
-grew `rustc` to about 7 GB and were killed after roughly 90 seconds on an 11 GB machine. With nightly
-and the new solver, a fresh check of `parallel_compare` took about 9 seconds and 460 MB. In a
-full-workspace stable check `http_checksum_native` also failed, but it passed when checked alone,
+grew `rustc` to about 7 GB and were killed after roughly 90 seconds on an 11 GB machine. With
+nightly and the new solver, a fresh check of `parallel_compare` took about 9 seconds and 460 MB. In
+a full-workspace stable check `http_checksum_native` also failed, but it passed when checked alone,
 which points to memory pressure from the concurrent compare examples rather than a type error. The
 cause of the difference was not investigated further.
 
@@ -82,17 +83,23 @@ pinned toolchain they are not needed: the examples check and build without them.
 
 **The workspace builds against unreleased `cgp` from git.** The root `Cargo.toml` overrides `cgp`
 and `cgp-error-anyhow` in `[patch.crates-io]` with the `cgp` repository's `main` branch by git URL,
-and the lockfile pins the commit, so a fresh clone builds on its own and its first build fetches that
-repository. Commented-out entries with paths into `../cgp` replace them when testing against a local
-change to `cgp`.
+and the lockfile pins the commit, so a fresh clone builds on its own and its first build fetches
+that repository. Commented-out entries with paths into `../cgp` replace them when testing against a
+local change to `cgp`.
 
 ## Source
 
-- The workspace manifest: [Cargo.toml](https://github.com/contextgeneric/hypershell/blob/v0.8.0/Cargo.toml)
-- The toolchain: [rust-toolchain.toml](https://github.com/contextgeneric/hypershell/blob/v0.8.0/rust-toolchain.toml) and [.cargo/config.toml](https://github.com/contextgeneric/hypershell/blob/v0.8.0/.cargo/config.toml)
-- The prelude: [crates/hypershell/src/prelude.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell/src/prelude.rs)
+- The workspace manifest:
+  [Cargo.toml](https://github.com/contextgeneric/hypershell/blob/v0.8.0/Cargo.toml)
+- The toolchain:
+  [rust-toolchain.toml](https://github.com/contextgeneric/hypershell/blob/v0.8.0/rust-toolchain.toml)
+  and
+  [.cargo/config.toml](https://github.com/contextgeneric/hypershell/blob/v0.8.0/.cargo/config.toml)
+- The prelude:
+  [crates/hypershell/src/prelude.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell/src/prelude.rs)
 
 ## Public material derived from this
 
-The `architecture/crate-layout` page of the planned [Hypershell project
-section](../../../website/projects/hypershell.md), and the crate list in the repository README.
+The `architecture/crate-layout` page of the
+[Hypershell project section](../../../website/projects/hypershell.md), and the crate list in the
+repository README.

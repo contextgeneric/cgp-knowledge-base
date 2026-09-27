@@ -3,7 +3,8 @@
 `echo` with one argument read from a field of a custom context, showing how a program that is a type
 reads a runtime value it cannot hold itself.
 
-- **Source**: [crates/hypershell-examples/examples/hello_name.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/hello_name.rs)
+- **Source**:
+  [crates/hypershell-examples/examples/hello_name.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/hello_name.rs)
 - **Run**: `cargo run --example hello_name`
 - **Needs**: `echo`
 - **Result**: prints `Hello, Alice`
@@ -59,10 +60,12 @@ field. `MyApp` joins the same namespace as `HypershellCli` and adds only the fie
 
 ## What it demonstrates
 
-- The argument sub-language and `FieldArg`: see [arguments](../reference/arguments.md#fieldarg-and-extractfieldarg).
-- A custom context that joins the namespace: see [assembly](../architecture/assembly.md#layer-three-contexts).
-- Why a field read here is `HasField` rather than an `#[implicit]` argument: the program chooses
-  the field name; see [arguments](../reference/arguments.md#fieldarg-and-extractfieldarg).
+- The argument sub-language and `FieldArg`: see
+  [arguments](../reference/arguments.md#fieldarg-and-extractfieldarg).
+- A custom context that joins the namespace: see
+  [assembly](../architecture/assembly.md#layer-three-contexts).
+- Why a field read here is `HasField` rather than an `#[implicit]` argument: the program chooses the
+  field name; see [arguments](../reference/arguments.md#fieldarg-and-extractfieldarg).
 
 ## Try a change
 
@@ -86,10 +89,10 @@ error[E0277]: [CGP-E002] the provider trait `Handler<Pipe<…>, Vec<u8>>` with c
 
 The chain below the root cause runs through `HypershellBaseProvider`, `HandlePipe`, the pipeline's
 `ComposeHandlers`, `HandleSimpleExec`, `CoreExec`, `ExtractArgs` recursing over the list, and
-`ExtractFieldArg`. Written at the `handle` call instead, the same mistake produced three `[CGP-E002]`
-headlines and no root cause.
+`ExtractFieldArg`. Written at the `handle` call instead, the same mistake produced three
+`[CGP-E002]` headlines and no root cause.
 
 ## Public material derived from this
 
-The `examples/hello-name` page of the planned [Hypershell project
-section](../../../website/projects/hypershell.md).
+The `examples/hello-name` page of the
+[Hypershell project section](../../../website/projects/hypershell.md).

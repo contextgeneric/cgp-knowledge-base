@@ -24,9 +24,9 @@ them:
 
 Because the extractor, updater, and handler components are generic over their syntax, the
 [`RedirectLookup`](../../../cgp/reference/providers/redirect_lookup.md) impl behind each route
-appends every type parameter to the path before looking it up. A handler lookup therefore ends in the
-syntax and then the input, as in `@cgp.extra.handler.HandlerComponent.SimpleExec<…>.Vec<u8>`. That
-second segment is what lets a bundle dispatch on the input; see
+appends every type parameter to the path before looking it up. A handler lookup therefore ends in
+the syntax and then the input, as in `@cgp.extra.handler.HandlerComponent.SimpleExec<…>.Vec<u8>`.
+That second segment is what lets a bundle dispatch on the input; see
 [streams-and-input-dispatch.md](streams-and-input-dispatch.md).
 
 ## Layer one: backend bundles
@@ -70,12 +70,14 @@ delegate_components! {
 The bundles are:
 
 - **`HypershellBaseProvider`** (`hypershell-components`): the control syntax (`Pipe`, `Use`,
-  `ConvertTo`, `Box`), `BytesToString`, and the string, command, and URL extractors for
-  `StaticArg`, `FieldArg`, and `JoinArgs`.
-- **`HypershellTokioProvider`** (`hypershell-tokio-components`): process execution, files, the stream
-  conversions, `JoinArgs` for command paths, the command updaters, and `CommandArg = PathBuf`.
+  `ConvertTo`, `Box`), `BytesToString`, and the string, command, and URL extractors for `StaticArg`,
+  `FieldArg`, and `JoinArgs`.
+- **`HypershellTokioProvider`** (`hypershell-tokio-components`): process execution, files, the
+  stream conversions, `JoinArgs` for command paths, the command updaters, and
+  `CommandArg = PathBuf`.
 - **`HypershellReqwestProvider`** (`hypershell-reqwest-components`): the HTTP syntax, the method
-  extractor, `UrlEncodeArg`, the header updaters, and `Url = url::Url`, `HttpMethod = reqwest::Method`.
+  extractor, `UrlEncodeArg`, the header updaters, and `Url = url::Url`,
+  `HttpMethod = reqwest::Method`.
 - **`HypershellJsonProvider`** (`hypershell-json-components`): `EncodeJson` and `DecodeJson`.
 - **`HypershellTungsteniteProvider`** (`hypershell-tungstenite-components`): `WebSocket`, per input
   type.
@@ -91,8 +93,8 @@ Three smaller aggregates sit inside the bundles and are named as providers by th
 **The bundles use `open` because `open` redirects into the bundle's own table, keyed by the bare
 component name.** A bundle joins no namespace and knows nothing of the prefix its components are
 registered under, so it can be reached from any namespace route and any context entry alike. The
-`open` statement is documented as not combining with a joined namespace when the component carries
-a `#[prefix]`. The bundle pattern avoids that restriction by keeping the `open` in a table that joins
+`open` statement is documented as not combining with a joined namespace when the component carries a
+`#[prefix]`. The bundle pattern avoids that restriction by keeping the `open` in a table that joins
 no namespace, and leaving the prefixed routes to the layer above.
 
 The bundles are providers, not contexts, so none is checked with `delegate_and_check_components!`.
@@ -154,7 +156,8 @@ namespace wires to [`UseField`](../../../cgp/reference/providers/use_field.md) o
 `http_client`. That field name is the reason every HTTP-capable context in the repository names its
 `reqwest::Client` field `http_client`.
 
-The full route table is in [the contexts and namespace reference](../reference/contexts-and-namespace.md).
+The full route table is in
+[the contexts and namespace reference](../reference/contexts-and-namespace.md).
 
 ## Layer three: contexts
 
@@ -188,7 +191,8 @@ getter finds no `http_client` field. A user's context follows the same pattern, 
 `FieldArg` its programs read.
 
 A context can also add or override entries next to the `namespace` statement, using the full
-prefixed path. The `bluesky_websocket` example adds the WebSocket syntax and its error type this way:
+prefixed path. The `bluesky_websocket` example adds the WebSocket syntax and its error type this
+way:
 
 ```rust
 delegate_components! {
@@ -205,20 +209,21 @@ delegate_components! {
 ```
 
 Such an entry works only for a path the namespace does not already bind, or the two impls conflict,
-per the [namespace override conflict](../../../cgp/errors/wiring/namespace-override-conflict.md). And
-a segment that names a type must be in scope: this entry compiles only with `ErrorRaiserComponent`
-imported. An extension that several contexts share is better published as a namespace that inherits
-`HypershellNamespace`, as the examples crate does with `HypershellChecksumNamespace` and
-`HypershellCompareNamespace`; see [extending the language](../guides/extending-the-language.md).
+per the [namespace override conflict](../../../cgp/errors/wiring/namespace-override-conflict.md).
+And a segment that names a type must be in scope: this entry compiles only with
+`ErrorRaiserComponent` imported. An extension that several contexts share is better published as a
+namespace that inherits `HypershellNamespace`, as the examples crate does with
+`HypershellChecksumNamespace` and `HypershellCompareNamespace`; see
+[extending the language](../guides/extending-the-language.md).
 
 ## One lookup, end to end
 
-Resolving `HypershellCli: CanHandle<SimpleExec<StaticArg<"echo">, Args>, Vec<u8>>` crosses all
-three layers, and each step is a CGP rule documented elsewhere:
+Resolving `HypershellCli: CanHandle<SimpleExec<StaticArg<"echo">, Args>, Vec<u8>>` crosses all three
+layers, and each step is a CGP rule documented elsewhere:
 
-1. `HypershellCli` has no direct entry for `HandlerComponent`, so its `namespace` blanket forwards the
-   key to `HypershellNamespace`, which inherits the `#[prefix]` route from `DefaultNamespace`. The
-   delegate is a `RedirectLookup` down `@cgp.extra.handler.HandlerComponent`.
+1. `HypershellCli` has no direct entry for `HandlerComponent`, so its `namespace` blanket forwards
+   the key to `HypershellNamespace`, which inherits the `#[prefix]` route from `DefaultNamespace`.
+   The delegate is a `RedirectLookup` down `@cgp.extra.handler.HandlerComponent`.
 2. The redirect appends the two parameters and looks up
    `@cgp.extra.handler.HandlerComponent.SimpleExec<…>.Vec<u8>` in `HypershellCli`'s table. The
    namespace blanket forwards again, and the namespace entry for `SimpleExec` matches the prefix of
@@ -231,18 +236,27 @@ three layers, and each step is a CGP rule documented elsewhere:
    `CanHandle<CoreExec<…>, ()>`, which repeats the walk.
 
 All of it is resolved by the compiler, so the call compiles to a direct call to the provider's body.
-`cargo cgp check` shows the same walk as a dependency tree, with each redirect as a `[CGP-E104]` line;
-see [debugging](../guides/debugging.md).
+`cargo cgp check` shows the same walk as a dependency tree, with each redirect as a `[CGP-E104]`
+line; see [debugging](../guides/debugging.md).
 
 ## Source
 
-- The bundles: `providers/combined.rs` in [hypershell-components](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/providers/combined.rs), [hypershell-tokio-components](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-tokio-components/src/providers/combined.rs), [hypershell-reqwest-components](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-reqwest-components/src/providers/combined.rs), [hypershell-json-components](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-json-components/src/providers/combined.rs), and [hypershell-tungstenite-components](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-tungstenite-components/src/providers/combined.rs)
-- The namespace: [crates/hypershell/src/namespaces/handlers.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell/src/namespaces/handlers.rs)
-- The contexts: [crates/hypershell/src/contexts/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell/src/contexts)
-- The extension namespaces: [crates/hypershell-examples/src/namespaces/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-examples/src/namespaces)
+- The bundles: `providers/combined.rs` in
+  [hypershell-components](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/providers/combined.rs),
+  [hypershell-tokio-components](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-tokio-components/src/providers/combined.rs),
+  [hypershell-reqwest-components](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-reqwest-components/src/providers/combined.rs),
+  [hypershell-json-components](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-json-components/src/providers/combined.rs),
+  and
+  [hypershell-tungstenite-components](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-tungstenite-components/src/providers/combined.rs)
+- The namespace:
+  [crates/hypershell/src/namespaces/handlers.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell/src/namespaces/handlers.rs)
+- The contexts:
+  [crates/hypershell/src/contexts/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell/src/contexts)
+- The extension namespaces:
+  [crates/hypershell-examples/src/namespaces/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-examples/src/namespaces)
 
 ## Public material derived from this
 
-The `architecture/assembly` page of the planned [Hypershell project
-section](../../../website/projects/hypershell.md), and the one-line `HypershellCli` its index shows
-early.
+The `architecture/assembly` page of the
+[Hypershell project section](../../../website/projects/hypershell.md), and the one-line
+`HypershellCli` its index shows early.

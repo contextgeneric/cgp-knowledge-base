@@ -3,7 +3,8 @@
 Two checksum sub-pipelines run concurrently and compared with the examples library's `Compare`
 syntax, with the sub-pipeline written once as a generic type alias.
 
-- **Source**: [crates/hypershell-examples/examples/parallel_compare.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/parallel_compare.rs)
+- **Source**:
+  [crates/hypershell-examples/examples/parallel_compare.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/parallel_compare.rs)
 - **Run**: `cargo run --example parallel_compare`
 - **Needs**: network
 - **Result**: prints `equals: true`.
@@ -53,22 +54,23 @@ checksum namespace, and wires `Compare` through `BoxHandler`; see
 [the examples library](README.md#the-examples-library).
 
 The example demonstrates that the two URLs serve the same page. The URL without the slash answers
-301, and the streaming request follows it because its `Vec<u8>` input is sent as a buffered body; see
-[HTTP](../reference/http.md#streaminghttprequest-and-handlestreaminghttprequest).
+301, and the streaming request follows it because its `Vec<u8>` input is sent as a buffered body;
+see [HTTP](../reference/http.md#streaminghttprequest-and-handlestreaminghttprequest).
 
 ## What it demonstrates
 
 - Control syntax whose operands are whole programs: see
   [extending the language](../guides/extending-the-language.md#add-control-syntax).
-- Generic program aliases, and `|` inside a type argument: see [the macro reference](../reference/macro.md).
+- Generic program aliases, and `|` inside a type argument: see
+  [the macro reference](../reference/macro.md).
 
 ## Known issues
 
-The file sets `#![recursion_limit = "512"]`, which the pinned toolchain does not need. On stable Rust
-without the new trait solver, checking this example grew `rustc` to about 7 GB before it was killed;
-see [crate layout](../architecture/crate-layout.md#build-facts).
+The file sets `#![recursion_limit = "512"]`, which the pinned toolchain does not need. On stable
+Rust without the new trait solver, checking this example grew `rustc` to about 7 GB before it was
+killed; see [crate layout](../architecture/crate-layout.md#build-facts).
 
 ## Public material derived from this
 
-The `examples/parallel-compare` page of the planned [Hypershell project
-section](../../../website/projects/hypershell.md).
+The `examples/parallel-compare` page of the
+[Hypershell project section](../../../website/projects/hypershell.md), not yet written.

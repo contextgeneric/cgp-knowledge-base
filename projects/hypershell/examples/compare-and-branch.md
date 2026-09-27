@@ -3,7 +3,8 @@
 A comparison of two checksum sub-pipelines used as the condition of `If`, which runs one of two
 `echo` commands.
 
-- **Source**: [crates/hypershell-examples/examples/compare_and_branch.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/compare_and_branch.rs)
+- **Source**:
+  [crates/hypershell-examples/examples/compare_and_branch.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/compare_and_branch.rs)
 - **Run**: `cargo run --example compare_and_branch`
 - **Needs**: network, `echo`
 - **Result**: compiles; no run is confirmed. It fetches the same two URLs as
@@ -60,7 +61,8 @@ The context is the same `MyApp` as in `parallel_compare`, joined to `HypershellC
 
 - Nesting control syntax: see [the examples library](README.md#the-examples-library) and
   [extending the language](../guides/extending-the-language.md#add-control-syntax).
-- Inputs shaped by the program: see [interpretation](../architecture/interpretation.md#handler-is-the-interpreter-interface).
+- Inputs shaped by the program: see
+  [interpretation](../architecture/interpretation.md#handler-is-the-interpreter-interface).
 
 ## Known issues
 
@@ -69,5 +71,6 @@ which the pinned toolchain does not need. See [issues.md](../issues.md#housekeep
 
 ## Public material derived from this
 
-The `examples/compare-and-branch` page, once a run is recorded here, of the planned [Hypershell
-project section](../../../website/projects/hypershell.md).
+The `examples/compare-and-branch` page of the
+[Hypershell project section](../../../website/projects/hypershell.md), not yet written, which waits
+on a run recorded here.

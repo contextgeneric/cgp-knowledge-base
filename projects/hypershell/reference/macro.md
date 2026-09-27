@@ -18,8 +18,8 @@ position, as `pub type Program = hypershell! { … };` or as a type argument.
 
 ## Behavior
 
-The macro first regroups the input so that `<` and `>` delimit groups, since Rust's token trees treat
-angle brackets as punctuation, and then applies four rules, recursively inside every group:
+The macro first regroups the input so that `<` and `>` delimit groups, since Rust's token trees
+treat angle brackets as punctuation, and then applies four rules, recursively inside every group:
 
 - **A `|` splits the enclosing group into pipeline stages.** Two or more stages become
   `Pipe<Product![stage, stage, …]>`, and a single stage is emitted as itself, so
@@ -31,8 +31,8 @@ angle brackets as punctuation, and then applies four rules, recursively inside e
   number is valid only where Rust accepts a const generic argument.
 - **Every other token passes through**, and every other group is emitted with its own delimiters.
 
-Because the rules recurse, a `|` inside angle brackets builds a nested pipeline. The compare examples
-rely on this to pass a sub-pipeline as a type argument:
+Because the rules recurse, a `|` inside angle brackets builds a nested pipeline. The compare
+examples rely on this to pass a sub-pipeline as a type argument:
 
 ```rust
 pub type GetChecksumOf<Url> = hypershell! {
@@ -42,21 +42,23 @@ pub type GetChecksumOf<Url> = hypershell! {
 };
 ```
 
-A probe confirmed each rule by type equality against the hand-written form, including
-`Box< A | B >` becoming `Box<Pipe<Product![A, B]>>`.
+A probe confirmed each rule by type equality against the hand-written form, including `Box< A | B >`
+becoming `Box<Pipe<Product![A, B]>>`.
 
 ## Known issues
 
-Four edges were confirmed by probes, and each is recorded in [issues.md](../issues.md#the-hypershell-macro):
+Four edges were confirmed by probes, and each is recorded in
+[issues.md](../issues.md#the-hypershell-macro):
 
 - **The expansion is unhygienic.** `Pipe`, `Product!`, and `Symbol!` are emitted as bare names, so
-  they must be in scope at the use site. Importing the macro and the syntax types without the prelude
-  fails with "cannot find macro `Product` in this scope" and "cannot find type `Pipe` in this scope".
+  they must be in scope at the use site. Importing the macro and the syntax types without the
+  prelude fails with "cannot find macro `Product` in this scope" and "cannot find type `Pipe` in
+  this scope".
 - **An unbalanced `<` panics the macro**, reported as "proc macro panicked" with the message
   `mismatch > at the end of token stream`, rather than as a spanned error.
 - **`|` splits at the token level, not per list element.** Inside a bracket list, a `|` makes the
-  whole list one pipeline: `WithArgs[a, b | c]` becomes `WithArgs<Product![Pipe<Product![a, b, c]>]>`,
-  not a two-element list.
+  whole list one pipeline: `WithArgs[a, b | c]` becomes
+  `WithArgs<Product![Pipe<Product![a, b, c]>]>`, not a two-element list.
 - **Any `>` closes the innermost angle group**, so a type written with `->`, such as a function
   pointer, is misparsed. `hypershell! { ConvertTo<fn() -> u8> }` fails with "expected one of `!`,
   `(`, `,`, `::`, `<`, or `>`, found `<eof>`". No program in the repository uses one.
@@ -68,5 +70,6 @@ Four edges were confirmed by probes, and each is recorded in [issues.md](../issu
 
 ## Public material derived from this
 
-The `reference/hypershell_macro` page of the planned [Hypershell project
-section](../../../website/projects/hypershell.md), and the macro's rustdoc.
+The `reference/hypershell_macro` page of the
+[Hypershell project section](../../../website/projects/hypershell.md), not yet written, and the
+macro's rustdoc.

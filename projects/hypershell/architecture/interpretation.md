@@ -10,9 +10,9 @@ it needs, and the three ways a provider hands work back to the context. The gene
 ## `Handler` is the interpreter interface
 
 **Running a program is one call to `CanHandle::handle`, with the program as the `Code` tag and the
-program's input as the argument.** Hypershell defines no interpreter trait of its own. It uses
-CGP's [`Handler`](../../../cgp/reference/components/handler.md) component, the async and fallible
-member of the [handler family](../../../cgp/concepts/handlers.md):
+program's input as the argument.** Hypershell defines no interpreter trait of its own. It uses CGP's
+[`Handler`](../../../cgp/reference/components/handler.md) component, the async and fallible member
+of the [handler family](../../../cgp/concepts/handlers.md):
 
 ```rust
 let output = app.handle(PhantomData::<Program>, input).await?;
@@ -59,12 +59,13 @@ A provider may also ignore the syntax entirely. The stream adapters and `HandleB
 `Handler<Code, Input>` for every `Code`, since they take no information from it, and the wiring
 decides which syntax they answer for.
 
-**Providers are written in the explicit form of [`#[cgp_impl]`](../../../cgp/reference/macros/cgp_impl.md).**
-Almost every provider names the context (`impl<Context, …> Handler<…> for Context`) and lists its
-dependencies as `Context:` bounds. None uses [`#[uses]`](../../../cgp/reference/attributes/uses.md),
-and only `BoxHandler` and `DecodeUtf8Bytes` use [`#[use_type]`](../../../cgp/reference/attributes/use_type.md).
-This is valid, but it is not the form the [writing-providers](../../../cgp/guides/writing-providers.md)
-and [declaring-dependencies](../../../cgp/guides/declaring-dependencies.md) guides recommend; the
+**Providers are written in the explicit form of
+[`#[cgp_impl]`](../../../cgp/reference/macros/cgp_impl.md).** Almost every provider names the
+context (`impl<Context, …> Handler<…> for Context`) and lists its dependencies as `Context:` bounds.
+None uses [`#[uses]`](../../../cgp/reference/attributes/uses.md), and only `BoxHandler` and
+`DecodeUtf8Bytes` use [`#[use_type]`](../../../cgp/reference/attributes/use_type.md). This is valid,
+but it is not the form the [writing-providers](../../../cgp/guides/writing-providers.md) and
+[declaring-dependencies](../../../cgp/guides/declaring-dependencies.md) guides recommend; the
 modernization is tracked in [issues.md](../issues.md#housekeeping).
 
 ## Arguments have their own components
@@ -98,9 +99,9 @@ extractor routes to its own `JoinExtractArgs` so that joined path segments go th
 **Argument lists are applied by two updater components that mutate a backend's builder.**
 `CanUpdateCommand<Args>` in the Tokio crate takes `&mut tokio::process::Command`, and
 `CanUpdateRequestBuilder<Args>` in the reqwest crate takes and returns a `reqwest::RequestBuilder`.
-These interfaces are deliberately tied to one backend. The coupling does not spread, because only the
-providers that use a Tokio `Command` depend on `CanUpdateCommand`, and a context that never runs a
-process never needs it.
+These interfaces are deliberately tied to one backend. The coupling does not spread, because only
+the providers that use a Tokio `Command` depend on `CanUpdateCommand`, and a context that never runs
+a process never needs it.
 
 ## Calling back into the context
 
@@ -161,14 +162,14 @@ impl<Context> StringArgExtractor<JoinArgs<Nil>> for Context { /* the empty strin
 ```
 
 The struct is declared by hand and each impl names it without `new`, since two impls share it. The
-head is resolved through the context, so each element may be any argument syntax the context
-routes. The tail is resolved through the provider itself, named in the `where` clause, so the
-recursion never re-enters the wiring for the list. `JoinExtractArgs` and `UpdateRequestHeaders`
-follow the same pattern for `JoinArgs` as a path and for `WithHeaders`.
+head is resolved through the context, so each element may be any argument syntax the context routes.
+The tail is resolved through the provider itself, named in the `where` clause, so the recursion
+never re-enters the wiring for the list. `JoinExtractArgs` and `UpdateRequestHeaders` follow the
+same pattern for `JoinArgs` as a path and for `WithHeaders`.
 
 `ExtractArgs`, which interprets `WithArgs`, recurses differently. It writes the tail bound as
-`Self: CommandUpdater<Context, WithArgs<Args>>`, and `#[cgp_impl]` reads `Self` as the context, so the
-bound expands to `Context: CommandUpdater<Context, WithArgs<Args>>` and the tail call to
+`Self: CommandUpdater<Context, WithArgs<Args>>`, and `#[cgp_impl]` reads `Self` as the context, so
+the bound expands to `Context: CommandUpdater<Context, WithArgs<Args>>` and the tail call to
 `Context::update_command`. Each tail is therefore looked up again through the context's wiring, and
 the recursion works only because the namespace routes every `WithArgs<Args>` back to `ExtractArgs`.
 The inconsistency is recorded in [issues.md](../issues.md#housekeeping).
@@ -183,9 +184,10 @@ aggregate maps `Pipe<Handlers>` to `PipeHandlers<Handlers::Wrapped>`, where the 
 rewrites `Product![A, B, C]` into `Product![Call<A>, Call<B>, Call<C>]`. The
 [handler combinator](../../../cgp/reference/providers/handler_combinators.md) then threads each
 stage's output into the next stage's input, and every stage is resolved through the context.
-`HandlePipe` still does this with a legacy [`UseDelegate`](../../../cgp/reference/providers/use_delegate.md)
-nested table, because its key carries a bound (`<Handlers: WrapCall> Pipe<Handlers>`). A probe
-confirmed that the `open` statement accepts the same bounded key, so the table can be converted; see
+`HandlePipe` still does this with a legacy
+[`UseDelegate`](../../../cgp/reference/providers/use_delegate.md) nested table, because its key
+carries a bound (`<Handlers: WrapCall> Pipe<Handlers>`). A probe confirmed that the `open` statement
+accepts the same bounded key, so the table can be converted; see
 [issues.md](../issues.md#housekeeping).
 
 **`Use<Provider, Code>` runs a provider named in the program.** `HandleUseProvider` forwards to
@@ -207,12 +209,19 @@ whose `Handler` impl requires one, makes that a `Handler`. See
 
 ## Source
 
-- The components: [crates/hypershell-components/src/components/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-components/src/components), [crates/hypershell-tokio-components/src/components/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-tokio-components/src/components), and [crates/hypershell-reqwest-components/src/components/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-reqwest-components/src/components)
-- The control providers: [crates/hypershell-components/src/providers/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-components/src/providers)
-- `WrapCall`: [crates/hypershell-components/src/traits/wrap_call.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/traits/wrap_call.rs)
-- `HandleSimpleExec` and `ExtractArgs`: [crates/hypershell-tokio-components/src/providers/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-tokio-components/src/providers)
+- The components:
+  [crates/hypershell-components/src/components/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-components/src/components),
+  [crates/hypershell-tokio-components/src/components/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-tokio-components/src/components),
+  and
+  [crates/hypershell-reqwest-components/src/components/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-reqwest-components/src/components)
+- The control providers:
+  [crates/hypershell-components/src/providers/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-components/src/providers)
+- `WrapCall`:
+  [crates/hypershell-components/src/traits/wrap_call.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/traits/wrap_call.rs)
+- `HandleSimpleExec` and `ExtractArgs`:
+  [crates/hypershell-tokio-components/src/providers/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-tokio-components/src/providers)
 
 ## Public material derived from this
 
-The `architecture/interpretation` page of the planned [Hypershell project
-section](../../../website/projects/hypershell.md).
+The `architecture/interpretation` page of the
+[Hypershell project section](../../../website/projects/hypershell.md), not yet written.

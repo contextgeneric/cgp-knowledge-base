@@ -9,7 +9,8 @@ configuration, so nothing runs the tests automatically.
 
 ## What each test pins
 
-The tests are in [`crates/hypershell-examples/tests/`](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-examples/tests),
+The tests are in
+[`crates/hypershell-examples/tests/`](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-examples/tests),
 gathered by a `main.rs` that sets `#![recursion_limit = "256"]`. Each defines its program, and where
 it needs one, its context:
 
@@ -56,8 +57,8 @@ Several things no test and no example reaches:
   `HypershellHttp`, or any bundle. A check over the two contexts and a representative program per
   syntax would catch an unroutable syntax such as `StreamToLines`.
 - **Syntax nothing uses.** `ConvertTo`, `Use`, `Box`, `CoreExec` and `CoreHttpRequest` written
-  directly, `PutMethod`, `DeleteMethod`, `StreamToLines`, and `ToTokioAsyncRead` appear in no test or
-  example.
+  directly, `PutMethod`, `DeleteMethod`, `StreamToLines`, and `ToTokioAsyncRead` appear in no test
+  or example.
 - **The macro's edges.** Nothing pins the expansion of `hypershell!`, including the nested-pipe
   behavior the compare examples depend on.
 - **Redirects.** No test requests a URL that redirects. Only the compare examples do, and they need
@@ -65,5 +66,6 @@ Several things no test and no example reaches:
 
 ## Public material derived from this
 
-The one sentence on the `limitations` page of the planned [Hypershell project
-section](../../website/projects/hypershell.md) saying that the project is lightly tested.
+The one sentence on the `limitations` page of the
+[Hypershell project section](../../website/projects/hypershell.md) saying that the project is
+lightly tested.
