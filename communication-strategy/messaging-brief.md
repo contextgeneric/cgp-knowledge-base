@@ -25,8 +25,8 @@ plain description after the concrete benefit is clear.
 ## The five headline features
 
 Use this panel for a full feature summary, in the order fixed by
-[identity.md](identity.md#the-headline-feature-set). Put code early in a README rather than requiring
-readers to pass the full panel first.
+[identity.md](identity.md#the-headline-feature-set). Put code early in a README rather than
+requiring readers to pass the full panel first.
 
 | Feature | Public wording |
 | --- | --- |
@@ -74,25 +74,28 @@ Grant the valid concern, then explain the mechanism and limit. See
 | Is it mature enough? | State current limits and offer a small evaluation; stable compilation does not establish production readiness. |
 | There is a learning curve | Start with a useful operation and teach the machinery as needed. |
 
-Use the canonical checker qualification without paraphrasing:
-`cargo cgp check` leads with the root cause for the classes it recognizes, and the tool is a v0.1.0-alpha that does not yet reshape every class.
+Use the canonical checker qualification without paraphrasing: `cargo cgp check` leads with the root
+cause for the classes it recognizes, and the tool is a v0.1.0-alpha that does not yet reshape every
+class.
 
 ## The boundary, and the costs to concede every time
 
 Use the lowest level of abstraction that solves the problem. Plain traits and generics suit simple
 choices; direct consumer impls suit context-specific behavior; enums suit small closed sets; and
 `dyn Trait` supports runtime-selected implementations. Providers help when interchangeable behavior,
-reuse, or composition warrants wiring. See [the decision guide](message.md#when-not-to-reach-for-cgp).
+reuse, or composition warrants wiring. See
+[the decision guide](message.md#when-not-to-reach-for-cgp).
 
 State the relevant costs beside the benefit: additional declarations and wiring, compile-time work,
-verbose raw diagnostics, and learning. A delegation entry alone does not verify dependencies;
-check or use the component to force verification.
+verbose raw diagnostics, and learning. A delegation entry alone does not verify dependencies; check
+or use the component to force verification.
 
 Mention the [CGP agent skill](https://github.com/contextgeneric/cgp-skills) only beside the costs it
 can help address, following [message.md](message.md#the-one-mitigation-that-spans-three-of-these).
-It teaches an assistant to read and write CGP; it does not remove the reader's review responsibility.
-Keep AI support out of the pitch and distinguish it from [AI authorship](ai-disclosure.md).
-The website's AI navigation label is the documented exception to placement, not a feature claim.
+It teaches an assistant to read and write CGP; it does not remove the reader's review
+responsibility. Keep AI support out of the pitch and distinguish it from
+[AI authorship](ai-disclosure.md). The website's AI navigation label is the documented exception to
+placement, not a feature claim.
 
 ## The ask, by stage
 
@@ -123,8 +126,8 @@ Use concrete terms and preserve their scope. [vocabulary.md](vocabulary.md) owns
 
 Apply these rules across formats:
 
-- **Match voice to the page.** Project voice on documentation; the author's voice on the blog.
-  Avoid a corporate "we" for one person. Preserve the exceptions in
+- **Match voice to the page.** Project voice on documentation; the author's voice on the blog. Avoid
+  a corporate "we" for one person. Preserve the exceptions in
   [voice-and-register.md](voice-and-register.md).
 - **Keep claims accurate.** Verify code, qualify benefits, and represent alternatives fairly.
 - **Protect readers' identities.** Summarize reactions to CGP without linking threads or quoting
@@ -135,7 +138,8 @@ Apply these rules across formats:
 
 ## The four checks before publishing
 
-Read the draft in this order, following [voice-and-register.md](voice-and-register.md#checking-a-draft):
+Read the draft in this order, following
+[voice-and-register.md](voice-and-register.md#checking-a-draft):
 
 1. Does it sound like the author or project, with specific claims instead of generic praise?
 2. Are the relevant costs stated where readers need them?

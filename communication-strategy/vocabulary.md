@@ -27,16 +27,16 @@ explanation accompanies a term to the reader's knowledge.
 | **Context-generic programming** | The paradigm's name. Introduce it beside a concrete description, after showing what it does. |
 
 Use “pluggable trait implementations at compile-time” in the lead descriptor, as specified in
-[identity.md](identity.md). “Pluggable” distinguishes implementation choice from ordinary reuse;
-“at compile-time” prevents a runtime-plugin interpretation. “Reusable” remains appropriate when
+[identity.md](identity.md). “Pluggable” distinguishes implementation choice from ordinary reuse; “at
+compile-time” prevents a runtime-plugin interpretation. “Reusable” remains appropriate when
 describing actual provider reuse, but does not convey the whole distinction by itself.
 
-Choose a context gloss that matches the example. For a context whose fields supply values, use
-“the type the method runs on, which supplies the values it needs as its fields.” Shorten this to
-“the type the implementation runs against” when fields are irrelevant. An abstract-type trait can
-use “the type that implements the trait.” Once wiring is introduced, “the type that owns the wiring”
-can clarify that role. Use the environmental gloss below when the context represents application
-choices rather than the target value.
+Choose a context gloss that matches the example. For a context whose fields supply values, use “the
+type the method runs on, which supplies the values it needs as its fields.” Shorten this to “the
+type the implementation runs against” when fields are irrelevant. An abstract-type trait can use
+“the type that implements the trait.” Once wiring is introduced, “the type that owns the wiring” can
+clarify that role. Use the environmental gloss below when the context represents application choices
+rather than the target value.
 
 Describe **cargo-cgp** as “CGP's error toolchain” and refer to its checking command as
 `cargo cgp check`. Explain the concrete failure it helps diagnose rather than promising uniformly
@@ -45,7 +45,8 @@ clear errors. Copy this qualification unchanged wherever the tool's diagnostic b
 > `cargo cgp check` leads with the root cause for the classes it recognizes, and the tool is a v0.1.0-alpha that does not yet reshape every class.
 
 The [error-reading guidance](readers.md#reading-the-error-messages) explains how to teach that
-workflow. Command syntax and availability belong in the [tool reference](../cgp/reference/cargo-cgp.md).
+workflow. Command syntax and availability belong in the
+[tool reference](../cgp/reference/cargo-cgp.md).
 
 Call the published assistant guidance **CGP's agent skill**. It teaches an assistant to read and
 write CGP; it does not remove the human reviewer's need to understand the code. Describe assistance
@@ -64,12 +65,12 @@ Use these terms for the context's role:
 - **Environmental context:** The context supplies implementation choices and the dependencies
   providers use. Introduce it as “a type that stands for one set of choices.” It may be fieldless,
   as in `struct App;`, or hold runtime values such as clients and settings.
-- **Application context:** An environmental context representing an application's choices.
-  Introduce it as “a type that stands for this application, where its choices live.”
+- **Application context:** An environmental context representing an application's choices. Introduce
+  it as “a type that stands for this application, where its choices live.”
 
 Use “environment” only as an explained analogy for readers familiar with implicit parameters or
-similar systems. Keep “context” as the CGP term. State that provider selection is static even when
-a context carries runtime state; [implicit parameters](../related-work/implicit-parameters.md)
+similar systems. Keep “context” as the CGP term. State that provider selection is static even when a
+context carries runtime state; [implicit parameters](../related-work/implicit-parameters.md)
 develops that comparison.
 
 Use these qualifiers for the component's target:
@@ -81,15 +82,15 @@ Use these qualifiers for the component's target:
 - **Selector:** A parameter used to choose an implementation rather than identify the input being
   operated on. In `CanCompute<Code, Input>`, `Code` is a selector and `Input` is the target.
 
-A generic parameter alone does not make a component parameter-targeted. Explain the parameter's
-role from the operation. These labels describe the consumer interface; raw provider traits carry
-an explicit context parameter in either arrangement.
+A generic parameter alone does not make a component parameter-targeted. Explain the parameter's role
+from the operation. These labels describe the consumer interface; raw provider traits carry an
+explicit context parameter in either arrangement.
 
 ### Why the qualifiers are not jargon
 
-Use qualifiers where they explain a real choice in the example. Once the role is established,
-plain “context” is sufficient until that role changes. A page does not need a complete taxonomy
-before showing a method call.
+Use qualifiers where they explain a real choice in the example. Once the role is established, plain
+“context” is sufficient until that role changes. A page does not need a complete taxonomy before
+showing a method call.
 
 These arrangements are possible in ordinary Rust. CGP supplies reusable providers and wiring for
 selecting them; it does not make application types or parameter-targeted traits legal for the first
@@ -99,8 +100,8 @@ explains how to introduce the arrangement through code.
 
 ### The confusions these qualifiers prevent
 
-State the role change beside the example that introduces it. These common ambiguities suggest
-what needs explaining:
+State the role change beside the example that introduces it. These common ambiguities suggest what
+needs explaining:
 
 | Possible reading | Clarification |
 | --- | --- |
@@ -120,8 +121,8 @@ precise term without unnecessary simplification.
   should explain the rules and their purpose directly.
 - **Blanket implementation:** Introduce it when explaining how one impl applies to all types
   satisfying its bounds.
-- **Monomorphization:** Name it when discussing compilation or generated code. Distinguish generating
-  code for concrete types from the narrower claim that a call uses static dispatch.
+- **Monomorphization:** Name it when discussing compilation or generated code. Distinguish
+  generating code for concrete types from the narrower claim that a call uses static dispatch.
 - **Higher-ranked trait bounds and `PhantomData`:** Explain their specific role when the example
   requires them rather than adding them to an introductory glossary.
 - **`DelegateComponent` and `IsProviderFor`:** Introduce these while reading expansions or
@@ -155,8 +156,8 @@ misunderstandings:
 
 Keep runtime-cost claims specific to provider selection. A context may contain runtime values or
 trait objects, a provider may allocate, and a handler may perform I/O. Static wiring does not remove
-those costs or guarantee a particular benchmark or binary size. “Zero-cost abstraction” can remain
-a feature title when the accompanying text explains what is eliminated.
+those costs or guarantee a particular benchmark or binary size. “Zero-cost abstraction” can remain a
+feature title when the accompanying text explains what is eliminated.
 
 Do not use **capability** for CGP's constructs or product claims. The term has distinct meanings in
 object-capability models, context-and-capabilities proposals, and effect systems. A CGP trait bound
@@ -170,11 +171,12 @@ does not establish a security boundary. Use the word appropriate to the subject:
 - **Product description:** Feature or strength.
 
 Retain “capability” when accurately describing another system's construct. The
-[capabilities comparison](../related-work/capabilities.md) separates those meanings and their limits.
+[capabilities comparison](../related-work/capabilities.md) separates those meanings and their
+limits.
 
 Keep assistant support separate from AI authorship. “CGP ships an agent skill” describes help for
-people using CGP. “An AI agent wrote this page from the knowledge base” describes provenance.
-Use [ai-disclosure.md](ai-disclosure.md) for the latter; “AI-assisted” alone may leave the role unclear.
+people using CGP. “An AI agent wrote this page from the knowledge base” describes provenance. Use
+[ai-disclosure.md](ai-disclosure.md) for the latter; “AI-assisted” alone may leave the role unclear.
 Neither claim promises that generated code can bypass review.
 
 Avoid inventing terms for distinctions ordinary wording already expresses. Phrases such as “a type
@@ -188,9 +190,9 @@ Sentence-level issues such as stacked hedges and decorative phrasing belong in
 ## The name, and the community's bridge terms
 
 Pair “context-generic programming” with a plain description on first contact. The
-[reception summary](evidence.md#cgps-own-reception-and-the-lessons-in-it) records readers finding the
-name unclear and using familiar terms to interpret it. That finding supports explaining the name;
-it does not establish that every reader reacts the same way.
+[reception summary](evidence.md#cgps-own-reception-and-the-lessons-in-it) records readers finding
+the name unclear and using familiar terms to interpret it. That finding supports explaining the
+name; it does not establish that every reader reacts the same way.
 
 Use terms such as “structural typing” or “duck typing” only as qualified comparisons. They can help
 readers recognize code written against required operations, but CGP still uses nominal Rust traits
@@ -223,22 +225,23 @@ These terms describe how a piece presents its subject:
   [Identity.md](identity.md) sets CGP's positioning.
 - **Framing:** Selecting an accurate angle and wording for a fact, such as explaining provider
   choice through a testing problem or a coherence problem.
-- **Value proposition:** A concise answer to what the reader gains and why it matters for their task.
-- **Differentiation:** A relevant difference from an alternative. State the use case and costs;
-  a difference is not automatically an advantage.
+- **Value proposition:** A concise answer to what the reader gains and why it matters for their
+  task.
+- **Differentiation:** A relevant difference from an alternative. State the use case and costs; a
+  difference is not automatically an advantage.
 
 ### Reaching people at scale, and sounding like one project
 
 These terms guide distribution and consistency:
 
-- **Channel:** Where a piece appears, such as a README, conference, or discussion forum.
-  Match its audience and conventions; [evidence.md](evidence.md) records the project's experience.
+- **Channel:** Where a piece appears, such as a README, conference, or discussion forum. Match its
+  audience and conventions; [evidence.md](evidence.md) records the project's experience.
 - **Curse of knowledge:** The difficulty experts have recognizing what an unfamiliar reader still
   needs explained. Explicit prerequisites and reader feedback help test those assumptions.
 - **Message discipline:** Using consistent words and claims across pieces so readers can connect
   them. It serves a similar purpose to stable names in an API.
-- **Clarity over completeness:** Focus the opening on an understandable idea. This governs the
-  entry to a piece, not permission to omit required depth or reference coverage.
+- **Clarity over completeness:** Focus the opening on an understandable idea. This governs the entry
+  to a piece, not permission to omit required depth or reference coverage.
 
 ### Earning and keeping trust
 
@@ -246,8 +249,8 @@ Use these terms with evidence rather than predictions about every reader:
 
 - **Social proof:** Evidence from others' use, work, or reports that helps a reader assess a claim.
   Cite only verified examples and respect the rules for discussing reactions to CGP.
-- **Funnel:** A model of stages from hearing about a tool to trying, using, and recommending it.
-  It describes possible paths rather than a required sequence for every reader.
+- **Funnel:** A model of stages from hearing about a tool to trying, using, and recommending it. It
+  describes possible paths rather than a required sequence for every reader.
 - **Conversion:** A reader taking a defined next step. A click, working example, and adoption are
   different outcomes and must not be counted as the same result.
 - **Show, don't tell:** Demonstrate a claim with a checkable example instead of relying on praise.
@@ -258,18 +261,19 @@ Use these terms with evidence rather than predictions about every reader:
 
 This document is the source of truth for the website's
 [glossary](https://contextgeneric.dev/docs/reference/glossary), which renders its definitions for a
-public reader: the CGP terms and the context and target qualifiers below, alongside the Rust concepts
-the site assumes and the borrowed terms the comparison pages use. The glossary defines and routes
-rather than explaining, so a change to a definition here belongs on that page in the same change, per
-the [synchronization rule](../AGENTS.md#the-synchronization-rule). Its shape is specified in
+public reader: the CGP terms and the context and target qualifiers above, alongside the Rust
+concepts the site assumes and the borrowed terms the comparison pages use. The glossary defines and
+routes rather than explaining, so a change to a definition here belongs on that page in the same
+change, per the [synchronization rule](../AGENTS.md#the-synchronization-rule). Its shape is
+specified in
 [writing-guides/reference.md](../website/writing-guides/reference.md#the-glossary-page).
 
 ## Keeping the list in sync
 
-Check related guidance when terminology changes. [Message.md](message.md), [identity.md](identity.md),
-[messaging-brief.md](messaging-brief.md), and [voice-and-register.md](voice-and-register.md) must use
-compatible wording. Keep this document as the home of definitions and link to it rather than
-maintaining competing glossaries.
+Check related guidance when terminology changes. [Message.md](message.md),
+[identity.md](identity.md), [messaging-brief.md](messaging-brief.md), and
+[voice-and-register.md](voice-and-register.md) must use compatible wording. Keep this document as
+the home of definitions and link to it rather than maintaining competing glossaries.
 
 Verify construct descriptions against the library and skill under the
 [synchronization rule](../AGENTS.md#the-synchronization-rule). Add a communication term here when

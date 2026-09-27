@@ -6,15 +6,15 @@ review covers.
 ## Why this needs a policy rather than a footnote
 
 CGP must disclose its substantial use of AI. Agent-written documentation, the
-[public knowledge base](https://github.com/contextgeneric/cgp-knowledge-base), and
-`Co-Authored-By` commit trailers make that use visible. A disclosure should give readers an
-accurate account without making them reconstruct it from repository history. The
+[public knowledge base](https://github.com/contextgeneric/cgp-knowledge-base), and `Co-Authored-By`
+commit trailers make that use visible. A disclosure should give readers an accurate account without
+making them reconstruct it from repository history. The
 [honesty rule](AGENTS.md#honesty-is-the-strategy) applies to process as well as technical claims.
 
 The author's own writing provides the model for disclosure. The
 [new-website post](../website/blog/new-website.md) describes LLM assistance with the site's design,
-images, colour theme, and prose, and acknowledges that a professional designer could do better.
-Use the same plain register while distinguishing the different arrangements across the project.
+images, colour theme, and prose, and acknowledges that a professional designer could do better. Use
+the same plain register while distinguishing the different arrangements across the project.
 
 Avoid exaggerating either AI's contribution or human oversight. State what happened and its limits,
 without apology or promotional language. A reassuring claim about review is still false if that
@@ -22,21 +22,22 @@ review did not happen.
 
 ## The principle that organizes the levels
 
-The project allows more agent authorship where work can be checked against an established source
-and less where it defines the library users compile into their programs. Explain this principle
-before describing the levels, so readers understand the division of work.
+The project allows more agent authorship where work can be checked against an established source and
+less where it defines the library users compile into their programs. Explain this principle before
+describing the levels, so readers understand the division of work.
 
 Assess each artifact through these questions:
 
-- **Does it become part of a user's program?** Library code becomes a dependency users must trust.
-  A tool runs on their project and can be replaced without changing the program's implementation.
+- **Does it become part of a user's program?** Library code becomes a dependency users must trust. A
+  tool runs on their project and can be replaced without changing the program's implementation.
 - **Can it be checked against an established source?** Documentation can be compared with code,
   tests can exercise the library, and tool output can be compared with fixtures. Designing an
   interface requires the author's judgment about what it should do; checking an implementation
   against that design answers a different question.
 
 These criteria explain the range from agent-written documentation to a largely hand-written core
-library. They guide authorship decisions without guaranteeing that any resulting artifact is correct.
+library. They guide authorship decisions without guaranteeing that any resulting artifact is
+correct.
 
 ## The four levels
 
@@ -55,16 +56,16 @@ The public repository exposes the process for inspection. Readers can consult th
 document catalog, and commit history, including trailers that identify AI co-authorship. This record
 helps explain how a page was produced; it does not prove every statement is correct.
 
-The author directs the work and remains accountable for publication. He sets the rules, chooses
-what gets written, and reads the pages that carry the argument. He does not read every line of every
+The author directs the work and remains accountable for publication. He sets the rules, chooses what
+gets written, and reads the pages that carry the argument. He does not read every line of every
 ported reference page. Disclosures must preserve that limit; see
 [the review requirements](#the-two-claims-that-are-easiest-to-get-wrong).
 
 ### Revision of human-written drafts
 
-The author writes blog and tutorial drafts, and agents revise them against the knowledge base.
-He supplies the argument, priorities, concessions, and voice. Agents improve the prose and check
-code and claims.
+The author writes blog and tutorial drafts, and agents revise them against the knowledge base. He
+supplies the argument, priorities, concessions, and voice. Agents improve the prose and check code
+and claims.
 
 State this order explicitly. "AI-assisted" alone does not distinguish an author's draft revised by
 an agent from an agent-written reference page. The provenance note must describe the arrangement
@@ -86,18 +87,18 @@ using agents extensively in the test suite.
 
 ### The core library
 
-The author designs every CGP construct and interface, and writes the core library almost entirely
-by hand. This is the code users import, so the disclosure must distinguish design ownership from
+The author designs every CGP construct and interface, and writes the core library almost entirely by
+hand. This is the code users import, so the disclosure must distinguish design ownership from
 implementation assistance.
 
 AI assists with correctness checks, quality review, and proc-macro implementation. The author sets
 the design and directs and reviews the implementation work. Say both: he decides what CGP's
 constructs mean, and agents sometimes help implement them.
 
-Avoid the unqualified claim that the library is entirely hand-written. The `cgp` history includes
-AI co-authorship trailers on proc-macro work. Those records are useful disclosure, but a trailer
-alone does not distinguish design from implementation or establish how much review occurred.
-Describe those responsibilities directly.
+Avoid the unqualified claim that the library is entirely hand-written. The `cgp` history includes AI
+co-authorship trailers on proc-macro work. Those records are useful disclosure, but a trailer alone
+does not distinguish design from implementation or establish how much review occurred. Describe
+those responsibilities directly.
 
 ## How to word a disclosure
 
@@ -123,13 +124,14 @@ Preserve the qualifications on core-library authorship and human review. The
 [core-library section](#the-core-library) distinguishes the author's design from assisted
 implementation. The review claim must be equally precise.
 
-The website's [authorship rule](../website/AGENTS.md#who-drafts-a-page-and-who-reads-it-before-it-publishes)
-is the authority on which pages receive full review. It requires the author to read the front page,
+The website's
+[authorship rule](../website/AGENTS.md#who-drafts-a-page-and-who-reads-it-before-it-publishes) is
+the authority on which pages receive full review. It requires the author to read the front page,
 every Concepts explanation page, the reference index, the AI disclosure page, and every blog post in
-full before publication, and on every comparison page the two sections that judge another tool. Other
-pages follow their writing guides and receive spot checks. Consult that rule when drafting a disclosure
-instead of reconstructing the list from memory. The disclosure page states the comparison clause
-alongside the rest.
+full before publication, and on every comparison page the two sections that judge another tool.
+Other pages follow their writing guides and receive spot checks. Consult that rule when drafting a
+disclosure instead of reconstructing the list from memory. The disclosure page states the comparison
+clause alongside the rest.
 
 The review policy reflects the kind of work each page requires. Construct reference pages are ports
 of source-checked documents into a fixed template, while argument and framing require close human
@@ -148,12 +150,12 @@ Project status, rather than a recurring page type needing a separate writing gui
 
 Open with the organizing principle, then present the levels in this document's order. Begin with
 agent-written documentation and end with the core library, so the page explains substantial AI use
-before describing its limits. Each level covers its scope, the division of work, the reason for
-that division, and the limits of review. Give the knowledge-base process enough space for readers
-to understand how it can be checked.
+before describing its limits. Each level covers its scope, the division of work, the reason for that
+division, and the limits of review. Give the knowledge-base process enough space for readers to
+understand how it can be checked.
 
-Write in the project voice, with a visible personal statement where accountability requires it.
-For example, the author may say "every error is mine." The
+Write in the project voice, with a visible personal statement where accountability requires it. For
+example, the author may say "every error is mine." The
 [Contribute page's sponsorship section](../website/site-structure.md) provides a precedent for
 switching visibly to his voice.
 
@@ -163,8 +165,8 @@ work than a human would.
 
 ## Linking to it from a page
 
-Add a provenance note to each new or substantially rewritten AI-assisted website page. Follow
-these requirements:
+Add a provenance note to each new or substantially rewritten AI-assisted website page. Follow these
+requirements:
 
 - **Put one line at the foot of the page.** Keep provenance easy to find without interrupting the
   page's explanation.
@@ -185,6 +187,6 @@ page's provenance.
 
 ## Keeping this current
 
-Revise this policy and its public page when authorship or review practices change. Check them when
-a part of the project starts or stops being agent-written, when review requirements change, or when
-a stated limit becomes inaccurate. The disclosure must describe the process in use.
+Revise this policy and its public page when authorship or review practices change. Check them when a
+part of the project starts or stops being agent-written, when review requirements change, or when a
+stated limit becomes inaccurate. The disclosure must describe the process in use.

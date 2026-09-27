@@ -3,30 +3,31 @@
 Present CGP consistently through its settled tag line, a concrete pitch, and a focused set of
 headline features.
 
-These descriptions express the same identity at different lengths. Each must show what CGP adds
-to Rust, why a reader would use it, and where its benefits stop.
+These descriptions express the same identity at different lengths. Each must show what CGP adds to
+Rust, why a reader would use it, and where its benefits stop.
 
 ## The positioning, in the order it was decided
 
 Choose the positioning before writing the tag line. Work through alternatives, differences,
 benefits, audience, and category in that order. The method comes from the
-[communication sources](evidence.md#sources-for-the-craft-this-section-borrows); CGP's decisions are:
+[communication sources](evidence.md#sources-for-the-craft-this-section-borrows); CGP's decisions
+are:
 
 1. **Alternatives:** Plain traits and generics, enums, `dyn Trait`, newtypes, hand-written provider
    patterns, dependency-injection libraries, or waiting for a language feature. Each fits some
    problems better; [message.md](message.md#when-not-to-reach-for-cgp) explains where.
-2. **Differences:** CGP gives implementations separate provider types and lets contexts select
-   them. Providers can declare dependencies without adding them to the consumer interface, and
-   contexts can choose associated types without passing each as a separate generic parameter.
-   These mechanisms use ordinary traits on stable Rust.
+2. **Differences:** CGP gives implementations separate provider types and lets contexts select them.
+   Providers can declare dependencies without adding them to the consumer interface, and contexts
+   can choose associated types without passing each as a separate generic parameter. These
+   mechanisms use ordinary traits on stable Rust.
 3. **Benefits:** Readers can select implementations per application, extend behavior for foreign
    target types through providers, and keep implementation dependencies out of intermediate
-   signatures. Wiring resolves statically. Abstract dependencies can also help keep a reusable
-   core independent of a particular runtime or error library.
+   signatures. Wiring resolves statically. Abstract dependencies can also help keep a reusable core
+   independent of a particular runtime or error library.
 4. **Audience:** These benefits matter to developers managing interchangeable implementations,
-   library authors extending foreign types, and maintainers passing dependencies through deep
-   call graphs. They offer less to code with a single fixed implementation or a small, closed set
-   of alternatives. See [readers.md](readers.md).
+   library authors extending foreign types, and maintainers passing dependencies through deep call
+   graphs. They offer less to code with a single fixed implementation or a small, closed set of
+   alternatives. See [readers.md](readers.md).
 5. **Category:** Describe CGP as a *language extension for Rust*. This conveys its scope while
    making clear that it adds to Rust. "A language" or "a superset of Rust" overstates what a macro
    library provides. Dependency injection and type-class comparisons belong in explanations for
@@ -54,8 +55,8 @@ directly, and can coexist with code that does not use CGP. Explain those facts e
 understand that adoption can begin with one component.
 
 CGP also composes with familiar ways of representing variation. A context may contain generics,
-enums, or trait objects while selecting its providers statically. Developers choose which
-variations deserve separate context types and which belong inside a context. See
+enums, or trait objects while selecting its providers statically. Developers choose which variations
+deserve separate context types and which belong inside a context. See
 [the configuration objection](message.md#the-objections-readers-bring).
 
 Explain Rust's existing mechanisms fairly before showing what CGP adds. "A library on stable Rust"
@@ -70,14 +71,14 @@ Each phrase answers a different first-contact question:
   constructs that expand to ordinary Rust; it does not require a compiler fork or a new Rust
   grammar.
 - **"Pluggable"** names interchangeable implementations selected per context. "Reusable" alone
-  misses that distinction because ordinary traits already support reuse. Keep "pluggable" in
-  the tag line even where "swappable" is useful in an explanation.
+  misses that distinction because ordinary traits already support reuse. Keep "pluggable" in the tag
+  line even where "swappable" is useful in an explanation.
 - **"Trait implementations"** connects the unfamiliar idea to a Rust abstraction the reader knows.
 - **"At compile-time"** explains when selection happens. It prevents "pluggable" from implying a
   runtime container, dynamically loaded plugin, or vtable lookup.
 
-Introduce the name *context-generic programming* after giving it a concrete meaning. The name
-alone does not tell an unfamiliar reader what the tool does, as the reception summarized in
+Introduce the name *context-generic programming* after giving it a concrete meaning. The name alone
+does not tell an unfamiliar reader what the tool does, as the reception summarized in
 [evidence.md](evidence.md) illustrates.
 
 Use the pitch to explain the breadth the tag line omits. Abstract types, extensible data, and
@@ -86,10 +87,10 @@ handlers matter, but listing them all in the descriptor would obscure its centra
 ### Using "modular" as a supporting word
 
 Keep "modular" out of the lead description. It names a broad design quality without showing the
-problem CGP solves, and some readers associate it with runtime dependency-injection frameworks.
-When it helps later in a piece, qualify the meaning: explicit wiring resolved at compile time,
-without runtime dispatch overhead. The [redesign queue](../website/redesign-queue.md) tracks
-site wording that needs to match this guidance.
+problem CGP solves, and some readers associate it with runtime dependency-injection frameworks. When
+it helps later in a piece, qualify the meaning: explicit wiring resolved at compile time, without
+runtime dispatch overhead. The [redesign queue](../website/redesign-queue.md) tracks site wording
+that needs to match this guidance.
 
 ## The pitch that follows the line
 
@@ -109,8 +110,8 @@ The breadth line explains what else the same approach supports:
 > extensible records and variants, and composable handlers.
 
 Keep the payoff beside the mechanism. An associated type is determined by its context, so callers
-need not pass it as an independent type parameter. This does not remove all generics or bounds.
-The reasoning is in
+need not pass it as an independent type parameter. This does not remove all generics or bounds. The
+reasoning is in
 [impl-side dependencies](../cgp/concepts/impl-side-dependencies.md#type-dependencies-and-why-they-need-no-parameter).
 The [extensible-data](../cgp/concepts/extensible-records.md) and
 [handler](../cgp/concepts/handlers.md) documents explain the rest of the breadth claim.
@@ -150,13 +151,13 @@ selection explicitly; use also forces type checking. See
 
 ### What the set deliberately leaves out
 
-Leave "Dependency Injection" out of the general feature panel. Explain its benefits through
-checked wiring and abstract dependencies, then use the DI comparison where the reader's background
-makes it helpful. Avoid importing assumptions about a runtime container.
+Leave "Dependency Injection" out of the general feature panel. Explain its benefits through checked
+wiring and abstract dependencies, then use the DI comparison where the reader's background makes it
+helpful. Avoid importing assumptions about a runtime container.
 
 Put domain-specific benefits in the material linked from the panel. Error handling, runtime choice,
-trait decomposition, and alternatives to dynamic dispatch develop the headline features rather
-than competing with them. The [homepage guide](../website/writing-guides/homepage.md) specifies the
+trait decomposition, and alternatives to dynamic dispatch develop the headline features rather than
+competing with them. The [homepage guide](../website/writing-guides/homepage.md) specifies the
 panel's place on the page; the [redesign queue](../website/redesign-queue.md) tracks site changes.
 
 ### Phrasing rules for feature titles
@@ -167,8 +168,8 @@ sentence explains the scope. State the benefit and the qualifier together.
 
 Keep portability in the dependency feature and signature simplification in the breadth line. The
 former addresses the systems programmer choosing a runtime or platform. The latter addresses the
-maintainer whose intermediate layers repeat type parameters. Separating them keeps each short
-while the longer [message](message.md) explains both.
+maintainer whose intermediate layers repeat type parameters. Separating them keeps each short while
+the longer [message](message.md) explains both.
 
 ## Keeping this document in sync
 

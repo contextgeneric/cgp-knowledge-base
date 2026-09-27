@@ -25,9 +25,9 @@ For each piece, settle these choices before drafting:
 
 ## The link-aggregator launch post
 
-Write a short author-voiced introduction that gives unfamiliar readers a reason to inspect the
-code. Use "pluggable trait implementations for Rust, at compile-time" in the title rather than
-relying on the paradigm name.
+Write a short author-voiced introduction that gives unfamiliar readers a reason to inspect the code.
+Use "pluggable trait implementations for Rust, at compile-time" in the title rather than relying on
+the paradigm name.
 
 Open with a runnable example or a clearly labeled before-and-after. Show the problem that warrants
 providers, then say when a plain trait suffices. Link to deeper material instead of reproducing it
@@ -57,19 +57,19 @@ Use the project voice and make the first screen explain what CGP does. Put the s
 beneath the name, follow it with a short reassurance line, and show code early. Keep any feature
 summary compact; do not make readers pass a full feature panel before reaching the example.
 
-State that the library uses stable Rust and show installation early. Link readers trying CGP to
-the quickstart and evaluators to the candid maturity discussion. Use the
+State that the library uses stable Rust and show installation early. Link readers trying CGP to the
+quickstart and evaluators to the candid maturity discussion. Use the
 [headline features](identity.md#the-headline-feature-set) for a fuller feature panel and the
 [homepage guide](../website/writing-guides/homepage.md) for related layout guidance.
 
-Check every README surface a release exposes. The repository's root README and the file selected
-by a crate's `Cargo.toml` `readme` field may differ; inspect the manifest rather than assuming they
-are the same. Check the package page and Rustdoc entry separately, since crate-level Rustdoc may
-come from source attributes rather than the README.
+Check every README surface a release exposes. The repository's root README and the file selected by
+a crate's `Cargo.toml` `readme` field may differ; inspect the manifest rather than assuming they are
+the same. Check the package page and Rustdoc entry separately, since crate-level Rustdoc may come
+from source attributes rather than the README.
 
-Give each entry page enough substance to justify following its links. A tag line, useful code, and
-a clear documentation link work better than a page that only redirects readers or dismisses its
-own documentation.
+Give each entry page enough substance to justify following its links. A tag line, useful code, and a
+clear documentation link work better than a page that only redirects readers or dismisses its own
+documentation.
 
 ## The conference talk or video
 
@@ -100,23 +100,23 @@ Describe each alternative as its users would recognize it, including where it is
 Use [related-work](../related-work/README.md) for the comparison and
 [message.md](message.md#when-not-to-reach-for-cgp) for CGP's boundary.
 
-Compare the same attributes across tools. A table works when its rows explain actual differences
-and trade-offs; avoid choosing criteria solely to make CGP win. End with guidance for the reader's
-case rather than a universal verdict.
+Compare the same attributes across tools. A table works when its rows explain actual differences and
+trade-offs; avoid choosing criteria solely to make CGP win. End with guidance for the reader's case
+rather than a universal verdict.
 
 Preserve the author's care with related work. Explain both the useful analogy and where it stops,
 especially for concepts such as type classes, ML modules, and effects.
 
 The website's comparison pages are the standing form of this piece, and the
 [comparison page guide](../website/writing-guides/related-work.md) governs them: it fixes how an
-internal related-work document is ported, above all that the document's positioning guidance is applied
-as page structure rather than published, and how another community's tool is written about in public.
-A comparison written for another channel follows the same rules for the compared tool.
+internal related-work document is ported, above all that the document's positioning guidance is
+applied as page structure rather than published, and how another community's tool is written about
+in public. A comparison written for another channel follows the same rules for the compared tool.
 
 ## Titles, first lines, and search
 
-Write each page's title and opening for someone arriving directly from a link or search result.
-The reader may not have seen the homepage or an earlier tutorial. This follows the
+Write each page's title and opening for someone arriving directly from a link or search result. The
+reader may not have seen the homepage or an earlier tutorial. This follows the
 [Every Page is Page One approach](evidence.md#sources-for-the-craft-this-section-borrows).
 
 Use problem-oriented titles for tutorials, explanations, and posts. These examples connect a
@@ -129,23 +129,23 @@ construct to the result the reader wants:
 | Abstract types | Let each application choose its error type |
 | Context-generic programming for library authors | Add behavior for a type you do not own |
 
-Reference pages are the exception: use the construct name readers are looking up, then explain
-its purpose in the overview's first sentence.
+Reference pages are the exception: use the construct name readers are looking up, then explain its
+purpose in the overview's first sentence.
 
 Orient unfamiliar readers in the first paragraph. Give a short description of CGP linked to an
 introduction, then state what this page covers. Use the settled descriptor where it fits, without
 repeating a long introduction on every page.
 
-Use established problem names naturally where they apply. Terms such as "orphan rule",
-"conflicting implementations", and `E0119` connect the page to the question it answers. Do not
-repeat them for search ranking or claim knowledge of search traffic the project does not measure.
+Use established problem names naturally where they apply. Terms such as "orphan rule", "conflicting
+implementations", and `E0119` connect the page to the question it answers. Do not repeat them for
+search ranking or claim knowledge of search traffic the project does not measure.
 
-Qualify bridge terms such as "structural typing" when using them. CGP remains nominal and wired;
-the analogy should explain a resemblance without asserting a different type system. Follow
+Qualify bridge terms such as "structural typing" when using them. CGP remains nominal and wired; the
+analogy should explain a resemblance without asserting a different type system. Follow
 [vocabulary.md](vocabulary.md#the-name-and-the-communitys-bridge-terms).
 
-Write an explicit page description and blog excerpt. Use Docusaurus `description` front matter for
-a concise summary, and check the excerpt above a blog post's truncate marker. Search engines may
+Write an explicit page description and blog excerpt. Use Docusaurus `description` front matter for a
+concise summary, and check the excerpt above a blog post's truncate marker. Search engines may
 choose a different snippet, so do not promise that the description controls every preview.
 Aggregator titles follow the [launch-post guidance](#the-link-aggregator-launch-post).
 
@@ -163,8 +163,9 @@ question, using [message.md](message.md#the-objections-readers-bring) for detail
 | I have only one application. | Assess present needs such as foreign targets or reusable providers. Do not invent a future second context to justify wiring. |
 | Will every configuration need a context? | Separate only useful type-level distinctions. Keep runtime choices in enums or trait objects inside the context. |
 
-Use the canonical limitation when recommending the checker:
-`cargo cgp check` leads with the root cause for the classes it recognizes, and the tool is a v0.1.0-alpha that does not yet reshape every class.
+Use the canonical limitation when recommending the checker: `cargo cgp check` leads with the root
+cause for the classes it recognizes, and the tool is a v0.1.0-alpha that does not yet reshape every
+class.
 
 ## The conversion ladder
 
@@ -271,12 +272,13 @@ against the source and `/cgp` skill under the
 
 The opening names a Rust restriction and explains why it exists. The code then changes the
 implementation arrangement, with the move from value `Self` to environmental context stated
-explicitly. Both contexts check their wiring. The close states costs and asks only for a small trial.
+explicitly. Both contexts check their wiring. The close states costs and asks only for a small
+trial.
 
 Keep the example's scope when adapting it. It demonstrates separate provider choices, not a repeal
-of Rust's coherence rules or a claim that both bodies produce different results for every input.
-The [message example](message.md#the-problems-cgp-removes) supplies the rejected ordinary-Rust code
-when the format has room for a full before-and-after.
+of Rust's coherence rules or a claim that both bodies produce different results for every input. The
+[message example](message.md#the-problems-cgp-removes) supplies the rejected ordinary-Rust code when
+the format has room for a full before-and-after.
 
 ### A README above the fold
 
@@ -324,8 +326,8 @@ fn main() {
 >
 > [Insert quickstart link] · [Insert maturity discussion link]
 
-The descriptor, installation, and code give an unfamiliar reader a concrete starting point. This
-is a self-targeted component on a value context, `Person`. The limitation prevents the small example
+The descriptor, installation, and code give an unfamiliar reader a concrete starting point. This is
+a self-targeted component on a value context, `Person`. The limitation prevents the small example
 from implying that every greeting needs a component. A fuller README can follow it with the
 [canonical feature panel](identity.md#the-headline-feature-set).
 
@@ -348,10 +350,10 @@ carries the detail. It uses ordinary Rust vocabulary before introducing the prov
 
 ### Adapting these
 
-Change the motivating problem to fit the dominant [reader](readers.md). A foreign target may suit
-a library author, an abstract error type a systems programmer, and trait decomposition an evaluator.
+Change the motivating problem to fit the dominant [reader](readers.md). A foreign target may suit a
+library author, an abstract error type a systems programmer, and trait decomposition an evaluator.
 Keep the settled descriptor while changing the example that earns the reader's attention.
 
-Preserve the fair explanation of Rust, the relevant cost, and verified code in every adaptation.
-Add new worked drafts here when a distinct format needs one, using the same pattern: example copy
+Preserve the fair explanation of Rust, the relevant cost, and verified code in every adaptation. Add
+new worked drafts here when a distinct format needs one, using the same pattern: example copy
 followed by a short explanation of its choices.

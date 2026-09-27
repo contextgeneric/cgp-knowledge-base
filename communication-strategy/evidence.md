@@ -17,29 +17,30 @@ Publication schedules and campaign results are managed outside this repository.
 ## What the Rust community worries about, and what it rewards
 
 Rust surveys support addressing compilation cost, debugging, and complexity directly. The
-[2025 survey](https://blog.rust-lang.org/2026/03/02/2025-State-Of-Rust-Survey-results/), published in
-March 2026, collected 7,156 completed responses. Its productivity chart reports slow compilation as
-a big problem for 27.29% and debugging for 19.90% of respondents to that question. Concern about
+[2025 survey](https://blog.rust-lang.org/2026/03/02/2025-State-Of-Rust-Survey-results/), published
+in March 2026, collected 7,156 completed responses. Its productivity chart reports slow compilation
+as a big problem for 27.29% and debugging for 19.90% of respondents to that question. Concern about
 complexity was 41.6%, compared with 45.2% in 2024. These findings describe survey respondents, not
 all Rust developers.
 
 The [2024 survey](https://blog.rust-lang.org/2025/02/13/2024-State-Of-Rust-Survey-results/) also
 reports performance as employers' second most common reason for investing in Rust, after building
-correct software. This supports discussing runtime cost, without establishing how any particular
-CGP message will perform.
+correct software. This supports discussing runtime cost, without establishing how any particular CGP
+message will perform.
 
 State compilation and diagnostic costs beside the benefits of abstraction. Pair the diagnostic
 concession with [`cargo-cgp`](../cgp/reference/cargo-cgp.md), using the canonical wording:
-`cargo cgp check` leads with the root cause for the classes it recognizes, and the tool is a v0.1.0-alpha that does not yet reshape every class.
+`cargo cgp check` leads with the root cause for the classes it recognizes, and the tool is a
+v0.1.0-alpha that does not yet reshape every class.
 
 Show why the added abstraction is useful before introducing it. The concern about complexity
 supports the [enhances-not-replaces framing](identity.md): explain CGP through ordinary Rust,
 gradual adoption, and a concrete problem. This is a strategic inference from the survey, not a
 measured preference for that wording.
 
-Explain runtime cost precisely. CGP resolves wiring at compile time and uses static dispatch;
-that mechanism supports a specific claim about dispatch overhead. Avoid implying that every
-program using CGP is faster.
+Explain runtime cost precisely. CGP resolves wiring at compile time and uses static dispatch; that
+mechanism supports a specific claim about dispatch overhead. Avoid implying that every program using
+CGP is faster.
 
 ## The conversations that draw attention
 
@@ -54,34 +55,36 @@ measurements:
 - **Async and function coloring:** The
   [function-coloring discussion](https://www.thecodedmessage.com/posts/async-colors/) and
   [async-trait issue](https://github.com/rust-lang/rust/issues/103854) offer context for
-  [CGP's `Send` recovery](../cgp/concepts/send-bounds.md). Keep the connection narrow: CGP does
-  not remove function coloring.
+  [CGP's `Send` recovery](../cgp/concepts/send-bounds.md). Keep the connection narrow: CGP does not
+  remove function coloring.
 - **Error handling:** The choice between concrete error types and libraries such as `anyhow` and
   `thiserror` offers a practical opening for CGP's abstract error type. Use the
   [modular-error-handling explanation](../cgp/concepts/modular-error-handling.md) to state the
   benefit without claiming a measured level of audience interest.
 - **Reflection and compile-time introspection:** The Rust project's
   [reflection and comptime goal](https://goals.rust-lang.org/2026/reflection-and-comptime.html)
-  records a landed MVP and further experimental work, including validation with reflection
-  libraries such as `facet` and `bevy_reflect`. Present CGP's type-level structural reflection as
-  available on stable Rust and potentially complementary. Do not imply a settled future language
-  design or stabilization date.
+  records a landed MVP and further experimental work, including validation with reflection libraries
+  such as `facet` and `bevy_reflect`. Present CGP's type-level structural reflection as available on
+  stable Rust and potentially complementary. Do not imply a settled future language design or
+  stabilization date.
 - **Dictionary passing and context-carried implementations:** Nadrieril's
   [dictionary-passing](https://nadrieril.github.io/blog/2026/03/20/dictionary-passing-style.html)
-  and [traits carrying values](https://nadrieril.github.io/blog/2026/03/22/what-if-traits-carried-values.html)
+  and
+  [traits carrying values](https://nadrieril.github.io/blog/2026/03/22/what-if-traits-carried-values.html)
   posts, Boxy's [An Incoherent Rust](https://www.boxyuwu.blog/posts/an-incoherent-rust/), and Tyler
-  Mandry's [context and capabilities](https://tmandry.gitlab.io/blog/posts/2021-12-21-context-capabilities/)
+  Mandry's
+  [context and capabilities](https://tmandry.gitlab.io/blog/posts/2021-12-21-context-capabilities/)
   proposal provide a relevant comparison for the
-  [language-design reader](readers.md#the-language-design-and-compiler-team-reader). Present CGP
-  as a working desugaring of part of this design space. It neither supplies the formalization
-  those efforts seek nor migrates the existing trait ecosystem. The comparison itself, including
+  [language-design reader](readers.md#the-language-design-and-compiler-team-reader). Present CGP as
+  a working desugaring of part of this design space. It neither supplies the formalization those
+  efforts seek nor migrates the existing trait ecosystem. The comparison itself, including
   specialization and Cairo, is worked out in
   [related-work/rust-language-proposals.md](../related-work/rust-language-proposals.md).
 - **AI-assisted development:** Discuss CGP's published
   [agent skill](https://github.com/contextgeneric/cgp-skills) beside the costs of wiring,
-  vocabulary, and diagnostics, as prescribed in [message.md](message.md#the-objections-readers-bring).
-  Readers can try it and judge its help. Its existence does not prove that it removes those costs,
-  and AI support should not lead the pitch.
+  vocabulary, and diagnostics, as prescribed in
+  [message.md](message.md#the-objections-readers-bring). Readers can try it and judge its help. Its
+  existence does not prove that it removes those costs, and AI support should not lead the pitch.
 
 The 2025 survey suggests that some learning questions may be moving to LLM tools. Its authors infer
 this from open answers and shifts in community participation. Treat that as context for agent
@@ -89,20 +92,20 @@ support, not as a measurement of CGP users or evidence that the skill solves the
 
 ## What the search data shows about demand
 
-Google Search Console gives the project one measured view of what readers look for, and the
-finding worth carrying into public writing is which vocabulary they use. Over the twelve months to
+Google Search Console gives the project one measured view of what readers look for, and the finding
+worth carrying into public writing is which vocabulary they use. Over the twelve months to
 2026-09-18 the domain property drew 121,685 impressions and 970 clicks, and its largest non-branded
-term by far was the **blanket-implementation family**: six query variants totalling 1,781 impressions
-and 106 clicks at average positions between 4.0 and 5.1. The page earning most of them is a chapter of
-the [CGP Patterns book](https://patterns.contextgeneric.dev/).
+term by far was the **blanket-implementation family**: six query variants totalling 1,781
+impressions and 106 clicks at average positions between 4.0 and 5.1. The page earning most of them
+is a chapter of the [CGP Patterns book](https://patterns.contextgeneric.dev/).
 
 Two conclusions follow for this section, and both are narrow. **Blanket implementations are the
 entry point readers actually search for**, which supports leading with that idea for a general Rust
 audience and is independent evidence for the hand-rolled-workaround finding below. And **the
 project's own name has almost no search demand**: *context generic programming* and *cgp rust*
 together drew 112 impressions in a year, at average positions of 1.1 and 1.3. That is measured
-support for [identity.md](identity.md#why-each-word-of-the-line-is-there)'s rule that the name always
-travels with a plain descriptor. The bare acronym drew 736 impressions and no clicks at all.
+support for [identity.md](identity.md#why-each-word-of-the-line-is-there)'s rule that the name
+always travels with a plain descriptor. The bare acronym drew 736 impressions and no clicks at all.
 
 These are Google figures for one property over one year. They describe what reached this site, not
 what the Rust community wants, and the query table is capped at 1,000 rows, so roughly nine
@@ -110,20 +113,20 @@ impressions in ten are long-tail queries nobody can inspect.
 
 ## The pains are real, and developers already hand-roll the fix
 
-An independently published workaround shows that CGP addresses a problem developers encounter.
-The [alternative blanket implementations article](https://www.greyblake.com/blog/alternative-blanket-implementations-for-single-rust-trait/)
-uses marker types and a helper trait to allow otherwise-overlapping implementations to coexist.
-That resembles CGP's central mechanism and provides a concrete comparison for a reader who suspects
+An independently published workaround shows that CGP addresses a problem developers encounter. The
+[alternative blanket implementations article](https://www.greyblake.com/blog/alternative-blanket-implementations-for-single-rust-trait/)
+uses marker types and a helper trait to allow otherwise-overlapping implementations to coexist. That
+resembles CGP's central mechanism and provides a concrete comparison for a reader who suspects
 unnecessary abstraction.
 
 Use the workaround to explain the benefit of packaging a reusable technique. It establishes that
-someone needed the pattern, and the search data above establishes that people look for the underlying
-idea in volume; neither proves that CGP is the best solution for every instance.
+someone needed the pattern, and the search data above establishes that people look for the
+underlying idea in volume; neither proves that CGP is the best solution for every instance.
 
-Dependency injection provides another comparison, but the trade-offs depend on the design. A
-runtime container may use `Arc<dyn Trait>` to resolve an object graph. CGP instead selects providers
-through per-context wiring and static dispatch. Explain that difference without generalizing all
-DI crates as runtime containers or dismissing their design choices. Consult
+Dependency injection provides another comparison, but the trade-offs depend on the design. A runtime
+container may use `Arc<dyn Trait>` to resolve an object graph. CGP instead selects providers through
+per-context wiring and static dispatch. Explain that difference without generalizing all DI crates
+as runtime containers or dismissing their design choices. Consult
 [related-work/dependency-injection.md](../related-work/dependency-injection.md) for the comparison.
 
 Public trait signatures can expose implementation details. The
@@ -149,8 +152,8 @@ These objections recur and suggest specific responses:
   ask what justifies the declarations and wiring. Lead with a concrete problem and a
   before-and-after before naming the paradigm.
 - **Difficulty tracing control flow:** Readers want to know which implementation a method invokes.
-  Show how the wiring table names a provider and how to follow that choice. A searchable table
-  helps navigation but does not eliminate indirection.
+  Show how the wiring table names a provider and how to follow that choice. A searchable table helps
+  navigation but does not eliminate indirection.
 - **Similarity to prior work:** Readers compare CGP with aspect-oriented programming, COM, or ML
   modules. Use [related-work](../related-work/README.md) to explain both the resemblance and the
   limits of the comparison.
@@ -158,16 +161,16 @@ These objections recur and suggest specific responses:
   unfamiliar reader. Pair the name with a plain description. Structural-typing analogies can help,
   provided the piece explains that CGP remains nominal and wired.
 - **An inferred single-item restriction:** Teaching feedback records readers interpreting
-  single-method examples as a limit on component traits. Show a working multi-item component
-  before discussing grouping, and distinguish macro support from advice about provider reuse.
-- **Overstated ergonomics:** Readers expect compiler errors to require understanding generated
-  code. Teach the desugaring and present `cargo-cgp` as a response to that difficulty, with its
-  limits intact. The canonical concession is: `cargo cgp check` leads with the root cause for the
-  classes it recognizes, and the tool is a v0.1.0-alpha that does not yet reshape every class.
-  Reception of the tool is not established here; do not invent community praise.
+  single-method examples as a limit on component traits. Show a working multi-item component before
+  discussing grouping, and distinguish macro support from advice about provider reuse.
+- **Overstated ergonomics:** Readers expect compiler errors to require understanding generated code.
+  Teach the desugaring and present `cargo-cgp` as a response to that difficulty, with its limits
+  intact. The canonical concession is: `cargo cgp check` leads with the root cause for the classes
+  it recognizes, and the tool is a v0.1.0-alpha that does not yet reshape every class. Reception of
+  the tool is not established here; do not invent community praise.
 
-Show generated Rust early enough to prepare readers for debugging. The ergonomics objection
-supports the [teaching requirement](readers.md#the-comprehension-barriers) to make the desugaring
+Show generated Rust early enough to prepare readers for debugging. The ergonomics objection supports
+the [teaching requirement](readers.md#the-comprehension-barriers) to make the desugaring
 understandable, rather than promising that readers will never need it.
 
 The recorded sample covers posts across the [blog catalog](../website/blog/README.md), including
@@ -191,18 +194,18 @@ examine. Its presentation on the site is tracked in the
 
 ## Where the profiles gather
 
-Choose the channel, intended reader, and opening together. Use the [reader profiles](readers.md)
-as a working model, then revise that model from actual responses. These are presentation choices,
-not measured demographic assignments to venues.
+Choose the channel, intended reader, and opening together. Use the [reader profiles](readers.md) as
+a working model, then revise that model from actual responses. These are presentation choices, not
+measured demographic assignments to venues.
 
 General channels need a clear description and a concrete example. Lobsters and the Rust subreddit
 have hosted useful CGP discussion; *This Week in Rust* offers another distribution route. Treat
 Hacker News as an uncertain opportunity rather than the basis of a plan. Address the motivating
 problem and make implementation selection visible before readers dismiss the code as verbosity.
 
-Specialist readers need comparisons suited to their existing knowledge. Functional-programming
-and type-system audiences can use the relevant one-liners in [message.md](message.md). Evaluators
-need detailed explanations and comparisons that state maturity, costs, and practical use.
+Specialist readers need comparisons suited to their existing knowledge. Functional-programming and
+type-system audiences can use the relevant one-liners in [message.md](message.md). Evaluators need
+detailed explanations and comparisons that state maturity, costs, and practical use.
 
 Language-design readers need a precise contribution to a design question. A general announcement
 alone is unlikely to provide it. Explain the fragment CGP implements, the desugaring it supplies,
@@ -220,26 +223,26 @@ findings that change the guidance.
 Track these signals where they are available:
 
 - **Awareness: questions prompted by the opening.** Read the first ten replies, distinguish
-  how-questions from dismissals, and compare their proportions. Note replies that fit neither
-  group and samples with fewer replies. This is a rough framing check, not a measure of adoption;
-  it is the only measurement recorded as used so far.
+  how-questions from dismissals, and compare their proportions. Note replies that fit neither group
+  and samples with fewer replies. This is a rough framing check, not a measure of adoption; it is
+  the only measurement recorded as used so far.
 - **Activation: time to a running program.** The Quickstart target is a reader with Rust installed
   reaching a working result in under ten minutes using only the page. Measure with a
   [friction log](readers.md#keeping-the-model-observed) on a clean machine. The target is owned by
   [the orientation-page guide](../website/writing-guides/orientation.md), which the page is written
   against. Hello World and the first tutorial part use the same measure with longer budgets.
 - **Adoption: recurring questions from people writing code.** Summarize patterns from GitHub
-  Discussions, Discord, and the subreddit. Investigate the page that should answer each question.
-  If confusion persists after a revision, examine both the explanation and the construct.
-- **Advocacy: independent writing and components.** Count contributions and unsolicited writing
-  when they occur, and record which subjects they cover. These indicate engagement beyond reading;
-  they do not by themselves establish widespread adoption.
+  Discussions, Discord, and the subreddit. Investigate the page that should answer each question. If
+  confusion persists after a revision, examine both the explanation and the construct.
+- **Advocacy: independent writing and components.** Count contributions and unsolicited writing when
+  they occur, and record which subjects they cover. These indicate engagement beyond reading; they
+  do not by themselves establish widespread adoption.
 - **Search: available through Google Search Console, for Google only.** The site has no analytics
   and needs none for this: Search Console places no script on the site and reports what Google
-  already knows about its own index. A twelve-month export to 2026-09-18 is summarized [above](#what-the-search-data-shows-about-demand) and
-  analyzed in the website section's [SEO strategy](../website/seo.md). Nothing equivalent exists for
-  Bing, Kagi, or Brave, so claims about those engines still rest on hand checks. Keep raw exports
-  outside this repository.
+  already knows about its own index. A twelve-month export to 2026-09-18 is summarized
+  [above](#what-the-search-data-shows-about-demand) and analyzed in the website section's
+  [SEO strategy](../website/seo.md). Nothing equivalent exists for Bing, Kagi, or Brave, so claims
+  about those engines still rest on hand checks. Keep raw exports outside this repository.
 
 Establish a baseline before attributing a change to a piece. Collect a signal only when it can
 inform a decision. Update the standing guidance when findings change it; repeated confirmation
@@ -247,19 +250,19 @@ belongs in the external measurement record, if needed, rather than adding detail
 
 ## Reading the reaction
 
-Use replies to test whether the opening communicates the intended benefit. Questions about how
-CGP achieves a result suggest that readers understood enough to investigate. Dismissals about
-verbosity, unclear control flow, prior art, or an opaque name suggest places to revisit. They may
-also express a real cost or a poor fit, so do not assume every objection is a wording failure.
+Use replies to test whether the opening communicates the intended benefit. Questions about how CGP
+achieves a result suggest that readers understood enough to investigate. Dismissals about verbosity,
+unclear control flow, prior art, or an opaque name suggest places to revisit. They may also express
+a real cost or a poor fit, so do not assume every objection is a wording failure.
 
 Try a candidate opening with its intended audience and revise from the response. Check whether the
 problem is clear, whether the comparison is accurate, and whether a limitation needs stating.
 Summarize changed conclusions in the patterns above without reproducing threads or identifying
 commenters. Publication planning and detailed results remain outside this repository.
 
-Space substantial publications apart to reduce competition for the same readers. Simultaneous
-posts can divide attention and make their results harder to interpret. Treat spacing as part of
-the external publication plan.
+Space substantial publications apart to reduce competition for the same readers. Simultaneous posts
+can divide attention and make their results harder to interpret. Treat spacing as part of the
+external publication plan.
 
 ## Sources, and when each was last checked
 
@@ -288,8 +291,8 @@ have not been checked again.
 
 ### Sources for the craft this section borrows
 
-Use these sources for the communication methods applied elsewhere in the section. Link to this
-list when using a method. "Summary read" records consultation of a published summary rather than
+Use these sources for the communication methods applied elsewhere in the section. Link to this list
+when using a method. "Summary read" records consultation of a published summary rather than
 verification against the full original work.
 
 | Source | Used for | Last checked |

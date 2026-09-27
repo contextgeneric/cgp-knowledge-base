@@ -14,8 +14,8 @@ marketing, public communication, and developer relations. Explain that craft in 
 using a systems programmer's intuition where helpful. Technical expertise alone does not tell a
 writer what an unfamiliar reader needs to hear.
 
-The guidance prevents unsupported claims and generic copy. A claim CGP cannot support damages
-trust, while fluent prose filled with vague praise loses the author's voice. Start with
+The guidance prevents unsupported claims and generic copy. A claim CGP cannot support damages trust,
+while fluent prose filled with vague praise loses the author's voice. Start with
 [author-personality.md](author-personality.md): his stated preferences govern the rest of the
 section.
 
@@ -45,9 +45,9 @@ also addresses the concern about complexity recorded in [evidence.md](evidence.m
 
 ## Principles from the non-technical craft
 
-Write from the reader's current knowledge. The **curse of knowledge** is the difficulty experts
-have remembering what an unfamiliar reader does not yet understand. It leads writers to introduce
-an elegant mechanism before showing the problem it solves. Begin with a problem the reader can
+Write from the reader's current knowledge. The **curse of knowledge** is the difficulty experts have
+remembering what an unfamiliar reader does not yet understand. It leads writers to introduce an
+elegant mechanism before showing the problem it solves. Begin with a problem the reader can
 recognize, then introduce the mechanism.
 
 **Positioning** helps readers place CGP in a useful category. Readers interpret an unfamiliar tool
@@ -60,49 +60,49 @@ it through a real example or a before-and-after. Use consistent words across pie
 connect what they learn. Keep the entry focused, then provide the depth the subject needs and tell
 readers what a long piece will cover.
 
-Developer relations builds trust through accurate claims and useful help. Show what CGP does,
-state its costs, represent alternatives fairly, and say when a simpler tool fits better. Use real
-examples from other developers when available. Ask readers for a next step suited to their stage,
-whether that is reading an explanation, trying a program, or contributing a component.
+Developer relations builds trust through accurate claims and useful help. Show what CGP does, state
+its costs, represent alternatives fairly, and say when a simpler tool fits better. Use real examples
+from other developers when available. Ask readers for a next step suited to their stage, whether
+that is reading an explanation, trying a program, or contributing a component.
 
 ## The catalog
 
 Read the [messaging brief](messaging-brief.md) before drafting, then consult the fuller documents
 for the decisions your piece needs. For a first reading, follow the order below; read AI disclosure
-when writing about provenance. Related subjects stay together so writers can find their reasoning
-in one place.
+when writing about provenance. Related subjects stay together so writers can find their reasoning in
+one place.
 
 - [The messaging brief](messaging-brief.md): The settled message, features, audience-specific pains,
   objections, costs, next steps, vocabulary, and publishing checks in one page.
-- [The author's personality and preferences](author-personality.md): His observed writing habits
-  and stated preferences. Read this before applying the other guidance; it governs conflicts.
+- [The author's personality and preferences](author-personality.md): His observed writing habits and
+  stated preferences. Read this before applying the other guidance; it governs conflicts.
 - [Voice and register](voice-and-register.md): Project and author voices, paragraph structure,
   canonical examples, diagrams, code samples, and habits to avoid.
-- [Writing styles](writing-styles.md): Direct sentences, clear subjects, alternatives to habitual
-  em dashes, and plain English for agent-drafted pages, with before-and-after examples.
+- [Writing styles](writing-styles.md): Direct sentences, clear subjects, alternatives to habitual em
+  dashes, and plain English for agent-drafted pages, with before-and-after examples.
 - [Identity](identity.md): Positioning, the settled tag line, the pitch that follows it, and the
   homepage feature set.
-- [Readers](readers.md): Audience profiles, comprehension barriers, teaching responses, and ways
-  to test assumptions through friction logs and reader conversations.
+- [Readers](readers.md): Audience profiles, comprehension barriers, teaching responses, and ways to
+  test assumptions through friction logs and reader conversations.
 - [The message](message.md): The pains CGP addresses, its strengths, reader objections, and the
   limits beyond which a simpler tool fits better.
 - [Vocabulary](vocabulary.md): Preferred, deferred, and avoided terms, plus definitions of the
   communication craft. It resolves wording disagreements.
-- [Reader simulation](reader-simulation.md): A method for predicting what readers know, expect,
-  and understand as a piece develops, then revising where those predictions fail.
+- [Reader simulation](reader-simulation.md): A method for predicting what readers know, expect, and
+  understand as a piece develops, then revising where those predictions fail.
 - [Formats](formats.md): Guidance for posts, READMEs, talks, threads, and comparisons, including
   titles, search, discussion replies, next steps, and model drafts.
 - [Evidence](evidence.md): Survey findings, relevant discussions, summarized CGP reception, the
   measured search demand from Search Console, evaluation signals, and dated sources for audience
   claims and communication methods.
-- [AI disclosure](ai-disclosure.md): How to describe AI's role in documentation, revisions,
-  tooling, tests, and the core library; review limits; and website provenance notes.
+- [AI disclosure](ai-disclosure.md): How to describe AI's role in documentation, revisions, tooling,
+  tests, and the core library; review limits; and website provenance notes.
 
 ## Where this guidance gets spent
 
 The [website section](../website/README.md) turns this strategy into page-specific guidance and
-records of published work. Start with its [writing guides](../website/writing-guides/README.md)
-when drafting for the site. The [homepage](../website/writing-guides/homepage.md),
+records of published work. Start with its [writing guides](../website/writing-guides/README.md) when
+drafting for the site. The [homepage](../website/writing-guides/homepage.md),
 [tutorial](../website/writing-guides/tutorial.md), and
 [comparison page](../website/writing-guides/related-work.md) guides own those formats' detailed
 requirements.

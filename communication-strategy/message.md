@@ -1,6 +1,7 @@
 # The message: pains, strengths, objections, and limits
 
-Choose a problem the reader recognizes, show the relevant CGP benefit, and state the costs and limits.
+Choose a problem the reader recognizes, show the relevant CGP benefit, and state the costs and
+limits.
 
 Keep these parts together when revising a claim. A changed strength may need a matching change to
 its motivating problem, objection, and boundary. [readers.md](readers.md) identifies audiences;
@@ -12,14 +13,14 @@ Open with the reader's problem before explaining CGP's mechanism. Show a recogni
 then a small, fair before-and-after. State where the extra abstraction is useful and where a plain
 trait would be clearer.
 
-Use the modern idioms taught by the `/cgp` skill and [guides](../cgp/guides/README.md). Providers use
-`#[cgp_impl]`, context fields use `#[implicit]`, and wiring uses `delegate_components!` with explicit
-checks. Label incomplete examples and say what they omit.
+Use the modern idioms taught by the `/cgp` skill and [guides](../cgp/guides/README.md). Providers
+use `#[cgp_impl]`, context fields use `#[implicit]`, and wiring uses `delegate_components!` with
+explicit checks. Label incomplete examples and say what they omit.
 
-Identify the context and target when showing code. A value context holds the data being operated
-on; an environmental context supplies an application's choices and dependencies. A self-targeted
-component acts on the context, while a parameter-targeted component acts on a separate type.
-Narrate any change between these arrangements, following
+Identify the context and target when showing code. A value context holds the data being operated on;
+an environmental context supplies an application's choices and dependencies. A self-targeted
+component acts on the context, while a parameter-targeted component acts on a separate type. Narrate
+any change between these arrangements, following
 [vocabulary.md](vocabulary.md#qualifying-a-context-and-a-target).
 
 ## The problems CGP removes
@@ -84,8 +85,8 @@ impl<Value: AsRef<[u8]>> Encoder<Value> {
 ```
 
 Explain that the encoded value moved from `Self` into `Value`. The consumer's `Self` now represents
-an environmental context, and the component is parameter-targeted. Separate application contexts
-can choose different encoders for the same value type. The
+an environmental context, and the component is parameter-targeted. Separate application contexts can
+choose different encoders for the same value type. The
 [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md) explains this arrangement.
 
 Use this opening for type-system readers and broad introductions. A shorter, self-targeted example
@@ -100,17 +101,19 @@ forbids a foreign trait impl for a foreign type. A CGP provider instead implemen
 on its own marker type, with the foreign target supplied as a parameter. A local context can select
 it without wrapping the target value.
 
-Keep the scope of the claim explicit. CGP does not make an arbitrary forbidden `impl ForeignTrait for ForeignType` legal. It offers a different arrangement using provider traits and local choices.
-Use this comparison for library authors and experienced Rust developers, supported by
-[coherence](../cgp/concepts/coherence.md) and the hand-written patterns in [evidence.md](evidence.md).
-A program that needs one globally consistent implementation may be better served by a plain trait.
+Keep the scope of the claim explicit. CGP does not make an arbitrary forbidden
+`impl ForeignTrait for ForeignType` legal. It offers a different arrangement using provider traits
+and local choices. Use this comparison for library authors and experienced Rust developers,
+supported by [coherence](../cgp/concepts/coherence.md) and the hand-written patterns in
+[evidence.md](evidence.md). A program that needs one globally consistent implementation may be
+better served by a plain trait.
 
 ### Mock in tests, run the real thing in production, without `dyn` or a framework
 
 Show production and test contexts choosing different providers for the same operation. A trait
 object, a generic parameter, and CGP wiring are all valid ways to separate an interface from its
-implementation. CGP is useful when per-context choices or repeated dependency parameters justify
-its additional declarations.
+implementation. CGP is useful when per-context choices or repeated dependency parameters justify its
+additional declarations.
 
 This wiring fragment assumes `CanSendEmail`, its component, the providers, and both context types
 are defined elsewhere:
@@ -130,14 +133,14 @@ wiring selects the implementation.
 
 Introduce `App` and `TestApp` as environmental contexts: types that hold each application's choices
 and required data. `CanSendEmail` is self-targeted because sending mail is an operation on that
-application. Per-application choice does not require a target parameter. The choice is explicit,
-and a dependency with one implementation can remain a plain trait.
+application. Per-application choice does not require a target parameter. The choice is explicit, and
+a dependency with one implementation can remain a plain trait.
 
 ### Your second application already exists: it is spelled as a feature flag
 
-Look for existing variation before proposing another context type. Feature-gated backends, a
-backend enum, a trait object, a generic application type, or a test harness can show that the
-program already supports more than one arrangement. Do not assume every reader has this need.
+Look for existing variation before proposing another context type. Feature-gated backends, a backend
+enum, a trait object, a generic application type, or a test harness can show that the program
+already supports more than one arrangement. Do not assume every reader has this need.
 
 A separate context type can make a build-time distinction explicit. Pair that explanation with the
 `App` and `TestApp` wiring above instead of introducing another example. This remains an
@@ -174,9 +177,9 @@ associated types from representation hiding through Rust's module privacy.
 
 ### Break up a trait that grew into a monolith
 
-Show how independently chosen implementations can motivate smaller components. CGP grew from work
-on the large `ChainHandle` interface described in [author-personality.md](author-personality.md).
-The relevant benefit is that reusable providers can satisfy separate operations without each
+Show how independently chosen implementations can motivate smaller components. CGP grew from work on
+the large `ChainHandle` interface described in [author-personality.md](author-personality.md). The
+relevant benefit is that reusable providers can satisfy separate operations without each
 implementation supplying an unrelated collection of methods.
 
 Split along the choices real contexts need to make. Keep items together when one provider choice
@@ -218,20 +221,21 @@ generic. Follow [naming a type dependency](../cgp/guides/naming-a-type-dependenc
 
 ### Keep a provider's dependencies out of your public API
 
-Explain how impl-side constraints separate an operation's interface from its implementation needs.
-A provider can use `#[uses]` and `#[implicit]` without adding those dependencies to the consumer
+Explain how impl-side constraints separate an operation's interface from its implementation needs. A
+provider can use `#[uses]` and `#[implicit]` without adding those dependencies to the consumer
 method signature. This helps library authors keep implementation requirements from spreading to
 callers.
 
-Keep Rust's privacy rules in the explanation. A type that appears in a public method signature
-still needs appropriate visibility. CGP helps avoid exposing some dependencies in that signature;
-it does not make a private type valid in a public interface. See
+Keep Rust's privacy rules in the explanation. A type that appears in a public method signature still
+needs appropriate visibility. CGP helps avoid exposing some dependencies in that signature; it does
+not make a private type valid in a public interface. See
 [impl-side dependencies](../cgp/concepts/impl-side-dependencies.md) and [evidence.md](evidence.md).
 
 ### Read a CGP compile error without decoding a wall of generated types
 
 Show a real missing dependency and the diagnostic that identifies it. This example is based on
-cargo-cgp's [missing-field fixture](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/fields/base_area_1_1.rs).
+cargo-cgp's
+[missing-field fixture](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/fields/base_area_1_1.rs).
 The provider needs both dimensions, but `Rectangle` supplies only `width`:
 
 ```rust
@@ -260,7 +264,8 @@ check_components! { Rectangle { AreaCalculatorComponent } }
 fn main() {}
 ```
 
-The fixture's [diagnostic snapshot](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/fields/base_area_1_1.cgp.stderr)
+The fixture's
+[diagnostic snapshot](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/fields/base_area_1_1.cgp.stderr)
 contains this root-cause note:
 
 ```text
@@ -273,11 +278,11 @@ contains this root-cause note:
 
 Explain the repair rather than only praising the shorter output. The check forces verification of
 `RectangleArea` for `Rectangle`; adding a suitable `height` field satisfies the missing dependency.
-The [toolchain reference](../cgp/reference/cargo-cgp.md) explains how the driver recovers and presents
-the cause. Recheck the fixture before publishing its output.
+The [toolchain reference](../cgp/reference/cargo-cgp.md) explains how the driver recovers and
+presents the cause. Recheck the fixture before publishing its output.
 
-Keep the canonical limitation beside the tool claim:
-`cargo cgp check` leads with the root cause for the classes it recognizes, and the tool is a v0.1.0-alpha that does not yet reshape every class.
+Keep the canonical limitation beside the tool claim: `cargo cgp check` leads with the root cause for
+the classes it recognizes, and the tool is a v0.1.0-alpha that does not yet reshape every class.
 
 ### Choosing which problem to lead with
 
@@ -308,8 +313,8 @@ uses statically dispatched calls, without a runtime container or vtable lookup f
 Providers are type-level markers and need not be instantiated. Say "provider selection adds no
 runtime lookup"; avoid unsupported claims about comparative speed or the entire binary.
 
-**Separate providers allow interchangeable implementations.** Implementations that would overlap
-on one `Self` type can coexist on different provider types. A context selects the provider for a
+**Separate providers allow interchangeable implementations.** Implementations that would overlap on
+one `Self` type can coexist on different provider types. A context selects the provider for a
 component and any dispatch parameters. Rust still enforces coherence on the generated impls; CGP
 changes the arrangement rather than disabling those checks.
 
@@ -323,26 +328,26 @@ requirements through bounds and attributes. A component use or an explicit `chec
 assertion forces those requirements to be checked. Defining the delegation entry alone does not.
 Checks are code the writer supplies, and their raw diagnostics can be verbose.
 
-**Declared requirements limit what generic code can access through its context.** A generic
-provider can use the operations available through its bounds, instead of assuming access to every
-field of a concrete application. This helps even in a single application. It is not a sandbox:
-ordinary Rust functions can still access other in-scope APIs, and a broadly bounded dependency may
-itself expose many operations.
+**Declared requirements limit what generic code can access through its context.** A generic provider
+can use the operations available through its bounds, instead of assuming access to every field of a
+concrete application. This helps even in a single application. It is not a sandbox: ordinary Rust
+functions can still access other in-scope APIs, and a broadly bounded dependency may itself expose
+many operations.
 
 **Dedicated tooling helps explain wiring failures.** Demonstrate `cargo cgp check` with a real
 fixture and retain the canonical qualification: `cargo cgp check` leads with the root cause for the
-classes it recognizes, and the tool is a v0.1.0-alpha that does not yet reshape every class.
-Do not describe the error problem as solved.
+classes it recognizes, and the tool is a v0.1.0-alpha that does not yet reshape every class. Do not
+describe the error problem as solved.
 
 **Gradual adoption preserves ordinary Rust choices.** A consumer trait supports direct impls,
 providers use familiar impl syntax, and implicit arguments resemble parameters. Start with one
 operation or component. Explain the additional generated code and wiring rather than claiming that
 CGP eliminates boilerplate.
 
-Blanket extension traits provide a useful introduction for readers who know them. The pattern
-behind `Itertools` or `StreamExt` helps explain how a generic impl can add methods to existing
-types. Then explain what CGP adds: separate providers and context-specific selection. The analogy
-introduces the foundation without equating the libraries.
+Blanket extension traits provide a useful introduction for readers who know them. The pattern behind
+`Itertools` or `StreamExt` helps explain how a generic impl can add methods to existing types. Then
+explain what CGP adds: separate providers and context-specific selection. The analogy introduces the
+foundation without equating the libraries.
 
 **Abstract types keep context-selected types from becoming separate parameters.** Generic code can
 name an associated error, scalar, or runtime type and let the context supply it. This can simplify
@@ -352,8 +357,8 @@ is a one-line change.
 
 **Type-level shapes support reusable structural operations.** An opted-in type exposes field or
 variant information to statically checked generic code. State the derive requirement and the work
-performed by the operation. Avoid suggesting that compile-time metadata makes serialization or
-field traversal itself free.
+performed by the operation. Avoid suggesting that compile-time metadata makes serialization or field
+traversal itself free.
 
 **Stable Rust lowers the toolchain requirement for the library.** CGP is a library, not a compiler
 fork or a language proposal. Distinguish this from the optional compiler-linked `cargo-cgp` tool,
@@ -378,8 +383,8 @@ Use an analogy only for a reader who knows its source, and give its limit nearby
 
 Higher-order providers offer another example for readers composing constrained functions. A type
 alias can name a composition such as `ScaledAreaCalculator<RectangleAreaCalculator>` without
-repeating all its operational bounds at the alias. Those bounds must still hold when the provider
-is checked or used. See [higher-order providers](../cgp/concepts/higher-order-providers.md).
+repeating all its operational bounds at the alias. Those bounds must still hold when the provider is
+checked or used. See [higher-order providers](../cgp/concepts/higher-order-providers.md).
 
 ## The objections readers bring
 
@@ -392,24 +397,24 @@ that every reader raises every objection.
 
 Answer comparisons by naming the mechanism and its limits:
 
-- **"DI is heavy and fails at runtime."** CGP selects providers through the trait system rather
-  than a runtime object container. Do not generalize all DI libraries as reflection-based or
-  dynamically checked; compare the specific tool the reader knows.
-- **"Values appear from nowhere."** Explain where the context holds values, how a provider
-  requests them, and where wiring or defaults select implementations. CGP does not choose a
-  preferred provider by guessing the developer's intent.
+- **"DI is heavy and fails at runtime."** CGP selects providers through the trait system rather than
+  a runtime object container. Do not generalize all DI libraries as reflection-based or dynamically
+  checked; compare the specific tool the reader knows.
+- **"Values appear from nowhere."** Explain where the context holds values, how a provider requests
+  them, and where wiring or defaults select implementations. CGP does not choose a preferred
+  provider by guessing the developer's intent.
 - **"Coherence exists for a reason."** Agree, then show that separate provider types permit
   alternatives while Rust checks the wiring impls for overlap. Use the
   [RustLab explanation](../website/blog/rustlab-2025-coherence.md) as the model for explaining why
   coherence matters before presenting CGP's arrangement.
-- **"Extensible records produce huge errors."** Concede that shape-related failures can expose
-  long generated types. Opt-in use and explicit checks help localize them without guaranteeing
-  short diagnostics.
+- **"Extensible records produce huge errors."** Concede that shape-related failures can expose long
+  generated types. Opt-in use and explicit checks help localize them without guaranteeing short
+  diagnostics.
 - **"Is this an effect or reflection system?"** Explain the fragment the analogy covers. CGP does
   not supply continuations or arbitrary runtime introspection.
 - **"Static dispatch loses runtime flexibility."** Agree that static wiring cannot load unknown
-  implementations at runtime. Use `dyn Trait` or another runtime representation for that need;
-  a CGP context may contain it.
+  implementations at runtime. Use `dyn Trait` or another runtime representation for that need; a CGP
+  context may contain it.
 
 ### Native to the Rust audience
 
@@ -418,15 +423,15 @@ Answer Rust-specific concerns with a concrete example and a proportionate recomm
 **"This is over-engineered."** Show the problem before the component declarations and say where a
 plain trait, generic, or enum is enough. More enthusiasm does not justify more machinery.
 
-**"I only have one application."** Concede that selecting different providers across contexts is
-not yet a demonstrated benefit. Then examine needs that can exist within one application:
-overlapping providers for different targets, foreign target types, and implementation dependencies
-kept out of intermediate interfaces. Look for a real test context or build-time variation, without
-inventing a future need.
+**"I only have one application."** Concede that selecting different providers across contexts is not
+yet a demonstrated benefit. Then examine needs that can exist within one application: overlapping
+providers for different targets, foreign target types, and implementation dependencies kept out of
+intermediate interfaces. Look for a real test context or build-time variation, without inventing a
+future need.
 
 Recommend the simplest useful form when those needs are absent. A plain trait or `#[cgp_fn]` may
-suffice without wiring. The presence of only one context does not by itself rule out providers,
-and the possibility of a future second context does not justify them by itself.
+suffice without wiring. The presence of only one context does not by itself rule out providers, and
+the possibility of a future second context does not justify them by itself.
 
 **"Can a component have only one method?"** Show that a component is an ordinary multi-item trait
 before discussing design guidance. `CanCompute` and `CanHandle` include an associated `Output`
@@ -445,39 +450,39 @@ promising universal reuse.
 
 **"I cannot see what the macros generate."** Show the ordinary Rust expansion and point to
 `cargo cgp expand`, following the [tool reference](../cgp/reference/cargo-cgp.md). Check the
-installed tool's command availability before giving instructions. Debugging generated code remains
-a cost.
+installed tool's command availability before giving instructions. Debugging generated code remains a
+cost.
 
 **"I cannot tell which code runs."** Trace the consumer call through the wiring to the provider.
 Concede the indirection and show any namespace, forwarding, or wrapper involved. Static selection
 makes the route inspectable; it does not make every route one step long.
 
 **"What happens to compile times?"** State that macros, type checking, and monomorphization add
-compile-time work. Do not invent a magnitude or claim that every added compile-time cost replaces
-a runtime cost. The [Hypershell account](../website/blog/hypershell-release.md) models how to
-separate observations from rough experiments.
+compile-time work. Do not invent a magnitude or claim that every added compile-time cost replaces a
+runtime cost. The [Hypershell account](../website/blog/hypershell-release.md) models how to separate
+observations from rough experiments.
 
-**"The errors are a wall of generated types."** Concede the raw diagnostic cost and show checks
-and tooling on the actual failure. Use the canonical sentence: `cargo cgp check` leads with the
-root cause for the classes it recognizes, and the tool is a v0.1.0-alpha that does not yet reshape
-every class.
+**"The errors are a wall of generated types."** Concede the raw diagnostic cost and show checks and
+tooling on the actual failure. Use the canonical sentence: `cargo cgp check` leads with the root
+cause for the classes it recognizes, and the tool is a v0.1.0-alpha that does not yet reshape every
+class.
 
-**"Rust does not need a DI framework."** Agree that ordinary traits and generics often suffice.
-Show the particular limitation at issue, such as overlapping impls or repeated dependency
-parameters, instead of arguing for frameworks in general.
+**"Rust does not need a DI framework."** Agree that ordinary traits and generics often suffice. Show
+the particular limitation at issue, such as overlapping impls or repeated dependency parameters,
+instead of arguing for frameworks in general.
 
 **"Why not traits, generics, or an enum?"** Compare those alternatives fairly and recommend the
-lowest useful level of abstraction. The [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md)
-provides the decision guide.
+lowest useful level of abstraction. The
+[modularity hierarchy](../cgp/concepts/modularity-hierarchy.md) provides the decision guide.
 
 **"Is it mature enough for my codebase?"** State the project's maturity and limits honestly.
-Incremental adoption permits a smaller evaluation, but removing an abstraction still takes work.
-CGP does not require a framework runtime; that fact is not proof of production readiness. Preserve
-the candid maturity guidance recorded in [site-structure.md](../website/site-structure.md).
+Incremental adoption permits a smaller evaluation, but removing an abstraction still takes work. CGP
+does not require a framework runtime; that fact is not proof of production readiness. Preserve the
+candid maturity guidance recorded in [site-structure.md](../website/site-structure.md).
 
-**"There is a learning curve."** Agree and make the first task small. A function-style operation
-can introduce useful context-generic code before components and wiring. Teach the later machinery
-when the reader needs it instead of describing the whole learning curve as trivial.
+**"There is a learning curve."** Agree and make the first task small. A function-style operation can
+introduce useful context-generic code before components and wiring. Teach the later machinery when
+the reader needs it instead of describing the whole learning curve as trivial.
 
 ### The one mitigation that spans three of these
 
@@ -503,7 +508,8 @@ code. The exception permits navigation, not an AI-led pitch.
 
 Recommend the simplest abstraction that solves the actual problem. Provider wiring is most useful
 when interchangeable or reusable implementations justify explicit selection. Other CGP constructs,
-such as `#[cgp_fn]`, can help without a wiring table; distinguish them from the full provider pattern.
+such as `#[cgp_fn]`, can help without a wiring table; distinguish them from the full provider
+pattern.
 
 Compare the alternatives by the choice the reader needs to make:
 
