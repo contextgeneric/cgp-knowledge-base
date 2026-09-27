@@ -51,20 +51,19 @@ must fix every reference to it in the same change.
 **Because deployment runs from `main` on every push, work that should not be public yet lives on a
 branch, and the repository has a settled habit of naming that branch after the release it accompanies.**
 `v0.6.2`, `v0.7.1`, and now `v0.8.0` are release branches in that sense; `v0.8.0` is where the whole
-site redesign is being written, and it merges when the release ships. The rule that follows — never
-commit redesign work to `main` — is in [AGENTS.md](AGENTS.md#the-redesign-lands-on-a-release-branch-all-at-once).
+site redesign is being written, and it merges when the release ships. The rule that follows, never
+to commit redesign work to `main`, is in [AGENTS.md](AGENTS.md#the-redesign-lands-on-a-release-branch-all-at-once).
 
-Three other branches carry material that is easy to miss because it is not on `main`, and an agent
+Two other branches carry material that is easy to miss because it is not on `main`, and an agent
 looking for "everything the site has" will not find it otherwise. The **`incoherent-rust` branch**
 holds a substantial unpublished blog post, recorded in
-[blog/incoherent-rust-today.md](blog/incoherent-rust-today.md). The **`ai-draft-1` branch** carries the
-`notes/` tree — a set of working notes on applying Diátaxis to the site, plus a long note on implicit
-parameters — which are drafting material rather than publishable pages and are not built by Docusaurus.
-The **`rustlab-presentation` branch** carries the slide assets for the talk transcript. None of these
-is dead: the notes informed the writing guides, and the two others are content.
+[blog/incoherent-rust-today.md](blog/incoherent-rust-today.md). The **`rustlab-presentation` branch**
+carries the slide assets for the talk transcript. Neither is dead: both are content.
 
-The `notes/` tree deserves one line of its own, because its status is ambiguous on sight. It sits in the
-repository, is written in Markdown, and is not part of the site — nothing under it is routed or built.
+The `notes/` tree deserves one line of its own, because its status is ambiguous on sight. It sits on
+`main` as well as `v0.8.0` and is written in Markdown: a set of working notes on applying Diátaxis to
+the site, plus a long note on implicit parameters. It is not part of the site, since nothing under it is
+routed or built.
 Treat it as a scratchpad whose conclusions belong in the [writing guides](writing-guides/README.md)
 rather than as a fourth documentation tier.
 
@@ -99,17 +98,20 @@ already follows.
 It is filled in **lazily**, and the rule is in
 [AGENTS.md](AGENTS.md#verify-code-against-current-cgp-and-never-against-a-blog-post): a page gets its
 file when someone writes, revises, or reviews it. A missing file therefore means nobody has been
-through that page yet. **`docs/concepts/` is covered in full** — one file per page that shows code.
-Under `tests/reference/`, the written groups are mirrored as they are ported: `errors.rs`,
-`macros/delegate_components.rs`, all of `derives/`, the `traits/` pages that show checkable code, most
-of `providers/`, and all of `components/` (each component page that shows code, including the `handler/`
-subsection), plus the `docs/cargo-cgp/` pages under `tests/cargo_cgp/`. The rejected snippets from every
-section live together under `tests/compile_fail/`. The `traits/` mirror files stay flat under
-`tests/reference/traits/` rather than following the docs into their subdirectories, because a Rust module
-name cannot contain a hyphen; the mirror still resolves because every page's basename is unique. The
-`types/` group is now mirrored too, one file per type page flat under `tests/reference/types/`, so
-every written reference group has its `example-code` counterpart. The crate pins `cgp = "0.8.0-alpha"`, which resolves from
-crates.io today and joins the tutorials' pin on the release checklist.
+through that page yet. On the `v0.8.0` branch the crate has one test target per section:
+`tests/concepts/` covers every concept page that shows code, `tests/comparisons/` every comparison
+page, `tests/tutorials/` the ported tutorial parts, `tests/quickstart.rs` the Quickstart, and
+`tests/cargo_cgp/` the `docs/cargo-cgp/` pages. Under `tests/reference/`, the written groups are
+mirrored as they are ported: `errors.rs`, `macros/` (`delegate_components.rs` and
+`cgp_namespace.rs`), `attributes/` (`default_impl.rs`, `impl_generics.rs`, and `prefix.rs`), all of
+`derives/`, the `traits/` pages that show checkable code, most of `providers/`, all of `components/`
+(including the `handler/` subsection), and `types/`, one file per type page. The rejected snippets
+from every section live together under `tests/compile_fail/`. The `traits/` and `types/` mirror files
+stay flat rather than following the docs into their subdirectories, because a Rust module name cannot
+contain a hyphen; the mirror still resolves because every page's basename is unique. The crate
+depends on `cgp = "0.8.0-alpha"` and patches it to the `cgp` repository's git `main` through
+`[patch.crates-io]`, so it tests the pages against unreleased `cgp`; the version pin joins the
+tutorials' pin on the release checklist.
 
 ## Navigation and the announcement bar
 
@@ -1187,10 +1189,10 @@ eleven pages were titled with a list — *`CanUpcast`, `CanDowncast` & `CanBuild
 [granularity rule](writing-guides/reference.md#granularity-one-page-per-named-construct) now forbids.
 No prose was discarded: each page's material moved to the construct it belongs to, and where two pages
 would have repeated an explanation one keeps it and the other links, which is why
-[`CanDowncastFields`](https://contextgeneric.dev/docs/reference/traits/can_downcast_fields) defers its
-recursion to [`CanDowncast`](https://contextgeneric.dev/docs/reference/traits/can_downcast) and every
+[`CanDowncastFields`](https://contextgeneric.dev/docs/reference/traits/casting/can_downcast_fields) defers its
+recursion to [`CanDowncast`](https://contextgeneric.dev/docs/reference/traits/casting/can_downcast) and every
 optional-field page defers the transform to
-[`TransformMapFields`](https://contextgeneric.dev/docs/reference/traits/transform_map_fields).
+[`TransformMapFields`](https://contextgeneric.dev/docs/reference/traits/type-level/transform_map_fields).
 
 Three decisions the split settled are worth copying rather than rediscovering. **Markers stay with their
 trait** — `IsPresent` and the other six are types implementing `MapType` or `MapTypeRef`, not constructs,
