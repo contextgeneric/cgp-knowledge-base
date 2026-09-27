@@ -249,9 +249,9 @@ bare `@a.b.*` notation (no `Path!(…)` wrapper), and the upstream reference is
 
 ### `CGP-E010`: wiring never resolves
 
-- **Message:** `` [CGP-E010] the wiring for the consumer trait `<Consumer>` on context `<Context>`
-  never resolves: the lookup recurses without terminating ``, with a `help` naming the usual
-  cause and the two fixes.
+- **Message:**
+  `` [CGP-E010] the wiring for the consumer trait `<Consumer>` on context `<Context>` never resolves — the lookup recurses without terminating ``,
+  with a `help` naming the usual cause and the two fixes.
 - **Means:** resolving the component's wiring recurses without bottoming out. This almost always
   means the wiring routes the component back to the context itself: a component delegated to
   `UseContext` whose only implementation of the consumer trait *is* that delegation.
