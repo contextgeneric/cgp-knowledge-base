@@ -1,12 +1,12 @@
 # `HasField`
 
-`HasField<Tag>` is the consumer trait for reading a single named field out of a context by a type-level tag, with `HasFieldMut<Tag>` adding mutable access, the provider-side mirrors `FieldGetter` and `MutFieldGetter` supplying the same access through CGP wiring, and the lifetime helpers `MapField`/`FieldMapper` letting chained field accesses borrow correctly.
+`HasField<Tag>` is the trait for reading one named field out of a context by a type-level tag. `HasFieldMut<Tag>` adds mutable access, `FieldGetter` and `MutFieldGetter` are the provider-side mirrors used in wiring, and `MapField` and `FieldMapper` let chained accesses borrow correctly.
 
 ## Purpose
 
-`HasField` exists so that a provider can demand a specific value from its context without naming the context's concrete type. The recurring problem in CGP is that a provider is generic over the context but still needs a `name`, a `port`, or some other field out of it; it cannot reach into a struct it does not know. `HasField<Tag>` solves this by keying each field with a *tag type* that stands in for the field's name, so a provider can write `Context: HasField<Symbol!("name"), Value = String>` in its `where` clause and receive the field through the trait system. This makes field access an impl-side dependency rather than part of any public interface — any context that supplies a matching field satisfies the bound automatically. See [impl-side dependencies](../../concepts/impl-side-dependencies.md) for why this constraint-based style is the heart of CGP.
+`HasField` lets a provider demand a value from its context without naming the context's type. A provider is generic over the context but still needs a `name`, a `port`, or another field, and it cannot reach into a struct it does not know. `HasField<Tag>` keys each field with a tag type standing for the field's name, so a provider writes `Context: HasField<Symbol!("name"), Value = String>` in its `where` clause and receives the field through the trait system. Field access becomes an impl-side dependency rather than part of a public interface: any context with a matching field satisfies the bound. See [impl-side dependencies](../../concepts/impl-side-dependencies.md) for why this constraint-based style is the heart of CGP.
 
-The trait is deliberately tiny because it is the foundation that the value-injection macros stand on. [`#[derive(HasField)]`](../derives/derive_has_field.md) generates the impls from a struct's fields, and higher-level constructs — `#[cgp_auto_getter]`, `#[cgp_getter]` through the [`UseField`](../providers/use_field.md) provider, and `#[implicit]` arguments — all desugar into `HasField` bounds and `get_field` calls. Understanding `HasField` is understanding how every one of those reaches a field.
+The trait is small because the value-injection macros stand on it. [`#[derive(HasField)]`](../derives/derive_has_field.md) generates the impls from a struct's fields, and `#[cgp_auto_getter]`, `#[cgp_getter]` through [`UseField`](../providers/use_field.md), and `#[implicit]` arguments all desugar into `HasField` bounds and `get_field` calls.
 
 ## Definition
 
@@ -30,9 +30,9 @@ pub trait HasFieldMut<Tag>: HasField<Tag> {
 }
 ```
 
-Both traits carry `#[diagnostic::on_unimplemented]` notes that point a reader at `#[derive(HasField)]` when the bound is unsatisfied, so a missing field surfaces as a readable error rather than an opaque trait failure.
+Neither trait carries a `#[diagnostic::on_unimplemented]` note; a missing field is reported as an unsatisfied `HasField<Symbol<…>>` bound, whose tag spells the field name, and [cargo-cgp](../cargo-cgp.md) turns it into a "missing field" message. `HasField`, `HasFieldMut`, `FieldGetter`, and `MutFieldGetter` are in the prelude; `MapField` and `FieldMapper` are imported from `cgp::core::field::traits`.
 
-The consumer side has a provider-side mirror so field access can be wired like any other component rather than only implemented directly on the context. `FieldGetter<Context, Tag>` is the provider trait corresponding to `HasField`: instead of `&self`, it takes the context as an explicit argument, which is the shape CGP providers use:
+Field access has a provider-side mirror, so it can be wired like a component rather than only implemented on the context. `FieldGetter<Context, Tag>` corresponds to `HasField`, taking the context as an explicit argument instead of `&self`:
 
 ```rust
 pub trait FieldGetter<Context, Tag> {
@@ -46,7 +46,7 @@ pub trait MutFieldGetter<Context, Tag>: FieldGetter<Context, Tag> {
 }
 ```
 
-Alongside these, `MapField` and `FieldMapper` add a borrow-through-a-closure variant of the same access. They exist to organize lifetime inference: chaining `context.get_field().get_field()` would otherwise force `Self::Value` to be `'static`, so `map_field` takes a `for<'a> FnOnce(&'a Self::Value) -> &'a T` closure and applies it to the borrowed field, letting the compiler infer the correct lifetime:
+`MapField` and `FieldMapper` add a variant that borrows through a closure. They organize lifetime inference: chaining `context.get_field().get_field()` would otherwise force `Self::Value` to be `'static`, so `map_field` applies a `for<'a> FnOnce(&'a Self::Value) -> &'a T` closure to the borrowed field:
 
 ```rust
 pub trait MapField<Tag>: HasField<Tag> {
@@ -68,9 +68,14 @@ pub trait FieldMapper<Context, Tag>: FieldGetter<Context, Tag> {
 
 ## Behavior
 
-The consumer impls of `HasField` come almost entirely from `#[derive(HasField)]`; the trait file itself provides only the blanket impls that make the access compose. The first is a `Deref` forwarding impl: when a context dereferences to a target that has the field, the context inherits it, so a `HasField` bound passes transparently through smart-pointer wrappers. This impl is marked `#[diagnostic::do_not_recommend]` so the compiler does not suggest the blanket path in error messages. `HasFieldMut` carries the analogous `DerefMut` forwarding impl, with the target additionally bounded `'static`.
+The consumer impls of `HasField` come almost entirely from `#[derive(HasField)]`. The trait files add blanket impls that make access compose:
 
-The provider side is what connects field access to wiring. `UseContext` implements `FieldGetter<Context, Tag>` for any context that itself has the field, delegating straight to `context.get_field(...)`:
+- **A `Deref` forwarding impl.** A type that dereferences to a target with the field inherits it, so a `HasField` bound passes through smart pointers and newtypes. A private `DerefMap` helper keeps the target free of a `'static` bound.
+- **A `DerefMut` forwarding impl** for `HasFieldMut`, which does require the target to be `'static`.
+
+Both carry `#[diagnostic::do_not_recommend]`, so the compiler does not suggest the blanket path in errors.
+
+The provider side connects field access to wiring. `UseContext` implements `FieldGetter<Context, Tag>` for any context that has the field under the same tag:
 
 ```rust
 impl<Context, Tag, Field> FieldGetter<Context, Tag> for UseContext
@@ -84,7 +89,9 @@ where
 }
 ```
 
-`FieldMapper` is implemented as a blanket impl for any `FieldGetter` (with the getter and tag `'static`), so every provider-side getter automatically gains the lifetime-friendly `map_field`. Likewise `MapField` is a blanket impl for every `HasField` whose tag is `'static`. The split between the two sides is the standard CGP consumer/provider duality: `HasField`/`HasFieldMut` are what generic code bounds against, while `FieldGetter`/`MutFieldGetter` are what gets wired — the [`UseField`](../providers/use_field.md) provider is the wiring-side implementation that `#[cgp_getter]` targets.
+The tag `UseContext` reads is the tag it is asked under. Through [`WithContext`](../providers/with_provider.md), a getter component asks under its own marker, so the context must implement `HasField<NameGetterComponent>` for `WithContext` to apply.
+
+`FieldMapper` has a blanket impl for every `FieldGetter` whose getter and tag are `'static`, and `MapField` one for every `HasField` whose tag is `'static`. The two sides follow CGP's consumer and provider split: generic code bounds on `HasField` and `HasFieldMut`, while `FieldGetter` and `MutFieldGetter` are what gets wired, with [`UseField`](../providers/use_field.md) as the usual implementation.
 
 ## Examples
 
@@ -120,11 +127,15 @@ delegate_components! {
 }
 ```
 
-Because `Person` derives `HasField`, it implements `HasField<Symbol!("name"), Value = String>`, which is exactly the bound `GreetHello` requires; the wiring type-checks and `person.greet()` prints the name. In practice the explicit bound is rarely hand-written — `#[cgp_auto_getter]`, `#[cgp_getter]`, and `#[implicit]` arguments all generate it for you on top of these impls.
+`Person` derives `HasField`, so it implements `HasField<Symbol!("name"), Value = String>`, the bound `GreetHello` requires, and `person.greet()` prints the name. The explicit bound is rarely hand-written; `#[cgp_auto_getter]`, `#[cgp_getter]`, and `#[implicit]` arguments generate it.
 
 ## Related constructs
 
 `HasField` is generated by [`#[derive(HasField)]`](../derives/derive_has_field.md), which emits one `HasField` and one `HasFieldMut` impl per struct field. Its tags come from [`Symbol!`](../macros/symbol.md) for named fields and [`Index<N>`](../types/index.md) for tuple fields. The provider-side [`UseField`](../providers/use_field.md) provider is the wiring-side implementation of `FieldGetter` that `#[cgp_getter]` targets, and field access in general is the canonical example of [impl-side dependencies](../../concepts/impl-side-dependencies.md). For the whole-struct structural view rather than single-field access, see [`HasFields`](has_fields.md).
+
+## Known issues
+
+A type that implements `Deref` cannot also have a derived or hand-written `HasField` impl for a tag its `Deref` target implements. The `Deref` forwarding impl already covers that tag, so the two impls overlap and fail with `E0119`. Tags the target lacks are unaffected. See [`#[derive(HasField)]`](../derives/derive_has_field.md#known-issues).
 
 ## Source
 

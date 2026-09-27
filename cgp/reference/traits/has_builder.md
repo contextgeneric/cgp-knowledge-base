@@ -4,9 +4,9 @@ The builder family is the set of traits that let a record be assembled one field
 
 ## Purpose
 
-The builder family solves the problem of constructing a record incrementally and generically, where the fields are not all known at the same place in the code and the construction must still be checked at compile time. A plain struct literal requires every field to be supplied at once; these traits instead start from an empty *partial* value and add fields to it one by one, with each addition advancing a type-level record of which fields are present. The payoff is that finalizing an incomplete value is a compile error, not a runtime panic — the trait that turns a partial value back into the concrete struct is implemented only for the fully-present configuration.
+The builder family solves the problem of constructing a record incrementally and generically, where the fields are not all known at the same place in the code and the construction must still be checked at compile time. A plain struct literal requires every field to be supplied at once; these traits instead start from an empty *partial* value and add fields to it one by one, with each addition advancing a type-level record of which fields are present. The payoff is that finalizing an incomplete value is a compile error, not a runtime panic, the trait that turns a partial value back into the concrete struct is implemented only for the fully-present configuration.
 
-The family is built around a single primitive, `UpdateField`, that changes one field's storage from one state to another. Everything else is either a wrapper over that primitive (`BuildField` sets an absent field present, `TakeField` removes a present field) or an entry/exit point for the whole process (`HasBuilder`/`IntoBuilder` start a build, `FinalizeBuild` ends one). The traits live in the field crate and are implemented for a struct by [`#[derive(BuildField)]`](../derives/derive_build_field.md), which also generates the partial companion type they operate on.
+The family is built around a single primitive, `UpdateField`, that changes one field's storage from one state to another. Everything else is either a wrapper over that primitive (`BuildField` sets an absent field present, `TakeField` removes a present field) or an entry/exit point for the whole process (`HasBuilder`/`IntoBuilder` start a build, `FinalizeBuild` ends one). The traits are in the prelude, except `TakeField` and `CanBuildFrom`, which are imported from `cgp::core::field::traits` and `cgp::core::field::impls`. They are implemented for a struct by [`#[derive(BuildField)]`](../derives/derive_build_field.md), which also generates the partial companion type they operate on.
 
 ## Definition
 
@@ -24,13 +24,13 @@ pub trait IntoBuilder {
 }
 ```
 
-`UpdateField<Tag, M>` is the primitive every field operation reduces to. It changes the field named by `Tag` from its current marker (`Mapper`) to the new marker `M`, both of which are [`MapType`](map_type.md) markers, and returns the field's old value alongside the rebuilt partial value:
+`UpdateField<Tag, M>` is the primitive every field operation reduces to. It changes the field named by `Tag` from its current marker, `Mapper`, to the new marker `M`, both [`MapType`](map_type.md) markers. `Output` is the partial value with the field in state `M`, and the method returns the field's old value alongside it:
 
 ```rust
 pub trait UpdateField<Tag, M: MapType> {
     type Value;
-    type Mapper: MapType;                 // the field's marker before the update
-    type Output;                          // the partial value with the field now in state M
+    type Mapper: MapType;
+    type Output;
     fn update_field(
         self,
         _tag: PhantomData<Tag>,
@@ -41,7 +41,7 @@ pub trait UpdateField<Tag, M: MapType> {
 
 The `M::Map<Self::Value>` argument and the `Mapper::Map<Self::Value>` first return component are the field's value as it is *stored* under each marker: `IsPresent` stores the value itself, `IsNothing` stores `()`. So updating an absent field to present takes the real value in and returns `()` as the old value; the reverse takes `()` in and returns the real value.
 
-`BuildField<Tag>` and `TakeField<Tag>` are the two directions of that transition, each defined once in the field crate as a blanket impl over `UpdateField`. `BuildField` is the `IsNothing → IsPresent` direction — set a currently-absent field — and `TakeField` is the `IsPresent → IsNothing` direction — remove a currently-present field:
+`BuildField<Tag>` and `TakeField<Tag>` are the two directions of that transition, each defined once in the field crate as a blanket impl over `UpdateField`. `BuildField` is the `IsNothing → IsPresent` direction, set a currently-absent field, and `TakeField` is the `IsPresent → IsNothing` direction, remove a currently-present field:
 
 ```rust
 pub trait BuildField<Tag> {
@@ -67,7 +67,7 @@ where
 { /* take_field = self.update_field(tag, ()) */ }
 ```
 
-`PartialData` records which concrete struct a partial value targets, and `FinalizeBuild` — a subtrait of `PartialData` — turns the partial value back into that struct:
+`PartialData` records which concrete struct a partial value targets, and `FinalizeBuild`, a subtrait of `PartialData`, turns the partial value back into that struct:
 
 ```rust
 pub trait PartialData {
@@ -95,28 +95,38 @@ The family is normally driven through `builder()`, a series of `build_field` cal
 use cgp::prelude::*;
 use cgp::core::field::impls::CanBuildFrom;
 
-// The source of a `build_from` needs its field list too, so it derives `HasFields` as well.
 #[derive(HasFields, BuildField)]
-pub struct FooBar { pub foo: u64, pub bar: String }
+pub struct FooBar {
+    pub foo: u64,
+    pub bar: String,
+}
 
 #[derive(BuildField)]
-pub struct FooBarBaz { pub foo: u64, pub bar: String, pub baz: bool }
+pub struct FooBarBaz {
+    pub foo: u64,
+    pub bar: String,
+    pub baz: bool,
+}
 
 fn extend(foo_bar: FooBar) -> FooBarBaz {
-    FooBarBaz::builder()                                   // all IsNothing
-        .build_from(foo_bar)                              // foo, bar now IsPresent
-        .build_field(PhantomData::<Symbol!("baz")>, true) // baz now IsPresent
-        .finalize_build()                                 // only the all-present impl applies
+    FooBarBaz::builder()
+        .build_from(foo_bar)
+        .build_field(PhantomData::<Symbol!("baz")>, true)
+        .finalize_build()
 }
 ```
 
-Each line changes the partial type, and the `finalize_build` on the last line type-checks only because every marker has reached `IsPresent` by that point. Reordering the steps so that `finalize_build` ran before `baz` was set would be a compile error rather than a runtime failure.
+`builder()` starts with every marker `IsNothing`, `build_from` sets `foo` and `bar`, and `build_field` sets `baz`. Each step changes the partial type, and `finalize_build` type-checks only because every marker has reached `IsPresent`. Reordering the steps so that `finalize_build` ran before `baz` was set would be a compile error rather than a runtime failure.
 
-**`CanBuildFrom` bounds its *source* on `HasFields + IntoBuilder`, which is why the source above derives [`HasFields`](has_fields.md) as well as the builder.** `build_from` recurses over `Source::Fields` to know which fields to copy, so a source deriving only `#[derive(BuildField)]` has a builder of its own and still cannot be merged into anything — the failure is an unsatisfied `HasFields` bound on the source type rather than anything about the target. The target needs only the builder.
+**`CanBuildFrom` bounds its *source* on `HasFields + IntoBuilder`, which is why the source above derives [`HasFields`](has_fields.md) as well as the builder.** `build_from` recurses over `Source::Fields` to know which fields to copy, so a source deriving only `#[derive(BuildField)]` has a builder of its own and still cannot be merged into anything, the failure is an unsatisfied `HasFields` bound on the source type rather than anything about the target. The target needs only the builder.
 
 ## Related constructs
 
 The struct-side derive that generates the partial type and all these impls is [`#[derive(BuildField)]`](../derives/derive_build_field.md), whose doc shows the exact expanded code. The presence markers `IsPresent`, `IsNothing`, and `IsVoid` are [`MapType`](map_type.md) implementations, and the partial type's `MapType` parameters are what record per-field state. Fields already set on a partial value are read back through [`HasField`](has_field.md). The enum counterparts to this family are the extractor traits in [`extract_field`](extract_field.md), which deconstruct a value variant by variant, and [`FromVariant`](from_variant.md), which constructs an enum from a single variant. The conceptual overview that ties this family into the [extensible builder pattern](../../concepts/extensible-records.md) is in [extensible records](../../concepts/extensible-records.md), worked through in the [application builder](../../../examples/application-builder.md) example.
+
+## Known issues
+
+The partial companion type keeps the original struct's field attributes. A helper attribute belonging to another derive on the same struct, such as `#[serde(rename = "x")]`, therefore fails to compile on the companion with ``cannot find attribute `serde` ``. The fix is for the derive to strip such attributes from the companion while keeping `#[cfg]` and documentation; see [`#[derive(BuildField)]`](../derives/derive_build_field.md#known-issues).
 
 ## Source
 

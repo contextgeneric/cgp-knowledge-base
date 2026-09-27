@@ -4,7 +4,7 @@
 
 ## Purpose
 
-This family exists to give namespaces and presets a uniform, per-key lookup surface. A namespace is a reusable table of default wirings that a context can opt into and then complete; resolving such a default means asking, "for this key, what does the namespace delegate to?" The three traits are the answer-bearers, differing only in how many type parameters take part in the key. `DefaultNamespace` keys a default purely on the component name. `DefaultImpls1` keys it on the component name *and* one further type — the typical shape for a per-type default, where the same component resolves differently for `String` than for `u64`. `DefaultImpls2` does the same for two further types, for components parameterized by a pair.
+This family exists to give namespaces and presets a uniform, per-key lookup surface. A namespace is a reusable table of default wirings that a context can opt into and then complete; resolving such a default means asking, "for this key, what does the namespace delegate to?" The three traits are the answer-bearers, differing only in how many type parameters take part in the key. `DefaultNamespace` keys a default purely on the component name. `DefaultImpls1` keys it on the component name and one further type, the usual shape for a per-type default, where a component resolves differently for `String` than for `u64`. `DefaultImpls2` does the same for two further types, for components parameterized by a pair.
 
 The reason to have all three rather than one variadic trait is that each fixes the arity of the key at the type level, which lets the projection `<Key as Trait<…, Delegate = Provider>>` resolve cleanly. A context that joins a namespace forwards its lookups into one of these traits, and a `for … in` loop that pulls per-type defaults reads them by projecting the `Delegate`. The whole mechanism is type-level, and it is customized by completion rather than by override: a context's direct entries supply the paths the namespace leaves unbound, while an entry for a key the namespace already binds overlaps the forwarding impl and is rejected with `E0119`, the [namespace override conflict](../../errors/wiring/namespace-override-conflict.md).
 
@@ -40,11 +40,11 @@ impl<Components> DefaultImpls1<ShowImplComponent, Components> for String {
 
 so `Self` is `String` and the trait's `T` parameter is filled by `ShowImplComponent`. The rule that actually governs it comes from the attribute rather than from the trait: `#[default_impl(Key in NamespacePath)]` makes `Key` the impl's `Self` and appends the table parameter to whatever `NamespacePath` names, so the leading arguments are simply the ones written inside the path. The same rule is what makes the `for … in` loop's bound read `T: DefaultImpls1<Component, App, Delegate = Provider>`, with the loop variable in the `Self` position.
 
-`DefaultImpls2` extends this to a two-type key and is reachable by exactly the same route, since the attribute accepts an arbitrary namespace path: `#[default_impl(String in DefaultImpls2<ShowImplComponent, u64>)]` registers a default under the pair. Nothing in the library itself emits or consumes `DefaultImpls2` — no macro special-cases it and it has no other user — so it is a provided extension point rather than a construct the generated code relies on.
+`DefaultImpls2` extends this to a two-type key and is reachable by exactly the same route, since the attribute accepts an arbitrary namespace path: `#[default_impl(String in DefaultImpls2<ShowImplComponent, u64>)]` registers a default under the pair. Nothing in the library emits or consumes `DefaultImpls2`; no macro special-cases it, so it is an extension point rather than a construct the generated code relies on.
 
 ## Behavior
 
-Each trait is implemented once per default entry, and resolving a default is reading `Delegate` from the matching impl. `DefaultNamespace<Components>` is implemented for a component-name key when a namespace supplies a default for that component regardless of any type parameter; the [`#[prefix(...)]`](../attributes/prefix.md) attribute that attaches a component to a namespace emits exactly such an impl, with `Delegate` a [`RedirectLookup`](../providers/redirect_lookup.md) that re-routes the lookup along a path. `DefaultImpls1<T, Components>` is implemented for an *instance* type carrying the component name as its leading parameter, so the same component resolves per type; the `#[default_impl(T in DefaultImpls1<Component>)]` attribute on a provider impl (shown under Examples below) registers the provider as the default for that `T`, emitting `impl<Components> DefaultImpls1<Component, Components> for T { type Delegate = Provider; }` — note again that `T` is the impl's `Self`, not the trait's `T` parameter. `DefaultImpls2` does the same under a two-type key.
+Each trait is implemented once per default entry, and resolving a default is reading `Delegate` from the matching impl. `DefaultNamespace<Components>` is implemented for a component-name key when a namespace supplies a default for that component regardless of any type parameter; the [`#[prefix(...)]`](../attributes/prefix.md) attribute that attaches a component to a namespace emits exactly such an impl, with `Delegate` a [`RedirectLookup`](../providers/redirect_lookup.md) that re-routes the lookup along a path. `DefaultImpls1<T, Components>` is implemented for an *instance* type carrying the component name as its leading parameter, so the same component resolves per type; the `#[default_impl(T in DefaultImpls1<Component>)]` attribute on a provider impl (shown under Examples below) registers the provider as the default for that `T`, emitting `impl<Components> DefaultImpls1<Component, Components> for T { type Delegate = Provider; }`. Note again that `T` is the impl's `Self`, not the trait's `T` parameter. `DefaultImpls2` does the same under a two-type key.
 
 The attribute's forms, the `where` clause it drops from the registration impl, and the orphan-rule limits on where it may be written are documented in [`#[default_impl]`](../attributes/default_impl.md).
 
@@ -74,6 +74,13 @@ impl ShowImpl<String> {
         value.clone()
     }
 }
+
+#[cgp_impl(new ShowWithDisplay)]
+impl<T: Display> ShowImpl<T> {
+    fn show(&self, value: &T) -> String {
+        value.to_string()
+    }
+}
 ```
 
 The `#[default_impl]` attribute emits `impl<Components> DefaultImpls1<ShowImplComponent, Components> for String { type Delegate = ShowString; }`, registering `ShowString` as the per-type default for `String`. A context then joins the namespace, pulls those defaults in with a `for … in` loop, and adds an entry for a type the registry does not cover:
@@ -89,13 +96,12 @@ delegate_components! {
             @test.ShowImplComponent.T: Provider,
         }
 
-        @test.ShowImplComponent.u64:
-            ShowWithDisplay, // u64 has no registered default, so the context supplies one
+        @test.ShowImplComponent.u64: ShowWithDisplay,
     }
 }
 ```
 
-The `namespace DefaultNamespace;` line forwards `App`'s lookups through `DefaultNamespace<App>`, and the loop wires each `T` by projecting `T: DefaultImpls1<ShowImplComponent, App, Delegate = Provider>`. The direct `u64` line supplies a type the registry has no default for. Had `u64` a registered default as well, the loop's impl and the direct entry would both cover its path, and the compiler would reject the pair with `E0119`. A namespace can also be defined wholesale and used as the loop target:
+The `namespace DefaultNamespace;` line forwards `App`'s lookups through `DefaultNamespace<App>`, and the loop wires each `T` by projecting `T: DefaultImpls1<ShowImplComponent, App, Delegate = Provider>`. The direct `u64` line supplies a type the registry has no default for, so `App.show(&5u64)` uses `ShowWithDisplay` while `App.show(&s)` for a `String` uses `ShowString`. Had `u64` a registered default as well, the loop's impl and the direct entry would both cover its path, and the compiler would reject the pair with `E0119`. A namespace can also be defined wholesale and used as the loop target:
 
 ```rust
 cgp_namespace! {

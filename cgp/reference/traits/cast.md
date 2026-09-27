@@ -1,12 +1,14 @@
 # Casting: `CanUpcast`, `CanDowncast`, `CanDowncastFields`, `CanBuildFrom`
 
-`CanUpcast`, `CanDowncast`, `CanDowncastFields`, and `CanBuildFrom` are the structural conversion traits that move a value between two CGP data types by their shared fields or variants — widening an enum, narrowing it, or assembling a struct from the fields of others — entirely by matching type-level names.
+`CanUpcast`, `CanDowncast`, `CanDowncastFields`, and `CanBuildFrom` are the structural conversion traits that move a value between two CGP data types by their shared fields or variants, widening an enum, narrowing it, or assembling a struct from the fields of others, entirely by matching type-level names.
 
 ## Purpose
 
 These traits exist so that two types sharing a subset of named fields or variants can be converted into one another generically, without any hand-written `From`/`TryFrom` impl. CGP represents every record as a product of named fields and every enum as a sum of named variants (via [`#[derive(HasFields)]`](../derives/derive_has_fields.md)), and once a type's shape is a type-level list, conversion becomes a matter of routing each named entry to the matching slot in the target. The four traits cover the directions that routing can take: enlarging a sum, shrinking a sum, and growing a record out of smaller records.
 
-Upcast and downcast are the two directions of variant conversion. An *upcast* takes a value of a "narrow" enum whose variants are a subset of a "wide" enum's, and lifts it into the wide enum — always succeeds, because every variant of the source has a home in the target. A *downcast* goes the other way: it tries to narrow a wide enum into a smaller one, succeeding only if the value's current variant exists in the target, and otherwise handing back a remainder so the caller can keep trying other targets. `CanBuildFrom` is the record counterpart: it assembles a target by copying the fields it shares with a source, leaving the rest of the target to be filled in separately.
+Upcast and downcast are the two directions of variant conversion. An *upcast* takes a value of a "narrow" enum whose variants are a subset of a "wide" enum's, and lifts it into the wide enum, always succeeds, because every variant of the source has a home in the target. A *downcast* goes the other way: it tries to narrow a wide enum into a smaller one, succeeding only if the value's current variant exists in the target, and otherwise handing back a remainder so the caller can keep trying other targets. `CanBuildFrom` is the record counterpart: it assembles a target by copying the fields it shares with a source, leaving the rest of the target to be filled in separately.
+
+None of the four is in the prelude; all are imported from `cgp::core::field::impls`.
 
 ## Definition
 
@@ -18,7 +20,7 @@ pub trait CanUpcast<Target> {
 }
 ```
 
-`CanDowncast<Target>` is fallible. It returns `Result<Target, Self::Remainder>`, where the `Remainder` is the source's extractor with the attempted variants removed — what is left to try if this narrowing did not match:
+`CanDowncast<Target>` is fallible. It returns `Result<Target, Self::Remainder>`, where the `Remainder` is the source's extractor with the attempted variants removed, what is left to try if this narrowing did not match:
 
 ```rust
 pub trait CanDowncast<Target> {
@@ -52,7 +54,7 @@ pub trait CanBuildFrom<Source> {
 
 The variant conversions are driven by a shared recursion over the target's sum of variants. `CanUpcast` is implemented for any context that has both a [`HasFields`](has_fields.md) shape and a [`HasExtractor`](extract_field.md): it turns the source into its extractor, then walks the source's own field list, extracting each variant from the extractor and reconstructing it into the target via [`FromVariant`](from_variant.md). Because every source variant is guaranteed to exist in a wider target, the walk is total and the remaining extractor is uninhabited, finalized away with [`FinalizeExtract`](extract_field.md). The result is the source value re-tagged as the target enum.
 
-`CanDowncast` and `CanDowncastFields` recurse over the *target's* variants instead. For each `Field<Tag, Value>` in `Target::Fields`, the implementation uses [`ExtractField`](extract_field.md) to try pulling that variant out of the source extractor: on success it rebuilds the target with `FromVariant` and returns `Ok`; on failure it threads the shrunken remainder into the next variant's attempt. If no target variant matches, the terminal `Void` impl returns the whole remainder as `Err`. The difference between the two traits is only the starting point — `CanDowncast` first calls `to_extractor` on the original enum, while `CanDowncastFields` operates on an extractor it is already given, which is exactly the `Remainder` from a prior `downcast`. This is why downcasting against several candidate targets in turn chains a `downcast` followed by `downcast_fields` calls on each remainder.
+`CanDowncast` and `CanDowncastFields` recurse over the *target's* variants instead. For each `Field<Tag, Value>` in `Target::Fields`, the implementation uses [`ExtractField`](extract_field.md) to try pulling that variant out of the source extractor: on success it rebuilds the target with `FromVariant` and returns `Ok`; on failure it threads the shrunken remainder into the next variant's attempt. If no target variant matches, the terminal `Void` impl returns the whole remainder as `Err`. The difference between the two traits is only the starting point, `CanDowncast` first calls `to_extractor` on the original enum, while `CanDowncastFields` operates on an extractor it is already given, which is exactly the `Remainder` from a prior `downcast`. This is why downcasting against several candidate targets in turn chains a `downcast` followed by `downcast_fields` calls on each remainder.
 
 `CanBuildFrom` recurses over the source's field product. For each `Field<Tag, Value>` the source exposes, it uses [`TakeField`](has_builder.md) to remove that field's value from the source and [`BuildField`](has_builder.md) to write it into the target builder, threading both the shrinking source and the growing builder through the recursion. When the source's fields are exhausted, the target builder is returned. The target need not be complete after one `build_from`: a builder can absorb fields from several sources in sequence, and only then be finalized.
 
@@ -78,28 +80,48 @@ pub enum FooBarBaz {
     Baz(bool),
 }
 
-// upcast: always succeeds, every FooBar variant exists in FooBarBaz
-let wide = FooBar::Foo(1).upcast(PhantomData::<FooBarBaz>);
-assert_eq!(wide, FooBarBaz::Foo(1));
+fn casts() {
+    let wide = FooBar::Foo(1).upcast(PhantomData::<FooBarBaz>);
+    assert_eq!(wide, FooBarBaz::Foo(1));
 
-// downcast: succeeds for shared variants, fails for Baz
-assert_eq!(FooBarBaz::Bar("hi".into()).downcast(PhantomData::<FooBar>).ok(), Some(FooBar::Bar("hi".into())));
-assert_eq!(FooBarBaz::Baz(true).downcast(PhantomData::<FooBar>).ok(), None);
+    let narrow = FooBarBaz::Bar("hi".into()).downcast(PhantomData::<FooBar>).ok();
+    assert_eq!(narrow, Some(FooBar::Bar("hi".into())));
+
+    assert_eq!(FooBarBaz::Baz(true).downcast(PhantomData::<FooBar>).ok(), None);
+}
 ```
+
+The upcast always succeeds, because every `FooBar` variant exists in `FooBarBaz`. The downcast succeeds for a shared variant and fails for `Baz`.
 
 `CanBuildFrom` assembles one struct from several smaller ones by copying their fields into a builder before finalizing:
 
 ```rust
 use cgp::core::field::impls::CanBuildFrom;
 
-#[derive(CgpData)] pub struct FooBar { pub foo: u64, pub bar: String }
-#[derive(CgpData)] pub struct Baz { pub baz: bool }
-#[derive(CgpData)] pub struct FooBarBaz { pub foo: u64, pub bar: String, pub baz: bool }
+#[derive(CgpData)]
+pub struct FooBar {
+    pub foo: u64,
+    pub bar: String,
+}
 
-let combined: FooBarBaz = FooBarBaz::builder()
-    .build_from(FooBar { foo: 1, bar: "bar".into() })
-    .build_from(Baz { baz: true })
-    .finalize_build();
+#[derive(CgpData)]
+pub struct Baz {
+    pub baz: bool,
+}
+
+#[derive(CgpData)]
+pub struct FooBarBaz {
+    pub foo: u64,
+    pub bar: String,
+    pub baz: bool,
+}
+
+fn combine() -> FooBarBaz {
+    FooBarBaz::builder()
+        .build_from(FooBar { foo: 1, bar: "bar".into() })
+        .build_from(Baz { baz: true })
+        .finalize_build()
+}
 ```
 
 ## Related constructs
@@ -108,7 +130,7 @@ The casting traits sit on top of the extensible-data primitives: variant casts r
 
 ## Source
 
-- `CanUpcast`, `CanDowncast`, and `CanDowncastFields`, together with the `FieldsExtractor` recursion that drives them, are defined in [crates/core/cgp-field/src/impls/cast.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/impls/cast.rs). Note that `FieldsExtractor` is `pub` while the analogous `FieldsBuilder` in `build_from.rs` is private — so the extractor recursion can appear by name in a diagnostic and be named in a bound, while the builder recursion cannot.
+- `CanUpcast`, `CanDowncast`, and `CanDowncastFields`, together with the `FieldsExtractor` recursion that drives them, are defined in [crates/core/cgp-field/src/impls/cast.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/impls/cast.rs). `FieldsExtractor` is `pub` while the analogous `FieldsBuilder` in `build_from.rs` is private, so the extractor recursion can appear by name in a diagnostic and be named in a bound, while the builder recursion cannot.
 - `CanBuildFrom` and its internal `FieldsBuilder` recursion are in [crates/core/cgp-field/src/impls/build_from.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/impls/build_from.rs).
 - The underlying extractor and builder traits are under [crates/core/cgp-field/src/traits/](https://github.com/contextgeneric/cgp/tree/main/crates/core/cgp-field/src/traits/) (`extract_field.rs`, `from_variant.rs`, `has_builder.rs`).
 

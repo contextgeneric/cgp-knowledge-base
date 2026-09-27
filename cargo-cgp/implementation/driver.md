@@ -174,10 +174,9 @@ reports the real missing leaf bound. That leaf is not merely omitted from the pr
 this path the default solver does not compute it at all (confirmed by tracing
 `rustc_hir_typeck::method::probe` — the leaf predicate never appears).
 
-The next-generation solver does compute it. Under `-Znext-solver=globally` the same mistake reports
-`HasField is not implemented for Person with the field: Symbol<…"name"…>`, names the concrete
-`Person: HasField<Symbol!("name")>` bound, and even renders CGP's own
-`#[diagnostic::on_unimplemented]` hint ("add `#[derive(HasField)]`"). So merely compiling the
+The next-generation solver does compute it. Under `-Znext-solver=globally` the same mistake names
+the concrete `Person: HasField<Symbol!("name")>` bound. (CGP's traits no longer carry
+`#[diagnostic::on_unimplemented]` hints; they were removed in favor of cargo-cgp's own messages.) So merely compiling the
 workspace crate under the new solver un-hides the cause — no diagnostic parsing required. The flag
 is scoped to workspace crates (only they go through the driver), so dependencies still build with
 the default solver. The before/after is pinned by the

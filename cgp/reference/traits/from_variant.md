@@ -4,9 +4,9 @@
 
 ## Purpose
 
-`FromVariant` solves the problem of building an enum value in generic code that does not — and cannot — name the concrete variant constructor. Writing `Shape::Circle(circle)` hard-codes both the enum and the variant, so it only works where both are known statically. `FromVariant` instead selects the variant with a type-level [`Symbol!`](../macros/symbol.md) tag, so a provider parameterized over the tag can construct whichever variant it was asked to build, on whatever enum implements the trait for that tag. It is the construction counterpart to the extractor's deconstruction: where [`ExtractField`](extract_field.md) takes one variant *out* of a value, `FromVariant` puts one variant *in*.
+`FromVariant` builds an enum value in generic code that cannot name the concrete variant constructor. Writing `Shape::Circle(circle)` hard-codes both the enum and the variant, so it only works where both are known statically. `FromVariant` instead selects the variant with a type-level [`Symbol!`](../macros/symbol.md) tag, so a provider parameterized over the tag can construct whichever variant it was asked to build, on whatever enum implements the trait for that tag. It is the construction counterpart to the extractor's deconstruction: where [`ExtractField`](extract_field.md) takes one variant *out* of a value, `FromVariant` puts one variant *in*.
 
-This is the smallest trait of the extensible-variant family. It carries no partial companion type and no presence tracking — there is no state to track when building a single variant — so it is just a direct, tag-selected constructor. It is implemented for an enum by [`#[derive(FromVariant)]`](../derives/derive_from_variant.md), which emits one impl per variant, and it is the construction half that the casts and dispatchers reach for after a match has decided which variant to build.
+It is the smallest trait of the extensible-variant family: building one variant has no state to track, so it has no partial companion type and no presence markers, only a tag-selected constructor. It is in the prelude. It is implemented for an enum by [`#[derive(FromVariant)]`](../derives/derive_from_variant.md), which emits one impl per variant, and it is the construction half that the casts and dispatchers reach for after a match has decided which variant to build.
 
 ## Definition
 
@@ -19,11 +19,11 @@ pub trait FromVariant<Tag> {
 }
 ```
 
-`Tag` is the variant's name as a type-level string `Symbol!`, `Value` is that variant's payload type, and `from_variant` wraps a payload into the enum as the chosen variant. The `PhantomData<Tag>` argument carries no data; its sole job is to let the caller select which variant to build when several `FromVariant` impls — one per variant — are in scope on the same enum. The trait is implemented once per variant, each impl fixing its own `Tag` and `Value`, so the choice of impl *is* the choice of variant.
+`Tag` is the variant's name as a type-level string `Symbol!`, `Value` is that variant's payload type, and `from_variant` wraps a payload into the enum as the chosen variant. The `PhantomData<Tag>` argument carries no data; its sole job is to let the caller select which variant to build when several `FromVariant` impls, one per variant, are in scope on the same enum. The trait is implemented once per variant, each impl fixing its own `Tag` and `Value`, so the choice of impl *is* the choice of variant.
 
 ## Behavior
 
-Each `FromVariant` impl is a thin wrapper that maps a payload to its variant. The derive emits, for every single-payload variant, an impl keyed by that variant's name symbol with the payload as `Value`, whose `from_variant` simply returns `Self::Variant(value)`. There is no intermediate type, no `MapType` marker, and no validation beyond the type system's own check that the supplied `value` matches the variant's payload type. Because the impls are distinguished only by their `Tag` type parameter, resolving a `from_variant` call comes down to which `Symbol!` the caller names in the `PhantomData` argument — the compiler picks the matching impl and inlines it to the corresponding constructor.
+Each `FromVariant` impl is a thin wrapper that maps a payload to its variant. The derive emits, for every single-payload variant, an impl keyed by that variant's name symbol with the payload as `Value`, whose `from_variant` simply returns `Self::Variant(value)`. There is no intermediate type, no `MapType` marker, and no validation beyond the type system's own check that the supplied `value` matches the variant's payload type. Because the impls are distinguished only by their `Tag` type parameter, resolving a `from_variant` call comes down to which `Symbol!` the caller names in the `PhantomData` argument, the compiler picks the matching impl and inlines it to the corresponding constructor.
 
 For an enum `Shape { Circle(Circle), Rectangle(Rectangle) }`, the derive produces:
 
@@ -51,6 +51,15 @@ A call to `Shape::from_variant(PhantomData::<Symbol!("Circle")>, circle)` resolv
 
 ```rust
 use cgp::prelude::*;
+
+pub struct Circle {
+    pub radius: f64,
+}
+
+pub struct Rectangle {
+    pub width: f64,
+    pub height: f64,
+}
 
 #[derive(FromVariant)]
 pub enum Shape {

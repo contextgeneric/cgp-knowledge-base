@@ -43,7 +43,7 @@ Then grep one class-specific pattern to confirm the cause, because each class ha
 | To confirm | Grep for | What the hit tells you |
 |---|---|---|
 | a surfaced dependency leaf (missing field or trait) | `grep -n 'help:'` | the concrete unmet bound; a `HasField<Symbol<N, Chars<…>>>` spells the field name letter-by-letter on that one line, and the paired "but trait `HasField<…>` *is* implemented" hint names the field the context *does* have |
-| an unwired component | `grep -n 'does not contain any DelegateComponent entry'` | CGP's own diagnostic message, naming the component with no wiring |
+| an unwired component | `grep -n 'DelegateComponent<.*is not implemented'` | the `help:` line ``the trait `DelegateComponent<FooComponent>` is not implemented for `App` ``, naming the component with no wiring |
 | a duplicate key or generated name (`E0119`/`E0428`) | `grep -n 'conflicting implementation\|defined multiple times'` | the two carets are the two entries to reconcile |
 | whether an `E0119` is a specific override or a blanket forwarding overlap | `grep -n 'downstream crates may implement'` | present → a duplicate key or a namespace override on a concrete key; absent on a fully-generic `DelegateComponent<_>` → two namespaces (or a namespace and a bare-key `for` loop) joined |
 | a wiring or namespace-inheritance cycle (`E0275`) | `grep -n 'overflow evaluating'` | the recursing requirement names the loop; ignore the `recursion limit` help, which never applies to a true cycle |

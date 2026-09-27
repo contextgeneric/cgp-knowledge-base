@@ -8,7 +8,7 @@
 
 This is what lets the builder family in [`HasBuilder`](has_builder.md) and the extractor family in [`ExtractField`](extract_field.md) move a record through intermediate states without ever changing the runtime representation of a value. A builder starts every field as "nothing" and flips each one to "present" as it is filled; an extractor starts every variant as "present" and flips each one to "void" as it is consumed. Because the flip is a change of type parameter, the compiler tracks exactly which fields are filled and refuses to finalize a record with a missing field. `MapType` is the vocabulary for those per-field states.
 
-The companion trait [`MapTypeRef`](#maptyperef) does the same job for borrowed views, where the wrapping additionally introduces a lifetime — a reference, a mutable reference, or an owned value.
+The companion trait [`MapTypeRef`](#maptyperef) does the same job for borrowed views, where the wrapping additionally introduces a lifetime, a reference, a mutable reference, or an owned value.
 
 ## Definition
 
@@ -20,7 +20,7 @@ pub trait MapType {
 }
 ```
 
-The four standard markers in `cgp-field` cover the states a field passes through. `IsPresent` is the identity wrapping — the field holds its value directly. `IsNothing` erases the value to the unit type, marking the field as absent. `IsVoid` maps to the uninhabited [`Void`](../types/either.md) type, marking a variant that can never be reached. `IsOptional` wraps the value in `Option<T>`, marking a field that is optionally present:
+The four standard markers in `cgp-field` cover the states a field passes through. `IsPresent` is the identity wrapping, the field holds its value directly. `IsNothing` erases the value to the unit type, marking the field as absent. `IsVoid` maps to the uninhabited [`Void`](../types/either.md) type, marking a variant that can never be reached. `IsOptional` wraps the value in `Option<T>`, marking a field that is optionally present:
 
 ```rust
 impl MapType for IsPresent { type Map<T> = T; }
@@ -28,6 +28,8 @@ impl MapType for IsNothing { type Map<T> = (); }
 impl MapType for IsVoid    { type Map<T> = Void; }
 impl MapType for IsOptional { type Map<T> = Option<T>; }
 ```
+
+`MapType`, `IsPresent`, `IsNothing`, and `IsVoid` are in the prelude; `IsOptional` is imported from `cgp::core::field::impls`.
 
 ## `MapTypeRef`
 
@@ -47,9 +49,9 @@ impl MapTypeRef for IsMut   { type Map<'a, T: 'a> = &'a mut T; }
 impl MapTypeRef for IsOwned { type Map<'a, T: 'a> = T; }
 ```
 
-Two of the three have consumers. `IsRef` and `IsMut` are what `HasExtractorRef` and `HasExtractorMut` fix their borrowed extractors to, but **nothing in CGP currently selects `IsOwned`** — no derive emits it and no provider resolves against it. It is available for a borrowed view that holds its payloads by value, and at present that view exists only if you write it yourself. `IsOwned` is also, unlike `IsRef` and `IsMut`, not in the prelude.
+Two of the three have consumers. `IsRef` and `IsMut` are what `HasExtractorRef` and `HasExtractorMut` fix their borrowed extractors to, but **nothing in CGP currently selects `IsOwned`**, no derive emits it and no provider resolves against it. It is available for a borrowed view that holds its payloads by value, and at present that view exists only if you write it yourself. `IsOwned` is also, unlike `IsRef` and `IsMut`, not in the prelude.
 
-A borrowed extractor combines the two families: the partial type carries one outer `MapTypeRef` marker (`IsRef` for `extractor_ref`, `IsMut` for `extractor_mut`) shared across all fields, and one `MapType` marker per field. A field's storage type is then `MapType::Map<MapTypeRef::Map<'a, T>>` — the per-field presence marker applied to the borrowed value type.
+A borrowed extractor combines the two families: the partial type carries one outer `MapTypeRef` marker (`IsRef` for `extractor_ref`, `IsMut` for `extractor_mut`) shared across all fields, and one `MapType` marker per field. A field's storage type is then `MapType::Map<MapTypeRef::Map<'a, T>>`, the per-field presence marker applied to the borrowed value type.
 
 ## `TransformMap` and `TransformMapFields`
 
@@ -103,11 +105,29 @@ impl<T: Default> TransformMap<IsOptional, IsPresent, T> for FillDefaults {
 }
 ```
 
-Applied through `transform_map_fields`, this turns a partially-built record — where some fields are present, some absent, and some optional — into a fully present builder whose missing fields have been filled with their defaults, ready to finalize.
+Applied through `transform_map_fields`, this turns a partial record whose fields are present, absent, or optional into a fully present builder with defaults filled in. The method takes no generic arguments, so the transform and target marker are named on the trait:
+
+```rust
+use cgp::core::field::traits::TransformMapFields;
+
+#[derive(CgpData)]
+pub struct Config {
+    pub port: u16,
+    pub verbose: bool,
+}
+
+fn with_defaults() -> Config {
+    let partial = Config::builder().build_field(PhantomData::<Symbol!("port")>, 8080);
+
+    TransformMapFields::<FillDefaults, IsPresent>::transform_map_fields(partial).finalize_build()
+}
+```
+
+`port` is present and kept, and the absent `verbose` becomes `bool::default()`.
 
 ## Related constructs
 
-`MapType` is the per-field state vocabulary that [`HasBuilder`](has_builder.md) and its `PartialData`/`UpdateField` family use to track which fields are filled, and that [`ExtractField`](extract_field.md) uses to track which variants are still reachable. The `IsPresent`/`IsNothing`/`IsVoid`/`IsOptional` markers wrap field values; `IsVoid` maps to the uninhabited [`Void`](../types/either.md), the terminator of the [`Either`](../types/either.md) sum list. The borrowed markers `IsRef`/`IsMut`/`IsOwned` of `MapTypeRef` feed the reference extractors. [`MapFields`](product_ops.md) applies a single `MapType` marker uniformly to every entry of a [`Cons`](../types/cons.md) product or `Either` sum, producing the partial-type field lists these markers populate. The whole scheme is generated by [`#[derive(CgpData)]`](../derives/derive_cgp_data.md). The [optional-field traits](optional_fields.md) build on this vocabulary with the `TransformMapDefault` and `TransformOptional` markers, which fill or wrap fields when finalizing a partially-built record. The conceptual overviews that show these markers tracking field and variant state are [extensible records](../../concepts/extensible-records.md) and [extensible variants](../../concepts/extensible-variants.md).
+`MapType` is the per-field state vocabulary that [`HasBuilder`](has_builder.md) and its `PartialData`/`UpdateField` family use to track which fields are filled, and that [`ExtractField`](extract_field.md) uses to track which variants are still reachable. The `IsPresent`/`IsNothing`/`IsVoid`/`IsOptional` markers wrap field values; `IsVoid` maps to the uninhabited [`Void`](../types/either.md), the terminator of the [`Either`](../types/either.md) sum list. The borrowed markers `IsRef`/`IsMut`/`IsOwned` of `MapTypeRef` feed the reference extractors. [`MapFields`](product_ops.md) applies a single `MapType` marker uniformly to every entry of a [`Cons`](../types/cons.md) product or `Either` sum. The whole scheme is generated by [`#[derive(CgpData)]`](../derives/derive_cgp_data.md). The [optional-field traits](optional_fields.md) build on this vocabulary with the `TransformMapDefault` and `TransformOptional` markers, which fill or wrap fields when finalizing a partially-built record. The conceptual overviews that show these markers tracking field and variant state are [extensible records](../../concepts/extensible-records.md) and [extensible variants](../../concepts/extensible-variants.md).
 
 ## Source
 
