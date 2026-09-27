@@ -99,7 +99,7 @@ pub struct Person {
     pub age: u8,
 }
 
-// generated:
+// generated, among other impls:
 // impl HasFields for Person {
 //     type Fields = Product![
 //         Field<Symbol!("name"), String>,
@@ -110,6 +110,29 @@ pub struct Person {
 
 The field names are [`Symbol!`](symbol.md) type-level strings, so the whole list is a type-level
 description of `Person`'s layout that generic code can walk to build, read, or transform a `Person`.
+The derive emits the same list again for `HasFieldsRef`, with each value a `&'a` reference, along
+with the `ToFields`, `ToFieldsRef`, and `FromFields` conversions.
+
+The one place `Product!` is written by hand in ordinary code is a handler pipeline, where the list
+is the program and its steps run left to right:
+
+```rust
+delegate_components! {
+    MyContext {
+        ComputerComponent:
+            PipeHandlers<Product![
+                Multiply<Symbol!("foo")>,
+                Add<Symbol!("bar")>,
+                Multiply<Symbol!("baz")>,
+            ]>,
+    }
+}
+```
+
+With `Multiply<Tag>` and `Add<Tag>` reading a `u64` field named by `Tag`, `MyContext` computes
+`((input * foo) + bar) * baz`. Everywhere else the list is generated: never write the `Cons` chain
+out, let `#[derive(HasFields)]` produce a struct's shape, and prefer a tuple or a struct when no
+generic code recurses over the list.
 
 A list type and a matching value can also be written directly:
 
@@ -133,6 +156,19 @@ These constructs are the ones `Product!` relates to:
   `Cons`/`Nil` structure.
 - [Product operations](../traits/product_ops.md): `AppendProduct`, `ConcatProduct`, and `MapFields`,
   which transform product lists at the type level.
+
+## Known issues
+
+These corner cases report themselves in ways that do not name the cause:
+
+- **The two macros differ only in case.** `Product!` in expression position fails inside the type
+  parser with ``expected one of: `for`, parentheses, `fn`, …``, a list of type tokens, and
+  `product!` in type position expands to the constructor call `Cons(u32, …)`, which rustc rejects as
+  `E0214`, ``parenthesized type parameters may only be used with a `Fn` trait``.
+- **A one-element list is still a list.** `Product![T]` is `Cons<T, Nil>`, a distinct type from `T`.
+- **Element order is part of the type.** `Product![A, B]` and `Product![B, A]` are unrelated. A
+  name-tagged field list is consumed by name, so this matters little there, but a handler pipeline's
+  order is its execution order.
 
 ## Source
 

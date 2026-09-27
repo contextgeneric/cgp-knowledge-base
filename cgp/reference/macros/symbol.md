@@ -36,8 +36,11 @@ Symbol!("")
 ```
 
 Any string literal is accepted, including the empty string and multi-byte Unicode such as
-`Symbol!("世界")`. The most common place to see one is a `HasField` bound, as in
-`HasField<Symbol!("name"), Value = String>`.
+`Symbol!("世界")`. The parser reads a `LitStr` and keeps its value, so a raw string or an escape
+spells the characters it denotes: `Symbol!(r"raw")` is `Symbol!("raw")`, and `Symbol!("a\nb")`
+holds a newline. A byte string, a C string, or an identifier fails with `expected string literal`,
+and a second token after the literal fails with `unexpected token`. The most common place to see
+one is a `HasField` bound, as in `HasField<Symbol!("name"), Value = String>`.
 
 The macro takes the literal verbatim. A field declared as the raw identifier `r#type` is tagged
 `Symbol!("type")` by the derives, which strip the `r#`, so `Symbol!("type")` is the tag that
@@ -51,8 +54,8 @@ The input is a single string literal:
 SymbolInput -> STRING_LITERAL
 ```
 
-`STRING_LITERAL` is the Rust string-literal token, so any string literal is accepted, and nothing
-may follow it.
+`STRING_LITERAL` is the Rust string-literal token, raw strings included, so any string literal is
+accepted and nothing may follow it.
 
 ## Expansion
 
@@ -102,6 +105,32 @@ where
 An [`#[implicit]`](../attributes/implicit.md) argument named `name` generates exactly this bound and
 read, which is why idiomatic providers rarely spell the tag out.
 
+The one place a reader routinely writes the macro is a wiring entry that points a
+[`#[cgp_getter]`](cgp_getter.md) at a field whose name differs from the method's:
+
+```rust
+#[cgp_getter]
+pub trait HasName {
+    fn name(&self) -> &str;
+}
+
+#[derive(HasField)]
+pub struct Person {
+    pub first_name: String,
+}
+
+delegate_components! {
+    Person {
+        NameGetterComponent: UseField<Symbol!("first_name")>,
+    }
+}
+```
+
+So write `Symbol!` by hand when the field name is a wiring decision, with
+[`UseField`](../providers/use_field.md), and let `#[implicit]`, `#[cgp_auto_getter]`, and the derives
+generate it everywhere else. Use `Index` for a tuple field rather than a `Symbol!("0")`, which is a
+different type.
+
 A type-level string can also be constructed and printed, because `Symbol` implements `Default` and
 `Display`, reconstructing the string from the `Chars` chain:
 
@@ -109,6 +138,10 @@ A type-level string can also be constructed and printed, because `Symbol` implem
 let s = <Symbol!("hello")>::default();
 assert_eq!(s.to_string(), "hello");
 ```
+
+The same text is a constant through [`StaticString`](../traits/static_format.md), imported from
+`cgp::core::field::traits`: `<Symbol!("hello") as StaticString>::VALUE` is `"hello"`. That trait is
+what `LEN` exists for, since it decodes the characters into a `[u8; LEN]` buffer at compile time.
 
 ## Related constructs
 
@@ -125,6 +158,21 @@ These constructs are the ones `Symbol!` works with:
 - [`Sum!`](sum.md): where an enum's variant names appear as `Symbol!` tags.
 - [`StaticFormat`](../traits/static_format.md): the trait behind `Symbol`'s `Display`, which turns
   the type back into a string.
+
+## Known issues
+
+These corner cases report themselves in ways that do not name the cause:
+
+- **Two spellings of one field are unrelated tags.** `Symbol!("first_name")` and
+  `Symbol!("firstName")` are different types, so a mismatch reports as a missing `HasField` bound
+  rather than as a typo.
+- **The tag is a type, not a value.** `let tag = Symbol!("name");` parses the expanded
+  `Symbol<4, Chars<…>>` as a comparison chain and fails with
+  ``macro expansion ignores `,` and any tokens following``, then an `E0369` about `<` and an `E0308`
+  about a struct constructor. The tag is passed as `PhantomData::<Symbol!("name")>`.
+- **An error prints the expanded tag.** A missing field is reported against
+  `HasField<Symbol<5, Chars<'w', Chars<'i', …>>>>`, which spells `width` one character at a time;
+  [`cargo cgp check`](../cargo-cgp.md) names the field directly.
 
 ## Source
 

@@ -71,6 +71,11 @@ Ending in `Void` rather than `Nil` is the essential difference from [`Product!`]
 empty record is a valid value, the unit struct `Nil`, but an empty choice is uninhabited, since
 there is nothing to choose. `Void` plays the role of the never type here, marking the end of a sum.
 
+The terminator is what gives generic variant handling compile-time exhaustiveness without a wildcard
+arm. As each variant is ruled out, the remaining type shrinks toward `Void`, and code that has
+handled every variant is left holding a `Void`, discharged with `match remainder {}`. Adding a
+variant without handling it makes the remainder inhabited again, so the code stops compiling.
+
 ## Examples
 
 `Sum!` most often appears as the `Fields` of an enum that derives
@@ -86,7 +91,7 @@ pub enum Shape {
     Rectangle { width: f64, height: f64 },
 }
 
-// generated:
+// generated, among other impls:
 // impl HasFields for Shape {
 //     type Fields = Sum![
 //         Field<Symbol!("Circle"), f64>,
@@ -103,6 +108,10 @@ single unnamed field is the payload type itself, a struct-like variant nests a
 [`Product!`](product.md) of its named fields, several unnamed fields nest a `Product!` keyed by
 [`Index`](../types/index.md), and a unit variant's payload is `Nil`. Generic code walks the `Sum!`
 to find which variant a value holds, and walks a nested `Product!` to reach that variant's fields.
+
+`Sum!` has no everyday hand-written use: let `#[derive(CgpData)]` or `#[derive(HasFields)]`
+generate an enum's list, never write the `Either` chain out, and prefer a plain `enum` and `match`
+when the variant set is closed and consumed in one place.
 
 A sum type can also be written directly:
 
@@ -123,6 +132,21 @@ These constructs are the ones `Sum!` relates to:
 - [`#[derive(CgpVariant)]`](../derives/derive_cgp_variant.md) and
   [`#[derive(FromVariant)]`](../derives/derive_from_variant.md): the extensible-variant derives that
   build on this representation.
+
+## Known issues
+
+These corner cases concern the sum shape and the derives that produce it:
+
+- **The empty sum is uninhabited.** `Sum![]` is `Void`, so a function returning one never returns.
+- **A one-element sum is still a wrapper.** `Sum![T]` is `Either<T, Void>`, a distinct type from `T`.
+- **Variant order is part of the type**, though the operations that consume a derived list match on
+  the name tags, and a cast between two enums works through that name matching.
+- **Only `#[derive(HasFields)]` accepts every variant shape.** The variant derives,
+  [`#[derive(CgpData)]`](../derives/derive_cgp_data.md), `CgpVariant`, `ExtractField`, and
+  `FromVariant`, reject a struct-like, multi-field, or unit variant with
+  `Expected variant to contain exactly one unnamed field`, because constructing or extracting a
+  variant hands over its payload as one value. A richer payload is wrapped in its own struct, as
+  `Rectangle(Rectangle)`.
 
 ## Source
 

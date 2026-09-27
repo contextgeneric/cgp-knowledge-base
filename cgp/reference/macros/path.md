@@ -103,6 +103,7 @@ A path is usually written as a redirect target. Used directly as a type, `Path!`
 a [`RedirectLookup`](../providers/redirect_lookup.md) resolves against a table:
 
 ```rust
+use cgp::core::error::ErrorRaiserComponent;
 use cgp::prelude::*;
 
 type ErrorRoute = Path!(@app.error.ErrorRaiserComponent);
@@ -125,7 +126,11 @@ cgp_namespace! {
 // the entry's Delegate is RedirectLookup<__Table__, PathCons<MyFooComponent, Nil>>
 ```
 
-Either way the path is the same `PathCons` list.
+Either way the path is the same `PathCons` list. Prefer that embedded form, in a namespace entry, a
+`#[prefix]`, or an `@`-path wiring key, over naming a `type SomeRoute = Path!(…)` and using it
+indirectly, and use the `open` statement rather than building paths for per-type dispatch of one
+component. `Path!` is not a general type-level list: [`Product!`](product.md) is, without the
+segment-classification rule.
 
 ## Related constructs
 
@@ -142,6 +147,13 @@ These constructs are the ones `Path!` relates to:
   `RedirectLookup` impl does with its type parameters.
 
 ## Known issues
+
+A few mistakes report themselves poorly. A missing leading `@` fails with ``expected `@` ``. A bare
+`@` or a trailing dot, as in `@app.`, fails while parsing the missing segment as a type, with
+``unexpected end of input, expected one of: `for`, parentheses, `fn`, …``. Case decides meaning
+silently: `@app` and `@App` are both valid and different, so a capitalization slip compiles and
+routes elsewhere, and a route nothing binds also compiles, surfacing only when a
+[`check_components!`](check_components.md) evaluates the lookup.
 
 A lowercase segment spelled like a numeric primitive becomes a type rather than a symbol. The
 primitive check accepts any identifier of `i`, `u`, or `f` followed only by digits, so it matches

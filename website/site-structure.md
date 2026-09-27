@@ -102,8 +102,7 @@ through that page yet. On the `v0.8.0` branch the crate has one test target per 
 `tests/concepts/` covers every concept page that shows code, `tests/comparisons/` every comparison
 page, `tests/tutorials/` the ported tutorial parts, `tests/quickstart.rs` the Quickstart, and
 `tests/cargo_cgp/` the `docs/cargo-cgp/` pages. Under `tests/reference/`, the written groups are
-mirrored as they are ported: `errors.rs`, `macros/` (every construct page except the four type-level
-construction macros), `attributes/`
+mirrored as they are ported: `errors.rs`, `macros/` (every construct page), `attributes/`
 (`default_impl.rs`, `impl_generics.rs`, and `prefix.rs`), all of `derives/`, the `traits/` pages
 that show checkable code, most of `providers/`, all of `components/` (including the `handler/`
 subsection), and `types/`, one file per type page. The rejected snippets from every section live
