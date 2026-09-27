@@ -1,67 +1,78 @@
 # Monad providers
 
-The monad providers turn a list of handlers and a choice of monad into a single composed handler that short-circuits on the appropriate branch: `PipeMonadic` is the pipeline builder, the `IdentMonadic` / `OkMonadic` / `ErrMonadic` markers (with their transformer forms) name the monad, and `BindOk` / `BindErr` are the per-step bind providers that implement the branching.
+The monad providers compose a list of handlers under a chosen monad into one handler that short-circuits on the monad's stop case. `PipeMonadic` builds the pipeline, the markers `IdentMonadic`, `OkMonadic`, and `ErrMonadic` (with their transformer forms) name the monad, and `BindOk` and `BindErr` implement one branching step.
 
 ## Purpose
 
-These providers implement [monadic handler composition](../../concepts/monadic-handlers.md) on top of the [`Computer`](../components/computer.md) family. They exist so that a sequence of handlers whose outputs carry a "continue" case and a "stop" case can be chained without manually pattern-matching each step: the monad decides which case threads forward and which short-circuits, and the providers assemble the composition in types. The result of building a pipeline is itself a provider for `Computer`, `AsyncComputer`, `TryComputer`, and `Handler`, so a monadic pipeline wires into a context exactly like any other handler provider.
+These providers implement [monadic handler composition](../../concepts/monadic-handlers.md) on the [`Computer`](../components/computer.md) family. They chain handlers whose outputs carry a "continue" case and a "stop" case, such as `Ok` and `Err`, without matching on each step by hand: the monad decides which case feeds the next handler and which ends the pipeline. A built pipeline is itself a provider of `Computer`, `AsyncComputer`, `TryComputer`, and `Handler`, so it wires into a context like any other handler.
 
-The providers divide into three groups. `PipeMonadic` is the entry point a user wires or invokes. The monad markers are the zero-sized types that select the short-circuiting behavior. The bind providers are the lower-level building blocks that `PipeMonadic` composes internally, and that can also be used directly with the non-monadic [`PipeHandlers`](handler_combinators.md) when finer control is wanted.
+The providers form three groups:
+
+- **`PipeMonadic`**, the entry point a user wires or calls.
+- **The monad markers**, zero-sized types that select the short-circuiting behavior.
+- **The bind providers**, the per-step building blocks `PipeMonadic` composes, also usable directly inside a plain [`PipeHandlers`](handler_combinators.md) list.
+
+None is in the prelude. `PipeMonadic` is imported from `cgp::extra::monad::providers`, and the markers and binds from `cgp::extra::monad::monadic::{ident, ok, err}`.
 
 ## The pipeline provider
 
-`PipeMonadic<M, Providers>` is the provider that composes a handler list `Providers` under a monad `M` into a single short-circuiting handler:
+`PipeMonadic<M, Providers>` composes the handler list `Providers` under the monad `M`:
 
 ```rust
 pub struct PipeMonadic<M, Providers>(pub PhantomData<(M, Providers)>);
 ```
 
-`M` is a monad marker and `Providers` is a [type-level list](../types/cons.md) of handler providers, written with `Product![...]`. `PipeMonadic` implements the handler components by folding the list: it delegates `ComputerComponent` and `AsyncComputerComponent` to the provider that an internal `BindProviders<M>` computation produces from the list. That fold walks the list so that the first provider runs on the input and its result is bound, via the monad, to the monadically-composed rest of the list — each step running only on the previous step's continue branch.
+`Providers` is a [`Product!`](../macros/product.md) list. For `ComputerComponent` and `AsyncComputerComponent`, `PipeMonadic` delegates to the provider that a private `BindProviders<M>` fold builds from the list. Writing `Bind<P>` for `<M as MonadicBind<P>>::Provider`, the bind step `M` produces (such as `BindErr<IdentMonadic, P>` for `ErrMonadic`), the fold of `[A, B, C]` is `ComposeHandlers<A, Bind<ComposeHandlers<B, Bind<C>>>>`. Each handler after the first runs only on the previous step's continue case. A one-element list is its only provider, and an empty list builds nothing.
 
-`PipeMonadic` also implements `TryComputerComponent` and `HandlerComponent`, the fallible and async-fallible handler components, by a bridge through the err monad. For these it first maps every provider in the list to `TryPromote<Provider>` (demoting fallible handlers to plain `Computer`s whose output is an explicit `Result`), applies `ErrMonadic` as a transformer on top of the given monad `M`, composes that demoted list under the transformed monad, and finally wraps the composed provider back in `TryPromote` to restore the fallible interface. The effect is that a `PipeMonadic` over fallible handlers short-circuits on the context's error type in addition to whatever branching `M` itself contributes.
+For `TryComputerComponent` and `HandlerComponent`, `PipeMonadic` bridges through the err monad:
+
+1. Each provider in the list is wrapped in `TryPromote<Provider>`, turning a fallible handler into a `Computer` whose output is `Result<Output, Context::Error>`.
+2. `M` is applied as a transformer over `ErrMonadic`, so the err monad handles the outer `Result` that carries the context's error and `M` handles the value inside it. With `M = IdentMonadic` this is plain `ErrMonadic`; with `M = OkMonadic` it is `OkMonadicTrans<ErrMonadic>`.
+3. The wrapped list is composed under that monad, and the result is wrapped in `TryPromote` again to restore the fallible interface.
+
+So a fallible pipeline stops at the first context error, in addition to whatever `M` stops on.
 
 ## Monad markers
 
-The monad markers are zero-sized types that select which branch of a step's output continues the pipeline and which short-circuits. CGP defines three base markers and a transformer form for the two that branch on `Result`.
+The markers decide which case of a step's output continues:
 
-`IdentMonadic` is the identity monad: it threads every value forward and never short-circuits, so a `PipeMonadic<IdentMonadic, ...>` is equivalent to plain composition with `PipeHandlers`.
+| Marker | Continues on | Stops on |
+| --- | --- | --- |
+| `IdentMonadic` | every value | never |
+| `ErrMonadic` | `Ok(value)` | `Err`, the familiar early return on error |
+| `OkMonadic` | `Err(value)` | `Ok`, stopping at the first success |
 
 ```rust
 pub struct IdentMonadic;
-```
-
-`OkMonadic` short-circuits on `Ok` and continues on `Err`, and `ErrMonadic` short-circuits on `Err` and continues on `Ok`:
-
-```rust
 pub struct OkMonadic;
 pub struct ErrMonadic;
 ```
 
-`ErrMonadic` is the familiar early-return-on-error behavior, where the first `Err` produced by any step becomes the pipeline's output and the rest do not run. `OkMonadic` is its mirror, stopping at the first `Ok`.
+`PipeMonadic<IdentMonadic, …>` is the same as `PipeHandlers`.
 
-Each `Result`-branching marker has a transformer form, `OkMonadicTrans<M>` and `ErrMonadicTrans<M>`, that applies its behavior on top of a base monad `M` so monads can stack over nested result types:
+The two `Result` markers have transformer forms that stack a layer over another monad:
 
 ```rust
 pub struct OkMonadicTrans<M>(pub PhantomData<M>);
 pub struct ErrMonadicTrans<M>(pub PhantomData<M>);
 ```
 
-Writing `OkMonadicTrans<ErrMonadic>` builds a monad that short-circuits on an outer `Ok` while threading an inner `Result` through the err monad beneath it. The bare `OkMonadic` and `ErrMonadic` markers produce their own transformer forms over `IdentMonadic` when used as transformers, so a single layer of branching needs no explicit transformer.
+In `OkMonadicTrans<M>`, the monad `M` handles the outer structure of each output, and the ok layer applies to the `Result` that `M` exposes as its value. So `OkMonadicTrans<ErrMonadic>` over outputs of type `Result<Result<T, E1>, E2>` stops on an outer `Err`, stops on an inner `Ok`, and continues with the `E1` of an `Ok(Err(e1))`. `ErrMonadicTrans<M>` mirrors it. Applied as a transformer to a monad `M`, the bare `OkMonadic` gives `OkMonadicTrans<M>` and `ErrMonadic` gives `ErrMonadicTrans<M>`. Used on its own, each binds as its transformer over `IdentMonadic`.
 
 ## Bind providers
 
-`BindOk` and `BindErr` are the per-step providers that implement a single bind of the ok and err monads. `PipeMonadic` composes them internally, but they are also usable directly as handler providers — for example inside a [`PipeHandlers`](handler_combinators.md) list — when a pipeline is built step by step rather than through `PipeMonadic`.
+`BindOk` and `BindErr` implement one bind step. `PipeMonadic` composes them, and they can also be placed in a `PipeHandlers` list by hand:
 
 ```rust
 pub struct BindOk<M, Cont>(pub PhantomData<(M, Cont)>);
 pub struct BindErr<M, Cont>(pub PhantomData<(M, Cont)>);
 ```
 
-In both, `M` is the monad layer beneath this bind and `Cont` is the continuation provider to run on the continue branch. `BindErr<M, Cont>` implements `Computer` and `AsyncComputer` for an input of `Result<T1, E>`: on `Ok(value)` it runs `Cont` on `value` and lifts the continuation's output back through `M`, and on `Err(err)` it short-circuits by lifting the error directly to the output, skipping `Cont`. `BindOk<M, Cont>` is the mirror, branching on `Result<T, E1>`: it runs `Cont` on the `Err` payload and short-circuits on `Ok`. The `M` parameter lets these binds nest: at the bottom of a single-layer pipeline it is `IdentMonadic`, and a stacked monad threads a deeper monad through it.
+`M` is the monad layer beneath this bind, `IdentMonadic` for a single layer, and `Cont` is the provider to run on the continue case. `BindErr<M, Cont>` implements `Computer` and `AsyncComputer` for an input of `Result<T1, E>`: on `Ok(value)` it runs `Cont` on `value` and passes the output through `M`, and on `Err(err)` it skips `Cont` and lifts the error into the output through `M`. `BindOk<M, Cont>` is the mirror: it runs `Cont` on the `Err` payload and stops on `Ok`.
 
 ## The `TryPromoteProviders` mapper
 
-`TryPromoteProviders` is the type-level mapper that `PipeMonadic` uses to demote a whole list of fallible handler providers to infallible ones in one step:
+`TryPromoteProviders` is the type-level mapper `PipeMonadic` uses to wrap every provider of a list in `TryPromote`:
 
 ```rust
 pub struct TryPromoteProviders;
@@ -71,35 +82,55 @@ impl MapType for TryPromoteProviders {
 }
 ```
 
-It implements [`MapType`](../traits/map_type.md) by mapping each provider to `TryPromote<Provider>`, so applying it to a handler list with `MapFields` rewrites every element to its `TryPromote` form. `PipeMonadic` uses this when implementing the fallible handler components, turning a list of `TryComputer` providers into a list of plain `Computer` providers whose output is an explicit `Result` before composing them under the err-transformed monad. The `TryPromote` provider it wraps each element in is documented with the [handler combinators](handler_combinators.md); it converts between the fallible and infallible handler interfaces in both directions.
+It implements [`MapType`](../traits/map_type.md), so `MapFields` applies it to each element of the handler list. [`TryPromote`](handler_combinators.md) converts between a fallible handler and a `Computer` returning `Result`, in both directions.
 
 ## Examples
 
-The simplest use composes a homogeneous list under a base monad. With an `Increment` computer that returns `Result<u8, &str>` — `Ok` on success and `Err("overflow")` on overflow — composing three under `ErrMonadic` chains on the `Ok` value and stops at the first error:
+These examples come from the `monadic_handlers` tests. `Increment` is built from a function returning `Result`:
 
 ```rust
+use cgp::prelude::*;
+use cgp::extra::handler::PipeHandlers;
+use cgp::extra::monad::monadic::err::{BindErr, ErrMonadic};
+use cgp::extra::monad::monadic::ident::IdentMonadic;
+use cgp::extra::monad::providers::PipeMonadic;
+
+#[cgp_computer]
+pub fn increment(value: u8) -> Result<u8, &'static str> {
+    value.checked_add(1).ok_or("overflow")
+}
+```
+
+Composing three under `ErrMonadic` continues on each `Ok` and stops at the first `Err`, so starting from `253` it returns `Err("overflow")`:
+
+```rust
+let context = ();
+let code = PhantomData::<()>;
+
 PipeMonadic::<ErrMonadic, Product![Increment, Increment, Increment]>::compute(&context, code, 253)
 // 253 -> Ok(254) -> Ok(255) -> Err("overflow")
 ```
 
-A single bind step can be assembled by hand and run through `PipeHandlers`, which `PipeMonadic` does internally for a two-element list:
+The same step can be built by hand, which is what `PipeMonadic` does for a two-element list:
 
 ```rust
 PipeHandlers::<Product![Increment, BindErr<IdentMonadic, Increment>]>::compute(&context, code, 1)
-// 1 -> Ok(2) -> BindErr runs the second Increment on 2 -> Ok(3)
+// Ok(3)
 ```
 
-Stacking monads handles nested results. Composing handlers that return `Result<Result<(), u8>, &str>` under `OkMonadicTrans<ErrMonadic>` short-circuits on the outer `Ok` while threading the inner `Result` through the err monad, and the same list composed under `OkMonadic` can be driven through the fallible `try_compute` and async `handle` entry points because `PipeMonadic` implements `TryComputer` and `Handler` as well:
-
-```rust
-PipeMonadic::<OkMonadic, Product![ReturnOkErr, ReturnOkOk, ReturnOkErr]>::try_compute(&context, code, 1)
-```
+For handlers returning `Result<Result<(), u8>, &'static str>`, `OkMonadicTrans<ErrMonadic>` stops on an outer `Err` or an inner `Ok`. The same handlers composed under plain `OkMonadic` can be driven through `try_compute` and `handle`, because the fallible bridge stacks `OkMonadic` over `ErrMonadic` itself, taking the context's error from the outer `Result`.
 
 ## Related constructs
 
-`PipeMonadic` generalizes the non-monadic [handler combinators](handler_combinators.md): `PipeHandlers` and `ComposeHandlers` chain handlers feeding each output straight into the next, which `PipeMonadic<IdentMonadic, ...>` reduces to, while `PipeMonadic` uses the `TryPromote` provider those combinators define to bridge fallible and infallible handlers. The monads these providers consume are defined by the trait layer in [monad traits](../traits/monad.md) — `MonadicTrans`, `MonadicBind`, `ContainsValue`, and `LiftValue` — and the conceptual overview of why a monadic pipeline short-circuits is in [monadic handlers](../../concepts/monadic-handlers.md). The pipelines build providers for the [`Computer`](../components/computer.md) family, and `TryPromoteProviders` relies on [`MapType`](../traits/map_type.md) and `MapFields` to map over the handler list. For selecting one handler among several by a type-level key rather than running them in sequence, see [dispatch combinators](dispatch_combinators.md).
+These constructs are the ones the monad providers work with:
+
+- [Handler combinators](handler_combinators.md) — `PipeHandlers`, `ComposeHandlers`, and `TryPromote`, which these providers build on.
+- [Monad traits](../traits/monad.md) — `MonadicTrans`, `MonadicBind`, `ContainsValue`, and `LiftValue`, which define the monads.
+- [Monadic handlers](../../concepts/monadic-handlers.md) — why a monadic pipeline short-circuits.
+- [`MapType`](../traits/map_type.md) — the mapping behind `TryPromoteProviders`.
+- [Dispatch combinators](dispatch_combinators.md) — selecting one handler by a key instead of running several in sequence.
 
 ## Source
 
 - The pipeline provider, `TryPromoteProviders`, and the internal `BindProviders` fold are in [crates/extra/cgp-monad/src/providers/pipe_monadic.rs](https://github.com/contextgeneric/cgp/blob/main/crates/extra/cgp-monad/src/providers/pipe_monadic.rs).
-- The monad markers and bind providers are in [crates/extra/cgp-monad/src/monadic/](https://github.com/contextgeneric/cgp/tree/main/crates/extra/cgp-monad/src/monadic/) — `ident.rs` for `IdentMonadic`, `ok.rs` for `OkMonadic` / `OkMonadicTrans` / `BindOk`, and `err.rs` for `ErrMonadic` / `ErrMonadicTrans` / `BindErr`.
+- The monad markers and bind providers are in [crates/extra/cgp-monad/src/monadic/](https://github.com/contextgeneric/cgp/tree/main/crates/extra/cgp-monad/src/monadic/): `ident.rs` for `IdentMonadic`, `ok.rs` for `OkMonadic` / `OkMonadicTrans` / `BindOk`, and `err.rs` for `ErrMonadic` / `ErrMonadicTrans` / `BindErr`.

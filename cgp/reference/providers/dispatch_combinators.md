@@ -1,30 +1,31 @@
 # Dispatch combinators
 
-The dispatch combinators are the `cgp-dispatch` provider structs that route an extensible-data value — a record or a variant — to per-field or per-variant handlers, and assemble or finalize the result. They are all [`Computer`](../components/computer.md)-family providers (and several are also [`Handler`](../components/handler.md)/`TryComputer` providers) built on top of the extractor and builder trait families.
+The dispatch combinators are the `cgp-dispatch` providers that route an extensible-data value to per-variant or per-field handlers: the matchers take an enum apart and hand each variant's payload to a handler, and the builders assemble a record with one handler per field.
 
 ## Purpose
 
-The dispatch combinators solve the problem of handling an arbitrary record or enum generically, where the set of fields or variants is not known at the call site and the handling logic for each one lives in a separate provider. A hand-written `match` on a concrete enum names every variant in one place and calls a fixed function for each; these combinators instead drive the extractor family from [`extract_field`](../traits/extract_field.md) and the builder family from [`has_builder`](../traits/has_builder.md) to do the same work over a value whose shape is only known at the type level, dispatching each field or variant to a handler chosen by type.
+The dispatch combinators handle an arbitrary enum or record generically, when the variants or fields are known only at the type level and the logic for each lives in its own provider. A hand-written `match` names every variant in one place. The matchers instead drive the extractor traits of [`extract_field`](../traits/extract_field.md), trying one variant at a time and proving the match exhaustive without a wildcard arm. The builders drive the builder traits of [`has_builder`](../traits/has_builder.md), starting from an empty partial record and filling one field per handler.
 
-The combinators divide into two halves that mirror the two halves of the extensible-data machinery. The *matcher* half consumes a sum type: it tries each variant in turn, hands the matched payload to a handler, and proves the match exhaustive without a wildcard arm. The *builder* half produces a product type: it starts from an empty builder, runs a handler per field to compute that field's value, and finalizes the fully-populated record. Both halves are expressed as handler providers so they compose with the rest of the handler ecosystem — they can be wired into a context with [`delegate_components!`](../macros/delegate_components.md), nested inside [`UseInputDelegate`](use_delegate.md), and chained with the combinators in [`handler_combinators`](handler_combinators.md).
+Both halves are handler providers, so they wire into a context with [`delegate_components!`](../macros/delegate_components.md) and compose with the [handler combinators](handler_combinators.md). They differ in which handler traits they implement:
 
-## Definition
+- **The matchers and their adapters** implement `Computer` and `AsyncComputer` only.
+- **The builders** implement `Computer`, `TryComputer`, and `Handler`, propagating an inner provider's error in the fallible forms.
 
-The combinators are zero-sized provider structs, each generic over a list of handlers or a per-element provider, that implement one or more of the handler component traits. This section groups them by role: the matcher loop they share, the matchers that drive it directly, the field/variant adapters that prepare a value for a handler, the convenience matchers that build a handler list from a context's fields, and the builders that go the other way. Every struct verified here carries `PhantomData` over its type parameters and is a pure type-level entity with no runtime value, in keeping with how CGP providers work.
+The prelude exports the value matchers `MatchWithValueHandlers`, `MatchWithValueHandlersRef`, `MatchWithValueHandlersMut`, and their `MatchFirstWith…` counterparts. Every other name here is imported from `cgp::extra::dispatch`.
 
-### `DispatchMatchers` — the matcher loop
+## The matcher loop: `DispatchMatchers`
 
-`DispatchMatchers<Handlers>` is the engine every matcher delegates to. It is a type alias for a monadic pipeline that runs a list of handlers and stops at the first one that succeeds:
+Every matcher runs its handler list through one loop, a monadic pipeline that stops at the first handler that matches:
 
 ```rust
 pub type DispatchMatchers<Providers> = PipeMonadic<OkMonadic, Providers>;
 ```
 
-The list `Providers` is a `Product![...]` of handlers, each of which takes the partial value (the extractor) and returns `Result<Output, Remainder>`: `Ok(output)` means that handler matched and produced the output, while `Err(remainder)` means it did not match and hands back the extractor with one more variant ruled out. [`PipeMonadic`](monad_providers.md) under the `OkMonadic` monad threads the pipeline along the `Err` branch and short-circuits on `Ok`, so the list runs handler by handler until one returns `Ok`, carrying the shrinking remainder forward through each `Err`. When the last handler still returns `Err`, the remainder type has every variant ruled out and is therefore uninhabited, which lets the enclosing matcher discharge it without a fallback arm. `DispatchMatchers` is an implementation detail of the matchers below and is not normally named by users.
+Each handler in the `Product!` list takes the extractor, a partial view of the enum, and returns `Result<Output, Remainder>`. `Ok(output)` means the handler matched. `Err(remainder)` hands back the extractor with one more variant ruled out. Under [`OkMonadic`](monad_providers.md) the pipeline continues on `Err` and stops on `Ok`, carrying the shrinking remainder from handler to handler. If the last handler still returns `Err`, every variant has been ruled out, so the remainder type is uninhabited and the matcher discharges it without a fallback arm. Users rarely name `DispatchMatchers` directly.
 
-### `MatchWithHandlers` and its borrowed forms
+## Matchers
 
-`MatchWithHandlers<Handlers>` is the owned-input matcher: given a value, it converts the value to its extractor and runs the handler list over it. Its `Computer`/`AsyncComputer` impls require the input to implement [`HasExtractor`](../traits/extract_field.md), run `DispatchMatchers<Handlers>` over `Input::Extractor` to obtain `Result<Output, Remainder>`, and call `finalize_extract_result` on that result so the uninhabited remainder is discharged and the bare `Output` is returned:
+`MatchWithHandlers<Handlers>` is the owned-input matcher. It requires the input to implement [`HasExtractor`](../traits/extract_field.md), runs `DispatchMatchers<Handlers>` over `Input::Extractor`, and calls `finalize_extract_result` to discharge the uninhabited remainder and return the bare `Output`:
 
 ```rust
 pub struct MatchWithHandlers<Handlers>(pub PhantomData<Handlers>);
@@ -43,63 +44,35 @@ where
 }
 ```
 
-`MatchWithHandlersRef<Handlers>` and `MatchWithHandlersMut<Handlers>` are the same provider over a borrowed input. They implement the handler traits for `&'a Input` and `&'a mut Input` respectively, require `HasExtractorRef`/`HasExtractorMut`, and run the handler list over `Input::ExtractorRef<'a>`/`Input::ExtractorMut<'a>`, so a value can be matched without being moved. Each of the three structs implements both the synchronous `Computer` and the `AsyncComputer` form.
+The matchers come in six forms, along two axes:
 
-### `MatchFirstWithHandlers` and its borrowed forms
+| | owned input | `&'a Input` | `&'a mut Input` |
+| --- | --- | --- | --- |
+| **value alone** | `MatchWithHandlers` | `MatchWithHandlersRef` | `MatchWithHandlersMut` |
+| **value with extra arguments** | `MatchFirstWithHandlers` | `MatchFirstWithHandlersRef` | `MatchFirstWithHandlersMut` |
 
-`MatchFirstWithHandlers<Handlers>` is the matcher for the multi-argument calling convention, where the input is a tuple `(Input, Args)` carrying the value being matched together with extra arguments to pass along to each handler. It threads `Args` through the loop unchanged: the handler list runs over `(Input::Extractor, Args)` and returns `Result<Output, (Remainder, Args)>`, so on a miss both the shrunken remainder and the still-owned arguments are carried to the next handler. When the loop finishes with an `Err`, the remainder is uninhabited and is discharged directly through `finalize_extract`:
+The borrowed forms require `HasExtractorRef` or `HasExtractorMut` and match without moving the value. The `MatchFirstWith…` forms take a tuple `(Input, Args)` whose first element is matched while `Args` rides along to every handler: the list runs over `(Input::Extractor, Args)` and returns `Result<Output, (Remainder, Args)>`, so a miss carries both the remainder and the arguments forward.
 
-```rust
-pub struct MatchFirstWithHandlers<Handlers>(pub PhantomData<Handlers>);
+## Adapters
 
-impl<Context, Code, Input, Args, Output, Remainder, Handlers>
-    Computer<Context, Code, (Input, Args)> for MatchFirstWithHandlers<Handlers>
-where
-    Input: HasExtractor,
-    DispatchMatchers<Handlers>: Computer<
-        Context, Code, (Input::Extractor, Args),
-        Output = Result<Output, (Remainder, Args)>>,
-    Remainder: FinalizeExtract,
-{
-    type Output = Output;
-    // compute: match DispatchMatchers::compute(context, code, (input.to_extractor(), args)) {
-    //     Ok(output) => output,
-    //     Err((remainder, _)) => remainder.finalize_extract(),
-    // }
-}
-```
+A matcher's handler list is normally a list of adapters, each of which tries one variant and forwards the payload to an inner provider. Every adapter defaults its provider to [`UseContext`](use_context.md) and returns the `Result<Output, Remainder>` shape the loop expects:
 
-The "first" in the name reflects that the value being matched is the *first* element of the input tuple, with the remaining arguments riding alongside. As with the plain matcher, there are borrowed variants `MatchFirstWithHandlersRef<Handlers>` and `MatchFirstWithHandlersMut<Handlers>` over `(&'a Input, Args)` and `(&'a mut Input, Args)`, and each struct implements both `Computer` and `AsyncComputer`.
-
-### The field and variant adapters
-
-The handler list a matcher runs is normally a list of *adapters*, each of which tries one field or variant and forwards the matched payload to an inner provider. Four adapters cover the matching side, and each pairs a value-extraction step with a delegation to a provider that defaults to [`UseContext`](use_context.md).
-
-`ExtractFieldAndHandle<Tag, Provider>` is the variant adapter for the owned/value calling convention. Its `Output` is `Result<Output, Remainder>`: it calls `ExtractField<Tag>` on the input, and on success wraps the payload in a `Field<Tag, Value>` and hands it to `Provider`, returning `Ok` of the provider's output; on failure it returns `Err` of the remainder, the extractor with that variant ruled out. `ExtractFirstFieldAndHandle<Tag, Provider>` is the same adapter for the `(Input, Args)` convention, threading the arguments into the provider call as `(Field<Tag, Value>, Args)` and returning `Result<Output, (Remainder, Args)>`:
+- **`ExtractFieldAndHandle<Tag, Provider>`** calls `ExtractField<Tag>` on the input. On a match it passes the payload to `Provider` as a `Field<Tag, Value>` and returns `Ok` of the output; otherwise it returns `Err` of the remainder.
+- **`ExtractFirstFieldAndHandle<Tag, Provider>`** does the same for the `(Input, Args)` form, calling `Provider` with `(Field<Tag, Value>, Args)`.
+- **`HandleFieldValue<Provider>`** sits between an extract adapter and the real work: it strips the `Field` wrapper and passes the bare value to `Provider`. **`HandleFirstFieldValue<Provider>`** does the same for `(Field<Tag, Input>, Args)`, forwarding `(Input, Args)`.
+- **`DowncastAndHandle<Inner, Provider>`** matches a group of variants at once. It uses `CanDowncastFields<Inner>` from [`cast`](../traits/cast.md) to narrow the input to a smaller enum `Inner`, and on success hands the whole `Inner` value to `Provider`.
 
 ```rust
 pub struct ExtractFieldAndHandle<Tag, Provider = UseContext>(pub PhantomData<(Tag, Provider)>);
 pub struct ExtractFirstFieldAndHandle<Tag, Provider = UseContext>(pub PhantomData<(Tag, Provider)>);
-```
-
-`HandleFieldValue<Provider>` and `HandleFirstFieldValue<Provider>` are the unwrapping adapters that sit between an extract adapter and the actual work. An extract adapter delivers a `Field<Tag, Value>` so the variant name is still attached to the payload; `HandleFieldValue` strips the `Field` wrapper and passes the bare `Value` to `Provider`, and `HandleFirstFieldValue` does the same for the `(Field<Tag, Input>, Args)` tuple, forwarding `(Input, Args)`:
-
-```rust
 pub struct HandleFieldValue<Provider = UseContext>(pub PhantomData<Provider>);
 pub struct HandleFirstFieldValue<Provider = UseContext>(pub PhantomData<Provider>);
-```
-
-`DowncastAndHandle<Inner, Provider>` is the adapter that matches a *group* of variants at once rather than a single one. Instead of `ExtractField`, it uses `CanDowncastFields<Inner>` (see [`cast`](../traits/cast.md)) to try to narrow the input to a smaller enum type `Inner`; on success it hands the whole `Inner` value to `Provider` and returns `Ok`, and on failure it returns `Err` of the remainder. This lets a matcher delegate several variants to one sub-matcher in a single step:
-
-```rust
 pub struct DowncastAndHandle<Input, Provider = UseContext>(pub PhantomData<(Input, Provider)>);
 ```
 
-Each of these adapters implements both `Computer` and `AsyncComputer`. Because every one returns the `Result<Output, Remainder>` (or `Result<Output, (Remainder, Args)>`) shape that `DispatchMatchers` expects, a `Product!` of them is exactly the handler list a matcher consumes.
+## Convenience matchers
 
-### `MatchWithValueHandlers` and `MatchWithFieldHandlers`
-
-Writing out the full handler list for every variant is mechanical, so the convenience matchers build the list automatically from the input type's own field list. `MatchWithFieldHandlers<Provider>` and `MatchWithValueHandlers<Provider>` are type aliases over [`UseInputDelegate`](use_delegate.md) that dispatch on the input type and, for each input, synthesize the per-variant handler list from that input's [`HasFields`](../traits/has_fields.md):
+The convenience matchers build the adapter list from the input enum's own variants, so no list is written by hand. `MatchWithFieldHandlers` and `MatchWithValueHandlers` are aliases over [`UseInputDelegate`](handler_combinators.md#the-legacy-form-useinputdelegate) that key on the input type and, for each input, derive the list from its [`HasFields`](../traits/has_fields.md):
 
 ```rust
 pub type MatchWithFieldHandlers<Provider = UseContext> =
@@ -109,13 +82,11 @@ pub type MatchWithValueHandlers<Provider = UseContext> =
     UseInputDelegate<MatchWithFieldHandlersInputs<HandleFieldValue<Provider>>>;
 ```
 
-The difference between the two is exactly one `HandleFieldValue` wrapper. `MatchWithFieldHandlers` builds a list of `ExtractFieldAndHandle<Tag, Provider>` adapters, so `Provider` receives each matched payload as a `Field<Tag, Value>` with the variant name still attached. `MatchWithValueHandlers` wraps `Provider` in `HandleFieldValue` first, so `Provider` receives the bare `Value` — this is the form to use when the per-variant handler is an ordinary computer over the payload type, such as one generated by [`#[cgp_computer]`](../macros/cgp_computer.md). The list itself is assembled by the `HasFieldHandlers`/`ToFieldHandlers` machinery described below.
+They differ by one `HandleFieldValue` wrapper. `MatchWithFieldHandlers` runs `ExtractFieldAndHandle<Tag, Provider>` per variant, so `Provider` receives a `Field<Tag, Value>`. `MatchWithValueHandlers` runs `ExtractFieldAndHandle<Tag, HandleFieldValue<Provider>>`, so `Provider` receives the bare payload. That makes it the form for payload handlers that are ordinary computers, such as ones from [`#[cgp_computer]`](../macros/cgp_computer.md). With the default `UseContext`, each payload goes back through the context's own `ComputerComponent`.
 
-The borrowed counterparts are `MatchWithFieldHandlersRef`/`MatchWithValueHandlersRef` (over `&Input`) and `MatchWithValueHandlersMut` (over `&mut Input`). These additionally wire the `…RefComponent` handler traits through [`PromoteRef`](handler_combinators.md), so a single struct serves both the by-value-of-reference and the by-reference handler interfaces. The first-argument convenience matchers — `MatchFirstWithFieldHandlers`, `MatchFirstWithValueHandlers`, and their `Ref`/`Mut` variants — are the same aliases built on `ExtractFirstFieldAndHandle`, `HandleFirstFieldValue`, and the `MatchFirstWith…` matchers, for the `(Input, Args)` calling convention.
+The borrowed forms `MatchWithFieldHandlersRef`, `MatchWithValueHandlersRef`, and `MatchWithValueHandlersMut` are delegation tables. Their `Computer` and `AsyncComputer` entries dispatch `&Input` or `&mut Input` to the borrowed matchers, and their `ComputerRef` and `AsyncComputerRef` entries do the same through [`PromoteRef`](handler_combinators.md). The `MatchFirstWith…` convenience matchers are the same aliases built on the first-argument adapters and matchers.
 
-### `ToFieldHandlers`, `HasFieldHandlers`, and `MapFieldHandler`
-
-The convenience matchers turn a context's field list into a handler list through three cooperating traits. `MapFieldHandler` is a type-level function from a field's `Tag` to the adapter that should handle it; `ToFieldHandlers` walks the [`Either`](../types/either.md)-list of a field list and applies that function to each field, producing a `Cons`-list of adapters; and `HasFieldHandlers` is the convenience entry point that reads a context's `HasFields::Fields` and runs `ToFieldHandlers` over it:
+The list is built by three traits:
 
 ```rust
 pub trait MapFieldHandler {
@@ -129,21 +100,16 @@ pub trait ToFieldHandlers<M> {
 pub trait HasFieldHandlers<M> {
     type Handlers;
 }
-
-impl<Context, Fields, M> HasFieldHandlers<M> for Context
-where
-    Context: HasFields<Fields = Fields>,
-    Fields: ToFieldHandlers<M>,
-{
-    type Handlers = Fields::Handlers;
-}
 ```
 
-`ToFieldHandlers` is implemented inductively over the sum list: for `Either<Field<Tag, Value>, RestFields>` it produces `Cons<M::FieldHandler<Tag>, RestFields::Handlers>`, and for the terminating [`Void`](../types/either.md) it produces `Nil`. The two `MapFieldHandler` markers supplied by the crate are `MapExtractFieldAndHandle<Provider>`, whose `FieldHandler<Tag>` is `ExtractFieldAndHandle<Tag, Provider>`, and `MapExtractFirstFieldAndHandle<Provider>`, whose `FieldHandler<Tag>` is `ExtractFirstFieldAndHandle<Tag, Provider>`. Composing these is how `MatchWithValueHandlers` ends up running an `ExtractFieldAndHandle<Tag, HandleFieldValue<Provider>>` for each variant of the input enum without the user spelling out the list.
+`MapFieldHandler` maps a variant's `Tag` to its adapter; the crate provides `MapExtractFieldAndHandle<Provider>` and `MapExtractFirstFieldAndHandle<Provider>`. `ToFieldHandlers` walks a sum-type field list: `Either<Field<Tag, Value>, Rest>` becomes `Cons<M::FieldHandler<Tag>, Rest::Handlers>`, and [`Void`](../types/either.md) becomes `Nil`. `HasFieldHandlers` applies `ToFieldHandlers` to a type's `HasFields::Fields`. Because only the `Either`/`Void` list is handled, the convenience matchers apply to enums, not to structs.
 
-### `BuildAndSetField` and `BuildAndMerge`
+## Builders
 
-The builder side runs in the opposite direction: rather than taking a value apart, it assembles a record field by field, with one handler computing each field's value. `BuildAndSetField<Tag, Provider>` is the single-field builder adapter. It takes a builder (a partial record from [`has_builder`](../traits/has_builder.md)), runs `Provider` over a *reference* to that builder to compute the value for `Tag`, then calls `BuildField<Tag>` to set that field and returns the advanced builder. Because the provider sees `&Builder`, it can read fields already set on the partial record while computing the next one:
+The builders assemble a record from an empty partial record, one handler per field. Two adapters do the per-field work, each running its provider over a reference to the current builder, so a handler can read fields already set:
+
+- **`BuildAndSetField<Tag, Provider>`** computes one field's value with `Provider` and sets it with `BuildField<Tag>`.
+- **`BuildAndMerge<Provider>`** computes a whole record with `Provider` and copies every shared field into the builder with `CanBuildFrom` from [`has_builder`](../traits/has_builder.md).
 
 ```rust
 pub struct BuildAndSetField<Tag, Provider = UseContext>(pub PhantomData<(Tag, Provider)>);
@@ -160,28 +126,7 @@ where
 }
 ```
 
-`BuildAndMerge<Provider>` is the bulk counterpart. Instead of setting one field, it runs `Provider` over a reference to the builder to produce another record's worth of fields, then uses `CanBuildFrom` (see [`has_builder`](../traits/has_builder.md)) to copy every shared field from that result into the builder in one step — the field-list analogue of `BuildAndSetField`:
-
-```rust
-pub struct BuildAndMerge<Provider = UseContext>(pub PhantomData<Provider>);
-
-impl<Context, Code, Builder, Provider, Output, Res> Computer<Context, Code, Builder>
-    for BuildAndMerge<Provider>
-where
-    Provider: for<'a> Computer<Context, Code, &'a Builder, Output = Res>,
-    Builder: CanBuildFrom<Res, Output = Output>,
-{
-    type Output = Output;
-    // compute: let output = Provider::compute(context, code, &builder);
-    //          builder.build_from(output)
-}
-```
-
-Both `BuildAndSetField` and `BuildAndMerge` implement `Computer`, `TryComputer`, and `Handler`; the `TryComputer` and `Handler` forms additionally require `Context: HasErrorType` and propagate the inner provider's error.
-
-### `BuildWithHandlers` and `BuildAndMergeOutputs`
-
-`BuildWithHandlers<Output, Handlers>` is the entry point that turns a list of builder adapters into a complete record. It starts from `Output::builder()` (an empty partial record, via `HasBuilder`), pipes that builder through the handler list with [`PipeHandlers`](handler_combinators.md) so each adapter sets its field, and calls `finalize_build` on the fully-populated result to recover the concrete `Output`:
+`BuildWithHandlers<Output, Handlers>` runs the adapters. It starts from `Output::builder()`, pipes the builder through `Handlers` with [`PipeHandlers`](handler_combinators.md), and calls `finalize_build` to recover the concrete `Output`. It ignores its own input. `finalize_build` exists only for a builder with every field set, so a missing handler is a compile error:
 
 ```rust
 pub struct BuildWithHandlers<Output, Handlers>(pub PhantomData<(Output, Handlers)>);
@@ -198,18 +143,27 @@ where
 }
 ```
 
-The original `Input` is discarded — `BuildWithHandlers` produces its output from the builder, not from the input. It implements `Computer`, `TryComputer`, and `Handler`, with the latter two requiring `Context: HasErrorType`. Because `finalize_build` is in scope only for the all-present builder configuration, omitting a handler for some field is a compile error rather than a runtime failure.
+`BuildAndMergeOutputs<Output, Handlers>` takes a list of plain record-producing providers instead of adapters. It is a delegation table that maps the handler components to `BuildWithHandlers<Output, Handlers::Mapped>`, after wrapping each provider in `BuildAndMerge` through the `ToBuildAndMergeHandler` [`MapType`](../traits/map_type.md) marker.
 
-`BuildAndMergeOutputs<Output, Handlers>` is a higher-level wrapper used when the handler list is itself a list of plain field-producing providers rather than builder adapters. It is a `delegate_components!` table that maps the whole handler family (`ComputerComponent`, `TryComputerComponent`, `HandlerComponent`, and their `Ref` forms) to `BuildWithHandlers<Output, Handlers::Mapped>`, where each provider in `Handlers` has first been wrapped in `BuildAndMerge` by mapping the list through the `ToBuildAndMergeHandler` [`MapType`](../traits/map_type.md) marker. In effect it lets a caller supply a list of result-producing providers and have each one merged into the builder automatically.
+All the builders implement `Computer`, `TryComputer`, and `Handler`; the fallible forms require `Context: HasErrorType`.
 
 ## Examples
 
-A matcher is normally driven by spelling out one extract adapter per variant and wrapping each payload handler in `HandleFieldValue`. The following dispatches a `Shape` enum to a per-variant area computer:
+This matcher dispatches a `Shape` to a per-variant area provider with an explicit adapter list:
 
 ```rust
-use cgp::extra::dispatch::{
-    ExtractFieldAndHandle, HandleFieldValue, MatchWithHandlers,
-};
+use core::marker::PhantomData;
+use cgp::prelude::*;
+use cgp::extra::dispatch::{ExtractFieldAndHandle, HandleFieldValue, MatchWithHandlers};
+
+pub struct Circle {
+    pub radius: f64,
+}
+
+pub struct Rectangle {
+    pub width: f64,
+    pub height: f64,
+}
 
 #[derive(CgpData)]
 pub enum Shape {
@@ -217,37 +171,56 @@ pub enum Shape {
     Rectangle(Rectangle),
 }
 
-// ComputeArea is a #[cgp_computer] over the payload types Circle and Rectangle.
-let circle = Shape::Circle(Circle { radius: 5.0 });
+pub struct ComputeArea;
 
-let _area = MatchWithHandlers::<
-    Product![
-        ExtractFieldAndHandle<Symbol!("Circle"), HandleFieldValue<ComputeArea>>,
-        ExtractFieldAndHandle<Symbol!("Rectangle"), HandleFieldValue<ComputeArea>>,
-    ],
->::compute(&(), PhantomData::<()>, circle);
+#[cgp_provider]
+impl<Context, Code> Computer<Context, Code, Circle> for ComputeArea {
+    type Output = f64;
+
+    fn compute(_context: &Context, _code: PhantomData<Code>, shape: Circle) -> f64 {
+        core::f64::consts::PI * shape.radius * shape.radius
+    }
+}
+
+#[cgp_provider]
+impl<Context, Code> Computer<Context, Code, Rectangle> for ComputeArea {
+    type Output = f64;
+
+    fn compute(_context: &Context, _code: PhantomData<Code>, shape: Rectangle) -> f64 {
+        shape.width * shape.height
+    }
+}
+
+fn area(shape: Shape) -> f64 {
+    MatchWithHandlers::<
+        Product![
+            ExtractFieldAndHandle<Symbol!("Circle"), HandleFieldValue<ComputeArea>>,
+            ExtractFieldAndHandle<Symbol!("Rectangle"), HandleFieldValue<ComputeArea>>,
+        ],
+    >::compute(&(), PhantomData::<()>, shape)
+}
 ```
 
-The list tries `Circle` first; if the runtime value is a circle, `ComputeArea` runs on the `Circle` payload and the loop stops. Otherwise the remainder carries `Circle` ruled out into the `Rectangle` adapter, which is the last arm, so its failure would leave an uninhabited remainder that `finalize_extract_result` discharges.
+The list tries `Circle` first. A rectangle misses it, and the remainder, with `Circle` ruled out, reaches the `Rectangle` adapter, the last arm.
 
-The same dispatch is far shorter through `MatchWithValueHandlers`, which builds that list from the enum's own fields. Wiring it into a context's `Computer` component with the `open` statement of [`delegate_components!`](../macros/delegate_components.md), keyed on the input as the second path segment, lets the matcher be selected when the input is a `Shape`:
+`MatchWithValueHandlers` builds the same list from the enum. Wired with `open`, keyed on the input as the second path segment, it handles a `Shape` by sending each payload back through the context:
 
 ```rust
+pub struct App;
+
 delegate_components! {
     App {
         open ComputerComponent;
 
-        @ComputerComponent.<Code> Code.[Circle, Rectangle, Triangle]: ComputeArea,
-        @ComputerComponent.<Code> Code.[Shape, ShapePlus]: MatchWithValueHandlers,
+        @ComputerComponent.<Code> Code.[Circle, Rectangle]: ComputeArea,
+        @ComputerComponent.<Code> Code.Shape: MatchWithValueHandlers,
     }
 }
 ```
 
-Existing code wires the same table in the legacy form, `ComputerComponent: UseInputDelegate<new AreaComputers { … }>`, described under [handler combinators](handler_combinators.md#the-legacy-form-useinputdelegate).
+`App` computes a `Circle` or `Rectangle` directly with `ComputeArea`. For a `Shape` it runs `MatchWithValueHandlers`, whose `UseContext` provider asks `App` again for the payload's type, which reaches `ComputeArea`. Existing code writes the same table as `ComputerComponent: UseInputDelegate<new AreaComputers { … }>`.
 
-Here a `Circle` input is handled directly by `ComputeArea`, while a `Shape` input is handled by `MatchWithValueHandlers`, which synthesizes `ExtractFieldAndHandle<Tag, HandleFieldValue<UseContext>>` for each variant and routes each payload back through the context's own `ComputerComponent` — so `Circle` and `Rectangle` payloads reach `ComputeArea` after all.
-
-The builder side mirrors this. The following assembles a `FooBarBaz` by merging a built `FooBar` and computing the remaining `baz` field:
+The builder side, given a provider `BuildFooBar` that produces a `FooBar` record and a provider `BuildBaz` that computes a `baz` value, assembles a `FooBarBaz`:
 
 ```rust
 use cgp::extra::dispatch::{BuildAndMerge, BuildAndSetField, BuildWithHandlers};
@@ -260,13 +233,30 @@ type Handlers = Product![
 let foo_bar_baz = BuildWithHandlers::<FooBarBaz, Handlers>::compute(&context, code, ());
 ```
 
-`BuildWithHandlers` starts from `FooBarBaz::builder()`, runs `BuildAndMerge<BuildFooBar>` to copy the `foo` and `bar` fields from a built `FooBar`, runs `BuildAndSetField<Symbol!("baz"), BuildBaz>` to compute and set `baz`, and finalizes. Dropping either handler leaves a field unset and fails to compile at `finalize_build`.
+`BuildAndMerge<BuildFooBar>` copies `foo` and `bar` from a built `FooBar`, and `BuildAndSetField` sets `baz`. Dropping either handler leaves a field unset and fails to compile at `finalize_build`. The [application builder](../../../examples/application-builder.md) example develops this pattern with `BuildAndMergeOutputs`.
 
 ## Related constructs
 
-The matchers stand on the enum-deconstruction traits in [`extract_field`](../traits/extract_field.md) (`HasExtractor`, `ExtractField`, `FinalizeExtract`) and obtain the variant list from [`has_fields`](../traits/has_fields.md); the builders stand on the record-assembly traits in [`has_builder`](../traits/has_builder.md) (`HasBuilder`, `BuildField`, `FinalizeBuild`, `CanBuildFrom`). The matcher loop is [`PipeMonadic`](monad_providers.md) under the `OkMonadic` monad, and the builder pipeline is [`PipeHandlers`](handler_combinators.md); both produce providers in the [`Computer`](../components/computer.md)/[`Handler`](../components/handler.md) families. The convenience matchers dispatch through [`UseInputDelegate`](use_delegate.md) and reuse the borrowed-input promotion of [`PromoteRef`](handler_combinators.md), and their per-element provider defaults to [`UseContext`](use_context.md). The grouped-variant adapter `DowncastAndHandle` relies on [`cast`](../traits/cast.md). The high-level overview that ties all of these together is [`dispatching`](../../concepts/dispatching.md), and the attribute macro that generates a matcher-backed trait impl automatically is [`#[cgp_auto_dispatch]`](../macros/cgp_auto_dispatch.md). The data-type patterns these combinators serve are [extensible records](../../concepts/extensible-records.md) (the builders) and [extensible variants](../../concepts/extensible-variants.md) (the matchers); `BuildAndMergeOutputs` drives the [application builder](../../../examples/application-builder.md) example, while `MatchWithValueHandlers` and the explicit `MatchWithHandlers` form drive the [extensible shapes](../../../examples/extensible-shapes.md) example over a non-recursive enum and the [expression interpreter](../../../examples/expression-interpreter.md) example over a recursive one.
+These constructs are the ones the dispatch combinators work with:
+
+- [`extract_field`](../traits/extract_field.md), [`has_fields`](../traits/has_fields.md), and [`cast`](../traits/cast.md) — the enum-deconstruction traits behind the matchers.
+- [`has_builder`](../traits/has_builder.md) — the record-assembly traits behind the builders.
+- [Monad providers](monad_providers.md) and [handler combinators](handler_combinators.md) — `PipeMonadic`, `PipeHandlers`, `UseInputDelegate`, and `PromoteRef`.
+- [`UseContext`](use_context.md) — the default per-element provider.
+- [Dispatching](../../concepts/dispatching.md), [extensible variants](../../concepts/extensible-variants.md), and [extensible records](../../concepts/extensible-records.md) — the concepts these combinators serve.
+- [`#[cgp_auto_dispatch]`](../macros/cgp_auto_dispatch.md) — generates a matcher-backed trait impl.
+- The [extensible shapes](../../../examples/extensible-shapes.md), [expression interpreter](../../../examples/expression-interpreter.md), and [application builder](../../../examples/application-builder.md) examples.
+
+## Known issues
+
+Some delegation entries in the crate can never resolve, because they point at providers that lack the needed impl:
+
+- **The borrowed value matchers.** `MatchWithFieldHandlersRef`, `MatchWithValueHandlersRef`, and `MatchWithValueHandlersMut` also route `TryComputerComponent`, `HandlerComponent`, `TryComputerRefComponent`, and `HandlerRefComponent`. Those entries lead to `MatchWithHandlersRef` or `MatchWithHandlersMut`, which implement only `Computer` and `AsyncComputer`, so wiring a fallible component to one of these matchers fails with an unsatisfied bound. The owned `MatchWithValueHandlers` has the same limit without the misleading entries.
+- **`BuildAndMergeOutputs`.** It routes `ComputerRefComponent`, `TryComputerRefComponent`, and `HandlerRefComponent` to `BuildWithHandlers`, which implements only `Computer`, `TryComputer`, and `Handler`.
+
+Either the entries should be removed, or the matchers should gain fallible impls and the builder a `PromoteRef` route. Until then, use these providers only for the components they implement.
 
 ## Source
 
 - The provider structs live under [crates/extra/cgp-dispatch/src/providers/](https://github.com/contextgeneric/cgp/tree/main/crates/extra/cgp-dispatch/src/providers/): the matchers in `with_handlers/` (`match_with_handlers.rs`, `match_with_handlers_ref.rs`, `match_with_handlers_mut.rs`, `match_first_with_handlers*.rs`, `build_with_handlers.rs`), the matcher loop alias in `dispatchers/dispatch_matchers.rs`, the field/variant adapters in `field_matchers/` (`extract_field.rs`, `extract_first_field.rs`, `extract_handle.rs`, `field_value.rs`, `first_field_value.rs`), the convenience matchers and the `ToFieldHandlers`/`HasFieldHandlers`/`MapFieldHandler` machinery in `matchers/` (`match_with_field_handlers.rs`, `match_first_with_field_handlers.rs`, `to_field_handlers.rs`), and the builders in `field_builders/` (`build_and_set_field.rs`, `build_and_merge.rs`) and `builders/build_and_merge_outputs.rs`.
-- The prelude re-exports the value-handler matchers from [crates/main/cgp-extra/src/prelude.rs](https://github.com/contextgeneric/cgp/blob/main/crates/main/cgp-extra/src/prelude.rs); the remaining structs are reached through `cgp::extra::dispatch`.
+- The prelude re-exports the value matchers from [crates/main/cgp-extra/src/prelude.rs](https://github.com/contextgeneric/cgp/blob/main/crates/main/cgp-extra/src/prelude.rs); the remaining structs are reached through `cgp::extra::dispatch`.

@@ -1,20 +1,18 @@
 # `UseType` (provider)
 
-`UseType<Type>` is a zero-sized provider that supplies a concrete `Type` as the value of an abstract CGP type, letting a context bind an abstract associated type to a real type purely through wiring.
+`UseType<Type>` is a zero-sized provider that supplies a concrete `Type` as the value of an abstract CGP type, so a context fixes an abstract type through wiring alone.
 
-This document describes the `UseType` **provider** — the struct `UseType<Type>(PhantomData<Type>)`. It is a different construct from the [`#[use_type]` attribute](../attributes/use_type.md), which is a modifier that rewrites bare type names inside `#[cgp_fn]`, `#[cgp_impl]`, and `#[cgp_component]` definitions and adds the owning trait as a bound. The attribute is about *referring to* an abstract type ergonomically; the provider here is about *choosing the concrete type* an abstract type resolves to. They share a name because both center on abstract types, but they live in different places and do different jobs — link between them, do not conflate them.
+This document covers the provider, the struct `UseType<Type>(PhantomData<Type>)`. The [`#[use_type]` attribute](../attributes/use_type.md) is a different construct: it rewrites bare type names inside a definition and adds the owning trait as a bound. The attribute refers to an abstract type; the provider chooses the concrete type behind it.
 
 ## Purpose
 
-`UseType` removes the need to hand-write a provider impl every time a context wants to fix an abstract type to a concrete one. An abstract type in CGP is a trait with a single associated type, defined with [`#[cgp_type]`](../macros/cgp_type.md) — for example `trait HasScalarType { type Scalar; }`. Generic code refers to `Self::Scalar` without committing to any particular type, and a concrete context decides what `Scalar` actually is. Without `UseType`, making that decision would mean writing a bespoke provider whose only content is `type Scalar = f64;`, repeated for every abstract type and every concrete choice.
+`UseType` spares a context from writing a provider every time it fixes an abstract type. An abstract type is a trait with one associated type, such as `#[cgp_type] trait HasScalarType { type Scalar; }`. Without `UseType`, choosing `f64` for `Scalar` would take a bespoke provider whose only content is `type Scalar = f64;`, repeated for every abstract type and every choice.
 
-`UseType<T>` is the one provider that captures this trivial shape once and for all: it is a [`TypeProvider`](../components/has_type.md) that reports its type parameter `T` as the abstract type. Wiring a context's type component to `UseType<f64>` therefore sets that context's abstract type to `f64` with no custom impl. This is the type-level counterpart of how [`UseField`](use_field.md) lets a getter read an arbitrary field by name — a general-purpose provider parameterized by exactly the thing the context wants to supply.
-
-Because the provider carries no runtime data — it is a type-level marker, `PhantomData` and nothing more — `UseType<T>` exists only to be named in a delegation table. It is never constructed as a value during normal use.
+`UseType<T>` captures that shape once. Wiring a context's type component to `UseType<f64>` sets the abstract type to `f64` with no custom impl. It plays the role for types that [`UseField`](use_field.md) plays for getters: a general provider parameterized by exactly what the context wants to supply. Like every provider it holds no runtime data and exists only to be named in a delegation table.
 
 ## Definition
 
-`UseType` is a phantom-typed struct parameterized by the concrete type it supplies, defined in `cgp-type`:
+`UseType` is defined in `cgp-type`, with an alias for use through [`WithProvider`](with_provider.md):
 
 ```rust
 pub struct UseType<Type>(pub PhantomData<Type>);
@@ -22,11 +20,13 @@ pub struct UseType<Type>(pub PhantomData<Type>);
 pub type WithType<Type> = WithProvider<UseType<Type>>;
 ```
 
-The `WithType<Type>` alias wraps `UseType<Type>` in [`WithProvider`](with_provider.md), the adapter that lets a generic `TypeProvider` stand in as the provider for a specific `#[cgp_type]` component. A `#[cgp_type]` macro generates a `WithProvider` impl for its component, so wiring with either `UseType<T>` (via the component's generated `UseType` impl) or `WithType<T>` (via `WithProvider`) sets the abstract type to `T`.
+`UseType` is in the prelude. `WithType` is not, and is imported from `cgp::core::types`.
 
 ## Behavior
 
-`UseType<Type>` implements the built-in provider trait [`TypeProvider`](../components/has_type.md) for every context and tag, setting its associated `Type` to the struct's own type parameter:
+`UseType` answers two kinds of type component, through two impls of the same struct:
+
+- **The built-in [`HasType`](../components/has_type.md) component.** `cgp-type` implements the provider trait `TypeProvider` for every context and every tag, with the struct's parameter as the type:
 
 ```rust
 #[cgp_provider(TypeProviderComponent)]
@@ -35,9 +35,7 @@ impl<Context, Tag, Type> TypeProvider<Context, Tag> for UseType<Type> {
 }
 ```
 
-The impl is unconditional in `Context` and `Tag` — `UseType<f64>` is a `TypeProvider` whose `Type` is `f64` regardless of which context or which type tag asks. `HasType<Tag>` is the consumer trait that reads this; `TypeProvider` is its provider trait. So once a context's `TypeProviderComponent` is wired to `UseType<f64>`, the context implements `HasType<Tag>` with `Type = f64`, and `TypeOf<Context, Tag>` resolves to `f64`.
-
-[`#[cgp_type]`](../macros/cgp_type.md) targets this same provider. When you write `#[cgp_type] trait HasScalarType { type Scalar; }`, the macro generates a `UseType` impl for the component's provider trait:
+- **Every [`#[cgp_type]`](../macros/cgp_type.md) component.** The macro generates an impl of the component's own provider trait:
 
 ```rust
 impl<Scalar, __Context__> ScalarTypeProvider<__Context__> for UseType<Scalar> {
@@ -45,11 +43,15 @@ impl<Scalar, __Context__> ScalarTypeProvider<__Context__> for UseType<Scalar> {
 }
 ```
 
-so that wiring `ScalarTypeProviderComponent` to `UseType<f64>` sets `Scalar = f64` on the context. The built-in `TypeProvider` impl shown above and the per-component impl generated by `#[cgp_type]` are the two faces of the same `UseType<Type>` struct: the first makes it a provider for the built-in `HasType` component, the second makes it a provider for a user-defined abstract-type component. A bound on the associated type (such as `type Scalar: Copy`) is copied into the generated impl's `where` clause, so the concrete type must satisfy it at the wiring site.
+The first impl ignores the tag, so a single `TypeProviderComponent: UseType<f64>` entry resolves `HasType<Tag>` to `f64` for every `Tag`. The second makes `ScalarTypeProviderComponent: UseType<f64>` set `Scalar = f64`.
+
+A bound on the associated type, such as `type Scalar: Copy`, is copied into the generated impl's `where` clause. Wiring is lazy, so an unsatisfied bound is not reported where the entry is written: `ScalarTypeProviderComponent: UseType<String>` compiles until something requires the context's `HasScalarType`, or until a [`check_components!`](../macros/check_components.md) block checks the component.
+
+`WithType<T>` reaches the same result by another route. The `WithProvider` impl that `#[cgp_type]` generates accepts any `TypeProvider` for the component's key, and `UseType<T>` is one through its built-in impl.
 
 ## Examples
 
-A complete use defines an abstract type, wires a concrete type with `UseType`, and reads it back through `HasScalarType`:
+This context fixes a `#[cgp_type]` abstract type to `f64`:
 
 ```rust
 use cgp::prelude::*;
@@ -67,6 +69,12 @@ delegate_components! {
     }
 }
 
+check_components! {
+    App {
+        ScalarTypeProviderComponent,
+    }
+}
+
 fn zero<Context>() -> Context::Scalar
 where
     Context: HasScalarType,
@@ -76,9 +84,7 @@ where
 }
 ```
 
-`App` wires `ScalarTypeProviderComponent` to `UseType<f64>`, so the generated `UseType` impl makes `App` implement `HasScalarType` with `Scalar = f64`. The `Copy` bound on the associated type is enforced against `f64` where the wiring is written.
-
-The same binding can be expressed with the `WithType` alias, which routes through `WithProvider` instead of the component's own `UseType` impl:
+`App` implements `HasScalarType` with `Scalar = f64` through the generated `UseType` impl, and the check confirms that `f64` meets the `Copy` bound. The same binding can be written with the alias, after `use cgp::core::types::WithType;`:
 
 ```rust
 delegate_components! {
@@ -88,11 +94,16 @@ delegate_components! {
 }
 ```
 
-Both forms produce the same result — `App::Scalar` is `f64` — which is why `UseType<T>` is the idiomatic way to bind an abstract type without writing a provider by hand.
-
 ## Related constructs
 
-`UseType` is the provider that [`#[cgp_type]`](../macros/cgp_type.md) generates an impl for, so the two are almost always seen together: `#[cgp_type]` defines the abstract type and `UseType<T>` supplies the concrete one at wiring time. It implements the built-in [`HasType` / `TypeProvider`](../components/has_type.md) component, the foundation on which all abstract types rest. Its `WithType` alias is one of the named wrappers around [`WithProvider`](with_provider.md). It is the type-level analogue of the [`UseField`](use_field.md) provider that [`#[cgp_getter]`](../macros/cgp_getter.md) generates, and of [`UseDelegate`](use_delegate.md) for behavioral components. For resolving an abstract type through a lookup table rather than a fixed type, see [`UseDelegatedType`](use_delegated_type.md). Do not confuse this provider with the similarly named [`#[use_type]` attribute](../attributes/use_type.md), which imports and rewrites abstract type names in definitions.
+These constructs are the ones `UseType` works with:
+
+- [`#[cgp_type]`](../macros/cgp_type.md) — defines abstract-type components and generates their `UseType` impl.
+- [`HasType`](../components/has_type.md) — the built-in abstract-type component whose `TypeProvider` it implements.
+- [`UseDelegatedType`](use_delegated_type.md) — resolves the type through a lookup table instead of a fixed parameter.
+- [`WithProvider`](with_provider.md) — the adapter behind the `WithType` alias.
+- [`UseField`](use_field.md) — the getter counterpart.
+- [`#[use_type]`](../attributes/use_type.md) — the attribute with a similar name.
 
 ## Source
 

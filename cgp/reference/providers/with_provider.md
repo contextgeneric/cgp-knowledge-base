@@ -1,39 +1,36 @@
 # `WithProvider<Provider>`
 
-`WithProvider<Provider>` is a zero-sized adapter provider that turns a foundational provider — one implementing `TypeProvider` or `FieldGetter` — into a provider of a specific CGP component.
+`WithProvider<Provider>` is a zero-sized adapter that turns a foundational provider, one implementing `TypeProvider` or `FieldGetter`, into a provider of a specific CGP component.
 
 ## Purpose
 
-`WithProvider` bridges the gap between CGP's two layers of provider trait. Foundational traits like [`TypeProvider`](../components/has_type.md) and [`FieldGetter`](../traits/has_field.md) are generic, component-agnostic mechanisms: a `TypeProvider` supplies *some* abstract type for *some* tag, and a `FieldGetter` reads *some* field for *some* output tag, without either knowing which named component it serves. A CGP component, by contrast, has a specific provider trait — `NameTypeProvider`, `NameGetter` — that a context wires to. `WithProvider<Provider>` is the adapter that lets a foundational provider stand in as the provider for one of these named components: it implements the component's provider trait by forwarding to the foundational provider's method.
+`WithProvider` lets a provider written once against a generic trait serve many named components. The foundational traits [`TypeProvider`](../components/has_type.md) and [`FieldGetter`](../traits/has_field.md) do not know which component they serve: a `TypeProvider` supplies a type for a tag, and a `FieldGetter` reads a field for a tag. A component such as `HasNameType` or `HasName` has its own provider trait, `NameTypeProvider` or `NameGetter`, and a context wires that. `WithProvider<Provider>` implements the component's provider trait by forwarding to the foundational one, so a type provider or field getter written once serves every type or getter component.
 
-This adapter lets the foundational layer be wired without each foundational provider having to implement every component trait by hand. A field getter implemented once as a `FieldGetter` can serve any number of getter components through `WithProvider`; an abstract-type implementation written once as a `TypeProvider` can serve any type component the same way. The component-specific glue is generated, and `WithProvider` is the type that carries it.
+Users rarely write `WithProvider` in full, because its common uses have aliases:
 
-`WithProvider` is rarely written in full by users, because its common uses are packaged as aliases. The family `WithContext`, `WithType`, `WithField`, `WithFieldRef`, and `WithDelegatedType` are all `WithProvider<...>` specialized to a particular inner provider, and these aliases appear in everyday wiring. Understanding `WithProvider` explains why those aliases work.
-
-Like every CGP provider, `WithProvider` carries no runtime value. The `Provider` type parameter is held in `PhantomData`, and the struct exists only as a type-level marker naming the foundational provider to adapt.
+| Alias | Expands to | Defined in | In the prelude |
+| --- | --- | --- | --- |
+| `WithContext` | `WithProvider<UseContext>` | `cgp-component` | yes |
+| `WithType<Type>` | `WithProvider<UseType<Type>>` | `cgp-type` | no, `cgp::core::types` |
+| `WithDelegatedType<Components>` | `WithProvider<UseDelegatedType<Components>>` | `cgp-type` | no, `cgp::core::types` |
+| `WithField<Tag>` | `WithProvider<UseField<Tag>>` | `cgp-field` | no, `cgp::core::field::impls` |
+| `WithFieldRef<Tag, Value>` | `WithProvider<UseFieldRef<Tag, Value>>` | `cgp-field` | no, `cgp::core::field::impls` |
 
 ## Definition
 
-`WithProvider` is a struct parameterized by the inner provider, defined in `cgp-component`:
+`WithProvider` is defined in `cgp-component` and is in the prelude:
 
 ```rust
 pub struct WithProvider<Provider>(pub PhantomData<Provider>);
 ```
 
-The single type parameter `Provider` is the foundational provider being adapted — typically a [`TypeProvider`](../components/has_type.md) or [`FieldGetter`](../traits/has_field.md). The `PhantomData` makes `Provider` a parameter of a valueless struct; nothing of `Provider` is ever constructed.
+`Provider` is the foundational provider being adapted, held in `PhantomData` and never constructed.
 
 ## Behavior
 
-`#[cgp_type]` and `#[cgp_getter]` generate a `WithProvider` impl that forwards a component's provider-trait method to the inner provider's foundational method. For a type component such as
+`WithProvider` has no impls of its own in `cgp-component`. [`#[cgp_type]`](../macros/cgp_type.md) and [`#[cgp_getter]`](../macros/cgp_getter.md) generate one for each component they define, keyed by the component's marker:
 
-```rust
-#[cgp_type]
-pub trait HasNameType {
-    type Name;
-}
-```
-
-`#[cgp_type]` emits a `WithProvider` impl that defines the component's associated type from the inner `TypeProvider` (shown with the macro's real placeholder identifiers):
+- **A type component** gets an impl that takes its associated type from the inner `TypeProvider`:
 
 ```rust
 impl<__Provider__, Name, __Context__> NameTypeProvider<__Context__> for WithProvider<__Provider__>
@@ -44,7 +41,7 @@ where
 }
 ```
 
-For a single-method getter, `#[cgp_getter]` emits an analogous `WithProvider` impl that reads the value through the inner `FieldGetter`:
+- **A getter component with exactly one method** gets an impl that reads through the inner `FieldGetter`. A getter with several methods gets none, since one field getter cannot serve several methods:
 
 ```rust
 impl<__Context__, __Provider__> NameGetter<__Context__> for WithProvider<__Provider__>
@@ -57,16 +54,23 @@ where
 }
 ```
 
-In both cases the bound names the foundational trait — `TypeProvider` or `FieldGetter` — keyed by the component-name struct, and the method or associated type forwards to it. `#[cgp_getter]` generates the `WithProvider` impl only when the getter trait has exactly one method, since a single foundational getter cannot serve several methods at once. Each impl is paired with a matching `IsProviderFor` impl so dependencies reach the [check traits](../../concepts/check-traits.md).
+A `&mut self` getter bounds the inner provider by `MutFieldGetter` instead, and a slice getter bounds the value by `AsRef<[T]> + 'static` rather than fixing it. Each generated impl is paired with an `IsProviderFor` impl, so dependencies reach the [check traits](../../concepts/check-traits.md).
 
-The aliases specialize `WithProvider` to a fixed inner provider so the common cases need no `WithProvider<...>` spelled out. `WithContext = WithProvider<UseContext>` adapts the context's own consumer-trait implementation; `WithType<Type> = WithProvider<UseType<Type>>` and `WithField<Tag> = WithProvider<UseField<Tag>>` adapt the foundational type and field providers; `WithFieldRef<Tag, Value> = WithProvider<UseFieldRef<Tag, Value>>` adapts a getter that returns a reference borrowed through `AsRef`; and `WithDelegatedType<Components> = WithProvider<UseDelegatedType<Components>>` adapts a type provider that looks its type up in a delegation table. `WithContext` lives in `cgp-component` beside `WithProvider`, while the `WithType`/`WithDelegatedType` pair is defined in `cgp-type` and the `WithField`/`WithFieldRef` pair in `cgp-field`, each next to the inner provider it wraps.
+The component's own marker is the tag passed to the foundational provider, which decides what each alias reads:
+
+- **`WithType<T>`** ignores the tag and supplies `T`.
+- **`WithDelegatedType<Table>`** looks the component's marker up in `Table`.
+- **`WithField<Tag>`** reads the context's `Tag` field and ignores the marker. `UseField` is also a `TypeProvider`, so wired to a type component it sets the abstract type to that field's type.
+- **`WithFieldRef<Tag, Value>`** reads the `Tag` field and borrows it as `&Value` through `AsRef<Value>`.
+- **`WithContext`** asks the context itself, through `UseContext`: for a getter it reads the context's `HasField` entry keyed by the component's marker, and for a type component it reads the context's `HasType` keyed by the marker.
 
 ## Examples
 
-The everyday way to use `WithProvider` is through one of its aliases, which read as a single wiring choice. Adapting the context's own field getter into a getter component uses `WithField`:
+This getter reads a field whose name differs from the method's:
 
 ```rust
 use cgp::prelude::*;
+use cgp::core::field::impls::WithField;
 
 #[cgp_getter]
 pub trait HasName {
@@ -85,11 +89,16 @@ delegate_components! {
 }
 ```
 
-`WithField<Symbol!("first_name")>` expands to `WithProvider<UseField<Symbol!("first_name")>>`, so `Person`'s `NameGetter` provider is the adapter wrapping the foundational `UseField` getter for the `first_name` field. The generated `WithProvider` impl forwards `name()` to `UseField`'s `FieldGetter::get_field`, which reads `first_name`. The same shape recurs for abstract types: wiring a type component to `WithType<String>` adapts `UseType<String>`, and to `WithDelegatedType<SomeTable>` adapts a `UseDelegatedType` that resolves the type through a table.
+`WithField<Symbol!("first_name")>` is `WithProvider<UseField<Symbol!("first_name")>>`. The generated `WithProvider` impl forwards `name()` to `UseField`'s `FieldGetter::get_field`, which reads `first_name`. For this getter the plain `UseField<Symbol!("first_name")>` works as well, through the `UseField` impl `#[cgp_getter]` also generates. The aliases matter for providers that exist only as a foundational impl.
 
 ## Related constructs
 
-`WithProvider`'s impls are generated by [`#[cgp_type]`](../macros/cgp_type.md) and [`#[cgp_getter]`](../macros/cgp_getter.md), adapting the foundational [`TypeProvider`](../components/has_type.md) and [`FieldGetter`](../traits/has_field.md) traits into component providers. Its alias family wraps the foundational providers documented separately: [`UseContext`](use_context.md) via `WithContext`, [`UseType`](use_type.md) via `WithType`, [`UseField`](use_field.md) via `WithField`, [`UseFieldRef`](use_field_ref.md) via `WithFieldRef`, and [`UseDelegatedType`](use_delegated_type.md) via `WithDelegatedType`. Aliases are wired with [`delegate_components!`](../macros/delegate_components.md), and the dependency propagation that makes them checkable flows through [`IsProviderFor`](../traits/is_provider_for.md).
+These constructs are the ones `WithProvider` works with:
+
+- [`#[cgp_type]`](../macros/cgp_type.md) and [`#[cgp_getter]`](../macros/cgp_getter.md) — generate its impls.
+- [`TypeProvider`](../components/has_type.md) and [`FieldGetter`](../traits/has_field.md) — the foundational traits it adapts.
+- [`UseContext`](use_context.md), [`UseType`](use_type.md), [`UseDelegatedType`](use_delegated_type.md), [`UseField`](use_field.md), and [`UseFieldRef`](use_field_ref.md) — the inner providers of its aliases.
+- [`IsProviderFor`](../traits/is_provider_for.md) — carries the adapted provider's dependencies to the checks.
 
 ## Source
 

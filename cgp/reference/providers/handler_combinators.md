@@ -1,32 +1,44 @@
 # Handler combinators
 
-The handler combinators are the provider structs of `cgp-handler` that build, sequence, and adapt handlers — composing two providers end to end, threading a whole list through a pipeline, returning the input unchanged, and lifting a provider written for one handler shape into another.
+The handler combinators are the provider structs of `cgp-handler` that build, sequence, and adapt handlers: they compose providers end to end, thread a list of providers through a pipeline, return the input unchanged, and lift a provider written for one member of the handler family into another.
 
 ## Purpose
 
-The handler combinators exist because the handler family is not one trait but several closely related ones — [`Computer`](../components/computer.md), [`TryComputer`](../components/try_computer.md), `AsyncComputer`, [`Handler`](../components/handler.md), and [`Producer`](../components/producer.md), each with a `…Ref` variant — and code is rarely written against all of them at once. A provider author writes a plain synchronous `Computer`, or a fallible `TryComputer`, or an async `Handler`, depending on what is natural for the computation. The combinators let those single-shape providers be wired wherever a different shape is expected, and let several providers be glued into a larger one, without forcing the author to re-implement each provider across every trait in the family.
+The combinators let a provider written for one handler trait be used wherever another is wanted, and let small providers be glued into larger ones. The handler family is several related traits, [`Computer`](../components/computer.md), [`TryComputer`](../components/try_computer.md), `AsyncComputer`, [`Handler`](../components/handler.md), and [`Producer`](../components/producer.md), most with a `…Ref` variant. An author writes whichever shape is natural for the computation, and the combinators supply the rest without reimplementing it for every trait.
 
-They divide into three jobs. The *composition* combinators (`ComposeHandlers`, `PipeHandlers`) sequence handlers so that the output of one becomes the input of the next. The *identity* combinator (`ReturnInput`) is the neutral element of that composition, passing its input straight through. The *promotion* combinators (`Promote` and friends) lift a provider from one handler trait to another — from a `Computer` up to a `TryComputer`, from a synchronous computer to an async one, from a value handler to a reference handler — so that one written implementation satisfies many traits. Because every combinator is itself a CGP provider, all of this happens at the type level through delegation, and the combinators nest freely inside one another.
+They do three jobs:
 
-Like all CGP providers, these combinators are zero-sized: their type parameters are inner providers carried in `PhantomData`, never runtime values. The combinator names the providers to compose or promote, and the method bodies forward to those providers' associated functions.
+- **Composition.** `ComposeHandlers` and `PipeHandlers` sequence handlers, so the output of one becomes the input of the next.
+- **Identity.** `ReturnInput` passes its input straight through, the neutral element of composition.
+- **Promotion.** `Promote`, `PromoteAsync`, `PromoteRef`, `TryPromote`, and the promotion bundles lift a provider from one handler trait to another.
+
+Every combinator is a zero-sized provider whose type parameters are inner providers held in `PhantomData`. The work happens at the type level through delegation, so the combinators nest freely.
 
 ## The handler family
 
-Every combinator below is defined in terms of the handler component traits, so a brief orientation helps. The family shares a common method signature: a context reference, a `PhantomData<Code>` tag selecting the operation, and an input, producing an associated `Output`. The members differ in fallibility and asynchrony. [`Computer`](../components/computer.md) is the plain synchronous, infallible form, with `compute(context, code, input) -> Output`. [`TryComputer`](../components/try_computer.md) is synchronous but fallible, returning `Result<Output, Context::Error>` and requiring `Context: HasErrorType`. `AsyncComputer` is asynchronous and infallible. [`Handler`](../components/handler.md) is asynchronous and fallible, the most general member. Each of these has a `…Ref` companion (`ComputerRef`, `TryComputerRef`, `AsyncComputerRef`, `HandlerRef`) whose method takes the input by reference (`&Input`) instead of by value. [`Producer`](../components/producer.md) is the degenerate case that takes no input at all, producing an `Output` from the context and `Code` alone.
+Every member shares one method shape: a context reference, a `PhantomData<Code>` tag selecting the operation, and an input, producing an associated `Output`. The members differ in fallibility and asynchrony:
 
-The promotion combinators trade on the natural orderings among these. A `Computer` is also a valid `TryComputer` (wrap the output in `Ok`) and a valid `AsyncComputer` (the future is ready immediately); a `TryComputer` is a valid `Handler`; a value handler can serve a reference handler by dereferencing. The combinators encode exactly these one-directional lifts.
+| | infallible | fallible (`Result<Output, Context::Error>`) |
+| --- | --- | --- |
+| **synchronous** | `Computer` | `TryComputer` |
+| **async** | `AsyncComputer` | `Handler` |
+
+Each of the four has a `…Ref` companion whose method takes `&Input`. `Producer` takes no input at all.
+
+Promotion follows the natural inclusions among these. An infallible provider is a fallible one that always returns `Ok`, and a synchronous provider is an async one whose future is ready at once. A by-reference provider serves an owned-input slot by dereferencing the input, and an owned-input provider serves a by-reference slot only if it accepts a borrow as its input. Nothing goes the other way: a fallible or async provider cannot be lowered.
 
 ## Composing handlers in sequence
 
-`ComposeHandlers<ProviderA, ProviderB>` runs two handlers back to back, feeding the output of the first as the input of the second, and is the fundamental sequencing combinator. It implements every member of the handler family by threading the intermediary value through both providers under the same context and `Code`:
+`ComposeHandlers<ProviderA, ProviderB>` runs two handlers back to back, feeding the first one's output to the second as its input:
 
 ```rust
 pub struct ComposeHandlers<ProviderA, ProviderB>(pub PhantomData<(ProviderA, ProviderB)>);
 ```
 
-For the plain `Computer` shape, the impl requires `ProviderA: Computer<Context, Code, Input>` and `ProviderB: Computer<Context, Code, ProviderA::Output>` — the second provider's input type is pinned to the first's output type — and the composite `Output` is `ProviderB::Output`:
+For `Computer`, it requires `ProviderA: Computer<Context, Code, Input>` and `ProviderB: Computer<Context, Code, ProviderA::Output>`, and its `Output` is `ProviderB::Output`:
 
 ```rust
+#[cgp_provider]
 impl<Context, Code, Input, ProviderA, ProviderB> Computer<Context, Code, Input>
     for ComposeHandlers<ProviderA, ProviderB>
 where
@@ -42,17 +54,17 @@ where
 }
 ```
 
-The same shape is implemented for `TryComputer`, `AsyncComputer`, and `Handler`. The fallible and async variants differ only in how the intermediary is obtained: `TryComputer` and `Handler` use `?` to short-circuit on the first provider's error (and so require `Context: HasErrorType`), and `AsyncComputer` and `Handler` `.await` each step. In every case the two providers share one context and one `Code`; only the value flowing between them changes type.
+The same impl exists for `TryComputer`, `AsyncComputer`, and `Handler`, and for no other member: `ComposeHandlers` has no `…Ref` or `Producer` impl. The fallible impls short-circuit on the first error with `?` and require `Context: HasErrorType`, and the async impls `.await` each step. Both providers always share one context and one `Code`; only the value between them changes type.
 
 ## Composing a list of handlers
 
-`PipeHandlers<Providers>` generalizes `ComposeHandlers` from two providers to a type-level list of them, composing the whole pipeline right to left into a single nested `ComposeHandlers`. It is parameterized by a [`Product!`](../macros/product.md) list of providers:
+`PipeHandlers<Providers>` extends `ComposeHandlers` to a [`Product!`](../macros/product.md) list of providers:
 
 ```rust
 pub struct PipeHandlers<Providers>(pub PhantomData<Providers>);
 ```
 
-`PipeHandlers` carries no handler impls of its own. Instead it delegates every component to whatever single provider the list folds down to, computed by an internal `ComposeProviders` trait that walks the `Cons`/`Nil` list. A list of one provider folds to that provider unchanged; a list `Cons<ProviderA, rest>` folds to `ComposeHandlers<ProviderA, fold(rest)>`. The delegation entry then routes any handler component on `PipeHandlers<Providers>` to that folded provider:
+It has no handler impls of its own. Instead it delegates every component to the single provider its list folds to:
 
 ```rust
 delegate_components! {
@@ -63,59 +75,49 @@ delegate_components! {
 }
 ```
 
-The practical effect is that `PipeHandlers<Product![A, B, C]>` behaves exactly as `ComposeHandlers<A, ComposeHandlers<B, C>>`, threading the input through `A`, then `B`, then `C`, with each stage's output type feeding the next stage's input type. Because the delegation is generic over the `Component` key, the same pipeline simultaneously serves as a `Computer`, `TryComputer`, `AsyncComputer`, or `Handler` — whichever the wiring asks for — provided every stage supports that shape. This is the combinator to reach for when wiring a multi-stage transformation: list the stages in order and let `PipeHandlers` build the composition.
+The private `ComposeProviders` trait does the fold. A one-element list folds to its only provider, and `Cons<A, Cons<B, Rest>>` folds to `ComposeHandlers<A, fold(Cons<B, Rest>)>`. An empty list has no fold, so `PipeHandlers<Product![]>` provides nothing.
+
+So `PipeHandlers<Product![A, B, C]>` is `ComposeHandlers<A, ComposeHandlers<B, C>>`: the input passes through `A`, then `B`, then `C`. Because the delegation is generic over the component key, the same pipeline serves whichever of `Computer`, `TryComputer`, `AsyncComputer`, or `Handler` the wiring asks for, provided every stage supports that member.
 
 ## Returning the input unchanged
 
-`ReturnInput` is the identity handler: it ignores the context and `Code` and returns its input as its output. It is a plain unit struct with no type parameters:
+`ReturnInput` is the identity handler, a unit struct that ignores the context and `Code` and returns its input:
 
 ```rust
 pub struct ReturnInput;
 ```
 
-It implements `Computer`, `TryComputer`, `AsyncComputer`, and `Handler`, in each case setting `Output = Input` and returning the input directly (wrapped in `Ok` for the fallible variants, which therefore require `Context: HasErrorType`). `ReturnInput` is the neutral element of handler composition: composing it before or after any other handler leaves that handler's behavior unchanged. It is useful as a placeholder stage, as the base case of a conditionally-built pipeline, or wherever a handler slot must be filled but no transformation is wanted.
+It implements `Computer`, `TryComputer`, `AsyncComputer`, and `Handler` with `Output = Input`, wrapping the input in `Ok` for the fallible members, which therefore require `Context: HasErrorType`. Composing it before or after a handler leaves that handler unchanged, so it serves as a placeholder stage or as the base case of a pipeline built step by step.
 
-## Promoting a provider to another handler shape
+## Promoting a provider to another member
 
-The promotion combinators each take a single inner `Provider` and re-expose it under a different member of the handler family, so that an implementation written once satisfies several traits. Each is a one-parameter struct carrying the inner provider in `PhantomData`, and each implements the *target* traits in terms of the inner provider's *source* trait. The lifts they perform are summarized here and detailed below.
+Each promotion combinator takes one inner `Provider` and implements some target traits in terms of the provider's source trait. Each takes exactly one step:
 
-`Promote<Provider>` lifts upward along the infallible-to-fallible and sync-to-async axes, treating a less capable provider as a more capable one without adding error or async behavior of its own. It gives three impls:
+| Combinator | Implements | From an inner provider that is | By |
+| --- | --- | --- | --- |
+| `Promote<P>` | `Computer` | `Producer` | ignoring the input |
+| `Promote<P>` | `TryComputer` | `Computer` | wrapping the output in `Ok` |
+| `Promote<P>` | `Handler` | `AsyncComputer` | wrapping the awaited output in `Ok` |
+| `PromoteAsync<P>` | `AsyncComputer` | `Computer` | running it inside an `async` method |
+| `PromoteAsync<P>` | `Handler` | `TryComputer` | running it inside an `async` method |
+| `TryPromote<P>` | `TryComputer` | `Computer` with `Output = Result<T, Context::Error>` | passing the result through |
+| `TryPromote<P>` | `Computer` | `TryComputer` | returning the result as a plain value |
+| `TryPromote<P>` | `Handler` | `AsyncComputer` with `Output = Result<T, Context::Error>` | passing the result through |
+| `TryPromote<P>` | `AsyncComputer` | `Handler` | returning the result as a plain value |
+| `PromoteRef<P>` | each owned-input member | its `…Ref` companion | dereferencing the input |
+| `PromoteRef<P>` | each `…Ref` member | its owned-input companion, for every `&'a Input` | passing the borrow as the input |
 
-```rust
-pub struct Promote<Provider>(pub PhantomData<Provider>);
-```
+Every `TryPromote` impl, and every impl whose target or source is fallible, requires `Context: HasErrorType`.
 
-As a `Computer`, `Promote<Provider>` requires the inner `Provider: Producer<Context, Code>` and ignores its own input, calling `Provider::produce` — this is how a producer (which takes no input) is adapted to fill a computer slot (which is handed an input it does not need). As a `TryComputer`, it requires `Provider: Computer` and wraps the infallible result in `Ok`. As a `Handler`, it requires `Provider: AsyncComputer` and wraps the awaited result in `Ok`. In each case the promotion adds the missing behavior — discarding an input, introducing an always-`Ok` result — without changing what the inner provider computes.
+`PromoteRef` covers `Computer`, `TryComputer`, `AsyncComputer`, and `Handler`, in both directions. The owned-input direction requires `Input: Deref<Target = Target>` and calls the inner `…Ref` provider on `input.deref()`, so a provider written for `&T` serves a slot that hands it a `Box<T>` or another smart pointer. The by-reference direction requires `P: for<'a> Computer<Context, Code, &'a Input>` (or the matching trait) and passes the borrow through. A provider written for an owned `u64` does not meet that bound, so it cannot answer `compute_ref` through `PromoteRef`.
 
-`PromoteAsync<Provider>` lifts a synchronous provider into an asynchronous one:
-
-```rust
-pub struct PromoteAsync<Provider>(pub PhantomData<Provider>);
-```
-
-As an `AsyncComputer`, it requires `Provider: Computer` and runs it synchronously inside the async method (the returned future is immediately ready). As a `Handler`, it requires `Provider: TryComputer` and returns that fallible synchronous result, so a synchronous fallible computer becomes an async fallible handler.
-
-`PromoteRef<Provider>` bridges between value handlers and reference handlers by dereferencing, and is the most thoroughly implemented promotion — it covers all four families in both directions:
-
-```rust
-pub struct PromoteRef<Provider>(pub PhantomData<Provider>);
-```
-
-For each of `Computer`/`ComputerRef`, `TryComputer`/`TryComputerRef`, `AsyncComputer`/`AsyncComputerRef`, and `Handler`/`HandlerRef`, `PromoteRef` provides two impls. One direction implements the by-value trait given an inner by-reference provider plus `Input: Deref<Target = Target>`, calling the inner provider on `input.deref()`. The other direction implements the by-reference trait given an inner by-value provider that works `for<'a>` over `&'a Input`, calling the inner provider on the borrowed input. This lets a provider written to take `&T` serve a slot that hands it a smart pointer to `T`, and vice versa, without manual deref boilerplate.
-
-`TryPromote<Provider>` lifts in both directions across the boundary between a `Result`-valued output and a fallible trait, unifying the two ways of expressing fallibility:
-
-```rust
-pub struct TryPromote<Provider>(pub PhantomData<Provider>);
-```
-
-As a `TryComputer`, it requires the inner `Provider: Computer` whose `Output` is itself a `Result<Output, Context::Error>`, and unwraps that into the `TryComputer` result — turning a computer that *returns* a `Result` into a genuine fallible computer. As a `Computer`, it goes the other way: given `Provider: TryComputer`, its output type is `Result<Output, Context::Error>` and it surfaces the fallible result as an ordinary value. The analogous pair lifts between `Handler` (from an `AsyncComputer` returning a `Result`) and `AsyncComputer` (from a `Handler`). All four impls require `Context: HasErrorType`.
+A lift that takes two steps chains the combinators. A plain `Computer` becomes a `Handler` as `PromoteAsync<Promote<P>>`: `Promote` makes the `TryComputer`, and `PromoteAsync` makes the `Handler` from it.
 
 ## Promotion bundles
 
-Several promotion adapters are not handler impls themselves but delegation tables that wire a whole cluster of handler components to the right single-trait promotion at once. They exist so that a provider author can implement just one trait — say `Computer` — and have the bundle fill in every other member of the family by promotion. Each is defined with [`delegate_components!`](../macros/delegate_components.md) over a generic inner `Provider`, and the [`#[cgp_computer]`](../macros/cgp_computer.md) and [`#[cgp_producer]`](../macros/cgp_producer.md) macros wire their generated providers into it.
+A promotion bundle is a delegation table, defined with [`delegate_components!`](../macros/delegate_components.md), that wires every other member of the family to the right one-step combinator for a given base. It lets an author implement one trait and have the bundle answer the rest. [`#[cgp_computer]`](../macros/cgp_computer.md) and [`#[cgp_producer]`](../macros/cgp_producer.md) wire their generated providers into one.
 
-`PromoteComputer<Provider>` starts from a provider that implements `Computer` (the by-value, synchronous, infallible base) and fills in every other family member. It routes `TryComputerComponent` to `Promote<Provider>` (wrap in `Ok`), `AsyncComputerComponent` and `HandlerComponent` to `PromoteAsync<Provider>` (run synchronously in an async method), and all the `…Ref` components to `PromoteRef<Provider>` (dereference, then defer to the base):
+`PromoteComputer<Provider>` fills in the family from a `Computer` base:
 
 ```rust
 delegate_components! {
@@ -132,17 +134,20 @@ delegate_components! {
 }
 ```
 
-`PromoteTryComputer<Provider>` starts from a provider that implements `TryComputer`. It routes `TryComputerComponent` to `TryPromote<Provider>` and defers all the remaining components to `PromoteComputer<Provider>`, so the fallible base is first turned into a plain computer and the rest of the family is derived from there.
+Several entries take their one step from a sibling rather than from the base. `HandlerComponent: PromoteAsync<Provider>` needs `Provider: TryComputer`, and each `PromoteRef<Provider>` entry needs `Provider` to answer the matching owned-input member. So a bundle expects its parameter to be a provider wired to that same bundle, which is what the macros do by passing `Self`: the generated provider delegates `TryComputerComponent` to `Promote<Self>`, and `PromoteAsync<Self>` then finds that `TryComputer`. Wiring a context's `HandlerComponent` to `PromoteComputer<MyComputer>`, for a provider that implements only `Computer`, fails; the hand-written form is `PromoteAsync<Promote<MyComputer>>`.
 
-`PromoteProducer<Provider>` starts from a `Producer` — a provider that takes no input. It routes `ComputerComponent` to `Promote<Provider>` (which discards the computer's input and calls `produce`) and defers the rest to `PromoteComputer<Provider>`, so a single produced value flows out of every handler shape regardless of input.
+The other bundles follow the same pattern from other bases:
 
-`PromoteAsyncComputer<Provider>` starts from a provider that implements `AsyncComputer`. It wires `HandlerComponent` to `Promote<Provider>` (wrap the awaited value in `Ok`) and the `AsyncComputerRefComponent` and `HandlerRefComponent` to `PromoteRef<Provider>`. It is the async-base counterpart to `PromoteComputer`.
+- **`PromoteTryComputer<Provider>`** starts from a `Computer` whose `Output` is a `Result`, the base `#[cgp_computer]` generates for a function returning `Result`. It routes `TryComputerComponent` to `TryPromote<Provider>` and the rest to `PromoteComputer<Provider>`.
+- **`PromoteProducer<Provider>`** starts from a `Producer`. It routes `ComputerComponent` to `Promote<Provider>`, which ignores the input, and the rest to `PromoteComputer<Provider>`.
+- **`PromoteAsyncComputer<Provider>`** starts from an `AsyncComputer`. It routes `HandlerComponent` to `Promote<Provider>` and `AsyncComputerRefComponent` and `HandlerRefComponent` to `PromoteRef<Provider>`.
+- **`PromoteHandler<Provider>`** starts from an `AsyncComputer` whose `Output` is a `Result`. It routes `HandlerComponent` to `TryPromote<Provider>` and `AsyncComputerRefComponent` and `HandlerRefComponent` to `PromoteAsyncComputer<Provider>`.
 
-`PromoteHandler<Provider>` starts from the most general base, a provider that implements `Handler`. It routes `HandlerComponent` to `TryPromote<Provider>` and defers the async-ref components to `PromoteAsyncComputer<Provider>`.
+The async bundles fill in only the async members, because the synchronous ones cannot be derived from an async base.
 
 ## Dispatching on the input type
 
-**The current way to choose a handler by the type of its input is the `open` statement with a two-segment path key.** The `RedirectLookup` impl behind `open` appends every type parameter of the consumer trait to the lookup path, so a handler component's path is `Code` then `Input`, and a key with a per-entry generic first segment dispatches on the input alone:
+The recommended way to choose a handler by its input type is the `open` statement with a two-segment path key. The [`RedirectLookup`](redirect_lookup.md) impl behind `open` appends every type parameter of the consumer trait to the lookup path, so a handler component's path is `Code` then `Input`, and a per-entry generic first segment dispatches on the input alone:
 
 ```rust
 delegate_components! {
@@ -156,30 +161,17 @@ delegate_components! {
 }
 ```
 
-Replacing `<Code> Code` with a concrete code dispatches on both parameters, as in `@ComputerComponent.Eval.Plus<MathExpr>: EvalAdd`. The same form works inside an aggregate provider, which is how a reusable input dispatcher is packaged. The key forms and their one restriction, that a key cannot share a table with a longer key beneath it, are in the `open` section of [`delegate_components!`](../macros/delegate_components.md), and the lookup is explained under [`RedirectLookup`](redirect_lookup.md).
+Replacing `<Code> Code` with a concrete code dispatches on both parameters, as in `@ComputerComponent.Eval.Plus<MathExpr>: EvalAdd`. The same form works inside an aggregate provider, which is how a reusable input dispatcher is packaged. The key forms, and the restriction that a key cannot share a table with a longer key beneath it, are in the `open` section of [`delegate_components!`](../macros/delegate_components.md).
 
 ### The legacy form: `UseInputDelegate`
 
-`UseInputDelegate<Components>` is the older, table-based dispatcher for the same job, and it remains common in existing code and in the [dispatch combinators](dispatch_combinators.md). It is a delegate-style dispatcher analogous to [`UseDelegate`](use_delegate.md), but it keys its lookup table on the handler's `Input` type rather than on the `Code` type. It is defined as a one-parameter struct holding the lookup table:
+`UseInputDelegate<Components>` is the older, table-based dispatcher for the same job, still common in existing code and in the [dispatch combinators](dispatch_combinators.md):
 
 ```rust
 pub struct UseInputDelegate<Components>(pub PhantomData<Components>);
 ```
 
-Whereas `UseDelegate` dispatches on the first generic parameter of a provider trait — `Code` for the handler family — `UseInputDelegate` dispatches on the `Input` parameter, so that the provider handling a value is chosen by the type of that value. The handler component traits enable both dispatchers at once: each is declared with two `#[derive_delegate]` directives, `UseDelegate<Code>` and `UseInputDelegate<Input>`, as on the `Computer` component:
-
-```rust
-#[cgp_component(Computer)]
-#[derive_delegate(UseDelegate<Code>)]
-#[derive_delegate(UseInputDelegate<Input>)]
-pub trait CanCompute<Code, Input> {
-    type Output;
-
-    fn compute(&self, _code: PhantomData<Code>, input: Input) -> Self::Output;
-}
-```
-
-For `UseInputDelegate<Components>`, the second directive makes `#[cgp_component]` generate a provider impl that looks up `Components` keyed on the `Input` type and forwards to the matching delegate:
+It is the `Input`-keyed sibling of [`UseDelegate`](use_delegate.md), which keys on `Code`. Every handler component except `Producer` declares both `#[derive_delegate(UseDelegate<Code>)]` and `#[derive_delegate(UseInputDelegate<Input>)]`, and the second generates an impl that looks the `Input` type up in `Components` and forwards to the delegate found there:
 
 ```rust
 impl<Context, Code, Input, Components, Delegate> Computer<Context, Code, Input>
@@ -196,15 +188,40 @@ where
 }
 ```
 
-The lookup key is the dispatched parameter — here `Input` — while `Code` and `Context` pass through unchanged, exactly as with `UseDelegate`. (The `#[derive_delegate]` machinery groups the dispatched parameters into a tuple, which for a single parameter collapses to the parameter type itself, so the table is keyed directly on the concrete input type.) `UseInputDelegate` is wired through a nested table inside `delegate_components!` in the same way: the outer entry routes a handler component to `UseInputDelegate<SomeTable>`, and that inner table maps each concrete input type to the provider responsible for it. The same impl shape is generated for every member of the handler family, since each declares the `UseInputDelegate<Input>` directive.
+`Context` and `Code` pass through unchanged. A context wires it with a nested table: the outer entry routes a handler component to `UseInputDelegate<SomeTable>`, and the inner table maps each input type to its provider.
 
 ## Examples
 
-A pipeline of computers shows the composition combinators with `PipeHandlers`. Suppose `Multiply<Field>` and `Add<Field>` are `Computer` providers over `u64` that read a factor or addend from a context field, and a context carries `foo`, `bar`, and `baz`:
+This pipeline of computers reads a factor or an addend from context fields at each stage:
 
 ```rust
+use core::marker::PhantomData;
 use cgp::prelude::*;
 use cgp::extra::handler::{CanCompute, PipeHandlers};
+
+#[cgp_new_provider]
+impl<Context, Tag, Field> Computer<Context, Tag, u64> for Multiply<Field>
+where
+    Context: HasField<Field, Value = u64>,
+{
+    type Output = u64;
+
+    fn compute(context: &Context, _tag: PhantomData<Tag>, input: u64) -> u64 {
+        input * context.get_field(PhantomData)
+    }
+}
+
+#[cgp_new_provider]
+impl<Context, Tag, Field> Computer<Context, Tag, u64> for Add<Field>
+where
+    Context: HasField<Field, Value = u64>,
+{
+    type Output = u64;
+
+    fn compute(context: &Context, _tag: PhantomData<Tag>, input: u64) -> u64 {
+        input + context.get_field(PhantomData)
+    }
+}
 
 #[derive(HasField)]
 pub struct MyContext {
@@ -225,13 +242,17 @@ delegate_components! {
 }
 ```
 
-Wiring `ComputerComponent` to `PipeHandlers` over the three-stage list composes them into `ComposeHandlers<Multiply<…>, ComposeHandlers<Add<…>, Multiply<…>>>`. Computing over an input of `5` on a context with `foo = 2`, `bar = 3`, `baz = 4` first multiplies by `foo`, then adds `bar`, then multiplies by `baz`, yielding `((5 * 2) + 3) * 4`. The same list could be wired to `HandlerComponent` instead, provided every stage supports the handler shape — and stages of mismatched shapes can be reconciled inline, as in `PromoteAsync<Promote<Add<Symbol!("bar")>>>`, which lifts a plain `Computer` stage up to the async `Handler` shape the pipeline expects.
-
-The promotion bundles appear most often indirectly. A provider author writing a single `Computer` impl and wiring it with [`#[cgp_computer]`](../macros/cgp_computer.md) gets `PromoteComputer<Self>` wired across the rest of the family automatically, so the one implementation answers `try_compute`, `compute_async`, and `handle` as well. Reaching for `PromoteComputer<MyProvider>` by hand achieves the same effect when wiring the components explicitly.
+The pipeline is `ComposeHandlers<Multiply<…>, ComposeHandlers<Add<…>, Multiply<…>>>`. With `foo = 2`, `bar = 3`, and `baz = 4`, `context.compute(PhantomData::<()>, 5)` returns `((5 * 2) + 3) * 4`. To wire the same stages to `HandlerComponent`, lift each `Computer` stage with `PromoteAsync<Promote<…>>`, as in `PromoteAsync<Promote<Add<Symbol!("bar")>>>`, and give the context an error type.
 
 ## Related constructs
 
-The combinators are providers of the handler component traits: [`Computer`](../components/computer.md), [`TryComputer`](../components/try_computer.md), [`Handler`](../components/handler.md), and [`Producer`](../components/producer.md), with the conceptual overview in [handlers](../../concepts/handlers.md). The composition and promotion combinators are wired automatically by the [`#[cgp_computer]`](../macros/cgp_computer.md) and [`#[cgp_producer]`](../macros/cgp_producer.md) macros, which generate a single-trait provider and delegate the rest of the family through the promotion bundles. `UseInputDelegate` is the `Input`-keyed sibling of [`UseDelegate`](use_delegate.md), both generated by the `#[derive_delegate]` directive of [`#[cgp_component]`](../macros/cgp_component.md) and wired through nested tables with [`delegate_components!`](../macros/delegate_components.md). The promotion bundles are themselves delegation tables, so they rely on [`DelegateComponent`](../traits/delegate_component.md) and propagate dependencies through [`IsProviderFor`](../traits/is_provider_for.md) to the [check traits](../../concepts/check-traits.md).
+These constructs are the ones the handler combinators work with:
+
+- [`Computer`](../components/computer.md), [`TryComputer`](../components/try_computer.md), [`Handler`](../components/handler.md), and [`Producer`](../components/producer.md) — the traits they implement, with the overview in [handlers](../../concepts/handlers.md).
+- [`#[cgp_computer]`](../macros/cgp_computer.md) and [`#[cgp_producer]`](../macros/cgp_producer.md) — generate a one-trait provider and wire it into a promotion bundle.
+- [`UseDelegate`](use_delegate.md) and [`#[derive_delegate]`](../attributes/derive_delegate.md) — the `Code`-keyed sibling of `UseInputDelegate`, and the attribute that generates both.
+- [`delegate_components!`](../macros/delegate_components.md) and [`RedirectLookup`](redirect_lookup.md) — the `open` form of input dispatch.
+- [Monad providers](monad_providers.md) — `PipeMonadic` and the bind combinators that extend `PipeHandlers` with short-circuiting.
 
 ## Source
 

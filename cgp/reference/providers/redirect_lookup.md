@@ -1,30 +1,31 @@
 # `RedirectLookup<Key, Components>`
 
-`RedirectLookup<Key, Components>` is a zero-sized provider that implements a component's provider trait by looking up a type-level path in a separate table, re-routing the lookup along that path instead of resolving the component against the context directly.
+`RedirectLookup` is a zero-sized provider that implements a component's provider trait by looking a type-level path up in a table, instead of looking the component up in the context directly. It is the mechanism behind the `open` statement and namespaces.
 
 ## Purpose
 
-`RedirectLookup` decouples *which key* a component is looked up under from *which table* answers it. The ordinary provider blanket impl looks a component up in the context's own [delegation table](../traits/delegate_component.md), keyed by the component-name struct. `RedirectLookup<Components, Path>` does the lookup differently: it consults the table `Components` keyed by an arbitrary type-level `Path`, then delegates to whatever provider that entry holds. This indirection lets one component's resolution be redirected to a different key in a different table, which is the basis for organizing wiring into namespaces.
+`RedirectLookup` separates the key a component is looked up under from the table that answers it. The ordinary provider blanket impl looks a component up in the context's own [delegation table](../traits/delegate_component.md), keyed by the component's marker. `RedirectLookup` consults a given table keyed by a given type-level path, and delegates to whatever provider that entry holds.
 
-The redirection makes namespaces possible. A namespace groups a context's components under a path prefix so that several related components can be wired in one place and addressed by a shared path. `RedirectLookup` is the provider that turns a prefixed path back into a concrete provider: the namespace machinery sets a component's delegate to a `RedirectLookup` carrying the path under which the real provider was registered, so a lookup of the component follows that path into the table and lands on the intended provider.
+This indirection lets wiring be organized by path:
 
-`RedirectLookup` is not written by hand; it is emitted by macros. Every `#[cgp_component]` generates a `RedirectLookup` impl for its provider trait, and the namespace attributes generate `DelegateComponent` entries whose delegate is a `RedirectLookup`. Reading those generated entries is where this provider appears.
+- **The `open` statement** of [`delegate_components!`](../macros/delegate_components.md) wires a component to a `RedirectLookup` rooted at the component's own name in the context's table, so entries such as `@AreaCalculatorComponent.Rectangle` choose a provider per type argument.
+- **A [namespace](../../concepts/namespaces.md)** routes a component to a `RedirectLookup` along the path the component was registered under with [`#[prefix]`](../attributes/prefix.md), so a context that joins the namespace binds the provider at that path.
 
-Like every CGP provider, `RedirectLookup` carries no runtime value. Both type parameters are held in `PhantomData`, and the struct exists only as a type-level marker describing a lookup to perform.
+`RedirectLookup` is never written by hand. Every `#[cgp_component]` generates its impl, and `open`, `#[prefix]`, and the namespace machinery generate the entries that point to it.
 
 ## Definition
 
-`RedirectLookup` is a struct parameterized by a key and a table, defined in `cgp-component`:
+`RedirectLookup` is defined in `cgp-component` and exported by the prelude:
 
 ```rust
 pub struct RedirectLookup<Key, Components>(pub PhantomData<(Key, Components)>);
 ```
 
-The `Key` parameter is the type-level path to look up — typically a [`PathCons`](../types/path_cons.md) chain of [`Symbol!`](../macros/symbol.md) segments ending in a component-name struct. The `Components` parameter is the table to look it up in, a type implementing [`DelegateComponent`](../traits/delegate_component.md). In the generated impls the two appear in the order `RedirectLookup<Components, Path>`, with the table first and the path second. The `PhantomData` makes both parameters part of a valueless struct.
+The declared parameter names do not match how the type is used. Every generated impl and entry passes the table first and the path second, as `RedirectLookup<Components, Path>`. The path is a [`PathCons`](../types/path_cons.md) chain, usually of [`Symbol!`](../macros/symbol.md) segments and a component marker, and the table is a type implementing [`DelegateComponent`](../traits/delegate_component.md).
 
 ## Behavior
 
-`#[cgp_component]` generates a `RedirectLookup` impl of the provider trait alongside the consumer blanket impl, the provider blanket impl, the component-name struct, and the [`UseContext`](use_context.md) impl. The generated impl looks the path up in the table and forwards to the resulting delegate. For a component such as
+`#[cgp_component]` generates a `RedirectLookup` impl of the provider trait next to the [`UseContext`](use_context.md) impl. For a trait with no type parameters:
 
 ```rust
 #[cgp_component(Greeter)]
@@ -33,7 +34,7 @@ pub trait CanGreet {
 }
 ```
 
-the macro generates this impl (shown with the macro's real placeholder identifiers):
+the impl looks the path up once and forwards to the delegate found:
 
 ```rust
 impl<__Context__, __Components__, __Path__> Greeter<__Context__>
@@ -48,7 +49,7 @@ where
 }
 ```
 
-The mechanism is one `DelegateComponent` lookup keyed on `__Path__` rather than on the component name. `RedirectLookup<Components, Path>` implements `Greeter` whenever `Components` maps `Path` to a delegate that itself implements `Greeter`, and the method forwards to that delegate. When the consumer trait carries generic type parameters, the impl additionally constrains `Path` with [`ConcatPath`](../traits/static_format.md) so the parameters are appended to the path before the lookup, letting the redirected key encode the generic arguments. **Every type parameter is appended, in declaration order**; lifetime and const parameters are skipped, since only types key the path. For `CanCompute<Code, Input>` the generated bound is `__Path__: ConcatPath<Path!(@Code.Input)>`, so a redirect rooted at `@ComputerComponent` looks up `@ComputerComponent.Code.Input`:
+When the consumer trait has type parameters, the impl first appends them to the path with [`ConcatPath`](../types/path_cons.md). Every type parameter is appended, in declaration order; lifetime and const parameters are skipped. For `CanCompute<Code, Input>` the bound is `__Path__: ConcatPath<PathCons<Code, PathCons<Input, Nil>>>`, so a redirect rooted at `@ComputerComponent` looks up `@ComputerComponent.Code.Input`:
 
 ```rust
 impl<__Context__, Code, Input, __Components__, __Path__> Computer<__Context__, Code, Input>
@@ -60,16 +61,27 @@ where
 { /* … forwards to the delegate */ }
 ```
 
-A table entry can therefore dispatch on any of the parameters, not only the first: a key that stops after `Code` matches every `Input`, and one that continues matches a particular `Input` as well. The `open` statement of [`delegate_components!`](../macros/delegate_components.md) documents the key forms this allows, including dispatch on the input alone. As always, the impl is paired with a matching `IsProviderFor` impl so dependencies reach the [check traits](../../concepts/check-traits.md).
-
-The namespace attributes are what populate the path side. The `#[prefix(@path in Namespace)]` attribute on a component generates a namespace impl whose `Delegate` is `RedirectLookup<Components, Path>`, with the prefix path joined onto the component name — so resolving the component under that namespace follows the prefixed path into the table. The `DefaultNamespace` trait plays the same role for the default routing. Together these turn a path-addressed wiring entry into a concrete provider through `RedirectLookup`.
+The lookup is still a single `DelegateComponent` query on the whole extended path, not a walk segment by segment. A table can answer a shorter prefix of the path because `delegate_components!` generates entries generic over the remaining segments: a key that stops after `Code` matches every `Input`, and a longer key matches a particular `Input`. The `open` section of [`delegate_components!`](../macros/delegate_components.md) documents these key forms. The impl is paired with an `IsProviderFor` impl, so dependencies reach the [check traits](../../concepts/check-traits.md).
 
 ## Examples
 
-`RedirectLookup` appears in the delegate that the namespace machinery generates, where a component is registered under a path and reached through that path. Wiring a component under a path prefix produces a `RedirectLookup` entry:
+This component registers itself under `@app` in `DefaultNamespace`, and a context binds its provider at that path:
 
 ```rust
 use cgp::prelude::*;
+
+#[cgp_component(Greeter)]
+#[prefix(@app in DefaultNamespace)]
+pub trait CanGreet {
+    fn greet(&self) -> String;
+}
+
+#[cgp_impl(new GreetHello)]
+impl Greeter {
+    fn greet(&self) -> String {
+        "hello".into()
+    }
+}
 
 pub struct App;
 
@@ -77,16 +89,28 @@ delegate_components! {
     App {
         namespace DefaultNamespace;
 
-        @bar.baz: TestProvider,
+        @app.GreeterComponent: GreetHello,
+    }
+}
+
+check_components! {
+    App {
+        GreeterComponent,
     }
 }
 ```
 
-This registers `TestProvider` under the path `bar`/`baz` in `App`'s default namespace. When a component is later resolved against `App` through that namespace, its delegate is a `RedirectLookup<App, Path>` whose `Path` is the `PathCons` chain `bar` then `baz` then the component name. The lookup follows that path into `App`'s table — matching the entry registered above — and dispatches to `TestProvider`. The component name never keys the context directly; it is the tail of a path that `RedirectLookup` walks. This is the indirection that lets namespaces organize wiring by path while still resolving to ordinary providers.
+`#[prefix]` makes `DefaultNamespace` route `GreeterComponent` to a `RedirectLookup` over the path `@app.GreeterComponent`. The `namespace` statement makes `App` resolve its components through that namespace, so `App.greet()` looks up `@app.GreeterComponent` in `App`'s own table and finds `GreetHello`. The component marker is the last segment of the path rather than a key of its own.
 
 ## Related constructs
 
-`RedirectLookup` is generated by [`#[cgp_component]`](../macros/cgp_component.md) for every component, and is central to the namespace machinery driven by [`cgp_namespace!`](../macros/cgp_namespace.md) and explained in [namespaces](../../concepts/namespaces.md). Its lookup is a [`DelegateComponent`](../traits/delegate_component.md) read keyed on a type-level path built from [`PathCons`](../types/path_cons.md) and [`Symbol!`](../macros/symbol.md), with generic parameters folded in through [`ConcatPath`](../traits/static_format.md). It sits beside the other `#[cgp_component]`-generated provider [`UseContext`](use_context.md), which routes back to the context rather than through a separate table, and its dependency propagation flows through [`IsProviderFor`](../traits/is_provider_for.md) for the [check traits](../../concepts/check-traits.md).
+These constructs are the ones `RedirectLookup` works with:
+
+- [`#[cgp_component]`](../macros/cgp_component.md) — generates its impl for every component.
+- [`delegate_components!`](../macros/delegate_components.md) — the `open` and `namespace` statements that produce redirects.
+- [`#[prefix]`](../attributes/prefix.md), [`cgp_namespace!`](../macros/cgp_namespace.md), and [namespaces](../../concepts/namespaces.md) — register components under paths.
+- [`DelegateComponent`](../traits/delegate_component.md), [`PathCons`](../types/path_cons.md), and [`Symbol!`](../macros/symbol.md) — the table and the path it looks up.
+- [`UseContext`](use_context.md) — the other generated provider, which routes back to the context.
 
 ## Source
 

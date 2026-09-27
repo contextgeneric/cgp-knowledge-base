@@ -1,20 +1,30 @@
 # In-tree error providers
 
-The in-tree error providers are the zero-sized provider structs in `cgp-error-extra` that implement the error-raising and error-wrapping components for any context, independent of which concrete error type that context has chosen.
+The in-tree error providers are the zero-sized provider structs in `cgp-error-extra` that implement the error-raising and error-wrapping components for any context, whatever concrete error type the context chose.
 
 ## Purpose
 
-These providers exist so that a context can wire up common error-handling strategies without depending on a specific error library. The [`CanRaiseError`](../components/can_raise_error.md) and `CanWrapError` components define *what* a context can do with errors — turn a foreign error into its abstract `Self::Error`, or attach detail to an existing one — but they say nothing about *how*. The providers here supply the how for the cases that do not need a particular backend: convert through `From`, return an error that already is the abstract type, format a foreign error into a string, discard a detail, panic, or absorb an impossible error. Each is generic over the context, so it works with whatever error type the context's [`HasErrorType`](../components/has_error_type.md) names.
+These providers give a context common error-handling strategies without depending on an error library. [`CanRaiseError`](../components/can_raise_error.md) and `CanWrapError` say what a context can do with errors, raise a foreign error into its abstract `Self::Error` or attach detail to one, but not how. The providers here supply the how for cases that need no particular backend. Each is generic over the context, so it works with whatever error type the context's [`HasErrorType`](../components/has_error_type.md) names.
 
-These are the in-tree counterparts to the standalone [error backends](../../../projects/error/README.md) `cgp-error-anyhow`, `cgp-error-eyre`, and `cgp-error-std`. Those crates supply providers specialized to a concrete error type — raising into an `anyhow::Error`, for example — whereas the providers in `cgp-error-extra` stay abstract over the context's error type and capture strategies that are independent of any one library. A context typically wires a mix: a backend for the concrete error type plus these generic providers for the cross-cutting strategies. What a backend adds over these providers, and why `DebugError` cannot be the provider for `String` itself, is set out in the backends' [architecture](../../../projects/error/architecture.md#what-a-backend-adds-over-the-generic-providers).
+They complement the standalone [error backends](../../../projects/error/README.md) `cgp-error-anyhow`, `cgp-error-eyre`, and `cgp-error-std`, whose providers are specialized to one concrete error type. A context typically wires a backend for its error type and these providers for strategies that cut across types. What a backend adds over these providers, and why `DebugError` cannot be the provider for `String` itself, is set out in the backends' [architecture](../../../projects/error/architecture.md#what-a-backend-adds-over-the-generic-providers).
 
-Each provider implements one or both of the two error components through their provider traits. `CanRaiseError`'s provider trait is `ErrorRaiser`, wired to the context with `ErrorRaiserComponent`; `CanWrapError`'s provider trait is `ErrorWrapper`, wired with `ErrorWrapperComponent`. A provider that implements `ErrorRaiser` supplies raising; one that implements `ErrorWrapper` supplies wrapping; some supply both.
+All seven are reached through `cgp::extra::error`, and none is in the prelude. Their provider traits `ErrorRaiser` and `ErrorWrapper`, and the keys `ErrorRaiserComponent` and `ErrorWrapperComponent`, are imported from `cgp::core::error`.
 
-## Implementations
+## Providers
 
-The seven providers divide into three groups by which component they implement and how they treat the error. The pure raisers — `RaiseFrom`, `ReturnError`, and `RaiseInfallible` — implement `ErrorRaiser` to convert a source error into the abstract error. `DiscardDetail` implements `ErrorWrapper` to drop detail. `PanicOnError` implements `ErrorRaiser` to abort rather than produce an error value. The string-formatting providers `DebugError` and `DisplayError` implement both components, redirecting through a string. The following sections describe each, naming the component it provides and the bound it places on the context or the error.
+The seven providers fall into three groups:
 
-### `RaiseFrom` — convert via `From`
+| Provider | Implements | Accepts | Effect |
+| --- | --- | --- | --- |
+| `RaiseFrom` | `ErrorRaiser` | any `E` with `Context::Error: From<E>` | converts with `into()` |
+| `ReturnError` | `ErrorRaiser` | `E` equal to `Context::Error` | returns the error unchanged |
+| `RaiseInfallible` | `ErrorRaiser` | `Infallible` only | cannot be called |
+| `PanicOnError` | `ErrorRaiser` | any `E: Debug` | panics with the error |
+| `DiscardDetail` | `ErrorWrapper` | any detail | drops the detail |
+| `DebugError` | both | any `Debug` value | formats with `{:?}` and forwards as a `String` |
+| `DisplayError` | both | any `Display` value | formats with `to_string()` and forwards as a `String` |
+
+### `RaiseFrom`: convert through `From`
 
 `RaiseFrom` is the `ErrorRaiser` provider that raises a source error by converting it into the context's error type with the standard `From` trait. It implements `ErrorRaiser<Context, E>` for any context whose abstract `Error` implements `From<E>`:
 
@@ -33,7 +43,7 @@ where
 
 This is the default choice whenever the abstract error already knows how to absorb the source error through `From`. Because the bound is `Context::Error: From<E>`, a single wiring of `RaiseFrom` covers every source error type the context's error has a `From` impl for.
 
-### `ReturnError` — the source is already the abstract error
+### `ReturnError`: the source is already the abstract error
 
 `ReturnError` is the `ErrorRaiser` provider for the case where the source error *is* the context's abstract error, so raising is the identity. It implements `ErrorRaiser<Context, E>` only when the context's `Error` is exactly `E`:
 
@@ -51,7 +61,7 @@ where
 
 The `HasErrorType<Error = E>` bound ties the source type to the abstract error, so `raise_error` returns its argument untouched. A context uses this when generic code raises a value that is already of the context's chosen error type.
 
-### `RaiseInfallible` — absorb an impossible error
+### `RaiseInfallible`: absorb an impossible error
 
 `RaiseInfallible` is the `ErrorRaiser` provider for `core::convert::Infallible`, the error type that can never be constructed. It implements `ErrorRaiser<Context, Infallible>` for any context with an error type, producing the abstract error by matching on the uninhabited value:
 
@@ -69,7 +79,7 @@ where
 
 Since an `Infallible` value cannot exist, the empty `match` is total and the function is never actually called at runtime. This provider lets generic code that is parameterized over a fallible operation be wired uniformly even when the operation chosen for a given context cannot fail.
 
-### `DiscardDetail` — wrap by ignoring the detail
+### `DiscardDetail`: wrap by ignoring the detail
 
 `DiscardDetail` is the `ErrorWrapper` provider that throws away whatever detail is attached and returns the error unchanged. It implements `ErrorWrapper<Context, Detail>` for any context and any detail type:
 
@@ -87,7 +97,7 @@ where
 
 This satisfies the `CanWrapError` trait without actually enriching the error, which is useful when a context's error type cannot carry extra context, or when the wrapping detail is deliberately not retained. It is the wrapping counterpart to a no-op: the error propagates as-is.
 
-### `PanicOnError` — abort instead of producing an error
+### `PanicOnError`: abort instead of producing an error
 
 `PanicOnError` is the `ErrorRaiser` provider that panics with the source error's debug representation rather than returning an abstract error. It implements `ErrorRaiser<Context, E>` for any context whose error type exists, requiring only that the source error is `Debug`:
 
@@ -104,11 +114,11 @@ where
 }
 ```
 
-Although the signature promises to return `Context::Error`, the body never does — `panic!` diverges. This provider is for contexts where an error is treated as a programming fault that should abort rather than be handled, such as tests or fail-fast tooling.
+Although the signature promises a `Context::Error`, the body never returns one, because `panic!` diverges. This provider is for contexts where an error is treated as a programming fault that should abort rather than be handled, such as tests or fail-fast tooling.
 
-### `DebugError` and `DisplayError` — format through a string
+### `DebugError` and `DisplayError`: format through a string
 
-`DebugError` and `DisplayError` implement *both* error components by redirecting through the context's string-based error handling. Rather than producing the abstract error directly, each formats the source error or detail into a `String` and forwards to the context's own `CanRaiseError<String>` or `CanWrapError<String>` — so they delegate the final step to whatever string-handling provider the context already wires. `DebugError` formats with the `Debug` trait:
+`DebugError` and `DisplayError` implement *both* error components by redirecting through the context's string-based error handling. Each formats the source error or detail into a `String` and forwards it to the context's own `CanRaiseError<String>` or `CanWrapError<String>`, so the final step is done by whatever string provider the context wires. `DebugError` formats with the `Debug` trait:
 
 ```rust
 #[cgp_provider]
@@ -134,58 +144,58 @@ where
 }
 ```
 
-`DisplayError` is identical in shape but formats with the `Display` trait and `to_string()` instead, raising `Context::raise_error(e.to_string())` and wrapping `Context::wrap_error(error, detail.to_string())`. Both require the context to already raise and wrap `String`, which is the indirection that lets them reduce any `Debug` or `Display` error to the string case the context knows how to handle. Because they format into an allocated `String`, both live behind the crate's `alloc` feature.
+`DisplayError` is identical in shape but formats with the `Display` trait and `to_string()` instead, raising `Context::raise_error(e.to_string())` and wrapping `Context::wrap_error(error, detail.to_string())`. Both require the context to already raise and wrap `String`, which is the indirection that lets them reduce any `Debug` or `Display` error to the string case the context knows how to handle. Because they allocate a `String`, both sit behind the crate's `alloc` feature, which is on by default.
 
 ## Behavior
 
-A context gains an error strategy by wiring one of these providers to `ErrorRaiserComponent` or `ErrorWrapperComponent` exactly like any other component, and the provider's `where` clause determines when that wiring type-checks. `RaiseFrom` requires the abstract error to be `From` the source, `ReturnError` requires the source to be the abstract error itself, `RaiseInfallible` accepts only `Infallible`, and `PanicOnError` accepts any `Debug` source — so the choice of provider is also a statement about which source errors a context will accept and how. Because both components dispatch through `UseDelegate` over the source-error or detail type, a context commonly wires several of these providers at once through a delegation table, one per source error type.
+A context wires these providers to `ErrorRaiserComponent` or `ErrorWrapperComponent` like any other provider, and each provider's `where` clause decides which source errors the wiring accepts. Because a context usually meets several source error types, it dispatches on the source type, one provider per type. The recommended form is `open ErrorRaiserComponent;` with entries such as `@ErrorRaiserComponent.String: RaiseFrom`; the legacy form is a `UseDelegate` table keyed by source type.
 
-The string-formatting providers compose with the other raisers rather than replacing them, which is the key to their design. `DebugError` and `DisplayError` do not know the context's error type; they only know how to turn a `Debug` or `Display` value into a `String` and hand it off. The context must separately wire a provider — often `RaiseFrom` or a backend provider — that handles the `String` source, and the formatting providers route every other source error through that single string path. This lets a context handle an open-ended set of error types with one concrete string-raising rule plus a uniform formatting redirect.
+The string-formatting providers compose with the others rather than replacing them. `DebugError` and `DisplayError` do not know the context's error type; they turn a value into a `String` and hand it to the context's own `String` raiser or wrapper. So the context wires one concrete rule for `String`, such as `RaiseFrom` or a backend provider, and routes other source types through the formatting providers to reach it.
 
 ## Examples
 
-Wiring `RaiseFrom` to the error-raiser component lets a context raise any source error its abstract error can absorb through `From`:
+This context uses `String` as its error type, raises `String` directly, formats a `ParseIntError` into a `String`, and ignores wrapping detail:
 
 ```rust
+use core::num::ParseIntError;
 use cgp::prelude::*;
-use cgp::core::error::ErrorRaiserComponent;
-use cgp::extra::error::RaiseFrom;
+use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent, ErrorWrapperComponent};
+use cgp::extra::error::{DebugError, DiscardDetail, RaiseFrom};
+
+pub struct App;
 
 delegate_components! {
     App {
-        ErrorRaiserComponent:
-            RaiseFrom,
+        open ErrorRaiserComponent;
+
+        ErrorTypeProviderComponent: UseType<String>,
+        ErrorWrapperComponent: DiscardDetail,
+        @ErrorRaiserComponent.String: RaiseFrom,
+        @ErrorRaiserComponent.ParseIntError: DebugError,
     }
+}
+
+fn parse<Context>(input: &str) -> Result<u64, Context::Error>
+where
+    Context: CanRaiseError<ParseIntError> + CanWrapError<&'static str>,
+{
+    input
+        .parse()
+        .map_err(|e| Context::wrap_error(Context::raise_error(e), "while parsing"))
 }
 ```
 
-With this wiring, any generic provider that calls `Context::raise_error(source)` on `App` succeeds for every `source` whose type the `App` error implements `From` for.
-
-A context can combine the formatting and converting providers by dispatching per source-error type, so that a `String` is raised directly while other `Debug` errors are formatted into a string first:
-
-```rust
-use cgp::prelude::*;
-use cgp::core::error::ErrorRaiserComponent;
-use cgp::extra::error::{DebugError, RaiseFrom};
-
-delegate_components! {
-    App {
-        ErrorRaiserComponent:
-            UseDelegate<new AppErrorRaisers {
-                String:
-                    RaiseFrom,
-                ParseError:
-                    DebugError,
-            }>,
-    }
-}
-```
-
-Here a raised `String` is converted straight into the abstract error by `RaiseFrom`, while a raised `ParseError` is formatted with `Debug` by `DebugError` and then forwarded back through the `String` entry — which `RaiseFrom` handles — giving a single coherent error type from two different sources.
+A raised `String` goes through `RaiseFrom`, using the reflexive `From<String> for String`. A raised `ParseIntError` goes through `DebugError`, which formats it and raises the result through the `String` entry. So `parse::<App>("x")` returns `Err("ParseIntError { kind: InvalidDigit }")`, with the `"while parsing"` detail dropped by `DiscardDetail`.
 
 ## Related constructs
 
-These providers implement the [`CanRaiseError`](../components/can_raise_error.md) and `CanWrapError` components through their `ErrorRaiser` and `ErrorWrapper` provider traits, and every one of them is generic over a context that supplies [`HasErrorType`](../components/has_error_type.md) to name the abstract `Self::Error` they produce. They are wired to a context with `delegate_components!` on `ErrorRaiserComponent`/`ErrorWrapperComponent` and checked with `check_components!`, and because both components derive `UseDelegate`, they are typically dispatched per source-error or detail type through a delegation table — see [`UseDelegate`](use_delegate.md). The library-specific counterparts that raise into a concrete error type live in the standalone backends `cgp-error-anyhow`, `cgp-error-eyre`, and `cgp-error-std`, documented as the [error backends](../../../projects/error/README.md) project. The [modular error handling](../../concepts/modular-error-handling.md) concept explains how these providers fit alongside the abstract error type and the backends as interchangeable error-handling strategies.
+These constructs are the ones the error providers work with:
+
+- [`CanRaiseError` and `CanWrapError`](../components/can_raise_error.md) — the components they implement, through `ErrorRaiser` and `ErrorWrapper`.
+- [`HasErrorType`](../components/has_error_type.md) — the abstract error they produce.
+- [`delegate_components!`](../macros/delegate_components.md) and [`UseDelegate`](use_delegate.md) — the `open` and legacy forms of per-source dispatch.
+- The [error backends](../../../projects/error/README.md) — library-specific counterparts.
+- [Modular error handling](../../concepts/modular-error-handling.md) — how these providers fit CGP's error strategy.
 
 ## Source
 

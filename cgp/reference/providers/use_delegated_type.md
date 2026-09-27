@@ -1,18 +1,16 @@
 # `UseDelegatedType`
 
-`UseDelegatedType<Components>` is a zero-sized type provider that resolves an abstract CGP type by looking the type tag up in a delegation table, rather than fixing it to a single concrete type.
+`UseDelegatedType<Components>` is a zero-sized type provider that resolves an abstract CGP type by looking its tag up in a delegation table, instead of fixing it to one concrete type.
 
 ## Purpose
 
-`UseDelegatedType` exists for the case where the concrete type an abstract type resolves to should itself be decided by a type-level table. The plain [`UseType<T>`](use_type.md) provider binds an abstract type to one fixed `T`. But sometimes a single provider must answer several abstract-type components at once, or route each type tag to a different concrete type chosen elsewhere — for instance when a namespace or a higher-order provider supplies a coherent bundle of types. Hand-writing one `UseType` wiring per tag would scatter that decision; `UseDelegatedType` concentrates it into one `Components` table that the provider consults.
+`UseDelegatedType` lets one provider answer several abstract types, each with its own concrete type chosen in a table. [`UseType<T>`](use_type.md) binds an abstract type to one fixed `T`, so a context with several abstract types needs one `UseType` entry per type. `UseDelegatedType<Components>` gathers those choices into one `Components` table that can be reused, swapped, or supplied from elsewhere, while each context only points its type components at the table.
 
-The mechanism is the same indirection that [`UseDelegate`](use_delegate.md) provides for behavioral components, lifted to the type level. Where `UseDelegate<Components>` dispatches a *method call* to whichever provider `Components` maps the active tag to, `UseDelegatedType<Components>` dispatches a *type resolution* to whichever concrete type `Components` maps the active tag to. It is the type-level analogue of `UseDelegate`: both read an entry out of a [`DelegateComponent`](../traits/delegate_component.md) table keyed by the tag, but one yields behavior and the other yields a type.
-
-Like every CGP provider, `UseDelegatedType` carries no runtime value — it is a `PhantomData`-only marker named in wiring, never constructed.
+It is the type-level counterpart of [`UseDelegate`](use_delegate.md). Both read an entry from a [`DelegateComponent`](../traits/delegate_component.md) table keyed by a tag, but `UseDelegate` yields a provider to call and `UseDelegatedType` yields a type.
 
 ## Definition
 
-`UseDelegatedType` is a phantom-typed struct parameterized by the lookup table it consults, defined in `cgp-type`:
+`UseDelegatedType` is defined in `cgp-type`, with an alias for use through [`WithProvider`](with_provider.md):
 
 ```rust
 pub struct UseDelegatedType<Components>(pub PhantomData<Components>);
@@ -20,11 +18,11 @@ pub struct UseDelegatedType<Components>(pub PhantomData<Components>);
 pub type WithDelegatedType<Components> = WithProvider<UseDelegatedType<Components>>;
 ```
 
-The `Components` parameter is a type that implements [`DelegateComponent`](../traits/delegate_component.md) for each type tag the provider must answer — the same kind of type-level key-value map that `delegate_components!` builds. The `WithDelegatedType<Components>` alias wraps the provider in [`WithProvider`](with_provider.md), so a user-defined [`#[cgp_type]`](../macros/cgp_type.md) component (whose generated `WithProvider` impl forwards to any `TypeProvider`) can be backed by a delegated lookup as well as the built-in [`HasType`](../components/has_type.md) component. Neither `UseDelegatedType` nor `WithDelegatedType` is re-exported through `cgp::prelude`; reach them through `cgp::core::types`.
+`Components` is a table type with a `DelegateComponent` entry for each tag the provider answers, the kind of table `delegate_components!` builds. Neither name is in the prelude; both are imported from `cgp::core::types`.
 
 ## Behavior
 
-`UseDelegatedType<Components>` implements [`TypeProvider`](../components/has_type.md) by looking the type tag `Tag` up in `Components` and reporting the delegate it finds as the abstract type:
+`UseDelegatedType<Components>` implements the built-in [`TypeProvider`](../components/has_type.md) by looking the tag up in `Components`:
 
 ```rust
 #[cgp_provider(TypeProviderComponent)]
@@ -36,17 +34,20 @@ where
 }
 ```
 
-The `where` clause is the whole of the behavior: `Components: DelegateComponent<Tag, Delegate = Type>` reads the entry stored at key `Tag` in the `Components` table, and the impl sets the abstract `Type` to that delegate. Because the lookup is keyed by `Tag`, one `UseDelegatedType<Components>` provider answers as many distinct type tags as `Components` has entries, each resolving to its own concrete type. If `Components` has no entry for a given tag, the `DelegateComponent` bound is unsatisfied and the context simply does not implement `HasType` for that tag — the missing-entry diagnostic from `DelegateComponent` surfaces the gap.
+The table maps each tag straight to a type, not to a provider. A tag with no entry leaves the bound unsatisfied, so the context does not implement the abstract type for that tag.
 
-Contrast this with `UseType<T>`, whose `TypeProvider` impl is unconditional and always reports the single type `T`. `UseDelegatedType` adds exactly one level of indirection — the `DelegateComponent` lookup — so the concrete type comes from the table instead of from the provider's own parameter.
+Which tag is looked up depends on how the provider is wired:
+
+- **Directly on the built-in `HasType`**, as `TypeProviderComponent: UseDelegatedType<Table>`, the tag is the `Tag` of `HasType<Tag>`, so the table maps tags such as `ScalarTag` to types.
+- **Through `WithDelegatedType` on a [`#[cgp_type]`](../macros/cgp_type.md) component**, the tag is the component's key. The `WithProvider` impl that `#[cgp_type]` generates asks for `TypeProvider<Context, ScalarTypeProviderComponent>`, so the table maps `ScalarTypeProviderComponent` to a type.
 
 ## Examples
 
-A typical use defines a lookup table mapping type tags to concrete types and wires a context's type component to `UseDelegatedType` over that table. The table is an ordinary type carrying `DelegateComponent` entries:
+This context resolves two `#[cgp_type]` abstract types from one table:
 
 ```rust
 use cgp::prelude::*;
-use cgp::core::types::WithDelegatedType; // not re-exported through the prelude
+use cgp::core::types::WithDelegatedType;
 
 #[cgp_type]
 pub trait HasScalarType {
@@ -78,13 +79,17 @@ delegate_components! {
 }
 ```
 
-`App` routes both its scalar and index type components through `WithDelegatedType<AppTypes>`, the [`WithProvider`](with_provider.md) alias that adapts the foundational `UseDelegatedType` provider to a `#[cgp_type]` component. When the wiring asks for `App`'s `Scalar`, the provider looks `ScalarTypeProviderComponent` up in `AppTypes` and finds `f64`; for `Index` it finds `usize`. A single provider entry on `App` thus answers two abstract types, with the concrete choices held in one place in `AppTypes`.
-
-This makes `UseDelegatedType` valuable for bundling: the set of concrete types lives in the `AppTypes` table and can be reused, swapped, or supplied by a namespace, while each context only points its type components at the table.
+When `App` resolves `Scalar`, `WithDelegatedType<AppTypes>` looks `ScalarTypeProviderComponent` up in `AppTypes` and finds `f64`; for `Index` it finds `usize`. One entry on `App` answers both abstract types, and the concrete choices live together in `AppTypes`.
 
 ## Related constructs
 
-`UseDelegatedType` is the type-level counterpart of [`UseDelegate`](use_delegate.md), which performs the same `DelegateComponent` lookup for behavioral (method) components. It resolves through the [`DelegateComponent`](../traits/delegate_component.md) trait, the type-level key-value map that `delegate_components!` populates, and implements the [`HasType` / `TypeProvider`](../components/has_type.md) component it answers for. Its sibling [`UseType`](use_type.md) is the simpler provider that fixes an abstract type to one concrete type without a lookup. Its `WithDelegatedType` alias is one of the named wrappers around [`WithProvider`](with_provider.md), used to back a [`#[cgp_type]`](../macros/cgp_type.md) component with a delegated lookup.
+These constructs are the ones `UseDelegatedType` works with:
+
+- [`UseDelegate`](use_delegate.md) — the same table lookup for behavioral components.
+- [`UseType`](use_type.md) — the simpler provider that fixes one type.
+- [`HasType`](../components/has_type.md) — the built-in component whose `TypeProvider` it implements.
+- [`WithProvider`](with_provider.md) and [`#[cgp_type]`](../macros/cgp_type.md) — the adapter behind `WithDelegatedType` and the macro that generates its impl.
+- [`DelegateComponent`](../traits/delegate_component.md) — the table trait it reads.
 
 ## Source
 
@@ -93,4 +98,4 @@ This makes `UseDelegatedType` valuable for bundling: the set of concrete types l
 
 ## Public pages derived from this document
 
-This document feeds two public pages: [`use_delegated_type`](https://contextgeneric.dev/docs/reference/providers/use_delegated_type), which keeps the foundational mechanism, and its alias page [`with_delegated_type`](https://contextgeneric.dev/docs/reference/providers/with_delegated_type), which carries the wiring form and worked example, since `UseDelegatedType` is wired only through the `WithDelegatedType` alias. The alias family itself is documented in [with_provider.md](with_provider.md). A change here is propagated to both, per the [synchronization rule](../../../AGENTS.md#the-synchronization-rule).
+This document feeds two public pages: [`use_delegated_type`](https://contextgeneric.dev/docs/reference/providers/use_delegated_type), which keeps the foundational mechanism, and its alias page [`with_delegated_type`](https://contextgeneric.dev/docs/reference/providers/with_delegated_type), which carries the wiring form and worked example for `#[cgp_type]` components. The alias family itself is documented in [with_provider.md](with_provider.md). A change here is propagated to both, per the [synchronization rule](../../../AGENTS.md#the-synchronization-rule).

@@ -1,18 +1,16 @@
 # `UseField`
 
-`UseField<Tag>` is a zero-sized provider that implements a getter component by reading a field named by `Tag` from the context through [`HasField`](../traits/has_field.md), letting the field name differ from the getter method name.
+`UseField<Tag>` is a zero-sized provider that reads the context's field named by `Tag` through [`HasField`](../traits/has_field.md). Its main use is to implement a getter whose method name differs from the field it reads.
 
 ## Purpose
 
-`UseField` exists to decouple a getter's method name from the field it reads. A getter component defined with [`#[cgp_getter]`](../macros/cgp_getter.md) describes a value the context can supply — `fn name(&self) -> &str` — but the context may store that value under a different field, say `first_name`, or different contexts may store it under different names. `UseField<Tag>` carries the field name as its type parameter, so wiring a context's getter component to `UseField<Symbol!("first_name")>` makes the getter read `first_name` even though the method is `name`. The field name lives in the wiring, not in the trait.
+`UseField` separates a getter's method name from the field that stores the value. A getter component defined with [`#[cgp_getter]`](../macros/cgp_getter.md), such as `fn name(&self) -> &str`, describes a value the context supplies, but a context may store it as `first_name`, and different contexts may use different names. `UseField<Tag>` carries the field name as a type parameter, so wiring `NameGetterComponent: UseField<Symbol!("first_name")>` makes `name()` read `first_name`. The field name lives in the wiring, not in the trait. [`#[cgp_auto_getter]`](../macros/cgp_auto_getter.md), which always reads the field named after the method, cannot express this.
 
-This is the provider that [`#[cgp_getter]`](../macros/cgp_getter.md) targets. When a getter trait has a single method, `#[cgp_getter]` generates a `UseField` impl for the getter's provider trait with the field tag left as a free parameter, so a context picks the field by writing `UseField<Symbol!("...")>` in its delegation table. `UseField` itself is the general-purpose provider underneath that pattern: it works for any tag the context's [`HasField`](../traits/has_field.md) impl supports.
-
-The `Tag` is usually a type-level string built with [`Symbol!`](../macros/symbol.md), such as `Symbol!("name")`, or a type-level integer wrapped in `Index<N>` for tuple fields — these are exactly the tags that [`#[derive(HasField)]`](../derives/derive_has_field.md) generates `HasField` impls for. Any other type works as a tag too, but then the context must supply the matching `HasField` impl itself. As with every CGP provider, `UseField<Tag>` carries no runtime value; it is a `PhantomData`-only marker named in wiring.
+The `Tag` is usually a [`Symbol!`](../macros/symbol.md) string such as `Symbol!("name")`, or an [`Index<N>`](../types/index.md) for a tuple field. These are the tags [`#[derive(HasField)]`](../derives/derive_has_field.md) generates impls for. Any other type works as a tag if the context implements `HasField` for it by hand.
 
 ## Definition
 
-`UseField` is a phantom-typed struct parameterized by the field tag, defined in `cgp-field`:
+`UseField` is defined in `cgp-field`, with an alias for use through [`WithProvider`](with_provider.md):
 
 ```rust
 pub struct UseField<Tag>(pub PhantomData<Tag>);
@@ -20,11 +18,14 @@ pub struct UseField<Tag>(pub PhantomData<Tag>);
 pub type WithField<Tag> = WithProvider<UseField<Tag>>;
 ```
 
-The `WithField<Tag>` alias wraps `UseField<Tag>` in [`WithProvider`](with_provider.md), the adapter that lets a generic field getter back a specific getter component. The `#[cgp_getter]` macro generates a `WithProvider` impl for its component, so a getter can be wired with either `UseField<Symbol!("...")>` (through the macro's own generated `UseField` impl) or `WithField<Symbol!("...")>` (through `WithProvider`).
+`UseField` is in the prelude. `WithField` is not, and is imported from `cgp::core::field::impls`.
 
 ## Implementations
 
-`UseField<Tag>` implements three provider traits, each forwarding to the context's [`HasField`](../traits/has_field.md) impl for `Tag`. The central one is the provider-side getter, [`FieldGetter`](../traits/has_field.md), which reads the field by reference:
+`UseField<Tag>` is implemented in several places, all forwarding to the context's `HasField<Tag>`:
+
+- **Every single-method [`#[cgp_getter]`](../macros/cgp_getter.md) component.** The macro generates an impl of the getter's provider trait for `UseField<__Tag__>`, with the tag left free and the return-type conversion, such as `.as_str()`, applied. This is the impl a direct `UseField` wiring uses.
+- **The foundational [`FieldGetter`](../traits/has_field.md) and `MutFieldGetter`.** These read the field by reference and let `UseField` back a getter through `WithField`:
 
 ```rust
 impl<Context, OutTag, Tag, Value> FieldGetter<Context, OutTag> for UseField<Tag>
@@ -39,13 +40,13 @@ where
 }
 ```
 
-Two tags appear here for a reason. `OutTag` is the tag the *component* asks under (the getter component's name), while `Tag` is the *field* tag the provider was parameterized with. The impl ignores `OutTag` entirely and reads `Tag` from the context, which is precisely the decoupling: the component's identity and the field name are independent. The associated `Value` is taken from the context's `HasField<Tag>` impl, so the returned reference is to the real field.
-
-`UseField<Tag>` also implements the mutable getter [`MutFieldGetter`](../traits/has_field.md) the same way, requiring `Context: HasFieldMut<Tag>` and returning `&mut Value` via `get_field_mut`. And it implements [`TypeProvider`](../components/has_type.md), reporting the field's `Value` type as an abstract type — so the *type* of a field can itself be wired as a context's abstract type. Each impl is paired with an `IsProviderFor` impl carrying the same `HasField` bound, so delegation propagates the dependency and check traits report a missing field precisely.
+  `OutTag` is the tag the component asks under, its own marker, and the impl ignores it and reads `Tag`. That is the decoupling in its plainest form. The `MutFieldGetter` impl is the same with `HasFieldMut` and `get_field_mut`.
+- **[`TypeProvider`](../components/has_type.md).** `UseField<Tag>` reports the field's type as an abstract type, so a type component wired to `UseField<Symbol!("width")>` or `WithField<Symbol!("width")>` takes the type of the `width` field. This impl has a matching `IsProviderFor<TypeProviderComponent, …>` impl.
+- **The handler family.** `cgp-handler` implements `Computer` and `AsyncComputer` for `UseField<Tag>` by forwarding to the value stored in the field, as described under [`Computer`](../components/computer.md).
 
 ## Examples
 
-The defining use wires a getter to a field whose name differs from the method, which is the case the simpler [`#[cgp_auto_getter]`](../macros/cgp_auto_getter.md) cannot express. The trait method is `name`, but the context stores the value in `first_name`:
+This getter reads a field whose name differs from the method's:
 
 ```rust
 use cgp::prelude::*;
@@ -66,14 +67,14 @@ delegate_components! {
     }
 }
 
-fn greet(person: &Person) {
-    println!("Hello, {}!", person.name()); // reads the first_name field
+check_components! {
+    Person {
+        NameGetterComponent,
+    }
 }
 ```
 
-`Person` wires `NameGetterComponent` to `UseField<Symbol!("first_name")>`. The generated getter resolves through the `FieldGetter` impl above, whose `Tag` is `Symbol!("first_name")`, so `person.name()` reads `Person`'s `first_name` field — the method name and the field name diverge, with the field name supplied entirely by the wiring.
-
-The same binding can be written with the `WithField` alias, which routes through `WithProvider`:
+`person.name()` resolves through the `NameGetter` impl `#[cgp_getter]` generated for `UseField<__Tag__>`, with `Symbol!("first_name")` as the tag, so it returns the `first_name` field as a `&str`. The same binding can be written with the alias, after `use cgp::core::field::impls::WithField;`:
 
 ```rust
 delegate_components! {
@@ -83,11 +84,17 @@ delegate_components! {
 }
 ```
 
-Both forms read `first_name`; `UseField` is the idiomatic choice for binding a getter to a named field without hand-writing a provider.
-
 ## Related constructs
 
-`UseField` is the provider that [`#[cgp_getter]`](../macros/cgp_getter.md) generates an impl for, the mechanism that lets a getter's field name differ from its method name. It implements the provider-side [`FieldGetter` / `MutFieldGetter`](../traits/has_field.md) traits by reading the consumer-side [`HasField`](../traits/has_field.md) impl that [`#[derive(HasField)]`](../derives/derive_has_field.md) produces, keyed by tags built with [`Symbol!`](../macros/symbol.md) or `Index<N>`. Its `WithField` alias is one of the named wrappers around [`WithProvider`](with_provider.md). It is the field-level analogue of the [`UseType`](use_type.md) provider that [`#[cgp_type]`](../macros/cgp_type.md) generates for abstract types. For a getter whose value is reached through `AsRef`/`AsMut` rather than read directly, see [`UseFieldRef`](use_field_ref.md); for chaining getters across nested contexts, see [`ChainGetters`](chain_getters.md).
+These constructs are the ones `UseField` works with:
+
+- [`#[cgp_getter]`](../macros/cgp_getter.md) — generates its getter impl.
+- [`HasField`, `FieldGetter`, and `MutFieldGetter`](../traits/has_field.md) — the traits it reads and implements.
+- [`#[derive(HasField)]`](../derives/derive_has_field.md), [`Symbol!`](../macros/symbol.md), and [`Index<N>`](../types/index.md) — the field impls and tags it relies on.
+- [`WithProvider`](with_provider.md) — the adapter behind `WithField`.
+- [`UseFieldRef`](use_field_ref.md) — borrows the field as another type through `AsRef`.
+- [`ChainGetters`](chain_getters.md) — reads through nested contexts.
+- [`UseType`](use_type.md) — the counterpart for abstract types.
 
 ## Source
 
