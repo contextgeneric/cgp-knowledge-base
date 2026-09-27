@@ -63,5 +63,5 @@ The same struct implements both directions.
 
 ## Public material derived from this
 
-The `UseSerde` page in the `reference/providers/` pages of the planned [cgp-serde project
+The `UseSerde` page in the `reference/providers/` pages of the [cgp-serde project
 section](../../../website/projects/cgp-serde.md), and the rustdoc for `UseSerde`.

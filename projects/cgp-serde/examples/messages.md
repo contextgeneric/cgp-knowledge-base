@@ -91,6 +91,16 @@ error[E0277]: [CGP-E001] the consumer traits `CanSerializeValue<DateTime<Utc>>` 
   = note: root cause: [CGP-E107] context `AppB` does not contain any delegate entry for `@ValueSerializerComponent.i64`
 ```
 
+The public page makes the change on the full test instead: `i64` removed from `AppB`'s `UseSerde`
+entry, leaving `[u64, String]`, checked with `cargo cgp check` built from the `cargo-cgp` source at
+commit `b6a6323`. The check on `AppB` fails on every type that contains a date, with the same root
+cause:
+
+```text
+error[E0277]: [CGP-E001] the consumer traits `CanSerializeValue<DateTime<Utc>>`, `CanSerializeValue<EncryptedMessage>`, `CanSerializeValue<MessagesByTopic>`, and `CanSerializeValue<MessagesArchive>` are not implemented for context `AppB`
+    = note: root cause: [CGP-E107] context `AppB` does not contain any delegate entry for `@ValueSerializerComponent.i64`
+```
+
 The dependency chain it prints under the root cause runs from `SerializeIterator` through
 `SerializeDeref` and `SerializeFields` to `SerializeTimestamp`, which asks the context for the `i64`.
 The fix is the `i64` entry; see
@@ -166,6 +176,6 @@ the same choices through `UseDelegate` tables.
 
 ## Public material derived from this
 
-The `examples/messages` page of the planned [cgp-serde project
+The `examples/messages` page of the [cgp-serde project
 section](../../../website/projects/cgp-serde.md), including its change to try, and the
 two-application result on the section's index.

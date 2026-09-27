@@ -153,5 +153,5 @@ No serializing counterpart. A value that is `AsRef<[u8]>` serializes through
 
 ## Public material derived from this
 
-The three provider pages in the `reference/providers/` pages of the planned [cgp-serde project
+The three provider pages in the `reference/providers/` pages of the [cgp-serde project
 section](../../../website/projects/cgp-serde.md), and the rustdoc for the three providers.

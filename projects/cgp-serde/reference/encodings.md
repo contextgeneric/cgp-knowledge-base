@@ -178,6 +178,6 @@ The same struct implements both directions, and the two round-trip for values wi
 
 ## Public material derived from this
 
-The four provider pages in the `reference/providers/` pages of the planned [cgp-serde project
+The four provider pages in the `reference/providers/` pages of the [cgp-serde project
 section](../../../website/projects/cgp-serde.md), the `messages` example page, where the two
 applications differ by these providers, and the rustdoc for all four.

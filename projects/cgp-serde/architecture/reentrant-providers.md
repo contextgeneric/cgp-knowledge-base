@@ -164,7 +164,9 @@ the library's tests assert each context's wiring with
 [`check_components!`](../../../cgp/reference/macros/check_components.md). A cycle in the wiring does
 not recurse at runtime either. A provider that re-enters for a type whose entry leads back to itself,
 such as `String` wired to `SerializeWithDisplay`, which re-enters for `String`, fails to compile. The
-trait solver reports it as `E0275`, overflow evaluating the requirement.
+trait solver reports it as `E0275`, overflow evaluating the requirement, and `cargo cgp check`
+reshapes it as `[CGP-E010]`, a lookup that never resolves, when a `check_components!` table triggers
+it; see [debugging wiring](../guides/debugging-wiring.md#a-provider-depends-on-itself).
 
 That same compile-time resolution is why a **recursive data type** cannot be serialized through the
 re-entrant providers. A `Node` with a `children: Vec<Node>` field makes `CanSerializeValue<Node>`
@@ -178,6 +180,6 @@ each node, compiles and produces the expected nested JSON.
 
 ## Public material derived from this
 
-The `architecture/reentrant-providers` page of the planned [cgp-serde project
+The `architecture/reentrant-providers` page of the [cgp-serde project
 section](../../../website/projects/cgp-serde.md), and the rustdoc for `SerializeWithContext` and
 `DeserializeWithContext`.

@@ -223,5 +223,5 @@ crates exist to avoid.
 
 ## Public material derived from this
 
-The allocation pages in the `reference/` pages of the planned [cgp-serde project
+The allocation pages in the `reference/` pages of the [cgp-serde project
 section](../../../website/projects/cgp-serde.md), and the rustdoc for both crates.

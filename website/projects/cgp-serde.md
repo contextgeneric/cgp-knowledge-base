@@ -6,11 +6,79 @@ example programs, the design behind the component split, the guides for wiring a
 providers, one reference page per construct, and the comparison with Serde. The clearest
 demonstration of the coherence bypass on a trait every Rust developer already knows.
 
-- **Planned URL** — `https://contextgeneric.dev/docs/projects/cgp-serde/`
+- **URL** — <https://contextgeneric.dev/docs/projects/cgp-serde/>
+- **Source** —
+  [docs/projects/cgp-serde/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/projects/cgp-serde),
+  written on the website's `v0.8.0` branch and not yet published
 - **Ports** — [projects/cgp-serde/](../../projects/cgp-serde/README.md)
 - **Repository** — [`cgp-serde`](https://github.com/contextgeneric/cgp-serde), documented on its
   `v0.8.0` branch
-- **Status** — planned; no page written. The component reference pages wait on DC3
+- **Verified against** — `cgp-serde` `v0.8.0` at commit `d89ee05`, with `cgp` `main` at `adc616c`
+  through the workspace's patch, and `cargo-cgp` built from its source at commit `b6a6323`
+- **Status** — Draft: 45 of about 50 pages written, listed in [What is written](#what-is-written);
+  the two arena examples and three component pages wait on DC3
+- **How it was made** — written by an agent from the project section; level one of the four in
+  [ai-disclosure.md](../../communication-strategy/ai-disclosure.md)
+
+## What is written
+
+**Forty-five cgp-serde pages are written, all the pages that DC3 does not block**, and the section
+index gained cgp-serde in its project list, five rows in its pattern table, and a line in its
+evaluator route. Resources links the section beside the crate. `yarn build` passes with them, so
+every link and anchor they carry resolves. They are:
+
+- **Project** — `cgp-serde/index.md`.
+- **Examples** — the index, `basic`, and `messages`.
+- **Architecture** — the index, `serde-bridge`, `component-design`, `reentrant-providers`,
+  `derive-free-records`, `context-services`, and `crate-layout`.
+- **Guides** — `wiring-a-context`, `writing-a-provider`, `formats`, and `debugging-wiring`, under a
+  generated category index.
+- **Reference** — the index, with the provider tables and a *Looking for a name you don't see?*
+  table; the 23 provider pages under `reference/providers/`; `SerializeWithContext`,
+  `DeserializeWithContext`, and `CanDeserializeJsonString` under `reference/types/`; and `CanAlloc`
+  under `reference/components/`, which carries no `#[derive_delegate]` and so is not blocked.
+- **The comparison and the limitations** — `serde-comparison.md` and `limitations.md`.
+
+**The pages not yet written** wait on DC3, and none is scaffolded as a stub. Pages that would link
+them describe the idea in place or say the page is still being written:
+
+- `examples/arena-simplified` and `examples/arena` wait on the cleanup of their tests. The
+  architecture page `context-services` quotes the arena test's relevant entries with the unused JSON
+  entries elided, and the debugging guide describes its allocator case without linking a page.
+- `reference/components/can_serialize_value`, `can_deserialize_value`, and `has_arena` wait on the
+  removal of their `#[derive_delegate]` attributes. `component-design` shows the two components'
+  method signatures rather than their declarations, and `AllocateWithArena` describes the getter in
+  prose.
+
+The writing turned up several facts a later revision must respect:
+
+- **Every run and diagnostic was re-produced.** The four tests were run offline and passed, and
+  `messages` printed the two documents the pages quote. Each *Try a change* result, each diagnostic,
+  and each claim the pages add beyond the records was re-run in a probe crate at
+  `~/.cache/cgp-probes/serde-probe`, whose sources are kept under `reports/probes/cgp-serde-pages/` in
+  the workspace. The postcard claim is the one taken from the records alone, since the crate could
+  not be fetched offline.
+- **The `E0275` cases are reshaped when checked.** A provider that depends on itself and a recursive
+  type both report `[CGP-E010]` through `check_components!`, from the published `cargo-cgp` as well
+  as the source build; at a call site with no check, the raw overflow stays. The project's
+  [debugging guide](../../projects/cgp-serde/guides/debugging-wiring.md) is corrected to match.
+- **A context-defined namespace shares wiring.** The wiring guide's last step shows `AppA` and `AppB`
+  sharing entries through a namespace of the reader's own, which a probe confirmed, with each context
+  still opening the component and a rebinding rejected as `[CGP-E005]`. It is advice for the reader,
+  not the library's `CgpSerdeNamespace`, and the [wiring
+  record](../../projects/cgp-serde/guides/wiring-a-context.md#share-wiring-between-contexts) carries it.
+- **Source links point at `main`**, per the writing guide, so until the `v0.8.0` branch merges they
+  show the release's `UseDelegate` tables.
+- **The install instructions assume the merge too.** The index tells a reader to depend on the
+  crates from the repository by git, since the crates.io release is built on an older CGP.
+- **No public page lists cgp-serde's defects or missing features.** Where a defect shapes how a
+  provider is used, the provider's page states the behavior and routes the reader in *When to use
+  it*: `SerializeBytes` sends JSON users to the text encodings, and `DeserializeWithFromStr` states
+  the inputs it reads. The defects themselves stay in [issues.md](../../projects/cgp-serde/issues.md).
+- **The comparison's two judging sections want the author's read.** `serde-comparison.md` is a
+  Projects page, but its *What each approach costs* and *When plain Serde is the better choice*
+  judge another project's tool, the same reason those sections of every Comparisons page are on the
+  author's list in [../AGENTS.md](../AGENTS.md#who-drafts-a-page-and-who-reads-it-before-it-publishes).
 
 ## What it covers
 
@@ -21,6 +89,11 @@ value out of `Self` into a parameter, so the implementation is chosen by the con
 two applications encode the same value differently by a few wiring lines. It also shows that a type
 can be serialized with no serialization derive at all, and that a deserializer can draw a service,
 an arena, from its context.
+
+The section has no measured search demand to answer: the announcement post draws impressions at an
+average position of 16.8 and converts at 0.13%, and the *serde* query cluster sits below position 24
+with no clicks, per [seo.md](../seo.md). So the index is written for a reader who arrives from the
+section index or a link, not for a search result.
 
 The section serves the **evaluator** first: the question "can CGP do something real" is answered
 most directly by a library that replaces part of Serde. So the index opens on the two-application
@@ -38,8 +111,9 @@ not list the features it lacks; those are records in the project's `issues.md`.
 
 ## The pages
 
-Four example pages, 7 architecture pages, 4 guides, about 30 reference pages, the comparison, and
-the limitations page: about 48 in all.
+The index, four example pages and their index, 7 architecture pages, 4 guides, 31 reference pages
+with the reference index, the comparison, and the limitations page: 50 in all, of which 45 are
+written.
 
 ### Index
 
@@ -130,8 +204,10 @@ features](../../projects/cgp-serde/issues.md#missing-features) and
 - **Publish a `CgpSerdeNamespace`**, recommended rather than required. It is a design decision about
   what the defaults should be, and it is the library improvement that would most strengthen the
   section: the `messages` payoff is sharper when the shared wiring is one `namespace` line and the
-  two applications differ only in the entries that matter. **If it is built, write `messages`,
-  `basic`, and the wiring guide against it** rather than revising them afterwards.
+  two applications differ only in the entries that matter. **If it is built, revise `messages`,
+  `basic`, and the wiring guide against it together**, since all three are written against the
+  wiring as it stands; the guide's last step shows a reader-defined namespace, which the library's
+  own would replace.
 
 ### Release conditions
 

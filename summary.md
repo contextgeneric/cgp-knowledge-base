@@ -840,9 +840,10 @@ it stale.
   21 pages written and the revisions they were verified against, what each unwritten page waits on,
   the thirteen examples and about 75 construct pages planned, the comparison with shell scripts, and
   the release the install instructions need.
-- [cgp-serde.md](website/projects/cgp-serde.md) — four example pages led by `messages`, the design and
-  guides, about 30 construct pages, the comparison with Serde, and DC3's attribute removals, arena-test
-  cleanups, and recommended namespace.
+- [cgp-serde.md](website/projects/cgp-serde.md) — the plan and record of the cgp-serde section: the
+  45 pages written and the revisions they were verified against, the two arena examples and three
+  component pages that wait on DC3, and DC3's attribute removals, arena-test cleanups, and
+  recommended namespace.
 - [error-backends.md](website/projects/error-backends.md) — one walkthrough per crate, the shared design
   and guides, 15 construct pages, no limitations page, the verified wiring the eyre and std records
   still need, and publication gated on the `cgp` release.

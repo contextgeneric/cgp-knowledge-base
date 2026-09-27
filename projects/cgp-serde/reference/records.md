@@ -104,7 +104,10 @@ succeeds only if every field was set. The input's key order does not matter.
 
 The provider rejects input in these cases, each with a Serde custom error:
 
-- **A field is missing** — `missing field: b`, raised after the whole map is read.
+- **A field is missing** — `missing field: b`, raised after the whole map is read. A field whose type
+  is an `Option` is no exception: a probe reading `{"a":1}` into a struct with `a: u64` and
+  `b: Option<u64>` failed with `missing field: b at line 1 column 7`, while `{"a":1,"b":null}` read
+  `b` as `None`.
 - **A field appears twice** — `duplicate field: a`, raised at the second occurrence.
 - **The input is not a map** — the deserializer's own type error; with JSON, an array gives
   `invalid type: sequence, expected map`.
@@ -216,6 +219,6 @@ value. The providers come from `cgp_serde::providers`, except `SerializeHex`, wh
 
 ## Public material derived from this
 
-The two provider pages in the `reference/providers/` pages of the planned [cgp-serde project
+The two provider pages in the `reference/providers/` pages of the [cgp-serde project
 section](../../../website/projects/cgp-serde.md), and the rustdoc for `SerializeFields` and
 `DeserializeRecordFields`.

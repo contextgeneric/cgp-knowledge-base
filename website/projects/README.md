@@ -10,9 +10,9 @@ replaces](#what-the-section-replaces).
   Reference and `cargo-cgp` in the sidebar
 - **Derived from** — [projects/](../../projects/README.md), which stays the source of truth
 - **Page-type spec** — [../writing-guides/project.md](../writing-guides/project.md); read it first
-- **Status** — in progress: the section index and 21 Hypershell pages are written on the website's
-  `v0.8.0` branch, per [hypershell.md](hypershell.md#what-is-written); the other three projects are
-  planned. Post-release, per [Ordering](#ordering)
+- **Status** — in progress: the section index, 21 Hypershell pages, and 45 cgp-serde pages are
+  written on the website's `v0.8.0` branch, per [hypershell.md](hypershell.md#what-is-written) and
+  [cgp-serde.md](cgp-serde.md#what-is-written); the other two projects are planned. Post-release, per [Ordering](#ordering)
 
 ## What the section is
 

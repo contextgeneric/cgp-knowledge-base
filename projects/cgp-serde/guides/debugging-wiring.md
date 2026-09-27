@@ -5,7 +5,9 @@ diagnostic. This guide shows each mistake with the code that makes it and what t
 The general method for reading CGP errors is in [debugging](../../../cgp/guides/debugging.md), and the
 diagnostics below come from `cargo cgp check`, CGP's error toolchain. `cargo cgp check` leads with the
 root cause for the classes it recognizes, and the tool is a v0.1.0-alpha that does not yet reshape every
-class. Two of the mistakes below are classes it leaves as rustc reports them.
+class. Two classes below pass through only partly: the overflow cases are reshaped when a
+`check_components!` table triggers them but stay raw at a call site, and a key that does not parse
+is a macro error the tool leaves as it is.
 
 ## A type the traversal reaches has no entry
 
@@ -123,19 +125,36 @@ delegate_components! {
         @ValueSerializerComponent.String: SerializeWithDisplay,
     }
 }
+
+check_components! {
+    Ctx {
+        ValueSerializerComponent: String,
+    }
+}
 ```
 
 `SerializeWithDisplay` serializes a value by formatting it to a `String` and asking the context to
-serialize that `String`, which leads straight back to `SerializeWithDisplay`. Using the context reports
-`E0275`, overflow evaluating the requirement, at the call site; `cargo cgp check` leaves this class
-unchanged. The fix is a leaf provider for the intermediate type, such as `UseSerde` or
+serialize that `String`, which leads straight back to `SerializeWithDisplay`. Through the check,
+`cargo cgp check` reshapes the overflow, from the published release and the source build alike:
+
+```text
+error[E0275]: [CGP-E010] the wiring for the consumer trait `CanSerializeValue<String>` on context `Ctx` never resolves — the lookup recurses without terminating
+```
+
+Its help line suggests a context wired back to itself, as with `UseContext`, which is the usual cause
+of the class but not this one. At a call site with no check, such as
+`serde_json::to_string(&SerializeWithContext::new(&Ctx, &value))`, the tool leaves rustc's
+`E0275` unchanged, as overflow evaluating the requirement
+`SerializeWithContext<'_, Ctx, String>: Serialize`. The fix is a leaf provider for the intermediate type, such as `UseSerde` or
 `SerializeString` for `String`.
 
 ## The data type is recursive
 
 **A type that contains itself fails the same way even when every entry is present.** A
 `Node { id: u64, children: Vec<Node> }` wired to `SerializeFields`, with `Vec<Node>` wired to
-`SerializeIterator` and the reference entry in place, reports `E0275` when used, because serializing
+`SerializeIterator` and the reference entry in place, reports `E0275` when used, reshaped as
+`[CGP-E010] the wiring for the consumer trait CanSerializeValue<Node> on context Ctx never resolves`
+when checked, because serializing
 `Node` requires serializing `Vec<Node>`, which requires `&Node`, which requires `Node` again. No wiring
 fixes it: the type needs a provider that walks the recursion itself and asks the context only for the
 non-recursive parts, as
@@ -152,6 +171,6 @@ a type alias instead, as
 
 ## Public material derived from this
 
-The `guides/debugging-wiring` page of the planned [cgp-serde project
+The `guides/debugging-wiring` page of the [cgp-serde project
 section](../../../website/projects/cgp-serde.md), and a troubleshooting section of the repository
 README.

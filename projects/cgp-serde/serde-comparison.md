@@ -87,7 +87,7 @@ interoperate through `UseSerde` and the adapters, a project can use each for the
 
 ## Public material derived from this
 
-The `serde-comparison` page of the planned [cgp-serde project
+The `serde-comparison` page of the [cgp-serde project
 section](../../website/projects/cgp-serde.md), and any comparison with Serde in public writing,
 which [message.md](../../communication-strategy/message.md) requires to state where the simpler tool
 wins.
