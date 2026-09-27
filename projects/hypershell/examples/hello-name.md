@@ -64,6 +64,31 @@ field. `MyApp` joins the same namespace as `HypershellCli` and adds only the fie
 - Why a field read here is `HasField` rather than an `#[implicit]` argument: the program chooses
   the field name; see [arguments](../reference/arguments.md#fieldarg-and-extractfieldarg).
 
+## Try a change
+
+Running the program on `HypershellCli`, which has no `name` field, is the change the public page
+shows. A probe checked the pairing with a check keyed on the program and its input, and read it with
+`cargo cgp check` built from the `cargo-cgp` source at commit `b6a6323`:
+
+```rust
+check_components! {
+    #[check_trait(CheckHypershellCli)]
+    HypershellCli {
+        HandlerComponent: (Program, Vec<u8>),
+    }
+}
+```
+
+```text
+error[E0277]: [CGP-E002] the provider trait `Handler<Pipe<…>, Vec<u8>>` with context `HypershellCli` is not implemented for provider `ComposeHandlers<…>`
+   = note: root cause: [CGP-E106] missing field `name` on `HypershellCli`
+```
+
+The chain below the root cause runs through `HypershellBaseProvider`, `HandlePipe`, the pipeline's
+`ComposeHandlers`, `HandleSimpleExec`, `CoreExec`, `ExtractArgs` recursing over the list, and
+`ExtractFieldArg`. Written at the `handle` call instead, the same mistake produced three `[CGP-E002]`
+headlines and no root cause.
+
 ## Public material derived from this
 
 The `examples/hello-name` page of the planned [Hypershell project

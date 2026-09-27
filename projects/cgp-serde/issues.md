@@ -120,6 +120,6 @@ Housekeeping items affect neither behavior nor features but mislead a reader or 
 
 ## Public material derived from this
 
-The defects and missing features on the `limitations` page of the planned [cgp-serde project
-section](../../website/projects/cgp-serde.md), which the plan requires to be kept rather than
-trimmed as the library matures.
+None on the public site: the website's pages state only high-level limits and name no bugs or
+missing features, per [the writing guide](../../website/writing-guides/project.md#the-limitations-page).
+The code prerequisites in the [cgp-serde plan](../../website/projects/cgp-serde.md) draw on it.

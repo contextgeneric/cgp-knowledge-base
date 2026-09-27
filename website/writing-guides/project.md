@@ -42,9 +42,9 @@ ways the internal reference is, so the same four transformations apply as in
 - **Re-point every link**, per [Linking](#linking) below. The internal documents link into `cgp/`,
   `examples/`, and each other, and a public page may link none of those.
 - **Drop the internal records.** The header fields that record the documented branch and local
-  checkout, the housekeeping items in `issues.md`, the probes, the "Public material derived from
-  this" line, and every sentence addressed to an agent maintaining the project stay in the knowledge
-  base.
+  checkout, everything in `issues.md` and `testing.md`, the probes, the "Public material derived
+  from this" line, and every sentence addressed to an agent maintaining the project stay in the
+  knowledge base.
 - **Orient a reader who does not know CGP.** The internal documents assume the `/cgp` skill. A
   public page glosses "context", "provider", and "wiring" on first use, and links the page that
   explains each.
@@ -53,10 +53,11 @@ ways the internal reference is, so the same four transformations apply as in
 
 **An example page is an expansion instead.** The internal example document is a record: it quotes
 the parts of a program that carry its ideas, says what running it produced, and lists its defects.
-The public page keeps all of that and adds what a record leaves out: an introduction for a reader
-new to CGP, the reason each part is written the way it is, the name of the pattern it shows, and a
-route onward. It is the one page kind in the section that is written rather than transformed, which
-is why it is specified in the most detail below.
+The public page keeps the program and what running it produced, leaves the defects in the record,
+and adds what a record leaves out: an introduction for a reader new to CGP, the reason each part is
+written the way it is, the name of the pattern it shows, and a route onward. It is the one page kind
+in the section that is written rather than transformed, which is why it is specified in the most
+detail below.
 
 ## The page kinds
 
@@ -78,8 +79,8 @@ the path.
   wiring. Ported from `guides/`.
 - **Reference pages** (`reference/**/*.md`) — one page per public construct, for a library a reader
   depends on. Split from the family documents in `reference/`.
-- **The limitations page** (`limitations.md`) — the defects and missing features a user will meet,
-  for a library. Ported from `issues.md`.
+- **The limitations page** (`limitations.md`) — the high-level limits of the project's design and
+  status, for a library. Written from the project README and the architecture, not from `issues.md`.
 - **A comparison page**, named for what it compares against — for a project that rebuilds a
   well-known library or practice, such as cgp-serde against Serde. Ported from the project's
   comparison document.
@@ -89,14 +90,17 @@ introduces the projects and routes a reader from a pattern to the example page t
 contents are specified in the [blueprint](../projects/README.md#the-section-index) rather than here,
 since there is only one.
 
-`testing.md` has no public page. What it establishes that a reader needs, such as which behavior is
-exercised and which is not, belongs on the limitations page in a sentence or two.
+`issues.md` and `testing.md` have no public page, and their contents do not appear on any. A
+project's defects, missing features, and test gaps are records for the people working on it; a
+public reader learning the project needs only the high-level limits, as [The limitations
+page](#the-limitations-page) describes. A sentence saying the project is lightly tested is as far as
+the test record reaches.
 
 **A demonstration project omits the reference and the limitations page.** Nobody depends on the
 crates in [cgp-examples](../../projects/cgp-examples/README.md), so a reference for their items
-would document names no reader types, and a list of their gaps would record housekeeping rather than
-limits a user meets. Their items are shown and explained where an example page uses them, and a
-crate's status goes in a short section on its index.
+would document names no reader types, and the limits worth stating fit in a sentence on the index.
+Their items are shown and explained where an example page uses them, and a crate's status goes in a
+short section on its index.
 
 ## The example page
 
@@ -188,11 +192,11 @@ than described. When the page quotes `cargo cgp check`, it carries the canonical
 [vocabulary.md](../../communication-strategy/vocabulary.md#terms-to-use-and-how-to-introduce-each)
 unchanged.
 
-### It closes with limits and a route
+### It closes with a route
 
-**A *Known limitations* section** appears when the internal record lists a defect a reader of this
-program would meet, stated as a limit rather than as an apology, with a link to the project's
-limitations page. Housekeeping items never appear.
+**An example page does not list defects or missing features**, even where the internal record for
+the program has a *Known issues* section. A limit of the design that the program shows, such as a
+program being fixed at compile time, belongs in *The pattern*, as its cost.
 
 **A *Where to go next* section** ends every example page with three kinds of link: the next example
 in the project's teaching order, the architecture page or guide that develops what this program
@@ -242,6 +246,25 @@ A paragraph that would be true of any CGP program belongs to the Concepts tier, 
 there instead, per the rule the internal documents already follow in
 [projects/AGENTS.md](../../projects/AGENTS.md#leave-cgp-itself-to-cgp).
 
+**An architecture page is the easiest page to leave looking internal, because its source document is
+the most internal of all.** An internal architecture document is written for someone about to change
+the project: it opens with the mechanism, names every item, and records where the design is
+incomplete. Ported as it stands, it reads as a maintainer's notes. Apply the three transformations
+of [explanation.md](explanation.md#turning-a-concept-document-into-an-explanation-page) in full:
+
+- **Open with the question an outside reader would ask**, such as "how does one line give a context
+  the whole language?", and answer it, rather than opening with how the mechanism is built.
+- **Introduce one new term at a time**, in plain words, before using it: a bundle, a namespace, an
+  input dispatcher. Start from what the reader knows, such as a shell pipeline or a generic impl.
+- **Leave the machinery out** unless the page is about it: registration paths, lookup internals,
+  diagnostic codes, and item-by-item inventories belong to the reference and the knowledge base. A
+  table earns its place when a user consults it, as the table of what each stage accepts does.
+
+**The cost section states trade-offs, not defects.** Say what the design costs a reader, in their
+terms, and when the cost is worth paying, the way the site's Concepts pages do: "the layers make the
+language easy to reuse and harder to trace". A cost section never lists the project's open issues or
+missing features; those stay in the knowledge base.
+
 ## Guides
 
 **A guide does one job, in order, and names the mistakes that job invites.** The internal guides are
@@ -289,9 +312,8 @@ internal field lands:
    direction, or that there is none.
 8. **When to use it** — which neighbouring construct a reader may have wanted instead, drawn from
    the project's guides, which have no other public home for that judgement.
-9. **Known limitations**, when there are any, linking the limitations page.
-10. **Related constructs**, **The ideas behind it**, linking the CGP reference and Concepts pages
-    the construct rests on, and **Source**.
+9. **Related constructs**, **The ideas behind it**, linking the CGP reference and Concepts pages the
+   construct rests on, and **Source**.
 
 There is no *Under the hood*, since a project construct's machinery is the CGP construct it is built
 from and the CGP reference already explains it. The one exception is a project's own macro, such as
@@ -306,14 +328,22 @@ completeness obligation: an item a reader can name and cannot find is a hole.
 
 ## The limitations page
 
-**The limitations page lists what a user of the library will run into, and says what to do
-instead.** Port the defects and missing features from `issues.md`; each keeps the code that triggers
-it and what happens, per the [error-message
-rule](../../AGENTS.md#show-the-example-behind-an-error-message). Drop the housekeeping section.
+**The limitations page states the high-level limits a reader learning the project should know, not
+its defects.** Those are the limits that follow from what the project is and how it is designed:
+that it is a proof of concept, what its design rules out, what it needs to build, what its errors
+are like, and what extending it can and cannot do. Write it from the project README and the
+architecture, each limit in a short section named for what it means to the reader, such as "Programs
+are fixed at compile time".
+
+**Bugs and unimplemented features stay out of every public page**, this one included. They are the
+project's records, kept in `issues.md` for the people fixing them, and they change too often to
+publish: a defect listed publicly is out of date the day it is fixed. A reader who meets one reports
+it, and the page loses nothing by not predicting it.
+
 Close with where a simpler tool is the better choice, drawn from the comparison document where there
 is one, because that is the question an evaluator reading this page is asking.
 
-**The page must not shrink as the library matures in any way other than items being fixed.** The
+**The page must not shrink as the project matures except where a limit stops being true.** The
 candid account of costs is what makes the rest of the section credible, and it is the first thing a
 well-meaning trim removes.
 
@@ -358,6 +388,12 @@ kind of internal link has a fixed public replacement:
 | `website/blog/…` (a post's record) | the live post |
 | `communication-strategy/…` | dropped |
 
+**A page that is not written yet is not linked, and is not scaffolded as a stub.** A reader arriving
+at a placeholder from inside a tutorial has been sent nowhere, so a written page describes the idea
+in place, or names the page as still being written without linking it, and gains the link when the
+page exists. The section's sidebar then shows only pages a reader can use. This differs from the
+site reference, whose completeness obligation made a stub for every construct worth having.
+
 Links out of the site go to the project's repository on its default branch, to the crate on
 crates.io or docs.rs, and to the documentation of external libraries the project builds on. A
 mention of `cargo cgp check` links the site's page for it, `/docs/cargo-cgp/check`, rather than the
@@ -375,6 +411,12 @@ written for the site, and a project's code is already compiled by its own reposi
 would be one more thing to keep in step. The projects also need what the crate does not carry, such
 as Hypershell's nightly toolchain and its network-bound backends. The rule and its reason are
 recorded in [AGENTS.md](../AGENTS.md#verify-code-against-current-cgp-and-never-against-a-blog-post).
+
+**Quote `cargo-cgp` output from the tool built at its current source**, the same output the site's
+compile errors page documents, and record in the example's internal document where the published
+release prints something different. The published v0.1.0-alpha reports a missing dispatcher entry as
+`[CGP-E107]` where the source reports `[CGP-E110]`, for instance, and a reader running the release
+will see the first. Re-check the quoted output when the tool releases.
 
 **The code must use current idioms.** Where the project's source still uses a form the
 [guides](../../cgp/guides/README.md) tell readers to replace, the page does not publish it: the
@@ -409,12 +451,11 @@ plan names the posts that get one.
 - **No link into the knowledge base**, and no internal vocabulary without a gloss.
 - **No CGP primer.** One sentence of orientation and a link; the explanation belongs to the
   tutorials and Concepts.
-- **No housekeeping.** Stale metadata, unused items, and missing rustdoc are records for the
-  project's maintainers.
+- **No bugs, missing features, or housekeeping.** Defects, unimplemented features, stale metadata,
+  unused items, and missing rustdoc are records for the project's maintainers, kept in `issues.md`.
 - **No dated framing**: no "this release", no "recently", no version number attached to a behavior.
   The pages describe the project as it is and are corrected in place.
-- **No unmarked speculation.** Future work is either a missing feature on the limitations page or
-  left out.
+- **No speculation.** Future work is left out.
 - **No invented numbers**, per
   [voice-and-register.md](../../communication-strategy/voice-and-register.md).
 
@@ -422,6 +463,12 @@ plan names the posts that get one.
 
 - **Open an example page cold.** Within the first screen, does a reader who has never heard of CGP
   know what the program does, what the project is, and where to go if they need background?
+- **Read every `New to CGP?` box on its own.** Each must link at least one CGP page, usually the
+  Hello World tutorial and the Concepts page for the pattern, not only the earlier examples it
+  builds on. A box that routes only to other project pages leaves the CGP newcomer where it found
+  them.
+- **Check each example page's closing links**: the next example, a page of the project's own that
+  develops the idea, and a Concepts or tutorial page.
 - **Read only the headings of an example page.** They should summarize how the program works.
 - **Find the pattern and its cost.** Every example page names one pattern, links the page that
   explains it, and states what it costs.

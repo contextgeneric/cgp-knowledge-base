@@ -10,7 +10,9 @@ replaces](#what-the-section-replaces).
   Reference and `cargo-cgp` in the sidebar
 - **Derived from** — [projects/](../../projects/README.md), which stays the source of truth
 - **Page-type spec** — [../writing-guides/project.md](../writing-guides/project.md); read it first
-- **Status** — planned; no page written. Post-release, per [Ordering](#ordering)
+- **Status** — in progress: the section index and 21 Hypershell pages are written on the website's
+  `v0.8.0` branch, per [hypershell.md](hypershell.md#what-is-written); the other three projects are
+  planned. Post-release, per [Ordering](#ordering)
 
 ## What the section is
 
@@ -140,9 +142,10 @@ crates, whose internal sections have no per-example document yet.
 | `architecture/<idea>.md` | `architecture/<idea>.md` |
 | `guides/<job>.md` | `guides/<job>.md` |
 | `reference/<family>.md` | one page per construct in the family, under `reference/<kind>/` |
-| `issues.md` | `limitations.md`, defects and missing features only |
+| `issues.md` | none; bugs and missing features stay internal |
 | a comparison document | a page of the same name |
-| `testing.md` | none; its relevant facts go on the limitations page |
+| the README and `architecture/`, for their limits | `limitations.md`, the high-level limits of the design and status |
+| `testing.md` | none; the limitations page says only that the project is lightly tested |
 | [cgp-examples/constructs.md](../../projects/cgp-examples/constructs.md) | the pattern-finding table on the section index |
 
 **Where a project has no per-example document, it is written in this base first.** A public page

@@ -5,11 +5,83 @@ compile time through CGP wiring: thirteen example programs, the design that make
 the guides for writing and extending the language, one reference page per construct, and a candid
 account of what the proof of concept does not do. The project with measured search demand behind it.
 
-- **Planned URL** — `https://contextgeneric.dev/docs/projects/hypershell/`
+- **URL** — <https://contextgeneric.dev/docs/projects/hypershell/>
+- **Source** —
+  [docs/projects/hypershell/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/projects/hypershell),
+  written on the website's `v0.8.0` branch and not yet published
 - **Ports** — [projects/hypershell/](../../projects/hypershell/README.md)
 - **Repository** — [`hypershell`](https://github.com/contextgeneric/hypershell), documented on its
   `v0.8.0` branch, which is the only branch built on `HypershellNamespace`
-- **Status** — planned; no page written. The reference and the extension pages wait on DC1
+- **Verified against** — `hypershell` `v0.8.0` at commit `7f7e943`, and `cargo-cgp` built from its
+  source at commit `b6a6323`
+- **Status** — Draft: 21 Hypershell pages and the section index written, listed in [What is
+  written](#what-is-written); the reference, the comparison, and the pages that quote providers wait
+  on DC1 or a knowledge-base document
+- **How it was made** — written by an agent from the project section; level one of the four in
+  [ai-disclosure.md](../../communication-strategy/ai-disclosure.md)
+
+## What is written
+
+**Twenty-one Hypershell pages and the section index are written**, all the pages that nothing
+blocks. `yarn build` passes with them, so every link they carry resolves. They are:
+
+- **Section and project** — `docs/projects/index.md`, the section index, with Hypershell as its only
+  project and a pattern-finding table of Hypershell rows; and `hypershell/index.md`.
+- **Examples** — the index and eleven pages: `hello`, `hello-name`, `http-checksum-cli`,
+  `http-checksum-client`, `http-checksum-native`, `nix-manual`, `save-webpage`, `github-issues`,
+  `rust-playground`, `bluesky`, and `bluesky-websocket`.
+- **Architecture** — the index, `abstract-syntax`, `assembly`, `streams-and-input-dispatch`, and
+  `crate-layout`.
+- **Guides** — `writing-a-program` and `debugging`, under a generated category index.
+- **Limitations** — `limitations.md`.
+
+**The pages not yet written** are the ones this plan says must wait, and none is scaffolded as a
+stub. Pages that would link them instead describe the idea in place, or say the page is still being
+written, so no link points at a placeholder:
+
+- `examples/parallel-compare` and `examples/compare-and-branch`, `architecture/interpretation`,
+  `architecture/error-handling`, and `guides/extending-the-language` quote providers in the explicit
+  form, and wait on DC1. `compare-and-branch` also needs a confirmed run.
+- The whole `reference/` group waits on DC1. The example pages name each Hypershell construct and
+  link the architecture page that explains it, and gain links to construct pages when those exist.
+- `shell-scripts.md` waits on its knowledge-base document.
+
+The writing turned up several facts a later revision must respect:
+
+- **Every run and diagnostic was re-produced.** `hello` and `hello_name` were built and run offline
+  and printed what the records say. Every diagnostic the pages quote, and every fix they recommend,
+  was re-run in a probe crate against the local checkout, with `cargo-cgp` built from source. The
+  network examples were not re-run; their pages describe what they print, from the records, without
+  quoting output that was not captured.
+- **The diagnostics come from the unreleased `cargo-cgp`.** The published v0.1.0-alpha reports the
+  missing dispatcher entry as `[CGP-E107]` where the source reports `[CGP-E110]`, and the site's
+  [compile errors page](https://contextgeneric.dev/docs/reference/errors) already documents
+  `[CGP-E110]`, so the pages follow the source. Re-check them when `cargo-cgp` next releases.
+- **Source links point at `main`**, per the writing guide, so until the `v0.8.0` branch merges they
+  show the older preset-based code.
+- **The pages are on the website's release branch**, so they publish when that branch merges, with
+  v0.8.0, unless they are moved off it first. The section was planned as post-release work;
+  publishing it with the release instead is a decision for the author, and it depends on
+  Hypershell's own `v0.8.0` branch merging by then.
+- **The install instructions assume the merge too.** The index tells a reader to clone the
+  repository, and to depend on it by git with its toolchain files copied, rather than naming a
+  crates.io version.
+- **Two knowledge-base corrections came out of it**: the namespace's route table listed only two of
+  the four method markers, and the writing guide's advice about `Vec::<u8>::new()` overstated its
+  effect. Both are fixed in the project section.
+- **The architecture pages are written for an outside reader, not ported line for line.** Each opens
+  with a question such a reader would ask, introduces bundles, namespaces, and input dispatchers one
+  at a time, and leaves out the registration paths, the lookup internals, and the `[CGP-E104]` walk
+  the internal documents carry. Their cost sections state trade-offs; the project's open issues stay
+  on the limitations page. A revision should keep them that way, per the [writing
+  guide](../writing-guides/project.md#architecture-pages).
+- **No public page lists Hypershell's bugs or missing features.** The limitations page states only
+  the high-level limits of the design, and the example pages carry no known-issues sections; the
+  redirect, `StreamToLines`, WebSocket, and macro defects stay in the project's
+  [issues](../../projects/hypershell/issues.md), per the [writing
+  guide](../writing-guides/project.md#the-limitations-page).
+- **The `Try a change` results** are recorded in the example records for `hello_name`,
+  `http_checksum_native`, and `bluesky_websocket` before the pages quote them.
 
 ## What it covers
 
@@ -136,9 +208,10 @@ approximate sizes are:
 The prelude is a re-export module rather than a construct, so the index documents what it brings
 into scope, and the reference index's lookup table routes each re-exported name to its page.
 
-A provider that the internal reference records as routed nowhere, or a syntax the namespace does not
-route, keeps its page and says so under *Known limitations*, since a reader who finds the name needs
-to know it cannot be used as it stands.
+A provider or syntax that `HypershellNamespace` does not include keeps its page, and its *Usage*
+section says plainly that a context must wire it to use it. That is a fact about using the item, not
+a defect report; why it is left out, and whether it works, are recorded in the project's `issues.md`
+and stay there.
 
 ### The comparison and the limitations
 
@@ -147,11 +220,11 @@ to know it cannot be used as it stands.
   scripting vs rust* queries and carries the trade-offs the announcement post's disadvantages
   section made. **It has no internal document yet**; see [Knowledge-base
   prerequisites](#knowledge-base-prerequisites).
-- **`limitations.md`** — from [issues.md](../../projects/hypershell/issues.md): the streamed body
-  that does not follow redirects, the unusable `StreamToLines`, the syntax a namespace-joining
-  context cannot reinterpret, the macro's edges, and the evidence gaps a user would want to know:
-  few tests, no wiring checks, and the nightly toolchain. The learning curve falls on the people
-  extending the language rather than the people using it; say so here in the project voice.
+- **`limitations.md`** — the high-level limits of the design and status, written from the README and
+  the architecture: a proof of concept that is lightly tested, programs fixed at compile time, typed
+  stages stricter than a shell, extensions that add syntax but cannot replace the standard syntax's
+  meaning, the nightly toolchain, and long compile errors. It names no bugs and no unimplemented
+  features; those stay in [issues.md](../../projects/hypershell/issues.md).
 
 ## Prerequisites
 
@@ -205,6 +278,5 @@ primer and its preset-based code; its record lists what has drifted.
 
 Two properties are worth defending. **The one-line context stays on the index**, near the top,
 rather than moving into the assembly page as the section grows. And **the limitations page and the
-comparison keep the costs** the announcement post was candid about: compile times the project has
-not measured are stated as unmeasured rather than dropped, and the diagnostics are shown as they
-are.
+comparison keep the costs** the announcement post was candid about: the toolchain, the compile-time
+work, and the long diagnostics, stated as the design's limits rather than as a list of defects.

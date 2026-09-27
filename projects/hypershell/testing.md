@@ -65,5 +65,5 @@ Several things no test and no example reaches:
 
 ## Public material derived from this
 
-The sentences on what is and is not exercised on the `limitations` page of the planned [Hypershell
-project section](../../website/projects/hypershell.md).
+The one sentence on the `limitations` page of the planned [Hypershell project
+section](../../website/projects/hypershell.md) saying that the project is lightly tested.

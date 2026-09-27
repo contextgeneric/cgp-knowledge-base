@@ -734,7 +734,7 @@ it stale.
   counterparts of the code the site shows, plus one entry each for the front page, Introduction,
   the Quickstart, Overview, Resources, Contribute, the `cargo-cgp` tooling section, the AI skills section and its
   `cgp-skills` submodule, the Concepts section, the Comparisons section, the Reference section including its
-  compile-errors and glossary pages, and the AI disclaimer.
+  compile-errors and glossary pages, the Projects section, and the AI disclaimer.
 
 ### `website/writing-guides/` — how new pages should be written
 
@@ -759,8 +759,9 @@ it stale.
 - [project.md](website/writing-guides/project.md) — the Projects section ported from the internal
   project sections: the seven page kinds, the example page as a short applied-register tutorial with
   its *New to CGP?* orientation, walkthrough by idea, named pattern, and verified change to try, one
-  reference page per project construct and what folds onto another's page, the limitations page, the
-  link map, and project code verified against its own repository rather than `example-code`.
+  reference page per project construct and what folds onto another's page, a limitations page of
+  high-level limits with no bugs or missing features on any public page, the link map and the rule against placeholder pages, project code verified against its own repository
+  rather than `example-code`, and diagnostics quoted from the source-built `cargo-cgp`.
 - [tooling.md](website/writing-guides/tooling.md) — the pages documenting a program the reader runs
   rather than a construct they write: why a tool's page fails differently, the five-page section shape,
   quoting real output rather than remembered output, and the version concession.
@@ -833,9 +834,10 @@ it stale.
 - [cgp-examples.md](website/projects/cgp-examples.md) — the five demonstration crates as about 18
   example pages with no reference, the per-example records `builder`, `transfer`, and `greet` need
   first, and the DC4 code changes.
-- [hypershell.md](website/projects/hypershell.md) — thirteen example pages, the design and guides,
-  about 75 construct pages, a comparison with shell scripts that needs an internal document first, the
-  pages DC1 blocks, and the release the install instructions need.
+- [hypershell.md](website/projects/hypershell.md) — the plan and record of the Hypershell section: the
+  21 pages written and the revisions they were verified against, what each unwritten page waits on,
+  the thirteen examples and about 75 construct pages planned, the comparison with shell scripts, and
+  the release the install instructions need.
 - [cgp-serde.md](website/projects/cgp-serde.md) — four example pages led by `messages`, the design and
   guides, about 30 construct pages, the comparison with Serde, and DC3's attribute removals, arena-test
   cleanups, and recommended namespace.

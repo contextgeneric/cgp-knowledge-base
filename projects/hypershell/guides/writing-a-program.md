@@ -109,8 +109,11 @@ The common cases are:
 - A Rust value for a program starting with `EncodeJson`.
 - A pair for the examples library's `Compare` and `If`, one input per operand.
 
-Prefer `Vec::<u8>::new()` to `Vec::new()`. When the program fails to type-check, the element type of
-a bare `Vec::new()` cannot be inferred, which adds unresolved `_` types to every message.
+When the program fails to type-check, the errors reported at the `handle` call show some of their
+types as unresolved `_` whichever form the input takes. A probe of the missing-field mistake at its
+call site produced three `[CGP-E002]` headlines: with `Vec::new()`, two named the input `_` and one
+`Vec<_>`; with `Vec::<u8>::new()`, two still named it `_` and one `Vec<u8>`. A check keyed on the
+program and its input names every type, which is the better reason to check.
 
 The program's output type is computed from its last stage, so `handle` on a program ending in
 `DecodeJson<Vec<Issue>>` returns a `Vec<Issue>` with no conversion.
