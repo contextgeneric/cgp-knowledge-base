@@ -185,10 +185,11 @@ delegate_components! {
 
 Several entries take their one step from a sibling rather than from the base.
 `HandlerComponent: PromoteAsync<Provider>` needs `Provider: TryComputer`, and each
-`PromoteRef<Provider>` entry needs `Provider` to answer the matching owned-input member. So a bundle
-expects its parameter to be a provider wired to that same bundle, which is what the macros do by
-passing `Self`: the generated provider delegates `TryComputerComponent` to `Promote<Self>`, and
-`PromoteAsync<Self>` then finds that `TryComputer`.
+`PromoteRef<Provider>` entry other than `ComputerRefComponent` needs `Provider` to answer the
+matching owned-input member over a borrowed input. So a bundle expects its parameter to be a
+provider wired to that same bundle, which is what the macros do by passing `Self`: the generated
+provider delegates `TryComputerComponent` to `Promote<Self>`, and `PromoteAsync<Self>` then finds
+that `TryComputer`.
 
 The other bundles follow the same pattern from other bases:
 
@@ -217,17 +218,22 @@ bundle, as the macros wire theirs:
   `TryComputer`) does not, and fails with
   ``error[E0277]: the trait bound `Double: DelegateComponent<TryComputerComponent>` is not satisfied``.
   The hand-written form is `PromoteAsync<Promote<P>>`.
-- **`PromoteTryComputer<P>`:** `TryComputerComponent` (`TryPromote`) works for any `Computer`
-  returning `Result`; `HandlerComponent`, through `PromoteComputer<P>`, does not. The hand-written
-  form is `PromoteAsync<TryPromote<P>>`.
+- **`PromoteTryComputer<P>`:** `TryComputerComponent` (`TryPromote`) and `AsyncComputerComponent`
+  (`PromoteAsync`, through `PromoteComputer<P>`, keeping the `Result` as its output) work for any
+  `Computer` returning `Result`; `HandlerComponent`, through `PromoteComputer<P>`, does not. The
+  hand-written form is `PromoteAsync<TryPromote<P>>`.
 - **`PromoteProducer<P>`:** `ComputerComponent` (`Promote`) works for any `Producer`; every other
   entry, through `PromoteComputer<P>`, needs `P` wired to the bundle.
 - **`PromoteAsyncComputer<P>`** and **`PromoteHandler<P>`:** `HandlerComponent` (`Promote` and
   `TryPromote`) works for any `AsyncComputer`, or any returning `Result` respectively.
 
-Every bundle's `…Ref` entries also need a base that accepts the borrow as its input, so a base over
-an owned `u64` answers none of them; wiring `HandlerRefComponent: PromoteHandler<P>` for such a base
-fails with `E0277`.
+The `…Ref` entries follow the same rule, with a borrowed input. `ComputerRefComponent` in
+`PromoteComputer<P>` and `PromoteTryComputer<P>`, and `AsyncComputerRefComponent` in
+`PromoteAsyncComputer<P>` and `PromoteHandler<P>`, take one step from the base, so a hand-written
+base whose input is `&'a Input` at every lifetime answers them. Every other `…Ref` entry steps from
+a sibling, so even such a base fails there: wiring `HandlerRefComponent` to
+`PromoteAsyncComputer<P>` or `PromoteHandler<P>` fails with `E0277`, because `P` does not implement
+`DelegateComponent<HandlerComponent>`. A base over an owned `u64` answers no `…Ref` entry at all.
 
 ## Dispatching on the input type
 
