@@ -226,8 +226,9 @@ and the note ``required for `Double` to implement `TryComputer<App, (), u64>` ``
 form is `PromoteAsync<Promote<Double>>`; a `#[cgp_computer]` provider needs neither, since it is
 wired to `PromoteComputer<Self>`.
 
-A concrete context calling `App::handle(…)` by bare name is ambiguous (`E0034`) when the `Handler`
-provider trait is in scope, as it is through the prelude, for the reason given in
+A concrete context calling `App::handle(…)` by bare name is ambiguous (`E0034`) when `CanHandle` is
+imported and the `Handler` provider trait is in scope, as it is through the prelude, for the reason
+given in
 [`Computer`'s Known issues](computer.md#known-issues).
 
 ## Source

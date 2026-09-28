@@ -130,10 +130,10 @@ but not `compute_ref`; the check reports it as
 [`#[cgp_computer]`](../macros/cgp_computer.md) function over a reference parameter, as
 `fn double(value: &u64) -> u64`, does meet the bound and answers `compute_ref`.
 
-`PromoteRef<P>` also runs the other way: as a `Computer` it takes an owned input that dereferences to
-`Target`, such as `Box<String>` for `Target = String`, and calls the `ComputerRef` provider `P` on
-`input.deref()`, so any `ComputerRef` provider serves that direction. The same two directions hold
-for `AsyncComputer` and `AsyncComputerRef`.
+`PromoteRef<P>` also runs the other way: as a `Computer` it takes an owned input that dereferences
+to `Target`, such as `Box<String>` for `Target = String`, and calls the `ComputerRef` provider `P`
+on `input.deref()`, so any `ComputerRef` provider serves that direction. The same two directions
+hold for `AsyncComputer` and `AsyncComputerRef`.
 
 A `Computer` whose `Output` is a `Result` over the context's error type is how
 [`#[cgp_computer]`](../macros/cgp_computer.md) writes a synchronous function returning `Result`; its
@@ -304,12 +304,14 @@ These constructs are the ones the computer components work with:
 
 **Calling a computer on a concrete context by its bare name is ambiguous.** A context that delegates
 `ComputerComponent` also implements the `Computer` provider trait through the delegation blanket
-impl, and the prelude brings `Computer` into scope, so `App::compute(&App, PhantomData::<()>, 21)`
-fails with ``error[E0034]: multiple applicable items in scope``, its notes naming `CanCompute` and
+impl, and the prelude brings `Computer` into scope, so once `CanCompute` is imported too,
+`App::compute(&App, PhantomData::<()>, 21)` fails with
+``error[E0034]: multiple applicable items in scope``, its notes naming `CanCompute` and
 `cgp::prelude::Computer` as the two candidates. Method syntax, `App.compute(…)`, is unambiguous
 because only the consumer trait takes `self`; `<App as CanCompute<(), u64>>::compute(…)` names the
-consumer trait explicitly. The same applies to every handler-family member whose provider trait is
-in scope.
+consumer trait explicitly. Without the consumer trait in scope the same call compiles and runs the
+provider trait's `compute`, with `App` as its own provider through the delegation blanket impl. The
+same applies to every handler-family member whose consumer and provider traits are both in scope.
 
 ## Source
 
