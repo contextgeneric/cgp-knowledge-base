@@ -1108,14 +1108,16 @@ four whose pages show code a compiler can check, since a page that only displays
 checking nothing about CGP by re-declaring it.
 
 Porting the `derives/` group corrected two claims and turned up a library defect, all three found by
-compiling the pages' snippets rather than by reading them — which is the strongest argument yet for the
-`example-code` crate, since each of the six derive pages carries a file there and every one of these was
-invisible on the page. **`build_from` needs [`#[derive(HasFields)]`](../cgp/reference/derives/derive_has_fields.md)
-on its *source*, not just the builder**: `CanBuildFrom` walks the source's field list, so the internal
-reference's own Examples snippet — which derived only `BuildField` on both structs — would not have
-compiled. And **a partial companion type carries none of the input's attributes**, because the codegen
-clears them, so a partially-built record or an extraction remainder is neither `Debug` nor `Clone`
-however the original is derived; that had gone unrecorded on either side and is why an
+compiling the pages' snippets rather than by reading them — which is the strongest argument yet for
+the `example-code` crate, since each of the six derive pages carries a file there and every one of
+these was invisible on the page. **`build_from` needs
+[`#[derive(HasFields)]`](../cgp/reference/derives/derive_has_fields.md) on its *source*, not just
+the builder**: `CanBuildFrom` walks the source's field list, so the internal reference's own
+Examples snippet — which derived only `BuildField` on both structs — would not have compiled. And
+**a partial companion type carries none of the input's struct-level attributes**, because the
+codegen clears them, so a partially-built record or an extraction remainder is neither `Debug` nor
+`Clone` however the original is derived (field and variant attributes, by contrast, are copied, the
+Known issue a `serde` helper attribute trips); that had gone unrecorded on either side and is why an
 `assert_eq!` over an `extract_field` result does not compile.
 
 The defect is the first entry in the library's [`invalid_expansion`](https://github.com/contextgeneric/cgp/tree/main/crates/tests/cgp-macro-tests/tests/invalid_expansion)

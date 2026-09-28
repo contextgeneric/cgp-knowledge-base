@@ -340,6 +340,47 @@ through `UpdateField`, and neither changes a value's runtime layout beyond wrapp
 only way a partial value becomes a concrete struct; these extensions simply guarantee the
 all-present configuration is reached before it is invoked.
 
+### Choosing between the paths, and their pitfalls
+
+Moving to this layer gives up the core builder's compile-time completeness check, which is the
+trade to weigh before reaching for it. With the core builder a missing field is a compile error; on
+an optional builder it is an `Err` from `finalize_optional` or a silently substituted default from
+`finalize_with_default`, and nothing in the result distinguishes a field set to its default from one
+left unset. The layer suits fields that arrive unpredictably, such as parsed configuration or a value
+assembled over several passes; a hand-written builder remains better when finalizing should validate,
+when fields depend on each other, or when a default is computed rather than `Default::default()`.
+
+The optional builder's type records nothing about what has been set, since every field stays
+`IsOptional` from start to finish. That is what permits setting a field more than once, and it is why
+finalizing must check at run time. `SetOptional::set_optional` returns `(previous, builder)`, in that
+order, the previous value as an `Option`; there is no operation that unsets a field, so a field left
+alone stays `None`. A field whose own type is already `Option<T>` takes an `Option<T>` argument and is
+stored as `Option<Option<T>>`, the outer layer being the builder's presence tracking, which is easy
+to conflate with the field's own optionality when reading an error.
+
+`ToOptional` is one-way. A field already set survives the conversion as `Some`, which distinguishes
+it from starting over with `optional_builder()`, and no `from_optional` exists: returning to a strict
+configuration means finalizing, through `FinalizeOptional` or `CanFinalizeWithDefault`. Relaxing a
+complete value is `into_builder()` followed by `to_optional()`, which makes every field `Some`.
+
+`FinalizeOptional`'s error is a `&'static str` naming one field, enough to report which field is
+missing and not a structured value to match on. Because the walk checks the last declared field
+first and stops at the first `None`, reordering a struct's fields changes which missing field is
+named, which a test asserting on the name depends on.
+
+`CanBuildWithDefault::build_with_default` is an associated function on the target,
+`Point3d::build_with_default(source)`, and it offers no step at which to set a field by hand; a build
+that copies some fields and sets others writes the three calls out. Its enum analogue, widening a
+variant set rather than a field set, is [`CanUpcast`](cast.md). When both types are the author's own
+and the conversion is written once, a hand-written `From` impl is clearer, requires nothing of either
+type, and can choose values other than `Default`.
+
+`TransformMapDefault` and `TransformOptional` are markers named only in a
+`TransformMapFields<Marker, Target>` bound, which is where an operation says which conversion it
+drives; a caller of `finalize_with_default` or `to_optional` never names them. A conversion neither
+covers, one that validates, logs, or fills from something other than `Default`, is a marker of one's
+own implementing [`TransformMap`](map_type.md) once per source state it accepts.
+
 ## Examples
 
 The optional-field workflow starts an all-optional builder, sets fields freely, and finalizes with

@@ -64,11 +64,13 @@ field's value as it is *stored* under each marker: `IsPresent` stores the value 
 stores `()`. So updating an absent field to present takes the real value in and returns `()` as the
 old value; the reverse takes `()` in and returns the real value.
 
-The target marker `M` is not inferred from the value passed. A `String` argument could be the storage
-of more than one marker, so `builder.update_field(PhantomData::<Symbol!("first_name")>, value)` on a
-fresh `Person` builder fails with ``error[E0284]: type annotations needed for `((), __PartialPerson<_, IsNothing>)` ``
-and the note ``cannot satisfy `<_ as MapType>::Map<String> == String` ``. A direct call names the
-marker, as `UpdateField::<Symbol!("first_name"), IsPresent>::update_field(builder, PhantomData, value)`;
+The target marker `M` is not inferred from the value passed. The argument's type is the projection
+`M::Map<Self::Value>`, and rustc does not solve a projection backwards, so
+`builder.update_field(PhantomData::<Symbol!("first_name")>, value)` on a fresh `Person` builder
+fails with ``error[E0284]: type annotations needed for `((), __PartialPerson<_, IsNothing>)` `` and
+the note ``cannot satisfy `<_ as MapType>::Map<String> == String` ``. A direct call names the
+marker, as
+`UpdateField::<Symbol!("first_name"), IsPresent>::update_field(builder, PhantomData, value)`;
 `BuildField` and `TakeField` below pin it, which is one reason they exist.
 
 `BuildField<Tag>` and `TakeField<Tag>` are the two directions of that transition, each defined once
@@ -248,6 +250,47 @@ impl<
 through untouched, which is why fields can be built in any order. The companion drops the struct's
 own attributes, so it has none of the record's derives (`Debug`, `Clone`, and so on); the field
 attributes are a different matter, under [Known issues](#known-issues).
+
+### Using the family, and where it stops
+
+The builder family is for code that cannot name the record it builds, and concrete code that can is
+better served by plain Rust. A struct literal already checks completeness and generates nothing, a
+struct update expression (`Person { first_name, ..person }`) swaps a field of a complete value, and
+destructuring (`let Person { first_name, .. } = person;`) takes one out. The traits belong
+in generic code: a routine bounded on `HasBuilder`, `BuildField`, and `FinalizeBuild` assembles a
+record it never names, which is the extensible builder pattern. It tracks presence and nothing else,
+with neither defaults nor validation at finalize, so a field with a sensible default still has to be
+set unless the [optional-field extensions](optional_fields.md) are used, and a hand-written builder
+remains the better tool when validation or interdependent fields are the point.
+
+The two entry points differ in their receivers as well as their starting states. `builder()` is an
+associated function, called as `Person::builder()` or `T::builder()`; `into_builder(self)` is a
+method that consumes the value, with no borrowing form, so a caller that must keep the original
+reaches for [`ToFieldsRef`](has_fields.md), which yields a shape rather than a builder. A value
+straight out of `into_builder` is already finalizable, so `into_builder().finalize_build()` is the
+identity; the round trip is useful only for what happens between, such as a `take_field` followed by
+a `build_field` that swaps one field, or handing the taken fields to another record's builder.
+
+Every transition returns a *different* type, which shapes how the traits are called. A builder cannot
+be held in one variable of fixed type across a chain, so it cannot be filled in a loop: a chain of
+`build_field` calls is unrolled by construction, and a whole-record transition is
+[`TransformMapFields`](map_type.md) rather than repeated `UpdateField` calls. The tag travels in a
+`PhantomData<Tag>` argument, `PhantomData::<Symbol!("first_name")>` for a named field and
+`PhantomData::<Index<0>>` for a tuple-struct position, written in full wherever inference cannot fix
+it. `take_field` returns `(value, remainder)` in that order, and `update_field` returns the old
+storage first and the new partial second.
+
+Where a mistake surfaces follows from the same types. A forgotten field is detectable only at
+`finalize_build`, since any prefix of a chain is a legal partial value, and a decomposition that takes
+a field out and never puts it back fails there too rather than where the field was dropped. In an
+`UpdateField` bound, `Mapper` is the field's state *before* the call; reading it as the state after
+selects the wrong impl or none. `PartialData` is satisfied by an empty builder as readily as by a full
+one, so a bound that needs completeness names `FinalizeBuild`, which supertraits it and makes naming
+both redundant; `PartialData` has no method, since naming the destination is not an operation. The
+enum side implements `PartialData` on its extraction companions, with `Target` naming the enum, so a
+`PartialData` bound admits an extractor remainder as well as a record builder. Its ending,
+[`FinalizeExtract`](extract_field.md), discharges an exhausted extractor, sound for the opposite
+reason: the value cannot exist, rather than being complete.
 
 ## Examples
 
