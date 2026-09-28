@@ -12,8 +12,10 @@ concrete type. Generic code writes `<Self as HasType<Tag>>::Type`, or `TypeOf<Co
 never names the concrete type. See [abstract types](../../concepts/abstract-types.md) for how
 abstract types are used across a codebase.
 
-It is the only abstract-type component built into CGP, but most code defines named abstract types
-with [`#[cgp_type]`](../macros/cgp_type.md) instead. A named trait such as `HasScalarType` reads
+It is the one abstract-type component in CGP indexed by a tag rather than named; CGP's other
+abstract types, such as [`HasErrorType`](has_error_type.md) and
+[`HasRuntimeType`](has_runtime.md), are named components defined with
+[`#[cgp_type]`](../macros/cgp_type.md), which is also how most code defines its own. A named trait such as `HasScalarType` reads
 better than `HasType<ScalarTag>` and has its own component key. The two meet at the provider level:
 `#[cgp_type]` generates a `WithProvider` impl that lets any `TypeProvider` back the named component,
 so a provider written once for `HasType` also serves every `#[cgp_type]` trait.

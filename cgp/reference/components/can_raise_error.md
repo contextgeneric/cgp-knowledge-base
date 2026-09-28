@@ -48,7 +48,10 @@ The two traits share one shape:
 - **The methods are associated functions**, with no `self` receiver, because building an error
   depends on the context type, not on a context value. Generic code calls
   `Context::raise_error(source)` or `Self::wrap_error(error, detail)` where only the type parameter
-  is in scope.
+  is in scope. On a concrete context with the provider trait also imported, the bare
+  `App::raise_error(…)` is ambiguous (`E0034 multiple applicable items in scope`), because the
+  context implements `ErrorRaiser` too through the provider blanket impl; name the consumer trait,
+  as `<App as CanRaiseError<String>>::raise_error(…)`.
 - **The provider traits are `ErrorRaiser` and `ErrorWrapper`**, wired with the keys
   `ErrorRaiserComponent` and `ErrorWrapperComponent`.
 - **[`#[derive_delegate(UseDelegate<...>)]`](../attributes/derive_delegate.md)** generates the
@@ -82,8 +85,8 @@ applies `#[track_caller]` on a trait method declaration to every impl of that me
 `#[cgp_component]` keeps it on the provider trait's declaration. It therefore covers the consumer
 blanket impl, the delegation impl, the `UseDelegate` and `RedirectLookup` impls, and every provider.
 An error library that records `Location::caller()`, such as eyre with its `track-caller` feature,
-records the line that called `raise_error`, whether the component is wired directly, with `open`, or
-through a namespace path. The location survives only while every call between the caller and the
+records the line that called `raise_error`, whether the component is wired directly, with `open`, through
+a namespace path, or through a `UseDelegate` table. The location survives only while every call between the caller and the
 library is `#[track_caller]`. `Into::into` and eyre's constructors are, but a helper function inside
 a provider needs the attribute too, or the library records the helper's line.
 
