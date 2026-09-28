@@ -50,7 +50,10 @@ impl MapType for IsOptional { type Map<T> = Option<T>; }
 ```
 
 `MapType`, `IsPresent`, `IsNothing`, and `IsVoid` are in the prelude; `IsOptional` is imported from
-`cgp::core::field::impls`.
+`cgp::core::field::impls`. The library also implements `MapType` for two list mappers that are not
+field states, `TryPromoteProviders` (in `cgp-monad`, `Map<P> = TryPromote<P>`) and
+`ToBuildAndMergeHandler` (in `cgp-dispatch`), which [`MapFields`](product_ops.md) applies to wrap every
+provider in a list.
 
 ## `MapTypeRef`
 

@@ -26,9 +26,10 @@ already binds overlaps the forwarding impl and is rejected with `E0119`, the
 [namespace override conflict](../../errors/wiring/namespace-override-conflict.md).
 
 These traits are the plumbing beneath the [`cgp_namespace!`](../macros/cgp_namespace.md) macro and
-the `namespace` / `for … in` syntax of [`delegate_components!`](../macros/delegate_components.md). A
-user writing namespaces names them only in the namespace header and in the `for … in` loop target;
-the macros generate the impls and the forwarding.
+the `namespace` / `for … in` syntax of [`delegate_components!`](../macros/delegate_components.md). A user writing namespaces names them in the namespace header, in the `for … in` loop target, and in
+the registering attributes (`#[prefix(@path in DefaultNamespace)]` on a component,
+`#[default_impl(Key in DefaultImpls1<Component>)]` on a provider); the macros generate the impls and
+the forwarding.
 
 ## Definition
 

@@ -149,8 +149,7 @@ fn names() {
 `to_string` goes through `Display`, which delegates to `StaticFormat`. `StaticString::VALUE` is a
 compile-time constant and handles multi-byte characters.
 
-`ConcatPath` composes two paths into one at the type level, the operation behind chaining nested
-accessors:
+`ConcatPath` composes two paths into one at the type level:
 
 ```rust
 type Outer = Path!(@a.b);
