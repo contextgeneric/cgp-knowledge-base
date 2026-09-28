@@ -18,7 +18,9 @@ plain [`UseField`](use_field.md) works for them:
 - `Option<&T>` from an `Option<T>` field, and `Option<&str>` from an `Option<String>` field.
 
 `UseFieldRef` is for the remaining case, a getter returning `&T` for a sized `T` that the field is
-not but can borrow as.
+not but can borrow as. It cannot serve a `-> &str` getter: `str` is unsized, so
+`WithFieldRef<Symbol!("name"), str>` fails with `E0277` (the size of `str` is not known), and the
+getter's `WithProvider` impl expects `Value = String` for a `&str` return, adding an `E0271`.
 
 It implements only the foundational [`FieldGetter`](../traits/has_field.md) and `MutFieldGetter`,
 not any getter component's own provider trait. So it is wired to a getter through
