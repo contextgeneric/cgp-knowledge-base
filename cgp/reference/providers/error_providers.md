@@ -294,3 +294,17 @@ These constructs are the ones the error providers work with:
 - The standalone backend counterparts are in
   [crates/standalone/error/](https://github.com/contextgeneric/cgp/tree/main/crates/standalone/error/),
   documented in [projects/error/](../../../projects/error/README.md).
+
+## Public pages derived from this document
+
+The public reference gives each provider here its own page, so this document feeds the [error
+providers overview](https://contextgeneric.dev/docs/reference/providers/error/) and seven construct
+pages: [`debug_error`](https://contextgeneric.dev/docs/reference/providers/error/debug_error),
+[`discard_detail`](https://contextgeneric.dev/docs/reference/providers/error/discard_detail),
+[`display_error`](https://contextgeneric.dev/docs/reference/providers/error/display_error),
+[`panic_on_error`](https://contextgeneric.dev/docs/reference/providers/error/panic_on_error),
+[`raise_from`](https://contextgeneric.dev/docs/reference/providers/error/raise_from),
+[`raise_infallible`](https://contextgeneric.dev/docs/reference/providers/error/raise_infallible),
+and [`return_error`](https://contextgeneric.dev/docs/reference/providers/error/return_error). A
+change here is propagated to each page it touches, per the [synchronization
+rule](../../../AGENTS.md#the-synchronization-rule).

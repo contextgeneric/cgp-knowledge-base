@@ -187,3 +187,13 @@ These constructs are the ones the monad providers work with:
   [crates/extra/cgp-monad/src/monadic/](https://github.com/contextgeneric/cgp/tree/main/crates/extra/cgp-monad/src/monadic/):
   `ident.rs` for `IdentMonadic`, `ok.rs` for `OkMonadic` / `OkMonadicTrans` / `BindOk`, and `err.rs`
   for `ErrMonadic` / `ErrMonadicTrans` / `BindErr`.
+
+## Public pages derived from this document
+
+The public reference gives each provider here its own page, so this document feeds the [monad
+providers overview](https://contextgeneric.dev/docs/reference/providers/monad/) and three construct
+pages: [`bind_err`](https://contextgeneric.dev/docs/reference/providers/monad/bind_err),
+[`bind_ok`](https://contextgeneric.dev/docs/reference/providers/monad/bind_ok), and
+[`pipe_monadic`](https://contextgeneric.dev/docs/reference/providers/monad/pipe_monadic). A change
+here is propagated to each page it touches, per the [synchronization
+rule](../../../AGENTS.md#the-synchronization-rule).

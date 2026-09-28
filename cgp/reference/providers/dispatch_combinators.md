@@ -75,9 +75,25 @@ The matchers come in six forms, along two axes:
 | **value with extra arguments** | `MatchFirstWithHandlers` | `MatchFirstWithHandlersRef` | `MatchFirstWithHandlersMut` |
 
 The borrowed forms require `HasExtractorRef` or `HasExtractorMut` and match without moving the
-value. The `MatchFirstWith…` forms take a tuple `(Input, Args)` whose first element is matched while
-`Args` rides along to every handler: the list runs over `(Input::Extractor, Args)` and returns
-`Result<Output, (Remainder, Args)>`, so a miss carries both the remainder and the arguments forward.
+value. Their extractors yield `&'a Value` or `&'a mut Value` payloads, so each payload handler
+computes over `&Circle` or `&mut Circle`, and a check names the borrowed input as
+`ComputerComponent: <'a> ((), &'a Shape)`. The `MatchFirstWith…` forms take a tuple `(Input, Args)`
+whose first element is matched while `Args` rides along to every handler: the list runs over
+`(Input::Extractor, Args)` and returns `Result<Output, (Remainder, Args)>`, so a miss carries both
+the remainder and the arguments forward.
+
+A list must have an arm for every variant. After the last arm the remainder must implement
+`FinalizeExtract`, which the derive emits only for the all-`IsVoid` configuration of the partial
+enum, so a list that misses `Rectangle` fails with
+``error[E0277]: the trait bound `__PartialShape<IsVoid, IsPresent>: FinalizeExtract` is not satisfied``,
+naming the ruled-out variant `IsVoid` and the unmatched one `IsPresent`.
+
+Because the matchers implement only `Computer` and `AsyncComputer`, wiring one to
+`TryComputerComponent` or `HandlerComponent` fails with an unsatisfied `IsProviderFor`, and rustc's
+help lists the `ComputerComponent` and `AsyncComputerComponent` impls it does have. The fallible
+slots take the matcher through the handler promotions: `TryComputerComponent: Promote<M>` and
+`HandlerComponent: PromoteAsync<Promote<M>>`. When the per-variant handlers return `Result` in the
+context's error type, `TryPromote<M>` reads the matcher's `Result` output as a `TryComputer`.
 
 ## Adapters
 
@@ -95,7 +111,12 @@ forwards the payload to an inner provider. Every adapter defaults its provider t
   does the same for `(Field<Tag, Input>, Args)`, forwarding `(Input, Args)`.
 - **`DowncastAndHandle<Inner, Provider>`** matches a group of variants at once. It uses
   `CanDowncastFields<Inner>` from [`cast`](../traits/cast.md) to narrow the input to a smaller enum
-  `Inner`, and on success hands the whole `Inner` value to `Provider`.
+  `Inner`, and on success hands the whole `Inner` value to `Provider`; on a miss the remainder has
+  every variant of `Inner` ruled out. `CanDowncastFields` works on any source that can extract each
+  of `Inner`'s variants, the extractor included, and needs `Inner: HasFields` and `FromVariant` for
+  each variant, so `Inner` derives `CgpData` and each of its variants is a variant of the input with
+  the same name and payload type. The struct names its first parameter `Input`; the impls name it
+  `Inner`.
 
 ```rust
 pub struct ExtractFieldAndHandle<Tag, Provider = UseContext>(pub PhantomData<(Tag, Provider)>);
@@ -125,14 +146,30 @@ They differ by one `HandleFieldValue` wrapper. `MatchWithFieldHandlers` runs
 `MatchWithValueHandlers` runs `ExtractFieldAndHandle<Tag, HandleFieldValue<Provider>>`, so
 `Provider` receives the bare payload. That makes it the form for payload handlers that are ordinary
 computers, such as ones from [`#[cgp_computer]`](../macros/cgp_computer.md). With the default
-`UseContext`, each payload goes back through the context's own `ComputerComponent`.
+`UseContext`, each payload goes back through the context's own `ComputerComponent`, so the context
+wires the payload types beside the enum, as in the `open` example below; a named provider, as in
+`MatchWithValueHandlers<ComputeArea>`, needs no per-type entries. A `MatchWithFieldHandlers`
+provider receives `Field<Tag, Value>` and can read the variant name as `Tag::VALUE` through
+[`StaticString`](../traits/static_format.md), so one generic provider serves every variant of every
+enum.
 
 The borrowed forms `MatchWithFieldHandlersRef`, `MatchWithValueHandlersRef`, and
-`MatchWithValueHandlersMut` are delegation tables. Their `Computer` and `AsyncComputer` entries
-dispatch `&Input` or `&mut Input` to the borrowed matchers, and their `ComputerRef` and
-`AsyncComputerRef` entries do the same through [`PromoteRef`](handler_combinators.md). The
-`MatchFirstWith…` convenience matchers are the same aliases built on the first-argument adapters and
-matchers.
+`MatchWithValueHandlersMut` are structs with a delegation table. Their `Computer` and
+`AsyncComputer` entries key a `UseInputDelegate` on `&'a Input` or `&'a mut Input` and reach the
+borrowed matchers, whose arms hand the provider a `Field<Tag, &Value>` (or `&mut Value`), so
+`MatchWithValueHandlersRef<P>` serves `ComputerComponent` over `&Shape` with a `P` over `&Circle`.
+Their `…Ref` entries wrap the same table in [`PromoteRef`](handler_combinators.md), with
+`PromoteRef<Provider>` per payload, so `MatchWithValueHandlersRef<P>` serves `ComputerRefComponent`
+over `Shape` with a `P: ComputerRef<…, Circle>`. The `Mut` form's `…Ref` entries cannot resolve,
+because `PromoteRef` lends a shared borrow while its table keys on `&'a mut Input`. There is no
+`MatchWithFieldHandlersMut`.
+
+The `MatchFirstWith…` convenience matchers are six aliases over `UseInputDelegate`:
+`MatchFirstWithFieldHandlers`, `MatchFirstWithValueHandlers`, and their `Ref` and `Mut` forms. Their
+tables key on `(Input, Args)`, `(&'a Input, Args)`, or `(&'a mut Input, Args)` and map to the
+matching `MatchFirstWithHandlers…` over a list built with `MapExtractFirstFieldAndHandle`, the
+value forms wrapping the provider in `HandleFirstFieldValue`. The three value forms are in the
+prelude.
 
 The list is built by three traits:
 
@@ -155,7 +192,11 @@ pub trait HasFieldHandlers<M> {
 `ToFieldHandlers` walks a sum-type field list: `Either<Field<Tag, Value>, Rest>` becomes
 `Cons<M::FieldHandler<Tag>, Rest::Handlers>`, and [`Void`](../types/either.md) becomes `Nil`.
 `HasFieldHandlers` applies `ToFieldHandlers` to a type's `HasFields::Fields`. Because only the
-`Either`/`Void` list is handled, the convenience matchers apply to enums, not to structs.
+`Either`/`Void` list is handled, the convenience matchers apply to enums, not to structs: wiring
+one for a struct `Scene` fails with
+``error[E0277]: the trait bound `MatchWithHandlers<_>: cgp::prelude::Computer<App, (), Scene>` is not satisfied``,
+followed by the unsatisfied `ToFieldHandlers` bound on the struct's `Cons` field list and its
+missing `HasExtractor`.
 
 ## Builders
 
@@ -167,6 +208,16 @@ can read fields already set:
   `BuildField<Tag>`.
 - **`BuildAndMerge<Provider>`** computes a whole record with `Provider` and copies every shared
   field into the builder with `CanBuildFrom` from [`has_builder`](../traits/has_builder.md).
+  `CanBuildFrom` takes each of the sub-record's fields in turn and sets it with `BuildField`, so
+  every field of the sub-record must be a field of the target, of the same type, and still unset;
+  merging a field an earlier step set fails with an `E0271` mismatch on
+  `UpdateField<…>::Mapper == IsNothing`. The sub-record needs `HasFields` and `IntoBuilder`, which
+  `#[derive(CgpData)]` gives it.
+
+A partial record implements `HasField` for each field it has set, so a step's provider can bound on
+`Builder: HasField<Symbol!("max_connections"), Value = u32>` and read a field an earlier step set.
+The order of the list therefore matters: the same provider placed before the step that sets its
+field fails that bound.
 
 ```rust
 pub struct BuildAndSetField<Tag, Provider = UseContext>(pub PhantomData<(Tag, Provider)>);
@@ -185,8 +236,11 @@ where
 
 `BuildWithHandlers<Output, Handlers>` runs the adapters. It starts from `Output::builder()`, pipes
 the builder through `Handlers` with [`PipeHandlers`](handler_combinators.md), and calls
-`finalize_build` to recover the concrete `Output`. It ignores its own input. `finalize_build` exists
-only for a builder with every field set, so a missing handler is a compile error:
+`finalize_build` to recover the concrete `Output`. It ignores its own input, so it is called with
+`()`. `finalize_build` exists only for a builder with every field set, so a missing handler is a
+compile error, reported by the builder's markers, as in
+``error[E0277]: the trait bound `__PartialApp<IsPresent, IsPresent, IsNothing>: FinalizeBuild` is not satisfied``
+for an `App` whose third field no step sets:
 
 ```rust
 pub struct BuildWithHandlers<Output, Handlers>(pub PhantomData<(Output, Handlers)>);
@@ -289,24 +343,31 @@ delegate_components! {
 reaches `ComputeArea`. Existing code writes the same table as
 `ComputerComponent: UseInputDelegate<new AreaComputers { … }>`.
 
-The builder side, given a provider `BuildFooBar` that produces a `FooBar` record and a provider
-`BuildBaz` that computes a `baz` value, assembles a `FooBarBaz`:
+The builder side assembles an `App { db_url, max_connections, user_agent }` on an `AppBuilder`
+context that holds the configuration. `BuildDatabaseConfig` builds a
+`DatabaseConfig { db_url, max_connections }` and `BuildUserAgent` a `String`, each reading a field
+of `AppBuilder` as an `#[implicit]` argument and ignoring the partial record it is given:
 
 ```rust
 use cgp::extra::dispatch::{BuildAndMerge, BuildAndSetField, BuildWithHandlers};
 
-type Handlers = Product![
-    BuildAndMerge<BuildFooBar>,
-    BuildAndSetField<Symbol!("baz"), BuildBaz>,
-];
-
-let foo_bar_baz = BuildWithHandlers::<FooBarBaz, Handlers>::compute(&context, code, ());
+delegate_components! {
+    AppBuilder {
+        ComputerComponent:
+            BuildWithHandlers<App, Product![
+                BuildAndMerge<BuildDatabaseConfig>,
+                BuildAndSetField<Symbol!("user_agent"), BuildUserAgent>,
+            ]>,
+    }
+}
 ```
 
-`BuildAndMerge<BuildFooBar>` copies `foo` and `bar` from a built `FooBar`, and `BuildAndSetField`
-sets `baz`. Dropping either handler leaves a field unset and fails to compile at `finalize_build`.
-The [application builder](../../../examples/application-builder.md) example develops this pattern
-with `BuildAndMergeOutputs`.
+`BuildAndMerge<BuildDatabaseConfig>` copies `db_url` and `max_connections`, and `BuildAndSetField`
+sets `user_agent`; `builder.compute(PhantomData::<()>, ())` returns the `App`. Dropping either step
+leaves a field unset and fails to compile at `finalize_build`. When every step is a merge,
+`BuildAndMergeOutputs<App, Product![BuildDatabaseConfig, BuildHttpConfig]>` lists the providers
+bare. The [application builder](../../../examples/application-builder.md) example develops this
+pattern with `BuildAndMergeOutputs` over real subsystems.
 
 ## Related constructs
 
@@ -335,11 +396,16 @@ the needed impl:
   `MatchWithValueHandlersMut` also route `TryComputerComponent`, `HandlerComponent`,
   `TryComputerRefComponent`, and `HandlerRefComponent`. Those entries lead to `MatchWithHandlersRef`
   or `MatchWithHandlersMut`, which implement only `Computer` and `AsyncComputer`, so wiring a
-  fallible component to one of these matchers fails with an unsatisfied bound. The owned
-  `MatchWithValueHandlers` has the same limit without the misleading entries.
+  fallible component to one of these matchers fails with an unsatisfied bound, noted as
+  ``required for `cgp::prelude::MatchWithValueHandlersRef<ComputeAreaOfRef>` to implement `IsProviderFor<cgp::prelude::HandlerComponent, App, ((), &'a Shape)>` ``.
+  The owned `MatchWithValueHandlers` has the same limit without the misleading entries. The `Mut`
+  form's `ComputerRefComponent` and `AsyncComputerRefComponent` entries cannot resolve either, as
+  the convenience-matcher section explains.
 - **`BuildAndMergeOutputs`.** It routes `ComputerRefComponent`, `TryComputerRefComponent`, and
   `HandlerRefComponent` to `BuildWithHandlers`, which implements only `Computer`, `TryComputer`, and
-  `Handler`.
+  `Handler`, so the check fails on `IsProviderFor<cgp::prelude::ComputerRefComponent, …>` and
+  rustc lists the three impls it has. The builder ignores its input, so a `…Ref` route would add
+  nothing.
 
 Either the entries should be removed, or the matchers should gain fallible impls and the builder a
 `PromoteRef` route. Until then, use these providers only for the components they implement.
@@ -360,3 +426,23 @@ Either the entries should be removed, or the matchers should gain fallible impls
 - The prelude re-exports the value matchers from
   [crates/main/cgp-extra/src/prelude.rs](https://github.com/contextgeneric/cgp/blob/main/crates/main/cgp-extra/src/prelude.rs);
   the remaining structs are reached through `cgp::extra::dispatch`.
+
+## Public pages derived from this document
+
+The public reference gives each provider here its own page, so this document feeds the [dispatch
+combinators overview](https://contextgeneric.dev/docs/reference/providers/dispatch/) and eleven
+construct pages:
+[`build_and_merge`](https://contextgeneric.dev/docs/reference/providers/dispatch/build_and_merge),
+[`build_and_merge_outputs`](https://contextgeneric.dev/docs/reference/providers/dispatch/build_and_merge_outputs),
+[`build_and_set_field`](https://contextgeneric.dev/docs/reference/providers/dispatch/build_and_set_field),
+[`build_with_handlers`](https://contextgeneric.dev/docs/reference/providers/dispatch/build_with_handlers),
+[`downcast_and_handle`](https://contextgeneric.dev/docs/reference/providers/dispatch/downcast_and_handle),
+[`extract_field_and_handle`](https://contextgeneric.dev/docs/reference/providers/dispatch/extract_field_and_handle),
+[`handle_field_value`](https://contextgeneric.dev/docs/reference/providers/dispatch/handle_field_value),
+[`match_first_with_handlers`](https://contextgeneric.dev/docs/reference/providers/dispatch/match_first_with_handlers),
+[`match_with_field_handlers`](https://contextgeneric.dev/docs/reference/providers/dispatch/match_with_field_handlers),
+[`match_with_handlers`](https://contextgeneric.dev/docs/reference/providers/dispatch/match_with_handlers),
+and
+[`match_with_value_handlers`](https://contextgeneric.dev/docs/reference/providers/dispatch/match_with_value_handlers).
+A change here is propagated to each page it touches, per the [synchronization
+rule](../../../AGENTS.md#the-synchronization-rule).

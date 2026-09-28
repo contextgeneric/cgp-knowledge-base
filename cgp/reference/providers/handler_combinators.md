@@ -384,3 +384,24 @@ These constructs are the ones the handler combinators work with:
   and its provider impls are generated from the `#[derive_delegate(UseInputDelegate<Input>)]`
   directive on the handler component traits in
   [crates/extra/cgp-handler/src/components/](https://github.com/contextgeneric/cgp/tree/main/crates/extra/cgp-handler/src/components/).
+
+## Public pages derived from this document
+
+The public reference gives each provider here its own page, so this document feeds the [handler
+combinators overview](https://contextgeneric.dev/docs/reference/providers/handler/) and thirteen
+construct pages:
+[`compose_handlers`](https://contextgeneric.dev/docs/reference/providers/handler/compose_handlers),
+[`pipe_handlers`](https://contextgeneric.dev/docs/reference/providers/handler/pipe_handlers),
+[`promote`](https://contextgeneric.dev/docs/reference/providers/handler/promote),
+[`promote_async`](https://contextgeneric.dev/docs/reference/providers/handler/promote_async),
+[`promote_async_computer`](https://contextgeneric.dev/docs/reference/providers/handler/promote_async_computer),
+[`promote_computer`](https://contextgeneric.dev/docs/reference/providers/handler/promote_computer),
+[`promote_handler`](https://contextgeneric.dev/docs/reference/providers/handler/promote_handler),
+[`promote_producer`](https://contextgeneric.dev/docs/reference/providers/handler/promote_producer),
+[`promote_ref`](https://contextgeneric.dev/docs/reference/providers/handler/promote_ref),
+[`promote_try_computer`](https://contextgeneric.dev/docs/reference/providers/handler/promote_try_computer),
+[`return_input`](https://contextgeneric.dev/docs/reference/providers/handler/return_input),
+[`try_promote`](https://contextgeneric.dev/docs/reference/providers/handler/try_promote), and
+[`use_input_delegate`](https://contextgeneric.dev/docs/reference/providers/handler/use_input_delegate).
+A change here is propagated to each page it touches, per the [synchronization
+rule](../../../AGENTS.md#the-synchronization-rule).
