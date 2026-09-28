@@ -145,12 +145,21 @@ PipeMonadic::<ErrMonadic, Product![Increment, Increment, Increment]>::compute(&c
 // 253 -> Ok(254) -> Ok(255) -> Err("overflow")
 ```
 
+The pipeline is wired like any handler, as `ComputerComponent: PipeMonadic<ErrMonadic, Product![Increment, Increment, Increment]>`
+on a context, after which `app.compute(PhantomData::<()>, 253)` returns `Err("overflow")` through
+`CanCompute`.
+
 The same step can be built by hand, which is what `PipeMonadic` does for a two-element list:
 
 ```rust
 PipeHandlers::<Product![Increment, BindErr<IdentMonadic, Increment>]>::compute(&context, code, 1)
 // Ok(3)
 ```
+
+`BindOk` builds a fallback step the same way. With `classify` returning `Ok(value)` for a value
+under 10 and `Err(value)` otherwise, and `halve` returning `Ok(value / 2)`,
+`PipeHandlers<Product![Classify, BindOk<IdentMonadic, Halve>]>` returns `Ok(5)` for `5` without
+running `Halve`, and `Ok(10)` for `20`.
 
 For handlers returning `Result<Result<(), u8>, &'static str>`, `OkMonadicTrans<ErrMonadic>` stops on
 an outer `Err` or an inner `Ok`. The same handlers composed under plain `OkMonadic` can be driven

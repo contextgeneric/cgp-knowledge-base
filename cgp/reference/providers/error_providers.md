@@ -59,7 +59,11 @@ where
 
 This is the default choice whenever the abstract error already knows how to absorb the source error
 through `From`. Because the bound is `Context::Error: From<E>`, a single wiring of `RaiseFrom`
-covers every source error type the context's error has a `From` impl for.
+covers every source error type the context's error has a `From` impl for. A source without one fails
+at the check: on a context whose error is `String`, raising a `ParseIntError` through
+`ErrorRaiserComponent: RaiseFrom` reports
+``error[E0277]: the trait bound `RaiseFrom: ErrorRaiser<App, ParseIntError>` is not satisfied`` and
+``the trait bound `String: From<ParseIntError>` is not satisfied``.
 
 ### `ReturnError`: the source is already the abstract error
 
@@ -81,7 +85,8 @@ where
 
 The `HasErrorType<Error = E>` bound ties the source type to the abstract error, so `raise_error`
 returns its argument untouched. A context uses this when generic code raises a value that is already
-of the context's chosen error type.
+of the context's chosen error type. `RaiseFrom` would also work there, through the standard library's
+reflexive `impl<T> From<T> for T`; `ReturnError` states the intent and needs no `From` bound.
 
 ### `RaiseInfallible`: absorb an impossible error
 
@@ -147,8 +152,10 @@ where
 ```
 
 Although the signature promises a `Context::Error`, the body never returns one, because `panic!`
-diverges. This provider is for contexts where an error is treated as a programming fault that should
-abort rather than be handled, such as tests or fail-fast tooling.
+diverges. This provider is for contexts where an error is treated as a programming fault that should abort
+rather than be handled, such as tests or fail-fast tooling. The context still wires an error type,
+since the bound requires `HasErrorType`; the panic message is the source's `Debug` output, so a
+`String` source `"unrecoverable"` panics with `"\"unrecoverable\""`.
 
 ### `DebugError` and `DisplayError`: format through a string
 
@@ -184,9 +191,18 @@ where
 
 `DisplayError` is identical in shape but formats with the `Display` trait and `to_string()` instead,
 raising `Context::raise_error(e.to_string())` and wrapping
-`Context::wrap_error(error, detail.to_string())`. Both require the context to already raise and wrap
-`String`, which is the indirection that lets them reduce any `Debug` or `Display` error to the
-string case the context knows how to handle. Because they allocate a `String`, both sit behind the
+`Context::wrap_error(error, detail.to_string())`. Both require the context to already raise and wrap `String`, which is the indirection that lets
+them reduce any `Debug` or `Display` error to the string case the context knows how to handle. A
+`ParseIntError` becomes `"ParseIntError { kind: InvalidDigit }"` through `DebugError` and
+`"invalid digit found in string"` through `DisplayError`.
+
+That indirection is also their one trap: **the `String` key itself must not be wired to either of
+them.** For a `String` source, `DebugError` formats it and raises the result through
+`CanRaiseError<String>`, which resolves to `DebugError` again, so a check reports
+``error[E0275]: overflow evaluating the requirement `DebugError: ErrorRaiser<App, String>` ``. The
+same cycle arises for `@ErrorWrapperComponent.String: DisplayError`, and for either provider on
+either component. The `String` key goes to a provider that finishes the job, such as `RaiseFrom` or
+a backend provider. Because they allocate a `String`, both sit behind the
 crate's `alloc` feature, which is on by default.
 
 ## Behavior
