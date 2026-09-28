@@ -49,7 +49,22 @@ itself, with no `Field<Index<0>, _>` wrapper, although its `HasField<Index<0>>` 
 
 Access by index resolves entirely at compile time, because the position lives in the type. There is
 no bounds check and no runtime indexing, and an out-of-range index is a type error rather than a
-panic: `Index<5>` on a three-field struct simply has no matching `HasField` impl.
+panic: `Index<5>` on a three-field struct has no matching `HasField` impl. `Index` is in the prelude.
+
+### Writing it, and what goes wrong
+
+`Index<N>` is the tag for a tuple position and a [`Symbol!`](../macros/symbol.md) the tag for a named
+field, and the derive generates the right one for each, so `Index` is written by hand only to tag a
+positional field outside a derive or to read one through `get_field`. In an error, a missing
+`HasField<Index<2>>` bound names the third field of a tuple struct.
+
+The two mistakes are a position the struct lacks and a string where a number belongs. Reading
+`*point.get_field(PhantomData::<Index<5>>)` on `pub struct Point(pub f64, pub f64, pub f64);` fails
+with ``error[E0277]: the trait bound `Point: cgp::prelude::HasField<cgp::prelude::Index<5>>` is not satisfied``,
+and the help lines list the three `HasField<Index<0>>` to `HasField<Index<2>>` impls the struct does
+have, so an off-by-one index surfaces the same way. `Symbol!("0")` is a string tag, never generated
+for a tuple field, so reading it on `Pair` fails with
+``error[E0277]: the trait bound `Pair: cgp::prelude::HasField<cgp::prelude::Symbol<1, cgp::prelude::Chars<'0', Nil>>>` is not satisfied``.
 
 ## Examples
 
@@ -61,10 +76,10 @@ use cgp::prelude::*;
 #[derive(HasField)]
 pub struct Pair(pub u32, pub String);
 
-// generated for the first field:
+// generated for the first field, beside a matching `HasFieldMut<Index<0>>` impl:
 // impl HasField<Index<0>> for Pair {
 //     type Value = u32;
-//     fn get_field(&self, _tag: PhantomData<Index<0>>) -> &u32 {
+//     fn get_field(&self, key: ::core::marker::PhantomData<Index<0>>) -> &Self::Value {
 //         &self.0
 //     }
 // }

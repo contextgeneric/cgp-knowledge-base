@@ -905,6 +905,21 @@ struct by hand, `pub struct ArrayTable<const N: usize>;`, wire it with its own b
 `<const N: usize> ArrayTable<N> { … }`, and name it in the outer entry as
 `UseDelegate<ArrayTable<N>>`.
 
+**A component used at an unsized parameter passes its check and fails at every call.** The
+forwarding `IsProviderFor<Key, __Context__, __Params__>` impl the macro emits for each entry declares
+`__Params__` without `?Sized`, although the trait itself declares `Params: ?Sized`. A component whose
+type parameter is `?Sized`, used at an unsized argument, has an unsized params tuple, so the context
+never implements its provider trait through the table. For
+`#[cgp_component(ReferenceGetter)] pub trait HasReference<'a, T: 'a + ?Sized>` wired at `str`, the
+check `ReferenceGetterComponent: (Life<'a>, str)` passes, because
+[`CanUseComponent`](../traits/can_use_component.md) asks the provider's own `IsProviderFor` impl rather
+than the table's, while `borrowed.get_reference()` fails with
+``error[E0599]: the method `get_reference` exists for struct `Borrowed<'_>`, but its trait bounds were not satisfied``,
+whose note reads `` `str: Sized` which is required by `Borrowed<'_>: HasReference<'_, str>` ``. The
+correct behavior is to declare `__Params__: ?Sized` on the forwarding impl. Until then, give such a
+component a sized argument or implement its consumer trait directly on the context. The same example
+is on the [`Life`](../types/life.md) page.
+
 ## Related constructs
 
 These constructs are the ones `delegate_components!` works with:

@@ -45,9 +45,73 @@ the call site. The surface has three parts:
 - **`get_or_clone`**, available when `T: Clone`, resolves the enum to a plain `T`, moving the owned
   value or cloning the borrowed one.
 
-A borrowed `MRef` is therefore read cheaply and promoted to ownership only when asked.
+A borrowed `MRef` is therefore read cheaply and promoted to ownership only when asked. Those are the
+whole surface: `MRef` is neither `Clone` nor `Debug`. It is in the prelude.
+
+The getter macros and [`#[implicit]`](../attributes/implicit.md) recognize `MRef` by shape, a
+single-segment path named `MRef` with a lifetime and a type argument, and read a field of type `T`
+into `MRef::Ref(…)`. An implicit argument declared that way therefore always lends. A differently
+shaped or qualified `MRef` falls through to the owned form, which expects a field of that very type,
+so `fn greeting(&self) -> cgp::prelude::MRef<'_, String>;` under `#[cgp_auto_getter]` places `'_` in
+a `HasField` bound and fails with ``error[E0637]: `'_` cannot be used here``.
+
+### Choosing it, and what goes wrong
+
+`MRef` is the getter return type for a value some contexts store and others build: a context wired
+to [`UseField`](../providers/use_field.md) lends its field as `MRef::Ref`, and a hand-written
+provider returns `MRef::Owned`. A plain `&T` is the better return type when every context stores the
+value, and an `#[implicit]` argument remains the default way for a provider to read a stored field.
+The type is not related to [`Life`](life.md), whose lifetime is a type-level lift rather than a
+borrow. `get_or_clone` clones only the borrowed case, so it is free on an owned value. And because
+`Deref` makes the variants transparent, a manual match on `Ref` versus `Owned` usually means the code
+wanted `get_or_clone`.
 
 ## Examples
+
+A getter returning `MRef` lets one context lend a stored field and another build the value:
+
+```rust
+use cgp::prelude::*;
+
+#[cgp_getter]
+pub trait HasGreeting {
+    fn greeting(&self) -> MRef<'_, String>;
+}
+
+#[cgp_impl(new BuildGreeting)]
+impl GreetingGetter {
+    fn greeting(&self, #[implicit] name: &str) -> MRef<'_, String> {
+        MRef::Owned(format!("Hello, {name}!"))
+    }
+}
+
+#[derive(HasField)]
+pub struct Stored {
+    pub greeting: String,
+}
+
+#[derive(HasField)]
+pub struct Computed {
+    pub name: String,
+}
+
+delegate_components! {
+    Stored {
+        GreetingGetterComponent: UseField<Symbol!("greeting")>,
+    }
+}
+
+delegate_components! {
+    Computed {
+        GreetingGetterComponent: BuildGreeting,
+    }
+}
+
+// Generic code reads either case through `Deref`.
+pub fn shout<Context: HasGreeting>(context: &Context) -> String {
+    context.greeting().to_uppercase()
+}
+```
 
 Both variants share one type and are consumed the same way; only construction differs:
 

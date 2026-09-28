@@ -68,6 +68,31 @@ constant uses `StaticString::VALUE`.
 beyond `StaticFormat` and `Display`. `Default` is what lets a `Symbol!("…")` type be materialized as
 a value where one is needed. `Chars` additionally derives `Eq`, `PartialEq`, `Clone`, and `Copy`.
 
+A bare `Chars` chain lacks the length, so `StaticString` is implemented for `Symbol` and for `Nil`
+(whose value is `""`) and not for `Chars`. Both types are in the prelude, and also reachable as
+`cgp::core::base::types`.
+
+### Reading it, and what goes wrong
+
+`Chars` is read in errors and written through [`Symbol!`](../macros/symbol.md), preferably through
+the constructs that derive the tag from an argument or method name. A raw error names a missing
+field as a `Symbol` over a `Chars` chain, read off one character at a time. A provider reading
+`#[implicit] width: f64` and `#[implicit] height: f64`, wired and checked on a context with only
+`height`, fails with a help line naming both tags:
+
+```text
+help: the trait `HasField<Symbol<5, cgp::prelude::Chars<'w', cgp::prelude::Chars<'i', cgp::prelude::Chars<'d', cgp::prelude::Chars<'t', cgp::prelude::Chars<'h', Nil>>>>>>>` is not implemented for `Rectangle`
+      but trait `HasField<Symbol<6, cgp::prelude::Chars<'h', cgp::prelude::Chars<'e', cgp::prelude::Chars<'i', cgp::prelude::Chars<'g', cgp::prelude::Chars<'h', cgp::prelude::Chars<'t', Nil>>>>>>>>` is implemented for it
+```
+
+[`cargo cgp check`](../cargo-cgp.md) reads the chain back into the name and reports
+``[CGP-E106] missing field `width` on `Rectangle` `` as the root cause.
+
+Three misreadings recur. `LEN` counts bytes, so on a non-ASCII name it exceeds the number of `Chars`
+nodes. A `Chars` value is zero-sized and stores no `&str`; `Display` rebuilds the text from the type.
+And `Chars` is the character specialization of `Cons`, whose head is a `const char`, so it cannot
+carry arbitrary element types the way a product list does.
+
 ## Examples
 
 A type-level string most often appears as the `Tag` of a [`HasField`](../traits/has_field.md) bound,

@@ -50,7 +50,27 @@ The remaining impls defer to the value and ignore the tag, so a `Field` compares
 `Value`. `Debug` forwards to the value's `Debug` without showing the tag, and `PartialEq` and `Eq`
 compare only `value`, each requiring the matching bound on `Value`. Code that needs the name reads
 it from the `Tag` parameter through trait resolution, such as matching a `Field<Symbol!("name"), _>`
-against a `HasField<Symbol!("name")>` bound, never from stored data.
+against a `HasField<Symbol!("name")>` bound, never from stored data. Those four impls are the
+whole set: `Field` is not `Clone`, `Copy`, or `Default` whatever its `Value` is, and it is in the
+prelude.
+
+### Reading it, and what goes wrong
+
+`Field` is read far more often than it is written. The derives, [`#[derive(HasFields)]`](../derives/derive_has_fields.md)
+and [`#[derive(CgpData)]`](../derives/derive_cgp_data.md), produce a type's entries, so a type the
+author owns gets them from one derive rather than from a hand-written list that restates the type and
+drifts from it. A `Field` is built directly only in generic shape code that assembles or rewrites a
+record or variant entry by entry, with `.into()` and the expected type supplying the tag. Code that
+needs the names works on a list of `Field` entries, never a bare `Product!` of values, since the
+operations that walk a shape match on the tags.
+
+The mistakes follow from the tag being a type. It never affects equality or printing, so two entries
+with equal values compare equal and `Debug` prints `"Bob"` for a `Field<Symbol!("name"), String>`
+holding `"Bob"`. It adds no size, so a `Field` is free at run time. It must match exactly for a
+lookup to resolve, so `Symbol!("first_name")` against `Symbol!("firstName")` surfaces as an
+unsatisfied `HasField` bound rather than as a typo. And a one-field tuple struct's shape holds no
+`Field` at all, per the exception under Examples, which code expecting a list of entries meets as a
+bare `u32`.
 
 ## Examples
 

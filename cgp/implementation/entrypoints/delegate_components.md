@@ -267,6 +267,17 @@ The combination is nonetheless redundant in practice, which is why no wiring tes
 end. A loop already yields one provider per key, so a nested table below it dispatches the same
 parameter a second time. The form is kept correct rather than recommended.
 
+**The forwarding `IsProviderFor` impl requires a sized params tuple.** The mapping's `eval` pushes a
+bare `__Params__` onto the impl generics before emitting
+`impl<…, __Context__, __Params__> IsProviderFor<Key, __Context__, __Params__> for Target`, so the
+parameter is implicitly `Sized`, while `IsProviderFor` declares `Params: ?Sized`. The provider blanket
+impl of a component requires the context itself to implement `IsProviderFor` through this impl, so a
+component whose `?Sized` type parameter is used at an unsized argument, whose params tuple such as
+`(Life<'a>, str)` is therefore unsized, is never usable through a table. `check_components!` still
+passes, because `CanUseComponent` asks the delegate's `IsProviderFor` impl rather than the table's.
+Pushing `__Params__: ?Sized` would fix it. The user-facing behavior is in the
+[reference Known issues](../../reference/macros/delegate_components.md#known-issues).
+
 ## Snapshots
 
 Every `snapshot_delegate_components!` invocation across the suite is indexed here, since these

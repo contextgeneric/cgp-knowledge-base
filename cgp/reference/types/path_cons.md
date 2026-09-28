@@ -68,7 +68,22 @@ or a namespace entry names as `RedirectLookup<Components, Path>`. Its impl, whic
 the component's type parameters through `ConcatPath` and looks the whole extended path up as one key
 in `Components`, as `Components: DelegateComponent<Path>`. The path therefore never names a provider
 itself; it says which key to look up, so the same path can resolve to different providers in
-different tables, and the entry it reaches may redirect again.
+different tables, and the entry it reaches may redirect again. `PathCons` and `ConcatPath` are both
+in the prelude.
+
+### Reading it, and what goes wrong
+
+A path is read in expansions, left to right, one step per segment: a `Symbol` for a lowercase name
+and the named type for a capitalized one. It is written through [`Path!`](../macros/path.md) when one
+is needed directly, and more often not written at all, since joining a namespace or an `open`
+statement produces the paths. `cargo cgp expand` prints a path in its `Path!` form, so a namespace
+entry reads `RedirectLookup<__Table__, Path!(@MyFooComponent)>` rather than the raw `PathCons` chain.
+
+The misreadings come from treating a path like other lists. A path names a key, not a provider, so
+the same path resolves differently in different tables. Its segments are `?Sized` markers rather than
+values, unlike a product list's. A `Nil` at its end is the ordinary terminator rather than a sign that
+a product has been mixed in. And a path key written in `delegate_components!` ends in a generic
+parameter rather than `Nil`, which is what lets it match every longer path beneath it.
 
 ## Examples
 

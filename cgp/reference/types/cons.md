@@ -54,7 +54,45 @@ Generic code consumes the list by recursing on its two cases. An impl for `Nil` 
 case, and an impl for `Cons<Head, Tail>` supplies the step, usually requiring `Tail` to implement
 the same trait so the recursion ends at `Nil`. This pair of impls is the standard shape of any
 operation that folds over a product, and it lets the field machinery handle a struct of any width
-without per-field code.
+without per-field code. A minimal one counts the elements:
+
+```rust
+pub trait Len {
+    const LEN: usize;
+}
+
+impl Len for Nil {
+    const LEN: usize = 0;
+}
+
+impl<Head, Tail: Len> Len for Cons<Head, Tail> {
+    const LEN: usize = 1 + Tail::LEN;
+}
+
+// <Product![u32, String, bool] as Len>::LEN == 3
+```
+
+`Nil` ends the string and path lists too: `Symbol!("hi")` is `Symbol<2, Chars<'h', Chars<'i', Nil>>>`,
+the empty string is `Symbol<0, Nil>`, and a `Path!` chain of [`PathCons`](path_cons.md) cells ends in
+`Nil`. It is also the shape of a unit struct that derives `HasFields`, and `product![]` is the `Nil`
+value. Both types are in the prelude.
+
+### Reading and writing them, and what goes wrong
+
+The cells are read in expansions and written through [`Product!`](../macros/product.md), since the
+macro builds the same chain and a hand-written one is longer and harder to change. A struct's shape
+comes from [`#[derive(HasFields)]`](../derives/derive_has_fields.md) rather than from a declared
+chain, which would restate the struct and drift from it. The cells are named directly in one place,
+the impls of a fold like `Len` above, because an impl matches on a cell rather than on the macro. In
+an error, a field-list mismatch is a mismatch between two `Cons` chains, and the cell where they
+diverge is the field that differs.
+
+Three mistakes recur. A one-element list is not its element: `Product![T]` is `Cons<T, Nil>`, a type
+distinct from `T`, although the derive's one-field tuple struct is the exception whose shape is the
+field's type itself (see [`Field`](field.md)). Element order is part of the type, which matters little
+for a list of name-tagged `Field` entries, since the operations match on names, and is the execution
+order for a handler pipeline. And `Nil` is inhabited while the sum list's [`Void`](either.md) is not:
+an empty record can exist and an empty choice cannot, so the two terminators are not interchangeable.
 
 ## Examples
 

@@ -56,11 +56,58 @@ the product: a product ends in [`Nil`](cons.md), an empty record that can be con
 sum ends in the uninhabited `Void`, because an empty choice has no value to pick. `Void` plays the
 role of the never type, marking the end of a sum.
 
-The uninhabitedness of `Void` is essential to the extractor machinery. After an extractor has tried
-every variant of a sum and matched none, the leftover value has type `Void`, which cannot exist.
-[`FinalizeExtract`](../traits/extract_field.md) for `Void` turns it into any type with an empty
-`match self {}`, so a fully handled extraction is total at compile time, with no unreachable branch
-at runtime. A constructible terminator like `Nil` could not be discharged this way.
+The uninhabitedness of `Void` is essential to the extractor machinery, in a second place as well as
+the list's end. An extractor from [`#[derive(ExtractField)]`](../derives/derive_extract_field.md) is
+a companion enum with one [`MapType`](../traits/map_type.md) marker per variant, and each
+`extract_field` that fails marks its variant `IsVoid`, whose `Map<T>` is `Void`. Once every variant
+is `IsVoid`, every variant of the companion holds a `Void`, so the companion is uninhabited, and the
+derive gives exactly that configuration a [`FinalizeExtract`](../traits/extract_field.md) impl whose
+body is `match self {}`. A fully handled extraction is therefore total at compile time, with no
+unreachable branch at runtime, and an extraction that stops short fails on the missing
+`FinalizeExtract` impl for a companion with some variant still `IsPresent`. The trait also has an
+impl on `Void` itself, and on `Infallible`, with the same body:
+
+```rust
+pub trait FinalizeExtract {
+    fn finalize_extract<T>(self) -> T;
+}
+
+impl FinalizeExtract for Void {
+    fn finalize_extract<T>(self) -> T {
+        match self {}
+    }
+}
+```
+
+so `Result<T, Void>::finalize_extract_result()` unwraps without a panic path. A constructible
+terminator like `Nil`, or the `()` an absent record field holds, could not be discharged this way.
+`Void` is the same idea as `!` or `Infallible`, defined separately so the terminator of a sum is named
+for that job.
+
+An enum's shape follows each variant's own form: a variant with one unnamed field has that field's
+type as its payload, a named-field variant a product of `Field` entries keyed by `Symbol!`, a
+multi-field tuple variant one keyed by `Index`, and a unit variant `Nil`. Both types are in the
+prelude.
+
+### Matching a sum, and what goes wrong
+
+A `match` on a sum selects a branch by depth, and its last arm is the `Void` position. By value that
+arm may be left out, since Rust treats an uninhabited payload as unreachable in a match on a value, so
+`match shape.to_fields() { Either::Left(c) => …, Either::Right(Either::Left(r)) => … }` is
+exhaustive. Behind a reference it is required: omitting it on a `&Sum![u32, bool]` fails with
+``error[E0004]: non-exhaustive patterns: `&cgp::prelude::Either::Right(cgp::prelude::Either::Right(_))` not covered``,
+with the note `` `Void` is uninhabited but is not being matched by value, so a wildcard `_` is required ``,
+and `Either::Right(Either::Right(void)) => match *void {}` closes it. A positional match belongs
+where the enum's order is known; generic code takes an enum apart by variant name through the
+[extractor family](../traits/extract_field.md) instead.
+
+The cells are read in expansions and written through [`Sum!`](../macros/sum.md), with an enum's
+shape coming from `#[derive(HasFields)]`. In an error, the number of `Right` wrappers says which
+variant a value selects. A sum holds one branch rather than all of them, so a type written with one
+list where the other is expected fails as a mismatch between an `Either` chain and a `Cons` chain.
+Branch order is part of the type, though the name-tagged branches make it matter less than it
+sounds. And the empty sum `Sum![]` is the uninhabited `Void`: code cannot construct an empty choice,
+though it can construct an empty record, which ends in `Nil`.
 
 ## Examples
 
