@@ -115,7 +115,8 @@ foundational `TypeProvider` or `FieldGetter` stand in as a named component's pro
 
 CGP makes the error type abstract so fallible generic code never names a concrete error, and these
 components carry that strategy. [`HasErrorType`](components/has_error_type.md) gives a context one
-shared `Error` type (an abstract-type component, so wired with `UseType`), and
+shared `Error` type (an abstract-type component, so wired with `UseType`; `ErrorOnly<E>` in
+`cgp::core::error` is a context carrying nothing but that type), and
 [`CanRaiseError` / `CanWrapError`](components/can_raise_error.md) construct that error from a source
 error and attach detail to it, dispatching per source or detail type. The interchangeable strategies
 that satisfy them (the [error providers](providers/error_providers.md) `RaiseFrom`, `ReturnError`,

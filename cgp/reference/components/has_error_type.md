@@ -60,6 +60,12 @@ A context sets its error type in one of three ways:
   `cgp-error-anyhow`, `cgp-error-eyre`, and `cgp-error-std` each provide a provider for this
   component, such as `UseAnyhowError`, that sets `Error` to the backend's type.
 
+`cgp::core::error` also carries `ErrorOnly<E>`, a zero-sized context defined in
+`cgp-error`'s `contexts` module whose one trait is `HasErrorType`, with `Error = E` for any
+`E: Debug`, and which implements `Default`. It stands in wherever code needs a context that has an
+error type and nothing else, as a test of a fallible computation that reads nothing from its context
+does with `ErrorOnly::<String>::default()`.
+
 `HasErrorType` has no methods; it only declares the type. Constructing errors belongs to the traits
 that import it: [`CanRaiseError`](can_raise_error.md) converts a source error into `Self::Error`,
 and [`CanWrapError`](can_raise_error.md) adds detail to an existing one. Keeping the declaration
@@ -116,6 +122,8 @@ These constructs are the ones `HasErrorType` works with:
 
 - The trait and the `ErrorOf` alias are defined in
   [crates/core/cgp-error/src/traits/has_error_type.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-error/src/traits/has_error_type.rs).
+- `ErrorOnly` is defined in
+  [crates/core/cgp-error/src/contexts/error_only.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-error/src/contexts/error_only.rs).
 - The `#[cgp_type]` machinery it relies on lives in
   [crates/macros/cgp-macro-core/src/types/cgp_type/](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-core/src/types/cgp_type/),
   and the underlying `HasType`/`TypeProvider`/`UseType` definitions are in

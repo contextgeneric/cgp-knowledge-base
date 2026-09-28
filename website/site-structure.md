@@ -986,7 +986,7 @@ related-concept entry's external link is one the comparison page it routes to al
 from that page's Sources section so the two agree on the authority.
 
 **The terms are linked from the pages that use them**, first use per page with the inline gloss left
-beside it: 289 links across 136 pages, in page bodies rather than in the closing routing lists. Three rules decided what was left alone, and a later agent
+beside it: some 440 links across 176 pages, in page bodies rather than in the closing routing lists. Three rules decided what was left alone, and a later agent
 should read them as settled rather than as unfinished work. **A page that owns a term does not link
 it** — *Bypassing coherence* does not link *coherence*. **A compound use is not the general term**, so
 CGP's own *consumer blanket impl* and *provider blanket impl* keep their abbreviated spelling and only
