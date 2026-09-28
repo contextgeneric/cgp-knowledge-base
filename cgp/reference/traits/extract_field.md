@@ -121,9 +121,112 @@ no wildcard arm.
 
 The three accessor traits differ only in ownership. `HasExtractor` consumes the value and yields an
 owned extractor whose payloads are owned; the `from_extractor` method reverses `to_extractor` for an
-unmatched value. `HasExtractorRef` and `HasExtractorMut` borrow the value and yield a borrowed
-extractor over the same partial enum, carrying a `MapTypeRef` marker (`IsRef` or `IsMut`) that maps
-each payload slot to a shared or mutable reference, so a value can be matched without being moved.
+unmatched value, as a plain variant-for-variant `match`. `HasExtractorRef` and `HasExtractorMut`
+borrow the value and yield a borrowed extractor over a *second* companion enum,
+`__PartialRef{Name}`, which carries a lifetime and a `MapTypeRef` marker (`IsRef` or `IsMut`) that
+maps each payload slot to a shared or mutable reference, so a value can be matched without being
+moved. The derive emits the per-variant `ExtractField` impls and the all-`IsVoid` `FinalizeExtract`
+impl on that enum too, generic over the `MapTypeRef` marker, so a borrowed chain narrows and
+finalizes exactly as an owned one does. Both companions implement [`PartialData`](has_builder.md)
+with `Target` naming the original enum.
+
+`cargo cgp expand` on a two-variant `Shape { Circle(Circle), Rectangle(Rectangle) }` shows the two
+companions and the `Circle` extraction:
+
+```rust
+pub enum __PartialShape<__F0__: MapType, __F1__: MapType> {
+    Circle(<__F0__ as MapType>::Map<Circle>),
+    Rectangle(<__F1__ as MapType>::Map<Rectangle>),
+}
+pub enum __PartialRefShape<'__a__, __R__: MapTypeRef, __F0__: MapType, __F1__: MapType> {
+    Circle(<__F0__ as MapType>::Map<<__R__ as MapTypeRef>::Map<'__a__, Circle>>),
+    Rectangle(<__F1__ as MapType>::Map<<__R__ as MapTypeRef>::Map<'__a__, Rectangle>>),
+}
+impl<__F1__: MapType> ExtractField<Symbol!("Circle")>
+for __PartialShape<IsPresent, __F1__> {
+    type Value = Circle;
+    type Remainder = __PartialShape<IsVoid, __F1__>;
+    fn extract_field(
+        self,
+        _tag: ::core::marker::PhantomData<Symbol!("Circle")>,
+    ) -> Result<Self::Value, Self::Remainder> {
+        match self {
+            __PartialShape::Circle(value) => Ok(value),
+            __PartialShape::Rectangle(value) => Err(__PartialShape::Rectangle(value)),
+        }
+    }
+}
+```
+
+`HasExtractorRef` for `Shape` sets `ExtractorRef<'a>` to
+`__PartialRefShape<'a, IsRef, IsPresent, IsPresent>`, and `HasExtractorMut` sets `ExtractorMut<'a>`
+to the same enum with `IsMut`.
+
+### Where each mistake surfaces
+
+Every misuse of a chain is a compile error, and the messages name the partial types rather than the
+mistake, so each is worth recognizing by shape. On the `Shape` above:
+
+```rust
+// Extracting `Circle` again from the remainder of a failed `Circle` attempt.
+if let Err(remainder) = shape.to_extractor().extract_field(PhantomData::<Symbol!("Circle")>) {
+    let _ = remainder.extract_field(PhantomData::<Symbol!("Circle")>);
+}
+
+// Finalizing with `Circle` still possible, directly and through the `Result`.
+match shape.to_extractor().extract_field(PhantomData::<Symbol!("Rectangle")>) {
+    Ok(rect) => rect.width,
+    Err(remainder) => remainder.finalize_extract(),
+}
+let rect = shape
+    .to_extractor()
+    .extract_field(PhantomData::<Symbol!("Rectangle")>)
+    .finalize_extract_result();
+```
+
+Extracting a variant twice is `error[E0308]: mismatched types`, labelled
+``expected `9`, found `6` ``: with only the `Rectangle` impl left applicable, rustc settles on it and
+reports the tag argument, the numbers being the two names' lengths in their `Symbol` types. A
+three-variant enum leaves two impls, so the same mistake is reported differently there. Finalizing
+early directly is
+``error[E0599]: no method named `finalize_extract` found for enum `__PartialShape<__F0__, __F1__>` ``,
+labelled ``method not found in `__PartialShape<IsPresent, IsVoid>` ``, so the marker still
+`IsPresent` is the variant left to try. Through the `Result` it is
+``error[E0599]: the method `finalize_extract_result` exists for enum `Result<Rectangle, __PartialShape<IsPresent, IsVoid>>`, but its trait bounds were not satisfied``,
+noting ``__PartialShape<IsPresent, IsVoid>: FinalizeExtract``. Calling `finalize_extract_result`
+without importing `FinalizeExtractResult` is
+``error[E0599]: no method named `finalize_extract_result` found for enum `Result<T, E>` ``, with a
+help line naming the trait to import. And comparing a whole extraction result,
+`assert_eq!(shape.to_extractor().extract_field(PhantomData::<Symbol!("Circle")>), Ok(circle))`, fails
+with `E0369` (``binary operation `==` cannot be applied to type `Result<Circle, __PartialShape<IsVoid, IsPresent>>` ``)
+and `E0277` (``doesn't implement `Debug` ``), because the companions carry none of the enum's derives.
+
+### Using the family, and where it stops
+
+The family is for code that handles one variant each independently, or that cannot name the enum; a
+concrete `match` is shorter, clearer, already exhaustive, and generates nothing, and `matches!` or
+`if let` answers which variant a value holds. Hand-written chains are rare in practice: the
+[dispatch combinators](../providers/dispatch_combinators.md) generate the chain from the enum's own
+variant list, which also keeps "add a variant" from breaking every call site, since a hand-written
+chain stops compiling the moment the final remainder becomes inhabited again. That breakage is the
+guarantee, not a defect.
+
+Pick the weakest accessor that works: `extractor_ref` for reading, `extractor_mut` for changing a
+payload in place (the value stays mutably borrowed while the extractor or a payload from it lives),
+and `to_extractor` only when a payload must be moved out. A borrowed chain cannot move a payload out,
+and neither borrowed accessor has a `from_extractor`, which is rarely missed since the value was never
+consumed; `from_extractor` itself accepts only the all-possible extractor, so a narrowed one has no
+way back. The owned and borrowed extractors are different enums, so code generic over "an extractor"
+is generic over the extractor type with `ExtractField` bounds, and a signature holding an
+`ExtractorRef<'a>` or `ExtractorMut<'a>` usually spells its lifetime out. Extractions may be written in
+any order, since each step moves only its own variant's marker, but every variant must be tried
+before the remainder finalizes. Absence is `IsVoid` here and `IsNothing` in a builder; the two are not
+interchangeable, and an error naming the wrong one usually means record and variant machinery have
+been crossed.
+
+`FinalizeExtractResult`'s bound is on the `Result`'s error type alone, so it also collapses any
+`Result` whose error is `Infallible` or `Void`, which occasionally resolves where a reader did not
+expect it. It returns the `Ok` value with no runtime branch left to fail.
 
 ## Examples
 

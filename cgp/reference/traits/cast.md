@@ -61,8 +61,9 @@ pub trait CanDowncastFields<Target> {
 ```
 
 `CanBuildFrom<Source>` assembles a target builder by drawing fields from a source. It is implemented
-for a builder and consumes a `Source`, moving every field the two share out of the source and into
-the builder, returning the updated builder as `Output`:
+for a builder and consumes a `Source`, moving every field of the source into the builder, returning
+the updated builder as `Output`. Every source field must therefore exist in the target and still be
+absent from the builder:
 
 ```rust
 pub trait CanBuildFrom<Source> {
@@ -99,6 +100,46 @@ exposes, it uses [`TakeField`](has_builder.md) to remove that field's value from
 source and the growing builder through the recursion. When the source's fields are exhausted, the
 target builder is returned. The target need not be complete after one `build_from`: a builder can
 absorb fields from several sources in sequence, and only then be finalized.
+
+Each side of a cast derives what its role needs, which the bounds make exact. An upcast walks and
+takes apart its source, so the source needs `HasFields` and `HasExtractor` (from
+`#[derive(HasFields)]` and `#[derive(ExtractField)]`) while the target needs only `FromVariant`. A
+downcast takes apart its source and walks its target, so the source needs only `HasExtractor` while
+the target needs `HasFields` and `FromVariant`. `CanBuildFrom` needs `HasFields` and `IntoBuilder`
+on its source (`#[derive(HasFields)]` and `#[derive(BuildField)]`) and a builder whose
+`BuildField` covers every source field. `#[derive(CgpData)]` on both sides covers every direction.
+
+The directions differ in which mismatch is a compile error. An upcast into a target lacking one of
+the source's variants fails on the missing constructor: a `FooBar { Foo(u64), Bar(String) }` upcast
+into `FooBaz { Foo(u64), Baz(bool) }` is
+``error[E0277]: the trait bound `FooBaz: FromVariant<Symbol<3, …'B'…'a'…'r'…>>` is not satisfied``,
+noted as required for `FooBar` to implement `CanUpcast<FooBaz>`, and a payload mismatch
+(`Foo(u64)` into `Foo(u32)`) is `E0271` on `<Target as FromVariant<…>>::Value == u64`. A downcast
+needs every *target* variant in the source: `FooBar` downcast into `FooQux { Foo(u64), Qux(char) }`
+fails with
+``error[E0277]: the trait bound `__PartialFooBar<IsVoid, IsPresent>: ExtractField<Symbol<3, …'Q'…'u'…'x'…>>` is not satisfied``,
+while a source variant the target lacks is the runtime `Err`. Calling `downcast` on a remainder
+rather than `downcast_fields` is
+``error[E0599]: the method `downcast` exists for enum `__PartialFooBarBaz<IsVoid, IsPresent, IsPresent>`, but its trait bounds were not satisfied``,
+noting that `HasExtractor` must be implemented. `CanDowncastFields` applies to any extractor that
+can yield each target variant, a fresh `to_extractor()` included, and once a chain's candidates cover
+every source variant the last remainder is uninhabited, so the final `downcast_fields` result closes
+with `finalize_extract_result`.
+
+`CanBuildFrom` never drops a source field. A source `Person { first_name, surname }` merged into
+`Employee { first_name, last_name }` fails on `build_from` itself, not at `finalize_build`, with
+``error[E0277]: the trait bound `__PartialEmployee<IsPresent, IsNothing>: UpdateField<Symbol<7, …surname…>, IsPresent>` is not satisfied``,
+noted as required through `FieldsBuilder` and `CanBuildFrom<Person>`. Two sources carrying the same
+field fail on the second merge with the builder's build-twice mismatch, `E0271` on
+`…>::Mapper == IsNothing`. A target field no source carries is legal and is left for a
+`build_field` or a defaulted finalize.
+
+These traits suit conversions that must be derived from names; a hand-written `From` or `TryFrom`
+is clearer when both types are one's own and the conversion is written once, and a concrete `match`
+suits a one-off narrowing. `.ok()` on a downcast suits a single attempt and discards the remainder a
+further attempt needs, and a remainder derives nothing, so a `Result` holding one is neither `Debug`
+nor `PartialEq`. None of the four has a borrowing form, and each chain step has a different type, so
+a chain is unrolled rather than looped.
 
 ## Examples
 
@@ -195,8 +236,8 @@ and both `upcast` and `downcast` to convert between sibling shape enums in the
   that drives them, are defined in
   [crates/core/cgp-field/src/impls/cast.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/impls/cast.rs).
   `FieldsExtractor` is `pub` while the analogous `FieldsBuilder` in `build_from.rs` is private, so
-  the extractor recursion can appear by name in a diagnostic and be named in a bound, while the
-  builder recursion cannot.
+  only the extractor recursion can be named in a bound; both appear by name in diagnostics, the
+  builder one as `cgp::cgp_core::cgp_field::impls::build_from::FieldsBuilder`.
 - `CanBuildFrom` and its internal `FieldsBuilder` recursion are in
   [crates/core/cgp-field/src/impls/build_from.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/impls/build_from.rs).
 - The underlying extractor and builder traits are under

@@ -74,6 +74,28 @@ and is exactly `Shape::Circle(circle)`. The benefit appears only in generic code
 itself parameterized over a tag `Tag` with a `C: FromVariant<Tag>` bound can build the variant named
 by `Tag` without ever mentioning a concrete variant.
 
+The tag must be written whenever the enum has two or more variants. A bare `PhantomData`, as
+`Shape::from_variant(PhantomData, circle)`, fails with `error[E0283]: type annotations needed` and
+``note: multiple `impl`s satisfying `Shape: cgp::prelude::FromVariant<_>` found``, since rustc does not
+pick the impl from the payload's type; a one-variant enum has a single impl, so there the tag is
+inferred. A variant name is matched exactly, so `Symbol!("circle")` for a `Circle` variant is an
+unsatisfied `FromVariant<Symbol<6, Chars<'c', …>>>` bound (`E0277`) rather than a type mismatch. Each
+derived impl is spanned at its variant, so a hand-written
+`impl FromVariant<Symbol!("Circle")> for Shape` beside the derive fails with `E0119`, ``conflicting implementations of trait `FromVariant<…>` for type `Shape` ``,
+with the primary label on the `Circle` variant. A variant named `Value` breaks the derive, because
+the generated signature names the payload as `Self::Value`; see
+[`#[derive(FromVariant)]`](../derives/derive_from_variant.md). Every variant needs exactly one unnamed
+payload, the derive's requirement rather than the trait's.
+
+Bound on `FromVariant` only where a type parameter decides the variant to build: a concrete site
+writes the constructor, which is shorter and generates nothing, and a type that is also taken apart
+derives [`CgpData`](../derives/derive_cgp_data.md) rather than this derive alone. The associated
+`Value` is what makes a generic signature possible, since a function that does not know the variant
+still names the payload type it takes as `<Shape as FromVariant<Tag>>::Value`. The trait is also the
+whole of what an upcast asks of its target: a narrow enum deriving `HasFields` and `ExtractField`
+upcasts into a wide enum that derives only `FromVariant`, which lets a routine build into a small
+local enum and widen the result.
+
 ## Examples
 
 `FromVariant` lifts a value into an enum by naming the variant with a tag, which a concrete call

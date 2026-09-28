@@ -1163,7 +1163,7 @@ not parse: [`Path!`](../cgp/reference/macros/path.md) requires the leading `@`.
 Two smaller facts are now recorded rather than implied: `IsOwned` is a public `MapTypeRef` marker that
 **nothing in CGP selects**, so a reader meeting it in the list of three should not assume an owned extractor
 exists; and `FieldsExtractor` is `pub` while its analogue `FieldsBuilder` is private, so only the former can
-appear by name in a diagnostic.
+be named in a bound, though both appear by name in diagnostics.
 
 Two coverage gaps in the library were closed alongside. **`AppendProduct`, `ConcatProduct`, and `MapFields` had
 no test anywhere** despite being public and carrying worked examples in the internal reference; they now have
