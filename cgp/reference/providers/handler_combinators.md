@@ -42,8 +42,9 @@ all.
 Promotion follows the natural inclusions among these. An infallible provider is a fallible one that
 always returns `Ok`, and a synchronous provider is an async one whose future is ready at once. A
 by-reference provider serves an owned-input slot by dereferencing the input, and an owned-input
-provider serves a by-reference slot only if it accepts a borrow as its input. Nothing goes the other
-way: a fallible or async provider cannot be lowered.
+provider serves a by-reference slot only if it accepts a borrow as its input. No promotion removes a
+failure path or an `await`: `TryPromote` can present a fallible provider as an infallible one, but
+only by making the `Result` its output.
 
 ## Composing handlers in sequence
 
@@ -187,9 +188,7 @@ Several entries take their one step from a sibling rather than from the base.
 `PromoteRef<Provider>` entry needs `Provider` to answer the matching owned-input member. So a bundle
 expects its parameter to be a provider wired to that same bundle, which is what the macros do by
 passing `Self`: the generated provider delegates `TryComputerComponent` to `Promote<Self>`, and
-`PromoteAsync<Self>` then finds that `TryComputer`. Wiring a context's `HandlerComponent` to
-`PromoteComputer<MyComputer>`, for a provider that implements only `Computer`, fails; the
-hand-written form is `PromoteAsync<Promote<MyComputer>>`.
+`PromoteAsync<Self>` then finds that `TryComputer`.
 
 The other bundles follow the same pattern from other bases:
 
@@ -207,6 +206,28 @@ The other bundles follow the same pattern from other bases:
 
 The async bundles fill in only the async members, because the synchronous ones cannot be derived
 from an async base.
+
+Which entries serve a hand-written base, one not wired to the bundle, follows from how many steps
+each entry takes from the base. An entry whose combinator takes its one step from the base works for
+any provider; an entry that takes its step from a sibling component needs the base wired to the same
+bundle, as the macros wire theirs:
+
+- **`PromoteComputer<P>`:** `TryComputerComponent` (`Promote`) and `AsyncComputerComponent`
+  (`PromoteAsync`) work for any `Computer`; `HandlerComponent` (`PromoteAsync<P>`, which needs a
+  `TryComputer`) does not, and fails with
+  ``error[E0277]: the trait bound `Double: DelegateComponent<TryComputerComponent>` is not satisfied``.
+  The hand-written form is `PromoteAsync<Promote<P>>`.
+- **`PromoteTryComputer<P>`:** `TryComputerComponent` (`TryPromote`) works for any `Computer`
+  returning `Result`; `HandlerComponent`, through `PromoteComputer<P>`, does not. The hand-written
+  form is `PromoteAsync<TryPromote<P>>`.
+- **`PromoteProducer<P>`:** `ComputerComponent` (`Promote`) works for any `Producer`; every other
+  entry, through `PromoteComputer<P>`, needs `P` wired to the bundle.
+- **`PromoteAsyncComputer<P>`** and **`PromoteHandler<P>`:** `HandlerComponent` (`Promote` and
+  `TryPromote`) works for any `AsyncComputer`, or any returning `Result` respectively.
+
+Every bundle's `…Ref` entries also need a base that accepts the borrow as its input, so a base over
+an owned `u64` answers none of them; wiring `HandlerRefComponent: PromoteHandler<P>` for such a base
+fails with `E0277`.
 
 ## Dispatching on the input type
 
@@ -262,9 +283,12 @@ where
 }
 ```
 
-`Context` and `Code` pass through unchanged. A context wires it with a nested table: the outer entry
-routes a handler component to `UseInputDelegate<SomeTable>`, and the inner table maps each input
-type to its provider.
+`Context` and `Code` pass through unchanged. The listing renames the generics for reading; the
+generated impl uses `__Context__`, `__Components__`, and `__Delegate__`, looks the table up by
+`(Input)`, the bare type rather than a one-element tuple, and names the output as
+`<__Delegate__ as Computer<__Context__, Code, Input>>::Output`. A context wires it with a nested
+table: the outer entry routes a handler component to `UseInputDelegate<SomeTable>`, and the inner
+table maps each input type to its provider.
 
 ## Examples
 
