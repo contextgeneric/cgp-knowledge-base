@@ -37,7 +37,9 @@ provider-trait bounds joined by `+`:
 
 `InnerCalculator` is the provider type, usually a generic parameter of the impl, and
 `AreaCalculator` is the provider trait whose context argument the macro fills in. The trait may
-carry further generic arguments, which keep their order after the inserted `Self`.
+carry further generic arguments, which keep their order after the inserted `Self`; a lifetime
+argument, as in `#[use_provider(Inner: Namer<'a>)]` on a component with a lifetime, stays ahead of
+it, because the completed bound is re-parsed and `syn` emits lifetimes first.
 
 One attribute binds one provider. Unlike [`#[uses]`](uses.md) and [`#[use_type]`](use_type.md), it
 does not take a comma-separated list, because its bound list runs to the end of the attribute. The
@@ -74,7 +76,9 @@ ProviderBound   -> TypePath GenericArgs?
 written without the leading context argument the attribute inserts. Two properties of these
 productions explain every parse failure the attribute produces. A `ProviderBound` is a path with
 plain generic arguments rather than a full `TypeParamBound`, so a turbofish or an associated-type
-binding does not parse there and belongs in the host's own `where` clause. And the `+`-separated
+binding does not parse there (`AreaCalculator<Output = f64>` fails with
+``associated bindings (`Name = ...`) are not allowed in type arguments``) and belongs in the host's
+own `where` clause. And the `+`-separated
 list is parsed to the end of the attribute's input, so exactly one provider fits in one attribute
 and a comma after the first pair reads as a missing `+`. The list may end with a `+`, and an empty
 list parses to a vacuous bound.

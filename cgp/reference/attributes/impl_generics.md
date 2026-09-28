@@ -52,7 +52,9 @@ a nested position such as `&Pool<Db>` pins `Db`. A parameter absent from every i
 rejected as unconstrained; see Known issues.
 
 The list accepts a lifetime or a const parameter as well as a type parameter, because the parser
-reads Rust `GenericParam` productions. Type parameters are the case the attribute exists for.
+reads Rust `GenericParam` productions. A const parameter is pinned like a type one, by a field type
+that mentions it: `#[impl_generics(const N: usize)]` with `#[implicit] data: &[u8; N]` infers `N`
+from an array field's length. Type parameters are the case the attribute exists for.
 
 `#[impl_generics(...)]` is read only by `#[cgp_fn]`. [`#[cgp_impl]`](../macros/cgp_impl.md) does not
 collect it and does not need an equivalent: a provider impl's own generic list is already impl-only,
@@ -188,8 +190,12 @@ Rust `GenericParam`, and the compiler then rejects the generated impl with
 hard error.
 
 On any host other than `#[cgp_fn]` the attribute is not consumed and reaches the compiler as
-`cannot find attribute 'impl_generics' in this scope`, once per generated item on a
-`#[cgp_component]`. Neither host reports it as a misplaced CGP attribute.
+`cannot find attribute 'impl_generics' in this scope`. It is reported once even on a
+`#[cgp_component]`, whose generated items all carry the forwarded attribute, because the copies
+share the attribute's span and rustc deduplicates them. On a `#[cgp_impl]` a second error follows,
+since the parameter the attribute would have declared never exists: a method naming it, as in
+`#[implicit] name: &Name`, fails with ``E0425 cannot find type `Name` in this scope``. Neither host
+reports the attribute as a misplaced CGP attribute.
 
 ## Source
 

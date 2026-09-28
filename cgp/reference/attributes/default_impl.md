@@ -217,8 +217,8 @@ delegate_components! {
 
 `App` is an **environmental context** and `Show<T>` is **parameter-targeted**: the shown value is
 the parameter, and `App` only carries the wiring. The loop wires every type with a registered
-default, and the direct `u64` line shadows whatever the namespace would otherwise supply for that
-type. `DefaultImpls1` is not in the prelude and comes from `cgp::core::component`.
+default, and the direct `u64` line adds a type the registry does not cover; an entry for a covered
+type such as `String` would overlap the loop's impl, as Known issues records. `DefaultImpls1` is not in the prelude and comes from `cgp::core::component`.
 
 ## Related constructs
 
@@ -288,8 +288,12 @@ with `E0210`, because a `PathCons` list is never a local type; this is the
 type key keyed on a foreign component into a foreign namespace fails the same way.
 
 Writing the table parameter yourself, as in `DefaultImpls1<ShowImplComponent, App>`, makes the
-trait's arity wrong once the macro appends `__Components__`, and the compiler rejects the impl for
-supplying too many generic arguments.
+trait's arity wrong once the macro appends `__Components__`, and the compiler rejects the impl with
+``E0107 trait takes 2 generic arguments but 3 generic arguments were supplied``.
+
+The orphan failure of a path key reads
+``E0210 type parameter `__Components__` must be used as an argument to some local type``, headlined
+at the `#[cgp_impl]` attribute, because the uncovered parameter is the table the macro appended.
 
 On the [`#[cgp_impl(Self)]`](../macros/cgp_impl.md) passthrough form the attribute is still lowered,
 with the provider type `Self`, so the emitted registration reads `type Delegate = Self`, which

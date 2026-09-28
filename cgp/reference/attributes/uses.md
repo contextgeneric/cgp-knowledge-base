@@ -48,7 +48,8 @@ trait rather than only its impl, use [`#[extend_where]`](extend_where.md) on `#[
 `#[uses(...)]` is accepted on [`#[cgp_fn]`](../macros/cgp_fn.md) and
 [`#[cgp_impl]`](../macros/cgp_impl.md), the two hosts with an impl to attach bounds to. It is not
 accepted on [`#[cgp_component]`](../macros/cgp_component.md), where a trait dependency is a
-supertrait written with [`#[extend]`](extend.md).
+supertrait written with [`#[extend]`](extend.md); the component collector passes it through
+untouched, so it fails with ``cannot find attribute `uses` in this scope``.
 
 ## Syntax Grammar
 
@@ -60,7 +61,8 @@ UsesArgs -> TypeParamBound ( `,` TypeParamBound )* `,`?
 
 `TypeParamBound` is the Rust grammar's bound production, wider than the `Trait<Args>` form the
 attribute is normally written with: a lifetime, a `?Sized`, and an associated-type equality all
-parse, though Rust itself rejects some of them as a bound on `Self`. The list may be empty, and
+parse, though Rust itself rejects some of them as a bound on `Self`: `#[uses(?Sized)]` fails with
+`this relaxed bound is not permitted here`. The list may be empty, and
 entries from every occurrence of the attribute are collected before the bound is built, so
 `#[uses(A, B)]` and `#[uses(A)] #[uses(B)]` emit the same thing.
 
@@ -168,6 +170,16 @@ These constructs are the ones `#[uses]` works with:
   higher-order provider.
 - [`#[implicit]`](implicit.md): brings in a context field as an argument.
 - [`#[extend_where]`](extend_where.md): makes a bound part of a `#[cgp_fn]` trait's definition.
+
+## Known issues
+
+Naming a provider trait instead of a consumer trait is the common misuse, written when
+[`#[use_provider]`](use_provider.md) was meant. `#[uses(AreaCalculator)]` emits
+`Self: AreaCalculator`, and a provider trait carries an explicit context parameter that `#[uses]`
+does not fill in, so the bound fails with
+``E0107 missing generics for trait `AreaCalculator` `` (`expected 1 generic argument`), with a note
+naming the missing `__Context__` parameter. Depend on the consumer trait (`CanCalculateArea`) for
+whatever the context wires, or on the provider through `#[use_provider]` for a named implementation.
 
 ## Source
 

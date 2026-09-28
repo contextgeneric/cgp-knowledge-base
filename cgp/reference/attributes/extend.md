@@ -49,7 +49,11 @@ and they accumulate.
 collector: [`#[cgp_type]`](../macros/cgp_type.md), [`#[cgp_getter]`](../macros/cgp_getter.md), and
 [`#[cgp_auto_getter]`](../macros/cgp_auto_getter.md). It is not accepted on
 [`#[cgp_impl]`](../macros/cgp_impl.md), because a provider impl has no trait definition of its own;
-its supertraits belong to the component's trait.
+its supertraits belong to the component's trait. There the attribute is passed through untouched and
+fails with ``cannot find attribute `extend` in this scope``, and since the bound never reaches the
+impl, a body calling the supertrait's method fails beside it with `E0599` (the method exists but its
+trait bounds were not satisfied). Moving the bound to [`#[uses]`](uses.md), or onto the component's
+trait, fixes both.
 
 ## Syntax Grammar
 
@@ -60,7 +64,9 @@ ExtendArgs -> TypeParamBound ( `,` TypeParamBound )* `,`?
 ```
 
 This is the production [`#[uses]`](uses.md) accepts, the Rust `TypeParamBound`, so a lifetime, a
-`?Sized`, or an associated-type equality parses as readily as a trait name. The list may be empty,
+`?Sized`, or an associated-type equality parses as readily as a trait name, though Rust rejects a
+relaxed supertrait: `#[extend(?Sized)]` fails with
+`relaxed bounds are not permitted in supertrait bounds`. The list may be empty,
 and every occurrence's entries are collected together. The two attributes differ in where the bounds
 land, not in what they accept.
 
@@ -133,8 +139,13 @@ pub trait CanGreet {
 is the same as `pub trait CanGreet: HasName`. The component macro then treats the supertrait as it
 treats any: it stays on the consumer trait and becomes a `Context: HasName` predicate on the
 provider trait and on every generated impl, as
-[`#[cgp_component]`](../macros/cgp_component.md#expansion) shows. Although `#[extend]` generates
-nothing the language cannot already spell here, it is still the preferred form, because it presents
+[`#[cgp_component]`](../macros/cgp_component.md#expansion) shows. Because a trait's `where` bound is
+not implied for its implementations, every provider of the component must prove `Context: HasName`
+itself: a `#[cgp_impl]` provider for `Greeter` without `#[uses(HasName)]` fails at its own
+definition with ``E0277 the trait bound `__Context__: HasName` is not satisfied``, whether or not its
+body calls `name()`. So `#[extend]` guarantees the supertrait to callers of `CanGreet`, not to the
+providers that implement it. Although `#[extend]` generates nothing the language cannot already
+spell here, it is still the preferred form, because it presents
 the bound as an import and keeps the `use`/`pub use` pairing with `#[uses]` consistent.
 
 ## Examples

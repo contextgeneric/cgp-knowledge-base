@@ -158,9 +158,14 @@ A `#[cgp_impl]` block with several methods gathers the bounds of every method an
 before adding them, since all methods share one impl. Two methods that each take
 `#[implicit] name: &str` contribute one `HasField<Symbol!("name"), Value = String>` bound. The
 comparison covers the whole specification (name, argument type, field type, access form, and
-mutability), so two methods reading the same field at different types each contribute a bound. A
-`&str` in one method and a `String` in another therefore require two conflicting `Value` types
-rather than merging silently. The `let` bindings are still emitted once per method.
+mutability), so two methods reading the same field in different ways each contribute a bound. When
+the field types agree the two bounds are identical and harmless: a `&str` in one method and a
+`String` in another both require `Value = String`. When they differ, as with `count: u32` in one
+method and `count: u64` in another, the bounds demand two `Value` types at once, and the provider
+fails where it is defined with
+``E0284 type annotations needed: cannot satisfy `<__Context__ as HasField<…>>::Value == u32` ``,
+headlined at the provider name in `#[cgp_impl(new …)]`. The `let` bindings are still emitted once per
+method.
 
 ## Examples
 

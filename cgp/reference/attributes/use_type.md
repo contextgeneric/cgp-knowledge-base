@@ -159,7 +159,9 @@ where
 The substitution matches single-segment type paths without arguments whose name is an imported name
 or alias. A bare `Scalar` in a return type, an implicit argument, a `where` predicate, or a `let` in
 the body is rewritten the same way, which is what lets nested uses work without the author writing a
-path.
+path. On `#[cgp_impl]` it also reaches the provider trait's arguments in the impl header, so
+`impl FooProvider<Error>` under `#[use_type(HasErrorType.Error)]` implements the provider trait at
+the context's error type rather than at a type named `Error`.
 
 The rewrite also reaches an alias that qualifies an expression path, so the alias means one thing
 throughout the definition. `Transaction::begin_from(pool)` becomes
@@ -360,9 +362,30 @@ These constructs are the ones `#[use_type]` works with:
   it fits.
 - [`#[extend]`](extend.md): adds a supertrait without rewriting names; prefer `#[use_type]` when the
   imported type appears in signatures.
+- [`#[impl_generics]`](impl_generics.md): the lighter alternative on `#[cgp_fn]` when the type only
+  flows through values the body reads from fields, so it is inferred rather than wired; move to an
+  abstract type once a signature names the type or two traits must agree on it, per
+  [naming a type dependency](../../guides/naming-a-type-dependency.md).
 - [`HasType`](../components/has_type.md): CGP's built-in abstract-type component.
 - [Importing abstract types](../../guides/importing-abstract-types.md): the guide recommending this
   attribute over a supertrait plus `Self::Type`.
+
+## Known issues
+
+Three corner cases are lowered faithfully and left to the compiler, and each is worth recognizing:
+
+- **A misspelled associated type** lowers into a path that names nothing, and because the
+  substitution keeps the user's span, the error lands on each use of the alias:
+  `#[use_type(HasErrorType.Eror)]` fails with
+  ``E0576 cannot find associated type `Eror` in trait `HasErrorType` ``.
+- **An alias in a trait path's head is not grounded**, since that position must name a trait and an
+  alias names a type, so `#[use_type(HasFooType.Foo, Foo.Bar)]` fails on the second `Foo` with
+  ``E0405 cannot find trait `Foo` in this scope``.
+- **Two pins naming each other**, `#[use_type(HasFooType.{Foo = Bar}, HasBarType.{Bar = Foo})]`,
+  ground in one pass and emit both bounds, which the solver cannot discharge:
+  ``E0275 overflow evaluating the requirement `<__Context__ as HasFooType>::Foo == _` ``. The
+  [implementation document](../../implementation/asts/attributes/use_type.md#behavior-and-corner-cases)
+  records why this is emitted rather than rejected.
 
 ## Source
 

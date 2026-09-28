@@ -85,6 +85,11 @@ where
 { /* … */ }
 ```
 
+Because a trait's `where` bound is not implied for its implementations, every provider impl of the
+component must prove that context bound itself, so a `#[cgp_impl]` provider for `Greeter` needs
+`#[uses(HasName)]` (or the matching `#[use_type]` for a type supertrait) even when its body never
+calls the supertrait; without it the impl fails with `E0277` at its own definition.
+
 A **default method body** is preserved into the provider trait, because the provider trait is a
 clone of the consumer trait with only `self`/`Self` rewritten. This is what lets an empty
 `#[cgp_impl]` provider inherit the default and satisfy the component with no method of its own.

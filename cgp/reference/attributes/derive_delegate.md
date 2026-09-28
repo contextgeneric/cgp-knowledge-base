@@ -195,16 +195,16 @@ pub trait CanCalculateArea<Shape> {
 pub struct Rectangle { pub width: f64, pub height: f64 }
 pub struct Circle { pub radius: f64 }
 
-#[cgp_new_provider]
-impl<Context> AreaCalculator<Context, Rectangle> for RectangleArea {
-    fn area(_context: &Context, shape: &Rectangle) -> f64 {
+#[cgp_impl(new RectangleArea)]
+impl AreaCalculator<Rectangle> {
+    fn area(&self, shape: &Rectangle) -> f64 {
         shape.width * shape.height
     }
 }
 
-#[cgp_new_provider]
-impl<Context> AreaCalculator<Context, Circle> for CircleArea {
-    fn area(_context: &Context, shape: &Circle) -> f64 {
+#[cgp_impl(new CircleArea)]
+impl AreaCalculator<Circle> {
+    fn area(&self, shape: &Circle) -> f64 {
         core::f64::consts::PI * shape.radius * shape.radius
     }
 }
@@ -228,7 +228,9 @@ delegate_components! {
 ```
 
 Now `MyApp` implements `CanCalculateArea<Rectangle>` through `RectangleArea` and
-`CanCalculateArea<Circle>` through `CircleArea`. The generated `UseDelegate` impl performs the
+`CanCalculateArea<Circle>` through `CircleArea`, which
+`check_components! { MyApp { AreaCalculatorComponent: [Rectangle, Circle] } }` confirms. `MyApp` is
+an **environmental context** and the component is **parameter-targeted**. The generated `UseDelegate` impl performs the
 lookup: for a `Rectangle` it reads the `Rectangle` entry from `AreaCalculatorComponents`, finds
 `RectangleArea`, and forwards `area` to it.
 
@@ -240,6 +242,19 @@ makes sense for components that carry generic parameters. It generates an impl f
 shape), whose role and behavior that document covers in full. The inner lookup table it dispatches
 through is populated with [`delegate_components!`](../macros/delegate_components.md), whose
 nested-table syntax is the idiomatic way to define `UseDelegate<...>` wirings in place.
+
+## Known issues
+
+Wiring one component both through `open` and through a `UseDelegate` table is a coherence conflict,
+because each emits its own `DelegateComponent` impl for the component key on the context. A wiring
+entry expands to an `IsProviderFor` impl and a `DelegateComponent` impl, so the compiler reports
+`E0119` twice, once for each; the `DelegateComponent` report names the component
+(`conflicting implementations of trait 'DelegateComponent<AreaCalculatorComponent>' for type 'App'`).
+One dispatch mechanism per component is the rule.
+
+A key parameter that is not in scope fails as an unresolved type in the generated impl,
+``E0425 cannot find type `Shape` in this scope``, most often because the attribute sits on a
+component with no type parameter to dispatch on.
 
 ## Source
 

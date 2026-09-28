@@ -209,10 +209,15 @@ nothing.
 ## Known issues
 
 The marker is appended by the macro, so a path that already ends in the marker doubles it:
-`#[prefix(@app.GreeterComponent in Ns)]` registers the component at
-`@app.GreeterComponent.GreeterComponent`. The definition compiles, and a context that binds
-`@app.GreeterComponent` then finds its entry never consulted, because the route and the binding name
-different paths.
+`#[prefix(@app.GreeterComponent in Ns)]` routes the component to
+`@app.GreeterComponent.GreeterComponent`. On a component without type parameters the mistake stays
+hidden, because a `delegate_components!` path key ends in a wildcard tail, so a context's
+`@app.GreeterComponent` entry matches the doubled route as a longer path beneath it and the check
+passes. On a component with type parameters it surfaces: with
+`#[prefix(@app.ShowImplComponent in DefaultNamespace)]` on `CanShow<T>`, the per-type entry
+`@app.ShowImplComponent.String` does not match the route
+`@app.ShowImplComponent.ShowImplComponent.String`, and `check_components!` reports the unregistered
+path below.
 
 Registering routes a component and binds nothing. A prefixed component compiles even when nothing
 binds its path, and so does a context that joins the namespace; only a `check_components!` reports

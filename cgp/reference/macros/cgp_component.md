@@ -257,6 +257,10 @@ where
 The same predicate is added to *every* item the macro emits that mentions the context: the consumer
 blanket impl, the provider blanket impl, and the `UseContext` and `RedirectLookup` provider impls each
 gain their own `Context: HasName`, since none of them can apply where the supertrait does not hold.
+A user-written provider must satisfy it too, because a trait's `where` bound is not implied for its
+implementations: a `#[cgp_impl]` provider for `Greeter` declares `#[uses(HasName)]` (or the matching
+`#[use_type]` for a type supertrait) even when its body never calls `name()`, and without it fails at
+its own definition with ``E0277 the trait bound `__Context__: HasName` is not satisfied``.
 
 **A component trait's methods may carry default bodies, and the body travels to the provider trait
 rather than staying behind on the consumer trait.** This is the second thing the `Self`-to-`Context`
