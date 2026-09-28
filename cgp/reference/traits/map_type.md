@@ -109,12 +109,44 @@ pub trait TransformMapFields<Transform, TargetMap> {
 }
 ```
 
-The recursion is the load-bearing part. For each `Field<Tag, Value>` in the list,
-`TransformMapFields` uses [`UpdateField`](has_builder.md) twice: it first takes the field out
+The recursion is the load-bearing part, and it lives in a private helper trait,
+`TransformMapFieldsImpl`, implemented over the target's field list. For each `Field<Tag, Value>` in
+the list, after first recursing into the rest of the list, `TransformMapFields` uses
+[`UpdateField`](has_builder.md) twice: it first takes the field out
 (replacing its marker with `IsNothing`), reads its current marker, applies
 `Transform::transform_mapped` to convert the value to the `TargetMap` wrapping, then writes it back
 under `TargetMap`. The result type therefore has every field re-marked to `TargetMap`, with the
 values transformed accordingly.
+
+### Calling it, and what goes wrong
+
+`transform_map_fields` takes no type arguments, so something must fix `Transform` and `TargetMap`.
+Inside generic code a `where` clause does, and the method is called bare; at a concrete call site
+they are named on the trait, as
+`TransformMapFields::<FillDefaults, IsPresent>::transform_map_fields(partial)`. A bare
+`Point { x: 1 }.into_builder().transform_map_fields()` at a concrete site fails with
+``error[E0283]: type annotations needed for `__PartialPoint<_>` ``. Because each list cell recurses
+into the rest of the list before converting its own field, the fields are visited from the last
+declared to the first, which a transform with a side effect (one that logs, say) observes.
+
+A transform needs an impl for every source marker a field may be in. Applying a
+`pub struct OnlyAbsent;` with only a `TransformMap<IsNothing, IsPresent, T>` impl to a builder whose `port: u16`
+is set fails twice: first with a misleading
+``error[E0271]: type mismatch resolving `<__PartialConfig<IsPresent, IsPresent> as UpdateField<Symbol<4, …>, IsNothing>>::Mapper == IsNothing` ``,
+then with the real cause,
+``error[E0277]: the trait bound `OnlyAbsent: TransformMap<IsPresent, IsPresent, u16>` is not satisfied``,
+which identifies the field by its value type rather than its name. Reached through a method call on
+an operation built from the walk, such as `finalize_with_default`, the error instead stops at the
+`TransformMapFields` bound; see [optional_fields](optional_fields.md).
+
+A marker of one's own implementing `MapType` gets only part of the machinery. The derive's
+`UpdateField` impls are generic over any marker, so `update_field` moves a field into a custom state
+and a `TransformMap` can convert to and from it, but the finalize impls, the `HasField` impls on a
+partial type, and the optional layer are written against the standard markers. A bound that pins a
+marker's storage names the generic associated type with its argument, as
+`M: MapType<Map<String> = String>`. `IsNothing` and `IsVoid` are not interchangeable: the first is
+inhabited (`()`), the second is not (`Void`), and an error naming the wrong one usually means record
+and variant machinery have been crossed.
 
 ## Examples
 

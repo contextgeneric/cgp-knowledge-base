@@ -109,6 +109,32 @@ With `IsPresent` it is the identity, with `IsNothing` every entry becomes `()`, 
 provider, such as `TryPromoteProviders` with `Map<P> = TryPromote<P>`, rewrites a list of providers
 the same way. Because `MapFields` covers both lists, one marker applies to a product or a sum alike.
 
+### Using them, and what each rejects
+
+The three results carry different names, and reaching for the wrong one is a plain resolution error:
+`AppendProduct` and `ConcatProduct` expose `Output` while `MapFields` exposes `Mapped`, so
+`<Product![u8, u16] as MapFields<IsPresent>>::Output` fails with
+``error[E0576]: cannot find associated type `Output` in trait `MapFields` ``. A mapper with no
+`MapType` impl fails on the bound itself: mapping through a plain `pub struct Wrapped;` is
+``error[E0277]: the trait bound `Wrapped: MapType` is not satisfied``, noted as
+``required for `Cons<u8, Cons<u16, Nil>>` to implement `MapFields<Wrapped>` ``.
+
+Only `MapFields` covers sums; there is no `AppendSum` or `ConcatSum`. Order is part of every result
+type, so appending differs from prepending, `A` then `B` is unrelated to `B` then `A`, and nothing
+normalizes a list. `ConcatProduct` does not detect duplicate entries: two products sharing a field
+name concatenate into a legal list with the name twice, which fails later at whatever consumes it.
+Concatenating onto `Nil`, or `Nil` onto a list, is the identity, which lets generic bounds resolve in
+the degenerate cases. Each operation recurses once per entry of the list it walks (the first operand
+for `ConcatProduct`), so a very wide shape costs trait-resolution work proportional to its width.
+
+They compute types, never values: a `MapFields<IsOptional>` result wraps nothing at run time, and
+the value-level counterpart is [`TransformMapFields`](map_type.md#transformmap-and-transformmapfields).
+A type's existing shape comes from [`HasFields`](has_fields.md), and moving values through a shape is
+the builder and extractor families' job. `MapFields` is also easy to confuse with two neighbours:
+[`MapType`](map_type.md) names one field's storage, and `MapField`, singular, is the field-access
+lifetime helper in [`has_field`](has_field.md). [`ConcatPath`](static_format.md) is the analogous
+splice for type-level paths.
+
 ## Examples
 
 These operations underlie the extensible-record machinery, so they are most visible through its

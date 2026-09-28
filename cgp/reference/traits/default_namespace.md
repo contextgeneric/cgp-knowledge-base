@@ -120,6 +120,48 @@ context's loops leave open, and an entry for a key they already answer overlaps 
 rejected with `E0119`. That is the pattern presets rely on, expressed entirely through these
 projections with no runtime cost.
 
+### What each misuse reports
+
+The three mistakes this family invites are all compile errors on the generated impls, and each is
+worth recognizing. With the `Show<T>` component, `ShowString` default, and `App` of the example
+below:
+
+```rust
+// A loop whose key never mentions its variable.
+for <T, Provider> in DefaultImpls1<ShowImplComponent> {
+    @test.ShowImplComponent.String: Provider,
+}
+
+// A direct entry for a type the loop already wires through a registered default.
+@test.ShowImplComponent.String: ShowWithDisplay,
+
+// A bare-key entry for a component the namespace already routes.
+ShowImplComponent: ShowWithDisplay,
+```
+
+The loop fails with ``error[E0207]: the type parameter `T` is not constrained by the impl trait, self type, or predicates``
+and the same for `Provider`, since the loop variables appear only in the bound. The direct `String`
+entry overlaps the loop's impl, reported as `E0119` on both generated traits:
+``conflicting implementations of trait `IsProviderFor<PathCons<Symbol<4, …'t'…'e'…'s'…'t'…>, PathCons<ShowImplComponent, PathCons<String, _>>>, _, _>` for type `App` ``
+and then on `DelegateComponent<…>`. The bare-key entry overlaps the namespace's own entry for the
+component, again `E0119` twice, on ``IsProviderFor<ShowImplComponent, _, _>`` and
+``DelegateComponent<ShowImplComponent>``; a context joining a namespace wires a prefixed component at
+its path instead.
+
+A component with several type parameters takes one path segment per parameter, because the generated
+`RedirectLookup` appends every parameter to the route. So a `CanConvert<Source, Target>` default
+registered as `#[default_impl(String in DefaultImpls2<ConverterComponent, u64>)]` is pulled in by a
+loop keyed `@test.ConverterComponent.T.u64`, with the loop variable in the source position; the
+registration emits `impl<Components> DefaultImpls2<ConverterComponent, u64, Components> for String`.
+
+`Show<T>` is a parameter-targeted component on an environmental context: `App` carries the wiring and
+the shown value is the parameter. Reach for a namespace only once top-level wiring is long enough to
+be a problem, since it adds an indirection to follow when reading; prefer `DefaultNamespace` for
+per-component defaults, `DefaultImpls1` for per-type ones, and a purpose-named namespace trait of
+one's own (which `#[default_impl]` accepts as readily) over `DefaultImpls2` when a default really
+depends on two types. A default fixed for a whole application is usually clearer as a
+`DefaultImpls1` default plus a wiring entry.
+
 ## Examples
 
 A per-type default registered with `#[default_impl]` and then pulled into a context shows the chain.

@@ -19,8 +19,10 @@ two ways to recover the string, and `ConcatPath` is the corresponding type-level
 `{}`. `StaticString` recovers it eagerly, as a compile-time `&'static str` constant computed by
 const evaluation, so the decoded string is available wherever a `const` is needed and costs nothing
 at runtime. `ConcatPath` works one level up: a [`PathCons`](../types/path_cons.md) path is a
-type-level list of path segments, and joining two paths, the common operation when composing nested
-accessors, is splicing one such list onto another.
+type-level list of path segments, and joining two paths is splicing one such list onto another. Its
+one consumer in the library is the `RedirectLookup` impl `#[cgp_component]` generates, which appends
+the component's type parameters to the lookup path; nested getters chain through a `Product!` list
+in [`ChainGetters`](../providers/chain_getters.md) and do not use paths at all.
 
 ## Definition
 
@@ -67,7 +69,11 @@ pub trait StaticString {
 }
 ```
 
-It is implemented for every type via a blanket impl over an internal `StaticBytes` trait.
+It is a blanket impl over a private `StaticBytes` trait, which only `Symbol<LEN, Chars>` and `Nil`
+implement, so a bare `Chars` list lacks it:
+``<Chars<'a', Nil> as StaticString>::VALUE`` fails with
+``error[E0277]: the trait bound `cgp::prelude::Chars<'a', cgp::prelude::Nil>: StaticString` is not satisfied``,
+with a help line naming the unimplemented `StaticBytes`. `Nil`'s value is `""`.
 `Symbol<LEN, Chars>` computes a `[u8; LEN]` byte array at const-evaluation time by walking the
 `Chars` list and UTF-8-encoding each character into the array, then `StaticString::VALUE` validates
 those bytes as UTF-8 and exposes the result as a `&'static str`. The `LEN` const parameter of the
@@ -101,8 +107,26 @@ multi-byte Unicode: the byte length in `Symbol` accounts for UTF-8 width, and th
 decodes to `""`.
 
 `ConcatPath` is a pure type-level computation evaluated during trait resolution. It never touches
-values; it only names the combined path type, which a getter or accessor then uses to descend
-through nested fields.
+values; it only names the combined path type. For a component `Show<T>`, the generated provider impl
+reads
+
+```rust
+impl<__Context__, T, __Components__, __Path__> ShowImpl<__Context__, T>
+for RedirectLookup<__Components__, __Path__>
+where
+    __Path__: ConcatPath<Path!(@T)>,
+    __Components__: DelegateComponent<<__Path__ as ConcatPath<Path!(@T)>>::Output>,
+    // and the delegate implements ShowImpl
+```
+
+so a lookup redirected to `@test.ShowImplComponent` for a `u64` value reads the table at
+`@test.ShowImplComponent.u64`.
+
+`StaticFormat` takes no `self`, so formatting through `Display` needs a value (for a symbol,
+`<Symbol!("name")>::default()`), while code holding only the type bounds on `StaticFormat` directly.
+The one case for naming it is a wrapper that holds only `PhantomData<Tag>` and implements `Display`
+by calling `Tag::fmt(f)`; otherwise a `Display` bound needs no import, and `StaticString` is cheaper
+for a name used more than once, since `Display` reconstructs the string on every call.
 
 ## Examples
 
@@ -135,7 +159,7 @@ type Joined = <Outer as ConcatPath<Inner>>::Output;
 ```
 
 `Joined` is the path `Path!(@a.b.c.d)`. Note the leading `@`: [`Path!`](../macros/path.md) requires
-it, so `Path!(a.b)` does not parse. The library itself uses a narrower shape: the generated code
+it, so `Path!(a.b)` fails with ``error: expected `@` ``. The library itself uses a narrower shape: the generated code
 appends the trait's type parameters, as `__Path__: ConcatPath<PathCons<T, Nil>>`, which is how a
 redirected lookup extends the route it was given.
 
@@ -146,8 +170,8 @@ redirected lookup extends the route it was given.
 a string literal, the type-level string at the heart of CGP's field naming. `ConcatPath` operates on
 the [`PathCons`](../types/path_cons.md) list constructed by the [`Path!`](../macros/path.md) macro,
 and is the path-level analogue of the product-level `ConcatProduct`. Together they let the names
-that drive [`HasField`](has_field.md) lookups and nested-getter composition surface as ordinary
-strings and paths.
+that drive [`HasField`](has_field.md) lookups and namespace routing surface as ordinary strings and
+paths.
 
 ## Source
 
