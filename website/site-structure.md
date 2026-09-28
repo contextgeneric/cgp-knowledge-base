@@ -1262,7 +1262,7 @@ Five mechanics are settled and a later page should copy rather than rediscover t
 
 **A construct the macros generate opens with a *Generated machinery* notice**, an `:::info` block between
 the summary and *Overview*, saying that the reader is not expected to use the construct, which macro
-produces or consumes it, and that the page therefore exists to explain what that macro emits. Twenty-seven
+produces or consumes it, and that the page therefore exists to explain what that macro emits. Twenty-six
 `traits/` pages carry one. The `types/` pages carry none, because that whole section is building blocks
 and its overview says so, so a per-page notice would only repeat the framing. It shares its position and
 shape with the *Legacy — read, don't write* notice

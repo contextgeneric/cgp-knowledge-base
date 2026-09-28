@@ -37,7 +37,11 @@ The parameters identify one provider trait implementation:
 - **`Context`** is the context the provider trait is implemented for.
 - **`Params`** holds the provider trait's other generic parameters: one parameter as itself, several
   as a tuple, and none as the default `()`. So a provider trait with parameters `<I, J>` uses
-  `Params = (I, J)`.
+  `Params = (I, J)`, and one with `<Shape>` uses `Shape`, which the generated supertrait writes as
+  `(Shape)`, a parenthesized type rather than a tuple. A lifetime parameter is lifted into
+  [`Life<'a>`](../types/life.md). Asserting a one-parameter marker with a one-element tuple, as
+  `IsProviderFor<AreaCalculatorComponent, App, (Rectangle,)>`, is a different bound, and rustc adds
+  ``help: for that trait implementation, expected `Rectangle`, found `(Rectangle,)` ``.
 
 The trait is in the prelude. It carries no `#[diagnostic::on_unimplemented]` attribute; diagnostics
 are left to [cargo-cgp](../cargo-cgp.md).
@@ -64,6 +68,15 @@ where
     GetFooValue: IsProviderFor<FooGetterAtComponent, __Context__, __Params__>,
 {}
 ```
+
+A provider trait impl written without `#[cgp_provider]` gets no marker impl, so it fails its own
+supertrait with
+``the trait bound `GreetHello: IsProviderFor<GreeterComponent, Context>` is not satisfied``.
+When a check fails on a provider's dependency, the notes run from the check through
+``required for `GreetHello` to implement `IsProviderFor<GreeterComponent, Person>` `` down to the
+`#[uses(HasName)]` attribute that introduced the unmet bound. Two `check_components!` blocks in one
+module both declare `__Check{Context}`, so a second one, such as a `#[check_providers(...)]` block
+beside a context check, needs its own `#[check_trait(Name)]`.
 
 The forwarding impl is what carries dependencies across layers. When a context delegates to an
 [aggregate provider](../../concepts/aggregate-providers.md) that delegates further, each table

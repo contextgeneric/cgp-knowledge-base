@@ -55,8 +55,24 @@ than the provider. `check_components!` asserts `CanUseComponent` by default and 
 `IsProviderFor` for its `#[check_providers(...)]` form, which checks a named provider directly.
 
 `check_components!` emits a private check trait whose supertrait is `CanUseComponent`, and one empty
-impl of it per checked entry. Each impl compiles only if its supertrait holds, so the whole table is
-a compile-time assertion that adds nothing to the binary.
+impl of it per checked entry, as in:
+
+```rust
+trait __CheckApp<
+    __Component__,
+    __Params__: ?Sized,
+>: CanUseComponent<__Component__, __Params__> {}
+impl __CheckApp<GreeterComponent, ()> for App {}
+impl __CheckApp<AreaCalculatorComponent, Rectangle> for App {}
+```
+
+Each impl compiles only if its supertrait holds, so the whole table is a compile-time assertion that
+adds nothing to the binary.
+
+`delegate_and_check_components!` asserts the same bound for each entry keyed on a component name,
+`->` entries included, and wires path keys, `=>` redirects, and statements without checking them.
+Asserting it on a provider bundle is meaningless: it passes vacuously when the bundled providers
+need nothing from their context and fails blaming the bundle otherwise.
 
 ## Examples
 

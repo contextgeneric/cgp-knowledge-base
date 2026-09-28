@@ -75,7 +75,29 @@ must be kept. All five traits are in the prelude.
 ## Behavior
 
 All five impls come from [`#[derive(HasFields)]`](../derives/derive_has_fields.md); the trait
-modules define only the bare traits. A struct produces a `Product!` of its fields and an enum a
+modules define only the bare traits. The derive names the borrowed shape's lifetime `'__a`, so a
+field that is itself a reference gains a second one: `name: &'a str` appears in `FieldsRef<'__a>` as
+`&'__a &'a str`. The conversions it emits for a struct are one `Cons` chain each:
+
+```rust
+impl FromFields for Config {
+    fn from_fields(Cons(host, Cons(port, Nil)): Self::Fields) -> Self {
+        Self {
+            host: host.value,
+            port: port.value,
+        }
+    }
+}
+impl ToFields for Config {
+    fn to_fields(self) -> Self::Fields {
+        Cons(self.host.into(), Cons(self.port.into(), Nil))
+    }
+}
+```
+
+For an enum, `to_fields` matches each variant onto its `Either` arm and `from_fields` matches down
+the chain, ending in `Either::Right(rest) => match rest {}` on the `Void` terminator. `HasFields`
+accepts every variant shape, where the extractor derives need one unnamed payload per variant. A struct produces a `Product!` of its fields and an enum a
 `Sum!` of its variants. A single-field tuple struct is special: its `Fields` is the inner type
 directly, so `struct Wrap(u32)` has `Fields = u32`, not a one-element product.
 

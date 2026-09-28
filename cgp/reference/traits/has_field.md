@@ -66,7 +66,6 @@ pub trait FieldGetter<Context, Tag> {
 
     fn get_field(context: &Context, _tag: PhantomData<Tag>) -> &Self::Value;
 }
-
 pub trait MutFieldGetter<Context, Tag>: FieldGetter<Context, Tag> {
     fn get_field_mut(context: &mut Context, tag: PhantomData<Tag>) -> &mut Self::Value;
 }
@@ -85,7 +84,6 @@ pub trait MapField<Tag>: HasField<Tag> {
         mapper: impl for<'a> FnOnce(&'a Self::Value) -> &'a T,
     ) -> &T;
 }
-
 pub trait FieldMapper<Context, Tag>: FieldGetter<Context, Tag> {
     fn map_field<T>(
         context: &Context,
@@ -127,11 +125,36 @@ The tag `UseContext` reads is the tag it is asked under. Through
 [`WithContext`](../providers/with_provider.md), a getter component asks under its own marker, so the
 context must implement `HasField<NameGetterComponent>` for `WithContext` to apply.
 
+A getter component reaches a `FieldGetter` provider through
+[`WithProvider`](../providers/with_provider.md). For a one-method getter,
+[`#[cgp_getter]`](../macros/cgp_getter.md) emits an impl of the getter's provider trait for
+`WithProvider<P>` bounded on `P: FieldGetter<Context, NameGetterComponent, Value = T>`, asking under
+the component's own marker, or on `MutFieldGetter` when the method takes `&mut self`.
+`#[cgp_getter]` does not generate `FieldGetter`; it consumes it. `UseField<Tag>` implements
+`FieldGetter` and `MutFieldGetter` for every tag it is asked under, reading its own `Tag`, so
+`WithField<Tag>` (an alias for `WithProvider<UseField<Tag>>`, imported from
+`cgp::core::field::impls`) serves any getter, read or mutable. A bare `UseField<Tag>` entry works as
+well, through a separate impl `#[cgp_getter]` emits for `UseField` directly. `UseFieldRef` also
+implements `MutFieldGetter`; `UseContext` implements only `FieldGetter`, so a mutable getter cannot
+go through `WithContext`. A hand-written `FieldGetter` provider, such as one reading a field of a
+nested value, is an ordinary impl on a marker type wired as `WithProvider<ReadDisplayName>`; wired
+bare, it fails with
+``the trait bound `ReadDisplayName: IsProviderFor<NameGetterComponent, Account>` is not satisfied``,
+since it does not implement the getter's provider trait.
+
 `FieldMapper` has a blanket impl for every `FieldGetter` whose getter and tag are `'static`, and
-`MapField` one for every `HasField` whose tag is `'static`. The two sides follow CGP's consumer and
-provider split: generic code bounds on `HasField` and `HasFieldMut`, while `FieldGetter` and
-`MutFieldGetter` are what gets wired, with [`UseField`](../providers/use_field.md) as the usual
-implementation.
+`MapField` one for every `HasField` whose tag is `'static`. They exist because a chained read fails
+in generic code: for `Context: HasField<A, Value = Inner>` and `Inner: HasField<B>`,
+`context.get_field(..).get_field(..)` fails with
+``error[E0311]: the parameter type `Inner` may not live long enough``.
+rustc suggests naming the lifetime and adding `Inner: 'a`, which works in a free function, but a
+provider trait's method has its lifetimes fixed by the trait, so there `map_field` (or
+`FieldMapper::map_field` on an inner provider) is the way to read through.
+[`ChainGetters`](../providers/chain_getters.md) is built on `FieldMapper` and is wired as
+`WithProvider<ChainGetters<Product![UseField<A>, UseField<B>]>>`. The two sides follow CGP's
+consumer and provider split: generic code bounds on `HasField` and `HasFieldMut`, while
+`FieldGetter` and `MutFieldGetter` are what gets wired, with [`UseField`](../providers/use_field.md)
+as the usual implementation.
 
 ## Examples
 
@@ -160,7 +183,6 @@ where
 pub struct Person {
     pub name: String,
 }
-
 delegate_components! {
     Person {
         GreeterComponent: GreetHello,
@@ -186,7 +208,8 @@ whole-struct structural view rather than single-field access, see [`HasFields`](
 
 A type that implements `Deref` cannot also have a derived or hand-written `HasField` impl for a tag
 its `Deref` target implements. The `Deref` forwarding impl already covers that tag, so the two impls
-overlap and fail with `E0119`. Tags the target lacks are unaffected. See
+overlap and fail with `E0119`: conflicting implementations of `HasField` for the type, at a tag
+whose `Symbol<…>` spells the field's name. Tags the target lacks are unaffected. See
 [`#[derive(HasField)]`](../derives/derive_has_field.md#known-issues).
 
 ## Source

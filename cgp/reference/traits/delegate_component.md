@@ -56,9 +56,20 @@ The impls are almost never written by hand.
 unmet requirement stays diagnosable.
 
 The provider blanket impl is the reader. For a component `Foo`, it implements the provider trait for
-any type `P` with `P: DelegateComponent<FooComponent>`, forwarding each method to
+any type `P` with both `P: DelegateComponent<FooComponent>` and
+`P: IsProviderFor<FooComponent, Context, Params>`, forwarding each method to
 `<P as DelegateComponent<FooComponent>>::Delegate`. The table read is literally how a call is
-routed.
+routed. Because the blanket impl requires the forwarding impl too, a `DelegateComponent` impl
+written by hand, without the `IsProviderFor` impl `delegate_components!` emits beside it, does not
+wire the component: the context never gets the provider trait, and a call fails with
+``error[E0599]: the method `greet` exists for struct `App`, but its trait bounds were not satisfied``.
+
+Wiring one key twice on one table is two impls of each generated trait for one type, so it fails
+twice with `E0119`, first as
+``conflicting implementations of trait `IsProviderFor<GreeterComponent, _, _>` for type `App` ``
+and then for `DelegateComponent<GreeterComponent>`. A context with no entry for a checked component
+fails the check on `CanUseComponent`, with a help line naming the unimplemented
+`DelegateComponent<GreeterComponent>` for the context.
 
 A lookup is shallow: one read yields the immediate `Delegate`, which may itself be a table. An
 [aggregate provider](../../concepts/aggregate-providers.md) declared with `new` holds its own table,
@@ -66,7 +77,24 @@ so a context can delegate a group of components to the bundle, and each componen
 reads through to the bundle's entry. Keys can also be type-level paths: the `open` statement and
 namespaces store entries keyed on `PathCons` lists, and
 [`RedirectLookup`](../providers/redirect_lookup.md) reads one with a single lookup on the whole
-path.
+path. A path entry is emitted with a generic tail, as
+`impl<__Wildcard__> DelegateComponent<PathCons<MyFooComponent, __Wildcard__>> for App`, so it
+matches every longer path beneath it.
+
+A `namespace N;` header emits one blanket entry instead of one per key, reading each key's value
+from the namespace trait that [`cgp_namespace!`](../macros/cgp_namespace.md) defines:
+
+```rust
+impl<__Key__, __Value__> DelegateComponent<__Key__> for App
+where
+    __Key__: MyNamespace<App, Delegate = __Value__>,
+{
+    type Delegate = __Value__;
+}
+```
+
+with a matching blanket `IsProviderFor` impl that forwards to `__Value__`. A direct entry for a key
+the namespace binds overlaps this blanket and conflicts with `E0119`.
 
 ## Examples
 
