@@ -49,8 +49,8 @@ impl<__Context__> FooGetter<__Context__> for UseFields
 where
     __Context__: HasField<Symbol!("foo"), Value = String>,
 {
-    fn foo(__context__: &__Context__) -> &str {
-        __context__.get_field(PhantomData::<Symbol!("foo")>).as_str()
+        fn foo(__context__: &__Context__) -> &str {
+        __context__.get_field(::core::marker::PhantomData::<Symbol!("foo")>).as_str()
     }
 }
 ```

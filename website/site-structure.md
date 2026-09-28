@@ -917,12 +917,12 @@ that shows code has an `example-code` mirror flat under `tests/reference/types/`
 compiler-checked like the other written groups rather than only ported; the overview page shows no code
 and gets no file. The provider pages are
 mirrored in the
-`example-code` crate under `tests/reference/providers/`: the singletons, the four `With…` alias pages
-except `with_context` (which shows no wireable example), all of `error/`, `handler/`, and `monad/`, and
-all of `dispatch/`. The `dispatch/` group is now covered end to end, including the builder-side
+`example-code` crate under `tests/reference/providers/`: the singletons, all five `With…` alias
+pages, all of `error/`, `handler/`, and `monad/`, and all of `dispatch/`. The `dispatch/` group is now covered end to end, including the builder-side
 (`build_and_set_field`, `build_and_merge`, `build_with_handlers`, `build_and_merge_outputs`) and
-advanced-matcher (`match_first_with_handlers`, `downcast_and_handle`) pages. `UseFieldRef` and `UseDelegatedType` carry no mirror of their own, since their
-wireable example lives on their alias page (`with_field_ref`, `with_delegated_type`).
+advanced-matcher (`match_first_with_handlers`, `downcast_and_handle`) pages. `UseFieldRef` carries no mirror of its own, since its wireable example lives on its alias page
+(`with_field_ref`); `use_delegated_type` has one for the direct `TypeProviderComponent` form its page
+shows, while its alias form lives on `with_delegated_type`.
 
 ### The compile-errors page
 

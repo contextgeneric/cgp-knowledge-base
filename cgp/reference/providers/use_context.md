@@ -62,8 +62,10 @@ consumer trait's supertraits are reproduced in the `where` clause.
 A context must never wire a component to `UseContext` for the same trait instance it is resolving.
 The context would implement `CanGreet` through `UseContext`, which implements `Greeter` by calling
 `CanGreet`: a cycle the trait solver cannot resolve, reported as an overflow or an unsatisfied
-bound. The same cycle arises when a higher-order provider with inner `UseContext` asks the context
-for the very instance the provider is serving. `UseContext` is safe when it reaches a different
+bound; a check reports it as
+``error[E0275]: overflow evaluating the requirement `App: IsProviderFor<EncoderComponent, App, u32>` ``
+for an `@EncoderComponent.u32: UseContext` entry. The same cycle arises when a higher-order provider
+with inner `UseContext` asks the context for the very instance the provider is serving. `UseContext` is safe when it reaches a different
 instance, such as the same component at another type argument.
 
 ## Examples
@@ -124,6 +126,42 @@ instance, which `App` answers with `RectangleArea`. Because the inner call goes 
 context, nesting works too: a `Scaled<Scaled<Rectangle>>` scales twice. Writing
 `ScaledArea<RectangleArea>` in the entry would instead fix the inner calculator and bypass the
 context's wiring.
+
+The same shape works for a container over its elements. `EncodeVec` encodes a `Vec<Item>` by
+encoding each element through `Inner`, which defaults to `UseContext`:
+
+```rust
+pub struct EncodeVec<Inner = UseContext>(pub PhantomData<Inner>);
+
+#[cgp_impl(EncodeVec<Inner>)]
+#[use_provider(Inner: Encoder<Item>)]
+impl<Item, Inner> Encoder<Vec<Item>> {
+    fn encode(&self, values: &Vec<Item>) -> Vec<u8> {
+        values
+            .iter()
+            .flat_map(|item| Inner::encode(self, item))
+            .collect()
+    }
+}
+
+delegate_components! {
+    App {
+        open EncoderComponent;
+
+        @EncoderComponent.u32: EncodeAsText,
+        @EncoderComponent.Vec<u32>: EncodeVec,
+    }
+}
+```
+
+With `EncodeAsText` encoding any `Display` value as its text, `App.encode(&vec![1u32, 2, 3])`
+returns the bytes of `"123"`: the element lookup asks for `CanEncode<u32>`, a different instance from
+the `Vec<u32>` being encoded.
+
+`UseContext` also appears as a type argument inside a wiring entry, where a provider that takes an
+inner provider is given it explicitly or by default. The dispatch combinators such as
+`MatchWithValueHandlers<Provider = UseContext>` default their per-variant provider to it. It is never
+the whole value of an entry for the component it implements, which is the cycle above.
 
 ## Related constructs
 

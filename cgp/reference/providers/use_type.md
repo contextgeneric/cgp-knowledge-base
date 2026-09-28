@@ -54,10 +54,15 @@ impl<Context, Tag, Type> TypeProvider<Context, Tag> for UseType<Type> {
   component's own provider trait:
 
 ```rust
-impl<Scalar, __Context__> ScalarTypeProvider<__Context__> for UseType<Scalar> {
+impl<Scalar, __Context__> ScalarTypeProvider<__Context__> for UseType<Scalar>
+where
+    Scalar: Copy,
+{
     type Scalar = Scalar;
 }
 ```
+
+(shown for `type Scalar: Copy`; an unbounded associated type gives an empty `where` clause).
 
 The first impl ignores the tag, so a single `TypeProviderComponent: UseType<f64>` entry resolves
 `HasType<Tag>` to `f64` for every `Tag`. The second makes
@@ -66,8 +71,9 @@ The first impl ignores the tag, so a single `TypeProviderComponent: UseType<f64>
 A bound on the associated type, such as `type Scalar: Copy`, is copied into the generated impl's
 `where` clause. Wiring is lazy, so an unsatisfied bound is not reported where the entry is written:
 `ScalarTypeProviderComponent: UseType<String>` compiles until something requires the context's
-`HasScalarType`, or until a [`check_components!`](../macros/check_components.md) block checks the
-component.
+`HasScalarType`, or until a [`check_components!`](../macros/check_components.md) block checks the component, which reports
+``error[E0277]: the trait bound `String: Copy` is not satisfied`` with the note
+``required for `cgp::prelude::UseType<String>` to implement `IsProviderFor<ScalarTypeProviderComponent, App>` ``.
 
 `WithType<T>` reaches the same result by another route. The `WithProvider` impl that `#[cgp_type]`
 generates accepts any `TypeProvider` for the component's key, and `UseType<T>` is one through its

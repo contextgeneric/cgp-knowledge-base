@@ -81,7 +81,25 @@ alias reads:
   `AsRef<Value>`.
 - **`WithContext`** asks the context itself, through `UseContext`: for a getter it reads the
   context's `HasField` entry keyed by the component's marker, and for a type component it reads the
-  context's `HasType` keyed by the marker.
+  context's `HasType` keyed by the marker. So `TypeProviderComponent: UseType<String>` beside
+  `NameTypeProviderComponent: WithContext` makes `Name` resolve to `String`, and a getter wired to
+  `WithContext` needs a hand-written `HasField<NameGetterComponent>` impl, since no derive keys a
+  field by a component marker.
+
+The aliases are not all interchangeable with their bare inner providers:
+
+- **`WithType<T>` and `UseType<T>`** are equivalent on every `#[cgp_type]` component, which gets
+  both a `UseType` and a `WithProvider` impl.
+- **`WithField<Tag>` and `UseField<Tag>`** are equivalent on a single-method getter, which gets both
+  impls. On a `#[cgp_type]` component only `WithField` works, since the macro generates no `UseField`
+  impl; the bare `UseField<Symbol!("width")>` fails with `E0277`, while `WithField` reaches
+  `UseField`'s own `TypeProvider` impl and sets the type to the field's.
+- **`WithContext` and `UseContext`** differ. Wired to a component, `UseContext` calls the context's
+  own consumer trait for that same component, a cycle reported as
+  ``error[E0275]: overflow evaluating the requirement `Person: IsProviderFor<NameGetterComponent, Person>` ``,
+  while `WithContext` reaches the context's generic `HasField` or `HasType` entry instead.
+- **`WithFieldRef` and `WithDelegatedType`** have no bare equivalent on a named component, because
+  `UseFieldRef` and `UseDelegatedType` implement only the foundational traits.
 
 ## Examples
 

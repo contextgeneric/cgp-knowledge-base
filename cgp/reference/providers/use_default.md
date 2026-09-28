@@ -61,7 +61,9 @@ impl Greeter {}
 The first makes `UseDefault` a `NameGetter` whose `name` returns `"John"`. The second makes it a
 `Greeter` whose `greet` formats around `self.name()`. The `Greeter` impl still needs
 [`#[uses(HasName)]`](../attributes/uses.md): the supertrait becomes a predicate on the provider
-trait, but a generic impl must prove it, and without the bound the impl fails with `E0277`. Each
+trait, but a generic impl must prove it, and without the bound the impl fails with
+``error[E0277]: the trait bound `__Context__: HasName` is not satisfied``, reported on the
+`#[cgp_impl(UseDefault)]` attribute. Each
 `#[cgp_impl]` also generates the matching [`IsProviderFor`](../traits/is_provider_for.md) impl.
 
 ## Examples

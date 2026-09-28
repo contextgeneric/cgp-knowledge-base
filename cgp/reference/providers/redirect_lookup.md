@@ -132,6 +132,13 @@ check_components! {
 namespace, so `App.greet()` looks up `@app.GreeterComponent` in `App`'s own table and finds
 `GreetHello`. The component marker is the last segment of the path rather than a key of its own.
 
+A context that joins the namespace cannot also bind the component at its bare key. The `namespace`
+statement already gives `App` an entry for `GreeterComponent`, the one that redirects to
+`@app.GreeterComponent`, so adding `GreeterComponent: GreetHello` to the same table fails with
+``error[E0119]: conflicting implementations of trait `IsProviderFor<GreeterComponent, _, _>` for type `App` ``
+(and the same for `DelegateComponent<GreeterComponent>`), pointing at the `namespace` statement as
+the first implementation.
+
 ## Related constructs
 
 These constructs are the ones `RedirectLookup` works with:

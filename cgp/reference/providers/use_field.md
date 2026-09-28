@@ -38,8 +38,25 @@ pub type WithField<Tag> = WithProvider<UseField<Tag>>;
 
 - **Every single-method [`#[cgp_getter]`](../macros/cgp_getter.md) component.** The macro generates
   an impl of the getter's provider trait for `UseField<__Tag__>`, with the tag left free and the
-  return-type conversion, such as `.as_str()`, applied. This is the impl a direct `UseField` wiring
-  uses.
+  return-type conversion, such as `.as_str()`, applied, and an `IsProviderFor` impl with the same
+  `HasField` bound. This is the impl a direct `UseField` wiring uses. For `fn name(&self) -> &str`:
+
+```rust
+impl<__Context__, __Tag__> NameGetter<__Context__> for UseField<__Tag__>
+where
+    __Context__: HasField<__Tag__, Value = String>,
+{
+    fn name(__context__: &__Context__) -> &str {
+        __context__.get_field(::core::marker::PhantomData::<__Tag__>).as_str()
+    }
+}
+```
+
+  A getter with two or more methods gets no `UseField` impl, so wiring one to
+  `UseField<Symbol!("foo")>` fails at the check with an `E0277` naming the missing
+  `IsProviderFor<FooBarGetterComponent, App>`; such a getter is wired to
+  [`UseFields`](use_fields.md). The conversions cover borrowed views, so a `-> &[u8]` getter reads a
+  `Vec<u8>` field.
 - **The foundational [`FieldGetter`](../traits/has_field.md) and `MutFieldGetter`.** These read the
   field by reference and let `UseField` back a getter through `WithField`:
 
@@ -58,11 +75,16 @@ where
 
   `OutTag` is the tag the component asks under, its own marker, and the impl ignores it and reads
   `Tag`. That is the decoupling in its plainest form. The `MutFieldGetter` impl is the same with
-  `HasFieldMut` and `get_field_mut`.
+  `HasFieldMut` and `get_field_mut`. `FieldGetter` and `MutFieldGetter` are plain traits rather
+  than components, so these impls have no `IsProviderFor` pair; the `WithProvider` impl a
+  `#[cgp_getter]` component gets, which `WithField` reaches, carries one.
 - **[`TypeProvider`](../components/has_type.md).** `UseField<Tag>` reports the field's type as an
-  abstract type, so a type component wired to `UseField<Symbol!("width")>` or
-  `WithField<Symbol!("width")>` takes the type of the `width` field. This impl has a matching
-  `IsProviderFor<TypeProviderComponent, …>` impl.
+  abstract type, with a matching `IsProviderFor<TypeProviderComponent, …>` impl. The built-in
+  `TypeProviderComponent` (imported from `cgp::core::types`) takes `UseField<Symbol!("width")>`
+  directly, so `HasType<Tag>` resolves to the type of the `width` field. A
+  [`#[cgp_type]`](../macros/cgp_type.md) component takes it only as `WithField<Symbol!("width")>`,
+  since the macro generates `UseType` and `WithProvider` impls but no `UseField` one; wiring such a
+  component to the bare `UseField<Symbol!("width")>` fails with `E0277`.
 - **The handler family.** `cgp-handler` implements `Computer` and `AsyncComputer` for
   `UseField<Tag>` by forwarding to the value stored in the field, as described under
   [`Computer`](../components/computer.md).
