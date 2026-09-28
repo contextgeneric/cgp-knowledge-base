@@ -69,8 +69,33 @@ members work too.
 Like the other bundles, `PromoteProducer<P>` expects `P` to be wired to the bundle itself, as
 [`#[cgp_producer]`](../macros/cgp_producer.md) wires its provider to `PromoteProducer<Self>`. Its
 `ComputerComponent` entry works for any producer, but its fallible and async entries reach `P`
-through the other components and fail if `P` answers only `Producer`. The promotions are documented
-in [handler combinators](../providers/handler_combinators.md).
+through the other components and fail if `P` answers only `Producer`. A hand-written producer can
+be wired the same way, as
+`delegate_components! { MagicNumber { [ComputerComponent, TryComputerComponent]: PromoteProducer<Self> } }`,
+after which a context wires `TryComputerComponent: MagicNumber` directly. The promotions are
+documented in [handler combinators](../providers/handler_combinators.md).
+
+Because a `#[cgp_producer]` provider is wired to its own bundle, a context wires any member of the
+family to it directly, and each member returns the produced value whatever input it is given:
+
+```rust
+#[cgp_producer]
+fn default_port() -> u16 {
+    8080
+}
+
+delegate_components! {
+    App {
+        ErrorTypeProviderComponent: UseType<String>,
+        [ComputerComponent, HandlerComponent]: DefaultPort,
+    }
+}
+```
+
+`App.compute(PhantomData::<()>, ())` returns `8080`, and `App.handle(PhantomData::<()>, ())` resolves
+to `Ok(8080)`. The fallible members need the context's error type to form their `Result`, but always
+return `Ok`. A producer function returning a `Result` is not a fallible producer: the fallible
+members wrap the whole `Result` in `Ok`, so an `Err` short-circuits nothing downstream.
 
 ## Examples
 
@@ -98,13 +123,20 @@ delegate_components! {
     }
 }
 
-fn run(app: &App) -> u64 {
-    app.produce(PhantomData::<()>)
+check_components! {
+    App {
+        ProducerComponent: (),
+    }
+}
+
+pub fn demo() {
+    assert_eq!(App.produce(PhantomData::<()>), 42);
 }
 ```
 
 `App` delegates `ProducerComponent` to `MagicNumber`, so it implements
-`CanProduce<(), Output = u64>` and `run` returns `42`. The
+`CanProduce<(), Output = u64>` and `produce` returns `42`. The component is self-targeted: with no
+input, the operation describes the context, and `Code` is a selector naming which value is wanted. The
 [`#[cgp_producer]`](../macros/cgp_producer.md) macro writes this provider from
 `fn magic_number() -> u64 { 42 }` and also wires `PromoteProducer<Self>`, so the generated
 `MagicNumber` answers `compute`, `compute_ref`, and the rest of the family with `42`, whatever input
@@ -123,6 +155,16 @@ These constructs are the ones `Producer` works with:
 - [`delegate_components!`](../macros/delegate_components.md): its `open` statement dispatches on
   `Code`, replacing the legacy [`UseDelegate`](../providers/use_delegate.md) table described in
   [dispatching](../../concepts/dispatching.md).
+
+## Known issues
+
+**`PromoteProducer<P>` answers the fallible and async members only when `P` is wired to it.** A
+context wiring `TryComputerComponent` to `PromoteProducer<MagicNumber>`, for a hand-written
+`MagicNumber` that implements only `Producer`, fails at the check with
+``error[E0277]: the trait bound `MagicNumber: DelegateComponent<cgp::prelude::ComputerComponent>` is not satisfied``
+and the note ``required for `MagicNumber` to implement `Computer<App, (), ()>` ``, because the
+bundle's `TryComputerComponent` entry is `Promote<MagicNumber>`, which looks for a `Computer` through
+`MagicNumber`'s own wiring. Wire the producer to the bundle, or write it with `#[cgp_producer]`.
 
 ## Source
 

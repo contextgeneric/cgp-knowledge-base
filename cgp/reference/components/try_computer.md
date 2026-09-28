@@ -50,8 +50,10 @@ The parts are these:
 takes `input: &Input`.
 
 The prelude exports the provider trait `TryComputer` and the keys `TryComputerComponent` and
-`TryComputerRefComponent`. The consumer traits `CanTryCompute` and `CanTryComputeRef` and the
-provider trait `TryComputerRef` are imported from `cgp::extra::handler`.
+`TryComputerRefComponent`. The consumer traits `CanTryCompute` and `CanTryComputeRef`, the provider
+trait `TryComputerRef`, and the one-step promotion providers are imported from
+`cgp::extra::handler`. A context calling either member must also wire an error type, since both
+consumer traits have `HasErrorType` as a supertrait.
 
 ## Implementations
 
@@ -87,6 +89,10 @@ neighbors:
   through, and as a `Computer` it returns the fallible provider's result as a plain value.
 - **`PromoteAsync<P>`** makes an async `Handler` from a `TryComputer` by running it inside an
   `async` method.
+- **`PromoteRef<P>`** bridges `TryComputer` and `TryComputerRef`. As a `TryComputerRef` it needs a
+  `TryComputer` written for `&'a Input` at every lifetime, and as a `TryComputer` it calls a
+  `TryComputerRef` provider on the dereferenced owned input, the two directions described for
+  [`ComputerRef`](computer.md#implementations).
 
 ## Examples
 
@@ -94,13 +100,14 @@ This provider parses a `String` into a `u64` and raises the parse error into the
 
 ```rust
 use core::marker::PhantomData;
+use core::num::ParseIntError;
 use cgp::prelude::*;
 use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
 use cgp::extra::error::RaiseFrom;
-use cgp::extra::handler::{CanTryCompute, TryComputerComponent};
+use cgp::extra::handler::CanTryCompute;
 
 #[cgp_impl(new ParseU64)]
-#[uses(CanRaiseError<core::num::ParseIntError>)]
+#[uses(CanRaiseError<ParseIntError>)]
 #[use_type(HasErrorType.Error)]
 impl<Code> TryComputer<Code, String> {
     type Output = u64;
@@ -110,15 +117,15 @@ impl<Code> TryComputer<Code, String> {
         _code: PhantomData<Code>,
         input: String,
     ) -> Result<Self::Output, Error> {
-        input.parse().map_err(|e| Self::raise_error(e))
+        input.parse().map_err(Self::raise_error)
     }
 }
 
-#[derive(Debug)]
-pub struct AppError(String);
+#[derive(Debug, PartialEq)]
+pub struct AppError(pub String);
 
-impl From<core::num::ParseIntError> for AppError {
-    fn from(e: core::num::ParseIntError) -> Self {
+impl From<ParseIntError> for AppError {
+    fn from(e: ParseIntError) -> Self {
         AppError(e.to_string())
     }
 }
@@ -132,6 +139,12 @@ delegate_components! {
         TryComputerComponent: ParseU64,
     }
 }
+
+check_components! {
+    App {
+        TryComputerComponent: ((), String),
+    }
+}
 ```
 
 `ParseU64` names neither the context nor its error type. `App` supplies both: its error type is
@@ -142,7 +155,36 @@ returns `Err(AppError(...))`.
 A function returning `Result<u64, String>` becomes a similar provider through
 [`#[cgp_computer]`](../macros/cgp_computer.md). The generated provider implements `Computer` with
 the `Result` as its output, and its `PromoteTryComputer` bundle derives `TryComputer` from it
-through `TryPromote`.
+through `TryPromote`. Wired to both components, it returns the whole `Result` from `compute` and
+propagates the `Err` from `try_compute`. The function's error type must equal the context's, because
+the bundle passes the `Err` through unconverted, so a provider that must raise a concrete error into
+the context's error is written by hand, as `ParseU64` is.
+
+The by-reference member has the same shape with a borrowed input. This provider parses a port from
+a borrowed setting, on a context wired like `App` above but with
+`TryComputerRefComponent: ParsePort`:
+
+```rust
+use cgp::extra::handler::{CanTryComputeRef, TryComputerRef};
+
+#[cgp_impl(new ParsePort)]
+#[uses(CanRaiseError<ParseIntError>)]
+#[use_type(HasErrorType.Error)]
+impl<Code> TryComputerRef<Code, String> {
+    type Output = u16;
+
+    fn try_compute_ref(
+        &self,
+        _code: PhantomData<Code>,
+        input: &String,
+    ) -> Result<Self::Output, Error> {
+        input.trim().parse().map_err(Self::raise_error)
+    }
+}
+```
+
+`App.try_compute_ref(PhantomData::<()>, &" 8080 ".to_owned())` returns `Ok(8080)` and leaves the
+caller owning the string.
 
 ## Related constructs
 

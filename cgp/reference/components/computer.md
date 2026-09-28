@@ -13,8 +13,9 @@ a `Code` tag, and an `Input`, with no failure path.
 
 It is the member a provider author reaches for first, because promotion runs one way. The
 [promotion providers](../providers/handler_combinators.md) lift an infallible computer into the
-fallible and async members by wrapping its output in `Ok` or its call in a future, but nothing
-lowers a fallible provider back to an infallible one.
+fallible and async members by wrapping its output in `Ok` or its call in an async method, but no
+promotion removes a failure path or an `await`. `TryPromote` can present a `TryComputer` as a
+`Computer`, but only by making the `Result` its `Output`.
 
 The four computer components differ along two axes:
 
@@ -57,7 +58,8 @@ The parts are these:
 `CanComputeRef` is identical except that `compute_ref` takes `input: &Input`.
 
 The async members declare an `async` method under [`#[async_trait]`](../macros/async_trait.md),
-which rewrites it to return `impl Future<Output = Self::Output>` without boxing:
+which rewrites it to return `impl Future<Output = Self::Output>` without boxing and without a `Send`
+bound:
 
 ```rust
 #[async_trait]
@@ -75,11 +77,19 @@ pub trait CanComputeAsync<Code, Input> {
 `CanComputeAsyncRef` is its by-reference counterpart, with `compute_async_ref` taking
 `input: &Input`. None of the four imports `HasErrorType`, because none can fail.
 
-The prelude exports the provider traits `Computer` and `AsyncComputer` and the keys
-`ComputerComponent`, `ComputerRefComponent`, `AsyncComputerComponent`, and
+The prelude exports the provider traits `Computer`, `AsyncComputer`, and `AsyncComputerRef` and the
+keys `ComputerComponent`, `ComputerRefComponent`, `AsyncComputerComponent`, and
 `AsyncComputerRefComponent`. The consumer traits `CanCompute`, `CanComputeRef`, `CanComputeAsync`,
-and `CanComputeAsyncRef`, and the provider traits `ComputerRef` and `AsyncComputerRef`, are imported
-from `cgp::extra::handler`.
+and `CanComputeAsyncRef`, the provider trait `ComputerRef`, and the one-step promotion providers
+(`Promote`, `PromoteAsync`, `PromoteRef`, `TryPromote`) are imported from `cgp::extra::handler`; the
+promotion bundles such as `PromoteComputer` are in the prelude.
+
+The `#[prefix]` registration decides how a context that joins `DefaultNamespace` wires these
+components. It binds a provider at the prefixed path, as
+`@cgp.extra.handler.ComputerComponent: Double`, and a bare `ComputerComponent: Double` entry in the
+same table conflicts with the
+namespace's own entry for that key (`E0119`). A context that does not join the namespace wires the
+bare key as usual.
 
 ## Implementations
 
@@ -115,7 +125,20 @@ Promotion lets one `Computer` impl answer the other members, with one limit. Lif
 `Handler` wraps the output in `Ok`. Lifting to a `…Ref` member passes the borrow through as the
 input, so it works only when the provider accepts `&'a Input` for every lifetime `'a`. A computer
 written for an owned `u64` answers `compute`, `try_compute`, and `compute_async` through promotion,
-but not `compute_ref`.
+but not `compute_ref`; the check reports it as
+``required for `Double` to implement `for<'a> cgp::prelude::Computer<App, (), &'a u64>` ``. A
+[`#[cgp_computer]`](../macros/cgp_computer.md) function over a reference parameter, as
+`fn double(value: &u64) -> u64`, does meet the bound and answers `compute_ref`.
+
+`PromoteRef<P>` also runs the other way: as a `Computer` it takes an owned input that dereferences to
+`Target`, such as `Box<String>` for `Target = String`, and calls the `ComputerRef` provider `P` on
+`input.deref()`, so any `ComputerRef` provider serves that direction. The same two directions hold
+for `AsyncComputer` and `AsyncComputerRef`.
+
+A `Computer` whose `Output` is a `Result` over the context's error type is how
+[`#[cgp_computer]`](../macros/cgp_computer.md) writes a synchronous function returning `Result`; its
+`PromoteTryComputer` bundle routes `TryComputerComponent` to `TryPromote`, which reads that `Result`
+as the failure path, while `compute` returns the whole `Result`.
 
 The promotion bundles such as `PromoteComputer<P>` expect `P` to be wired to the same bundle, as
 [`#[cgp_computer]`](../macros/cgp_computer.md) wires its provider to `PromoteComputer<Self>`. Some
@@ -133,7 +156,7 @@ through `CanTryCompute`:
 use core::marker::PhantomData;
 use cgp::prelude::*;
 use cgp::core::error::ErrorTypeProviderComponent;
-use cgp::extra::handler::{CanCompute, CanTryCompute, TryComputerComponent};
+use cgp::extra::handler::{CanCompute, CanTryCompute};
 
 #[cgp_new_provider]
 impl<Context, Code> Computer<Context, Code, u64> for Double {
@@ -154,11 +177,15 @@ delegate_components! {
     }
 }
 
-fn run(app: &App) -> (u64, Result<u64, String>) {
-    (
-        app.compute(PhantomData::<()>, 21),
-        app.try_compute(PhantomData::<()>, 21),
-    )
+check_components! {
+    App {
+        [ComputerComponent, TryComputerComponent]: ((), u64),
+    }
+}
+
+pub fn demo() {
+    assert_eq!(App.compute(PhantomData::<()>, 21), 42);
+    assert_eq!(App.try_compute(PhantomData::<()>, 21), Ok(42));
 }
 ```
 
@@ -168,6 +195,94 @@ through the `PromoteComputer` bundle, so `try_compute` returns `Ok(42)`. The fal
 the context's error type, which `App` sets to `String`. In practice
 [`#[cgp_computer]`](../macros/cgp_computer.md) writes such a provider from
 `fn double(input: u64) -> u64` and wires every promotion itself.
+
+A `ComputerRef` provider reads a borrowed input, and `PromoteRef` lets it answer an owned input that
+dereferences to it:
+
+```rust
+use core::marker::PhantomData;
+use cgp::prelude::*;
+use cgp::extra::handler::{CanCompute, CanComputeRef, ComputerRef, PromoteRef};
+
+#[cgp_new_provider]
+impl<Context, Code> ComputerRef<Context, Code, String> for StringLength {
+    type Output = usize;
+
+    fn compute_ref(_context: &Context, _code: PhantomData<Code>, input: &String) -> usize {
+        input.len()
+    }
+}
+
+pub struct App;
+
+delegate_components! {
+    App {
+        ComputerRefComponent: StringLength,
+        ComputerComponent: PromoteRef<StringLength>,
+    }
+}
+
+check_components! {
+    App {
+        ComputerRefComponent: ((), String),
+        ComputerComponent: ((), Box<String>),
+    }
+}
+```
+
+`App.compute_ref(PhantomData::<()>, &name)` reads `name` without taking it, and
+`App.compute(PhantomData::<()>, Box::new(name))` hands over a `Box<String>` that `PromoteRef`
+dereferences for `StringLength`.
+
+An async provider declares `async fn` in its impl. Wiring `AsyncComputerComponent` to
+`PromoteAsync<Double>` instead answers the same call from the synchronous `Double`:
+
+```rust
+use core::marker::PhantomData;
+use cgp::prelude::*;
+use cgp::extra::handler::{CanComputeAsync, CanComputeAsyncRef};
+
+#[cgp_new_provider]
+impl<Context, Code> AsyncComputer<Context, Code, u64> for DoubleAsync {
+    type Output = u64;
+
+    async fn compute_async(_context: &Context, _code: PhantomData<Code>, input: u64) -> u64 {
+        input * 2
+    }
+}
+
+#[cgp_new_provider]
+impl<Context, Code> AsyncComputerRef<Context, Code, String> for CountWords {
+    type Output = usize;
+
+    async fn compute_async_ref(
+        _context: &Context,
+        _code: PhantomData<Code>,
+        input: &String,
+    ) -> usize {
+        input.split_whitespace().count()
+    }
+}
+
+pub struct App;
+
+delegate_components! {
+    App {
+        AsyncComputerComponent: DoubleAsync,
+        AsyncComputerRefComponent: CountWords,
+    }
+}
+
+pub async fn run(app: &App, text: &String) -> (u64, usize) {
+    (
+        app.compute_async(PhantomData::<()>, 21).await,
+        app.compute_async_ref(PhantomData::<()>, text).await,
+    )
+}
+```
+
+The futures need an executor to run, which CGP leaves to the application. `AsyncComputerRef` is
+in the prelude, so neither async provider needs an import beyond it.
 
 ## Related constructs
 
@@ -184,6 +299,17 @@ These constructs are the ones the computer components work with:
 - [`delegate_components!`](../macros/delegate_components.md): its `open` statement dispatches on
   `Code`, `Input`, or both, replacing the legacy `UseDelegate` and `UseInputDelegate` tables
   described in the [dispatching-per-type](../../guides/dispatching-per-type.md) guide.
+
+## Known issues
+
+**Calling a computer on a concrete context by its bare name is ambiguous.** A context that delegates
+`ComputerComponent` also implements the `Computer` provider trait through the delegation blanket
+impl, and the prelude brings `Computer` into scope, so `App::compute(&App, PhantomData::<()>, 21)`
+fails with ``error[E0034]: multiple applicable items in scope``, its notes naming `CanCompute` and
+`cgp::prelude::Computer` as the two candidates. Method syntax, `App.compute(…)`, is unambiguous
+because only the consumer trait takes `self`; `<App as CanCompute<(), u64>>::compute(…)` names the
+consumer trait explicitly. The same applies to every handler-family member whose provider trait is
+in scope.
 
 ## Source
 

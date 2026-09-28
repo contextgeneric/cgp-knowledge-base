@@ -53,8 +53,8 @@ The parts are these:
 `input: &Input`.
 
 The prelude exports the provider trait `Handler` and the keys `HandlerComponent` and
-`HandlerRefComponent`. The consumer traits `CanHandle` and `CanHandleRef` and the provider trait
-`HandlerRef` are imported from `cgp::extra::handler`.
+`HandlerRefComponent`. The consumer traits `CanHandle` and `CanHandleRef`, the provider trait
+`HandlerRef`, and the one-step promotion providers are imported from `cgp::extra::handler`.
 
 ## Implementations
 
@@ -88,10 +88,13 @@ than from hand-written code. Each promotion takes one step:
 - **`TryPromote<P>`** makes a `Handler` from an `AsyncComputer` whose `Output` is already
   `Result<T, Context::Error>`.
 - **`PromoteRef<P>`** converts between `Handler` and `HandlerRef`, dereferencing an owned input or
-  passing a borrow through.
+  passing a borrow through. The borrow direction needs a `Handler` written for `&'a Input` at every
+  lifetime, and it is the `HandlerRefComponent` entry every promotion bundle ends in.
 
 A plain `Computer` takes two steps, as `PromoteAsync<Promote<P>>`. The promotion bundles and
-[`#[cgp_computer]`](../macros/cgp_computer.md) chain these steps for the author.
+[`#[cgp_computer]`](../macros/cgp_computer.md) chain these steps for the author; a provider that
+`#[cgp_computer]` or [`#[cgp_producer]`](../macros/cgp_producer.md) generates is wired to its own
+bundle, so a context wires `HandlerComponent` to it directly.
 
 ## Examples
 
@@ -119,6 +122,85 @@ such as a `Computer` wired as `PromoteAsync<Promote<MyComputer>>`, or one genera
 [`#[cgp_computer]`](../macros/cgp_computer.md) or [`#[cgp_producer]`](../macros/cgp_producer.md),
 which wire their own promotions.
 
+A context answers that bound with a synchronous computer lifted in two steps:
+
+```rust
+use core::marker::PhantomData;
+use cgp::prelude::*;
+use cgp::core::error::ErrorTypeProviderComponent;
+use cgp::extra::handler::{CanHandle, Promote, PromoteAsync};
+
+#[cgp_new_provider]
+impl<Context, Code> Computer<Context, Code, u64> for Double {
+    type Output = u64;
+
+    fn compute(_context: &Context, _code: PhantomData<Code>, input: u64) -> u64 {
+        input * 2
+    }
+}
+
+pub struct App;
+
+delegate_components! {
+    App {
+        ErrorTypeProviderComponent: UseType<String>,
+        HandlerComponent: PromoteAsync<Promote<Double>>,
+    }
+}
+
+check_components! {
+    App {
+        HandlerComponent: ((), u64),
+    }
+}
+```
+
+`App.handle(PhantomData::<()>, 21).await` returns `Ok(42)`.
+
+A `HandlerRef` provider awaits and may fail over a borrowed input. This one raises a `String`
+message into a context whose error type is `String`, so `RaiseFrom` raises it through the identity
+`From` impl:
+
+```rust
+use core::marker::PhantomData;
+use cgp::prelude::*;
+use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
+use cgp::extra::error::RaiseFrom;
+use cgp::extra::handler::{CanHandleRef, HandlerRef};
+
+#[cgp_impl(new NonEmptyLength)]
+#[uses(CanRaiseError<String>)]
+#[use_type(HasErrorType.Error)]
+impl<Code> HandlerRef<Code, String> {
+    type Output = usize;
+
+    async fn handle_ref(
+        &self,
+        _code: PhantomData<Code>,
+        input: &String,
+    ) -> Result<Self::Output, Error> {
+        if input.is_empty() {
+            return Err(Self::raise_error("empty request".to_owned()));
+        }
+
+        Ok(input.len())
+    }
+}
+
+pub struct App;
+
+delegate_components! {
+    App {
+        ErrorTypeProviderComponent: UseType<String>,
+        ErrorRaiserComponent: RaiseFrom,
+        HandlerRefComponent: NonEmptyLength,
+    }
+}
+```
+
+`App.handle_ref(PhantomData::<()>, &request).await` returns `Ok(request.len())` for a non-empty
+request and `Err("empty request".to_owned())` for an empty one.
+
 ## Related constructs
 
 These constructs are the ones `Handler` works with:
@@ -132,6 +214,21 @@ These constructs are the ones `Handler` works with:
   `Code` or `Input`, replacing the legacy [`UseDelegate`](../providers/use_delegate.md) and
   `UseInputDelegate` tables described in the
   [dispatching-per-type](../../guides/dispatching-per-type.md) guide.
+
+## Known issues
+
+**A promotion bundle wired on a context expects its provider to be wired to the same bundle.** The
+`HandlerComponent` entry of `PromoteComputer<P>` is `PromoteAsync<P>`, which needs `P` to be a
+`TryComputer`. Wiring a context's `HandlerComponent` to `PromoteComputer<Double>`, for a
+hand-written `Double` that implements only `Computer`, fails at the check with
+``error[E0277]: the trait bound `Double: DelegateComponent<TryComputerComponent>` is not satisfied``
+and the note ``required for `Double` to implement `TryComputer<App, (), u64>` ``. The hand-written
+form is `PromoteAsync<Promote<Double>>`; a `#[cgp_computer]` provider needs neither, since it is
+wired to `PromoteComputer<Self>`.
+
+A concrete context calling `App::handle(…)` by bare name is ambiguous (`E0034`) when the `Handler`
+provider trait is in scope, as it is through the prelude, for the reason given in
+[`Computer`'s Known issues](computer.md#known-issues).
 
 ## Source
 
