@@ -73,6 +73,12 @@ providers. Most contexts wire ready-made ones rather than writing their own:
   `RaiseAnyhowError`.
 - **The [in-tree error providers](../providers/error_providers.md)** in `cgp-error-extra` capture
   strategies independent of the error type, such as `RaiseFrom`, which converts with `Into`.
+  `DebugError` and `DisplayError` format the source or detail into a `String` and forward it to the
+  context's own `CanRaiseError<String>` or `CanWrapError<String>`, so they cannot serve the `String`
+  key itself: `@ErrorWrapperComponent.String: DisplayError` routes the lookup back to the same entry
+  and overflows with
+  ``E0275 overflow evaluating the requirement `App: IsProviderFor<ErrorWrapperComponent, App, String>` ``.
+  The `String` key needs a provider that builds the error, such as `RaiseFrom` or a backend's.
 
 Different source errors often need different providers, and a context dispatches on the source type
 in either of two ways. The recommended form is `open ErrorRaiserComponent;` followed by one entry
