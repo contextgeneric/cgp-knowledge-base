@@ -65,6 +65,11 @@ becomes its type's default; and a field that is `IsOptional` becomes the contain
 empty, the default. Because all three target `IsPresent`, applying this transform across a record
 leaves every field present, which is precisely the configuration `FinalizeBuild` accepts.
 
+Only the `IsPresent` impl is free of the `Default` bound, so what needs `Default` depends on the
+builder. On a core builder it is every field still `IsNothing`; a core builder with every field set
+converts whatever its field types. On an optional builder it is every field, set or not, because a set
+field is still `IsOptional` and goes through the third impl.
+
 ### `CanFinalizeWithDefault`: finalize, defaulting whatever is unset
 
 `CanFinalizeWithDefault` finalizes a partial record into its target struct, defaulting any field
@@ -93,11 +98,36 @@ The body is the layer's core motion: `transform_map_fields` walks the record and
 `TransformMapDefault` to every field, producing an all-`IsPresent` partial value, and
 `finalize_build` turns that into the concrete struct. The strict presence check still applies, but
 it always succeeds, because the transform guarantees presence before `finalize_build` is reached.
+The impl applies to a core builder as well as an optional one: `Context::builder()` with only `foo`
+built finalizes this way to the same value as the optional builder with only `foo` set.
+
+A field type with no `Default` is reported without being named when the call is a method call. With
+`pub struct Port(pub u16);` lacking `Default`:
+
+```rust
+#[derive(CgpData)]
+pub struct Server {
+    pub host: String,
+    pub port: Port,
+}
+
+let _ = Server::builder()
+    .build_field(PhantomData::<Symbol!("host")>, "localhost".to_owned())
+    .finalize_with_default();
+```
+
+fails with
+``error[E0599]: the method `finalize_with_default` exists for struct `__PartialServer<IsPresent, IsNothing>`, but its trait bounds were not satisfied``,
+whose notes stop at ``__PartialServer<IsPresent, IsNothing>: TransformMapFields<TransformMapDefault, IsPresent>``
+(followed by the autoref'd `&` and `&mut` variants) and mention neither `port` nor `Default`. The same
+`Server` on an optional builder with both fields set fails the same way, on
+`__PartialServer<IsOptional, IsOptional>`. Reached through a `where` clause instead, as through
+`CanBuildWithDefault` below, rustc follows the chain and names the root cause.
 
 ### `CanBuildWithDefault`: build from a source, defaulting the rest
 
-`CanBuildWithDefault<Source>` constructs the target struct by copying whatever fields a `Source`
-record shares with it and defaulting every remaining field. It chains the core
+`CanBuildWithDefault<Source>` constructs the target struct by copying every field of a `Source`
+record into it and defaulting every remaining field. It chains the core
 [`CanBuildFrom`](has_builder.md) copy step into a defaulted finalize:
 
 ```rust
@@ -122,6 +152,17 @@ The pipeline reads top to bottom: start an empty builder for the target with
 `build_from`, then finalize with defaults for the fields the source did not supply. This is the
 field-level "widening cast", turning a `Point2d` into a `Point3d` whose extra `z` is `0`, for
 instance, without naming any field explicitly.
+
+The widening runs one way. `build_from` walks the *source's* fields and builds each into the target,
+so every source field must exist on the target: a `LabeledPoint2d { x, y, label }` fails with
+``error[E0277]: the trait bound `__PartialPoint3d<IsPresent, IsPresent, IsNothing>: UpdateField<Symbol<5, …label…>, IsPresent>` is not satisfied``,
+noted as required through `CanBuildFrom<LabeledPoint2d>` and `CanBuildWithDefault<LabeledPoint2d>`,
+rather than dropping `label`. A target field the source lacks is the case the defaulted finalize
+fills, and when its type has no `Default`, the bound chain here names it: building the `Server`
+above from a `Host { host: String }` fails with
+``error[E0277]: the trait bound `Port: Default` is not satisfied``, noted as
+``required for `TransformMapDefault` to implement `TransformMap<IsNothing, IsPresent, Port>` `` and
+then through `TransformMapFields`, `CanFinalizeWithDefault`, and `CanBuildWithDefault<Host>`.
 
 ### `ToOptional` and `TransformOptional`: re-wrap every field as `Option`
 
@@ -159,6 +200,12 @@ After `to_optional`, the partial type's every field marker is `IsOptional`, so e
 is an `Option`. A field already set becomes `Some`, an unset field becomes `None`, and from then on
 every field can be assigned or reassigned freely, because an `IsOptional` slot can always be
 overwritten.
+
+`TransformOptional` has no impl from `IsOptional`, so an already-optional builder cannot be converted
+again. `Context::optional_builder().to_optional()` fails with
+``error[E0599]: the method `to_optional` exists for struct `__PartialContext<IsOptional, IsOptional>`, but its trait bounds were not satisfied``,
+noting the unmet ``TransformMapFields<TransformOptional, IsOptional>`` bound. Unlike
+`TransformMapDefault`, it carries no `Default` bound, so the conversion applies to every field type.
 
 ### `HasOptionalBuilder`: start an all-optional builder
 
@@ -222,6 +269,11 @@ set repeatedly, and `set_optional` returns the previous `Option` while `set` dis
 what makes the optional builder freely mutable, in contrast to the core `build_field` that consumes
 an absent slot exactly once.
 
+Calling `set` on a core builder fails both pins. `Context::builder().set(PhantomData::<Symbol!("foo")>, "foo".to_owned())`
+reports two `E0271` errors on `__PartialContext<IsNothing, IsNothing>`, one resolving
+`…>::Mapper == IsOptional` and one resolving `…>::Output == __PartialContext<IsNothing, IsNothing>`,
+the second noting it found `__PartialContext<IsOptional, IsNothing>`.
+
 ### `FinalizeOptional`: finalize, erroring on a genuinely missing field
 
 `FinalizeOptional` finalizes an optional builder into its concrete struct, succeeding only if every
@@ -235,10 +287,35 @@ pub trait FinalizeOptional: PartialData {
 }
 ```
 
-The implementation walks the target's [`HasFields`](has_fields.md) list. For each field it takes the
-`Option` out of the `IsOptional` slot with `UpdateField`; if the value is present it writes it back
-as `IsPresent` with `BuildField`, and if it is `None` it returns `Err(Tag::VALUE)`, the field's name
-as a static string. Only when every field has a value does it call `finalize_build` and return `Ok`.
+The implementation walks the target's [`HasFields`](has_fields.md) list, so the record needs
+`HasFields` as well as the builder, which `#[derive(CgpData)]` supplies. The public impl hands the
+builder to a private helper trait implemented over the field list and finalizes the result:
+
+```rust
+impl<ContextA, ContextB, Target> FinalizeOptional for ContextA
+where
+    ContextA: PartialData<Target = Target>,
+    Target: HasFields,
+    Target::Fields: FinalizeOptionalImpl<ContextA, Output = ContextB>,
+    ContextB: FinalizeBuild<Target = Target>,
+{
+    fn finalize_optional(self) -> Result<Self::Target, &'static str> {
+        let context = Target::Fields::finalize_optional(self)?;
+        Ok(context.finalize_build())
+    }
+}
+```
+
+For each `Cons` cell the helper first recurses into the rest, then moves the field from `IsOptional`
+to `IsNothing` with `UpdateField` to take the `Option` out; a `Some` is written back as `IsPresent`
+with `BuildField`, and a `None` returns `Err(Tag::VALUE)`, the field's name as a static string
+through `Tag: StaticString`. `Nil` returns the context unchanged. Only when every field has a value
+does `finalize_build` run and the result come back as `Ok`.
+
+A core builder is rejected: `Context::builder().finalize_optional()` fails with
+``error[E0599]: the method `finalize_optional` exists for struct `__PartialContext<IsNothing, IsNothing>`, but its trait bounds were not satisfied``,
+and its notes list only unmet `PartialData` bounds on the autoref'd `&` and `&mut` receivers, with
+nothing about `IsOptional`.
 
 The recursion handles the rest of the list before the current field, so fields are checked from last
 to first. With several fields unset, the error names the last of them in declaration order: an

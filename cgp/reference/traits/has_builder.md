@@ -64,6 +64,13 @@ field's value as it is *stored* under each marker: `IsPresent` stores the value 
 stores `()`. So updating an absent field to present takes the real value in and returns `()` as the
 old value; the reverse takes `()` in and returns the real value.
 
+The target marker `M` is not inferred from the value passed. A `String` argument could be the storage
+of more than one marker, so `builder.update_field(PhantomData::<Symbol!("first_name")>, value)` on a
+fresh `Person` builder fails with ``error[E0284]: type annotations needed for `((), __PartialPerson<_, IsNothing>)` ``
+and the note ``cannot satisfy `<_ as MapType>::Map<String> == String` ``. A direct call names the
+marker, as `UpdateField::<Symbol!("first_name"), IsPresent>::update_field(builder, PhantomData, value)`;
+`BuildField` and `TakeField` below pin it, which is one reason they exist.
+
 `BuildField<Tag>` and `TakeField<Tag>` are the two directions of that transition, each defined once
 in the field crate as a blanket impl over `UpdateField`. `BuildField` is the `IsNothing → IsPresent`
 direction, set a currently-absent field, and `TakeField` is the `IsPresent → IsNothing` direction,
@@ -79,7 +86,13 @@ pub trait BuildField<Tag> {
 impl<Context, Tag> BuildField<Tag> for Context
 where
     Context: UpdateField<Tag, IsPresent, Mapper = IsNothing>,
-{ /* build_field = self.update_field(tag, value).1 */ }
+{
+    type Value = Context::Value;
+    type Output = Context::Output;
+    fn build_field(self, tag: PhantomData<Tag>, value: Self::Value) -> Self::Output {
+        self.update_field(tag, value).1
+    }
+}
 
 pub trait TakeField<Tag> {
     type Value;
@@ -90,7 +103,13 @@ pub trait TakeField<Tag> {
 impl<Context, Tag> TakeField<Tag> for Context
 where
     Context: UpdateField<Tag, IsNothing, Mapper = IsPresent>,
-{ /* take_field = self.update_field(tag, ()) */ }
+{
+    type Value = Context::Value;
+    type Remainder = Context::Output;
+    fn take_field(self, tag: PhantomData<Tag>) -> (Self::Value, Self::Remainder) {
+        self.update_field(tag, ())
+    }
+}
 ```
 
 `PartialData` records which concrete struct a partial value targets, and `FinalizeBuild`, a subtrait
@@ -124,11 +143,111 @@ compiler rejects building a field that is already set or taking one that is abse
 emits a [`HasField`](has_field.md) impl on the partial type gated on `IsPresent`, so a field that
 has been set can be read back out of a still-incomplete value.
 
+Each misuse surfaces on the `UpdateField` bound behind the directional trait, never as a message about
+presence. On a two-field `Person { first_name: String, last_name: String }` deriving `BuildField`:
+
+```rust
+// Building `first_name` twice.
+let _ = Person::builder()
+    .build_field(PhantomData::<Symbol!("first_name")>, "Alice".to_owned())
+    .build_field(PhantomData::<Symbol!("first_name")>, "Bob".to_owned());
+
+// Taking `first_name` from an empty builder.
+let _ = Person::builder().take_field(PhantomData::<Symbol!("first_name")>);
+
+// Setting a field `Person` does not declare.
+let _ = Person::builder().build_field(PhantomData::<Symbol!("age")>, 42_u8);
+```
+
+The first fails with `E0271`,
+``type mismatch resolving `<__PartialPerson<IsPresent, IsNothing> as UpdateField<Symbol<10, …>, IsPresent>>::Mapper == IsNothing` ``,
+with ``note: expected this to be `IsNothing` `` pointing at the derive; the first `IsPresent` in the
+partial type is the only sign the field is already set. The second is the mirror image, `E0271` on
+`Mapper == IsPresent` for `__PartialPerson<IsNothing, IsNothing>`. The third is `E0277`,
+``the trait bound `__PartialPerson<IsNothing, IsNothing>: UpdateField<Symbol<3, …'a'…'g'…'e'…>, IsPresent>` is not satisfied``,
+followed by a help listing the `UpdateField` impls that do exist, one per declared field.
+
 Finalizing is what makes the tracking load-bearing. The derive provides exactly one `FinalizeBuild`
 impl, on the all-`IsPresent` configuration of the partial type, so `finalize_build` is in scope only
 when every field is present; calling it on a partial value with any `IsNothing` field fails to
 compile. `PartialData::Target` is implemented for *every* configuration and names the struct being
 built, which is how generic builder code knows the destination type before the build is complete.
+Finalizing a `Person` with only `first_name` set fails with
+``error[E0599]: no method named `finalize_build` found for struct `__PartialPerson<__F0__, __F1__>` ``,
+labelled ``method not found in `__PartialPerson<IsPresent, IsNothing>` ``, so the marker list is the
+diagnostic. A fieldless `struct Empty {}` has a companion with no markers, and
+`Empty::builder().finalize_build()` compiles at once.
+
+The derive's output for that `Person` shows every piece. `cargo cgp expand` gives the companion and
+the entry and exit impls:
+
+```rust
+pub struct __PartialPerson<__F0__: MapType, __F1__: MapType> {
+    pub first_name: <__F0__ as MapType>::Map<String>,
+    pub last_name: <__F1__ as MapType>::Map<String>,
+}
+impl<__F0__: MapType, __F1__: MapType> PartialData for __PartialPerson<__F0__, __F1__> {
+    type Target = Person;
+}
+impl FinalizeBuild for __PartialPerson<IsPresent, IsPresent> {
+    fn finalize_build(self) -> Self::Target {
+        Person {
+            first_name: self.first_name,
+            last_name: self.last_name,
+        }
+    }
+}
+impl HasBuilder for Person {
+    type Builder = __PartialPerson<IsNothing, IsNothing>;
+    fn builder() -> Self::Builder {
+        __PartialPerson {
+            first_name: (),
+            last_name: (),
+        }
+    }
+}
+impl IntoBuilder for Person {
+    type Builder = __PartialPerson<IsPresent, IsPresent>;
+    fn into_builder(self) -> Self::Builder {
+        __PartialPerson {
+            first_name: self.first_name,
+            last_name: self.last_name,
+        }
+    }
+}
+```
+
+and one `UpdateField` impl per field, in which only that field's marker moves:
+
+```rust
+impl<
+    __M1__: MapType,
+    __M2__: MapType,
+    __F1__: MapType,
+> UpdateField<Symbol!("first_name"), __M2__> for __PartialPerson<__M1__, __F1__> {
+    type Value = String;
+    type Mapper = __M1__;
+    type Output = __PartialPerson<__M2__, __F1__>;
+    fn update_field(
+        self,
+        _tag: ::core::marker::PhantomData<Symbol!("first_name")>,
+        value: __M2__::Map<Self::Value>,
+    ) -> (__M1__::Map<Self::Value>, Self::Output) {
+        (
+            self.first_name,
+            __PartialPerson {
+                first_name: value,
+                last_name: self.last_name,
+            },
+        )
+    }
+}
+```
+
+`__M1__` is unconstrained, so the impl applies whatever state the field is in, and `__F1__` passes
+through untouched, which is why fields can be built in any order. The companion drops the struct's
+own attributes, so it has none of the record's derives (`Debug`, `Clone`, and so on); the field
+attributes are a different matter, under [Known issues](#known-issues).
 
 ## Examples
 
@@ -170,8 +289,10 @@ before `baz` was set would be a compile error rather than a runtime failure.
 derives [`HasFields`](has_fields.md) as well as the builder.** `build_from` recurses over
 `Source::Fields` to know which fields to copy, so a source deriving only `#[derive(BuildField)]` has
 a builder of its own and still cannot be merged into anything, the failure is an unsatisfied
-`HasFields` bound on the source type rather than anything about the target. The target needs only
-the builder.
+`HasFields` bound on the source type rather than anything about the target:
+``the trait bound `FooBar: HasFields` is not satisfied``, noted as
+``required for `__PartialFooBaz<IsNothing, IsNothing>` to implement `CanBuildFrom<FooBar>` ``. The
+target needs only the builder.
 
 ## Related constructs
 
