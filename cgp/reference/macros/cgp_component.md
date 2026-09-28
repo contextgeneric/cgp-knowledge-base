@@ -174,15 +174,19 @@ an unrecognized one with `unknown key <key>`, and a missing `provider` with
 **The component name may carry a list of bare generic parameter names**, such as
 `name: ShapeComponent<Shape>`, which the marker struct then declares. Each must be one of the
 trait's own parameters, because the macro writes the name, parameters included, wherever the
-component appears; Known issues records what an undeclared one does. Anything more is rejected:
+component appears. The macro rejects a parameter the trait does not declare before it generates any
+item, with an error spanned on that parameter:
+``the component name's parameter `T` is not a generic parameter of the trait `CanShape` ``.
+Anything more is rejected:
 
 - a bound fails with ``trait bounds (`A: Clone`) are not allowed in type generics``, and a lifetime
   bound with ``lifetime bounds (`'a: 'b`) are not allowed in type generics``;
 - a default fails with ``default type parameters (`A = B`) are not allowed in type generics``;
 - a type that is not a single identifier, such as `Vec<u8>`, fails to parse (``expected `,` ``),
   while a single identifier such as `u32` is read as a parameter *name*, not as the type;
-- a const parameter (`const N: usize`) parses, which is why `NameParam` lists it, but then fails
-  inside the macro, as Known issues records.
+- a const parameter (`const N: usize`) parses, which is why `NameParam` lists it, but is always
+  rejected: on a trait without an `N` it is the undeclared-parameter error above, and a trait that
+  declares `const N: usize` is refused for its const generic parameter, as Known issues records.
 
 A provider for such a component written with [`#[cgp_impl]`](cgp_impl.md) must name the component
 explicitly, as in `#[cgp_impl(new SquareArea: AreaCalculatorComponent<Square>)]`, because the
@@ -486,13 +490,6 @@ error on the attribute's line, and its help may suggest a similarly named built-
 `#[uses]`), which leads away from the fix. A genuine typo in an attribute name produces the same
 error.
 
-**A `name:` parameter that the trait does not declare is accepted and fails downstream.**
-`#[cgp_component { provider: Shape, name: ShapeComponent<T> }]` on a trait without a `T` parses,
-and the compiler then reports ``error[E0425]: cannot find type `T` in this scope`` at the `T`,
-followed by an `E0034` about the generated impls, because the name is written into impl positions
-where `T` is not in scope. The correct behavior would be a spanned error from the macro naming the
-parameter the trait lacks.
-
 **Attributes on a trait *method* follow a different path.** Each is kept on the consumer trait's
 method and copied onto the matching method declaration of the provider trait, while the generated
 impls' methods carry none. For `#[track_caller]` that is enough, because Rust applies the attribute
@@ -509,13 +506,6 @@ destructuring pattern in a default method, such as `(a, b): (u32, u32)`, both fa
 `expected identifier` followed by ``failed to parse internal tokens to type `proc_macro2::Ident` ``. The
 correct behavior would be to bind such a parameter to a fresh name in the forwarding impls. Until
 then, give every parameter a name, such as `_value: u32`, and destructure inside a default body.
-
-**A const parameter in the `name:` list is accepted by the parser but not handled by the code that
-uses the name as a type.** `#[cgp_component { provider: Foo, name: FooComponent<const N: usize> }]`
-fails with ``failed to parse internal tokens to type `syn::generics::TypeParamBound` ``, because the
-component name is rendered with `const N: usize` in a type position. The correct behavior would be to
-reject the parameter with a spanned error, or to render it as the bare `N` where the name is used as
-a type.
 
 ## Source
 

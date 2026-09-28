@@ -223,7 +223,7 @@ impl and a forwarding [`IsProviderFor`](../traits/is_provider_for.md) impl per e
 impl DelegateComponent<NameTypeProviderComponent> for MyContext {
     type Delegate = UseType<String>;
 }
-impl<__Context__, __Params__>
+impl<__Context__, __Params__: ?Sized>
     IsProviderFor<NameTypeProviderComponent, __Context__, __Params__> for MyContext
 where
     UseType<String>: IsProviderFor<NameTypeProviderComponent, __Context__, __Params__>,
@@ -232,7 +232,7 @@ where
 impl DelegateComponent<NameGetterComponent> for MyContext {
     type Delegate = UseField<Symbol!("name")>;
 }
-impl<__Context__, __Params__>
+impl<__Context__, __Params__: ?Sized>
     IsProviderFor<NameGetterComponent, __Context__, __Params__> for MyContext
 where
     UseField<Symbol!("name")>: IsProviderFor<NameGetterComponent, __Context__, __Params__>,

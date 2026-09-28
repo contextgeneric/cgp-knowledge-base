@@ -39,9 +39,11 @@ parse the raw form, fill in their own default provider name, and then convert.
 ## `ItemCgpComponent`
 
 `ItemCgpComponent` is the input stage: the resolved args and the trait as written. Its `preprocess`
-step runs the [attribute collector](attributes/README.md) `CgpComponentAttributes::preprocess`,
-which strips the CGP modifier attributes off the trait and returns them as a structured record, so
-every later stage sees a plain `syn::ItemTrait` beside that record.
+step first rejects a component-name parameter the trait does not declare
+(`check_component_name_params`), then runs the [attribute collector](attributes/README.md)
+`CgpComponentAttributes::preprocess`, which strips the CGP modifier attributes off the trait and
+returns them as a structured record, so every later stage sees a plain `syn::ItemTrait` beside that
+record.
 
 ## `PreprocessedCgpComponent`
 

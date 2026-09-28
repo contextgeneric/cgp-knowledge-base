@@ -62,23 +62,17 @@ rejects each richer form with its own message:
 
 `TypeGenericParams` is the list, parsed with the same `parse_angle_bracketed` helper, and
 `to_generics` lowers it to a `syn::Generics` for a struct definition. It is distinct from
-`TypeGenerics` in `types/generics/`, which adapts an already-parsed `syn::Generics` and normalizes
-it through `split_for_impl`; the inline docs explain when to use each.
+`TypeGenerics` in `types/generics/`, which adapts an already-parsed `syn::Generics` through
+`TryFrom`, normalizing it through `split_for_impl` so a `const N: T` becomes a bare `N`; the inline
+docs explain when to use each. `TypeGenerics` also parses tokens, for the name of a table nested in
+`delegate_components!`: it reads a `syn::Generics` and accepts bare lifetimes, bare type parameters,
+and `const N: T` parameters without a default, rejecting a bound, a default, or a `where` clause
+with `invalid type generics syntax`.
 
 `IdentWithTypeGenerics` is an identifier followed by `TypeGenericParams`. The `#[cgp_component]`
 `name:` key parses the component name with it, and so do the `delegate_components!` `new` table name
 and the provider type `#[cgp_new_provider]` declares, all of which name a struct with those
 parameters.
-
-## Known issues
-
-`TypeGenericParam` accepts a const parameter, but the component name that carries one is also
-rendered in type positions, where `const N: usize` is not valid.
-`#[cgp_component { provider: Foo, name: FooComponent<const N: usize> }]` therefore fails inside the
-macro with ``failed to parse internal tokens to type `syn::generics::TypeParamBound` ``. The fix is
-either to reject a const parameter where the name is used as a type or to render it as the bare `N`
-there; the user-visible side is in
-[reference/macros/cgp_component.md](../../reference/macros/cgp_component.md#known-issues).
 
 ## Tests
 

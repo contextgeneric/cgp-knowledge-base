@@ -27,8 +27,9 @@ and applying the macro to a non-trait item fails at `syn::parse2::<ItemTrait>`.
 The macro moves through three stages, each a method on the AST type the previous one produced; the
 [`cgp_component` AST stack](../asts/cgp_component.md) documents those types in full.
 
-- **preprocess** strips the CGP modifier attributes (`#[derive_delegate]`, `#[prefix]`, and the
-  rest) off the trait, separating them from the plain trait the later stages transform.
+- **preprocess** first checks the `name:` parameters against the trait (below), then strips the CGP
+  modifier attributes (`#[derive_delegate]`, `#[prefix]`, and the rest) off the trait, separating
+  them from the plain trait the later stages transform.
 - **eval** is the core derivation: it builds the provider trait, the consumer and provider blanket
   impls, and the component marker struct.
 - **to_items** renders everything into the final `Vec<syn::Item>`, appending the standard provider
@@ -112,6 +113,16 @@ reject it rather than emitting a provider trait that uses the const parameter in
 fails to compile. A const *item* on the trait (`const CONSTANT: u64;`) is unaffected: that is an
 associated const, not a generic parameter, and is provided by a const-generic provider struct.
 
+The **`name:` parameters must be the trait's own.** The marker struct is declared with the name's
+parameters while the generated impls name it with the trait's, so `ItemCgpComponent::preprocess`
+first runs `check_component_name_params`, which looks up each lifetime, type, and const parameter of
+the component name among the trait's generics by name and kind. One the trait lacks is rejected
+with a spanned error on that parameter,
+``the component name's parameter `T` is not a generic parameter of the trait `CanShape` ``, rather
+than being emitted into impl positions where it is unbound (`E0425`, then an `E0034` on the
+generated impls). A const name parameter therefore never reaches a type position: either the trait
+lacks it and this check fires, or the trait declares it and the const-generic rejection does.
+
 The **reserved identifiers** appear literally in the output: the context parameter is `__Context__`
 (unless the `context` key overrides it), the provider-trait method's receiver is `__context__`, the
 snake-cased context name wrapped in double underscores (a `context: Ctx` key gives `__ctx__`), the
@@ -154,13 +165,6 @@ consumer blanket impl, the provider blanket impl, the `UseContext` and `Redirect
 any `#[derive_delegate]` impl all share the path. The fix is to generate a fresh binding for such a
 parameter; the [reference Known issues](../../reference/macros/cgp_component.md#known-issues) give
 the workaround.
-
-A `name:` parameter the trait does not declare is not checked. `TypeGenericParam` accepts any bare
-identifier, and nothing compares the name's parameters with the trait's generics, so
-`#[cgp_component { provider: Shape, name: ShapeComponent<T> }]` on a trait without `T` emits
-`ShapeComponent<T>` into impl positions where `T` is unbound, and the compiler reports `E0425` at
-the `T` followed by an `E0034`. The fix is a spanned error in `CgpComponentArgs` (or at `eval`)
-naming each name parameter missing from the trait's generics. No rejection test pins it yet.
 
 The namespace impl a `#[prefix]` attribute adds carries the macro `call_site` span.
 `PrefixAttribute::to_namespace_impl` builds it with `parse_internal!` and does not re-span the
@@ -224,8 +228,10 @@ The behavioral tests confirm the generated wiring works:
   eyre report raised through plain, `open`, and namespace-path wiring records the test's own line as
   its location.
 - [cgp-macro-tests/tests/parser_rejections/cgp_component.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/cgp_component.rs)
-  asserts the macro rejects a non-trait item, a trait carrying a const generic parameter, and
-  attribute arguments with a repeated key, an unknown key, or no `provider` key.
+  asserts the macro rejects a non-trait item, a trait carrying a const generic parameter, attribute
+  arguments with a repeated key, an unknown key, or no `provider` key, and a `name:` parameter the
+  trait does not declare, and that the same `name:` form expands when the trait declares the
+  parameter.
 - The `cargo-cgp` UI fixture
   [`acceptable/wiring/duplicate-keys/duplicate_component_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/duplicate-keys/duplicate_component_name.rs)
   pins that the derived marker's `E0428` "previous definition" note falls on the provider name

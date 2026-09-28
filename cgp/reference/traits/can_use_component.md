@@ -56,10 +56,9 @@ than the provider. `check_components!` asserts `CanUseComponent` by default and 
 
 The second bound asks the *delegate's* `IsProviderFor` impl, not the context's own. A call through
 the consumer trait goes the other way, through the provider blanket impl, which requires the context
-to implement `IsProviderFor` by way of the table's forwarding impl. The two agree except where that
-forwarding impl cannot apply, which today is a component used at an unsized type parameter: the check
-passes and every call fails, per the
-[`delegate_components!` Known issues](../macros/delegate_components.md#known-issues).
+to implement `IsProviderFor` by way of the table's forwarding impl. The two agree, because the
+forwarding impl is bounded on exactly the delegate's `IsProviderFor` and accepts every params tuple
+the trait does, including an unsized one such as `(Life<'a>, str)`.
 
 `check_components!` emits a private check trait whose supertrait is `CanUseComponent`, and one empty
 impl of it per checked entry, as in:

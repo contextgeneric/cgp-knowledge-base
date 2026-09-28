@@ -55,9 +55,23 @@ type's final path segment.
 
 A component with parameters places them in the `__Params__` slot: a single parameter directly,
 multiple as a tuple. The `#[check_providers(...)]` form changes both the supertrait and the
-implementing type: the trait supertraits `IsProviderFor<__Component__, Context, __Params__>` instead
-of `CanUseComponent`, and one impl is written for each listed provider rather than for the context,
-so each provider is asserted independently.
+implementing type: the trait takes a third parameter, `__Context__`, and supertraits
+`IsProviderFor<__Component__, __Context__, __Params__>` instead of `CanUseComponent`, and one impl
+is written for each listed provider rather than for the context, so each provider is asserted
+independently. Each impl fills `__Context__` with the table's context type:
+
+```rust
+// #[check_trait(CheckGenProviders)] #[check_providers(RectangleArea)] <T> Gen<T> { AreaCalculatorComponent }
+trait CheckGenProviders<__Component__, __Context__, __Params__: ?Sized>:
+    IsProviderFor<__Component__, __Context__, __Params__>
+{}
+impl<T> CheckGenProviders<AreaCalculatorComponent, Gen<T>, ()> for RectangleArea {}
+```
+
+The context is a trait parameter rather than a type spelled into the supertrait because `eval`
+merges the table's `impl_generics` and `where` clause only onto the impls. A context naming a
+table generic, such as `Gen<T>`, therefore reaches the trait only through an impl that declares
+`T`, which is what lets a generic table check its providers at every instantiation.
 
 ## Behavior and corner cases
 
@@ -126,15 +140,6 @@ the conflict at the repeated component.
 
 ## Known issues
 
-The `#[check_providers(...)]` trait is built with the context type spelled out in its supertrait,
-`IsProviderFor<__Component__, #context_type, __Params__>`, while `eval` merges the table's
-`impl_generics` and `where` clause only onto the impls. A generic table,
-`#[check_providers(P)] <T> Gen<T> { … }`, therefore names `T` in a trait that never declares it,
-failing with `E0425`, and the impl's `T` is then unconstrained, `E0207`. The fix is to put the table's
-generics on the trait too, or to make the context a parameter of the trait; the
-[reference Known issues](../../reference/macros/check_components.md#known-issues) give the
-concrete-instantiation workaround.
-
 `derive_check_trait_ident` parses the context type as a `PathWithTypeArgs` to take its last
 identifier, so a context that is not a path, such as `&'a Person`, has no name to derive. Without
 `#[check_trait(...)]` the table fails with `expected identifier` at the context type, which does not
@@ -157,8 +162,12 @@ snapshots belong to this entrypoint:
   each impl, a check parameter that uses a generic (`Component: &'a I`), and a component that is
   itself generic (`BarGetterAtComponent<I>`).
 - [checking/check_providers.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/checking/check_providers.rs):
-  the `#[check_providers(...)]` form: the trait supertraits `IsProviderFor` and is implemented for
-  each listed provider rather than for the context.
+  the `#[check_providers(...)]` form: the trait takes the context as its `__Context__` parameter,
+  supertraits `IsProviderFor`, and is implemented for each listed provider rather than for the
+  context.
+- [checking/check_providers_generic.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/checking/check_providers_generic.rs):
+  `#[check_providers(...)]` on a generic `<T> Wrapper<T>` table: the impl carries the table's `<T>`
+  and passes `Wrapper<T>` as the trait's `__Context__`.
 - [checking/check_path_context.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/checking/check_path_context.rs):
   a path-qualified context (`inner::Context`): the derived trait name (`__CheckContext`) comes from
   the final path segment, and the impl targets the context by its full path.

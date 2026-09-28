@@ -57,10 +57,13 @@ delegate_components! {
 
 A `new` keyword before the target makes the macro declare the target struct as well.
 `new MyComponents { ... }` emits `pub struct MyComponents;`, or a generic struct with a
-`PhantomData` field when the target carries lifetime or type parameters, alongside the table impls.
-A `const` parameter is not supported there, as Known issues records. This is how
-an aggregate provider is declared: a zero-sized provider whose table dispatches each component to a
-sub-provider, so other contexts can delegate a whole group of components to it at once.
+`PhantomData` field when the target carries parameters, alongside the table impls. The target's
+parameters take their kinds from the leading generic list, so
+`<const N: usize> new ArrayTable<N> { ... }` declares `pub struct ArrayTable<const N: usize>`. The
+`PhantomData` field covers only the lifetime and type parameters, so a target carrying only a
+`const` gets a `PhantomData<()>` field. This is how an aggregate provider is declared: a zero-sized
+provider whose table dispatches each component to a sub-provider, so other contexts can delegate a
+whole group of components to it at once.
 
 An aggregate provider is a provider rather than a context, so it is wired with plain
 `delegate_components!` and never with
@@ -241,7 +244,7 @@ to. One further form exists, and it is legacy.
 > }
 > ```
 >
-> Here the entry's `<T>` reaches the outer key, the wrapper, and the generated `struct BarValue<T>` alike, so one entry defines a family of inner tables.
+> Here the entry's `<T>` reaches the outer key, the wrapper, and the generated `struct BarValue<T>` alike, so one entry defines a family of inner tables. The inner list declares the struct's parameters, so a `const` is written with its kind: `<const N: usize> ArrayKey<N>: UseDelegate<new ArrayTable<const N: usize> { … }>` declares `struct ArrayTable<const N: usize>`, while a bare `N` there would declare a type parameter, as Known issues shows.
 >
 > The form also depends on the component carrying [`#[derive_delegate(UseDelegate<Shape>)]`](../attributes/derive_delegate.md), which generates the dispatch impl the wrapper resolves through. Without it the table still expands, and the failure appears at the check as an unsatisfied `IsProviderFor` on `UseDelegate<…>` that says nothing about the missing attribute. This is the practical difference from `open`, which resolves through the `RedirectLookup` impl every component already has and so needs nothing added to the component.
 >
@@ -436,13 +439,13 @@ The grammar needs a few notes beyond what the rules show:
   `invalid impl generics syntax`.
 - **An `InnerTable` names a fresh struct.** It is an identifier with an optional `BoundFreeGenerics`
   list rather than a full type, because the macro declares it. That list is a definition-position
-  list of lifetimes and type parameters: no bounds and no defaults. Write any bound on the entry's
-  generics instead. A bound on the inner table is rejected, but with a misleading message: the value
-  parser tries the nested form speculatively and falls back to a plain type, so
-  `UseDelegate<new BarValue<T: Clone> { … }>` reports ``expected `,` `` at the inner table's name.
-  A `const N: usize` parameter fails the same way, and a bare `N` declares a type parameter, so an
-  entry passing a const through it fails with `E0747`: an inner table cannot carry a const
-  parameter, as Known issues records.
+  list of lifetimes, type parameters, and `const` parameters: no bounds and no defaults. Write any
+  bound on the entry's generics instead. Because the list declares the struct, a `const` keeps its
+  kind (`ArrayTable<const N: usize>`) and a bare `N` declares a type parameter. A bound or a default
+  on the inner table is rejected, but with a misleading message: the value parser tries the nested
+  form speculatively and falls back to a plain type, so `UseDelegate<new BarValue<T: Clone> { … }>`
+  and `UseDelegate<new ArrayTable<const N: usize = 3> { … }>` report ``expected `,` `` at the inner
+  table's name.
 - **The nested-table wrapper is a bare `IDENTIFIER`.** A qualified path is not the nested form and
   reports ``expected `,` `` like a bound does.
 - **A `MultiKey` takes no generics of its own**, only its elements do.
@@ -486,8 +489,10 @@ The macro then emits the matching `IsProviderFor` impl, generic over a context a
 which holds whenever the delegated provider is itself a provider for the component:
 
 ```rust
-impl<__Context__, __Params__>
-    IsProviderFor<AreaCalculatorComponent, __Context__, __Params__> for Rectangle
+impl<
+    __Context__,
+    __Params__: ?Sized,
+> IsProviderFor<AreaCalculatorComponent, __Context__, __Params__> for Rectangle
 where
     RectangleAreaCalculator: IsProviderFor<AreaCalculatorComponent, __Context__, __Params__>,
 {}
@@ -497,7 +502,9 @@ This second impl keeps missing dependencies diagnosable. `RectangleAreaCalculato
 `IsProviderFor` impl, generated by [`#[cgp_impl]`](cgp_impl.md) or
 [`#[cgp_provider]`](cgp_provider.md), carries the bounds it needs, so an unmet transitive
 requirement flows back through this forwarding impl to the point of use. The parameters are
-literally named `__Context__` and `__Params__`.
+literally named `__Context__` and `__Params__`. `__Params__` is `?Sized`, matching the trait's own
+`Params: ?Sized`, so a component whose `?Sized` type parameter is used at an unsized argument, with
+an unsized params tuple such as `(Life<'a>, str)`, still resolves through the table.
 
 Every other form lowers to the same pair, including the three statements. What a form changes is how
 many pairs one line produces and what the `Delegate` type is, as the rest of this section shows.
@@ -537,7 +544,7 @@ The forwarding `IsProviderFor` impl carries that bound as well as the usual one,
 projected type:
 
 ```rust
-impl<__Context__, __Params__> IsProviderFor<Index<1>, __Context__, __Params__>
+impl<__Context__, __Params__: ?Sized> IsProviderFor<Index<1>, __Context__, __Params__>
 for BarComponents
 where
     FooComponents: DelegateComponent<Index<1>>,
@@ -892,33 +899,12 @@ statement, which is the
 [namespace override conflict](../../errors/wiring/namespace-override-conflict.md) class. Overriding
 works only on a path the namespace routes onward without binding.
 
-**A table struct the macro declares cannot carry a `const` parameter.** A nested inner table's
-generic list admits only lifetimes and type parameters, so
-`UseDelegate<new ArrayTable<const N: usize> { … }>` fails to parse, reporting ``expected `,` `` at
-`ArrayTable` once the value parser falls back to a plain type. Writing the bare `N` parses, but
-declares `N` as a type parameter of the generated struct, so an entry keyed on
-`<const N: usize> ArrayKey<N>` that passes `N` through fails with `E0747`, a constant provided where
-a type was expected. A `new` target fails the same way: `<const N: usize> new ArrayTable<N> { … }`
-declares `ArrayTable<N>` with a type parameter and reports `E0747`, because the target's struct is
-read from its type arguments, which name `N` without its kind. The workaround is to declare the
-struct by hand, `pub struct ArrayTable<const N: usize>;`, wire it with its own block,
-`<const N: usize> ArrayTable<N> { … }`, and name it in the outer entry as
-`UseDelegate<ArrayTable<N>>`.
-
-**A component used at an unsized parameter passes its check and fails at every call.** The
-forwarding `IsProviderFor<Key, __Context__, __Params__>` impl the macro emits for each entry declares
-`__Params__` without `?Sized`, although the trait itself declares `Params: ?Sized`. A component whose
-type parameter is `?Sized`, used at an unsized argument, has an unsized params tuple, so the context
-never implements its provider trait through the table. For
-`#[cgp_component(ReferenceGetter)] pub trait HasReference<'a, T: 'a + ?Sized>` wired at `str`, the
-check `ReferenceGetterComponent: (Life<'a>, str)` passes, because
-[`CanUseComponent`](../traits/can_use_component.md) asks the provider's own `IsProviderFor` impl rather
-than the table's, while `borrowed.get_reference()` fails with
-``error[E0599]: the method `get_reference` exists for struct `Borrowed<'_>`, but its trait bounds were not satisfied``,
-whose note reads `` `str: Sized` which is required by `Borrowed<'_>: HasReference<'_, str>` ``. The
-correct behavior is to declare `__Params__: ?Sized` on the forwarding impl. Until then, give such a
-component a sized argument or implement its consumer trait directly on the context. The same example
-is on the [`Life`](../types/life.md) page.
+**A bare `N` in a nested table's generic list declares a type parameter.** The inner list is a
+definition-position list, so `<const N: usize> ArrayKey<N>: UseDelegate<new ArrayTable<N> { … }>`
+gives `ArrayTable` a type parameter `N`, and passing the constant through fails with `E0747`,
+``constant provided when a type was expected``, at the `N`. Write the parameter with its kind, as
+`new ArrayTable<const N: usize> { … }`. A `new` target differs, because its list is the target's
+type arguments: `<const N: usize> new ArrayTable<N>` takes the kind from the leading generic list.
 
 ## Related constructs
 

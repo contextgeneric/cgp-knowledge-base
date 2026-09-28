@@ -29,8 +29,11 @@ kinds of output:
 - **`derive_blanket_impl`** builds the single `impl <Trait> for __Variants__` that, per method,
   invokes a value-handler matcher over the enum. It threads a `where` clause that bounds each
   matcher and requires `__Variants__: HasExtractor`.
-- **`derive_method_computer`** builds, per method, a free function annotated with
-  [`#[cgp_computer]`](cgp_computer.md) whose body calls the trait method on the payload. The macro
+- **`derive_method_computer`** builds, per method, a private free function annotated with
+  [`#[cgp_computer]`](cgp_computer.md) whose body calls the trait method on the payload, named
+  `__compute_{method}__` so it does not collide with the module's own items. Both this name and
+  the computer's `Compute{Method}` are built from the unrawed method identifier, so a method named
+  `r#type` yields `__compute_type__` and `ComputeType` rather than an invalid identifier. The macro
   emits these by delegating to `#[cgp_computer]` rather than synthesizing the `Computer` impl
   itself.
 
@@ -50,7 +53,7 @@ the payload through a fresh lifetime `'__a__`:
 ```rust
 // from `fn area(&self) -> f64;`
 #[cgp_computer(ComputeArea)]
-fn area<'__a__, __Variants__: HasArea>(__Variants__: &'__a__ __Variants__) -> f64 {
+fn __compute_area__<'__a__, __Variants__: HasArea>(__Variants__: &'__a__ __Variants__) -> f64 {
     __Variants__.area()
 }
 ```
@@ -119,11 +122,12 @@ user-facing workarounds.
   lifetimes, such as `fn lookup<'a>(&'a self, key: &str) -> &'a str`, quantifies only the last one
   in the set's order and fails with `E0261` on the other. The fix is a single `for<…>` over all of
   them.
-- **The per-variant helper takes the method's name.** `derive_method_computer` emits a free
-  function named `#method_ident` beside the trait, so a module that already declares an item of
-  that name fails with `E0428`, followed by `E0061` and `E0308` from the clash. The fix is to emit
-  the helper under a generated name the user cannot collide with, since only the `Compute{Method}`
-  provider needs to be nameable. No test pins it yet.
+- **Two dispatch traits in one module cannot share a method name.** Both the helper
+  (`__compute_{method}__`) and the computer (`Compute{Method}`) are derived from the method
+  identifier alone, so two `#[cgp_auto_dispatch]` traits declaring `fn area` in one module emit each
+  twice and fail with `E0428` on both names and `E0119` on the computers' impls. The fix is to fold
+  the trait identifier into both names, which changes the `Compute{Method}` provider name the
+  reference documents. No `cargo-cgp` UI fixture pins it yet.
 
 The macro also **rejects a trait method with non-lifetime generic parameters** with a spanned
 `syn::Error` ("Dispatch trait methods cannot contain non-lifetime generic parameters due to the lack
@@ -169,6 +173,12 @@ The behavioral tests cover every receiver-and-argument shape the matcher selecti
 - [dispatching/auto_dispatch_consumer_traits_in_scope.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/dispatching/auto_dispatch_consumer_traits_in_scope.rs):
   a synchronous and an async dispatch trait in a module that imports `CanCompute` and
   `CanComputeAsync`, pinning that the generated matcher call names its provider trait.
+- [dispatching/auto_dispatch_method_name_in_scope.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/dispatching/auto_dispatch_method_name_in_scope.rs):
+  a free function named `area` beside a dispatch trait with an `area` method, pinning that the
+  per-variant helper takes a reserved name.
+- [dispatching/auto_dispatch_raw_method_name.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/dispatching/auto_dispatch_raw_method_name.rs):
+  a method named `r#type`, pinning that the computer and helper names are built from the unrawed
+  identifier (`ComputeType`, `__compute_type__`).
 - [dispatching/types.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/dispatching/types.rs)
   is the shared fixture the shape tests import: the `FooBar` enum, derived with `CgpVariant`, over
   the unit structs `Foo` and `Bar`.

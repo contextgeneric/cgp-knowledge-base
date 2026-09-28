@@ -16,8 +16,9 @@ what the whole pipeline produces; this document covers the types, one per role i
 `eval` produces an `EvaluatedDelegateTable`, a bag of `ItemImpl`s and `EmptyStruct`s, whose
 `ToTokens` emits the structs first, then the impls.
 
-`eval` does three things: if `new` is present it parses the target into an identifier-plus-generics
-and pushes an `EmptyStruct` for it; it builds the entry impls from `DelegateEntries::build_impls`;
+`eval` does three things: if `new` is present it parses the target into an identifier-plus-generics,
+restores the kind of each parameter that names a `const` of the leading generic list, and pushes an
+`EmptyStruct` for it; it builds the entry impls from `DelegateEntries::build_impls`;
 and it collects every nested `UseDelegate` inner table (via `ExtractInnerDelegateTables`) and emits
 each inner table's own struct and impls. The target type and the outer generics are threaded down
 into every entry so all impls carry the table's generics.
@@ -36,10 +37,12 @@ concatenating the evaluated entries; `build_impls` then renders each into its
 ## `InnerDelegateTable`
 
 `InnerDelegateTable` is a nested table lifted out of a `UseDelegate<new Inner { … }>` value: an
-identifier, its generics, and its own `DelegateEntries`. It builds its own `EmptyStruct` and,
-treating its own identifier-plus-generics as the target type, its own entry impls, so a nested table
-is evaluated exactly like a top-level one. `ExtractInnerDelegateTables` recurses so that nesting to
-any depth is flattened into the table's struct-and-impl list.
+identifier, its generics as a `TypeGenerics` definition list (lifetimes, type parameters, and
+`const` parameters, without bounds or defaults), and its own `DelegateEntries`. It builds its own
+`EmptyStruct` from that list and, treating its identifier with the list's type arguments as the
+target type, its own entry impls, so a nested table is evaluated exactly like a top-level one.
+`ExtractInnerDelegateTables` recurses so that nesting to any depth is flattened into the table's
+struct-and-impl list.
 
 ## `DelegateStatement`
 
@@ -119,9 +122,10 @@ falls back to a bare type.
 
 `DelegateValueWithInnerTable` parses the legacy nested-dispatch shape `Wrapper<new Inner { … }>`: a
 wrapper identifier, `<`, the `new` keyword, an `InnerDelegateTable`, `>`. Its `eval` produces the
-value type `Wrapper<Inner…>` (dropping the `new`, which only signals that the inner struct must be
-declared), and `ExtractInnerDelegateTables` yields the inner table itself so `DelegateTable::eval`
-emits its struct and impls alongside the outer entry.
+value type `Wrapper<Inner…>` from the inner table's type arguments, so `new Inner<const N: usize>`
+becomes `Wrapper<Inner<N>>` (and the `new`, which only signals that the inner struct must be
+declared, is dropped), and `ExtractInnerDelegateTables` yields the inner table itself so
+`DelegateTable::eval` emits its struct and impls alongside the outer entry.
 
 ## `EvaluatedDelegateEntry`
 
@@ -131,11 +135,11 @@ owns the rendering: `build_delegate_component_impl` emits the
 `DelegateComponent<Key> for TableType { type Delegate = Value; }` impl, and
 `build_is_provider_for_impl` emits the forwarding `IsProviderFor<Key, __Context__, __Params__>` impl
 bounded on `Value: IsProviderFor<Key, __Context__, __Params__>`, appending the reserved
-`__Context__` and `__Params__` generics. Both then pass through `respan_impl`, which re-spans the
-finished impl's boundary tokens (its `impl` keyword and `{ … }` body) onto the entry's `span`,
-leaving the interior (including the value and any per-entry generic) at its own spans. A coherence
-conflict therefore points at the entry rather than the whole block, while an unconstrained generic's
-`E0207` still lands on the user's `<T>`, as
+`__Context__` and `__Params__: ?Sized` generics. Both then pass through `respan_impl`, which
+re-spans the finished impl's boundary tokens (its `impl` keyword and `{ … }` body) onto the entry's
+`span`, leaving the interior (including the value and any per-entry generic) at its own spans. A
+coherence conflict therefore points at the entry rather than the whole block, while an unconstrained
+generic's `E0207` still lands on the user's `<T>`, as
 [Error spans](../entrypoints/delegate_components.md#error-spans) explains. (`build_namespace_impl`,
 on the same type, is used by the namespace preset machinery to emit a `Namespace for Key` impl
 instead.)

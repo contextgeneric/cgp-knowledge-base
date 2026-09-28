@@ -49,7 +49,7 @@ a `check_components!` block can coexist once each in the same module:
 impl DelegateComponent<NameGetterComponent> for MyContext {
     type Delegate = UseField<Symbol!("name")>;
 }
-impl<__Context__, __Params__>
+impl<__Context__, __Params__: ?Sized>
     IsProviderFor<NameGetterComponent, __Context__, __Params__> for MyContext
 where
     UseField<Symbol!("name")>: IsProviderFor<NameGetterComponent, __Context__, __Params__>,

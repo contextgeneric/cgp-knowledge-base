@@ -23,10 +23,10 @@ attributes (rejecting any other, a repeat of either, and an empty `#[check_provi
 the trait name as `__Check{Context}` from the final segment of the context type's path when not
 overridden, so a path-qualified context is accepted, and parses the braced entries. Its `eval`
 builds the check trait once, supertraiting `CanUseComponent` normally or
-`IsProviderFor<…, Context, …>` under `#[check_providers]`, then emits one impl per evaluated entry.
-For the context-checking form it overrides the impl's `Self`-type span with the component's span so
-an error points at the component; the `#[check_providers]` form instead emits one impl per listed
-provider.
+`IsProviderFor<__Component__, __Context__, __Params__>` under `#[check_providers]`, with the context
+as the trait's `__Context__` parameter, then emits one impl per evaluated entry. For the
+context-checking form it overrides the impl's `Self`-type span with the component's span so an error
+points at the component; the `#[check_providers]` form instead emits one impl per listed provider.
 
 ## `CheckEntries` and `CheckEntry`
 

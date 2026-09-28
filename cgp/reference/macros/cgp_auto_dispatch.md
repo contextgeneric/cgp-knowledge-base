@@ -55,7 +55,7 @@ Supertraits parse but break the expansion, as Known issues explains.
 ## Expansion
 
 The macro keeps the trait unchanged and appends two kinds of item: one blanket impl of the trait for
-a fresh type parameter named `__Variants__`, and, for each method, one free function that
+a fresh type parameter named `__Variants__`, and, for each method, one private free function that
 [`#[cgp_computer]`](cgp_computer.md) turns into a per-variant computer.
 
 ### The per-variant computer
@@ -65,16 +65,22 @@ the macro emits:
 
 ```rust
 #[cgp_computer(ComputeArea)]
-fn area<'__a__, __Variants__: HasArea>(__Variants__: &'__a__ __Variants__) -> f64 {
+fn __compute_area__<'__a__, __Variants__: HasArea>(__Variants__: &'__a__ __Variants__) -> f64 {
     __Variants__.area()
 }
 ```
 
-The computer is named `Compute` followed by the method name in PascalCase, so `area` yields
-`ComputeArea`. It is generic over any `__Variants__: HasArea`, so it applies to every payload type
-that implements the trait. It borrows the payload for a fresh lifetime `'__a__`, mirroring the
-`&self` receiver, and the same lifetime is given to any elided reference in the arguments or the
-return type.
+The function takes a reserved name, `__compute_` plus the method name plus `__`, so it does not
+collide with the module's own items: a free function called `area` beside the trait compiles. The
+computer is named `Compute` followed by the method name in PascalCase, so `area` yields
+`ComputeArea`. Both names use the method name without its raw-identifier prefix, so a method named
+`r#type` yields `__compute_type__` and `ComputeType`. The one clash the names still allow, between
+two dispatch traits in one module, is in Known issues.
+
+The computer is generic over any `__Variants__: HasArea`, so it applies to every payload type that
+implements the trait. It borrows the payload for a fresh lifetime `'__a__`, mirroring the `&self`
+receiver, and the same lifetime is given to any elided reference in the arguments or the return
+type.
 
 ### The enum-level blanket impl
 
@@ -205,13 +211,14 @@ These constructs are the ones `#[cgp_auto_dispatch]` builds on:
 
 ## Known issues
 
-**The per-method helper function takes the method's name.** Each method's per-variant function is
-emitted as a free function with the method's own name (`fn area`) in the module that declares the
-trait, so a module that already holds an item of that name fails with
-``E0428: the name `area` is defined multiple times``, followed by argument-count and type errors
-from the clash. The correct behavior would be to emit the helper under a generated name that
-cannot collide, since only the `ComputeArea` provider needs to be visible. Until then,
-declare the trait in a module without a clashing item.
+**Two dispatch traits in one module cannot share a method name.** The helper and the computer are
+named after the method alone, so a second `#[cgp_auto_dispatch]` trait with an `area` method emits a
+second `__compute_area__` and a second `ComputeArea`, and the module fails with
+``E0428: the name `__compute_area__` is defined multiple times``, the same for `ComputeArea`, and
+`E0119` conflicts between the two computers' `Computer`, `IsProviderFor`, and `DelegateComponent`
+impls, followed by `E0277` errors on the second trait's blanket impl. Declaring the traits in
+separate modules avoids it. Naming the generated items after the trait as well as the method would
+remove the clash, at the cost of renaming the `Compute{Method}` provider.
 
 **The blanket impl covers every type implementing `HasExtractor`.** A hand-written impl of the
 trait for a type outside that set, such as each payload struct, coexists with it, but one for any

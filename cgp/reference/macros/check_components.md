@@ -95,13 +95,15 @@ Two attributes may head a table, in either order, each at most once:
   be derived.
 - **`#[check_providers(...)]`** checks that each listed provider is a provider for the context,
   instead of checking the context. Each provider is asserted separately, which is how the layers of
-  a higher-order provider are checked one by one. It must list at least one provider.
+  a higher-order provider are checked one by one. It must list at least one provider. A generic
+  table checks the providers at every instantiation, so
+  `#[check_providers(RectangleArea)] <T> Gen<T> { AreaCalculatorComponent }` asserts that
+  `RectangleArea` is a provider for each `Gen<T>`.
 
 Any other attribute is rejected by name, as `Invalid attribute #[allow(unused)]`. An empty
 `#[check_providers()]` fails with `` `#[check_providers(...)]` requires at least one provider type. ``,
 and a repeated attribute with ``Multiple `#[check_trait]` attributes found. Expected at most one.``
-or its `check_providers` twin. `#[check_providers(...)]` also needs a concrete context, as Known
-issues records.
+or its `check_providers` twin.
 
 ## Syntax Grammar
 
@@ -203,8 +205,9 @@ generics and `where` clause are added to every impl: a
 ### Checking providers
 
 The `#[check_providers(...)]` form changes both the supertrait and the implementing type. The check
-trait's supertrait becomes `IsProviderFor` on the context, and the impls are written for each listed
-provider rather than for the context:
+trait's supertrait becomes `IsProviderFor`, the trait gains a `__Context__` parameter that each impl
+fills with the table's context type, and the impls are written for each listed provider rather than
+for the context:
 
 ```rust
 check_components! {
@@ -222,19 +225,23 @@ check_components! {
 expands to:
 
 ```rust
-trait CheckScaledRectangleProviders<__Component__, __Params__: ?Sized>:
-    IsProviderFor<__Component__, ScaledRectangle, __Params__>
+trait CheckScaledRectangleProviders<__Component__, __Context__, __Params__: ?Sized>:
+    IsProviderFor<__Component__, __Context__, __Params__>
 {}
 
-impl CheckScaledRectangleProviders<AreaCalculatorComponent, ()> for RectangleAreaCalculator {}
-impl CheckScaledRectangleProviders<AreaCalculatorComponent, ()>
+impl CheckScaledRectangleProviders<AreaCalculatorComponent, ScaledRectangle, ()>
+    for RectangleAreaCalculator {}
+impl CheckScaledRectangleProviders<AreaCalculatorComponent, ScaledRectangle, ()>
     for ScaledAreaCalculator<RectangleAreaCalculator> {}
 ```
 
 Each provider is checked by its own impl, so a dependency missing only from the outer
 `ScaledAreaCalculator<RectangleAreaCalculator>` errors on that line alone, while one missing from
 the inner `RectangleAreaCalculator` errors on both. The pattern of failures locates the broken
-layer.
+layer. Passing the context as a trait parameter keeps a generic table's parameters on the impls,
+where the table's generics are declared: `#[check_providers(RectangleArea)] <T> Gen<T> { … }` emits
+`impl<T> CheckGenProviders<AreaCalculatorComponent, Gen<T>, ()> for RectangleArea {}` under a
+`#[check_trait(CheckGenProviders)]`.
 
 ## Examples
 
@@ -320,13 +327,6 @@ individual provider layers through `#[check_providers(...)]`, which suits the
 [higher-order providers](../../concepts/higher-order-providers.md) such layers come from.
 
 ## Known issues
-
-`#[check_providers(...)]` does not work on a generic table. The generated trait names the context
-type in its supertrait, `IsProviderFor<__Component__, Gen<T>, __Params__>`, but the table's generics
-are merged only onto the impls, so `#[check_providers(RectangleArea)] <T> Gen<T> { … }` fails with
-`E0425`, ``cannot find type `T` in this scope``, and an `E0207` on the impl. The correct behavior
-would carry the table's generics onto the trait as well. Until then, check a concrete instantiation
-such as `Gen<u32>`.
 
 A context that is not a path, such as a reference `&'a Person`, cannot yield a derived check-trait
 name. Without `#[check_trait(...)]`, such a table fails to parse with `expected identifier`,

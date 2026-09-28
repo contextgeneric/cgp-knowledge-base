@@ -62,7 +62,7 @@ Three macros generate the pieces that form the diagnostic chain:
   impl on the table that forwards to the delegate's own marker:
 
 ```rust
-impl<__Context__, __Params__> IsProviderFor<FooGetterAtComponent, __Context__, __Params__>
+impl<__Context__, __Params__: ?Sized> IsProviderFor<FooGetterAtComponent, __Context__, __Params__>
     for MyAppComponents
 where
     GetFooValue: IsProviderFor<FooGetterAtComponent, __Context__, __Params__>,

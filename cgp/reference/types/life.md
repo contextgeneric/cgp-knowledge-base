@@ -61,13 +61,13 @@ trait-object type without a trait and reports
 `PhantomData<Life<'a>>`; a `PhantomData<&'a ()>` also satisfies the unused-parameter rule, but it is
 covariant and leaves the struct `Send` and `Sync`.
 
-Two limitations surface on components with a lifetime, and neither is `Life`'s own. A component whose
-type parameter is `?Sized`, used at an unsized argument such as `str`, passes its check but fails at
-every call through a table, because the table's forwarding `IsProviderFor` impl requires a sized
-params tuple; the defect and its workaround are in the
-[`delegate_components!` Known issues](../macros/delegate_components.md#known-issues). And a
-higher-order provider over a lifetime component loses the inner-provider `IsProviderFor` counterpart,
-recorded in the [`#[cgp_provider]` Known issues](../macros/cgp_provider.md#known-issues).
+A component whose type parameter is `?Sized` works at an unsized argument such as `str`. Its params
+tuple, `(Life<'a>, str)`, is then unsized too, and both `IsProviderFor`, which declares
+`Params: ?Sized`, and a table's forwarding impl, which declares `__Params__: ?Sized`, accept it, so
+the component resolves through a table like any other. One limitation does surface on components
+with a lifetime, and it is not `Life`'s own: a higher-order provider over a lifetime component loses
+the inner-provider `IsProviderFor` counterpart, recorded in the
+[`#[cgp_provider]` Known issues](../macros/cgp_provider.md#known-issues).
 
 ## Examples
 
@@ -127,7 +127,44 @@ pub trait ReferenceGetter<
 
 Every impl that wires this component, whether `UseContext`, the table's forwarding impl, or a
 hand-written provider, carries the same `(Life<'a>, T)` tuple, so the lifetime is preserved through
-resolution. `Config` is a sized target on purpose; see the unsized-target limitation above.
+resolution.
+
+The same component wired at the unsized target `str` resolves through the table and can be called:
+
+```rust
+#[cgp_impl(new GetName)]
+#[uses(HasField<Symbol!("name"), Value = &'a str>)]
+impl<'a> ReferenceGetter<'a, str> {
+    fn get_reference(&self) -> &'a str {
+        self.get_field(PhantomData::<Symbol!("name")>)
+    }
+}
+
+#[derive(HasField)]
+pub struct Borrowed<'a> {
+    pub name: &'a str,
+}
+
+delegate_components! {
+    <'a> Borrowed<'a> {
+        ReferenceGetterComponent: GetName,
+    }
+}
+
+check_components! {
+    <'a> Borrowed<'a> {
+        ReferenceGetterComponent: (Life<'a>, str),
+    }
+}
+
+pub fn demo_unsized() {
+    let text = String::from("demo");
+    let borrowed = Borrowed { name: &text };
+
+    let name: &str = borrowed.get_reference();
+    assert_eq!(name, "demo");
+}
+```
 
 ## Related constructs
 

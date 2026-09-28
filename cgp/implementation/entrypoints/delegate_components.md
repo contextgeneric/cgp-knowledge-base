@@ -49,16 +49,25 @@ requirement stays diagnosable. A plain `Key: Provider` mapping lowers directly:
 impl DelegateComponent<AreaCalculatorComponent> for Rectangle {
     type Delegate = RectangleArea;
 }
-impl<__Context__, __Params__>
-    IsProviderFor<AreaCalculatorComponent, __Context__, __Params__> for Rectangle
+impl<
+    __Context__,
+    __Params__: ?Sized,
+> IsProviderFor<AreaCalculatorComponent, __Context__, __Params__> for Rectangle
 where
     RectangleArea: IsProviderFor<AreaCalculatorComponent, __Context__, __Params__>,
 {}
 ```
 
 Both `__Context__` and `__Params__` are the reserved identifiers that appear literally in the
-output. When the body carries a leading `new` keyword, the macro additionally emits the target
-struct (`struct Rectangle;`, or a generic struct if the target carries parameters), and a
+output. `build_is_provider_for_impl` pushes `__Params__: ?Sized`, matching the trait's own
+`Params: ?Sized`. The provider blanket impl of a component requires the context itself to implement
+`IsProviderFor` through this impl. With a bare, implicitly `Sized` `__Params__`, a component whose
+`?Sized` type parameter is used at an unsized argument, with a params tuple such as
+`(Life<'a>, str)`, would be unusable through a table even though `check_components!` passes for it,
+since the check asks the delegate's impl rather than the table's.
+
+When the body carries a leading `new` keyword, the macro additionally emits the target struct
+(`struct Rectangle;`, or a generic struct if the target carries parameters), and a
 nested-`UseDelegate` value lifts its inner table out into its own struct and impls, so a value like
 `UseDelegate<new Inner { … }>` contributes both the outer entry and a full inner table. The
 extraction walks the body's **statements** as well as its mappings, since a `for` loop's body holds
@@ -118,6 +127,17 @@ The `namespace`/`for` statement forms lower through a shared "for-entry" path th
 namespace machinery and are detailed in the AST document. A **`for` loop's optional `where` clause**
 is merged into every impl the loop generates, alongside that reconstructed bound, so a bound written
 on the loop constrains which keys it wires.
+
+A **declared table struct keeps a `const` parameter's kind** by two routes. A `new` target is
+written with type arguments, so `DelegateTable::eval` reads the struct from the target as an
+`IdentWithTypeGenerics`, where a bare `N` carries no kind; it then replaces each type parameter
+whose name matches a `const` parameter of the table's own generic list with that const parameter, so
+`<const N: usize> new ArrayTable<N>` declares `ArrayTable<const N: usize>`. A nested inner table is
+written with a definition-position list instead, so `TypeGenerics::parse` accepts `const N: usize`
+there and a bare `N` stays a type parameter; `DelegateValueWithInnerTable::eval` then names the
+table by its type arguments (`split_for_impl`), turning `new Inner<const N: usize>` into `Inner<N>`
+in the outer entry. `EmptyStruct` keeps a const on the struct and leaves it out of the `PhantomData`
+field, so a struct carrying only a const gets `PhantomData<()>`.
 
 The **`open` statement is exactly a `=>` redirect** whose key is the opened component and whose path
 is that component alone: both lower to `RedirectLookup<TableType, PathCons<Component, Nil>>`, so
@@ -225,22 +245,13 @@ reports the same `expected ':'` on the trailing segment, and a bounded generic l
 table reports `expected ','`, because the value parser tries the nested-table form speculatively and
 falls back to reading the whole value as a plain type. All three are pinned as rejection cases (see
 [Tests](#tests)). The same fallback explains two further messages: a qualified wrapper such as
-`cgp::prelude::UseDelegate<new Inner { … }>` and a `const N: usize` parameter on the inner table
-both report `expected ','` at the inner table's name, since `DelegateValueWithInnerTable` reads the
-wrapper as a bare `Ident` and the inner table's generics as `TypeGenerics`. A generic list written
+`cgp::prelude::UseDelegate<new Inner { … }>` and a default on the inner table's generics, such as
+`const N: usize = 3`, both report `expected ','` at the inner table's name, since
+`DelegateValueWithInnerTable` reads the wrapper as a bare `Ident` and `TypeGenerics::parse` rejects
+a bound, a default, or a `where` clause. A generic list written
 before a list key, `<T> [A<T>, B]`, reports `expected square brackets`: `DelegateKey::parse` forks
 past the generics, sees the bracket, and hands the input, generics and all, to `MultiDelegateKey`,
 which parses no generics.
-
-**A declared table struct cannot carry a `const` parameter.** `TypeGenerics::parse` accepts a list
-only when it survives a round trip through `split_for_impl`'s type generics, which drops a const
-parameter's kind, so `new Inner<const N: usize> { … }` is rejected and a bare `new Inner<N>`
-declares a *type* parameter `N`. A `new` target has the same gap by another route:
-`DelegateTable::eval` reads the struct from the target's type arguments as an
-`IdentWithTypeGenerics`, and `N` there carries no kind either. Either way an entry passing a const
-through fails with `E0747`. `EmptyStruct` already skips const parameters when it builds the
-`PhantomData` field, so the fix is in the parsers alone: keep the const parameter's kind, from the
-table's own generic list for a `new` target, and admit `const` in the inner table's list.
 
 The `namespace` statement parses its namespace as a bare `Ident`, so a namespace from another module
 cannot be named by path: `namespace some_mod::MyNs;` fails with ``expected `;` `` at the `::`. The
@@ -266,17 +277,6 @@ the inner table's own generic, `new Inner<Provider>`, is what puts it in both pl
 The combination is nonetheless redundant in practice, which is why no wiring test drives one end to
 end. A loop already yields one provider per key, so a nested table below it dispatches the same
 parameter a second time. The form is kept correct rather than recommended.
-
-**The forwarding `IsProviderFor` impl requires a sized params tuple.** The mapping's `eval` pushes a
-bare `__Params__` onto the impl generics before emitting
-`impl<…, __Context__, __Params__> IsProviderFor<Key, __Context__, __Params__> for Target`, so the
-parameter is implicitly `Sized`, while `IsProviderFor` declares `Params: ?Sized`. The provider blanket
-impl of a component requires the context itself to implement `IsProviderFor` through this impl, so a
-component whose `?Sized` type parameter is used at an unsized argument, whose params tuple such as
-`(Life<'a>, str)` is therefore unsized, is never usable through a table. `check_components!` still
-passes, because `CanUseComponent` asks the delegate's `IsProviderFor` impl rather than the table's.
-Pushing `__Params__: ?Sized` would fix it. The user-facing behavior is in the
-[reference Known issues](../../reference/macros/delegate_components.md#known-issues).
 
 ## Snapshots
 
@@ -335,6 +335,10 @@ The namespace snapshots pin the statement and `@`-path forms:
   every body form in one block: an `open` statement, a `->` entry into an aggregate provider, a list
   key, and `@`-path keys using a braced group, a bracketed group, and a per-segment generic. The
   only place the composition itself is pinned.
+- [dispatching/const_generic_tables.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/dispatching/const_generic_tables.rs):
+  a `<const N: u64> new ConstantTable<N>` target declaring `ConstantTable<const N: u64>` with a
+  `PhantomData<()>` field, and a nested `UseDelegate<new CountTable<const N: usize> { … }>` table
+  named `CountTable<N>` in the outer entry; the tests call through both.
 - [dispatching/use_delegate_getter.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/dispatching/use_delegate_getter.rs):
   the legacy `UseDelegate<new … { … }>` nested-table value, including a custom `UseDelegate2`
   wrapper over tuple keys.
@@ -362,6 +366,11 @@ The behavioral tests confirm the generated wiring resolves and compiles:
   [basic_delegation/consumer_delegate_generic.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/basic_delegation/consumer_delegate_generic.rs)
   check that a context may satisfy some components by wiring and others by a direct trait impl, and
   that a generic component resolves independently per type argument.
+
+- [generic_components/unsized_parameter.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/generic_components/unsized_parameter.rs)
+  wires a component over `T: ?Sized` at `str`, checks it at `(Life<'a>, str)`, and *calls* it,
+  directly and through a generic bound, which pins the `__Params__: ?Sized` on the forwarding impl
+  (the check alone passes either way).
 
 - [namespaces/for_loop_nested_table.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/namespaces/for_loop_nested_table.rs)
   checks that a nested table opened inside a `for` loop's body is lifted out and carries its entry,

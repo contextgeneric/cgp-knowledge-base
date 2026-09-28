@@ -233,10 +233,13 @@ A few rules recur across the suite and are worth stating plainly. A lifetime is 
 by [`parse_is_provider_params`](functions/parse/is_provider_params.md), and inside a provider
 struct's `PhantomData`. A const argument is rejected in a provider trait's own argument list,
 because it cannot key the type-based `IsProviderFor` tuple, yet it flows through untouched as a
-const generic on the provider *struct*. Parameters merged from two sources (the trait's own generics
-plus an inserted context, say) pass through [`merge_generics`](functions/derive/generics.md) so they
-cannot collide. Finally, every parameter that appears in a generated header must be bound in that
-header, or the compiler reports the free parameter as `E0207`.
+const generic on the provider *struct*. A table struct that `delegate_components!` declares for a
+`new` target needs the opposite care: the target names a const bare, in argument position, so the
+macro restores its kind from the table's generic list before declaring the struct. Parameters merged
+from two sources (the trait's own generics plus an inserted context, say) pass through
+[`merge_generics`](functions/derive/generics.md) so they cannot collide. Finally, every parameter
+that appears in a generated header must be bound in that header, or the compiler reports the free
+parameter as `E0207`.
 
 ### Spans: aim generated items at the token the user wrote
 
