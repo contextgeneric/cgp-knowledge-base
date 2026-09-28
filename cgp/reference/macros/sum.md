@@ -71,10 +71,13 @@ Ending in `Void` rather than `Nil` is the essential difference from [`Product!`]
 empty record is a valid value, the unit struct `Nil`, but an empty choice is uninhabited, since
 there is nothing to choose. `Void` plays the role of the never type here, marking the end of a sum.
 
-The terminator is what gives generic variant handling compile-time exhaustiveness without a wildcard
-arm. As each variant is ruled out, the remaining type shrinks toward `Void`, and code that has
-handled every variant is left holding a `Void`, discharged with `match remainder {}`. Adding a
-variant without handling it makes the remainder inhabited again, so the code stops compiling.
+The uninhabited `Void` is what gives generic variant handling compile-time exhaustiveness without a
+wildcard arm. As an extractor rules each variant out it marks that variant `IsVoid`, whose payload
+type is `Void`, so code that has handled every variant is left holding an extractor whose every
+variant holds a `Void`. That value cannot exist, and it is discharged with an empty `match`, which
+[`FinalizeExtract`](../traits/extract_field.md) wraps. Adding a variant without handling it leaves
+that variant's payload inhabited, so the code stops compiling. A `match` on a `Sum!` value directly
+closes the same way, with an empty match on its final `Void` arm.
 
 ## Examples
 
