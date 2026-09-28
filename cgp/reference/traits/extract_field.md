@@ -216,7 +216,8 @@ payload in place (the value stays mutably borrowed while the extractor or a payl
 and `to_extractor` only when a payload must be moved out. A borrowed chain cannot move a payload out,
 and neither borrowed accessor has a `from_extractor`, which is rarely missed since the value was never
 consumed; `from_extractor` itself accepts only the all-possible extractor, so a narrowed one has no
-way back. The owned and borrowed extractors are different enums, so code generic over "an extractor"
+way back. An extractor type is a generated companion, so a signature returning `Self::Extractor` exposes a
+generated name in a public API. The owned and borrowed extractors are different enums, so code generic over "an extractor"
 is generic over the extractor type with `ExtractField` bounds, and a signature holding an
 `ExtractorRef<'a>` or `ExtractorMut<'a>` usually spells its lifetime out. Extractions may be written in
 any order, since each step moves only its own variant's marker, but every variant must be tried

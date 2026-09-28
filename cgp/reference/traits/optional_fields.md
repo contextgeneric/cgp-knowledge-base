@@ -148,7 +148,7 @@ where
 ```
 
 The pipeline reads top to bottom: start an empty builder for the target with
-[`HasBuilder`](has_builder.md), copy across every field the source and target have in common with
+[`HasBuilder`](has_builder.md), copy across every field of the source, each of which must exist in the target, with
 `build_from`, then finalize with defaults for the fields the source did not supply. This is the
 field-level "widening cast", turning a `Point2d` into a `Point3d` whose extra `z` is `0`, for
 instance, without naming any field explicitly.

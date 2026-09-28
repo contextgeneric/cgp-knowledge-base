@@ -139,7 +139,9 @@ is clearer when both types are one's own and the conversion is written once, and
 suits a one-off narrowing. `.ok()` on a downcast suits a single attempt and discards the remainder a
 further attempt needs, and a remainder derives nothing, so a `Result` holding one is neither `Debug`
 nor `PartialEq`. None of the four has a borrowing form, and each chain step has a different type, so
-a chain is unrolled rather than looped.
+a chain is unrolled rather than looped. The casts are opt-in: a type from a crate that has not
+derived the machinery cannot take part, and a renamed variant or field fails where the cast is
+written, not at the rename.
 
 ## Examples
 
