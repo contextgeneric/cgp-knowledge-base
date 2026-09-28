@@ -48,6 +48,13 @@ the recommended form for abstract-type components. In [`#[cgp_fn]`](../reference
 whose `where` clauses are impl-side dependencies rather than supertraits, `#[extend]` is the only
 way to declare a supertrait at all.
 
+A component's supertrait binds its callers, not its providers, so each provider still declares it.
+The provider trait carries the supertrait as a `Context: HasName` `where` bound, which a Rust impl
+must prove rather than inherit, so every `#[cgp_impl]` provider for `CanGreet` writes
+`#[uses(HasName)]`, even one whose body never calls `name()`, and fails with `E0277` at its own
+definition without it. The same holds for a type supertrait added with `#[use_type]`: each provider
+repeats the `#[use_type]` import, which is what the idiomatic providers already do.
+
 ## Related guides
 
 - [Importing abstract types](importing-abstract-types.md): use `#[use_type]` instead when the
