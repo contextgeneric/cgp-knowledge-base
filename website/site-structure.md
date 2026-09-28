@@ -103,8 +103,8 @@ through that page yet. On the `v0.8.0` branch the crate has one test target per 
 page, `tests/tutorials/` the ported tutorial parts, `tests/quickstart.rs` the Quickstart, and
 `tests/cargo_cgp/` the `docs/cargo-cgp/` pages. Under `tests/reference/`, the written groups are
 mirrored as they are ported: `errors.rs`, `macros/` and `attributes/` (every construct page),
-all of `derives/`, the `traits/` pages
-that show checkable code, most of `providers/`, all of `components/` (including the `handler/`
+all of `derives/`, every `traits/` construct
+page, all of `providers/` that shows code, all of `components/` (including the `handler/`
 subsection), and `types/`, one file per type page. The rejected snippets from every section live
 together under `tests/compile_fail/`. The `traits/` and `types/` mirror files stay flat rather than
 following the docs into their subdirectories, because a Rust module name cannot contain a hyphen;
@@ -1202,8 +1202,9 @@ another page moves to its own page in the directory its kind belongs to**, which
 to eight, and why `#[impl_generics(...)]` and `#[prefix(...)]` later left `cgp_fn.md` and
 `cgp_namespace.md` for pages of their own, taking it to ten. And **the `example-code` mirror splits with the pages**: `cast.rs` became four files and
 `product_ops.rs` three, since a mirror file that names a page which no longer exists is worse than none.
-The split pages inherited their snippets already compiled, so the crate stayed green throughout — but
-**the pages created around them are not yet mirrored**, which is the round's one outstanding item.
+The split pages inherited their snippets already compiled, so the crate stayed green throughout, and
+the pages created around them have since been mirrored too, so every `traits/` construct page now has
+a file.
 
 Reviewing the first four written pages had earlier corrected one originating on the site. The
 [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md) page had given "implementing a provider trait on a
