@@ -113,7 +113,11 @@ those derives include it alongside the [`#[derive(ExtractField)]`](derive_extrac
 extractor and the [`#[derive(HasFields)]`](derive_has_fields.md) representation traits. Its closest
 relative is [`ExtractField`](../traits/extract_field.md), the reverse operation that takes a variant
 out rather than putting one in. For structs, the analogous field-setting building block is
-[`#[derive(BuildField)]`](derive_build_field.md). The generated constructors correspond to the arms
+[`#[derive(BuildField)]`](derive_build_field.md). The generated constructors are also all that
+[`CanUpcast`](../traits/cast.md) needs of its *target*: the cast walks the source's `HasFields` list
+with the source's extractor and builds each variant through `Target: FromVariant<Tag>`, so a target
+deriving only `FromVariant` can be upcast into, while the source needs `HasFields` and
+`ExtractField`. The generated constructors correspond to the arms
 of the enum's [`sum`](../macros/sum.md) representation ([`Either`/`Void`](../types/either.md)).
 
 ## Known issues
