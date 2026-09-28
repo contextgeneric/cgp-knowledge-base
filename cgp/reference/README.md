@@ -100,8 +100,8 @@ Use these when generic code must name a type (an error type, a scalar, a runtime
 chooses for itself. [`#[cgp_type]`](macros/cgp_type.md) defines an abstract-type component from a
 trait with one associated type, layering a [`UseType`](providers/use_type.md) blanket impl on top of
 [`#[cgp_component]`](macros/cgp_component.md) so a context binds the concrete type by wiring the
-component to `UseType<T>`; that machinery rests on CGP's single built-in abstract-type component,
-[`HasType` / `TypeProvider`](components/has_type.md). The [`#[use_type]`](attributes/use_type.md)
+component to `UseType<T>`; its generated `WithProvider` impl connects it to CGP's tag-indexed
+abstract-type component, [`HasType` / `TypeProvider`](components/has_type.md). The [`#[use_type]`](attributes/use_type.md)
 attribute, distinct from the `UseType` provider despite the shared name, imports an abstract type
 into a `#[cgp_fn]`/`#[cgp_impl]`/`#[cgp_component]` definition, rewriting a bare `Error` or `Scalar`
 into its fully-qualified `<Self as Trait>::Type` form and adding the supertrait or bound, and it
@@ -362,7 +362,7 @@ These are the full CGP components CGP ships with (each a consumer trait, provide
 `…Component` marker), which an application wires through `delegate_components!` like any component
 it defines itself.
 
-- [`HasType` / `TypeProvider`](components/has_type.md): CGP's built-in abstract-type component.
+- [`HasType` / `TypeProvider`](components/has_type.md): CGP's tag-indexed abstract-type component.
 - [`HasErrorType`](components/has_error_type.md): the abstract error type component.
 - [`CanRaiseError` / `CanWrapError`](components/can_raise_error.md): raising and wrapping source
   errors into the abstract error type.

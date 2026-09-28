@@ -366,7 +366,7 @@ These constructs are the ones `#[use_type]` works with:
   flows through values the body reads from fields, so it is inferred rather than wired; move to an
   abstract type once a signature names the type or two traits must agree on it, per
   [naming a type dependency](../../guides/naming-a-type-dependency.md).
-- [`HasType`](../components/has_type.md): CGP's built-in abstract-type component.
+- [`HasType`](../components/has_type.md): CGP's tag-indexed abstract-type component.
 - [Importing abstract types](../../guides/importing-abstract-types.md): the guide recommending this
   attribute over a supertrait plus `Self::Type`.
 

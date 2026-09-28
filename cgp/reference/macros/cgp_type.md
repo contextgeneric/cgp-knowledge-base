@@ -161,13 +161,14 @@ where
 }
 ```
 
-The `HasType`/`TypeProvider` relationship this builds on is CGP's single built-in abstract-type
-component: `HasType<Tag>` is the consumer trait, `TypeProvider` is its provider trait, and `UseType` is
-itself a `TypeProvider`
+The `HasType`/`TypeProvider` relationship this adapts is CGP's tag-indexed abstract-type component:
+`HasType<Tag>` is the consumer trait, `TypeProvider` is its provider trait, and `UseType` is itself a
+`TypeProvider`
 (`impl<Context, Tag, Type> TypeProvider<Context, Tag> for UseType<Type> { type Type = Type; }`). The
-`WithProvider` impl lets a `#[cgp_type]` component be backed by a generic `TypeProvider`, so the same
-`UseType<T>` value satisfies both the built-in `HasType` and any user-defined `#[cgp_type]`
-component.
+`WithProvider` impl lets a `#[cgp_type]` component be backed by any `TypeProvider`, queried with the
+component's own key as the tag, so a provider written once for `TypeProvider`, such as
+`UseDelegatedType`, serves every named component through `WithProvider<P>`. `UseType<T>` satisfies a
+named component through the generated `UseType` impl above, without the adapter.
 
 As with the other macros, each generated provider impl is paired with a matching `IsProviderFor`
 impl carrying the same bounds, and the desugarings above are the exact shape the macro emits.

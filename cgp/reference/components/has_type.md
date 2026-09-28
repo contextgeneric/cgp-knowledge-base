@@ -1,6 +1,6 @@
 # `HasType`
 
-`HasType<Tag>` is CGP's built-in abstract-type component: it gives a context one abstract type per
+`HasType<Tag>` is CGP's tag-indexed abstract-type component: it gives a context one abstract type per
 tag, with `TypeProvider` as its provider trait and `TypeOf<Context, Tag>` as the alias for the
 resolved type.
 
