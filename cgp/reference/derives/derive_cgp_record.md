@@ -47,7 +47,7 @@ Each named field becomes a type-level string [`Symbol!`](../macros/symbol.md) us
 is tagged by its logical name `Symbol!("type")`. The field's declared type becomes its value type,
 and generic parameters on the struct are carried onto the generated impls. The derive accepts the
 same structs that [`#[derive(CgpData)]`](derive_cgp_data.md) accepts for the record path; the only
-difference is that `CgpRecord` refuses non-struct inputs outright.
+difference is that `CgpRecord` refuses non-struct inputs outright, with ``expected `struct` ``.
 
 ## Expansion
 

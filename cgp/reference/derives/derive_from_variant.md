@@ -78,7 +78,10 @@ The `FromVariant` trait is defined in the field crate; the derive only supplies 
 impls. There is no partial type, no `MapType` marker, and no state tracking; each impl simply wraps
 the value in its variant. The `Tag` is the variant name's type-level string, and the
 `PhantomData<Tag>` argument exists solely to let the caller pick which variant to build when several
-`FromVariant` impls are in scope.
+`FromVariant` impls are in scope. The payload type does not drive that choice: on an enum with two
+variants, even of different payload types, an untagged `Shape::from_variant(PhantomData, circle)`
+fails with `E0283` (`type annotations needed`), and only a single-variant enum lets the tag be
+inferred. A struct is rejected with ``expected `enum` ``.
 
 ## Examples
 

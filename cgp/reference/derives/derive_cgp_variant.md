@@ -46,7 +46,7 @@ the constructor and extractor slices must name one payload type. A variant's nam
 type-level string `Symbol!` used as its `Tag`, and its payload type becomes its value type. Generic
 parameters on the enum are carried onto the generated impls. The derive accepts the same enums that
 [`#[derive(CgpData)]`](derive_cgp_data.md) accepts for the variant path; the only difference is that
-`CgpVariant` refuses non-enum inputs outright.
+`CgpVariant` refuses non-enum inputs outright, with ``expected `enum` ``.
 
 ## Expansion
 

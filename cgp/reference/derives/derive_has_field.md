@@ -51,7 +51,7 @@ pub struct Person {
 It accepts structs with named fields and tuple structs, which differ only in how each field's tag is
 computed. A named field is keyed by [`Symbol!("field_name")`](../macros/symbol.md), the type-level
 string of its identifier, and a tuple field by [`Index<N>`](../types/index.md), its position. A unit
-struct produces no impls, since it has no fields, and an enum is rejected with
+struct produces no impls, since it has no fields, and an enum or a union is rejected with
 ``expected `struct` ``.
 
 A raw-identifier field is keyed by its logical name: a field written `r#type` is keyed by

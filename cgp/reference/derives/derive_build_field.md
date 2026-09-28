@@ -42,7 +42,7 @@ pub struct Person {
 Each named field becomes a type-level string `Symbol!` used as the field's `Tag`, and its declared
 type becomes its value type. A tuple struct works equally well: an unnamed field at position `N` is
 keyed by [`Index<N>`](../types/index.md) instead of a `Symbol!`. Generic parameters on the struct
-are carried onto the generated impls. The derive emits the same builder impls that the record path
+are carried onto the generated impls. An enum is rejected with ``expected `struct` ``. The derive emits the same builder impls that the record path
 of [`#[derive(CgpData)]`](derive_cgp_data.md) emits: it is that slice in isolation, with no
 `HasField` getters or `HasFields` representation traits.
 

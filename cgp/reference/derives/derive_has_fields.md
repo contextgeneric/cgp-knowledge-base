@@ -256,8 +256,8 @@ with the additional builder, partial-record, and field-update machinery needed f
 **Two variant names are reserved, and using one fails to compile.** The generated impls name their
 associated types through `Self::Fields` and `Self::FieldsRef`, so an enum with a variant called
 `Fields` or `FieldsRef` makes that path ambiguous between the variant and the associated type. The
-compiler reports `ambiguous associated item` with its headline on the `#[derive(HasFields)]`
-attribute, but a `note: "Fields" could refer to the variant defined here` points at the offending
+compiler reports `ambiguous associated item` (the deny-by-default `ambiguous_associated_items`
+future-compatibility lint) with its headline on the `#[derive(HasFields)]` attribute, but a `note: "Fields" could refer to the variant defined here` points at the offending
 variant, so the error is readable once the note is followed. The extractor's collisions are the
 opaque ones, because there the colliding variant belongs to a generated companion enum; see
 [`#[derive(ExtractField)]`](derive_extract_field.md)'s Known issues. Writing the projections as

@@ -42,8 +42,8 @@ pub enum Shape {
 Each variant's name becomes a type-level string `Symbol!` used as the variant's `Tag`, and its
 payload type becomes its value type. Every variant must carry exactly one unnamed payload, a
 single-field tuple variant such as `Circle(Circle)`; a fieldless, multi-field, or struct-style
-variant is a compile error. Generic parameters on the enum are carried onto the generated impls. The
-derive emits the same extractor impls that the variant path of
+variant is a compile error, and a struct is rejected with ``expected `enum` ``. Generic parameters on
+the enum are carried onto the generated impls. The derive emits the same extractor impls that the variant path of
 [`#[derive(CgpData)]`](derive_cgp_data.md) emits: it is that slice in isolation, with no `HasFields`
 representation traits and no [`FromVariant`](../traits/from_variant.md) constructors.
 
