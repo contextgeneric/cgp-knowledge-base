@@ -234,6 +234,15 @@ The pass-through conflicts `cargo-cgp` leaves uncoded:
   two `#[cgp_impl(new …)]` declaring the same provider struct; the `.cgp.stderr` keeps the `E0428`
   plus the surviving `E0119` on the provider trait `Greeter<_>` (its `IsProviderFor` half
   suppressed), all uncoded.
+- [`wiring/duplicate-keys/auto_dispatch_shared_method_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/duplicate-keys/auto_dispatch_shared_method_name.rs):
+  two [`#[cgp_auto_dispatch]`](../../reference/macros/cgp_auto_dispatch.md) traits in one module
+  declaring the same method, so the generated helper `__compute_area__` and computer `ComputeArea`
+  are each declared twice; the `.cgp.stderr` keeps both `E0428`s and the `E0119` on the computer's
+  `Computer` impl uncoded, with the `ComputeArea` carets on the second `area` method name, and
+  collapses the computers' conflicting promotion wiring into one `[CGP-E004]` headline. This is a
+  known defect of the macro rather than a user's wiring mistake; the
+  [implementation document](../../implementation/entrypoints/cgp_auto_dispatch.md#known-issues)
+  records the fix.
 
 ## Related
 

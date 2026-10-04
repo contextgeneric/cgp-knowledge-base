@@ -26,8 +26,8 @@ operation designed from the start to be configured per context is a
 
 ## Syntax
 
-`#[cgp_auto_dispatch]` is written above a trait definition. It takes no arguments, and any tokens
-given as an argument are ignored:
+`#[cgp_auto_dispatch]` is written above a trait definition. It takes no arguments, and an argument
+fails with `` `#[cgp_auto_dispatch]` takes no arguments ``:
 
 ```rust
 #[cgp_auto_dispatch]
@@ -36,32 +36,38 @@ pub trait HasArea {
 }
 ```
 
-The trait may carry generic parameters. Each method may take `self` by value, by shared reference,
-or by mutable reference, may take further arguments by value or by reference, and may be `async`.
+The trait may carry generic parameters, lifetimes included, and supertraits. Each method may take
+`self` by value, by shared reference, or by mutable reference, may take further arguments by value
+or by reference, may name lifetimes or elide them anywhere in its signature, may have a default
+body, and may be `async`.
 
-The macro rejects three shapes at expansion time, each with its own message:
+The macro rejects four shapes at expansion time, each with its own message:
 
 - **A trait item other than a method**: an associated type or constant fails with
   `Only function items are allowed in a dispatch trait`.
 - **A method without a `self` receiver**: the receiver is the enum value being matched, so its
   absence fails with `Dispatcher method must have a self argument`.
+- **A typed receiver** such as `self: Box<Self>`: the receiver must be the enum or a borrow of it
+  for a matcher to take it, so it fails with
+  ``Dispatcher method receiver must be `self`, `&self`, or `&mut self` ``.
 - **A method with a type or const generic parameter**: the generated impl would need a quantified
   bound Rust lacks, so it fails with
   `Dispatch trait methods cannot contain non-lifetime generic parameters …`. Lifetime parameters are
   allowed.
 
-Supertraits parse but break the expansion, as Known issues explains.
-
 ## Expansion
 
 The macro keeps the trait unchanged and appends two kinds of item: one blanket impl of the trait for
 a fresh type parameter named `__Variants__`, and, for each method, one private free function that
-[`#[cgp_computer]`](cgp_computer.md) turns into a per-variant computer.
+it turns into a per-variant computer exactly as [`#[cgp_computer]`](cgp_computer.md) would. The
+macro runs that function through `#[cgp_computer]`'s own pipeline rather than emitting the
+attribute, so the expansion holds the computer's final code, with every CGP name fully qualified;
+the forms below show the function as `#[cgp_computer]` input, which is the readable view.
 
 ### The per-variant computer
 
 Each method becomes a function that calls the method on the payload. For the `HasArea` trait above,
-the macro emits:
+the macro generates the per-variant computer of:
 
 ```rust
 #[cgp_computer(ComputeArea)]
@@ -78,9 +84,29 @@ computer is named `Compute` followed by the method name in PascalCase, so `area`
 two dispatch traits in one module, is in Known issues.
 
 The computer is generic over any `__Variants__: HasArea`, so it applies to every payload type that
-implements the trait. It borrows the payload for a fresh lifetime `'__a__`, mirroring the `&self`
-receiver, and the same lifetime is given to any elided reference in the arguments or the return
-type.
+implements the trait. It borrows the payload for the receiver's lifetime, `'__a__` when the receiver
+elides it, as `&self` does.
+
+**Every elided lifetime in the signature is named the way the compiler's elision rules read it**,
+because the signature is copied into the computer and into the matcher bound below, where an elided
+lifetime is either rejected or means something else. Each elided lifetime in an argument, at any
+depth (`&str`, `Option<&str>`, `Foo<'_>`), gets its own fresh name, `'__a1__`, `'__a2__`, and so on,
+as elided inputs are distinct; an elided lifetime in the return type takes the receiver's, or, for a
+by-value `self`, the one lifetime the arguments use. A `fn(&T)` type or an `Fn(&T)` bound keeps the
+lifetimes it binds itself. So `fn label(&self, suffix: &str) -> &str` generates:
+
+```rust
+#[cgp_computer(ComputeLabel)]
+fn __compute_label__<'__a__, '__a1__, __Variants__: CanLabel>(
+    __Variants__: &'__a__ __Variants__,
+    (arg_0): (&'__a1__ str),
+) -> &'__a__ str {
+    __Variants__.label(arg_0)
+}
+```
+
+and the returned borrow outlives a shorter-lived `suffix`, exactly as the trait's own signature
+promises.
 
 ### The enum-level blanket impl
 
@@ -104,9 +130,11 @@ where
 }
 ```
 
-The impl always requires `__Variants__: HasExtractor`, because matching needs an extensible enum. It
-calls the matcher with a unit context `&()` and a unit code `PhantomData::<()>`, since the
-per-variant logic depends only on the payload. The call names the provider trait with inferred
+The impl always requires `__Variants__: HasExtractor`, because matching needs an extensible enum,
+and it requires the trait's supertraits of the enum too, so a dispatch trait declared as
+`trait CanGreet: HasName` adds `__Variants__: HasName`; the enum then has to provide each
+supertrait, for instance by dispatching it as well. It calls the matcher with a unit context `&()`
+and a unit code `PhantomData::<()>`, since the per-variant logic depends only on the payload. The call names the provider trait with inferred
 arguments, `Computer<_, _, _>`, so it stays unambiguous in a module that also imports the consumer
 trait `CanCompute`.
 
@@ -135,9 +163,11 @@ fn contains(&self, arg_0: f64, arg_1: f64) -> bool {
 }
 ```
 
-An `async` method uses `AsyncComputer` in both the bound and the call, and `.await`s the result. A
-by-value `self` method with no borrowed argument or return needs no lifetime, so its bound has no
-`for<…>` quantifier.
+The bound is quantified, in a single `for<…>`, over the method's own lifetime parameters and the
+lifetimes the macro named; the trait's own lifetime parameters are declared by the impl and are not
+quantified. An `async` method uses `AsyncComputer` in both the bound and the call, and `.await`s the
+result. A by-value `self` method with no borrowed argument or return needs no lifetime, so its bound
+has no `for<…>` quantifier.
 
 ## Examples
 
@@ -216,9 +246,10 @@ named after the method alone, so a second `#[cgp_auto_dispatch]` trait with an `
 second `__compute_area__` and a second `ComputeArea`, and the module fails with
 ``E0428: the name `__compute_area__` is defined multiple times``, the same for `ComputeArea`, and
 `E0119` conflicts between the two computers' `Computer`, `IsProviderFor`, and `DelegateComponent`
-impls, followed by `E0277` errors on the second trait's blanket impl. Declaring the traits in
-separate modules avoids it. Naming the generated items after the trait as well as the method would
-remove the clash, at the cost of renaming the `Compute{Method}` provider.
+impls, followed by errors on the second trait's blanket impl. Declaring the traits in separate
+modules avoids it. Naming the generated items after the trait as well as the method would remove the
+clash, at the cost of renaming the `Compute{Method}` provider, which code outside the macro can wire
+by name.
 
 **The blanket impl covers every type implementing `HasExtractor`.** A hand-written impl of the
 trait for a type outside that set, such as each payload struct, coexists with it, but one for any
@@ -236,28 +267,23 @@ bound quantified over the method's type parameter, guaranteeing that every paylo
 every instantiation, and Rust has no such bound. A generic method must be dispatched with the
 combinators directly.
 
-A supertrait on the dispatch trait makes the expansion fail to compile. The blanket impl implements
-the trait for every `__Variants__` but never requires the supertrait, so Rust rejects it with
-`E0277` (the trait bound `__Variants__: Supertrait` is not satisfied) at the attribute, unless the
-supertrait already holds for every type. The correct behavior would be to add
-`__Variants__: Supertrait` to the blanket impl's `where` clause. Until then, declare the dependency
-on each method's payload impls instead of as a supertrait.
-
-A method whose signature needs two distinct lifetimes also fails to compile. The macro collects
-every lifetime the bound must quantify, such as a named `'a` on the receiver and the `'__a__` it
-assigns to an elided argument, but emits a `for<…>` quantifier for only the last one. So
-`fn lookup<'a>(&'a self, key: &str) -> &'a str` fails with `E0261` (use of undeclared lifetime name
-`'__a__`). The correct behavior would be a single `for<'a, '__a__>` quantifier over all of them.
-Naming every reference with the same lifetime, or eliding them all, avoids the problem.
+**A lifetime hidden in a path is not named.** A type that carries a lifetime parameter without
+writing it, such as `Cow<str>` for `Cow<'_, str>`, gives the macro no token to rename, so the
+expansion fails with `E0726` (implicit elided lifetime not allowed here) for such an argument and
+`E0106` (missing lifetime specifier) for such a return type. Whether a path hides a lifetime depends
+on the type's definition, which the macro cannot see. Writing the lifetime out as `Cow<'_, str>`
+avoids it.
 
 ## Source
 
 - Entry point: `cgp_auto_dispatch` in
-  [crates/macros/cgp-extra-macro-lib/src/entrypoints/cgp_auto_dispatch.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-extra-macro-lib/src/entrypoints/cgp_auto_dispatch.rs),
+  [crates/macros/cgp-macro-extra-lib/src/cgp_auto_dispatch.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-extra-lib/src/cgp_auto_dispatch.rs),
   forwarded from the proc-macro shim in
-  [crates/macros/cgp-extra-macro/src/lib.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-extra-macro/src/lib.rs)
+  [crates/macros/cgp-macro-extra/src/lib.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-extra/src/lib.rs)
   and re-exported through
   [crates/main/cgp-extra/src/prelude.rs](https://github.com/contextgeneric/cgp/blob/main/crates/main/cgp-extra/src/prelude.rs).
+- The parsing and codegen, including the lifetime naming:
+  [crates/macros/cgp-macro-extra-core/src/types/cgp_auto_dispatch/](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-extra-core/src/types/cgp_auto_dispatch/).
 - Matchers it generates:
   [crates/extra/cgp-dispatch/src/providers/matchers/](https://github.com/contextgeneric/cgp/tree/main/crates/extra/cgp-dispatch/src/providers/matchers/).
 - Internal walkthrough (the blanket-impl and per-variant-computer helpers, the matcher selection,

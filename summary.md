@@ -375,7 +375,8 @@ it stale.
 
 - [README.md](cgp/implementation/README.md) — the implementation catalog plus the cross-cutting notes
   every reviewer needs: leading-generic insertion and lifetime ordering, keeping the generic kinds
-  apart, spans for the compiler and the IDE, parsing with `parse_internal!`, and hygiene.
+  apart, spans for the compiler and the IDE, parsing with `parse_internal!`, lowering through
+  another macro's IR, and hygiene.
 - [AGENTS.md](cgp/implementation/AGENTS.md) — the rules for this tree: what an implementation document
   is for, the per-kind document templates, the Tests and Snapshots sections, Known issues, and how to
   document the ways an expansion can fail to compile.
@@ -463,8 +464,13 @@ it stale.
   associated type and rewriting its bare alias.
 - [blanket_trait.md](cgp/implementation/asts/blanket_trait.md) — the single-type stack behind
   `#[blanket_trait]`.
+- [cgp_auto_dispatch.md](cgp/implementation/asts/cgp_auto_dispatch.md) — the stack behind
+  `#[cgp_auto_dispatch]`: per-method checks, elided-lifetime naming, and the IR holding a blanket
+  impl and one computer per method.
 - [cgp_component.md](cgp/implementation/asts/cgp_component.md) — the item → preprocessed → evaluated
   sequence behind `#[cgp_component]`.
+- [cgp_computer.md](cgp/implementation/asts/cgp_computer.md) — the stack behind `#[cgp_computer]`,
+  its `Result<T, E>` detection, and the `EvaluatedHandlerFn` IR it shares with `#[cgp_producer]`.
 - [cgp_data.md](cgp/implementation/asts/cgp_data.md) — the AST family every extensible-data derive
   parses into.
 - [cgp_fn.md](cgp/implementation/asts/cgp_fn.md) — the stack behind `#[cgp_fn]`.
@@ -472,6 +478,8 @@ it stale.
   `#[cgp_auto_getter]`.
 - [cgp_impl.md](cgp/implementation/asts/cgp_impl.md) — the stack that lowers consumer-style syntax to
   a provider impl.
+- [cgp_producer.md](cgp/implementation/asts/cgp_producer.md) — the stack behind `#[cgp_producer]`,
+  evaluating into the shared handler-function IR.
 - [cgp_provider.md](cgp/implementation/asts/cgp_provider.md) — the stack shared by `#[cgp_provider]`
   and `#[cgp_new_provider]`.
 - [cgp_type.md](cgp/implementation/asts/cgp_type.md) — the thin wrapper that adds the abstract-type

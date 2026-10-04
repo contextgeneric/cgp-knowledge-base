@@ -44,7 +44,8 @@ fn add(a: u64, b: u64) -> u64 {
 ```
 
 The provider's name defaults to the function name in PascalCase, so `add` produces `Add`, and an
-explicit argument is used verbatim. The rest of the function maps onto the handler in these ways:
+explicit argument is used verbatim. A raw identifier loses its `r#` prefix first, so `r#type`
+produces `Type`. The rest of the function maps onto the handler in these ways:
 
 - **Parameters** become the handler's input. Only their types are read, since each input is
   rebound as `arg_i`, so a destructuring pattern such as `(a, b): (u64, u64)` is accepted.
@@ -53,9 +54,22 @@ explicit argument is used verbatim. The rest of the function maps onto the handl
 - **Generic parameters and the `where` clause** carry over to the generated impl.
 - **`async`** selects the asynchronous base trait.
 
-A function with a `self` receiver is rejected with `Computer functions cannot have a receiver`. A
-handler provider has no receiver of its own, because the handler machinery passes the context in as
-a separate argument.
+**Only the bare two-argument `Result<T, E>` counts as fallible.** The macro reads the return type's
+tokens, not its meaning, so a return type whose first token is `Result` must be written exactly as
+`Result<T, E>`, and any other type is a plain value. A qualified `core::result::Result<u64, String>`
+is therefore a value, and a one-argument alias such as `anyhow::Result`'s `Result<u64>` is rejected
+with `` A `Result` return type must be written as `Result<T, E>`, naming its error type ``, because
+the macro cannot tell what it names. Known issues covers what a qualified `Result` does.
+
+The function must have a shape a provider can take, and the macro rejects two departures with an
+error pointing at the offending part of the signature:
+
+- **A `self` receiver** fails with `Computer functions cannot have a receiver`. A handler provider
+  has no receiver of its own, because the handler machinery passes the context in as a separate
+  argument.
+- **`impl Trait`**, which a provider impl's trait arguments and `Output` type cannot hold, fails
+  with ``Computer function parameters cannot use `impl Trait`; declare a generic parameter instead``
+  in a parameter, and with ``Computer functions cannot return `impl Trait` `` in the return type.
 
 ## Syntax Grammar
 
@@ -72,10 +86,14 @@ Rust; the macro reads its shape to choose the base trait and bundle, as Expansio
 
 ## Expansion
 
-The macro emits three items: the original function unchanged, a `#[cgp_new_provider]` impl of a base
-handler trait that calls the function, and a `delegate_components!` block that wires the other
-handler components to a promotion bundle. Two independent choices decide the base trait and the
-bundle, as this table shows:
+The macro's expansion is three items: the original function unchanged, a `#[cgp_new_provider]` impl
+of a base handler trait that calls the function, and a `delegate_components!` block that wires the
+other handler components to a promotion bundle. The macro builds those two macros' input itself and
+lowers it in place, so what it emits is their expansion (the provider struct, the impl, its
+`IsProviderFor` impl, and one `DelegateComponent` impl per wired component) with every CGP name
+fully qualified, which is why the generated code needs no `use cgp::prelude::*` in scope. The forms
+below show that input, which is the readable view. Two independent choices decide the base trait and
+the bundle, as this table shows:
 
 | Function | Base trait | Bundle for the other components |
 |---|---|---|
@@ -96,7 +114,7 @@ fn add(a: u64, b: u64) -> u64 {
 }
 ```
 
-the macro emits the function followed by:
+the macro emits the function followed by the expansion of:
 
 ```rust
 #[cgp_new_provider]
@@ -159,8 +177,8 @@ fn add_with_error(a: u64, b: u64) -> Result<u64, String> {
 ```
 
 the `Computer` impl has `Output = Result<u64, String>`, and the other components forward to
-`PromoteTryComputer<Self>`. The detection is purely syntactic, and Known issues lists the spellings
-it misses.
+`PromoteTryComputer<Self>`. The detection is purely syntactic: only the bare `Result<T, E>` counts,
+as Syntax states.
 
 ### Asynchronous functions
 
@@ -253,25 +271,30 @@ whose `HasErrorType::Error` is anything but `String` fails its fallible members 
 ``E0271: type mismatch resolving `<App as HasErrorType>::Error == String` ``. Convert inside the
 function, or write a `TryComputer` provider by hand that raises through the context.
 
-The choice between the value and `Result` bundles is made from the return type's tokens, not its
-meaning. A return type counts as a `Result` only when it is written as the bare path `Result<T, E>`,
-with `Result` as its only segment and exactly two arguments. Any other spelling is treated as a
-plain value: `core::result::Result<u64, String>`, `io::Result<u64>`, and `anyhow::Result<u64>` all
-select `PromoteComputer`, so `try_compute` and `handle` wrap the whole result in `Ok` instead of
-propagating its error.
+**A qualified `Result` is a plain value.** Because only the bare `Result<T, E>` selects the fallible
+bundles, `core::result::Result<u64, String>`, `io::Result<u64>`, and `anyhow::Result<u64>` all select
+`PromoteComputer`, so `try_compute` and `handle` wrap the whole result in `Ok` instead of propagating
+its error. Write the bare `Result<T, E>` form in the signature of a fallible computer.
 
-A one-argument alias written as `Result<u64>`, such as the one `use anyhow::Result;` brings into
-scope, fails outright. The macro expects a second argument and reports
-``expected `,` ``. Write the full `Result<T, E>` form in the signature of a fallible computer.
+**A type parameter used only in the return type fails to compile.** The function's generics move
+onto the generated impl, whose trait arguments carry only the input type, so in
+`fn parse<T: FromStr>(value: String) -> Option<T>` nothing constrains `T` and the compiler rejects
+the impl with `E0207`, its caret on the `T`. Such a computer has to be written as a `Computer`
+provider by hand.
+
+**Argument-position `impl Trait` is rejected.** It is sugar for a generic parameter, which the macro
+otherwise accepts, so the macro could rewrite it into one, but it does not. Declare the generic
+parameter explicitly instead, as the error message suggests.
 
 ## Source
 
 - Entrypoint:
-  [crates/macros/cgp-extra-macro/src/lib.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-extra-macro/src/lib.rs),
-  forwarding to the implementation in
-  [crates/macros/cgp-extra-macro-lib/src/entrypoints/cgp_computer.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-extra-macro-lib/src/entrypoints/cgp_computer.rs).
-- `Result`-versus-value detection: the `MaybeResultType` parser in
-  [crates/macros/cgp-extra-macro-lib/src/parse/maybe_result.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-extra-macro-lib/src/parse/maybe_result.rs).
+  [crates/macros/cgp-macro-extra/src/lib.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-extra/src/lib.rs),
+  forwarding to
+  [crates/macros/cgp-macro-extra-lib/src/cgp_computer.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-extra-lib/src/cgp_computer.rs).
+- The parsing and codegen:
+  [crates/macros/cgp-macro-extra-core/src/types/cgp_computer/](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-extra-core/src/types/cgp_computer/),
+  with the `Result`-versus-value detection in `maybe_result.rs`.
 - Base `Computer`/`AsyncComputer` traits:
   [crates/extra/cgp-handler/src/components/](https://github.com/contextgeneric/cgp/tree/main/crates/extra/cgp-handler/src/components/);
   the promotion bundles in

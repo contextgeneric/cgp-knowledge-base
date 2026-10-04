@@ -85,8 +85,8 @@ own:
 - [async_and_send/spawn.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/async_and_send/spawn.rs):
   async components declared with `#[async_trait]` whose futures are handed to a
   `Send + 'static`-demanding executor.
-- [dispatching/auto_dispatch_async_self_ref_only.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/dispatching/auto_dispatch_async_self_ref_only.rs)
-  and the other `auto_dispatch_async_*` files: `#[async_trait]` stacked with
+- [auto_dispatch/async_self_ref_only.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/auto_dispatch/async_self_ref_only.rs)
+  and the other `async_*` files in the `auto_dispatch` target: `#[async_trait]` stacked with
   [`#[cgp_auto_dispatch]`](cgp_auto_dispatch.md) on async dispatch traits.
 
 No test pins the rewrite itself. A `snapshot_*!` macro records its host macro's output before

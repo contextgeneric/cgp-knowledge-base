@@ -177,8 +177,10 @@ aux crate's `../other-aux` path) resolves through the shared materialized siblin
 worker's manifest is rewritten only when its dependency set actually changes, a run of ordinary
 (no-aux) fixtures never disturbs the cached `cgp` build. This is what lets the three cross-crate
 orphan-rule fixtures, the published-blanket-trait fixture
-`use-site/upstream_blanket_trait_use_site`, and the positive `ok/cross_crate_wiring.rs` reproduce
-what a single crate cannot.
+`use-site/upstream_blanket_trait_use_site`, the positive `ok/cross_crate_wiring.rs`, and the two
+cross-crate dispatch fixtures `ok/cross_crate_dispatch_enum.rs` and
+`ok/cross_crate_dispatch_payloads.rs` (backed by the `cgp-test-dispatch-traits` and
+`cgp-test-dispatch-shapes` auxiliary crates) reproduce what a single crate cannot.
 
 The rust-stderr pass builds in a *separate* target directory from the `cargo-cgp` pass:
 `target-rust/` beside the worker crate's default `target/`. The reason is cargo's fingerprinting:

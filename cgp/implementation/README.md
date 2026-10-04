@@ -4,6 +4,11 @@ This directory documents the *internals* of the CGP macros: how each macro is im
 [crates/macros/cgp-macro-core](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-core)
 and
 [crates/macros/cgp-macro-lib](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-lib),
+or, for the extra-feature macros `#[cgp_computer]`, `#[cgp_producer]`, and `#[cgp_auto_dispatch]`,
+in
+[crates/macros/cgp-macro-extra-core](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-extra-core)
+and
+[crates/macros/cgp-macro-extra-lib](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-extra-lib),
 including corner-case behavior, known limitations and bugs, and the test suite that exercises each
 construct. It is the documentation an agent reviewing or maintaining the macro source reads first:
 it records the current state of the code in one place so an agent can pick up a construct's
@@ -33,11 +38,12 @@ function", or "an internal macro". A new document goes in the matching subdirect
 itself in the catalog below in the same change.
 
 The [entrypoints/](entrypoints/) directory holds one document per CGP macro (the top-level
-procedural macro a programmer invokes), describing its `cgp-macro-lib` entry function, the transform
-pipeline it drives, the items it emits, its corner cases, known issues, tests, and snapshots. The
-[asts/](asts/) directory holds one document per evaluation stack of AST constructs (the
-`cgp-macro-core` types implementing `Parse` or `ToTokens`, or serving as an intermediate
-representation), with the types of one pipeline grouped into a single document. The
+procedural macro a programmer invokes), describing its `cgp-macro-lib` (or `cgp-macro-extra-lib`)
+entry function, the transform pipeline it drives, the items it emits, its corner cases, known
+issues, tests, and snapshots. The [asts/](asts/) directory holds one document per evaluation stack
+of AST constructs (the `cgp-macro-core` and `cgp-macro-extra-core` types implementing `Parse` or
+`ToTokens`, or serving as an intermediate representation), with the types of one pipeline grouped
+into a single document. The
 [functions/](functions/) directory holds the standalone helper functions, split into
 [functions/parse/](functions/parse/) for parsing helpers and [functions/derive/](functions/derive/)
 for code-synthesis helpers. The [macros/](macros/) directory holds the internal `macro_rules!`
@@ -124,6 +130,9 @@ One document per evaluation stack, grouped by the macro that owns it:
 - [delegate_component](asts/delegate_component.md), [check_components](asts/check_components.md),
   [namespace](asts/namespace.md).
 - [cgp_data](asts/cgp_data.md): the shared extensible-data derive stack.
+- [cgp_computer](asts/cgp_computer.md), [cgp_producer](asts/cgp_producer.md),
+  [cgp_auto_dispatch](asts/cgp_auto_dispatch.md): the `cgp-macro-extra-core` stacks, which evaluate
+  into IR made of `cgp-macro-core` AST nodes.
 - [product](asts/product.md), [sum](asts/sum.md), [path](asts/path.md), [symbol](asts/symbol.md):
   the type-level construction stacks.
 - [ident](asts/ident.md): the restricted argument and parameter types (`TypeArg`,
@@ -320,6 +329,26 @@ and `PathWithTypeArgs`) to reject at parse time what `syn` would silently wave t
 should confirm user-facing input is validated against those rather than raw `syn` nodes. The same
 leniency is what makes the lifetime round-trip above work: `syn` accepts the mis-ordered `<Ctx, 'a>`
 on parse and quietly re-emits it correctly.
+
+### Lowering through another macro's IR
+
+A macro that is defined in terms of another CGP macro builds that macro's AST node rather than
+emitting an invocation of it, and lowers the node with the node's own method. `#[cgp_impl]` hands
+its rewritten impl to `ItemCgpProvider`, the type `#[cgp_provider]` parses into, and calls
+`lower()`. The extra-feature macros go further: each one's `eval()` stage returns an intermediate
+representation (IR) made of such nodes. A computer's IR is an `ItemCgpProvider` (what
+`#[cgp_new_provider] impl …` would parse into) plus a `DelegateTable` (what
+`delegate_components! { … }` would), and a dispatch trait's IR holds one `ItemCgpComputer` per
+method, which runs through the computer pipeline in turn; see
+[the `cgp_computer` stack](asts/cgp_computer.md#evaluatedhandlerfn).
+
+Three properties make this the pattern to follow. The expansion is the final code in one pass,
+rather than tokens the compiler hands back to another macro. Every CGP name in it is qualified
+through an `exports` marker, whereas an emitted `#[cgp_new_provider]` or `delegate_components!`
+resolves only where the caller has imported it. And the inner macro's rules apply unchanged, since
+the same type does the lowering. Build each IR node with `parse_internal!` from quoted tokens, as
+any other node, and give the inner node any setting its own parser would take from the attribute
+(the `new` flag and the component type of an `ItemCgpProvider`, say) explicitly.
 
 ### Hygiene: exports markers and reserved identifiers
 

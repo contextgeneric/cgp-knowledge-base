@@ -42,7 +42,8 @@ fn magic_number() -> u64 {
 ```
 
 The provider's name defaults to the function name in PascalCase, so `magic_number` produces
-`MagicNumber`, and an explicit argument is used verbatim. The return type becomes the producer's
+`MagicNumber`, and an explicit argument is used verbatim. A raw identifier loses its `r#` prefix
+first, so `r#loop` produces `Loop`. The return type becomes the producer's
 output, and an omitted return type is `()`.
 
 The function must have the shape a producer can take, and the macro rejects each departure with an
@@ -54,6 +55,8 @@ error pointing at the offending part of the signature:
   `Producer functions cannot be async`.
 - **Generic parameters**: the generated impl has no place for them, so they fail with
   `Producer functions must have empty generic parameters`.
+- **`impl Trait` in the return type**: the generated impl's `Output` type cannot hold it, so it
+  fails with ``Producer functions cannot return `impl Trait` ``.
 
 ## Syntax Grammar
 
@@ -70,10 +73,13 @@ constrained to a producer's shape as Syntax describes.
 
 ## Expansion
 
-The macro emits three items: the original function unchanged, a `#[cgp_new_provider]` impl of
-[`Producer`](../components/producer.md) that calls the function, and a `delegate_components!` block
-that wires the rest of the handler family to the
-[`PromoteProducer`](../providers/handler_combinators.md) bundle. Given:
+The macro's expansion is three items: the original function unchanged, a `#[cgp_new_provider]` impl
+of [`Producer`](../components/producer.md) that calls the function, and a `delegate_components!`
+block that wires the rest of the handler family to the
+[`PromoteProducer`](../providers/handler_combinators.md) bundle. The macro builds those two macros'
+input itself and lowers it in place, so what it emits is their expansion with every CGP name fully
+qualified, and the generated code needs no `use cgp::prelude::*` in scope. The form below shows that
+input, which is the readable view. Given:
 
 ```rust
 #[cgp_producer]
@@ -82,7 +88,7 @@ pub fn magic_number() -> u64 {
 }
 ```
 
-the macro emits the function followed by:
+the macro emits the function followed by the expansion of:
 
 ```rust
 #[cgp_new_provider]
@@ -184,9 +190,11 @@ These constructs are the ones `#[cgp_producer]` builds on or parallels:
 ## Source
 
 - Entrypoint:
-  [crates/macros/cgp-extra-macro/src/lib.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-extra-macro/src/lib.rs),
-  forwarding to the implementation in
-  [crates/macros/cgp-extra-macro-lib/src/entrypoints/cgp_producer.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-extra-macro-lib/src/entrypoints/cgp_producer.rs).
+  [crates/macros/cgp-macro-extra/src/lib.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-extra/src/lib.rs),
+  forwarding to
+  [crates/macros/cgp-macro-extra-lib/src/cgp_producer.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-extra-lib/src/cgp_producer.rs).
+- The parsing and codegen:
+  [crates/macros/cgp-macro-extra-core/src/types/cgp_producer/](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-extra-core/src/types/cgp_producer/).
 - `Producer` trait:
   [crates/extra/cgp-handler/src/components/produce.rs](https://github.com/contextgeneric/cgp/blob/main/crates/extra/cgp-handler/src/components/produce.rs);
   the `PromoteProducer` bundle in

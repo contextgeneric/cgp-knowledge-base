@@ -312,6 +312,11 @@ trait: a bare `Db` fails with ``E0425: cannot find type `Db` in this scope`` and
 signature or to make it an abstract type; [`#[impl_generics]`](../attributes/impl_generics.md)
 records this and its other deferred failures.
 
+**A function named with a raw identifier needs an explicit trait name.** The default name is the
+function name in PascalCase, and for `fn r#type` the macro builds it from the raw spelling, so the
+compiler aborts with `custom attribute panicked` (`"R#type"` is not a valid identifier). Naming the
+trait explicitly, as `#[cgp_fn(Type)]`, avoids it.
+
 ## Source
 
 - Entry point: `cgp_fn` in

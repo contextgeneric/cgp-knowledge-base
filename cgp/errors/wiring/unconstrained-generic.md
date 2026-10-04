@@ -24,7 +24,10 @@ impl<T> DelegateComponent<GreeterComponent> for Person {
 ```
 
 The same shape arises when a *generic* provider is registered as a per-type default, since the
-provider's parameter lands only in the `Delegate` associated-type position.
+provider's parameter lands only in the `Delegate` associated-type position, and when a
+[`#[cgp_computer]`](../../reference/macros/cgp_computer.md) function has a type parameter that
+appears only in its return type, since the function's generics move onto a `Computer` impl whose
+trait arguments carry only the input types and whose output is an associated type.
 
 ## The raw diagnostic
 
@@ -89,6 +92,14 @@ cannot bind the provider's parameter.
   `<T>` (the error printed twice), and its `.cgp.stderr` is identical: the pass-through that places
   the fixture in the `usability/` tier, since cargo-cgp does not yet restate this class in wiring
   terms.
+- [`acceptable/lowering/computer_output_only_type_parameter.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/computer_output_only_type_parameter.rs):
+  a `#[cgp_computer]` function `parse<T: FromStr>(value: String) -> Option<T>`, whose `T` reaches
+  only the impl's `Output`; the `.rust.stderr` pins the `E0207` pair with both carets on the `T` the
+  user wrote, and the `.cgp.stderr` passes it through. The cause is as precise as in the wiring
+  case, and the fix is a different one: the macro would need to make the provider struct generic
+  over `T`, which the
+  [implementation document](../../implementation/entrypoints/cgp_computer.md#known-issues) records
+  as a known issue.
 
 ## Related
 

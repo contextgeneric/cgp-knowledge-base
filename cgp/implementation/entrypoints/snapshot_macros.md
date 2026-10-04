@@ -17,8 +17,8 @@ and converting a `syn::Error` into a compile error. The real logic is in `cgp-ma
 split into the per-macro entrypoints under
 [src/entrypoints/](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-test-util-lib/src/entrypoints/)
 and the shared snapshot types and helpers. This crate is a peer of `cgp-macro-lib`, not part of
-`cgp-macro-core`; it depends on `cgp-macro-lib` so that a snapshot runs the *actual* macro rather
-than a reimplementation.
+`cgp-macro-core`; it depends on `cgp-macro-lib` and `cgp-macro-extra-lib` so that a snapshot runs
+the *actual* macro rather than a reimplementation.
 
 The family members mirror the CGP macros they pin. The current set is `snapshot_cgp_component!`,
 `snapshot_cgp_impl!`, `snapshot_cgp_provider!`, `snapshot_cgp_new_provider!`, `snapshot_cgp_fn!`,
@@ -26,12 +26,12 @@ The family members mirror the CGP macros they pin. The current set is `snapshot_
 `snapshot_cgp_namespace!`, `snapshot_blanket_trait!`, `snapshot_delegate_components!`,
 `snapshot_check_components!`, `snapshot_delegate_and_check_components!`,
 `snapshot_derive_has_field!`, `snapshot_derive_has_fields!`, `snapshot_derive_cgp_data!`,
-`snapshot_derive_build_field!`, `snapshot_derive_extract_field!`, and
-`snapshot_derive_from_variant!`. There is no snapshot macro for `#[cgp_computer]`,
-`#[cgp_producer]`, `#[cgp_auto_dispatch]`, or `#[async_trait]`: `cgp-macro-test-util-lib` depends
-only on `cgp-macro-lib` and `cgp-macro-core`, while those macros live in `cgp-extra-macro-lib` and
-`cgp-async-macro`, so they are pinned only behaviorally, through the handler, dispatch, and async
-tests indexed in their own implementation documents.
+`snapshot_derive_build_field!`, `snapshot_derive_extract_field!`,
+`snapshot_derive_from_variant!`, `snapshot_cgp_computer!`, `snapshot_cgp_producer!`, and
+`snapshot_cgp_auto_dispatch!`. The last three call the extra-feature macros' entry functions in
+`cgp-macro-extra-lib`, which `cgp-macro-test-util-lib` depends on beside `cgp-macro-lib`. There is
+no snapshot macro for `#[async_trait]`, which lives in the self-contained `cgp-async-macro` crate,
+so it is pinned only behaviorally, through the async tests indexed in its implementation document.
 
 Two derives also have no member, and for a different reason: `#[derive(CgpRecord)]` and
 `#[derive(CgpVariant)]` emit byte-for-byte what `#[derive(CgpData)]` emits on the same shape, so a
@@ -50,9 +50,9 @@ invocation and which `cgp-macro-lib` function it calls:
 - **Parse** the macro body into a snapshot wrapper, which captures the macro invocation to expand
   plus the trailing `#[test]` scaffold (the test name, the output binding, and the assertion
   expression).
-- **Expand** by calling the corresponding `cgp-macro-lib` entry function (for example
-  `cgp_macro_lib::cgp_component(attr, body)`) on the captured invocation, producing the same
-  `TokenStream` a user would get.
+- **Expand** by calling the corresponding `cgp-macro-lib` or `cgp-macro-extra-lib` entry function
+  (for example `cgp_macro_lib::cgp_component(attr, body)`) on the captured invocation, producing
+  the same `TokenStream` a user would get.
 - **Wrap** the expansion with `MacroSnapshot::wrap_output`, which pretty-prints it and stitches
   together the final output.
 
@@ -166,4 +166,5 @@ canonical index of which expansion variants each family member pins and which ar
 - Keyword markers:
   [src/keywords.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-test-util-lib/src/keywords.rs).
 - Each snapshot calls the matching production entry function in
-  [cgp-macro-lib](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-lib/).
+  [cgp-macro-lib](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-lib/) or
+  [cgp-macro-extra-lib](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-extra-lib/).

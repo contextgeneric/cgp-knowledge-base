@@ -177,6 +177,14 @@ generic rather than rejected, which is the intended limitation rather than a bug
 generics are considered an advanced case better written as an explicit blanket impl or a
 [`#[cgp_component]`](../../reference/macros/cgp_component.md) provider.
 
+**A function named with a raw identifier makes the macro panic.** `ItemCgpFn::preprocess` derives
+the default trait name by running the function name through `to_camel_case_str` without removing
+its `r#` prefix, so `fn r#type` yields the string `R#type`, and `Ident::new` panics because that is
+not a valid identifier; the compiler reports "custom attribute panicked". The correct behavior is to
+unraw the name first, as `cgp-macro-extra-core`'s `derive_provider_ident` does for
+[`#[cgp_computer]`](cgp_computer.md), giving `Type`. An explicit name, `#[cgp_fn(Type)]`, skips the
+derivation and avoids the panic. No test pins it yet.
+
 ## Snapshots
 
 Every `snapshot_cgp_fn!` invocation across the suite is indexed here, since these snapshots all

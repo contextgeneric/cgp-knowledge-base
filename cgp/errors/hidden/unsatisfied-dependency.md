@@ -208,6 +208,13 @@ promoting to a check) can.
   as a `[CGP-E001]` headline over a
   ``root cause: [CGP-E201] the trait bound `f64: Eq` is not satisfied`` tree. Its surfaced
   counterpart is the [unsatisfied ordinary trait bound](../checks/ordinary-trait-bound.md) class.
+- [`usability/extensible-data/auto_dispatch_missing_variant_impl.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/extensible-data/auto_dispatch_missing_variant_impl.rs):
+  the same hidden `E0599` reached through
+  [`#[cgp_auto_dispatch]`](../../reference/macros/cgp_auto_dispatch.md): one of an enum's two
+  payloads lacks the dispatch trait, so the generated matcher's `Computer` bound fails where the
+  enum's method is called. The notes name that matcher bound but never the payload, `Square`, that
+  lacks the impl, and the typed resolver declines the extensible-data family, so the `.cgp.stderr`
+  passes the error through unrecovered, which places the fixture in cargo-cgp's `usability/` tier.
 
 ## Related
 

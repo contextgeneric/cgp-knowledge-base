@@ -245,6 +245,15 @@ never stating the mistake, that one enum has a variant the other lacks. The mism
 type-level list algebra the compiler holds exactly, so the class suits the typed resolver: a leaf
 naming the absent variant (or the unbuildable field) is the work here.
 
+Dispatch over an extensible enum fails the same way. When one payload of a
+[`#[cgp_auto_dispatch]`](../../cgp/reference/macros/cgp_auto_dispatch.md) enum lacks the dispatch
+trait
+([`auto_dispatch_missing_variant_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/extensible-data/auto_dispatch_missing_variant_impl.rs)),
+the call on the enum fails with a passed-through `E0599` whose notes name the generated matcher's
+unsatisfied `Computer` bound and point at the payload that *does* implement the trait, while the
+payload that lacks it is never named. The leaf to recover is that payload's missing impl, which the
+matcher's per-variant bounds encode.
+
 ## What good presentation looks like
 
 Taken together, these issues define the tool's presentation target for the classes it does not yet
