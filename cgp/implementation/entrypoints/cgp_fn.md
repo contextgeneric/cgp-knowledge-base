@@ -183,7 +183,9 @@ its `r#` prefix, so `fn r#type` yields the string `R#type`, and `Ident::new` pan
 not a valid identifier; the compiler reports "custom attribute panicked". The correct behavior is to
 unraw the name first, as `cgp-macro-extra-core`'s `derive_provider_ident` does for
 [`#[cgp_computer]`](cgp_computer.md), giving `Type`. An explicit name, `#[cgp_fn(Type)]`, skips the
-derivation and avoids the panic. No test pins it yet.
+derivation and avoids the panic. The `panics_on_raw_function_name` test in
+[parser_rejections/cgp_fn.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/cgp_fn.rs)
+pins the current panic.
 
 ## Snapshots
 
@@ -300,7 +302,8 @@ returns `Err`:
   the context mutably and again at once), a malformed `#[implicit]` attribute carrying arguments
   (`#[implicit(...)]` or `#[implicit = ...]`), and the two mutable-reference forms under a `&self`
   receiver (a `&mut [T]` slice and an `Option<&mut T>`), each of which reads through `get_field_mut`
-  and so requires `&mut self`.
+  and so requires `&mut self`. It also pins the raw-function-name panic from Known issues, as a
+  `#[should_panic]` test rather than a rejection.
 
 ## Source
 

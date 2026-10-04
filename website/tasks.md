@@ -167,10 +167,10 @@ follows are in [writing-guides/reference.md](writing-guides/reference.md).
   added to this index in the same change.
 - **R2: re-bless the extra-macro fixtures once the `cgp` refactor merges.** The `#[cgp_computer]`,
   `#[cgp_producer]`, and `#[cgp_auto_dispatch]` pages describe the refactored macros on `cgp`'s
-  `macro-extra-refactoring` branch, and their compile-fail fixtures in `example-code/` were blessed
-  against that branch through a local path patch. The crate's `cgp` patch points at the git `main`,
-  so its compile-fail suite fails until the branch merges, and the `.stderr` files that quote a `cgp`
-  source path still name the local checkout. *Lands in:* `example-code/tests/compile_fail/`. *Blocked
+  `macro-extra-refactoring` branch, and their mirrors and compile-fail fixtures in `example-code/`
+  were checked and blessed against that branch through a local path patch. The crate's `cgp` patch
+  points at the git `main`, so those mirrors and the compile-fail suite fail until the branch
+  merges, and the `.stderr` files that quote a `cgp` source path still name the local checkout. *Lands in:* `example-code/tests/compile_fail/`. *Blocked
   by:* the `cgp` branch merging to `main`. *Done when:*
   `TRYBUILD=overwrite cargo test --test compile_fail_tests` has re-blessed the fixtures against the
   git dependency and `cargo test` in `example-code/` is green.
