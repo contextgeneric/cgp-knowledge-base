@@ -165,15 +165,6 @@ follows are in [writing-guides/reference.md](writing-guides/reference.md).
   the author reads, so **that read is what remains**. It is also the section's completeness check
   (every construct has an entry here even where the page behind it is a stub), so a page added later is
   added to this index in the same change.
-- **R2: re-bless the extra-macro fixtures once the `cgp` refactor merges.** The `#[cgp_computer]`,
-  `#[cgp_producer]`, and `#[cgp_auto_dispatch]` pages describe the refactored macros on `cgp`'s
-  `macro-extra-refactoring` branch, and their mirrors and compile-fail fixtures in `example-code/`
-  were checked and blessed against that branch through a local path patch. The crate's `cgp` patch
-  points at the git `main`, so those mirrors and the compile-fail suite fail until the branch
-  merges, and the `.stderr` files that quote a `cgp` source path still name the local checkout. *Lands in:* `example-code/tests/compile_fail/`. *Blocked
-  by:* the `cgp` branch merging to `main`. *Done when:*
-  `TRYBUILD=overwrite cargo test --test compile_fail_tests` has re-blessed the fixtures against the
-  git dependency and `cargo test` in `example-code/` is green.
 
 ## P — The Projects section, and the code it quotes
 
@@ -464,7 +455,6 @@ the [ordering](#the-ordering) for what to start on.
 | T4 | nothing | nothing |
 | T3 | nothing | nothing |
 | R1 | the author's read | nothing |
-| R2 | the `cgp` extra-macro refactor merging | nothing |
 | DC1, DC3, DC4 | nothing | parts of P2, P3, and P1 respectively |
 | P1 | V1, its project's branch, its knowledge-base records, DC4 | P5 |
 | P2, P3 | V1, their DC task, their project's release | P5 |
@@ -515,9 +505,6 @@ when each page's first impression in the index is fixed.
 **The X tasks fit anywhere, and X1 and X2 are worth doing early**: a published skill that lags
 `cgp-skills` misteaches every agent that reads it, and the crate's landing page is working against the
 project every day it stays as it is.
-
-**R2 as soon as the `cgp` extra-macro refactor merges**, since until then the `example-code` crate's
-compile-fail suite is red.
 
 **DC1, DC3, and DC4 whenever there is capacity**, since they are independent of everything above and are
 the long lead time on the Projects pages.
