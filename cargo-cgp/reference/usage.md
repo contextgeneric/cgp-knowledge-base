@@ -171,14 +171,21 @@ matters here too: it keeps the editor's check from contending with your normal b
 Four consequences of the override are worth telling a user, and the public page does. **Rust
 Analyzer runs the array exactly as written**, so its own `check.features`, `check.allTargets`,
 `check.extraArgs`, and `check.workspace` settings no longer reach the check, and any feature or
-target flag has to be written into the array. **Its as-you-type diagnostics are separate**, computed
-by its own analysis on the user's toolchain, so they are never rewritten and can disagree with the
-pinned-nightly check. **The setting belongs in workspace settings** (VS Code's `.vscode/settings.json`)
-rather than user settings, since a user-level override runs the tool, and a second build under the
-nightly, on every Rust project; and a committed workspace file breaks the editor check for anyone
-without the tool. **The editor's `PATH` decides whether `cargo` finds the subcommand**, which matters
-when the tool is on `PATH` only through shell start-up files (a Nix profile) and the editor was
-launched from a desktop launcher. The full integration notes, including why Rust Analyzer's own
+target flag has to be written into the array: a bogus `extraArgs` entry beside the override changes
+nothing, while the same entry without it breaks the check. **Its as-you-type diagnostics are
+separate**, computed by its own analysis on the user's toolchain, so they are never rewritten and can
+disagree with the pinned-nightly check. **The setting belongs in workspace settings** (VS Code's
+`.vscode/settings.json`) rather than user settings, since a user-level override runs the tool, and a
+second build under the nightly, on every Rust project; and a committed workspace file breaks the
+editor check for anyone without the tool. **The editor's `PATH` decides whether `cargo` finds the
+subcommand**, which matters when the tool is on `PATH` only through shell start-up files (a Nix
+profile) and the editor was launched from a desktop launcher.
+
+A failing command surfaces as a Rust Analyzer warning (`window/showMessage`, type 2) reading
+`cargo check failed to start: Cargo watcher failed, the command produced no valid metadata (…)`
+followed by the command's stderr. A preflight failure therefore arrives with the front end's own
+message and its "Run `cargo cgp setup`", and a missing tool arrives as cargo's `no such command` error
+naming `cgp`. The full integration notes, including why Rust Analyzer's own
 wrapper does not collide with the tool's, are in
 [Rust Analyzer integration](../implementation/distribution.md#rust-analyzer-integration). The public
 page is [Editor integration](https://contextgeneric.dev/docs/cargo-cgp/editor-integration); its probe,

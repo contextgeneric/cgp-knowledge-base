@@ -476,8 +476,9 @@ pages, in the order a reader needs them, specified by [writing-guides/tooling.md
   command, why `check.overrideCommand` rather than `check.command`, what the editor shows for the
   check page's call-site `Rectangle` program, what the switch changes (slow first save, rust-analyzer's
   own check options no longer applied, its as-you-type errors not rewritten, the pinned nightly
-  disagreeing with the reader's toolchain), turning it off, when it does not work (run the same
-  command in a terminal; VS Code's `PATH`), and its boundary with the verification stated. It links
+  disagreeing with the reader's toolchain), turning it off, when it does not work (rust-analyzer's
+  `cargo check failed to start` warning, which carries the tool's own message; the same command in a
+  terminal; VS Code's `PATH`), and its boundary with the verification stated. It links
   rust-analyzer's configuration manual and VS Code's settings documentation.
 - **Troubleshooting**: the symptom index, then sections ordered by how often a reader meets them,
   including the check disagreeing with `cargo check`, a slow first check, and
@@ -524,12 +525,16 @@ sitting in the project's own target directory wherever the command runs.
 
 **The editor page was verified against the rust-analyzer server, not the VS Code window.** An LSP
 client under `reports/probes/cargo-cgp-editor/` in the workspace root starts rust-analyzer with the
-override as its initialization options, opens and saves the check page's program, and prints what the
-server publishes; the message the page quotes is that output. The settings file, the command-palette
-names, and how VS Code renders the error come from VS Code's and rust-analyzer's own documentation,
-which the page links. The failure cases (a missing tool, a `PATH` without it) and the claim that
-`check.extraArgs` and `check.features` stop applying under the override rest on rust-analyzer's
-configuration manual rather than on a run.
+override (and any further `check` options) as its initialization options, opens and saves the check
+page's program, and prints what the server publishes and every `window/showMessage`. Every quoted
+editor output comes from it: the rewritten error, the `cargo check failed to start` warning carrying
+the preflight's message (provoked with an unknown `CARGO_CGP_TOOLCHAIN`, then quoted with the pinned
+nightly's name), and cargo's `no such command` error naming `cgp` with the tool removed from `PATH`. A run with a
+bogus `check.extraArgs` and `check.features` alongside the override still checked cleanly, while the
+same `extraArgs` without the override broke the check, which is the evidence that the override drops
+those options. The settings file and command-palette names come from VS Code's and rust-analyzer's
+documentation, which the page links, and the restart command's name from the extension's own
+`package.json`; how VS Code renders the error in its window is the one thing nobody has looked at.
 
 **The pinned nightly's date is shown only where real output contains it.** Commands that need it use
 `nightly-YYYY-MM-DD` and say where to read the real one, so a toolchain bump changes quoted output but

@@ -122,7 +122,11 @@ through `check.overrideCommand` (it is a two-word command and must emit JSON):
 ```
 
 Never apply this to a user's Rust Analyzer configuration on your own initiative; present it as an
-option and edit their editor settings only when they explicitly ask.
+option and edit their editor settings only when they explicitly ask. When they do, put it in the
+project's workspace settings rather than their user settings, and write any feature flag into the
+array, since the override replaces Rust Analyzer's own check options;
+[Usage](../../cargo-cgp/reference/usage.md#editor-integration-rust-analyzer) has the rest, including
+the warning a failing command produces.
 
 ## Expanding the generated code
 

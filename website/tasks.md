@@ -316,7 +316,8 @@ somewhere to be tracked.
   publish v0.1.0**, then **re-run every quoted output against the tagged build**: the pages quote
   output captured from `main`. The re-run reaches past the section, to every `cargo cgp check` output
   the site quotes (the compile-errors page, the checking tutorial, the reference pages, the Projects
-  pages). *Lands in:* the `cargo-cgp` repository, then the website's `v0.8.0` branch. *Blocks:* V1's
+  pages), and the editor page's rust-analyzer output, which comes from the probe the
+  [cargo-cgp record](site-structure.md#cargo-cgp) names rather than from a terminal. *Lands in:* the `cargo-cgp` repository, then the website's `v0.8.0` branch. *Blocks:* V1's
   merge. *Done when:* the tag exists and every quoted output matches it.
 
 ## A — The AI disclosure
