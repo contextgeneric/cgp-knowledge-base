@@ -442,7 +442,7 @@ on the site where a single voice is appropriate rather than the project's collec
 ### What it covers
 
 The tool's own section, a top-level category beside the reference rather than inside it, since every
-reference page answers "what does this construct mean" and these answer "how do I run this". Eight
+reference page answers "what does this construct mean" and these answer "how do I run this". Nine
 pages, in the order a reader needs them, specified by [writing-guides/tooling.md](writing-guides/tooling.md):
 
 - **Overview** (`index.md`, the category's link target): what the tool is and that it is optional, the
@@ -459,8 +459,8 @@ pages, in the order a reader needs them, specified by [writing-guides/tooling.md
   note on the agent skill.
 - **Check**: running it from the root, a pasteable `area-demo` package with the deliberate mistake, the
   same mistake pinned to the wiring by `check_components!` (with the raw `help` line it replaces), the
-  three settings a check changes, where `target/cgp` goes, forwarded flags, an editor
-  section marked unverified, and its boundary.
+  three settings a check changes, where `target/cgp` goes, forwarded flags, a short editor
+  section pointing to the editor page, and its boundary.
 - **Reading the output**: the parts of a rewritten error, then one real example per shape (two causes
   in one error, a component nothing is wired for, a field of the wrong type, an ordinary Rust trait
   that does not hold, a two-caret conflict, a fix in a `help` line), and the list of errors that pass
@@ -471,6 +471,14 @@ pages, in the order a reader needs them, specified by [writing-guides/tooling.md
 - **Expand**: when to use it first, the fixed `Rectangle` and its real `--item Rectangle` listing,
   `--item`, choosing a target, the `cargo-expand` comparison quoting the compiler's own expansion, and
   what to expect from the output.
+- **Editor integration**: VS Code with the rust-analyzer extension only. The setting in the workspace
+  `.vscode/settings.json` (and why not user settings, and when not to commit it), each part of the
+  command, why `check.overrideCommand` rather than `check.command`, what the editor shows for the
+  check page's call-site `Rectangle` program, what the switch changes (slow first save, rust-analyzer's
+  own check options no longer applied, its as-you-type errors not rewritten, the pinned nightly
+  disagreeing with the reader's toolchain), turning it off, when it does not work (run the same
+  command in a terminal; VS Code's `PATH`), and its boundary with the verification stated. It links
+  rust-analyzer's configuration manual and VS Code's settings documentation.
 - **Troubleshooting**: the symptom index, then sections ordered by how often a reader meets them,
   including the check disagreeing with `cargo check`, a slow first check, and
   the overridden `RUSTC_WORKSPACE_WRAPPER`.
@@ -513,6 +521,15 @@ so they are the pages' newest facts and the likeliest to be quoted wrongly from 
 `cargo cgp --version` (quoted as `cargo-cgp 0.1.0`), `cargo cgp update` installing only official
 releases, `setup` and `update` answering `--help` and refusing other arguments, and `target/cgp`
 sitting in the project's own target directory wherever the command runs.
+
+**The editor page was verified against the rust-analyzer server, not the VS Code window.** An LSP
+client under `reports/probes/cargo-cgp-editor/` in the workspace root starts rust-analyzer with the
+override as its initialization options, opens and saves the check page's program, and prints what the
+server publishes; the message the page quotes is that output. The settings file, the command-palette
+names, and how VS Code renders the error come from VS Code's and rust-analyzer's own documentation,
+which the page links. The failure cases (a missing tool, a `PATH` without it) and the claim that
+`check.extraArgs` and `check.features` stop applying under the override rest on rust-analyzer's
+configuration manual rather than on a run.
 
 **The pinned nightly's date is shown only where real output contains it.** Commands that need it use
 `nightly-YYYY-MM-DD` and say where to read the real one, so a toolchain bump changes quoted output but

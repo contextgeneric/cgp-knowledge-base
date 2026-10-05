@@ -778,8 +778,8 @@ it stale.
   high-level limits with no bugs or missing features on any public page, the link map and the rule against placeholder pages, project code verified against its own repository
   rather than `example-code`, and diagnostics quoted from the source-built `cargo-cgp`.
 - [tooling.md](website/writing-guides/tooling.md) — the pages documenting a program the reader runs
-  rather than a construct they write: why a tool's page fails differently, the eight-page section shape
-  with its reading and lookup pages, quoting real output from the program shown, writing against the
+  rather than a construct they write: why a tool's page fails differently, the nine-page section shape
+  with its reading, editor, and lookup pages, quoting real output from the program shown, writing against the
   release the site ships with, the Linux-only rule, and the version-free concession.
 - [orientation.md](website/writing-guides/orientation.md) — the routing pages: what separates
   orientation from persuading, teaching, arguing and specifying; the Introduction's three parts; the

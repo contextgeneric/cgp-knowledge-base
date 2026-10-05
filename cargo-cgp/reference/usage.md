@@ -161,10 +161,29 @@ words and must emit JSON, wire it through `check.overrideCommand` (not `check.co
 ```
 
 The tool renders the transformed diagnostics as rustc JSON, which cargo wraps and the editor parses,
-so the CGP transforms appear inline in the editor's diagnostics. The isolated `target/cgp` directory
-matters here too: it keeps the editor's check from contending with your normal builds. The full
-integration notes, including why Rust Analyzer's own wrapper does not collide with the tool's, are
-in [Rust Analyzer integration](../implementation/distribution.md#rust-analyzer-integration).
+so the CGP transforms appear inline in the editor's diagnostics. Driving Rust Analyzer as an editor
+does (open the file, save it, read `publishDiagnostics`) confirms it: on the call-site `Rectangle`
+program missing `height`, the server publishes one `rustc`-sourced `E0599` at the `area` call whose
+message is the `[CGP-E001]` headline followed by the `root cause:` line and the whole dependency
+tree, the same text the terminal prints minus the code frame. The isolated `target/cgp` directory
+matters here too: it keeps the editor's check from contending with your normal builds.
+
+Four consequences of the override are worth telling a user, and the public page does. **Rust
+Analyzer runs the array exactly as written**, so its own `check.features`, `check.allTargets`,
+`check.extraArgs`, and `check.workspace` settings no longer reach the check, and any feature or
+target flag has to be written into the array. **Its as-you-type diagnostics are separate**, computed
+by its own analysis on the user's toolchain, so they are never rewritten and can disagree with the
+pinned-nightly check. **The setting belongs in workspace settings** (VS Code's `.vscode/settings.json`)
+rather than user settings, since a user-level override runs the tool, and a second build under the
+nightly, on every Rust project; and a committed workspace file breaks the editor check for anyone
+without the tool. **The editor's `PATH` decides whether `cargo` finds the subcommand**, which matters
+when the tool is on `PATH` only through shell start-up files (a Nix profile) and the editor was
+launched from a desktop launcher. The full integration notes, including why Rust Analyzer's own
+wrapper does not collide with the tool's, are in
+[Rust Analyzer integration](../implementation/distribution.md#rust-analyzer-integration). The public
+page is [Editor integration](https://contextgeneric.dev/docs/cargo-cgp/editor-integration); its probe,
+an LSP client that drives the server this way, is `reports/probes/cargo-cgp-editor/` in the workspace
+root.
 
 ## Running on a project outside this repository
 

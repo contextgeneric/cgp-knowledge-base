@@ -417,25 +417,6 @@ published blog posts, whose titles are among the worst offenders and whose
 
 ## X — Cross-cutting
 
-- **X1: keep the published skill in step with `cgp-skills`.** The website publishes the skill
-  through symlinks into a `cgp-skills` git submodule, so there is no copy to re-inline and nothing to
-  edit on the site; see [site-structure.md](site-structure.md). The submodule pins a v0.8.0 revision.
-  What remains is procedural, and **the pointer bump is the author's**, per
-  [AGENTS.md](AGENTS.md#the-agent-skill-is-published-as-a-snapshot): an agent never advances it. The
-  skill changes waiting for the next bump are the dispatch-on-a-later-parameter guidance in
-  `references/wiring.md` and its siblings; the namespace changes in `SKILL.md` and
-  `references/namespaces.md` (path-keyed bundles, and the correction that a context cannot override a
-  key its namespace binds); and the new `references/error-backends.md` on the standalone error
-  backends. That file is a **new reference**, so the bump that picks it up must also add its symlink
-  beside the other reference pages, or the site will not publish it. **Never edit the skill through the
-  website checkout**, since the submodule is `cgp-skills` itself. *Lands in:* the website repository's
-  submodule pointer, and a symlink for each new reference. *Blocked by:* the skill change being pushed.
-
-  Two corrections landed in `cgp-skills` alongside the attributes port and are worth knowing about,
-  because both had been recommending forms that do not compile: `#[use_provider]` takes **one attribute
-  per inner provider** rather than a comma-separated list, which the skill had advised in four places; and
-  a predicate promoted by [`#[extend_where]`](../cgp/reference/attributes/extend_where.md) is a
-  precondition callers must prove rather than a bound they inherit.
 - **X2: the crate's own landing page.** `crates/main/cgp/README.md` is what crates.io and docs.rs
   display for the `cgp` crate, and it is a thirteen-line stub that says CGP's constructs are "still
   mostly undocumented within Rustdoc", routes readers to the book the site itself describes as not
@@ -479,7 +460,7 @@ the [ordering](#the-ordering) for what to start on.
 | A1 | the author's read | every page-adding task's provenance note |
 | S1, S3, S4, S5, S7, S10 | nothing | nothing; S3 and S4 should precede V1 |
 | S9, S11 | V1 | nothing |
-| X1, X2, X3 | nothing | nothing |
+| X2, X3 | nothing | nothing |
 
 Two shapes in that graph are worth naming, because they are what make the ordering non-obvious. The
 **Projects pages are gated on code and on the projects' own releases** rather than on writing alone, so the
@@ -516,9 +497,8 @@ that remain render a derived description that is serviceable, so whoever returns
 which pages carry impressions before sweeping, and should still land the edit before the merge, which is
 when each page's first impression in the index is fixed.
 
-**The X tasks fit anywhere, and X1 and X2 are worth doing early**: a published skill that lags
-`cgp-skills` misteaches every agent that reads it, and the crate's landing page is working against the
-project every day it stays as it is.
+**The X tasks fit anywhere, and X2 is worth doing early**: the crate's landing page is working
+against the project every day it stays as it is.
 
 **DC1, DC3, and DC4 whenever there is capacity**, since they are independent of everything above and are
 the long lead time on the Projects pages.

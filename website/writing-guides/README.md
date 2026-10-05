@@ -72,8 +72,8 @@ Register a new guide here in the same change that adds it, and in [../../summary
   limitations page, the link map, and why project code is verified against its own repository rather
   than the `example-code` crate.
 - [tooling.md](tooling.md): the pages documenting a program the reader *runs* rather than a construct
-  they write, covering why a tool's page fails differently from a construct's, the eight-page section
-  shape with its reading and lookup pages, the obligation to quote real output from the program the page
+  they write, covering why a tool's page fails differently from a construct's, the nine-page section
+  shape with its reading, editor, and lookup pages, the obligation to quote real output from the program the page
   shows, writing against the release the site ships with, the Linux-only rule, and the version-free
   concession every claim about the error experience carries.
 - [reference.md](reference.md): the canonical per-construct reference, ported from the knowledge

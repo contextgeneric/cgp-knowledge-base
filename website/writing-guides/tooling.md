@@ -9,8 +9,9 @@ this guide describes.
   [voice-and-register.md](../../communication-strategy/voice-and-register.md)
 - **Derived from**: [cargo-cgp/reference/](../../cargo-cgp/reference/README.md) and
   [cargo-cgp/error-code.md](../../cargo-cgp/error-code.md), which stay the source of truth
-- **Scale**: eight pages, namely an overview, installation, one page per reading command, a page on
-  reading the output, troubleshooting, and two lookup pages for the error codes and the command line
+- **Scale**: nine pages, namely an overview, installation, one page per reading command, a page on
+  reading the output, a page on editor integration, troubleshooting, and two lookup pages for the
+  error codes and the command line
 
 ## Why this is its own kind of page
 
@@ -32,9 +33,10 @@ re-checked.
 
 ## The section shape
 
-Eight pages, ordered by what the reader is doing: the five a reader works through first, then the
-troubleshooting page they reach when the tool will not run, then the two pages they look things up in.
-The order is the reader's rather than the tool's.
+Nine pages, ordered by what the reader is doing: the five a reader works through first, then the
+editor page for the reader who wants the check where they write code, then the troubleshooting page
+they reach when the tool will not run, then the two pages they look things up in. The order is the
+reader's rather than the tool's.
 
 **An overview** at `index.md`, which is the category's `link` target rather than a generated index. It
 answers *why this exists* before *how to run it*, and it earns that with a concrete before/after: the
@@ -59,6 +61,13 @@ root-cause note and its dependency tree, several causes in one block, the two-ca
 given in a `help` line, and which error classes still arrive as the compiler wrote them. It exists
 because a reader holding an error is a different reader from one learning to run the command, and they
 arrive here from a search or from the check page.
+
+**Editor integration**, which wires the check into an editor's on-save diagnostics. It is its own page
+rather than a section of the check page because a reader searches for editor setup by itself, and
+because the switch changes things a reader would otherwise blame on the tool: the first save is slow,
+the editor's own check options stop reaching the command, and the editor's as-you-type errors are not
+rewritten. It covers one editor and its language server at a time, and says which it covers and how
+the setting was verified; an editor nobody has tried is named as untried rather than given a recipe.
 
 **Troubleshooting**, which opens with a **symptom index** (a table from the distinctive fragment of an
 error to the section that explains it), because a reader arrives holding an error message and nothing

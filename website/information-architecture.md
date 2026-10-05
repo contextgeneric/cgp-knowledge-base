@@ -237,9 +237,9 @@ each page's two judging sections.
   construct lookup, and the answer to vocabulary that was used across the site far more widely than it
   was defined. Recorded in [site-structure.md](site-structure.md).
 - *Tooling*: present at `docs/cargo-cgp/`, labelled for the tool rather than the category, since it
-  covers one. A sibling section rather than part of the reference: eight pages, namely an overview,
-  installation, one page per reading command, reading the output, troubleshooting, and two lookup pages
-  for the error codes and the command line. The error-codes page is where the reference's error
+  covers one. A sibling section rather than part of the reference: nine pages, namely an overview,
+  installation, one page per reading command, reading the output, editor integration, troubleshooting,
+  and two lookup pages for the error codes and the command line. The error-codes page is where the reference's error
   catalog sends a reader holding a `[CGP-Exxx]` code.
 
 **Projects** (new category, roughly two hundred pages): **after the release**, unlike everything else
