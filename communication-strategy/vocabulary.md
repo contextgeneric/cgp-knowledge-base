@@ -42,7 +42,11 @@ Describe **cargo-cgp** as “CGP's error toolchain” and refer to its checking 
 `cargo cgp check`. Explain the concrete failure it helps diagnose rather than promising uniformly
 clear errors. Copy this qualification unchanged wherever the tool's diagnostic benefit is discussed:
 
-> `cargo cgp check` leads with the root cause for the classes it recognizes, and the tool is a v0.1.0-alpha that does not yet reshape every class.
+> `cargo cgp check` leads with the root cause for the classes it recognizes, and the tool does not yet reshape every class.
+
+The sentence carries no version number on purpose. It is copied onto dozens of pages, and a number
+there would go stale with every release while adding nothing the concession needs. A page that must
+name the version, such as the tool's installation page, states it once in its own words.
 
 The [error-reading guidance](readers.md#reading-the-error-messages) explains how to teach that
 workflow. Command syntax and availability belong in the

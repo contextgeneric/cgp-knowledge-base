@@ -30,8 +30,8 @@ message will perform.
 
 State compilation and diagnostic costs beside the benefits of abstraction. Pair the diagnostic
 concession with [`cargo-cgp`](../cgp/reference/cargo-cgp.md), using the canonical wording:
-`cargo cgp check` leads with the root cause for the classes it recognizes, and the tool is a
-v0.1.0-alpha that does not yet reshape every class.
+`cargo cgp check` leads with the root cause for the classes it recognizes, and the tool does not yet
+reshape every class.
 
 Show why the added abstraction is useful before introducing it. The concern about complexity
 supports the [enhances-not-replaces framing](identity.md): explain CGP through ordinary Rust,
@@ -166,7 +166,7 @@ These objections recur and suggest specific responses:
 - **Overstated ergonomics:** Readers expect compiler errors to require understanding generated code.
   Teach the desugaring and present `cargo-cgp` as a response to that difficulty, with its limits
   intact. The canonical concession is: `cargo cgp check` leads with the root cause for the classes
-  it recognizes, and the tool is a v0.1.0-alpha that does not yet reshape every class. Reception of
+  it recognizes, and the tool does not yet reshape every class. Reception of
   the tool is not established here; do not invent community praise.
 
 Show generated Rust early enough to prepare readers for debugging. The ergonomics objection supports

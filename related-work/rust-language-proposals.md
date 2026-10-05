@@ -447,8 +447,8 @@ defined through [`#[cgp_component]`](../cgp/reference/macros/cgp_component.md), 
 retrofit an existing foreign trait such as `serde::Serialize` without a parallel component, where a
 language change would apply to every trait. The wiring is code somebody writes and reads, where a
 language feature would infer it. And the raw diagnostics are trait-solver output over generated
-types. `cargo cgp check` leads with the root cause for the classes it recognizes, and the tool is a
-v0.1.0-alpha that does not yet reshape every class. Where a program's need is exactly a specialized
+types. `cargo cgp check` leads with the root cause for the classes it recognizes, and the tool does
+not yet reshape every class. Where a program's need is exactly a specialized
 fast path for one type under a blanket impl, `min_specialization` on nightly, or a manual dispatch
 trick on stable, is the smaller tool. Where the need is several equally valid impls chosen per
 application, impls for types the program does not own, or environment values reaching deep code

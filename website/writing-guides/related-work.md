@@ -134,8 +134,7 @@ qualifiers and the misreadings they prevent are in
 its own community states them, with the citation. CGP's costs are the ordinary ones, stated in the
 author's plain register: the wiring, the declarations, the compile-time work, and the raw
 diagnostics, with the canonical sentence copied rather than paraphrased: `cargo cgp check` leads
-with the root cause for the classes it recognizes, and the tool is a v0.1.0-alpha that does not yet
-reshape every class.
+with the root cause for the classes it recognizes, and the tool does not yet reshape every class.
 
 **Where the other tool is the better choice.** Its own section, never folded into the costs. Every
 internal document names these cases, and they are the sentences that earn the page its credibility

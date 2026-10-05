@@ -4,8 +4,8 @@ Most cgp-serde compile errors come from a handful of wiring mistakes, and each h
 diagnostic. This guide shows each mistake with the code that makes it and what the compiler reports.
 The general method for reading CGP errors is in [debugging](../../../cgp/guides/debugging.md), and
 the diagnostics below come from `cargo cgp check`, CGP's error toolchain. `cargo cgp check` leads
-with the root cause for the classes it recognizes, and the tool is a v0.1.0-alpha that does not yet
-reshape every class. Two classes below pass through only partly: the overflow cases are reshaped
+with the root cause for the classes it recognizes, and the tool does not yet reshape every class.
+Two classes below pass through only partly: the overflow cases are reshaped
 when a `check_components!` table triggers them but stay raw at a call site, and a key that does not
 parse is a macro error the tool leaves as it is.
 

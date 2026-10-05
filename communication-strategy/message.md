@@ -282,7 +282,7 @@ The [toolchain reference](../cgp/reference/cargo-cgp.md) explains how the driver
 presents the cause. Recheck the fixture before publishing its output.
 
 Keep the canonical limitation beside the tool claim: `cargo cgp check` leads with the root cause for
-the classes it recognizes, and the tool is a v0.1.0-alpha that does not yet reshape every class.
+the classes it recognizes, and the tool does not yet reshape every class.
 
 ### Choosing which problem to lead with
 
@@ -336,7 +336,7 @@ many operations.
 
 **Dedicated tooling helps explain wiring failures.** Demonstrate `cargo cgp check` with a real
 fixture and retain the canonical qualification: `cargo cgp check` leads with the root cause for the
-classes it recognizes, and the tool is a v0.1.0-alpha that does not yet reshape every class. Do not
+classes it recognizes, and the tool does not yet reshape every class. Do not
 describe the error problem as solved.
 
 **Gradual adoption preserves ordinary Rust choices.** A consumer trait supports direct impls,
@@ -464,8 +464,7 @@ observations from rough experiments.
 
 **"The errors are a wall of generated types."** Concede the raw diagnostic cost and show checks and
 tooling on the actual failure. Use the canonical sentence: `cargo cgp check` leads with the root
-cause for the classes it recognizes, and the tool is a v0.1.0-alpha that does not yet reshape every
-class.
+cause for the classes it recognizes, and the tool does not yet reshape every class.
 
 **"Rust does not need a DI framework."** Agree that ordinary traits and generics often suffice. Show
 the particular limitation at issue, such as overlapping impls or repeated dependency parameters,

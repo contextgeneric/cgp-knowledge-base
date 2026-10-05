@@ -282,8 +282,8 @@ Prepare readers for verbose errors involving generated types and transitive depe
 does not guarantee that every diagnostic becomes short or identifies the cause equally well.
 
 Introduce cargo-cgp when demonstrating a wiring failure. Use the canonical qualification:
-`cargo cgp check` leads with the root cause for the classes it recognizes, and the tool is a
-v0.1.0-alpha that does not yet reshape every class. Teach readers to inspect the reported cause and
+`cargo cgp check` leads with the root cause for the classes it recognizes, and the tool does not yet
+reshape every class. Teach readers to inspect the reported cause and
 use the [error catalog](../cgp/errors/README.md) or [tool reference](../cgp/reference/cargo-cgp.md)
 for unfamiliar cases. Check actual output rather than promising a particular rewrite.
 

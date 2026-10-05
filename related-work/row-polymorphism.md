@@ -469,8 +469,8 @@ from rows: a mis-wired or incomplete structural operation surfaces as a long, ge
 trait error, the CGP-idiom echo of a 152Kb row-unification message. CGP's mitigation is
 [`check_components!`](../cgp/reference/macros/check_components.md), which forces the missing field
 or variant to be named at the wiring site rather than deep inside a use, and `cargo cgp check`,
-which leads with the root cause for the classes it recognizes; the tool is a v0.1.0-alpha that does
-not yet reshape every class. The diagnostics remain heavier than a nominal `match`. CGP also demands
+which leads with the root cause for the classes it recognizes; the tool does not yet reshape every
+class. The diagnostics remain heavier than a nominal `match`. CGP also demands
 more ceremony than an anonymous record: derives, type-level tags, and wiring where a row system
 would infer everything. Where a program wants terse anonymous records with full inference, and can
 pay the error-message cost, a real row system such as PureScript's is the better tool, and reaching

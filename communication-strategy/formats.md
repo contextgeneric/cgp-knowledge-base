@@ -164,8 +164,7 @@ question, using [message.md](message.md#the-objections-readers-bring) for detail
 | Will every configuration need a context? | Separate only useful type-level distinctions. Keep runtime choices in enums or trait objects inside the context. |
 
 Use the canonical limitation when recommending the checker: `cargo cgp check` leads with the root
-cause for the classes it recognizes, and the tool is a v0.1.0-alpha that does not yet reshape every
-class.
+cause for the classes it recognizes, and the tool does not yet reshape every class.
 
 ## The conversion ladder
 

@@ -75,8 +75,7 @@ Grant the valid concern, then explain the mechanism and limit. See
 | There is a learning curve | Start with a useful operation and teach the machinery as needed. |
 
 Use the canonical checker qualification without paraphrasing: `cargo cgp check` leads with the root
-cause for the classes it recognizes, and the tool is a v0.1.0-alpha that does not yet reshape every
-class.
+cause for the classes it recognizes, and the tool does not yet reshape every class.
 
 ## The boundary, and the costs to concede every time
 

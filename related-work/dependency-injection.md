@@ -301,7 +301,7 @@ management to the application.
 
 CGP's raw errors can be difficult to read because they include generated traits and types.
 [`cargo cgp check`](../cargo-cgp/reference/usage.md) leads with the root cause for the classes it
-recognizes, and the tool is a v0.1.0-alpha that does not yet reshape every class. The
+recognizes, and the tool does not yet reshape every class. The
 [Modularity Hierarchy](../cgp/concepts/modularity-hierarchy.md) weighs the additional machinery
 against plain traits, generics, and other alternatives.
 
