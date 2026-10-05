@@ -115,6 +115,10 @@ nightly at the front-end's own version, and places the driver next to the front-
 `~/.cargo/bin`. Because `setup` reads the pinned toolchain from the front-end's baked-in constant,
 you never type a nightly date. `setup` requires rustup to manage the toolchain.
 
+`setup` and `update` take no options and ignore any arguments passed after them, so
+`cargo cgp setup --help` runs setup rather than printing help; the front end's own `--help` is the
+place to look.
+
 You run `cargo cgp setup` once after installing, and again only when told to: `cargo cgp check` runs
 a fast, read-only preflight before each check and, if it finds the driver missing, the toolchain
 absent, or the two out of step, stops with an error naming `cargo cgp setup` as the fix rather than

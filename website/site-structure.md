@@ -462,8 +462,12 @@ pages, in the order a reader needs them, specified by [writing-guides/tooling.md
   three settings a check changes, the subdirectory `target/cgp` caveat, forwarded flags, an editor
   section marked unverified, and its boundary.
 - **Reading the output**: the parts of a rewritten error, then one real example per shape (two causes
-  in one error, a field of the wrong type, a two-caret conflict, a fix in a `help` line), and the list
-  of errors that pass through unchanged.
+  in one error, a component nothing is wired for, a field of the wrong type, an ordinary Rust trait
+  that does not hold, a two-caret conflict, a fix in a `help` line), and the list of errors that pass
+  through unchanged. The ordinary-trait shape is the one rewritten error that keeps the compiler's own
+  headline at a check, so the page's test for a passed-through error is "no `[CGP-Exxx]` code
+  anywhere", not "no code in the headline"; reached through a method call, the same mistake gets a
+  CGP headline and a `[CGP-E201]` cause line, which is the only case that code appears in.
 - **Expand**: when to use it first, the fixed `Rectangle` and its real `--item Rectangle` listing,
   `--item`, choosing a target, the `cargo-expand` comparison quoting the compiler's own expansion, and
   what to expect from the output.
@@ -489,8 +493,10 @@ public pages drop what those documents carry for an agent (the pointers into the
 the driver-level debugging recipes) and add a reader who has to choose an install path.
 
 The pages show programs from the [area-calculation](../examples/area-calculation.md) scenario, a value
-context with a self-targeted component, plus a small greeter and two `#[cgp_fn]` functions on the
-reading page. Every program is in the website repository's `example-code/` crate: the deliberate
+context with a self-targeted component. The reading page also uses a fieldless `App`, an
+environmental context with self-targeted components (a greeter, a farewell, and a scalar comparison
+over an abstract type), and two `#[cgp_fn]` functions, and it marks the switch from `Rectangle` to
+`App` where it happens. Every program is in the website repository's `example-code/` crate: the deliberate
 mistakes as `trybuild` fixtures under `tests/compile_fail/cargo_cgp/`, one per heading, and the two
 programs the pages say compile under `tests/cargo_cgp/`.
 

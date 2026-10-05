@@ -71,8 +71,13 @@ Run the command from inside the package or workspace you mean to check. And if c
 on `PATH`, the front-end reports that while trying to launch the wrapped build:
 
 ```text
-failed to run `cargo check` (is cargo on PATH?)
+cargo-cgp: failed to run `cargo check` (is cargo on PATH?): No such file or directory (os error 2)
 ```
+
+The front end prints every error of its own through `{error:#}`, which appends the underlying OS
+error after a colon. This case is hard to reach in practice: the managed preflight runs `rustc`
+first, so a machine missing cargo usually fails there instead, with the `is rustup on PATH?` message
+in [the preflight section](#the-managed-preflight-rejects-the-setup).
 
 ## The front-end cannot find the driver
 
@@ -205,6 +210,18 @@ cargo-cgp: toolchain `nightly-2026-09-14` is not available (exit status: 1)
 The pinned toolchain is not installed. Run `cargo cgp setup`.
 ```
 
+On a machine with no rustup at all, the same advice arrives with a different first line, because the
+toolchain probe runs `rustc` through rustup's shim and the shim is missing:
+
+```text
+cargo-cgp: failed to run `rustc` (is rustup on PATH?)
+
+The pinned toolchain is not installed. Run `cargo cgp setup`.
+```
+
+There `setup` cannot help either, since it needs rustup too; install rustup or use the Nix flake,
+whose wrapper runs the front end unmanaged and so skips the preflight.
+
 If the toolchain is present but the driver cannot run under it (almost always a driver built against
 a *different* nightly than the one now installed), the preflight reports the load failure as a
 driver problem, having already confirmed the toolchain exists:
@@ -247,7 +264,8 @@ per the section above.
 rather than failing obscurely:
 
 ```text
-rustup was not found on PATH; cargo-cgp requires rustup to manage toolchains
+cargo-cgp: installing toolchain `nightly-2026-09-14` (with rustc-dev, llvm-tools)…
+cargo-cgp: rustup was not found on PATH; cargo-cgp requires rustup to manage toolchains
 ```
 
 On such a machine, install through the [Nix flake](installation.md#installing-with-nix) instead,
@@ -268,6 +286,7 @@ you see, then read the section for the fix.
 | `error while loading shared libraries: librustc_driver-…` | library path unset, or toolchain mismatch | [The driver cannot load the compiler library](#the-driver-cannot-load-the-compiler-library) |
 | `--print sysroot` failed with status `exit status: 127` | Nix install; a same-version rustup toolchain shadows its libraries | [A Nix install fails its sysroot probe](#a-nix-install-fails-its-sysroot-probe-under-cargo-cgp) |
 | `the pinned toolchain is not installed` | pinned nightly absent | [The managed preflight rejects the setup](#the-managed-preflight-rejects-the-setup) |
+| `is rustup on PATH?` | no rustup for the toolchain probe | [The managed preflight rejects the setup](#the-managed-preflight-rejects-the-setup) |
 | `could not run under toolchain …` | driver built against another nightly | [The managed preflight rejects the setup](#the-managed-preflight-rejects-the-setup) |
 | `out of lockstep` / `now provides` | front-end and driver versions/builds differ | [The managed preflight rejects the setup](#the-managed-preflight-rejects-the-setup) |
 | `could not parse` … `--version` output | an old or foreign driver binary | [The managed preflight rejects the setup](#the-managed-preflight-rejects-the-setup) |

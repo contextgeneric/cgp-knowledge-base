@@ -54,7 +54,17 @@ normal build cache and vice versa. Because these are diagnostic settings the too
 `cargo check`, much as Clippy runs under its own settings.
 
 To send the check's artifacts somewhere other than `target/cgp`, pass `--target-dir` (or set
-`CARGO_TARGET_DIR`); either takes precedence over the default.
+`CARGO_TARGET_DIR`); either takes precedence over the default. **The default is a relative path**,
+`--target-dir target/cgp` passed to cargo as written, so cargo resolves it against the directory the
+command runs in: run from a subdirectory of a package, a check creates a fresh `target/cgp` inside that
+subdirectory and rebuilds every dependency there. `expand` injects the same default.
+
+Two further consequences of the wrapping are worth knowing. **Only workspace members are reshaped**,
+because the driver is installed through `RUSTC_WORKSPACE_WRAPPER`, which cargo applies to workspace
+members alone; a path dependency outside the workspace compiles through plain `rustc` and its errors
+arrive raw. And **the front end sets `RUSTC_WORKSPACE_WRAPPER` unconditionally**, replacing any value
+the user exported, so a wrapper of the user's own given through that variable does not run under the
+tool. How a user's `RUSTC_WRAPPER` (sccache, say) composes with the driver has not been checked.
 
 ## Expanding a target
 
@@ -198,7 +208,8 @@ setups. They are summarized here; the full contract is in
 - `CARGO_CGP_DRIVER`: an explicit path to the driver executable, bypassing the sibling lookup. Point
   it at a freshly built `target/debug/cargo-cgp-driver`.
 - `CARGO_CGP_TOOLCHAIN`: override the pinned nightly at runtime, for testing a toolchain bump;
-  normally paired with `CARGO_CGP_NO_MANAGE`.
+  normally paired with `CARGO_CGP_NO_MANAGE`. `setup` reads it too, so it installs the overriding
+  toolchain rather than the pinned one.
 - `CARGO_TARGET_DIR` / `--target-dir`: choose the check's target directory instead of the default
   `target/cgp`.
 
