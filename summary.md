@@ -641,7 +641,8 @@ it stale.
 - [README.md](cargo-cgp/reference/README.md) — the usage index and the two phases it covers, getting
   the tool installed and running it.
 - [installation.md](cargo-cgp/reference/installation.md) — every install, update, and uninstall path,
-  through cargo or Nix, and the pinned nightly each needs.
+  through cargo or Nix, the pinned nightly each needs, the front-end changes planned for v0.1.0, and
+  the Linux-only testing and the `cgp` v0.8 line the driver reads.
 - [troubleshooting.md](cargo-cgp/reference/troubleshooting.md) — diagnosing a tool that will not run,
   seam by seam, with the exact message each failure prints.
 - [usage.md](cargo-cgp/reference/usage.md) — running `check` and `expand`, reading the output and its
@@ -733,17 +734,19 @@ it stale.
   never the answer and which three query clusters to consider, the agent surfaces including the
   evidence on `llms.txt`, what was checked and left alone, and what to watch now that measurement
   exists.
-- [website/tasks.md](website/tasks.md) — the redesign's work plan: that the whole site relaunches with
-  the v0.8.0 release from one branch, the four standing obligations every page-adding task carries,
-  every remaining task with its repository, dependencies, and done-condition (including the AI
-  disclosure page and the post-release Projects pages with the code changes they need), which of them
-  the release waits for, and the ordering; deleted when empty.
-- [website/site-structure.md](website/site-structure.md) — the site's build, navigation, announcement
-  bar, deployment, release-branch workflow, the three settings that depart from stock Docusaurus to
-  publish the agent skill from its own repository, and the `example-code/` crate that holds the compiled
-  counterparts of the code the site shows, plus one entry each for the front page, Introduction,
-  the Quickstart, Overview, Resources, Contribute, the `cargo-cgp` tooling section, the AI skills section and its
-  `cgp-skills` submodule, the Concepts section, the Comparisons section, the Reference section including its
+- [website/tasks.md](website/tasks.md) — the redesign's work plan: that the whole site relaunches
+  with the v0.8.0 release (and `cargo-cgp` v0.1.0) from one branch, the four standing obligations
+  every page-adding task carries, every remaining task with its repository, dependencies, and
+  done-condition (including the AI disclosure page, the `cargo-cgp` release the tool's pages are
+  written against, and the post-release Projects pages with the code changes they need), which of
+  them the release waits for, and the ordering; deleted when empty.
+- [website/site-structure.md](website/site-structure.md) — the site's build, navigation,
+  announcement bar, deployment, the release branch that carries both `cgp` v0.8.0 and `cargo-cgp`
+  v0.1.0, the three settings that depart from stock Docusaurus to publish the agent skill from its
+  own repository, and the `example-code/` crate that holds the compiled counterparts of the code the
+  site shows, plus one entry each for the front page, Introduction, the Quickstart, Overview,
+  Resources, Contribute, the `cargo-cgp` tooling section, the AI skills section and its `cgp-skills`
+  submodule, the Concepts section, the Comparisons section, the Reference section including its
   compile-errors and glossary pages, the Projects section, and the AI disclaimer.
 
 ### `website/writing-guides/`: how new pages should be written
@@ -773,8 +776,9 @@ it stale.
   high-level limits with no bugs or missing features on any public page, the link map and the rule against placeholder pages, project code verified against its own repository
   rather than `example-code`, and diagnostics quoted from the source-built `cargo-cgp`.
 - [tooling.md](website/writing-guides/tooling.md) — the pages documenting a program the reader runs
-  rather than a construct they write: why a tool's page fails differently, the five-page section shape,
-  quoting real output rather than remembered output, and the version concession.
+  rather than a construct they write: why a tool's page fails differently, the eight-page section shape
+  with its reading and lookup pages, quoting real output from the program shown, writing against the
+  release the site ships with, the Linux-only rule, and the version-free concession.
 - [orientation.md](website/writing-guides/orientation.md) — the routing pages: what separates
   orientation from persuading, teaching, arguing and specifying; the Introduction's three parts; the
   Quickstart's ten-minute target, its one-context program, and the boundary against Hello World; the

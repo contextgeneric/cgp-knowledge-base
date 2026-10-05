@@ -217,15 +217,22 @@ If the driver runs but reports a version or a build identity that does not match
 lockstep: a partial upgrade, or a stale binary earlier on `PATH`:
 
 ```text
-the installed cargo-cgp-driver is version 0.1.0, but this cargo-cgp is 0.2.0 (the two are out of lockstep)
+cargo-cgp: the installed cargo-cgp-driver is version 0.1.0, but this cargo-cgp is 0.2.0 (the two are out of lockstep)
 
 Run `cargo cgp setup`.
 ```
 
 ```text
-the cargo-cgp-driver was built against `rustc 1.99.0-nightly (…)`, but the pinned toolchain `nightly-2026-09-14` now provides `rustc 1.100.0-nightly (…)`
+cargo-cgp: the cargo-cgp-driver was built against `rustc 1.99.0-nightly (…)`, but the pinned toolchain `nightly-2026-09-14` now provides `rustc 1.100.0-nightly (…)`
 
 Run `cargo cgp setup`.
+```
+
+A driver whose `--version` output is not in the three-line shape at all (an old or foreign binary
+on the lookup path) fails the parse instead:
+
+```text
+cargo-cgp: could not parse `cargo-cgp-driver --version` output. Run `cargo cgp setup`.
 ```
 
 Every one of these is resolved by `cargo cgp setup`, which reinstalls the pinned toolchain and
@@ -263,6 +270,7 @@ you see, then read the section for the fix.
 | `the pinned toolchain is not installed` | pinned nightly absent | [The managed preflight rejects the setup](#the-managed-preflight-rejects-the-setup) |
 | `could not run under toolchain …` | driver built against another nightly | [The managed preflight rejects the setup](#the-managed-preflight-rejects-the-setup) |
 | `out of lockstep` / `now provides` | front-end and driver versions/builds differ | [The managed preflight rejects the setup](#the-managed-preflight-rejects-the-setup) |
+| `could not parse` … `--version` output | an old or foreign driver binary | [The managed preflight rejects the setup](#the-managed-preflight-rejects-the-setup) |
 | `rustup was not found on PATH` | no rustup for `setup` | [Provisioning fails](#provisioning-fails) |
 
 ## Further reading

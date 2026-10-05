@@ -249,16 +249,26 @@ covered by document-the-present in full. Correct them in place, without a change
 repository and goes live when that branch merges, together with the v0.8.0 release.** Two rules follow
 and both are absolute while the campaign runs.
 
+**The branch is named for `cgp`, but it carries two releases.** It also documents `cargo-cgp` v0.1.0,
+the tool's first stable release, which is cut from the `cargo-cgp` repository's `main` and published
+alongside `cgp` v0.8.0. The branch merges only after **both** are published. So on this branch the
+tool is v0.1.0 exactly as `cgp` is v0.8.0: a page names `0.1.0`, describes what `cargo-cgp`'s `main`
+does (including the changes planned to land before its tag), and never mentions the `v0.1.0-alpha`
+pre-release that crates.io carries today. The one exception is the installation page's note telling
+alpha users how to upgrade, since that is a fact a released page still needs. What must happen before
+the tag is task V2 in [tasks.md](tasks.md).
+
 **Never commit redesign work to `main`.** The site deploys to GitHub Pages from `main` on every push,
 so a page landed there publishes immediately, which would put a half-rebuilt site in front of readers
 and spend the release's attention on it. The branch is also how previous releases were staged, so this
 is the project's existing habit rather than a new one.
 
-**Write every page as though v0.8.0 has already shipped.** Version pins name `0.8.0`, prose describes
-the library as it is on that branch, and nothing hedges about an unreleased version or an alpha. The
-whole site becomes true on the day the branch merges, which is what makes the two events one event. The
-`0.8.0-alpha` pre-release the ecosystem repositories currently track is a fact about today rather than
-about the site being written.
+**Write every page as though v0.8.0 and `cargo-cgp` v0.1.0 have already shipped.** Version pins name
+`0.8.0` and `0.1.0`, prose describes the library and the tool as they are on their default branches,
+and nothing hedges about an unreleased version or an alpha. The whole site becomes true on the day the
+branch merges, which is what makes the three events one event. The `0.8.0-alpha` and `0.1.0-alpha`
+pre-releases the ecosystem repositories currently track are facts about today rather than about the
+site being written.
 
 The corollary is that a correction which should reach readers *before* the release (something on the
 live site that is actively wrong) is the one kind of change that goes to `main` as well, and is then

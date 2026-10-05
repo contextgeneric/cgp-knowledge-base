@@ -40,6 +40,26 @@ the Nix flake with the tag dropped, which tracks `main`
 (`nix run github:contextgeneric/cargo-cgp -- expand --lib`), or from a
 [source checkout](#installing-from-source). `cargo cgp check` is unaffected.
 
+The next release is `v0.1.0`, cut from `main` alongside `cgp` v0.8.0, and the public website is written
+against it ahead of time. Two front-end changes are planned to land before that tag: accepting
+`cargo cgp --version` (today it is rejected as an unknown subcommand, so the version is read from the
+first line of `cargo cgp --help`), and letting `cargo cgp update` move a pre-release install to a
+stable release. That second change cannot reach existing installs, because an install runs its own
+`update`: a `v0.1.0-alpha` install filters out every stable version and so never sees `v0.1.0`, and
+moves to it only through a fresh `cargo install cargo-cgp` followed by `cargo cgp setup`. The task is
+V2 in the [website plan](../../website/tasks.md).
+
+## Platforms and the CGP version it reads
+
+The tool is tested on **Linux** only. The front-end carries macOS and Windows branches (the
+dynamic-library variable, and `update`'s Windows fallback), but neither platform has been run, so
+treat both as untested rather than unsupported.
+
+The driver recognizes CGP's constructs by the names of the crates that define them (`cgp_component`,
+`cgp_type`, `cgp_field`, `cgp_base_types`) and of the items inside them, so it is built for the
+`cgp` v0.8 line. Code on an older `cgp` compiles under the tool as it would under `cargo check`, but
+whether its errors are recognized has not been tested.
+
 ## Installing with Nix
 
 The flake at the repository root builds both binaries against the pinned nightly and wraps them so

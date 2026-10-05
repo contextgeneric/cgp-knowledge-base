@@ -49,10 +49,15 @@ must fix every reference to it in the same change.
 ## Branches, and what is not on `main`
 
 **Because deployment runs from `main` on every push, work that should not be public yet lives on a
-branch, and the repository has a settled habit of naming that branch after the release it accompanies.**
-`v0.6.2`, `v0.7.1`, and now `v0.8.0` are release branches in that sense; `v0.8.0` is where the whole
-site redesign is being written, and it merges when the release ships. The rule that follows, never
-to commit redesign work to `main`, is in [AGENTS.md](AGENTS.md#the-redesign-lands-on-a-release-branch-all-at-once).
+branch, and the repository has a settled habit of naming that branch after the release it
+accompanies.** `v0.6.2`, `v0.7.1`, and now `v0.8.0` are release branches in that sense; `v0.8.0` is
+where the whole site redesign is being written, and it merges when the release ships. Despite its
+name it carries two releases: `cgp` v0.8.0 and `cargo-cgp` v0.1.0, the tool's first stable release,
+cut from that repository's `main`. It merges only once both are published, and every page on it
+treats both as already out, per
+[AGENTS.md](AGENTS.md#the-redesign-lands-on-a-release-branch-all-at-once). The rule that follows,
+never to commit redesign work to `main`, is in
+[AGENTS.md](AGENTS.md#the-redesign-lands-on-a-release-branch-all-at-once).
 
 Two other branches carry material that is easy to miss because it is not on `main`, and an agent
 looking for "everything the site has" will not find it otherwise. The **`incoherent-rust` branch**
@@ -428,67 +433,102 @@ on the site where a single voice is appropriate rather than the project's collec
 
 - **URL** — <https://contextgeneric.dev/docs/cargo-cgp/>
 - **Source** — [docs/cargo-cgp/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/cargo-cgp)
-- **Status** — Current: all five pages written
+- **Status** — Current, written against `cargo-cgp` v0.1.0 ahead of its release (task V2)
 - **How it was made** — written by an agent from [cargo-cgp/reference/](../cargo-cgp/reference/README.md)
-  and verified by running the tool; level one of the four in
+  and [cargo-cgp/error-code.md](../cargo-cgp/error-code.md), with every quoted output produced by
+  running the tool built from `cargo-cgp`'s `main`; level one of the four in
   [ai-disclosure.md](../communication-strategy/ai-disclosure.md)
 
 ### What it covers
 
 The tool's own section, a top-level category beside the reference rather than inside it, since every
-reference page answers "what does this construct mean" and these answer "how do I run this". Five
-pages: an **overview** carrying the argument, one page each for **check** and **expand**, plus
-**installation** and **troubleshooting**. The category links to the overview rather than to a generated
-index.
+reference page answers "what does this construct mean" and these answer "how do I run this". Eight
+pages, in the order a reader needs them, specified by [writing-guides/tooling.md](writing-guides/tooling.md):
 
-The overview leads on the problem rather than the tool, with the same wiring mistake shown twice — once
-as plain `cargo check` reports it, a `Chars` list the reader has to decode character by character, and
-once as `cargo cgp check` does, with the missing field named in English and the dependency chain drawn
-beneath it. That contrast is the page's whole argument, and both halves were produced by running the
-two commands rather than transcribed.
+- **Overview** (`index.md`, the category's link target): what the tool is and that it is optional, the
+  before/after that carries the argument, how it works in two paragraphs, what it costs, and what it
+  does not do. The before/after is the **hidden-cause case**: an unchecked call to `area` on a
+  `Rectangle` missing its `height` field, where stable `cargo check` prints an `E0599` that never names
+  `height` and ends by suggesting `Rectangle::area()`, against the tool's `[CGP-E001]` with the field
+  named. That contrast was chosen over the checked case because the raw output leaves the cause out
+  rather than burying it.
+- **Installation**: the decision table including the reader with neither rustup nor Nix, the cargo and
+  Nix paths pinned to `v0.1.0`, checking the install (with the library path the driver's `--version`
+  needs when run by hand on the cargo path), the Linux-only platform statement and the CGP v0.8 target,
+  updating, the alpha-upgrade note, CI, uninstalling (including `target/cgp`), from source, and a short
+  note on the agent skill.
+- **Check**: running it from the root, a pasteable `area-demo` package with the deliberate mistake, the
+  same mistake pinned to the wiring by `check_components!` (with the raw `help` line it replaces), the
+  three settings a check changes, the subdirectory `target/cgp` caveat, forwarded flags, an editor
+  section marked unverified, and its boundary.
+- **Reading the output**: the parts of a rewritten error, then one real example per shape (two causes
+  in one error, a field of the wrong type, a two-caret conflict, a fix in a `help` line), and the list
+  of errors that pass through unchanged.
+- **Expand**: when to use it first, the fixed `Rectangle` and its real `--item Rectangle` listing,
+  `--item`, choosing a target, the `cargo-expand` comparison quoting the compiler's own expansion, and
+  what to expect from the output.
+- **Troubleshooting**: the symptom index, then sections ordered by how often a reader meets them,
+  including the check disagreeing with `cargo check`, a slow first check or a stray `target/cgp`, and
+  the overridden `RUSTC_WORKSPACE_WRAPPER`.
+- **Error codes**: one heading per code (so `#cgp-e001` resolves), each with the message form, the
+  mistake, the fix, and the section of the reference's compile-errors page that explains the class;
+  then the rewrites that carry no code. The compile-errors page keeps a short section pointing here
+  rather than its own copy of the tables.
+- **Command reference**: the four commands, their options, the variables the tool reads and the ones it
+  sets for cargo, the files it creates, the exit status, and the driver's own two queries.
 
 ### How it relates to the knowledge base
 
 The material is [cargo-cgp/reference/](../cargo-cgp/reference/README.md), which stays the source of
 truth: [installation.md](../cargo-cgp/reference/installation.md) behind the installation page,
-[usage.md](../cargo-cgp/reference/usage.md) behind check and expand, and
-[troubleshooting.md](../cargo-cgp/reference/troubleshooting.md) behind troubleshooting, with the
-`[CGP-Exxx]` meanings from [error-code.md](../cargo-cgp/error-code.md). The public pages drop what those
-documents carry for an agent — the pointers into the tool's implementation notes, the driver-level
-debugging recipes — and add the one thing they lack, which is a reader who has to *choose* an install
-path rather than follow one.
+[usage.md](../cargo-cgp/reference/usage.md) behind check, expand, and the command reference,
+[troubleshooting.md](../cargo-cgp/reference/troubleshooting.md) behind troubleshooting, and
+[error-code.md](../cargo-cgp/error-code.md) behind the error-codes page. The list of errors that pass
+through unchanged comes from [cargo-cgp/issues/usability.md](../cargo-cgp/issues/usability.md). The
+public pages drop what those documents carry for an agent (the pointers into the implementation notes,
+the driver-level debugging recipes) and add a reader who has to choose an install path.
 
-The page type is specified in [writing-guides/tooling.md](writing-guides/tooling.md), added with this
-section because a program the reader runs fails differently from a construct they write, and the
-reference guide's rules do not cover it.
+The pages show programs from the [area-calculation](../examples/area-calculation.md) scenario, a value
+context with a self-targeted component, plus a small greeter and two `#[cgp_fn]` functions on the
+reading page. Every program is in the website repository's `example-code/` crate: the deliberate
+mistakes as `trybuild` fixtures under `tests/compile_fail/cargo_cgp/`, one per heading, and the two
+programs the pages say compile under `tests/cargo_cgp/`.
 
-Two pages show Rust, and both are backed by the website repository's `example-code/` crate: the broken
-program the check page runs the tool on is a `trybuild` compile-fail fixture under
-`tests/compile_fail/cargo_cgp/`, and the fixed program the expand page expands is a live module under
-`tests/cargo_cgp/` with a test.
+### What a later revision must know
 
-### Where it diverges
+**The quoted output comes from `cargo-cgp`'s `main`, not from a release.** It was captured with the
+source-built tool on Linux, against `cgp`'s `main`, and output that names the tool's version was quoted
+with `0.1.0` in place of the pre-release `0.1.0-alpha` the build reports. Task V2 in [tasks.md](tasks.md)
+re-runs every quoted command against the tagged release.
 
-`expand` answers `--help` itself: `cargo cgp expand --help` prints the tool's expand help, which
-documents `--item`, while `cargo cgp check --help` forwards to `cargo check`, per
-[usage.md](../cargo-cgp/reference/usage.md#expanding-a-target). Check such a claim by running the
-source-built command, since the published `v0.1.0-alpha` has no `expand` at all.
+**Three passages describe behavior planned for v0.1.0 that `main` does not have yet**, and they carry no
+quoted output for that reason: `cargo cgp --version` on the installation and command-reference pages,
+and the release-channel rule for `cargo cgp update` that lets a pre-release move to a stable release.
+If V2 does not land them, those passages change. Two more describe `main`'s current behavior that V2
+may change: `setup` and `update` ignoring their arguments, so `cargo cgp setup --help` runs setup, and
+`target/cgp` being relative to the directory the command runs in. If either is fixed before the tag,
+remove its warning.
 
-Two further facts are release-dependent and will go out of date on their own. **`cargo cgp expand` is newer than the published `v0.1.0-alpha`**, so an install from
-crates.io does not carry it; both the installation and expand pages say so, and both notes should be
-removed when the next release ships. And **the version string does not tell you which commands you
-have** — a build from the default branch still reports `0.1.0-alpha` while carrying `expand` — which is
-why the installation page tells a reader to read the command list rather than the version.
+**The pinned nightly's date is shown only where real output contains it.** Commands that need it use
+`nightly-YYYY-MM-DD` and say where to read the real one, so a toolchain bump changes quoted output but
+no instructions.
+
+**Two findings from writing the pages are not yet in the tool's own records.** An undeclared trait
+called inside a `#[cgp_impl]` provider body passes through as the compiler's `E0599`, while the same
+mistake in a `#[cgp_fn]` body is reshaped into `[CGP-E012]`; the reading page lists the first among the
+errors that pass through. And the `--help` and `target/cgp` behaviors above are candidates for the
+front end rather than for the documentation.
 
 ### Maintaining it
 
 **Re-run the commands rather than editing their output.** Every quoted diagnostic and listing on these
-pages came out of the tool, and a paraphrase reads to a user as a version mismatch. The guide's draft
-checks are the procedure.
+pages came out of the tool, run on exactly the program the page shows, and a paraphrase reads to a user
+as a version mismatch. The guide's draft checks are the procedure.
 
 When the tool's diagnostics change, the internal reference and these pages move together, per the
-[synchronization rule](../AGENTS.md#the-synchronization-rule) — and so does the
-[error catalog](../cgp/errors/README.md), whose classes cite the same `[CGP-Exxx]` codes.
+[synchronization rule](../AGENTS.md#the-synchronization-rule), and so does the
+[error catalog](../cgp/errors/README.md), whose classes cite the same `[CGP-Exxx]` codes. A new code
+gets a heading on the error-codes page in the same change.
 
 ## AI skills
 
@@ -621,9 +661,11 @@ sections and adds a decision-guide tail after its tier explanations: the tail le
 and uses tables where an explanation page would use prose.
 
 Three conventions the written pages settle are worth copying rather than rediscovering.
-**The `cargo cgp check` concession names the version** — every page that mentions the tool calls it a `v0.1.0-alpha`
-covering the core wiring errors rather than every class, per
-[vocabulary.md](../communication-strategy/vocabulary.md). **A page that crosses between context shapes
+**The `cargo cgp check` concession is the canonical sentence, with no version in it**: every page that
+mentions the tool says it leads with the root cause for the classes it recognizes and does not yet
+reshape every class, per [vocabulary.md](../communication-strategy/vocabulary.md), and links the
+[list of classes that pass through](https://contextgeneric.dev/docs/cargo-cgp/reading-output#errors-that-pass-through-unchanged)
+where it says more. **A page that crosses between context shapes
 marks the crossing where it happens**, in prose beside the code, rather than in a glossary at either end.
 And **the encoding example is shared with the front page**: the homepage hero's rejected `CanEncode` pair
 over `Display` and `AsRef<[u8]>` is the same code *Bypassing coherence* opens its argument on, and the

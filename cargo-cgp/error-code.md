@@ -312,6 +312,12 @@ faces [overlapping namespace forwarding](../cgp/errors/wiring/namespace-forwardi
   risking the suppression of an unrelated error.
 - **Fix (in the `help`):** add the trait to the definition's `#[uses(…)]` list (or a hand-written
   `where Self: <Trait>` bound), so it becomes a bound on the generated context.
+- **Not reached from a `#[cgp_impl]` provider body.** There the generated impl is
+  `impl<__Context__> Provider<__Context__> for <ProviderStruct>`, whose `Self` is the provider struct
+  rather than a bare type parameter, so the structural gate above does not match and the compiler's
+  `E0599` about `&__Context__` passes through. This was observed while writing the website's
+  [Reading the output](../website/site-structure.md#cargo-cgp) page, which lists it among the errors
+  that pass through, and has no fixture yet.
 - **Upstream class:** the post-codegen face of a missing impl-side dependency; closest to the
   [hidden unsatisfied-dependency](../cgp/errors/hidden/unsatisfied-dependency.md) class, but here
   the fix is declaring the dependency rather than satisfying it.
