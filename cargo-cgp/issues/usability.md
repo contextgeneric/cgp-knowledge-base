@@ -122,7 +122,10 @@ fixture that pins it.
   `#[uses(…)]`) becomes a `[CGP-E012]` header naming the trait, with the `#[uses(…)]` fix in a
   `help`, in place of rustc's vague `E0599`, which names `__Context__` and points at a transitive
   `HasField` bound
-  ([`undeclared_uses_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/undeclared_uses_trait.rs)).
+  ([`undeclared_uses_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/undeclared_uses_trait.rs),
+  and [`undeclared_uses_trait_in_cgp_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/undeclared_uses_trait_in_cgp_impl.rs)
+  with its async form for a provider body, where the generated impl's `Self` is the provider struct
+  and the receiver's declared type identifies the shape instead).
   Any `[T]: Sized` cascade the unresolved return type trails is left as rustc wrote it: those errors
   can land off the failing expression, where suppressing them reliably would risk hiding an
   unrelated error.

@@ -273,28 +273,38 @@ A `cargo cgp update` subcommand upgrades the tool to its latest version, and its
 the only ordering that can work. A release may bump the pinned nightly, and the knowledge of the new
 toolchain and the new provisioning logic lives *inside* the new `cargo-cgp` binary; the old process
 cannot provision the new driver because it only knows the old pin. So `update` first reinstalls the
-front-end with `cargo install cargo-cgp` (which, having no compiler linkage, builds under any
-toolchain and needs no pinned nightly), then runs the freshly installed `cargo-cgp setup` as a child
+front-end with `cargo install cargo-cgp --version <target>` (which, having no compiler linkage,
+builds under any toolchain and needs no pinned nightly; the version is named because a bare
+`cargo install` takes the newest *stable* release, the wrong target for a pre-release moving to a
+newer pre-release), then runs the freshly installed `cargo-cgp setup` as a child
 process, which brings the driver and toolchain up to the new version. The heavy `rustc-dev` work
 stays deferred to the new `setup`, exactly where it belongs.
 
-Before touching anything, `update` finds out whether there is a newer version to move to **in the
-running version's channel** and skips out early when there is not. It reads the crates.io sparse
-index for the front-end crate (`https://index.crates.io/ca/rg/cargo-cgp`, one JSON line per
-published version), enumerates every non-yanked version, and picks the highest one whose
-pre-release-ness matches the running version's: a stable install considers only stable candidates, a
-pre-release install only pre-releases. If that highest in-channel version is **not strictly newer**,
+Before touching anything, `update` finds out whether there is a newer version to move to **that the
+running version's channel allows** and skips out early when there is not. It reads the crates.io
+sparse index for the front-end crate (`https://index.crates.io/ca/rg/cargo-cgp`, one JSON line per
+published version), enumerates every non-yanked version, and picks the highest allowed one: a stable
+install considers only stable candidates, while a pre-release install considers every candidate,
+pre-release or stable, so it can reach the release it previewed. If that highest in-channel version is **not strictly newer**,
 `update` prints "already up to date (v<current>)" and exits without invoking `cargo install`,
 rustup, or `setup`; only a strictly newer one triggers the reinstall.
 
-Preserving the channel is why `update` enumerates all versions rather than asking cargo for the
-single "latest". Both `cargo search` and `cargo info` report only a crate's *max version*, which
+Keeping a stable install on stable releases is why `update` enumerates all versions rather than
+asking cargo for the single "latest". Both `cargo search` and `cargo info` report only a crate's *max version*, which
 **includes pre-releases**, so if a pre-release higher than the latest stable is published, a stable
 install could neither see the latest stable through them nor safely take the pre-release. Reading
 the index directly gives every version, so the channel filter can pick the right one:
-`v0.1.0 → v0.1.1`, never `v0.1.2-alpha`; and `v0.1.0-alpha → v0.1.1-alpha`. The comparison is
-`semver`, which orders a pre-release below its release, so the "highest in channel" and "strictly
-newer" tests are both exact.
+`v0.1.0 → v0.1.1`, never `v0.1.2-alpha`; `v0.1.0-alpha → v0.1.0` once the release is out; and
+`v0.1.0-alpha → v0.1.1-alpha` while only pre-releases are newer. The comparison is `semver`, which
+orders a pre-release below its release, so the "highest allowed" and "strictly newer" tests are both
+exact. A pre-release install must be able to take a stable release: one restricted to pre-releases
+never sees the release it previewed. That rule cannot reach installs that predate it, since an
+install runs its own `update`, so a `v0.1.0-alpha` install moves to `v0.1.0` only through a fresh
+`cargo install cargo-cgp` and `cargo cgp setup`.
+
+`setup` and `update` take no arguments. Because both install things, each answers `--help` with a
+help text of its own instead of running, and refuses any other argument with an error naming it,
+rather than ignoring it and starting an install the user did not ask for.
 
 The index is read over HTTP with the widely-used `ureq` (rustls TLS) and `serde_json`, kept to the
 front-end's `update` path alone; the check path and the driver never call them. The sparse-index
@@ -563,15 +573,19 @@ project's ordinary `cargo build` and from Rust Analyzer's own project-loading bu
 the class of slowness and flapping diagnostics reported when clippy is used as the check command
 ([rust-analyzer#19336](https://github.com/rust-lang/rust-analyzer/issues/19336)).
 
-So `cargo cgp check` always builds into `target/cgp`, not the project's `target/`, on every
-invocation (whether Rust Analyzer is the caller or not), so a check never invalidates a normal build
+So `cargo cgp check` always builds into a `cgp` subdirectory of the project's target directory,
+`target/cgp` beside `target/debug`, rather than into `target/debug` itself, on every invocation (whether Rust Analyzer is the caller or not), so a check never invalidates a normal build
 and vice versa. This mirrors how `rustc_plugin` isolates its own `target/plugin-<channel>`
 directory, and the isolation helps command-line use as much as the editor; the cost is a one-time
-rebuild of the dependency graph in `target/cgp`, cached thereafter. A user who needs a different
-location passes `--target-dir`, which overrides the default: the front-end injects its `target/cgp`
-default only when the forwarded arguments do not already set one, the same inject-only-when-absent
-rule the driver follows for its own flags. (A user's `CARGO_TARGET_DIR` is likewise respected in
-preference to the default.)
+rebuild of the dependency graph in `target/cgp`, cached thereafter. The front end finds the project's
+target directory by running `cargo metadata --no-deps` (forwarding any `--manifest-path`) and reading
+its `target_directory`, so the directory is the same wherever in the package the command runs, and
+follows a `build.target-dir` the project configures. When that query fails (no package, a broken
+manifest) it falls back to the relative `target/cgp` and lets the wrapped command report the problem.
+A user who needs a different location passes `--target-dir`, which overrides the default: the
+front-end injects its default only when the forwarded arguments do not already set one, the same
+inject-only-when-absent rule the driver follows for its own flags. (A user's `CARGO_TARGET_DIR` is
+likewise respected in preference to the default.)
 
 One residual caveat has no fix, only awareness: Rust Analyzer's inline semantic analysis and the
 `cargo-cgp` flycheck can disagree. Rust Analyzer's own type inference runs against the project's
@@ -707,18 +721,20 @@ has a build script that bakes in the pinned toolchain.
 - [`crates/cargo-cgp/src/config.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/config.rs):
   the well-known names: `PINNED_TOOLCHAIN` and `TOOL_VERSION` (baked in), the environment variables
   (`CARGO_CGP_DRIVER`, `CARGO_CGP_NO_MANAGE`, `CARGO_CGP_TOOLCHAIN`, `RUSTUP_TOOLCHAIN`), the
-  `target/cgp` default, and the crate names.
+  `cgp` target subdirectory and its relative fallback, and the crate names.
 - [`crates/cargo-cgp/build.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/build.rs):
   derives `PINNED_TOOLCHAIN` from
   [`rust-toolchain.toml`](https://github.com/contextgeneric/cargo-cgp/blob/main/rust-toolchain.toml),
   mirroring how `rustc_plugin` derives `CHANNEL`.
 - [`crates/cargo-cgp/src/run.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/run.rs):
-  dispatches `check`, `expand`, `setup`, and `update`.
+  dispatches `check`, `expand`, `setup`, and `update`, answers `--help` and `--version`, and gives
+  `setup` and `update` their own `--help` while refusing any other argument to them.
 - [`crates/cargo-cgp/src/toolchain.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/toolchain.rs):
   resolves the effective pinned toolchain and queries its `rustc --version` through rustup.
 - [`crates/cargo-cgp/src/launch/command.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/command.rs):
   runs the preflight (when managed), forces `RUSTUP_TOOLCHAIN`, wires the driver and sysroot, and
-  injects the `target/cgp` default unless the caller set the target directory.
+  injects the `target/cgp` default, found through `cargo metadata` in `launch/target_dir.rs`, unless
+  the caller set the target directory.
 - [`crates/cargo-cgp/src/launch/preflight.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/preflight.rs):
   verifies the toolchain is installed and the driver runs and matches (the pure `evaluate` plus the
   `--version`-parsing and IO), returning the discovered sysroot.

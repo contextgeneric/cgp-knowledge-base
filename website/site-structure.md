@@ -459,7 +459,7 @@ pages, in the order a reader needs them, specified by [writing-guides/tooling.md
   note on the agent skill.
 - **Check**: running it from the root, a pasteable `area-demo` package with the deliberate mistake, the
   same mistake pinned to the wiring by `check_components!` (with the raw `help` line it replaces), the
-  three settings a check changes, the subdirectory `target/cgp` caveat, forwarded flags, an editor
+  three settings a check changes, where `target/cgp` goes, forwarded flags, an editor
   section marked unverified, and its boundary.
 - **Reading the output**: the parts of a rewritten error, then one real example per shape (two causes
   in one error, a component nothing is wired for, a field of the wrong type, an ordinary Rust trait
@@ -472,7 +472,7 @@ pages, in the order a reader needs them, specified by [writing-guides/tooling.md
   `--item`, choosing a target, the `cargo-expand` comparison quoting the compiler's own expansion, and
   what to expect from the output.
 - **Troubleshooting**: the symptom index, then sections ordered by how often a reader meets them,
-  including the check disagreeing with `cargo check`, a slow first check or a stray `target/cgp`, and
+  including the check disagreeing with `cargo check`, a slow first check, and
   the overridden `RUSTC_WORKSPACE_WRAPPER`.
 - **Error codes**: one heading per code (so `#cgp-e001` resolves), each with the message form, the
   mistake, the fix, and the section of the reference's compile-errors page that explains the class;
@@ -507,23 +507,22 @@ source-built tool on Linux, against `cgp`'s `main`, and output that names the to
 with `0.1.0` in place of the pre-release `0.1.0-alpha` the build reports. Task V2 in [tasks.md](tasks.md)
 re-runs every quoted command against the tagged release.
 
-**Three passages describe behavior planned for v0.1.0 that `main` does not have yet**, and they carry no
-quoted output for that reason: `cargo cgp --version` on the installation and command-reference pages,
-and the release-channel rule for `cargo cgp update` that lets a pre-release move to a stable release.
-If V2 does not land them, those passages change. Two more describe `main`'s current behavior that V2
-may change: `setup` and `update` ignoring their arguments, so `cargo cgp setup --help` runs setup, and
-`target/cgp` being relative to the directory the command runs in. If either is fixed before the tag,
-remove its warning.
+**Four front-end behaviors the pages describe landed on `main` while the pages were being written**,
+so they are the pages' newest facts and the likeliest to be quoted wrongly from memory:
+`cargo cgp --version` (quoted as `cargo-cgp 0.1.0`), `cargo cgp update` letting a pre-release install
+move to a stable release, `setup` and `update` answering `--help` and refusing other arguments, and
+`target/cgp` sitting in the project's own target directory wherever the command runs. The
+alpha-upgrade note on the installation page stays true after the tag, because an alpha install runs
+its own, older `update`.
 
 **The pinned nightly's date is shown only where real output contains it.** Commands that need it use
 `nightly-YYYY-MM-DD` and say where to read the real one, so a toolchain bump changes quoted output but
 no instructions.
 
-**Two findings from writing the pages are not yet in the tool's own records.** An undeclared trait
-called inside a `#[cgp_impl]` provider body passes through as the compiler's `E0599`, while the same
-mistake in a `#[cgp_fn]` body is reshaped into `[CGP-E012]`; the reading page lists the first among the
-errors that pass through. And the `--help` and `target/cgp` behaviors above are candidates for the
-front end rather than for the documentation.
+**An undeclared trait called inside a `#[cgp_impl]` provider body is reshaped into `[CGP-E012]`**,
+like the same mistake in a `#[cgp_fn]` body; writing the pages found it passing through raw, and the
+fix and its fixture landed in `cargo-cgp` with the front-end changes above. The reading page and the
+error-codes page say both bodies are covered.
 
 ### Maintaining it
 

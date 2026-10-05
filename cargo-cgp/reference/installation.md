@@ -41,13 +41,13 @@ the Nix flake with the tag dropped, which tracks `main`
 [source checkout](#installing-from-source). `cargo cgp check` is unaffected.
 
 The next release is `v0.1.0`, cut from `main` alongside `cgp` v0.8.0, and the public website is written
-against it ahead of time. Two front-end changes are planned to land before that tag: accepting
-`cargo cgp --version` (today it is rejected as an unknown subcommand, so the version is read from the
-first line of `cargo cgp --help`), and letting `cargo cgp update` move a pre-release install to a
-stable release. That second change cannot reach existing installs, because an install runs its own
-`update`: a `v0.1.0-alpha` install filters out every stable version and so never sees `v0.1.0`, and
-moves to it only through a fresh `cargo install cargo-cgp` followed by `cargo cgp setup`. The task is
-V2 in the [website plan](../../website/tasks.md).
+against it ahead of time. `main` already lets `cargo cgp update` move a pre-release install to a
+stable release, but that cannot reach existing installs, because an install runs its own `update`:
+the `v0.1.0-alpha` front end considers only pre-releases and so never sees `v0.1.0`, and moves to it
+only through a fresh `cargo install cargo-cgp` followed by `cargo cgp setup`. The `v0.1.0-alpha`
+front end also rejects `cargo cgp --version` as an unknown subcommand, so on that install the version
+is the first line of `cargo cgp --help`. What remains before the tag is task V2 in the
+[website plan](../../website/tasks.md).
 
 ## Platforms and the CGP version it reads
 
@@ -115,9 +115,9 @@ nightly at the front-end's own version, and places the driver next to the front-
 `~/.cargo/bin`. Because `setup` reads the pinned toolchain from the front-end's baked-in constant,
 you never type a nightly date. `setup` requires rustup to manage the toolchain.
 
-`setup` and `update` take no options and ignore any arguments passed after them, so
-`cargo cgp setup --help` runs setup rather than printing help; the front end's own `--help` is the
-place to look.
+`setup` and `update` take no options. Each answers `--help` (or `-h`) with a help text of its own
+rather than running, and refuses any other argument with an error naming it, since both install
+things and a mistyped flag should not start an install.
 
 You run `cargo cgp setup` once after installing, and again only when told to: `cargo cgp check` runs
 a fast, read-only preflight before each check and, if it finds the driver missing, the toolchain
@@ -181,13 +181,14 @@ How you update matches how you installed. On the cargo path, `cargo cgp update` 
 cargo cgp update
 ```
 
-It reads the crates.io index for the front-end, picks the highest published version **in your
-current release channel** (a stable install never jumps to a pre-release, and a pre-release install
-stays on pre-releases) and does nothing if you already have the newest. When there is a newer
-version it reinstalls the front-end and re-runs the new `setup` to bring the driver and toolchain up
-to match. On Windows the running binary is locked and cannot replace itself, so `update` prints the
-two commands (`cargo install cargo-cgp` then `cargo cgp setup`) to run by hand from a shell where
-the tool is not running.
+It reads the crates.io index for the front-end, picks the highest published version **your release
+channel allows** (a stable install never jumps to a pre-release, while a pre-release install takes
+the newest version of either kind, so it reaches the release it previewed) and does nothing if you
+already have the newest. When there is a newer version it reinstalls the front-end at exactly that
+version and re-runs the new `setup` to bring the driver and toolchain up to match. On Windows the
+running binary is locked and cannot replace itself, so `update` prints the two commands
+(`cargo install cargo-cgp --version <version>` then `cargo cgp setup`) to run by hand from a shell
+where the tool is not running.
 
 On the Nix path there is no `cargo cgp update`; you upgrade by refreshing the flake instead. For an
 installed profile, upgrade it (`nix profile upgrade`); for the tool pinned as an input in another

@@ -309,22 +309,18 @@ somewhere to be tracked.
   the release-announcement guide, so it is also the guide's first test; record what the spec got wrong.
 
 - **V2: publish `cargo-cgp` v0.1.0 so the cargo-cgp pages become true.** The
-  [cargo-cgp section](site-structure.md#cargo-cgp) is written against v0.1.0 as though it had shipped,
-  so three things must hold before the branch merges. **The front end gains two changes** before the
-  tag: `cargo cgp --version` must print the version (today it is an unknown subcommand), and
-  `cargo cgp update` must let a pre-release install move to a stable release, since its channel filter
-  keeps a pre-release on pre-releases. The second only helps future pre-releases: a `v0.1.0-alpha`
-  install runs its own `update` and never sees `v0.1.0`, which is why the installation page tells alpha
-  users to reinstall. **The repository's own README**, which is also the crates.io page, drops its
-  pre-release banner and carries the release. **Every quoted output on the section is re-run against
-  the tagged build**: the pages quote output captured from `main` with its version string rewritten to
-  `0.1.0`, the `--version` passages carry no quoted output yet, and the alpha-upgrade path has not been
-  run. The re-run reaches past the section, to every `cargo cgp check` output the site quotes (the
-  compile-errors page, the checking tutorial, the reference pages, the Projects pages). The skill's
-  version line and Nix tag in `cgp-skills` move to `v0.1.0` in the same pass. *Lands in:* the
-  `cargo-cgp` repository, then the website's `v0.8.0` branch and `cgp-skills`. *Blocks:* V1's merge.
-  *Done when:* the tag exists, every quoted output matches it, and the section's record drops its
-  pre-release notes.
+  [cargo-cgp section](site-structure.md#cargo-cgp) is written against v0.1.0 as though it had shipped.
+  The front-end changes the pages rely on are on `cargo-cgp`'s `main` (`--version`, the update
+  channel, `setup` and `update` answering `--help`, and `target/cgp` placed in the project's target
+  directory), so what remains is the release itself. **The repository's own README**, which is also
+  the crates.io page, drops its pre-release banner and carries the release. **Every quoted output on
+  the section is re-run against the tagged build**: the pages quote output captured from `main` with
+  its version string rewritten to `0.1.0`, and the alpha-upgrade path has not been run. The re-run
+  reaches past the section, to every `cargo cgp check` output the site quotes (the compile-errors
+  page, the checking tutorial, the reference pages, the Projects pages). The skill's version line and
+  Nix tag in `cgp-skills` move to `v0.1.0` in the same pass. *Lands in:* the `cargo-cgp` repository,
+  then the website's `v0.8.0` branch and `cgp-skills`. *Blocks:* V1's merge. *Done when:* the tag
+  exists, every quoted output matches it, and the section's record drops its pre-release notes.
 
 ## A — The AI disclosure
 
@@ -482,7 +478,7 @@ the [ordering](#the-ordering) for what to start on.
 | P5 | the pages it links | nothing |
 | B1, B2 | nothing (both held until after V1) | nothing |
 | V1 | the v0.8.0 release, and every release-blocking task | B1 and B2 |
-| V2 | the `cargo-cgp` front-end changes and tag | V1 |
+| V2 | the `cargo-cgp` tag | V1 |
 | A1 | the author's read | every page-adding task's provenance note |
 | S1, S3, S4, S5, S7, S10 | nothing | nothing; S3 and S4 should precede V1 |
 | S9, S11 | V1 | nothing |

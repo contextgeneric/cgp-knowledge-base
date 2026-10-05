@@ -297,27 +297,36 @@ faces [overlapping namespace forwarding](../cgp/errors/wiring/namespace-forwardi
   `help` naming the fix: `` declare it as a dependency with `#[uses(<Trait>)]` ``.
 - **Means:** a `#[cgp_fn]`/`#[cgp_impl]` body calls a CGP trait's method (a consumer trait, or a
   `#[cgp_fn]`/`#[blanket_trait]` blanket trait) on `self`, but the enclosing definition never
-  declared it. The macro lowers the body into a blanket impl over a generated generic context,
-  `impl<__Context__> Describe for __Context__ where __Context__: GetName`, so a trait the body uses
-  must be a `where` bound on `__Context__`, added with `#[uses(…)]`. Omitted, the method cannot
-  resolve on `__Context__`. This also covers a forgotten CGP *consumer* trait used the same way.
+  declared it. `#[cgp_fn]` lowers the body into a blanket impl over a generated generic context,
+  `impl<__Context__> Describe for __Context__ where __Context__: GetName`, and `#[cgp_impl]` into a
+  provider impl over the same context, `impl<__Context__> Greeter<__Context__> for GreetHello`, with
+  `self` renamed to `__context__: &__Context__`. Either way a trait the body uses must be a `where`
+  bound on `__Context__`, added with `#[uses(…)]`. Omitted, the method cannot resolve on
+  `__Context__`. This also covers a forgotten CGP *consumer* trait used the same way.
 - **Triggered by:** an `E0599` "the method `…` exists for reference `&__Context__`, but its trait
   bounds were not satisfied", whose note points at a transitive `HasField` bound. The resolver
-  confirms it structurally: the failing call sits in a generated blanket impl whose `Self` is a bare
-  type parameter, the called method belongs to a CGP trait, and that trait is not among the impl's
-  `where` bounds. The Rust code stays `E0599`. Any `[T]: Sized` cascade the unresolved return type
+  confirms it structurally: the failing call sits in a generated impl over a bare type-parameter
+  context (the impl's `Self` in a `#[cgp_fn]` blanket impl, the provider trait's first argument in a
+  `#[cgp_impl]` provider impl) and is made on that context (a receiver that is a parameter must be
+  declared as the context, read from the method's signature and followed through the `let` an
+  `async fn` adds; a receiver no signature types is accepted only in a `#[cgp_fn]` impl), the called
+  method belongs to a CGP trait, and that trait is not among the impl's `where` bounds. A call on
+  another generic parameter (`value: &Value`) is deliberately left as rustc wrote it, since its fix is
+  a bound on `Value`, which `#[uses]` cannot give. Fixtures:
+  [`undeclared_uses_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/undeclared_uses_trait.rs)
+  for a `#[cgp_fn]` body,
+  [`undeclared_uses_trait_in_cgp_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/undeclared_uses_trait_in_cgp_impl.rs)
+  and
+  [`undeclared_uses_trait_in_async_cgp_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/undeclared_uses_trait_in_async_cgp_impl.rs)
+  for provider bodies, and
+  [`undeclared_trait_on_non_context_parameter`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/undeclared_trait_on_non_context_parameter.rs)
+  for the call left alone. The Rust code stays `E0599`. Any `[T]: Sized` cascade the unresolved return type
   trails (in an `async` body especially) is left as rustc wrote it: those errors can land off the
   failing expression (on the binding pattern, or a later statement the unresolved type flows into)
   where suppressing them reliably would need type information the emitter cannot obtain without
   risking the suppression of an unrelated error.
 - **Fix (in the `help`):** add the trait to the definition's `#[uses(…)]` list (or a hand-written
   `where Self: <Trait>` bound), so it becomes a bound on the generated context.
-- **Not reached from a `#[cgp_impl]` provider body.** There the generated impl is
-  `impl<__Context__> Provider<__Context__> for <ProviderStruct>`, whose `Self` is the provider struct
-  rather than a bare type parameter, so the structural gate above does not match and the compiler's
-  `E0599` about `&__Context__` passes through. This was observed while writing the website's
-  [Reading the output](../website/site-structure.md#cargo-cgp) page, which lists it among the errors
-  that pass through, and has no fixture yet.
 - **Upstream class:** the post-codegen face of a missing impl-side dependency; closest to the
   [hidden unsatisfied-dependency](../cgp/errors/hidden/unsatisfied-dependency.md) class, but here
   the fix is declaring the dependency rather than satisfying it.

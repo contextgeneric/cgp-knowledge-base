@@ -28,7 +28,8 @@ Every argument after `check` is forwarded verbatim to `cargo check`, so the flag
 work unchanged: `cargo cgp check --workspace`, `cargo cgp check -p my-crate`, `cargo cgp check -v`.
 The command also runs directly as `cargo-cgp check` when you have not installed it as a cargo
 subcommand. For a summary of the available commands, run `cargo cgp --help` (or `cargo cgp` with no
-subcommand at all, which prints the same overview).
+subcommand at all, which prints the same overview); `cargo cgp --version` (or `-V`) prints the tool's
+version alone, as `cargo-cgp <version>`.
 
 cargo-cgp does not interpret those forwarded flags itself; it appends them to `cargo check` and lets
 cargo own them. Three consequences follow. Every `cargo check` flag works exactly as it does under a
@@ -54,10 +55,12 @@ normal build cache and vice versa. Because these are diagnostic settings the too
 `cargo check`, much as Clippy runs under its own settings.
 
 To send the check's artifacts somewhere other than `target/cgp`, pass `--target-dir` (or set
-`CARGO_TARGET_DIR`); either takes precedence over the default. **The default is a relative path**,
-`--target-dir target/cgp` passed to cargo as written, so cargo resolves it against the directory the
-command runs in: run from a subdirectory of a package, a check creates a fresh `target/cgp` inside that
-subdirectory and rebuilds every dependency there. `expand` injects the same default.
+`CARGO_TARGET_DIR`); either takes precedence over the default. **The default is the `cgp`
+subdirectory of the project's own target directory**, which the front end reads from
+`cargo metadata --no-deps` (forwarding any `--manifest-path`), so it is the same wherever in the
+package the command runs and follows a configured `build.target-dir`. Only when that query fails, as
+outside any package, does the front end fall back to a relative `target/cgp`, and the wrapped command
+then reports the real problem. `expand` injects the same default.
 
 Two further consequences of the wrapping are worth knowing. **Only workspace members are reshaped**,
 because the driver is installed through `RUSTC_WORKSPACE_WRAPPER`, which cargo applies to workspace
