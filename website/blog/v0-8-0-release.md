@@ -22,7 +22,7 @@ finished nor about a shipped release.
 It was **drafted as the v0.7.1 announcement**, when namespaces were expected to be a minor addition.
 The work grew (namespaces required a new path system, the `open` statement, per-type defaults, and
 ultimately the removal of the entire preset mechanism), so the release was renumbered to **v0.8.0**,
-which is still in development at `0.8.0-alpha`. There is no v0.7.1 tag and there will not be one; the
+which is still in development. There is no v0.7.1 tag and there will not be one; the
 last shipped release is [v0.7.0](../../releases/v0-7-0.md). Anything in the base that attributes
 namespaces to "v0.7.1" is wrong.
 

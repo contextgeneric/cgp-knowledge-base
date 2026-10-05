@@ -325,7 +325,7 @@ that terminates. Do not present forwarding to the same wired wrapper as a usable
 
 The OCaml snippets were compiled with OCaml 5.5.0; the modular-implicits snippet follows the
 proposal paper, since the extension has not shipped. The CGP snippets were compiled against `cgp`
-`0.8.0-alpha` with a `check_components!` assertion per wired context.
+`0.8.0` with a `check_components!` assertion per wired context.
 
 These references support the module semantics and comparison:
 

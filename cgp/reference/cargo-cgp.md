@@ -50,10 +50,10 @@ cargo install cargo-cgp      # the front-end; builds on any toolchain
 cargo cgp setup              # provisions the pinned nightly + driver, in lockstep
 ```
 
-With **Nix** (pinning the pre-release tag for a reproducible install):
+With **Nix** (pinning the release tag for a reproducible install):
 
 ```sh
-nix profile install github:contextgeneric/cargo-cgp/v0.1.0-alpha
+nix profile install github:contextgeneric/cargo-cgp/v0.1.0
 ```
 
 The full matrix of installing from source, updating, and uninstalling is in cargo-cgp's
@@ -67,7 +67,7 @@ project directory, pinning the tag:
 
 ```sh
 cd /path/to/a/cgp/project
-nix run github:contextgeneric/cargo-cgp/v0.1.0-alpha -- check
+nix run github:contextgeneric/cargo-cgp/v0.1.0 -- check
 ```
 
 Everything after `--` is forwarded to `cargo check`. This needs no rustup and leaves the project's
@@ -215,11 +215,6 @@ output is meant to be *read* rather than compiled: the `cgp::macro_prelude::` qu
 emit is stripped for legibility, and an `open` statement's per-key wiring entry keeps its raw
 `PathCons<…>` key, since its tail is a generic parameter that no `Path!` spelling covers.
 
-`expand` is newer than the v0.1.0-alpha release, so a `cargo install cargo-cgp` from crates.io does
-not yet carry it. Until the next release, get it by dropping the tag from the Nix reference
-(`nix run github:contextgeneric/cargo-cgp -- expand --lib`, which tracks `main`) or by
-[building from a checkout](../../cargo-cgp/reference/installation.md#installing-from-source).
-
 ## When cargo-cgp is not available
 
 If the tool is not installed and cannot be run, fall back to reading the raw compiler output
@@ -233,7 +228,7 @@ them with a `check_components!` at the wiring site to make it appear.
 
 ## Version compatibility
 
-This documentation is written for **`cgp` v0.8.0** and **`cargo-cgp` v0.1.0-alpha**. The two version
+This documentation is written for **`cgp` v0.8.0** and **`cargo-cgp` v0.1.0**. The two version
 independently: `cargo-cgp` reads `cgp`'s stable, macro-generated surface (the consumer/provider
 traits, `DelegateComponent`, `HasField`, and the rest), so a newer `cargo-cgp` works against this
 `cgp`, and a newer `cgp` generally works under this `cargo-cgp`. If the tool reports a version far

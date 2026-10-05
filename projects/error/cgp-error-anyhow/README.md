@@ -8,7 +8,7 @@ projects wire, and the one to reach for first.
   [`crates/standalone/error/cgp-error-anyhow/`](https://github.com/contextgeneric/cgp/tree/main/crates/standalone/error/cgp-error-anyhow)
   in the `cgp` repository, on `main`; see
   [which revision](../README.md#which-revision-these-documents-describe)
-- **Crate**: `cgp-error-anyhow` 0.8.0-alpha, depending on `cgp-core` and `anyhow` 1.0.104 without
+- **Crate**: `cgp-error-anyhow` 0.8.0, depending on `cgp-core` and `anyhow` 1.0.104 without
   default features
 - **`no_std`**: yes, using anyhow's `no_std` mode
 - **Tests**: the `anyhow_*` files, `readme_anyhow.rs`, and three shared files of the

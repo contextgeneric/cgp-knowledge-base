@@ -293,14 +293,14 @@ Keeping a stable install on stable releases is why `update` enumerates all versi
 asking cargo for the single "latest". Both `cargo search` and `cargo info` report only a crate's *max version*, which
 **includes pre-releases**, so if a pre-release higher than the latest stable is published, a stable
 install could neither see the latest stable through them nor safely take the pre-release. Reading
-the index directly gives every version, so the channel filter can pick the right one:
-`v0.1.0 → v0.1.1`, never `v0.1.2-alpha`; `v0.1.0-alpha → v0.1.0` once the release is out; and
-`v0.1.0-alpha → v0.1.1-alpha` while only pre-releases are newer. The comparison is `semver`, which
-orders a pre-release below its release, so the "highest allowed" and "strictly newer" tests are both
-exact. A pre-release install must be able to take a stable release: one restricted to pre-releases
-never sees the release it previewed. That rule cannot reach installs that predate it, since an
-install runs its own `update`, so a `v0.1.0-alpha` install moves to `v0.1.0` only through a fresh
-`cargo install cargo-cgp` and `cargo cgp setup`.
+the index directly gives every version, so the channel filter can pick the right one: with
+hypothetical versions, `v1.0.0 → v1.0.1`, never `v1.1.0-beta`; and `v1.1.0-beta → v1.1.0` once the
+release is out. The comparison is `semver`, which orders a pre-release below its release, so the
+"highest allowed" and "strictly newer" tests are both exact. A pre-release install must be able to
+take a stable release, since one restricted to pre-releases never sees the release it previewed.
+Pre-releases themselves are test runs of the cargo integration and are not documented as versions,
+per the base's [rule on versions](../../AGENTS.md#document-official-versions-never-pre-releases);
+this paragraph describes only how `update` treats one.
 
 `setup` and `update` take no arguments. Because both install things, each answers `--help` with a
 help text of its own instead of running, and refuses any other argument with an error naming it,
@@ -698,15 +698,18 @@ UI suite exercises the managed/unmanaged wiring end to end.
   [`rust-toolchain.toml`](https://github.com/contextgeneric/cargo-cgp/blob/main/rust-toolchain.toml).
 - [`crates/cargo-cgp/tests/update.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/update.rs):
   `sparse_index_path` over the registry's dir convention; `parse_versions` skipping yanked and
-  unparseable lines; and the channel-preserving `select_update` (a stable install taking the highest
-  stable and *never* a pre-release, a pre-release install taking the highest pre-release, and
-  no-newer/downgrade yielding `None`), all without a network call.
+  unparseable lines; and `select_update` (a stable install taking the highest stable and *never* a
+  pre-release, a pre-release install taking the highest newer version of either kind, including the
+  release it previewed, and no-newer/downgrade yielding `None`), all without a network call.
 - [`crates/cargo-cgp/tests/command.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/command.rs):
   `forwards_target_dir` detects an explicit `--target-dir` (spaced or `=`) so the default is not
-  injected over it.
+  injected over it; `forwarded_manifest_path` finds a `--manifest-path` in either form; and
+  `parse_target_directory` reads `target_directory` out of `cargo metadata`'s JSON.
 - [`crates/cargo-cgp/tests/dispatch.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/dispatch.rs):
-  the side-effect-free dispatch paths (an unknown subcommand, and a missing subcommand or help
-  flag).
+  the side-effect-free dispatch paths (an unknown subcommand, a missing subcommand or help flag,
+  `--version`/`-V`, and `setup` and `update` answering `--help` without running and refusing any
+  other argument); [`tests/help.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/help.rs)
+  checks the `setup` and `update` help texts name what each command needs.
 - The [UI snapshot suite](testing.md) is the standing end-to-end proof that the driver runs as the
   compiler; it drives the built binaries with `CARGO_CGP_NO_MANAGE` set, so the check runs unmanaged
   against the toolchain `cargo test` already selected. The managed path (preflight + toolchain

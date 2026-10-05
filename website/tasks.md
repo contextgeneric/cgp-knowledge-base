@@ -223,8 +223,8 @@ replace. The code tasks are numbered DC, and DC1 and DC3 keep their IDs.
   DC3 for those five pages. The written index gives a git dependency, pending a cgp-serde release
   built on `cgp` 0.8.0.
 - **P4: the error backend pages.** About 22 pages. *Blocked by:* the `cgp` 0.8.0 release, since the
-  published 0.8.0-alpha crates behave differently from the source the pages describe, and a verified
-  wiring with its output in the eyre and std records in this base, which only the anyhow record has.
+  crates ship with it, and a verified wiring with its output in the eyre and std records in this
+  base, which only the anyhow record has.
 - **P5: the links into the section.** An *In practice:* entry in each Concepts page's *Where to go next*
   that has a matching example page, the error backends linked from the error-handling concept and
   reference pages, each project section listed on Resources, and the applied tutorial (T3) routed to the
@@ -309,18 +309,15 @@ somewhere to be tracked.
   the release-announcement guide, so it is also the guide's first test; record what the spec got wrong.
 
 - **V2: publish `cargo-cgp` v0.1.0 so the cargo-cgp pages become true.** The
-  [cargo-cgp section](site-structure.md#cargo-cgp) is written against v0.1.0 as though it had shipped.
-  The front-end changes the pages rely on are on `cargo-cgp`'s `main` (`--version`, the update
-  channel, `setup` and `update` answering `--help`, and `target/cgp` placed in the project's target
-  directory), so what remains is the release itself. **The repository's own README**, which is also
-  the crates.io page, drops its pre-release banner and carries the release. **Every quoted output on
-  the section is re-run against the tagged build**: the pages quote output captured from `main` with
-  its version string rewritten to `0.1.0`, and the alpha-upgrade path has not been run. The re-run
-  reaches past the section, to every `cargo cgp check` output the site quotes (the compile-errors
-  page, the checking tutorial, the reference pages, the Projects pages). The skill's version line and
-  Nix tag in `cgp-skills` move to `v0.1.0` in the same pass. *Lands in:* the `cargo-cgp` repository,
-  then the website's `v0.8.0` branch and `cgp-skills`. *Blocks:* V1's merge. *Done when:* the tag
-  exists, every quoted output matches it, and the section's record drops its pre-release notes.
+  [cargo-cgp section](site-structure.md#cargo-cgp), the tool's README, and the `cgp-skills` skill are
+  written against v0.1.0 as though it had shipped, per the base's
+  [rule on versions](../AGENTS.md#document-official-versions-never-pre-releases), and the front-end
+  changes they rely on are on `cargo-cgp`'s `main`. What remains is the release itself. **Tag and
+  publish v0.1.0**, then **re-run every quoted output against the tagged build**: the pages quote
+  output captured from `main`. The re-run reaches past the section, to every `cargo cgp check` output
+  the site quotes (the compile-errors page, the checking tutorial, the reference pages, the Projects
+  pages). *Lands in:* the `cargo-cgp` repository, then the website's `v0.8.0` branch. *Blocks:* V1's
+  merge. *Done when:* the tag exists and every quoted output matches it.
 
 ## A — The AI disclosure
 

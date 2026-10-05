@@ -105,7 +105,7 @@ so the crates' docs.rs pages list items with no explanation.
   `reqwest = "0.11"`, it describes the assembly crate as defining "presets", and it defers to the
   announcement post, whose wiring code is several breaking releases old.
 - **The branches diverge from the published crate.** The crates.io release, 0.1.0 (tag `v0.1.0`),
-  was built against `cgp` 0.4.1, `main` tracks `cgp` 0.7.0, and `v0.8.0` tracks `cgp` 0.8.0-alpha.
+  was built against `cgp` 0.4.1, `main` tracks `cgp` 0.7.0, and `v0.8.0` tracks `cgp` 0.8.0.
   All three carry version 0.1.0.
 - **Providers use the explicit form.** Almost every provider names the context and lists `Context:`
   bounds, and none uses [`#[uses]`](../../cgp/reference/attributes/uses.md). This is the form the

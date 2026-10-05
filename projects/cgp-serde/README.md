@@ -10,7 +10,7 @@ deserializer can draw services such as an arena allocator from the context it ru
 - **Branch documented**: `v0.8.0`
 - **Crates**: `cgp-serde`, `cgp-serde-extra`, `cgp-serde-json`, `cgp-serde-alloc`,
   `cgp-serde-typed-arena`, all at 0.2.0
-- **Tracks**: `cgp` 0.8.0-alpha, through a git patch to the `cgp` repository's `main` branch
+- **Tracks**: `cgp` 0.8.0, through a git patch to the `cgp` repository's `main` branch
 - **Status**: Proof of concept; see [Status and gaps](#status-and-gaps)
 
 ## What it is
@@ -40,11 +40,11 @@ yet, because the record and sequence providers do not declare a length. The desi
 
 ## Which revision these documents describe
 
-These documents describe the `v0.8.0` branch, which tracks `cgp` 0.8.0-alpha and is not yet
+These documents describe the `v0.8.0` branch, which tracks `cgp` 0.8.0 and is not yet
 released. The crates on crates.io and the repository's `main` branch are the 0.2.0 release, built
 against `cgp` 0.7.0; the `v0.8.0` branch still carries version 0.2.0 in its manifests. The library
 crates on the two branches offer the same components and providers and differ only in attribute
-syntax that `cgp` 0.8.0-alpha changed, while the tests on `v0.8.0` wire per-type dispatch with the
+syntax that `cgp` 0.8.0 changed, while the tests on `v0.8.0` wire per-type dispatch with the
 `open` statement where the release builds `UseDelegate` tables. So what these documents say a
 provider does holds for both, but code quoted from them compiles only against the `v0.8.0` branch.
 Source links point at that branch, per

@@ -236,7 +236,7 @@ with no arguments prints a short description of the driver and these same flags 
 `built-against-rustc:` compiler it was actually built with:
 
 ```text
-cargo-cgp-driver 0.1.0-alpha
+cargo-cgp-driver 0.1.0
 pinned-toolchain: nightly-2026-09-14
 built-against-rustc: rustc 1.100.0-nightly (4b6d04e70 2026-09-13)
 ```

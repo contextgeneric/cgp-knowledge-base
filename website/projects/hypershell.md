@@ -55,10 +55,9 @@ The writing turned up several facts a later revision must respect:
   was re-run in a probe crate against the local checkout, with `cargo-cgp` built from source. The
   network examples were not re-run; their pages describe what they print, from the records, without
   quoting output that was not captured.
-- **The diagnostics come from the unreleased `cargo-cgp`.** The published v0.1.0-alpha reports the
-  missing dispatcher entry as `[CGP-E107]` where the source reports `[CGP-E110]`, and the site's
-  [compile errors page](https://contextgeneric.dev/docs/reference/errors) already documents
-  `[CGP-E110]`, so the pages follow the source. Re-check them when `cargo-cgp` next releases.
+- **The diagnostics come from `cargo-cgp` built from source**, which is the v0.1.0 release the site
+  documents, per the base's [rule on versions](../../AGENTS.md#document-official-versions-never-pre-releases).
+  Re-check them against the tagged release.
 - **Source links point at `main`**, per the writing guide, so until the `v0.8.0` branch merges they
   show the older preset-based code.
 - **The pages are on the website's release branch**, so they publish when that branch merges, with

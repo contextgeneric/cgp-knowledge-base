@@ -35,8 +35,7 @@ in all.
 
 - **Index** — from the [project README](../../projects/error/README.md): the table of the three
   crates, the four roles each fills, which to reach for first, and the route to the walkthroughs and
-  guides. The four ways the published 0.8.0-alpha crates differ from the source are dropped, since
-  the pages describe the release built from that source.
+  guides.
 - **Walkthroughs**, one per crate, as the crate's `index.md`:
   - `anyhow/index.md` — from
     [cgp-error-anyhow/README.md](../../projects/error/cgp-error-anyhow/README.md): the verified
@@ -87,11 +86,8 @@ section, and for std, the chain printed with `{}` and with `{:#}`. Those outputs
 distinguish the three walkthroughs.
 
 **The release conditions are the `cgp` release itself.** The crates ship from the `cgp` repository
-at the same version, and the published 0.8.0-alpha differs from the source in four ways that change
-behavior, per the [project
-README](../../projects/error/README.md#which-revision-these-documents-describe). The pages describe
-the 0.8.0 release, so they are written against the source and published once that release is on
-crates.io.
+at the same version, and the pages describe the 0.8.0 release, so they are written against the source
+and published once that release is on crates.io.
 
 ## Links into the section
 

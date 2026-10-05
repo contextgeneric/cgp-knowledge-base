@@ -97,7 +97,7 @@ match. The candid future-work section is the honesty that
   `arena_simplified.rs` are the 0.2.0 tests wired with `UseDelegate` tables. The `v0.8.0` versions,
   wired with `open`, are recorded in
   [projects/cgp-serde/examples/](../../projects/cgp-serde/examples/README.md).
-- **`cgp-serde` itself has moved on.** The repository now tracks `cgp` 0.8.0-alpha at crate version
+- **`cgp-serde` itself has moved on.** The repository now tracks `cgp` 0.8.0 at crate version
   0.2.0, so the post describes the 0.1 release rather than the current library.
 
 ## Maintaining it

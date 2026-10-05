@@ -9,7 +9,7 @@ it suits a library or a `no_std` context that wants an open-ended error type.
   [`crates/standalone/error/cgp-error-std/`](https://github.com/contextgeneric/cgp/tree/main/crates/standalone/error/cgp-error-std)
   in the `cgp` repository, on `main`; see
   [which revision](../README.md#which-revision-these-documents-describe)
-- **Crate**: `cgp-error-std` 0.8.0-alpha, depending only on `cgp-core`
+- **Crate**: `cgp-error-std` 0.8.0, depending only on `cgp-core`
 - **`no_std`**: yes, with `alloc`
 - **Tests**: the `std_*` files, `readme_std.rs`, and the shared `swapping_backends.rs` of the
   `error_backends` target; see [testing.md](testing.md)
@@ -44,9 +44,7 @@ prints its own message, and the error it wraps is reachable only through `source
 `WrapError` prints its detail alone with `{}`, and a reporter that walks `source()`, such as
 anyhow's or eyre's when a boxed error is later converted into one of theirs, prints every message
 exactly once. To print the whole chain from the error itself, use `{:#}` or `{:?}` on a `WrapError`,
-which join the messages with `": "`. The published 0.8.0-alpha prints the source inside `Display` as
-well, so a chain walk repeats it; see
-[which revision](../README.md#which-revision-these-documents-describe).
+which join the messages with `": "`.
 
 One consequence is worth knowing when printing the boxed `Error` directly: `{:#}` reaches
 `WrapError`'s chain form only when the outermost error is a `WrapError`. A raised error that was

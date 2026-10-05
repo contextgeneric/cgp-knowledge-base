@@ -466,10 +466,10 @@ as Hypershell's nightly toolchain and its network-bound backends. The rule and i
 recorded in [AGENTS.md](../AGENTS.md#verify-code-against-current-cgp-and-never-against-a-blog-post).
 
 **Quote `cargo-cgp` output from the tool built at its current source**, the same output the site's
-compile errors page documents, and record in the example's internal document where the published
-release prints something different. The published v0.1.0-alpha reports a missing dispatcher entry as
-`[CGP-E107]` where the source reports `[CGP-E110]`, for instance, and a reader running the release
-will see the first. Re-check the quoted output when the tool releases.
+compile errors page documents. That source is the release the site documents, so a pre-release on
+crates.io is neither quoted nor compared against, per the base's
+[rule on versions](../../AGENTS.md#document-official-versions-never-pre-releases). Re-check the
+quoted output when the tool releases.
 
 **The code must use current idioms.** Where the project's source still uses a form the
 [guides](../../cgp/guides/README.md) tell readers to replace, the page does not publish it: the

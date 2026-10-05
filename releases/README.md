@@ -98,7 +98,7 @@ that post's [internal document](../website/blog/README.md), and closes with what
   types in getter traits.
 - [v0.7.0](v0-7-0.md): 28 February 2026. The ergonomics release: `#[cgp_fn]`, `#[implicit]`,
   `#[uses]`, `#[extend]`, `#[use_provider]`, `#[use_type]`, and the removal of `#[cgp_context]`.
-- [v0.8.0](v0-8-0.md): **unreleased**, in development at `0.8.0-alpha`. Namespaces and paths, the
+- [v0.8.0](v0-8-0.md): **unreleased**, in development on `main`. Namespaces and paths, the
   `open` statement, the removal of presets, and the adoption of `cargo-cgp`.
 
 There is **no v0.7.1**. It was planned as a minor namespace release, grew past that, and was
@@ -108,9 +108,9 @@ renumbered to v0.8.0; the draft announcement written under the old number is doc
 ## What counts as a release, and where the facts come from
 
 A document exists here for every tag in [`cgp`](https://github.com/contextgeneric/cgp) that names a
-published version. The pre-release tags (`v0.4.1-alpha`, the four `v0.5.0` betas, `v0.6.0-beta`,
-`v0.8.0-alpha`) get no document of their own; the work in them is recorded against the release it
-shipped in.
+published version. Pre-release tags are test runs of a release and are not tracked, per the base's
+[rule on versions](../AGENTS.md#document-official-versions-never-pre-releases); the work in them is
+recorded against the release it shipped in.
 
 Every claim in these documents is verified against the tag rather than taken from a summary, because
 the summaries disagree with the code in at least three places. The repository's

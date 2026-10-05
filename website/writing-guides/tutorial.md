@@ -247,7 +247,7 @@ error at the wiring site. **Show one deliberate failure**: remove a field a prov
 error's shape without pasting a screenful of it, then show the same failure through `cargo cgp check`
 naming the missing field. And **set the expectation honestly**: raw CGP diagnostics can be verbose, a
 check localizes them, `cargo cgp check` leads with the root cause for the classes it recognizes, and the
-tool is an early pre-release that does not yet reshape every class. Pretending the diagnostics are as
+tool does not yet reshape every class. Pretending the diagnostics are as
 smooth as the surface syntax costs more trust than admitting they are not.
 
 This material has its own tutorial in the first-principles register, the checking-and-debugging part of

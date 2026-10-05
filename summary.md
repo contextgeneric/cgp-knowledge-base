@@ -15,10 +15,11 @@ it stale.
 - [README.md](README.md) — what the knowledge base is, why the ecosystem's documentation is
   consolidated here, and a summary of every top-level directory.
 - [AGENTS.md](AGENTS.md) — the authoring and maintenance rules for the whole base: the
-  synchronization rule, verifying against the source, document-the-present, the rules that follow from
-  this repository being public, how links are written, the separate owners of project facts
-  (`projects/`) and CGP patterns (`cgp/`, `examples/`) and matching a project's documented branch,
-  registering a document, the prose mechanics, and the committing rule.
+  synchronization rule, verifying against the source, document-the-present, documenting official
+  versions and never pre-releases, the rules that follow from this repository being public, how
+  links are written, the separate owners of project facts (`projects/`) and CGP patterns (`cgp/`,
+  `examples/`) and matching a project's documented branch, registering a document, the prose
+  mechanics, and the committing rule.
 - [summary.md](summary.md) — this file.
 - [sibling-projects.md](sibling-projects.md) — the member projects, their repositories, the revision
   of each to read, and the rules for finding a sibling locally versus linking to it.
@@ -708,10 +709,11 @@ it stale.
   layering the depth rather than omitting the advanced material, never taking current syntax from a
   blog post, the `example-code` crate and the Projects pages' exception to it, the prohibition on
   rewriting published history and the settled pointer from a post to the project section it grew
-  into, the release-branch model the redesign lands through, who drafts a page and who reads it
-  before it publishes, disclosing AI use on a page, the document template, the status vocabulary,
-  and how a ported catalog registers as one entry rather than one document per page, with the
-  Projects section recorded one plan per project.
+  into, the release-branch model the redesign lands through (both `cgp` v0.8.0 and `cargo-cgp`
+  v0.1.0, written as shipped), who drafts a page and who reads it before it publishes, disclosing AI
+  use on a page, the document template, the status vocabulary, and how a ported catalog registers as
+  one entry rather than one document per page, with the Projects section recorded one plan per
+  project.
 - [website/information-architecture.md](website/information-architecture.md) — the site as intended:
   why most readers never see the homepage, the four routes in and why three fail, what each surface is
   for, the target page inventory including unwritten pages, the sidebar order, and each reader
@@ -899,7 +901,7 @@ it stale.
   associated types in getter traits; all three still current.
 - [v0-7-0.md](releases/v0-7-0.md) — 2026-02-28, the most recent shipped release: the attribute suite
   and the removal of `#[cgp_context]`; its changelog entry is mislabelled v0.6.2.
-- [v0-8-0.md](releases/v0-8-0.md) — **unreleased**, in development at `0.8.0-alpha`: namespaces and
+- [v0-8-0.md](releases/v0-8-0.md) — **unreleased**, in development on `main`: namespaces and
   paths, the `open` statement, the removal of presets, the error backends' behavior changes, and why
   it is not v0.7.1.
 
@@ -1263,8 +1265,8 @@ it stale.
   blocks and housekeeping.
 - [projects/error/README.md](projects/error/README.md) — the error backends `cgp-error-anyhow`,
   `cgp-error-eyre`, and `cgp-error-std`: why they are a project rather than part of `cgp/`, the table
-  of their providers, the four ways the published 0.8.0-alpha differs from the source, building and
-  testing, the confirmed gaps, and the catalog.
+  of their providers, the revision documented, building and testing, the confirmed gaps, and the
+  catalog.
 - [projects/error/architecture.md](projects/error/architecture.md) — the four roles every backend
   fills, how the providers are written, what a backend adds over the generic providers, the
   `Send + Sync + 'static` bounds, the `@cgp.core.error` paths, and the feature and `no_std` facts.

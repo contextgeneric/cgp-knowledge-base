@@ -28,26 +28,13 @@ whatever toolchain it already uses for its ordinary builds.
 
 ## Current availability
 
-The tool is published at `v0.1.0-alpha`, and all three paths work: both crates are on crates.io at
-that matching version, so `cargo install cargo-cgp` followed by `cargo cgp setup` produces a working
+The tool is published at `v0.1.0`, and all three paths work: both crates are on crates.io at that
+matching version, so `cargo install cargo-cgp` followed by `cargo cgp setup` produces a working
 install; the Nix flake builds the same pair from the tagged source; and a source checkout builds it
 directly. The cargo path is the intended primary distribution for a machine with rustup.
 
-One command is newer than that release: **`cargo cgp expand`** (see
-[Usage](usage.md#expanding-a-target)) landed after `v0.1.0-alpha` was tagged, so an install from
-crates.io, or from the pinned Nix reference, does not carry it. Until the next release, get it from
-the Nix flake with the tag dropped, which tracks `main`
-(`nix run github:contextgeneric/cargo-cgp -- expand --lib`), or from a
-[source checkout](#installing-from-source). `cargo cgp check` is unaffected.
-
-The next release is `v0.1.0`, cut from `main` alongside `cgp` v0.8.0, and the public website is written
-against it ahead of time. `main` already lets `cargo cgp update` move a pre-release install to a
-stable release, but that cannot reach existing installs, because an install runs its own `update`:
-the `v0.1.0-alpha` front end considers only pre-releases and so never sees `v0.1.0`, and moves to it
-only through a fresh `cargo install cargo-cgp` followed by `cargo cgp setup`. The `v0.1.0-alpha`
-front end also rejects `cargo cgp --version` as an unknown subcommand, so on that install the version
-is the first line of `cargo cgp --help`. What remains before the tag is task V2 in the
-[website plan](../../website/tasks.md).
+This document describes `v0.1.0` as published, per the base's
+[rule on versions](../../AGENTS.md#document-official-versions-never-pre-releases).
 
 ## Platforms and the CGP version it reads
 
@@ -75,24 +62,24 @@ nix profile install github:contextgeneric/cargo-cgp
 ```
 
 This puts both `cargo-cgp` and `cargo-cgp-driver` in your Nix profile, side by side as the front-end
-requires. Append a released tag to pin an exact pre-release rather than the default branch (for the
-current pre-release, `nix profile install github:contextgeneric/cargo-cgp/v0.1.0-alpha`), which is
-the form to prefer for a reproducible install. To run the tool once without installing it (for
+requires. Append a release tag to pin an exact release rather than the default branch
+(`nix profile install github:contextgeneric/cargo-cgp/v0.1.0`), which is the form to prefer for a
+reproducible install. To run the tool once without installing it (for
 example in CI or to try it on a project), run the flake's default app from the project directory
 instead:
 
 ```sh
 cd /path/to/your/project     # a cargo package or workspace that uses `cgp`
-nix run github:contextgeneric/cargo-cgp/v0.1.0-alpha -- check
+nix run github:contextgeneric/cargo-cgp/v0.1.0 -- check
 ```
 
-The `/v0.1.0-alpha` suffix pins the flake to that Git tag; drop it
+The `/v0.1.0` suffix pins the flake to that Git tag; drop it
 (`github:contextgeneric/cargo-cgp`) to track the default branch instead.
 
 To pin the tool in another project's own flake, add it as an input and take its `packages.default`:
 
 ```nix
-inputs.cargo-cgp.url = "github:contextgeneric/cargo-cgp/v0.1.0-alpha";
+inputs.cargo-cgp.url = "github:contextgeneric/cargo-cgp/v0.1.0";
 # then, in a devShell or CI derivation:
 #   packages = [ cargo-cgp.packages.${system}.default ];
 ```

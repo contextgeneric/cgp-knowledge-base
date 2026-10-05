@@ -10,7 +10,7 @@ documents treat each one as its own subproject.
 - **Branch documented**: `v0.8.0`
 - **Crates**: `cgp-example-transfer`, `cgp-example-expression`, `cgp-example-builder`,
   `cgp-example-web-app`, and `cgp-example-greet`, all at 0.1.0 and unpublished
-- **Tracks**: `cgp` 0.8.0-alpha, through a git patch to the `cgp` repository's `main` branch
+- **Tracks**: `cgp` 0.8.0, through a git patch to the `cgp` repository's `main` branch
 - **Status**: Demonstrations rather than libraries; see [Workspace gaps](#workspace-gaps)
 
 ## What it is
@@ -35,7 +35,7 @@ macro's current output:
 
 ## Which revision these documents describe
 
-These documents describe the `v0.8.0` branch, which tracks `cgp` 0.8.0-alpha. It is ahead of `main`,
+These documents describe the `v0.8.0` branch, which tracks `cgp` 0.8.0. It is ahead of `main`,
 which builds against the published `cgp` 0.7.0 and has no `web-app` crate, no namespace wiring in
 `transfer`, and no `transfer` README. None of the crates is published. Source links point at the
 `v0.8.0` branch, per [../AGENTS.md](../AGENTS.md#a-project-section-documents-its-project-in-depth).

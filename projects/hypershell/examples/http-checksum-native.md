@@ -63,9 +63,8 @@ error[E0277]: [CGP-E002] the provider trait `Handler<Pipe<…>, GenericArray<u8,
    = note: root cause: [CGP-E110] provider `HandleToTokioAsyncRead` does not contain any delegate entry for `@HandlerComponent.StreamToStdout.GenericArray<u8, …>`
 ```
 
-The published `cargo-cgp` v0.1.0-alpha reports the same leaf as `[CGP-E107]`, calling
-`HandleToTokioAsyncRead` a context; the dedicated `[CGP-E110]` code is newer than that release. See
-[debugging](../guides/debugging.md#a-stage-cannot-accept-the-previous-stages-output).
+See [debugging](../guides/debugging.md#a-stage-cannot-accept-the-previous-stages-output) for this
+failure and its fix.
 
 ## What it demonstrates
 

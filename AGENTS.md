@@ -106,6 +106,28 @@ concept, guide, or implementation document still describes only the present, and
 longer exists is deleted from it rather than annotated. When you need to say what something *used*
 to be, link to the release document that says it.
 
+## Document official versions, never pre-releases
+
+**Every document names official release versions only, for every crate in the ecosystem**: the
+release a branch is preparing, such as `cgp` v0.8.0 or `cargo-cgp` v0.1.0, never the pre-release
+published on the way to it. A pre-release such as `0.8.0-alpha` or `0.1.0-alpha` is a test run,
+published to check that the crates and the cargo integration work before the official version ships.
+It is not part of the project's public history and is not tracked anywhere: no document names it,
+records how it behaves, compares it with the source, or tells a reader how to move off it.
+
+When the code you are documenting carries a pre-release version (a `Cargo.toml` at `0.8.0-alpha`, a
+binary that reports `0.1.0-alpha`), write as though the official version it leads to has already been
+published. Name that version, describe the code on the branch as that release, and quote command
+output with the official version in place of the pre-release one. Do not add notes about which
+pre-release is on crates.io, what it lacks, or how it differs; when the official version ships, the
+documents are already right.
+
+The rule yields only to an explicit instruction from the user to document a particular pre-release.
+It does not reach code: a manifest or lockfile states whatever version it must to build, and a
+document describing that file names the version it builds against only where an agent needs the
+fact to run it. History stays out by the [rule above](#document-the-present-not-the-history), and
+[releases/](releases/README.md) records official releases alone.
+
 ## This repository is public
 
 **This knowledge base is written for an internal audience but published in a public repository, and

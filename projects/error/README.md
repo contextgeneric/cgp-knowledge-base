@@ -11,8 +11,8 @@ traits concrete.
 - **Local checkout**: `../cgp/crates/standalone/error`, per
   [sibling-projects.md](../../sibling-projects.md)
 - **Branch documented**: `main`
-- **Crates**: `cgp-error-anyhow`, `cgp-error-eyre`, and `cgp-error-std`, all at 0.8.0-alpha
-- **Tracks**: `cgp` 0.8.0-alpha, through a path dependency on `cgp-core`
+- **Crates**: `cgp-error-anyhow`, `cgp-error-eyre`, and `cgp-error-std`, all at 0.8.0
+- **Tracks**: `cgp` 0.8.0, through a path dependency on `cgp-core`
 - **Status**: Small and complete for what they cover; tested by the `error_backends` target of
   `cgp-tests`
 
@@ -45,27 +45,9 @@ also wrap a detail onto an existing error:
 
 ## Which revision these documents describe
 
-These documents describe the crates on the `cgp` repository's `main` branch at version 0.8.0-alpha.
-The 0.8.0-alpha crates on crates.io carry the same public items but differ from this source in four
-ways that change behavior:
-
-- **eyre panics.** The published `cgp-error-eyre` builds eyre with no features, so every report it
-  builds panics unless the application has installed a hook with `eyre::set_hook`. This source
-  enables `auto-install`.
-- **eyre locations.** Where the application enables eyre's default features, the published crate's
-  reports record a `Location:` inside the backend. In this source `raise_error` and `wrap_error` are
-  `#[track_caller]` and the crate enables `track-caller`, so the location is the caller's line.
-- **std wrapping.** The published `RaiseBoxedStdError` implements only `ErrorRaiser`, so it cannot
-  be wired as a wrapper. This source gives it an `ErrorWrapper` impl.
-- **std chains.** The published `WrapError` prints its source inside its own `Display` and also
-  returns it from `source()`, so a reporter that walks the chain prints the source twice. This
-  source prints the detail alone with `{}`.
-
-The published crates also depend on anyhow 1.0.95 and eyre 0.6.12, where this source requires anyhow
-1.0.104 and eyre 0.6.14. They write their providers in older forms (`#[cgp_impl]` blocks with an
-explicit `impl<Context> … for Context` header and a `Context: HasErrorType<Error = …>` bound,
-`#[cgp_provider]`, and `#[cgp_new_provider]`) that the concise `#[cgp_impl]` with `#[use_type]`
-replaces here. Source links point at `main`, which is the branch
+These documents describe the crates on the `cgp` repository's `main` branch as release 0.8.0, per
+the
+base's [rule on versions](../../AGENTS.md#document-official-versions-never-pre-releases). Source links point at `main`, which is the branch
 [sibling-projects.md](../../sibling-projects.md) records for this project.
 
 ## Building and testing

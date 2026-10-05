@@ -113,10 +113,10 @@ page, all of `providers/` that shows code, all of `components/` (including the `
 subsection), and `types/`, one file per type page. The rejected snippets from every section live
 together under `tests/compile_fail/`. The `traits/` and `types/` mirror files stay flat rather than
 following the docs into their subdirectories, because a Rust module name cannot contain a hyphen;
-the mirror still resolves because every page's basename is unique. The crate depends on
-`cgp = "0.8.0-alpha"` and patches it to the `cgp` repository's git `main` through
-`[patch.crates-io]`, so it tests the pages against unreleased `cgp`; the version pin joins the
-tutorials' pin on the release checklist.
+the mirror still resolves because every page's basename is unique. The crate takes `cgp` from the
+`cgp` repository's git `main`, the 0.8.0 release the site documents, so it tests the pages against
+that release before it is on crates.io; pinning `cgp = "0.8.0"` from crates.io joins the tutorials'
+pin on the release checklist.
 
 ## Navigation and the announcement bar
 
@@ -288,8 +288,8 @@ beside the tutorials.
 
 **Half of the guide's check cannot be run until the release ships, and that gap is worth naming.**
 The program is verified — it compiles and runs in the `example-code` mirror. The *install path* is
-not: `cgp = "0.8.0"` does not resolve on crates.io, which carries `0.8.0-alpha`, so `cargo add cgp`
-today produces something other than what the page shows. That is correct on a branch written as
+not: `cgp = "0.8.0"` does not resolve on crates.io until the release is published, so `cargo add cgp`
+cannot be walked as the page shows before then. That is correct on a branch written as
 though v0.8.0 has shipped, and it means the guide's real check — paste the program into a fresh
 project on a clean machine and time the walk — belongs to the release rather than to writing the
 page. Run it then, before the branch merges if the crate is published first.
@@ -455,7 +455,7 @@ pages, in the order a reader needs them, specified by [writing-guides/tooling.md
 - **Installation**: the decision table including the reader with neither rustup nor Nix, the cargo and
   Nix paths pinned to `v0.1.0`, checking the install (with the library path the driver's `--version`
   needs when run by hand on the cargo path), the Linux-only platform statement and the CGP v0.8 target,
-  updating, the alpha-upgrade note, CI, uninstalling (including `target/cgp`), from source, and a short
+  updating, CI, uninstalling (including `target/cgp`), from source, and a short
   note on the agent skill.
 - **Check**: running it from the root, a pasteable `area-demo` package with the deliberate mistake, the
   same mistake pinned to the wiring by `check_components!` (with the raw `help` line it replaces), the
@@ -502,18 +502,17 @@ programs the pages say compile under `tests/cargo_cgp/`.
 
 ### What a later revision must know
 
-**The quoted output comes from `cargo-cgp`'s `main`, not from a release.** It was captured with the
-source-built tool on Linux, against `cgp`'s `main`, and output that names the tool's version was quoted
-with `0.1.0` in place of the pre-release `0.1.0-alpha` the build reports. Task V2 in [tasks.md](tasks.md)
-re-runs every quoted command against the tagged release.
+**The quoted output comes from `cargo-cgp`'s `main`, the v0.1.0 release the pages document.** It was
+captured with the source-built tool on Linux, against `cgp`'s `main`, and output that names the
+tool's version is quoted as `0.1.0`, per the base's
+[rule on versions](../AGENTS.md#document-official-versions-never-pre-releases). Task V2 in
+[tasks.md](tasks.md) re-runs every quoted command against the tagged release.
 
 **Four front-end behaviors the pages describe landed on `main` while the pages were being written**,
 so they are the pages' newest facts and the likeliest to be quoted wrongly from memory:
-`cargo cgp --version` (quoted as `cargo-cgp 0.1.0`), `cargo cgp update` letting a pre-release install
-move to a stable release, `setup` and `update` answering `--help` and refusing other arguments, and
-`target/cgp` sitting in the project's own target directory wherever the command runs. The
-alpha-upgrade note on the installation page stays true after the tag, because an alpha install runs
-its own, older `update`.
+`cargo cgp --version` (quoted as `cargo-cgp 0.1.0`), `cargo cgp update` installing only official
+releases, `setup` and `update` answering `--help` and refusing other arguments, and `target/cgp`
+sitting in the project's own target directory wherever the command runs.
 
 **The pinned nightly's date is shown only where real output contains it.** Commands that need it use
 `nightly-YYYY-MM-DD` and say where to read the real one, so a toolchain bump changes quoted output but
@@ -830,7 +829,7 @@ running example and compiles without a `serde` dependency. **The reflection page
 local field writer**, `WriteFields` over a `FieldsWriter` recursion producing a JSON-like string,
 modeled line for line on `cgp-serde`'s `SerializeFields` and linking to it, rather than a quotation of
 the crate's source. The published `cgp-serde` crate and its `main` branch depend on `cgp` `0.7.0`, so the verification
-crate cannot depend on it beside `0.8.0-alpha` without two `cgp` versions, and a page whose snippet the crate
+crate cannot depend on it beside `cgp` 0.8.0 without two `cgp` versions, and a page whose snippet the crate
 cannot compile would break the rule that every snippet is checked. The dynamic-dispatch page's
 namespace example likewise uses the [namespaces concept](../cgp/concepts/namespaces.md)'s compiled
 open-slot shape rather than the internal document's `@cgp.core.error => @app` redirect.
@@ -1373,7 +1372,7 @@ reader who needs it can find it while a beginner meets it only after the example
 Reference's notation page.
 
 **Snippets are compiled, not eyeballed.** Every written page's examples were checked against `cgp`
-`0.8.0-alpha`, with a `check_components!` assertion per wired context where the page wires one, which is
+`0.8.0`, with a `check_components!` assertion per wired context where the page wires one, which is
 what confirms wiring resolves rather than merely parses. A page that documents a *failure* — a rejected
 input, a macro's own error message — quotes the message the compiler actually produced rather than a
 remembered one, since those wordings change without notice.

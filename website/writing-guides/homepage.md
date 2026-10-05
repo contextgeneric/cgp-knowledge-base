@@ -101,7 +101,7 @@ the pre-emption of the first objection on its own.
 
 Two blocks in sequence, the first labelled as what Rust refuses and the second as the same program under
 CGP. This is the verified form: the first block fails with exactly the error it claims, and the second
-compiles and runs against `cgp` `0.8.0-alpha` once the two imports (`core::fmt::Display` and
+compiles and runs against `cgp` `0.8.0` once the two imports (`core::fmt::Display` and
 `cgp::prelude::*`) are added back.
 
 ```rust
@@ -338,7 +338,7 @@ piece that has room to show a before and after.
 **5. What it costs.** The cost section is not optional and is not softened. It is more machinery than a
 plain trait; for a trait with one implementation a plain trait is the right tool; the compile-time
 work is real; the raw diagnostics are verbose, `cargo cgp check` leads with the root cause for the
-classes it recognizes, and that tool is an early pre-release. This section is the single highest-trust
+classes it recognizes, and the tool does not yet reshape every class. This section is the single highest-trust
 element on the page, and the register to write it in is the author's own: state the cost as part of
 describing the thing accurately, not as a hedge appended to a pitch.
 

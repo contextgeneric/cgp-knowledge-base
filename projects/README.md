@@ -46,7 +46,7 @@ it instead of restating them. A project document explains the project's own desi
 
 ## The catalog
 
-Four projects are documented so far. All four track the CGP version in development, 0.8.0-alpha, and
+Four projects are documented so far. All four track the CGP release in preparation, 0.8.0, and
 most are cited by public posts whose code has since gone stale, which is a recurring pattern worth
 expecting: the project moves with the library while the post that announced it does not.
 

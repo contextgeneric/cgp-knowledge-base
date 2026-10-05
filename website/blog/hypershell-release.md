@@ -122,7 +122,7 @@ removed something the post uses.
   [crate layout](../../projects/hypershell/architecture/crate-layout.md). The inversion argument
   itself holds.
 - **The install snippet pins `cgp = "0.4.1"` and `hypershell = "0.1.0"`.** Hypershell itself now
-  tracks `cgp` 0.8.0-alpha.
+  tracks `cgp` 0.8.0.
 - **One claim has been overtaken.** The post says AI editors "are getting pretty good at deciphering
   the error messages" as the practical answer to CGP's diagnostics. That is now the second-best
   answer: [`cargo-cgp`](../../cargo-cgp/README.md) rewrites the common wiring errors directly.

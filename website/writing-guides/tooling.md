@@ -80,12 +80,14 @@ applies to error text especially: the tool's messages are the thing being docume
 must come from exactly the program the page shows, so keep that program in the website repository's
 `example-code/` crate and re-run the tool on it rather than on a variant.
 
-**Write against the release the site ships with.** The site publishes alongside a tool release, so the
-pages describe that release as already out, including commands and fixes that land on the tool's
-default branch before the tag. Output captured from a pre-release build that names the build's version
-is quoted with the release's version, and the page's record says so; re-running every quoted command
-against the tagged release is a publication step, not an optional check. Where a passage describes
-behavior that does not exist yet on any build, it carries no quoted output until that behavior lands.
+**Write against the official release the site ships with.** The site publishes alongside a tool
+release, so the pages describe that release as already out, including commands and fixes that land on
+the tool's default branch before the tag. No page names a pre-release, explains how one differs, or
+tells a reader how to move off one, per the base's
+[rule on versions](../../AGENTS.md#document-official-versions-never-pre-releases): output that names
+a pre-release version is quoted with the official one. Re-running every quoted command against the
+tagged release is a publication step, not an optional check. Where a passage describes behavior that
+does not exist yet on any build, it carries no quoted output until that behavior lands.
 
 **Say what the command does *not* do.** Every page here carries a boundary, because the honest scope of
 this tool is narrow: it is optional, it is not a build tool, and CGP compiles on stable Rust without it.

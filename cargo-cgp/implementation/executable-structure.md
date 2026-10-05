@@ -206,11 +206,13 @@ argument and rewrite tests are listed in the [driver deep dive](driver.md#tests)
 - [`crates/cargo-cgp/tests/args.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/args.rs):
   `strip_subcommand` across the invocation forms.
 - [`crates/cargo-cgp/tests/dispatch.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/dispatch.rs):
-  `dispatch`'s side-effect-free branches: an unknown subcommand errors, and no subcommand or a help
-  flag shows the help text.
+  `dispatch`'s side-effect-free branches: an unknown subcommand errors, no subcommand or a help flag
+  shows the help text, a version flag prints the version, and `setup` and `update` answer `--help`
+  without running and refuse any other argument.
 - [`crates/cargo-cgp/tests/help.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/help.rs):
-  the help texts list the subcommands and options, the help flags are recognized, and the top-level
-  help points at both subcommand helps.
+  the help texts list the subcommands and options, the help and version flags are recognized, the
+  top-level help points at both subcommand helps, and the `setup` and `update` helps say what each
+  installs and needs.
 - [`crates/cargo-cgp/tests/sysroot.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/sysroot.rs):
   `format_stderr`, which appends a failed sysroot probe's stderr (a loader failure, empty output,
   non-UTF-8 bytes) to its error message.

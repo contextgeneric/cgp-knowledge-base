@@ -206,7 +206,7 @@ counts are estimates from the internal catalogs; each plan says how its count wa
   the comparison with Serde. Its component pages wait on DC3.
 - [error-backends.md](error-backends.md) — `cgp-error-anyhow`, `cgp-error-eyre`, and
   `cgp-error-std`: one walkthrough per crate, 15 construct pages, and the shared guides. The
-  smallest, and the only one whose published crates change behavior at the release.
+  smallest, and the only one that ships from the `cgp` repository itself.
 
 At these estimates the section is roughly two hundred pages, most of them reference pages, which is
 why the ordering below writes the examples of every project before the bulk of any reference.

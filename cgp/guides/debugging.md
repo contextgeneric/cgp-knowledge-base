@@ -42,7 +42,7 @@ through a cascade is already at the top of the output. Install and run it per th
 
 **The rest of this guide is the fallback.** Reach for the hand techniques below when `cargo-cgp` is
 not available on the machine, when it leaves an error largely as `rustc` wrote it (it is an early
-pre-release that reshapes the core classes but not yet every one, so an orphan-rule error, for
+release that reshapes the core classes but not yet every one, so an extensible-data failure, for
 instance, still comes through raw), or when you want to understand the raw diagnostic behind a
 reshaped one. In every such case the shape-reading, grepping, check-promotion, and reduction moves
 that follow still apply to the underlying compiler output, which is the same output `cargo-cgp`

@@ -147,8 +147,8 @@ internal document** under [blog/](../blog/README.md) in the same change, per
 
 Two further items belong to the release rather than to the post, and both are invisible until someone
 tries to follow the site. **Re-pin the `cgp` version wherever the site names it**: every tutorial's
-`Cargo.toml` snippet and the `example-code` crate, which tracks the resolvable pre-release until the
-real version exists on crates.io. A tutorial pinning a version crates.io does not yet carry is correct
+`Cargo.toml` snippet and the `example-code` crate, which takes `cgp` from the repository's `main`
+until the release exists on crates.io. A tutorial pinning a version crates.io does not yet carry is correct
 on the branch and broken the moment a reader copies it, so the pin and the release ship together. And
 **confirm the sitemap and submit it**, per
 [seo.md](../seo.md#the-work-in-order), which is the one search task that cannot be done early.

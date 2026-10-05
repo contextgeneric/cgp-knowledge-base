@@ -8,7 +8,7 @@ customizable reports; no project in the ecosystem wires it yet.
   [`crates/standalone/error/cgp-error-eyre/`](https://github.com/contextgeneric/cgp/tree/main/crates/standalone/error/cgp-error-eyre)
   in the `cgp` repository, on `main`; see
   [which revision](../README.md#which-revision-these-documents-describe)
-- **Crate**: `cgp-error-eyre` 0.8.0-alpha, depending on `cgp-core` and `eyre` 0.6.14 with the
+- **Crate**: `cgp-error-eyre` 0.8.0, depending on `cgp-core` and `eyre` 0.6.14 with the
   `auto-install` and `track-caller` features
 - **`no_std`**: no, because eyre requires `std`
 - **Tests**: the `eyre_*` files, `readme_eyre.rs`, and the shared `swapping_backends.rs` of the
@@ -38,9 +38,7 @@ have one. The first report the crate builds installs eyre's default handler, so 
 with no setup. An application that wants a different handler, such as `color-eyre`, installs it with
 `eyre::set_hook` at the start of `main`: once any report exists, `set_hook` returns an error and the
 default handler stays. Without `auto-install`, building a report with no hook installed panics with
-"a handler must always be installed if the `auto-install` feature is disabled", which is how the
-published 0.8.0-alpha behaves; see
-[which revision](../README.md#which-revision-these-documents-describe).
+"a handler must always be installed if the `auto-install` feature is disabled".
 
 The crate also enables eyre's `track-caller` feature, so the default handler prints a `Location:`
 section naming where the report was built. That is the line that called `raise_error`, because

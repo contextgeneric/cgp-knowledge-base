@@ -472,7 +472,7 @@ page in the same change.
 The account of the related work draws on the primary literature of the object-capability model, the
 documentation of the systems and languages that implement it, the effects-as-capabilities papers and
 the Scala reference, and the Rust community's own writing. The `cap-std` snippets were compiled with
-`cap-std` 3.x and the CGP snippet against the local `cgp` source at `0.8.0-alpha`; the Scala snippet
+`cap-std` 3.x and the CGP snippet against the local `cgp` source at `0.8.0`; the Scala snippet
 was compiled with Scala 3.8.4. The Pony snippet is not compiled, because the Nix `ponyc` package
 builds its own LLVM; its calls were checked against the standard library's signatures for
 `FileAuth`, `FilePath`, and `OpenFile`.
