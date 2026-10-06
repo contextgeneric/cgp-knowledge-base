@@ -32,7 +32,7 @@ pub enum ChatEvent {
     Posted(Posted),
     Edited(Edited),
     Reacted(Reacted),
-    HistoryCleared(()),
+    HistoryCleared,
 }
 
 #[derive(Debug, PartialEq, CgpData)]
@@ -45,7 +45,7 @@ pub struct SyncBatch {
 `Edited` holds a `message_id`, a `date`, and new `encrypted_data`; `Reacted` holds a `message_id`,
 an `author_id`, and an `emoji: String`. The emoji is a `String` rather than a `char`, because many
 emoji are several Unicode scalar values: the example's 👍🏽 is two. `HistoryCleared` carries no data,
-so it holds `()`, the form `CgpVariant` requires of a variant with no data; see
+so it has no fields, and `CgpVariant` gives it the payload `Nil`; see
 [variants](../reference/variants.md). None of the types derives anything from Serde, and none names
 an encoding.
 
@@ -64,14 +64,16 @@ delegate_components! {
         };
 
         @ValueSerializerComponent.<'a, T> &'a T: SerializeDeref,
-        @ValueSerializerComponent.[i64, u64, String, ()]: UseSerde,
+        @ValueSerializerComponent.[i64, u64, String]: UseSerde,
+        @ValueSerializerComponent.Nil: SerializeUnit,
         @ValueSerializerComponent.Vec<u8>: SerializeBase64,
         @ValueSerializerComponent.DateTime<Utc>: SerializeTimestamp,
         @ValueSerializerComponent.[Posted, Edited, Reacted, SyncBatch]: SerializeRecordFields,
         @ValueSerializerComponent.ChatEvent: SerializeVariantFields,
         @ValueSerializerComponent.Vec<ChatEvent>: SerializeIterator,
 
-        @ValueDeserializerComponent.[i64, u64, String, ()]: UseSerde,
+        @ValueDeserializerComponent.[i64, u64, String]: UseSerde,
+        @ValueDeserializerComponent.Nil: SerializeUnit,
         @ValueDeserializerComponent.Vec<u8>: SerializeBase64,
         @ValueDeserializerComponent.DateTime<Utc>: SerializeTimestamp,
         @ValueDeserializerComponent.[Posted, Edited, Reacted, SyncBatch]: DeserializeRecordFields,
@@ -89,7 +91,7 @@ Every type the traversal reaches has an entry in each direction: the three recor
 through the [record providers](../reference/records.md), `ChatEvent` through the
 [variant providers](../reference/variants.md), the `Vec` of events through
 [`SerializeIterator` and `DeserializeExtend`](../reference/collections.md), the reference entry that
-iterating the `Vec` needs, and `()` for `HistoryCleared`. Each context checks all of them with two
+iterating the `Vec` needs, and `Nil` for `HistoryCleared`. Each context checks all of them with two
 `check_components!` tables, the deserializing one with `Life<'de>`.
 
 ## Writing and reading through the adapters
@@ -127,10 +129,11 @@ inside the records. The first event, from the server and then from the inspector
 
 The example prints the documents pretty-printed; the lines above are condensed. The `device_key` is
 `"ZGV2aWNlLTc="` from the server and `"6465766963652d37"` from the inspector, `Reacted` keeps its
-emoji as written, and `HistoryCleared` is `{"HistoryCleared": null}` from both, since both wire `()`
-to `UseSerde`. Each application reads its own document back into a batch equal to the original. The
-dates are whole seconds, because a Unix timestamp drops anything finer, so a date with milliseconds
-would not survive the server's round trip.
+emoji as written, and `HistoryCleared` is `{"HistoryCleared": null}` from both, since both wire
+`Nil` to [`SerializeUnit`](../reference/variants.md#serializeunit). Serde's derive would write the
+bare name `"HistoryCleared"` instead. Each application reads its own document back into a batch
+equal to the original. The dates are whole seconds, because a Unix timestamp drops anything finer,
+so a date with milliseconds would not survive the server's round trip.
 
 ## Reading the other application's JSON
 
@@ -154,13 +157,29 @@ An encoding is not self-describing, and nothing in the data types records which 
 ends of a channel must therefore wire the same choices, and a mismatch can pass unnoticed until a
 value happens not to fit.
 
+## Try a change
+
+**Removing the server's `Nil` entry for reading makes every type that contains an event fail its
+check.** Delete `@ValueDeserializerComponent.Nil: SerializeUnit` from `ServerApp` and the
+`(Life<'de>, Nil)` entry from its deserializer check, then run `cargo cgp check`. The check fails on
+the three types that contain an event, and the tool names the missing entry as the root cause:
+
+```text
+error[E0277]: [CGP-E001] the consumer traits `CanDeserializeValue<ChatEvent>`, `CanDeserializeValue<Vec<ChatEvent>>`, and `CanDeserializeValue<SyncBatch>` are not implemented for context `ServerApp`
+    = note: root cause: [CGP-E107] context `ServerApp` does not contain any delegate entry for `@ValueDeserializerComponent.Nil`
+```
+
+The dependency chain below the root cause runs from `SyncBatch` through the `Vec` and `ChatEvent`,
+then down each variant of `Enum! { … }` to `HistoryCleared(Nil)`. No struct holds a `Nil`, so the
+entry is needed only because an event may be `HistoryCleared`.
+
 ## What it demonstrates
 
 - The record and variant providers together, in both directions: see
   [records](../reference/records.md) and [variants](../reference/variants.md).
 - A context's choices reaching through an enum into the records its variants hold: see
   [re-entrant providers](../architecture/reentrant-providers.md).
-- A variant with no data as a `()` payload: see
+- A variant with no fields, whose `Nil` payload the context wires: see
   [variants](../reference/variants.md#wiring-the-pair).
 - Encodings as a wiring decision both ends of a channel must share: see
   [component design](../architecture/component-design.md).

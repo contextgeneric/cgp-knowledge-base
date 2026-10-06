@@ -43,8 +43,10 @@ the choice of variant.
 ## Behavior
 
 Each `FromVariant` impl is a thin wrapper that maps a payload to its variant. The derive emits, for
-every single-payload variant, an impl keyed by that variant's name symbol with the payload as
-`Value`, whose `from_variant` simply returns `Self::Variant(value)`. There is no intermediate type,
+every variant, an impl keyed by that variant's name symbol with the payload as `Value`, whose
+`from_variant` simply returns `Self::Variant(value)`. A variant with no fields has the payload
+`Nil` and builds itself without it, so `Status::from_variant(PhantomData::<Symbol!("Closed")>, Nil)`
+is `Status::Closed`. There is no intermediate type,
 no `MapType` marker, and no validation beyond the type system's own check that the supplied `value`
 matches the variant's payload type. Because the impls are distinguished only by their `Tag` type
 parameter, resolving a `from_variant` call comes down to which `Symbol!` the caller names in the
@@ -84,8 +86,8 @@ derived impl is spanned at its variant, so a hand-written
 `impl FromVariant<Symbol!("Circle")> for Shape` beside the derive fails with `E0119`, ``conflicting implementations of trait `FromVariant<…>` for type `Shape` ``,
 with the primary label on the `Circle` variant. A variant named `Value` breaks the derive, because
 the generated signature names the payload as `Self::Value`; see
-[`#[derive(FromVariant)]`](../derives/derive_from_variant.md). Every variant needs exactly one unnamed
-payload, the derive's requirement rather than the trait's.
+[`#[derive(FromVariant)]`](../derives/derive_from_variant.md). Every variant needs one unnamed
+payload or no fields, the derive's requirement rather than the trait's.
 
 Bound on `FromVariant` only where a type parameter decides the variant to build: a concrete site
 writes the constructor, which is shorter and generates nothing, and a type that is also taken apart

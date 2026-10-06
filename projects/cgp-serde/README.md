@@ -75,14 +75,15 @@ The layout is worked through in [architecture/crate-layout.md](architecture/crat
 
 ## Status and gaps
 
-The library handles named-field structs, enums whose variants each hold one payload, the common
-scalar and collection types, and any type that already implements Serde's traits, but it is a proof
-of concept with gaps that have each been
-confirmed against the `v0.8.0` branch. [issues.md](issues.md) records them in full, together with
-the defects and housekeeping items this summary leaves out:
+The library handles named-field structs, enums whose variants each hold one payload or none, the
+common scalar and collection types, and any type that already implements Serde's traits, but it is a
+proof of concept with gaps that have each been confirmed against the `v0.8.0` branch.
+[issues.md](issues.md) records them in full, together with the defects and housekeeping items this
+summary leaves out:
 
 - **Enums**: the variant providers write only Serde's externally tagged form, every variant must
-  hold exactly one payload, and the serializer accepts only `'static` enums; see
+  hold one payload or no fields, a variant with no fields is written differently from Serde's derive
+  in JSON and RON, and the serializer accepts only `'static` enums; see
   [variants](reference/variants.md#known-issues).
 - **Recursive data types**: a type that contains itself, such as a tree node with a `Vec` of
   children, fails to compile through the generic providers and needs a provider written for it; see
@@ -139,8 +140,8 @@ ideas every provider shares, then use the reference to look up a provider.
     serializing a struct as a map and reading one back through the optional builder, with no
     serialization-specific derive.
   - [variants.md](reference/variants.md): `SerializeVariantFields` and `DeserializeVariantFields`:
-    an enum in Serde's externally tagged form, `()` payloads for unit-like variants, and the
-    serializer's `'static` limit.
+    an enum in Serde's externally tagged form, `SerializeUnit` for the `Nil` payload of a variant
+    with no fields, and the serializer's `'static` limit.
   - [default-values.md](reference/default-values.md): `DeserializeDefault`: the one higher-order
     serialization provider, which defaults a null value but not a missing field.
   - [encodings.md](reference/encodings.md): `SerializeHex`, `SerializeBase64`,

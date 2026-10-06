@@ -239,12 +239,14 @@ Lowering errors, in [lowering/](lowering/):
   its caret on the name the user wrote.
 - [Out-of-scope generated name](lowering/out-of-scope-generated-name.md): an `#[impl_generics]`
   parameter named in the trait's own signature, where only the generated impl declares it, so the
-  generated trait names a type it cannot see (`E0433`). It has two siblings, both name collisions
-  between a generated path and a user identifier: the abstract type whose name shadows the trait
-  bounding it (`E0404`), and the enum variant whose name collides with an associated type the
-  extensible-data derives generate, reported as a code-less `ambiguous associated item`, the one
+  generated trait names a type it cannot see (`E0433`). It has three siblings. Two are name
+  collisions between a generated path and a user identifier: the abstract type whose name shadows
+  the trait bounding it (`E0404`), and the enum variant whose name collides with an associated type
+  the extensible-data derives generate, reported as a code-less `ambiguous associated item`, the one
   shape in this class that is a CGP defect, and one whose diagnostic names the offending variant for
-  two of the three derives and not for the extractor.
+  two of the three derives and not for the extractor. The third is the `Box` that the variant
+  derives' mutable extractor names for a variant with no fields, missing in a `no_std` crate that
+  has not imported it (`E0433`).
 
 Error-code reference, in [error_codes/](error_codes/):
 

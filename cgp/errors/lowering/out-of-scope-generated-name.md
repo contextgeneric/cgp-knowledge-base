@@ -151,12 +151,51 @@ issues of each affected derive's [reference](../../reference/derives/derive_extr
 [implementation](../../implementation/entrypoints/derive_extract_field.md) document. A struct's
 *field* names are unaffected, since a field is not in the same namespace as an associated type.
 
+## A third sibling: `Box` in a `no_std` crate
+
+The fourth shape is a name the expansion deliberately leaves to the caller. The variant derives
+([`#[derive(CgpVariant)]`](../../reference/derives/derive_cgp_variant.md), `CgpData` on an enum, and
+[`#[derive(ExtractField)]`](../../reference/derives/derive_extract_field.md)) give a variant with no
+fields the payload `Nil`, and the mutable extractor needs a `&mut Nil` for it. Rust does not promote
+`&mut Nil` to a constant, so the expansion builds it with `Box::leak(Box::new(Nil))`, which never
+allocates because `Nil` is zero-sized. `cgp` links no `alloc`, so the expansion writes `Box` bare,
+resolved where the derive is used. A `std` crate has it in the prelude; a `no_std` crate that has
+not imported it does not:
+
+```rust
+#![no_std]
+
+extern crate std; // links std, but without its prelude
+
+use cgp::prelude::*;
+
+#[derive(CgpVariant)]
+pub enum Status {
+    Active(u64),
+    Closed, // the mutable extractor's `Box::leak(Box::new(Nil))` for this variant
+}
+```
+
+The compiler reports ``E0433: cannot find type `Box` in this scope`` with the label
+``use of undeclared type `Box` `` on the empty variant, where the codegen spans the token, and a
+`help` suggesting `use std::boxed::Box;` (or the `alloc` path in a crate that links `alloc`).
+`cargo-cgp` passes it through unchanged, and it needs nothing more: the caret names the variant and
+the suggestion is the fix. This is an acceptable failure rather than a defect, since naming `Box`
+from `cgp` would make every `cgp` user link `alloc`, and the only alternative way to make a
+`&'a mut Nil` is `unsafe` code.
+
 ## Backing fixtures
 
 - [`acceptable/lowering/impl_generics_in_signature.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/impl_generics_in_signature.rs):
   an `#[impl_generics(Db: Database)]` parameter named as the return type `Db::Row`; its snapshots
   pin the `E0433` with the caret on the return type and the pass-through, and the fixture doubles as
   the recorded forcing condition for promoting an inferred type to an abstract one.
+- [`acceptable/lowering/no_std_empty_variant_without_box.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/no_std_empty_variant_without_box.rs):
+  the [`Box` sibling](#a-third-sibling-box-in-a-no_std-crate): a `no_std` crate deriving
+  `CgpVariant` over an empty variant without `Box` in scope, its snapshots pinning the `E0433` on
+  the variant and rustc's suggested import. Its working counterpart,
+  [`ok/no_std_empty_variant.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/ok/no_std_empty_variant.rs),
+  imports `Box` and compiles clean.
 - [`acceptable/lowering/cgp_type_name_shadows_bound.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/cgp_type_name_shadows_bound.rs):
   the [shadowed abstract type](#a-sibling-the-shadowed-abstract-type), pinning the `E0404` and both
   of its landmark notes.

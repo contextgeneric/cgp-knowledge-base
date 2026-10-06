@@ -67,13 +67,14 @@ Field tags drive everything. A named struct field or an enum variant becomes a t
 field types and single-field variant payload types become the field values. Generic parameters on
 the type are carried through onto the generated impls.
 
-**On an enum, every variant must carry exactly one unnamed payload.** The requirement comes from the
-extractor and `FromVariant` slices, which each have to name one payload type per variant, and a
-fieldless, multi-field, or struct-style variant fails with
-`Expected variant to contain exactly one unnamed field`. Wrap a richer payload in its own struct so
-the variant's value stays a single nameable type. [`#[derive(HasFields)]`](derive_has_fields.md) is
-the exception in the family and accepts all four variant shapes, so an enum that cannot take this
-derive can still have a structural representation.
+**On an enum, every variant must carry one unnamed payload or no fields.** A variant with no fields,
+written `Closed`, `Closed()`, or `Closed {}`, carries the payload `Nil`. The requirement comes from
+the extractor and `FromVariant` slices, which each have to name one payload type per variant, and a
+variant with several fields or with named fields fails with
+`Expected variant to contain exactly one unnamed field, or no fields`. Wrap a richer payload in its
+own struct so the variant's value stays a single nameable type.
+[`#[derive(HasFields)]`](derive_has_fields.md) is the exception in the family and accepts all four
+variant shapes, so an enum that cannot take this derive can still have a structural representation.
 
 The degenerate shapes are accepted rather than rejected. A fieldless struct yields a partial
 companion type with no `MapType` parameters, so `builder()` is already finalizable, and a

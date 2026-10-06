@@ -99,7 +99,8 @@ impl ToFields for Config {
 
 For an enum, `to_fields` matches each variant onto its `Either` arm and `from_fields` matches down
 the chain, ending in `Either::Right(rest) => match rest {}` on the `Void` terminator. `HasFields`
-accepts every variant shape, where the extractor derives need one unnamed payload per variant. A struct produces a `Product!` of its fields and an enum a
+accepts every variant shape, where the extractor derives need one unnamed payload or no fields per
+variant. A struct produces a `Product!` of its fields and an enum a
 `Sum!` of its variants. A single-field tuple struct is special: its `Fields` is the inner type
 directly, so `struct Wrap(u32)` has `Fields = u32`, not a one-element product.
 

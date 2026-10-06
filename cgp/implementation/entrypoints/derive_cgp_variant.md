@@ -35,10 +35,11 @@ their item shapes.
 
 The variant corner cases are inherited from those building blocks: variant names are keyed by
 [`Symbol!`](../../reference/macros/symbol.md), generics (including a lifetime parameter named `'a`)
-are threaded onto every impl and onto the partial enums, and every variant must be a
-single-unnamed-field tuple variant or the extractor and `FromVariant` codegen fail (see
-[`derive_extract_field`](derive_extract_field.md)). The borrowed extractor introduces its own
-lifetime under the reserved name `'__a__` precisely so it never collides with the enum's own `'a`.
+are threaded onto every impl and onto the partial enums, and every variant must have one unnamed
+field or no fields, the latter carrying the payload `Nil`, or the extractor and `FromVariant`
+codegen fail (see [`derive_extract_field`](derive_extract_field.md)). The borrowed extractor
+introduces its own lifetime under the reserved name `'__a__` precisely so it never collides with the
+enum's own `'a`.
 An enum with *no* variants is special-cased so its degenerate expansion still compiles: the borrowed
 partial enum becomes a bare empty enum and the borrowed accessors match the dereferenced place, as
 described in
@@ -94,9 +95,12 @@ The shared variant tests and the enum rejection cases exercise it:
   extractors, guarding against the borrowed extractor's lifetime colliding with the enum's own `'a`.
 - [derive_cgp_data_empty.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/derive_cgp_data_empty.rs)
   snapshots the variantless-enum expansion, pinning the empty-enum special case.
+- [empty_variants.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/empty_variants.rs)
+  derives `CgpVariant` over variants with no fields in all three forms and over a C-like enum, and
+  drives construction, extraction, casts, and dispatch on them.
 - [parser_rejections/derive_from_variant.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/derive_from_variant.rs)
   pins that `#[derive(CgpVariant)]` refuses a non-enum item at parse time, and that the shared
-  single-unnamed-field requirement rejects malformed variants.
+  variant-shape requirement rejects a variant with several or named fields.
 
 ## Source
 

@@ -52,8 +52,9 @@ wire.
 | `DeserializeExtend` | `cgp-serde` | de | `Value: Default + IntoIterator<Item = Item> + Extend<Item>` | `Item` |
 | `SerializeRecordFields` | `cgp-serde` | ser | `Value: HasFields`, plus `HasField` per field | each field type |
 | `DeserializeRecordFields` | `cgp-serde` | de | `Value: HasFields`, plus a builder | each field type |
-| `SerializeVariantFields` | `cgp-serde` | ser | `Value: ToFieldsRef + 'static`, one payload per variant | each variant's payload type |
-| `DeserializeVariantFields` | `cgp-serde` | de | `Value: FromFields`, one payload per variant | each variant's payload type |
+| `SerializeVariantFields` | `cgp-serde` | ser | `Value: ToFieldsRef + 'static`, one payload or none per variant | each variant's payload type, `Nil` for a variant with no fields |
+| `DeserializeVariantFields` | `cgp-serde` | de | `Value: FromFields`, one payload or none per variant | each variant's payload type, `Nil` for a variant with no fields |
+| `SerializeUnit` | `cgp-serde` | both | ser: any `Value`; de: `Value: Default` | nothing |
 | `DeserializeDefault<Provider>` | `cgp-serde` | de | `Value: Default`; `Provider` handles `Value` | nothing; calls `Provider` |
 | `SerializeHex` | `cgp-serde-extra` | both | ser: `Value: ToHex`; de: `Value: FromHex` | `String` |
 | `SerializeBase64` | `cgp-serde-extra` | both | ser: `Value: AsRef<[u8]>`; de: `Vec<u8>` only | `String` |
@@ -103,9 +104,9 @@ Register each reference document here, in [../README.md](../README.md), and in
 - [records.md](records.md): `SerializeRecordFields` and `DeserializeRecordFields`: serializing a
   struct as a map and reading one back through the optional builder, with no serialization-specific
   derive.
-- [variants.md](variants.md): `SerializeVariantFields` and `DeserializeVariantFields`: an enum in
-  Serde's externally tagged form, `()` payloads for unit-like variants, and the serializer's
-  `'static` limit.
+- [variants.md](variants.md): `SerializeVariantFields`, `DeserializeVariantFields`, and
+  `SerializeUnit`: an enum in Serde's externally tagged form, the `Nil` payload of a variant with no
+  fields, and the serializer's `'static` limit.
 - [default-values.md](default-values.md): `DeserializeDefault`: the one higher-order serialization
   provider, which defaults a null value but not a missing field.
 - [encodings.md](encodings.md): `SerializeHex`, `SerializeBase64`, `SerializeRfc3339Date`, and

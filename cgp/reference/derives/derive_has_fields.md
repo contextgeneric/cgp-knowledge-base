@@ -62,8 +62,8 @@ enum's variant shapes.** The derives that *deconstruct* an enum
 ([`#[derive(ExtractField)]`](derive_extract_field.md) and
 [`#[derive(FromVariant)]`](derive_from_variant.md), and therefore
 [`#[derive(CgpVariant)]`](derive_cgp_variant.md) and [`#[derive(CgpData)]`](derive_cgp_data.md))
-require every variant to be a single-unnamed-field tuple variant, because each has to name one
-payload type. `HasFields` only *describes* a variant, so it accepts all four shapes and nests each
+accept a variant with one unnamed field or with no fields, because each has to name one payload
+type. `HasFields` only *describes* a variant, so it accepts all four shapes and nests each
 variant's own fields as a product inside that variant's `Field` entry, applying the same tagging
 rules it applies to a struct:
 
@@ -83,10 +83,17 @@ variant becomes a product keyed by `Index<N>`; and a named-field variant becomes
 `Symbol!`. The `FromFields`, `ToFields`, and `ToFieldsRef` conversions handle each shape, so a value
 of any such enum round-trips through its `Fields` representation.
 
-This matters mostly when deriving `HasFields` alone. Reaching for the umbrella `#[derive(CgpData)]`
-on the same enum would fail, because its extractor slice imposes the single-payload requirement that
-this derive does not, so an enum with mixed variant shapes can have a structural representation but
-no generic constructor or extractor.
+The variant derives agree with this encoding: a variant with no fields, in any of its three forms
+(`Empty`, `Empty()`, `Empty {}`), is the payload `Nil` there too, constructed from `Nil` and
+extracted as `Nil`. The difference matters only for a variant with several fields or with named
+fields, such as `Rectangle` and `Triangle` above. Reaching for the umbrella `#[derive(CgpData)]` on
+such an enum fails, because its extractor slice needs one payload per variant, so an enum with those
+shapes can have a structural representation but no generic constructor or extractor.
+
+In the borrowed view `FieldsRef`, a variant with no fields stays `Nil` rather than `&Nil`: a borrowed
+product is a product of references, and the empty product has none to take. The borrowed extractor
+of [`#[derive(ExtractField)]`](derive_extract_field.md) instead gives `&Nil`, since it borrows the
+variant's payload as a whole.
 
 ## Expansion
 

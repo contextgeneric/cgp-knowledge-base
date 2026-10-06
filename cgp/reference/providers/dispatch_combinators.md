@@ -153,6 +153,12 @@ provider receives `Field<Tag, Value>` and can read the variant name as `Tag::VAL
 [`StaticString`](../traits/static_format.md), so one generic provider serves every variant of every
 enum.
 
+**The difference decides how variants with no fields are told apart.** Each such variant carries the
+payload `Nil`, so a value matcher hands every one of them the same `Nil`, and one handler for `Nil`
+serves them all. A field matcher hands over `Field<Symbol!("Closed"), Nil>`, so its provider still
+sees which variant it is. The borrowed matchers handle these variants too, since the borrowed
+extractors give them a `&Nil` or `&mut Nil` like any other payload.
+
 The borrowed forms `MatchWithFieldHandlersRef`, `MatchWithValueHandlersRef`, and
 `MatchWithValueHandlersMut` are structs with a delegation table. Their `Computer` and
 `AsyncComputer` entries key a `UseInputDelegate` on `&'a Input` or `&'a mut Input` and reach the

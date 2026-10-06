@@ -69,8 +69,9 @@ and `where` clause are threaded onto every generated impl and onto the `__Partia
 
 The shape-specific corner cases are inherited from the building blocks rather than introduced here:
 a single-field tuple struct is special-cased in the `HasFields` product (see
-[`derive_has_fields`](derive_has_fields.md)), and an enum whose variants are not each
-single-unnamed-field tuple variants fails in the extractor and `FromVariant` codegen (see
+[`derive_has_fields`](derive_has_fields.md)), a variant with no fields carries the payload `Nil`,
+and an enum with a variant of several or named fields fails in the extractor and `FromVariant`
+codegen (see
 [`derive_extract_field`](derive_extract_field.md) and
 [`derive_from_variant`](derive_from_variant.md)). `CgpData` on such an enum therefore fails the same
 way, because it runs the same helpers.
@@ -137,6 +138,10 @@ the variant expansion by `extensible_variants`:
 - [extensible_variants/derive_cgp_data_empty.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/derive_cgp_data_empty.rs):
   a variantless enum, the degenerate special case: bare `__Partial*` enums with no parameters and
   `match *self {}` in the borrowed accessors.
+- [extensible_variants/derive_cgp_data_empty_variants.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/derive_cgp_data_empty_variants.rs):
+  a newtype variant beside the three forms of a variant with no fields, each carrying `Nil`: built
+  with `{}`, matched with `{ .. }`, and held as `Nil`, `&Nil`, or `Box::leak(Box::new(Nil))` by the
+  owned, shared, and mutable extractors.
 
 ## Tests
 
@@ -158,6 +163,9 @@ the corner cases the snapshots do not:
 - [extensible_variants/derive_cgp_data_lifetime.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/derive_cgp_data_lifetime.rs):
   the extractor path on an enum whose own lifetime is named `'a`, confirming the reserved `'__a__`
   borrow lifetime does not collide.
+- [extensible_variants/empty_variants.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/empty_variants.rs):
+  variants with no fields through construction, extraction, casts, and dispatch, beside the
+  snapshot above.
 - [record_build_from.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_records/record_build_from.rs),
   [record_build_with_handlers.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_records/record_build_with_handlers.rs),
   [shape_dispatch.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/shape_dispatch.rs),
@@ -169,7 +177,7 @@ the corner cases the snapshots do not:
 The umbrella's own rejection path is pinned in
 [cgp-macro-tests/parser_rejections/derive_cgp_data.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/derive_cgp_data.rs):
 the shape dispatch refuses an item that is neither a struct nor an enum (a union), and the enum path
-propagates the single-unnamed-field variant restriction it shares with
+propagates the variant-shape restriction it shares with
 [`#[derive(CgpVariant)]`](derive_cgp_variant.md) and
 [`#[derive(FromVariant)]`](derive_from_variant.md).
 

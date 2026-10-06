@@ -52,7 +52,7 @@ Three further limits come from the providers rather than the approach, and are r
 [records](../reference/records.md#known-issues): records are written as maps rather than structs,
 without a declared length; and tuple structs are rejected. Enums get the same treatment from the
 [variant providers](../reference/variants.md), which need only `HasFields` and limit each variant to
-one payload.
+one payload or none.
 The field-list recursion is also monomorphized per struct, as Serde's derive output is, so the
 approach saves writing the code rather than compiling it.
 

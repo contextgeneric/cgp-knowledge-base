@@ -256,6 +256,14 @@ trait for a type outside that set, such as each payload struct, coexists with it
 extensible enum, the dispatched `Shape` included, fails with
 ``E0119: conflicting implementations of trait `HasArea` ``.
 
+**Every payload type must be local to the crate writing the trait impls.** A crate can implement the
+dispatched trait for its own payload structs, but an impl for a foreign type, such as `u64`, fails
+with ``E0119: conflicting implementations of trait `HasArea` ``: the blanket impl applies to any type
+implementing `HasExtractor`, and Rust assumes the foreign type's crate may yet implement it. This
+rules out an enum with a variant that has no fields, whose payload is CGP's own `Nil`. Such an enum
+is dispatched with the [dispatch combinators](../providers/dispatch_combinators.md) and a provider
+instead, which a crate can implement for `Nil` because the provider is its own.
+
 **A missing variant impl or derive is reported at the call, not at its cause.** Omitting the impl
 for one payload fails where the enum's method is called, with
 ``E0599: the method `area` exists for reference `&Shape`, but its trait bounds were not satisfied``,

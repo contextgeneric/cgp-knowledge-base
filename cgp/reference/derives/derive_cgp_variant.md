@@ -40,9 +40,11 @@ pub enum Shape {
 }
 ```
 
-Each variant must carry exactly one unnamed payload, as `Circle(Circle)` does; a unit, multi-field,
-or struct-style variant fails with `Expected variant to contain exactly one unnamed field`, because
-the constructor and extractor slices must name one payload type. A variant's name becomes a
+Each variant carries either one unnamed payload, as `Circle(Circle)` does, or no fields at all, as
+`Closed`, `Closed()`, or `Closed {}`, whose payload is [`Nil`](../types/cons.md), the empty product
+[`#[derive(HasFields)]`](derive_has_fields.md) gives it. A variant with several fields or with named
+fields fails with `Expected variant to contain exactly one unnamed field, or no fields`, because the
+constructor and extractor slices must name one payload type. A variant's name becomes a
 type-level string `Symbol!` used as its `Tag`, and its payload type becomes its value type. Generic
 parameters on the enum are carried onto the generated impls. The derive accepts the same enums that
 [`#[derive(CgpData)]`](derive_cgp_data.md) accepts for the variant path; the only difference is that
@@ -115,7 +117,9 @@ It then emits, per variant, an `ExtractField` impl available only when that vari
 `IsPresent`; calling it returns `Ok(value)` if the runtime value is that variant, or
 `Err(remainder)` where the remainder has that variant's marker flipped to `IsVoid`. The borrowed
 `__PartialRefShape` enum carries an extra `MapTypeRef` parameter and backs
-`HasExtractorRef`/`HasExtractorMut`. The full per-variant detail is documented in
+`HasExtractorRef`/`HasExtractorMut`. A variant with no fields carries `Nil` like any payload: the
+owned extractor holds `Nil`, the shared one `&Nil`, and the mutable one a `&mut Nil` made by
+`Box::leak(Box::new(Nil))`. The full per-variant detail is documented in
 [`#[derive(ExtractField)]`](derive_extract_field.md).
 
 The single most important fact about the expansion is that *possibility is encoded in the type*.
@@ -181,6 +185,19 @@ variant with any of those names makes the generated `Self::…` path ambiguous, 
 names the variant depends on which slice collided: the extractor's impls target the generated
 companions and so point back at the derive, while the representation and constructor impls point at
 the real variant.
+
+**A `no_std` crate needs `Box` in scope to derive over a variant with no fields.** The mutable
+extractor builds that variant's `&mut Nil` with `Box::leak(Box::new(Nil))`, and writes `Box` bare,
+resolved where the derive is used, since `cgp` links no `alloc`. A `std` crate has `Box` in its
+prelude; a `no_std` crate without it fails with ``cannot find type `Box` in this scope``, pointing at
+the empty variant, and is fixed by `extern crate alloc; use alloc::boxed::Box;`. See
+[`#[derive(ExtractField)]`](derive_extract_field.md#known-issues).
+
+**`#[cgp_auto_dispatch]` cannot serve an enum with a variant that has no fields.** Every such
+variant's payload is `Nil`, so the dispatched trait needs an impl for `Nil`. `Nil` is foreign to the
+crate writing it, so that impl conflicts with the blanket impl `#[cgp_auto_dispatch]` emits
+(`E0119`). Dispatch over such an enum with a value or field matcher and a provider instead; see
+[`#[cgp_auto_dispatch]`](../macros/cgp_auto_dispatch.md#known-issues).
 
 **A variant attribute that belongs to another derive breaks the build.** The extractor slice keeps
 each variant's attributes on the `__Partial{Name}` companion enums, so a helper attribute such as

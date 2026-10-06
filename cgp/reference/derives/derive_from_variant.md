@@ -35,11 +35,14 @@ pub enum Shape {
 ```
 
 Each variant's name becomes a type-level string `Symbol!` used as the variant's `Tag`, and its
-payload type becomes the constructor's value type. Every variant must carry exactly one unnamed
-payload, a single-field tuple variant such as `Circle(Circle)`; a fieldless, multi-field, or
-struct-style variant is a compile error. Generic parameters on the enum are carried onto the
-generated impls. The derive emits exactly the `FromVariant` impls that the variant path of
-[`#[derive(CgpData)]`](derive_cgp_data.md) emits: that slice in isolation.
+payload type becomes the constructor's value type. A variant carries either one unnamed payload, as
+`Circle(Circle)` does, or no fields at all, written `Closed`, `Closed()`, or `Closed {}`, whose
+payload is [`Nil`](../types/cons.md), the empty product
+[`#[derive(HasFields)]`](derive_has_fields.md) gives it. A variant with several fields or with named
+fields is a compile error, `Expected variant to contain exactly one unnamed field, or no fields`.
+Generic parameters on the enum are carried onto the generated impls. The derive emits exactly the
+`FromVariant` impls that the variant path of [`#[derive(CgpData)]`](derive_cgp_data.md) emits: that
+slice in isolation.
 
 ## Expansion
 
@@ -70,6 +73,18 @@ impl FromVariant<Symbol!("Rectangle")> for Shape {
     type Value = Rectangle;
     fn from_variant(_tag: PhantomData<Symbol!("Rectangle")>, value: Self::Value) -> Self {
         Self::Rectangle(value)
+    }
+}
+```
+
+A variant with no fields takes `Nil` and builds itself with braces, which build all three of its
+forms, so `Closed`, `Closed()`, and `Closed {}` expand alike:
+
+```rust
+impl FromVariant<Symbol!("Closed")> for Status {
+    type Value = Nil;
+    fn from_variant(_tag: PhantomData<Symbol!("Closed")>, _: Self::Value) -> Self {
+        Self::Closed {}
     }
 }
 ```
@@ -133,11 +148,11 @@ then, renaming the variant is the only fix. `Value` is the only name this derive
 [`#[derive(HasFields)]`](derive_has_fields.md) two others, so an enum deriving the whole family must
 avoid all seven.
 
-The derive only accepts enums whose every variant is a single-field tuple variant. A fieldless
-variant like `Empty`, a multi-field variant like `Pair(A, B)`, or a struct-style variant like
-`Named { x: A }` causes the macro to fail with
-`Expected variant to contain exactly one unnamed field`. There is no way to opt a variant out of the
-requirement, so an enum that mixes shapes cannot derive the constructor at all.
+The derive accepts only variants with one unnamed field or no fields. A multi-field variant like
+`Pair(A, B)` or a struct-style variant with fields like `Named { x: A }` causes the macro to fail
+with `Expected variant to contain exactly one unnamed field, or no fields`. There is no way to opt a
+variant out of the requirement, so an enum with such a variant cannot derive the constructor at all;
+wrap its fields in a struct to make it a newtype variant.
 
 ## Source
 

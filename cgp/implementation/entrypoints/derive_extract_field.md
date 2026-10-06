@@ -91,6 +91,23 @@ dereferenced place with `match *self {}` rather than `match self {}`, since a ba
 `HasExtractorRef`/`HasExtractorMut` GATs keep their `'__a__` parameter because the trait declares
 it, but the empty partial enum on the right-hand side takes no arguments.
 
+**A variant's payload is read through `VariantPayload`** in the `derive_extractor/utils.rs` helper:
+`get_variant_payload` gives `Single(T)` for a newtype variant and `Empty` for a variant with no
+fields, in any of its forms, and rejects any other shape. An empty variant's payload type is `Nil`,
+the empty product `#[derive(HasFields)]` gives it, so the partial enums wrap it like any payload
+type. The variant has no field to move or borrow, so `VariantPayload` supplies each accessor's
+pattern and payload instead. It matches `Self::V { .. }` and builds `Self::V {}`, braced forms that
+work for all three variant forms, so the codegen never branches on which form the user wrote. The
+owned extractor holds `Nil`, `from_extractor` binds the ignored payload as `_`, the shared extractor
+holds the promoted constant `&Nil`, and the mutable extractor holds `Box::leak(Box::new(Nil))`.
+Rust promotes `&Nil` but not `&mut Nil`, and the leaked box never allocates because `Nil` is
+zero-sized. Its `Box` is written bare and spanned at the empty variant, the one name a CGP expansion
+resolves in the caller's scope rather than through an `exports` marker, because `cgp` links no
+`alloc`; see the [hygiene note](../README.md#hygiene-exports-markers-and-reserved-identifiers).
+Every borrowed payload thus stays a reference, which the borrowed matchers' `PromoteRef` needs,
+since it dereferences the payload, and a C-like enum, all of whose variants are empty, still uses
+the borrowed partial enum's `'__a__` and `__R__` parameters.
+
 This derive emits no `HasFields` representation impls and no `FromVariant` constructors, which come
 from [`#[derive(HasFields)]`](derive_has_fields.md) and
 [`#[derive(FromVariant)]`](derive_from_variant.md). `ExtractField` is purely the deconstruction
@@ -145,14 +162,26 @@ filter variant attributes the same way, keeping only those that make sense on th
 [reference Known issues](../../reference/derives/derive_extract_field.md#known-issues) describe the
 user-visible side.
 
-The extractor codegen requires every variant to be a single-unnamed-field tuple variant (enforced by
-`get_variant_type` in the `derive_extractor/utils.rs` helper). A fieldless variant like `Empty`, a
-multi-field variant like `Pair(A, B)`, or a struct-style variant like `Named { x: A }` makes the
-macro fail with "Expected variant to contain exactly one unnamed field". There is no per-variant
-opt-out, so an enum mixing variant shapes cannot derive the extractor at all; the same requirement
+The extractor codegen requires every variant to have one unnamed field or no fields (enforced by
+`get_variant_payload` in the `derive_extractor/utils.rs` helper). A multi-field variant like
+`Pair(A, B)` or a struct-style variant with fields like `Named { x: A }` makes the macro fail with
+"Expected variant to contain exactly one unnamed field, or no fields". There is no per-variant
+opt-out, so an enum with such a variant cannot derive the extractor at all; the same requirement
 applies to [`#[derive(FromVariant)]`](derive_from_variant.md) and therefore to
 `#[derive(CgpVariant)]`/`#[derive(CgpData)]` on such an enum. The reference document records the
 user-visible form of this limitation in its own Known issues.
+
+**A `no_std` crate needs `Box` in scope when an enum has a variant with no fields.** The mutable
+extractor's bare `Box`, described under Behavior and corner cases, fails to resolve in a `no_std`
+crate that has not imported it, as `E0433` on the empty variant with rustc's suggestion of the
+import. This is an acceptable failure deferred to the compiler: `cgp` would have to link `alloc` to
+name `Box` itself, and the expansion cannot build a `&mut Nil` otherwise without `unsafe`. The
+class is the error catalog's
+[out-of-scope generated name](../../errors/lowering/out-of-scope-generated-name.md), pinned by the
+`cargo-cgp` fixture
+[`acceptable/lowering/no_std_empty_variant_without_box.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/no_std_empty_variant_without_box.rs),
+and its working counterpart, which imports `Box`, by
+[`ok/no_std_empty_variant.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/ok/no_std_empty_variant.rs).
 
 ## Snapshots
 
@@ -165,7 +194,7 @@ representation impls or `FromVariant` constructors:
 
 The same items also appear inside the variant expansion pinned by the `snapshot_derive_cgp_data!`
 snapshots indexed in [derive_cgp_data.md's Snapshots section](derive_cgp_data.md#snapshots), which
-is where the generic, struct-payload, and variantless enum shapes are covered.
+is where the generic, struct-payload, variantless, and empty-variant enum shapes are covered.
 
 ## Tests
 
@@ -187,9 +216,15 @@ exercise the machinery:
   snapshots the variantless-enum expansion, pinning the empty-enum special case: bare
   `__PartialNever`/`__PartialRefNever` enums with no parameters and `match *self {}` in the borrowed
   accessors.
-- The single-unnamed-field requirement (Known issues) has no dedicated failure case in
-  `cgp-macro-tests`, but is covered end-to-end through the variant derives by
-  [parser_rejections/derive_from_variant.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/derive_from_variant.rs).
+- [empty_variants.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/empty_variants.rs)
+  drives variants with no fields in all three forms: owned, shared, and mutable extraction of their
+  `Nil` payload, an exhaustive chain over a C-like enum, casts, and value and field dispatch,
+  including the mutable value matcher that reaches the leaked `Box<Nil>`. A `Lookup<'a, T>` enum
+  places an empty variant beside a generic and a borrowed payload, so the partial enums carry both
+  kinds of parameter.
+- The variant-shape requirement (Known issues) is pinned with its exact message by
+  [parser_rejections/derive_from_variant.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/derive_from_variant.rs),
+  whose `extract_field_rejects_struct_style_variant` drives this derive directly.
 - The reserved-`'__a__` lifetime is exercised against a lifetime-parameterized enum by
   [derive_cgp_data_lifetime.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/derive_cgp_data_lifetime.rs),
   which derives `#[derive(CgpData)]` on an `enum Message<'a>` and drives the owned, borrowed, and

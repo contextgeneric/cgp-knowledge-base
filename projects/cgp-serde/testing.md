@@ -85,6 +85,9 @@ in `unit_payload.rs` and `nesting.rs`:
   enum; the first, middle, and last of ten variants.
 - **`payloads.rs`**: scalar, `Option` (a value and `null`), collection (empty and not), byte, and
   enum payloads, each following the context's choice for its type.
+- **`empty_variants.rs`**: a variant of each empty form, `Closed`, `Paused()`, and `Archived {}`,
+  written as `{"Variant":null}` through `SerializeUnit` and read back; a map payload rejected with
+  `expected unit`; the bare variant name rejected; and the unit payload in RON and postcard.
 - **`unit_payload.rs`**: a `()` payload written as `null` through `UseSerde` and as `{}` through a
   provider the test defines; each context rejecting the other's form; and the bare variant name
   rejected under both.
@@ -100,7 +103,9 @@ in `unit_payload.rs` and `nesting.rs`:
   writes and reads the declaration index, rejects an index out of range, and rejects a record
   payload.
 - **`serde_compat.rs`**: an enum with Serde's derive agrees with the providers in JSON in both
-  directions, and in RON and postcard for payloads that are not records.
+  directions, and in RON and postcard for payloads that are not records. For the three empty forms,
+  it pins the known JSON difference (Serde's three forms, each rejected, and Serde reading only the
+  providers' unit form) and the agreement in postcard.
 
 ## The compile-fail tests
 
@@ -136,7 +141,7 @@ The tests run these providers, in the directions listed:
 
 - **Asserted output**: `UseSerde`, `SerializeString` (serializing), `SerializeHex`,
   `SerializeBase64`, `SerializeRfc3339Date`, `SerializeTimestamp`, `SerializeRecordFields`,
-  `DeserializeRecordFields`, `SerializeVariantFields`, `DeserializeVariantFields`,
+  `DeserializeRecordFields`, `SerializeVariantFields`, `DeserializeVariantFields`, `SerializeUnit`,
   `SerializeDeref`, `SerializeIterator`, `DeserializeExtend`, `DeserializeAndAllocate` in both
   forms, `AllocateWithArena` with `HasArena` wired through `UseField`, `SerializeToJsonString`,
   `DeserializeFromJsonString` over `DeserializeFromJsonReader`, and `deserialize_json_string`.

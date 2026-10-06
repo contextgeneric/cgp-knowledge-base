@@ -48,8 +48,12 @@ crate; the derive supplies only the per-variant impls.
 
 ## Behavior and corner cases
 
-The enum's generic parameters are threaded onto every impl. This derive emits no `HasFields`
-representation impls and no extractor, which come from
+The enum's generic parameters are threaded onto every impl. A variant with no fields, in any of its
+three forms, gets `type Value = Nil`, binds the ignored parameter as `_`, and builds itself as
+`Self::V {}`, the braced form that builds a unit, an empty tuple, and an empty struct variant alike;
+the payload handling is shared with the extractor through `VariantPayload`, described in
+[`derive_extract_field`](derive_extract_field.md#behavior-and-corner-cases). This derive emits no
+`HasFields` representation impls and no extractor, which come from
 [`#[derive(HasFields)]`](derive_has_fields.md) and
 [`#[derive(ExtractField)]`](derive_extract_field.md). `FromVariant` is purely the construction
 slice, included wholesale by [`#[derive(CgpVariant)]`](derive_cgp_variant.md) and
@@ -81,10 +85,10 @@ has the same defect across five names and [`#[derive(HasFields)]`](derive_has_fi
 so an enum deriving the whole family has seven names it cannot use. Pinned by
 [invalid_expansion/reserved_variant_names.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/invalid_expansion/reserved_variant_names.rs).
 
-Like the extractor derive, `#[derive(FromVariant)]` requires every variant to be a
-single-unnamed-field tuple variant. A fieldless, multi-field, or struct-style variant makes the
-macro fail with "Expected variant to contain exactly one unnamed field", with no per-variant
-opt-out. The requirement is described alongside the extractor's in
+Like the extractor derive, `#[derive(FromVariant)]` requires every variant to have one unnamed
+field or no fields. A multi-field or struct-style variant with fields makes the macro fail with
+"Expected variant to contain exactly one unnamed field, or no fields", with no per-variant opt-out.
+The requirement is described alongside the extractor's in
 [`derive_extract_field`](derive_extract_field.md#known-issues), and the reference document records
 its user-visible form.
 
@@ -98,7 +102,7 @@ nothing but the per-variant impls, that snapshot is the whole of it:
 
 The same impls also appear inside the variant expansion pinned by the `snapshot_derive_cgp_data!`
 snapshots indexed in [derive_cgp_data.md's Snapshots section](derive_cgp_data.md#snapshots), which
-is where the generic and variantless enum shapes are covered.
+is where the generic, variantless, and empty-variant enum shapes are covered.
 
 ## Tests
 
@@ -111,8 +115,10 @@ is where the generic and variantless enum shapes are covered.
   [variant_dispatch.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/variant_dispatch.rs),
   construct enums through the generated `from_variant`.
 - [parser_rejections/derive_from_variant.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/derive_from_variant.rs)
-  pins the single-unnamed-field requirement: the derive rejects a fieldless, a multi-field, and a
-  struct-style variant.
+  pins the variant-shape requirement with its exact message: the derive rejects a multi-field and a
+  struct-style variant with fields.
+- [empty_variants.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/empty_variants.rs)
+  builds a variant with no fields in each of its three forms from `Nil`.
 - [invalid_expansion/reserved_variant_names.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/invalid_expansion/reserved_variant_names.rs)
   pins the reserved-variant-name defect recorded under Known issues, capturing the emitted `Self::…`
   paths as a string snapshot so the test compiles even though the code it describes would not.

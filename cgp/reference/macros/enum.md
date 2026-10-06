@@ -144,11 +144,12 @@ These constructs are the ones `Enum!` relates to:
 
 These corner cases concern the shapes `Enum!` can describe and how other tools see them:
 
-- **Every variant shape is accepted, but the variant derives need one positional field.**
+- **Every variant shape is accepted, but the variant derives need one positional field or none.**
   `Enum!` describes any variant, as `#[derive(HasFields)]` does. The derives that construct and
   extract variants, `#[derive(CgpVariant)]`, `#[derive(FromVariant)]`, and `#[derive(ExtractField)]`,
-  accept only variants with exactly one positional field, so a shape with unit or multi-field
-  variants has no generic constructor or extractor.
+  accept only variants with exactly one positional field or no fields, the latter with the payload
+  `Nil`, so a shape with multi-field or named-field variants has no generic constructor or
+  extractor.
 - **A variant name must be an identifier.** A sum whose entries are tagged by `Index<N>` or by a
   `Symbol!` that is not an identifier has no `Enum!` spelling, and is written with `Sum!`.
 - **Clippy's `type_complexity` lint and the `#[use_type]` gap** apply as they do to

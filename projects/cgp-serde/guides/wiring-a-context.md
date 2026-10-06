@@ -45,8 +45,8 @@ column of the [reference table](../reference/README.md#serialization-and-deseria
 - **Structs** wired to `SerializeRecordFields` or `DeserializeRecordFields` need an entry for each
   field's type.
 - **Enums** wired to `SerializeVariantFields` or `DeserializeVariantFields` need an entry for each
-  variant's payload type, including `()` for a unit-like variant such as `Empty(())`. The `()`
-  entry decides how that variant is written: `UseSerde` writes `{"Empty":null}`; see
+  variant's payload type, including `Nil` for a variant with no fields, such as `Empty`. The `Nil`
+  entry decides how that variant is written: `SerializeUnit` writes `{"Empty":null}`; see
   [variants](../reference/variants.md#wiring-the-pair).
 - **Collections** need their own entry, not only their item type's, and `SerializeIterator` needs an
   entry for the item *reference* it yields; the generic `<'a, T> &'a T: SerializeDeref` entry covers

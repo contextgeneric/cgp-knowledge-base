@@ -148,10 +148,11 @@ These corner cases concern the sum shape and the derives that produce it:
   the name tags, and a cast between two enums works through that name matching.
 - **Only `#[derive(HasFields)]` accepts every variant shape.** The variant derives,
   [`#[derive(CgpData)]`](../derives/derive_cgp_data.md), `CgpVariant`, `ExtractField`, and
-  `FromVariant`, reject a struct-like, multi-field, or unit variant with
-  `Expected variant to contain exactly one unnamed field`, because constructing or extracting a
-  variant hands over its payload as one value. A richer payload is wrapped in its own struct, as
-  `Rectangle(Rectangle)`.
+  `FromVariant`, accept a variant with one unnamed field or with no fields, whose payload is `Nil`.
+  They reject a multi-field or struct-like variant with fields with
+  `Expected variant to contain exactly one unnamed field, or no fields`, because constructing or
+  extracting a variant hands over its payload as one value. A richer payload is wrapped in its own
+  struct, as `Rectangle(Rectangle)`.
 
 ## Source
 

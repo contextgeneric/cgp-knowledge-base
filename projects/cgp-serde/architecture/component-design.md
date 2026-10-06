@@ -59,6 +59,7 @@ The table pairs every serializing provider with its deserializing counterpart:
 | `SerializeIterator` | `DeserializeExtend` | separate structs: iterate by reference, extend by value |
 | `SerializeRecordFields` | `DeserializeRecordFields` | separate structs: read fields, fill a builder |
 | `SerializeVariantFields` | `DeserializeVariantFields` | separate structs: borrow the active variant, build from one variant |
+| `SerializeUnit` | `SerializeUnit` | one struct; deserializes into `Default` |
 | none | `DeserializeDefault<P>` | deserialize-only, higher-order |
 | `SerializeHex`, `SerializeBase64`, `SerializeRfc3339Date`, `SerializeTimestamp` | the same structs | one struct each |
 | `SerializeToJsonString` | `DeserializeFromJsonString`, `DeserializeFromJsonReader` | separate structs over `TryComputer` |

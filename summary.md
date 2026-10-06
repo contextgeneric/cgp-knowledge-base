@@ -351,8 +351,9 @@ it stale.
   `#[use_type]` import naming an associated type its trait does not declare (`E0576`).
 - [lowering/out-of-scope-generated-name.md](cgp/errors/lowering/out-of-scope-generated-name.md) — an
   `#[impl_generics]` parameter named in the trait's own signature, where only the generated impl
-  declares it (`E0433`), plus the abstract type shadowing its own bound (`E0404`) and the enum variant
-  colliding with a derive-generated associated type (`ambiguous associated item`).
+  declares it (`E0433`), plus the abstract type shadowing its own bound (`E0404`), the enum variant
+  colliding with a derive-generated associated type (`ambiguous associated item`), and the `Box` a
+  `no_std` crate lacks for a variant with no fields (`E0433`).
 - [error_codes/README.md](cgp/errors/error_codes/README.md) — the forward index from a `rustc` error
   code to its meaning and the CGP classes that emit it.
 - [error_codes/cargo-cgp-codes.md](cgp/errors/error_codes/cargo-cgp-codes.md) — a pointer entry for
@@ -881,7 +882,7 @@ it stale.
   the thirteen examples and about 75 construct pages planned, the comparison with shell scripts, and
   the release the install instructions need.
 - [cgp-serde.md](website/projects/cgp-serde.md) — the plan and record of the cgp-serde section: the
-  48 pages written and the revisions they were verified against, the two arena examples and three
+  49 pages written and the revisions they were verified against, the two arena examples and three
   component pages that wait on DC3, and DC3's attribute removals, arena-test cleanups, and
   recommended namespace.
 - [error-backends.md](website/projects/error-backends.md) — one walkthrough per crate, the shared design
@@ -1159,9 +1160,9 @@ it stale.
   format, missing, duplicate, and unknown fields, and the format limits of a map without a declared
   length.
 - [projects/cgp-serde/reference/variants.md](projects/cgp-serde/reference/variants.md) —
-  `SerializeVariantFields` and `DeserializeVariantFields`: enums in Serde's externally tagged form,
-  one payload per variant, `()` for unit-like variants, the rejection messages, and the serializer's
-  `'static` limit.
+  `SerializeVariantFields`, `DeserializeVariantFields`, and `SerializeUnit`: enums in Serde's
+  externally tagged form, one payload or none per variant, `Nil` for a variant with no fields, the
+  rejection messages, and the serializer's `'static` limit.
 - [projects/cgp-examples/README.md](projects/cgp-examples/README.md) — the repository of five
   independent example crates: what each demonstrates, its context shape, worked example, citing post,
   whether it runs, the `v0.8.0` branch against `main` and the unmerged

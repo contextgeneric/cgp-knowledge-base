@@ -125,10 +125,10 @@ entrypoint document:
 
 - The shape-dispatch rejections are pinned in `cgp-macro-tests`'s `parser_rejections` target:
   [derive_cgp_data.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/derive_cgp_data.rs)
-  drives `ItemCgpData` and asserts it refuses a non-struct/non-enum item and a non-single-field
-  variant, and
+  drives `ItemCgpData` and asserts it refuses a non-struct/non-enum item and a variant with several
+  or named fields, and
   [derive_from_variant.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/derive_from_variant.rs)
-  covers the variant-shape rejection (raised by the `get_variant_type` helper) plus `CgpVariant`'s
+  covers the variant-shape rejection (raised by the `get_variant_payload` helper) plus `CgpVariant`'s
   non-enum rejection. The record derives' non-struct rejection (raised at `syn::parse2` of
   `ItemStruct`) has no dedicated test and is exercised only implicitly.
 - The stage transforms are exercised end to end by the expansion snapshots indexed in the entrypoint

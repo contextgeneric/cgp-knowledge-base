@@ -62,7 +62,8 @@ relies on them cannot move those types to cgp-serde yet:
   present.
 - **Enum representations and shapes**: Serde derives all four enum representations for any variant
   shape; cgp-serde's variant providers write only the externally tagged form, for variants that
-  hold exactly one payload, and serialize only `'static` enums.
+  hold one payload or none, write a variant with no fields as a newtype variant holding a unit
+  rather than in the form Serde's derive uses, and serialize only `'static` enums.
 - **Tuple structs and tuples**: Serde derives them; cgp-serde's record providers reject tuple
   structs, and no provider handles tuples.
 - **Recursive types**: Serde derives them without difficulty; cgp-serde's generic providers fail to

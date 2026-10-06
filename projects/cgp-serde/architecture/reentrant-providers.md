@@ -101,6 +101,7 @@ are the associated types named in its bounds.
 | `SerializeString` | both | nothing | leaf |
 | `SerializeBytes` | both | nothing | leaf |
 | `TryDeserializeBytes` | deserialize | nothing | leaf |
+| `SerializeUnit` | both | nothing | leaf |
 | `SerializeWithDisplay` | serialize | `String` | direct |
 | `DeserializeWithFromStr` | deserialize | `&'de str` | direct |
 | `SerializeFrom<Target>` | serialize | `Target` | direct |
@@ -111,8 +112,8 @@ are the associated types named in its bounds.
 | `DeserializeExtend` | deserialize | each `Item` | adapter (private seed) |
 | `SerializeRecordFields` | serialize | each field's type | adapter |
 | `DeserializeRecordFields` | deserialize | each field's type | adapter |
-| `SerializeVariantFields` | serialize | the active variant's payload type | adapter |
-| `DeserializeVariantFields` | deserialize | the variant's payload type | adapter |
+| `SerializeVariantFields` | serialize | the active variant's payload type, `Nil` if it has no fields | adapter |
+| `DeserializeVariantFields` | deserialize | the variant's payload type, `Nil` if it has no fields | adapter |
 | `SerializeHex`, `SerializeBase64`, `SerializeRfc3339Date` | both | `String` | direct |
 | `SerializeTimestamp` | both | `i64` | direct |
 | `DeserializeAndAllocate` | deserialize | the owned `Value` behind `&'a Value`, then allocates through `CanAlloc` | direct |

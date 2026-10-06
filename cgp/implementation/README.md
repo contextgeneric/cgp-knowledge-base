@@ -361,3 +361,10 @@ any CGP name not interpolated from an `exports` marker. The reserved identifiers
 introduces (`__Context__`, `__Provider__`, `__Component__`, `__Components__`, `__context__`, and the
 like) are wrapped in double underscores so they cannot collide with a user's own names, and a new
 identifier the codegen invents should follow the same convention.
+
+**One expansion takes a name from the caller's scope on purpose.** The variant derives build an
+empty variant's `&mut Nil` payload with `Box::leak(Box::new(Nil))`, and write `Box` bare, because
+`cgp` links no `alloc` and so has no `Box` to export. A `std` crate finds it in its prelude, and a
+`no_std` crate must import it; the
+[extractor derive's Known issues](entrypoints/derive_extract_field.md#known-issues) record the
+trade-off. Any other non-CGP name an expansion needs comes from `::core`, which every crate has.

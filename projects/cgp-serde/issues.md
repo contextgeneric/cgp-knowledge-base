@@ -64,8 +64,10 @@ struct or collection. See [records](reference/records.md#known-issues) and
 A missing feature is behavior the library does not attempt. Each is documented where it applies.
 
 - **Other enum shapes and representations**: the variant providers handle only variants that hold
-  exactly one payload, in Serde's externally tagged form. Unit, tuple, and struct-style variants,
-  and the internally tagged, adjacently tagged, and untagged forms, have no provider. See
+  one payload or no fields, in Serde's externally tagged form, and write a variant with no fields as
+  a newtype variant holding a unit rather than in the form Serde's derive uses. Multi-field tuple
+  and struct-style variants with fields, Serde's own forms for empty variants, and the internally
+  tagged, adjacently tagged, and untagged forms have no provider. See
   [variants](reference/variants.md).
 - **Recursive data types**: a struct or enum that contains itself fails to compile with `E0275`
   through the generic providers and needs a hand-written provider. The `recursive_record` and

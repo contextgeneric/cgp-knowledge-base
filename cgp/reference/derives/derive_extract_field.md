@@ -40,9 +40,11 @@ pub enum Shape {
 ```
 
 Each variant's name becomes a type-level string `Symbol!` used as the variant's `Tag`, and its
-payload type becomes its value type. Every variant must carry exactly one unnamed payload, a
-single-field tuple variant such as `Circle(Circle)`; a fieldless, multi-field, or struct-style
-variant is a compile error, and a struct is rejected with ``expected `enum` ``. Generic parameters on
+payload type becomes its value type. A variant carries either one unnamed payload, as
+`Circle(Circle)` does, or no fields at all, written `Closed`, `Closed()`, or `Closed {}`, whose
+payload is [`Nil`](../types/cons.md), the empty product [`#[derive(HasFields)]`](derive_has_fields.md)
+gives it. A variant with several fields or with named fields is a compile error, and a struct is
+rejected with ``expected `enum` ``. Generic parameters on
 the enum are carried onto the generated impls. The derive emits the same extractor impls that the variant path of
 [`#[derive(CgpData)]`](derive_cgp_data.md) emits: it is that slice in isolation, with no `HasFields`
 representation traits and no [`FromVariant`](../traits/from_variant.md) constructors.
@@ -140,6 +142,29 @@ The `FinalizeExtract` trait itself is defined in the field crate (with blanket i
 `FinalizeExtractResult` trait, also in the field crate, is what `finalize_extract_result` calls to
 collapse an `Ok`/empty-`Err` result into the value.
 
+**A variant with no fields carries `Nil` and is matched with braces.** For
+`Status { Active(u64), Closed }`, the partial enums hold `Nil` like any payload type, and each
+accessor matches `Self::Closed { .. }`, which matches all three empty forms, and fills in a payload,
+since the variant has no field to move or borrow:
+
+```rust
+// in to_extractor
+Self::Closed { .. } => __PartialStatus::Closed(Nil),
+// in from_extractor
+__PartialStatus::Closed(_) => Self::Closed {},
+// in extractor_ref
+Self::Closed { .. } => __PartialRefStatus::Closed(&Nil),
+// in extractor_mut
+Self::Closed { .. } => __PartialRefStatus::Closed(Box::leak(Box::new(Nil))),
+```
+
+The shared payload `&Nil` is a promoted constant. Rust does not promote `&mut Nil`, so the mutable
+payload leaks a `Box<Nil>`, which never allocates because `Nil` is zero-sized. `Box` is the one name
+the expansion takes from the caller's scope, since `cgp` links no `alloc`; see
+[Known issues](#known-issues). Every borrowed payload is therefore a reference, as for a newtype
+variant, so the borrowed matchers, whose handlers dereference the payload, work on empty variants
+too.
+
 The key takeaway is that `to_extractor` yields `__PartialShape<IsPresent, IsPresent>`, each failed
 `extract_field` returns a remainder with one more `IsVoid`, and at `__PartialShape<IsVoid, IsVoid>`
 the value is uninhabited, so once every variant has been tried, the compiler knows the match is
@@ -217,11 +242,20 @@ the enum's attributes but keep each variant's, so a helper attribute such as
 The compiler rejects it with
 ``cannot find attribute `serde` in this scope``. An enum therefore cannot combine `#[derive(ExtractField)]`, or `CgpVariant` or `CgpData`, with a derive whose variant helper attributes it uses. The correct behavior would be to clear variant attributes on the companion enums as well. The record side has the same defect for field attributes; see [`#[derive(BuildField)]`](derive_build_field.md).
 
-The derive only accepts enums whose every variant is a single-field tuple variant. A fieldless
-variant like `Empty`, a multi-field variant like `Pair(A, B)`, or a struct-style variant like
-`Named { x: A }` causes the macro to fail with
-`Expected variant to contain exactly one unnamed field`. There is no way to opt a variant out of the
-requirement, so an enum that mixes shapes cannot derive the extractor at all.
+The derive accepts only variants with one unnamed field or no fields. A multi-field variant like
+`Pair(A, B)` or a struct-style variant with fields like `Named { x: A }` causes the macro to fail
+with `Expected variant to contain exactly one unnamed field, or no fields`. There is no way to opt a
+variant out of the requirement, so an enum with such a variant cannot derive the extractor at all;
+wrap its fields in a struct to make it a newtype variant.
+
+**A `no_std` crate needs `Box` in scope to derive over a variant with no fields.** The mutable
+extractor builds such a variant's `&mut Nil` with `Box::leak(Box::new(Nil))`, writing `Box` bare so
+it resolves where the derive is used, because `cgp` links no `alloc` and cannot name `Box` itself.
+A `std` crate has `Box` in its prelude. A `no_std` crate without it fails with
+``cannot find type `Box` in this scope``, with the caret on the empty variant and a `help` that
+suggests the import; `extern crate alloc; use alloc::boxed::Box;` fixes it. The class is recorded
+in the error catalog as an
+[out-of-scope generated name](../../errors/lowering/out-of-scope-generated-name.md).
 
 ## Source
 

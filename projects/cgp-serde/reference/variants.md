@@ -5,6 +5,8 @@ enum needs no serialization-specific derive and no dependency on `serde` or `cgp
 `SerializeVariantFields` writes an enum in Serde's externally tagged form, `{"Variant": payload}`,
 and `DeserializeVariantFields` reads it back. They are separate structs, like the
 [record providers](records.md), because they walk the enum through different CGP traits.
+[`SerializeUnit`](#serializeunit), the provider for the payload of a variant with no fields, is
+documented here too.
 
 Both rest on CGP's [extensible variants](../../../cgp/concepts/extensible-variants.md). An enum's
 variant list comes from [`HasFields`](../../../cgp/reference/traits/has_fields.md), as a sum of
@@ -14,12 +16,16 @@ directions need only `#[derive(HasFields)]`, which emits the `FromFields` and `T
 the providers call; [`#[derive(CgpVariant)]`](../../../cgp/reference/derives/derive_cgp_variant.md)
 and [`#[derive(CgpData)]`](../../../cgp/reference/derives/derive_cgp_data.md) include it.
 
-**Every variant must hold exactly one unnamed payload**, the shape `CgpVariant` requires. A payload
-is any type the context wires: a record, a scalar, a collection, or another enum. A unit-like
-variant is written with a `()` payload, as `Empty(())`, and the context's wiring for `()` decides
-its format. An enum that derives only `HasFields` may have unit, tuple, or struct-style variants,
-whose payloads are `Nil` or an anonymous product; wiring it to either provider compiles until the
-enum is used, then reports a missing entry for that payload type.
+**Every variant must hold one unnamed payload or no fields**, the shapes `CgpVariant` accepts. A
+payload is any type the context wires: a record, a scalar, a collection, or another enum. A variant
+with no fields, written `Closed`, `Closed()`, or `Closed {}`, carries the payload `Nil`, and the
+context's wiring for `Nil` decides its format. Wired to `SerializeUnit`, every one of these forms
+is written `{"Closed":null}`, which differs from what Serde's derive writes for each of them in JSON
+and RON; see [Known issues](#known-issues). A variant may also hold `()`, as `Empty(())`, whose
+format the context's wiring for `()` decides in the same way. An enum that derives only `HasFields`
+may also have multi-field tuple or struct-style variants, whose payloads are anonymous products;
+wiring it to either provider compiles until the enum is used, then reports a missing entry for that
+payload type.
 
 ## `SerializeVariantFields`
 
@@ -41,7 +47,10 @@ where
 
 `VariantsSerializer` is a private trait implemented for the borrowed variant list. Its `Either` case
 requires, for each `Field<Tag, &Payload>`, that `Tag: StaticString` and that the context implements
-`CanSerializeValue<Payload>`; its `Void` case is uninhabited, so the match over the variants is
+`CanSerializeValue<Payload>`. A variant with no fields appears in the list as `Field<Tag, Nil>`
+rather than as a reference, since the borrowed view of an empty product has nothing to borrow, so a
+second `Either` case serializes it through the context as `&Nil` and requires
+`CanSerializeValue<Nil>`. The `Void` case is uninhabited, so the match over the variants is
 exhaustive by its type.
 
 ### Behavior
@@ -56,6 +65,18 @@ same enum, in JSON and, for payloads that are not records, in RON and postcard. 
 variant around its payload, `Label("x")`, and postcard writes the index followed by the payload,
 `[1, 5]` for the second variant holding `5`.
 
+A variant with no fields is written the same way, as a newtype variant holding the context's
+encoding of `Nil`. With `Nil` wired to [`SerializeUnit`](#serializeunit), `Status::Closed` is
+`{"Closed":null}` in JSON and `Closed(())` in RON, and `Status::Archived {}`, the fourth variant, is
+`[3]` in postcard, the index with nothing after it. Serde's derive writes each empty form its own
+way, and only postcard agrees:
+
+| Variant | Serde's derive, JSON | Serde's derive, RON | Both, postcard |
+|---|---|---|---|
+| `Closed` | `"Closed"` | `Closed` | `[1]` |
+| `Paused()` | `{"Paused":[]}` | `Paused()` | `[2]` |
+| `Archived {}` | `{"Archived":{}}` | `Archived()` | `[3]` |
+
 The enum name the format receives is the last segment of `core::any::type_name` without its generic
 arguments, such as `Token` for `Token<'a>`, because `HasFields` carries no type name and RON rejects
 a name that is not an identifier. The name never decides which variant is written. Both providers
@@ -63,7 +84,8 @@ pass the same name.
 
 ### Context dependencies
 
-The context must implement `CanSerializeValue<P>` for the payload type `P` of every variant.
+The context must implement `CanSerializeValue<P>` for the payload type `P` of every variant, which
+is `Nil` for a variant with no fields.
 
 ### Pairing
 
@@ -83,6 +105,10 @@ agree on the format: an externally tagged newtype variant.
   [records](records.md#known-issues).
 - **A recursive enum fails to compile with `E0275`**, as a recursive record does; see [re-entrant
   providers](../architecture/reentrant-providers.md#what-re-entry-requires-of-a-context).
+- **A variant with no fields does not match Serde's derive in JSON or RON**, as the table under
+  Behavior shows. `serde_json` still reads the provider's `{"Closed":null}` into a unit variant
+  `Closed` of a Serde-derived mirror, but not `{"Paused":null}` into `Paused()` or
+  `{"Archived":null}` into `Archived {}`. postcard writes the same bytes on both sides.
 
 ## `DeserializeVariantFields`
 
@@ -130,8 +156,12 @@ The provider rejects input in these cases, each reported through the format's ow
 - **An index out of range**, from a binary format:
   `variant index 9 out of range, expected one of …`. postcard reports any custom error as
   `SerdeDeCustom`, so the message is lost there.
-- **A bare variant name**, such as `"Empty"`:
-  `invalid type: unit variant, expected newtype variant`, whatever the context wires for `()`.
+- **A bare variant name**, such as `"Closed"`, the form Serde's derive writes for a unit variant:
+  `invalid type: unit variant, expected newtype variant`, whatever the context wires for the
+  payload. Serde's forms for the other empty variants, `{"Paused":[]}` and `{"Archived":{}}`, fail
+  in the payload's provider; with `SerializeUnit`, as
+  `invalid type: sequence, expected unit at line 1 column 10` and
+  `invalid type: map, expected unit at line 1 column 12`.
 - **A payload of the wrong type**: the payload provider's error; with JSON, `{"Label":5}` gives
   ``invalid type: integer `5`, expected a string``.
 - **Anything that is not one variant**: `serde_json` reports an empty object, a second variant, an
@@ -139,7 +169,8 @@ The provider rejects input in these cases, each reported through the format's ow
 
 ### Context dependencies
 
-The context must implement `CanDeserializeValue<'de, P>` for the payload type `P` of every variant.
+The context must implement `CanDeserializeValue<'de, P>` for the payload type `P` of every variant,
+which is `Nil` for a variant with no fields.
 
 ### Pairing
 
@@ -150,16 +181,54 @@ The serializing counterpart is [`SerializeVariantFields`](#serializevariantfield
 - **The variant list given to the format is empty**, as described under Behavior; a format that
   relies on it is untested.
 - **Only Serde's externally tagged representation is supported.** There is no internally tagged,
-  adjacently tagged, or untagged form, and the bare-string form Serde's derive uses for a unit
-  variant is rejected; a unit-like variant is `Empty(())`, written as the context writes `()`.
+  adjacently tagged, or untagged form, and none of the JSON or RON forms Serde's derive writes for
+  a variant with no fields is accepted; such a variant is read only as a newtype variant holding the
+  context's encoding of `Nil`. In postcard the two agree.
 - **A recursive enum fails to compile with `E0275`**, as for serializing.
+
+## `SerializeUnit`
+
+`SerializeUnit` writes any value as Serde's unit and reads a unit back as the type's `Default`. It
+is the provider for `Nil`, the payload the CGP variant derives give a variant with no fields.
+
+### Definition
+
+```rust
+pub struct SerializeUnit;
+
+#[cgp_impl(SerializeUnit)]
+impl<Value> ValueSerializer<Value> { ... }
+
+#[cgp_impl(SerializeUnit)]
+impl<'de, Value> ValueDeserializer<'de, Value>
+where
+    Value: Default,
+{ ... }
+```
+
+### Behavior
+
+The serializer ignores the value and calls `serialize_unit`, which JSON writes as `null`, RON as
+`()`, and postcard as nothing. The deserializer calls `deserialize_unit` and returns
+`Value::default()`. It rejects anything that is not a unit, so `{"Closed":{}}` fails with
+`invalid type: map, expected unit at line 1 column 10`. Because the serializer accepts any value,
+wiring it for a type that carries data drops that data, so it should be wired only for a type with
+nothing to write, such as `Nil`.
+
+### Context dependencies
+
+None. It writes and reads the unit itself.
+
+### Pairing
+
+One struct serves both directions, and the two agree on the unit.
 
 ## Wiring the pair
 
 A context wires both providers per enum type with the `open` statement of
 [`delegate_components!`](../../../cgp/reference/macros/delegate_components.md), alongside an entry
-for every payload type, including `()` when a variant holds one. This context reads and writes a
-`Shape` whose payloads are two records, a `String`, and `()`:
+for every payload type, including `Nil` when a variant has no fields. This context reads and writes
+a `Shape` whose payloads are two records, a `String`, and the `Nil` of an empty variant:
 
 ```rust
 #[derive(CgpData)]
@@ -178,7 +247,7 @@ pub enum Shape {
     Circle(Circle),
     Rectangle(Rectangle),
     Label(String),
-    Empty(()),
+    Empty,
 }
 
 pub struct App;
@@ -190,11 +259,13 @@ delegate_components! {
             ValueDeserializerComponent,
         };
 
-        @ValueSerializerComponent.[u64, String, ()]: UseSerde,
+        @ValueSerializerComponent.[u64, String]: UseSerde,
+        @ValueSerializerComponent.Nil: SerializeUnit,
         @ValueSerializerComponent.[Circle, Rectangle]: SerializeRecordFields,
         @ValueSerializerComponent.Shape: SerializeVariantFields,
 
-        @ValueDeserializerComponent.[u64, String, ()]: UseSerde,
+        @ValueDeserializerComponent.[u64, String]: UseSerde,
+        @ValueDeserializerComponent.Nil: SerializeUnit,
         @ValueDeserializerComponent.[Circle, Rectangle]: DeserializeRecordFields,
         @ValueDeserializerComponent.Shape: DeserializeVariantFields,
     }
@@ -215,11 +286,13 @@ check_components! {
 }
 ```
 
-With `()` wired to `UseSerde`, `Shape::Empty(())` is written `{"Empty":null}`, as Serde's derive
-writes it. A context that wires `()` to a provider writing an empty map writes `{"Empty":{}}`
-instead, and each context rejects the other's form. A missing payload entry is reported with the
-payload as its root cause: without the `()` entry, `cargo cgp check` reports
-``[CGP-E107] context `App` does not contain any delegate entry for `@ValueDeserializerComponent.()` ``,
+With `Nil` wired to `SerializeUnit`, `Shape::Empty` is written `{"Empty":null}`. A variant that
+holds `()` instead, as `Empty(())`, is written however the context writes `()`: `UseSerde` writes
+the same `{"Empty":null}`, as Serde's derive writes that variant, while a context that wires `()` to
+a provider writing an empty map writes `{"Empty":{}}`, and each context rejects the other's form. A
+missing payload entry is reported with the payload as its root cause: without the `Nil` entry,
+`cargo cgp check` reports
+``[CGP-E107] context `App` does not contain any delegate entry for `@ValueDeserializerComponent.Nil` ``,
 with a dependency chain through each variant of `Enum! { … }`.
 
 ## Related documents
@@ -237,9 +310,11 @@ with a dependency chain through each variant of `Enum! { … }`.
 - [`crates/cgp-serde/src/providers/variant.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/variant.rs):
   `DeserializeVariantFields`, its visitor and identifier seed, `VariantsDeserializer`, and the enum
   name helper.
+- [`crates/cgp-serde/src/providers/unit.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/unit.rs):
+  `SerializeUnit`.
 
 ## Public material derived from this
 
-The two provider pages in the `reference/providers/` pages of the
+The three provider pages in the `reference/providers/` pages of the
 [cgp-serde project section](../../../website/projects/cgp-serde.md), and the rustdoc for
-`SerializeVariantFields` and `DeserializeVariantFields`.
+`SerializeVariantFields`, `DeserializeVariantFields`, and `SerializeUnit`.
