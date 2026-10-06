@@ -975,7 +975,7 @@ rest use a `generated-index`. A separate `errors.md` covers post-expansion compi
 **The construct list is complete, and every page on it is written**, which matters more than it
 sounds: the completeness obligation is against the index rather than against the prose, so no
 construct is missing from the site. Every construct page is written, plus the
-index and `errors.md`: `macros/` (twenty pages), `attributes/` (ten), `derives/` (eight), `traits/`
+index and `errors.md`: `macros/` (twenty-two pages), `attributes/` (ten), `derives/` (eight), `traits/`
 (fifty-seven), `providers/` (fifty), `components/` (seventeen), and `types/` (eleven construct pages,
 plus a section overview) are finished end to end. The `providers/` group is now one
 page per provider: sixteen singleton pages, plus four subsections — `error/`, `handler/`, `dispatch/`,
@@ -1482,8 +1482,8 @@ enough to read the page with and not an attempt at the full account; that lives 
 the sidebar rather than through an inline link, per the convention above. Two of the first four written
 pages had missed the gloss, which makes it the convention here most easily dropped.
 
-**Four pages are exempt from the gloss, because they never use the word above the advanced line**:
-`Product!`, `Sum!`, `Path!`, and `#[async_trait]`. `Symbol!` is *not* among them despite belonging to the
+**Six pages are exempt from the gloss, because they never use the word above the advanced line**:
+`Product!`, `Sum!`, `Struct!`, `Enum!`, `Path!`, and `#[async_trait]`. `Symbol!` is *not* among them despite belonging to the
 same group — it opens on why encoding a string as a type matters to a context, and glosses the word there.
 
 A mechanical check over this convention has to allow for three things, and missing any of them reports

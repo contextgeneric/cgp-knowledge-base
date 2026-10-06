@@ -95,7 +95,8 @@ declared and are forms a reader meets rather than writes, so one page covers bot
 lists** (`Cons`/`Nil`, `Either`/`Void`, `Chars`, and `PathCons`) get one page each instead, since each
 is a separately nameable construct a reader may look up by name; the `Cons`, `Either`, `Chars`, and
 `PathCons` head cells carry the family explanation the terminators and specializations link to. The sugar
-that builds them, `Symbol!`, `Product!`, `Sum!`, and `Path!`, keeps a page each too.
+that builds them, `Symbol!`, `Product!`, `Sum!`, `Path!`, and the `Struct!`/`Enum!` shape macros, keeps
+a page each too.
 
 **The rule reaches every group, including those whose internal documents bundle several constructs.**
 `providers/`, `components/`, and `types/` are ported this way, and these splits are the model for a
