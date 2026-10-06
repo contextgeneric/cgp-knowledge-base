@@ -161,7 +161,7 @@ ideas every provider shares, then use the reference to look up a provider.
     the `cargo cgp check` output for each.
   - [formats.md](guides/formats.md): using a context with `serde_json` and other formats, and which
     formats work.
-- [examples/](examples/README.md): one document per test, in teaching order, with what running it
+- [examples/](examples/README.md): one document per example, in teaching order, with what running it
   produces and the snippets that carry its ideas:
   - [basic.md](examples/basic.md): one struct round-tripped through JSON by the `TryComputer` JSON
     providers, with its bytes as hex.

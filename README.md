@@ -163,7 +163,7 @@ opt-in crates that ship from the `cgp` repository without being part of the `cgp
 project section is verified against its project's source at the branch recorded for it and grows
 from a single orienting `README.md` into the shape its rules describe: the project's architecture, a
 reference for its public items, guides, its tests, its open issues, and one document per runnable
-example, which for cgp-serde means each of its tests. A project section is the primary source for
+example, which for cgp-serde means each program in its examples crate. A project section is the primary source for
 its project's facts, so other documents link to it instead of restating them, while CGP's own
 constructs and patterns stay documented in `cgp/` and `examples/` and are linked rather than
 re-explained.

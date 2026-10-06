@@ -34,8 +34,8 @@ Six files cover this crate:
 
 Hypershell, cgp-serde, and cgp-examples depend on the crate, and each overrides it through its
 `[patch.crates-io]` section with the `cgp` repository's `main` branch. Against commit `adc616c`, the
-four Hypershell tests, the four cgp-serde tests, and the three cgp-examples tests passed, and every
-Hypershell target compiled. Which of their tests reach an error path is recorded in their own
+four Hypershell tests, the tests of the four cgp-serde examples, and the three cgp-examples tests
+passed, and every Hypershell target compiled. Which of their tests reach an error path is recorded in their own
 testing documents.
 
 ## What nothing tests

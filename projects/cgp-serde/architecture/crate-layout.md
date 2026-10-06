@@ -46,7 +46,7 @@ and depend on `cgp-serde-alloc` alone. The layering is described in
 
 ## Module layout
 
-Every crate uses the same small set of module names, so a reader can find the kind of item they want
+Every library crate uses the same small set of module names, so a reader can find the kind of item they want
 by its module:
 
 - **`components`**: CGP components defined by the crate (`cgp-serde` only).

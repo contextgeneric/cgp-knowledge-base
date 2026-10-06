@@ -63,7 +63,7 @@ Three projects wire it, each documented in its own section:
   `RaiseAnyhowError` and two non-standard ones with `DebugAnyhowError`, and wraps every detail with
   `DebugAnyhowError`; see [error handling](../../hypershell/architecture/error-handling.md). Its
   prelude re-exports `cgp_error_anyhow::Error`.
-- **cgp-serde**: three of its tests wire `UseAnyhowError` and `RaiseAnyhowError`; see
+- **cgp-serde**: three of its examples wire `UseAnyhowError` and `RaiseAnyhowError`; see
   [wiring a context](../../cgp-serde/guides/wiring-a-context.md).
 - **cgp-examples**: every `builder` context wires the same two; see
   [builder contexts](../../cgp-examples/builder/reference/builder-contexts.md).
