@@ -7,8 +7,8 @@ author's own environment has no other place to get it.
 
 Each skill sits in its own directory with a `SKILL.md`, the layout agent harnesses load skills from,
 so a contributor can copy or link the directory into wherever their harness looks for skills. The
-`cgp` repository does this itself: its `.claude/skills/point-first-writing` is a link to this
-directory in a sibling checkout, so this copy is the only one to edit.
+member repositories do not ship a copy, so this directory is the only one to edit, and a link to it
+stays current where a copy would drift.
 
 The CGP skill is not here. It lives in [`cgp-skills`](https://github.com/contextgeneric/cgp-skills)
 and is published on the website, because it teaches CGP rather than a convention for writing about
