@@ -86,6 +86,11 @@ Register a new guide here in the same change that adds it, and in [../../summary
   tutorial, an explanation and a reference; what each of the three pages is for; the Quickstart's
   ten-minute activation target and the boundary that keeps it from becoming a second Hello World;
   and the version pin that ties it to the release.
+- [knowledge-base.md](knowledge-base.md): the pages explaining the public knowledge base, covering
+  why they are the second sanctioned exception to the one-way link rule and how far it reaches, the
+  four-page shape that keeps the process page apart from the two how-to pages, what a how-to page
+  owes its reader as the site's first of the kind, and why prompt templates wait until they have
+  been tested.
 - [related-work.md](related-work.md): the comparison pages, ported from the internal
   [related-work](../../related-work/README.md) documents for a reader who already knows type classes,
   dependency injection, ML modules, effects, or another related idea, covering the four transformations the port

@@ -10,13 +10,15 @@ finds the internal document for that page, and follows its links outward.
 
 ## Why this section exists
 
-The website and the knowledge base have opposite audiences, and that asymmetry is the whole reason for
-this directory. The website is **public-facing**: it is read by Rust developers evaluating CGP, and
-every link on it must resolve for someone who has never heard of this repository. The knowledge base is
-**internal**: it is written by and for agents, it assumes the `/cgp` skill, and it records unfinished
-work and known defects that no public page should surface. A website page therefore **cannot link into
-the knowledge base**, and this creates a gap: the agent maintaining a page needs the background,
-provenance, and current-version facts that only the base holds.
+The website and the knowledge base have opposite audiences, and that asymmetry is the whole reason
+for this directory. The website is **public-facing**: it is read by Rust developers evaluating CGP,
+and every link on it must resolve for someone who has never heard of this repository. The knowledge
+base is **internal**: it is written by and for agents, it assumes the `/cgp` skill, and it records
+unfinished work and known defects that no public page should surface. A website page therefore
+**cannot link into the knowledge base**, apart from the few pages that explain the base itself
+within the bounds [AGENTS.md](AGENTS.md#the-one-way-link-rule) sets, and this creates a gap: the
+agent maintaining a page needs the background, provenance, and current-version facts that only the
+base holds.
 
 These documents close that gap from the other side. Each one is the knowledge base's record *about* a
 website page: it names the page, links to it publicly, and links inward to the reference documents,

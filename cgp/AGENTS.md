@@ -4,7 +4,7 @@ This directory documents the CGP language extension. It is agent-maintained docu
 is to record the full semantics of every CGP construct and the internals of the macros that produce
 them. Read [README.md](README.md) for the background and motivation behind it, and the base-wide
 [../AGENTS.md](../AGENTS.md) for the rules every section shares: the synchronization rule, verifying
-against the source, the dual-reader prose style, document-the-present, how links are written, how a
+against the source, the point-first prose style, document-the-present, how links are written, how a
 document registers itself, and the prose mechanics. The rules below add only what is specific to
 documenting `cgp`.
 
@@ -280,7 +280,7 @@ reality, so describe the behavior as it currently is even when it is wrong, and 
 the same change that fixes the code.
 
 Improve flow, and deduplicate, when a review finds the document hard to follow. A document that has
-been patched repeatedly drifts from the dual-reader style: topic sentences stop matching their
+been patched repeatedly drifts from the point-first style: topic sentences stop matching their
 paragraphs, the same concept gets explained in two places, and sections lose their order. Rewrite or
 reorganize the affected sections rather than adding another patch, and collapse a repeated
 explanation into the one document that owns the concept, replacing the duplicate with a cross-link:

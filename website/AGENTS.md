@@ -24,22 +24,32 @@ the public page it describes, so an agent starting from a page always reaches th
 The practical consequence is that **the internal document is the only place a page's provenance can be
 recorded**, which is why creating a page without creating its document leaves that provenance nowhere.
 
-**One page is a sanctioned exception, and only one.** The
-[AI disclaimer page](https://contextgeneric.dev/docs/ai/disclaimer) links to the knowledge base
-repository, because the base is the subject it is disclosing: its argument is that CGP's documentation
-is written against a public record whose rules and history a reader can go and check, and that argument
-cannot be made while hiding the record. Neither reason behind the one-way rule applies there: the link
-is a public GitHub URL that resolves for everyone, and exposing the material is the point rather than
-an accident. The exception is to the repository as a whole, not to individual documents: that page links
-the base's front door, never a path into a particular file, because a reader following a deep link lands
-in prose written for agents with no idea what they are reading.
+**Two hand-written surfaces are sanctioned exceptions, and only two.** The [AI disclaimer
+page](https://contextgeneric.dev/docs/ai/disclaimer) links to the knowledge base repository, because
+the base is the subject it is disclosing: its argument is that CGP's documentation is written
+against a public record whose rules and history a reader can go and check, and that argument cannot
+be made while hiding the record. The pages under `docs/ai/knowledge-base/` link to it for the same
+reason and one more: they teach a reader to point an agent at the base, which cannot be done without
+naming its files. Neither reason behind the one-way rule applies to either surface: the links are
+public GitHub URLs that resolve for everyone, and exposing the material is the point rather than an
+accident.
 
-**The published agent skill is a second exception, and it is a different kind.** The skill pages under
-`docs/ai/skills/` cite this base by deep GitHub URL roughly ninety times, and those links are
-deliberate rather than tolerated: the pages *are* prose written for agents, the reader has been told so
-before reaching them, and a reader who follows one lands exactly where the skill intended. That
-exception is bounded to those pages, which nobody hand-writes; see
-[the section below](#the-agent-skill-is-published-as-a-snapshot). No page you write may link here.
+The exceptions are bounded by how far a reader can follow them without getting lost. The disclaimer
+links the base's front door and its [issue
+tracker](https://github.com/contextgeneric/cgp-knowledge-base/issues), which is where readers report
+problems in the base and holds no agent prose. The knowledge-base pages may also link the four
+top-level entry files written to orient an agent (`README.md`, `summary.md`, `AGENTS.md`, and
+`sibling-projects.md`), but never a document inside a section, because a reader following such a
+link lands in prose written for agents with no idea what they are reading. A page that needs to name
+a section points the reader at its directory in prose rather than linking a file in it.
+
+**The published agent skill is a further exception, and it is a different kind.** The skill pages
+under `docs/ai/skills/` cite this base by deep GitHub URL roughly ninety times, and those links are
+deliberate rather than tolerated: the pages *are* prose written for agents, the reader has been told
+so before reaching them, and a reader who follows one lands exactly where the skill intended. That
+exception is bounded to those pages, which nobody hand-writes; see [the section
+below](#the-agent-skill-is-published-as-a-snapshot). No page you write may link here, other than the
+two surfaces above within their bounds.
 
 Two mechanics follow from the base's [link conventions](../AGENTS.md#writing-links). A link to a
 published page is its live URL under `https://contextgeneric.dev`, since that is where a reader meets
@@ -281,15 +291,17 @@ built to prevent [voiceless machine prose](../communication-strategy/README.md) 
 roughly a hundred pages of it.
 
 **The author reads, in full, before publication:** the front page, every page of the *Concepts*
-explanation tier, the reference index, the AI disclosure page, every blog post, and, on every
-*Comparisons* page, the two sections that judge another tool: *What each approach costs* and *Where the
-other tool is the better choice*. Most of these carry the voice, make the argument, and are what a
-first-contact reader meets, so an off-voice paragraph in one of them costs more than a wrong sentence
-anywhere else. The disclosure page is on the list for a different reason: a wrong sentence there is a
-false claim about the project rather than about CGP, and it is the page whose entire value is that it is
-accurate. The comparison sections are on it because they speak about other communities' tools, and a
-sentence that reads as disparagement there costs the project more than any wrong claim about CGP.
-The public disclosure page states this part of the arrangement alongside the rest.
+explanation tier, the reference index, the AI disclosure page, the knowledge-base page describing
+how CGP's documentation is written, every blog post, and, on every *Comparisons* page, the two
+sections that judge another tool: *What each approach costs* and *Where the other tool is the better
+choice*. Most of these carry the voice, make the argument, and are what a first-contact reader
+meets, so an off-voice paragraph in one of them costs more than a wrong sentence anywhere else. The
+disclosure page and the documentation-process page are on the list for a different reason: a wrong
+sentence on either is a false claim about the project rather than about CGP, and each is a page
+whose entire value is that it is accurate. The comparison sections are on it because they speak
+about other communities' tools, and a sentence that reads as disparagement there costs the project
+more than any wrong claim about CGP. The public disclosure page states this part of the arrangement
+alongside the rest.
 
 This list is the authoritative one, and it is quoted elsewhere, in
 [tasks.md](tasks.md) and in

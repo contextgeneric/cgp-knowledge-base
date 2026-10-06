@@ -57,6 +57,14 @@ write CGP; it does not remove the human reviewer's need to understand the code. 
 with wiring, vocabulary, and diagnostics beside those costs, following
 [message.md](message.md#the-one-mitigation-that-spans-three-of-these).
 
+Call the public repository of agent-written documents **the CGP knowledge base**, and keep it
+distinct from the two things it is most often confused with. "The documentation" means the pages a
+reader meets on the website; the knowledge base is the record that documentation and the agent skill
+are written from, written for agents and carrying unfinished work. "The agent skill" is the
+distilled part an assistant loads for everyday work; the knowledge base is the exhaustive record it
+links to. Say that the knowledge base is written for agents whenever a page sends a person to it, so
+the reader knows what kind of prose they will find.
+
 ## Qualifying a context and a target
 
 Identify what the context represents and what the operation acts on. These are separate questions,

@@ -149,6 +149,12 @@ the release's contents and its breaking changes from
 [releases/v0-8-0.md](../../releases/v0-8-0.md); and keep the motivation section as it stands, since it
 is the best part of the draft and needs no change.
 
+The draft's *AI-generated documentation and skill* section links "knowledge base" to a placeholder
+`#`. The natural target is the site's [knowledge-base pages](../site-structure.md#knowledge-base),
+and its promise of a later post on the methodology is now partly met by the process page there. Both
+are the author's to settle, since the section is in his voice; its word and page counts are also
+still placeholders.
+
 Two mechanical items go with it. The **placeholder date** in the filename must become the real
 release date, which also sets its position in the blog index (the explicit `slug` fixes the URL).
 The **opening sentence** claims the release has already happened and must not go out before it has.

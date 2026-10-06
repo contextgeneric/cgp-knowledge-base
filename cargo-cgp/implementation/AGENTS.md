@@ -2,7 +2,7 @@
 
 This directory documents the internals of `cargo-cgp`. Read [README.md](README.md) for the catalog,
 the base-wide [../../AGENTS.md](../../AGENTS.md) for the rules every document in the knowledge base
-follows (the dual-reader prose requirement, the synchronization rule, document-the-present, and how
+follows (the point-first prose requirement, the synchronization rule, document-the-present, and how
 links are written), and [../AGENTS.md](../AGENTS.md) for the ones specific to documenting this tool,
 including the read-only external references. This file adds only what is specific to the
 implementation tree.

@@ -100,6 +100,84 @@ co-authorship trailers on proc-macro work. Those records are useful disclosure, 
 does not distinguish design from implementation or establish how much review occurred. Describe
 those responsibilities directly.
 
+## The knowledge base behind the first level
+
+The first level rests on a process rather than on a person, so the process is the claim a reader has
+to assess. This section owns the claims about it. The disclosure page states them briefly, and the
+website's [methodology page](../website/site-structure.md#knowledge-base) develops them; both take
+their wording from here, so the two cannot drift apart.
+
+The claims the project can make, and their limits, are these:
+
+- **Knowledge is written down before it is used.** Agents write each construct's semantics, the
+  macro internals, the error classes, and the worked examples into the public base once, and later
+  agents read the result rather than reconstruct it from the macro source or recall it from
+  training. An agent prompted once fills its gaps from training instead, and for CGP much of that
+  material shows syntax the library no longer accepts, as the
+  [blog records](../website/blog/README.md) show for the project's own posts.
+- **The source outranks the documents.** A document that disagrees with the code is a defect, and
+  agents check claims against the source, the tests, and the expansion snapshots rather than against
+  memory or an earlier draft, under the [synchronization
+  rule](../AGENTS.md#the-synchronization-rule).
+- **One construct has several views that must agree.** The implementation, its snapshots, its
+  reference document, its implementation document, and the skill's reference describe the same
+  construct, and a change to one is a change to all.
+- **The rules are written down and public.** Each section's `AGENTS.md` records how its documents
+  are written, and the outputs (the skill and the website's ported pages) are derived from the base
+  rather than written fresh.
+- **A person directs the work, and agents ask rather than guess.** The author designs CGP, writes
+  and revises the rules, and chooses what gets documented, per [the first
+  level](#documentation-and-articles-written-by-agents-from-a-public-knowledge-base). Every
+  `AGENTS.md` tells an agent to stop and ask when a choice has more than one defensible answer. A
+  review of a document checks its claims against the source in one pass before improving its prose
+  in another, per [cgp/AGENTS.md](../cgp/AGENTS.md#reviewing-and-updating-a-document), and a new
+  kind of website page gets its writing guide before the page, per
+  [website/AGENTS.md](../website/AGENTS.md#registering-a-document). Do not turn this into a claim
+  that the author reads every page; the review arrangement is stated below.
+- **The checks are partly mechanical and mostly not.** Expansion snapshots and `cargo-cgp` UI
+  fixtures fail a build when generated code or a diagnostic changes. Agreement between prose and
+  code is enforced by agents following the rules and by the author's review, which can miss a stale
+  sentence. State this limit wherever the process is described.
+- **The base is in an early phase and under active development.** Many of its documents still need
+  further review, by the author and by agents, and some contain errors or inconsistencies that no
+  review has found yet. The aim is to improve it step by step toward full accuracy, meaning
+  agreement with the author's intent as well as with the source. Say this wherever a page sends a
+  reader to the base or describes its process, so the reader weighs a document accordingly. The
+  knowledge-base overview's *Its current state* section states it in full; a page that mentions the
+  base in passing uses a one-clause form and links that section rather than repeating it.
+
+Draw the contrast with one-shot prompting as a mechanism, as in the first claim. Do not characterize
+other projects' AI use or the public's view of it, which [evidence.md](evidence.md) does not record.
+And do not claim that the process makes agent output correct, or better than a human's. It makes an
+error checkable and correctable against a public record, which is the strongest honest claim.
+
+## Contributions from outside the project
+
+**Finding problems in the knowledge base is a useful contribution in its own right.** Because the
+base is still being reviewed, an error or an inconsistency someone finds and reports is work the
+project would otherwise have to do itself. Reports go to the knowledge base's
+[issue tracker](https://github.com/contextgeneric/cgp-knowledge-base/issues), and public pages send
+readers there for any problem in a document.
+
+**AI-assisted contributions to any CGP repository must use the knowledge base.** A contributor whose
+agent writes or changes code or documentation directs that agent to read the knowledge base and
+follow the `AGENTS.md` files of the repositories it touches, so the change carries its documentation
+and skill updates and uses the vocabulary and idioms the base records. The reason is the one behind
+the first level: an agent working from its training alone reproduces CGP's outdated syntax and
+invents semantics the base already records.
+
+**An AI-assisted pull request or issue includes the prompts used to produce it**: the prompt that
+verified the issue, or the prompt that applied the fix. The CGP maintainers may run similar prompts
+themselves rather than merge a pull request directly, so the prompt can matter as much as the
+change. State this as the maintainers' option, not as a promise about how any contribution will be
+handled.
+
+This is a light policy, and the project states that a more detailed one will follow. It contains the
+two requirements above and nothing else. Do not add requirements it does not contain, such as a
+disclosure trailer or a review attestation, until that policy is drafted. The website's
+[contributing page](../website/site-structure.md#knowledge-base) publishes it, and the disclosure
+page summarizes it in a section of its own.
+
 ## How to word a disclosure
 
 Use a short factual description of the actual process. Apply these rules:
@@ -124,14 +202,14 @@ Preserve the qualifications on core-library authorship and human review. The
 [core-library section](#the-core-library) distinguishes the author's design from assisted
 implementation. The review claim must be equally precise.
 
-The website's
-[authorship rule](../website/AGENTS.md#who-drafts-a-page-and-who-reads-it-before-it-publishes) is
-the authority on which pages receive full review. It requires the author to read the front page,
-every Concepts explanation page, the reference index, the AI disclosure page, and every blog post in
-full before publication, and on every comparison page the two sections that judge another tool.
-Other pages follow their writing guides and receive spot checks. Consult that rule when drafting a
-disclosure instead of reconstructing the list from memory. The disclosure page states the comparison
-clause alongside the rest.
+The website's [authorship
+rule](../website/AGENTS.md#who-drafts-a-page-and-who-reads-it-before-it-publishes) is the authority
+on which pages receive full review. It requires the author to read the front page, every Concepts
+explanation page, the reference index, the AI disclosure page, the page describing how CGP's
+documentation is written, and every blog post in full before publication, and on every comparison
+page the two sections that judge another tool. Other pages follow their writing guides and receive
+spot checks. Consult that rule when drafting a disclosure instead of reconstructing the list from
+memory. The disclosure page states the comparison clause alongside the rest.
 
 The review policy reflects the kind of work each page requires. Construct reference pages are ports
 of source-checked documents into a fixed template, while argument and framing require close human
@@ -152,7 +230,9 @@ Open with the organizing principle, then present the levels in this document's o
 agent-written documentation and end with the core library, so the page explains substantial AI use
 before describing its limits. Each level covers its scope, the division of work, the reason for that
 division, and the limits of review. Give the knowledge-base process enough space for readers to
-understand how it can be checked.
+understand how it can be checked, and link the
+[methodology page](../website/site-structure.md#knowledge-base) for the full account rather than
+reproducing it.
 
 Write in the project voice, with a visible personal statement where accountability requires it. For
 example, the author may say "every error is mine." The

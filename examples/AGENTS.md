@@ -4,7 +4,7 @@ This directory holds the knowledge base's self-contained worked examples, one do
 each developing a realistic scenario from its contexts and components through to the wiring that
 connects them. Read [README.md](README.md) for the catalog and what an example is for, and the
 base-wide [../AGENTS.md](../AGENTS.md) for the rules every section shares: the synchronization rule,
-the dual-reader prose style, document-the-present, and how a document registers itself. The rules
+the point-first prose style, document-the-present, and how a document registers itself. The rules
 below add what is specific to examples.
 
 The examples sit at the base's top level rather than inside a member section because they serve the

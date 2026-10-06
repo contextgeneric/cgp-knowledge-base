@@ -498,8 +498,8 @@ Separate agent support from AI authorship. Help using CGP belongs here; claims a
 built follow [ai-disclosure.md](ai-disclosure.md).
 
 The website's "AI" navigation entry is a standing exception to the placement rule. It labels the
-section containing the skill and disclosure page, under the decision in
-[information-architecture.md](../website/information-architecture.md#the-target-page-inventory).
+section containing the skill, the knowledge-base pages, and the disclosure page, under the decision
+in [information-architecture.md](../website/information-architecture.md#the-target-page-inventory).
 Retain that label while keeping other prominent introductory copy focused on CGP's benefits and
 code. The exception permits navigation, not an AI-led pitch.
 

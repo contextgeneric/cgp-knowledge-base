@@ -13,13 +13,15 @@ it stale.
 ## Top level
 
 - [README.md](README.md) — what the knowledge base is, why the ecosystem's documentation is
-  consolidated here, and a summary of every top-level directory.
+  consolidated here, a summary of every top-level directory, and what an outside agent that only
+  reads the base needs to know.
 - [AGENTS.md](AGENTS.md) — the authoring and maintenance rules for the whole base: the
   synchronization rule, verifying against the source, document-the-present, documenting official
   versions and never pre-releases, the rules that follow from this repository being public, how
   links are written, the separate owners of project facts (`projects/`) and CGP patterns (`cgp/`,
   `examples/`) and matching a project's documented branch, registering a document, the prose
-  mechanics, and the committing rule.
+  mechanics, and the committing rule; it also governs `releases/` and `skills/`, which have no rules
+  of their own.
 - [summary.md](summary.md) — this file.
 - [sibling-projects.md](sibling-projects.md) — the member projects, their repositories, the revision
   of each to read, and the rules for finding a sibling locally versus linking to it.
@@ -603,11 +605,11 @@ it stale.
 - [identity.md](communication-strategy/identity.md) — the positioning decided in five steps from
   alternatives to category, the settled tag line analyzed word by word, the enhances-not-replaces frame,
   the layered pitch that follows the line, and the curated headline feature set for a front page.
-- [readers.md](communication-strategy/readers.md) — audience hypotheses by Rust experience, prior model, and task; comprehension barriers, teaching responses, and methods for testing the model against reader feedback.
+- [readers.md](communication-strategy/readers.md) — audience hypotheses by Rust experience, prior model, and task, including the reader who doubts agent-written documentation and the contributor directing an agent; comprehension barriers, teaching responses, and methods for testing the model against reader feedback.
 - [message.md](communication-strategy/message.md) — everything a piece says about CGP: the pains it
   removes, the strengths worth advertising, the objections readers bring, and the boundary where a
   plainer tool wins: four views of one reader.
-- [vocabulary.md](communication-strategy/vocabulary.md) — CGP definitions, context and target qualifiers, term introduction, wording to avoid, canonical cargo-cgp qualification, and communication terminology.
+- [vocabulary.md](communication-strategy/vocabulary.md) — CGP definitions, context and target qualifiers, term introduction (including the knowledge base as distinct from the documentation and the skill), wording to avoid, canonical cargo-cgp qualification, and communication terminology.
 - [reader-simulation.md](communication-strategy/reader-simulation.md) — the theory-of-mind method for
   writing CGP prose: the split-knowledge model reader, the predict-compare-repair loop, the six
   mental-state variables (common ground, working memory, model under construction, expectation, stance,
@@ -621,11 +623,15 @@ it stale.
   own posts and talk were received, and the measured search demand from Search Console and the signal watched at each funnel stage; the section's single
   home for external citations, audience facts and borrowed craft alike, each with the date it was last
   checked, and the rule that reaction to CGP is summarized rather than linked.
-- [ai-disclosure.md](communication-strategy/ai-disclosure.md) — how the project discloses its own use of
-  AI: the reach-and-verifiability principle behind the gradient, the four levels from agent-written
-  documentation through revised drafts and non-imported code to the hand-written core library, the
-  wording rules, the non-uniform-review claim that is easiest to get wrong, the site's disclosure page,
-  and the rule that only new pages link to it.
+- [ai-disclosure.md](communication-strategy/ai-disclosure.md) — how the project discloses its own
+  use of AI: the reach-and-verifiability principle behind the gradient, the four levels from
+  agent-written documentation through revised drafts and non-imported code to the hand-written core
+  library, the claims the project can make about the knowledge-base process behind the first level
+  and their limits including the base's early phase, the light policy requiring AI-assisted
+  contributions to use the knowledge base and to include the prompts behind them, reports of
+  problems in the base as a contribution,
+  the wording rules, the non-uniform-review claim that is easiest to get wrong, the site's
+  disclosure page, and the rule that only new pages link to it.
 
 ## `cargo-cgp/`: the CGP toolchain
 
@@ -703,7 +709,8 @@ it stale.
 
 - [website/README.md](website/README.md) — what this section documents, the one-way link asymmetry
   that makes it necessary, how the Docusaurus site is organized, and its catalog.
-- [website/AGENTS.md](website/AGENTS.md) — the rules: the one-way link rule and its two exceptions,
+- [website/AGENTS.md](website/AGENTS.md) — the rules: the one-way link rule and its exceptions (the
+  disclaimer and the knowledge-base pages, each bounded, and the published skill),
   the published agent skill as a pinned snapshot that agents never edit, bump, or read from,
   consulting communication-strategy before writing public prose, covering every supported form by
   layering the depth rather than omitting the advanced material, never taking current syntax from a
@@ -716,8 +723,8 @@ it stale.
   project.
 - [website/information-architecture.md](website/information-architecture.md) — the site as intended:
   why most readers never see the homepage, the four routes in and why three fail, what each surface is
-  for, the target page inventory including unwritten pages, the sidebar order, and each reader
-  profile's path through the site.
+  for, the target page inventory including unwritten pages and the AI section's overview and
+  knowledge-base subsection, the sidebar order, and each reader profile's path through the site.
 - [website/patterns-book.md](website/patterns-book.md) — the CGP Patterns book: its measured search
   performance and the single chapter carrying 77% of it, the split between seven current chapters and
   twelve stale ones, the one outbound link in nineteen chapters, the 28 unwritten entries the website
@@ -733,15 +740,15 @@ it stale.
   redirect stubs landed, the branded terms that already rank first and have no volume, the
   blanket-implementation family that is the project's one proven term, the map from the headline
   features to query families, the per-page title and description levers, why adding a page is almost
-  never the answer and which three query clusters to consider, the agent surfaces including the
-  evidence on `llms.txt`, what was checked and left alone, and what to watch now that measurement
-  exists.
+  never the answer and which three query clusters to consider, the agent surfaces (the knowledge
+  base among them) including the evidence on `llms.txt`, what was checked and left alone, and what
+  to watch now that measurement exists.
 - [website/tasks.md](website/tasks.md) — the redesign's work plan: that the whole site relaunches
   with the v0.8.0 release (and `cargo-cgp` v0.1.0) from one branch, the four standing obligations
   every page-adding task carries, every remaining task with its repository, dependencies, and
-  done-condition (including the AI disclosure page, the `cargo-cgp` release the tool's pages are
-  written against, and the post-release Projects pages with the code changes they need), which of
-  them the release waits for, and the ordering; deleted when empty.
+  done-condition (including the AI disclosure page, the knowledge-base pages, the `cargo-cgp`
+  release the tool's pages are written against, and the post-release Projects pages with the code
+  changes they need), which of them the release waits for, and the ordering; deleted when empty.
 - [website/site-structure.md](website/site-structure.md) — the site's build, navigation,
   announcement bar, deployment, the release branch that carries both `cgp` v0.8.0 and `cargo-cgp`
   v0.1.0, the three settings that depart from stock Docusaurus to publish the agent skill from its
@@ -749,7 +756,8 @@ it stale.
   site shows, plus one entry each for the front page, Introduction, the Quickstart, Overview,
   Resources, Contribute, the `cargo-cgp` tooling section, the AI skills section and its `cgp-skills`
   submodule, the Concepts section, the Comparisons section, the Reference section including its
-  compile-errors and glossary pages, the Projects section, and the AI disclaimer.
+  compile-errors and glossary pages, the Projects section, the AI section's overview and
+  knowledge-base pages, and the AI disclaimer.
 
 ### `website/writing-guides/`: how new pages should be written
 
@@ -791,6 +799,11 @@ it stale.
   to enumerate against it, near-one-page-per-construct with four consolidations, the replacement for
   every internal link target, the external Rust documentation table, and the glossary page with its
   three sections, the definition-and-route entry, and the heading level every term needs to be linkable.
+- [knowledge-base.md](website/writing-guides/knowledge-base.md) — the four pages explaining the
+  public knowledge base: why they are the second, bounded exception to the one-way link rule, the
+  shape that keeps the process page apart from the two how-to pages, what a how-to page owes its
+  reader as the site's first of the kind, what must not appear on them, and why prompt templates
+  wait until they have been tested.
 - [related-work.md](website/writing-guides/related-work.md) — the comparison pages ported from the
   internal related-work documents: the four transformations of the port (retire the positioning section
   and apply it as structure, compress the refresher, re-point every link, keep Sources), the page shape
@@ -904,6 +917,16 @@ it stale.
 - [v0-8-0.md](releases/v0-8-0.md) — **unreleased**, in development on `main`: namespaces and
   paths, the `open` statement, the removal of presets, the error backends' behavior changes, and why
   it is not v0.7.1.
+
+## `skills/`: the writing skills the rules name
+
+- [README.md](skills/README.md) — why the base publishes skills that the rules of this base and the
+  member projects name but no other repository ships, how a skill is laid out for an agent harness,
+  and the catalog.
+- [point-first-writing/SKILL.md](skills/point-first-writing/SKILL.md) — the prose convention for
+  documents, guides, and code comments: point-first paragraphs, prose for arguments and lists for
+  sets, grounded and connected claims, plain English, and punctuation that states the relationship
+  in place of em dashes.
 
 ## `projects/`: the libraries built with CGP
 

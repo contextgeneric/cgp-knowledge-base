@@ -3,7 +3,7 @@
 This file governs how to write and maintain the documents in this directory, which document the
 `cargo-cgp` toolchain. Read [README.md](README.md) first for what this section covers and how it is
 organized, the base-wide [../AGENTS.md](../AGENTS.md) for the rules every section shares: the
-synchronization rule, the dual-reader prose style, document-the-present, how links are written, the
+synchronization rule, the point-first prose style, document-the-present, how links are written, the
 backtick discipline, and how a document registers itself, and the member project's own
 [AGENTS.md](https://github.com/contextgeneric/cargo-cgp/blob/main/AGENTS.md) for the code itself.
 The rules below add what is specific to documenting this tool; a category may add more in its own

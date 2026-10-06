@@ -295,6 +295,8 @@ as they are written rather than planned into the target.
 
 **AI**: the section carries CGP's relationship with coding agents in both directions, and the two
 directions are different subjects that must be named apart rather than blended.
+- *Overview* (**new**, `docs/ai/index.md`): the section's landing page, routing by question under
+  one heading per direction. Recorded in [site-structure.md](site-structure.md#ai-section-overview).
 - *Using CGP with coding agents*: present as the inlined skill copy, regenerated from `cgp-skills`
   rather than edited. This is a **feature**: what CGP offers a reader who works with an assistant.
 - *AI disclaimer*: present. The disclosure page: the four levels from agent-written documentation
@@ -305,10 +307,22 @@ directions are different subjects that must be named apart rather than blended.
   it is one project-meta page rather than a kind the site will publish repeatedly, and recorded in
   [site-structure.md](site-structure.md).
 
-The section stays at `docs/ai/`, labelled "AI Assisted Development", which reads correctly for both
-pages; the unmerged rename to `docs/ai-assisted-development/` would move both URLs to no benefit. The
-alternative placement (the disclosure page under **Project** beside Contribute) is defensible and was
-not chosen, because a reader looking for provenance looks under AI first.
+- *The knowledge base* (**new**, `docs/ai/knowledge-base/`): four pages about the public [knowledge
+  base](../README.md) the documentation is written from. The index orients a reader; *How CGP's
+  Documentation Is Written* is a **fact about the project**, the full account of the process the
+  disclaimer summarizes; *Using the Knowledge Base with Your Agent* and *Contributing to CGP with an
+  Agent* are **features**, how-to pages for a reader directing an agent. Keeping the process page
+  apart from the two how-to pages keeps the two directions named apart inside the subsection. These
+  pages and the disclaimer are the only hand-written pages that link into this base, within the
+  bounds [AGENTS.md](AGENTS.md#the-one-way-link-rule) sets. Recorded in
+  [site-structure.md](site-structure.md#knowledge-base).
+
+The section stays at `docs/ai/`, labelled "AI-Assisted Development", which reads correctly for every
+page in it; the unmerged rename to `docs/ai-assisted-development/` would move every URL in it to no
+benefit. The alternative placement (the disclosure page under **Project** beside Contribute) is
+defensible and was not chosen, because a reader looking for provenance looks under AI first. Inside
+the section the order is the overview, the skill, the knowledge base, then the disclaimer, so the
+disclaimer closes the section as the destination of every provenance note.
 
 The navigation bar's "AI" entry is the one place the site leads with the word, and the communication
 strategy's rule against leading with AI tolerates it as a label rather than a hook, for the reasons in
@@ -396,9 +410,17 @@ pages are what fix it and they land afterwards. Until then the applied tutorial 
 are what this reader gets, which is a reason to draw the tutorial's scenario from an example that
 exercises extensible data rather than from an arbitrary one.
 
-The **enthusiast** is ready to go deep and contribute. Their path is the blog → the book → Contribute,
-and the top rung of that ladder is publishing components of their own, which is the outcome the
-Contribute page argues for.
+The **enthusiast** is ready to go deep and contribute. Their path is the blog → the book →
+Contribute, and the top rung of that ladder is publishing components of their own, which is the
+outcome the Contribute page argues for. An enthusiast who wants to change CGP itself continues from
+Contribute to *Contributing to CGP with an Agent*, the site's only guide to contributing code.
+
+The **reader who doubts agent-written documentation** arrives at a provenance note at the foot of a
+page, or at the AI section from the navigation bar. Their path is the disclaimer → *How CGP's
+Documentation Is Written* → the knowledge base repository itself, and what persuades them is a
+process they can check rather than an assurance. The **working developer with an assistant** takes a
+branch off their own path: the agent skill → *Using the Knowledge Base with Your Agent*, once a
+question outgrows what the skill carries.
 
 ## Placing a new page
 

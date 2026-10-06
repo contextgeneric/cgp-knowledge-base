@@ -332,6 +332,21 @@ somewhere to be tracked.
   since the `cgp` commit trailers make the blunter version disprovable. *Spec:*
   [ai-disclosure.md](../communication-strategy/ai-disclosure.md).
 
+- **A2: the knowledge-base pages.** Written and building at `docs/ai/knowledge-base/` on the release
+  branch, four pages recorded in one [site-structure.md](site-structure.md#knowledge-base) entry: an
+  index, the page describing how CGP's documentation is written, a how-to for pointing an agent at
+  the base, and a how-to for contributing with an agent that publishes the light contribution
+  policy. The AI section's [overview page](site-structure.md#ai-section-overview), which routes to
+  them and to the skill and disclaimer, lands with them. What remains is **the author's read of the
+  documentation-process page**, which is on the [read-in-full
+  list](AGENTS.md#who-drafts-a-page-and-who-reads-it-before-it-publishes) for the same reason the
+  disclosure page is. The pages carry no prompt templates, which wait until they have been tested,
+  per the guide; adding them is later work and does not block this task. *Spec:*
+  [writing-guides/knowledge-base.md](writing-guides/knowledge-base.md), with the process claims
+  owned by
+  [ai-disclosure.md](../communication-strategy/ai-disclosure.md#the-knowledge-base-behind-the-first-level).
+  *Blocked by:* nothing; it is not release-blocking, but it publishes with the branch.
+
 Disclosure for the **other repositories** (`cargo-cgp` above all, whose source sits wholly at level
 three) is deliberately out of scope here and happens after the redesign is published. Do not add notes
 to another project's README or documentation in the meantime.
@@ -422,12 +437,14 @@ published blog posts, whose titles are among the worst offenders and whose
   display for the `cgp` crate, and it is a thirteen-line stub that says CGP's constructs are "still
   mostly undocumented within Rustdoc", routes readers to the book the site itself describes as not
   recently updated, and links the public into this knowledge base. Meanwhile the repository's own
-  `README.md` already implements the settled tag line and the curated five features and is visible only
-  on GitHub. This is a first-contact surface working against the project, and it is not a website task,
-  which is the only reason nobody has owned it. *Lands in:* the `cgp` repository. *Done when:* the crate
-  README carries the tag line, the reassurance line, and a short quick look; points at the site's
-  reference rather than at the knowledge base; and the claim about rustdoc coverage is either true or
-  gone. *Blocked by:* nothing; the reference is complete, so the destination exists.
+  `README.md` already implements the settled tag line and the curated five features and is visible
+  only on GitHub. This is a first-contact surface working against the project, and it is not a
+  website task, which is the only reason nobody has owned it. *Lands in:* the `cgp` repository.
+  *Done when:* the crate README carries the tag line, the reassurance line, and a short quick look;
+  points at the site's reference rather than at the knowledge base, sending contributors and agents
+  to the site's knowledge-base pages where it needs to mention the base at all; and the claim about
+  rustdoc coverage is either true or gone. *Blocked by:* nothing; the reference is complete, so the
+  destination exists.
 - **X3: the three canonical diagrams.** The wiring table, the consumer-and-provider split, and
   coherence scoped, each drawn once as an SVG among the site's static assets and reused by every page
   that explains the idea, per
@@ -459,6 +476,7 @@ the [ordering](#the-ordering) for what to start on.
 | V1 | the v0.8.0 release, and every release-blocking task | B1 and B2 |
 | V2 | the `cargo-cgp` tag | V1 |
 | A1 | the author's read | every page-adding task's provenance note |
+| A2 | the author's read | nothing |
 | S1, S3, S4, S5, S7, S10 | nothing | nothing; S3 and S4 should precede V1 |
 | S9, S11 | V1 | nothing |
 | X2, X3 | nothing | nothing |
@@ -476,13 +494,14 @@ link in that chain that can start today is F2, which aligns the front page with 
 tour, so that is what to hand over while the decision is outstanding.
 
 **Several things wait on the author rather than on an agent, and they are worth collecting into one
-handover rather than raised one at a time.** R1's reference index and A1's disclosure page are written
-and need a read. The two judging sections on each of the eleven comparison pages need the same read,
-against the standard in [writing-guides/related-work.md](writing-guides/related-work.md). What S7 has
-left needs repository settings no commit can change. And the Quickstart's ten-minute target has never
-been measured; it wants a friction log on a clean machine, per
-[writing-guides/orientation.md](writing-guides/orientation.md#the-quickstart). None of these blocks a
-writing task.
+handover rather than raised one at a time.** R1's reference index, A1's disclosure page, and A2's
+documentation-process page are written and need a read. The two judging sections on each of the
+eleven comparison pages need the same read, against the standard in
+[writing-guides/related-work.md](writing-guides/related-work.md). What S7 has left needs repository
+settings no commit can change. And the Quickstart's ten-minute target has never been measured; it
+wants a friction log on a clean machine, per
+[writing-guides/orientation.md](writing-guides/orientation.md#the-quickstart). None of these blocks
+a writing task.
 
 **T3 and T4 are the writing left in the tutorials.** T3 is where a reader finally meets an application
 context, and T4 is cheap enough to fold into any pass over the series.

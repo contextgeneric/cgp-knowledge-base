@@ -18,9 +18,11 @@ toolchain's (with [cargo-cgp/implementation/AGENTS.md](cargo-cgp/implementation/
 [projects/AGENTS.md](projects/AGENTS.md) for the libraries built with CGP. Read the one that owns
 what you are about to touch, after this file.
 
-One section has no rules of its own and is governed by this file alone:
-[releases/](releases/README.md), which is the single exception to the document-the-present rule
-below and is otherwise bound by this file unchanged.
+Two sections have no rules of their own and are governed by this file alone.
+[releases/](releases/README.md) is the single exception to the document-the-present rule below and
+is otherwise bound by this file unchanged. [skills/](skills/README.md) publishes writing skills that
+documents in this base or the member projects' rules name and no other repository ships, and a skill
+there is written for agents to load rather than as a document about CGP.
 
 ## Orient before any task
 
@@ -32,7 +34,7 @@ you move into an unfamiliar construct. The skill lives in
 [`cgp-skills`](https://github.com/contextgeneric/cgp-skills) and is built from this base, so the two
 must always use the same words for the same ideas.
 
-**Load the `/dual-reader-prose` skill whenever you write or revise prose here**, which is nearly
+**Load the `/point-first-writing` skill whenever you write or revise prose here**, which is nearly
 every task, and follow its convention. A document in this base is read both by an agent scanning for
 one fact and by an agent reading a subsystem end to end, and the style serves both: open every
 section and every paragraph with a self-contained topic sentence that states its point, then

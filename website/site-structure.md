@@ -1,9 +1,10 @@
 # Site structure and standalone pages
 
-This document describes how the CGP website is built and navigated, and then covers every page that is
-neither a blog post nor part of a tutorial series — the front page, the Introduction, the Overview,
-Resources, Contribute, and the AI skills section. Blog posts have their own documents under
-[blog/](blog/README.md) and tutorial series under [tutorials/](tutorials/README.md).
+This document describes how the CGP website is built and navigated, and then covers every page that
+is neither a blog post nor part of a tutorial series — the front page, the Introduction, the
+Overview, Resources, Contribute, and the AI section's overview, skill, knowledge-base, and
+disclaimer pages. Blog posts have their own documents under [blog/](blog/README.md) and tutorial
+series under [tutorials/](tutorials/README.md).
 
 ## How the site is built
 
@@ -403,10 +404,13 @@ publishes it, and keep the book's description in step with
 
 ### What it covers
 
-Six contribution paths — joining the discussion channels, reading and critiquing the documentation,
-publishing reusable CGP components, sharing on social media, writing independently about CGP, and
-sponsoring the author — followed by an acknowledgement crediting Soares Chen as CGP's creator, naming
-Haskell typeclasses as the primary inspiration, and recording that CGP was developed at
+The page lists seven contribution paths: joining the discussion channels, reading and critiquing the
+documentation, publishing reusable CGP components, contributing code or documentation (routing to
+the [contributing page](#knowledge-base), the site's only guide to changing CGP itself, and to its
+section on reporting problems in the base),
+sharing on social media, writing independently about CGP, and sponsoring the author. An
+acknowledgement follows, crediting Soares Chen as CGP's creator, naming Haskell typeclasses as the
+primary inspiration, and recording that CGP was developed at
 [Informal Systems](https://informal.systems/) as part of the
 [Hermes SDK](https://github.com/informalsystems/hermes-sdk/).
 
@@ -556,6 +560,43 @@ When the tool's diagnostics change, the internal reference and these pages move 
 [error catalog](../cgp/errors/README.md), whose classes cite the same `[CGP-Exxx]` codes. A new code
 gets a heading on the error-codes page in the same change.
 
+## AI section overview
+
+- **URL** — <https://contextgeneric.dev/docs/ai/>
+- **Source** —
+  [docs/ai/index.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/docs/ai/index.md)
+- **Status** — Current, on the `v0.8.0` branch
+- **How it was made** — written by an agent (level one), following
+  [writing-guides/orientation.md](writing-guides/orientation.md); not yet read by the author
+
+### What it covers
+
+The overview is the AI section's landing page, which the category's `link` targets in place of a
+generated index. It orients a cold reader with the settled descriptor, then routes by question under
+two headings that keep the section's directions apart. *Working with CGP through an agent* is the
+feature: it states what the agent skill and knowledge base can reduce and that the reader still
+reviews the result, then routes to the skill, the using page, and the contributing page, and sends a
+reader learning CGP themselves to the tutorials and Concepts. *How the CGP project uses AI* is the
+fact about the project: two sentences summarizing the disclaimer's arrangement, then routes to the
+disclaimer, the process page, and the knowledge-base index.
+
+### How it relates to the knowledge base
+
+It is an orientation page, so [writing-guides/orientation.md](writing-guides/orientation.md) governs
+its shape: one line of orientation, routing named by the question each route answers, and nothing
+that teaches or persuades. Its summary of how the project uses AI is taken from the
+[disclaimer](#ai-disclaimer) and [ai-disclosure.md](../communication-strategy/ai-disclosure.md); its
+sentence on what agent support can and cannot do follows
+[message.md](../communication-strategy/message.md#the-one-mitigation-that-spans-three-of-these). It
+links into no knowledge-base file, so the one-way rule's exceptions do not reach it.
+
+### Maintaining it
+
+Revisit it when a page is added to or removed from the AI section, and whenever the disclaimer's
+arrangement changes, since its two-sentence summary of that arrangement is a public claim and must
+match the disclaimer. Keep it a routing page: an explanation that grows here belongs on the page it
+routes to.
+
 ## AI skills
 
 - **URL** — <https://contextgeneric.dev/docs/ai/skills/>
@@ -570,7 +611,9 @@ The AI section publishes CGP's agent skill for readers who want to hand it to an
 page explains what the skill is, states plainly that it teaches the assistant rather than the reader,
 distinguishes attaching the primer from installing the complete skill, and routes learners to the
 tutorials and concepts. It explains that cloning downloads the files and that the assistant must be
-configured to discover them, with the entry point and references kept together. It carries no skill content of its own.
+configured to discover them, with the entry point and references kept together, and it sends a
+reader whose question outgrows the skill to the [knowledge-base using page](#knowledge-base). It
+carries no skill content of its own.
 
 The skill itself follows as sibling pages: `SKILL.md` and one page per file in `cgp/references/`.
 **These are symlinks, not copies.** The `cgp-skills` repository is a git submodule checked out at the
@@ -1514,6 +1557,85 @@ the pages were verified against. The page type and its conventions, including th
 verified against its project's repository rather than the `example-code` crate, are in
 [writing-guides/project.md](writing-guides/project.md).
 
+## Knowledge base
+
+- **URL** — <https://contextgeneric.dev/docs/ai/knowledge-base/>
+- **Source** —
+  [docs/ai/knowledge-base/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/ai/knowledge-base)
+- **Status** — Current, on the `v0.8.0` branch; awaiting the author's read of the process page
+- **How it was made** — all four pages written by an agent (level one), from
+  [writing-guides/knowledge-base.md](writing-guides/knowledge-base.md); none has been read by the
+  author yet, and each footer records agent authorship without claiming review
+
+### What it covers
+
+The subsection explains the public [knowledge base](../README.md) to a person, in four pages that
+keep the AI section's two directions apart:
+
+- **The index** (`index.md`): what the base is, who writes it and who it is written for, the order
+  of authority from source code to base to skill and site, a one-line map of each top-level section
+  named in prose, a section on its current state (an early phase, documents still awaiting review,
+problems filed on the issue tracker), and the four entry files as links, then routing by question.
+- **How CGP's Documentation Is Written** (`how-cgp-is-documented.md`): the fact about the project.
+  It covers the problem of one-shot prompting from stale training material and of reading macro
+  source, the write-once-and-keep-true rules, `#[cgp_component]` traced through its five views, the
+  written `AGENTS.md` rules and the communication strategy, who directs the work and the separate
+  passes it moves through, how the site's pages derive from the base, and where the checks stop,
+including the base's early phase and where to file an error.
+- **Using the Knowledge Base with Your Agent** (`using-it-with-your-agent.md`): the first of the
+  site's how-to pages. It covers when the skill suffices, access, the instructions to give an agent
+  (with the section that owns each kind of question named), the context cost of `summary.md`, and
+reviewing the answer, with a document's problems filed on the issue tracker along with the prompt
+that surfaced them. It carries no prompt templates.
+- **Contributing to CGP with an Agent** (`contributing-with-an-agent.md`): the second how-to page.
+  It publishes the light contribution policy (use the knowledge base, and include the prompts behind
+an AI-assisted pull request or issue), presents reporting problems in the base as a contribution,
+and covers the side-by-side checkout layout, the
+  `AGENTS.md` files and the documentation obligation they share (corrections included), the
+  `point-first-writing` skill, the two rules that shape how the agent works with the contributor
+  (ask rather than guess, and commit only when asked), and the macro review and error-message
+  workflows.
+
+### How it relates to the knowledge base
+
+Every process claim comes from
+[ai-disclosure.md](../communication-strategy/ai-disclosure.md#the-knowledge-base-behind-the-first-level),
+which also owns the [contribution
+policy](../communication-strategy/ai-disclosure.md#contributions-from-outside-the-project); the page
+shape, the how-to rules, and the draft checks come from
+[writing-guides/knowledge-base.md](writing-guides/knowledge-base.md). The term follows
+[vocabulary.md](../communication-strategy/vocabulary.md#terms-to-use-and-how-to-introduce-each), and
+the readers are the two hypothesis profiles in
+[readers.md](../communication-strategy/readers.md#the-reader-who-doubts-agent-written-documentation).
+The pages are the second sanctioned exception to the [one-way link
+rule](AGENTS.md#the-one-way-link-rule): they link the base's front door, its issue tracker, and its
+four top-level entry files, and name every deeper path in prose. The base's
+[README](../README.md#reading-it-from-outside-the-project) carries the matching section for an
+outside agent, which the using page relies on.
+
+### Maintaining it
+
+These pages describe the base's own structure, so they go stale when the base changes rather than
+when CGP does. Revisit them in the same change as any of these:
+
+- a top-level section of the base is added, renamed, or removed, or an entry file is renamed;
+- a section or path the using page names moves;
+- the documentation process or its review arrangement changes, together with the disclaimer;
+- the contribution policy is replaced by the fuller one it promises.
+
+**The pages deliberately carry no prompt templates.** The author has decided they wait until each
+has been tested enough to recommend. Adding one follows the testing step in the
+[guide](writing-guides/knowledge-base.md#checking-a-draft), with each run recorded here.
+
+The process page is on the author's read-in-full list, and the other three ship on the guide and a
+spot check.
+
+Two pages outside the subsection link into it, and each link is one line beside the reader's task:
+the skill index points to the using page, and the Contribute page's *Contribute Code or
+Documentation* section points to the contributing page. The disclaimer links the process page from
+its documentation section. The v0.8.0 release draft's placeholder knowledge-base link is recorded in
+[its post record](blog/v0-8-0-release.md#maintaining-it), since setting it is the author's call.
+
 ## AI disclaimer
 
 - **URL** — <https://contextgeneric.dev/docs/ai/disclaimer>
@@ -1526,22 +1648,32 @@ verified against its project's repository rather than the `example-code` crate, 
 
 ### What it covers
 
-The page opens with a summary of AI's roles and the author's design ownership, then explains why the
-division varies. Agents receive more writing responsibility when output can be checked against
-existing code and does not become part of a user's application. The section distinguishes checking
-an implementation from deciding what behavior the library should provide.
+The page opens with the settled descriptor, a summary of AI's roles and the author's design
+ownership, and a sentence saying the sections run from the most agent-written part to the least. It
+then explains why the division varies. Agents receive more writing responsibility when output can be
+checked against existing code and does not become part of a user's application. The section
+distinguishes checking an implementation from deciding what behavior the library should provide.
 
 Four sections then run from most AI to least. **Documentation and reference pages** is the longest,
 because it is the only level whose trustworthiness rests on a process rather than on a person: it
 describes the knowledge base, the rule that source outranks every document, claims being read out of
 code and tests and expansion snapshots rather than recalled, documentation changing with the behavior it
-describes, and the per-commit model trailers that make the whole thing checkable. **Blog posts and
+describes, the author directing the work while agents ask rather than guess, the per-commit model
+trailers that make the whole thing checkable, the review arrangement (every page outside the
+read-in-full list ships on its guide and a spot check), and which checks are mechanical and which
+depend on agents and review. **Blog posts and
 tutorials** inverts the order — the author drafts, an agent revises. **Tooling and tests** covers
-`cargo-cgp` and the test suite under one rule, that neither becomes part of a user's program.
+`cargo-cgp` and the test suite under one rule, that neither becomes part of a user's program, and
+closes on the canonical `cargo cgp check` qualification from
+[vocabulary.md](../communication-strategy/vocabulary.md#terms-to-use-and-how-to-introduce-each).
 **The CGP library** states that the design is entirely the author's and separates that from macro
 implementation work he directs and shares. The page states the limits of source verification, human
-review, and tests, including incorrect test expectations and missing cases. A short
-**Responsibility** section carries the page's single sentence in the author's own voice, and
+review, and tests, including incorrect test expectations and missing cases. **Contributions from
+others** states the light contribution policy, its prompt requirement, and the value of reporting
+problems in the base, and links the
+[contributing page](#knowledge-base) that publishes it. A short **Responsibility** section carries
+the page's single sentence in the author's own voice and says where to report an error (the issue
+tracker for the base, Discussions or the repository otherwise), and
 **How pages are marked** explains the provenance notes and why older pages do not carry them.
 
 ### How it relates to the knowledge base
@@ -1554,9 +1686,12 @@ project. The disposition behind the page is recorded in
 [author-personality.md](../communication-strategy/author-personality.md), and the linking mechanics in
 [AGENTS.md](AGENTS.md#disclosing-ai-use-on-a-page).
 
-**This is the one page permitted to link into the knowledge base**, for the reason given in
+**This is one of the two surfaces permitted to link into the knowledge base**, with the
+[knowledge-base pages](#knowledge-base), for the reason given in
 [AGENTS.md](AGENTS.md#the-one-way-link-rule): the base is the subject it discloses, and the argument
-cannot be made while hiding the record. It links the repository's front door and never a path inside it.
+cannot be made while hiding the record. It links the repository's front door and never a path inside
+it, and it links the [process page](#knowledge-base) for the full account of the documentation
+process.
 
 ### Maintaining it
 
@@ -1570,18 +1705,20 @@ it into "everything is reviewed" is the single most damaging edit available here
 section separates the design from the implementation** because the `cgp` repository's commit trailers
 make a blunter claim disprovable in a minute.
 
-Its seven section headings are link targets for every page that carries a provenance note, and the
+Its eight section headings are link targets for every page that carries a provenance note, and the
 anchors are generated from the heading text — `#documentation-and-reference-pages`,
 `#blog-posts-and-tutorials`, `#tooling-and-tests`, `#the-cgp-library`, and the rest. Rewording a heading
 breaks every inbound link, and `onBrokenLinks` is set to `throw`, so the build will catch it. Note also
 that this site's MDX setup rejects the `{#custom-id}` heading syntax, so explicit anchor ids are not an
 option here.
 
-### The section holds two pages pointing in opposite directions
+### The section holds pages pointing in opposite directions
 
 Keeping them legibly apart is the section's design problem. The skill page is a **feature** — what
 CGP offers a reader who works with a coding assistant. The disclaimer page is a **fact about the
-project**. The category is labelled "AI Assisted Development", which covers both adequately, and the
-directory stays `docs/ai/`; the unmerged `rustlab-presentation` branch renames the directory to
-`docs/ai-assisted-development/`, which would move both pages' URLs and is not worth doing for a label
-that already reads correctly in the sidebar.
+project**. The [knowledge-base subsection](#knowledge-base) carries one page of each kind: its
+process page is a fact about the project, and its two how-to pages are features. The category is
+labelled "AI-Assisted Development", which covers both adequately, and the directory stays
+`docs/ai/`; the unmerged `rustlab-presentation` branch renames the directory to
+`docs/ai-assisted-development/`, which would move every URL in the section and is not worth doing
+for a label that already reads correctly in the sidebar.

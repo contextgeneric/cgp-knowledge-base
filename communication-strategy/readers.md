@@ -136,6 +136,28 @@ be adopted independently, but removing an abstraction still takes work. Use the
 [message guidance](message.md) and [evidence](evidence.md) rather than promises about effortless
 migration or production readiness.
 
+### The reader who doubts agent-written documentation
+
+Show this reader a process they can check rather than reassurance. Their hypothesized question is
+whether documentation an agent wrote can be trusted at all, and an adjective about quality cannot
+answer it. A description of how claims are checked against the source, which rules bind the agents,
+and where the checks stop gives them something to verify. This profile is a working hypothesis:
+[evidence.md](evidence.md) records nothing about how CGP's readers view agent-written pages, so do
+not describe their attitude, or the wider community's, as a finding.
+
+Concede the limits in the same place as the process. Source checks and spot reviews miss errors, and
+this reader trusts a page more for saying so. The claims and their limits are owned by
+[ai-disclosure.md](ai-disclosure.md#the-knowledge-base-behind-the-first-level).
+
+### The contributor directing an agent
+
+Give a would-be contributor the layout, the rules, and the obligation, in that order. They already
+want to change CGP and may already work with an agent; what they lack is how the repositories fit
+together locally, which `AGENTS.md` files bind their agent, and that a change to code carries its
+documentation and skill changes. This profile is also a hypothesis, since
+[evidence.md](evidence.md) records no observations of outside contributors, so state requirements
+rather than predicting how contributors behave.
+
 ### The language-design and compiler-team reader
 
 Present CGP to language-design readers as a concrete implementation relevant to a specific design

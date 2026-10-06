@@ -126,7 +126,7 @@ becoming a `where`-bound, a lifetime lifted into `Life<'a>`) with a small exampl
 in the abstract.
 
 When a section lists many items one at a time (the tests, the snapshots, a set of accepted keys), use
-a bullet list rather than framed prose. The dual-reader topic-sentence style governs the explanatory
+a bullet list rather than framed prose. The point-first topic-sentence style governs the explanatory
 prose, not these enumerations: introduce the list with a short sentence and let the bullets carry
 the items.
 

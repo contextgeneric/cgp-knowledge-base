@@ -38,9 +38,10 @@ accepted, [Algolia DocSearch](#the-decisions-this-needs), is a decision the auth
 than one an agent applied, which is the rule
 [site-structure.md](site-structure.md#how-the-site-is-built) sets.
 
-**The site may still never link into this knowledge base.** Nothing here changes the
-[one-way link rule](AGENTS.md#the-one-way-link-rule), including for a file such as `llms.txt` that is
-written for machines.
+**The site may still never link into this knowledge base, outside its two sanctioned surfaces.**
+Nothing here changes the [one-way link rule](AGENTS.md#the-one-way-link-rule) or widens its
+exceptions (the disclaimer and the `docs/ai/knowledge-base/` pages), including for a file such as
+`llms.txt` that is written for machines.
 
 ## What was measured
 
@@ -628,7 +629,7 @@ it are different ones, and CGP is better placed than its search performance sugg
 matter and they behave differently.
 
 **Retrieval at coding time** is what an agent does when it has already been told to use CGP, or has
-found it, and needs to write correct code. Four surfaces serve it today:
+found it, and needs to write correct code. Five surfaces serve it today:
 
 - **docs.rs** is the default surface for any Rust crate, and CGP's is weak by the project's own
   admission: it reports 50% of the crate documented, and the crate README tells readers the constructs
@@ -642,6 +643,10 @@ found it, and needs to write correct code. Four surfaces serve it today:
   ships a skill teaching an assistant its vocabulary, idioms, and diagnostics is answering this audience
   directly, and [cgp-skills](https://github.com/contextgeneric/cgp-skills) is already published on the
   site and on GitHub.
+- **The knowledge base**, for an agent whose user has pointed it there to learn or audit CGP in
+  depth. The site's [knowledge-base pages](site-structure.md#knowledge-base) teach that use, and the
+  base's README tells an outside agent what to read. It is a surface the user chooses rather than
+  one an agent discovers, so it needs no discoverability work beyond those pages.
 - **The site itself**, fetched directly, which is why the
   [first-paragraph rule](#own-the-name-by-saying-it-where-it-means-something) and one-page-per-question
   matter as much for an agent as for a person: both are answering "is this page about the thing I
