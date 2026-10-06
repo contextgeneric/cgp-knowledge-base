@@ -195,7 +195,10 @@ markers of [`MapType`](traits/map_type.md), the list algebra of
 [`AppendProduct` / `ConcatProduct` / `MapFields`](traits/product_ops.md), the structural casts
 [`CanUpcast` / `CanDowncast` / `CanBuildFrom`](traits/cast.md), and the
 [optional-field extensions](traits/optional_fields.md) for defaulted and optional fields. Each entry
-in the shape is a [`Field`](types/field.md) pairing a value with its type-level name tag.
+in the shape is a [`Field`](types/field.md) pairing a value with its type-level name tag. When code
+names a shape rather than deriving it, [`Struct!`](macros/struct.md) and [`Enum!`](macros/enum.md)
+write it as the body of a struct or enum declaration, expanding to exactly the `Fields` the derive
+would give that body.
 
 ### Type-level primitives
 
@@ -203,7 +206,9 @@ These are the type-level building blocks the rest of CGP is constructed from, mo
 sugar, and otherwise needing only to be recognized in expansions and error messages. The
 construction macros are [`Symbol!`](macros/symbol.md) (a type-level string, for field names),
 [`Product!`](macros/product.md) and [`Sum!`](macros/sum.md) (type-level record and variant lists),
-and [`Path!`](macros/path.md) (a routing path); their expanded lists are
+and [`Path!`](macros/path.md) (a routing path), with [`Struct!`](macros/struct.md) and
+[`Enum!`](macros/enum.md) as the record and variant forms of a `Product!` or `Sum!` of named fields;
+their expanded lists are
 [`Cons` / `Nil`](types/cons.md) for products, [`Either` / `Void`](types/either.md) for sums,
 [`Chars`](types/chars.md) for the string behind `Symbol`, and [`PathCons`](types/path_cons.md) for
 paths. Two further lifts make non-type things addressable in trait resolution:
@@ -311,13 +316,15 @@ time.
 
 ## Type-level construction macros: [macros/](macros/)
 
-These macros construct the type-level vocabulary (strings, lists, sums, and paths) that the rest of
-CGP is built on.
+These macros construct the type-level vocabulary (strings, lists, sums, paths, and the record and
+variant shapes) that the rest of CGP is built on.
 
 - [`Symbol!`](macros/symbol.md): type-level string, used for field names.
 - [`Product!` / `product!`](macros/product.md): type-level list type and value.
 - [`Sum!`](macros/sum.md): type-level sum (variant) type.
 - [`Path!`](macros/path.md): type-level path, used by namespaces and redirected lookups.
+- [`Struct!`](macros/struct.md): a struct's `HasFields` shape, written as a struct body.
+- [`Enum!`](macros/enum.md): an enum's `HasFields` shape, written as an enum body.
 
 ## Attribute modifiers: [attributes/](attributes/)
 

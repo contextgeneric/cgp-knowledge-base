@@ -87,10 +87,14 @@ it stale.
   `=>`), the three key forms with the `[…]`/`{…}` path groups, the two value forms, the three
   statements (`open`, `namespace`, `for`), `open` keys that dispatch on any of a component's type
   parameters, and how they all combine in one block.
+- [enum.md](cgp/reference/macros/enum.md) — `Enum!`, an enum's `HasFields` shape written as the body
+  of an enum declaration.
 - [path.md](cgp/reference/macros/path.md) — the type-level path macro behind namespaces and
   redirected lookups.
 - [product.md](cgp/reference/macros/product.md) — the type-level list type `Product!` and its
   value-level `product!`.
+- [struct.md](cgp/reference/macros/struct.md) — `Struct!`, a struct's `HasFields` shape written as the
+  body of a struct declaration, named or tuple.
 - [sum.md](cgp/reference/macros/sum.md) — the type-level sum `Sum!`, the dual of `Product!`.
 - [symbol.md](cgp/reference/macros/symbol.md) — the type-level string used as a field-name tag.
 
@@ -436,10 +440,14 @@ it stale.
   derive.
 - [derive_has_fields.md](cgp/implementation/entrypoints/derive_has_fields.md) — the whole-shape
   field-list derive.
+- [enum.md](cgp/implementation/entrypoints/enum.md) — the `Enum!` shape macro: its variant parsing
+  and the derive encoder it reuses.
 - [path.md](cgp/implementation/entrypoints/path.md) — the `Path!` type-level path macro.
 - [product.md](cgp/implementation/entrypoints/product.md) — the `Product!`/`product!` list macros.
 - [snapshot_macros.md](cgp/implementation/entrypoints/snapshot_macros.md) — the `snapshot_*!` family
   that pins macro expansions as `insta` snapshots.
+- [struct.md](cgp/implementation/entrypoints/struct.md) — the `Struct!` shape macro: its content-based
+  form detection and the derive encoder it reuses.
 - [sum.md](cgp/implementation/entrypoints/sum.md) — the `Sum!` type-level sum macro.
 - [symbol.md](cgp/implementation/entrypoints/symbol.md) — the `Symbol!` type-level string macro.
 
@@ -496,6 +504,8 @@ it stale.
 - [namespace.md](cgp/implementation/asts/namespace.md) — the namespace table and its evaluated form.
 - [path.md](cgp/implementation/asts/path.md) — the AST family that parses and emits type-level paths.
 - [product.md](cgp/implementation/asts/product.md) — the type- and value-level product AST pair.
+- [shape.md](cgp/implementation/asts/shape.md) — `StructType` and `EnumType` behind `Struct!`/`Enum!`,
+  with the shared field parsing and validation helpers.
 - [sum.md](cgp/implementation/asts/sum.md) — the single AST type behind `Sum!`.
 - [symbol.md](cgp/implementation/asts/symbol.md) — the single AST type behind `Symbol!`.
 

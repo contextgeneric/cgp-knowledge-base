@@ -292,6 +292,27 @@ whether a bound is dischargeable is exactly the information a macro cannot obtai
 Rejecting it would refuse a meaningful constraint on the strength of a guess, so the pin is emitted
 and the compiler decides.
 
+## Known issues
+
+**`SubstituteAbstractTypes` does not descend into macro bodies, so an alias inside a type-level
+macro stays bare.** The visitor rewrites every `syn::Type` it reaches, but `syn` keeps a macro
+invocation's body as an opaque `TokenStream`, so in
+
+```rust
+#[cgp_fn]
+#[use_type(HasErrorType.Error)]
+fn fail_in_list(&self) -> Product![Error] { … }
+```
+
+the `Error` inside `Product![…]` is never visited and the expansion fails with `E0425`. The same
+holds for `Sum!`, `Struct!`, and `Enum!`. This fails the adjacency test: the `Self` rewrite of
+`#[cgp_impl]` already reaches into macro bodies, through `replace_self_type`'s `visit_macro_mut`
+token-level pass, so declining here is an inconsistency rather than a boundary. The fix is a
+matching `visit_macro_mut` that rewrites a bare alias token at the token level. It must skip a
+`Struct!` or `Enum!` field name followed by `:`, since a field or variant may share an alias's
+name, and it must leave an identifier that is part of a longer path alone, as the type-level rule
+already does.
+
 ## Tests
 
 The behavioral tests span every host and every form the attribute accepts:

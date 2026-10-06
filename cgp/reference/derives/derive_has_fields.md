@@ -243,6 +243,10 @@ higher-level constructs such as the extensible-builder and data-manipulation mac
 
 ## Related constructs
 
+[`Struct!`](../macros/struct.md) and [`Enum!`](../macros/enum.md) run this derive's encoder on a
+struct or enum body written in place, so `Struct! { name: String, age: u8 }` is the `Fields` of the
+`Person` above without declaring `Person`.
+
 `#[derive(HasFields)]` is the structural counterpart to
 [`#[derive(HasField)]`](derive_has_field.md): `HasField` gives indexed, single-field access for
 dependency injection, while `HasFields` gives the aggregate view of the whole type. The `Fields`

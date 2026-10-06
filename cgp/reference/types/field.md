@@ -116,6 +116,8 @@ These constructs are the ones `Field` relates to:
 
 - [`Product!`](../macros/product.md) and [`Sum!`](../macros/sum.md): the lists `Field` entries fill,
   built from [`Cons`/`Nil`](cons.md) and [`Either`/`Void`](either.md).
+- [`Struct!`](../macros/struct.md) and [`Enum!`](../macros/enum.md): write a list of `Field`
+  entries as a struct or enum body, with each tag taken from a field or variant name.
 - [`Symbol!`](../macros/symbol.md) and [`Index`](index.md): produce the tag for a named entry and a
   positional one.
 - [`#[derive(HasFields)]`](../derives/derive_has_fields.md) and

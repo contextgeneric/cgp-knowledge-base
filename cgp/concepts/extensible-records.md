@@ -47,6 +47,10 @@ its shape with one entry per field tagged by name:
 type Fields = Product![Field<Symbol!("sqlite_pool"), SqlitePool>];
 ```
 
+Where code names such a shape itself, in a bound or an impl, it writes the same type as the struct
+body it describes: [`Struct! { sqlite_pool: SqlitePool }`](../reference/macros/struct.md) expands
+to exactly this `Product!`, because it runs the derive's own encoder.
+
 Reading a single field by name is the older and simpler operation provided by
 [`#[derive(HasField)]`](../reference/derives/derive_has_field.md), which generates one
 [`HasField`](../reference/traits/has_field.md) impl per field keyed on a

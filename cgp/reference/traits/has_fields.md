@@ -47,7 +47,9 @@ an enum, `Fields` is a [`Sum`](../macros/sum.md): an `Either`/`Void` chain of `F
 entries, one per variant. A variant with one unnamed field carries its payload type directly, a unit
 variant carries `Nil`, and any other variant carries its fields as a nested product. Named fields
 and variants are tagged by [`Symbol!`](../macros/symbol.md); tuple fields by `Index<N>`.
-`FieldsRef<'a>` is the same shape with each value borrowed for `'a`.
+`FieldsRef<'a>` is the same shape with each value borrowed for `'a`. Code that names a shape
+writes it with [`Struct!`](../macros/struct.md) or [`Enum!`](../macros/enum.md), which take the
+body of a declaration and expand to exactly the `Fields` the derive gives it.
 
 The three conversion traits each supertrait one of the two shape traits and add a single method.
 `ToFields` and `FromFields` build on `HasFields`, while `ToFieldsRef` builds on `HasFieldsRef`:

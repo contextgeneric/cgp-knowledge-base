@@ -106,7 +106,8 @@ pub enum Shape {
 // }
 ```
 
-The variant names are [`Symbol!`](symbol.md) strings. A variant's payload follows its fields: a
+The variant names are [`Symbol!`](symbol.md) strings, and the same list is written
+[`Enum! { Circle(f64), Rectangle { width: f64, height: f64 } }`](enum.md). A variant's payload follows its fields: a
 single unnamed field is the payload type itself, a struct-like variant nests a
 [`Product!`](product.md) of its named fields, several unnamed fields nest a `Product!` keyed by
 [`Index`](../types/index.md), and a unit variant's payload is `Nil`. Generic code walks the `Sum!`
@@ -128,6 +129,7 @@ These constructs are the ones `Sum!` relates to:
 
 - [`Product!`](product.md): the record counterpart, pairing with [`Cons`](../types/cons.md) and
   ending in `Nil`.
+- [`Enum!`](enum.md): writes a `Sum!` of named variants as an enum body.
 - [`Either`](../types/either.md): the sum cell `Sum!` expands to, with its terminator `Void`.
 - [`Field`](../types/field.md): the usual branch type, tagged by a [`Symbol!`](symbol.md) variant
   name.

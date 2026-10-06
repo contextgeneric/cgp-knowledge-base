@@ -98,6 +98,8 @@ Type-level construction macros:
 - [`Symbol!`](entrypoints/symbol.md), [`Product!`](entrypoints/product.md),
   [`Sum!`](entrypoints/sum.md), [`Path!`](entrypoints/path.md): the type-level string, list, sum,
   and path macros.
+- [`Struct!`](entrypoints/struct.md), [`Enum!`](entrypoints/enum.md): the shape macros, which read
+  a struct or enum body and run the `#[derive(HasFields)]` encoder on it.
 
 Data derives:
 
@@ -133,8 +135,8 @@ One document per evaluation stack, grouped by the macro that owns it:
 - [cgp_computer](asts/cgp_computer.md), [cgp_producer](asts/cgp_producer.md),
   [cgp_auto_dispatch](asts/cgp_auto_dispatch.md): the `cgp-macro-extra-core` stacks, which evaluate
   into IR made of `cgp-macro-core` AST nodes.
-- [product](asts/product.md), [sum](asts/sum.md), [path](asts/path.md), [symbol](asts/symbol.md):
-  the type-level construction stacks.
+- [product](asts/product.md), [sum](asts/sum.md), [path](asts/path.md), [symbol](asts/symbol.md),
+  [shape](asts/shape.md): the type-level construction stacks.
 - [ident](asts/ident.md): the restricted argument and parameter types (`TypeArg`,
   `PathWithTypeArgs`, `IdentWithTypeGenerics`, and kin) that replace `syn`'s lenient generic lists.
 - [attributes/](asts/attributes/README.md): the modifier-attribute AST stacks, one page per

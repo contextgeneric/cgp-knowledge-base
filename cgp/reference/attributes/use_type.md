@@ -387,6 +387,16 @@ Three corner cases are lowered faithfully and left to the compiler, and each is 
   [implementation document](../../implementation/asts/attributes/use_type.md#behavior-and-corner-cases)
   records why this is emitted rather than rejected.
 
+One further case is a defect rather than a deliberate deferral:
+
+- **An alias inside a type-level macro is not rewritten.** The rewrite reaches every `syn::Type`
+  in the item, but a macro invocation's body is opaque tokens, so a bare alias written inside
+  `Product![…]`, `Sum![…]`, [`Struct! { … }`](../macros/struct.md), or
+  [`Enum! { … }`](../macros/enum.md) is left bare and fails with
+  ``E0425 cannot find type `Error` in this scope``. Write the qualified
+  `<Self as HasErrorType>::Error` inside the macro until the
+  [fix](../../implementation/asts/attributes/use_type.md#known-issues) lands.
+
 ## Source
 
 - Parsing: `UseTypeAttribute` in

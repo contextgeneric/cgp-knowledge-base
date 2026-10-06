@@ -110,6 +110,8 @@ pub struct Person {
 
 The field names are [`Symbol!`](symbol.md) type-level strings, so the whole list is a type-level
 description of `Person`'s layout that generic code can walk to build, read, or transform a `Person`.
+Code that names such a list writes it as [`Struct! { name: String, age: u8 }`](struct.md), which
+expands to exactly this `Product!`.
 The derive emits the same list again for `HasFieldsRef`, with each value a `&'a` reference, along
 with the `ToFields`, `ToFieldsRef`, and `FromFields` conversions.
 
@@ -147,6 +149,8 @@ These constructs are the ones `Product!` relates to:
 
 - [`Sum!`](sum.md): the counterpart for enum variants, with the same right-nested shape but
   branching with `Either` and ending in `Void`.
+- [`Struct!`](struct.md): writes a `Product!` of named or positional `Field` entries as a struct
+  body.
 - [`Cons`](../types/cons.md): the list cell `Product!` expands to, with its terminator `Nil`.
 - [`Field`](../types/field.md): the usual element type, tagged by a [`Symbol!`](symbol.md) name or
   an [`Index`](../types/index.md) position.
