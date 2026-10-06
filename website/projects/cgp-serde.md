@@ -44,8 +44,8 @@ every link and anchor they carry resolves. They are:
 them describe the idea in place or say the page is still being written:
 
 - `examples/arena-simplified` and `examples/arena` wait on the cleanup of their tests. The
-  architecture page `context-services` quotes the arena test's relevant entries with the unused JSON
-  entries elided, and the debugging guide describes its allocator case without linking a page.
+  architecture page `context-services` quotes the arena example's relevant entries with the unused
+  JSON entries elided, and the debugging guide describes its allocator case without linking a page.
 - `reference/components/can_serialize_value`, `can_deserialize_value`, and `has_arena` wait on the
   removal of their `#[derive_delegate]` attributes. `component-design` shows the two components'
   method signatures rather than their declarations, and `AllocateWithArena` describes the getter in
@@ -53,12 +53,12 @@ them describe the idea in place or say the page is still being written:
 
 The writing turned up several facts a later revision must respect:
 
-- **Every run and diagnostic was re-produced.** The four tests were run offline and passed, and
-  `messages` asserts the two documents the pages quote. Each *Try a change* result, each diagnostic,
-  and each claim the pages add beyond the records was re-run in a probe crate at
-  `~/.cache/cgp-probes/serde-probe`, whose sources are kept under `reports/probes/cgp-serde-pages/` in
-  the workspace. The postcard claim is the one taken from the records alone, since the crate could
-  not be fetched offline.
+- **Every run and diagnostic was re-produced.** The four examples' tests were run offline and
+  passed, and `messages` asserts the two documents the pages quote. Each *Try a change* result, each
+  diagnostic, and each claim the pages add beyond the records was re-run in a probe crate at
+  `~/.cache/cgp-probes/serde-probe`, whose sources are kept under `reports/probes/cgp-serde-pages/`
+  in the workspace. The postcard claim is the one taken from the records alone, since the crate
+  could not be fetched offline.
 - **The `E0275` cases are reshaped when checked.** A provider that depends on itself and a recursive
   type both report `[CGP-E010]` through `check_components!`, from the published `cargo-cgp` as well
   as the source build; at a call site with no check, the raw overflow stays. The project's
@@ -69,8 +69,9 @@ The writing turned up several facts a later revision must respect:
   not the library's `CgpSerdeNamespace`, and the [wiring
   record](../../projects/cgp-serde/guides/wiring-a-context.md#share-wiring-between-contexts) carries it.
 - **Source links point at `main`**, per the writing guide, so until the `v0.8.0` branch merges they
-  show the release's `UseDelegate` tables, and the links of the two variant provider pages, whose
-  files exist only on `v0.8.0`, do not resolve.
+  show the release's `UseDelegate` tables. Links to files that exist only on `v0.8.0` do not
+  resolve until then: the two variant provider pages' sources, and the example pages' sources under
+  `crates/cgp-serde-examples/`.
 - **The variant provider pages were written with the providers.** `serialize_variant_fields` and
   `deserialize_variant_fields` state only what the `variants` test suite asserts, and present the
   `'static` limit and the single enum form as limits a reader must know before choosing them.
@@ -133,10 +134,10 @@ examples. The index should work on its own for a reader who reads nothing else.
 
 ### Examples
 
-One page per example test in [examples/](../../projects/cgp-serde/examples/README.md), in its
-teaching order, with `examples/index.md` from that README. The four example tests are the
-repository's only runnable programs. Other tests get no pages: the examples are to move
-out of the test crate into example programs, and the pages will follow them then.
+One page per example in [examples/](../../projects/cgp-serde/examples/README.md), in its teaching
+order, with `examples/index.md` from that README. The four examples live in the
+`cgp-serde-examples` crate as Cargo example targets and are the repository's only runnable
+programs; the tests in `cgp-serde-tests` get no pages.
 
 - `basic` — one struct round-tripped through JSON by the JSON providers, with its bytes as hex and
   errors through the anyhow backend. The pattern: serialization as a wired operation, with the error
@@ -146,7 +147,7 @@ out of the test crate into example programs, and the pages will follow them then
   and the entries a traversal needs. Its record already carries the one *Try a change* this section
   most needs: removing the `i64` entry and reading the root cause `cargo cgp check` reports.
 - `arena-simplified` — borrowed values deserialized into a context-supplied arena through a
-  test-local getter and deserializer. The page presents itself as the smaller form, and says what
+  local getter and deserializer. The page presents itself as the smaller form, and says what
   the layered form adds.
 - `arena` — the same through the layered allocation crates, with the allocator as a wiring entry.
   The pattern: a provider drawing a runtime service from the context, and the allocator as a wiring
@@ -208,9 +209,9 @@ features](../../projects/cgp-serde/issues.md#missing-features) and
   context on the branch dispatches with `open`, so the attributes serve only a downstream user still
   building `UseDelegate` tables, and that breakage is accepted. This blocks the three component
   pages.
-- **Clean up the two arena tests** before their example pages quote them: `arena.rs` wires two JSON
-  handler entries its test never uses, and `arena_simplified.rs` repeats a check in a second table.
-  The test-local getter in `arena_simplified.rs` can become an `#[implicit]` argument, which a probe
+- **Clean up the two arena examples** before their pages quote them: `arena.rs` wires two JSON
+  handler entries it never uses, and `arena_simplified.rs` repeats a check in a second table.
+  The local getter in `arena_simplified.rs` can become an `#[implicit]` argument, which a probe
   confirmed.
 - **Publish a `CgpSerdeNamespace`**, recommended rather than required. It is a design decision about
   what the defaults should be, and it is the library improvement that would most strengthen the

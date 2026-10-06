@@ -52,10 +52,10 @@ Source links point at that branch, per
 
 ## How it is organized
 
-The workspace holds five library crates and a test crate. The split follows external dependencies,
-so an application depends only on the crates whose providers its wiring names. Every library crate
-is `no_std`, and the three that need `String` or `Vec` also link `alloc`. The layout is worked
-through in [architecture/crate-layout.md](architecture/crate-layout.md).
+The workspace holds five library crates, an examples crate, and a test crate. The split follows
+external dependencies, so an application depends only on the crates whose providers its wiring
+names. Every library crate is `no_std`, and the three that need `String` or `Vec` also link `alloc`.
+The layout is worked through in [architecture/crate-layout.md](architecture/crate-layout.md).
 
 - **`cgp-serde`**: the two components, the two context adapters, and the core providers. Depends
   only on `cgp` and `serde`.
@@ -66,11 +66,12 @@ through in [architecture/crate-layout.md](architecture/crate-layout.md).
 - **`cgp-serde-alloc`**: an allocation component and the provider that deserializes a borrowed value
   into it. Adds no external dependency.
 - **`cgp-serde-typed-arena`**: an implementation of the allocation component over `typed-arena`.
-- **`cgp-serde-tests`**: the test crate, unpublished. Four example tests (a JSON round trip, the
+- **`cgp-serde-examples`**: four runnable examples, unpublished: a JSON round trip, the
   two-application serialization demo, and the arena deserialization demo in its layered and
-  simplified forms) are the repository's only runnable examples, each documented in
-  [examples/](examples/README.md). Provider suites test the record and variant providers in depth;
-  see [testing.md](testing.md).
+  simplified forms. Each runs with `cargo run --example` and is documented in
+  [examples/](examples/README.md).
+- **`cgp-serde-tests`**: the test crate, unpublished: provider suites that test the record and
+  variant providers in depth, and compile-fail tests; see [testing.md](testing.md).
 
 ## Status and gaps
 
@@ -167,12 +168,12 @@ ideas every provider shares, then use the reference to look up a provider.
   - [messages.md](examples/messages.md): the two-application demo: the same nested archive encoded
     two ways by contexts that differ in three entries.
   - [arena-simplified.md](examples/arena-simplified.md): borrowed values deserialized into a
-    context-supplied arena with a test-local getter and deserializer.
+    context-supplied arena with a local getter and deserializer.
   - [arena.md](examples/arena.md): the same through the layered allocation crates, with the
     allocator as a wiring entry.
 - [serde-comparison.md](serde-comparison.md): what cgp-serde keeps from Serde, adds, and lacks, how
   Serde's idioms map onto it, and when plain Serde is the better choice.
-- [testing.md](testing.md): what the example tests and the provider suites pin, which tests pin a
+- [testing.md](testing.md): what the examples' tests and the provider suites pin, which tests pin a
   known issue, and what no test exercises.
 - [issues.md](issues.md): the confirmed defects, missing features, and housekeeping items.
 
@@ -197,11 +198,11 @@ They feed three artifacts:
 ## How it relates to the rest of the base
 
 The [modular serialization example](../../examples/modular-serialization.md) develops the project's
-scenario end to end, and is the teaching version of what the repository's own tests, documented in
-[examples/](examples/README.md), show as they stand. The
-[announcement post](../../website/blog/cgp-serde-release.md) is the fullest published account,
-written against an earlier release; its document records what has drifted. The project was also the
-live demonstration in the [RustLab 2025 talk](../../website/blog/rustlab-2025-coherence.md).
+scenario end to end, and is the teaching version of what the repository's own examples, documented
+in [examples/](examples/README.md), show as they stand. The [announcement
+post](../../website/blog/cgp-serde-release.md) is the fullest published account, written against an
+earlier release; its document records what has drifted. The project was also the live demonstration
+in the [RustLab 2025 talk](../../website/blog/rustlab-2025-coherence.md).
 
 On the CGP side, the library is the clearest available demonstration of
 [bypassing coherence](../../cgp/concepts/coherence.md), whose worked illustration uses cgp-serde's

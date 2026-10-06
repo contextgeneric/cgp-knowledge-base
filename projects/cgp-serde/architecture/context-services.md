@@ -38,13 +38,12 @@ A context wires all three, with the getter pointed at the field that holds the a
 allocator means wiring `AllocatorComponent` to a different provider, and giving a second type its
 own arena means one more getter entry keyed on that type; neither touches the deserializer.
 
-The repository's [arena test](../examples/arena.md) wires the three layers. Its
-[simplified test](../examples/arena-simplified.md), which the announcement post follows, collapses
-them: a local `DeserializeAndAllocate` calls a local `#[cgp_auto_getter]` `HasArena` directly. That
-form is shorter to read and fixes the allocator inside the deserializer, which is the dependency the
-layered form removes. The
-[modular serialization example](../../../examples/modular-serialization.md) teaches the layered
-form.
+The repository's [arena example](../examples/arena.md) wires the three layers. Its [simplified
+example](../examples/arena-simplified.md), which the announcement post follows, collapses them: a
+local `DeserializeAndAllocate` calls a local `#[cgp_auto_getter]` `HasArena` directly. That form is
+shorter to read and fixes the allocator inside the deserializer, which is the dependency the layered
+form removes. The [modular serialization example](../../../examples/modular-serialization.md)
+teaches the layered form.
 
 ## The lifetimes
 

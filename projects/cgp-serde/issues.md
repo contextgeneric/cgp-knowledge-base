@@ -115,13 +115,14 @@ Housekeeping items affect neither behavior nor features but mislead a reader or 
 - **The repository README.** It shows the component definitions in the pre-0.8 attribute syntax and
   defers everything else to the announcement post.
 - **Untested providers.** Seven providers are never run by any test; see [testing.md](testing.md).
-- **Dead wiring and a redundant check in the arena tests.** `arena.rs` opens `TryComputerComponent`
-  and wires `SerializeJson` and `DeserializeJson<T>`, but calls `deserialize_json_string`, which
-  does not use them; a probe without those entries built and passed. The `SerializeJson` entry could
-  not work if called, since the context wires no serializers. `arena_simplified.rs` has a
-  `CanUseApp` table checking `ValueDeserializerComponent` at `(Life<'a>, Coord)`, which its
-  `CanDeserializeApp` table already covers. See the [arena](examples/arena.md#known-issues) and
-  [simplified arena](examples/arena-simplified.md#known-issues) examples.
+- **Dead wiring and a redundant check in the arena examples.** `arena.rs` opens
+  `TryComputerComponent` and wires `SerializeJson` and `DeserializeJson<T>`, but calls
+  `deserialize_json_string`, which does not use them; a probe without those entries built and
+  passed. The `SerializeJson` entry could not work if called, since the context wires no
+  serializers. `arena_simplified.rs` has a `CanUseApp` table checking `ValueDeserializerComponent`
+  at `(Life<'a>, Coord)`, which its `CanDeserializeApp` table already covers. See the
+  [arena](examples/arena.md#known-issues) and [simplified
+  arena](examples/arena-simplified.md#known-issues) examples.
 - **A getter an implicit argument could replace.** `arena_simplified.rs` declares a
   `#[cgp_auto_getter]` `HasArena` only so its local `DeserializeAndAllocate` can read the context's
   `arena` field. A probe replaced the import with an `#[implicit] arena: &&'a Arena<Value>` argument

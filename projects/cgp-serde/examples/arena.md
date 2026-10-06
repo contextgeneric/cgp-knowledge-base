@@ -4,15 +4,16 @@ Borrowed `&'a Coord` values deserialized from JSON into an arena, through the li
 allocation crates, so that the allocator is a wiring entry rather than code inside the deserializer.
 
 - **Source**:
-  [crates/cgp-serde-tests/src/tests/arena.rs](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-tests/src/tests/arena.rs)
-- **Run**: `cargo test -p cgp-serde-tests arena::`
+  [crates/cgp-serde-examples/examples/arena.rs](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-examples/examples/arena.rs)
+- **Run**: `cargo run -p cgp-serde-examples --example arena`; its test runs with
+  `cargo test -p cgp-serde-examples --example arena`
 - **Needs**: nothing beyond the build
-- **Result**: passes; asserts that the deserialized `Payload` has id 8 and the two expected
-  coordinates
+- **Result**: prints the deserialized `Payload`, with id 8 and the two expected coordinates; the
+  test asserts it
 
 ## The same scenario, with the library's providers
 
-This test deserializes the same JSON as [`arena_simplified`](arena-simplified.md), and differs in
+This example deserializes the same JSON as [`arena_simplified`](arena-simplified.md), and differs in
 two ways. It defines no provider or getter of its own, and imports the layered items instead:
 
 ```rust
@@ -25,7 +26,7 @@ use cgp_serde_typed_arena::traits::ArenaGetterComponent;
 Its data types also derive only the field traits each direction needs, rather than `CgpData`.
 Deserializing a record needs `HasFields` to list the fields and `BuildField` to fill them, per
 [derive-free records](../architecture/derive-free-records.md#what-a-struct-still-opts-into), and the
-containing struct is named `Payload` where the simplified test says `Cluster`:
+containing struct is named `Payload` where the simplified example says `Cluster`:
 
 ```rust
 #[derive(Debug, PartialEq, Eq, HasFields, BuildField)]
@@ -67,7 +68,7 @@ entry is not keyed per type, so every `HasArena<'a, T>` lookup reads the one `ar
 suits a context with a single arena. A context with an arena per type opens the getter and keys it
 on `T`, as the [allocation reference](../reference/allocation.md#hasarena) shows.
 
-The allocator is the layer this test exists to show.
+The allocator is the layer this example exists to show.
 [`CanAlloc`](../reference/allocation.md#canalloc) is wired to
 [`AllocateWithArena`](../reference/allocation.md#allocatewitharena), and
 [`DeserializeAndAllocate`](../reference/allocation.md#deserializeandallocate) calls it without
@@ -122,15 +123,15 @@ reaches it, as the probe above shows.
 
 ## Deserializing
 
-The test builds the arena and the context and calls
+The example builds the arena and the context and calls
 [`deserialize_json_string`](../reference/json.md#candeserializejsonstring), exactly as the
-simplified test does, and the resulting `Payload<'_>` borrows its coordinates from the arena.
+simplified example does, and the resulting `Payload<'_>` borrows its coordinates from the arena.
 
 ## What it demonstrates
 
 - The layered allocation crates, where the allocator is a wiring choice: see
   [context services](../architecture/context-services.md) and
-  [allocation](../reference/allocation.md), whose wiring section is drawn from this test.
+  [allocation](../reference/allocation.md), whose wiring section is drawn from this example.
 - A getter component wired to a field with `UseField`, and checked with `Life`: see
   [`HasArena`](../reference/allocation.md#hasarena).
 - The minimum derives for deserializing a record: see [records](../reference/records.md).
@@ -141,7 +142,7 @@ simplified test does, and the resulting `Payload<'_>` borrows its coordinates fr
 
 - **The JSON handler entries are dead wiring.** The table opens `TryComputerComponent` and wires
   `SerializeJson` to `SerializeToJsonString` and `DeserializeJson<T>` to
-  `DeserializeFromJsonString`, but the test calls `deserialize_json_string`, which does not go
+  `DeserializeFromJsonString`, but the example calls `deserialize_json_string`, which does not go
   through them. A probe with those entries, the `TryComputerComponent` opening, and their imports
   removed built and deserialized the same `Payload`. The `SerializeJson` entry could not work if
   called, because the context wires no serializers; wiring is lazy, so an entry nothing uses

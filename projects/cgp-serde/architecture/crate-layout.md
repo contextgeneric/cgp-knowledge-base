@@ -18,11 +18,15 @@ dependencies of its own providers and nothing else:
 | `cgp-serde-alloc` | `cgp-serde` | the `CanAlloc` component and `DeserializeAndAllocate` |
 | `cgp-serde-typed-arena` | `cgp-serde`, `cgp-serde-alloc`, `typed-arena` | the arena getter and `AllocateWithArena` |
 
-The test crate, `cgp-serde-tests`, depends on all five, on `cgp-error-anyhow` for a concrete error
-type, on Serde's `derive` feature, on `ron` and `postcard` for its format tests, and on `trybuild`
-for its compile-fail tests. It sets `publish = false`, so publishing the workspace
-releases only the five library crates. No library crate depends on `cgp-error-anyhow`: the JSON
-providers name only `HasErrorType` and `CanRaiseError`, and the application chooses the error type.
+Two more crates hold the examples and the tests, and both set `publish = false`, so publishing the
+workspace releases only the five library crates. The examples crate, `cgp-serde-examples`, has no
+library code: its four examples are Cargo example targets, and it depends on all five library
+crates, on `cgp-error-anyhow` for a concrete error type, and on `serde_json`, `chrono`, and
+`typed-arena`, all as dev-dependencies. The test crate, `cgp-serde-tests`, depends on `cgp-serde`
+and `cgp-serde-extra`, on Serde's `derive` feature, on `ron` and `postcard` for its format tests,
+and on `trybuild` for its compile-fail tests. No library crate depends on `cgp-error-anyhow`: the
+JSON providers name only `HasErrorType` and `CanRaiseError`, and the application chooses the error
+type.
 
 The graph is the practical form of the design's main promise. A crate that defines data types needs
 only `cgp`, to derive the field traits the record providers read, and depends on neither `serde` nor

@@ -206,7 +206,7 @@ arena, builds `App { arena: &arena }`, and deserializes; the resulting `Payload<
 the arena. The error components are there because the JSON helper raises `serde_json` errors through
 the context; see [JSON providers](json.md).
 
-This wiring is drawn from the repository's [arena test](../examples/arena.md), and the
+This wiring is drawn from the repository's [arena example](../examples/arena.md), and the
 [modular serialization example](../../../examples/modular-serialization.md) teaches the same layered
 form. The repository also carries a [simplified form](../examples/arena-simplified.md), which the
 announcement post uses. The simplified form defines its own `#[cgp_auto_getter]` `HasArena` and its

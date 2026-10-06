@@ -187,7 +187,7 @@ replace. The code tasks are numbered DC, and DC1 and DC3 keep their IDs.
   accepts its bounded generic key. Drop the six `#[derive_delegate(UseDelegate<Arg>)]` attributes,
   whose removal is breaking for downstream users and is accepted. *Lands in:* the `hypershell` repository.
   The project's [issues](../projects/hypershell/issues.md) list the defects worth fixing in the same pass.
-- **DC3: drop cgp-serde's three `#[derive_delegate]` attributes, clean up its arena tests, and consider
+- **DC3: drop cgp-serde's three `#[derive_delegate]` attributes, clean up its arena examples, and consider
   a `CgpSerdeNamespace`.** The attribute removals are breaking for downstream users and are accepted. The
   namespace is a design decision about what the defaults should be rather than a mechanical conversion,
   and it is recommended rather than required: without it every context spells out a dozen wiring

@@ -4,11 +4,12 @@ One struct serialized to a JSON string and read back through the same context, s
 round trip in which the struct derives only `CgpData` and its bytes are encoded as hex by wiring.
 
 - **Source**:
-  [crates/cgp-serde-tests/src/tests/basic.rs](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-tests/src/tests/basic.rs)
-- **Run**: `cargo test -p cgp-serde-tests basic`
+  [crates/cgp-serde-examples/examples/basic.rs](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-examples/examples/basic.rs)
+- **Run**: `cargo run -p cgp-serde-examples --example basic`; its test runs with
+  `cargo test -p cgp-serde-examples --example basic`
 - **Needs**: nothing beyond the build
-- **Result**: passes; asserts the exact JSON `{"quantity":42,"message":"hello","data":"010203"}` and
-  that deserializing it gives back the original value
+- **Result**: prints the JSON `{"quantity":42,"message":"hello","data":"010203"}` and the value read
+  back; the test asserts both
 
 ## A struct with no serialization derive
 
@@ -86,12 +87,12 @@ ErrorRaiserComponent: RaiseAnyhowError,
 @TryComputerComponent.<T> DeserializeJson<T>: DeserializeFromJsonString,
 ```
 
-The test then calls both through `try_compute`, with `CanTryCompute` imported from
+The example then calls both through `try_compute`, with `CanTryCompute` imported from
 `cgp::extra::handler`:
 
 ```rust
 let serialized = context
-    .try_compute(PhantomData::<SerializeJson>, &value)
+    .try_compute(PhantomData::<SerializeJson>, &payload())
     .unwrap();
 
 let deserialized: Payload = context
@@ -147,14 +148,14 @@ checks the `TryComputer` entries.
 
 ## Known issues
 
-The test pins only the success path. It feeds no invalid input, so neither the missing-field message
-above nor any other failure is asserted; see [testing.md](../testing.md#what-is-untested).
+The example covers only the success path. It feeds no invalid input, so neither the missing-field
+message above nor any other failure is asserted; see [testing.md](../testing.md#what-is-untested).
 
 ## Try a change
 
-Switching the bytes from hex to base64 is the change the public page shows. A probe copied the test,
-replaced `SerializeHex` with `SerializeBase64` in both `Vec<u8>` entries, and imported it from
-`cgp_serde_extra::providers`. The first assertion then failed with the new JSON:
+Switching the bytes from hex to base64 is the change the public page shows. A probe copied the
+example, replaced `SerializeHex` with `SerializeBase64` in both `Vec<u8>` entries, and imported it
+from `cgp_serde_extra::providers`. The first assertion then failed with the new JSON:
 
 ```text
 assertion `left == right` failed
@@ -162,11 +163,12 @@ assertion `left == right` failed
  right: "{\"quantity\":42,\"message\":\"hello\",\"data\":\"010203\"}"
 ```
 
-With the expected string changed to `"AQID"`, the test passed, reading the base64 back into the same
-`Payload`. The missing-field message quoted above was re-run in the same probe and matched.
+With the expected string changed to `"AQID"`, the example's test passed, reading the base64 back
+into the same `Payload`. The missing-field message quoted above was re-run in the same probe and
+matched.
 
 ## Public material derived from this
 
 The `examples/basic` page of the
 [cgp-serde project section](../../../website/projects/cgp-serde.md), which takes its code from this
-test and quotes the change above.
+example and quotes the change above.

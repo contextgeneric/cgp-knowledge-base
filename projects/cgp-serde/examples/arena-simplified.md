@@ -1,20 +1,21 @@
 # `arena_simplified`
 
 Borrowed `&'a Coord` values deserialized from JSON into an arena that the context holds, with the
-arena getter and the allocating deserializer defined in the test itself. This is the form the
-announcement post shows, and the post's "Full Example" link leads to the `main` branch's version of
-the test, which wires the same choices through a `UseDelegate` table.
+arena getter and the allocating deserializer defined in the example itself. This is the form the
+announcement post shows, and the post's "Full Example" link leads to the `main` branch's version,
+a test that wires the same choices through a `UseDelegate` table.
 
 - **Source**:
-  [crates/cgp-serde-tests/src/tests/arena_simplified.rs](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-tests/src/tests/arena_simplified.rs)
-- **Run**: `cargo test -p cgp-serde-tests arena_simplified`
+  [crates/cgp-serde-examples/examples/arena_simplified.rs](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-examples/examples/arena_simplified.rs)
+- **Run**: `cargo run -p cgp-serde-examples --example arena_simplified`; its test runs with
+  `cargo test -p cgp-serde-examples --example arena_simplified`
 - **Needs**: nothing beyond the build
-- **Result**: passes; asserts that the deserialized `Cluster` has id 8 and the two expected
-  coordinates
+- **Result**: prints the deserialized `Cluster`, with id 8 and the two expected coordinates; the
+  test asserts it
 
 ## A deserializer that takes the arena from its context
 
-The test defines its own getter and deserializer. The getter is a
+The example defines its own getter and deserializer. The getter is a
 [`#[cgp_auto_getter]`](../../../cgp/reference/macros/cgp_auto_getter.md) trait, which reads the
 field named `arena` by blanket impl, and the deserializer imports it with `#[uses]`:
 
@@ -99,7 +100,7 @@ result:
 let arena = Arena::new();
 let app = App { arena: &arena };
 
-let deserialized: Cluster<'_> = app.deserialize_json_string(&serialized).unwrap();
+let deserialized: Cluster<'_> = app.deserialize_json_string(SERIALIZED).unwrap();
 ```
 
 The method cannot produce a value that borrows from its input string. `Cluster` borrows from the
@@ -111,7 +112,7 @@ arena instead, so it is exactly what the method can return.
   [context services](../architecture/context-services.md).
 - A borrowed value deserialized with a lifetime independent of the input's: see
   [`DeserializeAndAllocate`](../reference/allocation.md#deserializeandallocate), whose library form
-  this test's local provider collapses.
+  this example's local provider collapses.
 - Keys and checks for a context and value types that carry lifetimes: see
   [components](../reference/components.md#candeserializevalue).
 
@@ -122,10 +123,10 @@ separates the two with the library's own crates, and the top-level
 
 ## Known issues
 
-- **The first check duplicates the second.** The test's `CanUseApp` table checks
+- **The first check duplicates the second.** The example's `CanUseApp` table checks
   `ValueDeserializerComponent` at `(Life<'a>, Coord)`, which its `CanDeserializeApp` table already
   covers for every `'de`. The table has the same name and shape as the getter check in the
-  [layered test](arena.md), which checks `ArenaGetterComponent`, but here the getter is a blanket
+  [layered example](arena.md), which checks `ArenaGetterComponent`, but here the getter is a blanket
   trait with no component to check. See [issues.md](../issues.md#housekeeping).
 - **The getter could be an implicit argument.** `HasArena` exists only for the provider to read a
   field of its own context, the case the

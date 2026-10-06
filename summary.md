@@ -1095,7 +1095,7 @@ it stale.
   format, the three `serde_json` deserialization entry points, which formats fit the output, and
   writing an entry point for another format.
 - [projects/cgp-serde/examples/README.md](projects/cgp-serde/examples/README.md) — the catalog of the
-  repository's four tests as runnable examples, with how to run each and what it produced, the
+  four examples in the `cgp-serde-examples` crate, with how to run each and its test, what it printed, the
   environmental, parameter-targeted shape they all wire, and the boundary with the top-level example.
 - [projects/cgp-serde/examples/basic.md](projects/cgp-serde/examples/basic.md) — one struct
   round-tripped through JSON by the `TryComputer` JSON providers, with bytes as hex and anyhow errors.
@@ -1103,14 +1103,14 @@ it stale.
   two-application demo, the three entries that differ, the entries the traversal needs, and the
   missing-`i64` diagnostic.
 - [projects/cgp-serde/examples/arena-simplified.md](projects/cgp-serde/examples/arena-simplified.md)
-  — borrowed values allocated into a context-supplied arena by a test-local getter and deserializer;
+  — borrowed values allocated into a context-supplied arena by a local getter and deserializer;
   a redundant check, and a getter an implicit argument could replace.
 - [projects/cgp-serde/examples/arena.md](projects/cgp-serde/examples/arena.md) — the same through the
   layered allocation crates, the missing-allocator diagnostic, and the dead JSON handler wiring.
 - [projects/cgp-serde/serde-comparison.md](projects/cgp-serde/serde-comparison.md) — what cgp-serde
   keeps from Serde and adds to it, how Serde's idioms map onto wiring, what it lacks, and when plain
   Serde is the better choice.
-- [projects/cgp-serde/testing.md](projects/cgp-serde/testing.md) — the four example tests and their
+- [projects/cgp-serde/testing.md](projects/cgp-serde/testing.md) — the four examples' tests and their
   checks, the record and variant provider suites and their shared helpers, the `trybuild`
   compile-fail tests, the tests that pin a known issue, which providers are asserted or never
   exercised, and the untested failure paths.

@@ -5,10 +5,12 @@ differ in three wiring entries, producing JSON with hex bytes and RFC 3339 dates
 bytes and Unix timestamps from the other.
 
 - **Source**:
-  [crates/cgp-serde-tests/src/tests/messages.rs](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-tests/src/tests/messages.rs)
-- **Run**: `cargo test -p cgp-serde-tests messages`
+  [crates/cgp-serde-examples/examples/messages.rs](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-examples/examples/messages.rs)
+- **Run**: `cargo run -p cgp-serde-examples --example messages`; its test runs with
+  `cargo test -p cgp-serde-examples --example messages`
 - **Needs**: nothing beyond the build
-- **Result**: passes; asserts both pretty-printed JSON documents, shown under [Output](#output)
+- **Result**: prints both pretty-printed JSON documents, shown under [Output](#output); the test
+  asserts both
 
 ## Nested data that derives only `CgpData`
 
@@ -92,7 +94,7 @@ error[E0277]: [CGP-E001] the consumer traits `CanSerializeValue<DateTime<Utc>>` 
   = note: root cause: [CGP-E107] context `AppB` does not contain any delegate entry for `@ValueSerializerComponent.i64`
 ```
 
-The public page makes the change on the full test instead: `i64` removed from `AppB`'s `UseSerde`
+The public page makes the change on the full example instead: `i64` removed from `AppB`'s `UseSerde`
 entry, leaving `[u64, String]`, checked with `cargo cgp check` built from the `cargo-cgp` source at
 commit `b6a6323`. The check on `AppB` fails on every type that contains a date, with the same root
 cause:
@@ -110,25 +112,31 @@ The dependency chain it prints under the root cause runs from `SerializeIterator
 ## Serializing through the adapter
 
 Each context checks all seven value types with a plain `check_components!` table, whose derived
-names, `__CheckAppA` and `__CheckAppB`, do not collide. The test then hands each context and the
+names, `__CheckAppA` and `__CheckAppB`, do not collide. The example then hands each context and the
 same archive to `serde_json` through the
-[`SerializeWithContext`](../reference/context-adapters.md#serializewithcontext) adapter:
+[`SerializeWithContext`](../reference/context-adapters.md#serializewithcontext) adapter, in a helper
+that accepts any context able to serialize the archive:
 
 ```rust
-let serialized_a =
-    serde_json::to_string_pretty(&SerializeWithContext::new(&AppA, &archive)).unwrap();
+fn to_pretty_json<Context>(context: &Context, archive: &MessagesArchive) -> String
+where
+    Context: CanSerializeValue<MessagesArchive>,
+{
+    serde_json::to_string_pretty(&SerializeWithContext::new(context, archive)).unwrap()
+}
 ```
 
-It then compares each document with the exact text it expects, so a change in any provider on the
-path fails the test.
+`main` prints `to_pretty_json(&AppA, &archive)` and `to_pretty_json(&AppB, &archive)`, and the
+example's test compares each document with the exact text it expects, so a change in any provider
+on the path fails it.
 
 Because the adapter is an ordinary `Serialize` value, neither context wires error components: any
 `serde_json::Error` comes back unchanged.
 
 ## Output
 
-The test asserts the archive twice, once per context. Each document follows its context's choices
-at every level of nesting; the first message shows the difference. From `AppA`:
+The example serializes the archive twice, once per context. Each document follows its context's
+choices at every level of nesting; the first message shows the difference. From `AppA`:
 
 ```json
 {

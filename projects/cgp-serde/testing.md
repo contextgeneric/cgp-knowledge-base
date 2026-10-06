@@ -1,24 +1,26 @@
 # Testing
 
-cgp-serde's tests live in one crate, `cgp-serde-tests`, in three kinds. Four **example tests**
-each wire one scenario end to end and double as the library's only runnable examples. The
-**provider suites** test one provider family in depth, one concern per file, against exact output.
-The **compile-fail tests** pin wiring the providers reject, with its exact diagnostics. This
+cgp-serde's tests are of three kinds, in two crates. The four **examples** in `cgp-serde-examples`
+each wire one scenario end to end and carry their assertions as tests. The **provider suites** in
+`cgp-serde-tests` test one provider family in depth, one concern per file, against exact output.
+The **compile-fail tests**, also in `cgp-serde-tests`, pin wiring the providers reject, with its
+exact diagnostics. This
 document records what each pins, which tests pin a known issue, and which parts of the library no
 test exercises. On the `v0.8.0` branch, `cargo test --workspace` passes every test; the library
 crates carry no tests and no doc tests of their own.
 
-## The example tests
+## The examples' tests
 
-Each example test defines its own data types and contexts and is documented as an example in
-[examples/](examples/README.md):
+Each example is a Cargo example target with `test = true`, so `cargo test` runs the `#[test]`
+function it carries beside its `main`. Each defines its own data types and contexts and is
+documented in [examples/](examples/README.md):
 
-| File | Scenario | Runtime assertion | Compile-time checks |
+| Example | Scenario | Runtime assertion | Compile-time checks |
 |---|---|---|---|
 | `basic.rs` | A `Payload` round-tripped through JSON by the `try_compute` JSON providers, with bytes as hex | the exact JSON string, and equality after the round trip | serializer and deserializer for all four value types |
 | `messages.rs` | The two-application demo: `AppA` with hex and RFC 3339, `AppB` with base64 and timestamps | both pretty-printed JSON documents, exactly | serializer for all seven value types, for each context |
 | `arena.rs` | Deserializing a `Payload<'a>` into an arena through the layered allocation crates | equality with the expected value | the arena getter, and the deserializer for four value types |
-| `arena_simplified.rs` | The same with a test-local getter and `DeserializeAndAllocate`, as in the announcement post | equality with the expected value | the deserializer for four value types, plus a second table repeating one of them |
+| `arena_simplified.rs` | The same with a local getter and `DeserializeAndAllocate`, as in the announcement post | equality with the expected value | the deserializer for four value types, plus a second table repeating one of them |
 
 All four use `serde_json` as the format and `cgp-error-anyhow` for the error type where one is
 needed. The checks use [`check_components!`](../../cgp/reference/macros/check_components.md), and
@@ -27,7 +29,7 @@ list deserializer entries with `Life<'de>`, as
 holds two tables for one context they carry explicit `#[check_trait]` names; `messages.rs` checks
 two different contexts and relies on the derived names.
 
-Two of the tests carry wiring or checks that add nothing. `arena.rs` opens `TryComputerComponent`
+Two of the examples carry wiring or checks that add nothing. `arena.rs` opens `TryComputerComponent`
 and wires both JSON codes although it deserializes through `deserialize_json_string`, which bypasses
 them. `arena_simplified.rs` checks deserializing `Coord` in a table of its own that its second table
 already covers. The [arena](examples/arena.md#known-issues) and
@@ -162,8 +164,10 @@ how they went unnoticed.
 
 ## Source
 
+- [`crates/cgp-serde-examples/examples/`](https://github.com/contextgeneric/cgp-serde/tree/v0.8.0/crates/cgp-serde-examples/examples):
+  the four examples.
 - [`crates/cgp-serde-tests/src/tests/`](https://github.com/contextgeneric/cgp-serde/tree/v0.8.0/crates/cgp-serde-tests/src/tests):
-  the four example tests, the `records/` and `variants/` suites, and the `support/` helpers.
+  the `records/` and `variants/` suites, and the `support/` helpers.
 - [`crates/cgp-serde-tests/tests/`](https://github.com/contextgeneric/cgp-serde/tree/v0.8.0/crates/cgp-serde-tests/tests):
   the compile-fail runner and its cases.
 
