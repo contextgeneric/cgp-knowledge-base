@@ -38,6 +38,19 @@ such as `"4\"2"` with its escaped quote, fails with
 the plain `"42"` fails the same way. Re-entering for an owned `String` would accept them. See
 [conversions](reference/conversions.md#deserializewithfromstr).
 
+### The variant serializer accepts only `'static` enums
+
+`SerializeVariantFields` bounds the enum's borrowed variant list, `FieldsRef<'a>`, for every
+lifetime `'a`, because the component's method borrows the value for a lifetime local to the method.
+`FieldsRef<'a>` requires `Self: 'a`, which holds for every `'a` only when the enum is `'static`. So
+`Token<'a> { Word(&'a str), Number(u64) }` wired to it fails with `E0477` at `check_components!`,
+and a call with a borrowed value fails with `E0597`, while `Token<'static>` works. Deserializing has
+no such limit. CGP's borrowed extractor, `HasExtractorRef`, has the same requirement, so it does not
+help. The fix needs a per-variant accessor in `cgp` that borrows like `HasField`, with the borrow in
+the method signature rather than in an associated type, such as an `ExtractFieldRef<Tag>` emitted
+by `#[derive(ExtractField)]`. The `variant_serializer_needs_static` compile-fail test pins the
+failure. See [variants](reference/variants.md#known-issues).
+
 ### Records and sequences do not declare their length
 
 `SerializeRecordFields` calls `serialize_map(None)` and `SerializeIterator` calls `serialize_seq(None)`,
@@ -50,10 +63,13 @@ See [records](reference/records.md#known-issues) and
 
 A missing feature is behavior the library does not attempt. Each is documented where it applies.
 
-- **Enums**: no provider serializes or deserializes an enum generically; an enum works only through
-  `UseSerde`. See [the project README](README.md#status-and-gaps).
-- **Recursive data types**: a type that contains itself fails to compile with `E0275` through the
-  generic providers and needs a hand-written provider. See
+- **Other enum shapes and representations**: the variant providers handle only variants that hold
+  exactly one payload, in Serde's externally tagged form. Unit, tuple, and struct-style variants,
+  and the internally tagged, adjacently tagged, and untagged forms, have no provider. See
+  [variants](reference/variants.md).
+- **Recursive data types**: a struct or enum that contains itself fails to compile with `E0275`
+  through the generic providers and needs a hand-written provider. The `recursive_record` and
+  `recursive_enum` compile-fail tests pin it. See
   [re-entrant providers](architecture/reentrant-providers.md#what-re-entry-requires-of-a-context).
 - **Tuple structs**: the record providers reject them, because `Index<N>` tags do not implement
   `StaticString`. See [records](reference/records.md).
@@ -78,8 +94,8 @@ A missing feature is behavior the library does not attempt. Each is documented w
 - **Performance evidence**: no benchmark has been run. The likeliest cost is in
   `DeserializeRecordFields`, which allocates each key as a `String` and compares it against each
   field name in turn.
-- **Documentation in the code**: only `SerializeRecordFields` and `DeserializeRecordFields` have doc
-  comments, so the docs.rs pages list the other items without explanation.
+- **Documentation in the code**: only the record and variant providers have doc comments, so the
+  docs.rs pages list the other items without explanation.
 
 ## Housekeeping
 

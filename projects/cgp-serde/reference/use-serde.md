@@ -42,8 +42,9 @@ field, wired to `UseSerde` in a context that wires `Vec<u8>` to `SerializeHex`, 
 `data` as the array `[1,2]`. A type whose fields should follow the context's choices is wired to
 [`SerializeRecordFields`](records.md) instead.
 
-`UseSerde` is also the only way the library encodes an enum, since no provider handles an enum
-generically; the enum must implement Serde's traits itself.
+`UseSerde` is also how the library encodes an enum the [variant providers](variants.md) cannot
+handle, such as one with unit or struct-style variants or an internally tagged representation; the
+enum must implement Serde's traits itself.
 
 The deserializing impl passes Serde's `'de` lifetime straight through, so `UseSerde` can produce a
 value that borrows from the input when the Serde impl does. Wiring `&'a str` to `UseSerde`

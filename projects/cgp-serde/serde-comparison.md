@@ -48,6 +48,7 @@ while cgp-serde's choices are per type:
 | a newtype wrapper to change a type's encoding | wire a different provider in a different context |
 | `#[serde(remote = "…")]` for a foreign type | not needed for encoding choice; a foreign type is wired to a provider directly |
 | `#[derive(Serialize, Deserialize)]` on a struct | derive `CgpData`, wire the struct to `SerializeRecordFields` and `DeserializeRecordFields` |
+| `#[derive(Serialize, Deserialize)]` on an enum of newtype variants | derive `CgpVariant`, wire the enum to `SerializeVariantFields` and `DeserializeVariantFields` |
 | a hand-written `DeserializeSeed` for state | a provider that takes the state from the context |
 | zero-copy `&'de str` fields | wire `&'a str` to `UseSerde` and deserialize from a borrowing reader |
 
@@ -59,7 +60,9 @@ relies on them cannot move those types to cgp-serde yet:
 - **Field and container attributes**: `rename`, `rename_all`, `skip`, `flatten`, `default`,
   `deny_unknown_fields`, and the rest. Every field is written under its Rust name and must be
   present.
-- **Enums**: Serde derives all four enum representations; cgp-serde has no generic enum provider.
+- **Enum representations and shapes**: Serde derives all four enum representations for any variant
+  shape; cgp-serde's variant providers write only the externally tagged form, for variants that
+  hold exactly one payload, and serialize only `'static` enums.
 - **Tuple structs and tuples**: Serde derives them; cgp-serde's record providers reject tuple
   structs, and no provider handles tuples.
 - **Recursive types**: Serde derives them without difficulty; cgp-serde's generic providers fail to

@@ -155,10 +155,54 @@ type, such as `UseSerde` or `SerializeString` for `String`.
 `SerializeIterator` and the reference entry in place, reports `E0275` when used, reshaped as
 `[CGP-E010] the wiring for the consumer trait CanSerializeValue<Node> on context Ctx never resolves`
 when checked, because serializing `Node` requires serializing `Vec<Node>`, which requires `&Node`,
-which requires `Node` again. No wiring fixes it: the type needs a provider that walks the recursion
+which requires `Node` again. An enum that contains itself fails the same way: an
+`Expr { Literal(u64), Negate(Box<Expr>) }` wired to `SerializeVariantFields`, with `Box<Expr>` wired
+to `SerializeDeref`, is reported as
+`[CGP-E010] the wiring for the consumer trait CanSerializeValue<Expr> on context App never resolves`.
+No wiring fixes it: the type needs a provider that walks the recursion
 itself and asks the context only for the non-recursive parts, as
 [re-entrant providers](../architecture/reentrant-providers.md#what-re-entry-requires-of-a-context)
 describes.
+
+## An enum with a lifetime is serialized
+
+**`SerializeVariantFields` accepts only `'static` enums, so an enum that borrows fails with a
+lifetime error rather than a missing entry.**
+
+```rust
+#[derive(CgpVariant)]
+pub enum Token<'a> {
+    Word(&'a str),
+    Number(u64),
+}
+
+delegate_components! {
+    App {
+        open ValueSerializerComponent;
+        @ValueSerializerComponent.[u64, <'a> &'a str]: UseSerde,
+        @ValueSerializerComponent.<'a> Token<'a>: SerializeVariantFields,
+    }
+}
+
+check_components! {
+    <'a> App {
+        ValueSerializerComponent: Token<'a>,
+    }
+}
+```
+
+The check fails although every entry is present, and `cargo cgp check` passes the error through as
+rustc writes it:
+
+```text
+error[E0477]: the type `Token<'a>` does not fulfill the required lifetime
+27 |         ValueSerializerComponent: Token<'a>,
+```
+
+The provider's bound on the enum's borrowed variant list must hold for every lifetime, which only a
+`'static` enum satisfies; [variants](../reference/variants.md#known-issues) explains why. Wiring
+`Token<'static>` instead compiles, and deserializing `Token<'a>` is unaffected. An enum whose values
+must borrow needs a serializer written for it.
 
 ## A key does not parse
 

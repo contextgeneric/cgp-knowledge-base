@@ -881,7 +881,7 @@ it stale.
   the thirteen examples and about 75 construct pages planned, the comparison with shell scripts, and
   the release the install instructions need.
 - [cgp-serde.md](website/projects/cgp-serde.md) — the plan and record of the cgp-serde section: the
-  45 pages written and the revisions they were verified against, the two arena examples and three
+  47 pages written and the revisions they were verified against, the two arena examples and three
   component pages that wait on DC3, and DC3's attribute removals, arena-test cleanups, and
   recommended namespace.
 - [error-backends.md](website/projects/error-backends.md) — one walkthrough per crate, the shared design
@@ -1111,10 +1111,12 @@ it stale.
   keeps from Serde and adds to it, how Serde's idioms map onto wiring, what it lacks, and when plain
   Serde is the better choice.
 - [projects/cgp-serde/testing.md](projects/cgp-serde/testing.md) — the four example tests and their
-  checks, the record provider suite and its shared helpers, the tests that pin a known issue, which
-  providers are asserted or never exercised, and the untested failure paths.
+  checks, the record and variant provider suites and their shared helpers, the `trybuild`
+  compile-fail tests, the tests that pin a known issue, which providers are asserted or never
+  exercised, and the untested failure paths.
 - [projects/cgp-serde/issues.md](projects/cgp-serde/issues.md) — the confirmed defects (byte
-  round-trip, owned bytes, borrowed strings, undeclared lengths), missing features, and housekeeping.
+  round-trip, owned bytes, borrowed strings, the `'static`-only variant serializer, undeclared
+  lengths), missing features, and housekeeping.
 - [projects/cgp-serde/reference/README.md](projects/cgp-serde/reference/README.md) — the catalog,
   and tables of every public item and provider with its crate, direction, bounds, context
   dependencies, and import path.
@@ -1152,6 +1154,10 @@ it stale.
 - [projects/cgp-serde/reference/records.md](projects/cgp-serde/reference/records.md) —
   `SerializeRecordFields` and `DeserializeRecordFields`: the minimum derives per direction, the map format,
   missing, duplicate, and unknown fields, and the format limits of a map without a declared length.
+- [projects/cgp-serde/reference/variants.md](projects/cgp-serde/reference/variants.md) —
+  `SerializeVariantFields` and `DeserializeVariantFields`: enums in Serde's externally tagged form,
+  one payload per variant, `()` for unit-like variants, the rejection messages, and the serializer's
+  `'static` limit.
 - [projects/cgp-examples/README.md](projects/cgp-examples/README.md) — the repository of five
   independent example crates: what each demonstrates, its context shape, worked example, citing post,
   whether it runs, the `v0.8.0` branch against `main` and the unmerged

@@ -15,14 +15,14 @@ demonstration of the coherence bypass on a trait every Rust developer already kn
   `v0.8.0` branch
 - **Verified against** — `cgp-serde` `v0.8.0` at commit `d89ee05`, with `cgp` `main` at `adc616c`
   through the workspace's patch, and `cargo-cgp` built from its source at commit `b6a6323`
-- **Status** — Draft: 45 of about 50 pages written, listed in [What is written](#what-is-written);
+- **Status** — Draft: 47 of about 52 pages written, listed in [What is written](#what-is-written);
   the two arena examples and three component pages wait on DC3
 - **How it was made** — written by an agent from the project section; level one of the four in
   [ai-disclosure.md](../../communication-strategy/ai-disclosure.md)
 
 ## What is written
 
-**Forty-five cgp-serde pages are written, all the pages that DC3 does not block**, and the section
+**Forty-seven cgp-serde pages are written, all the pages that DC3 does not block**, and the section
 index gained cgp-serde in its project list, five rows in its pattern table, and a line in its
 evaluator route. Resources links the section beside the crate. `yarn build` passes with them, so
 every link and anchor they carry resolves. They are:
@@ -34,7 +34,7 @@ every link and anchor they carry resolves. They are:
 - **Guides** — `wiring-a-context`, `writing-a-provider`, `formats`, and `debugging-wiring`, under a
   generated category index.
 - **Reference** — the index, with the provider tables and a *Looking for a name you don't see?*
-  table; the 23 provider pages under `reference/providers/`; `SerializeWithContext`,
+  table; the 25 provider pages under `reference/providers/`; `SerializeWithContext`,
   `DeserializeWithContext`, and `CanDeserializeJsonString` under `reference/types/`; and `CanAlloc`
   under `reference/components/`, which carries no `#[derive_delegate]` and so is not blocked.
 - **The comparison and the limitations** — `serde-comparison.md` and `limitations.md`.
@@ -68,7 +68,11 @@ The writing turned up several facts a later revision must respect:
   not the library's `CgpSerdeNamespace`, and the [wiring
   record](../../projects/cgp-serde/guides/wiring-a-context.md#share-wiring-between-contexts) carries it.
 - **Source links point at `main`**, per the writing guide, so until the `v0.8.0` branch merges they
-  show the release's `UseDelegate` tables.
+  show the release's `UseDelegate` tables, and the links of the two variant provider pages, whose
+  files exist only on `v0.8.0`, do not resolve.
+- **The variant provider pages were written with the providers.** `serialize_variant_fields` and
+  `deserialize_variant_fields` state only what the `variants` test suite asserts, and present the
+  `'static` limit and the single enum form as limits a reader must know before choosing them.
 - **The install instructions assume the merge too.** The index tells a reader to depend on the
   crates from the repository by git, since the crates.io release is built on an older CGP.
 - **Every example page has a *The problem* section before its code**, per [the writing
@@ -110,13 +114,14 @@ example page says so beside the code, since a reader arriving from Serde expects
 **The index must say on its first screen that cgp-serde is a proof of concept**, which it describes
 itself as, and state its scope in the terms a Serde user asks about: that it replaces Serde's
 per-type implementations while keeping Serde's data model and formats, and that its generic
-providers cover structs with named fields and types that already implement Serde's traits. It does
+providers cover structs with named fields, enums whose variants each hold one value, and types that
+already implement Serde's traits. It does
 not list the features it lacks; those are records in the project's `issues.md`.
 
 ## The pages
 
-The index, four example pages and their index, 7 architecture pages, 4 guides, 31 reference pages
-with the reference index, the comparison, and the limitations page: 50 in all, of which 45 are
+The index, four example pages and their index, 7 architecture pages, 4 guides, 33 reference pages
+with the reference index, the comparison, and the limitations page: 52 in all, of which 47 are
 written.
 
 ### Index
@@ -171,8 +176,8 @@ gets a page. Enumerate against the source when porting; the groups are:
   `HasArena`.
 - **`reference/types/`, 3 pages** — the adapters `SerializeWithContext` and
   `DeserializeWithContext`, and the `CanDeserializeJsonString` blanket trait.
-- **`reference/providers/`, 23 pages** — the nineteen serialization and deserialization providers,
-  from `UseSerde` to `DeserializeAndAllocate`, then the three JSON providers and
+- **`reference/providers/`, 25 pages** — the twenty-one serialization and deserialization
+  providers, from `UseSerde` to `DeserializeAndAllocate`, then the three JSON providers and
   `AllocateWithArena`. Each page's *Pairing* section names the provider for the other direction, or
   says there is none, and its *Context dependencies* section names what the provider re-enters the
   context for.

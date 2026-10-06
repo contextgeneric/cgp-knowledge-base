@@ -20,9 +20,8 @@ are:
   all three.
 
 Only structs with named fields work. A tuple struct keys its fields by `Index<N>`, which does not
-implement `StaticString`, so wiring one to either provider fails to compile. No provider in the
-library handles an enum generically; an enum is encoded only through `UseSerde`, from its own Serde
-impl.
+implement `StaticString`, so wiring one to either provider fails to compile. An enum is handled by the
+[variant providers](variants.md) instead.
 
 ## `SerializeRecordFields`
 

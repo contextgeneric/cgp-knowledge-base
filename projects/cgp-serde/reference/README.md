@@ -52,6 +52,8 @@ wire.
 | `DeserializeExtend` | `cgp-serde` | de | `Value: Default + IntoIterator<Item = Item> + Extend<Item>` | `Item` |
 | `SerializeRecordFields` | `cgp-serde` | ser | `Value: HasFields`, plus `HasField` per field | each field type |
 | `DeserializeRecordFields` | `cgp-serde` | de | `Value: HasFields`, plus a builder | each field type |
+| `SerializeVariantFields` | `cgp-serde` | ser | `'static` `Value: ToFieldsRef`, one payload per variant | each variant's payload type |
+| `DeserializeVariantFields` | `cgp-serde` | de | `Value: FromFields`, one payload per variant | each variant's payload type |
 | `DeserializeDefault<Provider>` | `cgp-serde` | de | `Value: Default`; `Provider` handles `Value` | nothing; calls `Provider` |
 | `SerializeHex` | `cgp-serde-extra` | both | ser: `Value: ToHex`; de: `Value: FromHex` | `String` |
 | `SerializeBase64` | `cgp-serde-extra` | both | ser: `Value: AsRef<[u8]>`; de: `Vec<u8>` only | `String` |
@@ -98,8 +100,12 @@ Register each reference document here, in [../README.md](../README.md), and in
   the borrowed-string limit of `DeserializeWithFromStr`.
 - [collections.md](collections.md): `SerializeIterator` and `DeserializeExtend`: sequences whose
   items follow the context, the reference entry iteration needs, and maps as sequences of pairs.
-- [records.md](records.md): `SerializeRecordFields` and `DeserializeRecordFields`: serializing a struct as
-  a map and reading one back through the optional builder, with no serialization-specific derive.
+- [records.md](records.md): `SerializeRecordFields` and `DeserializeRecordFields`: serializing a
+  struct as a map and reading one back through the optional builder, with no serialization-specific
+  derive.
+- [variants.md](variants.md): `SerializeVariantFields` and `DeserializeVariantFields`: an enum in
+  Serde's externally tagged form, `()` payloads for unit-like variants, and the serializer's
+  `'static` limit.
 - [default-values.md](default-values.md): `DeserializeDefault`: the one higher-order serialization
   provider, which defaults a null value but not a missing field.
 - [encodings.md](encodings.md): `SerializeHex`, `SerializeBase64`, `SerializeRfc3339Date`, and

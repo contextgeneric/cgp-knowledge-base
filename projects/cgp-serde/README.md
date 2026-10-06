@@ -69,18 +69,20 @@ through in [architecture/crate-layout.md](architecture/crate-layout.md).
 - **`cgp-serde-tests`**: the test crate, unpublished. Four example tests (a JSON round trip, the
   two-application serialization demo, and the arena deserialization demo in its layered and
   simplified forms) are the repository's only runnable examples, each documented in
-  [examples/](examples/README.md). Provider suites test the record providers in depth; see
+  [examples/](examples/README.md). Provider suites test the record and variant providers in depth; see
   [testing.md](testing.md).
 
 ## Status and gaps
 
-The library handles named-field structs, the common scalar and collection types, and any type that
-already implements Serde's traits, but it is a proof of concept with gaps that have each been
+The library handles named-field structs, enums whose variants each hold one payload, the common
+scalar and collection types, and any type that already implements Serde's traits, but it is a proof
+of concept with gaps that have each been
 confirmed against the `v0.8.0` branch. [issues.md](issues.md) records them in full, together with
 the defects and housekeeping items this summary leaves out:
 
-- **Enums**: no provider serializes an enum generically; an enum works only through `UseSerde`, from
-  its own `Serialize` or `Deserialize` impl.
+- **Enums**: the variant providers write only Serde's externally tagged form, every variant must
+  hold exactly one payload, and the serializer accepts only `'static` enums; see
+  [variants](reference/variants.md#known-issues).
 - **Recursive data types**: a type that contains itself, such as a tree node with a `Vec` of
   children, fails to compile through the generic providers and needs a provider written for it; see
   [re-entrant providers](architecture/reentrant-providers.md#what-re-entry-requires-of-a-context).
@@ -90,8 +92,8 @@ the defects and housekeeping items this summary leaves out:
 - **Serde's attributes**: fields cannot be renamed, skipped, flattened, or defaulted when missing.
 - **JSON helpers**: the JSON providers deserialize from any `serde_json` reader, but the only
   convenience method takes a string; there is no counterpart for serializing.
-- **Evidence**: no benchmark has been run, only the record providers have rustdoc, and seven
-  providers are never run by a test.
+- **Evidence**: no benchmark has been run, only the record and variant providers have rustdoc, and
+  seven providers are never run by a test.
 
 ## The documents
 
@@ -132,9 +134,12 @@ ideas every provider shares, then use the reference to look up a provider.
   - [collections.md](reference/collections.md): `SerializeIterator` and `DeserializeExtend`:
     sequences whose items follow the context, the reference entry iteration needs, and maps as
     sequences of pairs.
-  - [records.md](reference/records.md): `SerializeRecordFields` and `DeserializeRecordFields`: serializing
-    a struct as a map and reading one back through the optional builder, with no
+  - [records.md](reference/records.md): `SerializeRecordFields` and `DeserializeRecordFields`:
+    serializing a struct as a map and reading one back through the optional builder, with no
     serialization-specific derive.
+  - [variants.md](reference/variants.md): `SerializeVariantFields` and `DeserializeVariantFields`:
+    an enum in Serde's externally tagged form, `()` payloads for unit-like variants, and the
+    serializer's `'static` limit.
   - [default-values.md](reference/default-values.md): `DeserializeDefault`: the one higher-order
     serialization provider, which defaults a null value but not a missing field.
   - [encodings.md](reference/encodings.md): `SerializeHex`, `SerializeBase64`,
@@ -177,7 +182,7 @@ These documents are the source for the project's public writing, and each one na
 They feed three artifacts:
 
 - **The cgp-serde section of the website's Projects pages**, recorded in
-  [website/projects/cgp-serde.md](../../website/projects/cgp-serde.md), with 45 of its 50 pages
+  [website/projects/cgp-serde.md](../../website/projects/cgp-serde.md), with 47 of its 52 pages
   written. Each document here feeds the public page of the same name: the examples become short
   tutorials, the architecture documents, guides, and comparison are ported one to one, and each
   reference family document is split into one page per construct. The limitations page is written
@@ -185,7 +190,7 @@ They feed three artifacts:
   issues document feeds no page.
 - **The repository README**, which currently summarizes the components in pre-0.8 syntax and defers
   to the announcement post.
-- **Rustdoc for every public item.** Only the record providers carry doc comments, so the crates'
+- **Rustdoc for every public item.** Only the record and variant providers carry doc comments, so the crates'
   docs.rs pages list most items without explanation; the reference entries are written to be
   condensed into them.
 

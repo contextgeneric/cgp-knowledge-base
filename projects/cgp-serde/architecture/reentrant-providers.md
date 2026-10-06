@@ -111,6 +111,8 @@ are the associated types named in its bounds.
 | `DeserializeExtend` | deserialize | each `Item` | adapter (private seed) |
 | `SerializeRecordFields` | serialize | each field's type | adapter |
 | `DeserializeRecordFields` | deserialize | each field's type | adapter |
+| `SerializeVariantFields` | serialize | the active variant's payload type | adapter |
+| `DeserializeVariantFields` | deserialize | the variant's payload type | adapter |
 | `SerializeHex`, `SerializeBase64`, `SerializeRfc3339Date` | both | `String` | direct |
 | `SerializeTimestamp` | both | `i64` | direct |
 | `DeserializeAndAllocate` | deserialize | the owned `Value` behind `&'a Value`, then allocates through `CanAlloc` | direct |

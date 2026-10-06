@@ -49,13 +49,14 @@ mechanisms, they are separate structs: `SerializeRecordFields` pairs with `Deser
 `SerializeIterator` with `DeserializeExtend`. The full pairing is in
 [component-design.md](component-design.md#one-struct-both-directions).
 
-**A struct needs no serialization-specific derive.** `SerializeRecordFields` walks a struct's field list
-through [`HasFields`](../../../cgp/reference/traits/has_fields.md), and `DeserializeRecordFields`
-fills the struct through CGP's optional builder. Both depend only on derives from `cgp`: serializing
-needs `HasFields` and `HasField`, deserializing needs `HasFields` and `BuildField`, and `CgpData`
-derives all three. A library can therefore make its types serializable without depending on `serde`
-or `cgp-serde`, and an application can encode them however it likes. See
-[derive-free-records.md](derive-free-records.md).
+**A struct or enum needs no serialization-specific derive.** `SerializeRecordFields` walks a
+struct's field list through [`HasFields`](../../../cgp/reference/traits/has_fields.md), and
+`DeserializeRecordFields` fills the struct through CGP's optional builder. Both depend only on
+derives from `cgp`: serializing needs `HasFields` and `HasField`, deserializing needs `HasFields` and
+`BuildField`, and `CgpData` derives all three. The variant providers do the same for an enum through
+its `HasFields` variant list alone. A library can therefore make its types serializable without
+depending on `serde` or `cgp-serde`, and an application can encode them however it likes. See
+[derive-free-records.md](derive-free-records.md) and [variants](../reference/variants.md).
 
 **A deserializer can take services from its context.** Because every provider method receives the
 context, a provider can require a trait on it as an impl-side dependency and call it

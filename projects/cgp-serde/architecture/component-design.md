@@ -58,13 +58,16 @@ The table pairs every serializing provider with its deserializing counterpart:
 | `SerializeDeref` | none | a reference is deserialized by `DeserializeAndAllocate` |
 | `SerializeIterator` | `DeserializeExtend` | separate structs: iterate by reference, extend by value |
 | `SerializeRecordFields` | `DeserializeRecordFields` | separate structs: read fields, fill a builder |
+| `SerializeVariantFields` | `DeserializeVariantFields` | separate structs: borrow the active variant, build from one variant |
 | none | `DeserializeDefault<P>` | deserialize-only, higher-order |
 | `SerializeHex`, `SerializeBase64`, `SerializeRfc3339Date`, `SerializeTimestamp` | the same structs | one struct each |
 | `SerializeToJsonString` | `DeserializeFromJsonString`, `DeserializeFromJsonReader` | separate structs over `TryComputer` |
 
 The separate pairs differ because their two directions use different machinery rather than different
 decisions. `SerializeRecordFields` reads each field through `HasField`, while `DeserializeRecordFields`
-builds the struct through CGP's optional builder; `SerializeIterator` borrows the collection and
+builds the struct through CGP's optional builder; `SerializeVariantFields` borrows the enum's variant
+list, while `DeserializeVariantFields` builds the enum from the one variant it reads;
+`SerializeIterator` borrows the collection and
 walks it, while `DeserializeExtend` starts from a default and extends it. Each direction is
 therefore a different provider rather than one decision implemented twice, and each gets a name for
 its mechanism.

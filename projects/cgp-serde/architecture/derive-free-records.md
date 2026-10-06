@@ -50,7 +50,9 @@ cannot be encoded differently, short of giving one of them a distinct type.
 
 Three further limits come from the providers rather than the approach, and are recorded with them in
 [records](../reference/records.md#known-issues): records are written as maps rather than structs,
-without a declared length; tuple structs are rejected; and enums have no generic provider at all.
+without a declared length; and tuple structs are rejected. Enums get the same treatment from the
+[variant providers](../reference/variants.md), which need only `HasFields` and limit each variant to
+one payload.
 The field-list recursion is also monomorphized per struct, as Serde's derive output is, so the
 approach saves writing the code rather than compiling it.
 

@@ -71,7 +71,8 @@ present. Two of them affect which formats accept cgp-serde's output:
   postcard rejects them.
 
 The derive's attributes (renaming, skipping, flattening, defaulting a missing field, rejecting
-unknown fields) also have no equivalent, and enums have no generic provider. A self-describing
+unknown fields) also have no equivalent, and enums are written only in Serde's externally tagged
+form. A self-describing
 format such as JSON or RON works with the library as it stands; the complete list of gaps is in the
 project [README](../README.md#status-and-gaps).
 

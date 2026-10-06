@@ -46,7 +46,7 @@ The first two need the context's error components, and the seed needs none; see
 ## Choose a format that fits the output
 
 **Self-describing text formats work with the library as it stands; length-prefixed binary formats do
-not yet.** Two properties of the output decide it:
+not yet.** These properties of the output decide it:
 
 - **Records are maps.** Structs serialized through `SerializeRecordFields` arrive at the format as maps,
   so JSON is unaffected and RON writes `{"a":1}` rather than its struct syntax. Deserializing
@@ -54,6 +54,10 @@ not yet.** Two properties of the output decide it:
 - **Lengths are unknown.** Records and collections are started without a length, so postcard rejects
   them with `SerializeSeqLengthUnknown`. Any format that must write a length before the elements has
   the same problem.
+- **Enums are externally tagged newtype variants.** The variant providers write exactly what Serde's
+  derive writes for an enum of one-payload variants, so JSON, RON, and postcard agree with a
+  Serde-derived type, apart from payloads that are records. The variant index is the declaration
+  position, as in Serde's derive.
 
 `SerializeBytes` adds a third, JSON-specific limit: it writes bytes as a JSON array but reads them
 only from an unescaped string, so bytes do not round-trip through JSON. Wire a text encoding such as

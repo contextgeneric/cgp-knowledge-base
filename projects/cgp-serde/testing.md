@@ -1,8 +1,9 @@
 # Testing
 
-cgp-serde's tests live in one crate, `cgp-serde-tests`, in two kinds. Four **example tests** each
-wire one scenario end to end and double as the library's only runnable examples. The **provider
-suites** test one provider family in depth, one concern per file, against exact output. This
+cgp-serde's tests live in one crate, `cgp-serde-tests`, in three kinds. Four **example tests**
+each wire one scenario end to end and double as the library's only runnable examples. The
+**provider suites** test one provider family in depth, one concern per file, against exact output.
+The **compile-fail tests** pin wiring the providers reject, with its exact diagnostics. This
 document records what each pins, which tests pin a known issue, and which parts of the library no
 test exercises. On the `v0.8.0` branch, `cargo test --workspace` passes every test; the library
 crates carry no tests and no doc tests of their own.
@@ -70,6 +71,43 @@ through one context, `App`, plus a second context in `context_choice.rs`:
   providers read what it writes.
 - **`formats.rs`**: RON round-trips a record in map syntax, and postcard rejects one.
 
+### Variants
+
+The `variants/` suite tests [`SerializeVariantFields` and `DeserializeVariantFields`](reference/variants.md)
+through one context, `App`, plus second contexts in `unit_payload.rs` and `nesting.rs`:
+
+- **`round_trip.rs`**: every variant of a four-variant enum tagged with its name; a one-variant
+  enum; the first, middle, and last of ten variants.
+- **`payloads.rs`**: scalar, `Option` (a value and `null`), collection (empty and not), byte, and
+  enum payloads, each following the context's choice for its type.
+- **`unit_payload.rs`**: a `()` payload written as `null` through `UseSerde` and as `{}` through a
+  provider the test defines; each context rejecting the other's form; and the bare variant name
+  rejected under both.
+- **`deserialize_input.rs`**: the unknown-variant message listing every name; an escaped variant
+  name; input through an `io::Read`; and the exact errors for an empty object, two variants, a value
+  that is not an enum, a wrong payload type, and trailing input.
+- **`nesting.rs`**: enums in a record and a `Vec`; the same payload written as hex by one context
+  and base64 by another.
+- **`lifetimes.rs`**: a borrowed payload deserialized from a string, and `Token<'static>`
+  serialized.
+- **`formats.rs`**: RON round trips, including a generic enum, whose name RON validates; postcard
+  writes and reads the declaration index, rejects an index out of range, and rejects a record
+  payload.
+- **`serde_compat.rs`**: an enum with Serde's derive agrees with the providers in JSON in both
+  directions, and in RON and postcard for payloads that are not records.
+
+## The compile-fail tests
+
+**`tests/compile_fail.rs` runs [`trybuild`](https://docs.rs/trybuild) over `tests/compile_fail/`**,
+each case a small program the providers reject, with its rustc output pinned in a `.stderr` file.
+The output depends on the toolchain, so the files are regenerated with `TRYBUILD=overwrite` after
+the pinned toolchain changes:
+
+- **`variant_serializer_needs_static.rs`**: `Token<'a>` wired to `SerializeVariantFields` fails
+  with `E0477`.
+- **`recursive_enum.rs`**: an enum holding a `Box` of itself fails with `E0275`.
+- **`recursive_record.rs`**: a record holding a `Vec` of itself fails with `E0275`.
+
 ## Tests that pin a known issue
 
 **A test that pins a known issue asserts the current behavior and says so in its doc comment**, so
@@ -78,20 +116,26 @@ a fix fails it and names the entry in [issues.md](issues.md) to remove:
 - **A missing `Option` field is an error**: `deserialize_input.rs`, per
   [records](reference/records.md#known-issues-1).
 - **The sequence form of a record is rejected**: `deserialize_input.rs`, per the same section.
-- **Records are maps to RON, and postcard rejects them**: `formats.rs`, per
+- **Records are maps to RON, and postcard rejects them**: the records suite's `formats.rs`, and the
+  variants suite's `formats.rs` for a record payload, per
   [records](reference/records.md#known-issues) and the length entry in issues.md.
+- **The variant serializer needs a `'static` enum**: `variant_serializer_needs_static.rs`, per
+  [variants](reference/variants.md#known-issues).
+- **Recursive types overflow the trait solver**: `recursive_enum.rs` and `recursive_record.rs`, per
+  [re-entrant providers](architecture/reentrant-providers.md#what-re-entry-requires-of-a-context).
 
 ## What is exercised
 
 The tests run these providers, in the directions listed:
 
 - **Asserted output**: `UseSerde`, `SerializeString` (serializing), `SerializeHex`,
-  `SerializeBase64`, `SerializeRecordFields`, `DeserializeRecordFields`, `SerializeDeref`,
+  `SerializeBase64`, `SerializeRecordFields`, `DeserializeRecordFields`, `SerializeVariantFields`,
+  `DeserializeVariantFields`, `SerializeDeref`,
   `SerializeIterator`, `DeserializeExtend`, the serializing side of `SerializeRfc3339Date` and
   `SerializeTimestamp`, `DeserializeAndAllocate` in both forms, `AllocateWithArena` with `HasArena`
   wired through `UseField`, `SerializeToJsonString`, `DeserializeFromJsonString` over
   `DeserializeFromJsonReader`, and `deserialize_json_string`.
-- **Formats**: JSON throughout, RON and postcard for records.
+- **Formats**: JSON throughout, RON and postcard for records and enums.
 
 ## What is untested
 
@@ -103,11 +147,12 @@ the repository's own tests:
 - **Directions never run**: deserializing with `SerializeString`, `SerializeRfc3339Date`, and
   `SerializeTimestamp`.
 - **Inputs never used**: `DeserializeFromJsonReader` with a `SliceRead` or `IoRead`.
-- **Failure paths outside the record providers**: no test feeds invalid input to any other
+- **Failure paths outside the record and variant providers**: no test feeds invalid input to any other
   provider, so their error messages in the reference (invalid hex, out-of-range conversions, bad
   timestamps) are not pinned.
-- **Compile failures**: there are no compile-fail tests, so the diagnostics in
-  [debugging wiring](guides/debugging-wiring.md) are not pinned either.
+- **Most diagnostics**: the compile-fail tests pin rustc's raw output for three cases. The other
+  diagnostics in [debugging wiring](guides/debugging-wiring.md), and every `cargo cgp check`
+  rewrite, are not pinned.
 
 Several of the defects in [issues.md](issues.md) sit in exactly these untested providers, which is
 how they went unnoticed.
@@ -115,7 +160,9 @@ how they went unnoticed.
 ## Source
 
 - [`crates/cgp-serde-tests/src/tests/`](https://github.com/contextgeneric/cgp-serde/tree/v0.8.0/crates/cgp-serde-tests/src/tests):
-  the four example tests, the `records/` suite, and the `support/` helpers.
+  the four example tests, the `records/` and `variants/` suites, and the `support/` helpers.
+- [`crates/cgp-serde-tests/tests/`](https://github.com/contextgeneric/cgp-serde/tree/v0.8.0/crates/cgp-serde-tests/tests):
+  the compile-fail runner and its cases.
 
 ## Public material derived from this
 

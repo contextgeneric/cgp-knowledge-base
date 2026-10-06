@@ -291,6 +291,16 @@ belonging to another derive, such as `#[serde(rename = "x")]`, fails to compile 
 with
 ``cannot find attribute `serde` ``. See [`#[derive(ExtractField)]`](../derives/derive_extract_field.md#known-issues).
 
+**The borrowed extractor accepts only `'static` enums in a bound for every lifetime.** A bound such
+as `for<'a> E::ExtractorRef<'a>: …` fails for an enum with a lifetime, such as
+`Token<'a> { Word(&'a str), Number(u64) }`, with `E0477`, for the same reason as
+[`HasFieldsRef`](has_fields.md#known-issues): `ExtractorRef<'a>` declares `where Self: 'a`. Getting
+the extractor some other way does not help, because the derived partial enum itself carries the
+requirement: `__PartialRefToken<'__a__, 'a: '__a__, …>` declares that the enum's lifetime outlives
+the borrow, and each payload is wrapped in `MapTypeRef::Map<'a, T: 'a>`. A bound naming the
+extractor for one lifetime that is a parameter of the impl, as the by-reference dispatchers use,
+is unaffected.
+
 ## Source
 
 - The traits `ExtractField`, `HasExtractor`, `HasExtractorRef`, `HasExtractorMut`,
