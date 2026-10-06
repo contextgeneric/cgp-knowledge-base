@@ -66,9 +66,11 @@ through in [architecture/crate-layout.md](architecture/crate-layout.md).
 - **`cgp-serde-alloc`**: an allocation component and the provider that deserializes a borrowed value
   into it. Adds no external dependency.
 - **`cgp-serde-typed-arena`**: an implementation of the allocation component over `typed-arena`.
-- **`cgp-serde-tests`**: the test crate: a JSON round trip, the two-application serialization demo,
-  and the arena deserialization demo in its layered and simplified forms. The four tests are the
-  repository's only runnable examples, and each is documented in [examples/](examples/README.md).
+- **`cgp-serde-tests`**: the test crate, unpublished. Four example tests (a JSON round trip, the
+  two-application serialization demo, and the arena deserialization demo in its layered and
+  simplified forms) are the repository's only runnable examples, each documented in
+  [examples/](examples/README.md). Provider suites test the record providers in depth; see
+  [testing.md](testing.md).
 
 ## Status and gaps
 
@@ -165,7 +167,8 @@ ideas every provider shares, then use the reference to look up a provider.
     allocator as a wiring entry.
 - [serde-comparison.md](serde-comparison.md): what cgp-serde keeps from Serde, adds, and lacks, how
   Serde's idioms map onto it, and when plain Serde is the better choice.
-- [testing.md](testing.md): what the four tests and their checks pin, and what no test exercises.
+- [testing.md](testing.md): what the example tests and the provider suites pin, which tests pin a
+  known issue, and what no test exercises.
 - [issues.md](issues.md): the confirmed defects, missing features, and housekeeping items.
 
 ## Public material derived from these documents

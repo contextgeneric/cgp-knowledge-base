@@ -53,9 +53,9 @@ The provider opens a map without declaring its length and writes one entry per f
 order. Each key is the Rust field name exactly as written, and each value is the field's value
 wrapped in [`SerializeWithContext`](../architecture/reentrant-providers.md#adapter-calls), so the
 context chooses its encoding. With JSON, a struct `Rec { a: 1, b: "x".into() }` whose field types
-are wired to `UseSerde` serializes to `{"a":1,"b":"x"}`. The provider writes a map through
-`serialize_map` rather than a struct through `serialize_struct`, which is what a derived `Serialize`
-impl calls, and every field is written under its Rust name.
+are wired to `UseSerde` serializes to `{"a":1,"b":"x"}`, and a struct with no fields to `{}`. The
+provider writes a map through `serialize_map` rather than a struct through `serialize_struct`, which
+is what a derived `Serialize` impl calls, and every field is written under its Rust name.
 
 ### Context dependencies
 

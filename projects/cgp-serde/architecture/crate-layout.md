@@ -19,7 +19,7 @@ dependencies of its own providers and nothing else:
 | `cgp-serde-typed-arena` | `cgp-serde`, `cgp-serde-alloc`, `typed-arena` | the arena getter and `AllocateWithArena` |
 
 The test crate, `cgp-serde-tests`, depends on all five, on `cgp-error-anyhow` for a concrete error
-type, and on Serde's `derive` feature. It sets `publish = false`, so publishing the workspace
+type, on Serde's `derive` feature, and on `ron` and `postcard` for its format tests. It sets `publish = false`, so publishing the workspace
 releases only the five library crates. No library crate depends on `cgp-error-anyhow`: the JSON
 providers name only `HasErrorType` and `CanRaiseError`, and the application chooses the error type.
 

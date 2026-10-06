@@ -1110,9 +1110,9 @@ it stale.
 - [projects/cgp-serde/serde-comparison.md](projects/cgp-serde/serde-comparison.md) — what cgp-serde
   keeps from Serde and adds to it, how Serde's idioms map onto wiring, what it lacks, and when plain
   Serde is the better choice.
-- [projects/cgp-serde/testing.md](projects/cgp-serde/testing.md) — the four tests and their checks,
-  the dead wiring and redundant check two of them carry, which providers are asserted, run, or never
-  exercised, and the untested failure paths.
+- [projects/cgp-serde/testing.md](projects/cgp-serde/testing.md) — the four example tests and their
+  checks, the record provider suite and its shared helpers, the tests that pin a known issue, which
+  providers are asserted or never exercised, and the untested failure paths.
 - [projects/cgp-serde/issues.md](projects/cgp-serde/issues.md) — the confirmed defects (byte
   round-trip, owned bytes, borrowed strings, undeclared lengths), missing features, and housekeeping.
 - [projects/cgp-serde/reference/README.md](projects/cgp-serde/reference/README.md) — the catalog,

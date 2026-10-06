@@ -1,10 +1,12 @@
 # cgp-serde examples
 
-This directory documents each test in the repository's `cgp-serde-tests` crate as a worked example:
-what the test does, the data types and context it defines, what running it produces, and which parts
-of the architecture and reference it demonstrates. cgp-serde ships no `examples/` programs, so its
-four tests are its runnable examples. Each defines its own data types and contexts, and together
-they cover a JSON round trip, the two-application demo, and arena deserialization in two forms.
+This directory documents each example test in the repository's `cgp-serde-tests` crate as a worked
+example: what the test does, the data types and context it defines, what running it produces, and
+which parts of the architecture and reference it demonstrates. cgp-serde ships no `examples/`
+programs, so its four example tests are its runnable examples. Each defines its own data types and
+contexts, and together they cover a JSON round trip, the two-application demo, and arena
+deserialization in two forms. The crate's provider suites test one provider family each and are not
+examples; [testing.md](../testing.md#the-provider-suites) records them.
 
 ## How these differ from the top-level example
 
@@ -71,12 +73,12 @@ service from its context.
 
 ## What the examples leave out
 
-The four tests exercise most of the library's providers but not all of them, so the examples are not
-a tour of every provider. None of them runs the byte providers, `SerializeWithDisplay`,
+The four example tests exercise most of the library's providers but not all of them, so the examples
+are not a tour of every provider. None of them runs the byte providers, `SerializeWithDisplay`,
 `DeserializeWithFromStr`, `SerializeFrom`, `TrySerializeFrom`, or `DeserializeDefault`, none uses a
 format other than JSON, and none feeds invalid input. [testing.md](../testing.md) records the
-coverage in full, and the [reference](../reference/README.md) documents the rest of the providers
-from probes.
+coverage in full, including the provider suites, and the [reference](../reference/README.md)
+documents the rest of the providers from probes.
 
 ## Public material derived from this
 

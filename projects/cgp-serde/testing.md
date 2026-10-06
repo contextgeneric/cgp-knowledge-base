@@ -1,15 +1,16 @@
 # Testing
 
-cgp-serde's tests live in one crate, `cgp-serde-tests`, and consist of four runtime tests, each
-paired with compile-time wiring checks. This document records what each test pins, what the checks
-assert, and which parts of the library no test exercises. On the `v0.8.0` branch,
-`cargo test --workspace` passes all four tests; the library crates carry no tests and no doc tests
-of their own.
+cgp-serde's tests live in one crate, `cgp-serde-tests`, in two kinds. Four **example tests** each
+wire one scenario end to end and double as the library's only runnable examples. The **provider
+suites** test one provider family in depth, one concern per file, against exact output. This
+document records what each pins, which tests pin a known issue, and which parts of the library no
+test exercises. On the `v0.8.0` branch, `cargo test --workspace` passes every test; the library
+crates carry no tests and no doc tests of their own.
 
-## What each test pins
+## The example tests
 
-Each test file defines its own data types and contexts, so the files double as the library's only
-runnable examples, and each is documented as one in [examples/](examples/README.md):
+Each example test defines its own data types and contexts and is documented as an example in
+[examples/](examples/README.md):
 
 | File | Scenario | Runtime assertion | Compile-time checks |
 |---|---|---|---|
@@ -31,16 +32,66 @@ them. `arena_simplified.rs` checks deserializing `Coord` in a table of its own t
 already covers. The [arena](examples/arena.md#known-issues) and
 [simplified arena](examples/arena-simplified.md#known-issues) examples record both.
 
+## The provider suites
+
+**Each suite fixes one context and one set of data types, and asserts exact text.** The data types
+derive only `CgpData`, and the suite's `check_components!` tables list every type in both
+directions. The lockfile pins `serde_json`, `ron`, and `postcard`, so error messages are compared
+whole, positions included. The shared helpers in `support/` run a value through a context and a
+format:
+
+- **`to_json` and `from_json`**: serialize compactly, and deserialize from a string, rejecting
+  trailing input.
+- **`from_json_reader`**: deserialize through an `io::Read`, which cannot lend borrowed data. It
+  needs the value to deserialize for every input lifetime, so a test of a borrowed type drives the
+  reader itself.
+- **`assert_json_round_trip`**: assert the exact JSON and that it reads back to the same value.
+- **`to_ron`, `from_ron`, `to_postcard`, and `from_postcard`**: the same for RON and postcard.
+
+### Records
+
+The `records/` suite tests [`SerializeRecordFields` and `DeserializeRecordFields`](reference/records.md)
+through one context, `App`, plus a second context in `context_choice.rs`:
+
+- **`round_trip.rs`**: fields in declaration order; a one-field record; an empty record as `{}`;
+  every leaf type, including `Option` as a value and as `null`; edge values (`u64::MAX`,
+  `i64::MIN`, an empty string, escapes, and non-ASCII text); a nested record and a `Vec` of records,
+  empty and not.
+- **`deserialize_input.rs`**: keys in any order; unknown keys skipped whatever they hold; escaped
+  keys; input through an `io::Read`; and the exact errors for a missing field, a duplicate field, a
+  wrong field type, a sequence, and trailing input.
+- **`context_choice.rs`**: the same record under two contexts, with its `Vec<u8>` field written as
+  hex by one and base64 by the other, both read back.
+- **`lifetimes.rs`**: a record with `&'a str` fields serialized from local strings, deserialized
+  borrowing from a string, and rejected through an `io::Read` with
+  `expected a borrowed string`.
+- **`generic.rs`**: one `<T> Pair<T>` entry serving `Pair<u64>` and `Pair<Point>`.
+- **`serde_compat.rs`**: a mirror struct with Serde's derive reads what the providers write, and the
+  providers read what it writes.
+- **`formats.rs`**: RON round-trips a record in map syntax, and postcard rejects one.
+
+## Tests that pin a known issue
+
+**A test that pins a known issue asserts the current behavior and says so in its doc comment**, so
+a fix fails it and names the entry in [issues.md](issues.md) to remove:
+
+- **A missing `Option` field is an error**: `deserialize_input.rs`, per
+  [records](reference/records.md#known-issues-1).
+- **The sequence form of a record is rejected**: `deserialize_input.rs`, per the same section.
+- **Records are maps to RON, and postcard rejects them**: `formats.rs`, per
+  [records](reference/records.md#known-issues) and the length entry in issues.md.
+
 ## What is exercised
 
 The tests run these providers, in the directions listed:
 
 - **Asserted output**: `UseSerde`, `SerializeString` (serializing), `SerializeHex`,
-  `SerializeRecordFields`, `DeserializeRecordFields`, `SerializeDeref`, `SerializeIterator`,
-  `DeserializeExtend`, the serializing side of `SerializeBase64`, `SerializeRfc3339Date`, and
+  `SerializeBase64`, `SerializeRecordFields`, `DeserializeRecordFields`, `SerializeDeref`,
+  `SerializeIterator`, `DeserializeExtend`, the serializing side of `SerializeRfc3339Date` and
   `SerializeTimestamp`, `DeserializeAndAllocate` in both forms, `AllocateWithArena` with `HasArena`
   wired through `UseField`, `SerializeToJsonString`, `DeserializeFromJsonString` over
   `DeserializeFromJsonReader`, and `deserialize_json_string`.
+- **Formats**: JSON throughout, RON and postcard for records.
 
 ## What is untested
 
@@ -49,12 +100,12 @@ the repository's own tests:
 
 - **Providers never run**: `SerializeBytes`, `TryDeserializeBytes`, `SerializeWithDisplay`,
   `DeserializeWithFromStr`, `SerializeFrom`, `TrySerializeFrom`, and `DeserializeDefault`.
-- **Directions never run**: deserializing with `SerializeString`, `SerializeBase64`,
-  `SerializeRfc3339Date`, and `SerializeTimestamp`.
-- **Inputs never used**: `DeserializeFromJsonReader` with a `SliceRead` or `IoRead`, and any format
-  other than JSON.
-- **Failure paths**: no test feeds invalid input, so none of the error messages recorded in the
-  reference (missing and duplicate fields, invalid hex, out-of-range conversions) is pinned.
+- **Directions never run**: deserializing with `SerializeString`, `SerializeRfc3339Date`, and
+  `SerializeTimestamp`.
+- **Inputs never used**: `DeserializeFromJsonReader` with a `SliceRead` or `IoRead`.
+- **Failure paths outside the record providers**: no test feeds invalid input to any other
+  provider, so their error messages in the reference (invalid hex, out-of-range conversions, bad
+  timestamps) are not pinned.
 - **Compile failures**: there are no compile-fail tests, so the diagnostics in
   [debugging wiring](guides/debugging-wiring.md) are not pinned either.
 
@@ -64,7 +115,7 @@ how they went unnoticed.
 ## Source
 
 - [`crates/cgp-serde-tests/src/tests/`](https://github.com/contextgeneric/cgp-serde/tree/v0.8.0/crates/cgp-serde-tests/src/tests):
-  the four test files.
+  the four example tests, the `records/` suite, and the `support/` helpers.
 
 ## Public material derived from this
 
