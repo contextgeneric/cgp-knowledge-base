@@ -135,12 +135,11 @@ a fix fails it and names the entry in [issues.md](issues.md) to remove:
 The tests run these providers, in the directions listed:
 
 - **Asserted output**: `UseSerde`, `SerializeString` (serializing), `SerializeHex`,
-  `SerializeBase64`, `SerializeRecordFields`, `DeserializeRecordFields`, `SerializeVariantFields`,
-  `DeserializeVariantFields`, `SerializeDeref`,
-  `SerializeIterator`, `DeserializeExtend`, the serializing side of `SerializeRfc3339Date` and
-  `SerializeTimestamp`, `DeserializeAndAllocate` in both forms, `AllocateWithArena` with `HasArena`
-  wired through `UseField`, `SerializeToJsonString`, `DeserializeFromJsonString` over
-  `DeserializeFromJsonReader`, and `deserialize_json_string`.
+  `SerializeBase64`, `SerializeRfc3339Date`, `SerializeTimestamp`, `SerializeRecordFields`,
+  `DeserializeRecordFields`, `SerializeVariantFields`, `DeserializeVariantFields`,
+  `SerializeDeref`, `SerializeIterator`, `DeserializeExtend`, `DeserializeAndAllocate` in both
+  forms, `AllocateWithArena` with `HasArena` wired through `UseField`, `SerializeToJsonString`,
+  `DeserializeFromJsonString` over `DeserializeFromJsonReader`, and `deserialize_json_string`.
 - **Formats**: JSON throughout, RON and postcard for records and enums.
 
 ## What is untested
@@ -150,12 +149,11 @@ the repository's own tests:
 
 - **Providers never run**: `SerializeBytes`, `TryDeserializeBytes`, `SerializeWithDisplay`,
   `DeserializeWithFromStr`, `SerializeFrom`, `TrySerializeFrom`, and `DeserializeDefault`.
-- **Directions never run**: deserializing with `SerializeString`, `SerializeRfc3339Date`, and
-  `SerializeTimestamp`.
+- **Directions never run**: deserializing with `SerializeString`.
 - **Inputs never used**: `DeserializeFromJsonReader` with a `SliceRead` or `IoRead`.
-- **Failure paths outside the record and variant providers**: no test feeds invalid input to any
-  other provider, so their error messages in the reference (invalid hex, out-of-range conversions,
-  bad timestamps) are not pinned.
+- **Failure paths outside the record and variant providers**: only the `events` example's invalid
+  hex is pinned. The other error messages in the reference, such as out-of-range conversions and
+  bad timestamps, are not.
 - **Most diagnostics**: the compile-fail tests pin rustc's raw output for three cases. The other
   diagnostics in [debugging wiring](guides/debugging-wiring.md), and every `cargo cgp check`
   rewrite, are not pinned.
