@@ -401,7 +401,7 @@ marking.
     node off its trait `DefId` and the obligation's arguments (`trait_generics`) as a rustc-free
     `DepNode` variant, dropping the plumbing; `render_ty.rs` resugars a `DefId`-anchored
     `Cons`/`Nil` or `Either`/`Void` self type to `Product![…]`/`Sum![…]`, or (when every element is
-    a `Field`) to `Struct! { … }`/`Enum! { … }`, rendering a call-site placeholder as `_` (recursing
+    a `Field` and the shared `shape` rules give a spelling) to a `Struct!`/`Enum!` shape, rendering a call-site placeholder as `_` (recursing
     into a tuple so a nested placeholder prints `_` rather than the raw `!N` form).
   - `cgp_item.rs` holds the structural, `IsProviderFor`-free trait recognition (`is_provider_trait`
     / `provider_blanket_marker` (the `DelegateComponent`-bounded provider blanket),
@@ -514,6 +514,8 @@ Each **leaf class** has fixtures for its field, wiring, and redirect shapes:
 - `sum_variant_chain`: the sum counterpart over a `Sum![u64, f64]` list of bare types, pinning the
   `Either`/`Void` → `Sum![…]` resugaring left as a plain list.
 - `enum_variant_chain`: a sum of *named* variants, pinning the `Enum! { Rect(u64), … }` form.
+- `enum_variant_shapes_chain`: a sum using every variant shape, pinning each variant's shortest
+  spelling (`Empty`, `Rect { w: f64 }`, `Pair(u8, u16)`, `Circle(f64)`).
 - `unregistered_prefix_path`, `qualified_prefix_path` (a module-qualified path still folding to a
   clean `@…`), `multi_redirect_missing` (several hops), and `open_missing_type_key`: the
   namespace-redirect variants.

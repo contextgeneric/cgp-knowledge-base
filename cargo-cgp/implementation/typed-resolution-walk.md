@@ -348,10 +348,10 @@ labels read well:
   by raw argument position would land on the region and abort the compiler, while the type-position
   read skips lifetimes in the label the way ordinary Rust elision does (`ReferenceGetter<str>`).
 - **Type-level lists are resugared.** A rendered label's `Self` type has its `Cons`/`Either` list
-  read back as the `Product![A, B]` or `Sum![A, B]` the programmer wrote, and one step further to
-  `Struct! { name: Type, … }` or `Enum! { Name(Type), … }` when every element is a named field, so a
-  field- or variant-list handler (the modular-serialization example's `FieldsSerializer` over a
-  record's field list) names the list rather than a chain of cells. The rendering is `render_ty`,
+  read back as the `Product![A, B]` or `Sum![A, B]` the programmer wrote, and one step further to a
+  CGP `Struct!` or `Enum!` shape when every element is a `Field` cell, so a field- or variant-list
+  handler (the modular-serialization example's `FieldsSerializer` over a record's field list) names
+  the list rather than a chain of cells. The rendering is `render_ty`,
   the **typed** one of the tool's three resugaring implementations, anchored by `DefId` to the CGP
   crate that defines each cell so a same-named type elsewhere is never resugared. What each
   construct folds back to, what makes a fold decline, and how this implementation differs from the

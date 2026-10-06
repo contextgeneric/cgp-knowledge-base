@@ -322,21 +322,23 @@ raw. The direction is a second, subtler form of the same problem: a list's *tail
 so folding the innermost cell first leaves a two-element list as `Cons<A, Product![B]>`. Each pass
 therefore folds a list before recursing, and recurses into the elements it collected.
 
-**Only real syntax is emitted, so two diagnostic-only forms are deliberately not produced.** A
-diagnostic folds an all-field list on to `Struct! { width: f64, … }` and renders an open-ended path
-with a trailing `.*`; neither is a real CGP macro, and this pass writes source, where every
-construct shown should be something the programmer could have written. So a field list stays
-`Product![Field<Symbol!("width"), f64>, …]` and an open-ended path stays its raw chain. This is the
-one place the three implementations deliberately differ, and the reason is recorded in both
-documents.
+**Only real syntax is emitted, so the diagnostic-only path wildcard is deliberately not
+produced.** A diagnostic renders an open-ended path with a trailing `.*`, which is not `Path!`
+syntax, and this pass writes source, where every construct shown should be something the programmer
+could have written. So an open-ended path stays its raw chain. A field list, by contrast, folds to
+CGP's real `Struct!` or `Enum!` shape, as it does in a diagnostic: a derived `Fields` prints as
+`Struct! { width: f64, height: f64 }`. This is the one place the three implementations deliberately
+differ, and the reason is recorded in both documents.
 
 **The printer's spacing has to be corrected after the fact.** A resugared construct is a macro call
 whose body holds ordinary types, and the printer lays a macro body out token by token. It cannot
 know the body is a type list, so it prints `Product![Multiply < Symbol!("foo") >]`. Its rules cannot
 be coaxed into the conventional form, because the space *before* a token is the printer's decision
-and an identifier cannot ask for it to be dropped. So the crate ends with one narrow text pass that
-removes spaces inside the bodies of the four macros it emits, never inside a literal, and never
-anywhere else in the program.
+and an identifier cannot ask for it to be dropped. The printer also breaks every brace-delimited
+macro body onto lines of its own, which would print each `Struct! { … }` shape as a block. So the
+crate ends with one narrow text pass that removes spaces inside the bodies of the macros it emits,
+keeping the space after a `Struct!` field's single `:`, and joins a `Struct!` or `Enum!` brace body
+back onto the macro's line. It never touches a literal or anything outside those bodies.
 
 Sugar the *user* wrote needs no attention at all: a hand-written
 `PipeHandlers<Product![StepOne, StepTwo]>` comes out as written, because the CGP macro that copied

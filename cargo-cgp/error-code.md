@@ -560,9 +560,9 @@ full.
 
 **`Product!` / `Sum!` resugaring** reverses a type-level list expansion back to its surface form, so
 `Cons<u64, Cons<String, Nil>>` becomes `Product![u64, String]` and an `Either`/`Void` list becomes
-`Sum![…]`. A list whose elements are all named fields folds one step further to a `Struct! { … }` or
-`Enum! { … }`: presentation-only forms, not real CGP macros, chosen because a record reads far
-better than a chain of `Field` cells.
+`Sum![…]`. A list whose elements are all `Field` cells folds one step further to CGP's `Struct!` or
+`Enum!` shape when the shape has an exact spelling, because a record reads far better than a chain
+of `Field` cells, and the shape can be copied back into code.
 [`resugar_lists`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/resugar_list.rs)
 owns the text form and the driver's `render_ty` the typed one.
 

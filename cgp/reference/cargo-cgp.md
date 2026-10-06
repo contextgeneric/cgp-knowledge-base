@@ -138,8 +138,9 @@ what a construct produces before trusting your memory of it.
 
 What makes it worth using over plain `cargo expand` is that CGP's type-level constructs come back
 **resugared**: a field tag reads `Symbol!("width")` rather than the raw `Symbol<5, Chars<'w', …>>`
-list the compiler prints, a handler pipeline reads `Product![StepOne, StepTwo]`, and a namespace key
-reads `Path!(@app.GreeterComponent)`. Everything else is a full expansion: `#[derive(Debug)]` and
+list the compiler prints, a handler pipeline reads `Product![StepOne, StepTwo]`, a derived field
+list reads [`Struct! { width: f64, height: f64 }`](macros/struct.md), and a namespace key reads
+`Path!(@app.GreeterComponent)`. Everything else is a full expansion: `#[derive(Debug)]` and
 `println!` appear in their generated form too, so what you get is the whole program with the CGP
 parts legible. Expanding the [area-calculation](../../examples/area-calculation.md) example's
 `rectangle_area` function shows the shape:

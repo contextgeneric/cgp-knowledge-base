@@ -89,7 +89,7 @@ same change.
   it, and all of it is unit-tested without a compiler.
 - [Resugaring](resugaring.md): the transforms that reverse CGP's type-level expansions, so every
   construct the tool shows is spelled the way the programmer wrote it: `Symbol!`, `Path!`, the
-  `Product!`/`Sum!` lists and their `Struct!`/`Enum!` record forms, and the path strips that must
+  `Product!`/`Sum!` lists and their `Struct!`/`Enum!` shapes, and the path strips that must
   run first. It has one section per construct with its expansion and its decline cases, and states
   the exact-match rule that keeps a resugaring from claiming syntax nobody wrote. One sub-section
   per implementation (typed over `Ty<'tcx>`, text over `&str`, syntax tree over `syn::Type`)

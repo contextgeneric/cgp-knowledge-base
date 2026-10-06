@@ -136,7 +136,7 @@ cell first leaves a two-element list as `Cons<A, Product![B]>`), so each pass fo
 and then recurses into the elements it collected. That same innermost-first instinct is what makes
 the shared `Nil` overlap hazard bite hardest here, which is why the passes stay separate whole-tree
 visits (see [the rules](#the-rules-every-resugaring-follows)). And it **emits only real syntax**,
-which is the one place the three implementations deliberately differ, the subject of the next
+so it leaves out the one presentation-only form the diagnostic passes show, the subject of the next
 section.
 
 A fifth demand is not about matching at all but about printing, and it is why the crate ends with a
@@ -144,26 +144,29 @@ text pass despite being built to avoid text matching. A resugared construct is a
 body holds ordinary types, and the printer lays a macro body out token by token: it cannot know the
 body is a type list, so it prints `Product![Multiply < Symbol!("foo") >]`. Its spacing rules cannot
 be coaxed into the conventional form, because the space *before* a token is the printer's decision
-and an identifier cannot ask for it to be dropped. So one narrow pass removes spaces inside the
-bodies of the four macros the crate emits (never inside a literal, never anywhere else in the
-program), which only ever removes a space and so cannot alter meaning.
+and an identifier cannot ask for it to be dropped. The printer also breaks every brace-delimited
+macro body onto lines of its own, which would print each `Struct! { … }` shape as a block. So one
+narrow pass removes the spaces inside the bodies of the macros the crate emits, keeping the space
+after a `Struct!` field's single `:`, and joins a `Struct!` or `Enum!` brace body back onto the
+macro's line. It never touches a literal or anything outside those bodies, and it only ever removes
+whitespace, so it cannot alter meaning.
 
 ### Only source output is held to real syntax
 
-Two of the forms a diagnostic shows are **presentation-only**: the `Struct! { … }` / `Enum! { … }`
-record forms an all-field list folds to, and the trailing `.*` wildcard an open-ended path takes. No
-such CGP macros exist and neither would parse back. They earn their place in a diagnostic because
-the alternative is unreadable (a chain of `Field` cells, a raw `PathCons` list), and a diagnostic is
-prose about the program, not the program.
+One form a diagnostic shows is **presentation-only**: the trailing `.*` wildcard an open-ended path
+takes. No CGP macro writes it and it would not parse back. It earns its place in a diagnostic
+because the alternative is a raw `PathCons` list, and a diagnostic is prose about the program, not
+the program.
 
-Source output is different, and the syntax-tree pass therefore **does not emit either**. An
-expansion is read as code: a reader may copy a line out of it, and every construct in it should be
-something they could have written. So a field list stays `Product![Field<Symbol!("width"), f64>, …]`
-(real, writable, and true to the type), and an open-ended path stays its raw chain. (In an expansion
-the open tail is a named generic parameter anyway, not the `_` a diagnostic renders.)
+Source output is different, and the syntax-tree pass therefore **does not emit it**. An expansion is
+read as code: a reader may copy a line out of it, and every construct in it should be something
+they could have written. So an open-ended path stays its raw chain in an expansion. (There the open
+tail is a named generic parameter anyway, not the `_` a diagnostic renders.)
 
 This is the one sanctioned divergence between the implementations. The rule that generalizes it: the
 two diagnostic passes may show a form that reads better than it parses, and the source pass may not.
+The `Struct!`/`Enum!` shapes are not such a form: they are real CGP macros, so all three passes emit
+them, under the same exact-match rules.
 
 ### Why the three cannot be one
 
@@ -214,13 +217,12 @@ one combined visitor turns a `Symbol`'s terminating `Nil` into `Product![]`, aft
 chain order are what keep the constructs apart, and no implementation may fold them into one
 traversal.
 
-**A few surface forms are presentation-only.** `Struct! { … }`, `Enum! { … }`, and `Path!`'s
-trailing `.*` wildcard are not real CGP macros and would not parse back. They exist because the
-shape they describe reads far better than the list, and they are the one place resugaring shows
-something other than what the programmer could have written. So they are shown in a *diagnostic*
-only, never in source output, per
+**One surface form is presentation-only.** `Path!`'s trailing `.*` wildcard is not `Path!` syntax
+and would not parse back. It exists because the open-ended path it describes reads far better than
+the list, and it is the one place resugaring shows something other than what the programmer could
+have written. So it is shown in a *diagnostic* only, never in source output, per
 [only source output is held to real syntax](#only-source-output-is-held-to-real-syntax). Every other
-output is real, writable syntax everywhere.
+output, the `Struct!`/`Enum!` shapes included, is real, writable syntax everywhere.
 
 **An empty list is left as its terminator.** A bare `Nil` or `Void` is not rewritten to `Product![]`
 or `Sum![]`: the terminator alone reads as the plain type it is, and resugaring it would mean
@@ -375,11 +377,12 @@ at the end of `PathCons<` is never mistaken for a list cell.
 The typed implementation is `render_ty`'s `cgp_spine`; the text implementation is
 [`resugar_lists`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/resugar_list.rs).
 
-### `Struct!` and `Enum!`: a list of named fields
+### `Struct!` and `Enum!`: a list of fields
 
-When every element of a list is a **named field**, the list is not really a list to the reader: it
-is a record or a variant set, and resugaring folds it one step further. This is the shape
-`#[derive(HasFields)]` produces:
+When every element of a list is a `Field` cell, the list is not really a list to the reader: it is
+a record or a variant set, and resugaring folds it one step further, to CGP's
+[`Struct!`](../../cgp/reference/macros/struct.md) or [`Enum!`](../../cgp/reference/macros/enum.md)
+shape. This is the shape `#[derive(HasFields)]` produces:
 
 ```rust
 #[derive(HasFields)]
@@ -389,28 +392,59 @@ pub struct Rectangle {
 }
 ```
 
-whose `Fields` associated type is a product of `Field` cells, each pairing a `Symbol!` name tag with
-the field's type. A product of fields becomes a struct and a sum of fields becomes an enum:
+whose `Fields` associated type is a product of `Field` cells, each pairing a `Symbol!` name tag
+(or, for a tuple struct, an `Index<N>` position tag) with the field's type. Each macro expands to
+exactly the `Fields` the derive gives the same body, so the fold is the macro's expansion reversed:
 
 ```text
 Cons<Field<Symbol!("width"), f64>, Cons<Field<Symbol!("height"), f64>, Nil>>
     →   Struct! { width: f64, height: f64 }
 
+Cons<Field<Index<0>, u64>, Cons<Field<Index<1>, String>, Nil>>
+    →   Struct!(u64, String)
+
 Either<Field<Symbol!("Rect"), u64>, Either<Field<Symbol!("Circle"), f64>, Void>>
     →   Enum! { Rect(u64), Circle(f64) }
 ```
 
-`Struct!` and `Enum!` are presentation-only (no such CGP macros exist), and they are worth that
-exception because the alternative is unreadable: a real record provider's chain hop otherwise names
-a chain of `Field` cells several fields long, where
-`Struct! { message_id: u64, date: DateTime<Utc>, … }` says the same thing at a glance. For that same
-reason they are a *diagnostic* form only; source output stops at the `Product!`/`Sum!` list, which
-is real syntax ([why](#only-source-output-is-held-to-real-syntax)).
+The shapes are worth folding to because the list form is unreadable: a real record provider's
+chain hop otherwise names a chain of `Field` cells several fields long, where
+`Struct! { message_id: u64, date: DateTime<Utc>, … }` says the same thing at a glance. And because
+they are real macros, a shape read in a diagnostic or an expansion can be copied back into code.
 
-The fold applies only when **every** element is a bare `Field` cell whose tag is a plain symbol
-literal; a single element that is not drops the whole list back to its plain `Product!`/`Sum!` form,
-because a half-record form would misrepresent the shape. Field values are resugared recursively, so
-a nested record folds in turn.
+**A shape is printed only when it has an exact spelling, since the output must parse back to the
+same type.** A product folds to `Struct! { a: A, … }` when every tag is a name a struct body can
+write, and to `Struct!(A, B, …)` when the tags are `Index<0>`, `Index<1>`, … in order with at least
+two cells. Several lists have no such spelling and keep their `Product!` form:
+
+- **A single `Index` cell:** `Struct!(T)` is the bare `T` by the derive's newtype rule, so
+  `Cons<Field<Index<0>, T>, Nil>` stays `Product![Field<Index<0>, T>]`.
+- **Positions out of order or with a gap,** and a list that **mixes** name and position tags.
+- **A name that is not an identifier,** such as a hand-written `Symbol!("foo bar")`. A keyword is
+  writable raw, so a `Symbol!("type")` tag prints as `r#type`, which `Struct!` tags by its logical
+  name; `self`, `Self`, `super`, `crate`, and `_` cannot be written even raw.
+- **Any element that is not a `Field` cell,** since a half-record form would misrepresent the list.
+
+A sum folds to `Enum!` when every tag is a writable name; a variant cannot be named by a position.
+
+**Each variant takes the shortest of its equivalent spellings.** An `Enum!` variant's fields are
+encoded by the `Struct!` rules, so several spellings name the same payload, and the fold picks the
+one a programmer would write. The payload is resugared first, and then:
+
+- **A `Nil` payload** is a unit variant, `Empty`, rather than `Empty(Nil)`.
+- **A payload that folded to `Struct! { … }`** lends the variant its braces: `Rect { w: f64 }`.
+- **A payload that folded to `Struct!(…)`** lends the variant its parentheses: `Pair(u8, u16)`.
+- **Any other payload** is the single positional field: `Circle(f64)`, or
+  `One(Product![Field<Index<0>, u8>])` for a one-element positional list.
+
+Field values are resugared recursively, so a nested record folds in turn.
+
+The rules are written once, in the rustc-free crate's
+[`shape`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/shape)
+module, which the text and typed passes both call: `render_struct_shape`, `render_enum_shape`, and
+`render_variant` take names and already-rendered values, so the two diagnostic passes cannot
+disagree on a spelling. The syntax-tree pass applies the same rules to `syn` nodes, with its own copy
+of the writable-name check, `shape_name`, kept in step.
 
 ### The path strips that run first
 
@@ -478,10 +512,16 @@ compiler, and the UI suite pins the typed pass end to end.
   wrong length and a foreign `Symbol` left alone, the `PathCons` → `@…`/`Path!(@…)` forms across
   symbol, type, primitive, generic-value, and reference-value segments, the open `_` tail folded to
   `.*`, the qualified-tail and lowercase-segment declines, the `Product!`/`Sum!` folds, the
-  `Struct!`/`Enum!` record forms, a mixed list kept as a plain product, a nested list, a
+  named and tuple `Struct!` shapes and the `Enum!` shape in each variant spelling, the declines for a
+  single `Index` cell, a non-identifier name, and a position-tagged sum, a raw keyword name, a mixed
+  list kept as a plain product, a nested list, a
   non-terminating list declined, the `Cons`-inside-`PathCons` guard, the module and CGP-prefix
   strips (including the multi-byte box-drawing and string-literal cases), and the
   `postprocess_message` chain end to end.
+- [`crates/cargo-cgp-error-processing/tests/shape.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/shape.rs):
+  the shared spelling rules directly: which names are written as is, raw, or not at all, the named
+  and tuple `Struct!` forms and every product that declines, each variant spelling including a
+  payload that only starts with a shape, and the `Enum!` declines.
 - [`tests/ui/acceptable/fields/base_area_1`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/fields/base_area_1.rs):
   the typed `Symbol!` decode in a real diagnostic: the missing field is named `height` in the lead,
   where raw rustc renders a `Chars` list (and elides part of it).
@@ -491,6 +531,12 @@ compiler, and the UI suite pins the typed pass end to end.
   and
   [`enum_variant_chain`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/missing-wiring/enum_variant_chain.rs):
   the sum list as a plain `Sum![…]` list of bare types, and as an `Enum! { … }` of named variants.
+- [`enum_variant_shapes_chain`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/missing-wiring/enum_variant_shapes_chain.rs):
+  the typed fold of a variant list using every variant shape, each hop printing the remaining list
+  with `Empty`, `Rect { w: f64 }`, `Pair(u8, u16)`, and `Circle(f64)` spellings.
+- [`ok/shape_macros`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/ok/shape_macros.rs):
+  `Struct!`/`Enum!` written by hand, whose `.expand.rs` shows the syntax-tree pass printing derived
+  field lists in the same forms, brace bodies joined onto one line.
 - The path fixtures,
   [`unregistered_prefix_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/resolution/unregistered_prefix_path.rs),
   [`qualified_prefix_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/qualified_prefix_path.rs)
@@ -501,7 +547,8 @@ compiler, and the UI suite pins the typed pass end to end.
 - [`crates/cargo-cgp-expand/tests/resugar.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-expand/tests/resugar.rs):
   the syntax-tree implementation over hand-written expanded source, run through the whole pipeline
   the driver runs: each construct and its decline cases, both `Nil` overlap hazards, the
-  outermost-first fold, the tightened spacing of a generic element, the two diagnostic-only forms
+  outermost-first fold, the tightened spacing of a generic element, the named and tuple `Struct!`
+  shapes with their declines, the `Enum!` shape in each variant spelling, the open-path wildcard
   confirmed *absent*, and the prelude strip including the qualified-path shapes whose index it has
   to correct.
 
@@ -517,14 +564,17 @@ same construct; consistency between them rests on this document.
 ## Source
 
 - [`crates/cargo-cgp-driver/src/resolve/label/render_ty.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/label/render_ty.rs):
-  the typed pass: the `cgp_spine` walk, the `named_fields` record/variant fold, the recursive
-  element rendering, and the placeholder/tuple rendering.
+  the typed pass: the `cgp_spine` walk, the `field_cells` read of a list's tags that feeds the
+  shared shape rules, the recursive element rendering, and the placeholder/tuple rendering.
 - [`crates/cargo-cgp-driver/src/resolve/cgp_item.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/cgp_item.rs):
-  `decode_symbol`, the typed `Symbol!` decode, and `is_cgp_item`, the `DefId` anchor every typed
-  recognition goes through.
+  `decode_symbol`, the typed `Symbol!` decode with its `LEN` check, `decode_index`, the `Index<N>`
+  decode, and `is_cgp_item`, the `DefId` anchor every typed recognition goes through.
 - [`crates/cargo-cgp-driver/src/config.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/config.rs):
   the crate and type-name constants the typed pass anchors against (`CONS_TYPE`, `NIL_TYPE`,
   `EITHER_TYPE`, `VOID_TYPE`, `FIELD_TYPE`, `PATH_CONS_TYPE`, and their defining crates).
+- [`crates/cargo-cgp-error-processing/src/shape/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/shape):
+  the shared `Struct!`/`Enum!` spelling rules: `shape_name`, `render_struct_shape`,
+  `render_enum_shape`, and `render_variant`.
 - [`crates/cargo-cgp-error-processing/src/postprocess/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/postprocess):
   the text passes, one module each: `resugar_symbol.rs`, `resugar_path.rs`, `resugar_list.rs`,
   `strip_modules.rs`, `strip_prefixes.rs`, and `chain.rs`, which sequences them.
@@ -551,5 +601,8 @@ whenever a rule here needs checking against the macro's own behaviour.
 - [`Product!`](../../cgp/reference/macros/product.md) and
   [`Sum!`](../../cgp/reference/macros/sum.md): the `Cons`/`Nil` and `Either`/`Void` lists.
 - [`Field`](../../cgp/reference/types/field.md) and
-  [`HasFields`](../../cgp/reference/traits/has_fields.md): the named-field cell and the shape the
+  [`HasFields`](../../cgp/reference/traits/has_fields.md): the field cell and the shape the
   `Struct!`/`Enum!` fold describes.
+- [`Struct!`](../../cgp/reference/macros/struct.md) and
+  [`Enum!`](../../cgp/reference/macros/enum.md): the shape macros the fold reverses, and the
+  encoding rules its spellings follow.

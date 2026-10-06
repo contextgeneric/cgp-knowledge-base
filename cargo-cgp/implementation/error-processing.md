@@ -25,6 +25,11 @@ from the driver, is what keeps them unit-testable.
   the text), and
   [`postprocess_message`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/chain.rs)
   chains them.
+- **The shape spellings**
+  ([`shape`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/shape))
+  decide whether a field list has an exact `Struct!`/`Enum!` spelling and render it. They take names
+  and already-rendered values, so the text resugaring and the driver's typed renderer both call them
+  and cannot disagree; [Resugaring](resugaring.md#struct-and-enum-a-list-of-fields) holds the rules.
 - **The wiring rewrite**
   ([`rewrite`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/rewrite))
   is the string transform that renames CGP wiring messages, over the
@@ -183,9 +188,9 @@ transforms run, in three groups:
   (`PathCons<Symbol!("app"), PathCons<GreeterComponent, Nil>>` → `@app.GreeterComponent`, or the
   `Path!(@…)` macro form when its `wrap` parameter is set), and
   [`resugar_lists`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/resugar_list.rs)
-  (`Cons`/`Either` lists → `Product![…]`/`Sum![…]`, or `Struct! { … }`/`Enum! { … }` when every
-  element is a named field), reverse a CGP type-level expansion back to the syntax the programmer
-  wrote. They are one of the tool's [three resugaring implementations](resugaring.md), which
+  (`Cons`/`Either` lists → `Product![…]`/`Sum![…]`, or a `Struct!`/`Enum!` shape when every
+  element is a `Field` cell and the shape has an exact spelling), reverse a CGP type-level expansion
+  back to the syntax the programmer wrote. They are one of the tool's [three resugaring implementations](resugaring.md), which
   **[Resugaring](resugaring.md)** documents in full: what each construct expands to and folds back
   to, the exact-match rule that makes each decline rather than guess, why this text implementation
   needs hand-rolled structural parsing where the driver's typed one does not, and who passes `wrap`.
