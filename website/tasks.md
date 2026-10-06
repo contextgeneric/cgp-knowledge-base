@@ -216,12 +216,12 @@ replace. The code tasks are numbered DC, and DC1 and DC3 keep their IDs.
   `guides/extending-the-language`, and the two compare examples; a confirmed run of
   `compare_and_branch`; and the comparison document in this base. The written index gives a git
   dependency, pending a Hypershell release built on `cgp` 0.8.0.
-- **P3: the cgp-serde pages.** Fifty-two pages, of which the 47 that DC3 does not block are written, with
-  cgp-serde added to the section index and Resources; see
+- **P3: the cgp-serde pages.** Fifty-two pages, of which the 47 that DC3 does not block are written,
+  with cgp-serde added to the section index and Resources; see
   [projects/cgp-serde.md](projects/cgp-serde.md#what-is-written). What remains is the two arena
-  examples and the pages for `CanSerializeValue`, `CanDeserializeValue`, and `HasArena`. *Blocked by:*
-  DC3 for those five pages. The written index gives a git dependency, pending a cgp-serde release
-  built on `cgp` 0.8.0.
+  examples and the pages for `CanSerializeValue`, `CanDeserializeValue`, and `HasArena`. *Blocked
+  by:* DC3 for those five pages. The written index gives a git dependency, pending a cgp-serde
+  release built on `cgp` 0.8.0.
 - **P4: the error backend pages.** About 22 pages. *Blocked by:* the `cgp` 0.8.0 release, since the
   crates ship with it, and a verified wiring with its output in the eyre and std records in this
   base, which only the anyhow record has.

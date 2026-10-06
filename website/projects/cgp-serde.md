@@ -14,7 +14,8 @@ demonstration of the coherence bypass on a trait every Rust developer already kn
 - **Repository** — [`cgp-serde`](https://github.com/contextgeneric/cgp-serde), documented on its
   `v0.8.0` branch
 - **Verified against** — `cgp-serde` `v0.8.0` at commit `d89ee05`, with `cgp` `main` at `adc616c`
-  through the workspace's patch, and `cargo-cgp` built from its source at commit `b6a6323`
+  through the workspace's patch, and at `bcc9fcc` for the `SerializeRecordFields` rename and the two
+  variant provider pages, and `cargo-cgp` built from its source at commit `b6a6323`
 - **Status** — Draft: 47 of about 52 pages written, listed in [What is written](#what-is-written);
   the two arena examples and three component pages wait on DC3
 - **How it was made** — written by an agent from the project section; level one of the four in

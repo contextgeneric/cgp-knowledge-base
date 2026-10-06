@@ -154,16 +154,17 @@ with each entry a [`Field<Tag, Value>`](../types/field.md) tagged by
 declares `where Self: 'a`, so `for<'a> T::FieldsRef<'a>: Trait` asks the compiler to prove `T: 'a`
 for every `'a`, which it can only do when `T` is `'static`. A provider needs that bound when its
 method borrows the value for a lifetime the impl cannot name, as in
-`fn serialize(&self, value: &Value, …)`. With `enum Token<'a> { Word(&'a str), Number(u64) }`, such a provider fails with
-`E0477`, "the type `Token<'a>` does not fulfill the required lifetime", or with `E0597` at a call
-site, where rustc notes that "due to a current limitation of the type system, this implies a
-`'static` lifetime". `Token<'static>` works.
+`fn serialize(&self, value: &Value, …)`. With `enum Token<'a> { Word(&'a str), Number(u64) }`, such
+a provider fails with `E0477`, "the type `Token<'a>` does not fulfill the required lifetime", or
+with `E0597` at a call site, where rustc notes that "due to a current limitation of the type system,
+this implies a `'static` lifetime". `Token<'static>` works.
 
-Two forms avoid it. When the borrow's lifetime can be a parameter of the impl, as the `&'a Input`
-of the by-reference dispatchers is, bound `T::FieldsRef<'a>` for that one `'a`. Otherwise, read the
-value through an accessor whose associated type carries no lifetime and whose method borrows, as
-[`HasField`](has_field.md) does. cgp-serde's enum serializer meets this limit; see its
-[variant providers](../../../projects/cgp-serde/reference/variants.md#known-issues).
+Two forms do not need the bound for every lifetime. When the borrow's lifetime can be a parameter of
+the impl, as the `&'a Input` of the by-reference dispatchers is, the bound names `T::FieldsRef<'a>`
+for that one `'a`, and the type `&'a T` itself implies `T: 'a`. Otherwise, the value can be read
+through an accessor whose associated type carries no lifetime and whose method borrows, as
+[`HasField`](has_field.md) does. cgp-serde's enum serializer meets this limit; see its [variant
+providers](../../../projects/cgp-serde/reference/variants.md#known-issues).
 
 ## Source
 

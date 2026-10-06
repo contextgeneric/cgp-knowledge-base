@@ -24,10 +24,10 @@ pub struct Payload {
 }
 ```
 
-`CgpData` exposes the field list and the builder that
-[`SerializeRecordFields` and `DeserializeRecordFields`](../reference/records.md) walk. Wired to those two
-providers, the struct serializes as a JSON object keyed by its field names and is read back from
-one; see [derive-free records](../architecture/derive-free-records.md).
+`CgpData` exposes the field list and the builder that [`SerializeRecordFields` and
+`DeserializeRecordFields`](../reference/records.md) walk. Wired to those two providers, the struct
+serializes as a JSON object keyed by its field names and is read back from one; see [derive-free
+records](../architecture/derive-free-records.md).
 
 ## One context, both directions
 

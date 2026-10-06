@@ -117,5 +117,5 @@ to before any other, so they are listed first; the rest are grouped by the tradi
   `comptime` as the compile-time model, and Rust's nightly reflection MVP read from its source, set
   against Go, Java, C++26, D, and facet. CGP reaches the same generic-over-structure payoff by
   encoding a type's shape as type-level lists the trait system resolves against, shown through
-  `cgp-serde`'s `SerializeRecordFields`, carrying field types as types so it recurses into them, checked
-  when written, and extended to behavior and abstract-type selection.
+  `cgp-serde`'s `SerializeRecordFields`, carrying field types as types so it recurses into them,
+  checked when written, and extended to behavior and abstract-type selection.

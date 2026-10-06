@@ -297,9 +297,9 @@ as `for<'a> E::ExtractorRef<'a>: …` fails for an enum with a lifetime, such as
 [`HasFieldsRef`](has_fields.md#known-issues): `ExtractorRef<'a>` declares `where Self: 'a`. Getting
 the extractor some other way does not help, because the derived partial enum itself carries the
 requirement: `__PartialRefToken<'__a__, 'a: '__a__, …>` declares that the enum's lifetime outlives
-the borrow, and each payload is wrapped in `MapTypeRef::Map<'a, T: 'a>`. A bound naming the
-extractor for one lifetime that is a parameter of the impl, as the by-reference dispatchers use,
-is unaffected.
+the borrow, and each payload is wrapped in `MapTypeRef::Map<'a, T: 'a>`. The by-reference
+dispatchers do not need the bound for every lifetime: they take their input as `&'a Input`, which
+makes `'a` a parameter of the impl, and the type `&'a Input` itself implies `Input: 'a`.
 
 ## Source
 

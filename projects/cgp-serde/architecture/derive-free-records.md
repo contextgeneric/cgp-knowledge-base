@@ -17,10 +17,10 @@ that needs a different encoding for a library's type has to wrap it in a newtype
 [`CgpData`](../../../cgp/reference/derives/derive_cgp_data.md), or the narrower field derives,
 exposes its fields as type-level data: a list of named fields through
 [`HasFields`](../../../cgp/reference/traits/has_fields.md), per-field access through `HasField`, and
-an incremental builder through `BuildField`. `SerializeRecordFields` and `DeserializeRecordFields` are
-written once against that data and work for every struct that exposes it, so a library defines its
-types with a dependency on `cgp` alone, and each application wires its own serialization for them.
-This is CGP's [extensible records](../../../cgp/concepts/extensible-records.md) applied to
+an incremental builder through `BuildField`. `SerializeRecordFields` and `DeserializeRecordFields`
+are written once against that data and work for every struct that exposes it, so a library defines
+its types with a dependency on `cgp` alone, and each application wires its own serialization for
+them. This is CGP's [extensible records](../../../cgp/concepts/extensible-records.md) applied to
 serialization.
 
 ## What a struct still opts into

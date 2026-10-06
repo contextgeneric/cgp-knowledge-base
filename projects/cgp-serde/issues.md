@@ -53,10 +53,10 @@ failure. See [variants](reference/variants.md#known-issues).
 
 ### Records and sequences do not declare their length
 
-`SerializeRecordFields` calls `serialize_map(None)` and `SerializeIterator` calls `serialize_seq(None)`,
-even when the length is known, so a format that must write a length before the elements rejects
-them. `postcard::to_allocvec` fails with `SerializeSeqLengthUnknown` on any struct or collection.
-See [records](reference/records.md#known-issues) and
+`SerializeRecordFields` calls `serialize_map(None)` and `SerializeIterator` calls
+`serialize_seq(None)`, even when the length is known, so a format that must write a length before
+the elements rejects them. `postcard::to_allocvec` fails with `SerializeSeqLengthUnknown` on any
+struct or collection. See [records](reference/records.md#known-issues) and
 [collections](reference/collections.md#known-issues).
 
 ## Missing features

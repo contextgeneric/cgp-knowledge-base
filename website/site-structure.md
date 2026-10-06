@@ -887,17 +887,18 @@ citation of the draft. Sources sections were kept.
 Two adaptations to the CGP code are worth recording, because a later synchronization of an internal
 document will find its snippets differ from the page's. **The encoder pair replaces `cgp-serde`'s
 providers.** Where the internal type-classes, implicit-parameters, and Rust-proposals documents show
-`UseSerde` and `SerializeBytes` on `cgp-serde`'s `ValueSerializer`, the pages show `EncodeWithDisplay`,
-`EncodeBytes`, and `EncodeAsHex` on the `CanEncode<Value>` component from
-[message.md](../communication-strategy/message.md#the-problems-cgp-removes), which is the site's shared
-running example and compiles without a `serde` dependency. **The reflection page's worked example is a
-local field writer**, `WriteFields` over a `FieldsWriter` recursion producing a JSON-like string,
-modeled line for line on `cgp-serde`'s `SerializeRecordFields` and linking to it, rather than a quotation of
-the crate's source. The published `cgp-serde` crate and its `main` branch depend on `cgp` `0.7.0`, so the verification
-crate cannot depend on it beside `cgp` 0.8.0 without two `cgp` versions, and a page whose snippet the crate
-cannot compile would break the rule that every snippet is checked. The dynamic-dispatch page's
-namespace example likewise uses the [namespaces concept](../cgp/concepts/namespaces.md)'s compiled
-open-slot shape rather than the internal document's `@cgp.core.error => @app` redirect.
+`UseSerde` and `SerializeBytes` on `cgp-serde`'s `ValueSerializer`, the pages show
+`EncodeWithDisplay`, `EncodeBytes`, and `EncodeAsHex` on the `CanEncode<Value>` component from
+[message.md](../communication-strategy/message.md#the-problems-cgp-removes), which is the site's
+shared running example and compiles without a `serde` dependency. **The reflection page's worked
+example is a local field writer**, `WriteFields` over a `FieldsWriter` recursion producing a
+JSON-like string, modeled line for line on `cgp-serde`'s `SerializeRecordFields` and linking to it,
+rather than a quotation of the crate's source. The published `cgp-serde` crate and its `main` branch
+depend on `cgp` `0.7.0`, so the verification crate cannot depend on it beside `cgp` 0.8.0 without
+two `cgp` versions, and a page whose snippet the crate cannot compile would break the rule that
+every snippet is checked. The dynamic-dispatch page's namespace example likewise uses the
+[namespaces concept](../cgp/concepts/namespaces.md)'s compiled open-slot shape rather than the
+internal document's `@cgp.core.error => @app` redirect.
 
 The overview and the effects, capabilities, dependency-injection, dynamic-dispatch, and
 implicit-parameter pages use point-first explanations with explicit limits on each analogy.

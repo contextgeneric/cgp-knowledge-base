@@ -8,12 +8,11 @@ and `DeserializeVariantFields` reads it back. They are separate structs, like th
 
 Both rest on CGP's [extensible variants](../../../cgp/concepts/extensible-variants.md). An enum's
 variant list comes from [`HasFields`](../../../cgp/reference/traits/has_fields.md), as a sum of
-`Field<Tag, Payload>` entries, and each variant's name is a type-level string the providers turn into
-a `&'static str` through [`StaticString`](../../../cgp/reference/traits/static_format.md). Both
-directions need only `#[derive(HasFields)]`, which emits the `FromFields` and `ToFieldsRef` impls the
-providers call;
-[`#[derive(CgpVariant)]`](../../../cgp/reference/derives/derive_cgp_variant.md) and
-[`#[derive(CgpData)]`](../../../cgp/reference/derives/derive_cgp_data.md) include it.
+`Field<Tag, Payload>` entries, and each variant's name is a type-level string the providers turn
+into a `&'static str` through [`StaticString`](../../../cgp/reference/traits/static_format.md). Both
+directions need only `#[derive(HasFields)]`, which emits the `FromFields` and `ToFieldsRef` impls
+the providers call; [`#[derive(CgpVariant)]`](../../../cgp/reference/derives/derive_cgp_variant.md)
+and [`#[derive(CgpData)]`](../../../cgp/reference/derives/derive_cgp_data.md) include it.
 
 **Every variant must hold exactly one unnamed payload**, the shape `CgpVariant` requires. A payload
 is any type the context wires: a record, a scalar, a collection, or another enum. A unit-like
@@ -47,18 +46,20 @@ exhaustive by its type.
 
 ### Behavior
 
-The provider borrows the enum's variant list with `to_fields_ref`, finds the active variant, and calls
-`serialize_newtype_variant` with the variant's name, its declaration position as the index, and the
-payload wrapped in [`SerializeWithContext`](../architecture/reentrant-providers.md#adapter-calls).
-With JSON, `Shape::Circle(Circle { radius: 3 })` serializes to `{"Circle":{"radius":3}}` and
+The provider borrows the enum's variant list with `to_fields_ref`, finds the active variant, and
+calls `serialize_newtype_variant` with the variant's name, its declaration position as the index,
+and the payload wrapped in
+[`SerializeWithContext`](../architecture/reentrant-providers.md#adapter-calls). With JSON,
+`Shape::Circle(Circle { radius: 3 })` serializes to `{"Circle":{"radius":3}}` and
 `Shape::Label("hi".into())` to `{"Label":"hi"}`. This is exactly what Serde's derive writes for the
-same enum, in JSON and, for payloads that are not records, in RON and postcard. RON writes the variant
-around its payload, `Label("x")`, and postcard writes the index followed by the payload, `[1, 5]` for
-the second variant holding `5`.
+same enum, in JSON and, for payloads that are not records, in RON and postcard. RON writes the
+variant around its payload, `Label("x")`, and postcard writes the index followed by the payload,
+`[1, 5]` for the second variant holding `5`.
 
 The enum name the format receives is the last segment of `core::any::type_name` without its generic
 arguments, such as `Token` for `Token<'a>`, because `HasFields` carries no type name and RON rejects
-a name that is not an identifier. The name never decides which variant is written.
+a name that is not an identifier. The name never decides which variant is written. Both providers
+pass the same name.
 
 ### Context dependencies
 
@@ -80,8 +81,8 @@ agree on the format: an externally tagged newtype variant.
   `HasField` does for records; see [issues.md](../issues.md#defects).
 - **A record payload is rejected by postcard**, because records are written without a length; see
   [records](records.md#known-issues).
-- **A recursive enum fails to compile with `E0275`**, as a recursive record does; see
-  [re-entrant providers](../architecture/reentrant-providers.md#what-re-entry-requires-of-a-context).
+- **A recursive enum fails to compile with `E0275`**, as a recursive record does; see [re-entrant
+  providers](../architecture/reentrant-providers.md#what-re-entry-requires-of-a-context).
 
 ## `DeserializeVariantFields`
 
@@ -106,22 +107,31 @@ where
 
 ### Behavior
 
-The provider calls `deserialize_enum` and reads the variant identifier first. A text format gives the
-identifier as a name, which is compared against each variant name in declaration order without being
-copied; a binary format gives the declaration index. The provider then reads the payload with
-`newtype_variant_seed` and a [`DeserializeWithContext`](../architecture/reentrant-providers.md#adapter-calls)
-seed, places it in the matching arm of the variant list, and builds the enum with `from_fields`. The
-`'de` lifetime reaches the payload, so `Token<'a>` reads `{"Word":"hello"}` with `"hello"` borrowed
-from the input. Escaped variant names and input read through an `io::Read` both work.
+The provider calls `deserialize_enum` and reads the variant identifier first. A text format gives
+the identifier as a name, which is compared against each variant name in declaration order without
+being copied; a binary format gives the declaration index. The provider then reads the payload with
+`newtype_variant_seed` and a
+[`DeserializeWithContext`](../architecture/reentrant-providers.md#adapter-calls) seed, places it in
+the matching arm of the variant list, and builds the enum with `from_fields`. The `'de` lifetime
+reaches the payload, so `Token<'a>` reads `{"Word":"hello"}` with `"hello"` borrowed from the input.
+Escaped variant names and input read through an `io::Read` both work, and so does a name the format
+hands over as bytes.
+
+`deserialize_enum` also takes the list of variant names, as a `&'static [&'static str]`, which
+cannot be built from the type-level variant list on stable Rust. The provider passes an empty list.
+`serde_json`, RON, and postcard ignore it, and the provider's own unknown-variant error lists the
+names instead, but a format that reads the list would see none.
 
 The provider rejects input in these cases, each reported through the format's own error:
 
-- **An unknown variant**: ``unknown variant `Square`, expected one of `Circle`, `Rectangle`, `Label`, `Empty` ``,
-  the same wording Serde's derive uses.
-- **An index out of range**, from a binary format: `variant index 9 out of range, expected one of …`.
-  postcard reports any custom error as `SerdeDeCustom`, so the message is lost there.
-- **A bare variant name**, such as `"Empty"`: `invalid type: unit variant, expected newtype variant`,
-  whatever the context wires for `()`.
+- **An unknown variant**:
+  ``unknown variant `Square`, expected one of `Circle`, `Rectangle`, `Label`, `Empty` ``, the same
+  wording Serde's derive uses.
+- **An index out of range**, from a binary format:
+  `variant index 9 out of range, expected one of …`. postcard reports any custom error as
+  `SerdeDeCustom`, so the message is lost there.
+- **A bare variant name**, such as `"Empty"`:
+  `invalid type: unit variant, expected newtype variant`, whatever the context wires for `()`.
 - **A payload of the wrong type**: the payload provider's error; with JSON, `{"Label":5}` gives
   ``invalid type: integer `5`, expected a string``.
 - **Anything that is not one variant**: `serde_json` reports an empty object, a second variant, an
@@ -137,6 +147,8 @@ The serializing counterpart is [`SerializeVariantFields`](#serializevariantfield
 
 ### Known issues
 
+- **The variant list given to the format is empty**, as described under Behavior; a format that
+  relies on it is untested.
 - **Only Serde's externally tagged representation is supported.** There is no internally tagged,
   adjacently tagged, or untagged form, and the bare-string form Serde's derive uses for a unit
   variant is rejected; a unit-like variant is `Empty(())`, written as the context writes `()`.

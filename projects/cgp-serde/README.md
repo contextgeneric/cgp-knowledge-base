@@ -69,8 +69,8 @@ through in [architecture/crate-layout.md](architecture/crate-layout.md).
 - **`cgp-serde-tests`**: the test crate, unpublished. Four example tests (a JSON round trip, the
   two-application serialization demo, and the arena deserialization demo in its layered and
   simplified forms) are the repository's only runnable examples, each documented in
-  [examples/](examples/README.md). Provider suites test the record and variant providers in depth; see
-  [testing.md](testing.md).
+  [examples/](examples/README.md). Provider suites test the record and variant providers in depth;
+  see [testing.md](testing.md).
 
 ## Status and gaps
 
@@ -190,9 +190,9 @@ They feed three artifacts:
   issues document feeds no page.
 - **The repository README**, which currently summarizes the components in pre-0.8 syntax and defers
   to the announcement post.
-- **Rustdoc for every public item.** Only the record and variant providers carry doc comments, so the crates'
-  docs.rs pages list most items without explanation; the reference entries are written to be
-  condensed into them.
+- **Rustdoc for every public item.** Only the record and variant providers carry doc comments, so
+  the crates' docs.rs pages list most items without explanation; the reference entries are written
+  to be condensed into them.
 
 ## How it relates to the rest of the base
 

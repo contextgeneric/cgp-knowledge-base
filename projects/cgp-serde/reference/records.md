@@ -2,8 +2,8 @@
 
 The record providers serialize and deserialize a struct generically, by walking its fields, so a
 struct needs no serialization-specific derive and no dependency on `serde` or `cgp-serde`.
-`SerializeRecordFields` writes a struct as a map and `DeserializeRecordFields` reads one back. They are
-separate structs rather than one provider serving both directions, because they walk the struct
+`SerializeRecordFields` writes a struct as a map and `DeserializeRecordFields` reads one back. They
+are separate structs rather than one provider serving both directions, because they walk the struct
 through different CGP traits.
 
 Both rest on CGP's [extensible records](../../../cgp/concepts/extensible-records.md). A struct's
@@ -20,13 +20,13 @@ are:
   all three.
 
 Only structs with named fields work. A tuple struct keys its fields by `Index<N>`, which does not
-implement `StaticString`, so wiring one to either provider fails to compile. An enum is handled by the
-[variant providers](variants.md) instead.
+implement `StaticString`, so wiring one to either provider fails to compile. An enum is handled by
+the [variant providers](variants.md) instead.
 
 ## `SerializeRecordFields`
 
-`SerializeRecordFields` serializes a struct as a map from each field's name to its value, serializing
-every value through the context.
+`SerializeRecordFields` serializes a struct as a map from each field's name to its value,
+serializing every value through the context.
 
 ### Definition
 
@@ -212,9 +212,10 @@ value. The providers come from `cgp_serde::providers`, except `SerializeHex`, wh
 
 ## Related documents
 
-- [Reflection](../../../related-work/reflection.md) compares `SerializeRecordFields` with Serde's derive,
-  facet, and Rust's reflection proposal, including the observation that the field-list recursion
-  still monomorphizes per struct, so it saves authoring duplication rather than binary size.
+- [Reflection](../../../related-work/reflection.md) compares `SerializeRecordFields` with Serde's
+  derive, facet, and Rust's reflection proposal, including the observation that the field-list
+  recursion still monomorphizes per struct, so it saves authoring duplication rather than binary
+  size.
 - [Re-entrant providers](../architecture/reentrant-providers.md) explains the adapter both providers
   use to hand each field back to the context.
 

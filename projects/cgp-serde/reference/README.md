@@ -52,7 +52,7 @@ wire.
 | `DeserializeExtend` | `cgp-serde` | de | `Value: Default + IntoIterator<Item = Item> + Extend<Item>` | `Item` |
 | `SerializeRecordFields` | `cgp-serde` | ser | `Value: HasFields`, plus `HasField` per field | each field type |
 | `DeserializeRecordFields` | `cgp-serde` | de | `Value: HasFields`, plus a builder | each field type |
-| `SerializeVariantFields` | `cgp-serde` | ser | `'static` `Value: ToFieldsRef`, one payload per variant | each variant's payload type |
+| `SerializeVariantFields` | `cgp-serde` | ser | `Value: ToFieldsRef + 'static`, one payload per variant | each variant's payload type |
 | `DeserializeVariantFields` | `cgp-serde` | de | `Value: FromFields`, one payload per variant | each variant's payload type |
 | `DeserializeDefault<Provider>` | `cgp-serde` | de | `Value: Default`; `Provider` handles `Value` | nothing; calls `Provider` |
 | `SerializeHex` | `cgp-serde-extra` | both | ser: `Value: ToHex`; de: `Value: FromHex` | `String` |
@@ -63,8 +63,8 @@ wire.
 
 Where a bound names an error type, such as `TryFrom`'s or `FromStr`'s, that error must implement
 `Display`, because the provider reports it through Serde's `Error::custom`. Every provider is
-imported from its crate's `providers` module, such as `cgp_serde::providers::SerializeRecordFields` or
-`cgp_serde_extra::providers::SerializeHex`.
+imported from its crate's `providers` module, such as `cgp_serde::providers::SerializeRecordFields`
+or `cgp_serde_extra::providers::SerializeHex`.
 
 ## Other providers
 

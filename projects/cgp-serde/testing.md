@@ -51,8 +51,9 @@ format:
 
 ### Records
 
-The `records/` suite tests [`SerializeRecordFields` and `DeserializeRecordFields`](reference/records.md)
-through one context, `App`, plus a second context in `context_choice.rs`:
+The `records/` suite tests [`SerializeRecordFields` and
+`DeserializeRecordFields`](reference/records.md) through one context, `App`, plus a second context
+in `context_choice.rs`:
 
 - **`round_trip.rs`**: fields in declaration order; a one-field record; an empty record as `{}`;
   every leaf type, including `Option` as a value and as `null`; edge values (`u64::MAX`,
@@ -73,8 +74,9 @@ through one context, `App`, plus a second context in `context_choice.rs`:
 
 ### Variants
 
-The `variants/` suite tests [`SerializeVariantFields` and `DeserializeVariantFields`](reference/variants.md)
-through one context, `App`, plus second contexts in `unit_payload.rs` and `nesting.rs`:
+The `variants/` suite tests [`SerializeVariantFields` and
+`DeserializeVariantFields`](reference/variants.md) through one context, `App`, plus second contexts
+in `unit_payload.rs` and `nesting.rs`:
 
 - **`round_trip.rs`**: every variant of a four-variant enum tagged with its name; a one-variant
   enum; the first, middle, and last of ten variants.
@@ -84,8 +86,9 @@ through one context, `App`, plus second contexts in `unit_payload.rs` and `nesti
   provider the test defines; each context rejecting the other's form; and the bare variant name
   rejected under both.
 - **`deserialize_input.rs`**: the unknown-variant message listing every name; an escaped variant
-  name; input through an `io::Read`; and the exact errors for an empty object, two variants, a value
-  that is not an enum, a wrong payload type, and trailing input.
+  name; input through an `io::Read`; a variant name handed over as bytes, through Serde's `value`
+  deserializers, matched and, when unknown, escaped in the error; and the exact errors for an empty
+  object, two variants, a value that is not an enum, a wrong payload type, and trailing input.
 - **`nesting.rs`**: enums in a record and a `Vec`; the same payload written as hex by one context
   and base64 by another.
 - **`lifetimes.rs`**: a borrowed payload deserialized from a string, and `Token<'static>`
@@ -147,9 +150,9 @@ the repository's own tests:
 - **Directions never run**: deserializing with `SerializeString`, `SerializeRfc3339Date`, and
   `SerializeTimestamp`.
 - **Inputs never used**: `DeserializeFromJsonReader` with a `SliceRead` or `IoRead`.
-- **Failure paths outside the record and variant providers**: no test feeds invalid input to any other
-  provider, so their error messages in the reference (invalid hex, out-of-range conversions, bad
-  timestamps) are not pinned.
+- **Failure paths outside the record and variant providers**: no test feeds invalid input to any
+  other provider, so their error messages in the reference (invalid hex, out-of-range conversions,
+  bad timestamps) are not pinned.
 - **Most diagnostics**: the compile-fail tests pin rustc's raw output for three cases. The other
   diagnostics in [debugging wiring](guides/debugging-wiring.md), and every `cargo cgp check`
   rewrite, are not pinned.

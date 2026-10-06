@@ -1152,8 +1152,9 @@ it stale.
   `CanAlloc`, `DeserializeAndAllocate`, `HasArena`, and `AllocateWithArena`: deserializing borrowed
   values into a context-supplied arena, layered so the allocator is a wiring choice.
 - [projects/cgp-serde/reference/records.md](projects/cgp-serde/reference/records.md) —
-  `SerializeRecordFields` and `DeserializeRecordFields`: the minimum derives per direction, the map format,
-  missing, duplicate, and unknown fields, and the format limits of a map without a declared length.
+  `SerializeRecordFields` and `DeserializeRecordFields`: the minimum derives per direction, the map
+  format, missing, duplicate, and unknown fields, and the format limits of a map without a declared
+  length.
 - [projects/cgp-serde/reference/variants.md](projects/cgp-serde/reference/variants.md) —
   `SerializeVariantFields` and `DeserializeVariantFields`: enums in Serde's externally tagged form,
   one payload per variant, `()` for unit-like variants, the rejection messages, and the serializer's

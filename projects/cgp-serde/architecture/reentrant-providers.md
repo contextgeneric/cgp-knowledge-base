@@ -10,18 +10,18 @@ second way possible, and what the design requires of a context's wiring.
 **Re-entry is what makes a context's choices reach every level of nesting.** In plain Serde, the
 `Serialize` impl of a struct calls each field's own `Serialize` impl, so the encoding of a `Vec<u8>`
 field is fixed by whoever implemented `Serialize` for `Vec<u8>`. cgp-serde replaces that call with a
-call on the context. `SerializeRecordFields` serializes a field by asking the context to serialize the
-field's type, `SerializeIterator` does the same for each item, and so on down. A context that wires
-`Vec<u8>` to `SerializeHex` therefore gets hex for every `Vec<u8>` wherever it occurs (a top-level
-value, a field, an item of a list inside a field), and no provider on the path has to know about the
-choice.
+call on the context. `SerializeRecordFields` serializes a field by asking the context to serialize
+the field's type, `SerializeIterator` does the same for each item, and so on down. A context that
+wires `Vec<u8>` to `SerializeHex` therefore gets hex for every `Vec<u8>` wherever it occurs (a
+top-level value, a field, an item of a list inside a field), and no provider on the path has to know
+about the choice.
 
-The same property keeps providers small and reusable. `SerializeRecordFields` knows how to walk a struct
-and nothing about its fields' types; `SerializeIterator` knows how to walk a collection and nothing
-about its items. Each is written once, generically, and composed by the context. The dependency on
-the context appears in each provider as an
-[impl-side dependency](../../../cgp/concepts/impl-side-dependencies.md) on the consumer trait, such
-as `Self: CanSerializeValue<String>`, so the context resolves it from its own wiring.
+The same property keeps providers small and reusable. `SerializeRecordFields` knows how to walk a
+struct and nothing about its fields' types; `SerializeIterator` knows how to walk a collection and
+nothing about its items. Each is written once, generically, and composed by the context. The
+dependency on the context appears in each provider as an [impl-side
+dependency](../../../cgp/concepts/impl-side-dependencies.md) on the consumer trait, such as
+`Self: CanSerializeValue<String>`, so the context resolves it from its own wiring.
 
 ## The two forms of re-entry
 

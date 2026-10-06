@@ -43,9 +43,9 @@ error[E0277]: [CGP-E001] the consumer trait `CanSerializeValue<Payload>` is not 
   = note: root cause: [CGP-E107] context `App` does not contain any delegate entry for `@ValueSerializerComponent.Vec<u8>`
 ```
 
-The dependency chain the tool prints beneath the root cause walks from `SerializeRecordFields` through the
-field list to the `data` field, so the missing type is named even when it is several levels deep.
-The fix is an entry for `Vec<u8>`.
+The dependency chain the tool prints beneath the root cause walks from `SerializeRecordFields`
+through the field list to the `data` field, so the missing type is named even when it is several
+levels deep. The fix is an entry for `Vec<u8>`.
 
 The same diagnostic, naming a different key, covers three missing entries that are easy to overlook
 because no field in the data has the type:
@@ -159,10 +159,9 @@ which requires `Node` again. An enum that contains itself fails the same way: an
 `Expr { Literal(u64), Negate(Box<Expr>) }` wired to `SerializeVariantFields`, with `Box<Expr>` wired
 to `SerializeDeref`, is reported as
 `[CGP-E010] the wiring for the consumer trait CanSerializeValue<Expr> on context App never resolves`.
-No wiring fixes it: the type needs a provider that walks the recursion
-itself and asks the context only for the non-recursive parts, as
-[re-entrant providers](../architecture/reentrant-providers.md#what-re-entry-requires-of-a-context)
-describes.
+No wiring fixes it: the type needs a provider that walks the recursion itself and asks the context
+only for the non-recursive parts, as [re-entrant
+providers](../architecture/reentrant-providers.md#what-re-entry-requires-of-a-context) describes.
 
 ## An enum with a lifetime is serialized
 

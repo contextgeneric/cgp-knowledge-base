@@ -344,8 +344,8 @@ through trait impls the way Zig's `inline for` iterates `@typeInfo`, and the who
 checked at the definition site and erased before runtime. The
 [`cgp-serde`](https://github.com/contextgeneric/cgp-serde) crate makes the parallel concrete, and
 set against facet and the Rust MVP it shows exactly where the type-level encoding differs from value
-reflection. Its serializer wires an **environmental context**: the `Self` of `SerializeRecordFields` is an
-application such as `AppA`, and the serialized `Value` is a parameter.
+reflection. Its serializer wires an **environmental context**: the `Self` of `SerializeRecordFields`
+is an application such as `AppA`, and the serialized `Value` is a parameter.
 
 ### A type's shape becomes a type, not a descriptor
 
@@ -470,10 +470,10 @@ Two differences make CGP's position distinct rather than merely another point. F
 `TypeId`, from which a generic function cannot be instantiated directly. Recursion into a field's
 own type is therefore mediated by stored function pointers (facet) or is not yet expressible from
 the raw reflection (the MVP). CGP's `Field<Tag, FieldValue>` carries `FieldValue` as a real type
-parameter, so `SerializeRecordFields` can write `Context: CanSerializeValue<FieldValue>` and recurse into
-a fully typed, statically checked serializer for the field's type, the recursion a `TypeId` cannot
-drive. Second, `cgp-serde` dispatches each field through the *context's* `CanSerializeValue` wiring,
-so the same type serializes differently under different application contexts, the
+parameter, so `SerializeRecordFields` can write `Context: CanSerializeValue<FieldValue>` and recurse
+into a fully typed, statically checked serializer for the field's type, the recursion a `TypeId`
+cannot drive. Second, `cgp-serde` dispatches each field through the *context's* `CanSerializeValue`
+wiring, so the same type serializes differently under different application contexts, the
 [per-context choice](../cgp/concepts/coherence.md) that facet, serde, and the MVP, each with one
 fixed interpretation per type, do not have.
 
