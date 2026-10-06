@@ -23,7 +23,7 @@ delegate_components! {
         @ValueSerializerComponent.Vec<u8>: SerializeHex,
         @ValueSerializerComponent.DateTime<Utc>: SerializeRfc3339Date,
         @ValueSerializerComponent.[Vec<EncryptedMessage>, Vec<MessagesByTopic>]: SerializeIterator,
-        @ValueSerializerComponent.[MessagesArchive, MessagesByTopic, EncryptedMessage]: SerializeFields,
+        @ValueSerializerComponent.[MessagesArchive, MessagesByTopic, EncryptedMessage]: SerializeRecordFields,
     }
 }
 ```
@@ -42,7 +42,7 @@ JSON providers through `try_compute` opens `TryComputerComponent` too and keys i
 each top-level type and follow what each provider asks the context for, using the "Re-enters for"
 column of the [reference table](../reference/README.md#serialization-and-deserialization-providers):
 
-- **Structs** wired to `SerializeFields` or `DeserializeRecordFields` need an entry for each field's
+- **Structs** wired to `SerializeRecordFields` or `DeserializeRecordFields` need an entry for each field's
   type.
 - **Collections** need their own entry, not only their item type's, and `SerializeIterator` needs an
   entry for the item *reference* it yields; the generic `<'a, T> &'a T: SerializeDeref` entry covers
@@ -137,7 +137,7 @@ cgp_namespace! {
         @ValueSerializerComponent.Vec<EncryptedMessage>:
             SerializeIterator,
         @ValueSerializerComponent.[MessagesByTopic, EncryptedMessage]:
-            SerializeFields,
+            SerializeRecordFields,
     }
 }
 

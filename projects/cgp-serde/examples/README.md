@@ -47,7 +47,7 @@ network or any program outside the build. The table records what each did when r
 | Example | Filter | Result |
 |---|---|---|
 | [`basic`](basic.md) | `basic` | passes; the JSON and the round trip are asserted |
-| [`messages`](messages.md) | `messages` | passes; prints two JSON documents without asserting them |
+| [`messages`](messages.md) | `messages` | passes; both JSON documents are asserted |
 | [`arena_simplified`](arena-simplified.md) | `arena_simplified` | passes; the deserialized value is asserted |
 | [`arena`](arena.md) | `arena::` | passes; the deserialized value is asserted |
 

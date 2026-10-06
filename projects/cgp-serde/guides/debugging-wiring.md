@@ -12,7 +12,7 @@ parse is a macro error the tool leaves as it is.
 ## A type the traversal reaches has no entry
 
 **The most common mistake is a missing entry for a nested type.** Here `Payload` is wired to
-`SerializeFields`, but its `data: Vec<u8>` field's type has no entry:
+`SerializeRecordFields`, but its `data: Vec<u8>` field's type has no entry:
 
 ```rust
 #[derive(CgpData)]
@@ -25,7 +25,7 @@ delegate_components! {
     App {
         open ValueSerializerComponent;
         @ValueSerializerComponent.u64: UseSerde,
-        @ValueSerializerComponent.Payload: SerializeFields,
+        @ValueSerializerComponent.Payload: SerializeRecordFields,
     }
 }
 
@@ -43,7 +43,7 @@ error[E0277]: [CGP-E001] the consumer trait `CanSerializeValue<Payload>` is not 
   = note: root cause: [CGP-E107] context `App` does not contain any delegate entry for `@ValueSerializerComponent.Vec<u8>`
 ```
 
-The dependency chain the tool prints beneath the root cause walks from `SerializeFields` through the
+The dependency chain the tool prints beneath the root cause walks from `SerializeRecordFields` through the
 field list to the `data` field, so the missing type is named even when it is several levels deep.
 The fix is an entry for `Vec<u8>`.
 
@@ -151,7 +151,7 @@ type, such as `UseSerde` or `SerializeString` for `String`.
 ## The data type is recursive
 
 **A type that contains itself fails the same way even when every entry is present.** A
-`Node { id: u64, children: Vec<Node> }` wired to `SerializeFields`, with `Vec<Node>` wired to
+`Node { id: u64, children: Vec<Node> }` wired to `SerializeRecordFields`, with `Vec<Node>` wired to
 `SerializeIterator` and the reference entry in place, reports `E0275` when used, reshaped as
 `[CGP-E010] the wiring for the consumer trait CanSerializeValue<Node> on context Ctx never resolves`
 when checked, because serializing `Node` requires serializing `Vec<Node>`, which requires `&Node`,

@@ -25,7 +25,7 @@ pub struct Payload {
 ```
 
 `CgpData` exposes the field list and the builder that
-[`SerializeFields` and `DeserializeRecordFields`](../reference/records.md) walk. Wired to those two
+[`SerializeRecordFields` and `DeserializeRecordFields`](../reference/records.md) walk. Wired to those two
 providers, the struct serializes as a JSON object keyed by its field names and is read back from
 one; see [derive-free records](../architecture/derive-free-records.md).
 
@@ -50,7 +50,7 @@ delegate_components! {
         @ValueSerializerComponent.u64: UseSerde,
         @ValueSerializerComponent.String: SerializeString,
         @ValueSerializerComponent.Vec<u8>: SerializeHex,
-        @ValueSerializerComponent.Payload: SerializeFields,
+        @ValueSerializerComponent.Payload: SerializeRecordFields,
 
         @ValueDeserializerComponent.[u64, String]: UseSerde,
         @ValueDeserializerComponent.Payload: DeserializeRecordFields,

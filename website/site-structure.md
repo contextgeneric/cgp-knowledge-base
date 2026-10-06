@@ -892,7 +892,7 @@ providers.** Where the internal type-classes, implicit-parameters, and Rust-prop
 [message.md](../communication-strategy/message.md#the-problems-cgp-removes), which is the site's shared
 running example and compiles without a `serde` dependency. **The reflection page's worked example is a
 local field writer**, `WriteFields` over a `FieldsWriter` recursion producing a JSON-like string,
-modeled line for line on `cgp-serde`'s `SerializeFields` and linking to it, rather than a quotation of
+modeled line for line on `cgp-serde`'s `SerializeRecordFields` and linking to it, rather than a quotation of
 the crate's source. The published `cgp-serde` crate and its `main` branch depend on `cgp` `0.7.0`, so the verification
 crate cannot depend on it beside `cgp` 0.8.0 without two `cgp` versions, and a page whose snippet the crate
 cannot compile would break the rule that every snippet is checked. The dynamic-dispatch page's

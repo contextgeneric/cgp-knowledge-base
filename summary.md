@@ -1150,7 +1150,7 @@ it stale.
   `CanAlloc`, `DeserializeAndAllocate`, `HasArena`, and `AllocateWithArena`: deserializing borrowed
   values into a context-supplied arena, layered so the allocator is a wiring choice.
 - [projects/cgp-serde/reference/records.md](projects/cgp-serde/reference/records.md) —
-  `SerializeFields` and `DeserializeRecordFields`: the minimum derives per direction, the map format,
+  `SerializeRecordFields` and `DeserializeRecordFields`: the minimum derives per direction, the map format,
   missing, duplicate, and unknown fields, and the format limits of a map without a declared length.
 - [projects/cgp-examples/README.md](projects/cgp-examples/README.md) — the repository of five
   independent example crates: what each demonstrates, its context shape, worked example, citing post,

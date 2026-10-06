@@ -50,7 +50,7 @@ wire.
 | `SerializeDeref` | `cgp-serde` | ser | `Value: Deref` | `Value::Target` |
 | `SerializeIterator` | `cgp-serde` | ser | `for<'a> &'a Value: IntoIterator` | each item, a reference for `Vec` and slices |
 | `DeserializeExtend` | `cgp-serde` | de | `Value: Default + IntoIterator<Item = Item> + Extend<Item>` | `Item` |
-| `SerializeFields` | `cgp-serde` | ser | `Value: HasFields`, plus `HasField` per field | each field type |
+| `SerializeRecordFields` | `cgp-serde` | ser | `Value: HasFields`, plus `HasField` per field | each field type |
 | `DeserializeRecordFields` | `cgp-serde` | de | `Value: HasFields`, plus a builder | each field type |
 | `DeserializeDefault<Provider>` | `cgp-serde` | de | `Value: Default`; `Provider` handles `Value` | nothing; calls `Provider` |
 | `SerializeHex` | `cgp-serde-extra` | both | ser: `Value: ToHex`; de: `Value: FromHex` | `String` |
@@ -61,7 +61,7 @@ wire.
 
 Where a bound names an error type, such as `TryFrom`'s or `FromStr`'s, that error must implement
 `Display`, because the provider reports it through Serde's `Error::custom`. Every provider is
-imported from its crate's `providers` module, such as `cgp_serde::providers::SerializeFields` or
+imported from its crate's `providers` module, such as `cgp_serde::providers::SerializeRecordFields` or
 `cgp_serde_extra::providers::SerializeHex`.
 
 ## Other providers
@@ -98,7 +98,7 @@ Register each reference document here, in [../README.md](../README.md), and in
   the borrowed-string limit of `DeserializeWithFromStr`.
 - [collections.md](collections.md): `SerializeIterator` and `DeserializeExtend`: sequences whose
   items follow the context, the reference entry iteration needs, and maps as sequences of pairs.
-- [records.md](records.md): `SerializeFields` and `DeserializeRecordFields`: serializing a struct as
+- [records.md](records.md): `SerializeRecordFields` and `DeserializeRecordFields`: serializing a struct as
   a map and reading one back through the optional builder, with no serialization-specific derive.
 - [default-values.md](default-values.md): `DeserializeDefault`: the one higher-order serialization
   provider, which defaults a null value but not a missing field.

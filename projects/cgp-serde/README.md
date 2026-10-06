@@ -88,8 +88,8 @@ the defects and housekeeping items this summary leaves out:
 - **Serde's attributes**: fields cannot be renamed, skipped, flattened, or defaulted when missing.
 - **JSON helpers**: the JSON providers deserialize from any `serde_json` reader, but the only
   convenience method takes a string; there is no counterpart for serializing.
-- **Evidence**: no benchmark has been run, the source has no rustdoc, and the tests assert little:
-  the two-application demo prints its output without checking it.
+- **Evidence**: no benchmark has been run, only the record providers have rustdoc, and seven
+  providers are never run by a test.
 
 ## The documents
 
@@ -130,7 +130,7 @@ ideas every provider shares, then use the reference to look up a provider.
   - [collections.md](reference/collections.md): `SerializeIterator` and `DeserializeExtend`:
     sequences whose items follow the context, the reference entry iteration needs, and maps as
     sequences of pairs.
-  - [records.md](reference/records.md): `SerializeFields` and `DeserializeRecordFields`: serializing
+  - [records.md](reference/records.md): `SerializeRecordFields` and `DeserializeRecordFields`: serializing
     a struct as a map and reading one back through the optional builder, with no
     serialization-specific derive.
   - [default-values.md](reference/default-values.md): `DeserializeDefault`: the one higher-order
@@ -182,8 +182,9 @@ They feed three artifacts:
   issues document feeds no page.
 - **The repository README**, which currently summarizes the components in pre-0.8 syntax and defers
   to the announcement post.
-- **Rustdoc for every public item.** The source carries no doc comments, so the crates' docs.rs
-  pages list items without explanation; the reference entries are written to be condensed into them.
+- **Rustdoc for every public item.** Only the record providers carry doc comments, so the crates'
+  docs.rs pages list most items without explanation; the reference entries are written to be
+  condensed into them.
 
 ## How it relates to the rest of the base
 

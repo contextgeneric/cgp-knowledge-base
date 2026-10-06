@@ -19,7 +19,8 @@ dependencies of its own providers and nothing else:
 | `cgp-serde-typed-arena` | `cgp-serde`, `cgp-serde-alloc`, `typed-arena` | the arena getter and `AllocateWithArena` |
 
 The test crate, `cgp-serde-tests`, depends on all five, on `cgp-error-anyhow` for a concrete error
-type, and on Serde's `derive` feature. No library crate depends on `cgp-error-anyhow`: the JSON
+type, and on Serde's `derive` feature. It sets `publish = false`, so publishing the workspace
+releases only the five library crates. No library crate depends on `cgp-error-anyhow`: the JSON
 providers name only `HasErrorType` and `CanRaiseError`, and the application chooses the error type.
 
 The graph is the practical form of the design's main promise. A crate that defines data types needs
@@ -52,7 +53,7 @@ by its module:
 - **`impls`**: blanket traits built with `#[cgp_fn]` (`cgp-serde-json` only).
 
 Each module re-exports its files with `pub use`, so an item is imported from the module rather than
-the file, as in `cgp_serde::providers::SerializeFields`.
+the file, as in `cgp_serde::providers::SerializeRecordFields`.
 
 ## Build facts
 

@@ -6,9 +6,9 @@ bytes and Unix timestamps from the other.
 
 - **Source**:
   [crates/cgp-serde-tests/src/tests/messages.rs](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-tests/src/tests/messages.rs)
-- **Run**: `cargo test -p cgp-serde-tests messages -- --nocapture`
+- **Run**: `cargo test -p cgp-serde-tests messages`
 - **Needs**: nothing beyond the build
-- **Result**: passes; prints both JSON documents, shown under [Output](#output), and asserts nothing
+- **Result**: passes; asserts both pretty-printed JSON documents, shown under [Output](#output)
 
 ## Nested data that derives only `CgpData`
 
@@ -44,7 +44,7 @@ delegate_components! {
         @ValueSerializerComponent.Vec<u8>: SerializeHex,
         @ValueSerializerComponent.DateTime<Utc>: SerializeRfc3339Date,
         @ValueSerializerComponent.[Vec<EncryptedMessage>, Vec<MessagesByTopic>]: SerializeIterator,
-        @ValueSerializerComponent.[MessagesArchive, MessagesByTopic, EncryptedMessage]: SerializeFields,
+        @ValueSerializerComponent.[MessagesArchive, MessagesByTopic, EncryptedMessage]: SerializeRecordFields,
     }
 }
 ```
@@ -103,7 +103,7 @@ error[E0277]: [CGP-E001] the consumer traits `CanSerializeValue<DateTime<Utc>>`,
 ```
 
 The dependency chain it prints under the root cause runs from `SerializeIterator` through
-`SerializeDeref` and `SerializeFields` to `SerializeTimestamp`, which asks the context for the
+`SerializeDeref` and `SerializeRecordFields` to `SerializeTimestamp`, which asks the context for the
 `i64`. The fix is the `i64` entry; see
 [debugging wiring](../guides/debugging-wiring.md#a-type-the-traversal-reaches-has-no-entry).
 
@@ -115,17 +115,19 @@ same archive to `serde_json` through the
 [`SerializeWithContext`](../reference/context-adapters.md#serializewithcontext) adapter:
 
 ```rust
-let serialized =
+let serialized_a =
     serde_json::to_string_pretty(&SerializeWithContext::new(&AppA, &archive)).unwrap();
-println!("serialized with A: {serialized}");
 ```
+
+It then compares each document with the exact text it expects, so a change in any provider on the
+path fails the test.
 
 Because the adapter is an ordinary `Serialize` value, neither context wires error components: any
 `serde_json::Error` comes back unchanged.
 
 ## Output
 
-With `--nocapture`, the test prints the archive twice. Each document follows its context's choices
+The test asserts the archive twice, once per context. Each document follows its context's choices
 at every level of nesting; the first message shows the difference. From `AppA`:
 
 ```json
@@ -166,11 +168,6 @@ which wires the same choices through `UseDelegate` tables.
 
 ## Known issues
 
-- **The test asserts nothing.** It prints both documents, so a regression in any provider it runs
-  would still pass as long as serialization succeeded. It is the only test that runs
-  `SerializeDeref`, `SerializeIterator`, `SerializeBase64`, `SerializeRfc3339Date`, and
-  `SerializeTimestamp`, so none of them has an asserted output; see
-  [testing.md](../testing.md#what-is-exercised).
 - **The shared entries are repeated.** The library publishes no namespace of defaults, so the two
   tables spell out every entry they share; see
   [wiring a context](../guides/wiring-a-context.md#share-wiring-between-contexts) and

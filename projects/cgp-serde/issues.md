@@ -40,7 +40,7 @@ the plain `"42"` fails the same way. Re-entering for an owned `String` would acc
 
 ### Records and sequences do not declare their length
 
-`SerializeFields` calls `serialize_map(None)` and `SerializeIterator` calls `serialize_seq(None)`,
+`SerializeRecordFields` calls `serialize_map(None)` and `SerializeIterator` calls `serialize_seq(None)`,
 even when the length is known, so a format that must write a length before the elements rejects
 them. `postcard::to_allocvec` fails with `SerializeSeqLengthUnknown` on any struct or collection.
 See [records](reference/records.md#known-issues) and
@@ -78,8 +78,8 @@ A missing feature is behavior the library does not attempt. Each is documented w
 - **Performance evidence**: no benchmark has been run. The likeliest cost is in
   `DeserializeRecordFields`, which allocates each key as a `String` and compares it against each
   field name in turn.
-- **Documentation in the code**: no public item has a doc comment, so the docs.rs pages list items
-  without explanation.
+- **Documentation in the code**: only `SerializeRecordFields` and `DeserializeRecordFields` have doc
+  comments, so the docs.rs pages list the other items without explanation.
 
 ## Housekeeping
 
@@ -93,14 +93,12 @@ Housekeeping items affect neither behavior nor features but mislead a reader or 
   `https://github.com/contextgeneric/cgp`, so all five published crates point at the CGP repository
   rather than cgp-serde's.
 - **Crate descriptions.** `cgp-serde-alloc` and `cgp-serde-typed-arena` share the description
-  "Arena-based deserialization using cgp-serde", although only the second involves an arena, and the
-  test crate repeats the core crate's description.
+  "Arena-based deserialization using cgp-serde", although only the second involves an arena.
 - **Version numbers.** The `v0.8.0` branch still carries version 0.2.0 in every manifest, the same
   number as the published crates built on `cgp` 0.7.0.
 - **The repository README.** It shows the component definitions in the pre-0.8 attribute syntax and
   defers everything else to the announcement post.
-- **Tests that assert nothing.** `messages.rs` prints both applications' JSON without checking it,
-  and seven providers are never run; see [testing.md](testing.md).
+- **Untested providers.** Seven providers are never run by any test; see [testing.md](testing.md).
 - **Dead wiring and a redundant check in the arena tests.** `arena.rs` opens `TryComputerComponent`
   and wires `SerializeJson` and `DeserializeJson<T>`, but calls `deserialize_json_string`, which
   does not use them; a probe without those entries built and passed. The `SerializeJson` entry could

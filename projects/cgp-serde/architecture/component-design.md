@@ -57,13 +57,13 @@ The table pairs every serializing provider with its deserializing counterpart:
 | `TrySerializeFrom<T>` | `TrySerializeFrom<T>` | one struct, fallible |
 | `SerializeDeref` | none | a reference is deserialized by `DeserializeAndAllocate` |
 | `SerializeIterator` | `DeserializeExtend` | separate structs: iterate by reference, extend by value |
-| `SerializeFields` | `DeserializeRecordFields` | separate structs: read fields, fill a builder |
+| `SerializeRecordFields` | `DeserializeRecordFields` | separate structs: read fields, fill a builder |
 | none | `DeserializeDefault<P>` | deserialize-only, higher-order |
 | `SerializeHex`, `SerializeBase64`, `SerializeRfc3339Date`, `SerializeTimestamp` | the same structs | one struct each |
 | `SerializeToJsonString` | `DeserializeFromJsonString`, `DeserializeFromJsonReader` | separate structs over `TryComputer` |
 
 The separate pairs differ because their two directions use different machinery rather than different
-decisions. `SerializeFields` reads each field through `HasField`, while `DeserializeRecordFields`
+decisions. `SerializeRecordFields` reads each field through `HasField`, while `DeserializeRecordFields`
 builds the struct through CGP's optional builder; `SerializeIterator` borrows the collection and
 walks it, while `DeserializeExtend` starts from a default and extends it. Each direction is
 therefore a different provider rather than one decision implemented twice, and each gets a name for

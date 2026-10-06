@@ -2,7 +2,7 @@
 
 The record providers serialize and deserialize a struct generically, by walking its fields, so a
 struct needs no serialization-specific derive and no dependency on `serde` or `cgp-serde`.
-`SerializeFields` writes a struct as a map and `DeserializeRecordFields` reads one back. They are
+`SerializeRecordFields` writes a struct as a map and `DeserializeRecordFields` reads one back. They are
 separate structs rather than one provider serving both directions, because they walk the struct
 through different CGP traits.
 
@@ -24,15 +24,17 @@ implement `StaticString`, so wiring one to either provider fails to compile. No 
 library handles an enum generically; an enum is encoded only through `UseSerde`, from its own Serde
 impl.
 
-## `SerializeFields`
+## `SerializeRecordFields`
 
-`SerializeFields` serializes a struct as a map from each field's name to its value, serializing
+`SerializeRecordFields` serializes a struct as a map from each field's name to its value, serializing
 every value through the context.
 
 ### Definition
 
 ```rust
-#[cgp_impl(new SerializeFields)]
+pub struct SerializeRecordFields;
+
+#[cgp_impl(SerializeRecordFields)]
 impl<Value> ValueSerializer<Value>
 where
     Value: HasFields,
@@ -128,7 +130,7 @@ entry for `Vec<&'a Coord>`, and the arena example wires the `&'a Coord` items it
 
 ### Pairing
 
-The serializing counterpart is [`SerializeFields`](#serializefields).
+The serializing counterpart is [`SerializeRecordFields`](#serializefields).
 
 ### Known issues
 
@@ -171,7 +173,7 @@ delegate_components! {
         @ValueSerializerComponent.u64: UseSerde,
         @ValueSerializerComponent.String: SerializeString,
         @ValueSerializerComponent.Vec<u8>: SerializeHex,
-        @ValueSerializerComponent.Payload: SerializeFields,
+        @ValueSerializerComponent.Payload: SerializeRecordFields,
 
         @ValueDeserializerComponent.[u64, String]: UseSerde,
         @ValueDeserializerComponent.Vec<u8>: SerializeHex,
@@ -211,7 +213,7 @@ value. The providers come from `cgp_serde::providers`, except `SerializeHex`, wh
 
 ## Related documents
 
-- [Reflection](../../../related-work/reflection.md) compares `SerializeFields` with Serde's derive,
+- [Reflection](../../../related-work/reflection.md) compares `SerializeRecordFields` with Serde's derive,
   facet, and Rust's reflection proposal, including the observation that the field-list recursion
   still monomorphizes per struct, so it saves authoring duplication rather than binary size.
 - [Re-entrant providers](../architecture/reentrant-providers.md) explains the adapter both providers
@@ -220,7 +222,7 @@ value. The providers come from `cgp_serde::providers`, except `SerializeHex`, wh
 ## Source
 
 - [`crates/cgp-serde/src/providers/fields.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/fields.rs):
-  `SerializeFields` and `FieldsSerializer`.
+  `SerializeRecordFields` and `FieldsSerializer`.
 - [`crates/cgp-serde/src/providers/record.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/record.rs):
   `DeserializeRecordFields`, `MapVisitor`, and `HandleMapEntry`.
 
@@ -228,4 +230,4 @@ value. The providers come from `cgp_serde::providers`, except `SerializeHex`, wh
 
 The two provider pages in the `reference/providers/` pages of the
 [cgp-serde project section](../../../website/projects/cgp-serde.md), and the rustdoc for
-`SerializeFields` and `DeserializeRecordFields`.
+`SerializeRecordFields` and `DeserializeRecordFields`.

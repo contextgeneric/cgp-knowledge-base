@@ -40,7 +40,7 @@ impl is used serializes its fields through that impl, not through the context, s
 other choices do not reach inside it. A struct deriving Serde's `Serialize` with a `data: Vec<u8>`
 field, wired to `UseSerde` in a context that wires `Vec<u8>` to `SerializeHex`, still serializes
 `data` as the array `[1,2]`. A type whose fields should follow the context's choices is wired to
-[`SerializeFields`](records.md) instead.
+[`SerializeRecordFields`](records.md) instead.
 
 `UseSerde` is also the only way the library encodes an enum, since no provider handles an enum
 generically; the enum must implement Serde's traits itself.

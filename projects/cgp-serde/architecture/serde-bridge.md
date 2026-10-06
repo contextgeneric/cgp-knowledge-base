@@ -63,7 +63,7 @@ comes straight back.
 Replacing the data-type layer means the behaviors Serde's derive provides are not automatically
 present. Two of them affect which formats accept cgp-serde's output:
 
-- **Records are written as maps.** [`SerializeFields`](../reference/records.md) calls
+- **Records are written as maps.** [`SerializeRecordFields`](../reference/records.md) calls
   `serialize_map` where a derived impl calls `serialize_struct`, so a format with distinct struct
   syntax, such as RON, shows a map.
 - **Lengths are not declared.** The record and [collection](../reference/collections.md) providers

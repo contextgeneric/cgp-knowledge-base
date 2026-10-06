@@ -45,11 +45,11 @@ each table. The library uses this for every encoding whose two directions are on
 `UseSerde`, `SerializeString`, `SerializeBytes`, `SerializeFrom`, `TrySerializeFrom`, and all four
 encodings in `cgp-serde-extra`. Structs named `Serialize…` may implement both directions, while
 structs named `Deserialize…` implement only deserialization. Where the two directions need different
-mechanisms, they are separate structs: `SerializeFields` pairs with `DeserializeRecordFields`, and
+mechanisms, they are separate structs: `SerializeRecordFields` pairs with `DeserializeRecordFields`, and
 `SerializeIterator` with `DeserializeExtend`. The full pairing is in
 [component-design.md](component-design.md#one-struct-both-directions).
 
-**A struct needs no serialization-specific derive.** `SerializeFields` walks a struct's field list
+**A struct needs no serialization-specific derive.** `SerializeRecordFields` walks a struct's field list
 through [`HasFields`](../../../cgp/reference/traits/has_fields.md), and `DeserializeRecordFields`
 fills the struct through CGP's optional builder. Both depend only on derives from `cgp`: serializing
 needs `HasFields` and `HasField`, deserializing needs `HasFields` and `BuildField`, and `CgpData`

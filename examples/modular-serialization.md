@@ -147,7 +147,7 @@ the same shape, as [writing a provider](../projects/cgp-serde/guides/writing-a-p
 Two recursive providers handle composite values by serializing each part through the context, so
 customization reaches arbitrarily deep without any provider knowing the concrete shape.
 `SerializeIterator` serializes any iterable as a sequence, asking the context how to serialize each
-item, and `SerializeFields` serializes any struct as a map by walking its fields:
+item, and `SerializeRecordFields` serializes any struct as a map by walking its fields:
 
 ```rust
 #[cgp_impl(new SerializeIterator)]
@@ -157,7 +157,9 @@ where
     Self: for<'a> CanSerializeValue<<&'a Value as IntoIterator>::Item>,
 { ... }
 
-#[cgp_impl(new SerializeFields)]
+pub struct SerializeRecordFields;
+
+#[cgp_impl(SerializeRecordFields)]
 impl<Value> ValueSerializer<Value>
 where
     Value: HasFields,
@@ -168,7 +170,7 @@ where
 Each item and each field is handed to Serde wrapped with the context in a `SerializeWithContext`, so
 it re-enters the context's wiring;
 [re-entrant providers](../projects/cgp-serde/architecture/reentrant-providers.md) explains the
-mechanism. `SerializeFields` is available because the struct derives
+mechanism. `SerializeRecordFields` is available because the struct derives
 [`CgpData`](../cgp/reference/derives/derive_cgp_data.md) and so exposes its fields through
 [`HasFields`](../cgp/reference/traits/has_fields.md). This is the payoff for the orphan rule: a data
 type needs no serialization-specific derive and no dependency on `serde` or cgp-serde at all, so a
@@ -221,7 +223,7 @@ section below.
 
 ```rust
 use cgp_serde::components::ValueSerializerComponent;
-use cgp_serde::providers::{SerializeDeref, SerializeFields, SerializeIterator, UseSerde};
+use cgp_serde::providers::{SerializeDeref, SerializeRecordFields, SerializeIterator, UseSerde};
 use cgp_serde_extra::providers::{SerializeHex, SerializeRfc3339Date};
 
 pub struct AppA;
@@ -251,7 +253,7 @@ delegate_components! {
             MessagesByTopic,
             EncryptedMessage,
         ]:
-            SerializeFields,
+            SerializeRecordFields,
     }
 }
 ```
@@ -296,7 +298,7 @@ delegate_components! {
             MessagesByTopic,
             EncryptedMessage,
         ]:
-            SerializeFields,
+            SerializeRecordFields,
     }
 }
 ```

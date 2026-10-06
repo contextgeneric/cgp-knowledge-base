@@ -14,7 +14,7 @@ runnable examples, and each is documented as one in [examples/](examples/README.
 | File | Scenario | Runtime assertion | Compile-time checks |
 |---|---|---|---|
 | `basic.rs` | A `Payload` round-tripped through JSON by the `try_compute` JSON providers, with bytes as hex | the exact JSON string, and equality after the round trip | serializer and deserializer for all four value types |
-| `messages.rs` | The two-application demo: `AppA` with hex and RFC 3339, `AppB` with base64 and timestamps | none; both outputs are printed | serializer for all seven value types, for each context |
+| `messages.rs` | The two-application demo: `AppA` with hex and RFC 3339, `AppB` with base64 and timestamps | both pretty-printed JSON documents, exactly | serializer for all seven value types, for each context |
 | `arena.rs` | Deserializing a `Payload<'a>` into an arena through the layered allocation crates | equality with the expected value | the arena getter, and the deserializer for four value types |
 | `arena_simplified.rs` | The same with a test-local getter and `DeserializeAndAllocate`, as in the announcement post | equality with the expected value | the deserializer for four value types, plus a second table repeating one of them |
 
@@ -36,12 +36,11 @@ already covers. The [arena](examples/arena.md#known-issues) and
 The tests run these providers, in the directions listed:
 
 - **Asserted output**: `UseSerde`, `SerializeString` (serializing), `SerializeHex`,
-  `SerializeFields`, `DeserializeRecordFields`, `DeserializeExtend`, `DeserializeAndAllocate` in
-  both forms, `AllocateWithArena` with `HasArena` wired through `UseField`, `SerializeToJsonString`,
-  `DeserializeFromJsonString` over `DeserializeFromJsonReader`, and `deserialize_json_string`.
-- **Run but not asserted**: `SerializeDeref`, `SerializeIterator`, and the serializing side of
-  `SerializeBase64`, `SerializeRfc3339Date`, and `SerializeTimestamp`, all in `messages.rs`. A
-  regression in any of them would still pass, as long as the output serialized at all.
+  `SerializeRecordFields`, `DeserializeRecordFields`, `SerializeDeref`, `SerializeIterator`,
+  `DeserializeExtend`, the serializing side of `SerializeBase64`, `SerializeRfc3339Date`, and
+  `SerializeTimestamp`, `DeserializeAndAllocate` in both forms, `AllocateWithArena` with `HasArena`
+  wired through `UseField`, `SerializeToJsonString`, `DeserializeFromJsonString` over
+  `DeserializeFromJsonReader`, and `deserialize_json_string`.
 
 ## What is untested
 

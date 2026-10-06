@@ -48,7 +48,7 @@ The first two need the context's error components, and the seed needs none; see
 **Self-describing text formats work with the library as it stands; length-prefixed binary formats do
 not yet.** Two properties of the output decide it:
 
-- **Records are maps.** Structs serialized through `SerializeFields` arrive at the format as maps,
+- **Records are maps.** Structs serialized through `SerializeRecordFields` arrive at the format as maps,
   so JSON is unaffected and RON writes `{"a":1}` rather than its struct syntax. Deserializing
   expects a map in return.
 - **Lengths are unknown.** Records and collections are started without a length, so postcard rejects

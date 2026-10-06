@@ -53,7 +53,7 @@ them describe the idea in place or say the page is still being written:
 The writing turned up several facts a later revision must respect:
 
 - **Every run and diagnostic was re-produced.** The four tests were run offline and passed, and
-  `messages` printed the two documents the pages quote. Each *Try a change* result, each diagnostic,
+  `messages` asserts the two documents the pages quote. Each *Try a change* result, each diagnostic,
   and each claim the pages add beyond the records was re-run in a probe crate at
   `~/.cache/cgp-probes/serde-probe`, whose sources are kept under `reports/probes/cgp-serde-pages/` in
   the workspace. The postcard claim is the one taken from the records alone, since the crate could
@@ -127,9 +127,10 @@ examples. The index should work on its own for a reader who reads nothing else.
 
 ### Examples
 
-One page per test in [examples/](../../projects/cgp-serde/examples/README.md), in its teaching
-order, with `examples/index.md` from that README. The tests are the repository's only runnable
-programs, and each page runs its test with `--nocapture` where the test prints.
+One page per example test in [examples/](../../projects/cgp-serde/examples/README.md), in its
+teaching order, with `examples/index.md` from that README. The four example tests are the
+repository's only runnable programs. Other tests get no pages: the examples are to move
+out of the test crate into example programs, and the pages will follow them then.
 
 - `basic` — one struct round-tripped through JSON by the JSON providers, with its bytes as hex and
   errors through the anyhow backend. The pattern: serialization as a wired operation, with the error
