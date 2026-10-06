@@ -53,9 +53,12 @@ through the [export markers](https://github.com/contextgeneric/cgp/blob/main/cra
 parses and silently discards a visibility, since it is meant for a declaration where the compiler
 reports a misplaced `pub` later, and it accepts a discriminant. `parse_variant` therefore reads the
 variant itself: it rejects any attribute with `reject_non_empty_attributes`, rejects a `pub` before
-it can be discarded, reads the name, and rejects a `=` discriminant after the fields. The fields are
-read with `syn`'s `FieldsNamed` and `FieldsUnnamed` parsers and checked with the same
-`validate_shape_fields` a `Struct!` body uses, so a field rule holds identically inside a variant.
+it can be discarded, reads the name, and rejects a `=` discriminant after the fields. The fields
+inside the variant's braces or parentheses are read by `parse_variant_fields`, the loop that reads a
+`Struct!` body with the form fixed by the delimiter instead of detected. Each entry therefore goes
+through the same keyword and literal checks and the same `validate_shape_fields`, so a field rule
+and its message hold identically inside a variant. An entry whose form contradicts the delimiter,
+such as `V { u8 }` or `V(a: u8)`, is rejected with a message naming the delimiter's form.
 
 **A variant's delimiter is visible, so it keeps its Rust meaning.** Unlike the `Struct!` invocation
 delimiter, the parentheses or braces after a variant name are tokens inside the body. Braces
@@ -107,10 +110,12 @@ pins the variant parsing and every rejection.
   [shape_macros/struct_hygiene.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/shape_macros/struct_hygiene.rs):
   variants forwarded through `macro_rules!` fragments, and `Enum!` with no imports.
 - [shape_macro_parsing/enum_variants.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/shape_macro_parsing/enum_variants.rs):
-  calls the `EnumType` parser directly and asserts each variant keeps its declared shape.
+  calls the `EnumType` parser directly and asserts each variant keeps its declared shape, an
+  empty field list in parentheses or braces included.
 - [parser_rejections/enum_macro.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/enum_macro.rs):
   pins the message for a variant attribute, a `pub` variant, a discriminant, a duplicate variant,
-  and the field rejections inside named and positional variants.
+  the field rejections inside named and positional variants (a literal and a keyword name
+  included), and a field form that contradicts the variant's delimiter.
 
 ## Source
 

@@ -44,10 +44,10 @@ body, and that is the spelling cargo-cgp prints. An entry is named when it start
 identifier followed by a single `:`, so a path type such as `core::marker::PhantomData<u8>` is a
 positional field.
 
-A field name may be a raw identifier, and its tag is the name without the `r#`, as the derive tags
-it: `Struct! { r#type: u8 }` keys its field by `Symbol!("type")`. Either form accepts a trailing
-comma. Field types are ordinary Rust types, including generic parameters, references with
-lifetimes, and associated-type projections.
+A field name may be a raw identifier, and a name that is a keyword such as `type` must be written as
+one. Its tag is the name without the `r#`, as the derive tags it: `Struct! { r#type: u8 }` keys its
+field by `Symbol!("type")`. Either form accepts a trailing comma. Field types are ordinary Rust
+types, including generic parameters, references with lifetimes, and associated-type projections.
 
 The parts of a struct body that a shape has no use for are rejected at parse time with a spanned
 error:
@@ -57,6 +57,9 @@ error:
 - **An unnamed field:** the `_` field name.
 - **Duplicate names:** a field name given twice, comparing names without `r#`.
 - **Mixed forms:** a body with both `name: Type` entries and bare types.
+- **A keyword name:** a keyword written as a field name, as in `Struct! { type: u8 }`, with a
+  message suggesting `r#type`. The four keywords with no raw form (`self`, `Self`, `super`, and
+  `crate`) are rejected as field names outright.
 - **A value:** a literal where a type belongs, as in `Struct! { a: 1 }`.
 
 ## Syntax Grammar

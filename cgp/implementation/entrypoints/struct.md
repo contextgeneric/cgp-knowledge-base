@@ -74,23 +74,34 @@ a default delimiter token. Those parsers accept more than a shape can use, so
 `delegate_components!` also uses), any visibility, the `_` name (which `parse_named` accepts as part
 of its `_: struct { … }` anonymous-field syntax), and duplicate names compared without `r#`.
 
-**A value in a type position gets its own message.** On the same fork, after the field name and its
-colon for a named entry, a literal token reports
-`expected a type: a type-level shape lists field types, not values`. Without the check,
-`Struct! { a: 1 }` would fail inside `syn`'s type parser with a message about the expected type
-tokens, which says nothing about the likely mistake of reading `Struct!` as a struct literal.
+**Two likely mistakes get their own messages, caught on the same fork.** Without these checks,
+both would fail inside `syn`'s type parser with a message listing every token a type may start with,
+which names neither mistake:
+
+- **A keyword as a field name.** `peek(Ident)` does not match a keyword, so `Struct! { type: u8 }`
+  would be classified as positional. A keyword (peeked with `Ident::peek_any`) followed by a single
+  `:` therefore reports `` `type` is a keyword: write the field name as `r#type` ``, or
+  `` `self` cannot be a field name `` for the four keywords with no raw form (`self`, `Self`,
+  `super`, `crate`).
+- **A value in a type position.** After the field name and its colon for a named entry, a literal
+  token reports `expected a type: a type-level shape lists field types, not values`, the likely
+  mistake of reading `Struct! { a: 1 }` as a struct literal.
 
 **The newtype and empty rules come from the encoder.** `item_fields_to_product_type` returns a
 single positional field's type unwrapped and folds an empty field list to `Nil`, so `Struct!(T)` is
 `T` and `Struct! {}` is `Nil`, exactly as for a derived struct. An empty body is held as
 `Fields::Unit`, which the encoder treats like any empty list.
 
-**Spans follow the derive.** A named field's tag is built with `Symbol::from_ident`, so its
-`Symbol`/`Chars` tokens carry the field name's span, and each field type keeps its own tokens, so a
-type error inside a field lands on the type the user wrote. The `Cons` and `Field` wrappers are
-built with `quote!` and sit at the invocation's span. The expansion is a single type rather than an
-impl, so the [error-span](../README.md#spans-aim-generated-items-at-the-token-the-user-wrote)
-re-spanning that item-emitting macros need does not apply.
+**Spans follow the derive.** A named field's tag is built with `Symbol::from_ident`, whose
+`quote_spanned!` gives the tag's angle brackets, commas, character literals, and length literal the
+field name's span. The `Symbol`, `Chars`, and `Nil` paths themselves come from the export markers,
+which emit them at the call site. No resolvable reference therefore lands on the field name's
+range, so go-to-definition on a field name should not offer those types, though this has not been
+checked in an editor. Each field type keeps its own tokens, so a type error inside a field lands on
+the type the user wrote. The `Cons` and `Field` wrappers are built with `quote!` and sit at the
+invocation's span. The expansion is a single type rather than an impl, so the
+[error-span](../README.md#spans-aim-generated-items-at-the-token-the-user-wrote) re-spanning that
+item-emitting macros need does not apply.
 
 ## Known issues
 
@@ -143,8 +154,9 @@ pins the form detection and every rejection.
   calls the `StructType` parser directly and asserts the form each body is read as, including path
   types beginning with `::` or `a::`.
 - [parser_rejections/struct_macro.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/struct_macro.rs):
-  pins the message for an attribute, a doc comment, each visibility, the `_` name, duplicate and
-  raw-duplicate names, both orders of mixed forms, and a literal in a type position.
+  pins the message for an attribute, a doc comment, each visibility, the `_` name, a keyword name
+  (with and without a raw form), duplicate and raw-duplicate names, both orders of mixed forms, and
+  a literal in a type position.
 
 ## Source
 

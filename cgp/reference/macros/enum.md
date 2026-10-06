@@ -49,7 +49,9 @@ error:
 - **Discriminants:** a `= value` after a variant.
 - **Duplicate names:** a variant name given twice.
 - **Field problems:** every rule [`Struct!`](struct.md#syntax) applies to its fields, applied to
-  each variant's fields.
+  each variant's fields with the same messages.
+- **A form the delimiter contradicts:** a bare type inside a variant's braces, as in `V { u8 }`, or
+  a `name: Type` entry inside its parentheses, as in `V(a: u8)`.
 
 ## Syntax Grammar
 
