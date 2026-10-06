@@ -18,6 +18,11 @@ such as `T: FromFields<Fields = Enum! { … }>`, an impl over a shape, or a wiri
 the form [`cargo-cgp`](../cargo-cgp.md) prints a variant list in, so a shape the tool shows can be
 copied back into code. Like [`Struct!`](struct.md), it builds a type, never a value.
 
+Reach for it only where code names a shape. An enum the author owns gets its shape from
+`#[derive(HasFields)]` or `#[derive(CgpData)]`, and restating it as an `Enum!` beside it is a second
+copy that can drift. A choice among types that are not named variants stays a [`Sum!`](sum.md), and
+a closed variant set consumed in one place is clearer as a plain `enum` with a `match`.
+
 ## Syntax
 
 The body is the inside of an enum declaration. Each variant takes one of the three Rust variant

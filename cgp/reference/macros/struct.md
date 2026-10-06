@@ -21,6 +21,12 @@ diagnostic and in `cargo cgp expand`, so a shape the tool shows can be copied ba
 `Struct!` builds a type, never a value. A value of the shape is built with
 [`product!`](product.md) or taken from a struct with `ToFields`.
 
+Reach for it only where code names a shape. A struct the author owns gets its shape from
+`#[derive(HasFields)]`, and restating that shape as a `Struct!` beside it is a second copy that can
+drift. An enum's shape is [`Enum!`](enum.md), a list that is not a set of fields (such as a handler
+pipeline) stays a [`Product!`](product.md), and a fixed group of values that no generic code walks
+by name is clearer as a plain struct or tuple.
+
 ## Syntax
 
 The body is the inside of a struct declaration, in one of two forms:

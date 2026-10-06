@@ -678,7 +678,8 @@ it stale.
 - [error-pipeline.md](cargo-cgp/implementation/error-pipeline.md) — how the stages fit together to
   turn raw diagnostics into readable CGP errors, all inside the driver.
 - [error-processing.md](cargo-cgp/implementation/error-processing.md) — the rustc-free crate holding
-  the post-processing transforms, the wiring rewrite, the diagnosis model, and the wording.
+  the post-processing transforms, the shared `Struct!`/`Enum!` shape spellings, the wiring rewrite,
+  the diagnosis model, and the wording.
 - [typed-root-cause-resolution.md](cargo-cgp/implementation/typed-root-cause-resolution.md) — the
   pipeline overview for resolving a check failure's root cause by asking the trait solver.
 - [typed-resolution-anchors.md](cargo-cgp/implementation/typed-resolution-anchors.md) — the

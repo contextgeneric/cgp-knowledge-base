@@ -284,8 +284,12 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   the exact-match cases `resugar_symbol` must skip, the `PathCons` → `Path!` resugaring (symbol,
   type, and primitive segments, the open `_` tail folded to a `.*` wildcard, and the
   non-round-trippable cases `resugar_path` must skip), the single-field (inline and separate-note
-  landmark) versus missing-derive branches of `rewrite_missing_fields`, and the
-  `postprocess_message` chain.
+  landmark) versus missing-derive branches of `rewrite_missing_fields`, the `Product!`/`Sum!` folds
+  with their `Struct!`/`Enum!` shapes and declines, and the `postprocess_message` chain.
+- [`crates/cargo-cgp-error-processing/tests/shape.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/shape.rs):
+  the shared `Struct!`/`Enum!` spelling rules on their own: writable, raw, and unwritable names,
+  the named and tuple struct forms and every product that declines, each variant spelling, and the
+  enum declines.
 - [`crates/cargo-cgp-error-processing/tests/rewrite.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/rewrite.rs):
   the wiring-message rewrite over a hand-built name map (see [The driver](driver.md#tests)).
 - [`crates/cargo-cgp-error-processing/tests/diagnosis.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/diagnosis.rs):
@@ -351,6 +355,10 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   by its `wrap` parameter), `resugar_list.rs` (`resugar_lists`, the `Product!`/`Sum!` and
   `Struct!`/`Enum!` resugarer), and `missing_field.rs` (`rewrite_missing_fields`,
   `context_has_hasfield_impls`, and the single-field-vs-missing-derive classification).
+- [`crates/cargo-cgp-error-processing/src/shape/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/shape):
+  the shared shape spellings: `shape_name.rs` (which names a body can write, and which only raw),
+  `struct_shape.rs` (`ShapeTag` and `render_struct_shape`), and `enum_shape.rs`
+  (`render_enum_shape` and `render_variant`).
 - [`crates/cargo-cgp-error-processing/src/rewrite/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/rewrite):
   the wiring-message rewrite and `ComponentNameMap` the driver drives: `mod.rs` (re-exports),
   `message.rs` (`rewrite_message` and the note/header forms: the code-stamping `rewrite_trait_bound`

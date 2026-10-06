@@ -531,6 +531,9 @@ compiler, and the UI suite pins the typed pass end to end.
   and
   [`enum_variant_chain`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/missing-wiring/enum_variant_chain.rs):
   the sum list as a plain `Sum![…]` list of bare types, and as an `Enum! { … }` of named variants.
+- [`fallback_shape_resugar`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/resolution/fallback_shape_resugar.rs):
+  the text fold on rustc's own rendering of a declined diagnostic: a tuple shape read from
+  `Index<N>` tags, a named shape with a raw keyword field, and an `Enum!` in each variant spelling.
 - [`enum_variant_shapes_chain`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/missing-wiring/enum_variant_shapes_chain.rs):
   the typed fold of a variant list using every variant shape, each hop printing the remaining list
   with `Empty`, `Rect { w: f64 }`, `Pair(u8, u16)`, and `Circle(f64)` spellings.

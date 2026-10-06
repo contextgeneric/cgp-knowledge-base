@@ -110,6 +110,8 @@ These constructs are the ones `Index` relates to:
   [`#[derive(HasField)]`](../derives/derive_has_field.md): single-field access keyed by the tag.
 - [`Field`](field.md) and [`HasFields`](../traits/has_fields.md): where the tag names each entry of
   a multi-field tuple struct's list.
+- [`Struct!`](../macros/struct.md): writes such a list as a tuple struct body, so `Struct!(u64, String)`
+  keys its entries `Index<0>` and `Index<1>`.
 
 ## Source
 
