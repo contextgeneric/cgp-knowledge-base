@@ -66,10 +66,10 @@ The layout is worked through in [architecture/crate-layout.md](architecture/crat
 - **`cgp-serde-alloc`**: an allocation component and the provider that deserializes a borrowed value
   into it. Adds no external dependency.
 - **`cgp-serde-typed-arena`**: an implementation of the allocation component over `typed-arena`.
-- **`cgp-serde-examples`**: four runnable examples, unpublished: a JSON round trip, the
-  two-application serialization demo, and the arena deserialization demo in its layered and
-  simplified forms. Each runs with `cargo run --example` and is documented in
-  [examples/](examples/README.md).
+- **`cgp-serde-examples`**: five runnable examples, unpublished: a JSON round trip, the
+  two-application serialization demo, chat events serialized and deserialized by two applications,
+  and the arena deserialization demo in its layered and simplified forms. Each runs with
+  `cargo run --example` and is documented in [examples/](examples/README.md).
 - **`cgp-serde-tests`**: the test crate, unpublished: provider suites that test the record and
   variant providers in depth, and compile-fail tests; see [testing.md](testing.md).
 
@@ -167,6 +167,8 @@ ideas every provider shares, then use the reference to look up a provider.
     providers, with its bytes as hex.
   - [messages.md](examples/messages.md): the two-application demo: the same nested archive encoded
     two ways by contexts that differ in three entries.
+  - [events.md](examples/events.md): chat events, an enum of record payloads, serialized and
+    deserialized by two applications, and each one's JSON misread by the other.
   - [arena-simplified.md](examples/arena-simplified.md): borrowed values deserialized into a
     context-supplied arena with a local getter and deserializer.
   - [arena.md](examples/arena.md): the same through the layered allocation crates, with the
@@ -183,7 +185,7 @@ These documents are the source for the project's public writing, and each one na
 They feed three artifacts:
 
 - **The cgp-serde section of the website's Projects pages**, recorded in
-  [website/projects/cgp-serde.md](../../website/projects/cgp-serde.md), with 47 of its 52 pages
+  [website/projects/cgp-serde.md](../../website/projects/cgp-serde.md), with 48 of its 53 pages
   written. Each document here feeds the public page of the same name: the examples become short
   tutorials, the architecture documents, guides, and comparison are ported one to one, and each
   reference family document is split into one page per construct. The limitations page is written

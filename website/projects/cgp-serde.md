@@ -16,20 +16,20 @@ demonstration of the coherence bypass on a trait every Rust developer already kn
 - **Verified against** — `cgp-serde` `v0.8.0` at commit `d89ee05`, with `cgp` `main` at `adc616c`
   through the workspace's patch, and at `bcc9fcc` for the `SerializeRecordFields` rename and the two
   variant provider pages, and `cargo-cgp` built from its source at commit `b6a6323`
-- **Status** — Draft: 47 of about 52 pages written, listed in [What is written](#what-is-written);
+- **Status** — Draft: 48 of about 53 pages written, listed in [What is written](#what-is-written);
   the two arena examples and three component pages wait on DC3
 - **How it was made** — written by an agent from the project section; level one of the four in
   [ai-disclosure.md](../../communication-strategy/ai-disclosure.md)
 
 ## What is written
 
-**Forty-seven cgp-serde pages are written, all the pages that DC3 does not block**, and the section
+**Forty-eight cgp-serde pages are written, all the pages that DC3 does not block**, and the section
 index gained cgp-serde in its project list, five rows in its pattern table, and a line in its
 evaluator route. Resources links the section beside the crate. `yarn build` passes with them, so
 every link and anchor they carry resolves. They are:
 
 - **Project** — `cgp-serde/index.md`.
-- **Examples** — the index, `basic`, and `messages`.
+- **Examples** — the index, `basic`, `messages`, and `events`.
 - **Architecture** — the index, `serde-bridge`, `component-design`, `reentrant-providers`,
   `derive-free-records`, `context-services`, and `crate-layout`.
 - **Guides** — `wiring-a-context`, `writing-a-provider`, `formats`, and `debugging-wiring`, under a
@@ -53,8 +53,10 @@ them describe the idea in place or say the page is still being written:
 
 The writing turned up several facts a later revision must respect:
 
-- **Every run and diagnostic was re-produced.** The four examples' tests were run offline and
-  passed, and `messages` asserts the two documents the pages quote. Each *Try a change* result, each
+- **Every run and diagnostic was re-produced.** The examples' tests were run offline and
+  passed, and `messages` and `events` assert the documents the pages quote. The `events` page's
+  *Try a change* diagnostic came from `cargo cgp check` on a copy of the example at
+  `~/.cache/cgp-probes/events`. Each *Try a change* result, each
   diagnostic, and each claim the pages add beyond the records was re-run in a probe crate at
   `~/.cache/cgp-probes/serde-probe`, whose sources are kept under `reports/probes/cgp-serde-pages/`
   in the workspace. The postcard claim is the one taken from the records alone, since the crate
@@ -122,8 +124,8 @@ not list the features it lacks; those are records in the project's `issues.md`.
 
 ## The pages
 
-The index, four example pages and their index, 7 architecture pages, 4 guides, 33 reference pages
-with the reference index, the comparison, and the limitations page: 52 in all, of which 47 are
+The index, five example pages and their index, 7 architecture pages, 4 guides, 33 reference pages
+with the reference index, the comparison, and the limitations page: 53 in all, of which 48 are
 written.
 
 ### Index
@@ -135,7 +137,7 @@ examples. The index should work on its own for a reader who reads nothing else.
 ### Examples
 
 One page per example in [examples/](../../projects/cgp-serde/examples/README.md), in its teaching
-order, with `examples/index.md` from that README. The four examples live in the
+order, with `examples/index.md` from that README. The five examples live in the
 `cgp-serde-examples` crate as Cargo example targets and are the repository's only runnable
 programs; the tests in `cgp-serde-tests` get no pages.
 
@@ -146,6 +148,11 @@ programs; the tests in `cgp-serde-tests` get no pages.
   two applications choosing overlapping providers for the same type without a coherence conflict,
   and the entries a traversal needs. Its record already carries the one *Try a change* this section
   most needs: removing the `i64` entry and reading the root cause `cargo cgp check` reports.
+- `events` — a batch of chat events, an enum whose variants hold records, written and read back by
+  a server and an inspector with different encodings, then read by each with the other's. The
+  pattern: the record and variant providers in both directions, and an encoding as a choice both
+  ends of a channel must share, shown by the silent base64 misread. Its *Try a change* removes the
+  `()` entry and reads the root cause.
 - `arena-simplified` — borrowed values deserialized into a context-supplied arena through a
   local getter and deserializer. The page presents itself as the smaller form, and says what
   the layered form adds.

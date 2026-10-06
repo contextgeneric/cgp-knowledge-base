@@ -881,7 +881,7 @@ it stale.
   the thirteen examples and about 75 construct pages planned, the comparison with shell scripts, and
   the release the install instructions need.
 - [cgp-serde.md](website/projects/cgp-serde.md) — the plan and record of the cgp-serde section: the
-  47 pages written and the revisions they were verified against, the two arena examples and three
+  48 pages written and the revisions they were verified against, the two arena examples and three
   component pages that wait on DC3, and DC3's attribute removals, arena-test cleanups, and
   recommended namespace.
 - [error-backends.md](website/projects/error-backends.md) — one walkthrough per crate, the shared design
@@ -1095,13 +1095,16 @@ it stale.
   format, the three `serde_json` deserialization entry points, which formats fit the output, and
   writing an entry point for another format.
 - [projects/cgp-serde/examples/README.md](projects/cgp-serde/examples/README.md) — the catalog of the
-  four examples in the `cgp-serde-examples` crate, with how to run each and its test, what it printed, the
+  five examples in the `cgp-serde-examples` crate, with how to run each and its test, what it printed, the
   environmental, parameter-targeted shape they all wire, and the boundary with the top-level example.
 - [projects/cgp-serde/examples/basic.md](projects/cgp-serde/examples/basic.md) — one struct
   round-tripped through JSON by the `TryComputer` JSON providers, with bytes as hex and anyhow errors.
 - [projects/cgp-serde/examples/messages.md](projects/cgp-serde/examples/messages.md) — the
   two-application demo, the three entries that differ, the entries the traversal needs, and the
   missing-`i64` diagnostic.
+- [projects/cgp-serde/examples/events.md](projects/cgp-serde/examples/events.md) — chat events,
+  an enum of record payloads, serialized and deserialized by a server and an inspector, and each
+  application's JSON read by the other: a fast failure one way, a silent base64 misread the other.
 - [projects/cgp-serde/examples/arena-simplified.md](projects/cgp-serde/examples/arena-simplified.md)
   — borrowed values allocated into a context-supplied arena by a local getter and deserializer;
   a redundant check, and a getter an implicit argument could replace.
@@ -1110,7 +1113,7 @@ it stale.
 - [projects/cgp-serde/serde-comparison.md](projects/cgp-serde/serde-comparison.md) — what cgp-serde
   keeps from Serde and adds to it, how Serde's idioms map onto wiring, what it lacks, and when plain
   Serde is the better choice.
-- [projects/cgp-serde/testing.md](projects/cgp-serde/testing.md) — the four examples' tests and their
+- [projects/cgp-serde/testing.md](projects/cgp-serde/testing.md) — the five examples' tests and their
   checks, the record and variant provider suites and their shared helpers, the `trybuild`
   compile-fail tests, the tests that pin a known issue, which providers are asserted or never
   exercised, and the untested failure paths.

@@ -2,11 +2,12 @@
 
 This directory documents each example in the repository's `cgp-serde-examples` crate: what the
 example does, the data types and context it defines, what running it produces, and which parts of
-the architecture and reference it demonstrates. The crate holds the four examples as Cargo example
+the architecture and reference it demonstrates. The crate holds the five examples as Cargo example
 targets under `examples/`, and has no library code of its own. Each example defines its own data
-types and contexts, and together they cover a JSON round trip, the two-application demo, and arena
-deserialization in two forms. The provider suites in `cgp-serde-tests` are tests rather than
-examples; [testing.md](../testing.md#the-provider-suites) records them.
+types and contexts, and together they cover a JSON round trip, the two-application demo, chat events
+written and read back by two applications, and arena deserialization in two forms. The provider
+suites in `cgp-serde-tests` are tests rather than examples;
+[testing.md](../testing.md#the-provider-suites) records them.
 
 ## How these differ from the top-level example
 
@@ -51,10 +52,11 @@ program outside the build. The table records what each did when run against the 
 |---|---|---|
 | [`basic`](basic.md) | the JSON and the value read back | passes; asserts both |
 | [`messages`](messages.md) | both applications' JSON | passes; asserts both documents |
+| [`events`](events.md) | both applications' JSON, and the error each gives reading the other's | passes; asserts both documents, both round trips, and both errors |
 | [`arena_simplified`](arena-simplified.md) | the deserialized value | passes; asserts it |
 | [`arena`](arena.md) | the deserialized value | passes; asserts it |
 
-`cargo test --workspace` runs all four tests, and each example compiles with no warnings.
+`cargo test --workspace` runs all five tests, and each example compiles with no warnings.
 
 ## The catalog
 
@@ -65,6 +67,8 @@ service from its context.
   providers, with its bytes as hex.
 - [messages.md](messages.md): the two-application demo: nested data encoded as hex and RFC 3339 by
   one context, and as base64 and Unix timestamps by another.
+- [events.md](events.md): a batch of chat events, an enum whose variants hold records, written and
+  read back by two applications, and each application's JSON read by the other.
 - [arena-simplified.md](arena-simplified.md): borrowed values deserialized into an arena the context
   supplies, with a getter and deserializer local to the example, as in the announcement post.
 - [arena.md](arena.md): the same through the layered allocation crates, where the allocator is a
@@ -72,12 +76,12 @@ service from its context.
 
 ## What the examples leave out
 
-The four examples exercise most of the library's providers but not all of them, so they are not a
+The five examples exercise most of the library's providers but not all of them, so they are not a
 tour of every provider. None of them runs the byte providers, `SerializeWithDisplay`,
 `DeserializeWithFromStr`, `SerializeFrom`, `TrySerializeFrom`, or `DeserializeDefault`, none uses a
-format other than JSON, and none feeds invalid input. [testing.md](../testing.md) records the
-coverage in full, including the provider suites, and the [reference](../reference/README.md)
-documents the rest of the providers from probes.
+format other than JSON, and only `events` feeds input a context rejects. [testing.md](../testing.md)
+records the coverage in full, including the provider suites, and the
+[reference](../reference/README.md) documents the rest of the providers from probes.
 
 ## Public material derived from this
 

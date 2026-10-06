@@ -1,6 +1,6 @@
 # Testing
 
-cgp-serde's tests are of three kinds, in two crates. The four **examples** in `cgp-serde-examples`
+cgp-serde's tests are of three kinds, in two crates. The five **examples** in `cgp-serde-examples`
 each wire one scenario end to end and carry their assertions as tests. The **provider suites** in
 `cgp-serde-tests` test one provider family in depth, one concern per file, against exact output.
 The **compile-fail tests**, also in `cgp-serde-tests`, pin wiring the providers reject, with its
@@ -19,6 +19,7 @@ documented in [examples/](examples/README.md):
 |---|---|---|---|
 | `basic.rs` | A `Payload` round-tripped through JSON by the `try_compute` JSON providers, with bytes as hex | the exact JSON string, and equality after the round trip | serializer and deserializer for all four value types |
 | `messages.rs` | The two-application demo: `AppA` with hex and RFC 3339, `AppB` with base64 and timestamps | both pretty-printed JSON documents, exactly | serializer for all seven value types, for each context |
+| `events.rs` | A batch of chat events, an enum of record payloads, written and read back by a server (base64, timestamps) and an inspector (hex, RFC 3339), then read by each with the other's choices | both JSON documents exactly, both round trips, and both mismatch errors | serializer and deserializer for every type each context reaches |
 | `arena.rs` | Deserializing a `Payload<'a>` into an arena through the layered allocation crates | equality with the expected value | the arena getter, and the deserializer for four value types |
 | `arena_simplified.rs` | The same with a local getter and `DeserializeAndAllocate`, as in the announcement post | equality with the expected value | the deserializer for four value types, plus a second table repeating one of them |
 
@@ -165,7 +166,7 @@ how they went unnoticed.
 ## Source
 
 - [`crates/cgp-serde-examples/examples/`](https://github.com/contextgeneric/cgp-serde/tree/v0.8.0/crates/cgp-serde-examples/examples):
-  the four examples.
+  the five examples.
 - [`crates/cgp-serde-tests/src/tests/`](https://github.com/contextgeneric/cgp-serde/tree/v0.8.0/crates/cgp-serde-tests/src/tests):
   the `records/` and `variants/` suites, and the `support/` helpers.
 - [`crates/cgp-serde-tests/tests/`](https://github.com/contextgeneric/cgp-serde/tree/v0.8.0/crates/cgp-serde-tests/tests):

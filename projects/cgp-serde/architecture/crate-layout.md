@@ -20,7 +20,7 @@ dependencies of its own providers and nothing else:
 
 Two more crates hold the examples and the tests, and both set `publish = false`, so publishing the
 workspace releases only the five library crates. The examples crate, `cgp-serde-examples`, has no
-library code: its four examples are Cargo example targets, and it depends on all five library
+library code: its five examples are Cargo example targets, and it depends on all five library
 crates, on `cgp-error-anyhow` for a concrete error type, and on `serde_json`, `chrono`, and
 `typed-arena`, all as dev-dependencies. The test crate, `cgp-serde-tests`, depends on `cgp-serde`
 and `cgp-serde-extra`, on Serde's `derive` feature, on `ron` and `postcard` for its format tests,
