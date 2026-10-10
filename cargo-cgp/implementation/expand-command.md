@@ -224,8 +224,8 @@ argument-and-environment contract between the two executables, alongside `CARGO_
 like that variable its spelling is declared independently in each crate's `config` module.
 
 **The driver must not set `-Zunpretty=expanded`, and the reason is the single most important fact in
-this document.** When `sess.opts.pretty` is set, `run_compiler` prints the crate and exits *before*
-any callback runs:
+this document.** When `sess.opts.pretty` is set, `compiler_entrypoint` prints the crate and exits
+*before* any callback runs:
 
 ```rust
 let mut krate = passes::parse(sess);
@@ -238,7 +238,7 @@ if callbacks.after_crate_root_parsing(compiler, &mut krate) == Compilation::Stop
 
 ([`rustc_driver_impl/src/lib.rs`](../../../external/rust/compiler/rustc_driver_impl/src/lib.rs).) So
 under that flag the driver never gets a turn, and could not resugar anything. It would have to
-capture rustc's output through `Config.output_file` and post-process it after `run_compiler`
+capture rustc's output through `Config.output_file` and post-process it after `compiler_entrypoint`
 returned, which also trips the `IgnoringOutDir` warning that `build_output_filenames` emits whenever
 an output file is set alongside cargo's `--out-dir`
 ([`rustc_interface/src/util.rs`](../../../external/rust/compiler/rustc_interface/src/util.rs)).
@@ -246,9 +246,9 @@ Doing the work in a callback instead avoids both, and lands the driver on precis
 deferred selectivity phase needs.
 
 So the driver hooks `after_expansion` and does the printing itself. By the time that callback runs,
-macro expansion has happened (`run_compiler` forces `tcx.resolver_for_lowering()` immediately before
-calling it, which is what drives expansion and name resolution), and the expanded AST is reachable
-as `&'tcx Steal<ast::Crate>` from that same query, which is exactly where rustc's own
+macro expansion has happened (`compiler_entrypoint` forces `tcx.resolver_for_lowering()` immediately
+before calling it, which is what drives expansion and name resolution), and the expanded AST is
+reachable as `&'tcx Steal<ast::Crate>` from that same query, which is exactly where rustc's own
 [`pretty.rs`](../../../external/rust/compiler/rustc_driver_impl/src/pretty.rs) reads it. The hook
 clones the crate out from behind the `Steal` (`ast::Crate` is `Clone`) and renders it with the
 compiler's own printer:
@@ -280,7 +280,10 @@ Two smaller decisions round out expand mode. **The injected diagnostic flags are
 never runs here; leaving them off keeps expand mode minimal and its cost predictable. **The CGP
 emitter stays installed**, so a genuine expansion-time error (a `delegate_components!` body that
 does not parse) is still rendered the way `check` would render it. Such an error aborts before the
-printing hook, so the driver writes no output and the front-end reports that nothing was produced.
+printing hook, so the driver writes no output and the front-end reports that nothing was produced. A
+type defined twice stops the compilation just as early: rustc treats a duplicate type definition as
+fatal once name resolution finishes, which is before `after_expansion` runs, so a crate with such a
+clash expands to nothing and the front-end reports that no expansion was produced.
 
 ## The rustc-free resugaring
 

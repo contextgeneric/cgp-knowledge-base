@@ -59,8 +59,8 @@ fixture that pins it.
   `[CGP-E004]`–`[CGP-E008]`, including a duplicate `cgp_namespace!` `@`-path as a `[CGP-E008]`
   naming both redirect targets
   ([`namespace_duplicate_path_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/namespace_duplicate_path_key.rs));
-  a duplicate provider *name* keeps only the `E0428` and the provider-trait conflict, its redundant
-  `IsProviderFor` half suppressed
+  a duplicate provider *name* is the lone `E0428`, since the compiler stops once it finds a type
+  defined twice
   ([`duplicate_provider_name`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/duplicate-keys/duplicate_provider_name.rs));
   and the `UseContext` cycle's `E0275` becomes a `[CGP-E010]` headline with a `help` naming the
   usual cause

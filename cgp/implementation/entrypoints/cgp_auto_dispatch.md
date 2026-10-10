@@ -165,9 +165,10 @@ the other impls in the crate, so the compiler's coherence check reports it.
 **Two dispatch traits in one module cannot share a method name.** Both the helper
 (`__compute_{method}__`) and the computer (`Compute{Method}`) are derived from the method identifier
 alone, so two `#[cgp_auto_dispatch]` traits declaring `fn area` in one module emit each twice and
-fail with `E0428` on both names and `E0119` on the computers' impls and wiring. The fix is to fold
-the trait identifier into both names, which renames the public `Compute{Method}` provider that code
-outside the macro wires by name, so it is deferred. The `cargo-cgp` fixture
+fail with `E0428` on both names. Stable `rustc` also reports `E0119` on the computers' impls and
+wiring; the nightly `cargo-cgp` pins stops after the `E0428`s. The fix is to fold the trait
+identifier into both names, which renames the public `Compute{Method}` provider that code outside
+the macro wires by name, so it is deferred. The `cargo-cgp` fixture
 [`acceptable/wiring/duplicate-keys/auto_dispatch_shared_method_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/duplicate-keys/auto_dispatch_shared_method_name.rs)
 pins it; the [conflicting wiring](../../errors/wiring/conflicting-wiring.md) class describes the
 errors.

@@ -185,12 +185,11 @@ overlapping keys) more than once, or when two namespace entries claim one key (w
 on the namespace's own lookup trait rather than `DelegateComponent`, and where an entry may come
 from a `cgp_namespace!` body, a provider's `#[default_impl(… in …)]`, or the inheritance blanket a
 `new Child: Parent` header emits). A generated pair's redundant `IsProviderFor` half is always
-suppressed, including the pair a duplicate *provider* definition produces, where the surviving
-conflict is on the provider trait itself, and the Rust code stays `E0119`. What differs, and why
-each has its own code, is the shape of the collision, and so the message and the fix. In every case
-an `@`-path key renders in bare `@a.b.*` notation (no `Path!(…)` wrapper), and the upstream
-reference is [conflicting wiring](../cgp/errors/wiring/conflicting-wiring.md) with its two namespace
-faces [overlapping namespace forwarding](../cgp/errors/wiring/namespace-forwarding-conflict.md) and
+suppressed, and the Rust code stays `E0119`. What differs, and why each has its own code, is the
+shape of the collision, and so the message and the fix. In every case an `@`-path key renders in
+bare `@a.b.*` notation (no `Path!(…)` wrapper), and the upstream reference is
+[conflicting wiring](../cgp/errors/wiring/conflicting-wiring.md) with its two namespace faces
+[overlapping namespace forwarding](../cgp/errors/wiring/namespace-forwarding-conflict.md) and
 [namespace override conflict](../cgp/errors/wiring/namespace-override-conflict.md).
 
 - **`CGP-E004`: duplicate wiring.** `` [CGP-E004] duplicate wiring for <key> on `<Context>` ``: the

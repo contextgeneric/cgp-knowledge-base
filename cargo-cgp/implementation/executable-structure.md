@@ -149,8 +149,8 @@ pinned-nightly requirement) is part of the
 a front-end plus a driver; both set `RUSTC_WORKSPACE_WRAPPER` to the driver and then run a cargo
 subcommand; both locate the driver as a sibling of the front-end via `current_exe`; both detect
 wrapper mode by testing whether the second argument's file stem is `rustc` and drop it; both inject
-`--sysroot` only when one is absent; and both run the compiler with `rustc_driver::run_compiler`
-inside `catch_with_exit_code`. Reading
+`--sysroot` only when one is absent; and both run the compiler with
+`rustc_driver::compiler_entrypoint` inside `catch_with_exit_code`. Reading
 [`external/rust-clippy/src/driver.rs`](../../../external/rust-clippy/src/driver.rs) and
 [`external/rust-clippy/src/main.rs`](../../../external/rust-clippy/src/main.rs) alongside our two
 crates, the correspondence is close enough to map function for function.

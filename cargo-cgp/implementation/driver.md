@@ -47,8 +47,8 @@ Before handing control to the compiler,
 [`args::rustc_args`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/args.rs)
 turns the wrapper's argument vector into a rustc one. It detects "wrapper mode" (the second argument
 is a path whose file stem is `rustc`) and removes that injected compiler path, because
-`rustc_driver::run_compiler` treats the vector's first element as the ignored program name and
-everything after it as flags; leaving the `rustc` path in would make the compiler treat it as an
+`rustc_driver::compiler_entrypoint` treats the vector's first element as the ignored program name
+and everything after it as flags; leaving the `rustc` path in would make the compiler treat it as an
 input file.
 
 It then injects flags, each only when the invocation does not already set it. `--sysroot` is
@@ -537,11 +537,10 @@ suppressing a lone `E0119` would leave a failing build with no error at all. Eve
 block), and the two conflict exactly when their `IsProviderFor` copies do. So the classifier
 suppresses only when a genuine local `IsProviderFor` impl sits at the caret *and* the two colliding
 sites each carry a local impl of one *common* other trait, whose own `E0119` rustc then reports.
-That confirmation is what extends the suppression beyond delegate pairs to a duplicate provider
-*name*: two `#[cgp_impl(new P)]` blocks, whose `E0428` and provider-trait `E0119` remain while the
-redundant `IsProviderFor` block is dropped
+An `IsProviderFor` conflict with no common companion is left alone. A duplicate provider *name* (two
+`#[cgp_impl(new P)]` blocks) never reaches this classifier: rustc stops once name resolution finds a
+type defined twice, so the `E0428` is the only error
 ([`duplicate_provider_name`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/duplicate-keys/duplicate_provider_name.rs)).
-An `IsProviderFor` conflict with no common companion is left alone.
 
 Everything is recovered from the compiler, not the error text. rustc aims the `E0119` at
 `tcx.def_span` of the conflicting impl, and the delegate macro re-spans each entry onto its key
@@ -744,7 +743,7 @@ resolution-class `E0599` emitted mid-`clauses_of`), recognized by its plain-stri
 
 The driver follows `clippy-driver` closely in its skeleton: both detect wrapper mode by testing
 whether the second argument's file stem is `rustc` and drop it, both inject `--sysroot` only when
-one is absent, and both run the compiler with `rustc_driver::run_compiler` inside
+one is absent, and both run the compiler with `rustc_driver::compiler_entrypoint` inside
 `catch_with_exit_code`. Reading
 [`external/rust-clippy/src/driver.rs`](../../../external/rust-clippy/src/driver.rs) alongside this
 crate, the correspondence maps function for function.
@@ -786,8 +785,8 @@ will likely grow toward it:
 ## Further reading
 
 - [rustc_driver and rustc_interface, in the Rust Compiler Development Guide](https://rustc-dev-guide.rust-lang.org/rustc-driver/intro.html),
-  describes `rustc_driver::run_compiler` and the `Callbacks` trait: the entry point the driver calls
-  and the hook `CgpCallbacks` implements.
+  describes `rustc_driver::compiler_entrypoint` and the `Callbacks` trait: the entry point the
+  driver calls and the hook `CgpCallbacks` implements.
 - [Example: Getting diagnostics, in the Rust Compiler Development Guide](https://rustc-dev-guide.rust-lang.org/rustc-driver/getting-diagnostics.html),
   walks a minimal `rustc_driver` program that installs a custom emitter through `psess_created`, the
   same hook the trait-renaming emitter uses (note the guide still shows the older `Translate`-based

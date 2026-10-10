@@ -165,8 +165,10 @@ is where each caret lands. Each is covered by a `cargo-cgp` UI fixture, linked p
 A **duplicate provider name** (two `#[cgp_impl(new Foo)]` blocks) declares `pub struct Foo;` twice
 (`E0428`) and emits two conflicting provider impls (`E0119`). The `E0428` carets land on the `Foo`
 inside each `#[cgp_impl(new …)]` and the `E0119` carets on each provider `impl` block, per
-[Error spans](#error-spans). Pinned by
-[`acceptable/wiring/duplicate-keys/duplicate_provider_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/duplicate-keys/duplicate_provider_name.rs).
+[Error spans](#error-spans). Stable `rustc` reports both errors; the nightly `cargo-cgp` pins stops
+once name resolution finds the type defined twice, so its UI fixture
+[`acceptable/wiring/duplicate-keys/duplicate_provider_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/duplicate-keys/duplicate_provider_name.rs)
+pins only the `E0428` carets.
 
 A **duplicate `#[default_impl]` key** (two `#[cgp_impl]` blocks each registering the same key as a
 per-type default in the same namespace) emits two conflicting delegation impls and fails with

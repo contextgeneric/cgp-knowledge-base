@@ -81,7 +81,9 @@ duplicate [`#[default_impl]`](../../reference/attributes/default_impl.md) confli
 `DefaultImpls…` impl, and a duplicate [`cgp_namespace!`](../../reference/macros/cgp_namespace.md)
 body entry (a `:` mapping or a `=>` redirect) conflicts on its one namespace-trait impl. A
 duplicated provider *name* is the compound case: `E0428` on the struct, plus the `E0119` pair on the
-provider's own provider-trait and `IsProviderFor` impls.
+provider's own provider-trait and `IsProviderFor` impls. The nightly that `cargo-cgp` pins prints
+only the `E0428`, because it stops once name resolution finds a type defined twice, before coherence
+checking runs.
 
 Two wrinkles round out the shape, and the second is where Rust's coherence reasoning shows through.
 When the key is a `@`-path, the conflicting trait's name expands into a long `PathCons<Symbol<…>>`
@@ -150,11 +152,11 @@ Which `[CGP-E00x]` code it stamps distinguishes the shapes this class produces:
   when they differ
   (`` duplicate redirect for component `FooComponent` on `App`: redirected to both `@app.foo` and `@app.bar` ``).
 
-One form in this class is a **pass-through** that `cargo-cgp` does not rewrite, so a reader sees the
-raw diagnostic above: the `E0428` name clashes (`duplicate_component_name`,
-`duplicate_provider_name`) keep `rustc`'s uncoded `E0428`; for a duplicate provider, the surviving
-`E0119` on the provider trait is kept too, with its `IsProviderFor` half suppressed, because `E0428`
-already points precisely at the two definitions. The codes are defined in the
+One form in this class is a **pass-through** that `cargo-cgp` does not rewrite: the `E0428` name
+clashes (`duplicate_component_name`, `duplicate_provider_name`) keep `rustc`'s uncoded `E0428`,
+because it already points precisely at the two definitions. Under the pinned nightly the `E0428` is
+the only error a name clash produces, since the compiler stops before the conflicting impls reach
+coherence checking. The codes are defined in the
 [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
 
 ## Resolving it
@@ -231,17 +233,15 @@ The pass-through conflicts `cargo-cgp` leaves uncoded:
 - [`wiring/duplicate-keys/duplicate_component_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/duplicate-keys/duplicate_component_name.rs):
   a derived `…Component` marker clashing with a hand-declared type; `E0428` kept verbatim.
 - [`wiring/duplicate-keys/duplicate_provider_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/duplicate-keys/duplicate_provider_name.rs):
-  two `#[cgp_impl(new …)]` declaring the same provider struct; the `.cgp.stderr` keeps the `E0428`
-  plus the surviving `E0119` on the provider trait `Greeter<_>` (its `IsProviderFor` half
-  suppressed), all uncoded.
+  two `#[cgp_impl(new …)]` declaring the same provider struct; both snapshots hold the lone uncoded
+  `E0428`, since the pinned nightly stops before the provider impls conflict.
 - [`wiring/duplicate-keys/auto_dispatch_shared_method_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/duplicate-keys/auto_dispatch_shared_method_name.rs):
   two [`#[cgp_auto_dispatch]`](../../reference/macros/cgp_auto_dispatch.md) traits in one module
   declaring the same method, so the generated helper `__compute_area__` and computer `ComputeArea`
-  are each declared twice; the `.cgp.stderr` keeps both `E0428`s and the `E0119` on the computer's
-  `Computer` impl uncoded, with the `ComputeArea` carets on the second `area` method name, and
-  collapses the computers' conflicting promotion wiring into one `[CGP-E004]` headline. This is a
-  known defect of the macro rather than a user's wiring mistake; the
-  [implementation document](../../implementation/entrypoints/cgp_auto_dispatch.md#known-issues)
+  are each declared twice; both snapshots hold just the two uncoded `E0428`s, with the
+  `ComputeArea` caret on the second `area` method name, because the pinned nightly stops before the
+  computers' impls conflict. This is a known defect of the macro rather than a user's wiring
+  mistake; the [implementation document](../../implementation/entrypoints/cgp_auto_dispatch.md#known-issues)
   records the fix.
 
 ## Related
