@@ -117,7 +117,7 @@ defining property of the class and the reason it lives apart from the
 [surfaced classes](../checks/), whose diagnostics *do* carry the cause.
 
 **Newer nightly compilers descend further, so the class is hidden only on stable.** The
-`nightly-2026-09-14` toolchain that `cargo-cgp` pins prints the same `E0599` but adds a
+nightly toolchain that `cargo-cgp` pins prints the same `E0599` but adds a
 `note: trait bound … was not satisfied` naming the leaf itself:
 `Person: HasField<Symbol<4, Chars<..>>>` for the missing field, or `f64: Eq` for an ordinary bound.
 The `method … not found … because it doesn't satisfy` line names the leaf as well. The fixtures'

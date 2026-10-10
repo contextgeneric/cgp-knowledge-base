@@ -137,7 +137,7 @@ LD_LIBRARY_PATH=$SYSROOT/lib cargo-cgp-driver --version
 The second cause is a **toolchain mismatch**: the library path is set, but to a *different*
 toolchain than the one the driver was built against, so the exact `librustc_driver-<hash>.so` is
 absent from it. This is what happens when an unmanaged check runs under a toolchain that is not the
-driver's pinned nightly: the driver embeds, say, `nightly-2026-09-14`, but the ambient toolchain is
+driver's pinned nightly: the driver embeds, say, `nightly-2026-10-10`, but the ambient toolchain is
 `stable`, so cargo's first probe of the wrapper aborts:
 
 ```text
@@ -205,7 +205,7 @@ the cases apart, in the order the preflight checks them.
 If the pinned toolchain is not installed, the preflight stops before even reaching the driver:
 
 ```text
-cargo-cgp: toolchain `nightly-2026-09-14` is not available (exit status: 1)
+cargo-cgp: toolchain `nightly-2026-10-10` is not available (exit status: 1)
 
 The pinned toolchain is not installed. Run `cargo cgp setup`.
 ```
@@ -227,7 +227,7 @@ a *different* nightly than the one now installed), the preflight reports the loa
 driver problem, having already confirmed the toolchain exists:
 
 ```text
-cargo-cgp: the cargo-cgp-driver could not run under toolchain `nightly-2026-09-14` (it was likely built against a different nightly). Run `cargo cgp setup`.
+cargo-cgp: the cargo-cgp-driver could not run under toolchain `nightly-2026-10-10` (it was likely built against a different nightly). Run `cargo cgp setup`.
 ```
 
 If the driver runs but reports a version or a build identity that does not match, the two are out of
@@ -240,7 +240,7 @@ Run `cargo cgp setup`.
 ```
 
 ```text
-cargo-cgp: the cargo-cgp-driver was built against `rustc 1.99.0-nightly (…)`, but the pinned toolchain `nightly-2026-09-14` now provides `rustc 1.100.0-nightly (…)`
+cargo-cgp: the cargo-cgp-driver was built against `rustc 1.99.0-nightly (…)`, but the pinned toolchain `nightly-2026-10-10` now provides `rustc 1.101.0-nightly (…)`
 
 Run `cargo cgp setup`.
 ```
@@ -264,7 +264,7 @@ per the section above.
 rather than failing obscurely:
 
 ```text
-cargo-cgp: installing toolchain `nightly-2026-09-14` (with rustc-dev, llvm-tools)…
+cargo-cgp: installing toolchain `nightly-2026-10-10` (with rustc-dev, llvm-tools)…
 cargo-cgp: rustup was not found on PATH; cargo-cgp requires rustup to manage toolchains
 ```
 

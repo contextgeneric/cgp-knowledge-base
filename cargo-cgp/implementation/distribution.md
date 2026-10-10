@@ -49,7 +49,7 @@ The design's job is to make the match automatic.
 
 Two widespread misconceptions are worth clearing up before the design, because both make the problem
 sound worse than it is. **Updating the host's nightly does not break the driver.** The pin is a
-*dated* nightly (`nightly-2026-09-14`), which rustup treats as an immutable, distinct toolchain; a
+*dated* nightly (`nightly-2026-10-10`), which rustup treats as an immutable, distinct toolchain; a
 `rustup update` refreshes the rolling `stable`/`beta`/`nightly` channels and leaves a dated nightly
 untouched. The driver keeps working until *cargo-cgp itself* ships a new version that bumps the pin.
 **And the project being checked does not need to use nightly at all.** A user's crate can pin
