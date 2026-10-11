@@ -109,14 +109,13 @@ front-end runs the wrapped `cargo check`, it sets `RUSTUP_TOOLCHAIN=<PINNED_TOOL
 environment (`cargo +<PINNED_TOOLCHAIN> check` would be equivalent). This one variable makes
 everything downstream consistent.
 
-Forcing the toolchain resolves the sysroot-and-dylib coherence problem for free. With
-`RUSTUP_TOOLCHAIN` set to the pinned nightly, the front-end's existing `rustc --print sysroot`
-discovery
-([`launch::sysroot`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/sysroot.rs))
-returns the *pinned* sysroot, so the `--sysroot` the driver injects and the `librustc_driver` it
-loads both belong to the nightly the driver was compiled against. The three things that must agree
-(the driver's embedded compiler, the injected sysroot, and the loaded shared library) come from one
-toolchain by construction, with no version-matching left to chance.
+Forcing the toolchain resolves the sysroot-and-dylib coherence problem for free. The front-end
+discovers the sysroot through rustup, as `rustup run <PINNED_TOOLCHAIN> rustc --print sysroot`
+([`launch::sysroot`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/sysroot.rs)),
+which returns the *pinned* sysroot, so the `--sysroot` the driver injects and the `librustc_driver`
+it loads both belong to the nightly the driver was compiled against. The three things that must
+agree (the driver's embedded compiler, the injected sysroot, and the loaded shared library) come
+from one toolchain by construction, with no version-matching left to chance.
 
 The override is safe because `RUSTUP_TOOLCHAIN` outranks `rust-toolchain.toml`. Rustup's override
 precedence runs, highest first: a `+toolchain` on the command line, the `RUSTUP_TOOLCHAIN` variable,
@@ -197,25 +196,34 @@ nightly date.
 ### What the preflight verifies
 
 The preflight is a fast, read-only sequence at the top of `check`, run before any cargo is spawned,
-and every failure produces the same actionable outcome: an error that names what is wrong and
-directs the user to `cargo cgp setup`. It answers two questions in order (is the pinned toolchain
-installed, and does the driver actually run and match) and stops at the first "no." The ordering is
-deliberate: the cheap, disambiguating check comes first, so that when the driver fails, the
-preflight already knows whether the toolchain underneath it is to blame and can say so.
+and every failure produces an actionable error that names what is wrong and directs the user to
+`cargo cgp setup`. The one exception is a machine without rustup, which `setup` cannot repair
+either, so that message names rustup and the Nix flake instead. It answers two questions in order
+(is the pinned toolchain installed, and does the driver actually run and match) and stops at the
+first "no." The ordering is deliberate: the cheap, disambiguating check comes first, so that when
+the driver fails, the preflight already knows whether the toolchain underneath it is to blame and
+can say so.
 
 The driver it tests is the one the launch has already located, through the
 [`driver_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/driver_path.rs)
 lookup: the `CARGO_CGP_DRIVER` override if set, otherwise the sibling of the running front-end, and
-failing both the bare driver name, left for the operating system to resolve on `PATH`. A driver
-missing from all three is caught by the second question, when running it fails with
-`failed to run the cargo-cgp-driver at …`, the plainest "run setup" case.
+failing both the first `cargo-cgp-driver` on `PATH`. Every message about the driver names its path
+and where it was found, so a stale driver found on `PATH` (from another install, say) is not
+mistaken for the one `setup` placed beside the front-end. A driver found nowhere is caught by the
+second question, when running it fails with
+`failed to run the cargo-cgp-driver (none is beside cargo-cgp or on PATH): …`, the plainest "run
+setup" case.
 
-**Is the pinned toolchain installed?** The preflight runs `rustc --version` with `RUSTUP_TOOLCHAIN`
-forced to the pinned nightly, and reads back the toolchain's own rustc identity, its version line.
-This is cheap, and doing it first separates a *missing toolchain* from a *bad driver*: if this query
-fails, the toolchain the driver needs is simply not installed, and that is the message the user
-gets. If it succeeds, the preflight now holds the identity of the compiler the check will force, to
-compare the driver against.
+**Is the pinned toolchain installed?** The preflight runs
+`rustup run <PINNED_TOOLCHAIN> rustc --version` and reads back the toolchain's own rustc identity,
+its version line. Asking rustup directly ties the answer to the pinned toolchain: only rustup's
+`rustc` shim honors `RUSTUP_TOOLCHAIN`, so on a machine without rustup another `rustc` on `PATH`
+would answer for a toolchain that is not there. `rustup run` installs nothing unless given
+`--install`. This is cheap, and doing it first separates a *missing toolchain* from a *bad driver*:
+if this query fails, the toolchain the driver needs is not installed, and the user gets that message
+with rustup's own reason beneath it. If rustup itself is missing, the message says so. If it
+succeeds, the preflight now holds the identity of the compiler the check will force, to compare the
+driver against.
 
 **Does the driver run and match?** The preflight then invokes `cargo-cgp-driver --version` under the
 *exact* environment the real check will use: `RUSTUP_TOOLCHAIN` forced to the pinned nightly, the
@@ -231,8 +239,8 @@ driver from the wrong release fails the second:
   "cannot open shared object file" error. So a driver that will not run under the forced toolchain
   is, in the overwhelmingly common case, one compiled against the wrong nightly. Because the
   previous step already confirmed the toolchain *is* installed, the preflight attributes a launch
-  failure to the driver and points at `setup` with that specific message, rather than passing a
-  cryptic loader error to the user.
+  failure to the driver and points at `setup`, keeping the loader's own message beneath its
+  explanation.
 - **Is it the right build?** When the driver does load, it prints its `--version` output and exits.
   That output carries three fields baked in at build time, one per line so a value with spaces stays
   unambiguous: `cargo-cgp-driver <tool_version>`, `pinned-toolchain: <name>`, and
@@ -243,7 +251,8 @@ driver from the wrong release fails the second:
   partial upgrade or a stale binary on `PATH`), and `built_against_rustc` must equal the installed
   toolchain's `rustc --version` read in the previous step (a difference is a driver built against a
   nightly other than the pinned one, which loaded only because its hash happened to resolve). Either
-  mismatch sends the user to `setup`.
+  mismatch sends the user to `setup`. The compiler mismatch names the toolchain the preflight
+  queried, which `CARGO_CGP_TOOLCHAIN` can make another one than the driver's own pin.
 
 The flag is the ordinary `--version`, not a tool-specific name: `cargo-cgp` versions on its own
 track, unrelated to `cgp`'s, so a `--cgp-version` would misleadingly imply otherwise. The driver
@@ -413,7 +422,7 @@ resolve, and exits 127 before printing a sysroot. The counter-intuitive conseque
 failure appears in whichever project tracks the *same* Rust version as the pinned nightly. Prefixing
 the toolchain's own `lib` on the front-end wrapper (the same protection the driver has) makes its
 libraries win that lookup while leaving the caller's entries after them. A rustup-managed install is
-immune by construction: its probe goes through rustup's own shim, which points the path at the
+immune by construction: its probe runs through `rustup run`, which points the path at the
 toolchain being queried. The user-facing account is in
 [Troubleshooting](../reference/troubleshooting.md#a-nix-install-fails-its-sysroot-probe-under-cargo-cgp).
 
@@ -515,11 +524,10 @@ is how a Nix consumer "upgrades the tool" in place of `cargo cgp update`.
 ## Loading the compiler at runtime
 
 At runtime the driver must load the pinned nightly's `librustc_driver`, and the front-end finds it
-by discovering the sysroot. The front-end runs `rustc --print sysroot` (which returns the pinned
-sysroot, because the toolchain is forced), passes it to the driver through `CARGO_CGP_SYSROOT`, and
-prepends the sysroot's `lib` directory to the OS dynamic-library search path so the loader finds
-`librustc_driver`. That is the contract documented in
-[Executable structure](executable-structure.md#the-environment-contract).
+by discovering the sysroot. The front-end runs `rustc --print sysroot` through rustup under the
+pinned toolchain, passes it to the driver through `CARGO_CGP_SYSROOT`, and prepends the sysroot's
+`lib` directory to the OS dynamic-library search path so the loader finds `librustc_driver`. That is
+the contract documented in [Executable structure](executable-structure.md#the-environment-contract).
 
 Runtime discovery is chosen over a build-time rpath, though both would work: because the driver is
 always compiled on the machine it runs on, an embedded rpath (as `rustc_plugin`'s `build_main` bakes
@@ -652,8 +660,8 @@ handled knowingly rather than discovered late.
 - **rustup is assumed by the managed path (limitation).** The `setup`/`update`/preflight flow
   manages toolchains entirely through rustup (`RUSTUP_TOOLCHAIN`, `rustup toolchain install`). A
   machine whose Rust comes from a distro package or another manager has no rustup to drive, so it is
-  out of scope for automatic provisioning; `setup` reports a missing rustup plainly rather than
-  failing obscurely. Nix is the exception rather than a gap: it is served by the
+  out of scope for automatic provisioning; `setup` and the preflight report a missing rustup
+  plainly rather than failing obscurely. Nix is the exception rather than a gap: it is served by the
   [`flake.nix`](#installing-with-nix), which provisions the toolchain at build time and runs the
   front-end unmanaged.
 - **`update` version discovery targets the default crates.io (limitation).** It reads
@@ -700,7 +708,13 @@ UI suite exercises the managed/unmanaged wiring end to end.
   [`evaluate`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/preflight.rs)
   verdict on a matching driver, a version mismatch, and a rustc mismatch; and a check that the
   baked-in `PINNED_TOOLCHAIN` equals the channel in
-  [`rust-toolchain.toml`](https://github.com/contextgeneric/cargo-cgp/blob/main/rust-toolchain.toml).
+  [`rust-toolchain.toml`](https://github.com/contextgeneric/cargo-cgp/blob/main/rust-toolchain.toml);
+  and `failure_message` for each failure: the driver's path and origin in every driver message, the
+  loader's and rustup's reasons kept, the queried toolchain named in a compiler mismatch, and a
+  missing rustup naming rustup and the Nix flake instead of `setup`.
+- [`crates/cargo-cgp/tests/front_end/driver_path.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/driver_path.rs):
+  `locate_driver`'s order (the override, the sibling, then `PATH`) and the bare name kept for a
+  driver found nowhere.
 - [`crates/cargo-cgp/tests/front_end/update.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/update.rs):
   `sparse_index_path` over the registry's dir convention; `parse_versions` skipping yanked and
   unparseable lines; `select_update` (a stable install taking the highest stable and *never* a
