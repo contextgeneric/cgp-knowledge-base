@@ -231,12 +231,12 @@ Because each transform is a pure function over a string, it is tested without ru
 test drives one transform over the case under test and asserts on the returned `Option<String>`;
 nothing compiles, no driver runs, and the test is fast and deterministic, so a whole catalog of
 cases can be exercised as ordinary library tests. This is what the rustc-free design buys.
-[`tests/postprocess.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/postprocess.rs)
+[`tests/error_processing/postprocess.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/postprocess.rs)
 drives each transform: a stripped prefix, an exactly-matched `Symbol!`, a wrong length or foreign
 type left alone, the single-field (inline and separate-note landmark) versus missing-derive
 branches, and the `postprocess_message` chain end to end. The diagnosis wording is tested the same
 way, only over a hand-built `Resolved` rather than a string:
-[`tests/diagnosis.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/diagnosis.rs)
+[`tests/error_processing/diagnosis/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/tests/error_processing/diagnosis)
 drives `plan_resolved` through the missing-field, missing-derive, `Deref`-target,
 field-type-mismatch, use-site, kept-ordinary-bound, and provider-header cases, asserting the header,
 `help`s, and notes it returns with no compiler in the loop.
@@ -279,64 +279,64 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
 
 ## Tests
 
-- [`crates/cargo-cgp-error-processing/tests/postprocess.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/postprocess.rs):
+- [`crates/cargo-cgp-error-processing/tests/error_processing/postprocess.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/postprocess.rs):
   drives each post-processing transform over crafted inputs: the stripped/left-alone prefix cases,
   the exact-match cases `resugar_symbol` must skip, the `PathCons` → `Path!` resugaring (symbol,
   type, and primitive segments, the open `_` tail folded to a `.*` wildcard, and the
   non-round-trippable cases `resugar_path` must skip), the single-field (inline and separate-note
   landmark) versus missing-derive branches of `rewrite_missing_fields`, the `Product!`/`Sum!` folds
   with their `Struct!`/`Enum!` shapes and declines, and the `postprocess_message` chain.
-- [`crates/cargo-cgp-error-processing/tests/shape.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/shape.rs):
+- [`crates/cargo-cgp-error-processing/tests/error_processing/shape.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/shape.rs):
   the shared `Struct!`/`Enum!` spelling rules on their own: writable, raw, and unwritable names,
   the named and tuple struct forms and every product that declines, each variant spelling, and the
   enum declines.
-- [`crates/cargo-cgp-error-processing/tests/rewrite.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/rewrite.rs):
+- [`crates/cargo-cgp-error-processing/tests/error_processing/rewrite.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/rewrite.rs):
   the wiring-message rewrite over a hand-built name map (see [The driver](driver.md#tests)).
-- [`crates/cargo-cgp-error-processing/tests/diagnosis.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/diagnosis.rs):
+- [`crates/cargo-cgp-error-processing/tests/error_processing/diagnosis/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/tests/error_processing/diagnosis):
   `plan_resolved` and the wording over hand-built `Resolved` values: the missing-field,
   missing-derive, and `Deref`-target field cases, a field-type mismatch, an abstract-type mismatch
   (with its wiring `help`) and its help-less plain-associated-type sibling, a use-site method
   failure, a kept ordinary bound (header dropped, lead-less note), a provider header via the text
   rewrite, and the pluralized consumer header.
-- [`crates/cargo-cgp-error-processing/tests/tree.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/tree.rs):
+- [`crates/cargo-cgp-error-processing/tests/error_processing/tree.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/tree.rs):
   the `termtree`-backed `render_dependency_tree` (a list, a branch); building and merging trees is
   the graph's job, tested in `graph.rs`.
-- [`crates/cargo-cgp-error-processing/tests/graph.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/graph.rs):
+- [`crates/cargo-cgp-error-processing/tests/error_processing/graph.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/graph.rs):
   the `DependencyGraph` build-and-render, as `insta` inline snapshots: a list, a shared-prefix
   branch, a subsuming cascade, converging leaves, a diamond, a super-root, a within-path repeat,
   repeated generics rendered in full, and the cross-block elision (see
   [Dependency-graph rendering](dependency-graph-rendering.md)).
-- [`crates/cargo-cgp-error-processing/tests/wiring.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/wiring.rs):
+- [`crates/cargo-cgp-error-processing/tests/error_processing/wiring.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/wiring.rs):
   `plan_wiring_conflict` and `wiring_conflict_help` over hand-built `WiringConflict` values: the
   duplicate, overlap (component and path forms), multiple-namespaces, redirect (header plus its
   help), and same-/different-path duplicate-redirect headers.
-- [`crates/cargo-cgp-error-processing/tests/coalesce.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/coalesce.rs):
+- [`crates/cargo-cgp-error-processing/tests/error_processing/coalesce.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/coalesce.rs):
   `coalesce_underived_fields` over hand-built causes: the merged group (keeping every field's path),
   its lead and single derive help, and the boundaries (a lone underived field, genuinely missing
   fields, different owners, a group beside a missing field).
-- [`crates/cargo-cgp-error-processing/tests/group.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/group.rs):
+- [`crates/cargo-cgp-error-processing/tests/error_processing/group.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/group.rs):
   `group_by_shared_cause` over hand-built resolutions: failures sharing a cause grouped, disjoint
   ones kept apart, the union-of-two-others case partial overlap produces, the transitive bridge that
   makes the relation a partition, the context keeping one field name on two contexts apart, a
   causeless failure alone, and the arrival ordering of the groups and their members.
-- [`crates/cargo-cgp-error-processing/tests/causes.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/causes.rs):
+- [`crates/cargo-cgp-error-processing/tests/error_processing/causes.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/causes.rs):
   the `Causes` set: one leaf reached by three consumers collecting into one cause with all three
   paths, the repeated-underived-field lead the invariant prevents, distinct leaves kept apart, an
   exact repeat of a path dropped, `from_sub_chains` grouping, `union` folding a shared cause while
   keeping every route (and its associativity), and `headed_by` prefixing every path, plus its
   commutation with the grouping, which is why heading needs no re-merge.
-- [`crates/cargo-cgp-error-processing/tests/dedup.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/dedup.rs):
+- [`crates/cargo-cgp-error-processing/tests/error_processing/dedup.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/dedup.rs):
   the `DedupLedger` key scheme: a re-reported cause suppressed, distinct causes kept, the text key,
   the coded-header key collapsing a declined fallback, and a kept rustc header never keying.
-- [`crates/cargo-cgp-error-processing/tests/signals.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/signals.rs):
+- [`crates/cargo-cgp-error-processing/tests/error_processing/signals.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/signals.rs):
   the text signals: the wording each matches and the near-miss it must not (the two `E0599` shapes,
   the method-probe artifacts, the orphan marker-plus-phrase pair, the `?`-cascade phrasing, and both
   footer forms, including the reworded line that yields no codes, the case the rebuild must decline
   on rather than delete the footer).
-- [`crates/cargo-cgp-error-processing/tests/orphan.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/orphan.rs):
+- [`crates/cargo-cgp-error-processing/tests/error_processing/orphan.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/orphan.rs):
   `plan_orphan_conflict` and `orphan_conflict_help` over hand-built conflicts: a component key and a
   path key registered, and the reopen trigger's inheritance fix.
-- [`crates/cargo-cgp-error-processing/tests/cgp_impl_misuse.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/cgp_impl_misuse.rs):
+- [`crates/cargo-cgp-error-processing/tests/error_processing/cgp_impl_misuse.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/cgp_impl_misuse.rs):
   the `#[cgp_impl]` misuse wording: a consumer trait in the header (naming the provider to use), a
   trait that is not a CGP component, a consumer trait in a provider bound, and an inner provider not
   imported.

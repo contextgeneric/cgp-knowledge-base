@@ -436,14 +436,14 @@ marking.
   `cause_signature`), `coalesce.rs` (`coalesce_underived_fields`, merging several underived fields
   on one struct into a single heading cause), and `plan.rs` (`DiagKind`, `DiagnosisPlan`, the
   unrendered `PendingNote`, and `plan_resolved` with its `categorized_header`), unit-tested in
-  [`tests/diagnosis.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/diagnosis.rs),
-  [`tests/coalesce.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/coalesce.rs),
+  [`tests/error_processing/diagnosis/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/tests/error_processing/diagnosis),
+  [`tests/error_processing/coalesce.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/coalesce.rs),
   and
-  [`tests/graph.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/graph.rs).
+  [`tests/error_processing/graph.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/graph.rs).
 - [`crates/cargo-cgp-error-processing/src/tree.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/tree.rs):
   the `DependencyTree` type and its `cargo tree`-style renderer over `termtree`, the target the
   graph expands into, unit-tested in
-  [`tests/tree.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/tree.rs).
+  [`tests/error_processing/tree.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/tree.rs).
 - [`crates/cargo-cgp-driver/src/config.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/config.rs):
   the crate and trait-name anchors the resolution matches against.
 
@@ -698,12 +698,12 @@ The **impl-site and wrapper-chain paths** are pinned by:
 Finally, the leaf wording and the tree renderer are unit-tested over hand-built `Resolved` values,
 independently of the compiler:
 
-- [`cargo-cgp-error-processing/tests/diagnosis.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/diagnosis.rs):
+- [`cargo-cgp-error-processing/tests/error_processing/diagnosis/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/tests/error_processing/diagnosis):
   the coded headers, the `root cause:` notes, and the derive `help`s.
-- [`cargo-cgp-error-processing/tests/graph.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/graph.rs):
+- [`cargo-cgp-error-processing/tests/error_processing/graph.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/graph.rs):
   the dependency-graph build-and-render (list, branch, diamond, super-root, within-path repeat) as
   `insta` inline snapshots.
-- [`cargo-cgp-error-processing/tests/tree.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/tree.rs):
+- [`cargo-cgp-error-processing/tests/error_processing/tree.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/tree.rs):
   the `cargo tree`-style renderer.
 
 ## Further reading

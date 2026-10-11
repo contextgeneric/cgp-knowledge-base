@@ -703,8 +703,8 @@ it stale.
   launch, why the driver prints from `after_expansion`, and the deferred selective un-expansion.
 - [rustc-diagnostic-internals.md](cargo-cgp/implementation/rustc-diagnostic-internals.md) — where the
   compiler builds and *suppresses* diagnostic information, and the panic hazards of re-entering it.
-- [testing.md](cargo-cgp/implementation/testing.md) — the argument tests and the UI snapshot suite,
-  its three passes and bless workflow, and how it compares to Clippy's harness.
+- [testing.md](cargo-cgp/implementation/testing.md) — the unit tests (one target per crate) and the
+  UI snapshot suite, its three passes and bless workflow, and how it compares to Clippy's harness.
 - [distribution.md](cargo-cgp/implementation/distribution.md) — packaging both binaries with a pinned
   nightly, the version preflight, and the `setup`/`update` flow.
 

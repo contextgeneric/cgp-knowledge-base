@@ -110,8 +110,8 @@ same change.
   relating an un-instantiated binder, leaking inference variables across contexts) and how the
   resolver avoids each. Read it when a diagnostic is dropping a cause the tool needs, or before
   adding a compiler interaction that could crash the driver.
-- [Testing](testing.md): how the tool is tested: the tests over the argument handling, and the UI
-  snapshot suite. The suite is a custom Rust test harness (like Clippy's `compile-test`) that
+- [Testing](testing.md): how the tool is tested: the unit tests, one test target per crate, and the
+  UI snapshot suite. The suite is a custom Rust test harness (like Clippy's `compile-test`) that
   compiles fixtures under `tests/ui/` through the tool and diffs committed `.cgp.stderr`,
   `.rust.stderr`, and `.expand.rs` snapshots. The document also covers the bless workflow and how
   the harness compares to Clippy's.

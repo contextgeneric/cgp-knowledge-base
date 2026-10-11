@@ -799,19 +799,19 @@ will likely grow toward it:
 
 ## Tests
 
-- [`crates/cargo-cgp-driver/tests/args.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/args.rs):
+- [`crates/cargo-cgp-driver/tests/driver/args.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/args.rs):
   `rustc_args` wrapper-mode stripping, sysroot injection, an existing sysroot left alone,
   injected-flag appending, an explicit `-Znext-solver` override, and the `-vV`/`--print` info-query
   skips.
-- [`crates/cargo-cgp-driver/tests/help.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/help.rs):
+- [`crates/cargo-cgp-driver/tests/driver/help.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/help.rs):
   `wants_help` detecting the help flags, and the help text explaining the wrapper role and flags.
-- [`crates/cargo-cgp-error-processing/tests/rewrite.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/rewrite.rs):
+- [`crates/cargo-cgp-error-processing/tests/error_processing/rewrite.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/rewrite.rs):
   the compiler-free rewrite over a hand-built name map, run on any toolchain: both note forms and
   both header forms; generic components (a single parameter reattached to the header, a
   multi-parameter tuple unwrapped, and the notes eliding parameters); the module-prefix and
   generic-subject/context cases; the non-CGP and unknown-marker pass-throughs; and a check that the
   `ComponentNameMap` lazy initializer is *not* forced when no message matches.
-- [`crates/cargo-cgp-error-processing/tests/postprocess.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/postprocess.rs):
+- [`crates/cargo-cgp-error-processing/tests/error_processing/postprocess.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/postprocess.rs):
   the compiler-free post-processing transforms the emitter applies as its final pass: prefix
   stripping, the `Symbol!` and `Path!` resugaring, and the missing-field reword branches.
 - [`tests/ui/hidden/unsatisfied-dependency/unsatisfied_dependency.cgp.stderr`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/unsatisfied_dependency.cgp.stderr):

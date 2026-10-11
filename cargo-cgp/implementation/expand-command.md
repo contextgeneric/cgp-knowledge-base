@@ -508,28 +508,28 @@ worth reading before changing the launching or printing halves.
 The resugaring is pure text-to-text, so it is pinned by unit tests with no compiler; the launching
 and printing halves need a real compilation, so they are exercised by running the command.
 
-- [`crates/cargo-cgp-expand/tests/resugar.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-expand/tests/resugar.rs):
+- [`crates/cargo-cgp-expand/tests/expand/resugar.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-expand/tests/expand/resugar.rs):
   the resugaring end to end over hand-written expanded source: each construct and its decline cases,
   the two overlap hazards (a `Symbol`'s and a path's terminating `Nil`, either of which a combined
   pass would turn into `Product![]`), the outermost-first fold (a two-element field list), the
   tightened spacing of a generic element, the diagnostic-only forms deliberately *not* emitted (a
   field list kept as a `Product!`, an open-ended path left raw), the prelude strip including both
   qualified-path shapes, an ordinary module qualifier kept, and unparsable input returned verbatim.
-- [`crates/cargo-cgp-driver/tests/expand.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/expand.rs):
+- [`crates/cargo-cgp-driver/tests/driver/expand.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/expand.rs):
   the marker flags: the request and its path recovered, the flag stripped from the vector the
   compiler sees, an ordinary compilation carrying no request, an empty path declining, the item
   filter taken alongside the output, and a stray item flag never reaching the compiler.
-- [`crates/cargo-cgp/tests/help.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/help.rs):
+- [`crates/cargo-cgp/tests/front_end/help.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/help.rs):
   that the expand help documents `--item` and its three rules, names the target-selection trap, and
   points at `cargo rustc --help` for the forwarded options; and that the top-level help points at
   both subcommands' helps, since their options come from different places.
-- [`crates/cargo-cgp/tests/expand.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/expand.rs):
+- [`crates/cargo-cgp/tests/front_end/expand.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/expand.rs):
   the front-end's pure helpers: the profile detection in both forms (and a `--bin release` value
   that must not count as one), the per-process output path, and the `--item` extraction: both
   spellings, everything else forwarded untouched, a bare word left to cargo, a crate-rooted path
   accepted, and the two rejection shapes (a missing or repeated filter names the flag, a malformed
   path names the path).
-- [`crates/cargo-cgp-expand/tests/select.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-expand/tests/select.rs):
+- [`crates/cargo-cgp-expand/tests/expand/select.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-expand/tests/expand/select.rs):
   the three selection rules over a two-module program: a module giving its unwrapped contents, a
   type giving its declaration and the impls for it, an unqualified path reaching into a module, a
   trait giving the impls of it, a path matching nothing yielding nothing, and the path-shape parser.

@@ -397,7 +397,7 @@ above.
 Because the graph is a pure function over structured data, every shape is a unit test with no
 compiler, and the end-to-end behavior is pinned by the UI suite.
 
-- [`crates/cargo-cgp-error-processing/tests/graph.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/graph.rs):
+- [`crates/cargo-cgp-error-processing/tests/error_processing/graph.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/graph.rs):
   the build-and-render as `insta` inline snapshots: a linear spine, a shared-prefix branch, a
   subsuming cascade, converging independent roots on one leaf, a diamond, a super-root, a
   within-path label repeat kept linear, cross-path redirects distinct by key versus merged by key, a
@@ -406,15 +406,15 @@ compiler, and the end-to-end behavior is pinned by the UI suite.
   graph truncating at what the first drew while keeping its own prefix *and still ending at the root
   cause*, the within-render reference staying bare by contrast, a wholly-redundant graph reporting
   itself `fully_elided_by`, and a leaf-only graph never doing so (a leaf hides no subtree).
-- [`crates/cargo-cgp-error-processing/tests/diagnosis.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/diagnosis.rs):
+- [`crates/cargo-cgp-error-processing/tests/error_processing/diagnosis/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/tests/error_processing/diagnosis):
   the note assembly over the graph: the singular `root cause:` lead, its drop when the header states
   that leaf (either mismatch class, or a kept-header bound) and its retention under a header that
   does not, the `root causes:` list for distinct leaves, the shared-prefix merge into one branching
   note, and independent-root causes folding into one note with stacked chains.
-- [`crates/cargo-cgp-error-processing/tests/coalesce.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/coalesce.rs):
+- [`crates/cargo-cgp-error-processing/tests/error_processing/coalesce.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/coalesce.rs):
   `coalesce_underived_fields` keeping every field's path while merging the heading into one
   `UnderivedFields` cause.
-- [`crates/cargo-cgp-error-processing/tests/causes.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/causes.rs):
+- [`crates/cargo-cgp-error-processing/tests/error_processing/causes.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/causes.rs):
   the `Causes` set: one leaf reached by three consumers collecting to one cause holding all three
   paths, the underived-field lead that repetition would otherwise produce, distinct leaves staying
   apart, an exact repeat of a path dropped, `from_sub_chains` grouping, `union`'s fold and its

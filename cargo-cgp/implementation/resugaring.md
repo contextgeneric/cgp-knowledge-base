@@ -507,7 +507,7 @@ inside one still prints as `_`.
 Resugaring is pure text-to-text or type-to-text, so most of it is pinned by unit tests with no
 compiler, and the UI suite pins the typed pass end to end.
 
-- [`crates/cargo-cgp-error-processing/tests/postprocess.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/postprocess.rs):
+- [`crates/cargo-cgp-error-processing/tests/error_processing/postprocess.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/postprocess.rs):
   the text implementations over crafted inputs: an exactly-matched `Symbol!` and the empty symbol, a
   wrong length and a foreign `Symbol` left alone, the `PathCons` → `@…`/`Path!(@…)` forms across
   symbol, type, primitive, generic-value, and reference-value segments, the open `_` tail folded to
@@ -518,7 +518,7 @@ compiler, and the UI suite pins the typed pass end to end.
   non-terminating list declined, the `Cons`-inside-`PathCons` guard, the module and CGP-prefix
   strips (including the multi-byte box-drawing and string-literal cases), and the
   `postprocess_message` chain end to end.
-- [`crates/cargo-cgp-error-processing/tests/shape.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/shape.rs):
+- [`crates/cargo-cgp-error-processing/tests/error_processing/shape.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/shape.rs):
   the shared spelling rules directly: which names are written as is, raw, or not at all, the named
   and tuple `Struct!` forms and every product that declines, each variant spelling including a
   payload that only starts with a shape, and the `Enum!` declines.
@@ -547,7 +547,7 @@ compiler, and the UI suite pins the typed pass end to end.
   [`open_missing_type_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/open_missing_type_key.rs),
   pin the typed path rendering, in a namespace redirect and an `open` dispatch key.
 
-- [`crates/cargo-cgp-expand/tests/resugar.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-expand/tests/resugar.rs):
+- [`crates/cargo-cgp-expand/tests/expand/resugar.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-expand/tests/expand/resugar.rs):
   the syntax-tree implementation over hand-written expanded source, run through the whole pipeline
   the driver runs: each construct and its decline cases, both `Nil` overlap hazards, the
   outermost-first fold, the tightened spacing of a generic element, the named and tuple `Struct!`

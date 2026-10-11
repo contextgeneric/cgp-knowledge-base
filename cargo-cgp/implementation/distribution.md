@@ -459,7 +459,7 @@ upstream). Everything that needs the version reads it back from that file:
 
 Two automated guards mean the sync cannot silently rot. The
 `pinned_toolchain_matches_the_toolchain_file` test in
-[`preflight.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/preflight.rs)
+[`preflight.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/preflight.rs)
 asserts the baked-in `PINNED_TOOLCHAIN` equals the channel it re-reads from `rust-toolchain.toml`,
 so a build whose constant drifted from the file fails the test. (The dated string elsewhere in that
 same test file is fixed *sample* `--version` output feeding the parser test; it is both the input
@@ -690,26 +690,26 @@ changing the piece each one covers.
 The pieces are unit-tested over their pure logic, keeping the process-spawning at the edges, and the
 UI suite exercises the managed/unmanaged wiring end to end.
 
-- [`crates/cargo-cgp/tests/preflight.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/preflight.rs):
+- [`crates/cargo-cgp/tests/front_end/preflight.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/preflight.rs):
   parses the driver's `--version` output (accepting the real shape, rejecting a foreign first line
   and missing fields); the
   [`evaluate`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/preflight.rs)
   verdict on a matching driver, a version mismatch, and a rustc mismatch; and a check that the
   baked-in `PINNED_TOOLCHAIN` equals the channel in
   [`rust-toolchain.toml`](https://github.com/contextgeneric/cargo-cgp/blob/main/rust-toolchain.toml).
-- [`crates/cargo-cgp/tests/update.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/update.rs):
+- [`crates/cargo-cgp/tests/front_end/update.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/update.rs):
   `sparse_index_path` over the registry's dir convention; `parse_versions` skipping yanked and
   unparseable lines; and `select_update` (a stable install taking the highest stable and *never* a
   pre-release, a pre-release install taking the highest newer version of either kind, including the
   release it previewed, and no-newer/downgrade yielding `None`), all without a network call.
-- [`crates/cargo-cgp/tests/command.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/command.rs):
+- [`crates/cargo-cgp/tests/front_end/command.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/command.rs):
   `forwards_target_dir` detects an explicit `--target-dir` (spaced or `=`) so the default is not
   injected over it; `forwarded_manifest_path` finds a `--manifest-path` in either form; and
   `parse_target_directory` reads `target_directory` out of `cargo metadata`'s JSON.
-- [`crates/cargo-cgp/tests/dispatch.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/dispatch.rs):
+- [`crates/cargo-cgp/tests/front_end/dispatch.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/dispatch.rs):
   the side-effect-free dispatch paths (an unknown subcommand, a missing subcommand or help flag,
   `--version`/`-V`, and `setup` and `update` answering `--help` without running and refusing any
-  other argument); [`tests/help.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/help.rs)
+  other argument); [`tests/front_end/help.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/help.rs)
   checks the `setup` and `update` help texts name what each command needs.
 - The [UI snapshot suite](testing.md) is the standing end-to-end proof that the driver runs as the
   compiler; it drives the built binaries with `CARGO_CGP_NO_MANAGE` set, so the check runs unmanaged
