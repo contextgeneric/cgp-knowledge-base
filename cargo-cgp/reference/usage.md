@@ -37,10 +37,11 @@ plain `cargo check`, since that is literally what runs. **cargo**, not cargo-cgp
 an unknown flag produces cargo's own error (`error: unexpected argument '--nope' found`), not a
 cargo-cgp message. And `cargo cgp check --help` prints `cargo check`'s own help and exits *without*
 running a check: the flag is forwarded like any other, so what you see is cargo's flag list under a
-`Usage: cargo check [OPTIONS]` banner, and the driver never runs. The one flag cargo-cgp inspects is
-`--target-dir`, which it looks for only to decide whether to inject its own default (below); every
-other flag it passes through untouched. (The pinned toolchain and the injected diagnostic flags in
-the next paragraph are applied *around* this forwarding, not by altering the flags you pass.)
+`Usage: cargo check [OPTIONS]` banner, and the driver never runs. cargo-cgp only reads two flags,
+and passes both through unchanged: `--target-dir`, to decide whether to inject its own default
+(below), and `--manifest-path`, to ask cargo for that default. (The pinned toolchain and the
+injected diagnostic flags in the next paragraph are applied *around* this forwarding, not by
+altering the flags you pass.)
 
 A check differs from a plain `cargo check` in three deliberate ways, all handled for you. It
 compiles your workspace under the tool's own **pinned nightly** rather than your project's

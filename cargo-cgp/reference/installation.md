@@ -123,11 +123,16 @@ cd cargo-cgp
 cargo build
 ```
 
-Then run the freshly built front-end against another project, pointing it at the built driver and
-skipping the management preflight, so it uses the pinned toolchain the checkout already selects:
+Then run the freshly built front-end from the other project's directory, pointing it at the built
+driver and skipping the management preflight. Unmanaged mode also skips the toolchain forcing, so
+set `RUSTUP_TOOLCHAIN` to the pinned nightly (the `channel` in the checkout's `rust-toolchain.toml`)
+yourself. Without it the project's own toolchain runs, and the driver fails to load
+`librustc_driver`:
 
 ```sh
-CARGO_CGP_NO_MANAGE=1 CARGO_CGP_DRIVER=$PWD/target/debug/cargo-cgp-driver \
+cd /path/to/your/project
+RUSTUP_TOOLCHAIN=nightly-2026-10-10 CARGO_CGP_NO_MANAGE=1 \
+  CARGO_CGP_DRIVER=/path/to/cargo-cgp/target/debug/cargo-cgp-driver \
   /path/to/cargo-cgp/target/debug/cargo-cgp check
 ```
 
