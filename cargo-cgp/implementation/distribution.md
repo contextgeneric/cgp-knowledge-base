@@ -721,9 +721,11 @@ UI suite exercises the managed/unmanaged wiring end to end.
   verdict on a matching driver, a version mismatch, and a rustc mismatch; and a check that the
   baked-in `PINNED_TOOLCHAIN` equals the channel in
   [`rust-toolchain.toml`](https://github.com/contextgeneric/cargo-cgp/blob/main/rust-toolchain.toml);
-  and `failure_message` for each failure: the driver's path and origin in every driver message, the
+  `failure_message` for each failure: the driver's path and origin in every driver message, the
   loader's and rustup's reasons kept, the queried toolchain named in a compiler mismatch, and a
-  missing rustup naming rustup and the Nix flake instead of `setup`.
+  missing rustup naming rustup and the Nix flake instead of `setup`; `judge_driver_answer`, the
+  verdict on a driver that ran, failed, or printed another shape; and `toolchain_failure`, the
+  failure each toolchain-query error stands for.
 - [`crates/cargo-cgp/tests/front_end/driver_path.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/driver_path.rs):
   `locate_driver`'s order (the override, the sibling, then `PATH`) and the bare name kept for a
   driver found nowhere.
@@ -740,8 +742,9 @@ UI suite exercises the managed/unmanaged wiring end to end.
   `forwards_target_dir` detects an explicit `--target-dir` (spaced or `=`) so the default is not
   injected over it; `forwarded_manifest_path` finds a `--manifest-path` in either form;
   `metadata_query_args` forwards the manifest path and every `--config` value, in either form, and
-  ignores arguments after a `--`; and `parse_target_directory` reads `target_directory` out of
-  `cargo metadata`'s JSON.
+  ignores arguments after a `--`; `parse_target_directory` reads `target_directory` out of
+  `cargo metadata`'s JSON; and `cgp_target_dir` picks the `cgp` subdirectory or the relative
+  fallback.
 - [`crates/cargo-cgp/tests/front_end/dispatch.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/dispatch.rs):
   the side-effect-free dispatch paths (an unknown subcommand, a missing subcommand or help flag,
   `--version`/`-V`, and `setup` and `update` answering `--help` without running and refusing any

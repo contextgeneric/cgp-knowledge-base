@@ -230,7 +230,8 @@ argument and rewrite tests are listed in the [driver deep dive](driver.md#tests)
   installs and needs.
 - [`crates/cargo-cgp/tests/front_end/sysroot.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/sysroot.rs):
   `format_stderr`, which appends a failed sysroot probe's stderr (a loader failure, empty output,
-  non-UTF-8 bytes) to its error message.
+  non-UTF-8 bytes) to its error message, and `sysroot_command`, which queries a forced toolchain
+  through `rustup run` and otherwise asks the ambient compiler.
 
 ## Source
 
