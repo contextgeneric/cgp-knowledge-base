@@ -37,11 +37,11 @@ plain `cargo check`, since that is literally what runs. **cargo**, not cargo-cgp
 an unknown flag produces cargo's own error (`error: unexpected argument '--nope' found`), not a
 cargo-cgp message. And `cargo cgp check --help` prints `cargo check`'s own help and exits *without*
 running a check: the flag is forwarded like any other, so what you see is cargo's flag list under a
-`Usage: cargo check [OPTIONS]` banner, and the driver never runs. cargo-cgp only reads two flags,
-and passes both through unchanged: `--target-dir`, to decide whether to inject its own default
-(below), and `--manifest-path`, to ask cargo for that default. (The pinned toolchain and the
-injected diagnostic flags in the next paragraph are applied *around* this forwarding, not by
-altering the flags you pass.)
+`Usage: cargo check [OPTIONS]` banner, and the driver never runs. cargo-cgp only reads three flags,
+and passes all of them through unchanged: `--target-dir`, to decide whether to inject its own
+default (below), and `--manifest-path` and `--config`, to ask cargo for that default. (The pinned
+toolchain and the injected diagnostic flags in the next paragraph are applied *around* this
+forwarding, not by altering the flags you pass.)
 
 A check differs from a plain `cargo check` in three deliberate ways, all handled for you. It
 compiles your workspace under the tool's own **pinned nightly** rather than your project's
@@ -50,18 +50,20 @@ project's own toolchain is left untouched for its ordinary builds. It turns on t
 trait solver** (`-Znext-solver`), which is what surfaces the CGP dependency errors the default
 solver hides, reporting the real missing bound, such as `HasField<Symbol!("name")>`, instead of
 stopping at a generic "trait bounds were not satisfied". And it builds into an **isolated
-`target/cgp` directory** rather than your project's `target/`, so a check never invalidates your
-normal build cache and vice versa. Because these are diagnostic settings the tool chooses,
-`cargo cgp check` is a diagnostic pass rather than a reproduction of your project's own
-`cargo check`, much as Clippy runs under its own settings.
+`target/cgp` directory** rather than your project's `target/`. Cargo locks a target directory while
+it builds there, so a shared one would make each check wait for your other cargo runs and the
+editor's, and the reverse. Because these are diagnostic settings the tool chooses, `cargo cgp check`
+is a diagnostic pass rather than a reproduction of your project's own `cargo check`, much as Clippy
+runs under its own settings.
 
-To send the check's artifacts somewhere other than `target/cgp`, pass `--target-dir` (or set
-`CARGO_TARGET_DIR`); either takes precedence over the default. **The default is the `cgp`
-subdirectory of the project's own target directory**, which the front end reads from
-`cargo metadata --no-deps` (forwarding any `--manifest-path`), so it is the same wherever in the
-package the command runs and follows a configured `build.target-dir`. Only when that query fails, as
-outside any package, does the front end fall back to a relative `target/cgp`, and the wrapped
-command then reports the real problem. `expand` injects the same default.
+To send the check's artifacts somewhere other than `target/cgp`, pass `--target-dir`, which is taken
+as given. **Otherwise the check builds into the `cgp` subdirectory of the project's own target
+directory**, which the front end reads from `cargo metadata --no-deps` (forwarding any
+`--manifest-path` and `--config`), so it is the same wherever in the package the command runs and
+follows a `CARGO_TARGET_DIR`, a configured `build.target-dir`, or one given with `--config`: with
+`CARGO_TARGET_DIR=/build`, the check builds in `/build/cgp`. Only when that query fails, as outside
+any package, does the front end fall back to a relative `target/cgp`, and the wrapped command then
+reports the real problem. `expand` injects the same default.
 
 Two further consequences of the wrapping are worth knowing. **Only workspace members are reshaped**,
 because the driver is installed through `RUSTC_WORKSPACE_WRAPPER`, which cargo applies to workspace
@@ -243,8 +245,8 @@ setups. They are summarized here; the full contract is in
 - `CARGO_CGP_TOOLCHAIN`: override the pinned nightly at runtime, for testing a toolchain bump;
   normally paired with `CARGO_CGP_NO_MANAGE`. `setup` reads it too, so it installs the overriding
   toolchain rather than the pinned one.
-- `CARGO_TARGET_DIR` / `--target-dir`: choose the check's target directory instead of the default
-  `target/cgp`.
+- `CARGO_TARGET_DIR`: moves the project's target directory, and the check builds in its `cgp`
+  subdirectory. Pass `--target-dir` to choose the check's directory exactly.
 
 ## Calling the driver directly (debugging)
 

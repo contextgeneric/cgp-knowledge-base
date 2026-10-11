@@ -590,23 +590,27 @@ The genuine integration risk is build-artifact contention, and the fix is a dedi
 directory that the tool uses by default. Because `cargo-cgp` forces the pinned nightly and injects
 `-Znext-solver` and `--verbose`, its check produces artifacts with a different fingerprint from the
 project's ordinary `cargo build` and from Rust Analyzer's own project-loading builds. Sharing one
-`target/` directory then means the two fight over cargo's build lock and churn each other's caches,
-the class of slowness and flapping diagnostics reported when clippy is used as the check command
-([rust-analyzer#19336](https://github.com/rust-lang/rust-analyzer/issues/19336)).
+`target/` directory then means the two wait on each other for cargo's build lock, the class of
+slowness reported when clippy is used as the check command
+([rust-analyzer#19336](https://github.com/rust-lang/rust-analyzer/issues/19336)). The artifacts
+themselves coexist, since cargo keeps each build's by hash; a probe sharing one directory between
+stable, the pinned nightly, and the tool showed each keeping its own, and the check waiting for the
+lock another cargo run held.
 
 So `cargo cgp check` always builds into a `cgp` subdirectory of the project's target directory,
-`target/cgp` beside `target/debug`, rather than into `target/debug` itself, on every invocation (whether Rust Analyzer is the caller or not), so a check never invalidates a normal build
-and vice versa. This mirrors how `rustc_plugin` isolates its own `target/plugin-<channel>`
-directory, and the isolation helps command-line use as much as the editor; the cost is a one-time
-rebuild of the dependency graph in `target/cgp`, cached thereafter. The front end finds the project's
-target directory by running `cargo metadata --no-deps` (forwarding any `--manifest-path`) and reading
-its `target_directory`, so the directory is the same wherever in the package the command runs, and
-follows a `build.target-dir` the project configures. When that query fails (no package, a broken
-manifest) it falls back to the relative `target/cgp` and lets the wrapped command report the problem.
-A user who needs a different location passes `--target-dir`, which overrides the default: the
-front-end injects its default only when the forwarded arguments do not already set one, the same
-inject-only-when-absent rule the driver follows for its own flags. (A user's `CARGO_TARGET_DIR` is
-likewise respected in preference to the default.)
+`target/cgp` beside `target/debug`, on every invocation (whether Rust Analyzer is the caller or
+not), so a check never waits on the lock a normal build holds, and the reverse. This mirrors how
+`rustc_plugin` isolates its own `target/plugin-<channel>` directory, and the isolation helps
+command-line use as much as the editor; the cost is a one-time rebuild of the dependency graph in
+`target/cgp`, cached thereafter. The front end finds the project's target directory by running
+`cargo metadata --no-deps` (forwarding any `--manifest-path` and `--config`) and reading its
+`target_directory`, so the directory is the same wherever in the package the command runs, and
+follows a `CARGO_TARGET_DIR`, a `build.target-dir` in a config file, or one given with `--config`;
+each gets the `cgp` subdirectory, since each is a directory other cargo runs share. When that query
+fails (no package, a broken manifest) it falls back to the relative `target/cgp` and lets the
+wrapped command report the problem. A user who needs a different location passes `--target-dir`,
+which is taken as given: the front-end injects its default only when the forwarded arguments do not
+already set one, the same inject-only-when-absent rule the driver follows for its own flags.
 
 One residual caveat has no fix, only awareness: Rust Analyzer's inline semantic analysis and the
 `cargo-cgp` flycheck can disagree. Rust Analyzer's own type inference runs against the project's
@@ -734,8 +738,10 @@ UI suite exercises the managed/unmanaged wiring end to end.
   `--root` that places it beside the front-end.
 - [`crates/cargo-cgp/tests/front_end/command.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/command.rs):
   `forwards_target_dir` detects an explicit `--target-dir` (spaced or `=`) so the default is not
-  injected over it; `forwarded_manifest_path` finds a `--manifest-path` in either form; and
-  `parse_target_directory` reads `target_directory` out of `cargo metadata`'s JSON.
+  injected over it; `forwarded_manifest_path` finds a `--manifest-path` in either form;
+  `metadata_query_args` forwards the manifest path and every `--config` value, in either form, and
+  ignores arguments after a `--`; and `parse_target_directory` reads `target_directory` out of
+  `cargo metadata`'s JSON.
 - [`crates/cargo-cgp/tests/front_end/dispatch.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/dispatch.rs):
   the side-effect-free dispatch paths (an unknown subcommand, a missing subcommand or help flag,
   `--version`/`-V`, and `setup` and `update` answering `--help` without running and refusing any
