@@ -550,9 +550,10 @@ owns the string transform.
 
 **Path stripping** removes the module paths rustc prints in front of type names, so
 `cgp::prelude::Chars` becomes `Chars`, but keeps a qualifier that tells two types apart, so
-`std::io::Error` beside a crate's own `Error` stays qualified. It applies to every message the tool
-rewrote, and to a message it left alone only when one of the resugarings below fired there;
-otherwise the paths stay as rustc printed them. It only shortens a name;
+`std::io::Error` beside a crate's own `Error` stays qualified. CGP's own paths and its encoding
+types (`Symbol`, `Chars`, `Cons`, and the rest) always lose their qualifier. It applies to every
+message the tool rewrote, and to a message it left alone only when one of the resugarings below
+fired there; otherwise the paths stay as rustc printed them. It only shortens a name;
 [`strip_unambiguous_paths`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/strip_modules.rs)
 owns it.
 

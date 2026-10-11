@@ -464,11 +464,16 @@ The chain's strip,
 collapses an `a::b::C` identifier run to its final segment unless the qualifier tells two types
 apart. rustc's own rule decides which ones do: a name it prints qualified is either non-unique or
 glob-imported, so a qualified name the crate does not glob-import is ambiguous, and its qualifier
-stays. The driver supplies the glob-imported names from the resolver's `glob_map`, and a run rooted
-at the `cgp` crate always collapses, since the prelude glob is why rustc qualifies it:
+stays. The driver supplies the glob-imported names from the resolver's `glob_map`. Two kinds of run
+always collapse: one rooted at the `cgp` crate, since the prelude glob is why rustc qualifies it,
+and one ending in a name of CGP's encoding (`Symbol`, `Chars`, `Nil`, `Cons`, `Either`, `Void`,
+`PathCons`, `Field`, `Index`, `HasField`), whichever crate re-exports it, because the stages after
+the strip match those names bare. Some of them are ambiguous (`std::str::Chars`), but in a CGP
+diagnostic they are the encoding the resugaring folds away:
 
 ```text
 cgp::prelude::HasErrorType                        →   HasErrorType
+app::prelude::Chars                               →   Chars                           (encoding)
 finance::QuantityTypeProviderComponent            →   QuantityTypeProviderComponent   (glob-imported)
 std::io::Error                                    →   std::io::Error                  (ambiguous)
 ```
