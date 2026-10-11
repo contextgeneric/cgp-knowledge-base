@@ -159,7 +159,7 @@ A Nix-installed tool can fail before it compiles anything, on the query it makes
 toolchain's libraries:
 
 ```text
-cargo-cgp: `/nix/store/…-rust-minimal-1.99.0-nightly-…/bin/rustc --print sysroot` failed with status exit status: 127:
+cargo-cgp: `/nix/store/…-rust-minimal-1.101.0-nightly-…/bin/rustc --print sysroot` failed with status exit status: 127:
 
 rustc: error while loading shared libraries: libz.so.1: cannot open shared object file: No such file or directory
 ```
@@ -174,7 +174,7 @@ that directory ahead of the binary's own `RUNPATH`.
 Whether that matters depends on the project, because a rustc shared library is named for its Rust
 version rather than by a content hash. A project on a *different* version is harmless: its
 `libLLVM.so.21.1-rust-1.91.1-stable` collides with nothing. A project pinning the **same** version
-as the tool's own nightly is not: rustup's `libLLVM.so.22.1-rust-1.99.0-nightly` has exactly the
+as the tool's own nightly is not: rustup's `libLLVM.so.23.1-rust-1.101.0-nightly` has exactly the
 name the Nix `rustc` is looking for, so it is loaded instead, and being an FHS build it then wants a
 system `libz.so.1` the Nix loader cannot resolve. So the failure appears in whichever project
 happens to track the same Rust version as the tool, which is the *opposite* of the intuition that a
@@ -220,7 +220,10 @@ The pinned toolchain is not installed. Run `cargo cgp setup`.
 ```
 
 There `setup` cannot help either, since it needs rustup too; install rustup or use the Nix flake,
-whose wrapper runs the front end unmanaged and so skips the preflight.
+whose wrapper runs the front end unmanaged and so skips the preflight. A machine without rustup but
+with another `rustc` on `PATH`, such as a Nix one, does not get that message: the preflight takes
+that `rustc` for the pinned toolchain, and the driver then fails to load under it, which reports as
+the driver problem below. The fix is the same.
 
 If the toolchain is present but the driver cannot run under it (almost always a driver built against
 a *different* nightly than the one now installed), the preflight reports the load failure as a
@@ -285,7 +288,7 @@ you see, then read the section for the fix.
 | `could not execute process` … `(never executed)` | driver path wrong (unmanaged) | [The front-end cannot find the driver](#the-front-end-cannot-find-the-driver) |
 | `error while loading shared libraries: librustc_driver-…` | library path unset, or toolchain mismatch | [The driver cannot load the compiler library](#the-driver-cannot-load-the-compiler-library) |
 | `--print sysroot` failed with status `exit status: 127` | Nix install; a same-version rustup toolchain shadows its libraries | [A Nix install fails its sysroot probe](#a-nix-install-fails-its-sysroot-probe-under-cargo-cgp) |
-| `the pinned toolchain is not installed` | pinned nightly absent | [The managed preflight rejects the setup](#the-managed-preflight-rejects-the-setup) |
+| `The pinned toolchain is not installed` | pinned nightly absent | [The managed preflight rejects the setup](#the-managed-preflight-rejects-the-setup) |
 | `is rustup on PATH?` | no rustup for the toolchain probe | [The managed preflight rejects the setup](#the-managed-preflight-rejects-the-setup) |
 | `could not run under toolchain …` | driver built against another nightly | [The managed preflight rejects the setup](#the-managed-preflight-rejects-the-setup) |
 | `out of lockstep` / `now provides` | front-end and driver versions/builds differ | [The managed preflight rejects the setup](#the-managed-preflight-rejects-the-setup) |
