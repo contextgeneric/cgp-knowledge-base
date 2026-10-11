@@ -190,14 +190,16 @@ count and make cargo report a failed compilation. And the driver's own
 type names in an error would shorten the very path the message quotes, turning `contexts::nope` into
 `nope`.
 
-**The driver writes the finished text to a file and the front-end prints it.** The path is a temp
-file named after the front-end's process id, so two concurrent runs never read each other's output
-([`expand/output.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/expand/output.rs));
-the front-end clears it before launching cargo, reads it afterwards, and writes it to stdout.
-Routing the content through a file rather than the driver's stdout keeps it from interleaving with
-cargo's progress output, which is why `cargo-expand` passes `-o` too, and it leaves the front-end's
-role unchanged from `check`: it never parses or reshapes what the driver produced, it only relays
-it.
+**The driver writes the finished text to a file and the front-end prints it.** The file sits in a
+directory the front-end creates for the one run
+([`expand/output.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/expand/output.rs)):
+created exclusively under the system temp directory, readable only by the user (mode 0700 on Unix),
+and removed once the front-end has read the file and written it to stdout. A fixed file name in the
+shared temp directory would let another user place a symlink there for the driver's write to follow,
+and a fresh directory also means no earlier run's output can be printed by mistake. Routing the
+content through a file rather than the driver's stdout keeps it from interleaving with cargo's
+progress output, which is why `cargo-expand` passes `-o` too, and it leaves the front-end's role
+unchanged from `check`: it never parses or reshapes what the driver produced, it only relays it.
 
 The expansion also builds under `--profile check`, since it needs no codegen. The flag is added
 unless the caller chose a profile of their own, which `forwards_profile` decides the way the
@@ -525,7 +527,8 @@ and printing halves need a real compilation, so they are exercised by running th
   both subcommands' helps, since their options come from different places.
 - [`crates/cargo-cgp/tests/front_end/expand.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/expand.rs):
   the front-end's pure helpers: the profile detection in both forms (and a `--bin release` value
-  that must not count as one), the per-process output path, and the `--item` extraction: both
+  that must not count as one), the output directory (new for each run, removed afterwards, a name
+  another process holds skipped, and private to the user on Unix), and the `--item` extraction: both
   spellings, everything else forwarded untouched, a bare word left to cargo, a crate-rooted path
   accepted, and the two rejection shapes (a missing or repeated filter names the flag, a malformed
   path names the path).
@@ -547,7 +550,7 @@ and printing halves need a real compilation, so they are exercised by running th
 - [`crates/cargo-cgp/src/expand/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp/src/expand):
   the front-end subcommand: `command.rs` runs the wrapped `cargo rustc` with the marker flags and
   prints what the driver wrote, `item.rs` takes `--item <path>` out of the forwarded arguments and
-  checks its shape, `output.rs` holds the per-process output path and reads it back, and
+  checks its shape, `output.rs` creates the private output directory and reads the file back, and
   `profile.rs` decides whether `--profile check` is added.
 - [`crates/cargo-cgp/src/launch/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp/src/launch):
   the setup both subcommands share: `command.rs` builds the wrapped cargo command (the preflight,
