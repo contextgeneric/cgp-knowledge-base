@@ -159,10 +159,12 @@ failure with a root-cause-first diagnostic, covered in its own document; failing
 CGP wiring notes; and finally the [post-processing](error-processing.md) transforms (stripping
 module paths, resugaring `Symbol!`, `Path!`, and the type-level lists, rewording an unmet `HasField`
 bound) clean up every rewritten diagnostic, and change an untransformed one only where they recover
-a CGP encoding, so no raw CGP construct leaks and a plain Rust error stays as rustc printed it. The
-sections that follow detail the two levers, the rename, the two coherence reshapes, and the
-`#[cgp_impl]` reshapes; the replacement and the post-processing build on the rename's `TyCtxt`
-access and rustc-free helpers, and are documented separately.
+a CGP encoding, so no raw CGP construct leaks and the transforms leave a plain Rust error as rustc
+printed it (the injected `--verbose` aside, see
+[Un-eliding the diagnostic](#un-eliding-the-diagnostic)). The sections that follow detail the two
+levers, the rename, the two coherence reshapes, and the `#[cgp_impl]` reshapes; the replacement and
+the post-processing build on the rename's `TyCtxt` access and rustc-free helpers, and are documented
+separately.
 
 The emitter is also what *renders* the diagnostics, the way vanilla `rustc` would. The wrapper type
 [`CgpEmitter`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/cgp_emitter.rs)
@@ -254,6 +256,25 @@ before/after is pinned by the
 UI snapshot, a fixture of `acceptable` quality because the flag, with the typed resolver on top,
 turns its otherwise hidden cause into a clean, root-cause-first error, as the solver switch does for
 `unsatisfied_dependency`.
+
+**The flag reaches every diagnostic in the compilation, so a diagnostic the tool leaves alone also
+prints un-elided.** rustc reads `opts.verbose` from the session options, which are fixed once the
+session is built, so the driver cannot turn the flag off for one diagnostic. In the
+[`provider_wrong_signature`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/provider_wrong_signature.rs)
+fixture, a `#[cgp_impl]` provider method takes a `u64` where its component declares a `u32`, and
+the `E0053` note reads `` expected signature `fn(&__Context__, u32) -> String` ``, naming the
+context parameter `#[cgp_impl]` generates. Plain rustc diffs the two signatures and prints
+`fn(&_, u32) -> String`. A crate's own types differ the same way: in
+[`lookalike_cgp_names`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/lookalike_cgp_names.rs),
+a program that never names CGP, `Symbol<1, Chars<'a', Nil>>` prints in full where rustc shows
+`Symbol<1, Chars<..>>`.
+
+This is a known limitation, kept because both alternatives cost more. Without the flag, the
+CGP diagnostics the resolver declines lose their field names: a `Symbol!("nmae")` reads
+`Symbol<4, Chars<'n', Chars<'m', _>>>`, and rustc's similar-impl hint replaces the help naming the
+missing field. Re-eliding the text afterward cannot work either, because rustc prints `_` only for
+the arguments the two compared types share, and the text does not record which those were. Plain
+`cargo check` still shows any diagnostic in rustc's own wording.
 
 ### Naming the traits behind a component marker
 
@@ -901,7 +922,8 @@ will likely grow toward it:
   included, matches plain `cargo check` exactly. `same_name_types`, `compute_bare_name_ambiguous`,
   `raise_error_ambiguous`, and `update_field_marker_unannotated` pin that the post-processing keeps
   the paths, labels, and context spans of an untransformed diagnostic, and `lookalike_cgp_names`
-  that a crate not using CGP is never resugared.
+  that a crate not using CGP is never resugared. `provider_wrong_signature` and
+  `lookalike_cgp_names` pin the `--verbose` limitation, marked `//@rewrites-falsely:`.
 - [`tests/ui/robustness/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/robustness):
   `panic_in_transform` and `panic_in_flush`, a wiring failure between two type errors with the
   emitter made to panic in each stage, pinning that every error still prints, as rustc built it,

@@ -292,10 +292,19 @@ against every hazard above before it is trusted.
 
 Two grep patterns relocate the elision sites when a nightly bump moves them. Searching the compiler
 for `opts.verbose` (excluding `verbose_internals`) enumerates every elision gate. On the pinned
-nightly these are `maybe_highlight` and the lifetime/type arms in `infer/mod.rs`,
-`short_string_namespace` in `ty/error.rs`, and `report_similar_impl_candidates` in
-`fulfillment_errors.rs`. Searching `pretty.rs` for `should_print_verbose` enumerates the
-internal-debug branches `--verbose` intentionally leaves off.
+nightly the trait-error gates are `maybe_highlight`, the lifetime, type, and alias arms of `cmp`,
+and the expected/found shortening in `expected_found_str_term`, all in `infer/mod.rs`;
+`short_string_namespace` in `ty/error.rs`; and both candidate cutoffs in
+`report_similar_impl_candidates` in `fulfillment_errors.rs`. Other diagnostics have gates too: the
+"...and N other places" cutoff of a borrow-checker move error (`move_errors.rs`), the elided-lifetime
+note limit in `trait_impl_difference.rs`, and the long region-highlighted types in
+`placeholder_error.rs`. (`rustc_codegen_ssa` also reads the flag for a linker failure, which a check
+never reaches.) Searching `pretty.rs` for `should_print_verbose` enumerates the internal-debug
+branches `--verbose` intentionally leaves off.
+
+The flag is a session option, so each of these gates opens for every diagnostic in the
+compilation, including the ones the tool leaves alone. [The driver](driver.md#un-eliding-the-diagnostic)
+records that as a known limitation.
 
 Both suppression families are defeated with the coarse argument lever: inject a flag, change nothing
 else. The finer work uses the compiler's own state directly rather than its printed output, and the

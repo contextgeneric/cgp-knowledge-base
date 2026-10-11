@@ -321,25 +321,6 @@ The fixtures group by construct:
 - **Use sites** (`use-site/`): calls the resolver declines, leaking `IsProviderFor` or rustc's
   method-probe advice, including a provider's own method called directly.
 
-## Untransformed diagnostics are not left as rustc printed them
-
-A diagnostic the tool does not rewrite should print exactly as plain `cargo check` prints it, and
-some still do not, because the driver injects `--verbose` into every compilation. The flag defeats
-rustc's elisions so a CGP root cause stays visible (see
-[rustc diagnostic internals](../implementation/rustc-diagnostic-internals.md#the-suppression-points)),
-and it does the same to plain Rust errors. A signature note prints the generated `__Context__` where
-plain rustc prints `_`
-([`provider_wrong_signature`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/provider_wrong_signature.rs)),
-and a crate's own `Symbol<1, Chars<'a', Nil>>` prints in full where plain rustc shows
-`Symbol<1, Chars<..>>`
-([`lookalike_cgp_names`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/lookalike_cgp_names.rs)).
-The untransformed diagnostics of a CGP program differ the same way: a long requirement prints in
-full, with its module paths, where plain rustc shortens it. Each pass-through fixture that shows
-this lives under
-[`pass-through/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/pass-through) with
-a `//@rewrites-falsely:` marker naming its cause, and the harness reports the marker once the
-output matches plain rustc's.
-
 ## What good presentation looks like
 
 Taken together, these issues define the tool's presentation target for the classes it does not yet

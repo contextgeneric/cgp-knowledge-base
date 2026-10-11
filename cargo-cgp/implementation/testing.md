@@ -145,9 +145,10 @@ header.
 - **The pass-through check** runs for every fixture under `pass-through/`: a program whose errors
   are plain Rust, which the tool must render exactly as rustc does. It requires the tool's stderr to
   equal plain `cargo check`'s, both normalized as the baseline is, so the property holds without a
-  hand-reviewed snapshot. A pass-through fixture that the tool still rewrites falsely declares
-  `//@rewrites-falsely: <reason>`; its snapshots then pin today's output, and the check reports the
-  marker once the outputs agree, so the fix that closes it also removes it.
+  hand-reviewed snapshot. A pass-through fixture whose output still differs from rustc's, for a fix
+  still to come or a documented limitation, declares `//@rewrites-falsely: <reason>`; its snapshots
+  then pin today's output, and the check reports the marker once the outputs agree, so the fix that
+  closes a difference also removes it.
 - **The header check** runs for every error fixture (everything outside `ok/`, `pass-through/`, and
   `robustness/`): it requires a `//@quality:` directive and a `//@codes:` list equal to the set of
   `[CGP-Exxx]` codes in the tool's output, so a fixture that gains or loses a code fails instead of
