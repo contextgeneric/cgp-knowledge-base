@@ -613,6 +613,9 @@ fixtures:
 - `unrelated_error_before_call`: an `Rc` `Send` error on the line before a failing consumer call
   keeps its own diagnostic, because the call-site anchor matches a call only by the diagnostic's
   primary span.
+- `unrelated_error_in_call_argument`: the limit of that rule. The same `Send` error inside an
+  argument of the failing call overlaps the call's span, so it resolves to the call's cause and is
+  de-duplicated away; the fixture pins the lost error (quality `hidden`).
 - `cascade_later_stage`: the same dispatch shape but with the missing field read by the *second*
   pipeline stage rather than the first, so the cause sits behind a `ComposeHandlers` stage keyed on
   the first stage's un-normalized `::Output`. Pins the placeholder-fold of a still-unresolved
@@ -719,6 +722,9 @@ The **impl-site and wrapper-chain paths** are pinned by:
 - `unrelated_error_in_wrapper_impl`: an `Rc` `Send` error inside a wrapper impl's method body keeps
   its own diagnostic, while the forwarding call to the failing supertrait's method joins the
   `[CGP-E009]` block (`is_about_impl`).
+- `unrelated_error_in_forwarding_argument`: the limit of that rule, the impl-site form of
+  `unrelated_error_in_call_argument`. The `Send` error inside the forwarding call's argument
+  overlaps the call, joins the `[CGP-E009]` block, and is lost (quality `hidden`).
 
 Finally, the leaf wording and the tree renderer are unit-tested over hand-built `Resolved` values,
 independently of the compiler:
