@@ -245,6 +245,12 @@ a help that suggests the derive the enum already has
 ([`variant_helper_attribute`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/macro-defects/variant_helper_attribute.rs)). Both are fixed in `cgp`:
 qualified projections, and filtering the copied attributes.
 
+A `Path!` defect reaches the reader the same way. `Path!` reads a segment such as the `f` of
+`@app.f` as a type, so three `E0425`s name `f` as an unresolved type, and rustc's `E0275` overflow
+follows, with nothing naming the segment rule as the cause
+([`path_segment_read_as_type`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/macro-defects/path_segment_read_as_type.rs)).
+The fix belongs in `cgp`'s `Path!` primitive rule.
+
 ## Extensible-data failures are not reshaped at all
 
 The casts, builders, and extractors of the
@@ -291,8 +297,6 @@ check that its premise holds before it fires. These fixtures pin the false line:
 - [`check_trait_named_as_wrapper`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/checks/check_trait_named_as_wrapper.rs): a generic key in
   `delegate_and_check_components!` presents the generated `__CanUseApp` check trait as the user's
   trait in a `[CGP-E009]` headline.
-- [`path_segment_read_as_type`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/macro-defects/path_segment_read_as_type.rs): an overflow that cascades from an unresolved
-  `@`-path segment is rewritten into the `[CGP-E010]` cycle with its `UseContext` advice.
 - [`type_error_in_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/type_error_in_wiring.rs): an unresolved wiring type becomes a `{type error}: Debug`
   root cause.
 - [`question_mark_after_failed_handle`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/handlers/question_mark_after_failed_handle.rs): the `?` after a

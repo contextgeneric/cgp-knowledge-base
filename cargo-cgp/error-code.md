@@ -269,7 +269,10 @@ bare `@a.b.*` notation (no `Path!(…)` wrapper), and the upstream reference is
   `UseContext` whose only implementation of the consumer trait *is* that delegation.
 - **Triggered by:** an `E0275` overflow whose requirement is a `Context: CanUseComponent<Marker, …>`
   bound. The Rust code stays `E0275`; the note pointing at the generated `__Check…` trait is
-  dropped, since the kept caret already covers the check entry.
+  dropped, since the kept caret already covers the check entry. An overflow at a check entry whose
+  context wires a type the compiler could not resolve (an earlier `E0425` or `E0412`) is not
+  rewritten: the lookup can overflow through that `{type error}` without any cycle, so rustc's
+  wording stays and the earlier error is the one to fix.
 - **Fix:** wire the component to a real provider, or implement the consumer trait directly on the
   context, so the lookup terminates.
 - **Upstream class:** [wiring cycle](../cgp/errors/wiring/wiring-cycle.md).

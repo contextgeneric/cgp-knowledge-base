@@ -86,7 +86,9 @@ drops the `Greeter<Person>` / `CanGreet` / `UseContext` / `__CheckPerson` note c
 leaves the caret on the `GreeterComponent` entry inside the check block. A `help:` note names the
 usual cause (a component delegated to `UseContext` with no direct consumer-trait impl) and the two
 fixes: wire a real provider, or implement the consumer trait on the context. Where raw `rustc` hands
-you an overflow depth and a chain to decode, the tool states that the wiring recurses and why.
+you an overflow depth and a chain to decode, the tool states that the wiring recurses and why. An
+overflow that follows from an unresolved name in the context's wiring, rather than from a cycle,
+keeps rustc's wording, so the earlier `E0425` stays the error to fix.
 
 The tool does more than restate the overflow when a cycle is tangled with a recoverable cause, and
 this is where its cycle guard earns its keep. In `mutual_cycle_with_cause` (`ProviderA` depends on

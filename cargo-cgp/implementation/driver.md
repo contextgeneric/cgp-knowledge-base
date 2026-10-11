@@ -355,7 +355,14 @@ map. When the overflow header is rewritten, the emitter also drops the note poin
 generated `__Check…` trait (the kept caret already covers the check entry) and attaches a `help`
 naming the usual cause and the two fixes (`wiring_overflow_help`); the
 [`use_context_cycle`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/use_context_cycle.rs)
-fixture pins the reshaped output. The emitter applies the full dispatch only to a diagnostic's
+fixture pins the reshaped output. An overflow can also follow from an earlier unresolved name: a
+wiring entry that names a type the compiler could not resolve holds a `{type error}`, and a lookup
+through it can overflow with no cycle in the wiring. So the emitter leaves an `E0275` at a check
+entry in rustc's wording when the checked context's `DelegateComponent` entries hold such a type
+(`overflow_follows_type_error` in the driver's `resolve/overflow.rs`), since the earlier error is
+the one to fix
+([`path_segment_read_as_type`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/macro-defects/path_segment_read_as_type.rs)).
+The emitter applies the full dispatch only to a diagnostic's
 *main* message and the note rename to its children, since a CGP error code belongs on a main message
 alone. A message whose marker is absent from the map, or any other message, passes through
 untouched. A **generic component**, one whose marker carries extra type parameters so that
