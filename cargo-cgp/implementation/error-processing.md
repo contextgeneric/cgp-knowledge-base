@@ -356,7 +356,8 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   commutation with the grouping, which is why heading needs no re-merge.
 - [`crates/cargo-cgp-error-processing/tests/error_processing/dedup.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/dedup.rs):
   the `DedupLedger` key scheme: a re-reported cause suppressed, distinct causes kept, the text key,
-  the coded-header key collapsing a declined fallback, and a kept rustc header never keying.
+  the coded-header key collapsing a declined fallback but never a resolved report (in either
+  arrival order, or with a second cause set), and a kept rustc header never keying.
 - [`crates/cargo-cgp-error-processing/tests/error_processing/signals.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/signals.rs):
   the text signals: the wording each matches and the near-miss it must not (the two `E0599` shapes,
   the method-probe artifacts, the orphan marker-plus-phrase pair, the `?`-cascade phrasing, and both
