@@ -601,11 +601,14 @@ suppressing a lone `E0119` would leave a failing build with no error at all. Eve
 `DelegateComponent` entry impl of a wiring entry, or the provider-trait impl of a `#[cgp_provider]`
 block), and the two conflict exactly when their `IsProviderFor` copies do. So the classifier
 suppresses only when a genuine local `IsProviderFor` impl sits at the caret *and* the two colliding
-sites each carry a local impl of one *common* other trait, whose own `E0119` rustc then reports.
-An `IsProviderFor` conflict with no common companion is left alone. A duplicate provider *name* (two
+sites each carry a local impl of one *common* other trait, whose own `E0119` rustc then reports. An
+`IsProviderFor` conflict with no common companion is left alone. A duplicate provider *name* (two
 `#[cgp_impl(new P)]` blocks) never reaches this classifier: rustc stops once name resolution finds a
 type defined twice, so the `E0428` is the only error
 ([`duplicate_provider_name`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_provider_name.rs)).
+Two `#[cgp_impl(P)]` blocks for one provider struct declared once do reach it: the provider-trait
+`E0119` is kept and its `IsProviderFor` twin dropped
+([`duplicate_provider_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_provider_impl.rs)).
 
 Everything is recovered from the compiler, not the error text. rustc aims the `E0119` at
 `tcx.def_span` of the conflicting impl, and the delegate macro re-spans each entry onto its key

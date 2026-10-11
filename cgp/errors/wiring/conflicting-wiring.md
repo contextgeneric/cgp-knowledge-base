@@ -159,8 +159,10 @@ One form in this class is a **pass-through** that `cargo-cgp` does not rewrite: 
 clashes (`duplicate_component_name`, `duplicate_provider_name`) keep `rustc`'s uncoded `E0428`,
 because it already points precisely at the two definitions. Under the pinned nightly the `E0428` is
 the only error a name clash produces, since the compiler stops before the conflicting impls reach
-coherence checking. The codes are defined in the
-[cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
+coherence checking. Two `#[cgp_impl(P)]` blocks for one provider struct declared once do reach
+coherence checking: `cargo-cgp` keeps the uncoded `E0119` on the provider trait, whose carets cover
+the two blocks, and drops the duplicate `E0119` on the `IsProviderFor` impls they generate. The
+codes are defined in the [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
 
 ## Resolving it
 
@@ -244,6 +246,9 @@ The pass-through conflicts `cargo-cgp` leaves uncoded:
 - [`wiring/duplicate-keys/duplicate_provider_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_provider_name.rs):
   two `#[cgp_impl(new …)]` declaring the same provider struct; both snapshots hold the lone uncoded
   `E0428`, since the pinned nightly stops before the provider impls conflict.
+- [`wiring/conflicting-wiring/duplicate_provider_impl.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_provider_impl.rs):
+  two `#[cgp_impl(GreetHello)]` blocks for one declared provider struct; the tool keeps the
+  provider-trait `E0119` and drops its `IsProviderFor` twin.
 - [`wiring/duplicate-keys/auto_dispatch_shared_method_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/auto_dispatch_shared_method_name.rs):
   two [`#[cgp_auto_dispatch]`](../../reference/macros/cgp_auto_dispatch.md) traits in one module
   declaring the same method, so the generated helper `__compute_area__` and computer `ComputeArea`
