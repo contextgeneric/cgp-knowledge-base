@@ -43,7 +43,16 @@ reach the compiler untouched.
 
 ## Preparing the argument vector
 
-Before handing control to the compiler,
+Before reading any argument, the driver expands `@file` arguments
+([`args::expand_arg_files`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/args.rs),
+over rustc's own `rustc_driver::args::arg_expand_all`). When a command line grows long, cargo keeps
+the wrapper and the `rustc` path visible and moves the rest into such a file, one argument per line,
+so the driver's own `--cgp-expand=` flag and a user's explicit `-Znext-solver`, `--verbose`, or
+`--sysroot` may sit inside it. Expanding first lets the driver find them; rustc then receives the
+arguments already expanded. The expansion runs inside `catch_with_exit_code`, so an unreadable file
+ends the compilation with the fatal error rustc itself would report.
+
+Then
 [`args::rustc_args`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/args.rs)
 turns the wrapper's argument vector into a rustc one. It detects "wrapper mode" (the second argument
 is a path whose file stem is `rustc`) and removes that injected compiler path, because
@@ -826,10 +835,11 @@ inside the toolchain; that difference belongs to the shared environment contract
 The remaining differences are gaps where the driver is deliberately simpler than Clippy today and
 will likely grow toward it:
 
-- **Argument reading.** The driver reads `env::args()`, whereas Clippy uses
-  `rustc_driver::args::raw_args`, which also expands `@argfile` arguments that cargo passes on some
-  platforms (notably Windows, to dodge command-line length limits). Until this is adopted, an
-  `@argfile` invocation would not be handled.
+- **Argument reading.** The driver expands `@file` arguments before reading its flags, where Clippy
+  reads `rustc_driver::args::raw_args` unexpanded and peeks inside an argument file only for
+  `--sysroot`. The driver needs the full expansion because its own `--cgp-expand=` flag can sit in
+  the file. Clippy's `raw_args` also reports a non-Unicode argument as an error, where the driver
+  reads `env::args()`, which panics on one.
 - **Driver front-matter.** Both drivers install rustc's logger (`init_rustc_env_logger`) and its
   ICE hook (`install_ice_hook`) with their own bug-report URL, and both answer `--version` and
   `--help`. `cargo-cgp` additionally wraps the ICE hook, so a panic its emitter contains is not
@@ -867,7 +877,8 @@ will likely grow toward it:
 - [`crates/cargo-cgp-driver/tests/driver/args.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/args.rs):
   `rustc_args` wrapper-mode stripping, sysroot injection, an existing sysroot left alone,
   injected-flag appending, an explicit `-Znext-solver` override, and the `-vV`/`--print` info-query
-  skips.
+  skips; and `expand_arg_files` expanding an argument file that holds `--cgp-expand=` and a
+  user's `-Znext-solver`.
 - [`crates/cargo-cgp-driver/tests/driver/help.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/help.rs):
   `wants_help` detecting the help flags, and the help text explaining the wrapper role and flags.
 - [`crates/cargo-cgp-driver/tests/driver/test_panic.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/test_panic.rs):
@@ -916,7 +927,8 @@ will likely grow toward it:
   the entrypoint: installs the logger and the panic hooks, reads the sysroot, prepares the argument
   vector, and runs the compiler under `catch_with_exit_code`.
 - [`crates/cargo-cgp-driver/src/args.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/args.rs):
-  `rustc_args`: wrapper-mode stripping, sysroot injection, flag injection, and the info-query skip.
+  `expand_arg_files`, the `@file` expansion, and `rustc_args`: wrapper-mode stripping, sysroot
+  injection, flag injection, and the info-query skip.
 - [`crates/cargo-cgp-driver/src/config.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/config.rs):
   the shared names: the injected flags (`NEXT_SOLVER_FLAG`, `VERBOSE_FLAG`, `SYSROOT_ENV`) and the
   identity anchor (`CGP_COMPONENT_CRATE`, `IS_PROVIDER_FOR_TRAIT`), each with its rationale.
