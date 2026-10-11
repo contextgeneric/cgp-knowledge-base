@@ -292,12 +292,17 @@ the work is the same leaf: name the field or variant the generated types encode.
 Some rewrites state something false, which is worse than passing rustc's text through. Each needs a
 check that its premise holds before it fires. These fixtures pin the false line:
 
-- [`field_tag_typo_derive_hint`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/field_tag_typo_derive_hint.rs): a misspelled `HasField` tag on a struct that
-  derives `HasField` gets a help saying the derive is required.
+- [`field_tag_typo_derive_hint`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/field_tag_typo_derive_hint.rs) and
+  [`symbol_tag_on_tuple_struct`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/symbol_tag_on_tuple_struct.rs): a misspelled tag, or a
+  `Symbol!` tag on a tuple struct, gets a help saying the derive is required on a struct that has it.
+- [`check_trait_named_as_wrapper`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/check_trait_named_as_wrapper.rs): a generic key in
+  `delegate_and_check_components!` presents the generated `__CanUseApp` check trait as the user's
+  trait in a `[CGP-E009]` headline.
 - [`deref_has_field_conflict`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/deref_has_field_conflict.rs): an `E0119` overlap between a derived `HasField` and
   the `Deref` blanket impl gains a missing-derive help and a `[CGP-E108]` root cause.
-- [`getter_unwired_call`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/getter_unwired_call.rs): an unwired `#[cgp_getter]` call names the component
-  marker as the context.
+- [`getter_unwired_call`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/getter_unwired_call.rs) and
+  [`use_default_getter_context`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/use_default_getter_context.rs): an unwired getter,
+  called directly or from a `UseDefault` body, names the component marker as the context.
 - [`direct_delegation_missing_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/direct_delegation_missing_key.rs): a `->` delegation to a table lacking the key
   reports the context, which has the entry, as the table missing it.
 - [`raise_generic_missing_bound`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/raise_generic_missing_bound.rs): `Self::raise_error` without `#[uses]` reports the
@@ -338,7 +343,7 @@ The fixtures group by construct:
   wired as a handler or applied to a struct, pipeline stages that disagree, a monadic pipeline over
   plain values, and matchers or builders missing an arm or a field.
 - **Use sites** (`use-site/`): calls the resolver declines, leaking `IsProviderFor` or rustc's
-  method-probe advice.
+  method-probe advice, including a provider's own method called directly.
 
 ## Untransformed diagnostics print full paths
 
