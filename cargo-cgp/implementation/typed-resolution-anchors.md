@@ -89,8 +89,10 @@ itself a CGP consumer trait (has a consumer blanket routing to a provider) reads
 concrete impl, reads `[CGP-E009] the trait …`. Because the wrapper is a distinct trait from the CGP
 supertrait it reduces to, its error is reported on its own rather than de-duplicating into the
 `check_components!` entry for that supertrait. This anchor is tried *before* the wrapper-chain and
-use-site ones, and it fires only for an impl on a *local* struct or enum. An impl on a foreign type
-or a provider struct carries no consumer supertrait on a context and is skipped.
+use-site ones, and it fires only for an impl on a **context**: a struct or enum the checked crate
+defines, or one from another crate that carries `DelegateComponent` wiring of its own
+(`is_context_adt`), as a context a library exports does. An impl on any other foreign type or on a
+provider struct carries no consumer supertrait on a context and is skipped.
 
 **From a foreign wrapper chain.** The routing glue can put the failure one level further out: a
 hand-written `impl Trait for Foreign` block whose `Self` is a foreign type holding the context,
@@ -99,16 +101,16 @@ money-transfer example's routing layer is the case: `impl CanAddApiRoutes for Ro
 whose supertrait descends through `CanAddMainApiRoutes<MockApp>` and `CanAddRoute<MockApp, …>`
 before reaching `MockApp: CanHandleApi<…>`, with the real context `MockApp` appearing only as a type
 *argument* of each hop and never as the impl's `Self`. Neither the impl-site anchor (whose `Self`
-must be a local context) nor the use-site anchor (whose context comes from a struct-definition span
-the caret never touches) can recover it.
+must be a context) nor the use-site anchor (whose context comes from a struct-definition span the
+caret never touches) can recover it.
 
 `resolve_wrapper_chain` descends the impl's own unmet supertrait through the ordinary trait
 obligations beneath it (each impl's `where`-clause bounds) until one lands on a CGP consumer whose
-`Self` is a local context, the handoff (`consumer_handoff_causes`) it then seeds and walks directly.
-Every ordinary hop becomes a `trait impl` node, so the tree reads from the code the programmer wrote
-down to the root cause. Two subtleties make the descent work. First, it **re-evaluates each
-obligation with the trait solver** rather than trusting rustc's cascade-suppressed diagnostic: the
-direct `MockApp: CanHandleApiSend<…>` bound is *assumed to hold* off its own ill-formed impl, so the
+`Self` is a context, the handoff (`consumer_handoff_causes`) it then seeds and walks directly. Every
+ordinary hop becomes a `trait impl` node, so the tree reads from the code the programmer wrote down
+to the root cause. Two subtleties make the descent work. First, it **re-evaluates each obligation
+with the trait solver** rather than trusting rustc's cascade-suppressed diagnostic: the direct
+`MockApp: CanHandleApiSend<…>` bound is *assumed to hold* off its own ill-formed impl, so the
 descent reaches the consumer instead through the **base trait of a projection `where`-clause** (a
 `Ctx::Response: Send` bound over the broken `CanHandleApi`, whose base `Ctx: CanHandleApi<…>` is
 what genuinely fails), which requires reading the impl's predicates *un-normalized* so the

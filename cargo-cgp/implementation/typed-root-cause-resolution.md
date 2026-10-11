@@ -240,10 +240,11 @@ anchor reaches a manual supertrait bound in a trait definition or `where` clause
 namespace-joined use-site call, whenever a local CGP consumer trait and its context appear in the
 diagnostic's spans (the `use_type_foreign_unsatisfied`, `use_type_nested_unsatisfied`, and
 `namespace_join_use_site` fixtures under
-[`checks/check-trait-failure/use-type/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/checks/check-trait-failure/use-type) and
-[`hidden/unsatisfied-dependency/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/hidden/unsatisfied-dependency)). The
-[call-site anchor](typed-resolution-call-site.md) covers the *foreign generic consumer* case, the
-unconditionally-matching dispatch shape
+[`checks/check-trait-failure/use-type/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/checks/check-trait-failure/use-type)
+and
+[`hidden/unsatisfied-dependency/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/hidden/unsatisfied-dependency)).
+The [call-site anchor](typed-resolution-call-site.md) covers the *foreign generic consumer* case,
+the unconditionally-matching dispatch shape
 ([`cascade_after_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/cascade_after_use_site.rs)).
 A caret on a *provider* struct's own impl is handled narrowly rather than fully. The impl-site and
 wrapper-chain anchors skip the provider impl's *supertrait* recovery (its only supertrait is
@@ -257,7 +258,7 @@ the recoveries reach: a generic component's trait definition, a call whose *rece
 syntactically recoverable (a method call's result or a field access, `self.app.handle(…)`; typing
 those needs the typeck results the emitter can never force), or a written type beyond the call-site
 anchor's small hand lowering. The wrapper-chain descent is itself bounded (it follows only real impl
-`where`-clauses, reports a cause only at a genuine CGP consumer on a local context, and stops at a
+`where`-clauses, reports a cause only at a genuine CGP consumer on a context, and stops at a
 recursion bound), and every call-site seed is gated on actually failing, so neither can fabricate a
 chain from an unrelated bound.
 
@@ -409,7 +410,8 @@ marking.
     / `provider_blanket_marker` (the `DelegateComponent`-bounded provider blanket),
     `consumer_provider_trait` / `is_consumer_trait`, and `marker_to_consumer`), plus the `Symbol!`
     field-name decode, `is_namespace_lookup_trait` (by the single-`Delegate`-associated-type
-    fingerprint plus CGP evidence), and the shared `PathCons`/`Nil`/local-ADT recognizers. A sibling
+    fingerprint plus CGP evidence), and the shared `PathCons`/`Nil`/local-ADT and context-ADT
+    recognizers. A sibling
     [`conflict/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/conflict)
     handles the duplicate-key `E0119` conflict, and a sibling
     [`orphan.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/orphan.rs)
@@ -602,6 +604,9 @@ fixtures:
   [call-site anchor](typed-resolution-call-site.md)'s worked example, resolved into one `[CGP-E001]`
   block whose await-site re-report de-duplicates and whose `?`-operator cascade the emitter's gate
   drops (the resolver never takes a `?` error, so the fixture fails without the gate).
+- `foreign_context_error_route`: a handler-pipeline call on a context from an upstream crate whose
+  error table lacks a route, recovered by the call-site anchor into the `[CGP-E107]` leaf the local
+  form reports, rather than rustc's two provider-plumbing errors that never name the route.
 - `unrelated_error_before_call`: an `Rc` `Send` error on the line before a failing consumer call
   keeps its own diagnostic, because the call-site anchor matches a call only by the diagnostic's
   primary span.
@@ -705,6 +710,9 @@ The **impl-site and wrapper-chain paths** are pinned by:
   the `is_blanket_trait` case: the impl-site anchor walks the `#[cgp_fn]` blanket's `where` clause
   (and a `#[uses]`-chained sibling) to the `` missing field `name` `` cause instead of declining to
   rustc's misleading `#[derive(HasField)]` note.
+- `foreign_context_wrapper_impl`: a local wrapper trait implemented on a context from an upstream
+  crate (via `//@aux-build`), reaching the same `[CGP-E107]` missing error route the local form
+  reports, because the impl-site anchor accepts a foreign context that carries its own wiring.
 - `unrelated_error_in_wrapper_impl`: an `Rc` `Send` error inside a wrapper impl's method body keeps
   its own diagnostic, while the forwarding call to the failing supertrait's method joins the
   `[CGP-E009]` block (`is_about_impl`).

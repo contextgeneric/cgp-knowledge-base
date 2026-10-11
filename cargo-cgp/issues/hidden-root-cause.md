@@ -15,41 +15,6 @@ reconstruct it, and only when a fixture under
 are the cases that justify the tool's compiler-internal foothold: where the ordinary text output has
 lost information, only a tool reading the compiler's own state can put it back.
 
-## A wiring failure on a context from another crate
-
-**A call on a context defined in another crate can lose its root cause entirely.** The reproduced
-case is a handler pipeline: an upstream crate defines a small pipeline language, its providers, and
-a context `App` whose open `ErrorRaiserComponent` table routes some error types but not `IoFailure`,
-which one stage raises. A downstream crate runs the pipeline:
-
-```rust
-use cgp::extra::handler::CanHandle;
-use cgp::prelude::*;
-use cgp_test_foreign_pipeline::{App, Echo, Pipe, Stdout, backend};
-
-pub async fn run() -> Result<(), backend::Error> {
-    App.handle(PhantomData::<Pipe<Product![Echo, Stdout]>>, Vec::new()).await?;
-    Ok(())
-}
-```
-
-The tool reports two `[CGP-E002]` headlines about the whole pipeline's `ComposeHandlers`, each over
-rustc's `IsProviderFor` notes, and no `root cause:` tree. Neither its output nor plain
-`cargo check`'s mentions `IoFailure` or `ErrorRaiserComponent`, so no processing of the text could
-recover the cause. The same program with `App` defined in the calling crate is reshaped into a
-`[CGP-E107]` leaf naming `@ErrorRaiserComponent.IoFailure`, so the crate boundary is what loses
-it. The likely reason, not yet confirmed in the source, is that the resolver's use-site anchors read
-the context from local definitions, and the call is the only error the program produces. A `check_components!` entry for the program surfaces the
-cause, as the [debugging guide](../../cgp/guides/debugging.md) recommends.
-
-The case was found by removing the `std::io::Error` route from Hypershell's namespace, where the
-built-in `HypershellCli` context lives in the `hypershell` crate and every example runs it from
-another. Closing it means anchoring a use-site failure on a foreign context: recovering the
-context from the call's receiver type and walking its wiring, which the
-[call-site anchor](../implementation/typed-resolution-call-site.md) does for local contexts. The
-fixture is [`foreign_context_error_route`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/foreign_context_error_route.rs), whose upstream crate is the
-`cgp-test-foreign-pipeline` auxiliary crate.
-
 ## Two defeated archetypes
 
 The two archetypes this category was first built around are both defeated, each by a flag the

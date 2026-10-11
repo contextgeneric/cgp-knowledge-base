@@ -143,19 +143,23 @@ initializer) or to a fn parameter (typed by the enclosing signature, like the fi
 to a non-generic fn takes the callee's declared return type; references are peeled along the way. A
 receiver whose type genuinely needs inference (a method call's result, a field access) declines, as
 does a generic context, whose type arguments are exactly what the missing typeck results would have
-supplied. The trait candidates come from the method *name*, and are of two kinds: every CGP
-**consumer trait** (recognized structurally, in any crate) declaring a `self` method of that name,
-tried first so a directly-wired consumer keeps its precise recovery; then every `#[cgp_fn]` /
-`#[blanket_trait]` **blanket trait** declaring such a method, as recognized by `is_blanket_trait`
-(see [anchoring the starting obligation](typed-resolution-anchors.md)). A blanket trait is a
-blanket-impl trait that is not a CGP component (no provider trait, no `DelegateComponent`), consumed
-like a consumer (`app.describe()`) and seeding the same walkable obligation `Ctx: Describe` whose
-`Self` is the context. Because it is not a CGP component, its result is headed
-`[CGP-E009] the trait …` rather than `[CGP-E001] the consumer trait …`, the same wording the
-impl-site anchor gives such a trait reached through a wrapper, by clearing the
-`Resolved::consumers_are_cgp` flag the walk sets. This is what recovers a direct call to a
-`#[cgp_fn]` trait the context cannot satisfy: an `E0599` whose real cause (a field one composed
-blanket trait reads) rustc buries in a mid-stack note under its method-probe candidate list
+supplied, and a type that is no context. A context from another crate qualifies when it carries
+`DelegateComponent` wiring of its own (`is_context_adt`), so a call on a context a library exports
+recovers its root cause as a call on a local one does
+([`foreign_context_error_route`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/foreign_context_error_route.rs)).
+The trait candidates come from the method *name*, and are of two kinds: every CGP **consumer trait**
+(recognized structurally, in any crate) declaring a `self` method of that name, tried first so a
+directly-wired consumer keeps its precise recovery; then every `#[cgp_fn]` / `#[blanket_trait]`
+**blanket trait** declaring such a method, as recognized by `is_blanket_trait` (see
+[anchoring the starting obligation](typed-resolution-anchors.md)). A blanket trait is a blanket-impl
+trait that is not a CGP component (no provider trait, no `DelegateComponent`), consumed like a
+consumer (`app.describe()`) and seeding the same walkable obligation `Ctx: Describe` whose `Self` is
+the context. Because it is not a CGP component, its result is headed `[CGP-E009] the trait …` rather
+than `[CGP-E001] the consumer trait …`, the same wording the impl-site anchor gives such a trait
+reached through a wrapper, by clearing the `Resolved::consumers_are_cgp` flag the walk sets. This is
+what recovers a direct call to a `#[cgp_fn]` trait the context cannot satisfy: an `E0599` whose real
+cause (a field one composed blanket trait reads) rustc buries in a mid-stack note under its
+method-probe candidate list
 ([`cgp_fn_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/cgp_fn_use_site.rs)).
 
 ## Parameters by signature unification, not by convention
@@ -287,12 +291,13 @@ The anchor's fixtures live under
 [`tests/ui/hidden/unsatisfied-dependency/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/hidden/unsatisfied-dependency):
 `cascade_after_use_site` (the worked example above), `generic_consumer_use_site` (the value-argument
 case), `call_site_tuple_input` (the partial tuple recovery), `cgp_fn_use_site` (the `#[cgp_fn]`
-trait call recovered as a `[CGP-E009]` block), and the `cascade_later_stage*` shapes whose pipeline
-stages the walk then descends. The decline boundary is pinned by `generic_consumer_unwritten_arg`,
-and the span gate by `unrelated_error_before_call` (an unrelated `Send` error before the failing
-call keeps its own diagnostic) and the pass-through fixture `local_blanket_trait` (a plain error in
-a function that also calls a failing blanket-trait method is left alone). The consolidated catalog
-lives in the parent document's [Tests](typed-root-cause-resolution.md#tests) section.
+trait call recovered as a `[CGP-E009]` block), `foreign_context_error_route` (a call on a context
+from an upstream crate), and the `cascade_later_stage*` shapes whose pipeline stages the walk then
+descends. The decline boundary is pinned by `generic_consumer_unwritten_arg`, and the span gate by
+`unrelated_error_before_call` (an unrelated `Send` error before the failing call keeps its own
+diagnostic) and the pass-through fixture `local_blanket_trait` (a plain error in a function that
+also calls a failing blanket-trait method is left alone). The consolidated catalog lives in the
+parent document's [Tests](typed-root-cause-resolution.md#tests) section.
 
 ## Source
 
