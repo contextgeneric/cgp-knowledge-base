@@ -288,9 +288,6 @@ the work is the same leaf: name the field or variant the generated types encode.
 Some rewrites state something false, which is worse than passing rustc's text through. Each needs a
 check that its premise holds before it fires. These fixtures pin the false line:
 
-- [`field_tag_typo_derive_hint`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/field_tag_typo_derive_hint.rs) and
-  [`symbol_tag_on_tuple_struct`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/symbol_tag_on_tuple_struct.rs): a misspelled tag, or a
-  `Symbol!` tag on a tuple struct, gets a help saying the derive is required on a struct that has it.
 - [`check_trait_named_as_wrapper`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/checks/check_trait_named_as_wrapper.rs): a generic key in
   `delegate_and_check_components!` presents the generated `__CanUseApp` check trait as the user's
   trait in a `[CGP-E009]` headline.

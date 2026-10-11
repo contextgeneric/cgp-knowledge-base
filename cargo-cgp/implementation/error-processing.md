@@ -180,7 +180,12 @@ computes it once up front. The missing-field reword must know whether the contex
 "similar impl" landmark that tells it can sit in a different child than the clause. So the driver
 scans every message and label with
 [`context_has_hasfield_impls`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/missing_field.rs)
-first, then passes the answer into each per-message rewrite.
+first, then passes the answer into each per-message rewrite. It reads each message's fragments
+joined, since rustc styles the `is` of `is implemented for it` as a fragment of its own, and the
+check strips module paths before it matches, since rustc's separate note names the trait qualified
+when the crate glob-imports it (`` implements trait `cgp::prelude::HasField<Tag>` ``). Missing
+either landmark would make a struct that derives `HasField` read as one that does not, and the
+rewrite would wrongly say the derive is required.
 
 ## The post-processing transforms
 
@@ -304,7 +309,8 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   the exact-match cases `resugar_symbol` must skip, the `PathCons` → `Path!` resugaring (symbol,
   type, and primitive segments, the open `_` tail folded to a `.*` wildcard, and the
   non-round-trippable cases `resugar_path` must skip), the single-field (inline and separate-note
-  landmark) versus missing-derive branches of `rewrite_missing_fields`, the `Product!`/`Sum!` folds
+  landmark, each also with a qualified trait path) versus missing-derive branches of
+  `rewrite_missing_fields`, the `Product!`/`Sum!` folds
   with their `Struct!`/`Enum!` shapes and declines, and the `postprocess_message` chain, including
   the `Origin` rule: an untransformed message keeps rustc's paths unless a CGP encoding is
   recovered, and a rewritten one is stripped.
