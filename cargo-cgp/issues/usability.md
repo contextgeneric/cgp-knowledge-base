@@ -284,7 +284,10 @@ field built twice or taken while absent as an `E0271` on its `UpdateField` marke
 [`build_from_overlapping_sources`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/build_from_overlapping_sources.rs)), and the
 `BuildAndMergeOutputs` dispatcher reports two different field mistakes with identical output
 ([`build_and_merge_extra_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/build_and_merge_extra_field.rs),
-[`build_and_merge_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/build_and_merge_missing_field.rs)). The
+[`build_and_merge_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/build_and_merge_missing_field.rs)),
+and a call to such a builder whose target lacks a field ends at
+`__PartialApp<IsPresent>: CanBuildFrom<Http>` without naming the field
+([`question_mark_after_failed_handle`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/handlers/question_mark_after_failed_handle.rs)). The
 defaulted and optional builders, extraction, construction by tag, and the casts each have fixtures
 under [`uncataloged/extensible-data/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/uncataloged/extensible-data);
 the work is the same leaf: name the field or variant the generated types encode.
@@ -297,8 +300,6 @@ check that its premise holds before it fires. These fixtures pin the false line:
 - [`check_trait_named_as_wrapper`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/checks/check_trait_named_as_wrapper.rs): a generic key in
   `delegate_and_check_components!` presents the generated `__CanUseApp` check trait as the user's
   trait in a `[CGP-E009]` headline.
-- [`question_mark_after_failed_handle`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/handlers/question_mark_after_failed_handle.rs): the `?` after a
-  failing builder call becomes a `CanRaiseError<()>` failure, and the real mistake is not shown.
 
 ## Construct failures that carry no fix
 

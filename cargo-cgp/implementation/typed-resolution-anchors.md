@@ -158,19 +158,24 @@ layer's root cause, because rustc's "not implemented for `Rectangle`" note spans
 
 A `DelegateComponent` key comes in three shapes, and each is handled differently. The distinction
 matters for an `open`-dispatched context, whose per-value entries are redirect *paths*, not markers.
-A **bare component marker** maps to `Ctx: Consumer` (its parameterless form). An **`open`-dispatch
-redirect path** (`PathCons<Component, PathCons<Value, …>>`, the key an `@Component.Value:` entry
-emits) is decomposed, and the real dispatch value re-checked as `Ctx: Consumer<Value>`, so the
-failure is traced with the value the context actually wired (re-checking the raw `PathCons` key
-would report the internal list as a bogus consumer bottoming out on `T: Sized` noise). Three keys
-are skipped: a bare marker that is *also* `open`-dispatched (its `()` form would report a spurious
-`@Component.()` redirect, while its real values are covered by the path entries); a generic
-catch-all whose recovered value still carries a free type parameter (`<'a, T> &'a T: SerializeDeref`
-yields `&T`, whose re-check produces only `T: Sized`); and a **blanket-forwarding key**, a bare type
-parameter (`__Key__`) from the impl a `namespace …;` join emits
-(`impl<__Key__> DelegateComponent<__Key__> for Ctx`) to forward *every* lookup to the namespace.
-That key names no concrete component, and re-checking a free parameter as one bottoms out on
-`__Key__: Sized` noise; skipping it means this anchor yields nothing for a pure namespace join
+A **bare component marker** maps to `Ctx: Consumer` (its parameterless form), and only for a
+component without type parameters: the bare marker carries no parameter values, and re-checking a
+generic component with `()` in its parameter slot would assert an obligation nothing in the program
+asks for (`CanRaiseError<()>` for a wired `ErrorRaiserComponent`), so such a failure is left to the
+call-site anchor
+([`question_mark_after_failed_handle`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/handlers/question_mark_after_failed_handle.rs)).
+An **`open`-dispatch redirect path** (`PathCons<Component, PathCons<Value, …>>`, the key an
+`@Component.Value:` entry emits) is decomposed, and the real dispatch value re-checked as
+`Ctx: Consumer<Value>`, so the failure is traced with the value the context actually wired
+(re-checking the raw `PathCons` key would report the internal list as a bogus consumer bottoming out
+on `T: Sized` noise). Three keys are skipped: a bare marker that is *also* `open`-dispatched (its
+`()` form would report a spurious `@Component.()` redirect, while its real values are covered by the
+path entries); a generic catch-all whose recovered value still carries a free type parameter
+(`<'a, T> &'a T: SerializeDeref` yields `&T`, whose re-check produces only `T: Sized`); and a
+**blanket-forwarding key**, a bare type parameter (`__Key__`) from the impl a `namespace …;` join
+emits (`impl<__Key__> DelegateComponent<__Key__> for Ctx`) to forward *every* lookup to the
+namespace. That key names no concrete component, and re-checking a free parameter as one bottoms out
+on `__Key__: Sized` noise; skipping it means this anchor yields nothing for a pure namespace join
 (whose concrete wiring lives in the namespace, not the context's own impls), leaving that case to
 the next anchor. The
 [`open_dispatch_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/open_dispatch_use_site.rs)

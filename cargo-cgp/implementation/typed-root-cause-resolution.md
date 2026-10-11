@@ -284,19 +284,19 @@ parameter from the supertrait, the by-component use-site path recovers it for an
 component from the `PathCons<Component, Value>` redirect key, and the call-site path recovers every
 parameter the call *writes*, seeding the rest as unknowns; what no path recovers is a parameter
 whose only carrier is an argument the call does **not** type syntactically (a plain variable, an
-unsuffixed literal), where the by-component path re-checks its bare marker with an empty `()` slot,
-the by-consumer path only fires for a consumer whose sole generic is `Self`, and the call-site
-seed's unknown makes every root cause parameter-dependent. Such a failure declines to the fallback,
-whose method-probe advice the emitter strips, so the unmet wiring bound leads
+unsuffixed literal), where the by-component path skips a generic component's bare marker, the
+by-consumer path only fires for a consumer whose sole generic is `Self`, and the call-site seed's
+unknown makes every root cause parameter-dependent. Such a failure declines to the fallback, whose
+method-probe advice the emitter strips, so the unmet wiring bound leads
 ([`generic_consumer_unwritten_arg`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/use-site/generic_consumer_unwritten_arg.rs)
 pins the cleaned output). The plausible recovery, should the class need resolving in full, is to
-re-check the wired delegate's *implemented* parameter values instead of the meaningless `()` form.
-And the walk uses an **empty parameter environment** throughout, which suits the concrete check
-impls the fixtures exercise but will need the impl's own environment to extend cleanly to checks
-that carry generic parameters. The resolver renders only leaves it can trust (a `HasField` field
-(missing, underived, or type-mismatched), an associated type the owner supplies differently from
-what a provider requires, a missing wiring, a missing dispatch entry on a non-context delegation
-table, a namespace redirect the context does not terminate, an ordinary foreign bound, or a terminal
+re-check the wired delegate's *implemented* parameter values rather than skip the marker. And the
+walk uses an **empty parameter environment** throughout, which suits the concrete check impls the
+fixtures exercise but will need the impl's own environment to extend cleanly to checks that carry
+generic parameters. The resolver renders only leaves it can trust (a `HasField` field (missing,
+underived, or type-mismatched), an associated type the owner supplies differently from what a
+provider requires, a missing wiring, a missing dispatch entry on a non-context delegation table, a
+namespace redirect the context does not terminate, an ordinary foreign bound, or a terminal
 blanket-trait bound), dropping pure wiring-plumbing dead-ends, so a diagnostic whose only
 recoverable leaf is one of those falls back. Parallel branches, deep nesting, and non-field leaves,
 by contrast, are all handled. The associated-type leaf is bounded in one way worth recording: it is
