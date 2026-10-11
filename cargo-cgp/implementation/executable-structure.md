@@ -71,8 +71,10 @@ runs (`expand` builds on the same function; see [The expand command](expand-comm
 `RUSTC_WORKSPACE_WRAPPER` to the driver's path, which
 [`launch::driver_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/driver_path.rs)
 locates as a sibling of the running front-end executable, since cargo and rustup lay the two
-binaries down together (falling back to the bare name, resolved on `PATH`, when no sibling exists).
-It hands the driver the two further things it needs through the environment (the next section).
+binaries down together (falling back to the first `cargo-cgp-driver` on `PATH` when no sibling
+exists). A wrapper the user had set in that variable cannot run as well, so the front-end prints a
+warning naming it. It hands the driver the two further things it needs through the environment (the
+next section).
 
 The front-end passes cargo's output straight through rather than reshaping it. It inherits cargo's
 stdio (`command.status()`) and touches nothing on the diagnostic stream, so cargo's progress lines
@@ -212,6 +214,9 @@ argument and rewrite tests are listed in the [driver deep dive](driver.md#tests)
   by its position instead of panicking.
 - [`crates/cargo-cgp/tests/front_end/exit.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/exit.rs):
   `exit_code` passing an exit code through and turning a signal into 128 plus its number.
+- [`crates/cargo-cgp/tests/front_end/workspace_wrapper.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/workspace_wrapper.rs):
+  `workspace_wrapper_warning` naming a replaced `RUSTC_WORKSPACE_WRAPPER`, and staying silent when
+  the variable is unset, empty, or already the driver.
 - [`crates/cargo-cgp/tests/front_end/dylib.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/dylib.rs):
   `dylib_search_path` putting the sysroot library first, and reporting a directory that holds the
   list separator instead of panicking.
@@ -248,6 +253,8 @@ The front-end's modules are listed here; the driver's are in the
   the `expand` subcommand over the same launch (see [The expand command](expand-command.md)).
 - [`crates/cargo-cgp/src/launch/target_dir.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/target_dir.rs):
   the isolated `target/cgp` directory a wrapped build uses unless `--target-dir` is forwarded.
+- [`crates/cargo-cgp/src/launch/workspace_wrapper.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/workspace_wrapper.rs):
+  the warning printed when the front-end replaces a user's `RUSTC_WORKSPACE_WRAPPER`.
 - [`crates/cargo-cgp/src/launch/driver_path.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/driver_path.rs):
   locates the driver via the `CARGO_CGP_DRIVER` override, as a sibling, or failing both on `PATH`.
 - [`crates/cargo-cgp/src/launch/preflight.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/preflight.rs):

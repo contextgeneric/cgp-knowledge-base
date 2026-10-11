@@ -70,10 +70,16 @@ because the driver is installed through `RUSTC_WORKSPACE_WRAPPER`, which cargo a
 members alone; a path dependency outside the workspace compiles through plain `rustc` and its errors
 arrive raw. And **the front end sets `RUSTC_WORKSPACE_WRAPPER` unconditionally**, replacing any
 value the user exported, so a wrapper of the user's own given through that variable does not run
-under the tool. A user's `RUSTC_WRAPPER`, such as `sccache`, does compose with the driver: cargo
-runs the wrapper with the driver and the real `rustc` as its next two arguments, so the driver still
-sees wrapper mode and rewrites as usual, and `sccache` does not cache a failing compilation, so it
-never replays an output from before the rewrite.
+under the tool. It says so on stderr when it replaces one:
+
+```text
+cargo-cgp: warning: RUSTC_WORKSPACE_WRAPPER is set to `/usr/local/bin/my-wrapper`; cargo-cgp replaces it with its driver for this run, so that wrapper does not run
+```
+
+A user's `RUSTC_WRAPPER`, such as `sccache`, does compose with the driver: cargo runs the wrapper
+with the driver and the real `rustc` as its next two arguments, so the driver still sees wrapper
+mode and rewrites as usual, and `sccache` does not cache a failing compilation, so it never replays
+an output from before the rewrite.
 
 ## Expanding a target
 
