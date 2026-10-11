@@ -853,13 +853,16 @@ They go out untransformed because a second panic inside a panic hook aborts the 
 is no time to run the flush's rendering. The driver also initializes rustc's `RUSTC_LOG` logger,
 as rustc and Clippy do.
 
-**No input is known to make the emitter panic**, so the fixtures that pin the fallback make it
-panic on purpose. The `CARGO_CGP_TEST_PANIC` environment variable names the stage that panics
-(`transform` or `flush`), and the
-[`robustness/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/robustness)
-fixtures set it with the harness's `//@env:` directive. The ICE ordering is checked by hand with
-`RUSTFLAGS=-Ztreat-err-as-bug=2`, since an ICE report carries a backtrace, a timestamped file name,
-and the compiler's version, none of which a snapshot can hold.
+**No input is known to make the emitter panic**, so the fixtures that pin the fallback make it panic
+on purpose. The `CARGO_CGP_TEST_PANIC` environment variable names the stage that panics (`transform`
+or `flush`), and the
+[`robustness/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/robustness) fixtures
+set it with the harness's `//@env:` directive. The ICE ordering has a fixture of its own, which
+crashes the compiler rather than the emitter: `RUSTFLAGS=-Ztreat-err-as-bug=2` turns the second
+error into an internal compiler error. An ICE report also carries a backtrace, a timestamped
+crash-report file, and the panicking thread's id, so the fixture sets `RUST_BACKTRACE=0` and
+`RUSTC_ICE=0` (no file), and the harness replaces the thread id. The report still names the compiler
+and driver versions, so a toolchain bump or a version change re-blesses it.
 
 ## Comparison with Clippy
 
@@ -947,7 +950,9 @@ will likely grow toward it:
   emitter made to panic in each stage, pinning that every error still prints, as rustc built it,
   with the internal-error note. `fatal_after_buffered_diagnostic` pins a fatal error that stops the
   compilation early: a rewritten wiring failure, held in the buffer, then a fatal query cycle
-  (`E0391`); both print, in rustc's order.
+  (`E0391`); both print, in rustc's order. `ice_after_buffered_diagnostic` pins a compiler crash
+  (`-Ztreat-err-as-bug=2`) after a buffered wiring failure: the panic hook prints the failure,
+  untransformed, before the crash report, as plain rustc orders them.
 - [`crates/cargo-cgp-error-processing/tests/error_processing/rewrite.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/rewrite.rs):
   the compiler-free rewrite over a hand-built name map, run on any toolchain: both note forms and
   both header forms; generic components (a single parameter reattached to the header, a

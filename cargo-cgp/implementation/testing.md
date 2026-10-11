@@ -208,11 +208,11 @@ A fixture states what the harness must do with it through **directives**: line c
 with `//@`, as in Clippy's UI tests, which the compiler ignores and only the harness reads. Six
 exist: `//@aux-build: <crate>` (an auxiliary crate, below), `//@rewrites-falsely: <reason>` (the
 pass-through exception above), `//@json` (the JSON pass), `//@env: <KEY>=<VALUE>` (an environment
-variable for the tool's runs, which the `robustness/` fixtures use to make the emitter panic on
-purpose), and the header's `//@quality:` and `//@codes:`. A misspelled directive would silently do
-nothing, so the parser rejects an unknown `//@name` and a known name written in another comment
-form, such as `// @json` with a space; a comment that merely starts with an `@`-path, such as
-commented-out wiring, stays legal.
+variable for the tool's runs, which the `robustness/` fixtures use to make the emitter panic or the
+compiler crash on purpose), and the header's `//@quality:` and `//@codes:`. A misspelled directive
+would silently do nothing, so the parser rejects an unknown `//@name` and a known name written in
+another comment form, such as `// @json` with a space; a comment that merely starts with an
+`@`-path, such as commented-out wiring, stays legal.
 
 ### How a fixture is compiled
 
@@ -287,17 +287,19 @@ dropping it earns its keep. The sysroot arrives with any diagnostic that points 
 library (an implicit `Sized` bound on `Option`, say), and its path carries the contributor's home
 directory, the pinned nightly's name, and the host target triple, so it is rewritten to `$SYSROOT`.
 The single `normalize` module handles the rendered stderr of both passes: it rewrites the paths to
-`$CGP`/`$DIR`/`$SYSROOT` and drops the summary and temp-file lines, so what is compared depends only
-on the diagnostic content. The baseline alone also collapses every `Chars<…>` field-name spine to
-`Chars<..>`, because plain rustc truncates such a spine at a depth that varies between runs. The
-tool's output keeps its spines, since a raw spine there means the tool's resugaring declined, which
-the snapshot must show. Normalization applies to the compared/blessed output only; `--print` shows
-the raw output untouched. The harness finds the built `cargo-cgp` by walking up from its own
-test binary until an ancestor directory holds that binary, having first built both with
-`cargo build` (the front-end locates the driver as its sibling). Searching for the binary rather
-than counting parent directories keeps the lookup independent of where cargo puts a test executable,
-which differs between cargo versions (`target/debug/deps/` in some, a per-package directory under
-`target/debug/build/` in others); the front-end's own place in `target/debug` is the stable anchor.
+`$CGP`/`$DIR`/`$SYSROOT`, replaces the thread id in a compiler crash report (which only the
+`robustness/` fixture that crashes rustc on purpose prints) with `$TID`, and drops the summary and
+temp-file lines, so what is compared depends only on the diagnostic content. The baseline alone also
+collapses every `Chars<…>` field-name spine to `Chars<..>`, because plain rustc truncates such a
+spine at a depth that varies between runs. The tool's output keeps its spines, since a raw spine
+there means the tool's resugaring declined, which the snapshot must show. Normalization applies to
+the compared/blessed output only; `--print` shows the raw output untouched. The harness finds the
+built `cargo-cgp` by walking up from its own test binary until an ancestor directory holds that
+binary, having first built both with `cargo build` (the front-end locates the driver as its
+sibling). Searching for the binary rather than counting parent directories keeps the lookup
+independent of where cargo puts a test executable, which differs between cargo versions
+(`target/debug/deps/` in some, a per-package directory under `target/debug/build/` in others); the
+front-end's own place in `target/debug` is the stable anchor.
 
 ### Running and blessing
 
@@ -439,8 +441,9 @@ suite. There is no dogfood test yet (see above).
 - [`crates/cargo-cgp-ui-tests/tests/harness/options.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/options.rs),
   [`crates/cargo-cgp-ui-tests/tests/harness/normalize.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/normalize.rs):
   harness option/filter parsing, and the output normalizer: the `$CGP`/`$DIR`/`$SYSROOT` path
-  rewrites, the dropped content-free lines (including the coverage failure line), the baseline's
-  `Chars<…>` spine collapse across every truncation depth, and the tool output keeping its spines.
+  rewrites, the `$TID` thread id of a crash report, the dropped content-free lines (including the
+  coverage failure line), the baseline's `Chars<…>` spine collapse across every truncation depth,
+  and the tool output keeping its spines.
 - [`crates/cargo-cgp-ui-tests/tests/harness/paths.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/paths.rs):
   the upward search for the built front-end, against both layouts cargo has put a test binary in
   (`<profile>/deps/` and `<profile>/build/<package>/<hash>/out/`), plus the nearest-ancestor rule,
