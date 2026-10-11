@@ -93,8 +93,10 @@ branch elided against an earlier block
 too, and a note with no chain at all names the cause in its lead instead. Every lead and every tree
 entry carries a [`CGP-E1xx`/`CGP-E2xx` code](../error-code.md) (the wording below omits the prefix
 for brevity). Paths render as a bare `@app.GreeterComponent` (the `Path!(@…)` macro form is reserved
-for the resugaring fallback), and module qualifiers are stripped throughout, so
-`contexts::app::MockApp` reads as `MockApp`. The chain is indented two spaces under its heading.
+for the resugaring fallback), and module qualifiers are stripped throughout except where they tell
+two types apart, so `cgp::prelude::HasErrorType` reads as `HasErrorType` while `std::io::Error`
+keeps its path (see [Resugaring](resugaring.md#the-path-strips-that-run-first)). The chain is
+indented two spaces under its heading.
 
 A failure with **several root causes** (the usual shape, since every cause descends from the one
 failing obligation the walk seeded) is always rendered as a **single** note, not one per cause:

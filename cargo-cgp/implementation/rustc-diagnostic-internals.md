@@ -208,6 +208,14 @@ the query's own emission re-enters the lock. Forcing `tcx.typeck` is worse: it i
 that *replays its cached diagnostics* when forced, so forcing it from the emitter re-emits every
 error in that body.
 
+A query can also take the lock without emitting anything. `trimmed_def_paths`, the map rustc trims
+paths with, records that trimming happened by setting a flag through the diagnostic context
+(`Session::record_trimmed_def_paths` in
+[`rustc_session/src/session.rs`](../../../external/rust/compiler/rustc_session/src/session.rs)), so
+forcing it from the emitter panics whenever the diagnostic being emitted did not already compute it.
+The emitter's path strip therefore reads only the resolver's `glob_map`, which is computed long
+before, to decide which qualified names are ambiguous.
+
 The rule that keeps the resolver safe follows from *when* these queries are still uncached. A query
 that already ran during analysis is cached, and forcing it from the emitter just returns the cached
 value without re-emitting, which is why the resolver can freely solve obligations against providers

@@ -317,12 +317,14 @@ dispatches on (`Vec<u8>`, `&Coord`, `DateTime<Utc>`). A namespace path therefore
 PathCons<Symbol!("app"), PathCons<GreeterComponent, Nil>>   →   @app.GreeterComponent
 ```
 
-Two segment shapes decline, leaving the whole list raw rather than risking a mangled path. A
-**module-qualified** segment folds to its final identifier only when every part is a plain
-identifier and the tail is a type. The [module strip](#the-path-strips-that-run-first) normally
-removes the qualifier before this pass, so a residual `::` means the list is not the bare form
-`Path!` writes. A **bare lowercase identifier** declines outright: `Path!` would have encoded it as
-a `Symbol`, so meeting one as a plain type is ambiguous.
+A **module-qualified** segment is rendered as written, since `Path!` parses each segment as a type:
+`PathCons<ErrorRaiserComponent, PathCons<std::io::Error, Nil>>` reads
+`@ErrorRaiserComponent.std::io::Error`. The [path strip](#the-path-strips-that-run-first) runs first
+and keeps a qualifier only where it tells two types apart, so the one that reaches this pass is
+meaningful, and dropping it would make `std::io::Error` read as any other `Error`. Two segment
+shapes decline, leaving the whole list raw rather than risking a mangled path: a qualified segment
+that is not a plain type path (a lowercase tail, generics), and a **bare lowercase identifier**,
+which `Path!` would have encoded as a `Symbol`, so meeting one as a plain type is ambiguous.
 
 One non-`Nil` tail is still resugared, and it is the presentation-only case. An **open-ended path**
 ends in a generic "rest of path" parameter instead of `Nil`, which rustc prints as the inference
@@ -450,32 +452,43 @@ of the writable-name check, `shape_name`, kept in step.
 
 ### The path strips that run first
 
-Two transforms are not resugarings but must run before them, since every rule above matches bare
-type names. They also do real work of their own: rustc shortens a path only when the name is unique
-across the build and was not brought in by a glob import, so the CGP types a crate imports through
+A path strip is not a resugaring but must run before them, since every rule above matches bare type
+names. It also does real work of its own. rustc shortens a path only when the name is unique across
+the build and was not brought in by a glob import, so the CGP types a crate imports through
 `use cgp::prelude::*` print qualified, and in a message the tool built, or around a construct it
 resugared, those qualifiers are noise the reader did not write. A diagnostic the tool otherwise left
 alone keeps them, as plain `cargo check` prints them.
 
-[`strip_module_paths`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/strip_modules.rs)
-collapses every `a::b::C` identifier run to its final segment:
+The chain's strip,
+[`strip_unambiguous_paths`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/strip_modules.rs),
+collapses an `a::b::C` identifier run to its final segment unless the qualifier tells two types
+apart. rustc's own rule decides which ones do: a name it prints qualified is either non-unique or
+glob-imported, so a qualified name the crate does not glob-import is ambiguous, and its qualifier
+stays. The driver supplies the glob-imported names from the resolver's `glob_map`, and a run rooted
+at the `cgp` crate always collapses, since the prelude glob is why rustc qualifies it:
 
 ```text
-contexts::app::MockApp                            →   MockApp
-interfaces::types::QuantityTypeProviderComponent  →   QuantityTypeProviderComponent
-f64: std::cmp::Eq                                 →   f64: Eq
+cgp::prelude::HasErrorType                        →   HasErrorType
+finance::QuantityTypeProviderComponent            →   QuantityTypeProviderComponent   (glob-imported)
+std::io::Error                                    →   std::io::Error                  (ambiguous)
 ```
 
-It scans the ASCII identifier run by byte but copies every other character whole by its UTF-8 width,
-so multi-byte text (a rendered dependency tree's `└─`) is never split into invalid bytes. It skips
-string literals, so a name inside a `Symbol!("a::b")` is never mangled, and it leaves a turbofish,
+Stripping every qualifier would turn `std::io::Error` beside a crate's `backend::Error` into two
+bare `Error`s, which also read as CGP's abstract `Error` type
+([`stripped_error_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/errors/stripped_error_path.rs),
+[`open_route_stripped_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/errors/open_route_stripped_path.rs)).
+[`strip_module_paths`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/strip_modules.rs),
+which collapses every run, is what the missing-field check reads a landmark through.
+
+Both scan the ASCII identifier run by byte but copy every other character whole by its UTF-8 width,
+so multi-byte text (a rendered dependency tree's `└─`) is never split into invalid bytes. They skip
+string literals, so a name inside a `Symbol!("a::b")` is never mangled, and they leave a turbofish,
 an associated-type `>::Assoc` tail, and a lone identifier alone.
 
 [`strip_cgp_prefixes`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/strip_prefixes.rs)
 removes the specific CGP re-export paths (`cgp::prelude::`, `cgp::macro_prelude::`,
-`cgp::cgp_core::`, `cgp::cgp_extra::`), turning `cgp::prelude::Chars` into `Chars`. With the general
-module strip running first this is largely redundant, and it is kept as the explicit CGP-specific
-fallback.
+`cgp::cgp_core::`, `cgp::cgp_extra::`), turning `cgp::prelude::Chars` into `Chars`. Nothing in the
+chain calls it.
 
 The expand command treats these differently from a diagnostic, and deliberately so: it strips the
 `cgp::macro_prelude::` qualifier the macros emit, because that is pure noise, but **keeps** general

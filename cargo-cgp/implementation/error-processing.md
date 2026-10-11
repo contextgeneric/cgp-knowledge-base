@@ -123,9 +123,10 @@ CGP wiring messages it recognizes; then it hands the diagnostic to the post-proc
 [`Origin`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/chain.rs)
 that says whether either transform rewrote it.
 
-**A rewritten diagnostic gets the whole chain.** The tool built its sentences, so the module strip
-gives every name the bare form the tool's own wording uses, and the resugaring tidies the
-compiler-formatted CGP types a rewrite embeds, such as a provider like
+**A rewritten diagnostic gets the whole chain.** The tool built its sentences, so the path strip
+gives every name the bare form the tool's own wording uses, except a name whose qualifier tells two
+types apart (`std::io::Error`, see [Resugaring](resugaring.md#the-path-strips-that-run-first)), and
+the resugaring tidies the compiler-formatted CGP types a rewrite embeds, such as a provider like
 `RedirectLookup<…, PathCons<Symbol<…>>>` in a coded header, folded to `RedirectLookup<…, @…>`. The
 missing-field reword finds nothing to match, because the resolver's tree never carries the
 `` `HasField<…>` is not implemented `` clause the reword keys on.
@@ -198,15 +199,14 @@ resugaring (which reads a `Field`'s `Symbol!("…")` tag when naming a struct fi
 and before the field rewrite (which matches the resugared `HasField<Symbol!("…")>` form). Six
 transforms run, in three groups:
 
-- **The two path strips**:
-  [`strip_module_paths`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/strip_modules.rs),
-  which collapses every `a::b::C` identifier run to its final segment (`contexts::app::MockApp` →
-  `MockApp`, `f64: std::cmp::Eq` → `f64: Eq`), and
-  [`strip_cgp_prefixes`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/strip_prefixes.rs),
-  which removes the CGP re-export paths in `CGP_PREFIXES` (`cgp::prelude::Chars` → `Chars`) and is
-  largely redundant because the general strip runs first. They lead the chain because everything
-  after them matches bare type names; [Resugaring](resugaring.md#the-path-strips-that-run-first)
-  covers what each leaves alone and why.
+- **The path strip**:
+  [`strip_unambiguous_paths`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/strip_modules.rs),
+  which collapses each `a::b::C` identifier run to its final segment unless the qualifier tells two
+  types apart, as the driver's
+  [`AmbiguousNames`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/ambiguous.rs)
+  says (`cgp::prelude::Chars` → `Chars`, `std::io::Error` kept). It leads the chain because
+  everything after it matches bare type names;
+  [Resugaring](resugaring.md#the-path-strips-that-run-first) covers what each leaves alone and why.
 - **The three resugaring transforms**,
   [`resugar_symbol`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/resugar_symbol.rs)
   (`Symbol<2, Chars<'x', Chars<'y', Nil>>>` → `Symbol!("xy")`),
@@ -377,15 +377,17 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
 ## Source
 
 - [`crates/cargo-cgp-error-processing/src/postprocess/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/postprocess):
-  the post-processing transforms: `mod.rs` (re-exports), `chain.rs` (the `postprocess_message`
-  chain with its `Origin` rule, and `postprocess_fragments`, which reads a message rustc
-  split into styled fragments as the one line it renders as), `strip_modules.rs`
-  (`strip_module_paths`, the UTF-8-safe module-qualifier collapse), `strip_prefixes.rs`
-  (`strip_cgp_prefixes` and the `CGP_PREFIXES` constant), `resugar_symbol.rs` (the exact-match
-  `Symbol!` parser), `resugar_path.rs` (the `PathCons` → `@…`/`Path!(@…)` resugarer, the form chosen
-  by its `wrap` parameter), `resugar_list.rs` (`resugar_lists`, the `Product!`/`Sum!` and
-  `Struct!`/`Enum!` resugarer), and `missing_field.rs` (`rewrite_missing_fields`,
-  `context_has_hasfield_impls`, and the single-field-vs-missing-derive classification).
+  the post-processing transforms: `mod.rs` (re-exports), `chain.rs` (the `postprocess_message` chain
+  with its `Origin` rule, and `postprocess_fragments`, which reads a message rustc split into styled
+  fragments as the one line it renders as), `strip_modules.rs` (`strip_unambiguous_paths`, the
+  UTF-8-safe module-qualifier collapse that keeps a disambiguating qualifier, and
+  `strip_module_paths`, which keeps none), `ambiguous.rs` (`AmbiguousNames`, which qualified names
+  tell two types apart), `strip_prefixes.rs` (`strip_cgp_prefixes` and the `CGP_PREFIXES` constant),
+  `resugar_symbol.rs` (the exact-match `Symbol!` parser), `resugar_path.rs` (the `PathCons` →
+  `@…`/`Path!(@…)` resugarer, the form chosen by its `wrap` parameter), `resugar_list.rs`
+  (`resugar_lists`, the `Product!`/`Sum!` and `Struct!`/`Enum!` resugarer), and `missing_field.rs`
+  (`rewrite_missing_fields`, `context_has_hasfield_impls`, and the single-field-vs-missing-derive
+  classification).
 - [`crates/cargo-cgp-error-processing/src/shape/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/shape):
   the shared shape spellings: `shape_name.rs` (which names a body can write, and which only raw),
   `struct_shape.rs` (`ShapeTag` and `render_struct_shape`), and `enum_shape.rs`
