@@ -72,7 +72,9 @@ Injection is skipped entirely for cargo's info queries, `rustc -vV` and `--print
 code to diagnose. `--verbose` would actively break `-vV`, since that already implies `-v` and a
 second one makes rustc reject the invocation. Because each flag is injected only when absent, an
 explicit choice on the command line always wins: a user's own `--sysroot`, or an explicit
-`-Znext-solver=no`, is left in place.
+`-Znext-solver=no`, is left in place. Absence is checked in every spelling rustc accepts: `key` and
+`key=value`, a `-Z` option written as two arguments (`-Z next-solver=no`), and `-v` for `--verbose`
+(beside which a second `--verbose` would make rustc reject the invocation).
 
 ## Running the compiler
 
@@ -876,8 +878,8 @@ will likely grow toward it:
 
 - [`crates/cargo-cgp-driver/tests/driver/args.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/args.rs):
   `rustc_args` wrapper-mode stripping, sysroot injection, an existing sysroot left alone,
-  injected-flag appending, an explicit `-Znext-solver` override, and the `-vV`/`--print` info-query
-  skips; and `expand_arg_files` expanding an argument file that holds `--cgp-expand=` and a
+  injected-flag appending, an explicit `-Znext-solver` override in either spelling, `-v` counted
+  as `--verbose`, and the `-vV`/`--print` info-query skips; and `expand_arg_files` expanding an argument file that holds `--cgp-expand=` and a
   user's `-Znext-solver`.
 - [`crates/cargo-cgp-driver/tests/driver/help.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/help.rs):
   `wants_help` detecting the help flags, and the help text explaining the wrapper role and flags.
