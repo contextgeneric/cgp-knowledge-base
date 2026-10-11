@@ -142,14 +142,18 @@ shared cause, so the collected causes go through `Causes::union`: the shared cau
 keeps *every* component's route to it, so each consumer the header lists has a chain in the note
 ([`use_site_shared_cause`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/use_site_shared_cause.rs)).
 A diagnostic span can also land on a *provider* struct, so a candidate that wires no failing
-component is discarded, which selects the real context. The transformed error is the same
-`[CGP-E001]` consumer form over a root-cause note, and the misleading "this is an associated
-function… use associated function syntax instead" advice, which the method probe emits for CGP's
-`self`-less provider methods, is dropped with the rest of rustc's sub-notes. The anchor is not
-limited to method calls: any failure whose spans land on the context's struct definition reaches it,
-which is how a **`#[check_providers(...)]` per-layer assertion**, whose `IsProviderFor`-supertraited
-check impl no other anchor matches, still resolves to the failing layer's root cause, because
-rustc's "not implemented for `Rectangle`" note spans the struct
+component is discarded, which selects the real context. A **component marker** is never a candidate
+at all: rustc's notes often point at a component macro's attribute (`#[cgp_getter]`, say), under
+which the generated marker struct is defined, and reading that marker as the context would name
+`NameGetterComponent` where the context `Person` belongs
+([`getter_unwired_call`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/getter_unwired_call.rs)).
+The transformed error is the same `[CGP-E001]` consumer form over a root-cause note, and the
+misleading "this is an associated function… use associated function syntax instead" advice, which
+the method probe emits for CGP's `self`-less provider methods, is dropped with the rest of rustc's
+sub-notes. The anchor is not limited to method calls: any failure whose spans land on the context's
+struct definition reaches it, which is how a **`#[check_providers(...)]` per-layer assertion**,
+whose `IsProviderFor`-supertraited check impl no other anchor matches, still resolves to the failing
+layer's root cause, because rustc's "not implemented for `Rectangle`" note spans the struct
 ([`check_providers_layer`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/higher-order-provider-layer/check_providers_layer.rs)).
 
 A `DelegateComponent` key comes in three shapes, and each is handled differently. The distinction
