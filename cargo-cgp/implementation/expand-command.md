@@ -350,7 +350,8 @@ and an identifier cannot ask for it to be dropped. The printer also breaks every
 macro body onto lines of its own, which would print each `Struct! { … }` shape as a block. So the
 crate ends with one narrow text pass that removes spaces inside the bodies of the macros it emits,
 keeping the space after a `Struct!` field's single `:`, and joins a `Struct!` or `Enum!` brace body
-back onto the macro's line. It never touches a literal or anything outside those bodies.
+back onto the macro's line. It never touches a literal, a comment, or anything outside those bodies,
+since its search for the macro calls steps over literals and comments.
 
 Sugar the *user* wrote needs no attention at all: a hand-written
 `PipeHandlers<Product![StepOne, StepTwo]>` comes out as written, because the CGP macro that copied
@@ -523,7 +524,9 @@ and printing halves need a real compilation, so they are exercised by running th
   pass would turn into `Product![]`), the outermost-first fold (a two-element field list), the
   tightened spacing of a generic element, the diagnostic-only forms deliberately *not* emitted (a
   field list kept as a `Product!`, an open-ended path left raw), the prelude strip including both
-  qualified-path shapes, an ordinary module qualifier kept, and unparsable input returned verbatim.
+  qualified-path shapes, an ordinary module qualifier kept, unparsable input returned verbatim, and
+  a string, raw string, or doc comment naming a sugar macro left untouched while a call after it is
+  still tightened.
 - [`crates/cargo-cgp-driver/tests/driver/expand.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/expand.rs):
   the marker flags: the request and its path recovered, the flag stripped from the vector the
   compiler sees, an ordinary compilation carrying no request, an empty path declining, the item
