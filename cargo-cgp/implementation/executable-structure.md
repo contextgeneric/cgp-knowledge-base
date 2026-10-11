@@ -205,7 +205,11 @@ front-end. The full testing picture is its own document, [Testing](testing.md). 
 argument and rewrite tests are listed in the [driver deep dive](driver.md#tests).
 
 - [`crates/cargo-cgp/tests/front_end/args.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/args.rs):
-  `strip_subcommand` across the invocation forms.
+  `strip_subcommand` across the invocation forms, and `utf8_args` reporting a non-Unicode argument
+  by its position instead of panicking.
+- [`crates/cargo-cgp/tests/front_end/dylib.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/dylib.rs):
+  `dylib_search_path` putting the sysroot library first, and reporting a directory that holds the
+  list separator instead of panicking.
 - [`crates/cargo-cgp/tests/front_end/dispatch.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/dispatch.rs):
   `dispatch`'s side-effect-free branches: an unknown subcommand errors, no subcommand or a help flag
   shows the help text, a version flag prints the version, and `setup` and `update` answer `--help`

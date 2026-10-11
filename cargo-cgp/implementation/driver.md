@@ -43,7 +43,14 @@ reach the compiler untouched.
 
 ## Preparing the argument vector
 
-Before reading any argument, the driver expands `@file` arguments
+The driver reads its arguments with rustc's own `rustc_driver::args::raw_args`, which reports an
+argument that is not valid Unicode as a fatal error where `std::env::args` would panic. It reads
+them before installing its panic hooks, because rustc's ICE hook reads `env::args` itself when
+`RUST_BACKTRACE` is unset and would panic on such an argument, as plain `rustc` does. The checks for
+a direct invocation's `--help` and `--version` run on a lossy copy, in which such an argument
+matches no flag.
+
+Before reading its own flags, the driver expands `@file` arguments
 ([`args::expand_arg_files`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/args.rs),
 over rustc's own `rustc_driver::args::arg_expand_all`). When a command line grows long, cargo keeps
 the wrapper and the `rustc` path visible and moves the rest into such a file, one argument per line,
@@ -866,11 +873,10 @@ inside the toolchain; that difference belongs to the shared environment contract
 The remaining differences are gaps where the driver is deliberately simpler than Clippy today and
 will likely grow toward it:
 
-- **Argument reading.** The driver expands `@file` arguments before reading its flags, where Clippy
-  reads `rustc_driver::args::raw_args` unexpanded and peeks inside an argument file only for
-  `--sysroot`. The driver needs the full expansion because its own `--cgp-expand=` flag can sit in
-  the file. Clippy's `raw_args` also reports a non-Unicode argument as an error, where the driver
-  reads `env::args()`, which panics on one.
+- **Argument reading.** Both read `rustc_driver::args::raw_args`, but the driver then expands
+  `@file` arguments before reading its flags, where Clippy reads them unexpanded and peeks inside an
+  argument file only for `--sysroot`. The driver needs the full expansion because its own
+  `--cgp-expand=` flag can sit in the file.
 - **Driver front-matter.** Both drivers install rustc's logger (`init_rustc_env_logger`) and its
   ICE hook (`install_ice_hook`) with their own bug-report URL, and both answer `--version` and
   `--help`. `cargo-cgp` additionally wraps the ICE hook, so a panic its emitter contains is not
@@ -910,6 +916,9 @@ will likely grow toward it:
   injected-flag appending, an explicit `-Znext-solver` override in either spelling, `-v` counted as
   `--verbose`, and the `-vV`/`--print` info-query skips; and `expand_arg_files` expanding an
   argument file that holds `--cgp-expand=` and a user's `-Znext-solver`.
+- [`crates/cargo-cgp-driver/tests/driver/run.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/run.rs):
+  runs the built driver with a non-Unicode argument and `RUST_BACKTRACE` unset, pinning that it
+  exits with rustc's error rather than a panic.
 - [`crates/cargo-cgp-driver/tests/driver/help.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/help.rs):
   `wants_help` detecting the help flags, and the help text explaining the wrapper role and flags.
 - [`crates/cargo-cgp-driver/tests/driver/test_panic.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/test_panic.rs):
