@@ -306,12 +306,13 @@ this paragraph describes only how `update` treats one.
 help text of its own instead of running, and refuses any other argument with an error naming it,
 rather than ignoring it and starting an install the user did not ask for.
 
-The index is read over HTTP with the widely-used `ureq` (rustls TLS) and `serde_json`, kept to the
-front-end's `update` path alone; the check path and the driver never call them. The sparse-index
-access follows the shape of the `crates-index` crate but is written directly over those two rather
-than taking on that dependency. One limitation follows from reading `index.crates.io` directly:
-unlike the eventual `cargo install`, it does not consult a user's configured registry mirror or
-private registry, so automatic version discovery targets the default crates.io (see
+The index is read over HTTP with the widely-used `ureq` (rustls TLS) and `serde_json`. The network
+access stays on the front-end's `update` path alone. The check path uses `serde_json` only to read
+the local `cargo metadata` output, and the driver uses neither crate. The sparse-index access
+follows the shape of the `crates-index` crate but is written directly over those two rather than
+taking on that dependency. One limitation follows from reading `index.crates.io` directly: unlike
+the eventual `cargo install`, it does not consult a user's configured registry mirror or private
+registry, so automatic version discovery targets the default crates.io (see
 [Open decisions and risks](#open-decisions-and-risks-to-resolve)).
 
 Installation and update both go **through cargo**; there is no self-replace mechanism to maintain.
@@ -350,10 +351,10 @@ hatches. They are what let the UI snapshot suite drive the freshly-compiled driv
 - `CARGO_CGP_DRIVER` names an explicit driver executable, bypassing the sibling lookup. The UI test
   harness sets this to the `target/debug/cargo-cgp-driver` it just built, which is how the suite
   tests a driver that was never installed.
-- `CARGO_CGP_NO_MANAGE` (or an equivalent skip flag) turns off the preflight and its version checks
-  entirely, telling `cargo-cgp` to trust whatever driver and toolchain the environment already
-  provides. A developer running inside the source checkout under the pinned toolchain wants exactly
-  this: no provisioning, no handshake, just run.
+- `CARGO_CGP_NO_MANAGE` turns off the preflight and its version checks entirely, telling `cargo-cgp`
+  to trust whatever driver and toolchain the environment already provides. A developer running
+  inside the source checkout under the pinned toolchain wants exactly this: no provisioning, no
+  handshake, just run.
 - `CARGO_CGP_TOOLCHAIN` overrides `PINNED_TOOLCHAIN` at runtime, so the tool can be pointed at a
   different nightly for testing a toolchain bump before the constant is changed. Because a
   hand-picked toolchain will not match the driver's baked-in `built_against_rustc`, it is normally

@@ -10,7 +10,8 @@ The tool is split into two binaries because only one of them may link the compil
 keeping that linkage isolated keeps the other binary small and ordinary. The **`cargo-cgp` crate**
 ([`crates/cargo-cgp`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp)) is
 the front-end: the cargo subcommand a user invokes, an ordinary binary with no compiler linkage (its
-dependencies are `anyhow`, plus `semver`, `serde_json`, and `ureq` for the update check). The
+dependencies are `anyhow`, `serde_json` for reading `cargo metadata` and the crates.io index, and
+`semver` and `ureq` for the update check). The
 **`cargo-cgp-driver` crate**
 ([`crates/cargo-cgp-driver`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver))
 is the driver: a `rustc` replacement that links the compiler's unstable `rustc_driver` library under
