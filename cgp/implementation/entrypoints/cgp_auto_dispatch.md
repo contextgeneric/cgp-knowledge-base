@@ -154,7 +154,7 @@ let _ = Shape::Circle(Circle).area();  // E0599 at the call
 
 This is the [hidden unsatisfied dependency](../../errors/hidden/unsatisfied-dependency.md) class,
 pinned by the `cargo-cgp` fixture
-[`usability/extensible-data/auto_dispatch_missing_variant_impl.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/extensible-data/auto_dispatch_missing_variant_impl.rs).
+[`hidden/unsatisfied-dependency/auto_dispatch_missing_variant_impl.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/auto_dispatch_missing_variant_impl.rs).
 
 **A hand-written impl of the trait for an extensible enum conflicts with the blanket impl** with
 `E0119`, because the blanket impl covers every type implementing `HasExtractor`. The macro cannot see
@@ -169,7 +169,7 @@ fail with `E0428` on both names. Stable `rustc` also reports `E0119` on the comp
 wiring; the nightly `cargo-cgp` pins stops after the `E0428`s. The fix is to fold the trait
 identifier into both names, which renames the public `Compute{Method}` provider that code outside
 the macro wires by name, so it is deferred. The `cargo-cgp` fixture
-[`acceptable/wiring/duplicate-keys/auto_dispatch_shared_method_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/duplicate-keys/auto_dispatch_shared_method_name.rs)
+[`wiring/conflicting-wiring/auto_dispatch_shared_method_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/auto_dispatch_shared_method_name.rs)
 pins it; the [conflicting wiring](../../errors/wiring/conflicting-wiring.md) class describes the
 errors.
 

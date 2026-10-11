@@ -117,7 +117,7 @@ unchecked wiring produces) is documented as the
 *this* document pins is the **span**: the unsatisfied-bound caret lands on the component inside the
 `check_components!` block, not on the shared context type, because the check impl re-spans that one
 context token onto each listed component in turn with `override_span`. The `cargo-cgp` UI fixture
-[`acceptable/fields/missing_dependency.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/fields/missing_dependency.rs)
+[`checks/check-trait-failure/fields/missing_dependency.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/missing_dependency.rs)
 is the regression test for that re-span; the
 [`delegate_components!` counterpart](delegate_components.md) leaves the same wiring unchecked to
 show the contrasting lazy error.
@@ -186,15 +186,15 @@ The behavioral coverage for `check_components!` is the compile-time assertion it
   the table-level attribute rejections: an empty `#[check_providers()]`, a repeated
   `#[check_providers]`, a repeated `#[check_trait]`, and an unknown attribute each fail to parse.
 - The `cargo-cgp` UI fixture
-  [`acceptable/fields/missing_dependency.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/fields/missing_dependency.rs)
+  [`checks/check-trait-failure/fields/missing_dependency.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/missing_dependency.rs)
   pins that an unsatisfied impl-side dependency is reported with its `E0277` caret on the checked
   component inside the block, a regression test for the `override_span` re-span (see
   [Failure modes](#failure-modes)). Its error anatomy is the
   [check-trait failure](../../errors/checks/check-trait-failure.md) class.
 - The `cargo-cgp` UI fixtures
-  [`acceptable/resolution/ordinary_bound_unsatisfied.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/resolution/ordinary_bound_unsatisfied.rs)
+  [`checks/ordinary-trait-bound/ordinary_bound_unsatisfied.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/ordinary-trait-bound/ordinary_bound_unsatisfied.rs)
   and
-  [`acceptable/generic/generic_context_ordinary_bound.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/generic/generic_context_ordinary_bound.rs)
+  [`checks/ordinary-trait-bound/generic_context_ordinary_bound.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/ordinary-trait-bound/generic_context_ordinary_bound.rs)
   pin a check surfacing an *ordinary* trait bound (`Scalar: Eq`, unmet by a wired `f64`) as the
   primary `E0277`, from a concrete context and from a generic `<T> Wrapper<T>` table checked at
   `Wrapper<f64>` respectively. Their error anatomy is the

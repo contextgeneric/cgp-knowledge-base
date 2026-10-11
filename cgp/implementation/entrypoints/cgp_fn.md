@@ -152,7 +152,7 @@ author which of the two they meant (promoting the type to an abstract type, or k
 signature), so it lowers faithfully and defers. The observable diagnostic is the
 [out-of-scope generated name](../../errors/lowering/out-of-scope-generated-name.md) class (`E0433`),
 pinned by
-[`acceptable/lowering/impl_generics_in_signature.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/impl_generics_in_signature.rs);
+[`lowering/out-of-scope-generated-name/impl_generics_in_signature.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/out-of-scope-generated-name/impl_generics_in_signature.rs);
 the prescriptive side, when to climb from an inferred parameter to an abstract type, is
 [naming a type dependency](../../guides/naming-a-type-dependency.md). Note that an *abstract* type
 has no such restriction: [`#[use_type]`](../../reference/attributes/use_type.md) adds its bound to

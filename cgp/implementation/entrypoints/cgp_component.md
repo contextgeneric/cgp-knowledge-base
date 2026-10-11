@@ -150,7 +150,7 @@ a `#[cgp_component(Greeter)]` that derives the same marker, defines the name twi
 document pins is the **span**: the `E0428` "previous definition here" note lands on the `Greeter`
 provider name inside `#[cgp_component(..)]`, not on the whole attribute, per the marker-span
 behavior above. The `cargo-cgp` UI fixture
-[`acceptable/wiring/duplicate-keys/duplicate_component_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/duplicate-keys/duplicate_component_name.rs)
+[`wiring/conflicting-wiring/duplicate_component_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_component_name.rs)
 is the regression test for that span, since a regression to `call_site` would move the note onto the
 attribute.
 
@@ -233,7 +233,7 @@ The behavioral tests confirm the generated wiring works:
   trait does not declare, and that the same `name:` form expands when the trait declares the
   parameter.
 - The `cargo-cgp` UI fixture
-  [`acceptable/wiring/duplicate-keys/duplicate_component_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/duplicate-keys/duplicate_component_name.rs)
+  [`wiring/conflicting-wiring/duplicate_component_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_component_name.rs)
   pins that the derived marker's `E0428` "previous definition" note falls on the provider name
   rather than the whole attribute, a regression test for the marker-name span (see
   [Failure modes](#failure-modes)). Its error class is

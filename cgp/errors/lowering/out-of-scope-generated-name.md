@@ -71,8 +71,8 @@ definition that carries the attribute, so the attribute is one line away.
 on it nor could recover anything useful if it did: there is no obligation to re-run and no wiring to
 descend.
 
-The pass-through is the right outcome rather than a gap, which is why the fixture sits in the tool's
-`acceptable/` tier: the caret is on the author's own token and the message names exactly what is
+The pass-through is the right outcome rather than a gap, which is why the fixture has `acceptable`
+quality in the tool: the caret is on the author's own token and the message names exactly what is
 missing. The codes the tool stamps on the classes it does rewrite are in the
 [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
 
@@ -186,29 +186,29 @@ from `cgp` would make every `cgp` user link `alloc`, and the only alternative wa
 
 ## Backing fixtures
 
-- [`acceptable/lowering/impl_generics_in_signature.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/impl_generics_in_signature.rs):
+- [`lowering/out-of-scope-generated-name/impl_generics_in_signature.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/out-of-scope-generated-name/impl_generics_in_signature.rs):
   an `#[impl_generics(Db: Database)]` parameter named as the return type `Db::Row`; its snapshots
   pin the `E0433` with the caret on the return type and the pass-through, and the fixture doubles as
   the recorded forcing condition for promoting an inferred type to an abstract one.
-- [`acceptable/lowering/no_std_empty_variant_without_box.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/no_std_empty_variant_without_box.rs):
+- [`lowering/out-of-scope-generated-name/no_std_empty_variant_without_box.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/out-of-scope-generated-name/no_std_empty_variant_without_box.rs):
   the [`Box` sibling](#a-third-sibling-box-in-a-no_std-crate): a `no_std` crate deriving
   `CgpVariant` over an empty variant without `Box` in scope, its snapshots pinning the `E0433` on
   the variant and rustc's suggested import. Its working counterpart,
   [`ok/no_std_empty_variant.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/ok/no_std_empty_variant.rs),
   imports `Box` and compiles clean.
-- [`acceptable/lowering/cgp_type_name_shadows_bound.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/cgp_type_name_shadows_bound.rs):
+- [`lowering/out-of-scope-generated-name/cgp_type_name_shadows_bound.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/out-of-scope-generated-name/cgp_type_name_shadows_bound.rs):
   the [shadowed abstract type](#a-sibling-the-shadowed-abstract-type), pinning the `E0404` and both
   of its landmark notes.
-- [`usability/lowering/reserved_variant_name_extract_field.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/lowering/reserved_variant_name_extract_field.rs)
-  and [`reserved_variant_name_cgp_data.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/lowering/reserved_variant_name_cgp_data.rs): the
+- [`lowering/out-of-scope-generated-name/reserved_variant_name_extract_field.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/out-of-scope-generated-name/reserved_variant_name_extract_field.rs)
+  and [`reserved_variant_name_cgp_data.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/out-of-scope-generated-name/reserved_variant_name_cgp_data.rs): the
   [reserved variant name](#a-second-sibling-the-reserved-variant-name) under the extractor, a
   `Value` and a `Remainder` variant, pinning the opaque form whose notes both land on the derive;
   `cargo-cgp` passes it through. The readable form, a `Value` variant under `#[derive(FromVariant)]`
   whose note points at the variant, is
-  [`reserved_variant_name_from_variant.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/lowering/reserved_variant_name_from_variant.rs). The library
+  [`reserved_variant_name_from_variant.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/out-of-scope-generated-name/reserved_variant_name_from_variant.rs). The library
   side pins the emitted `Self::…` paths in
   [`invalid_expansion/reserved_variant_names.rs`](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/invalid_expansion/reserved_variant_names.rs).
-- [`acceptable/lowering/consumer_trait_in_provider_impl_generic.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/consumer_trait_in_provider_impl_generic.rs):
+- [`uncataloged/wrong-component-half/consumer_trait_in_provider_impl_generic.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/wrong-component-half/consumer_trait_in_provider_impl_generic.rs):
   the adjacent `E0425` shape: a `#[cgp_impl]` header names the consumer trait
   `CanCalculateArea<Rectangle>` where the provider trait `AreaCalculator` belongs, so the derived
   `CanCalculateAreaComponent` marker does not exist; the `.rust.stderr` pins `E0425` with the caret

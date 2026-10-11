@@ -235,30 +235,30 @@ rewrite as a path), a distinction only the normalized `Delegate` answers, never 
 
 The `.rust.stderr` snapshot pins the raw `E0119` shape and the `.cgp.stderr` the reshaped form.
 
-- [`wiring/namespace-paths/override_registered_path.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/override_registered_path.rs):
+- [`wiring/namespace-paths/override_registered_path.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-override-conflict/override_registered_path.rs):
   the context-level shape: a context joining `AppNamespace` overrides a path bound with
   `#[default_impl]`; the `.rust.stderr` pins the `E0119` pair on `DelegateComponent<PathCons<…>>`
   and `IsProviderFor<PathCons<…>, _, _>` for `App` with the expanded path type and the
   `downstream crates may implement` note, the `.cgp.stderr` the single `[CGP-E005]` headline with
   the resugared `@app.GreeterComponent.*` path.
-- [`wiring/duplicate-keys/for_loop_prefixed_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/duplicate-keys/for_loop_prefixed_key.rs):
+- [`wiring/duplicate-keys/for_loop_prefixed_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-override-conflict/for_loop_prefixed_key.rs):
   the context-level shape reached through a `for` loop keyed
   `@cgp.core.error.ErrorRaiserComponent.Key` beside a namespace that binds `….String`; the
   `.rust.stderr` pins the same `E0119` pair and downstream note, the `.cgp.stderr` the `[CGP-E005]`
   headline
   `` `App` cannot wire `@cgp.core.error.ErrorRaiserComponent.*` that is already set through `AppDefaults` ``,
   the loop's key parameter rendered as the `.*` tail.
-- [`wiring/namespace-paths/inherited_override_conflict.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/inherited_override_conflict.rs):
+- [`wiring/namespace-paths/inherited_override_conflict.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-override-conflict/inherited_override_conflict.rs):
   the namespace-level shape against a key the parent *binds*: a child namespace redefining an
   inherited entry; the `.rust.stderr` pins the single `E0119` on `ChildNs<_>` for
   `GreeterComponent`, with "first implementation here" on the inherited parent and no downstream
   note, and the `.cgp.stderr` the `[CGP-E005]` headline naming the parent that already sets the key.
-- [`wiring/namespace-paths/namespace_inherited_unprefixed_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/namespace_inherited_unprefixed_key.rs):
+- [`wiring/namespace-paths/namespace_inherited_unprefixed_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-override-conflict/namespace_inherited_unprefixed_key.rs):
   the namespace-level shape against a key the parent *redirects*: a `#[default_impl]` binding a
   prefixed component's bare marker in a namespace inheriting `DefaultNamespace`; the `.cgp.stderr`
   pins the `[CGP-E007]` headline and the `help` naming `@app.GreeterComponent`. Its context-level
   counterpart is
-  [`namespace_unprefixed_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/namespace_unprefixed_key.rs),
+  [`namespace_unprefixed_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-override-conflict/namespace_unprefixed_key.rs),
   where a context joining a namespace makes the same mistake.
 
 ## Related

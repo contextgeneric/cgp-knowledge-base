@@ -41,37 +41,36 @@ output normalization, also under `tests/`.
 ## The UI snapshot suite
 
 The UI suite is modeled on Clippy's: a tree of `.rs` fixtures, each paired with committed snapshots,
-checked by compiling the fixture and diffing. The fixtures live under
-[`tests/ui/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui), grouped into four
-top-level categories by the *quality of the output* the tool now produces: `acceptable/` for output
-that meets the bar (the diagnostic the tool renders is a clean, root-cause-first error a reader can
-act on); `usability/` for errors that still carry the cause but bury it, the remaining issues;
-`hidden-root-cause/` for errors whose cause is absent from the output; and `ok/` for a fixture that
-compiles clean and needs no diagnostic work. Each fixture `<name>.rs` has
-three siblings: `<name>.cgp.stderr`, the tool's rendered output; `<name>.rust.stderr`, what plain
-`cargo check` prints for the same fixture, the untransformed "before" against which the tool's
-`.cgp.stderr` is the "after"; and `<name>.expand.rs`, the Rust the fixture's CGP macros generate, as
+checked by compiling the fixture and diffing. Each fixture `<name>.rs` has three siblings:
+`<name>.cgp.stderr`, the tool's rendered output; `<name>.rust.stderr`, what plain `cargo check`
+prints for the same fixture, the untransformed "before" against which the tool's `.cgp.stderr` is
+the "after"; and `<name>.expand.rs`, the Rust the fixture's CGP macros generate, as
 `cargo cgp expand` shows it. A fixture that compiles cleanly has an empty `.cgp.stderr` and an empty
-`.rust.stderr`, but still has an `.expand.rs`. Every fixture has one, since expansion happens before
-type-checking and so succeeds whether or not the fixture compiles.
+`.rust.stderr`, but still has an `.expand.rs`, since expansion happens before type-checking and so
+succeeds whether or not the fixture compiles.
 
-Within each category the fixtures are sorted into kind subdirectories. `acceptable/` is split by the
-kind of failure the tool resolves: `fields/` and `field-types/` for missing and mistyped fields,
-`types/` for an abstract type the context and a provider disagree on, `providers/` for provider
-dependency chains, `generic/` for generic components, `resolution/` for the non-field and boundary
-cases the resolver still reshapes, `use-site/` for consumer-method call failures, `use-type/` for an
-unsatisfiable `#[use_type]` import, `verbosity/` for a deep dispatch chain shown in full,
-`duplication/` for the de-duplicated and coalesced multi-block cases, and `lowering/` and `wiring/`
-for the remaining classes (`wiring/orphan/` holding the cross-crate orphan-rule cases the tool
-reshapes into `[CGP-E011]`). `usability/` is split by the kind of issue that remains:
-`extensible-data/`, `fields/`, `handlers/`, `lowering/`, `misleading/`, `paths/`, `providers/`,
-`types/`, `use-site/`, and `wiring/` with its `checks/`, `conflicts/`, `constraints/`, `cycles/`,
-`keys/`, and `namespaces/` groups. Alongside the hand-curated examples, the
-tree holds one fixture per post-codegen error class, giving the tool a snapshot of its own
-transformed output for the whole [error catalog](../../cgp/errors/README.md). `cgp` has no
-compile-fail suite of its own, so these fixtures are the maintained copy. The
-[usability fixtures README](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/README.md)
-records the class-by-class findings.
+**The fixtures live under
+[`tests/ui/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui) in one directory per
+error class**, so a fixture moves only when its class changes, never when its message improves. The
+class directories mirror the [error catalog](../../cgp/errors/README.md): `checks/`, `hidden/`,
+`lowering/`, and `wiring/`, each holding one directory per class document
+(`checks/check-trait-failure/`, `wiring/orphan-rule/`, and so on). Mistakes the catalog does not yet
+cover sit under `uncataloged/<class>/` (the used-but-undeclared and wrong-half classes the catalog
+lists as a gap, the extensible-data family, wiring keys that do not resolve, and macro defects),
+each awaiting a catalog page. The largest class, `checks/check-trait-failure/`, keeps concept
+sub-directories (`fields/`, `providers/`, `missing-wiring/`, and the rest) so no directory grows
+crowded. Two directories hold fixtures that belong to no error class: `ok/` for programs that
+compile clean, and `pass-through/` for plain Rust errors the tool must render exactly as rustc does.
+Every fixture name is unique across the tree, so a fixture can be found by name alone.
+
+**How well the tool presents a fixture's error is a header field rather than a directory.** Every
+error fixture declares `//@quality: acceptable` (the tool leads with the cause), `usability` (the
+cause is present but buried), or `hidden` (the cause is absent from the output), and `//@codes: …`
+lists the exact `[CGP-Exxx]` codes its output carries (`none` for an uncoded one); the header check
+below holds the two in step with the output. `--list` prints every fixture with its quality and
+codes, so `--list | grep ^usability` shows the open usability cases. The tree holds one fixture per
+post-codegen error class, giving the tool a snapshot of its own transformed output for the whole
+catalog; `cgp` has no compile-fail suite of its own, so these fixtures are the maintained copy.
 
 The suite pins *both* halves of that transformation, so the tool's contribution is legible on the
 page. The `.cgp.stderr` is the output of `cargo-cgp` itself. Each fixture is compiled by running the
@@ -111,23 +110,28 @@ applies every CGP transform in-process and renders the result, `.cgp.stderr` is 
   [the expand command](expand-command.md) and the syntax-tree [resugaring](resugaring.md) it drives,
   neither of which any other test exercises through a real compilation.
 
-Two checks then compare the passes with each other rather than with a snapshot, because a snapshot
-alone cannot catch the two failures that matter most: a crash that prints nothing, and a rewrite of
-an error the tool should leave alone.
+Three checks then hold each fixture to more than its snapshots. Two compare the passes with each
+other, because a snapshot alone cannot catch the two failures that matter most: a crash that prints
+nothing, and a rewrite of an error the tool should leave alone. The third checks the fixture's
+header.
 
 - **The status check** requires the tool and plain `cargo check` to agree on whether the fixture
   compiles. A crash with no output, or the tool accepting what rustc rejects, would otherwise pass
   whenever the snapshot happened to match. The one known case where the next-generation solver
   accepts a mistake, a namespace inheritance cycle, is no exception here: on the pinned nightly the
   default solver accepts it too (only stable rejects it), so its fixture
-  `usability/wiring/namespaces/namespace_inheritance_cycle` compiles under both, and the check fails
-  if a later nightly makes them disagree.
+  `wiring/namespace-inheritance-cycle/namespace_inheritance_cycle` compiles under both, and the
+  check fails if a later nightly makes them disagree.
 - **The pass-through check** runs for every fixture under `pass-through/`: a program whose errors
   are plain Rust, which the tool must render exactly as rustc does. It requires the tool's stderr to
   equal plain `cargo check`'s, both normalized as the baseline is, so the property holds without a
   hand-reviewed snapshot. A pass-through fixture that the tool still rewrites falsely declares
   `//@rewrites-falsely: <reason>`; its snapshots then pin today's output, and the check reports the
   marker once the outputs agree, so the fix that closes it also removes it.
+- **The header check** runs for every error fixture (everything outside `ok/` and `pass-through/`):
+  it requires a `//@quality:` directive and a `//@codes:` list equal to the set of `[CGP-Exxx]`
+  codes in the tool's output, so a fixture that gains or loses a code fails instead of being
+  re-blessed unnoticed.
 
 A fixture that declares `//@json` also runs **the JSON pass**, which runs
 `cargo cgp check --message-format=json` and compares its compiler messages with `<name>.cgp.json`.
@@ -151,7 +155,7 @@ compilation stops before expansion completes has no expansion to record, so its 
 two-line comment marker saying so. Two causes stop it that early: a malformed macro invocation, and
 a type defined twice, which rustc treats as fatal once name resolution finishes. The marker is worth
 pinning, since it says the failure precedes type-checking. The three fixtures under
-`acceptable/wiring/duplicate-keys/` that define a name twice (`duplicate_component_name`,
+`wiring/conflicting-wiring/` that define a name twice (`duplicate_component_name`,
 `duplicate_provider_name`, and `auto_dispatch_shared_method_name`) record it.
 
 ### The harness is a custom Rust test binary
@@ -180,12 +184,12 @@ tool's libraries. Running the full suite builds the front-end and its driver and
 needs both present.
 
 A fixture states what the harness must do with it through **directives**: line comments that start
-with `//@`, as in Clippy's UI tests, which the compiler ignores and only the harness reads. Three
+with `//@`, as in Clippy's UI tests, which the compiler ignores and only the harness reads. Five
 exist: `//@aux-build: <crate>` (an auxiliary crate, below), `//@rewrites-falsely: <reason>` (the
-pass-through exception above), and `//@json` (the JSON pass). A misspelled directive would silently
-do nothing, so the parser rejects an unknown `//@name` and a known name written in another comment
-form, such as `// @json` with a space; a comment that merely starts with an `@`-path, such as
-commented-out wiring, stays legal.
+pass-through exception above), `//@json` (the JSON pass), and the header's `//@quality:` and
+`//@codes:`. A misspelled directive would silently do nothing, so the parser rejects an unknown
+`//@name` and a known name written in another comment form, such as `// @json` with a space; a
+comment that merely starts with an `@`-path, such as commented-out wiring, stays legal.
 
 ### How a fixture is compiled
 
@@ -219,7 +223,7 @@ aux crate's `../other-aux` path) resolves through the shared materialized siblin
 worker's manifest is rewritten only when its dependency set actually changes, a run of ordinary
 (no-aux) fixtures never disturbs the cached `cgp` build. This is what lets the three cross-crate
 orphan-rule fixtures, the published-blanket-trait fixture
-`use-site/upstream_blanket_trait_use_site`, the positive `ok/cross_crate_wiring.rs`, and the two
+`upstream_blanket_trait_use_site`, the positive `ok/cross_crate_wiring.rs`, and the two
 cross-crate dispatch fixtures `ok/cross_crate_dispatch_enum.rs` and
 `ok/cross_crate_dispatch_payloads.rs` (backed by the `cgp-test-dispatch-traits` and
 `cgp-test-dispatch-shapes` auxiliary crates) reproduce what a single crate cannot.
@@ -336,20 +340,21 @@ compiler's diagnostic text. The harness builds and runs under the toolchain the 
 The pin covers the toolchain's *components* as well as its date, and one of them is there only for
 this suite. `rust-src` is no use to the driver, but rustc shows the `core`/`std` source line beneath
 a diagnostic that points into the standard library only when that component is present. A fixture
-such as `usability/lowering/option_slice`, whose error cites `Option`'s definition, renders one way
-with it and another way without. Left unpinned, that turns on whichever components a contributor's
-toolchain happened to pick up (rustup installs them on demand, and other tools ask for `rust-src`),
-and the snapshot flips underneath an unrelated change. Pinning it in `rust-toolchain.toml` makes the
-diagnostic content a function of the toolchain file alone, which is what the rest of this section
-assumes. It is deliberately *not* added to what `cargo cgp setup` installs, since a user of the tool
-never runs this suite. A deliberate toolchain bump can therefore change the diagnostic wording and
-require a re-bless, exactly as it does for Clippy. A `.cgp.stderr` or `.rust.stderr` diff after a
-toolchain change is expected, not a regression. An `.expand.rs` is steadier, since it holds
-generated *source* rather than compiler prose, but it too is toolchain-dependent: the compiler's own
-pretty-printer lays it out, and the injected `#![feature(prelude_import)]`/`extern crate std`
-preamble comes from the edition's prelude. A passing `acceptable/use-site/unsatisfied_dependency`
-snapshot is also the standing proof that the driver genuinely stands in as the compiler, since its
-un-hidden root cause could only be produced by compiling the fixture through the tool.
+such as `lowering/ill-formed-generated-type/option_slice`, whose error cites `Option`'s definition,
+renders one way with it and another way without. Left unpinned, that turns on whichever components a
+contributor's toolchain happened to pick up (rustup installs them on demand, and other tools ask for
+`rust-src`), and the snapshot flips underneath an unrelated change. Pinning it in
+`rust-toolchain.toml` makes the diagnostic content a function of the toolchain file alone, which is
+what the rest of this section assumes. It is deliberately *not* added to what `cargo cgp setup`
+installs, since a user of the tool never runs this suite. A deliberate toolchain bump can therefore
+change the diagnostic wording and require a re-bless, exactly as it does for Clippy. A `.cgp.stderr`
+or `.rust.stderr` diff after a toolchain change is expected, not a regression. An `.expand.rs` is
+steadier, since it holds generated *source* rather than compiler prose, but it too is
+toolchain-dependent: the compiler's own pretty-printer lays it out, and the injected
+`#![feature(prelude_import)]`/`extern crate std` preamble comes from the edition's prelude. A
+passing `hidden/unsatisfied-dependency/unsatisfied_dependency` snapshot is also the standing proof
+that the driver genuinely stands in as the compiler, since its un-hidden root cause could only be
+produced by compiling the fixture through the tool.
 
 ## Comparison with Clippy
 
@@ -423,13 +428,14 @@ no dogfood test yet (see above).
   unreadable fixture, and the malformed-directive guard from both sides: a space after the slashes
   and a doc-comment form are rejected, while prose mentioning the syntax is not.
 - [`crates/cargo-cgp-ui-tests/tests/directives.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/directives.rs):
-  every directive read together, none declared, commented-out `@`-path wiring left alone, and the
-  rejection of an unknown directive, a spaced directive, and a `//@rewrites-falsely:` without a
-  reason.
+  every directive read together, none declared, `//@codes: none`, commented-out `@`-path wiring left
+  alone, and the rejection of an unknown directive, a spaced directive, a `//@rewrites-falsely:`
+  without a reason, a malformed code, and an unknown quality.
 - [`crates/cargo-cgp-ui-tests/tests/passes.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/passes.rs):
-  the status check (agreement and disagreement in both directions), the pass-through check (equal
-  output, a difference, and the `//@rewrites-falsely:` marker in both states), and the reduction of
-  cargo's JSON stream to compiler messages.
+  the header check (exact codes, a missing directive, `//@codes: none`), the collection of codes
+  from output, the status check (agreement and disagreement in both directions), the pass-through
+  check (equal output, a difference, and the `//@rewrites-falsely:` marker in both states), and the
+  reduction of cargo's JSON stream to compiler messages.
 - [`crates/cargo-cgp-ui-tests/tests/snapshot.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/snapshot.rs):
   a missing snapshot reported as a mismatch, blessing it into existence, and the line diff's
   context and markers.
@@ -449,7 +455,7 @@ no dogfood test yet (see above).
   `normalize`, `snapshot`).
 - [`tests/ui/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui): the fixture tree,
   one scenario per `.rs` file with its `.cgp.stderr`, `.rust.stderr`, and `.expand.rs` snapshots,
-  grouped into the `acceptable/` / `usability/` / `ok/` category subdirectories.
+  grouped into error-class directories beside `ok/` and `pass-through/`.
 - [`crates/cargo-cgp/src/args.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/args.rs),
   [`crates/cargo-cgp-driver/src/args.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/args.rs):
   the modules the argument tests cover.

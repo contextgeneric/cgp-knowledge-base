@@ -83,7 +83,7 @@ gated on actually failing, a recovered concrete input can never fabricate a caus
 stage's output recovered, the later stage's input becomes that concrete type and the bound it fails
 becomes the reported root cause. An example is an `AsRef<[u8]>` requirement a byte-consuming stage
 places on a producing stage whose output type is not a byte slice, the shape
-[`cascade_later_stage_input`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/cascade_later_stage_input.rs)
+[`cascade_later_stage_input`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/cascade_later_stage_input.rs)
 pins.
 
 The step is **structural**: it recovers `<T as SomeTrait<…>>::Assoc` for *any* trait and *any*
@@ -148,9 +148,9 @@ treats everything else as a leaf. It deliberately does *not* follow
   This is the leaf a handler pipeline bottoms out on when a stage's output type is not one a later
   stage's `UseInputDelegate` input dispatcher handles: a raw `GenericArray` digest, say, reaching an
   `AsyncRead` sink's dispatcher because a byte-encoding stage is missing. The shape is distilled in
-  [`cascade_nested_projection`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/cascade_nested_projection.rs),
+  [`cascade_nested_projection`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/cascade_nested_projection.rs),
   with the empty-table variant in
-  [`empty_dispatch_table`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/empty_dispatch_table.rs).
+  [`empty_dispatch_table`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/empty_dispatch_table.rs).
   Hypershell's own dispatchers `open` their component instead, so the same mistake in its
   `http_checksum_native` example reaches the redirect-wiring leaf above.
 - An unmet **`DelegateComponent<Marker>` on a type that is neither the context nor any table** is
@@ -162,9 +162,9 @@ treats everything else as a leaf. It deliberately does *not* follow
   did not unify (a pipeline stage fed the wrong input, the `HandleShout` shape) *has* one and is
   dropped, its real cause running through that impl; a genuine non-provider has *none* and is
   reported, named against `T` rather than a wiring key
-  ([`non_provider_wired`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/providers/non_provider_wired.rs)
+  ([`non_provider_wired`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/non_provider_wired.rs)
   pins it;
-  [`cascade_after_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/cascade_after_use_site.rs)
+  [`cascade_after_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/cascade_after_use_site.rs)
   is the dead-end that must stay dropped).
 - An unmet **namespace-lookup bound** is a missing-redirect-wiring leaf too when its table, the
   trait's last type argument, is the context. When the table is an aggregate provider that joins the
@@ -367,7 +367,7 @@ one flat path of these nodes per way a cause is reached, and the rustc-free
 `cargo tree`-style text, every construct named in full. A dispatch pipeline's plumbing hops all
 restate the same program-sized `Code` type, and each spells it out, since the type a reader is
 tracing is the point of the chain
-([`deep_dispatch_chain`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/verbosity/deep_dispatch_chain.rs)
+([`deep_dispatch_chain`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/verbosity/deep_dispatch_chain.rs)
 pins the resulting shape). All of the merge and render is in the rustc-free
 `cargo-cgp-error-processing` crate, unit-tested on any toolchain.
 

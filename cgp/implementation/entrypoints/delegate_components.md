@@ -393,40 +393,41 @@ The failure cases in `cgp-macro-tests` pin the attribute rejection:
 The post-codegen compile-fail cases are `cargo-cgp` UI fixtures that pin the expansions that fail to
 compile. All are **acceptable** failures, deferred to the compiler by design and none a defect, and
 their anatomy is documented in the [error catalog](../../errors/README.md); the
-[Failure modes](#failure-modes) section links each to its class. `cargo-cgp` files each fixture by
-the *quality of the output* it renders (`acceptable/` when the tool already leads with the cause,
-`usability/` when the cause is present but buried), which is why the unconstrained-generic case
-below sits under `usability/` even though it is not a defect:
+[Failure modes](#failure-modes) section links each to its class. `cargo-cgp` files each fixture
+under its error class and records the *quality of the output* it renders in a header field
+(`acceptable` when the tool already leads with the cause, `usability` when the cause is present but
+buried), which is why the unconstrained-generic case below has `usability` quality even though it is
+not a defect:
 
-- [`acceptable/wiring/duplicate-keys/duplicate_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/duplicate-keys/duplicate_key.rs):
+- [`wiring/conflicting-wiring/duplicate_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_key.rs):
   two blocks mapping the same key expand to conflicting `DelegateComponent` impls (`E0119`).
-- [`acceptable/wiring/duplicate-keys/duplicate_key_same_block.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/duplicate-keys/duplicate_key_same_block.rs):
+- [`wiring/conflicting-wiring/duplicate_key_same_block.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_key_same_block.rs):
   the same conflict from two entries in one block; its `.rust.stderr` pins the per-entry
   [error spans](#error-spans), each caret landing on its own `GreeterComponent` key rather than the
   whole block.
-- [`acceptable/wiring/namespace-paths/delegate_duplicate_path_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/delegate_duplicate_path_key.rs):
+- [`wiring/conflicting-wiring/delegate_duplicate_path_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/delegate_duplicate_path_key.rs):
   the `@`-path analogue: two identical `@cgp.core.error.ErrorTypeProviderComponent` entries under a
   `namespace` header conflict, and its `.rust.stderr` pins the [error span](#error-spans) landing on
   the duplicated path leaf rather than the whole block, even though the key lowers to a synthesized
   `PathCons<..>` type.
-- [`acceptable/wiring/duplicate-keys/duplicate_open_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/duplicate-keys/duplicate_open_key.rs):
+- [`wiring/conflicting-wiring/duplicate_open_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_open_key.rs):
   an `open` header colliding with an explicit mapping for the same component; its `.rust.stderr`
   pins the [error span](#error-spans) of the `open`-header entry, whose span comes from the opened
   component (a source distinct from the plain key path).
-- [`acceptable/wiring/duplicate-keys/overlapping_generic.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/duplicate-keys/overlapping_generic.rs):
+- [`wiring/conflicting-wiring/overlapping_generic.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/overlapping_generic.rs):
   a generic `<T> Wrapper<T>` entry overlaps a specific `Wrapper<u64>` entry at the same key
   (`E0119`).
-- [`acceptable/use-site/missing_dependency.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/missing_dependency.rs):
+- [`hidden/unsatisfied-dependency/missing_dependency_call.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/missing_dependency_call.rs):
   a lazily-wired provider whose `Self: HasName` dependency the context does not satisfy; the unmet
   bound surfaces at the call site (`E0599`). Its anatomy is the
   [hidden unsatisfied-dependency](../../errors/hidden/unsatisfied-dependency.md) error class.
-- [`acceptable/use-site/ordinary_bound_unsatisfied.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/ordinary_bound_unsatisfied.rs):
+- [`hidden/unsatisfied-dependency/ordinary_bound_unsatisfied_call.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/ordinary_bound_unsatisfied_call.rs):
   the same hidden `E0599` where the suppressed dependency is an *ordinary* trait bound
   (`Scalar: Eq`, unmet by a wired `f64`) rather than a `HasField`, called rather than checked. Same
   [hidden unsatisfied-dependency](../../errors/hidden/unsatisfied-dependency.md) class; its surfaced
   counterpart is the [unsatisfied ordinary trait bound](../../errors/checks/ordinary-trait-bound.md)
   class.
-- [`usability/wiring/constraints/unconstrained_generic.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/wiring/constraints/unconstrained_generic.rs):
+- [`wiring/unconstrained-generic/unconstrained_generic.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/unconstrained_generic.rs):
   a per-entry generic that appears only in the value (`<T> GreeterComponent: GreetWith<T>`) lowers
   to an impl with an unconstrained `T` (`E0207`), which the compiler rejects as it would a
   hand-written impl.

@@ -312,13 +312,13 @@ bare `@a.b.*` notation (no `Path!(…)` wrapper), and the upstream reference is
   method belongs to a CGP trait, and that trait is not among the impl's `where` bounds. A call on
   another generic parameter (`value: &Value`) is deliberately left as rustc wrote it, since its fix is
   a bound on `Value`, which `#[uses]` cannot give. Fixtures:
-  [`undeclared_uses_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/undeclared_uses_trait.rs)
+  [`undeclared_uses_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/used-but-undeclared/undeclared_uses_trait.rs)
   for a `#[cgp_fn]` body,
-  [`undeclared_uses_trait_in_cgp_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/undeclared_uses_trait_in_cgp_impl.rs)
+  [`undeclared_uses_trait_in_cgp_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/used-but-undeclared/undeclared_uses_trait_in_cgp_impl.rs)
   and
-  [`undeclared_uses_trait_in_async_cgp_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/undeclared_uses_trait_in_async_cgp_impl.rs)
+  [`undeclared_uses_trait_in_async_cgp_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/used-but-undeclared/undeclared_uses_trait_in_async_cgp_impl.rs)
   for provider bodies, and
-  [`undeclared_trait_on_non_context_parameter`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/undeclared_trait_on_non_context_parameter.rs)
+  [`undeclared_trait_on_non_context_parameter`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/used-but-undeclared/undeclared_trait_on_non_context_parameter.rs)
   for the call left alone. The Rust code stays `E0599`. Any `[T]: Sized` cascade the unresolved return type
   trails (in an `async` body especially) is left as rustc wrote it: those errors can land off the
   failing expression (on the binding pattern, or a later statement the unresolved type flows into)

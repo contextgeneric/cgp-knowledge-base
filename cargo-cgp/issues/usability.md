@@ -5,19 +5,15 @@ problems a reader hits even when the diagnostic contains everything needed to fi
 separates these from a [hidden root cause](hidden-root-cause.md) is that the information is present:
 the cause could be recovered from the output by a careful reader or a post-processor, so the work
 here is re-presentation, not recovery. Every issue is backed by a fixture under
-[`tests/ui/usability/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/usability),
-grouped into a sub-directory that names the issue class. When a fixture's presentation reaches the
-bar, it graduates out of `usability/` into
-[`tests/ui/acceptable/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/acceptable)
-and its issue is deleted from this document.
+[`tests/ui/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/) whose header declares `//@quality: usability`, in the directory of its error
+class. When a fixture's presentation reaches the bar, its header changes to
+`//@quality: acceptable` and its issue is deleted from this document.
 
 ## What the tool already presents well
 
 The classes below carry their root cause in a form that clears the usability bar, so their fixtures
-live under
-[`acceptable/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/acceptable) and are
-listed here only so a reader can tell them from the open issues. Their codes are catalogued in
-[error-code.md](../error-code.md) and their mechanics in the
+have `acceptable` quality and are listed here only so a reader can tell them from the open issues.
+Their codes are catalogued in [error-code.md](../error-code.md) and their mechanics in the
 [implementation documents](../implementation/README.md); each entry names the behavior and the
 fixture that pins it.
 
@@ -31,84 +27,84 @@ fixture that pins it.
 - **A missing derive across several fields** is one root cause: several present-but-underived fields
   on one struct merge into a single `[CGP-E108]` lead listing every field, over one merged tree,
   with the derive `help` naming the one fix
-  ([`base_area_2`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/fields/base_area_2.rs);
+  ([`base_area_2`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/base_area_2.rs);
   the boundaries, a lone underived field and genuinely absent fields, are pinned by
-  [`underived_and_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/fields/underived_and_missing_field.rs)
+  [`underived_and_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/underived_and_missing_field.rs)
   and
-  [`parallel_branches`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/fields/parallel_branches.rs)).
+  [`parallel_branches`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/parallel_branches.rs)).
   The *same* field reached by several coalesced consumers is one cause too: the block's union of its
   members' causes is folded by leaf before the wording runs, so the lead keeps the single-field form
-  ([`coalesced_underived_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/duplication/coalesced_underived_field.rs)).
+  ([`coalesced_underived_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/duplication/coalesced_underived_field.rs)).
   And a use-site failure spanning several wired components that share a cause renders every
   component's route, converging on the shared hop
-  ([`use_site_shared_cause`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/duplication/use_site_shared_cause.rs)).
+  ([`use_site_shared_cause`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/use_site_shared_cause.rs)).
 - **A pipeline stage routing back to the context for an unwired `Code`** ends at the absent entry. A
   type-level DSL interprets each stage by routing through the context's own handler, and a context
   that joins a namespace carries a blanket forwarding that matches *every* key, but an unmet
   delegation on the context is terminal whatever nominally matches it. So the block leads with
   `[CGP-E107] … does not contain any delegate entry for @….Missing` rather than one `[CGP-E002]` per
   combinator layer naming `PipeHandlers`/`ComposeHandlers`
-  ([`pipeline_unhandled_code`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/pipeline_unhandled_code.rs)).
+  ([`pipeline_unhandled_code`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/use-site/pipeline_unhandled_code.rs)).
 - **A use-site failure the resolver declines** drops rustc's "this is an associated function, not a
   method" framing and its wrong "use associated function syntax instead" suggestion, both artifacts
   of CGP's `self`-less provider methods, leaving the unmet wiring bound as the first note
-  ([`generic_consumer_unwritten_arg`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/generic_consumer_unwritten_arg.rs);
+  ([`generic_consumer_unwritten_arg`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/use-site/generic_consumer_unwritten_arg.rs);
   recovering the dispatch parameter itself is a documented
   [resolver boundary](../implementation/typed-root-cause-resolution.md#boundaries-and-open-ends)).
 - **Wiring coherence conflicts** carry codes. The duplicate delegate-key `E0119` family is
   `[CGP-E004]`–`[CGP-E008]`, including a duplicate `cgp_namespace!` `@`-path as a `[CGP-E008]`
   naming both redirect targets
-  ([`namespace_duplicate_path_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/namespace_duplicate_path_key.rs));
+  ([`namespace_duplicate_path_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/namespace_duplicate_path_key.rs));
   a duplicate provider *name* is the lone `E0428`, since the compiler stops once it finds a type
   defined twice
-  ([`duplicate_provider_name`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/duplicate-keys/duplicate_provider_name.rs));
+  ([`duplicate_provider_name`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_provider_name.rs));
   and the `UseContext` cycle's `E0275` becomes a `[CGP-E010]` headline with a `help` naming the
   usual cause
-  ([`use_context_cycle`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/constraints/use_context_cycle.rs)).
+  ([`use_context_cycle`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/use_context_cycle.rs)).
   A collision *inside a namespace* reads the same way whatever its key: a child namespace redefining
   a key it inherits is a `[CGP-E005]` naming the parent
-  ([`inherited_override_conflict`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/inherited_override_conflict.rs)),
+  ([`inherited_override_conflict`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-override-conflict/inherited_override_conflict.rs)),
   two `#[default_impl]`s on one per-type key a `[CGP-E004]` naming the type and its table
-  ([`duplicate_default_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/duplicate_default_impl.rs)),
+  ([`duplicate_default_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_default_impl.rs)),
   and a prefixed component bound by its bare marker (a mis-written key rather than an override) a
   `[CGP-E007]` whose `help` names the path to write instead, whether the entry it collides with is
   an inherited redirect
-  ([`namespace_inherited_unprefixed_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/namespace_inherited_unprefixed_key.rs))
+  ([`namespace_inherited_unprefixed_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-override-conflict/namespace_inherited_unprefixed_key.rs))
   or the component's own `#[prefix]` route
-  ([`default_impl_unprefixed_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/default_impl_unprefixed_key.rs)).
+  ([`default_impl_unprefixed_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/default_impl_unprefixed_key.rs)).
 - **A cross-context dependency** (one context's wiring depending on a *concrete* other context, so
   one obligation appears in two contexts' trees) resolves on both sides. A provider's own
   `where Inner: CanCompute` clause is recovered as that consumer obligation, de-duplicating into
   `Inner`'s own block rather than leaking `__Context__`/`IsProviderFor` or declining to rustc's raw
   bound, and the same node inside the *outer* context's tree is re-rooted at `Inner` so it decodes
   to the missing field
-  ([`cross_context_node_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/resolution/cross_context_node_key.rs)).
+  ([`cross_context_node_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/resolution/cross_context_node_key.rs)).
 - **An orphan-rule namespace registration** (registering wiring into a namespace the crate does not
   own, keyed on a component it does not own either) becomes a `[CGP-E011]` header naming the foreign
   namespace and key, with the ownership-based fix in a `help`, in place of rustc's `E0210`/`E0117`,
   which names the machinery parameter `__Components__`/`__Table__`. Its three triggers are under
-  [`acceptable/wiring/orphan/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/acceptable/wiring/orphan):
+  [`wiring/orphan-rule/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/wiring/orphan-rule):
   a `#[default_impl]` on a bare foreign component marker
-  ([`default_impl_foreign_component`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/orphan/default_impl_foreign_component.rs)),
+  ([`default_impl_foreign_component`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/orphan-rule/default_impl_foreign_component.rs)),
   on a foreign prefix path
-  ([`default_impl_foreign_prefix_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/orphan/default_impl_foreign_prefix_path.rs)),
+  ([`default_impl_foreign_prefix_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/orphan-rule/default_impl_foreign_prefix_path.rs)),
   and a `cgp_namespace!` re-open whose `__Table__` trigger selects the inherit-a-new-namespace fix
-  ([`reopen_foreign_namespace`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/orphan/reopen_foreign_namespace.rs)).
+  ([`reopen_foreign_namespace`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/orphan-rule/reopen_foreign_namespace.rs)).
 - **One mistake reported as many errors** collapses on both axes. CGP wiring is lazy, so one missing
   dependency surfaces at the `check_components!` entry, at every hand-written `impl` that references
   the broken consumer, and at each call. The *same* consumer re-reported at many sites de-duplicates
   to one block, keyed on a span-independent cause signature, so the transfer example's single
   un-wired password type yields two trees rather than eighteen
-  ([`cross_site_dedup`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/duplication/cross_site_dedup.rs),
-  [`manual_supertrait_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/manual_supertrait_impl.rs)).
+  ([`cross_site_dedup`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/duplication/cross_site_dedup.rs),
+  [`manual_supertrait_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/manual_supertrait_impl.rs)).
   *Different* consumers that share one root cause coalesce into a single `[CGP-E001]` headline
   listing every affected consumer trait, with a caret per failing entry and the shared cause shown
   once. The emitter holds each compilation's diagnostics in arrival order and flushes them at
   `Drop`, the only point after every diagnostic has arrived, grouping the consumer failures that
   *share* a root cause, so
-  [`density_3`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/duplication/density_3.rs)
+  [`density_3`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/verbose-cascade/density_3.rs)
   (two components, one missing `height`),
-  [`dependency_cascade`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/duplication/dependency_cascade.rs)
+  [`dependency_cascade`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/verbose-cascade/dependency_cascade.rs)
   (three chained providers), and `missing_normal_bound` (two consumers sharing an `App: Clone`
   bound) each collapse to one block, and cargo's re-count keeps the "N errors" summary honest.
   Grouping on a shared cause rather than on one whole-failure key also covers the *partial-overlap*
@@ -116,14 +112,14 @@ fixture that pins it.
   several root causes: each `check_components!` entry stops at the first unmet leaf on its own
   branch while a use-site call walks every wired component, so no two cause sets are equal, and the
   union block still keeps its dependency chain
-  ([`overlapping_cause_sets`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/duplication/overlapping_cause_sets.rs)).
+  ([`overlapping_cause_sets`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/duplication/overlapping_cause_sets.rs)).
 - **A trait used but not declared** (a `#[cgp_fn]`/`#[cgp_impl]` body that calls a CGP trait's
   method, a consumer or `#[cgp_fn]`/`#[blanket_trait]` trait, on `self` without declaring it via
   `#[uses(…)]`) becomes a `[CGP-E012]` header naming the trait, with the `#[uses(…)]` fix in a
   `help`, in place of rustc's vague `E0599`, which names `__Context__` and points at a transitive
   `HasField` bound
-  ([`undeclared_uses_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/undeclared_uses_trait.rs),
-  and [`undeclared_uses_trait_in_cgp_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/undeclared_uses_trait_in_cgp_impl.rs)
+  ([`undeclared_uses_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/used-but-undeclared/undeclared_uses_trait.rs),
+  and [`undeclared_uses_trait_in_cgp_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/used-but-undeclared/undeclared_uses_trait_in_cgp_impl.rs)
   with its async form for a provider body, where the generated impl's `Self` is the provider struct
   and the receiver's declared type identifies the shape instead).
   Any `[T]: Sized` cascade the unresolved return type trails is left as rustc wrote it: those errors
@@ -138,18 +134,18 @@ fixture that pins it.
   fingerprints, so it generalizes over a component's generic parameters and tells a wrong-half
   mistake (`[CGP-E013]`, which names the provider trait to use) apart from a non-component trait
   (`[CGP-E014]`, which has no provider to suggest)
-  ([`consumer_trait_in_provider_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/consumer_trait_in_provider_impl.rs),
-  [`consumer_trait_in_provider_impl_generic`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/consumer_trait_in_provider_impl_generic.rs),
+  ([`consumer_trait_in_provider_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/wrong-component-half/consumer_trait_in_provider_impl.rs),
+  [`consumer_trait_in_provider_impl_generic`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/wrong-component-half/consumer_trait_in_provider_impl_generic.rs),
   and
-  [`cgp_impl_on_non_cgp_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/cgp_impl_on_non_cgp_trait.rs)).
+  [`cgp_impl_on_non_cgp_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/wrong-component-half/cgp_impl_on_non_cgp_trait.rs)).
 - **A higher-order provider's `#[use_provider]` mistake** is reshaped the same way. Calling
   `InnerCalculator::area(self)` without `#[use_provider(InnerCalculator: AreaCalculator)]` becomes a
   `[CGP-E016]` error naming the inner provider and the fix, in place of rustc's `E0599`, which leaks
   the generated `__Context__` and suggests the wrong consumer-trait bound
-  ([`higher_order_missing_use_provider`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/higher_order_missing_use_provider.rs)).
+  ([`higher_order_missing_use_provider`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/used-but-undeclared/higher_order_missing_use_provider.rs)).
   Naming the *consumer* trait in the `#[use_provider]` bound becomes a `[CGP-E015]` error pointing
   at the provider trait to use, with the `E0308` body cascade suppressed
-  ([`higher_order_use_provider_consumer_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/higher_order_use_provider_consumer_trait.rs)).
+  ([`higher_order_use_provider_consumer_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/wrong-component-half/higher_order_use_provider_consumer_trait.rs)).
 - **An abstract type the context binds one way while a provider pins it another** is a coded
   mismatch of its own. A context chooses an abstract type's concrete form by wiring its component to
   `UseType<T>`; a provider can pin the same type with the `#[use_type(Trait.{Assoc = Concrete})]`
@@ -157,19 +153,19 @@ fixture that pins it.
   fails. The resolver's projection recovery covers any associated type, not only `HasField`'s, so
   the failure becomes a `[CGP-E017]` header naming both types over a root-cause tree, with a `help`
   naming the wiring entry to change
-  ([`abstract_type_mismatch`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/types/abstract_type_mismatch.rs)).
+  ([`abstract_type_mismatch`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/types/abstract_type_mismatch.rs)).
 - **A blanket trait published by a library** is reshaped like a local one. A
   `#[cgp_fn]`/`#[blanket_trait]` trait is recognized by its blanket impl over a bare context, a
   signal too broad on its own (`ToString` and `Into` share it), so a foreign trait qualifies only on
   evidence that its blanket depends on a CGP construct, and the `[CGP-E009]` reshaping crosses the
   crate boundary
-  ([`upstream_blanket_trait_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/upstream_blanket_trait_use_site.rs)).
+  ([`upstream_blanket_trait_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/upstream_blanket_trait_use_site.rs)).
 - **A CGP construct rustc splits across styled fragments** is resugared. rustc builds its "similar
   impl" hint from fragments split at every difference between the two traits, shredding a
   `Symbol<3, Chars<'B', …>>` so no fragment matches; the tool reads the fragments as the one line
   they render as, and flattens them only when that recovers something, so the hint reads
   `Symbol!("Bar")` like the header beside it
-  ([`upcast_missing_variant`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/extensible-data/upcast_missing_variant.rs)
+  ([`upcast_missing_variant`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/upcast_missing_variant.rs)
   shows it on a declined diagnostic).
 - **A required type that projects through the context's own wiring** is shown in both forms. When a
   provider reads a field whose type is expressed through an
@@ -182,7 +178,7 @@ fixture that pins it.
   so they cannot state a requirement two ways, and the abstract-type pair `[CGP-E017]`/`[CGP-E112]`
   does the same. The one deliberate divergence is the abstract-type `help`, which takes the reduced
   form alone because it prescribes an edit the reader types rather than describing the requirement
-  ([`abstract_field_type_mismatch`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/field-types/abstract_field_type_mismatch.rs)).
+  ([`abstract_field_type_mismatch`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/field-types/abstract_field_type_mismatch.rs)).
 - **A missing entry in an aggregate provider's own table** names that provider, whether the
   aggregate `open`s the component or joins a namespace itself. Each `[CGP-E104]` redirect hop reads
   the table off its own `RedirectLookup<Table, Path>`, so a context's redirect says `` in `App` ``
@@ -190,8 +186,8 @@ fixture that pins it.
   `[CGP-E110]` provider-table leaf,
   `` provider `ByteSink` does not contain any delegate entry for `@ComputerComponent.Sink.Digest` ``,
   rather than a `[CGP-E107]` leaf calling the aggregate a context
-  ([`open_aggregate_missing_entry`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/missing-wiring/open_aggregate_missing_entry.rs),
-  [`namespace_aggregate_missing_entry`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/missing-wiring/namespace_aggregate_missing_entry.rs)).
+  ([`open_aggregate_missing_entry`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/open_aggregate_missing_entry.rs),
+  [`namespace_aggregate_missing_entry`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/namespace_aggregate_missing_entry.rs)).
 
 **A dispatch chain shows every CGP construct as written**, at the cost of length. A chain restates a
 program-sized `Code` type at every hop, and the tool does not shorten a hop that repeats its
@@ -209,7 +205,7 @@ A `delegate_components!` entry whose generic parameter is used only in the value
 (`<T> GreeterComponent: GreetWith<T>`) is rejected with `E0207` *twice*, at the same caret, and the
 two errors carry contradictory auto-fixes: the first suggests adding the parameter to the context
 type, the second suggests removing it
-([`unconstrained_generic`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/wiring/constraints/unconstrained_generic.rs)).
+([`unconstrained_generic`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/unconstrained_generic.rs)).
 Only the second fix matches the actual mistake. Coalescing the pair, or at least suppressing the
 misleading first suggestion, is the work here; it is the last of the wiring-conflict shapes that
 still passes through with only light post-processing.
@@ -218,13 +214,13 @@ still passes through with only light post-processing.
 
 When a macro lowers accepted input into ill-formed Rust, the error lands on the macro attribute and
 never states the real cause.
-[`option_slice`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/lowering/option_slice.rs)
+[`option_slice`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/ill-formed-generated-type/option_slice.rs)
 produces an unsized-type failure (an `Option<[u8]>` generated from an auto-getter returning `&[u8]`)
 as two cascading errors both anchored on the `#[cgp_auto_getter]` attribute, naming neither the
 field nor the shorthand combination that has no lowering rule. The cause is hinted by the spans but
 never named; its counterpart
-[`use_type_unknown_assoc`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/use_type_unknown_assoc.rs)
-is `acceptable/` precisely because rustc already names the typo and its fix. Recognizing the
+[`use_type_unknown_assoc`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/unresolved-imported-type/use_type_unknown_assoc.rs)
+has `acceptable` quality precisely because rustc already names the typo and its fix. Recognizing the
 lowering class and naming the offending construct is the work here.
 
 The cheaper way to close a case of this shape is often to fix it in `cgp`. A cyclic `#[use_type]`
@@ -240,13 +236,13 @@ Two extensible-data derive defects land here for the same reason. An enum varian
 associated type the derives generate (`Value`, `Remainder`, `Fields`, …) makes the generated
 `Self::…` path ambiguous; under the extractor both notes land on the derive attribute, so nothing
 names the variant
-([`reserved_variant_name_extract_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/lowering/reserved_variant_name_extract_field.rs),
-[`reserved_variant_name_cgp_data`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/lowering/reserved_variant_name_cgp_data.rs); the readable
+([`reserved_variant_name_extract_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/out-of-scope-generated-name/reserved_variant_name_extract_field.rs),
+[`reserved_variant_name_cgp_data`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/out-of-scope-generated-name/reserved_variant_name_cgp_data.rs); the readable
 `FromVariant` case is
-[`reserved_variant_name_from_variant`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/lowering/reserved_variant_name_from_variant.rs)). And a
+[`reserved_variant_name_from_variant`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/out-of-scope-generated-name/reserved_variant_name_from_variant.rs)). And a
 variant helper attribute of another derive, copied onto the extractor's companion enums, fails with
 a help that suggests the derive the enum already has
-([`variant_helper_attribute`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/lowering/variant_helper_attribute.rs)). Both are fixed in `cgp`:
+([`variant_helper_attribute`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/macro-defects/variant_helper_attribute.rs)). Both are fixed in `cgp`:
 qualified projections, and filtering the copied attributes.
 
 ## Extensible-data failures are not reshaped at all
@@ -254,7 +250,7 @@ qualified projections, and filtering the copied attributes.
 The casts, builders, and extractors of the
 [extensible-data](../../cgp/concepts/extensible-records.md) family have no reshaping and no upstream
 error class. A `CanUpcast` into a target missing one variant
-([`upcast_missing_variant`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/extensible-data/upcast_missing_variant.rs))
+([`upcast_missing_variant`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/upcast_missing_variant.rs))
 reports an internal `FromVariant` bound, puts its caret on the *wrong* variant, exposes the
 macro-generated `__PartialSmall<IsVoid, IsPresent>` extractor state, and hides a requirement, while
 never stating the mistake, that one enum has a variant the other lacks. The mismatch is pure
@@ -264,7 +260,7 @@ naming the absent variant (or the unbuildable field) is the work here.
 Dispatch over an extensible enum fails the same way. When one payload of a
 [`#[cgp_auto_dispatch]`](../../cgp/reference/macros/cgp_auto_dispatch.md) enum lacks the dispatch
 trait
-([`auto_dispatch_missing_variant_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/extensible-data/auto_dispatch_missing_variant_impl.rs)),
+([`auto_dispatch_missing_variant_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/auto_dispatch_missing_variant_impl.rs)),
 the call on the enum fails with a passed-through `E0599` whose notes name the generated matcher's
 unsatisfied `Computer` bound and point at the payload that *does* implement the trait, while the
 payload that lacks it is never named. The leaf to recover is that payload's missing impl, which the
@@ -273,18 +269,18 @@ matcher's per-variant bounds encode.
 The rest of the family fails the same way: rustc reports the bound on a generated type, and the
 tool passes it through without naming the field or variant at fault. The record builder reports a
 field built twice or taken while absent as an `E0271` on its `UpdateField` marker
-([`build_field_twice`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/extensible-data/build_field_twice.rs),
-[`take_field_absent`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/extensible-data/take_field_absent.rs)), and a premature finalize as an
+([`build_field_twice`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/build_field_twice.rs),
+[`take_field_absent`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/take_field_absent.rs)), and a premature finalize as an
 `E0599` whose only clue is the partial type's marker list
-([`finalize_build_premature`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/extensible-data/finalize_build_premature.rs)). Merging with
+([`finalize_build_premature`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/finalize_build_premature.rs)). Merging with
 `build_from` reports a stray or doubled field on the private `FieldsBuilder` recursion
-([`build_from_field_not_in_target`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/extensible-data/build_from_field_not_in_target.rs),
-[`build_from_overlapping_sources`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/extensible-data/build_from_overlapping_sources.rs)), and the
+([`build_from_field_not_in_target`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/build_from_field_not_in_target.rs),
+[`build_from_overlapping_sources`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/build_from_overlapping_sources.rs)), and the
 `BuildAndMergeOutputs` dispatcher reports two different field mistakes with identical output
-([`build_and_merge_extra_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/extensible-data/build_and_merge_extra_field.rs),
-[`build_and_merge_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/extensible-data/build_and_merge_missing_field.rs)). The
+([`build_and_merge_extra_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/build_and_merge_extra_field.rs),
+[`build_and_merge_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/build_and_merge_missing_field.rs)). The
 defaulted and optional builders, extraction, construction by tag, and the casts each have fixtures
-under [`extensible-data/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/usability/extensible-data);
+under [`uncataloged/extensible-data/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/uncataloged/extensible-data);
 the work is the same leaf: name the field or variant the generated types encode.
 
 ## A rewrite states something false
@@ -292,32 +288,32 @@ the work is the same leaf: name the field or variant the generated types encode.
 Some rewrites state something false, which is worse than passing rustc's text through. Each needs a
 check that its premise holds before it fires. These fixtures pin the false line:
 
-- [`field_tag_typo_derive_hint`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/field_tag_typo_derive_hint.rs) and
-  [`symbol_tag_on_tuple_struct`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/symbol_tag_on_tuple_struct.rs): a misspelled tag, or a
+- [`field_tag_typo_derive_hint`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/field_tag_typo_derive_hint.rs) and
+  [`symbol_tag_on_tuple_struct`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/symbol_tag_on_tuple_struct.rs): a misspelled tag, or a
   `Symbol!` tag on a tuple struct, gets a help saying the derive is required on a struct that has it.
-- [`check_trait_named_as_wrapper`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/check_trait_named_as_wrapper.rs): a generic key in
+- [`check_trait_named_as_wrapper`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/checks/check_trait_named_as_wrapper.rs): a generic key in
   `delegate_and_check_components!` presents the generated `__CanUseApp` check trait as the user's
   trait in a `[CGP-E009]` headline.
-- [`deref_has_field_conflict`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/deref_has_field_conflict.rs): an `E0119` overlap between a derived `HasField` and
+- [`deref_has_field_conflict`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/deref_has_field_conflict.rs): an `E0119` overlap between a derived `HasField` and
   the `Deref` blanket impl gains a missing-derive help and a `[CGP-E108]` root cause.
-- [`getter_unwired_call`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/getter_unwired_call.rs) and
-  [`use_default_getter_context`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/use_default_getter_context.rs): an unwired getter,
+- [`getter_unwired_call`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/getter_unwired_call.rs) and
+  [`use_default_getter_context`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/used-but-undeclared/use_default_getter_context.rs): an unwired getter,
   called directly or from a `UseDefault` body, names the component marker as the context.
-- [`direct_delegation_missing_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/direct_delegation_missing_key.rs): a `->` delegation to a table lacking the key
+- [`direct_delegation_missing_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/direct_delegation_missing_key.rs): a `->` delegation to a table lacking the key
   reports the context, which has the entry, as the table missing it.
-- [`raise_generic_missing_bound`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/raise_generic_missing_bound.rs): `Self::raise_error` without `#[uses]` reports the
+- [`raise_generic_missing_bound`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/used-but-undeclared/raise_generic_missing_bound.rs): `Self::raise_error` without `#[uses]` reports the
   generated `__Context__` as an inner provider and suggests `#[use_provider]`.
-- [`stripped_error_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/stripped_error_path.rs): a stripped `backend::Error` reads as the abstract `Error`
+- [`stripped_error_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/errors/stripped_error_path.rs): a stripped `backend::Error` reads as the abstract `Error`
   in a `[CGP-E017]` headline and its `UseType<Error>` help.
-- [`open_prefixed_component`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/open_prefixed_component.rs) and [`open_and_use_delegate`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/open_and_use_delegate.rs): the
+- [`open_prefixed_component`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/open_prefixed_component.rs) and [`open_and_use_delegate`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/open_and_use_delegate.rs): the
   `[CGP-E007]` help names the generated `__Value__`, or a dispatcher, as the provider to wire.
-- [`cgp_computer_no_error_type_call`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/cgp_computer_no_error_type_call.rs): an uninferred `(_, _)` input adds a false
+- [`cgp_computer_no_error_type_call`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/handlers/cgp_computer_no_error_type_call.rs): an uninferred `(_, _)` input adds a false
   `[CGP-E110]` root cause beside the real one.
-- [`path_segment_read_as_type`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/path_segment_read_as_type.rs): an overflow that cascades from an unresolved
+- [`path_segment_read_as_type`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/macro-defects/path_segment_read_as_type.rs): an overflow that cascades from an unresolved
   `@`-path segment is rewritten into the `[CGP-E010]` cycle with its `UseContext` advice.
-- [`type_error_in_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/type_error_in_wiring.rs): an unresolved wiring type becomes a `{type error}: Debug`
+- [`type_error_in_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/type_error_in_wiring.rs): an unresolved wiring type becomes a `{type error}: Debug`
   root cause.
-- [`question_mark_after_failed_handle`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/question_mark_after_failed_handle.rs): the `?` after a
+- [`question_mark_after_failed_handle`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/handlers/question_mark_after_failed_handle.rs): the `?` after a
   failing builder call becomes a `CanRaiseError<()>` failure, and the real mistake is not shown.
 
 ## Construct failures that carry no fix
@@ -351,12 +347,12 @@ The fixtures group by construct:
 
 A diagnostic the tool does not rewrite prints full paths where plain `cargo check` prints short
 ones: `cgp::prelude::IsNothing` in an `E0284` headline
-([`update_field_marker_unannotated`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/paths/update_field_marker_unannotated.rs)),
+([`update_field_marker_unannotated`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/update_field_marker_unannotated.rs)),
 `std::result::Result` in an `E0599` headline
-([`headline_std_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/paths/headline_std_path.rs)), and
+([`headline_std_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/headline_std_path.rs)), and
 `cgp::cgp_core::cgp_field::traits::TransformMapFields` inside a machine-applicable suggestion
-([`suggestion_full_paths`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/paths/suggestion_full_paths.rs), with more cases under
-[`paths/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/usability/paths): a
+([`suggestion_full_paths`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/suggestion_full_paths.rs), with more cases under
+[`pass-through/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/pass-through): a
 `lib::Person` struct path, `__Context__` in a printed signature, and full trait paths in `E0034`
 suggestions). The driver does not set the
 `trimmed_def_paths` option that rustc's own driver sets, so the compiler prints every path in full;

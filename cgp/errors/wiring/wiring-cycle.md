@@ -112,14 +112,14 @@ high enough.
 
 ## Backing fixtures
 
-- [`acceptable/wiring/constraints/use_context_cycle.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/constraints/use_context_cycle.rs):
+- [`wiring/wiring-cycle/use_context_cycle.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/use_context_cycle.rs):
   a component wired to `UseContext` with no terminating provider, forced through a
   `check_components!`; its `.rust.stderr` pins the raw `E0275` overflow as the pinned nightly prints
   it, on `Person: CanUseComponent<GreeterComponent>` with no note chain (stable overflows on
   `Person: IsProviderFor<GreeterComponent, Person>` and prints the `Greeter<Person>` → `CanGreet` →
   `UseContext` chain), and its `.cgp.stderr` the `[CGP-E010]` "never resolves" rewrite with the
   chain dropped and the caret held on the `GreeterComponent` entry.
-- [`acceptable/wiring/constraints/mutual_cycle_with_cause.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/constraints/mutual_cycle_with_cause.rs):
+- [`wiring/wiring-cycle/mutual_cycle_with_cause.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/mutual_cycle_with_cause.rs):
   a two-component cycle (`ProviderA` ↔ `ProviderB`) walked alongside a genuinely missing `width`
   field; its `.rust.stderr` is not an overflow but a raw `E0277` on
   `DoA: IsProviderFor<ProviderAComponent, App>`, and its `.cgp.stderr` shows the resolver's cycle

@@ -192,29 +192,29 @@ promoting to a check) can.
 
 ## Backing fixtures
 
-- [`acceptable/use-site/missing_dependency.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/missing_dependency.rs):
+- [`hidden/unsatisfied-dependency/missing_dependency_call.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/missing_dependency_call.rs):
   `GreetHello` requires `Self: HasName`, `Person` lacks the `name` field, and the method is called
   directly; its `.rust.stderr` pins the raw `E0599` as the pinned nightly prints it, whose notes
   already name the `HasField<Symbol<4, …>>` leaf (plus the method-probe advice) but not the chain to
   it, and its `.cgp.stderr` the recovered `[CGP-E001]` headline over a
   `` root cause: [CGP-E106] missing field `name` `` tree. Its checked counterpart,
-  [`acceptable/fields/missing_dependency.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/fields/missing_dependency.rs),
+  [`checks/check-trait-failure/fields/missing_dependency.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/missing_dependency.rs),
   reaches the same mistake through a check and belongs to the
   [check-trait failure](../checks/check-trait-failure.md) class.
-- [`acceptable/use-site/ordinary_bound_unsatisfied.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/ordinary_bound_unsatisfied.rs):
+- [`hidden/unsatisfied-dependency/ordinary_bound_unsatisfied_call.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/ordinary_bound_unsatisfied_call.rs):
   the same hidden `E0599` where the suppressed leaf is an *ordinary* trait bound (`Scalar: Eq`, with
   `f64` wired) rather than a `HasField`, which stable hides the same way whatever the leaf's kind,
   and whose nightly `.rust.stderr` names `f64: Eq` in a note; its `.cgp.stderr` recovers the cause
   as a `[CGP-E001]` headline over a
   ``root cause: [CGP-E201] the trait bound `f64: Eq` is not satisfied`` tree. Its surfaced
   counterpart is the [unsatisfied ordinary trait bound](../checks/ordinary-trait-bound.md) class.
-- [`usability/extensible-data/auto_dispatch_missing_variant_impl.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/extensible-data/auto_dispatch_missing_variant_impl.rs):
+- [`hidden/unsatisfied-dependency/auto_dispatch_missing_variant_impl.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/auto_dispatch_missing_variant_impl.rs):
   the same hidden `E0599` reached through
   [`#[cgp_auto_dispatch]`](../../reference/macros/cgp_auto_dispatch.md): one of an enum's two
   payloads lacks the dispatch trait, so the generated matcher's `Computer` bound fails where the
   enum's method is called. The notes name that matcher bound but never the payload, `Square`, that
   lacks the impl, and the typed resolver declines the extensible-data family, so the `.cgp.stderr`
-  passes the error through unrecovered, which places the fixture in cargo-cgp's `usability/` tier.
+  passes the error through unrecovered, which gives the fixture `usability` quality in cargo-cgp.
 
 ## Related
 

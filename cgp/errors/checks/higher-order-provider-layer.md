@@ -133,7 +133,7 @@ versus outer" from the depth rather than reading a phrase like "needed by the in
 
 ## Backing fixtures
 
-- [`acceptable/providers/higher_order_inner_dependency.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/providers/higher_order_inner_dependency.rs):
+- [`checks/higher-order-provider-layer/higher_order_inner_dependency.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/higher-order-provider-layer/higher_order_inner_dependency.rs):
   `ScaledArea<BaseArea>` wired onto a `Rectangle` with `scale_factor` but no `base_area`, so the
   inner layer fails; its `.rust.stderr` pins the shape as the pinned nightly prints it, the
   `CanUseComponent` block alone (stable adds the intermediate `BaseArea: AreaCalculator<Rectangle>`
@@ -142,7 +142,7 @@ versus outer" from the depth rather than reading a phrase like "needed by the in
   `1 redundant requirement hidden` note, while its `.cgp.stderr` collapses that to one `[CGP-E001]`
   block whose `` root cause: [CGP-E106] missing field `base_area` `` tree carries *two* `[CGP-E102]`
   provider hops (`ScaledArea<BaseArea>` then `BaseArea`).
-- [`acceptable/providers/higher_order_outer_dependency.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/providers/higher_order_outer_dependency.rs):
+- [`checks/higher-order-provider-layer/higher_order_outer_dependency.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/higher-order-provider-layer/higher_order_outer_dependency.rs):
   the mirror, with `base_area` but no `scale_factor`, so the outer layer fails; its `.rust.stderr`
   pins the single, shorter block, the `HasField<Symbol!("scale_factor")>` leaf, the caret on
   `ScaledArea`'s `Self: HasScaleFactor`, and a chain that stops at the outer `IsProviderFor` without

@@ -108,7 +108,7 @@ implemented for a foreign key, and reads the trigger off the impl's own paramete
 `help` names the fix that fits: keying the registration on a local component (or registering it from
 the namespace's crate) for a registration, and inheriting the namespace into a new local one for a
 re-open. The three triggers are pinned by the fixtures under
-[`acceptable/wiring/orphan/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/acceptable/wiring/orphan);
+[`wiring/orphan-rule/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/wiring/orphan-rule);
 `[CGP-E011]` is catalogued in the [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
 
 ## Resolving it
@@ -138,18 +138,18 @@ the value the rewrite adds is the translation, not the extraction.
 
 ## Backing fixtures
 
-Each fixture sits under `acceptable/wiring/orphan/`, where its `.cgp.stderr` pins the reshaped
+Each fixture sits under `wiring/orphan-rule/`, where its `.cgp.stderr` pins the reshaped
 `[CGP-E011]` output and its `.rust.stderr` the raw `E0210` baseline.
 
-- [`acceptable/wiring/orphan/default_impl_foreign_prefix_path.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/orphan/default_impl_foreign_prefix_path.rs):
+- [`wiring/orphan-rule/default_impl_foreign_prefix_path.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/orphan-rule/default_impl_foreign_prefix_path.rs):
   a downstream crate registering a `#[default_impl]` for an upstream *prefixed* component into the
   upstream namespace, so the key is a foreign `PathCons<Symbol<…>>` path; the reshaped snapshot
   names the `` path `@app.AnnouncerComponent` `` and the foreign namespace.
-- [`acceptable/wiring/orphan/default_impl_foreign_component.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/orphan/default_impl_foreign_component.rs):
+- [`wiring/orphan-rule/default_impl_foreign_component.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/orphan-rule/default_impl_foreign_component.rs):
   the same `#[default_impl]` orphan keyed on a foreign *unprefixed* component marker rather than a
   path, showing the restriction is not specific to prefixes; the snapshot names the
   `` component `GreeterComponent` `` instead.
-- [`acceptable/wiring/orphan/reopen_foreign_namespace.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/orphan/reopen_foreign_namespace.rs):
+- [`wiring/orphan-rule/reopen_foreign_namespace.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/orphan-rule/reopen_foreign_namespace.rs):
   a `cgp_namespace!` block without `new` re-opening a foreign namespace; its `__Table__` trigger
   selects the inherit-a-new-namespace `help`, with the caret on the whole `cgp_namespace!` block.
 

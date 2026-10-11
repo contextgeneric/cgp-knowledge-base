@@ -150,19 +150,19 @@ to.
 
 ## Backing fixtures
 
-- [`acceptable/resolution/ordinary_bound_unsatisfied.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/resolution/ordinary_bound_unsatisfied.rs):
+- [`checks/ordinary-trait-bound/ordinary_bound_unsatisfied.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/ordinary-trait-bound/ordinary_bound_unsatisfied.rs):
   a provider requiring `Scalar: Eq` on a context that wires `Scalar` to `f64`, checked; its
   `.rust.stderr` pins the primary `E0277` on `f64: Eq`, the `help:` list of conforming standard
   types, and the `IsProviderFor` note pointing at the `Scalar: Eq` bound, while its `.cgp.stderr`
   keeps that same uncoded headline and rewrites only the chain into the `[CGP-E101]`/`[CGP-E102]`
   tree over the pass-through leaf.
-- [`acceptable/generic/generic_context_ordinary_bound.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/generic/generic_context_ordinary_bound.rs):
+- [`checks/ordinary-trait-bound/generic_context_ordinary_bound.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/ordinary-trait-bound/generic_context_ordinary_bound.rs):
   the same bound reached through impl generics: a generic `<T> Wrapper<T>` table checked at
   `Wrapper<f64>`, surfacing `f64: Eq` through `IsProviderFor<…, Wrapper<f64>>`, with the
   `.cgp.stderr` tree naming the context as `Wrapper<f64>`.
 
 The hidden (method-call) form of the same mistake is
-[`acceptable/use-site/ordinary_bound_unsatisfied.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/ordinary_bound_unsatisfied.rs),
+[`hidden/unsatisfied-dependency/ordinary_bound_unsatisfied_call.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/ordinary_bound_unsatisfied_call.rs),
 cataloged with the [hidden unsatisfied dependency](../hidden/unsatisfied-dependency.md) class it
 shares its shape with; there the `.cgp.stderr` must recover the buried bound, so it does lead with
 `[CGP-E001]` and a `root cause: [CGP-E201]` tree.

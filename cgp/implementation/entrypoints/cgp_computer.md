@@ -137,7 +137,7 @@ CheckedAdd::try_compute(&App, PhantomData::<()>, (1, 2));
 ```
 
 The class is described under [E0271](../../errors/error_codes/e0271.md), and the `cargo-cgp` fixture
-[`acceptable/types/computer_result_error_mismatch.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/types/computer_result_error_mismatch.rs)
+[`checks/check-trait-failure/types/computer_result_error_mismatch.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/types/computer_result_error_mismatch.rs)
 pins it.
 
 ## Known issues
@@ -151,7 +151,7 @@ output-only parameters (`Parse<T>`), which changes how it is named and wired, so
 yet do it; a function like this has to be written as a hand-made `Computer` provider. The
 [unconstrained generic](../../errors/wiring/unconstrained-generic.md) class covers the error, and the
 `cargo-cgp` fixture
-[`acceptable/lowering/computer_output_only_type_parameter.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/computer_output_only_type_parameter.rs)
+[`wiring/unconstrained-generic/computer_output_only_type_parameter.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/computer_output_only_type_parameter.rs)
 pins it.
 
 **Argument-position `impl Trait` is rejected rather than lowered.** It is sugar for an anonymous

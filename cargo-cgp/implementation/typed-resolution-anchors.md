@@ -27,9 +27,9 @@ decides whether a tuple is *the* single tuple-typed parameter or several to spre
 parameter takes its region back out of the `Life<'a>` lift. Trusting the slot's shape instead would
 hand the solver a malformed obligation (a `Life<'a>` *type* where a region belongs aborts the
 compiler when related), so any mismatch declines to the fallback rather than build one (the
-[`lifetime_component`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/generic/lifetime_component.rs)
+[`lifetime_component`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/generic/lifetime_component.rs)
 and
-[`tuple_param_component`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/generic/tuple_param_component.rs)
+[`tuple_param_component`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/generic/tuple_param_component.rs)
 fixtures pin the two shapes). `CanUseComponent` is the user's own check assertion, legitimately read
 here to find the component; it is the marker map, not the walk, that then routes to the consumer.
 
@@ -128,7 +128,7 @@ context wires, maps each key to its consumer trait, seeds that consumer obligati
 ones that do not hold. Because it walks every wired component, several of them can bottom out on one
 shared cause, so the collected causes go through `Causes::union`: the shared cause is named once and
 keeps *every* component's route to it, so each consumer the header lists has a chain in the note
-([`use_site_shared_cause`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/duplication/use_site_shared_cause.rs)).
+([`use_site_shared_cause`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/use_site_shared_cause.rs)).
 A diagnostic span can also land on a *provider* struct, so a candidate that wires no failing
 component is discarded, which selects the real context. The transformed error is the same
 `[CGP-E001]` consumer form over a root-cause note, and the misleading "this is an associated
@@ -138,7 +138,7 @@ limited to method calls: any failure whose spans land on the context's struct de
 which is how a **`#[check_providers(...)]` per-layer assertion**, whose `IsProviderFor`-supertraited
 check impl no other anchor matches, still resolves to the failing layer's root cause, because
 rustc's "not implemented for `Rectangle`" note spans the struct
-([`check_providers_layer`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/providers/check_providers_layer.rs)).
+([`check_providers_layer`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/higher-order-provider-layer/check_providers_layer.rs)).
 
 A `DelegateComponent` key comes in three shapes, and each is handled differently. The distinction
 matters for an `open`-dispatched context, whose per-value entries are redirect *paths*, not markers.
@@ -157,7 +157,7 @@ That key names no concrete component, and re-checking a free parameter as one bo
 `__Key__: Sized` noise; skipping it means this anchor yields nothing for a pure namespace join
 (whose concrete wiring lives in the namespace, not the context's own impls), leaving that case to
 the next anchor. The
-[`open_dispatch_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/open_dispatch_use_site.rs)
+[`open_dispatch_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/open_dispatch_use_site.rs)
 fixture pins the path re-check.
 
 **From a use site, by consumer trait.** The next anchor closes the namespace-joined gap the previous
@@ -171,11 +171,11 @@ concrete wiring is invisible to the per-component anchor above, but the trait so
 delegate *through* the namespace's `RedirectLookup` when the walk normalizes it. This anchor is
 restricted to a consumer whose only generic is `Self`, so the obligation forms without the component
 parameters a use site does not carry. It reaches not only namespace-joined method calls
-([`namespace_join_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/namespace_join_use_site.rs))
+([`namespace_join_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/namespace_join_use_site.rs))
 but any failure that names a local consumer and its context in its spans, including a manual
 supertrait bound in a trait definition or `where` clause (the `use_type_*_unsatisfied` fixtures
 under
-[`acceptable/use-type/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/acceptable/use-type)).
+[`checks/check-trait-failure/use-type/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/checks/check-trait-failure/use-type)).
 A directly-wired context keeps the more precise per-component recovery.
 
 **From the call expression itself.** The sixth anchor, `resolve_call_site`, handles the use-site
@@ -205,7 +205,7 @@ genuinely depends on CGP: on a trait from cgp's own crates (`HasField` above all
 trait, or on another blanket trait that does, followed a few links through composed blanket traits.
 That is what lets the reshaping reach a blanket trait a *library* publishes, which is where such
 traits normally live
-([`upstream_blanket_trait_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/upstream_blanket_trait_use_site.rs)),
+([`upstream_blanket_trait_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/upstream_blanket_trait_use_site.rs)),
 while still excluding the std blankets the rule is aimed at.
 
 **From a use site, by blanket trait.** The seventh and last anchor,

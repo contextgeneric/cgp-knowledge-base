@@ -125,7 +125,7 @@ causes match exactly, since failures whose cause sets merely overlap are grouped
 
 ## Backing fixtures
 
-- [`acceptable/duplication/dependency_cascade.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/duplication/dependency_cascade.rs):
+- [`checks/verbose-cascade/dependency_cascade.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/verbose-cascade/dependency_cascade.rs):
   a three-deep provider chain over one missing `name` field, checked across all three components;
   its `.rust.stderr` pins the cascade as the pinned nightly prints it, three blocks where stable
   prints six: for the `BazComponent` check an intermediate
@@ -134,7 +134,7 @@ causes match exactly, since failures whose cause sets merely overlap are grouped
   `HasField<Symbol<4, …>>` leaf. Its `.cgp.stderr` shows the single coalesced block,
   `` the consumer traits `CanBaz`, `CanBar`, and `CanFoo` `` over one
   `` [CGP-E106] missing field `name` `` tree, with a caret at each entry.
-- [`acceptable/duplication/density_3.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/duplication/density_3.rs):
+- [`checks/verbose-cascade/density_3.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/verbose-cascade/density_3.rs):
   a denser two-component check over one missing `height` field where the second component
   (`CanCalculateDensity`) depends transitively on the first (`CanCalculateArea`); its `.cgp.stderr`
   pins the two components coalesced into one `[CGP-E001]` headline over the shared `[CGP-E106]`

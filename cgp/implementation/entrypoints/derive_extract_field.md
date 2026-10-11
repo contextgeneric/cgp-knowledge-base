@@ -179,7 +179,7 @@ name `Box` itself, and the expansion cannot build a `&mut Nil` otherwise without
 class is the error catalog's
 [out-of-scope generated name](../../errors/lowering/out-of-scope-generated-name.md), pinned by the
 `cargo-cgp` fixture
-[`acceptable/lowering/no_std_empty_variant_without_box.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/no_std_empty_variant_without_box.rs),
+[`lowering/out-of-scope-generated-name/no_std_empty_variant_without_box.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/out-of-scope-generated-name/no_std_empty_variant_without_box.rs),
 and its working counterpart, which imports `Box`, by
 [`ok/no_std_empty_variant.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/ok/no_std_empty_variant.rs).
 

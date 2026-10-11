@@ -240,17 +240,18 @@ anchor reaches a manual supertrait bound in a trait definition or `where` clause
 namespace-joined use-site call, whenever a local CGP consumer trait and its context appear in the
 diagnostic's spans (the `use_type_foreign_unsatisfied`, `use_type_nested_unsatisfied`, and
 `namespace_join_use_site` fixtures under
-[`acceptable/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/acceptable)). The
+[`checks/check-trait-failure/use-type/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/checks/check-trait-failure/use-type) and
+[`hidden/unsatisfied-dependency/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/hidden/unsatisfied-dependency)). The
 [call-site anchor](typed-resolution-call-site.md) covers the *foreign generic consumer* case, the
 unconditionally-matching dispatch shape
-([`cascade_after_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/cascade_after_use_site.rs)).
+([`cascade_after_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/cascade_after_use_site.rs)).
 A caret on a *provider* struct's own impl is handled narrowly rather than fully. The impl-site and
 wrapper-chain anchors skip the provider impl's *supertrait* recovery (its only supertrait is
 `IsProviderFor`, so routing a cause through it would leak the provider trait's `__Context__` and an
 `IsProviderFor` hop), but the impl-site anchor does recover a *cross-context* dependency named
 directly in the provider's own `where` clause (`where Inner: CanCompute`, a concrete local context),
 walking it as that consumer obligation so it de-duplicates into the context's own check
-([`cross_context_node_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/resolution/cross_context_node_key.rs));
+([`cross_context_node_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/resolution/cross_context_node_key.rs));
 a provider impl carrying no such recoverable bound declines. What else declines is a failure none of
 the recoveries reach: a generic component's trait definition, a call whose *receiver's type* is not
 syntactically recoverable (a method call's result or a field access, `self.app.handle(…)`; typing
@@ -283,7 +284,7 @@ unsuffixed literal), where the by-component path re-checks its bare marker with 
 the by-consumer path only fires for a consumer whose sole generic is `Self`, and the call-site
 seed's unknown makes every root cause parameter-dependent. Such a failure declines to the fallback,
 whose method-probe advice the emitter strips, so the unmet wiring bound leads
-([`generic_consumer_unwritten_arg`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/generic_consumer_unwritten_arg.rs)
+([`generic_consumer_unwritten_arg`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/use-site/generic_consumer_unwritten_arg.rs)
 pins the cleaned output). The plausible recovery, should the class need resolving in full, is to
 re-check the wired delegate's *implemented* parameter values instead of the meaningless `()` form.
 And the walk uses an **empty parameter environment** throughout, which suits the concrete check
@@ -448,16 +449,19 @@ marking.
 
 ## Tests
 
-The resolver is exercised end to end by the UI snapshot suite. The fixtures it reshapes live under
-[`tests/ui/acceptable/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/acceptable)
-(the `fields/`, `field-types/`, `types/`, `providers/`, `generic/`, `resolution/`, `verbosity/`,
-`wiring/`, `use-site/`, `use-type/`, and `duplication/` subgroups), carrying `.cgp.stderr` snapshots
-of the transformed output. The failure it declines (a use-site `E0599` on a generic consumer whose
-dispatch parameter rides in an argument the call does not type syntactically) pins its fallback
-(with the method-probe advice stripped) in
-[`acceptable/use-site/generic_consumer_unwritten_arg`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/generic_consumer_unwritten_arg.rs),
+The resolver is exercised end to end by the UI snapshot suite. The fixtures it reshapes live in the
+error-class directories under
+[`tests/ui/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/), above all
+[`checks/check-trait-failure/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/checks/check-trait-failure)
+(its `fields/`, `field-types/`, `types/`, `providers/`, `generic/`, `resolution/`, `verbosity/`,
+`missing-wiring/`, `use-site/`, `use-type/`, and `duplication/` subgroups) and
+[`hidden/unsatisfied-dependency/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/hidden/unsatisfied-dependency),
+carrying `.cgp.stderr` snapshots of the transformed output. The failure it declines (a use-site
+`E0599` on a generic consumer whose dispatch parameter rides in an argument the call does not type
+syntactically) pins its fallback (with the method-probe advice stripped) in
+[`checks/check-trait-failure/use-site/generic_consumer_unwritten_arg`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/use-site/generic_consumer_unwritten_arg.rs),
 so the two sides together pin both the transform and the decline boundary;
-[`acceptable/verbosity/deep_dispatch_chain`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/verbosity/deep_dispatch_chain.rs)
+[`checks/check-trait-failure/verbosity/deep_dispatch_chain`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/verbosity/deep_dispatch_chain.rs)
 pins a resolved deep dispatch chain, every hop naming its program type in full.
 [Testing](testing.md) describes the suite and its bless workflow. The fixtures group by what they
 pin.
@@ -470,7 +474,7 @@ Each **leaf class** has fixtures for its field, wiring, and redirect shapes:
 - `field_type_mismatch` and `field_type_mismatch_1`: a matching name with a mismatched type, read
   through a getter and directly via an `#[implicit]` argument.
 - `abstract_field_type_mismatch` (under
-  [`acceptable/field-types/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/acceptable/field-types))
+  [`checks/check-trait-failure/field-types/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/checks/check-trait-failure/field-types))
   : the same leaf where the *required* type is itself a projection through the context's own wiring
   (`Pool<<App as HasDbType>::Db>`, from a provider reading `&Pool<Db>` under an imported abstract
   type), so the mismatch is between two of the context's own decisions rather than between a
@@ -479,7 +483,7 @@ Each **leaf class** has fixtures for its field, wiring, and redirect shapes:
   header and the `[CGP-E109]` leaf both read `` `Pool<<App as HasDbType>::Db>` (`Pool<Postgres>`) ``
   while a concrete requirement stays bare.
 - `abstract_type_mismatch` (under
-  [`acceptable/types/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/acceptable/types)):
+  [`checks/check-trait-failure/types/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/checks/check-trait-failure/types)):
   the abstract-type sibling of those two: a context binds `HasScalarType` to `UseType<u32>` while
   its provider pins the same type to `f64` with the `#[use_type(HasScalarType.{Scalar = f64})]`
   equality form, so the trait bound holds and only the projection fails. Pins the generalized
@@ -545,7 +549,7 @@ Several fixtures pin the **harder mechanics**:
   (`CanFormatPair<(u32, u64)>`) rather than spread into two parameters by the params-slot
   ungrouping.
 - `check_providers_layer` (under
-  [`acceptable/providers/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/acceptable/providers)):
+  [`checks/higher-order-provider-layer/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/checks/higher-order-provider-layer)):
   a `#[check_providers(...)]` per-layer assertion, whose `IsProviderFor`-supertraited check impl no
   anchor matches directly, resolved through the use-site anchor instead (rustc's "not implemented
   for `Rectangle`" note spans the context's struct definition) into the failing layer's root-cause
@@ -553,7 +557,7 @@ Several fixtures pin the **harder mechanics**:
 - `ordinary_bound_unsatisfied`: a non-field `f64: Eq` bound whose rustc header is kept over a
   lead-less chain note.
 - `constrained_delegate_key` and `pipe_handlers_empty` (under
-  [`acceptable/wiring/constrained-key/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/acceptable/wiring/constrained-key)):
+  [`checks/check-trait-failure/constrained-key/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/checks/check-trait-failure/constrained-key)):
   a delegation whose `DelegateComponent` impl carries a constrained key that is unsatisfied, so the
   walk descends the delegation impl and bottoms out on its unmet `where`-bound as an ordinary-bound
   leaf. The first is a self-contained dispatcher (`PickFirstProvider<Product![]>`, whose `Nil` list
@@ -578,9 +582,9 @@ Several fixtures pin the **harder mechanics**:
   must decline rather than run its solver on and re-enter the `DiagCtxt` lock.
 
 The **use-site paths** are pinned by the
-[`acceptable/use-site/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/acceptable/use-site)
+[`hidden/unsatisfied-dependency/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/hidden/unsatisfied-dependency)
 and
-[`acceptable/use-type/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/acceptable/use-type)
+[`checks/check-trait-failure/use-type/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/checks/check-trait-failure/use-type)
 fixtures:
 
 - `missing_dependency` and `unsatisfied_dependency`: a consumer-method `E0599` giving the `CGP-E001`
@@ -628,7 +632,7 @@ fixtures:
   part of the parent `UseInputDelegate<EmptySink>` obligation's `Self`, so it is reported regardless
   of the table wiring any other key.
 - `non_provider_wired` (under
-  [`acceptable/providers/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/acceptable/providers)):
+  [`checks/check-trait-failure/providers/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/checks/check-trait-failure/providers)):
   a type wired where a provider was expected that does not implement the provider trait at all
   (`WrapGreeter<NotAGreeter>` with `NotAGreeter` an ordinary struct, the `money-transfer-api`
   `UseBasicAuth<QueryBalanceRequest>` shape). Pins the `[CGP-E111]` not-a-provider leaf and its
@@ -653,7 +657,7 @@ fixtures:
   `App: Describe` to the missing field, and heads the block `[CGP-E009] the trait …` (clearing
   `consumers_are_cgp`) rather than declining to rustc's `E0599` with the cause buried under a
   method-probe candidate list. The use-site counterpart of the impl-site
-  [`cgp_fn_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/fields/cgp_fn_missing_field.rs).
+  [`cgp_fn_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/cgp_fn_missing_field.rs).
 - `upstream_blanket_trait_use_site`: the `cgp_fn_use_site` shape with the blanket trait defined in
   an *upstream* crate (via `//@aux-build`), the arrangement a library publishing blanket traits
   produces. Pins the foreign half of `is_blanket_trait`: a locality-only rule would stop the
@@ -667,7 +671,7 @@ fixtures:
   attribute, outside `App`'s item span), heading `[CGP-E009]` over the missing-field tree, where raw
   rustc mangles the field name to an unreadable `Symbol<4, Chars<..>>` in a `help`. Its
   decline-boundary sibling is
-  [`generic_consumer_unwritten_arg`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/generic_consumer_unwritten_arg.rs),
+  [`generic_consumer_unwritten_arg`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/use-site/generic_consumer_unwritten_arg.rs),
   an `E0599` whose deep blanket-trait bound stays declined because the anchor is gated to `E0277`.
 - `use_type_foreign_unsatisfied` and `use_type_nested_unsatisfied`: an unsatisfiable `#[use_type]`
   abstract-type import in a trait definition, recovered by the consumer-trait anchor into a
@@ -684,7 +688,7 @@ The **impl-site and wrapper-chain paths** are pinned by:
   reaches a CGP consumer two hops down, the cause reached through a projection bound's base trait,
   headed by the `[CGP-E009]` foreign-plain form.
 - `cgp_fn_missing_field` (under
-  [`acceptable/fields/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/acceptable/fields)):
+  [`checks/check-trait-failure/fields/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/checks/check-trait-failure/fields)):
   a `#[cgp_fn]` trait asserted through a wrapper (`pub trait CheckFormatName: FormatName {}` +
   `impl CheckFormatName for App {}`) whose blanket-impl supertrait is not a CGP component, pinning
   the `is_blanket_trait` case: the impl-site anchor walks the `#[cgp_fn]` blanket's `where` clause

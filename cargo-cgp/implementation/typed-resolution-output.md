@@ -117,21 +117,21 @@ The `root cause:` lead is worded by *why* the leaf is unmet, and there are seven
   a separate `help` names the fix: `` make sure that `#[derive(HasField)]` is used for `Person` ``.
   When the field is only reachable through a `Deref` target, the `help` points at that target
   instead
-  ([`missing_has_field_derive`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/fields/missing_has_field_derive.rs),
-  [`field_via_deref`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/fields/field_via_deref.rs)).
+  ([`missing_has_field_derive`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/missing_has_field_derive.rs),
+  [`field_via_deref`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/field_via_deref.rs)).
   Several such fields on *one* struct are one mistake (the derive emits an impl per field), so
   `plan_resolved` coalesces them (`coalesce_underived_fields`) into a single cause reading
   `` root cause: accessor trait `HasField` is not implemented for the fields `height` and `width` of `Rectangle` ``,
   over one merged tree whose branches still end at the per-field leaves
-  ([`base_area_2`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/fields/base_area_2.rs));
+  ([`base_area_2`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/base_area_2.rs));
   a lone underived field, an underived field beside a genuinely missing one, and underived fields on
   *different* structs all stay apart
-  ([`underived_and_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/fields/underived_and_missing_field.rs)).
+  ([`underived_and_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/underived_and_missing_field.rs)).
 - A **missing wiring**, a component the context does not delegate to any provider, is the wiring
   counterpart of a missing field. It reads as
   `` root cause: context `App` does not contain any delegate entry for `BarProviderComponent` `` and
   names the component marker the programmer writes to fix it. The
-  [`basic_missing_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/missing-wiring/basic_missing_wiring.rs)
+  [`basic_missing_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/basic_missing_wiring.rs)
   fixture is the shape: a provider `DoFooWithBar` declares `#[uses(CanUseBar)]`, so `App` can use it
   only if it also wires `BarProviderComponent`, but `App` wires only `FooProviderComponent`. The
   tree bottoms out on the `CanUseBar` trait the unwired component would have supplied:
@@ -163,11 +163,11 @@ The `root cause:` lead is worded by *why* the leaf is unmet, and there are seven
   key is a bare marker) by the `PathCons` key, and rendered as the whole path rather than its
   flattened item name. A path missing from any other table is the missing-dispatch-entry leaf below
   instead. The
-  [`unregistered_prefix_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/resolution/unregistered_prefix_path.rs),
-  [`qualified_prefix_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/qualified_prefix_path.rs),
-  [`multi_redirect_missing`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/multi_redirect_missing.rs),
+  [`unregistered_prefix_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/unregistered_prefix_path.rs),
+  [`qualified_prefix_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/qualified_prefix_path.rs),
+  [`multi_redirect_missing`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/multi_redirect_missing.rs),
   and
-  [`open_missing_type_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/open_missing_type_key.rs)
+  [`open_missing_type_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/open_missing_type_key.rs)
   fixtures pin the variants.
 
 - A **missing dispatch entry**, a *non-context* delegation table missing a key, is the wiring
@@ -183,17 +183,17 @@ The `root cause:` lead is worded by *why* the leaf is unmet, and there are seven
   `` provider `ByteSink` does not contain any delegate entry for `@ComputerComponent.Sink.Digest` ``,
   and the `RedirectLookup` hop above it names `ByteSink` as its table, since each hop reads its
   table off its own `RedirectLookup<Table, Path>`
-  ([`open_aggregate_missing_entry`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/missing-wiring/open_aggregate_missing_entry.rs),
+  ([`open_aggregate_missing_entry`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/open_aggregate_missing_entry.rs),
   and
-  [`namespace_aggregate_missing_entry`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/missing-wiring/namespace_aggregate_missing_entry.rs)
+  [`namespace_aggregate_missing_entry`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/namespace_aggregate_missing_entry.rs)
   for the namespace form). This is the leaf a handler pipeline bottoms out on when a stage's output
   is not a type a later stage's `UseInputDelegate` input dispatcher handles, as when a raw digest
   reaches an `AsyncRead` sink's dispatcher because a byte-encoding stage is missing. The tree shows
   the offending type flowing into the stage, so a reader sees exactly what reached a stage that
   cannot handle it
-  ([`cascade_nested_projection`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/cascade_nested_projection.rs)
+  ([`cascade_nested_projection`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/cascade_nested_projection.rs)
   pins the shape;
-  [`transitive_missing_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/missing-wiring/transitive_missing_wiring.rs)
+  [`transitive_missing_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/transitive_missing_wiring.rs)
   the aggregate-provider variant).
 
 - A **non-provider**, a type wired where a provider was expected that does not implement the
@@ -206,7 +206,7 @@ The `root cause:` lead is worded by *why* the leaf is unmet, and there are seven
   valid-provider dead-end (a leaf provider reached via the blanket after an input mismatch, which
   *has* a concrete impl of the trait) by the owner having **no** concrete impl of the provider
   trait, and named against that trait rather than a wiring key
-  ([`non_provider_wired`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/providers/non_provider_wired.rs)
+  ([`non_provider_wired`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/non_provider_wired.rs)
   pins it).
 
 - An **abstract-type mismatch**, an associated type the owner supplies differently from what a
@@ -217,7 +217,7 @@ The `root cause:` lead is worded by *why* the leaf is unmet, and there are seven
   It reads `associated type`, and carries no `help`, when the trait is not a CGP abstract-type
   component: an ordinary trait's associated type is fixed by whatever impl supplies it, so there is
   no wiring entry to name. The
-  [`abstract_type_mismatch`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/types/abstract_type_mismatch.rs)
+  [`abstract_type_mismatch`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/types/abstract_type_mismatch.rs)
   fixture pins the shape.
 
 A field-type mismatch is an eighth leaf, worded the same way from its `[CGP-E003]` headline. Any

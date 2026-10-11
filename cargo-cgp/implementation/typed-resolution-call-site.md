@@ -46,7 +46,7 @@ a pipeline program's wiring expands to them, which is precisely why a diagnostic
 names no cause a reader can act on.
 
 The following program (condensed from the
-[`cascade_after_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/cascade_after_use_site.rs)
+[`cascade_after_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/cascade_after_use_site.rs)
 fixture) wires every pipeline program `Prog<Steps>`, whatever its `Steps`, to a `PipeHandlers`
 composition of those steps. The first step reads the context's `name` field, which `App` does not
 have; that missing field is the root cause the anchor must recover:
@@ -156,7 +156,7 @@ impl-site anchor gives such a trait reached through a wrapper, by clearing the
 `Resolved::consumers_are_cgp` flag the walk sets. This is what recovers a direct call to a
 `#[cgp_fn]` trait the context cannot satisfy: an `E0599` whose real cause (a field one composed
 blanket trait reads) rustc buries in a mid-stack note under its method-probe candidate list
-([`cgp_fn_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/cgp_fn_use_site.rs)).
+([`cgp_fn_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/cgp_fn_use_site.rs)).
 
 ## Parameters by signature unification, not by convention
 
@@ -183,7 +183,7 @@ generics, is recovered. The two fixture shapes show the same mechanism serving b
   unified with the declared input `_tag: PhantomData<Code>`, which binds
   `Code = Prog<Product![HandleName, HandleShout]>`.
 - In
-  [`generic_consumer_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/generic_consumer_use_site.rs),
+  [`generic_consumer_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/generic_consumer_use_site.rs),
   a consumer `CanFormatPair<T>` with the plain value method `fn format_pair(&self, value: T)` is
   called as `app.format_pair((1_u32, 2_u64))`; the written tuple type `(u32, u64)` is unified with
   the declared `value: T`, which binds `T = (u32, u64)`. No tag argument exists, and none is needed.
@@ -207,7 +207,7 @@ unmatched and hides a cause that sits inside a *written* branch of the input or,
 condition reads, a branch that does not depend on the input at all. The recovered arity and its
 written elements are real call-side information; only the leaves the call does not type stay
 unknown, and those are never reported. The
-[`call_site_tuple_input`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/call_site_tuple_input.rs)
+[`call_site_tuple_input`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/call_site_tuple_input.rs)
 fixture pins the shape.
 
 ## Unknown parameters become rigid placeholders
@@ -226,7 +226,7 @@ reports** a leaf that still carries one: a bound like `Input: Send` with an unkn
 unknowable, and reporting `_: Send` would fabricate a requirement the programmer cannot act on. Only
 a root cause that holds *whatever the unknown parameter is* survives; a failure whose every leaf
 depends on the unknown declines to the fallback
-([`generic_consumer_unwritten_arg`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/generic_consumer_unwritten_arg.rs)
+([`generic_consumer_unwritten_arg`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/use-site/generic_consumer_unwritten_arg.rs)
 pins that boundary with the same `CanFormatPair` call with the tuple passed through a plain
 variable, whose type the call no longer writes). In the rendered output a placeholder prints as the
 `_` the programmer would write, including one nested inside a recovered tuple (`((_, _), _)`). The
@@ -272,7 +272,7 @@ invented diagnostic.
 ## Tests
 
 The anchor's fixtures live under
-[`tests/ui/acceptable/use-site/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/acceptable/use-site):
+[`tests/ui/hidden/unsatisfied-dependency/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/hidden/unsatisfied-dependency):
 `cascade_after_use_site` (the worked example above), `generic_consumer_use_site` (the value-argument
 case), `call_site_tuple_input` (the partial tuple recovery), `cgp_fn_use_site` (the `#[cgp_fn]`
 trait call recovered as a `[CGP-E009]` block), and the `cascade_later_stage*` shapes whose pipeline

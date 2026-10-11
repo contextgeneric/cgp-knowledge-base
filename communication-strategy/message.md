@@ -235,7 +235,7 @@ not make a private type valid in a public interface. See
 
 Show a real missing dependency and the diagnostic that identifies it. This example is based on
 cargo-cgp's
-[missing-field fixture](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/fields/base_area_1_1.rs).
+[missing-field fixture](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/base_area_1_1.rs).
 The provider needs both dimensions, but `Rectangle` supplies only `width`:
 
 ```rust
@@ -265,7 +265,7 @@ fn main() {}
 ```
 
 The fixture's
-[diagnostic snapshot](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/fields/base_area_1_1.cgp.stderr)
+[diagnostic snapshot](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/base_area_1_1.cgp.stderr)
 contains this root-cause note:
 
 ```text

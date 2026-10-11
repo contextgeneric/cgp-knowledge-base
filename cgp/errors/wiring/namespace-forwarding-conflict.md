@@ -128,11 +128,11 @@ to `[CGP-E006]` rather than the override's `[CGP-E005]`.
 The `.rust.stderr` snapshot pins the raw generic `E0119` pair and the `.cgp.stderr` the `[CGP-E006]`
 reshaping.
 
-- [`wiring/namespace-paths/two_namespaces_joined.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/two_namespaces_joined.rs):
+- [`wiring/namespace-paths/two_namespaces_joined.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-forwarding-conflict/two_namespaces_joined.rs):
   two `namespace` joins on one context; the `.rust.stderr` pins the `E0119` pair with carets on the
   two `namespace` lines and no downstream note, the `.cgp.stderr` the single `[CGP-E006]` headline
   naming both `NamespaceA` and `NamespaceB`.
-- [`wiring/duplicate-keys/for_loop_bare_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/duplicate-keys/for_loop_bare_key.rs):
+- [`wiring/duplicate-keys/for_loop_bare_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-forwarding-conflict/for_loop_bare_key.rs):
   a bare-key `for` loop beside a namespace join; the `.rust.stderr` pins the same generic `E0119`
   pair with the conflicting caret on the loop's `Key: Value` line, the `.cgp.stderr` the
   `[CGP-E006]` headline naming `DefaultNamespace` and the loop's `GreeterTable`.

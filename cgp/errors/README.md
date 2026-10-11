@@ -71,9 +71,9 @@ the compiler because it lacks the whole-program view the check needs; its docume
 in full. A **problematic** failure is a CGP *defect*: input a macro should have rejected, or an
 expansion that emits invalid Rust; the observable error a user hits is cataloged here like any other
 class, but the explanation of *why it is a defect and what the fix would be* stays under the owning
-macro's `## Known issues`, cross-linked both ways. (This is orthogonal to which `cargo-cgp`
-directory (`acceptable/`, `usability/`, `ok/`) the backing fixture lives in, which is decided by
-output quality.)
+macro's `## Known issues`, cross-linked both ways. (This is orthogonal to the *output quality*
+(`acceptable`, `usability`, or `hidden`) that the backing fixture's header records in `cargo-cgp`;
+the fixture's directory mirrors its class here.)
 
 ## Which compiler the raw diagnostic describes
 
@@ -263,9 +263,11 @@ Error-code reference, in [error_codes/](error_codes/):
 
 **Five mistakes that `cargo-cgp` recognizes and rewrites have no class document here, and the
 omission is a gap rather than a decision.** They are cataloged in `cargo-cgp`'s own
-[error-code catalog](../../cargo-cgp/error-code.md) as `CGP-E012`–`CGP-E016`, each backed by a
-fixture under
-[`acceptable/lowering/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/acceptable/lowering),
+[error-code catalog](../../cargo-cgp/error-code.md) as `CGP-E012`–`CGP-E016`, each backed by
+fixtures under
+[`uncataloged/used-but-undeclared/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/uncataloged/used-but-undeclared)
+and
+[`uncataloged/wrong-component-half/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/uncataloged/wrong-component-half),
 and every one of them is a post-codegen compile failure, squarely
 [what belongs here](#what-belongs-here-and-what-does-not).
 

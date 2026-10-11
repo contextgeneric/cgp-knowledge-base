@@ -284,7 +284,7 @@ specifies; the rest belong to the deferred component work and are listed so the 
 the intent.
 
 - **Output-preservation guard (near-term)**: introducing `ResolveCtx` must leave the
-  `tests/ui/acceptable/` snapshots unchanged; the refactor is behavior-preserving.
+  `tests/ui/` snapshots unchanged; the refactor is behavior-preserving.
 - **Stand-in decision-logic unit tests (later)**: once the components exist, exercise
   `is_reportable_leaf`, `is_dispatch_lookup`, `owner_has_impl_of`, the `field_issue` `Deref`-chain
   classification, and the label rendering over a hand-built graph, covering the branch corners

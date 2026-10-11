@@ -150,11 +150,12 @@ fixture that needs adding.
 ## Handling the acceptable / problematic / rejection split
 
 Two orthogonal classifications apply, and keeping them separate is what stops the catalog from
-duplicating or losing information. **Where the fixture lives in `cargo-cgp`** is decided by *output
-quality* (`ok/` (clean compile), `acceptable/` (the tool leads with the cause), or `usability/` (the
-cause is present but buried)) per `cargo-cgp`'s own guide; this catalog does not mirror those
-directories. **Whether the failure is a CGP defect** is the distinction that still governs this
-catalog, and the test for it lives in
+duplicating or losing information. **Where the fixture lives in `cargo-cgp`** follows this catalog:
+each error-class directory mirrors a class document here (`checks/check-trait-failure/`, say), and
+the *output quality* (`acceptable`, the tool leads with the cause; `usability`, the cause is present
+but buried; `hidden`, the cause is absent) is a header field per `cargo-cgp`'s own guide. **Whether
+the failure is a CGP defect** is the distinction that still governs this catalog, and the test for
+it lives in
 [../implementation/AGENTS.md](../implementation/AGENTS.md#documenting-how-a-macros-expansion-can-fail-to-compile);
 apply it rather than judging by how reasonable the deferral sounds, since a construct that handles
 the neighbouring case already is missing a case rather than drawing a line. An **acceptable**

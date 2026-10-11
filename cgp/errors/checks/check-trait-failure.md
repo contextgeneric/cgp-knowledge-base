@@ -247,22 +247,22 @@ reduce to the same `[CGP-E001]` headline and `root cause:` tree.
 
 ## Backing fixtures
 
-- [`acceptable/fields/missing_dependency.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/fields/missing_dependency.rs):
+- [`checks/check-trait-failure/fields/missing_dependency.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/missing_dependency.rs):
   the surfaced case for `GreetHello`'s unmet `Self: HasName`; its `.rust.stderr` pins the raw
   `help:` note naming `HasField<Symbol!("name")>` and the caret on `GreeterComponent`, and its
   `.cgp.stderr` the `[CGP-E001]`/`[CGP-E106]` reshaping. Its use-site counterpart,
-  [`acceptable/use-site/missing_dependency.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/missing_dependency.rs),
+  [`hidden/unsatisfied-dependency/missing_dependency_call.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/missing_dependency_call.rs),
   reaches the same mistake by a method call: the [hidden](../hidden/unsatisfied-dependency.md)
   `E0599` in the raw output, which `cargo-cgp`'s next-gen solver recovers to the same headline.
-- [`acceptable/use-type/use_type_foreign_unsatisfied.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-type/use_type_foreign_unsatisfied.rs):
+- [`checks/check-trait-failure/use-type/use_type_foreign_unsatisfied.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/use-type/use_type_foreign_unsatisfied.rs):
   the trait bound reached through a `#[use_type]` foreign import instead of a check: naming a
   component for a `Types` that does not implement the imported `HasScalarType` surfaces `E0277`,
   pinning that the foreign bound is *enforced on the generated trait* rather than silently dropped.
-- [`acceptable/use-type/use_type_nested_unsatisfied.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-type/use_type_nested_unsatisfied.rs):
+- [`checks/check-trait-failure/use-type/use_type_nested_unsatisfied.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/use-type/use_type_nested_unsatisfied.rs):
   the same through a *nested* two-hop import, so the grounded bound
   `<Self as HasTypes>::Types: HasScalarType` is the one enforced, confirming the
   transitively-grounded foreign bound is checked at depth.
-- [`acceptable/field-types/abstract_field_type_mismatch.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/field-types/abstract_field_type_mismatch.rs):
+- [`checks/check-trait-failure/field-types/abstract_field_type_mismatch.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/field-types/abstract_field_type_mismatch.rs):
   the [wiring-derived field type](#when-the-fields-required-type-comes-from-the-wiring): an `App`
   wiring `Db` to `Postgres` while declaring a `Pool<Sqlite>` field, under a provider reading
   `&Pool<Db>`. Its `.rust.stderr` pins the normalized `Pool<Postgres>` requirement and the mangled
@@ -270,21 +270,21 @@ reduce to the same `[CGP-E001]` headline and `root cause:` tree.
   with the required type given as `Pool<<App as HasDbType>::Db>` followed by `(Pool<Postgres>)`, the
   projection that names the wiring plus the type it resolves to. Its concrete-required-type sibling
   is
-  [`field_type_mismatch`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/field-types/field_type_mismatch.rs).
-- [`acceptable/types/abstract_type_mismatch.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/types/abstract_type_mismatch.rs):
+  [`field_type_mismatch`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/field-types/field_type_mismatch.rs).
+- [`checks/check-trait-failure/types/abstract_type_mismatch.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/types/abstract_type_mismatch.rs):
   the [equality-pinned abstract type](#when-the-dependency-is-an-equality-pinned-abstract-type): a
   context wiring `HasScalarType` to `UseType<u32>` under a provider that pins it to `f64`. Its
   `.rust.stderr` pins the raw `E0271` with its caret on the `#[cgp_type]` attribute and no mention
   of `u32`, and its `.cgp.stderr` the `[CGP-E017]`/`[CGP-E112]` reshaping with the `UseType<f64>`
   help.
-- [`acceptable/fields/missing_has_field_derive.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/fields/missing_has_field_derive.rs):
+- [`checks/check-trait-failure/fields/missing_has_field_derive.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/missing_has_field_derive.rs):
   the [derive-missing variant](#when-the-derive-is-missing-entirely): a `Person` with the `name`
   field but no `#[derive(HasField)]`, so the raw output drops the "but trait `HasField<…>` is
   implemented" landmark (the signal the whole derive is missing), and `cargo-cgp` coalesces it to
   one `[CGP-E108]` cause. Related field-derive fixtures
-  ([`base_area_2`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/fields/base_area_2.rs),
-  [`empty_field_struct`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/fields/empty_field_struct.rs),
-  [`underived_and_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/fields/underived_and_missing_field.rs))
+  ([`base_area_2`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/base_area_2.rs),
+  [`empty_field_struct`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/empty_field_struct.rs),
+  [`underived_and_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/underived_and_missing_field.rs))
   pin the coalescing and the mixed missing-plus-underived case.
 
 ## Related

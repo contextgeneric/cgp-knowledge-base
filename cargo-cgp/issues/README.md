@@ -19,9 +19,9 @@ Two things are out of scope. First, the classes the tool **already** handles wel
 compiles the workspace through a `rustc_driver` wrapper that both injects `-Znext-solver=globally`,
 surfacing the CGP dependency bounds the default solver hides, and rewrites the CGP error classes it
 recognizes into a root-cause-first form stamped with `[CGP-Exxx]` codes. Those resolved classes are
-recorded as `acceptable/` fixtures (and in the CGP error catalog), not as issues here; this
-directory tracks only what the tool does *not* yet do well: a cause it cannot recover, or one it
-recovers but presents poorly. Second, this catalog is only about the diagnostics CGP produces; a
+recorded as fixtures of `acceptable` quality (and in the CGP error catalog), not as issues here;
+this directory tracks only what the tool does *not* yet do well: a cause it cannot recover, or one
+it recovers but presents poorly. Second, this catalog is only about the diagnostics CGP produces; a
 plain Rust or Cargo error that has nothing to do with CGP is not `cargo-cgp`'s problem to reformat
 and is not recorded here.
 
@@ -30,8 +30,9 @@ and is not recorded here.
 The issues split along one axis: whether the root cause is *recoverable* from the tool's output at
 all, or merely hard to read. That axis matters because it decides who the issue is for and how much
 the tool must do to close it: recovering absent information needs the compiler-internal foothold,
-while re-presenting present information is post-processing. The `tests/ui/` fixtures are grouped
-into the same categories, so a fixture's directory names the kind of problem it exposes.
+while re-presenting present information is post-processing. Each `tests/ui/` fixture records the
+same distinction in its `//@quality:` header field (`hidden`, `usability`, or `acceptable`), while
+its directory names its error class.
 
 - [Hidden root cause](hidden-root-cause.md): **tool-oriented**, about *sufficiency* rather than
   format. It catalogs the edge cases where `cargo-cgp` does not emit enough information for any
@@ -39,14 +40,15 @@ into the same categories, so a fixture's directory names the kind of problem it 
   output alone, no matter how that output is processed. These are the cases that justify the tool's
   compiler-internal access, because only a tool reading the compiler's own state can supply what the
   ordinary text output has lost. It has **one reproduced case**, a wiring failure on a context
-  defined in another crate, pinned under `tests/ui/hidden-root-cause/`; the document also records
-  the two archetypes the driver's flags (`-Znext-solver=globally` and `--verbose`) defeat, so they
-  are recognized again.
+  defined in another crate, pinned by
+  `tests/ui/hidden/unsatisfied-dependency/foreign_context_error_route` with `hidden` quality; the
+  document also records the two archetypes the driver's flags (`-Znext-solver=globally` and
+  `--verbose`) defeat, so they are recognized again.
 - [Usability issues](usability.md): **human-oriented**, about *readability*. It lists output that
   does carry the root cause but buries it (foremost the sheer verbosity of a CGP compile error), so
   a reader must wade through volume, encoding, and generated-type noise to reach a cause that is
-  nonetheless present. Its fixtures live in
-  [`tests/ui/usability/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/usability).
+  nonetheless present. Its fixtures carry `//@quality: usability`; the harness lists them with
+  `cargo test -p cargo-cgp-ui-tests --test ui -- --list`.
 
 The dividing line is a single test: if no amount of downstream processing of the text could
 reconstruct the root cause, the issue is a hidden root cause; if a sufficiently careful reader or
@@ -54,15 +56,10 @@ tool could, it is a usability issue. Both draw their evidence from the fixtures 
 against the [CGP error catalog](../../cgp/errors/README.md), which maps every error class CGP
 produces and, class by class, whether the root cause is present in the output or suppressed.
 
-Two further categories hold the fixtures that are *not* open problems, and neither has a matching
-issues document because there is nothing to fix.
+The fixtures that are *not* open problems need no issues document because there is nothing to fix.
 [`tests/ui/ok/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/ok) is the
-clean-compile baseline: correctly-wired programs that check with empty output.
-[`tests/ui/acceptable/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/acceptable)
-is where an *error* fixture graduates once `cargo-cgp` presents its cause well enough: the typed
-root-cause resolver has already carried the whole check-trait-failure family there, so `acceptable/`
-holds the reformatted errors that clear the usability bar, grouped into concept sub-directories.
-Their snapshots are the standing proof the tool keeps producing good output. As a usability issue is
-closed, its fixture graduates from `usability/` into `acceptable/`, a plain move of its
-`.rs`/`.cgp.stderr`/`.rust.stderr`/`.expand.rs` set, since the snapshots are independent of the
-fixture's directory.
+clean-compile baseline: correctly-wired programs that check with empty output. An *error* fixture
+whose cause `cargo-cgp` presents well has `acceptable` quality; the typed root-cause resolver has
+carried most of the check-trait-failure class there. Their snapshots are the standing proof the
+tool keeps producing good output. As a usability issue is closed, its fixture's header changes from
+`//@quality: usability` to `//@quality: acceptable`; the fixture stays in its class directory.

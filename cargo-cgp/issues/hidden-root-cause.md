@@ -47,7 +47,7 @@ built-in `HypershellCli` context lives in the `hypershell` crate and every examp
 another. Closing it means anchoring a use-site failure on a foreign context: recovering the
 context from the call's receiver type and walking its wiring, which the
 [call-site anchor](../implementation/typed-resolution-call-site.md) does for local contexts. The
-fixture is [`foreign_context_error_route`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden-root-cause/foreign_context_error_route.rs), whose upstream crate is the
+fixture is [`foreign_context_error_route`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/foreign_context_error_route.rs), whose upstream crate is the
 `cgp-test-foreign-pipeline` auxiliary crate.
 
 ## Two defeated archetypes
@@ -78,11 +78,10 @@ the provider trait and does not compute the real missing leaf bound at all, so n
 processing could recover it, since the leaf was never in the diagnostic. `cargo-cgp` defeats this by
 injecting `-Znext-solver=globally`, which descends to the leaf and even renders CGP's own "add
 `#[derive(HasField)]`" hint. The fixture for that path,
-[`unsatisfied_dependency`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-site/unsatisfied_dependency.rs),
+[`unsatisfied_dependency`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/unsatisfied_dependency.rs),
 demonstrates the recovered cause, and since the typed resolver also presents it as a `[CGP-E001]`
-headline over a `root cause:` note, it lives under
-[`acceptable/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/acceptable) rather
-than as a usability case.
+headline over a `root cause:` note, it has `acceptable` quality rather
+than `usability`.
 
 ### Defeated: a field name the printer elided a character from
 
@@ -91,20 +90,19 @@ cannot be read back from the diagnostic at all. When a provider needs a field th
 the context has a *near-miss* field, rustc reports the unmet bound through its two-line "similar
 impl exists" hint and, in that hint, diffs the two `HasField` symbols and replaces every generic
 argument they share with `_`. In
-[`base_area_1`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/fields/base_area_1.rs)
+[`base_area_1`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/base_area_1.rs)
 a `Rectangle` that has `width` but not `height` makes the two symbols share the character `'h'`, and
 that shared `'h'` is collapsed to `_` in *both* names (`h,e,i,g,_,t` for `height`), so without the
 flag below the field name is absent from the text, not merely encoded. `cargo-cgp` defeats this by
 injecting `--verbose`, which turns off the compiler's matching-argument elision (along with two
-related compressions) so the full `Symbol` always prints. That fixture, too, lives under
-[`acceptable/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/acceptable), because
-the typed resolver reads the field name straight from the `Symbol!` and states it plainly.
+related compressions) so the full `Symbol` always prints. That fixture, too, has `acceptable`
+quality, because the typed resolver reads the field name straight from the `Symbol!` and states it
+plainly.
 
 ## What a new case would look like
 
 Should another wiring mistake be found whose cause survives *both* levers (the next-gen solver still
-does not compute it, and `--verbose` still does not print it), it belongs here, with a fixture under
-[`tests/ui/hidden-root-cause/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/hidden-root-cause)
+does not compute it, and `--verbose` still does not print it), it belongs here, with a fixture of `hidden` quality in its error class's directory
 that proves the cause is unrecoverable from the text. The upstream catalog's
 [hidden-versus-surfaced axis](../../cgp/errors/README.md#the-central-axis-hidden-versus-surfaced) is
 the same distinction from the CGP side and is the reference for judging which classes carry their

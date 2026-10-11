@@ -109,9 +109,9 @@ rust-analyzer maps a source token to its expansion by source range, so re-spanni
 reference onto the field would hijack go-to-definition on the field, whereas a keyword and a
 delimiter cannot. The caret half is pinned by the raw `.rust.stderr` baselines of the `cargo-cgp` UI
 fixtures that exercise a derived context,
-[`fields/base_area_1`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/fields/base_area_1.rs)
+[`fields/base_area_1`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/base_area_1.rs)
 and the multi-field
-[`duplication/density_3`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/duplication/density_3.rs)
+[`duplication/density_3`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/verbose-cascade/density_3.rs)
 among them, so a regression that drops the re-span changes those snapshots.
 
 ## Known issues

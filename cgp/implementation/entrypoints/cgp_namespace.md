@@ -307,7 +307,7 @@ two crates:
   builds `cgp-test-crate-b`, which registers a *local* component into `cgp-test-crate-a`'s foreign
   `AppNamespace` with `#[default_impl(FarewellComponent in AppNamespace)]`, legal because the crate
   owns the component key, and resolves it through a local context that joins the namespace. Its
-  failing orphan-rule counterparts are the `acceptable/wiring/orphan/` fixtures cataloged under
+  failing orphan-rule counterparts are the `wiring/orphan-rule/` fixtures cataloged under
   [orphan-rule](../../errors/wiring/orphan-rule.md).
 
 The rejection cases in `cgp-macro-tests` pin the attribute rejection and the edge of the header-only
@@ -322,48 +322,48 @@ form:
 The post-codegen compile-fail cases are `cargo-cgp` UI fixtures that pin accepted expansions failing
 to compile. All are **acceptable** failures (deferred to the compiler by design, none a defect)
 documented in the [error catalog](../../errors/README.md); the [Failure modes](#failure-modes)
-section links each to its class. `cargo-cgp` files each fixture by the *quality of the output* it
-renders, and every fixture below sits under `acceptable/` because the tool's output already leads
-with the cause:
+section links each to its class. `cargo-cgp` records the *quality of the output* it renders in each
+fixture's header, and every fixture below has `acceptable` quality because the tool's output already
+leads with the cause:
 
-- [`acceptable/wiring/namespace-paths/namespace_duplicate_path_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/namespace_duplicate_path_key.rs):
+- [`wiring/conflicting-wiring/namespace_duplicate_path_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/namespace_duplicate_path_key.rs):
   two identical `@`-path prefix-rewrite entries conflict (`E0119`); its `.rust.stderr` pins the
   [error span](#error-spans) landing on the duplicated path leaf rather than the whole block, even
   though the key lowers to a synthesized `PathCons<..>` type.
-- [`acceptable/wiring/namespace-paths/override_registered_path.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/override_registered_path.rs):
+- [`wiring/namespace-override-conflict/override_registered_path.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-override-conflict/override_registered_path.rs):
   a context joins a namespace that registers a path (via `#[default_impl]`) and also wires that path
   directly, so the `namespace` blanket impl and the direct entry both implement `DelegateComponent`
   for the path (`E0119`, with the `downstream crates may implement` note); the context-level shape
   of the [namespace override conflict](../../errors/wiring/namespace-override-conflict.md) class.
-- [`acceptable/wiring/namespace-paths/inherited_override_conflict.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/inherited_override_conflict.rs):
+- [`wiring/namespace-override-conflict/inherited_override_conflict.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-override-conflict/inherited_override_conflict.rs):
   a child namespace that redefines a key its parent binds, so the inheritance blanket impl and the
   child's specific entry overlap (a *single* `E0119` on `ChildNs<_>` for the component marker, no
   note); the namespace-level shape of the
   [namespace override conflict](../../errors/wiring/namespace-override-conflict.md) class.
-- [`acceptable/wiring/duplicate-keys/for_loop_bare_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/duplicate-keys/for_loop_bare_key.rs):
+- [`wiring/namespace-forwarding-conflict/for_loop_bare_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-forwarding-conflict/for_loop_bare_key.rs):
   a bare-key `for` loop alongside a `namespace` join, whose two blanket
   `DelegateComponent`/`IsProviderFor` impls overlap (`E0119`, fully-generic carets, no downstream
   note); the
   [overlapping namespace forwarding](../../errors/wiring/namespace-forwarding-conflict.md) class.
-- [`acceptable/wiring/namespace-paths/two_namespaces_joined.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/two_namespaces_joined.rs):
+- [`wiring/namespace-forwarding-conflict/two_namespaces_joined.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-forwarding-conflict/two_namespaces_joined.rs):
   two `namespace` joins on one context, each emitting a blanket forwarding impl over every key,
   which overlap (`E0119`, fully-generic carets); the same
   [overlapping namespace forwarding](../../errors/wiring/namespace-forwarding-conflict.md) class.
-- [`acceptable/wiring/orphan/default_impl_foreign_prefix_path.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/orphan/default_impl_foreign_prefix_path.rs):
+- [`wiring/orphan-rule/default_impl_foreign_prefix_path.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/orphan-rule/default_impl_foreign_prefix_path.rs):
   a downstream crate registers a default for an upstream *prefixed* component into the upstream
   namespace, whose `impl Namespace<_> for PathCons<..>` is wholly foreign and violates the orphan
   rule (`E0210` on `__Components__`); the
   [orphan-rule violation](../../errors/wiring/orphan-rule.md) class. A cross-crate case: an
   `//@aux-build` upstream crate supplies the component and namespace.
-- [`acceptable/wiring/orphan/default_impl_foreign_component.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/orphan/default_impl_foreign_component.rs):
+- [`wiring/orphan-rule/default_impl_foreign_component.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/orphan-rule/default_impl_foreign_component.rs):
   the same orphan keyed on a foreign *unprefixed* component marker rather than a path (`E0210` on
   `__Components__`); shows the restriction is not specific to prefixes. Same
   [orphan-rule violation](../../errors/wiring/orphan-rule.md) class.
-- [`acceptable/wiring/orphan/reopen_foreign_namespace.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/orphan/reopen_foreign_namespace.rs):
+- [`wiring/orphan-rule/reopen_foreign_namespace.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/orphan-rule/reopen_foreign_namespace.rs):
   a `cgp_namespace!` block without `new` re-opening a foreign namespace, whose entry impl is foreign
   (`E0210` on `__Table__`, caret on the whole block); same
   [orphan-rule violation](../../errors/wiring/orphan-rule.md) class.
-- [`acceptable/resolution/unregistered_prefix_path.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/resolution/unregistered_prefix_path.rs):
+- [`checks/unregistered-namespace-path/unregistered_prefix_path.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/unregistered_prefix_path.rs):
   a `#[prefix]`-ed component joined through its namespace with no provider bound at its path, so a
   `check_components!` reports the redirect target's `DefaultNamespace`/`DelegateComponent` lookup as
   unsatisfied (`E0277`); the

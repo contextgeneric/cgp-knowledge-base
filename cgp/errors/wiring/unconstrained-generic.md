@@ -67,8 +67,8 @@ wiring entry.
 
 `cargo-cgp` does not yet rewrite this class; it passes rustc's diagnostic through unchanged. For the
 fixture, the tool's `.cgp.stderr` is byte-for-byte its raw `.rust.stderr`: both `E0207` errors, both
-`help:` notes, no `[CGP-Exxx]` code stamped. That pass-through is why the fixture sits in
-cargo-cgp's `usability/` tier rather than `acceptable/`. The cause is already pinpoint-accurate at
+`help:` notes, no `[CGP-Exxx]` code stamped. That pass-through is why the fixture has
+`usability` quality in cargo-cgp rather than `acceptable`. The cause is already pinpoint-accurate at
 the caret, so nothing is buried, but the message still speaks in impl terms ("the type parameter `T`
 is not constrained"), where the actionable reading is a wiring one: the generic must reach the
 component *key* (`<T> SomeKey<T>: …`), not only the provider *value*. Restating the fix that way is
@@ -86,13 +86,13 @@ cannot bind the provider's parameter.
 
 ## Backing fixtures
 
-- [`usability/wiring/constraints/unconstrained_generic.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/wiring/constraints/unconstrained_generic.rs):
+- [`wiring/unconstrained-generic/unconstrained_generic.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/unconstrained_generic.rs):
   a per-entry generic (`<T> GreeterComponent: GreetWith<T>`) that appears only in the value,
   lowering to an impl with an unconstrained `T`; its `.rust.stderr` pins the `E0207` carets on the
-  `<T>` (the error printed twice), and its `.cgp.stderr` is identical: the pass-through that places
-  the fixture in the `usability/` tier, since cargo-cgp does not yet restate this class in wiring
+  `<T>` (the error printed twice), and its `.cgp.stderr` is identical: the pass-through that gives
+  the fixture `usability` quality, since cargo-cgp does not yet restate this class in wiring
   terms.
-- [`acceptable/lowering/computer_output_only_type_parameter.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/computer_output_only_type_parameter.rs):
+- [`wiring/unconstrained-generic/computer_output_only_type_parameter.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/computer_output_only_type_parameter.rs):
   a `#[cgp_computer]` function `parse<T: FromStr>(value: String) -> Option<T>`, whose `T` reaches
   only the impl's `Output`; the `.rust.stderr` pins the `E0207` pair with both carets on the `T` the
   user wrote, and the `.cgp.stderr` passes it through. The cause is as precise as in the wiring

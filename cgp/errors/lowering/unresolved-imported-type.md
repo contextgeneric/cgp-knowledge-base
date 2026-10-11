@@ -65,9 +65,9 @@ written in the attribute, so following it to the attribute is immediate.
 misnamed-type case it does not need to. For the `use_type_unknown_assoc` fixture the tool's
 `.cgp.stderr` is byte-for-byte its raw `.rust.stderr`: the `E0576`, the "similarly named associated
 type `Scalar` defined here" note, and the `help:` suggesting the correct spelling, with no
-`[CGP-Exxx]` code stamped and nothing suppressed. That fixture sits in cargo-cgp's `acceptable/`
-tier precisely because the raw diagnostic already leads with the cause, with the caret on the user's
-own token and the fix in the `help:`; passing it through is the right outcome, not a gap.
+`[CGP-Exxx]` code stamped and nothing suppressed. That fixture has `acceptable` quality in cargo-cgp
+precisely because the raw diagnostic already leads with the cause, with the caret on the user's own
+token and the fix in the `help:`; passing it through is the right outcome, not a gap.
 
 The codes cargo-cgp stamps on the classes it does rewrite are defined in the
 [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
@@ -96,12 +96,12 @@ post-codegen error class, and its mechanics are in the
 
 ## Backing fixtures
 
-- [`acceptable/lowering/use_type_unknown_assoc.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/use_type_unknown_assoc.rs):
+- [`lowering/unresolved-imported-type/use_type_unknown_assoc.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/unresolved-imported-type/use_type_unknown_assoc.rs):
   a `#[cgp_fn]` importing `HasScalarType.Scalr` where the trait declares `Scalar`; its
   `.rust.stderr` pins the `E0576` with the caret on the `Scalr` in the signature and the "similarly
   named associated type" `help:`, doubling as a guard that the substitution preserves the user's
-  identifier span, and its `.cgp.stderr` is identical: the pass-through that keeps the fixture in
-  the `acceptable/` tier, since the raw error already leads with the cause.
+  identifier span, and its `.cgp.stderr` is identical: the pass-through that keeps the fixture at
+  `acceptable` quality, since the raw error already leads with the cause.
 
 ## Related
 

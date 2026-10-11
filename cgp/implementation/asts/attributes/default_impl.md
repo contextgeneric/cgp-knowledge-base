@@ -93,9 +93,9 @@ The behavioral and snapshot tests exercise the emitted impl, the wiring it enabl
   pins that the registration impl carries no `where` clause when the provider has a `#[use_type]`
   dependency, and resolves such a provider through a context that joins the namespace.
 - The cross-crate orphan restriction on a default is pinned by the `cargo-cgp` UI fixtures
-  [`acceptable/wiring/orphan/default_impl_foreign_prefix_path.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/orphan/default_impl_foreign_prefix_path.rs)
+  [`wiring/orphan-rule/default_impl_foreign_prefix_path.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/orphan-rule/default_impl_foreign_prefix_path.rs)
   (a *prefixed* component's foreign path key) and
-  [`acceptable/wiring/orphan/default_impl_foreign_component.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/orphan/default_impl_foreign_component.rs)
+  [`wiring/orphan-rule/default_impl_foreign_component.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/orphan-rule/default_impl_foreign_component.rs)
   (a foreign *unprefixed* component marker key), both the
   [orphan-rule violation](../../../errors/wiring/orphan-rule.md) class.
 

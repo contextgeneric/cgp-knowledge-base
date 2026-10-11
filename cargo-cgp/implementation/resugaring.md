@@ -522,29 +522,29 @@ compiler, and the UI suite pins the typed pass end to end.
   the shared spelling rules directly: which names are written as is, raw, or not at all, the named
   and tuple `Struct!` forms and every product that declines, each variant spelling including a
   payload that only starts with a shape, and the `Enum!` declines.
-- [`tests/ui/acceptable/fields/base_area_1`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/fields/base_area_1.rs):
+- [`tests/ui/checks/check-trait-failure/fields/base_area_1`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/base_area_1.rs):
   the typed `Symbol!` decode in a real diagnostic: the missing field is named `height` in the lead,
   where raw rustc renders a `Chars` list (and elides part of it).
-- [`record_field_chain`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/missing-wiring/record_field_chain.rs):
+- [`record_field_chain`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/record_field_chain.rs):
   the typed `Cons`/`Nil` → `Struct! { … }` fold, in a record provider's chain.
-- [`sum_variant_chain`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/missing-wiring/sum_variant_chain.rs)
+- [`sum_variant_chain`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/sum_variant_chain.rs)
   and
-  [`enum_variant_chain`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/missing-wiring/enum_variant_chain.rs):
+  [`enum_variant_chain`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/enum_variant_chain.rs):
   the sum list as a plain `Sum![…]` list of bare types, and as an `Enum! { … }` of named variants.
-- [`fallback_shape_resugar`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/resolution/fallback_shape_resugar.rs):
+- [`fallback_shape_resugar`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/resolution/fallback_shape_resugar.rs):
   the text fold on rustc's own rendering of a declined diagnostic: a tuple shape read from
   `Index<N>` tags, a named shape with a raw keyword field, and an `Enum!` in each variant spelling.
-- [`enum_variant_shapes_chain`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/missing-wiring/enum_variant_shapes_chain.rs):
+- [`enum_variant_shapes_chain`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/enum_variant_shapes_chain.rs):
   the typed fold of a variant list using every variant shape, each hop printing the remaining list
   with `Empty`, `Rect { w: f64 }`, `Pair(u8, u16)`, and `Circle(f64)` spellings.
 - [`ok/shape_macros`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/ok/shape_macros.rs):
   `Struct!`/`Enum!` written by hand, whose `.expand.rs` shows the syntax-tree pass printing derived
   field lists in the same forms, brace bodies joined onto one line.
 - The path fixtures,
-  [`unregistered_prefix_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/resolution/unregistered_prefix_path.rs),
-  [`qualified_prefix_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/qualified_prefix_path.rs)
+  [`unregistered_prefix_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/unregistered_prefix_path.rs),
+  [`qualified_prefix_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/qualified_prefix_path.rs)
   (a module-qualified path folded to a clean `@…`), and
-  [`open_missing_type_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/open_missing_type_key.rs),
+  [`open_missing_type_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/open_missing_type_key.rs),
   pin the typed path rendering, in a namespace redirect and an `open` dispatch key.
 
 - [`crates/cargo-cgp-expand/tests/resugar.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-expand/tests/resugar.rs):

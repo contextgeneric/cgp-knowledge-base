@@ -102,8 +102,8 @@ invalid Rust rather than a macro-time rejection. `parse_field_type` applies the 
 `Option<&[T]>` and emits a `HasField` bound over the unsized `Option<[T]>`, which `rustc` rejects.
 This is a deliberate boundary shared by `#[cgp_getter]` and `#[cgp_fn]` implicits (all three call
 `parse_field_type`), pinned as an acceptable failure by the `cargo-cgp` UI fixture
-[`usability/lowering/option_slice.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/lowering/option_slice.rs),
-filed under `usability/` because cargo-cgp passes rustc's `Sized` error through rather than
+[`lowering/ill-formed-generated-type/option_slice.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/ill-formed-generated-type/option_slice.rs),
+with `usability` quality because cargo-cgp passes rustc's `Sized` error through rather than
 rewriting it.
 
 ## Known issues

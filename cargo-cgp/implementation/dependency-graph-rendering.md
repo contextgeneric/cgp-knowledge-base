@@ -183,7 +183,7 @@ The following shapes cover the cases the graph exists to render; each is a real 
 leaf it bottoms out on is the root cause.
 
 A **linear spine** (one consumer, one chain, one leaf) is the base case
-([`base_area_1`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/fields/base_area_1.rs),
+([`base_area_1`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/base_area_1.rs),
 a `Rectangle` missing its `height` field):
 
 ```text
@@ -195,7 +195,7 @@ a `Rectangle` missing its `height` field):
 
 A **shared-root branch**, one consumer whose provider has two unmet dependencies, branches at the
 divergence point
-([`parallel_branches`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/fields/parallel_branches.rs),
+([`parallel_branches`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/parallel_branches.rs),
 a `Person` missing both name fields):
 
 ```text
@@ -209,7 +209,7 @@ a `Person` missing both name fields):
 
 A **subsuming cascade**, where `CanCalculateDensity` depends on `CanCalculateArea` and both are
 checked
-([`density_3`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/duplication/density_3.rs)),
+([`density_3`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/verbose-cascade/density_3.rs)),
 renders as the single deeper chain, because the area consumer's head is a descendant of the density
 chain and so is not a second root:
 
@@ -223,7 +223,7 @@ chain and so is not a second root:
 ```
 
 **Two independent consumers converging on one leaf**
-([`parallel_consumers`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/duplication/parallel_consumers.rs),
+([`parallel_consumers`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/verbose-cascade/parallel_consumers.rs),
 two unrelated components each reading the missing `height`) keeps both roots, and the shared leaf is
 drawn under each. A leaf hides no subtree, so there is no `(*)`:
 
@@ -239,7 +239,7 @@ drawn under each. A leaf hides no subtree, so there is no `(*)`:
 ```
 
 A **diamond**, one shared trait reached through two branches
-([`diamond_shared_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/resolution/diamond_shared_trait.rs),
+([`diamond_shared_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/resolution/diamond_shared_trait.rs),
 where `CanTop` depends on both `CanLeft` and `CanRight`, which both depend on `CanShared`, whose
 provider needs a `name` field the context lacks), expands the shared `CanShared` subtree under the
 first branch and `(*)`-references it under the second, so the root cause is shown once:
@@ -259,7 +259,7 @@ first branch and `(*)`-references it under the second, so the root cause is show
 ```
 
 **Distinct-key redirects** show why the redirect key is part of a node's identity
-([`redirect_distinct_keys`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/missing-wiring/redirect_distinct_keys.rs),
+([`redirect_distinct_keys`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/redirect_distinct_keys.rs),
 two dependencies dispatched along one `open` route for two unwired keys). Both redirect hops render
 the same label, but they hold different keys (`Left`, `Right`), so the graph keeps them distinct and
 the tree branches to each key's own missing-wiring leaf rather than collapsing both under one shared
@@ -422,7 +422,7 @@ compiler, and the end-to-end behavior is pinned by the UI suite.
   needs no re-merge.
 - The UI fixtures the worked shapes above cite (`base_area_1`, `parallel_branches`, `density_3`,
   `parallel_consumers`, `diamond_shared_trait`, and `redirect_distinct_keys`), plus
-  [`foreign_getter_missing_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/resolution/foreign_getter_missing_wiring.rs),
+  [`foreign_getter_missing_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/resolution/foreign_getter_missing_wiring.rs),
   a diamond converging on one missing wiring, exercise the graph end to end through the real
   compiler.
 

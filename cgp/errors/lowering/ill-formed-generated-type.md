@@ -81,14 +81,14 @@ the synthesized type, not the shorthand the user wrote.
 fixture, the tool's `.cgp.stderr` is byte-for-byte its raw `.rust.stderr`: the primary `E0277` "the
 size for values of type `[u8]` cannot be known at compilation time", its `Sized` `help:` note, the
 "required by an implicit `Sized` bound in `Option`" note, and the trailing `E0599` on `as_ref`, with
-no `[CGP-Exxx]` code stamped and no note suppressed. The pass-through is why the fixture sits in
-cargo-cgp's `usability/` tier: the cause is present and stated plainly, but two things bury it for a
-CGP reader. The caret points at the `#[cgp_auto_getter]` attribute rather than at any type the user
-wrote, because the offending `Option<[u8]>` is synthesized in the expansion; and the derived `E0599`
-on `as_ref` adds noise below the real error. The improvement left for the tool is translation, not
-recovery: suppress the derived `E0599`, and read the synthesized `Option<[u8]>` back to its cause,
-that the field type combined the `Option<&T>` and `&[T]` shorthands into a shape CGP has no rule
-for. The codes cargo-cgp stamps on the classes it does rewrite are defined in the
+no `[CGP-Exxx]` code stamped and no note suppressed. The pass-through is why the fixture has
+`usability` quality in cargo-cgp: the cause is present and stated plainly, but two things bury it
+for a CGP reader. The caret points at the `#[cgp_auto_getter]` attribute rather than at any type the
+user wrote, because the offending `Option<[u8]>` is synthesized in the expansion; and the derived
+`E0599` on `as_ref` adds noise below the real error. The improvement left for the tool is
+translation, not recovery: suppress the derived `E0599`, and read the synthesized `Option<[u8]>`
+back to its cause, that the field type combined the `Option<&T>` and `&[T]` shorthands into a shape
+CGP has no rule for. The codes cargo-cgp stamps on the classes it does rewrite are defined in the
 [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
 
 ## Resolving it
@@ -105,12 +105,12 @@ dynamically sized type is out of scope by design.
 
 ## Backing fixtures
 
-- [`usability/lowering/option_slice.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/lowering/option_slice.rs):
+- [`lowering/ill-formed-generated-type/option_slice.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/ill-formed-generated-type/option_slice.rs):
   a `#[cgp_auto_getter]` returning `Option<&[u8]>`, lowered to a `HasField` bound over the unsized
   `Option<[u8]>`; its `.rust.stderr` pins the primary `E0277` "the size for values of type `[u8]`
   cannot be known at compilation time" with the `Sized` `help:` note, the "required by an implicit
   `Sized` bound in `Option`" note, and the derived `E0599` on `as_ref`. Its `.cgp.stderr` is
-  identical: the pass-through that places the fixture in the `usability/` tier, since cargo-cgp does
+  identical: the pass-through that gives the fixture `usability` quality, since cargo-cgp does
   not yet suppress the derived `E0599` or read the synthesized type back to the shorthand
   combination.
 

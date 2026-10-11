@@ -405,12 +405,12 @@ trait argument rather than an `in` clause, and a cycle on a component trait rath
 Five `cargo-cgp` UI fixtures pin the post-codegen behavior the attribute defers to the compiler
 (`cargo-cgp` files each by the quality of the output it renders):
 
-- [`acceptable/use-type/use_type_foreign_unsatisfied.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-type/use_type_foreign_unsatisfied.rs)
+- [`checks/check-trait-failure/use-type/use_type_foreign_unsatisfied.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/use-type/use_type_foreign_unsatisfied.rs)
   (a foreign `in Types` bound *enforced* on the trait rather than dropped) and
-  [`acceptable/use-type/use_type_nested_unsatisfied.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/use-type/use_type_nested_unsatisfied.rs)
+  [`checks/check-trait-failure/use-type/use_type_nested_unsatisfied.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/use-type/use_type_nested_unsatisfied.rs)
   (the same at a nested two-hop depth) are both the
   [check-trait-failure](../../../errors/checks/check-trait-failure.md) class.
-- [`acceptable/lowering/use_type_unknown_assoc.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/use_type_unknown_assoc.rs)
+- [`lowering/unresolved-imported-type/use_type_unknown_assoc.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/unresolved-imported-type/use_type_unknown_assoc.rs)
   (a misnamed imported associated type lowered into an unresolvable path, whose caret confirms the
   substitution preserves the user's identifier span) is the
   [unresolved-imported-type](../../../errors/lowering/unresolved-imported-type.md) class.

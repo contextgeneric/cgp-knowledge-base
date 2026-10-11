@@ -186,9 +186,10 @@ macro includes the ways its *accepted* input can still fail to compile downstrea
 distinct from the input a macro rejects at parse time. Enumerate these compile-failure modes as part
 of documenting a macro, and sort each into one of two kinds. This acceptable-versus-problematic
 split is a *documentation* distinction (whether the failure is a defect), not a directory split:
-`cargo-cgp` files its UI fixtures by the *quality of the output* it renders
-(`ok`/`acceptable`/`usability`), while the acceptable/problematic distinction here decides whether a
-failure is *also* recorded as a defect in the macro's `## Known issues`:
+`cargo-cgp` files its UI fixtures by error class and records the *quality of the output* it renders
+(`acceptable`/`usability`/`hidden`) in each fixture's header, while the acceptable/problematic
+distinction here decides whether a failure is *also* recorded as a defect in the macro's
+`## Known issues`:
 
 - An **acceptable** failure is one the macro **intentionally delegates to the Rust compiler**
   because it lacks the whole-program view the check needs: two `delegate_components!` blocks that

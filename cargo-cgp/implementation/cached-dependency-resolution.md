@@ -9,7 +9,7 @@ it recurs, without changing a byte of the output.
 interior node on its region-erased obligation and root context, with the incomplete-subtree flag at
 population and the reachable-set disjointness check at consultation, and `resolve_leaves` folds the
 root node's owned sub-result into the diagnostic. It is verified output-preserving against the whole
-`tests/ui/acceptable/` suite, with a dedicated diamond fixture pinning interior reuse and a
+`tests/ui/` suite, with a dedicated diamond fixture pinning interior reuse and a
 mutual-cycle fixture pinning the incomplete-subtree cut on a resolving walk. What is still not
 isolated by a test is the reuse disjointness check, whose failure mode is an exotic cross-diagnostic
 multi-node cycle the snapshot suite cannot express on its own (see [Tests](#tests)).
@@ -267,7 +267,7 @@ reusing a subtree cached under one context beneath another would mislabel it. Ke
 alongside the obligation makes that a cache miss, which is correct: the same obligation under a
 different context is a different rendering. For a seed the context is the obligation's own `self_ty`
 and adds nothing; it earns its place only once interior nodes are cached across trees. The
-[`cross_context_node_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/resolution/cross_context_node_key.rs)
+[`cross_context_node_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/resolution/cross_context_node_key.rs)
 fixture is the cross-context shape that exercises this. `Outer`'s walk re-roots the shared
 `Inner: CanCompute` node at `Inner` (so it keys identically to `Inner`'s own walk and shares that
 cached subtree), rendering it as a consumer impl for context `Inner`, while `Inner`'s own tree
@@ -355,14 +355,14 @@ different-consumer-same-cause blocks into one listing (see
 
 The primary guard is met; the rest is coverage still to add.
 
-- **Output-preservation regression guard** (met): the existing `tests/ui/acceptable/` snapshot suite
+- **Output-preservation regression guard** (met): the existing `tests/ui/` snapshot suite
   passes unchanged with both the root and the interior layer in place. This is the primary
   correctness check: the cache is pure memoization, so any snapshot change would be a bug. It also
   exercises the incidental paths: the cross-site re-report reuse (`cross_site_dedup`,
   `manual_supertrait_impl`) and, where a cycle reaches the walk, the incomplete-subtree cut
   (`use_context_cycle`, a self-cycle that declines).
 - **Cycle cut in a resolving walk** (met):
-  [`acceptable/wiring/constraints/mutual_cycle_with_cause`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/constraints/mutual_cycle_with_cause.rs)
+  [`wiring/wiring-cycle/mutual_cycle_with_cause`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/mutual_cycle_with_cause.rs)
   wires a two-component mutual cycle (`ProviderA` depends on `CanB`, `ProviderB` back on `CanA`)
   alongside a genuinely missing field. The walk descends the `CanA → CanB → CanA` loop, the cycle
   guard cuts it (flagging that subtree incomplete), and the missing-field cause down the other
@@ -371,7 +371,7 @@ The primary guard is met; the rest is coverage still to add.
   *resolves* rather than declining, so it pins the cut and the incomplete-flag propagation on a live
   tree.
 - **Diamond reuse** (met):
-  [`acceptable/resolution/diamond_shared_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/resolution/diamond_shared_trait.rs)
+  [`checks/check-trait-failure/resolution/diamond_shared_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/resolution/diamond_shared_trait.rs)
   routes two independent branches (`CanTop` depends on both `CanLeft` and `CanRight`) through one
   shared `CanShared` trait whose provider needs a `name` field the context lacks. The walk descends
   `App: CanShared` twice (once per branch), so the interior node is resolved under the first branch

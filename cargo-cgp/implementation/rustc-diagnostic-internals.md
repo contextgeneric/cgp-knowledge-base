@@ -104,14 +104,14 @@ compare equal.
 
 For ordinary types this is a readable shorthand: `Foo<_, Bar>` says "the first argument is the same
 in both, look at the second". For a CGP `Symbol` it is destructive. The
-[`acceptable/fields/base_area_1`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/fields/base_area_1.rs)
+[`checks/check-trait-failure/fields/base_area_1`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/base_area_1.rs)
 fixture asks for a `height` field on a `Rectangle` that only has `width`, so rustc diffs
 `HasField<Symbol!("height")>` against `HasField<Symbol!("width")>`. The two symbols share the
 character `'h'` (fifth in `height`, last in `width`), so `maybe_highlight` collapses that shared
 `'h'` to `_` in *both* names, printing `h,e,i,g,_,t` and `w,i,d,t,_`, and the field name cannot be
 read back from the text at all. Under `--verbose` the same hint prints both symbols in full, which
 is what the fixture's blessed
-[`.cgp.stderr`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/fields/base_area_1.cgp.stderr)
+[`.cgp.stderr`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/base_area_1.cgp.stderr)
 records.
 
 ### A long type is truncated and written to a file

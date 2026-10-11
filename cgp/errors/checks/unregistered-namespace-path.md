@@ -172,7 +172,7 @@ forgot a `#[default_impl]` or body entry" could be added rather than left for th
 
 ## Backing fixtures
 
-- [`acceptable/resolution/unregistered_prefix_path.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/resolution/unregistered_prefix_path.rs):
+- [`checks/unregistered-namespace-path/unregistered_prefix_path.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/unregistered_prefix_path.rs):
   a `#[prefix]`-ed `Greeter` joined through `DefaultNamespace` with no provider ever bound at
   `@app.GreeterComponent`; its `.rust.stderr` pins the output of the pinned nightly, which leads one
   bound higher than stable, with the primary `E0277` on
@@ -180,23 +180,23 @@ forgot a `#[default_impl]` or body entry" could be added rather than left for th
   `RedirectLookup` serves rather than stable's `DefaultNamespace` list, while its `.cgp.stderr`
   recasts this as `[CGP-E001]` over a `root cause: [CGP-E107] … @app.GreeterComponent` tree with a
   `[CGP-E104]` redirect hop.
-- [`acceptable/wiring/namespace-paths/qualified_prefix_path.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/qualified_prefix_path.rs):
+- [`checks/unregistered-namespace-path/qualified_prefix_path.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/qualified_prefix_path.rs):
   a deep prefix whose `[CGP-E107]` leaf renders the full
   `@app.finance.types.QuantityTypeProviderComponent` path, pinning that the resugaring reproduces
   multi-segment paths intact.
-- [`acceptable/wiring/namespace-paths/multi_redirect_missing.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/multi_redirect_missing.rs):
+- [`checks/unregistered-namespace-path/multi_redirect_missing.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/multi_redirect_missing.rs):
   a chain of redirects that never terminates, so the `.cgp.stderr` tree stacks one `[CGP-E104]` hop
   per link (`@start.GreeterComponent` → `@middle` → `@end`) before the `[CGP-E107]` leaf at `@end`.
-- [`acceptable/wiring/namespace-paths/open_missing_type_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/open_missing_type_key.rs):
+- [`checks/unregistered-namespace-path/open_missing_type_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/open_missing_type_key.rs):
   an `open` per-type dispatch missing a type key, where the `[CGP-E107]` leaf names the type in the
   path (`@ItemEncoderComponent.Vec<u8>`) and the consumer headline is the generic
   `CanEncodeItem<Vec<u8>>`.
-- [`acceptable/wiring/missing-wiring/open_aggregate_missing_entry.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/missing-wiring/open_aggregate_missing_entry.rs):
+- [`checks/check-trait-failure/missing-wiring/open_aggregate_missing_entry.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/open_aggregate_missing_entry.rs):
   a context routes one code to an aggregate provider that `open`s `ComputerComponent` in its own
   table and dispatches on the input, and the aggregate lacks the input the check asks for; the
   `.cgp.stderr` pins the `[CGP-E110]` leaf naming the aggregate and the `[CGP-E104]` hop that reads
   `` in `ByteSink` ``.
-- [`acceptable/wiring/missing-wiring/namespace_aggregate_missing_entry.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/missing-wiring/namespace_aggregate_missing_entry.rs):
+- [`checks/unregistered-namespace-path/namespace_aggregate_missing_entry.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/namespace_aggregate_missing_entry.rs):
   a context forwards `@app` to a path-keyed aggregate provider that joins `DefaultNamespace` itself
   and lacks `@app.NamerComponent`; the `.cgp.stderr` pins the `[CGP-E110]` leaf naming the
   aggregate, whose namespace lookup is the unmet bound.

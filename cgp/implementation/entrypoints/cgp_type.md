@@ -128,7 +128,7 @@ naming an associated type, which can read as though the author had written a gen
 did not. The class is the
 [shadowed-abstract-type sibling](../../errors/lowering/out-of-scope-generated-name.md#a-sibling-the-shadowed-abstract-type),
 pinned by
-[`acceptable/lowering/cgp_type_name_shadows_bound.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/cgp_type_name_shadows_bound.rs).
+[`lowering/out-of-scope-generated-name/cgp_type_name_shadows_bound.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/out-of-scope-generated-name/cgp_type_name_shadows_bound.rs).
 
 ## Snapshots
 
