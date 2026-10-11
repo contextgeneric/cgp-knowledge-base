@@ -319,10 +319,13 @@ as `CGP_COMPONENT_CRATE`.
 
 Each entry is **keyed by the marker's full path** (`def_path_str`), not its bare name, so two
 distinct structs sharing a marker name in different modules occupy separate entries. The map's sole
-consumer is the **text-rewrite fallback** below, which has only the marker *name* rendered into the
-diagnostic text (where no `DefId` and rarely a full path survives), so it matches a key by its last
-path segment. That is ambiguous only when two markers share a name, an unavoidable residual of
-working from rendered text. (The [typed root-cause resolver](typed-root-cause-resolution.md) does
+consumer is the **text-rewrite fallback** below, which has only the marker as rendered into the
+diagnostic text, with no `DefId`. It matches the printed marker against each key's trailing
+segments: rustc prints a marker bare when its name is unique and qualified when two items share it,
+so a qualified `shapes_a::MeasurerComponent` picks out its own entry. When the keys that match stand
+for different traits (a bare name two components share), the lookup declines and the message keeps
+rustc's wording, so a note never names the other component's trait
+([`same_name_marker_rename`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/resolution/same_name_marker_rename.rs)). (The [typed root-cause resolver](typed-root-cause-resolution.md) does
 not use the map: it reads consumer and provider names straight off the real trait `DefId`s it walks,
 part of resolving without depending on `IsProviderFor`, the very supertrait this map is built by
 inverting. The map therefore serves only the declined-diagnostic text path, where recognizing
