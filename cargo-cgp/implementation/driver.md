@@ -939,8 +939,8 @@ will likely grow toward it:
 - [`tests/ui/robustness/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/robustness):
   `panic_in_transform` and `panic_in_flush`, a wiring failure between two type errors with the
   emitter made to panic in each stage, pinning that every error still prints, as rustc built it,
-  with the internal-error note. `fatal_after_buffered_diagnostic` pins the other way the flush runs
-  during an unwind: a rewritten wiring failure, held in the buffer, followed by a fatal query cycle
+  with the internal-error note. `fatal_after_buffered_diagnostic` pins a fatal error that stops the
+  compilation early: a rewritten wiring failure, held in the buffer, then a fatal query cycle
   (`E0391`); both print, in rustc's order.
 - [`crates/cargo-cgp-error-processing/tests/error_processing/rewrite.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/rewrite.rs):
   the compiler-free rewrite over a hand-built name map, run on any toolchain: both note forms and
