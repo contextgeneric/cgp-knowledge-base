@@ -449,8 +449,10 @@ of the writable-name check, `shape_name`, kept in step.
 ### The path strips that run first
 
 Two transforms are not resugarings but must run before them, since every rule above matches bare
-type names. They also do real work of their own: rustc prints types fully qualified, and in a CGP
-diagnostic those qualifiers are noise the reader did not write.
+type names. They also do real work of their own: rustc shortens a path only when the name is unique
+across the build and was not brought in by a glob import, so the CGP types a crate imports through
+`use cgp::prelude::*` print qualified, and in a CGP diagnostic those qualifiers are noise the
+reader did not write.
 
 [`strip_module_paths`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/strip_modules.rs)
 collapses every `a::b::C` identifier run to its final segment:

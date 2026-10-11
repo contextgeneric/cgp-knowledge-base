@@ -73,7 +73,12 @@ which executes the compiler and converts a compiler-signalled failure into the p
 matching what plain `rustc` returns. The compiler behavior the driver adds is installed through
 [`callbacks::CgpCallbacks`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/callbacks.rs),
 which implements two hooks. Its `config` hook installs the diagnostic-rewriting emitter described
-under [Naming the traits behind a component marker](#naming-the-traits-behind-a-component-marker).
+under [Naming the traits behind a component marker](#naming-the-traits-behind-a-component-marker),
+and turns on the session's `trimmed_def_paths` option as rustc's own driver does, so the compiler
+prints a type by its short name wherever that name is unique and not glob-imported
+(`Option<String>`, not `std::option::Option<std::string::String>`). A compiler run through `rustc_driver` leaves the
+option off unless its callbacks set it, and without it every diagnostic the tool leaves alone would
+print paths plain rustc shortens, suggestions included.
 Its `after_expansion` hook serves the driver's *other* mode: when `cargo cgp expand` asked for an
 expansion, it prints the expanded crate and stops the compilation there instead of checking it (see
 [The expand command](expand-command.md)). Aside from the injected flags, that emitter, and that
@@ -847,6 +852,10 @@ will likely grow toward it:
   the `CARGO_CGP_TEST_PANIC` values that arm each stage, and the values that arm none.
 - [`crates/cargo-cgp-error-processing/tests/error_processing/internal_error.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/internal_error.rs):
   the note on a diagnostic shown untransformed after a contained panic.
+- [`tests/ui/pass-through/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/pass-through):
+  `consumer_not_in_scope`, `headline_std_path`, `suggestion_full_paths`, and
+  `auto_getter_mut_option` pin the trimmed paths: each diagnostic the tool leaves alone, suggestions
+  included, matches plain `cargo check` exactly.
 - [`tests/ui/robustness/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/robustness):
   `panic_in_transform` and `panic_in_flush`, a wiring failure between two type errors with the
   emitter made to panic in each stage, pinning that every error still prints, as rustc built it,

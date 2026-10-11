@@ -343,20 +343,24 @@ The fixtures group by construct:
 - **Use sites** (`use-site/`): calls the resolver declines, leaking `IsProviderFor` or rustc's
   method-probe advice, including a provider's own method called directly.
 
-## Untransformed diagnostics print full paths
+## Untransformed diagnostics are not left as rustc printed them
 
-A diagnostic the tool does not rewrite prints full paths where plain `cargo check` prints short
-ones: `cgp::prelude::IsNothing` in an `E0284` headline
-([`update_field_marker_unannotated`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/update_field_marker_unannotated.rs)),
-`std::result::Result` in an `E0599` headline
-([`headline_std_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/headline_std_path.rs)), and
-`cgp::cgp_core::cgp_field::traits::TransformMapFields` inside a machine-applicable suggestion
-([`suggestion_full_paths`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/suggestion_full_paths.rs), with more cases under
-[`pass-through/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/pass-through): a
-`lib::Person` struct path, `__Context__` in a printed signature, and full trait paths in `E0034`
-suggestions). The driver does not set the
-`trimmed_def_paths` option that rustc's own driver sets, so the compiler prints every path in full;
-the module strip shortens most of them afterwards but not all, and it must not touch a suggestion.
+A diagnostic the tool does not rewrite should print exactly as plain `cargo check` prints it, and
+some do not. The post-processing that tidies CGP's types runs on every diagnostic, so its module
+strip shortens paths rustc printed in full on purpose: "expected `a::Foo`, found `b::Foo`" reads
+"expected `Foo`, found `Foo`"
+([`same_name_types`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/same_name_types.rs)),
+and a note's `cgp::prelude::Computer` loses its path
+([`compute_bare_name_ambiguous`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/compute_bare_name_ambiguous.rs)).
+Its text matchers also resugar a crate's own types that merely share CGP's names
+([`lookalike_cgp_names`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/lookalike_cgp_names.rs)).
+Separately, the injected `--verbose` prints the generated `__Context__` in a signature note where
+plain rustc prints `_`
+([`provider_wrong_signature`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/provider_wrong_signature.rs)).
+Each such fixture lives under
+[`pass-through/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/pass-through) with
+a `//@rewrites-falsely:` marker naming its cause, and the harness reports the marker once the
+output matches plain rustc's.
 
 ## What good presentation looks like
 
