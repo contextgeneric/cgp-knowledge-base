@@ -591,8 +591,14 @@ compiler, and the UI suite pins the typed pass end to end.
   `Chars<…>` list outside a fixture's own doc comment, which is the standing evidence that the pass
   reaches every construct the fixtures produce.
 
-What is *not* guarded: no test asserts that the three implementations agree with each other on the
-same construct; consistency between them rests on this document.
+- [`crates/cargo-cgp-expand/tests/expand/agreement.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-expand/tests/expand/agreement.rs):
+  the text and syntax-tree implementations fed the same constructs, each spelling compared: every
+  construct above with its declines, and the one sanctioned divergence, the open-ended path that
+  only a diagnostic shows as `.*`.
+
+What is *not* guarded: the typed implementation needs the compiler, so no test compares it with the
+other two directly; the fixtures above pin its output construct by construct, and its agreement with
+them rests on this document.
 
 ## Source
 

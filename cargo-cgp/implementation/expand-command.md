@@ -550,6 +550,9 @@ and printing halves need a real compilation, so they are exercised by running th
 - [`crates/cargo-cgp/tests/front_end/invocation.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/invocation.rs):
   `cargo_invocation`'s order: the marker flags after one `--`, a user's `--` kept single with the
   tool's cargo flags in front of it, and the split at the first separator.
+- [`crates/cargo-cgp-expand/tests/expand/agreement.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-expand/tests/expand/agreement.rs):
+  this crate's resugaring and the diagnostic text resugaring agreeing on every construct, through a
+  path-only dev-dependency on `cargo-cgp-error-processing` that publishing drops.
 - [`crates/cargo-cgp-expand/tests/expand/select.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-expand/tests/expand/select.rs):
   the three selection rules over a two-module program: a module giving its unwrapped contents, a
   type giving its declaration and the impls for it, an unqualified path reaching into a module, a
