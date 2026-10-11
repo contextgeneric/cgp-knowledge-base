@@ -91,8 +91,8 @@ change did what was intended. The suite exists so that is caught the moment it l
 ### Three passes per fixture
 
 Each fixture is verified by three passes: two about what the compiler *says* (the tool's real output
-and the plain-compiler baseline it improves on) and one about what the macros *generate*. They do
-not cross-check each other, and there is no separate capture or unit pass. Because the driver
+and the plain-compiler baseline it improves on) and one about what the macros *generate*. There is
+no separate capture or unit pass. Because the driver
 applies every CGP transform in-process and renders the result, `.cgp.stderr` is simply what
 `cargo-cgp` prints, with nothing to reconcile it against. All three are implemented in
 [`passes`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/src/passes.rs):
@@ -110,6 +110,32 @@ applies every CGP transform in-process and renders the result, `.cgp.stderr` is 
   "why does it say that?" usually is, and it is the end-to-end coverage of
   [the expand command](expand-command.md) and the syntax-tree [resugaring](resugaring.md) it drives,
   neither of which any other test exercises through a real compilation.
+
+Two checks then compare the passes with each other rather than with a snapshot, because a snapshot
+alone cannot catch the two failures that matter most: a crash that prints nothing, and a rewrite of
+an error the tool should leave alone.
+
+- **The status check** requires the tool and plain `cargo check` to agree on whether the fixture
+  compiles. A crash with no output, or the tool accepting what rustc rejects, would otherwise pass
+  whenever the snapshot happened to match. The one sanctioned disagreement is a known false
+  acceptance of the next-generation trait solver, which a fixture declares with
+  `//@false-acceptance`; the check then requires exactly that disagreement, so the marker cannot go
+  stale.
+- **The pass-through check** runs for every fixture under `pass-through/`: a program whose errors
+  are plain Rust, which the tool must render exactly as rustc does. It requires the tool's stderr to
+  equal plain `cargo check`'s, both normalized as the baseline is, so the property holds without a
+  hand-reviewed snapshot. A pass-through fixture that the tool still rewrites falsely declares
+  `//@rewrites-falsely: <reason>`; its snapshots then pin today's output, and the check reports the
+  marker once the outputs agree, so the fix that closes it also removes it.
+
+A fixture that declares `//@json` also runs **the JSON pass**, which runs
+`cargo cgp check --message-format=json` and compares its compiler messages with `<name>.cgp.json`.
+Editors and agents read this stream rather than the rendered text, and nothing else exercises it.
+The snapshot reduces each message to the fields a consumer uses (its level, code, message, spans,
+and children) and leaves out the `rendered` text the `.cgp.stderr` already pins and cargo's artifact
+lines. A handful of representative fixtures carry the directive: a resolved check-trait failure, a
+use-site failure, an undeclared import, a duplicate wiring key, an untransformed diagnostic, and a
+clean compile.
 
 The expand pass normalizes less than the other two, deliberately. Only the absolute paths are
 replaced; none of the diagnostic normalization applies, and one piece of it would actively hide a
@@ -137,18 +163,28 @@ whose `ui` test target sets `harness = false` and provides its own `fn main`
 the same shape as Clippy's `tests/compile-test.rs`. The `fn main` is thin; the logic is in the
 crate's library so it stays small and testable, split into focused modules: `options` (argument
 parsing), `paths` (locating the workspace, fixtures, cgp checkout, and built binaries), `fixtures`
-(discovery), `harness` (building the binaries and compiling a fixture in a worker crate, through
-`cargo-cgp` or plain `cargo`), `passes` (the three per-fixture passes), `runner` (scheduling
-fixtures across the worker pool), `aux` (materializing the auxiliary crates a fixture depends on,
-described below), `normalize` (rewriting volatile paths and dropping content-free lines out of the
-output), and `snapshot` (compare, bless, diff).
+(discovery), `directives` (the `//@` header directives below), `harness` (building the binaries and
+compiling a fixture in a worker crate, through `cargo-cgp` or plain `cargo`), `passes` (the
+per-fixture passes and the checks across them), `runner` (scheduling fixtures across the worker
+pool), `aux` (materializing the auxiliary crates a fixture depends on, described below),
+`normalize` (rewriting volatile paths and dropping content-free lines out of the output), and
+`snapshot` (compare, bless, diff).
 
 The harness crate is a full workspace member, so `cargo test` runs the whole suite alongside the
-argument tests. It shells out to `cargo` and `cargo-cgp` and carries no non-std dependencies of its
-own. The driver does every diagnostic transform in-process, so the harness only launches processes
-and diffs their output, with no need to link the tool's libraries. Running the full suite builds the
-front-end and its driver and expects a sibling `cgp` checkout at `../cgp` (which each throwaway
-crate depends on by path), so a plain `cargo test` needs both present.
+argument tests. It shells out to `cargo` and `cargo-cgp`, and its one dependency is `serde_json`,
+which reads cargo's message stream for the JSON pass. The driver does every diagnostic transform
+in-process, so the harness only launches processes and diffs their output, with no need to link the
+tool's libraries. Running the full suite builds the front-end and its driver and expects a sibling
+`cgp` checkout at `../cgp` (which each throwaway crate depends on by path), so a plain `cargo test`
+needs both present.
+
+A fixture states what the harness must do with it through **directives**: line comments that start
+with `//@`, as in Clippy's UI tests, which the compiler ignores and only the harness reads. Four
+exist: `//@aux-build: <crate>` (an auxiliary crate, below), `//@false-acceptance` and
+`//@rewrites-falsely: <reason>` (the two exceptions above), and `//@json` (the JSON pass). A
+misspelled directive would silently do nothing, so the parser rejects an unknown `//@name` and a
+known name written in another comment form, such as `// @json` with a space; a comment that merely
+starts with an `@`-path, such as commented-out wiring, stays legal.
 
 ### How a fixture is compiled
 
@@ -170,10 +206,9 @@ directive's spelling is exact and a near-miss is rejected rather than ignored**,
 directive is invisible in a way that matters: the fixture keeps compiling, loses its path
 dependency, and fails on an unresolved import instead of reproducing the scenario it was written
 for, which reads as ordinary snapshot staleness. A formatter inserting one space (`// @aux-build:`)
-is enough to disable a cross-crate fixture this way. `aux::declared` therefore asserts on any
-comment that *starts* with something directive-shaped but does not match the exact prefix, while
-leaving prose that merely mentions the syntax alone. The `aux` module materializes every stored
-auxiliary crate once, up front: it copies the crate's source from
+is enough to disable a cross-crate fixture this way, which is why the directive parser rejects it.
+The `aux` module materializes every stored auxiliary crate once, up front, replacing any earlier
+copy so a file deleted from the stored crate does not survive: it copies the crate's source from
 [`crates/cargo-cgp-ui-tests/auxiliary/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-ui-tests/auxiliary)
 into `target/ui-harness/aux/` and generates its manifest there, substituting the resolved
 sibling-`cgp` path (the same path the worker crates use) for the placeholder the stored manifest
@@ -215,7 +250,8 @@ The `-q` removes most of the noise: it suppresses cargo's own progress lines (`C
 `Compiling`, `Finished`). What remains and must be normalized away is machine-specific or
 non-diagnostic: the absolute paths of the `cgp` checkout, the throwaway crate, and the toolchain
 sysroot, the cargo build-failure summary (`could not compile …`, which is cargo's own output rather
-than part of any diagnostic), and a note pointing at a hash-named temp file when a long type is
+than part of any diagnostic), cargo's "process didn't exit successfully" line (which appears only
+under coverage instrumentation), and a note pointing at a hash-named temp file when a long type is
 elided. The driver's `--verbose` suppresses that elision, so the temp-file note never reaches a
 `.cgp.stderr`; but the rust-stderr pass runs plain `cargo check` *without* `--verbose`, so a long
 CGP type can be elided there and the note does arise in `.rust.stderr`, which is exactly why
@@ -224,8 +260,11 @@ library (an implicit `Sized` bound on `Option`, say), and its path carries the c
 directory, the pinned nightly's name, and the host target triple, so it is rewritten to `$SYSROOT`.
 The single `normalize` module handles the rendered stderr of both passes: it rewrites the paths to
 `$CGP`/`$DIR`/`$SYSROOT` and drops the summary and temp-file lines, so what is compared depends only
-on the diagnostic content. Normalization applies to the compared/blessed output only; `--print`
-shows the raw output untouched. The harness finds the built `cargo-cgp` by walking up from its own
+on the diagnostic content. The baseline alone also collapses every `Chars<…>` field-name spine to
+`Chars<..>`, because plain rustc truncates such a spine at a depth that varies between runs. The
+tool's output keeps its spines, since a raw spine there means the tool's resugaring declined, which
+the snapshot must show. Normalization applies to the compared/blessed output only; `--print` shows
+the raw output untouched. The harness finds the built `cargo-cgp` by walking up from its own
 test binary until an ancestor directory holds that binary, having first built both with
 `cargo build` (the front-end locates the driver as its sibling). Searching for the binary rather
 than counting parent directories keeps the lookup independent of where cargo puts a test executable,
@@ -244,7 +283,8 @@ cargo test -p cargo-cgp-ui-tests            # only the suite
 To pass an argument to the harness, target the `ui` test explicitly with `--test ui`, so the flag is
 not also handed to the crate's other (libtest) tests. The harness accepts a path substring to filter
 fixtures, `--bless` to rewrite the snapshots, `--print` to show a fixture's raw output instead of
-comparing, and `--jobs N` (`-j N`) to set the worker count:
+comparing (the tool's stderr, plain `cargo check`'s stderr, and the expansion, each with its exit
+status), and `--jobs N` (`-j N`) to set the worker count:
 
 ```sh
 cargo test -p cargo-cgp-ui-tests --test ui -- usability    # only fixtures whose path contains "usability"
@@ -258,14 +298,19 @@ machine's parallelism, capped at 8 and at the number of fixtures. Raise it past 
 machine that can afford more concurrent `cgp` builds (one per worker, since the workers cannot share
 a target directory), or set `-j 1` to run fully sequentially.
 
-After an *intended* change to what the tool emits, `--bless` regenerates all three snapshots, the
-analogue of Clippy's `cargo bless`. It writes `.cgp.stderr` from the real `cargo-cgp` run,
-`.rust.stderr` from plain `cargo check`, and `.expand.rs` from `cargo cgp expand`, and the diff is
-reviewed before committing. The three move for different reasons, which is what makes a diff
-informative: `.cgp.stderr` changes when the tool's diagnostics change, `.rust.stderr` on a toolchain
-bump *or* whenever a fixture's own line numbering shifts, and `.expand.rs` when a CGP macro's
-expansion changes or when the resugaring does. An unexpected `.expand.rs` diff after a `cgp` update
-is a report of what the macros now generate.
+A mismatch prints a line diff for each pass that failed, labelled with the pass and marking each
+line only in the snapshot with `-` and each line only in the actual output with `+`, with two lines
+of context. A missing snapshot is a mismatch, not an empty snapshot, so deleting one cannot pass
+unnoticed; `--bless` creates it.
+
+After an *intended* change to what the tool emits, `--bless` regenerates all three snapshots (and
+`.cgp.json` where the JSON pass runs), the analogue of Clippy's `cargo bless`. It writes
+`.cgp.stderr` from the real `cargo-cgp` run, `.rust.stderr` from plain `cargo check`, and
+`.expand.rs` from `cargo cgp expand`, and the diff is reviewed before committing. The three move for
+different reasons, which is what makes a diff informative: `.cgp.stderr` changes when the tool's
+diagnostics change, `.rust.stderr` on a toolchain bump *or* whenever a fixture's own line numbering
+shifts, and `.expand.rs` when a CGP macro's expansion changes or when the resugaring does. An
+unexpected `.expand.rs` diff after a `cgp` update is a report of what the macros now generate.
 
 **Reading a bless diff means telling three causes apart, and two of them are not about behavior at
 all.** Editing a fixture's `//!` header (rewriting a doc pointer, re-wrapping a sentence) moves
@@ -365,8 +410,8 @@ no dogfood test yet (see above).
 - [`crates/cargo-cgp-ui-tests/tests/options.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/options.rs),
   [`crates/cargo-cgp-ui-tests/tests/normalize.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/normalize.rs):
   harness option/filter parsing, and the output normalizer: the `$CGP`/`$DIR`/`$SYSROOT` path
-  rewrites, the dropped content-free lines, and the `Chars<…>` spine collapse across every
-  truncation depth.
+  rewrites, the dropped content-free lines (including the coverage failure line), the baseline's
+  `Chars<…>` spine collapse across every truncation depth, and the tool output keeping its spines.
 - [`crates/cargo-cgp-ui-tests/tests/paths.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/paths.rs):
   the upward search for the built front-end, against both layouts cargo has put a test binary in
   (`<profile>/deps/` and `<profile>/build/<package>/<hash>/out/`), plus the nearest-ancestor rule,
@@ -376,6 +421,17 @@ no dogfood test yet (see above).
   the `//@aux-build:` parser: one and several declared crates, a fixture declaring none, an
   unreadable fixture, and the malformed-directive guard from both sides: a space after the slashes
   and a doc-comment form are rejected, while prose mentioning the syntax is not.
+- [`crates/cargo-cgp-ui-tests/tests/directives.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/directives.rs):
+  every directive read together, none declared, commented-out `@`-path wiring left alone, and the
+  rejection of an unknown directive, a spaced directive, and a `//@rewrites-falsely:` without a
+  reason.
+- [`crates/cargo-cgp-ui-tests/tests/passes.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/passes.rs):
+  the status check (agreement, disagreement, and the false-acceptance marker in both states), the
+  pass-through check (equal output, a difference, and the `//@rewrites-falsely:` marker in both
+  states), and the reduction of cargo's JSON stream to compiler messages.
+- [`crates/cargo-cgp-ui-tests/tests/snapshot.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/snapshot.rs):
+  a missing snapshot reported as a mismatch, blessing it into existence, and the line diff's
+  context and markers.
 - [`crates/cargo-cgp-ui-tests/tests/fixtures.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/fixtures.rs):
   fixture discovery: nested directories are collected in order, an `.expand.rs` snapshot is not
   collected as a fixture, and the no-expansion marker is a valid Rust comment block.
@@ -388,8 +444,8 @@ no dogfood test yet (see above).
 
 - [`crates/cargo-cgp-ui-tests/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-ui-tests):
   the custom UI-test harness: `tests/ui.rs` (the `harness = false` entrypoint) and the `src/`
-  modules (`options`, `paths`, `fixtures`, `harness`, `passes`, `runner`, `aux`, `normalize`,
-  `snapshot`).
+  modules (`options`, `paths`, `fixtures`, `directives`, `harness`, `passes`, `runner`, `aux`,
+  `normalize`, `snapshot`).
 - [`tests/ui/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui): the fixture tree,
   one scenario per `.rs` file with its `.cgp.stderr`, `.rust.stderr`, and `.expand.rs` snapshots,
   grouped into the `acceptable/` / `usability/` / `ok/` category subdirectories.
