@@ -292,15 +292,6 @@ defaulted and optional builders, extraction, construction by tag, and the casts 
 under [`uncataloged/extensible-data/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/uncataloged/extensible-data);
 the work is the same leaf: name the field or variant the generated types encode.
 
-## A rewrite states something false
-
-Some rewrites state something false, which is worse than passing rustc's text through. Each needs a
-check that its premise holds before it fires. These fixtures pin the false line:
-
-- [`check_trait_named_as_wrapper`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/checks/check_trait_named_as_wrapper.rs): a generic key in
-  `delegate_and_check_components!` presents the generated `__CanUseApp` check trait as the user's
-  trait in a `[CGP-E009]` headline.
-
 ## Construct failures that carry no fix
 
 Many construct mistakes reach the reader as rustc wrote them, or reshaped without the hint that
@@ -311,7 +302,9 @@ The fixtures group by construct:
   value, an unimported or guessed key, each an `E0425` or `E0782` with a wrong suggestion.
 - **Wiring checks, conflicts, and cycles** (`wiring/checks/`, `wiring/conflicts/`,
   `wiring/cycles/`): a check table defined twice or holding an entry twice, a bundle checked as a
-  context, a hand impl beside wiring, and a cycle reached by a call or through `DebugError`.
+  context, a hand impl beside wiring, a cycle reached by a call or through `DebugError`, and a
+  generic key in `delegate_and_check_components!` checked at unit parameters without
+  `#[check_params(...)]` (`check_trait_named_as_wrapper`).
 - **Namespaces** (`wiring/namespaces/`, `wiring/constraints/`): a namespace that does not inherit
   the one a component is prefixed into, a near-miss path, a doubled prefix marker, and the `E0207`
   forms of `for` loops, `#[default_impl]`, and a self-inheriting namespace.

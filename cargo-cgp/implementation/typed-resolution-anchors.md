@@ -92,7 +92,11 @@ supertrait it reduces to, its error is reported on its own rather than de-duplic
 use-site ones, and it fires only for an impl on a **context**: a struct or enum the checked crate
 defines, or one from another crate that carries `DelegateComponent` wiring of its own
 (`is_context_adt`), as a context a library exports does. An impl on any other foreign type or on a
-provider struct carries no consumer supertrait on a context and is skipped.
+provider struct carries no consumer supertrait on a context and is skipped. So is a
+`check_components!` check impl, whose generated trait carries `CanUseComponent` as its supertrait:
+it belongs to the check-entry anchor, and heading a tree with it would present the generated
+`__CanUseApp` as a trait the programmer wrote
+([`check_trait_named_as_wrapper`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/checks/check_trait_named_as_wrapper.rs)).
 
 **From a foreign wrapper chain.** The routing glue can put the failure one level further out: a
 hand-written `impl Trait for Foreign` block whose `Self` is a foreign type holding the context,
