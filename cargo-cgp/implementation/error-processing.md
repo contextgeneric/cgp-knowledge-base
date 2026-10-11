@@ -66,7 +66,9 @@ from the driver, is what keeps them unit-testable.
   `cgp_impl_misuse.rs` (`CgpImplMisuse` for the `[CGP-E013]`–`[CGP-E015]` provider-definition
   mistakes, and `MissingUseProvider` for the `[CGP-E016]` inner provider never imported). They are
   documented where the driver detects them, in
-  [The driver](driver.md#the-drivers-diagnostic-transformations).
+  [The driver](driver.md#the-drivers-diagnostic-transformations). Last, `internal_error.rs` words
+  the note on a diagnostic the driver shows untransformed after a panic in its own transform (see
+  [The driver](driver.md#containing-the-drivers-own-panics)).
 - **The dependency-tree renderer**
   ([`tree`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/tree.rs))
   is the `DependencyTree` type and its `cargo tree`-style renderer over the tiny `termtree` crate.
@@ -336,6 +338,8 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
 - [`crates/cargo-cgp-error-processing/tests/error_processing/orphan.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/orphan.rs):
   `plan_orphan_conflict` and `orphan_conflict_help` over hand-built conflicts: a component key and a
   path key registered, and the reopen trigger's inheritance fix.
+- [`crates/cargo-cgp-error-processing/tests/error_processing/internal_error.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/internal_error.rs):
+  the internal-error note naming the panic and the issue tracker.
 - [`crates/cargo-cgp-error-processing/tests/error_processing/cgp_impl_misuse.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/cgp_impl_misuse.rs):
   the `#[cgp_impl]` misuse wording: a consumer trait in the header (naming the provider to use), a
   trait that is not a CGP component, a consumer trait in a provider bound, and an inner provider not
@@ -386,7 +390,8 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   `wiring.rs` (`WiringConflict`/`WiringKey`, `plan_wiring_conflict` for the
   `[CGP-E004]`–`[CGP-E008]` duplicate-key headers, and `wiring_conflict_help` for the redirect fix),
   plus `orphan.rs`, `undeclared.rs`, and `cgp_impl_misuse.rs` (the `[CGP-E011]`–`[CGP-E016]` reshape
-  models and their wording). See [Typed root-cause resolution](typed-root-cause-resolution.md) and
+  models and their wording), and `internal_error.rs` (the note on a diagnostic shown untransformed
+  after a contained panic). See [Typed root-cause resolution](typed-root-cause-resolution.md) and
   [The driver](driver.md#reshaping-a-duplicate-key-conflict).
 - [`crates/cargo-cgp-error-processing/src/tree.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/tree.rs):
   the `DependencyTree` type and its `cargo tree`-style renderer, the target the

@@ -18,7 +18,10 @@ resolver guards against two distinct ones, described below. The information-drop
 what the tool must defeat; the
 [panic hazards](#panic-hazards-running-compiler-code-inside-the-emitter) section near the end is
 what it must *avoid*. It is the more dangerous half: an elision produces a worse message, but a
-re-entrancy panic aborts the whole compilation.
+re-entrancy panic loses the transform. The emitter contains such a panic and shows the diagnostic as
+rustc built it (see [The driver](driver.md#containing-the-drivers-own-panics)), so the user keeps
+their errors, but the CGP reshaping is gone. A panic inside a query also leaves that query
+poisoned, and a later use of it raises a fatal error that ends the compilation early.
 
 Every path here points into the read-only Rust checkout at
 [`../external/rust`](../../../external/rust), pinned to the same nightly the driver embeds (see
@@ -176,8 +179,10 @@ is the source of every panic risk the tool faces. rustc calls the emitter to *re
 diagnostic; it does not expect the emitter to turn around and drive the trait solver, force queries,
 or relate types. The resolver does exactly that (it re-runs the failing obligation through a fresh
 `InferCtxt`), so it lives in territory rustc's invariants do not cover, and it must respect a few of
-those invariants by hand or the whole compilation aborts. This section collects the hazards so the
-next agent recognizes them before adding a new compiler interaction to the resolver; the per-feature
+those invariants by hand or the transform fails. The emitter contains the resulting panic and falls
+back to rustc's diagnostic, so the hazards cost the reshaping rather than the compilation, but a
+fallback is still a defect. This section collects the hazards so the next agent recognizes them
+before adding a new compiler interaction to the resolver; the per-feature
 detail lives in [Typed root-cause resolution](typed-root-cause-resolution.md) and
 [The driver](driver.md), and this is the index to it.
 

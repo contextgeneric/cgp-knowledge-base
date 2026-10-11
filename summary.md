@@ -675,7 +675,8 @@ it stale.
 - [executable-structure.md](cargo-cgp/implementation/executable-structure.md) — the two-executable
   split, the cargo wrapping, and the environment contract between front-end and driver.
 - [driver.md](cargo-cgp/implementation/driver.md) — the deep dive into the rustc wrapper: argument
-  preparation, compiler-API access, the injected flags, and every diagnostic transform.
+  preparation, compiler-API access, the injected flags, every diagnostic transform, and how a panic
+  in the driver falls back to rustc's own diagnostics.
 - [error-pipeline.md](cargo-cgp/implementation/error-pipeline.md) — how the stages fit together to
   turn raw diagnostics into readable CGP errors, all inside the driver.
 - [error-processing.md](cargo-cgp/implementation/error-processing.md) — the rustc-free crate holding

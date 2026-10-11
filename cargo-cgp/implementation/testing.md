@@ -78,8 +78,9 @@ cover sit under `uncataloged/<class>/` (the used-but-undeclared and wrong-half c
 lists as a gap, the extensible-data family, wiring keys that do not resolve, and macro defects),
 each awaiting a catalog page. The largest class, `checks/check-trait-failure/`, keeps concept
 sub-directories (`fields/`, `providers/`, `missing-wiring/`, and the rest) so no directory grows
-crowded. Two directories hold fixtures that belong to no error class: `ok/` for programs that
-compile clean, and `pass-through/` for plain Rust errors the tool must render exactly as rustc does.
+crowded. Three directories hold fixtures that belong to no error class: `ok/` for programs that
+compile clean, `pass-through/` for plain Rust errors the tool must render exactly as rustc does, and
+`robustness/` for how the tool degrades when it fails itself, such as a panic in its emitter.
 Every fixture name is unique across the tree, so a fixture can be found by name alone.
 
 **How well the tool presents a fixture's error is a header field rather than a directory.** Every
@@ -147,10 +148,10 @@ header.
   hand-reviewed snapshot. A pass-through fixture that the tool still rewrites falsely declares
   `//@rewrites-falsely: <reason>`; its snapshots then pin today's output, and the check reports the
   marker once the outputs agree, so the fix that closes it also removes it.
-- **The header check** runs for every error fixture (everything outside `ok/` and `pass-through/`):
-  it requires a `//@quality:` directive and a `//@codes:` list equal to the set of `[CGP-Exxx]`
-  codes in the tool's output, so a fixture that gains or loses a code fails instead of being
-  re-blessed unnoticed.
+- **The header check** runs for every error fixture (everything outside `ok/`, `pass-through/`, and
+  `robustness/`): it requires a `//@quality:` directive and a `//@codes:` list equal to the set of
+  `[CGP-Exxx]` codes in the tool's output, so a fixture that gains or loses a code fails instead of
+  being re-blessed unnoticed.
 
 A fixture that declares `//@json` also runs **the JSON pass**, which runs
 `cargo cgp check --message-format=json` and compares its compiler messages with `<name>.cgp.json`.
@@ -203,12 +204,14 @@ tool's libraries. Running the full suite builds the front-end and its driver and
 needs both present.
 
 A fixture states what the harness must do with it through **directives**: line comments that start
-with `//@`, as in Clippy's UI tests, which the compiler ignores and only the harness reads. Five
+with `//@`, as in Clippy's UI tests, which the compiler ignores and only the harness reads. Six
 exist: `//@aux-build: <crate>` (an auxiliary crate, below), `//@rewrites-falsely: <reason>` (the
-pass-through exception above), `//@json` (the JSON pass), and the header's `//@quality:` and
-`//@codes:`. A misspelled directive would silently do nothing, so the parser rejects an unknown
-`//@name` and a known name written in another comment form, such as `// @json` with a space; a
-comment that merely starts with an `@`-path, such as commented-out wiring, stays legal.
+pass-through exception above), `//@json` (the JSON pass), `//@env: <KEY>=<VALUE>` (an environment
+variable for the tool's runs, which the `robustness/` fixtures use to make the emitter panic on
+purpose), and the header's `//@quality:` and `//@codes:`. A misspelled directive would silently do
+nothing, so the parser rejects an unknown `//@name` and a known name written in another comment
+form, such as `// @json` with a space; a comment that merely starts with an `@`-path, such as
+commented-out wiring, stays legal.
 
 ### How a fixture is compiled
 
@@ -449,7 +452,7 @@ suite. There is no dogfood test yet (see above).
 - [`crates/cargo-cgp-ui-tests/tests/harness/directives.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/directives.rs):
   every directive read together, none declared, `//@codes: none`, commented-out `@`-path wiring left
   alone, and the rejection of an unknown directive, a spaced directive, a `//@rewrites-falsely:`
-  without a reason, a malformed code, and an unknown quality.
+  without a reason, an `//@env:` without an assignment, a malformed code, and an unknown quality.
 - [`crates/cargo-cgp-ui-tests/tests/harness/passes.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/passes.rs):
   the header check (exact codes, a missing directive, `//@codes: none`), the collection of codes
   from output, the status check (agreement and disagreement in both directions), the pass-through
@@ -474,7 +477,7 @@ suite. There is no dogfood test yet (see above).
   `normalize`, `snapshot`).
 - [`tests/ui/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui): the fixture tree,
   one scenario per `.rs` file with its `.cgp.stderr`, `.rust.stderr`, and `.expand.rs` snapshots,
-  grouped into error-class directories beside `ok/` and `pass-through/`.
+  grouped into error-class directories beside `ok/`, `pass-through/`, and `robustness/`.
 - [`crates/cargo-cgp/src/args.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/args.rs),
   [`crates/cargo-cgp-driver/src/args.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/args.rs):
   the modules the argument tests cover.

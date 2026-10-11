@@ -29,6 +29,8 @@ same change.
   the diagnostics: the two flag levers (trait solver, verbosity), the generic `CgpEmitter` that
   renders text or JSON like vanilla `rustc`, the emitter that renames CGP wiring notes using the
   live compiler, and the post-processing fallback that keeps un-rewritten CGP constructs readable.
+  It also covers how the driver contains its own panics, falling back to rustc's diagnostics, and
+  keeps rustc's output order when the compiler crashes.
 - [Typed root-cause resolution](typed-root-cause-resolution.md): the deeper emitter transformation
   that turns a check-failure diagnostic into its root-cause `cargo tree`. It recovers the chain by
   re-running the check obligation through the trait solver (from inside `emit_diagnostic`, since

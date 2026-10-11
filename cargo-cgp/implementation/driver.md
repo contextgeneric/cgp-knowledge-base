@@ -739,6 +739,45 @@ resolution-class `E0599` emitted mid-`clauses_of`), recognized by its plain-stri
 (non-string) message. Its wording is the rustc-free `plan_missing_use_provider` /
 `missing_use_provider_help` over the owned `MissingUseProvider`.
 
+## Containing the driver's own panics
+
+**A panic in the driver's own code never costs the user their diagnostics.** The emitter re-runs
+compiler code from inside `emit_diagnostic` and renders every buffered diagnostic from its `Drop`,
+so a bug in either would otherwise stop the compilation with nothing printed, or abort the process
+outright, since the flush runs while the thread unwinds from rustc's fatal-error abort, as every
+failing compilation does. So the emitter runs both under `catch_unwind`
+([`containment`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/containment.rs)):
+
+- **A panic in a transform** buffers that diagnostic as rustc built it, with a note saying the
+  transform failed, naming the panic, and giving the issue tracker, and the compilation goes on to
+  the next diagnostic.
+- **A panic in the flush** emits every buffered diagnostic as rustc built it, each resolution with
+  the same note, in arrival order.
+
+A `FatalErrorMarker` unwind is rustc aborting on a fatal error rather than a panic of the
+driver's, so containment lets it continue.
+
+**A crash elsewhere in the compiler keeps rustc's output order.** Plain rustc prints each error as
+it arrives, so an internal compiler error's report follows the errors before it. The emitter holds
+its diagnostics until the flush, which would put them after the report. The driver therefore sets
+up its panic hooks before the compiler runs, as rustc's own driver does. It installs rustc's ICE
+hook with cargo-cgp's issue tracker as the bug-report URL and the driver version as an extra note.
+It then wraps that hook: a panic the emitter is containing is recorded for the note and printed
+nowhere, and any other panic first has the emitter emit its buffer, untransformed, and then hands
+over to the ICE hook. The buffer and the inner emitter sit behind a lock the hook can reach
+([`output`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/output.rs)).
+They go out untransformed because a second panic inside a panic hook aborts the process, so a crash
+is no time to run the flush's rendering. The driver also initializes rustc's `RUSTC_LOG` logger,
+as rustc and Clippy do.
+
+**No input is known to make the emitter panic**, so the fixtures that pin the fallback make it
+panic on purpose. The `CARGO_CGP_TEST_PANIC` environment variable names the stage that panics
+(`transform` or `flush`), and the
+[`robustness/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/robustness)
+fixtures set it with the harness's `//@env:` directive. The ICE ordering is checked by hand with
+`RUSTFLAGS=-Ztreat-err-as-bug=2`, since an ICE report carries a backtrace, a timestamped file name,
+and the compiler's version, none of which a snapshot can hold.
+
 ## Comparison with Clippy
 
 The driver follows `clippy-driver` closely in its skeleton: both detect wrapper mode by testing
@@ -764,13 +803,12 @@ will likely grow toward it:
   `rustc_driver::args::raw_args`, which also expands `@argfile` arguments that cargo passes on some
   platforms (notably Windows, to dodge command-line length limits). Until this is adopted, an
   `@argfile` invocation would not be handled.
-- **Driver front-matter.** Clippy's driver installs a logger (`init_rustc_env_logger`) and an ICE
-  hook (`install_ice_hook`) with a bug-report URL, and handles `--version`, `--help`, and a
-  `--rustc` passthrough. `cargo-cgp` answers `--version` and `--help` (above) but installs no logger
-  or ICE hook and has no `--rustc` passthrough; a panic in the driver therefore surfaces as a plain
-  panic rather than a formatted ICE report. The panics most within the tool's power to cause come
-  from the emitter re-running compiler code, and the ways to avoid them are catalogued in
-  [rustc diagnostic internals](rustc-diagnostic-internals.md#panic-hazards-running-compiler-code-inside-the-emitter).
+- **Driver front-matter.** Both drivers install rustc's logger (`init_rustc_env_logger`) and its
+  ICE hook (`install_ice_hook`) with their own bug-report URL, and both answer `--version` and
+  `--help`. `cargo-cgp` additionally wraps the ICE hook, so a panic its emitter contains is not
+  reported and a real crash prints the buffered diagnostics first (see
+  [Containing the driver's own panics](#containing-the-drivers-own-panics)); Clippy emits as it
+  goes and needs neither. Clippy also has a `--rustc` passthrough, which `cargo-cgp` lacks.
 - **Info-query handling.** Clippy detects cargo's info queries (`-vV`, `--print`) and its
   `--cap-lints=allow` / `--no-deps` cases to *skip* running its lints for them. The driver already
   skips *flag injection* for `-vV` and `--print` (above), and its emitter rewrite is a no-op on the
@@ -805,6 +843,14 @@ will likely grow toward it:
   skips.
 - [`crates/cargo-cgp-driver/tests/driver/help.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/help.rs):
   `wants_help` detecting the help flags, and the help text explaining the wrapper role and flags.
+- [`crates/cargo-cgp-driver/tests/driver/test_panic.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/test_panic.rs):
+  the `CARGO_CGP_TEST_PANIC` values that arm each stage, and the values that arm none.
+- [`crates/cargo-cgp-error-processing/tests/error_processing/internal_error.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/internal_error.rs):
+  the note on a diagnostic shown untransformed after a contained panic.
+- [`tests/ui/robustness/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/robustness):
+  `panic_in_transform` and `panic_in_flush`, a wiring failure between two type errors with the
+  emitter made to panic in each stage, pinning that every error still prints, as rustc built it,
+  with the internal-error note.
 - [`crates/cargo-cgp-error-processing/tests/error_processing/rewrite.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/rewrite.rs):
   the compiler-free rewrite over a hand-built name map, run on any toolchain: both note forms and
   both header forms; generic components (a single parameter reattached to the header, a
@@ -833,8 +879,8 @@ will likely grow toward it:
 ## Source
 
 - [`crates/cargo-cgp-driver/src/run.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/run.rs):
-  the entrypoint: reads the sysroot, prepares the argument vector, runs the compiler under
-  `catch_with_exit_code`.
+  the entrypoint: installs the logger and the panic hooks, reads the sysroot, prepares the argument
+  vector, and runs the compiler under `catch_with_exit_code`.
 - [`crates/cargo-cgp-driver/src/args.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/args.rs):
   `rustc_args`: wrapper-mode stripping, sysroot injection, flag injection, and the info-query skip.
 - [`crates/cargo-cgp-driver/src/config.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/config.rs):
@@ -848,17 +894,20 @@ will likely grow toward it:
   compiler's default emitter for the active format (a `JsonEmitter` or an `AnnotateSnippetEmitter`)
   and wraps it, `cgp_emitter.rs` holds the `CgpEmitter<E>` type (holding the `ComponentNameMap`, the
   rustc-free `DedupLedger` of already-emitted failures, the `cgp_spans` list of recognized-failure
-  spans that anchors the `?`-operator cascade suppression, and the arrival-ordered `buffer` of
-  `BufEntry`s flushed from `Drop` (`Plain` verbatim in place, `Resolved` having its `root cause:`
-  note rendered there against the flush's shared `seen` set, and the `coalescible` ones additionally
-  partitioned by `group_by_shared_cause` and merged into one consumer header per group by
-  `merged_diag`, after which `rebuild_explain_footers` makes the trailing `rustc --explain` footer
-  name only the codes that survived)) and its transform/post-process/de-duplicate/coalesce
-  orchestration, and `edit.rs` holds the `DiagInner`-editing helpers (including `message_signature`,
-  the span-independent text key for de-duplicating a declined-but-rewritten diagnostic;
-  `strip_method_probe_advice`, the drop of rustc's associated-function framing on a declined
-  consumer-method `E0599`; and `is_question_mark_cascade`, the `Try`/`FromResidual`-shape recognizer
-  for the cascade drop; the text phrasings all three key on live in the rustc-free
+  spans that anchors the `?`-operator cascade suppression, and the shared output whose
+  arrival-ordered buffer of `BufEntry`s is flushed from `Drop` (`Plain` verbatim in place,
+  `Resolved` having its `root cause:` note rendered there against the flush's shared `seen` set, and
+  the `coalescible` ones additionally partitioned by `group_by_shared_cause` and merged into one
+  consumer header per group by `merged_diag`, after which `rebuild_explain_footers` makes the
+  trailing `rustc --explain` footer name only the codes that survived)) and its
+  transform/post-process/de-duplicate/coalesce orchestration, `buffer.rs` the buffered entries and
+  their untransformed fallback, `output.rs` the inner emitter and buffer shared with the panic hook,
+  `containment.rs` the `catch_unwind` wrapper and the panic hooks, `test_panic.rs` the panic a
+  fixture raises on purpose, and `edit.rs` holds the `DiagInner`-editing helpers (including
+  `message_signature`, the span-independent text key for de-duplicating a declined-but-rewritten
+  diagnostic; `strip_method_probe_advice`, the drop of rustc's associated-function framing on a
+  declined consumer-method `E0599`; and `is_question_mark_cascade`, the `Try`/`FromResidual`-shape
+  recognizer for the cascade drop; the text phrasings all three key on live in the rustc-free
   [`signals`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/signals.rs)
   module).
 - [`crates/cargo-cgp-driver/src/component_map.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/component_map.rs):
