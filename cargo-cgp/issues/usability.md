@@ -317,6 +317,8 @@ check that its premise holds before it fires. These fixtures pin the false line:
   `@`-path segment is rewritten into the `[CGP-E010]` cycle with its `UseContext` advice.
 - [`type_error_in_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/type_error_in_wiring.rs): an unresolved wiring type becomes a `{type error}: Debug`
   root cause.
+- [`question_mark_after_failed_handle`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/question_mark_after_failed_handle.rs): the `?` after a
+  failing builder call becomes a `CanRaiseError<()>` failure, and the real mistake is not shown.
 
 ## Construct failures that carry no fix
 
