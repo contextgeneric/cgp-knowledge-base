@@ -179,8 +179,8 @@ the newest version of either kind, so it reaches the release it previewed) and d
 already have the newest. When there is a newer version it reinstalls the front-end at exactly that
 version and re-runs the new `setup` to bring the driver and toolchain up to match. On Windows the
 running binary is locked and cannot replace itself, so `update` prints the two commands
-(`cargo install cargo-cgp --version <version>` then `cargo cgp setup`) to run by hand from a shell
-where the tool is not running.
+(`cargo install cargo-cgp --version <version> --locked` then `cargo cgp setup`) to run by hand from
+a shell where the tool is not running.
 
 On the Nix path there is no `cargo cgp update`; you upgrade by refreshing the flake instead. For an
 installed profile, upgrade it (`nix profile upgrade`); for the tool pinned as an input in another

@@ -153,14 +153,16 @@ it carries everything needed to provision the rest of the tool itself.
 `cargo cgp setup` then performs the two heavyweight steps under the pinned string it reads from that
 constant, so the user never types the nightly date. It runs
 `rustup toolchain install <PINNED_TOOLCHAIN> -c rustc-dev -c llvm-tools` for the build-time compiler
-internals, then `cargo install cargo-cgp-driver --version <version>` with
+internals, then `cargo install cargo-cgp-driver --version <version> --locked` with
 `RUSTUP_TOOLCHAIN=<PINNED_TOOLCHAIN>` (the equivalent of `cargo +<PINNED_TOOLCHAIN> install …`) to
 build the driver under that exact nightly, passing `--root` so it lands next to the front-end in
-`~/.cargo/bin`. The explicit toolchain is mandatory, not stylistic: without it `cargo install` would
-build the driver against the active toolchain and fail on stable or mis-version on another nightly
-(cargo#11036 again). Pinning the driver to the front-end's own version (`--version <version>`) is
-what keeps the pair in lockstep, and it is possible only because the two crates are released
-together (below).
+`~/.cargo/bin`. `--locked` builds the `Cargo.lock` published with the crate, so the driver links the
+dependency versions the release was tested with, including the `syn` and `prettyplease` versions
+whose output the expand snapshots pin, instead of the newest compatible ones. The explicit toolchain
+is mandatory, not stylistic: without it `cargo install` would build the driver against the active
+toolchain and fail on stable or mis-version on another nightly (cargo#11036 again). Pinning the
+driver to the front-end's own version (`--version <version>`) is what keeps the pair in lockstep,
+and it is possible only because the two crates are released together (below).
 
 Keeping the two crates separate is exactly what enables this. Folding the driver into the
 `cargo-cgp` package as a second `[[bin]]` would force the whole package, front-end included, to
@@ -184,10 +186,11 @@ knowingly.
 
 `cargo cgp setup` performs the full provisioning: install the pinned toolchain
 (`rustup toolchain install <PINNED_TOOLCHAIN> -c rustc-dev -c llvm-tools`) and build the driver
-under it (the equivalent of `cargo +<PINNED_TOOLCHAIN> install cargo-cgp-driver@<version>`), landing
-it beside the front-end. It is the command a user runs once after `cargo install cargo-cgp`, and the
-command the preflight names whenever it finds something wrong. Making provisioning a single named
-subcommand gives the docs one stable entry point instead of a shifting list of `rustup` and `cargo`
+under it (the equivalent of
+`cargo +<PINNED_TOOLCHAIN> install cargo-cgp-driver@<version> --locked`), landing it beside the
+front-end. It is the command a user runs once after `cargo install cargo-cgp`, and the command the
+preflight names whenever it finds something wrong. Making provisioning a single named subcommand
+gives the docs one stable entry point instead of a shifting list of `rustup` and `cargo`
 incantations, and it is the one place that reads `PINNED_TOOLCHAIN`, so the user never types the
 nightly date.
 
@@ -273,12 +276,12 @@ A `cargo cgp update` subcommand upgrades the tool to its latest version, and its
 the only ordering that can work. A release may bump the pinned nightly, and the knowledge of the new
 toolchain and the new provisioning logic lives *inside* the new `cargo-cgp` binary; the old process
 cannot provision the new driver because it only knows the old pin. So `update` first reinstalls the
-front-end with `cargo install cargo-cgp --version <target>` (which, having no compiler linkage,
-builds under any toolchain and needs no pinned nightly; the version is named because a bare
+front-end with `cargo install cargo-cgp --version <target> --locked` (which, having no compiler
+linkage, builds under any toolchain and needs no pinned nightly; the version is named because a bare
 `cargo install` takes the newest *stable* release, the wrong target for a pre-release moving to a
-newer pre-release), then runs the freshly installed `cargo-cgp setup` as a child
-process, which brings the driver and toolchain up to the new version. The heavy `rustc-dev` work
-stays deferred to the new `setup`, exactly where it belongs.
+newer pre-release), then runs the freshly installed `cargo-cgp setup` as a child process, which
+brings the driver and toolchain up to the new version. The heavy `rustc-dev` work stays deferred to
+the new `setup`, exactly where it belongs.
 
 Before touching anything, `update` finds out whether there is a newer version to move to **that the
 running version's channel allows** and skips out early when there is not. It reads the crates.io
@@ -326,10 +329,11 @@ process *is* `~/.cargo/bin/cargo-cgp`, the file `cargo install` overwrites. On U
 cargo writes the new binary alongside and moves it over the old name with an atomic rename, and the
 running process keeps executing its original inode. On **Windows a running executable is locked**,
 so the `cargo install` step fails with "Access is denied." `update` catches that failure and prints
-the exact commands for the user to run by hand (`cargo install cargo-cgp` followed by
-`cargo cgp setup`, from a shell where `cargo-cgp` is not currently running), which succeed precisely
-because they are not self-referential. The tool does not embed a self-replacing installer to work
-around this; it delegates to cargo and hands the user the manual path when cargo cannot finish.
+the exact commands for the user to run by hand
+(`cargo install cargo-cgp --version <version> --locked` followed by `cargo cgp setup`, from a shell
+where `cargo-cgp` is not currently running), which succeed precisely because they are not
+self-referential. The tool does not embed a self-replacing installer to work around this; it
+delegates to cargo and hands the user the manual path when cargo cannot finish.
 
 Two smaller properties round out the design. **An interrupted update degrades safely**: between
 reinstalling the front-end and finishing `setup`, the machine briefly holds a new front-end against
@@ -699,9 +703,13 @@ UI suite exercises the managed/unmanaged wiring end to end.
   [`rust-toolchain.toml`](https://github.com/contextgeneric/cargo-cgp/blob/main/rust-toolchain.toml).
 - [`crates/cargo-cgp/tests/front_end/update.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/update.rs):
   `sparse_index_path` over the registry's dir convention; `parse_versions` skipping yanked and
-  unparseable lines; and `select_update` (a stable install taking the highest stable and *never* a
+  unparseable lines; `select_update` (a stable install taking the highest stable and *never* a
   pre-release, a pre-release install taking the highest newer version of either kind, including the
-  release it previewed, and no-newer/downgrade yielding `None`), all without a network call.
+  release it previewed, and no-newer/downgrade yielding `None`), all without a network call; and
+  `frontend_install_args`, the locked reinstall at the chosen version.
+- [`crates/cargo-cgp/tests/front_end/setup.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/setup.rs):
+  `driver_install_args`, the locked driver install at the front-end's version, with and without the
+  `--root` that places it beside the front-end.
 - [`crates/cargo-cgp/tests/front_end/command.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/command.rs):
   `forwards_target_dir` detects an explicit `--target-dir` (spaced or `=`) so the default is not
   injected over it; `forwarded_manifest_path` finds a `--manifest-path` in either form; and
