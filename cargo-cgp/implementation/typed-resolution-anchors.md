@@ -208,15 +208,15 @@ by-blanket-trait use-site anchors) reach a `#[cgp_fn]`/`#[blanket_trait]` **blan
 consumed like a consumer but which is not a component, so no marker or provider trait identifies it.
 The only structural mark it carries is a blanket impl over a bare context, and that alone is far too
 broad to key on: `ToString`, `Into`, and `Borrow` all have one, and reshaping their failures into
-CGP errors would be an over-reach. So `is_blanket_trait` accepts a trait two ways. One the **checked
-crate defines** qualifies outright, since cargo-cgp runs on CGP workspaces and a failing local
-blanket trait is the shape `#[cgp_fn]` produces. A **foreign** one must show that its blanket
-genuinely depends on CGP: on a trait from cgp's own crates (`HasField` above all), on a CGP consumer
-trait, or on another blanket trait that does, followed a few links through composed blanket traits.
-That is what lets the reshaping reach a blanket trait a *library* publishes, which is where such
-traits normally live
+CGP errors would be an over-reach. A CGP crate's own ordinary blanket traits carry one too
+(`impl<T: Clone> Describe for T`). So `is_blanket_trait` accepts a trait, local or foreign, only
+when its blanket genuinely depends on CGP: on a trait from cgp's own crates (`HasField` above all),
+on a CGP consumer trait, or on another blanket trait that does, followed a few links through
+composed blanket traits. That admits the `#[cgp_fn]` output of the checked crate and a blanket trait
+a *library* publishes, which is where such traits normally live
 ([`upstream_blanket_trait_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/upstream_blanket_trait_use_site.rs)),
-while still excluding the std blankets the rule is aimed at.
+while a plain blanket trait in either place keeps rustc's diagnostic
+([`local_blanket_trait_reached`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/local_blanket_trait_reached.rs)).
 
 **From a use site, by blanket trait.** The seventh and last anchor,
 `resolve_use_site_blanket_trait`, is the by-consumer anchor's counterpart for a

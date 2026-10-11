@@ -341,9 +341,9 @@ marking.
     required as a bound, reading the context off the failing expression via the call-site anchor's
     `contexts_at_spans` and heading the result `[CGP-E009]` by clearing `consumers_are_cgp`. A
     blanket trait is recognized by `is_blanket_trait`: a blanket impl over a bare context, accepted
-    outright for a trait the checked crate defines and, for a foreign one, only on evidence that the
-    blanket depends on a CGP construct, so a blanket trait a library publishes is reached while
-    `ToString` and `Into` are not.
+    only on evidence that the blanket depends on a CGP construct, so a `#[cgp_fn]` trait or one a
+    library publishes is reached while `ToString`, `Into`, and a crate's own plain blanket traits
+    are not.
   - [`call_site/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/call_site)
     holds the sixth anchor, `resolve_call_site`, the HIR re-read of the failing call, one stage per
     file: `find_call.rs` (`method_calls_at`, the calls at the diagnostic's primary spans, or inside
@@ -409,7 +409,7 @@ marking.
     / `provider_blanket_marker` (the `DelegateComponent`-bounded provider blanket),
     `consumer_provider_trait` / `is_consumer_trait`, and `marker_to_consumer`), plus the `Symbol!`
     field-name decode, `is_namespace_lookup_trait` (by the single-`Delegate`-associated-type
-    fingerprint), and the shared `PathCons`/`Nil`/local-ADT recognizers. A sibling
+    fingerprint plus CGP evidence), and the shared `PathCons`/`Nil`/local-ADT recognizers. A sibling
     [`conflict/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/conflict)
     handles the duplicate-key `E0119` conflict, and a sibling
     [`orphan.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/orphan.rs)
@@ -665,9 +665,15 @@ fixtures:
   [`cgp_fn_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/cgp_fn_missing_field.rs).
 - `upstream_blanket_trait_use_site`: the `cgp_fn_use_site` shape with the blanket trait defined in
   an *upstream* crate (via `//@aux-build`), the arrangement a library publishing blanket traits
-  produces. Pins the foreign half of `is_blanket_trait`: a locality-only rule would stop the
+  produces. Pins the foreign reach of `is_blanket_trait`: a locality-only rule would stop the
   `[CGP-E009]` reshaping at the crate boundary and leave rustc's `E0599`, while the CGP-evidence
   rule (`Describe` → `HasName` → `HasField`) reaches it.
+- `local_blanket_trait_reached` (under
+  [`pass-through/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/pass-through)):
+  a local blanket trait bounded only on `Clone`, reached through a wrapper impl and a direct call,
+  left as rustc wrote it because its blanket shows no CGP evidence.
+- `lookalike_namespace_trait` (same directory): a user trait with a lone `type Delegate` and two
+  conflicting impls, left as rustc's `E0119` because no impl shows namespace evidence.
 - `cgp_fn_where_bound`: the same `#[cgp_fn]` trait required through a `where` **bound**
   (`fn greet_all<Context: GetName>(…)`) rather than called, so the failure is an `E0277` on the call
   with no method call to read. Pins the by-blanket-trait anchor (`resolve_use_site_blanket_trait`):

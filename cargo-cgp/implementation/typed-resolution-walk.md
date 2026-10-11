@@ -171,7 +171,10 @@ treats everything else as a leaf. It deliberately does *not* follow
   namespace itself, it is the missing-dispatch-entry leaf, as a path key on that provider is. The
   bound is recognized not by name but by the trait's *fingerprint*, a single `Delegate` associated
   type, which `DefaultNamespace`, the `DefaultImpls*` traits, and every user `cgp_namespace!` trait
-  share. So a same-named user namespace is caught without a `DefId` anchor.
+  share. Any user trait can have that shape, so the trait must also show CGP evidence: it is one of
+  CGP's own, an impl of it is keyed by a component marker or a `PathCons` path (the entries
+  `cgp_namespace!` writes), or an impl's `where` clause names a parent namespace that shows the same
+  evidence. So a user namespace is caught without a `DefId` anchor, and a lookalike trait is not.
 - An **ordinary bound on a foreign type** (`f64: Eq`) is a leaf, and the descent must not walk into
   whatever unrelated `std` blanket impl happens to match its `Self` (an `impl<F: FnPtr> Eq for F`
   would otherwise fabricate a misleading `f64: FnPtr` step). A **constrained `DelegateComponent`
