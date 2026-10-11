@@ -283,6 +283,11 @@ deterministically against a rigid placeholder region but stalls against an uncon
 region. The instantiation is a no-op for an ordinary binder-free obligation, so only the
 higher-ranked case changes.
 
+The walk does not descend an obligation that holds a `{type error}`, the type rustc puts where an
+earlier error left a name unresolved. Such a type unifies with anything, so following it could only
+invent a cause (a `{type error}: Debug` bound) or a loop, and the earlier error is the cause to fix
+([`type_error_in_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/type_error_in_wiring.rs)).
+
 Two safeguards keep the descent bounded. A **cycle guard** stops a branch as soon as an obligation
 reappears among its own ancestors (a `UseContext` loop routes `Ctx: Consumer` straight back to
 itself), so a cyclic wiring bottoms out at its first repeat rather than spinning. The depth cap

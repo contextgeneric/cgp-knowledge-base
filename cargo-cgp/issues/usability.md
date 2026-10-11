@@ -297,8 +297,6 @@ check that its premise holds before it fires. These fixtures pin the false line:
 - [`check_trait_named_as_wrapper`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/checks/check_trait_named_as_wrapper.rs): a generic key in
   `delegate_and_check_components!` presents the generated `__CanUseApp` check trait as the user's
   trait in a `[CGP-E009]` headline.
-- [`type_error_in_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/type_error_in_wiring.rs): an unresolved wiring type becomes a `{type error}: Debug`
-  root cause.
 - [`question_mark_after_failed_handle`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/handlers/question_mark_after_failed_handle.rs): the `?` after a
   failing builder call becomes a `CanRaiseError<()>` failure, and the real mistake is not shown.
 

@@ -357,11 +357,14 @@ naming the usual cause and the two fixes (`wiring_overflow_help`); the
 [`use_context_cycle`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/use_context_cycle.rs)
 fixture pins the reshaped output. An overflow can also follow from an earlier unresolved name: a
 wiring entry that names a type the compiler could not resolve holds a `{type error}`, and a lookup
-through it can overflow with no cycle in the wiring. So the emitter leaves an `E0275` at a check
-entry in rustc's wording when the checked context's `DelegateComponent` entries hold such a type
-(`overflow_follows_type_error` in the driver's `resolve/overflow.rs`), since the earlier error is
-the one to fix
+through it can overflow with no cycle in the wiring. So before the rewrite the emitter walks the
+check entry's consumer obligation (`overflow_is_wiring_cycle` in the driver's `resolve/overflow.rs`),
+and an `E0275` whose walk meets neither the cycle guard nor the depth cap keeps rustc's wording,
+since the earlier error is the one to fix
 ([`path_segment_read_as_type`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/macro-defects/path_segment_read_as_type.rs)).
+The walk does not descend an obligation holding a `{type error}`, so a type error cannot make it
+loop, while a real cycle beside one is still reported
+([`type_error_in_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/type_error_in_wiring.rs)).
 The emitter applies the full dispatch only to a diagnostic's
 *main* message and the note rename to its children, since a CGP error code belongs on a main message
 alone. A message whose marker is absent from the map, or any other message, passes through
