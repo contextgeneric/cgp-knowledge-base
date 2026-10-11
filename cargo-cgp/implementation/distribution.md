@@ -172,6 +172,13 @@ places both in `~/.cargo/bin`, so the front-end's sibling lookup
 finds the driver with no configuration. Lockstep is enforced by the version preflight below, not by
 shared packaging.
 
+Each of the four published crates (the two binaries and the two rustc-free libraries the driver
+depends on) ships the MIT `LICENSE` its manifest declares and a README. The front-end's README is
+the repository's; the driver's says to install it through `cargo cgp setup`, and each library's says
+it serves the driver and that its API may change in any release. Each crate's `LICENSE` is a symlink
+to the one workspace file, as each binary's `rust-toolchain.toml` is, and cargo packages the file it
+points to.
+
 ## Provisioning: `setup` does the work, `check` only verifies
 
 All provisioning is delegated to one command, and `cargo cgp check` never installs or builds
@@ -427,10 +434,11 @@ toolchain being queried. The user-facing account is in
 [Troubleshooting](../reference/troubleshooting.md#a-nix-install-fails-its-sysroot-probe-under-cargo-cgp).
 
 The flake's source input is deliberately narrowed with `lib.fileset` to the crate sources, the
-manifests, the lockfile, and `rust-toolchain.toml`: everything the build reads and nothing else. The
-churny, build-irrelevant trees at the repository root (`docs/`, the `tests/ui` fixtures,
-`README.md`, `AGENTS.md`) are excluded, so editing them leaves the derivation's input hash unchanged
-and the built binaries cached; only a real source change triggers a rebuild.
+manifests, the lockfile, `rust-toolchain.toml`, and the `LICENSE` the crates link to: everything the
+build reads, plus the target of those links, and nothing else. The churny, build-irrelevant trees at
+the repository root (`docs/`, the `tests/ui` fixtures, `README.md`, `AGENTS.md`) are excluded, so
+editing them leaves the derivation's input hash unchanged and the built binaries cached; only a real
+source change triggers a rebuild.
 
 Running the check under Nix inherits the same caveat as the managed path: because the tool forces a
 fixed diagnostic nightly under `-Znext-solver`, the check compiles against a compiler the project
