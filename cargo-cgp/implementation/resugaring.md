@@ -464,7 +464,14 @@ The chain's strip,
 collapses an `a::b::C` identifier run to its final segment unless the qualifier tells two types
 apart. rustc's own rule decides which ones do: a name it prints qualified is either non-unique or
 glob-imported, so a qualified name the crate does not glob-import is ambiguous, and its qualifier
-stays. The driver supplies the glob-imported names from the resolver's `glob_map`. Two kinds of run
+stays. A glob-imported name is qualified whether or not it collides, so the driver also reads which
+item each glob brings in under the name, and a printed path that is not one of those items keeps
+its qualifier: in a crate that glob-imports its own `Error`, `std::io::Error` stays qualified
+([`glob_imported_error_route`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/errors/glob_imported_error_route.rs)).
+The driver supplies the glob-imported names from the resolver's `glob_map`, and the items from each
+glob `use`'s target module. Reading that module needs the HIR, so only a message the tool rewrote
+gets it; an untransformed message, which can arrive during name resolution, treats a glob-imported
+name as unambiguous. Two kinds of run
 always collapse: one rooted at the `cgp` crate, since the prelude glob is why rustc qualifies it,
 and one ending in a name of CGP's encoding (`Symbol`, `Chars`, `Nil`, `Cons`, `Either`, `Void`,
 `PathCons`, `Field`, `Index`, `HasField`), whichever crate re-exports it, because the stages after

@@ -216,6 +216,13 @@ forcing it from the emitter panics whenever the diagnostic being emitted did not
 The emitter's path strip therefore reads only the resolver's `glob_map`, which is computed long
 before, to decide which qualified names are ambiguous.
 
+Reading the HIR has the same hazard at an earlier phase. Name resolution emits diagnostics (an
+unused import, an unresolved name) before the crate is lowered to HIR, so a HIR read from the
+emitter at that point (`hir_node_by_def_id`, say) forces lowering under the lock, and lowering
+emits. A transform that reads the HIR runs only for a diagnostic from type checking or later,
+which every diagnostic the tool rewrites is; the path strip reads a glob `use`'s target module only
+for such a message.
+
 The rule that keeps the resolver safe follows from *when* these queries are still uncached. A query
 that already ran during analysis is cached, and forcing it from the emitter just returns the cached
 value without re-emitting, which is why the resolver can freely solve obligations against providers
