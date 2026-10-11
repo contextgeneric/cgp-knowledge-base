@@ -372,6 +372,8 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   the `#[cgp_impl]` misuse wording: a consumer trait in the header (naming the provider to use), a
   trait that is not a CGP component, a consumer trait in a provider bound, and an inner provider not
   imported.
+- [`crates/cargo-cgp-error-processing/tests/error_processing/undeclared.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/undeclared.rs):
+  the `[CGP-E012]` header naming the undeclared trait, and the help naming the `#[uses(…)]` to write.
 - The [UI snapshot suite](testing.md) exercises the transforms over every fixture's real
   diagnostics: each `.cgp.stderr` is what the driver rendered after applying them.
 
