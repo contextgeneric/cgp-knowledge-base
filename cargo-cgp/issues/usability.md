@@ -289,15 +289,56 @@ the work is the same leaf: name the field or variant the generated types encode.
 
 ## A rewrite states something false
 
-Two text rewrites misfire. A `HasField` bound whose tag misspells a field the struct derives has
-rustc's "similar impl" help rewritten into "`#[derive(HasField)]` is required to access field
-`nmae`", although the derive is present and the mistake is the spelling
-([`field_tag_typo_derive_hint`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/field_tag_typo_derive_hint.rs)). And the `E0275`
-overflow that cascades from an unresolved `@`-path segment is rewritten into the `[CGP-E010]` wiring
-cycle with its `UseContext` advice
-([`path_segment_read_as_type`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/path_segment_read_as_type.rs)). Each rewrite needs a
-check that its premise holds: the derive is absent, or the overflow is not downstream of another
-error.
+Some rewrites state something false, which is worse than passing rustc's text through. Each needs a
+check that its premise holds before it fires. These fixtures pin the false line:
+
+- [`field_tag_typo_derive_hint`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/field_tag_typo_derive_hint.rs): a misspelled `HasField` tag on a struct that
+  derives `HasField` gets a help saying the derive is required.
+- [`deref_has_field_conflict`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/deref_has_field_conflict.rs): an `E0119` overlap between a derived `HasField` and
+  the `Deref` blanket impl gains a missing-derive help and a `[CGP-E108]` root cause.
+- [`getter_unwired_call`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/getter_unwired_call.rs): an unwired `#[cgp_getter]` call names the component
+  marker as the context.
+- [`direct_delegation_missing_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/direct_delegation_missing_key.rs): a `->` delegation to a table lacking the key
+  reports the context, which has the entry, as the table missing it.
+- [`raise_generic_missing_bound`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/raise_generic_missing_bound.rs): `Self::raise_error` without `#[uses]` reports the
+  generated `__Context__` as an inner provider and suggests `#[use_provider]`.
+- [`stripped_error_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/stripped_error_path.rs): a stripped `backend::Error` reads as the abstract `Error`
+  in a `[CGP-E017]` headline and its `UseType<Error>` help.
+- [`open_prefixed_component`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/open_prefixed_component.rs) and [`open_and_use_delegate`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/open_and_use_delegate.rs): the
+  `[CGP-E007]` help names the generated `__Value__`, or a dispatcher, as the provider to wire.
+- [`cgp_computer_no_error_type_call`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/cgp_computer_no_error_type_call.rs): an uninferred `(_, _)` input adds a false
+  `[CGP-E110]` root cause beside the real one.
+- [`path_segment_read_as_type`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/path_segment_read_as_type.rs): an overflow that cascades from an unresolved
+  `@`-path segment is rewritten into the `[CGP-E010]` cycle with its `UseContext` advice.
+- [`type_error_in_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/type_error_in_wiring.rs): an unresolved wiring type becomes a `{type error}: Debug`
+  root cause.
+
+## Construct failures that carry no fix
+
+Many construct mistakes reach the reader as rustc wrote them, or reshaped without the hint that
+names the fix. The cause is in the output, but the reader must know the construct to act on it.
+The fixtures group by construct:
+
+- **Wiring keys and values** (`wiring/keys/`): a trait written as a key, an undeclared provider or
+  value, an unimported or guessed key, each an `E0425` or `E0782` with a wrong suggestion.
+- **Wiring checks, conflicts, and cycles** (`wiring/checks/`, `wiring/conflicts/`,
+  `wiring/cycles/`): a check table defined twice or holding an entry twice, a bundle checked as a
+  context, a hand impl beside wiring, and a cycle reached by a call or through `DebugError`.
+- **Namespaces** (`wiring/namespaces/`, `wiring/constraints/`): a namespace that does not inherit
+  the one a component is prefixed into, a near-miss path, a doubled prefix marker, and the `E0207`
+  forms of `for` loops, `#[default_impl]`, and a self-inheriting namespace.
+- **Lowering** (`lowering/`): a provider trait in `#[uses]`, `Self::CONST` rewritten to the context,
+  a missing `#[uses]` for a supertrait, the abstract `Error` without `#[use_type]`, and `#[uses]` on
+  a component.
+- **Providers, fields, and types** (`providers/`, `fields/`, `types/`): getters wired to the wrong
+  provider, a generic check without its parameter, `UseDelegate` without `#[derive_delegate]`, a
+  provider impl without `#[cgp_provider]`, a tuple-struct context, a field read as two types, and a
+  borrowed error detail.
+- **Handlers** (`handlers/`, `extensible-data/`): promotions of hand-written providers, a matcher
+  wired as a handler or applied to a struct, pipeline stages that disagree, a monadic pipeline over
+  plain values, and matchers or builders missing an arm or a field.
+- **Use sites** (`use-site/`): calls the resolver declines, leaking `IsProviderFor` or rustc's
+  method-probe advice.
 
 ## Untransformed diagnostics print full paths
 
@@ -307,7 +348,10 @@ ones: `cgp::prelude::IsNothing` in an `E0284` headline
 `std::result::Result` in an `E0599` headline
 ([`headline_std_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/paths/headline_std_path.rs)), and
 `cgp::cgp_core::cgp_field::traits::TransformMapFields` inside a machine-applicable suggestion
-([`suggestion_full_paths`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/paths/suggestion_full_paths.rs)). The driver does not set the
+([`suggestion_full_paths`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/paths/suggestion_full_paths.rs), with more cases under
+[`paths/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/usability/paths): a
+`lib::Person` struct path, `__Context__` in a printed signature, and full trait paths in `E0034`
+suggestions). The driver does not set the
 `trimmed_def_paths` option that rustc's own driver sets, so the compiler prints every path in full;
 the module strip shortens most of them afterwards but not all, and it must not touch a suggestion.
 
