@@ -37,6 +37,10 @@ between two components that each delegate through the other fails the same way, 
 branch of the resolution also has a real missing dependency. Then plain `rustc` reports that
 dependency's `E0277` instead of an overflow.
 
+A lookup that grows without ever repeating overflows the same way, though no obligation recurs. A
+provider of `CanShow<T>` that requires `CanShow<Vec<T>>` of its context asks for `CanShow<Vec<T>>`,
+then `CanShow<Vec<Vec<T>>>`, and so on without end.
+
 ## The raw diagnostic
 
 This section describes what plain `cargo check` prints, the fallback when `cargo-cgp` is not on
@@ -90,6 +94,10 @@ you an overflow depth and a chain to decode, the tool states that the wiring rec
 overflow that follows from an unresolved name in the context's wiring, rather than from a cycle,
 keeps rustc's wording, so the earlier `E0425` stays the error to fix.
 
+The growing `CanShow<Vec<T>>` lookup gets the same rewrite. The resolver's walk stops at its depth
+cap instead of its cycle guard, and either stop marks the wiring as never resolving. The `help:`
+note still names a `UseContext` delegation, which does not fit this shape.
+
 The tool does more than restate the overflow when a cycle is tangled with a recoverable cause, and
 this is where its cycle guard earns its keep. In `mutual_cycle_with_cause` (`ProviderA` depends on
 `CanB`, `ProviderB` depends back on `CanA`, walked alongside a genuinely missing `width` field) the
@@ -128,6 +136,18 @@ high enough.
   guard cutting the loop and leading with `[CGP-E002]` over a
   `` root cause: [CGP-E106] missing field `width` `` tree, the cause down the non-cyclic branch
   rather than the cycle.
+- [`wiring/wiring-cycle/cycle_cut_rechecked.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/cycle_cut_rechecked.rs):
+  the same cycle with both components checked, which merge into one `[CGP-E001]` block over the
+  `width` tree; the check of `CanB` resolves only because the resolver does not reuse the subtree
+  the first walk cut.
+- [`wiring/wiring-cycle/cross_context_cycle_reuse.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/cross_context_cycle_reuse.rs):
+  a cycle through two contexts (`Inner`'s provider needs `Outer: Linked`, which needs `Outer: CanM`,
+  whose provider needs `Inner: CanN`) beside a missing `name` field; `Outer`'s tree keeps only the
+  field, because the resolver does not reuse `Inner`'s cached subtree where it would repeat
+  `Outer: Linked`.
+- [`wiring/wiring-cycle/divergent_wiring.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/divergent_wiring.rs):
+  the growing `CanShow<Vec<T>>` lookup above; its `.rust.stderr` pins the raw `E0275` and its
+  `.cgp.stderr` the `[CGP-E010]` rewrite reached through the depth cap.
 
 ## Related
 

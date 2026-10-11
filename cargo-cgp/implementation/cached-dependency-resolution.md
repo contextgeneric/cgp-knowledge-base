@@ -9,10 +9,9 @@ it recurs, without changing a byte of the output.
 interior node on its region-erased obligation and root context, with the incomplete-subtree flag at
 population and the reachable-set disjointness check at consultation, and `resolve_leaves` folds the
 root node's owned sub-result into the diagnostic. It is verified output-preserving against the whole
-`tests/ui/` suite, with a dedicated diamond fixture pinning interior reuse and a
-mutual-cycle fixture pinning the incomplete-subtree cut on a resolving walk. What is still not
-isolated by a test is the reuse disjointness check, whose failure mode is an exotic cross-diagnostic
-multi-node cycle the snapshot suite cannot express on its own (see [Tests](#tests)).
+`tests/ui/` suite, with a dedicated diamond fixture pinning interior reuse, a mutual-cycle fixture
+pinning the incomplete-subtree cut on a resolving walk, and one fixture per guard that fails when
+that guard is removed (see [Tests](#tests)).
 
 It is a companion to [The resolve context](resolve-context.md), a planned refactor that would house
 the cache and frames it as one instance of a larger goal (a rustc-free, mockable resolution core),
@@ -186,6 +185,14 @@ form a cycle. In acyclic wiring an ancestor can never appear in any subtree, sin
 repeat and hence a cycle, so the check always passes and the hit rate is full, diamonds included.
 The check engages, and declines a reuse, only when a genuine multi-node cycle reaches the walk,
 which is exactly where relying on the node-alone key would be unsound.
+
+Within one root context the check never declines, because the root context fixes which bounds the
+walk descends. If a complete subtree of `N` reached an ancestor `A` of the current walk under the
+same contexts, then `A` reaches `N` and `N` reaches `A`, so `N`'s own walk met that loop and was
+cut, and a cut subtree is never cached. A decline therefore needs the loop's obligation walked under
+two root contexts: a plain bound on another context, such as `Outer: Linked` reached from `Inner`'s
+walk, is a leaf there, while `Outer`'s own walk descends it as a bound on its context. The
+`cross_context_cycle_reuse` fixture below builds that shape.
 
 ## The cache key
 
@@ -380,6 +387,30 @@ The primary guard is met; the rest is coverage still to add.
   output-preserving on a minimal, purpose-built diamond rather than only incidentally through the
   serialization fixtures.
 
+Three fixtures isolate the guards: each fails when its guard is removed, and the whole suite
+otherwise passes, so no other fixture catches the removal. Each removal was checked by hand, by
+editing the guard out of `resolve_node` and running the suite.
+
+- **Population guard** (met):
+  [`wiring/wiring-cycle/cycle_cut_rechecked`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/cycle_cut_rechecked.rs)
+  checks both components of the two-component cycle above. Within one walk an ancestor-induced cut
+  never loses a cause (the ancestor's own causes are reported where it is first visited), so the
+  fixture needs a second walk: the walk from `CanA` cuts the loop below `CanB`, leaving `CanB`'s
+  subtree incomplete, and the walk from `CanB` must resolve it afresh to reach the missing field
+  through `CanA`. Storing the incomplete subtree leaves `CanB`'s check an empty result, and its
+  error falls back to rustc's text.
+- **Depth cut** (met):
+  [`wiring/wiring-cycle/divergent_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/divergent_wiring.rs)
+  checks a lookup that grows without repeating (`CanShow<T>` requiring `CanShow<Vec<T>>`), so the
+  depth cap is the only cut. Its incomplete flag lets the tool word the overflow as `[CGP-E010]`,
+  so a depth cut that leaves the flag clear loses the rewrite.
+- **Reuse disjointness** (met):
+  [`wiring/wiring-cycle/cross_context_cycle_reuse`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/cross_context_cycle_reuse.rs)
+  builds the two-context loop of
+  [the consultation guard](#consultation-reuse-only-where-no-cycle-would-form). Skipping the
+  reachable-set check splices the looping `Outer: Linked` leaf into `Outer`'s tree as a second root
+  cause.
+
 The tests below do not exist yet; they are the coverage still to add.
 
 - **Determinism**: a unit test (or a repeated no-bless UI run) confirming the walk yields the same
@@ -389,17 +420,6 @@ The tests below do not exist yet; they are the coverage still to add.
 - **Whole-crate hit accounting**: an instrumented run over an error-heavy fixture (the
   money-transfer shape) asserting that the eighteen-tree case computes the walk once per distinct
   node, not once per site.
-- **Soundness under a cut / under reuse**: the two guards (the incomplete-subtree taint and the
-  reachable-set disjointness check) are exercised by the fixtures above but not *isolated* by one
-  that would fail if either guard were removed. Such a fixture is hard to construct as a UI
-  snapshot, for a structural reason worth recording: within a single walk an ancestor-induced cut
-  never loses a cause (the ancestor's own causes were already reported where it was first visited),
-  so a broken taint changes the output only when a node cut under one diagnostic's ancestor set is
-  *reused* under another's where that ancestor is absent, which takes an exotic cross-diagnostic
-  multi-node cycle. Verifying such a fixture actually catches the bug also means temporarily
-  removing the guard to watch it fail, which the snapshot suite alone cannot express. The honest
-  coverage is the output-preservation guard plus the cycle-cut fixture above; a targeted
-  guard-removal test is left as future work.
 
 ## Source
 

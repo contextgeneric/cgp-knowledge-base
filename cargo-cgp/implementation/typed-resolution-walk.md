@@ -292,11 +292,13 @@ Two safeguards keep the descent bounded. A **cycle guard** stops a branch as soo
 reappears among its own ancestors (a `UseContext` loop routes `Ctx: Consumer` straight back to
 itself), so a cyclic wiring bottoms out at its first repeat rather than spinning. The depth cap
 `MAX_DEPTH` is the backstop for what the guard cannot catch: a *divergent* wiring whose obligations
-keep growing without ever exactly repeating. The cap is set well above a genuine chain's depth (each
-logical hop expands to a consumer obligation, the delegation-routing provider obligation, a
-`RedirectLookup`, the real provider obligation, then the next consumer, so a deeply nested data type
-reaches its root cause only tens of frames down), but not arbitrarily high, because the walk re-runs
-the solver at every frame, so the cap also bounds a divergent wiring's worst-case work.
+keep growing without ever exactly repeating
+([`divergent_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/divergent_wiring.rs)).
+The cap is set well above a genuine chain's depth (each logical hop expands to a consumer
+obligation, the delegation-routing provider obligation, a `RedirectLookup`, the real provider
+obligation, then the next consumer, so a deeply nested data type reaches its root cause only tens of
+frames down), but not arbitrarily high, because the walk re-runs the solver at every frame, so the
+cap also bounds a divergent wiring's worst-case work.
 
 The descent is memoized at every node, so a distinct obligation reached from many sites or many
 branches is resolved once and reused; the cycle guard and `MAX_DEPTH` cut above are what decide
