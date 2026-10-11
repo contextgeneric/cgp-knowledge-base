@@ -291,8 +291,6 @@ check that its premise holds before it fires. These fixtures pin the false line:
 - [`check_trait_named_as_wrapper`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/checks/check_trait_named_as_wrapper.rs): a generic key in
   `delegate_and_check_components!` presents the generated `__CanUseApp` check trait as the user's
   trait in a `[CGP-E009]` headline.
-- [`raise_generic_missing_bound`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/used-but-undeclared/raise_generic_missing_bound.rs): `Self::raise_error` without `#[uses]` reports the
-  generated `__Context__` as an inner provider and suggests `#[use_provider]`.
 - [`stripped_error_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/errors/stripped_error_path.rs): a stripped `backend::Error` reads as the abstract `Error`
   in a `[CGP-E017]` headline and its `UseType<Error>` help.
 - [`open_prefixed_component`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/open_prefixed_component.rs) and [`open_and_use_delegate`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/open_and_use_delegate.rs): the

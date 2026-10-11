@@ -413,8 +413,10 @@ bare `@a.b.*` notation (no `Path!(…)` wrapper), and the upstream reference is
   help names the "type parameter is bounded by the trait" shape. The resolver confirms it
   structurally: the failing call is `Param::method(…)` on a generic parameter of an enclosing
   provider-trait impl, the method belongs to a CGP provider trait, and the parameter is not bounded
-  by it. rustc's own suggestion leaks the generated `__Context__` and offers the *consumer* trait as
-  a bound (the wrong fix); the rewrite names the inner provider and the `#[use_provider]` fix
+  by it. The impl's own context parameter never qualifies: `Self::method(…)` in a `#[cgp_impl]` body
+  names the generated `__Context__`, whose missing bound is a `#[uses]` dependency, not an inner
+  provider. rustc's own suggestion leaks the generated `__Context__` and offers the *consumer* trait
+  as a bound (the wrong fix); the rewrite names the inner provider and the `#[use_provider]` fix
   instead. The Rust code stays `E0599`.
 - **Fix (in the `help`):** import the inner provider with
   `#[use_provider(<Inner>: <ProviderTrait>)]`, which supplies the leading context argument the
