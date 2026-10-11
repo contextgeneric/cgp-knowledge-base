@@ -389,7 +389,10 @@ parameters, while the header *reattaches* them so the message stays precise. So
 `CanUseComponent<AreaCalculatorComponent, f64>` yields the header
 `` the consumer trait `CanCalculateArea<f64>` `` and the note "the consumer trait
 `CanCalculateArea`"; a two-parameter component arrives tuple-grouped (`(u32, u64)`) and the header
-unwraps it to `` `CanCalculateArea<u32, u64>` ``. One faithful oddity follows from naming the
+unwraps it to `` `CanCalculateArea<u32, u64>` ``. The map records each component's parameter count,
+read off its provider trait, because a one-parameter component whose parameter is a tuple arrives in
+the same shape and must stay whole (`CanFormatPair<(u32, u64)>`); and the argument splitter does not
+count the `>` of a function pointer's `->` as a closing bracket. One faithful oddity follows from naming the
 obligation's subject verbatim: the subject is usually a provider (`RectangleArea`,
 `ScaledArea<RectangleArea>`) but is the context itself when the context stands in as its own
 provider, so a self-provider case reads
