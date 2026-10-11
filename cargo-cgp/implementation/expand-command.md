@@ -181,6 +181,11 @@ The third rule is what makes the filter useful here rather than merely available
 generated items are almost all impls, and impls have no names of their own, so a filter that matched
 only declarations would answer "what does this component generate?" with just the trait definition.
 
+The two impl rules also reach an impl inside an unnamed constant's block, `const _: () = { … };`,
+the shape many third-party derives emit (CGP's own macros do not). Selecting such an impl selects
+its whole block, because the impl's paths resolve through the block's `extern crate` and `use`
+items.
+
 **A path that matches nothing yields nothing (never the whole crate), and the *driver* reports it.**
 Which layer reports what matters here, because getting it wrong produces a genuinely misleading
 message. The front-end sees only an absent expansion, and cannot tell a path that names nothing from
@@ -548,7 +553,8 @@ and printing halves need a real compilation, so they are exercised by running th
 - [`crates/cargo-cgp-expand/tests/expand/select.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-expand/tests/expand/select.rs):
   the three selection rules over a two-module program: a module giving its unwrapped contents, a
   type giving its declaration and the impls for it, an unqualified path reaching into a module, a
-  trait giving the impls of it, a path matching nothing yielding nothing, and the path-shape parser.
+  trait giving the impls of it, a path matching nothing yielding nothing, the path-shape parser, and
+  an impl inside an unnamed constant's block selecting that block, by its type or its trait.
 
 - The [UI suite](testing.md#three-passes-per-fixture) runs the command over **every fixture** as its
   third pass, diffing the expansion against a committed `<name>.expand.rs`. That is the end-to-end

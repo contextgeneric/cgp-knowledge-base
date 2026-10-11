@@ -127,7 +127,8 @@ accepted, so `--item crate::contexts::app` and `--item contexts::app` are the sa
 The trait form is usually what you want on CGP code, because a component's generated items *are*
 impls: `--item AreaCalculator` gives the provider trait together with the blanket impls, the
 `UseContext` impl, and each provider's impl of it. A type's form is the companion:
-`--item Rectangle` shows the struct with its `HasField` impls and its wiring. If the path matches
+`--item Rectangle` shows the struct with its `HasField` impls and its wiring, including an impl a
+derive put inside a `const _: () = { … };` block, which comes with its block. If the path matches
 nothing you get an error saying so, not a silent whole-crate expansion.
 
 The filter is the one argument `expand` does not forward to cargo. A bare positional path (the way
