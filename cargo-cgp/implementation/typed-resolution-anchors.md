@@ -56,20 +56,30 @@ implemented directly on `MockApp`. When the underlying `CanHandleApi` wiring is 
 lands on this impl (its header, a method signature, or the forwarding call), never on `MockApp`'s
 own type definition, so the use-site anchor cannot recover the context from a struct-definition
 span. `resolve_impl_site` handles it: it finds the enclosing trait impl whose *full* HIR span (not
-`def_span`, which for an impl covers only the header) contains a diagnostic span, takes its `Self`
-type as the context, and instantiates the impl's supertraits for that `Self`. A supertrait on that
-context that does not hold and is either a CGP consumer trait **or** a `#[cgp_fn]` /
-`#[blanket_trait]` blanket-impl trait (`impl<Context> Trait for Context where Self: HasField<…>`, a
-trait with a blanket impl but no provider, recognized by `is_blanket_trait` as described under
-*Recognizing a blanket trait* below) **is** the obligation to walk. The resolver seeds it directly
-(`wrapper_consumer_causes`), with its concrete component parameter intact
-(`CanHandleApi<QueryBalanceApi>`, not the `()` a parameterless re-check would substitute), so no
-marker detour is needed. The blanket-impl case is what reshapes a `#[cgp_fn]` blanket-trait check
-(`pub trait CheckGetUser: GetUser {}` + `impl CheckGetUser for App {}`, the tutorial idiom for
-asserting a blanket trait holds) whose real cause is a field the context is missing: the walk
-descends the blanket's `where` clause (`Self: HasField<…>`, or a `#[uses]`-chained sibling trait) to
-the `` missing field `…` `` leaf, in place of rustc's misleading "`#[derive(HasField)]` is required"
-note. A plain supertrait such as `Send` is neither, so it is left alone.
+`def_span`, which for an impl covers only the header) contains the diagnostic's primary span, takes
+its `Self` type as the context, and instantiates the impl's supertraits for that `Self`. A
+supertrait on that context that does not hold and is either a CGP consumer trait **or** a
+`#[cgp_fn]` / `#[blanket_trait]` blanket-impl trait
+(`impl<Context> Trait for Context where Self: HasField<…>`, a trait with a blanket impl but no
+provider, recognized by `is_blanket_trait` as described under *Recognizing a blanket trait* below)
+**is** the obligation to walk. The resolver seeds it directly (`wrapper_consumer_causes`), with its
+concrete component parameter intact (`CanHandleApi<QueryBalanceApi>`, not the `()` a parameterless
+re-check would substitute), so no marker detour is needed. The blanket-impl case is what reshapes a
+`#[cgp_fn]` blanket-trait check (`pub trait CheckGetUser: GetUser {}` +
+`impl CheckGetUser for App {}`, the tutorial idiom for asserting a blanket trait holds) whose real
+cause is a field the context is missing: the walk descends the blanket's `where` clause
+(`Self: HasField<…>`, or a `#[uses]`-chained sibling trait) to the `` missing field `…` `` leaf, in
+place of rustc's misleading "`#[derive(HasField)]` is required" note. A plain supertrait such as
+`Send` is neither, so it is left alone.
+
+**The impl counts only when the caret is about it.** A method body inside the impl can hold an
+unrelated error, such as an `Rc` passed to a `T: Send` function, and re-anchoring that error onto
+the impl's failing supertrait would replace it with the CGP tree and then de-duplicate it away. So
+`is_about_impl` (in `spans.rs`) accepts a primary span on the impl outside every method body (the
+header or a signature), or one inside a body only on a call to a method that the impl's trait or one
+of its supertraits declares, which is the forwarding call that fails because the supertrait does.
+The wrapper-chain anchor below applies the same gate. A secondary label or a note never counts,
+since rustc points those at any code the failure passed through.
 
 The tree and headline are then **headed by the impl's own trait**, the wrapper the programmer wrote,
 so the failure reads `CanHandleApiSend → CanHandleApi → …` and points at their code rather than
@@ -241,8 +251,9 @@ groups anchored here.
   `use_site_consumer.rs`, which holds both the by-consumer `resolve_use_site_consumer` and its
   by-blanket-trait sibling `resolve_use_site_blanket_trait` over one shared helper) over the shared
   `seed.rs` (the consumer-obligation builder) and `spans.rs` (the local items a diagnostic's spans
-  land on). The by-blanket-trait anchor recovers its context from the failing expression through the
-  call-site anchor's `contexts_at_spans`.
+  land on, and `is_about_impl`, whether a caret inside an impl is about it). The by-blanket-trait
+  anchor recovers its context from the failing expression through the call-site anchor's
+  `contexts_at_spans`.
 - [`crates/cargo-cgp-driver/src/resolve/cgp_item.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/cgp_item.rs):
   the DefId-anchored, `IsProviderFor`-free trait recognition every anchor relies on.
 

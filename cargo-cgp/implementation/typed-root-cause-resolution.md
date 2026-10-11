@@ -317,36 +317,37 @@ marking.
     (`consumer_obligation`, the `Params`-slot ungrouping decided by the consumer's own generics: a
     single tuple-typed parameter kept whole, a lifetime restored from `Life<'a>` via `life_region`,
     any mismatch declining rather than handing the solver a malformed trait ref) and `spans.rs` (the
-    local impls and struct definitions a diagnostic's spans land on). `check_failure.rs` matches the
-    check impl by span, then `can_use_to_consumer_obligation` maps its
-    `CanUseComponent<Marker, Params>` assertion through `marker_to_consumer` to the consumer
-    obligation. `impl_site.rs` recovers the context and the failing supertrait from an enclosing
-    `impl Trait for Context` block, heading the tree with the impl's own wrapper trait (`[CGP-E001]`
-    or `[CGP-E009]` by its blanket-impl fingerprint) through `wrapper_consumer_causes`, which seeds
-    the supertrait directly when it is a CGP consumer *or* a `#[cgp_fn]`/`#[blanket_trait]`
-    blanket-impl trait (`is_blanket_trait`), the latter reshaping a `#[cgp_fn]` blanket-trait check
-    whose cause is a missing field. `wrapper_chain.rs` is the foreign-wrapper case, descending each
-    hop's `where`-clauses via `wrapper_chain_children` read un-normalized so an associated-type
-    bound descends to its base trait, until `consumer_handoff_causes` reaches a CGP consumer on the
-    context, named plainly with `subject_is_context = false`. `use_site.rs` recovers the context ADT
-    from the diagnostic's spans and its wired components from `DelegateComponent` impls via
-    `delegated_check_targets`, mapping each marker to its consumer and recovering an `open`-dispatch
-    value from a `PathCons` key through `open_dispatch_target`, while skipping a raw path key, a
-    redundant bare marker, a free-parameter catch-all, and a `namespace …;` blanket `__Key__` key.
-    `use_site_consumer.rs` recovers a local, non-generic CGP consumer trait from the diagnostic's
-    spans and walks `Ctx: Consumer` directly (the anchor that reaches a namespace-joined context),
-    and its by-blanket-trait sibling `resolve_use_site_blanket_trait` (seventh, gated to `E0277`,
-    tried after the call-site anchor) does the same for a `#[cgp_fn]`/`#[blanket_trait]` blanket
-    trait required as a bound, reading the context off the failing expression via the call-site
-    anchor's `contexts_at_spans` and heading the result `[CGP-E009]` by clearing
-    `consumers_are_cgp`. A blanket trait is recognized by `is_blanket_trait`: a blanket impl over a
-    bare context, accepted outright for a trait the checked crate defines and, for a foreign one,
-    only on evidence that the blanket depends on a CGP construct, so a blanket trait a library
-    publishes is reached while `ToString` and `Into` are not.
+    local impls and struct definitions a diagnostic's spans land on, and `is_about_impl`, whether a
+    caret inside an impl is about it). `check_failure.rs` matches the check impl by span, then
+    `can_use_to_consumer_obligation` maps its `CanUseComponent<Marker, Params>` assertion through
+    `marker_to_consumer` to the consumer obligation. `impl_site.rs` recovers the context and the
+    failing supertrait from an enclosing `impl Trait for Context` block, heading the tree with the
+    impl's own wrapper trait (`[CGP-E001]` or `[CGP-E009]` by its blanket-impl fingerprint) through
+    `wrapper_consumer_causes`, which seeds the supertrait directly when it is a CGP consumer *or* a
+    `#[cgp_fn]`/`#[blanket_trait]` blanket-impl trait (`is_blanket_trait`), the latter reshaping a
+    `#[cgp_fn]` blanket-trait check whose cause is a missing field. `wrapper_chain.rs` is the
+    foreign-wrapper case, descending each hop's `where`-clauses via `wrapper_chain_children` read
+    un-normalized so an associated-type bound descends to its base trait, until
+    `consumer_handoff_causes` reaches a CGP consumer on the context, named plainly with
+    `subject_is_context = false`. `use_site.rs` recovers the context ADT from the diagnostic's spans
+    and its wired components from `DelegateComponent` impls via `delegated_check_targets`, mapping
+    each marker to its consumer and recovering an `open`-dispatch value from a `PathCons` key
+    through `open_dispatch_target`, while skipping a raw path key, a redundant bare marker, a
+    free-parameter catch-all, and a `namespace …;` blanket `__Key__` key. `use_site_consumer.rs`
+    recovers a local, non-generic CGP consumer trait from the diagnostic's spans and walks
+    `Ctx: Consumer` directly (the anchor that reaches a namespace-joined context), and its
+    by-blanket-trait sibling `resolve_use_site_blanket_trait` (seventh, gated to `E0277`, tried
+    after the call-site anchor) does the same for a `#[cgp_fn]`/`#[blanket_trait]` blanket trait
+    required as a bound, reading the context off the failing expression via the call-site anchor's
+    `contexts_at_spans` and heading the result `[CGP-E009]` by clearing `consumers_are_cgp`. A
+    blanket trait is recognized by `is_blanket_trait`: a blanket impl over a bare context, accepted
+    outright for a trait the checked crate defines and, for a foreign one, only on evidence that the
+    blanket depends on a CGP construct, so a blanket trait a library publishes is reached while
+    `ToString` and `Into` are not.
   - [`call_site/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/call_site)
     holds the sixth anchor, `resolve_call_site`, the HIR re-read of the failing call, one stage per
-    file: `find_call.rs` (`method_calls_at`, the calls at, or inside an expression at, the
-    diagnostic's spans (the latter for the await-desugar wrappers), and `traits_with_method`, the
+    file: `find_call.rs` (`method_calls_at`, the calls at the diagnostic's primary spans, or inside
+    an `.await` desugaring at them, and `traits_with_method`, the
     candidate consumer traits *and* `#[cgp_fn]`/`#[blanket_trait]` blanket traits by method name,
     the latter headed `[CGP-E009]` by clearing `consumers_are_cgp`), `receiver.rs`
     (`receiver_context`/`local_binding_context`, the receiver's type from its binding, annotation,
@@ -599,7 +600,11 @@ fixtures:
   to the missing field, with the blanket `__Key__` forwarding skipped.
 - `cascade_after_use_site`: the unconditionally-dispatched `E0277` of the
   [call-site anchor](typed-resolution-call-site.md)'s worked example, resolved into one `[CGP-E001]`
-  block whose await-site re-report de-duplicates and whose `?`-operator cascade stays suppressed.
+  block whose await-site re-report de-duplicates and whose `?`-operator cascade the emitter's gate
+  drops (the resolver never takes a `?` error, so the fixture fails without the gate).
+- `unrelated_error_before_call`: an `Rc` `Send` error on the line before a failing consumer call
+  keeps its own diagnostic, because the call-site anchor matches a call only by the diagnostic's
+  primary span.
 - `cascade_later_stage`: the same dispatch shape but with the missing field read by the *second*
   pipeline stage rather than the first, so the cause sits behind a `ComposeHandlers` stage keyed on
   the first stage's un-normalized `::Output`. Pins the placeholder-fold of a still-unresolved
@@ -694,6 +699,9 @@ The **impl-site and wrapper-chain paths** are pinned by:
   the `is_blanket_trait` case: the impl-site anchor walks the `#[cgp_fn]` blanket's `where` clause
   (and a `#[uses]`-chained sibling) to the `` missing field `name` `` cause instead of declining to
   rustc's misleading `#[derive(HasField)]` note.
+- `unrelated_error_in_wrapper_impl`: an `Rc` `Send` error inside a wrapper impl's method body keeps
+  its own diagnostic, while the forwarding call to the failing supertrait's method joins the
+  `[CGP-E009]` block (`is_about_impl`).
 
 Finally, the leaf wording and the tree renderer are unit-tested over hand-built `Resolved` values,
 independently of the compiler:

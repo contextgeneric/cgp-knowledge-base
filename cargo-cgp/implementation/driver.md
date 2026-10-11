@@ -511,16 +511,18 @@ a consumer-method call fails and its result is consumed with `?` (`app.handle(�
 of `expr?` becomes unresolvable, so rustc adds a `Try` / `FromResidual` error on the same expression
 that merely restates the wiring failure and dumps the unresolved `<Ctx as Consumer<…>>::Output`
 projection. The emitter records the primary span of every CGP failure it recognizes (`cgp_spans`,
-populated before de-duplication so even a dropped re-report still anchors its cascade) and
-suppresses a later, *untouched* diagnostic that both looks like a `?`-operator error
+populated before de-duplication so even a dropped re-report still anchors its cascade) and, before
+trying any transform, suppresses a later diagnostic that both looks like a `?`-operator error
 (`is_question_mark_cascade`, matching rustc's stable "the `` ? `` operator can only …" wording) and
 whose span overlaps a recorded failure. rustc emits the wiring failure before its cascade, so the
 span is always recorded in time. The scope is deliberately tight (only a `?` error sitting on an
 expression where a CGP wiring error was already shown is dropped, never a `?` misuse elsewhere),
-which is what makes suppressing an otherwise-untouched `rustc` error sound. It removes the two
-projection-dumping cascade blocks a `Code`-dispatched use-site failure would otherwise trail, while
-the [call-site anchor](typed-resolution-call-site.md) resolves the failure itself into one block;
-the pinning fixture is
+which is what makes suppressing an otherwise-untouched `rustc` error sound. The resolver declines
+every `?` error, since it is about `Try` on the call's result rather than the call's bounds, so one
+with no recorded failure is left as rustc wrote it rather than re-anchored onto the call it
+overlaps. It removes the two projection-dumping cascade blocks a `Code`-dispatched use-site failure
+would otherwise trail, while the [call-site anchor](typed-resolution-call-site.md) resolves the
+failure itself into one block; the pinning fixture is
 [`cascade_after_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/cascade_after_use_site.rs).
 
 ### Reshaping a duplicate-key conflict

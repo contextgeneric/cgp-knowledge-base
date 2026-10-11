@@ -254,9 +254,10 @@ error[E0277]: [CGP-E001] the consumer trait `CanHandle<Prog<Product![HandleName,
 ```
 
 The re-report rustc raises where the result is awaited resolves to the same cause and de-duplicates
-away, and the `?`-operator cascade the call trails is suppressed. A resolution from this anchor is
-also planned as a use-site failure whatever its rustc code, so the header names the consumer trait
-the call needs, never the dispatch plumbing rustc's own headline stopped on (see
+away, and the `?`-operator cascade the call trails is dropped by the emitter's `?`-cascade gate (see
+[The driver](driver.md)), since the resolver never takes a `?` error. A resolution from this anchor
+is also planned as a use-site failure whatever its rustc code, so the header names the consumer
+trait the call needs, never the dispatch plumbing rustc's own headline stopped on (see
 [Emitting the transformed diagnostic](typed-resolution-output.md#emitting-the-transformed-diagnostic)).
 
 ## Why a wrong guess cannot fabricate an error
@@ -269,6 +270,17 @@ placeholder-free leaf declines to the fallback. A mis-guessed consumer or contex
 either nothing or a genuine failing obligation of the context the programmer named, never an
 invented diagnostic.
 
+The anchor also considers only the calls the diagnostic is about. `method_calls_at` collects a call
+whose own span overlaps one of the diagnostic's primary spans, and carries a match inward only
+through an `.await` desugaring, for the re-report rustc aims at the `.await` alone. A match never
+carries through an ordinary enclosing expression, because a function's body block overlaps every
+error inside it: an unrelated error beside a failing call (an `Rc` passed to a `T: Send` function on
+the line before `person.greet()`) keeps its own diagnostic instead of being re-anchored onto the
+call and de-duplicated away. One shape remains indistinguishable: an unrelated error *inside an
+argument* of the failing call overlaps the call's span. Telling it apart would need the
+diagnostic's failing predicate, and rustc builds an `E0277` from formatted text with no structured
+predicate to compare.
+
 ## Tests
 
 The anchor's fixtures live under
@@ -276,9 +288,11 @@ The anchor's fixtures live under
 `cascade_after_use_site` (the worked example above), `generic_consumer_use_site` (the value-argument
 case), `call_site_tuple_input` (the partial tuple recovery), `cgp_fn_use_site` (the `#[cgp_fn]`
 trait call recovered as a `[CGP-E009]` block), and the `cascade_later_stage*` shapes whose pipeline
-stages the walk then descends. The decline boundary is pinned by `generic_consumer_unwritten_arg`.
-The consolidated catalog lives in the parent document's
-[Tests](typed-root-cause-resolution.md#tests) section.
+stages the walk then descends. The decline boundary is pinned by `generic_consumer_unwritten_arg`,
+and the span gate by `unrelated_error_before_call` (an unrelated `Send` error before the failing
+call keeps its own diagnostic) and the pass-through fixture `local_blanket_trait` (a plain error in
+a function that also calls a failing blanket-trait method is left alone). The consolidated catalog
+lives in the parent document's [Tests](typed-root-cause-resolution.md#tests) section.
 
 ## Source
 
