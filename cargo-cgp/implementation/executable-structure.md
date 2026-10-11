@@ -80,7 +80,10 @@ and the compiler's diagnostics appear live at the terminal, exactly as a plain `
 Every CGP transform happens inside the driver's emitter, which renders the finished diagnostics in
 whatever format the invocation asks for (human text by default, JSON when the caller requests it),
 so the front-end never sees, parses, or re-emits a diagnostic itself. Throughout, the exit code of
-the `cargo` process is propagated, so a failed check fails the command. The
+the `cargo` process is propagated, so a failed check fails the command
+([`exit::exit_code`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/exit.rs)).
+When a signal ends `cargo`, it has no exit code, so on Unix the front-end exits with 128 plus the
+signal number, as a shell reports it: 130 for an interrupted run. The
 [error pipeline](error-pipeline.md) documents where the transforms happen.
 
 ## Wrapping rustc: the driver
@@ -207,6 +210,8 @@ argument and rewrite tests are listed in the [driver deep dive](driver.md#tests)
 - [`crates/cargo-cgp/tests/front_end/args.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/args.rs):
   `strip_subcommand` across the invocation forms, and `utf8_args` reporting a non-Unicode argument
   by its position instead of panicking.
+- [`crates/cargo-cgp/tests/front_end/exit.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/exit.rs):
+  `exit_code` passing an exit code through and turning a signal into 128 plus its number.
 - [`crates/cargo-cgp/tests/front_end/dylib.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/dylib.rs):
   `dylib_search_path` putting the sysroot library first, and reporting a directory that holds the
   list separator instead of panicking.
@@ -237,6 +242,8 @@ The front-end's modules are listed here; the driver's are in the
 - [`crates/cargo-cgp/src/check.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/check.rs):
   runs that command for `cargo check`, inheriting cargo's stdio so its output streams through
   untouched, and propagates the exit code.
+- [`crates/cargo-cgp/src/exit.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/exit.rs):
+  the exit code propagated for a child process, including one a signal ended.
 - [`crates/cargo-cgp/src/expand/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp/src/expand):
   the `expand` subcommand over the same launch (see [The expand command](expand-command.md)).
 - [`crates/cargo-cgp/src/launch/target_dir.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/target_dir.rs):
