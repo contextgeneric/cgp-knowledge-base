@@ -114,7 +114,7 @@ be told which crate to expand, and `cargo rustc` is the one cargo subcommand tha
 rustc arguments to a *single* target's invocation. So the front-end runs, in effect:
 
 ```text
-cargo rustc --profile check <forwarded args> -- --cgp-expand=<output path>
+cargo rustc <forwarded args> --profile check --target-dir <dir> -- --cgp-expand=<output path>
 ```
 
 `--profile check` skips codegen, exactly as `cargo-expand` does. The marker flag after `--` reaches
@@ -123,6 +123,13 @@ through the driver as the workspace rustc wrapper) compile normally and produce 
 environment variable would have been the other way to signal expand mode, but it would reach every
 workspace crate at once and the driver would then have to reconstruct which one the user meant from
 `--crate-name`; letting cargo do the scoping is both simpler and more accurate.
+
+The forwarded arguments may carry a `--` of the user's own, with rustc flags after it
+(`cargo cgp expand --lib -- --cfg extra`). The command then keeps one separator: the flags the tool
+adds for cargo (`--profile check` and the target directory) stay in front of it, where cargo reads
+them, and the marker flags follow the user's rustc flags after it.
+[`launch::cargo_invocation`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/invocation.rs)
+assembles every wrapped command's arguments this way, `check`'s included.
 
 Everything else about launching the compilation is what `check` already does, and it is *shared code
 rather than a copy*: the [preflight](distribution.md) that verifies a matching driver, forcing
@@ -532,6 +539,9 @@ and printing halves need a real compilation, so they are exercised by running th
   spellings, everything else forwarded untouched, a bare word left to cargo, a crate-rooted path
   accepted, and the two rejection shapes (a missing or repeated filter names the flag, a malformed
   path names the path).
+- [`crates/cargo-cgp/tests/front_end/invocation.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/invocation.rs):
+  `cargo_invocation`'s order: the marker flags after one `--`, a user's `--` kept single with the
+  tool's cargo flags in front of it, and the split at the first separator.
 - [`crates/cargo-cgp-expand/tests/expand/select.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-expand/tests/expand/select.rs):
   the three selection rules over a two-module program: a module giving its unwrapped contents, a
   type giving its declaration and the impls for it, an unqualified path reaching into a module, a
@@ -554,8 +564,9 @@ and printing halves need a real compilation, so they are exercised by running th
   `profile.rs` decides whether `--profile check` is added.
 - [`crates/cargo-cgp/src/launch/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp/src/launch):
   the setup both subcommands share: `command.rs` builds the wrapped cargo command (the preflight,
-  the forced toolchain, the sysroot and dylib path), with `driver_path.rs`, `dylib.rs`,
-  `preflight.rs`, `sysroot.rs`, and `target_dir.rs` beside it.
+  the forced toolchain, the sysroot and dylib path), `invocation.rs` orders its arguments around a
+  single `--`, and `driver_path.rs`, `dylib.rs`, `preflight.rs`, `sysroot.rs`, and `target_dir.rs`
+  sit beside them.
   [`check.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/check.rs)
   is just the `cargo check` run.
 - [`crates/cargo-cgp/src/run.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/run.rs),
