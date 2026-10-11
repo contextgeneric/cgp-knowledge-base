@@ -487,7 +487,8 @@ The codes divide into the inner chain-node templates and the terminal root-cause
 - **`CGP-E110`: missing dispatch entry (leaf).**
   `` provider `<T>` does not contain any delegate entry for `<key>` ``: the chain bottoms out on a
   *non-context* delegation table missing a key: an
-  [aggregate provider](../cgp/concepts/aggregate-providers.md) missing a component wiring, or a
+  [aggregate provider](../cgp/concepts/aggregate-providers.md) missing a component wiring (including
+  a table a context's `Key -> Table` entry forwards to), or a
   [`UseDelegate`/`UseInputDelegate`](../cgp/reference/providers/use_delegate.md) dispatch table
   missing a branch for the type it dispatches on (a `Code` fragment or an `Input` value's type). The
   sibling of `CGP-E107` for a provider table rather than the context: the fix is to add the entry to

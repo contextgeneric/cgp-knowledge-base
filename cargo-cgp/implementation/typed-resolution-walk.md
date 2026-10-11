@@ -121,7 +121,11 @@ treats everything else as a leaf. It deliberately does *not* follow
 
 - An unmet **`HasField`** is the field leaf.
 - An unmet **`DelegateComponent<Marker>` on the context** is the missing-wiring leaf: the context
-  delegates that component to no provider.
+  delegates that component to no provider. The exception is an entry that forwards the key to
+  another table (`GreeterComponent -> Bundle`), which the context does carry: its impl's
+  `where Bundle: DelegateComponent<GreeterComponent>` bound is what fails, so the walk descends into
+  that lookup and reports the missing-dispatch-entry leaf on `Bundle`
+  ([`direct_delegation_missing_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/direct_delegation_missing_key.rs)).
 - An unmet **`DelegateComponent<PathCons<…>>`**, whose key is a redirect path rather than a bare
   marker, splits by owner. On the context it is the missing-*redirect*-wiring leaf (`[CGP-E107]`),
   named by its whole path. On any other type it is the missing-dispatch-entry leaf below, since the
