@@ -59,15 +59,18 @@ To send the check's artifacts somewhere other than `target/cgp`, pass `--target-
 subdirectory of the project's own target directory**, which the front end reads from
 `cargo metadata --no-deps` (forwarding any `--manifest-path`), so it is the same wherever in the
 package the command runs and follows a configured `build.target-dir`. Only when that query fails, as
-outside any package, does the front end fall back to a relative `target/cgp`, and the wrapped command
-then reports the real problem. `expand` injects the same default.
+outside any package, does the front end fall back to a relative `target/cgp`, and the wrapped
+command then reports the real problem. `expand` injects the same default.
 
 Two further consequences of the wrapping are worth knowing. **Only workspace members are reshaped**,
 because the driver is installed through `RUSTC_WORKSPACE_WRAPPER`, which cargo applies to workspace
 members alone; a path dependency outside the workspace compiles through plain `rustc` and its errors
-arrive raw. And **the front end sets `RUSTC_WORKSPACE_WRAPPER` unconditionally**, replacing any value
-the user exported, so a wrapper of the user's own given through that variable does not run under the
-tool. How a user's `RUSTC_WRAPPER` (sccache, say) composes with the driver has not been checked.
+arrive raw. And **the front end sets `RUSTC_WORKSPACE_WRAPPER` unconditionally**, replacing any
+value the user exported, so a wrapper of the user's own given through that variable does not run
+under the tool. A user's `RUSTC_WRAPPER`, such as `sccache`, does compose with the driver: cargo
+runs the wrapper with the driver and the real `rustc` as its next two arguments, so the driver still
+sees wrapper mode and rewrites as usual, and `sccache` does not cache a failing compilation, so it
+never replays an output from before the rewrite.
 
 ## Expanding a target
 
