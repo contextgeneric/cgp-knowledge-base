@@ -617,17 +617,23 @@ token, so
 matches the caret to that `DelegateComponent` impl (by source range, since the two halves of the
 pair carry the same range under different `SyntaxContext`s) and reads the entry off it: its context,
 its key, and its `Delegate`. It does the same for the "first implementation here" impl at the
-diagnostic's other labelled span, then classifies the shape into one of the five, each with its own
-code: a **duplicate** (`CGP-E004`, the two keys render equal), an **overlap** (`CGP-E005`, distinct
-but colliding keys: a generic over a specific, or a path prefixing another), **multiple namespaces**
-(`CGP-E006`, both keys are blanket forwardings, so the context joins more than one namespace), a
-**redirect** collision (`CGP-E007`), or a **duplicate redirect** (`CGP-E008`, both entries
-redirect). Each entry's target for the colliding key is read the same way: an ordinary entry's is
-its `Delegate`, a `RedirectLookup` for an `open` or `=>` redirect, while a blanket forwarding (a
-`namespace` join) has a generic `Delegate`, so its target is recovered by normalizing
-`<key as Namespace<Ctx>>::Delegate` for the other entry's concrete key through the trait solver (the
-same re-entrant normalization the typed resolver uses). So a namespace that redirects a prefixed
-component, beside an `open` of the same component, is a duplicate redirect naming both paths
+diagnostic's other labelled span. rustc labels that impl only when it is local; an upstream one,
+such as the blanket forwarding of a namespace an upstream context joins, appears in a note instead,
+and then the classifier declines, since it cannot say what the entry collides with
+([`upstream_namespace_join_overlap`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/upstream_namespace_join_overlap.rs),
+and the namespace-trait form
+[`upstream_namespace_inheritance_overlap`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-override-conflict/upstream_namespace_inheritance_overlap.rs)).
+Otherwise it classifies the shape into one of the five, each with its own code: a **duplicate**
+(`CGP-E004`, the two keys render equal), an **overlap** (`CGP-E005`, distinct but colliding keys: a
+generic over a specific, or a path prefixing another), **multiple namespaces** (`CGP-E006`, both
+keys are blanket forwardings, so the context joins more than one namespace), a **redirect**
+collision (`CGP-E007`), or a **duplicate redirect** (`CGP-E008`, both entries redirect). Each
+entry's target for the colliding key is read the same way: an ordinary entry's is its `Delegate`, a
+`RedirectLookup` for an `open` or `=>` redirect, while a blanket forwarding (a `namespace` join) has
+a generic `Delegate`, so its target is recovered by normalizing `<key as Namespace<Ctx>>::Delegate`
+for the other entry's concrete key through the trait solver (the same re-entrant normalization the
+typed resolver uses). So a namespace that redirects a prefixed component, beside an `open` of the
+same component, is a duplicate redirect naming both paths
 ([`open_prefixed_component`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/open_prefixed_component.rs)),
 and the generic parameter is never named as a provider. A redirect collision's header names only the
 redirected path; the *fix* (wire the direct entry's provider under that key) rides in a separate

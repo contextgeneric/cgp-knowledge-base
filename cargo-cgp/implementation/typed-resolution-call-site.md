@@ -290,14 +290,17 @@ predicate to compare.
 The anchor's fixtures live under
 [`tests/ui/hidden/unsatisfied-dependency/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/hidden/unsatisfied-dependency):
 `cascade_after_use_site` (the worked example above), `generic_consumer_use_site` (the value-argument
-case), `call_site_tuple_input` (the partial tuple recovery), `cgp_fn_use_site` (the `#[cgp_fn]`
-trait call recovered as a `[CGP-E009]` block), `foreign_context_error_route` (a call on a context
-from an upstream crate), and the `cascade_later_stage*` shapes whose pipeline stages the walk then
-descends. The decline boundary is pinned by `generic_consumer_unwritten_arg`, and the span gate by
-`unrelated_error_before_call` (an unrelated `Send` error before the failing call keeps its own
-diagnostic) and the pass-through fixture `local_blanket_trait` (a plain error in a function that
-also calls a failing blanket-trait method is left alone). The consolidated catalog lives in the
-parent document's [Tests](typed-root-cause-resolution.md#tests) section.
+case), `call_site_tuple_input` (the partial tuple recovery), `call_site_written_shapes` (every
+written shape the anchor reads: each definite literal kind, a struct literal, a constant, a
+non-generic call, and a `PhantomData` over a tuple, a reference, a slice, and generic paths),
+`cgp_fn_use_site` (the `#[cgp_fn]` trait call recovered as a `[CGP-E009]` block),
+`foreign_context_error_route` (a call on a context from an upstream crate), and the
+`cascade_later_stage*` shapes whose pipeline stages the walk then descends. The decline boundary is
+pinned by `generic_consumer_unwritten_arg`, and the span gate by `unrelated_error_before_call` (an
+unrelated `Send` error before the failing call keeps its own diagnostic) and the pass-through
+fixture `local_blanket_trait` (a plain error in a function that also calls a failing blanket-trait
+method is left alone). The consolidated catalog lives in the parent document's
+[Tests](typed-root-cause-resolution.md#tests) section.
 
 ## Source
 

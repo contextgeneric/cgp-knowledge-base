@@ -249,6 +249,10 @@ The pass-through conflicts `cargo-cgp` leaves uncoded:
 - [`wiring/conflicting-wiring/duplicate_provider_impl.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_provider_impl.rs):
   two `#[cgp_impl(GreetHello)]` blocks for one declared provider struct; the tool keeps the
   provider-trait `E0119` and drops its `IsProviderFor` twin.
+- [`wiring/conflicting-wiring/upstream_namespace_join_overlap.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/upstream_namespace_join_overlap.rs):
+  a local entry on an upstream context that joins a namespace, for a key the crate also registers
+  into that namespace; rustc names the upstream impl only in a note, so both `E0119`s stay as rustc
+  wrote them.
 - [`wiring/duplicate-keys/auto_dispatch_shared_method_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/auto_dispatch_shared_method_name.rs):
   two [`#[cgp_auto_dispatch]`](../../reference/macros/cgp_auto_dispatch.md) traits in one module
   declaring the same method, so the generated helper `__compute_area__` and computer `ComputeArea`
