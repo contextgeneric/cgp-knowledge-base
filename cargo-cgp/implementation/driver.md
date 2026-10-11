@@ -440,7 +440,10 @@ transformed is keyed by its rendered message text instead (`message_signature`),
 re-reports coalesce too. A third key is the **coded main-message header**: a failure the resolver
 declined but still rewrote (falling back to raw `IsProviderFor` scaffolding) carries the *same*
 `[CGP-Exxx]` header as the resolved tree of the same failure, so keying on the header collapses that
-declined fallback into the resolved occurrence even though their bodies differ. Only the tool's own
+declined fallback into the resolved occurrence even though their bodies differ. The header key works
+in that one direction only: a resolved report records it but never consults it, so a declined
+fallback that arrived first never hides the resolved tree after it, and two resolved reports of one
+consumer with different causes are both kept for the flush to coalesce. Only the tool's own
 transformed diagnostics are de-duplicated; an untouched `rustc` error always passes through. The
 count stays honest because cargo re-counts the diagnostics the emitter actually produces (a
 suppressed re-report drops out of its "N errors" summary as well), so the visible block count and
