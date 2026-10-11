@@ -130,7 +130,16 @@ treats everything else as a leaf. It deliberately does *not* follow
   marker, splits by owner. On the context it is the missing-*redirect*-wiring leaf (`[CGP-E107]`),
   named by its whole path. On any other type it is the missing-dispatch-entry leaf below, since the
   lookup ran in an aggregate provider that `open`s the component in its own table; the path is kept
-  whole as that leaf's key.
+  whole as that leaf's key. A redirect appends the component's parameters to its path, so a lookup
+  recovered from a call whose input is inferred ends in a placeholder segment; on the context the
+  leaf drops that trailing run and names the path the programmer can wire
+  (`@HandlerComponent.Missing`, from
+  [`pipeline_unhandled_code`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/use-site/pipeline_unhandled_code.rs)).
+  The trimmed leaf claims the context has no entry under that path for any value of the unknown, so
+  it is kept only when the solver, given an inference variable in place of each placeholder, finds
+  that the lookup can hold for none. An `open` error table that routes `String` can serve an
+  unknown error type, so its lookup is not reported
+  ([`placeholder_error_route_leaf`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/placeholder_error_route_leaf.rs)).
 - An unmet **`DelegateComponent<Key>` on a *non-context* delegation table** is the
   missing-dispatch-entry leaf (`[CGP-E110]`): the owner is a provider that delegates (an aggregate
   provider missing a component wiring, or a `UseDelegate`/`UseInputDelegate` table missing a branch
@@ -145,9 +154,14 @@ treats everything else as a leaf. It deliberately does *not* follow
     *regardless of whether that table wires any other key*. This is what reaches an **empty**
     dispatch table.
   - **by owner property** otherwise (the generic-blanket case, where the owner *equals* the parent
-    `Self`): the owner wires at least one other key, i.e. carries a `DelegateComponent` impl. This
-    is the aggregate-provider case, where the blanket keys on the provider itself so no
-    separate-table structure is visible.
+    `Self`): the owner wires at least one other key, i.e. carries a `DelegateComponent` impl, and
+    has no concrete impl of the parent provider trait. This is the aggregate-provider case, where
+    the blanket keys on the provider itself so no separate-table structure is visible. An owner with
+    its own impl of the trait can never wire the trait's key as well, since the blanket and the
+    impl would overlap, so reaching its blanket means that impl did not unify: the dead-end below,
+    even when it wires other keys, as a `#[cgp_computer]` provider wires its promotions
+    ([`cgp_computer_no_error_type_call`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/handlers/cgp_computer_no_error_type_call.rs),
+    whose `(_, _)` input keeps `Add`'s own `Computer` impl from matching).
 
   This is the leaf a handler pipeline bottoms out on when a stage's output type is not one a later
   stage's `UseInputDelegate` input dispatcher handles: a raw `GenericArray` digest, say, reaching an
@@ -240,7 +254,7 @@ parent obligation's `Self` (`Components` inside `UseDelegate<Components>` /
 `UseInputDelegate<Components>`, or any custom dispatcher holding its table as a parameter), which
 reaches even an *empty* table; and a **non-context table reached via the generic blanket** (owner
 *equals* the parent `Self`), recognized because the owner carries at least one `DelegateComponent`
-impl, the aggregate-provider case. The two non-context shapes are both the missing-dispatch-entry
+impl and no concrete impl of the parent provider trait, the aggregate-provider case. The two non-context shapes are both the missing-dispatch-entry
 leaf. A `DelegateComponent` that is *none* of these (owner is not the context, not a dispatch
 lookup, and not a table) splits one final way, by whether the owner has a **concrete impl of the
 parent provider trait** (`owner_has_impl_of` against that trait, not `DelegateComponent`): with no

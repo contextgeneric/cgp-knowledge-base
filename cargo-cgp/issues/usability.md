@@ -291,11 +291,6 @@ check that its premise holds before it fires. These fixtures pin the false line:
 - [`check_trait_named_as_wrapper`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/checks/check_trait_named_as_wrapper.rs): a generic key in
   `delegate_and_check_components!` presents the generated `__CanUseApp` check trait as the user's
   trait in a `[CGP-E009]` headline.
-- [`cgp_computer_no_error_type_call`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/handlers/cgp_computer_no_error_type_call.rs): an uninferred `(_, _)` input adds a false
-  `[CGP-E110]` root cause beside the real one.
-- [`placeholder_error_route_leaf`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/placeholder_error_route_leaf.rs): a pipeline stage raising its
-  unwritten input's error type adds a false `[CGP-E107]` "no delegate entry for
-  `@ErrorRaiserComponent`" beside the real missing field.
 - [`path_segment_read_as_type`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/macro-defects/path_segment_read_as_type.rs): an overflow that cascades from an unresolved
   `@`-path segment is rewritten into the `[CGP-E010]` cycle with its `UseContext` advice.
 - [`type_error_in_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/type_error_in_wiring.rs): an unresolved wiring type becomes a `{type error}: Debug`
