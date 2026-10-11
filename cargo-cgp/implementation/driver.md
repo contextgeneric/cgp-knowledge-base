@@ -171,7 +171,7 @@ targets the class of CGP error whose root cause the *default* solver hides.
 
 When a provider's impl-side dependency is unmet (say a `name` field the context does not carry), and
 the failure is reached by calling the consumer method directly, what the default solver reports
-depends on the compiler. On stable 1.98.1 its method-resolution path bottoms out at the provider
+depends on the compiler. On stable Rust its method-resolution path bottoms out at the provider
 trait (`Person: Greeter<Person>`) and never reports the real missing leaf bound. The pinned nightly
 does name the leaf in a note, as `Person: HasField<Symbol<4, Chars<..>>>`, but with the field name
 elided and the note buried under method-probe advice (the fixture's `.rust.stderr` records this).

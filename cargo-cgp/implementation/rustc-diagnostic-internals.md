@@ -159,7 +159,7 @@ re-bless the whole UI suite.
 
 Not every hidden cause is a printing elision. The archetypal CGP hidden error, a consumer-method
 call whose real missing bound the *default* trait solver may never compute, is suppressed earlier,
-during trait solving, not during printing. On a compiler where that happens (stable 1.98.1 stops at
+during trait solving, not during printing. On a compiler where that happens (stable Rust stops at
 `Person: Greeter<Person>`), no verbosity flag recovers it, because the information was never
 produced; the pinned nightly does reach the bound, but only in a buried note. The driver defeats it
 with a different injected flag, `-Znext-solver=globally`, which selects a solver that does descend
