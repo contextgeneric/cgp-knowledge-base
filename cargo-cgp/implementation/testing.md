@@ -117,10 +117,11 @@ an error the tool should leave alone.
 
 - **The status check** requires the tool and plain `cargo check` to agree on whether the fixture
   compiles. A crash with no output, or the tool accepting what rustc rejects, would otherwise pass
-  whenever the snapshot happened to match. The one sanctioned disagreement is a known false
-  acceptance of the next-generation trait solver, which a fixture declares with
-  `//@false-acceptance`; the check then requires exactly that disagreement, so the marker cannot go
-  stale.
+  whenever the snapshot happened to match. The one known case where the next-generation solver
+  accepts a mistake, a namespace inheritance cycle, is no exception here: on the pinned nightly the
+  default solver accepts it too (only stable rejects it), so its fixture
+  `usability/wiring/namespaces/namespace_inheritance_cycle` compiles under both, and the check fails
+  if a later nightly makes them disagree.
 - **The pass-through check** runs for every fixture under `pass-through/`: a program whose errors
   are plain Rust, which the tool must render exactly as rustc does. It requires the tool's stderr to
   equal plain `cargo check`'s, both normalized as the baseline is, so the property holds without a
@@ -179,12 +180,12 @@ tool's libraries. Running the full suite builds the front-end and its driver and
 needs both present.
 
 A fixture states what the harness must do with it through **directives**: line comments that start
-with `//@`, as in Clippy's UI tests, which the compiler ignores and only the harness reads. Four
-exist: `//@aux-build: <crate>` (an auxiliary crate, below), `//@false-acceptance` and
-`//@rewrites-falsely: <reason>` (the two exceptions above), and `//@json` (the JSON pass). A
-misspelled directive would silently do nothing, so the parser rejects an unknown `//@name` and a
-known name written in another comment form, such as `// @json` with a space; a comment that merely
-starts with an `@`-path, such as commented-out wiring, stays legal.
+with `//@`, as in Clippy's UI tests, which the compiler ignores and only the harness reads. Three
+exist: `//@aux-build: <crate>` (an auxiliary crate, below), `//@rewrites-falsely: <reason>` (the
+pass-through exception above), and `//@json` (the JSON pass). A misspelled directive would silently
+do nothing, so the parser rejects an unknown `//@name` and a known name written in another comment
+form, such as `// @json` with a space; a comment that merely starts with an `@`-path, such as
+commented-out wiring, stays legal.
 
 ### How a fixture is compiled
 
@@ -426,9 +427,9 @@ no dogfood test yet (see above).
   rejection of an unknown directive, a spaced directive, and a `//@rewrites-falsely:` without a
   reason.
 - [`crates/cargo-cgp-ui-tests/tests/passes.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/passes.rs):
-  the status check (agreement, disagreement, and the false-acceptance marker in both states), the
-  pass-through check (equal output, a difference, and the `//@rewrites-falsely:` marker in both
-  states), and the reduction of cargo's JSON stream to compiler messages.
+  the status check (agreement and disagreement in both directions), the pass-through check (equal
+  output, a difference, and the `//@rewrites-falsely:` marker in both states), and the reduction of
+  cargo's JSON stream to compiler messages.
 - [`crates/cargo-cgp-ui-tests/tests/snapshot.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/snapshot.rs):
   a missing snapshot reported as a mismatch, blessing it into existence, and the line diff's
   context and markers.
