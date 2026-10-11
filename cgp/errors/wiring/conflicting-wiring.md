@@ -146,8 +146,11 @@ Which `[CGP-E00x]` code it stamps distinguishes the shapes this class produces:
   (`` wire the provider `GreetHello` with the key `@GreeterComponent` ``). A registration that binds
   a *prefixed* component by its bare marker takes the same code, since the `#[prefix]` entry it
   collides with is itself a redirect, and the `help` then names the `@prefix.Component` path the
-  registration should have used.
-- The same key redirected twice (two `=>` mappings on a context, or one `@`-path registered twice
+  registration should have used. For a generic component the `help` names one key per parameter
+  value (`@AreaCalculatorComponent.<Shape>`), since the redirect appends the component's parameters
+  to its path.
+- The same key redirected twice (two `=>` mappings on a context, an `open` of a component the
+  joined namespace already redirects through its `#[prefix]`, or one `@`-path registered twice
   inside a `cgp_namespace!` block) becomes **`[CGP-E008]` duplicate redirect**, naming both targets
   when they differ
   (`` duplicate redirect for component `FooComponent` on `App`: redirected to both `@app.foo` and `@app.bar` ``).
@@ -197,6 +200,12 @@ headline. The `E0119` conflicts `cargo-cgp` rewrites:
 - [`wiring/duplicate-keys/duplicate_redirect.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_redirect.rs):
   the same component redirected to two paths on one context, rewritten to `[CGP-E008]` naming both
   targets.
+- [`wiring/conflicting-wiring/open_prefixed_component.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/open_prefixed_component.rs):
+  an `open` of a component the joined namespace redirects through its `#[prefix]`, a `[CGP-E008]`
+  naming the namespace's `@app.GreeterComponent` and the `open`'s `@GreeterComponent`.
+- [`wiring/conflicting-wiring/open_and_use_delegate.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/open_and_use_delegate.rs):
+  an `open` beside a direct `UseDelegate` entry for a generic component, a `[CGP-E007]` whose `help`
+  names the `@AreaCalculatorComponent.<Shape>` keys.
 - [`wiring/namespace-paths/delegate_duplicate_path_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/delegate_duplicate_path_key.rs):
   a duplicated `@`-path key whose raw conflicting trait name is a long `PathCons<Symbol<…>>` type;
   the `.cgp.stderr` resugars it to the bare `@cgp.core.error.ErrorTypeProviderComponent.*` path

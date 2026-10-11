@@ -562,20 +562,29 @@ code: a **duplicate** (`CGP-E004`, the two keys render equal), an **overlap** (`
 but colliding keys: a generic over a specific, or a path prefixing another), **multiple namespaces**
 (`CGP-E006`, both keys are blanket forwardings, so the context joins more than one namespace), a
 **redirect** collision (`CGP-E007`), or a **duplicate redirect** (`CGP-E008`, both entries
-redirect). A redirect collision is detected two ways: one entry's `Delegate` is literally a
-`RedirectLookup` (an `open` or `=>` redirect), *or* one entry is a blanket namespace and the other a
-concrete key the namespace maps to a `RedirectLookup`, recovered by normalizing
-`<key as Namespace<Ctx>>::Delegate` through the trait solver (the same re-entrant normalization the
-typed resolver uses). Its header names only the redirected path; the *fix* (wire the direct entry's
-provider under that key) rides in a separate `help`, kept out of the header so the headline stays
-one short sentence. Each key is rendered to its surface form off the types (a component marker to
-its name, a `PathCons<…>` to its bare `@…` path (a generic segment reading `*` in its own position,
-so `@ComputerComponent.*.u64.*` keeps the segments after it, and a generic tail reading `.*`, folded
-into a generic last segment so a `for`-loop key reads `@a.b.*`), an ordinary type key to its own
-rendering, a blanket forwarding to the namespace/table trait that keys it), so the headline names
-what the programmer wrote. A marker is told from an ordinary type structurally, by whether a
-provider trait's delegation blanket keys on it, so a per-type default's `String` reads as a type
-rather than as a component nobody defined. The message wording is decided by the rustc-free
+redirect). Each entry's target for the colliding key is read the same way: an ordinary entry's is
+its `Delegate`, a `RedirectLookup` for an `open` or `=>` redirect, while a blanket forwarding (a
+`namespace` join) has a generic `Delegate`, so its target is recovered by normalizing
+`<key as Namespace<Ctx>>::Delegate` for the other entry's concrete key through the trait solver (the
+same re-entrant normalization the typed resolver uses). So a namespace that redirects a prefixed
+component, beside an `open` of the same component, is a duplicate redirect naming both paths
+([`open_prefixed_component`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/open_prefixed_component.rs)),
+and the generic parameter is never named as a provider. A redirect collision's header names only the
+redirected path; the *fix* (wire the direct entry's provider under that key) rides in a separate
+`help`, kept out of the header so the headline stays one short sentence. A redirect looks a
+component up with its type parameters appended to the path, so for a generic component the `help`
+names one key per parameter value (`@AreaCalculatorComponent.<Shape>`) rather than the bare path the
+lookup never reads
+([`open_and_use_delegate`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/open_and_use_delegate.rs)).
+The `help` is omitted when the direct entry names no provider a reader wrote. Each key is rendered
+to its surface form off the types (a component marker to its name, a `PathCons<…>` to its bare `@…`
+path (a generic segment reading `*` in its own position, so `@ComputerComponent.*.u64.*` keeps the
+segments after it, and a generic tail reading `.*`, folded into a generic last segment so a
+`for`-loop key reads `@a.b.*`), an ordinary type key to its own rendering, a blanket forwarding to
+the namespace/table trait that keys it), so the headline names what the programmer wrote. A marker
+is told from an ordinary type structurally, by whether a provider trait's delegation blanket keys on
+it, so a per-type default's `String` reads as a type rather than as a component nobody defined. The
+message wording is decided by the rustc-free
 [`plan_wiring_conflict`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/wiring.rs)
 (and `wiring_conflict_help` for the redirect fix) over the owned `WiringConflict` the classifier
 fills in, so it is unit-tested without a compiler.

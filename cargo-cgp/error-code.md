@@ -218,12 +218,17 @@ bare `@a.b.*` notation (no `Path!(…)` wrapper), and the upstream reference is
   namespace binding a key its *inherited parent* redirects, the shape a bare marker key produces for
   a component carrying a `#[prefix(...)]`. The last two are recovered by normalizing the forwarded
   namespace's `Delegate` for that key. The fix rides in a `help`:
-  `` wire the provider `<Provider>` with the key `<path>` ``. **Fix:** wire the entry's provider
-  under the redirected path rather than the bare key.
+  `` wire the provider `<Provider>` with the key `<path>` ``. A redirect looks a component up with
+  its type parameters appended to the path, so for a generic component the `help` names one key
+  per parameter value instead:
+  `` the redirect appends the parameter `<Param>` to `<path>`, so wire each provider with a `<path>.<<Param>>` key in place of `<Provider>` ``.
+  The `help` is omitted when the direct entry names no provider a reader wrote. **Fix:** wire the
+  entry's provider under the redirected path rather than the bare key.
 - **`CGP-E008`: duplicate redirect.**
   `` [CGP-E008] duplicate redirect for <component> on `<Context>` … `` (naming one redirect target,
   or both when they differ): the same key redirected more than once: two `open`s or `=>` mappings on
-  a context, or the same `@`-path registered twice inside one `cgp_namespace!` block (where the
+  a context, an `open` of a component the joined namespace already redirects through its
+  `#[prefix]`, or the same `@`-path registered twice inside one `cgp_namespace!` block (where the
   subject is the namespace trait rather than a context). **Fix:** keep a single redirect.
 
 ### `CGP-E009`: wrapper trait not implemented
