@@ -199,14 +199,15 @@ from `cgp` would make every `cgp` user link `alloc`, and the only alternative wa
 - [`acceptable/lowering/cgp_type_name_shadows_bound.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/cgp_type_name_shadows_bound.rs):
   the [shadowed abstract type](#a-sibling-the-shadowed-abstract-type), pinning the `E0404` and both
   of its landmark notes.
-- The [reserved variant name](#a-second-sibling-the-reserved-variant-name) has **no `cargo-cgp`
-  fixture yet**, which is a recorded gap rather than an oversight: the shape is pinned on the
-  library side instead, by
-  [`invalid_expansion/reserved_variant_names.rs`](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/invalid_expansion/reserved_variant_names.rs),
-  which captures the emitted `Self::…` paths as a string snapshot so the test compiles even though
-  the code it describes would not. What that pin does not cover is the rendered diagnostic: whether
-  the tool leaves this message as the compiler wrote it, and whether it could recover the variant
-  name the compiler omits. A fixture is what would settle both.
+- [`usability/lowering/reserved_variant_name_extract_field.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/lowering/reserved_variant_name_extract_field.rs)
+  and [`reserved_variant_name_cgp_data.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/lowering/reserved_variant_name_cgp_data.rs): the
+  [reserved variant name](#a-second-sibling-the-reserved-variant-name) under the extractor, a
+  `Value` and a `Remainder` variant, pinning the opaque form whose notes both land on the derive;
+  `cargo-cgp` passes it through. The readable form, a `Value` variant under `#[derive(FromVariant)]`
+  whose note points at the variant, is
+  [`reserved_variant_name_from_variant.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/lowering/reserved_variant_name_from_variant.rs). The library
+  side pins the emitted `Self::…` paths in
+  [`invalid_expansion/reserved_variant_names.rs`](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/invalid_expansion/reserved_variant_names.rs).
 - [`acceptable/lowering/consumer_trait_in_provider_impl_generic.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/lowering/consumer_trait_in_provider_impl_generic.rs):
   the adjacent `E0425` shape: a `#[cgp_impl]` header names the consumer trait
   `CanCalculateArea<Rectangle>` where the provider trait `AreaCalculator` belongs, so the derived

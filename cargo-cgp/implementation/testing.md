@@ -63,7 +63,7 @@ unsatisfiable `#[use_type]` import, `verbosity/` for a deep dispatch chain shown
 `duplication/` for the de-duplicated and coalesced multi-block cases, and `lowering/` and `wiring/`
 for the remaining classes (`wiring/orphan/` holding the cross-crate orphan-rule cases the tool
 reshapes into `[CGP-E011]`). `usability/` is split by the kind of issue that remains:
-`extensible-data/`, `lowering/`, and `wiring/constraints/`. Alongside the hand-curated examples, the
+`extensible-data/`, `lowering/`, `misleading/`, `paths/`, and `wiring/constraints/`. Alongside the hand-curated examples, the
 tree holds one fixture per post-codegen error class, giving the tool a snapshot of its own
 transformed output for the whole [error catalog](../../cgp/errors/README.md). `cgp` has no
 compile-fail suite of its own, so these fixtures are the maintained copy. The

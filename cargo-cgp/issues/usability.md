@@ -236,6 +236,19 @@ for the tool to reshape. When a lowering error's cause is available to the macro
 beats teaching the tool to reconstruct it, a question worth asking of `option_slice` too, whose
 unsupported shorthand combination is likewise knowable at expansion time.
 
+Two extensible-data derive defects land here for the same reason. An enum variant named after an
+associated type the derives generate (`Value`, `Remainder`, `Fields`, …) makes the generated
+`Self::…` path ambiguous; under the extractor both notes land on the derive attribute, so nothing
+names the variant
+([`reserved_variant_name_extract_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/lowering/reserved_variant_name_extract_field.rs),
+[`reserved_variant_name_cgp_data`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/lowering/reserved_variant_name_cgp_data.rs); the readable
+`FromVariant` case is
+[`reserved_variant_name_from_variant`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/lowering/reserved_variant_name_from_variant.rs)). And a
+variant helper attribute of another derive, copied onto the extractor's companion enums, fails with
+a help that suggests the derive the enum already has
+([`variant_helper_attribute`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/lowering/variant_helper_attribute.rs)). Both are fixed in `cgp`:
+qualified projections, and filtering the copied attributes.
+
 ## Extensible-data failures are not reshaped at all
 
 The casts, builders, and extractors of the
@@ -256,6 +269,47 @@ the call on the enum fails with a passed-through `E0599` whose notes name the ge
 unsatisfied `Computer` bound and point at the payload that *does* implement the trait, while the
 payload that lacks it is never named. The leaf to recover is that payload's missing impl, which the
 matcher's per-variant bounds encode.
+
+The rest of the family fails the same way: rustc reports the bound on a generated type, and the
+tool passes it through without naming the field or variant at fault. The record builder reports a
+field built twice or taken while absent as an `E0271` on its `UpdateField` marker
+([`build_field_twice`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/extensible-data/build_field_twice.rs),
+[`take_field_absent`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/extensible-data/take_field_absent.rs)), and a premature finalize as an
+`E0599` whose only clue is the partial type's marker list
+([`finalize_build_premature`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/extensible-data/finalize_build_premature.rs)). Merging with
+`build_from` reports a stray or doubled field on the private `FieldsBuilder` recursion
+([`build_from_field_not_in_target`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/extensible-data/build_from_field_not_in_target.rs),
+[`build_from_overlapping_sources`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/extensible-data/build_from_overlapping_sources.rs)), and the
+`BuildAndMergeOutputs` dispatcher reports two different field mistakes with identical output
+([`build_and_merge_extra_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/extensible-data/build_and_merge_extra_field.rs),
+[`build_and_merge_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/extensible-data/build_and_merge_missing_field.rs)). The
+defaulted and optional builders, extraction, construction by tag, and the casts each have fixtures
+under [`extensible-data/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/usability/extensible-data);
+the work is the same leaf: name the field or variant the generated types encode.
+
+## A rewrite states something false
+
+Two text rewrites misfire. A `HasField` bound whose tag misspells a field the struct derives has
+rustc's "similar impl" help rewritten into "`#[derive(HasField)]` is required to access field
+`nmae`", although the derive is present and the mistake is the spelling
+([`field_tag_typo_derive_hint`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/field_tag_typo_derive_hint.rs)). And the `E0275`
+overflow that cascades from an unresolved `@`-path segment is rewritten into the `[CGP-E010]` wiring
+cycle with its `UseContext` advice
+([`path_segment_read_as_type`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/misleading/path_segment_read_as_type.rs)). Each rewrite needs a
+check that its premise holds: the derive is absent, or the overflow is not downstream of another
+error.
+
+## Untransformed diagnostics print full paths
+
+A diagnostic the tool does not rewrite prints full paths where plain `cargo check` prints short
+ones: `cgp::prelude::IsNothing` in an `E0284` headline
+([`update_field_marker_unannotated`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/paths/update_field_marker_unannotated.rs)),
+`std::result::Result` in an `E0599` headline
+([`headline_std_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/paths/headline_std_path.rs)), and
+`cgp::cgp_core::cgp_field::traits::TransformMapFields` inside a machine-applicable suggestion
+([`suggestion_full_paths`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/usability/paths/suggestion_full_paths.rs)). The driver does not set the
+`trimmed_def_paths` option that rustc's own driver sets, so the compiler prints every path in full;
+the module strip shortens most of them afterwards but not all, and it must not touch a suggestion.
 
 ## What good presentation looks like
 
