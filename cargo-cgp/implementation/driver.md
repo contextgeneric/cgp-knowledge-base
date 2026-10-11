@@ -878,9 +878,9 @@ will likely grow toward it:
 
 - [`crates/cargo-cgp-driver/tests/driver/args.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/args.rs):
   `rustc_args` wrapper-mode stripping, sysroot injection, an existing sysroot left alone,
-  injected-flag appending, an explicit `-Znext-solver` override in either spelling, `-v` counted
-  as `--verbose`, and the `-vV`/`--print` info-query skips; and `expand_arg_files` expanding an argument file that holds `--cgp-expand=` and a
-  user's `-Znext-solver`.
+  injected-flag appending, an explicit `-Znext-solver` override in either spelling, `-v` counted as
+  `--verbose`, and the `-vV`/`--print` info-query skips; and `expand_arg_files` expanding an
+  argument file that holds `--cgp-expand=` and a user's `-Znext-solver`.
 - [`crates/cargo-cgp-driver/tests/driver/help.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/help.rs):
   `wants_help` detecting the help flags, and the help text explaining the wrapper role and flags.
 - [`crates/cargo-cgp-driver/tests/driver/test_panic.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/test_panic.rs):
