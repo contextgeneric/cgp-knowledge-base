@@ -115,21 +115,39 @@ post-processing transforms in full and points at the other tenants' own document
 
 ## Where post-processing sits in the pipeline
 
-Post-processing is the driver's final diagnostic pass, and it runs on **every** diagnostic the
-driver emits, after whatever transform came before it (see [The error pipeline](error-pipeline.md)).
-The driver's emitter first tries the [typed root-cause resolver](typed-root-cause-resolution.md); if
-that declines, it renames the CGP wiring messages it recognizes; then, either way, the diagnostic
-passes through the post-processing transforms.
+Post-processing is the driver's final diagnostic pass, and how much of it applies depends on who
+built the diagnostic (see [The error pipeline](error-pipeline.md)). The driver's emitter first tries
+the [typed root-cause resolver](typed-root-cause-resolution.md); if that declines, it renames the
+CGP wiring messages it recognizes; then it hands the diagnostic to the post-processing chain with an
+[`Origin`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/chain.rs)
+that says whether either transform rewrote it.
 
-The pass does two jobs depending on what came before it, and both keep raw CGP spellings out of the
-output. For a diagnostic the tool left **un-rewritten**, post-processing is the whole cleanup: it
-strips the `cgp::` prefixes, resugars the `Symbol!` and `Path!` lists, and rewords an unmet
-`HasField` bound, so a diagnostic the tool does not classify still reads cleanly. For a
-**rewritten** one, only the prefix strip and the `Symbol!`/`Path!` resugaring bite: they tidy the
-compiler-formatted CGP type names a rewrite embeds, such as a provider like
-`RedirectLookup<…, PathCons<Symbol<…>>>` in a coded header, folded to
-`RedirectLookup<…, Path!(@…)>`. The missing-field reword finds nothing to match, because the
-resolver's tree never carries the `` `HasField<…>` is not implemented `` clause the reword keys on.
+**A rewritten diagnostic gets the whole chain.** The tool built its sentences, so the module strip
+gives every name the bare form the tool's own wording uses, and the resugaring tidies the
+compiler-formatted CGP types a rewrite embeds, such as a provider like
+`RedirectLookup<…, PathCons<Symbol<…>>>` in a coded header, folded to `RedirectLookup<…, @…>`. The
+missing-field reword finds nothing to match, because the resolver's tree never carries the
+`` `HasField<…>` is not implemented `` clause the reword keys on.
+
+**An untransformed diagnostic changes only where the chain recovers a CGP encoding.** rustc built
+it, and the tool's job there is to leave it as plain `cargo check` prints it, except that a raw
+`Symbol`, `PathCons`, or `Cons`/`Either` spine, or an unmet `HasField` bound, is unreadable. So a
+message is replaced only when a resugaring stage or the missing-field reword fired; the strips alone
+never count as a change. A path rustc printed in full on purpose survives: two types that share a
+name ("expected `a::Foo`, found `b::Foo`"), or a CGP trait the crate glob-imports, which rustc's
+trimmed paths leave qualified (`cgp::prelude::CanRaiseError`). Once a stage does fire, the strips
+apply to the rest of that message too, so the recovered construct does not sit among long paths. A
+path resugared in an untransformed message keeps its `Path!(@…)` macro form, since the reader meets
+it as a type.
+
+**In a crate that does not use CGP, an untransformed diagnostic is never post-processed.** The
+emitter asks the compiler once whether the crate uses `cgp` or one of CGP's own crates
+(`crate_uses_cgp` in the driver's `resolve/cgp_item.rs`, reading the `used_crates` query, which
+counts a crate's dependencies as used with it). A crate that declares `cgp` but never names it does
+not load it, so its own `Symbol`, `Chars`, or `HasField` is never mistaken for CGP's. The query is
+safe only once the crate store is frozen, so the emitter skips an untransformed diagnostic that
+arrives earlier, during name resolution; see the hazard in
+[rustc diagnostic internals](rustc-diagnostic-internals.md#freezing-the-crate-store-during-name-resolution-data-should-not-be-frozen).
 
 ## How the driver applies the transforms
 
@@ -287,7 +305,9 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   type, and primitive segments, the open `_` tail folded to a `.*` wildcard, and the
   non-round-trippable cases `resugar_path` must skip), the single-field (inline and separate-note
   landmark) versus missing-derive branches of `rewrite_missing_fields`, the `Product!`/`Sum!` folds
-  with their `Struct!`/`Enum!` shapes and declines, and the `postprocess_message` chain.
+  with their `Struct!`/`Enum!` shapes and declines, and the `postprocess_message` chain, including
+  the `Origin` rule: an untransformed message keeps rustc's paths unless a CGP encoding is
+  recovered, and a rewritten one is stripped.
 - [`crates/cargo-cgp-error-processing/tests/error_processing/shape.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/shape.rs):
   the shared `Struct!`/`Enum!` spelling rules on their own: writable, raw, and unwritable names,
   the named and tuple struct forms and every product that declines, each variant spelling, and the
@@ -351,7 +371,7 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
 
 - [`crates/cargo-cgp-error-processing/src/postprocess/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/postprocess):
   the post-processing transforms: `mod.rs` (re-exports), `chain.rs` (the `postprocess_message`
-  chain, threading the `bare_paths` flag, and `postprocess_fragments`, which reads a message rustc
+  chain with its `Origin` rule, and `postprocess_fragments`, which reads a message rustc
   split into styled fragments as the one line it renders as), `strip_modules.rs`
   (`strip_module_paths`, the UTF-8-safe module-qualifier collapse), `strip_prefixes.rs`
   (`strip_cgp_prefixes` and the `CGP_PREFIXES` constant), `resugar_symbol.rs` (the exact-match

@@ -545,10 +545,14 @@ traits. The rename runs in the driver;
 [`rewrite/message.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/rewrite/message.rs)
 owns the string transform.
 
-**Prefix stripping** removes the CGP module paths rustc prints in front of CGP type names, so
-`cgp::prelude::Chars` becomes `Chars`. It only shortens a name;
+**Path stripping** removes the module paths rustc prints in front of type names, so
+`cgp::prelude::Chars` becomes `Chars`. It applies to every message the tool rewrote, and to a
+message it left alone only when one of the resugarings below fired there; otherwise the paths stay
+as rustc printed them. It only shortens a name;
+[`strip_module_paths`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/strip_modules.rs)
+and
 [`strip_cgp_prefixes`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/strip_prefixes.rs)
-owns it.
+own it.
 
 **`Symbol!` resugaring** reverses a `Symbol!` type expansion back to its surface form, so
 `Symbol<2, Chars<'x', Chars<'y', Nil>>>` becomes `Symbol!("xy")`. It restores the syntax the

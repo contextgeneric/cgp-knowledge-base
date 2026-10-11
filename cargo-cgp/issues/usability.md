@@ -346,18 +346,18 @@ The fixtures group by construct:
 ## Untransformed diagnostics are not left as rustc printed them
 
 A diagnostic the tool does not rewrite should print exactly as plain `cargo check` prints it, and
-some do not. The post-processing that tidies CGP's types runs on every diagnostic, so its module
-strip shortens paths rustc printed in full on purpose: "expected `a::Foo`, found `b::Foo`" reads
-"expected `Foo`, found `Foo`"
-([`same_name_types`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/same_name_types.rs)),
-and a note's `cgp::prelude::Computer` loses its path
-([`compute_bare_name_ambiguous`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/compute_bare_name_ambiguous.rs)).
-Its text matchers also resugar a crate's own types that merely share CGP's names
-([`lookalike_cgp_names`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/lookalike_cgp_names.rs)).
-Separately, the injected `--verbose` prints the generated `__Context__` in a signature note where
+some still do not, because the driver injects `--verbose` into every compilation. The flag defeats
+rustc's elisions so a CGP root cause stays visible (see
+[rustc diagnostic internals](../implementation/rustc-diagnostic-internals.md#the-suppression-points)),
+and it does the same to plain Rust errors. A signature note prints the generated `__Context__` where
 plain rustc prints `_`
-([`provider_wrong_signature`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/provider_wrong_signature.rs)).
-Each such fixture lives under
+([`provider_wrong_signature`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/provider_wrong_signature.rs)),
+and a crate's own `Symbol<1, Chars<'a', Nil>>` prints in full where plain rustc shows
+`Symbol<1, Chars<..>>`
+([`lookalike_cgp_names`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/lookalike_cgp_names.rs)).
+The untransformed diagnostics of a CGP program differ the same way: a long requirement prints in
+full, with its module paths, where plain rustc shortens it. Each pass-through fixture that shows
+this lives under
 [`pass-through/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/pass-through) with
 a `//@rewrites-falsely:` marker naming its cause, and the harness reports the marker once the
 output matches plain rustc's.

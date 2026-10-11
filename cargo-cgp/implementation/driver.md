@@ -145,12 +145,13 @@ unrelated error. Otherwise the deepest transform, the
 [typed root-cause resolution](typed-root-cause-resolution.md), *replaces* a resolvable wiring
 failure with a root-cause-first diagnostic, covered in its own document; failing that, the in-place
 [trait-renaming rewrite](#naming-the-traits-behind-a-component-marker) described below renames the
-CGP wiring notes; and finally every diagnostic passes through the
-[post-processing](error-processing.md) transforms (stripping CGP path prefixes, resugaring `Symbol!`
-and `Path!`, rewording an unmet `HasField` bound), so no raw CGP construct leaks. The sections that
-follow detail the two levers, the rename, the two coherence reshapes, and the `#[cgp_impl]`
-reshapes; the replacement and the post-processing build on the rename's `TyCtxt` access and
-rustc-free helpers, and are documented separately.
+CGP wiring notes; and finally the [post-processing](error-processing.md) transforms (stripping
+module paths, resugaring `Symbol!`, `Path!`, and the type-level lists, rewording an unmet `HasField`
+bound) clean up every rewritten diagnostic, and change an untransformed one only where they recover
+a CGP encoding, so no raw CGP construct leaks and a plain Rust error stays as rustc printed it. The
+sections that follow detail the two levers, the rename, the two coherence reshapes, and the
+`#[cgp_impl]` reshapes; the replacement and the post-processing build on the rename's `TyCtxt`
+access and rustc-free helpers, and are documented separately.
 
 The emitter is also what *renders* the diagnostics, the way vanilla `rustc` would. The wrapper type
 [`CgpEmitter`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/cgp_emitter.rs)
@@ -855,7 +856,10 @@ will likely grow toward it:
 - [`tests/ui/pass-through/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/pass-through):
   `consumer_not_in_scope`, `headline_std_path`, `suggestion_full_paths`, and
   `auto_getter_mut_option` pin the trimmed paths: each diagnostic the tool leaves alone, suggestions
-  included, matches plain `cargo check` exactly.
+  included, matches plain `cargo check` exactly. `same_name_types`, `compute_bare_name_ambiguous`,
+  `raise_error_ambiguous`, and `update_field_marker_unannotated` pin that the post-processing keeps
+  the paths, labels, and context spans of an untransformed diagnostic, and `lookalike_cgp_names`
+  that a crate not using CGP is never resugared.
 - [`tests/ui/robustness/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/robustness):
   `panic_in_transform` and `panic_in_flush`, a wiring failure between two type errors with the
   emitter made to panic in each stage, pinning that every error still prints, as rustc built it,

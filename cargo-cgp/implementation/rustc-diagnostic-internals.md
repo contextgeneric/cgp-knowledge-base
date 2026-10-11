@@ -14,7 +14,7 @@ This document has a second subject that the same foothold forces on the tool. Be
 reaches the live `TyCtxt` and re-runs compiler code (the trait solver, and the queries it pulls in)
 from *inside* `emit_diagnostic`, it runs that code in a place rustc never expected arbitrary
 compiler work to run. Doing so can **panic the compiler**, and the panics are not hypothetical: the
-resolver guards against two distinct ones, described below. The information-dropping map below is
+driver guards against each one described below. The information-dropping map below is
 what the tool must defeat; the
 [panic hazards](#panic-hazards-running-compiler-code-inside-the-emitter) section near the end is
 what it must *avoid*. It is the more dangerous half: an elision produces a worse message, but a
@@ -250,11 +250,28 @@ mechanics (the `fresh_args_for_item`-plus-unification impl match, the normalize-
 in [Typed root-cause resolution](typed-root-cause-resolution.md); the note here is only that the
 erase is load-bearing, not cosmetic.
 
+### Freezing the crate store during name resolution (`data should not be frozen`)
+
+**The queries that list the loaded crates freeze the crate store, so calling one while the resolver
+can still load a crate panics the compiler the next time it does.** The `crates` and `used_crates`
+providers in
+[`rustc_metadata/src/rmeta/decoder/cstore_impl.rs`](../../../external/rust/compiler/rustc_metadata/src/rmeta/decoder/cstore_impl.rs)
+call `freeze_cstore` before they answer, and a later write to the store fails `FreezeLock`'s
+`data should not be frozen if we're still attempting to mutate it`. Name resolution loads a crate
+the first time a path names it, and it emits diagnostics as it goes, so a crate-list query from the
+emitter during name resolution freezes the store under it. The emitter's CGP-use check
+(`crate_uses_cgp`) therefore answers only once `cstore.is_frozen()` holds, and treats the crate as
+not using CGP before then. The store freezes in time for every CGP error: the trait solver lists the
+crates the first time it looks up the impls of a trait from another crate (`trait_impls_of` in
+[`rustc_middle/src/ty/trait_def.rs`](../../../external/rust/compiler/rustc_middle/src/ty/trait_def.rs)),
+and every CGP trait is from another crate.
+
 The through-line is that **the resolver's one safe compiler interaction is the trait solver on a
 fresh `InferCtxt`**, proven re-entrant-safe against a diagnostic being emitted mid-solve. Everything
 else (forcing a global query that can emit, relating an un-instantiated binder, leaking a variable
-across contexts) must be avoided or carefully neutralized. A new compiler interaction added to the
-resolver should be checked against all three hazards before it is trusted.
+across contexts, listing the crates before the store is frozen) must be avoided or carefully
+neutralized. A new compiler interaction added to the resolver or the emitter should be checked
+against every hazard above before it is trusted.
 
 ## Finding these again, and going further
 

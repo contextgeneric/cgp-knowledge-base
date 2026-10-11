@@ -109,9 +109,10 @@ same change.
   trait-error reporters, the two verbosity switches (`--verbose` versus `-Zverbose-internals`), and
   the specific elision points the driver's `--verbose` injection defeats. It also catalogs the
   **panic hazards** of re-running compiler code inside the emitter (re-entering the `DiagCtxt` lock,
-  relating an un-instantiated binder, leaking inference variables across contexts) and how the
-  resolver avoids each. Read it when a diagnostic is dropping a cause the tool needs, or before
-  adding a compiler interaction that could crash the driver.
+  relating an un-instantiated binder, leaking inference variables across contexts, freezing the
+  crate store during name resolution) and how the driver avoids each. Read it when a diagnostic is
+  dropping a cause the tool needs, or before adding a compiler interaction that could crash the
+  driver.
 - [Testing](testing.md): how the tool is tested: the unit tests, one test target per crate, and the
   UI snapshot suite. The suite is a custom Rust test harness (like Clippy's `compile-test`) that
   compiles fixtures under `tests/ui/` through the tool and diffs committed `.cgp.stderr`,

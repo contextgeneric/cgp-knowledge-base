@@ -80,9 +80,11 @@ ordinary toolchain. Its coverage comes from UI fixtures compiled end to end.
 The text approach resugars constructs inside a diagnostic that has already been rendered to strings.
 It is the
 [`postprocess`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/postprocess)
-chain, and it runs on every diagnostic the driver emits: on one the resolver *declined* it is the
-entire cleanup, and on one the resolver reshaped it tidies the compiler-formatted types a
-constructed message still embeds.
+chain, and the driver runs it over every diagnostic it emits in a crate that uses CGP. On one the
+tool reshaped, it tidies the compiler-formatted types a constructed message still embeds; on one it
+left alone, a message changes only where a resugaring (or the missing-field reword) fires, so
+everything else stays as rustc printed it (see
+[Error processing](error-processing.md#where-post-processing-sits-in-the-pipeline)).
 
 It exists as a separate implementation because **by the time it runs, the types are gone**. This is
 the point worth being precise about, since the compiler is still right there in the process: rustc
@@ -451,8 +453,9 @@ of the writable-name check, `shape_name`, kept in step.
 Two transforms are not resugarings but must run before them, since every rule above matches bare
 type names. They also do real work of their own: rustc shortens a path only when the name is unique
 across the build and was not brought in by a glob import, so the CGP types a crate imports through
-`use cgp::prelude::*` print qualified, and in a CGP diagnostic those qualifiers are noise the
-reader did not write.
+`use cgp::prelude::*` print qualified, and in a message the tool built, or around a construct it
+resugared, those qualifiers are noise the reader did not write. A diagnostic the tool otherwise left
+alone keeps them, as plain `cargo check` prints them.
 
 [`strip_module_paths`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/strip_modules.rs)
 collapses every `a::b::C` identifier run to its final segment:
