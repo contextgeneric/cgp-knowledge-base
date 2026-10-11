@@ -101,11 +101,12 @@ from the driver, is what keeps them unit-testable.
 - **The text signals**
   ([`signals`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/signals.rs))
   are the stable rustc phrasings the emitter's candidate checks key on: the wiring-trait mention
-  that makes a diagnostic a resolution candidate, the method-bounds `E0599` shape the resolver may
-  safely run on, the method-probe advice the emitter strips, the orphan-parameter `E0210` shape, the
-  `?`-operator cascade wording, and the trailing "detailed explanations" footer the emitter rebuilds
-  (both recognizing the line and reading the codes it names). Each is a pure function, so the
-  wording dependence on rustc's phrasing is documented and tested in one place.
+  that marks a declined `E0599` as CGP's before its method-probe advice is stripped, the
+  method-bounds `E0599` shape the resolver may safely run on, the method-probe advice the emitter
+  strips, the orphan-parameter `E0210` shape, the `?`-operator cascade wording, and the trailing
+  "detailed explanations" footer the emitter rebuilds (both recognizing the line and reading the
+  codes it names). Each is a pure function, so the wording dependence on rustc's phrasing is
+  documented and tested in one place.
 
 A further module,
 [`code`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/code.rs),

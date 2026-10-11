@@ -114,16 +114,19 @@ node appears because the walk never went through one. The `[CGP-Exxx]` codes are
 
 ## When the resolver engages, and when it declines
 
-The resolver treats a diagnostic as a candidate whenever it plausibly stems from a CGP component
-failure, then either traces it to a root cause or steps aside. Concretely, a diagnostic is a
-candidate when it **names a CGP wiring or field trait** (`CanUseComponent`, `IsProviderFor`, or
-`HasField`, matched in rustc's rendered text, the one place these serve as a *signal* that the
-diagnostic is CGP-related), or carries code **`E0271`**, **`E0277`**, or a **method-bounds
-`E0599`**: the "the method `…` exists … but its trait bounds were not satisfied" shape. The breadth
-past the wiring-worded cases is deliberate, because a failure that names no CGP construct can still
-be one a CGP component caused: a hand-written `Send`-recovery wrapper's `async fn` fails with an
-`E0271` opaque-future mismatch, or a downstream bound needs a method the context cannot supply. The
-resolver traces the dependency chain and treats the error as CGP-related exactly when a CGP
+The resolver treats a diagnostic as a candidate whenever it reports an **unmet obligation** that
+plausibly stems from a CGP component failure, then either traces it to a root cause or steps aside.
+Concretely, a diagnostic is a candidate when it carries code **`E0271`**, **`E0275`** (an overflow
+evaluating a requirement), **`E0277`**, or a **method-bounds `E0599`**: the "the method `…` exists …
+but its trait bounds were not satisfied" shape. Any other code declines before the walk, even one
+whose text names a CGP trait: a coherence conflict (`E0119`) between a derived `HasField` impl and
+the `Deref` blanket impl names `HasField`, but two impls overlapping leaves no bound unmet, and
+walking it would invent a missing-impl cause
+([`deref_has_field_conflict`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/deref_has_field_conflict.rs)).
+The gate does not ask whether the text names a CGP construct, because a failure that names none can
+still be one a CGP component caused: a hand-written `Send`-recovery wrapper's `async fn` fails with
+an `E0271` opaque-future mismatch, or a downstream bound needs a method the context cannot supply.
+The resolver traces the dependency chain and treats the error as CGP-related exactly when a CGP
 component failure sits in that chain; a candidate whose chain reaches no CGP cause **declines** and
 passes through to the fallback text rewrite untouched.
 
@@ -421,7 +424,7 @@ marking.
     failure re-reported at many sites, or a shared trait, is walked once (see
     [Cached dependency resolution](cached-dependency-resolution.md)).
 - [`crates/cargo-cgp-driver/src/emitter/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/emitter):
-  the `try_resolve` seam (gated by a cheap `mentions_wiring` scan, an `E0271`/`E0277` code, or a
+  the `try_resolve` seam (gated to an unmet-obligation code, `E0271`/`E0275`/`E0277` or a
   method-bounds `E0599`, with a resolution-class `E0599` excluded so the solver never runs on an
   error emitted mid-`clauses_of`) that tries the seven anchors in turn (the by-blanket-trait anchor
   last, gated to `E0277`), and the `transform_resolved` mutation it feeds, mapping the rustc code to
