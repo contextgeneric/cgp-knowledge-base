@@ -42,11 +42,12 @@ output normalization, also under `tests/`.
 
 The UI suite is modeled on Clippy's: a tree of `.rs` fixtures, each paired with committed snapshots,
 checked by compiling the fixture and diffing. The fixtures live under
-[`tests/ui/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui), grouped into three
+[`tests/ui/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui), grouped into four
 top-level categories by the *quality of the output* the tool now produces: `acceptable/` for output
 that meets the bar (the diagnostic the tool renders is a clean, root-cause-first error a reader can
-act on); `usability/` for errors that still carry the cause but bury it, the remaining issues; and
-`ok/` for a fixture that compiles clean and needs no diagnostic work. Each fixture `<name>.rs` has
+act on); `usability/` for errors that still carry the cause but bury it, the remaining issues;
+`hidden-root-cause/` for errors whose cause is absent from the output; and `ok/` for a fixture that
+compiles clean and needs no diagnostic work. Each fixture `<name>.rs` has
 three siblings: `<name>.cgp.stderr`, the tool's rendered output; `<name>.rust.stderr`, what plain
 `cargo check` prints for the same fixture, the untransformed "before" against which the tool's
 `.cgp.stderr` is the "after"; and `<name>.expand.rs`, the Rust the fixture's CGP macros generate, as

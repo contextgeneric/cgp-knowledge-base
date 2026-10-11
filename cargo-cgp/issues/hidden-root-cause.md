@@ -15,25 +15,51 @@ reconstruct it, and only when a fixture under
 are the cases that justify the tool's compiler-internal foothold: where the ordinary text output has
 lost information, only a tool reading the compiler's own state can put it back.
 
-## No reproduced cases remain
+## A wiring failure on a context from another crate
 
-There is **no reproduced hidden-root-cause case**. The two archetypes this category is built around
-are both defeated, each by a flag the driver injects, so neither hides a cause the output cannot
-recover. Per the rule in [the issues README](README.md), under which a class with no reproducing
-fixture counts as resolved, this document keeps no open entry; it records the two defeated
-archetypes below so a future agent recognizes them, and states what a genuinely new case would have
-to look like to belong here.
+**A call on a context defined in another crate can lose its root cause entirely.** The reproduced
+case is a handler pipeline: an upstream crate defines a small pipeline language, its providers, and
+a context `App` whose open `ErrorRaiserComponent` table routes some error types but not `IoFailure`,
+which one stage raises. A downstream crate runs the pipeline:
 
-This is not merely the absence of a *known* case: every post-codegen compile-fail class CGP produces
-has a fixture under [`tests/ui/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui),
-across the `acceptable/` and `usability/` categories, run through cargo-cgp and snapshotted, and
-every reproducible class carries its root cause in the tool's output. So the CGP error catalog's own
-hidden class (an unsatisfied dependency reached by a consumer-method call) surfaces here too, and
-nothing across the catalog lands in this category. The one class that produces no usable diagnostic
-under cargo-cgp, `inheritance_cycle`, does so because the next-gen solver *accepts* it (a missing
-error, tracked as a solver caveat in
-[The driver](../implementation/driver.md#choosing-the-trait-solver)), not because a cause is
-suppressed.
+```rust
+use cgp::extra::handler::CanHandle;
+use cgp::prelude::*;
+use cgp_test_foreign_pipeline::{App, Echo, Pipe, Stdout, backend};
+
+pub async fn run() -> Result<(), backend::Error> {
+    App.handle(PhantomData::<Pipe<Product![Echo, Stdout]>>, Vec::new()).await?;
+    Ok(())
+}
+```
+
+The tool reports two `[CGP-E002]` headlines about the whole pipeline's `ComposeHandlers`, each over
+rustc's `IsProviderFor` notes, and no `root cause:` tree. Neither its output nor plain
+`cargo check`'s mentions `IoFailure` or `ErrorRaiserComponent`, so no processing of the text could
+recover the cause. The same program with `App` defined in the calling crate is reshaped into a
+`[CGP-E107]` leaf naming `@ErrorRaiserComponent.IoFailure`, so the crate boundary is what loses
+it. The likely reason, not yet confirmed in the source, is that the resolver's use-site anchors read
+the context from local definitions, and the call is the only error the program produces. A `check_components!` entry for the program surfaces the
+cause, as the [debugging guide](../../cgp/guides/debugging.md) recommends.
+
+The case was found by removing the `std::io::Error` route from Hypershell's namespace, where the
+built-in `HypershellCli` context lives in the `hypershell` crate and every example runs it from
+another. Closing it means anchoring a use-site failure on a foreign context: recovering the
+context from the call's receiver type and walking its wiring, which the
+[call-site anchor](../implementation/typed-resolution-call-site.md) does for local contexts. The
+fixture is [`foreign_context_error_route`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden-root-cause/foreign_context_error_route.rs), whose upstream crate is the
+`cgp-test-foreign-pipeline` auxiliary crate.
+
+## Two defeated archetypes
+
+The two archetypes this category was first built around are both defeated, each by a flag the
+driver injects, so neither hides a cause the output cannot recover. They are recorded so a future
+agent recognizes them. Every other post-codegen compile-fail class CGP produces has a fixture under
+[`tests/ui/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui) that carries its root
+cause in the tool's output; the one class that produces no usable diagnostic under cargo-cgp,
+`inheritance_cycle`, does so because the next-gen solver *accepts* it (a missing error, tracked as
+a solver caveat in [The driver](../implementation/driver.md#choosing-the-trait-solver)), not
+because a cause is suppressed.
 
 The two archetypes are defeated by *different* levers, and the distinction is the useful one to
 carry forward. A cause can be hidden because the compiler **never computed it** or because the
@@ -76,11 +102,10 @@ the typed resolver reads the field name straight from the `Symbol!` and states i
 
 ## What a new case would look like
 
-Should a wiring mistake be found whose cause survives *both* levers (the next-gen solver still does
-not compute it, and `--verbose` still does not print it), it belongs here, with a fixture under a
-recreated
-[`tests/ui/hidden-root-cause/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui)
-directory that proves the cause is unrecoverable from the text. The upstream catalog's
+Should another wiring mistake be found whose cause survives *both* levers (the next-gen solver still
+does not compute it, and `--verbose` still does not print it), it belongs here, with a fixture under
+[`tests/ui/hidden-root-cause/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/hidden-root-cause)
+that proves the cause is unrecoverable from the text. The upstream catalog's
 [hidden-versus-surfaced axis](../../cgp/errors/README.md#the-central-axis-hidden-versus-surfaced) is
 the same distinction from the CGP side and is the reference for judging which classes carry their
 cause and which suppress it.
