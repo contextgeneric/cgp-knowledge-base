@@ -78,8 +78,11 @@ the impl's failing supertrait would replace it with the CGP tree and then de-dup
 `is_about_impl` (in `spans.rs`) accepts a primary span on the impl outside every method body (the
 header or a signature), or one inside a body only on a call to a method that the impl's trait or one
 of its supertraits declares, which is the forwarding call that fails because the supertrait does.
-The wrapper-chain anchor below applies the same gate. A secondary label or a note never counts,
-since rustc points those at any code the failure passed through.
+The span must be about that call by the call-site anchor's rule (on the call, its method name, or a
+whole argument, never strictly inside its receiver or an argument), so an error nested in the
+forwarding call's argument keeps its own diagnostic too. The wrapper-chain anchor below applies the
+same gate. A secondary label or a note never counts, since rustc points those at any code the
+failure passed through.
 
 The tree and headline are then **headed by the impl's own trait**, the wrapper the programmer wrote,
 so the failure reads `CanHandleApiSend → CanHandleApi → …` and points at their code rather than

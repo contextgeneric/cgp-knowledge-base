@@ -274,19 +274,15 @@ placeholder-free leaf declines to the fallback. A mis-guessed consumer or contex
 either nothing or a genuine failing obligation of the context the programmer named, never an
 invented diagnostic.
 
-The anchor also considers only the calls the diagnostic is about. `method_calls_at` collects a call
-whose own span overlaps one of the diagnostic's primary spans, and carries a match inward only
-through an `.await` desugaring, for the re-report rustc aims at the `.await` alone. A match never
-carries through an ordinary enclosing expression, because a function's body block overlaps every
-error inside it: an unrelated error beside a failing call (an `Rc` passed to a `T: Send` function on
-the line before `person.greet()`) keeps its own diagnostic instead of being re-anchored onto the
-call and de-duplicated away. One shape remains indistinguishable: an unrelated error *inside an
-argument* of the failing call overlaps the call's span, so it is resolved to the call's cause and
-de-duplicated away, and the error is lost. A real failure of the call can point into an argument too
-(the `PhantomData` tag in the example above), so the span alone cannot tell them apart. That would
-need the diagnostic's failing predicate, and rustc builds an `E0277` from formatted text with no
-structured predicate to compare. The impl-site anchor has the same limit for an error inside the
-argument of a forwarding call.
+The anchor also considers only the calls the diagnostic is about. A failing call's primary span sits
+on the method name, on one whole argument (the `PhantomData` tag in the example above), or on the
+whole call, as does the re-report rustc raises where the result is awaited. So `method_calls_at`
+collects a call only when a primary span overlaps it without lying strictly inside its receiver or
+one of its arguments. Two kinds of unrelated error keep their own diagnostic instead of being
+re-anchored onto the call and de-duplicated away: an error beside the call (an `Rc` passed to a
+`T: Send` function on the line before `person.greet()`), whose span the call does not overlap, and
+an error nested in an argument (`person.greet(count(Rc::new(1)))`), whose span lies strictly inside
+it. The impl-site anchor reads a forwarding call through the same rule.
 
 ## Tests
 
@@ -300,10 +296,11 @@ non-generic call, and a `PhantomData` over a tuple, a reference, a slice, and ge
 `foreign_context_error_route` (a call on a context from an upstream crate), and the
 `cascade_later_stage*` shapes whose pipeline stages the walk then descends. The decline boundary is
 pinned by `generic_consumer_unwritten_arg`, and the span gate by `unrelated_error_before_call` (an
-unrelated `Send` error before the failing call keeps its own diagnostic), its limit by
-`unrelated_error_in_call_argument` (the same error inside the call's argument is lost), and the
-pass-through fixture `local_blanket_trait` (a plain error in a function that also calls a failing
-blanket-trait method is left alone). The consolidated catalog lives in the parent document's
+unrelated `Send` error before the failing call keeps its own diagnostic) and by
+`unrelated_error_in_call_argument` and `unrelated_error_in_awaited_argument` (the same error inside
+the call's argument, awaited or not, keeps its own diagnostic too), and the pass-through fixture
+`local_blanket_trait` (a plain error in a function that also calls a failing blanket-trait method is
+left alone). The consolidated catalog lives in the parent document's
 [Tests](typed-root-cause-resolution.md#tests) section.
 
 ## Source

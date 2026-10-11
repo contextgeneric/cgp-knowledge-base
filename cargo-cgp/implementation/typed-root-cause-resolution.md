@@ -350,10 +350,10 @@ marking.
     own plain blanket traits are not.
   - [`call_site/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/call_site)
     holds the sixth anchor, `resolve_call_site`, the HIR re-read of the failing call, one stage per
-    file: `find_call.rs` (`method_calls_at`, the calls at the diagnostic's primary spans, or inside
-    an `.await` desugaring at them, and `traits_with_method`, the
-    candidate consumer traits *and* `#[cgp_fn]`/`#[blanket_trait]` blanket traits by method name,
-    the latter headed `[CGP-E009]` by clearing `consumers_are_cgp`), `receiver.rs`
+    file: `find_call.rs` (`method_calls_at`, the calls a primary span lands on without lying
+    strictly inside the receiver or an argument, and `traits_with_method`, the candidate consumer
+    traits *and* `#[cgp_fn]`/`#[blanket_trait]` blanket traits by method name, the latter headed
+    `[CGP-E009]` by clearing `consumers_are_cgp`), `receiver.rs`
     (`receiver_context`/`local_binding_context`, the receiver's type from its binding, annotation,
     parameter, literal, or constructor-call signature, plus `contexts_at_spans`, the same reading
     applied to every expression at the diagnostic's spans, which is the by-blanket-trait anchor's
@@ -613,9 +613,9 @@ fixtures:
 - `unrelated_error_before_call`: an `Rc` `Send` error on the line before a failing consumer call
   keeps its own diagnostic, because the call-site anchor matches a call only by the diagnostic's
   primary span.
-- `unrelated_error_in_call_argument`: the limit of that rule. The same `Send` error inside an
-  argument of the failing call overlaps the call's span, so it resolves to the call's cause and is
-  de-duplicated away; the fixture pins the lost error (quality `hidden`).
+- `unrelated_error_in_call_argument` and `unrelated_error_in_awaited_argument`: the same `Send`
+  error nested in an argument of the failing call, plain and awaited, also keeps its own diagnostic,
+  because a span strictly inside an argument is not about the call.
 - `cascade_later_stage`: the same dispatch shape but with the missing field read by the *second*
   pipeline stage rather than the first, so the cause sits behind a `ComposeHandlers` stage keyed on
   the first stage's un-normalized `::Output`. Pins the placeholder-fold of a still-unresolved
@@ -722,9 +722,8 @@ The **impl-site and wrapper-chain paths** are pinned by:
 - `unrelated_error_in_wrapper_impl`: an `Rc` `Send` error inside a wrapper impl's method body keeps
   its own diagnostic, while the forwarding call to the failing supertrait's method joins the
   `[CGP-E009]` block (`is_about_impl`).
-- `unrelated_error_in_forwarding_argument`: the limit of that rule, the impl-site form of
-  `unrelated_error_in_call_argument`. The `Send` error inside the forwarding call's argument
-  overlaps the call, joins the `[CGP-E009]` block, and is lost (quality `hidden`).
+- `unrelated_error_in_forwarding_argument`: the same `Send` error nested in the forwarding call's
+  argument keeps its own diagnostic beside the `[CGP-E009]` block, by the call-site anchor's rule.
 
 Finally, the leaf wording and the tree renderer are unit-tested over hand-built `Resolved` values,
 independently of the compiler:
