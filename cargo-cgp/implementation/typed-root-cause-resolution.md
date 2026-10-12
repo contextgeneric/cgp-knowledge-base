@@ -186,8 +186,10 @@ each leaf, render the chain, and emit. Each stage has its own document, and this
 of them.
 
 Two facts hold across every stage, and everything below assumes them. **The obligation the walk
-works on is always a real consumer-trait obligation** `Ctx: ConsumerTrait<Params…>`, never a
-`CanUseComponent` wrapper, and **the traits are recognized structurally, without `IsProviderFor`**:
+works on is always a real trait obligation**, never a `CanUseComponent` or `IsProviderFor` wrapper:
+a consumer-trait obligation `Ctx: ConsumerTrait<Params…>`, or, for a `#[check_providers]` entry, the
+provider-trait obligation `Provider: ProviderTrait<Ctx, Params…>` the entry asserts. And **the
+traits are recognized structurally, without `IsProviderFor`**:
 
 - A **provider trait** is identified by the delegation blanket `#[cgp_component]` generates,
   `impl<Ctx, P> ProviderTrait<Ctx> for P where P: DelegateComponent<Marker>, …`, whose `Self` is a
@@ -316,8 +318,9 @@ marking.
 
 - [`crates/cargo-cgp-driver/src/resolve/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve):
   the typed resolution, split by stage into sub-directories behind re-exporting `mod.rs` files and
-  building the rustc-free `Resolved` model. Every anchor feeds the walk the real consumer obligation
-  `Ctx: ConsumerTrait<Params…>`, never a `CanUseComponent` wrapper.
+  building the rustc-free `Resolved` model. Every anchor feeds the walk a real trait obligation
+  (the consumer obligation `Ctx: ConsumerTrait<Params…>`, or the provider obligation a
+  `#[check_providers]` entry asserts), never a `CanUseComponent` or `IsProviderFor` wrapper.
   - [`anchor/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/anchor)
     holds seven of the eight anchors, plus their two shared ingredients: `seed.rs`
     (`consumer_obligation`, the `Params`-slot ungrouping decided by the consumer's own generics: a

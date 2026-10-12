@@ -118,10 +118,13 @@ recognizes.
   trait for the context: its impl-side `where`-clause dependencies do not hold.
 - **Triggered by:** a failing `#[check_providers(...)]` entry, recognized by the generated check
   impl whose supertrait is `IsProviderFor` and whose `Self` is the listed provider. The tree starts
-  at that provider, whatever the context wires. Any other failure is classed by the trait its anchor
-  recovered, even when rustc's own headline stops on a provider's `IsProviderFor` bound (a
-  dispatch combinator, a `RedirectLookup`, or a provider deep in the chain): such a block is
-  `CGP-E001` or `CGP-E003`.
+  at that provider, whatever the context wires. Any other failure the resolver traces is classed by
+  the trait its anchor recovered, even when rustc's own headline stops on a provider's
+  `IsProviderFor` bound (a dispatch combinator, a `RedirectLookup`, or a provider deep in the
+  chain): such a block is `CGP-E001` or `CGP-E003`. A failure the resolver declines has no anchor,
+  so the text rewrite restates an `IsProviderFor` headline in the provider form under this code,
+  and keeps rustc's notes in place of a root-cause tree
+  ([`generic_check_without_params`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/generic_check_without_params.rs)).
 - **Fix:** follow the `root cause:` note(s) to the dependency the provider is missing.
 - **Upstream class:** [check-trait failure](../cgp/errors/checks/check-trait-failure.md) (its
   provider-side face).

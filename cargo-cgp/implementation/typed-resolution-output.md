@@ -45,14 +45,18 @@ The sentence after the code states the causes the note lists, by three rules:
 - **Mixed causes** keep the class sentence with their count, and the note lists each:
   `` [CGP-E001] the consumer trait `CanCalculateVolume` is not implemented for context `Shape`: 2 root causes ``.
 
-The class sentence is the class's own wording: `` the consumer trait `C` is not implemented for
-context `X` `` for `[CGP-E001]`, the provider form the text rewrite words from rustc's headline for
-`[CGP-E002]`, and `` the trait `W` is not implemented for … `` for `[CGP-E003]`, naming a foreign
-subject plainly rather than calling it a context. It names the trait off its `DefId`, so it is
-exact even when two components share a name in different modules. The class sentence is also the
-block's **internal headline**: the de-duplication ledger records it, since a re-report the resolver
-declined is worded with it by the text rewrite (see [The driver](driver.md)). The two mismatch
-classes have no separate class sentence; their headline is their cause.
+Each class has its own class sentence, which names the trait off its `DefId`, so it is exact even
+when two components share a name in different modules:
+
+- **`[CGP-E001]`:** `` the consumer trait `C` is not implemented for context `X` ``.
+- **`[CGP-E002]`:** `` the provider trait `P` with context `X` is not implemented for provider `Q` ``.
+- **`[CGP-E003]`:** `` the trait `W` is not implemented for … ``, naming a foreign subject plainly
+  rather than calling it a context.
+
+The class sentence is also the block's **internal headline**: the de-duplication ledger records it,
+since a re-report the resolver declined is worded with it by the text rewrite (see
+[The driver](driver.md)). The two mismatch classes have no separate class sentence; their headline
+is their cause.
 
 The field-type-mismatch class is worth showing, because its headline is unusually specific. Reusing
 the area example but giving `Rectangle` a `height` of the wrong type:

@@ -1,14 +1,14 @@
 # Typed resolution: anchoring the starting obligation
 
 This document covers the first stage of the driver's
-[typed root-cause resolution](typed-root-cause-resolution.md): recovering, from a failing
-diagnostic, the **real consumer-trait obligation** `Ctx: ConsumerTrait<Params…>` that seeds the
-[walk](typed-resolution-walk.md). Eight anchors recover it from eight failure shapes, tried in
-order; the first that succeeds wins, and each produces the obligation to walk from a different
-shape: the consumer obligation, or, for a `#[check_providers]` entry, the provider obligation the
-entry asserts. Seven are described here. The remaining one, the re-read of the failing call
-expression, is tried seventh and has [its own document](typed-resolution-call-site.md). How the
-recovered causes are worded and emitted is [the transformed diagnostic](typed-resolution-output.md).
+[typed root-cause resolution](typed-root-cause-resolution.md), which recovers from a failing
+diagnostic the **real trait obligation** that seeds the [walk](typed-resolution-walk.md): a
+consumer-trait obligation `Ctx: ConsumerTrait<Params…>`, or, for a `#[check_providers]` entry, the
+provider-trait obligation the entry asserts. Eight anchors recover it from eight failure shapes,
+tried in order, and the first that succeeds wins. Seven are described here. The remaining one, the
+re-read of the failing call expression, is tried seventh and has
+[its own document](typed-resolution-call-site.md). How the recovered causes are worded and emitted
+is [the transformed diagnostic](typed-resolution-output.md).
 
 **From a `check_components!` entry, by span.** A `check_components!` entry expands to a concrete
 impl of a generated check trait,
