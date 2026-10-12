@@ -131,7 +131,7 @@ The provider reads the field through [`HasField`](../../../cgp/reference/traits/
 formats it with `Display`, so the field may be a `String` or any displayable value. The field name
 is chosen by the program, not by the provider, which is why this read cannot be an
 [`#[implicit]`](../../../cgp/reference/attributes/implicit.md) argument. A context missing the field
-fails to compile; through a check, `cargo cgp check` reports a `[CGP-E106]` root cause, "missing
+fails to compile; through a check, `cargo cgp check` reports a `[CGP-E110]` root cause, "missing
 field `name` on `HypershellCli`".
 
 ### Context dependencies

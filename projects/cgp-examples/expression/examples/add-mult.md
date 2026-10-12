@@ -71,7 +71,7 @@ ran `cargo cgp check` built from the `cargo-cgp` source at commit `b6a6323`:
 
 ```text
 error[E0277]: [CGP-E001] the consumer trait `CanCompute<Eval, Times<MathExpr>>` is not implemented for context `Interpreter`
-   = note: root cause: [CGP-E107] context `Interpreter` does not contain any delegate entry for `@ComputerComponent.Eval.Times<MathExpr>`
+   = note: root cause: [CGP-E113] context `Interpreter` does not contain any delegate entry for `@ComputerComponent.Eval.Times<MathExpr>`
 ```
 
 A second error, `[CGP-E002]`, lands at the wrapper's `<MatchWithValueHandlers>::compute` call,

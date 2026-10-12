@@ -40,20 +40,20 @@ per missing filter. It grouped each filter with the creator whose wrapper uses i
 
 ```text
 error[E0277]: [CGP-E001] the consumer traits `CanCreateUser` and `CanCensorUsername` are not implemented for context `CoreOnlyApp`
-   = note: root cause: [CGP-E107] context `CoreOnlyApp` does not contain any delegate entry for `@app.extra.content_filter.UsernameCensorComponent`
+   = note: root cause: [CGP-E113] context `CoreOnlyApp` does not contain any delegate entry for `@app.extra.content_filter.UsernameCensorComponent`
 error[E0277]: [CGP-E001] the consumer traits `CanCreatePost` and `CanDetectSpamMessage` are not implemented for context `CoreOnlyApp`
-   = note: root cause: [CGP-E107] context `CoreOnlyApp` does not contain any delegate entry for `@app.extra.content_filter.SpamMessageDetectorComponent`
+   = note: root cause: [CGP-E113] context `CoreOnlyApp` does not contain any delegate entry for `@app.extra.content_filter.SpamMessageDetectorComponent`
 ```
 
 The mistake is the missing `@app.extra` entry, and the root cause names the full path the namespace
 routes each filter to. The other five checks passed, since the getters, updaters, and deleter need
 nothing from the extras. Three further probes are recorded with the stage they concern:
 
-- **A bundle that does not join the namespace**: `[CGP-E110]` at the check lines; see
+- **A bundle that does not join the namespace**: `[CGP-E114]` at the check lines; see
   [namespaces.md](namespaces.md#the-bundles).
-- **A default-impls context without its filter entry**: `[CGP-E107]` at the creator's check; see
+- **A default-impls context without its filter entry**: `[CGP-E113]` at the creator's check; see
   [default-impls.md](default-impls.md#the-context).
-- **A context or child namespace that overrides a default**: `[CGP-E005]` at the entry; see
+- **A context or child namespace that overrides a default**: `[CGP-E011]` at the entry; see
   [default-impls.md](default-impls.md#a-default-cannot-be-overridden).
 
 ## What a probe ran

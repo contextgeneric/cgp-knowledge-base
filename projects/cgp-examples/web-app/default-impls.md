@@ -82,7 +82,7 @@ filter needs the censor:
 
 ```text
 error[E0277]: [CGP-E001] the consumer trait `CanCreateUser` is not implemented for context `NoFilterApp`
-   = note: root cause: [CGP-E107] context `NoFilterApp` does not contain any delegate entry for `@app.extra.content_filter.UsernameCensorComponent`
+   = note: root cause: [CGP-E113] context `NoFilterApp` does not contain any delegate entry for `@app.extra.content_filter.UsernameCensorComponent`
 ```
 
 ## A default cannot be overridden
@@ -104,7 +104,7 @@ delegate_components! {
 `cargo cgp check` rejected the entry as overlapping the namespace:
 
 ```text
-error[E0119]: [CGP-E005] `CachedApp` cannot wire `@app.core.user.UserGetterComponent.*` that is already set through `DefaultAppComponents`
+error[E0119]: [CGP-E011] `CachedApp` cannot wire `@app.core.user.UserGetterComponent.*` that is already set through `DefaultAppComponents`
 ```
 
 A child namespace that rebinds the same path, `new CachedAppComponents: DefaultAppComponents`, fails
@@ -138,7 +138,7 @@ built from the `cargo-cgp` source at commit `b6a6323` reported the conflict, as 
 above:
 
 ```text
-error[E0119]: [CGP-E005] `ProductionApp` cannot wire `@app.core.user.UserGetterComponent.*` that is already set through `DefaultAppComponents`
+error[E0119]: [CGP-E011] `ProductionApp` cannot wire `@app.core.user.UserGetterComponent.*` that is already set through `DefaultAppComponents`
 ```
 
 ## Public material derived from this

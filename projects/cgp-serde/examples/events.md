@@ -166,7 +166,7 @@ the three types that contain an event, and the tool names the missing entry as t
 
 ```text
 error[E0277]: [CGP-E001] the consumer traits `CanDeserializeValue<ChatEvent>`, `CanDeserializeValue<Vec<ChatEvent>>`, and `CanDeserializeValue<SyncBatch>` are not implemented for context `ServerApp`
-    = note: root cause: [CGP-E107] context `ServerApp` does not contain any delegate entry for `@ValueDeserializerComponent.Nil`
+    = note: root cause: [CGP-E113] context `ServerApp` does not contain any delegate entry for `@ValueDeserializerComponent.Nil`
 ```
 
 The dependency chain below the root cause runs from `SyncBatch` through the `Vec` and `ChatEvent`,

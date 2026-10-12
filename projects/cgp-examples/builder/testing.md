@@ -40,7 +40,7 @@ named the field, through the chain from `BuildAndMergeOutputs` down to `BuildOpe
 
 ```text
 error[E0271]: [CGP-E001] the consumer trait `CanHandle<(), ()>` is not implemented for context `NoPreambleBuilder`
-   = note: root cause: [CGP-E106] missing field `llm_preamble` on `NoPreambleBuilder`
+   = note: root cause: [CGP-E110] missing field `llm_preamble` on `NoPreambleBuilder`
 ```
 
 A second probe kept every field and left `BuildHttpClient` out of the list, wiring

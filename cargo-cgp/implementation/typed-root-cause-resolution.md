@@ -93,12 +93,12 @@ error[E0277]: [CGP-E001] the consumer trait `CanCalculateArea` is not implemente
 62 |         AreaCalculatorComponent,
    |         ^^^^^^^^^^^^^^^^^^^^^^^
    |
-   = note: root cause: [CGP-E106] missing field `height` on `Rectangle`
+   = note: root cause: [CGP-E110] missing field `height` on `Rectangle`
            this is required through the dependency chain:
              [CGP-E101] consumer trait impl `CanCalculateArea` for context `Rectangle`
              └─ [CGP-E102] provider trait impl `AreaCalculator` with context `Rectangle` for provider `RectangleArea`
-               └─ [CGP-E105] trait impl `HasRectangleFields` for `Rectangle`
-                 └─ [CGP-E106] missing field `height` on `Rectangle`
+               └─ [CGP-E104] trait impl `HasRectangleFields` for `Rectangle`
+                 └─ [CGP-E110] missing field `height` on `Rectangle`
 ```
 
 Every element of that output is reconstructed from the compiler, not read from rustc's message: the
@@ -231,7 +231,7 @@ wiring or dispatch entry named) and renders each hop as a tree label with the ty
 resugared.
 
 **[The transformed diagnostic](typed-resolution-output.md)** is the output side: the coded
-`[CGP-E001]`/`[CGP-E002]`/`[CGP-E003]`/`[CGP-E009]`/`[CGP-E017]` headline classes, the `root cause:`
+`[CGP-E001]`/`[CGP-E002]`/`[CGP-E004]`/`[CGP-E003]`/`[CGP-E005]` headline classes, the `root cause:`
 notes over their merged dependency trees (with underived-field causes coalesced), and the emitter's
 application of the rustc-free plan to the compiler's `DiagInner`.
 
@@ -327,7 +327,7 @@ marking.
     its `CanUseComponent<Marker, Params>` assertion through `marker_to_consumer` to the consumer
     obligation. `impl_site.rs` recovers the context and the failing supertrait from an enclosing
     `impl Trait for Context` block, heading the tree with the impl's own wrapper trait (`[CGP-E001]`
-    or `[CGP-E009]` by its blanket-impl fingerprint) through `wrapper_consumer_causes`, which seeds
+    or `[CGP-E003]` by its blanket-impl fingerprint) through `wrapper_consumer_causes`, which seeds
     the supertrait directly when it is a CGP consumer *or* a `#[cgp_fn]`/`#[blanket_trait]`
     blanket-impl trait (`is_blanket_trait`), the latter reshaping a `#[cgp_fn]` blanket-trait check
     whose cause is a missing field. `wrapper_chain.rs` is the foreign-wrapper case, descending each
@@ -343,7 +343,7 @@ marking.
     and its by-blanket-trait sibling `resolve_use_site_blanket_trait` (seventh, gated to `E0277`,
     tried after the call-site anchor) does the same for a `#[cgp_fn]`/`#[blanket_trait]` blanket
     trait required as a bound, reading the context off the failing expression via the call-site
-    anchor's `contexts_at_spans` and heading the result `[CGP-E009]` by clearing
+    anchor's `contexts_at_spans` and heading the result `[CGP-E003]` by clearing
     `consumers_are_cgp`. A blanket trait is recognized by `is_blanket_trait`: a blanket impl over a
     bare context, accepted only on evidence that the blanket depends on a CGP construct, so a
     `#[cgp_fn]` trait or one a library publishes is reached while `ToString`, `Into`, and a crate's
@@ -353,7 +353,7 @@ marking.
     file: `find_call.rs` (`method_calls_at`, the calls a primary span lands on without lying
     strictly inside the receiver or an argument, and `traits_with_method`, the candidate consumer
     traits *and* `#[cgp_fn]`/`#[blanket_trait]` blanket traits by method name, the latter headed
-    `[CGP-E009]` by clearing `consumers_are_cgp`), `receiver.rs`
+    `[CGP-E003]` by clearing `consumers_are_cgp`), `receiver.rs`
     (`receiver_context`/`local_binding_context`, the receiver's type from its binding, annotation,
     parameter, literal, or constructor-call signature, plus `contexts_at_spans`, the same reading
     applied to every expression at the diagnostic's spans, which is the by-blanket-trait anchor's
@@ -485,8 +485,8 @@ Each **leaf class** has fixtures for its field, wiring, and redirect shapes:
   (`Pool<<App as HasDbType>::Db>`, from a provider reading `&Pool<Db>` under an imported abstract
   type), so the mismatch is between two of the context's own decisions rather than between a
   provider and a struct. Pins the dual rendering: `classify::leaf` normalizes the required type
-  alongside the un-normalized form and keeps the reduction only when it differs, so the `[CGP-E003]`
-  header and the `[CGP-E109]` leaf both read `` `Pool<<App as HasDbType>::Db>` (`Pool<Postgres>`) ``
+  alongside the un-normalized form and keeps the reduction only when it differs, so the `[CGP-E004]`
+  header and the `[CGP-E112]` leaf both read `` `Pool<<App as HasDbType>::Db>` (`Pool<Postgres>`) ``
   while a concrete requirement stays bare.
 - `abstract_type_mismatch` (under
   [`checks/check-trait-failure/types/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/checks/check-trait-failure/types)):
@@ -494,17 +494,17 @@ Each **leaf class** has fixtures for its field, wiring, and redirect shapes:
   its provider pins the same type to `f64` with the `#[use_type(HasScalarType.{Scalar = f64})]`
   equality form, so the trait bound holds and only the projection fails. Pins the generalized
   projection recovery (the walk reports the unmet non-`HasField` projection instead of declining),
-  the `[CGP-E017]` header and `[CGP-E112]` leaf, the actual type read by normalizing the projection,
+  the `[CGP-E005]` header and `[CGP-E116]` leaf, the actual type read by normalizing the projection,
   and the `UseType<…>` `help` the `#[cgp_type]` recognition earns.
 - `abstract_type_mismatch_projected`: the same class where the provider pins the abstract type to a
   type that *projects through another one* (`{Transaction = Tx<Db>}`), so the requirement is
   `Tx<<App as HasDbType>::Db>` and the two things in conflict are both the context's own wiring
-  decisions. Pins the dual rendering on `[CGP-E017]`/`[CGP-E112]` (the projection followed by what
+  decisions. Pins the dual rendering on `[CGP-E005]`/`[CGP-E116]` (the projection followed by what
   it reduces to) and that the `help` uses the reduced form alone, since it names an edit to type. It
   depends on a pin grounding an alias nested in its right-hand side.
 - `plain_assoc_type_mismatch`: the negative counterpart, and the pin on that recognition's
   discriminator: the same projection failure on a plain associated-type trait implemented directly
-  on the context. It takes the same `[CGP-E017]` class, since the mechanism is the projection rather
+  on the context. It takes the same `[CGP-E005]` class, since the mechanism is the projection rather
   than the trait, but reads `associated type` and carries **no** `help`: there is no wiring entry to
   change, so suggesting `UseType<…>` would name a fix that does not exist.
 - `field_type_mismatch_modules`: two `Rectangle` contexts in separate modules with differently-typed
@@ -514,7 +514,7 @@ Each **leaf class** has fixtures for its field, wiring, and redirect shapes:
 - `parallel_missing_wiring`: two unwired components, both dependencies of one provider, so the two
   missing-wiring causes share a root and render as one branching note with a `root causes:` heading.
 - `transitive_missing_wiring`: a component wired through an *aggregate provider* that the aggregate
-  itself does not wire, the `[CGP-E110]` missing-dispatch-entry leaf on a non-context delegation
+  itself does not wire, the `[CGP-E114]` missing-dispatch-entry leaf on a non-context delegation
   table
   (`` provider `CommonProvider` does not contain any delegate entry for `BarProviderComponent` ``),
   with the whole tree correctly rooted at the checked context.
@@ -608,7 +608,7 @@ fixtures:
   block whose await-site re-report de-duplicates and whose `?`-operator cascade the emitter's gate
   drops (the resolver never takes a `?` error, so the fixture fails without the gate).
 - `foreign_context_error_route`: a handler-pipeline call on a context from an upstream crate whose
-  error table lacks a route, recovered by the call-site anchor into the `[CGP-E107]` leaf the local
+  error table lacks a route, recovered by the call-site anchor into the `[CGP-E113]` leaf the local
   form reports, rather than rustc's two provider-plumbing errors that never name the route.
 - `unrelated_error_before_call`: an `Rc` `Send` error on the line before a failing consumer call
   keeps its own diagnostic, because the call-site anchor matches a call only by the diagnostic's
@@ -636,7 +636,7 @@ fixtures:
 - `cascade_nested_projection`: the three-stage variant of the Hypershell checksum pipeline shape,
   where the later stage's input (an earlier stage's fixed, projection-typed output produced by a
   nested `PipeHandlers`) reaches an **input dispatcher** written as a `UseInputDelegate` table with
-  no entry for it. Pins the `[CGP-E110]` missing-dispatch-entry leaf: the cause is an unmet
+  no entry for it. Pins the `[CGP-E114]` missing-dispatch-entry leaf: the cause is an unmet
   `DelegateComponent` on the dispatch *table* rather than the context, which the walk reports rather
   than dropping as plumbing, leading with
   `` provider `SinkHandlers` does not contain any delegate entry for `Tagged<Bytes>` `` over the
@@ -651,7 +651,7 @@ fixtures:
   [`checks/check-trait-failure/providers/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/checks/check-trait-failure/providers)):
   a type wired where a provider was expected that does not implement the provider trait at all
   (`WrapGreeter<NotAGreeter>` with `NotAGreeter` an ordinary struct, the `money-transfer-api`
-  `UseBasicAuth<QueryBalanceRequest>` shape). Pins the `[CGP-E111]` not-a-provider leaf and its
+  `UseBasicAuth<QueryBalanceRequest>` shape). Pins the `[CGP-E115]` not-a-provider leaf and its
   discriminator against the `cascade_after_use_site` dead-end: `NotAGreeter` has no concrete
   `Greeter` impl (`owner_has_impl_of` false), so it is reported as
   `` the provider trait `Greeter` is not implemented for `NotAGreeter` `` rather than declining to a
@@ -670,14 +670,14 @@ fixtures:
   missing a field one composed blanket trait reads. Pins the call-site anchor's *blanket-trait*
   candidate: the called `Describe` is a `#[cgp_fn]`/`#[blanket_trait]` blanket-impl trait, not a CGP
   consumer, so no span-matching anchor recovers it; the anchor finds it by method name, walks
-  `App: Describe` to the missing field, and heads the block `[CGP-E009] the trait …` (clearing
+  `App: Describe` to the missing field, and heads the block `[CGP-E003] the trait …` (clearing
   `consumers_are_cgp`) rather than declining to rustc's `E0599` with the cause buried under a
   method-probe candidate list. The use-site counterpart of the impl-site
   [`cgp_fn_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/cgp_fn_missing_field.rs).
 - `upstream_blanket_trait_use_site`: the `cgp_fn_use_site` shape with the blanket trait defined in
   an *upstream* crate (via `//@aux-build`), the arrangement a library publishing blanket traits
   produces. Pins the foreign reach of `is_blanket_trait`: a locality-only rule would stop the
-  `[CGP-E009]` reshaping at the crate boundary and leave rustc's `E0599`, while the CGP-evidence
+  `[CGP-E003]` reshaping at the crate boundary and leave rustc's `E0599`, while the CGP-evidence
   rule (`Describe` → `HasName` → `HasField`) reaches it.
 - `local_blanket_trait_reached` (under
   [`pass-through/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/pass-through)):
@@ -690,7 +690,7 @@ fixtures:
   with no method call to read. Pins the by-blanket-trait anchor (`resolve_use_site_blanket_trait`):
   it recovers `GetName` from the diagnostic's spans and the context `App` from the failing
   expression (rustc puts the "not implemented for `App`" span on the `#[derive(HasField)]`
-  attribute, outside `App`'s item span), heading `[CGP-E009]` over the missing-field tree, where raw
+  attribute, outside `App`'s item span), heading `[CGP-E003]` over the missing-field tree, where raw
   rustc mangles the field name to an unreadable `Symbol<4, Chars<..>>` in a `help`. Its
   decline-boundary sibling is
   [`generic_consumer_unwritten_arg`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/use-site/generic_consumer_unwritten_arg.rs),
@@ -703,12 +703,12 @@ The **impl-site and wrapper-chain paths** are pinned by:
 
 - `manual_supertrait_impl`: a wrapper carrying a generic CGP consumer supertrait implemented
   directly on the context (the `CanHandleApiSend` shape), failing at both the impl header `E0277`
-  and its forwarding-call `E0599`, both collapsing to one `[CGP-E009]` block.
+  and its forwarding-call `E0599`, both collapsing to one `[CGP-E003]` block.
 - `traced_send_wrapper`: an async `Send`-recovery wrapper whose opaque-future `E0271` names no CGP
   construct, traced to the wrapper-headed tree.
 - `foreign_wrapper_chain`: a routing trait on a foreign `Box<App>` whose `where`-clause chain
   reaches a CGP consumer two hops down, the cause reached through a projection bound's base trait,
-  headed by the `[CGP-E009]` foreign-plain form.
+  headed by the `[CGP-E003]` foreign-plain form.
 - `cgp_fn_missing_field` (under
   [`checks/check-trait-failure/fields/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/checks/check-trait-failure/fields)):
   a `#[cgp_fn]` trait asserted through a wrapper (`pub trait CheckFormatName: FormatName {}` +
@@ -717,13 +717,13 @@ The **impl-site and wrapper-chain paths** are pinned by:
   (and a `#[uses]`-chained sibling) to the `` missing field `name` `` cause instead of declining to
   rustc's misleading `#[derive(HasField)]` note.
 - `foreign_context_wrapper_impl`: a local wrapper trait implemented on a context from an upstream
-  crate (via `//@aux-build`), reaching the same `[CGP-E107]` missing error route the local form
+  crate (via `//@aux-build`), reaching the same `[CGP-E113]` missing error route the local form
   reports, because the impl-site anchor accepts a foreign context that carries its own wiring.
 - `unrelated_error_in_wrapper_impl`: an `Rc` `Send` error inside a wrapper impl's method body keeps
   its own diagnostic, while the forwarding call to the failing supertrait's method joins the
-  `[CGP-E009]` block (`is_about_impl`).
+  `[CGP-E003]` block (`is_about_impl`).
 - `unrelated_error_in_forwarding_argument`: the same `Send` error nested in the forwarding call's
-  argument keeps its own diagnostic beside the `[CGP-E009]` block, by the call-site anchor's rule.
+  argument keeps its own diagnostic beside the `[CGP-E003]` block, by the call-site anchor's rule.
 
 Finally, the leaf wording and the tree renderer are unit-tested over hand-built `Resolved` values,
 independently of the compiler:

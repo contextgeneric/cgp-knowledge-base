@@ -74,7 +74,7 @@ it.** The route list routes the path `@cgp.core.error.ErrorRaiserComponent.<Type
 and the aggregate maps the type to its strategy. An extension that raises a type the namespace has
 never seen must add a route for it, which is why the `bluesky_websocket` example wires
 `@cgp.core.error.ErrorRaiserComponent.TungsteniteError: RaiseAnyhowError` on its context. A probe
-that raised an unregistered `TooLong` error from a custom handler failed with a `[CGP-E107]` root
+that raised an unregistered `TooLong` error from a custom handler failed with a `[CGP-E113]` root
 cause naming the missing path; see [debugging](../guides/debugging.md).
 
 The duplication has a reason. The namespace entries are routes and the aggregate entries are

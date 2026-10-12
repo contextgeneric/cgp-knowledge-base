@@ -26,7 +26,7 @@ defeats streaming. See
 ### `StreamToLines` is unusable
 
 `StreamToLines` has a provider, `HandleStreamToLines`, but no bundle entry and no route, so
-`StreamingExec<…> | StreamToLines` fails with a `[CGP-E107]` root cause naming
+`StreamingExec<…> | StreamToLines` fails with a `[CGP-E113]` root cause naming
 `@cgp.extra.handler.HandlerComponent.StreamToLines.…`. Routing it would not be enough: the provider
 returns a `Box<dyn Stream<…>>` without `Unpin`, which does not implement `Stream` itself and carries
 no wrapper type, so no later stage could consume it. See
@@ -38,7 +38,7 @@ no wrapper type, so no later stage could consume it. See
 
 `HypershellNamespace` binds every syntax path to a bundle, so neither a context that joins it nor a
 namespace that inherits it can route one syntax to a different provider. An entry for `SimpleExec`
-beside `namespace HypershellNamespace;` fails with `[CGP-E005]`, "`App` cannot wire
+beside `namespace HypershellNamespace;` fails with `[CGP-E011]`, "`App` cannot wire
 `@cgp.extra.handler.HandlerComponent.SimpleExec.*` that is already set through
 `HypershellNamespace`". This undercuts the design's claim that a context can change how a syntax
 behaves. It matters most for `CoreExec` and `CoreHttpRequest`, which exist so one entry can change

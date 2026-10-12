@@ -193,17 +193,17 @@ the headline to
 `` [CGP-E001] the consumer trait `CanGreet` is not implemented for context `Person` ``, and replaces
 the `required for …` scaffolding with a single `root cause:` note over a compact dependency tree:
 `[CGP-E101]` consumer-trait-impl hop → `[CGP-E102]` provider-trait-impl hop → the leaf. The leaf is
-`` [CGP-E106] missing field `name` on `Person` `` for a genuinely absent field, or `[CGP-E108]` for
+`` [CGP-E110] missing field `name` on `Person` `` for a genuinely absent field, or `[CGP-E111]` for
 the [derive-missing variant](#when-the-derive-is-missing-entirely), which coalesces every underived
 field on the struct into one "add `#[derive(HasField)]`" cause rather than listing them singly. The
-`#[use_type]` foreign-import form bottoms out on `[CGP-E107]` (the context supplies no wiring for
+`#[use_type]` foreign-import form bottoms out on `[CGP-E113]` (the context supplies no wiring for
 the trait). The `Symbol!("name")` list is resugared and the
 `CanUseComponent`/`IsProviderFor`/`__Check…` frames are dropped, so what remains is the field to fix
 and the wiring entry it hangs from. The codes are defined in the
 [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
 
 The [wiring-derived field type](#when-the-fields-required-type-comes-from-the-wiring) takes the same
-`[CGP-E003]`/`[CGP-E109]` shape as a concrete mismatch, with the field name resugared and the
+`[CGP-E004]`/`[CGP-E112]` shape as a concrete mismatch, with the field name resugared and the
 required type given in **both** forms:
 `` expected a `database` field of type `Pool<<App as HasDbType>::Db>` (`Pool<Postgres>`) on `App`, but found `Pool<Sqlite>` ``.
 The projection comes first because it names the wiring the requirement flows from, which is where
@@ -214,7 +214,7 @@ projection alone says where without saying what, so both are printed, and a requ
 already concrete normalizes to itself and gets no parenthetical.
 
 The [equality-pinned abstract type](#when-the-dependency-is-an-equality-pinned-abstract-type) is
-reshaped the same way into its own class, `[CGP-E017]`, and carries the required type in **both**
+reshaped the same way into its own class, `[CGP-E005]`, and carries the required type in **both**
 forms on the same rule as the field face: a pin whose right-hand side projects through *another*
 abstract type (`{Transaction = Tx<Db>}`) requires `Tx<<App as HasDbType>::Db>`, so the message names
 that and appends `(Tx<Postgres>)`. The one place the two forms part company is the `help`, which
@@ -222,7 +222,7 @@ uses the **reduced** type alone: it prescribes an edit the reader types, and `Us
 is a wiring entry where `UseType<Tx<<App as HasDbType>::Db>>` would restate the requirement and
 leave them to reduce it. For the backing fixture the headline reads
 `` expected the abstract type `Scalar` of `HasScalarType` on `Rectangle` to be `f64`, but found `u32` ``,
-over a `[CGP-E112]` leaf. Both halves of the disagreement are named: the required type read off the
+over a `[CGP-E116]` leaf. Both halves of the disagreement are named: the required type read off the
 failing projection, the supplied one by normalizing it, so a `UseType<T>` wiring and a direct impl
 are read alike, and a `help` names the wiring entry to change
 (`` wire `ScalarTypeProviderComponent` to `UseType<f64>` ``), recovered from the trait rather than
@@ -250,7 +250,7 @@ reduce to the same `[CGP-E001]` headline and `root cause:` tree.
 - [`checks/check-trait-failure/fields/missing_dependency.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/missing_dependency.rs):
   the surfaced case for `GreetHello`'s unmet `Self: HasName`; its `.rust.stderr` pins the raw
   `help:` note naming `HasField<Symbol!("name")>` and the caret on `GreeterComponent`, and its
-  `.cgp.stderr` the `[CGP-E001]`/`[CGP-E106]` reshaping. Its use-site counterpart,
+  `.cgp.stderr` the `[CGP-E001]`/`[CGP-E110]` reshaping. Its use-site counterpart,
   [`hidden/unsatisfied-dependency/missing_dependency_call.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/missing_dependency_call.rs),
   reaches the same mistake by a method call: the [hidden](../hidden/unsatisfied-dependency.md)
   `E0599` in the raw output, which `cargo-cgp`'s next-gen solver recovers to the same headline.
@@ -266,7 +266,7 @@ reduce to the same `[CGP-E001]` headline and `root cause:` tree.
   the [wiring-derived field type](#when-the-fields-required-type-comes-from-the-wiring): an `App`
   wiring `Db` to `Postgres` while declaring a `Pool<Sqlite>` field, under a provider reading
   `&Pool<Db>`. Its `.rust.stderr` pins the normalized `Pool<Postgres>` requirement and the mangled
-  `Symbol<8, Chars<..>>` field name, and its `.cgp.stderr` the `[CGP-E003]`/`[CGP-E109]` reshaping
+  `Symbol<8, Chars<..>>` field name, and its `.cgp.stderr` the `[CGP-E004]`/`[CGP-E112]` reshaping
   with the required type given as `Pool<<App as HasDbType>::Db>` followed by `(Pool<Postgres>)`, the
   projection that names the wiring plus the type it resolves to. Its concrete-required-type sibling
   is
@@ -275,13 +275,13 @@ reduce to the same `[CGP-E001]` headline and `root cause:` tree.
   the [equality-pinned abstract type](#when-the-dependency-is-an-equality-pinned-abstract-type): a
   context wiring `HasScalarType` to `UseType<u32>` under a provider that pins it to `f64`. Its
   `.rust.stderr` pins the raw `E0271` with its caret on the `#[cgp_type]` attribute and no mention
-  of `u32`, and its `.cgp.stderr` the `[CGP-E017]`/`[CGP-E112]` reshaping with the `UseType<f64>`
+  of `u32`, and its `.cgp.stderr` the `[CGP-E005]`/`[CGP-E116]` reshaping with the `UseType<f64>`
   help.
 - [`checks/check-trait-failure/fields/missing_has_field_derive.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/missing_has_field_derive.rs):
   the [derive-missing variant](#when-the-derive-is-missing-entirely): a `Person` with the `name`
   field but no `#[derive(HasField)]`, so the raw output drops the "but trait `HasField<…>` is
   implemented" landmark (the signal the whole derive is missing), and `cargo-cgp` coalesces it to
-  one `[CGP-E108]` cause. Related field-derive fixtures
+  one `[CGP-E111]` cause. Related field-derive fixtures
   ([`base_area_2`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/base_area_2.rs),
   [`empty_field_struct`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/empty_field_struct.rs),
   [`underived_and_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/underived_and_missing_field.rs))

@@ -269,11 +269,11 @@ The fixture's
 contains this root-cause note:
 
 ```text
-   = note: root cause: [CGP-E106] missing field `height` on `Rectangle`
+   = note: root cause: [CGP-E110] missing field `height` on `Rectangle`
            this is required through the dependency chain:
              [CGP-E101] consumer trait impl `CanCalculateArea` for context `Rectangle`
              └─ [CGP-E102] provider trait impl `AreaCalculator` with context `Rectangle` for provider `RectangleArea`
-               └─ [CGP-E106] missing field `height` on `Rectangle`
+               └─ [CGP-E110] missing field `height` on `Rectangle`
 ```
 
 Explain the repair rather than only praising the shorter output. The check forces verification of

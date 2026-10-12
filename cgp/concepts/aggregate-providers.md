@@ -184,7 +184,7 @@ delegate_components! {
 ```
 
 Without the `namespace` line, a context forwarding `@app.core` to this bundle fails its checks with
-the bundle reported as having no entry for the bare component name, `[CGP-E110]` in
+the bundle reported as having no entry for the bare component name, `[CGP-E114]` in
 [`cargo-cgp`](../../cargo-cgp/error-code.md). The
 [namespaces and prefixes guide](../guides/namespaces-and-prefixes.md#forwarding-a-path-to-a-bundle)
 shows when to organize wiring this way.

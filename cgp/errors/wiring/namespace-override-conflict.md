@@ -170,8 +170,8 @@ override decision as a bare coherence conflict.
 **context-level** shape is rewritten as follows: keeping `E0119`, it collapses the
 `DelegateComponent` + `IsProviderFor` pair into one message, suppresses the
 `downstream crates may implement …` note, resugars the `PathCons<Symbol<…>>` key to its bare
-`@app.…` path, and stamps **`[CGP-E005]` overlapping wiring**:
-`` [CGP-E005] `App` cannot wire `@app.GreeterComponent.*` that is already set through `AppNamespace` ``.
+`@app.…` path, and stamps **`[CGP-E011]` overlapping wiring**:
+`` [CGP-E011] `App` cannot wire `@app.GreeterComponent.*` that is already set through `AppNamespace` ``.
 That headline names the overriding entry, the path it claims, and the namespace that already binds
 it, so the reader sees the override decision the raw coherence conflict only implied; the two
 `rustc` carets are kept, this being a structural class with no `root cause:` tree.
@@ -179,13 +179,13 @@ it, so the reader sees the override decision the raw coherence conflict only imp
 The **namespace-level** shape is rewritten the same way, with the namespace standing where the
 context does. Which code it takes depends on how the parent answers the colliding key, because that
 is what decides the fix. A key the parent *binds* is a genuine override attempt and reads as
-**`[CGP-E005]`**:
-`` [CGP-E005] `ChildNs` cannot wire component `GreeterComponent` that is already set through `BaseNs` ``,
+**`[CGP-E011]`**:
+`` [CGP-E011] `ChildNs` cannot wire component `GreeterComponent` that is already set through `BaseNs` ``,
 naming the parent the reader has to change instead. A key the parent *redirects*, the
 prefixed-component face above, is a key written in the wrong form rather than an override, so
 `cargo-cgp` normalizes the parent's `Delegate` for that key to recover the path and reads it as
-**`[CGP-E007]`**:
-`` [CGP-E007] component `GreeterComponent` on `AppNamespace` is redirected to `@app.GreeterComponent` ``,
+**`[CGP-E013]`**:
+`` [CGP-E013] component `GreeterComponent` on `AppNamespace` is redirected to `@app.GreeterComponent` ``,
 putting the entry to write in a `help`:
 `` wire the provider `GreetHello` with the key `@app.GreeterComponent` ``. Both keep rustc's two
 carets, this being a structural class with no `root cause:` tree. The codes are defined in the
@@ -228,7 +228,7 @@ namespaces that each describe one *configuration*.
 Every shape is reshaped today, so the class has no outstanding tooling gap. What is worth preserving
 is the discrimination the messages rest on: the subject of a namespace-level collision is the
 namespace's own lookup trait rather than a context, and the code turns on whether the parent *binds*
-the colliding key (`[CGP-E005]`, an override to undo) or *redirects* it (`[CGP-E007]`, a key to
+the colliding key (`[CGP-E011]`, an override to undo) or *redirects* it (`[CGP-E013]`, a key to
 rewrite as a path), a distinction only the normalized `Delegate` answers, never the error text.
 
 ## Backing fixtures
@@ -239,12 +239,12 @@ The `.rust.stderr` snapshot pins the raw `E0119` shape and the `.cgp.stderr` the
   the context-level shape: a context joining `AppNamespace` overrides a path bound with
   `#[default_impl]`; the `.rust.stderr` pins the `E0119` pair on `DelegateComponent<PathCons<…>>`
   and `IsProviderFor<PathCons<…>, _, _>` for `App` with the expanded path type and the
-  `downstream crates may implement` note, the `.cgp.stderr` the single `[CGP-E005]` headline with
+  `downstream crates may implement` note, the `.cgp.stderr` the single `[CGP-E011]` headline with
   the resugared `@app.GreeterComponent.*` path.
 - [`wiring/duplicate-keys/for_loop_prefixed_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-override-conflict/for_loop_prefixed_key.rs):
   the context-level shape reached through a `for` loop keyed
   `@cgp.core.error.ErrorRaiserComponent.Key` beside a namespace that binds `….String`; the
-  `.rust.stderr` pins the same `E0119` pair and downstream note, the `.cgp.stderr` the `[CGP-E005]`
+  `.rust.stderr` pins the same `E0119` pair and downstream note, the `.cgp.stderr` the `[CGP-E011]`
   headline
   `` `App` cannot wire `@cgp.core.error.ErrorRaiserComponent.*` that is already set through `AppDefaults` ``,
   the loop's key parameter rendered as the `.*` tail.
@@ -252,11 +252,11 @@ The `.rust.stderr` snapshot pins the raw `E0119` shape and the `.cgp.stderr` the
   the namespace-level shape against a key the parent *binds*: a child namespace redefining an
   inherited entry; the `.rust.stderr` pins the single `E0119` on `ChildNs<_>` for
   `GreeterComponent`, with "first implementation here" on the inherited parent and no downstream
-  note, and the `.cgp.stderr` the `[CGP-E005]` headline naming the parent that already sets the key.
+  note, and the `.cgp.stderr` the `[CGP-E011]` headline naming the parent that already sets the key.
 - [`wiring/namespace-paths/namespace_inherited_unprefixed_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-override-conflict/namespace_inherited_unprefixed_key.rs):
   the namespace-level shape against a key the parent *redirects*: a `#[default_impl]` binding a
   prefixed component's bare marker in a namespace inheriting `DefaultNamespace`; the `.cgp.stderr`
-  pins the `[CGP-E007]` headline and the `help` naming `@app.GreeterComponent`. Its context-level
+  pins the `[CGP-E013]` headline and the `help` naming `@app.GreeterComponent`. Its context-level
   counterpart is
   [`namespace_unprefixed_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-override-conflict/namespace_unprefixed_key.rs),
   where a context joining a namespace makes the same mistake.

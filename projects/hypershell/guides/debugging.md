@@ -26,12 +26,12 @@ check_components! {
 
 The tree `cargo cgp check` prints follows the lookup described in
 [assembly](../architecture/assembly.md#one-lookup-end-to-end). Each namespace hop and each bundle's
-`open` redirect is a `[CGP-E104]` line naming the table it looks in, each provider a `[CGP-E102]`,
+`open` redirect is a `[CGP-E103]` line naming the table it looks in, each provider a `[CGP-E102]`,
 and each consumer trait reached through a dependency a `[CGP-E101]`. Read from the bottom: the last
 lines name the leaf that failed. The table names locate it. The context's own namespace hop reads
 `` in `HypershellCli` ``, a bundle's reads `` in `HypershellTokioProvider` ``, and an entry missing
-from a bundle or an input dispatcher is a `[CGP-E110]` leaf naming that provider, where one missing
-from the context is a `[CGP-E107]` leaf naming the context; see the
+from a bundle or an input dispatcher is a `[CGP-E114]` leaf naming that provider, where one missing
+from the context is a `[CGP-E113]` leaf naming the context; see the
 [error-code catalog](../../../cargo-cgp/error-code.md).
 
 ## A context lacks a field
@@ -48,7 +48,7 @@ pub type Program = hypershell! {
 
 ```text
 error[E0277]: [CGP-E002] the provider trait `Handler<Pipe<…>, Vec<u8>>` with context `HypershellCli` is not implemented …
-  = note: root cause: [CGP-E106] missing field `name` on `HypershellCli`
+  = note: root cause: [CGP-E110] missing field `name` on `HypershellCli`
 ```
 
 The tree runs through the pipeline, `HandleSimpleExec`, `CoreExec`, the command updater, and
@@ -73,7 +73,7 @@ pub type Program = hypershell! {
 ```
 
 ```text
-  = note: root cause: [CGP-E201] the trait bound `TokioAsyncReadStream<ChildOutputStream>: AsRef<[u8]>` is not satisfied
+  = note: root cause: [CGP-E117] the trait bound `TokioAsyncReadStream<ChildOutputStream>: AsRef<[u8]>` is not satisfied
 ```
 
 **Fix:** insert `StreamToBytes` between the two stages.
@@ -90,7 +90,7 @@ pub type Program = hypershell! {
 ```
 
 ```text
-  = note: root cause: [CGP-E110] provider `HandleToTokioAsyncRead` does not contain any delegate entry for `@HandlerComponent.StreamToStdout.GenericArray<u8, …>`
+  = note: root cause: [CGP-E114] provider `HandleToTokioAsyncRead` does not contain any delegate entry for `@HandlerComponent.StreamToStdout.GenericArray<u8, …>`
 ```
 
 The path names the syntax and then the input type, which is exactly what the dispatcher could not
@@ -116,7 +116,7 @@ pub type Program = hypershell! {
 
 ```text
 error[E0277]: [CGP-E001] the consumer trait `CanHandle<Pipe<…>, Vec<u8>>` is not implemented for context `HypershellCli`
-  = note: root cause: [CGP-E107] context `HypershellCli` does not contain any delegate entry for `@cgp.extra.handler.HandlerComponent.Checksum<…>`
+  = note: root cause: [CGP-E113] context `HypershellCli` does not contain any delegate entry for `@cgp.extra.handler.HandlerComponent.Checksum<…>`
 ```
 
 `WebSocket` fails the same way on such a context, and `StreamToLines` fails at
@@ -147,14 +147,14 @@ on `(CheckLength, Vec<u8>)` reports:
 
 ```text
 error[E0277]: [CGP-E001] the consumer trait `CanHandle<CheckLength, Vec<u8>>` is not implemented for context `App`
-   = note: root cause: [CGP-E107] context `App` does not contain any delegate entry for `@cgp.core.error.ErrorRaiserComponent.TooLong`
+   = note: root cause: [CGP-E113] context `App` does not contain any delegate entry for `@cgp.core.error.ErrorRaiserComponent.TooLong`
            this is required through the dependency chain:
              [CGP-E101] consumer trait impl `CanHandle<CheckLength, Vec<u8>>` for context `App`
-             └─ [CGP-E104] redirect lookup to `@cgp.extra.handler.HandlerComponent` in `App`
+             └─ [CGP-E103] redirect lookup to `@cgp.extra.handler.HandlerComponent` in `App`
                └─ [CGP-E102] provider trait impl `Handler<CheckLength, Vec<u8>>` with context `App` for provider `HandleCheckLength`
                  └─ [CGP-E101] consumer trait impl `CanRaiseError<TooLong>` for context `App`
-                   └─ [CGP-E104] redirect lookup to `@cgp.core.error.ErrorRaiserComponent` in `App`
-                     └─ [CGP-E107] context `App` does not contain any delegate entry for `@cgp.core.error.ErrorRaiserComponent.TooLong`
+                   └─ [CGP-E103] redirect lookup to `@cgp.core.error.ErrorRaiserComponent` in `App`
+                     └─ [CGP-E113] context `App` does not contain any delegate entry for `@cgp.core.error.ErrorRaiserComponent.TooLong`
 ```
 
 **Fix:** route the type to a raiser, as
@@ -190,7 +190,7 @@ delegate_components! {
 
 ```text
 error[E0277]: [CGP-E002] the provider trait `Handler<Shout, String>` with context `App` is not implemented for provider `ShoutText`
-  = note: root cause: [CGP-E111] the provider trait `Handler` is not implemented for `ShoutText`
+  = note: root cause: [CGP-E115] the provider trait `Handler` is not implemented for `ShoutText`
 ```
 
 **Fix:** lift the provider into a handler, as `Promote<PromoteAsync<ShoutText>>`, with both imported
@@ -212,7 +212,7 @@ delegate_components! {
 ```
 
 ```text
-error[E0119]: [CGP-E005] `App` cannot wire `@cgp.extra.handler.HandlerComponent.SimpleExec.*` that is already set through `HypershellNamespace`
+error[E0119]: [CGP-E011] `App` cannot wire `@cgp.extra.handler.HandlerComponent.SimpleExec.*` that is already set through `HypershellNamespace`
 ```
 
 The same entry in a namespace that inherits `HypershellNamespace` fails with a plain `E0119` on the

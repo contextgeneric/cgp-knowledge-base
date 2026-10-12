@@ -55,7 +55,7 @@ check_components! {
 ```
 
 `cargo cgp check` reports `[CGP-E001]`, that `CanRaiseError<Error>` is not implemented for `App`,
-with the root cause `[CGP-E107]`: `App` contains no delegate entry for `ErrorTypeProviderComponent`.
+with the root cause `[CGP-E113]`: `App` contains no delegate entry for `ErrorTypeProviderComponent`.
 The tree shows the missing `HasErrorType` twice, once as the consumer trait's supertrait and once as
 the provider's pin. Add `ErrorTypeProviderComponent: UseAnyhowError`.
 
@@ -79,7 +79,7 @@ check_components! {
 }
 ```
 
-`cargo cgp check` reports `E0271` tagged `[CGP-E017]`: the abstract type `Error` of `HasErrorType`
+`cargo cgp check` reports `E0271` tagged `[CGP-E005]`: the abstract type `Error` of `HasErrorType`
 on `App` was expected to be `Error` but is `Box<dyn Error + Send + Sync>`. The first `Error` is
 `anyhow::Error` with its path stripped by the tool's resugaring, which makes the message read oddly;
 its help line suggests wiring `UseType<Error>` for the same reason. The root cause is the
@@ -110,7 +110,7 @@ check_components! {
 }
 ```
 
-`cargo cgp check` reports `E0275` tagged `[CGP-E010]`: the wiring for `CanRaiseError<ParseIntError>`
+`cargo cgp check` reports `E0275` tagged `[CGP-E020]`: the wiring for `CanRaiseError<ParseIntError>`
 never resolves, because the lookup recurses. `DebugError` for `String` needs
 `CanRaiseError<String>`, which is `DebugError` for `String` again. The tool's help text names the
 most common cause of a recursing lookup, a component delegated back to the context, which is the

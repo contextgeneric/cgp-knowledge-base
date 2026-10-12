@@ -40,7 +40,7 @@ The check fails on `Payload`, and `cargo cgp check` names the missing entry as t
 
 ```text
 error[E0277]: [CGP-E001] the consumer trait `CanSerializeValue<Payload>` is not implemented for context `App`
-  = note: root cause: [CGP-E107] context `App` does not contain any delegate entry for `@ValueSerializerComponent.Vec<u8>`
+  = note: root cause: [CGP-E113] context `App` does not contain any delegate entry for `@ValueSerializerComponent.Vec<u8>`
 ```
 
 The dependency chain the tool prints beneath the root cause walks from `SerializeRecordFields`
@@ -106,7 +106,7 @@ let r: Result<u64, _> = Ctx.deserialize_json_string("1");
 Plain `cargo check` reports only that the method `deserialize_json_string` exists for `Ctx` but its
 trait bounds were not satisfied, as `E0599`, the hidden-cause shape the error catalog records as an
 [unsatisfied dependency](../../../cgp/errors/hidden/unsatisfied-dependency.md). `cargo cgp check`
-reshapes it as a `[CGP-E009]` error saying the trait `CanDeserializeJsonString<_>` is not
+reshapes it as a `[CGP-E003]` error saying the trait `CanDeserializeJsonString<_>` is not
 implemented for `Ctx`, with root causes naming the missing `ErrorTypeProviderComponent` and
 `ErrorRaiserComponent` entries. It also lists a missing `@ValueDeserializerComponent` entry, because
 the method call failed before the target type was inferred, so the tree shows
@@ -138,7 +138,7 @@ serialize that `String`, which leads straight back to `SerializeWithDisplay`. Th
 `cargo cgp check` reshapes the overflow, from the published release and the source build alike:
 
 ```text
-error[E0275]: [CGP-E010] the wiring for the consumer trait `CanSerializeValue<String>` on context `Ctx` never resolves — the lookup recurses without terminating
+error[E0275]: [CGP-E020] the wiring for the consumer trait `CanSerializeValue<String>` on context `Ctx` never resolves — the lookup recurses without terminating
 ```
 
 Its help line suggests a context wired back to itself, as with `UseContext`, which is the usual
@@ -153,12 +153,12 @@ type, such as `UseSerde` or `SerializeString` for `String`.
 **A type that contains itself fails the same way even when every entry is present.** A
 `Node { id: u64, children: Vec<Node> }` wired to `SerializeRecordFields`, with `Vec<Node>` wired to
 `SerializeIterator` and the reference entry in place, reports `E0275` when used, reshaped as
-`[CGP-E010] the wiring for the consumer trait CanSerializeValue<Node> on context Ctx never resolves`
+`[CGP-E020] the wiring for the consumer trait CanSerializeValue<Node> on context Ctx never resolves`
 when checked, because serializing `Node` requires serializing `Vec<Node>`, which requires `&Node`,
 which requires `Node` again. An enum that contains itself fails the same way: an
 `Expr { Literal(u64), Negate(Box<Expr>) }` wired to `SerializeVariantFields`, with `Box<Expr>` wired
 to `SerializeDeref`, is reported as
-`[CGP-E010] the wiring for the consumer trait CanSerializeValue<Expr> on context App never resolves`.
+`[CGP-E020] the wiring for the consumer trait CanSerializeValue<Expr> on context App never resolves`.
 No wiring fixes it: the type needs a provider that walks the recursion itself and asks the context
 only for the non-recursive parts, as [re-entrant
 providers](../architecture/reentrant-providers.md#what-re-entry-requires-of-a-context) describes.

@@ -83,7 +83,7 @@ that reaches it:
 
 ```text
 error[E0277]: [CGP-E002] the provider trait `UserCreator` with context `BareCoreApp` is not implemented for provider `BareCoreComponents`
-   = note: root cause: [CGP-E110] provider `BareCoreComponents` does not contain any delegate entry for `UserCreatorComponent`
+   = note: root cause: [CGP-E114] provider `BareCoreComponents` does not contain any delegate entry for `UserCreatorComponent`
 ```
 
 The lookup reaches the bundle keyed by the bare component name, which only the bundle's own
@@ -144,9 +144,9 @@ reported the same two errors as the `CoreOnlyApp` probe in
 
 ```text
 error[E0277]: [CGP-E001] the consumer traits `CanCreateUser` and `CanCensorUsername` are not implemented for context `TestApp`
-    = note: root cause: [CGP-E107] context `TestApp` does not contain any delegate entry for `@app.extra.content_filter.UsernameCensorComponent`
+    = note: root cause: [CGP-E113] context `TestApp` does not contain any delegate entry for `@app.extra.content_filter.UsernameCensorComponent`
 error[E0277]: [CGP-E001] the consumer traits `CanCreatePost` and `CanDetectSpamMessage` are not implemented for context `TestApp`
-    = note: root cause: [CGP-E107] context `TestApp` does not contain any delegate entry for `@app.extra.content_filter.SpamMessageDetectorComponent`
+    = note: root cause: [CGP-E113] context `TestApp` does not contain any delegate entry for `@app.extra.content_filter.SpamMessageDetectorComponent`
 ```
 
 ## Public material derived from this

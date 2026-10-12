@@ -122,9 +122,9 @@ which path is empty.
 it keeps the `E0277` code but replaces the `PathCons<…>: DefaultNamespace<App>` headline with
 `` [CGP-E001] the consumer trait `CanGreet` is not implemented for context `App` ``, then states the
 empty path in a
-`` root cause: [CGP-E107] context `App` does not contain any delegate entry for `@app.GreeterComponent` ``
-note. The tree between them is short: `[CGP-E101]` consumer-trait hop → `[CGP-E104]` redirect-lookup
-hop naming the path → the `[CGP-E107]` leaf, so the `RedirectLookup` and `DelegateComponent`
+`` root cause: [CGP-E113] context `App` does not contain any delegate entry for `@app.GreeterComponent` ``
+note. The tree between them is short: `[CGP-E101]` consumer-trait hop → `[CGP-E103]` redirect-lookup
+hop naming the path → the `[CGP-E113]` leaf, so the `RedirectLookup` and `DelegateComponent`
 scaffolding of the raw form collapses into one readable "redirect lands on an empty slot" chain. The
 `PathCons<Symbol!(…)>` list is resugared to its surface `@app.GreeterComponent` notation throughout,
 which is the single biggest readability win over the raw output, where the path is an abbreviated
@@ -132,14 +132,14 @@ which is the single biggest readability win over the raw output, where the path 
 
 The shape scales with how the redirect fails. A deep prefix renders its whole path
 (`@app.finance.types.QuantityTypeProviderComponent`); a chain of redirects that never terminates
-prints one `[CGP-E104]` hop per link before the `[CGP-E107]` leaf (`@start.GreeterComponent` →
+prints one `[CGP-E103]` hop per link before the `[CGP-E113]` leaf (`@start.GreeterComponent` →
 `@middle` → `@end`); and an `open` per-type dispatch missing a key names the type in the path
 (`@ItemEncoderComponent.Vec<u8>`). When the context wires nothing at the path, the leaf is
-`[CGP-E107]`. When the path is missing from an aggregate provider, whether it `open`s the component
-in its own table or joins the namespace itself, the leaf is the `[CGP-E110]` provider-table leaf
+`[CGP-E113]`. When the path is missing from an aggregate provider, whether it `open`s the component
+in its own table or joins the namespace itself, the leaf is the `[CGP-E114]` provider-table leaf
 instead,
 `` provider `ByteSink` does not contain any delegate entry for `@ComputerComponent.Sink.Digest` ``,
-and the `[CGP-E104]` hop above it reads `` in `ByteSink` ``, so the tree names the table the entry
+and the `[CGP-E103]` hop above it reads `` in `ByteSink` ``, so the tree names the table the entry
 belongs in. The codes are defined in the
 [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
 
@@ -163,9 +163,9 @@ the component.
 
 ## Notes for tooling
 
-`cargo-cgp` already extracts the unbound path: the `[CGP-E107]` leaf decodes the `PathCons` key back
+`cargo-cgp` already extracts the unbound path: the `[CGP-E113]` leaf decodes the `PathCons` key back
 to `@app.GreeterComponent` and reports that the context wires nothing there. What remains for a tool
-is the **fix hint** the raw `help:` list makes available but `[CGP-E107]` does not spell out:
+is the **fix hint** the raw `help:` list makes available but `[CGP-E113]` does not spell out:
 because the bare component marker still resolves through the namespace while the path does not, the
 registration succeeded and only the leaf binding is missing, so the actionable advice "you likely
 forgot a `#[default_impl]` or body entry" could be added rather than left for the reader to infer.
@@ -178,27 +178,27 @@ forgot a `#[default_impl]` or body entry" could be added rather than left for th
   bound higher than stable, with the primary `E0277` on
   `RedirectLookup<App, PathCons<…>>: IsProviderFor<_, App>` and a `help:` list of the components
   `RedirectLookup` serves rather than stable's `DefaultNamespace` list, while its `.cgp.stderr`
-  recasts this as `[CGP-E001]` over a `root cause: [CGP-E107] … @app.GreeterComponent` tree with a
-  `[CGP-E104]` redirect hop.
+  recasts this as `[CGP-E001]` over a `root cause: [CGP-E113] … @app.GreeterComponent` tree with a
+  `[CGP-E103]` redirect hop.
 - [`checks/unregistered-namespace-path/qualified_prefix_path.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/qualified_prefix_path.rs):
-  a deep prefix whose `[CGP-E107]` leaf renders the full
+  a deep prefix whose `[CGP-E113]` leaf renders the full
   `@app.finance.types.QuantityTypeProviderComponent` path, pinning that the resugaring reproduces
   multi-segment paths intact.
 - [`checks/unregistered-namespace-path/multi_redirect_missing.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/multi_redirect_missing.rs):
-  a chain of redirects that never terminates, so the `.cgp.stderr` tree stacks one `[CGP-E104]` hop
-  per link (`@start.GreeterComponent` → `@middle` → `@end`) before the `[CGP-E107]` leaf at `@end`.
+  a chain of redirects that never terminates, so the `.cgp.stderr` tree stacks one `[CGP-E103]` hop
+  per link (`@start.GreeterComponent` → `@middle` → `@end`) before the `[CGP-E113]` leaf at `@end`.
 - [`checks/unregistered-namespace-path/open_missing_type_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/open_missing_type_key.rs):
-  an `open` per-type dispatch missing a type key, where the `[CGP-E107]` leaf names the type in the
+  an `open` per-type dispatch missing a type key, where the `[CGP-E113]` leaf names the type in the
   path (`@ItemEncoderComponent.Vec<u8>`) and the consumer headline is the generic
   `CanEncodeItem<Vec<u8>>`.
 - [`checks/check-trait-failure/missing-wiring/open_aggregate_missing_entry.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/open_aggregate_missing_entry.rs):
   a context routes one code to an aggregate provider that `open`s `ComputerComponent` in its own
   table and dispatches on the input, and the aggregate lacks the input the check asks for; the
-  `.cgp.stderr` pins the `[CGP-E110]` leaf naming the aggregate and the `[CGP-E104]` hop that reads
+  `.cgp.stderr` pins the `[CGP-E114]` leaf naming the aggregate and the `[CGP-E103]` hop that reads
   `` in `ByteSink` ``.
 - [`checks/unregistered-namespace-path/namespace_aggregate_missing_entry.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/namespace_aggregate_missing_entry.rs):
   a context forwards `@app` to a path-keyed aggregate provider that joins `DefaultNamespace` itself
-  and lacks `@app.NamerComponent`; the `.cgp.stderr` pins the `[CGP-E110]` leaf naming the
+  and lacks `@app.NamerComponent`; the `.cgp.stderr` pins the `[CGP-E114]` leaf naming the
   aggregate, whose namespace lookup is the unmet bound.
 
 ## Related

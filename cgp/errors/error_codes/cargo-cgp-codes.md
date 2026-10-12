@@ -19,80 +19,77 @@ still works and the entries in this directory still apply; the `[CGP-Exxx]` tag 
 message text. A code is assigned only when `cargo-cgp` both rewrote the message and identified it as
 a CGP class; everything else is left uncoded by design.
 
-The three-digit space is split by *what* a code classifies.
+The hundreds digit says where a code appears: a `CGP-E0xx` code heads a rewritten message, and a
+`CGP-E1xx` code labels one entry of the dependency tree beneath it.
 
 ## Main-message headlines: `CGP-E0xx`
 
-These lead a rewritten main message. `E001`–`E003`, `E009`, and `E017` come from the typed resolver
-and carry a dependency chain in their notes, led by a `root cause:` line except for the two mismatch
-codes `E003` and `E017`, whose message states the cause; `E004`–`E008` classify a duplicate-key
-`E0119` conflict (no root-cause note, both `rustc` carets kept); `E010` and `E011` reshape a
-whole-program coherence error; and `E012`–`E016` reword a macro-lowering error, each with its fix in
-a `help`.
+These lead a rewritten main message, in family blocks of ten. `E001` to `E005` come from the typed
+resolver and carry a dependency chain in their notes, led by a `root cause:` line except for the two
+mismatch codes `E004` and `E005`, whose message states the cause; `E010` to `E014` classify a
+duplicate-key `E0119` conflict (no root-cause note, both `rustc` carets kept); `E020` and `E022`
+reshape a whole-program coherence error; and `E030` to `E034` reword a macro-lowering error, each
+with its fix in a `help`.
 
 - **CGP-E001**: the consumer trait is not implemented for the context (missing wiring, or an unmet
   transitive dependency).
 - **CGP-E002**: the provider trait is not implemented for the provider (its impl-side `where` bounds
   do not hold).
-- **CGP-E003**: a context field has the wrong type (the `HasField` bound holds but its `::Value`
+- **CGP-E003**: a hand-written wrapper trait or a `#[cgp_fn]` blanket trait (not a CGP consumer)
+  fails because a CGP component it depends on fails.
+- **CGP-E004**: a context field has the wrong type (the `HasField` bound holds but its `::Value`
   projection fails).
-- **CGP-E004**: duplicate wiring: the same key mapped twice.
-- **CGP-E005**: overlapping wiring: a key already set through another (generic over specific,
-  `@`-path over a namespace forwarding, or a prefix path).
-- **CGP-E006**: multiple namespaces used for one target in `delegate_components!`.
-- **CGP-E007**: redirect collision: a direct wiring collides with a redirect of the same key.
-- **CGP-E008**: duplicate redirect: the same key redirected more than once.
-- **CGP-E009**: a hand-written wrapper trait (not a CGP consumer) fails because a CGP component it
-  depends on fails.
-- **CGP-E010**: the wiring never resolves (an `E0275` overflow whose requirement is a
-  `CanUseComponent` bound; usually a `UseContext` cycle).
-- **CGP-E011**: an orphan-rule namespace registration: a foreign component or path registered into a
-  foreign namespace (`E0210`/`E0117`).
-- **CGP-E012**: a trait used in a `#[cgp_fn]`/`#[cgp_impl]` body but not declared with `#[uses]`.
-- **CGP-E013**: a `#[cgp_impl]` header names the component's consumer trait where its provider trait
-  belongs.
-- **CGP-E014**: `#[cgp_impl]` applied to a trait that is not a CGP component.
-- **CGP-E015**: an inner-provider bound names the consumer trait rather than the provider trait.
-- **CGP-E016**: an inner provider a higher-order provider calls but never imports with
-  `#[use_provider]`.
-- **CGP-E017**: an abstract type has the wrong type (the owner supplies one type where a provider
+- **CGP-E005**: an abstract type has the wrong type (the owner supplies one type where a provider
   requires another).
+- **CGP-E010**: duplicate wiring: the same key mapped twice.
+- **CGP-E011**: overlapping wiring: a key already set through another (generic over specific,
+  `@`-path over a namespace forwarding, or a prefix path).
+- **CGP-E012**: multiple namespaces used for one target in `delegate_components!`.
+- **CGP-E013**: redirect collision: a direct wiring collides with a redirect of the same key.
+- **CGP-E014**: duplicate redirect: the same key redirected more than once.
+- **CGP-E020**: the wiring never resolves (an `E0275` overflow whose requirement is a
+  `CanUseComponent` bound; usually a `UseContext` cycle).
+- **CGP-E022**: an orphan-rule namespace registration: a foreign component or path registered into a
+  foreign namespace (`E0210`/`E0117`).
+- **CGP-E030**: a trait used in a `#[cgp_fn]`/`#[cgp_impl]` body but not declared with `#[uses]`.
+- **CGP-E031**: an inner provider a higher-order provider calls but never imports with
+  `#[use_provider]`.
+- **CGP-E032**: a `#[cgp_impl]` header names the component's consumer trait where its provider trait
+  belongs.
+- **CGP-E033**: `#[cgp_impl]` applied to a trait that is not a CGP component.
+- **CGP-E034**: an inner-provider bound names the consumer trait rather than the provider trait.
 
 ## Dependency-tree entries: `CGP-E1xx`
 
 One per rendering template, riding at the start of each entry in a `root cause:` dependency tree.
+`E101` to `E104` are the steps of the chain; `E110` onward are the root causes it ends at, and the
+`root cause:` line above the tree carries its cause's code too.
 
-- **CGP-E101**: consumer trait impl hop.
-- **CGP-E102**: provider trait impl hop.
-- **CGP-E103**: retired and never emitted; the number is left unused.
-- **CGP-E104**: redirect-lookup hop (a namespace or `open` `RedirectLookup`), naming the table it
+- **CGP-E101**: consumer trait impl step.
+- **CGP-E102**: provider trait impl step.
+- **CGP-E103**: redirect-lookup step (a namespace or `open` `RedirectLookup`), naming the table it
   looks the path up in.
-- **CGP-E105**: a hop through any other trait impl (a user's blanket trait, or an ordinary bound
+- **CGP-E104**: a step through any other trait impl (a user's blanket trait, or an ordinary bound
   restated).
-- **CGP-E106**: leaf: a genuinely missing context field.
-- **CGP-E107**: leaf: the context wires no provider for a component (or terminates no namespace
+- **CGP-E110**: cause: a genuinely missing context field.
+- **CGP-E111**: cause: the struct has the field but did not derive `HasField`.
+- **CGP-E112**: cause: a field has the wrong type (the tree's face of `CGP-E004`).
+- **CGP-E113**: cause: the context wires no provider for a component (or terminates no namespace
   path).
-- **CGP-E108**: leaf: the struct has the field but did not derive `HasField`.
-- **CGP-E109**: leaf: a field has the wrong type.
-- **CGP-E110**: leaf: a non-context delegation table (aggregate provider,
+- **CGP-E114**: cause: a non-context delegation table (aggregate provider,
   `UseDelegate`/`UseInputDelegate`) is missing a key, including an `@`-path its own `open`
   redirected along.
-- **CGP-E111**: leaf: a non-provider was wired into a provider slot.
-- **CGP-E112**: leaf: an associated type the owner supplies differs from the one a provider requires
-  (the leaf face of `CGP-E017`).
-
-## Root-cause leads: `CGP-E2xx`
-
-The `root cause:` line reuses the terminal leaf's `CGP-E1xx` code where it has one; this range
-exists for the one case that needs its own.
-
-- **CGP-E201**: the failure bottoms out on an ordinary (non-CGP) trait bound.
+- **CGP-E115**: cause: a non-provider was wired into a provider slot.
+- **CGP-E116**: cause: an associated type the owner supplies differs from the one a provider requires
+  (the tree's face of `CGP-E005`).
+- **CGP-E117**: cause: an ordinary (non-CGP) trait bound that does not hold, in the compiler's own
+  wording.
 
 ## Where CGP classes cite these
 
 A class document's *How cargo-cgp presents it* section names the specific code(s) the tool produces
 for that class and links to the [authoritative catalog](../../../cargo-cgp/error-code.md). For
 example, [check-trait-failure](../checks/check-trait-failure.md) is stamped `[CGP-E001]` with a
-`root cause:` tree whose leaf is `[CGP-E106]` (missing field) or `[CGP-E108]` (underived); the
-[conflicting-wiring](../wiring/conflicting-wiring.md) family maps to `[CGP-E004]`–`[CGP-E008]`; and
-[wiring-cycle](../wiring/wiring-cycle.md) maps to `[CGP-E010]`.
+`root cause:` tree whose leaf is `[CGP-E110]` (missing field) or `[CGP-E111]` (underived); the
+[conflicting-wiring](../wiring/conflicting-wiring.md) family maps to `[CGP-E010]`–`[CGP-E014]`; and
+[wiring-cycle](../wiring/wiring-cycle.md) maps to `[CGP-E020]`.

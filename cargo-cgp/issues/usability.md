@@ -19,13 +19,13 @@ fixture that pins it.
 
 - **Check-trait failures**, the dominant class of CGP error. The
   [typed root-cause resolver](../implementation/typed-root-cause-resolution.md) leads with a single
-  coded headline (`[CGP-E001]` for an unimplemented consumer trait, `[CGP-E003]` for a field-type
+  coded headline (`[CGP-E001]` for an unimplemented consumer trait, `[CGP-E004]` for a field-type
   mismatch), states the cause as one plain sentence
   (`` root cause: missing field `height` on `Rectangle` ``), decodes the field name from its
   `Symbol!`, and renders the dependency path as a compact `cargo tree`, with the `IsProviderFor` /
   `CanUseComponent` / `__Check…` scaffolding suppressed throughout.
 - **A missing derive across several fields** is one root cause: several present-but-underived fields
-  on one struct merge into a single `[CGP-E108]` lead listing every field, over one merged tree,
+  on one struct merge into a single `[CGP-E111]` lead listing every field, over one merged tree,
   with the derive `help` naming the one fix
   ([`base_area_2`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/base_area_2.rs);
   the boundaries, a lone underived field and genuinely absent fields, are pinned by
@@ -42,7 +42,7 @@ fixture that pins it.
   type-level DSL interprets each stage by routing through the context's own handler, and a context
   that joins a namespace carries a blanket forwarding that matches *every* key, but an unmet
   delegation on the context is terminal whatever nominally matches it. So the block leads with
-  `[CGP-E107] … does not contain any delegate entry for @….Missing` rather than one `[CGP-E002]` per
+  `[CGP-E113] … does not contain any delegate entry for @….Missing` rather than one `[CGP-E002]` per
   combinator layer naming `PipeHandlers`/`ComposeHandlers`
   ([`pipeline_unhandled_code`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/use-site/pipeline_unhandled_code.rs)).
 - **A use-site failure the resolver declines** drops rustc's "this is an associated function, not a
@@ -52,22 +52,22 @@ fixture that pins it.
   recovering the dispatch parameter itself is a documented
   [resolver boundary](../implementation/typed-root-cause-resolution.md#boundaries-and-open-ends)).
 - **Wiring coherence conflicts** carry codes. The duplicate delegate-key `E0119` family is
-  `[CGP-E004]`–`[CGP-E008]`, including a duplicate `cgp_namespace!` `@`-path as a `[CGP-E008]`
+  `[CGP-E010]`–`[CGP-E014]`, including a duplicate `cgp_namespace!` `@`-path as a `[CGP-E014]`
   naming both redirect targets
   ([`namespace_duplicate_path_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/namespace_duplicate_path_key.rs));
   a duplicate provider *name* is the lone `E0428`, since the compiler stops once it finds a type
   defined twice
   ([`duplicate_provider_name`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_provider_name.rs));
-  and the `UseContext` cycle's `E0275` becomes a `[CGP-E010]` headline with a `help` naming the
+  and the `UseContext` cycle's `E0275` becomes a `[CGP-E020]` headline with a `help` naming the
   usual cause
   ([`use_context_cycle`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/use_context_cycle.rs)).
   A collision *inside a namespace* reads the same way whatever its key: a child namespace redefining
-  a key it inherits is a `[CGP-E005]` naming the parent
+  a key it inherits is a `[CGP-E011]` naming the parent
   ([`inherited_override_conflict`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-override-conflict/inherited_override_conflict.rs)),
-  two `#[default_impl]`s on one per-type key a `[CGP-E004]` naming the type and its table
+  two `#[default_impl]`s on one per-type key a `[CGP-E010]` naming the type and its table
   ([`duplicate_default_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_default_impl.rs)),
   and a prefixed component bound by its bare marker (a mis-written key rather than an override) a
-  `[CGP-E007]` whose `help` names the path to write instead, whether the entry it collides with is
+  `[CGP-E013]` whose `help` names the path to write instead, whether the entry it collides with is
   an inherited redirect
   ([`namespace_inherited_unprefixed_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-override-conflict/namespace_inherited_unprefixed_key.rs))
   or the component's own `#[prefix]` route
@@ -80,7 +80,7 @@ fixture that pins it.
   to the missing field
   ([`cross_context_node_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/resolution/cross_context_node_key.rs)).
 - **An orphan-rule namespace registration** (registering wiring into a namespace the crate does not
-  own, keyed on a component it does not own either) becomes a `[CGP-E011]` header naming the foreign
+  own, keyed on a component it does not own either) becomes a `[CGP-E022]` header naming the foreign
   namespace and key, with the ownership-based fix in a `help`, in place of rustc's `E0210`/`E0117`,
   which names the machinery parameter `__Components__`/`__Table__`. Its three triggers are under
   [`wiring/orphan-rule/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/wiring/orphan-rule):
@@ -115,7 +115,7 @@ fixture that pins it.
   ([`overlapping_cause_sets`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/duplication/overlapping_cause_sets.rs)).
 - **A trait used but not declared** (a `#[cgp_fn]`/`#[cgp_impl]` body that calls a CGP trait's
   method, a consumer or `#[cgp_fn]`/`#[blanket_trait]` trait, on `self` without declaring it via
-  `#[uses(…)]`) becomes a `[CGP-E012]` header naming the trait, with the `#[uses(…)]` fix in a
+  `#[uses(…)]`) becomes a `[CGP-E030]` header naming the trait, with the `#[uses(…)]` fix in a
   `help`, in place of rustc's vague `E0599`, which names `__Context__` and points at a transitive
   `HasField` bound
   ([`undeclared_uses_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/used-but-undeclared/undeclared_uses_trait.rs),
@@ -128,22 +128,22 @@ fixture that pins it.
 - **A `#[cgp_impl]` header naming the wrong trait** (the component's *consumer* trait where its
   *provider* trait belongs, `#[cgp_impl(new P)] impl CanCalculateArea` instead of
   `impl AreaCalculator`, or a trait that is not a CGP component at all) becomes a single
-  `[CGP-E013]`/`[CGP-E014]` error on the misused trait name, naming the fix, with the whole
+  `[CGP-E032]`/`[CGP-E033]` error on the misused trait name, naming the fix, with the whole
   macro-lowering cascade (`E0425` on a `…Component` marker the user never wrote, `E0107`, `E0186`,
   `E0207`, and a downstream check failure) suppressed. The recognition uses the consumer/provider
   fingerprints, so it generalizes over a component's generic parameters and tells a wrong-half
-  mistake (`[CGP-E013]`, which names the provider trait to use) apart from a non-component trait
-  (`[CGP-E014]`, which has no provider to suggest)
+  mistake (`[CGP-E032]`, which names the provider trait to use) apart from a non-component trait
+  (`[CGP-E033]`, which has no provider to suggest)
   ([`consumer_trait_in_provider_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/wrong-component-half/consumer_trait_in_provider_impl.rs),
   [`consumer_trait_in_provider_impl_generic`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/wrong-component-half/consumer_trait_in_provider_impl_generic.rs),
   and
   [`cgp_impl_on_non_cgp_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/wrong-component-half/cgp_impl_on_non_cgp_trait.rs)).
 - **A higher-order provider's `#[use_provider]` mistake** is reshaped the same way. Calling
   `InnerCalculator::area(self)` without `#[use_provider(InnerCalculator: AreaCalculator)]` becomes a
-  `[CGP-E016]` error naming the inner provider and the fix, in place of rustc's `E0599`, which leaks
+  `[CGP-E031]` error naming the inner provider and the fix, in place of rustc's `E0599`, which leaks
   the generated `__Context__` and suggests the wrong consumer-trait bound
   ([`higher_order_missing_use_provider`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/used-but-undeclared/higher_order_missing_use_provider.rs)).
-  Naming the *consumer* trait in the `#[use_provider]` bound becomes a `[CGP-E015]` error pointing
+  Naming the *consumer* trait in the `#[use_provider]` bound becomes a `[CGP-E034]` error pointing
   at the provider trait to use, with the `E0308` body cascade suppressed
   ([`higher_order_use_provider_consumer_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/wrong-component-half/higher_order_use_provider_consumer_trait.rs)).
 - **An abstract type the context binds one way while a provider pins it another** is a coded
@@ -151,13 +151,13 @@ fixture that pins it.
   `UseType<T>`; a provider can pin the same type with the `#[use_type(Trait.{Assoc = Concrete})]`
   equality form, and when the two disagree the trait bound still holds and only the projection
   fails. The resolver's projection recovery covers any associated type, not only `HasField`'s, so
-  the failure becomes a `[CGP-E017]` header naming both types over a root-cause tree, with a `help`
+  the failure becomes a `[CGP-E005]` header naming both types over a root-cause tree, with a `help`
   naming the wiring entry to change
   ([`abstract_type_mismatch`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/types/abstract_type_mismatch.rs)).
 - **A blanket trait published by a library** is reshaped like a local one. A
   `#[cgp_fn]`/`#[blanket_trait]` trait is recognized by its blanket impl over a bare context, a
   signal too broad on its own (`ToString` and `Into` share it), so a foreign trait qualifies only on
-  evidence that its blanket depends on a CGP construct, and the `[CGP-E009]` reshaping crosses the
+  evidence that its blanket depends on a CGP construct, and the `[CGP-E003]` reshaping crosses the
   crate boundary
   ([`upstream_blanket_trait_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/upstream_blanket_trait_use_site.rs)).
 - **A CGP construct rustc splits across styled fragments** is resugared. rustc builds its "similar
@@ -174,18 +174,18 @@ fixture that pins it.
   `` of type `Pool<<App as HasDbType>::Db>` (`Pool<Postgres>`) ``: the un-normalized form first
   because it names the wiring to change, the reduced form after because it is what the field is
   compared against. A requirement that is already concrete normalizes to itself and gets no
-  parenthetical. The `[CGP-E003]` headline and the `[CGP-E109]` leaf render it through one helper,
-  so they cannot state a requirement two ways, and the abstract-type pair `[CGP-E017]`/`[CGP-E112]`
+  parenthetical. The `[CGP-E004]` headline and the `[CGP-E112]` leaf render it through one helper,
+  so they cannot state a requirement two ways, and the abstract-type pair `[CGP-E005]`/`[CGP-E116]`
   does the same. The one deliberate divergence is the abstract-type `help`, which takes the reduced
   form alone because it prescribes an edit the reader types rather than describing the requirement
   ([`abstract_field_type_mismatch`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/field-types/abstract_field_type_mismatch.rs)).
 - **A missing entry in an aggregate provider's own table** names that provider, whether the
-  aggregate `open`s the component or joins a namespace itself. Each `[CGP-E104]` redirect hop reads
+  aggregate `open`s the component or joins a namespace itself. Each `[CGP-E103]` redirect hop reads
   the table off its own `RedirectLookup<Table, Path>`, so a context's redirect says `` in `App` ``
   and the aggregate's says `` in `ByteSink` ``, and a path key missing from the aggregate is the
-  `[CGP-E110]` provider-table leaf,
+  `[CGP-E114]` provider-table leaf,
   `` provider `ByteSink` does not contain any delegate entry for `@ComputerComponent.Sink.Digest` ``,
-  rather than a `[CGP-E107]` leaf calling the aggregate a context
+  rather than a `[CGP-E113]` leaf calling the aggregate a context
   ([`open_aggregate_missing_entry`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/open_aggregate_missing_entry.rs),
   [`namespace_aggregate_missing_entry`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/namespace_aggregate_missing_entry.rs)).
 

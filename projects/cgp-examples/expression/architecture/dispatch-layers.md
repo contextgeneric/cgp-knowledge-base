@@ -89,12 +89,12 @@ A plain `cargo build` reports a single `E0275` from inside the cycle instead, on
 Through a check, `cargo cgp check` reshapes the cycle. A second probe made the same change on a copy
 of `add_mult` with its full check block, wiring
 `@ComputerComponent.<Code> Code.MathExpr: MatchWithValueHandlers`, and `cargo cgp check` built from
-the `cargo-cgp` source at commit `b6a6323` reported three `[CGP-E010]` errors at the check lines,
+the `cargo-cgp` source at commit `b6a6323` reported three `[CGP-E020]` errors at the check lines,
 for `MathExpr`, `Plus<MathExpr>`, and `Times<MathExpr>`, followed by two raw `E0275` overflows on
 the dispatcher:
 
 ```text
-error[E0275]: [CGP-E010] the wiring for the consumer trait `CanCompute<Eval, MathExpr>` on context `Interpreter` never resolves — the lookup recurses without terminating
+error[E0275]: [CGP-E020] the wiring for the consumer trait `CanCompute<Eval, MathExpr>` on context `Interpreter` never resolves — the lookup recurses without terminating
 ```
 
 The tool's help line points at a component delegated back to the context, as with `UseContext`,

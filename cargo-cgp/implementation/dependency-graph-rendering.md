@@ -52,14 +52,14 @@ from:
 pub enum DepNode {
     Consumer { trait_ref: String, context: String },              // CGP-E101
     Provider { trait_ref: String, context: String, provider: String }, // CGP-E102
-    Redirect { path: String, table: String, key: String },        // CGP-E104
-    Trait { trait_ref: String, self_ty: String },                 // CGP-E105
+    Redirect { path: String, table: String, key: String },        // CGP-E103
+    Trait { trait_ref: String, self_ty: String },                 // CGP-E104
 }
 ```
 
-There is no `CGP-E103` hop: a `HasField` obligation is always a terminal root cause in the walk,
-never a mid-chain hop, so the code that would carry it stays unassigned (see
-[error-code.md](../error-code.md)). The terminal root cause is the existing
+A `HasField` obligation is never one of these hops: the walk always treats it as a terminal root
+cause, never a mid-chain step (see [error-code.md](../error-code.md)). The terminal root cause is
+the existing
 [`Leaf`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/leaf.rs),
 unchanged, since it already carries the field, wiring, dispatch, and bound classifications the leads
 and codes are worded from. A graph node is therefore either a hop or a leaf:
@@ -189,8 +189,8 @@ a `Rectangle` missing its `height` field):
 ```text
 [CGP-E101] consumer trait impl `CanCalculateArea` for context `Rectangle`
 └─ [CGP-E102] provider trait impl `AreaCalculator` with context `Rectangle` for provider `RectangleArea`
-  └─ [CGP-E105] trait impl `HasRectangleFields` for `Rectangle`
-    └─ [CGP-E106] missing field `height` on `Rectangle`
+  └─ [CGP-E104] trait impl `HasRectangleFields` for `Rectangle`
+    └─ [CGP-E110] missing field `height` on `Rectangle`
 ```
 
 A **shared-root branch**, one consumer whose provider has two unmet dependencies, branches at the
@@ -201,10 +201,10 @@ a `Person` missing both name fields):
 ```text
 [CGP-E101] consumer trait impl `CanGreet` for context `Person`
 └─ [CGP-E102] provider trait impl `Greeter` with context `Person` for provider `GreetFullName`
-  ├─ [CGP-E105] trait impl `HasFirstName` for `Person`
-  │ └─ [CGP-E106] missing field `first_name` on `Person`
-  └─ [CGP-E105] trait impl `HasLastName` for `Person`
-    └─ [CGP-E106] missing field `last_name` on `Person`
+  ├─ [CGP-E104] trait impl `HasFirstName` for `Person`
+  │ └─ [CGP-E110] missing field `first_name` on `Person`
+  └─ [CGP-E104] trait impl `HasLastName` for `Person`
+    └─ [CGP-E110] missing field `last_name` on `Person`
 ```
 
 A **subsuming cascade**, where `CanCalculateDensity` depends on `CanCalculateArea` and both are
@@ -218,8 +218,8 @@ chain and so is not a second root:
 └─ [CGP-E102] provider trait impl `DensityCalculator` with context `Rectangle` for provider `DensityFromMassField`
   └─ [CGP-E101] consumer trait impl `CanCalculateArea` for context `Rectangle`
     └─ [CGP-E102] provider trait impl `AreaCalculator` with context `Rectangle` for provider `RectangleArea`
-      └─ [CGP-E105] trait impl `HasRectangleFields` for `Rectangle`
-        └─ [CGP-E106] missing field `height` on `Rectangle`
+      └─ [CGP-E104] trait impl `HasRectangleFields` for `Rectangle`
+        └─ [CGP-E110] missing field `height` on `Rectangle`
 ```
 
 **Two independent consumers converging on one leaf**
@@ -230,12 +230,12 @@ drawn under each. A leaf hides no subtree, so there is no `(*)`:
 ```text
 [CGP-E101] consumer trait impl `CanCalculateArea` for context `Rectangle`
 └─ [CGP-E102] provider trait impl `AreaCalculator` with context `Rectangle` for provider `RectangleArea`
-  └─ [CGP-E105] trait impl `HasRectangleFields` for `Rectangle`
-    └─ [CGP-E106] missing field `height` on `Rectangle`
+  └─ [CGP-E104] trait impl `HasRectangleFields` for `Rectangle`
+    └─ [CGP-E110] missing field `height` on `Rectangle`
 [CGP-E101] consumer trait impl `CanReportHeight` for context `Rectangle`
 └─ [CGP-E102] provider trait impl `HeightReporter` with context `Rectangle` for provider `ReportHeight`
-  └─ [CGP-E105] trait impl `HasHeight` for `Rectangle`
-    └─ [CGP-E106] missing field `height` on `Rectangle`
+  └─ [CGP-E104] trait impl `HasHeight` for `Rectangle`
+    └─ [CGP-E110] missing field `height` on `Rectangle`
 ```
 
 A **diamond**, one shared trait reached through two branches
@@ -251,8 +251,8 @@ first branch and `(*)`-references it under the second, so the root cause is show
   │ └─ [CGP-E102] provider trait impl `LeftProvider` with context `App` for provider `ProvideLeft`
   │   └─ [CGP-E101] consumer trait impl `CanShared` for context `App`
   │     └─ [CGP-E102] provider trait impl `SharedProvider` with context `App` for provider `ProvideShared`
-  │       └─ [CGP-E105] trait impl `HasName` for `App`
-  │         └─ [CGP-E106] missing field `name` on `App`
+  │       └─ [CGP-E104] trait impl `HasName` for `App`
+  │         └─ [CGP-E110] missing field `name` on `App`
   └─ [CGP-E101] consumer trait impl `CanRight` for context `App`
     └─ [CGP-E102] provider trait impl `RightProvider` with context `App` for provider `ProvideRight`
       └─ [CGP-E101] consumer trait impl `CanShared` for context `App` (*)
@@ -269,11 +269,11 @@ redirect:
 [CGP-E101] consumer trait impl `CanAssemble` for context `App`
 └─ [CGP-E102] provider trait impl `Assembler` with context `App` for provider `AssembleParts`
   ├─ [CGP-E101] consumer trait impl `CanBuildValue<Left>` for context `App`
-  │ └─ [CGP-E104] redirect lookup to `@ValueBuilderComponent` in `App`
-  │   └─ [CGP-E107] context `App` does not contain any delegate entry for `@ValueBuilderComponent.Left`
+  │ └─ [CGP-E103] redirect lookup to `@ValueBuilderComponent` in `App`
+  │   └─ [CGP-E113] context `App` does not contain any delegate entry for `@ValueBuilderComponent.Left`
   └─ [CGP-E101] consumer trait impl `CanBuildValue<Right>` for context `App`
-    └─ [CGP-E104] redirect lookup to `@ValueBuilderComponent` in `App`
-      └─ [CGP-E107] context `App` does not contain any delegate entry for `@ValueBuilderComponent.Right`
+    └─ [CGP-E103] redirect lookup to `@ValueBuilderComponent` in `App`
+      └─ [CGP-E113] context `App` does not contain any delegate entry for `@ValueBuilderComponent.Right`
 ```
 
 ## Eliding across blocks

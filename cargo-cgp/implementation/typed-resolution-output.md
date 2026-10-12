@@ -28,13 +28,13 @@ Rust error code (`E0277`, `E0599`, `E0271`) is always kept. Five classes cover t
   *no* provider, so the wiring is simply missing), so the header follows the redirect through to the
   recovered consumer and takes the `[CGP-E001]` form instead of exposing `RedirectLookup<App, @…>`
   as a provider.
-- **`[CGP-E003]`, the field-type-mismatch form**, for an `E0271` the resolver traced to a `HasField`
+- **`[CGP-E004]`, the field-type-mismatch form**, for an `E0271` the resolver traced to a `HasField`
   projection: a field whose name matches but whose type does not.
-- **`[CGP-E017]`, the abstract-type-mismatch form**, for an `E0271` the resolver traced to any
+- **`[CGP-E005]`, the abstract-type-mismatch form**, for an `E0271` the resolver traced to any
   *other* associated-type projection, most often a CGP abstract type the context binds one way while
-  a provider pins it another. It is `[CGP-E003]`'s sibling in every respect but the trait the
+  a provider pins it another. It is `[CGP-E004]`'s sibling in every respect but the trait the
   projection sits on, and is worded in the same shape.
-- **`[CGP-E009]`, the plain-trait form**, for a hand-written wrapper trait that is *not* itself a
+- **`[CGP-E003]`, the plain-trait form**, for a hand-written wrapper trait that is *not* itself a
   CGP consumer (it has only a concrete impl, no consumer blanket), such as `CanHandleApiSend`. It
   reads `` the trait `…` is not implemented for `…` ``, distinguished from `[CGP-E001]` by the
   wrapper's fingerprint (see
@@ -66,11 +66,11 @@ the type mismatch on the `height` field**, and the resolver reads the expected t
 projection and the actual type off the struct:
 
 ```text
-error[E0271]: [CGP-E003] expected a `height` field of type `f64` on `Rectangle`, but found `i32`
+error[E0271]: [CGP-E004] expected a `height` field of type `f64` on `Rectangle`, but found `i32`
    = note: this is required through the dependency chain:
              [CGP-E101] consumer trait impl `CanCalculateArea` for context `Rectangle`
              └─ [CGP-E102] provider trait impl `AreaCalculator` with context `Rectangle` for provider `RectangleArea`
-               └─ [CGP-E109] field `height` on `Rectangle` has type `i32`, but `f64` is required
+               └─ [CGP-E112] field `height` on `Rectangle` has type `i32`, but `f64` is required
 ```
 
 Two cases keep rustc's own headline rather than a coded one. A main message that already states a
@@ -91,7 +91,7 @@ so it always bottoms out *at* the cause rather than one step before it, whatever
 branch elided against an earlier block
 ([cross-block elision](dependency-graph-rendering.md#eliding-across-blocks)) keeps that terminus
 too, and a note with no chain at all names the cause in its lead instead. Every lead and every tree
-entry carries a [`CGP-E1xx`/`CGP-E2xx` code](../error-code.md) (the wording below omits the prefix
+entry carries a [`CGP-E1xx` code](../error-code.md) (the wording below omits the prefix
 for brevity). Paths render as a bare `@app.GreeterComponent` (the `Path!(@…)` macro form is reserved
 for the resugaring fallback), and module qualifiers are stripped throughout except where they tell
 two types apart, so `cgp::prelude::HasErrorType` reads as `HasErrorType` while `std::io::Error`
@@ -140,17 +140,17 @@ The `root cause:` lead is worded by *why* the leaf is unmet, and there are seven
 
   ```text
   error[E0277]: [CGP-E001] the consumer trait `CanUseFoo` is not implemented for context `App`
-     = note: root cause: [CGP-E107] context `App` does not contain any delegate entry for `BarProviderComponent`
+     = note: root cause: [CGP-E113] context `App` does not contain any delegate entry for `BarProviderComponent`
              this is required through the dependency chain:
                [CGP-E101] consumer trait impl `CanUseFoo` for context `App`
                └─ [CGP-E102] provider trait impl `FooProvider` with context `App` for provider `DoFooWithBar`
                  └─ [CGP-E101] consumer trait impl `CanUseBar` for context `App`
-                   └─ [CGP-E107] context `App` does not contain any delegate entry for `BarProviderComponent`
+                   └─ [CGP-E113] context `App` does not contain any delegate entry for `BarProviderComponent`
   ```
 
   Note the nested `CanUseBar` node: because the walk descends the real trait the provider `#[uses]`,
   an intermediate consumer trait reads as `consumer trait impl` (`CGP-E101`), not the generic
-  `trait impl` (`CGP-E105`) a plain getter or bound gets.
+  `trait impl` (`CGP-E104`) a plain getter or bound gets.
 
 - A **missing redirect wiring**, a namespace/`open` redirect that resolves to nothing, is the
   path-keyed counterpart of a missing wiring, reading the *same* way but with the path as the key
@@ -222,7 +222,7 @@ The `root cause:` lead is worded by *why* the leaf is unmet, and there are seven
   [`abstract_type_mismatch`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/types/abstract_type_mismatch.rs)
   fixture pins the shape.
 
-A field-type mismatch is an eighth leaf, worded the same way from its `[CGP-E003]` headline. Any
+A field-type mismatch is an eighth leaf, worded the same way from its `[CGP-E004]` headline. Any
 other leaf simply restates its bound, as in
 ``root cause: the trait bound `f64: Eq` is not satisfied``, module qualifiers stripped.
 
@@ -257,9 +257,9 @@ plumbing (`PipeHandlers`, `ComposeHandlers`) the programmer never asserted on, w
 `CGP-E001` consumer form (worded from the resolution's context and consumer trait(s), pluralized
 when a use-site failure spans several components, and also used for an `IsProviderFor` bound whose
 provider is a `RedirectLookup`), the `CGP-E002` provider form from the text rewrite when rustc's own
-header names a real wired provider's `IsProviderFor`, the two mismatch forms (`CGP-E003` for a
-`HasField` value type, `CGP-E017` for any other associated type, the field form tried first as the
-more specific of the two), or the `CGP-E009` plain wrapper form. One extra case routes here: a
+header names a real wired provider's `IsProviderFor`, the two mismatch forms (`CGP-E004` for a
+`HasField` value type, `CGP-E005` for any other associated type, the field form tried first as the
+more specific of the two), or the `CGP-E003` plain wrapper form. One extra case routes here: a
 mismatch-coded (`E0271`) failure the resolver traced to a *non*-mismatch cause (a manual
 `Send`-recovery wrapper's opaque-future error, whose `type mismatch resolving …` message is
 unreadable) takes the `CGP-E001` consumer form, since it is really the consumer trait failing to be
@@ -278,7 +278,7 @@ target, plus one per abstract-type mismatch naming the wiring entry to change; a
 contributes none) and the plan's single note, opening with its `root cause:` lead (or `root causes:`
 list, when the causes bottom out on different leaves) over
 `this is required through the dependency chain:` and the graph beneath (the lead omitted when the
-kept header or the `CGP-E003` header already states the bound). rustc's structured suggestions are
+kept header or the `CGP-E004` header already states the bound). rustc's structured suggestions are
 discarded with its notes, the diagnostic's Rust code is never touched, and a provider with two
 absent dependencies sharing its chain yields one note over a merged tree that branches to both. The
 JSON emitter regenerates every rendered and structured field from the `DiagInner` for free, with

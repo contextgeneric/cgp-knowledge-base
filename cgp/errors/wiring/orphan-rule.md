@@ -91,14 +91,14 @@ namespace mechanics without the fix; the gap is knowledge, not information the c
 
 ## How cargo-cgp presents it
 
-`cargo-cgp` reshapes this class into a `[CGP-E011]` message that names the foreign namespace and key
+`cargo-cgp` reshapes this class into a `[CGP-E022]` message that names the foreign namespace and key
 rather than the machinery parameter. The header reads
 `` cannot register the foreign <key> into the foreign namespace `<Namespace>` ``, where `<key>` is
 `` component `GreeterComponent` `` for a bare marker or `` path `@app.AnnouncerComponent` `` for a
 prefix path (resugared from its `PathCons<Symbol<…>>` list), and the raw coherence notes are
 replaced by one `help` carrying the ownership-based fix from [Resolving it](#resolving-it) below.
 The caret still points at the offending `#[cgp_impl]` attribute or `cgp_namespace!` block, and the
-Rust code stays `E0210`/`E0117`, kept alongside the `[CGP-E011]` tag.
+Rust code stays `E0210`/`E0117`, kept alongside the `[CGP-E022]` tag.
 
 The tool recovers what it names from the compiler, not the error text: it finds the offending impl
 at the caret, confirms it is a foreign namespace trait (recognized by the single-`Delegate`
@@ -109,7 +109,7 @@ implemented for a foreign key, and reads the trigger off the impl's own paramete
 the namespace's crate) for a registration, and inheriting the namespace into a new local one for a
 re-open. The three triggers are pinned by the fixtures under
 [`wiring/orphan-rule/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/wiring/orphan-rule);
-`[CGP-E011]` is catalogued in the [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
+`[CGP-E022]` is catalogued in the [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
 
 ## Resolving it
 
@@ -139,7 +139,7 @@ the value the rewrite adds is the translation, not the extraction.
 ## Backing fixtures
 
 Each fixture sits under `wiring/orphan-rule/`, where its `.cgp.stderr` pins the reshaped
-`[CGP-E011]` output and its `.rust.stderr` the raw `E0210` baseline.
+`[CGP-E022]` output and its `.rust.stderr` the raw `E0210` baseline.
 
 - [`wiring/orphan-rule/default_impl_foreign_prefix_path.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/orphan-rule/default_impl_foreign_prefix_path.rs):
   a downstream crate registering a `#[default_impl]` for an upstream *prefixed* component into the

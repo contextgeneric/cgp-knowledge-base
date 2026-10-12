@@ -256,7 +256,7 @@ same key, and the compiler rejects the second with `E0119`
 Both carets land on the key tokens inside the two attributes, because the impl is re-spanned onto
 its key. The same conflict arises between a `#[default_impl(GreeterComponent in DefaultNamespace)]`
 and a `#[prefix(… in DefaultNamespace)]` on the same component, since both emit an impl of
-`DefaultNamespace` for the marker; `cargo-cgp` reports that one as `[CGP-E007]`, naming the
+`DefaultNamespace` for the marker; `cargo-cgp` reports that one as `[CGP-E013]`, naming the
 `@app.GreeterComponent` path the registration should have used, since a prefixed component is bound
 at its path rather than at its marker.
 
@@ -268,7 +268,7 @@ collides for the same reason one step removed. `#[prefix(@app in DefaultNamespac
 `#[default_impl(@app.GreeterComponent in AppNamespace)]` is what binds the provider the redirect
 leads to. This is the
 [namespace override conflict](../../errors/wiring/namespace-override-conflict.md) class, which
-`cargo-cgp` likewise reports as `[CGP-E007]` naming the path to write.
+`cargo-cgp` likewise reports as `[CGP-E013]` naming the path to write.
 
 A registered default is final for every context that draws on it; a context adds entries beside the
 defaults, never over them. A context that joins a namespace cannot replace a path the namespace

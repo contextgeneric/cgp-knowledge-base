@@ -133,19 +133,19 @@ does more than reshape existing text: its next-generation trait solver **recover
 `Person: Greeter<Person>` and names no dependency, `cargo-cgp` keeps the Rust code (`E0599` at a
 call site, `E0277` at a `where` bound) but rewrites the headline to
 `` [CGP-E001] the consumer trait `CanGreet` is not implemented for context `Person` `` and attaches
-a `root cause:` note: a `` [CGP-E106] missing field `name` on `Person` `` leaf over a compact
+a `root cause:` note: a `` [CGP-E110] missing field `name` on `Person` `` leaf over a compact
 dependency tree that the raw output never contained at all: `[CGP-E101]` consumer-trait hop →
-`[CGP-E102]` provider-trait hop → `[CGP-E105]` the `HasName` trait → the `[CGP-E106]` field leaf.
+`[CGP-E102]` provider-trait hop → `[CGP-E104]` the `HasName` trait → the `[CGP-E110]` field leaf.
 The method-probe misdirection ("this is an associated function, not a method" and the wrong
 `Person::greet()` suggestion) is dropped, so the recovered cause leads instead of the noise.
 
 The leaf the tree bottoms out on names the actual mistake, and it varies with the suppressed
-dependency's kind. A genuinely absent field is `[CGP-E106]`; a struct that never derived `HasField`
-coalesces to `[CGP-E108]`; a component the context never wired, or an
+dependency's kind. A genuinely absent field is `[CGP-E110]`; a struct that never derived `HasField`
+coalesces to `[CGP-E111]`; a component the context never wired, or an
 [unregistered namespace path](../checks/unregistered-namespace-path.md), is
-`[CGP-E107] does not contain any delegate entry`. When the buried leaf is an
+`[CGP-E113] does not contain any delegate entry`. When the buried leaf is an
 [ordinary Rust trait bound](../checks/ordinary-trait-bound.md) such as `Scalar: Eq`, the tree's
-terminal passes the bound through in rustc's own words and the `root cause:` lead takes `[CGP-E201]`
+terminal passes the bound through in rustc's own words and the `root cause:` lead takes `[CGP-E117]`
 instead. In every case the recovered result matches, byte for byte, what a
 [check-trait failure](../checks/check-trait-failure.md) produces for the same mistake, which is
 exactly how `cargo-cgp` recovers it, by promoting the hidden bound to the direct one the solver will
@@ -197,7 +197,7 @@ promoting to a check) can.
   directly; its `.rust.stderr` pins the raw `E0599` as the pinned nightly prints it, whose notes
   already name the `HasField<Symbol<4, …>>` leaf (plus the method-probe advice) but not the chain to
   it, and its `.cgp.stderr` the recovered `[CGP-E001]` headline over a
-  `` root cause: [CGP-E106] missing field `name` `` tree. Its checked counterpart,
+  `` root cause: [CGP-E110] missing field `name` `` tree. Its checked counterpart,
   [`checks/check-trait-failure/fields/missing_dependency.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/missing_dependency.rs),
   reaches the same mistake through a check and belongs to the
   [check-trait failure](../checks/check-trait-failure.md) class.
@@ -206,7 +206,7 @@ promoting to a check) can.
   `f64` wired) rather than a `HasField`, which stable hides the same way whatever the leaf's kind,
   and whose nightly `.rust.stderr` names `f64: Eq` in a note; its `.cgp.stderr` recovers the cause
   as a `[CGP-E001]` headline over a
-  ``root cause: [CGP-E201] the trait bound `f64: Eq` is not satisfied`` tree. Its surfaced
+  ``root cause: [CGP-E117] the trait bound `f64: Eq` is not satisfied`` tree. Its surfaced
   counterpart is the [unsatisfied ordinary trait bound](../checks/ordinary-trait-bound.md) class.
 - [`hidden/unsatisfied-dependency/auto_dispatch_missing_variant_impl.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/auto_dispatch_missing_variant_impl.rs):
   the same hidden `E0599` reached through

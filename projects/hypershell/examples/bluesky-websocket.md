@@ -86,7 +86,7 @@ builds, and `cargo cgp check` built from source at commit `b6a6323` reported:
 
 ```text
 error[E0277]: [CGP-E002] the provider trait `Handler<Pipe<…>, TokioAsyncReadStream<ReadHalf<SimplexStream>>>` with context `MyApp` is not implemented for provider `ComposeHandlers<…>`
-   = note: root cause: [CGP-E107] context `MyApp` does not contain any delegate entry for `@cgp.core.error.ErrorRaiserComponent.Error`
+   = note: root cause: [CGP-E113] context `MyApp` does not contain any delegate entry for `@cgp.core.error.ErrorRaiserComponent.Error`
 ```
 
 The path's last segment is `tungstenite::Error` written by its own name, `Error`, so the message

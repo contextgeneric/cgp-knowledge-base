@@ -163,9 +163,9 @@ delegate_components! {
 constrain the form. **Each context still opens the component**: without its `open` statement, plain
 `cargo check` fails every check with the unsatisfied bound
 `ValueSerializerComponent: MessagesNamespace<AppA>`, and `cargo cgp check` names the root cause as
-`[CGP-E107]`, `AppA` having no delegate entry for `ValueSerializerComponent`. And **a context cannot
+`[CGP-E113]`, `AppA` having no delegate entry for `ValueSerializerComponent`. And **a context cannot
 rebind an entry the namespace makes**: adding `@ValueSerializerComponent.u64: UseSerde` to `AppA`
-fails with `[CGP-E005]`, saying that `AppA` cannot wire `@ValueSerializerComponent.u64.*` because it
+fails with `[CGP-E011]`, saying that `AppA` cannot wire `@ValueSerializerComponent.u64.*` because it
 is already set through `MessagesNamespace`. So the namespace holds only what every joining context
 shares, and each point of difference stays in the contexts. The mechanism is in
 [namespaces and prefixes](../../../cgp/guides/namespaces-and-prefixes.md). The website's wiring

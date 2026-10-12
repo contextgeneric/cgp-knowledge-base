@@ -89,13 +89,13 @@ terms rather than in terms of the wiring intent.
 
 `cargo-cgp` recognizes this class and rewrites it to state the intent the raw impl-level collision
 hides. It keeps the `E0119` code, collapses the `DelegateComponent<_>` + `IsProviderFor<_, _, _>`
-pair into one message (suppressing the redundant `IsProviderFor` half), and stamps **`[CGP-E006]`
+pair into one message (suppressing the redundant `IsProviderFor` half), and stamps **`[CGP-E012]`
 multiple namespaces**:
-`` [CGP-E006] only one namespace can be used for each target type in `delegate_components!`, but `App` uses both `NamespaceA` and `NamespaceB` ``.
+`` [CGP-E012] only one namespace can be used for each target type in `delegate_components!`, but `App` uses both `NamespaceA` and `NamespaceB` ``.
 The two `rustc` carets are kept, landing on the two `namespace` headers (or, for the loop form, on
 the second header and the loop's `Key: Value` line), because they already point at the lines to
 reconcile; there is no `root cause:` tree, this being a structural class. The bare-key `for` loop
-form produces the *same* `[CGP-E006]` headline, naming the loop's table (`GreeterTable`) as the
+form produces the *same* `[CGP-E012]` headline, naming the loop's table (`GreeterTable`) as the
 second "namespace", which is exactly right: a bare-key loop forwards over every key just as a
 namespace join does. The code is defined in the
 [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
@@ -111,31 +111,31 @@ bare-key `for` loop collides with a namespace join, embed the loop's key in a pa
 also why a `for` loop is the natural tool for a generic-parameter component, whose dispatch path
 *is* the loop key. This works only when the namespace binds no entry under that prefix. Otherwise
 the loop overlaps those entries instead, which is the
-[namespace override conflict](namespace-override-conflict.md), reported as `[CGP-E005]`. Either fix
+[namespace override conflict](namespace-override-conflict.md), reported as `[CGP-E011]`. Either fix
 leaves the context with one forwarding impl and the overlap gone.
 
 ## Notes for tooling
 
 `cargo-cgp` already recognizes and rewrites this class in full (above), leading with the
-`[CGP-E006]` wiring-intent headline rather than the impl-level collision. The one signal it keys on
+`[CGP-E012]` wiring-intent headline rather than the impl-level collision. The one signal it keys on
 is worth restating for any post-processor: the absent "downstream crates may implement …" note over
 fully-generic `DelegateComponent<_>`/`IsProviderFor<_, _, _>` types is what distinguishes this class
 from the [namespace override conflict](namespace-override-conflict.md), and so routes the collision
-to `[CGP-E006]` rather than the override's `[CGP-E005]`.
+to `[CGP-E012]` rather than the override's `[CGP-E011]`.
 
 ## Backing fixtures
 
-The `.rust.stderr` snapshot pins the raw generic `E0119` pair and the `.cgp.stderr` the `[CGP-E006]`
+The `.rust.stderr` snapshot pins the raw generic `E0119` pair and the `.cgp.stderr` the `[CGP-E012]`
 reshaping.
 
 - [`wiring/namespace-paths/two_namespaces_joined.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-forwarding-conflict/two_namespaces_joined.rs):
   two `namespace` joins on one context; the `.rust.stderr` pins the `E0119` pair with carets on the
-  two `namespace` lines and no downstream note, the `.cgp.stderr` the single `[CGP-E006]` headline
+  two `namespace` lines and no downstream note, the `.cgp.stderr` the single `[CGP-E012]` headline
   naming both `NamespaceA` and `NamespaceB`.
 - [`wiring/duplicate-keys/for_loop_bare_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-forwarding-conflict/for_loop_bare_key.rs):
   a bare-key `for` loop beside a namespace join; the `.rust.stderr` pins the same generic `E0119`
   pair with the conflicting caret on the loop's `Key: Value` line, the `.cgp.stderr` the
-  `[CGP-E006]` headline naming `DefaultNamespace` and the loop's `GreeterTable`.
+  `[CGP-E012]` headline naming `DefaultNamespace` and the loop's `GreeterTable`.
 
 ## Related
 

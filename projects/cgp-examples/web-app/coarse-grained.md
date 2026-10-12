@@ -112,7 +112,7 @@ line, and ran `cargo cgp check` built from the `cargo-cgp` source at commit `b6a
 
 ```text
 error[E0277]: [CGP-E001] the consumer trait `CanManageUser` is not implemented for context `ProductionApp`
-    = note: root cause: [CGP-E107] context `ProductionApp` does not contain any delegate entry for `UsernameCensorComponent`
+    = note: root cause: [CGP-E113] context `ProductionApp` does not contain any delegate entry for `UsernameCensorComponent`
 ```
 
 The whole user manager fails, `get_user` and `update_user_data` with it, which the public page sets

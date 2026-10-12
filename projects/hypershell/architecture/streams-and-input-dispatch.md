@@ -114,7 +114,7 @@ follows a redirect; see
 The effect is that each accepting stage lists the input kinds it handles in its dispatcher, and a
 probe confirms the boundary is exact. `StreamingExec` accepts `Vec<u8>`, `String`,
 `TokioAsyncReadStream`, and `FuturesAsyncReadStream`. Given a `&'static str`, it fails with a
-[`[CGP-E110]`](../../../cargo-cgp/error-code.md) root cause,
+[`[CGP-E114]`](../../../cargo-cgp/error-code.md) root cause,
 `` provider `HandleToTokioAsyncRead` does not contain any delegate entry for `@HandlerComponent.StreamingExec<…>.&str` ``.
 
 ## Which stages accept which inputs

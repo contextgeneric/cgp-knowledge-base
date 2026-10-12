@@ -86,7 +86,7 @@ help: the trait `HasField<Symbol<5, cgp::prelude::Chars<'w', cgp::prelude::Chars
 ```
 
 [`cargo cgp check`](../cargo-cgp.md) reads the chain back into the name and reports
-``[CGP-E106] missing field `width` on `Rectangle` `` as the root cause.
+``[CGP-E110] missing field `width` on `Rectangle` `` as the root cause.
 
 Three misreadings recur. `LEN` counts bytes, so on a non-ASCII name it exceeds the number of `Chars`
 nodes. A `Chars` value is zero-sized and stores no `&str`; `Display` rebuilds the text from the type.

@@ -127,7 +127,7 @@ treats everything else as a leaf. It deliberately does *not* follow
   that lookup and reports the missing-dispatch-entry leaf on `Bundle`
   ([`direct_delegation_missing_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/direct_delegation_missing_key.rs)).
 - An unmet **`DelegateComponent<PathCons<…>>`**, whose key is a redirect path rather than a bare
-  marker, splits by owner. On the context it is the missing-*redirect*-wiring leaf (`[CGP-E107]`),
+  marker, splits by owner. On the context it is the missing-*redirect*-wiring leaf (`[CGP-E113]`),
   named by its whole path. On any other type it is the missing-dispatch-entry leaf below, since the
   lookup ran in an aggregate provider that `open`s the component in its own table; the path is kept
   whole as that leaf's key. A redirect appends the component's parameters to its path, so a lookup
@@ -141,7 +141,7 @@ treats everything else as a leaf. It deliberately does *not* follow
   unknown error type, so its lookup is not reported
   ([`placeholder_error_route_leaf`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/placeholder_error_route_leaf.rs)).
 - An unmet **`DelegateComponent<Key>` on a *non-context* delegation table** is the
-  missing-dispatch-entry leaf (`[CGP-E110]`): the owner is a provider that delegates (an aggregate
+  missing-dispatch-entry leaf (`[CGP-E114]`): the owner is a provider that delegates (an aggregate
   provider missing a component wiring, or a `UseDelegate`/`UseInputDelegate` table missing a branch
   for the type it dispatches on, a `Code` fragment or an `Input` value's type), and it does not wire
   this key. It is told apart from a higher-order-provider dead-end (dropped, below) two ways, so it
@@ -172,7 +172,7 @@ treats everything else as a leaf. It deliberately does *not* follow
   Hypershell's own dispatchers `open` their component instead, so the same mistake in its
   `http_checksum_native` example reaches the redirect-wiring leaf above.
 - An unmet **`DelegateComponent<Marker>` on a type that is neither the context nor any table** is
-  the **not-a-provider** leaf (`[CGP-E111]`): a type wired where a provider was expected that does
+  the **not-a-provider** leaf (`[CGP-E115]`): a type wired where a provider was expected that does
   not implement the provider trait at all (`UseBasicAuth<QueryBalanceRequest>`, a request type in a
   handler slot). It arises via the generic blanket for the parent provider trait `T` (owner ==
   parent `Self`), and is split from the **dead-end** by whether the owner has a *concrete* impl of
@@ -259,7 +259,7 @@ leaf. A `DelegateComponent` that is *none* of these (owner is not the context, n
 lookup, and not a table) splits one final way, by whether the owner has a **concrete impl of the
 parent provider trait** (`owner_has_impl_of` against that trait, not `DelegateComponent`): with no
 such impl it is a genuine non-provider wired where a provider was expected (the **not-a-provider**
-leaf, `[CGP-E111]`); with one, it is a leaf provider reached via the blanket only because that impl
+leaf, `[CGP-E115]`); with one, it is a leaf provider reached via the blanket only because that impl
 failed to unify (a pipeline stage fed the wrong input, the `HandleShout` shape), the routing
 dead-end that is dropped, its real cause running through that impl down another branch.
 
@@ -328,7 +328,7 @@ bounded against a cyclic `Deref`. A field present with a mismatched **type** is 
 reached differently, through the projection rule in the walk above. From the failing projection the
 resolver reads the expected type, and it queries the struct by `DefId` (with the struct's own
 generic arguments substituted, so a same-named struct in another module is never queried) for the
-actual type, yielding the `[CGP-E003]` mismatch leaf. A non-field leaf carries no struct, so it is
+actual type, yielding the `[CGP-E004]` mismatch leaf. A non-field leaf carries no struct, so it is
 simply restated as `self: Trait` (`f64: std::cmp::Eq`) for its note lead and for de-duplicating a
 leaf reached by several paths.
 
@@ -387,14 +387,13 @@ labels read well:
 
 Each hop is a structured [`DepNode`](error-processing.md) variant, one per template, each stamped
 with its own [`CGP-E1xx` code](../error-code.md) when rendered. So `consumer trait impl`
-(`CGP-E101`), `provider trait impl` (`CGP-E102`), `redirect lookup` (`CGP-E104`), and the general
-`trait impl` (`CGP-E105`) each carry a distinct tag, and a terminal leaf takes a leaf code
-(`CGP-E106`–`CGP-E112`), except a pass-through ordinary bound, which stays uncoded. The walk emits
-one flat path of these nodes per way a cause is reached, and the rustc-free
-[dependency graph](dependency-graph-rendering.md) merges the paths and renders them as
-`cargo tree`-style text, every construct named in full. A dispatch pipeline's plumbing hops all
-restate the same program-sized `Code` type, and each spells it out, since the type a reader is
-tracing is the point of the chain
+(`CGP-E101`), `provider trait impl` (`CGP-E102`), `redirect lookup` (`CGP-E103`), and the general
+`trait impl` (`CGP-E104`) each carry a distinct tag, and a terminal leaf takes a leaf code
+(`CGP-E110`–`CGP-E117`), an ordinary bound included. The walk emits one flat path of these nodes per
+way a cause is reached, and the rustc-free [dependency graph](dependency-graph-rendering.md) merges
+the paths and renders them as `cargo tree`-style text, every construct named in full. A dispatch
+pipeline's plumbing hops all restate the same program-sized `Code` type, and each spells it out,
+since the type a reader is tracing is the point of the chain
 ([`deep_dispatch_chain`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/verbosity/deep_dispatch_chain.rs)
 pins the resulting shape). All of the merge and render is in the rustc-free
 `cargo-cgp-error-processing` crate, unit-tested on any toolchain.

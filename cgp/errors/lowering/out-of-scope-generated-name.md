@@ -213,7 +213,7 @@ from `cgp` would make every `cgp` user link `alloc`, and the only alternative wa
   `CanCalculateArea<Rectangle>` where the provider trait `AreaCalculator` belongs, so the derived
   `CanCalculateAreaComponent` marker does not exist; the `.rust.stderr` pins `E0425` with the caret
   on the `#[cgp_impl]` attribute, beside an `E0107` on the header, and the `.cgp.stderr` leads with
-  `[CGP-E013]`.
+  `[CGP-E032]`.
 - [`ok/abstract_db_transaction.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/ok/abstract_db_transaction.rs):
   the clean-compile counterpart: the same two abstract types named in both components' signatures,
   where promoting them is what makes naming them legal. Two further `ok/` fixtures pin the positions

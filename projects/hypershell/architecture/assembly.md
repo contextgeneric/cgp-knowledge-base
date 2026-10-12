@@ -236,7 +236,7 @@ layers, and each step is a CGP rule documented elsewhere:
    `CanHandle<CoreExec<…>, ()>`, which repeats the walk.
 
 All of it is resolved by the compiler, so the call compiles to a direct call to the provider's body.
-`cargo cgp check` shows the same walk as a dependency tree, with each redirect as a `[CGP-E104]`
+`cargo cgp check` shows the same walk as a dependency tree, with each redirect as a `[CGP-E103]`
 line; see [debugging](../guides/debugging.md).
 
 ## Source

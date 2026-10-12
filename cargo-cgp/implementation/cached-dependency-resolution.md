@@ -115,7 +115,7 @@ argument turns on. `resolve_node(node, …, prefix, …)` takes the node *and* t
 obligation reappears among its ancestors, so the leaves below a node are a function of
 `(node, ancestor-set)`, not of the node alone. A cycle reaches the walk when wiring loops, as in the
 `UseContext` self-routing shape, which is normally intercepted upstream as the `E0275` overflow the
-driver rewrites to `[CGP-E010]`. The cycle guard exists precisely so the walk does not *rely* on
+driver rewrites to `[CGP-E020]`. The cycle guard exists precisely so the walk does not *rely* on
 that interception, and the cache must not reintroduce the reliance. Memoizing on the node and
 consulting it under a different ancestor set can therefore be wrong, in two directions:
 
@@ -316,7 +316,7 @@ removes the redundant walking, and the ledger still governs the redundant showin
 
 The cache reaches a strictly larger redundancy than the ledger, which is why both are needed. Two
 diagnostics can reach the same shown cause through *different* seeds. The money-transfer wrapper
-impl seeds a `[CGP-E009]` wrapper trait (deliberately its own block) while the check entry seeds the
+impl seeds a `[CGP-E003]` wrapper trait (deliberately its own block) while the check entry seeds the
 consumer, and the `density_3` / `dependency_cascade` shapes reach one field through distinct
 consumers. The ledger collapses or keeps those on the output side. The cache, meanwhile, saves the
 walk whenever any node recurs, even when the outputs do *not* de-duplicate, as when a later
@@ -373,7 +373,7 @@ The primary guard is met; the rest is coverage still to add.
   wires a two-component mutual cycle (`ProviderA` depends on `CanB`, `ProviderB` back on `CanA`)
   alongside a genuinely missing field. The walk descends the `CanA → CanB → CanA` loop, the cycle
   guard cuts it (flagging that subtree incomplete), and the missing-field cause down the other
-  branch is still reported as a clean `[CGP-E106]` tree, where rustc's raw error surfaces the cycle
+  branch is still reported as a clean `[CGP-E110]` tree, where rustc's raw error surfaces the cycle
   as repeated `App: CanA` requirements and buries the field. This is the first cyclic fixture that
   *resolves* rather than declining, so it pins the cut and the incomplete-flag propagation on a live
   tree.
@@ -402,7 +402,7 @@ editing the guard out of `resolve_node` and running the suite.
 - **Depth cut** (met):
   [`wiring/wiring-cycle/divergent_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/divergent_wiring.rs)
   checks a lookup that grows without repeating (`CanShow<T>` requiring `CanShow<Vec<T>>`), so the
-  depth cap is the only cut. Its incomplete flag lets the tool word the overflow as `[CGP-E010]`,
+  depth cap is the only cut. Its incomplete flag lets the tool word the overflow as `[CGP-E020]`,
   so a depth cut that leaves the flag clear loses the rewrite.
 - **Reuse disjointness** (met):
   [`wiring/wiring-cycle/cross_context_cycle_reuse`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/cross_context_cycle_reuse.rs)

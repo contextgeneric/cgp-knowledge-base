@@ -67,11 +67,11 @@ cgp_namespace! {
 }
 ```
 
-`cargo cgp check` reports it as [`[CGP-E005]`](../../../../cargo-cgp/error-code.md), overlapping
+`cargo cgp check` reports it as [`[CGP-E011]`](../../../../cargo-cgp/error-code.md), overlapping
 wiring:
 
 ```text
-error[E0119]: [CGP-E005] `ProdNamespace` cannot wire `@app.finance.UserBalanceQuerierComponent.*` that is already set through `MockNamespace`
+error[E0119]: [CGP-E011] `ProdNamespace` cannot wire `@app.finance.UserBalanceQuerierComponent.*` that is already set through `MockNamespace`
  --> src/bin/override.rs:9:10
   |
 8 |     new ProdNamespace: MockNamespace {

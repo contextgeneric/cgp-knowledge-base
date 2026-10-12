@@ -89,7 +89,7 @@ provider-trait block** as derived noise and recovers each *checked* component's 
 components that share that leaf: rather than one block per component, it emits one `[CGP-E001]`
 headline naming every affected consumer trait
 (`` the consumer traits `CanBaz`, `CanBar`, and `CanFoo` are not implemented for context `App` ``)
-with a caret at each check entry and a single `` root cause: [CGP-E106] missing field `name` `` tree
+with a caret at each check entry and a single `` root cause: [CGP-E110] missing field `name` `` tree
 beneath. So a six-block raw cascade over three checked components becomes one block, and cargo's
 re-count reports one error. A component rustc happened to surface provider-side (a lone `[CGP-E002]`
 block) is worded uniformly as a consumer in the merged headline, since a `check_components!` entry
@@ -133,11 +133,11 @@ causes match exactly, since failures whose cause sets merely overlap are grouped
   and for `BarComponent` and `FooComponent` a `CanUseComponent` block whose `help:` names the
   `HasField<Symbol<4, …>>` leaf. Its `.cgp.stderr` shows the single coalesced block,
   `` the consumer traits `CanBaz`, `CanBar`, and `CanFoo` `` over one
-  `` [CGP-E106] missing field `name` `` tree, with a caret at each entry.
+  `` [CGP-E110] missing field `name` `` tree, with a caret at each entry.
 - [`checks/verbose-cascade/density_3.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/verbose-cascade/density_3.rs):
   a denser two-component check over one missing `height` field where the second component
   (`CanCalculateDensity`) depends transitively on the first (`CanCalculateArea`); its `.cgp.stderr`
-  pins the two components coalesced into one `[CGP-E001]` headline over the shared `[CGP-E106]`
+  pins the two components coalesced into one `[CGP-E001]` headline over the shared `[CGP-E110]`
   leaf.
 
 ## Related

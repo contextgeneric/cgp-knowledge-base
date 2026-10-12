@@ -184,7 +184,7 @@ which is the point of the arrangement.
 **A bundle keyed by paths must join the namespace itself**, as `PostgresCoreComponents` does. The
 lookup that reaches a bundle is keyed by the bare component name, so only the bundle's own
 `namespace` line redirects that name to the path its entries match. Leave the line out and the
-context's checks fail with the bundle reported as having no entry for the component, `[CGP-E110]`;
+context's checks fail with the bundle reported as having no entry for the component, `[CGP-E114]`;
 the
 [aggregate providers](../concepts/aggregate-providers.md#aggregate-providers-behind-namespace-paths)
 concept traces why. A bundle keyed by bare names, at a leaf path, needs no `namespace` line.
@@ -413,7 +413,7 @@ registers as `#[default_impl(@app.GreeterComponent in AppNamespace)]`; writing t
 through the prefix's redirect (directly when it is the same namespace the `#[prefix]` names, through
 the inheritance blanket when the namespace inherits it), and the compiler rejects the overlap with
 `E0119`. Only an un-prefixed component is registered by its marker. `cargo-cgp` reports this one as
-`[CGP-E007]` and names the path to use in a `help`, and the
+`[CGP-E013]` and names the path to use in a `help`, and the
 [namespace override conflict](../errors/wiring/namespace-override-conflict.md) class has the full
 anatomy.
 

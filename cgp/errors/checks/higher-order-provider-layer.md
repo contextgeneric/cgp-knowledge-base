@@ -93,11 +93,11 @@ reach the `CanUseComponent` block that carries the leaf.
 (`` [CGP-E001] the consumer trait `CanCalculateArea` is not implemented for context `Rectangle` ``)
 over one `root cause:` tree, and **encodes the failing layer in the shape of that tree** rather than
 leaving it to be read from chain depth and caret position. For the inner failure the tree bottoms
-out at `` [CGP-E106] missing field `base_area` `` beneath *two* stacked `[CGP-E102]` provider-trait
+out at `` [CGP-E110] missing field `base_area` `` beneath *two* stacked `[CGP-E102]` provider-trait
 hops (first `ScaledArea<BaseArea>`, then the `BaseArea` it wraps) before reaching
-`[CGP-E105] HasBaseArea` and the field; the two provider hops are the wrapper relationship made
+`[CGP-E104] HasBaseArea` and the field; the two provider hops are the wrapper relationship made
 explicit. For the outer failure the tree bottoms out at
-`` [CGP-E106] missing field `scale_factor` `` beneath a *single* `[CGP-E102]` hop
+`` [CGP-E110] missing field `scale_factor` `` beneath a *single* `[CGP-E102]` hop
 (`ScaledArea<BaseArea>`) with the inner provider never named, exactly mirroring the shorter raw
 block. The intermediate near-contradiction block that clutters the raw inner-layer output is dropped
 entirely, so the recovered form reads the same in both cases save for that one-hop-versus-two-hop
@@ -140,14 +140,14 @@ versus outer" from the depth rather than reading a phrase like "needed by the in
   block before it), with the `HasField<Symbol<9, …>>` leaf, the caret on `BaseArea`'s
   `Self: HasBaseArea`, and the chain through both providers' `IsProviderFor` with the
   `1 redundant requirement hidden` note, while its `.cgp.stderr` collapses that to one `[CGP-E001]`
-  block whose `` root cause: [CGP-E106] missing field `base_area` `` tree carries *two* `[CGP-E102]`
+  block whose `` root cause: [CGP-E110] missing field `base_area` `` tree carries *two* `[CGP-E102]`
   provider hops (`ScaledArea<BaseArea>` then `BaseArea`).
 - [`checks/higher-order-provider-layer/higher_order_outer_dependency.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/higher-order-provider-layer/higher_order_outer_dependency.rs):
   the mirror, with `base_area` but no `scale_factor`, so the outer layer fails; its `.rust.stderr`
   pins the single, shorter block, the `HasField<Symbol!("scale_factor")>` leaf, the caret on
   `ScaledArea`'s `Self: HasScaleFactor`, and a chain that stops at the outer `IsProviderFor` without
   naming the inner provider, and its `.cgp.stderr` a `[CGP-E001]` block whose
-  `` root cause: [CGP-E106] missing field `scale_factor` `` tree carries a *single* `[CGP-E102]` hop
+  `` root cause: [CGP-E110] missing field `scale_factor` `` tree carries a *single* `[CGP-E102]` hop
   with the inner provider absent.
 
 ## Related

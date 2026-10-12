@@ -60,7 +60,7 @@ from source at commit `b6a6323` reported:
 
 ```text
 error[E0277]: [CGP-E002] the provider trait `Handler<Pipe<…>, GenericArray<u8, …>>` with context `MyApp` is not implemented for provider `Call<StreamToStdout>`
-   = note: root cause: [CGP-E110] provider `HandleToTokioAsyncRead` does not contain any delegate entry for `@HandlerComponent.StreamToStdout.GenericArray<u8, …>`
+   = note: root cause: [CGP-E114] provider `HandleToTokioAsyncRead` does not contain any delegate entry for `@HandlerComponent.StreamToStdout.GenericArray<u8, …>`
 ```
 
 See [debugging](../guides/debugging.md#a-stage-cannot-accept-the-previous-stages-output) for this

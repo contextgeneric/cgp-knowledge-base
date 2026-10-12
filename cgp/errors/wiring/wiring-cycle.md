@@ -85,7 +85,7 @@ reach for a check when a `UseContext` wiring is suspect.
 
 `cargo-cgp` recognizes the checked overflow and rewrites it into a statement of what actually went
 wrong. It keeps the `E0275` code but replaces the headline with
-``[CGP-E010] the wiring for the consumer trait `CanGreet` on context `Person` never resolves — the lookup recurses without terminating``,
+``[CGP-E020] the wiring for the consumer trait `CanGreet` on context `Person` never resolves — the lookup recurses without terminating``,
 drops the `Greeter<Person>` / `CanGreet` / `UseContext` / `__CheckPerson` note chain entirely, and
 leaves the caret on the `GreeterComponent` entry inside the check block. A `help:` note names the
 usual cause (a component delegated to `UseContext` with no direct consumer-trait impl) and the two
@@ -103,12 +103,12 @@ this is where its cycle guard earns its keep. In `mutual_cycle_with_cause` (`Pro
 `CanB`, `ProviderB` depends back on `CanA`, walked alongside a genuinely missing `width` field) the
 resolver cuts the `CanA → CanB → CanA` loop and follows the other branch to the leaf, leading with
 `` [CGP-E002] the provider trait `ProviderA` with context `App` is not implemented for provider `DoA` ``
-over a `` root cause: [CGP-E106] missing field `width` on `App` `` dependency tree (`[CGP-E101]`
-consumer-impl hop → `[CGP-E102]` provider-impl hop → `[CGP-E105]` `HasWidth` hop → the leaf). The
+over a `` root cause: [CGP-E110] missing field `width` on `App` `` dependency tree (`[CGP-E101]`
+consumer-impl hop → `[CGP-E102]` provider-impl hop → `[CGP-E104]` `HasWidth` hop → the leaf). The
 cycle is not the headline; the concrete cause reachable down the non-cyclic branch is. Because the
 same mistake hides as `E0599` when reached by a method call, the tool promotes it the way it
 promotes any [hidden dependency](../hidden/unsatisfied-dependency.md), synthesizing a check, which
-turns the hidden form into the `E0275` it then rewrites to `[CGP-E010]`. The codes are defined in
+turns the hidden form into the `E0275` it then rewrites to `[CGP-E020]`. The codes are defined in
 the [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
 
 ## Resolving it
@@ -127,14 +127,14 @@ high enough.
   `check_components!`; its `.rust.stderr` pins the raw `E0275` overflow as the pinned nightly prints
   it, on `Person: CanUseComponent<GreeterComponent>` with no note chain (stable overflows on
   `Person: IsProviderFor<GreeterComponent, Person>` and prints the `Greeter<Person>` → `CanGreet` →
-  `UseContext` chain), and its `.cgp.stderr` the `[CGP-E010]` "never resolves" rewrite with the
+  `UseContext` chain), and its `.cgp.stderr` the `[CGP-E020]` "never resolves" rewrite with the
   chain dropped and the caret held on the `GreeterComponent` entry.
 - [`wiring/wiring-cycle/mutual_cycle_with_cause.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/mutual_cycle_with_cause.rs):
   a two-component cycle (`ProviderA` ↔ `ProviderB`) walked alongside a genuinely missing `width`
   field; its `.rust.stderr` is not an overflow but a raw `E0277` on
   `DoA: IsProviderFor<ProviderAComponent, App>`, and its `.cgp.stderr` shows the resolver's cycle
   guard cutting the loop and leading with `[CGP-E002]` over a
-  `` root cause: [CGP-E106] missing field `width` `` tree, the cause down the non-cyclic branch
+  `` root cause: [CGP-E110] missing field `width` `` tree, the cause down the non-cyclic branch
   rather than the cycle.
 - [`wiring/wiring-cycle/cycle_cut_rechecked.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/cycle_cut_rechecked.rs):
   the same cycle with both components checked, which merge into one `[CGP-E001]` block over the
@@ -147,7 +147,7 @@ high enough.
   `Outer: Linked`.
 - [`wiring/wiring-cycle/divergent_wiring.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/divergent_wiring.rs):
   the growing `CanShow<Vec<T>>` lookup above; its `.rust.stderr` pins the raw `E0275` and its
-  `.cgp.stderr` the `[CGP-E010]` rewrite reached through the depth cap.
+  `.cgp.stderr` the `[CGP-E020]` rewrite reached through the depth cap.
 
 ## Related
 

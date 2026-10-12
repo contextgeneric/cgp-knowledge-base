@@ -91,7 +91,7 @@ timestamp encoding, and checked the date and the message vector:
 
 ```text
 error[E0277]: [CGP-E001] the consumer traits `CanSerializeValue<DateTime<Utc>>` and `CanSerializeValue<Vec<EncryptedMessage>>` are not implemented for context `AppB`
-  = note: root cause: [CGP-E107] context `AppB` does not contain any delegate entry for `@ValueSerializerComponent.i64`
+  = note: root cause: [CGP-E113] context `AppB` does not contain any delegate entry for `@ValueSerializerComponent.i64`
 ```
 
 The public page makes the change on the full example instead: `i64` removed from `AppB`'s `UseSerde`
@@ -101,7 +101,7 @@ cause:
 
 ```text
 error[E0277]: [CGP-E001] the consumer traits `CanSerializeValue<DateTime<Utc>>`, `CanSerializeValue<EncryptedMessage>`, `CanSerializeValue<MessagesByTopic>`, and `CanSerializeValue<MessagesArchive>` are not implemented for context `AppB`
-    = note: root cause: [CGP-E107] context `AppB` does not contain any delegate entry for `@ValueSerializerComponent.i64`
+    = note: root cause: [CGP-E113] context `AppB` does not contain any delegate entry for `@ValueSerializerComponent.i64`
 ```
 
 The dependency chain it prints under the root cause runs from `SerializeIterator` through

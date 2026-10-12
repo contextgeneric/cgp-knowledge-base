@@ -263,7 +263,7 @@ Error-code reference, in [error_codes/](error_codes/):
 
 **Five mistakes that `cargo-cgp` recognizes and rewrites have no class document here, and the
 omission is a gap rather than a decision.** They are cataloged in `cargo-cgp`'s own
-[error-code catalog](../../cargo-cgp/error-code.md) as `CGP-E012`–`CGP-E016`, each backed by
+[error-code catalog](../../cargo-cgp/error-code.md) as `CGP-E030`–`CGP-E034`, each backed by
 fixtures under
 [`uncataloged/used-but-undeclared/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/uncataloged/used-but-undeclared)
 and
@@ -274,14 +274,14 @@ and every one of them is a post-codegen compile failure, squarely
 Two are **used-but-undeclared** dependencies. A `#[cgp_fn]`/`#[cgp_impl]` body lowers into a blanket
 impl over a generated context parameter, so a trait the body calls on `self` must be a bound on that
 parameter: calling one without [`#[uses]`](../reference/attributes/uses.md) fails with an `E0599`
-about the generated `__Context__` (`CGP-E012`), and calling an inner provider without
+about the generated `__Context__` (`CGP-E030`), and calling an inner provider without
 [`#[use_provider]`](../reference/attributes/use_provider.md) fails with an `E0599` on a type
-parameter (`CGP-E016`).
+parameter (`CGP-E031`).
 
 Three are **the wrong half of a component** named where the other belongs. A `#[cgp_impl]` header
-naming the consumer trait rather than the provider trait (`CGP-E013`), the same confusion in an
-inner-provider bound (`CGP-E015`), and `#[cgp_impl]` applied to a trait that is not a component at
-all (`CGP-E014`). Each surfaces as an `E0107` arity error over a burst of unrelated codes, none of
+naming the consumer trait rather than the provider trait (`CGP-E032`), the same confusion in an
+inner-provider bound (`CGP-E034`), and `#[cgp_impl]` applied to a trait that is not a component at
+all (`CGP-E033`). Each surfaces as an `E0107` arity error over a burst of unrelated codes, none of
 which names the cause.
 
 These are first-week mistakes rather than exotic ones, which is what makes the gap worth closing:

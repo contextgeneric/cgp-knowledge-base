@@ -154,7 +154,7 @@ directly-wired consumer keeps its precise recovery; then every `#[cgp_fn]` / `#[
 [anchoring the starting obligation](typed-resolution-anchors.md)). A blanket trait is a blanket-impl
 trait that is not a CGP component (no provider trait, no `DelegateComponent`), consumed like a
 consumer (`app.describe()`) and seeding the same walkable obligation `Ctx: Describe` whose `Self` is
-the context. Because it is not a CGP component, its result is headed `[CGP-E009] the trait …` rather
+the context. Because it is not a CGP component, its result is headed `[CGP-E003] the trait …` rather
 than `[CGP-E001] the consumer trait …`, the same wording the impl-site anchor gives such a trait
 reached through a wrapper, by clearing the `Resolved::consumers_are_cgp` flag the walk sets. This is
 what recovers a direct call to a `#[cgp_fn]` trait the context cannot satisfy: an `E0599` whose real
@@ -246,15 +246,15 @@ error[E0277]: [CGP-E001] the consumer trait `CanHandle<Prog<Product![HandleName,
 93 |     app.handle(PhantomData::<Prog<Product![HandleName, HandleShout]>>, Vec::new())
    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
    |
-   = note: root cause: [CGP-E106] missing field `name` on `App`
+   = note: root cause: [CGP-E110] missing field `name` on `App`
            this is required through the dependency chain:
              [CGP-E101] consumer trait impl `CanHandle<Prog<Product![HandleName, HandleShout]>, _>` for context `App`
-             └─ [CGP-E104] redirect lookup to `@cgp.extra.handler.HandlerComponent` in `App`
+             └─ [CGP-E103] redirect lookup to `@cgp.extra.handler.HandlerComponent` in `App`
                └─ [CGP-E102] provider trait impl `Handler<Prog<Product![HandleName, HandleShout]>, _>` with context `App` for provider `PipeHandlers<Product![HandleName, HandleShout]>`
                  └─ [CGP-E102] provider trait impl `Handler<Prog<Product![HandleName, HandleShout]>, _>` with context `App` for provider `ComposeHandlers<HandleName, HandleShout>`
                    └─ [CGP-E102] provider trait impl `Handler<Prog<Product![HandleName, HandleShout]>, _>` with context `App` for provider `HandleName`
-                     └─ [CGP-E105] trait impl `HasName` for `App`
-                       └─ [CGP-E106] missing field `name` on `App`
+                     └─ [CGP-E104] trait impl `HasName` for `App`
+                       └─ [CGP-E110] missing field `name` on `App`
 ```
 
 The re-report rustc raises where the result is awaited resolves to the same cause and de-duplicates
@@ -292,7 +292,7 @@ The anchor's fixtures live under
 case), `call_site_tuple_input` (the partial tuple recovery), `call_site_written_shapes` (every
 written shape the anchor reads: each definite literal kind, a struct literal, a constant, a
 non-generic call, and a `PhantomData` over a tuple, a reference, a slice, and generic paths),
-`cgp_fn_use_site` (the `#[cgp_fn]` trait call recovered as a `[CGP-E009]` block),
+`cgp_fn_use_site` (the `#[cgp_fn]` trait call recovered as a `[CGP-E003]` block),
 `foreign_context_error_route` (a call on a context from an upstream crate), and the
 `cascade_later_stage*` shapes whose pipeline stages the walk then descends. The decline boundary is
 pinned by `generic_consumer_unwritten_arg`, and the span gate by `unrelated_error_before_call` (an

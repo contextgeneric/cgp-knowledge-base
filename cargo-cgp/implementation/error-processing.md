@@ -35,7 +35,7 @@ from the driver, is what keeps them unit-testable.
   is the string transform that renames CGP wiring messages, over the
   [`ComponentNameMap`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/rewrite/names.rs)
   the driver fills in from the compiler. It also rewrites the `E0275` wiring-overflow header into
-  its `[CGP-E010]` form. It is documented where it is used, in
+  its `[CGP-E020]` form. It is documented where it is used, in
   [The driver](driver.md#naming-the-traits-behind-a-component-marker).
 - **The diagnosis model and its wording**
   ([`diagnosis`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/diagnosis))
@@ -57,14 +57,14 @@ from the driver, is what keeps them unit-testable.
   [Typed root-cause resolution](typed-root-cause-resolution.md) and
   [Dependency-graph rendering](dependency-graph-rendering.md). The module also holds the
   duplicate-key conflict wording (`wiring.rs`): the `WiringConflict` model and
-  `plan_wiring_conflict`, which words the `[CGP-E004]`–`[CGP-E008]` headers (one per conflict shape)
+  `plan_wiring_conflict`, which words the `[CGP-E010]`–`[CGP-E014]` headers (one per conflict shape)
   the driver's `resolve::conflict` classifier feeds it (see
   [The driver](driver.md#reshaping-a-duplicate-key-conflict)). Three more models word the driver's
   other reshapes, each with a `plan_*` header and a `*_help` fix: `orphan.rs` (`OrphanConflict`, the
-  `[CGP-E011]` orphan-rule namespace registration), `undeclared.rs` (`UndeclaredTrait`, the
-  `[CGP-E012]` trait a `#[cgp_fn]`/`#[cgp_impl]` body calls without declaring it), and
-  `cgp_impl_misuse.rs` (`CgpImplMisuse` for the `[CGP-E013]`–`[CGP-E015]` provider-definition
-  mistakes, and `MissingUseProvider` for the `[CGP-E016]` inner provider never imported). They are
+  `[CGP-E022]` orphan-rule namespace registration), `undeclared.rs` (`UndeclaredTrait`, the
+  `[CGP-E030]` trait a `#[cgp_fn]`/`#[cgp_impl]` body calls without declaring it), and
+  `cgp_impl_misuse.rs` (`CgpImplMisuse` for the `[CGP-E032]`–`[CGP-E034]` provider-definition
+  mistakes, and `MissingUseProvider` for the `[CGP-E031]` inner provider never imported). They are
   documented where the driver detects them, in
   [The driver](driver.md#the-drivers-diagnostic-transformations). Last, `internal_error.rs` words
   the note on a diagnostic the driver shows untransformed after a panic in its own transform (see
@@ -373,7 +373,7 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   trait that is not a CGP component, a consumer trait in a provider bound, and an inner provider not
   imported.
 - [`crates/cargo-cgp-error-processing/tests/error_processing/undeclared.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/undeclared.rs):
-  the `[CGP-E012]` header naming the undeclared trait, and the help naming the `#[uses(…)]` to write.
+  the `[CGP-E030]` header naming the undeclared trait, and the help naming the `#[uses(…)]` to write.
 - The [UI snapshot suite](testing.md) exercises the transforms over every fixture's real
   diagnostics: each `.cgp.stderr` is what the driver rendered after applying them.
 
@@ -420,10 +420,11 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   (`coalesce_underived_fields`), `plan.rs` (`DiagKind`, `DiagnosisPlan`, the unrendered
   `PendingNote` and its `render`, and `plan_resolved` with its `categorized_header`), and
   `wiring.rs` (`WiringConflict`/`WiringKey`, `plan_wiring_conflict` for the
-  `[CGP-E004]`–`[CGP-E008]` duplicate-key headers, and `wiring_conflict_help` for the redirect fix),
-  plus `orphan.rs`, `undeclared.rs`, and `cgp_impl_misuse.rs` (the `[CGP-E011]`–`[CGP-E016]` reshape
-  models and their wording), and `internal_error.rs` (the note on a diagnostic shown untransformed
-  after a contained panic). See [Typed root-cause resolution](typed-root-cause-resolution.md) and
+  `[CGP-E010]`–`[CGP-E014]` duplicate-key headers, and `wiring_conflict_help` for the redirect fix),
+  plus `orphan.rs`, `undeclared.rs`, and `cgp_impl_misuse.rs` (the `[CGP-E022]` and
+  `[CGP-E030]`–`[CGP-E034]` reshape models and their wording), and `internal_error.rs` (the note on
+  a diagnostic shown untransformed after a contained panic). See
+  [Typed root-cause resolution](typed-root-cause-resolution.md) and
   [The driver](driver.md#reshaping-a-duplicate-key-conflict).
 - [`crates/cargo-cgp-error-processing/src/tree.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/tree.rs):
   the `DependencyTree` type and its `cargo tree`-style renderer, the target the

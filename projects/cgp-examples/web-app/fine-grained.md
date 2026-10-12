@@ -137,7 +137,7 @@ page shows. A probe made it on a copy of the module, and `cargo cgp check` built
 
 ```text
 error[E0277]: [CGP-E001] the consumer traits `CanCreateUser` and `CanCensorUsername` are not implemented for context `ProductionApp`
-    = note: root cause: [CGP-E107] context `ProductionApp` does not contain any delegate entry for `UsernameCensorComponent`
+    = note: root cause: [CGP-E113] context `ProductionApp` does not contain any delegate entry for `UsernameCensorComponent`
 ```
 
 The getter and updater checks passed, since their providers need only the database.

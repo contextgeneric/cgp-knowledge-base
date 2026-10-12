@@ -92,7 +92,7 @@ check_components! {
 
 ```text
 error[E0277]: [CGP-E001] the consumer trait `CanDeserializeValue<&Coord>` is not implemented for context `App<'_>`
-  = note: root cause: [CGP-E107] context `App<'_>` does not contain any delegate entry for `AllocatorComponent`
+  = note: root cause: [CGP-E113] context `App<'_>` does not contain any delegate entry for `AllocatorComponent`
 ```
 
 The chain beneath it runs through `DeserializeAndAllocate` to the `CanAlloc<Coord>` that provider

@@ -89,7 +89,7 @@ so the failure reads `CanHandleApiSend → CanHandleApi → …` and points at t
 dropping the wrapper. The headline wording turns on the wrapper's **fingerprint**: a wrapper that is
 itself a CGP consumer trait (has a consumer blanket routing to a provider) reads
 `[CGP-E001] the consumer trait …`, while a plain wrapper such as `CanHandleApiSend`, with only a
-concrete impl, reads `[CGP-E009] the trait …`. Because the wrapper is a distinct trait from the CGP
+concrete impl, reads `[CGP-E003] the trait …`. Because the wrapper is a distinct trait from the CGP
 supertrait it reduces to, its error is reported on its own rather than de-duplicating into the
 `check_components!` entry for that supertrait. This anchor is tried *before* the wrapper-chain and
 use-site ones, and it fires only for an impl on a **context**: a struct or enum the checked crate
@@ -122,7 +122,7 @@ descent reaches the consumer instead through the **base trait of a projection `w
 `Ctx::Response: Send` bound over the broken `CanHandleApi`, whose base `Ctx: CanHandleApi<…>` is
 what genuinely fails), which requires reading the impl's predicates *un-normalized* so the
 projection's base survives. Second, the tree and headline are headed by the impl's own trait,
-fingerprinted for the `[CGP-E001]`/`[CGP-E009]` wording as the impl-site anchor does. But because
+fingerprinted for the `[CGP-E001]`/`[CGP-E003]` wording as the impl-site anchor does. But because
 `Self` is a foreign wrapper rather than the context, the headline names it **plainly**
 (`` the trait `CanAddApiRoutes` is not implemented for `Router<Arc<MockApp>>` ``, with no `context`
 qualifier), carried by the `Resolved::subject_is_context` flag. Only a genuine CGP consumer is ever
@@ -213,7 +213,7 @@ is an `E0277` rather than an `E0599`, and its spans never leave the call. In the
 method belongs to a `#[cgp_fn]`/`#[blanket_trait]` **blanket trait** rather than a CGP consumer.
 That is a blanket-impl trait that is not a component, so the by-consumer anchor (restricted to CGP
 consumers) declines its `E0599`; the anchor finds it by method name and heads the result
-`[CGP-E009] the trait …`. Either way it re-reads the failing call expression from HIR. It takes the
+`[CGP-E003] the trait …`. Either way it re-reads the failing call expression from HIR. It takes the
 context from the method's *receiver*, the component's parameters by *unifying the call's written
 argument types against the method's own declared signature*, and seeds every parameter the call
 leaves to inference as a rigid placeholder the walk resolves around. It is the one anchor whose
@@ -247,7 +247,7 @@ consumer), and the context from the **failing expression itself** (the call argu
 fails: `app`, read off its binding by the call-site anchor's `contexts_at_spans`), because rustc
 puts its "not implemented for `App`" span on the context's `#[derive(HasField)]` attribute,
 *outside* the struct's item span, so no struct-definition span carries it. The walk then descends
-`Ctx: BlanketTrait` to the cause, and the result is headed `[CGP-E009] the trait …` (not
+`Ctx: BlanketTrait` to the cause, and the result is headed `[CGP-E003] the trait …` (not
 `[CGP-E001] the consumer trait …`) since a blanket trait is not a component. It is gated to the
 `E0277` shape and tried **after** the call-site anchor deliberately: an `E0599` method call belongs
 to the call-site anchor, and a *generic-consumer* method call whose deep blanket-trait bound is

@@ -275,7 +275,7 @@ pub trait HasReqwestClient {
 It is a [`#[cgp_getter]`](../../../cgp/reference/macros/cgp_getter.md) component, so the field it
 reads is chosen by wiring. `HypershellNamespace` wires it to `UseField<Symbol!("http_client")>`, so
 a context that runs HTTP must have a `reqwest::Client` field named `http_client`. A context without
-one fails with a `[CGP-E106]` "missing field `http_client`" root cause.
+one fails with a `[CGP-E110]` "missing field `http_client`" root cause.
 
 ## `ErrorResponse`
 

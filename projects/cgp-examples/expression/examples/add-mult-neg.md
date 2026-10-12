@@ -67,7 +67,7 @@ from the `cargo-cgp` source at commit `b6a6323` reported:
 
 ```text
 error[E0277]: [CGP-E001] the consumer trait `CanComputeRef<ToLisp, MathPlusExpr>` is not implemented for context `InterpreterPlus`
-   = note: root cause: [CGP-E107] context `InterpreterPlus` does not contain any delegate entry for `@ComputerRefComponent.ToLisp.MathPlusExpr`
+   = note: root cause: [CGP-E113] context `InterpreterPlus` does not contain any delegate entry for `@ComputerRefComponent.ToLisp.MathPlusExpr`
 ```
 
 A call to `compute_ref` with `ToLisp`, without the check, reports the same root cause as a missing

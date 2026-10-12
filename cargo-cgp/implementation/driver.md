@@ -143,18 +143,18 @@ live compiler holds; this is far more involved than a flag, because it links the
 API to reach the `TyCtxt`. That emitter is where the whole diagnostic layer lives (the front-end
 merely forwards what the driver renders), and it carries eight transformations. Five of them reshape
 a specific compiler error into one coded CGP form: a duplicate-key conflict (`E0119`) is
-[reshaped into its coded `[CGP-E004]`–`[CGP-E008]` form](#reshaping-a-duplicate-key-conflict), an
+[reshaped into its coded `[CGP-E010]`–`[CGP-E014]` form](#reshaping-a-duplicate-key-conflict), an
 orphan-rule namespace registration (`E0210`/`E0117`) is
-[reshaped into its `[CGP-E011]` form](#reshaping-an-orphan-rule-namespace-registration), a trait
+[reshaped into its `[CGP-E022]` form](#reshaping-an-orphan-rule-namespace-registration), a trait
 used in a `#[cgp_fn]`/`#[cgp_impl]` body but not declared via `#[uses(…)]` (an `E0599` on the
-generated `__Context__` generic) is reshaped into a `[CGP-E012]` header naming the trait, with the
+generated `__Context__` generic) is reshaped into a `[CGP-E030]` header naming the trait, with the
 `#[uses(…)]` fix in a `help` (recovered by
 [`resolve::detect_undeclared_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/undeclared.rs)
 and worded by the rustc-free `plan_undeclared_trait`), a `#[cgp_impl]` header (or a higher-order
 provider's inner-provider bound) naming the wrong trait is
-[reshaped into its `[CGP-E013]`/`[CGP-E014]`/`[CGP-E015]` form](#reshaping-a-cgp_impl-provider-definition-mistake),
+[reshaped into its `[CGP-E032]`/`[CGP-E033]`/`[CGP-E034]` form](#reshaping-a-cgp_impl-provider-definition-mistake),
 and a higher-order provider calling an inner provider it never imported with `#[use_provider]` (an
-`E0599` on an unbounded type parameter) is reshaped into a `[CGP-E016]` header naming the inner
+`E0599` on an unbounded type parameter) is reshaped into a `[CGP-E031]` header naming the inner
 provider, with the `#[use_provider(…)]` fix in a `help` (recovered by
 [`resolve::detect_missing_use_provider`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/missing_use_provider.rs)).
 Any `[T]: Sized` cascade the undeclared-trait case trails is left as rustc wrote it, because those
@@ -390,7 +390,7 @@ so it is unit-tested on any toolchain without a `TyCtxt`. Its entry point, `rewr
 dispatches to the `required for … to implement …` note forms (`rewrite_required_for`), the
 `the trait bound … is not satisfied` header form (`rewrite_trait_bound`, which stamps the
 `[CGP-Exxx]` code), and the `overflow evaluating the requirement …` header form
-(`rewrite_wiring_overflow`, which stamps `[CGP-E010]` on the `E0275` a wiring cycle produces: a
+(`rewrite_wiring_overflow`, which stamps `[CGP-E020]` on the `E0275` a wiring cycle produces: a
 `UseContext` delegation whose only consumer-trait impl is that delegation, so the lookup recurses
 forever). Each reads the marker out of the trait's generic arguments and looks the names up in the
 map. When the overflow header is rewritten, the emitter also drops the note pointing at the
@@ -453,8 +453,8 @@ consumer trait) and traces the dependency chain from there; if the chain reaches
 renders the tree, and if it does not it declines and the error passes through untouched. A traced
 `E0271` whose cause is *not* a projection mismatch (its opaque `type mismatch resolving …` message
 being unreadable) is given the `[CGP-E001]` consumer header, since it is really the consumer trait
-failing to be implemented; one that *is* takes the matching mismatch header: `[CGP-E003]` for a
-`HasField` value type, `[CGP-E017]` for any other associated type.
+failing to be implemented; one that *is* takes the matching mismatch header: `[CGP-E004]` for a
+`HasField` value type, `[CGP-E005]` for any other associated type.
 
 A final gate de-duplicates the transformed diagnostics *across* the compilation, because CGP wiring
 is lazy and so one mistake surfaces the same error at many sites. A missing dependency is reported
@@ -593,7 +593,7 @@ internal traits the user never wrote. The transform recognizes the pair as one l
 **drops** the redundant `IsProviderFor` diagnostic (emitting nothing) and **rewrites** the
 `DelegateComponent` one into a coded headline that names the colliding key(s), keeping rustc's two
 carets ("first implementation here" and "conflicting implementation"), which already point at the
-two entries. The code is one of `[CGP-E004]`–`[CGP-E008]`, chosen by the shape of the collision.
+two entries. The code is one of `[CGP-E010]`–`[CGP-E014]`, chosen by the shape of the collision.
 
 The `IsProviderFor` suppression is gated on its **companion conflict being confirmed**, because
 suppressing a lone `E0119` would leave a failing build with no error at all. Every generated
@@ -624,10 +624,10 @@ and then the classifier declines, since it cannot say what the entry collides wi
 and the namespace-trait form
 [`upstream_namespace_inheritance_overlap`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-override-conflict/upstream_namespace_inheritance_overlap.rs)).
 Otherwise it classifies the shape into one of the five, each with its own code: a **duplicate**
-(`CGP-E004`, the two keys render equal), an **overlap** (`CGP-E005`, distinct but colliding keys: a
-generic over a specific, or a path prefixing another), **multiple namespaces** (`CGP-E006`, both
+(`CGP-E010`, the two keys render equal), an **overlap** (`CGP-E011`, distinct but colliding keys: a
+generic over a specific, or a path prefixing another), **multiple namespaces** (`CGP-E012`, both
 keys are blanket forwardings, so the context joins more than one namespace), a **redirect**
-collision (`CGP-E007`), or a **duplicate redirect** (`CGP-E008`, both entries redirect). Each
+collision (`CGP-E013`), or a **duplicate redirect** (`CGP-E014`, both entries redirect). Each
 entry's target for the colliding key is read the same way: an ordinary entry's is its `Delegate`, a
 `RedirectLookup` for an `open` or `=>` redirect, while a blanket forwarding (a `namespace` join) has
 a generic `Delegate`, so its target is recovered by normalizing `<key as Namespace<Ctx>>::Delegate`
@@ -665,12 +665,12 @@ subject, rendered with its leading arguments but without the components table th
 (`DefaultImpls1<ShowImplComponent>`). Four constructs emit such an impl, and all four are read the
 same way: a `cgp_namespace!` body entry, a component's `#[prefix(… in Namespace)]` route, a
 provider's `#[default_impl(… in Namespace)]` registration, and the inheritance blanket a
-`new Child: Parent` header emits. So two `=>` entries on one path become a `[CGP-E008]` duplicate
+`new Child: Parent` header emits. So two `=>` entries on one path become a `[CGP-E014]` duplicate
 redirect naming both targets
 ([`namespace_duplicate_path_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/namespace_duplicate_path_key.rs)),
-two `#[default_impl]`s on one key a `[CGP-E004]` duplicate
+two `#[default_impl]`s on one key a `[CGP-E010]` duplicate
 ([`duplicate_default_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_default_impl.rs)),
-and a child namespace binding a key its parent already binds a `[CGP-E005]` overlap naming the
+and a child namespace binding a key its parent already binds a `[CGP-E011]` overlap naming the
 parent
 ([`inherited_override_conflict`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-override-conflict/inherited_override_conflict.rs)).
 
@@ -682,7 +682,7 @@ Where it is an inheritance blanket, whose `Delegate` is a projection rather than
 normalizing the parent's `Delegate` for the colliding key recovers the same path, exactly as the
 context-level route does for a `namespace …;` join
 ([`namespace_inherited_unprefixed_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-override-conflict/namespace_inherited_unprefixed_key.rs)).
-Either way the collision reads as a `[CGP-E007]` redirect whose `help` names the entry to write
+Either way the collision reads as a `[CGP-E013]` redirect whose `help` names the entry to write
 instead.
 
 The transform is anchored to the genuine CGP traits (by `DefId`, like the rest of the resolver), so
@@ -701,7 +701,7 @@ trait and the key are foreign (a downstream crate registering into an upstream n
 own, keyed on an upstream component it does not own either), nothing is local, and the compiler
 rejects it, naming the machinery parameter (`__Components__` from a `#[default_impl]`/`#[prefix]`,
 `__Table__` from a `cgp_namespace!` re-open) and framing a CGP wiring decision as a bare coherence
-rule. The transform **rewrites** that headline into the coded `[CGP-E011]` form, naming the foreign
+rule. The transform **rewrites** that headline into the coded `[CGP-E022]` form, naming the foreign
 namespace and the key the programmer wrote, re-aims the caret at the offending macro alone (dropping
 the "uncovered type parameter" label, which no longer applies), and adds a `help` carrying the
 ownership-based fix the raw error never states.
@@ -741,13 +741,13 @@ cryptic errors: `E0425` (the missing marker), `E0107` (the wrong trait given one
 too many, since the inserted context always exceeds a consumer trait's arity), `E0186` (`&self`
 mismatch), `E0207` (`__Context__` unconstrained), plus a downstream check failure, none naming the
 real cause. The transform **rewrites** the `E0107`, whose caret already sits on the misused trait
-name, into a `[CGP-E013]` (consumer trait) or `[CGP-E014]` (non-CGP trait) header with the fix in a
+name, into a `[CGP-E032]` (consumer trait) or `[CGP-E033]` (non-CGP trait) header with the fix in a
 `help`, and **suppresses** the rest of the cascade so one clean error remains.
 
 The same reshape covers a higher-order provider's **inner-provider bound** naming the consumer
 trait, typically through `#[use_provider]`, which fills the leading context argument in, so
 `#[use_provider(Inner: CanCalculateArea)]` generates `Inner: CanCalculateArea<Self>`, the consumer
-trait again given one argument too many. That `E0107` on the bound is reshaped into a `[CGP-E015]`
+trait again given one argument too many. That `E0107` on the bound is reshaped into a `[CGP-E034]`
 header, and the `E0308` body cascade the malformed bound trails (told from a user's own type error
 by its mention of the generated `__Context__`) is suppressed alongside it.
 
@@ -762,9 +762,9 @@ reference is a token the user wrote (not from a macro expansion), where the gene
 `IsProviderFor`/`DelegateComponent` forwarding impls carry a synthesized reference. The header trait
 is then classified by
 [`consumer_provider_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/cgp_item.rs):
-a consumer trait yields the provider trait to suggest (`[CGP-E013]`), a provider trait is the
-correct target and is skipped, and anything else is a non-CGP trait (`[CGP-E014]`); each of the
-impl's inner-provider `where`-bounds is scanned the same way for a consumer trait (`[CGP-E015]`).
+a consumer trait yields the provider trait to suggest (`[CGP-E032]`), a provider trait is the
+correct target and is skipped, and anything else is a non-CGP trait (`[CGP-E033]`); each of the
+impl's inner-provider `where`-bounds is scanned the same way for a consumer trait (`[CGP-E034]`).
 Detection is triggered only by the `E0107` (a type-lowering-phase error, always present for this
 mistake), because it forces HIR and trait-graph queries that would re-enter the `DiagCtxt` lock and
 abort the compiler if run while the earlier-phase `E0425` (emitted mid-name-resolution) is being
@@ -810,7 +810,7 @@ never imported. The body invokes the inner provider as an associated function,
 unbounded, so rustc reports a vague `E0599` ("no associated function `area` found for type parameter
 `InnerCalculator`") whose suggestion leaks the generated `__Context__` and offers the *consumer*
 trait as a bound, the wrong fix for a higher-order provider. The transform rewrites it into a
-`[CGP-E016]` header naming the inner provider, with the `#[use_provider(…)]` fix in a `help`,
+`[CGP-E031]` header naming the inner provider, with the `#[use_provider(…)]` fix in a `help`,
 recovered by
 [`resolve::detect_missing_use_provider`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/missing_use_provider.rs):
 the failing call is an associated-function call `Param::method(…)` on a generic parameter of an

@@ -314,7 +314,7 @@ it stale.
 
 - [README.md](cgp/errors/README.md) — the catalog: why these errors are hard, the hidden-versus-
   surfaced axis it is built around, what belongs here, the index of every class, and the recorded gap
-  where `cargo-cgp`'s `CGP-E012`–`CGP-E016` rewrites have no class document yet.
+  where `cargo-cgp`'s `CGP-E030`–`CGP-E034` rewrites have no class document yet.
 - [AGENTS.md](cgp/errors/AGENTS.md) — the rules: never paste verbatim output, record the three facts a
   tool needs, the document template, backing every class with a fixture, and gathering an error with a
   sub-agent.
@@ -1217,7 +1217,7 @@ it stale.
   — the six pieces a new endpoint needs and where each goes, and adding one from a downstream crate
   through its own context.
 - [projects/cgp-examples/transfer/guides/swapping-the-backend.md](projects/cgp-examples/transfer/guides/swapping-the-backend.md)
-  — a new backend provider, the namespace it needs, the `[CGP-E005]` error from overriding
+  — a new backend provider, the namespace it needs, the `[CGP-E011]` error from overriding
   `MockNamespace`, and the context that joins it.
 - [projects/cgp-examples/transfer/testing.md](projects/cgp-examples/transfer/testing.md) — the
   compile-time checks the crate relies on, the manual script, and what no test exercises.
@@ -1294,7 +1294,7 @@ it stale.
   prefix tree, the path-keyed bundles that must join the namespace, and `ProductionApp` and `TestApp`.
 - [projects/cgp-examples/web-app/default-impls.md](projects/cgp-examples/web-app/default-impls.md) —
   the custom `DefaultAppComponents` namespace, its seven defaults, the one path the context wires, and
-  the `[CGP-E005]` an override meets.
+  the `[CGP-E011]` an override meets.
 - [projects/cgp-examples/web-app/testing.md](projects/cgp-examples/web-app/testing.md) — the five
   checked contexts, a probe of a missing extras entry, what probes ran, and what nothing tests.
 - [projects/cgp-examples/web-app/issues.md](projects/cgp-examples/web-app/issues.md) — missing

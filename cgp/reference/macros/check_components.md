@@ -288,7 +288,7 @@ The `delegate_components!` block compiles on its own, because wiring is lazy. Th
 implement `HasField` for the `name` tag, which rustc prints as the nested
 `Symbol<4, Chars<'n', …>>` type. So the mismatch is reported at the wiring rather than at some
 distant call to `person.greet()`. [`cargo cgp check`](../cargo-cgp.md) condenses the same error into a root-cause
-tree ending in ``[CGP-E106] missing field `name` on `Person` ``.
+tree ending in ``[CGP-E110] missing field `name` on `Person` ``.
 
 A check for a component with a generic parameter supplies the parameters explicitly:
 
