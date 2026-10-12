@@ -485,7 +485,9 @@ The codes divide into the steps of the chain (`CGP-E101` to `CGP-E109`) and the 
 at (`CGP-E110` onward).
 
 - **`CGP-E101`: consumer trait impl.** `` consumer trait impl `<Trait>` for context `<Ctx>` ``: a
-  hop through the context's own consumer-trait impl (a `CanUseComponent` step).
+  hop through the context's own consumer-trait impl (a `CanUseComponent` step). A type that
+  carries no wiring of its own is not a context, so it is named plainly:
+  `` consumer trait impl `HasScalarType` for `NoScalar` ``.
 - **`CGP-E102`: provider trait impl.**
   `` provider trait impl `<Trait>` with context `<Ctx>` for provider `<Provider>` ``: a hop through
   a provider's provider-trait impl (an `IsProviderFor` step).

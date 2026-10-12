@@ -50,7 +50,7 @@ from:
 
 ```rust
 pub enum DepNode {
-    Consumer { trait_ref: String, context: String },              // CGP-E101
+    Consumer { trait_ref: String, context: String, is_context: bool }, // CGP-E101
     Provider { trait_ref: String, context: String, provider: String }, // CGP-E102
     Redirect { path: String, table: String, key: String },        // CGP-E103
     Trait { trait_ref: String, self_ty: String },                 // CGP-E104
@@ -73,12 +73,13 @@ pub enum ChainNode {
 
 Each variant renders to exactly the label its `CGP-E1xx` template dictates
 (`` consumer trait impl `…` for context `…` `` and the rest), with the trait reference stored *with*
-its generic arguments (`CanCalculateArea<f64>`), since rendering them is a rustc-free concern. Node
-identity is whole-node structural equality (`Eq`/`Hash` derived on the enum), which is faithful even
-where the rendered label is not: the `Redirect` node holds the dispatched `key` (`Left` versus
-`Right`) though it renders only the route and its table (`` `@ValueBuilderComponent` in `App` ``),
-so two lookups along one route for different keys stay distinct nodes rather than merging into a
-false diamond.
+its generic arguments (`CanCalculateArea<f64>`), since rendering them is a rustc-free concern. The
+`Consumer` node's `is_context` flag, which the resolver sets when the type carries wiring of its
+own, decides whether the label calls that type a context or names it plainly. Node identity is
+whole-node structural equality (`Eq`/`Hash` derived on the enum), which is faithful even where the
+rendered label is not: the `Redirect` node holds the dispatched `key` (`Left` versus `Right`) though
+it renders only the route and its table (`` `@ValueBuilderComponent` in `App` ``), so two lookups
+along one route for different keys stay distinct nodes rather than merging into a false diamond.
 
 ## A cause is a leaf and the paths that reach it
 

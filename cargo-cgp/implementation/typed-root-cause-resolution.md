@@ -709,7 +709,9 @@ fixtures:
   an `E0599` whose deep blanket-trait bound stays declined because the anchor is gated to `E0277`.
 - `use_type_foreign_unsatisfied` and `use_type_nested_unsatisfied`: an unsatisfiable `#[use_type]`
   abstract-type import in a trait definition, recovered by the consumer-trait anchor into a
-  `[CGP-E001]` missing-wiring tree instead of leaking generated `__…__` placeholder names.
+  `[CGP-E001]` missing-wiring tree instead of leaking generated `__…__` placeholder names. The type
+  argument the import is required of carries no wiring, so the consumer step names it plainly
+  rather than calling it a context.
 
 The **impl-site and wrapper-chain paths** are pinned by:
 
