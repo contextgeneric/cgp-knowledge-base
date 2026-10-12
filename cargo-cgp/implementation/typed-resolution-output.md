@@ -41,9 +41,16 @@ The sentence after the code states the causes the note lists, by three rules:
   entry use (``missing wiring for `FarewellComponent` on `App` ``, say).
 - **Several causes of one kind on one owner** are stated together: fields missing from one struct
   (`` missing fields `first_name` and `last_name` on `Person` ``), wiring missing from one context,
-  or entries missing from one provider's table.
+  or entries missing from one provider's table. A list longer than four names its first three and
+  counts the rest (`` missing fields `alpha`, `beta`, `gamma`, and 3 more on `App` ``), while the
+  note lists every cause
+  ([`many_missing_fields`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/many_missing_fields.rs)).
 - **Mixed causes** keep the class sentence with their count, and the note lists each:
   `` [CGP-E001] the consumer trait `CanCalculateVolume` is not implemented for context `Shape`: 2 root causes ``.
+
+Wherever the causes are listed (the headline, the `root causes:` list, and the tree's branches),
+they follow the order the walk reached them, which is the order the program wrote each step's
+requirements (see [the walk](typed-resolution-walk.md#walking-the-dependency-graph-downward)).
 
 Each class has its own class sentence, which names the trait off its `DefId`, so it is exact even
 when two components share a name in different modules:

@@ -393,8 +393,10 @@ marking.
     earlier stage's un-normalized output projection is still descended and reported on when its
     input concretizes). `projection_mismatch.rs` finds an unmet associated-type projection on the
     concrete-`Self` impl (`projection_mismatch`/`impl_projection_mismatch`, deferring the blanket
-    and preferring a `HasField` projection over any other), and `holds.rs` asks the solver whether a
-    predicate is satisfied.
+    and preferring a `HasField` projection over any other), `holds.rs` asks the solver whether a
+    predicate is satisfied, and `written_order.rs` reads an impl's clauses in the order the program
+    wrote them (`written_order`, undoing the compiler's move of each associated-type constraint to
+    the front).
   - [`classify/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/classify)
     classifies a terminal: `leaf.rs` turns it into the rustc-free `Leaf` (a field by inspecting the
     struct and its `Deref` chain in `field.rs`, a field-type mismatch with `field_type` reading the
@@ -550,6 +552,9 @@ Several fixtures pin the **harder mechanics**:
 
 - `parallel_branches`: two independent missing fields under one provider, merged into one branching
   note whose two branches end at the distinct field leaves.
+- `many_missing_fields`: six missing fields read through `#[implicit]` arguments, listed and
+  branched in the order the arguments are written, under a headline that names the first three and
+  counts the rest; `empty_field_struct` and `base_area_2` pin the written order of a getter's fields.
 - `deep_nesting`: higher-order providers nested four deep, one long list.
 - `dependency_cascade`: a chain of providers each depending on the next, its intermediate consumers
   each a `[CGP-E101]` node.

@@ -93,8 +93,10 @@ recognizes.
 
 - **Message:** `` [CGP-E001] <cause> ``, the root cause in the sentence its tree code words
   (`` [CGP-E001] missing field `height` on `Rectangle` ``). Several causes of one kind on one owner
-  are stated together (`` missing fields `first_name` and `last_name` on `Person` ``); mixed causes
-  take the class sentence with their count,
+  are stated together (`` missing fields `first_name` and `last_name` on `Person` ``), naming the
+  first three and counting the rest when there are more than four
+  (`` missing fields `alpha`, `beta`, `gamma`, and 3 more on `App` ``); mixed causes take the class
+  sentence with their count,
   `` [CGP-E001] the consumer trait `<Consumer>` is not implemented for context `<Context>`: 2 root causes ``
   (pluralized when a use-site failure spans several components). The class sentence is also the
   internal headline a declined re-report is matched on.

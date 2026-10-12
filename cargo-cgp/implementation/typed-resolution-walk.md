@@ -17,6 +17,17 @@ unmet dependency, not only the first, is what surfaces independent causes as **s
 next-generation solver short-circuits a conjunction at its first unmet bound, so a provider needing
 two absent fields would otherwise hide one.
 
+The walk reads an impl's `where` clauses in the order the program wrote them, so the causes, and the
+tree's branches, come out in that order. The compiler does not keep that order: it moves each
+associated-type constraint (the `Value = u64` of `HasField<Symbol!("f"), Value = u64>`) to the front
+by swapping it with the clause there, which scrambles the trait clauses behind it. Source positions
+cannot restore the order either, because every bound a getter or an `#[implicit]` argument generates
+carries the macro's call site. The constraints keep their written order, so `written_order` gives
+each trait clause that carries one its constraint's place and leaves the others in the compiler's
+order. That is exact for an impl with no constraint, and for one whose every bound carries one, as a
+getter's and a provider's with only implicit arguments do; an impl mixing the two (a `#[uses]` bound
+beside implicit arguments) lists its constrained bounds first.
+
 The descended chain is the real one: `Ctx: Consumer`, then `Ctx: Provider<Ctx>` (the delegation
 routing, whose label the tree drops), then the delegate's `Provider: ProviderTrait<Ctx>` (the real
 wired provider), then that provider impl's own `where` bounds, then the leaf. The provider's bounds
@@ -413,8 +424,8 @@ parent document's [Tests](typed-root-cause-resolution.md#tests) section.
 - [`crates/cargo-cgp-driver/src/resolve/walk/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/walk):
   the descent: `leaves.rs` (the recursion), `vocabulary.rs` (what it walks into), `impl_match.rs`
   (the satisfying impl and its dependencies), `unknowns.rs` (placeholders and stalled projections),
-  `projection_mismatch.rs` (the unmet projection an impl carries, `HasField` or otherwise), and
-  `holds.rs` (the solver query).
+  `projection_mismatch.rs` (the unmet projection an impl carries, `HasField` or otherwise),
+  `holds.rs` (the solver query), and `written_order.rs` (the order an impl's clauses are read in).
 - [`crates/cargo-cgp-driver/src/resolve/classify/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/classify):
   `reportable.rs` (root cause versus routing dead-end), `leaf.rs` (`classify_leaf`, which builds the
   rustc-free `Leaf`), `field.rs` (the struct and `Deref`-chain inspection), and `assoc_type.rs` (the
