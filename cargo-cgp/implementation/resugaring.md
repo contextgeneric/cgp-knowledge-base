@@ -459,22 +459,25 @@ alone keeps them, as plain `cargo check` prints them.
 
 The chain's strip,
 [`strip_unambiguous_paths`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/strip_modules.rs),
-collapses an `a::b::C` identifier run to its final segment unless the qualifier tells two types
-apart. rustc's own rule decides which ones do: a name it prints qualified is either non-unique or
-glob-imported, so a qualified name the crate does not glob-import is ambiguous, and its qualifier
-stays. A glob-imported name is qualified whether or not it collides, so the driver also reads which
-item each glob brings in under the name, and a printed path that is not one of those items keeps
-its qualifier: in a crate that glob-imports its own `Error`, `std::io::Error` stays qualified
+drops the module segments of an `a::b::C` identifier run unless the qualifier tells two types apart.
+A module is named in lowercase and a type or trait in uppercase, so the run keeps everything from
+its first uppercase segment: a trait's method keeps its trait
+(`cgp::prelude::TryComputer::try_compute` reads `TryComputer::try_compute`), and a run with no
+uppercase segment keeps its last one. rustc's own rule decides which ones do: a name it prints
+qualified is either non-unique or glob-imported, so a qualified name the crate does not glob-import
+is ambiguous, and its qualifier stays. A glob-imported name is qualified whether or not it collides,
+so the driver also reads which item each glob brings in under the name, and a printed path that is
+not one of those items keeps its qualifier: in a crate that glob-imports its own `Error`,
+`std::io::Error` stays qualified
 ([`glob_imported_error_route`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/errors/glob_imported_error_route.rs)).
 The driver supplies the glob-imported names from the resolver's `glob_map`, and the items from each
 glob `use`'s target module. Reading that module needs the HIR, so only a message the tool rewrote
 gets it; an untransformed message, which can arrive during name resolution, treats a glob-imported
-name as unambiguous. Two kinds of run
-always collapse: one rooted at the `cgp` crate, since the prelude glob is why rustc qualifies it,
-and one ending in a name of CGP's encoding (`Symbol`, `Chars`, `Nil`, `Cons`, `Either`, `Void`,
-`PathCons`, `Field`, `Index`, `HasField`), whichever crate re-exports it, because the stages after
-the strip match those names bare. Some of them are ambiguous (`std::str::Chars`), but in a CGP
-diagnostic they are the encoding the resugaring folds away:
+name as unambiguous. Two kinds of run always collapse: one rooted at the `cgp` crate, since the
+prelude glob is why rustc qualifies it, and one ending in a name of CGP's encoding (`Symbol`,
+`Chars`, `Nil`, `Cons`, `Either`, `Void`, `PathCons`, `Field`, `Index`, `HasField`), whichever crate
+re-exports it, because the stages after the strip match those names bare. Some of them are ambiguous
+(`std::str::Chars`), but in a CGP diagnostic they are the encoding the resugaring folds away:
 
 ```text
 cgp::prelude::HasErrorType                        →   HasErrorType

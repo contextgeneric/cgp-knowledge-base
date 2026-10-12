@@ -201,8 +201,8 @@ transforms run, in three groups:
 
 - **The path strip**:
   [`strip_unambiguous_paths`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/strip_modules.rs),
-  which collapses each `a::b::C` identifier run to its final segment unless the qualifier tells two
-  types apart, as the driver's
+  which drops the module segments of each `a::b::C` identifier run, keeping a trait or type before
+  an item (`TryComputer::try_compute`), unless the qualifier tells two types apart, as the driver's
   [`AmbiguousNames`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/ambiguous.rs)
   says (`cgp::prelude::Chars` → `Chars`, `std::io::Error` kept). It leads the chain because
   everything after it matches bare type names;
