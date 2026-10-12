@@ -75,14 +75,17 @@ fixture that pins it.
   ([`namespace_inherited_unprefixed_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-override-conflict/namespace_inherited_unprefixed_key.rs))
   or the component's own `#[prefix]` route
   ([`default_impl_unprefixed_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/default_impl_unprefixed_key.rs)).
-- **Structural mistakes** in a check table or a wiring entry carry codes of their own: a check
-  entry listed twice is `[CGP-E015]`, two check tables sharing a check-trait name `[CGP-E016]`, a
-  `for` loop whose key skips its variable `[CGP-E017]` (one block for rustc's three `E0207`s), and a
-  `#[default_impl]` on a generic provider impl `[CGP-E018]`, each with its fix in a `help`
+- **Structural mistakes** in a check table or a wiring entry carry codes of their own: a check entry
+  listed twice is `[CGP-E015]`, two check tables sharing a check-trait name `[CGP-E016]`, a `for`
+  loop whose key skips its variable `[CGP-E017]` (one block for rustc's three `E0207`s), a
+  `#[default_impl]` on a generic provider impl `[CGP-E018]`, and a wiring or namespace entry whose
+  key skips its generic parameters `[CGP-E019]` (one block for rustc's `E0207` per parameter and
+  impl, whose two suggestions do not compile), each with its fix in a `help`
   ([`check_duplicate_entry`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/check_duplicate_entry.rs),
   [`check_twice_same_context`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/check_twice_same_context.rs),
   [`for_loop_key_without_var`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/for_loop_key_without_var.rs),
-  [`default_impl_generic_provider`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/default_impl_generic_provider.rs)).
+  [`default_impl_generic_provider`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/default_impl_generic_provider.rs),
+  [`unconstrained_generic`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/unconstrained_generic.rs)).
 - **A cross-context dependency** (one context's wiring depending on a *concrete* other context, so
   one obligation appears in two contexts' trees) resolves on both sides. A provider's own
   `where Inner: CanCompute` clause is recovered as that consumer obligation, de-duplicating into
@@ -221,16 +224,28 @@ sacrifice precision.
 
 What remains below are the classes the tool does not yet reshape.
 
-## An unconstrained per-entry generic emits two contradictory errors
+## Two unconstrained generics still pass through
 
-A `delegate_components!` entry whose generic parameter is used only in the value
-(`<T> GreeterComponent: GreetWith<T>`) is rejected with `E0207` *twice*, at the same caret, and the
-two errors carry contradictory auto-fixes: the first suggests adding the parameter to the context
-type, the second suggests removing it
-([`unconstrained_generic`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/unconstrained_generic.rs)).
-Only the second fix matches the actual mistake. Coalescing the pair, or at least suppressing the
-misleading first suggestion, is the work here; it is the last of the wiring-conflict shapes that
-still passes through with only light post-processing.
+Two shapes of the [unconstrained generic](../../cgp/errors/wiring/unconstrained-generic.md) class
+reach the reader as rustc wrote them, with the cause at the caret but a fix that does not apply.
+
+A `#[default_impl]` on the impl of a provider struct that is itself generic over the impl's
+parameter (`#[cgp_impl(ShowWith<T>)]` over `impl<T: Display> ShowImpl<T>`) copies `T` onto the
+registration, whose key and table do not use it, so the compiler rejects it with `E0207`
+([`default_impl_generic_provider_struct`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/default_impl_generic_provider_struct.rs)).
+The `[CGP-E018]` reshaping covers a provider struct that does not use the parameter, and the
+`[CGP-E019]` reshaping covers entries a table names, so this one passes through, naming neither the
+`#[default_impl]` nor its fix. The fix differs from `[CGP-E018]`'s, since the provider struct needs
+the parameter: register a provider instantiated at one type, or wire the generic provider in a
+namespace body or on the context.
+
+A [`#[cgp_computer]`](../../cgp/reference/macros/cgp_computer.md) function whose type parameter
+appears only in its return type (`fn parse<T: FromStr>(value: String) -> Option<T>`) leaves `T`
+unbound on the generated `Computer` impl, whose trait arguments carry only the input types
+([`computer_output_only_type_parameter`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/computer_output_only_type_parameter.rs)).
+Its two suggestions splice a second generic list after `parse` and remove `T`, which the return type
+still uses, so neither compiles. The macro sees the whole signature, so it could reject the function
+with the fix, taking `T` from an argument or writing a concrete type, before the compiler runs.
 
 ## Macro lowering errors point at the attribute, not the cause
 
@@ -350,8 +365,7 @@ The fixtures group by construct:
 ## What good presentation looks like
 
 Taken together, these issues define the tool's presentation target for the classes it does not yet
-reshape: collapse the `E0207` unconstrained-generic pair so only the fix that matches the mistake
-survives; give the extensible-data family a root cause naming the absent variant or field; and
+reshape: give the extensible-data family a root cause naming the absent variant or field; and
 recover the untransformed lowering class into a coded, root-cause-first diagnostic, or at least name
 the offending construct instead of the macro attribute. The bar is the one the check-trait-failure
 family already meets: lead with the cause as one plain sentence, name the decoded construct, give a

@@ -213,6 +213,12 @@ determine `__Value__` is `__Key__: A<__Table__, Delegate = __Value__>`, a projec
 trait the impl defines, which the compiler does not count, so the impl is rejected with `E0207`
 (`__Value__` is not constrained) rather than overflowing.
 
+**A per-entry generic that never reaches the key**, as in `<T> GreeterComponent: GreetWith<T>`,
+lowers to an impl of the namespace's lookup trait for the key whose `T` nothing binds, so the
+compiler rejects it with `E0207`. It is the
+[unconstrained generic](../../errors/wiring/unconstrained-generic.md) error class, pinned by
+[`namespace_entry_generic`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/namespace_entry_generic.rs).
+
 ## Known issues
 
 The namespace body shares two sharp edges with

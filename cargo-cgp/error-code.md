@@ -57,7 +57,7 @@ yet:
 | Block | Family | Codes |
 | --- | --- | --- |
 | `CGP-E001` to `CGP-E009` | a trait the context cannot use, and the two type mismatches | `E001` to `E005` |
-| `CGP-E010` to `CGP-E019` | conflicting wiring, and structural mistakes | `E010` to `E018` |
+| `CGP-E010` to `CGP-E019` | conflicting wiring, and structural mistakes | `E010` to `E019` |
 | `CGP-E020` to `CGP-E029` | wiring that never resolves, and the orphan rule | `E020` to `E022` |
 | `CGP-E030` to `CGP-E039` | mistakes in what a macro was given | `E030` to `E034` |
 | `CGP-E040` to `CGP-E049` | wiring keys and values that do not resolve | none yet |
@@ -74,26 +74,27 @@ a blanket trait rather than a CGP consumer, and `CGP-E005` the abstract-type cou
 come from the duplicate-key conflict classifier, carry no root-cause note, and instead keep rustc's
 two carets, which already point at the two colliding entries. They are five separate codes because
 each rewrites the `E0119` into a distinct message form with its own fix. The **structural** codes
-`CGP-E015` to `CGP-E018`, in the same block, name a mistake in the shape of what a macro was given
+`CGP-E015` to `CGP-E019`, in the same block, name a mistake in the shape of what a macro was given
 (a check table listing an entry twice, two check tables sharing a check-trait name, a `for` loop
-whose key skips its variable, a `#[default_impl]` on a generic impl), each recovered off the
-compiler from the generated items the `E0119`, `E0428`, or `E0207` lands on, with its fix in a
-`help`. The **never-resolving and orphan** codes `CGP-E020` to `CGP-E022` each rewrite a
-whole-program error into a CGP-framed one carrying its fix in a `help`. `CGP-E020` and `CGP-E021`
-rewrite the `E0275` overflow of a wiring lookup that never ends, which has no terminal leaf to
-descend to, split by how the tool's walk of the lookup is cut: an obligation met again is a cycle
-(`CGP-E020`), and the depth limit reached without a repeat is a lookup that grows (`CGP-E021`).
-`CGP-E022` rewrites an orphan-rule namespace registration's `E0210`/`E0117` (recovered from the
-offending impl off the compiler, like the `E0119` family). The **macro-mistake** codes `CGP-E030` to
-`CGP-E034` are each recovered off the compiler from the generated impl the failing token sits in and
-reworded with the fix in a `help`. Two concern a used-but-undeclared dependency: `CGP-E030` a trait
-used in a `#[cgp_fn]`/`#[cgp_impl]` body but not declared via `#[uses(…)]`, and `CGP-E031` an inner
-provider a higher-order provider calls but never imported via `#[use_provider]`. Three concern a
-trait named where a provider trait belongs: `CGP-E032` a `#[cgp_impl]` header naming the component's
-consumer trait, `CGP-E033` a `#[cgp_impl]` on a trait that is not a CGP component at all, and
-`CGP-E034` an inner-provider bound (typically `#[use_provider]`) naming the consumer trait. Each
-entry below gives the rewritten message, the mistake behind it, the fix, and the
-[CGP error catalog](../cgp/errors/README.md) class it recognizes.
+whose key skips its variable, a `#[default_impl]` on a generic impl, a wiring entry whose key skips
+its generic parameters), each recovered off the compiler from the generated items the `E0119`,
+`E0428`, or `E0207` lands on, with its fix in a `help`. The **never-resolving and orphan** codes
+`CGP-E020` to `CGP-E022` each rewrite a whole-program error into a CGP-framed one carrying its fix
+in a `help`. `CGP-E020` and `CGP-E021` rewrite the `E0275` overflow of a wiring lookup that never
+ends, which has no terminal leaf to descend to, split by how the tool's walk of the lookup is cut:
+an obligation met again is a cycle (`CGP-E020`), and the depth limit reached without a repeat is a
+lookup that grows (`CGP-E021`). `CGP-E022` rewrites an orphan-rule namespace registration's
+`E0210`/`E0117` (recovered from the offending impl off the compiler, like the `E0119` family). The
+**macro-mistake** codes `CGP-E030` to `CGP-E034` are each recovered off the compiler from the
+generated impl the failing token sits in and reworded with the fix in a `help`. Two concern a
+used-but-undeclared dependency: `CGP-E030` a trait used in a `#[cgp_fn]`/`#[cgp_impl]` body but not
+declared via `#[uses(…)]`, and `CGP-E031` an inner provider a higher-order provider calls but never
+imported via `#[use_provider]`. Three concern a trait named where a provider trait belongs:
+`CGP-E032` a `#[cgp_impl]` header naming the component's consumer trait, `CGP-E033` a `#[cgp_impl]`
+on a trait that is not a CGP component at all, and `CGP-E034` an inner-provider bound (typically
+`#[use_provider]`) naming the consumer trait. Each entry below gives the rewritten message, the
+mistake behind it, the fix, and the [CGP error catalog](../cgp/errors/README.md) class it
+recognizes.
 
 ### `CGP-E001`: consumer trait not implemented
 
@@ -300,13 +301,13 @@ named by its parameter (`@ComputerComponent.Code.u64`) and a type segment with i
   registrations carry the attribute's span, so both carets cover `#[cgp_component]`. **Fix:** keep a
   single redirect.
 
-### `CGP-E015`–`CGP-E018`: structural mistakes
+### `CGP-E015`–`CGP-E019`: structural mistakes
 
-These four codes name a mistake in the shape of what `check_components!`, `delegate_components!`, or
-`#[default_impl]` was given, which the compiler rejects through the items the macro generated. The
-raw errors name those items (`__CheckApp`, an impl's type parameter) and carry suggestions that do
-not fix the program, so each rewrite names the mistake in the terms the program wrote and puts the
-fix in a `help`. The driver recognizes each from the generated items at the caret
+These five codes name a mistake in the shape of what `check_components!`, `delegate_components!`,
+`cgp_namespace!`, or `#[default_impl]` was given, which the compiler rejects through the items the
+macro generated. The raw errors name those items (`__CheckApp`, an impl's type parameter) and carry
+suggestions that do not fix the program, so each rewrite names the mistake in the terms the program
+wrote and puts the fix in a `help`. The driver recognizes each from the generated items at the caret
 (`resolve::structural`), and the rustc-free `plan_structural_mistake` and `structural_mistake_help`
 word them.
 
@@ -338,11 +339,24 @@ word them.
   remove the parameter is dropped. **Fix (in the `help`):**
   `` write `<Provider>`'s impl for `<key>` alone, in the concise `#[cgp_impl]` form without `<T>` ``
   ([`default_impl_generic_provider`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/default_impl_generic_provider.rs)).
+- **`CGP-E019`: a wiring entry whose key skips its generic parameters.**
+  `` [CGP-E019] the entry for `<key>` in the wiring of `<Context>` binds `<T>`, but its key does not use it ``,
+  or `` … in the namespace `<Namespace>` … `` for a `cgp_namespace!` entry, naming every parameter
+  the key leaves out (`` binds `T` and `U`, but its key does not use them ``). It replaces the
+  `E0207` rustc reports for each such parameter in every impl the entry lowers to (its
+  `IsProviderFor` twin, and a check impl under `delegate_and_check_components!`), with the caret on
+  the parameter rustc reports first and rustc's suggestions, to add the parameter to the context or
+  to remove it, dropped, since neither compiles. **Fix (in the `help`):**
+  `` write a concrete type in place of `<T>` in `<Provider>`, and remove `<T>` from the entry's generic parameters ``,
+  naming where the entry uses the parameter when that is not a plain provider (the table a `->`
+  entry forwards to), and only removing it when nothing uses it
+  ([`unconstrained_generic`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/unconstrained_generic.rs),
+  [`entry_generic_shapes`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/entry_generic_shapes.rs)).
 
 The structural codes report a mistake once, however many errors rustc gives for it. The upstream
 classes are [conflicting wiring](../cgp/errors/wiring/conflicting-wiring.md) for `CGP-E015` and
 `CGP-E016`, and [unconstrained generic](../cgp/errors/wiring/unconstrained-generic.md) for
-`CGP-E017` and `CGP-E018`.
+`CGP-E017` to `CGP-E019`.
 
 ### `CGP-E020`: wiring that leads back to itself
 
@@ -734,7 +748,7 @@ over the `WiringOverflow` the driver's walk recovers, the typed check-failure fo
 by
 [`plan_wiring_conflict`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/wiring.rs)
 (fed from the conflict the driver's `resolve::conflict` classifier recovers, one code per
-`WiringConflict` shape), the `CGP-E015`–`CGP-E018` structural forms by
+`WiringConflict` shape), the `CGP-E015`–`CGP-E019` structural forms by
 [`plan_structural_mistake`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/structural.rs)
 (fed from the `StructuralMistake` the driver's `resolve::structural` detectors recover), and the
 `CGP-E022` orphan form by

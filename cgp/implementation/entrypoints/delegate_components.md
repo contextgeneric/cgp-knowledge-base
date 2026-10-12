@@ -396,8 +396,7 @@ their anatomy is documented in the [error catalog](../../errors/README.md); the
 [Failure modes](#failure-modes) section links each to its class. `cargo-cgp` files each fixture
 under its error class and records the *quality of the output* it renders in a header field
 (`acceptable` when the tool already leads with the cause, `usability` when the cause is present but
-buried), which is why the unconstrained-generic case below has `usability` quality even though it is
-not a defect:
+buried), which is independent of whether the failure is a defect:
 
 - [`wiring/conflicting-wiring/duplicate_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_key.rs):
   two blocks mapping the same key expand to conflicting `DelegateComponent` impls (`E0119`).
@@ -431,6 +430,9 @@ not a defect:
   a per-entry generic that appears only in the value (`<T> GreeterComponent: GreetWith<T>`) lowers
   to an impl with an unconstrained `T` (`E0207`), which the compiler rejects as it would a
   hand-written impl.
+- [`wiring/unconstrained-generic/entry_generic_shapes.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/entry_generic_shapes.rs):
+  the same mistake in three more entry shapes: two parameters on one entry, a parameter the entry
+  never uses, and a `->` entry forwarding to a table named with its parameter.
 
 ## Source
 

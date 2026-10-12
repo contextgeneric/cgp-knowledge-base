@@ -145,7 +145,7 @@ merely forwards what the driver renders), and it carries nine transformations. S
 specific compiler error into one coded CGP form: a duplicate-key conflict (`E0119`) is
 [reshaped into its coded `[CGP-E010]`–`[CGP-E014]` form](#reshaping-a-duplicate-key-conflict), a
 structural mistake in a check table or a wiring entry (an `E0119`, `E0428`, or `E0207` on generated
-items) is [reshaped into its `[CGP-E015]`–`[CGP-E018]` form](#reshaping-a-structural-mistake), an
+items) is [reshaped into its `[CGP-E015]`–`[CGP-E019]` form](#reshaping-a-structural-mistake), an
 orphan-rule namespace registration (`E0210`/`E0117`) is
 [reshaped into its `[CGP-E022]` form](#reshaping-an-orphan-rule-namespace-registration), a trait
 used in a `#[cgp_fn]`/`#[cgp_impl]` body but not declared via `#[uses(…)]` (an `E0599` on the
@@ -734,7 +734,7 @@ and the namespace classes beside it pin each shape.
 
 Some mistakes are in the shape of what a macro was given, and the compiler rejects them through
 the items the macro generated, so its error names those items and offers a fix that does not apply.
-Four such shapes are reshaped, each recognized from the generated items at the caret by a detector
+Five such shapes are reshaped, each recognized from the generated items at the caret by a detector
 under
 [`resolve::structural`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/structural)
 and worded by the rustc-free `plan_structural_mistake` and `structural_mistake_help`:
@@ -753,19 +753,30 @@ and worded by the rustc-free `plan_structural_mistake` and `structural_mistake_h
 - **A `#[default_impl]` on a generic provider impl** (`[CGP-E018]`): an `E0207` on a parameter of a
   registration impl (a namespace lookup trait other than `DelegateComponent`) that neither its key,
   its trait arguments, nor the provider it registers uses.
+- **A wiring entry whose key skips its generic parameters** (`[CGP-E019]`): an `E0207` on a
+  parameter of a `DelegateComponent` entry, or of a `cgp_namespace!` entry's lookup-trait impl, that
+  nothing binds: neither the trait arguments name it, nor an associated-type bound whose arguments
+  are bound. A namespace impl is an entry only when no provider impl declares the same parameter,
+  since a `#[default_impl]` registration copies its provider impl's parameters, and an entry bounded
+  by a lookup trait on the parameter is a `for` loop's. The mistake lists every parameter nothing
+  binds, and its help depends on what in the entry uses them: the provider, another part of the
+  value, or nothing.
 
-Both `E0207` shapes drop rustc's suggestions, which remove the parameter or add it to the context,
-and keep the caret on the parameter alone. One mistake can produce several errors (a loop's two
-variables, each in two impls), so the emitter reports each recovered mistake once and drops the
-rest. The `E0207` detectors print a type by its own name rather than through the trimmed-paths map:
-an `E0207` is emitted before any type has been printed with trimmed paths, and the first such print
-records itself on the diagnostic context, whose lock the emitter holds
-([rustc diagnostic internals](rustc-diagnostic-internals.md)). The fixtures under
+The three `E0207` shapes drop rustc's suggestions, which remove the parameter or add it to the
+context, and keep the caret on the parameter alone. One mistake can produce several errors (a loop's
+two variables, or an entry's parameters, each in every impl the entry lowers to), so the emitter
+reports each recovered mistake once and drops the rest. The `E0207` detectors print a type by its
+own name rather than through the trimmed-paths map: an `E0207` is emitted before any type has been
+printed with trimmed paths, and the first such print records itself on the diagnostic context, whose
+lock the emitter holds ([rustc diagnostic internals](rustc-diagnostic-internals.md)). The fixtures
+under
 [`wiring/conflicting-wiring/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/wiring/conflicting-wiring)
 (`check_duplicate_entry`, `check_twice_same_context`, and their siblings) and
 [`wiring/unconstrained-generic/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/wiring/unconstrained-generic)
-(`for_loop_key_without_var`, `default_impl_generic_provider`, `default_impl_explicit_context`) pin
-the shapes.
+(`for_loop_key_without_var`, `default_impl_generic_provider`, `default_impl_explicit_context`,
+`unconstrained_generic`, `entry_generic_shapes`, `entry_generic_checked`, and
+`namespace_entry_generic`) pin the shapes, and `default_impl_generic_provider_struct` pins a
+`#[default_impl]` that no detector claims.
 
 A doubled `#[prefix]` is not among them: its two namespace registrations collide as a duplicate
 redirect, `[CGP-E014]`, which the [duplicate-key reshape](#reshaping-a-duplicate-key-conflict)

@@ -5,11 +5,13 @@ generated impl leaves the parameter unconstrained and the compiler rejects it wi
 
 ## What triggers it
 
-A `delegate_components!` entry may introduce its own generic parameters, but a per-entry generic is
+An entry in a wiring table may introduce its own generic parameters, but a per-entry generic is
 well-formed only when it reaches the *key*, where `DelegateComponent<Key<…>>` binds it. Writing one
 that appears only in the provider value never binds it, and CGP lowers the entry faithfully rather
 than second-guessing it, so the compiler rejects the free parameter exactly as it would a
-hand-written impl with an unused parameter.
+hand-written impl with an unused parameter. The same holds for an entry in
+`delegate_and_check_components!`, and for one in a `cgp_namespace!` body, which lowers to an impl of
+the namespace's lookup trait for its key.
 
 ```rust
 delegate_components! {
@@ -42,7 +44,12 @@ well-localized rather than cascading, but it is not quite a single line: the ent
 than one generated position carrying `T`, so the same `E0207` prints twice, each with a different
 `help:`: one offering to move `T` onto the `Person` type, one to remove the unused parameter. Both
 carets land on the same `<T>` and name the same cause, so there is no note chain and nothing to
-trace.
+trace. Neither suggestion compiles: `Person<T>` leaves the struct's parameter unused, and removing
+`<T>` leaves `GreetWith<T>` naming an undeclared type. The count depends on the impls the entry
+lowers to: `delegate_and_check_components!` adds a check impl, so it prints three, and a
+`cgp_namespace!` entry lowers to one impl, so it prints once, with a suggestion to make the
+component generic. An entry whose parameter appears nowhere prints once, with only the help to
+remove it, which is the right fix there.
 
 The rule behind it is that an impl parameter must be *determined* by the impl, and knowing why makes
 the fix obvious. Rust requires every generic parameter on an impl to appear in the implemented
@@ -62,24 +69,25 @@ resolvable no matter what impls other crates add later.
 
 The root cause is **present and precise**: the caret sits on the offending generic parameter, and
 the message states exactly why it is rejected. This is the most localized class in the catalog: the
-diagnostic needs no tracing and hides nothing. The only thing the raw message lacks is the
-CGP-specific remedy, since it describes the constraint in impl terms rather than in terms of the
-wiring entry.
+diagnostic needs no tracing and hides nothing. What the raw message lacks is the CGP-specific
+remedy: it describes the constraint in impl terms rather than in terms of the wiring entry, and its
+suggestions do not compile.
 
 ## How cargo-cgp presents it
 
-`cargo-cgp` does not yet rewrite the per-entry generic; it passes rustc's diagnostic through
-unchanged. For its fixture, the tool's `.cgp.stderr` is byte-for-byte its raw `.rust.stderr`: both
-`E0207` errors, both `help:` notes, no `[CGP-Exxx]` code stamped. That pass-through is why the
-fixture has `usability` quality in cargo-cgp rather than `acceptable`. The cause is already
-pinpoint-accurate at the caret, so nothing is buried, but the message still speaks in impl terms
-("the type parameter `T` is not constrained"), where the actionable reading is a wiring one: the
-generic must reach the component *key* (`<T> SomeKey<T>: …`), not only the provider *value*.
-Restating the fix that way is the one improvement left for the tool; there is nothing to recover,
-only to translate.
+`cargo-cgp` rewrites the per-entry generic into one **`[CGP-E019]`** in place of rustc's errors,
+whichever table holds the entry:
+``[CGP-E019] the entry for `GreeterComponent` in the wiring of `Person` binds `T`, but its key does not use it``,
+with the caret on `T` and a `help:` to write a concrete type in place of `T` in `GreetWith<T>` and
+remove `T` from the entry's generic parameters. rustc's two suggestions are dropped, since neither
+compiles. The headline names every parameter the key leaves out (``binds `T` and `U` ``), and a
+`cgp_namespace!` entry by its namespace (``in the namespace `AppNamespace` ``). The help adapts to
+what uses the parameter: it is only to remove the parameter when nothing in the entry uses it, and
+it points at where the entry uses it when that is not a plain provider, such as the table a `->`
+entry forwards to.
 
-The `for` loop and the `#[default_impl]` shapes are rewritten. A loop whose key does not use its key
-variable becomes one **`[CGP-E017]`** in place of rustc's three `E0207`s:
+The `for` loop and the `#[default_impl]` shapes are rewritten too. A loop whose key does not use its
+key variable becomes one **`[CGP-E017]`** in place of rustc's three `E0207`s:
 ``[CGP-E017] the `for` loop in the wiring of `App` binds `T`, but its key `@test.ShowImplComponent.String` does not use it``,
 with the caret on `T` and a `help:` to write `T` in the key. A `#[default_impl]` on a generic
 provider impl becomes **`[CGP-E018]`**:
@@ -88,6 +96,12 @@ with a `help:` to write the impl for `String` alone in the concise `#[cgp_impl]`
 covers the explicit-context form, `impl<Context> ShowImpl<String> for Context`, whose copied
 parameter is `Context`. Both drop rustc's suggestion to remove the parameter, which is not the fix.
 The codes are defined in the [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
+
+Two shapes still pass through as rustc writes them. A `#[default_impl]` on the impl of a provider
+struct that is itself generic over the parameter, `#[cgp_impl(ShowWith<T>)]`, names the parameter in
+the provider it registers, so neither the `[CGP-E018]` nor the `[CGP-E019]` recognition claims it.
+And a `#[cgp_computer]` function whose parameter appears only in its return type keeps rustc's pair,
+whose suggestions do not compile either.
 
 ## Resolving it
 
@@ -103,9 +117,19 @@ concise `#[cgp_impl]` form, since the default position cannot bind the provider'
 - [`wiring/unconstrained-generic/unconstrained_generic.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/unconstrained_generic.rs):
   a per-entry generic (`<T> GreeterComponent: GreetWith<T>`) that appears only in the value,
   lowering to an impl with an unconstrained `T`; its `.rust.stderr` pins the `E0207` carets on the
-  `<T>` (the error printed twice), and its `.cgp.stderr` is identical: the pass-through that gives
-  the fixture `usability` quality, since cargo-cgp does not yet restate this class in wiring
-  terms.
+  `<T>` (the error printed twice, with its two suggestions), and its `.cgp.stderr` the single
+  `[CGP-E019]` with the help to write a concrete type in place of `T`.
+- [`wiring/unconstrained-generic/entry_generic_shapes.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/entry_generic_shapes.rs):
+  an entry binding two such parameters, an entry binding one it never uses, and a `->` entry
+  forwarding to a table named with its parameter; the `.cgp.stderr` pins one `[CGP-E019]` per entry,
+  naming both parameters together, a help that only removes the unused one, and a help pointing at
+  where the `->` entry uses its parameter.
+- [`wiring/unconstrained-generic/entry_generic_checked.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/entry_generic_checked.rs):
+  the plain entry in `delegate_and_check_components!`, whose `.rust.stderr` pins the `E0207` three
+  times and whose `.cgp.stderr` pins one `[CGP-E019]`.
+- [`wiring/unconstrained-generic/namespace_entry_generic.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/namespace_entry_generic.rs):
+  the plain entry in a `cgp_namespace!` body; the `.rust.stderr` pins one `E0207` suggesting a
+  generic component, and the `.cgp.stderr` the `[CGP-E019]` naming the namespace.
 - [`wiring/unconstrained-generic/computer_output_only_type_parameter.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/computer_output_only_type_parameter.rs):
   a `#[cgp_computer]` function `parse<T: FromStr>(value: String) -> Option<T>`, whose `T` reaches
   only the impl's `Output`; the `.rust.stderr` pins the `E0207` pair with both carets on the `T` the
@@ -124,11 +148,16 @@ concise `#[cgp_impl]` form, since the default position cannot bind the provider'
   `#[default_impl]` on a provider impl generic over `T`, and on one written in the explicit-context
   form; the `.rust.stderr` pins the `E0207` with its "remove the unused type parameter" help, and
   the `.cgp.stderr` the `[CGP-E018]` naming the parameter.
+- [`wiring/unconstrained-generic/default_impl_generic_provider_struct.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/default_impl_generic_provider_struct.rs):
+  `#[default_impl]` on the impl of a provider struct generic over `T` (`#[cgp_impl(ShowWith<T>)]`);
+  both snapshots pin the same single `E0207`, which the tool passes through, so the fixture has
+  `usability` quality.
 
 ## Related
 
 - [Conflicting wiring](conflicting-wiring.md), [Orphan-rule violation](orphan-rule.md),
   [Wiring cycle](wiring-cycle.md): the sibling structural classes.
-- [`delegate_components!`](../../reference/macros/delegate_components.md) and
+- [`delegate_components!`](../../reference/macros/delegate_components.md),
+  [`cgp_namespace!`](../../reference/macros/cgp_namespace.md), and
   [`DelegateComponent`](../../reference/traits/delegate_component.md).
 - [Debugging CGP compile errors](../../guides/debugging.md): the `E0207` entry in the decoder.

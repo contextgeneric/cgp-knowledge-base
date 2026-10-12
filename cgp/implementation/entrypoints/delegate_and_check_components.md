@@ -106,7 +106,11 @@ key** produces `E0119` on the wiring side (and, if checked, the check side too),
 [conflicting wiring](../../errors/wiring/conflicting-wiring.md) error class. A **missing impl-side
 dependency** is what the check half exists to surface: the
 [check-trait failure](../../errors/checks/check-trait-failure.md) error class, reported at the
-wiring site rather than lazily at the call site.
+wiring site rather than lazily at the call site. A **per-entry generic that never reaches the key**
+is the [unconstrained generic](../../errors/wiring/unconstrained-generic.md) error class, which
+the compiler reports once more than under `delegate_components!`, since the check impl copies the
+entry's generic list too
+([`entry_generic_checked`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/entry_generic_checked.rs)).
 
 A table whose every entry is `#[skip_check]` (or an empty table, or one whose only key is an empty
 array) still emits the check trait but no check impls, so it verifies nothing; this parallels the
