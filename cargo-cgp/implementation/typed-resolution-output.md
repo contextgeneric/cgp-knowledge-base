@@ -1,9 +1,9 @@
 # Typed resolution: the transformed diagnostic
 
 This document covers the output side of the driver's
-[typed root-cause resolution](typed-root-cause-resolution.md): the two halves a resolved failure's
-diagnostic is rebuilt from (the coded headline and the `root cause:` notes), and how the emitter
-applies the rustc-free plan to the compiler's `DiagInner`. The recovery that produces the causes
+[typed root-cause resolution](typed-root-cause-resolution.md): the three parts a resolved failure's
+diagnostic is rebuilt from (the coded headline, the `root cause:` notes, and the fix `help`s), and
+how the emitter applies the rustc-free plan to the compiler's `DiagInner`. The recovery that produces the causes
 being worded here is the subject of [the anchors](typed-resolution-anchors.md) and
 [the walk](typed-resolution-walk.md).
 
@@ -146,9 +146,8 @@ The `root cause:` lead is worded by *why* the leaf is unmet, and there are seven
 - A **present-but-underived field**, one the struct carries but that has no (or an incomplete)
   `#[derive(HasField)]`, reads as
   `` root cause: `HasField` not derived for field `name` of `Person` ``, and
-  a separate `help` names the fix: `` make sure that `#[derive(HasField)]` is used for `Person` ``.
-  When the field is only reachable through a `Deref` target, the `help` points at that target
-  instead
+  a separate `help` names the fix: `` add `#[derive(HasField)]` to `Person` ``. When the field is
+  only reachable through a `Deref` target, the `help` points at that target instead
   ([`missing_has_field_derive`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/missing_has_field_derive.rs),
   [`field_via_deref`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/field_via_deref.rs)).
   Several such fields on *one* struct are one mistake (the derive emits an impl per field), so
@@ -176,6 +175,7 @@ The `root cause:` lead is worded by *why* the leaf is unmet, and there are seven
                └─ [CGP-E102] provider trait impl `FooProvider` with context `App` for provider `DoFooWithBar`
                  └─ [CGP-E101] consumer trait impl `CanUseBar` for context `App`
                    └─ [CGP-E113] missing wiring for `BarProviderComponent` on `App`
+     = help: wire `BarProviderComponent` to a provider in the wiring of `App`
   ```
 
   Note the nested `CanUseBar` node: because the walk descends the real trait the provider `#[uses]`,
@@ -265,6 +265,53 @@ where it ends. The test is what the header was worded from, not the kind of leaf
 in a block classed by its consumer keeps its lead, as it does in the emitter's coalesced block,
 whose headline may name several subjects when the causes are mixed.
 
+## The fix `help`s
+
+A resolved block ends with a `help` for each fix its causes call for, after the `root cause:` note,
+so each fix follows the cause it repairs. The fixes of one kind on one owner merge into one `help`,
+which names its items in the order the causes are listed, with no cap:
+
+- A **missing field** names the field to add, with the type its requirement gives it:
+  `` add the field `height: f64` to `Rectangle` ``, or
+  `` add the fields `first_name: String` and `last_name: String` to `Person` `` for several on one
+  struct. The type is the `Value = T` constraint the requirement writes beside its `HasField` bound,
+  which a getter's return type or an `#[implicit]` argument's type produces, read off the impl
+  that requires the field (`required_field_type`). A field whose requirement states no concrete
+  type is named alone.
+- A **present-but-underived field** names the derive, on the struct or on the `Deref` target that
+  carries the field: `` add `#[derive(HasField)]` to `Person` ``.
+- A **missing wiring**, plain or redirect, names the entries to write:
+  `` wire `BarProviderComponent` and `BazProviderComponent` to providers in the wiring of `App` ``,
+  a redirect named by its path key (`` wire `@app.GreeterComponent` to a provider … ``). A path
+  wired directly on a context is a valid entry even when the context joins a namespace, so the
+  `help` holds for a namespace redirect as well as an `open` one.
+- A **missing dispatch entry** names the table:
+  `` add an entry for `Tagged<Bytes>` to `SinkHandlers` ``.
+- An **abstract-type mismatch** names the wiring entry to change, as described above.
+
+A field-type mismatch, a non-provider, and an ordinary bound carry no `help`. The mismatch headline
+already states both types, and the other two have no single entry the tool can name.
+
+**A `help` appears only when its premise holds**, because a fix that does not compile is worse than
+none. Two checks guard it:
+
+- A missing field gets a `help` only when its struct implements `HasField` for another field, which
+  shows that the struct derives it. A struct with no `HasField` impl may lack the derive as well (a
+  unit struct the program never derived), and a fieldless struct's derive generates nothing, so the
+  two cannot be told apart and adding the field alone is not known to fix it
+  ([`check_providers_unwired_provider`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/check_providers_unwired_provider.rs)
+  names no fix). The classifier records the confirmation and the type in the leaf's `FieldFix`,
+  which is not part of the cause's identity: one field reached through requirements that state its
+  type differently stays one cause, and its `help` names the type only when every route agrees.
+- A key holding a reference or a lifetime argument gets no `help`. The compiler erases its lifetime,
+  so `@ItemEncoderComponent.&u64` cannot be pasted as written: the entry needs a named lifetime
+  (`<'a> @ItemEncoderComponent.&'a u64`)
+  ([`higher_ranked_descent`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/resolution/higher_ranked_descent.rs)).
+
+`fix_help_messages` builds the `help`s from the causes, and both the per-block plan and the
+emitter's coalesced block call it, so a merged block carries the same fixes as the blocks it
+replaces.
+
 ## Emitting the transformed diagnostic
 
 The wording is decided rustc-free and only *applied* by the emitter. The emitter maps the
@@ -307,10 +354,8 @@ single note followed by its `help`s, so each fix follows the cause it repairs: `
 sets the `help`s, and the flush inserts the rendered note ahead of them. The note opens with its
 `root cause:` lead (or `root causes:` list, when the causes bottom out on different leaves) over
 `this is required through the dependency chain:` and the graph beneath (the lead omitted when the
-kept header or a mismatch header already states the leaf). The `help`s name the fixes: one per
-distinct type that must derive `#[derive(HasField)]`, or the `Deref` target, plus one per
-abstract-type mismatch naming the wiring entry to change; a field-type mismatch contributes none.
-rustc's structured suggestions are discarded with its notes, the diagnostic's Rust code is never
+kept header or a mismatch header already states the leaf). The `help`s are the
+[fixes above](#the-fix-helps). rustc's structured suggestions are discarded with its notes, the diagnostic's Rust code is never
 touched, and a provider with two absent dependencies sharing its chain yields one note over a merged
 tree that branches to both. The JSON emitter regenerates every rendered and structured field from
 the `DiagInner` for free, with rustc's note-continuation indentation aligning each tree's
@@ -324,8 +369,8 @@ failure already shown, and the flush coalesces the blocks that share a root caus
 The wording is unit-tested rustc-free, over hand-built inputs:
 [`cargo-cgp-error-processing/tests/error_processing/diagnosis/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/tests/error_processing/diagnosis)
 drives the class headers, the displayed headlines (one cause, causes merged by kind and owner, mixed
-causes, and a coalesced block's subjects, in `headline.rs`), the `root cause:` notes, and the derive
-`help`s;
+causes, and a coalesced block's subjects, in `headline.rs`), the `root cause:` notes, and the fix
+`help`s (merged by kind and owner, typed fields, and the two premise checks, in `helps.rs`);
 [`tests/error_processing/coalesce.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/coalesce.rs)
 the underived-field coalescing and its boundaries;
 [`tests/error_processing/graph.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/graph.rs)

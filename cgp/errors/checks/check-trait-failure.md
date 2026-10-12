@@ -198,7 +198,10 @@ field on the struct into one "add `#[derive(HasField)]`" cause rather than listi
 `#[use_type]` foreign-import form bottoms out on `[CGP-E113]` (the context supplies no wiring for
 the trait). The `Symbol!("name")` list is resugared and the
 `CanUseComponent`/`IsProviderFor`/`__Check…` frames are dropped, so what remains is the field to fix
-and the wiring entry it hangs from. The codes are defined in the
+and the wiring entry it hangs from. A `help` after the note names the fix,
+`` add the field `name: String` to `Person` `` (with the type the provider requires), when the struct
+derives `HasField` for its other fields, or `` add `#[derive(HasField)]` to `Person` `` for the
+derive-missing variant. The codes are defined in the
 [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
 
 The [wiring-derived field type](#when-the-fields-required-type-comes-from-the-wiring) takes the same

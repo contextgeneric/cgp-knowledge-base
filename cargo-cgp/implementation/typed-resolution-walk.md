@@ -336,13 +336,17 @@ target that has not derived it (CGP's `HasField` forwards across `Deref` by a bl
 bound *would* hold if that target derived the field), in which case the resolver records the target
 so the fix can point at it. The inspection reads named struct fields directly and follows `Deref` by
 reading each `impl Deref`'s `Target` associated type, so it needs no inference context, and it is
-bounded against a cyclic `Deref`. A field present with a mismatched **type** is a fourth case
-reached differently, through the projection rule in the walk above. From the failing projection the
-resolver reads the expected type, and it queries the struct by `DefId` (with the struct's own
-generic arguments substituted, so a same-named struct in another module is never queried) for the
-actual type, yielding the `[CGP-E004]` mismatch leaf. A non-field leaf carries no struct, so it is
-simply restated as `self: Trait` (`f64: std::cmp::Eq`) for its note lead and for de-duplicating a
-leaf reached by several paths.
+bounded against a cyclic `Deref`. For a missing field the resolver also records what its fix can
+name: adding the field is confirmed only when the struct implements `HasField` for another field (so
+it derives it), and the field's type is the `Value = T` constraint the requirement writes beside its
+`HasField` bound, read off the impl that requires the field (`required_field_type`) and kept only
+when concrete (see [the fix `help`s](typed-resolution-output.md#the-fix-helps)). A field present
+with a mismatched **type** is a fourth case reached differently, through the projection rule in the
+walk above. From the failing projection the resolver reads the expected type, and it queries the
+struct by `DefId` (with the struct's own generic arguments substituted, so a same-named struct in
+another module is never queried) for the actual type, yielding the `[CGP-E004]` mismatch leaf. A
+non-field leaf carries no struct, so it is simply restated as `self: Trait` (`f64: std::cmp::Eq`)
+for its note lead and for de-duplicating a leaf reached by several paths.
 
 **Read the type an owner supplies for any other associated type.** A projection mismatch on a trait
 other than `HasField` has no struct field to query, so its *actual* side is read by asking the
@@ -428,8 +432,9 @@ parent document's [Tests](typed-root-cause-resolution.md#tests) section.
   `holds.rs` (the solver query), and `written_order.rs` (the order an impl's clauses are read in).
 - [`crates/cargo-cgp-driver/src/resolve/classify/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/classify):
   `reportable.rs` (root cause versus routing dead-end), `leaf.rs` (`classify_leaf`, which builds the
-  rustc-free `Leaf`), `field.rs` (the struct and `Deref`-chain inspection), and `assoc_type.rs` (the
-  normalization that reads the type an owner supplies for any other projected associated type).
+  rustc-free `Leaf`), `field.rs` (the struct and `Deref`-chain inspection), `required_type.rs` (the
+  type a requirement gives a missing field), and `assoc_type.rs` (the normalization that reads the
+  type an owner supplies for any other projected associated type).
 - [`crates/cargo-cgp-driver/src/resolve/label/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/label):
   `predicate_label.rs` (each hop as a structured `DepNode`, read off the obligation) and
   `render_ty.rs` (the type-level list resugaring).

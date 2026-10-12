@@ -108,7 +108,8 @@ recognizes.
   (`E0599`) on a context that cannot use a component it wires. The Rust code stays whatever rustc
   assigned (`E0277` at a check, `E0599` at a call site).
 - **Fix:** follow the `root cause:` note(s): add the missing field or derive, wire the missing
-  component, or satisfy the ordinary bound the chain bottoms out on.
+  component, or satisfy the ordinary bound the chain bottoms out on. A `help` names each fix the
+  tool can confirm.
 - **Upstream class:** [check-trait failure](../cgp/errors/checks/check-trait-failure.md).
 
 ### `CGP-E002`: provider trait not implemented
@@ -507,12 +508,14 @@ at (`CGP-E110` onward).
   all its arguments (`` trait impl `EncodeVariants<App>` for `Sum![u64, f64]` ``). It is coded even
   though the trait itself may not be a CGP construct.
 - **`CGP-E110`: missing field (leaf).** `` missing field `<f>` on `<T>` ``: the chain bottoms out on
-  a context field that is genuinely absent.
+  a context field that is genuinely absent. When the struct derives `HasField` for its other fields,
+  a `help` names the field to add with the type the requirement gives it,
+  `` add the field `<f>: <type>` to `<T>` ``.
 - **`CGP-E111`: unimplemented accessor (leaf).**
   `` `HasField` not derived for field `<f>` of `<T>` ``: the struct carries the field but has not
-  derived `HasField` for it (the fix, a `#[derive(HasField)]`, rides in a separate `help`). Several
-  such fields on *one* struct are one mistake: the derive emits an impl per field, so they coalesce
-  into a single root cause under the same code,
+  derived `HasField` for it (the fix rides in a separate `help`,
+  `` add `#[derive(HasField)]` to `<T>` ``). Several such fields on *one* struct are one mistake:
+  the derive emits an impl per field, so they coalesce into a single root cause under the same code,
   `` `HasField` not derived for fields `<f>` and `<g>` of `<T>` ``, over one merged tree whose
   branches still end at the per-field leaves.
 - **`CGP-E112`: field type mismatch (leaf).**
@@ -524,7 +527,8 @@ at (`CGP-E110` onward).
 - **`CGP-E113`: missing delegate entry (leaf).** `` missing wiring for `<key>` on `<Ctx>` ``: the
   context wires no provider for a component, or terminates no namespace path (the `<key>` is a
   component marker or an `@`-path). The table is always the context; a key missing from an aggregate
-  provider is `CGP-E114`.
+  provider is `CGP-E114`. A `help` names the entry to write,
+  `` wire `<key>` to a provider in the wiring of `<Ctx>` ``.
 - **`CGP-E114`: missing dispatch entry (leaf).** `` missing entry for `<key>` in provider `<T>` ``:
   the chain bottoms out on a *non-context* delegation table missing a key: an
   [aggregate provider](../cgp/concepts/aggregate-providers.md) missing a component wiring (including
@@ -536,7 +540,8 @@ at (`CGP-E110` onward).
   pipeline hits when a stage's output type is not one a later stage's input dispatcher handles). The
   key may also be an `@`-path, when the aggregate `open`s a component in its own table or joins a
   namespace itself: `` missing entry for `@ComputerComponent.Sink.Digest` in provider `ByteSink` ``,
-  under a `CGP-E103` hop that reads `` in `ByteSink` ``.
+  under a `CGP-E103` hop that reads `` in `ByteSink` ``. A `help` names the entry to add,
+  `` add an entry for `<key>` to `<T>` ``.
 - **`CGP-E115`: not a provider (leaf).** `` `<X>` is not a provider of `<T>` ``: the chain bottoms
   out on a type wired where a *provider* was expected that does not implement the provider trait at
   all. The mistake is putting a non-provider (often a request or value type) into a provider slot
@@ -565,7 +570,8 @@ These rewrites improve a diagnostic's readability without classifying its main m
 carry no code. They are listed here so their codelessness is a recorded decision.
 
 **Root-cause notes and dependency chains** replace a resolved diagnostic's sub-messages with one
-`root cause: …` note per recovered cause (and a `#[derive(HasField)]` `help` where that is the fix).
+`root cause: …` note over the dependency chains of every recovered cause, and a `help` for each fix
+the causes call for.
 They accompany a coded main message or a kept rustc one; the note itself is never coded.
 [Typed root-cause resolution](implementation/typed-root-cause-resolution.md) owns them.
 

@@ -139,7 +139,11 @@ in its own table or joins the namespace itself, the leaf is the `[CGP-E114]` pro
 instead,
 `` missing entry for `@ComputerComponent.Sink.Digest` in provider `ByteSink` ``,
 and the `[CGP-E103]` hop above it reads `` in `ByteSink` ``, so the tree names the table the entry
-belongs in. The codes are defined in the
+belongs in. A `help` after the note names the entry to write,
+`` wire `@app.GreeterComponent` to a provider in the wiring of `App` `` (or
+`` add an entry for `@ComputerComponent.Sink.Digest` to `ByteSink` ``). A path wired directly on the
+context is a valid entry beside its namespace join, and so is a registration from the provider's
+side, which [Resolving it](#resolving-it) describes. The codes are defined in the
 [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
 
 ## Resolving it

@@ -99,14 +99,15 @@ error[E0277]: [CGP-E001] missing field `height` on `Rectangle`
              └─ [CGP-E102] provider trait impl `AreaCalculator` with context `Rectangle` for provider `RectangleArea`
                └─ [CGP-E104] trait impl `HasRectangleFields` for `Rectangle`
                  └─ [CGP-E110] missing field `height` on `Rectangle`
+   = help: add the field `height: f64` to `Rectangle`
 ```
 
 Every element of that output is reconstructed from the compiler, not read from rustc's message: the
 headline states the actual mistake in one sentence, after the code `[CGP-E001]`, which classes the
 failure as a context that cannot implement a *consumer trait*; the `root cause:` note repeats that
-sentence above the tree; and the tree shows the transitive path from the consumer trait the reader
+sentence above the tree; the tree shows the transitive path from the consumer trait the reader
 checked (`CanCalculateArea`) down to the missing field, with each node named straight off the trait
-it stands for. Read the chain as the real obligation chain the walk descended:
+it stands for; and the `help` names the field to add, with the type the getter requires. Read the chain as the real obligation chain the walk descended:
 `Rectangle: CanCalculateArea` (the consumer) needs `RectangleArea: AreaCalculator<Rectangle>` (the
 wired provider), which needs `Rectangle: HasRectangleFields` (the getter), which needs the `height`
 field. No `IsProviderFor` node appears because the walk never went through one. The `[CGP-Exxx]`
@@ -399,19 +400,21 @@ marking.
     the front).
   - [`classify/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/classify)
     classifies a terminal: `leaf.rs` turns it into the rustc-free `Leaf` (a field by inspecting the
-    struct and its `Deref` chain in `field.rs`, a field-type mismatch with `field_type` reading the
-    actual type by `DefId`, an abstract-type mismatch with `assoc_type.rs`'s `projected_type`
-    normalizing the projection for the actual type and `abstract_type_component_marker` recovering
-    the wiring marker for its `help`, a missing wiring on the context, a missing dispatch entry on a
-    non-context delegation table, a not-a-provider on a non-table type, a missing redirect wiring
-    told apart by `is_path_cons`, or a bound); `reportable.rs` holds `is_reportable_leaf`, keeping
-    an unmet `DelegateComponent` on the context (a missing wiring), on a non-context delegation
-    table (a missing dispatch entry, recognized as a separate-table lookup by `is_dispatch_lookup`,
-    the owner a proper part of the parent obligation's `Self`, or by owner property via
-    `owner_has_impl_of` for `DelegateComponent`), or on a non-table type with no concrete impl of
-    the parent provider trait (a not-a-provider, via `owner_has_impl_of` against that trait), while
-    dropping a higher-order-provider dead-end (a non-table owner that *does* have a concrete impl of
-    the trait).
+    struct and its `Deref` chain in `field.rs`, with a missing field's fix confirmed by the struct's
+    other `HasField` impls and typed by `required_type.rs`'s `required_field_type`, which reads the
+    `Value = T` constraint beside the bound on the impl that requires it; a field-type mismatch with
+    `field_type` reading the actual type by `DefId`, an abstract-type mismatch with
+    `assoc_type.rs`'s `projected_type` normalizing the projection for the actual type and
+    `abstract_type_component_marker` recovering the wiring marker for its `help`, a missing wiring
+    on the context, a missing dispatch entry on a non-context delegation table, a not-a-provider on
+    a non-table type, a missing redirect wiring told apart by `is_path_cons`, or a bound);
+    `reportable.rs` holds `is_reportable_leaf`, keeping an unmet `DelegateComponent` on the context
+    (a missing wiring), on a non-context delegation table (a missing dispatch entry, recognized as a
+    separate-table lookup by `is_dispatch_lookup`, the owner a proper part of the parent
+    obligation's `Self`, or by owner property via `owner_has_impl_of` for `DelegateComponent`), or
+    on a non-table type with no concrete impl of the parent provider trait (a not-a-provider, via
+    `owner_has_impl_of` against that trait), while dropping a higher-order-provider dead-end (a
+    non-table owner that *does* have a concrete impl of the trait).
   - [`label/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/label)
     turns each obligation into a structured node: `predicate_label.rs` names each consumer/provider
     node off its trait `DefId` and the obligation's arguments (`trait_generics`) as a rustc-free
@@ -450,7 +453,7 @@ marking.
   structured `DepNode`/`ChainNode` and the `DependencyGraph` that merges and renders their paths;
   see [Dependency-graph rendering](dependency-graph-rendering.md)), the `wording/` directory (the
   coded headers, the `root cause:`/`root causes:` notes with `cause_notes` folding every cause's
-  paths into one graph, the leads and their codes, the derive `help`s, and the de-duplication
+  paths into one graph, the leads and their codes, the fix `help`s, and the de-duplication
   `cause_signature`), `coalesce.rs` (`coalesce_underived_fields`, merging several underived fields
   on one struct into a single heading cause), and `plan.rs` (`DiagKind`, `DiagnosisPlan`, the
   unrendered `PendingNote`, and `plan_resolved` with its `categorized_header`), unit-tested in
@@ -748,7 +751,7 @@ Finally, the leaf wording and the tree renderer are unit-tested over hand-built 
 independently of the compiler:
 
 - [`cargo-cgp-error-processing/tests/error_processing/diagnosis/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/tests/error_processing/diagnosis):
-  the coded headers, the `root cause:` notes, and the derive `help`s.
+  the coded headers, the `root cause:` notes, and the fix `help`s.
 - [`cargo-cgp-error-processing/tests/error_processing/graph.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/graph.rs):
   the dependency-graph build-and-render (list, branch, diamond, super-root, within-path repeat) as
   `insta` inline snapshots.

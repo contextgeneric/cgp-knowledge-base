@@ -419,20 +419,19 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   (`header.rs` (`consumer_header`, `field_mismatch_header`, `assoc_mismatch_header`), `lead.rs`
   (`root_cause_lead` and the leaf codes), `note.rs` (`cause_notes`, which folds every cause's paths
   into one graph and words the heading over it, and `cause_notes_seen`, the same against a `seen`
-  set shared with the compilation's other notes), `help.rs` (`fix_help_messages` over
-  `derive_help_messages` and `assoc_mismatch_help_messages`, the one entry point both the streaming
-  plan and the emitter's coalesced block build their `help`s through, so a merged block carries the
-  same fixes), and `signature.rs` (`cause_signature`)), `group.rs` (`group_by_shared_cause`,
-  partitioning the coalescible failures into the connected components of the shares-a-cause
-  relation, keyed structurally on each context-scoped `Leaf`), `coalesce.rs`
-  (`coalesce_underived_fields`), `plan.rs` (`DiagKind`, `DiagnosisPlan`, the unrendered
-  `PendingNote` and its `render`, and `plan_resolved` with its `categorized_header`), and
-  `wiring.rs` (`WiringConflict`/`WiringKey`, `plan_wiring_conflict` for the
-  `[CGP-E010]`–`[CGP-E014]` duplicate-key headers, and `wiring_conflict_help` for the redirect fix),
-  plus `orphan.rs`, `undeclared.rs`, and `cgp_impl_misuse.rs` (the `[CGP-E022]` and
-  `[CGP-E030]`–`[CGP-E034]` reshape models and their wording), and `internal_error.rs` (the note on
-  a diagnostic shown untransformed after a contained panic). See
-  [Typed root-cause resolution](typed-root-cause-resolution.md) and
+  set shared with the compilation's other notes), `help.rs` (`fix_help_messages`, which words one
+  `help` per kind of fix on one owner and is the one entry point both the streaming plan and the
+  emitter's coalesced block build their `help`s through, so a merged block carries the same fixes),
+  and `signature.rs` (`cause_signature`)), `group.rs` (`group_by_shared_cause`, partitioning the
+  coalescible failures into the connected components of the shares-a-cause relation, keyed
+  structurally on each context-scoped `Leaf`), `coalesce.rs` (`coalesce_underived_fields`),
+  `plan.rs` (`DiagKind`, `DiagnosisPlan`, the unrendered `PendingNote` and its `render`, and
+  `plan_resolved` with its `categorized_header`), and `wiring.rs` (`WiringConflict`/`WiringKey`,
+  `plan_wiring_conflict` for the `[CGP-E010]`–`[CGP-E014]` duplicate-key headers, and
+  `wiring_conflict_help` for the redirect fix), plus `orphan.rs`, `undeclared.rs`, and
+  `cgp_impl_misuse.rs` (the `[CGP-E022]` and `[CGP-E030]`–`[CGP-E034]` reshape models and their
+  wording), and `internal_error.rs` (the note on a diagnostic shown untransformed after a contained
+  panic). See [Typed root-cause resolution](typed-root-cause-resolution.md) and
   [The driver](driver.md#reshaping-a-duplicate-key-conflict).
 - [`crates/cargo-cgp-error-processing/src/tree.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/tree.rs):
   the `DependencyTree` type and its `cargo tree`-style renderer, the target the
