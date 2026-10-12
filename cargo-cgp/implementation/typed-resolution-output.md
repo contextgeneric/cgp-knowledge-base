@@ -57,8 +57,8 @@ when two components share a name in different modules:
 
 - **`[CGP-E001]`:** `` the consumer trait `C` is not implemented for context `X` ``.
 - **`[CGP-E002]`:** `` the provider trait `P` with context `X` is not implemented for provider `Q` ``.
-- **`[CGP-E003]`:** `` the trait `W` is not implemented for … ``, naming a foreign subject plainly
-  rather than calling it a context.
+- **`[CGP-E003]`:** `` the trait `W` is not implemented for … ``, naming a foreign subject, or a
+  blanket trait's subject that carries no wiring, plainly rather than calling it a context.
 
 The class sentence is also the block's **internal headline**: the de-duplication ledger records it,
 since a re-report the resolver declined is worded with it by the text rewrite (see

@@ -143,7 +143,8 @@ recognizes.
 
 - **Message:** `` [CGP-E003] <cause> ``, by the rules of `CGP-E001`; the class sentence, used for
   mixed causes, is `` the trait `<Wrapper>` is not implemented for context `<Context>` ``, naming a
-  foreign subject plainly (`` for `Router<Arc<App>>` ``).
+  foreign subject or a type without wiring plainly (`` for `Router<Arc<App>>` ``,
+  `` for `Shape` ``).
 - **Means:** a trait that is *not* a CGP consumer trait (so its class sentence reads "the trait",
   not "the consumer trait") cannot be implemented for the context, because a CGP component it
   depends on fails. Two shapes reach this code: a plain **wrapper trait** the programmer wrote (the
