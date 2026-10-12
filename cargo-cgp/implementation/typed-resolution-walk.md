@@ -287,9 +287,11 @@ obligation's context in place of `__Context__`. The walk descends the ones that 
 impl's unmet projection, and a missing field's required type is read off the same impl. The cause is
 then the one the program gives once the header names the provider trait, and the emitter keeps it
 beside the `[CGP-E032]`. When every clause holds, the obligation ends at the not-a-provider leaf,
-which the emitter drops as the header's consequence. Three fixtures pin the outcomes: a missing
-field
+which the emitter drops as the header's consequence. Four fixtures pin the outcomes: a missing
+field at a check
 ([`consumer_trait_in_provider_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/wrong-component-half/consumer_trait_in_provider_impl.rs)),
+the same at a call with no check
+([`consumer_trait_in_provider_impl_call_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/wrong-component-half/consumer_trait_in_provider_impl_call_missing_field.rs)),
 a field of the wrong type
 ([`consumer_trait_in_provider_impl_field_type`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/wrong-component-half/consumer_trait_in_provider_impl_field_type.rs)),
 and the header alone

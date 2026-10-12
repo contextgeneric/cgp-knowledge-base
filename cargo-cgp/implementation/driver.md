@@ -877,7 +877,8 @@ wording is decided by the rustc-free
 is unit-tested without a compiler. The blessed snapshots under
 [`uncataloged/wrong-component-half/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/uncataloged/wrong-component-half)
 pin the consumer-trait, generic-component, non-CGP-trait, and inner-bound shapes, and the
-consumer-trait header beside a missing field, a field of the wrong type, or nothing else.
+consumer-trait header beside a missing field (at a check or a call), a field of the wrong type, or
+nothing else.
 
 The reshape is deliberately specific to `#[cgp_impl]`, keyed on the `__Context__` marker it inserts.
 The lower-level `#[cgp_provider]`/`#[cgp_new_provider]` forms (a hand-spelled inside-out impl with a
