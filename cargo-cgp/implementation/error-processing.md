@@ -67,13 +67,15 @@ from the driver, is what keeps them unit-testable.
   `cgp_impl_misuse.rs` (`CgpImplMisuse` for the `[CGP-E032]`–`[CGP-E034]` provider-definition
   mistakes, and `MissingUseProvider` for the `[CGP-E031]` inner provider never imported). They are
   documented where the driver detects them, in
-  [The driver](driver.md#the-drivers-diagnostic-transformations). `overflow.rs` holds
-  `WiringOverflow`, the reason the driver's walk gives for a wiring lookup that never resolves (a
-  cycle, or a lookup that grows, with the provider step that causes it when a wiring entry chose
-  that provider), and words the reason that ends the `[CGP-E020]` or `[CGP-E021]` header and its
-  `help` (`wiring_overflow_reason`, `wiring_overflow_help`). Last, `internal_error.rs` words the
-  note on a diagnostic the driver shows untransformed after a panic in its own transform (see
-  [The driver](driver.md#containing-the-drivers-own-panics)).
+  [The driver](driver.md#the-drivers-diagnostic-transformations). `structural.rs` holds
+  `StructuralMistake`, the structural mistakes in a check table or a wiring entry the driver's
+  `resolve::structural` detectors recover, and words their `[CGP-E015]`–`[CGP-E018]` headers and
+  fixes. `overflow.rs` holds `WiringOverflow`, the reason the driver's walk gives for a wiring
+  lookup that never resolves (a cycle, or a lookup that grows, with the provider step that causes it
+  when a wiring entry chose that provider), and words the reason that ends the `[CGP-E020]` or
+  `[CGP-E021]` header and its `help` (`wiring_overflow_reason`, `wiring_overflow_help`). Last,
+  `internal_error.rs` words the note on a diagnostic the driver shows untransformed after a panic in
+  its own transform (see [The driver](driver.md#containing-the-drivers-own-panics)).
 - **The dependency-tree renderer**
   ([`tree`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/tree.rs))
   is the `DependencyTree` type and its `cargo tree`-style renderer over the tiny `termtree` crate.
@@ -434,13 +436,14 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   `plan.rs` (`DiagKind`, `DiagnosisPlan`, the unrendered `PendingNote` and its `render`, and
   `plan_resolved` with its `categorized_header`), `overflow.rs` (`WiringOverflow` and
   `OverflowStep`, with `wiring_overflow_reason` and `wiring_overflow_help` for the `[CGP-E020]` and
-  `[CGP-E021]` headers), `similar.rs` (`similar_name` and `similar_key`, the near-miss rules the fix
-  `help`s use), and `wiring.rs` (`WiringConflict`/`WiringKey`, `plan_wiring_conflict` for the
-  `[CGP-E010]`–`[CGP-E014]` duplicate-key headers, and `wiring_conflict_help` for the redirect fix),
-  plus `orphan.rs`, `undeclared.rs`, and `cgp_impl_misuse.rs` (the `[CGP-E022]` and
-  `[CGP-E030]`–`[CGP-E034]` reshape models and their wording), and `internal_error.rs` (the note on
-  a diagnostic shown untransformed after a contained panic). See
-  [Typed root-cause resolution](typed-root-cause-resolution.md) and
+  `[CGP-E021]` headers), `structural.rs` (`StructuralMistake`, with `plan_structural_mistake` and
+  `structural_mistake_help` for the `[CGP-E015]`–`[CGP-E018]` headers and fixes), `similar.rs`
+  (`similar_name` and `similar_key`, the near-miss rules the fix `help`s use), and `wiring.rs`
+  (`WiringConflict`/`WiringKey`, `plan_wiring_conflict` for the `[CGP-E010]`–`[CGP-E014]`
+  duplicate-key headers, and `wiring_conflict_help` for the redirect fix), plus `orphan.rs`,
+  `undeclared.rs`, and `cgp_impl_misuse.rs` (the `[CGP-E022]` and `[CGP-E030]`–`[CGP-E034]` reshape
+  models and their wording), and `internal_error.rs` (the note on a diagnostic shown untransformed
+  after a contained panic). See [Typed root-cause resolution](typed-root-cause-resolution.md) and
   [The driver](driver.md#reshaping-a-duplicate-key-conflict).
 - [`crates/cargo-cgp-error-processing/src/tree.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/tree.rs):
   the `DependencyTree` type and its `cargo tree`-style renderer, the target the

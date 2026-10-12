@@ -435,7 +435,10 @@ marking.
     handles the duplicate-key `E0119` conflict, and a sibling
     [`orphan.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/orphan.rs)
     the orphan-rule `E0210`/`E0117` namespace registration, both separate coherence-class transforms
-    documented in [The driver](driver.md#reshaping-a-duplicate-key-conflict). A sibling `cache.rs`
+    documented in [The driver](driver.md#reshaping-a-duplicate-key-conflict), and a sibling
+    [`structural/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/structural)
+    the structural mistakes in a check table or a wiring entry
+    ([The driver](driver.md#reshaping-a-structural-mistake)). A sibling `cache.rs`
     memoizes the walk at every node (keyed on the region-erased obligation and context), so a wiring
     failure re-reported at many sites, or a shared trait, is walked once (see
     [Cached dependency resolution](cached-dependency-resolution.md)).

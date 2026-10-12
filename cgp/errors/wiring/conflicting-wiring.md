@@ -153,13 +153,27 @@ Which `[CGP-E00x]` code it stamps distinguishes the shapes this class produces:
   (`@AreaCalculatorComponent.<Shape> Shape`), since the redirect appends the component's parameters
   to its path.
 - The same key redirected twice (two `=>` mappings on a context, an `open` of a component the
-  joined namespace already redirects through its `#[prefix]`, or one `@`-path registered twice
-  inside a `cgp_namespace!` block) becomes **`[CGP-E014]` duplicate redirect**, naming both targets
-  when they differ
+  joined namespace already redirects through its `#[prefix]`, one `@`-path registered twice
+  inside a `cgp_namespace!` block, or two `#[prefix]` attributes registering one component into one
+  namespace) becomes **`[CGP-E014]` duplicate redirect**, naming both targets when they differ
   (`` conflicting wiring: `App` redirects component `FooComponent` twice, to `@app.foo` and to `@app.bar` ``).
+  The two `#[prefix]` registrations carry the attribute's span, so both carets cover
+  `#[cgp_component]`.
+- A `check_components!` table that lists one entry twice generates two identical check impls,
+  which become **`[CGP-E015]`**:
+  `` [CGP-E015] `check_components!` checks `GreeterComponent` twice for `App` ``, with a `help:`
+  to remove one of the two entries. An entry with parameters is named as the table wrote it
+  (`` `ShowerComponent: u32` ``).
 
-One form in this class is a **pass-through** that `cargo-cgp` does not rewrite: the `E0428` name
-clashes (`duplicate_component_name`, `duplicate_provider_name`) keep `rustc`'s uncoded `E0428`,
+Two `check_components!` tables in one module whose check traits share a name produce an `E0428` on
+the generated check trait, which becomes **`[CGP-E016]`**:
+`` [CGP-E016] two `check_components!` tables in one module check `App` `` for the derived
+`__CheckApp`, or `` … name their check trait `CheckApp` `` for a name two `#[check_trait(...)]`
+attributes gave. The two carets are labelled as the first and the second table, and a `help:` names
+the merge or the `#[check_trait(...)]` rename.
+
+One form in this class is a **pass-through** that `cargo-cgp` does not rewrite: the other `E0428`
+name clashes (`duplicate_component_name`, `duplicate_provider_name`) keep `rustc`'s uncoded `E0428`,
 because it already points precisely at the two definitions. Under the pinned nightly the `E0428` is
 the only error a name clash produces, since the compiler stops before the conflicting impls reach
 coherence checking. Two `#[cgp_impl(P)]` blocks for one provider struct declared once do reach
@@ -173,22 +187,22 @@ Remove one of the two entries. For an overlapping path key, keep either the shor
 longer ones: key the first segment on its own when one provider serves every later value, or key
 each later value when they differ, since one table cannot do both. A table that dispatches on a
 later parameter through a generic first segment therefore cannot also key any first-parameter value
-on its own. For a duplicate check-trait name from two tables over one context, add a
-`#[check_trait(Name)]` to one. The namespace collisions split off above have their own remedies
-(inheriting rather than joining several namespaces, or overriding only a path the namespace leaves
-unbound) covered in [overlapping namespace forwarding](namespace-forwarding-conflict.md) and
+on its own. For a duplicate check-trait name from two tables over one context, merge the tables or
+add a `#[check_trait(Name)]` to one. The namespace collisions split off above have their own
+remedies (inheriting rather than joining several namespaces, or overriding only a path the namespace
+leaves unbound) covered in [overlapping namespace forwarding](namespace-forwarding-conflict.md) and
 [namespace override conflict](namespace-override-conflict.md).
 
 ## Notes for tooling
 
 `cargo-cgp` already does the collapsing and resugaring this class needs (above); what remains
-uncoded is the `E0428` name-clash pair, which is precise enough to relay verbatim: the two carets
-name the two definitions and the code names the mistake.
+uncoded is the `E0428` name-clash pair outside the check tables, which is precise enough to relay
+verbatim: the two carets name the two definitions and the code names the mistake.
 
 ## Backing fixtures
 
 The `.rust.stderr` snapshot pins the raw `E0119`/`E0428` shape and the `.cgp.stderr` the reshaped
-headline. The `E0119` conflicts `cargo-cgp` rewrites:
+headline. The conflicts `cargo-cgp` rewrites:
 
 - [`wiring/duplicate-keys/duplicate_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_key.rs)
   and
@@ -239,6 +253,20 @@ headline. The `E0119` conflicts `cargo-cgp` rewrites:
   registers into, so the registration collides with the prefix's own redirect; the `.cgp.stderr`
   pins the `[CGP-E013]` rewrite and the `help` naming the `@app.GreeterComponent` path to register
   under.
+
+- [`wiring/conflicting-wiring/duplicate_prefix.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_prefix.rs):
+  two `#[prefix]` attributes registering one component into one namespace, a `[CGP-E014]` naming
+  both paths, both carets on `#[cgp_component]`.
+- [`wiring/conflicting-wiring/check_duplicate_entry.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/check_duplicate_entry.rs)
+  and
+  [`wiring/conflicting-wiring/check_duplicate_entry_with_params.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/check_duplicate_entry_with_params.rs):
+  one entry listed twice in a `check_components!` table, without and with parameters, rewritten to
+  `[CGP-E015]` with the removal `help:`.
+- [`wiring/conflicting-wiring/check_twice_same_context.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/check_twice_same_context.rs)
+  and
+  [`wiring/conflicting-wiring/check_trait_named_twice.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/check_trait_named_twice.rs):
+  two `check_components!` tables whose check traits share a name, derived and given, rewritten from
+  `E0428` to `[CGP-E016]` with the tables labelled.
 
 The two namespace collisions that are *not* duplicate declarations live with their own classes:
 `override_registered_path.rs`, `inherited_override_conflict.rs`, and `for_loop_prefixed_key.rs`

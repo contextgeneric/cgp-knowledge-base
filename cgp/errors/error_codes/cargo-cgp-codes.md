@@ -27,9 +27,10 @@ The hundreds digit says where a code appears: a `CGP-E0xx` code heads a rewritte
 These lead a rewritten main message, in family blocks of ten. `E001` to `E005` come from the typed
 resolver and carry a dependency chain in their notes, led by a `root cause:` line except for the two
 mismatch codes `E004` and `E005`, whose message states the cause; `E010` to `E014` classify a
-duplicate-key `E0119` conflict (no root-cause note, both `rustc` carets kept); `E020` and `E021`
-reshape the `E0275` overflow of a wiring lookup that never ends, and `E022` an orphan-rule coherence
-error; and `E030` to `E034` reword a macro-lowering error, each with its fix in a `help`.
+duplicate-key `E0119` conflict (no root-cause note, both `rustc` carets kept); `E015` to `E018` name
+a structural mistake in a check table or a wiring entry; `E020` and `E021` reshape the `E0275`
+overflow of a wiring lookup that never ends, and `E022` an orphan-rule coherence error; and `E030`
+to `E034` reword a macro-lowering error, each with its fix in a `help`.
 
 - **CGP-E001**: the consumer trait is not implemented for the context (missing wiring, or an unmet
   transitive dependency).
@@ -47,6 +48,11 @@ error; and `E030` to `E034` reword a macro-lowering error, each with its fix in 
 - **CGP-E012**: multiple namespaces used for one target in `delegate_components!`.
 - **CGP-E013**: redirect collision: a direct wiring collides with a redirect of the same key.
 - **CGP-E014**: duplicate redirect: the same key redirected more than once.
+- **CGP-E015**: a `check_components!` table lists one entry twice.
+- **CGP-E016**: two `check_components!` tables in one module share a check-trait name.
+- **CGP-E017**: a `for` loop in a wiring table whose key does not use its key variable.
+- **CGP-E018**: a `#[default_impl]` on a provider impl generic over a parameter the registration
+  cannot carry.
 - **CGP-E020**: the wiring never resolves because the lookup leads back to itself (an `E0275`
   overflow whose requirement is a `CanUseComponent` bound; a `UseContext` cycle is the usual case).
 - **CGP-E021**: the wiring never resolves because each step requires the consumer trait for a larger

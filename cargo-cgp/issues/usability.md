@@ -75,6 +75,14 @@ fixture that pins it.
   ([`namespace_inherited_unprefixed_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-override-conflict/namespace_inherited_unprefixed_key.rs))
   or the component's own `#[prefix]` route
   ([`default_impl_unprefixed_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/default_impl_unprefixed_key.rs)).
+- **Structural mistakes** in a check table or a wiring entry carry codes of their own: a check
+  entry listed twice is `[CGP-E015]`, two check tables sharing a check-trait name `[CGP-E016]`, a
+  `for` loop whose key skips its variable `[CGP-E017]` (one block for rustc's three `E0207`s), and a
+  `#[default_impl]` on a generic provider impl `[CGP-E018]`, each with its fix in a `help`
+  ([`check_duplicate_entry`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/check_duplicate_entry.rs),
+  [`check_twice_same_context`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/check_twice_same_context.rs),
+  [`for_loop_key_without_var`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/for_loop_key_without_var.rs),
+  [`default_impl_generic_provider`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/default_impl_generic_provider.rs)).
 - **A cross-context dependency** (one context's wiring depending on a *concrete* other context, so
   one obligation appears in two contexts' trees) resolves on both sides. A provider's own
   `where Inner: CanCompute` clause is recovered as that consumer obligation, de-duplicating into
@@ -314,12 +322,10 @@ The fixtures group by construct:
 - **Wiring keys and values** (`wiring/keys/`): a trait written as a key, an undeclared provider or
   value, an unimported or guessed key, each an `E0425` or `E0782` with a wrong suggestion.
 - **Wiring checks, conflicts, and cycles** (`wiring/checks/`, `wiring/conflicts/`,
-  `wiring/cycles/`): a check table defined twice or holding an entry twice, a bundle checked as a
-  context, a hand impl beside wiring, a cycle reached by a call, and a generic key in
-  `delegate_and_check_components!` checked at unit parameters without `#[check_params(...)]`
-  (`check_trait_named_as_wrapper`).
-- **Namespaces** (`wiring/namespaces/`, `wiring/constraints/`): the `E0207` forms of `for` loops,
-  `#[default_impl]`, and a self-inheriting namespace.
+  `wiring/cycles/`): a bundle checked as a context, a hand impl beside wiring, a cycle reached by a
+  call, and a generic key in `delegate_and_check_components!` checked at unit parameters without
+  `#[check_params(...)]` (`check_trait_named_as_wrapper`).
+- **Namespaces** (`wiring/namespaces/`, `wiring/constraints/`): a self-inheriting namespace.
 - **Lowering** (`lowering/`): a provider trait in `#[uses]`, `Self::CONST` rewritten to the context,
   a missing `#[uses]` for a supertrait, the abstract `Error` without `#[use_type]`, and `#[uses]` on
   a component.

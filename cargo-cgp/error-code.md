@@ -57,7 +57,7 @@ yet:
 | Block | Family | Codes |
 | --- | --- | --- |
 | `CGP-E001` to `CGP-E009` | a trait the context cannot use, and the two type mismatches | `E001` to `E005` |
-| `CGP-E010` to `CGP-E019` | conflicting wiring | `E010` to `E014` |
+| `CGP-E010` to `CGP-E019` | conflicting wiring, and structural mistakes | `E010` to `E018` |
 | `CGP-E020` to `CGP-E029` | wiring that never resolves, and the orphan rule | `E020` to `E022` |
 | `CGP-E030` to `CGP-E039` | mistakes in what a macro was given | `E030` to `E034` |
 | `CGP-E040` to `CGP-E049` | wiring keys and values that do not resolve | none yet |
@@ -73,23 +73,27 @@ a blanket trait rather than a CGP consumer, and `CGP-E005` the abstract-type cou
 `CGP-E004`.) The **conflicting-wiring** codes `CGP-E010` to `CGP-E014` are different in kind: they
 come from the duplicate-key conflict classifier, carry no root-cause note, and instead keep rustc's
 two carets, which already point at the two colliding entries. They are five separate codes because
-each rewrites the `E0119` into a distinct message form with its own fix. The **never-resolving and
-orphan** codes `CGP-E020` to `CGP-E022` each rewrite a whole-program error into a CGP-framed one
-carrying its fix in a `help`. `CGP-E020` and `CGP-E021` rewrite the `E0275` overflow of a wiring
-lookup that never ends, which has no terminal leaf to descend to, split by how the tool's walk of
-the lookup is cut: an obligation met again is a cycle (`CGP-E020`), and the depth limit reached
-without a repeat is a lookup that grows (`CGP-E021`). `CGP-E022` rewrites an orphan-rule namespace
-registration's `E0210`/`E0117` (recovered from the offending impl off the compiler, like the `E0119`
-family). The **macro-mistake** codes `CGP-E030` to `CGP-E034` are each recovered off the compiler
-from the generated impl the failing token sits in and reworded with the fix in a `help`. Two concern
-a used-but-undeclared dependency: `CGP-E030` a trait used in a `#[cgp_fn]`/`#[cgp_impl]` body but
-not declared via `#[uses(…)]`, and `CGP-E031` an inner provider a higher-order provider calls but
-never imported via `#[use_provider]`. Three concern a trait named where a provider trait belongs:
-`CGP-E032` a `#[cgp_impl]` header naming the component's consumer trait, `CGP-E033` a `#[cgp_impl]`
-on a trait that is not a CGP component at all, and `CGP-E034` an inner-provider bound (typically
-`#[use_provider]`) naming the consumer trait. Each entry below gives the rewritten message, the
-mistake behind it, the fix, and the [CGP error catalog](../cgp/errors/README.md) class it
-recognizes.
+each rewrites the `E0119` into a distinct message form with its own fix. The **structural** codes
+`CGP-E015` to `CGP-E018`, in the same block, name a mistake in the shape of what a macro was given
+(a check table listing an entry twice, two check tables sharing a check-trait name, a `for` loop
+whose key skips its variable, a `#[default_impl]` on a generic impl), each recovered off the
+compiler from the generated items the `E0119`, `E0428`, or `E0207` lands on, with its fix in a
+`help`. The **never-resolving and orphan** codes `CGP-E020` to `CGP-E022` each rewrite a
+whole-program error into a CGP-framed one carrying its fix in a `help`. `CGP-E020` and `CGP-E021`
+rewrite the `E0275` overflow of a wiring lookup that never ends, which has no terminal leaf to
+descend to, split by how the tool's walk of the lookup is cut: an obligation met again is a cycle
+(`CGP-E020`), and the depth limit reached without a repeat is a lookup that grows (`CGP-E021`).
+`CGP-E022` rewrites an orphan-rule namespace registration's `E0210`/`E0117` (recovered from the
+offending impl off the compiler, like the `E0119` family). The **macro-mistake** codes `CGP-E030` to
+`CGP-E034` are each recovered off the compiler from the generated impl the failing token sits in and
+reworded with the fix in a `help`. Two concern a used-but-undeclared dependency: `CGP-E030` a trait
+used in a `#[cgp_fn]`/`#[cgp_impl]` body but not declared via `#[uses(…)]`, and `CGP-E031` an inner
+provider a higher-order provider calls but never imported via `#[use_provider]`. Three concern a
+trait named where a provider trait belongs: `CGP-E032` a `#[cgp_impl]` header naming the component's
+consumer trait, `CGP-E033` a `#[cgp_impl]` on a trait that is not a CGP component at all, and
+`CGP-E034` an inner-provider bound (typically `#[use_provider]`) naming the consumer trait. Each
+entry below gives the rewritten message, the mistake behind it, the fix, and the
+[CGP error catalog](../cgp/errors/README.md) class it recognizes.
 
 ### `CGP-E001`: consumer trait not implemented
 
@@ -291,8 +295,54 @@ named by its parameter (`@ComputerComponent.Code.u64`) and a type segment with i
   (`` twice, both times to `<path>` `` when the two targets agree): the same key redirected more
   than once: two `open`s or `=>` mappings on a context, an `open` of a component the joined
   namespace already redirects through its `#[prefix]`, or the same `@`-path registered twice inside
-  one `cgp_namespace!` block (where the subject is the namespace trait rather than a context).
-  **Fix:** keep a single redirect.
+  one `cgp_namespace!` block (where the subject is the namespace trait rather than a context). Two
+  `#[prefix]` attributes registering one component into one namespace take this code too; their two
+  registrations carry the attribute's span, so both carets cover `#[cgp_component]`. **Fix:** keep a
+  single redirect.
+
+### `CGP-E015`–`CGP-E018`: structural mistakes
+
+These four codes name a mistake in the shape of what `check_components!`, `delegate_components!`, or
+`#[default_impl]` was given, which the compiler rejects through the items the macro generated. The
+raw errors name those items (`__CheckApp`, an impl's type parameter) and carry suggestions that do
+not fix the program, so each rewrite names the mistake in the terms the program wrote and puts the
+fix in a `help`. The driver recognizes each from the generated items at the caret
+(`resolve::structural`), and the rustc-free `plan_structural_mistake` and `structural_mistake_help`
+word them.
+
+- **`CGP-E015`: a check entry listed twice.**
+  `` [CGP-E015] `check_components!` checks `<entry>` twice for `<Context>` ``, the entry written as
+  the table wrote it (`` `ShowerComponent: u32` `` for one with parameters), from the `E0119` between
+  the two identical check impls. rustc's two carets stay. **Fix (in the `help`):**
+  `` remove one of the two `<entry>` entries ``
+  ([`check_duplicate_entry`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/check_duplicate_entry.rs)).
+- **`CGP-E016`: two check tables sharing a check-trait name.**
+  `` [CGP-E016] two `check_components!` tables in one module check `<Context>` `` when both derive
+  `__Check<Context>`, or `` … name their check trait `<Name>` `` when two `#[check_trait(...)]`
+  attributes give one name, from the `E0428` on the second definition. The two carets are labelled
+  as the first and the second table. The `E0428` comes from name resolution, before any query is
+  safe, so the driver recognizes it by the span's expansion from `check_components!` alone.
+  **Fix (in the `help`):** merge the two tables, or name one table's check trait with
+  `#[check_trait(...)]`
+  ([`check_twice_same_context`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/check_twice_same_context.rs)).
+- **`CGP-E017`: a `for` loop whose key skips its variable.**
+  `` [CGP-E017] the `for` loop in the wiring of `<Context>` binds `<T>`, but its key `<key>` does not use it ``,
+  one block in place of rustc's three `E0207`s (the key variable and the value variable, in the
+  entry and its `IsProviderFor` twin), with the caret on the variable and rustc's suggestions
+  dropped. **Fix (in the `help`):** `` write `<T>` in the key where the type the loop covers goes ``
+  ([`for_loop_key_without_var`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/for_loop_key_without_var.rs)).
+- **`CGP-E018`: a `#[default_impl]` on a generic provider impl.**
+  `` [CGP-E018] `#[default_impl]` cannot register `<Provider>` for `<key>`, because the provider's impl is generic over `<T>` ``,
+  from the `E0207` the registration's copied parameter produces, for a provider generic over a type
+  or written in the explicit-context form (`impl<Context> … for Context`). rustc's suggestion to
+  remove the parameter is dropped. **Fix (in the `help`):**
+  `` write `<Provider>`'s impl for `<key>` alone, in the concise `#[cgp_impl]` form without `<T>` ``
+  ([`default_impl_generic_provider`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/default_impl_generic_provider.rs)).
+
+The structural codes report a mistake once, however many errors rustc gives for it. The upstream
+classes are [conflicting wiring](../cgp/errors/wiring/conflicting-wiring.md) for `CGP-E015` and
+`CGP-E016`, and [unconstrained generic](../cgp/errors/wiring/unconstrained-generic.md) for
+`CGP-E017` and `CGP-E018`.
 
 ### `CGP-E020`: wiring that leads back to itself
 
@@ -681,7 +731,10 @@ over the `WiringOverflow` the driver's walk recovers, the typed check-failure fo
 by
 [`plan_wiring_conflict`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/wiring.rs)
 (fed from the conflict the driver's `resolve::conflict` classifier recovers, one code per
-`WiringConflict` shape), and the `CGP-E022` orphan form by
+`WiringConflict` shape), the `CGP-E015`–`CGP-E018` structural forms by
+[`plan_structural_mistake`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/structural.rs)
+(fed from the `StructuralMistake` the driver's `resolve::structural` detectors recover), and the
+`CGP-E022` orphan form by
 [`plan_orphan_conflict`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/orphan.rs)
 (fed from the `OrphanConflict` the driver's `resolve::orphan` classifier recovers). The `CGP-E1xx`
 dependency-tree entry codes are stamped when a node renders: the inner chain nodes by the structured

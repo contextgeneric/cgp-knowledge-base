@@ -23,11 +23,14 @@ impl<T> DelegateComponent<GreeterComponent> for Person {
 }
 ```
 
-The same shape arises when a *generic* provider is registered as a per-type default, since the
-provider's parameter lands only in the `Delegate` associated-type position, and when a
-[`#[cgp_computer]`](../../reference/macros/cgp_computer.md) function has a type parameter that
-appears only in its return type, since the function's generics move onto a `Computer` impl whose
-trait arguments carry only the input types and whose output is an associated type.
+The same shape arises in three more places. A *generic* provider registered as a per-type default
+with `#[default_impl]` leaves its parameter unbound, since the registration copies the provider
+impl's parameters and nothing in it uses them. A `for <T, Provider> in Table` loop in
+`delegate_components!` whose key does not mention `T` leaves both variables unbound, since only the
+key binds `T` and only `T` binds `Provider`. And a
+[`#[cgp_computer]`](../../reference/macros/cgp_computer.md) function whose type parameter appears
+only in its return type leaves it unbound, since the function's generics move onto a `Computer` impl
+whose trait arguments carry only the input types and whose output is an associated type.
 
 ## The raw diagnostic
 
@@ -65,24 +68,35 @@ wiring entry.
 
 ## How cargo-cgp presents it
 
-`cargo-cgp` does not yet rewrite this class; it passes rustc's diagnostic through unchanged. For the
-fixture, the tool's `.cgp.stderr` is byte-for-byte its raw `.rust.stderr`: both `E0207` errors, both
-`help:` notes, no `[CGP-Exxx]` code stamped. That pass-through is why the fixture has
-`usability` quality in cargo-cgp rather than `acceptable`. The cause is already pinpoint-accurate at
-the caret, so nothing is buried, but the message still speaks in impl terms ("the type parameter `T`
-is not constrained"), where the actionable reading is a wiring one: the generic must reach the
-component *key* (`<T> SomeKey<T>: …`), not only the provider *value*. Restating the fix that way is
-the one improvement left for the tool; there is nothing to recover, only to translate. The codes it
-stamps on the classes it does rewrite are defined in the
-[cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
+`cargo-cgp` does not yet rewrite the per-entry generic; it passes rustc's diagnostic through
+unchanged. For its fixture, the tool's `.cgp.stderr` is byte-for-byte its raw `.rust.stderr`: both
+`E0207` errors, both `help:` notes, no `[CGP-Exxx]` code stamped. That pass-through is why the
+fixture has `usability` quality in cargo-cgp rather than `acceptable`. The cause is already
+pinpoint-accurate at the caret, so nothing is buried, but the message still speaks in impl terms
+("the type parameter `T` is not constrained"), where the actionable reading is a wiring one: the
+generic must reach the component *key* (`<T> SomeKey<T>: …`), not only the provider *value*.
+Restating the fix that way is the one improvement left for the tool; there is nothing to recover,
+only to translate.
+
+The `for` loop and the `#[default_impl]` shapes are rewritten. A loop whose key does not use its key
+variable becomes one **`[CGP-E017]`** in place of rustc's three `E0207`s:
+``[CGP-E017] the `for` loop in the wiring of `App` binds `T`, but its key `@test.ShowImplComponent.String` does not use it``,
+with the caret on `T` and a `help:` to write `T` in the key. A `#[default_impl]` on a generic
+provider impl becomes **`[CGP-E018]`**:
+``[CGP-E018] `#[default_impl]` cannot register `ShowWithDisplay` for `String`, because the provider's impl is generic over `T` ``,
+with a `help:` to write the impl for `String` alone in the concise `#[cgp_impl]` form. The same code
+covers the explicit-context form, `impl<Context> ShowImpl<String> for Context`, whose copied
+parameter is `Context`. Both drop rustc's suggestion to remove the parameter, which is not the fix.
+The codes are defined in the [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
 
 ## Resolving it
 
 Make the generic reach the key so it is bound: introduce it on a key that carries it
 (`<T> SomeKey<T>: …`) rather than only on the value, or, when the intent was a single concrete
 wiring, register a concrete provider with no per-entry generic at all. For a generic provider
-registered as a per-type default, register a concrete provider instead, since the default position
-cannot bind the provider's parameter.
+registered as a per-type default, write the provider's impl for the registered type alone, in the
+concise `#[cgp_impl]` form, since the default position cannot bind the provider's parameter. For a
+`for` loop, write the loop's key variable in the key, where the type the loop covers goes.
 
 ## Backing fixtures
 
@@ -100,6 +114,16 @@ cannot bind the provider's parameter.
   over `T`, which the
   [implementation document](../../implementation/entrypoints/cgp_computer.md#known-issues) records
   as a known issue.
+- [`wiring/unconstrained-generic/for_loop_key_without_var.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/for_loop_key_without_var.rs):
+  a `for <T, Provider>` loop whose key `@test.ShowImplComponent.String` does not use `T`; the
+  `.rust.stderr` pins rustc's three `E0207`s with contradictory helps, and the `.cgp.stderr` the
+  single `[CGP-E017]`.
+- [`wiring/unconstrained-generic/default_impl_generic_provider.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/default_impl_generic_provider.rs)
+  and
+  [`wiring/unconstrained-generic/default_impl_explicit_context.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/default_impl_explicit_context.rs):
+  `#[default_impl]` on a provider impl generic over `T`, and on one written in the explicit-context
+  form; the `.rust.stderr` pins the `E0207` with its "remove the unused type parameter" help, and
+  the `.cgp.stderr` the `[CGP-E018]` naming the parameter.
 
 ## Related
 

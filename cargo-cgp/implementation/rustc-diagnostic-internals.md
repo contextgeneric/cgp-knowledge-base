@@ -215,7 +215,11 @@ paths with, records that trimming happened by setting a flag through the diagnos
 [`rustc_session/src/session.rs`](../../../external/rust/compiler/rustc_session/src/session.rs)), so
 forcing it from the emitter panics whenever the diagnostic being emitted did not already compute it.
 The emitter's path strip therefore reads only the resolver's `glob_map`, which is computed long
-before, to decide which qualified names are ambiguous.
+before, to decide which qualified names are ambiguous. Printing a type with trimmed paths forces the
+same map, so a transform that prints types for an early error (the structural `E0207` reshapes)
+prints each type by its own name under rustc's `with_forced_trimmed_paths!`, which needs no map.
+Printing untrimmed would avoid the map as well, but the path strip then reads the qualified name as
+one rustc kept on purpose and leaves it qualified.
 
 Reading the HIR has the same hazard at an earlier phase. Name resolution emits diagnostics (an
 unused import, an unresolved name) before the crate is lowered to HIR, so a HIR read from the

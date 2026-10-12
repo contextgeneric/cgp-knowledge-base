@@ -141,9 +141,11 @@ that changes how the compiler *produces* diagnostics, needing no diagnostic pars
 a **custom emitter** that acts on diagnostics the compiler has already *built*, using facts only the
 live compiler holds; this is far more involved than a flag, because it links the compiler's internal
 API to reach the `TyCtxt`. That emitter is where the whole diagnostic layer lives (the front-end
-merely forwards what the driver renders), and it carries eight transformations. Five of them reshape
-a specific compiler error into one coded CGP form: a duplicate-key conflict (`E0119`) is
-[reshaped into its coded `[CGP-E010]`–`[CGP-E014]` form](#reshaping-a-duplicate-key-conflict), an
+merely forwards what the driver renders), and it carries nine transformations. Six of them reshape a
+specific compiler error into one coded CGP form: a duplicate-key conflict (`E0119`) is
+[reshaped into its coded `[CGP-E010]`–`[CGP-E014]` form](#reshaping-a-duplicate-key-conflict), a
+structural mistake in a check table or a wiring entry (an `E0119`, `E0428`, or `E0207` on generated
+items) is [reshaped into its `[CGP-E015]`–`[CGP-E018]` form](#reshaping-a-structural-mistake), an
 orphan-rule namespace registration (`E0210`/`E0117`) is
 [reshaped into its `[CGP-E022]` form](#reshaping-an-orphan-rule-namespace-registration), a trait
 used in a `#[cgp_fn]`/`#[cgp_impl]` body but not declared via `#[uses(…)]` (an `E0599` on the
@@ -169,9 +171,9 @@ bound) clean up every rewritten diagnostic, and change an untransformed one only
 a CGP encoding, so no raw CGP construct leaks and the transforms leave a plain Rust error as rustc
 printed it (the injected `--verbose` aside, see
 [Un-eliding the diagnostic](#un-eliding-the-diagnostic)). The sections that follow detail the two
-levers, the rename, the two coherence reshapes, and the `#[cgp_impl]` reshapes; the replacement and
-the post-processing build on the rename's `TyCtxt` access and rustc-free helpers, and are documented
-separately.
+levers, the rename, the two coherence reshapes, the structural reshape, and the `#[cgp_impl]`
+reshapes; the replacement and the post-processing build on the rename's `TyCtxt` access and
+rustc-free helpers, and are documented separately.
 
 The emitter is also what *renders* the diagnostics, the way vanilla `rustc` would. The wrapper type
 [`CgpEmitter`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/cgp_emitter.rs)
@@ -728,6 +730,48 @@ recognized impls, leaving it to the fallback. The blessed snapshots under
 [`wiring/conflicting-wiring/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/wiring/conflicting-wiring)
 and the namespace classes beside it pin each shape.
 
+### Reshaping a structural mistake
+
+Some mistakes are in the shape of what a macro was given, and the compiler rejects them through
+the items the macro generated, so its error names those items and offers a fix that does not apply.
+Four such shapes are reshaped, each recognized from the generated items at the caret by a detector
+under
+[`resolve::structural`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/structural)
+and worded by the rustc-free `plan_structural_mistake` and `structural_mistake_help`:
+
+- **A check entry listed twice** (`[CGP-E015]`): the `E0119` between two identical impls of a
+  `check_components!` check trait, recognized by its `CanUseComponent` supertrait, with the entry
+  read off the impl at the caret. rustc's carets stay.
+- **Two check tables sharing a check-trait name** (`[CGP-E016]`): the `E0428` name resolution
+  reports. No query is safe that early, so the driver reads the name from the diagnostic's own
+  argument and confirms the span came from a `check_components!` expansion through its expansion
+  data alone. rustc's labels and note name the generated trait, so the two carets are relabelled as
+  the first and the second table.
+- **A `for` loop whose key skips its variable** (`[CGP-E017]`): an `E0207` on a parameter of a
+  loop-generated `DelegateComponent` entry (or its `IsProviderFor` twin) whose namespace bound's
+  variable the key does not mention.
+- **A `#[default_impl]` on a generic provider impl** (`[CGP-E018]`): an `E0207` on a parameter of a
+  registration impl (a namespace lookup trait other than `DelegateComponent`) that neither its key,
+  its trait arguments, nor the provider it registers uses.
+
+Both `E0207` shapes drop rustc's suggestions, which remove the parameter or add it to the context,
+and keep the caret on the parameter alone. One mistake can produce several errors (a loop's two
+variables, each in two impls), so the emitter reports each recovered mistake once and drops the
+rest. The `E0207` detectors print a type by its own name rather than through the trimmed-paths map:
+an `E0207` is emitted before any type has been printed with trimmed paths, and the first such print
+records itself on the diagnostic context, whose lock the emitter holds
+([rustc diagnostic internals](rustc-diagnostic-internals.md)). The fixtures under
+[`wiring/conflicting-wiring/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/wiring/conflicting-wiring)
+(`check_duplicate_entry`, `check_twice_same_context`, and their siblings) and
+[`wiring/unconstrained-generic/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/wiring/unconstrained-generic)
+(`for_loop_key_without_var`, `default_impl_generic_provider`, `default_impl_explicit_context`) pin
+the shapes.
+
+A doubled `#[prefix]` is not among them: its two namespace registrations collide as a duplicate
+redirect, `[CGP-E014]`, which the [duplicate-key reshape](#reshaping-a-duplicate-key-conflict)
+words. Both registrations carry the attribute's span, so the namespace route pairs two entries at
+one span as the first and the conflicting entry.
+
 ### Reshaping an orphan-rule namespace registration
 
 The orphan reshape handles the other coherence-class error, the orphan-rule violation (`E0210`, or
@@ -1044,7 +1088,8 @@ will likely grow toward it:
   their untransformed fallback, `output.rs` the inner emitter and buffer shared with the panic hook,
   `containment.rs` the `catch_unwind` wrapper and the panic hooks, `test_panic.rs` the panic a
   fixture raises on purpose, and `edit.rs` holds the `DiagInner`-editing helpers (including
-  `merged_span`, the merged block's one caret and its labelled other sites; `message_signature`, the
+  `merged_span`, the merged block's one caret and its labelled other sites; `check_table_span`, the
+  relabelled carets of two check tables sharing a check-trait name; `message_signature`, the
   span-independent text key for de-duplicating a declined-but-rewritten diagnostic;
   `strip_method_probe_advice`, the drop of rustc's associated-function framing on a declined
   consumer-method `E0599`; and `is_question_mark_cascade`, the `Try`/`FromResidual`-shape recognizer
