@@ -380,7 +380,8 @@ The fixtures group by construct:
   importing `std::error::Error` (`error_alias_in_cgp_fn`, `error_alias_in_provider_body`);
   `Self::Error` where two abstract-type traits declare an `Error` (`self_error_two_traits`); and
   `#[uses]` on a component, where `#[extend]` belongs, with rustc's `#[used]` suggestion
-  (`uses_on_component`).
+  (`uses_on_component`); and the `[CGP-E031]` help for an inner provider of a generic component,
+  which omits the component's parameters (`missing_use_provider_generic_component`).
 - **Providers, fields, and types:** getters wired to the wrong provider, a generic check without its
   parameter, `UseDelegate` without `#[derive_delegate]`, a provider impl without `#[cgp_provider]`,
   a tuple-struct context, a field read as two types, and a borrowed error detail.

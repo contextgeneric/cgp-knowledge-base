@@ -886,9 +886,10 @@ which finds the provider impl holding it outside the impl's method bodies (a bod
 not about what the impl declares), checks that the impl implements a CGP provider trait for a
 provider type over a parameter context, and evaluates each `where` clause the provider trait places
 on the context in the impl's own `param_env`. Each clause that does not hold is a requirement to
-name, and one whose trait is an abstract-type component is worded as its `#[use_type]` import. The
-first such `E0277` per impl is reworded, with the caret moved to the macro's call site so rustc's
-note that the error originates in the attribute macro drops out, and the later ones are dropped.
+name, written with the context folded to `Self` (the name the provider's `#[uses]` gives it), and
+one whose trait is an abstract-type component is worded as its `#[use_type]` import. The first such
+`E0277` per impl is reworded, with the caret moved to the macro's call site so rustc's note that the
+error originates in the attribute macro drops out, and the later ones are dropped.
 
 The two abstract-type paths meet in a provider of a component that imports `Error`. Name resolution
 reports a bare `Error` as an `E0425`, "cannot find type `Error` in this scope", before any `TyCtxt`

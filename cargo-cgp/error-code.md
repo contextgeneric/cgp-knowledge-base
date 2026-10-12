@@ -508,7 +508,10 @@ classes are [conflicting wiring](../cgp/errors/wiring/conflicting-wiring.md) for
   instead. The Rust code stays `E0599`.
 - **Fix (in the `help`):** import the inner provider with
   `#[use_provider(<Inner>: <ProviderTrait>)]`, which supplies the leading context argument the
-  provider trait needs.
+  provider trait needs. For a generic component the help names the provider trait without the
+  component's parameters, so it does not compile as written
+  ([`missing_use_provider_generic_component`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/missing_use_provider_generic_component.rs));
+  the import needs them, as in `#[use_provider(Inner: AreaCalculator<Shape>)]`.
 - **Upstream class:** [undeclared dependency](../cgp/errors/lowering/undeclared-dependency.md); see
   also [higher-order providers](../cgp/concepts/higher-order-providers.md) and
   [`#[use_provider]`](../cgp/reference/attributes/use_provider.md).
@@ -657,7 +660,10 @@ classes are [conflicting wiring](../cgp/errors/wiring/conflicting-wiring.md) for
   [`supertrait_missing_uses_beside_body_error`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/supertrait_missing_uses_beside_body_error.rs)
   (an unrelated body error kept beside it), and
   [`use_default_getter_context`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/use_default_getter_context.rs)
-  (a `#[cgp_impl(UseDefault)]` provider). The Rust code stays `E0277`.
+  (a `#[cgp_impl(UseDefault)]` provider), and
+  [`supertrait_missing_uses_self_argument`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/supertrait_missing_uses_self_argument.rs)
+  (a requirement naming the context, which the header and help write as `Self`). The Rust code
+  stays `E0277`.
 - **Fix (in the `help`):** declare the requirement on the provider, `#[uses(HasName)]` for a trait
   or `#[use_type(HasErrorType.Error)]` for an abstract-type component.
 - **Upstream class:** [undeclared dependency](../cgp/errors/lowering/undeclared-dependency.md).

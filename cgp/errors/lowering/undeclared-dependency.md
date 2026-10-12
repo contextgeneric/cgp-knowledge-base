@@ -186,7 +186,8 @@ the declaration to write in a `help`, and keeps `rustc`'s own code. The codes ar
   trait that declares it; the `E0277` blocks of that requirement are dropped, since the import
   satisfies them too.
 - **`[CGP-E036]`** for an undeclared requirement, reported once per provider, with the caret where
-  rustc first reported it, usually the `#[cgp_impl]` attribute:
+  rustc first reported it, usually the `#[cgp_impl]` attribute, and the context written as `Self`
+  in any requirement that names it:
   ``the provider trait `Greeter` requires `HasName` of the context, but the provider `GreetHello` does not declare it``,
   and ``help: declare it as a dependency with `#[uses(HasName)]` ``, or
   `#[use_type(HasErrorType.Error)]` for an abstract-type component.
@@ -196,7 +197,9 @@ Four cases keep `rustc`'s output. A call on a generic parameter other than the c
 cannot write. The other three are gaps, described under [Notes for tooling](#notes-for-tooling): a
 bare `Error` that no requirement of the component explains, a `Self::Error` that two abstract-type
 traits could declare, and an undeclared trait that takes a lifetime or const parameter, whose
-`[CGP-E030]` header stands without a help.
+`[CGP-E030]` header stands without a help. One reshaped case is a gap too: the `[CGP-E031]` help for
+an inner provider of a generic component names the provider trait without the component's
+parameters, so it does not compile.
 
 ## Resolving it
 
@@ -216,8 +219,8 @@ idiomatic form, and `#[use_type]` also rewrites the bare type name.
 
 ## Notes for tooling
 
-Three shapes still reach the reader as `rustc` wrote them, and each needs more than the emitter has
-today:
+Three shapes still reach the reader as `rustc` wrote them, and one reshaped help is incomplete; each
+needs more than the emitter has today:
 
 - **A bare `Error` that no requirement explains:** the `E0425` comes from name resolution, before
   the compiler has built the HIR or can say which traits declare an `Error`, and nothing later
@@ -227,6 +230,10 @@ today:
   does not guess. A rewording could list the candidate imports instead.
 - **A trait with a lifetime or const parameter:** the `[CGP-E030]` help writes only type arguments,
   so the header stands without one.
+- **An inner provider of a generic component:** the `[CGP-E031]` help names the provider trait
+  alone, `#[use_provider(Inner: AreaCalculator)]`, where the import needs the component's
+  parameters, `AreaCalculator<Shape>`. The arguments could be recovered from the call the way
+  `[CGP-E030]` recovers a generic trait's.
 
 The `[T]: Sized` errors that an unresolved call's result type can trail, notably in an `async` body,
 are also left in place: they can land off the failing expression, where dropping them reliably
@@ -262,6 +269,9 @@ These fixtures pin the class, one group per shape:
   a higher-order provider calling its inner provider without `#[use_provider]`; `[CGP-E031]`.
 - [`lowering/undeclared-dependency/missing_use_provider_other_component.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/missing_use_provider_other_component.rs):
   the same with an inner provider of another component; `[CGP-E031]`.
+- [`lowering/undeclared-dependency/missing_use_provider_generic_component.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/missing_use_provider_generic_component.rs):
+  the inner provider of a generic component, whose `[CGP-E031]` help omits the component's
+  parameter and so does not compile (`usability`).
 - [`lowering/undeclared-dependency/self_error_without_bound.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/self_error_without_bound.rs):
   `Self::Error` in a provider body; `[CGP-E035]` from the `E0220`.
 - [`lowering/undeclared-dependency/self_error_in_cgp_fn.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/self_error_in_cgp_fn.rs):
@@ -287,6 +297,9 @@ These fixtures pin the class, one group per shape:
   a provider omitting the `HasName` a component's `#[extend]` requires; `[CGP-E036]`.
 - [`lowering/undeclared-dependency/supertrait_missing_uses_generic.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/supertrait_missing_uses_generic.rs):
   the requirement is a generic trait, written `TagFor<u32>` in the header and the help.
+- [`lowering/undeclared-dependency/supertrait_missing_uses_self_argument.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/supertrait_missing_uses_self_argument.rs):
+  the requirement's argument is the context, written `CanCompareWith<Self>` rather than with the
+  generated `__Context__`.
 - [`lowering/undeclared-dependency/supertrait_missing_uses_beside_body_error.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/supertrait_missing_uses_beside_body_error.rs):
   an unrelated error in the provider's body stays beside the `[CGP-E036]`.
 - [`lowering/undeclared-dependency/use_default_getter_context.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/use_default_getter_context.rs):
