@@ -94,10 +94,15 @@ error[E0271]: [CGP-E004] field `height` on `Rectangle` has type `i32`, but `f64`
 Two cases keep rustc's own headline rather than a coded one. A main message that already states a
 **genuine recovered leaf** (an ordinary bound such as `f64: Eq` the next-generation solver descended
 to, which is itself the root cause) is left untouched, header and caret and all, because it already
-names the cause. But a main message that states a *mid-chain symptom* (an ordinary bound that is not
-one of the recovered leaves, such as a getter bound on a request whose real cause is a missing
-wiring a level down) is replaced by a `[CGP-E001]` headline stating the recovered cause. And a main message that
-is neither a trait bound nor a resolved class (an unrelated `E0308`) is always kept.
+names the cause. The one exception is an empty list: rustc prints CGP's empty list as `Nil`, while
+the leaf, which reads the type, writes it `Product![]`, so the headline takes the leaf's wording in
+rustc's sentence (`` the trait bound `Product![]: PickFirst` is not satisfied ``), still uncoded,
+and the caret drops its label, which restates the bound with `Nil`
+([`constrained_delegate_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/constrained-key/constrained_delegate_key.rs)).
+But a main message that states a *mid-chain symptom* (an ordinary bound that is not one of the
+recovered leaves, such as a getter bound on a request whose real cause is a missing wiring a level
+down) is replaced by a `[CGP-E001]` headline stating the recovered cause. And a main message that is
+neither a trait bound nor a resolved class (an unrelated `E0308`) is always kept.
 
 ## The root-cause notes
 

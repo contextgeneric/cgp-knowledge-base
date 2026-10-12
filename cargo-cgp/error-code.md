@@ -547,8 +547,9 @@ at (`CGP-E110` onward).
 - **`CGP-E117`: ordinary trait bound (leaf).**
   `` the trait bound `<S: Trait>` is not satisfied ``: the chain bottoms out on an ordinary (non-CGP)
   trait bound, such as `f64: Eq` required of the type a context wires for an abstract type. The
-  entry keeps the compiler's own wording. When the compiler's headline already states the bound,
-  the tool keeps that headline and the note carries the tree alone, ending at this entry.
+  entry keeps the compiler's own wording, with a CGP empty list written `Product![]` where the
+  compiler prints `Nil`. When the compiler's headline already states the bound, the tool keeps that
+  headline, in the same wording, and the note carries the tree alone, ending at this entry.
 
 ## Uncoded rewrites
 

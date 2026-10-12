@@ -200,8 +200,8 @@ treats everything else as a leaf. It deliberately does *not* follow
   delegates under a bound (`PipeHandlers<Providers>`'s `delegate_components!` generic list is
   `Providers: ComposeProviders<Provider = Provider>`), an argument that fails that bound (an empty
   `PipeHandlers<Product![]>`, whose `Nil` list has no `ComposeProviders` impl) makes the walk
-  descend the delegation impl and bottom out on the unmet composition bound
-  (`Nil: ComposeProviders`), which is the real cause, with the `DelegateComponent` node itself
+  descend the delegation impl and bottom out on the unmet composition bound, written
+  `Product![]: ComposeProviders` as the program wrote the list, which is the real cause, with the `DelegateComponent` node itself
   dropped as a plumbing label.
 
 Two foreign bounds are exceptions the descent *does* follow, both for the same reason: they reach

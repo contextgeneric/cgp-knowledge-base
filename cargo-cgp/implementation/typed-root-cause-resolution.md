@@ -416,7 +416,9 @@ marking.
     `DepNode` variant, dropping the plumbing; `render_ty.rs` resugars a `DefId`-anchored
     `Cons`/`Nil` or `Either`/`Void` self type to `Product![…]`/`Sum![…]`, or (when every element is
     a `Field` and the shared `shape` rules give a spelling) to a `Struct!`/`Enum!` shape, rendering a call-site placeholder as `_` (recursing
-    into a tuple so a nested placeholder prints `_` rather than the raw `!N` form).
+    into a tuple so a nested placeholder prints `_` rather than the raw `!N` form); and
+    `empty_lists.rs` writes a standalone CGP `Nil` or `Void` as `Product![]` or `Sum![]`, in a
+    label and in an ordinary-bound leaf alike.
   - `cgp_item.rs` holds the structural, `IsProviderFor`-free trait recognition (`is_provider_trait`
     / `provider_blanket_marker` (the `DelegateComponent`-bounded provider blanket),
     `consumer_provider_trait` / `is_consumer_trait`, and `marker_to_consumer`), plus the `Symbol!`
