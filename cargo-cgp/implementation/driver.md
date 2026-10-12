@@ -249,8 +249,12 @@ others". All three are gated on the compiler's `opts.verbose` flag, which `--ver
 one flag turns all three off and the full type is always present in the output. Crucially
 `--verbose` is *not* `-Zverbose-internals`: it un-elides without switching on the compiler's
 internal debug printing (disambiguator suffixes, region ids), so the diagnostics keep their ordinary
-shape. The full mechanism (which function performs each elision, and the two-verbosity-switch
-distinction that makes `--verbose` the surgical choice) is documented in
+shape. The emitter undoes the third: a failed bound's help listing the trait's implementors is cut
+back to rustc's eight and "and N others" (`bound_candidate_list`), because a CGP crate implements
+`IsProviderFor` hundreds of times and the full list buries the diagnostic it belongs to
+([`provider_impl_without_macro`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/provider_impl_without_macro.rs)).
+The full mechanism (which function performs each elision, and the two-verbosity-switch distinction
+that makes `--verbose` the surgical choice) is documented in
 [rustc diagnostic internals](rustc-diagnostic-internals.md#the-suppression-points).
 
 The worked case is a missing field surfaced through the two-line similar-impl hint. Asking for a

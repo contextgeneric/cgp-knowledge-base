@@ -93,7 +93,8 @@ the injection itself, and the reason it is skipped for cargo's info queries, is 
 Each suppression below drops information from a CGP diagnostic. For each, this section names the
 function, says what it erases and under what condition, and states whether the driver's `--verbose`
 injection defeats it. The first three are text elisions gated on `opts.verbose`, so `--verbose`
-closes all three; the fourth is left deliberately on.
+closes all three, and the emitter then cuts the third's candidate list back to rustc's length; the
+fourth is left deliberately on.
 
 ### Matching generic arguments are elided to `_`
 
@@ -142,11 +143,11 @@ away; see [Testing](testing.md).)
 When more than nine impls could satisfy a bound, rustc prints a few and summarizes the rest. The
 cutoff is in `report_similar_impl_candidates` in `fulfillment_errors.rs`: the number of candidates
 it shows is the full count when `candidates.len() <= 9 || opts.verbose`, and otherwise a truncated
-head with an "and N others" tail. A context wired with many components can exceed nine
-`HasField`/provider impls, so the candidate that names the relevant field can fall into the
-collapsed remainder. `--verbose` shows every candidate. This one is less central than the first two
-(the primary "not implemented for" line usually still carries the failing bound), but it is the same
-`opts.verbose` switch, so the injection gets it for free.
+head with an "and N others" tail. `--verbose` shows every candidate, which is the one elision the
+tool does not want lifted: a CGP crate implements `IsProviderFor` hundreds of times, so the help
+would list them all. The primary "not implemented for" line carries the failing bound anyway, so the
+driver's emitter cuts the list back to rustc's eight and the count (`bound_candidate_list`, see
+[The driver](driver.md#un-eliding-the-diagnostic)), restoring the text plain rustc prints.
 
 ### Internal debug printing is left off (deliberately)
 

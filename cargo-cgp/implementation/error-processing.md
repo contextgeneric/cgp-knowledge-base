@@ -107,6 +107,12 @@ from the driver, is what keeps them unit-testable.
   "detailed explanations" footer the emitter rebuilds (both recognizing the line and reading the
   codes it names). Each is a pure function, so the wording dependence on rustc's phrasing is
   documented and tested in one place.
+- **The candidate bound**
+  ([`candidates`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/candidates.rs))
+  cuts the list of implementors in a failed bound's help back to the length rustc prints outside a
+  verbose session, eight and "and N others" (`bound_candidate_list`). The driver's injected
+  `--verbose` lifts that limit, and a CGP crate implements `IsProviderFor` hundreds of times, so the
+  emitter applies it to every diagnostic before anything else reads it.
 
 A further module,
 [`code`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/code.rs),
@@ -353,6 +359,9 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   exact repeat of a path dropped, `from_sub_chains` grouping, `union` folding a shared cause while
   keeping every route (and its associativity), and `headed_by` prefixing every path, plus its
   commutation with the grouping, which is why heading needs no re-merge.
+- [`crates/cargo-cgp-error-processing/tests/error_processing/candidates.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/candidates.rs):
+  the candidate bound: a long list cut to eight and a count, a list rustc prints whole left alone,
+  the shared-type heading, and any other help left alone.
 - [`crates/cargo-cgp-error-processing/tests/error_processing/dedup.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/dedup.rs):
   the `DedupLedger` key scheme: a re-reported cause suppressed, distinct causes kept, the text key,
   the coded-header key collapsing a declined fallback but never a resolved report (in either
@@ -433,6 +442,8 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   the `DedupLedger` and its span-independent key scheme.
 - [`crates/cargo-cgp-error-processing/src/signals.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/signals.rs):
   the rustc-phrasing predicates the emitter's candidate checks and cleanups key on.
+- [`crates/cargo-cgp-error-processing/src/candidates.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/candidates.rs):
+  `bound_candidate_list`, the implementor list cut back to rustc's default length.
 - [`crates/cargo-cgp-error-processing/src/code.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/code.rs):
   the `CGP-E` error-code constants, catalogued in [error-code.md](../error-code.md).
 - [`crates/cargo-cgp-driver/src/emitter/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/emitter):
