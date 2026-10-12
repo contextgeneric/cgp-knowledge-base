@@ -95,8 +95,8 @@ same change.
   run first. It has one section per construct with its expansion and its decline cases, and states
   the exact-match rule that keeps a resugaring from claiming syntax nobody wrote. One sub-section
   per implementation (typed over `Ty<'tcx>`, text over `&str`, syntax tree over `syn::Type`)
-  explains why three inputs force three separate matchers that must nonetheless agree. The one
-  sanctioned divergence is that only a diagnostic may show a form that reads better than it parses.
+  explains why three inputs force three separate matchers that must nonetheless agree, and why
+  every form they show is real syntax.
 - [The expand command](expand-command.md): `cargo cgp expand`, which shows the ordinary Rust a
   project's CGP macros generate: a full `cargo-expand`-style expansion whose CGP type-level sugar
   the driver resugars before returning it. Covers why the compiler offers no way to expand only some

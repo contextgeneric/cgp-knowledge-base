@@ -171,7 +171,7 @@ override decision as a bare coherence conflict.
 `DelegateComponent` + `IsProviderFor` pair into one message, suppresses the
 `downstream crates may implement …` note, resugars the `PathCons<Symbol<…>>` key to its bare
 `@app.…` path, and stamps **`[CGP-E011]` overlapping wiring**:
-`` [CGP-E011] `App` cannot wire `@app.GreeterComponent.*` that is already set through `AppNamespace` ``.
+`` [CGP-E011] `App` cannot wire `@app.GreeterComponent` that is already set through `AppNamespace` ``.
 That headline names the overriding entry, the path it claims, and the namespace that already binds
 it, so the reader sees the override decision the raw coherence conflict only implied; the two
 `rustc` carets are kept, this being a structural class with no `root cause:` tree.
@@ -240,14 +240,14 @@ The `.rust.stderr` snapshot pins the raw `E0119` shape and the `.cgp.stderr` the
   `#[default_impl]`; the `.rust.stderr` pins the `E0119` pair on `DelegateComponent<PathCons<…>>`
   and `IsProviderFor<PathCons<…>, _, _>` for `App` with the expanded path type and the
   `downstream crates may implement` note, the `.cgp.stderr` the single `[CGP-E011]` headline with
-  the resugared `@app.GreeterComponent.*` path.
+  the resugared `@app.GreeterComponent` path.
 - [`wiring/duplicate-keys/for_loop_prefixed_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-override-conflict/for_loop_prefixed_key.rs):
   the context-level shape reached through a `for` loop keyed
   `@cgp.core.error.ErrorRaiserComponent.Key` beside a namespace that binds `….String`; the
   `.rust.stderr` pins the same `E0119` pair and downstream note, the `.cgp.stderr` the `[CGP-E011]`
   headline
-  `` `App` cannot wire `@cgp.core.error.ErrorRaiserComponent.*` that is already set through `AppDefaults` ``,
-  the loop's key parameter rendered as the `.*` tail.
+  `` `App` cannot wire `@cgp.core.error.ErrorRaiserComponent.Key` that is already set through `AppDefaults` ``,
+  the loop's key parameter named as written.
 - [`wiring/namespace-paths/inherited_override_conflict.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-override-conflict/inherited_override_conflict.rs):
   the namespace-level shape against a key the parent *binds*: a child namespace redefining an
   inherited entry; the `.rust.stderr` pins the single `E0119` on `ChildNs<_>` for

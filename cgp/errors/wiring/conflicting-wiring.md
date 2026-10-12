@@ -124,22 +124,24 @@ expanded `PathCons<…>` type on a path-key conflict and trusting the caret.
 de-duplicates the pair into one message. Because this is a structural class, there is no
 `root cause:` tree: both `rustc` carets are preserved (they are already the answer), the redundant
 `IsProviderFor` half of a generated pair is suppressed so one duplicate reads as one conflict, and
-any `@`-path key is resugared to bare `@a.b.*` notation instead of the `PathCons<Symbol<…>>` list.
+any `@`-path key is written as its entry wrote it, in bare `@a.b` notation, instead of the
+`PathCons<Symbol<…>>` list.
 Which `[CGP-E00x]` code it stamps distinguishes the shapes this class produces:
 
 - A duplicate key or overlapping generic becomes **`[CGP-E010]` duplicate wiring**:
   `` [CGP-E010] duplicate wiring for component `GreeterComponent` on `Person` `` (or, for a
-  `@`-path, `` duplicate wiring for `@cgp.core.error.ErrorTypeProviderComponent.*` on `App` ``). A
+  `@`-path, `` duplicate wiring for `@cgp.core.error.ErrorTypeProviderComponent` on `App` ``). A
   collision inside a namespace reads the same way, with the lookup trait standing in for the context
   and an ordinary type key worded as a type: two `#[default_impl]`s on one per-type key give
   `` duplicate wiring for type `String` on `DefaultImpls1<ShowImplComponent>` ``.
 - A path key overlapping a longer one becomes **`[CGP-E011]` overlapping wiring**, naming the longer
   key as the one that cannot be wired and the shorter as what already covers it:
-  `` [CGP-E011] `App` cannot wire `@cgp.core.error.ErrorTypeProviderComponent.String.*` that is already set through `@cgp.core.error.ErrorTypeProviderComponent.*` ``.
-  The trailing `.*` on both is the wildcard tail, and it is what shows that the second path lies
-  beneath the first. A generic segment renders as `*` in its own position, so
-  `@ComputerComponent.<Code> Code.u64` beside `@ComputerComponent.Eval` reads
-  `` `App` cannot wire `@ComputerComponent.*.u64.*` that is already set through `@ComputerComponent.Eval.*` ``.
+  `` [CGP-E011] `App` cannot wire `@cgp.core.error.ErrorTypeProviderComponent.String` that is already set through `@cgp.core.error.ErrorTypeProviderComponent` ``.
+  Each key ends in the wildcard tail the macro appends, which is why the first path covers the
+  second; the message leaves the tail out, since the entries never wrote it. A generic segment is
+  named by its parameter, so `@ComputerComponent.<Code> Code.u64` beside `@ComputerComponent.Eval`
+  reads
+  `` `App` cannot wire `@ComputerComponent.Code.u64` that is already set through `@ComputerComponent.Eval` ``.
 - An `open` header colliding with an explicit mapping becomes **`[CGP-E013]` redirect collision**:
   `` [CGP-E013] component `GreeterComponent` on `Person` is redirected to `@GreeterComponent` ``,
   carrying a `help:` that names the redirected key to wire the provider under
@@ -210,7 +212,7 @@ headline. The `E0119` conflicts `cargo-cgp` rewrites:
   names the `@AreaCalculatorComponent.<Shape>` keys.
 - [`wiring/namespace-paths/delegate_duplicate_path_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/delegate_duplicate_path_key.rs):
   a duplicated `@`-path key whose raw conflicting trait name is a long `PathCons<Symbol<…>>` type;
-  the `.cgp.stderr` resugars it to the bare `@cgp.core.error.ErrorTypeProviderComponent.*` path
+  the `.cgp.stderr` resugars it to the bare `@cgp.core.error.ErrorTypeProviderComponent` path
   under `[CGP-E010]`.
 - [`wiring/namespace-paths/namespace_duplicate_path_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/namespace_duplicate_path_key.rs):
   the same `@`-path redirected twice inside one `cgp_namespace!` block, a single `E0119` on the
@@ -223,7 +225,7 @@ headline. The `E0119` conflicts `cargo-cgp` rewrites:
 - [`wiring/namespace-paths/path_generic_segment_overlap.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/path_generic_segment_overlap.rs):
   `@ComputerComponent.<Code> Code.u64` beside `@ComputerComponent.Eval`, the overlap through a
   generic first segment; the `.cgp.stderr` pins the `[CGP-E011]` headline with the generic segment
-  rendered as `*`, `@ComputerComponent.*.u64.*`.
+  named by its parameter, `@ComputerComponent.Code.u64`.
 - [`wiring/namespace-paths/duplicate_default_impl.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_default_impl.rs):
   two `#[default_impl]` registering the same key, a *single* `E0119` on the one `DefaultImpls1`
   impl; the `.cgp.stderr` pins the `[CGP-E010]` rewrite naming the type key and its table.

@@ -239,8 +239,9 @@ on the namespace's own lookup trait rather than `DelegateComponent`, and where a
 from a `cgp_namespace!` body, a provider's `#[default_impl(… in …)]`, or the inheritance blanket a
 `new Child: Parent` header emits). A generated pair's redundant `IsProviderFor` half is always
 suppressed, and the Rust code stays `E0119`. What differs, and why each has its own code, is the
-shape of the collision, and so the message and the fix. In every case an `@`-path key renders in
-bare `@a.b.*` notation (no `Path!(…)` wrapper), and the upstream reference is
+shape of the collision, and so the message and the fix. In every case an `@`-path key renders as
+its entry wrote it, in bare `@a.b` notation (no `Path!(…)` wrapper), with a generic segment
+named by its parameter (`@ComputerComponent.Code.u64`), and the upstream reference is
 [conflicting wiring](../cgp/errors/wiring/conflicting-wiring.md) with its two namespace faces
 [overlapping namespace forwarding](../cgp/errors/wiring/namespace-forwarding-conflict.md) and
 [namespace override conflict](../cgp/errors/wiring/namespace-override-conflict.md).
@@ -255,7 +256,7 @@ bare `@a.b.*` notation (no `Path!(…)` wrapper), and the upstream reference is
   `` [CGP-E011] `<Context>` cannot wire <key> that is already set through <source> ``: two distinct
   but overlapping keys, where one cannot claim what the other already covers (a generic entry over a
   specific one, an `@`-path over a namespace forwarding, or a path that covers another, as a prefix
-  or through a generic segment rendered `*`). A child namespace redefining a key it inherits takes
+  or through a generic segment). A child namespace redefining a key it inherits takes
   this code too, with the namespace as the subject and the parent as the source. **Fix:** remove or
   narrow the overlapping entry. (A key the namespace resolves to a *redirect* is `CGP-E013`
   instead.)
@@ -590,10 +591,10 @@ owns the text form and the driver's `render_ty` the typed one.
 
 **`Path!` resugaring** reverses a `Path!` type expansion back to its surface form, so
 `PathCons<Symbol!("app"), PathCons<GreeterComponent, Nil>>` becomes `Path!(@app.GreeterComponent)`.
-It restores the syntax the programmer wrote, save for one readable extension: an open-ended path
-whose list ends in a generic parameter rustc prints as `_` gets a trailing `.*` wildcard segment
-(`PathCons<Symbol!("foo"), PathCons<Symbol!("bar"), _>>` becomes `Path!(@foo.bar.*)`), which is not
-real `Path!` syntax but reads far better than the raw list.
+It restores the syntax the programmer wrote and nothing more. An open-ended path, whose list ends in
+the generic tail `cgp`'s macros append to every `@`-path key (which rustc prints as `_`), has no
+`Path!` spelling, so it stays a list with its segments resugared; a message the tool rewrites names
+it as the key its entry wrote (`@foo.bar`).
 [`resugar_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/resugar_path.rs)
 owns it.
 

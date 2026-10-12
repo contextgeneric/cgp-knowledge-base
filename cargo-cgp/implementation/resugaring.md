@@ -138,8 +138,7 @@ cell first leaves a two-element list as `Cons<A, Product![B]>`), so each pass fo
 and then recurses into the elements it collected. That same innermost-first instinct is what makes
 the shared `Nil` overlap hazard bite hardest here, which is why the passes stay separate whole-tree
 visits (see [the rules](#the-rules-every-resugaring-follows)). And it **emits only real syntax**,
-so it leaves out the one presentation-only form the diagnostic passes show, the subject of the next
-section.
+as the diagnostic passes do, the subject of the next section.
 
 A fifth demand is not about matching at all but about printing, and it is why the crate ends with a
 text pass despite being built to avoid text matching. A resugared construct is a macro call whose
@@ -153,22 +152,21 @@ after a `Struct!` field's single `:`, and joins a `Struct!` or `Enum!` brace bod
 macro's line. It never touches a literal or anything outside those bodies, and it only ever removes
 whitespace, so it cannot alter meaning.
 
-### Only source output is held to real syntax
+### Every output is real syntax
 
-One form a diagnostic shows is **presentation-only**: the trailing `.*` wildcard an open-ended path
-takes. No CGP macro writes it and it would not parse back. It earns its place in a diagnostic
-because the alternative is a raw `PathCons` list, and a diagnostic is prose about the program, not
-the program.
+Every form the resugaring shows is one the programmer could have written, in a diagnostic and in
+source output alike. The case that tests the rule is an **open-ended path**, a `PathCons` list that
+ends in a generic "rest of path" parameter rather than `Nil`. `cgp`'s macros end every `@`-path key
+and redirect target with one, the reserved `__Wildcard__`, so that a lookup's appended parameters
+slot into it. No `Path!` spelling names that type: `Path!(@foo.bar)` is the closed,
+`Nil`-terminated path, a different type. So the `Path!(…)` form declines on an open tail, in the
+text pass and the syntax-tree pass alike, and the list stays raw with its segments resugared.
 
-Source output is different, and the syntax-tree pass therefore **does not emit it**. An expansion is
-read as code: a reader may copy a line out of it, and every construct in it should be something
-they could have written. So an open-ended path stays its raw chain in an expansion. (There the open
-tail is a named generic parameter anyway, not the `_` a diagnostic renders.)
-
-This is the one sanctioned divergence between the implementations. The rule that generalizes it: the
-two diagnostic passes may show a form that reads better than it parses, and the source pass may not.
-The `Struct!`/`Enum!` shapes are not such a form: they are real CGP macros, so all three passes emit
-them, under the same exact-match rules.
+A message the tool rewrites names a *key* rather than a type, and there the open tail is left out:
+a conflicting `@foo.bar` entry reads `@foo.bar`, exactly as its entry wrote it, since the programmer
+never writes the wildcard. The typed rendering of a conflict's key does the same, and prints any
+other generic segment by its parameter name (`@ComputerComponent.Code.u64`). The `Struct!`/`Enum!`
+shapes are real CGP macros too, so all three passes emit them, under the same exact-match rules.
 
 ### Why the three cannot be one
 
@@ -219,12 +217,10 @@ one combined visitor turns a `Symbol`'s terminating `Nil` into `Product![]`, aft
 chain order are what keep the constructs apart, and no implementation may fold them into one
 traversal.
 
-**One surface form is presentation-only.** `Path!`'s trailing `.*` wildcard is not `Path!` syntax
-and would not parse back. It exists because the open-ended path it describes reads far better than
-the list, and it is the one place resugaring shows something other than what the programmer could
-have written. So it is shown in a *diagnostic* only, never in source output, per
-[only source output is held to real syntax](#only-source-output-is-held-to-real-syntax). Every other
-output, the `Struct!`/`Enum!` shapes included, is real, writable syntax everywhere.
+**Every surface form is real syntax.** An open-ended path, which no `Path!` spelling names, stays
+a list in the `Path!(…)` form and drops its wildcard tail in a rewritten key, per
+[every output is real syntax](#every-output-is-real-syntax). Every other output, the
+`Struct!`/`Enum!` shapes included, is real, writable syntax everywhere.
 
 **An empty list is left as its terminator.** A bare `Nil` or `Void` is not rewritten to `Product![]`
 or `Sum![]`: the terminator alone reads as the plain type it is, and resugaring it would mean
@@ -326,19 +322,19 @@ shapes decline, leaving the whole list raw rather than risking a mangled path: a
 that is not a plain type path (a lowercase tail, generics), and a **bare lowercase identifier**,
 which `Path!` would have encoded as a `Symbol`, so meeting one as a plain type is ambiguous.
 
-One non-`Nil` tail is still resugared, and it is the presentation-only case. An **open-ended path**
-ends in a generic "rest of path" parameter instead of `Nil`, which rustc prints as the inference
-placeholder `_`, the shape that appears in the conflicting-wiring `E0119` blocks over a duplicated
-`@`-path key. That tail becomes a trailing `.*` wildcard:
+One non-`Nil` tail is treated apart. An **open-ended path** ends in the macros' generic "rest of
+path" parameter instead of `Nil`, which rustc prints as the inference placeholder `_`, the shape
+that appears in the conflicting-wiring `E0119` blocks over a duplicated `@`-path key. The bare form a
+rewritten message uses names the key, so it leaves the tail out, while the `Path!(…)` form declines,
+since `Path!(@foo.bar)` would be the closed path:
 
 ```text
-PathCons<Symbol!("foo"), PathCons<Symbol!("bar"), _>>   →   Path!(@foo.bar.*)
+PathCons<Symbol!("foo"), PathCons<Symbol!("bar"), _>>   →   @foo.bar           (a rewritten message)
+PathCons<Symbol!("foo"), PathCons<Symbol!("bar"), _>>   →   unchanged          (the `Path!(…)` form)
 ```
 
-`.*` is not `Path!` syntax and would not parse back, but it reads far better than the list and says
-what the path means: it matches any continuation. Only a bare `_` triggers it, since `_` is never a
-concrete segment; any other non-`Nil` tail declines. Being presentation-only, it is a diagnostic
-form: the source pass leaves an open-ended chain raw.
+Only a bare `_` is an open tail, since `_` is never a concrete segment; any other non-`Nil` tail
+declines in both forms.
 
 The text implementation is
 [`resugar_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/resugar_path.rs),
@@ -512,11 +508,11 @@ module qualifiers, because in printed source a qualifier carries information a r
 Three things a reader might expect to see resugared are deliberately not, and each has a reason
 worth recording so nobody adds it as a "missing" transform.
 
-An **open-ended path** stays raw in source output, and this is the one construct a real expansion
-still shows as a list. An `open` statement's per-key entry is generic over the rest of the path, so
-the impl keys on `PathCons<Component, PathCons<Key, __Wildcard__>>`, a tail that is a named type
-parameter, not `Nil`. A diagnostic renders that tail as the `.*` wildcard; source output cannot,
-since `.*` would not parse, so the chain is left as written.
+An **open-ended path** stays raw in source output and in an untransformed diagnostic, and this is
+the one construct a real expansion still shows as a list. An `open` statement's per-key entry is
+generic over the rest of the path, so the impl keys on
+`PathCons<Component, PathCons<Key, __Wildcard__>>`, a tail that is a type parameter, not `Nil`. No
+`Path!` spelling names that type, so the chain is left as written.
 
 An **empty list** stays as its terminator, per the shared rule above: a bare `Nil` or `Void` is a
 plain type in the reader's source too. A **type-level index** (`Index<0>`, the tuple-field tag)
@@ -540,8 +536,8 @@ compiler, and the UI suite pins the typed pass end to end.
 - [`crates/cargo-cgp-error-processing/tests/error_processing/postprocess.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/postprocess.rs):
   the text implementations over crafted inputs: an exactly-matched `Symbol!` and the empty symbol, a
   wrong length and a foreign `Symbol` left alone, the `PathCons` → `@…`/`Path!(@…)` forms across
-  symbol, type, primitive, generic-value, and reference-value segments, the open `_` tail folded to
-  `.*`, the qualified-tail and lowercase-segment declines, the `Product!`/`Sum!` folds, the
+  symbol, type, primitive, generic-value, and reference-value segments, the open `_` tail left out
+  of a key and declined by `Path!(…)`, the qualified-tail and lowercase-segment declines, the `Product!`/`Sum!` folds, the
   named and tuple `Struct!` shapes and the `Enum!` shape in each variant spelling, the declines for a
   single `Index` cell, a non-identifier name, and a position-tagged sum, a raw keyword name, a mixed
   list kept as a plain product, a nested list, a
@@ -581,8 +577,8 @@ compiler, and the UI suite pins the typed pass end to end.
   the syntax-tree implementation over hand-written expanded source, run through the whole pipeline
   the driver runs: each construct and its decline cases, both `Nil` overlap hazards, the
   outermost-first fold, the tightened spacing of a generic element, the named and tuple `Struct!`
-  shapes with their declines, the `Enum!` shape in each variant spelling, the open-path wildcard
-  confirmed *absent*, and the prelude strip including the qualified-path shapes whose index it has
+  shapes with their declines, the `Enum!` shape in each variant spelling, the open-ended path left
+  as a list, and the prelude strip including the qualified-path shapes whose index it has
   to correct.
 
 - Every fixture's `.expand.rs` snapshot in the [UI suite](testing.md#three-passes-per-fixture) pins
@@ -593,8 +589,7 @@ compiler, and the UI suite pins the typed pass end to end.
 
 - [`crates/cargo-cgp-expand/tests/expand/agreement.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-expand/tests/expand/agreement.rs):
   the text and syntax-tree implementations fed the same constructs, each spelling compared: every
-  construct above with its declines, and the one sanctioned divergence, the open-ended path that
-  only a diagnostic shows as `.*`.
+  construct above with its declines, and the open-ended path both leave as a list.
 
 What is *not* guarded: the typed implementation needs the compiler, so no test compares it with the
 other two directly; the fixtures above pin its output construct by construct, and its agreement with

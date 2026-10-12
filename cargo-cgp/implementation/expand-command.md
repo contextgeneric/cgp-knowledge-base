@@ -339,13 +339,12 @@ raw. The direction is a second, subtler form of the same problem: a list's *tail
 so folding the innermost cell first leaves a two-element list as `Cons<A, Product![B]>`. Each pass
 therefore folds a list before recursing, and recurses into the elements it collected.
 
-**Only real syntax is emitted, so the diagnostic-only path wildcard is deliberately not
-produced.** A diagnostic renders an open-ended path with a trailing `.*`, which is not `Path!`
-syntax, and this pass writes source, where every construct shown should be something the programmer
-could have written. So an open-ended path stays its raw chain. A field list, by contrast, folds to
-CGP's real `Struct!` or `Enum!` shape, as it does in a diagnostic: a derived `Fields` prints as
-`Struct! { width: f64, height: f64 }`. This is the one place the three implementations deliberately
-differ, and the reason is recorded in both documents.
+**Only real syntax is emitted, so an open-ended path stays its raw chain.** No `Path!` spelling
+names a path that ends in a generic tail rather than `Nil`, and this pass writes source, where every
+construct shown should be something the programmer could have written; the diagnostic text pass
+declines such a path the same way. A field list, by contrast, folds to CGP's real `Struct!` or
+`Enum!` shape, as it does in a diagnostic: a derived `Fields` prints as
+`Struct! { width: f64, height: f64 }`.
 
 **The printer's spacing has to be corrected after the fact.** A resugared construct is a macro call
 whose body holds ordinary types, and the printer lays a macro body out token by token. It cannot
