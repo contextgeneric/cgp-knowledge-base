@@ -164,7 +164,9 @@ name ("expected `a::Foo`, found `b::Foo`"), or a CGP trait the crate glob-import
 trimmed paths leave qualified (`cgp::prelude::CanRaiseError`). Once a stage does fire, the strips
 apply to the rest of that message too, so the recovered construct does not sit among long paths. A
 path resugared in an untransformed message keeps its `Path!(@…)` macro form, since the reader meets
-it as a type.
+it as a type. One more change reaches an untransformed diagnostic, outside this crate: the driver
+merges a diagnostic rustc reports twice into its first report (see
+[The driver](driver.md#naming-the-traits-behind-a-component-marker)).
 
 **In a crate that does not use CGP, an untransformed diagnostic is never post-processed.** The
 emitter asks the compiler once whether the crate uses `cgp` or one of CGP's own crates

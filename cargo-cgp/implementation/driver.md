@@ -296,11 +296,11 @@ and the primary header the error opens with. Where rustc reports
 and `` required for `Rectangle` to implement `CanUseComponent<AreaCalculatorComponent>` ``, the tool
 emits
 `` required for the provider `RectangleArea` to implement the provider trait `AreaCalculator` for the context `Rectangle` ``
-and `` required for the context `Rectangle` to implement the consumer trait `CanCalculateArea` ``.
-A generated parameter in the context's place (`__Context__`, the context a provider impl is generic
-over) is not called a context: the provider note leaves it out
-([`implicit_conflicting_types`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/implicit-arguments/implicit_conflicting_types.rs)),
-and the consumer note names it plainly.
+and `` required for the context `Rectangle` to implement the consumer trait `CanCalculateArea` ``. A
+generated parameter in the context's place (`__Context__`, the context a provider impl is generic
+over) is not called a context: the provider note leaves it out, and the consumer note names it
+plainly (the `a_generated_parameter_is_not_called_a_context` test in
+[`rewrite.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/rewrite.rs)).
 The primary header is rewritten further, because an unsatisfied wiring bound is an identified CGP
 error class and gains its [CGP error code](../error-code.md):
 `` the trait bound `Rectangle: CanUseComponent<AreaCalculatorComponent>` is not satisfied `` becomes
@@ -503,9 +503,18 @@ headline is an `IsProviderFor` bound, it also records the provider form the text
 headline (`declined_header`), since a declined re-report carries that form instead. The header key
 works in that one direction only: a resolved report records it but never consults it, so a declined
 fallback that arrived first never hides the resolved tree after it, and two resolved reports of one
-consumer with different causes are both kept for the flush to coalesce. Only the tool's own
-transformed diagnostics are de-duplicated; an untouched `rustc` error always passes through. The
-count stays honest because cargo re-counts the diagnostics the emitter actually produces (a
+consumer with different causes are both kept for the flush to coalesce. The ledger keys only the
+tool's own transformed diagnostics. An untouched `rustc` error is merged only when rustc reports it
+twice: at the flush, in a crate that uses CGP, a later diagnostic with the same level, code, and
+message as an earlier one, and a primary caret on the same line, is merged into the earlier block
+([`merge_repeats`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/repeats.rs)),
+whose notes are the fuller. rustc repeats an error that way when it checks one requirement for each
+item a macro generated (the repeat renames or drops a note) or a call's bound for the call and an
+argument (the repeat has its own caret). A caret the earlier block does not already cover is kept,
+labelled "also required here", so no location is lost
+([`from_variant_wrong_case`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/from_variant_wrong_case.rs),
+[`matcher_missing_arm`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/matcher_missing_arm.rs)).
+The count stays honest because cargo re-counts the diagnostics the emitter actually produces (a
 suppressed re-report drops out of its "N errors" summary as well), so the visible block count and
 the summary agree. This is the [one-mistake-many-errors](../issues/usability.md) usability class the
 per-diagnostic resolver could not address on its own.
@@ -1278,14 +1287,16 @@ will likely grow toward it:
   their untransformed fallback, `output.rs` the inner emitter and buffer shared with the panic hook
   and the name-resolution reshape, `containment.rs` the `catch_unwind` wrapper and the panic hooks,
   `name_resolution.rs` the reshape of the wiring entries' name-resolution errors and the overflow
-  drop that goes with it, `test_panic.rs` the panic a fixture raises on purpose, and `edit.rs` holds
-  the `DiagInner`-editing helpers (including `merged_span`, the merged block's one caret and its
-  labelled other sites; `check_table_span`, the relabelled carets of two check tables sharing a
-  check-trait name; `message_signature`, the span-independent text key for de-duplicating a
-  declined-but-rewritten diagnostic; `strip_method_probe_advice`, the drop of rustc's
-  associated-function framing on a declined consumer-method `E0599`; and `is_question_mark_cascade`,
-  the `Try`/`FromResidual`-shape recognizer for the cascade drop; the text phrasings the last three
-  key on live in the rustc-free
+  drop that goes with it, `shared_dispatch_method.rs` the pairing of the two `E0428`s two dispatch
+  traits sharing a method name produce, `repeats.rs` the flush's merge of a diagnostic rustc reports
+  twice, `test_panic.rs` the panic a fixture raises on purpose, and `edit.rs` holds the
+  `DiagInner`-editing helpers (including `merged_span`, the merged block's one caret and its
+  labelled other sites; `two_definitions_span`, the relabelled carets of a generated name defined
+  twice, for two check tables sharing a check-trait name or two dispatch traits sharing a method;
+  `message_signature`, the span-independent text key for de-duplicating a declined-but-rewritten
+  diagnostic; `strip_method_probe_advice`, the drop of rustc's associated-function framing on a
+  declined consumer-method `E0599`; and `is_question_mark_cascade`, the `Try`/`FromResidual`-shape
+  recognizer for the cascade drop; the text phrasings the last three key on live in the rustc-free
   [`signals`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/signals.rs)
   module).
 - [`crates/cargo-cgp-driver/src/component_map.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/component_map.rs):
