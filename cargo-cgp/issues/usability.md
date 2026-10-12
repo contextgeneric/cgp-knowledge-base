@@ -180,6 +180,15 @@ fixture that pins it.
   does the same. The one deliberate divergence is the abstract-type `help`, which takes the reduced
   form alone because it prescribes an edit the reader types rather than describing the requirement
   ([`abstract_field_type_mismatch`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/field-types/abstract_field_type_mismatch.rs)).
+- **A slipped name** is named beside the cause it causes. A missing field whose struct carries a
+  similar one, or a missing key whose context wires a similar one (a recased or misspelled symbol,
+  a doubled or dropped prefix segment), gets a `help` naming it, ahead of the fix the cause itself
+  calls for
+  ([`getter_use_field_typo`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/getter_use_field_typo.rs),
+  [`prefix_case_slip`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/prefix_case_slip.rs),
+  [`prefix_doubled_marker_generic`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/prefix_doubled_marker_generic.rs),
+  and
+  [`namespace_not_inheriting_base`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/namespace_not_inheriting_base.rs)).
 - **A missing entry in an aggregate provider's own table** names that provider, whether the
   aggregate `open`s the component or joins a namespace itself. Each `[CGP-E103]` redirect hop reads
   the table off its own `RedirectLookup<Table, Path>`, so a context's redirect says `` in `App` ``
@@ -306,9 +315,8 @@ The fixtures group by construct:
   context, a hand impl beside wiring, a cycle reached by a call or through `DebugError`, and a
   generic key in `delegate_and_check_components!` checked at unit parameters without
   `#[check_params(...)]` (`check_trait_named_as_wrapper`).
-- **Namespaces** (`wiring/namespaces/`, `wiring/constraints/`): a namespace that does not inherit
-  the one a component is prefixed into, a near-miss path, a doubled prefix marker, and the `E0207`
-  forms of `for` loops, `#[default_impl]`, and a self-inheriting namespace.
+- **Namespaces** (`wiring/namespaces/`, `wiring/constraints/`): the `E0207` forms of `for` loops,
+  `#[default_impl]`, and a self-inheriting namespace.
 - **Lowering** (`lowering/`): a provider trait in `#[uses]`, `Self::CONST` rewritten to the context,
   a missing `#[uses]` for a supertrait, the abstract `Error` without `#[use_type]`, and `#[uses]` on
   a component.

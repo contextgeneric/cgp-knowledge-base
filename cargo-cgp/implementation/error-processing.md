@@ -426,7 +426,8 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   coalescible failures into the connected components of the shares-a-cause relation, keyed
   structurally on each context-scoped `Leaf`), `coalesce.rs` (`coalesce_underived_fields`),
   `plan.rs` (`DiagKind`, `DiagnosisPlan`, the unrendered `PendingNote` and its `render`, and
-  `plan_resolved` with its `categorized_header`), and `wiring.rs` (`WiringConflict`/`WiringKey`,
+  `plan_resolved` with its `categorized_header`), `similar.rs` (`similar_name` and `similar_key`,
+  the near-miss rules the fix `help`s use), and `wiring.rs` (`WiringConflict`/`WiringKey`,
   `plan_wiring_conflict` for the `[CGP-E010]`–`[CGP-E014]` duplicate-key headers, and
   `wiring_conflict_help` for the redirect fix), plus `orphan.rs`, `undeclared.rs`, and
   `cgp_impl_misuse.rs` (the `[CGP-E022]` and `[CGP-E030]`–`[CGP-E034]` reshape models and their

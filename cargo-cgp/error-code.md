@@ -510,7 +510,8 @@ at (`CGP-E110` onward).
 - **`CGP-E110`: missing field (leaf).** `` missing field `<f>` on `<T>` ``: the chain bottoms out on
   a context field that is genuinely absent. When the struct derives `HasField` for its other fields,
   a `help` names the field to add with the type the requirement gives it,
-  `` add the field `<f>: <type>` to `<T>` ``.
+  `` add the field `<f>: <type>` to `<T>` ``; when the struct carries a similar field, a `help`
+  names it first, `` a similar field exists on `<T>`: `<g>` ``.
 - **`CGP-E111`: unimplemented accessor (leaf).**
   `` `HasField` not derived for field `<f>` of `<T>` ``: the struct carries the field but has not
   derived `HasField` for it (the fix rides in a separate `help`,
@@ -528,7 +529,8 @@ at (`CGP-E110` onward).
   context wires no provider for a component, or terminates no namespace path (the `<key>` is a
   component marker or an `@`-path). The table is always the context; a key missing from an aggregate
   provider is `CGP-E114`. A `help` names the entry to write,
-  `` wire `<key>` to a provider in the wiring of `<Ctx>` ``.
+  `` wire `<key>` to a provider in the wiring of `<Ctx>` ``, after a near miss when the context
+  wires a similar key, `` a similar key exists in the wiring of `<Ctx>`: `<key>` ``.
 - **`CGP-E114`: missing dispatch entry (leaf).** `` missing entry for `<key>` in provider `<T>` ``:
   the chain bottoms out on a *non-context* delegation table missing a key: an
   [aggregate provider](../cgp/concepts/aggregate-providers.md) missing a component wiring (including

@@ -340,7 +340,9 @@ bounded against a cyclic `Deref`. For a missing field the resolver also records 
 name: adding the field is confirmed only when the struct implements `HasField` for another field (so
 it derives it), and the field's type is the `Value = T` constraint the requirement writes beside its
 `HasField` bound, read off the impl that requires the field (`required_field_type`) and kept only
-when concrete (see [the fix `help`s](typed-resolution-output.md#the-fix-helps)). A field present
+when concrete, and a similar field the struct carries is recorded as a likely typo (`similar_field`;
+see [the fix `help`s](typed-resolution-output.md#the-fix-helps)). A missing wiring key records a
+similar key the context wires the same way (`similar_wired_key`). A field present
 with a mismatched **type** is a fourth case reached differently, through the projection rule in the
 walk above. From the failing projection the resolver reads the expected type, and it queries the
 struct by `DefId` (with the struct's own generic arguments substituted, so a same-named struct in
@@ -433,7 +435,8 @@ parent document's [Tests](typed-root-cause-resolution.md#tests) section.
 - [`crates/cargo-cgp-driver/src/resolve/classify/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/classify):
   `reportable.rs` (root cause versus routing dead-end), `leaf.rs` (`classify_leaf`, which builds the
   rustc-free `Leaf`), `field.rs` (the struct and `Deref`-chain inspection), `required_type.rs` (the
-  type a requirement gives a missing field), and `assoc_type.rs` (the normalization that reads the
+  type a requirement gives a missing field), `near_miss.rs` (a similar field or wiring key the
+  program wrote), and `assoc_type.rs` (the normalization that reads the
   type an owner supplies for any other projected associated type).
 - [`crates/cargo-cgp-driver/src/resolve/label/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/label):
   `predicate_label.rs` (each hop as a structured `DepNode`, read off the obligation) and

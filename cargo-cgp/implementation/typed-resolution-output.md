@@ -3,9 +3,9 @@
 This document covers the output side of the driver's
 [typed root-cause resolution](typed-root-cause-resolution.md): the three parts a resolved failure's
 diagnostic is rebuilt from (the coded headline, the `root cause:` notes, and the fix `help`s), and
-how the emitter applies the rustc-free plan to the compiler's `DiagInner`. The recovery that produces the causes
-being worded here is the subject of [the anchors](typed-resolution-anchors.md) and
-[the walk](typed-resolution-walk.md).
+how the emitter applies the rustc-free plan to the compiler's `DiagInner`. The recovery that
+produces the causes being worded here is the subject of [the anchors](typed-resolution-anchors.md)
+and [the walk](typed-resolution-walk.md).
 
 ## The coded headline
 
@@ -288,6 +288,15 @@ which names its items in the order the causes are listed, with no cap:
 - A **missing dispatch entry** names the table:
   `` add an entry for `Tagged<Bytes>` to `SinkHandlers` ``.
 - An **abstract-type mismatch** names the wiring entry to change, as described above.
+- A **near miss** comes first when a missing field's struct carries a similar field, or a missing
+  key's context wires a similar key: `` a similar field exists on `Person`: `first_name` `` for
+  `frist_name`, or `` a similar key exists in the wiring of `App`: `@App.GreeterComponent` `` for
+  `@app.GreeterComponent`. A name is similar when it matches ignoring case or lies within two
+  edits, a swap of two letters counting as one (`similar_name`). A key is similar when one symbol
+  segment is, or when it has one prefix segment more or fewer, as a doubled or a dropped
+  `#[prefix]` segment makes it (`similar_key`); two type segments that differ name two types, so
+  they never count. The candidates are the struct's own fields and the context's own wiring
+  entries.
 
 A field-type mismatch, a non-provider, and an ordinary bound carry no `help`. The mismatch headline
 already states both types, and the other two have no single entry the tool can name.
@@ -355,14 +364,14 @@ sets the `help`s, and the flush inserts the rendered note ahead of them. The not
 `root cause:` lead (or `root causes:` list, when the causes bottom out on different leaves) over
 `this is required through the dependency chain:` and the graph beneath (the lead omitted when the
 kept header or a mismatch header already states the leaf). The `help`s are the
-[fixes above](#the-fix-helps). rustc's structured suggestions are discarded with its notes, the diagnostic's Rust code is never
-touched, and a provider with two absent dependencies sharing its chain yields one note over a merged
-tree that branches to both. The JSON emitter regenerates every rendered and structured field from
-the `DiagInner` for free, with rustc's note-continuation indentation aligning each tree's
-box-drawing under its `= note:`. A final cross-diagnostic de-duplication (keyed on the recovered
-cause, the rendered text, or the class header) suppresses a transformed diagnostic that re-reports a
-failure already shown, and the flush coalesces the blocks that share a root cause into one (see
-[The driver](driver.md)).
+[fixes above](#the-fix-helps). rustc's structured suggestions are discarded with its notes, the
+diagnostic's Rust code is never touched, and a provider with two absent dependencies sharing its
+chain yields one note over a merged tree that branches to both. The JSON emitter regenerates every
+rendered and structured field from the `DiagInner` for free, with rustc's note-continuation
+indentation aligning each tree's box-drawing under its `= note:`. A final cross-diagnostic
+de-duplication (keyed on the recovered cause, the rendered text, or the class header) suppresses a
+transformed diagnostic that re-reports a failure already shown, and the flush coalesces the blocks
+that share a root cause into one (see [The driver](driver.md)).
 
 ## Tests
 

@@ -136,13 +136,14 @@ prints one `[CGP-E103]` hop per link before the `[CGP-E113]` leaf (`@start.Greet
 (`@ItemEncoderComponent.Vec<u8>`). When the context wires nothing at the path, the leaf is
 `[CGP-E113]`. When the path is missing from an aggregate provider, whether it `open`s the component
 in its own table or joins the namespace itself, the leaf is the `[CGP-E114]` provider-table leaf
-instead,
-`` missing entry for `@ComputerComponent.Sink.Digest` in provider `ByteSink` ``,
-and the `[CGP-E103]` hop above it reads `` in `ByteSink` ``, so the tree names the table the entry
-belongs in. A `help` after the note names the entry to write,
-`` wire `@app.GreeterComponent` to a provider in the wiring of `App` `` (or
-`` add an entry for `@ComputerComponent.Sink.Digest` to `ByteSink` ``). A path wired directly on the
-context is a valid entry beside its namespace join, and so is a registration from the provider's
+instead, `` missing entry for `@ComputerComponent.Sink.Digest` in provider `ByteSink` ``, and the
+`[CGP-E103]` hop above it reads `` in `ByteSink` ``, so the tree names the table the entry belongs
+in. When the context wires a key that is a likely slip of the missing one (a recased symbol,
+`@App.GreeterComponent`, or a doubled prefix segment), a `help` names it first, as
+`` a similar key exists in the wiring of `App`: `@App.GreeterComponent` ``. A `help` after the note
+names the entry to write, `` wire `@app.GreeterComponent` to a provider in the wiring of `App` ``
+(or `` add an entry for `@ComputerComponent.Sink.Digest` to `ByteSink` ``). A path wired directly on
+the context is a valid entry beside its namespace join, and so is a registration from the provider's
 side, which [Resolving it](#resolving-it) describes. The codes are defined in the
 [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
 

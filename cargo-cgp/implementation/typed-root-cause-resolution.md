@@ -402,7 +402,8 @@ marking.
     classifies a terminal: `leaf.rs` turns it into the rustc-free `Leaf` (a field by inspecting the
     struct and its `Deref` chain in `field.rs`, with a missing field's fix confirmed by the struct's
     other `HasField` impls and typed by `required_type.rs`'s `required_field_type`, which reads the
-    `Value = T` constraint beside the bound on the impl that requires it; a field-type mismatch with
+    `Value = T` constraint beside the bound on the impl that requires it, and with a similar field or
+    wiring key the program wrote found by `near_miss.rs`; a field-type mismatch with
     `field_type` reading the actual type by `DefId`, an abstract-type mismatch with
     `assoc_type.rs`'s `projected_type` normalizing the projection for the actual type and
     `abstract_type_component_marker` recovering the wiring marker for its `help`, a missing wiring
