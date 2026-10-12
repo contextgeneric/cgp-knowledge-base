@@ -147,9 +147,10 @@ API to reach the `TyCtxt`. That emitter is where the whole diagnostic layer live
 merely forwards what the driver renders), and it carries nine transformations. Six of them reshape a
 specific compiler error into one coded CGP form: a duplicate-key conflict (`E0119`) is
 [reshaped into its coded `[CGP-E010]`–`[CGP-E014]` form](#reshaping-a-duplicate-key-conflict), a
-structural mistake in a check table or a wiring entry (an `E0119`, `E0428`, or `E0207` on generated
-items) is [reshaped into its `[CGP-E015]`–`[CGP-E019]` form](#reshaping-a-structural-mistake), an
-orphan-rule namespace registration (`E0210`/`E0117`) is
+structural mistake in a check table or a wiring entry (an `E0119`, `E0428`, `E0207`, or `E0277` on
+generated items) is
+[reshaped into its `[CGP-E015]`–`[CGP-E019]` or `[CGP-E060]` form](#reshaping-a-structural-mistake),
+an orphan-rule namespace registration (`E0210`/`E0117`) is
 [reshaped into its `[CGP-E022]` form](#reshaping-an-orphan-rule-namespace-registration), a
 dependency a CGP definition uses without declaring it (an `E0599`, `E0220`, `E0425`, or `E0277` on
 the generated context or an inner provider) is [reshaped](#reshaping-an-undeclared-dependency) into
@@ -729,10 +730,9 @@ and the namespace classes beside it pin each shape.
 
 ### Reshaping a structural mistake
 
-Some mistakes are in the shape of what a macro was given, and the compiler rejects them through
-the items the macro generated, so its error names those items and offers a fix that does not apply.
-Five such shapes are reshaped, each recognized from the generated items at the caret by a detector
-under
+Some mistakes are in the shape of what a macro was given, and the compiler rejects them through the
+items the macro generated, so its error names those items and offers a fix that does not apply. Six
+such shapes are reshaped, each recognized from the generated items at the caret by a detector under
 [`resolve::structural`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/structural)
 and worded by the rustc-free `plan_structural_mistake` and `structural_mistake_help`:
 
@@ -744,6 +744,18 @@ and worded by the rustc-free `plan_structural_mistake` and `structural_mistake_h
   argument and confirms the span came from a `check_components!` expansion through its expansion
   data alone. rustc's labels and note name the generated trait, so the two carets are relabelled as
   the first and the second table.
+- **A check entry that names no parameters for a component that takes some** (`[CGP-E060]`): an
+  `E0277` whose caret is the `Self` span of a check impl (the impl of a trait whose supertrait is
+  `CanUseComponent`, as the check-entry anchor finds it) asserting `CanUseComponent<Marker, ()>`,
+  where the marker's consumer trait takes parameters. The parameters the help names are the `Params`
+  of each `IsProviderFor` impl whose component and context unify with the check's, fully resolved
+  and not `()`, each kept only when `Context: CanUseComponent<Marker, Params>` holds in the check
+  impl's own environment; with none, the detector declines. The help writes them in the form of the
+  macro the check trait comes from (`#[check_params(…)]` for a `delegate_and_check_components!`
+  table, read from the trait definition's macro backtrace, and `Component: Params` otherwise).
+  rustc's notes and its `where` suggestion are dropped, and the caret stays on the entry. The
+  detector runs before the typed resolver, which declines the unit-parameter obligation and leaves
+  rustc's error, or its `[CGP-E002]` text rewrite, in place.
 - **A `for` loop whose key skips its variable** (`[CGP-E017]`): an `E0207` on a parameter of a
   loop-generated `DelegateComponent` entry (or its `IsProviderFor` twin) whose namespace bound's
   variable the key does not mention.
@@ -760,20 +772,24 @@ and worded by the rustc-free `plan_structural_mistake` and `structural_mistake_h
   value, or nothing.
 
 The three `E0207` shapes drop rustc's suggestions, which remove the parameter or add it to the
-context, and keep the caret on the parameter alone. One mistake can produce several errors (a loop's
-two variables, or an entry's parameters, each in every impl the entry lowers to), so the emitter
-reports each recovered mistake once and drops the rest. The `E0207` detectors print a type by its
-own name rather than through the trimmed-paths map: an `E0207` is emitted before any type has been
-printed with trimmed paths, and the first such print records itself on the diagnostic context, whose
-lock the emitter holds ([rustc diagnostic internals](rustc-diagnostic-internals.md)). The fixtures
-under
+context, and keep the caret on the parameter alone; `[CGP-E060]` does the same with the entry. One
+mistake can produce several errors (a loop's two variables, or an entry's parameters, each in every
+impl the entry lowers to), so the emitter reports each recovered mistake once and drops the rest.
+The `E0207` detectors print a type by its own name rather than through the trimmed-paths map: an
+`E0207` is emitted before any type has been printed with trimmed paths, and the first such print
+records itself on the diagnostic context, whose lock the emitter holds
+([rustc diagnostic internals](rustc-diagnostic-internals.md)). The fixtures under
 [`wiring/conflicting-wiring/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/wiring/conflicting-wiring)
 (`check_duplicate_entry`, `check_twice_same_context`, and their siblings) and
 [`wiring/unconstrained-generic/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/wiring/unconstrained-generic)
 (`for_loop_key_without_var`, `default_impl_generic_provider`, `default_impl_explicit_context`,
 `unconstrained_generic`, `entry_generic_shapes`, `entry_generic_checked`, and
 `namespace_entry_generic`) pin the shapes, and `default_impl_generic_provider_struct` pins a
-`#[default_impl]` that no detector claims.
+`#[default_impl]` that no detector claims. The check at unit parameters is pinned under
+[`checks/check-trait-failure/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/checks/check-trait-failure)
+by `generic_component_unit_params` and `check_trait_named_as_wrapper` (in
+`delegate_and_check_components!`, a component with a type parameter and a generic key) and
+`generic_check_without_params` (in `check_components!`).
 
 A doubled `#[prefix]` is not among them: its two namespace registrations collide as a duplicate
 redirect, `[CGP-E014]`, which the [duplicate-key reshape](#reshaping-a-duplicate-key-conflict)

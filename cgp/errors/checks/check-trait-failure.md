@@ -186,6 +186,55 @@ because the pairing became a stated claim, and a stated claim is one a check can
 to reconcile them: wire `Db` to the engine the field holds, or change the field to the engine the
 wiring names.
 
+## When a check names no parameters
+
+A fourth sub-case fails although nothing is missing: the check asks the wrong question. A component
+whose consumer trait takes type parameters (`CanCalculateArea<Shape>`) is checked at the parameters
+its entry names, and an entry that names none, in
+[`check_components!`](../../reference/macros/check_components.md) or
+[`delegate_and_check_components!`](../../reference/macros/delegate_and_check_components.md), is
+checked at the **unit parameters** `()`. A provider written for particular parameters does not serve
+`()`, so the check fails even though the context uses the component correctly at the parameters it
+actually needs:
+
+```rust
+#[cgp_component(AreaCalculator)]
+pub trait CanCalculateArea<Shape> {
+    fn area(&self, shape: &Shape) -> f64;
+}
+
+pub struct Rectangle {
+    pub width: f64,
+    pub height: f64,
+}
+
+#[cgp_impl(new RectangleArea)]
+impl AreaCalculator<Rectangle> {
+    fn area(&self, shape: &Rectangle) -> f64 {
+        shape.width * shape.height
+    }
+}
+
+pub struct App;
+
+delegate_and_check_components! {
+    App {
+        AreaCalculatorComponent: RectangleArea, // checked at `()`, not at `Rectangle`
+    }
+}
+```
+
+The raw output reads like a broken provider: an `E0277`
+`` the trait bound `RectangleArea: IsProviderFor<AreaCalculatorComponent, App>` is not satisfied ``,
+its caret on the entry. The only clue is the near-impl hint, which says the trait is implemented for
+`IsProviderFor<AreaCalculatorComponent, App, Rectangle>` but not for `()` ("expected `Rectangle`,
+found `()`"). A key whose marker carries the trait's own parameter
+(`<I> FooKeyComponent<I>: AnyFoo`) fails the same way, with no near-impl hint at all and a `help:`
+that splices a `where` clause into the entry, which does not compile. The fix is to name the
+parameters: `#[check_params(Rectangle)]` on a `delegate_and_check_components!` entry,
+`AreaCalculatorComponent: Rectangle` in `check_components!`, and `#[check_params(I)]` for the
+generic key.
+
 ## How cargo-cgp presents it
 
 `cargo-cgp` recognizes this class and leads with the cause. It keeps the `E0277` code but rewrites
@@ -230,6 +279,16 @@ are read alike, and a `help` names the wiring entry to change
 (`` wire `ScalarTypeProviderComponent` to `UseType<f64>` ``), recovered from the trait rather than
 guessed. Because one abstract type is shared, the cascade this class produces is also coalesced:
 every consumer that fails through it is listed in one block over a single root-cause tree.
+
+A [check that names no parameters](#when-a-check-names-no-parameters) is reported as what it is,
+with no tree:
+``[CGP-E060] the check of `AreaCalculatorComponent` on `App` names no parameters, so it checks the component at the unit parameters `()` ``,
+its caret on the entry and rustc's notes and `where` suggestion dropped, and a `help` naming the
+parameters to check, written for the macro the entry is in:
+``check it at the parameters its provider implements: `#[check_params(Rectangle)]` `` (or
+`` `AreaCalculatorComponent: Rectangle` `` in `check_components!`). The parameters are the ones a
+provider of the component implements for the context, kept only where the context passes the check;
+when none qualifies, the error keeps its ordinary reshaping.
 
 ## Resolving it
 
@@ -288,6 +347,17 @@ reduce to the same `[CGP-E001]` headline and `root cause:` tree.
   [`empty_field_struct`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/empty_field_struct.rs),
   [`underived_and_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/underived_and_missing_field.rs))
   pin the coalescing and the mixed missing-plus-underived case.
+- [`checks/check-trait-failure/checks/generic_component_unit_params.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/checks/generic_component_unit_params.rs):
+  a [check that names no parameters](#when-a-check-names-no-parameters) in
+  `delegate_and_check_components!`; its `.rust.stderr` pins the provider-shaped `E0277` with the
+  "expected `Rectangle`, found `()`" hint, and its `.cgp.stderr` the `[CGP-E060]` block whose help
+  names `#[check_params(Rectangle)]`.
+- [`checks/check-trait-failure/providers/generic_check_without_params.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/generic_check_without_params.rs):
+  the same in `check_components!`, whose help names `AreaCalculatorComponent: Square`.
+- [`checks/check-trait-failure/checks/check_trait_named_as_wrapper.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/checks/check_trait_named_as_wrapper.rs):
+  a generic key, `<I> FooKeyComponent<I>: AnyFoo`, checked at unit parameters; its `.rust.stderr`
+  pins the spliced `where` suggestion, and its `.cgp.stderr` the `[CGP-E060]` block naming
+  `#[check_params(I)]`.
 
 ## Related
 

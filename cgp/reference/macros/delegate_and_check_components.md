@@ -147,7 +147,9 @@ the parameter passes that check vacuously, proving nothing about the values the 
 provider written for particular values fails it, with an `E0277` on
 `RectangleArea: IsProviderFor<AreaCalculatorComponent, MyApp>` that reads like a broken provider.
 Only a help line hints at the cause, noting that the marker is implemented for `Rectangle` but not
-for `()`.
+for `()`. The error catalog records both shapes as a
+[check that names no parameters](../../errors/checks/check-trait-failure.md#when-a-check-names-no-parameters),
+which `cargo-cgp` reports with the `#[check_params(...)]` to write.
 
 ### Which forms are checked
 

@@ -81,8 +81,11 @@ A component with generic parameters listed without a value is checked at unit pa
 the component with `()` in place of each parameter. A provider generic over every value passes that
 vacuously, and a provider written for particular values fails with
 `RectangleArea: IsProviderFor<AreaCalculatorComponent, MyApp>` not satisfied, where only a help line
-notes that the marker is implemented for `Rectangle` but not for `()`. Listing the same check twice,
-directly or through a bracketed list, emits two identical impls and fails with `E0119`.
+notes that the marker is implemented for `Rectangle` but not for `()`. The error catalog records it
+as a
+[check that names no parameters](../../errors/checks/check-trait-failure.md#when-a-check-names-no-parameters),
+which `cargo-cgp` reports with the parameters to list. Listing the same check twice, directly or
+through a bracketed list, emits two identical impls and fails with `E0119`.
 
 ### Attributes
 

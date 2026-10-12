@@ -114,8 +114,9 @@ anchor is tried *before* the wrapper-chain and use-site ones, and it fires only 
 impl on any other foreign type or on a provider struct carries no consumer supertrait on a context
 and is skipped. So is a `check_components!` check impl, whose generated trait carries
 `CanUseComponent` as its supertrait: it belongs to the check-entry anchor, and heading a tree with
-it would present the generated `__CanUseApp` as a trait the programmer wrote
-([`check_trait_named_as_wrapper`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/checks/check_trait_named_as_wrapper.rs)).
+it would present the generated `__CanUseApp` as a trait the programmer wrote. No fixture depends on
+the skip: the check entries the check-entry anchor declines, ones checked at unit parameters, are
+reported as a [structural mistake](driver.md#reshaping-a-structural-mistake) before any anchor runs.
 
 **From a foreign wrapper chain.** The routing glue can put the failure one level further out: a
 hand-written `impl Trait for Foreign` block whose `Self` is a foreign type holding the context,

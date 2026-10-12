@@ -50,9 +50,9 @@ implied.
 
 ## Codes
 
-The headline codes come in six family blocks of ten; a family that outgrows its block takes the next
-free one. Five blocks hold codes today, and one is reserved for a class the tool does not reshape
-yet:
+The headline codes come in seven family blocks of ten; a family that outgrows its block takes the
+next free one. Six blocks hold codes today, and one is reserved for a class the tool does not
+reshape yet:
 
 | Block | Family | Codes |
 | --- | --- | --- |
@@ -62,6 +62,7 @@ yet:
 | `CGP-E030` to `CGP-E039` | mistakes in what a macro was given | `E030` to `E038` |
 | `CGP-E040` to `CGP-E049` | wiring keys and values that do not resolve | `E040` to `E043` |
 | `CGP-E050` to `CGP-E059` | extensible data | none yet |
+| `CGP-E060` to `CGP-E069` | structural mistakes, continued | `E060` |
 
 The families differ in how the tool recovers them. The **trait-failure** codes `CGP-E001` to
 `CGP-E005` come from the typed resolver; each carries the root cause in the accompanying `note`,
@@ -78,12 +79,14 @@ each rewrites the `E0119` into a distinct message form with its own fix. The **s
 (a check table listing an entry twice, two check tables sharing a check-trait name, a `for` loop
 whose key skips its variable, a `#[default_impl]` on a generic impl, a wiring entry whose key skips
 its generic parameters), each recovered off the compiler from the generated items the `E0119`,
-`E0428`, or `E0207` lands on, with its fix in a `help`. The **never-resolving and orphan** codes
-`CGP-E020` to `CGP-E022` each rewrite a whole-program error into a CGP-framed one carrying its fix
-in a `help`. `CGP-E020` and `CGP-E021` rewrite the `E0275` overflow of a wiring lookup that never
-ends, which has no terminal leaf to descend to, split by how the tool's walk of the lookup is cut:
-an obligation met again is a cycle (`CGP-E020`), and the depth limit reached without a repeat is a
-lookup that grows (`CGP-E021`). `CGP-E022` rewrites an orphan-rule namespace registration's
+`E0428`, or `E0207` lands on, with its fix in a `help`. The family outgrew its block, so `CGP-E060`,
+a check entry that names no parameters for a component that takes some, continues it in the next
+free block, recovered from the check impl the `E0277` lands on. The **never-resolving and orphan**
+codes `CGP-E020` to `CGP-E022` each rewrite a whole-program error into a CGP-framed one carrying its
+fix in a `help`. `CGP-E020` and `CGP-E021` rewrite the `E0275` overflow of a wiring lookup that
+never ends, which has no terminal leaf to descend to, split by how the tool's walk of the lookup is
+cut: an obligation met again is a cycle (`CGP-E020`), and the depth limit reached without a repeat
+is a lookup that grows (`CGP-E021`). `CGP-E022` rewrites an orphan-rule namespace registration's
 `E0210`/`E0117` (recovered from the offending impl off the compiler, like the `E0119` family). The
 **macro-mistake** codes `CGP-E030` to `CGP-E037` are each recovered off the compiler from the
 generated item the failing token sits in and reworded with the fix in a `help`. Four concern an
@@ -142,9 +145,9 @@ fix, and the [CGP error catalog](../cgp/errors/README.md) class it recognizes.
   the trait its anchor recovered, even when rustc's own headline stops on a provider's
   `IsProviderFor` bound (a dispatch combinator, a `RedirectLookup`, or a provider deep in the
   chain): such a block is `CGP-E001` or `CGP-E003`. A failure the resolver declines has no anchor,
-  so the text rewrite restates an `IsProviderFor` headline in the provider form under this code,
-  and keeps rustc's notes in place of a root-cause tree
-  ([`generic_check_without_params`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/generic_check_without_params.rs)).
+  so the text rewrite restates an `IsProviderFor` headline in the provider form under this code, and
+  keeps rustc's notes in place of a root-cause tree
+  ([`provider_impl_without_macro`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/provider_impl_without_macro.rs)).
 - **Fix:** follow the `root cause:` note(s) to the dependency the provider is missing.
 - **Upstream class:** [check-trait failure](../cgp/errors/checks/check-trait-failure.md) (its
   provider-side face).
@@ -312,15 +315,15 @@ named by its parameter (`@ComputerComponent.Code.u64`) and a type segment with i
   registrations carry the attribute's span, so both carets cover `#[cgp_component]`. **Fix:** keep a
   single redirect.
 
-### `CGP-E015`–`CGP-E019`: structural mistakes
+### `CGP-E015`–`CGP-E019` and `CGP-E060`: structural mistakes
 
-These five codes name a mistake in the shape of what `check_components!`, `delegate_components!`,
-`cgp_namespace!`, or `#[default_impl]` was given, which the compiler rejects through the items the
-macro generated. The raw errors name those items (`__CheckApp`, an impl's type parameter) and carry
-suggestions that do not fix the program, so each rewrite names the mistake in the terms the program
-wrote and puts the fix in a `help`. The driver recognizes each from the generated items at the caret
-(`resolve::structural`), and the rustc-free `plan_structural_mistake` and `structural_mistake_help`
-word them.
+These six codes name a mistake in the shape of what `check_components!`,
+`delegate_and_check_components!`, `delegate_components!`, `cgp_namespace!`, or `#[default_impl]` was
+given, which the compiler rejects through the items the macro generated. The raw errors name those
+items (`__CheckApp`, an impl's type parameter) and carry suggestions that do not fix the program, so
+each rewrite names the mistake in the terms the program wrote and puts the fix in a `help`. The
+driver recognizes each from the generated items at the caret (`resolve::structural`), and the
+rustc-free `plan_structural_mistake` and `structural_mistake_help` word them.
 
 - **`CGP-E015`: a check entry listed twice.**
   `` [CGP-E015] `check_components!` checks `<entry>` twice for `<Context>` ``, the entry written as
@@ -364,10 +367,29 @@ word them.
   ([`unconstrained_generic`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/unconstrained_generic.rs),
   [`entry_generic_shapes`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/entry_generic_shapes.rs)).
 
+- **`CGP-E060`: a check entry that names no parameters for a component that takes some.**
+  `` [CGP-E060] the check of `<entry>` on `<Context>` names no parameters, so it checks the component at the unit parameters `()` ``,
+  from the `E0277` on the check impl of a `check_components!` or `delegate_and_check_components!`
+  entry whose parameters are `()` while the component's consumer trait takes parameters, either its
+  own (`CanCalculateArea<Shape>`) or one its key's marker carries (`<I> FooKeyComponent<I>`). rustc
+  reports it as a provider that does not implement `IsProviderFor`, with a `where` suggestion
+  spliced into the entry for a generic key; both are dropped and the caret stays on the entry.
+  **Fix (in the `help`):**
+  `` check it at the parameters its provider implements: `#[check_params(<P>)]` `` for
+  `delegate_and_check_components!`, or `` `<entry>: <P>` `` (`` `<entry>: [<P1>, <P2>]` `` for
+  several) for `check_components!`. The parameters are those of the component's provider impls for
+  the context, each kept only when the context passes the check at it; without one, the error is not
+  reworded this way
+  ([`generic_component_unit_params`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/checks/generic_component_unit_params.rs),
+  [`generic_check_without_params`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/generic_check_without_params.rs),
+  [`check_trait_named_as_wrapper`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/checks/check_trait_named_as_wrapper.rs)).
+
 The structural codes report a mistake once, however many errors rustc gives for it. The upstream
 classes are [conflicting wiring](../cgp/errors/wiring/conflicting-wiring.md) for `CGP-E015` and
-`CGP-E016`, and [unconstrained generic](../cgp/errors/wiring/unconstrained-generic.md) for
-`CGP-E017` to `CGP-E019`.
+`CGP-E016`, [unconstrained generic](../cgp/errors/wiring/unconstrained-generic.md) for `CGP-E017` to
+`CGP-E019`, and
+[check-trait failure](../cgp/errors/checks/check-trait-failure.md#when-a-check-names-no-parameters)
+for `CGP-E060`.
 
 ### `CGP-E020`: wiring that leads back to itself
 
@@ -972,7 +994,7 @@ over the `WiringOverflow` the driver's walk recovers, the typed check-failure fo
 by
 [`plan_wiring_conflict`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/wiring.rs)
 (fed from the conflict the driver's `resolve::conflict` classifier recovers, one code per
-`WiringConflict` shape), the `CGP-E015`–`CGP-E019` structural forms by
+`WiringConflict` shape), the `CGP-E015`–`CGP-E019` and `CGP-E060` structural forms by
 [`plan_structural_mistake`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/structural.rs)
 (fed from the `StructuralMistake` the driver's `resolve::structural` detectors recover), and the
 `CGP-E022` orphan form by
@@ -984,8 +1006,8 @@ module (`plan_undeclared_trait`, `plan_missing_use_provider`, `plan_cgp_impl_mis
 `plan_unimported_abstract_type`, `plan_undeclared_requirement`, and `plan_provider_trait_in_uses`),
 fed from the matching detectors in the driver's `resolve` module, and the `CGP-E038` and
 `CGP-E040`–`CGP-E043` wiring-name forms come from `plan_unresolved_wiring_name` in the same module,
-fed from the driver's `resolve::wiring_name` detectors. The `CGP-E1xx`
-dependency-tree entry codes are stamped when a node renders: the inner chain nodes by the structured
+fed from the driver's `resolve::wiring_name` detectors. The `CGP-E1xx` dependency-tree entry codes
+are stamped when a node renders: the inner chain nodes by the structured
 [`DepNode`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/node.rs)
 variants (the driver's
 [`resolve::label`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/label)

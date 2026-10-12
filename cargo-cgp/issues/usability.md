@@ -78,14 +78,17 @@ fixture that pins it.
 - **Structural mistakes** in a check table or a wiring entry carry codes of their own: a check entry
   listed twice is `[CGP-E015]`, two check tables sharing a check-trait name `[CGP-E016]`, a `for`
   loop whose key skips its variable `[CGP-E017]` (one block for rustc's three `E0207`s), a
-  `#[default_impl]` on a generic provider impl `[CGP-E018]`, and a wiring or namespace entry whose
-  key skips its generic parameters `[CGP-E019]` (one block for rustc's `E0207` per parameter and
-  impl, whose two suggestions do not compile), each with its fix in a `help`
+  `#[default_impl]` on a generic provider impl `[CGP-E018]`, a wiring or namespace entry whose key
+  skips its generic parameters `[CGP-E019]` (one block for rustc's `E0207` per parameter and impl,
+  whose two suggestions do not compile), and a check entry that names no parameters for a component
+  that takes some `[CGP-E060]` (in place of an `E0277` that reads like a broken provider), each with
+  its fix in a `help`
   ([`check_duplicate_entry`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/check_duplicate_entry.rs),
   [`check_twice_same_context`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/check_twice_same_context.rs),
   [`for_loop_key_without_var`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/for_loop_key_without_var.rs),
   [`default_impl_generic_provider`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/default_impl_generic_provider.rs),
-  [`unconstrained_generic`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/unconstrained_generic.rs)).
+  [`unconstrained_generic`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/unconstrained_generic.rs),
+  [`generic_component_unit_params`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/checks/generic_component_unit_params.rs)).
 - **A cross-context dependency** (one context's wiring depending on a *concrete* other context, so
   one obligation appears in two contexts' trees) resolves on both sides. A provider's own
   `where Inner: CanCompute` clause is recovered as that consumer obligation, de-duplicating into
@@ -377,9 +380,8 @@ Many construct mistakes reach the reader as rustc wrote them, or reshaped withou
 names the fix. The cause is in the output, but the reader must know the construct to act on it.
 The fixtures group by construct:
 
-- **Wiring checks, conflicts, and cycles:** a bundle checked as a context, a cycle reached by a
-  call, and a generic key in `delegate_and_check_components!` checked at unit parameters without
-  `#[check_params(...)]` (`check_trait_named_as_wrapper`).
+- **Wiring checks, conflicts, and cycles:** a bundle checked as a context, and a cycle reached by a
+  call.
 - **Namespaces:** a self-inheriting namespace.
 - **Lowering:** `Self::CONST` rewritten to the context (`cgp_impl_self_const`); a bare `Error`
   without `#[use_type]` that no requirement of the component explains, whose `E0425` suggests
@@ -387,9 +389,9 @@ The fixtures group by construct:
   `Self::Error` where two abstract-type traits declare an `Error` (`self_error_two_traits`); and
   `#[uses]` on a component, where `#[extend]` belongs, with rustc's `#[used]` suggestion
   (`uses_on_component`).
-- **Providers, fields, and types:** getters wired to the wrong provider, a generic check without its
-  parameter, `UseDelegate` without `#[derive_delegate]`, a provider impl without `#[cgp_provider]`,
-  a tuple-struct context, a field read as two types, and a borrowed error detail.
+- **Providers, fields, and types:** getters wired to the wrong provider, `UseDelegate` without
+  `#[derive_delegate]`, a provider impl without `#[cgp_provider]`, a tuple-struct context, a field
+  read as two types, and a borrowed error detail.
 - **Handlers:** promotions of hand-written providers, a matcher wired as a handler or applied to a
   struct, a monadic pipeline over plain values, and matchers or builders missing an arm or a field.
 - **Use sites:** calls the resolver declines, leaking `IsProviderFor` or rustc's method-probe
