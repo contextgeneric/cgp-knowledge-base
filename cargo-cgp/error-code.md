@@ -276,8 +276,8 @@ named by its parameter (`@ComputerComponent.Code.u64`) and a type segment with i
   `` wire the provider `<Provider>` with the key `<path>` ``. A redirect looks a component up with
   its type parameters appended to the path, so for a generic component the key takes a generic
   segment per parameter, `` <path>.<<Param>> <Param> ``, which serves every value the direct entry
-  served
-  (`` wire the provider `UseDelegate<AreaTable>` with the key `@AreaCalculatorComponent.<Shape> Shape` ``).
+  served:
+  `` wire the provider `UseDelegate<AreaTable>` with the key `@AreaCalculatorComponent.<Shape> Shape` ``.
   The `help` is omitted when the direct entry names no provider a reader wrote. **Fix:** wire the
   entry's provider under the redirected path rather than the bare key.
 - **`CGP-E014`: duplicate redirect.**
