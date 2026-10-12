@@ -295,20 +295,22 @@ real traits.
 
 `transform_resolved` then mutates rustc's `DiagInner`: with a header it replaces the main message
 and collapses the span to the primary caret (the original labels restate the replaced message), and
-with `None` it leaves the header, labels, and caret alone. Either way it replaces the children with
-the plan's `help`s (one per distinct type that must derive `#[derive(HasField)]`, or the `Deref`
-target, plus one per abstract-type mismatch naming the wiring entry to change; a field-type mismatch
-contributes none) and the plan's single note, opening with its `root cause:` lead (or `root causes:`
-list, when the causes bottom out on different leaves) over
+with `None` it leaves the header, labels, and caret alone. Either way the children become the plan's
+single note followed by its `help`s, so each fix follows the cause it repairs: `transform_resolved`
+sets the `help`s, and the flush inserts the rendered note ahead of them. The note opens with its
+`root cause:` lead (or `root causes:` list, when the causes bottom out on different leaves) over
 `this is required through the dependency chain:` and the graph beneath (the lead omitted when the
-kept header or a mismatch header already states the leaf). rustc's structured suggestions are
-discarded with its notes, the diagnostic's Rust code is never touched, and a provider with two
-absent dependencies sharing its chain yields one note over a merged tree that branches to both. The
-JSON emitter regenerates every rendered and structured field from the `DiagInner` for free, with
-rustc's note-continuation indentation aligning each tree's box-drawing under its `= note:`. A final
-cross-diagnostic de-duplication (keyed on the recovered cause, the rendered text, or the class
-header) suppresses a transformed diagnostic that re-reports a failure already shown, and the flush
-coalesces the blocks that share a root cause into one (see [The driver](driver.md)).
+kept header or a mismatch header already states the leaf). The `help`s name the fixes: one per
+distinct type that must derive `#[derive(HasField)]`, or the `Deref` target, plus one per
+abstract-type mismatch naming the wiring entry to change; a field-type mismatch contributes none.
+rustc's structured suggestions are discarded with its notes, the diagnostic's Rust code is never
+touched, and a provider with two absent dependencies sharing its chain yields one note over a merged
+tree that branches to both. The JSON emitter regenerates every rendered and structured field from
+the `DiagInner` for free, with rustc's note-continuation indentation aligning each tree's
+box-drawing under its `= note:`. A final cross-diagnostic de-duplication (keyed on the recovered
+cause, the rendered text, or the class header) suppresses a transformed diagnostic that re-reports a
+failure already shown, and the flush coalesces the blocks that share a root cause into one (see
+[The driver](driver.md)).
 
 ## Tests
 

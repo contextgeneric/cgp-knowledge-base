@@ -292,7 +292,7 @@ named by its parameter (`@ComputerComponent.Code.u64`) and a type segment with i
 ### `CGP-E020`: wiring never resolves
 
 - **Message:**
-  `` [CGP-E020] the wiring for the consumer trait `<Consumer>` on context `<Context>` never resolves — the lookup recurses without terminating ``,
+  `` [CGP-E020] the wiring for the consumer trait `<Consumer>` on context `<Context>` never resolves, because the lookup recurses without terminating ``,
   with a `help` naming the usual cause and the two fixes.
 - **Means:** resolving the component's wiring recurses without bottoming out. This almost always
   means the wiring routes the component back to the context itself: a component delegated to

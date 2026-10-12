@@ -138,7 +138,7 @@ serialize that `String`, which leads straight back to `SerializeWithDisplay`. Th
 `cargo cgp check` reshapes the overflow, from the published release and the source build alike:
 
 ```text
-error[E0275]: [CGP-E020] the wiring for the consumer trait `CanSerializeValue<String>` on context `Ctx` never resolves — the lookup recurses without terminating
+error[E0275]: [CGP-E020] the wiring for the consumer trait `CanSerializeValue<String>` on context `Ctx` never resolves, because the lookup recurses without terminating
 ```
 
 Its help line suggests a context wired back to itself, as with `UseContext`, which is the usual

@@ -94,7 +94,7 @@ for `MathExpr`, `Plus<MathExpr>`, and `Times<MathExpr>`, followed by two raw `E0
 the dispatcher:
 
 ```text
-error[E0275]: [CGP-E020] the wiring for the consumer trait `CanCompute<Eval, MathExpr>` on context `Interpreter` never resolves — the lookup recurses without terminating
+error[E0275]: [CGP-E020] the wiring for the consumer trait `CanCompute<Eval, MathExpr>` on context `Interpreter` never resolves, because the lookup recurses without terminating
 ```
 
 The tool's help line points at a component delegated back to the context, as with `UseContext`,

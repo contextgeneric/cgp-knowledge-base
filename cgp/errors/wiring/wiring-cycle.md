@@ -85,7 +85,7 @@ reach for a check when a `UseContext` wiring is suspect.
 
 `cargo-cgp` recognizes the checked overflow and rewrites it into a statement of what actually went
 wrong. It keeps the `E0275` code but replaces the headline with
-``[CGP-E020] the wiring for the consumer trait `CanGreet` on context `Person` never resolves — the lookup recurses without terminating``,
+``[CGP-E020] the wiring for the consumer trait `CanGreet` on context `Person` never resolves, because the lookup recurses without terminating``,
 drops the `Greeter<Person>` / `CanGreet` / `UseContext` / `__CheckPerson` note chain entirely, and
 leaves the caret on the `GreeterComponent` entry inside the check block. A `help:` note names the
 usual cause (a component delegated to `UseContext` with no direct consumer-trait impl) and the two

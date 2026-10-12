@@ -522,23 +522,25 @@ share a root cause**. A group of one emits its own per-entry block unchanged; a 
 emits **one merged block**, its members ordered by source position: a headline stating the shared
 cause (`coalesced_headline`, which takes the first member's class code, and falls back to every
 member's class sentence with the cause count when the causes are mixed), a caret at each failing
-entry, and one root-cause note built by folding every member's paths into a single
-[dependency graph](dependency-graph-rendering.md). Because the members were grouped for *sharing* a
-cause, the union of their causes holds one copy of it per member, so the block folds those copies
-back into one through the rustc-free `Causes::union` before wording anything. Otherwise the same
-mistake would be stated once per member, most visibly as an underived field listed once per consumer
-that reads it. The graph does the merging: when one failing consumer transitively depends on another
-(`CanCalculateDensity` needs `CanCalculateArea`, so its chain *contains* the other's), the contained
-consumer is not a top-level root and the block leads with the subsuming chain; a wrapper's chain
-runs through the consumer it reduces to in the same way; when two consumers are independent but
-share the cause, both chains render, converging at the shared node. An untouched `rustc` error, a
-conflict, or an orphan reshape is buffered as a plain entry and emitted verbatim at its arrival
-position, so global ordering (a CGP block beside an unrelated `E0308`, say) is preserved.
+entry, one root-cause note built by folding every member's paths into a single
+[dependency graph](dependency-graph-rendering.md), and after it the fix `help`s the causes call for.
+Because the members were grouped for *sharing* a cause, the union of their causes holds one copy of
+it per member, so the block folds those copies back into one through the rustc-free `Causes::union`
+before wording anything. Otherwise the same mistake would be stated once per member, most visibly as
+an underived field listed once per consumer that reads it. The graph does the merging: when one
+failing consumer transitively depends on another (`CanCalculateDensity` needs `CanCalculateArea`, so
+its chain *contains* the other's), the contained consumer is not a top-level root and the block
+leads with the subsuming chain; a wrapper's chain runs through the consumer it reduces to in the
+same way; when two consumers are independent but share the cause, both chains render, converging at
+the shared node. An untouched `rustc` error, a conflict, or an orphan reshape is buffered as a plain
+entry and emitted verbatim at its arrival position, so global ordering (a CGP block beside an
+unrelated `E0308`, say) is preserved.
 
 The flush is also where every resolution's `root cause:` note is *rendered*, not merely where the
-coalesced ones are merged, and that is what lets the notes elide against one another. A resolution
-that does not coalesce still buffers its causes rather than its note (a type mismatch, or a kept
-rustc headline over an ordinary bound), because only at flush is the emission order known, and one
+coalesced ones are merged, and that is what lets the notes elide against one another. Each note goes
+ahead of its block's fix `help`s, so a fix follows the cause it repairs. A resolution that does not
+coalesce still buffers its causes rather than its note (a type mismatch, or a kept rustc headline
+over an ordinary bound), because only at flush is the emission order known, and one
 [dependency graph](dependency-graph-rendering.md#eliding-across-blocks) `seen` set threaded through
 the blocks in that order lets a later one `(*)`-truncate at the subtree an earlier one already drew,
 while still ending at the root cause, since the block it points into is one the reader may not have
