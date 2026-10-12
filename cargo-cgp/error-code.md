@@ -567,7 +567,8 @@ They accompany a coded main message or a kept rustc one; the note itself is neve
 
 **Obligation-note renaming** rewrites the `required for … to implement …` chain notes of an
 unresolved (fallback) diagnostic to name the consumer and provider traits instead of the wiring
-traits. The rename runs in the driver;
+traits. A generated parameter such as `__Context__` is never called a context: a provider note
+leaves it out, and a consumer note names it plainly. The rename runs in the driver;
 [`rewrite/message.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/rewrite/message.rs)
 owns the string transform.
 

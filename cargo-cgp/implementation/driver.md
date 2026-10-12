@@ -293,6 +293,10 @@ and `` required for `Rectangle` to implement `CanUseComponent<AreaCalculatorComp
 emits
 `` required for the provider `RectangleArea` to implement the provider trait `AreaCalculator` for the context `Rectangle` ``
 and `` required for the context `Rectangle` to implement the consumer trait `CanCalculateArea` ``.
+A generated parameter in the context's place (`__Context__`, the context a provider impl is generic
+over) is not called a context: the provider note leaves it out
+([`implicit_conflicting_types`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/implicit-arguments/implicit_conflicting_types.rs)),
+and the consumer note names it plainly.
 The primary header is rewritten further, because an unsatisfied wiring bound is an identified CGP
 error class and gains its [CGP error code](../error-code.md):
 `` the trait bound `Rectangle: CanUseComponent<AreaCalculatorComponent>` is not satisfied `` becomes
