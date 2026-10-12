@@ -73,7 +73,7 @@ value the user exported, so a wrapper of the user's own given through that varia
 under the tool. It says so on stderr when it replaces one:
 
 ```text
-cargo-cgp: warning: RUSTC_WORKSPACE_WRAPPER is set to `/usr/local/bin/my-wrapper`; cargo-cgp replaces it with its driver for this run, so that wrapper does not run
+warning: RUSTC_WORKSPACE_WRAPPER is set to `/usr/local/bin/my-wrapper`; cargo-cgp replaces it with its driver for this run, so that wrapper does not run
 ```
 
 A user's `RUSTC_WRAPPER`, such as `sccache`, does compose with the driver: cargo runs the wrapper
@@ -197,13 +197,13 @@ profile) and the editor was launched from a desktop launcher.
 A failing command surfaces as a Rust Analyzer warning (`window/showMessage`, type 2) reading
 `cargo check failed to start: Cargo watcher failed, the command produced no valid metadata (…)`
 followed by the command's stderr. A preflight failure therefore arrives with the front end's own
-message and its "Run `cargo cgp setup`", and a missing tool arrives as cargo's `no such command` error
-naming `cgp`. The full integration notes, including why Rust Analyzer's own
+message and its `` help: run `cargo cgp setup` `` line, and a missing tool arrives as cargo's
+`no such command` error naming `cgp`. The full integration notes, including why Rust Analyzer's own
 wrapper does not collide with the tool's, are in
 [Rust Analyzer integration](../implementation/distribution.md#rust-analyzer-integration). The public
-page is [Editor integration](https://contextgeneric.dev/docs/cargo-cgp/editor-integration); its probe,
-an LSP client that drives the server this way, is `reports/probes/cargo-cgp-editor/` in the workspace
-root.
+page is [Editor integration](https://contextgeneric.dev/docs/cargo-cgp/editor-integration); its
+probe, an LSP client that drives the server this way, is `reports/probes/cargo-cgp-editor/` in the
+workspace root.
 
 ## Running on a project outside this repository
 

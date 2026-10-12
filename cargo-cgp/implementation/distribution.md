@@ -304,9 +304,10 @@ running version's channel allows** and skips out early when there is not. It rea
 sparse index for the front-end crate (`https://index.crates.io/ca/rg/cargo-cgp`, one JSON line per
 published version), enumerates every non-yanked version, and picks the highest allowed one: a stable
 install considers only stable candidates, while a pre-release install considers every candidate,
-pre-release or stable, so it can reach the release it previewed. If that highest in-channel version is **not strictly newer**,
-`update` prints "already up to date (v<current>)" and exits without invoking `cargo install`,
-rustup, or `setup`; only a strictly newer one triggers the reinstall.
+pre-release or stable, so it can reach the release it previewed. If that highest in-channel version
+is **not strictly newer**, `update` prints `note: cargo-cgp v<current> is already up to date` and
+exits without invoking `cargo install`, rustup, or `setup`; only a strictly newer one triggers the
+reinstall.
 
 Keeping a stable install on stable releases is why `update` enumerates all versions rather than
 asking cargo for the single "latest". Both `cargo search` and `cargo info` report only a crate's *max version*, which
@@ -722,8 +723,9 @@ UI suite exercises the managed/unmanaged wiring end to end.
   baked-in `PINNED_TOOLCHAIN` equals the channel in
   [`rust-toolchain.toml`](https://github.com/contextgeneric/cargo-cgp/blob/main/rust-toolchain.toml);
   `failure_message` for each failure: the driver's path and origin in every driver message, the
-  loader's and rustup's reasons kept, the queried toolchain named in a compiler mismatch, and a
-  missing rustup naming rustup and the Nix flake instead of `setup`; `judge_driver_answer`, the
+  loader's and rustup's reasons kept, the queried toolchain named in a compiler mismatch, each
+  repairable failure ending in a `help` naming `setup`, and a missing rustup's `help` naming rustup
+  and the Nix flake instead; `judge_driver_answer`, the
   verdict on a driver that ran, failed, or printed another shape; and `toolchain_failure`, the
   failure each toolchain-query error stands for.
 - [`crates/cargo-cgp/tests/front_end/driver_path.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/driver_path.rs):

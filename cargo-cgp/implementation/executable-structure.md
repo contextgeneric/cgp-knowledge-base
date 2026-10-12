@@ -88,6 +88,17 @@ When a signal ends `cargo`, it has no exit code, so on Unix the front-end exits 
 signal number, as a shell reports it: 143 when `cargo` alone is sent `SIGTERM`. The
 [error pipeline](error-pipeline.md) documents where the transforms happen.
 
+The front-end's own messages take cargo's forms on stderr, so they read as part of cargo's output.
+An error it stops on prints as `error:` and its message, then each underlying cause under a
+`Caused by:` of its own; a fix is a `help:` line; a warning, such as for a replaced wrapper, is a
+`warning:`; and `setup` and `update` report progress as cargo's right-aligned status lines
+(`Installing`, `Updating`, `Finished`). When a message quotes another program's output, such as
+rustup's reason a toolchain is missing or the loader's reason the driver could not run, the quote is
+indented two spaces, so its own `error:` lines read as part of the quote. A failed command reports
+its status as cargo does, `(exit status: 1)`. The help and version texts go to stdout, as cargo's
+do. The forms live in
+[`report`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/report.rs).
+
 ## Wrapping rustc: the driver
 
 Cargo invokes the driver the way `RUSTC_WORKSPACE_WRAPPER` prescribes: the wrapper name, then the
@@ -230,8 +241,12 @@ argument and rewrite tests are listed in the [driver deep dive](driver.md#tests)
   installs and needs.
 - [`crates/cargo-cgp/tests/front_end/sysroot.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/sysroot.rs):
   `format_stderr`, which appends a failed sysroot probe's stderr (a loader failure, empty output,
-  non-UTF-8 bytes) to its error message, and `sysroot_command`, which queries a forced toolchain
-  through `rustup run` and otherwise asks the ambient compiler.
+  non-UTF-8 bytes) to its error message as an indented quote, and `sysroot_command`, which queries
+  a forced toolchain through `rustup run` and otherwise asks the ambient compiler.
+- [`crates/cargo-cgp/tests/front_end/report.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/report.rs):
+  the message forms: an error with each cause under its own `Caused by:`, a cause of several lines
+  indented line by line, another program's output quoted as an indented block, the `warning:` and
+  status-line shapes, and the shared `help` lines.
 
 ## Source
 
@@ -262,6 +277,9 @@ The front-end's modules are listed here; the driver's are in the
   the read-only pre-check of the driver and toolchain (see [Distribution](distribution.md)).
 - [`crates/cargo-cgp/src/launch/sysroot.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/sysroot.rs):
   discovers the toolchain sysroot, optionally under a forced toolchain.
+- [`crates/cargo-cgp/src/report.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/report.rs):
+  the cargo-style forms of the front-end's own messages: the error report with its causes, the
+  warning, the status line, the quoted output, and the shared `help` lines.
 - [`crates/cargo-cgp/src/launch/dylib.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/dylib.rs):
   the OS dynamic-library search path.
 - [`crates/cargo-cgp/src/toolchain.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/toolchain.rs),

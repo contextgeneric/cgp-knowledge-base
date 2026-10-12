@@ -53,12 +53,16 @@ The simplest failures never reach the driver. If you invoke an unknown subcomman
 says so and lists the four it accepts:
 
 ```text
-cargo-cgp: unknown cargo-cgp subcommand `frobnicate` (expected `check`, `expand`, `setup`, or `update`)
+error: no such command: `frobnicate`
+
+help: the commands are `check`, `expand`, `setup`, and `update`
 ```
 
 The fix is to use one of those four. Running the tool with no subcommand at all is not an error: it
 prints the same overview as `cargo cgp --help`. Note that `cargo cgp check` reaches the same
 entrypoint as a direct `cargo-cgp check`: cargo inserts the `cgp` token, which the front-end strips.
+An `` error: no such command: `cgp` `` comes from cargo instead: cargo found no `cargo-cgp` on
+`PATH`, so the tool is not installed or not on this shell's `PATH`.
 
 If the check runs outside a cargo package, the error comes from cargo, not `cargo-cgp`, because the
 front-end forwards to `cargo check`:
@@ -71,13 +75,16 @@ Run the command from inside the package or workspace you mean to check. And if c
 on `PATH`, the front-end reports that while trying to launch the wrapped build:
 
 ```text
-cargo-cgp: failed to run `cargo check` (is cargo on PATH?): No such file or directory (os error 2)
+error: failed to run `cargo check` (is cargo on PATH?)
+
+Caused by:
+  No such file or directory (os error 2)
 ```
 
-The front end prints every error of its own through `{error:#}`, which appends the underlying OS
-error after a colon. This case is hard to reach in practice: the managed preflight runs rustup
-first, so a machine missing cargo usually fails there instead, with the
-`rustup was not found on PATH` message in
+The front end prints its own errors as cargo does: the message after `error:`, then each underlying
+cause, here the operating system's, under a `Caused by:` of its own. This case is hard to reach in
+practice: the managed preflight runs rustup first, so a machine missing cargo usually fails there
+instead, with the `rustup was not found on PATH` message in
 [the preflight section](#the-managed-preflight-rejects-the-setup).
 
 ## The front-end cannot find the driver
@@ -88,9 +95,9 @@ message differs by mode. In **managed** mode the preflight catches it first and 
 `cargo cgp setup`:
 
 ```text
-cargo-cgp: failed to run the cargo-cgp-driver (none is beside cargo-cgp or on PATH): No such file or directory (os error 2)
+error: failed to run the cargo-cgp-driver (none is beside cargo-cgp or on PATH): No such file or directory (os error 2)
 
-Run `cargo cgp setup`.
+help: run `cargo cgp setup`
 ```
 
 In **unmanaged** mode (`CARGO_CGP_NO_MANAGE` set, as on the from-source and Nix paths) there is no
@@ -161,9 +168,9 @@ A Nix-installed tool can fail before it compiles anything, on the query it makes
 toolchain's libraries:
 
 ```text
-cargo-cgp: `/nix/store/…-rust-minimal-1.101.0-nightly-…/bin/rustc --print sysroot` failed with status exit status: 127:
+error: `/nix/store/…-rust-minimal-1.101.0-nightly-…/bin/rustc --print sysroot` failed (exit status: 127):
 
-rustc: error while loading shared libraries: libz.so.1: cannot open shared object file: No such file or directory
+  rustc: error while loading shared libraries: libz.so.1: cannot open shared object file: No such file or directory
 ```
 
 The distinctive part is that the *same command run by hand succeeds*, and that it fails only in some
@@ -200,30 +207,31 @@ sysroot's `lib` for the driver, so the pinned toolchain wins every lookup by con
 ## The managed preflight rejects the setup
 
 Before a managed check, the front-end runs a read-only preflight that verifies the toolchain and the
-driver, and each failure it can repair names `cargo cgp setup` as the fix (the design is in
-[Distribution](../implementation/distribution.md#what-the-preflight-verifies)). The messages tell
-the cases apart, in the order the preflight checks them. Each message about the driver names the
-driver's path and where it was found: from `CARGO_CGP_DRIVER`, beside `cargo-cgp`, or on `PATH`.
+driver, and each failure it can repair ends with a `help` naming `cargo cgp setup` as the fix (the
+design is in [Distribution](../implementation/distribution.md#what-the-preflight-verifies)). The
+messages tell the cases apart, in the order the preflight checks them. Each message about the driver
+names the driver's path and where it was found: from `CARGO_CGP_DRIVER`, beside `cargo-cgp`, or on
+`PATH`.
 
 If the pinned toolchain is not installed, the preflight stops before even reaching the driver and
-shows rustup's own reason:
+quotes rustup's own reason, indented so its `error:` and `help:` lines read as rustup's:
 
 ```text
-cargo-cgp: toolchain `nightly-2026-10-10` is not available:
+error: toolchain `nightly-2026-10-10` is not available:
 
-error: toolchain 'nightly-2026-10-10-x86_64-unknown-linux-gnu' is not installed
-help: run `rustup toolchain install nightly-2026-10-10-x86_64-unknown-linux-gnu` to install it
+  error: toolchain 'nightly-2026-10-10-x86_64-unknown-linux-gnu' is not installed
+  help: run `rustup toolchain install nightly-2026-10-10-x86_64-unknown-linux-gnu` to install it
 
-Run `cargo cgp setup`.
+help: run `cargo cgp setup`
 ```
 
 On a machine with no rustup at all, the preflight says so instead, because it queries the toolchain
 through rustup and `setup` needs rustup too:
 
 ```text
-cargo-cgp: rustup was not found on PATH, and cargo-cgp installs and selects its toolchain `nightly-2026-10-10` through rustup
+error: rustup was not found on PATH, and cargo-cgp installs and selects its toolchain `nightly-2026-10-10` through rustup
 
-Install rustup, or install cargo-cgp through its Nix flake, which needs no rustup.
+help: install rustup, or install cargo-cgp through its Nix flake, which needs no rustup
 ```
 
 The Nix flake's wrapper runs the front end unmanaged and so skips the preflight. The answer comes
@@ -235,26 +243,26 @@ a *different* nightly than the one now installed), the preflight reports the loa
 driver problem, having already confirmed the toolchain exists, and keeps the loader's message:
 
 ```text
-cargo-cgp: the cargo-cgp-driver at /home/user/.cargo/bin/cargo-cgp-driver (beside cargo-cgp) could not run under toolchain `nightly-2026-10-10` (it was likely built against a different nightly):
+error: the cargo-cgp-driver at /home/user/.cargo/bin/cargo-cgp-driver (beside cargo-cgp) could not run under toolchain `nightly-2026-10-10` (it was likely built against a different nightly):
 
-/home/user/.cargo/bin/cargo-cgp-driver: error while loading shared libraries: librustc_driver-1a6e695c833ebcd1.so: cannot open shared object file: No such file or directory
+  /home/user/.cargo/bin/cargo-cgp-driver: error while loading shared libraries: librustc_driver-1a6e695c833ebcd1.so: cannot open shared object file: No such file or directory
 
-Run `cargo cgp setup`.
+help: run `cargo cgp setup`
 ```
 
 If the driver runs but reports a version or a build identity that does not match, the two are out of
 lockstep: a partial upgrade, or a stale binary earlier on `PATH`:
 
 ```text
-cargo-cgp: the cargo-cgp-driver at /home/user/.cargo/bin/cargo-cgp-driver (beside cargo-cgp) is version 0.1.0, but this cargo-cgp is 0.2.0 (the two are out of lockstep)
+error: the cargo-cgp-driver at /home/user/.cargo/bin/cargo-cgp-driver (beside cargo-cgp) is version 0.1.0, but this cargo-cgp is 0.2.0 (the two are out of lockstep)
 
-Run `cargo cgp setup`.
+help: run `cargo cgp setup`
 ```
 
 ```text
-cargo-cgp: the cargo-cgp-driver at /home/user/.cargo/bin/cargo-cgp-driver (beside cargo-cgp) was built against `rustc 1.99.0-nightly (…)`, but toolchain `nightly-2026-10-10` provides `rustc 1.101.0-nightly (…)`
+error: the cargo-cgp-driver at /home/user/.cargo/bin/cargo-cgp-driver (beside cargo-cgp) was built against `rustc 1.99.0-nightly (…)`, but toolchain `nightly-2026-10-10` provides `rustc 1.101.0-nightly (…)`
 
-Run `cargo cgp setup`.
+help: run `cargo cgp setup`
 ```
 
 The toolchain named there is the one the preflight queried, which is the pinned nightly unless
@@ -262,9 +270,9 @@ The toolchain named there is the one the preflight queried, which is the pinned 
 at all (an old or foreign binary on the lookup path) fails the parse instead:
 
 ```text
-cargo-cgp: could not parse the `--version` output of the cargo-cgp-driver at /nix/profile/bin/cargo-cgp-driver (found on PATH, since none is beside cargo-cgp)
+error: could not parse the `--version` output of the cargo-cgp-driver at /nix/profile/bin/cargo-cgp-driver (found on PATH, since none is beside cargo-cgp)
 
-Run `cargo cgp setup`.
+help: run `cargo cgp setup`
 ```
 
 Every one of these but the missing rustup is resolved by `cargo cgp setup`, which reinstalls the
@@ -276,11 +284,13 @@ toolchain-match responsibility is yours, per the section above.
 ## Provisioning fails
 
 `cargo cgp setup` manages toolchains through rustup, so on a machine without rustup it stops plainly
-rather than failing obscurely:
+after its first progress line rather than failing obscurely:
 
 ```text
-cargo-cgp: installing toolchain `nightly-2026-10-10` (with rustc-dev, llvm-tools)…
-cargo-cgp: rustup was not found on PATH; cargo-cgp requires rustup to manage toolchains
+  Installing toolchain `nightly-2026-10-10` with rustc-dev and llvm-tools
+error: rustup was not found on PATH, and `cargo cgp setup` installs the toolchain `nightly-2026-10-10` through rustup
+
+help: install rustup, or install cargo-cgp through its Nix flake, which needs no rustup
 ```
 
 On such a machine, install through the [Nix flake](installation.md#installing-with-nix) instead,
@@ -293,13 +303,14 @@ you see, then read the section for the fix.
 
 | Error fragment | Cause | Section |
 | --- | --- | --- |
-| `unknown cargo-cgp subcommand` | wrong invocation | [The command itself fails](#the-command-itself-fails) |
+| `` no such command: `frobnicate` `` with the four commands listed | wrong invocation | [The command itself fails](#the-command-itself-fails) |
+| `` no such command: `cgp` `` | cargo-cgp not installed, or not on `PATH` | [The command itself fails](#the-command-itself-fails) |
 | `could not find Cargo.toml` | run outside a cargo package | [The command itself fails](#the-command-itself-fails) |
 | `is cargo on PATH?` | cargo not installed / not on `PATH` | [The command itself fails](#the-command-itself-fails) |
 | `failed to run the cargo-cgp-driver …` | driver missing (managed) | [The front-end cannot find the driver](#the-front-end-cannot-find-the-driver) |
 | `could not execute process` … `(never executed)` | driver path wrong (unmanaged) | [The front-end cannot find the driver](#the-front-end-cannot-find-the-driver) |
 | `error while loading shared libraries: librustc_driver-…` | library path unset, or toolchain mismatch | [The driver cannot load the compiler library](#the-driver-cannot-load-the-compiler-library) |
-| `--print sysroot` failed with status `exit status: 127` | Nix install; a same-version rustup toolchain shadows its libraries | [A Nix install fails its sysroot probe](#a-nix-install-fails-its-sysroot-probe-under-cargo-cgp) |
+| `--print sysroot` failed `(exit status: 127)` | Nix install; a same-version rustup toolchain shadows its libraries | [A Nix install fails its sysroot probe](#a-nix-install-fails-its-sysroot-probe-under-cargo-cgp) |
 | `toolchain … is not available` | pinned nightly absent | [The managed preflight rejects the setup](#the-managed-preflight-rejects-the-setup) |
 | `could not run under toolchain …` | driver built against another nightly | [The managed preflight rejects the setup](#the-managed-preflight-rejects-the-setup) |
 | `out of lockstep` / `was built against` | front-end and driver versions/builds differ | [The managed preflight rejects the setup](#the-managed-preflight-rejects-the-setup) |
