@@ -445,7 +445,9 @@ marking.
     for an undeclared dependency
     ([The driver](driver.md#reshaping-an-undeclared-dependency)), and `cgp_impl_misuse.rs` and
     `uses_misuse.rs` for a wrong component half
-    ([The driver](driver.md#reshaping-a-wrong-component-half)). A sibling `cache.rs`
+    ([The driver](driver.md#reshaping-a-wrong-component-half)), and `wiring_name/` reads a wiring
+    entry's names back from the HIR for an unresolved wiring name
+    ([The driver](driver.md#reshaping-an-unresolved-wiring-name)). A sibling `cache.rs`
     memoizes the walk at every node (keyed on the region-erased obligation and context), so a wiring
     failure re-reported at many sites, or a shared trait, is walked once (see
     [Cached dependency resolution](cached-dependency-resolution.md)).

@@ -342,6 +342,8 @@ it stale.
   with no local type (`E0210`/`E0117`).
 - [wiring/unconstrained-generic.md](cgp/errors/wiring/unconstrained-generic.md) — a per-entry generic
   that never reaches the key (`E0207`).
+- [wiring/unresolved-wiring-name.md](cgp/errors/wiring/unresolved-wiring-name.md) — a wiring key or
+  value that names nothing in scope, or a consumer trait as a key (`E0425`, `E0782`).
 - [wiring/wiring-cycle.md](cgp/errors/wiring/wiring-cycle.md) — a delegation that chases its own tail,
   overflowing the solver.
 - [lowering/ill-formed-generated-type.md](cgp/errors/lowering/ill-formed-generated-type.md) — a
@@ -387,6 +389,8 @@ it stale.
   declare.
 - [error_codes/e0599.md](cgp/errors/error_codes/e0599.md) — a method exists but its trait bounds were
   not satisfied.
+- [error_codes/e0782.md](cgp/errors/error_codes/e0782.md) — a trait written bare where a type
+  belongs.
 
 ### `cgp/implementation/`: how the macros are built
 

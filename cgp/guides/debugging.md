@@ -111,9 +111,9 @@ names, which is the whole of [reading the error's shape](#read-the-errors-shape-
 recovered without scrolling. From the headlines alone you know whether you face a dependency error
 (`E0277`/`E0599`), a coherence conflict (`E0119`), a cycle (`E0275`), an orphan violation (`E0210`),
 an unconstrained generic (`E0207`), a name-resolution failure (`E0576`/`E0433`/`E0425`), or a
-mistake in how a CGP definition names its dependencies (`E0107`/`E0220`), and the
-[decoder below](#a-decoder-for-the-errors-you-will-actually-see) says what each means. Pair it with
-the tail of the file (`tail -n 3`), which shows the error count and any
+mistake in how a CGP definition names its dependencies (`E0107`/`E0220`) or a wiring entry its key
+(`E0782`), and the [decoder below](#a-decoder-for-the-errors-you-will-actually-see) says what each
+means. Pair it with the tail of the file (`tail -n 3`), which shows the error count and any
 `the full name for the type has been written to '…long-type-….txt'` note telling you a cause is
 hiding behind an elided `...`.
 
@@ -340,9 +340,12 @@ this as a lookup once you have the error code and the trait it names.
   (`not found in this scope`) names a bare generated identifier, most often a `…Component` marker
   derived from a [`#[cgp_impl]`](../reference/macros/cgp_impl.md) header that names a component's
   *consumer* trait, or a trait that is no component at all, where its *provider* trait belongs (see
-  [Wrong component half](../errors/lowering/wrong-component-half.md)). An `E0425` on a bare `Error`
-  is an abstract type written without its `#[use_type(HasErrorType.Error)]` import, whatever the
-  `help:` says about `std::error::Error` (see
+  [Wrong component half](../errors/lowering/wrong-component-half.md)). An `E0425` whose caret sits
+  on a key or a value inside `delegate_components!` is a wiring name that does not resolve: a
+  component not imported, a key guessed from a trait's name, or a provider never declared (see
+  [Unresolved wiring name](../errors/wiring/unresolved-wiring-name.md)). An `E0425` on a bare
+  `Error` is an abstract type written without its `#[use_type(HasErrorType.Error)]` import, whatever
+  the `help:` says about `std::error::Error` (see
   [Undeclared dependency](../errors/lowering/undeclared-dependency.md)). See also
   [Out-of-scope generated name](../errors/lowering/out-of-scope-generated-name.md) and
   [Unresolved imported abstract type](../errors/lowering/unresolved-imported-type.md).
@@ -352,6 +355,9 @@ this as a lookup once you have the error code and the trait it names.
   `#[cgp_impl]` header or a `#[use_provider]` bound receives one argument too many, and a provider
   trait in `#[uses]` one too few. Name the other half; ignore the `help:` to remove or add generics.
   See [Wrong component half](../errors/lowering/wrong-component-half.md).
+- **`E0782` "expected a type, found a trait" on a `delegate_components!` key**: the key names a
+  consumer trait (`CanGreet`) where its component marker (`GreeterComponent`) belongs; ignore the
+  `dyn` suggestion. See [Unresolved wiring name](../errors/wiring/unresolved-wiring-name.md).
 - **`E0220` "associated type `Error` not found for `__Context__`"**: `Self::Error` (or another
   abstract type) in a CGP definition that does not import it; add
   `#[use_type(HasErrorType.Error)]`. An `E0277` on `__Context__: Trait` "required by a bound in" a

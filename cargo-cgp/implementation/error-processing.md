@@ -70,7 +70,9 @@ from the driver, is what keeps them unit-testable.
   provider does not declare, with a `#[uses]` help and a `#[use_type]` help), and
   `cgp_impl_misuse.rs` (`CgpImplMisuse` for the `[CGP-E032]`–`[CGP-E034]` wrong-half mistakes,
   `ProviderTraitInUses` for the `[CGP-E037]` provider trait in `#[uses]`, and `MissingUseProvider`
-  for the `[CGP-E031]` inner provider never imported, with a generic component's parameters). They
+  for the `[CGP-E031]` inner provider never imported, with a generic component's parameters), and
+  `wiring_name.rs` (`UnresolvedWiringName`, the `[CGP-E038]` and `[CGP-E040]`–`[CGP-E043]` wiring
+  key, value, or provider that does not resolve, with a help only where a fix is known). They
   are documented where the driver detects them, in
   [The driver](driver.md#the-drivers-diagnostic-transformations). `structural.rs` holds
   `StructuralMistake`, the structural mistakes in a check table or a wiring entry the driver's
@@ -406,6 +408,10 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   the `[CGP-E030]` header naming the undeclared trait, and the help naming the `#[uses(…)]` to
   write: with the arguments a generic trait's call fixes, with a parameter the call does not give
   away left for the reader to replace (one or several), and absent when the bound cannot be written.
+- [`crates/cargo-cgp-error-processing/tests/error_processing/wiring_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/wiring_name.rs):
+  the wiring-name wording: a consumer trait as a key, a component not in scope with its import, a
+  guessed key with the real component, an undeclared provider with and without a near miss, and a
+  `#[cgp_impl]` provider never declared.
 - [`crates/cargo-cgp-error-processing/tests/error_processing/unimported.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/unimported.rs):
   the `[CGP-E035]` header naming the abstract type, and the help naming the `#[use_type(…)]` import.
 - [`crates/cargo-cgp-error-processing/tests/error_processing/requirement.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/requirement.rs):
@@ -462,10 +468,10 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   (`similar_name` and `similar_key`, the near-miss rules the fix `help`s use), and `wiring.rs`
   (`WiringConflict`/`WiringKey`, `plan_wiring_conflict` for the `[CGP-E010]`–`[CGP-E014]`
   duplicate-key headers, and `wiring_conflict_help` for the redirect fix), plus `orphan.rs`,
-  `undeclared.rs`, `unimported.rs`, `requirement.rs`, and `cgp_impl_misuse.rs` (the `[CGP-E022]` and
-  `[CGP-E030]`–`[CGP-E037]` reshape models and their wording), and `internal_error.rs` (the note on
-  a diagnostic shown untransformed after a contained panic). See
-  [Typed root-cause resolution](typed-root-cause-resolution.md) and
+  `undeclared.rs`, `unimported.rs`, `requirement.rs`, `cgp_impl_misuse.rs`, and `wiring_name.rs`
+  (the `[CGP-E022]`, `[CGP-E030]`–`[CGP-E038]`, and `[CGP-E040]`–`[CGP-E043]` reshape models and
+  their wording), and `internal_error.rs` (the note on a diagnostic shown untransformed after a
+  contained panic). See [Typed root-cause resolution](typed-root-cause-resolution.md) and
   [The driver](driver.md#reshaping-a-duplicate-key-conflict).
 - [`crates/cargo-cgp-error-processing/src/tree.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/tree.rs):
   the `DependencyTree` type and its `cargo tree`-style renderer, the target the

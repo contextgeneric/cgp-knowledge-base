@@ -74,14 +74,13 @@ error class**, so a fixture moves only when its class changes, never when its me
 class directories mirror the [error catalog](../../cgp/errors/README.md): `checks/`, `hidden/`,
 `lowering/`, and `wiring/`, each holding one directory per class document
 (`checks/check-trait-failure/`, `wiring/orphan-rule/`, and so on). Mistakes the catalog does not yet
-cover sit under `uncataloged/<class>/` (the extensible-data family, wiring keys that do not resolve,
-implicit-argument mistakes, and macro defects), each awaiting a catalog page. The largest class,
-`checks/check-trait-failure/`, keeps concept sub-directories (`fields/`, `providers/`,
-`missing-wiring/`, and the rest) so no directory grows crowded. Three directories hold fixtures that
-belong to no error class: `ok/` for programs that compile clean, `pass-through/` for plain Rust
-errors the tool must render exactly as rustc does, and `robustness/` for how the tool degrades when
-it fails itself, such as a panic in its emitter. Every fixture name is unique across the tree, so a
-fixture can be found by name alone.
+cover sit under `uncataloged/<class>/` (the extensible-data family, implicit-argument mistakes, and
+macro defects), each awaiting a catalog page. The largest class, `checks/check-trait-failure/`,
+keeps concept sub-directories (`fields/`, `providers/`, `missing-wiring/`, and the rest) so no
+directory grows crowded. Three directories hold fixtures that belong to no error class: `ok/` for
+programs that compile clean, `pass-through/` for plain Rust errors the tool must render exactly as
+rustc does, and `robustness/` for how the tool degrades when it fails itself, such as a panic in its
+emitter. Every fixture name is unique across the tree, so a fixture can be found by name alone.
 
 **How well the tool presents a fixture's error is a header field rather than a directory.** Every
 error fixture declares `//@quality: acceptable` (the tool leads with the cause), `usability` (the

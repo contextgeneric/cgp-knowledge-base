@@ -29,8 +29,9 @@ resolver and carry a dependency chain in their notes, led by a `root cause:` lin
 mismatch codes `E004` and `E005`, whose message states the cause; `E010` to `E014` classify a
 duplicate-key `E0119` conflict (no root-cause note, both `rustc` carets kept); `E015` to `E019` name
 a structural mistake in a check table or a wiring entry; `E020` and `E021` reshape the `E0275`
-overflow of a wiring lookup that never ends, and `E022` an orphan-rule coherence error; and `E030`
-to `E037` reword a macro-lowering error, each with its fix in a `help`.
+overflow of a wiring lookup that never ends, and `E022` an orphan-rule coherence error; `E030` to
+`E038` reword a macro-lowering error, each with its fix in a `help`; and `E040` to `E043` reword a
+wiring key or value that does not resolve.
 
 - **CGP-E001**: the consumer trait is not implemented for the context (missing wiring, or an unmet
   transitive dependency).
@@ -74,6 +75,12 @@ to `E037` reword a macro-lowering error, each with its fix in a `help`.
 - **CGP-E036**: a requirement a provider trait places on the context (from its component's
   `#[extend]` or `#[use_type]`) that a `#[cgp_impl]` provider does not declare.
 - **CGP-E037**: a provider trait named in `#[uses]`, where a dependency names its consumer trait.
+- **CGP-E038**: `#[cgp_impl(Provider)]` names a provider struct never declared, where `new` declares
+  it.
+- **CGP-E040**: a consumer trait written as a wiring key, where its component belongs.
+- **CGP-E041**: a component written as a wiring key that exists but is not in scope.
+- **CGP-E042**: a wiring key that names no component, guessed from a consumer trait's name.
+- **CGP-E043**: a provider written as a wiring value that is never declared.
 
 ## Dependency-tree entries: `CGP-E1xx`
 
@@ -112,4 +119,6 @@ example, [check-trait-failure](../checks/check-trait-failure.md) is stamped `[CG
 lookup that grows. The two lowering classes take the macro-mistake block:
 [undeclared dependency](../lowering/undeclared-dependency.md) maps to `[CGP-E030]`, `[CGP-E031]`,
 `[CGP-E035]`, and `[CGP-E036]`, and [wrong component half](../lowering/wrong-component-half.md) to
-`[CGP-E032]` to `[CGP-E034]` and `[CGP-E037]`.
+`[CGP-E032]` to `[CGP-E034]` and `[CGP-E037]`, and
+[unresolved wiring name](../wiring/unresolved-wiring-name.md) takes `[CGP-E038]` and `[CGP-E040]`
+to `[CGP-E043]`.

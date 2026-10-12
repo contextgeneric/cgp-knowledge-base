@@ -94,13 +94,16 @@ which implements two hooks. Its `config` hook installs the diagnostic-rewriting 
 under [Naming the traits behind a component marker](#naming-the-traits-behind-a-component-marker),
 and turns on the session's `trimmed_def_paths` option as rustc's own driver does, so the compiler
 prints a type by its short name wherever that name is unique and not glob-imported
-(`Option<String>`, not `std::option::Option<std::string::String>`). A compiler run through `rustc_driver` leaves the
-option off unless its callbacks set it, and without it every diagnostic the tool leaves alone would
-print paths plain rustc shortens, suggestions included.
-Its `after_expansion` hook serves the driver's *other* mode: when `cargo cgp expand` asked for an
-expansion, it prints the expanded crate and stops the compilation there instead of checking it (see
-[The expand command](expand-command.md)). Aside from the injected flags, that emitter, and that
-second mode, the driver compiles exactly as `rustc` would.
+(`Option<String>`, not `std::option::Option<std::string::String>`). A compiler run through
+`rustc_driver` leaves the option off unless its callbacks set it, and without it every diagnostic
+the tool leaves alone would print paths plain rustc shortens, suggestions included. Its
+`after_expansion` hook, which the compiler calls once name resolution is over, has a job in each of
+the driver's modes. In a check it hands the emitter the `TyCtxt` it needs to reshape the
+name-resolution errors of the crate's wiring entries (see
+[Reshaping an unresolved wiring name](#reshaping-an-unresolved-wiring-name)). When
+`cargo cgp expand` asked for an expansion, it prints the expanded crate and stops the compilation
+there instead of checking it (see [The expand command](expand-command.md)). Aside from the injected
+flags, that emitter, and that second mode, the driver compiles exactly as `rustc` would.
 
 ## Accessing the Rust compiler API
 
@@ -141,8 +144,8 @@ that changes how the compiler *produces* diagnostics, needing no diagnostic pars
 a **custom emitter** that acts on diagnostics the compiler has already *built*, using facts only the
 live compiler holds; this is far more involved than a flag, because it links the compiler's internal
 API to reach the `TyCtxt`. That emitter is where the whole diagnostic layer lives (the front-end
-merely forwards what the driver renders), and it carries eight transformations. Five of them reshape
-a specific compiler error into one coded CGP form: a duplicate-key conflict (`E0119`) is
+merely forwards what the driver renders), and it carries nine transformations. Six of them reshape a
+specific compiler error into one coded CGP form: a duplicate-key conflict (`E0119`) is
 [reshaped into its coded `[CGP-E010]`–`[CGP-E014]` form](#reshaping-a-duplicate-key-conflict), a
 structural mistake in a check table or a wiring entry (an `E0119`, `E0428`, or `E0207` on generated
 items) is [reshaped into its `[CGP-E015]`–`[CGP-E019]` form](#reshaping-a-structural-mistake), an
@@ -152,7 +155,10 @@ dependency a CGP definition uses without declaring it (an `E0599`, `E0220`, `E04
 the generated context or an inner provider) is [reshaped](#reshaping-an-undeclared-dependency) into
 its `[CGP-E030]`, `[CGP-E031]`, `[CGP-E035]`, or `[CGP-E036]` form, and a definition naming the
 wrong half of a component (an `E0107`) is [reshaped](#reshaping-a-wrong-component-half) into its
-`[CGP-E032]`–`[CGP-E034]` or `[CGP-E037]` form. Otherwise the deepest transform, the
+`[CGP-E032]`–`[CGP-E034]` or `[CGP-E037]` form, and a wiring key, value, or provider that names
+nothing, or a consumer trait as a key (an `E0425` or `E0782`), is
+[reshaped](#reshaping-an-unresolved-wiring-name) into its `[CGP-E038]` or `[CGP-E040]`–`[CGP-E043]`
+form. Otherwise the deepest transform, the
 [typed root-cause resolution](typed-root-cause-resolution.md), *replaces* a resolvable wiring
 failure with a root-cause-first diagnostic, covered in its own document; failing that, the in-place
 [trait-renaming rewrite](#naming-the-traits-behind-a-component-marker) described below renames the
@@ -162,9 +168,9 @@ bound) clean up every rewritten diagnostic, and change an untransformed one only
 a CGP encoding, so no raw CGP construct leaks and the transforms leave a plain Rust error as rustc
 printed it (the injected `--verbose` aside, see
 [Un-eliding the diagnostic](#un-eliding-the-diagnostic)). The sections that follow detail the two
-levers, the rename, the two coherence reshapes, the structural reshape, and the macro-lowering
-reshapes; the replacement and the post-processing build on the rename's `TyCtxt` access and
-rustc-free helpers, and are documented separately.
+levers, the rename, the two coherence reshapes, the structural reshape, the macro-lowering reshapes,
+and the wiring-name reshape; the replacement and the post-processing build on the rename's `TyCtxt`
+access and rustc-free helpers, and are documented separately.
 
 The emitter is also what *renders* the diagnostics, the way vanilla `rustc` would. The wrapper type
 [`CgpEmitter`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/cgp_emitter.rs)
@@ -813,7 +819,7 @@ pin the component-key, path-key, and re-open shapes.
 
 ### Reshaping an undeclared dependency
 
-The emitter's last two reshapes handle macro-lowering mistakes rather than coherence ones, and the
+Two of the emitter's reshapes handle macro-lowering mistakes rather than coherence ones, and the
 first is a dependency a CGP definition uses but does not declare (the
 [undeclared dependency](../../cgp/errors/lowering/undeclared-dependency.md) class). Each CGP
 definition macro lowers its body into an impl over a generated context, and only the declared
@@ -1002,6 +1008,56 @@ user-named context) are not covered, and cannot be safely: without that reserved
 generic consumer trait on a context, so recognizing it would risk a false positive on valid code.
 `#[cgp_impl]` is the idiomatic provider form, so this is the case a programmer overwhelmingly hits.
 
+### Reshaping an unresolved wiring name
+
+The last reshape covers a name in a wiring entry that is wrong (the
+[unresolved wiring name](../../cgp/errors/wiring/unresolved-wiring-name.md) class): a consumer trait
+as a key, a component not in scope, a key guessed from a trait's name, or a provider never declared.
+Its difficulty is timing. Every shape but the first is an `E0425` "cannot find type", raised during
+name resolution, before the compiler has built the HIR and before any query that reads the crate's
+items is safe, and the name's own span carries no trace of the `delegate_components!` that wrote it,
+so nothing at emission time says it is a wiring key.
+
+The emitter therefore buffers those `E0425`s untouched, and the driver's `after_expansion` callback,
+which the compiler calls right after `resolver_for_lowering` finishes, runs
+[`reshape_name_resolution_errors`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/name_resolution.rs).
+It reaches the buffer through the same thread-local registration the panic hook uses
+(`with_registered_buffer` in `output.rs`), in three steps. It collects the buffered `E0425`s under
+the output's lock, plans them with the lock released, since a query run while planning can emit a
+diagnostic that takes the same lock, and then rewrites them under the lock, after checking that the
+candidates are where they were. The planning,
+[`resolve::plan_unresolved_names`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/wiring_name),
+reads each name's position back from the HIR: the `DelegateComponent` impl (by `DefId`) whose key or
+`Delegate` type is exactly the name, or the impl over `__Context__` whose unresolved `Self` is. A
+name inside a larger type, such as a segment of an `@`-path, is no entry's key or value and stays as
+rustc wrote it. Then:
+
+- **A key** is a component not in scope (`[CGP-E041]`) when exactly one component marker of that
+  name exists among the traits the crate can see, read from each provider trait's delegation
+  blanket. Its import path is a `crate::` path for a local component, and otherwise the shortest
+  public path found by walking the module trees of the direct dependencies and following
+  re-exports, since `def_path_str` names a crate re-exported under another name by its crate name
+  (`cgp::cgp_core::…`). A key that names no component is a guessed one (`[CGP-E042]`) when the name
+  without its `Component` suffix names exactly one consumer trait.
+- **A value** is an undeclared provider (`[CGP-E043]`), with a near miss looked for among the
+  providers of the key's component (`similar_name`). The requirement it leaves unprovable, the
+  entry's context implementing the component's consumer trait (`Person: CanGreet`), is recorded,
+  and the emitter drops a later `E0275` overflow on exactly that requirement as the entry's
+  consequence (`is_unresolved_wiring_overflow`).
+- **A `#[cgp_impl]` header's provider** is a provider never declared (`[CGP-E038]`), and a value
+  naming the same provider is dropped as its consequence.
+
+A repeat of a classified name at the same span is dropped; an unclassified diagnostic, repeats
+included, is left as rustc wrote it. The consumer trait as a key is different in kind: its `E0782`
+"expected a type, found a trait" is raised while the compiler lowers the impl's header, with a
+`TyCtxt` in scope, so the emitter recognizes it as it arrives
+(`resolve::detect_consumer_trait_as_key`) and words it as `[CGP-E040]`, the component read off the
+consumer trait's provider trait. The wording of every shape is the rustc-free
+`plan_unresolved_wiring_name` and `unresolved_wiring_name_help` over the owned
+`UnresolvedWiringName`. The blessed snapshots under
+[`wiring/unresolved-wiring-name/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/wiring/unresolved-wiring-name)
+pin every shape.
+
 ## Containing the driver's own panics
 
 **A panic in the driver's own code never costs the user their diagnostics.** The emitter re-runs
@@ -1083,8 +1139,9 @@ will likely grow toward it:
 - **Callbacks.** Clippy carries three `Callbacks` implementations (default, rustc-only, and
   lint-registering) and selects among them per invocation. `cargo-cgp` has one `CgpCallbacks`, which
   varies by its fields rather than by type: its `config` hook always installs the rewriting emitter,
-  and its `after_expansion` hook acts only when the invocation carried an expansion request. The
-  differentiation will grow as the driver does more post-processing.
+  and its `after_expansion` hook reshapes the name-resolution errors in a check and prints the
+  expansion when the invocation carried an expansion request. The differentiation will grow as the
+  driver does more post-processing.
 
 ## Further reading
 
@@ -1171,7 +1228,8 @@ will likely grow toward it:
   identity anchor (`CGP_COMPONENT_CRATE`, `IS_PROVIDER_FOR_TRAIT`), each with its rationale.
 - [`crates/cargo-cgp-driver/src/callbacks.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/callbacks.rs):
   the `Callbacks` implementation: its `config` hook installs the transforming emitter, and its
-  `after_expansion` hook serves expand mode ([The expand command](expand-command.md)).
+  `after_expansion` hook runs the name-resolution reshape in a check and serves expand mode
+  ([The expand command](expand-command.md)).
 - [`crates/cargo-cgp-driver/src/emitter/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/emitter):
   the generic `CgpEmitter<E>`, split behind a re-exporting `mod.rs`: `install.rs` rebuilds the
   compiler's default emitter for the active format (a `JsonEmitter` or an `AnnotateSnippetEmitter`)
@@ -1184,15 +1242,17 @@ will likely grow toward it:
   consumer header per group by `merged_diag`, after which `rebuild_explain_footers` makes the
   trailing `rustc --explain` footer name only the codes that survived)) and its
   transform/post-process/de-duplicate/coalesce orchestration, `buffer.rs` the buffered entries and
-  their untransformed fallback, `output.rs` the inner emitter and buffer shared with the panic hook,
-  `containment.rs` the `catch_unwind` wrapper and the panic hooks, `test_panic.rs` the panic a
-  fixture raises on purpose, and `edit.rs` holds the `DiagInner`-editing helpers (including
-  `merged_span`, the merged block's one caret and its labelled other sites; `check_table_span`, the
-  relabelled carets of two check tables sharing a check-trait name; `message_signature`, the
-  span-independent text key for de-duplicating a declined-but-rewritten diagnostic;
-  `strip_method_probe_advice`, the drop of rustc's associated-function framing on a declined
-  consumer-method `E0599`; and `is_question_mark_cascade`, the `Try`/`FromResidual`-shape recognizer
-  for the cascade drop; the text phrasings the last three key on live in the rustc-free
+  their untransformed fallback, `output.rs` the inner emitter and buffer shared with the panic hook
+  and the name-resolution reshape, `containment.rs` the `catch_unwind` wrapper and the panic hooks,
+  `name_resolution.rs` the reshape of the wiring entries' name-resolution errors and the overflow
+  drop that goes with it, `test_panic.rs` the panic a fixture raises on purpose, and `edit.rs` holds
+  the `DiagInner`-editing helpers (including `merged_span`, the merged block's one caret and its
+  labelled other sites; `check_table_span`, the relabelled carets of two check tables sharing a
+  check-trait name; `message_signature`, the span-independent text key for de-duplicating a
+  declined-but-rewritten diagnostic; `strip_method_probe_advice`, the drop of rustc's
+  associated-function framing on a declined consumer-method `E0599`; and `is_question_mark_cascade`,
+  the `Try`/`FromResidual`-shape recognizer for the cascade drop; the text phrasings the last three
+  key on live in the rustc-free
   [`signals`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/signals.rs)
   module).
 - [`crates/cargo-cgp-driver/src/component_map.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/component_map.rs):

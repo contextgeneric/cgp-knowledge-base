@@ -28,17 +28,18 @@ diagnostic a CGP mistake produces, pinned by their
 
 ## The codes
 
-The catalog surfaces fifteen codes, split by the kind of rule they enforce. Three are **coherence
+The catalog surfaces sixteen codes, split by the kind of rule they enforce. Three are **coherence
 and orphan** rules: the compiler refusing overlapping or foreign impls:
 
 - [`E0119`](e0119.md): conflicting implementations of a trait for a type.
 - [`E0210`](e0210.md): orphan rule: an uncovered type parameter in a foreign-trait impl.
 - [`E0117`](e0117.md): orphan rule: a foreign trait implemented for a foreign (arbitrary) type.
 
-Two are **well-formedness** rules on generic parameters and arguments:
+Three are **well-formedness** rules on generic parameters, arguments, and types:
 
 - [`E0207`](e0207.md): an unconstrained type parameter on an impl.
 - [`E0107`](e0107.md): an item named with more or fewer generic arguments than it declares.
+- [`E0782`](e0782.md): a trait written bare where a type belongs.
 
 Three are **trait-solving** outcomes: the solver failing to satisfy, project, or terminate a bound:
 

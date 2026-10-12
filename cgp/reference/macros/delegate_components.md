@@ -844,7 +844,12 @@ compiler hides.
 ``cannot find type `SquareArea` in this scope``, rather than anything about wiring. The usual cause
 is a provider written with [`#[cgp_impl]`](cgp_impl.md) without the `new` keyword and never declared
 separately, since the bare form implements the provider trait for a struct the author is expected to
-write.
+write. A key fails the same way when it names a component that is not imported, or a name guessed
+from the consumer trait's (`CanGreetComponent` for the component `GreeterComponent`), and a key
+naming the consumer trait itself fails with `E0782` "expected a type, found a trait". The error
+catalog records all of these as an
+[unresolved wiring name](../../errors/wiring/unresolved-wiring-name.md), which `cargo-cgp` reports
+with the name to write.
 
 **A statement placed after a mapping fails to parse**, and the message points somewhere misleading.
 Once the statements are consumed the parser expects only mappings, so it reads `open` as a key type,

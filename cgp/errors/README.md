@@ -154,12 +154,12 @@ through `IsProviderFor`, and the classes that are dominated by the *volume* of a
 rather than by any single message.
 
 The [wiring/](wiring/) directory holds the whole-program **structural** failures (coherence
-conflicts, orphan-rule violations, wiring cycles, unconstrained generics, and the namespace-specific
-coherence collisions) where the compiler reports a definite error code (`E0119`, `E0210`, `E0275`,
-`E0207`) and the difficulty is mapping that code back to the wiring mistake rather than a hidden or
-cascading cause. Because the catalog groups by usage as well as by error code, the namespace
-collisions live in their own documents even where they share a code (`E0119`) with a plain duplicate
-declaration.
+conflicts, orphan-rule violations, wiring cycles, unconstrained generics, the namespace-specific
+coherence collisions, and names in a wiring entry that do not resolve) where the compiler reports a
+definite error code (`E0119`, `E0210`, `E0275`, `E0207`, `E0425`) and the difficulty is mapping that
+code back to the wiring mistake rather than a hidden or cascading cause. Because the catalog groups
+by usage as well as by error code, the namespace collisions live in their own documents even where
+they share a code (`E0119`) with a plain duplicate declaration.
 
 The [lowering/](lowering/) directory holds the classes where the failure is not in the wiring at all
 but in what a macro *lowered* the user's input into: an accepted shorthand or type combination
@@ -169,11 +169,11 @@ generated code rather than any wiring decision.
 
 A fifth directory, [error_codes/](error_codes/), is a supporting *reference* rather than a class of
 error: one entry per `rustc` error code the catalog surfaces (`E0107`, `E0119`, `E0117`, `E0207`,
-`E0210`, `E0220`, `E0271`, `E0275`, `E0277`, `E0404`, `E0425`, `E0428`, `E0433`, `E0576`, `E0599`),
-stating what the code means in plain Rust, the rule behind it, and the RFC or issue that defines it,
-grounded in the official documentation. The class documents cite these entries in place of the raw
-`doc.rust-lang.org` URLs, so the Rust-language facts live in one verified place and the class docs
-carry only the CGP-specific anatomy. The same directory holds
+`E0210`, `E0220`, `E0271`, `E0275`, `E0277`, `E0404`, `E0425`, `E0428`, `E0433`, `E0576`, `E0599`,
+`E0782`), stating what the code means in plain Rust, the rule behind it, and the RFC or issue that
+defines it, grounded in the official documentation. The class documents cite these entries in place
+of the raw `doc.rust-lang.org` URLs, so the Rust-language facts live in one verified place and the
+class docs carry only the CGP-specific anatomy. The same directory holds
 [cargo-cgp-codes.md](error_codes/cargo-cgp-codes.md), the pointer to `cargo-cgp`'s own `[CGP-Exxx]`
 codes that each class's *How cargo-cgp presents it* section cites.
 
@@ -228,6 +228,9 @@ Structural wiring errors, in [wiring/](wiring/):
   definitions* rather than lazily at a use site; a self-inheriting `A: A` is an `E0207` instead.
 - [Unconstrained generic](wiring/unconstrained-generic.md): a per-entry generic that never reaches
   the key, leaving an impl parameter unconstrained (`E0207`).
+- [Unresolved wiring name](wiring/unresolved-wiring-name.md): a wiring key or value that names
+  nothing in scope (a component not imported, a key guessed from a trait's name, a provider never
+  declared) or a consumer trait where a component belongs (`E0425`, `E0782`).
 
 Lowering errors, in [lowering/](lowering/):
 
@@ -268,10 +271,10 @@ Error-code reference, in [error_codes/](error_codes/):
   [`E0210`](error_codes/e0210.md), [`E0220`](error_codes/e0220.md), [`E0271`](error_codes/e0271.md),
   [`E0275`](error_codes/e0275.md), [`E0277`](error_codes/e0277.md), [`E0404`](error_codes/e0404.md),
   [`E0425`](error_codes/e0425.md), [`E0428`](error_codes/e0428.md), [`E0433`](error_codes/e0433.md),
-  [`E0576`](error_codes/e0576.md), [`E0599`](error_codes/e0599.md), each recording what the code
-  means in plain Rust, the rule behind it, and where CGP produces it. Plus
-  [cargo-cgp-codes.md](error_codes/cargo-cgp-codes.md), the pointer to `cargo-cgp`'s `[CGP-Exxx]`
-  codes. See the [error-code reference index](error_codes/README.md).
+  [`E0576`](error_codes/e0576.md), [`E0599`](error_codes/e0599.md), [`E0782`](error_codes/e0782.md),
+  each recording what the code means in plain Rust, the rule behind it, and where CGP produces it.
+  Plus [cargo-cgp-codes.md](error_codes/cargo-cgp-codes.md), the pointer to `cargo-cgp`'s
+  `[CGP-Exxx]` codes. See the [error-code reference index](error_codes/README.md).
 
 ## Relationship to the rest of the knowledge base
 

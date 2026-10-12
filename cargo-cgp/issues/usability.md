@@ -181,6 +181,13 @@ fixture that pins it.
   ([`supertrait_missing_uses`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/supertrait_missing_uses.rs)).
   A bare `Error` in such a provider is folded into the `[CGP-E035]`
   ([`error_alias_without_use_type`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/error_alias_without_use_type.rs)).
+- **A wiring key or value that does not resolve** is named with its fix, in place of rustc's `dyn`,
+  type-parameter, and similar-name suggestions: a consumer trait as a key names its component
+  (`[CGP-E040]`), a component not in scope its import (`[CGP-E041]`), a key guessed from a trait's
+  name the real component (`[CGP-E042]`), an undeclared provider its component (`[CGP-E043]`), and a
+  `#[cgp_impl]` without `new` the `new` that declares the provider, with the wiring and call errors
+  it causes dropped (`[CGP-E038]`)
+  ([`wiring/unresolved-wiring-name/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/wiring/unresolved-wiring-name)).
 - **An abstract type the context binds one way while a provider pins it another** is a coded
   mismatch of its own. A context chooses an abstract type's concrete form by wiring its component to
   `UseType<T>`; a provider can pin the same type with the `#[use_type(Trait.{Assoc = Concrete})]`
@@ -370,8 +377,6 @@ Many construct mistakes reach the reader as rustc wrote them, or reshaped withou
 names the fix. The cause is in the output, but the reader must know the construct to act on it.
 The fixtures group by construct:
 
-- **Wiring keys and values:** a trait written as a key, an undeclared provider or value, an
-  unimported or guessed key, each an `E0425` or `E0782` with a wrong suggestion.
 - **Wiring checks, conflicts, and cycles:** a bundle checked as a context, a cycle reached by a
   call, and a generic key in `delegate_and_check_components!` checked at unit parameters without
   `#[check_params(...)]` (`check_trait_named_as_wrapper`).
