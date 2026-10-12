@@ -247,32 +247,33 @@ named by its parameter (`@ComputerComponent.Code.u64`) and a type segment with i
 [overlapping namespace forwarding](../cgp/errors/wiring/namespace-forwarding-conflict.md) and
 [namespace override conflict](../cgp/errors/wiring/namespace-override-conflict.md).
 
-- **`CGP-E010`: duplicate wiring.** `` [CGP-E010] duplicate wiring for <key> on `<Context>` ``: the
-  same key mapped twice. The key is a component marker, an `@`-path, or an ordinary type (a per-type
-  default's `String`), each worded as what it is; the subject is the context, or the namespace
-  lookup trait when the collision is inside a namespace
-  (`` on `DefaultImpls1<ShowImplComponent>` ``). **Fix:** remove one of the two entries the carets
-  point at.
+- **`CGP-E010`: duplicate wiring.**
+  `` [CGP-E010] conflicting wiring: `<Context>` wires <key> twice ``: the same key mapped twice.
+  The key is a component marker, an `@`-path, or an ordinary type (a per-type default's `String`),
+  each worded as what it is; the subject is the context, or the namespace lookup trait when the
+  collision is inside a namespace
+  (`` conflicting wiring: `DefaultImpls1<ShowImplComponent>` wires type `String` twice ``).
+  **Fix:** remove one of the two entries the carets point at.
 - **`CGP-E011`: overlapping wiring.**
-  `` [CGP-E011] `<Context>` cannot wire <key> that is already set through <source> ``: two distinct
-  but overlapping keys, where one cannot claim what the other already covers (a generic entry over a
-  specific one, an `@`-path over a namespace forwarding, or a path that covers another, as a prefix
-  or through a generic segment). A child namespace redefining a key it inherits takes
+  `` [CGP-E011] conflicting wiring: `<Context>` wires <key>, which <source> already covers ``: two
+  distinct but overlapping keys, where one cannot claim what the other already covers (a generic
+  entry over a specific one, an `@`-path over a namespace forwarding, or a path that covers another,
+  as a prefix or through a generic segment). A child namespace redefining a key it inherits takes
   this code too, with the namespace as the subject and the parent as the source. **Fix:** remove or
   narrow the overlapping entry. (A key the namespace resolves to a *redirect* is `CGP-E013`
   instead.)
 - **`CGP-E012`: multiple namespaces.**
-  `` [CGP-E012] only one namespace can be used for each target type in `delegate_components!`, but `<Context>` uses both `<A>` and `<B>` ``:
+  `` [CGP-E012] conflicting wiring: `<Context>` joins both `<A>` and `<B>`, but a target type in `delegate_components!` can join only one namespace ``:
   two blanket forwardings that each cover every key, from joining two namespaces (or a namespace
   plus a bare-key `for` loop, which desugars the same way). **Fix:** join one namespace and inherit
   the others into it, or move a bare `for` key into a path.
 - **`CGP-E013`: redirect collision.**
-  `` [CGP-E013] <component> on `<Context>` is redirected to `<path>` ``: a direct wiring that
-  collides with a redirect of the same key: an `open` header, an explicit `=>` redirect, a
-  `namespace` join that maps the key to a redirected path, or, with a namespace as the subject, a
-  namespace binding a key its *inherited parent* redirects, the shape a bare marker key produces for
-  a component carrying a `#[prefix(...)]`. The last two are recovered by normalizing the forwarded
-  namespace's `Delegate` for that key. The fix rides in a `help`:
+  `` [CGP-E013] conflicting wiring: `<Context>` wires <component> directly, but it is redirected to `<path>` ``:
+  a direct wiring that collides with a redirect of the same key: an `open` header, an explicit `=>`
+  redirect, a `namespace` join that maps the key to a redirected path, or, with a namespace as the
+  subject, a namespace binding a key its *inherited parent* redirects, the shape a bare marker key
+  produces for a component carrying a `#[prefix(...)]`. The last two are recovered by normalizing
+  the forwarded namespace's `Delegate` for that key. The fix rides in a `help`:
   `` wire the provider `<Provider>` with the key `<path>` ``. A redirect looks a component up with
   its type parameters appended to the path, so for a generic component the key takes a generic
   segment per parameter, `` <path>.<<Param>> <Param> ``, which serves every value the direct entry
@@ -281,11 +282,12 @@ named by its parameter (`@ComputerComponent.Code.u64`) and a type segment with i
   The `help` is omitted when the direct entry names no provider a reader wrote. **Fix:** wire the
   entry's provider under the redirected path rather than the bare key.
 - **`CGP-E014`: duplicate redirect.**
-  `` [CGP-E014] duplicate redirect for <component> on `<Context>` … `` (naming one redirect target,
-  or both when they differ): the same key redirected more than once: two `open`s or `=>` mappings on
-  a context, an `open` of a component the joined namespace already redirects through its
-  `#[prefix]`, or the same `@`-path registered twice inside one `cgp_namespace!` block (where the
-  subject is the namespace trait rather than a context). **Fix:** keep a single redirect.
+  `` [CGP-E014] conflicting wiring: `<Context>` redirects <component> twice, to `<path>` and to `<path>` ``
+  (`` twice, both times to `<path>` `` when the two targets agree): the same key redirected more
+  than once: two `open`s or `=>` mappings on a context, an `open` of a component the joined
+  namespace already redirects through its `#[prefix]`, or the same `@`-path registered twice inside
+  one `cgp_namespace!` block (where the subject is the namespace trait rather than a context).
+  **Fix:** keep a single redirect.
 
 ### `CGP-E020`: wiring never resolves
 

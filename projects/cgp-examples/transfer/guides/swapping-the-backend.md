@@ -71,7 +71,7 @@ cgp_namespace! {
 wiring:
 
 ```text
-error[E0119]: [CGP-E011] `ProdNamespace` cannot wire `@app.finance.UserBalanceQuerierComponent` that is already set through `MockNamespace`
+error[E0119]: [CGP-E011] conflicting wiring: `ProdNamespace` wires `@app.finance.UserBalanceQuerierComponent`, which `MockNamespace` already covers
  --> src/bin/override.rs:9:10
   |
 8 |     new ProdNamespace: MockNamespace {

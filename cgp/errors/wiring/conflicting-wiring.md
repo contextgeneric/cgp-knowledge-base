@@ -129,21 +129,22 @@ any `@`-path key is written as its entry wrote it, in bare `@a.b` notation, inst
 Which `[CGP-E00x]` code it stamps distinguishes the shapes this class produces:
 
 - A duplicate key or overlapping generic becomes **`[CGP-E010]` duplicate wiring**:
-  `` [CGP-E010] duplicate wiring for component `GreeterComponent` on `Person` `` (or, for a
-  `@`-path, `` duplicate wiring for `@cgp.core.error.ErrorTypeProviderComponent` on `App` ``). A
+  `` [CGP-E010] conflicting wiring: `Person` wires component `GreeterComponent` twice `` (or, for a
+  `@`-path,
+  `` conflicting wiring: `App` wires `@cgp.core.error.ErrorTypeProviderComponent` twice ``). A
   collision inside a namespace reads the same way, with the lookup trait standing in for the context
   and an ordinary type key worded as a type: two `#[default_impl]`s on one per-type key give
-  `` duplicate wiring for type `String` on `DefaultImpls1<ShowImplComponent>` ``.
+  `` conflicting wiring: `DefaultImpls1<ShowImplComponent>` wires type `String` twice ``.
 - A path key overlapping a longer one becomes **`[CGP-E011]` overlapping wiring**, naming the longer
-  key as the one that cannot be wired and the shorter as what already covers it:
-  `` [CGP-E011] `App` cannot wire `@cgp.core.error.ErrorTypeProviderComponent.String` that is already set through `@cgp.core.error.ErrorTypeProviderComponent` ``.
+  key as the one wired and the shorter as what already covers it:
+  `` [CGP-E011] conflicting wiring: `App` wires `@cgp.core.error.ErrorTypeProviderComponent.String`, which `@cgp.core.error.ErrorTypeProviderComponent` already covers ``.
   Each key ends in the wildcard tail the macro appends, which is why the first path covers the
   second; the message leaves the tail out, since the entries never wrote it. A generic segment is
   named by its parameter, so `@ComputerComponent.<Code> Code.u64` beside `@ComputerComponent.Eval`
   reads
-  `` `App` cannot wire `@ComputerComponent.Code.u64` that is already set through `@ComputerComponent.Eval` ``.
+  `` conflicting wiring: `App` wires `@ComputerComponent.Code.u64`, which `@ComputerComponent.Eval` already covers ``.
 - An `open` header colliding with an explicit mapping becomes **`[CGP-E013]` redirect collision**:
-  `` [CGP-E013] component `GreeterComponent` on `Person` is redirected to `@GreeterComponent` ``,
+  `` [CGP-E013] conflicting wiring: `Person` wires component `GreeterComponent` directly, but it is redirected to `@GreeterComponent` ``,
   carrying a `help:` that names the redirected key to wire the provider under
   (`` wire the provider `GreetHello` with the key `@GreeterComponent` ``). A registration that binds
   a *prefixed* component by its bare marker takes the same code, since the `#[prefix]` entry it
@@ -155,7 +156,7 @@ Which `[CGP-E00x]` code it stamps distinguishes the shapes this class produces:
   joined namespace already redirects through its `#[prefix]`, or one `@`-path registered twice
   inside a `cgp_namespace!` block) becomes **`[CGP-E014]` duplicate redirect**, naming both targets
   when they differ
-  (`` duplicate redirect for component `FooComponent` on `App`: redirected to both `@app.foo` and `@app.bar` ``).
+  (`` conflicting wiring: `App` redirects component `FooComponent` twice, to `@app.foo` and to `@app.bar` ``).
 
 One form in this class is a **pass-through** that `cargo-cgp` does not rewrite: the `E0428` name
 clashes (`duplicate_component_name`, `duplicate_provider_name`) keep `rustc`'s uncoded `E0428`,

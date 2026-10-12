@@ -91,7 +91,7 @@ terms rather than in terms of the wiring intent.
 hides. It keeps the `E0119` code, collapses the `DelegateComponent<_>` + `IsProviderFor<_, _, _>`
 pair into one message (suppressing the redundant `IsProviderFor` half), and stamps **`[CGP-E012]`
 multiple namespaces**:
-`` [CGP-E012] only one namespace can be used for each target type in `delegate_components!`, but `App` uses both `NamespaceA` and `NamespaceB` ``.
+`` [CGP-E012] conflicting wiring: `App` joins both `NamespaceA` and `NamespaceB`, but a target type in `delegate_components!` can join only one namespace ``.
 The two `rustc` carets are kept, landing on the two `namespace` headers (or, for the loop form, on
 the second header and the loop's `Key: Value` line), because they already point at the lines to
 reconcile; there is no `root cause:` tree, this being a structural class. The bare-key `for` loop

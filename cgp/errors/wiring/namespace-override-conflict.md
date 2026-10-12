@@ -171,7 +171,7 @@ override decision as a bare coherence conflict.
 `DelegateComponent` + `IsProviderFor` pair into one message, suppresses the
 `downstream crates may implement …` note, resugars the `PathCons<Symbol<…>>` key to its bare
 `@app.…` path, and stamps **`[CGP-E011]` overlapping wiring**:
-`` [CGP-E011] `App` cannot wire `@app.GreeterComponent` that is already set through `AppNamespace` ``.
+`` [CGP-E011] conflicting wiring: `App` wires `@app.GreeterComponent`, which `AppNamespace` already covers ``.
 That headline names the overriding entry, the path it claims, and the namespace that already binds
 it, so the reader sees the override decision the raw coherence conflict only implied; the two
 `rustc` carets are kept, this being a structural class with no `root cause:` tree.
@@ -180,12 +180,12 @@ The **namespace-level** shape is rewritten the same way, with the namespace stan
 context does. Which code it takes depends on how the parent answers the colliding key, because that
 is what decides the fix. A key the parent *binds* is a genuine override attempt and reads as
 **`[CGP-E011]`**:
-`` [CGP-E011] `ChildNs` cannot wire component `GreeterComponent` that is already set through `BaseNs` ``,
+`` [CGP-E011] conflicting wiring: `ChildNs` wires component `GreeterComponent`, which `BaseNs` already covers ``,
 naming the parent the reader has to change instead. A key the parent *redirects*, the
 prefixed-component face above, is a key written in the wrong form rather than an override, so
 `cargo-cgp` normalizes the parent's `Delegate` for that key to recover the path and reads it as
 **`[CGP-E013]`**:
-`` [CGP-E013] component `GreeterComponent` on `AppNamespace` is redirected to `@app.GreeterComponent` ``,
+`` [CGP-E013] conflicting wiring: `AppNamespace` wires component `GreeterComponent` directly, but it is redirected to `@app.GreeterComponent` ``,
 putting the entry to write in a `help`:
 `` wire the provider `GreetHello` with the key `@app.GreeterComponent` ``. Both keep rustc's two
 carets, this being a structural class with no `root cause:` tree. The codes are defined in the
@@ -246,7 +246,7 @@ The `.rust.stderr` snapshot pins the raw `E0119` shape and the `.cgp.stderr` the
   `@cgp.core.error.ErrorRaiserComponent.Key` beside a namespace that binds `….String`; the
   `.rust.stderr` pins the same `E0119` pair and downstream note, the `.cgp.stderr` the `[CGP-E011]`
   headline
-  `` `App` cannot wire `@cgp.core.error.ErrorRaiserComponent.Key` that is already set through `AppDefaults` ``,
+  `` conflicting wiring: `App` wires `@cgp.core.error.ErrorRaiserComponent.Key`, which `AppDefaults` already covers ``,
   the loop's key parameter named as written.
 - [`wiring/namespace-paths/inherited_override_conflict.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-override-conflict/inherited_override_conflict.rs):
   the namespace-level shape against a key the parent *binds*: a child namespace redefining an

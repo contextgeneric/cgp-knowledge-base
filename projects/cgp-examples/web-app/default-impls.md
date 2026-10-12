@@ -104,7 +104,7 @@ delegate_components! {
 `cargo cgp check` rejected the entry as overlapping the namespace:
 
 ```text
-error[E0119]: [CGP-E011] `CachedApp` cannot wire `@app.core.user.UserGetterComponent` that is already set through `DefaultAppComponents`
+error[E0119]: [CGP-E011] conflicting wiring: `CachedApp` wires `@app.core.user.UserGetterComponent`, which `DefaultAppComponents` already covers
 ```
 
 A child namespace that rebinds the same path, `new CachedAppComponents: DefaultAppComponents`, fails
@@ -138,7 +138,7 @@ built from the `cargo-cgp` source at commit `b6a6323` reported the conflict, as 
 above:
 
 ```text
-error[E0119]: [CGP-E011] `ProductionApp` cannot wire `@app.core.user.UserGetterComponent` that is already set through `DefaultAppComponents`
+error[E0119]: [CGP-E011] conflicting wiring: `ProductionApp` wires `@app.core.user.UserGetterComponent`, which `DefaultAppComponents` already covers
 ```
 
 ## Public material derived from this
