@@ -28,16 +28,17 @@ diagnostic a CGP mistake produces, pinned by their
 
 ## The codes
 
-The catalog surfaces thirteen codes, split by the kind of rule they enforce. Three are **coherence
+The catalog surfaces fifteen codes, split by the kind of rule they enforce. Three are **coherence
 and orphan** rules: the compiler refusing overlapping or foreign impls:
 
 - [`E0119`](e0119.md): conflicting implementations of a trait for a type.
 - [`E0210`](e0210.md): orphan rule: an uncovered type parameter in a foreign-trait impl.
 - [`E0117`](e0117.md): orphan rule: a foreign trait implemented for a foreign (arbitrary) type.
 
-One is a **well-formedness** rule on impl parameters:
+Two are **well-formedness** rules on generic parameters and arguments:
 
 - [`E0207`](e0207.md): an unconstrained type parameter on an impl.
+- [`E0107`](e0107.md): an item named with more or fewer generic arguments than it declares.
 
 Three are **trait-solving** outcomes: the solver failing to satisfy, project, or terminate a bound:
 
@@ -46,10 +47,12 @@ Three are **trait-solving** outcomes: the solver failing to satisfy, project, or
   implemented and only the projected type disagrees.
 - [`E0275`](e0275.md): overflow evaluating a requirement (a recursion-limit or cycle failure).
 
-Six are **name-resolution and method-probe** diagnostics:
+Seven are **name-resolution and method-probe** diagnostics:
 
 - [`E0428`](e0428.md): a name is defined more than once in one scope.
 - [`E0576`](e0576.md): an associated item is named that the trait or type does not declare.
+- [`E0220`](e0220.md): an associated type is named that the type parameter's bounds, or the trait
+  in a binding, do not declare.
 - [`E0599`](e0599.md): a method exists but its trait bounds are not satisfied.
 - [`E0433`](e0433.md): a path's leading segment names an undeclared type, crate, or module.
 - [`E0425`](e0425.md): an identifier is not found in this scope; the same "cannot find type"

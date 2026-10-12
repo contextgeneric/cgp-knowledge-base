@@ -440,7 +440,12 @@ marking.
     documented in [The driver](driver.md#reshaping-a-duplicate-key-conflict), and a sibling
     [`structural/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/structural)
     the structural mistakes in a check table or a wiring entry
-    ([The driver](driver.md#reshaping-a-structural-mistake)). A sibling `cache.rs`
+    ([The driver](driver.md#reshaping-a-structural-mistake)). The macro-lowering detectors sit
+    beside them: `undeclared.rs`, `missing_use_provider.rs`, `unimported.rs`, and `requirement.rs`
+    for an undeclared dependency
+    ([The driver](driver.md#reshaping-an-undeclared-dependency)), and `cgp_impl_misuse.rs` and
+    `uses_misuse.rs` for a wrong component half
+    ([The driver](driver.md#reshaping-a-wrong-component-half)). A sibling `cache.rs`
     memoizes the walk at every node (keyed on the region-erased obligation and context), so a wiring
     failure re-reported at many sites, or a shared trait, is walked once (see
     [Cached dependency resolution](cached-dependency-resolution.md)).
@@ -674,7 +679,7 @@ fixtures:
   part of the parent `UseInputDelegate<EmptySink>` obligation's `Self`, so it is reported regardless
   of the table wiring any other key.
 - `consumer_trait_in_provider_impl` and `consumer_trait_in_provider_impl_field_type` (under
-  [`uncataloged/wrong-component-half/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/uncataloged/wrong-component-half)):
+  [`lowering/wrong-component-half/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/lowering/wrong-component-half)):
   a provider whose `#[cgp_impl]` header names the consumer trait, beside a missing field or a field
   of the wrong type. Pins the descent into the misdirected impl's requirements: the check resolves
   to the `[CGP-E001]` missing-field or `[CGP-E004]` field-type block the program gives once the

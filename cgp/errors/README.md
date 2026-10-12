@@ -163,14 +163,15 @@ declaration.
 
 The [lowering/](lowering/) directory holds the classes where the failure is not in the wiring at all
 but in what a macro *lowered* the user's input into: an accepted shorthand or type combination
-expanded into Rust that is ill-formed on its own terms (an unsized type, for instance), so the
-compiler rejects the generated code rather than any wiring decision.
+expanded into Rust that is ill-formed on its own terms (an unsized type, for instance), or a
+definition whose declarations do not match what it uses or names, so the compiler rejects the
+generated code rather than any wiring decision.
 
 A fifth directory, [error_codes/](error_codes/), is a supporting *reference* rather than a class of
-error: one entry per `rustc` error code the catalog surfaces (`E0119`, `E0117`, `E0207`, `E0210`,
-`E0271`, `E0275`, `E0277`, `E0404`, `E0425`, `E0428`, `E0433`, `E0576`, `E0599`), stating what the
-code means in plain Rust, the rule behind it, and the RFC or issue that defines it, grounded in the
-official documentation. The class documents cite these entries in place of the raw
+error: one entry per `rustc` error code the catalog surfaces (`E0107`, `E0119`, `E0117`, `E0207`,
+`E0210`, `E0220`, `E0271`, `E0275`, `E0277`, `E0404`, `E0425`, `E0428`, `E0433`, `E0576`, `E0599`),
+stating what the code means in plain Rust, the rule behind it, and the RFC or issue that defines it,
+grounded in the official documentation. The class documents cite these entries in place of the raw
 `doc.rust-lang.org` URLs, so the Rust-language facts live in one verified place and the class docs
 carry only the CGP-specific anatomy. The same directory holds
 [cargo-cgp-codes.md](error_codes/cargo-cgp-codes.md), the pointer to `cargo-cgp`'s own `[CGP-Exxx]`
@@ -248,50 +249,29 @@ Lowering errors, in [lowering/](lowering/):
   two of the three derives and not for the extractor. The third is the `Box` that the variant
   derives' mutable extractor names for a variant with no fields, missing in a `no_std` crate that
   has not imported it (`E0433`).
+- [Undeclared dependency](lowering/undeclared-dependency.md): a `#[cgp_fn]`, `#[cgp_impl]`, or
+  `#[cgp_component]` definition that uses a trait without `#[uses]`, an inner provider without
+  `#[use_provider]`, or an abstract type without `#[use_type]`, or a provider that omits a
+  requirement its component places on every context, so the compiler reports an error on the
+  generated `__Context__` or the inner provider (`E0599`, `E0220`, `E0425`, or `E0277`) that names
+  no declaration.
+- [Wrong component half](lowering/wrong-component-half.md): a definition that names a component's
+  consumer trait where its provider trait belongs (a `#[cgp_impl]` header, a `#[use_provider]`
+  bound) or the reverse (`#[uses]`), applies `#[cgp_impl]` to a trait that is not a component, or
+  puts `#[uses]` on a component, so a trait receives the wrong number of arguments (`E0107`) or the
+  attribute is left unresolved.
 
 Error-code reference, in [error_codes/](error_codes/):
 
-- One entry per `rustc` code the catalog surfaces: [`E0119`](error_codes/e0119.md),
-  [`E0117`](error_codes/e0117.md), [`E0207`](error_codes/e0207.md), [`E0210`](error_codes/e0210.md),
-  [`E0271`](error_codes/e0271.md), [`E0275`](error_codes/e0275.md), [`E0277`](error_codes/e0277.md),
-  [`E0404`](error_codes/e0404.md), [`E0425`](error_codes/e0425.md), [`E0428`](error_codes/e0428.md),
-  [`E0433`](error_codes/e0433.md), [`E0576`](error_codes/e0576.md), [`E0599`](error_codes/e0599.md),
-  each recording what the code means in plain Rust, the rule behind it, and where CGP produces it.
-  Plus [cargo-cgp-codes.md](error_codes/cargo-cgp-codes.md), the pointer to `cargo-cgp`'s
-  `[CGP-Exxx]` codes. See the [error-code reference index](error_codes/README.md).
-
-## A gap: the used-but-undeclared and wrong-half classes
-
-**Five mistakes that `cargo-cgp` recognizes and rewrites have no class document here, and the
-omission is a gap rather than a decision.** They are cataloged in `cargo-cgp`'s own
-[error-code catalog](../../cargo-cgp/error-code.md) as `CGP-E030`–`CGP-E034`, each backed by
-fixtures under
-[`uncataloged/used-but-undeclared/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/uncataloged/used-but-undeclared)
-and
-[`uncataloged/wrong-component-half/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/uncataloged/wrong-component-half),
-and every one of them is a post-codegen compile failure, squarely
-[what belongs here](#what-belongs-here-and-what-does-not).
-
-Two are **used-but-undeclared** dependencies. A `#[cgp_fn]`/`#[cgp_impl]` body lowers into a blanket
-impl over a generated context parameter, so a trait the body calls on `self` must be a bound on that
-parameter: calling one without [`#[uses]`](../reference/attributes/uses.md) fails with an `E0599`
-about the generated `__Context__` (`CGP-E030`), and calling an inner provider without
-[`#[use_provider]`](../reference/attributes/use_provider.md) fails with an `E0599` on a type
-parameter (`CGP-E031`).
-
-Three are **the wrong half of a component** named where the other belongs. A `#[cgp_impl]` header
-naming the consumer trait rather than the provider trait (`CGP-E032`), the same confusion in an
-inner-provider bound (`CGP-E034`), and `#[cgp_impl]` applied to a trait that is not a component at
-all (`CGP-E033`). Each surfaces as an `E0107` arity error over a burst of unrelated codes, none of
-which names the cause.
-
-These are first-week mistakes rather than exotic ones, which is what makes the gap worth closing:
-the catalog claims to be the canonical index of the post-codegen failures, and `cargo-cgp`'s
-fixtures already pin them. The public [compile-errors page](../../website/site-structure.md)
-documents them from the tool's catalog in the meantime. Writing them up means five documents under a
-new subdirectory, the `lowering/` tree is the closest fit, since the failure is in what a macro
-lowered rather than in any wiring, each cross-linked from the matching `error-code.md` entry's
-*Upstream class* line, which currently says "no upstream error-catalog class of its own".
+- One entry per `rustc` code the catalog surfaces: [`E0107`](error_codes/e0107.md),
+  [`E0119`](error_codes/e0119.md), [`E0117`](error_codes/e0117.md), [`E0207`](error_codes/e0207.md),
+  [`E0210`](error_codes/e0210.md), [`E0220`](error_codes/e0220.md), [`E0271`](error_codes/e0271.md),
+  [`E0275`](error_codes/e0275.md), [`E0277`](error_codes/e0277.md), [`E0404`](error_codes/e0404.md),
+  [`E0425`](error_codes/e0425.md), [`E0428`](error_codes/e0428.md), [`E0433`](error_codes/e0433.md),
+  [`E0576`](error_codes/e0576.md), [`E0599`](error_codes/e0599.md), each recording what the code
+  means in plain Rust, the rule behind it, and where CGP produces it. Plus
+  [cargo-cgp-codes.md](error_codes/cargo-cgp-codes.md), the pointer to `cargo-cgp`'s `[CGP-Exxx]`
+  codes. See the [error-code reference index](error_codes/README.md).
 
 ## Relationship to the rest of the knowledge base
 

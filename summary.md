@@ -313,8 +313,7 @@ it stale.
 ### `cgp/errors/`: post-codegen compile errors, by class
 
 - [README.md](cgp/errors/README.md) — the catalog: why these errors are hard, the hidden-versus-
-  surfaced axis it is built around, what belongs here, the index of every class, and the recorded gap
-  where `cargo-cgp`'s `CGP-E030`–`CGP-E034` rewrites have no class document yet.
+  surfaced axis it is built around, what belongs here, and the index of every class.
 - [AGENTS.md](cgp/errors/AGENTS.md) — the rules: never paste verbatim output, record the three facts a
   tool needs, the document template, backing every class with a fixture, and gathering an error with a
   sub-agent.
@@ -354,15 +353,25 @@ it stale.
   declares it (`E0433`), plus the abstract type shadowing its own bound (`E0404`), the enum variant
   colliding with a derive-generated associated type (`ambiguous associated item`), and the `Box` a
   `no_std` crate lacks for a variant with no fields (`E0433`).
+- [lowering/undeclared-dependency.md](cgp/errors/lowering/undeclared-dependency.md) — a trait, an
+  inner provider, or an abstract type a definition uses without `#[uses]`, `#[use_provider]`, or
+  `#[use_type]`, or a component requirement a provider omits (`E0599`, `E0220`, `E0425`, `E0277`).
+- [lowering/wrong-component-half.md](cgp/errors/lowering/wrong-component-half.md) — a consumer trait
+  named where a provider trait belongs or the reverse, `#[cgp_impl]` on a non-component, or `#[uses]`
+  on a component (`E0107`).
 - [error_codes/README.md](cgp/errors/error_codes/README.md) — the forward index from a `rustc` error
   code to its meaning and the CGP classes that emit it.
 - [error_codes/cargo-cgp-codes.md](cgp/errors/error_codes/cargo-cgp-codes.md) — a pointer entry for
   `cargo-cgp`'s own `[CGP-Exxx]` codes and where they are defined.
+- [error_codes/e0107.md](cgp/errors/error_codes/e0107.md) — an item named with the wrong number of
+  generic arguments.
 - [error_codes/e0117.md](cgp/errors/error_codes/e0117.md) — the orphan rule for a wholly foreign impl.
 - [error_codes/e0119.md](cgp/errors/error_codes/e0119.md) — conflicting implementations (coherence).
 - [error_codes/e0207.md](cgp/errors/error_codes/e0207.md) — an unconstrained type parameter on an impl.
 - [error_codes/e0210.md](cgp/errors/error_codes/e0210.md) — the orphan rule for an uncovered type
   parameter.
+- [error_codes/e0220.md](cgp/errors/error_codes/e0220.md) — an associated type no bound of a type
+  parameter declares.
 - [error_codes/e0275.md](cgp/errors/error_codes/e0275.md) — overflow evaluating a requirement.
 - [error_codes/e0271.md](cgp/errors/error_codes/e0271.md) — a type mismatch resolving an
   associated-type projection.

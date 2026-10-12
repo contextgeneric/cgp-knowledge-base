@@ -52,22 +52,27 @@ frame, because the failure is caught during name resolution, before any bound is
 ## Where the root cause is
 
 The root cause is **present and is the entire diagnostic**: the primary `E0576` names both the
-missing associated type and the trait it was sought in, and the caret points at the exact token to
-change. This is the opposite of the hidden and cascading classes: nothing is suppressed, nothing is
-buried, and there is no verbosity to wade through. The `help:` note, when present, even supplies the
-fix. The only CGP-specific fact the message does not state is that the name came from a
-`#[use_type]` import, but the caret sits on the alias in the signature, which is the same name
-written in the attribute, so following it to the attribute is immediate.
+missing associated type and the trait it was sought in, and the caret points at a token that carries
+the misspelled name. This is the opposite of the hidden and cascading classes: nothing is
+suppressed, nothing is buried, and there is no verbosity to wade through. The CGP-specific fact the
+message does not state is that the name came from a `#[use_type]` import, and that fact decides the
+fix: the misspelling is in the attribute, while the caret sits on the alias in the signature.
+
+The `help:` misleads for the same reason. It suggests the correct spelling at the caret, so applying
+it changes the signature to `Scalar` while the attribute still imports `Scalr`. Nothing then declares
+the bare `Scalar`, and the compiler reports an `E0425`, "cannot find type `Scalar` in this scope". A
+reader must follow the alias back to the attribute and correct it there.
 
 ## How cargo-cgp presents it
 
-`cargo-cgp` does not rewrite this class; it passes rustc's diagnostic through unchanged, and for the
-misnamed-type case it does not need to. For the `use_type_unknown_assoc` fixture the tool's
-`.cgp.stderr` is byte-for-byte its raw `.rust.stderr`: the `E0576`, the "similarly named associated
-type `Scalar` defined here" note, and the `help:` suggesting the correct spelling, with no
-`[CGP-Exxx]` code stamped and nothing suppressed. That fixture has `acceptable` quality in cargo-cgp
-precisely because the raw diagnostic already leads with the cause, with the caret on the user's own
-token and the fix in the `help:`; passing it through is the right outcome, not a gap.
+`cargo-cgp` does not rewrite this class; it passes rustc's diagnostic through unchanged. For the
+`use_type_unknown_assoc` fixture the tool's `.cgp.stderr` is byte-for-byte its raw `.rust.stderr`:
+the `E0576`, the "similarly named associated type `Scalar` defined here" note, and the `help:`
+suggesting the spelling in the signature, with no `[CGP-Exxx]` code stamped and nothing suppressed.
+The fixture has `usability` quality, because that `help:` leads to a fix that does not compile. The
+gap is hard to close in the tool: the `E0576` comes from name resolution, before the compiler has
+built the HIR, so the tool cannot confirm that the name came from a `#[use_type]` import. The
+[usability issues](../../../cargo-cgp/issues/usability.md) track it.
 
 The codes cargo-cgp stamps on the classes it does rewrite are defined in the
 [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
@@ -77,9 +82,9 @@ The codes cargo-cgp stamps on the classes it does rewrite are defined in the
 Correct the imported name so it matches an associated type the trait declares: change
 `#[use_type(HasScalarType.Scalr)]` and every use of the alias to `Scalar`, or use an `as` clause
 (`#[use_type(HasScalarType.{Scalar as Scalr})]`) if the short local name was intended. The `help:`
-note usually names the correct spelling outright. If the type genuinely lives on a different trait,
-point the import at that trait instead. Because the diagnostic is a plain resolution error at the
-user's own token, no CGP-specific tracing is needed.
+names the correct spelling but applies it only to the signature, so make the same change in the
+attribute. If the type genuinely lives on a different trait, point the import at that trait
+instead.
 
 ## What this class does *not* cover
 
@@ -100,8 +105,8 @@ post-codegen error class, and its mechanics are in the
   a `#[cgp_fn]` importing `HasScalarType.Scalr` where the trait declares `Scalar`; its
   `.rust.stderr` pins the `E0576` with the caret on the `Scalr` in the signature and the "similarly
   named associated type" `help:`, doubling as a guard that the substitution preserves the user's
-  identifier span, and its `.cgp.stderr` is identical: the pass-through that keeps the fixture at
-  `acceptable` quality, since the raw error already leads with the cause.
+  identifier span, and its `.cgp.stderr` is identical, the pass-through of a `help:` that edits the
+  signature rather than the attribute (`usability`).
 
 ## Related
 
@@ -112,6 +117,8 @@ post-codegen error class, and its mechanics are in the
 - [Ill-formed generated type](ill-formed-generated-type.md): the sibling lowering class, where the
   generated type is *resolvable* but not well-formed (an unsized type) rather than unresolvable by
   name.
+- [Undeclared dependency](undeclared-dependency.md): the sibling class where the import is missing
+  rather than misspelled, so `Self::Error` or a bare `Error` names a type no bound declares.
 - [`E0576`](../error_codes/e0576.md): the Rust error code this class is reported under.
 - [Debugging CGP compile errors](../../guides/debugging.md): the prescriptive playbook this catalog
   supports.

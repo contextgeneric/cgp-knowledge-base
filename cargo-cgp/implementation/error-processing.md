@@ -60,14 +60,18 @@ from the driver, is what keeps them unit-testable.
   duplicate-key conflict wording (`wiring.rs`): the `WiringConflict` model and
   `plan_wiring_conflict`, which words the `[CGP-E010]`–`[CGP-E014]` headers (one per conflict shape)
   the driver's `resolve::conflict` classifier feeds it (see
-  [The driver](driver.md#reshaping-a-duplicate-key-conflict)). Three more models word the driver's
+  [The driver](driver.md#reshaping-a-duplicate-key-conflict)). Five more modules word the driver's
   other reshapes, each with a `plan_*` header and a `*_help` fix: `orphan.rs` (`OrphanConflict`, the
   `[CGP-E022]` orphan-rule namespace registration), `undeclared.rs` (`UndeclaredTrait`, the
-  `[CGP-E030]` trait a `#[cgp_fn]`/`#[cgp_impl]` body calls without declaring it), and
-  `cgp_impl_misuse.rs` (`CgpImplMisuse` for the `[CGP-E032]`–`[CGP-E034]` provider-definition
-  mistakes, and `MissingUseProvider` for the `[CGP-E031]` inner provider never imported). They are
-  documented where the driver detects them, in
-  [The driver](driver.md#the-drivers-diagnostic-transformations). `structural.rs` holds
+  `[CGP-E030]` trait a `#[cgp_fn]`/`#[cgp_impl]` body calls without declaring it, with the
+  `#[uses(…)]` bound written with the arguments the call uses), `unimported.rs`
+  (`UnimportedAbstractType`, the `[CGP-E035]` abstract type used without `#[use_type]`),
+  `requirement.rs` (`UndeclaredRequirement` and its `Requirement`s, the `[CGP-E036]` requirements a
+  provider does not declare, with a `#[uses]` help and a `#[use_type]` help), and
+  `cgp_impl_misuse.rs` (`CgpImplMisuse` for the `[CGP-E032]`–`[CGP-E034]` wrong-half mistakes,
+  `ProviderTraitInUses` for the `[CGP-E037]` provider trait in `#[uses]`, and `MissingUseProvider`
+  for the `[CGP-E031]` inner provider never imported). They are documented where the driver detects
+  them, in [The driver](driver.md#the-drivers-diagnostic-transformations). `structural.rs` holds
   `StructuralMistake`, the structural mistakes in a check table or a wiring entry the driver's
   `resolve::structural` detectors recover, and words their `[CGP-E015]`–`[CGP-E019]` headers and
   fixes. `overflow.rs` holds `WiringOverflow`, the reason the driver's walk gives for a wiring
@@ -252,11 +256,14 @@ transforms run, in three groups:
   **Every other clause keeps rustc's wording**, because the text cannot tell what the fix is. With
   no landmark the context implements `HasField` for no field, which a struct lacking the derive, a
   struct lacking the field, and a fieldless struct whose derive generates nothing all show alike;
-  naming the derive there would state a fix nothing confirms
-  ([`supertrait_missing_uses`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/used-but-undeclared/supertrait_missing_uses.rs)).
+  naming the derive there would state a fix nothing confirms (the `no_landmark_keeps_the_clause`
+  test in
+  [`postprocess.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/postprocess.rs)).
   A digit tag (`Symbol!("0")`) names no field, since a tuple struct keys its fields `Index<0>`
   ([`symbol_tag_on_tuple_struct`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/symbol_tag_on_tuple_struct.rs)),
-  and a `__Context__`-style parameter a macro generated is not a struct, so its fix is a bound.
+  and a `__Context__`-style parameter a macro generated is not a struct, so its fix is a bound (the
+  driver reports a provider missing such a bound as `[CGP-E036]`, per
+  [The driver](driver.md#reshaping-an-undeclared-dependency)).
 
 In practice the missing-field reword rarely fires, because the
 [typed root-cause resolver](typed-root-cause-resolution.md) recovers most missing-field failures
@@ -390,11 +397,19 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
 - [`crates/cargo-cgp-error-processing/tests/error_processing/internal_error.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/internal_error.rs):
   the internal-error note naming the panic and the issue tracker.
 - [`crates/cargo-cgp-error-processing/tests/error_processing/cgp_impl_misuse.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/cgp_impl_misuse.rs):
-  the `#[cgp_impl]` misuse wording: a consumer trait in the header (naming the provider to use), a
-  trait that is not a CGP component, a consumer trait in a provider bound, and an inner provider not
-  imported.
+  the wrong-half wording: a consumer trait in the header (naming the provider to use), a trait that
+  is not a CGP component (whose help names a provider trait for the header), a consumer trait in a
+  provider bound, a provider trait in `#[uses]` (naming the consumer trait to declare), and an inner
+  provider not imported.
 - [`crates/cargo-cgp-error-processing/tests/error_processing/undeclared.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/undeclared.rs):
-  the `[CGP-E030]` header naming the undeclared trait, and the help naming the `#[uses(…)]` to write.
+  the `[CGP-E030]` header naming the undeclared trait, and the help naming the `#[uses(…)]` to
+  write: with the arguments a generic trait's call fixes, with a parameter the call does not give
+  away left for the reader to replace (one or several), and absent when the bound cannot be written.
+- [`crates/cargo-cgp-error-processing/tests/error_processing/unimported.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/unimported.rs):
+  the `[CGP-E035]` header naming the abstract type, and the help naming the `#[use_type(…)]` import.
+- [`crates/cargo-cgp-error-processing/tests/error_processing/requirement.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/requirement.rs):
+  the `[CGP-E036]` header and helps: one requirement, several declared together, and an
+  abstract-type component imported with `#[use_type]` rather than declared.
 - The [UI snapshot suite](testing.md) exercises the transforms over every fixture's real
   diagnostics: each `.cgp.stderr` is what the driver rendered after applying them.
 
@@ -446,9 +461,10 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   (`similar_name` and `similar_key`, the near-miss rules the fix `help`s use), and `wiring.rs`
   (`WiringConflict`/`WiringKey`, `plan_wiring_conflict` for the `[CGP-E010]`–`[CGP-E014]`
   duplicate-key headers, and `wiring_conflict_help` for the redirect fix), plus `orphan.rs`,
-  `undeclared.rs`, and `cgp_impl_misuse.rs` (the `[CGP-E022]` and `[CGP-E030]`–`[CGP-E034]` reshape
-  models and their wording), and `internal_error.rs` (the note on a diagnostic shown untransformed
-  after a contained panic). See [Typed root-cause resolution](typed-root-cause-resolution.md) and
+  `undeclared.rs`, `unimported.rs`, `requirement.rs`, and `cgp_impl_misuse.rs` (the `[CGP-E022]` and
+  `[CGP-E030]`–`[CGP-E037]` reshape models and their wording), and `internal_error.rs` (the note on
+  a diagnostic shown untransformed after a contained panic). See
+  [Typed root-cause resolution](typed-root-cause-resolution.md) and
   [The driver](driver.md#reshaping-a-duplicate-key-conflict).
 - [`crates/cargo-cgp-error-processing/src/tree.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/tree.rs):
   the `DependencyTree` type and its `cargo tree`-style renderer, the target the

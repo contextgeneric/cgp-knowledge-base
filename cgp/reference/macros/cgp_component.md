@@ -488,7 +488,8 @@ or a doc comment apply where it should. It also means a misplaced `#[uses(...)]`
 `#[cgp_component]`. Every copy carries the attribute's own span, so rustc deduplicates them into one
 error on the attribute's line, and its help may suggest a similarly named built-in (`#[used]` for
 `#[uses]`), which leads away from the fix. A genuine typo in an attribute name produces the same
-error.
+error. The error catalog records the misplaced `#[uses]` as one shape of the
+[wrong component half](../../errors/lowering/wrong-component-half.md) class.
 
 **Attributes on a trait *method* follow a different path.** Each is kept on the consumer trait's
 method and copied onto the matching method declaration of the provider trait, while the generated

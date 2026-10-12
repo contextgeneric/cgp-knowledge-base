@@ -30,7 +30,7 @@ mismatch codes `E004` and `E005`, whose message states the cause; `E010` to `E01
 duplicate-key `E0119` conflict (no root-cause note, both `rustc` carets kept); `E015` to `E019` name
 a structural mistake in a check table or a wiring entry; `E020` and `E021` reshape the `E0275`
 overflow of a wiring lookup that never ends, and `E022` an orphan-rule coherence error; and `E030`
-to `E034` reword a macro-lowering error, each with its fix in a `help`.
+to `E037` reword a macro-lowering error, each with its fix in a `help`.
 
 - **CGP-E001**: the consumer trait is not implemented for the context (missing wiring, or an unmet
   transitive dependency).
@@ -61,13 +61,19 @@ to `E034` reword a macro-lowering error, each with its fix in a `help`.
   type (the same `E0275` overflow, for a lookup that grows without repeating).
 - **CGP-E022**: an orphan-rule namespace registration: a foreign component or path registered into a
   foreign namespace (`E0210`/`E0117`).
-- **CGP-E030**: a trait used in a `#[cgp_fn]`/`#[cgp_impl]` body but not declared with `#[uses]`.
+- **CGP-E030**: a trait used in a `#[cgp_fn]`/`#[cgp_impl]` body (a method on `self`, or an
+  associated function on `Self`) but not declared with `#[uses]`.
 - **CGP-E031**: an inner provider a higher-order provider calls but never imports with
   `#[use_provider]`.
 - **CGP-E032**: a `#[cgp_impl]` header names the component's consumer trait where its provider trait
   belongs.
 - **CGP-E033**: `#[cgp_impl]` applied to a trait that is not a CGP component.
 - **CGP-E034**: an inner-provider bound names the consumer trait rather than the provider trait.
+- **CGP-E035**: an abstract type (`Self::Error`, or a bare `Error`) used in a CGP definition but not
+  imported with `#[use_type]`.
+- **CGP-E036**: a requirement a provider trait places on the context (from its component's
+  `#[extend]` or `#[use_type]`) that a `#[cgp_impl]` provider does not declare.
+- **CGP-E037**: a provider trait named in `#[uses]`, where a dependency names its consumer trait.
 
 ## Dependency-tree entries: `CGP-E1xx`
 
@@ -103,4 +109,7 @@ example, [check-trait-failure](../checks/check-trait-failure.md) is stamped `[CG
 `root cause:` tree whose leaf is `[CGP-E110]` (missing field) or `[CGP-E111]` (underived); the
 [conflicting-wiring](../wiring/conflicting-wiring.md) family maps to `[CGP-E010]`–`[CGP-E014]`; and
 [wiring-cycle](../wiring/wiring-cycle.md) maps to `[CGP-E020]` for a cycle and `[CGP-E021]` for a
-lookup that grows.
+lookup that grows. The two lowering classes take the macro-mistake block:
+[undeclared dependency](../lowering/undeclared-dependency.md) maps to `[CGP-E030]`, `[CGP-E031]`,
+`[CGP-E035]`, and `[CGP-E036]`, and [wrong component half](../lowering/wrong-component-half.md) to
+`[CGP-E032]` to `[CGP-E034]` and `[CGP-E037]`.

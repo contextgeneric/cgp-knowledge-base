@@ -129,14 +129,18 @@ fixture that pins it.
   union block still keeps its dependency chain
   ([`overlapping_cause_sets`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/duplication/overlapping_cause_sets.rs)).
 - **A trait used but not declared** (a `#[cgp_fn]`/`#[cgp_impl]` body that calls a CGP trait's
-  method, a consumer or `#[cgp_fn]`/`#[blanket_trait]` trait, on `self` without declaring it via
-  `#[uses(…)]`) becomes a `[CGP-E030]` header naming the trait, with the `#[uses(…)]` fix in a
-  `help`, in place of rustc's vague `E0599`, which names `__Context__` and points at a transitive
-  `HasField` bound
-  ([`undeclared_uses_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/used-but-undeclared/undeclared_uses_trait.rs),
-  and [`undeclared_uses_trait_in_cgp_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/used-but-undeclared/undeclared_uses_trait_in_cgp_impl.rs)
+  method, a consumer or `#[cgp_fn]`/`#[blanket_trait]` trait, on `self`, or its associated function
+  on `Self`, without declaring it via `#[uses(…)]`) becomes a `[CGP-E030]` header naming the trait,
+  with the `#[uses(…)]` fix in a `help`, in place of rustc's vague `E0599`, which names
+  `__Context__` and points at a transitive `HasField` bound or splices a bound into the macro
+  attribute. A generic trait is written with the arguments the call uses
+  ([`undeclared_uses_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/undeclared_uses_trait.rs),
+  [`undeclared_uses_trait_in_cgp_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/undeclared_uses_trait_in_cgp_impl.rs)
   with its async form for a provider body, where the generated impl's `Self` is the provider struct
-  and the receiver's declared type identifies the shape instead).
+  and the receiver's declared type identifies the shape instead,
+  [`undeclared_generic_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/undeclared_generic_trait.rs),
+  and
+  [`raise_error_in_cgp_fn`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/raise_error_in_cgp_fn.rs)).
   Any `[T]: Sized` cascade the unresolved return type trails is left as rustc wrote it: those errors
   can land off the failing expression, where suppressing them reliably would risk hiding an
   unrelated error.
@@ -150,18 +154,32 @@ fixture that pins it.
   consumer/provider fingerprints, so it generalizes over a component's generic parameters and tells
   a wrong-half mistake (`[CGP-E032]`, which names the provider trait to use) apart from a
   non-component trait (`[CGP-E033]`, which has no provider to suggest)
-  ([`consumer_trait_in_provider_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/wrong-component-half/consumer_trait_in_provider_impl.rs),
-  [`consumer_trait_in_provider_impl_generic`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/wrong-component-half/consumer_trait_in_provider_impl_generic.rs),
+  ([`consumer_trait_in_provider_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/consumer_trait_in_provider_impl.rs),
+  [`consumer_trait_in_provider_impl_generic`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/consumer_trait_in_provider_impl_generic.rs),
   and
-  [`cgp_impl_on_non_cgp_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/wrong-component-half/cgp_impl_on_non_cgp_trait.rs)).
+  [`cgp_impl_on_non_cgp_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/cgp_impl_on_non_cgp_trait.rs)).
 - **A higher-order provider's `#[use_provider]` mistake** is reshaped the same way. Calling
   `InnerCalculator::area(self)` without `#[use_provider(InnerCalculator: AreaCalculator)]` becomes a
   `[CGP-E031]` error naming the inner provider and the fix, in place of rustc's `E0599`, which leaks
   the generated `__Context__` and suggests the wrong consumer-trait bound
-  ([`higher_order_missing_use_provider`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/used-but-undeclared/higher_order_missing_use_provider.rs)).
+  ([`higher_order_missing_use_provider`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/higher_order_missing_use_provider.rs)).
   Naming the *consumer* trait in the `#[use_provider]` bound becomes a `[CGP-E034]` error pointing
   at the provider trait to use, with the `E0308` body cascade suppressed
-  ([`higher_order_use_provider_consumer_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/wrong-component-half/higher_order_use_provider_consumer_trait.rs)).
+  ([`higher_order_use_provider_consumer_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/higher_order_use_provider_consumer_trait.rs)).
+  Naming a *provider* trait in `#[uses]` becomes a `[CGP-E037]` error naming the consumer trait to
+  declare, in place of rustc's suggestion to add the generated `<__Context__>`
+  ([`uses_provider_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/uses_provider_trait.rs)).
+- **An undeclared import or requirement** is named with its declaration. `Self::Error` without
+  `#[use_type(HasErrorType.Error)]` becomes a `[CGP-E035]` error naming the abstract type and the
+  import, in place of rustc's `E0220` on `__Context__`
+  ([`self_error_without_bound`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/self_error_without_bound.rs)).
+  A provider that omits a requirement its component places on every context (an `#[extend]` or a
+  `#[use_type]`) becomes one `[CGP-E036]` error naming the provider trait, the provider, and the
+  `#[uses]` or `#[use_type]` to add, in place of rustc's `E0277` on `__Context__` repeated at the
+  attribute and each signature
+  ([`supertrait_missing_uses`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/supertrait_missing_uses.rs)).
+  A bare `Error` in such a provider is folded into the `[CGP-E035]`
+  ([`error_alias_without_use_type`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/error_alias_without_use_type.rs)).
 - **An abstract type the context binds one way while a provider pins it another** is a coded
   mismatch of its own. A context chooses an abstract type's concrete form by wiring its component to
   `UseType<T>`; a provider can pin the same type with the `#[use_type(Trait.{Assoc = Concrete})]`
@@ -351,25 +369,25 @@ Many construct mistakes reach the reader as rustc wrote them, or reshaped withou
 names the fix. The cause is in the output, but the reader must know the construct to act on it.
 The fixtures group by construct:
 
-- **Wiring keys and values** (`wiring/keys/`): a trait written as a key, an undeclared provider or
-  value, an unimported or guessed key, each an `E0425` or `E0782` with a wrong suggestion.
-- **Wiring checks, conflicts, and cycles** (`wiring/checks/`, `wiring/conflicts/`,
-  `wiring/cycles/`): a bundle checked as a context, a cycle reached by a call, and a generic key in
-  `delegate_and_check_components!` checked at unit parameters without `#[check_params(...)]`
-  (`check_trait_named_as_wrapper`).
-- **Namespaces** (`wiring/namespaces/`, `wiring/constraints/`): a self-inheriting namespace.
-- **Lowering** (`lowering/`): a provider trait in `#[uses]`, `Self::CONST` rewritten to the context,
-  a missing `#[uses]` for a supertrait, the abstract `Error` without `#[use_type]`, and `#[uses]` on
-  a component.
-- **Providers, fields, and types** (`providers/`, `fields/`, `types/`): getters wired to the wrong
-  provider, a generic check without its parameter, `UseDelegate` without `#[derive_delegate]`, a
-  provider impl without `#[cgp_provider]`, a tuple-struct context, a field read as two types, and a
-  borrowed error detail.
-- **Handlers** (`handlers/`, `extensible-data/`): promotions of hand-written providers, a matcher
-  wired as a handler or applied to a struct, a monadic pipeline over plain values, and matchers or
-  builders missing an arm or a field.
-- **Use sites** (`use-site/`): calls the resolver declines, leaking `IsProviderFor` or rustc's
-  method-probe advice, including a provider's own method called directly.
+- **Wiring keys and values:** a trait written as a key, an undeclared provider or value, an
+  unimported or guessed key, each an `E0425` or `E0782` with a wrong suggestion.
+- **Wiring checks, conflicts, and cycles:** a bundle checked as a context, a cycle reached by a
+  call, and a generic key in `delegate_and_check_components!` checked at unit parameters without
+  `#[check_params(...)]` (`check_trait_named_as_wrapper`).
+- **Namespaces:** a self-inheriting namespace.
+- **Lowering:** `Self::CONST` rewritten to the context (`cgp_impl_self_const`); a bare `Error`
+  without `#[use_type]` that no requirement of the component explains, whose `E0425` suggests
+  importing `std::error::Error` (`error_alias_in_cgp_fn`, `error_alias_in_provider_body`);
+  `Self::Error` where two abstract-type traits declare an `Error` (`self_error_two_traits`); and
+  `#[uses]` on a component, where `#[extend]` belongs, with rustc's `#[used]` suggestion
+  (`uses_on_component`).
+- **Providers, fields, and types:** getters wired to the wrong provider, a generic check without its
+  parameter, `UseDelegate` without `#[derive_delegate]`, a provider impl without `#[cgp_provider]`,
+  a tuple-struct context, a field read as two types, and a borrowed error detail.
+- **Handlers:** promotions of hand-written providers, a matcher wired as a handler or applied to a
+  struct, a monadic pipeline over plain values, and matchers or builders missing an arm or a field.
+- **Use sites:** calls the resolver declines, leaking `IsProviderFor` or rustc's method-probe
+  advice, including a provider's own method called directly.
 
 ## What good presentation looks like
 

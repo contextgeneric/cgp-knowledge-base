@@ -110,7 +110,8 @@ Grep the error headlines first, because that one search classifies everything.
 names, which is the whole of [reading the error's shape](#read-the-errors-shape-before-its-contents)
 recovered without scrolling. From the headlines alone you know whether you face a dependency error
 (`E0277`/`E0599`), a coherence conflict (`E0119`), a cycle (`E0275`), an orphan violation (`E0210`),
-an unconstrained generic (`E0207`), or a name-resolution failure (`E0576`/`E0433`/`E0425`), and the
+an unconstrained generic (`E0207`), a name-resolution failure (`E0576`/`E0433`/`E0425`), or a
+mistake in how a CGP definition names its dependencies (`E0107`/`E0220`), and the
 [decoder below](#a-decoder-for-the-errors-you-will-actually-see) says what each means. Pair it with
 the tail of the file (`tail -n 3`), which shows the error count and any
 `the full name for the type has been written to '…long-type-….txt'` note telling you a cause is
@@ -131,6 +132,8 @@ cause or proves it absent:
 | an unconstrained entry generic (`E0207`) | `grep -n 'is not constrained'` | the caret sits on the `<T>` that must reach the key |
 | an ill-formed lowered type (`E0277` `Sized`) | `grep -n 'size for values of type\|Sized'` | an `Option<&T>` shorthand over an unsized type the macro cannot see (e.g. `Option<&Path>`); the `within` help names the type you wrote |
 | a `#[use_type]` imported-name typo (`E0576`) | `grep -n 'cannot find associated type'` | the caret sits on the misspelled name |
+| a dependency a CGP definition uses without declaring it | `grep -n '__Context__'` | a headline on the generated context (an `E0599` on `&__Context__`, an `E0220` "not found for `__Context__`", an `E0277` on `__Context__: Trait`) means a `#[cgp_fn]`/`#[cgp_impl]` lacks the `#[uses]`, `#[use_type]`, or component requirement for the trait or type it names; see [undeclared dependency](../errors/lowering/undeclared-dependency.md) |
+| the wrong half of a component (`E0107`) | `grep -n 'E0107'` | the caret's trait is a consumer trait in a `#[cgp_impl]` header or a `#[use_provider]` bound, or a provider trait in `#[uses]`; name the other half, per [wrong component half](../errors/lowering/wrong-component-half.md) |
 | a name a macro lowered out of scope (`E0433`/`E0425`) | `grep -nE 'E0433\|E0425'` | grep the **codes**, not the message: both print "cannot find type", so a text search finds one and misses the other. `E0433` (`use of undeclared type`) means the caret is in your own signature, on an `#[impl_generics]` parameter named where only the generated impl declares it; `E0425` (`not found in this scope`) means a bare generated name, most often a `…Component` marker derived from a `#[cgp_impl]` header naming the wrong trait |
 | an abstract type shadowing its own bound (`E0404`) | `grep -n 'expected trait, found'` | a `#[cgp_type]` associated type named after the trait bounding it, so the bound resolved to the associated type; the paired "you might have meant to refer to this trait" note names the other half |
 | a field type disagreeing with a *wired* abstract type (`E0271`) | `grep -n 'type mismatch resolving'` | the required side is printed normalized, so a `Value == Pool<Postgres>` requirement may come from a wired `Db` rather than from anything written in the provider, so check the wiring before the provider |
@@ -144,9 +147,10 @@ segments out on one line, so reading that single hit decodes the unbound path.
 
 One shape defeats grep entirely, and recognizing it saves a fruitless search. If the headline grep
 returns only an `E0599` "method … exists … but its trait bounds were not satisfied" (or an `E0277`
-on a bare consumer trait) with no `CanUseComponent`/`IsProviderFor` block beneath it, you are
-looking at a [hidden dependency](../errors/hidden/unsatisfied-dependency.md): the root cause is
-*absent from the output*, not merely far down it, so no grep can find it. Do not keep searching;
+on a bare consumer trait) on a concrete context, with no `CanUseComponent`/`IsProviderFor` block
+beneath it, you are looking at a [hidden dependency](../errors/hidden/unsatisfied-dependency.md):
+the root cause is *absent from the output*, not merely far down it, so no grep can find it. (The
+same `E0599` on `&__Context__` is an undeclared dependency instead, whose trait the `help:` names.) Do not keep searching;
 [promote the error with a check](#move-the-error-to-where-the-mistake-is-with-checks) and re-run,
 which turns it into a surfaced `E0277` whose leaf the greps above do find.
 
@@ -256,7 +260,10 @@ this as a lookup once you have the error code and the trait it names.
   because the compiler drops the nested bound when a blanket impl sits among the candidate impls. Do
   not scan it for a root cause; there is none in it, so promote it with a
   [`check_components!`](../reference/macros/check_components.md) to surface one. See
-  [Unsatisfied dependency (hidden)](../errors/hidden/unsatisfied-dependency.md).
+  [Unsatisfied dependency (hidden)](../errors/hidden/unsatisfied-dependency.md). The exception is a
+  receiver of `&__Context__`, or "no associated function … found for type parameter `__Context__`":
+  that is a `#[cgp_fn]`/`#[cgp_impl]` body calling a trait it does not declare, and the `help:` names
+  the trait to add to `#[uses]`; see [Undeclared dependency](../errors/lowering/undeclared-dependency.md).
 - **`E0277` on `IsProviderFor<…>`, `CanUseComponent<…>`, or a consumer trait**: a dependency is
   unmet or a component is unwired. Either the context has no `DelegateComponent` entry for the
   component (wire it), or the chosen provider needs something the context does not supply (read the
@@ -332,9 +339,25 @@ this as a lookup once you have the error code and the trait it names.
   [abstract type](../concepts/abstract-types.md), or keep it out of the signature. An `E0425`
   (`not found in this scope`) names a bare generated identifier, most often a `…Component` marker
   derived from a [`#[cgp_impl]`](../reference/macros/cgp_impl.md) header that names a component's
-  *consumer* trait, or a trait that is no component at all, where its *provider* trait belongs. See
+  *consumer* trait, or a trait that is no component at all, where its *provider* trait belongs (see
+  [Wrong component half](../errors/lowering/wrong-component-half.md)). An `E0425` on a bare `Error`
+  is an abstract type written without its `#[use_type(HasErrorType.Error)]` import, whatever the
+  `help:` says about `std::error::Error` (see
+  [Undeclared dependency](../errors/lowering/undeclared-dependency.md)). See also
   [Out-of-scope generated name](../errors/lowering/out-of-scope-generated-name.md) and
   [Unresolved imported abstract type](../errors/lowering/unresolved-imported-type.md).
+- **`E0107` "trait takes N generic arguments but N+1 … were supplied" or "missing generics for
+  trait"**: a component's trait named in the wrong position. The CGP attributes add the context
+  argument to a provider trait and leave it off a consumer trait, so a consumer trait in a
+  `#[cgp_impl]` header or a `#[use_provider]` bound receives one argument too many, and a provider
+  trait in `#[uses]` one too few. Name the other half; ignore the `help:` to remove or add generics.
+  See [Wrong component half](../errors/lowering/wrong-component-half.md).
+- **`E0220` "associated type `Error` not found for `__Context__`"**: `Self::Error` (or another
+  abstract type) in a CGP definition that does not import it; add
+  `#[use_type(HasErrorType.Error)]`. An `E0277` on `__Context__: Trait` "required by a bound in" a
+  provider trait is the related mistake of a provider omitting a requirement its component declares
+  with `#[extend]` or `#[use_type]`. See
+  [Undeclared dependency](../errors/lowering/undeclared-dependency.md).
 - **`E0404` "expected trait, found type parameter"**: an abstract type declared with the same name
   as the trait that bounds it (`type Database: Database`), so the bound resolved to the associated
   type rather than the trait. Ordinary name resolution rather than a CGP defect; rename one of the

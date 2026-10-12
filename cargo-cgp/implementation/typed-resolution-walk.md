@@ -296,13 +296,13 @@ then the one the program gives once the header names the provider trait, and the
 beside the `[CGP-E032]`. When every clause holds, the obligation ends at the not-a-provider leaf,
 which the emitter drops as the header's consequence. Four fixtures pin the outcomes: a missing
 field at a check
-([`consumer_trait_in_provider_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/wrong-component-half/consumer_trait_in_provider_impl.rs)),
+([`consumer_trait_in_provider_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/consumer_trait_in_provider_impl.rs)),
 the same at a call with no check
-([`consumer_trait_in_provider_impl_call_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/wrong-component-half/consumer_trait_in_provider_impl_call_missing_field.rs)),
+([`consumer_trait_in_provider_impl_call_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/consumer_trait_in_provider_impl_call_missing_field.rs)),
 a field of the wrong type
-([`consumer_trait_in_provider_impl_field_type`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/wrong-component-half/consumer_trait_in_provider_impl_field_type.rs)),
+([`consumer_trait_in_provider_impl_field_type`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/consumer_trait_in_provider_impl_field_type.rs)),
 and the header alone
-([`consumer_trait_in_provider_impl_called`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/wrong-component-half/consumer_trait_in_provider_impl_called.rs)).
+([`consumer_trait_in_provider_impl_called`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/consumer_trait_in_provider_impl_called.rs)).
 
 The walk crosses inference-context boundaries carefully, because a stray variable from one
 `InferCtxt` panics another. It finds the satisfying impl with the

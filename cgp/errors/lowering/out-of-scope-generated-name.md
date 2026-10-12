@@ -208,12 +208,12 @@ from `cgp` would make every `cgp` user link `alloc`, and the only alternative wa
   [`reserved_variant_name_from_variant.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/out-of-scope-generated-name/reserved_variant_name_from_variant.rs). The library
   side pins the emitted `Self::…` paths in
   [`invalid_expansion/reserved_variant_names.rs`](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/invalid_expansion/reserved_variant_names.rs).
-- [`uncataloged/wrong-component-half/consumer_trait_in_provider_impl_generic.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/wrong-component-half/consumer_trait_in_provider_impl_generic.rs):
+- [`lowering/wrong-component-half/consumer_trait_in_provider_impl_generic.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/consumer_trait_in_provider_impl_generic.rs):
   the adjacent `E0425` shape: a `#[cgp_impl]` header names the consumer trait
   `CanCalculateArea<Rectangle>` where the provider trait `AreaCalculator` belongs, so the derived
   `CanCalculateAreaComponent` marker does not exist; the `.rust.stderr` pins `E0425` with the caret
   on the `#[cgp_impl]` attribute, beside an `E0107` on the header, and the `.cgp.stderr` leads with
-  `[CGP-E032]`.
+  `[CGP-E032]`. The shape is cataloged as a [wrong component half](wrong-component-half.md).
 - [`ok/abstract_db_transaction.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/ok/abstract_db_transaction.rs):
   the clean-compile counterpart: the same two abstract types named in both components' signatures,
   where promoting them is what makes naming them legal. Two further `ok/` fixtures pin the positions

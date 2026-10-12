@@ -180,6 +180,11 @@ does not fill in, so the bound fails with
 ``E0107 missing generics for trait `AreaCalculator` `` (`expected 1 generic argument`), with a note
 naming the missing `__Context__` parameter. Depend on the consumer trait (`CanCalculateArea`) for
 whatever the context wires, or on the provider through `#[use_provider]` for a named implementation.
+The error catalog records the mistake as a
+[wrong component half](../../errors/lowering/wrong-component-half.md), which `cargo-cgp` reports
+as `[CGP-E037]`, naming the consumer trait to declare. Leaving a trait the body calls out of
+`#[uses]` altogether is the sibling
+[undeclared dependency](../../errors/lowering/undeclared-dependency.md).
 
 ## Source
 

@@ -59,7 +59,7 @@ yet:
 | `CGP-E001` to `CGP-E009` | a trait the context cannot use, and the two type mismatches | `E001` to `E005` |
 | `CGP-E010` to `CGP-E019` | conflicting wiring, and structural mistakes | `E010` to `E019` |
 | `CGP-E020` to `CGP-E029` | wiring that never resolves, and the orphan rule | `E020` to `E022` |
-| `CGP-E030` to `CGP-E039` | mistakes in what a macro was given | `E030` to `E034` |
+| `CGP-E030` to `CGP-E039` | mistakes in what a macro was given | `E030` to `E037` |
 | `CGP-E040` to `CGP-E049` | wiring keys and values that do not resolve | none yet |
 | `CGP-E050` to `CGP-E059` | extensible data | none yet |
 
@@ -85,16 +85,19 @@ ends, which has no terminal leaf to descend to, split by how the tool's walk of 
 an obligation met again is a cycle (`CGP-E020`), and the depth limit reached without a repeat is a
 lookup that grows (`CGP-E021`). `CGP-E022` rewrites an orphan-rule namespace registration's
 `E0210`/`E0117` (recovered from the offending impl off the compiler, like the `E0119` family). The
-**macro-mistake** codes `CGP-E030` to `CGP-E034` are each recovered off the compiler from the
-generated impl the failing token sits in and reworded with the fix in a `help`. Two concern a
-used-but-undeclared dependency: `CGP-E030` a trait used in a `#[cgp_fn]`/`#[cgp_impl]` body but not
-declared via `#[uses(…)]`, and `CGP-E031` an inner provider a higher-order provider calls but never
-imported via `#[use_provider]`. Three concern a trait named where a provider trait belongs:
-`CGP-E032` a `#[cgp_impl]` header naming the component's consumer trait, `CGP-E033` a `#[cgp_impl]`
-on a trait that is not a CGP component at all, and `CGP-E034` an inner-provider bound (typically
-`#[use_provider]`) naming the consumer trait. Each entry below gives the rewritten message, the
-mistake behind it, the fix, and the [CGP error catalog](../cgp/errors/README.md) class it
-recognizes.
+**macro-mistake** codes `CGP-E030` to `CGP-E037` are each recovered off the compiler from the
+generated item the failing token sits in and reworded with the fix in a `help`. Four concern an
+[undeclared dependency](../cgp/errors/lowering/undeclared-dependency.md): `CGP-E030` a trait used
+in a `#[cgp_fn]`/`#[cgp_impl]` body but not declared via `#[uses(…)]`, `CGP-E031` an inner provider
+a higher-order provider calls but never imported via `#[use_provider]`, `CGP-E035` an abstract type
+used but not imported via `#[use_type]`, and `CGP-E036` a requirement of a component that a
+provider does not declare. Four concern the
+[wrong component half](../cgp/errors/lowering/wrong-component-half.md): `CGP-E032` a `#[cgp_impl]`
+header naming the component's consumer trait, `CGP-E033` a `#[cgp_impl]` on a trait that is not a
+CGP component at all, `CGP-E034` an inner-provider bound (typically `#[use_provider]`) naming the
+consumer trait, and `CGP-E037` a provider trait named in `#[uses]`. Each entry below gives the
+rewritten message, the mistake behind it, the fix, and the
+[CGP error catalog](../cgp/errors/README.md) class it recognizes.
 
 ### `CGP-E001`: consumer trait not implemented
 
@@ -431,42 +434,59 @@ classes are [conflicting wiring](../cgp/errors/wiring/conflicting-wiring.md) for
 ### `CGP-E030`: trait used but not declared
 
 - **Message:** `` [CGP-E030] the trait `<Trait>` is used but not declared as a dependency ``, with a
-  `help` naming the fix: `` declare it as a dependency with `#[uses(<Trait>)]` ``.
-- **Means:** a `#[cgp_fn]`/`#[cgp_impl]` body calls a CGP trait's method (a consumer trait, or a
-  `#[cgp_fn]`/`#[blanket_trait]` blanket trait) on `self`, but the enclosing definition never
+  `help` naming the fix: `` declare it as a dependency with `#[uses(<Trait><Args>)]` ``. For a
+  generic trait the help writes the arguments the call uses, as in `#[uses(CanFormatPair<(u32, u64)>)]`;
+  an argument the tool cannot read stays as the trait's own parameter, and the help adds
+  `` , with the type the call uses in place of `<Param>` ``.
+- **Means:** a `#[cgp_fn]`/`#[cgp_impl]` body calls a CGP trait (a consumer trait, or a
+  `#[cgp_fn]`/`#[blanket_trait]` blanket trait) on the context, as a method on `self` or as an
+  associated function on `Self` (`Self::raise_error(…)`), but the enclosing definition never
   declared it. `#[cgp_fn]` lowers the body into a blanket impl over a generated generic context,
   `impl<__Context__> Describe for __Context__ where __Context__: GetName`, and `#[cgp_impl]` into a
   provider impl over the same context, `impl<__Context__> Greeter<__Context__> for GreetHello`, with
-  `self` renamed to `__context__: &__Context__`. Either way a trait the body uses must be a `where`
-  bound on `__Context__`, added with `#[uses(…)]`. Omitted, the method cannot resolve on
-  `__Context__`. This also covers a forgotten CGP *consumer* trait used the same way.
-- **Triggered by:** an `E0599` "the method `…` exists for reference `&__Context__`, but its trait
-  bounds were not satisfied", whose note points at a transitive `HasField` bound. The resolver
-  confirms it structurally: the failing call sits in a generated impl over a bare type-parameter
-  context (the impl's `Self` in a `#[cgp_fn]` blanket impl, the provider trait's first argument in a
-  `#[cgp_impl]` provider impl) and is made on that context (a receiver that is a parameter must be
-  declared as the context, read from the method's signature and followed through the `let` an
-  `async fn` adds; a receiver no signature types is accepted only in a `#[cgp_fn]` impl), the called
-  method belongs to a CGP trait, and that trait is not among the impl's `where` bounds. A call on
-  another generic parameter (`value: &Value`) is deliberately left as rustc wrote it, since its fix
-  is a bound on `Value`, which `#[uses]` cannot give. Fixtures:
-  [`undeclared_uses_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/used-but-undeclared/undeclared_uses_trait.rs)
+  `self` renamed to `__context__: &__Context__` and `Self` to `__Context__`. Either way a trait the
+  body uses must be a `where` bound on `__Context__`, added with `#[uses(…)]`. Omitted, the call
+  cannot resolve on `__Context__`.
+- **Triggered by:** an `E0599`, either "the method `…` exists for reference `&__Context__`, but its
+  trait bounds were not satisfied", whose note points at a transitive `HasField` bound, or "no
+  associated function or constant named `…` found for type parameter `__Context__`", whose
+  suggestions are spliced into the macro attribute. The resolver confirms it structurally: the
+  failing call sits in a generated impl over a bare type-parameter context (the impl's `Self` in a
+  `#[cgp_fn]` blanket impl, the provider trait's first argument in a `#[cgp_impl]` provider impl)
+  and is made on that context (a receiver that is a parameter must be declared as the context, read
+  from the method's signature and followed through the `let` an `async fn` adds; a receiver no
+  signature types is accepted only in a `#[cgp_fn]` impl; an associated function's qualifying type
+  must name the context), the called function belongs to a CGP trait, and that trait is not among
+  the impl's `where` bounds. The help's arguments come from unifying the call's arguments (their
+  written types, or a parameter's declared type) with the function's declared inputs; a trait with a
+  lifetime or const parameter gets no help. A call on another generic parameter (`value: &Value`)
+  is deliberately left as rustc wrote it, since its fix is a bound on `Value`, which `#[uses]` cannot
+  give. Fixtures:
+  [`undeclared_uses_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/undeclared_uses_trait.rs)
   for a `#[cgp_fn]` body,
-  [`undeclared_uses_trait_in_cgp_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/used-but-undeclared/undeclared_uses_trait_in_cgp_impl.rs)
+  [`undeclared_uses_trait_in_cgp_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/undeclared_uses_trait_in_cgp_impl.rs)
   and
-  [`undeclared_uses_trait_in_async_cgp_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/used-but-undeclared/undeclared_uses_trait_in_async_cgp_impl.rs)
-  for provider bodies, and
-  [`undeclared_trait_on_non_context_parameter`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/used-but-undeclared/undeclared_trait_on_non_context_parameter.rs)
+  [`undeclared_uses_trait_in_async_cgp_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/undeclared_uses_trait_in_async_cgp_impl.rs)
+  for provider bodies,
+  [`undeclared_generic_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/undeclared_generic_trait.rs)
+  and
+  [`undeclared_generic_trait_parameter`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/undeclared_generic_trait_parameter.rs)
+  for a generic trait's arguments,
+  [`raise_error_in_cgp_fn`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/raise_error_in_cgp_fn.rs),
+  [`raise_error_written_source`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/raise_error_written_source.rs),
+  and
+  [`raise_generic_missing_bound`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/raise_generic_missing_bound.rs)
+  for `Self::raise_error(…)`, and
+  [`undeclared_trait_on_non_context_parameter`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/undeclared_trait_on_non_context_parameter.rs)
   for the call left alone. The Rust code stays `E0599`. Any `[T]: Sized` cascade the unresolved
   return type trails (in an `async` body especially) is left as rustc wrote it: those errors can
   land off the failing expression (on the binding pattern, or a later statement the unresolved type
   flows into) where suppressing them reliably would need type information the emitter cannot obtain
   without risking the suppression of an unrelated error.
-- **Fix (in the `help`):** add the trait to the definition's `#[uses(…)]` list (or a hand-written
-  `where Self: <Trait>` bound), so it becomes a bound on the generated context.
-- **Upstream class:** the post-codegen face of a missing impl-side dependency; closest to the
-  [hidden unsatisfied-dependency](../cgp/errors/hidden/unsatisfied-dependency.md) class, but here
-  the fix is declaring the dependency rather than satisfying it.
+- **Fix (in the `help`):** add the trait to the definition's `#[uses(…)]` list, with the arguments
+  the call uses (or a hand-written `where Self: <Trait>` bound), so it becomes a bound on the
+  generated context.
+- **Upstream class:** [undeclared dependency](../cgp/errors/lowering/undeclared-dependency.md).
 
 ### `CGP-E031`: inner provider used but not imported
 
@@ -475,7 +495,7 @@ classes are [conflicting wiring](../cgp/errors/wiring/conflicting-wiring.md) for
 - **Means:** a higher-order provider's body calls an inner provider as an associated function
   (`<Inner>::method(self)`) that it never imported, so the inner parameter carries no provider-trait
   bound and the call cannot resolve. It is the higher-order-provider counterpart of
-  [`CGP-E030`](#cgp-e030-trait-used-but-not-declared): a used-but-undeclared dependency, here an
+  [`CGP-E030`](#cgp-e030-trait-used-but-not-declared): an undeclared dependency, here an
   inner provider imported with `#[use_provider]` rather than a `#[uses]` trait.
 - **Triggered by:** an `E0599` "no associated function … found for type parameter `<Inner>`" whose
   help names the "type parameter is bounded by the trait" shape. The resolver confirms it
@@ -489,8 +509,8 @@ classes are [conflicting wiring](../cgp/errors/wiring/conflicting-wiring.md) for
 - **Fix (in the `help`):** import the inner provider with
   `#[use_provider(<Inner>: <ProviderTrait>)]`, which supplies the leading context argument the
   provider trait needs.
-- **Upstream class:** a macro-lowering mistake with no upstream error-catalog class of its own; see
-  [higher-order providers](../cgp/concepts/higher-order-providers.md) and
+- **Upstream class:** [undeclared dependency](../cgp/errors/lowering/undeclared-dependency.md); see
+  also [higher-order providers](../cgp/concepts/higher-order-providers.md) and
   [`#[use_provider]`](../cgp/reference/attributes/use_provider.md).
 
 ### `CGP-E032`: consumer trait used in a provider impl
@@ -518,7 +538,7 @@ classes are [conflicting wiring](../cgp/errors/wiring/conflicting-wiring.md) for
   for a missing field, `[CGP-E004]` for a field of the wrong type).
 - **Fix (in the `help`):** change the impl header to name the provider trait the component pairs the
   consumer with.
-- **Upstream class:** a macro-lowering mistake with no upstream error-catalog class of its own; the
+- **Upstream class:** [wrong component half](../cgp/errors/lowering/wrong-component-half.md); the
   provider/consumer duality is described in
   [consumer and provider traits](../cgp/concepts/consumer-and-provider-traits.md).
 
@@ -527,7 +547,7 @@ classes are [conflicting wiring](../cgp/errors/wiring/conflicting-wiring.md) for
 - **Message:**
   `` [CGP-E033] `#[cgp_impl]` can only implement a CGP component's provider trait, but `<Trait>` is not a CGP component ``,
   with a `help`:
-  `` define `<Trait>` as a component with `#[cgp_component]`, or drop `#[cgp_impl]` and write a plain `impl` if it is an ordinary trait ``.
+  `` make `<Trait>` a component, as in `#[cgp_component(<Trait>Provider)]`, and implement its provider trait here (`impl <Trait>Provider`), or drop `#[cgp_impl]` and write a plain `impl` if it is an ordinary trait ``.
 - **Means:** `#[cgp_impl]` is applied to a trait that is not a CGP component at all (neither a
   consumer nor a provider trait) so there is no provider trait to implement. Distinct from
   [`CGP-E032`](#cgp-e032-consumer-trait-used-in-a-provider-impl), where the trait *is* a component
@@ -536,9 +556,11 @@ classes are [conflicting wiring](../cgp/errors/wiring/conflicting-wiring.md) for
 - **Triggered by:** the same `E0107` shape and structural gate as `CGP-E032` (the `__Context__`
   generic, a concrete `Self`, a user-written header trait), but the header trait's fingerprint is
   *neither* a consumer nor a provider trait. The Rust code stays `E0107`.
-- **Fix (in the `help`):** annotate the trait with `#[cgp_component]` to make it a component, or use
-  an ordinary `impl` if it was never meant to be one.
-- **Upstream class:** a macro-lowering mistake with no upstream error-catalog class of its own; see
+- **Fix (in the `help`):** make the trait a component with `#[cgp_component(…)]` and name the
+  provider trait it generates in the impl header (making it a component alone leaves its consumer
+  trait in the header, which is `CGP-E032`), or use an ordinary `impl` if it was never meant to be
+  one.
+- **Upstream class:** [wrong component half](../cgp/errors/lowering/wrong-component-half.md); see
   [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md) for what the macro requires of its target
   trait.
 
@@ -563,8 +585,106 @@ classes are [conflicting wiring](../cgp/errors/wiring/conflicting-wiring.md) for
   The Rust code stays `E0107`.
 - **Fix (in the `help`):** name the provider trait in the bound, idiomatically through
   `#[use_provider]`.
-- **Upstream class:** a macro-lowering mistake with no upstream error-catalog class of its own; see
-  [higher-order providers](../cgp/concepts/higher-order-providers.md).
+- **Upstream class:** [wrong component half](../cgp/errors/lowering/wrong-component-half.md); see
+  also [higher-order providers](../cgp/concepts/higher-order-providers.md).
+
+### `CGP-E035`: abstract type used but not imported
+
+- **Message:** `` [CGP-E035] the abstract type `<Type>` is used but not imported ``, with a `help`:
+  `` import it with `#[use_type(<Trait>.<Type>)]` ``.
+- **Means:** a `#[cgp_fn]`, `#[cgp_impl]`, or `#[cgp_component]` definition names an abstract type
+  of the context, as `Self::Error` or a bare `Error`, without importing it with
+  [`#[use_type]`](../cgp/reference/attributes/use_type.md). The context then carries no bound of
+  the abstract-type trait that declares the type, so `Self::Error` names an associated type nothing
+  declares, and a bare `Error`, which only the import rewrites, names no type at all.
+- **Triggered by:** an `E0220` "associated type `Error` not found for `__Context__`" (or "for
+  `Self`" in a `#[cgp_fn]`), read from the diagnostic's arguments (the type, its kind, and the
+  type it was sought on). The resolver confirms that the caret sits in a method of an item a CGP
+  macro generated (an impl over the reserved `__Context__`, a consumer or provider trait, or a
+  `#[cgp_fn]` trait) and finds the one CGP abstract-type component (a trait with the
+  `#[cgp_type]` fingerprint and no parameter of its own) that declares an associated type of that
+  name. It is reported once per definition. A bare `Error` arrives earlier, as an `E0425`
+  "cannot find type `Error` in this scope" from name resolution, when nothing can yet say which
+  trait declares it; it becomes `CGP-E035` when a requirement of the component names that trait
+  (see [`CGP-E036`](#cgp-e036-requirement-not-declared)), and the requirement's `E0277`s are then
+  dropped, since the import satisfies them too. Fixtures:
+  [`self_error_without_bound`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/self_error_without_bound.rs),
+  [`self_error_in_cgp_fn`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/self_error_in_cgp_fn.rs),
+  [`self_error_in_component`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/self_error_in_component.rs),
+  and
+  [`self_error_used_twice`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/self_error_used_twice.rs)
+  for `Self::Error`, and
+  [`error_alias_without_use_type`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/error_alias_without_use_type.rs)
+  and
+  [`use_type_component_self_error`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/use_type_component_self_error.rs)
+  for a provider of a component that imports the type. The Rust code stays `E0220` (or `E0425`).
+  Two cases are left as rustc wrote them: a second abstract-type trait declaring the same name makes
+  the import ambiguous
+  ([`self_error_two_traits`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/self_error_two_traits.rs)),
+  and a bare `Error` that no requirement explains keeps its `E0425` with rustc's suggestion to
+  import `std::error::Error`
+  ([`error_alias_in_cgp_fn`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/error_alias_in_cgp_fn.rs)).
+- **Fix (in the `help`):** import the type with `#[use_type(HasErrorType.Error)]` and write it bare.
+- **Upstream class:** [undeclared dependency](../cgp/errors/lowering/undeclared-dependency.md).
+
+### `CGP-E036`: requirement not declared
+
+- **Message:**
+  `` [CGP-E036] the provider trait `<ProviderTrait>` requires `<Trait>` of the context, but the provider `<Provider>` does not declare it ``
+  (`them` for several), with a `help` for each kind of declaration:
+  `` declare it as a dependency with `#[uses(<Trait>)]` `` for a trait, and
+  `` import it with `#[use_type(<Trait>.<Type>)]` `` for an abstract-type component.
+- **Means:** a component requires a trait of every context, through
+  [`#[extend(…)]`](../cgp/reference/attributes/extend.md) or `#[use_type(…)]` on its
+  `#[cgp_component]`, which lowers to a `where` clause on the provider trait
+  (`trait Greeter<__Context__> where __Context__: HasName`). A `#[cgp_impl]` provider must satisfy
+  that clause from its own declarations, and this one does not declare the trait, even when its
+  body never uses it.
+- **Triggered by:** an `E0277` on `__Context__: <Trait>`, "required by a bound in" the provider
+  trait, at the `#[cgp_impl]` attribute or a method signature. The resolver confirms it
+  structurally: the caret sits in a provider impl over the reserved `__Context__`, outside its
+  method bodies, the impl's trait is a CGP provider trait implemented for a provider type, and some
+  `where` clause the provider trait places on the context does not hold under the impl's own
+  declarations (checked with the trait solver in the impl's environment). Every such requirement is
+  named, in the component's order, and an abstract-type component's requirement is worded as its
+  `#[use_type]` import. It is reported once per provider, with the caret where rustc first reported
+  it (usually the attribute) and without rustc's note that the error originates in the macro; an
+  abstract type the provider also uses without importing it is reported as
+  [`CGP-E035`](#cgp-e035-abstract-type-used-but-not-imported) instead. Fixtures:
+  [`supertrait_missing_uses`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/supertrait_missing_uses.rs),
+  [`supertrait_missing_uses_generic`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/supertrait_missing_uses_generic.rs)
+  (a generic requirement, `TagFor<u32>`),
+  [`supertrait_missing_uses_beside_body_error`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/supertrait_missing_uses_beside_body_error.rs)
+  (an unrelated body error kept beside it), and
+  [`use_default_getter_context`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/use_default_getter_context.rs)
+  (a `#[cgp_impl(UseDefault)]` provider). The Rust code stays `E0277`.
+- **Fix (in the `help`):** declare the requirement on the provider, `#[uses(HasName)]` for a trait
+  or `#[use_type(HasErrorType.Error)]` for an abstract-type component.
+- **Upstream class:** [undeclared dependency](../cgp/errors/lowering/undeclared-dependency.md).
+
+### `CGP-E037`: provider trait in `#[uses]`
+
+- **Message:**
+  `` [CGP-E037] `<Provider>` is a provider trait and cannot be a `#[uses]` dependency; a dependency names its consumer trait `<Consumer>` ``,
+  with a `help`:
+  `` name the consumer trait instead: `#[uses(<Consumer>)]` (not the provider trait `<Provider>`) ``.
+- **Means:** `#[uses]` on a `#[cgp_fn]` or `#[cgp_impl]` names a component's *provider* trait.
+  [`#[uses]`](../cgp/reference/attributes/uses.md) declares a trait of the context and writes it as
+  `Self: <Trait>`, so a provider trait, whose first parameter is the context, is given one argument
+  too few. It is the mirror of [`CGP-E034`](#cgp-e034-consumer-trait-in-an-inner-provider-bound):
+  there a consumer trait stands where a provider trait belongs, here the reverse.
+- **Triggered by:** an `E0107` "missing generics for trait `<Provider>`", whose rustc `help` adds the
+  generated `<__Context__>`. The resolver confirms it from the HIR: the caret is the trait name of a
+  `where` bound on the context (`Self`, or the reserved `__Context__`) of an impl a CGP macro
+  generated, the trait is a CGP provider trait written without type arguments, and a consumer trait
+  pairs with it; the search for that consumer skips the impl's own trait, whose blanket impl may be
+  the one being lowered. Fixtures:
+  [`uses_provider_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/uses_provider_trait.rs)
+  on a `#[cgp_fn]` and
+  [`uses_provider_trait_in_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/uses_provider_trait_in_impl.rs)
+  on a `#[cgp_impl]` provider. The Rust code stays `E0107`.
+- **Fix (in the `help`):** name the consumer trait in `#[uses]`.
+- **Upstream class:** [wrong component half](../cgp/errors/lowering/wrong-component-half.md).
 
 ## Dependency-tree entry codes (`CGP-E1xx`)
 
@@ -754,7 +874,12 @@ by
 (fed from the `StructuralMistake` the driver's `resolve::structural` detectors recover), and the
 `CGP-E022` orphan form by
 [`plan_orphan_conflict`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/orphan.rs)
-(fed from the `OrphanConflict` the driver's `resolve::orphan` classifier recovers). The `CGP-E1xx`
+(fed from the `OrphanConflict` the driver's `resolve::orphan` classifier recovers). The
+`CGP-E030`–`CGP-E037` macro-mistake forms come from the wording functions in the same crate's
+[`diagnosis`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/diagnosis)
+module (`plan_undeclared_trait`, `plan_missing_use_provider`, `plan_cgp_impl_misuse`,
+`plan_unimported_abstract_type`, `plan_undeclared_requirement`, and `plan_provider_trait_in_uses`),
+fed from the matching detectors in the driver's `resolve` module. The `CGP-E1xx`
 dependency-tree entry codes are stamped when a node renders: the inner chain nodes by the structured
 [`DepNode`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/node.rs)
 variants (the driver's
