@@ -39,8 +39,9 @@ its directory names its error class.
   downstream consumer (a formatter, an IDE, or an AI agent) to identify the root cause from the
   output alone, no matter how that output is processed. These are the cases that justify the tool's
   compiler-internal access, because only a tool reading the compiler's own state can supply what the
-  ordinary text output has lost. It has no open reproduced case; it records the two archetypes the
-  driver's flags (`-Znext-solver=globally` and `--verbose`) defeat, so they are recognized again.
+  ordinary text output has lost. It lists five extensible-data failures whose output never names
+  the cause, and records the two archetypes the driver's flags (`-Znext-solver=globally` and
+  `--verbose`) defeat, so they are recognized again.
 - [Usability issues](usability.md): **human-oriented**, about *readability*. It lists output that
   does carry the root cause but buries it (foremost the sheer verbosity of a CGP compile error), so
   a reader must wade through volume, encoding, and generated-type noise to reach a cause that is

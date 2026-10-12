@@ -240,10 +240,12 @@ never states the real cause.
 produces an unsized-type failure (an `Option<[u8]>` generated from an auto-getter returning `&[u8]`)
 as two cascading errors both anchored on the `#[cgp_auto_getter]` attribute, naming neither the
 field nor the shorthand combination that has no lowering rule. The cause is hinted by the spans but
-never named; its counterpart
+never named. Its counterpart
 [`use_type_unknown_assoc`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/unresolved-imported-type/use_type_unknown_assoc.rs)
-has `acceptable` quality precisely because rustc already names the typo and its fix. Recognizing the
-lowering class and naming the offending construct is the work here.
+shows a different gap: rustc names the misspelled associated type and the similar one, but its
+suggestion edits the function's signature, while the misspelling is in
+`#[use_type(HasScalarType.Scalr)]`, so applying it leaves the program failing on an undeclared
+`Scalar`. Recognizing the lowering class and naming the offending construct is the work here.
 
 The cheaper way to close a case of this shape is often to fix it in `cgp`. A cyclic `#[use_type]`
 routing (`#[use_type(HasA.A in B, HasB.B in A)]`) is decidable from the import list alone, so
@@ -277,13 +279,18 @@ The fix belongs in `cgp`'s `Path!` primitive rule.
 
 The casts, builders, and extractors of the
 [extensible-data](../../cgp/concepts/extensible-records.md) family have no reshaping and no upstream
-error class. A `CanUpcast` into a target missing one variant
-([`upcast_missing_variant`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/upcast_missing_variant.rs))
-reports an internal `FromVariant` bound, puts its caret on the *wrong* variant, exposes the
-macro-generated `__PartialSmall<IsVoid, IsPresent>` extractor state, and hides a requirement, while
-never stating the mistake, that one enum has a variant the other lacks. The mismatch is pure
-type-level list algebra the compiler holds exactly, so the class suits the typed resolver: a leaf
-naming the absent variant (or the unbuildable field) is the work here.
+error class. A `BuildWithHandlers` list without a step for one field
+([`builder_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/builder_missing_field.rs))
+reports `__PartialConfig<IsPresent, IsNothing>: FinalizeBuild`, exposing the macro-generated
+partial-record state and never naming the unbuilt `port` field. The partial type encodes the mistake
+exactly, as type-level list algebra the compiler holds, so the class suits the typed resolver: a
+leaf naming the unbuilt field (or the absent variant) is the work here. Where rustc's own headline
+already names the tag, the output reads well enough as it stands: an upcast into a target missing a
+variant reads `Big: FromVariant<Symbol!("Bar")>`
+([`upcast_missing_variant`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/upcast_missing_variant.rs)),
+though its notes expose `__PartialSmall<IsVoid, IsPresent>` and its caret lands on the wrong
+variant. Five failures of the family never name their cause at all, and are listed under
+[hidden root cause](hidden-root-cause.md#extensible-data-failures-that-never-name-their-cause).
 
 Dispatch over an extensible enum fails the same way. When one payload of a
 [`#[cgp_auto_dispatch]`](../../cgp/reference/macros/cgp_auto_dispatch.md) enum lacks the dispatch
@@ -323,9 +330,9 @@ The fixtures group by construct:
 - **Wiring keys and values** (`wiring/keys/`): a trait written as a key, an undeclared provider or
   value, an unimported or guessed key, each an `E0425` or `E0782` with a wrong suggestion.
 - **Wiring checks, conflicts, and cycles** (`wiring/checks/`, `wiring/conflicts/`,
-  `wiring/cycles/`): a bundle checked as a context, a hand impl beside wiring, a cycle reached by a
-  call, and a generic key in `delegate_and_check_components!` checked at unit parameters without
-  `#[check_params(...)]` (`check_trait_named_as_wrapper`).
+  `wiring/cycles/`): a bundle checked as a context, a cycle reached by a call, and a generic key in
+  `delegate_and_check_components!` checked at unit parameters without `#[check_params(...)]`
+  (`check_trait_named_as_wrapper`).
 - **Namespaces** (`wiring/namespaces/`, `wiring/constraints/`): a self-inheriting namespace.
 - **Lowering** (`lowering/`): a provider trait in `#[uses]`, `Self::CONST` rewritten to the context,
   a missing `#[uses]` for a supertrait, the abstract `Error` without `#[use_type]`, and `#[uses]` on
@@ -335,8 +342,8 @@ The fixtures group by construct:
   provider impl without `#[cgp_provider]`, a tuple-struct context, a field read as two types, and a
   borrowed error detail.
 - **Handlers** (`handlers/`, `extensible-data/`): promotions of hand-written providers, a matcher
-  wired as a handler or applied to a struct, pipeline stages that disagree, a monadic pipeline over
-  plain values, and matchers or builders missing an arm or a field.
+  wired as a handler or applied to a struct, a monadic pipeline over plain values, and matchers or
+  builders missing an arm or a field.
 - **Use sites** (`use-site/`): calls the resolver declines, leaking `IsProviderFor` or rustc's
   method-probe advice, including a provider's own method called directly.
 

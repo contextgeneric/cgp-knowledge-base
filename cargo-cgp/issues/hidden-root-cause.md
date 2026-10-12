@@ -19,9 +19,11 @@ lost information, only a tool reading the compiler's own state can put it back.
 
 The two archetypes this category was first built around are both defeated, each by a flag the
 driver injects, so neither hides a cause the output cannot recover. They are recorded so a future
-agent recognizes them. Every other post-codegen compile-fail class CGP produces has a fixture under
+agent recognizes them. Apart from the
+[extensible-data failures below](#extensible-data-failures-that-never-name-their-cause), every
+post-codegen compile-fail class CGP produces has a fixture under
 [`tests/ui/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui) that carries its root
-cause in the tool's output; the one class that produces no usable diagnostic under cargo-cgp,
+cause in the tool's output. The one class that produces no usable diagnostic under cargo-cgp,
 `inheritance_cycle`, does so because the next-gen solver *accepts* it (a missing error, tracked as
 a solver caveat in [The driver](../implementation/driver.md#choosing-the-trait-solver)), not
 because a cause is suppressed.
@@ -63,6 +65,35 @@ injecting `--verbose`, which turns off the compiler's matching-argument elision 
 related compressions) so the full `Symbol` always prints. That fixture, too, has `acceptable`
 quality, because the typed resolver reads the field name straight from the `Symbol!` and states it
 plainly.
+
+## Extensible-data failures that never name their cause
+
+Five failures of the [extensible-data](../../cgp/concepts/extensible-records.md) family reach the
+reader as rustc wrote them, and no line of the output contains the cause: the derive or the
+`Default` impl the program lacks. Each names a bound on a macro-generated type or a missing method,
+and the field or type at fault appears nowhere, so the cause cannot be read back from the output
+without the program's source. Their fixtures carry `//@quality: hidden`:
+
+- [`auto_dispatch_missing_derive`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/auto_dispatch_missing_derive.rs):
+  a `#[cgp_auto_dispatch]` call on an enum without `#[derive(CgpData)]`, reported as the generated
+  matcher's unmet `Computer` bound.
+- [`build_from_source_without_has_fields`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/build_from_source_without_has_fields.rs):
+  `build_from` on a source struct without `#[derive(HasFields)]`, reported as `CanBuildFrom<…>` not
+  implemented for the target's partial record.
+- [`build_with_default_without_default`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/build_with_default_without_default.rs)
+  and
+  [`finalize_with_default_without_default`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/finalize_with_default_without_default.rs):
+  building or finalizing with defaults when an unset field's type has no `Default`, reported as
+  `CanFinalizeWithDefault` on the partial record, or as a missing method, without naming the field.
+- [`upcast_source_without_has_fields`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/upcast_source_without_has_fields.rs):
+  `upcast` on an enum that derives only `ExtractField`, reported as "no method named `upcast`" with
+  a note suggesting an impl of `CanUpcast`.
+
+Unlike the defeated archetypes, each cause is in the compiler's state: the presence markers of the
+partial record (`IsPresent`, `IsNothing`, and the rest) say which field is unset, and the unmet
+bound names the trait the missing derive would implement. So a typed leaf over them can name the
+field, its type without `Default`, or the derive, the same leaf the readable-but-buried failures of
+the family need ([usability](usability.md#extensible-data-failures-are-not-reshaped-at-all)).
 
 ## What a new case would look like
 
