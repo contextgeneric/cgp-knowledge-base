@@ -514,12 +514,12 @@ De-duplication collapses the *same* consumer's re-reports; a second gate, **coal
 *different* failures that share one root cause into a single block. One missing field can break
 several endpoints, a chain of dependent components fails top to bottom for the one field the
 innermost provider needs, and a hand-written wrapper trait fails beside the check of the consumer it
-reduces to. Stating the shared cause once, with a caret at every site, is only possible once they
-have all arrived, and the `Emitter` trait has no end-of-compilation hook, so the emitter does not
-emit as it goes: it **holds every diagnostic in an arrival-ordered buffer** and flushes it from its
-`Drop`. `Drop` runs during the `DiagCtxt`'s own teardown, after every diagnostic has been handed to
-the emitter but while the inner emitter (a field of the wrapper, dropped only afterward) is still
-alive to render; the diagnostics were counted by the `DiagCtxt` as they arrived, so deferring their
+reduces to. Stating the shared cause once, pointing at every site, is only possible once they have
+all arrived, and the `Emitter` trait has no end-of-compilation hook, so the emitter does not emit as
+it goes: it **holds every diagnostic in an arrival-ordered buffer** and flushes it from its `Drop`.
+`Drop` runs during the `DiagCtxt`'s own teardown, after every diagnostic has been handed to the
+emitter but while the inner emitter (a field of the wrapper, dropped only afterward) is still alive
+to render; the diagnostics were counted by the `DiagCtxt` as they arrived, so deferring their
 *rendering* to `Drop` leaves the error count untouched. At flush, each buffered failure whose
 headline gives way to its cause (`DiagnosisPlan::coalesces`: a rewritten headline that is not a type
 mismatch, whether on a consumer, a wrapper, or a foreign subject) is grouped with every failure it
@@ -540,8 +540,9 @@ overlap graph, which also earns an invariant the exact key could not: **no two c
 share a root cause**. A group of one emits its own per-entry block unchanged; a group of several
 emits **one merged block**, its members ordered by source position: a headline stating the shared
 cause (`coalesced_headline`, which takes the first member's class code, and falls back to every
-member's class sentence with the cause count when the causes are mixed), a caret at each failing
-entry, one root-cause note built by folding every member's paths into a single
+member's class sentence with the cause count when the causes are mixed), the first failing entry as
+its one primary caret and every other entry as a secondary span labelled "also required here"
+(`merged_span`), one root-cause note built by folding every member's paths into a single
 [dependency graph](dependency-graph-rendering.md), and after it the fix `help`s the causes call for.
 Because the members were grouped for *sharing* a cause, the union of their causes holds one copy of
 it per member, so the block folds those copies back into one through the rustc-free `Causes::union`
@@ -1043,10 +1044,11 @@ will likely grow toward it:
   their untransformed fallback, `output.rs` the inner emitter and buffer shared with the panic hook,
   `containment.rs` the `catch_unwind` wrapper and the panic hooks, `test_panic.rs` the panic a
   fixture raises on purpose, and `edit.rs` holds the `DiagInner`-editing helpers (including
-  `message_signature`, the span-independent text key for de-duplicating a declined-but-rewritten
-  diagnostic; `strip_method_probe_advice`, the drop of rustc's associated-function framing on a
-  declined consumer-method `E0599`; and `is_question_mark_cascade`, the `Try`/`FromResidual`-shape
-  recognizer for the cascade drop; the text phrasings all three key on live in the rustc-free
+  `merged_span`, the merged block's one caret and its labelled other sites; `message_signature`, the
+  span-independent text key for de-duplicating a declined-but-rewritten diagnostic;
+  `strip_method_probe_advice`, the drop of rustc's associated-function framing on a declined
+  consumer-method `E0599`; and `is_question_mark_cascade`, the `Try`/`FromResidual`-shape recognizer
+  for the cascade drop; the text phrasings the last three key on live in the rustc-free
   [`signals`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/signals.rs)
   module).
 - [`crates/cargo-cgp-driver/src/component_map.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/component_map.rs):

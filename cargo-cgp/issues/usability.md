@@ -101,7 +101,8 @@ fixture that pins it.
   [`manual_supertrait_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/manual_supertrait_impl.rs)).
   *Different* failures that share one root cause (consumers, a wrapper trait beside the consumer it
   reduces to, or failures on two contexts that bottom out on one context's field) coalesce into a
-  single block whose headline states the shared cause, with a caret per failing entry and the cause
+  single block whose headline states the shared cause, with its caret on the first failing entry,
+  each other entry labelled "also required here" so an editor shows one diagnostic, and the cause
   shown once. The emitter holds each compilation's diagnostics in arrival order and flushes them at
   `Drop`, the only point after every diagnostic has arrived, grouping the consumer failures that
   *share* a root cause, so

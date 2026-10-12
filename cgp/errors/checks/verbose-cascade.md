@@ -87,11 +87,13 @@ second-to-last message, but the concrete-item test is what makes it reliable reg
 provider-trait block** as derived noise and recovers each *checked* component's failure to a
 `root cause:` tree that descends all the way to the leaf. Then it **coalesces** the checked
 components that share that leaf: rather than one block per component, it emits one block whose
-headline states the shared cause (`` [CGP-E001] missing field `name` on `App` ``), with a caret at
-each check entry and a single `` root cause: [CGP-E110] missing field `name` `` tree beneath. So a
-six-block raw cascade over three checked components becomes one block, and cargo's re-count reports
-one error. A component rustc happened to surface provider-side is still classed as the consumer its
-check entry asserts, since a `check_components!` entry failing *is* the consumer trait failing.
+headline states the shared cause (`` [CGP-E001] missing field `name` on `App` ``), with its caret on
+the first check entry, each other entry labelled "also required here", and a single
+`` root cause: [CGP-E110] missing field `name` `` tree beneath. An editor shows the block as one
+diagnostic, with the other entries as related locations. So a six-block raw cascade over three
+checked components becomes one block, and cargo's re-count reports one error. A component rustc
+happened to surface provider-side is still classed as the consumer its check entry asserts, since a
+`check_components!` entry failing *is* the consumer trait failing.
 
 Merging every affected component into one block is possible because the tool holds the compilation's
 diagnostics until they have all arrived (there is no end-of-compilation hook), then groups together
@@ -130,8 +132,9 @@ causes match exactly, since failures whose cause sets merely overlap are grouped
   `ProvideFoo: IsProviderFor<FooComponent, App>` block whose `help:` pair is the near-contradiction,
   and for `BarComponent` and `FooComponent` a `CanUseComponent` block whose `help:` names the
   `HasField<Symbol<4, …>>` leaf. Its `.cgp.stderr` shows the single coalesced block,
-  `` the consumer traits `CanBaz`, `CanBar`, and `CanFoo` `` over one
-  `` [CGP-E110] missing field `name` `` tree, with a caret at each entry.
+  `` [CGP-E001] missing field `name` on `App` `` over one
+  `` [CGP-E110] missing field `name` `` tree, its caret on the `BazComponent` entry and the other
+  two entries labelled.
 - [`checks/verbose-cascade/density_3.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/verbose-cascade/density_3.rs):
   a denser two-component check over one missing `height` field where the second component
   (`CanCalculateDensity`) depends transitively on the first (`CanCalculateArea`); its `.cgp.stderr`
