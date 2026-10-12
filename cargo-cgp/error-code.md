@@ -276,7 +276,8 @@ named by its parameter (`@ComputerComponent.Code.u64`) and a type segment with i
   `` wire the provider `<Provider>` with the key `<path>` ``. A redirect looks a component up with
   its type parameters appended to the path, so for a generic component the key takes a generic
   segment per parameter, `` <path>.<<Param>> <Param> ``, which serves every value the direct entry
-  served (`` wire the provider `UseDelegate<AreaTable>` with the key `@AreaCalculatorComponent.<Shape> Shape` ``).
+  served
+  (`` wire the provider `UseDelegate<AreaTable>` with the key `@AreaCalculatorComponent.<Shape> Shape` ``).
   The `help` is omitted when the direct entry names no provider a reader wrote. **Fix:** wire the
   entry's provider under the redirected path rather than the bare key.
 - **`CGP-E014`: duplicate redirect.**
@@ -346,8 +347,8 @@ named by its parameter (`@ComputerComponent.Code.u64`) and a type segment with i
   declared as the context, read from the method's signature and followed through the `let` an
   `async fn` adds; a receiver no signature types is accepted only in a `#[cgp_fn]` impl), the called
   method belongs to a CGP trait, and that trait is not among the impl's `where` bounds. A call on
-  another generic parameter (`value: &Value`) is deliberately left as rustc wrote it, since its fix is
-  a bound on `Value`, which `#[uses]` cannot give. Fixtures:
+  another generic parameter (`value: &Value`) is deliberately left as rustc wrote it, since its fix
+  is a bound on `Value`, which `#[uses]` cannot give. Fixtures:
   [`undeclared_uses_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/used-but-undeclared/undeclared_uses_trait.rs)
   for a `#[cgp_fn]` body,
   [`undeclared_uses_trait_in_cgp_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/used-but-undeclared/undeclared_uses_trait_in_cgp_impl.rs)
@@ -355,11 +356,11 @@ named by its parameter (`@ComputerComponent.Code.u64`) and a type segment with i
   [`undeclared_uses_trait_in_async_cgp_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/used-but-undeclared/undeclared_uses_trait_in_async_cgp_impl.rs)
   for provider bodies, and
   [`undeclared_trait_on_non_context_parameter`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/used-but-undeclared/undeclared_trait_on_non_context_parameter.rs)
-  for the call left alone. The Rust code stays `E0599`. Any `[T]: Sized` cascade the unresolved return type
-  trails (in an `async` body especially) is left as rustc wrote it: those errors can land off the
-  failing expression (on the binding pattern, or a later statement the unresolved type flows into)
-  where suppressing them reliably would need type information the emitter cannot obtain without
-  risking the suppression of an unrelated error.
+  for the call left alone. The Rust code stays `E0599`. Any `[T]: Sized` cascade the unresolved
+  return type trails (in an `async` body especially) is left as rustc wrote it: those errors can
+  land off the failing expression (on the binding pattern, or a later statement the unresolved type
+  flows into) where suppressing them reliably would need type information the emitter cannot obtain
+  without risking the suppression of an unrelated error.
 - **Fix (in the `help`):** add the trait to the definition's `#[uses(…)]` list (or a hand-written
   `where Self: <Trait>` bound), so it becomes a bound on the generated context.
 - **Upstream class:** the post-codegen face of a missing impl-side dependency; closest to the
@@ -547,12 +548,12 @@ at (`CGP-E110` onward).
   through the same helper as `CGP-E112`, so a requirement that projects through another abstract
   type reads `` but `Tx<<App as HasDbType>::Db>` (`Tx<Postgres>`) is required `` here too. The
   non-`HasField` sibling of `CGP-E112`.
-- **`CGP-E117`: ordinary trait bound (leaf).**
-  `` the trait bound `<S: Trait>` is not satisfied ``: the chain bottoms out on an ordinary (non-CGP)
-  trait bound, such as `f64: Eq` required of the type a context wires for an abstract type. The
-  entry keeps the compiler's own wording, with a CGP empty list written `Product![]` where the
-  compiler prints `Nil`. When the compiler's headline already states the bound, the tool keeps that
-  headline, in the same wording, and the note carries the tree alone, ending at this entry.
+- **`CGP-E117`: ordinary trait bound (leaf).** `` the trait bound `<S: Trait>` is not satisfied ``:
+  the chain bottoms out on an ordinary (non-CGP) trait bound, such as `f64: Eq` required of the type
+  a context wires for an abstract type. The entry keeps the compiler's own wording, with a CGP empty
+  list written `Product![]` where the compiler prints `Nil`. When the compiler's headline already
+  states the bound, the tool keeps that headline, in the same wording, and the note carries the tree
+  alone, ending at this entry.
 
 ## Uncoded rewrites
 

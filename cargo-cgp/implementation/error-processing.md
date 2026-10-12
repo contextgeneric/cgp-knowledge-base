@@ -214,14 +214,14 @@ transforms run, in three groups:
   (`PathCons<Symbol!("app"), PathCons<GreeterComponent, Nil>>` → `@app.GreeterComponent`, or the
   `Path!(@…)` macro form when its `wrap` parameter is set), and
   [`resugar_lists`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/resugar_list.rs)
-  (`Cons`/`Either` lists → `Product![…]`/`Sum![…]`, or a `Struct!`/`Enum!` shape when every
-  element is a `Field` cell and the shape has an exact spelling), reverse a CGP type-level expansion
-  back to the syntax the programmer wrote. They are one of the tool's [three resugaring implementations](resugaring.md), which
-  **[Resugaring](resugaring.md)** documents in full: what each construct expands to and folds back
-  to, the exact-match rule that makes each decline rather than guess, why this text implementation
-  needs hand-rolled structural parsing where the driver's typed one does not, and who passes `wrap`.
-  Read it before changing any of the three, since a change to what a construct resugars to belongs
-  in all three implementations at once.
+  (`Cons`/`Either` lists → `Product![…]`/`Sum![…]`, or a `Struct!`/`Enum!` shape when every element
+  is a `Field` cell and the shape has an exact spelling), reverse a CGP type-level expansion back to
+  the syntax the programmer wrote. They are one of the tool's
+  [three resugaring implementations](resugaring.md), which **[Resugaring](resugaring.md)** documents
+  in full: what each construct expands to and folds back to, the exact-match rule that makes each
+  decline rather than guess, why this text implementation needs hand-rolled structural parsing where
+  the driver's typed one does not, and who passes `wrap`. Read it before changing any of the three,
+  since a change to what a construct resugars to belongs in all three implementations at once.
 - **[`rewrite_missing_fields`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/missing_field.rs)**
   turns an unmet `HasField` bound into a field-oriented message. It matches (after the two
   transforms above) `` the trait `HasField<Symbol!("name")>` is not implemented for `Context` `` and
@@ -309,12 +309,11 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   drives each post-processing transform over crafted inputs: the stripped/left-alone prefix cases,
   the exact-match cases `resugar_symbol` must skip, the `PathCons` → `Path!` resugaring (symbol,
   type, and primitive segments, the open `_` tail left out of a key and declined by the `Path!`
-  form, and the non-round-trippable cases `resugar_path` must skip), the single-field (inline and separate-note
-  landmark, each also with a qualified trait path) versus missing-derive branches of
-  `rewrite_missing_fields`, the `Product!`/`Sum!` folds
-  with their `Struct!`/`Enum!` shapes and declines, and the `postprocess_message` chain, including
-  the `Origin` rule: an untransformed message keeps rustc's paths unless a CGP encoding is
-  recovered, and a rewritten one is stripped.
+  form, and the non-round-trippable cases `resugar_path` must skip), the single-field (inline and
+  separate-note landmark, each also with a qualified trait path) versus missing-derive branches of
+  `rewrite_missing_fields`, the `Product!`/`Sum!` folds with their `Struct!`/`Enum!` shapes and
+  declines, and the `postprocess_message` chain, including the `Origin` rule: an untransformed
+  message keeps rustc's paths unless a CGP encoding is recovered, and a rewritten one is stripped.
 - [`crates/cargo-cgp-error-processing/tests/error_processing/shape.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/shape.rs):
   the shared `Struct!`/`Enum!` spelling rules on their own: writable, raw, and unwritable names,
   the named and tuple struct forms and every product that declines, each variant spelling, and the

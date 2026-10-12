@@ -224,10 +224,10 @@ a list in the `Path!(…)` form and drops its wildcard tail in a rewritten key, 
 
 **An empty list is written `Product![]` only where its type is known.** The typed implementation
 reads each type's `DefId`, so it writes a standalone CGP `Nil` as `Product![]` and `Void` as
-`Sum![]` (`PipeHandlers<Product![]>`), leaving alone the `Nil` that ends a spine, a `Symbol`'s string,
-or a `Field`'s unit payload. The text and syntax-tree passes see only the name, which a program may
-give a type of its own, so they leave a bare `Nil` or `Void` as it is, and their list folds require
-a first cell before they begin.
+`Sum![]` (`PipeHandlers<Product![]>`), leaving alone the `Nil` that ends a spine, a `Symbol`'s
+string, or a `Field`'s unit payload. The text and syntax-tree passes see only the name, which a
+program may give a type of its own, so they leave a bare `Nil` or `Void` as it is, and their list
+folds require a first cell before they begin.
 
 ## The resugarings
 
@@ -326,9 +326,9 @@ which `Path!` would have encoded as a `Symbol`, so meeting one as a plain type i
 
 One non-`Nil` tail is treated apart. An **open-ended path** ends in the macros' generic "rest of
 path" parameter instead of `Nil`, which rustc prints as the inference placeholder `_`, the shape
-that appears in the conflicting-wiring `E0119` blocks over a duplicated `@`-path key. The bare form a
-rewritten message uses names the key, so it leaves the tail out, while the `Path!(…)` form declines,
-since `Path!(@foo.bar)` would be the closed path:
+that appears in the conflicting-wiring `E0119` blocks over a duplicated `@`-path key. The bare form
+a rewritten message uses names the key, so it leaves the tail out, while the `Path!(…)` form
+declines, since `Path!(@foo.bar)` would be the closed path:
 
 ```text
 PathCons<Symbol!("foo"), PathCons<Symbol!("bar"), _>>   →   @foo.bar           (a rewritten message)
@@ -445,8 +445,8 @@ The rules are written once, in the rustc-free crate's
 [`shape`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/shape)
 module, which the text and typed passes both call: `render_struct_shape`, `render_enum_shape`, and
 `render_variant` take names and already-rendered values, so the two diagnostic passes cannot
-disagree on a spelling. The syntax-tree pass applies the same rules to `syn` nodes, with its own copy
-of the writable-name check, `shape_name`, kept in step.
+disagree on a spelling. The syntax-tree pass applies the same rules to `syn` nodes, with its own
+copy of the writable-name check, `shape_name`, kept in step.
 
 ### The path strips that run first
 
@@ -517,10 +517,11 @@ generic over the rest of the path, so the impl keys on
 `Path!` spelling names that type, so the chain is left as written.
 
 An **empty list** stays as its terminator in source output and in an untransformed diagnostic, per
-the shared rule above: those passes cannot tell CGP's `Nil` from a type a program named `Nil`. A **type-level index** (`Index<0>`, the tuple-field tag)
-needs nothing: `Index<N>` *is* the surface form a programmer writes, so there is no expansion to
-reverse. And a **`Life<'a>` lifetime lift** is decoded rather than resugared: the resolver reads the
-region back out of it when rebuilding an obligation whose trait wants a real lifetime
+the shared rule above: those passes cannot tell CGP's `Nil` from a type a program named `Nil`. A
+**type-level index** (`Index<0>`, the tuple-field tag) needs nothing: `Index<N>` *is* the surface
+form a programmer writes, so there is no expansion to reverse. And a **`Life<'a>` lifetime lift** is
+decoded rather than resugared: the resolver reads the region back out of it when rebuilding an
+obligation whose trait wants a real lifetime
 ([anchoring the starting obligation](typed-resolution-anchors.md)), and the label then shows the
 lifetime in its ordinary position rather than as a `Life<…>` argument.
 
@@ -539,10 +540,10 @@ compiler, and the UI suite pins the typed pass end to end.
   the text implementations over crafted inputs: an exactly-matched `Symbol!` and the empty symbol, a
   wrong length and a foreign `Symbol` left alone, the `PathCons` → `@…`/`Path!(@…)` forms across
   symbol, type, primitive, generic-value, and reference-value segments, the open `_` tail left out
-  of a key and declined by `Path!(…)`, the qualified-tail and lowercase-segment declines, the `Product!`/`Sum!` folds, the
-  named and tuple `Struct!` shapes and the `Enum!` shape in each variant spelling, the declines for a
-  single `Index` cell, a non-identifier name, and a position-tagged sum, a raw keyword name, a mixed
-  list kept as a plain product, a nested list, a
+  of a key and declined by `Path!(…)`, the qualified-tail and lowercase-segment declines, the
+  `Product!`/`Sum!` folds, the named and tuple `Struct!` shapes and the `Enum!` shape in each
+  variant spelling, the declines for a single `Index` cell, a non-identifier name, and a
+  position-tagged sum, a raw keyword name, a mixed list kept as a plain product, a nested list, a
   non-terminating list declined, the `Cons`-inside-`PathCons` guard, the module and CGP-prefix
   strips (including the multi-byte box-drawing and string-literal cases), and the
   `postprocess_message` chain end to end.

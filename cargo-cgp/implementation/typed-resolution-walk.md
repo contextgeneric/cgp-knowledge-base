@@ -201,8 +201,8 @@ treats everything else as a leaf. It deliberately does *not* follow
   `Providers: ComposeProviders<Provider = Provider>`), an argument that fails that bound (an empty
   `PipeHandlers<Product![]>`, whose `Nil` list has no `ComposeProviders` impl) makes the walk
   descend the delegation impl and bottom out on the unmet composition bound, written
-  `Product![]: ComposeProviders` as the program wrote the list, which is the real cause, with the `DelegateComponent` node itself
-  dropped as a plumbing label.
+  `Product![]: ComposeProviders` as the program wrote the list, which is the real cause, with the
+  `DelegateComponent` node itself dropped as a plumbing label.
 
 Two foreign bounds are exceptions the descent *does* follow, both for the same reason: they reach
 the context only deeper. The first is a **getter or blanket trait on a non-context type whose
@@ -254,14 +254,15 @@ parent obligation's `Self` (`Components` inside `UseDelegate<Components>` /
 `UseInputDelegate<Components>`, or any custom dispatcher holding its table as a parameter), which
 reaches even an *empty* table; and a **non-context table reached via the generic blanket** (owner
 *equals* the parent `Self`), recognized because the owner carries at least one `DelegateComponent`
-impl and no concrete impl of the parent provider trait, the aggregate-provider case. The two non-context shapes are both the missing-dispatch-entry
-leaf. A `DelegateComponent` that is *none* of these (owner is not the context, not a dispatch
-lookup, and not a table) splits one final way, by whether the owner has a **concrete impl of the
-parent provider trait** (`owner_has_impl_of` against that trait, not `DelegateComponent`): with no
-such impl it is a genuine non-provider wired where a provider was expected (the **not-a-provider**
-leaf, `[CGP-E115]`); with one, it is a leaf provider reached via the blanket only because that impl
-failed to unify (a pipeline stage fed the wrong input, the `HandleShout` shape), the routing
-dead-end that is dropped, its real cause running through that impl down another branch.
+impl and no concrete impl of the parent provider trait, the aggregate-provider case. The two
+non-context shapes are both the missing-dispatch-entry leaf. A `DelegateComponent` that is *none* of
+these (owner is not the context, not a dispatch lookup, and not a table) splits one final way, by
+whether the owner has a **concrete impl of the parent provider trait** (`owner_has_impl_of` against
+that trait, not `DelegateComponent`): with no such impl it is a genuine non-provider wired where a
+provider was expected (the **not-a-provider** leaf, `[CGP-E115]`); with one, it is a leaf provider
+reached via the blanket only because that impl failed to unify (a pipeline stage fed the wrong
+input, the `HandleShout` shape), the routing dead-end that is dropped, its real cause running
+through that impl down another branch.
 
 The walk crosses inference-context boundaries carefully, because a stray variable from one
 `InferCtxt` panics another. It finds the satisfying impl with the
