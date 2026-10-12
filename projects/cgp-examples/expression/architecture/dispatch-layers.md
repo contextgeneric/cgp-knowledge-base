@@ -88,18 +88,20 @@ A plain `cargo build` reports a single `E0275` from inside the cycle instead, on
 
 Through a check, `cargo cgp check` reshapes the cycle. A second probe made the same change on a copy
 of `add_mult` with its full check block, wiring
-`@ComputerComponent.<Code> Code.MathExpr: MatchWithValueHandlers`, and `cargo cgp check` built from
-the `cargo-cgp` source at commit `b6a6323` reported three `[CGP-E020]` errors at the check lines,
-for `MathExpr`, `Plus<MathExpr>`, and `Times<MathExpr>`, followed by two raw `E0275` overflows on
-the dispatcher:
+`@ComputerComponent.<Code> Code.MathExpr: MatchWithValueHandlers`, and `cargo cgp check` reported
+three `[CGP-E020]` errors at the check lines, for `MathExpr`, `Plus<MathExpr>`, and
+`Times<MathExpr>`, followed by two raw `E0275` overflows on the dispatcher. The project names a
+`MathExpr` and an `Interpreter` in several modules, and the output keeps module paths:
 
 ```text
-error[E0275]: [CGP-E020] the wiring for the consumer trait `CanCompute<Eval, MathExpr>` on context `Interpreter` never resolves, because the lookup recurses without terminating
+error[E0275]: [CGP-E020] the wiring for the consumer trait `CanCompute<Eval, contexts::add_mult::MathExpr>` on context `contexts::add_mult::Interpreter` never resolves, because the lookup leads back to itself
 ```
 
-The tool's help line points at a component delegated back to the context, as with `UseContext`,
-which is not this cycle's cause, and the public dispatch-layers page says so beside the quote; see
-the [cgp-examples plan](../../../../website/projects/cgp-examples.md#what-is-written).
+The help lines of the `MathExpr` and `Times<MathExpr>` errors name `eval::add::EvalAdd`, whose
+requirement closes the loop where the tool's walk met it, and the `Plus<MathExpr>` error's loop
+closes inside the dispatcher, so its help names no provider. Neither points at the `MathExpr` entry,
+the one to change. The public dispatch-layers page quotes this output as well; see the
+[cgp-examples plan](../../../../website/projects/cgp-examples.md#what-is-written).
 
 What breaks the loop is that the wrapper's impl has no `where` clause. It names the concrete context
 and a concrete `Output` and bounds nothing, so the compiler can accept

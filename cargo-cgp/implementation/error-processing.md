@@ -34,8 +34,9 @@ from the driver, is what keeps them unit-testable.
   ([`rewrite`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/rewrite))
   is the string transform that renames CGP wiring messages, over the
   [`ComponentNameMap`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/rewrite/names.rs)
-  the driver fills in from the compiler. It also rewrites the `E0275` wiring-overflow header into
-  its `[CGP-E020]` form. It is documented where it is used, in
+  the driver fills in from the compiler. It also rewrites the `E0275` header of a wiring lookup that
+  never resolves into its `[CGP-E020]` form for a cycle or its `[CGP-E021]` form for a lookup that
+  grows, by the reason the driver's walk found. It is documented where it is used, in
   [The driver](driver.md#naming-the-traits-behind-a-component-marker).
 - **The diagnosis model and its wording**
   ([`diagnosis`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/diagnosis))
@@ -66,8 +67,12 @@ from the driver, is what keeps them unit-testable.
   `cgp_impl_misuse.rs` (`CgpImplMisuse` for the `[CGP-E032]`–`[CGP-E034]` provider-definition
   mistakes, and `MissingUseProvider` for the `[CGP-E031]` inner provider never imported). They are
   documented where the driver detects them, in
-  [The driver](driver.md#the-drivers-diagnostic-transformations). Last, `internal_error.rs` words
-  the note on a diagnostic the driver shows untransformed after a panic in its own transform (see
+  [The driver](driver.md#the-drivers-diagnostic-transformations). `overflow.rs` holds
+  `WiringOverflow`, the reason the driver's walk gives for a wiring lookup that never resolves (a
+  cycle, or a lookup that grows, with the provider step that causes it when a wiring entry chose
+  that provider), and words the reason that ends the `[CGP-E020]` or `[CGP-E021]` header and its
+  `help` (`wiring_overflow_reason`, `wiring_overflow_help`). Last, `internal_error.rs` words the
+  note on a diagnostic the driver shows untransformed after a panic in its own transform (see
   [The driver](driver.md#containing-the-drivers-own-panics)).
 - **The dependency-tree renderer**
   ([`tree`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/tree.rs))
@@ -103,10 +108,11 @@ from the driver, is what keeps them unit-testable.
   are the stable rustc phrasings the emitter's candidate checks key on: the wiring-trait mention
   that marks a declined `E0599` as CGP's before its method-probe advice is stripped, the
   method-bounds `E0599` shape the resolver may safely run on, the method-probe advice the emitter
-  strips, the orphan-parameter `E0210` shape, the `?`-operator cascade wording, and the trailing
-  "detailed explanations" footer the emitter rebuilds (both recognizing the line and reading the
-  codes it names). Each is a pure function, so the wording dependence on rustc's phrasing is
-  documented and tested in one place.
+  strips, the orphan-parameter `E0210` shape, the `?`-operator cascade wording, rustc's advice to
+  raise the recursion limit, which the emitter drops from a rewritten wiring overflow, and the
+  trailing "detailed explanations" footer the emitter rebuilds (both recognizing the line and
+  reading the codes it names). Each is a pure function, so the wording dependence on rustc's
+  phrasing is documented and tested in one place.
 - **The candidate bound**
   ([`candidates`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/candidates.rs))
   cuts the list of implementors in a failed bound's help back to the length rustc prints outside a
@@ -368,9 +374,9 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   arrival order, or with a second cause set), and a kept rustc header never keying.
 - [`crates/cargo-cgp-error-processing/tests/error_processing/signals.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/signals.rs):
   the text signals: the wording each matches and the near-miss it must not (the two `E0599` shapes,
-  the method-probe artifacts, the orphan marker-plus-phrase pair, the `?`-cascade phrasing, and both
-  footer forms, including the reworded line that yields no codes, the case the rebuild must decline
-  on rather than delete the footer).
+  the method-probe artifacts, the orphan marker-plus-phrase pair, the `?`-cascade phrasing, the
+  recursion-limit advice, and both footer forms, including the reworded line that yields no codes,
+  the case the rebuild must decline on rather than delete the footer).
 - [`crates/cargo-cgp-error-processing/tests/error_processing/orphan.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/orphan.rs):
   `plan_orphan_conflict` and `orphan_conflict_help` over hand-built conflicts: a component key and a
   path key registered, and the reopen trigger's inheritance fix.
@@ -406,9 +412,9 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
 - [`crates/cargo-cgp-error-processing/src/rewrite/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/rewrite):
   the wiring-message rewrite and `ComponentNameMap` the driver drives: `mod.rs` (re-exports),
   `message.rs` (`rewrite_message` and the note/header forms: the code-stamping `rewrite_trait_bound`
-  and the `E0275` `rewrite_wiring_overflow` with its `wiring_overflow_help`), `names.rs`
-  (`ComponentNameMap`/`ComponentTraitNames`), `parse.rs` (`parse_trait_bound`), and `text.rs` (the
-  segment/generics splitters). See
+  and the `E0275` `rewrite_wiring_overflow`, whose reason comes from the diagnosis model's
+  `overflow.rs`), `names.rs` (`ComponentNameMap`/`ComponentTraitNames`), `parse.rs`
+  (`parse_trait_bound`), and `text.rs` (the segment/generics splitters). See
   [The driver](driver.md#naming-the-traits-behind-a-component-marker).
 - [`crates/cargo-cgp-error-processing/src/diagnosis/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/diagnosis):
   the rustc-free root-cause model and its wording: `leaf.rs` (`Leaf`/`FieldIssue`), `resolved.rs`
@@ -426,13 +432,15 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   coalescible failures into the connected components of the shares-a-cause relation, keyed
   structurally on each context-scoped `Leaf`), `coalesce.rs` (`coalesce_underived_fields`),
   `plan.rs` (`DiagKind`, `DiagnosisPlan`, the unrendered `PendingNote` and its `render`, and
-  `plan_resolved` with its `categorized_header`), `similar.rs` (`similar_name` and `similar_key`,
-  the near-miss rules the fix `help`s use), and `wiring.rs` (`WiringConflict`/`WiringKey`,
-  `plan_wiring_conflict` for the `[CGP-E010]`–`[CGP-E014]` duplicate-key headers, and
-  `wiring_conflict_help` for the redirect fix), plus `orphan.rs`, `undeclared.rs`, and
-  `cgp_impl_misuse.rs` (the `[CGP-E022]` and `[CGP-E030]`–`[CGP-E034]` reshape models and their
-  wording), and `internal_error.rs` (the note on a diagnostic shown untransformed after a contained
-  panic). See [Typed root-cause resolution](typed-root-cause-resolution.md) and
+  `plan_resolved` with its `categorized_header`), `overflow.rs` (`WiringOverflow` and
+  `OverflowStep`, with `wiring_overflow_reason` and `wiring_overflow_help` for the `[CGP-E020]` and
+  `[CGP-E021]` headers), `similar.rs` (`similar_name` and `similar_key`, the near-miss rules the fix
+  `help`s use), and `wiring.rs` (`WiringConflict`/`WiringKey`, `plan_wiring_conflict` for the
+  `[CGP-E010]`–`[CGP-E014]` duplicate-key headers, and `wiring_conflict_help` for the redirect fix),
+  plus `orphan.rs`, `undeclared.rs`, and `cgp_impl_misuse.rs` (the `[CGP-E022]` and
+  `[CGP-E030]`–`[CGP-E034]` reshape models and their wording), and `internal_error.rs` (the note on
+  a diagnostic shown untransformed after a contained panic). See
+  [Typed root-cause resolution](typed-root-cause-resolution.md) and
   [The driver](driver.md#reshaping-a-duplicate-key-conflict).
 - [`crates/cargo-cgp-error-processing/src/tree.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/tree.rs):
   the `DependencyTree` type and its `cargo tree`-style renderer, the target the

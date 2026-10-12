@@ -312,6 +312,16 @@ obligation, then the next consumer, so a deeply nested data type reaches its roo
 frames down), but not arbitrarily high, because the walk re-runs the solver at every frame, so the
 cap also bounds a divergent wiring's worst-case work.
 
+Each cut records why it stopped, on the sub-result it returns (`SubResult.cut`), and the reason
+rides up to the root. A repeat is a cycle, recorded with the provider step that requires the
+repeated obligation; the cap is a lookup that grows, recorded with its first larger requirement (the
+first obligation that restates an earlier one's trait and type with other arguments) and the
+provider step that requires it. A provider step is kept only when a wiring entry chose that
+provider, so a provider inside a higher-order provider is never named. Where two branches are cut
+differently, the cycle wins, since it explains a lookup that never resolves more exactly. The driver
+words an `E0275` wiring overflow from this reason (`walk_overflow` seeds the walk, and
+[The driver](driver.md#naming-the-traits-behind-a-component-marker) applies it).
+
 The descent is memoized at every node, so a distinct obligation reached from many sites or many
 branches is resolved once and reused; the cycle guard and `MAX_DEPTH` cut above are what decide
 whether a subtree is complete enough to cache. That mechanism (the node key, the incomplete-subtree

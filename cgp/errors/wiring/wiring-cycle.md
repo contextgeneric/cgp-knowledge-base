@@ -83,20 +83,41 @@ reach for a check when a `UseContext` wiring is suspect.
 
 ## How cargo-cgp presents it
 
-`cargo-cgp` recognizes the checked overflow and rewrites it into a statement of what actually went
-wrong. It keeps the `E0275` code but replaces the headline with
-``[CGP-E020] the wiring for the consumer trait `CanGreet` on context `Person` never resolves, because the lookup recurses without terminating``,
-drops the `Greeter<Person>` / `CanGreet` / `UseContext` / `__CheckPerson` note chain entirely, and
-leaves the caret on the `GreeterComponent` entry inside the check block. A `help:` note names the
-usual cause (a component delegated to `UseContext` with no direct consumer-trait impl) and the two
-fixes: wire a real provider, or implement the consumer trait on the context. Where raw `rustc` hands
-you an overflow depth and a chain to decode, the tool states that the wiring recurses and why. An
-overflow that follows from an unresolved name in the context's wiring, rather than from a cycle,
-keeps rustc's wording, so the earlier `E0425` stays the error to fix.
+`cargo-cgp` recognizes the checked overflow and rewrites it by how the lookup never resolves, which
+it learns by walking the check entry's consumer obligation. A walk that meets an obligation among its
+own ancestors is a cycle. The headline keeps the `E0275` code but reads
+``[CGP-E020] the wiring for the consumer trait `CanGreet` on context `Person` never resolves, because the lookup leads back to itself``.
+The tool drops the `__CheckPerson` note and rustc's advice to raise the recursion limit, and keeps
+the caret on the `GreeterComponent` entry inside the check block. A `help:` names the provider whose
+requirement closes the loop:
+``wire a provider in place of `UseContext`, which provides `Greeter` for `Person` by requiring `CanGreet` on `Person` again``.
+Where raw `rustc` hands you an overflow depth and a chain to decode, the tool states that the lookup
+loops and which provider closes it.
 
-The growing `CanShow<Vec<T>>` lookup gets the same rewrite. The resolver's walk stops at its depth
-cap instead of its cycle guard, and either stop marks the wiring as never resolving. The `help:`
-note still names a `UseContext` delegation, which does not fit this shape.
+The `help:` names a provider only when a wiring entry chose it, on the context or through a
+redirect. An `open` error route that raises its own `String` through `DebugError` reads as a cycle
+that `DebugError` closes
+([`debug_error_string_cycle`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/debug_error_string_cycle.rs)).
+A loop that closes inside a higher-order provider has no such entry: a dispatcher wired as the entry
+for the type it dispatches routes each variant back to the context through its inner `UseContext`,
+so that block's `help:` says only to wire a provider that does not require the consumer trait it
+provides
+([`dispatcher_cycle`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/dispatcher_cycle.rs)).
+In a loop through several entries, the `help:` names the provider whose requirement closes the loop
+where the walk met it, which is not always the entry to change: the same fixture's other block names
+`EvalAdd`, while the fix is a wrapper provider for the dispatched type's entry.
+
+The growing `CanShow<Vec<T>>` lookup has its own code. The walk reaches its depth cap without
+meeting a repeat, so the headline is `[CGP-E021]` and reads
+``… never resolves, because each step requires it for a larger type (`CanShow<Vec<u32>>`, …)``,
+naming the first larger requirement, and the `help:` names `ShowNested` as the provider whose
+requirement grows. The tool drops the recursion-limit advice here too, since no limit ends a lookup
+that grows.
+
+An overflow that follows from an unresolved name in the context's wiring, rather than from the
+wiring itself, keeps rustc's wording: its walk ends with neither cut, and the earlier `E0425` stays
+the error to fix. A real cycle beside such a name is still a cycle, since the walk does not descend
+the `{type error}` the name leaves ([`type_error_in_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/type_error_in_wiring.rs)).
 
 The tool does more than restate the overflow when a cycle is tangled with a recoverable cause, and
 this is where its cycle guard earns its keep. In `mutual_cycle_with_cause` (`ProviderA` depends on
@@ -105,20 +126,22 @@ resolver cuts the `CanA → CanB → CanA` loop and follows the other branch to 
 `` [CGP-E001] missing field `width` on `App` `` over a
 `` root cause: [CGP-E110] missing field `width` on `App` `` dependency tree (`[CGP-E101]`
 consumer-impl hop → `[CGP-E102]` provider-impl hop → `[CGP-E104]` `HasWidth` hop → the leaf). The
-cycle is not the headline; the concrete cause reachable down the non-cyclic branch is. Because the
-same mistake hides as `E0599` when reached by a method call, the tool promotes it the way it
-promotes any [hidden dependency](../hidden/unsatisfied-dependency.md), synthesizing a check, which
-turns the hidden form into the `E0275` it then rewrites to `[CGP-E020]`. The codes are defined in
-the [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
+cycle is not the headline; the concrete cause reachable down the non-cyclic branch is. Reached by a
+method call instead of a check, the cycle is not rewritten: on the nightly `cargo-cgp` pins, the
+call overflows on the consumer trait itself (`Person: CanGreet`) with or without the tool, which
+passes that `E0275` through, so a `check_components!` entry is the way to the rewritten form. The
+codes are defined in the [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
 
 ## Resolving it
 
 Break the cycle by wiring the component to a concrete provider that terminates the lookup rather
 than routing back to the context. `UseContext` is only safe as the *inner* provider of a
 higher-order provider or where the context supplies the component through some other impl;
-delegating a component's sole implementation to `UseContext` is always a cycle. Raising
-`#![recursion_limit = "…"]` is the wrong fix, because a true cycle never terminates, so no limit is
-high enough.
+delegating a component's sole implementation to `UseContext` is always a cycle. A provider that
+re-enters the context for the very type it provides, such as `DebugError` for `String`, needs a
+replacement that produces the value itself, and a lookup that grows needs a provider whose
+requirement stays at a fixed type. Raising `#![recursion_limit = "…"]` is the wrong fix, because
+neither shape terminates at any depth, so no limit is high enough.
 
 ## Backing fixtures
 
@@ -127,8 +150,22 @@ high enough.
   `check_components!`; its `.rust.stderr` pins the raw `E0275` overflow as the pinned nightly prints
   it, on `Person: CanUseComponent<GreeterComponent>` with no note chain (stable overflows on
   `Person: IsProviderFor<GreeterComponent, Person>` and prints the `Greeter<Person>` → `CanGreet` →
-  `UseContext` chain), and its `.cgp.stderr` the `[CGP-E020]` "never resolves" rewrite with the
-  chain dropped and the caret held on the `GreeterComponent` entry.
+  `UseContext` chain), and its `.cgp.stderr` the `[CGP-E020]` "leads back to itself" rewrite with
+  the chain dropped, the caret held on the `GreeterComponent` entry, and a `help:` naming
+  `UseContext`.
+- [`wiring/wiring-cycle/use_context_cycle_call.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/use_context_cycle_call.rs):
+  the same wiring reached by a method call, an `E0275` on `Person: CanGreet` that the tool passes
+  through.
+- [`wiring/wiring-cycle/debug_error_string_cycle.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/debug_error_string_cycle.rs):
+  an `open` error raiser routing `String` to `DebugError`, which raises through
+  `CanRaiseError<String>` again; a `[CGP-E020]` whose `help:` names `DebugError`.
+- [`wiring/wiring-cycle/type_error_in_wiring.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/type_error_in_wiring.rs):
+  the same cycle beside a wiring value naming an unresolved type; still a `[CGP-E020]` naming
+  `DebugError`, beside the `E0433` for the type.
+- [`wiring/wiring-cycle/dispatcher_cycle.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/dispatcher_cycle.rs):
+  a dispatcher wired as the entry for the type it dispatches; two `[CGP-E020]` blocks, one whose
+  `help:` names `EvalAdd` and one whose loop closes at the dispatcher's inner `UseContext`, so its
+  `help:` names no provider.
 - [`wiring/wiring-cycle/mutual_cycle_with_cause.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/mutual_cycle_with_cause.rs):
   a two-component cycle (`ProviderA` ↔ `ProviderB`) walked alongside a genuinely missing `width`
   field; its `.rust.stderr` is not an overflow but a raw `E0277` on
@@ -147,7 +184,12 @@ high enough.
   `Outer: Linked`.
 - [`wiring/wiring-cycle/divergent_wiring.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/divergent_wiring.rs):
   the growing `CanShow<Vec<T>>` lookup above; its `.rust.stderr` pins the raw `E0275` and its
-  `.cgp.stderr` the `[CGP-E020]` rewrite reached through the depth cap.
+  `.cgp.stderr` the `[CGP-E021]` rewrite reached through the depth cap, with a `help:` naming
+  `ShowNested`.
+- [`wiring/wiring-cycle/cross_context_cycle_reuse_distinct.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/cross_context_cycle_reuse_distinct.rs):
+  the two-context cycle with errors that share no cause, so `Outer`'s tree shows only its missing
+  `name` field, pinning that the resolver does not reuse a cached subtree that would repeat an
+  ancestor.
 
 ## Related
 

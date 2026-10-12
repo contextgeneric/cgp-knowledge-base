@@ -170,7 +170,7 @@ is why the library's tests assert each context's wiring with
 not recurse at runtime either. A provider that re-enters for a type whose entry leads back to
 itself, such as `String` wired to `SerializeWithDisplay`, which re-enters for `String`, fails to
 compile. The trait solver reports it as `E0275`, overflow evaluating the requirement, and
-`cargo cgp check` reshapes it as `[CGP-E020]`, a lookup that never resolves, when a
+`cargo cgp check` reshapes it as `[CGP-E020]`, a lookup that leads back to itself, when a
 `check_components!` table triggers it; see
 [debugging wiring](../guides/debugging-wiring.md#a-provider-depends-on-itself).
 

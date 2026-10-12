@@ -395,26 +395,41 @@ The rewrite itself is a plain string transform, kept in the rustc-free
 crate (module
 [`rewrite`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/rewrite))
 so it is unit-tested on any toolchain without a `TyCtxt`. Its entry point, `rewrite_message`,
-dispatches to the `required for … to implement …` note forms (`rewrite_required_for`), the
+dispatches to the `required for … to implement …` note forms (`rewrite_required_for`) and the
 `the trait bound … is not satisfied` header form (`rewrite_trait_bound`, which stamps the
-`[CGP-Exxx]` code), and the `overflow evaluating the requirement …` header form
-(`rewrite_wiring_overflow`, which stamps `[CGP-E020]` on the `E0275` a wiring cycle produces: a
-`UseContext` delegation whose only consumer-trait impl is that delegation, so the lookup recurses
-forever). Each reads the marker out of the trait's generic arguments and looks the names up in the
-map. When the overflow header is rewritten, the emitter also drops the note pointing at the
-generated `__Check…` trait (the kept caret already covers the check entry) and attaches a `help`
-naming the usual cause and the two fixes (`wiring_overflow_help`); the
-[`use_context_cycle`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/use_context_cycle.rs)
-fixture pins the reshaped output. An overflow can also follow from an earlier unresolved name: a
+`[CGP-Exxx]` code). Each reads the marker out of the trait's generic arguments and looks the names
+up in the map.
+
+The `overflow evaluating the requirement …` header form has its own entry point,
+`rewrite_wiring_overflow`, because its wording depends on why the lookup never resolves, which the
+overflow's text does not say. Before it rewrites an `E0275`, the emitter walks the check entry's
+consumer obligation (`overflow_walk` in the driver's `resolve/overflow.rs`), and the walk reports
+how it was cut as a rustc-free `WiringOverflow`. An obligation met again among its own ancestors is
+a cycle, stamped `[CGP-E020]` and worded "the lookup leads back to itself"; a `UseContext`
+delegation whose only consumer-trait impl is that delegation is the plain case. The depth cap
+reached without a repeat is a lookup that grows, stamped `[CGP-E021]` and worded with the first
+larger requirement. The emitter then drops the note pointing at the generated `__Check…` trait (the
+kept caret already covers the check entry) and rustc's advice to raise the recursion limit
+(`is_recursion_limit_help_text`), which no limit satisfies, and attaches a `help` naming the
+provider whose requirement closes or grows the loop (`wiring_overflow_help`). That provider is the
+walk's provider step just above the repeated or first larger requirement, and it is named only when
+the obligation above it is a wiring entry's routing, on the context or on a `RedirectLookup` for an
+`open` or namespace entry. A provider a higher-order provider holds inside it, such as the inner
+`UseContext` a dispatcher routes each variant through, is chosen by no entry, so its block's `help`
+names no provider. The
+[`use_context_cycle`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/use_context_cycle.rs),
+[`divergent_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/divergent_wiring.rs),
+and
+[`dispatcher_cycle`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/dispatcher_cycle.rs)
+fixtures pin the reshaped output. An overflow can also follow from an earlier unresolved name: a
 wiring entry that names a type the compiler could not resolve holds a `{type error}`, and a lookup
-through it can overflow with no cycle in the wiring. So before the rewrite the emitter walks the
-check entry's consumer obligation (`overflow_is_wiring_cycle` in the driver's
-`resolve/overflow.rs`), and an `E0275` whose walk meets neither the cycle guard nor the depth cap
-keeps rustc's wording, since the earlier error is the one to fix
+through it can overflow with no cycle in the wiring. Its walk meets neither the cycle guard nor the
+depth cap, so the `E0275` keeps rustc's wording, since the earlier error is the one to fix
 ([`path_segment_read_as_type`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/macro-defects/path_segment_read_as_type.rs)).
 The walk does not descend an obligation holding a `{type error}`, so a type error cannot make it
 loop, while a real cycle beside one is still reported
 ([`type_error_in_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/type_error_in_wiring.rs)).
+
 The emitter applies the full dispatch only to a diagnostic's *main* message and the note rename to
 its children, since a CGP error code belongs on a main message alone. A message whose marker is
 absent from the map, or any other message, passes through untouched. A **generic component**, one

@@ -10,8 +10,8 @@ interior node on its region-erased obligation and root context, with the incompl
 population and the reachable-set disjointness check at consultation, and `resolve_leaves` folds the
 root node's owned sub-result into the diagnostic. It is verified output-preserving against the whole
 `tests/ui/` suite, with a dedicated diamond fixture pinning interior reuse, a mutual-cycle fixture
-pinning the incomplete-subtree cut on a resolving walk, and one fixture per guard that fails when
-that guard is removed (see [Tests](#tests)).
+pinning the incomplete-subtree cut on a resolving walk, and a fixture for two of its three guards
+that fails when that guard is removed (see [Tests](#tests)).
 
 It is a companion to [The resolve context](resolve-context.md), a planned refactor that would house
 the cache and frames it as one instance of a larger goal (a rustc-free, mockable resolution core),
@@ -387,9 +387,9 @@ The primary guard is met; the rest is coverage still to add.
   output-preserving on a minimal, purpose-built diamond rather than only incidentally through the
   serialization fixtures.
 
-Three fixtures isolate the guards: each fails when its guard is removed, and the whole suite
-otherwise passes, so no other fixture catches the removal. Each removal was checked by hand, by
-editing the guard out of `resolve_node` and running the suite.
+The population and reuse guards each have a fixture that fails when the guard is removed, checked
+by hand by editing the guard out of `resolve_node` and running the suite. The depth cut's flag has
+no such fixture.
 
 - **Population guard** (met):
   [`wiring/wiring-cycle/cycle_cut_rechecked`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/cycle_cut_rechecked.rs)
@@ -399,11 +399,13 @@ editing the guard out of `resolve_node` and running the suite.
   subtree incomplete, and the walk from `CanB` must resolve it afresh to reach the missing field
   through `CanA`. Storing the incomplete subtree leaves `CanB`'s check an empty result, and its
   error falls back to rustc's text.
-- **Depth cut** (met):
+- **Depth cut** (not pinned):
   [`wiring/wiring-cycle/divergent_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/divergent_wiring.rs)
   checks a lookup that grows without repeating (`CanShow<T>` requiring `CanShow<Vec<T>>`), so the
-  depth cap is the only cut. Its incomplete flag lets the tool word the overflow as `[CGP-E020]`,
-  so a depth cut that leaves the flag clear loses the rewrite.
+  depth cap is the only cut. The tool words that overflow from the reason the cut records, not
+  from the flag, so a depth cut that leaves the flag clear prints the same `[CGP-E021]` output, and
+  no fixture fails. Pinning the flag needs a subtree that a depth cut leaves short and a later walk,
+  starting nearer the subtree, would resolve to a cause within the cap (`MAX_DEPTH` is 256).
 - **Reuse disjointness** (met):
   [`wiring/wiring-cycle/cross_context_cycle_reuse`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/cross_context_cycle_reuse.rs)
   builds the two-context loop of

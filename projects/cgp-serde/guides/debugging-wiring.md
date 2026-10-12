@@ -135,16 +135,16 @@ check_components! {
 
 `SerializeWithDisplay` serializes a value by formatting it to a `String` and asking the context to
 serialize that `String`, which leads straight back to `SerializeWithDisplay`. Through the check,
-`cargo cgp check` reshapes the overflow, from the published release and the source build alike:
+`cargo cgp check` reshapes the overflow:
 
 ```text
-error[E0275]: [CGP-E020] the wiring for the consumer trait `CanSerializeValue<String>` on context `Ctx` never resolves, because the lookup recurses without terminating
+error[E0275]: [CGP-E020] the wiring for the consumer trait `CanSerializeValue<String>` on context `Ctx` never resolves, because the lookup leads back to itself
 ```
 
-Its help line suggests a context wired back to itself, as with `UseContext`, which is the usual
-cause of the class but not this one. At a call site with no check, such as
-`serde_json::to_string(&SerializeWithContext::new(&Ctx, &value))`, the tool leaves rustc's `E0275`
-unchanged, as overflow evaluating the requirement
+Its help line names `SerializeWithDisplay` as the provider to replace, since it provides
+`ValueSerializer<String>` for `Ctx` by requiring `CanSerializeValue<String>` on `Ctx` again. At a
+call site with no check, such as `serde_json::to_string(&SerializeWithContext::new(&Ctx, &value))`,
+the tool leaves rustc's `E0275` unchanged, as overflow evaluating the requirement
 `SerializeWithContext<'_, Ctx, String>: Serialize`. The fix is a leaf provider for the intermediate
 type, such as `UseSerde` or `SerializeString` for `String`.
 
@@ -159,9 +159,11 @@ which requires `Node` again. An enum that contains itself fails the same way: an
 `Expr { Literal(u64), Negate(Box<Expr>) }` wired to `SerializeVariantFields`, with `Box<Expr>` wired
 to `SerializeDeref`, is reported as
 `[CGP-E020] the wiring for the consumer trait CanSerializeValue<Expr> on context App never resolves`.
-No wiring fixes it: the type needs a provider that walks the recursion itself and asks the context
-only for the non-recursive parts, as [re-entrant
-providers](../architecture/reentrant-providers.md#what-re-entry-requires-of-a-context) describes.
+The help line of each names `SerializeDeref`, the entry where the loop closes, but no stock provider
+in its place ends the loop: the type needs a provider that walks the recursion itself and asks the
+context only for the non-recursive parts, as
+[re-entrant providers](../architecture/reentrant-providers.md#what-re-entry-requires-of-a-context)
+describes.
 
 ## An enum with a lifetime is serialized
 

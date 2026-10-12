@@ -111,12 +111,12 @@ check_components! {
 ```
 
 `cargo cgp check` reports `E0275` tagged `[CGP-E020]`: the wiring for `CanRaiseError<ParseIntError>`
-never resolves, because the lookup recurses. `DebugError` for `String` needs
-`CanRaiseError<String>`, which is `DebugError` for `String` again. The tool's help text names the
-most common cause of a recursing lookup, a component delegated back to the context, which is the
-same shape here in a less obvious place. Route `String` to a provider that builds the error itself:
-`@ErrorRaiserComponent.String: DisplayAnyhowError`. The generic `DebugError` for `ParseIntError`
-then works, or the backend's `DebugAnyhowError` can replace it and skip the round trip.
+never resolves, because the lookup leads back to itself. `DebugError` for `String` needs
+`CanRaiseError<String>`, which is `DebugError` for `String` again, and the tool's help names
+`DebugError` as the provider to replace for `String`. Route `String` to a provider that builds the
+error itself: `@ErrorRaiserComponent.String: DisplayAnyhowError`. The generic `DebugError` for
+`ParseIntError` then works, or the backend's `DebugAnyhowError` can replace it and skip the round
+trip.
 
 ## A borrowed detail
 

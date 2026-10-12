@@ -58,7 +58,7 @@ yet:
 | --- | --- | --- |
 | `CGP-E001` to `CGP-E009` | a trait the context cannot use, and the two type mismatches | `E001` to `E005` |
 | `CGP-E010` to `CGP-E019` | conflicting wiring | `E010` to `E014` |
-| `CGP-E020` to `CGP-E029` | wiring that never resolves, and the orphan rule | `E020`, `E022` |
+| `CGP-E020` to `CGP-E029` | wiring that never resolves, and the orphan rule | `E020` to `E022` |
 | `CGP-E030` to `CGP-E039` | mistakes in what a macro was given | `E030` to `E034` |
 | `CGP-E040` to `CGP-E049` | wiring keys and values that do not resolve | none yet |
 | `CGP-E050` to `CGP-E059` | extensible data | none yet |
@@ -74,15 +74,17 @@ a blanket trait rather than a CGP consumer, and `CGP-E005` the abstract-type cou
 come from the duplicate-key conflict classifier, carry no root-cause note, and instead keep rustc's
 two carets, which already point at the two colliding entries. They are five separate codes because
 each rewrites the `E0119` into a distinct message form with its own fix. The **never-resolving and
-orphan** codes `CGP-E020` and `CGP-E022` each rewrite a whole-program coherence error into a
-CGP-framed one carrying its fix in a `help`: `CGP-E020` a wiring cycle's `E0275` (a cycle has no
-terminal leaf to descend to), and `CGP-E022` an orphan-rule namespace registration's
-`E0210`/`E0117` (recovered from the offending impl off the compiler, like the `E0119` family). The
-**macro-mistake** codes `CGP-E030` to `CGP-E034` are each recovered off the compiler from the
-generated impl the failing token sits in and reworded with the fix in a `help`. Two concern a
-used-but-undeclared dependency: `CGP-E030` a trait used in a `#[cgp_fn]`/`#[cgp_impl]` body but not
-declared via `#[uses(…)]`, and `CGP-E031` an inner provider a higher-order provider calls but never
-imported via `#[use_provider]`. Three concern a trait named where a provider trait belongs:
+orphan** codes `CGP-E020` to `CGP-E022` each rewrite a whole-program error into a CGP-framed one
+carrying its fix in a `help`. `CGP-E020` and `CGP-E021` rewrite the `E0275` overflow of a wiring
+lookup that never ends, which has no terminal leaf to descend to, split by how the tool's walk of
+the lookup is cut: an obligation met again is a cycle (`CGP-E020`), and the depth limit reached
+without a repeat is a lookup that grows (`CGP-E021`). `CGP-E022` rewrites an orphan-rule namespace
+registration's `E0210`/`E0117` (recovered from the offending impl off the compiler, like the `E0119`
+family). The **macro-mistake** codes `CGP-E030` to `CGP-E034` are each recovered off the compiler
+from the generated impl the failing token sits in and reworded with the fix in a `help`. Two concern
+a used-but-undeclared dependency: `CGP-E030` a trait used in a `#[cgp_fn]`/`#[cgp_impl]` body but
+not declared via `#[uses(…)]`, and `CGP-E031` an inner provider a higher-order provider calls but
+never imported via `#[use_provider]`. Three concern a trait named where a provider trait belongs:
 `CGP-E032` a `#[cgp_impl]` header naming the component's consumer trait, `CGP-E033` a `#[cgp_impl]`
 on a trait that is not a CGP component at all, and `CGP-E034` an inner-provider bound (typically
 `#[use_provider]`) naming the consumer trait. Each entry below gives the rewritten message, the
@@ -292,23 +294,52 @@ named by its parameter (`@ComputerComponent.Code.u64`) and a type segment with i
   one `cgp_namespace!` block (where the subject is the namespace trait rather than a context).
   **Fix:** keep a single redirect.
 
-### `CGP-E020`: wiring never resolves
+### `CGP-E020`: wiring that leads back to itself
 
 - **Message:**
-  `` [CGP-E020] the wiring for the consumer trait `<Consumer>` on context `<Context>` never resolves, because the lookup recurses without terminating ``,
-  with a `help` naming the usual cause and the two fixes.
-- **Means:** resolving the component's wiring recurses without bottoming out. This almost always
-  means the wiring routes the component back to the context itself: a component delegated to
-  `UseContext` whose only implementation of the consumer trait *is* that delegation.
+  `` [CGP-E020] the wiring for the consumer trait `<Consumer>` on context `<Context>` never resolves, because the lookup leads back to itself ``,
+  with a `help` naming the provider that closes the loop.
+- **Means:** resolving the component's wiring meets a requirement it is already resolving, so the
+  lookup never ends. A component wired to `UseContext` with no other implementation of its consumer
+  trait is the plain case: `UseContext` provides the provider trait by requiring the consumer trait,
+  which the wiring routes back to `UseContext`. An `open` error route that raises its own `String`
+  through `DebugError`, and a recursive data type serialized through providers that re-enter the
+  context, close the same kind of loop through other providers.
 - **Triggered by:** an `E0275` overflow whose requirement is a `Context: CanUseComponent<Marker, …>`
-  bound. The Rust code stays `E0275`; the note pointing at the generated `__Check…` trait is
-  dropped, since the kept caret already covers the check entry. An overflow at a check entry is
-  rewritten only when walking the entry's consumer obligation meets a cycle or the depth cap. A
-  lookup can also overflow through a type the compiler could not resolve (an earlier `E0425` or
-  `E0412`), with no cycle in the wiring; that overflow keeps rustc's wording, and the earlier error
+  bound, at a `check_components!` entry whose consumer obligation the tool walks until an obligation
+  repeats among its own ancestors. The Rust code stays `E0275`. The note pointing at the generated
+  `__Check…` trait is dropped, since the kept caret already covers the check entry, and so is
+  rustc's advice to raise the recursion limit, which cannot end the loop. A lookup can also overflow
+  through a type the compiler could not resolve (an earlier `E0425` or `E0412`), with no loop in the
+  wiring; its walk ends without a cut, so the overflow keeps rustc's wording, and the earlier error
   is the one to fix.
-- **Fix:** wire the component to a real provider, or implement the consumer trait directly on the
-  context, so the lookup terminates.
+- **Fix (in the `help`):**
+  `` wire a provider in place of `<Provider>`, which provides `<Provider trait>` for `<Context>` by requiring `<Consumer>` on `<Context>` again ``,
+  naming the provider whose requirement closes the loop (`UseContext`, or `DebugError` for the
+  `String` route). The provider is named only when a wiring entry chose it, directly or through a
+  redirect. A loop that closes inside a higher-order provider, such as the inner `UseContext` a
+  dispatcher routes each variant through, gets
+  `` wire the component to a provider that does not require the consumer trait it provides ``
+  instead.
+- **Upstream class:** [wiring cycle](../cgp/errors/wiring/wiring-cycle.md).
+
+### `CGP-E021`: wiring that grows without end
+
+- **Message:**
+  `` [CGP-E021] the wiring for the consumer trait `<Consumer>` on context `<Context>` never resolves, because each step requires it for a larger type (`<Larger>`, …) ``,
+  naming the first larger requirement (`` `CanShow<Vec<u32>>` `` for `CanShow<u32>`), with a `help`
+  naming the provider whose requirement grows.
+- **Means:** each step of the lookup requires the consumer trait again for a larger type, so no
+  requirement repeats, and the compiler gives up at its recursion limit. A provider of
+  `CanShow<T>` that requires `CanShow<Vec<T>>` is the plain case.
+- **Triggered by:** the same `E0275` overflow at a check entry, when the walk reaches its depth
+  limit without meeting a repeated obligation. The Rust code stays `E0275`, and the `__Check…` note
+  and rustc's advice to raise the recursion limit are dropped, since no limit ends a lookup that
+  grows.
+- **Fix (in the `help`):**
+  `` wire a provider in place of `<Provider>`, which provides `<Provider trait>` for `<Context>` by requiring `<Larger>` on `<Context>`, a larger type at every step ``,
+  or `` wire the component to a provider whose requirements do not grow with each step `` when no
+  wiring entry chose that provider.
 - **Upstream class:** [wiring cycle](../cgp/errors/wiring/wiring-cycle.md).
 
 ### `CGP-E022`: orphan-rule namespace registration
@@ -642,7 +673,9 @@ them. The constants live in the
 module of the error-processing crate, and are stamped by the main-message rewrites, all rustc-free,
 in that same crate. The text forms are stamped by
 [`rewrite_trait_bound` and `rewrite_wiring_overflow`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/rewrite/message.rs),
-the typed check-failure form by
+the second taking the overflow's reason, and its `help`, from
+[`wiring_overflow_reason` and `wiring_overflow_help`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/overflow.rs)
+over the `WiringOverflow` the driver's walk recovers, the typed check-failure form by
 [`plan_resolved`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/plan.rs)'s
 `categorized_header` (fed from the resolved failure), and the `CGP-E010`–`CGP-E014` conflict forms
 by

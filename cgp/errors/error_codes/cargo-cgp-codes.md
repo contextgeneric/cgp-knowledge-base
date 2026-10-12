@@ -27,9 +27,9 @@ The hundreds digit says where a code appears: a `CGP-E0xx` code heads a rewritte
 These lead a rewritten main message, in family blocks of ten. `E001` to `E005` come from the typed
 resolver and carry a dependency chain in their notes, led by a `root cause:` line except for the two
 mismatch codes `E004` and `E005`, whose message states the cause; `E010` to `E014` classify a
-duplicate-key `E0119` conflict (no root-cause note, both `rustc` carets kept); `E020` and `E022`
-reshape a whole-program coherence error; and `E030` to `E034` reword a macro-lowering error, each
-with its fix in a `help`.
+duplicate-key `E0119` conflict (no root-cause note, both `rustc` carets kept); `E020` and `E021`
+reshape the `E0275` overflow of a wiring lookup that never ends, and `E022` an orphan-rule coherence
+error; and `E030` to `E034` reword a macro-lowering error, each with its fix in a `help`.
 
 - **CGP-E001**: the consumer trait is not implemented for the context (missing wiring, or an unmet
   transitive dependency).
@@ -47,8 +47,10 @@ with its fix in a `help`.
 - **CGP-E012**: multiple namespaces used for one target in `delegate_components!`.
 - **CGP-E013**: redirect collision: a direct wiring collides with a redirect of the same key.
 - **CGP-E014**: duplicate redirect: the same key redirected more than once.
-- **CGP-E020**: the wiring never resolves (an `E0275` overflow whose requirement is a
-  `CanUseComponent` bound; usually a `UseContext` cycle).
+- **CGP-E020**: the wiring never resolves because the lookup leads back to itself (an `E0275`
+  overflow whose requirement is a `CanUseComponent` bound; a `UseContext` cycle is the usual case).
+- **CGP-E021**: the wiring never resolves because each step requires the consumer trait for a larger
+  type (the same `E0275` overflow, for a lookup that grows without repeating).
 - **CGP-E022**: an orphan-rule namespace registration: a foreign component or path registered into a
   foreign namespace (`E0210`/`E0117`).
 - **CGP-E030**: a trait used in a `#[cgp_fn]`/`#[cgp_impl]` body but not declared with `#[uses]`.
@@ -92,4 +94,5 @@ for that class and links to the [authoritative catalog](../../../cargo-cgp/error
 example, [check-trait-failure](../checks/check-trait-failure.md) is stamped `[CGP-E001]` with a
 `root cause:` tree whose leaf is `[CGP-E110]` (missing field) or `[CGP-E111]` (underived); the
 [conflicting-wiring](../wiring/conflicting-wiring.md) family maps to `[CGP-E010]`–`[CGP-E014]`; and
-[wiring-cycle](../wiring/wiring-cycle.md) maps to `[CGP-E020]`.
+[wiring-cycle](../wiring/wiring-cycle.md) maps to `[CGP-E020]` for a cycle and `[CGP-E021]` for a
+lookup that grows.

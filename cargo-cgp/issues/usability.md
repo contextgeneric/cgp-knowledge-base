@@ -59,9 +59,11 @@ fixture that pins it.
   a duplicate provider *name* is the lone `E0428`, since the compiler stops once it finds a type
   defined twice
   ([`duplicate_provider_name`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_provider_name.rs));
-  and the `UseContext` cycle's `E0275` becomes a `[CGP-E020]` headline with a `help` naming the
-  usual cause
-  ([`use_context_cycle`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/use_context_cycle.rs)).
+  and a wiring lookup's `E0275` becomes a `[CGP-E020]` headline when the lookup leads back to
+  itself, or a `[CGP-E021]` one when it grows with each step, with a `help` naming the provider
+  that closes or grows the loop
+  ([`use_context_cycle`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/use_context_cycle.rs),
+  [`divergent_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/divergent_wiring.rs)).
   A collision *inside a namespace* reads the same way whatever its key: a child namespace redefining
   a key it inherits is a `[CGP-E011]` naming the parent
   ([`inherited_override_conflict`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-override-conflict/inherited_override_conflict.rs)),
@@ -312,9 +314,9 @@ The fixtures group by construct:
   value, an unimported or guessed key, each an `E0425` or `E0782` with a wrong suggestion.
 - **Wiring checks, conflicts, and cycles** (`wiring/checks/`, `wiring/conflicts/`,
   `wiring/cycles/`): a check table defined twice or holding an entry twice, a bundle checked as a
-  context, a hand impl beside wiring, a cycle reached by a call or through `DebugError`, and a
-  generic key in `delegate_and_check_components!` checked at unit parameters without
-  `#[check_params(...)]` (`check_trait_named_as_wrapper`).
+  context, a hand impl beside wiring, a cycle reached by a call, and a generic key in
+  `delegate_and_check_components!` checked at unit parameters without `#[check_params(...)]`
+  (`check_trait_named_as_wrapper`).
 - **Namespaces** (`wiring/namespaces/`, `wiring/constraints/`): the `E0207` forms of `for` loops,
   `#[default_impl]`, and a self-inheriting namespace.
 - **Lowering** (`lowering/`): a provider trait in `#[uses]`, `Self::CONST` rewritten to the context,
