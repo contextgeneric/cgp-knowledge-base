@@ -645,8 +645,8 @@ and the generic parameter is never named as a provider. A redirect collision's h
 redirected path; the *fix* (wire the direct entry's provider under that key) rides in a separate
 `help`, kept out of the header so the headline stays one short sentence. A redirect looks a
 component up with its type parameters appended to the path, so for a generic component the `help`
-names one key per parameter value (`@AreaCalculatorComponent.<Shape>`) rather than the bare path the
-lookup never reads
+names a generic key (`@AreaCalculatorComponent.<Shape> Shape`) rather than the bare path the lookup
+never reads
 ([`open_and_use_delegate`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/open_and_use_delegate.rs)).
 The `help` is omitted when the direct entry names no provider a reader wrote. Each key is rendered
 to its surface form off the types (a component marker to its name, a `PathCons<…>` to its bare `@…`

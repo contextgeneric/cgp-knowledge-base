@@ -274,9 +274,9 @@ named by its parameter (`@ComputerComponent.Code.u64`) and a type segment with i
   a component carrying a `#[prefix(...)]`. The last two are recovered by normalizing the forwarded
   namespace's `Delegate` for that key. The fix rides in a `help`:
   `` wire the provider `<Provider>` with the key `<path>` ``. A redirect looks a component up with
-  its type parameters appended to the path, so for a generic component the `help` names one key
-  per parameter value instead:
-  `` the redirect appends the parameter `<Param>` to `<path>`, so wire each provider with a `<path>.<<Param>>` key in place of `<Provider>` ``.
+  its type parameters appended to the path, so for a generic component the key takes a generic
+  segment per parameter, `` <path>.<<Param>> <Param> ``, which serves every value the direct entry
+  served (`` wire the provider `UseDelegate<AreaTable>` with the key `@AreaCalculatorComponent.<Shape> Shape` ``).
   The `help` is omitted when the direct entry names no provider a reader wrote. **Fix:** wire the
   entry's provider under the redirected path rather than the bare key.
 - **`CGP-E014`: duplicate redirect.**
