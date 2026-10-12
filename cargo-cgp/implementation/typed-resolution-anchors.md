@@ -249,6 +249,11 @@ a *library* publishes, which is where such traits normally live
 ([`upstream_blanket_trait_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/upstream_blanket_trait_use_site.rs)),
 while a plain blanket trait in either place keeps rustc's diagnostic
 ([`local_blanket_trait_reached`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/local_blanket_trait_reached.rs)).
+A blanket trait CGP's own crates define, an extensible-data cast or builder such as `CanUpcast`, is
+excluded too: its failures end on the extractor and builder recursions, which the walk cannot yet
+word as the field or variant at fault, while rustc's own headline names it
+(`Big: FromVariant<Symbol!("Bar")>`, in
+[`upcast_missing_variant`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/upcast_missing_variant.rs)).
 
 **From a use site, by blanket trait.** The eighth and last anchor,
 `resolve_use_site_blanket_trait`, is the by-consumer anchor's counterpart for a

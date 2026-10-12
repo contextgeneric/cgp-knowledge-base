@@ -269,6 +269,8 @@ for one payload fails where the enum's method is called, with
 ``E0599: the method `area` exists for reference `&Shape`, but its trait bounds were not satisfied``,
 whose notes list the matcher's unsatisfied `Computer` bounds without naming the variant. Omitting
 `#[derive(CgpData)]` gives the same headline, with a note that `HasExtractor` must be implemented.
+[`cargo-cgp`](../cargo-cgp.md) names the payload instead:
+``[CGP-E003] the trait bound `Square: HasArea` is not satisfied``.
 
 Type and const generic parameters on a method are rejected by design. The blanket impl would need a
 bound quantified over the method's type parameter, guaranteeing that every payload satisfies it for

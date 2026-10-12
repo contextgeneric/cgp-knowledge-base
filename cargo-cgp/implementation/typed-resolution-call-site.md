@@ -140,12 +140,13 @@ reading the receiver's type without typeck. The anchor follows the receiver expr
 syntactically: a path to a binding leads to a `let` (typed by its annotation, or by a struct-literal
 initializer) or to a fn parameter (typed by the enclosing signature, like the fixture's
 `app: &App`); a struct literal, unit-struct value, const, or static names its type directly; a call
-to a non-generic fn takes the callee's declared return type; references are peeled along the way. A
-receiver whose type genuinely needs inference (a method call's result, a field access) declines, as
-does a generic context, whose type arguments are exactly what the missing typeck results would have
-supplied, and a type that is no context. A context from another crate qualifies when it carries
-`DelegateComponent` wiring of its own (`is_context_adt`), so a call on a context a library exports
-recovers its root cause as a call on a local one does
+to a non-generic fn, or to a tuple-struct or enum-variant constructor (`Shape::Circle(…)`), takes
+the callee's declared return type; references are peeled along the way. A receiver whose type
+genuinely needs inference (a method call's result, a field access) declines, as does a generic
+context, whose type arguments are exactly what the missing typeck results would have supplied, and a
+type that is no context. A context from another crate qualifies when it carries `DelegateComponent`
+wiring of its own (`is_context_adt`), so a call on a context a library exports recovers its root
+cause as a call on a local one does
 ([`foreign_context_error_route`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/foreign_context_error_route.rs)).
 The trait candidates come from the method *name*, and are of two kinds: every CGP **consumer trait**
 (recognized structurally, in any crate) declaring a `self` method of that name, tried first so a
@@ -194,10 +195,10 @@ generics, is recovered. The two fixture shapes show the same mechanism serving b
 An argument's type counts as *written* when it is determined by the expression's own syntax: a
 unit-struct or unit-variant value with its written path arguments, a struct literal, a reference to
 a written expression, a literal whose type is definite (`"…"`, `true`, `'c'`, suffixed numerics), or
-a call to a non-generic fn (its declared return type). Each written type is lowered by a
-deliberately small syntactic HIR-type lowering (paths to ADTs and aliases through the cached
-`type_of`, defaulted parameters filled in, lifetimes erased) that declines anything beyond it rather
-than guess.
+a call to a non-generic fn or a tuple-struct or enum-variant constructor (its declared return type).
+Each written type is lowered by a deliberately small syntactic HIR-type lowering (paths to ADTs and
+aliases through the cached `type_of`, defaulted parameters filled in, lifetimes erased) that
+declines anything beyond it rather than guess.
 
 A **tuple literal** is the one shape read *partially*: its *structure* is recovered even when some
 elements' types are not written, each unwritten element seeded as a fresh inference variable (folded
@@ -292,14 +293,15 @@ case), `call_site_tuple_input` (the partial tuple recovery), `call_site_written_
 written shape the anchor reads: each definite literal kind, a struct literal, a constant, a
 non-generic call, and a `PhantomData` over a tuple, a reference, a slice, and generic paths),
 `cgp_fn_use_site` (the `#[cgp_fn]` trait call recovered as a `[CGP-E003]` block),
-`foreign_context_error_route` (a call on a context from an upstream crate), and the
-`cascade_later_stage*` shapes whose pipeline stages the walk then descends. The decline boundary is
-pinned by `generic_consumer_unwritten_arg`, and the span gate by `unrelated_error_before_call` (an
-unrelated `Send` error before the failing call keeps its own diagnostic) and by
-`unrelated_error_in_call_argument` and `unrelated_error_in_awaited_argument` (the same error inside
-the call's argument, awaited or not, keeps its own diagnostic too), and the pass-through fixture
-`local_blanket_trait` (a plain error in a function that also calls a failing blanket-trait method is
-left alone). The consolidated catalog lives in the parent document's
+`auto_dispatch_missing_variant_impl` (a receiver built by an enum-variant constructor, resolved to
+the dispatch payload's missing impl), `foreign_context_error_route` (a call on a context from an
+upstream crate), and the `cascade_later_stage*` shapes whose pipeline stages the walk then descends.
+The decline boundary is pinned by `generic_consumer_unwritten_arg`, and the span gate by
+`unrelated_error_before_call` (an unrelated `Send` error before the failing call keeps its own
+diagnostic) and by `unrelated_error_in_call_argument` and `unrelated_error_in_awaited_argument` (the
+same error inside the call's argument, awaited or not, keeps its own diagnostic too), and the
+pass-through fixture `local_blanket_trait` (a plain error in a function that also calls a failing
+blanket-trait method is left alone). The consolidated catalog lives in the parent document's
 [Tests](typed-root-cause-resolution.md#tests) section.
 
 ## Source

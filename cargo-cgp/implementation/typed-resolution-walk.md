@@ -225,8 +225,15 @@ opaque `Request: HasBasicAuthHeader<Ctx>` bound being reported as a second, misl
 Following only context-side dependencies is what preserves the `f64: Eq` guarantee (a foreign
 `f64: FnPtr` step is not context-side, so it is never followed), and it also skips the getter's own
 `Ctx::Assoc`-typed `HasField` clause on the request, which is present but a projection mismatch a
-plain descent would misreport as a missing field. The second is a **same-trait recursion over a
-type-level list**: a record's field list
+plain descent would misreport as a missing field. A provider step that belongs to another context is
+not context-side, so it is not followed either. The case it matters for is a dispatch payload: a
+`#[cgp_auto_dispatch]` trait's blanket impl implements the trait for every type, by running a
+matcher with the unit context, so a payload that lacks its own impl (`Square: HasArea`) matches the
+blanket, whose dependencies are that matcher and the payload being an extensible enum. Neither
+is about the context, so the walk stops at `Square: HasArea`, the payload's missing impl, rather
+than descending the matcher into the extractor bounds a plain struct cannot meet
+([`auto_dispatch_missing_variant_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/auto_dispatch_missing_variant_impl.rs)).
+The second is a **same-trait recursion over a type-level list**: a record's field list
 `Cons<Field<.., V0>, Cons<Field<.., V1>, Nil>>: HandleMapEntry<.., Ctx, ..>` handles its head field
 here but its later fields through the **tail** `Cons<.., Nil>: HandleMapEntry<..>`, a same-trait
 bound on another foreign list node. Following a same-trait recursion lets the walk reach the field
@@ -369,18 +376,19 @@ bound *would* hold if that target derived the field), in which case the resolver
 so the fix can point at it. The inspection reads named struct fields directly and follows `Deref` by
 reading each `impl Deref`'s `Target` associated type, so it needs no inference context, and it is
 bounded against a cyclic `Deref`. For a missing field the resolver also records what its fix can
-name: adding the field is confirmed only when the struct implements `HasField` for another field (so
-it derives it), and the field's type is the `Value = T` constraint the requirement writes beside its
-`HasField` bound, read off the impl that requires the field (`required_field_type`) and kept only
-when concrete, and a similar field the struct carries is recorded as a likely typo (`similar_field`;
-see [the fix `help`s](typed-resolution-output.md#the-fix-helps)). A missing wiring key records a
-similar key the context wires the same way (`similar_wired_key`). A field present
-with a mismatched **type** is a fourth case reached differently, through the projection rule in the
-walk above. From the failing projection the resolver reads the expected type, and it queries the
-struct by `DefId` (with the struct's own generic arguments substituted, so a same-named struct in
-another module is never queried) for the actual type, yielding the `[CGP-E004]` mismatch leaf. A
-non-field leaf carries no struct, so it is simply restated as `self: Trait` (`f64: std::cmp::Eq`)
-for its note lead and for de-duplicating a leaf reached by several paths.
+name: adding the field is confirmed only when the struct has named fields (a tuple struct cannot
+gain one) and implements `HasField` for another field (so it derives it), and the field's type is
+the `Value = T` constraint the requirement writes beside its `HasField` bound, read off the impl
+that requires the field (`required_field_type`) and kept only when concrete, and a similar field the
+struct carries is recorded as a likely typo (`similar_field`; see
+[the fix `help`s](typed-resolution-output.md#the-fix-helps)). A missing wiring key records a similar
+key the context wires the same way (`similar_wired_key`). A field present with a mismatched **type**
+is a fourth case reached differently, through the projection rule in the walk above. From the
+failing projection the resolver reads the expected type, and it queries the struct by `DefId` (with
+the struct's own generic arguments substituted, so a same-named struct in another module is never
+queried) for the actual type, yielding the `[CGP-E004]` mismatch leaf. A non-field leaf carries no
+struct, so it is simply restated as `self: Trait` (`f64: std::cmp::Eq`) for its note lead and for
+de-duplicating a leaf reached by several paths.
 
 **Read the type an owner supplies for any other associated type.** A projection mismatch on a trait
 other than `HasField` has no struct field to query, so its *actual* side is read by asking the

@@ -170,6 +170,13 @@ fixture that pins it.
   the failure becomes a `[CGP-E005]` header naming both types over a root-cause tree, with a `help`
   naming the wiring entry to change
   ([`abstract_type_mismatch`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/types/abstract_type_mismatch.rs)).
+- **A dispatch payload that lacks the dispatched trait** is named. When one payload of a
+  [`#[cgp_auto_dispatch]`](../../cgp/reference/macros/cgp_auto_dispatch.md) enum lacks the trait,
+  the call on the enum resolves through the generated matcher to the per-variant computer's
+  requirement, ``[CGP-E003] the trait bound `Square: HasArea` is not satisfied``, in place of
+  rustc's `E0599`, which names the matcher's `Computer` bound and the payload that does implement
+  the trait
+  ([`auto_dispatch_missing_variant_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/auto_dispatch_missing_variant_impl.rs)).
 - **A blanket trait published by a library** is reshaped like a local one. A
   `#[cgp_fn]`/`#[blanket_trait]` trait is recognized by its blanket impl over a bare context, a
   signal too broad on its own (`ToString` and `Into` share it), so a foreign trait qualifies only on
@@ -305,36 +312,37 @@ already names the tag, the output reads well enough as it stands: an upcast into
 variant reads `Big: FromVariant<Symbol!("Bar")>`
 ([`upcast_missing_variant`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/upcast_missing_variant.rs)),
 though its notes expose `__PartialSmall<IsVoid, IsPresent>` and its caret lands on the wrong
-variant. Five failures of the family never name their cause at all, and are listed under
+variant. Four failures of the family never name their cause at all, and are listed under
 [hidden root cause](hidden-root-cause.md#extensible-data-failures-that-never-name-their-cause).
 
-Dispatch over an extensible enum fails the same way. When one payload of a
-[`#[cgp_auto_dispatch]`](../../cgp/reference/macros/cgp_auto_dispatch.md) enum lacks the dispatch
-trait
-([`auto_dispatch_missing_variant_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/auto_dispatch_missing_variant_impl.rs)),
-the call on the enum fails with a passed-through `E0599` whose notes name the generated matcher's
-unsatisfied `Computer` bound and point at the payload that *does* implement the trait, while the
-payload that lacks it is never named. The leaf to recover is that payload's missing impl, which the
-matcher's per-variant bounds encode.
+Dispatch over an extensible enum names its traits but not the derive. A
+[`#[cgp_auto_dispatch]`](../../cgp/reference/macros/cgp_auto_dispatch.md) call on an enum without
+`#[derive(CgpData)]`
+([`auto_dispatch_missing_derive`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/auto_dispatch_missing_derive.rs))
+resolves to the enum's two unmet requirements, `Shape: HasFields` and `Shape: HasExtractor`, the
+traits the derive supplies, under the trait's class sentence. Nothing names the derive, and one step
+of the tree names the matcher's private `dispatch::providers::matchers::to_field_handlers` path. The
+leaf to recover is the missing derive, which those two traits encode.
 
-The rest of the family fails the same way: rustc reports the bound on a generated type, and the
-tool passes it through without naming the field or variant at fault. The record builder reports a
-field built twice or taken while absent as an `E0271` on its `UpdateField` marker
+The rest of the family fails as the builder above does: rustc reports the bound on a generated type,
+and the tool passes it through without naming the field or variant at fault. The record builder
+reports a field built twice or taken while absent as an `E0271` on its `UpdateField` marker
 ([`build_field_twice`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/build_field_twice.rs),
-[`take_field_absent`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/take_field_absent.rs)), and a premature finalize as an
-`E0599` whose only clue is the partial type's marker list
-([`finalize_build_premature`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/finalize_build_premature.rs)). Merging with
-`build_from` reports a stray or doubled field on the private `FieldsBuilder` recursion
+[`take_field_absent`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/take_field_absent.rs)),
+and a premature finalize as an `E0599` whose only clue is the partial type's marker list
+([`finalize_build_premature`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/finalize_build_premature.rs)).
+Merging with `build_from` reports a stray or doubled field on the private `FieldsBuilder` recursion
 ([`build_from_field_not_in_target`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/build_from_field_not_in_target.rs),
-[`build_from_overlapping_sources`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/build_from_overlapping_sources.rs)), and the
-`BuildAndMergeOutputs` dispatcher reports two different field mistakes with identical output
+[`build_from_overlapping_sources`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/build_from_overlapping_sources.rs)),
+and the `BuildAndMergeOutputs` dispatcher reports two different field mistakes with identical output
 ([`build_and_merge_extra_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/build_and_merge_extra_field.rs),
 [`build_and_merge_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/build_and_merge_missing_field.rs)),
 and a call to such a builder whose target lacks a field ends at
 `__PartialApp<IsPresent>: CanBuildFrom<Http>` without naming the field
-([`question_mark_after_failed_handle`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/handlers/question_mark_after_failed_handle.rs)). The
-defaulted and optional builders, extraction, construction by tag, and the casts each have fixtures
-under [`uncataloged/extensible-data/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/uncataloged/extensible-data);
+([`question_mark_after_failed_handle`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/handlers/question_mark_after_failed_handle.rs)).
+The defaulted and optional builders, extraction, construction by tag, and the casts each have
+fixtures under
+[`uncataloged/extensible-data/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/uncataloged/extensible-data);
 the work is the same leaf: name the field or variant the generated types encode.
 
 ## Construct failures that carry no fix

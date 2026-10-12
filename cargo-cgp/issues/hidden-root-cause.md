@@ -68,15 +68,12 @@ plainly.
 
 ## Extensible-data failures that never name their cause
 
-Five failures of the [extensible-data](../../cgp/concepts/extensible-records.md) family reach the
+Four failures of the [extensible-data](../../cgp/concepts/extensible-records.md) family reach the
 reader as rustc wrote them, and no line of the output contains the cause: the derive or the
 `Default` impl the program lacks. Each names a bound on a macro-generated type or a missing method,
 and the field or type at fault appears nowhere, so the cause cannot be read back from the output
 without the program's source. Their fixtures carry `//@quality: hidden`:
 
-- [`auto_dispatch_missing_derive`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/auto_dispatch_missing_derive.rs):
-  a `#[cgp_auto_dispatch]` call on an enum without `#[derive(CgpData)]`, reported as the generated
-  matcher's unmet `Computer` bound.
 - [`build_from_source_without_has_fields`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/build_from_source_without_has_fields.rs):
   `build_from` on a source struct without `#[derive(HasFields)]`, reported as `CanBuildFrom<…>` not
   implemented for the target's partial record.

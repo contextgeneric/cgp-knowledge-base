@@ -149,8 +149,11 @@ terminal passes the bound through in rustc's own words and the `root cause:` lea
 instead. In every case the recovered result matches, byte for byte, what a
 [check-trait failure](../checks/check-trait-failure.md) produces for the same mistake, which is
 exactly how `cargo-cgp` recovers it, by promoting the hidden bound to the direct one the solver will
-trace. The codes are defined in the
-[cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
+trace. A call to a [`#[cgp_auto_dispatch]`](../../reference/macros/cgp_auto_dispatch.md) trait whose
+enum has a payload without the trait is recovered as well, though the trait is no component and has
+no check form: the tree runs through the generated matcher to the per-variant computer and ends at
+the payload's missing impl, ``[CGP-E003] the trait bound `Square: HasArea` is not satisfied``. The
+codes are defined in the [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
 
 ## Resolving it
 
@@ -212,9 +215,10 @@ promoting to a check) can.
   the same hidden `E0599` reached through
   [`#[cgp_auto_dispatch]`](../../reference/macros/cgp_auto_dispatch.md): one of an enum's two
   payloads lacks the dispatch trait, so the generated matcher's `Computer` bound fails where the
-  enum's method is called. The notes name that matcher bound but never the payload, `Square`, that
-  lacks the impl, and the typed resolver declines the extensible-data family, so the `.cgp.stderr`
-  passes the error through unrecovered, which gives the fixture `usability` quality in cargo-cgp.
+  enum's method is called. The `.rust.stderr` names that matcher bound but never the payload,
+  `Square`, that lacks the impl; the `.cgp.stderr` reads the enum off the variant constructor at the
+  call and leads with ``[CGP-E003] the trait bound `Square: HasArea` is not satisfied`` over the
+  matcher chain.
 
 ## Related
 

@@ -304,10 +304,12 @@ already states both types, and the other two have no single entry the tool can n
 **A `help` appears only when its premise holds**, because a fix that does not compile is worse than
 none. Two checks guard it:
 
-- A missing field gets a `help` only when its struct implements `HasField` for another field, which
-  shows that the struct derives it. A struct with no `HasField` impl may lack the derive as well (a
-  unit struct the program never derived), and a fieldless struct's derive generates nothing, so the
-  two cannot be told apart and adding the field alone is not known to fix it
+- A missing field gets a `help` only when its struct has named fields and implements `HasField` for
+  another field, which shows that the struct derives it. A tuple struct cannot gain a named field
+  ([`tuple_struct_named_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/tuple_struct_named_field.rs)
+  names no fix). A struct with no `HasField` impl may lack the derive as well (a unit struct the
+  program never derived), and a fieldless struct's derive generates nothing, so the two cannot be
+  told apart and adding the field alone is not known to fix it
   ([`check_providers_unwired_provider`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/check_providers_unwired_provider.rs)
   names no fix). The classifier records the confirmation and the type in the leaf's `FieldFix`,
   which is not part of the cause's identity: one field reached through requirements that state its

@@ -154,7 +154,8 @@ let _ = Shape::Circle(Circle).area();  // E0599 at the call
 
 This is the [hidden unsatisfied dependency](../../errors/hidden/unsatisfied-dependency.md) class,
 pinned by the `cargo-cgp` fixture
-[`hidden/unsatisfied-dependency/auto_dispatch_missing_variant_impl.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/auto_dispatch_missing_variant_impl.rs).
+[`hidden/unsatisfied-dependency/auto_dispatch_missing_variant_impl.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/auto_dispatch_missing_variant_impl.rs),
+whose `cargo-cgp` output names the payload's missing impl, `Square: HasArea`.
 
 **A hand-written impl of the trait for an extensible enum conflicts with the blanket impl** with
 `E0119`, because the blanket impl covers every type implementing `HasExtractor`. The macro cannot see

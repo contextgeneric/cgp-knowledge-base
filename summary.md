@@ -714,7 +714,7 @@ it stale.
 - [README.md](cargo-cgp/issues/README.md) — how pending issues are organized, and the rule that every
   issue is backed by a reproducing fixture.
 - [hidden-root-cause.md](cargo-cgp/issues/hidden-root-cause.md) — the cases where no downstream
-  consumer could recover the cause from the output: five extensible-data failures, and two defeated
+  consumer could recover the cause from the output: four extensible-data failures, and two defeated
   archetypes.
 - [usability.md](cargo-cgp/issues/usability.md) — output that carries the cause but buries it, the
   readability gaps that remain.
