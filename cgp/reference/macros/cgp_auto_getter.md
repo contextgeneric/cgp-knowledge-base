@@ -139,18 +139,22 @@ attributes [`#[extend]`](../attributes/extend.md) and [`#[use_type]`](../attribu
 apply, since the macro runs `#[cgp_component]`'s attribute collector; Expansion shows where their
 bounds land.
 
-**`Option<&[T]>` has no rule of its own.** The `Option<&T>` rule applies and asks for an unsized
-`Option<[T]>` field, so the compiler rejects the impl with `E0277` (the size of `[T]` cannot be
-known) rather than the macro rejecting the method. Return `Option<&Vec<T>>` from an
-`Option<Vec<T>>` field, or `&Option<Vec<T>>`, instead. This is a deliberate boundary shared with
-`#[cgp_getter]` and `#[implicit]` arguments.
+**An optional reference needs a sized referent.** The `Option<&T>` form reads an `Option<T>` field,
+and an `Option` holds only a sized value. So the macro rejects `Option<&[T]>` and
+`Option<&dyn Trait>`, with their `&mut` forms, naming the sized container to read instead: return
+`Option<&Vec<T>>` from an `Option<Vec<T>>` field, or `&Option<Vec<T>>`. An unsized type written as a
+path, such as `Path`, does not show its size to the macro, so `Option<&Path>` reaches the compiler,
+which rejects the impl with `E0277` (the size of `[u8]`, inside `Path`, cannot be known); return
+`Option<&PathBuf>` from an `Option<PathBuf>` field instead. The same rules hold for `#[cgp_getter]`
+and `#[implicit]` arguments, which share the parser.
 
 ### Rejected methods
 
 A getter method is a plain signature, and the macro rejects anything more with a message naming the
 problem. A `const`, `async`, or `unsafe` method, a method with generic parameters or a `where`
-clause, a method without a return type, and a by-value `self` receiver are all rejected, as is any
-trait item other than a method or the one associated type.
+clause, a method without a return type, a by-value `self` receiver, and an optional reference to a
+slice or a trait object are all rejected, as is any trait item other than a method or the one
+associated type.
 
 ## Expansion
 

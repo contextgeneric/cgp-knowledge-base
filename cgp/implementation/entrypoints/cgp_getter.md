@@ -193,8 +193,9 @@ auto-getter entrypoint:
 
 - [parser_rejections/getters.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/getters.rs)
   rejects const, async, unsafe, and generic getter methods, a by-value `self` receiver, a `&mut`
-  return under a `&self` receiver, two associated types, and an associated type beside a second
-  method, all checked by the shared field parsing. No rejection test drives `cgp_getter` itself, so
+  return under a `&self` receiver, an optional reference to a slice or a trait object, two
+  associated types, and an associated type beside a second method, all checked by the shared field
+  parsing. No rejection test drives `cgp_getter` itself, so
   its own "the `provider` key must be given" path for a trait not named `Has…` is untested.
 
 ## Source

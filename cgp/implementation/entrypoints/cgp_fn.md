@@ -300,10 +300,11 @@ returns `Err`:
   covers an implicit argument on a function with no `self` receiver, a `mut` binding pattern on an
   implicit argument, a `&mut` implicit argument that is not the sole implicit (which would borrow
   the context mutably and again at once), a malformed `#[implicit]` attribute carrying arguments
-  (`#[implicit(...)]` or `#[implicit = ...]`), and the two mutable-reference forms under a `&self`
+  (`#[implicit(...)]` or `#[implicit = ...]`), the two mutable-reference forms under a `&self`
   receiver (a `&mut [T]` slice and an `Option<&mut T>`), each of which reads through `get_field_mut`
-  and so requires `&mut self`. It also pins the raw-function-name panic from Known issues, as a
-  `#[should_panic]` test rather than a rejection.
+  and so requires `&mut self`, and an `Option<&[u8]>` argument, rejected with its message because it
+  would read an unsized `Option<[u8]>` field. It also pins the raw-function-name panic from Known
+  issues, as a `#[should_panic]` test rather than a rejection.
 
 ## Source
 

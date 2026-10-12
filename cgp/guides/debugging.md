@@ -129,7 +129,7 @@ cause or proves it absent:
 | a wiring or namespace-inheritance cycle (`E0275`) | `grep -n 'overflow evaluating'` | the recursing requirement names the loop; ignore the `recursion limit` help, which never applies to a true cycle |
 | an orphan-rule violation (`E0210`/`E0117`) | `grep -n 'must be used as the type parameter'` | a registration into a foreign namespace with no local type |
 | an unconstrained entry generic (`E0207`) | `grep -n 'is not constrained'` | the caret sits on the `<T>` that must reach the key |
-| an ill-formed lowered type (`E0277` `Sized`) | `grep -n 'size for values of type\|Sized'` | a field- or argument-type shorthand combination with no lowering rule (e.g. `Option<&[T]>`) |
+| an ill-formed lowered type (`E0277` `Sized`) | `grep -n 'size for values of type\|Sized'` | an `Option<&T>` shorthand over an unsized type the macro cannot see (e.g. `Option<&Path>`); the `within` help names the type you wrote |
 | a `#[use_type]` imported-name typo (`E0576`) | `grep -n 'cannot find associated type'` | the caret sits on the misspelled name |
 | a name a macro lowered out of scope (`E0433`/`E0425`) | `grep -nE 'E0433\|E0425'` | grep the **codes**, not the message: both print "cannot find type", so a text search finds one and misses the other. `E0433` (`use of undeclared type`) means the caret is in your own signature, on an `#[impl_generics]` parameter named where only the generated impl declares it; `E0425` (`not found in this scope`) means a bare generated name, most often a `…Component` marker derived from a `#[cgp_impl]` header naming the wrong trait |
 | an abstract type shadowing its own bound (`E0404`) | `grep -n 'expected trait, found'` | a `#[cgp_type]` associated type named after the trait bounding it, so the bound resolved to the associated type; the paired "you might have meant to refer to this trait" note names the other half |
@@ -317,10 +317,11 @@ this as a lookup once you have the error code and the trait it names.
   `Delegate` type; register a concrete provider instead. See
   [Unconstrained generic](../errors/wiring/unconstrained-generic.md).
 - **`E0277` "the size for values of type `…` cannot be known at compilation time" on a getter or
-  implicit-argument macro**: not a wiring error but a *lowering* one: a field- or argument-type
-  shorthand combination the macro has no rule for (most often `Option<&[T]>`) was lowered literally
-  into a bound naming an unsized type. Change the field type to a shape a single shorthand supports,
-  or write the accessor by hand. See
+  implicit-argument macro**: not a wiring error but a *lowering* one: an `Option<&T>` shorthand over
+  a type whose size the macro cannot see (such as `Option<&Path>`) was lowered into a bound naming
+  the unsized `Option<T>`. The macro rejects the shapes it can see, `Option<&[T]>` and
+  `Option<&dyn Trait>`, itself. Read the sized owner instead (`Option<&PathBuf>`), or write the
+  accessor by hand. See
   [Ill-formed generated type](../errors/lowering/ill-formed-generated-type.md).
 - **`E0433`/`E0425` "cannot find type" on a name you expected a macro to supply**: not a wiring
   error but a *lowering* one: the name is real, and the macro put it where it does not resolve. The

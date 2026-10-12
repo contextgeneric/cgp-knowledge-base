@@ -251,11 +251,11 @@ with the fix, taking `T` from an argument or writing a concrete type, before the
 
 When a macro lowers accepted input into ill-formed Rust, the error lands on the macro attribute and
 never states the real cause.
-[`option_slice`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/ill-formed-generated-type/option_slice.rs)
-produces an unsized-type failure (an `Option<[u8]>` generated from an auto-getter returning `&[u8]`)
-as two cascading errors both anchored on the `#[cgp_auto_getter]` attribute, naming neither the
-field nor the shorthand combination that has no lowering rule. The cause is hinted by the spans but
-never named. Its counterpart
+[`option_unsized_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/ill-formed-generated-type/option_unsized_path.rs)
+produces an unsized-type failure (an `Option<Path>` generated from an auto-getter returning
+`Option<&Path>`) as two cascading errors both anchored on the `#[cgp_auto_getter]` attribute, its
+headline naming the `[u8]` inside `Path` and nothing naming the `Option<&T>` shorthand that needs a
+sized `T`. The cause is hinted by the notes but never named. Its counterpart
 [`use_type_unknown_assoc`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/unresolved-imported-type/use_type_unknown_assoc.rs)
 shows a different gap: rustc names the misspelled associated type and the similar one, but its
 suggestion edits the function's signature, while the misspelling is in
@@ -267,9 +267,10 @@ routing (`#[use_type(HasA.A in B, HasB.B in A)]`) is decidable from the import l
 `#[use_type]`
 [rejects it at macro time](../../cgp/implementation/asts/attributes/use_type.md#ground_specs) with a
 message naming the cycle and a caret on the alias that closes it, and nothing reaches the compiler
-for the tool to reshape. When a lowering error's cause is available to the macro, fixing it in `cgp`
-beats teaching the tool to reconstruct it, a question worth asking of `option_slice` too, whose
-unsupported shorthand combination is likewise knowable at expansion time.
+for the tool to reshape. The getter macros reject an optional reference to a slice or a trait object
+the same way, since its shape shows the referent is unsized; only a type named by a path, whose size
+the macro cannot see, reaches the compiler. When a lowering error's cause is available to the macro,
+fixing it in `cgp` beats teaching the tool to reconstruct it.
 
 Two extensible-data derive defects land here for the same reason. An enum variant named after an
 associated type the derives generate (`Value`, `Remainder`, `Fields`, …) makes the generated

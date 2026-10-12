@@ -87,6 +87,13 @@ implementing `AsMut<[T]>`, via `.as_mut()`), `Option<&mut T>` (via `.as_mut()`),
 `Option<&mut str>` (via `.as_deref_mut()`). Every mutable form needs a `&mut self` receiver and must
 be alone, per the rules above.
 
+The `Option<&T>` form needs a sized `T`, since an `Option` holds only a sized value. An optional
+reference to a slice or a trait object (`Option<&[u8]>`, `Option<&dyn Debug>`) is rejected with a
+spanned error naming the sized container to read instead, as `Option<&Vec<u8>>` from an
+`Option<Vec<u8>>` field. An unsized type written as a path, such as `Path`, reaches the compiler
+instead, as an `E0277` on the host attribute, so read `Option<&PathBuf>` from an `Option<PathBuf>`
+field.
+
 The mutability of the read follows the argument's own type, not the receiver. An immutable argument,
 including a `&[T]` slice, reads through `HasField` even on a `&mut self` receiver. This is the one
 rule that differs from a getter trait, which takes its mode from the receiver instead.

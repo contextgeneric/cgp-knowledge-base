@@ -365,8 +365,8 @@ compiler's diagnostic text. The harness builds and runs under the toolchain the 
 The pin covers the toolchain's *components* as well as its date, and one of them is there only for
 this suite. `rust-src` is no use to the driver, but rustc shows the `core`/`std` source line beneath
 a diagnostic that points into the standard library only when that component is present. A fixture
-such as `lowering/ill-formed-generated-type/option_slice`, whose error cites `Option`'s definition,
-renders one way with it and another way without. Left unpinned, that turns on whichever components a
+such as `pass-through/local_blanket_trait`, whose error cites `Display`'s definition, renders one
+way with it and another way without. Left unpinned, that turns on whichever components a
 contributor's toolchain happened to pick up (rustup installs them on demand, and other tools ask for
 `rust-src`), and the snapshot flips underneath an unrelated change. Pinning it in
 `rust-toolchain.toml` makes the diagnostic content a function of the toolchain file alone, which is

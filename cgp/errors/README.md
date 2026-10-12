@@ -230,9 +230,10 @@ Structural wiring errors, in [wiring/](wiring/):
 
 Lowering errors, in [lowering/](lowering/):
 
-- [Ill-formed generated type](lowering/ill-formed-generated-type.md): a macro lowers an unsupported
-  field- or argument-type shorthand (such as `Option<&[T]>`) into a generated bound naming an
-  ill-formed, unsized type, which the compiler rejects with the `E0277` `Sized` form.
+- [Ill-formed generated type](lowering/ill-formed-generated-type.md): a macro lowers a field- or
+  argument-type shorthand over a type it cannot tell is unsized (such as `Option<&Path>`) into a
+  generated bound naming an ill-formed, unsized type, which the compiler rejects with the `E0277`
+  `Sized` form.
 - [Unresolved imported abstract type](lowering/unresolved-imported-type.md): a `#[use_type]` import
   names an associated type the owning trait does not declare, so the rewritten
   `<Self as Trait>::WrongName` path resolves to nothing and the compiler rejects it with `E0576`,

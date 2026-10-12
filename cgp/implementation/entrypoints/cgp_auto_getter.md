@@ -95,16 +95,42 @@ same getter works for any field type inferred from the argument.
 the receiver is rewritten to the context, and the `HasField` bound lands on the receiver type rather
 than the context.
 
-**Unsupported field-type combinations are deferred to the compiler.** The `Option` and slice
-shorthands each cover a single field shape; a combination CGP provides no rule for, most notably
-`Option<&[T]>`, is lowered literally rather than given a bespoke rule, so it reaches the compiler as
-invalid Rust rather than a macro-time rejection. `parse_field_type` applies the `Option<&T>` rule to
-`Option<&[T]>` and emits a `HasField` bound over the unsized `Option<[T]>`, which `rustc` rejects.
-This is a deliberate boundary shared by `#[cgp_getter]` and `#[cgp_fn]` implicits (all three call
-`parse_field_type`), pinned as an acceptable failure by the `cargo-cgp` UI fixture
-[`lowering/ill-formed-generated-type/option_slice.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/ill-formed-generated-type/option_slice.rs),
-with `usability` quality because cargo-cgp passes rustc's `Sized` error through rather than
-rewriting it.
+**An optional reference to an unsized type is rejected.** The `Option<&T>` form reads an
+`Option<T>` field, and an `Option` holds only a sized value, so `Option<&[T]>` and
+`Option<&dyn Trait>` (and their `&mut` forms) have no field to read. `parse_field_type` rejects them
+before lowering, with the caret on the written type and a message naming the sized container to read
+instead:
+
+```text
+error: `Option<&[T]>` would read an `Option<[T]>` field, which cannot exist because a slice is unsized; read an `Option<Vec<T>>` field as `Option<&Vec<T>>` instead
+```
+
+A parenthesized trait object such as `Option<&(dyn Debug + Send)>` is read through its parentheses.
+The check is syntactic, so an unsized type written as a plain path, such as `Option<&Path>`, is not
+caught here (see [Failure modes](#failure-modes)). The rejection is shared by `#[cgp_getter]` and
+`#[cgp_fn]` implicit arguments, which call the same parser, and the `cargo-cgp` UI fixture
+[`pass-through/option_slice.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/option_slice.rs)
+pins what a user sees.
+
+## Failure modes
+
+**An optional reference to an unsized type named by a path reaches the compiler.** The parser sees
+only tokens, and a path such as `Path`, `OsStr`, or a program's own dynamically sized struct does
+not show that its type is unsized, so `Option<&Path>` is lowered by the `Option<&T>` rule to a
+`HasField` bound over the ill-formed `Option<Path>`:
+
+```rust
+#[cgp_auto_getter]
+pub trait HasConfigPath {
+    fn config_path(&self) -> Option<&Path>; // reads an `Option<Path>` field, which cannot exist
+}
+```
+
+The compiler rejects it with `E0277` on the attribute. Deciding this needs the type's definition,
+which the macro cannot see at expansion, so the failure is deferred to the compiler by design. It is
+the [ill-formed generated type](../../errors/lowering/ill-formed-generated-type.md) error class,
+pinned by the `cargo-cgp` fixture
+[`lowering/ill-formed-generated-type/option_unsized_path.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/ill-formed-generated-type/option_unsized_path.rs).
 
 ## Known issues
 
@@ -195,9 +221,9 @@ The rejection cases confirm the macro refuses malformed input:
 
 - [parser_rejections/getters.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/getters.rs)
   drives `cgp_auto_getter` with const, async, unsafe, and generic getter methods, a by-value `self`
-  receiver, a `&mut` return under a `&self` receiver, two associated types, an associated type
-  beside a second method, an associated const, and an attribute argument, and asserts each is
-  rejected.
+  receiver, a `&mut` return under a `&self` receiver, an optional reference to a slice or a trait
+  object (each with its message), two associated types, an associated type beside a second method,
+  an associated const, and an attribute argument, and asserts each is rejected.
 
 ## Source
 
