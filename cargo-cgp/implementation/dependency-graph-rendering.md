@@ -270,10 +270,10 @@ redirect:
 └─ [CGP-E102] provider trait impl `Assembler` with context `App` for provider `AssembleParts`
   ├─ [CGP-E101] consumer trait impl `CanBuildValue<Left>` for context `App`
   │ └─ [CGP-E103] redirect lookup to `@ValueBuilderComponent` in `App`
-  │   └─ [CGP-E113] context `App` does not contain any delegate entry for `@ValueBuilderComponent.Left`
+  │   └─ [CGP-E113] missing wiring for `@ValueBuilderComponent.Left` on `App`
   └─ [CGP-E101] consumer trait impl `CanBuildValue<Right>` for context `App`
     └─ [CGP-E103] redirect lookup to `@ValueBuilderComponent` in `App`
-      └─ [CGP-E113] context `App` does not contain any delegate entry for `@ValueBuilderComponent.Right`
+      └─ [CGP-E113] missing wiring for `@ValueBuilderComponent.Right` on `App`
 ```
 
 ## Eliding across blocks

@@ -84,21 +84,21 @@ forwarding call's argument keeps its own diagnostic too. The wrapper-chain ancho
 same gate. A secondary label or a note never counts, since rustc points those at any code the
 failure passed through.
 
-The tree and headline are then **headed by the impl's own trait**, the wrapper the programmer wrote,
-so the failure reads `CanHandleApiSend → CanHandleApi → …` and points at their code rather than
-dropping the wrapper. The headline wording turns on the wrapper's **fingerprint**: a wrapper that is
-itself a CGP consumer trait (has a consumer blanket routing to a provider) reads
-`[CGP-E001] the consumer trait …`, while a plain wrapper such as `CanHandleApiSend`, with only a
-concrete impl, reads `[CGP-E003] the trait …`. Because the wrapper is a distinct trait from the CGP
-supertrait it reduces to, its error is reported on its own rather than de-duplicating into the
-`check_components!` entry for that supertrait. This anchor is tried *before* the wrapper-chain and
-use-site ones, and it fires only for an impl on a **context**: a struct or enum the checked crate
-defines, or one from another crate that carries `DelegateComponent` wiring of its own
-(`is_context_adt`), as a context a library exports does. An impl on any other foreign type or on a
-provider struct carries no consumer supertrait on a context and is skipped. So is a
-`check_components!` check impl, whose generated trait carries `CanUseComponent` as its supertrait:
-it belongs to the check-entry anchor, and heading a tree with it would present the generated
-`__CanUseApp` as a trait the programmer wrote
+The tree is then **headed by the impl's own trait**, the wrapper the programmer wrote, so the
+failure reads `CanHandleApiSend → CanHandleApi → …` and points at their code rather than dropping
+the wrapper. The headline's code turns on the wrapper's **fingerprint**: a wrapper that is itself a
+CGP consumer trait (has a consumer blanket routing to a provider) takes `[CGP-E001]`, while a plain
+wrapper such as `CanHandleApiSend`, with only a concrete impl, takes `[CGP-E003]`. The wrapper is a
+distinct trait from the CGP supertrait it reduces to, so its error is not a re-report of the
+`check_components!` entry for that supertrait; when the two share their root cause, they coalesce
+into one block at flush, as [the transformed diagnostic](typed-resolution-output.md) describes. This
+anchor is tried *before* the wrapper-chain and use-site ones, and it fires only for an impl on a
+**context**: a struct or enum the checked crate defines, or one from another crate that carries
+`DelegateComponent` wiring of its own (`is_context_adt`), as a context a library exports does. An
+impl on any other foreign type or on a provider struct carries no consumer supertrait on a context
+and is skipped. So is a `check_components!` check impl, whose generated trait carries
+`CanUseComponent` as its supertrait: it belongs to the check-entry anchor, and heading a tree with
+it would present the generated `__CanUseApp` as a trait the programmer wrote
 ([`check_trait_named_as_wrapper`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/checks/check_trait_named_as_wrapper.rs)).
 
 **From a foreign wrapper chain.** The routing glue can put the failure one level further out: a
@@ -121,13 +121,14 @@ with the trait solver** rather than trusting rustc's cascade-suppressed diagnost
 descent reaches the consumer instead through the **base trait of a projection `where`-clause** (a
 `Ctx::Response: Send` bound over the broken `CanHandleApi`, whose base `Ctx: CanHandleApi<…>` is
 what genuinely fails), which requires reading the impl's predicates *un-normalized* so the
-projection's base survives. Second, the tree and headline are headed by the impl's own trait,
-fingerprinted for the `[CGP-E001]`/`[CGP-E003]` wording as the impl-site anchor does. But because
-`Self` is a foreign wrapper rather than the context, the headline names it **plainly**
+projection's base survives. Second, the tree is headed by the impl's own trait, fingerprinted for
+the `[CGP-E001]`/`[CGP-E003]` code as the impl-site anchor does. But because `Self` is a foreign
+wrapper rather than the context, the class sentence names it **plainly**
 (`` the trait `CanAddApiRoutes` is not implemented for `Router<Arc<MockApp>>` ``, with no `context`
-qualifier), carried by the `Resolved::subject_is_context` flag. Only a genuine CGP consumer is ever
-reported as a cause, so a descent into unrelated `where`-clauses contributes nothing. This anchor is
-tried after the impl-site anchor and before the use-site ones.
+qualifier), carried by the `Resolved::subject_is_context` flag; it is the internal headline, and the
+displayed one only when the causes are too mixed to state at once. Only a genuine CGP consumer is
+ever reported as a cause, so a descent into unrelated `where`-clauses contributes nothing. This
+anchor is tried after the impl-site anchor and before the use-site ones.
 
 **From a use site, by wired component.** When no impl matches the caret, the failure is often a
 consumer-method call: CGP wiring is lazy, so a broken dependency surfaces where the method is
@@ -212,13 +213,13 @@ context's wiring matches the called component unconditionally, so the method is 
 is an `E0277` rather than an `E0599`, and its spans never leave the call. In the second, the called
 method belongs to a `#[cgp_fn]`/`#[blanket_trait]` **blanket trait** rather than a CGP consumer.
 That is a blanket-impl trait that is not a component, so the by-consumer anchor (restricted to CGP
-consumers) declines its `E0599`; the anchor finds it by method name and heads the result
-`[CGP-E003] the trait …`. Either way it re-reads the failing call expression from HIR. It takes the
-context from the method's *receiver*, the component's parameters by *unifying the call's written
-argument types against the method's own declared signature*, and seeds every parameter the call
-leaves to inference as a rigid placeholder the walk resolves around. It is the one anchor whose
-recovery works from the code the programmer wrote rather than from the diagnostic's spans, and its
-rationale, mechanics, and worked example have their own document:
+consumers) declines its `E0599`; the anchor finds it by method name and gives the result the
+`[CGP-E003]` code. Either way it re-reads the failing call expression from HIR. It takes the context
+from the method's *receiver*, the component's parameters by *unifying the call's written argument
+types against the method's own declared signature*, and seeds every parameter the call leaves to
+inference as a rigid placeholder the walk resolves around. It is the one anchor whose recovery works
+from the code the programmer wrote rather than from the diagnostic's spans, and its rationale,
+mechanics, and worked example have their own document:
 [Typed resolution: the call-site anchor](typed-resolution-call-site.md).
 
 **Recognizing a blanket trait.** Three of the anchors (the impl-site, the call-site, and the
@@ -247,12 +248,11 @@ consumer), and the context from the **failing expression itself** (the call argu
 fails: `app`, read off its binding by the call-site anchor's `contexts_at_spans`), because rustc
 puts its "not implemented for `App`" span on the context's `#[derive(HasField)]` attribute,
 *outside* the struct's item span, so no struct-definition span carries it. The walk then descends
-`Ctx: BlanketTrait` to the cause, and the result is headed `[CGP-E003] the trait …` (not
-`[CGP-E001] the consumer trait …`) since a blanket trait is not a component. It is gated to the
-`E0277` shape and tried **after** the call-site anchor deliberately: an `E0599` method call belongs
-to the call-site anchor, and a *generic-consumer* method call whose deep blanket-trait bound is
-unrecoverable (`generic_consumer_unwritten_arg`) must stay declined rather than latch onto that
-transitive trait.
+`Ctx: BlanketTrait` to the cause, and the result takes the `[CGP-E003]` code (not `[CGP-E001]`)
+since a blanket trait is not a component. It is gated to the `E0277` shape and tried **after** the
+call-site anchor deliberately: an `E0599` method call belongs to the call-site anchor, and a
+*generic-consumer* method call whose deep blanket-trait bound is unrecoverable
+(`generic_consumer_unwritten_arg`) must stay declined rather than latch onto that transitive trait.
 
 ## Tests
 

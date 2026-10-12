@@ -81,8 +81,8 @@ a probe context that joined `DefaultAppComponents` with no entries of its own pa
 filter needs the censor:
 
 ```text
-error[E0277]: [CGP-E001] the consumer trait `CanCreateUser` is not implemented for context `NoFilterApp`
-   = note: root cause: [CGP-E113] context `NoFilterApp` does not contain any delegate entry for `@app.extra.content_filter.UsernameCensorComponent`
+error[E0277]: [CGP-E001] missing wiring for `@app.extra.content_filter.UsernameCensorComponent` on `NoFilterApp`
+   = note: root cause: [CGP-E113] missing wiring for `@app.extra.content_filter.UsernameCensorComponent` on `NoFilterApp`
 ```
 
 ## A default cannot be overridden

@@ -39,7 +39,7 @@ named the field, through the chain from `BuildAndMergeOutputs` down to `BuildOpe
 `#[implicit] llm_preamble` argument needs it:
 
 ```text
-error[E0271]: [CGP-E001] the consumer trait `CanHandle<(), ()>` is not implemented for context `NoPreambleBuilder`
+error[E0271]: [CGP-E001] missing field `llm_preamble` on `NoPreambleBuilder`
    = note: root cause: [CGP-E110] missing field `llm_preamble` on `NoPreambleBuilder`
 ```
 

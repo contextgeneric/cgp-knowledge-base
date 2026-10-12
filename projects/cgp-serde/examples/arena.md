@@ -91,8 +91,8 @@ check_components! {
 `cargo cgp check` failed on that entry and named the omitted component:
 
 ```text
-error[E0277]: [CGP-E001] the consumer trait `CanDeserializeValue<&Coord>` is not implemented for context `App<'_>`
-  = note: root cause: [CGP-E113] context `App<'_>` does not contain any delegate entry for `AllocatorComponent`
+error[E0277]: [CGP-E001] missing wiring for `AllocatorComponent` on `App<'_>`
+  = note: root cause: [CGP-E113] missing wiring for `AllocatorComponent` on `App<'_>`
 ```
 
 The chain beneath it runs through `DeserializeAndAllocate` to the `CanAlloc<Coord>` that provider

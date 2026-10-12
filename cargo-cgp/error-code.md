@@ -20,7 +20,7 @@ A CGP error code is the letters `CGP-E` followed by three digits (`CGP-E001`, `C
 shown in square brackets at the start of the rewritten main message:
 
 ```text
-error[E0277]: [CGP-E001] the consumer trait `CanCalculateArea` is not implemented for context `Rectangle`
+error[E0277]: [CGP-E001] missing field `height` on `Rectangle`
 ```
 
 The `CGP-E` prefix is deliberately unlike Rust's own `E0277` shape, so a reader never mistakes one
@@ -30,7 +30,7 @@ diagnostic's own Rust code is always kept**. A rewritten message restates the sa
 readably; it does not reclassify the error away from rustc, so `error[E0277]:` (or `error[E0599]:`
 at a consumer-call use site, or `error[E0271]:` at a field-type mismatch) stays in the header, the
 trailing `rustc --explain` line stays meaningful, and the CGP code rides inside the message text
-where it reads as a tag on the sentence it classifies. This also keeps the code greppable: a reader
+where it reads as a tag on the cause it states. This also keeps the code greppable: a reader
 confirming a class need only search the output for `CGP-E001`.
 
 ## When a code is assigned
@@ -91,9 +91,13 @@ recognizes.
 
 ### `CGP-E001`: consumer trait not implemented
 
-- **Message:**
-  `` [CGP-E001] the consumer trait `<Consumer>` is not implemented for context `<Context>` ``
-  (pluralized when a use-site failure spans several components).
+- **Message:** `` [CGP-E001] <cause> ``, the root cause in the sentence its tree code words
+  (`` [CGP-E001] missing field `height` on `Rectangle` ``). Several causes of one kind on one owner
+  are stated together (`` missing fields `first_name` and `last_name` on `Person` ``); mixed causes
+  take the class sentence with their count,
+  `` [CGP-E001] the consumer trait `<Consumer>` is not implemented for context `<Context>`: 2 root causes ``
+  (pluralized when a use-site failure spans several components). The class sentence is also the
+  internal headline a declined re-report is matched on.
 - **Means:** the context cannot use a component it is expected to use: the wiring is missing, or a
   transitive dependency of the wired provider is unmet, so the blanket impl that would give the
   context its consumer trait does not apply.
@@ -107,8 +111,9 @@ recognizes.
 
 ### `CGP-E002`: provider trait not implemented
 
-- **Message:**
-  `` [CGP-E002] the provider trait `<Provider trait>` with context `<Context>` is not implemented for provider `<Provider>` ``.
+- **Message:** `` [CGP-E002] <cause> ``, by the rules of `CGP-E001`; the class sentence, used for
+  mixed causes, is
+  `` the provider trait `<Provider trait>` with context `<Context>` is not implemented for provider `<Provider>` ``.
 - **Means:** a specific provider fails to implement its provider trait for the context: its
   impl-side `where`-clause dependencies do not hold, as asserted by `IsProviderFor`.
 - **Triggered by:** an unsatisfied `Provider: IsProviderFor<Marker, Context, Params>` bound, a
@@ -120,16 +125,18 @@ recognizes.
 
 ### `CGP-E003`: wrapper trait not implemented
 
-- **Message:** `` [CGP-E003] the trait `<Wrapper>` is not implemented for context `<Context>` ``.
-- **Means:** a trait that is *not* a CGP consumer trait (so it reads "the trait", not "the consumer
-  trait") cannot be implemented for the context, because a CGP component it depends on fails. Two
-  shapes reach this code: a plain **wrapper trait** the programmer wrote (the transfer example's
-  `CanHandleApiSend`, which adds a `Send` bound over a CGP consumer supertrait), and a `#[cgp_fn]` /
-  `#[blanket_trait]` **blanket trait** (`impl<Context> Describe for Context where Self: …`), which
-  is a first-class core-CGP trait consumed like a consumer trait but is not a CGP *component* (it
-  has no provider trait or `DelegateComponent`). Either way it is the
-  [`CGP-E001`](#cgp-e001-consumer-trait-not-implemented) case for a trait that is not itself a CGP
-  component.
+- **Message:** `` [CGP-E003] <cause> ``, by the rules of `CGP-E001`; the class sentence, used for
+  mixed causes, is `` the trait `<Wrapper>` is not implemented for context `<Context>` ``, naming a
+  foreign subject plainly (`` for `Router<Arc<App>>` ``).
+- **Means:** a trait that is *not* a CGP consumer trait (so its class sentence reads "the trait",
+  not "the consumer trait") cannot be implemented for the context, because a CGP component it
+  depends on fails. Two shapes reach this code: a plain **wrapper trait** the programmer wrote (the
+  transfer example's `CanHandleApiSend`, which adds a `Send` bound over a CGP consumer supertrait),
+  and a `#[cgp_fn]` / `#[blanket_trait]` **blanket trait**
+  (`impl<Context> Describe for Context where Self: …`), which is a first-class core-CGP trait
+  consumed like a consumer trait but is not a CGP *component* (it has no provider trait or
+  `DelegateComponent`). Either way it is the [`CGP-E001`](#cgp-e001-consumer-trait-not-implemented)
+  case for a trait that is not itself a CGP component.
 - **Triggered by:** a failure surfaced *inside* a `impl Wrapper for Context` block (its header, a
   method signature, or a forwarding call), often as a raw `E0271`/`E0277`/`E0599` that names no CGP
   construct, which the resolver anchors on the enclosing impl and traces through the wrapper's CGP
@@ -149,7 +156,7 @@ recognizes.
 ### `CGP-E004`: field has the wrong type
 
 - **Message:**
-  `` [CGP-E004] expected a `<field>` field of type `<expected>` on `<Context>`, but found `<actual>` ``,
+  `` [CGP-E004] field `<field>` on `<Context>` has type `<actual>`, but `<expected>` is required ``,
   with `` `<expected>` (`<normalized>`) `` in place of `` `<expected>` `` when the required type
   projects through the context's own wiring (below).
 - **Means:** a context field the wiring reads is present and derives `HasField`, but its type is not
@@ -164,7 +171,7 @@ recognizes.
   constant. The message keeps that un-normalized form, because it names *where* the requirement
   comes from and points the reader at the wiring entry, and appends what it reduces to in
   parentheses, because that is what the reader compares against the field:
-  `` expected a `database` field of type `Pool<<App as HasDbType>::Db>` (`Pool<Postgres>`) on `App`, but found `Pool<Sqlite>` ``.
+  `` field `database` on `App` has type `Pool<Sqlite>`, but `Pool<<App as HasDbType>::Db>` (`Pool<Postgres>`) is required ``.
   Neither form alone is enough: the projection does not say what it resolves to, and the reduction
   does not say where it came from, so both are carried. A required type that is already concrete
   normalizes to itself and gets no parenthetical.
@@ -182,7 +189,7 @@ recognizes.
 ### `CGP-E005`: abstract type has the wrong type
 
 - **Message:**
-  `` [CGP-E005] expected the abstract type `<assoc>` of `<Trait>` on `<Owner>` to be `<expected>`, but found `<actual>` ``,
+  `` [CGP-E005] abstract type `<assoc>` of `<Trait>` on `<Owner>` is `<actual>`, but `<expected>` is required ``,
   reading `associated type` in place of `abstract type` when the trait is not a CGP abstract-type
   component.
 - **Means:** the owner supplies one concrete type for an associated type while a provider the wiring
@@ -486,26 +493,24 @@ at (`CGP-E110` onward).
 - **`CGP-E110`: missing field (leaf).** `` missing field `<f>` on `<T>` ``: the chain bottoms out on
   a context field that is genuinely absent.
 - **`CGP-E111`: unimplemented accessor (leaf).**
-  `` accessor trait `HasField` with field `<f>` is not implemented for `<T>` ``: the struct carries
-  the field but has not derived `HasField` for it (the fix, a `#[derive(HasField)]`, rides in a
-  separate `help`). Several such fields on *one* struct are one mistake: the derive emits an impl
-  per field, so they coalesce into a single root cause under the same code,
-  `` accessor trait `HasField` is not implemented for the fields `<f>` and `<g>` of `<T>` ``, over
-  one merged tree whose branches still end at the per-field leaves.
+  `` `HasField` not derived for field `<f>` of `<T>` ``: the struct carries the field but has not
+  derived `HasField` for it (the fix, a `#[derive(HasField)]`, rides in a separate `help`). Several
+  such fields on *one* struct are one mistake: the derive emits an impl per field, so they coalesce
+  into a single root cause under the same code,
+  `` `HasField` not derived for fields `<f>` and `<g>` of `<T>` ``, over one merged tree whose
+  branches still end at the per-field leaves.
 - **`CGP-E112`: field type mismatch (leaf).**
   `` field `<f>` on `<T>` has type `<actual>`, but `<expected>` is required ``: the field is present
   and derived but has the wrong type (the leaf face of the `CGP-E004` main message). The required
   type is rendered by the same helper as that headline, so a wiring-derived requirement reads
   `` but `Pool<<App as HasDbType>::Db>` (`Pool<Postgres>`) is required `` here too and the two can
   never state one requirement two ways.
-- **`CGP-E113`: missing delegate entry (leaf).**
-  `` context `<Ctx>` does not contain any delegate entry for `<key>` ``: the context wires no
-  provider for a component, or terminates no namespace path (the `<key>` is a component marker or an
-  `@`-path). The table is always the context; a key missing from an aggregate provider is
-  `CGP-E114`.
-- **`CGP-E114`: missing dispatch entry (leaf).**
-  `` provider `<T>` does not contain any delegate entry for `<key>` ``: the chain bottoms out on a
-  *non-context* delegation table missing a key: an
+- **`CGP-E113`: missing delegate entry (leaf).** `` missing wiring for `<key>` on `<Ctx>` ``: the
+  context wires no provider for a component, or terminates no namespace path (the `<key>` is a
+  component marker or an `@`-path). The table is always the context; a key missing from an aggregate
+  provider is `CGP-E114`.
+- **`CGP-E114`: missing dispatch entry (leaf).** `` missing entry for `<key>` in provider `<T>` ``:
+  the chain bottoms out on a *non-context* delegation table missing a key: an
   [aggregate provider](../cgp/concepts/aggregate-providers.md) missing a component wiring (including
   a table a context's `Key -> Table` entry forwards to), or a
   [`UseDelegate`/`UseInputDelegate`](../cgp/reference/providers/use_delegate.md) dispatch table
@@ -514,15 +519,13 @@ at (`CGP-E110` onward).
   *that provider*, or to feed the stage a type the table already covers (the shape a handler
   pipeline hits when a stage's output type is not one a later stage's input dispatcher handles). The
   key may also be an `@`-path, when the aggregate `open`s a component in its own table or joins a
-  namespace itself:
-  `` provider `ByteSink` does not contain any delegate entry for `@ComputerComponent.Sink.Digest` ``,
+  namespace itself: `` missing entry for `@ComputerComponent.Sink.Digest` in provider `ByteSink` ``,
   under a `CGP-E103` hop that reads `` in `ByteSink` ``.
-- **`CGP-E115`: not a provider (leaf).**
-  `` the provider trait `<T>` is not implemented for `<X>` ``: the chain bottoms out on a type wired
-  where a *provider* was expected that does not implement the provider trait at all. The mistake is
-  putting a non-provider (often a request or value type) into a provider slot (e.g.
-  `UseBasicAuth<QueryBalanceRequest>` with the endpoint handler omitted, so the request type sits
-  where an `ApiHandler` belongs. Distinct from `CGP-E114`: the owner is not a table missing one
+- **`CGP-E115`: not a provider (leaf).** `` `<X>` is not a provider of `<T>` ``: the chain bottoms
+  out on a type wired where a *provider* was expected that does not implement the provider trait at
+  all. The mistake is putting a non-provider (often a request or value type) into a provider slot
+  (e.g. `UseBasicAuth<QueryBalanceRequest>` with the endpoint handler omitted, so the request type
+  sits where an `ApiHandler` belongs. Distinct from `CGP-E114`: the owner is not a table missing one
   entry, so the fix is to use an actual provider (wrap it in the handler), not to add a wiring
   entry.
 - **`CGP-E116`: associated type mismatch (leaf).**

@@ -119,13 +119,12 @@ which path is empty.
 ## How cargo-cgp presents it
 
 `cargo-cgp` recasts the raw lookup failure from the machinery's point of view to the programmer's:
-it keeps the `E0277` code but replaces the `PathCons<…>: DefaultNamespace<App>` headline with
-`` [CGP-E001] the consumer trait `CanGreet` is not implemented for context `App` ``, then states the
-empty path in a
-`` root cause: [CGP-E113] context `App` does not contain any delegate entry for `@app.GreeterComponent` ``
-note. The tree between them is short: `[CGP-E101]` consumer-trait hop → `[CGP-E103]` redirect-lookup
-hop naming the path → the `[CGP-E113]` leaf, so the `RedirectLookup` and `DelegateComponent`
-scaffolding of the raw form collapses into one readable "redirect lands on an empty slot" chain. The
+it keeps the `E0277` code but replaces the `PathCons<…>: DefaultNamespace<App>` headline with the
+empty path, `` [CGP-E001] missing wiring for `@app.GreeterComponent` on `App` ``, and states it
+again in a `` root cause: [CGP-E113] missing wiring for `@app.GreeterComponent` on `App` `` note.
+The tree between them is short: `[CGP-E101]` consumer-trait hop → `[CGP-E103]` redirect-lookup hop
+naming the path → the `[CGP-E113]` leaf, so the `RedirectLookup` and `DelegateComponent` scaffolding
+of the raw form collapses into one readable "redirect lands on an empty slot" chain. The
 `PathCons<Symbol!(…)>` list is resugared to its surface `@app.GreeterComponent` notation throughout,
 which is the single biggest readability win over the raw output, where the path is an abbreviated
 `PathCons<Symbol<3, Chars<..>>, _>`.
@@ -138,7 +137,7 @@ prints one `[CGP-E103]` hop per link before the `[CGP-E113]` leaf (`@start.Greet
 `[CGP-E113]`. When the path is missing from an aggregate provider, whether it `open`s the component
 in its own table or joins the namespace itself, the leaf is the `[CGP-E114]` provider-table leaf
 instead,
-`` provider `ByteSink` does not contain any delegate entry for `@ComputerComponent.Sink.Digest` ``,
+`` missing entry for `@ComputerComponent.Sink.Digest` in provider `ByteSink` ``,
 and the `[CGP-E103]` hop above it reads `` in `ByteSink` ``, so the tree names the table the entry
 belongs in. The codes are defined in the
 [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).

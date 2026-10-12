@@ -89,8 +89,7 @@ reach the `CanUseComponent` block that carries the leaf.
 
 ## How cargo-cgp presents it
 
-`cargo-cgp` reshapes both cases into a single `[CGP-E001]` headline
-(`` [CGP-E001] the consumer trait `CanCalculateArea` is not implemented for context `Rectangle` ``)
+`cargo-cgp` reshapes both cases into a single `[CGP-E001]` headline that states the missing field
 over one `root cause:` tree, and **encodes the failing layer in the shape of that tree** rather than
 leaving it to be read from chain depth and caret position. For the inner failure the tree bottoms
 out at `` [CGP-E110] missing field `base_area` `` beneath *two* stacked `[CGP-E102]` provider-trait

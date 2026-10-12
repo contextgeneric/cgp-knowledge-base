@@ -189,9 +189,8 @@ wiring names.
 ## How cargo-cgp presents it
 
 `cargo-cgp` recognizes this class and leads with the cause. It keeps the `E0277` code but rewrites
-the headline to
-`` [CGP-E001] the consumer trait `CanGreet` is not implemented for context `Person` ``, and replaces
-the `required for …` scaffolding with a single `root cause:` note over a compact dependency tree:
+the headline to state the cause, `` [CGP-E001] missing field `name` on `Person` ``, and replaces the
+`required for …` scaffolding with a single `root cause:` note over a compact dependency tree:
 `[CGP-E101]` consumer-trait-impl hop → `[CGP-E102]` provider-trait-impl hop → the leaf. The leaf is
 `` [CGP-E110] missing field `name` on `Person` `` for a genuinely absent field, or `[CGP-E111]` for
 the [derive-missing variant](#when-the-derive-is-missing-entirely), which coalesces every underived
@@ -205,7 +204,7 @@ and the wiring entry it hangs from. The codes are defined in the
 The [wiring-derived field type](#when-the-fields-required-type-comes-from-the-wiring) takes the same
 `[CGP-E004]`/`[CGP-E112]` shape as a concrete mismatch, with the field name resugared and the
 required type given in **both** forms:
-`` expected a `database` field of type `Pool<<App as HasDbType>::Db>` (`Pool<Postgres>`) on `App`, but found `Pool<Sqlite>` ``.
+`` field `database` on `App` has type `Pool<Sqlite>`, but `Pool<<App as HasDbType>::Db>` (`Pool<Postgres>`) is required ``.
 The projection comes first because it names the wiring the requirement flows from, which is where
 the fix goes; the reduced type follows in parentheses because it is what the reader compares against
 the field. This is the one sub-case where each output would otherwise carry a fact the other lacks:
@@ -221,7 +220,7 @@ that and appends `(Tx<Postgres>)`. The one place the two forms part company is t
 uses the **reduced** type alone: it prescribes an edit the reader types, and `UseType<Tx<Postgres>>`
 is a wiring entry where `UseType<Tx<<App as HasDbType>::Db>>` would restate the requirement and
 leave them to reduce it. For the backing fixture the headline reads
-`` expected the abstract type `Scalar` of `HasScalarType` on `Rectangle` to be `f64`, but found `u32` ``,
+`` abstract type `Scalar` of `HasScalarType` on `Rectangle` is `u32`, but `f64` is required ``,
 over a `[CGP-E116]` leaf. Both halves of the disagreement are named: the required type read off the
 failing projection, the supplied one by normalizing it, so a `UseType<T>` wiring and a direct impl
 are read alike, and a `help` names the wiring entry to change

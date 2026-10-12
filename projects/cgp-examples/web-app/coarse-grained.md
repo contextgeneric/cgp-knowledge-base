@@ -111,8 +111,8 @@ page shows. A probe copied the module into a crate with a path dependency on thi
 line, and ran `cargo cgp check` built from the `cargo-cgp` source at commit `b6a6323`:
 
 ```text
-error[E0277]: [CGP-E001] the consumer trait `CanManageUser` is not implemented for context `ProductionApp`
-    = note: root cause: [CGP-E113] context `ProductionApp` does not contain any delegate entry for `UsernameCensorComponent`
+error[E0277]: [CGP-E001] missing wiring for `UsernameCensorComponent` on `ProductionApp`
+    = note: root cause: [CGP-E113] missing wiring for `UsernameCensorComponent` on `ProductionApp`
 ```
 
 The whole user manager fails, `get_user` and `update_user_data` with it, which the public page sets

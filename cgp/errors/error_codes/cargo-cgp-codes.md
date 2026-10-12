@@ -12,12 +12,12 @@ disagree, that catalog wins; keep this list in sync with it under the
 ## What a code is
 
 A code is `CGP-E` plus three digits, shown in square brackets at the start of a rewritten message,
-for example
-`` error[E0277]: [CGP-E001] the consumer trait `CanCalculateArea` is not implemented for context `Rectangle` ``.
-The diagnostic keeps its own `rustc` code (`E0277`, `E0599`, `E0271`, `E0275`), so `rustc --explain`
-still works and the entries in this directory still apply; the `[CGP-Exxx]` tag rides *inside* the
-message text. A code is assigned only when `cargo-cgp` both rewrote the message and identified it as
-a CGP class; everything else is left uncoded by design.
+before the cause it states, for example
+`` error[E0277]: [CGP-E001] missing field `height` on `Rectangle` ``. The diagnostic keeps its own
+`rustc` code (`E0277`, `E0599`, `E0271`, `E0275`), so `rustc --explain` still works and the entries
+in this directory still apply; the `[CGP-Exxx]` tag rides *inside* the message text. A code is
+assigned only when `cargo-cgp` both rewrote the message and identified it as a CGP class; everything
+else is left uncoded by design.
 
 The hundreds digit says where a code appears: a `CGP-E0xx` code heads a rewritten message, and a
 `CGP-E1xx` code labels one entry of the dependency tree beneath it.

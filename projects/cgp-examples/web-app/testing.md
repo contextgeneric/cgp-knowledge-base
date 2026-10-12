@@ -39,10 +39,10 @@ With all nine components checked, `cargo cgp check` failed with two errors at th
 per missing filter. It grouped each filter with the creator whose wrapper uses it:
 
 ```text
-error[E0277]: [CGP-E001] the consumer traits `CanCreateUser` and `CanCensorUsername` are not implemented for context `CoreOnlyApp`
-   = note: root cause: [CGP-E113] context `CoreOnlyApp` does not contain any delegate entry for `@app.extra.content_filter.UsernameCensorComponent`
-error[E0277]: [CGP-E001] the consumer traits `CanCreatePost` and `CanDetectSpamMessage` are not implemented for context `CoreOnlyApp`
-   = note: root cause: [CGP-E113] context `CoreOnlyApp` does not contain any delegate entry for `@app.extra.content_filter.SpamMessageDetectorComponent`
+error[E0277]: [CGP-E001] missing wiring for `@app.extra.content_filter.UsernameCensorComponent` on `CoreOnlyApp`
+   = note: root cause: [CGP-E113] missing wiring for `@app.extra.content_filter.UsernameCensorComponent` on `CoreOnlyApp`
+error[E0277]: [CGP-E001] missing wiring for `@app.extra.content_filter.SpamMessageDetectorComponent` on `CoreOnlyApp`
+   = note: root cause: [CGP-E113] missing wiring for `@app.extra.content_filter.SpamMessageDetectorComponent` on `CoreOnlyApp`
 ```
 
 The mistake is the missing `@app.extra` entry, and the root cause names the full path the namespace

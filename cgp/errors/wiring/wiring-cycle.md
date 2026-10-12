@@ -102,8 +102,8 @@ The tool does more than restate the overflow when a cycle is tangled with a reco
 this is where its cycle guard earns its keep. In `mutual_cycle_with_cause` (`ProviderA` depends on
 `CanB`, `ProviderB` depends back on `CanA`, walked alongside a genuinely missing `width` field) the
 resolver cuts the `CanA → CanB → CanA` loop and follows the other branch to the leaf, leading with
-`` [CGP-E002] the provider trait `ProviderA` with context `App` is not implemented for provider `DoA` ``
-over a `` root cause: [CGP-E110] missing field `width` on `App` `` dependency tree (`[CGP-E101]`
+`` [CGP-E002] missing field `width` on `App` `` over a
+`` root cause: [CGP-E110] missing field `width` on `App` `` dependency tree (`[CGP-E101]`
 consumer-impl hop → `[CGP-E102]` provider-impl hop → `[CGP-E104]` `HasWidth` hop → the leaf). The
 cycle is not the headline; the concrete cause reachable down the non-cyclic branch is. Because the
 same mistake hides as `E0599` when reached by a method call, the tool promotes it the way it

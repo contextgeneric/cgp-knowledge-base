@@ -131,13 +131,13 @@ the raw output, although the chain between the consumer trait and the leaf is st
 does more than reshape existing text: its next-generation trait solver **recovers the cause the raw
 `E0599` discarded.** Where plain `cargo check` on stable prints a diagnostic that bottoms out at
 `Person: Greeter<Person>` and names no dependency, `cargo-cgp` keeps the Rust code (`E0599` at a
-call site, `E0277` at a `where` bound) but rewrites the headline to
-`` [CGP-E001] the consumer trait `CanGreet` is not implemented for context `Person` `` and attaches
-a `root cause:` note: a `` [CGP-E110] missing field `name` on `Person` `` leaf over a compact
-dependency tree that the raw output never contained at all: `[CGP-E101]` consumer-trait hop →
-`[CGP-E102]` provider-trait hop → `[CGP-E104]` the `HasName` trait → the `[CGP-E110]` field leaf.
-The method-probe misdirection ("this is an associated function, not a method" and the wrong
-`Person::greet()` suggestion) is dropped, so the recovered cause leads instead of the noise.
+call site, `E0277` at a `where` bound) but rewrites the headline to the recovered cause,
+`` [CGP-E001] missing field `name` on `Person` ``, and attaches a `root cause:` note: a
+`` [CGP-E110] missing field `name` on `Person` `` leaf over a compact dependency tree that the raw
+output never contained at all: `[CGP-E101]` consumer-trait hop → `[CGP-E102]` provider-trait hop →
+`[CGP-E104]` the `HasName` trait → the `[CGP-E110]` field leaf. The method-probe misdirection ("this
+is an associated function, not a method" and the wrong `Person::greet()` suggestion) is dropped, so
+the recovered cause leads instead of the noise.
 
 The leaf the tree bottoms out on names the actual mistake, and it varies with the suppressed
 dependency's kind. A genuinely absent field is `[CGP-E110]`; a struct that never derived `HasField`
@@ -205,7 +205,7 @@ promoting to a check) can.
   the same hidden `E0599` where the suppressed leaf is an *ordinary* trait bound (`Scalar: Eq`, with
   `f64` wired) rather than a `HasField`, which stable hides the same way whatever the leaf's kind,
   and whose nightly `.rust.stderr` names `f64: Eq` in a note; its `.cgp.stderr` recovers the cause
-  as a `[CGP-E001]` headline over a
+  as a ``[CGP-E001] the trait bound `f64: Eq` is not satisfied`` headline over a
   ``root cause: [CGP-E117] the trait bound `f64: Eq` is not satisfied`` tree. Its surfaced
   counterpart is the [unsatisfied ordinary trait bound](../checks/ordinary-trait-bound.md) class.
 - [`hidden/unsatisfied-dependency/auto_dispatch_missing_variant_impl.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/auto_dispatch_missing_variant_impl.rs):

@@ -136,8 +136,8 @@ page shows. A probe made it on a copy of the module, and `cargo cgp check` built
 `cargo-cgp` source at commit `b6a6323` failed only the creator and the censor:
 
 ```text
-error[E0277]: [CGP-E001] the consumer traits `CanCreateUser` and `CanCensorUsername` are not implemented for context `ProductionApp`
-    = note: root cause: [CGP-E113] context `ProductionApp` does not contain any delegate entry for `UsernameCensorComponent`
+error[E0277]: [CGP-E001] missing wiring for `UsernameCensorComponent` on `ProductionApp`
+    = note: root cause: [CGP-E113] missing wiring for `UsernameCensorComponent` on `ProductionApp`
 ```
 
 The getter and updater checks passed, since their providers need only the database.

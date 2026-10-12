@@ -149,14 +149,14 @@ during expansion, but a wiring mistake does not. Use `check` for that.
 
 The output is ordinary rustc/cargo diagnostics, with the errors `cargo-cgp` recognizes rewritten
 into a clearer form. When the tool rewrites an error into a known CGP class, it stamps the message
-with a short code in square brackets:
+with a short code in square brackets and states the cause after it:
 
 ```text
-error[E0277]: [CGP-E001] the consumer trait `CanCalculateArea` is not implemented for context `Rectangle`
+error[E0277]: [CGP-E001] missing field `height` on `Rectangle`
 ```
 
-The `[CGP-Exxx]` code names one class of CGP mistake (what it means and how to fix it) and is looked
-up in the [CGP error-code catalog](../error-code.md). The diagnostic's own Rust code (`E0277` here)
+The `[CGP-Exxx]` code names one class of CGP mistake (here, a context that cannot implement a
+consumer trait) and is looked up in the [CGP error-code catalog](../error-code.md). The diagnostic's own Rust code (`E0277` here)
 is always kept, so `rustc --explain` still works and nothing is reclassified away from rustc; the
 CGP code rides inside the message as a tag on the sentence it classifies. Errors the tool does not
 recognize pass through as the compiler wrote them.

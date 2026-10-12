@@ -47,7 +47,7 @@ pub type Program = hypershell! {
 ```
 
 ```text
-error[E0277]: [CGP-E002] the provider trait `Handler<Pipe<…>, Vec<u8>>` with context `HypershellCli` is not implemented …
+error[E0277]: [CGP-E002] missing field `name` on `HypershellCli`
   = note: root cause: [CGP-E110] missing field `name` on `HypershellCli`
 ```
 
@@ -90,7 +90,7 @@ pub type Program = hypershell! {
 ```
 
 ```text
-  = note: root cause: [CGP-E114] provider `HandleToTokioAsyncRead` does not contain any delegate entry for `@HandlerComponent.StreamToStdout.GenericArray<u8, …>`
+  = note: root cause: [CGP-E114] missing entry for `@HandlerComponent.StreamToStdout.GenericArray<u8, …>` in provider `HandleToTokioAsyncRead`
 ```
 
 The path names the syntax and then the input type, which is exactly what the dispatcher could not
@@ -115,8 +115,8 @@ pub type Program = hypershell! {
 ```
 
 ```text
-error[E0277]: [CGP-E001] the consumer trait `CanHandle<Pipe<…>, Vec<u8>>` is not implemented for context `HypershellCli`
-  = note: root cause: [CGP-E113] context `HypershellCli` does not contain any delegate entry for `@cgp.extra.handler.HandlerComponent.Checksum<…>`
+error[E0277]: [CGP-E001] missing wiring for `@cgp.extra.handler.HandlerComponent.Checksum<…>` on `HypershellCli`
+  = note: root cause: [CGP-E113] missing wiring for `@cgp.extra.handler.HandlerComponent.Checksum<…>` on `HypershellCli`
 ```
 
 `WebSocket` fails the same way on such a context, and `StreamToLines` fails at
@@ -146,15 +146,15 @@ where
 on `(CheckLength, Vec<u8>)` reports:
 
 ```text
-error[E0277]: [CGP-E001] the consumer trait `CanHandle<CheckLength, Vec<u8>>` is not implemented for context `App`
-   = note: root cause: [CGP-E113] context `App` does not contain any delegate entry for `@cgp.core.error.ErrorRaiserComponent.TooLong`
+error[E0277]: [CGP-E001] missing wiring for `@cgp.core.error.ErrorRaiserComponent.TooLong` on `App`
+   = note: root cause: [CGP-E113] missing wiring for `@cgp.core.error.ErrorRaiserComponent.TooLong` on `App`
            this is required through the dependency chain:
              [CGP-E101] consumer trait impl `CanHandle<CheckLength, Vec<u8>>` for context `App`
              └─ [CGP-E103] redirect lookup to `@cgp.extra.handler.HandlerComponent` in `App`
                └─ [CGP-E102] provider trait impl `Handler<CheckLength, Vec<u8>>` with context `App` for provider `HandleCheckLength`
                  └─ [CGP-E101] consumer trait impl `CanRaiseError<TooLong>` for context `App`
                    └─ [CGP-E103] redirect lookup to `@cgp.core.error.ErrorRaiserComponent` in `App`
-                     └─ [CGP-E113] context `App` does not contain any delegate entry for `@cgp.core.error.ErrorRaiserComponent.TooLong`
+                     └─ [CGP-E113] missing wiring for `@cgp.core.error.ErrorRaiserComponent.TooLong` on `App`
 ```
 
 **Fix:** route the type to a raiser, as
@@ -189,8 +189,8 @@ delegate_components! {
 ```
 
 ```text
-error[E0277]: [CGP-E002] the provider trait `Handler<Shout, String>` with context `App` is not implemented for provider `ShoutText`
-  = note: root cause: [CGP-E115] the provider trait `Handler` is not implemented for `ShoutText`
+error[E0277]: [CGP-E002] `ShoutText` is not a provider of `Handler`
+  = note: root cause: [CGP-E115] `ShoutText` is not a provider of `Handler`
 ```
 
 **Fix:** lift the provider into a handler, as `Promote<PromoteAsync<ShoutText>>`, with both imported

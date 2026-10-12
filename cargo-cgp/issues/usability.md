@@ -19,11 +19,12 @@ fixture that pins it.
 
 - **Check-trait failures**, the dominant class of CGP error. The
   [typed root-cause resolver](../implementation/typed-root-cause-resolution.md) leads with a single
-  coded headline (`[CGP-E001]` for an unimplemented consumer trait, `[CGP-E004]` for a field-type
-  mismatch), states the cause as one plain sentence
-  (`` root cause: missing field `height` on `Rectangle` ``), decodes the field name from its
-  `Symbol!`, and renders the dependency path as a compact `cargo tree`, with the `IsProviderFor` /
-  `CanUseComponent` / `__Check…` scaffolding suppressed throughout.
+  coded headline that states the cause as one plain sentence
+  (`` [CGP-E001] missing field `height` on `Rectangle` ``, the code classing an unimplemented
+  consumer trait, or `[CGP-E004]` for a field-type mismatch), repeats it on the `root cause:` line
+  above the tree, decodes the field name from its `Symbol!`, and renders the dependency path as a
+  compact `cargo tree`, with the `IsProviderFor` / `CanUseComponent` / `__Check…` scaffolding
+  suppressed throughout.
 - **A missing derive across several fields** is one root cause: several present-but-underived fields
   on one struct merge into a single `[CGP-E111]` lead listing every field, over one merged tree,
   with the derive `help` naming the one fix
@@ -93,13 +94,13 @@ fixture that pins it.
 - **One mistake reported as many errors** collapses on both axes. CGP wiring is lazy, so one missing
   dependency surfaces at the `check_components!` entry, at every hand-written `impl` that references
   the broken consumer, and at each call. The *same* consumer re-reported at many sites de-duplicates
-  to one block, keyed on a span-independent cause signature, so the transfer example's single
-  un-wired password type yields two trees rather than eighteen
+  to one block, keyed on a span-independent cause signature
   ([`cross_site_dedup`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/duplication/cross_site_dedup.rs),
   [`manual_supertrait_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/manual_supertrait_impl.rs)).
-  *Different* consumers that share one root cause coalesce into a single `[CGP-E001]` headline
-  listing every affected consumer trait, with a caret per failing entry and the shared cause shown
-  once. The emitter holds each compilation's diagnostics in arrival order and flushes them at
+  *Different* failures that share one root cause (consumers, a wrapper trait beside the consumer it
+  reduces to, or failures on two contexts that bottom out on one context's field) coalesce into a
+  single block whose headline states the shared cause, with a caret per failing entry and the cause
+  shown once. The emitter holds each compilation's diagnostics in arrival order and flushes them at
   `Drop`, the only point after every diagnostic has arrived, grouping the consumer failures that
   *share* a root cause, so
   [`density_3`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/verbose-cascade/density_3.rs)
@@ -184,7 +185,7 @@ fixture that pins it.
   the table off its own `RedirectLookup<Table, Path>`, so a context's redirect says `` in `App` ``
   and the aggregate's says `` in `ByteSink` ``, and a path key missing from the aggregate is the
   `[CGP-E114]` provider-table leaf,
-  `` provider `ByteSink` does not contain any delegate entry for `@ComputerComponent.Sink.Digest` ``,
+  `` missing entry for `@ComputerComponent.Sink.Digest` in provider `ByteSink` ``,
   rather than a `[CGP-E113]` leaf calling the aggregate a context
   ([`open_aggregate_missing_entry`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/open_aggregate_missing_entry.rs),
   [`namespace_aggregate_missing_entry`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/namespace_aggregate_missing_entry.rs)).

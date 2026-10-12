@@ -98,7 +98,7 @@ the tool rewrites an error into a known class it stamps a short code in brackets
 cause:
 
 ```text
-error[E0277]: [CGP-E001] the consumer trait `CanCalculateArea` is not implemented for context `Rectangle`
+error[E0277]: [CGP-E001] missing field `height` on `Rectangle`
    = note: root cause: [CGP-E110] missing field `height` on `Rectangle`
            this is required through the dependency chain:
              [CGP-E101] consumer trait impl `CanCalculateArea` for context `Rectangle`

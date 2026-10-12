@@ -154,12 +154,11 @@ directly-wired consumer keeps its precise recovery; then every `#[cgp_fn]` / `#[
 [anchoring the starting obligation](typed-resolution-anchors.md)). A blanket trait is a blanket-impl
 trait that is not a CGP component (no provider trait, no `DelegateComponent`), consumed like a
 consumer (`app.describe()`) and seeding the same walkable obligation `Ctx: Describe` whose `Self` is
-the context. Because it is not a CGP component, its result is headed `[CGP-E003] the trait …` rather
-than `[CGP-E001] the consumer trait …`, the same wording the impl-site anchor gives such a trait
-reached through a wrapper, by clearing the `Resolved::consumers_are_cgp` flag the walk sets. This is
-what recovers a direct call to a `#[cgp_fn]` trait the context cannot satisfy: an `E0599` whose real
-cause (a field one composed blanket trait reads) rustc buries in a mid-stack note under its
-method-probe candidate list
+the context. Because it is not a CGP component, its result takes the `[CGP-E003]` code rather than
+`[CGP-E001]`, the same class the impl-site anchor gives such a trait reached through a wrapper, by
+clearing the `Resolved::consumers_are_cgp` flag the walk sets. This is what recovers a direct call
+to a `#[cgp_fn]` trait the context cannot satisfy: an `E0599` whose real cause (a field one composed
+blanket trait reads) rustc buries in a mid-stack note under its method-probe candidate list
 ([`cgp_fn_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/cgp_fn_use_site.rs)).
 
 ## Parameters by signature unification, not by convention
@@ -240,7 +239,7 @@ Put together, the example's failure becomes one block, led by the cause, in plac
 plumbing-worded blocks with no cause:
 
 ```text
-error[E0277]: [CGP-E001] the consumer trait `CanHandle<Prog<Product![HandleName, HandleShout]>, _>` is not implemented for context `App`
+error[E0277]: [CGP-E001] missing field `name` on `App`
   --> src/main.rs:93:16
    |
 93 |     app.handle(PhantomData::<Prog<Product![HandleName, HandleShout]>>, Vec::new())
@@ -260,8 +259,8 @@ error[E0277]: [CGP-E001] the consumer trait `CanHandle<Prog<Product![HandleName,
 The re-report rustc raises where the result is awaited resolves to the same cause and de-duplicates
 away, and the `?`-operator cascade the call trails is dropped by the emitter's `?`-cascade gate (see
 [The driver](driver.md)), since the resolver never takes a `?` error. A resolution from this anchor
-is also planned as a use-site failure whatever its rustc code, so the header names the consumer
-trait the call needs, never the dispatch plumbing rustc's own headline stopped on (see
+is also planned as a use-site failure whatever its rustc code, so its class is the consumer trait
+the call needs, never the dispatch plumbing rustc's own headline stopped on (see
 [Emitting the transformed diagnostic](typed-resolution-output.md#emitting-the-transformed-diagnostic)).
 
 ## Why a wrong guess cannot fabricate an error

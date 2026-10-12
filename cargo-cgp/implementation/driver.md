@@ -470,11 +470,13 @@ at several spans collapses to one, while two *distinct* consumers that happen to
 separate signatures, so each survives de-duplication (no trait's failure is ever hidden) to be
 *coalesced* at flush, described next. A diagnostic the resolver declined but the text rewrite still
 transformed is keyed by its rendered message text instead (`message_signature`), so the fallback
-re-reports coalesce too. A third key is the **coded main-message header**: a failure the resolver
+re-reports coalesce too. A third key is the **coded class headline**: a failure the resolver
 declined but still rewrote (falling back to raw `IsProviderFor` scaffolding) carries the *same*
-`[CGP-Exxx]` header as the resolved tree of the same failure, so keying on the header collapses that
-declined fallback into the resolved occurrence even though their bodies differ. The header key works
-in that one direction only: a resolved report records it but never consults it, so a declined
+`[CGP-Exxx]` class sentence the resolved tree of the same failure is classed under, so keying on it
+collapses that declined fallback into the resolved occurrence even though their bodies differ. A
+resolved report records its class headline (the plan's `class_header`), not the cause its displayed
+headline states, since the text rewrite of a declined report words only the class. The header key
+works in that one direction only: a resolved report records it but never consults it, so a declined
 fallback that arrived first never hides the resolved tree after it, and two resolved reports of one
 consumer with different causes are both kept for the flush to coalesce. Only the tool's own
 transformed diagnostics are de-duplicated; an untouched `rustc` error always passes through. The
@@ -484,21 +486,24 @@ the summary agree. This is the [one-mistake-many-errors](../issues/usability.md)
 per-diagnostic resolver could not address on its own.
 
 De-duplication collapses the *same* consumer's re-reports; a second gate, **coalescing**, collapses
-*different* consumers that share one root cause into a single block. The transfer example's one
-missing field breaks several endpoints, and a chain of dependent components fails top to bottom for
-the one field the innermost provider needs. Listing every affected consumer in one headline is only
-possible once they have all arrived, and the `Emitter` trait has no end-of-compilation hook, so the
-emitter does not emit as it goes: it **holds every diagnostic in an arrival-ordered buffer** and
-flushes it from its `Drop`. `Drop` runs during the `DiagCtxt`'s own teardown, after every diagnostic
-has been handed to the emitter but while the inner emitter (a field of the wrapper, dropped only
-afterward) is still alive to render; the diagnostics were counted by the `DiagCtxt` as they arrived,
-so deferring their *rendering* to `Drop` leaves the error count untouched. At flush, each buffered
-consumer-trait failure (`is_consumer_shaped`: a CGP consumer on the checked context, not a field
-mismatch, provider check, or foreign wrapper) is grouped with every failure it **shares a root
-cause** with, by the rustc-free `group_by_shared_cause`, which keys each cause on its context and
-its `Leaf` structurally rather than on the `root cause:` lead that leaf words, so grouping does not
-shift when a lead is reworded. Grouping on a shared cause rather than on one whole-failure key is
-what keeps a single mistake in a single block, because the depths one mistake surfaces at each see a
+*different* failures that share one root cause into a single block. One missing field can break
+several endpoints, a chain of dependent components fails top to bottom for the one field the
+innermost provider needs, and a hand-written wrapper trait fails beside the check of the consumer it
+reduces to. Stating the shared cause once, with a caret at every site, is only possible once they
+have all arrived, and the `Emitter` trait has no end-of-compilation hook, so the emitter does not
+emit as it goes: it **holds every diagnostic in an arrival-ordered buffer** and flushes it from its
+`Drop`. `Drop` runs during the `DiagCtxt`'s own teardown, after every diagnostic has been handed to
+the emitter but while the inner emitter (a field of the wrapper, dropped only afterward) is still
+alive to render; the diagnostics were counted by the `DiagCtxt` as they arrived, so deferring their
+*rendering* to `Drop` leaves the error count untouched. At flush, each buffered failure whose
+headline gives way to its cause (`DiagnosisPlan::coalesces`: a rewritten headline that is not a type
+mismatch, whether on a consumer, a wrapper, or a foreign subject) is grouped with every failure it
+**shares a root cause** with, by the rustc-free `group_by_shared_cause`. It keys each cause on its
+`Leaf` structurally rather than on the `root cause:` lead that leaf words, so grouping does not
+shift when a lead is reworded. A leaf names its owner, so failures on different contexts that bottom
+out on one owner's mistake group too; an ordinary trait bound names no owner and is keyed with the
+context it was reached from. Grouping on a shared cause rather than on one whole-failure key is what
+keeps a single mistake in a single block, because the depths one mistake surfaces at each see a
 different *subset* of its causes: a `check_components!` entry stops at the first unmet leaf on its
 own branch, while a use-site call walks every wired component and reaches them all. Those subsets
 overlap without ever being equal, so an exact-match key would group none of them. The block whose
@@ -508,27 +513,29 @@ be drawn and its chain would then be
 with no chain at all. The relation is made transitive so it is a partition rather than an ambiguous
 overlap graph, which also earns an invariant the exact key could not: **no two coalesced blocks
 share a root cause**. A group of one emits its own per-entry block unchanged; a group of several
-emits **one merged block**: a `[CGP-E001]` header listing every affected consumer trait
-(`consumer_header` over a synthesized `Resolved` whose `consumers` is the union), a caret at each
-failing entry, and one root-cause note built by folding every member's paths into a single
+emits **one merged block**, its members ordered by source position: a headline stating the shared
+cause (`coalesced_headline`, which takes the first member's class code, and falls back to every
+member's class sentence with the cause count when the causes are mixed), a caret at each failing
+entry, and one root-cause note built by folding every member's paths into a single
 [dependency graph](dependency-graph-rendering.md). Because the members were grouped for *sharing* a
 cause, the union of their causes holds one copy of it per member, so the block folds those copies
 back into one through the rustc-free `Causes::union` before wording anything. Otherwise the same
 mistake would be stated once per member, most visibly as an underived field listed once per consumer
 that reads it. The graph does the merging: when one failing consumer transitively depends on another
 (`CanCalculateDensity` needs `CanCalculateArea`, so its chain *contains* the other's), the contained
-consumer is not a top-level root and the block leads with the subsuming chain; when two consumers
-are independent but share the cause, both chains render, converging at the shared node. A member
-rustc happened to surface provider-side (a `[CGP-E002]` header as a lone diagnostic) is worded
-uniformly as a consumer in the merged block, since a `check_components!` entry failing *is* the
-consumer trait failing. An untouched `rustc` error, a conflict, or an orphan reshape is buffered as
-a plain entry and emitted verbatim at its arrival position, so global ordering (a CGP block beside
-an unrelated `E0308`, say) is preserved.
+consumer is not a top-level root and the block leads with the subsuming chain; a wrapper's chain
+runs through the consumer it reduces to in the same way; when two consumers are independent but
+share the cause, both chains render, converging at the shared node. A member rustc happened to
+surface provider-side (a `[CGP-E002]` header as a lone diagnostic) is classed as the consumer it
+checks in the merged block, since a `check_components!` entry failing *is* the consumer trait
+failing. An untouched `rustc` error, a conflict, or an orphan reshape is buffered as a plain entry
+and emitted verbatim at its arrival position, so global ordering (a CGP block beside an unrelated
+`E0308`, say) is preserved.
 
 The flush is also where every resolution's `root cause:` note is *rendered*, not merely where the
 coalesced ones are merged, and that is what lets the notes elide against one another. A resolution
-that does not coalesce still buffers its causes rather than its note (a wrapper trait, a mismatch, a
-provider-side check), because only at flush is the emission order known, and one
+that does not coalesce still buffers its causes rather than its note (a type mismatch, or a kept
+rustc headline over an ordinary bound), because only at flush is the emission order known, and one
 [dependency graph](dependency-graph-rendering.md#eliding-across-blocks) `seen` set threaded through
 the blocks in that order lets a later one `(*)`-truncate at the subtree an earlier one already drew,
 while still ending at the root cause, since the block it points into is one the reader may not have

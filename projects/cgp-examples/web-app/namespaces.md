@@ -82,8 +82,8 @@ Both checks failed with the same root cause, the bundle having no entry for the 
 that reaches it:
 
 ```text
-error[E0277]: [CGP-E002] the provider trait `UserCreator` with context `BareCoreApp` is not implemented for provider `BareCoreComponents`
-   = note: root cause: [CGP-E114] provider `BareCoreComponents` does not contain any delegate entry for `UserCreatorComponent`
+error[E0277]: [CGP-E002] missing entry for `UserCreatorComponent` in provider `BareCoreComponents`
+   = note: root cause: [CGP-E114] missing entry for `UserCreatorComponent` in provider `BareCoreComponents`
 ```
 
 The lookup reaches the bundle keyed by the bare component name, which only the bundle's own
@@ -143,10 +143,10 @@ reported the same two errors as the `CoreOnlyApp` probe in
 [testing.md](testing.md#what-the-checks-catch), now naming `TestApp`:
 
 ```text
-error[E0277]: [CGP-E001] the consumer traits `CanCreateUser` and `CanCensorUsername` are not implemented for context `TestApp`
-    = note: root cause: [CGP-E113] context `TestApp` does not contain any delegate entry for `@app.extra.content_filter.UsernameCensorComponent`
-error[E0277]: [CGP-E001] the consumer traits `CanCreatePost` and `CanDetectSpamMessage` are not implemented for context `TestApp`
-    = note: root cause: [CGP-E113] context `TestApp` does not contain any delegate entry for `@app.extra.content_filter.SpamMessageDetectorComponent`
+error[E0277]: [CGP-E001] missing wiring for `@app.extra.content_filter.UsernameCensorComponent` on `TestApp`
+    = note: root cause: [CGP-E113] missing wiring for `@app.extra.content_filter.UsernameCensorComponent` on `TestApp`
+error[E0277]: [CGP-E001] missing wiring for `@app.extra.content_filter.SpamMessageDetectorComponent` on `TestApp`
+    = note: root cause: [CGP-E113] missing wiring for `@app.extra.content_filter.SpamMessageDetectorComponent` on `TestApp`
 ```
 
 ## Public material derived from this

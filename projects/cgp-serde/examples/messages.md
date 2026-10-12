@@ -90,8 +90,8 @@ timestamp encoding, and checked the date and the message vector:
 `cargo cgp check` failed on both checked types and named the one entry the context omits:
 
 ```text
-error[E0277]: [CGP-E001] the consumer traits `CanSerializeValue<DateTime<Utc>>` and `CanSerializeValue<Vec<EncryptedMessage>>` are not implemented for context `AppB`
-  = note: root cause: [CGP-E113] context `AppB` does not contain any delegate entry for `@ValueSerializerComponent.i64`
+error[E0277]: [CGP-E001] missing wiring for `@ValueSerializerComponent.i64` on `AppB`
+  = note: root cause: [CGP-E113] missing wiring for `@ValueSerializerComponent.i64` on `AppB`
 ```
 
 The public page makes the change on the full example instead: `i64` removed from `AppB`'s `UseSerde`
@@ -100,8 +100,8 @@ commit `b6a6323`. The check on `AppB` fails on every type that contains a date, 
 cause:
 
 ```text
-error[E0277]: [CGP-E001] the consumer traits `CanSerializeValue<DateTime<Utc>>`, `CanSerializeValue<EncryptedMessage>`, `CanSerializeValue<MessagesByTopic>`, and `CanSerializeValue<MessagesArchive>` are not implemented for context `AppB`
-    = note: root cause: [CGP-E113] context `AppB` does not contain any delegate entry for `@ValueSerializerComponent.i64`
+error[E0277]: [CGP-E001] missing wiring for `@ValueSerializerComponent.i64` on `AppB`
+    = note: root cause: [CGP-E113] missing wiring for `@ValueSerializerComponent.i64` on `AppB`
 ```
 
 The dependency chain it prints under the root cause runs from `SerializeIterator` through

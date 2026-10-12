@@ -74,8 +74,8 @@ from a copy of the module, `cargo cgp check` built from the `cargo-cgp` source a
 reported the change the public page shows:
 
 ```text
-error[E0277]: [CGP-E001] the consumer trait `CanComputeRef<ToLisp, Plus<MathExpr>>` is not implemented for context `Interpreter`
-   = note: root cause: [CGP-E113] context `Interpreter` does not contain any delegate entry for `@ComputerRefComponent.ToLisp.Plus<MathExpr>`
+error[E0277]: [CGP-E001] missing wiring for `@ComputerRefComponent.ToLisp.Plus<MathExpr>` on `Interpreter`
+   = note: root cause: [CGP-E113] missing wiring for `@ComputerRefComponent.ToLisp.Plus<MathExpr>` on `Interpreter`
 ```
 
 Two `E0271` errors followed at the `ToLisp` wrapper's call to `MatchWithValueHandlersRef`.

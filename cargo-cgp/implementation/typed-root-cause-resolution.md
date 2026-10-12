@@ -87,7 +87,7 @@ unreadable `Symbol<6, Chars<'h', …>>` list), routed through `IsProviderFor` an
 The resolver replaces all of that with:
 
 ```text
-error[E0277]: [CGP-E001] the consumer trait `CanCalculateArea` is not implemented for context `Rectangle`
+error[E0277]: [CGP-E001] missing field `height` on `Rectangle`
   --> src/main.rs:62:9
    |
 62 |         AreaCalculatorComponent,
@@ -102,15 +102,16 @@ error[E0277]: [CGP-E001] the consumer trait `CanCalculateArea` is not implemente
 ```
 
 Every element of that output is reconstructed from the compiler, not read from rustc's message: the
-headline names the *consumer trait* the reader called (`CanCalculateArea`) and the context that
-cannot implement it; the `root cause:` note names the actual mistake in one sentence; and the tree
-shows the transitive path from the check entry down to the missing field, with each node named
-straight off the trait it stands for. Read the chain as the real obligation chain the walk
-descended: `Rectangle: CanCalculateArea` (the consumer) needs
-`RectangleArea: AreaCalculator<Rectangle>` (the wired provider), which needs
-`Rectangle: HasRectangleFields` (the getter), which needs the `height` field. No `IsProviderFor`
-node appears because the walk never went through one. The `[CGP-Exxx]` codes are catalogued in
-[error-code.md](../error-code.md). The rest of this document explains how each piece is produced.
+headline states the actual mistake in one sentence, after the code `[CGP-E001]`, which classes the
+failure as a context that cannot implement a *consumer trait*; the `root cause:` note repeats that
+sentence above the tree; and the tree shows the transitive path from the consumer trait the reader
+checked (`CanCalculateArea`) down to the missing field, with each node named straight off the trait
+it stands for. Read the chain as the real obligation chain the walk descended:
+`Rectangle: CanCalculateArea` (the consumer) needs `RectangleArea: AreaCalculator<Rectangle>` (the
+wired provider), which needs `Rectangle: HasRectangleFields` (the getter), which needs the `height`
+field. No `IsProviderFor` node appears because the walk never went through one. The `[CGP-Exxx]`
+codes are catalogued in [error-code.md](../error-code.md). The rest of this document explains how
+each piece is produced.
 
 ## When the resolver engages, and when it declines
 
@@ -231,7 +232,7 @@ wiring or dispatch entry named) and renders each hop as a tree label with the ty
 resugared.
 
 **[The transformed diagnostic](typed-resolution-output.md)** is the output side: the coded
-`[CGP-E001]`/`[CGP-E002]`/`[CGP-E004]`/`[CGP-E003]`/`[CGP-E005]` headline classes, the `root cause:`
+`[CGP-E001]` to `[CGP-E005]` headline classes and the cause each headline states, the `root cause:`
 notes over their merged dependency trees (with underived-field causes coalesced), and the emitter's
 application of the rustc-free plan to the compiler's `DiagInner`.
 
@@ -516,7 +517,7 @@ Each **leaf class** has fixtures for its field, wiring, and redirect shapes:
 - `transitive_missing_wiring`: a component wired through an *aggregate provider* that the aggregate
   itself does not wire, the `[CGP-E114]` missing-dispatch-entry leaf on a non-context delegation
   table
-  (`` provider `CommonProvider` does not contain any delegate entry for `BarProviderComponent` ``),
+  (`` missing entry for `BarProviderComponent` in provider `CommonProvider` ``),
   with the whole tree correctly rooted at the checked context.
 - `record_field_chain`: a record provider building each field through the context over a recursive
   `Cons`/`Nil` handler (the modular-serialization `DeserializeRecordFields`/`HandleMapEntry` shape),
@@ -597,9 +598,9 @@ fixtures:
   header with the method-syntax advice dropped over a `missing field` note.
 - `missing_wiring`: a use-site `E0599` whose provider needs an unwired component.
 - `ordinary_bound_unsatisfied`: a use-site `f64: Eq`, code kept `E0599`.
-- `open_dispatch_use_site`: the dispatch value recovered from the redirect key, so the header names
-  `CanEncodeItem<Seq<u64>>` and the note reaches the real `@ItemEncoderComponent.u64` wiring rather
-  than reporting the internal `PathCons` key as a bogus consumer trait.
+- `open_dispatch_use_site`: the dispatch value recovered from the redirect key, so the tree starts at
+  `CanEncodeItem<Seq<u64>>` and the headline and note reach the real `@ItemEncoderComponent.u64`
+  wiring rather than reporting the internal `PathCons` key as a bogus consumer trait.
 - `namespace_join_use_site`: a use-site `E0599` on a namespace-joined context, anchored on the
   `CanGreet` consumer trait from the diagnostic and walked through the namespace's `RedirectLookup`
   to the missing field, with the blanket `__Key__` forwarding skipped.
@@ -639,7 +640,7 @@ fixtures:
   no entry for it. Pins the `[CGP-E114]` missing-dispatch-entry leaf: the cause is an unmet
   `DelegateComponent` on the dispatch *table* rather than the context, which the walk reports rather
   than dropping as plumbing, leading with
-  `` provider `SinkHandlers` does not contain any delegate entry for `Tagged<Bytes>` `` over the
+  `` missing entry for `Tagged<Bytes>` in provider `SinkHandlers` `` over the
   chain. Hypershell's own dispatchers are `open`-based aggregates, which reach the redirect-wiring
   leaf instead; see [typed-resolution-walk](typed-resolution-walk.md).
 - `empty_dispatch_table`: the same missing-dispatch-entry leaf on an **empty** `UseInputDelegate`
@@ -654,7 +655,7 @@ fixtures:
   `UseBasicAuth<QueryBalanceRequest>` shape). Pins the `[CGP-E115]` not-a-provider leaf and its
   discriminator against the `cascade_after_use_site` dead-end: `NotAGreeter` has no concrete
   `Greeter` impl (`owner_has_impl_of` false), so it is reported as
-  `` the provider trait `Greeter` is not implemented for `NotAGreeter` `` rather than declining to a
+  `` `NotAGreeter` is not a provider of `Greeter` `` rather than declining to a
   `[CGP-E002]` block naming the whole `WrapGreeter<NotAGreeter>` pipeline.
 - `generic_consumer_use_site`: the same anchor's value-argument case: the dispatch parameter
   recovered by signature unification from a written tuple, no tag argument involved, with the
@@ -670,7 +671,7 @@ fixtures:
   missing a field one composed blanket trait reads. Pins the call-site anchor's *blanket-trait*
   candidate: the called `Describe` is a `#[cgp_fn]`/`#[blanket_trait]` blanket-impl trait, not a CGP
   consumer, so no span-matching anchor recovers it; the anchor finds it by method name, walks
-  `App: Describe` to the missing field, and heads the block `[CGP-E003] the trait …` (clearing
+  `App: Describe` to the missing field, and gives the block the `[CGP-E003]` code (clearing
   `consumers_are_cgp`) rather than declining to rustc's `E0599` with the cause buried under a
   method-probe candidate list. The use-site counterpart of the impl-site
   [`cgp_fn_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/cgp_fn_missing_field.rs).

@@ -292,7 +292,7 @@ the same `{"Empty":null}`, as Serde's derive writes that variant, while a contex
 a provider writing an empty map writes `{"Empty":{}}`, and each context rejects the other's form. A
 missing payload entry is reported with the payload as its root cause: without the `Nil` entry,
 `cargo cgp check` reports
-``[CGP-E113] context `App` does not contain any delegate entry for `@ValueDeserializerComponent.Nil` ``,
+``[CGP-E113] missing wiring for `@ValueDeserializerComponent.Nil` on `App` ``,
 with a dependency chain through each variant of `Enum! { … }`.
 
 ## Related documents

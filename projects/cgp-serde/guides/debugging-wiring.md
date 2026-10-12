@@ -39,8 +39,8 @@ check_components! {
 The check fails on `Payload`, and `cargo cgp check` names the missing entry as the root cause:
 
 ```text
-error[E0277]: [CGP-E001] the consumer trait `CanSerializeValue<Payload>` is not implemented for context `App`
-  = note: root cause: [CGP-E113] context `App` does not contain any delegate entry for `@ValueSerializerComponent.Vec<u8>`
+error[E0277]: [CGP-E001] missing wiring for `@ValueSerializerComponent.Vec<u8>` on `App`
+  = note: root cause: [CGP-E113] missing wiring for `@ValueSerializerComponent.Vec<u8>` on `App`
 ```
 
 The dependency chain the tool prints beneath the root cause walks from `SerializeRecordFields`
