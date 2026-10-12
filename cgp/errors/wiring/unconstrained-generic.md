@@ -94,14 +94,15 @@ provider impl becomes **`[CGP-E018]`**:
 ``[CGP-E018] `#[default_impl]` cannot register `ShowWithDisplay` for `String`, because the provider's impl is generic over `T` ``,
 with a `help:` to write the impl for `String` alone in the concise `#[cgp_impl]` form. The same code
 covers the explicit-context form, `impl<Context> ShowImpl<String> for Context`, whose copied
-parameter is `Context`. Both drop rustc's suggestion to remove the parameter, which is not the fix.
-The codes are defined in the [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
+parameter is `Context`, and a provider struct that is itself generic over the parameter,
+`#[cgp_impl(ShowWith<T>)]` over `impl<T: Display> ShowImpl<T>`, when the key is a type. Its `help:`
+registers the provider at the key instead:
+``write the impl for `String` alone, as `#[cgp_impl(ShowWith<String>)]` with `String` in place of `T` ``.
+All of them drop rustc's suggestion to remove the parameter, which is not the fix. The codes are
+defined in the [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
 
-Two shapes still pass through as rustc writes them. A `#[default_impl]` on the impl of a provider
-struct that is itself generic over the parameter, `#[cgp_impl(ShowWith<T>)]`, names the parameter in
-the provider it registers, so neither the `[CGP-E018]` nor the `[CGP-E019]` recognition claims it.
-And a `#[cgp_computer]` function whose parameter appears only in its return type keeps rustc's pair,
-whose suggestions do not compile either.
+One shape still passes through as rustc writes it: a `#[cgp_computer]` function whose parameter
+appears only in its return type keeps rustc's pair, whose suggestions do not compile either.
 
 ## Resolving it
 
@@ -150,8 +151,8 @@ concise `#[cgp_impl]` form, since the default position cannot bind the provider'
   the `.cgp.stderr` the `[CGP-E018]` naming the parameter.
 - [`wiring/unconstrained-generic/default_impl_generic_provider_struct.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/default_impl_generic_provider_struct.rs):
   `#[default_impl]` on the impl of a provider struct generic over `T` (`#[cgp_impl(ShowWith<T>)]`);
-  both snapshots pin the same single `E0207`, which the tool passes through, so the fixture has
-  `usability` quality.
+  the `.rust.stderr` pins the single `E0207`, and the `.cgp.stderr` the `[CGP-E018]` whose help
+  registers `ShowWith<String>`.
 
 ## Related
 

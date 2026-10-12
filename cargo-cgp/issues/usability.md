@@ -262,22 +262,11 @@ sacrifice precision.
 
 What remains below are the classes the tool does not yet reshape.
 
-## Two unconstrained generics still pass through
+## An unconstrained generic still passes through
 
-Two shapes of the [unconstrained generic](../../cgp/errors/wiring/unconstrained-generic.md) class
-reach the reader as rustc wrote them, with the cause at the caret but a fix that does not apply.
-
-A `#[default_impl]` on the impl of a provider struct that is itself generic over the impl's
-parameter (`#[cgp_impl(ShowWith<T>)]` over `impl<T: Display> ShowImpl<T>`) copies `T` onto the
-registration, whose key and table do not use it, so the compiler rejects it with `E0207`
-([`default_impl_generic_provider_struct`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/default_impl_generic_provider_struct.rs)).
-The `[CGP-E018]` reshaping covers a provider struct that does not use the parameter, and the
-`[CGP-E019]` reshaping covers entries a table names, so this one passes through, naming neither the
-`#[default_impl]` nor its fix. The fix differs from `[CGP-E018]`'s, since the provider struct needs
-the parameter: register a provider instantiated at one type, or wire the generic provider in a
-namespace body or on the context.
-
-A [`#[cgp_computer]`](../../cgp/reference/macros/cgp_computer.md) function whose type parameter
+One shape of the [unconstrained generic](../../cgp/errors/wiring/unconstrained-generic.md) class
+reaches the reader as rustc wrote it, with the cause at the caret but a fix that does not apply. A
+[`#[cgp_computer]`](../../cgp/reference/macros/cgp_computer.md) function whose type parameter
 appears only in its return type (`fn parse<T: FromStr>(value: String) -> Option<T>`) leaves `T`
 unbound on the generated `Computer` impl, whose trait arguments carry only the input types
 ([`computer_output_only_type_parameter`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/computer_output_only_type_parameter.rs)).

@@ -356,6 +356,10 @@ word them.
   remove the parameter is dropped. **Fix (in the `help`):**
   `` write `<Provider>`'s impl for `<key>` alone, in the concise `#[cgp_impl]` form without `<T>` ``
   ([`default_impl_generic_provider`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/default_impl_generic_provider.rs)).
+  A provider struct that is itself generic over the parameter (`#[cgp_impl(ShowWith<T>)]`) takes the
+  same code when the key is a type, and its help registers the provider at the key:
+  `` write the impl for `<key>` alone, as `#[cgp_impl(<Provider at key>)]` with `<key>` in place of `<T>` ``
+  ([`default_impl_generic_provider_struct`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/default_impl_generic_provider_struct.rs)).
 - **`CGP-E019`: a wiring entry whose key skips its generic parameters.**
   `` [CGP-E019] the entry for `<key>` in the wiring of `<Context>` binds `<T>`, but its key does not use it ``,
   or `` … in the namespace `<Namespace>` … `` for a `cgp_namespace!` entry, naming every parameter

@@ -773,8 +773,10 @@ and worded by the rustc-free `plan_structural_mistake` and `structural_mistake_h
   loop-generated `DelegateComponent` entry (or its `IsProviderFor` twin) whose namespace bound's
   variable the key does not mention.
 - **A `#[default_impl]` on a generic provider impl** (`[CGP-E018]`): an `E0207` on a parameter of a
-  registration impl (a namespace lookup trait other than `DelegateComponent`) that neither its key,
-  its trait arguments, nor the provider it registers uses.
+  registration impl (a namespace lookup trait other than `DelegateComponent`) that neither its key
+  nor its trait arguments use. When the provider it registers uses the parameter (a provider struct
+  generic over it), the mistake is recognized only for a type key, and the help names the provider
+  with the key's type in the parameter's place.
 - **A wiring entry whose key skips its generic parameters** (`[CGP-E019]`): an `E0207` on a
   parameter of a `DelegateComponent` entry, or of a `cgp_namespace!` entry's lookup-trait impl, that
   nothing binds: neither the trait arguments name it, nor an associated-type bound whose arguments
@@ -797,8 +799,8 @@ records itself on the diagnostic context, whose lock the emitter holds
 [`wiring/unconstrained-generic/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/wiring/unconstrained-generic)
 (`for_loop_key_without_var`, `default_impl_generic_provider`, `default_impl_explicit_context`,
 `unconstrained_generic`, `entry_generic_shapes`, `entry_generic_checked`, and
-`namespace_entry_generic`) pin the shapes, and `default_impl_generic_provider_struct` pins a
-`#[default_impl]` that no detector claims. The check at unit parameters is pinned under
+`namespace_entry_generic`, and `default_impl_generic_provider_struct` for the generic provider
+struct) pin the shapes. The check at unit parameters is pinned under
 [`checks/check-trait-failure/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/checks/check-trait-failure)
 by `generic_component_unit_params` and `check_trait_named_as_wrapper` (in
 `delegate_and_check_components!`, a component with a type parameter and a generic key) and

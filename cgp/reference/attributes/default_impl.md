@@ -248,7 +248,9 @@ provider: `impl<Context> ShowImpl<String> for Context` copies `Context` onto the
 which fails with the same `E0207` for `Context`, while the concise `impl ShowImpl<String>` registers
 cleanly because its `__Context__` is inserted after the registration is built. Write per-type
 defaults on concise, concrete impls, and wire a generic provider in a namespace body or directly on
-the context instead.
+the context instead. The error catalog records this as an
+[unconstrained generic](../../errors/wiring/unconstrained-generic.md), which `cargo-cgp` reports
+with the concrete impl to write.
 
 Two registrations for one key in one table conflict. Each emits an impl of the lookup trait for the
 same key, and the compiler rejects the second with `E0119`
