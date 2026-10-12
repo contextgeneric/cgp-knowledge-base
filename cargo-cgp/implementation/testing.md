@@ -160,8 +160,8 @@ Editors and agents read this stream rather than the rendered text, and nothing e
 The snapshot reduces each message to the fields a consumer uses (its level, code, message, spans,
 and children) and leaves out the `rendered` text the `.cgp.stderr` already pins and cargo's artifact
 lines. A handful of representative fixtures carry the directive: a resolved check-trait failure, a
-use-site failure, an undeclared import, a duplicate wiring key, an untransformed diagnostic, and a
-clean compile.
+use-site failure, an undeclared import, a duplicate wiring key, a merged block (one primary span,
+the other site labelled), an untransformed diagnostic, and a clean compile.
 
 The expand pass normalizes less than the other two, deliberately. Only the absolute paths are
 replaced; none of the diagnostic normalization applies, and one piece of it would actively hide a
