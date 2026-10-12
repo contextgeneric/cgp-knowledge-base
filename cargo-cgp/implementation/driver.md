@@ -574,7 +574,11 @@ that is actively wrong), while the real cause, the unmet wiring bound, sits in a
 method-bounds `E0599` that mentions a CGP wiring trait, the emitter strips that method-probe advice
 (`strip_method_probe_advice`, over the phrasings
 [`is_method_probe_advice_text`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/signals.rs)
-recognizes), so the wiring bound is the first note a reader meets. The
+recognizes), so the wiring bound is the first note a reader meets. It drops only that one
+suggestion: rustc's others stay, such as the bound to restrict a generic parameter with when a
+provider body calls a trait method on it
+([`undeclared_trait_on_non_context_parameter`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/used-but-undeclared/undeclared_trait_on_non_context_parameter.rs)).
+The
 [`generic_consumer_unwritten_arg`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/use-site/generic_consumer_unwritten_arg.rs)
 fixture, a use-site failure whose dispatch parameter no anchor can recover so that the resolver
 always declines, pins the cleaned output.

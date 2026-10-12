@@ -620,7 +620,8 @@ owns it.
 **Method-probe advice removal** drops rustc's "this is an associated function, not a method" framing
 and "use associated function syntax instead" suggestion from a consumer-method `E0599` the resolver
 declined, both artifacts of CGP's `self`-less provider methods, the second actively wrong, so the
-unmet wiring bound the diagnostic also names leads. It only removes noise, adding no classification;
+unmet wiring bound the diagnostic also names leads. rustc's other suggestions stay. It only removes
+noise, adding no classification;
 [`is_method_probe_advice_text`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/signals.rs)
 recognizes the phrasings and the driver's emitter applies the drop.
 
