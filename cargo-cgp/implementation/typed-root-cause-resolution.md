@@ -560,7 +560,8 @@ Several fixtures pin the **harder mechanics**:
   the obligation's own arguments.
 - `lifetime_component`: a component carrying a *lifetime* parameter (`(Life<'a>, str)` in its check
   entry), the lifetime restored from its `Life<'a>` lift to a region when the consumer obligation is
-  rebuilt, and the provider label's context read by type position past the leading lifetime.
+  rebuilt, the provider label's context read by type position past the leading lifetime, and the
+  lifetime kept in each step's trait as `'_` (`` `HasReference<'_, str>` ``).
 - `tuple_param_component`: a component whose single parameter is itself a *tuple* type, kept whole
   (`CanFormatPair<(u32, u64)>`) rather than spread into two parameters by the params-slot
   ungrouping.

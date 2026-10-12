@@ -357,7 +357,7 @@ the consumer trait's own `DefId`; a provider-trait obligation
 `Provider: ProviderTrait<Ctx, Params…>` becomes the provider-trait impl, naming the provider trait's
 `DefId`, the context (the trait's leading argument), and the provider struct (the obligation's
 `Self`); a `HasField` becomes the field-trait impl; and a user's own blanket or getter trait (or a
-terminal ordinary bound) renders as `` trait impl `Trait` for `Self` ``. Several details make the
+terminal ordinary bound) renders as `` trait impl `Trait<…>` for `Self` ``. Several details make the
 labels read well:
 
 - **Plumbing is dropped.** A provider-trait obligation *for the context itself* (the delegation
@@ -368,13 +368,14 @@ labels read well:
   `` redirect lookup to `@Path` in `Table` ``, so a chain of redirects reads as its successive hops.
   `Table` is the lookup's own first type argument, not the walk's context, so a hop inside an
   aggregate provider names the aggregate.
-- **Generic parameters are reattached.** A generic component's parameters are read from the trait
-  obligation's own type arguments (the consumer's arguments after `Self`, the provider's after the
-  leading context), so the trait reads as written (`CanCalculateArea<u32, u64, bool>`). The context
-  and the parameters are indexed by *type* position, because a component's lifetime parameters sort
-  ahead of the context in a provider trait's argument list (`ReferenceGetter<'a, Ctx, T>`): indexing
-  by raw argument position would land on the region and abort the compiler, while the type-position
-  read skips lifetimes in the label the way ordinary Rust elision does (`ReferenceGetter<str>`).
+- **Every trait keeps its arguments.** A step's trait is named with the obligation's own arguments
+  (the consumer's after `Self`, the provider's after `Self` and the leading context, any other
+  trait's after `Self`), so it reads as written: `CanCalculateArea<u32, u64, bool>`, and
+  `EncodeVariants<App>` for a blanket trait over a variant list. The context is found by *type*
+  position, because a component's lifetime parameters sort ahead of the context in a provider
+  trait's argument list (`ReferenceGetter<'a, Ctx, T>`), and indexing by raw argument position would
+  land on the region and abort the compiler. A lifetime argument stays in its place; the walk erases
+  regions, so it reads `'_`, as in the context `App<'_>` (`ReferenceGetter<'_, str>`).
 - **Type-level lists are resugared.** A rendered label's `Self` type has its `Cons`/`Either` list
   read back as the `Product![A, B]` or `Sum![A, B]` the programmer wrote, and one step further to a
   CGP `Struct!` or `Enum!` shape when every element is a `Field` cell, so a field- or variant-list

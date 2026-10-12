@@ -496,7 +496,8 @@ at (`CGP-E110` onward).
   but are distinct nodes in the dependency graph (the key is part of a node's identity), so each
   keeps its own branch and leaf.
 - **`CGP-E104`: trait impl (general).** `` trait impl `<Trait>` for `<Type>` ``: a hop through any
-  other trait: a user's blanket trait, or an ordinary bound restated as an impl. It is coded even
+  other trait, such as a user's blanket trait or an ordinary bound restated as an impl, named with
+  all its arguments (`` trait impl `EncodeVariants<App>` for `Sum![u64, f64]` ``). It is coded even
   though the trait itself may not be a CGP construct.
 - **`CGP-E110`: missing field (leaf).** `` missing field `<f>` on `<T>` ``: the chain bottoms out on
   a context field that is genuinely absent.
