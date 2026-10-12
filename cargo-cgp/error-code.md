@@ -491,7 +491,10 @@ classes are [conflicting wiring](../cgp/errors/wiring/conflicting-wiring.md) for
 ### `CGP-E031`: inner provider used but not imported
 
 - **Message:** `` [CGP-E031] the inner provider `<Inner>` is used but not imported ``, with a
-  `help`: `` import it with `#[use_provider(<Inner>: <ProviderTrait>)]` ``.
+  `help`: `` import it with `#[use_provider(<Inner>: <ProviderTrait><Args>)]` ``. For a generic
+  component the help writes the component's parameters after the context, as in
+  `#[use_provider(Inner: AreaCalculator<Shape>)]`; a parameter the call does not fix stays named,
+  and the help adds `` , with the type the call uses in place of `<Param>` ``.
 - **Means:** a higher-order provider's body calls an inner provider as an associated function
   (`<Inner>::method(self)`) that it never imported, so the inner parameter carries no provider-trait
   bound and the call cannot resolve. It is the higher-order-provider counterpart of
@@ -505,13 +508,15 @@ classes are [conflicting wiring](../cgp/errors/wiring/conflicting-wiring.md) for
   names the generated `__Context__`, whose missing bound is a `#[uses]` dependency, not an inner
   provider. rustc's own suggestion leaks the generated `__Context__` and offers the *consumer* trait
   as a bound (the wrong fix); the rewrite names the inner provider and the `#[use_provider]` fix
-  instead. The Rust code stays `E0599`.
+  instead. The component's parameters come from the call, as for `CGP-E030`: the method's signature
+  is instantiated with its `Self` pinned to the inner provider and its context to the impl's, and
+  each input is unified with the argument's readable type; the impl's own generic parameters may be
+  written, since the attribute sits on the same impl
+  ([`missing_use_provider_generic_component`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/missing_use_provider_generic_component.rs)).
+  The Rust code stays `E0599`.
 - **Fix (in the `help`):** import the inner provider with
-  `#[use_provider(<Inner>: <ProviderTrait>)]`, which supplies the leading context argument the
-  provider trait needs. For a generic component the help names the provider trait without the
-  component's parameters, so it does not compile as written
-  ([`missing_use_provider_generic_component`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/missing_use_provider_generic_component.rs));
-  the import needs them, as in `#[use_provider(Inner: AreaCalculator<Shape>)]`.
+  `#[use_provider(<Inner>: <ProviderTrait><Args>)]`, which supplies the leading context argument the
+  provider trait needs.
 - **Upstream class:** [undeclared dependency](../cgp/errors/lowering/undeclared-dependency.md); see
   also [higher-order providers](../cgp/concepts/higher-order-providers.md) and
   [`#[use_provider]`](../cgp/reference/attributes/use_provider.md).

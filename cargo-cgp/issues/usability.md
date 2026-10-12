@@ -160,8 +160,9 @@ fixture that pins it.
   [`cgp_impl_on_non_cgp_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/cgp_impl_on_non_cgp_trait.rs)).
 - **A higher-order provider's `#[use_provider]` mistake** is reshaped the same way. Calling
   `InnerCalculator::area(self)` without `#[use_provider(InnerCalculator: AreaCalculator)]` becomes a
-  `[CGP-E031]` error naming the inner provider and the fix, in place of rustc's `E0599`, which leaks
-  the generated `__Context__` and suggests the wrong consumer-trait bound
+  `[CGP-E031]` error naming the inner provider and the fix (with a generic component's parameters
+  written from the call), in place of rustc's `E0599`, which leaks the generated `__Context__` and
+  suggests the wrong consumer-trait bound
   ([`higher_order_missing_use_provider`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/higher_order_missing_use_provider.rs)).
   Naming the *consumer* trait in the `#[use_provider]` bound becomes a `[CGP-E034]` error pointing
   at the provider trait to use, with the `E0308` body cascade suppressed
@@ -380,8 +381,7 @@ The fixtures group by construct:
   importing `std::error::Error` (`error_alias_in_cgp_fn`, `error_alias_in_provider_body`);
   `Self::Error` where two abstract-type traits declare an `Error` (`self_error_two_traits`); and
   `#[uses]` on a component, where `#[extend]` belongs, with rustc's `#[used]` suggestion
-  (`uses_on_component`); and the `[CGP-E031]` help for an inner provider of a generic component,
-  which omits the component's parameters (`missing_use_provider_generic_component`).
+  (`uses_on_component`).
 - **Providers, fields, and types:** getters wired to the wrong provider, a generic check without its
   parameter, `UseDelegate` without `#[derive_delegate]`, a provider impl without `#[cgp_provider]`,
   a tuple-struct context, a field read as two types, and a borrowed error detail.

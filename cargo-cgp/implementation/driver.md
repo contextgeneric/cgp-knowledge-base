@@ -833,15 +833,15 @@ as the context, followed through the `let` an `async fn` adds, and a qualifying 
 context); it names a function of a CGP consumer or blanket trait; and that trait is not already a
 `where` bound of the impl. When several traits share the method name, the one whose definition the
 diagnostic's notes touch is taken. The help writes the trait with the arguments the call uses: the
-detector instantiates the function's signature with fresh variables, pins `Self` to the context,
-and unifies each declared input with the argument's type where that type can be read without
-typeck (a written type, through the call-site anchor's `expr_written_ty`, a parameter's declared
-type, or a `let` annotation). A trait parameter left unknown, or resolved to a type holding a
-lifetime or a generic parameter, stays named for the reader to replace, and a trait with a lifetime
-or const parameter gets the header without a help. A call on any other parameter is left alone,
-since `#[uses]` cannot bound it. Any `[T]: Sized` cascade the failed call trails is left as rustc
-wrote it, because those errors can land off the failing expression, where suppressing them reliably
-would risk hiding an unrelated error.
+detector instantiates the function's signature with fresh variables, pins `Self` to the context, and
+unifies each declared input with the argument's type where that type can be read without typeck (a
+written type, through the call-site anchor's `expr_written_ty`, a parameter's declared type with its
+late-bound lifetimes made fresh, or a `let` annotation). A trait parameter left unknown, or resolved
+to a type holding a lifetime or a generic parameter, stays named for the reader to replace, and a
+trait with a lifetime or const parameter gets the header without a help. A call on any other
+parameter is left alone, since `#[uses]` cannot bound it. Any `[T]: Sized` cascade the failed call
+trails is left as rustc wrote it, because those errors can land off the failing expression, where
+suppressing them reliably would risk hiding an unrelated error.
 
 **An unimported inner provider (`[CGP-E031]`).** The body invokes the inner provider as an
 associated function, `InnerCalculator::area(self)`, which needs the parameter bounded as
@@ -850,8 +850,9 @@ associated function, `InnerCalculator::area(self)`, which needs the parameter bo
 unbounded, so rustc reports a vague `E0599` ("no associated function `area` found for type parameter
 `InnerCalculator`") whose suggestion leaks the generated `__Context__` and offers the *consumer*
 trait as a bound, the wrong fix for a higher-order provider. The transform rewrites it into a
-`[CGP-E031]` header naming the inner provider, with the `#[use_provider(…)]` fix in a `help`,
-recovered by
+`[CGP-E031]` header naming the inner provider, with the `#[use_provider(…)]` fix in a `help` (a
+generic component's parameters written from the call, the way `[CGP-E030]` writes a generic trait's,
+with the inner provider as `Self` and the context argument left for the attribute), recovered by
 [`resolve::detect_missing_use_provider`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/missing_use_provider.rs):
 the failing call is an associated-function call `Param::method(…)` on a generic parameter of an
 enclosing provider-trait impl, the method belongs to a CGP provider trait, and the parameter is not

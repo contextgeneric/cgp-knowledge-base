@@ -70,8 +70,9 @@ from the driver, is what keeps them unit-testable.
   provider does not declare, with a `#[uses]` help and a `#[use_type]` help), and
   `cgp_impl_misuse.rs` (`CgpImplMisuse` for the `[CGP-E032]`–`[CGP-E034]` wrong-half mistakes,
   `ProviderTraitInUses` for the `[CGP-E037]` provider trait in `#[uses]`, and `MissingUseProvider`
-  for the `[CGP-E031]` inner provider never imported). They are documented where the driver detects
-  them, in [The driver](driver.md#the-drivers-diagnostic-transformations). `structural.rs` holds
+  for the `[CGP-E031]` inner provider never imported, with a generic component's parameters). They
+  are documented where the driver detects them, in
+  [The driver](driver.md#the-drivers-diagnostic-transformations). `structural.rs` holds
   `StructuralMistake`, the structural mistakes in a check table or a wiring entry the driver's
   `resolve::structural` detectors recover, and words their `[CGP-E015]`–`[CGP-E019]` headers and
   fixes. `overflow.rs` holds `WiringOverflow`, the reason the driver's walk gives for a wiring
@@ -400,7 +401,7 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   the wrong-half wording: a consumer trait in the header (naming the provider to use), a trait that
   is not a CGP component (whose help names a provider trait for the header), a consumer trait in a
   provider bound, a provider trait in `#[uses]` (naming the consumer trait to declare), and an inner
-  provider not imported.
+  provider not imported (plain, and of a generic component, with a parameter left for the reader).
 - [`crates/cargo-cgp-error-processing/tests/error_processing/undeclared.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/undeclared.rs):
   the `[CGP-E030]` header naming the undeclared trait, and the help naming the `#[uses(…)]` to
   write: with the arguments a generic trait's call fixes, with a parameter the call does not give

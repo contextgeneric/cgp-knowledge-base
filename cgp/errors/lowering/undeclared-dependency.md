@@ -176,7 +176,8 @@ the declaration to write in a `help`, and keeps `rustc`'s own code. The codes ar
   are read from the written argument types or the declared types of the parameters passed. An
   argument it cannot read stays as the trait's own parameter, and the help says to replace it:
   "with the type the call uses in place of `SourceError`".
-- **`[CGP-E031]`** for an unimported inner provider:
+- **`[CGP-E031]`** for an unimported inner provider, with a generic component's parameters written
+  from the call (`AreaCalculator<Shape>`):
   ``the inner provider `InnerCalculator` is used but not imported``, and
   ``help: import it with `#[use_provider(InnerCalculator: AreaCalculator)]` ``.
 - **`[CGP-E035]`** for an unimported abstract type, reported once per definition:
@@ -197,9 +198,7 @@ Four cases keep `rustc`'s output. A call on a generic parameter other than the c
 cannot write. The other three are gaps, described under [Notes for tooling](#notes-for-tooling): a
 bare `Error` that no requirement of the component explains, a `Self::Error` that two abstract-type
 traits could declare, and an undeclared trait that takes a lifetime or const parameter, whose
-`[CGP-E030]` header stands without a help. One reshaped case is a gap too: the `[CGP-E031]` help for
-an inner provider of a generic component names the provider trait without the component's
-parameters, so it does not compile.
+`[CGP-E030]` header stands without a help.
 
 ## Resolving it
 
@@ -219,8 +218,8 @@ idiomatic form, and `#[use_type]` also rewrites the bare type name.
 
 ## Notes for tooling
 
-Three shapes still reach the reader as `rustc` wrote them, and one reshaped help is incomplete; each
-needs more than the emitter has today:
+Three shapes still reach the reader as `rustc` wrote them, and each needs more than the emitter has
+today:
 
 - **A bare `Error` that no requirement explains:** the `E0425` comes from name resolution, before
   the compiler has built the HIR or can say which traits declare an `Error`, and nothing later
@@ -230,10 +229,6 @@ needs more than the emitter has today:
   does not guess. A rewording could list the candidate imports instead.
 - **A trait with a lifetime or const parameter:** the `[CGP-E030]` help writes only type arguments,
   so the header stands without one.
-- **An inner provider of a generic component:** the `[CGP-E031]` help names the provider trait
-  alone, `#[use_provider(Inner: AreaCalculator)]`, where the import needs the component's
-  parameters, `AreaCalculator<Shape>`. The arguments could be recovered from the call the way
-  `[CGP-E030]` recovers a generic trait's.
 
 The `[T]: Sized` errors that an unresolved call's result type can trail, notably in an `async` body,
 are also left in place: they can land off the failing expression, where dropping them reliably
@@ -270,8 +265,8 @@ These fixtures pin the class, one group per shape:
 - [`lowering/undeclared-dependency/missing_use_provider_other_component.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/missing_use_provider_other_component.rs):
   the same with an inner provider of another component; `[CGP-E031]`.
 - [`lowering/undeclared-dependency/missing_use_provider_generic_component.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/missing_use_provider_generic_component.rs):
-  the inner provider of a generic component, whose `[CGP-E031]` help omits the component's
-  parameter and so does not compile (`usability`).
+  the inner provider of a generic component, whose `[CGP-E031]` help writes the component's
+  parameter from the call, `AreaCalculator<Shape>`.
 - [`lowering/undeclared-dependency/self_error_without_bound.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/self_error_without_bound.rs):
   `Self::Error` in a provider body; `[CGP-E035]` from the `E0220`.
 - [`lowering/undeclared-dependency/self_error_in_cgp_fn.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/self_error_in_cgp_fn.rs):
