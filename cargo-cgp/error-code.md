@@ -241,7 +241,8 @@ from a `cgp_namespace!` body, a provider's `#[default_impl(… in …)]`, or the
 suppressed, and the Rust code stays `E0119`. What differs, and why each has its own code, is the
 shape of the collision, and so the message and the fix. In every case an `@`-path key renders as
 its entry wrote it, in bare `@a.b` notation (no `Path!(…)` wrapper), with a generic segment
-named by its parameter (`@ComputerComponent.Code.u64`), and the upstream reference is
+named by its parameter (`@ComputerComponent.Code.u64`) and a type segment with its arguments
+(`@DescriberComponent.Wrap<u64>`), and the upstream reference is
 [conflicting wiring](../cgp/errors/wiring/conflicting-wiring.md) with its two namespace faces
 [overlapping namespace forwarding](../cgp/errors/wiring/namespace-forwarding-conflict.md) and
 [namespace override conflict](../cgp/errors/wiring/namespace-override-conflict.md).

@@ -651,12 +651,13 @@ lookup never reads
 The `help` is omitted when the direct entry names no provider a reader wrote. Each key is rendered
 to its surface form off the types (a component marker to its name, a `PathCons<…>` to its bare `@…`
 path as its entry wrote it (a generic segment printing its parameter name, so an `open` entry's
-`<Code> Code.u64` reads `@ComputerComponent.Code.u64`, and the `__Wildcard__` tail the macros append
-left out), an ordinary type key to its own rendering, a blanket forwarding to
-the namespace/table trait that keys it), so the headline names what the programmer wrote. A marker
-is told from an ordinary type structurally, by whether a provider trait's delegation blanket keys on
-it, so a per-type default's `String` reads as a type rather than as a component nobody defined. The
-message wording is decided by the rustc-free
+`<Code> Code.u64` reads `@ComputerComponent.Code.u64`, a type segment keeping its arguments so
+`Wrap<u64>` and `Wrap<T>` stay apart, and the `__Wildcard__` tail the macros append left out), an
+ordinary type key to its own rendering, a blanket forwarding to the namespace/table trait that keys
+it), so the headline names what the programmer wrote. A marker is told from an ordinary type
+structurally, by whether a provider trait's delegation blanket keys on it, so a per-type default's
+`String` reads as a type rather than as a component nobody defined. The message wording is decided
+by the rustc-free
 [`plan_wiring_conflict`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/wiring.rs)
 (and `wiring_conflict_help` for the redirect fix) over the owned `WiringConflict` the classifier
 fills in, so it is unit-tested without a compiler.
