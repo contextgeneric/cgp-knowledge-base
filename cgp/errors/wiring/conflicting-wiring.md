@@ -172,6 +172,14 @@ the generated check trait, which becomes **`[CGP-E016]`**:
 attributes gave. The two carets are labelled as the first and the second table, and a `help:` names
 the merge or the `#[check_trait(...)]` rename.
 
+Two [`#[cgp_auto_dispatch]`](../../reference/macros/cgp_auto_dispatch.md) traits in one module that
+declare a method of one name produce two `E0428`s, one on the helper function and one on the
+computer the macro names after the method, which become one **`[CGP-E061]`**:
+`` [CGP-E061] two `#[cgp_auto_dispatch]` traits in one module declare the method `area` ``. Its
+carets are the two method names, labelled as the first and the second declaration, a `note:` names
+the generated `ComputeArea` and `__compute_area__`, and a `help:` names the fix: rename the method
+in one trait, or declare the traits in different modules.
+
 One form in this class is a **pass-through** that `cargo-cgp` does not rewrite: the other `E0428`
 name clashes (`duplicate_component_name`, `duplicate_provider_name`) keep `rustc`'s uncoded `E0428`,
 because it already points precisely at the two definitions. Under the pinned nightly the `E0428` is
@@ -196,8 +204,9 @@ leaves unbound) covered in [overlapping namespace forwarding](namespace-forwardi
 ## Notes for tooling
 
 `cargo-cgp` already does the collapsing and resugaring this class needs (above); what remains
-uncoded is the `E0428` name-clash pair outside the check tables, which is precise enough to relay
-verbatim: the two carets name the two definitions and the code names the mistake.
+uncoded is the `E0428` name-clash pair outside the check tables and the dispatch traits, which is
+precise enough to relay verbatim: the two carets name the two definitions and the code names the
+mistake.
 
 ## Backing fixtures
 
@@ -288,14 +297,18 @@ The pass-through conflicts `cargo-cgp` leaves uncoded:
   a local entry on an upstream context that joins a namespace, for a key the crate also registers
   into that namespace; rustc names the upstream impl only in a note, so both `E0119`s stay as rustc
   wrote them.
-- [`wiring/duplicate-keys/auto_dispatch_shared_method_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/auto_dispatch_shared_method_name.rs):
+- [`wiring/conflicting-wiring/auto_dispatch_shared_method_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/auto_dispatch_shared_method_name.rs):
   two [`#[cgp_auto_dispatch]`](../../reference/macros/cgp_auto_dispatch.md) traits in one module
   declaring the same method, so the generated helper `__compute_area__` and computer `ComputeArea`
-  are each declared twice; both snapshots hold just the two uncoded `E0428`s, with the
-  `ComputeArea` caret on the second `area` method name, because the pinned nightly stops before the
-  computers' impls conflict. This is a known defect of the macro rather than a user's wiring
-  mistake; the [implementation document](../../implementation/entrypoints/cgp_auto_dispatch.md#known-issues)
+  are each declared twice; the `.rust.stderr` holds just the two `E0428`s, with the `ComputeArea`
+  caret on the second `area` method name, because the pinned nightly stops before the computers'
+  impls conflict, and the `.cgp.stderr` the one `[CGP-E061]`. The macro's naming is a known defect
+  rather than a user's wiring mistake; the
+  [implementation document](../../implementation/entrypoints/cgp_auto_dispatch.md#known-issues)
   records the fix.
+- [`wiring/conflicting-wiring/auto_dispatch_shared_method_names.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/auto_dispatch_shared_method_names.rs):
+  the same with two shared methods, `area` and `perimeter`: four `E0428`s in the `.rust.stderr`, one
+  `[CGP-E061]` per method in the `.cgp.stderr`.
 
 ## Related
 

@@ -80,15 +80,17 @@ fixture that pins it.
   loop whose key skips its variable `[CGP-E017]` (one block for rustc's three `E0207`s), a
   `#[default_impl]` on a generic provider impl `[CGP-E018]`, a wiring or namespace entry whose key
   skips its generic parameters `[CGP-E019]` (one block for rustc's `E0207` per parameter and impl,
-  whose two suggestions do not compile), and a check entry that names no parameters for a component
-  that takes some `[CGP-E060]` (in place of an `E0277` that reads like a broken provider), each with
-  its fix in a `help`
+  whose two suggestions do not compile), a check entry that names no parameters for a component that
+  takes some `[CGP-E060]` (in place of an `E0277` that reads like a broken provider), and two
+  `#[cgp_auto_dispatch]` traits in one module sharing a method name `[CGP-E061]` (one block for the
+  two `E0428`s on the items the macro generates), each with its fix in a `help`
   ([`check_duplicate_entry`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/check_duplicate_entry.rs),
   [`check_twice_same_context`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/check_twice_same_context.rs),
   [`for_loop_key_without_var`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/for_loop_key_without_var.rs),
   [`default_impl_generic_provider`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/default_impl_generic_provider.rs),
   [`unconstrained_generic`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/unconstrained_generic.rs),
-  [`generic_component_unit_params`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/checks/generic_component_unit_params.rs)).
+  [`generic_component_unit_params`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/checks/generic_component_unit_params.rs),
+  [`auto_dispatch_shared_method_name`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/auto_dispatch_shared_method_name.rs)).
 - **A cross-context dependency** (one context's wiring depending on a *concrete* other context, so
   one obligation appears in two contexts' trees) resolves on both sides. A provider's own
   `where Inner: CanCompute` clause is recovered as that consumer obligation, de-duplicating into

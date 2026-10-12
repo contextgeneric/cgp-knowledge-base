@@ -76,13 +76,15 @@ from the driver, is what keeps them unit-testable.
   documented where the driver detects them, in
   [The driver](driver.md#the-drivers-diagnostic-transformations). `structural.rs` holds
   `StructuralMistake`, the structural mistakes in a check table or a wiring entry the driver's
-  `resolve::structural` detectors recover, and words their `[CGP-E015]`–`[CGP-E019]` and
-  `[CGP-E060]` headers and fixes. `overflow.rs` holds `WiringOverflow`, the reason the driver's walk
-  gives for a wiring lookup that never resolves (a cycle, or a lookup that grows, with the provider
-  step that causes it when a wiring entry chose that provider), and words the reason that ends the
-  `[CGP-E020]` or `[CGP-E021]` header and its `help` (`wiring_overflow_reason`,
-  `wiring_overflow_help`). Last, `internal_error.rs` words the note on a diagnostic the driver shows
-  untransformed after a panic in its own transform (see
+  `resolve::structural` detectors recover, and words their `[CGP-E015]`–`[CGP-E019]`, `[CGP-E060]`,
+  and `[CGP-E061]` headers and fixes, with a note for the one header that does not say why the
+  program fails. `dispatch_names.rs` mirrors the names `#[cgp_auto_dispatch]` gives a method's
+  helper and computer, which the emitter pairs to recognize `[CGP-E061]`. `overflow.rs` holds
+  `WiringOverflow`, the reason the driver's walk gives for a wiring lookup that never resolves (a
+  cycle, or a lookup that grows, with the provider step that causes it when a wiring entry chose
+  that provider), and words the reason that ends the `[CGP-E020]` or `[CGP-E021]` header and its
+  `help` (`wiring_overflow_reason`, `wiring_overflow_help`). Last, `internal_error.rs` words the
+  note on a diagnostic the driver shows untransformed after a panic in its own transform (see
   [The driver](driver.md#containing-the-drivers-own-panics)).
 - **The dependency-tree renderer**
   ([`tree`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/tree.rs))
@@ -368,7 +370,11 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   values: the duplicate check entry (plain and with parameters), the two check-trait name forms, the
   `for` loop key, the generic `#[default_impl]`, the wiring entry whose key skips its parameters,
   with one or two parameters, each help form, and a namespace entry, and the check at unit
-  parameters, with one or two parameters in each check macro's form.
+  parameters, with one or two parameters in each check macro's form, and the shared dispatch method,
+  with its note.
+- [`crates/cargo-cgp-error-processing/tests/error_processing/dispatch_names.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/dispatch_names.rs):
+  the `#[cgp_auto_dispatch]` names: a helper's method read back, other names declined, and the
+  computer's PascalCase name.
 - [`crates/cargo-cgp-error-processing/tests/error_processing/coalesce.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/coalesce.rs):
   `coalesce_underived_fields` over hand-built causes: the merged group (keeping every field's path),
   its lead and single derive help, and the boundaries (a lone underived field, genuinely missing
@@ -466,12 +472,13 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   `plan_resolved` with its `categorized_header`), `overflow.rs` (`WiringOverflow` and
   `OverflowStep`, with `wiring_overflow_reason` and `wiring_overflow_help` for the `[CGP-E020]` and
   `[CGP-E021]` headers), `structural.rs` (`StructuralMistake`, with `plan_structural_mistake` and
-  `structural_mistake_help` for the `[CGP-E015]`–`[CGP-E019]` and `[CGP-E060]` headers and fixes),
-  `similar.rs` (`similar_name` and `similar_key`, the near-miss rules the fix `help`s use), and
-  `wiring.rs` (`WiringConflict`/`WiringKey`, `plan_wiring_conflict` for the
-  `[CGP-E010]`–`[CGP-E014]` duplicate-key headers, and `wiring_conflict_help` for the redirect fix),
-  plus `orphan.rs`, `undeclared.rs`, `unimported.rs`, `requirement.rs`, `cgp_impl_misuse.rs`, and
-  `wiring_name.rs` (the `[CGP-E022]`, `[CGP-E030]`–`[CGP-E038]`, and `[CGP-E040]`–`[CGP-E043]`
+  `structural_mistake_help` for the `[CGP-E015]`–`[CGP-E019]`, `[CGP-E060]`, and `[CGP-E061]`
+  headers and fixes, and `structural_mistake_note`), `dispatch_names.rs` (`dispatch_helper_method`
+  and `dispatch_computer_name`), `similar.rs` (`similar_name` and `similar_key`, the near-miss rules
+  the fix `help`s use), and `wiring.rs` (`WiringConflict`/`WiringKey`, `plan_wiring_conflict` for
+  the `[CGP-E010]`–`[CGP-E014]` duplicate-key headers, and `wiring_conflict_help` for the redirect
+  fix), plus `orphan.rs`, `undeclared.rs`, `unimported.rs`, `requirement.rs`, `cgp_impl_misuse.rs`,
+  and `wiring_name.rs` (the `[CGP-E022]`, `[CGP-E030]`–`[CGP-E038]`, and `[CGP-E040]`–`[CGP-E043]`
   reshape models and their wording), and `internal_error.rs` (the note on a diagnostic shown
   untransformed after a contained panic). See
   [Typed root-cause resolution](typed-root-cause-resolution.md) and

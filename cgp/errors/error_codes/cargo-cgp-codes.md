@@ -31,7 +31,7 @@ duplicate-key `E0119` conflict (no root-cause note, both `rustc` carets kept); `
 a structural mistake in a check table or a wiring entry; `E020` and `E021` reshape the `E0275`
 overflow of a wiring lookup that never ends, and `E022` an orphan-rule coherence error; `E030` to
 `E038` reword a macro-lowering error, each with its fix in a `help`; `E040` to `E043` reword a
-wiring key or value that does not resolve; and `E060` continues the structural mistakes.
+wiring key or value that does not resolve; and `E060` and `E061` continue the structural mistakes.
 
 - **CGP-E001**: the consumer trait is not implemented for the context (missing wiring, or an unmet
   transitive dependency).
@@ -83,6 +83,8 @@ wiring key or value that does not resolve; and `E060` continues the structural m
 - **CGP-E043**: a provider written as a wiring value that is never declared.
 - **CGP-E060**: a check entry that names no parameters for a component that takes some, so it checks
   the component at the unit parameters `()`.
+- **CGP-E061**: two `#[cgp_auto_dispatch]` traits in one module declare a method of one name, so the
+  macro generates the method's helper and computer twice (`E0428`).
 
 ## Dependency-tree entries: `CGP-E1xx`
 
@@ -117,9 +119,9 @@ for that class and links to the [authoritative catalog](../../../cargo-cgp/error
 example, [check-trait-failure](../checks/check-trait-failure.md) is stamped `[CGP-E001]` with a
 `root cause:` tree whose leaf is `[CGP-E110]` (missing field) or `[CGP-E111]` (underived), or
 `[CGP-E060]` for a check that names no parameters; the
-[conflicting-wiring](../wiring/conflicting-wiring.md) family maps to `[CGP-E010]`–`[CGP-E014]`; and
-[wiring-cycle](../wiring/wiring-cycle.md) maps to `[CGP-E020]` for a cycle and `[CGP-E021]` for a
-lookup that grows. The two lowering classes take the macro-mistake block:
+[conflicting-wiring](../wiring/conflicting-wiring.md) family maps to `[CGP-E010]`–`[CGP-E016]` and
+`[CGP-E061]`; and [wiring-cycle](../wiring/wiring-cycle.md) maps to `[CGP-E020]` for a cycle and
+`[CGP-E021]` for a lookup that grows. The two lowering classes take the macro-mistake block:
 [undeclared dependency](../lowering/undeclared-dependency.md) maps to `[CGP-E030]`, `[CGP-E031]`,
 `[CGP-E035]`, and `[CGP-E036]`, and [wrong component half](../lowering/wrong-component-half.md) to
 `[CGP-E032]` to `[CGP-E034]` and `[CGP-E037]`, and

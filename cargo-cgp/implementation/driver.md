@@ -149,7 +149,7 @@ specific compiler error into one coded CGP form: a duplicate-key conflict (`E011
 [reshaped into its coded `[CGP-E010]`–`[CGP-E014]` form](#reshaping-a-duplicate-key-conflict), a
 structural mistake in a check table or a wiring entry (an `E0119`, `E0428`, `E0207`, or `E0277` on
 generated items) is
-[reshaped into its `[CGP-E015]`–`[CGP-E019]` or `[CGP-E060]` form](#reshaping-a-structural-mistake),
+[reshaped into its `[CGP-E015]`–`[CGP-E019]`, `[CGP-E060]`, or `[CGP-E061]` form](#reshaping-a-structural-mistake),
 an orphan-rule namespace registration (`E0210`/`E0117`) is
 [reshaped into its `[CGP-E022]` form](#reshaping-an-orphan-rule-namespace-registration), a
 dependency a CGP definition uses without declaring it (an `E0599`, `E0220`, `E0425`, or `E0277` on
@@ -731,8 +731,9 @@ and the namespace classes beside it pin each shape.
 ### Reshaping a structural mistake
 
 Some mistakes are in the shape of what a macro was given, and the compiler rejects them through the
-items the macro generated, so its error names those items and offers a fix that does not apply. Six
-such shapes are reshaped, each recognized from the generated items at the caret by a detector under
+items the macro generated, so its error names those items and offers a fix that does not apply.
+Seven such shapes are reshaped, each recognized from the generated items at the caret by a detector
+under
 [`resolve::structural`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/structural)
 and worded by the rustc-free `plan_structural_mistake` and `structural_mistake_help`:
 
@@ -756,6 +757,18 @@ and worded by the rustc-free `plan_structural_mistake` and `structural_mistake_h
   rustc's notes and its `where` suggestion are dropped, and the caret stays on the entry. The
   detector runs before the typed resolver, which declines the unit-parameter obligation and leaves
   rustc's error, or its `[CGP-E002]` text rewrite, in place.
+- **Two `#[cgp_auto_dispatch]` traits in one module sharing a method name** (`[CGP-E061]`): the two
+  `E0428`s on the items the macro names after the method alone, the helper `__compute_{method}__`
+  and the computer `Compute{Method}`. Neither is enough alone: the helper's caret comes from the
+  macro's expansion but sits on the attribute, and the computer's sits on the method name with no
+  trace of the macro. So the emitter pairs them as they arrive
+  ([`shared_dispatch_method`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/shared_dispatch_method.rs)):
+  the macro defines the helper first, so when the computer's `E0428` arrives, a buffered helper
+  `E0428` from a `#[cgp_auto_dispatch]` expansion whose method gives the computer's name (the
+  rustc-free `dispatch_helper_method` and `dispatch_computer_name` mirror the macro's naming) is
+  dropped, and the computer's is reworded, with its two carets labelled as the first and the second
+  declaration and a note naming the two generated items. It reads no compiler query, since an
+  `E0428` arrives during name resolution.
 - **A `for` loop whose key skips its variable** (`[CGP-E017]`): an `E0207` on a parameter of a
   loop-generated `DelegateComponent` entry (or its `IsProviderFor` twin) whose namespace bound's
   variable the key does not mention.
@@ -789,7 +802,9 @@ records itself on the diagnostic context, whose lock the emitter holds
 [`checks/check-trait-failure/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/checks/check-trait-failure)
 by `generic_component_unit_params` and `check_trait_named_as_wrapper` (in
 `delegate_and_check_components!`, a component with a type parameter and a generic key) and
-`generic_check_without_params` (in `check_components!`).
+`generic_check_without_params` (in `check_components!`), and the shared dispatch method by
+`auto_dispatch_shared_method_name` and `auto_dispatch_shared_method_names` under
+`wiring/conflicting-wiring/`.
 
 A doubled `#[prefix]` is not among them: its two namespace registrations collide as a duplicate
 redirect, `[CGP-E014]`, which the [duplicate-key reshape](#reshaping-a-duplicate-key-conflict)

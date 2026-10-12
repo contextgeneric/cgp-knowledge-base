@@ -174,9 +174,9 @@ or a snapshot would be collected as a fixture and then expanded in turn. And a f
 compilation stops before expansion completes has no expansion to record, so its snapshot holds a
 two-line comment marker saying so. Two causes stop it that early: a malformed macro invocation, and
 a type defined twice, which rustc treats as fatal once name resolution finishes. The marker is worth
-pinning, since it says the failure precedes type-checking. The three fixtures under
-`wiring/conflicting-wiring/` that define a name twice (`duplicate_component_name`,
-`duplicate_provider_name`, and `auto_dispatch_shared_method_name`) record it.
+pinning, since it says the failure precedes type-checking. The fixtures under
+`wiring/conflicting-wiring/` that define a name twice record it: a duplicate component or provider
+name, two check tables sharing a check-trait name, and two dispatch traits sharing a method name.
 
 ### The harness is a custom Rust test binary
 

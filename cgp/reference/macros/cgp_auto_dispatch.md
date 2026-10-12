@@ -247,9 +247,11 @@ second `__compute_area__` and a second `ComputeArea`, and the module fails with
 ``E0428: the name `__compute_area__` is defined multiple times``, the same for `ComputeArea`, and
 `E0119` conflicts between the two computers' `Computer`, `IsProviderFor`, and `DelegateComponent`
 impls, followed by errors on the second trait's blanket impl. Declaring the traits in separate
-modules avoids it. Naming the generated items after the trait as well as the method would remove the
-clash, at the cost of renaming the `Compute{Method}` provider, which code outside the macro can wire
-by name.
+modules avoids it. The error catalog records the clash under
+[conflicting wiring](../../errors/wiring/conflicting-wiring.md), and `cargo-cgp` reports the two
+`E0428`s as one error naming the method. Naming the generated items after the trait as well as the
+method would remove the clash, at the cost of renaming the `Compute{Method}` provider, which code
+outside the macro can wire by name.
 
 **The blanket impl covers every type implementing `HasExtractor`.** A hand-written impl of the
 trait for a type outside that set, such as each payload struct, coexists with it, but one for any
