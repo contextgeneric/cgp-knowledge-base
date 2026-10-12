@@ -102,7 +102,7 @@ The tool does more than restate the overflow when a cycle is tangled with a reco
 this is where its cycle guard earns its keep. In `mutual_cycle_with_cause` (`ProviderA` depends on
 `CanB`, `ProviderB` depends back on `CanA`, walked alongside a genuinely missing `width` field) the
 resolver cuts the `CanA → CanB → CanA` loop and follows the other branch to the leaf, leading with
-`` [CGP-E002] missing field `width` on `App` `` over a
+`` [CGP-E001] missing field `width` on `App` `` over a
 `` root cause: [CGP-E110] missing field `width` on `App` `` dependency tree (`[CGP-E101]`
 consumer-impl hop → `[CGP-E102]` provider-impl hop → `[CGP-E104]` `HasWidth` hop → the leaf). The
 cycle is not the headline; the concrete cause reachable down the non-cyclic branch is. Because the
@@ -133,7 +133,7 @@ high enough.
   a two-component cycle (`ProviderA` ↔ `ProviderB`) walked alongside a genuinely missing `width`
   field; its `.rust.stderr` is not an overflow but a raw `E0277` on
   `DoA: IsProviderFor<ProviderAComponent, App>`, and its `.cgp.stderr` shows the resolver's cycle
-  guard cutting the loop and leading with `[CGP-E002]` over a
+  guard cutting the loop and leading with `[CGP-E001]` over a
   `` root cause: [CGP-E110] missing field `width` `` tree, the cause down the non-cyclic branch
   rather than the cycle.
 - [`wiring/wiring-cycle/cycle_cut_rechecked.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/cycle_cut_rechecked.rs):

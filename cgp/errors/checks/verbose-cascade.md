@@ -86,16 +86,14 @@ second-to-last message, but the concrete-item test is what makes it reliable reg
 `cargo-cgp` collapses the whole cascade to a single block. First it **drops every intermediate
 provider-trait block** as derived noise and recovers each *checked* component's failure to a
 `root cause:` tree that descends all the way to the leaf. Then it **coalesces** the checked
-components that share that leaf: rather than one block per component, it emits one `[CGP-E001]`
-headline naming every affected consumer trait
-(`` the consumer traits `CanBaz`, `CanBar`, and `CanFoo` are not implemented for context `App` ``)
-with a caret at each check entry and a single `` root cause: [CGP-E110] missing field `name` `` tree
-beneath. So a six-block raw cascade over three checked components becomes one block, and cargo's
-re-count reports one error. A component rustc happened to surface provider-side (a lone `[CGP-E002]`
-block) is worded uniformly as a consumer in the merged headline, since a `check_components!` entry
-failing *is* the consumer trait failing.
+components that share that leaf: rather than one block per component, it emits one block whose
+headline states the shared cause (`` [CGP-E001] missing field `name` on `App` ``), with a caret at
+each check entry and a single `` root cause: [CGP-E110] missing field `name` `` tree beneath. So a
+six-block raw cascade over three checked components becomes one block, and cargo's re-count reports
+one error. A component rustc happened to surface provider-side is still classed as the consumer its
+check entry asserts, since a `check_components!` entry failing *is* the consumer trait failing.
 
-Listing every affected consumer in one headline is possible because the tool holds the compilation's
+Merging every affected component into one block is possible because the tool holds the compilation's
 diagnostics until they have all arrived (there is no end-of-compilation hook), then groups together
 the ones that *share* a root cause. Grouping on a shared cause rather than on a whole-failure key is
 what also reaches the harder shape, where one omission is reached at several instantiations and so

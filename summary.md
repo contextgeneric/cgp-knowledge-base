@@ -687,7 +687,7 @@ it stale.
 - [typed-resolution-anchors.md](cargo-cgp/implementation/typed-resolution-anchors.md) — the
   span-matching anchors that recover the real consumer obligation.
 - [typed-resolution-call-site.md](cargo-cgp/implementation/typed-resolution-call-site.md) — the
-  HIR re-read of the failing call expression, the sixth of the seven anchors.
+  HIR re-read of the failing call expression, the seventh of the eight anchors.
 - [typed-resolution-walk.md](cargo-cgp/implementation/typed-resolution-walk.md) — the descent to every
   terminal unmet bound, and each leaf's decoding and classification.
 - [typed-resolution-output.md](cargo-cgp/implementation/typed-resolution-output.md) — the coded

@@ -3,10 +3,11 @@
 This document covers the first stage of the driver's
 [typed root-cause resolution](typed-root-cause-resolution.md): recovering, from a failing
 diagnostic, the **real consumer-trait obligation** `Ctx: ConsumerTrait<Params…>` that seeds the
-[walk](typed-resolution-walk.md). Seven anchors recover it from seven failure shapes, tried in
-order; the first that succeeds wins, and each produces the same thing (the consumer obligation) from
-a different shape. Six are described here. The remaining one, the re-read of the failing call
-expression, is tried sixth and has [its own document](typed-resolution-call-site.md). How the
+[walk](typed-resolution-walk.md). Eight anchors recover it from eight failure shapes, tried in
+order; the first that succeeds wins, and each produces the obligation to walk from a different
+shape: the consumer obligation, or, for a `#[check_providers]` entry, the provider obligation the
+entry asserts. Seven are described here. The remaining one, the re-read of the failing call
+expression, is tried seventh and has [its own document](typed-resolution-call-site.md). How the
 recovered causes are worded and emitted is [the transformed diagnostic](typed-resolution-output.md).
 
 **From a `check_components!` entry, by span.** A `check_components!` entry expands to a concrete
@@ -32,6 +33,21 @@ and
 [`tuple_param_component`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/generic/tuple_param_component.rs)
 fixtures pin the two shapes). `CanUseComponent` is the user's own check assertion, legitimately read
 here to find the component; it is the marker map, not the walk, that then routes to the consumer.
+
+**From a `#[check_providers]` entry, by span.** The `#[check_providers(P)]` form of
+`check_components!` asserts a provider directly: it expands to an impl of a generated check trait
+whose supertrait is `IsProviderFor<Component, Context, Params>`, with the listed provider as `Self`
+and that type's span on the entry the user wrote
+(`impl CheckRectangleProviders<AreaCalculatorComponent, Rectangle, ()> for ScaledArea<RectangleArea> {}`).
+`resolve_provider_check` matches that impl by its `Self` span, as the check-entry anchor does, and
+tells a check trait from a component's own provider trait (which also carries `IsProviderFor`) by
+its supertrait's component argument being one of the trait's own parameters. It maps the marker to
+the component's provider trait and seeds the walk with the provider obligation
+`ScaledArea<RectangleArea>: AreaCalculator<Rectangle>`, so the tree starts at the provider the entry
+lists, whatever the context wires; a provider the context does not wire at all is checked the same
+way. The result records the provider, which makes the block the provider class `[CGP-E002]`
+([`check_providers_layer`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/higher-order-provider-layer/check_providers_layer.rs),
+[`check_providers_unwired_provider`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/check_providers_unwired_provider.rs)).
 
 **From a hand-written `impl Trait for Context` block.** A wiring failure often surfaces inside an
 impl the programmer wrote rather than at a check entry. The money-transfer example's per-endpoint
@@ -159,10 +175,7 @@ The transformed error is the same `[CGP-E001]` consumer form over a root-cause n
 misleading "this is an associated function… use associated function syntax instead" advice, which
 the method probe emits for CGP's `self`-less provider methods, is dropped with the rest of rustc's
 sub-notes. The anchor is not limited to method calls: any failure whose spans land on the context's
-struct definition reaches it, which is how a **`#[check_providers(...)]` per-layer assertion**,
-whose `IsProviderFor`-supertraited check impl no other anchor matches, still resolves to the failing
-layer's root cause, because rustc's "not implemented for `Rectangle`" note spans the struct
-([`check_providers_layer`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/higher-order-provider-layer/check_providers_layer.rs)).
+struct definition reaches it.
 
 A `DelegateComponent` key comes in three shapes, and each is handled differently. The distinction
 matters for an `open`-dispatched context, whose per-value entries are redirect *paths*, not markers.
@@ -207,7 +220,7 @@ under
 [`checks/check-trait-failure/use-type/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/checks/check-trait-failure/use-type)).
 A directly-wired context keeps the more precise per-component recovery.
 
-**From the call expression itself.** The sixth anchor, `resolve_call_site`, handles the use-site
+**From the call expression itself.** The seventh anchor, `resolve_call_site`, handles the use-site
 failure whose spans touch *nothing* the other anchors can read. Two shapes reach it. In the first, a
 context's wiring matches the called component unconditionally, so the method is *found*, the failure
 is an `E0277` rather than an `E0599`, and its spans never leave the call. In the second, the called
@@ -237,7 +250,7 @@ a *library* publishes, which is where such traits normally live
 while a plain blanket trait in either place keeps rustc's diagnostic
 ([`local_blanket_trait_reached`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/local_blanket_trait_reached.rs)).
 
-**From a use site, by blanket trait.** The seventh and last anchor,
+**From a use site, by blanket trait.** The eighth and last anchor,
 `resolve_use_site_blanket_trait`, is the by-consumer anchor's counterpart for a
 `#[cgp_fn]`/`#[blanket_trait]` **blanket trait**, a blanket-impl trait that is not a CGP component.
 It reaches the shape a blanket trait required through a `where` **bound** or supertrait produces
@@ -282,6 +295,6 @@ The per-file map of the whole resolver lives in the parent document's
 
 - [Typed root-cause resolution](typed-root-cause-resolution.md): the pipeline overview, its
   boundaries, and the consolidated tests and source catalogs.
-- [Typed resolution: the call-site anchor](typed-resolution-call-site.md): the sixth anchor.
+- [Typed resolution: the call-site anchor](typed-resolution-call-site.md): the seventh anchor.
 - [Typed resolution: walking to the root cause](typed-resolution-walk.md): the descent every
   anchor's seed feeds.

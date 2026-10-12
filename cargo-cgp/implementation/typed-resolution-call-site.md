@@ -1,9 +1,9 @@
 # Typed resolution: the call-site anchor
 
-This document covers the sixth anchor of the driver's
+This document covers the seventh anchor of the driver's
 [typed root-cause resolution](typed-root-cause-resolution.md): recovering a use-site failure's
 obligation from the failing call expression's own HIR, when its spans touch nothing the
-[span-matching anchors](typed-resolution-anchors.md) can read. (A seventh anchor,
+[span-matching anchors](typed-resolution-anchors.md) can read. (An eighth anchor,
 `resolve_use_site_blanket_trait`, is tried after it for a blanket trait required as a `where`
 *bound* rather than *called*; it is described in
 [anchoring the starting obligation](typed-resolution-anchors.md) and reuses this anchor's

@@ -475,7 +475,9 @@ declined but still rewrote (falling back to raw `IsProviderFor` scaffolding) car
 `[CGP-Exxx]` class sentence the resolved tree of the same failure is classed under, so keying on it
 collapses that declined fallback into the resolved occurrence even though their bodies differ. A
 resolved report records its class headline (the plan's `class_header`), not the cause its displayed
-headline states, since the text rewrite of a declined report words only the class. The header key
+headline states, since the text rewrite of a declined report words only the class; when rustc's own
+headline is an `IsProviderFor` bound, it also records the provider form the text rewrite gives that
+headline (`declined_header`), since a declined re-report carries that form instead. The header key
 works in that one direction only: a resolved report records it but never consults it, so a declined
 fallback that arrived first never hides the resolved tree after it, and two resolved reports of one
 consumer with different causes are both kept for the flush to coalesce. Only the tool's own
@@ -525,12 +527,9 @@ that reads it. The graph does the merging: when one failing consumer transitivel
 (`CanCalculateDensity` needs `CanCalculateArea`, so its chain *contains* the other's), the contained
 consumer is not a top-level root and the block leads with the subsuming chain; a wrapper's chain
 runs through the consumer it reduces to in the same way; when two consumers are independent but
-share the cause, both chains render, converging at the shared node. A member rustc happened to
-surface provider-side (a `[CGP-E002]` header as a lone diagnostic) is classed as the consumer it
-checks in the merged block, since a `check_components!` entry failing *is* the consumer trait
-failing. An untouched `rustc` error, a conflict, or an orphan reshape is buffered as a plain entry
-and emitted verbatim at its arrival position, so global ordering (a CGP block beside an unrelated
-`E0308`, say) is preserved.
+share the cause, both chains render, converging at the shared node. An untouched `rustc` error, a
+conflict, or an orphan reshape is buffered as a plain entry and emitted verbatim at its arrival
+position, so global ordering (a CGP block beside an unrelated `E0308`, say) is preserved.
 
 The flush is also where every resolution's `root cause:` note is *rendered*, not merely where the
 coalesced ones are merged, and that is what lets the notes elide against one another. A resolution

@@ -203,23 +203,24 @@ works on is always a real consumer-trait obligation** `Ctx: ConsumerTrait<Params
   consumer whose blanket routes to that provider.
 
 **[Anchoring the starting obligation](typed-resolution-anchors.md)** recovers the obligation the
-compiler failed to prove, one of seven ways tried in order. A `check_components!` entry is matched
+compiler failed to prove, one of eight ways tried in order. A `check_components!` entry is matched
 by its caret to the check impl and its `CanUseComponent<Marker, Params>` assertion mapped to the
-real consumer obligation; a failure inside a hand-written `impl Trait for Context` block is
-recovered from the impl's CGP consumer supertrait, and one inside an `impl … for Foreign` wrapper by
-descending its supertrait's `where`-clause hops to a consumer on the context; a consumer-method
-`E0599` is recovered from the context's own wired components, or from the consumer trait the
-diagnostic names (the anchor that reaches a namespace-joined context); and a `#[cgp_fn]` /
-`#[blanket_trait]` **blanket trait** required through a `where` bound (an `E0277`) is recovered from
-the blanket trait the diagnostic names and the context read off the failing expression.
+real consumer obligation, and a `#[check_providers]` entry the same way to the provider obligation
+it asserts; a failure inside a hand-written `impl Trait for Context` block is recovered from the
+impl's CGP consumer supertrait, and one inside an `impl … for Foreign` wrapper by descending its
+supertrait's `where`-clause hops to a consumer on the context; a consumer-method `E0599` is
+recovered from the context's own wired components, or from the consumer trait the diagnostic names
+(the anchor that reaches a namespace-joined context); and a `#[cgp_fn]` / `#[blanket_trait]`
+**blanket trait** required through a `where` bound (an `E0277`) is recovered from the blanket trait
+the diagnostic names and the context read off the failing expression.
 
-**[The call-site anchor](typed-resolution-call-site.md)** is tried sixth, for the use-site failure
+**[The call-site anchor](typed-resolution-call-site.md)** is tried seventh, for the use-site failure
 whose spans touch nothing the span-matching anchors can read: a wiring that matches the called
 component unconditionally (an `E0277` on the call itself), or a call to a `#[cgp_fn]` blanket-trait
 method. It re-reads the failing call expression from HIR alone: the receiver carries the context,
 the component's parameters come from unifying the call's *written* argument types against the
 method's own declared signature, and every parameter the call leaves to inference is seeded as a
-rigid placeholder the walk resolves around but never reports on. The seventh and last anchor,
+rigid placeholder the walk resolves around but never reports on. The eighth and last anchor,
 `resolve_use_site_blanket_trait`, is the by-consumer anchor's counterpart for a blanket trait
 required as a *bound* rather than *called*, gated to `E0277` and tried after the call-site anchor,
 so a method call leads with the trait the programmer invoked.
@@ -239,7 +240,7 @@ application of the rustc-free plan to the compiler's `DiagInner`.
 ## Boundaries and open ends
 
 The resolver is deliberately bounded, and a few edges are worth recording. Because it anchors the
-seven ways above, a wiring failure that is *none* of them declines. The consumer-trait use-site
+eight ways above, a wiring failure that is *none* of them declines. The consumer-trait use-site
 anchor reaches a manual supertrait bound in a trait definition or `where` clause, and a
 namespace-joined use-site call, whenever a local CGP consumer trait and its context appear in the
 diagnostic's spans (the `use_type_foreign_unsatisfied`, `use_type_nested_unsatisfied`, and
@@ -318,7 +319,7 @@ marking.
   building the rustc-free `Resolved` model. Every anchor feeds the walk the real consumer obligation
   `Ctx: ConsumerTrait<Params…>`, never a `CanUseComponent` wrapper.
   - [`anchor/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/anchor)
-    holds six of the seven anchors, plus their two shared ingredients: `seed.rs`
+    holds seven of the eight anchors, plus their two shared ingredients: `seed.rs`
     (`consumer_obligation`, the `Params`-slot ungrouping decided by the consumer's own generics: a
     single tuple-typed parameter kept whole, a lifetime restored from `Life<'a>` via `life_region`,
     any mismatch declining rather than handing the solver a malformed trait ref) and `spans.rs` (the
@@ -326,7 +327,10 @@ marking.
     component marker, and `is_about_impl`, whether a caret inside an impl is about it).
     `check_failure.rs` matches the check impl by span, then `can_use_to_consumer_obligation` maps
     its `CanUseComponent<Marker, Params>` assertion through `marker_to_consumer` to the consumer
-    obligation. `impl_site.rs` recovers the context and the failing supertrait from an enclosing
+    obligation. `provider_check.rs` matches a `#[check_providers]` entry's check impl the same way
+    and seeds the walk with the provider obligation it asserts, built by `seed.rs`'s
+    `provider_obligation` and walked by `resolve_provider_leaves`, which records the provider.
+    `impl_site.rs` recovers the context and the failing supertrait from an enclosing
     `impl Trait for Context` block, heading the tree with the impl's own wrapper trait (`[CGP-E001]`
     or `[CGP-E003]` by its blanket-impl fingerprint) through `wrapper_consumer_causes`, which seeds
     the supertrait directly when it is a CGP consumer *or* a `#[cgp_fn]`/`#[blanket_trait]`
@@ -341,7 +345,7 @@ marking.
     redundant bare marker, a free-parameter catch-all, and a `namespace …;` blanket `__Key__` key.
     `use_site_consumer.rs` recovers a local, non-generic CGP consumer trait from the diagnostic's
     spans and walks `Ctx: Consumer` directly (the anchor that reaches a namespace-joined context),
-    and its by-blanket-trait sibling `resolve_use_site_blanket_trait` (seventh, gated to `E0277`,
+    and its by-blanket-trait sibling `resolve_use_site_blanket_trait` (eighth, gated to `E0277`,
     tried after the call-site anchor) does the same for a `#[cgp_fn]`/`#[blanket_trait]` blanket
     trait required as a bound, reading the context off the failing expression via the call-site
     anchor's `contexts_at_spans` and heading the result `[CGP-E003]` by clearing
@@ -350,7 +354,7 @@ marking.
     `#[cgp_fn]` trait or one a library publishes is reached while `ToString`, `Into`, and a crate's
     own plain blanket traits are not.
   - [`call_site/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/call_site)
-    holds the sixth anchor, `resolve_call_site`, the HIR re-read of the failing call, one stage per
+    holds the seventh anchor, `resolve_call_site`, the HIR re-read of the failing call, one stage per
     file: `find_call.rs` (`method_calls_at`, the calls a primary span lands on without lying
     strictly inside the receiver or an argument, and `traits_with_method`, the candidate consumer
     traits *and* `#[cgp_fn]`/`#[blanket_trait]` blanket traits by method name, the latter headed
@@ -427,7 +431,7 @@ marking.
 - [`crates/cargo-cgp-driver/src/emitter/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/emitter):
   the `try_resolve` seam (gated to an unmet-obligation code, `E0271`/`E0275`/`E0277` or a
   method-bounds `E0599`, with a resolution-class `E0599` excluded so the solver never runs on an
-  error emitted mid-`clauses_of`) that tries the seven anchors in turn (the by-blanket-trait anchor
+  error emitted mid-`clauses_of`) that tries the eight anchors in turn (the by-blanket-trait anchor
   last, gated to `E0277`), and the `transform_resolved` mutation it feeds, mapping the rustc code to
   a `DiagKind` (overridden to the use-site kind for a call-anchored resolution), calling
   `plan_resolved`, and applying the plan to the `DiagInner`, falling back to the in-place text
@@ -557,10 +561,11 @@ Several fixtures pin the **harder mechanics**:
   ungrouping.
 - `check_providers_layer` (under
   [`checks/higher-order-provider-layer/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/checks/higher-order-provider-layer)):
-  a `#[check_providers(...)]` per-layer assertion, whose `IsProviderFor`-supertraited check impl no
-  anchor matches directly, resolved through the use-site anchor instead (rustc's "not implemented
-  for `Rectangle`" note spans the context's struct definition) into the failing layer's root-cause
-  tree.
+  a `#[check_providers(...)]` per-layer assertion, matched by the provider-check anchor to its
+  generated check impl and walked from the listed provider's obligation into a `[CGP-E002]` block
+  whose tree starts at the failing layer. `check_providers_unwired_provider` checks a provider the
+  context does not wire at all, and `same_name_marker_rename` one whose marker shares its name with
+  another component's.
 - `ordinary_bound_unsatisfied`: a non-field `f64: Eq` bound whose rustc header is kept over a
   lead-less chain note.
 - `constrained_delegate_key` and `pipe_handlers_empty` (under

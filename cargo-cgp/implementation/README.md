@@ -41,10 +41,10 @@ same change.
   single `root cause:` note over the dependency graph of every leaf, and anything the resolver
   declines falls back to the text rewrite. The document is the pipeline overview, with its
   boundaries and its consolidated tests and source catalogs, over four per-stage documents:
-  - [Typed resolution: anchoring the starting obligation](typed-resolution-anchors.md): the six
-    span-matching anchors that recover the real consumer obligation from a check entry, a
-    hand-written impl, a foreign wrapper chain, a use site, a namespace-joined consumer, or a
-    blanket trait.
+  - [Typed resolution: anchoring the starting obligation](typed-resolution-anchors.md): the seven
+    span-matching anchors that recover the obligation to walk from a check entry, a
+    `#[check_providers]` entry, a hand-written impl, a foreign wrapper chain, a use site, a
+    namespace-joined consumer, or a blanket trait.
   - [Typed resolution: the call-site anchor](typed-resolution-call-site.md): the HIR re-read of the
     failing call expression, its signature unification, and the rigid placeholders that stand in for
     what the call never types.

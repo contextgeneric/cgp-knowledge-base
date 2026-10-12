@@ -114,11 +114,14 @@ recognizes.
 - **Message:** `` [CGP-E002] <cause> ``, by the rules of `CGP-E001`; the class sentence, used for
   mixed causes, is
   `` the provider trait `<Provider trait>` with context `<Context>` is not implemented for provider `<Provider>` ``.
-- **Means:** a specific provider fails to implement its provider trait for the context: its
-  impl-side `where`-clause dependencies do not hold, as asserted by `IsProviderFor`.
-- **Triggered by:** an unsatisfied `Provider: IsProviderFor<Marker, Context, Params>` bound, a
-  `#[check_providers(...)]` assertion, or a wiring step (such as a namespace `RedirectLookup`) whose
-  provider-side failure rustc chose as the primary error.
+- **Means:** a provider a `#[check_providers(...)]` entry lists fails to implement its provider
+  trait for the context: its impl-side `where`-clause dependencies do not hold.
+- **Triggered by:** a failing `#[check_providers(...)]` entry, recognized by the generated check
+  impl whose supertrait is `IsProviderFor` and whose `Self` is the listed provider. The tree starts
+  at that provider, whatever the context wires. Any other failure is classed by the trait its anchor
+  recovered, even when rustc's own headline stops on a provider's `IsProviderFor` bound (a
+  dispatch combinator, a `RedirectLookup`, or a provider deep in the chain): such a block is
+  `CGP-E001` or `CGP-E003`.
 - **Fix:** follow the `root cause:` note(s) to the dependency the provider is missing.
 - **Upstream class:** [check-trait failure](../cgp/errors/checks/check-trait-failure.md) (its
   provider-side face).

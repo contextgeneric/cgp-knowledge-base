@@ -14,17 +14,16 @@ the cause, after the class's code; the Rust error code (`E0277`, `E0599`, `E0271
 The worked example's headline is `` [CGP-E001] missing field `height` on `Rectangle` ``: the code
 says what kind of failure it is, and the sentence says what to fix.
 
-Five classes choose the code:
+Five classes choose the code, and the anchor that matched the caret decides which, never the bound
+rustc's own headline stopped on:
 
 - **`[CGP-E001]`, the consumer class**, for a context that cannot implement a consumer trait, a
-  [check-trait failure](../../cgp/errors/checks/check-trait-failure.md). A consumer-method `E0599`
-  (whose text names no wiring trait) and a `RedirectLookup`-provider failure (below) also take it.
-- **`[CGP-E002]`, the provider class**, for a rustc header that opens on an unsatisfied
-  `IsProviderFor` bound of a real, wired provider whose own dependency fails (a `#[check_providers]`
-  layer, say). The one exception is a "provider" that is a **`RedirectLookup`**: that is redirect
-  plumbing the programmer never wrote (the lookup resolved to *no* provider, so the wiring is simply
-  missing), so the class follows the redirect through to the recovered consumer and takes
-  `[CGP-E001]` instead of exposing `RedirectLookup<App, @…>` as a provider.
+  [check-trait failure](../../cgp/errors/checks/check-trait-failure.md), whether reached through a
+  check entry, a consumer-method `E0599`, or a bound. It holds even when rustc's headline opens on a
+  provider's `IsProviderFor` bound: that provider may be dispatch plumbing, a `RedirectLookup`, or a
+  provider deep in the chain, none of which the programmer asserted on.
+- **`[CGP-E002]`, the provider class**, for a `#[check_providers]` entry, whose anchor records the
+  provider it lists (see [the anchors](typed-resolution-anchors.md)).
 - **`[CGP-E003]`, the plain-trait class**, for a trait that is *not* itself a CGP consumer: a
   hand-written wrapper with only a concrete impl, such as `CanHandleApiSend`, or a
   `#[cgp_fn]`/`#[blanket_trait]` blanket trait, told apart from `[CGP-E001]` by its fingerprint
@@ -264,27 +263,26 @@ against what the compilation's earlier notes already drew. One mapping is by *an
 code: a resolution the call-site anchor produced plans as a use-site failure whatever its rustc code
 (a genuine `E0271` field mismatch excepted), so its class is the consumer trait the call needs
 rather than whichever provider bound rustc's headline stopped on. At a call, that bound is dispatch
-plumbing (`PipeHandlers`, `ComposeHandlers`) the programmer never asserted on, where the
-`[CGP-E002]` provider form would leak internals.
+plumbing (`PipeHandlers`, `ComposeHandlers`) the programmer never asserted on.
 
 `plan_resolved`'s `categorized_header` picks the headline class described earlier and words its
-class sentence: the `CGP-E001` consumer form (worded from the resolution's context and consumer
-trait(s), pluralized when a use-site failure spans several components, and also used for an
-`IsProviderFor` bound whose provider is a `RedirectLookup`), the `CGP-E002` provider form from the
-text rewrite when rustc's own header names a real wired provider's `IsProviderFor`, the two mismatch
-classes (`CGP-E004` for a `HasField` value type, `CGP-E005` for any other associated type, the field
-class tried first as the more specific of the two, each worded as its cause), or the `CGP-E003`
-plain-trait form. One extra case routes here: a mismatch-coded (`E0271`) failure the resolver traced
-to a *non*-mismatch cause (a manual `Send`-recovery wrapper's opaque-future error, whose
-`type mismatch resolving …` message is unreadable) takes the `CGP-E001` consumer class, since it is
-really the consumer trait failing to be implemented. The header is `None` (rustc's kept) only when
-the main message restates a genuine recovered leaf; a mid-chain symptom is replaced, and an
-unrelated non-CGP message is kept. `plan_resolved` then turns the class sentence into the displayed
-header with `cause_headline`, by the three rules above, and keeps the class sentence as the plan's
-`class_header`. (This is the one place the `[CGP-E002]` provider wording still routes through the
-text rewrite and its `ComponentNameMap`, because the *header* it rewrites is rustc's own
-`IsProviderFor`-worded main message; the resolved *tree* beneath it is built entirely from the real
-traits.)
+class sentence from the resolution: the `CGP-E001` consumer form (pluralized when a use-site failure
+spans several components), the `CGP-E002` provider form when the resolution records a
+`#[check_providers]` provider, the two mismatch classes (`CGP-E004` for a `HasField` value type,
+`CGP-E005` for any other associated type, the field class tried first as the more specific of the
+two, each worded as its cause), or the `CGP-E003` plain-trait form. One extra case routes here: a
+mismatch-coded (`E0271`) failure the resolver traced to a *non*-mismatch cause (a manual
+`Send`-recovery wrapper's opaque-future error, whose `type mismatch resolving …` message is
+unreadable) takes the `CGP-E001` consumer class, since it is really the consumer trait failing to be
+implemented. The header is `None` (rustc's kept) only when the main message restates a genuine
+recovered leaf; a mid-chain symptom is replaced, and an unrelated non-CGP message is kept.
+`plan_resolved` then turns the class sentence into the displayed header with `cause_headline`, by
+the three rules above, and keeps the class sentence as the plan's `class_header`. When rustc's own
+headline is an `IsProviderFor` bound, the provider form the text rewrite gives it is kept too, as
+`declined_header`: a re-report of the same failure the resolver declines is worded that way, so the
+de-duplication ledger records both. This is the one place the text rewrite and its
+`ComponentNameMap` still serve a resolved diagnostic; the tree beneath is built entirely from the
+real traits.
 
 `transform_resolved` then mutates rustc's `DiagInner`: with a header it replaces the main message
 and collapses the span to the primary caret (the original labels restate the replaced message), and
