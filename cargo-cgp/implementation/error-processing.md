@@ -229,27 +229,26 @@ transforms run, in three groups:
   the driver's typed one does not, and who passes `wrap`. Read it before changing any of the three,
   since a change to what a construct resugars to belongs in all three implementations at once.
 - **[`rewrite_missing_fields`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/missing_field.rs)**
-  turns an unmet `HasField` bound into a field-oriented message. It matches (after the two
-  transforms above) `` the trait `HasField<Symbol!("name")>` is not implemented for `Context` `` and
-  distinguishes two cases whose fixes differ. When the context implements `HasField` for some other
-  field, it is a single missing field (`` missing field `name` on `Context` ``); when it implements
-  `HasField` for no field at all, the whole derive is missing
-  (`` `#[derive(HasField)]` is required to access field `name` on `Context` ``). Neither rewrite
-  carries a CGP error code: the clause it rewrites sits in a sub-message, and codes classify only a
-  rewritten *main* message (see [error-code.md](../error-code.md)). The tell that separates the two
-  cases is rustc's "similar impl" landmark, which the CGP
-  [check-trait-failure catalog entry](../../cgp/errors/checks/check-trait-failure.md) documents: its
-  presence, either inline (`` but trait `HasField<…>` is implemented for it ``, one other field) or
-  as a separate `` `Context` implements trait `HasField<…>` `` note (several other fields), means a
-  single missing field; its absence means the missing derive.
+  turns an unmet `HasField` bound into a missing-field message where the text shows the field is
+  missing. It matches (after the two transforms above)
+  `` the trait `HasField<Symbol!("name")>` is not implemented for `Context` `` and rewrites it to
+  `` missing field `name` on `Context` `` when the same diagnostic shows the context implementing
+  `HasField` for another field: rustc's "similar impl" landmark, which the CGP
+  [check-trait-failure catalog entry](../../cgp/errors/checks/check-trait-failure.md) documents,
+  either inline (`` but trait `HasField<…>` is implemented for it ``, one other field) or as a
+  separate `` `Context` implements trait `HasField<…>` `` note (several other fields). A struct with
+  `HasField` impls for its other fields derives it, so the field it lacks is missing. The rewrite
+  carries no CGP error code: the clause sits in a sub-message, and codes classify only a rewritten
+  *main* message (see [error-code.md](../error-code.md)).
 
-  **The empty-derived-struct case is fine, not a defect.** The single-vs-derive classification is
-  exact except for one degenerate input, and that input needs no fix. A context that derives
-  `HasField` but declares **no fields at all** gets the missing-derive message even though the
-  derive is present. That is correct, because `#[derive(HasField)]` emits one impl per field, so on
-  a fieldless struct it emits *nothing*, identical to no derive at all. A fieldless derive leaves no
-  trace in the generated program, so it is genuinely impossible to tell whether it was written; the
-  two are the same program wherever `HasField` is concerned.
+  **Every other clause keeps rustc's wording**, because the text cannot tell what the fix is. With
+  no landmark the context implements `HasField` for no field, which a struct lacking the derive, a
+  struct lacking the field, and a fieldless struct whose derive generates nothing all show alike;
+  naming the derive there would state a fix nothing confirms
+  ([`supertrait_missing_uses`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/used-but-undeclared/supertrait_missing_uses.rs)).
+  A digit tag (`Symbol!("0")`) names no field, since a tuple struct keys its fields `Index<0>`
+  ([`symbol_tag_on_tuple_struct`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/symbol_tag_on_tuple_struct.rs)),
+  and a `__Context__`-style parameter a macro generated is not a struct, so its fix is a bound.
 
 In practice the missing-field reword rarely fires, because the
 [typed root-cause resolver](typed-root-cause-resolution.md) recovers most missing-field failures
@@ -265,9 +264,9 @@ nothing compiles, no driver runs, and the test is fast and deterministic, so a w
 cases can be exercised as ordinary library tests. This is what the rustc-free design buys.
 [`tests/error_processing/postprocess.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/postprocess.rs)
 drives each transform: a stripped prefix, an exactly-matched `Symbol!`, a wrong length or foreign
-type left alone, the single-field (inline and separate-note landmark) versus missing-derive
-branches, and the `postprocess_message` chain end to end. The diagnosis wording is tested the same
-way, only over a hand-built `Resolved` rather than a string:
+type left alone, the single-field rewrite (inline and separate-note landmark) and the clauses it
+keeps, and the `postprocess_message` chain end to end. The diagnosis wording is tested the same way,
+only over a hand-built `Resolved` rather than a string:
 [`tests/error_processing/diagnosis/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/tests/error_processing/diagnosis)
 drives `plan_resolved` through the missing-field, missing-derive, `Deref`-target,
 field-type-mismatch, use-site, kept-ordinary-bound, and provider-header cases, asserting the header,
@@ -316,10 +315,11 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   the exact-match cases `resugar_symbol` must skip, the `PathCons` → `Path!` resugaring (symbol,
   type, and primitive segments, the open `_` tail left out of a key and declined by the `Path!`
   form, and the non-round-trippable cases `resugar_path` must skip), the single-field (inline and
-  separate-note landmark, each also with a qualified trait path) versus missing-derive branches of
-  `rewrite_missing_fields`, the `Product!`/`Sum!` folds with their `Struct!`/`Enum!` shapes and
-  declines, and the `postprocess_message` chain, including the `Origin` rule: an untransformed
-  message keeps rustc's paths unless a CGP encoding is recovered, and a rewritten one is stripped.
+  separate-note landmark, each also with a qualified trait path) rewrite versus the kept clauses (no
+  landmark, a digit tag, a generated context) of `rewrite_missing_fields`, the `Product!`/`Sum!`
+  folds with their `Struct!`/`Enum!` shapes and declines, and the `postprocess_message` chain,
+  including the `Origin` rule: an untransformed message keeps rustc's paths unless a CGP encoding is
+  recovered, and a rewritten one is stripped.
 - [`crates/cargo-cgp-error-processing/tests/error_processing/shape.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/shape.rs):
   the shared `Struct!`/`Enum!` spelling rules on their own: writable, raw, and unwritable names,
   the named and tuple struct forms and every product that declines, each variant spelling, and the
@@ -397,7 +397,7 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   `resugar_symbol.rs` (the exact-match `Symbol!` parser), `resugar_path.rs` (the `PathCons` →
   `@…`/`Path!(@…)` resugarer, the form chosen by its `wrap` parameter), `resugar_list.rs`
   (`resugar_lists`, the `Product!`/`Sum!` and `Struct!`/`Enum!` resugarer), and `missing_field.rs`
-  (`rewrite_missing_fields`, `context_has_hasfield_impls`, and the single-field-vs-missing-derive
+  (`rewrite_missing_fields`, `context_has_hasfield_impls`, and the landmark-gated single-field
   classification).
 - [`crates/cargo-cgp-error-processing/src/shape/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/shape):
   the shared shape spellings: `shape_name.rs` (which names a body can write, and which only raw),

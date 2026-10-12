@@ -620,8 +620,8 @@ it as the key its entry wrote (`@foo.bar`).
 owns it.
 
 **Missing-field clause rewriting** turns an unmet `` `HasField<Symbol!("name")>` `` clause inside a
-sub-message into `` missing field `name` on `Context` `` (or the `#[derive(HasField)]` form when the
-context implements `HasField` for nothing);
+sub-message into `` missing field `name` on `Context` `` when the diagnostic shows the context
+implementing `HasField` for another field, and leaves every other clause as rustc wrote it;
 [`rewrite_missing_fields`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/missing_field.rs)
 owns it.
 
