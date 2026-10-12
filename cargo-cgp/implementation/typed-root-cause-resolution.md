@@ -394,10 +394,12 @@ marking.
     earlier stage's un-normalized output projection is still descended and reported on when its
     input concretizes). `projection_mismatch.rs` finds an unmet associated-type projection on the
     concrete-`Self` impl (`projection_mismatch`/`impl_projection_mismatch`, deferring the blanket
-    and preferring a `HasField` projection over any other), `holds.rs` asks the solver whether a
-    predicate is satisfied, and `written_order.rs` reads an impl's clauses in the order the program
-    wrote them (`written_order`, undoing the compiler's move of each associated-type constraint to
-    the front).
+    and preferring a `HasField` projection over any other; `unmet_projection` over an impl's
+    instantiated clauses), `holds.rs` asks the solver whether a predicate is satisfied,
+    `written_order.rs` reads an impl's clauses in the order the program wrote them (`written_order`,
+    undoing the compiler's move of each associated-type constraint to the front), and
+    `misdirected.rs` reads the requirements of a provider impl whose `#[cgp_impl]` header names the
+    consumer trait (`misdirected_impl_clauses`).
   - [`classify/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/classify)
     classifies a terminal: `leaf.rs` turns it into the rustc-free `Leaf` (a field by inspecting the
     struct and its `Deref` chain in `field.rs`, with a missing field's fix confirmed by the struct's
@@ -680,6 +682,14 @@ fixtures:
   `Greeter` impl (`owner_has_impl_of` false), so it is reported as
   `` `NotAGreeter` is not a provider of `Greeter` `` rather than declining to a
   `[CGP-E002]` block naming the whole `WrapGreeter<NotAGreeter>` pipeline.
+- `consumer_trait_in_provider_impl` and `consumer_trait_in_provider_impl_field_type` (under
+  [`uncataloged/wrong-component-half/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/uncataloged/wrong-component-half)):
+  a provider whose `#[cgp_impl]` header names the consumer trait, beside a missing field or a field
+  of the wrong type. Pins the descent into the misdirected impl's requirements: the check resolves
+  to the `[CGP-E001]` missing-field or `[CGP-E004]` field-type block the program gives once the
+  header is fixed, kept beside the `[CGP-E032]`. `consumer_trait_in_provider_impl_called` is the
+  case with every requirement met, where the walk ends at the not-a-provider leaf and the emitter
+  drops the call's error as the header's consequence.
 - `generic_consumer_use_site`: the same anchor's value-argument case: the dispatch parameter
   recovered by signature unification from a written tuple, no tag argument involved, with the
   misleading method-syntax advice dropped.

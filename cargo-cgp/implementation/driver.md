@@ -854,19 +854,21 @@ handled, the
 The sibling `E0425`/`E0186`/`E0207`/`E0308` are suppressed by matching their spans against the impl
 body and the `__Context__` parameter's call-site (a sibling arriving before the `E0107` is purged
 from the buffer at reshape time), the downstream `NotAProvider` check re-report by matching its
-resolved leaf against the offending provider struct, and rustc's trailing `rustc --explain` footer
-is rebuilt so it does not list the suppressed ones. That footer rebuild is not particular to this
-reshape: rustc builds the footer in `print_error_count` from every code it *registered*, which is a
-superset of what the emitter emits once it has suppressed a re-report, a `?`-cascade, or this
-sibling burst, and once it has *merged* the failures sharing a cause into one block carrying the
-first member's code. So `rebuild_explain_footers` runs over the whole flushed list, keeping the
-footer's own codes filtered by what survived: an intersection rather than a fresh set, since rustc
-lists only codes that *have* an extended explanation and second-guessing that would offer
-`--explain` for a code with no such text. A footer whose codes all survive is rewritten identically,
-so untouched output is unaffected. And because a footer line always names at least one code, parsing
-none from any of them means rustc reworded rather than that there are none. So the rebuild declines
-and leaves the footer exactly as written, a stale footer being a far smaller fault than a silently
-deleted one. Both the recognition and the code reading live in the rustc-free
+resolved leaf against the offending provider struct (a requirement of the impl that fails on its own
+resolves to its own cause through the impl as written, per
+[typed-resolution-walk](typed-resolution-walk.md), so that report is kept), and rustc's trailing
+`rustc --explain` footer is rebuilt so it does not list the suppressed ones. That footer rebuild is
+not particular to this reshape: rustc builds the footer in `print_error_count` from every code it
+*registered*, which is a superset of what the emitter emits once it has suppressed a re-report, a
+`?`-cascade, or this sibling burst, and once it has *merged* the failures sharing a cause into one
+block carrying the first member's code. So `rebuild_explain_footers` runs over the whole flushed
+list, keeping the footer's own codes filtered by what survived: an intersection rather than a fresh
+set, since rustc lists only codes that *have* an extended explanation and second-guessing that would
+offer `--explain` for a code with no such text. A footer whose codes all survive is rewritten
+identically, so untouched output is unaffected. And because a footer line always names at least one
+code, parsing none from any of them means rustc reworded rather than that there are none. So the
+rebuild declines and leaves the footer exactly as written, a stale footer being a far smaller fault
+than a silently deleted one. Both the recognition and the code reading live in the rustc-free
 [`signals`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/signals.rs)
 module with the emitter's other rustc-phrasing dependencies, where they are unit-tested. The message
 wording is decided by the rustc-free
@@ -874,7 +876,8 @@ wording is decided by the rustc-free
 (and `cgp_impl_misuse_help` for the fix) over the owned `CgpImplMisuse` the detector fills in, so it
 is unit-tested without a compiler. The blessed snapshots under
 [`uncataloged/wrong-component-half/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/uncataloged/wrong-component-half)
-pin the consumer-trait, generic-component, non-CGP-trait, and inner-bound shapes.
+pin the consumer-trait, generic-component, non-CGP-trait, and inner-bound shapes, and the
+consumer-trait header beside a missing field, a field of the wrong type, or nothing else.
 
 The reshape is deliberately specific to `#[cgp_impl]`, keyed on the `__Context__` marker it inserts.
 The lower-level `#[cgp_provider]`/`#[cgp_new_provider]` forms (a hand-spelled inside-out impl with a

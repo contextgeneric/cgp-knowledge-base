@@ -142,10 +142,11 @@ fixture that pins it.
   `impl AreaCalculator`, or a trait that is not a CGP component at all) becomes a single
   `[CGP-E032]`/`[CGP-E033]` error on the misused trait name, naming the fix, with the whole
   macro-lowering cascade (`E0425` on a `…Component` marker the user never wrote, `E0107`, `E0186`,
-  `E0207`, and a downstream check failure) suppressed. The recognition uses the consumer/provider
-  fingerprints, so it generalizes over a component's generic parameters and tells a wrong-half
-  mistake (`[CGP-E032]`, which names the provider trait to use) apart from a non-component trait
-  (`[CGP-E033]`, which has no provider to suggest)
+  `E0207`, and a downstream check failure) suppressed. A requirement of the impl that fails on its
+  own, such as a missing field, is reported beside it as its own block. The recognition uses the
+  consumer/provider fingerprints, so it generalizes over a component's generic parameters and tells
+  a wrong-half mistake (`[CGP-E032]`, which names the provider trait to use) apart from a
+  non-component trait (`[CGP-E033]`, which has no provider to suggest)
   ([`consumer_trait_in_provider_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/wrong-component-half/consumer_trait_in_provider_impl.rs),
   [`consumer_trait_in_provider_impl_generic`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/wrong-component-half/consumer_trait_in_provider_impl_generic.rs),
   and

@@ -275,6 +275,26 @@ reached via the blanket only because that impl failed to unify (a pipeline stage
 input, the `HandleShout` shape), the routing dead-end that is dropped, its real cause running
 through that impl down another branch.
 
+Before a provider-trait obligation reaches that not-a-provider leaf, the walk checks for a provider
+whose `#[cgp_impl]` header names the component's consumer trait where the provider trait belongs,
+the mistake `[CGP-E032]` reports. Such a provider has no impl of the provider trait, so the
+obligation fails as if it were no provider at all, a consequence of the header. But its impl still
+states what the provider needs from the context, and a need that fails is a separate mistake that
+outlives the header fix. So when a local provider has no impl of the provider trait, and exactly one
+impl of the paired consumer trait on it carries the `__Context__` parameter `#[cgp_impl]` inserts
+and no other type parameter, `misdirected_impl_clauses` reads that impl's clauses with the
+obligation's context in place of `__Context__`. The walk descends the ones that fail, or reports the
+impl's unmet projection, and a missing field's required type is read off the same impl. The cause is
+then the one the program gives once the header names the provider trait, and the emitter keeps it
+beside the `[CGP-E032]`. When every clause holds, the obligation ends at the not-a-provider leaf,
+which the emitter drops as the header's consequence. Three fixtures pin the outcomes: a missing
+field
+([`consumer_trait_in_provider_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/wrong-component-half/consumer_trait_in_provider_impl.rs)),
+a field of the wrong type
+([`consumer_trait_in_provider_impl_field_type`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/wrong-component-half/consumer_trait_in_provider_impl_field_type.rs)),
+and the header alone
+([`consumer_trait_in_provider_impl_called`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/wrong-component-half/consumer_trait_in_provider_impl_called.rs)).
+
 The walk crosses inference-context boundaries carefully, because a stray variable from one
 `InferCtxt` panics another. It finds the satisfying impl with the
 `fresh_args_for_item`-plus-unification dance rather than `SelectionContext` (which asserts against
@@ -441,7 +461,9 @@ parent document's [Tests](typed-root-cause-resolution.md#tests) section.
   the descent: `leaves.rs` (the recursion), `vocabulary.rs` (what it walks into), `impl_match.rs`
   (the satisfying impl and its dependencies), `unknowns.rs` (placeholders and stalled projections),
   `projection_mismatch.rs` (the unmet projection an impl carries, `HasField` or otherwise),
-  `holds.rs` (the solver query), and `written_order.rs` (the order an impl's clauses are read in).
+  `holds.rs` (the solver query), `written_order.rs` (the order an impl's clauses are read in), and
+  `misdirected.rs` (the requirements of a provider impl whose `#[cgp_impl]` header names the
+  consumer trait).
 - [`crates/cargo-cgp-driver/src/resolve/classify/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/classify):
   `reportable.rs` (root cause versus routing dead-end), `leaf.rs` (`classify_leaf`, which builds the
   rustc-free `Leaf`), `field.rs` (the struct and `Deref`-chain inspection), `required_type.rs` (the

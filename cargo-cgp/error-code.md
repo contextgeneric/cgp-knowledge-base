@@ -497,7 +497,10 @@ classes are [conflicting wiring](../cgp/errors/wiring/conflicting-wiring.md) for
   a concrete provider-struct `Self`, and a user-written header trait that is a CGP *consumer* trait
   (its consumer↔provider fingerprint yields the provider trait to suggest). The sibling
   macro-lowering errors and the downstream `NotAProvider` check re-report are suppressed. The Rust
-  code stays `E0107`.
+  code stays `E0107`. A requirement of the impl that fails on its own, such as a field the context
+  lacks, is a separate mistake: the resolver reads the impl's requirements as written, so it is
+  reported beside this error as the block the program gives once the header is fixed (`[CGP-E001]`
+  for a missing field, `[CGP-E004]` for a field of the wrong type).
 - **Fix (in the `help`):** change the impl header to name the provider trait the component pairs the
   consumer with.
 - **Upstream class:** a macro-lowering mistake with no upstream error-catalog class of its own; the
