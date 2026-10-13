@@ -234,9 +234,9 @@ The behavioral tests confirm the generated wiring works:
   its location.
 - [cgp-macro-tests/tests/parser_rejections/cgp_component.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/cgp_component.rs)
   asserts the macro rejects a non-trait item, a trait carrying a const generic parameter, attribute
-  arguments with a repeated key, an unknown key, or no `provider` key, and a `name:` parameter the
-  trait does not declare, and that the same `name:` form expands when the trait declares the
-  parameter.
+  arguments with a repeated key, an unknown key, or no `provider` key, a `name:` parameter the
+  trait does not declare, and a `#[uses]` attribute (its message naming `#[extend]`), and that the
+  same `name:` form expands when the trait declares the parameter.
 - The `cargo-cgp` UI fixture
   [`wiring/conflicting-wiring/duplicate_component_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_component_name.rs)
   pins that the derived marker's `E0428` "previous definition" note falls on the provider name

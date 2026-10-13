@@ -1,9 +1,8 @@
 # Wrong component half
 
-A CGP definition names one half of a component where the other half belongs, applies `#[cgp_impl]`
-to a trait with no provider half, or puts one half's attribute on the other, so the macro gives a
-trait the wrong number of arguments and the compiler reports an `E0107` arity error, or an unknown
-attribute, about the generated code.
+A CGP definition names one half of a component where the other half belongs, or applies
+`#[cgp_impl]` to a trait with no provider half, so the macro gives a trait the wrong number of
+arguments and the compiler reports an `E0107` arity error about the generated code.
 
 ## What triggers it
 
@@ -25,8 +24,9 @@ belongs) or one too few (a provider trait where a consumer trait belongs). The m
 it, because they do not resolve the trait names they are given, so the mistake reaches the compiler
 as an
 [acceptable failure](../../implementation/AGENTS.md#documenting-how-a-macros-expansion-can-fail-to-compile).
-The shapes follow, one per position. The last, an attribute on the wrong half, is a CGP defect
-instead, since the macro reads its own attributes and could reject it.
+The shapes follow, one per position. A provider's attribute on a component trait, `#[uses]` where
+[`#[extend]`](../../reference/attributes/extend.md) belongs, is not among them: `#[cgp_component]`
+reads its own attributes, so it rejects `#[uses]` with a message naming the `#[extend]` form.
 
 ### A consumer trait in a `#[cgp_impl]` header
 
@@ -107,27 +107,6 @@ pub fn double_area(&self) -> f64 {
 `#[uses]` writes `Self: AreaCalculator`, which lacks the context argument the provider trait takes
 first. The same holds for `#[uses]` on a `#[cgp_impl]` provider.
 
-### A provider attribute on a component
-
-`#[uses]` is an attribute of the definitions that lower to an impl (`#[cgp_fn]` and `#[cgp_impl]`).
-A component declares what it requires of every context with
-[`#[extend]`](../../reference/attributes/extend.md) instead, and `#[cgp_component]` forwards an
-attribute it does not recognize onto the items it emits, so the `#[uses]` reaches the compiler
-unprocessed:
-
-```rust
-#[cgp_component(Greeter)]
-#[uses(HasName)] // should be `#[extend(HasName)]`
-pub trait CanGreet {
-    fn greet(&self);
-}
-```
-
-This shape is a defect of `#[cgp_component]` rather than an acceptable failure: the macro already
-parses `#[extend]` and `#[use_type]` beside it, so it could reject `#[uses]` with a pointer to
-`#[extend]`. Its [known issues](../../reference/macros/cgp_component.md#known-issues) record the
-forwarding behavior.
-
 ## The raw diagnostic
 
 This section describes what plain `cargo check` prints on stable `rustc`, the fallback when
@@ -154,17 +133,14 @@ generic arguments rather than as the wrong half. Each shape adds its own compani
 - **A provider trait in `#[uses]`:** an `E0107` "missing generics for trait `AreaCalculator`" on the
   name in the attribute, whose `help:` adds the generated parameter,
   `#[uses(AreaCalculator<__Context__>)]`, writing a name the user never declared into their source.
-- **A provider attribute on a component:** a code-less "cannot find attribute `uses` in this scope",
-  whose `help:` suggests the built-in `#[used]`.
 
 ## Where the root cause is
 
 The root cause is **present but misread**. The `E0107` caret sits on the trait name the user wrote,
-the exact token to change, and the attribute error names `uses`, but neither says that the trait is
-the wrong half of its component or which half belongs there. The surrounding helps point at wrong
+the exact token to change, but it does not say that the trait is the wrong half of its component or
+which half belongs there. The surrounding helps point at wrong
 fixes: deleting generics the macro inserted, adding the generated `__Context__`, renaming the
-attribute to `AreaCalculatorComponent`, parameterizing the provider struct by `__Context__`, or
-using `#[used]`. In the header shapes the `E0107` is not even first: the `E0425` arrives before it,
+attribute to `AreaCalculatorComponent`, or parameterizing the provider struct by `__Context__`. In the header shapes the `E0107` is not even first: the `E0425` arrives before it,
 since name resolution runs before the compiler lowers the impl's types, and the `E0186` and `E0207`
 after it repeat the same mistake.
 
@@ -215,15 +191,8 @@ Name the half the position expects:
 - **A `#[use_provider]` bound:** name the provider trait,
   `#[use_provider(InnerCalculator: AreaCalculator)]`.
 - **A `#[uses]` dependency:** name the consumer trait, `#[uses(CanCalculateArea)]`.
-- **A requirement on a component:** use `#[extend(HasName)]` in place of `#[uses(HasName)]`.
 
 ## Notes for tooling
-
-The provider attribute on a component is the shape still left as `rustc` wrote it. Its error comes
-from name resolution, before the HIR exists, and carries no error code, so the emitter could
-recognize it only from the attribute's span and the `#[cgp_component]` beside it in the source. The
-better fix is in `cgp`: since the shape is a macro defect, `#[cgp_component]` rejecting `#[uses]`
-with a pointer to `#[extend]` would remove the class's last unreshaped case at its source.
 
 ## Backing fixtures
 
@@ -248,9 +217,6 @@ These fixtures pin the class, one group per shape:
   a provider trait in a `#[cgp_fn]`'s `#[uses]`; `[CGP-E037]`.
 - [`lowering/wrong-component-half/uses_provider_trait_in_impl.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/uses_provider_trait_in_impl.rs):
   the same on a `#[cgp_impl]` provider; `[CGP-E037]`.
-- [`lowering/wrong-component-half/uses_on_component.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/uses_on_component.rs):
-  `#[uses]` on a `#[cgp_component]`, left as `rustc` wrote it with its `#[used]` suggestion
-  (`usability`).
 
 ## Related
 

@@ -56,7 +56,9 @@ An unrecognized attribute is never an error: a collector that does not match an 
 identifier pushes it back onto a `raw_attributes` list (or straight back onto the item, for the
 component collector), which the host re-attaches to the generated code. This is what lets
 `#[async_trait]`, `#[allow(...)]`, and any other foreign attribute ride through a host macro
-untouched.
+untouched. The one exception is `#[uses(...)]` on a trait definition: the component collector
+recognizes it to reject it, with a message naming `#[extend(...)]`, since a provider's dependency
+attribute there is a mistake rather than a foreign attribute.
 
 ## Which host accepts which modifier
 

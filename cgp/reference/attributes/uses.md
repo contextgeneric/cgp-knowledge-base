@@ -48,8 +48,8 @@ trait rather than only its impl, use [`#[extend_where]`](extend_where.md) on `#[
 `#[uses(...)]` is accepted on [`#[cgp_fn]`](../macros/cgp_fn.md) and
 [`#[cgp_impl]`](../macros/cgp_impl.md), the two hosts with an impl to attach bounds to. It is not
 accepted on [`#[cgp_component]`](../macros/cgp_component.md), where a trait dependency is a
-supertrait written with [`#[extend]`](extend.md); the component collector passes it through
-untouched, so it fails with ``cannot find attribute `uses` in this scope``.
+supertrait written with [`#[extend]`](extend.md); the component macro, and `#[cgp_auto_getter]`
+beside it, rejects it with a message naming the `#[extend(...)]` form.
 
 ## Syntax Grammar
 

@@ -256,9 +256,8 @@ Lowering errors, in [lowering/](lowering/):
   no declaration.
 - [Wrong component half](lowering/wrong-component-half.md): a definition that names a component's
   consumer trait where its provider trait belongs (a `#[cgp_impl]` header, a `#[use_provider]`
-  bound) or the reverse (`#[uses]`), applies `#[cgp_impl]` to a trait that is not a component, or
-  puts `#[uses]` on a component, so a trait receives the wrong number of arguments (`E0107`) or the
-  attribute is left unresolved.
+  bound) or the reverse (`#[uses]`), or applies `#[cgp_impl]` to a trait that is not a component, so a
+  trait receives the wrong number of arguments (`E0107`).
 
 Error-code reference, in [error_codes/](error_codes/):
 

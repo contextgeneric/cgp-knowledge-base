@@ -109,13 +109,12 @@ Any of the four may be repeated. `#[extend]` and `#[use_type]` also accept a com
 one attribute. `#[derive_delegate]` takes a single dispatch spec per attribute (whose parameter may
 itself be a parenthesized tuple), so a second dispatcher needs a second attribute.
 
-**Three modifiers that other host macros accept are not accepted here, and the macro does not report
-the mistake itself.** `#[uses(...)]`, `#[extend_where(...)]`, and `#[use_provider(...)]` are
-meaningful only where there is a provider impl or a generated trait definition to attach them to, so
-the component collector does not match them. An unrecognized attribute is passed straight through
-onto the items the macro emits, where the compiler rejects it as
-`cannot find attribute … in this scope`. None of these modifiers is a standalone proc macro, so there is nothing else for the name to
-resolve to. The equivalent of `#[uses]` on a component is a supertrait, written with `#[extend]`.
+**Three modifiers that other host macros accept are not accepted here.** `#[uses(...)]`,
+`#[extend_where(...)]`, and `#[use_provider(...)]` are meaningful only where there is a provider
+impl or a generated trait definition to attach them to. The macro rejects `#[uses(...)]` itself,
+with a message naming `#[extend(...)]`, the supertrait form that is its equivalent on a component.
+The other two it passes straight through onto the items it emits, where the compiler rejects them as
+`cannot find attribute … in this scope`, since neither is a standalone proc macro.
 
 The related macros [`#[cgp_type]`](cgp_type.md) and [`#[cgp_getter]`](cgp_getter.md) build on
 `#[cgp_component]` to derive additional constructs for abstract-type and getter components
@@ -484,13 +483,11 @@ rather than rejected.** The unmatched attribute is re-attached to the consumer t
 it is cloned onto the provider trait and onto the impls built from each: the two blanket impls, the
 `UseContext` and `RedirectLookup` provider impls, and any `UseDelegate` impl. The marker struct, the
 namespace impls, and the `IsProviderFor` impls do not receive it. That is what lets `#[allow(...)]`
-or a doc comment apply where it should. It also means a misplaced `#[uses(...)]` surfaces as a
-``cannot find attribute `uses` in this scope`` resolution error that does not mention
-`#[cgp_component]`. Every copy carries the attribute's own span, so rustc deduplicates them into one
-error on the attribute's line, and its help may suggest a similarly named built-in (`#[used]` for
-`#[uses]`), which leads away from the fix. A genuine typo in an attribute name produces the same
-error. The error catalog records the misplaced `#[uses]` as one shape of the
-[wrong component half](../../errors/lowering/wrong-component-half.md) class.
+or a doc comment apply where it should. A misspelled attribute name surfaces as a
+``cannot find attribute `…` in this scope`` resolution error that does not mention
+`#[cgp_component]`; every copy carries the attribute's own span, so rustc deduplicates them into one
+error on the attribute's line. A `#[uses(...)]`, which declares a provider's dependencies, is
+rejected by the macro instead, with a message naming the `#[extend(...)]` form a component uses.
 
 **Attributes on a trait *method* follow a different path.** Each is kept on the consumer trait's
 method and copied onto the matching method declaration of the provider trait, while the generated

@@ -358,8 +358,7 @@ it stale.
   inner provider, or an abstract type a definition uses without `#[uses]`, `#[use_provider]`, or
   `#[use_type]`, or a component requirement a provider omits (`E0599`, `E0220`, `E0425`, `E0277`).
 - [lowering/wrong-component-half.md](cgp/errors/lowering/wrong-component-half.md) — a consumer trait
-  named where a provider trait belongs or the reverse, `#[cgp_impl]` on a non-component, or `#[uses]`
-  on a component (`E0107`).
+  named where a provider trait belongs or the reverse, or `#[cgp_impl]` on a non-component (`E0107`).
 - [error_codes/README.md](cgp/errors/error_codes/README.md) — the forward index from a `rustc` error
   code to its meaning and the CGP classes that emit it.
 - [error_codes/cargo-cgp-codes.md](cgp/errors/error_codes/cargo-cgp-codes.md) — a pointer entry for
