@@ -198,6 +198,9 @@ These fixtures pin the class, one group per shape:
   a misspelled provider as a value; `[CGP-E043]` without a help.
 - [`wiring/unresolved-wiring-name/provider_not_declared.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/provider_not_declared.rs):
   `#[cgp_impl(GreetHello)]` without `new`, wired and called; one `[CGP-E038]`.
+- [`wiring/unresolved-wiring-name/path_segment_not_declared.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/path_segment_not_declared.rs):
+  an undeclared type as an `@`-path segment, which keeps `rustc`'s `E0425`s and the `E0275`
+  overflow a check reports after them.
 
 ## Related
 

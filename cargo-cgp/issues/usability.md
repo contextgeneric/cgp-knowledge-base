@@ -299,11 +299,11 @@ the same way, since its shape shows the referent is unsized; only a type named b
 the macro cannot see, reaches the compiler. When a lowering error's cause is available to the macro,
 fixing it in `cgp` beats teaching the tool to reconstruct it.
 
-A `Path!` defect reaches the reader the same way. `Path!` reads a segment such as the `f` of
-`@app.f` as a type, so three `E0425`s name `f` as an unresolved type, and rustc's `E0275` overflow
-follows, with nothing naming the segment rule as the cause
-([`path_segment_read_as_type`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/macro-defects/path_segment_read_as_type.rs)).
-The fix belongs in `cgp`'s `Path!` primitive rule.
+An `@`-path segment naming an undeclared type keeps rustc's output: an `E0425` per use, with a help
+suggesting a type parameter, then the `E0275` overflow a check reports on the lookup through it
+([`path_segment_not_declared`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/path_segment_not_declared.rs)). The
+[unresolved wiring name](../../cgp/errors/wiring/unresolved-wiring-name.md) class reshapes a whole
+key or value but not a segment of one.
 
 ## Extensible-data failures are not reshaped at all
 

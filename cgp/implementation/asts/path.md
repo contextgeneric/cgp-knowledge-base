@@ -20,9 +20,8 @@ ErrorRaiserComponent // Type: capitalized
 u32                  // Type: lowercase but a primitive
 ```
 
-`is_primitive_type` recognizes `char`, `bool`, `usize`, `isize`, and `str` by name, and the numeric
-primitives by shape: `i`, `u`, or `f` followed only by digits. The shape rule over-matches, as Known
-issues records. `PathElement` emits itself through `ToTokens`, delegating to the symbol or the type,
+`is_primitive_type` recognizes Rust's primitive names exactly, so a near miss such as `f` or `u2` is a
+symbol. `PathElement` emits itself through `ToTokens`, delegating to the symbol or the type,
 and implements the internal `ToType` trait. Its `span()` returns the segment's source span (the
 type's own span, or the symbol's parse-time span), which `delegate_components!` joins across a path
 to aim an [error span](../entrypoints/delegate_components.md#error-spans) at an `@`-path key.
@@ -83,13 +82,6 @@ registers under either a component name or a namespace path. `PathHeadOrType` is
 disambiguation for a `PathHead`, but no macro uses it.
 
 ## Known issues
-
-`is_primitive_type` accepts any identifier of `i`, `u`, or `f` followed by zero or more digits, so
-the bare `i`, `u`, and `f`, and names such as `u2` or `i7` that are not Rust primitives, stay named
-types instead of becoming symbols. `@app.f` therefore lowers its second segment to a type `f`, which
-fails to compile unless such a type is in scope. Every `@`-path shares the defect, since they all
-parse through `PathElement`. The fix is to match only Rust's primitive names; the user-visible side
-is in [reference/macros/path.md](../../reference/macros/path.md#known-issues).
 
 `PathHeadOrType` is dead code: nothing constructs or parses it.
 

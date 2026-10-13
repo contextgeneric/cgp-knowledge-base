@@ -425,7 +425,7 @@ fixtures pin the reshaped output. An overflow can also follow from an earlier un
 wiring entry that names a type the compiler could not resolve holds a `{type error}`, and a lookup
 through it can overflow with no cycle in the wiring. Its walk meets neither the cycle guard nor the
 depth cap, so the `E0275` keeps rustc's wording, since the earlier error is the one to fix
-([`path_segment_read_as_type`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/macro-defects/path_segment_read_as_type.rs)).
+([`path_segment_not_declared`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/path_segment_not_declared.rs)).
 The walk does not descend an obligation holding a `{type error}`, so a type error cannot make it
 loop, while a real cycle beside one is still reported
 ([`type_error_in_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/type_error_in_wiring.rs)).

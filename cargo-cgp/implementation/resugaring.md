@@ -340,7 +340,8 @@ declines in both forms.
 
 The text implementation is
 [`resugar_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/resugar_path.rs),
-which also mirrors the macro's own `is_primitive_type` rule so the two classifications cannot drift.
+which also copies the macro's own `is_primitive_type` rule (the real primitive names only), as the
+expand crate does; the three are kept in step by hand, so a segment classifies alike everywhere.
 
 ### `Product!` and `Sum!`: the lists
 
@@ -543,7 +544,8 @@ compiler, and the UI suite pins the typed pass end to end.
   the text implementations over crafted inputs: an exactly-matched `Symbol!` and the empty symbol, a
   wrong length and a foreign `Symbol` left alone, the `PathCons` → `@…`/`Path!(@…)` forms across
   symbol, type, primitive, generic-value, and reference-value segments, the open `_` tail left out
-  of a key and declined by `Path!(…)`, the qualified-tail and lowercase-segment declines, the
+  of a key and declined by `Path!(…)`, the qualified-tail, lowercase-segment, and near-miss
+  primitive (`f`, `u2`) declines, the
   `Product!`/`Sum!` folds, the named and tuple `Struct!` shapes and the `Enum!` shape in each
   variant spelling, the declines for a single `Index` cell, a non-identifier name, and a
   position-tagged sum, a raw keyword name, a mixed list kept as a plain product, a nested list, a

@@ -39,10 +39,9 @@ Each segment is parsed as a type, and the segment's spelling decides how it is e
   usually a component key or a namespace marker, a primitive such as `u32`, `bool`, `usize`, or
   `str`, or any type with generic arguments or a path.
 
-The primitive check is broader than the real primitives. It treats `char`, `bool`, `usize`, `isize`,
-`str`, and any identifier made of `i`, `u`, or `f` followed only by digits as a primitive, which
-includes the bare names `i`, `u`, and `f` and names such as `u2`. So `@app.f` names a type `f`
-rather than the symbol `"f"`, as Known issues explains.
+The primitive check matches only Rust's primitive names: `u8` to `u128`, `usize`, `i8` to `i128`,
+`isize`, `f32`, `f64`, `char`, `bool`, and `str`. A name that only looks like one, such as `f` or
+`u2`, is a symbol, so `@app.f` names the symbol `"f"`.
 
 Mixing the two kinds is normal: `@my_app.ShowImplComponent` pairs a symbol segment with a component
 segment.
@@ -154,13 +153,6 @@ A few mistakes report themselves poorly. A missing leading `@` fails with ``expe
 silently: `@app` and `@App` are both valid and different, so a capitalization slip compiles and
 routes elsewhere, and a route nothing binds also compiles, surfacing only when a
 [`check_components!`](check_components.md) evaluates the lookup.
-
-A lowercase segment spelled like a numeric primitive becomes a type rather than a symbol. The
-primitive check accepts any identifier of `i`, `u`, or `f` followed only by digits, so it matches
-the bare `i`, `u`, and `f` and names such as `u2` or `f16` alongside the real `u32` and `f64`.
-`@app.f` therefore expands with a type segment `f` instead of `Symbol!("f")`, and fails to compile
-unless a type `f` is in scope. The correct behavior would be to recognize only Rust's actual
-primitive names. Until then, avoid such one-letter or letter-digit segments in paths.
 
 ## Source
 

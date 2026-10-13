@@ -60,20 +60,10 @@ becomes a `Symbol`; everything else stays the named type. The primitive exceptio
 name like `u32`, `bool`, `usize`, or `str` is kept as the primitive type rather than turned into a
 symbol. `is_primitive_type` in
 [path_element.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/path/path_element.rs)
-recognizes `char`, `bool`, `usize`, `isize`, and `str` by name, and every other primitive by shape:
-`i`, `u`, or `f` followed only by digits. The shape rule over-matches, as Known issues records. This
+recognizes Rust's primitive names exactly (`u8` to `u128`, `usize`, `i8` to `i128`, `isize`, `f32`,
+`f64`, `char`, `bool`, and `str`), so a near miss such as `f` or `u2` is a symbol. This
 is the same convention `cgp_namespace!` entries and `#[prefix(...)]` attributes embed, and those
 constructs reuse the same segment and fold machinery rather than the `Path!` entry function.
-
-## Known issues
-
-The shape rule in `is_primitive_type` accepts any `i`, `u`, or `f` followed by zero or more digits,
-so the bare `i`, `u`, and `f`, and names such as `u2` or `i7` that are not Rust primitives, are
-classified as primitives. `@app.f` therefore lowers its second segment to a type `f` instead of
-`Symbol!("f")`, which fails to compile unless a type `f` is in scope. The check runs for every
-`@`-path, so namespace entries, `#[prefix]` paths, and `delegate_components!` keys share the defect.
-The fix is to match only Rust's actual primitive names. The
-[reference Known issues](../../reference/macros/path.md#known-issues) give the workaround.
 
 ## Snapshots
 
@@ -88,8 +78,9 @@ classification is asserted directly by a type-equality test.
 the macro itself, and the rest exercise the same parsing through the namespace and prefix machinery.
 
 - [namespaces/path_macro.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/namespaces/path_macro.rs)
-  asserts by type equality that `Path!` turns lowercase segments into `Symbol!`s, keeps capitalized
-  and primitive segments as types, and ends the chain in `Nil`.
+  asserts by type equality that `Path!` turns lowercase segments into `Symbol!`s, including names
+  such as `f`, `u2`, and `i7` that only look like primitives, keeps capitalized and primitive
+  segments as types, and ends the chain in `Nil`.
 
 - [namespaces/redirect_lookup.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/namespaces/redirect_lookup.rs)
   pins, through a `snapshot_cgp_component!` golden, how a `#[prefix(@bar.baz in DefaultNamespace)]`
