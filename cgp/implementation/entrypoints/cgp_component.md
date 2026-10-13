@@ -75,6 +75,13 @@ impl, the other along a namespace lookup path.
 
 ## Behavior and corner cases
 
+**Every method parameter must be a plain name.** The forwarding impls (the consumer blanket impl,
+the provider blanket impl, the `UseContext` and `RedirectLookup` impls, and any `#[derive_delegate]`
+impl) call the delegate with each parameter by name, through
+`signature_to_delegated_impl_item_fn` (see [delegated-impl synthesis](../functions/derive/delegated_impls.md)),
+so a `_`, `mut value`, or destructuring parameter is rejected with a message on its pattern saying
+to name it, such as `_value`, and destructure inside a default body.
+
 A **supertrait** on the consumer trait is not kept as a supertrait on the provider trait; it is
 lowered to a bound on the context, and the same context bound is threaded onto every generated impl.
 So `pub trait CanGreet: HasName` produces:
@@ -158,16 +165,6 @@ attribute.
 
 ## Known issues
 
-The forwarding impls cannot take a parameter that is not a plain identifier.
-`signature_to_delegated_impl_item_fn` (see
-[delegated-impl synthesis](../functions/derive/delegated_impls.md#known-issues)) rebuilds each call
-by parsing every parameter pattern as an `Ident`, so a `_` parameter or a destructuring pattern in a
-default method fails with ``failed to parse internal tokens to type `proc_macro2::Ident` ``. The
-consumer blanket impl, the provider blanket impl, the `UseContext` and `RedirectLookup` impls, and
-any `#[derive_delegate]` impl all share the path. The fix is to generate a fresh binding for such a
-parameter; the [reference Known issues](../../reference/macros/cgp_component.md#known-issues) give
-the workaround.
-
 The namespace impl a `#[prefix]` attribute adds carries the macro `call_site` span.
 `PrefixAttribute::to_namespace_impl` builds it with `parse_internal!` and does not re-span the
 result, unlike the `#[default_impl]` registration (`override_item_span` onto its key) and the
@@ -235,8 +232,9 @@ The behavioral tests confirm the generated wiring works:
 - [cgp-macro-tests/tests/parser_rejections/cgp_component.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/cgp_component.rs)
   asserts the macro rejects a non-trait item, a trait carrying a const generic parameter, attribute
   arguments with a repeated key, an unknown key, or no `provider` key, a `name:` parameter the
-  trait does not declare, and a `#[uses]` attribute (its message naming `#[extend]`), and that the
-  same `name:` form expands when the trait declares the parameter.
+  trait does not declare, a `#[uses]` attribute (its message naming `#[extend]`), and a `_` or
+  destructuring method parameter, and that the same `name:` form expands when the trait declares the
+  parameter.
 - The `cargo-cgp` UI fixture
   [`wiring/conflicting-wiring/duplicate_component_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_component_name.rs)
   pins that the derived marker's `E0428` "previous definition" note falls on the provider name

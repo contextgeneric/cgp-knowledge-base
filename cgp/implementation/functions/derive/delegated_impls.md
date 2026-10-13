@@ -64,16 +64,13 @@ associated type is projected as `<… as ProviderTrait>::Output`, because the va
 provider side. Method forwarding needs no qualification: it calls `<delegate>::method(args)` and
 relies on the impl's `where` clause to bring the delegate's trait into scope.
 
-## Known issues
+## Rejected parameters
 
-`signature_to_delegated_impl_item_fn` names each argument by parsing the parameter's pattern as an
-`Ident`, so a parameter that is not a plain identifier cannot be forwarded. A `_` parameter, which
-Rust allows in a bodiless trait method, and a destructuring pattern such as `(a, b): (u32, u32)` in
-a default method both fail with `expected identifier`, followed by
-``failed to parse internal tokens to type `proc_macro2::Ident` ``. The correct behavior is to bind
-such a parameter to a fresh name (a reserved `__arg_N__`, say) in the generated signature and call.
-Every caller shares the defect; the user-visible side is in
-[reference/macros/cgp_component.md](../../../reference/macros/cgp_component.md#known-issues).
+`signature_to_delegated_impl_item_fn` forwards each argument by the name its pattern binds, which
+`arg_to_ident` reads from a plain identifier pattern. A pattern with no single plain name (a `_`
+parameter, which Rust allows in a bodiless trait method, a `mut value` parameter, or a destructuring
+pattern such as `(a, b): (u32, u32)` in a default method) is rejected with a spanned message saying
+to name it, such as `_value`.
 
 ## Tests
 
@@ -84,6 +81,8 @@ expansion snapshots, which pin the forwarding bodies.
   [basic_delegation/component_macro.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/basic_delegation/component_macro.rs)
   shows method forwarding through the consumer and provider blanket impls and through `UseContext`
   and `RedirectLookup`.
+- [cgp-macro-tests/tests/parser_rejections/cgp_component.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/cgp_component.rs)
+  pins the rejection of a `_` parameter and of a destructuring parameter, with the message.
 - The default-method case in
   [basic_delegation/default_methods.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/basic_delegation/default_methods.rs)
   confirms a forwarded call resolves to a default body.

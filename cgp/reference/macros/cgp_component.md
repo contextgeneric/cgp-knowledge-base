@@ -498,13 +498,13 @@ lookup such as `Location::caller()` inside a provider reports the line that call
 method, through direct and `open` wiring alike. [`CanRaiseError`](../components/can_raise_error.md)
 relies on this so that error libraries record where an error was raised.
 
-**A method parameter whose pattern is not a plain identifier fails to expand.** The generated
-forwarding impls call the delegate with each parameter by name, so the macro reads every parameter
-pattern as an identifier. A `_` parameter, which Rust allows in a bodiless trait method, and a
-destructuring pattern in a default method, such as `(a, b): (u32, u32)`, both fail with
-`expected identifier` followed by ``failed to parse internal tokens to type `proc_macro2::Ident` ``. The
-correct behavior would be to bind such a parameter to a fresh name in the forwarding impls. Until
-then, give every parameter a name, such as `_value: u32`, and destructure inside a default body.
+**Every method parameter needs a plain name.** The generated forwarding impls call the delegate
+with each parameter by name, so the macro rejects a parameter whose pattern is not a plain
+identifier: a `_` parameter, which Rust allows in a bodiless trait method, a `mut value` parameter,
+and a destructuring pattern in a default method, such as `(a, b): (u32, u32)`. The message, on the
+pattern, reads ``a component method parameter needs a plain name, since the generated impls forward
+each argument by name``. Give every parameter a name, such as `_value: u32`, and destructure inside a
+default body.
 
 ## Source
 
