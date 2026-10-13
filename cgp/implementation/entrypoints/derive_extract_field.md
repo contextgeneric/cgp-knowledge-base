@@ -72,6 +72,12 @@ impl.
 
 ## Behavior and corner cases
 
+**The companion enums keep only `#[cfg]` and documentation from each variant.**
+`derive_extractor_enum` and `derive_extractor_enum_ref` clear the enum's own attributes and filter
+each variant's through `retain_companion_attrs`, so a helper attribute of another derive
+(`#[default]`, `#[serde(…)]`) stays on the input enum, where that derive reads it, rather than
+failing to resolve on a companion that lacks the derive.
+
 **Every associated type is named through a qualified projection.** The accessors return
 `<Self as HasExtractor>::Extractor` and its borrowed counterparts, and each `extract_field` returns
 `Result<<Self as ExtractField<Tag>>::Value, <Self as ExtractField<Tag>>::Remainder>`. Inside an impl
@@ -141,15 +147,6 @@ consequence as the [record companion](derive_build_field.md#behavior-and-corner-
 `derive_extractor_enum` clones the input enum and clears its attributes, so a
 `Result<Value, Remainder>` from `extract_field` is neither `Debug` nor `PartialEq` however the
 original enum is derived, and cannot be compared or printed whole.
-
-**A variant helper attribute that belongs to another derive breaks the build.**
-`derive_extractor_enum` and `derive_extractor_enum_ref` clear the enum's attributes but keep each
-variant's, so an attribute such as `#[serde(rename = "x")]` lands on a companion that does not
-derive `Serialize` and fails with ``cannot find attribute `serde` in this scope``. The fix is to
-filter variant attributes the same way, keeping only those that make sense on the companion, such as
-`#[cfg]` and documentation; the
-[reference Known issues](../../reference/derives/derive_extract_field.md#known-issues) describe the
-user-visible side.
 
 The extractor codegen requires every variant to have one unnamed field or no fields (enforced by
 `get_variant_payload` in the `derive_extractor/utils.rs` helper). A multi-field variant like
@@ -222,6 +219,12 @@ exercise the machinery:
   derives `#[derive(CgpData)]` on an enum whose variants are named `Value`, `Remainder`,
   `Extractor`, `ExtractorRef`, `ExtractorMut`, `Fields`, and `FieldsRef`, and drives each slice on
   it, which compiles only because the impls write qualified projections.
+- [companion_attrs/helper_attributes.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/companion_attrs/helper_attributes.rs)
+  checks the derive's output directly: a field's or variant's `#[serde(…)]` and `#[default]` do not
+  reach the companions, while its documentation does.
+- [variant_helper_attribute.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/variant_helper_attribute.rs)
+  derives `Default` and `CgpData` on an enum whose variant carries `#[default]`, and checks both
+  derives work.
 
 ## Source
 

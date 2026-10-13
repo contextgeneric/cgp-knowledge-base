@@ -80,6 +80,10 @@ pub enum __PartialRefShape<'__a__, __R__: MapTypeRef, __F0__: MapType, __F1__: M
 }
 ```
 
+Each variant keeps only its `#[cfg]` and documentation attributes on the companions, so a helper
+attribute of another derive, such as `#[default]` or `#[serde(rename = "x")]`, stays on the input
+enum, where that derive reads it.
+
 It then emits `PartialData` (both partial enums target `Shape`) and the extractor accessors.
 `HasExtractor` yields an owned extractor with every variant present; `HasExtractorRef` and
 `HasExtractorMut` yield borrowed extractors over `__PartialRefShape` with `IsRef`/`IsMut`:
@@ -228,12 +232,6 @@ and switches on the [`MapType`](../traits/map_type.md) markers `IsPresent`/`IsVo
 without the derives on the original, so a `Result<Value, Remainder>` returned by `extract_field` is
 neither `Debug` nor `PartialEq` even when the enum is both, and cannot be compared or printed as a
 whole. This mirrors the record side's companion struct.
-
-**A variant attribute that belongs to another derive breaks the build.** The companion enums clear
-the enum's attributes but keep each variant's, so a helper attribute such as
-`#[serde(rename = "x")]` on a variant lands on `__PartialShape`, which does not derive `Serialize`.
-The compiler rejects it with
-``cannot find attribute `serde` in this scope``. An enum therefore cannot combine `#[derive(ExtractField)]`, or `CgpVariant` or `CgpData`, with a derive whose variant helper attributes it uses. The correct behavior would be to clear variant attributes on the companion enums as well. The record side has the same defect for field attributes; see [`#[derive(BuildField)]`](derive_build_field.md).
 
 The derive accepts only variants with one unnamed field or no fields. A multi-field variant like
 `Pair(A, B)` or a struct-style variant with fields like `Named { x: A }` causes the macro to fail

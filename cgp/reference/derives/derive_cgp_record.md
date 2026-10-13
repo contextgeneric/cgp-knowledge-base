@@ -181,16 +181,6 @@ individually when you need only one slice. The generated types reference
 [`Field`](../types/field.md), the [`product`](../macros/product.md) type-level list (`Cons`/`Nil`),
 and the `MapType` markers `IsPresent`/`IsNothing`/`IsVoid`.
 
-## Known issues
-
-The record derive inherits the reserved-name and attribute limits of its slices. Its builder slice
-copies each field's attributes onto the `__Partial{Name}` companion struct, so a field helper
-attribute of another derive, such as `#[serde(rename = "x")]` beside
-`#[derive(Serialize, CgpRecord)]`, fails with
-``cannot find attribute `serde` in this scope``, as [`#[derive(BuildField)]`](derive_build_field.md)
-records. A struct's field names are otherwise unrestricted, since fields do not share a namespace
-with the generated associated types.
-
 ## Source
 
 - Entry point: `derive_cgp_record` in

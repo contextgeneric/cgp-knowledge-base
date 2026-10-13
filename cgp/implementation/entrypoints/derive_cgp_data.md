@@ -83,16 +83,6 @@ a coherence conflict points at that token rather than at the whole `#[derive(Cgp
 mechanism is documented under [`#[derive(HasField)]`](derive_has_field.md#error-spans) and repeated
 in each slice's Error spans section.
 
-## Known issues
-
-**A field or variant helper attribute that belongs to another derive breaks the build.** The builder
-slice's `__Partial{Name}` struct and the extractor slice's companion enums clear the type's
-attributes but keep each field's or variant's, so an attribute such as `#[serde(rename = "x")]`
-lands on a companion that does not run that derive and fails with
-``cannot find attribute `serde` in this scope``. The fix belongs in the two slices, recorded in
-[`derive_build_field`](derive_build_field.md#known-issues) and
-[`derive_extract_field`](derive_extract_field.md#known-issues).
-
 ## Snapshots
 
 Every `snapshot_derive_cgp_data!` invocation across the suite is indexed here, since these snapshots

@@ -108,15 +108,9 @@ fragment rather than as a full impl.
 
 ## Known issues
 
-The codegen these types drive has two recorded defects, each described with its fix in the owning
-entrypoint document:
-
-- the builder and extractor companions keep field and variant attributes, so another derive's helper
-  attribute fails to resolve
-  ([derive_build_field.md](../entrypoints/derive_build_field.md#known-issues),
-  [derive_extract_field.md](../entrypoints/derive_extract_field.md#known-issues));
-- a derived `HasField` impl overlaps the `Deref` blanket impl for a field name the `Deref` target
-  shares ([derive_has_field.md](../entrypoints/derive_has_field.md#known-issues)).
+The codegen these types drive has one recorded defect, described with its fix in the owning
+entrypoint document: a derived `HasField` impl overlaps the `Deref` blanket impl for a field name the
+`Deref` target shares ([derive_has_field.md](../entrypoints/derive_has_field.md#known-issues)).
 
 ## Tests
 

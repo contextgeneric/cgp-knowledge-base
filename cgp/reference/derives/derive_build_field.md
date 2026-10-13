@@ -161,9 +161,9 @@ It **keeps the original struct's visibility**, and each field keeps its own, so 
 yields a `pub struct __PartialPerson` whose fields can be read and written positionally. But it
 **carries none of the struct's own attributes**: the derive clears them, so a
 `#[derive(Debug, Clone)]` on the input does not reach the partial type and a partially-built value
-can be neither printed nor cloned. Each field's attributes, by contrast, are copied onto the
-matching field of the partial struct, which Known issues shows is a problem for another derive's
-helper attributes. The per-field `HasField` impls on the partial type are the supported way to read
+can be neither printed nor cloned. Each field keeps only its `#[cfg]` and documentation attributes,
+so a helper attribute of another derive, such as `#[serde(rename = "x")]`, stays on the input
+struct, where that derive reads it. The per-field `HasField` impls on the partial type are the supported way to read
 a field back out mid-build.
 
 ## Examples
@@ -208,15 +208,6 @@ carries `TakeField`, the present-to-absent counterpart of `BuildField` that the 
 [`HasField`](../traits/has_field.md), stores them in the [`product`](../macros/product.md)-shaped
 partial struct, and switches on the [`MapType`](../traits/map_type.md) markers
 `IsPresent`/`IsNothing`/`IsVoid`.
-
-## Known issues
-
-A field attribute that belongs to another derive breaks the build. The partial struct is a copy of
-the input with the struct's attributes cleared but each field's attributes kept, so a helper
-attribute such as `#[serde(rename = "x")]` lands on a field of `__PartialPerson`, a struct that does
-not derive `Serialize`. The compiler then rejects it with
-``cannot find attribute `serde` in this scope``, pointing at the attribute on the original struct. A struct therefore cannot combine `#[derive(BuildField)]`, or `CgpRecord` or `CgpData`, with a derive whose field helper attributes it uses. The correct behavior would be to clear field attributes on the partial struct as well, keeping only those that make sense there, such as `#[cfg]` or documentation. Plain attributes such as `#[doc]` and `#[allow]`
-are harmless.
 
 ## Source
 

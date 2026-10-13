@@ -286,11 +286,6 @@ deconstructing a variant. The conceptual overview that frames this family is
 
 ## Known issues
 
-The partial companion enum keeps the original enum's variant attributes, so a helper attribute
-belonging to another derive, such as `#[serde(rename = "x")]`, fails to compile on the companion
-with
-``cannot find attribute `serde` ``. See [`#[derive(ExtractField)]`](../derives/derive_extract_field.md#known-issues).
-
 **The borrowed extractor accepts only `'static` enums in a bound for every lifetime.** A bound such
 as `for<'a> E::ExtractorRef<'a>: …` fails for an enum with a lifetime, such as
 `Token<'a> { Word(&'a str), Number(u64) }`, with `E0477`, for the same reason as

@@ -299,12 +299,6 @@ the same way, since its shape shows the referent is unsized; only a type named b
 the macro cannot see, reaches the compiler. When a lowering error's cause is available to the macro,
 fixing it in `cgp` beats teaching the tool to reconstruct it.
 
-An extensible-data derive defect lands here for the same reason. A variant helper attribute of
-another derive, copied onto the extractor's companion enums, fails with a help that suggests the
-derive the enum already has
-([`variant_helper_attribute`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/macro-defects/variant_helper_attribute.rs)).
-The fix belongs in `cgp`: filtering the copied attributes.
-
 A `Path!` defect reaches the reader the same way. `Path!` reads a segment such as the `f` of
 `@app.f` as a type, so three `E0425`s name `f` as an unresolved type, and rustc's `E0275` overflow
 follows, with nothing naming the segment rule as the cause

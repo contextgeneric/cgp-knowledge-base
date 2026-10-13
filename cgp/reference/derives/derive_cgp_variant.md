@@ -187,12 +187,6 @@ crate writing it, so that impl conflicts with the blanket impl `#[cgp_auto_dispa
 (`E0119`). Dispatch over such an enum with a value or field matcher and a provider instead; see
 [`#[cgp_auto_dispatch]`](../macros/cgp_auto_dispatch.md#known-issues).
 
-**A variant attribute that belongs to another derive breaks the build.** The extractor slice keeps
-each variant's attributes on the `__Partial{Name}` companion enums, so a helper attribute such as
-`#[serde(rename = "x")]` beside `#[derive(Serialize, CgpVariant)]` fails with
-``cannot find attribute `serde` in this scope``, as [`#[derive(ExtractField)]`](derive_extract_field.md)
-records.
-
 ## Source
 
 - Entry point: `derive_cgp_variant` in

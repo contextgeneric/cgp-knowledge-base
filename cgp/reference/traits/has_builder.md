@@ -351,13 +351,6 @@ enum from a single variant. The conceptual overview that ties this family into t
 [extensible records](../../concepts/extensible-records.md), worked through in the
 [application builder](../../../examples/application-builder.md) example.
 
-## Known issues
-
-The partial companion type keeps the original struct's field attributes. A helper attribute
-belonging to another derive on the same struct, such as `#[serde(rename = "x")]`, therefore fails to
-compile on the companion with
-``cannot find attribute `serde` ``. The fix is for the derive to strip such attributes from the companion while keeping `#[cfg]` and documentation; see [`#[derive(BuildField)]`](../derives/derive_build_field.md#known-issues).
-
 ## Source
 
 - The traits are defined in

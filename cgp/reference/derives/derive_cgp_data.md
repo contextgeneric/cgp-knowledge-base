@@ -283,16 +283,6 @@ reference [`Field`](../types/field.md), the [`product`](../macros/product.md) (`
 [`sum`](../macros/sum.md) (`Either`/`Void`) type-level lists, and the `MapType` markers
 `IsPresent`/`IsNothing`/`IsVoid`.
 
-## Known issues
-
-**A field or variant attribute that belongs to another derive breaks the build.** The builder's
-companion struct keeps each field's attributes and the extractor's companion enums keep each
-variant's, so a helper attribute such as `#[serde(rename = "x")]` beside
-`#[derive(Serialize, CgpData)]` lands on a generated type that does not derive `Serialize` and fails
-with
-``cannot find attribute `serde` in this scope``. [`#[derive(BuildField)]`](derive_build_field.md) and [`#[derive(ExtractField)]`](derive_extract_field.md)
-record the defect and the fix.
-
 ## Source
 
 - Entry point: `derive_cgp_data` in

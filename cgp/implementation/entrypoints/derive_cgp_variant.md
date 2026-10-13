@@ -51,13 +51,6 @@ coherence conflict points there rather than at the whole `#[derive(CgpVariant)]`
 [`cgp_data` AST stack](../asts/cgp_data.md) documents `ItemCgpVariant` and its methods, and
 [`derive_cgp_data`](derive_cgp_data.md) covers the umbrella derive this is a restriction of.
 
-## Known issues
-
-**A variant helper attribute that belongs to another derive breaks the build.** The extractor
-slice's companion enums keep each variant's attributes, so an attribute such as
-`#[serde(rename = "x")]` fails with ``cannot find attribute `serde` in this scope``. The mechanism
-and fix are recorded in [`derive_extract_field`](derive_extract_field.md#known-issues).
-
 ## Snapshots
 
 `#[derive(CgpVariant)]` has no snapshot macro of its own; its expansion is identical to the enum

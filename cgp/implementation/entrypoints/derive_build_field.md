@@ -79,6 +79,11 @@ supplies only the all-present impl.
 
 ## Behavior and corner cases
 
+**The companion struct keeps only `#[cfg]` and documentation from each field.**
+`derive_builder_struct` clears the struct's own attributes and filters each field's through
+`retain_companion_attrs`, so a helper attribute of another derive (`#[serde(…)]`) stays on the input
+struct rather than failing to resolve on a companion that lacks the derive.
+
 A named field is keyed by [`Symbol!`](../../reference/macros/symbol.md) and a tuple field by
 [`Index<N>`](../../reference/types/index.md), following the whole family's tagging rule, so a tuple
 struct produces `UpdateField<Index<N>, _>` impls. The struct's generic parameters and `where` clause
@@ -116,18 +121,6 @@ only the `impl`/`{ … }` boundary, the mechanism the
 companion struct is cloned from the user's own struct, so its tokens already carry meaningful spans
 and need no re-spanning.
 
-## Known issues
-
-The clone clears only the struct's attributes, so every *field* attribute is copied onto
-`__Partial{Name}`. A helper attribute that belongs to another derive, such as
-`#[serde(rename = "x")]`, then lands on a struct that does not run that derive, and the compiler
-rejects it with ``cannot find attribute `serde` in this scope``. Plain attributes such as `#[doc]`
-and `#[allow]` are harmless. The fix is to filter the field attributes in `derive_builder_struct` as
-well, keeping only those that make sense on the companion, such as `#[cfg]` and documentation. The
-[reference Known issues](../../reference/derives/derive_build_field.md#known-issues) describe the
-user-visible side, and the same defect reaches [`#[derive(CgpRecord)]`](derive_cgp_record.md) and
-[`#[derive(CgpData)]`](derive_cgp_data.md) through this slice.
-
 ## Snapshots
 
 `snapshot_derive_build_field!` pins this derive's output on its own, which is what makes the slice
@@ -160,6 +153,9 @@ exercise the machinery:
   drives the `build_with_default` cast.
 - [record_empty.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_records/record_empty.rs)
   drives the fieldless record, where `builder()` finalizes with no intervening `build_field`.
+- [companion_attrs/helper_attributes.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/companion_attrs/helper_attributes.rs)
+  checks the derive's output directly: a field's or variant's `#[serde(…)]` and `#[default]` do not
+  reach the companions, while its documentation does.
 
 ## Source
 

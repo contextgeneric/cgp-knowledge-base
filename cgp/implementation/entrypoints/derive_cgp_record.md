@@ -41,13 +41,6 @@ the struct name), so a coherence conflict points there rather than at the whole
 [`cgp_data` AST stack](../asts/cgp_data.md) documents `ItemCgpRecord` and its methods, and
 [`derive_cgp_data`](derive_cgp_data.md) covers the umbrella derive this is a restriction of.
 
-## Known issues
-
-The derive inherits the field-attribute defect of its builder slice: each field's attributes are
-copied onto `__Partial{Name}`, so a helper attribute belonging to another derive, such as
-`#[serde(rename = "x")]`, fails with ``cannot find attribute `serde` in this scope``. The mechanism
-and fix are recorded in [`derive_build_field`](derive_build_field.md#known-issues).
-
 ## Snapshots
 
 `#[derive(CgpRecord)]` has no snapshot macro of its own, and needs none: its expansion is identical
