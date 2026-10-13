@@ -262,18 +262,6 @@ sacrifice precision.
 
 What remains below are the classes the tool does not yet reshape.
 
-## An unconstrained generic still passes through
-
-One shape of the [unconstrained generic](../../cgp/errors/wiring/unconstrained-generic.md) class
-reaches the reader as rustc wrote it, with the cause at the caret but a fix that does not apply. A
-[`#[cgp_computer]`](../../cgp/reference/macros/cgp_computer.md) function whose type parameter
-appears only in its return type (`fn parse<T: FromStr>(value: String) -> Option<T>`) leaves `T`
-unbound on the generated `Computer` impl, whose trait arguments carry only the input types
-([`computer_output_only_type_parameter`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/computer_output_only_type_parameter.rs)).
-Its two suggestions splice a second generic list after `parse` and remove `T`, which the return type
-still uses, so neither compiles. The macro sees the whole signature, so it could reject the function
-with the fix, taking `T` from an argument or writing a concrete type, before the compiler runs.
-
 ## Macro lowering errors point at the attribute, not the cause
 
 When a macro lowers accepted input into ill-formed Rust, the error lands on the macro attribute and

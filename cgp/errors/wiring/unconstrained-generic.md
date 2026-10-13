@@ -25,14 +25,14 @@ impl<T> DelegateComponent<GreeterComponent> for Person {
 }
 ```
 
-The same shape arises in three more places. A *generic* provider registered as a per-type default
+The same shape arises in two more places. A *generic* provider registered as a per-type default
 with `#[default_impl]` leaves its parameter unbound, since the registration copies the provider
 impl's parameters and nothing in it uses them. A `for <T, Provider> in Table` loop in
 `delegate_components!` whose key does not mention `T` leaves both variables unbound, since only the
-key binds `T` and only `T` binds `Provider`. And a
+key binds `T` and only `T` binds `Provider`. A
 [`#[cgp_computer]`](../../reference/macros/cgp_computer.md) function whose type parameter appears
-only in its return type leaves it unbound, since the function's generics move onto a `Computer` impl
-whose trait arguments carry only the input types and whose output is an associated type.
+only in its return type would leave it unbound too, but the macro sees the whole signature and
+rejects it at expansion, so it never reaches the compiler.
 
 ## The raw diagnostic
 
@@ -101,9 +101,6 @@ registers the provider at the key instead:
 All of them drop rustc's suggestion to remove the parameter, which is not the fix. The codes are
 defined in the [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
 
-One shape still passes through as rustc writes it: a `#[cgp_computer]` function whose parameter
-appears only in its return type keeps rustc's pair, whose suggestions do not compile either.
-
 ## Resolving it
 
 Make the generic reach the key so it is bound: introduce it on a key that carries it
@@ -131,14 +128,6 @@ concise `#[cgp_impl]` form, since the default position cannot bind the provider'
 - [`wiring/unconstrained-generic/namespace_entry_generic.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/namespace_entry_generic.rs):
   the plain entry in a `cgp_namespace!` body; the `.rust.stderr` pins one `E0207` suggesting a
   generic component, and the `.cgp.stderr` the `[CGP-E019]` naming the namespace.
-- [`wiring/unconstrained-generic/computer_output_only_type_parameter.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/computer_output_only_type_parameter.rs):
-  a `#[cgp_computer]` function `parse<T: FromStr>(value: String) -> Option<T>`, whose `T` reaches
-  only the impl's `Output`; the `.rust.stderr` pins the `E0207` pair with both carets on the `T` the
-  user wrote, and the `.cgp.stderr` passes it through. The cause is as precise as in the wiring
-  case, and the fix is a different one: the macro would need to make the provider struct generic
-  over `T`, which the
-  [implementation document](../../implementation/entrypoints/cgp_computer.md#known-issues) records
-  as a known issue.
 - [`wiring/unconstrained-generic/for_loop_key_without_var.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/for_loop_key_without_var.rs):
   a `for <T, Provider>` loop whose key `@test.ShowImplComponent.String` does not use `T`; the
   `.rust.stderr` pins rustc's three `E0207`s with contradictory helps, and the `.cgp.stderr` the

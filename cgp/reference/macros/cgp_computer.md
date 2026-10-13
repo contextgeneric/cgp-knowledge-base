@@ -61,7 +61,7 @@ is therefore a value, and a one-argument alias such as `anyhow::Result`'s `Resul
 with `` A `Result` return type must be written as `Result<T, E>`, naming its error type ``, because
 the macro cannot tell what it names. Known issues covers what a qualified `Result` does.
 
-The function must have a shape a provider can take, and the macro rejects two departures with an
+The function must have a shape a provider can take, and the macro rejects these departures with an
 error pointing at the offending part of the signature:
 
 - **A `self` receiver** fails with `Computer functions cannot have a receiver`. A handler provider
@@ -70,6 +70,11 @@ error pointing at the offending part of the signature:
 - **`impl Trait`**, which a provider impl's trait arguments and `Output` type cannot hold, fails
   with ``Computer function parameters cannot use `impl Trait`; declare a generic parameter instead``
   in a parameter, and with ``Computer functions cannot return `impl Trait` `` in the return type.
+- **A type or const parameter that no argument type names**, as in
+  `fn parse<T: FromStr>(value: String) -> Option<T>`, fails with
+  ``the parameter `T` appears in no argument type, so the generated `Computer` impl cannot determine it``, since the generated impl's trait arguments carry only the input types. A
+  parameter another bound names is accepted, since a bound such as `I: IntoIterator<Item = T>` on an
+  input `I` determines `T`.
 
 ## Syntax Grammar
 

@@ -94,6 +94,16 @@ is spanned on the function identifier too.
 
 ## Behavior and corner cases
 
+**A type or const parameter that no argument type names is rejected.** The function's generics move
+onto the base impl, whose trait arguments carry only the input types, so a parameter only the output
+uses, as in `fn parse<T: FromStr>(value: String) -> Option<T>`, would be constrained by nothing and
+fail with `E0207`. `reject_output_only_params` rejects it during `preprocess`, on the parameter,
+saying to take an argument whose type names it or to write the provider by hand on a provider
+generic over it. A parameter that another parameter's bound or a `where` predicate names is left to
+the compiler, since an associated-type bound such as `I: IntoIterator<Item = T>` on an input `I`
+determines `T`. Accepting the output-only form would need the provider struct itself to be generic
+over the parameter (`Parse<T>`), which changes how it is named and wired.
+
 **Parameter patterns are discarded.** Each input is rebound positionally as `arg_i`, so a `mut`
 binding or a destructuring pattern in the source signature is replaced by a plain binding, and the
 function itself keeps its own pattern.
@@ -142,18 +152,6 @@ pins it.
 
 ## Known issues
 
-**A type parameter that appears only in the return type is unconstrained.** The function's generics
-move onto the base impl, whose trait arguments carry only the input type, so a parameter used only
-in the output, as in `fn parse<T: FromStr>(value: String) -> Option<T>`, is constrained by neither
-the trait arguments nor the self type, and the impl fails with `E0207`, its caret on the `T` the user
-wrote. Accepting such a function would need the provider struct itself to be generic over the
-output-only parameters (`Parse<T>`), which changes how it is named and wired, so the macro does not
-yet do it; a function like this has to be written as a hand-made `Computer` provider. The
-[unconstrained generic](../../errors/wiring/unconstrained-generic.md) class covers the error, and the
-`cargo-cgp` fixture
-[`wiring/unconstrained-generic/computer_output_only_type_parameter.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/computer_output_only_type_parameter.rs)
-pins it.
-
 **Argument-position `impl Trait` is rejected rather than lowered.** It is sugar for an anonymous
 generic parameter, which the macro otherwise accepts, so the correct behavior would be to rewrite
 each one into a fresh named type parameter. The macro rejects it with a spanned error instead.
@@ -194,7 +192,8 @@ The behavioral tests exercise the generated provider across the handler family:
 - [handlers/computer_macro_generics.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/handlers/computer_macro_generics.rs),
   [handlers/computer_macro_named.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/handlers/computer_macro_named.rs),
   [handlers/computer_macro_output.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/handlers/computer_macro_output.rs):
-  the generic, named, unit-return, and qualified-`Result` providers called through the family.
+  the generic, named, unit-return, and qualified-`Result` providers called through the family; the
+  generics file includes `first_item`, whose `T` only an input's associated-type bound names.
 - [handlers/computer_macro_visibility.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/handlers/computer_macro_visibility.rs):
   a `pub fn` computer in a child module used from its parent.
 - [handlers/raw_function_names.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/handlers/raw_function_names.rs):
@@ -215,7 +214,8 @@ The failure cases pin each rejection and its message with `assert_macro_rejects_
 
 - [parser_rejections/cgp_computer.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/cgp_computer.rs)
   covers a `self` receiver, a one-argument `Result<u64>` alias, an `impl Trait` parameter and
-  return type, and a path as the provider name.
+  return type, a path as the provider name, and a type and a const parameter only the return type
+  uses.
 
 `cargo-cgp`'s
 [`ok/handler_function_macros.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/ok/handler_function_macros.rs)
