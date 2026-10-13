@@ -107,10 +107,14 @@ A **`for Context` clause is optional**, and omitting it is the idiomatic form. W
 `ItemCgpImpl::lower` treats the block's `Self` type as the provider trait path and inserts
 `__Context__` at the front of the impl generics.
 
-**Local associated types are preserved by name.** A `type Output = …` the block declares itself is
-collected before the rewrite so the `replace_self` type visitor leaves `Self::Output` alone rather
-than rewriting it to the context; only imported abstract types (`Self::Error` from `#[use_type]`)
-and receiver `self`/`Self` are rewritten.
+**Local associated types and consts name the provider's own items.** A `type Output = …` the block
+declares itself is collected before the rewrite so the `replace_self` type visitor leaves
+`Self::Output` alone rather than rewriting it to the context. A `const LIMIT` the block declares is
+collected too, and `Self::LIMIT` is rewritten to the qualified
+`<Provider as ProviderTrait<Context>>::LIMIT` instead. Left as `Self::LIMIT`, the path would be
+ambiguous (`E0034`): the consumer blanket impl gives the provider struct the consumer trait, which
+declares the same const. Only imported abstract types (`Self::Error` from `#[use_type]`) and
+receiver `self`/`Self` are rewritten to the context.
 
 The **companion attributes** are applied in `ItemCgpImpl::lower` before the provider rewrite:
 `#[implicit]` parameters are extracted from each signature and turned into `HasField` bounds on the
@@ -219,6 +223,9 @@ belong to this entrypoint:
   a `#[default_impl]` on a provider carrying `#[use_type]` and `#[implicit]` dependencies, pinning
   that the registration impl carries only `__Components__` and no `where` clause, since a `Self`
   bound there would land on the `PathCons<..>` key.
+- [basic_delegation/self_local_assoc_const.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/basic_delegation/self_local_assoc_const.rs):
+  a provider reading its own `const LIMIT` as `Self::LIMIT`, in plain code and inside a macro body,
+  both rewritten to `<AllowUnderLimit as RateLimiter<__Context__>>::LIMIT`.
 - [basic_delegation/provider_component_override.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/basic_delegation/provider_component_override.rs):
   the `: ComponentType` override: `#[cgp_impl(new FortyTwo: HasFooComponent)]` targets a component
   whose marker name (`HasFooComponent`) is not the derived `FooProviderComponent`, so the
@@ -260,6 +267,9 @@ The behavioral tests confirm the lowered wiring works:
   block itself declares is *not* rewritten, so the emitted provider impl keeps `Self::Label` (where
   `Self` is the provider that declares it) while `self.name()` in the same body is still rewritten
   to the context.
+- [basic_delegation/self_local_assoc_const.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/basic_delegation/self_local_assoc_const.rs)
+  confirms the same for an associated const: the provider's `Self::LIMIT` reads its own `LIMIT`
+  through the qualified path, and a wired context's calls see the limit.
 - [implicit_arguments/cgp_impl_implicit_generic.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/implicit_arguments/cgp_impl_implicit_generic.rs)
   reads `#[implicit]` arguments as a provider's own generic `Scalar`, checked at `f64` through
   `#[check_params]`.

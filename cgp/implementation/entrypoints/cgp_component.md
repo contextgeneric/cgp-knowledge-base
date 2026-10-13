@@ -93,7 +93,9 @@ calls the supertrait; without it the impl fails with `E0277` at its own definiti
 
 A **default method body** is preserved into the provider trait, because the provider trait is a
 clone of the consumer trait with only `self`/`Self` rewritten. This is what lets an empty
-`#[cgp_impl]` provider inherit the default and satisfy the component with no method of its own.
+`#[cgp_impl]` provider inherit the default and satisfy the component with no method of its own. A
+`Self::Item` naming an associated type or const the trait declares is not rewritten, so a default
+body's `Self::LIMIT` reads the provider's own const rather than the unbounded context's.
 
 **Generic parameters** on the component are appended after the context in the provider trait and
 collected into the `IsProviderFor` params tuple. A lifetime stays ahead of the context (lifetimes
@@ -217,6 +219,9 @@ The behavioral tests confirm the generated wiring works:
 - [basic_delegation/default_methods.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/basic_delegation/default_methods.rs)
   checks at run time that an empty provider impl inherits the default bodies and `App.greet()`
   returns the expected string.
+- [basic_delegation/self_local_assoc_const.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/basic_delegation/self_local_assoc_const.rs)
+  checks that a default body reading the trait's own const as `Self::LIMIT` compiles in the provider
+  trait and reads the wired provider's value at run time.
 - [generic_components/component_type_param.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/generic_components/component_type_param.rs)
   wires a single-type-parameter component to one provider, passes `check_components!` for a concrete
   type argument, and computes an area at run time.

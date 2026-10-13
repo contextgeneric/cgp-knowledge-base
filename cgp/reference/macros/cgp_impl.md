@@ -206,14 +206,16 @@ Three transformations happened here:
 identifier gets its own, so `for Rectangle` yields `__rectangle__`. A context that is not a bare
 identifier, such as `App<'a>`, falls back to `__context__`.
 
-**A `Self::Assoc` path whose `Assoc` is an associated type the block itself declares is exempt from
-the rewrite.** The macro gathers those names first and leaves such paths alone, which is what lets a
-provider for a component with an associated type (a `Computer` supplying `type Output`, say) keep
-writing `Self::Output` in its signatures and bodies. In the emitted impl `Self` is the provider
-struct, which is exactly the type that declares `Output`, so the path still resolves. Every other
-`Self` in the same block is rewritten as usual, including one naming an abstract type the *context*
-supplies. The exemption does not extend to associated consts, for the reason given under Known
-issues.
+**A `Self::Item` path whose `Item` is an associated type or const the block itself declares names
+the provider's own item, not the context's.** The macro gathers those names first. It leaves a
+`Self::Output` naming a local associated type alone, which lets a provider for a component with an
+associated type (a `Computer` supplying `type Output`, say) keep writing `Self::Output` in its
+signatures and bodies: in the emitted impl `Self` is the provider struct, which declares `Output`.
+It rewrites a `Self::LIMIT` naming a local const to the qualified
+`<AllowUnderLimit as RateLimiter<__Context__>>::LIMIT`, because a bare `Self::LIMIT` on the provider
+is ambiguous: the consumer trait's blanket impl gives the provider the consumer trait's `LIMIT` too.
+Every other `Self` in the same block is rewritten to the context as usual, including one naming an
+abstract type the *context* supplies.
 
 **The rewrite is scoped to the block's own method bodies.** An item nested *inside* a body (a local
 `struct` with its own `impl`, a helper `fn`, an inline `trait`) introduces a fresh `self`/`Self` that
@@ -361,18 +363,6 @@ whose area is computed.
   [`check_components!`](check_components.md) verifies the wiring.
 
 ## Known issues
-
-**The `Self`-means-context rewrite exempts associated types but not associated consts, which makes a
-provider's own const awkward to name inside its body.** Before rewriting, the macro collects the
-associated types the block declares and skips any `Self::` path whose first segment names one of
-them, so `Self::Output` resolves, correctly, to the provider's own type. The collection covers
-associated types alone, so a `Self::LIMIT` naming an associated const the same block just defined
-*is* rewritten and no longer resolves. The error reads
-`E0599: no associated function or constant named 'LIMIT' found for type parameter '__Context__'`.
-Name the provider explicitly through its provider trait instead, as
-`<AllowUnderLimit as RateLimiter<Self>>::LIMIT`, which the rewrite turns into the correct
-fully-qualified path. The consumer side is unaffected: a wired context reads the same const as
-`<App as CanRateLimit>::LIMIT`.
 
 **A [`#[default_impl(...)]`](../attributes/default_impl.md) registration works only on the concise
 form.** It copies the provider impl's generic parameters as written, so on the explicit

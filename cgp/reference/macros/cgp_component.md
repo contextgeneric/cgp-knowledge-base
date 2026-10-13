@@ -234,12 +234,13 @@ pub trait AreaCalculator<Context>:
 }
 ```
 
-**An associated type the trait declares for itself is the one `Self` the rewrite leaves alone.** The
-provider trait keeps the declaration, so a `Self::Output` in the consumer trait stays `Self::Output`
-in the provider trait, where it names the provider's own `Output`, and each provider chooses the
-type it returns. The consumer blanket impl then sets
+**An associated type or const the trait declares for itself is the one `Self` the rewrite leaves
+alone.** The provider trait keeps the declaration, so a `Self::Output` in the consumer trait stays
+`Self::Output` in the provider trait, where it names the provider's own `Output`, and each provider
+chooses the type it returns. The consumer blanket impl then sets
 `type Output = <Context as OutputProducer<Context>>::Output`, and the provider blanket impl reads the
-same projection through its delegate.
+same projection through its delegate. A default method body reading a const the trait declares,
+`Self::LIMIT`, likewise reads the provider's own `LIMIT` in the provider trait.
 
 **The provider trait's supertrait list is replaced by `IsProviderFor` rather than extended with it,
 and the consumer trait's own supertraits become a `where` predicate on the context.** That holds for

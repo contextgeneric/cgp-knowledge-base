@@ -68,9 +68,10 @@ clause and erroring otherwise.
 `to_raw_item_impl` is where the rewrite happens: it swaps the block's `Self` type to the provider
 type, inserts the context type as the provider trait's leading type argument, computes the receiver
 identifier (the context type snake-cased and double-underscored, or the literal `__context__` when
-the context is not a plain identifier), and runs the three `replace_self` visitors. It first
-collects the block's own associated types so the type visitor skips rewriting `Self::Output` and
-other local associated types.
+the context is not a plain identifier), and runs the `replace_self` visitors. It first collects the
+block's own associated types, so the type visitor skips rewriting `Self::Output` and other local
+associated types, and the block's own consts, which `QualifySelfConstVisitor` names through the
+provider trait.
 
 ## `CgpProviderOrBareImpl`
 
@@ -83,14 +84,19 @@ provider impl, its `IsProviderFor` impl, and any provider struct. The entrypoint
 
 ## The `replace_self` visitors
 
-Three `VisitMut` passes in
+Four `VisitMut` passes in
 [cgp-macro-core/src/visitors/replace_self/](https://github.com/contextgeneric/cgp/tree/main/crates/macros/cgp-macro-core/src/visitors/replace_self/)
 perform the rewrite that turns consumer-style syntax into provider-style, and they run in this
 order:
 
+- **`QualifySelfConstVisitor`** rewrites a `Self::LIMIT` naming a const the block declares to the
+  qualified `<Provider as ProviderTrait<Context>>::LIMIT`, in expressions, patterns, and macro
+  bodies (at the token level). A bare `Self::LIMIT` would be ambiguous once `Self` is the provider,
+  since the consumer blanket impl gives the provider struct the consumer trait's const too. Only
+  `#[cgp_impl]` runs this pass.
 - **`ReplaceSelfTypeVisitor`** rewrites the `Self` type to the context type and `Self::Foo` paths to
-  `Context::Foo`, but skips any path whose associated type is in the block's local associated-type
-  list, so a trait's own `Self::Output` is left intact. It handles macro bodies at the token level
+  `Context::Foo`, but skips any path whose second segment is in the block's list of local associated
+  items, so a trait's own `Self::Output` is left intact. It handles macro bodies at the token level
   too, since `VisitMut` does not see inside a `macro!( … )`.
 - **`ReplaceSelfReceiverVisitor`** rewrites the method receiver into an explicit context parameter,
   preserving the reference and mutability shape: `&self` becomes `__context__: &Context`,
@@ -102,7 +108,7 @@ order:
   value form: a `self::` module path is left intact, since a `self` immediately followed by `::` is
   the current module rather than the receiver.
 
-All three visitors override `visit_item_mut` to a no-op, so they **stop at any item nested inside a
+All four visitors override `visit_item_mut` to a no-op, so they **stop at any item nested inside a
 method body**: a local `struct`, `impl`, `trait`, or `fn` introduces its own `self`/`Self` scope
 that names that item, not the enclosing context, and must be left untouched. Because a trait's or
 impl's associated items are `TraitItem`/`ImplItem` rather than `Item`, this guard fires only for
@@ -111,10 +117,12 @@ which *do* capture the outer `self`, are still descended into. The token-level m
 scope, so this stopping applies at the AST level only.
 
 The receiver identifier and the context type these visitors substitute are the ones
-`to_raw_item_impl` computed. The same visitors are also used by the
-[`cgp_component` stack](cgp_component.md) to lower a consumer trait's default method bodies into the
-provider trait, so the nested-item guard protects those bodies too, and by the getter-field parser
-to rewrite `Self` in a typed receiver. They are not used by the
+`to_raw_item_impl` computed. The last three visitors are also used elsewhere. The
+[`cgp_component` stack](cgp_component.md) runs them to lower a consumer trait's default method bodies
+into the provider trait, so the nested-item guard protects those bodies too. There the local-item
+list holds the trait's own associated types and consts, and a default body's `Self::LIMIT` stays
+`Self::LIMIT`, which resolves to the provider's const inside the trait. The getter-field parser runs
+the type visitor to rewrite `Self` in a typed receiver. None of them is used by the
 [`cgp_provider` stack](cgp_provider.md), which already receives provider-form input.
 
 ## Known issues

@@ -275,9 +275,8 @@ rather than by a keyword. Use `#[cgp_new_provider]` to declare the struct.
 consumer blanket impl gives it the consumer trait, which declares the same item. `Self::LIMIT`
 therefore fails with `E0034: multiple applicable items in scope`, naming one candidate in the
 provider trait impl and one in the consumer trait's blanket impl. Name the provider trait to
-disambiguate, as `<Self as RateLimiter<Context>>::LIMIT`. This differs from
-[`#[cgp_impl]`](cgp_impl.md), where `Self` is the context and the qualified path names the provider
-struct instead.
+disambiguate, as `<Self as RateLimiter<Context>>::LIMIT`.
+[`#[cgp_impl]`](cgp_impl.md) writes that qualified path itself for a const its block declares.
 
 **A higher-order provider whose component carries a lifetime loses the inner-provider
 `IsProviderFor` bound.** The augmentation described above finds the context by reading the inner

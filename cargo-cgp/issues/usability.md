@@ -374,12 +374,11 @@ The fixtures group by construct:
 - **Wiring checks, conflicts, and cycles:** a bundle checked as a context, and a cycle reached by a
   call.
 - **Namespaces:** a self-inheriting namespace.
-- **Lowering:** `Self::CONST` rewritten to the context (`cgp_impl_self_const`); a bare `Error`
-  without `#[use_type]` that no requirement of the component explains, whose `E0425` suggests
-  importing `std::error::Error` (`error_alias_in_cgp_fn`, `error_alias_in_provider_body`);
-  `Self::Error` where two abstract-type traits declare an `Error` (`self_error_two_traits`); and
-  `#[uses]` on a component, where `#[extend]` belongs, with rustc's `#[used]` suggestion
-  (`uses_on_component`).
+- **Lowering:** a bare `Error` without `#[use_type]` that no requirement of the component explains,
+  whose `E0425` suggests importing `std::error::Error` (`error_alias_in_cgp_fn`,
+  `error_alias_in_provider_body`); `Self::Error` where two abstract-type traits declare an `Error`
+  (`self_error_two_traits`); and `#[uses]` on a component, where `#[extend]` belongs, with rustc's
+  `#[used]` suggestion (`uses_on_component`).
 - **Providers, fields, and types:** getters wired to the wrong provider, `UseDelegate` without
   `#[derive_delegate]`, a provider impl without `#[cgp_provider]`, a tuple-struct context, a field
   read as two types, and a borrowed error detail.
