@@ -206,6 +206,26 @@ whole path where the toolchain supports `Span::join` and otherwise keeps the lea
 component of a namespace path, or the dispatch key of an `@Component.key` entry), so the caret lands
 on the segment that discriminates entries sharing a prefix.
 
+A `->` entry needs one more re-span, because its errors come from inside its impls rather than from
+their headers. Its value is the projection `<Table as DelegateComponent<Key>>::Delegate`, so its
+`DelegateComponent` impl carries the bound `Table: DelegateComponent<Key>` and its `IsProviderFor`
+impl a bound on the projection, and when the table lacks the key both fail as false global bounds.
+Each of those fragments mixes the user's key and table with synthesized tokens, which would widen
+its span to the whole block. So `DirectDelegateMapping` re-spans every *synthesized* token of the
+bound and the projection onto the `->` the user wrote, with
+[`override_synthesized_span`](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/functions/override_span.rs),
+and sets the entry's `delegate_span`, which re-spans the `type Delegate` item and the
+`IsProviderFor` impl's bound on the value the same way. The `->` is the target because no resolvable
+name shares its range, so moving synthesized references such as `DelegateComponent` onto it leaves
+go-to-definition on the key and the table unchanged.
+
+The `IsProviderFor` impl's `__Context__` and `__Params__: ?Sized` parameters need a span of their own,
+`params_span`, set to the `-` of the arrow alone. rustc reports a false global bound at the first
+`where` predicate whose span contains it, and an inline parameter bound is such a predicate: left at
+the whole block it claims every error, and on the full `->` it claims the impl's copy of the table
+bound, which rustc then reports a second time at a different span. On the `-`, it contains neither,
+so both errors land on `-> Table`, and rustc prints the copy once.
+
 Because the `.stderr` fixtures record the exact line and column of each caret, they double as
 regression tests for these spans: reverting the re-span snaps the carets back to the block and the
 snapshots change (see [Tests](#tests)).
@@ -413,6 +433,10 @@ buried), which is independent of whether the failure is a defect:
   an `open` header colliding with an explicit mapping for the same component; its `.rust.stderr`
   pins the [error span](#error-spans) of the `open`-header entry, whose span comes from the opened
   component (a source distinct from the plain key path).
+- [`checks/check-trait-failure/missing-wiring/direct_delegation_missing_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/direct_delegation_missing_key.rs):
+  a `->` entry into a table that lacks the key; its `.rust.stderr` pins the
+  [error spans](#error-spans) of the failing bound and of the `Sized` error, both on `-> Bundle`
+  rather than on the whole block.
 - [`wiring/conflicting-wiring/overlapping_generic.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/overlapping_generic.rs):
   a generic `<T> Wrapper<T>` entry overlaps a specific `Wrapper<u64>` entry at the same key
   (`E0119`).

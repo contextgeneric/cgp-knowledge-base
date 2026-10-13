@@ -301,10 +301,12 @@ them:
   from the live macro expansion, whereas a dependent crate relies on the recorded definition span,
   which is where the leak shows.
 
-Two more re-spanning techniques cover the rest. `override_item_span`'s sibling `override_span`
-re-spans *every* token unconditionally, which is right only for `check_components!`, where the
-intent is to clobber one shared user token, the context type, onto each checked component in turn.
-Where the originating token is itself synthesized and has lost its span (an `@`-path's
+Other re-spanning techniques cover the rest. `override_item_span`'s sibling `override_span` re-spans
+*every* token unconditionally, which is right only for `check_components!`, where the intent is to
+clobber one shared user token, the context type, onto each checked component in turn. A second
+sibling, `override_synthesized_span`, re-spans every synthesized token of a fragment whose own span a
+diagnostic reads, such as a `where` bound, onto a user token no resolvable name shares; the `->`
+entries of `delegate_components!` use it with their arrow. Where the originating token is itself synthesized and has lost its span (an `@`-path's
 `PathCons<..>` nest), the evaluated form carries an explicit span field forward, as
 `EvaluatedCheckEntry.span` and `EvaluatedDelegateEntry.span` do; and the provider macros reuse the
 user's own `for` token so the middle of a generated impl header never falls on `call_site`.
