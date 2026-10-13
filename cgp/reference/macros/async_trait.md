@@ -92,6 +92,28 @@ A method without a return type is treated as returning `()`:
 fn run(&self) -> impl ::core::future::Future<Output = ()>;
 ```
 
+### A default body becomes the future
+
+A method with a default body keeps it, wrapped in `async move { … }`, so the body is the future the
+method returns, as the body of an `async fn` is. Each by-value parameter bound to a plain name is
+rebound inside the block, so the future owns it and drops it when it completes rather than when the
+method returns, and a `mut` on the parameter moves to the rebinding:
+
+```rust
+// async fn add(&self, mut value: u32, extra: u32) -> u32 { value += extra; value }
+fn add(&self, value: u32, extra: u32) -> impl ::core::future::Future<Output = u32> {
+    async move {
+        let mut value = value;
+        let extra = extra;
+        value += extra;
+        value
+    }
+}
+```
+
+A component's default body reaches its provider trait the same way, so an empty provider inherits
+it.
+
 ### Items other than traits pass through
 
 The macro rewrites only trait definitions and returns any other item, most importantly an `impl`
@@ -180,15 +202,6 @@ These constructs are the ones `#[async_trait]` is used with:
   treat an async component exactly like a synchronous one, since wiring is independent of asyncness.
 
 ## Known issues
-
-An async trait method with a default body is mishandled, because `#[async_trait]` rewrites only the
-signature. It strips `async` and changes the return type to `impl Future`, but leaves the body
-verbatim instead of wrapping it in an `async { … }` block. The result is a non-async method whose
-body returns a plain value and may use `.await`, which fails to compile. The case is rare, because
-async trait methods are almost always declarations and providers supply the behavior, but a
-default-bodied `async fn` in an `#[async_trait]` trait is not supported. A body returning a plain
-`1` fails with ``E0277: `{integer}` is not a future``, which names the body's type rather than the
-rewrite; wrap the body in an `async { … }` block by hand, or move it to a provider.
 
 The generated future carries no `Send` bound. The rewrite produces a bare `impl Future<Output = T>`,
 so the future is `Send` only when the concrete future happens to be, and the trait cannot require

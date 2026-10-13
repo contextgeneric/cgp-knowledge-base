@@ -41,34 +41,30 @@ fn fetch(&self, id: &str) -> impl ::core::future::Future<Output = Result<Vec<u8>
 fn run(&self) -> impl ::core::future::Future<Output = ()>;
 ```
 
-Only method signatures are touched. Non-async methods, associated types, and associated constants
-pass through unchanged, and the method body, for the rare method that has one, is never rewritten
-(see Known issues).
+Non-async methods, associated types, and associated constants pass through unchanged. A rewritten
+method that has a default body gets it wrapped in `async move { … }`, preceded by a rebinding of each
+by-value identifier parameter (`let value = value;`), so the body is the returned future and owns
+those parameters, as an `async fn`'s does; a `mut` moves from the parameter to its rebinding, since
+the body mutates the rebound one.
 
 ## Behavior and corner cases
 
-The **only structural transform is to the signature**: the `async` token is removed and the return
-type is wrapped in `impl Future`. The macro introduces no boxing, no allocation, and no `Send`
-bound. It is a mechanical spelling of return-position `impl Trait` in a trait, and the returned
-future is exactly the one the method body produces.
+The **transform is to the signature, and to a default body only to make it the future**: the `async`
+token is removed, the return type is wrapped in `impl Future`, and a default body is wrapped in an
+`async move` block. The macro introduces no boxing, no allocation, and no `Send` bound. It is a
+mechanical spelling of return-position `impl Trait` in a trait, which captures every lifetime in
+scope, so a body that borrows `&self` or a reference argument needs no extra bound.
+
+The **rebinding covers only parameters bound to a plain name**. A destructuring pattern
+(`(a, b): (u32, u32)`) is destructured when the method is called and its parts move into the future
+only if the body uses them, and a by-value `self` is captured only when the body uses it, since
+`self` cannot be rebound; an unused part is then dropped when the method returns, earlier than an
+`async fn` would drop it.
 
 The **passthrough on non-trait items is deliberate**, not an error path in the usual sense: any item
 that fails to parse as an `ItemTrait` is returned verbatim, which is what lets `#[async_trait]` sit
 harmlessly on an `impl` block that a host macro like [`#[cgp_fn]`](cgp_fn.md) copies the attribute
 onto.
-
-## Known issues
-
-The macro **mishandles an async method that carries a default body**. It strips `async` and rewrites
-the return type to `impl Future`, but leaves the body verbatim rather than wrapping it in an
-`async { … }` block. The result is a non-async method whose body still returns a plain value (and
-may use `.await`), which fails to compile. In practice this is rarely hit, because async trait
-methods are almost always bodyless declarations with behavior supplied by a provider impl, but a
-default-bodied `async fn` inside a `#[async_trait]` trait is not supported. The correct behavior
-would be to wrap a rewritten method's body in `async move { … }` so the signature and body agree.
-The user-visible consequence, together with the absence of a `Send` bound on the generated future,
-is documented under Known issues in
-[reference/macros/async_trait.md](../../reference/macros/async_trait.md).
 
 ## Tests
 
@@ -88,10 +84,14 @@ own:
 - [auto_dispatch/async_self_ref_only.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/auto_dispatch/async_self_ref_only.rs)
   and the other `async_*` files in the `auto_dispatch` target: `#[async_trait]` stacked with
   [`#[cgp_auto_dispatch]`](cgp_auto_dispatch.md) on async dispatch traits.
+- [async_and_send/default_body.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/async_and_send/default_body.rs):
+  a default `async` body on a plain trait and on a component, run to completion, with a `mut`
+  parameter mutated inside and a by-value guard parameter dropped only when the future completes.
 
-No test pins the rewrite itself. A `snapshot_*!` macro records its host macro's output before
+No snapshot pins the rewrite itself. A `snapshot_*!` macro records its host macro's output before
 `#[async_trait]` runs, so the snapshots above show the attribute still in place and `async fn`
-unrewritten; the `impl Future` form is checked only by those files compiling.
+unrewritten; the `impl Future` form is checked by those files compiling, and the default-body
+wrapping by `default_body.rs` running.
 
 ## Source
 
