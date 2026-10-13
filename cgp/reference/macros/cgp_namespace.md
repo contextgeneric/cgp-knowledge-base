@@ -452,15 +452,13 @@ entry, or direct wiring answers it, and a `check_components!` reports the lookup
 satisfied, where the `Symbol` is the `show` prefix. This is the
 [unregistered namespace path](../../errors/checks/unregistered-namespace-path.md) error class.
 
-A circular parent chain is rejected at the `cgp_namespace!` definitions, and its two shapes fail
-differently. A chain through two or more namespaces, such as `new A: B` with `new B: A`, makes the
-inheritance impl's first bound loop, reported as `E0275` overflow at both definitions
-(`overflow evaluating the requirement '__Key__: A<__BComponents>'`, and its mirror). A
-self-inheriting `new A: A` does not overflow: its forwarding impl has a value parameter nothing
-determines, so it fails with `E0207`
-(`the type parameter '__Value__' is not constrained by the impl trait, self type, or predicates`).
-Both mean the parent chain is not acyclic, and only the first says so recognizably. This is the
-[namespace inheritance cycle](../../errors/wiring/namespace-inheritance-cycle.md) error class.
+A circular parent chain is an error, reported in one of two places. A namespace that names itself
+as its parent, `new A: A`, is rejected by the macro with
+``the namespace `A` cannot inherit from itself``, the caret on the parent. A chain through two or
+more namespaces, such as `new A: B` with `new B: A`, is not visible to any one invocation, so the
+compiler reports it: the inheritance impl's first bound loops, reported as `E0275` overflow at both
+definitions (`overflow evaluating the requirement '__Key__: A<__BComponents>'`, and its mirror). This
+is the [namespace inheritance cycle](../../errors/wiring/namespace-inheritance-cycle.md) error class.
 
 The `namespace` statement names its namespace by a bare identifier, so a namespace from another
 module cannot be written as a path: `namespace some_mod::MyNs;` fails with

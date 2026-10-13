@@ -208,10 +208,11 @@ inheritance blanket impl's `where` clause requires the parent's lookup trait, so
 chain yields a `where` clause that never discharges; unlike the lazy `UseContext`
 [wiring cycle](../../errors/wiring/wiring-cycle.md), the compiler catches it *eagerly* while
 checking each generated inheritance impl, so both `cgp_namespace!` definitions carry the overflow
-with no use site required. A self-inheriting `new A: A` fails differently. The bound that would
-determine `__Value__` is `__Key__: A<__Table__, Delegate = __Value__>`, a projection of the very
-trait the impl defines, which the compiler does not count, so the impl is rejected with `E0207`
-(`__Value__` is not constrained) rather than overflowing.
+with no use site required. A self-inheriting `new A: A`, the one cycle a single invocation shows,
+never reaches the compiler: `NamespaceTable`'s parser rejects a parent path that is the namespace's
+own name with the same type arguments, the caret on the parent. The compiler would report it only
+as an `E0207` on the inheritance impl's unconstrained `__Value__`, spanning the whole block, since
+the bound that would determine it is a projection of the very trait the impl defines.
 
 **A per-entry generic that never reaches the key**, as in `<T> GreeterComponent: GreetWith<T>`,
 lowers to an impl of the namespace's lookup trait for the key whose `T` nothing binds, so the
@@ -321,7 +322,8 @@ form:
 
 - [parser_rejections/cgp_namespace.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/cgp_namespace.rs)
   asserts the macro rejects an attribute on a `:` mapping key, on a `=>` redirect key, and on a key
-  inside a `for` loop. The same file asserts that a token other than `{` after the header
+  inside a `for` loop, and a namespace naming itself as its parent, with and without type arguments,
+  with its message. The same file asserts that a token other than `{` after the header
   (`new MyNamespace: DefaultNamespace;`, `new MyNamespace foo`) is rejected, so the header-only form
   accepts only an input that ends at the header.
 

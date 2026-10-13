@@ -2,12 +2,13 @@
 
 Two namespaces that inherit from each other make resolving any key chase the inheritance chain
 forever, so the trait solver overflows with `E0275`, reported *at the `cgp_namespace!` definitions
-themselves*. A namespace that inherits itself fails differently, with `E0207`, as described below.
+themselves*. A namespace that names itself as its parent never reaches the compiler: `cgp_namespace!`
+rejects it.
 
 ## What triggers it
 
 The mistake is a circular parent chain among namespaces: `A` names `B` as its parent while `B` names
-`A`, or a namespace names itself. A [namespace](../../reference/macros/cgp_namespace.md) inherits
+`A`. A [namespace](../../reference/macros/cgp_namespace.md) inherits
 its parent through a blanket impl whose `where` clause requires the parent's lookup trait, so a
 parent chain that loops back on itself produces a `where` clause that can never be discharged.
 
@@ -23,12 +24,11 @@ cgp_namespace! {
 
 `new NamespaceA: NamespaceB` emits the inheritance blanket impl
 `impl<Table, Key, Value> NamespaceA<Table> for Key where Key: NamespaceB<…>, Key: NamespaceB<Table, Delegate = Value>`,
-and `new NamespaceB: NamespaceA` emits the mirror. A self-inheriting `new A: A {}` is not part of
-this class: its one inheritance impl bounds `Key: A<Table, Delegate = Value>`, a projection of the
-very trait it implements, which the compiler does not count as determining `Value`, so the impl
-fails with `E0207` (the type parameter `__Value__` is not constrained) instead of overflowing. CGP
-cannot see the parent chain is circular from one macro invocation (each `cgp_namespace!` knows only
-its own parent) so it lowers each namespace faithfully and defers the contradiction to the compiler.
+and `new NamespaceB: NamespaceA` emits the mirror. CGP cannot see the parent chain is circular from
+one macro invocation (each `cgp_namespace!` knows only its own parent) so it lowers each namespace
+faithfully and defers the contradiction to the compiler. A self-inheriting `new A: A {}` is the one
+cycle a single invocation shows, so the macro rejects it with
+``the namespace `A` cannot inherit from itself``, the caret on the parent.
 
 ## The raw diagnostic
 
@@ -87,7 +87,7 @@ solver treats as a fatal overflow simply resolves.
 
 The practical consequence is that this class surfaces only for a reader on plain
 `rustc`/`cargo check`; the recommended `cargo-cgp` toolchain will not flag the circular inheritance,
-and there is no `.cgp.stderr` to consult. That does not make the wiring correct: a self- or
+and there is no `.cgp.stderr` to consult. That does not make the wiring correct: a
 mutually-inheriting namespace is still a mistake, only invisible under the tool, which is why the
 fix in [Resolving it](#resolving-it) still applies even when nothing complains.
 
@@ -102,15 +102,19 @@ enough.
 
 ## Backing fixtures
 
-This is the **one class in the catalog with no `cargo-cgp` fixture**, because there is no error to
-snapshot: under `cargo-cgp`'s next-generation solver the mutually-inheriting namespaces compile
-clean, so a fixture would carry an empty `.cgp.stderr` and misrepresent the class as fixed. The
-absence is deliberate and is recorded on the `cargo-cgp` side as the single un-migrated class, in
-its [UI-test README](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/README.md), which
-explains it as a *missing* error (the next-solver divergence above) rather than a suppressed cause,
-and notes it will be reproduced only if a genuinely reproducible case is found. The raw `E0275`
-described above therefore has no blessed `.rust.stderr` either; it is what plain `cargo check`
-prints today, verified against the compiler rather than against a committed snapshot.
+The fixture pins the class's divergence rather than an error, since under the pinned nightly there
+is none to snapshot:
+
+- [`wiring/namespace-inheritance-cycle/namespace_inheritance_cycle.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-inheritance-cycle/namespace_inheritance_cycle.rs):
+  two namespaces that inherit from each other, which both the default and the next-generation solver
+  on the pinned nightly accept, so its `.cgp.stderr` and `.rust.stderr` are empty; its exit-status
+  check fails if a later nightly makes the two disagree.
+
+The raw `E0275` described above therefore has no blessed `.rust.stderr`; it is what stable `rustc`
+prints, verified against the compiler rather than against a committed snapshot. The self-inheriting
+form's macro rejection is pinned by the `cargo-cgp` fixture
+[`pass-through/namespace_self_inherit.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/namespace_self_inherit.rs),
+which checks that the tool prints the macro's message as rustc does.
 
 ## Related
 

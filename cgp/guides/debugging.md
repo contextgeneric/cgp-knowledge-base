@@ -314,7 +314,7 @@ this as a lookup once you have the error code and the trait it names.
   check* (a plain method call hides it as the `E0599` above); see
   [Wiring cycle](../errors/wiring/wiring-cycle.md). A second form is a circular namespace parent
   chain (`cgp_namespace! { new A: B }` with `new B: A`), which overflows *eagerly at the
-  `cgp_namespace!` definitions* (a self-inheriting `new A: A` is an `E0207` instead); see
+  `cgp_namespace!` definitions* (the macro rejects a self-inheriting `new A: A`); see
   [Namespace inheritance cycle](../errors/wiring/namespace-inheritance-cycle.md). For either, ignore
   the `help: increase the recursion limit` suggestion: a true cycle never terminates, so no limit
   clears it.

@@ -225,7 +225,7 @@ Structural wiring errors, in [wiring/](wiring/):
   when forced through a check, but the hidden `E0599` when reached by a plain method call.
 - [Namespace inheritance cycle](wiring/namespace-inheritance-cycle.md): namespaces whose parent
   chain loops (`A: B` with `B: A`), an `E0275` overflow caught *eagerly at the `cgp_namespace!`
-  definitions* rather than lazily at a use site; a self-inheriting `A: A` is an `E0207` instead.
+  definitions* rather than lazily at a use site; `cgp_namespace!` rejects a self-inheriting `A: A`.
 - [Unconstrained generic](wiring/unconstrained-generic.md): a per-entry generic that never reaches
   the key, leaving an impl parameter unconstrained (`E0207`).
 - [Unresolved wiring name](wiring/unresolved-wiring-name.md): a wiring key or value that names
