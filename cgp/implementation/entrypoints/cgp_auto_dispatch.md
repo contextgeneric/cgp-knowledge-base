@@ -161,6 +161,27 @@ whose `cargo-cgp` output names the payload's missing impl, `Square: HasArea`.
 `E0119`, because the blanket impl covers every type implementing `HasExtractor`. The macro cannot see
 the other impls in the crate, so the compiler's coherence check reports it.
 
+**A lifetime hidden in a path is not named.** A type that carries a lifetime parameter without
+writing it, such as `Cow<str>` for `Cow<'_, str>`, has no token for the elaboration to rewrite, so
+the elided lifetime stays implicit in the matcher bound and the computer's impl header, where
+elision is not allowed. Whether a path hides a lifetime is recoverable only from the type's
+definition, which the macro cannot see, so the compiler reports it:
+
+```rust
+#[cgp_auto_dispatch]
+pub trait CanLabel {
+    fn label(&self, prefix: Cow<str>) -> String;   // E0726 and E0106
+}
+```
+
+For such an argument the compiler reports `E0726` ("implicit elided lifetime not allowed here"),
+whose help suggests the right `Cow<'_, str>`, and `E0106` ("missing lifetime specifier"), whose help
+suggests the generated `'__a__` lifetime it finds in scope, which the user cannot name. For such a
+return type it reports `E0106`. Writing the lifetime out as `Cow<'_, str>` avoids both, since the
+elaboration then names it. The `cargo-cgp` fixture
+[`uncataloged/macro-defects/auto_dispatch_hidden_lifetime.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/macro-defects/auto_dispatch_hidden_lifetime.rs) pins the argument case, where
+the tool keeps both errors and the wrong help.
+
 ## Known issues
 
 **Two dispatch traits in one module cannot share a method name.** Both the helper
@@ -173,14 +194,6 @@ the macro wires by name, so it is deferred. The `cargo-cgp` fixture
 [`wiring/conflicting-wiring/auto_dispatch_shared_method_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/auto_dispatch_shared_method_name.rs)
 pins it; the [conflicting wiring](../../errors/wiring/conflicting-wiring.md) class describes the
 errors.
-
-**A lifetime hidden in a path is not named.** A type that carries a lifetime parameter without
-writing it, such as `Cow<str>` for `Cow<'_, str>`, has no token for the elaboration to rewrite, so
-the elided lifetime stays implicit in the matcher bound and the expansion fails: `E0726` ("implicit
-elided lifetime not allowed here") for such an argument, and `E0106` ("missing lifetime specifier")
-for such a return type. Whether a path hides a lifetime is recoverable only from the type's
-definition, which the macro cannot see, so the fix is to write the lifetime out as `Cow<'_, str>`,
-which the elaboration then names.
 
 ## Snapshots
 

@@ -281,8 +281,9 @@ combinators directly.
 
 **A lifetime hidden in a path is not named.** A type that carries a lifetime parameter without
 writing it, such as `Cow<str>` for `Cow<'_, str>`, gives the macro no token to rename, so the
-expansion fails with `E0726` (implicit elided lifetime not allowed here) for such an argument and
-`E0106` (missing lifetime specifier) for such a return type. Whether a path hides a lifetime depends
+expansion fails with `E0726` (implicit elided lifetime not allowed here) for such an argument, beside
+an `E0106` (missing lifetime specifier) whose help names the macro's own `'__a__` lifetime, and with
+`E0106` for such a return type. Whether a path hides a lifetime depends
 on the type's definition, which the macro cannot see. Writing the lifetime out as `Cow<'_, str>`
 avoids it.
 
