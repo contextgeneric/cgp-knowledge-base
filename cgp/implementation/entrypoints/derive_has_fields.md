@@ -62,6 +62,12 @@ list by `variants_to_sum_type` in `sum.rs`; the entries are chained right-associ
 
 ## Behavior and corner cases
 
+**The enum conversions name their associated types through qualified projections.** `to_fields`
+and `from_fields` name `<Self as HasFields>::Fields`, and `to_fields_ref` returns
+`<Self as HasFieldsRef>::FieldsRef<'__a>`, since inside an impl for an enum a bare `Self::Fields`
+could also name a variant called `Fields`, which `rustc` rejects as `ambiguous associated item`. The
+struct conversions keep `Self::Fields`, since a struct has no variants to collide with.
+
 A **single-field tuple struct** (a newtype) is special-cased: its `Fields` is the inner type
 directly, not a one-element `Cons<Field<Index<0>, _>, Nil>`, and the conversions pass the single
 value straight through. A tuple struct with more than one field is not special-cased: its fields are
@@ -97,21 +103,6 @@ type name instead of on the whole `#[derive(HasFields)]`. `derive_has_fields_imp
 [`override_item_span`](../README.md#spans-aim-generated-items-at-the-token-the-user-wrote), which
 moves only the `impl`/`{ … }` boundary, the mechanism the
 [`#[derive(HasField)]`](derive_has_field.md#error-spans) doc explains in full.
-
-## Known issues
-
-**The codegen names its associated types as `Self::Fields` and `Self::FieldsRef`, so those two
-variant names make the enum expansion invalid.** `from_fields` takes `rest: Self::Fields` and
-`to_fields_ref` returns `Self::FieldsRef<'__a>`; inside an impl for an enum either path can resolve
-to a variant of the same name, so `rustc` rejects the expansion with `ambiguous associated item`,
-with its headline on the derive attribute and a `note` pointing at the user's own variant. Because
-these impls are written `for` the user's enum, the colliding variant keeps its own span and the
-error stays actionable, unlike the extractor's. Writing each as `<Self as HasFields>::Fields` would
-remove the ambiguity and is the fix. The variant derives add five further reserved names, listed in
-[`#[derive(ExtractField)]`](derive_extract_field.md#known-issues), so an enum deriving the whole
-family has seven. A struct's *field* names are unaffected, since a field is not in the same
-namespace as an associated type. Pinned by
-[invalid_expansion/reserved_variant_names.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/invalid_expansion/reserved_variant_names.rs).
 
 ## Snapshots
 
@@ -152,9 +143,10 @@ The snapshot tests above double as the coverage:
 - The `struct_single_unnamed_field` snapshot is the guard on the newtype special case.
 - `struct_generic`/`struct_generic_lifetime` and `has_fields_enum_generic` guard the
   generic-threading behavior.
-- [invalid_expansion/reserved_variant_names.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/invalid_expansion/reserved_variant_names.rs)
-  pins the reserved-variant-name defect recorded under Known issues, capturing the emitted `Self::…`
-  paths as a string snapshot so the test compiles even though the code it describes would not.
+- [reserved_variant_names.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/reserved_variant_names.rs)
+  derives `#[derive(CgpData)]` on an enum whose variants are named `Value`, `Remainder`,
+  `Extractor`, `ExtractorRef`, `ExtractorMut`, `Fields`, and `FieldsRef`, and drives each slice on
+  it, which compiles only because the impls write qualified projections.
 
 ## Source
 

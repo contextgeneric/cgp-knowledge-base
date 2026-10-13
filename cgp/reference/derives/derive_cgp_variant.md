@@ -104,8 +104,8 @@ pub enum __PartialShape<__F0__: MapType, __F1__: MapType> {
 
 impl HasExtractor for Shape {
     type Extractor = __PartialShape<IsPresent, IsPresent>;     // all variants still possible
-    fn to_extractor(self) -> Self::Extractor { /* map each variant across */ }
-    fn from_extractor(extractor: Self::Extractor) -> Self { /* map back */ }
+    fn to_extractor(self) -> <Self as HasExtractor>::Extractor { /* map each variant across */ }
+    fn from_extractor(extractor: <Self as HasExtractor>::Extractor) -> Self { /* map back */ }
 }
 
 impl FinalizeExtract for __PartialShape<IsVoid, IsVoid> {       // no variants left -> empty
@@ -173,18 +173,6 @@ derive those individually when you need only one slice. The generated types refe
 the `MapType` markers `IsPresent`/`IsVoid`.
 
 ## Known issues
-
-**Seven variant names are reserved, and using one fails to compile.** `CgpVariant` runs the
-representation, constructor, and extractor codegen together, so it inherits every reserved name
-those slices introduce: `Fields` and `FieldsRef` from
-[`#[derive(HasFields)]`](derive_has_fields.md), `Value` from
-[`#[derive(FromVariant)]`](derive_from_variant.md), and `Value`, `Remainder`, `Extractor`,
-`ExtractorRef`, and `ExtractorMut` from [`#[derive(ExtractField)]`](derive_extract_field.md). A
-variant with any of those names makes the generated `Self::…` path ambiguous, reported as
-`ambiguous associated item` with its headline on the derive attribute. Whether the message also
-names the variant depends on which slice collided: the extractor's impls target the generated
-companions and so point back at the derive, while the representation and constructor impls point at
-the real variant.
 
 **A `no_std` crate needs `Box` in scope to derive over a variant with no fields.** The mutable
 extractor builds that variant's `&mut Nil` with `Box::leak(Box::new(Nil))`, and writes `Box` bare,

@@ -352,8 +352,7 @@ it stale.
   `#[use_type]` import naming an associated type its trait does not declare (`E0576`).
 - [lowering/out-of-scope-generated-name.md](cgp/errors/lowering/out-of-scope-generated-name.md) — an
   `#[impl_generics]` parameter named in the trait's own signature, where only the generated impl
-  declares it (`E0433`), plus the abstract type shadowing its own bound (`E0404`), the enum variant
-  colliding with a derive-generated associated type (`ambiguous associated item`), and the `Box` a
+  declares it (`E0433`), plus the abstract type shadowing its own bound (`E0404`) and the `Box` a
   `no_std` crate lacks for a variant with no fields (`E0433`).
 - [lowering/undeclared-dependency.md](cgp/errors/lowering/undeclared-dependency.md) — a trait, an
   inner provider, or an abstract type a definition uses without `#[uses]`, `#[use_provider]`, or

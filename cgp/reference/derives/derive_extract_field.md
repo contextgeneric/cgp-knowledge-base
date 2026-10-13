@@ -87,13 +87,13 @@ It then emits `PartialData` (both partial enums target `Shape`) and the extracto
 ```rust
 impl HasExtractor for Shape {
     type Extractor = __PartialShape<IsPresent, IsPresent>;
-    fn to_extractor(self) -> Self::Extractor {
+    fn to_extractor(self) -> <Self as HasExtractor>::Extractor {
         match self {
             Self::Circle(value) => __PartialShape::Circle(value),
             Self::Rectangle(value) => __PartialShape::Rectangle(value),
         }
     }
-    fn from_extractor(extractor: Self::Extractor) -> Self {
+    fn from_extractor(extractor: <Self as HasExtractor>::Extractor) -> Self {
         match extractor {
             __PartialShape::Circle(value) => Self::Circle(value),
             __PartialShape::Rectangle(value) => Self::Rectangle(value),
@@ -103,7 +103,7 @@ impl HasExtractor for Shape {
 
 impl HasExtractorRef for Shape {
     type ExtractorRef<'__a__> = __PartialRefShape<'__a__, IsRef, IsPresent, IsPresent> where Self: '__a__;
-    fn extractor_ref(&self) -> Self::ExtractorRef<'_> { /* ... */ }
+    fn extractor_ref<'__a__>(&'__a__ self) -> <Self as HasExtractorRef>::ExtractorRef<'__a__> { /* ... */ }
 }
 // plus HasExtractorMut over __PartialRefShape<'__a__, IsMut, IsPresent, IsPresent>
 ```
@@ -127,7 +127,13 @@ Finally it emits, per variant, an `ExtractField` impl available only when that v
 impl<__F1__: MapType> ExtractField<Symbol!("Circle")> for __PartialShape<IsPresent, __F1__> {
     type Value = Circle;
     type Remainder = __PartialShape<IsVoid, __F1__>;
-    fn extract_field(self, _: PhantomData<Symbol!("Circle")>) -> Result<Circle, Self::Remainder> {
+    fn extract_field(
+        self,
+        _: PhantomData<Symbol!("Circle")>,
+    ) -> Result<
+        <Self as ExtractField<Symbol!("Circle")>>::Value,
+        <Self as ExtractField<Symbol!("Circle")>>::Remainder,
+    > {
         match self {
             __PartialShape::Circle(value) => Ok(value),
             __PartialShape::Rectangle(value) => Err(__PartialShape::Rectangle(value)),
@@ -136,6 +142,10 @@ impl<__F1__: MapType> ExtractField<Symbol!("Circle")> for __PartialShape<IsPrese
 }
 // plus ExtractField for "Rectangle", and the borrowed variants over __PartialRefShape
 ```
+
+Every associated type in these impls is written as a qualified projection, such as
+`<Self as ExtractField<Tag>>::Remainder`, rather than `Self::Remainder`, so a variant named `Value`,
+`Remainder`, `Extractor`, `ExtractorRef`, or `ExtractorMut` cannot make a generated path ambiguous.
 
 The `FinalizeExtract` trait itself is defined in the field crate (with blanket impls for `Void` and
 `Infallible`); the derive supplies the all-void impl on the partial enums. The companion
@@ -213,23 +223,6 @@ variants in [`sum`](../macros/sum.md)-shaped partial enums ([`Either`/`Void`](..
 and switches on the [`MapType`](../traits/map_type.md) markers `IsPresent`/`IsVoid`.
 
 ## Known issues
-
-**Five variant names are reserved, and using one fails to compile.** The generated impls name their
-associated types through `Self::…` (`Self::Value` in every `ExtractField` impl, `Self::Remainder` in
-its return type, and `Self::Extractor`, `Self::ExtractorRef`, and `Self::ExtractorMut` in the three
-accessor impls), so a variant called `Value`, `Remainder`, `Extractor`, `ExtractorRef`, or
-`ExtractorMut` makes that path ambiguous between the variant and the associated type. The compiler
-reports `ambiguous associated item`, and this derive's version of the error is the opaque one in the
-family: both the headline *and* the `"… could refer to the variant defined here"` note land on the
-`#[derive(ExtractField)]` attribute, so nothing in the output names the variant to rename. The
-reason is that these impls are written for the generated `__Partial…` companion enums rather than
-for your enum, and the companion's variant identifiers are rebuilt by the codegen, so they carry the
-derive's span. The sibling derives collide on your own enum's variants and do point a note at them.
-The correct behavior would be for the codegen to write the associated type as
-`<Self as ExtractField<Tag>>::Value` rather than `Self::Value`, which would remove the ambiguity;
-until then, renaming the variant is the only fix. [`#[derive(HasFields)]`](derive_has_fields.md)
-reserves `Fields` and `FieldsRef` for the same reason, so an enum deriving the whole family must
-avoid all seven names.
 
 **A partial enum carries none of the enum's own attributes.** The companion enums are generated
 without the derives on the original, so a `Result<Value, Remainder>` returned by `extract_field` is

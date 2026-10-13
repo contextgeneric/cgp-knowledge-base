@@ -299,18 +299,11 @@ the same way, since its shape shows the referent is unsized; only a type named b
 the macro cannot see, reaches the compiler. When a lowering error's cause is available to the macro,
 fixing it in `cgp` beats teaching the tool to reconstruct it.
 
-Two extensible-data derive defects land here for the same reason. An enum variant named after an
-associated type the derives generate (`Value`, `Remainder`, `Fields`, …) makes the generated
-`Self::…` path ambiguous; under the extractor both notes land on the derive attribute, so nothing
-names the variant
-([`reserved_variant_name_extract_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/out-of-scope-generated-name/reserved_variant_name_extract_field.rs),
-[`reserved_variant_name_cgp_data`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/out-of-scope-generated-name/reserved_variant_name_cgp_data.rs); the readable
-`FromVariant` case is
-[`reserved_variant_name_from_variant`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/out-of-scope-generated-name/reserved_variant_name_from_variant.rs)). And a
-variant helper attribute of another derive, copied onto the extractor's companion enums, fails with
-a help that suggests the derive the enum already has
-([`variant_helper_attribute`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/macro-defects/variant_helper_attribute.rs)). Both are fixed in `cgp`:
-qualified projections, and filtering the copied attributes.
+An extensible-data derive defect lands here for the same reason. A variant helper attribute of
+another derive, copied onto the extractor's companion enums, fails with a help that suggests the
+derive the enum already has
+([`variant_helper_attribute`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/macro-defects/variant_helper_attribute.rs)).
+The fix belongs in `cgp`: filtering the copied attributes.
 
 A `Path!` defect reaches the reader the same way. `Path!` reads a segment such as the `f` of
 `@app.f` as a type, so three `E0425`s name `f` as an unresolved type, and rustc's `E0275` overflow

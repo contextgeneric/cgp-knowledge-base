@@ -72,6 +72,13 @@ impl.
 
 ## Behavior and corner cases
 
+**Every associated type is named through a qualified projection.** The accessors return
+`<Self as HasExtractor>::Extractor` and its borrowed counterparts, and each `extract_field` returns
+`Result<<Self as ExtractField<Tag>>::Value, <Self as ExtractField<Tag>>::Remainder>`. Inside an impl
+for an enum, a bare `Self::Value` could also name a variant of that name, which `rustc` rejects as
+`ambiguous associated item`; the companion enums repeat the user's variant names, so the extract
+impls need the qualification as much as the accessors on the user's enum.
+
 A variant's name is keyed by the [`Symbol!`](../../reference/macros/symbol.md) of its identifier,
 and the enum's generic parameters are threaded onto every impl and onto both companion enums, with
 the ref enum additionally bounding the type parameters by its `'__a__` lifetime. The reserved
@@ -128,24 +135,6 @@ only the `impl`/`{ … }` boundary, the mechanism the
 tokens already carry meaningful spans and need no re-spanning.
 
 ## Known issues
-
-**The codegen names its associated types as `Self::…`, so five variant names make the expansion
-invalid.** The `extract_field` impls return `Result<Self::Value, Self::Remainder>` and the three
-accessors return `Self::Extractor`, `Self::ExtractorRef`, and `Self::ExtractorMut`; inside an impl
-for an enum each of those paths can resolve to either the associated type or a variant of the same
-name, so a variant called `Value`, `Remainder`, `Extractor`, `ExtractorRef`, or `ExtractorMut` is
-rejected with `ambiguous associated item`. This derive's diagnostic is the opaque one in the family:
-both the headline and the `"could refer to the variant defined here"` note land on the derive
-attribute, because these impls target the generated `__Partial…` companions and
-`derive_extractor_enum` rebuilds their variant identifiers, so those idents carry the derive's span
-rather than a user token. `derive_has_fields` and `derive_from_variant` write their impls `for` the
-user's enum, so their notes do point at the real variant, which makes this the one collision a
-reader cannot resolve from the output alone. Writing each as a fully qualified projection, such as
-`<Self as ExtractField<Tag>>::Value`, would remove the ambiguity and is the fix.
-[`#[derive(FromVariant)]`](derive_from_variant.md#known-issues) shares the `Value` collision and
-[`#[derive(HasFields)]`](derive_has_fields.md) adds `Fields` and `FieldsRef`, so an enum deriving
-the whole family has seven reserved names. Pinned by
-[invalid_expansion/reserved_variant_names.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/invalid_expansion/reserved_variant_names.rs).
 
 **The partial enums carry none of the input's attributes**, for the same reason and with the same
 consequence as the [record companion](derive_build_field.md#behavior-and-corner-cases):
@@ -229,9 +218,10 @@ exercise the machinery:
   [derive_cgp_data_lifetime.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/derive_cgp_data_lifetime.rs),
   which derives `#[derive(CgpData)]` on an `enum Message<'a>` and drives the owned, borrowed, and
   mutable extractors.
-- [invalid_expansion/reserved_variant_names.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/invalid_expansion/reserved_variant_names.rs)
-  pins the reserved-variant-name defect recorded under Known issues, capturing the emitted `Self::…`
-  paths as a string snapshot so the test compiles even though the code it describes would not.
+- [reserved_variant_names.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/reserved_variant_names.rs)
+  derives `#[derive(CgpData)]` on an enum whose variants are named `Value`, `Remainder`,
+  `Extractor`, `ExtractorRef`, `ExtractorMut`, `Fields`, and `FieldsRef`, and drives each slice on
+  it, which compiles only because the impls write qualified projections.
 
 ## Source
 

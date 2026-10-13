@@ -38,7 +38,12 @@ name, takes the variant's payload as the associated `Value`, and wraps it in the
 ```rust
 impl FromVariant<Symbol!("Circle")> for Shape {
     type Value = Circle;
-    fn from_variant(_tag: PhantomData<Symbol!("Circle")>, value: Self::Value) -> Self { Self::Circle(value) }
+    fn from_variant(
+        _tag: PhantomData<Symbol!("Circle")>,
+        value: <Self as FromVariant<Symbol!("Circle")>>::Value,
+    ) -> Self {
+        Self::Circle(value)
+    }
 }
 ```
 
@@ -47,6 +52,10 @@ several `FromVariant` impls are in scope. The `FromVariant` trait itself is defi
 crate; the derive supplies only the per-variant impls.
 
 ## Behavior and corner cases
+
+**The payload type is a qualified projection.** The `from_variant` parameter is written
+`<Self as FromVariant<Tag>>::Value`, not `Self::Value`: inside an impl for an enum, `Self::Value`
+could also name a variant called `Value`, which `rustc` rejects as `ambiguous associated item`.
 
 The enum's generic parameters are threaded onto every impl. A variant with no fields, in any of its
 three forms, gets `type Value = Nil`, binds the ignored parameter as `_`, and builds itself as
@@ -70,20 +79,6 @@ only the `impl`/`{ … }` boundary, the mechanism the
 [`#[derive(HasField)]`](derive_has_field.md#error-spans) doc explains in full.
 
 ## Known issues
-
-**The codegen names the payload type as `Self::Value`, so a variant called `Value` makes the
-expansion invalid.** `derive_from_variant_from_enum` writes the `from_variant` parameter as
-`value: Self::Value`, and inside an impl for an enum that path can resolve to either the trait's
-associated type or a variant of the same name, so `rustc` rejects the expansion with
-`ambiguous associated item`, with its headline on the derive attribute and a `note` pointing at the
-user's own variant. Because the impl is written `for` the user's enum, the colliding variant keeps
-its own span and the error stays actionable, unlike the extractor's. Writing the projection as
-`<Self as FromVariant<Tag>>::Value` would remove the ambiguity, and doing so is the fix; the
-interpolated `#variant_type` on the `type Value =` line is already unambiguous, so only the
-parameter's type needs changing. [`#[derive(ExtractField)]`](derive_extract_field.md#known-issues)
-has the same defect across five names and [`#[derive(HasFields)]`](derive_has_fields.md) across two,
-so an enum deriving the whole family has seven names it cannot use. Pinned by
-[invalid_expansion/reserved_variant_names.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/invalid_expansion/reserved_variant_names.rs).
 
 Like the extractor derive, `#[derive(FromVariant)]` requires every variant to have one unnamed
 field or no fields. A multi-field or struct-style variant with fields makes the macro fail with
@@ -119,9 +114,10 @@ is where the generic, variantless, and empty-variant enum shapes are covered.
   struct-style variant with fields.
 - [empty_variants.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/empty_variants.rs)
   builds a variant with no fields in each of its three forms from `Nil`.
-- [invalid_expansion/reserved_variant_names.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/invalid_expansion/reserved_variant_names.rs)
-  pins the reserved-variant-name defect recorded under Known issues, capturing the emitted `Self::…`
-  paths as a string snapshot so the test compiles even though the code it describes would not.
+- [reserved_variant_names.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/extensible_variants/reserved_variant_names.rs)
+  derives `#[derive(CgpData)]` on an enum whose variants are named `Value`, `Remainder`,
+  `Extractor`, `ExtractorRef`, `ExtractorMut`, `Fields`, and `FieldsRef`, and drives each slice on
+  it, which compiles only because the impls write qualified projections.
 
 ## Source
 

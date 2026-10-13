@@ -108,12 +108,9 @@ fragment rather than as a full impl.
 
 ## Known issues
 
-The codegen these types drive has three recorded defects, each described with its fix in the owning
+The codegen these types drive has two recorded defects, each described with its fix in the owning
 entrypoint document:
 
-- seven variant names (`Fields`, `FieldsRef`, `Value`, `Remainder`, `Extractor`, `ExtractorRef`,
-  `ExtractorMut`) collide with the `Self::…` projections the enum impls write
-  ([derive_cgp_data.md](../entrypoints/derive_cgp_data.md#known-issues));
 - the builder and extractor companions keep field and variant attributes, so another derive's helper
   attribute fails to resolve
   ([derive_build_field.md](../entrypoints/derive_build_field.md#known-issues),

@@ -84,10 +84,9 @@ inferred. A variant name is matched exactly, so `Symbol!("circle")` for a `Circl
 unsatisfied `FromVariant<Symbol<6, Chars<'c', …>>>` bound (`E0277`) rather than a type mismatch. Each
 derived impl is spanned at its variant, so a hand-written
 `impl FromVariant<Symbol!("Circle")> for Shape` beside the derive fails with `E0119`, ``conflicting implementations of trait `FromVariant<…>` for type `Shape` ``,
-with the primary label on the `Circle` variant. A variant named `Value` breaks the derive, because
-the generated signature names the payload as `Self::Value`; see
-[`#[derive(FromVariant)]`](../derives/derive_from_variant.md). Every variant needs one unnamed
-payload or no fields, the derive's requirement rather than the trait's.
+with the primary label on the `Circle` variant. Every variant needs one unnamed payload or no fields,
+the derive's requirement rather than the trait's; see
+[`#[derive(FromVariant)]`](../derives/derive_from_variant.md).
 
 Bound on `FromVariant` only where a type parameter decides the variant to build: a concrete site
 writes the constructor, which is shorter and generates nothing, and a type that is also taken apart

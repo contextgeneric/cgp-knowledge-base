@@ -285,19 +285,6 @@ reference [`Field`](../types/field.md), the [`product`](../macros/product.md) (`
 
 ## Known issues
 
-**Seven variant names are reserved on an enum, and using one fails to compile.** Because `CgpData`
-runs the representation, constructor, and extractor codegen together, an enum deriving it inherits
-every reserved name each of those slices introduces: `Fields` and `FieldsRef` from
-[`#[derive(HasFields)]`](derive_has_fields.md), and `Value`, `Remainder`, `Extractor`,
-`ExtractorRef`, and `ExtractorMut` from [`#[derive(ExtractField)]`](derive_extract_field.md) and
-[`#[derive(FromVariant)]`](derive_from_variant.md). A variant with any of those names makes the
-generated `Self::…` path ambiguous, reported as `ambiguous associated item` with its headline on the
-derive attribute. Whether the message also names the variant depends on which slice collided: the
-representation and constructor impls are written for your enum, so their notes point at the real
-variant, while the extractor's are written for the generated companions and point back at the
-derive. A struct's field names are unaffected. The per-slice entries carry the mechanism and the
-correct fix.
-
 **A field or variant attribute that belongs to another derive breaks the build.** The builder's
 companion struct keeps each field's attributes and the extractor's companion enums keep each
 variant's, so a helper attribute such as `#[serde(rename = "x")]` beside

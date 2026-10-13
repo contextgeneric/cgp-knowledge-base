@@ -53,20 +53,6 @@ coherence conflict points there rather than at the whole `#[derive(CgpVariant)]`
 
 ## Known issues
 
-**Seven variant names are reserved on an enum, inherited from the slices this derive composes.**
-Because the generated impls name their associated types through `Self::…`, a variant called `Fields`
-or `FieldsRef` (from [`derive_has_fields`](derive_has_fields.md#known-issues)), or `Value`,
-`Remainder`, `Extractor`, `ExtractorRef`, or `ExtractorMut` (from
-[`derive_extract_field`](derive_extract_field.md#known-issues) and
-[`derive_from_variant`](derive_from_variant.md#known-issues)), makes that path ambiguous and the
-expansion is rejected with `ambiguous associated item`, headlined at the derive attribute. Whether a
-note also names the variant depends on the slice: the representation and constructor impls target
-the user's enum and so point at the real variant, while the extractor's target the generated
-companions and point back at the derive. The fix belongs in each slice's codegen, a fully qualified
-projection in place of `Self::…`, rather than here, since this derive introduces no paths of its
-own. Pinned by
-[invalid_expansion/reserved_variant_names.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/invalid_expansion/reserved_variant_names.rs).
-
 **A variant helper attribute that belongs to another derive breaks the build.** The extractor
 slice's companion enums keep each variant's attributes, so an attribute such as
 `#[serde(rename = "x")]` fails with ``cannot find attribute `serde` in this scope``. The mechanism

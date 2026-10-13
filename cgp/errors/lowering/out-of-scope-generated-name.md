@@ -108,52 +108,9 @@ is to name them apart, which is why an abstract database type reads better as `D
 CGP defect (the collision is ordinary Rust name resolution) but it is easy to walk into when naming
 an abstract type after the concrete trait it abstracts over.
 
-## A second sibling: the reserved variant name
+## A second sibling: `Box` in a `no_std` crate
 
-The third shape in this family is the only one that *is* a CGP defect, and the only one whose
-readability depends on which construct produced it. The extensible-data derives name their own
-associated types through an unqualified `Self::…` path: `Self::Value` in
-[`#[derive(FromVariant)]`](../../reference/derives/derive_from_variant.md)'s constructor,
-`Self::Value` and `Self::Remainder` in
-[`#[derive(ExtractField)]`](../../reference/derives/derive_extract_field.md)'s extract impls,
-`Self::Extractor`, `Self::ExtractorRef`, and `Self::ExtractorMut` in its accessors, and
-`Self::Fields` and `Self::FieldsRef` in
-[`#[derive(HasFields)]`](../../reference/derives/derive_has_fields.md)'s conversions. Inside an impl
-for an *enum*, each of those paths can resolve either to the trait's associated type or to a variant
-of the same name, so seven variant names cannot be used:
-
-```rust
-#[derive(FromVariant)]
-pub enum Tagged {
-    Value(u32), // `Self::Value` in the generated constructor is now ambiguous
-}
-```
-
-The compiler reports a bare `error: ambiguous associated item` (no `E` code) headlined on the
-`#[derive(...)]` attribute, with two notes naming the two candidates: "`Value` could refer to the
-variant defined here" and "`Value` could also refer to the associated type defined here".
-
-**Whether that first note is useful depends on which derive collided, and the difference is the
-reason this shape is worth cataloging.** `#[derive(HasFields)]` and `#[derive(FromVariant)]` write
-their impls `for` the user's own enum, so the colliding variant keeps its own span and the note
-points straight at it: an ordinary, readable ambiguity error. `#[derive(ExtractField)]` writes its
-impls for the generated `__Partial…` companion enums instead, and the codegen rebuilds those variant
-identifiers rather than reusing the user's, so they carry the derive's span: *both* notes then land
-on the `#[derive(ExtractField)]` attribute and nothing in the output names the variant the author
-must rename. That is the case a reader cannot resolve from the diagnostic alone, and the one to
-recognize by shape.
-
-Unlike the shadowed abstract type above, this is a defect rather than ordinary name resolution. The
-codegen should write each associated type as a fully qualified projection,
-`<Self as FromVariant<Tag>>::Value`, which is unambiguous whatever the variants are named. Until it
-does, the fix is to rename the variant, and the seven reserved names are recorded in the Known
-issues of each affected derive's [reference](../../reference/derives/derive_extract_field.md) and
-[implementation](../../implementation/entrypoints/derive_extract_field.md) document. A struct's
-*field* names are unaffected, since a field is not in the same namespace as an associated type.
-
-## A third sibling: `Box` in a `no_std` crate
-
-The fourth shape is a name the expansion deliberately leaves to the caller. The variant derives
+The third shape is a name the expansion deliberately leaves to the caller. The variant derives
 ([`#[derive(CgpVariant)]`](../../reference/derives/derive_cgp_variant.md), `CgpData` on an enum, and
 [`#[derive(ExtractField)]`](../../reference/derives/derive_extract_field.md)) give a variant with no
 fields the payload `Nil`, and the mutable extractor needs a `&mut Nil` for it. Rust does not promote
@@ -191,7 +148,7 @@ from `cgp` would make every `cgp` user link `alloc`, and the only alternative wa
   pin the `E0433` with the caret on the return type and the pass-through, and the fixture doubles as
   the recorded forcing condition for promoting an inferred type to an abstract one.
 - [`lowering/out-of-scope-generated-name/no_std_empty_variant_without_box.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/out-of-scope-generated-name/no_std_empty_variant_without_box.rs):
-  the [`Box` sibling](#a-third-sibling-box-in-a-no_std-crate): a `no_std` crate deriving
+  the [`Box` sibling](#a-second-sibling-box-in-a-no_std-crate): a `no_std` crate deriving
   `CgpVariant` over an empty variant without `Box` in scope, its snapshots pinning the `E0433` on
   the variant and rustc's suggested import. Its working counterpart,
   [`ok/no_std_empty_variant.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/ok/no_std_empty_variant.rs),
@@ -199,15 +156,6 @@ from `cgp` would make every `cgp` user link `alloc`, and the only alternative wa
 - [`lowering/out-of-scope-generated-name/cgp_type_name_shadows_bound.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/out-of-scope-generated-name/cgp_type_name_shadows_bound.rs):
   the [shadowed abstract type](#a-sibling-the-shadowed-abstract-type), pinning the `E0404` and both
   of its landmark notes.
-- [`lowering/out-of-scope-generated-name/reserved_variant_name_extract_field.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/out-of-scope-generated-name/reserved_variant_name_extract_field.rs)
-  and [`reserved_variant_name_cgp_data.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/out-of-scope-generated-name/reserved_variant_name_cgp_data.rs): the
-  [reserved variant name](#a-second-sibling-the-reserved-variant-name) under the extractor, a
-  `Value` and a `Remainder` variant, pinning the opaque form whose notes both land on the derive;
-  `cargo-cgp` passes it through. The readable form, a `Value` variant under `#[derive(FromVariant)]`
-  whose note points at the variant, is
-  [`reserved_variant_name_from_variant.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/out-of-scope-generated-name/reserved_variant_name_from_variant.rs). The library
-  side pins the emitted `Self::…` paths in
-  [`invalid_expansion/reserved_variant_names.rs`](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/invalid_expansion/reserved_variant_names.rs).
 - [`lowering/wrong-component-half/consumer_trait_in_provider_impl_generic.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/consumer_trait_in_provider_impl_generic.rs):
   the adjacent `E0425` shape: a `#[cgp_impl]` header names the consumer trait
   `CanCalculateArea<Rectangle>` where the provider trait `AreaCalculator` belongs, so the derived

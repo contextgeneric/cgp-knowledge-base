@@ -193,7 +193,10 @@ The enum derive likewise emits `HasFieldsRef` (the same sum with borrowed values
 `FromFields`, and `ToFieldsRef`, with each conversion matching on the concrete variant and mapping
 it to the corresponding `Either` arm. Note that `Circle { radius: f64 }` is a named-field variant,
 so its payload is a one-entry product; a newtype variant such as `Circle(Circle)` carries its
-payload type directly instead, per the shape rules above.
+payload type directly instead, per the shape rules above. The enum conversions name the
+associated types through qualified projections, `<Self as HasFields>::Fields` and
+`<Self as HasFieldsRef>::FieldsRef<'__a>`, so a variant named `Fields` or `FieldsRef` cannot make a
+generated path ambiguous.
 
 The empty shapes fall out of the same construction rather than being special-cased. A unit struct's
 `Fields` is `Nil` and its conversions round-trip through the empty product, so a unit struct is a
@@ -261,22 +264,6 @@ type it produces is built from [`Product`](../macros/product.md) for structs and
 [`Sum`](../macros/sum.md) for enums, with named entries tagged by [`Symbol!`](../macros/symbol.md).
 [`#[derive(CgpData)]`](derive_cgp_data.md) builds on this derive, generating `HasFields` together
 with the additional builder, partial-record, and field-update machinery needed for extensible data.
-
-## Known issues
-
-**Two variant names are reserved, and using one fails to compile.** The generated impls name their
-associated types through `Self::Fields` and `Self::FieldsRef`, so an enum with a variant called
-`Fields` or `FieldsRef` makes that path ambiguous between the variant and the associated type. The
-compiler reports `ambiguous associated item` (the deny-by-default `ambiguous_associated_items`
-future-compatibility lint) with its headline on the `#[derive(HasFields)]` attribute, but a `note: "Fields" could refer to the variant defined here` points at the offending
-variant, so the error is readable once the note is followed. The extractor's collisions are the
-opaque ones, because there the colliding variant belongs to a generated companion enum; see
-[`#[derive(ExtractField)]`](derive_extract_field.md)'s Known issues. Writing the projections as
-`<Self as HasFields>::Fields` in the codegen would remove the ambiguity; until then, renaming the
-variant is the only fix. The variant derives reserve five further names, listed in
-[`#[derive(ExtractField)]`](derive_extract_field.md)'s Known issues, so an enum deriving the whole
-family must avoid all seven. A struct's *field* names are unaffected, since a field is not in the
-same namespace as an associated type.
 
 ## Source
 

@@ -64,14 +64,20 @@ associated `Value`:
 ```rust
 impl FromVariant<Symbol!("Circle")> for Shape {
     type Value = Circle;
-    fn from_variant(_tag: PhantomData<Symbol!("Circle")>, value: Self::Value) -> Self {
+    fn from_variant(
+        _tag: PhantomData<Symbol!("Circle")>,
+        value: <Self as FromVariant<Symbol!("Circle")>>::Value,
+    ) -> Self {
         Self::Circle(value)
     }
 }
 
 impl FromVariant<Symbol!("Rectangle")> for Shape {
     type Value = Rectangle;
-    fn from_variant(_tag: PhantomData<Symbol!("Rectangle")>, value: Self::Value) -> Self {
+    fn from_variant(
+        _tag: PhantomData<Symbol!("Rectangle")>,
+        value: <Self as FromVariant<Symbol!("Rectangle")>>::Value,
+    ) -> Self {
         Self::Rectangle(value)
     }
 }
@@ -83,14 +89,18 @@ forms, so `Closed`, `Closed()`, and `Closed {}` expand alike:
 ```rust
 impl FromVariant<Symbol!("Closed")> for Status {
     type Value = Nil;
-    fn from_variant(_tag: PhantomData<Symbol!("Closed")>, _: Self::Value) -> Self {
+    fn from_variant(
+        _tag: PhantomData<Symbol!("Closed")>,
+        _: <Self as FromVariant<Symbol!("Closed")>>::Value,
+    ) -> Self {
         Self::Closed {}
     }
 }
 ```
 
-The `FromVariant` trait is defined in the field crate; the derive only supplies the per-variant
-impls. There is no partial type, no `MapType` marker, and no state tracking; each impl simply wraps
+The payload type is written as the qualified projection `<Self as FromVariant<Tag>>::Value` rather
+than `Self::Value`, so a variant named `Value` cannot make the path ambiguous. The `FromVariant`
+trait is defined in the field crate; the derive only supplies the per-variant impls. There is no partial type, no `MapType` marker, and no state tracking; each impl simply wraps
 the value in its variant. The `Tag` is the variant name's type-level string, and the
 `PhantomData<Tag>` argument exists solely to let the caller pick which variant to build when several
 `FromVariant` impls are in scope. The payload type does not drive that choice: on an enum with two
@@ -136,17 +146,6 @@ deriving only `FromVariant` can be upcast into, while the source needs `HasField
 of the enum's [`sum`](../macros/sum.md) representation ([`Either`/`Void`](../types/either.md)).
 
 ## Known issues
-
-**A variant named `Value` fails to compile.** The generated `from_variant` signature names the
-payload as `Self::Value`, so a variant of that name makes the path ambiguous between the variant and
-the associated type, and the compiler reports `ambiguous associated item` with its headline on the
-`#[derive(FromVariant)]` attribute and a `note: "Value" could refer to the variant defined here`
-pointing at the offending variant, so the error is readable once the note is followed. Writing the
-projection as `<Self as FromVariant<Tag>>::Value` in the codegen would remove the ambiguity; until
-then, renaming the variant is the only fix. `Value` is the only name this derive reserves, but
-[`#[derive(ExtractField)]`](derive_extract_field.md) reserves it along with four more and
-[`#[derive(HasFields)]`](derive_has_fields.md) two others, so an enum deriving the whole family must
-avoid all seven.
 
 The derive accepts only variants with one unnamed field or no fields. A multi-field variant like
 `Pair(A, B)` or a struct-style variant with fields like `Named { x: A }` causes the macro to fail
