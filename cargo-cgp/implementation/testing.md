@@ -72,9 +72,9 @@ succeeds whether or not the fixture compiles.
 [`tests/ui/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui) in one directory per
 error class**, so a fixture moves only when its class changes, never when its message improves. The
 class directories mirror the [error catalog](../../cgp/errors/README.md): `checks/`, `hidden/`,
-`lowering/`, and `wiring/`, each holding one directory per class document
-(`checks/check-trait-failure/`, `wiring/orphan-rule/`, and so on). Mistakes the catalog does not yet
-cover sit under `uncataloged/<class>/` (the extensible-data family, implicit-argument mistakes, and
+`lowering/`, `wiring/`, and `data/`, each holding one directory per class document
+(`checks/check-trait-failure/`, `wiring/orphan-rule/`, `data/extensible-data/`, and so on). Mistakes
+the catalog does not yet cover sit under `uncataloged/<class>/` (implicit-argument mistakes and
 macro defects), each awaiting a catalog page. The largest class, `checks/check-trait-failure/`,
 keeps concept sub-directories (`fields/`, `providers/`, `missing-wiring/`, and the rest) so no
 directory grows crowded. Three directories hold fixtures that belong to no error class: `ok/` for

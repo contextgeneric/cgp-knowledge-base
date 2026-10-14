@@ -14,7 +14,7 @@ the cause, after the class's code; the Rust error code (`E0277`, `E0599`, `E0271
 The worked example's headline is `` [CGP-E001] missing field `height` on `Rectangle` ``: the code
 says what kind of failure it is, and the sentence says what to fix.
 
-Five classes choose the code, and the anchor that matched the caret decides which, never the bound
+Six classes choose the code, and the anchor that matched the caret decides which, never the bound
 rustc's own headline stopped on:
 
 - **`[CGP-E001]`, the consumer class**, for a context that cannot implement a consumer trait, a
@@ -34,6 +34,10 @@ rustc's own headline stopped on:
   associated-type projection, most often a CGP abstract type the context binds one way while a
   provider pins it another. It is `[CGP-E004]`'s sibling in every respect but the trait the
   projection sits on.
+- **`[CGP-E050]`, the extensible-data class**, for a call to one of CGP's extensible-data operations
+  (a cast such as `upcast`, a builder or extractor operation), which the call-site anchor records by
+  setting `Resolved::data_operation`. These traits are not components, so its class sentence is the
+  plain-trait one; a data cause reached through a check or a consumer keeps that anchor's class.
 
 The sentence after the code states the causes the note lists, by three rules:
 
@@ -57,8 +61,9 @@ when two components share a name in different modules:
 
 - **`[CGP-E001]`:** `` the consumer trait `C` is not implemented for context `X` ``.
 - **`[CGP-E002]`:** `` the provider trait `P` with context `X` is not implemented for provider `Q` ``.
-- **`[CGP-E003]`:** `` the trait `W` is not implemented for … ``, naming a foreign subject, or a
-  blanket trait's subject that carries no wiring, plainly rather than calling it a context.
+- **`[CGP-E003]`** and **`[CGP-E050]`:** `` the trait `W` is not implemented for … ``, naming a
+  foreign subject, or a blanket or data trait's subject that carries no wiring, plainly rather than
+  calling it a context.
 
 The class sentence is also the block's **internal headline**: the de-duplication ledger records it,
 since a re-report the resolver declined is worded with it by the text rewrite (see
@@ -139,7 +144,7 @@ render as their own root trees stacked in the one note. The heading lists the di
 singular `root cause:` lead when they all bottom out on the same leaf, or a `root causes:` list
 (each with its own code, so a reader sees every cause at a glance) when they differ.
 
-The `root cause:` lead is worded by *why* the leaf is unmet, and there are seven leaf shapes:
+The `root cause:` lead is worded by *why* the leaf is unmet, and there are eight leaf shapes:
 
 - A **genuinely absent field** reads as `` root cause: missing field `height` on `Rectangle` ``, the
   worked example's leaf. There is no `context` qualifier, since `HasField` can land on any struct.
@@ -252,12 +257,28 @@ The `root cause:` lead is worded by *why* the leaf is unmet, and there are seven
   [`abstract_type_mismatch`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/types/abstract_type_mismatch.rs)
   fixture pins the shape.
 
-A field-type mismatch is an eighth leaf, worded the same way from its `[CGP-E004]` headline. Any
+- An **extensible-data cause**, a field or variant whose state a builder, extractor, or cast does
+  not allow, or a data derive a type lacks, is read off the presence markers of the partial type
+  the bound lands on (see [the walk](typed-resolution-walk.md#decoding-classifying-and-rendering-a-leaf))
+  and names the struct or enum rather than the generated type:
+  ``root cause: field `port` of `Config` is not set`` (`[CGP-E119]`), with the field set twice
+  (`[CGP-E118]`), a missing variant (`[CGP-E120]`), the variants a match left unextracted
+  (`[CGP-E121]`), a variant payload of the wrong type (`[CGP-E122]`), and a missing data trait
+  (`` `Shape` does not implement `HasFields` ``, `[CGP-E123]`) worded the same way. A field a
+  builder names that its struct lacks takes the missing-field lead above. Several missing data
+  traits on one type merge into one headline
+  (`` `Shape` does not implement `HasFields` and `HasExtractor` ``)
+  ([`builder_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/builder_missing_field.rs),
+  [`auto_dispatch_missing_derive`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/auto_dispatch_missing_derive.rs)).
+
+A field-type mismatch is a ninth leaf, worded the same way from its `[CGP-E004]` headline. Any
 other leaf simply restates its bound, as in
 ``root cause: the trait bound `f64: Eq` is not satisfied``, module qualifiers stripped.
 
 **A lead is dropped only where a mismatch headline or a kept rustc headline already states that very
-leaf.** Both mismatch classes state their leaf as the headline, so their notes carry the chain
+leaf.** Both mismatch classes state their leaf as the headline, as does an `E0271` traced to a
+variant payload of the wrong type (under its anchor's class code,
+[`upcast_payload_mismatch`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/upcast_payload_mismatch.rs)), so their notes carry the chain
 alone (as the `E0271` example above shows), and a kept rustc header restating the ordinary bound the
 walk descended to drops that bound's lead the same way. Every other block keeps its `root cause:`
 line even though its headline states the same cause, so the tree always sits under a line naming
@@ -288,8 +309,12 @@ which names its items in the order the causes are listed, with no cap:
 - A **missing dispatch entry** names the table:
   `` add an entry for `Tagged<Bytes>` to `SinkHandlers` ``.
 - An **abstract-type mismatch** names the wiring entry to change, as described above.
-- A **near miss** comes first when a missing field's struct carries a similar field, or a missing
-  key's context wires a similar key: `` a similar field exists on `Person`: `first_name` `` for
+- A **missing data trait** names the derive that supplies it, the derives one type needs merged
+  into one attribute: `` add `#[derive(HasFields, ExtractField)]` to `Shape` ``. It is given only
+  when the type is a struct or enum the crate defines and of a kind each derive accepts.
+- A **near miss** comes first when a missing field's struct carries a similar field, a missing
+  variant's enum a similar variant (`` a similar variant exists on `Shape`: `Circle` ``), or a
+  missing key's context wires a similar key: `` a similar field exists on `Person`: `first_name` `` for
   `frist_name`, or `` a similar key exists in the wiring of `App`: `@App.GreeterComponent` `` for
   `@app.GreeterComponent`. A name is similar when it matches ignoring case or lies within two
   edits, a swap of two letters counting as one (`similar_name`). A key is similar when one symbol
@@ -298,8 +323,12 @@ which names its items in the order the causes are listed, with no cap:
   they never count. The candidates are the struct's own fields and the context's own wiring
   entries.
 
-A field-type mismatch, a non-provider, and an ordinary bound carry no `help`. The mismatch headline
-already states both types, and the other two have no single entry the tool can name.
+A field-type mismatch, a non-provider, an ordinary bound, and the extensible-data state causes (a
+field set twice or not set, a variant not extracted, a variant payload of the wrong type) carry no
+`help`. The mismatch headlines already state both types, a state cause names the field or variant to
+handle, and the others have no single entry the tool can name. A field a builder names that its
+struct lacks gets no add-the-field `help` either, since the merge can then still leave another
+field unset.
 
 **A `help` appears only when its premise holds**, because a fix that does not compile is worse than
 none. Two checks guard it:
@@ -344,7 +373,9 @@ class sentence from the resolution: the `CGP-E001` consumer form (pluralized whe
 spans several components), the `CGP-E002` provider form when the resolution records a
 `#[check_providers]` provider, the two mismatch classes (`CGP-E004` for a `HasField` value type,
 `CGP-E005` for any other associated type, the field class tried first as the more specific of the
-two, each worded as its cause), or the `CGP-E003` plain-trait form. One extra case routes here: a
+two, each worded as its cause, and a variant payload of the wrong type worded as its cause under the
+anchor's own class), the `CGP-E050` extensible-data form when the resolution records a call to a
+data operation, or the `CGP-E003` plain-trait form. One extra case routes here: a
 mismatch-coded (`E0271`) failure the resolver traced to a *non*-mismatch cause (a manual
 `Send`-recovery wrapper's opaque-future error, whose `type mismatch resolving …` message is
 unreadable) takes the `CGP-E001` consumer class, since it is really the consumer trait failing to be

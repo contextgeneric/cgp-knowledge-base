@@ -51,8 +51,7 @@ implied.
 ## Codes
 
 The headline codes come in seven family blocks of ten; a family that outgrows its block takes the
-next free one. Six blocks hold codes today, and one is reserved for a class the tool does not
-reshape yet:
+next free one:
 
 | Block | Family | Codes |
 | --- | --- | --- |
@@ -61,7 +60,7 @@ reshape yet:
 | `CGP-E020` to `CGP-E029` | wiring that never resolves, and the orphan rule | `E020` to `E022` |
 | `CGP-E030` to `CGP-E039` | mistakes in what a macro was given | `E030` to `E038` |
 | `CGP-E040` to `CGP-E049` | wiring keys and values that do not resolve | `E040` to `E043` |
-| `CGP-E050` to `CGP-E059` | extensible data | none yet |
+| `CGP-E050` to `CGP-E059` | extensible data | `E050` |
 | `CGP-E060` to `CGP-E069` | structural mistakes, continued | `E060`, `E061` |
 
 The families differ in how the tool recovers them. The **trait-failure** codes `CGP-E001` to
@@ -108,7 +107,9 @@ entry that is wrong, all in the
 consumer trait as a key, `CGP-E041` a component not in scope, `CGP-E042` a key that names no
 component, and `CGP-E043` a provider never declared. Except `CGP-E040`, they come from name
 resolution, before the compiler builds the HIR, so the tool holds those errors and reshapes them
-once resolution is over. Each entry below gives the rewritten message, the mistake behind it, the
+once resolution is over. The **extensible-data** code `CGP-E050` heads a failed call to one of CGP's
+data operations (a builder, an extractor, a cast), resolved by the typed resolver like the
+trait-failure codes, its headline the field or variant at fault. Each entry below gives the rewritten message, the mistake behind it, the
 fix, and the [CGP error catalog](../cgp/errors/README.md) class it recognizes.
 
 ### `CGP-E001`: consumer trait not implemented
@@ -830,6 +831,27 @@ for `CGP-E060`.
 - **Fix:** declare the provider, or name one that exists.
 - **Upstream class:** [unresolved wiring name](../cgp/errors/wiring/unresolved-wiring-name.md).
 
+### `CGP-E050`: extensible-data operation not implemented
+
+- **Message:** `` [CGP-E050] <cause> ``, the root cause in the sentence its tree code words
+  (`` [CGP-E050] missing variant `Bar` on `Big` ``), by the rules of `CGP-E001`; the class sentence,
+  used for mixed causes, is `` the trait `<Trait>` is not implemented for `<Type>` ``, naming the
+  data trait (`` `CanUpcast<Big>` ``) and its subject plainly.
+- **Means:** one of CGP's extensible-data operations, a cast such as `upcast` or `downcast` or a
+  builder or extractor operation, is called on a value whose field or variant is not in the state
+  the operation needs, or on a type that lacks the data derive it needs. The operation's trait is
+  implemented only for the states where it is valid, tracked by the presence markers of the partial
+  types a data derive generates, so the cause is a field or variant, named by the tree's leaf
+  (`CGP-E118` to `CGP-E123`, or a missing field as `CGP-E110`).
+- **Triggered by:** a call to a method of a trait the `cgp-field` or `cgp-field-extra` crate defines,
+  on a receiver the [call-site anchor](implementation/typed-resolution-call-site.md) can type, whose
+  obligation fails (an `E0277`, an `E0271`, or a method-bounds `E0599`). The same causes reached
+  through a check or a consumer keep that anchor's class (`CGP-E001`), and a `#[cgp_auto_dispatch]`
+  call keeps `CGP-E003`. The Rust code stays whatever rustc assigned.
+- **Fix:** follow the cause: drop a second setting of a field, set an unset one, add a missing
+  variant or align a payload type, or add the derive a `help` names.
+- **Upstream class:** [extensible data](../cgp/errors/data/extensible-data.md).
+
 ## Dependency-tree entry codes (`CGP-E1xx`)
 
 The `CGP-E1xx` range codes the entries of a `root cause:` note's dependency tree, one code per
@@ -874,7 +896,10 @@ at (`CGP-E110` onward).
   a context field that is genuinely absent. When the struct derives `HasField` for its other fields,
   a `help` names the field to add with the type the requirement gives it,
   `` add the field `<f>: <type>` to `<T>` ``; when the struct carries a similar field, a `help`
-  names it first, `` a similar field exists on `<T>`: `<g>` ``.
+  names it first, `` a similar field exists on `<T>`: `<g>` ``. The same leaf states a field an
+  extensible-data builder operation names that its struct does not declare (a `build_from` source's
+  field the target lacks); it then gets the near miss but no add-the-field `help`, since adding it
+  can leave another field the merge never sets.
 - **`CGP-E111`: unimplemented accessor (leaf).**
   `` `HasField` not derived for field `<f>` of `<T>` ``: the struct carries the field but has not
   derived `HasField` for it (the fix rides in a separate `help`,
@@ -928,6 +953,32 @@ at (`CGP-E110` onward).
   list written `Product![]` where the compiler prints `Nil`. When the compiler's headline already
   states the bound, the tool keeps that headline, in the same wording, and the note carries the tree
   alone, ending at this entry.
+
+- **`CGP-E118`: field already set (leaf).** `` field `<f>` of `<T>` is already set ``: a builder
+  operation needs the field unset (a second `build_field`, or a second merge source carrying it),
+  and the builder's presence marker for it is `IsPresent`. The builder of `T` is the partial type a
+  data derive generates, and the chain step above names it in words
+  (`` trait impl `BuildField<Symbol!("host")>` for the builder of `Config` with `host` and `port` set ``).
+- **`CGP-E119`: fields not set (leaf).** `` field `<f>` of `<T>` is not set ``, or
+  `` fields `<f>` and `<g>` of `<T>` are not set ``: an operation needs the fields set (a finalize,
+  a `take_field`) and the builder's markers for them are not `IsPresent`.
+- **`CGP-E120`: missing variant (leaf).** `` missing variant `<V>` on `<T>` ``: an operation names a
+  variant the enum does not declare, as a cast between enums whose variants do not match, or a
+  construction by a tag the enum lacks. A `help` names a similar variant the enum declares,
+  `` a similar variant exists on `<T>`: `<W>` ``.
+- **`CGP-E121`: variants not extracted (leaf).** `` variant `<V>` of `<T>` is not extracted ``: an
+  extractor is finalized while its markers say it may still yield the variants, as a matcher whose
+  arms leave one out does.
+- **`CGP-E122`: variant type mismatch (leaf).**
+  `` variant `<V>` on `<T>` has type `<actual>`, but `<expected>` is required ``: a cast between two
+  enums whose variants of one name carry different payloads. The variant counterpart of
+  `CGP-E112`; an `E0271` block states it as its headline.
+- **`CGP-E123`: data trait not implemented (leaf).** `` `<T>` does not implement `<Trait>` ``: a
+  trait only a data derive implements (`HasFields`, `HasExtractor`, `HasBuilder`, `FromVariant`)
+  is unmet on a type that is not a partial value. Several on one type merge into one cause sentence
+  (`` `Shape` does not implement `HasFields` and `HasExtractor` ``), and a `help` names the derives
+  in one attribute when the type is a struct or enum the crate defines, of a kind each derive
+  accepts: `` add `#[derive(HasFields, ExtractField)]` to `<T>` ``.
 
 ## Uncoded rewrites
 

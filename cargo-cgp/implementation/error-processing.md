@@ -456,12 +456,15 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   (`parse_trait_bound`), and `text.rs` (the segment/generics splitters). See
   [The driver](driver.md#naming-the-traits-behind-a-component-marker).
 - [`crates/cargo-cgp-error-processing/src/diagnosis/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/diagnosis):
-  the rustc-free root-cause model and its wording: `leaf.rs` (`Leaf`/`FieldIssue`), `resolved.rs`
+  the rustc-free root-cause model and its wording: `leaf.rs` (`Leaf`/`FieldIssue`, and the facts a
+  `help` reads, `FieldFix`/`NearMiss`/`DeriveFix`), `resolved.rs`
   (`Cause`, holding a leaf and every path that reaches it; `Causes`, the set that keeps one cause
   per distinct leaf by construction, through `from_sub_chains`/`union`/`headed_by` over a private
   field; and `Resolved`), `node.rs` (`DepNode` / `ChainNode`, the structured chain nodes and their
-  rendering) and `graph.rs` (`DependencyGraph`, the DAG build-and-render), the `wording/` directory
-  (`header.rs` (`consumer_header`, `field_mismatch_header`, `assoc_mismatch_header`), `lead.rs`
+  rendering, with `PartialValue`, a builder or extractor named in words) and `graph.rs` (`DependencyGraph`, the DAG build-and-render), the `wording/` directory
+  (`header.rs` (`class_sentence`, `class_code`, `consumer_header`, and the finders of the leaf a
+  mismatch headline states), `headline.rs` (`cause_headline` and `merged_cause`, the displayed
+  headline), `lead.rs`
   (`root_cause_lead` and the leaf codes), `note.rs` (`cause_notes`, which folds every cause's paths
   into one graph and words the heading over it, and `cause_notes_seen`, the same against a `seen`
   set shared with the compilation's other notes), `help.rs` (`fix_help_messages`, which words one

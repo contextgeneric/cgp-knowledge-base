@@ -127,7 +127,10 @@ A branch ends at a **terminal leaf**, and which obligations count as terminal is
 honest. The descent follows only the CGP wiring vocabulary (any provider trait, where a
 `ProvideFoo: Foo<App>` bound routes on to the provider's own dependencies; `DelegateComponent`; and
 any obligation whose `Self` is the context, covering its consumer, getter, and blanket traits) and
-treats everything else as a leaf. It deliberately does *not* follow
+CGP's **extensible-data traits** (every trait the `cgp-field` and `cgp-field-extra` crates define:
+the builders, extractors, and casts), and treats everything else as a leaf. A data operation's
+blanket impl leads to the presence-marker bound that says which field or variant is at fault, so the
+walk descends it the way it descends a provider. It deliberately does *not* follow
 `IsProviderFor`/`CanUseComponent`, which are dropped as plumbing above. The leaf shapes are:
 
 - An unmet **`HasField`** is the field leaf.
@@ -204,6 +207,22 @@ treats everything else as a leaf. It deliberately does *not* follow
   CGP's own, an impl of it is keyed by a component marker or a `PathCons` path (the entries
   `cgp_namespace!` writes), or an impl's `where` clause names a parent namespace that shows the same
   evidence. So a user namespace is caught without a `DefId` anchor, and a lookalike trait is not.
+- An unmet **extensible-data bound** is the data leaf, read off the presence markers of the partial
+  type it lands on ([below](#decoding-classifying-and-rendering-a-leaf)): a builder's `UpdateField`
+  for a field the struct lacks is the missing-field leaf; its `Mapper` projection found set where
+  the update needs it unset, or unset where it needs it set, is the field-already-set or
+  field-not-set leaf (`[CGP-E118]`, `[CGP-E119]`); an unmet `FinalizeBuild` names the fields not
+  set; an extractor's `ExtractField` for a variant the enum lacks, or an enum's `FromVariant` for
+  one, is the missing-variant leaf (`[CGP-E120]`); an unmet `FinalizeExtract` names the variants
+  not extracted (`[CGP-E121]`); a `FromVariant` whose `Value` projection differs is the
+  variant-type leaf (`[CGP-E122]`); and a trait only a data derive implements (`HasFields`,
+  `HasExtractor`, `HasBuilder`), unmet on a type that is not a partial value, is the
+  data-trait-unimplemented leaf (`[CGP-E123]`). The shape is pinned by the fixtures of
+  [`data/extensible-data/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/data/extensible-data),
+  such as
+  [`builder_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/builder_missing_field.rs)
+  and
+  [`upcast_missing_variant`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/upcast_missing_variant.rs).
 - An **ordinary bound on a foreign type** (`f64: Eq`) is a leaf, and the descent must not walk into
   whatever unrelated `std` blanket impl happens to match its `Self` (an `impl<F: FnPtr> Eq for F`
   would otherwise fabricate a misleading `f64: FnPtr` step). A **constrained `DelegateComponent`
@@ -219,18 +238,21 @@ Two foreign bounds are exceptions the descent *does* follow, both for the same r
 the context only deeper. The first is a **getter or blanket trait on a non-context type whose
 satisfying impl depends on the context**, such as a request struct's `HasBasicAuthHeader<Ctx>`,
 whose `#[cgp_auto_getter]` blanket impl requires `Ctx: HasPasswordType`. There the walk looks into
-that blanket impl and follows only its **context-side dependencies**, so the real cause on the
+that blanket impl and follows only its **context-side dependencies** (a provider trait, a
+`DelegateComponent`, or an obligation on the context, as `is_context_side` decides; never an
+extensible-data trait, which is about the foreign type itself), so the real cause on the
 context surfaces (and de-duplicates with the same cause reached down another branch) instead of the
 opaque `Request: HasBasicAuthHeader<Ctx>` bound being reported as a second, misleading root cause.
 Following only context-side dependencies is what preserves the `f64: Eq` guarantee (a foreign
 `f64: FnPtr` step is not context-side, so it is never followed), and it also skips the getter's own
 `Ctx::Assoc`-typed `HasField` clause on the request, which is present but a projection mismatch a
 plain descent would misreport as a missing field. A provider step that belongs to another context is
-not context-side, so it is not followed either. The case it matters for is a dispatch payload: a
-`#[cgp_auto_dispatch]` trait's blanket impl implements the trait for every type, by running a
-matcher with the unit context, so a payload that lacks its own impl (`Square: HasArea`) matches the
-blanket, whose dependencies are that matcher and the payload being an extensible enum. Neither
-is about the context, so the walk stops at `Square: HasArea`, the payload's missing impl, rather
+not context-side, so it is not followed either, nor is a data trait on the foreign type. The case
+both matter for is a dispatch payload: a `#[cgp_auto_dispatch]` trait's blanket impl implements the
+trait for every type, by running a matcher with the unit context, so a payload that lacks its own
+impl (`Square: HasArea`) matches the blanket, whose dependencies are that matcher and the payload
+being an extensible enum (`HasExtractor`, a data trait). Neither is about the context, so the walk
+stops at `Square: HasArea`, the payload's missing impl, rather
 than descending the matcher into the extractor bounds a plain struct cannot meet
 ([`auto_dispatch_missing_variant_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/auto_dispatch_missing_variant_impl.rs)).
 The second is a **same-trait recursion over a type-level list**: a record's field list
@@ -390,6 +412,22 @@ queried) for the actual type, yielding the `[CGP-E004]` mismatch leaf. A non-fie
 struct, so it is simply restated as `self: Trait` (`f64: std::cmp::Eq`) for its note lead and for
 de-duplicating a leaf reached by several paths.
 
+**Read a partial value's presence markers.** An extensible-data leaf lands on a *partial* value: a
+type a data derive generates for each struct and enum (`__PartialPerson<F0, F1>`), with one
+`MapType` marker parameter per field or variant. The resolver recognizes one by its `PartialData`
+impl, anchored to `cgp-field`, whose `Target` names the struct or enum it builds or matches. Each
+field of a partial record, and the payload of each variant of a partial enum, is stored as
+`<M as MapType>::Map<…>` for one of its marker parameters, so the ADT's own definition pairs every
+marker with the field or variant it tracks, and the value's arguments give each marker's state:
+`IsPresent` (set, or still possible), `IsNothing` (unset), `IsVoid` (ruled out), or `IsOptional`
+(held as an `Option`). The leaf then names the field or variant the failing bound's tag decodes to,
+or the members in the wrong state, against the target's name rather than the generated one. A
+missing data derive records the derive a `help` can name only when the type is a struct or enum the
+crate defines, of a kind the derive accepts (`ExtractField` and `FromVariant` an enum, `BuildField`
+a struct); and a field a builder names that its struct lacks offers no add-the-field fix, since a
+merge can then still leave another field unset
+([`build_and_merge_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/build_and_merge_missing_field.rs)).
+
 **Read the type an owner supplies for any other associated type.** A projection mismatch on a trait
 other than `HasField` has no struct field to query, so its *actual* side is read by asking the
 solver to normalize the projection itself (`projected_type`). That one query covers every way an
@@ -420,8 +458,10 @@ labels read well:
 
 - **Plumbing is dropped.** A provider-trait obligation *for the context itself* (the delegation
   routing, as opposed to the real provider), the `DelegateComponent` table lookup, a namespace
-  lookup, and any residual `CanUseComponent`/`IsProviderFor` obligation carry no information and
-  return no label, keeping the chain legible without losing a real step. A
+  lookup, an extensible-data trait's recursion over a type-level list (`CanBuildFrom`'s
+  `FieldsBuilder` over a record's fields, a cast's `FieldsExtractor` over an enum's variants), and
+  any residual `CanUseComponent`/`IsProviderFor` obligation carry no information and return no
+  label, keeping the chain legible without losing a real step. A
   `RedirectLookup<Table, Path>` provider, by contrast, renders as
   `` redirect lookup to `@Path` in `Table` ``, so a chain of redirects reads as its successive hops.
   `Table` is the lookup's own first type argument, not the walk's context, so a hop inside an
@@ -434,6 +474,11 @@ labels read well:
   trait's argument list (`ReferenceGetter<'a, Ctx, T>`), and indexing by raw argument position would
   land on the region and abort the compiler. A lifetime argument stays in its place; the walk erases
   regions, so it reads `'_`, as in the context `App<'_>` (`ReferenceGetter<'_, str>`).
+- **A builder or an extractor is named in words.** A step whose `Self` is a partial value names it
+  by what it builds or matches and its markers, as
+  ``trait impl `BuildField<Symbol!("host")>` for the builder of `Config` with `host` and `port` set``
+  or ``… for the extractor of `Shape` with `Circle` ruled out``, rather than by its generated name. A
+  partial value in a trait argument (a builder pipeline's input) keeps its generated type.
 - **Type-level lists are resugared.** A rendered label's `Self` type has its `Cons`/`Either` list
   read back as the `Product![A, B]` or `Sum![A, B]` the programmer wrote, and one step further to a
   CGP `Struct!` or `Enum!` shape when every element is a `Field` cell, so a field- or variant-list
@@ -468,7 +513,8 @@ parent document's [Tests](typed-root-cause-resolution.md#tests) section.
 ## Source
 
 - [`crates/cargo-cgp-driver/src/resolve/walk/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/walk):
-  the descent: `leaves.rs` (the recursion), `vocabulary.rs` (what it walks into), `impl_match.rs`
+  the descent: `leaves.rs` (the recursion), `vocabulary.rs` (what it walks into, and which
+  dependencies a foreign bound is followed into), `impl_match.rs`
   (the satisfying impl and its dependencies), `unknowns.rs` (placeholders and stalled projections),
   `projection_mismatch.rs` (the unmet projection an impl carries, `HasField` or otherwise),
   `holds.rs` (the solver query), `written_order.rs` (the order an impl's clauses are read in), and
@@ -476,10 +522,14 @@ parent document's [Tests](typed-root-cause-resolution.md#tests) section.
   consumer trait).
 - [`crates/cargo-cgp-driver/src/resolve/classify/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/classify):
   `reportable.rs` (root cause versus routing dead-end), `leaf.rs` (`classify_leaf`, which builds the
-  rustc-free `Leaf`), `field.rs` (the struct and `Deref`-chain inspection), `required_type.rs` (the
-  type a requirement gives a missing field), `near_miss.rs` (a similar field or wiring key the
-  program wrote), and `assoc_type.rs` (the normalization that reads the
+  rustc-free `Leaf`), `data.rs` (`classify_data_leaf`, the extensible-data leaf read off the presence
+  markers), `field.rs` (the struct and `Deref`-chain inspection), `required_type.rs` (the
+  type a requirement gives a missing field), `near_miss.rs` (a similar field, variant, or wiring key
+  the program wrote), and `assoc_type.rs` (the normalization that reads the
   type an owner supplies for any other projected associated type).
+- [`crates/cargo-cgp-driver/src/resolve/data/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/data):
+  `traits.rs` (the extensible-data traits, their list recursions, and the derive each data trait
+  comes from) and `partial.rs` (`read_partial`, a partial value's target and markers).
 - [`crates/cargo-cgp-driver/src/resolve/label/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/label):
   `predicate_label.rs` (each hop as a structured `DepNode`, read off the obligation) and
   `render_ty.rs` (the type-level list resugaring).

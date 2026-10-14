@@ -28,25 +28,28 @@ diagnostic a CGP mistake produces, pinned by their
 
 ## The codes
 
-The catalog surfaces sixteen codes, split by the kind of rule they enforce. Three are **coherence
+The catalog surfaces eighteen codes, split by the kind of rule they enforce. Three are **coherence
 and orphan** rules: the compiler refusing overlapping or foreign impls:
 
 - [`E0119`](e0119.md): conflicting implementations of a trait for a type.
 - [`E0210`](e0210.md): orphan rule: an uncovered type parameter in a foreign-trait impl.
 - [`E0117`](e0117.md): orphan rule: a foreign trait implemented for a foreign (arbitrary) type.
 
-Three are **well-formedness** rules on generic parameters, arguments, and types:
+Four are **well-formedness** rules on generic parameters, arguments, types, and lifetimes:
 
 - [`E0207`](e0207.md): an unconstrained type parameter on an impl.
 - [`E0107`](e0107.md): an item named with more or fewer generic arguments than it declares.
 - [`E0782`](e0782.md): a trait written bare where a type belongs.
+- [`E0477`](e0477.md): a type does not outlive a lifetime a bound requires of it.
 
-Three are **trait-solving** outcomes: the solver failing to satisfy, project, or terminate a bound:
+Four are **type-checking and trait-solving** outcomes: an expression of the wrong type, or the
+solver failing to satisfy, project, or terminate a bound:
 
 - [`E0277`](e0277.md): a trait bound is not satisfied (including the `Sized` special case).
 - [`E0271`](e0271.md): a type mismatch resolving an associated-type projection: the trait *is*
   implemented and only the projected type disagrees.
 - [`E0275`](e0275.md): overflow evaluating a requirement (a recursion-limit or cycle failure).
+- [`E0308`](e0308.md): an expression's type differs from the type its position expects.
 
 Seven are **name-resolution and method-probe** diagnostics:
 

@@ -45,10 +45,12 @@ error[E0271]: [CGP-E001] missing field `llm_preamble` on `NoPreambleBuilder`
 
 A second probe kept every field and left `BuildHttpClient` out of the list, wiring
 `BuildAndMergeOutputs<App, Product![BuildSqliteClient, BuildOpenAiClient]>`. The check failed
-because the partial `App` cannot be finalized with its second field, `http_client`, still absent:
+because the builder cannot finalize `App` with its second field, `http_client`, still unset, and
+`cargo cgp check` named the field, qualifying `App` because `postgres.rs` declares an `App` too:
 
 ```text
-error[E0277]: the trait bound `__PartialApp<IsPresent, IsNothing, IsPresent, IsPresent>: FinalizeBuild` is not satisfied
+error[E0277]: [CGP-E001] field `http_client` of `app::App` is not set
+   = note: root cause: [CGP-E119] field `http_client` of `app::App` is not set
 ```
 
 The checks say nothing about what a build does at runtime: a builder that compiles can still fail to

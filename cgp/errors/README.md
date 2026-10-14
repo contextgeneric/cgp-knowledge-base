@@ -139,10 +139,11 @@ the noise. The [authoring conventions](AGENTS.md) make this rule precise.
 
 ## Organization
 
-The catalog is divided into four subdirectories, so a reader lands in the right class before
+The catalog is divided into five subdirectories, so a reader lands in the right class before
 decoding any type. The first three follow the hidden-versus-surfaced axis above; the fourth holds a
-failure that arises earlier, in the macro's lowering itself. Each document is registered in the
-catalog below in the same change that adds it.
+failure that arises earlier, in the macro's lowering itself; the fifth holds the failures of
+extensible-data operations, whose cause is a value's state rather than any wiring. Each document is
+registered in the catalog below in the same change that adds it.
 
 The [hidden/](hidden/) directory holds the classes where the compiler **suppresses** the root cause:
 the errors a user meets by exercising broken wiring through a consumer trait rather than a check.
@@ -167,10 +168,16 @@ expanded into Rust that is ill-formed on its own terms (an unsized type, for ins
 definition whose declarations do not match what it uses or names, so the compiler rejects the
 generated code rather than any wiring decision.
 
-A fifth directory, [error_codes/](error_codes/), is a supporting *reference* rather than a class of
+The [data/](data/) directory holds the failures of CGP's extensible-data operations (builders,
+extractors, casts, and the providers built on them) applied to a value whose fields or variants are
+not in the state the operation needs, or to a type without the derive it needs. The compiler reports
+them as a bound on a generated partial type, so the cause is encoded in that type's markers rather
+than stated.
+
+A sixth directory, [error_codes/](error_codes/), is a supporting *reference* rather than a class of
 error: one entry per `rustc` error code the catalog surfaces (`E0107`, `E0119`, `E0117`, `E0207`,
-`E0210`, `E0220`, `E0271`, `E0275`, `E0277`, `E0404`, `E0425`, `E0428`, `E0433`, `E0576`, `E0599`,
-`E0782`), stating what the code means in plain Rust, the rule behind it, and the RFC or issue that
+`E0210`, `E0220`, `E0271`, `E0275`, `E0277`, `E0308`, `E0404`, `E0425`, `E0428`, `E0433`, `E0477`,
+`E0576`, `E0599`, `E0782`), stating what the code means in plain Rust, the rule behind it, and the RFC or issue that
 defines it, grounded in the official documentation. The class documents cite these entries in place
 of the raw `doc.rust-lang.org` URLs, so the Rust-language facts live in one verified place and the
 class docs carry only the CGP-specific anatomy. The same directory holds
@@ -259,14 +266,22 @@ Lowering errors, in [lowering/](lowering/):
   bound) or the reverse (`#[uses]`), or applies `#[cgp_impl]` to a trait that is not a component, so a
   trait receives the wrong number of arguments (`E0107`).
 
+Extensible-data errors, in [data/](data/):
+
+- [Extensible data](data/extensible-data.md): a builder, extractor, or cast applied in a state its
+  value does not allow (a field set twice or never set, a variant left unextracted, two enums whose
+  variants do not match) or to a type without its data derive, reported as a bound on a generated
+  partial type (`E0277`, `E0271`, `E0599`, or `E0308`).
+
 Error-code reference, in [error_codes/](error_codes/):
 
 - One entry per `rustc` code the catalog surfaces: [`E0107`](error_codes/e0107.md),
   [`E0119`](error_codes/e0119.md), [`E0117`](error_codes/e0117.md), [`E0207`](error_codes/e0207.md),
   [`E0210`](error_codes/e0210.md), [`E0220`](error_codes/e0220.md), [`E0271`](error_codes/e0271.md),
-  [`E0275`](error_codes/e0275.md), [`E0277`](error_codes/e0277.md), [`E0404`](error_codes/e0404.md),
-  [`E0425`](error_codes/e0425.md), [`E0428`](error_codes/e0428.md), [`E0433`](error_codes/e0433.md),
-  [`E0576`](error_codes/e0576.md), [`E0599`](error_codes/e0599.md), [`E0782`](error_codes/e0782.md),
+  [`E0275`](error_codes/e0275.md), [`E0277`](error_codes/e0277.md), [`E0308`](error_codes/e0308.md),
+  [`E0404`](error_codes/e0404.md), [`E0425`](error_codes/e0425.md), [`E0428`](error_codes/e0428.md),
+  [`E0433`](error_codes/e0433.md), [`E0477`](error_codes/e0477.md), [`E0576`](error_codes/e0576.md),
+  [`E0599`](error_codes/e0599.md), [`E0782`](error_codes/e0782.md),
   each recording what the code means in plain Rust, the rule behind it, and where CGP produces it.
   Plus [cargo-cgp-codes.md](error_codes/cargo-cgp-codes.md), the pointer to `cargo-cgp`'s
   `[CGP-Exxx]` codes. See the [error-code reference index](error_codes/README.md).

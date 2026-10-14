@@ -236,7 +236,7 @@ wiring or dispatch entry named) and renders each hop as a tree label with the ty
 resugared.
 
 **[The transformed diagnostic](typed-resolution-output.md)** is the output side: the coded
-`[CGP-E001]` to `[CGP-E005]` headline classes and the cause each headline states, the `root cause:`
+`[CGP-E001]` to `[CGP-E005]` and `[CGP-E050]` headline classes and the cause each headline states, the `root cause:`
 notes over their merged dependency trees (with underived-field causes coalesced), and the emitter's
 application of the rustc-free plan to the compiler's `DiagInner`.
 
@@ -301,7 +301,8 @@ fixtures exercise but will need the impl's own environment to extend cleanly to 
 generic parameters. The resolver renders only leaves it can trust (a `HasField` field (missing,
 underived, or type-mismatched), an associated type the owner supplies differently from what a
 provider requires, a missing wiring, a missing dispatch entry on a non-context delegation table, a
-namespace redirect the context does not terminate, an ordinary foreign bound, or a terminal
+namespace redirect the context does not terminate, an extensible-data field or variant in a state
+its operation does not allow or a data derive a type lacks, an ordinary foreign bound, or a terminal
 blanket-trait bound), dropping pure wiring-plumbing dead-ends, so a diagnostic whose only
 recoverable leaf is one of those falls back. Parallel branches, deep nesting, and non-field leaves,
 by contrast, are all handled. The associated-type leaf is bounded in one way worth recording: it is
@@ -361,8 +362,9 @@ marking.
     holds the seventh anchor, `resolve_call_site`, the HIR re-read of the failing call, one stage per
     file: `find_call.rs` (`method_calls_at`, the calls a primary span lands on without lying
     strictly inside the receiver or an argument, and `traits_with_method`, the candidate consumer
-    traits *and* `#[cgp_fn]`/`#[blanket_trait]` blanket traits by method name, the latter headed
-    `[CGP-E003]` by clearing `consumers_are_cgp`), `receiver.rs`
+    traits, `#[cgp_fn]`/`#[blanket_trait]` blanket traits, and extensible-data traits by method
+    name, the blanket traits headed `[CGP-E003]` by clearing `consumers_are_cgp` and the data traits
+    `[CGP-E050]` by setting `data_operation`), `receiver.rs`
     (`receiver_context`/`local_binding_context`, the receiver's type from its binding, annotation,
     parameter, literal, or constructor-call signature, plus `contexts_at_spans`, the same reading
     applied to every expression at the diagnostic's spans, which is the by-blanket-trait anchor's
@@ -380,8 +382,9 @@ marking.
     same-trait list recursion, the drop of a leaf still carrying a call-site placeholder (an
     unknowable `_: Send` is never reported), and `compute_leaves` folding the root node's sub-result
     into a `Resolved`). `vocabulary.rs` decides what the descent walks into (`is_descendable`:
-    provider traits, `DelegateComponent`, and context obligations, *not*
-    `IsProviderFor`/`CanUseComponent`; and the `is_workaround_plumbing` drop of a
+    provider traits, `DelegateComponent`, context obligations, and extensible-data traits, *not*
+    `IsProviderFor`/`CanUseComponent`; `is_context_side`, the subset a foreign bound's blanket is
+    followed into; and the `is_workaround_plumbing` drop of a
     `CanUseComponent`/`IsProviderFor` dependency beside the real obligation). `impl_match.rs` finds
     the satisfying impl and reads its dependencies (`impl_where_obligations` preferring a
     concrete-`Self` impl over the delegation blanket, the placeholder instantiation of a
@@ -401,7 +404,9 @@ marking.
     `misdirected.rs` reads the requirements of a provider impl whose `#[cgp_impl]` header names the
     consumer trait (`misdirected_impl_clauses`).
   - [`classify/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/classify)
-    classifies a terminal: `leaf.rs` turns it into the rustc-free `Leaf` (a field by inspecting the
+    classifies a terminal: `data.rs` reads an extensible-data terminal off the presence markers of
+    the partial type it lands on (`classify_data_leaf`), `leaf.rs` turns it into the rustc-free
+    `Leaf` (a field by inspecting the
     struct and its `Deref` chain in `field.rs`, with a missing field's fix confirmed by the struct's
     other `HasField` impls and typed by `required_type.rs`'s `required_field_type`, which reads the
     `Value = T` constraint beside the bound on the impl that requires it, and with a similar field or
@@ -418,10 +423,15 @@ marking.
     on a non-table type with no concrete impl of the parent provider trait (a not-a-provider, via
     `owner_has_impl_of` against that trait), while dropping a higher-order-provider dead-end (a
     non-table owner that *does* have a concrete impl of the trait).
+  - [`data/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/data)
+    recognizes CGP's extensible-data traits (`is_data_trait`, `is_data_list_recursion`, and
+    `data_derive`, the derive behind each data trait) and reads a partial value back into its target
+    and the state of each field or variant (`read_partial`).
   - [`label/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/label)
     turns each obligation into a structured node: `predicate_label.rs` names each consumer/provider
     node off its trait `DefId` and the obligation's arguments (`trait_generics`) as a rustc-free
-    `DepNode` variant, dropping the plumbing; `render_ty.rs` resugars a `DefId`-anchored
+    `DepNode` variant, dropping the plumbing (an extensible-data list recursion among it) and naming a
+    partial value in words (`DepNode::PartialTrait`); `render_ty.rs` resugars a `DefId`-anchored
     `Cons`/`Nil` or `Either`/`Void` self type to `Product![…]`/`Sum![…]`, or (when every element is
     a `Field` and the shared `shape` rules give a spelling) to a `Struct!`/`Enum!` shape, rendering a call-site placeholder as `_` (recursing
     into a tuple so a nested placeholder prints `_` rather than the raw `!N` form); and
@@ -743,6 +753,25 @@ fixtures:
   `[CGP-E001]` missing-wiring tree instead of leaking generated `__…__` placeholder names. The type
   argument the import is required of carries no wiring, so the consumer step names it plainly
   rather than calling it a context.
+
+The **extensible-data leaf** is pinned by the fixtures of
+[`data/extensible-data/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/data/extensible-data),
+which the [extensible data](../../cgp/errors/data/extensible-data.md) class catalogs:
+
+- `builder_missing_field`, `builder_field_set_twice`, and `matcher_missing_arm_check`: a builder or
+  matcher wired behind a check, the field not set, the field set twice, or the variant not extracted
+  read off the partial type's markers under `[CGP-E001]`, the last builder step naming the builder in
+  words.
+- `build_and_merge_extra_field` and `build_and_merge_missing_field`: a merge whose source carries a
+  field the target lacks, reached through the descent into `CanBuildFrom` and the builder's
+  `BuildField`, the stray field named as a missing field with no add-the-field `help`.
+- `upcast_missing_variant`, `downcast_missing_source_variant`, and `upcast_payload_mismatch`: a cast
+  on a constructed enum, read by the call-site anchor's data candidate under `[CGP-E050]`, the
+  missing variant or the payload of the wrong type named.
+- `has_fields_bound_without_derive` and `auto_dispatch_missing_derive`: a data trait a type lacks,
+  with the derive `help`, the latter merging two traits on one enum.
+- `from_variant_bound_missing_variant`: a plain function's bound no anchor recovers, keeping rustc's
+  headline and pinning the resugaring of the "similar impl" help rustc splits into styled fragments.
 
 The **impl-site and wrapper-chain paths** are pinned by:
 

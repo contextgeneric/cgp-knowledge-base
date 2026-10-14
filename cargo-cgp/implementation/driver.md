@@ -512,8 +512,8 @@ whose notes are the fuller. rustc repeats an error that way when it checks one r
 item a macro generated (the repeat renames or drops a note) or a call's bound for the call and an
 argument (the repeat has its own caret). A caret the earlier block does not already cover is kept,
 labelled "also required here", so no location is lost
-([`from_variant_wrong_case`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/from_variant_wrong_case.rs),
-[`matcher_missing_arm`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/matcher_missing_arm.rs)).
+([`from_variant_wrong_case`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/from_variant_wrong_case.rs),
+[`matcher_missing_arm`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/matcher_missing_arm.rs)).
 The count stays honest because cargo re-counts the diagnostics the emitter actually produces (a
 suppressed re-report drops out of its "N errors" summary as well), so the visible block count and
 the summary agree. This is the [one-mistake-many-errors](../issues/usability.md) usability class the

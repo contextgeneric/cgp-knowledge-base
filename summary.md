@@ -359,6 +359,9 @@ it stale.
   `#[use_type]`, or a component requirement a provider omits (`E0599`, `E0220`, `E0425`, `E0277`).
 - [lowering/wrong-component-half.md](cgp/errors/lowering/wrong-component-half.md) — a consumer trait
   named where a provider trait belongs or the reverse, or `#[cgp_impl]` on a non-component (`E0107`).
+- [data/extensible-data.md](cgp/errors/data/extensible-data.md) — a builder, extractor, or cast
+  applied in a state its value does not allow, or to a type without its data derive, reported as a
+  bound on a generated partial type (`E0277`, `E0271`, `E0599`, `E0308`).
 - [error_codes/README.md](cgp/errors/error_codes/README.md) — the forward index from a `rustc` error
   code to its meaning and the CGP classes that emit it.
 - [error_codes/cargo-cgp-codes.md](cgp/errors/error_codes/cargo-cgp-codes.md) — a pointer entry for
@@ -377,12 +380,16 @@ it stale.
   associated-type projection.
 - [error_codes/e0277.md](cgp/errors/error_codes/e0277.md) — a trait bound is not satisfied, including
   the `Sized` form.
+- [error_codes/e0308.md](cgp/errors/error_codes/e0308.md) — mismatched types: an expression of
+  another type than its position expects.
 - [error_codes/e0404.md](cgp/errors/error_codes/e0404.md) — a trait was expected in a bound position
   but the name resolved to something else.
 - [error_codes/e0425.md](cgp/errors/error_codes/e0425.md) — an identifier is not found in this scope.
 - [error_codes/e0433.md](cgp/errors/error_codes/e0433.md) — a path's leading segment names an
   undeclared type, crate, or module.
 - [error_codes/e0428.md](cgp/errors/error_codes/e0428.md) — a name defined more than once in one scope.
+- [error_codes/e0477.md](cgp/errors/error_codes/e0477.md) — a type that does not outlive a lifetime
+  a bound requires of it.
 - [error_codes/e0576.md](cgp/errors/error_codes/e0576.md) — an associated item the trait does not
   declare.
 - [error_codes/e0599.md](cgp/errors/error_codes/e0599.md) — a method exists but its trait bounds were

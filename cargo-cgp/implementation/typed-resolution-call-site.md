@@ -148,11 +148,13 @@ type that is no context. A context from another crate qualifies when it carries 
 wiring of its own (`is_context_adt`), so a call on a context a library exports recovers its root
 cause as a call on a local one does
 ([`foreign_context_error_route`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/foreign_context_error_route.rs)).
-The trait candidates come from the method *name*, and are of two kinds: every CGP **consumer trait**
-(recognized structurally, in any crate) declaring a `self` method of that name, tried first so a
-directly-wired consumer keeps its precise recovery; then every `#[cgp_fn]` / `#[blanket_trait]`
+The trait candidates come from the method *name*, and are of three kinds: every CGP **consumer
+trait** (recognized structurally, in any crate) declaring a `self` method of that name, tried first
+so a directly-wired consumer keeps its precise recovery; then every `#[cgp_fn]` / `#[blanket_trait]`
 **blanket trait** declaring such a method, as recognized by `is_blanket_trait` (see
-[anchoring the starting obligation](typed-resolution-anchors.md)). A blanket trait is a blanket-impl
+[anchoring the starting obligation](typed-resolution-anchors.md)); then every one of CGP's
+**extensible-data traits** declaring it, the casts, builders, and extractors of the `cgp-field` and
+`cgp-field-extra` crates (`CanUpcast::upcast`, `CanDowncast::downcast`). A blanket trait is a blanket-impl
 trait that is not a CGP component (no provider trait, no `DelegateComponent`), consumed like a
 consumer (`app.describe()`) and seeding the same walkable obligation `Ctx: Describe` whose `Self` is
 the context. Because it is not a CGP component, its result takes the `[CGP-E003]` code rather than
@@ -161,6 +163,12 @@ clearing the `Resolved::consumers_are_cgp` flag the walk sets. This is what reco
 to a `#[cgp_fn]` trait the context cannot satisfy: an `E0599` whose real cause (a field one composed
 blanket trait reads) rustc buries in a mid-stack note under its method-probe candidate list
 ([`cgp_fn_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/cgp_fn_use_site.rs)).
+An extensible-data trait is consumed the same way on its receiver (`Small::Foo(1).upcast(…)`), and
+its result takes the `[CGP-E050]` code by setting `Resolved::data_operation`, the walk descending
+the operation's blanket impl to the field or variant at fault
+([`upcast_missing_variant`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/upcast_missing_variant.rs)).
+Its receiver is often another data operation's result (a builder chain, a remainder bound by a
+pattern), which the anchor cannot type, so such a call declines.
 
 ## Parameters by signature unification, not by convention
 

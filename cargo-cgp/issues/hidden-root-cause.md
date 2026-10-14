@@ -74,23 +74,26 @@ reader as rustc wrote them, and no line of the output contains the cause: the de
 and the field or type at fault appears nowhere, so the cause cannot be read back from the output
 without the program's source. Their fixtures carry `//@quality: hidden`:
 
-- [`build_from_source_without_has_fields`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/build_from_source_without_has_fields.rs):
+- [`build_from_source_without_has_fields`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/build_from_source_without_has_fields.rs):
   `build_from` on a source struct without `#[derive(HasFields)]`, reported as `CanBuildFrom<…>` not
   implemented for the target's partial record.
-- [`build_with_default_without_default`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/build_with_default_without_default.rs)
+- [`build_with_default_without_default`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/build_with_default_without_default.rs)
   and
-  [`finalize_with_default_without_default`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/finalize_with_default_without_default.rs):
+  [`finalize_with_default_without_default`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/finalize_with_default_without_default.rs):
   building or finalizing with defaults when an unset field's type has no `Default`, reported as
   `CanFinalizeWithDefault` on the partial record, or as a missing method, without naming the field.
-- [`upcast_source_without_has_fields`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/extensible-data/upcast_source_without_has_fields.rs):
+- [`upcast_source_without_has_fields`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/upcast_source_without_has_fields.rs):
   `upcast` on an enum that derives only `ExtractField`, reported as "no method named `upcast`" with
   a note suggesting an impl of `CanUpcast`.
 
 Unlike the defeated archetypes, each cause is in the compiler's state: the presence markers of the
 partial record (`IsPresent`, `IsNothing`, and the rest) say which field is unset, and the unmet
-bound names the trait the missing derive would implement. So a typed leaf over them can name the
-field, its type without `Default`, or the derive, the same leaf the readable-but-buried failures of
-the family need ([usability](usability.md#extensible-data-failures-are-not-reshaped-at-all)).
+bound names the trait the missing derive would implement. The typed leaf that reads those markers
+and names a missing data derive exists for the shapes an anchor reaches (the
+[extensible data](../../cgp/errors/data/extensible-data.md) class). These four are calls the
+resolver does not take: a call on another call's result or by a type-relative path, which no anchor
+types yet, or an `E0599` "no method named", which its gate declines
+([usability](usability.md#extensible-data-method-calls-are-not-reshaped)).
 
 ## What a new case would look like
 
