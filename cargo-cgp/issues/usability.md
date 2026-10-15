@@ -221,9 +221,10 @@ fixture that pins it.
   `Symbol!("Foo")` beside a header naming `Symbol!("Bar")`
   ([`from_variant_bound_missing_variant`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/from_variant_bound_missing_variant.rs)
   shows it on a declined diagnostic).
-- **An extensible-data failure behind a check or a cast** names the field or variant at fault. The
-  walk descends CGP's data traits to the bound on the generated partial type and reads its presence
-  markers, so a builder list without a step for one field reads
+- **An extensible-data failure** names the field or variant at fault, behind a check, a cast, or a
+  call on a builder or an extractor that other data operations produced. The walk descends CGP's
+  data traits to the bound on the generated partial type and reads its presence markers, so a
+  builder list without a step for one field reads
   `` [CGP-E001] field `port` of `Config` is not set ``
   ([`builder_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/builder_missing_field.rs)),
   an upcast into an enum without one of the source's variants reads
@@ -231,6 +232,15 @@ fixture that pins it.
   ([`upcast_missing_variant`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/upcast_missing_variant.rs)),
   and a type without the data derive an operation needs gets a `help` naming it
   ([`auto_dispatch_missing_derive`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/auto_dispatch_missing_derive.rs)).
+  The data-call anchor types a builder chain, a remainder a pattern binds, and a type-relative call
+  through the operations' signatures, so a `build_field` setting a field twice reads
+  `` [CGP-E050] field `first_name` of `Person` is already set ``
+  ([`build_field_twice`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/build_field_twice.rs)),
+  and the shapes rustc reports before the bounds are checked are resolved too: a premature
+  `finalize_build`'s "no method named" `E0599`
+  ([`finalize_build_premature`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/finalize_build_premature.rs))
+  and a variant extracted twice, an `E0308`
+  ([`extract_field_twice`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/extract_field_twice.rs)).
 - **A required type that projects through the context's own wiring** is shown in both forms. When a
   provider reads a field whose type is expressed through an
   [abstract type](../../cgp/concepts/abstract-types.md) it imports
@@ -303,33 +313,10 @@ suggesting a type parameter, then the `E0275` overflow a check reports on the lo
 [unresolved wiring name](../../cgp/errors/wiring/unresolved-wiring-name.md) class reshapes a whole
 key or value but not a segment of one.
 
-## Extensible-data method calls are not reshaped
+## Extensible-data shapes outside the presence-marker leaf
 
-A failing call on a builder, an extractor, or a remainder passes through as rustc wrote it, unless
-its receiver is a value the call-site anchor can type. The
-[extensible data](../../cgp/errors/data/extensible-data.md) class is reshaped where an existing
-anchor reaches it (through a check, a consumer call, or a cast on a constructed enum), and its leaf
-then names the field or variant at fault. But a data operation's receiver is usually another
-operation's result: a `build_field` chain or a premature `finalize_build`
-([`build_field_twice`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/build_field_twice.rs),
-[`finalize_build_premature`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/finalize_build_premature.rs)),
-a merge with `build_from`
-([`build_from_field_not_in_target`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/build_from_field_not_in_target.rs),
-[`build_from_overlapping_sources`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/build_from_overlapping_sources.rs)),
-or a remainder bound by a pattern
-([`finalize_extract_early`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/finalize_extract_early.rs),
-[`downcast_on_remainder`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/downcast_on_remainder.rs)).
-The emitter cannot read typeck results, so typing such a receiver means following the chain of data
-operations from the struct's `builder()` or a constructor through each operation's signature. The
-same holds for a type-relative call (`Shape::from_variant(…)`) and for an `E0599` "no method named"
-on a partial type, which the resolver's gate does not take today. The class's remaining fixtures
-under
-[`data/extensible-data/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/data/extensible-data)
-pin each shape, four of them under
-[hidden root cause](hidden-root-cause.md#extensible-data-failures-that-never-name-their-cause).
-
-Two shapes stay outside the presence-marker leaf. A matcher's provider method called directly
-(`MatchWithHandlers::<…>::compute(&(), …)`,
+Two shapes of the [extensible data](../../cgp/errors/data/extensible-data.md) class stay as rustc
+wrote them. A matcher's provider method called directly (`MatchWithHandlers::<…>::compute(&(), …)`,
 [`matcher_missing_arm`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/matcher_missing_arm.rs))
 is a use site no anchor reads, though its walk would reach the unextracted variant as the check form
 does. And a bound on a borrowed field view for every lifetime, on an enum with a lifetime

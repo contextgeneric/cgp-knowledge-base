@@ -4,11 +4,12 @@ This document covers the first stage of the driver's
 [typed root-cause resolution](typed-root-cause-resolution.md), which recovers from a failing
 diagnostic the **real trait obligation** that seeds the [walk](typed-resolution-walk.md): a
 consumer-trait obligation `Ctx: ConsumerTrait<Params…>`, or, for a `#[check_providers]` entry, the
-provider-trait obligation the entry asserts. Eight anchors recover it from eight failure shapes,
-tried in order, and the first that succeeds wins. Seven are described here. The remaining one, the
-re-read of the failing call expression, is tried seventh and has
-[its own document](typed-resolution-call-site.md). How the recovered causes are worded and emitted
-is [the transformed diagnostic](typed-resolution-output.md).
+provider-trait obligation the entry asserts. Nine anchors recover it from nine failure shapes,
+tried in order, and the first that succeeds wins. Seven are described here. The remaining two
+re-read the failing call expression, one for a call through a consumer or blanket trait and one for
+a call to an extensible-data operation; they are tried seventh and eighth and share
+[their own document](typed-resolution-call-site.md). How the recovered causes are worded and
+emitted is [the transformed diagnostic](typed-resolution-output.md).
 
 **From a `check_components!` entry, by span.** A `check_components!` entry expands to a concrete
 impl of a generated check trait,
@@ -236,6 +237,15 @@ from the code the programmer wrote rather than from the diagnostic's spans, and 
 mechanics, and worked example have their own document:
 [Typed resolution: the call-site anchor](typed-resolution-call-site.md).
 
+**From a call to an extensible-data operation.** The eighth anchor, `resolve_data_call`, re-reads a
+failing call to one of CGP's builder, extractor, or cast operations (`build_field`,
+`extract_field`, `downcast`, `Shape::from_variant`), whose value is usually another data
+operation's result or a remainder a pattern binds, not a context. It types that value through the
+chain of operations that produced it, seeds the call the way the seventh anchor does, and gives the
+result the `[CGP-E050]` code. It takes two diagnostic shapes no other anchor sees: an `E0599` "no
+method named" (a finalize on a builder with a field unset) and an `E0308` on a tag argument (a
+variant extracted twice). The same document covers it.
+
 **Recognizing a blanket trait.** Three of the anchors (the impl-site, the call-site, and the
 by-blanket-trait use-site anchors) reach a `#[cgp_fn]`/`#[blanket_trait]` **blanket trait**: a trait
 consumed like a consumer but which is not a component, so no marker or provider trait identifies it.
@@ -251,11 +261,11 @@ a *library* publishes, which is where such traits normally live
 while a plain blanket trait in either place keeps rustc's diagnostic
 ([`local_blanket_trait_reached`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/local_blanket_trait_reached.rs)).
 A blanket trait CGP's own crates define, an extensible-data cast or builder such as `CanUpcast`, is
-not a blanket trait in this sense: the call-site anchor reaches it as a candidate of its own, an
-extensible-data trait, whose failure takes the `[CGP-E050]` class
+not a blanket trait in this sense: the data-call anchor reaches it instead, and its failure takes
+the `[CGP-E050]` class
 ([`upcast_missing_variant`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/upcast_missing_variant.rs)).
 
-**From a use site, by blanket trait.** The eighth and last anchor,
+**From a use site, by blanket trait.** The ninth and last anchor,
 `resolve_use_site_blanket_trait`, is the by-consumer anchor's counterpart for a
 `#[cgp_fn]`/`#[blanket_trait]` **blanket trait**, a blanket-impl trait that is not a CGP component.
 It reaches the shape a blanket trait required through a `where` **bound** or supertrait produces
@@ -300,6 +310,7 @@ The per-file map of the whole resolver lives in the parent document's
 
 - [Typed root-cause resolution](typed-root-cause-resolution.md): the pipeline overview, its
   boundaries, and the consolidated tests and source catalogs.
-- [Typed resolution: the call-site anchor](typed-resolution-call-site.md): the seventh anchor.
+- [Typed resolution: the call-site anchor](typed-resolution-call-site.md): the seventh and eighth
+  anchors.
 - [Typed resolution: walking to the root cause](typed-resolution-walk.md): the descent every
   anchor's seed feeds.

@@ -497,7 +497,11 @@ which collapses every run, is what the missing-field check reads a landmark thro
 Both scan the ASCII identifier run by byte but copy every other character whole by its UTF-8 width,
 so multi-byte text (a rendered dependency tree's `└─`) is never split into invalid bytes. They skip
 string literals, so a name inside a `Symbol!("a::b")` is never mangled, and they leave a turbofish,
-an associated-type `>::Assoc` tail, and a lone identifier alone.
+an associated-type `>::Assoc` tail, and a lone identifier alone. A run right after the word `use`
+keeps every segment too, since a `use` statement is code the reader types as written: the
+extensible-data `help` that names a method's import
+(`` with `use cgp::core::field::impls::CanDowncastFields;` in scope ``) keeps its path
+([`downcast_on_remainder`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/downcast_on_remainder.rs)).
 
 [`strip_cgp_prefixes`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/strip_prefixes.rs)
 removes the specific CGP re-export paths (`cgp::prelude::`, `cgp::macro_prelude::`,

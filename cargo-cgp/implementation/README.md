@@ -45,9 +45,10 @@ same change.
     span-matching anchors that recover the obligation to walk from a check entry, a
     `#[check_providers]` entry, a hand-written impl, a foreign wrapper chain, a use site, a
     namespace-joined consumer, or a blanket trait.
-  - [Typed resolution: the call-site anchor](typed-resolution-call-site.md): the HIR re-read of the
-    failing call expression, its signature unification, and the rigid placeholders that stand in for
-    what the call never types.
+  - [Typed resolution: the call-site anchor](typed-resolution-call-site.md): the HIR re-reads of
+    the failing call expression, its signature unification, the rigid placeholders that stand in
+    for what the call never types, and the data-call anchor that types an extensible-data
+    operation's value through the chain of operations that produced it.
   - [Typed resolution: walking to the root cause](typed-resolution-walk.md): the descent from the
     seeded obligation to every terminal unmet bound, and the decoding, classification, and label
     rendering of each leaf.

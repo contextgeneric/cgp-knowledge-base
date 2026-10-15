@@ -132,7 +132,15 @@ The resolver traces the dependency chain and treats the error as CGP-related exa
 component failure sits in that chain; a candidate whose chain reaches no CGP cause **declines** and
 passes through to the fallback text rewrite untouched.
 
-The `E0599` arm is narrowed to the method-bounds shape for a reason beyond relevance: a
+Two more shapes are candidates for one anchor alone, the data-call anchor: the method probe's "no
+method named `…`" `E0599`, and an `E0308` on a call's argument. A call to one of CGP's
+extensible-data operations can fail with either before its bounds are checked (a builder finalized
+with a field unset has no `finalize_build` at all, and an extractor with one variant left rejects
+the tag of the variant it already ruled out), and an `E0308` is taken only when the walk finds the
+field or variant state the operation rejects
+([the data-call anchor](typed-resolution-call-site.md#calls-to-extensible-data-operations)).
+
+The `E0599` arm is otherwise narrowed to those two shapes for a reason beyond relevance: a
 *resolution*-class `E0599` (`no variant named …`, `no associated item …`) is emitted while type
 lowering is still mid-flight, and running the resolver's trait solver on it re-enters the diagnostic
 context and aborts the compiler. Declining such an `E0599` before any solving is both crash-safe and
@@ -206,7 +214,7 @@ traits are recognized structurally, without `IsProviderFor`**:
   consumer whose blanket routes to that provider.
 
 **[Anchoring the starting obligation](typed-resolution-anchors.md)** recovers the obligation the
-compiler failed to prove, one of eight ways tried in order. A `check_components!` entry is matched
+compiler failed to prove, one of nine ways tried in order. A `check_components!` entry is matched
 by its caret to the check impl and its `CanUseComponent<Marker, Params>` assertion mapped to the
 real consumer obligation, and a `#[check_providers]` entry the same way to the provider obligation
 it asserts; a failure inside a hand-written `impl Trait for Context` block is recovered from the
@@ -223,10 +231,13 @@ component unconditionally (an `E0277` on the call itself), or a call to a `#[cgp
 method. It re-reads the failing call expression from HIR alone: the receiver carries the context,
 the component's parameters come from unifying the call's *written* argument types against the
 method's own declared signature, and every parameter the call leaves to inference is seeded as a
-rigid placeholder the walk resolves around but never reports on. The eighth and last anchor,
-`resolve_use_site_blanket_trait`, is the by-consumer anchor's counterpart for a blanket trait
-required as a *bound* rather than *called*, gated to `E0277` and tried after the call-site anchor,
-so a method call leads with the trait the programmer invoked.
+rigid placeholder the walk resolves around but never reports on. The eighth, the data-call anchor
+`resolve_data_call`, re-reads a call to one of CGP's extensible-data operations, typing the builder,
+extractor, or remainder it is called on through the chain of data operations and pattern bindings
+that produced it. The ninth and last anchor, `resolve_use_site_blanket_trait`, is the by-consumer
+anchor's counterpart for a blanket trait required as a *bound* rather than *called*, gated to
+`E0277` and tried after the call-site anchors, so a method call leads with the trait the programmer
+invoked.
 
 **[Walking to the root cause](typed-resolution-walk.md)** descends the seeded obligation's
 dependency graph (following only the CGP wiring vocabulary and obligations on the context itself,
@@ -243,7 +254,7 @@ application of the rustc-free plan to the compiler's `DiagInner`.
 ## Boundaries and open ends
 
 The resolver is deliberately bounded, and a few edges are worth recording. Because it anchors the
-eight ways above, a wiring failure that is *none* of them declines. The consumer-trait use-site
+nine ways above, a wiring failure that is *none* of them declines. The consumer-trait use-site
 anchor reaches a manual supertrait bound in a trait definition or `where` clause, and a
 namespace-joined use-site call, whenever a local CGP consumer trait and its context appear in the
 diagnostic's spans (the `use_type_foreign_unsatisfied`, `use_type_nested_unsatisfied`, and
@@ -264,11 +275,12 @@ walking it as that consumer obligation so it de-duplicates into the context's ow
 a provider impl carrying no such recoverable bound declines. What else declines is a failure none of
 the recoveries reach: a generic component's trait definition, a call whose *receiver's type* is not
 syntactically recoverable (a method call's result or a field access, `self.app.handle(…)`; typing
-those needs the typeck results the emitter can never force), or a written type beyond the call-site
-anchor's small hand lowering. The wrapper-chain descent is itself bounded (it follows only real impl
-`where`-clauses, reports a cause only at a genuine CGP consumer on a context, and stops at a
-recursion bound), and every call-site seed is gated on actually failing, so neither can fabricate a
-chain from an unrelated bound.
+those needs the typeck results the emitter can never force), unless the receiver is a chain of
+extensible-data operations the data-call anchor types from their signatures, or a written type
+beyond the call-site anchor's small hand lowering. The wrapper-chain descent is itself bounded (it
+follows only real impl `where`-clauses, reports a cause only at a genuine CGP consumer on a context,
+and stops at a recursion bound), and every call-site seed is gated on actually failing, so neither
+can fabricate a chain from an unrelated bound.
 
 One use-site shape is out of reach for a hard reason worth recording: a **consumer-method call whose
 failure is an `E0271`, not an `E0599`**: `app.deserialize_json_string::<Payload>(…)` on a context
@@ -324,7 +336,7 @@ marking.
   (the consumer obligation `Ctx: ConsumerTrait<Params…>`, or the provider obligation a
   `#[check_providers]` entry asserts), never a `CanUseComponent` or `IsProviderFor` wrapper.
   - [`anchor/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/anchor)
-    holds seven of the eight anchors, plus their two shared ingredients: `seed.rs`
+    holds seven of the nine anchors, plus their two shared ingredients: `seed.rs`
     (`consumer_obligation`, the `Params`-slot ungrouping decided by the consumer's own generics: a
     single tuple-typed parameter kept whole, a lifetime restored from `Life<'a>` via `life_region`,
     any mismatch declining rather than handing the solver a malformed trait ref) and `spans.rs` (the
@@ -350,7 +362,7 @@ marking.
     redundant bare marker, a free-parameter catch-all, and a `namespace …;` blanket `__Key__` key.
     `use_site_consumer.rs` recovers a local, non-generic CGP consumer trait from the diagnostic's
     spans and walks `Ctx: Consumer` directly (the anchor that reaches a namespace-joined context),
-    and its by-blanket-trait sibling `resolve_use_site_blanket_trait` (eighth, gated to `E0277`,
+    and its by-blanket-trait sibling `resolve_use_site_blanket_trait` (ninth, gated to `E0277`,
     tried after the call-site anchor) does the same for a `#[cgp_fn]`/`#[blanket_trait]` blanket
     trait required as a bound, reading the context off the failing expression via the call-site
     anchor's `contexts_at_spans` and heading the result `[CGP-E003]` by clearing
@@ -359,22 +371,27 @@ marking.
     `#[cgp_fn]` trait or one a library publishes is reached while `ToString`, `Into`, and a crate's
     own plain blanket traits are not.
   - [`call_site/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/call_site)
-    holds the seventh anchor, `resolve_call_site`, the HIR re-read of the failing call, one stage per
-    file: `find_call.rs` (`method_calls_at`, the calls a primary span lands on without lying
-    strictly inside the receiver or an argument, and `traits_with_method`, the candidate consumer
-    traits, `#[cgp_fn]`/`#[blanket_trait]` blanket traits, and extensible-data traits by method
-    name, the blanket traits headed `[CGP-E003]` by clearing `consumers_are_cgp` and the data traits
-    `[CGP-E050]` by setting `data_operation`), `receiver.rs`
+    holds the seventh and eighth anchors, `resolve_call_site` and `resolve_data_call`, the HIR
+    re-reads of the failing call, one stage per file: `find_call.rs` (`method_calls_at`, the calls a
+    primary span lands on without lying strictly inside the receiver or an argument
+    (`is_about_call`), and `traits_with_method`, the candidate consumer traits and
+    `#[cgp_fn]`/`#[blanket_trait]` blanket traits by method name, the blanket traits headed
+    `[CGP-E003]` by clearing `consumers_are_cgp`), `data_call.rs` (`resolve_data_call`, a method or
+    type-relative call to an extensible-data operation in scope at the call, headed `[CGP-E050]` by
+    setting `data_operation`), `chain.rs` (`data_expr_ty`, the value such a call is made on, typed
+    through the data operations and pattern bindings that produced it), `receiver.rs`
     (`receiver_context`/`local_binding_context`, the receiver's type from its binding, annotation,
     parameter, literal, or constructor-call signature, plus `contexts_at_spans`, the same reading
     applied to every expression at the diagnostic's spans, which is the by-blanket-trait anchor's
     context source), `seed.rs` (`seed_from_call`, the signature unification: fresh variables for the
     method's item, `Self` pinned to the context, each written argument type unified with its
-    declared input, the trait's parameters read back with `walk`'s `unknowns_to_placeholders`
+    declared input (from the first input for a type-relative call, and a data value's argument typed
+    by `data_expr_ty` too), the trait's parameters read back with `walk`'s `unknowns_to_placeholders`
     folding what stayed unresolved), `written_ty.rs` (`expr_written_ty`, the argument shapes whose
     types the call writes, a tuple read partially, its shape recovered with a fresh inference
     variable per unwritten element), and `lower.rs` (`lower_hir_ty`/`instantiate_written`, the small
-    syntactic type lowering over cached `type_of`).
+    syntactic type lowering over cached `type_of`, a literal const argument read through the
+    `lit_to_const` query).
   - [`walk/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/walk)
     walks the cause chain to each terminal leaf. `leaves.rs` drives the recursion (`resolve_leaves`
     erasing the seed, `resolve_node` the per-node memoized descent with the cycle guard and
@@ -424,9 +441,10 @@ marking.
     `owner_has_impl_of` against that trait), while dropping a higher-order-provider dead-end (a
     non-table owner that *does* have a concrete impl of the trait).
   - [`data/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/data)
-    recognizes CGP's extensible-data traits (`is_data_trait`, `is_data_list_recursion`, and
-    `data_derive`, the derive behind each data trait) and reads a partial value back into its target
-    and the state of each field or variant (`read_partial`).
+    recognizes CGP's extensible-data traits (`is_data_trait`; `is_data_operation`, the ones a call
+    to a data operation names, which leave out the field-access traits; `is_data_list_recursion`;
+    and `data_derive`, the derive behind each data trait) and reads a partial value back into its
+    target and the state of each field or variant (`read_partial`).
   - [`label/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/label)
     turns each obligation into a structured node: `predicate_label.rs` names each consumer/provider
     node off its trait `DefId` and the obligation's arguments (`trait_generics`) as a rustc-free
@@ -464,12 +482,13 @@ marking.
 - [`crates/cargo-cgp-driver/src/emitter/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/emitter):
   the `try_resolve` seam (gated to an unmet-obligation code, `E0271`/`E0275`/`E0277` or a
   method-bounds `E0599`, with a resolution-class `E0599` excluded so the solver never runs on an
-  error emitted mid-`clauses_of`) that tries the eight anchors in turn (the by-blanket-trait anchor
-  last, gated to `E0277`), and the `transform_resolved` mutation it feeds, mapping the rustc code to
-  a `DiagKind` (overridden to the use-site kind for a call-anchored resolution), calling
-  `plan_resolved`, and applying the plan to the `DiagInner`, falling back to the in-place text
-  rewrite when resolution returns `None`. A final cross-diagnostic de-duplication suppresses a
-  re-report of a failure already shown.
+  error emitted mid-`clauses_of`) that tries the nine anchors in turn (the by-blanket-trait anchor
+  last, gated to `E0277`) and sends the method probe's "no method named" `E0599`
+  (`is_no_matching_item`) and an `E0308` to the data-call anchor alone, and the `transform_resolved`
+  mutation it feeds, mapping the rustc code to a `DiagKind` (overridden to the use-site kind for a
+  call-anchored resolution), calling `plan_resolved`, and applying the plan to the `DiagInner`,
+  falling back to the in-place text rewrite when resolution returns `None`. A final cross-diagnostic
+  de-duplication suppresses a re-report of a failure already shown.
 - [`crates/cargo-cgp-error-processing/src/diagnosis/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/diagnosis):
   the rustc-free model and wording, `leaf.rs`/`resolved.rs` (the `Leaf`, `FieldIssue`, `Cause`
   holding a leaf and every path that reaches it, and `Resolved`), `node.rs`/`graph.rs` (the
@@ -766,10 +785,29 @@ which the [extensible data](../../cgp/errors/data/extensible-data.md) class cata
   field the target lacks, reached through the descent into `CanBuildFrom` and the builder's
   `BuildField`, the stray field named as a missing field with no add-the-field `help`.
 - `upcast_missing_variant`, `downcast_missing_source_variant`, and `upcast_payload_mismatch`: a cast
-  on a constructed enum, read by the call-site anchor's data candidate under `[CGP-E050]`, the
-  missing variant or the payload of the wrong type named.
-- `has_fields_bound_without_derive` and `auto_dispatch_missing_derive`: a data trait a type lacks,
-  with the derive `help`, the latter merging two traits on one enum.
+  on a constructed enum, read by the data-call anchor under `[CGP-E050]`, the missing variant or the
+  payload of the wrong type named.
+- `build_field_twice`, `build_field_unknown`, `take_field_absent`, and `finalize_build_premature`: a
+  builder typed through its `builder()` and `build_field` chain, the field set twice, missing from
+  the struct, or not set, the last a "no method named" `E0599` whose chain starts at the finalize.
+- `build_from_overlapping_sources` and `build_from_field_not_in_target`: a merge into a builder
+  typed after an earlier merge, the field already set or missing from the target.
+- `extract_field_twice`, `finalize_extract_early`, and `downcast_on_remainder`: a remainder a
+  pattern binds, the variant already extracted (an `E0308`), not extracted, or the remainder given
+  where its enum belongs, with the `downcast_fields` `help` and its import.
+- `set_optional_on_core_builder`: an optional builder's `set` on a core builder, with the
+  `to_optional` `help` and its import.
+- `from_variant_wrong_case`, `build_with_default_without_default`, and
+  `finalize_with_default_without_default`: type-relative and chained calls, the misspelled variant
+  with its near miss, and the `Port: Default` bound an unset field needs.
+- `has_fields_bound_without_derive`, `auto_dispatch_missing_derive`,
+  `build_from_source_without_has_fields`, and `upcast_source_without_has_fields`: a data trait a type
+  lacks, with the derive `help`, the second merging two traits on one enum, the last a "no method
+  named" `E0599`.
+- `data_operation_name_not_in_scope` (under
+  [`pass-through/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/pass-through)):
+  calls named like data operations in a module without CGP's traits in scope, left as rustc wrote
+  them.
 - `from_variant_bound_missing_variant`: a plain function's bound no anchor recovers, keeping rustc's
   headline and pinning the resugaring of the "similar impl" help rustc splits into styled fragments.
 

@@ -39,7 +39,8 @@ let _ = Person::builder()
 
 The same mistake reaches a builder through a merge: `build_from` copies every field of its source,
 so two sources that share a field set it twice, and a `BuildWithHandlers` list with two steps for
-one field does the same.
+one field does the same. An optional builder's `set` has the matching rule: it needs the field held
+as optional, which a core builder from `builder()` never does until `to_optional()` converts it.
 
 ### A field the struct does not declare
 
@@ -91,7 +92,8 @@ let _: Big = Small::Foo(1).upcast(PhantomData::<Big>);
 ```
 
 Constructing an enum by a tag it lacks (`Shape::from_variant(PhantomData::<Symbol!("circle")>, …)`)
-fails the same way.
+fails the same way. So does calling `downcast` on the remainder an earlier downcast returns: the
+remainder is an extractor, not the enum, and an extractor takes `downcast_fields`.
 
 ### A missing data derive, or a missing `Default`
 
@@ -162,31 +164,43 @@ Each cause has its own tree code in the
 - `[CGP-E121]`: ``variant `Rectangle` of `Shape` is not extracted``.
 - `[CGP-E122]`: ``variant `Foo` on `FooBarBaz` has type `u32`, but `u64` is required``.
 - `[CGP-E123]`: `` `Shape` does not implement `HasFields` ``.
+- `[CGP-E124]`: ``variant `Circle` of `Shape` is already extracted``.
+- `[CGP-E125]`: ``field `foo` of `Context` is not optional``.
+- `[CGP-E126]`: `` an extractor of `FooBarBaz` does not implement `HasExtractor` ``, for a builder
+  or an extractor given where its struct or enum belongs.
 - `[CGP-E110]`: ``missing field `timeout` on `App` ``, the ordinary missing-field leaf, for a field
   a builder operation names that the struct lacks.
+- `[CGP-E117]`: ``the trait bound `Port: Default` is not satisfied``, the ordinary bound a defaulted
+  finalize needs for a field left unset.
 
 The headline states the cause after the code its anchor gives:
 
 - **Through a check or a consumer call**, the block keeps the consumer class
   (``[CGP-E001] field `port` of `Config` is not set``), its tree running through the builder or
   matcher provider to the cause.
-- **A call to one of CGP's data operations** on a constructed value (`upcast`, `downcast`) takes the
-  extensible-data class: ``[CGP-E050] missing variant `Bar` on `Big` ``.
+- **A call to one of CGP's data operations** takes the extensible-data class:
+  ``[CGP-E050] missing variant `Bar` on `Big` ``. The call may be made on a constructed value, on a
+  builder or an extractor that a chain of data operations produced
+  (`Person::builder().build_field(…)`), on a remainder a pattern binds (`Err(remainder)`), or by a
+  type-relative path (`Server::build_with_default(…)`): the tool types the value through the
+  operations that built it. This covers the shapes rustc reports before the operation's bounds are
+  checked, an `E0599` "no method named `finalize_build`" and an `E0308` on the tag of a variant
+  extracted twice.
 - **A `#[cgp_auto_dispatch]` call** on an enum without the derive keeps the blanket-trait class:
   ``[CGP-E003] `Shape` does not implement `HasFields` and `HasExtractor` ``.
 
 A missing derive gets a `help` naming it, the traits one type lacks merged into one attribute
 (`` add `#[derive(HasFields, ExtractField)]` to `Shape` ``), and a missing variant gets a near miss
-when the enum has a similar one. The tree names a builder or an extractor in words, as in
+when the enum has a similar one. A builder or extractor in the wrong place, and a field an optional
+builder's `set` needs optional, get a `help` naming the method to call with the `use` its trait
+needs, since the data traits are not in the prelude
+(`` call `downcast_fields` in place of `downcast` on an extractor, with `use cgp::core::field::impls::CanDowncastFields;` in scope ``).
+The tree names a builder or an extractor in words, as in
 ``trait impl `BuildField<Symbol!("host")>` for the builder of `Config` with `host` and `port` set``,
-though a provider step whose input is a partial value still shows its generated type.
-
-A failing call on a builder or an extractor that is itself the result of a call (a `build_field`
-chain, a `finalize_build`), on a remainder bound by a pattern (`Err(remainder)`), or by a
-type-relative path (`Server::build_with_default(…)`) passes through as rustc wrote it, with only
-the field names resugared to `Symbol!`. Four of them never name the cause, and are listed under
-[hidden root cause](../../../cargo-cgp/issues/hidden-root-cause.md). The lifetime shape passes
-through too.
+though a provider step whose input is a partial value still shows its generated type, and the
+defaulted finalize's chain names the internal `TransformMapDefault` transform. Two shapes pass
+through as rustc wrote them: a matcher's provider method called directly, a use site no anchor reads,
+and the lifetime shape.
 
 ## Resolving it
 
@@ -198,49 +212,62 @@ Each shape has its own fix, named by the cause:
 - **A variant left unextracted**: extract it before finalizing, or add an arm for it to the matcher.
 - **A cast that does not match**: add the missing variant, align the payload types, or cast to an
   enum whose variants match.
+- **A variant extracted twice**: handle the variant where it was first extracted, or extract
+  another one from the remainder.
+- **A field an optional builder needs optional**: call `to_optional()` on the builder first, or set
+  the field with `build_field`.
+- **A builder or an extractor in the wrong place**: call the operation it takes, as the `help`
+  names (`downcast_fields` on a remainder).
 - **A missing derive**: add the derive the `help` names; `#[derive(CgpData)]` supplies all of them.
 - **A missing `Default`**: implement `Default` for the field's type, or set the field before the
   defaulted finalize.
 
 ## Notes for tooling
 
-A call whose receiver is another call's result, a pattern binding, or a type-relative path needs
-its receiver's type recovered before the walk can start, and the emitter cannot read typeck results
-(see [Typed root-cause resolution](../../../cargo-cgp/implementation/typed-root-cause-resolution.md#boundaries-and-open-ends)).
-Recovering it means typing the chain of data operations by hand, from the struct's `builder()` or a
-constructor, through each operation's signature.
+The tool types a data operation's value from the operations' signatures, since the emitter cannot
+read typeck results (see
+[Typed resolution: the call-site anchor](../../../cargo-cgp/implementation/typed-resolution-call-site.md#calls-to-extensible-data-operations)).
+A value that does not come from a data operation, a constructor, a literal, or a binding the tool
+reads (a field access, a generic function's result) stays untyped, and so does a tag written with a
+computed const argument (`Index<{ 0 + 0 }>`), so such a call passes through as rustc wrote it. A
+call by a name a data operation shares (`builder`, `set`) is read as one only when the data trait is
+in scope at the call, as the compiler's own method lookup requires.
 
 ## Backing fixtures
 
 These fixtures pin the class, one group per shape:
 
 - [`data/extensible-data/build_field_twice.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/build_field_twice.rs):
-  a `build_field` chain setting `first_name` twice; passed through.
+  a `build_field` chain setting `first_name` twice; `[CGP-E050]` over `[CGP-E118]`.
 - [`data/extensible-data/builder_field_set_twice.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/builder_field_set_twice.rs):
   a `BuildWithHandlers` list setting `host` twice, behind a check; `[CGP-E118]`.
 - [`data/extensible-data/build_from_overlapping_sources.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/build_from_overlapping_sources.rs):
-  two `build_from` sources sharing `bar`; passed through.
+  two `build_from` sources sharing `bar`; `[CGP-E050]` over `[CGP-E118]`.
 - [`data/extensible-data/take_field_absent.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/take_field_absent.rs):
-  `take_field` on an empty builder; passed through.
+  `take_field` on an empty builder; `[CGP-E050]` over `[CGP-E119]`.
 - [`data/extensible-data/set_optional_on_core_builder.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/set_optional_on_core_builder.rs):
-  `set` on a builder that is not optional; passed through.
+  `set` on a builder that is not optional; `[CGP-E050]` over `[CGP-E125]`, with the
+  `to_optional` `help`.
 - [`data/extensible-data/build_field_unknown.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/build_field_unknown.rs):
-  `build_field` for a field `Person` lacks; passed through.
+  `build_field` for a field `Person` lacks; `[CGP-E050]` over `[CGP-E110]`.
 - [`data/extensible-data/build_from_field_not_in_target.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/build_from_field_not_in_target.rs):
-  a `build_from` source carrying `surname`, which the target lacks; passed through.
+  a `build_from` source carrying `surname`, which the target lacks; `[CGP-E050]` over
+  `[CGP-E110]`.
 - [`data/extensible-data/build_and_merge_extra_field.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/build_and_merge_extra_field.rs)
   and
   [`build_and_merge_missing_field.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/build_and_merge_missing_field.rs):
   a `BuildAndMergeOutputs` output carrying a field the target lacks, extra or renamed, behind a
   check; ``[CGP-E001] missing field … on `App` ``.
 - [`data/extensible-data/finalize_build_premature.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/finalize_build_premature.rs):
-  `finalize_build` with `last_name` unset; passed through.
+  `finalize_build` with `last_name` unset, an `E0599` "no method named"; `[CGP-E050]` over
+  `[CGP-E119]`.
 - [`data/extensible-data/builder_missing_field.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/builder_missing_field.rs):
   a `BuildWithHandlers` list without a step for `port`, behind a check; `[CGP-E119]`.
 - [`data/extensible-data/extract_field_twice.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/extract_field_twice.rs):
-  `Circle` extracted from a remainder that ruled it out; passed through as an `E0308`.
+  `Circle` extracted from a remainder that ruled it out, an `E0308`; `[CGP-E050]` over
+  `[CGP-E124]`.
 - [`data/extensible-data/finalize_extract_early.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/finalize_extract_early.rs):
-  a remainder finalized with `Circle` left; passed through.
+  a remainder finalized with `Circle` left; `[CGP-E050]` over `[CGP-E121]`.
 - [`data/extensible-data/matcher_missing_arm_check.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/matcher_missing_arm_check.rs):
   a `MatchWithHandlers` list without an arm for `Rectangle`, behind a check; `[CGP-E121]`.
 - [`data/extensible-data/matcher_missing_arm.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/matcher_missing_arm.rs):
@@ -253,9 +280,11 @@ These fixtures pin the class, one group per shape:
 - [`data/extensible-data/upcast_payload_mismatch.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/upcast_payload_mismatch.rs):
   an upcast whose `Foo` payloads differ; `[CGP-E050]` over `[CGP-E122]`.
 - [`data/extensible-data/downcast_on_remainder.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/downcast_on_remainder.rs):
-  `downcast` called on a remainder, which needs `downcast_fields`; passed through.
+  `downcast` called on a remainder, which needs `downcast_fields`; `[CGP-E050]` over
+  `[CGP-E126]`, with the `downcast_fields` `help`.
 - [`data/extensible-data/from_variant_wrong_case.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/from_variant_wrong_case.rs):
-  `from_variant` by the tag `circle` for `Circle`; passed through, its two identical reports merged.
+  `from_variant` by the tag `circle` for `Circle`; `[CGP-E050]` over `[CGP-E120]` with its near
+  miss, its two reports merged.
 - [`data/extensible-data/from_variant_bound_missing_variant.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/from_variant_bound_missing_variant.rs):
   a plain function bounded on a variant `Big` lacks; rustc's headline kept, with its "similar impl"
   help resugared from the fragments rustc splits it into.
@@ -268,12 +297,13 @@ These fixtures pin the class, one group per shape:
 - [`data/extensible-data/build_from_source_without_has_fields.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/build_from_source_without_has_fields.rs)
   and
   [`upcast_source_without_has_fields.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/upcast_source_without_has_fields.rs):
-  a `build_from` or `upcast` source without `HasFields`; passed through, the cause absent.
+  a `build_from` or `upcast` source without `HasFields`; `[CGP-E050]` over `[CGP-E123]` with the
+  derive `help`.
 - [`data/extensible-data/build_with_default_without_default.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/build_with_default_without_default.rs)
   and
   [`finalize_with_default_without_default.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/finalize_with_default_without_default.rs):
-  a defaulted build or finalize whose unset `port` has no `Default`; passed through, the cause
-  absent.
+  a defaulted build or finalize whose unset `port` has no `Default`; `[CGP-E050]` over the
+  `[CGP-E117]` bound `Port: Default`.
 - [`data/extensible-data/transform_map_fields_missing_marker.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/transform_map_fields_missing_marker.rs):
   a field transform without a conversion for one marker; rustc's headline, which names it, kept.
 - [`data/extensible-data/fields_ref_for_all_lifetimes.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/fields_ref_for_all_lifetimes.rs):

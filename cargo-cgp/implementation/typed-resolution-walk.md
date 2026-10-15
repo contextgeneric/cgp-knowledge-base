@@ -213,11 +213,15 @@ walk descends it the way it descends a provider. It deliberately does *not* foll
   the update needs it unset, or unset where it needs it set, is the field-already-set or
   field-not-set leaf (`[CGP-E118]`, `[CGP-E119]`); an unmet `FinalizeBuild` names the fields not
   set; an extractor's `ExtractField` for a variant the enum lacks, or an enum's `FromVariant` for
-  one, is the missing-variant leaf (`[CGP-E120]`); an unmet `FinalizeExtract` names the variants
+  one, is the missing-variant leaf (`[CGP-E120]`), and for a variant the extractor already ruled
+  out, the already-extracted leaf (`[CGP-E124]`); an unmet `FinalizeExtract` names the variants
   not extracted (`[CGP-E121]`); a `FromVariant` whose `Value` projection differs is the
-  variant-type leaf (`[CGP-E122]`); and a trait only a data derive implements (`HasFields`,
-  `HasExtractor`, `HasBuilder`), unmet on a type that is not a partial value, is the
-  data-trait-unimplemented leaf (`[CGP-E123]`). The shape is pinned by the fixtures of
+  variant-type leaf (`[CGP-E122]`); a `Mapper` projection found set or unset where an optional
+  builder's `set` needs the field optional is the not-optional leaf (`[CGP-E125]`); and a trait
+  only a data derive implements (`HasFields`, `HasExtractor`, `HasBuilder`) is the
+  data-trait-unimplemented leaf (`[CGP-E123]`) on a type that is not a partial value, and on a
+  partial value the leaf of a builder or an extractor given where its struct or enum belongs
+  (`[CGP-E126]`). The shape is pinned by the fixtures of
   [`data/extensible-data/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/data/extensible-data),
   such as
   [`builder_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/builder_missing_field.rs)
@@ -427,6 +431,12 @@ crate defines, of a kind the derive accepts (`ExtractField` and `FromVariant` an
 a struct); and a field a builder names that its struct lacks offers no add-the-field fix, since a
 merge can then still leave another field unset
 ([`build_and_merge_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/build_and_merge_missing_field.rs)).
+Two leaves record a method for their `help`, each only when the solver confirms it holds: a core
+builder's conversion to an optional one (`to_optional`, through `ToOptional`) for the not-optional
+leaf, and for an extractor given to `downcast`, the extractor's own operation (`downcast_fields`,
+through `CanDowncastFields`), the pair read from the driver's `PARTIAL_VALUE_OPERATIONS`. Each
+records the path a `use` imports its trait by, since these traits are not in the prelude and the
+compiler's own import suggestion names a crate path that does not compile.
 
 **Read the type an owner supplies for any other associated type.** A projection mismatch on a trait
 other than `HasField` has no struct field to query, so its *actual* side is read by asking the
@@ -502,6 +512,11 @@ since the type a reader is tracing is the point of the chain
 pins the resulting shape). All of the merge and render is in the rustc-free
 `cargo-cgp-error-processing` crate, unit-tested on any toolchain.
 
+A seed that is itself the cause, an operation with no impl at all (a `FinalizeBuild` on a builder
+with a field unset, a `FromVariant` for a variant the enum lacks), still heads its chain with its
+own step, so the chain names the operation the cause is about rather than restating the cause
+([`finalize_build_premature`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/finalize_build_premature.rs)).
+
 ## Tests
 
 The walk and its leaf classification carry most of the resolver's fixtures: the leaf classes
@@ -528,8 +543,9 @@ parent document's [Tests](typed-root-cause-resolution.md#tests) section.
   the program wrote), and `assoc_type.rs` (the normalization that reads the
   type an owner supplies for any other projected associated type).
 - [`crates/cargo-cgp-driver/src/resolve/data/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/data):
-  `traits.rs` (the extensible-data traits, their list recursions, and the derive each data trait
-  comes from) and `partial.rs` (`read_partial`, a partial value's target and markers).
+  `traits.rs` (the extensible-data traits, the operations among them, their list recursions, and
+  the derive each data trait comes from) and `partial.rs` (`read_partial`, a partial value's target
+  and markers).
 - [`crates/cargo-cgp-driver/src/resolve/label/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/label):
   `predicate_label.rs` (each hop as a structured `DepNode`, read off the obligation) and
   `render_ty.rs` (the type-level list resugaring).

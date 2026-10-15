@@ -705,7 +705,8 @@ it stale.
 - [typed-resolution-anchors.md](cargo-cgp/implementation/typed-resolution-anchors.md) — the
   span-matching anchors that recover the obligation the walk starts from.
 - [typed-resolution-call-site.md](cargo-cgp/implementation/typed-resolution-call-site.md) — the
-  HIR re-read of the failing call expression, the seventh of the eight anchors.
+  HIR re-reads of the failing call expression, the seventh and eighth of the nine anchors: a call on
+  a context, and a call to an extensible-data operation typed through its chain.
 - [typed-resolution-walk.md](cargo-cgp/implementation/typed-resolution-walk.md) — the descent to every
   terminal unmet bound, and each leaf's decoding and classification.
 - [typed-resolution-output.md](cargo-cgp/implementation/typed-resolution-output.md) — the coded
@@ -732,8 +733,8 @@ it stale.
 - [README.md](cargo-cgp/issues/README.md) — how pending issues are organized, and the rule that every
   issue is backed by a reproducing fixture.
 - [hidden-root-cause.md](cargo-cgp/issues/hidden-root-cause.md) — the cases where no downstream
-  consumer could recover the cause from the output: four extensible-data failures, and two defeated
-  archetypes.
+  consumer could recover the cause from the output: none open, the two defeated archetypes, and
+  what a new case would look like.
 - [usability.md](cargo-cgp/issues/usability.md) — output that carries the cause but buries it, the
   readability gaps that remain.
 

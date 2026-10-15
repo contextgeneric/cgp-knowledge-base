@@ -123,6 +123,11 @@ One per rendering template, riding at the start of each entry in a `root cause:`
 - **CGP-E122**: cause: a variant whose payload is not the type an extensible-data operation requires.
 - **CGP-E123**: cause: a type that does not implement a trait a data derive supplies (`HasFields`,
   `HasExtractor`, `HasBuilder`, `FromVariant`).
+- **CGP-E124**: cause: a variant an extractor already ruled out, extracted again.
+- **CGP-E125**: cause: a field an optional builder's `set` needs held as optional, which a core
+  builder holds set or unset.
+- **CGP-E126**: cause: a builder or an extractor given to an operation that needs the struct or enum
+  itself (`downcast` on a remainder, which takes `downcast_fields`).
 
 ## Where CGP classes cite these
 
@@ -139,5 +144,5 @@ example, [check-trait-failure](../checks/check-trait-failure.md) is stamped `[CG
 `[CGP-E032]` to `[CGP-E034]` and `[CGP-E037]`, and
 [unresolved wiring name](../wiring/unresolved-wiring-name.md) takes `[CGP-E038]` and `[CGP-E040]` to
 `[CGP-E043]`. The [extensible-data](../data/extensible-data.md) class takes `[CGP-E050]` for a call
-to a data operation, and its causes `[CGP-E118]` to `[CGP-E123]` under whichever headline its anchor
+to a data operation, and its causes `[CGP-E118]` to `[CGP-E126]` under whichever headline its anchor
 gives.

@@ -230,8 +230,9 @@ transforms run, in three groups:
   which drops the module segments of each `a::b::C` identifier run, keeping a trait or type before
   an item (`TryComputer::try_compute`), unless the qualifier tells two types apart, as the driver's
   [`AmbiguousNames`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/ambiguous.rs)
-  says (`cgp::prelude::Chars` → `Chars`, `std::io::Error` kept). It leads the chain because
-  everything after it matches bare type names;
+  says (`cgp::prelude::Chars` → `Chars`, `std::io::Error` kept), or the run is the path of a
+  `use` statement, which the reader types whole. It leads the chain because everything after it
+  matches bare type names;
   [Resugaring](resugaring.md#the-path-strips-that-run-first) covers what each leaves alone and why.
 - **The three resugaring transforms**,
   [`resugar_symbol`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/resugar_symbol.rs)
@@ -437,13 +438,13 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   with its `Origin` rule, and `postprocess_fragments`, which reads a message rustc split into styled
   fragments as the one line it renders as), `strip_modules.rs` (`strip_unambiguous_paths`, the
   UTF-8-safe module-qualifier collapse that keeps a disambiguating qualifier, and
-  `strip_module_paths`, which keeps none), `ambiguous.rs` (`AmbiguousNames`, which qualified names
-  tell two types apart), `strip_prefixes.rs` (`strip_cgp_prefixes` and the `CGP_PREFIXES` constant),
-  `resugar_symbol.rs` (the exact-match `Symbol!` parser), `resugar_path.rs` (the `PathCons` →
-  `@…`/`Path!(@…)` resugarer, the form chosen by its `wrap` parameter), `resugar_list.rs`
-  (`resugar_lists`, the `Product!`/`Sum!` and `Struct!`/`Enum!` resugarer), and `missing_field.rs`
-  (`rewrite_missing_fields`, `context_has_hasfield_impls`, and the landmark-gated single-field
-  classification).
+  `strip_module_paths`, which keeps none; both keep a `use` statement's path), `ambiguous.rs`
+  (`AmbiguousNames`, which qualified names tell two types apart), `strip_prefixes.rs`
+  (`strip_cgp_prefixes` and the `CGP_PREFIXES` constant), `resugar_symbol.rs` (the exact-match
+  `Symbol!` parser), `resugar_path.rs` (the `PathCons` → `@…`/`Path!(@…)` resugarer, the form chosen
+  by its `wrap` parameter), `resugar_list.rs` (`resugar_lists`, the `Product!`/`Sum!` and
+  `Struct!`/`Enum!` resugarer), and `missing_field.rs` (`rewrite_missing_fields`,
+  `context_has_hasfield_impls`, and the landmark-gated single-field classification).
 - [`crates/cargo-cgp-error-processing/src/shape/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/shape):
   the shared shape spellings: `shape_name.rs` (which names a body can write, and which only raw),
   `struct_shape.rs` (`ShapeTag` and `render_struct_shape`), and `enum_shape.rs`

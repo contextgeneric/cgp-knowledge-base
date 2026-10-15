@@ -35,8 +35,8 @@ rustc's own headline stopped on:
   provider pins it another. It is `[CGP-E004]`'s sibling in every respect but the trait the
   projection sits on.
 - **`[CGP-E050]`, the extensible-data class**, for a call to one of CGP's extensible-data operations
-  (a cast such as `upcast`, a builder or extractor operation), which the call-site anchor records by
-  setting `Resolved::data_operation`. These traits are not components, so its class sentence is the
+  (a cast such as `upcast`, a builder or extractor operation), which the data-call anchor records
+  by setting `Resolved::data_operation`. These traits are not components, so its class sentence is the
   plain-trait one; a data cause reached through a check or a consumer keeps that anchor's class.
 
 The sentence after the code states the causes the note lists, by three rules:
@@ -263,9 +263,13 @@ The `root cause:` lead is worded by *why* the leaf is unmet, and there are eight
   and names the struct or enum rather than the generated type:
   ``root cause: field `port` of `Config` is not set`` (`[CGP-E119]`), with the field set twice
   (`[CGP-E118]`), a missing variant (`[CGP-E120]`), the variants a match left unextracted
-  (`[CGP-E121]`), a variant payload of the wrong type (`[CGP-E122]`), and a missing data trait
-  (`` `Shape` does not implement `HasFields` ``, `[CGP-E123]`) worded the same way. A field a
-  builder names that its struct lacks takes the missing-field lead above. Several missing data
+  (`[CGP-E121]`), a variant payload of the wrong type (`[CGP-E122]`), a missing data trait
+  (`` `Shape` does not implement `HasFields` ``, `[CGP-E123]`), a variant extracted again
+  (`` variant `Circle` of `Shape` is already extracted ``, `[CGP-E124]`), a field an optional
+  builder's `set` needs optional (`` field `foo` of `Context` is not optional ``, `[CGP-E125]`),
+  and a builder or an extractor given where its struct or enum belongs
+  (`` an extractor of `FooBarBaz` does not implement `HasExtractor` ``, `[CGP-E126]`) worded the
+  same way. A field a builder names that its struct lacks takes the missing-field lead above. Several missing data
   traits on one type merge into one headline
   (`` `Shape` does not implement `HasFields` and `HasExtractor` ``)
   ([`builder_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/builder_missing_field.rs),
@@ -312,6 +316,15 @@ which names its items in the order the causes are listed, with no cap:
 - A **missing data trait** names the derive that supplies it, the derives one type needs merged
   into one attribute: `` add `#[derive(HasFields, ExtractField)]` to `Shape` ``. It is given only
   when the type is a struct or enum the crate defines and of a kind each derive accepts.
+- A **builder or extractor in the wrong place** names the method it takes instead, with the `use`
+  its trait needs, since the data traits are not in the prelude and the compiler's own import
+  suggestion names a crate path that does not compile:
+  ``call `downcast_fields` in place of `downcast` on an extractor, with `use cgp::core::field::impls::CanDowncastFields;` in scope``
+  for an extractor given to `downcast`, and
+  ``call `to_optional` on the builder first to hold each field as optional, with `use cgp::extra::field::impls::ToOptional;` in scope``
+  for a field not optional. Each is given only when the solver confirms the method holds for the
+  value, and the [module strip](resugaring.md#the-path-strips-that-run-first) keeps the `use`
+  path whole.
 - A **near miss** comes first when a missing field's struct carries a similar field, a missing
   variant's enum a similar variant (`` a similar variant exists on `Shape`: `Circle` ``), or a
   missing key's context wires a similar key: `` a similar field exists on `Person`: `first_name` `` for
@@ -324,8 +337,8 @@ which names its items in the order the causes are listed, with no cap:
   entries.
 
 A field-type mismatch, a non-provider, an ordinary bound, and the extensible-data state causes (a
-field set twice or not set, a variant not extracted, a variant payload of the wrong type) carry no
-`help`. The mismatch headlines already state both types, a state cause names the field or variant to
+field set twice or not set, a variant extracted twice or not extracted, a variant payload of the
+wrong type) carry no `help`. The mismatch headlines already state both types, a state cause names the field or variant to
 handle, and the others have no single entry the tool can name. A field a builder names that its
 struct lacks gets no add-the-field `help` either, since the merge can then still leave another
 field unset.

@@ -221,6 +221,13 @@ prints each type by its own name under rustc's `with_forced_trimmed_paths!`, whi
 Printing untrimmed would avoid the map as well, but the path strip then reads the qualified name as
 one rustc kept on purpose and leaves it qualified.
 
+Building an error value takes the lock too. `Ty::new_error_with_message` and its `Const`
+counterpart register a delayed bug (`span_delayed_bug`) before returning the `{type error}`, so code
+in the emitter must never construct one, even as a stand-in it will discard. The call-site
+lowering, which declines a const argument it cannot read, fills the slot with `tcx.consts.unit`
+before discarding the result. The literal it can read goes through the `lit_to_const` query, which
+builds the constant from the literal alone and reports nothing.
+
 Reading the HIR has the same hazard at an earlier phase. Name resolution emits diagnostics (an
 unused import, an unresolved name) before the crate is lowered to HIR, so a HIR read from the
 emitter at that point (`hir_node_by_def_id`, say) forces lowering under the lock, and lowering
@@ -236,8 +243,11 @@ emission, which happens when the diagnostic being emitted was itself produced *d
 that is, during the collection / type-lowering phase, not the later trait-solving phase. So the
 resolver **declines diagnostics from the collection phase**: a resolution-class `E0599`
 (`no variant named …`, `no associated item …`) is emitted mid-`clauses_of`, so `try_resolve` filters
-it out before running the solver, keeping only the method-bounds `E0599` (which is reported during
-method resolution, after collection). The same reasoning bans forcing `tcx.typeck` from the emitter
+it out before running the solver. It keeps the `E0599`s the method probe reports while a body is
+type-checked, after collection: the method-bounds shape, and the "no method named" shape the
+data-call anchor takes, both built by `report_no_match_method_error` in
+[`rustc_hir_typeck/src/method/suggest.rs`](../../../external/rust/compiler/rustc_hir_typeck/src/method/suggest.rs).
+An `E0308` on a call's argument comes from the same body type-checking. The same reasoning bans forcing `tcx.typeck` from the emitter
 outright. `E0271`/`E0277` are trait-solving failures reported after collection, so the queries their
 resolution forces are already cached and they are safe to trace. The gate that encodes this is in
 [Typed root-cause resolution](typed-root-cause-resolution.md); the `tcx.typeck` ban is why one

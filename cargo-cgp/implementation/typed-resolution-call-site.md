@@ -1,10 +1,13 @@
 # Typed resolution: the call-site anchor
 
-This document covers the seventh anchor of the driver's
+This document covers the seventh and eighth anchors of the driver's
 [typed root-cause resolution](typed-root-cause-resolution.md): recovering a use-site failure's
 obligation from the failing call expression's own HIR, when its spans touch nothing the
-[span-matching anchors](typed-resolution-anchors.md) can read. (An eighth anchor,
-`resolve_use_site_blanket_trait`, is tried after it for a blanket trait required as a `where`
+[span-matching anchors](typed-resolution-anchors.md) can read. The seventh, the call-site anchor,
+reads a call through a consumer or blanket trait on a context; the eighth, the data-call anchor,
+reads a call to one of CGP's extensible-data operations, whose value is usually another operation's
+result ([below](#calls-to-extensible-data-operations)). (A ninth anchor,
+`resolve_use_site_blanket_trait`, is tried after them for a blanket trait required as a `where`
 *bound* rather than *called*; it is described in
 [anchoring the starting obligation](typed-resolution-anchors.md) and reuses this anchor's
 `contexts_at_spans`.)
@@ -148,13 +151,11 @@ type that is no context. A context from another crate qualifies when it carries 
 wiring of its own (`is_context_adt`), so a call on a context a library exports recovers its root
 cause as a call on a local one does
 ([`foreign_context_error_route`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/foreign_context_error_route.rs)).
-The trait candidates come from the method *name*, and are of three kinds: every CGP **consumer
+The trait candidates come from the method *name*, and are of two kinds: every CGP **consumer
 trait** (recognized structurally, in any crate) declaring a `self` method of that name, tried first
 so a directly-wired consumer keeps its precise recovery; then every `#[cgp_fn]` / `#[blanket_trait]`
 **blanket trait** declaring such a method, as recognized by `is_blanket_trait` (see
-[anchoring the starting obligation](typed-resolution-anchors.md)); then every one of CGP's
-**extensible-data traits** declaring it, the casts, builders, and extractors of the `cgp-field` and
-`cgp-field-extra` crates (`CanUpcast::upcast`, `CanDowncast::downcast`). A blanket trait is a blanket-impl
+[anchoring the starting obligation](typed-resolution-anchors.md)). A blanket trait is a blanket-impl
 trait that is not a CGP component (no provider trait, no `DelegateComponent`), consumed like a
 consumer (`app.describe()`) and seeding the same walkable obligation `Ctx: Describe` whose `Self` is
 the context. Because it is not a CGP component, its result takes the `[CGP-E003]` code rather than
@@ -163,12 +164,9 @@ clearing the `Resolved::consumers_are_cgp` flag the walk sets. This is what reco
 to a `#[cgp_fn]` trait the context cannot satisfy: an `E0599` whose real cause (a field one composed
 blanket trait reads) rustc buries in a mid-stack note under its method-probe candidate list
 ([`cgp_fn_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/cgp_fn_use_site.rs)).
-An extensible-data trait is consumed the same way on its receiver (`Small::Foo(1).upcast(…)`), and
-its result takes the `[CGP-E050]` code by setting `Resolved::data_operation`, the walk descending
-the operation's blanket impl to the field or variant at fault
-([`upcast_missing_variant`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/upcast_missing_variant.rs)).
-Its receiver is often another data operation's result (a builder chain, a remainder bound by a
-pattern), which the anchor cannot type, so such a call declines.
+A call to one of CGP's extensible-data operations (a cast, a builder, an extractor) is not a
+candidate here: the data-call anchor tried next takes it, since its value is usually another data
+operation's result ([below](#calls-to-extensible-data-operations)).
 
 ## Parameters by signature unification, not by convention
 
@@ -205,8 +203,9 @@ unit-struct or unit-variant value with its written path arguments, a struct lite
 a written expression, a literal whose type is definite (`"…"`, `true`, `'c'`, suffixed numerics), or
 a call to a non-generic fn or a tuple-struct or enum-variant constructor (its declared return type).
 Each written type is lowered by a deliberately small syntactic HIR-type lowering (paths to ADTs and
-aliases through the cached `type_of`, defaulted parameters filled in, lifetimes erased) that
-declines anything beyond it rather than guess.
+aliases through the cached `type_of`, defaulted parameters filled in, lifetimes erased, and a
+literal const argument read as the compiler reads it) that declines anything beyond it rather than
+guess.
 
 A **tuple literal** is the one shape read *partially*: its *structure* is recovered even when some
 elements' types are not written, each unwritten element seeded as a fresh inference variable (folded
@@ -292,6 +291,97 @@ re-anchored onto the call and de-duplicated away: an error beside the call (an `
 an error nested in an argument (`person.greet(count(Rc::new(1)))`), whose span lies strictly inside
 it. The impl-site anchor reads a forwarding call through the same rule.
 
+## Calls to extensible-data operations
+
+The data-call anchor, `resolve_data_call`, is tried eighth, after the call-site anchor, for a failing
+call to one of CGP's extensible-data operations: a builder's `build_field`, `take_field`, or
+`finalize_build`, an extractor's `extract_field` or `finalize_extract`, a cast's `upcast` or
+`downcast`, and the other traits of the `cgp-field` and `cgp-field-extra` crates. Such a call
+differs from a consumer call in what it is called on. Its value is a struct or an enum, or more often
+a *partial value* another operation produced: the builder `Person::builder()` returns, the builder a
+previous `build_field` returns, or the remainder an `Err(remainder)` pattern takes out of a failed
+extraction. None of these is a context, and the receiver reading above types none of the produced
+ones.
+
+So the anchor types the value through the chain of operations that built it. Each step is a call to
+a data operation, by method (`builder.build_field(PhantomData::<Symbol!("first_name")>, …)`) or by
+type-relative path (`Person::builder()`); its output is read off the operation's declared signature
+in a fresh inference context, with `Self` pinned to the step's input and each written argument
+unified with its declared input, then normalized once the trait obligation is solved. A binding is
+followed to what bound it: a `let`, or a field of a tuple-struct or tuple-variant pattern in a
+`let`, an `if let`, or a `match` arm (`Err(remainder)` takes the error field of the `Result` its
+scrutinee has). The chain ends at a value the call-site anchor already types (a constructor, a
+literal, an annotated binding), and a step whose output does not reduce to a concrete type ends it
+with a decline. A program that builds one field twice shows the whole path:
+
+```rust
+#[derive(CgpData)]
+pub struct Person {
+    pub first_name: String,
+    pub last_name: String,
+}
+
+let _ = Person::builder()
+    .build_field(PhantomData::<Symbol!("first_name")>, "Alice".to_owned())
+    .build_field(PhantomData::<Symbol!("first_name")>, "Bob".to_owned());
+```
+
+The anchor types `Person::builder()` as `__PartialPerson<IsNothing, IsNothing>` and the first
+`build_field` as `__PartialPerson<IsPresent, IsNothing>`, seeds the failing second call as
+`__PartialPerson<IsPresent, IsNothing>: BuildField<Symbol!("first_name")>`, and the
+[walk](typed-resolution-walk.md) reads the builder's markers:
+
+```text
+error[E0271]: [CGP-E050] field `first_name` of `Person` is already set
+  --> src/main.rs:24:22
+   |
+24 |         .build_field(PhantomData::<Symbol!("first_name")>, "Bob".to_owned());
+   |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: root cause: [CGP-E118] field `first_name` of `Person` is already set
+           this is required through the dependency chain:
+             [CGP-E104] trait impl `BuildField<Symbol!("first_name")>` for the builder of `Person` with `first_name` set
+             └─ [CGP-E118] field `first_name` of `Person` is already set
+```
+
+Reading the tag needs one more piece of the small lowering. `Symbol!("first_name")` expands to
+`Symbol<10, Chars<'f', …>>`, whose length and characters are const generic arguments, so a literal
+const argument is lowered through the compiler's `lit_to_const` query, which builds the constant
+from the literal without evaluating anything (and so reports nothing). Any other const argument,
+such as a computed `{ 0 + 0 }`, leaves the tag unknown and the call declines.
+
+Three rules keep the anchor from claiming a call that is not a data operation:
+
+- **Only data operations qualify:** the traits of the two crates, except the field-access traits
+  (`HasField`, `HasFieldMut`, `FieldGetter`, `MutFieldGetter`), which read one field of a value
+  rather than operate on a whole record or enum.
+- **Only a trait in scope at the call qualifies.** The compiler's method lookup considers only the
+  traits in scope, and records them per call, so a method of another library that shares a name
+  (`Config::builder()` on a type that never derived a builder, in a module without CGP's prelude)
+  keeps rustc's diagnostic
+  ([`data_operation_name_not_in_scope`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/data_operation_name_not_in_scope.rs)).
+- **The seed is gated** as the call-site anchor's is: a seed that holds is skipped, and a walk that
+  reaches no reportable cause declines.
+
+The anchor also takes two diagnostic shapes no other anchor sees, because a data operation can fail
+before its bounds are checked. A builder finalized with a field unset has no `finalize_build` at all,
+since only the all-set builder implements `FinalizeBuild`, so the method probe reports an `E0599` "no
+method named `finalize_build`"; and an extractor with one variant left settles `extract_field` on
+the one impl that remains and rejects the tag argument as an `E0308`. Both are reported while the
+calling body is type-checked, as the method-bounds `E0599` is, so the solver may run on them (see
+[rustc diagnostic internals](rustc-diagnostic-internals.md#re-entering-the-diagnostic-context-lock-was-already-held)).
+The emitter sends both to this anchor alone, and takes an `E0308` only when every cause the walk
+finds is a field or variant state (`Leaf::is_data_state`), since a mismatched argument is otherwise
+a plain type error. The "no method named" shape is recognized by the arguments its translatable
+message names (`item_kind`, `item_ident`), and told apart from the method-bounds `E0599`, which the
+probe builds from the same diagnostic, by that one's plain-string message.
+
+A failure this anchor resolves is headed `[CGP-E050]` (`Resolved::data_operation`), the value named
+plainly unless it carries wiring. When the seed is itself the cause, the operation having no impl at
+all (`FinalizeBuild` on a builder with a field unset), the chain still starts with the operation's
+own step, so it names the finalize the cause is about. The causes and their wording belong to
+[the transformed diagnostic](typed-resolution-output.md).
+
 ## Tests
 
 The anchor's fixtures live under
@@ -309,21 +399,35 @@ The decline boundary is pinned by `generic_consumer_unwritten_arg`, and the span
 diagnostic) and by `unrelated_error_in_call_argument` and `unrelated_error_in_awaited_argument` (the
 same error inside the call's argument, awaited or not, keeps its own diagnostic too), and the
 pass-through fixture `local_blanket_trait` (a plain error in a function that also calls a failing
-blanket-trait method is left alone). The consolidated catalog lives in the parent document's
+blanket-trait method is left alone).
+
+The data-call anchor's fixtures are the extensible-data family under
+[`tests/ui/data/extensible-data/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/data/extensible-data):
+`build_field_twice` (the worked example above), `build_from_overlapping_sources` (a builder typed
+after one merge), `finalize_build_premature` (a "no method named" `E0599`), `extract_field_twice`
+(an `E0308` on a remainder an `if let` binds), `finalize_extract_early` (a remainder a `match` arm
+binds), `downcast_on_remainder` (a remainder used where its enum belongs), `from_variant_wrong_case`
+and `build_with_default_without_default` (type-relative calls), and `upcast_missing_variant` (a
+cast on a constructed value). The pass-through fixture `data_operation_name_not_in_scope` pins the
+in-scope rule. The consolidated catalog lives in the parent document's
 [Tests](typed-root-cause-resolution.md#tests) section.
 
 ## Source
 
 - [`crates/cargo-cgp-driver/src/resolve/call_site/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/call_site):
   one file per stage: `find_call.rs` (locating the call and the candidate consumers), `receiver.rs`
-  (the context off the receiver), `seed.rs` (the signature unification), `written_ty.rs` (the types
-  the call's arguments write), and `lower.rs` (the small syntactic type lowering).
+  (the context off the receiver), `seed.rs` (the signature unification, for each `CallForm`: a
+  consumer method call, a data method call, and a data path call), `written_ty.rs` (the types the
+  call's arguments write), and `lower.rs` (the small syntactic type lowering, literal const
+  arguments included); for the data-call anchor, `data_call.rs` (`resolve_data_call`, locating a
+  method or type-relative call and its data operations in scope) and `chain.rs` (`data_expr_ty`,
+  typing a value through the data operations and pattern bindings that produced it).
 
 ## Further reading
 
 - [Typed root-cause resolution](typed-root-cause-resolution.md): the pipeline overview.
-- [Typed resolution: anchoring the starting obligation](typed-resolution-anchors.md): the five
-  anchors tried before this one, and the by-blanket-trait anchor tried after it.
+- [Typed resolution: anchoring the starting obligation](typed-resolution-anchors.md): the six
+  anchors tried before these two, and the by-blanket-trait anchor tried after them.
 - [Typed resolution: walking to the root cause](typed-resolution-walk.md): how the seeded obligation
   (placeholders and all) is descended.
 - [rustc diagnostic internals](rustc-diagnostic-internals.md): why `tcx.typeck` can never be forced

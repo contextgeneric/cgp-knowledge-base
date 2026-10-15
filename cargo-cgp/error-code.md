@@ -842,14 +842,21 @@ for `CGP-E060`.
   the operation needs, or on a type that lacks the data derive it needs. The operation's trait is
   implemented only for the states where it is valid, tracked by the presence markers of the partial
   types a data derive generates, so the cause is a field or variant, named by the tree's leaf
-  (`CGP-E118` to `CGP-E123`, or a missing field as `CGP-E110`).
-- **Triggered by:** a call to a method of a trait the `cgp-field` or `cgp-field-extra` crate defines,
-  on a receiver the [call-site anchor](implementation/typed-resolution-call-site.md) can type, whose
-  obligation fails (an `E0277`, an `E0271`, or a method-bounds `E0599`). The same causes reached
-  through a check or a consumer keep that anchor's class (`CGP-E001`), and a `#[cgp_auto_dispatch]`
-  call keeps `CGP-E003`. The Rust code stays whatever rustc assigned.
-- **Fix:** follow the cause: drop a second setting of a field, set an unset one, add a missing
-  variant or align a payload type, or add the derive a `help` names.
+  (`CGP-E118` to `CGP-E126`, a missing field as `CGP-E110`, or the ordinary bound an operation
+  needs, such as `Port: Default` for a defaulted finalize, as `CGP-E117`).
+- **Triggered by:** a call to an operation of a trait the `cgp-field` or `cgp-field-extra` crate
+  defines (other than the field-access traits such as `HasField`), in scope at the call, by method
+  (`builder.build_field(…)`) or by type-relative path (`Shape::from_variant(…)`), on a value the
+  [data-call anchor](implementation/typed-resolution-call-site.md#calls-to-extensible-data-operations)
+  types: a constructed value, or a builder, extractor, or remainder typed through the chain of data
+  operations and pattern bindings that produced it. Its obligation fails as an `E0277`, an `E0271`,
+  an `E0599` ("no method named", or the method-bounds shape), or an `E0308` on a tag argument (a
+  variant extracted twice). The same causes reached through a check or a consumer keep that
+  anchor's class (`CGP-E001`), and a `#[cgp_auto_dispatch]` call keeps `CGP-E003`. The Rust code
+  stays whatever rustc assigned.
+- **Fix:** follow the cause: drop a second setting of a field or extraction of a variant, set an
+  unset one, add a missing variant or align a payload type, add the derive a `help` names, or call
+  the method a `help` names (with the `use` it gives).
 - **Upstream class:** [extensible data](../cgp/errors/data/extensible-data.md).
 
 ## Dependency-tree entry codes (`CGP-E1xx`)
@@ -979,6 +986,21 @@ at (`CGP-E110` onward).
   (`` `Shape` does not implement `HasFields` and `HasExtractor` ``), and a `help` names the derives
   in one attribute when the type is a struct or enum the crate defines, of a kind each derive
   accepts: `` add `#[derive(HasFields, ExtractField)]` to `<T>` ``.
+- **`CGP-E124`: variant already extracted (leaf).** `` variant `<V>` of `<T>` is already extracted ``:
+  an extractor whose marker for the variant is `IsVoid`, the remainder of an extraction that did not
+  yield it, is asked for it again. rustc reports it as an `E0308` on the tag argument, since only the
+  other variants' impls remain.
+- **`CGP-E125`: field not optional (leaf).** `` field `<f>` of `<T>` is not optional ``: an
+  optional builder's operation (`set`, `set_optional`) on a field the builder holds set or unset,
+  as a record's core builder does. A `help` names the conversion with the import its trait needs,
+  `` call `to_optional` on the builder first to hold each field as optional, with `use cgp::extra::field::impls::ToOptional;` in scope ``,
+  when the builder takes it.
+- **`CGP-E126`: builder or extractor in the wrong place (leaf).**
+  `` an extractor of `<T>` does not implement `<Trait>` `` (`` a builder of `<T>` … ``): a partial
+  value given to an operation that needs a trait only the struct or enum itself implements, as
+  `downcast` called on the remainder of an earlier downcast. A `help` names the method the partial
+  value takes instead when one holds,
+  `` call `downcast_fields` in place of `downcast` on an extractor, with `use cgp::core::field::impls::CanDowncastFields;` in scope ``.
 
 ## Uncoded rewrites
 
@@ -1003,7 +1025,8 @@ owns the string transform.
 `TryComputer::try_compute` (a trait or type before an item is not a module, so it stays), but keeps
 a qualifier that tells two types apart, so `std::io::Error` beside a crate's own `Error` stays
 qualified. CGP's own paths and its encoding types (`Symbol`, `Chars`, `Cons`, and the rest) always
-lose their qualifier. It applies to every message the tool rewrote, and to a message it left alone
+lose their qualifier, except in a `use` statement a `help` writes, whose path the reader types
+whole. It applies to every message the tool rewrote, and to a message it left alone
 only when one of the resugarings below fired there; otherwise the paths stay as rustc printed them.
 It only shortens a name;
 [`strip_unambiguous_paths`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/strip_modules.rs)
