@@ -746,7 +746,8 @@ fixtures:
   `GreeterComponent -> Bundle` entry into a table that lacks the key, beside a check. Pins the
   forwarding-entry anchor: the compiler's error on the entry's own forwarding bound reads as the
   `[CGP-E001]` block over `[CGP-E114]`, and the unsized-projection error and the check's report
-  drop as the same failure.
+  drop as the same failure. `direct_delegation_missing_key_unchecked` is the same entry with no
+  check or call, where the entry's errors are the only report.
 - `non_provider_wired` (under
   [`checks/check-trait-failure/providers/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/checks/check-trait-failure/providers)):
   a type wired where a provider was expected that does not implement the provider trait at all
