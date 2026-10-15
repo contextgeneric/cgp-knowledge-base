@@ -315,11 +315,8 @@ key or value but not a segment of one.
 
 ## Extensible-data shapes outside the presence-marker leaf
 
-Two shapes of the [extensible data](../../cgp/errors/data/extensible-data.md) class stay as rustc
-wrote them. A matcher's provider method called directly (`MatchWithHandlers::<…>::compute(&(), …)`,
-[`matcher_missing_arm`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/matcher_missing_arm.rs))
-is a use site no anchor reads, though its walk would reach the unextracted variant as the check form
-does. And a bound on a borrowed field view for every lifetime, on an enum with a lifetime
+One shape of the [extensible data](../../cgp/errors/data/extensible-data.md) class stays as rustc
+wrote it: a bound on a borrowed field view for every lifetime, on an enum with a lifetime
 ([`fields_ref_for_all_lifetimes`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/fields_ref_for_all_lifetimes.rs)),
 is a bare `E0477` on the check entry that never points at the `for<'b>` bound.
 
@@ -341,7 +338,7 @@ The fixtures group by construct:
 - **Handlers:** promotions of hand-written providers, a matcher wired as a handler or applied to a
   struct, and matchers or builders missing an arm or a field.
 - **Use sites:** calls the resolver declines, leaking `IsProviderFor` or rustc's method-probe
-  advice, including a provider's own method called directly.
+  advice.
 
 ## What good presentation looks like
 

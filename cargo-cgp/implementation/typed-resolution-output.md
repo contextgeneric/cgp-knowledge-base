@@ -22,8 +22,8 @@ rustc's own headline stopped on:
   check entry, a consumer-method `E0599`, or a bound. It holds even when rustc's headline opens on a
   provider's `IsProviderFor` bound: that provider may be dispatch plumbing, a `RedirectLookup`, or a
   provider deep in the chain, none of which the programmer asserted on.
-- **`[CGP-E002]`, the provider class**, for a `#[check_providers]` entry, whose anchor records the
-  provider it lists (see [the anchors](typed-resolution-anchors.md)).
+- **`[CGP-E002]`, the provider class**, for a `#[check_providers]` entry or a provider's own method
+  called directly, whose anchor records the provider (see [the anchors](typed-resolution-anchors.md)).
 - **`[CGP-E003]`, the plain-trait class**, for a trait that is *not* itself a CGP consumer: a
   hand-written wrapper with only a concrete impl, such as `CanHandleApiSend`, or a
   `#[cgp_fn]`/`#[blanket_trait]` blanket trait, told apart from `[CGP-E001]` by its fingerprint

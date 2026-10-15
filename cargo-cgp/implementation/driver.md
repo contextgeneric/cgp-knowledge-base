@@ -509,11 +509,12 @@ twice: at the flush, in a crate that uses CGP, a later diagnostic with the same 
 message as an earlier one, and a primary caret on the same line, is merged into the earlier block
 ([`merge_repeats`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/repeats.rs)),
 whose notes are the fuller. rustc repeats an error that way when it checks one requirement for each
-item a macro generated (the repeat renames or drops a note) or a call's bound for the call and an
-argument (the repeat has its own caret). A caret the earlier block does not already cover is kept,
-labelled "also required here", so no location is lost
-([`from_variant_wrong_case`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/from_variant_wrong_case.rs),
-[`matcher_missing_arm`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/matcher_missing_arm.rs)).
+item a macro generated (the repeat renames or drops a note;
+[`implicit_conflicting_types`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/implicit-arguments/implicit_conflicting_types.rs))
+or a call's bound for the call and an argument (the repeat has its own caret;
+[`transform_map_fields_missing_marker`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/transform_map_fields_missing_marker.rs),
+whose first block already covers the call). A caret the earlier block does not already cover is
+kept, labelled "also required here", so no location is lost.
 The count stays honest because cargo re-counts the diagnostics the emitter actually produces (a
 suppressed re-report drops out of its "N errors" summary as well), so the visible block count and
 the summary agree. This is the [one-mistake-many-errors](../issues/usability.md) usability class the

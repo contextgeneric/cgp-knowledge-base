@@ -36,8 +36,9 @@ its cause; and `E060` and `E061` continue the structural mistakes.
 
 - **CGP-E001**: the consumer trait is not implemented for the context (missing wiring, or an unmet
   transitive dependency).
-- **CGP-E002**: a provider a `#[check_providers]` entry lists does not implement its provider trait
-  for the context (its impl-side `where` bounds do not hold).
+- **CGP-E002**: a provider a `#[check_providers]` entry lists, or whose own method is called
+  directly, does not implement its provider trait for the context (its impl-side `where` bounds do
+  not hold).
 - **CGP-E003**: a hand-written wrapper trait or a `#[cgp_fn]` blanket trait (not a CGP consumer)
   fails because a CGP component it depends on fails.
 - **CGP-E004**: a context field has the wrong type (the `HasField` bound holds but its `::Value`

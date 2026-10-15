@@ -234,10 +234,12 @@ method's own declared signature, and every parameter the call leaves to inferenc
 rigid placeholder the walk resolves around but never reports on. The eighth, the data-call anchor
 `resolve_data_call`, re-reads a call to one of CGP's extensible-data operations, typing the builder,
 extractor, or remainder it is called on through the chain of data operations and pattern bindings
-that produced it. The ninth and last anchor, `resolve_use_site_blanket_trait`, is the by-consumer
-anchor's counterpart for a blanket trait required as a *bound* rather than *called*, gated to
-`E0277` and tried after the call-site anchors, so a method call leads with the trait the programmer
-invoked.
+that produced it. The ninth, the provider-call anchor `resolve_provider_call`, re-reads a provider
+trait's method called through the provider's own path and walks the provider obligation it asserts,
+as a `#[check_providers]` entry's is. The tenth and last anchor, `resolve_use_site_blanket_trait`,
+is the by-consumer anchor's counterpart for a blanket trait required as a *bound* rather than
+*called*, gated to `E0277` and tried after the call-site anchors, so a method call leads with the
+trait the programmer invoked.
 
 **[Walking to the root cause](typed-resolution-walk.md)** descends the seeded obligation's
 dependency graph (following only the CGP wiring vocabulary and obligations on the context itself,
@@ -334,9 +336,10 @@ marking.
   the typed resolution, split by stage into sub-directories behind re-exporting `mod.rs` files and
   building the rustc-free `Resolved` model. Every anchor feeds the walk a real trait obligation
   (the consumer obligation `Ctx: ConsumerTrait<Params…>`, or the provider obligation a
-  `#[check_providers]` entry asserts), never a `CanUseComponent` or `IsProviderFor` wrapper.
+  `#[check_providers]` entry or a provider's own method call asserts), never a `CanUseComponent` or
+  `IsProviderFor` wrapper.
   - [`anchor/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/anchor)
-    holds seven of the nine anchors, plus their two shared ingredients: `seed.rs`
+    holds seven of the ten anchors, plus their two shared ingredients: `seed.rs`
     (`consumer_obligation`, the `Params`-slot ungrouping decided by the consumer's own generics: a
     single tuple-typed parameter kept whole, a lifetime restored from `Life<'a>` via `life_region`,
     any mismatch declining rather than handing the solver a malformed trait ref) and `spans.rs` (the
@@ -362,8 +365,8 @@ marking.
     redundant bare marker, a free-parameter catch-all, and a `namespace …;` blanket `__Key__` key.
     `use_site_consumer.rs` recovers a local, non-generic CGP consumer trait from the diagnostic's
     spans and walks `Ctx: Consumer` directly (the anchor that reaches a namespace-joined context),
-    and its by-blanket-trait sibling `resolve_use_site_blanket_trait` (ninth, gated to `E0277`,
-    tried after the call-site anchor) does the same for a `#[cgp_fn]`/`#[blanket_trait]` blanket
+    and its by-blanket-trait sibling `resolve_use_site_blanket_trait` (tenth, gated to `E0277`,
+    tried after the call anchors) does the same for a `#[cgp_fn]`/`#[blanket_trait]` blanket
     trait required as a bound, reading the context off the failing expression via the call-site
     anchor's `contexts_at_spans` and heading the result `[CGP-E003]` by clearing
     `consumers_are_cgp`. A blanket trait is recognized by `is_blanket_trait`: a blanket impl over a
@@ -371,15 +374,19 @@ marking.
     `#[cgp_fn]` trait or one a library publishes is reached while `ToString`, `Into`, and a crate's
     own plain blanket traits are not.
   - [`call_site/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/call_site)
-    holds the seventh and eighth anchors, `resolve_call_site` and `resolve_data_call`, the HIR
-    re-reads of the failing call, one stage per file: `find_call.rs` (`method_calls_at`, the calls a
-    primary span lands on without lying strictly inside the receiver or an argument
+    holds the seventh to ninth anchors, `resolve_call_site`, `resolve_data_call`, and
+    `resolve_provider_call`, the HIR re-reads of the failing call, one stage per file:
+    `find_call.rs` (`method_calls_at`, the calls a primary span lands on without lying strictly
+    inside the receiver or an argument
     (`is_about_call`), and `traits_with_method`, the candidate consumer traits and
     `#[cgp_fn]`/`#[blanket_trait]` blanket traits by method name, the blanket traits headed
     `[CGP-E003]` by clearing `consumers_are_cgp`), `data_call.rs` (`resolve_data_call`, a method or
     type-relative call to an extensible-data operation in scope at the call, headed `[CGP-E050]` by
-    setting `data_operation`), `chain.rs` (`data_expr_ty`, the value such a call is made on, typed
-    through the data operations and pattern bindings that produced it), `receiver.rs`
+    setting `data_operation`), `provider_call.rs` (`resolve_provider_call`, a type-relative call
+    to a provider trait's function in scope at the call, its provider obligation walked by
+    `resolve_provider_leaves` from the context argument, headed `[CGP-E002]`), `chain.rs`
+    (`data_expr_ty`, the value such a call is made on, typed through the data operations and
+    pattern bindings that produced it), `receiver.rs`
     (`receiver_context`/`local_binding_context`, the receiver's type from its binding, annotation,
     parameter, literal, or constructor-call signature, plus `contexts_at_spans`, the same reading
     applied to every expression at the diagnostic's spans, which is the by-blanket-trait anchor's
@@ -485,7 +492,7 @@ marking.
 - [`crates/cargo-cgp-driver/src/emitter/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/emitter):
   the `try_resolve` seam (gated to an unmet-obligation code, `E0271`/`E0275`/`E0277` or a
   method-bounds `E0599`, with a resolution-class `E0599` excluded so the solver never runs on an
-  error emitted mid-`clauses_of`) that tries the nine anchors in turn (the by-blanket-trait anchor
+  error emitted mid-`clauses_of`) that tries the ten anchors in turn (the by-blanket-trait anchor
   last, gated to `E0277`) and sends the method probe's "no method named" `E0599`
   (`is_no_matching_item`) and an `E0308` to the data-call anchor alone, and the `transform_resolved`
   mutation it feeds, mapping the rustc code to a `DiagKind` (overridden to the use-site kind for a
@@ -750,6 +757,13 @@ fixtures:
   the field a branch reads, where collapsing the tuple to one flat unknown would leave the impl
   unmatched and decline. This is the shape a branching/comparison DSL interpreter hits, such as a
   real `If<Compare<…>, …>` program reading an unwired field inside its condition.
+- `provider_called_directly` and `provider_called_directly_without_error_type` (under
+  `hidden/unsatisfied-dependency/`), and `matcher_missing_arm` (under `data/extensible-data/`): a
+  provider trait's method called through the provider's own path. Pins the provider-call anchor:
+  the provider read off the path, the context and component parameters off the arguments (a
+  parameter binding typed from the enclosing signature in `matcher_missing_arm`), and the
+  `[CGP-E002]` class, over a stage given another stage's output type (`[CGP-E127]`), a missing
+  error-type wiring (`[CGP-E113]`), and a variant never extracted (`[CGP-E121]`).
 - `cgp_fn_use_site`: a direct call to a `#[cgp_fn]` trait method (`app.describe()`) whose context is
   missing a field one composed blanket trait reads. Pins the call-site anchor's *blanket-trait*
   candidate: the called `Describe` is a `#[cgp_fn]`/`#[blanket_trait]` blanket-impl trait, not a CGP

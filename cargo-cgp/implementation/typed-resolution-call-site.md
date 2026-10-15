@@ -1,16 +1,17 @@
 # Typed resolution: the call-site anchor
 
-This document covers the seventh and eighth anchors of the driver's
+This document covers the seventh, eighth, and ninth anchors of the driver's
 [typed root-cause resolution](typed-root-cause-resolution.md): recovering a use-site failure's
 obligation from the failing call expression's own HIR, when its spans touch nothing the
 [span-matching anchors](typed-resolution-anchors.md) can read. The seventh, the call-site anchor,
 reads a call through a consumer or blanket trait on a context; the eighth, the data-call anchor,
 reads a call to one of CGP's extensible-data operations, whose value is usually another operation's
-result ([below](#calls-to-extensible-data-operations)). (A ninth anchor,
-`resolve_use_site_blanket_trait`, is tried after them for a blanket trait required as a `where`
-*bound* rather than *called*; it is described in
-[anchoring the starting obligation](typed-resolution-anchors.md) and reuses this anchor's
-`contexts_at_spans`.)
+result ([below](#calls-to-extensible-data-operations)); and the ninth, the provider-call anchor,
+reads a provider trait's method called through the provider's own path
+([below](#calls-to-a-providers-own-method)). (A tenth anchor, `resolve_use_site_blanket_trait`, is
+tried after them for a blanket trait required as a `where` *bound* rather than *called*; it is
+described in [anchoring the starting obligation](typed-resolution-anchors.md) and reuses this
+anchor's `contexts_at_spans`.)
 
 The call-site anchor exists for the use-site failure that leaves *no usable span at all*, and its
 design follows from working out what can still be known once the spans are gone. This document
@@ -382,6 +383,55 @@ all (`FinalizeBuild` on a builder with a field unset), the chain still starts wi
 own step, so it names the finalize the cause is about. The causes and their wording belong to
 [the transformed diagnostic](typed-resolution-output.md).
 
+## Calls to a provider's own method
+
+The provider-call anchor, `resolve_provider_call`, is tried ninth, for a call that names a provider
+and calls its provider trait's method directly, with no consumer trait between them:
+
+```rust
+#[cgp_computer]
+pub fn increment(value: u8) -> Result<u8, &'static str> {
+    value.checked_add(1).ok_or("overflow")
+}
+
+let _ = PipeHandlers::<Product![Increment, Increment]>::compute(&(), PhantomData::<()>, 1u8);
+```
+
+Such a call asserts the provider trait itself, much as a `#[check_providers]` entry does, so the
+anchor seeds and walks the provider obligation. The provider is the type the path names, read by the
+small lowering. The candidate traits are the CGP provider traits in scope at the call that declare
+a function of the called name; a provider method takes its context as an argument rather than as
+`self`, so every function counts. The seed then unifies the call's arguments with the function's
+declared inputs, as a data operation's type-relative call does: every argument is an input, and
+one that is a binding is typed through it, so `MatchWithHandlers::<…>::compute(&(), PhantomData::<()>, shape)`
+takes `shape`'s type from the enclosing signature. Here the seed is
+`PipeHandlers<Product![Increment, Increment]>: Computer<(), (), u8>`.
+
+The walk is rooted at the provider trait's context, its first type argument after `Self`, so a
+call whose context argument stays unknown declines. The result records the provider, which makes
+the block the provider class `[CGP-E002]`, and the context is named plainly unless it carries
+wiring. In the example the walk reaches the second stage, which `PipeHandlers` gives the first
+stage's `Result` output, and the provider-for-other-arguments leaf states it:
+
+```text
+error[E0599]: [CGP-E002] `Increment` implements `Computer` only with `Input = u8`, not `Input = Result<u8, &str>`
+  --> src/main.rs:23:61
+   |
+23 |     let _ = PipeHandlers::<Product![Increment, Increment]>::compute(&(), PhantomData::<()>, 1u8);
+   |                                                             ^^^^^^^
+   |
+   = note: root cause: [CGP-E127] `Increment` implements `Computer` only with `Input = u8`, not `Input = Result<u8, &str>`
+           this is required through the dependency chain:
+             [CGP-E102] provider trait impl `Computer<(), u8>` with context `()` for provider `PipeHandlers<Product![Increment, Increment]>`
+             └─ [CGP-E102] provider trait impl `Computer<(), u8>` with context `()` for provider `ComposeHandlers<Increment, Increment>`
+               └─ [CGP-E102] provider trait impl `Computer<(), Result<u8, &str>>` with context `()` for provider `Increment`
+                 └─ [CGP-E127] `Increment` implements `Computer` only with `Input = u8`, not `Input = Result<u8, &str>`
+```
+
+The same gates as the other call anchors keep it from claiming a call that is not this shape: a
+call whose trait is not in scope is left alone, a seed that holds is skipped, and a walk that
+reaches no reportable cause declines.
+
 ## Tests
 
 The anchor's fixtures live under
@@ -409,25 +459,34 @@ after one merge), `finalize_build_premature` (a "no method named" `E0599`), `ext
 binds), `downcast_on_remainder` (a remainder used where its enum belongs), `from_variant_wrong_case`
 and `build_with_default_without_default` (type-relative calls), and `upcast_missing_variant` (a
 cast on a constructed value). The pass-through fixture `data_operation_name_not_in_scope` pins the
-in-scope rule. The consolidated catalog lives in the parent document's
-[Tests](typed-root-cause-resolution.md#tests) section.
+in-scope rule.
+
+The provider-call anchor's fixtures are `provider_called_directly` (the worked example above) and
+`provider_called_directly_without_error_type` (a `#[cgp_computer]` provider's fallible member,
+called on a context without an error type, resolved to the missing wiring), under
+`hidden/unsatisfied-dependency/`, and `matcher_missing_arm` under `data/extensible-data/` (a
+matcher's `compute`, its input a fn parameter, resolved to the variant it never extracts). The
+consolidated catalog lives in the parent document's [Tests](typed-root-cause-resolution.md#tests)
+section.
 
 ## Source
 
 - [`crates/cargo-cgp-driver/src/resolve/call_site/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/call_site):
   one file per stage: `find_call.rs` (locating the call and the candidate consumers), `receiver.rs`
   (the context off the receiver), `seed.rs` (the signature unification, for each `CallForm`: a
-  consumer method call, a data method call, and a data path call), `written_ty.rs` (the types the
+  consumer method call, a data method call, and a type-relative path call), `written_ty.rs` (the types the
   call's arguments write), and `lower.rs` (the small syntactic type lowering, literal const
   arguments included); for the data-call anchor, `data_call.rs` (`resolve_data_call`, locating a
   method or type-relative call and its data operations in scope) and `chain.rs` (`data_expr_ty`,
-  typing a value through the data operations and pattern bindings that produced it).
+  typing a value through the data operations and pattern bindings that produced it); for the
+  provider-call anchor, `provider_call.rs` (`resolve_provider_call`, locating a type-relative call
+  and the provider traits in scope that declare its function).
 
 ## Further reading
 
 - [Typed root-cause resolution](typed-root-cause-resolution.md): the pipeline overview.
 - [Typed resolution: anchoring the starting obligation](typed-resolution-anchors.md): the six
-  anchors tried before these two, and the by-blanket-trait anchor tried after them.
+  anchors tried before these three, and the by-blanket-trait anchor tried after them.
 - [Typed resolution: walking to the root cause](typed-resolution-walk.md): how the seeded obligation
   (placeholders and all) is descended.
 - [rustc diagnostic internals](rustc-diagnostic-internals.md): why `tcx.typeck` can never be forced

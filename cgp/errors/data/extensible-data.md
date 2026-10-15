@@ -198,9 +198,10 @@ needs, since the data traits are not in the prelude
 The tree names a builder or an extractor in words, as in
 ``trait impl `BuildField<Symbol!("host")>` for the builder of `Config` with `host` and `port` set``,
 though a provider step whose input is a partial value still shows its generated type, and the
-defaulted finalize's chain names the internal `TransformMapDefault` transform. Two shapes pass
-through as rustc wrote them: a matcher's provider method called directly, a use site no anchor reads,
-and the lifetime shape.
+defaulted finalize's chain names the internal `TransformMapDefault` transform. A matcher's provider
+method called directly through its path takes the provider class, as
+``[CGP-E002] variant `Rectangle` of `Shape` is not extracted``. The lifetime shape passes through as
+rustc wrote it.
 
 ## Resolving it
 
@@ -271,8 +272,8 @@ These fixtures pin the class, one group per shape:
 - [`data/extensible-data/matcher_missing_arm_check.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/matcher_missing_arm_check.rs):
   a `MatchWithHandlers` list without an arm for `Rectangle`, behind a check; `[CGP-E121]`.
 - [`data/extensible-data/matcher_missing_arm.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/matcher_missing_arm.rs):
-  the same matcher's provider method called directly; passed through, its two identical reports
-  merged.
+  the same matcher's provider method called directly through its path; `[CGP-E002]` over
+  `[CGP-E121]`, rustc's repeat dropped.
 - [`data/extensible-data/upcast_missing_variant.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/upcast_missing_variant.rs):
   an upcast into `Big`, which lacks `Small`'s `Bar`; `[CGP-E050]` over `[CGP-E120]`.
 - [`data/extensible-data/downcast_missing_source_variant.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/downcast_missing_source_variant.rs):

@@ -154,8 +154,11 @@ exactly how `cargo-cgp` recovers it, by promoting the hidden bound to the direct
 trace. A call to a [`#[cgp_auto_dispatch]`](../../reference/macros/cgp_auto_dispatch.md) trait whose
 enum has a payload without the trait is recovered as well, though the trait is no component and has
 no check form: the tree runs through the generated matcher to the per-variant computer and ends at
-the payload's missing impl, ``[CGP-E003] the trait bound `Square: HasArea` is not satisfied``. The
-codes are defined in the [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
+the payload's missing impl, ``[CGP-E003] the trait bound `Square: HasArea` is not satisfied``. A
+provider's own method called through its path (`Add::try_compute(&App, …)`), which asserts the
+provider trait itself, is recovered the way a `#[check_providers]` entry is, as the provider class
+``[CGP-E002] missing wiring for `ErrorTypeProviderComponent` on `App` ``. The codes are defined in
+the [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
 
 ## Resolving it
 
@@ -219,6 +222,13 @@ promoting to a check) can.
   but never the context the provider takes, and the `.cgp.stderr` leads with the
   `[CGP-E127]` cause. Its checked counterpart is
   [`checks/check-trait-failure/providers/provider_for_other_context.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/provider_for_other_context.rs).
+- [`hidden/unsatisfied-dependency/provider_called_directly_without_error_type.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/provider_called_directly_without_error_type.rs):
+  a `#[cgp_computer]` provider's fallible `try_compute` called through its path on a context with no
+  error type; the `.rust.stderr` stops at `App: ErrorTypeProvider<App>` with rustc's implementor
+  list, and the `.cgp.stderr` leads with the `[CGP-E002]` missing wiring and its `help`. Its sibling
+  [`provider_called_directly.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/provider_called_directly.rs)
+  calls a `PipeHandlers` pipeline whose second stage takes the first stage's input type, not its
+  `Result` output, and ends at `[CGP-E127]`.
 - [`hidden/unsatisfied-dependency/auto_dispatch_missing_variant_impl.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/auto_dispatch_missing_variant_impl.rs):
   the same hidden `E0599` reached through
   [`#[cgp_auto_dispatch]`](../../reference/macros/cgp_auto_dispatch.md): one of an enum's two

@@ -47,8 +47,9 @@ same change.
     namespace-joined consumer, or a blanket trait.
   - [Typed resolution: the call-site anchor](typed-resolution-call-site.md): the HIR re-reads of
     the failing call expression, its signature unification, the rigid placeholders that stand in
-    for what the call never types, and the data-call anchor that types an extensible-data
-    operation's value through the chain of operations that produced it.
+    for what the call never types, the data-call anchor that types an extensible-data operation's
+    value through the chain of operations that produced it, and the provider-call anchor that reads
+    a provider's own method called through its path.
   - [Typed resolution: walking to the root cause](typed-resolution-walk.md): the descent from the
     seeded obligation to every terminal unmet bound, and the decoding, classification, and label
     rendering of each leaf.
