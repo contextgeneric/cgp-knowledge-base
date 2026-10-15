@@ -128,6 +128,9 @@ One per rendering template, riding at the start of each entry in a `root cause:`
   builder holds set or unset.
 - **CGP-E126**: cause: a builder or an extractor given to an operation that needs the struct or enum
   itself (`downcast` on a remainder, which takes `downcast_fields`).
+- **CGP-E127**: cause: a provider that implements the provider trait for other arguments than the
+  wiring gives it (a provider written for another context, or a stage given another stage's output
+  type).
 
 ## Where CGP classes cite these
 

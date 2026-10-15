@@ -172,8 +172,9 @@ walk descends it the way it descends a provider. It deliberately does *not* foll
     has no concrete impl of the parent provider trait. This is the aggregate-provider case, where
     the blanket keys on the provider itself so no separate-table structure is visible. An owner with
     its own impl of the trait can never wire the trait's key as well, since the blanket and the
-    impl would overlap, so reaching its blanket means that impl did not unify: the dead-end below,
-    even when it wires other keys, as a `#[cgp_computer]` provider wires its promotions
+    impl would overlap, so reaching its blanket means that impl did not unify: the dead-end or
+    the provider-for-other-arguments leaf below, even when it wires other keys, as a
+    `#[cgp_computer]` provider wires its promotions
     ([`cgp_computer_no_error_type_call`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/handlers/cgp_computer_no_error_type_call.rs),
     whose `(_, _)` input keeps `Add`'s own `Computer` impl from matching).
 
@@ -185,19 +186,30 @@ walk descends it the way it descends a provider. It deliberately does *not* foll
   [`empty_dispatch_table`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/empty_dispatch_table.rs).
   Hypershell's own dispatchers `open` their component instead, so the same mistake in its
   `http_checksum_native` example reaches the redirect-wiring leaf above.
-- An unmet **`DelegateComponent<Marker>` on a type that is neither the context nor any table** is
-  the **not-a-provider** leaf (`[CGP-E115]`): a type wired where a provider was expected that does
-  not implement the provider trait at all (`UseBasicAuth<QueryBalanceRequest>`, a request type in a
-  handler slot). It arises via the generic blanket for the parent provider trait `T` (owner ==
-  parent `Self`), and is split from the **dead-end** by whether the owner has a *concrete* impl of
-  `T` (`owner_has_impl_of`): a leaf provider reached via the blanket only because its concrete impl
-  did not unify (a pipeline stage fed the wrong input, the `HandleShout` shape) *has* one and is
-  dropped, its real cause running through that impl; a genuine non-provider has *none* and is
-  reported, named against `T` rather than a wiring key
+- An unmet **`DelegateComponent<Marker>` on a type that is neither the context nor any table**
+  arises via the generic blanket for the parent provider trait `T` (owner == parent `Self`), and
+  splits by whether the owner has a *concrete* impl of `T` (`owner_has_impl_of`). A genuine
+  non-provider has *none*: a type wired where a provider was expected that does not implement the
+  provider trait at all (`UseBasicAuth<QueryBalanceRequest>`, a request type in a handler slot), the
+  **not-a-provider** leaf (`[CGP-E115]`), named against `T` rather than a wiring key
   ([`non_provider_wired`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/non_provider_wired.rs)
-  pins it;
-  [`cascade_after_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/cascade_after_use_site.rs)
-  is the dead-end that must stay dropped).
+  pins it). An owner that *has* one reached the blanket only because that impl did not unify with
+  the arguments the walk gives it, and two cases follow:
+  - When those arguments are fully known (no placeholder, inference variable, or unreduced
+    projection) and exactly one argument position is one that none of the owner's concrete impls
+    accepts, the owner implements `T` for other arguments: the **provider-for-other-arguments**
+    leaf (`[CGP-E127]`, `provider_for_other_arguments` in `classify/other_arguments.rs`). It names
+    that argument and the ones the impls take there: the context for a provider written for
+    another context
+    ([`provider_for_other_context`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/provider_for_other_context.rs)),
+    or a component parameter for a pipeline stage given another stage's output type
+    ([`pipe_handlers_stage_mismatch`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/handlers/pipe_handlers_stage_mismatch.rs)).
+    An impl's own generic parameters print as `_` (`Input = Result<_, _>`).
+  - Otherwise it is the **dead-end**, dropped, its real cause running through that impl: a stage fed
+    an input the walk does not know (the `HandleShout` shape;
+    [`cascade_after_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/cascade_after_use_site.rs)
+    is the dead-end that must stay dropped), or a mismatch at several positions, which no single
+    argument explains.
 - An unmet **namespace-lookup bound** is a missing-redirect-wiring leaf too when its table, the
   trait's last type argument, is the context. When the table is an aggregate provider that joins the
   namespace itself, it is the missing-dispatch-entry leaf, as a path key on that provider is. The
@@ -304,9 +316,11 @@ these (owner is not the context, not a dispatch lookup, and not a table) splits 
 whether the owner has a **concrete impl of the parent provider trait** (`owner_has_impl_of` against
 that trait, not `DelegateComponent`): with no such impl it is a genuine non-provider wired where a
 provider was expected (the **not-a-provider** leaf, `[CGP-E115]`); with one, it is a leaf provider
-reached via the blanket only because that impl failed to unify (a pipeline stage fed the wrong
-input, the `HandleShout` shape), the routing dead-end that is dropped, its real cause running
-through that impl down another branch.
+reached via the blanket only because that impl failed to unify. That is the
+**provider-for-other-arguments** leaf (`[CGP-E127]`) when the walk's arguments are fully known and
+one position explains the mismatch, and otherwise (a pipeline stage fed an unknown input, the
+`HandleShout` shape) the routing dead-end that is dropped, its real cause running through that impl
+down another branch.
 
 Before a provider-trait obligation reaches that not-a-provider leaf, the walk checks for a provider
 whose `#[cgp_impl]` header names the component's consumer trait where the provider trait belongs,
@@ -536,7 +550,8 @@ parent document's [Tests](typed-root-cause-resolution.md#tests) section.
   `misdirected.rs` (the requirements of a provider impl whose `#[cgp_impl]` header names the
   consumer trait).
 - [`crates/cargo-cgp-driver/src/resolve/classify/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/classify):
-  `reportable.rs` (root cause versus routing dead-end), `leaf.rs` (`classify_leaf`, which builds the
+  `reportable.rs` (root cause versus routing dead-end), `other_arguments.rs` (the argument a provider
+  does not implement its provider trait for), `leaf.rs` (`classify_leaf`, which builds the
   rustc-free `Leaf`), `data.rs` (`classify_data_leaf`, the extensible-data leaf read off the presence
   markers), `field.rs` (the struct and `Deref`-chain inspection), `required_type.rs` (the
   type a requirement gives a missing field), `near_miss.rs` (a similar field, variant, or wiring key

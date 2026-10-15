@@ -144,7 +144,7 @@ render as their own root trees stacked in the one note. The heading lists the di
 singular `root cause:` lead when they all bottom out on the same leaf, or a `root causes:` list
 (each with its own code, so a reader sees every cause at a glance) when they differ.
 
-The `root cause:` lead is worded by *why* the leaf is unmet, and there are eight leaf shapes:
+The `root cause:` lead is worded by *why* the leaf is unmet, in one shape per kind of leaf:
 
 - A **genuinely absent field** reads as `` root cause: missing field `height` on `Rectangle` ``, the
   worked example's leaf. There is no `context` qualifier, since `HasField` can land on any struct.
@@ -240,11 +240,25 @@ The `root cause:` lead is worded by *why* the leaf is unmet, and there are eight
   `money-transfer-api` example does when an endpoint's inner handler is dropped and
   `UseBasicAuth<QueryBalanceRequest>` leaves the *request* type where an `ApiHandler` belongs. It is
   the sibling of a missing dispatch entry for a type that is not a table at all: told apart from a
-  valid-provider dead-end (a leaf provider reached via the blanket after an input mismatch, which
-  *has* a concrete impl of the trait) by the owner having **no** concrete impl of the provider
-  trait, and named against that trait rather than a wiring key
+  valid provider reached via the blanket after an argument mismatch, which *has* a concrete impl of
+  the trait, by the owner having **no** concrete impl of the provider trait, and named against that
+  trait rather than a wiring key
   ([`non_provider_wired`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/non_provider_wired.rs)
   pins it).
+
+- A **provider for other arguments**, a valid provider whose concrete impls take other arguments
+  than the wiring gives it at one position, reads as
+  `` root cause: `GreetPerson` implements `Greeter` only for `Person`, not `Robot` `` for the
+  context, and as
+  `` root cause: `Double` implements `Computer` only with `Input = u64`, not `Input = String` `` for
+  a component parameter, named by the provider trait's own parameter name; several impls join with
+  "or", and an impl's own generic parameters print as `_`. The mistakes are a provider written for
+  one context and wired on another
+  ([`provider_for_other_context`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/provider_for_other_context.rs)),
+  and a pipeline stage given another stage's output type
+  ([`pipe_handlers_stage_mismatch`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/handlers/pipe_handlers_stage_mismatch.rs)).
+  The cause names no fix: the provider is right for other arguments, and only the reader knows
+  whether the wiring or the provider should change.
 
 - An **abstract-type mismatch**, an associated type the owner supplies differently from what a
   provider requires, reads as

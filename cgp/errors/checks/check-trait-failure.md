@@ -235,6 +235,54 @@ parameters: `#[check_params(Rectangle)]` on a `delegate_and_check_components!` e
 `AreaCalculatorComponent: Rectangle` in `check_components!`, and `#[check_params(I)]` for the
 generic key.
 
+## When the provider takes other arguments
+
+A provider can fail a check although it is a provider of the component: it implements the provider
+trait, but not for the arguments the wiring gives it. A provider written for one context and wired
+on another is the plain case, since `#[cgp_impl(new GreetPerson)] impl Greeter for Person`
+implements `Greeter` for the context `Person` alone:
+
+```rust
+#[cgp_component(Greeter)]
+pub trait CanGreet {
+    fn greet(&self);
+}
+
+pub struct Person;
+pub struct Robot;
+
+#[cgp_impl(new GreetPerson)]
+impl Greeter for Person {
+    fn greet(&self) {}
+}
+
+delegate_components! {
+    Robot {
+        GreeterComponent: GreetPerson, // a provider for `Person`, not `Robot`
+    }
+}
+
+check_components! {
+    Robot {
+        GreeterComponent,
+    }
+}
+```
+
+A component argument can differ the same way. A
+[handler pipeline](../../reference/providers/handler_combinators.md) feeds each stage the output of
+the stage before it, so a stage that takes `u64` after one that returns `String` is asked for
+`Computer` with the input `String`, which its impl does not provide.
+
+The raw output is an `E0277` on the provider's `IsProviderFor` bound,
+`` the trait bound `GreetPerson: IsProviderFor<GreeterComponent, Robot>` is not satisfied ``, its
+caret on the entry. The cause sits in the near-impl hint below it, which names the
+`IsProviderFor<GreeterComponent, Person, ()>` the provider does implement and adds
+"for that trait implementation, expected `Person`, found `Robot`"; for a pipeline stage the hint
+reads "expected `u64`, found `String`". The fix is a provider for these arguments, or other
+arguments for this provider: wire a provider written for `Robot`, or make the stage before it
+return what the stage takes.
+
 ## How cargo-cgp presents it
 
 `cargo-cgp` recognizes this class and leads with the cause. It keeps the `E0277` code but rewrites
@@ -289,6 +337,14 @@ parameters to check, written for the macro the entry is in:
 `` `AreaCalculatorComponent: Rectangle` `` in `check_components!`). The parameters are the ones a
 provider of the component implements for the context, kept only where the context passes the check;
 when none qualifies, the error keeps its ordinary reshaping.
+
+A [provider that takes other arguments](#when-the-provider-takes-other-arguments) bottoms out on the
+`[CGP-E127]` leaf, which names the one argument the provider's impls do not accept and the arguments
+they take there: `` [CGP-E001] `GreetPerson` implements `Greeter` only for `Person`, not `Robot` ``
+for the context, and
+`` [CGP-E001] `Double` implements `Computer` only with `Input = u64`, not `Input = String` `` for a
+component parameter, named as the provider trait names it. It carries no `help`, since only the
+reader knows whether the wiring or the provider should change.
 
 ## Resolving it
 
@@ -354,6 +410,17 @@ reduce to the same `[CGP-E001]` headline and `root cause:` tree.
   names `#[check_params(Rectangle)]`.
 - [`checks/check-trait-failure/providers/generic_check_without_params.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/generic_check_without_params.rs):
   the same in `check_components!`, whose help names `AreaCalculatorComponent: Square`.
+- [`checks/check-trait-failure/providers/provider_for_other_context.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/provider_for_other_context.rs):
+  a [provider that takes other arguments](#when-the-provider-takes-other-arguments), written for
+  `Person` and wired on `Robot`; its `.rust.stderr` pins the near-impl hint "expected `Person`, found
+  `Robot`", and its `.cgp.stderr` the `[CGP-E127]` leaf naming the context. The component-argument
+  forms are
+  [`pipe_handlers_stage_mismatch`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/handlers/pipe_handlers_stage_mismatch.rs)
+  (a stage taking `u64` after one returning `String`),
+  [`pipe_monadic_non_result`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/handlers/pipe_monadic_non_result.rs)
+  (a monadic pipeline's `BindErr` given a stage's `u64` where it takes a `Result`), and
+  [`promote_ref_owned_input`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/handlers/promote_ref_owned_input.rs)
+  (`PromoteRef` calling a provider that takes its input by value with a reference, an `E0271`).
 - [`checks/check-trait-failure/checks/check_trait_named_as_wrapper.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/checks/check_trait_named_as_wrapper.rs):
   a generic key, `<I> FooKeyComponent<I>: AnyFoo`, checked at unit parameters; its `.rust.stderr`
   pins the spliced `where` suggestion, and its `.cgp.stderr` the `[CGP-E060]` block naming

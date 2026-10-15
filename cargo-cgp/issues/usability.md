@@ -339,7 +339,7 @@ The fixtures group by construct:
   `#[derive_delegate]`, a provider impl without `#[cgp_provider]`, a tuple-struct context, a field
   read as two types, and a borrowed error detail.
 - **Handlers:** promotions of hand-written providers, a matcher wired as a handler or applied to a
-  struct, a monadic pipeline over plain values, and matchers or builders missing an arm or a field.
+  struct, and matchers or builders missing an arm or a field.
 - **Use sites:** calls the resolver declines, leaking `IsProviderFor` or rustc's method-probe
   advice, including a provider's own method called directly.
 

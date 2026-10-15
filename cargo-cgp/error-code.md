@@ -1002,6 +1002,18 @@ at (`CGP-E110` onward).
   value takes instead when one holds,
   `` call `downcast_fields` in place of `downcast` on an extractor, with `use cgp::core::field::impls::CanDowncastFields;` in scope ``.
 
+- **`CGP-E127`: provider for other arguments (leaf).**
+  `` `<P>` implements `<Trait>` only for `<A>`, not `<B>` ``, or
+  `` `<P>` implements `<Trait>` only with `<Param> = <A>`, not `<Param> = <B>` ``: the chain bottoms
+  out on a provider that implements the provider trait, but not for the arguments the wiring gives
+  it. Exactly one argument differs from every impl the provider has: the context, as for a
+  provider written with `#[cgp_impl(new GreetPerson)] impl Greeter for Person` and wired on
+  `Robot`, or a component parameter, named as the provider trait names it, as for a pipeline stage
+  that takes `u64` after one that returns `String`. Several impls join with "or", and an impl's own
+  generic parameters print as `_` (`` `Input = Result<_, _>` ``). Distinct from `CGP-E115`: the
+  type is a provider, so the fix is a provider for these arguments, or other arguments for this
+  provider, and the cause names no `help`.
+
 ## Uncoded rewrites
 
 These rewrites improve a diagnostic's readability without classifying its main message, so they

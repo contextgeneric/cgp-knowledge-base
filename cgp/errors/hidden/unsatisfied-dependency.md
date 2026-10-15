@@ -143,10 +143,12 @@ The leaf the tree bottoms out on names the actual mistake, and it varies with th
 dependency's kind. A genuinely absent field is `[CGP-E110]`; a struct that never derived `HasField`
 coalesces to `[CGP-E111]`; a component the context never wired, or an
 [unregistered namespace path](../checks/unregistered-namespace-path.md), is
-`[CGP-E113] does not contain any delegate entry`. When the buried leaf is an
+``[CGP-E113] missing wiring for `GreeterComponent` on `Person` ``. When the buried leaf is an
 [ordinary Rust trait bound](../checks/ordinary-trait-bound.md) such as `Scalar: Eq`, the tree's
 terminal passes the bound through in rustc's own words and the `root cause:` lead takes `[CGP-E117]`
-instead. In every case the recovered result matches, byte for byte, what a
+instead. A provider written for another context, wired on this one, ends at
+``[CGP-E127] `GreetPerson` implements `Greeter` only for `Person`, not `Robot` ``. In every case the
+recovered result matches, byte for byte, what a
 [check-trait failure](../checks/check-trait-failure.md) produces for the same mistake, which is
 exactly how `cargo-cgp` recovers it, by promoting the hidden bound to the direct one the solver will
 trace. A call to a [`#[cgp_auto_dispatch]`](../../reference/macros/cgp_auto_dispatch.md) trait whose
@@ -211,6 +213,12 @@ promoting to a check) can.
   as a ``[CGP-E001] the trait bound `f64: Eq` is not satisfied`` headline over a
   ``root cause: [CGP-E117] the trait bound `f64: Eq` is not satisfied`` tree. Its surfaced
   counterpart is the [unsatisfied ordinary trait bound](../checks/ordinary-trait-bound.md) class.
+- [`hidden/unsatisfied-dependency/provider_for_other_context_call.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/provider_for_other_context_call.rs):
+  the hidden `E0599` where the provider `GreetPerson` implements `Greeter` for `Person` and `Robot`
+  wires it; the `.rust.stderr` names the unmet `GreetPerson: IsProviderFor<GreeterComponent, Robot>`
+  but never the context the provider takes, and the `.cgp.stderr` leads with the
+  `[CGP-E127]` cause. Its checked counterpart is
+  [`checks/check-trait-failure/providers/provider_for_other_context.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/provider_for_other_context.rs).
 - [`hidden/unsatisfied-dependency/auto_dispatch_missing_variant_impl.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/auto_dispatch_missing_variant_impl.rs):
   the same hidden `E0599` reached through
   [`#[cgp_auto_dispatch]`](../../reference/macros/cgp_auto_dispatch.md): one of an enum's two

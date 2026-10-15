@@ -432,14 +432,17 @@ marking.
     `assoc_type.rs`'s `projected_type` normalizing the projection for the actual type and
     `abstract_type_component_marker` recovering the wiring marker for its `help`, a missing wiring
     on the context, a missing dispatch entry on a non-context delegation table, a not-a-provider on
-    a non-table type, a missing redirect wiring told apart by `is_path_cons`, or a bound);
+    a non-table type, a provider for other arguments named by `other_arguments.rs`, a missing
+    redirect wiring told apart by `is_path_cons`, or a bound);
     `reportable.rs` holds `is_reportable_leaf`, keeping an unmet `DelegateComponent` on the context
     (a missing wiring), on a non-context delegation table (a missing dispatch entry, recognized as a
     separate-table lookup by `is_dispatch_lookup`, the owner a proper part of the parent
     obligation's `Self`, or by owner property via `owner_has_impl_of` for `DelegateComponent`), or
     on a non-table type with no concrete impl of the parent provider trait (a not-a-provider, via
-    `owner_has_impl_of` against that trait), while dropping a higher-order-provider dead-end (a
-    non-table owner that *does* have a concrete impl of the trait).
+    `owner_has_impl_of` against that trait), and on a non-table type that *does* have one when the
+    walk's arguments are fully known and one argument explains the mismatch (a provider for other
+    arguments, `is_blanket_dead_end` and `provider_for_other_arguments`), while dropping the
+    remaining dead-end (such an owner fed an argument the walk does not know).
   - [`data/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/data)
     recognizes CGP's extensible-data traits (`is_data_trait`; `is_data_operation`, the ones a call
     to a data operation names, which leave out the field-access traits; `is_data_list_recursion`;
@@ -728,6 +731,15 @@ fixtures:
   `Greeter` impl (`owner_has_impl_of` false), so it is reported as
   `` `NotAGreeter` is not a provider of `Greeter` `` rather than declining to a
   `[CGP-E002]` block naming the whole `WrapGreeter<NotAGreeter>` pipeline.
+- `provider_for_other_context` (under
+  [`checks/check-trait-failure/providers/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/checks/check-trait-failure/providers)),
+  with its call form `provider_for_other_context_call` under `hidden/unsatisfied-dependency/`: a
+  provider written for `Person` and wired on `Robot`. Pins the `[CGP-E127]` leaf the dead-end
+  becomes when the walk's arguments are fully known: `GreetPerson` has a concrete `Greeter` impl,
+  for `Person`, so the leaf names the context it takes. `pipe_handlers_stage_mismatch`,
+  `pipe_monadic_non_result`, and `promote_ref_owned_input` (under `handlers/`) pin the
+  component-argument form, the last from an `E0271`, and `pipe_monadic_non_result` an impl's own
+  parameters printed as `_`.
 - `generic_consumer_use_site`: the same anchor's value-argument case: the dispatch parameter
   recovered by signature unification from a written tuple, no tag argument involved, with the
   misleading method-syntax advice dropped.
