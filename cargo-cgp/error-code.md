@@ -127,9 +127,10 @@ fix, and the [CGP error catalog](../cgp/errors/README.md) class it recognizes.
   transitive dependency of the wired provider is unmet, so the blanket impl that would give the
   context its consumer trait does not apply.
 - **Triggered by:** an unsatisfied `Context: CanUseComponent<Marker, Params>` bound, a
-  `check_components!` / `delegate_and_check_components!` entry failing, or a consumer-method call
-  (`E0599`) on a context that cannot use a component it wires. The Rust code stays whatever rustc
-  assigned (`E0277` at a check, `E0599` at a call site).
+  `check_components!` / `delegate_and_check_components!` entry failing, a consumer-method call
+  (`E0599`) on a context that cannot use a component it wires, or a call to a generic function
+  whose consumer-trait bound the context fails (`E0277`). The Rust code stays whatever rustc
+  assigned (`E0277` at a check or a bound, `E0599` at a method call).
 - **Fix:** follow the `root cause:` note(s): add the missing field or derive, wire the missing
   component, or satisfy the ordinary bound the chain bottoms out on. A `help` names each fix the
   tool can confirm.
@@ -180,8 +181,8 @@ fix, and the [CGP error catalog](../cgp/errors/README.md) class it recognizes.
   consumer supertrait to the root cause; **or** a `#[cgp_fn]` / `#[blanket_trait]` blanket trait the
   context cannot satisfy, reached either by a direct method call (`app.describe()`, an `E0599` the
   [call-site anchor](implementation/typed-resolution-call-site.md) recovers from the call
-  expression) or through a `where` bound (`fn f<C: Describe>(…)`, an `E0277` the by-blanket-trait
-  use-site anchor recovers). Whether the failing trait is a CGP consumer or one of these
+  expression) or through a `where` bound (`fn f<C: Describe>(…)`, an `E0277` the bound-call anchor
+  recovers from the called function's own bound). Whether the failing trait is a CGP consumer or one of these
   non-component traits is decided by its **fingerprint**: a CGP consumer carries a blanket impl
   routing to a provider trait, while a wrapper has only its concrete impl and a `#[cgp_fn]` trait
   has a blanket impl over the bare context with no provider.

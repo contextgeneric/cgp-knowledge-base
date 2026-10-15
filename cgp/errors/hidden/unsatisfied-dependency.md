@@ -233,6 +233,13 @@ promoting to a check) can.
   [`provider_called_directly.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/provider_called_directly.rs)
   calls a `PipeHandlers` pipeline whose second stage takes the first stage's input type, not its
   `Result` output, and ends at `[CGP-E127]`.
+- [`hidden/unsatisfied-dependency/consumer_bound_call.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/consumer_bound_call.rs):
+  the consumer trait used as a bound, `fn greet_twice<Context: CanGreet>(…)` called with a `Person`
+  that lacks the `name` field; the `.rust.stderr` is the `E0277` on the call, and the `.cgp.stderr`
+  the `[CGP-E001]` block whose tree starts at `CanGreet`. Its sibling
+  [`raise_error_unwired_call.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/raise_error_unwired_call.rs)
+  bounds a function on `CanRaiseError<String>` and calls it as `fail::<App>()` on a context with no
+  error raiser wired, which ends at the missing `ErrorRaiserComponent` wiring and its `help`.
 - [`hidden/unsatisfied-dependency/hand_delegate_without_is_provider.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/hand_delegate_without_is_provider.rs):
   `App` wired by a hand-written `impl DelegateComponent<GreeterComponent> for App` and called; the
   `.rust.stderr` names the unmet `App: IsProviderFor<GreeterComponent, App>` and points into `cgp`,

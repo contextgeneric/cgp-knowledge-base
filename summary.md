@@ -705,9 +705,9 @@ it stale.
 - [typed-resolution-anchors.md](cargo-cgp/implementation/typed-resolution-anchors.md) — the
   span-matching anchors that recover the obligation the walk starts from.
 - [typed-resolution-call-site.md](cargo-cgp/implementation/typed-resolution-call-site.md) — the
-  HIR re-reads of the failing call expression, the seventh to ninth of the ten anchors: a call on a
-  context, a call to an extensible-data operation typed through its chain, and a provider's own
-  method called through its path.
+  HIR re-reads of the failing call expression, the seventh to tenth of the eleven anchors: a call on
+  a context, a call to an extensible-data operation typed through its chain, a provider's own
+  method called through its path, and a bound of a called generic function.
 - [typed-resolution-walk.md](cargo-cgp/implementation/typed-resolution-walk.md) — the descent to every
   terminal unmet bound, and each leaf's decoding and classification.
 - [typed-resolution-output.md](cargo-cgp/implementation/typed-resolution-output.md) — the coded

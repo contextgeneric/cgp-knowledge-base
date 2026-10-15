@@ -4,11 +4,12 @@ This document covers the first stage of the driver's
 [typed root-cause resolution](typed-root-cause-resolution.md), which recovers from a failing
 diagnostic the **real trait obligation** that seeds the [walk](typed-resolution-walk.md): a
 consumer-trait obligation `Ctx: ConsumerTrait<Params…>`, or, for a `#[check_providers]` entry or a
-provider's own method called directly, the provider-trait obligation it asserts. Ten anchors recover it from ten failure shapes, tried
-in order, and the first that succeeds wins. Seven are described here. The remaining three re-read
-the failing call expression, one for a call through a consumer or blanket trait, one for a call to
-an extensible-data operation, and one for a provider trait's method called through the provider's
-own path; they are tried seventh to ninth and share
+provider's own method called directly, the provider-trait obligation it asserts. Eleven anchors
+recover it from eleven failure shapes, tried in order, and the first that succeeds wins. Seven are
+described here. The remaining four re-read the failing call expression, one for a call through a
+consumer or blanket trait, one for a call to an extensible-data operation, one for a provider
+trait's method called through the provider's own path, and one for a bound of a generic function
+the call names; they are tried seventh to tenth and share
 [their own document](typed-resolution-call-site.md). How the recovered causes are worded and
 emitted is [the transformed diagnostic](typed-resolution-output.md).
 
@@ -255,6 +256,15 @@ context and component parameters off the arguments, and walks it as a `#[check_p
 obligation is walked, so the result is the provider class `[CGP-E002]`. The same document covers
 it.
 
+**From a bound of a called generic function.** The tenth anchor, `resolve_bound_call`, reads a
+call to a generic function by path (`fail::<App>()` for `fn fail<Context: CanRaiseError<String>>()`,
+or `greet_twice(&person)` for `fn greet_twice<Context: CanGreet>(…)`), whose `E0277` names a bound
+the call instantiates rather than a trait the call invokes. It instantiates the function's own
+`where` clauses with the type arguments the turbofish and the arguments write, and seeds each
+consumer-trait or blanket-trait bound on a context that does not hold. It is gated to `E0277` and
+tried before the by-blanket-trait anchor, so the tree starts at the bound the call requires rather
+than at a trait deeper in the chain that rustc's notes name. The same document covers it.
+
 **Recognizing a blanket trait.** Three of the anchors (the impl-site, the call-site, and the
 by-blanket-trait use-site anchors) reach a `#[cgp_fn]`/`#[blanket_trait]` **blanket trait**: a trait
 consumed like a consumer but which is not a component, so no marker or provider trait identifies it.
@@ -274,12 +284,13 @@ not a blanket trait in this sense: the data-call anchor reaches it instead, and 
 the `[CGP-E050]` class
 ([`upcast_missing_variant`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/upcast_missing_variant.rs)).
 
-**From a use site, by blanket trait.** The tenth and last anchor,
+**From a use site, by blanket trait.** The eleventh and last anchor,
 `resolve_use_site_blanket_trait`, is the by-consumer anchor's counterpart for a
 `#[cgp_fn]`/`#[blanket_trait]` **blanket trait**, a blanket-impl trait that is not a CGP component.
-It reaches the shape a blanket trait required through a `where` **bound** or supertrait produces
-(`fn greet_all<Context: GetName>(…)` called with a context missing the field): an `E0277` naming the
-blanket trait, with no method call on a concrete context for the call-site anchor to read. It
+It reaches the shape a blanket trait required through a `where` **bound** or supertrait produces:
+an `E0277` naming the blanket trait, with no method call on a concrete context for the call-site
+anchor to read. A bound of the called function itself (`fn greet_all<Context: GetName>(…)` called
+with a context missing the field) is the bound-call anchor's, tried just before. It
 recovers the blanket trait from the diagnostic's spans (as the by-consumer anchor recovers a
 consumer), and the context from the **failing expression itself** (the call argument whose type
 fails: `app`, read off its binding by the call-site anchor's `contexts_at_spans`), because rustc
@@ -319,7 +330,7 @@ The per-file map of the whole resolver lives in the parent document's
 
 - [Typed root-cause resolution](typed-root-cause-resolution.md): the pipeline overview, its
   boundaries, and the consolidated tests and source catalogs.
-- [Typed resolution: the call-site anchor](typed-resolution-call-site.md): the seventh, eighth, and
-  ninth anchors.
+- [Typed resolution: the call-site anchor](typed-resolution-call-site.md): the seventh to tenth
+  anchors.
 - [Typed resolution: walking to the root cause](typed-resolution-walk.md): the descent every
   anchor's seed feeds.

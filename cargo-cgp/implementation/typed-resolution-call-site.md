@@ -1,17 +1,19 @@
 # Typed resolution: the call-site anchor
 
-This document covers the seventh, eighth, and ninth anchors of the driver's
+This document covers the seventh to tenth anchors of the driver's
 [typed root-cause resolution](typed-root-cause-resolution.md): recovering a use-site failure's
 obligation from the failing call expression's own HIR, when its spans touch nothing the
 [span-matching anchors](typed-resolution-anchors.md) can read. The seventh, the call-site anchor,
 reads a call through a consumer or blanket trait on a context; the eighth, the data-call anchor,
 reads a call to one of CGP's extensible-data operations, whose value is usually another operation's
-result ([below](#calls-to-extensible-data-operations)); and the ninth, the provider-call anchor,
-reads a provider trait's method called through the provider's own path
-([below](#calls-to-a-providers-own-method)). (A tenth anchor, `resolve_use_site_blanket_trait`, is
-tried after them for a blanket trait required as a `where` *bound* rather than *called*; it is
-described in [anchoring the starting obligation](typed-resolution-anchors.md) and reuses this
-anchor's `contexts_at_spans`.)
+result ([below](#calls-to-extensible-data-operations)); the ninth, the provider-call anchor, reads
+a provider trait's method called through the provider's own path
+([below](#calls-to-a-providers-own-method)); and the tenth, the bound-call anchor, reads a bound of
+a generic function at the call that instantiates it ([below](#bounds-of-a-called-generic-function)).
+(An eleventh anchor, `resolve_use_site_blanket_trait`, is tried after them for a blanket trait
+required as a `where` *bound* elsewhere; it is described in
+[anchoring the starting obligation](typed-resolution-anchors.md) and reuses this anchor's
+`contexts_at_spans`.)
 
 The call-site anchor exists for the use-site failure that leaves *no usable span at all*, and its
 design follows from working out what can still be known once the spans are gone. This document
@@ -432,6 +434,40 @@ The same gates as the other call anchors keep it from claiming a call that is no
 call whose trait is not in scope is left alone, a seed that holds is skipped, and a walk that
 reaches no reportable cause declines.
 
+## Bounds of a called generic function
+
+The bound-call anchor, `resolve_bound_call`, is tried tenth, gated to `E0277`, for a call to a
+generic function whose own `where` bound the context fails. Nothing in such a call invokes the
+trait, so no receiver carries the context and no span names the trait:
+
+```rust
+fn fail<Context: CanRaiseError<String>>() -> Context::Error {
+    Context::raise_error(String::new())
+}
+
+let _ = fail::<App>(); // `App` wires no error raiser
+```
+
+The call itself asserts the bound, so the anchor reads it off the function. It finds a call by a
+path to a free generic function that a primary span is about, by the call-site anchor's rule; a
+caret on the turbofish lies in the callee, not in an argument, so it counts. The function's
+parameters start as fresh variables. The turbofish's written types fill its explicit type
+parameters in order, and each argument's type is unified with the declared input it fills. That
+type is written by the argument's syntax, or declared for a binding with its references kept
+(`greet_all(app)` for `app: &App` fills `&Context`), or read as the call-site anchor reads a
+receiver. The function's own clauses are then instantiated, and each bound on a CGP consumer trait
+or blanket trait whose `Self` is a context, fully known, and failing is seeded and walked. The
+result is `[CGP-E001]` for a consumer trait and `[CGP-E003]` for a blanket trait, and here it reads:
+
+```text
+error[E0277]: [CGP-E001] missing wiring for `ErrorRaiserComponent` on `App`
+```
+
+The anchor is tried before the by-blanket-trait anchor, whose own trait comes from rustc's notes:
+for a consumer trait required as a bound (`fn greet_twice<Context: CanGreet>(…)`), those notes name
+a trait deeper in the chain, a getter the provider uses, and the tree would start there instead of
+at the bound the call requires. A bound on any other trait (`T: Clone`) is left as rustc wrote it.
+
 ## Tests
 
 The anchor's fixtures live under
@@ -465,9 +501,14 @@ The provider-call anchor's fixtures are `provider_called_directly` (the worked e
 `provider_called_directly_without_error_type` (a `#[cgp_computer]` provider's fallible member,
 called on a context without an error type, resolved to the missing wiring), under
 `hidden/unsatisfied-dependency/`, and `matcher_missing_arm` under `data/extensible-data/` (a
-matcher's `compute`, its input a fn parameter, resolved to the variant it never extracts). The
-consolidated catalog lives in the parent document's [Tests](typed-root-cause-resolution.md#tests)
-section.
+matcher's `compute`, its input a fn parameter, resolved to the variant it never extracts).
+
+The bound-call anchor's fixtures, under `hidden/unsatisfied-dependency/`, are
+`raise_error_unwired_call` (the worked example above, the context from the turbofish),
+`consumer_bound_call` (a consumer trait as a bound, the context from a reference argument, its
+tree headed by the consumer), and `cgp_fn_where_bound` (a `#[cgp_fn]` blanket trait as a bound,
+the context from a parameter binding of reference type, under `[CGP-E003]`). The consolidated
+catalog lives in the parent document's [Tests](typed-root-cause-resolution.md#tests) section.
 
 ## Source
 
@@ -480,13 +521,15 @@ section.
   method or type-relative call and its data operations in scope) and `chain.rs` (`data_expr_ty`,
   typing a value through the data operations and pattern bindings that produced it); for the
   provider-call anchor, `provider_call.rs` (`resolve_provider_call`, locating a type-relative call
-  and the provider traits in scope that declare its function).
+  and the provider traits in scope that declare its function); for the bound-call anchor,
+  `bound_call.rs` (`resolve_bound_call`, instantiating a called generic function's own bounds);
+  and `receiver.rs`'s `declared_binding_ty`, a binding's declared type with its references.
 
 ## Further reading
 
 - [Typed root-cause resolution](typed-root-cause-resolution.md): the pipeline overview.
 - [Typed resolution: anchoring the starting obligation](typed-resolution-anchors.md): the six
-  anchors tried before these three, and the by-blanket-trait anchor tried after them.
+  anchors tried before these four, and the by-blanket-trait anchor tried after them.
 - [Typed resolution: walking to the root cause](typed-resolution-walk.md): how the seeded obligation
   (placeholders and all) is descended.
 - [rustc diagnostic internals](rustc-diagnostic-internals.md): why `tcx.typeck` can never be forced

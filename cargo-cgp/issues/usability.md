@@ -337,8 +337,8 @@ The fixtures group by construct:
   read as two types, and a borrowed error detail.
 - **Handlers:** promotions of hand-written providers, a matcher wired as a handler or applied to a
   struct, and matchers or builders missing an arm or a field.
-- **Use sites:** calls the resolver declines, leaking `IsProviderFor` or rustc's method-probe
-  advice.
+- **Use sites:** a consumer method called on a type parameter the function does not bound by the
+  consumer trait, which keeps rustc's method-probe advice (`generic_fn_missing_bound`).
 
 ## What good presentation looks like
 
