@@ -157,8 +157,12 @@ no check form: the tree runs through the generated matcher to the per-variant co
 the payload's missing impl, ``[CGP-E003] the trait bound `Square: HasArea` is not satisfied``. A
 provider's own method called through its path (`Add::try_compute(&App, …)`), which asserts the
 provider trait itself, is recovered the way a `#[check_providers]` entry is, as the provider class
-``[CGP-E002] missing wiring for `ErrorTypeProviderComponent` on `App` ``. The codes are defined in
-the [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
+``[CGP-E002] missing wiring for `ErrorTypeProviderComponent` on `App` ``. A context wired by a
+hand-written `DelegateComponent` impl, with no `IsProviderFor` impl beside it, passes a check but
+fails every call, since only the call's route needs the context's own `IsProviderFor`; it ends at
+``[CGP-E128] the wiring of `GreeterComponent` on `App` has no `IsProviderFor` impl ``, with a `help`
+naming the `delegate_components!` entry to write. The codes are defined in the
+[cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
 
 ## Resolving it
 
@@ -229,6 +233,10 @@ promoting to a check) can.
   [`provider_called_directly.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/provider_called_directly.rs)
   calls a `PipeHandlers` pipeline whose second stage takes the first stage's input type, not its
   `Result` output, and ends at `[CGP-E127]`.
+- [`hidden/unsatisfied-dependency/hand_delegate_without_is_provider.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/hand_delegate_without_is_provider.rs):
+  `App` wired by a hand-written `impl DelegateComponent<GreeterComponent> for App` and called; the
+  `.rust.stderr` names the unmet `App: IsProviderFor<GreeterComponent, App>` and points into `cgp`,
+  and the `.cgp.stderr` leads with the `[CGP-E128]` cause and its `help`.
 - [`hidden/unsatisfied-dependency/auto_dispatch_missing_variant_impl.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/auto_dispatch_missing_variant_impl.rs):
   the same hidden `E0599` reached through
   [`#[cgp_auto_dispatch]`](../../reference/macros/cgp_auto_dispatch.md): one of an enum's two

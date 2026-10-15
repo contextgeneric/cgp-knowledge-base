@@ -278,7 +278,7 @@ bound on another foreign list node. Following a same-trait recursion lets the wa
 whose dependency is the real cause; following only the *same* trait keeps the `f64: Eq` guarantee,
 since a foreign leaf's `impl` dependency is a *different* trait.
 
-Two further rules finish the terminal cases. An obligation whose satisfying impl's trait-clause
+Further rules finish the terminal cases. An obligation whose satisfying impl's trait-clause
 `where`-obligations **all hold**, yet is itself unmet, is failing for an associated-type mismatch
 the trait-clause walk cannot see: `Self: Trait<Assoc = T>` desugars into *two* predicates, and the
 walk follows only the trait half, so a satisfied `Ctx: HasErrorType` beside a failing
@@ -299,6 +299,21 @@ impl, and matching the blanket first, which carries no projection, would wrongly
 But a getter trait whose *only* impl is a blanket (`impl<C: HasField<..>> HasName for C`) still has
 its projection read from that blanket, so a blanket is deferred, not skipped outright. A branch with
 no such projection yields nothing and declines to the fallback.
+
+Before that search, the walk checks the one scaffolding requirement that can be the cause itself.
+The delegation blanket a consumer call routes through requires the context's own
+`IsProviderFor<Component, Context, …>` beside its delegate, and `delegate_components!` implements it
+with each entry. A context wired by a hand-written `DelegateComponent` impl has no such impl, so its
+delegation step fails on that bound alone while every other requirement holds, and a check of the
+component passes, since it needs only the delegate's `IsProviderFor`. So when an impl's only failing
+requirements are `IsProviderFor` bounds, one of them on the context, and the context has no
+`IsProviderFor` impl for the component (nor a blanket one over every key, as a namespace join
+writes), `wiring_without_provider_for` (`classify/hand_wiring.rs`) reports the
+**wiring-without-`IsProviderFor`** leaf (`[CGP-E128]`), carrying the delegate the hand-written impl
+names for its `help`
+([`hand_delegate_without_is_provider`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/hand_delegate_without_is_provider.rs)).
+A context that has the impl is left alone, since the failure then lies with the delegate's own
+`IsProviderFor`.
 
 Finally, a branch that bottoms out on a `DelegateComponent` is kept only when the owner genuinely
 lacks an entry it *should* carry, and dropped as **pure wiring plumbing** otherwise (a delegation
@@ -551,7 +566,8 @@ parent document's [Tests](typed-root-cause-resolution.md#tests) section.
   consumer trait).
 - [`crates/cargo-cgp-driver/src/resolve/classify/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/classify):
   `reportable.rs` (root cause versus routing dead-end), `other_arguments.rs` (the argument a provider
-  does not implement its provider trait for), `leaf.rs` (`classify_leaf`, which builds the
+  does not implement its provider trait for), `hand_wiring.rs` (a component wired without its
+  `IsProviderFor`), `leaf.rs` (`classify_leaf`, which builds the
   rustc-free `Leaf`), `data.rs` (`classify_data_leaf`, the extensible-data leaf read off the presence
   markers), `field.rs` (the struct and `Deref`-chain inspection), `required_type.rs` (the
   type a requirement gives a missing field), `near_miss.rs` (a similar field, variant, or wiring key

@@ -260,6 +260,14 @@ The `root cause:` lead is worded by *why* the leaf is unmet, in one shape per ki
   The cause names no fix: the provider is right for other arguments, and only the reader knows
   whether the wiring or the provider should change.
 
+- A **wiring without `IsProviderFor`**, a component the context wires by a hand-written
+  `DelegateComponent` impl with no `IsProviderFor` impl beside it, reads as
+  `` root cause: the wiring of `GreeterComponent` on `App` has no `IsProviderFor` impl ``, and a
+  `help` names the entry to write in its place,
+  `` replace the hand-written `DelegateComponent` impl with `delegate_components! { App { GreeterComponent: GreetHello } }` ``,
+  when the impl is one the program wrote
+  ([`hand_delegate_without_is_provider`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/hand_delegate_without_is_provider.rs)).
+
 - An **abstract-type mismatch**, an associated type the owner supplies differently from what a
   provider requires, reads as
   ``root cause: abstract type `Error` of `HasErrorType` on `App` is `String`, but `AppError` is required``,

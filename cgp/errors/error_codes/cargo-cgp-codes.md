@@ -132,6 +132,8 @@ One per rendering template, riding at the start of each entry in a `root cause:`
 - **CGP-E127**: cause: a provider that implements the provider trait for other arguments than the
   wiring gives it (a provider written for another context, or a stage given another stage's output
   type).
+- **CGP-E128**: cause: a component the context wires through a hand-written `DelegateComponent` impl
+  with no `IsProviderFor` impl beside it, so a check passes while every call fails.
 
 ## Where CGP classes cite these
 

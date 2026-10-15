@@ -1017,6 +1017,14 @@ at (`CGP-E110` onward).
   generic parameters print as `_` (`` `Input = Result<_, _>` ``). Distinct from `CGP-E115`: the
   type is a provider, so the fix is a provider for these arguments, or other arguments for this
   provider, and the cause names no `help`.
+- **`CGP-E128`: wiring without `IsProviderFor` (leaf).**
+  `` the wiring of `<C>` on `<X>` has no `IsProviderFor` impl ``: the context wires the component
+  through a hand-written `DelegateComponent` impl, and nothing implements `IsProviderFor` for it
+  beside, as `delegate_components!` does with each entry. A check of the component passes, since it
+  needs only the delegate's `IsProviderFor`, but a consumer call routes through the provider blanket,
+  which also needs the context's, so every call fails. When the impl is one the program wrote, a
+  `help` names the entry to write instead,
+  `` replace the hand-written `DelegateComponent` impl with `delegate_components! { <X> { <C>: <P> } }` ``.
 
 ## Uncoded rewrites
 

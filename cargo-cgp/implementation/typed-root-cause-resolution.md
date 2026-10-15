@@ -439,8 +439,9 @@ marking.
     `assoc_type.rs`'s `projected_type` normalizing the projection for the actual type and
     `abstract_type_component_marker` recovering the wiring marker for its `help`, a missing wiring
     on the context, a missing dispatch entry on a non-context delegation table, a not-a-provider on
-    a non-table type, a provider for other arguments named by `other_arguments.rs`, a missing
-    redirect wiring told apart by `is_path_cons`, or a bound);
+    a non-table type, a provider for other arguments named by `other_arguments.rs`, a component
+    wired without its `IsProviderFor` recognized by `hand_wiring.rs`, a missing redirect wiring told
+    apart by `is_path_cons`, or a bound);
     `reportable.rs` holds `is_reportable_leaf`, keeping an unmet `DelegateComponent` on the context
     (a missing wiring), on a non-context delegation table (a missing dispatch entry, recognized as a
     separate-table lookup by `is_dispatch_lookup`, the owner a proper part of the parent
@@ -747,6 +748,10 @@ fixtures:
   `pipe_monadic_non_result`, and `promote_ref_owned_input` (under `handlers/`) pin the
   component-argument form, the last from an `E0271`, and `pipe_monadic_non_result` an impl's own
   parameters printed as `_`.
+- `hand_delegate_without_is_provider` (under `hidden/unsatisfied-dependency/`): a context wired by a
+  hand-written `DelegateComponent` impl, called. Pins the `[CGP-E128]` leaf the delegation step
+  gives when its only failing requirement is the context's own `IsProviderFor` and the context has
+  none for the component, with the `help` naming the `delegate_components!` entry.
 - `generic_consumer_use_site`: the same anchor's value-argument case: the dispatch parameter
   recovered by signature unification from a written tuple, no tag argument involved, with the
   misleading method-syntax advice dropped.
