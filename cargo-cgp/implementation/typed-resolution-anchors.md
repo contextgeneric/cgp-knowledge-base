@@ -4,8 +4,8 @@ This document covers the first stage of the driver's
 [typed root-cause resolution](typed-root-cause-resolution.md), which recovers from a failing
 diagnostic the **real trait obligation** that seeds the [walk](typed-resolution-walk.md): a
 consumer-trait obligation `Ctx: ConsumerTrait<Params…>`, or, for a `#[check_providers]` entry or a
-provider's own method called directly, the provider-trait obligation it asserts. Eleven anchors
-recover it from eleven failure shapes, tried in order, and the first that succeeds wins. Seven are
+provider's own method called directly, the provider-trait obligation it asserts. Twelve anchors
+recover it from twelve failure shapes, tried in order, and the first that succeeds wins. Eight are
 described here. The remaining four re-read the failing call expression, one for a call through a
 consumer or blanket trait, one for a call to an extensible-data operation, one for a provider
 trait's method called through the provider's own path, and one for a bound of a generic function
@@ -284,7 +284,7 @@ not a blanket trait in this sense: the data-call anchor reaches it instead, and 
 the `[CGP-E050]` class
 ([`upcast_missing_variant`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/upcast_missing_variant.rs)).
 
-**From a use site, by blanket trait.** The eleventh and last anchor,
+**From a use site, by blanket trait.** The eleventh anchor,
 `resolve_use_site_blanket_trait`, is the by-consumer anchor's counterpart for a
 `#[cgp_fn]`/`#[blanket_trait]` **blanket trait**, a blanket-impl trait that is not a CGP component.
 It reaches the shape a blanket trait required through a `where` **bound** or supertrait produces:
@@ -302,6 +302,19 @@ call-site anchor deliberately: an `E0599` method call belongs to the call-site a
 *generic-consumer* method call whose deep blanket-trait bound is unrecoverable
 (`generic_consumer_unwritten_arg`) must stay declined rather than latch onto that transitive trait.
 
+**From a forwarding entry.** The twelfth and last anchor, `resolve_forwarding_entry`, reads an
+error on a `Key -> Table` entry of `delegate_components!`. The entry lowers to
+`impl DelegateComponent<Key> for Context where Table: DelegateComponent<Key>`, with the bound
+spanned onto the entry's `->`, so when the table lacks the key the compiler reports that bound, and
+the unsized `Delegate` projection it leaves, at the `-> Table` caret, before any check or call that
+uses the entry. The anchor matches the local entry whose forwarding bound lies inside the caret and
+seeds the consumer obligation that entry wires, `Context: Consumer` for a bare component marker
+without parameters, so the walk descends the forwarding into the table and ends at its missing
+entry, as a check of the component does
+([`direct_delegation_missing_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/direct_delegation_missing_key.rs)).
+The result is the consumer class `[CGP-E001]`, and a later report of the same failure, the check's
+or the projection's, de-duplicates against it. It is gated to `E0277`.
+
 ## Tests
 
 Every anchor is pinned end to end by the UI snapshot suite; the consolidated fixture catalog, with
@@ -313,8 +326,8 @@ groups anchored here.
 ## Source
 
 - [`crates/cargo-cgp-driver/src/resolve/anchor/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/anchor):
-  one file per anchor (`check_failure.rs`, `impl_site.rs`, `wrapper_chain.rs`, `use_site.rs`, and
-  `use_site_consumer.rs`, which holds both the by-consumer `resolve_use_site_consumer` and its
+  one file per anchor (`check_failure.rs`, `provider_check.rs`, `impl_site.rs`, `wrapper_chain.rs`,
+  `use_site.rs`, `forward_entry.rs`, and `use_site_consumer.rs`, which holds both the by-consumer `resolve_use_site_consumer` and its
   by-blanket-trait sibling `resolve_use_site_blanket_trait` over one shared helper) over the shared
   `seed.rs` (the consumer-obligation builder) and `spans.rs` (the local items a diagnostic's spans
   land on, and `is_about_impl`, whether a caret inside an impl is about it). The by-blanket-trait

@@ -238,10 +238,12 @@ that produced it. The ninth, the provider-call anchor `resolve_provider_call`, r
 trait's method called through the provider's own path and walks the provider obligation it asserts,
 as a `#[check_providers]` entry's is. The tenth, the bound-call anchor `resolve_bound_call`, reads
 a call to a generic function whose own `where` bound the context fails, instantiating the bound
-from the call's turbofish and arguments. The eleventh and last anchor,
-`resolve_use_site_blanket_trait`, is the by-consumer anchor's counterpart for a blanket trait
-required as a *bound* elsewhere rather than *called*; both are gated to `E0277` and tried after the
-call-site anchors, so a method call leads with the trait the programmer invoked.
+from the call's turbofish and arguments. The eleventh, `resolve_use_site_blanket_trait`, is the
+by-consumer anchor's counterpart for a blanket trait required as a *bound* elsewhere rather than
+*called*; both are gated to `E0277` and tried after the call-site anchors, so a method call leads
+with the trait the programmer invoked. The twelfth and last, `resolve_forwarding_entry`, reads an
+error on a `Key -> Table` wiring entry whose own forwarding bound fails, seeding the consumer
+obligation the entry wires.
 
 **[Walking to the root cause](typed-resolution-walk.md)** descends the seeded obligation's
 dependency graph (following only the CGP wiring vocabulary and obligations on the context itself,
@@ -341,7 +343,7 @@ marking.
   `#[check_providers]` entry or a provider's own method call asserts), never a `CanUseComponent` or
   `IsProviderFor` wrapper.
   - [`anchor/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/anchor)
-    holds seven of the eleven anchors, plus their two shared ingredients: `seed.rs`
+    holds eight of the twelve anchors, plus their two shared ingredients: `seed.rs`
     (`consumer_obligation`, the `Params`-slot ungrouping decided by the consumer's own generics: a
     single tuple-typed parameter kept whole, a lifetime restored from `Life<'a>` via `life_region`,
     any mismatch declining rather than handing the solver a malformed trait ref) and `spans.rs` (the
@@ -365,6 +367,8 @@ marking.
     `delegated_check_targets`, mapping each marker to its consumer and recovering an `open`-dispatch
     value from a `PathCons` key through `open_dispatch_target`, while skipping a raw path key, a
     redundant bare marker, a free-parameter catch-all, and a `namespace …;` blanket `__Key__` key.
+    `forward_entry.rs` matches a `Key -> Table` entry by its forwarding bound's span inside the
+    caret and seeds the consumer obligation the entry wires.
     `use_site_consumer.rs` recovers a local, non-generic CGP consumer trait from the diagnostic's
     spans and walks `Ctx: Consumer` directly (the anchor that reaches a namespace-joined context),
     and its by-blanket-trait sibling `resolve_use_site_blanket_trait` (eleventh, gated to `E0277`,
@@ -501,8 +505,8 @@ marking.
 - [`crates/cargo-cgp-driver/src/emitter/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/emitter):
   the `try_resolve` seam (gated to an unmet-obligation code, `E0271`/`E0275`/`E0277` or a
   method-bounds `E0599`, with a resolution-class `E0599` excluded so the solver never runs on an
-  error emitted mid-`clauses_of`) that tries the eleven anchors in turn (the bound-call and
-  by-blanket-trait anchors last, gated to `E0277`) and sends the method probe's "no method named" `E0599`
+  error emitted mid-`clauses_of`) that tries the twelve anchors in turn (the bound-call,
+  by-blanket-trait, and forwarding-entry anchors last, gated to `E0277`) and sends the method probe's "no method named" `E0599`
   (`is_no_matching_item`) and an `E0308` to the data-call anchor alone, and the `transform_resolved`
   mutation it feeds, mapping the rustc code to a `DiagKind` (overridden to the use-site kind for a
   call-anchored resolution), calling `plan_resolved`, and applying the plan to the `DiagInner`,
@@ -738,6 +742,11 @@ fixtures:
   with no check. `consumer_trait_in_provider_impl_called` is the case with every requirement met,
   where the walk ends at the not-a-provider leaf and the emitter drops the call's error as the
   header's consequence.
+- `direct_delegation_missing_key` (under `checks/check-trait-failure/missing-wiring/`): a
+  `GreeterComponent -> Bundle` entry into a table that lacks the key, beside a check. Pins the
+  forwarding-entry anchor: the compiler's error on the entry's own forwarding bound reads as the
+  `[CGP-E001]` block over `[CGP-E114]`, and the unsized-projection error and the check's report
+  drop as the same failure.
 - `non_provider_wired` (under
   [`checks/check-trait-failure/providers/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/checks/check-trait-failure/providers)):
   a type wired where a provider was expected that does not implement the provider trait at all

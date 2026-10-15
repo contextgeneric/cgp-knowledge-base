@@ -10,10 +10,10 @@ result ([below](#calls-to-extensible-data-operations)); the ninth, the provider-
 a provider trait's method called through the provider's own path
 ([below](#calls-to-a-providers-own-method)); and the tenth, the bound-call anchor, reads a bound of
 a generic function at the call that instantiates it ([below](#bounds-of-a-called-generic-function)).
-(An eleventh anchor, `resolve_use_site_blanket_trait`, is tried after them for a blanket trait
-required as a `where` *bound* elsewhere; it is described in
-[anchoring the starting obligation](typed-resolution-anchors.md) and reuses this anchor's
-`contexts_at_spans`.)
+(Two anchors are tried after them, both described in
+[anchoring the starting obligation](typed-resolution-anchors.md): an eleventh,
+`resolve_use_site_blanket_trait`, for a blanket trait required as a `where` *bound* elsewhere,
+which reuses this anchor's `contexts_at_spans`, and a twelfth for a `->` forwarding entry.)
 
 The call-site anchor exists for the use-site failure that leaves *no usable span at all*, and its
 design follows from working out what can still be known once the spans are gone. This document
