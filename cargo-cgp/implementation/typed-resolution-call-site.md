@@ -171,6 +171,21 @@ A call to one of CGP's extensible-data operations (a cast, a builder, an extract
 candidate here: the data-call anchor tried next takes it, since its value is usually another data
 operation's result ([below](#calls-to-extensible-data-operations)).
 
+A receiver whose type is a **type parameter** of the enclosing function or impl is no context, but
+a consumer method called on it fails for a reason the receiver shows on its own. In
+`fn run<Context>(context: &Context) { context.greet(); }`, the method exists only where `Context`
+has the bound `Context: CanGreet`, which `run` does not declare. So when the receiver is a binding
+whose declared type is such a parameter, exactly one consumer trait in scope at the call declares
+the method, that trait takes no parameters besides `Self`, and the item does not already bound
+the parameter by it, the anchor reports the missing bound itself, with no walk: the
+unbounded-parameter cause
+``[CGP-E129] the type parameter `Context` of `run` is not bounded by `CanGreet` `` under the
+consumer class, with the `help` ``add the bound `Context: CanGreet` to `run` ``. rustc's
+"use associated function syntax" suggestion is dropped with the rest of its notes
+([`generic_fn_missing_bound`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/generic_fn_missing_bound.rs)).
+The parameter's type is built from the item's generics, since asking the compiler for a type
+parameter's own type is a bug it reports into the diagnostic context the emitter holds.
+
 ## Parameters by signature unification, not by convention
 
 Recovering the component's parameters (the `Code` and `Input` in `CanHandle<Code, Input>`) is where
@@ -480,7 +495,8 @@ non-generic call, and a `PhantomData` over a tuple, a reference, a slice, and ge
 `auto_dispatch_missing_variant_impl` (a receiver built by an enum-variant constructor, resolved to
 the dispatch payload's missing impl), `foreign_context_error_route` (a call on a context from an
 upstream crate), and the `cascade_later_stage*` shapes whose pipeline stages the walk then descends.
-The decline boundary is pinned by `generic_consumer_unwritten_arg`, and the span gate by
+A receiver typed by an unbounded type parameter is `generic_fn_missing_bound`. The decline boundary
+is pinned by `generic_consumer_unwritten_arg`, and the span gate by
 `unrelated_error_before_call` (an unrelated `Send` error before the failing call keeps its own
 diagnostic) and by `unrelated_error_in_call_argument` and `unrelated_error_in_awaited_argument` (the
 same error inside the call's argument, awaited or not, keeps its own diagnostic too), and the
@@ -514,10 +530,11 @@ catalog lives in the parent document's [Tests](typed-root-cause-resolution.md#te
 
 - [`crates/cargo-cgp-driver/src/resolve/call_site/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/call_site):
   one file per stage: `find_call.rs` (locating the call and the candidate consumers), `receiver.rs`
-  (the context off the receiver), `seed.rs` (the signature unification, for each `CallForm`: a
-  consumer method call, a data method call, and a type-relative path call), `written_ty.rs` (the types the
-  call's arguments write), and `lower.rs` (the small syntactic type lowering, literal const
-  arguments included); for the data-call anchor, `data_call.rs` (`resolve_data_call`, locating a
+  (the context off the receiver), `unbounded.rs` (a receiver typed by a type parameter its item
+  does not bound by the called consumer trait), `seed.rs` (the signature unification, for each
+  `CallForm`: a consumer method call, a data method call, and a type-relative path call),
+  `written_ty.rs` (the types the call's arguments write), and `lower.rs` (the small syntactic type
+  lowering, literal const arguments included); for the data-call anchor, `data_call.rs` (`resolve_data_call`, locating a
   method or type-relative call and its data operations in scope) and `chain.rs` (`data_expr_ty`,
   typing a value through the data operations and pattern bindings that produced it); for the
   provider-call anchor, `provider_call.rs` (`resolve_provider_call`, locating a type-relative call

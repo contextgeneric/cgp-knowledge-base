@@ -161,7 +161,11 @@ provider trait itself, is recovered the way a `#[check_providers]` entry is, as 
 hand-written `DelegateComponent` impl, with no `IsProviderFor` impl beside it, passes a check but
 fails every call, since only the call's route needs the context's own `IsProviderFor`; it ends at
 ``[CGP-E128] the wiring of `GreeterComponent` on `App` has no `IsProviderFor` impl ``, with a `help`
-naming the `delegate_components!` entry to write. The codes are defined in the
+naming the `delegate_components!` entry to write. A consumer method called inside a generic
+function on a type parameter the function does not bound by the consumer trait is a missing bound
+rather than missing wiring, and reads
+``[CGP-E129] the type parameter `Context` of `run` is not bounded by `CanGreet` ``, with a `help`
+naming the bound. The codes are defined in the
 [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
 
 ## Resolving it
@@ -240,6 +244,10 @@ promoting to a check) can.
   [`raise_error_unwired_call.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/raise_error_unwired_call.rs)
   bounds a function on `CanRaiseError<String>` and calls it as `fail::<App>()` on a context with no
   error raiser wired, which ends at the missing `ErrorRaiserComponent` wiring and its `help`.
+- [`hidden/unsatisfied-dependency/generic_fn_missing_bound.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/generic_fn_missing_bound.rs):
+  `context.greet()` in `fn run<Context>(context: &Context)`, with no `CanGreet` bound; the
+  `.rust.stderr` frames it as a method probe and suggests `Context::greet()` beside the right
+  restrict-the-parameter help, and the `.cgp.stderr` states the missing bound as `[CGP-E129]`.
 - [`hidden/unsatisfied-dependency/hand_delegate_without_is_provider.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/hand_delegate_without_is_provider.rs):
   `App` wired by a hand-written `impl DelegateComponent<GreeterComponent> for App` and called; the
   `.rust.stderr` names the unmet `App: IsProviderFor<GreeterComponent, App>` and points into `cgp`,

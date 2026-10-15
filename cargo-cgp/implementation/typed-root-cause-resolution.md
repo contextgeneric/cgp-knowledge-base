@@ -396,7 +396,9 @@ marking.
     (`receiver_context`/`local_binding_context`, the receiver's type from its binding, annotation,
     parameter, literal, or constructor-call signature, plus `contexts_at_spans`, the same reading
     applied to every expression at the diagnostic's spans, which is the by-blanket-trait anchor's
-    context source), `seed.rs` (`seed_from_call`, the signature unification: fresh variables for the
+    context source), `unbounded.rs` (`unbounded_receiver`, a consumer method called on a receiver
+    typed by a type parameter its item does not bound by the consumer trait, reported as the
+    `[CGP-E129]` cause without a walk), `seed.rs` (`seed_from_call`, the signature unification: fresh variables for the
     method's item, `Self` pinned to the context, each written argument type unified with its
     declared input (from the first input for a type-relative call, and a data value's argument typed
     by `data_expr_ty` too), the trait's parameters read back with `walk`'s `unknowns_to_placeholders`
@@ -781,6 +783,10 @@ fixtures:
   the by-blanket-trait anchor: `consumer_bound_call`'s tree starts at the bound `CanGreet`, not at
   the getter rustc's notes name. `cgp_fn_where_bound` is its blanket-trait form, the context a
   parameter binding of reference type.
+- `generic_fn_missing_bound` (under `hidden/unsatisfied-dependency/`): a consumer method called on
+  `context: &Context` in `fn run<Context>`, which does not bound `Context` by the consumer. Pins the
+  call-site anchor's type-parameter receiver: the `[CGP-E129]` cause and its `help` naming the
+  bound, in place of rustc's "use associated function syntax" advice.
 - `cgp_fn_use_site`: a direct call to a `#[cgp_fn]` trait method (`app.describe()`) whose context is
   missing a field one composed blanket trait reads. Pins the call-site anchor's *blanket-trait*
   candidate: the called `Describe` is a `#[cgp_fn]`/`#[blanket_trait]` blanket-impl trait, not a CGP

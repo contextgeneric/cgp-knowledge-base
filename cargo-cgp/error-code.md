@@ -128,8 +128,9 @@ fix, and the [CGP error catalog](../cgp/errors/README.md) class it recognizes.
   context its consumer trait does not apply.
 - **Triggered by:** an unsatisfied `Context: CanUseComponent<Marker, Params>` bound, a
   `check_components!` / `delegate_and_check_components!` entry failing, a consumer-method call
-  (`E0599`) on a context that cannot use a component it wires, or a call to a generic function
-  whose consumer-trait bound the context fails (`E0277`). The Rust code stays whatever rustc
+  (`E0599`) on a context that cannot use a component it wires or on a type parameter that does not
+  have the consumer trait as a bound, or a call to a generic function whose consumer-trait bound the
+  context fails (`E0277`). The Rust code stays whatever rustc
   assigned (`E0277` at a check or a bound, `E0599` at a method call).
 - **Fix:** follow the `root cause:` note(s): add the missing field or derive, wire the missing
   component, or satisfy the ordinary bound the chain bottoms out on. A `help` names each fix the
@@ -1026,6 +1027,13 @@ at (`CGP-E110` onward).
   which also needs the context's, so every call fails. When the impl is one the program wrote, a
   `help` names the entry to write instead,
   `` replace the hand-written `DelegateComponent` impl with `delegate_components! { <X> { <C>: <P> } }` ``.
+- **`CGP-E129`: unbounded type parameter (leaf).**
+  `` the type parameter `<T>` of `<f>` is not bounded by `<Trait>` ``: a consumer-trait method called
+  on a value whose type is a type parameter of the enclosing function or impl, which does not bound
+  the parameter by the consumer trait (`context.greet()` in `fn run<Context>(context: &Context)`).
+  The method exists only where the parameter has the bound, so the fix is the bound, and a `help`
+  names it, `` add the bound `<T>: <Trait>` to `<f>` ``. Raw rustc frames the call as a method
+  probe and suggests associated-function syntax, which the block drops.
 
 ## Uncoded rewrites
 

@@ -268,6 +268,12 @@ The `root cause:` lead is worded by *why* the leaf is unmet, in one shape per ki
   when the impl is one the program wrote
   ([`hand_delegate_without_is_provider`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/hand_delegate_without_is_provider.rs)).
 
+- An **unbounded type parameter**, a consumer method called on a value of a type parameter its
+  generic function or impl does not bound by the consumer trait, reads as
+  `` root cause: the type parameter `Context` of `run` is not bounded by `CanGreet` ``, and a
+  `help` names the bound, `` add the bound `Context: CanGreet` to `run` ``
+  ([`generic_fn_missing_bound`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/generic_fn_missing_bound.rs)).
+
 - An **abstract-type mismatch**, an associated type the owner supplies differently from what a
   provider requires, reads as
   ``root cause: abstract type `Error` of `HasErrorType` on `App` is `String`, but `AppError` is required``,

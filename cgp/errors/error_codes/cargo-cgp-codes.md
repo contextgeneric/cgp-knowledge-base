@@ -134,6 +134,8 @@ One per rendering template, riding at the start of each entry in a `root cause:`
   type).
 - **CGP-E128**: cause: a component the context wires through a hand-written `DelegateComponent` impl
   with no `IsProviderFor` impl beside it, so a check passes while every call fails.
+- **CGP-E129**: cause: a consumer-trait method called on a type parameter that its generic function
+  or impl does not bound by the consumer trait.
 
 ## Where CGP classes cite these
 
