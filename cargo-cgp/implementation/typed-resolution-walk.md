@@ -203,6 +203,12 @@ walk descends it the way it descends a provider. It deliberately does *not* foll
   (`provided_components`): each provider trait with no parameter beyond `Self` and the context whose
   delegation blanket keys on a marker, kept when the solver confirms `Owner: Trait<Context>`
   ([`wrong_component_provider_check`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/wrong_component_provider_check.rs)).
+  `core_provider_hint` handles two core providers, anchored by `DefId` to the crates that define
+  them: `UseField` on a trait with no `UseField` impl, where `UseFields` implements the trait for the
+  context (a multi-method getter), and `UseDelegate` on a component with parameters whose trait has
+  a `RedirectLookup` impl, which an `open` statement uses
+  ([`getter_multi_method_use_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/getter_multi_method_use_field.rs),
+  [`use_delegate_without_derive`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/use_delegate_without_derive.rs)).
   An owner that *has* one reached the blanket only because that impl did not unify with
   the arguments the walk gives it, and two cases follow:
   - When those arguments are fully known (no placeholder, inference variable, or unreduced

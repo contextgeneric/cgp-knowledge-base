@@ -1008,7 +1008,12 @@ at (`CGP-E110` onward).
   with the `use` it needs when the prelude does not export it. The adapter is any impl of the
   provider trait whose `Self` is a type over one type parameter that the impl bounds by a trait
   (`WithProvider<P>`, `Promote<P>`), applied to the wired type and confirmed to hold by the
-  solver; no adapter is named by its name. When the wired type is a provider of other components for
+  solver; no adapter is named by its name. For two CGP core providers used where they have no impl, a
+  `help` names what serves the slot: `UseFields` for a `UseField` wired to a multi-method getter
+  (when the solver confirms it implements the getter for the context), and an `open` statement for
+  a `UseDelegate` wired to a component that does not declare `#[derive_delegate]`
+  (``dispatch with `open AreaCalculatorComponent;` and one `@AreaCalculatorComponent.Shape: <provider>` entry per type``,
+  when the component's provider trait has a `RedirectLookup` impl). When the wired type is a provider of other components for
   the same context (a `Farewell` provider wired under `GreeterComponent`), a `help` says so and gives
   both ways out, ``` `SayBye` provides `Farewell`: wire it under `FarewellComponent`, or wire a provider of `Greeter` here ```.
 - **`CGP-E116`: associated type mismatch (leaf).**

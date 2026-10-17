@@ -366,6 +366,10 @@ which names its items in the order the causes are listed, with no cap:
   ``` `SayBye` provides `Farewell`: wire it under `FarewellComponent`, or wire a provider of `Greeter` here ```.
   It is given only for components whose provider trait the solver confirms the wired type implements
   for the same context.
+- A **misused core provider** names what serves the slot: ``wire `UseFields` in place of `UseField<…>`,
+  which reads each method's field by the method's name`` for a multi-method getter, and
+  ``dispatch with `open AreaCalculatorComponent;` and one `@AreaCalculatorComponent.Shape: <provider>` entry per type, in place of `UseDelegate<AreaTable>` ``
+  for a component without `#[derive_delegate]`.
 - A **non-provider's adapter** names the adapter type to wire in its place:
   ``wire `WithProvider<ReadDisplayName>` in place of `ReadDisplayName` ``. Several adapters read as
   alternatives joined by "or", and an adapter outside the prelude adds the `use` it needs
