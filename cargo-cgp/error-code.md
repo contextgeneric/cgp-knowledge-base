@@ -938,7 +938,9 @@ at (`CGP-E110` onward).
   a context field that is genuinely absent. When the struct derives `HasField` for its other fields,
   a `help` names the field to add with the type the requirement gives it,
   `` add the field `<f>: <type>` to `<T>` ``; when the struct carries a similar field, a `help`
-  names it first, `` a similar field exists on `<T>`: `<g>` ``. The same leaf states a field an
+  names it first, `` a similar field exists on `<T>`: `<g>` ``, and a tuple struct's position
+  written as a string tag (`Symbol!("0")`) gets
+  `` a field of the tuple struct `<T>` is keyed by `Index<0>`, not by `Symbol!("0")` ``. The same leaf states a field an
   extensible-data builder operation names that its struct does not declare (a `build_from` source's
   field the target lacks); it then gets the near miss but no add-the-field `help`, since adding it
   can leave another field the merge never sets.

@@ -430,8 +430,11 @@ target that has not derived it (CGP's `HasField` forwards across `Deref` by a bl
 bound *would* hold if that target derived the field), in which case the resolver records the target
 so the fix can point at it. The inspection reads named struct fields directly and follows `Deref` by
 reading each `impl Deref`'s `Target` associated type, so it needs no inference context, and it is
-bounded against a cyclic `Deref`. For a missing field the resolver also records what its fix can
-name: adding the field is confirmed only when the struct has named fields (a tuple struct cannot
+bounded against a cyclic `Deref`. Only a struct with named fields carries a field a `Symbol!` tag
+names: a tuple struct keys its fields by `Index<N>`, so a `Symbol!("0")` tag on one is a *missing*
+field, never an underived one, and the resolver records the `Index<0>` tag the position takes
+([`symbol_tag_on_tuple_struct_check`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/symbol_tag_on_tuple_struct_check.rs)).
+For a missing field the resolver also records what its fix can name: adding the field is confirmed only when the struct has named fields (a tuple struct cannot
 gain one) and implements `HasField` for another field (so it derives it), and the field's type is
 the `Value = T` constraint the requirement writes beside its `HasField` bound, read off the impl
 that requires the field (`required_field_type`) and kept only when concrete, and a similar field the

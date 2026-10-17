@@ -353,6 +353,9 @@ which names its items in the order the causes are listed, with no cap:
   for a field not optional. Each is given only when the solver confirms the method holds for the
   value, and the [module strip](resugaring.md#the-path-strips-that-run-first) keeps the `use`
   path whole.
+- A **tuple field's tag** is named when a missing field's name is a position of a tuple struct:
+  ``a field of the tuple struct `Pair` is keyed by `Index<0>`, not by `Symbol!("0")` ``. A tuple
+  struct cannot gain a named field, so no add-the-field `help` follows.
 - A **near miss** comes first when a missing field's struct carries a similar field, a missing
   variant's enum a similar variant (`` a similar variant exists on `Shape`: `Circle` ``), or a
   missing key's context wires a similar key: `` a similar field exists on `Person`: `first_name` `` for

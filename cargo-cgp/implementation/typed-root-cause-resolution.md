@@ -887,6 +887,10 @@ The **impl-site and wrapper-chain paths** are pinned by:
   the `is_blanket_trait` case: the impl-site anchor walks the `#[cgp_fn]` blanket's `where` clause
   (and a `#[uses]`-chained sibling) to the `` missing field `name` `` cause instead of declining to
   rustc's misleading `#[derive(HasField)]` note.
+- `symbol_tag_on_tuple_struct_check` (same directory): a provider that requires `HasField<Symbol!("0")>`,
+  checked on a tuple struct that derives `HasField`. The classifier reads only a struct with named
+  fields as carrying a `Symbol!`-tagged field, so the cause is a missing field, not the underived
+  one it would have blamed, and its `help` names the `Index<0>` tag.
 - `foreign_context_wrapper_impl`: a local wrapper trait implemented on a context from an upstream
   crate (via `//@aux-build`), reaching the same `[CGP-E113]` missing error route the local form
   reports, because the impl-site anchor accepts a foreign context that carries its own wiring.
