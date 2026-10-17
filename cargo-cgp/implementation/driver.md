@@ -172,8 +172,8 @@ a CGP encoding, so no raw CGP construct leaks and the transforms leave a plain R
 printed it (the injected `--verbose` aside, see
 [Un-eliding the diagnostic](#un-eliding-the-diagnostic)). The sections that follow detail the two
 levers, the rename, the two coherence reshapes, the structural reshape, the macro-lowering reshapes,
-the wiring-name reshape, and the drop of a suggestion that names a generated identifier; the
-replacement and the post-processing build on the rename's `TyCtxt` access and rustc-free helpers,
+the wiring-name reshape, and the two drops of a wrong suggestion (one that names a generated
+identifier, one spliced after an attribute macro); the replacement and the post-processing build on the rename's `TyCtxt` access and rustc-free helpers,
 and are documented separately.
 
 The emitter is also what *renders* the diagnostics, the way vanilla `rustc` would. The wrapper type
@@ -1133,6 +1133,30 @@ that arrives after name resolution is not covered, and no fixture needs it to be
 fixture pins the result: the `E0106` keeps its caret and label, and the `E0726` keeps the right
 help.
 
+### Dropping a suggestion spliced after an attribute macro
+
+An attribute macro's generated code carries the attribute's own span, so when rustc rejects that
+code it can suggest an insertion at the end of that span, which is the point right after the
+attribute's `]`. For `#[cgp_impl(new SquareArea)] impl AreaCalculator<Square>` of a component whose
+name takes a parameter, `E0107` suggests `#[cgp_impl(new SquareArea)]<Shape>`, and for a
+`#[cgp_auto_getter]` method whose generated body returns the wrong type, `E0308` suggests
+`#[cgp_auto_getter].as_deref()`. No edit of the user's source can apply either, since the fault is
+in code the macro wrote.
+
+The drop runs from the emitter's transform for every diagnostic, in a crate that uses CGP
+(`crate_uses_cgp`, which cannot answer during name resolution), so a plain Rust error keeps every suggestion. Unlike the generated-name drop it
+cannot run once after resolution, because these errors arrive at lowering and type-checking, so each
+is cleaned as it arrives. [`drop_attribute_splices`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/attribute_splice.rs)
+recognizes the suggestion by the span it edits, never by its text: a substitution that inserts at a
+span an attribute macro's expansion carries (`ExpnKind::Macro(MacroKind::Attr, _)`), exactly where
+that expansion's call site ends. It then removes that suggestion through `retain_suggestions` and
+leaves the others. The
+[`parameterized_name_default_component`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/macro-defects/parameterized_name_default_component.rs)
+and
+[`auto_getter_mut_option`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/macro-defects/auto_getter_mut_option.rs)
+fixtures pin it. The second, once a `pass-through/` fixture, no longer matches plain `cargo check`
+for that reason, so it lives beside the first.
+
 ## Containing the driver's own panics
 
 **A panic in the driver's own code never costs the user their diagnostics.** The emitter re-runs
@@ -1250,8 +1274,8 @@ will likely grow toward it:
 - [`crates/cargo-cgp-error-processing/tests/error_processing/internal_error.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/internal_error.rs):
   the note on a diagnostic shown untransformed after a contained panic.
 - [`tests/ui/pass-through/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/pass-through):
-  `consumer_not_in_scope`, `headline_std_path`, `suggestion_full_paths`, and
-  `auto_getter_mut_option` pin the trimmed paths: each diagnostic the tool leaves alone, suggestions
+  `consumer_not_in_scope`, `headline_std_path`, and
+  `suggestion_full_paths` pin the trimmed paths: each diagnostic the tool leaves alone, suggestions
   included, matches plain `cargo check` exactly. `same_name_types`, `compute_bare_name_ambiguous`,
   `raise_error_ambiguous`, and `update_field_marker_unannotated` pin that the post-processing keeps
   the paths, labels, and context spans of an untransformed diagnostic, and `lookalike_cgp_names`
@@ -1322,7 +1346,7 @@ will likely grow toward it:
   and the name-resolution reshape, `containment.rs` the `catch_unwind` wrapper and the panic hooks,
   `name_resolution.rs` the reshape of the wiring entries' name-resolution errors and the overflow
   drop that goes with it, `generated_names.rs` the drop of a suggestion that names a generated
-  identifier, `shared_dispatch_method.rs` the pairing of the two `E0428`s two dispatch
+  identifier, `attribute_splice.rs` the drop of a suggestion spliced after an attribute macro, `shared_dispatch_method.rs` the pairing of the two `E0428`s two dispatch
   traits sharing a method name produce, `repeats.rs` the flush's merge of a diagnostic rustc reports
   twice, `test_panic.rs` the panic a fixture raises on purpose, and `edit.rs` holds the
   `DiagInner`-editing helpers (including `merged_span`, the merged block's one caret and its
