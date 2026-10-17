@@ -59,7 +59,7 @@ next free one:
 | `CGP-E010` to `CGP-E019` | conflicting wiring, and structural mistakes | `E010` to `E019` |
 | `CGP-E020` to `CGP-E029` | wiring that never resolves, and the orphan rule | `E020` to `E022` |
 | `CGP-E030` to `CGP-E039` | mistakes in what a macro was given | `E030` to `E038` |
-| `CGP-E040` to `CGP-E049` | wiring keys and values that do not resolve | `E040` to `E043` |
+| `CGP-E040` to `CGP-E049` | wiring keys and values that do not resolve | `E040` to `E044` |
 | `CGP-E050` to `CGP-E059` | extensible data | `E050` |
 | `CGP-E060` to `CGP-E069` | structural mistakes, continued | `E060`, `E061` |
 
@@ -101,11 +101,12 @@ header naming the component's consumer trait, `CGP-E033` a `#[cgp_impl]` on a tr
 CGP component at all, `CGP-E034` an inner-provider bound (typically `#[use_provider]`) naming the
 consumer trait, and `CGP-E037` a provider trait named in `#[uses]`. `CGP-E038`, a
 `#[cgp_impl(Provider)]` that never declares its provider, is cataloged with the names that do not
-resolve. The **wiring-name** codes `CGP-E040` to `CGP-E043` cover a name in a `delegate_components!`
+resolve. The **wiring-name** codes `CGP-E040` to `CGP-E044` cover a name in a `delegate_components!`
 entry that is wrong, all in the
 [unresolved wiring name](../cgp/errors/wiring/unresolved-wiring-name.md) class: `CGP-E040` a
 consumer trait as a key, `CGP-E041` a component not in scope, `CGP-E042` a key that names no
-component, and `CGP-E043` a provider never declared. Except `CGP-E040`, they come from name
+component, `CGP-E043` a provider never declared, and `CGP-E044` a type in an `@`-path never
+declared. Except `CGP-E040`, they come from name
 resolution, before the compiler builds the HIR, so the tool holds those errors and reshapes them
 once resolution is over. The **extensible-data** code `CGP-E050` heads a failed call to one of CGP's
 data operations (a builder, an extractor, a cast), resolved by the typed resolver like the
@@ -793,14 +794,15 @@ for `CGP-E060`.
   imported where the table is written, such as `ErrorTypeProviderComponent`, which the prelude does
   not export.
 - **Triggered by:** an `E0425` "cannot find type" from name resolution whose caret is exactly a
-  wiring key, when exactly one component marker of that name exists among the traits the crate can
-  see. The path is a `crate::` path for a local component, and for a dependency's the shortest
+  wiring key, or a whole segment of an `@`-path in a key or value, when exactly one component marker
+  of that name exists among the traits the crate can see. The path is a `crate::` path for a local component, and for a dependency's the shortest
   public path from a direct dependency's root, found by walking its modules and following
   re-exports; the compiler's own path printing names a crate re-exported under another name by its
   crate name (`cgp::cgp_core::…`), which does not compile. A repeat at the same key prints once, and
   rustc's suggestions are dropped
   ([`error_key_not_imported`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/error_key_not_imported.rs),
-  [`component_in_module_not_imported`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/component_in_module_not_imported.rs)).
+  [`component_in_module_not_imported`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/component_in_module_not_imported.rs),
+  [`path_segment_component_not_imported`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/path_segment_component_not_imported.rs)).
   Two components of the same name decline. The Rust code stays `E0425`.
 - **Fix (in the `help`):** import the component.
 - **Upstream class:** [unresolved wiring name](../cgp/errors/wiring/unresolved-wiring-name.md).
@@ -831,10 +833,37 @@ for `CGP-E060`.
   wiring value. The near miss is looked for among the providers that implement the provider trait of
   the key's component, with the same closeness rule as the other near-miss helps. rustc's
   suggestion of a similarly named trait (often the provider trait) is dropped, and an `E0275`
-  overflow on the requirement the entry leaves unprovable is dropped as its consequence
+  overflow on the requirement the entry leaves unprovable (the context implementing the consumer
+  trait, as a call reports it, or `CanUseComponent` of the component, as a check reports it) is
+  dropped as its consequence
   ([`value_not_declared`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/value_not_declared.rs)).
   The Rust code stays `E0425`.
 - **Fix:** declare the provider, or name one that exists.
+- **Upstream class:** [unresolved wiring name](../cgp/errors/wiring/unresolved-wiring-name.md).
+
+### `CGP-E044`: type in a wiring path not declared
+
+- **Message:** `` [CGP-E044] the type `<Name>` in a wiring path is not declared ``, with a `help` for
+  a whole segment:
+  `` declare or import the type `<Name>`, or write the segment in lowercase to make it a symbol ``.
+- **Means:** an `@`-path in a key, or in the value a `=>` redirects to, names a type that nothing
+  declares. A path segment that is not a lowercase identifier stays the type it spells, and only a
+  lowercase one becomes a symbol, so a misspelled or never declared name stays a type that does not
+  resolve.
+- **Triggered by:** an `E0425` "cannot find type" from name resolution whose caret is an unresolved
+  type inside the path spine (`PathCons`) of a `DelegateComponent` impl's key or `Delegate` type,
+  found by its span in the HIR. A segment that names one component marker is `CGP-E041` instead. The
+  header replaces the compiler's, and the compiler's other suggestions stay (a similarly named
+  struct is a correct near miss), except the "missing a type parameter" one, which no wiring entry
+  can take. The `help` is added only when nothing else says how to fix the name, and only for a type
+  that is a segment by itself, since one nested in a segment's generic arguments has no lowercase
+  form. A later report of the same name prints once, and an `E0275` overflow on the requirement a
+  value's entry leaves unprovable is dropped as its consequence
+  ([`path_segment_not_declared`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/path_segment_not_declared.rs),
+  [`path_segment_near_miss`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/path_segment_near_miss.rs),
+  [`path_segment_nested_type`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/path_segment_nested_type.rs)).
+  The Rust code stays `E0425`.
+- **Fix (in the `help`):** declare or import the type, or write the segment in lowercase.
 - **Upstream class:** [unresolved wiring name](../cgp/errors/wiring/unresolved-wiring-name.md).
 
 ### `CGP-E050`: extensible-data operation not implemented
@@ -1131,7 +1160,7 @@ by
 module (`plan_undeclared_trait`, `plan_missing_use_provider`, `plan_cgp_impl_misuse`,
 `plan_unimported_abstract_type`, `plan_undeclared_requirement`, and `plan_provider_trait_in_uses`),
 fed from the matching detectors in the driver's `resolve` module, and the `CGP-E038` and
-`CGP-E040`–`CGP-E043` wiring-name forms come from `plan_unresolved_wiring_name` in the same module,
+`CGP-E040`–`CGP-E044` wiring-name forms come from `plan_unresolved_wiring_name` in the same module,
 fed from the driver's `resolve::wiring_name` detectors. The `CGP-E1xx` dependency-tree entry codes
 are stamped when a node renders: the inner chain nodes by the structured
 [`DepNode`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/node.rs)

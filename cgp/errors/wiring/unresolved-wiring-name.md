@@ -1,8 +1,8 @@
 # Unresolved wiring name
 
 A `delegate_components!` entry names something that does not exist where the wiring is written (a
-component not in scope, a key guessed from a trait's name, a provider never declared) or a consumer
-trait where a component belongs, so the compiler reports the name itself (`E0425` "cannot find
+component not in scope, a key guessed from a trait's name, a provider never declared, a type in an
+`@`-path never declared) or a consumer trait where a component belongs, so the compiler reports the name itself (`E0425` "cannot find
 type", or `E0782` "expected a type, found a trait"), with suggestions that do not fit wiring.
 
 ## What triggers it
@@ -94,6 +94,24 @@ trait for a struct the author is expected to declare, and `#[cgp_impl(new GreetH
 Without either, the impl and the wiring both name a type that does not exist. A misspelled provider
 in the value, `GreeterComponent: GreetHi`, fails the same way at the value alone.
 
+### A type in an `@`-path that is never declared
+
+A path key (`@app.Missing`), or the path a `=>` redirect points at, is a chain of segments. A
+segment that is not a lowercase identifier stays the type it spells, so it must exist where the
+table is written. A lowercase segment becomes a symbol (`Symbol!("app")`) and needs no declaration:
+
+```rust
+delegate_components! {
+    App {
+        GreeterComponent => @app.Missing, // `Missing` is declared nowhere
+        @app.Missing: GreetHello,
+    }
+}
+```
+
+A misspelled type fails the same way, and so does a segment written with a capital by mistake that
+was meant as a symbol.
+
 ## The raw diagnostic
 
 This section describes what plain `cargo check` prints on stable `rustc`, the fallback when
@@ -113,6 +131,11 @@ diagnostic names it. Each shape adds suggestions of its own:
 - **A key guessed from a trait's name:** the same `E0425`, reported twice, with a `help:` to add a
   type parameter or to use a similarly named item, such as the trait `CanUseComponent` for
   `CanGreetComponent`.
+- **A type in an `@`-path:** the same `E0425`, reported at each use of the path, so the redirect and
+  the key above each report it. The first gets a `help:` to add a type parameter to the entry's key
+  (`GreeterComponent<Missing> => …`), which no wiring entry can take, and a similarly named struct
+  is suggested when there is one. A check on the context then overflows (`E0275`) on the lookup
+  through the unresolved key.
 - **A provider that is never declared:** an `E0425` "cannot find type `GreetHello` in this scope"
   at the `#[cgp_impl]` attribute and again at the wiring value. A misspelled value alone gets one,
   whose `help:` suggests a similarly named trait, often the provider trait (`Greeter` for
@@ -147,14 +170,22 @@ the provider of a `#[cgp_impl]` header.
 - **`[CGP-E043]`** for an undeclared provider in a value:
   ``the provider `GreetHi` wired for `GreeterComponent` is not declared``, with a `help` only when a
   provider of that component has a similar name, and rustc's suggestion of a trait dropped.
+- **`[CGP-E044]`** for a type in an `@`-path never declared:
+  ``the type `Missing` in a wiring path is not declared``, with
+  ``help: declare or import the type `Missing`, or write the segment in lowercase to make it a symbol``
+  when nothing else says how to fix it. The type-parameter suggestion is dropped and rustc's other
+  suggestions stay, since a similarly named struct is a correct near miss. A segment that is a
+  component not in scope gets `[CGP-E041]` instead, and the `E0275` overflow a check reports on the
+  entry is dropped as its consequence.
 - **`[CGP-E038]`** for a `#[cgp_impl]` provider never declared:
   ``the provider `GreetHello` is not declared``, and
   ``help: declare it with `#[cgp_impl(new GreetHello)]` ``. The wiring value's error for the same
   name is dropped as its consequence, and so is the `E0275` overflow a call then reports under the
   tool's next-generation solver.
 
-A name reported twice at one span prints once. A name that is only part of a key or a value, such
-as a segment of an `@`-path, is left as `rustc` wrote it, and so is a name no rule explains.
+A name reported twice at one span prints once, and so does a type of one name reported at several
+places in `@`-paths. A name that is part of a key or a value without being in an `@`-path, such as
+a type argument of a provider, is left as `rustc` wrote it, and so is a name no rule explains.
 
 ## Resolving it
 
@@ -169,7 +200,7 @@ Name what the position takes, in scope:
 ## Notes for tooling
 
 The `E0425`s are raised by name resolution, before the compiler builds the HIR, so the tool holds
-them and reshapes them after resolution, when it can read the wiring entries back. Three cases still
+them and reshapes them after resolution, when it can read the wiring entries back. Four cases still
 keep `rustc`'s output:
 
 - **A name that matches components in two crates:** the import is ambiguous, and the tool does not
@@ -178,6 +209,8 @@ keep `rustc`'s output:
   name is recognized; a misspelled component name gets no near miss.
 - **A key in another table:** only `delegate_components!` entries are recognized, not a
   `check_components!` entry naming the same wrong key.
+- **A type argument outside an `@`-path:** a value such as `UseDelegate<Missing>` keeps both
+  `E0425`s and the type-parameter suggestion, since only a type inside a path is recognized.
 
 ## Backing fixtures
 
@@ -199,8 +232,14 @@ These fixtures pin the class, one group per shape:
 - [`wiring/unresolved-wiring-name/provider_not_declared.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/provider_not_declared.rs):
   `#[cgp_impl(GreetHello)]` without `new`, wired and called; one `[CGP-E038]`.
 - [`wiring/unresolved-wiring-name/path_segment_not_declared.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/path_segment_not_declared.rs):
-  an undeclared type as an `@`-path segment, which keeps `rustc`'s `E0425`s and the `E0275`
-  overflow a check reports after them.
+  an undeclared type as an `@`-path segment, in a redirect and a key and then checked; one
+  `[CGP-E044]`, with the repeat and the `E0275` overflow dropped.
+- [`wiring/unresolved-wiring-name/path_segment_near_miss.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/path_segment_near_miss.rs):
+  a misspelled type as a segment; `[CGP-E044]` keeps the compiler's similarly named struct.
+- [`wiring/unresolved-wiring-name/path_segment_component_not_imported.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/path_segment_component_not_imported.rs):
+  a component of another module as a segment; `[CGP-E041]` names the `crate::` path.
+- [`wiring/unresolved-wiring-name/path_segment_nested_type.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/path_segment_nested_type.rs):
+  a type nested in a segment's generic arguments; `[CGP-E044]` without a help.
 
 ## Related
 

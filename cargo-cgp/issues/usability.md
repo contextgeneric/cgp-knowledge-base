@@ -189,7 +189,8 @@ fixture that pins it.
 - **A wiring key or value that does not resolve** is named with its fix, in place of rustc's `dyn`,
   type-parameter, and similar-name suggestions: a consumer trait as a key names its component
   (`[CGP-E040]`), a component not in scope its import (`[CGP-E041]`), a key guessed from a trait's
-  name the real component (`[CGP-E042]`), an undeclared provider its component (`[CGP-E043]`), and a
+  name the real component (`[CGP-E042]`), an undeclared provider its component (`[CGP-E043]`), an undeclared type in an `@`-path its
+  coded header (`[CGP-E044]`), and a
   `#[cgp_impl]` without `new` the `new` that declares the provider, with the wiring and call errors
   it causes dropped (`[CGP-E038]`)
   ([`wiring/unresolved-wiring-name/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/wiring/unresolved-wiring-name)).

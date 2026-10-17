@@ -160,7 +160,7 @@ its `[CGP-E030]`, `[CGP-E031]`, `[CGP-E035]`, or `[CGP-E036]` form, and a defini
 wrong half of a component (an `E0107`) is [reshaped](#reshaping-a-wrong-component-half) into its
 `[CGP-E032]`–`[CGP-E034]` or `[CGP-E037]` form, and a wiring key, value, or provider that names
 nothing, or a consumer trait as a key (an `E0425` or `E0782`), is
-[reshaped](#reshaping-an-unresolved-wiring-name) into its `[CGP-E038]` or `[CGP-E040]`–`[CGP-E043]`
+[reshaped](#reshaping-an-unresolved-wiring-name) into its `[CGP-E038]` or `[CGP-E040]`–`[CGP-E044]`
 form. Otherwise the deepest transform, the
 [typed root-cause resolution](typed-root-cause-resolution.md), *replaces* a resolvable wiring
 failure with a root-cause-first diagnostic, covered in its own document; failing that, the in-place
@@ -1074,9 +1074,9 @@ diagnostic that takes the same lock, and then rewrites them under the lock, afte
 candidates are where they were. The planning,
 [`resolve::plan_unresolved_names`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/wiring_name),
 reads each name's position back from the HIR: the `DelegateComponent` impl (by `DefId`) whose key or
-`Delegate` type is exactly the name, or the impl over `__Context__` whose unresolved `Self` is. A
-name inside a larger type, such as a segment of an `@`-path, is no entry's key or value and stays as
-rustc wrote it. Then:
+`Delegate` type is exactly the name, or the impl over `__Context__` whose unresolved `Self` is, or
+a type inside the `@`-path of such a key or value. A name inside any other larger type, such as a
+type argument of a provider, is no entry's key or value and stays as rustc wrote it. Then:
 
 - **A key** is a component not in scope (`[CGP-E041]`) when exactly one component marker of that
   name exists among the traits the crate can see, read from each provider trait's delegation
@@ -1092,6 +1092,19 @@ rustc wrote it. Then:
   consequence (`is_unresolved_wiring_overflow`).
 - **A `#[cgp_impl]` header's provider** is a provider never declared (`[CGP-E038]`), and a value
   naming the same provider is dropped as its consequence.
+- **A type in an `@`-path** is found by its own span. `delegate_components!` gives a path's
+  `PathCons` spine the span of the whole macro call but keeps each segment's span as the user wrote
+  it, so the pass walks the key and the `Delegate` type for a path that resolves to nothing at the
+  name's span, below a `PathCons` of the base-types crate (`path_segment_at`, in `slot.rs`). A
+  segment that names one component marker is a component not in scope (`[CGP-E041]`). Any other is
+  `[CGP-E044]`, which replaces only the header, because the compiler's near-miss note and its
+  similarly named struct are correct for a type; the "missing a type parameter" suggestion is
+  dropped, since no wiring entry has generics to take it, and the pass's own help follows only when
+  nothing else is left that says how to fix the name, and only for a whole segment, since a lowercase
+  spelling makes a segment a symbol but not a type nested in one. A later report of the same name
+  is dropped. A redirect's value also leaves its entry's requirement unprovable, so the overflow
+  list records both forms of it, the consumer trait for a call and `CanUseComponent` of the
+  component for a check, and the emitter drops the `E0275` on either.
 
 A repeat of a classified name at the same span is dropped; an unclassified diagnostic, repeats
 included, is left as rustc wrote it. The consumer trait as a key is different in kind: its `E0782`
@@ -1100,7 +1113,8 @@ included, is left as rustc wrote it. The consumer trait as a key is different in
 (`resolve::detect_consumer_trait_as_key`) and words it as `[CGP-E040]`, the component read off the
 consumer trait's provider trait. The wording of every shape is the rustc-free
 `plan_unresolved_wiring_name` and `unresolved_wiring_name_help` over the owned
-`UnresolvedWiringName`. The blessed snapshots under
+`UnresolvedWiringName`, and `is_missing_type_parameter_help_text` names the suggestion the path case
+drops. The blessed snapshots under
 [`wiring/unresolved-wiring-name/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/wiring/unresolved-wiring-name)
 pin every shape.
 

@@ -30,8 +30,8 @@ mismatch codes `E004` and `E005`, whose message states the cause; `E010` to `E01
 duplicate-key `E0119` conflict (no root-cause note, both `rustc` carets kept); `E015` to `E019` name
 a structural mistake in a check table or a wiring entry; `E020` and `E021` reshape the `E0275`
 overflow of a wiring lookup that never ends, and `E022` an orphan-rule coherence error; `E030` to
-`E038` reword a macro-lowering error, each with its fix in a `help`; `E040` to `E043` reword a
-wiring key or value that does not resolve; `E050` heads a failed extensible-data operation, stating
+`E038` reword a macro-lowering error, each with its fix in a `help`; `E040` to `E044` reword a
+wiring key, value, or path type that does not resolve; `E050` heads a failed extensible-data operation, stating
 its cause; and `E060` and `E061` continue the structural mistakes.
 
 - **CGP-E001**: the consumer trait is not implemented for the context (missing wiring, or an unmet
@@ -83,6 +83,7 @@ its cause; and `E060` and `E061` continue the structural mistakes.
 - **CGP-E041**: a component written as a wiring key that exists but is not in scope.
 - **CGP-E042**: a wiring key that names no component, guessed from a consumer trait's name.
 - **CGP-E043**: a provider written as a wiring value that is never declared.
+- **CGP-E044**: a type written inside a wiring entry's `@`-path that is never declared.
 - **CGP-E050**: an extensible-data operation (a builder, an extractor, or a cast such as `upcast`)
   called on a value whose field or variant is not in the state it needs, or on a type without the
   data derive it needs; the headline states which.
@@ -151,6 +152,6 @@ example, [check-trait-failure](../checks/check-trait-failure.md) is stamped `[CG
 `[CGP-E035]`, and `[CGP-E036]`, and [wrong component half](../lowering/wrong-component-half.md) to
 `[CGP-E032]` to `[CGP-E034]` and `[CGP-E037]`, and
 [unresolved wiring name](../wiring/unresolved-wiring-name.md) takes `[CGP-E038]` and `[CGP-E040]` to
-`[CGP-E043]`. The [extensible-data](../data/extensible-data.md) class takes `[CGP-E050]` for a call
+`[CGP-E044]`. The [extensible-data](../data/extensible-data.md) class takes `[CGP-E050]` for a call
 to a data operation, and its causes `[CGP-E118]` to `[CGP-E126]` under whichever headline its anchor
 gives.
