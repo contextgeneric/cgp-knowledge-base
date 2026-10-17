@@ -354,6 +354,9 @@ it stale.
   `#[impl_generics]` parameter named in the trait's own signature, where only the generated impl
   declares it (`E0433`), plus the abstract type shadowing its own bound (`E0404`) and the `Box` a
   `no_std` crate lacks for a variant with no fields (`E0433`).
+- [lowering/provider-impl-without-macro.md](cgp/errors/lowering/provider-impl-without-macro.md) — a
+  provider trait implemented by a plain `impl`, so the provider has no `IsProviderFor` impl
+  (`E0277`).
 - [lowering/undeclared-dependency.md](cgp/errors/lowering/undeclared-dependency.md) — a trait, an
   inner provider, or an abstract type a definition uses without `#[uses]`, `#[use_provider]`, or
   `#[use_type]`, or a component requirement a provider omits (`E0599`, `E0220`, `E0425`, `E0277`).

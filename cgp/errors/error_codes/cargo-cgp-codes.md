@@ -30,7 +30,7 @@ mismatch codes `E004` and `E005`, whose message states the cause; `E010` to `E01
 duplicate-key `E0119` conflict (no root-cause note, both `rustc` carets kept); `E015` to `E019` name
 a structural mistake in a check table or a wiring entry; `E020` and `E021` reshape the `E0275`
 overflow of a wiring lookup that never ends, and `E022` an orphan-rule coherence error; `E030` to
-`E038` reword a macro-lowering error, each with its fix in a `help`; `E040` to `E044` reword a
+`E039` reword a macro-lowering error, each with its fix in a `help`; `E040` to `E044` reword a
 wiring key, value, or path type that does not resolve; `E050` heads a failed extensible-data operation, stating
 its cause; and `E060` and `E061` continue the structural mistakes.
 
@@ -79,6 +79,7 @@ its cause; and `E060` and `E061` continue the structural mistakes.
 - **CGP-E037**: a provider trait named in `#[uses]`, where a dependency names its consumer trait.
 - **CGP-E038**: `#[cgp_impl(Provider)]` names a provider struct never declared, where `new` declares
   it.
+- **CGP-E039**: a provider trait implemented by a plain `impl`, without `#[cgp_provider]`.
 - **CGP-E040**: a consumer trait written as a wiring key, where its component belongs.
 - **CGP-E041**: a component written as a wiring key that exists but is not in scope.
 - **CGP-E042**: a wiring key that names no component, guessed from a consumer trait's name.

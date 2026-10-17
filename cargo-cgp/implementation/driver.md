@@ -158,7 +158,8 @@ dependency a CGP definition uses without declaring it (an `E0599`, `E0220`, `E04
 the generated context or an inner provider) is [reshaped](#reshaping-an-undeclared-dependency) into
 its `[CGP-E030]`, `[CGP-E031]`, `[CGP-E035]`, or `[CGP-E036]` form, and a definition naming the
 wrong half of a component (an `E0107`) is [reshaped](#reshaping-a-wrong-component-half) into its
-`[CGP-E032]`–`[CGP-E034]` or `[CGP-E037]` form, and a wiring key, value, or provider that names
+`[CGP-E032]`–`[CGP-E034]` or `[CGP-E037]` form, a provider-trait impl written without its macro (an
+`E0277`) is [reshaped](#reshaping-a-provider-impl-written-without-its-macro) into `[CGP-E039]`, and a wiring key, value, or provider that names
 nothing, or a consumer trait as a key (an `E0425` or `E0782`), is
 [reshaped](#reshaping-an-unresolved-wiring-name) into its `[CGP-E038]` or `[CGP-E040]`–`[CGP-E044]`
 form. Otherwise the deepest transform, the
@@ -254,8 +255,7 @@ one flag turns all three off and the full type is always present in the output. 
 internal debug printing (disambiguator suffixes, region ids), so the diagnostics keep their ordinary
 shape. The emitter undoes the third: a failed bound's help listing the trait's implementors is cut
 back to rustc's eight and "and N others" (`bound_candidate_list`), because a CGP crate implements
-`IsProviderFor` hundreds of times and the full list buries the diagnostic it belongs to
-([`provider_impl_without_macro`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/provider_impl_without_macro.rs)).
+`IsProviderFor` hundreds of times and the full list buries the diagnostic it belongs to.
 The full mechanism (which function performs each elision, and the two-verbosity-switch distinction
 that makes `--verbose` the surgical choice) is documented in
 [rustc diagnostic internals](rustc-diagnostic-internals.md#the-suppression-points).
@@ -1053,6 +1053,27 @@ user-named context) are not covered, and cannot be safely: without that reserved
 `impl<Ctx> SomeConsumer<Ctx> for ConcreteType` cannot be told from a legitimate direct impl of a
 generic consumer trait on a context, so recognizing it would risk a false positive on valid code.
 `#[cgp_impl]` is the idiomatic provider form, so this is the case a programmer overwhelmingly hits.
+
+### Reshaping a provider impl written without its macro
+
+A provider trait has `IsProviderFor` as a supertrait, and `#[cgp_provider]` writes the provider's
+impl of it beside the impl of the provider trait. A provider-trait impl written by hand has no
+marker impl, so the compiler rejects it on the supertrait with an `E0277` at the impl's `Self` type,
+and lists every unrelated implementor of `IsProviderFor` beside it. The emitter recognizes the shape
+as the error arrives, gated to an `E0277` whose message names `IsProviderFor` and confirmed
+structurally by
+[`resolve::detect_provider_impl_without_macro`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/macro_less_provider.rs):
+the caret is the `Self` type of a local impl whose trait is a CGP provider trait the user named
+(`provider_blanket_marker` finds its component marker), the `Self` is a struct, enum, or union, and
+no `IsProviderFor` impl exists for that struct and marker. It words the `[CGP-E039]` header and its
+`#[cgp_provider]` help from the rustc-free `plan_provider_impl_without_macro` and
+`provider_impl_without_macro_help`, drops the implementor list, and remembers the provider, so a
+later `E0277` on that provider's `IsProviderFor` bound (the failing check of a context that wires
+it) is dropped as the same mistake. The fixtures
+[`provider_impl_without_macro`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/provider_impl_without_macro.rs)
+and
+[`provider_impl_without_macro_wired`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/provider_impl_without_macro_wired.rs)
+pin both.
 
 ### Reshaping an unresolved wiring name
 

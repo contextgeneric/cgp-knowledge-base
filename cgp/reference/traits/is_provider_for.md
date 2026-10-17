@@ -72,6 +72,9 @@ where
 A provider trait impl written without `#[cgp_provider]` gets no marker impl, so it fails its own
 supertrait with
 ``the trait bound `GreetHello: IsProviderFor<GreeterComponent, Context>` is not satisfied``.
+[`cargo-cgp`](../cargo-cgp.md) words it as `[CGP-E039]` with the fix, as the
+[provider impl without the macro](../../errors/lowering/provider-impl-without-macro.md) class
+describes.
 When a check fails on a provider's dependency, the notes run from the check through
 ``required for `GreetHello` to implement `IsProviderFor<GreeterComponent, Person>` `` down to the
 `#[uses(HasName)]` attribute that introduced the unmet bound. Two `check_components!` blocks in one

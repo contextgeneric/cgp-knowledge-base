@@ -255,6 +255,9 @@ Lowering errors, in [lowering/](lowering/):
   name shadows the trait bounding it (`E0404`), a name collision between a generated path and a user
   identifier, and the `Box` that the variant derives' mutable extractor names for a variant with no
   fields, missing in a `no_std` crate that has not imported it (`E0433`).
+- [Provider impl without the macro](lowering/provider-impl-without-macro.md): a provider trait
+  implemented for a provider struct by a plain `impl`, so the provider has no `IsProviderFor` impl
+  and the compiler rejects the impl on the provider trait's supertrait (`E0277`).
 - [Undeclared dependency](lowering/undeclared-dependency.md): a `#[cgp_fn]`, `#[cgp_impl]`, or
   `#[cgp_component]` definition that uses a trait without `#[uses]`, an inner provider without
   `#[use_provider]`, or an abstract type without `#[use_type]`, or a provider that omits a

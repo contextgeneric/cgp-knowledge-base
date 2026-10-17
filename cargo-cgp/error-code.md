@@ -58,7 +58,7 @@ next free one:
 | `CGP-E001` to `CGP-E009` | a trait the context cannot use, and the two type mismatches | `E001` to `E005` |
 | `CGP-E010` to `CGP-E019` | conflicting wiring, and structural mistakes | `E010` to `E019` |
 | `CGP-E020` to `CGP-E029` | wiring that never resolves, and the orphan rule | `E020` to `E022` |
-| `CGP-E030` to `CGP-E039` | mistakes in what a macro was given | `E030` to `E038` |
+| `CGP-E030` to `CGP-E039` | mistakes in what a macro was given | `E030` to `E039` |
 | `CGP-E040` to `CGP-E049` | wiring keys and values that do not resolve | `E040` to `E044` |
 | `CGP-E050` to `CGP-E059` | extensible data | `E050` |
 | `CGP-E060` to `CGP-E069` | structural mistakes, continued | `E060`, `E061` |
@@ -101,7 +101,7 @@ header naming the component's consumer trait, `CGP-E033` a `#[cgp_impl]` on a tr
 CGP component at all, `CGP-E034` an inner-provider bound (typically `#[use_provider]`) naming the
 consumer trait, and `CGP-E037` a provider trait named in `#[uses]`. `CGP-E038`, a
 `#[cgp_impl(Provider)]` that never declares its provider, is cataloged with the names that do not
-resolve. The **wiring-name** codes `CGP-E040` to `CGP-E044` cover a name in a `delegate_components!`
+resolve, and `CGP-E039` is a provider-trait impl written without `#[cgp_provider]`. The **wiring-name** codes `CGP-E040` to `CGP-E044` cover a name in a `delegate_components!`
 entry that is wrong, all in the
 [unresolved wiring name](../cgp/errors/wiring/unresolved-wiring-name.md) class: `CGP-E040` a
 consumer trait as a key, `CGP-E041` a component not in scope, `CGP-E042` a key that names no
@@ -155,8 +155,7 @@ fix, and the [CGP error catalog](../cgp/errors/README.md) class it recognizes.
   `IsProviderFor` bound (a dispatch combinator, a `RedirectLookup`, or a provider deep in the
   chain): such a block is `CGP-E001` or `CGP-E003`. A failure the resolver declines has no anchor,
   so the text rewrite restates an `IsProviderFor` headline in the provider form under this code, and
-  keeps rustc's notes in place of a root-cause tree
-  ([`provider_impl_without_macro`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/provider_impl_without_macro.rs)).
+  keeps rustc's notes in place of a root-cause tree.
 - **Fix:** follow the `root cause:` note(s) to the dependency the provider is missing.
 - **Upstream class:** [check-trait failure](../cgp/errors/checks/check-trait-failure.md) (its
   provider-side face), and [unsatisfied dependency](../cgp/errors/hidden/unsatisfied-dependency.md)
@@ -769,6 +768,25 @@ for `CGP-E060`.
   The Rust code stays `E0425`.
 - **Fix (in the `help`):** add `new` to the attribute, or declare the provider struct.
 - **Upstream class:** [unresolved wiring name](../cgp/errors/wiring/unresolved-wiring-name.md).
+
+### `CGP-E039`: provider impl without the macro
+
+- **Message:**
+  `` [CGP-E039] the impl of `<Trait>` for `<Provider>` is written without `#[cgp_provider]` ``, with
+  a `help`: `` add `#[cgp_provider]` to the impl of `<Trait>`, or write the provider with `#[cgp_impl]` ``.
+- **Means:** a provider trait is implemented for a provider struct by a plain `impl`. The provider
+  trait has `IsProviderFor` as a supertrait, and only `#[cgp_provider]` (or `#[cgp_impl]`) writes the
+  provider's impl of it, so the plain impl fails its own supertrait.
+- **Triggered by:** an `E0277` naming `IsProviderFor` whose caret is exactly the `Self` type of a
+  local impl the user wrote of a CGP provider trait, when no `IsProviderFor` impl exists for that
+  struct and the trait's component. rustc's implementor list is dropped, and a later `E0277` on the
+  same provider's `IsProviderFor` bound, such as the failing check of a context that wires it, is
+  dropped as its consequence
+  ([`provider_impl_without_macro`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/provider_impl_without_macro.rs),
+  [`provider_impl_without_macro_wired`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/provider_impl_without_macro_wired.rs)).
+  The Rust code stays `E0277`.
+- **Fix (in the `help`):** add `#[cgp_provider]` to the impl, or write the provider with `#[cgp_impl]`.
+- **Upstream class:** [provider impl without the macro](../cgp/errors/lowering/provider-impl-without-macro.md).
 
 ### `CGP-E040`: consumer trait as a wiring key
 

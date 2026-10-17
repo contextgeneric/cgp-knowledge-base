@@ -70,8 +70,9 @@ from the driver, is what keeps them unit-testable.
   provider does not declare, with a `#[uses]` help and a `#[use_type]` help), and
   `cgp_impl_misuse.rs` (`CgpImplMisuse` for the `[CGP-E032]`–`[CGP-E034]` wrong-half mistakes,
   `ProviderTraitInUses` for the `[CGP-E037]` provider trait in `#[uses]`, and `MissingUseProvider`
-  for the `[CGP-E031]` inner provider never imported, with a generic component's parameters), and
-  `wiring_name.rs` (`UnresolvedWiringName`, the `[CGP-E038]` and `[CGP-E040]`–`[CGP-E044]` wiring
+  for the `[CGP-E031]` inner provider never imported, with a generic component's parameters),
+  `macro_less_provider.rs` (`ProviderImplWithoutMacro`, the `[CGP-E039]` provider-trait impl
+  written without `#[cgp_provider]`, with its help), and `wiring_name.rs` (`UnresolvedWiringName`, the `[CGP-E038]` and `[CGP-E040]`–`[CGP-E044]` wiring
   key, value, or provider that does not resolve, with a help only where a fix is known). They are
   documented where the driver detects them, in
   [The driver](driver.md#the-drivers-diagnostic-transformations). `structural.rs` holds
@@ -484,7 +485,7 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   the fix `help`s use), and `wiring.rs` (`WiringConflict`/`WiringKey`, `plan_wiring_conflict` for
   the `[CGP-E010]`–`[CGP-E014]` duplicate-key headers, and `wiring_conflict_help` for the redirect
   fix), plus `orphan.rs`, `undeclared.rs`, `unimported.rs`, `requirement.rs`, `cgp_impl_misuse.rs`,
-  and `wiring_name.rs` (the `[CGP-E022]`, `[CGP-E030]`–`[CGP-E038]`, and `[CGP-E040]`–`[CGP-E044]`
+  `macro_less_provider.rs`, and `wiring_name.rs` (the `[CGP-E022]`, `[CGP-E030]`–`[CGP-E039]`, and `[CGP-E040]`–`[CGP-E044]`
   reshape models and their wording), and `internal_error.rs` (the note on a diagnostic shown
   untransformed after a contained panic). See
   [Typed root-cause resolution](typed-root-cause-resolution.md) and

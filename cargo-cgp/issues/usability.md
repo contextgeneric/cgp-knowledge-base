@@ -333,11 +333,11 @@ The fixtures group by construct:
   whose `E0425` suggests importing `std::error::Error` (`error_alias_in_cgp_fn`,
   `error_alias_in_provider_body`); `Self::Error` where two abstract-type traits declare an `Error`
   (`self_error_two_traits`).
-- **Providers, fields, and types:** getters wired to the wrong provider, `UseDelegate` without
-  `#[derive_delegate]`, a provider impl without `#[cgp_provider]`, a tuple-struct context, a field
-  read as two types, and a borrowed error detail.
-- **Handlers:** promotions of hand-written providers, a matcher wired as a handler or applied to a
-  struct, and matchers or builders missing an arm or a field.
+- **Providers, fields, and types:** `UseField` on a multi-method getter, `UseDelegate` without
+  `#[derive_delegate]`, a field read through a `Symbol!` digit tag by a `get_field` call on a tuple
+  struct, a field read as two types, and a borrowed error detail.
+- **Handlers:** a matcher wired as a handler or applied to a struct, and matchers or builders
+  missing an arm or a field.
 
 ## What good presentation looks like
 
