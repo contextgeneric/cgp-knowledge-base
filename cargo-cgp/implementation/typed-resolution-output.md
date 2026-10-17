@@ -244,7 +244,10 @@ The `root cause:` lead is worded by *why* the leaf is unmet, in one shape per ki
   the trait, by the owner having **no** concrete impl of the provider trait, and named against that
   trait rather than a wiring key
   ([`non_provider_wired`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/non_provider_wired.rs)
-  pins it).
+  pins it). The chain step directly above this leaf, for the same provider, reads as a requirement
+  (``provider trait `Greeter` required of provider `NotAGreeter` with context `App` ``) rather than
+  as the provider-trait impl the provider lacks; `Causes` rewords it when the chain is built, and it
+  keeps its code and every fact.
 
 - A **provider for other arguments**, a valid provider whose concrete impls take other arguments
   than the wiring gives it at one position, reads as

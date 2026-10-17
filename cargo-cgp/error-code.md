@@ -923,7 +923,10 @@ at (`CGP-E110` onward).
   `` consumer trait impl `HasScalarType` for `NoScalar` ``.
 - **`CGP-E102`: provider trait impl.**
   `` provider trait impl `<Trait>` with context `<Ctx>` for provider `<Provider>` ``: a hop through
-  a provider's provider-trait impl (an `IsProviderFor` step).
+  a provider's provider-trait impl (an `IsProviderFor` step). Directly above a `CGP-E115` leaf for
+  the same provider, which has no such impl, the hop reads as the requirement it is,
+  `` provider trait `<Trait>` required of provider `<Provider>` with context `<Ctx>` ``, under the
+  same code.
 - **`CGP-E103`: redirect lookup.** `` redirect lookup to `@…` in `<Table>` ``: a hop through a
   namespace or `open` `RedirectLookup<Table, Path>`, naming the table the path is looked up in: the
   context for its own `open` or `namespace`, or an aggregate provider that `open`s a component in
