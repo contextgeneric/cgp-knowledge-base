@@ -985,7 +985,12 @@ at (`CGP-E110` onward).
   (e.g. `UseBasicAuth<QueryBalanceRequest>` with the endpoint handler omitted, so the request type
   sits where an `ApiHandler` belongs. Distinct from `CGP-E114`: the owner is not a table missing one
   entry, so the fix is to use an actual provider (wrap it in the handler), not to add a wiring
-  entry.
+  entry. When an adapter type wraps the wired type into a provider of the trait, a `help` names it
+  in place of the wired type, ``wire `WithProvider<ReadDisplayName>` in place of `ReadDisplayName` ``,
+  with the `use` it needs when the prelude does not export it. The adapter is any impl of the
+  provider trait whose `Self` is a type over one type parameter that the impl bounds by a trait
+  (`WithProvider<P>`, `Promote<P>`), applied to the wired type and confirmed to hold by the
+  solver; no adapter is named by its name.
 - **`CGP-E116`: associated type mismatch (leaf).**
   `` abstract type `<assoc>` of `<Trait>` on `<Owner>` is `<actual>`, but `<expected>` is required ``:
   the chain bottoms out on an associated type the owner supplies differently from what a provider

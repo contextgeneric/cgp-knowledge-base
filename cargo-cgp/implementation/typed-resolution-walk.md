@@ -193,7 +193,13 @@ walk descends it the way it descends a provider. It deliberately does *not* foll
   provider trait at all (`UseBasicAuth<QueryBalanceRequest>`, a request type in a handler slot), the
   **not-a-provider** leaf (`[CGP-E115]`), named against `T` rather than a wiring key
   ([`non_provider_wired`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/non_provider_wired.rs)
-  pins it). An owner that *has* one reached the blanket only because that impl did not unify with
+  pins it). The leaf also records the **adapters** that make the owner a provider
+  (`wrapping_adapters`, `classify/adapter.rs`): for each impl of the provider trait whose `Self` is
+  an ADT over one type parameter the impl bounds by a trait (`WithProvider<P>`, `Promote<P>`; an
+  ADT such as `UseType<T>`, which only carries `T` as a type, bounds it by nothing), the ADT applied
+  to the owner, kept when the solver confirms it implements the trait for the same arguments. No
+  adapter is recognized by name, and the search declines when the obligation holds an unknown. An
+  owner that *has* one reached the blanket only because that impl did not unify with
   the arguments the walk gives it, and two cases follow:
   - When those arguments are fully known (no placeholder, inference variable, or unreduced
     projection) and exactly one argument position is one that none of the owner's concrete impls
@@ -568,7 +574,8 @@ parent document's [Tests](typed-root-cause-resolution.md#tests) section.
   `misdirected.rs` (the requirements of a provider impl whose `#[cgp_impl]` header names the
   consumer trait).
 - [`crates/cargo-cgp-driver/src/resolve/classify/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/classify):
-  `reportable.rs` (root cause versus routing dead-end), `other_arguments.rs` (the argument a provider
+  `reportable.rs` (root cause versus routing dead-end), `adapter.rs` (the adapter types that make a
+  non-provider a provider), `other_arguments.rs` (the argument a provider
   does not implement its provider trait for), `hand_wiring.rs` (a component wired without its
   `IsProviderFor`), `leaf.rs` (`classify_leaf`, which builds the
   rustc-free `Leaf`), `data.rs` (`classify_data_leaf`, the extensible-data leaf read off the presence

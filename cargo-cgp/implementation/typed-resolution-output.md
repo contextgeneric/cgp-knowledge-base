@@ -247,7 +247,13 @@ The `root cause:` lead is worded by *why* the leaf is unmet, in one shape per ki
   pins it). The chain step directly above this leaf, for the same provider, reads as a requirement
   (``provider trait `Greeter` required of provider `NotAGreeter` with context `App` ``) rather than
   as the provider-trait impl the provider lacks; `Causes` rewords it when the chain is built, and it
-  keeps its code and every fact.
+  keeps its code and every fact. When an adapter type applied to the provider is a provider of the
+  trait, the leaf carries it for a `help`, as
+  [`field_getter_wired_bare`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/field_getter_wired_bare.rs),
+  [`use_field_on_cgp_type`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/use_field_on_cgp_type.rs),
+  and
+  [`promote_computer_handwritten_handler`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/handlers/promote_computer_handwritten_handler.rs)
+  pin it.
 
 - A **provider for other arguments**, a valid provider whose concrete impls take other arguments
   than the wiring gives it at one position, reads as
@@ -356,6 +362,10 @@ which names its items in the order the causes are listed, with no cap:
   for a field not optional. Each is given only when the solver confirms the method holds for the
   value, and the [module strip](resugaring.md#the-path-strips-that-run-first) keeps the `use`
   path whole.
+- A **non-provider's adapter** names the adapter type to wire in its place:
+  ``wire `WithProvider<ReadDisplayName>` in place of `ReadDisplayName` ``. Several adapters read as
+  alternatives joined by "or", and an adapter outside the prelude adds the `use` it needs
+  (``wire `Promote<Double>` in place of `Double`, with `use cgp::extra::handler::Promote;` in scope``).
 - A **tuple field's tag** is named when a missing field's name is a position of a tuple struct:
   ``a field of the tuple struct `Pair` is keyed by `Index<0>`, not by `Symbol!("0")` ``. A tuple
   struct cannot gain a named field, so no add-the-field `help` follows.
