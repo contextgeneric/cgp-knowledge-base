@@ -362,6 +362,10 @@ which names its items in the order the causes are listed, with no cap:
   for a field not optional. Each is given only when the solver confirms the method holds for the
   value, and the [module strip](resugaring.md#the-path-strips-that-run-first) keeps the `use`
   path whole.
+- A **non-provider that provides another component** says which, and names both ways out:
+  ``` `SayBye` provides `Farewell`: wire it under `FarewellComponent`, or wire a provider of `Greeter` here ```.
+  It is given only for components whose provider trait the solver confirms the wired type implements
+  for the same context.
 - A **non-provider's adapter** names the adapter type to wire in its place:
   ``wire `WithProvider<ReadDisplayName>` in place of `ReadDisplayName` ``. Several adapters read as
   alternatives joined by "or", and an adapter outside the prelude adds the `use` it needs

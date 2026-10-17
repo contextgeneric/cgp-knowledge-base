@@ -990,7 +990,9 @@ at (`CGP-E110` onward).
   with the `use` it needs when the prelude does not export it. The adapter is any impl of the
   provider trait whose `Self` is a type over one type parameter that the impl bounds by a trait
   (`WithProvider<P>`, `Promote<P>`), applied to the wired type and confirmed to hold by the
-  solver; no adapter is named by its name.
+  solver; no adapter is named by its name. When the wired type is a provider of other components for
+  the same context (a `Farewell` provider wired under `GreeterComponent`), a `help` says so and gives
+  both ways out, ``` `SayBye` provides `Farewell`: wire it under `FarewellComponent`, or wire a provider of `Greeter` here ```.
 - **`CGP-E116`: associated type mismatch (leaf).**
   `` abstract type `<assoc>` of `<Trait>` on `<Owner>` is `<actual>`, but `<expected>` is required ``:
   the chain bottoms out on an associated type the owner supplies differently from what a provider

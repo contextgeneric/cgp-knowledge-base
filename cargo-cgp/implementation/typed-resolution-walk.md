@@ -198,8 +198,12 @@ walk descends it the way it descends a provider. It deliberately does *not* foll
   an ADT over one type parameter the impl bounds by a trait (`WithProvider<P>`, `Promote<P>`; an
   ADT such as `UseType<T>`, which only carries `T` as a type, bounds it by nothing), the ADT applied
   to the owner, kept when the solver confirms it implements the trait for the same arguments. No
-  adapter is recognized by name, and the search declines when the obligation holds an unknown. An
-  owner that *has* one reached the blanket only because that impl did not unify with
+  adapter is recognized by name, and the search declines when the obligation holds an unknown. It
+  also records the other components the owner is a provider of for the same context
+  (`provided_components`): each provider trait with no parameter beyond `Self` and the context whose
+  delegation blanket keys on a marker, kept when the solver confirms `Owner: Trait<Context>`
+  ([`wrong_component_provider_check`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/wrong_component_provider_check.rs)).
+  An owner that *has* one reached the blanket only because that impl did not unify with
   the arguments the walk gives it, and two cases follow:
   - When those arguments are fully known (no placeholder, inference variable, or unreduced
     projection) and exactly one argument position is one that none of the owner's concrete impls
@@ -575,7 +579,7 @@ parent document's [Tests](typed-root-cause-resolution.md#tests) section.
   consumer trait).
 - [`crates/cargo-cgp-driver/src/resolve/classify/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/classify):
   `reportable.rs` (root cause versus routing dead-end), `adapter.rs` (the adapter types that make a
-  non-provider a provider), `other_arguments.rs` (the argument a provider
+  non-provider a provider, and the other components it provides), `other_arguments.rs` (the argument a provider
   does not implement its provider trait for), `hand_wiring.rs` (a component wired without its
   `IsProviderFor`), `leaf.rs` (`classify_leaf`, which builds the
   rustc-free `Leaf`), `data.rs` (`classify_data_leaf`, the extensible-data leaf read off the presence
