@@ -180,7 +180,8 @@ suggests the generated `'__a__` lifetime it finds in scope, which the user canno
 return type it reports `E0106`. Writing the lifetime out as `Cow<'_, str>` avoids both, since the
 elaboration then names it. The `cargo-cgp` fixture
 [`uncataloged/macro-defects/auto_dispatch_hidden_lifetime.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/macro-defects/auto_dispatch_hidden_lifetime.rs) pins the argument case, where
-the tool keeps both errors and the wrong help.
+the tool keeps both errors and drops the wrong help, so only the `E0726` suggestion remains (see
+[Dropping a suggestion that names a generated identifier](../../../cargo-cgp/implementation/driver.md#dropping-a-suggestion-that-names-a-generated-identifier)).
 
 ## Known issues
 

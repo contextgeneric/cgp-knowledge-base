@@ -100,7 +100,9 @@ the tool leaves alone would print paths plain rustc shortens, suggestions includ
 `after_expansion` hook, which the compiler calls once name resolution is over, has a job in each of
 the driver's modes. In a check it hands the emitter the `TyCtxt` it needs to reshape the
 name-resolution errors of the crate's wiring entries (see
-[Reshaping an unresolved wiring name](#reshaping-an-unresolved-wiring-name)). When
+[Reshaping an unresolved wiring name](#reshaping-an-unresolved-wiring-name)) and to drop the
+suggestions that name an identifier a macro generated (see
+[Dropping a suggestion that names a generated identifier](#dropping-a-suggestion-that-names-a-generated-identifier)). When
 `cargo cgp expand` asked for an expansion, it prints the expanded crate and stops the compilation
 there instead of checking it (see [The expand command](expand-command.md)). Aside from the injected
 flags, that emitter, and that second mode, the driver compiles exactly as `rustc` would.
@@ -170,8 +172,9 @@ a CGP encoding, so no raw CGP construct leaks and the transforms leave a plain R
 printed it (the injected `--verbose` aside, see
 [Un-eliding the diagnostic](#un-eliding-the-diagnostic)). The sections that follow detail the two
 levers, the rename, the two coherence reshapes, the structural reshape, the macro-lowering reshapes,
-and the wiring-name reshape; the replacement and the post-processing build on the rename's `TyCtxt`
-access and rustc-free helpers, and are documented separately.
+the wiring-name reshape, and the drop of a suggestion that names a generated identifier; the
+replacement and the post-processing build on the rename's `TyCtxt` access and rustc-free helpers,
+and are documented separately.
 
 The emitter is also what *renders* the diagnostics, the way vanilla `rustc` would. The wrapper type
 [`CgpEmitter`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/cgp_emitter.rs)
@@ -1101,6 +1104,35 @@ consumer trait's provider trait. The wording of every shape is the rustc-free
 [`wiring/unresolved-wiring-name/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/wiring/unresolved-wiring-name)
 pin every shape.
 
+### Dropping a suggestion that names a generated identifier
+
+A CGP macro declares some names only in its expansion, and spells each as a reserved identifier,
+wrapped in double underscores (`__Context__`, and the lifetimes `'__a__` and `'__a0__` that
+`#[cgp_auto_dispatch]` gives an elided one). When a macro cannot name what the user wrote, the
+compiler reports the gap and may suggest inserting one of those names into the user's source, where
+it does not resolve. The suggestion is wrong whatever the error: for a `Cow<str>` argument of a
+`#[cgp_auto_dispatch]` method, `E0106` suggests `Cow<'__a__, str>`, while the `E0726` beside it
+suggests the `Cow<'_, str>` that works.
+
+Like the wiring-name reshape, the drop runs from the `after_expansion` callback, because the
+lifetime errors arrive during name resolution, before an emitted diagnostic can ask whether the
+crate uses CGP. The pass
+[`drop_generated_name_suggestions`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/generated_names.rs)
+reaches the buffer through the same registration, and only in a crate that links a CGP crate
+(`resolve::links_cgp`), so a plain Rust error keeps every suggestion. It drops each structured
+suggestion with a substitution whose text holds a reserved name
+([`reserved_names`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/signals.rs),
+a word of at least one character between two leading and two trailing underscores) that the source
+file being edited does not contain, since a name the file spells is one the user wrote. The test
+reads the text of the suggestion rather than the macro's expansion, because the suggestion's span
+sits in the user's own code, where nothing marks it as the macro's. Two limits follow. A comment
+that spells the reserved name counts as the user writing it, so the suggestion stays. A diagnostic
+that arrives after name resolution is not covered, and no fixture needs it to be. The
+`retain_suggestions` helper in `edit.rs` serves this pass and the method-probe cleanup alike. The
+[`auto_dispatch_hidden_lifetime`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/macro-defects/auto_dispatch_hidden_lifetime.rs)
+fixture pins the result: the `E0106` keeps its caret and label, and the `E0726` keeps the right
+help.
+
 ## Containing the driver's own panics
 
 **A panic in the driver's own code never costs the user their diagnostics.** The emitter re-runs
@@ -1182,8 +1214,8 @@ will likely grow toward it:
 - **Callbacks.** Clippy carries three `Callbacks` implementations (default, rustc-only, and
   lint-registering) and selects among them per invocation. `cargo-cgp` has one `CgpCallbacks`, which
   varies by its fields rather than by type: its `config` hook always installs the rewriting emitter,
-  and its `after_expansion` hook reshapes the name-resolution errors in a check and prints the
-  expansion when the invocation carried an expansion request. The differentiation will grow as the
+  and its `after_expansion` hook reshapes the name-resolution errors and drops the suggestions that
+  name a generated identifier in a check, and prints the expansion when the invocation carried an expansion request. The differentiation will grow as the
   driver does more post-processing.
 
 ## Further reading
@@ -1271,7 +1303,8 @@ will likely grow toward it:
   identity anchor (`CGP_COMPONENT_CRATE`, `IS_PROVIDER_FOR_TRAIT`), each with its rationale.
 - [`crates/cargo-cgp-driver/src/callbacks.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/callbacks.rs):
   the `Callbacks` implementation: its `config` hook installs the transforming emitter, and its
-  `after_expansion` hook runs the name-resolution reshape in a check and serves expand mode
+  `after_expansion` hook runs the name-resolution reshape and the generated-name suggestion drop in a
+  check and serves expand mode
   ([The expand command](expand-command.md)).
 - [`crates/cargo-cgp-driver/src/emitter/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/emitter):
   the generic `CgpEmitter<E>`, split behind a re-exporting `mod.rs`: `install.rs` rebuilds the
@@ -1288,7 +1321,8 @@ will likely grow toward it:
   their untransformed fallback, `output.rs` the inner emitter and buffer shared with the panic hook
   and the name-resolution reshape, `containment.rs` the `catch_unwind` wrapper and the panic hooks,
   `name_resolution.rs` the reshape of the wiring entries' name-resolution errors and the overflow
-  drop that goes with it, `shared_dispatch_method.rs` the pairing of the two `E0428`s two dispatch
+  drop that goes with it, `generated_names.rs` the drop of a suggestion that names a generated
+  identifier, `shared_dispatch_method.rs` the pairing of the two `E0428`s two dispatch
   traits sharing a method name produce, `repeats.rs` the flush's merge of a diagnostic rustc reports
   twice, `test_panic.rs` the panic a fixture raises on purpose, and `edit.rs` holds the
   `DiagInner`-editing helpers (including `merged_span`, the merged block's one caret and its
