@@ -79,8 +79,10 @@ macro defects), each awaiting a catalog page. The largest class, `checks/check-t
 keeps concept sub-directories (`fields/`, `providers/`, `missing-wiring/`, and the rest) so no
 directory grows crowded. Three directories hold fixtures that belong to no error class: `ok/` for
 programs that compile clean, `pass-through/` for plain Rust errors the tool must render exactly as
-rustc does, and `robustness/` for how the tool degrades when it fails itself, such as a panic in its
-emitter. Every fixture name is unique across the tree, so a fixture can be found by name alone.
+rustc does, and `robustness/` for how the tool degrades when the compilation fails under it, such as
+a compiler crash or a fatal error while it holds diagnostics. A panic in its own emitter is pinned
+by the driver's unit tests instead (see [The driver](driver.md#containing-the-drivers-own-panics)).
+Every fixture name is unique across the tree, so a fixture can be found by name alone.
 
 **How well the tool presents a fixture's error is a header field rather than a directory.** Every
 error fixture declares `//@quality: acceptable` (the tool leads with the cause), `usability` (the
@@ -207,8 +209,8 @@ A fixture states what the harness must do with it through **directives**: line c
 with `//@`, as in Clippy's UI tests, which the compiler ignores and only the harness reads. Six
 exist: `//@aux-build: <crate>` (an auxiliary crate, below), `//@rewrites-falsely: <reason>` (the
 pass-through exception above), `//@json` (the JSON pass), `//@env: <KEY>=<VALUE>` (an environment
-variable for the tool's runs, which the `robustness/` fixtures use to make the emitter panic or the
-compiler crash on purpose), and the header's `//@quality:` and `//@codes:`. A misspelled directive
+variable for the tool's runs, which a `robustness/` fixture uses to make the compiler crash on
+purpose), and the header's `//@quality:` and `//@codes:`. A misspelled directive
 would silently do nothing, so the parser rejects an unknown `//@name`, a known name written in
 another comment form, such as `// @json` with a space, an `//@aux-build:` without a crate, and a
 second `//@codes:`, `//@quality:`, or `//@rewrites-falsely:`, which would silently replace the

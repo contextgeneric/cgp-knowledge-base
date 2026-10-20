@@ -1260,11 +1260,13 @@ They go out untransformed because a second panic inside a panic hook aborts the 
 is no time to run the flush's rendering. The driver also initializes rustc's `RUSTC_LOG` logger,
 as rustc and Clippy do.
 
-**No input is known to make the emitter panic**, so the fixtures that pin the fallback make it panic
-on purpose. The `CARGO_CGP_TEST_PANIC` environment variable names the stage that panics (`transform`
-or `flush`), and the
-[`robustness/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/robustness) fixtures
-set it with the harness's `//@env:` directive. The ICE ordering has a fixture of its own, which
+**No input is known to make the emitter panic**, so the fallback is tested through its own functions
+rather than through a compilation. The emitter runs its transform and its flush through
+[`transform_or_original` and `render_or_untransformed`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/fallback.rs),
+which take the step as a closure, and the driver's unit tests pass a closure that panics. The
+shipped driver therefore carries no switch that makes it panic. The ICE ordering has a fixture of
+its own, in
+[`robustness/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/robustness), which
 crashes the compiler rather than the emitter: `RUSTFLAGS=-Ztreat-err-as-bug=2` turns the second
 error into an internal compiler error. An ICE report also carries a backtrace, a timestamped
 crash-report file, and the panicking thread's id, so the fixture sets `RUST_BACKTRACE=0` and
@@ -1342,8 +1344,11 @@ will likely grow toward it:
   exits with rustc's error rather than a panic.
 - [`crates/cargo-cgp-driver/tests/driver/help.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/help.rs):
   `wants_help` detecting the help flags, and the help text explaining the wrapper role and flags.
-- [`crates/cargo-cgp-driver/tests/driver/test_panic.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/test_panic.rs):
-  the `CARGO_CGP_TEST_PANIC` values that arm each stage, and the values that arm none.
+- [`crates/cargo-cgp-driver/tests/driver/containment.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/containment.rs):
+  `contain` returning a value, naming a contained panic's message and location, letting a
+  `FatalErrorMarker` unwind on, and restoring the outer state after a nested call; and the two
+  fallbacks with a panicking step: a transform's panic giving back rustc's diagnostic with the
+  internal-error note, and a flush's panic emitting every entry untransformed, in order.
 - [`crates/cargo-cgp-error-processing/tests/error_processing/internal_error.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/internal_error.rs):
   the note on a diagnostic shown untransformed after a contained panic.
 - [`tests/ui/pass-through/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/pass-through):
@@ -1355,13 +1360,11 @@ will likely grow toward it:
   that a crate not using CGP is never resugared. `provider_wrong_signature` and
   `lookalike_cgp_names` pin the `--verbose` limitation, marked `//@rewrites-falsely:`.
 - [`tests/ui/robustness/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/robustness):
-  `panic_in_transform` and `panic_in_flush`, a wiring failure between two type errors with the
-  emitter made to panic in each stage, pinning that every error still prints, as rustc built it,
-  with the internal-error note. `fatal_after_buffered_diagnostic` pins a fatal error that stops the
-  compilation early: a rewritten wiring failure, held in the buffer, then a fatal query cycle
-  (`E0391`); both print, in rustc's order. `ice_after_buffered_diagnostic` pins a compiler crash
-  (`-Ztreat-err-as-bug=2`) after a buffered wiring failure: the panic hook prints the failure,
-  untransformed, before the crash report, as plain rustc orders them.
+  `fatal_after_buffered_diagnostic` pins a fatal error that stops the compilation early: a rewritten
+  wiring failure, held in the buffer, then a fatal query cycle (`E0391`); both print, in rustc's
+  order. `ice_after_buffered_diagnostic` pins a compiler crash (`-Ztreat-err-as-bug=2`) after a
+  buffered wiring failure: the panic hook prints the failure, untransformed, before the crash
+  report, as plain rustc orders them.
 - [`crates/cargo-cgp-error-processing/tests/error_processing/rewrite.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/rewrite.rs):
   the compiler-free rewrite over a hand-built name map, run on any toolchain: both note forms and
   both header forms; generic components (a single parameter reattached to the header, a
@@ -1419,9 +1422,11 @@ will likely grow toward it:
   and the name-resolution reshape, `containment.rs` the `catch_unwind` wrapper and the panic hooks,
   `name_resolution.rs` the reshape of the wiring entries' name-resolution errors and the overflow
   drop that goes with it, `generated_names.rs` the drop of a suggestion that names a generated
-  identifier, `use_type_misspelling.rs` the help on a misspelled `#[use_type]` import, `attribute_splice.rs` the drop of a suggestion spliced after an attribute macro, `shared_dispatch_method.rs` the pairing of the two `E0428`s two dispatch
-  traits sharing a method name produce, `repeats.rs` the flush's merge of a diagnostic rustc reports
-  twice, `test_panic.rs` the panic a fixture raises on purpose, and `edit.rs` holds the
+  identifier, `use_type_misspelling.rs` the help on a misspelled `#[use_type]` import,
+  `attribute_splice.rs` the drop of a suggestion spliced after an attribute macro,
+  `shared_dispatch_method.rs` the pairing of the two `E0428`s two dispatch traits sharing a method
+  name produce, `repeats.rs` the flush's merge of a diagnostic rustc reports twice, `fallback.rs`
+  the diagnostics emitted when the transform or the flush panics, and `edit.rs` holds the
   `DiagInner`-editing helpers (including `merged_span`, the merged block's one caret and its
   labelled other sites; `two_definitions_span`, the relabelled carets of a generated name defined
   twice, for two check tables sharing a check-trait name or two dispatch traits sharing a method;
