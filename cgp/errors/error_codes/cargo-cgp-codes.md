@@ -143,15 +143,17 @@ One per rendering template, riding at the start of each entry in a `root cause:`
 
 A class document's *How cargo-cgp presents it* section names the specific code(s) the tool produces
 for that class and links to the [authoritative catalog](../../../cargo-cgp/error-code.md). For
-example, [check-trait-failure](../checks/check-trait-failure.md) is stamped `[CGP-E001]` with a
+example, [check-trait-failure](../checks/check-trait-failure.md) is stamped `[CGP-E001]` (or
+`[CGP-E002]` for a `#[check_providers]` entry, `[CGP-E003]` for a wrapper or blanket trait) with a
 `root cause:` tree whose leaf is `[CGP-E110]` (missing field) or `[CGP-E111]` (underived), or
 `[CGP-E060]` for a check that names no parameters; the
 [conflicting-wiring](../wiring/conflicting-wiring.md) family maps to `[CGP-E010]`–`[CGP-E016]` and
 `[CGP-E061]`; and [wiring-cycle](../wiring/wiring-cycle.md) maps to `[CGP-E020]` for a cycle and
-`[CGP-E021]` for a lookup that grows. The two lowering classes take the macro-mistake block:
+`[CGP-E021]` for a lookup that grows. Three lowering classes take the macro-mistake block:
 [undeclared dependency](../lowering/undeclared-dependency.md) maps to `[CGP-E030]`, `[CGP-E031]`,
-`[CGP-E035]`, and `[CGP-E036]`, and [wrong component half](../lowering/wrong-component-half.md) to
+`[CGP-E035]`, and `[CGP-E036]`, [wrong component half](../lowering/wrong-component-half.md) to
 `[CGP-E032]` to `[CGP-E034]` and `[CGP-E037]`, and
+[provider impl without the macro](../lowering/provider-impl-without-macro.md) to `[CGP-E039]`;
 [unresolved wiring name](../wiring/unresolved-wiring-name.md) takes `[CGP-E038]` and `[CGP-E040]` to
 `[CGP-E044]`. The [extensible-data](../data/extensible-data.md) class takes `[CGP-E050]` for a call
 to a data operation, and its causes `[CGP-E118]` to `[CGP-E126]` under whichever headline its anchor

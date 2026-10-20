@@ -1080,9 +1080,9 @@ no `IsProviderFor` impl exists for that struct and marker. It words the `[CGP-E0
 `provider_impl_without_macro_help`, drops the implementor list, and remembers the provider, so a
 later `E0277` on that provider's `IsProviderFor` bound (the failing check of a context that wires
 it) is dropped as the same mistake. The fixtures
-[`provider_impl_without_macro`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/provider_impl_without_macro.rs)
+[`provider_impl_without_macro`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/provider-impl-without-macro/provider_impl_without_macro.rs)
 and
-[`provider_impl_without_macro_wired`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/provider_impl_without_macro_wired.rs)
+[`provider_impl_without_macro_wired`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/provider-impl-without-macro/provider_impl_without_macro_wired.rs)
 pin both.
 
 ### Reshaping an unresolved wiring name

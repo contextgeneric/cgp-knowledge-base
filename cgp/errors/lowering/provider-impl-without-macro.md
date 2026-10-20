@@ -67,9 +67,9 @@ declares the provider struct with `new` and keeps `self` for the context.
 
 ## Backing fixtures
 
-- [`checks/check-trait-failure/providers/provider_impl_without_macro.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/provider_impl_without_macro.rs):
+- [`lowering/provider-impl-without-macro/provider_impl_without_macro.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/provider-impl-without-macro/provider_impl_without_macro.rs):
   the impl alone; one `[CGP-E039]`.
-- [`checks/check-trait-failure/providers/provider_impl_without_macro_wired.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/provider_impl_without_macro_wired.rs):
+- [`lowering/provider-impl-without-macro/provider_impl_without_macro_wired.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/provider-impl-without-macro/provider_impl_without_macro_wired.rs):
   the same wired and checked; the check's `E0277` is dropped as the mistake's consequence.
 
 ## Related

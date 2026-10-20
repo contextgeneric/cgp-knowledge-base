@@ -162,7 +162,7 @@ carrying the fix in a `help`; it keeps `rustc`'s `E0107` code. The codes are def
   The sibling `E0425`, `E0186`, and `E0207` and the downstream check report are dropped. A
   requirement of the impl that fails on its own, such as a field the context lacks, is a second
   mistake, so it is reported beside the `[CGP-E032]` as the error the program gives once the header
-  is fixed.
+  is fixed: `[CGP-E001]` for a missing field, `[CGP-E004]` for a field of the wrong type.
 - **`[CGP-E033]`** for a trait that is not a component:
   `` `#[cgp_impl]` can only implement a CGP component's provider trait, but `Greet` is not a CGP component ``,
   with a `help` to make `Greet` a component, as in `#[cgp_component(GreetProvider)]`, and implement

@@ -89,8 +89,9 @@ terminal leaf to descend to, split by how the tool's walk of the lookup is cut: 
 again is a cycle (`CGP-E020`), and the depth limit reached without a repeat is a lookup that grows
 (`CGP-E021`). `CGP-E022` rewrites an orphan-rule namespace registration's `E0210`/`E0117` (recovered
 from the offending impl off the compiler, like the `E0119` family). The **macro-mistake** codes
-`CGP-E030` to `CGP-E037` are each recovered off the compiler from the generated item the failing
-token sits in and reworded with the fix in a `help`. Four concern an
+`CGP-E030` to `CGP-E039` are each recovered off the compiler from the generated item the failing
+token sits in and reworded with the fix in a `help`; the block is full, so a new macro-mistake code
+takes the next free block. Four concern an
 [undeclared dependency](../cgp/errors/lowering/undeclared-dependency.md): `CGP-E030` a trait used in
 a `#[cgp_fn]`/`#[cgp_impl]` body but not declared via `#[uses(…)]`, `CGP-E031` an inner provider a
 higher-order provider calls but never imported via `#[use_provider]`, `CGP-E035` an abstract type
@@ -101,8 +102,10 @@ header naming the component's consumer trait, `CGP-E033` a `#[cgp_impl]` on a tr
 CGP component at all, `CGP-E034` an inner-provider bound (typically `#[use_provider]`) naming the
 consumer trait, and `CGP-E037` a provider trait named in `#[uses]`. `CGP-E038`, a
 `#[cgp_impl(Provider)]` that never declares its provider, is cataloged with the names that do not
-resolve, and `CGP-E039` is a provider-trait impl written without `#[cgp_provider]`. The **wiring-name** codes `CGP-E040` to `CGP-E044` cover a name in a `delegate_components!`
-entry that is wrong, all in the
+resolve, and `CGP-E039` is a provider-trait impl written without `#[cgp_provider]` (the
+[provider impl without the macro](../cgp/errors/lowering/provider-impl-without-macro.md) class).
+The **wiring-name** codes `CGP-E040` to `CGP-E044` cover a name in a `delegate_components!` entry that
+is wrong, all in the
 [unresolved wiring name](../cgp/errors/wiring/unresolved-wiring-name.md) class: `CGP-E040` a
 consumer trait as a key, `CGP-E041` a component not in scope, `CGP-E042` a key that names no
 component, `CGP-E043` a provider never declared, and `CGP-E044` a type in an `@`-path never
@@ -789,8 +792,8 @@ for `CGP-E060`.
   struct and the trait's component. rustc's implementor list is dropped, and a later `E0277` on the
   same provider's `IsProviderFor` bound, such as the failing check of a context that wires it, is
   dropped as its consequence
-  ([`provider_impl_without_macro`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/provider_impl_without_macro.rs),
-  [`provider_impl_without_macro_wired`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/provider_impl_without_macro_wired.rs)).
+  ([`provider_impl_without_macro`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/provider-impl-without-macro/provider_impl_without_macro.rs),
+  [`provider_impl_without_macro_wired`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/provider-impl-without-macro/provider_impl_without_macro_wired.rs)).
   The Rust code stays `E0277`.
 - **Fix (in the `help`):** add `#[cgp_provider]` to the impl, or write the provider with `#[cgp_impl]`.
 - **Upstream class:** [provider impl without the macro](../cgp/errors/lowering/provider-impl-without-macro.md).
@@ -1037,7 +1040,6 @@ at (`CGP-E110` onward).
   list written `Product![]` where the compiler prints `Nil`. When the compiler's headline already
   states the bound, the tool keeps that headline, in the same wording, and the note carries the tree
   alone, ending at this entry.
-
 - **`CGP-E118`: field already set (leaf).** `` field `<f>` of `<T>` is already set ``: a builder
   operation needs the field unset (a second `build_field`, or a second merge source carrying it),
   and the builder's presence marker for it is `IsPresent`. The builder of `T` is the partial type a
@@ -1078,7 +1080,6 @@ at (`CGP-E110` onward).
   `downcast` called on the remainder of an earlier downcast. A `help` names the method the partial
   value takes instead when one holds,
   `` call `downcast_fields` in place of `downcast` on an extractor, with `use cgp::core::field::impls::CanDowncastFields;` in scope ``.
-
 - **`CGP-E127`: provider for other arguments (leaf).**
   `` `<P>` implements `<Trait>` only for `<A>`, not `<B>` ``, or
   `` `<P>` implements `<Trait>` only with `<Param> = <A>`, not `<Param> = <B>` ``: the chain bottoms
@@ -1206,10 +1207,12 @@ by
 `CGP-E022` orphan form by
 [`plan_orphan_conflict`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/orphan.rs)
 (fed from the `OrphanConflict` the driver's `resolve::orphan` classifier recovers). The
-`CGP-E030`–`CGP-E037` macro-mistake forms come from the wording functions in the same crate's
+`CGP-E030`–`CGP-E037` and `CGP-E039` macro-mistake forms come from the wording functions in the same
+crate's
 [`diagnosis`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/diagnosis)
 module (`plan_undeclared_trait`, `plan_missing_use_provider`, `plan_cgp_impl_misuse`,
-`plan_unimported_abstract_type`, `plan_undeclared_requirement`, and `plan_provider_trait_in_uses`),
+`plan_unimported_abstract_type`, `plan_undeclared_requirement`, `plan_provider_trait_in_uses`, and
+`plan_provider_impl_without_macro`),
 fed from the matching detectors in the driver's `resolve` module, and the `CGP-E038` and
 `CGP-E040`–`CGP-E044` wiring-name forms come from `plan_unresolved_wiring_name` in the same module,
 fed from the driver's `resolve::wiring_name` detectors. The `CGP-E1xx` dependency-tree entry codes

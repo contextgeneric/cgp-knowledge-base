@@ -100,8 +100,14 @@ explicit. For the outer failure the tree bottoms out at
 (`ScaledArea<BaseArea>`) with the inner provider never named, exactly mirroring the shorter raw
 block. The intermediate near-contradiction block that clutters the raw inner-layer output is dropped
 entirely, so the recovered form reads the same in both cases save for that one-hop-versus-two-hop
-depth. The codes are defined in the
-[cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
+depth.
+
+Checked with `#[check_providers(...)]` instead, each failing layer is its own block under the
+provider code `[CGP-E002]`, whose tree starts at that layer. An outer-layer failure reads
+`` [CGP-E002] missing field `scale_factor` on `Rectangle` `` over a single `[CGP-E102]` hop for
+`ScaledArea<RectangleArea>`, with the inner provider never named
+([`check_providers_layer`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/higher-order-provider-layer/check_providers_layer.rs)).
+The codes are defined in the [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
 
 ## Resolving it
 

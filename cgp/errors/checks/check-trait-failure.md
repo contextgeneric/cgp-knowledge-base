@@ -301,6 +301,16 @@ derives `HasField` for its other fields, or `` add `#[derive(HasField)]` to `Per
 derive-missing variant. The codes are defined in the
 [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
 
+The headline code follows the trait the failing entry or call names, and the cause and its tree read
+the same under each. A `#[check_providers(...)]` entry asserts a provider's trait directly, so its
+block is `[CGP-E002]` and its tree starts at that provider
+(`` [CGP-E002] missing field `name` on `App` ``,
+[`check_providers_unwired_provider`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/check_providers_unwired_provider.rs)).
+A trait that is not a component, a hand-written wrapper over a consumer trait or a `#[cgp_fn]`
+blanket trait, fails under `[CGP-E003]`, its tree starting at that trait
+([`cgp_fn_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/cgp_fn_missing_field.rs),
+[`foreign_wrapper_chain`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/duplication/foreign_wrapper_chain.rs)).
+
 The [wiring-derived field type](#when-the-fields-required-type-comes-from-the-wiring) takes the same
 `[CGP-E004]`/`[CGP-E112]` shape as a concrete mismatch, with the field name resugared and the
 required type given in **both** forms:
