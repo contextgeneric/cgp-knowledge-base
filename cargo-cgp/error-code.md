@@ -1167,6 +1167,15 @@ noise, adding no classification;
 [`is_method_probe_advice_text`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/signals.rs)
 recognizes the phrasings and the driver's emitter applies the drop.
 
+**A misspelled `#[use_type]` import's help** replaces the compiler's suggestion to respell the alias,
+which leaves the import's misspelling in place and does not compile, with a `help` naming the rename
+in the import, and in each use of the alias unless the import gives an `as` alias of its own. It
+applies to an `E0576` whose caret is a bare alias in an item a CGP macro generated, and keeps the
+compiler's header;
+[`reshape_use_type_misspellings`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/use_type_misspelling.rs)
+applies it, and the class is
+[unresolved imported abstract type](../cgp/errors/lowering/unresolved-imported-type.md).
+
 ## Maintaining this catalog
 
 This catalog is bound by the same synchronization rule as the rest of the knowledge base

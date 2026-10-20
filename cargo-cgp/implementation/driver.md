@@ -100,8 +100,10 @@ the tool leaves alone would print paths plain rustc shortens, suggestions includ
 `after_expansion` hook, which the compiler calls once name resolution is over, has a job in each of
 the driver's modes. In a check it hands the emitter the `TyCtxt` it needs to reshape the
 name-resolution errors of the crate's wiring entries (see
-[Reshaping an unresolved wiring name](#reshaping-an-unresolved-wiring-name)) and to drop the
-suggestions that name an identifier a macro generated (see
+[Reshaping an unresolved wiring name](#reshaping-an-unresolved-wiring-name)), to replace the help
+on a misspelled `#[use_type]` import (see
+[Replacing the help on a misspelled `#[use_type]` import](#replacing-the-help-on-a-misspelled-use_type-import)),
+and to drop the suggestions that name an identifier a macro generated (see
 [Dropping a suggestion that names a generated identifier](#dropping-a-suggestion-that-names-a-generated-identifier)). When
 `cargo cgp expand` asked for an expansion, it prints the expanded crate and stops the compilation
 there instead of checking it (see [The expand command](expand-command.md)). Aside from the injected
@@ -1168,6 +1170,33 @@ that arrives after name resolution is not covered, and no fixture needs it to be
 fixture pins the result: the `E0106` keeps its caret and label, and the `E0726` keeps the right
 help.
 
+### Replacing the help on a misspelled `#[use_type]` import
+
+A `#[use_type]` import that misspells its associated type leaves the compiler's help pointing at the
+wrong place. `#[use_type(HasScalarType.Scalr)]` rewrites each bare `Scalr` to
+`<Self as HasScalarType>::Scalr`, keeping the span of the alias the program wrote, so name
+resolution reports `E0576`, "cannot find associated type `Scalr` in trait `HasScalarType`", at that
+alias. The header and the "similarly named associated type" note are right, but the help respells
+the alias, which leaves the import's `Scalr` in place and fails on an undeclared `Scalar` (the
+[unresolved imported abstract type](../../cgp/errors/lowering/unresolved-imported-type.md) class).
+
+The error arrives during name resolution, so the fix also runs from the `after_expansion` callback,
+as [`reshape_use_type_misspellings`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/use_type_misspelling.rs),
+in a crate that links CGP, with the collect, detect, and rewrite steps of the wiring-name reshape.
+The detection,
+[`resolve::detect_use_type_misspelling`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/use_type_misspelling.rs),
+accepts the `E0576` only when the caret sits in an item a CGP macro generated (the recognition
+[`[CGP-E035]`](#reshaping-an-undeclared-dependency) uses) and the source writes the name bare there.
+A qualified path the program wrote itself (`<Self as HasScalarType>::Scalr`) is respelled where it
+stands, so the compiler's help is right for it and stays. The detection then needs exactly one trait
+of the reported name, and an associated type of it that the name is a slip of (`similar_name`). The
+pass drops each suggestion that edits the alias and adds the rustc-free `use_type_misspelling_help`,
+which names the rename in the import, and in each use of the alias unless the import gives an `as`
+alias of its own. The header stays the compiler's, without a code. The fixtures
+`use_type_unknown_assoc`, `use_type_unknown_assoc_alias`, and `qualified_path_unknown_assoc`, under
+[`lowering/unresolved-imported-type/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/lowering/unresolved-imported-type),
+pin the three cases.
+
 ### Dropping a suggestion spliced after an attribute macro
 
 An attribute macro's generated code carries the attribute's own span, so when rustc rejects that
@@ -1273,8 +1302,9 @@ will likely grow toward it:
 - **Callbacks.** Clippy carries three `Callbacks` implementations (default, rustc-only, and
   lint-registering) and selects among them per invocation. `cargo-cgp` has one `CgpCallbacks`, which
   varies by its fields rather than by type: its `config` hook always installs the rewriting emitter,
-  and its `after_expansion` hook reshapes the name-resolution errors and drops the suggestions that
-  name a generated identifier in a check, and prints the expansion when the invocation carried an expansion request. The differentiation will grow as the
+  and its `after_expansion` hook reshapes the name-resolution errors, replaces the help on a
+  misspelled `#[use_type]` import, and drops the suggestions that name a generated identifier in a
+  check, and prints the expansion when the invocation carried an expansion request. The differentiation will grow as the
   driver does more post-processing.
 
 ## Further reading
@@ -1362,8 +1392,8 @@ will likely grow toward it:
   identity anchor (`CGP_COMPONENT_CRATE`, `IS_PROVIDER_FOR_TRAIT`), each with its rationale.
 - [`crates/cargo-cgp-driver/src/callbacks.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/callbacks.rs):
   the `Callbacks` implementation: its `config` hook installs the transforming emitter, and its
-  `after_expansion` hook runs the name-resolution reshape and the generated-name suggestion drop in a
-  check and serves expand mode
+  `after_expansion` hook runs the name-resolution reshape, the `#[use_type]` help replacement, and
+  the generated-name suggestion drop in a check and serves expand mode
   ([The expand command](expand-command.md)).
 - [`crates/cargo-cgp-driver/src/emitter/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/emitter):
   the generic `CgpEmitter<E>`, split behind a re-exporting `mod.rs`: `install.rs` rebuilds the
@@ -1381,7 +1411,7 @@ will likely grow toward it:
   and the name-resolution reshape, `containment.rs` the `catch_unwind` wrapper and the panic hooks,
   `name_resolution.rs` the reshape of the wiring entries' name-resolution errors and the overflow
   drop that goes with it, `generated_names.rs` the drop of a suggestion that names a generated
-  identifier, `attribute_splice.rs` the drop of a suggestion spliced after an attribute macro, `shared_dispatch_method.rs` the pairing of the two `E0428`s two dispatch
+  identifier, `use_type_misspelling.rs` the help on a misspelled `#[use_type]` import, `attribute_splice.rs` the drop of a suggestion spliced after an attribute macro, `shared_dispatch_method.rs` the pairing of the two `E0428`s two dispatch
   traits sharing a method name produce, `repeats.rs` the flush's merge of a diagnostic rustc reports
   twice, `test_panic.rs` the panic a fixture raises on purpose, and `edit.rs` holds the
   `DiagInner`-editing helpers (including `merged_span`, the merged block's one caret and its

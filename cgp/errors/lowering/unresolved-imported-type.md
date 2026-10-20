@@ -65,14 +65,20 @@ reader must follow the alias back to the attribute and correct it there.
 
 ## How cargo-cgp presents it
 
-`cargo-cgp` does not rewrite this class; it passes rustc's diagnostic through unchanged. For the
-`use_type_unknown_assoc` fixture the tool's `.cgp.stderr` is byte-for-byte its raw `.rust.stderr`:
-the `E0576`, the "similarly named associated type `Scalar` defined here" note, and the `help:`
-suggesting the spelling in the signature, with no `[CGP-Exxx]` code stamped and nothing suppressed.
-The fixture has `usability` quality, because that `help:` leads to a fix that does not compile. The
-gap is hard to close in the tool: the `E0576` comes from name resolution, before the compiler has
-built the HIR, so the tool cannot confirm that the name came from a `#[use_type]` import. The
-[usability issues](../../../cargo-cgp/issues/usability.md) track it.
+`cargo-cgp` keeps the compiler's header and notes, which already name the missing associated type,
+its trait, and the similar one the trait declares, and replaces the misleading `help:` with one
+naming the edit that compiles:
+``rename `Scalr` to `Scalar` in the `#[use_type]` import from `HasScalarType` and in each use of `Scalr` ``,
+without the last clause when the import gives an `as` alias of its own
+(`#[use_type(HasScalarType.{Scalr as Value})]`). No `[CGP-Exxx]` code is stamped, since the header
+is the compiler's; the change is one of the tool's
+[uncoded rewrites](../../../cargo-cgp/error-code.md#uncoded-rewrites).
+
+The tool confirms the import before it changes anything. The `E0576` comes from name resolution, so
+the tool holds it until resolution is over, then requires the caret to sit in an item a CGP macro
+generated, with the name written bare there, and the trait to declare an associated type the name is
+a slip of. A qualified path the program wrote itself, `<Self as HasScalarType>::Scalr`, is respelled
+where it stands, so the compiler's help is right for it and stays.
 
 The codes cargo-cgp stamps on the classes it does rewrite are defined in the
 [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
@@ -83,7 +89,7 @@ Correct the imported name so it matches an associated type the trait declares: c
 `#[use_type(HasScalarType.Scalr)]` and every use of the alias to `Scalar`, or use an `as` clause
 (`#[use_type(HasScalarType.{Scalar as Scalr})]`) if the short local name was intended. The `help:`
 names the correct spelling but applies it only to the signature, so make the same change in the
-attribute. If the type genuinely lives on a different trait, point the import at that trait
+attribute (`cargo-cgp`'s help names both edits). If the type genuinely lives on a different trait, point the import at that trait
 instead.
 
 ## What this class does *not* cover
@@ -105,8 +111,14 @@ post-codegen error class, and its mechanics are in the
   a `#[cgp_fn]` importing `HasScalarType.Scalr` where the trait declares `Scalar`; its
   `.rust.stderr` pins the `E0576` with the caret on the `Scalr` in the signature and the "similarly
   named associated type" `help:`, doubling as a guard that the substitution preserves the user's
-  identifier span, and its `.cgp.stderr` is identical, the pass-through of a `help:` that edits the
-  signature rather than the attribute (`usability`).
+  identifier span, and its `.cgp.stderr` replaces that `help:` with the rename in the import and in
+  each use of the alias.
+- [`lowering/unresolved-imported-type/use_type_unknown_assoc_alias.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/unresolved-imported-type/use_type_unknown_assoc_alias.rs):
+  the same misspelling under an `as` alias, `#[use_type(HasScalarType.{Scalr as Value})]`, whose
+  help renames the import alone.
+- [`lowering/unresolved-imported-type/qualified_path_unknown_assoc.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/unresolved-imported-type/qualified_path_unknown_assoc.rs):
+  a qualified path the program wrote itself in a `#[cgp_fn]`, `<Self as HasScalarType>::Scalr`,
+  whose compiler `help:` respells it in place and is kept.
 
 ## Related
 

@@ -363,18 +363,12 @@ tool does not have:
   missing field ([`cross_context_cycle_reuse`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/cross_context_cycle_reuse.rs),
   [`cross_context_cycle_reuse_distinct`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/cross_context_cycle_reuse_distinct.rs)).
 
-## Shapes a neighboring rewrite does not reach
+## A shape a neighboring rewrite does not reach
 
-Two shapes sit next to a class the tool already reshapes:
-
-- **A misspelled `#[use_type]` import:** `#[use_type(HasScalarType.Scalr)]` rewrites the bare
-  `Scalr` to `<Self as HasScalarType>::Scalr`, and rustc's `E0576` names the misspelling and the
-  similar `Scalar`, but its help respells the signature, which leaves the import's `Scalr` in place
-  and fails on an undeclared `Scalar`
-  ([`use_type_unknown_assoc`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/unresolved-imported-type/use_type_unknown_assoc.rs)).
-- **A `UseContext` cycle reached by a call:** a component wired to `UseContext` with no other
-  implementation is `[CGP-E020]` at a check entry, but a consumer-method call keeps rustc's bare
-  `E0275` on the call ([`use_context_cycle_call`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/use_context_cycle_call.rs)).
+A `UseContext` cycle reached by a call keeps the compiler's output. A component wired to
+`UseContext` with no other implementation is `[CGP-E020]` at a check entry, but a consumer-method
+call keeps rustc's bare `E0275` on the call
+([`use_context_cycle_call`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/use_context_cycle_call.rs)).
 
 ## What good presentation looks like
 
