@@ -407,8 +407,12 @@ up in the map.
 
 The `overflow evaluating the requirement …` header form has its own entry point,
 `rewrite_wiring_overflow`, because its wording depends on why the lookup never resolves, which the
-overflow's text does not say. Before it rewrites an `E0275`, the emitter walks the check entry's
-consumer obligation (`overflow_walk` in the driver's `resolve/overflow.rs`), and the walk reports
+overflow's text does not say. Before it rewrites an `E0275`, the emitter walks the consumer
+obligation at the caret (`overflow_walk` in the driver's `resolve/overflow.rs`): a check entry's,
+or else that of the consumer-method call whose consumer trait the overflow names, recovered by the
+call-site anchor's own steps, since a call overflows on the consumer trait itself rather than on
+`CanUseComponent`. The text form accepts that requirement when the name map knows the trait as a
+consumer (`ComponentNameMap::is_consumer`). The walk reports
 how it was cut as a rustc-free `WiringOverflow`. An obligation met again among its own ancestors is
 a cycle, stamped `[CGP-E020]` and worded "the lookup leads back to itself"; a `UseContext`
 delegation whose only consumer-trait impl is that delegation is the plain case. The depth cap
@@ -426,7 +430,11 @@ names no provider. The
 [`divergent_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/divergent_wiring.rs),
 and
 [`dispatcher_cycle`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/dispatcher_cycle.rs)
-fixtures pin the reshaped output. An overflow can also follow from an earlier unresolved name: a
+fixtures pin the reshaped output at a check, and
+[`use_context_cycle_call`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/use_context_cycle_call.rs)
+and
+[`divergent_wiring_call`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/divergent_wiring_call.rs)
+at a call. An overflow can also follow from an earlier unresolved name: a
 wiring entry that names a type the compiler could not resolve holds a `{type error}`, and a lookup
 through it can overflow with no cycle in the wiring. Its walk meets neither the cycle guard nor the
 depth cap, so the `E0275` keeps rustc's wording, since the earlier error is the one to fix

@@ -59,7 +59,7 @@ its cause; and `E060` and `E061` continue the structural mistakes.
 - **CGP-E019**: an entry in a wiring table or a namespace binds generic parameters its key does not
   use.
 - **CGP-E020**: the wiring never resolves because the lookup leads back to itself (an `E0275`
-  overflow whose requirement is a `CanUseComponent` bound; a `UseContext` cycle is the usual case).
+  overflow at a check entry or a consumer-method call; a `UseContext` cycle is the usual case).
 - **CGP-E021**: the wiring never resolves because each step requires the consumer trait for a larger
   type (the same `E0275` overflow, for a lookup that grows without repeating).
 - **CGP-E022**: an orphan-rule namespace registration: a foreign component or path registered into a

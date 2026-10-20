@@ -363,13 +363,6 @@ tool does not have:
   missing field ([`cross_context_cycle_reuse`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/cross_context_cycle_reuse.rs),
   [`cross_context_cycle_reuse_distinct`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/cross_context_cycle_reuse_distinct.rs)).
 
-## A shape a neighboring rewrite does not reach
-
-A `UseContext` cycle reached by a call keeps the compiler's output. A component wired to
-`UseContext` with no other implementation is `[CGP-E020]` at a check entry, but a consumer-method
-call keeps rustc's bare `E0275` on the call
-([`use_context_cycle_call`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/use_context_cycle_call.rs)).
-
 ## What good presentation looks like
 
 The bar is the one the check-trait-failure family meets: lead with the cause as one plain sentence,

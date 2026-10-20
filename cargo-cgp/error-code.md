@@ -429,10 +429,15 @@ for `CGP-E060`.
   through `DebugError`, and a recursive data type serialized through providers that re-enter the
   context, close the same kind of loop through other providers.
 - **Triggered by:** an `E0275` overflow whose requirement is a `Context: CanUseComponent<Marker, …>`
-  bound, at a `check_components!` entry whose consumer obligation the tool walks until an obligation
-  repeats among its own ancestors. The Rust code stays `E0275`. The note pointing at the generated
-  `__Check…` trait is dropped, since the kept caret already covers the check entry, and so is
-  rustc's advice to raise the recursion limit, which cannot end the loop. A lookup can also overflow
+  bound, at a `check_components!` entry, or the consumer trait itself, at a consumer-method call
+  (`Person: CanGreet` at `Person.greet()`), whose consumer obligation the tool walks until an
+  obligation repeats among its own ancestors. The call's obligation is recovered as the
+  [call-site anchor](implementation/typed-resolution-call-site.md) recovers a failing call's, and
+  only for the consumer trait the overflow names. The Rust code stays `E0275`. The note pointing at
+  the generated `__Check…` trait is dropped, since the kept caret already covers the check entry,
+  and so is rustc's advice to raise the recursion limit, which cannot end the loop
+  ([`use_context_cycle`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/use_context_cycle.rs),
+  [`use_context_cycle_call`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/use_context_cycle_call.rs)). A lookup can also overflow
   through a type the compiler could not resolve (an earlier `E0425` or `E0412`), with no loop in the
   wiring; its walk ends without a cut, so the overflow keeps rustc's wording, and the earlier error
   is the one to fix.
@@ -455,8 +460,10 @@ for `CGP-E060`.
 - **Means:** each step of the lookup requires the consumer trait again for a larger type, so no
   requirement repeats, and the compiler gives up at its recursion limit. A provider of
   `CanShow<T>` that requires `CanShow<Vec<T>>` is the plain case.
-- **Triggered by:** the same `E0275` overflow at a check entry, when the walk reaches its depth
-  limit without meeting a repeated obligation. The Rust code stays `E0275`, and the `__Check…` note
+- **Triggered by:** the same `E0275` overflow at a check entry or a consumer-method call, when the
+  walk reaches its depth limit without meeting a repeated obligation
+  ([`divergent_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/divergent_wiring.rs),
+  [`divergent_wiring_call`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/divergent_wiring_call.rs)). The Rust code stays `E0275`, and the `__Check…` note
   and rustc's advice to raise the recursion limit are dropped, since no limit ends a lookup that
   grows.
 - **Fix (in the `help`):**
