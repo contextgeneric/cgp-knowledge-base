@@ -251,7 +251,11 @@ orphan-rule fixtures, the published-blanket-trait fixture
 `upstream_blanket_trait_use_site`, the positive `ok/cross_crate_wiring.rs`, and the two
 cross-crate dispatch fixtures `ok/cross_crate_dispatch_enum.rs` and
 `ok/cross_crate_dispatch_payloads.rs` (backed by the `cgp-test-dispatch-traits` and
-`cgp-test-dispatch-shapes` auxiliary crates) reproduce what a single crate cannot.
+`cgp-test-dispatch-shapes` auxiliary crates) reproduce what a single crate cannot. One auxiliary
+crate has no `cgp` dependency at all: `cgp-test-plain-macros` provides attribute macros whose
+expansions fail the way a CGP macro's can, so the `pass-through/` fixtures
+`generated_lifetime_without_cgp` and `attribute_splice_without_cgp` pin that a crate without CGP
+keeps the suggestions the tool drops in one with it.
 
 The rust-stderr pass builds in a *separate* target directory from the `cargo-cgp` pass:
 `target-rust/` beside the worker crate's default `target/`. The reason is cargo's fingerprinting:

@@ -116,6 +116,9 @@ post-codegen error class, and its mechanics are in the
 - [`lowering/unresolved-imported-type/use_type_unknown_assoc_alias.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/unresolved-imported-type/use_type_unknown_assoc_alias.rs):
   the same misspelling under an `as` alias, `#[use_type(HasScalarType.{Scalr as Value})]`, whose
   help renames the import alone.
+- [`lowering/unresolved-imported-type/use_type_unknown_assoc_shared_trait_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/unresolved-imported-type/use_type_unknown_assoc_shared_trait_name.rs):
+  the same misspelling where a second trait shares the imported trait's name; the help still names
+  the rename, for the trait the compiler's note points at.
 - [`lowering/unresolved-imported-type/qualified_path_unknown_assoc.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/unresolved-imported-type/qualified_path_unknown_assoc.rs):
   a qualified path the program wrote itself in a `#[cgp_fn]`, `<Self as HasScalarType>::Scalr`,
   whose compiler `help:` respells it in place and is kept.

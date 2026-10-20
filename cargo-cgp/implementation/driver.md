@@ -258,6 +258,8 @@ internal debug printing (disambiguator suffixes, region ids), so the diagnostics
 shape. The emitter undoes the third: a failed bound's help listing the trait's implementors is cut
 back to rustc's eight and "and N others" (`bound_candidate_list`), because a CGP crate implements
 `IsProviderFor` hundreds of times and the full list buries the diagnostic it belongs to.
+[`many_implementors`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/many_implementors.rs)
+pins that a plain Rust bound's list then matches plain `cargo check`.
 The full mechanism (which function performs each elision, and the two-verbosity-switch distinction
 that makes `--verbose` the surgical choice) is documented in
 [rustc diagnostic internals](rustc-diagnostic-internals.md#the-suppression-points).
@@ -1176,7 +1178,11 @@ that arrives after name resolution is not covered, and no fixture needs it to be
 `retain_suggestions` helper in `edit.rs` serves this pass and the method-probe cleanup alike. The
 [`auto_dispatch_hidden_lifetime`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/macro-defects/auto_dispatch_hidden_lifetime.rs)
 fixture pins the result: the `E0106` keeps its caret and label, and the `E0726` keeps the right
-help.
+help. Two `pass-through/` fixtures pin what keeps such a suggestion:
+[`reserved_lifetime_written`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/reserved_lifetime_written.rs),
+a CGP crate whose own code names `'__a__`, and
+[`generated_lifetime_without_cgp`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/generated_lifetime_without_cgp.rs),
+a crate without CGP whose own attribute macro generates the lifetime.
 
 ### Replacing the help on a misspelled `#[use_type]` import
 
@@ -1189,21 +1195,25 @@ the alias, which leaves the import's `Scalr` in place and fails on an undeclared
 [unresolved imported abstract type](../../cgp/errors/lowering/unresolved-imported-type.md) class).
 
 The error arrives during name resolution, so the fix also runs from the `after_expansion` callback,
-as [`reshape_use_type_misspellings`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/use_type_misspelling.rs),
+as
+[`reshape_use_type_misspellings`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/use_type_misspelling.rs),
 in a crate that links CGP, with the collect, detect, and rewrite steps of the wiring-name reshape.
 The detection,
 [`resolve::detect_use_type_misspelling`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/use_type_misspelling.rs),
 accepts the `E0576` only when the caret sits in an item a CGP macro generated (the recognition
 [`[CGP-E035]`](#reshaping-an-undeclared-dependency) uses) and the source writes the name bare there.
 A qualified path the program wrote itself (`<Self as HasScalarType>::Scalr`) is respelled where it
-stands, so the compiler's help is right for it and stays. The detection then needs exactly one trait
-of the reported name, and an associated type of it that the name is a slip of (`similar_name`). The
-pass drops each suggestion that edits the alias and adds the rustc-free `use_type_misspelling_help`,
-which names the rename in the import, and in each use of the alias unless the import gives an `as`
-alias of its own. The header stays the compiler's, without a code. The fixtures
-`use_type_unknown_assoc`, `use_type_unknown_assoc_alias`, and `qualified_path_unknown_assoc`, under
+stands, so the compiler's help is right for it and stays. The detection then needs the trait the
+import names, and an associated type of it that the name is a slip of (`similar_name`). The
+compiler's message names the trait by its bare name, so when two traits share it, the trait meant is
+the one whose associated type the compiler's "similarly named associated type … defined here" note
+points at. The pass drops each suggestion that edits the alias and adds the rustc-free
+`use_type_misspelling_help`, which names the rename in the import, and in each use of the alias
+unless the import gives an `as` alias of its own. The header stays the compiler's, without a code.
+The fixtures `use_type_unknown_assoc`, `use_type_unknown_assoc_alias`,
+`use_type_unknown_assoc_shared_trait_name`, and `qualified_path_unknown_assoc`, under
 [`lowering/unresolved-imported-type/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/lowering/unresolved-imported-type),
-pin the three cases.
+pin the four cases.
 
 ### Dropping a suggestion spliced after an attribute macro
 
@@ -1227,7 +1237,9 @@ leaves the others. The
 and
 [`auto_getter_mut_option`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/macro-defects/auto_getter_mut_option.rs)
 fixtures pin it. The second, once a `pass-through/` fixture, no longer matches plain `cargo check`
-for that reason, so it lives beside the first.
+for that reason, so it lives beside the first. A crate without CGP keeps the suggestion, which
+[`attribute_splice_without_cgp`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/attribute_splice_without_cgp.rs)
+pins with an attribute macro of its own.
 
 ## Containing the driver's own panics
 
