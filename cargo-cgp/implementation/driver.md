@@ -1247,6 +1247,9 @@ pins with an attribute macro of its own. An attribute macro that re-spans the us
 them its expansion's context at their own locations, so a suggestion there edits the user's code
 and stays
 ([`respanned_token_suggestion`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/respanned_token_suggestion.rs)).
+The same insertion at the end of a function-like macro's call is a valid edit, `name!().as_deref()`,
+so it stays too
+([`function_macro_suggestion`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/function_macro_suggestion.rs)).
 
 ## Containing the driver's own panics
 
@@ -1380,8 +1383,9 @@ will likely grow toward it:
   `consumer_not_in_scope`, `headline_std_path`, and
   `suggestion_full_paths` pin the trimmed paths: each diagnostic the tool leaves alone, suggestions
   included, matches plain `cargo check` exactly. `repeated_bound_without_cgp` pins that a crate
-  without CGP keeps a repeated error, and `respanned_token_suggestion` that a suggestion at a token
-  an attribute macro re-spanned stays. `same_name_types`, `compute_bare_name_ambiguous`,
+  without CGP keeps a repeated error, and `respanned_token_suggestion` and
+  `function_macro_suggestion` that a suggestion at a token an attribute macro re-spanned, or at the
+  end of a function-like macro's call, stays. `same_name_types`, `compute_bare_name_ambiguous`,
   `raise_error_ambiguous`, and `update_field_marker_unannotated` pin that the post-processing keeps
   the paths, labels, and context spans of an untransformed diagnostic, and `lookalike_cgp_names`
   that a crate not using CGP is never resugared. `provider_wrong_signature` and
