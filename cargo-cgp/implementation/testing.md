@@ -209,9 +209,10 @@ exist: `//@aux-build: <crate>` (an auxiliary crate, below), `//@rewrites-falsely
 pass-through exception above), `//@json` (the JSON pass), `//@env: <KEY>=<VALUE>` (an environment
 variable for the tool's runs, which the `robustness/` fixtures use to make the emitter panic or the
 compiler crash on purpose), and the header's `//@quality:` and `//@codes:`. A misspelled directive
-would silently do nothing, so the parser rejects an unknown `//@name` and a known name written in
-another comment form, such as `// @json` with a space; a comment that merely starts with an
-`@`-path, such as commented-out wiring, stays legal.
+would silently do nothing, so the parser rejects an unknown `//@name`, a known name written in
+another comment form, such as `// @json` with a space, an `//@aux-build:` without a crate, and a
+second `//@codes:`, `//@quality:`, or `//@rewrites-falsely:`, which would silently replace the
+first; a comment that merely starts with an `@`-path, such as commented-out wiring, stays legal.
 
 ### How a fixture is compiled
 
@@ -455,7 +456,8 @@ suite. There is no dogfood test yet (see above).
 - [`crates/cargo-cgp-ui-tests/tests/harness/directives.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/directives.rs):
   every directive read together, none declared, `//@codes: none`, commented-out `@`-path wiring left
   alone, and the rejection of an unknown directive, a spaced directive, a `//@rewrites-falsely:`
-  without a reason, an `//@env:` without an assignment, a malformed code, and an unknown quality.
+  without a reason, an `//@env:` without an assignment, an `//@aux-build:` without a crate, a
+  malformed code, an unknown quality, and a second `//@codes:` or `//@quality:`.
 - [`crates/cargo-cgp-ui-tests/tests/harness/passes.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/passes.rs):
   the header check (exact codes, a missing directive, `//@codes: none`), the collection of codes
   from output, the status check (agreement and disagreement in both directions), the pass-through

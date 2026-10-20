@@ -253,13 +253,13 @@ driver from the wrong release fails the second:
   unambiguous: `cargo-cgp-driver <tool_version>`, `pinned-toolchain: <name>`, and
   `built-against-rustc: <rustc --version line>`. The last is the compiler that *actually* compiled
   the driver, which its build script captured by querying the compiling rustc (`$RUSTC --version`)
-  so the value reflects reality rather than intent. The preflight parses these and makes two strict
-  comparisons: `tool_version` must equal the front-end's own version exactly (a difference is a
-  partial upgrade or a stale binary on `PATH`), and `built_against_rustc` must equal the installed
-  toolchain's `rustc --version` read in the previous step (a difference is a driver built against a
-  nightly other than the pinned one, which loaded only because its hash happened to resolve). Either
-  mismatch sends the user to `setup`. The compiler mismatch names the toolchain the preflight
-  queried, which `CARGO_CGP_TOOLCHAIN` can make another one than the driver's own pin.
+  so the value reflects reality rather than intent. The preflight reads the first and the last and
+  makes two strict comparisons: `tool_version` must equal the front-end's own version exactly (a
+  difference is a partial upgrade or a stale binary on `PATH`), and `built_against_rustc` must equal
+  the installed toolchain's `rustc --version` read in the previous step (a difference is a driver
+  built against a nightly other than the pinned one, which loaded only because its hash happened to
+  resolve). Either mismatch sends the user to `setup`. The compiler mismatch names the toolchain the
+  preflight queried, which `CARGO_CGP_TOOLCHAIN` can make another one than the driver's own pin.
 
 The flag is the ordinary `--version`, not a tool-specific name: `cargo-cgp` versions on its own
 track, unrelated to `cgp`'s, so a `--cgp-version` would misleadingly imply otherwise. The driver
@@ -365,17 +365,17 @@ automatically, since another tool may still depend on that nightly.
 ## Escape hatches for local development
 
 Developing `cargo-cgp` itself means running an unreleased front-end against a just-built driver, so
-the provisioning above must be fully overridable, and a few environment variables provide the escape
-hatches. They are what let the UI snapshot suite drive the freshly-compiled driver out of
-`target/debug` instead of a provisioned one, and they are essential to the tool's own test loop.
+the provisioning above must be overridable, and a few environment variables provide the escape
+hatches. The UI snapshot suite needs only one of them: it runs the `cargo-cgp` it built in
+`target/debug` with `CARGO_CGP_NO_MANAGE` set, and that front-end's sibling lookup finds the driver
+built beside it.
 
-- `CARGO_CGP_DRIVER` names an explicit driver executable, bypassing the sibling lookup. The UI test
-  harness sets this to the `target/debug/cargo-cgp-driver` it just built, which is how the suite
-  tests a driver that was never installed.
+- `CARGO_CGP_DRIVER` names an explicit driver executable, bypassing the sibling lookup, for a driver
+  that sits neither beside the front-end nor on `PATH`.
 - `CARGO_CGP_NO_MANAGE` turns off the preflight and its version checks entirely, telling `cargo-cgp`
-  to trust whatever driver and toolchain the environment already provides. A developer running
-  inside the source checkout under the pinned toolchain wants exactly this: no provisioning, no
-  handshake, just run.
+  to trust whatever driver and toolchain the environment already provides. The UI suite and the
+  [Nix package](#installing-with-nix) set it, and so does a developer running inside the source
+  checkout under the pinned toolchain: no provisioning, no handshake, just run.
 - `CARGO_CGP_TOOLCHAIN` overrides `PINNED_TOOLCHAIN` at runtime, so the tool can be pointed at a
   different nightly for testing a toolchain bump before the constant is changed. Because a
   hand-picked toolchain will not match the driver's baked-in `built_against_rustc`, it is normally
@@ -742,11 +742,11 @@ UI suite exercises the managed/unmanaged wiring end to end.
   `--root` that places it beside the front-end.
 - [`crates/cargo-cgp/tests/front_end/command.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/command.rs):
   `forwards_target_dir` detects an explicit `--target-dir` (spaced or `=`) so the default is not
-  injected over it; `forwarded_manifest_path` finds a `--manifest-path` in either form;
-  `metadata_query_args` forwards the manifest path and every `--config` value, in either form, and
-  ignores arguments after a `--`; `parse_target_directory` reads `target_directory` out of
-  `cargo metadata`'s JSON; and `cgp_target_dir` picks the `cgp` subdirectory or the relative
-  fallback.
+  injected over it, and ignores one after a `--`, which is rustc's; `forwarded_manifest_path` finds
+  a `--manifest-path` in either form; `metadata_query_args` forwards the manifest path and every
+  `--config` value, in either form, and ignores arguments after a `--`; `parse_target_directory`
+  reads `target_directory` out of `cargo metadata`'s JSON; and `cgp_target_dir` picks the `cgp`
+  subdirectory or the relative fallback.
 - [`crates/cargo-cgp/tests/front_end/dispatch.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/dispatch.rs):
   the side-effect-free dispatch paths (an unknown subcommand, a missing subcommand or help flag,
   `--version`/`-V`, and `setup` and `update` answering `--help` without running and refusing any
