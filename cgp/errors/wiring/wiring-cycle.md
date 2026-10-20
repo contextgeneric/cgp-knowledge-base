@@ -131,7 +131,8 @@ cycle is not the headline; the concrete cause reachable down the non-cyclic bran
 Reached by a method call instead of a check, the cycle reads the same. On the nightly `cargo-cgp`
 pins, the call overflows on the consumer trait itself (`Person: CanGreet`), where stable prints the
 hidden `E0599`. The tool walks the call's consumer obligation as it walks a check entry's, so the
-block is the same `[CGP-E020]`, with the caret on the method name and the same `help:`. A growing lookup reached by a call is `[CGP-E021]` the same way. The codes are defined in
+block is the same `[CGP-E020]`, with the caret on the method name and the same `help:`. A check
+and a call of the same loop print one block, at the check, since the call's states the same cause. A growing lookup reached by a call is `[CGP-E021]` the same way. The codes are defined in
 the [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
 
 ## Resolving it
@@ -158,6 +159,9 @@ neither shape terminates at any depth, so no limit is high enough.
 - [`wiring/wiring-cycle/use_context_cycle_call.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/use_context_cycle_call.rs):
   the same wiring reached by a method call, an `E0275` on `Person: CanGreet` that the tool rewrites
   to the same `[CGP-E020]` with the `help:` naming `UseContext`, the caret on the method name.
+- [`wiring/wiring-cycle/use_context_cycle_check_and_call.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/use_context_cycle_check_and_call.rs):
+  the same wiring reached by a check and a call; the compiler reports both overflows, and the tool
+  prints one `[CGP-E020]` at the check entry, dropping the call's as a repeat of the same mistake.
 - [`wiring/wiring-cycle/debug_error_string_cycle.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/debug_error_string_cycle.rs):
   an `open` error raiser routing `String` to `DebugError`, which raises through
   `CanRaiseError<String>` again; a `[CGP-E020]` whose `help:` names `DebugError`.
