@@ -529,7 +529,9 @@ item a macro generated (the repeat renames or drops a note;
 or a call's bound for the call and an argument (the repeat has its own caret;
 [`transform_map_fields_missing_marker`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/transform_map_fields_missing_marker.rs),
 whose first block already covers the call). A caret the earlier block does not already cover is
-kept, labelled "also required here", so no location is lost.
+kept, labelled "also required here", so no location is lost. A crate without CGP keeps both blocks
+([`repeated_bound_without_cgp`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/repeated_bound_without_cgp.rs)),
+and the driver's unit tests pin each condition of the merge.
 The count stays honest because cargo re-counts the diagnostics the emitter actually produces (a
 suppressed re-report drops out of its "N errors" summary as well), so the visible block count and
 the summary agree. This is the [one-mistake-many-errors](../issues/usability.md) usability class the
@@ -1241,7 +1243,10 @@ and
 fixtures pin it. The second, once a `pass-through/` fixture, no longer matches plain `cargo check`
 for that reason, so it lives beside the first. A crate without CGP keeps the suggestion, which
 [`attribute_splice_without_cgp`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/attribute_splice_without_cgp.rs)
-pins with an attribute macro of its own.
+pins with an attribute macro of its own. An attribute macro that re-spans the user's tokens gives
+them its expansion's context at their own locations, so a suggestion there edits the user's code
+and stays
+([`respanned_token_suggestion`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/respanned_token_suggestion.rs)).
 
 ## Containing the driver's own panics
 
@@ -1363,12 +1368,20 @@ will likely grow toward it:
   `FatalErrorMarker` unwind on, and restoring the outer state after a nested call; and the two
   fallbacks with a panicking step: a transform's panic giving back rustc's diagnostic with the
   internal-error note, and a flush's panic emitting every entry untransformed, in order.
+- [`crates/cargo-cgp-driver/tests/driver/repeats.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/repeats.rs):
+  `merge_repeats` over hand-built diagnostics: a repeat at another caret on the line merged and
+  labelled, one the first block covers adding no label, and the same error kept on another line or
+  in another file, with another code, message, or level, without a code, or with an inline message.
+- [`crates/cargo-cgp-driver/tests/driver/postprocess.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/postprocess.rs):
+  a span label the post-processing rewrites, with the span's primary span and context span kept.
 - [`crates/cargo-cgp-error-processing/tests/error_processing/internal_error.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/internal_error.rs):
   the note on a diagnostic shown untransformed after a contained panic.
 - [`tests/ui/pass-through/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/pass-through):
   `consumer_not_in_scope`, `headline_std_path`, and
   `suggestion_full_paths` pin the trimmed paths: each diagnostic the tool leaves alone, suggestions
-  included, matches plain `cargo check` exactly. `same_name_types`, `compute_bare_name_ambiguous`,
+  included, matches plain `cargo check` exactly. `repeated_bound_without_cgp` pins that a crate
+  without CGP keeps a repeated error, and `respanned_token_suggestion` that a suggestion at a token
+  an attribute macro re-spanned stays. `same_name_types`, `compute_bare_name_ambiguous`,
   `raise_error_ambiguous`, and `update_field_marker_unannotated` pin that the post-processing keeps
   the paths, labels, and context spans of an untransformed diagnostic, and `lookalike_cgp_names`
   that a crate not using CGP is never resugared. `provider_wrong_signature` and

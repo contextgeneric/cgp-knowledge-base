@@ -405,7 +405,8 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   the text signals: the wording each matches and the near-miss it must not (the two `E0599` shapes,
   the method-probe artifacts, the orphan marker-plus-phrase pair, the `?`-cascade phrasing, the
   recursion-limit advice, and both footer forms, including the reworded line that yields no codes,
-  the case the rebuild must decline on rather than delete the footer).
+  the case the rebuild must decline on rather than delete the footer), and the reserved names a
+  macro generates beside the words a user's own name can form.
 - [`crates/cargo-cgp-error-processing/tests/error_processing/orphan.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/orphan.rs):
   `plan_orphan_conflict` and `orphan_conflict_help` over hand-built conflicts: a component key and a
   path key registered, and the reopen trigger's inheritance fix.

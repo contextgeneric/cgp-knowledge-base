@@ -255,7 +255,8 @@ cross-crate dispatch fixtures `ok/cross_crate_dispatch_enum.rs` and
 crate has no `cgp` dependency at all: `cgp-test-plain-macros` provides attribute macros whose
 expansions fail the way a CGP macro's can, so the `pass-through/` fixtures
 `generated_lifetime_without_cgp` and `attribute_splice_without_cgp` pin that a crate without CGP
-keeps the suggestions the tool drops in one with it.
+keeps the suggestions the tool drops in one with it, and `respanned_token_suggestion` pins that a
+CGP crate keeps a suggestion at a token one of its macros re-spanned.
 
 The rust-stderr pass builds in a *separate* target directory from the `cargo-cgp` pass:
 `target-rust/` beside the worker crate's default `target/`. The reason is cargo's fingerprinting:
