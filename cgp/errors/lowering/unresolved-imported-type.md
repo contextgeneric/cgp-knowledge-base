@@ -66,8 +66,8 @@ reader must follow the alias back to the attribute and correct it there.
 ## How cargo-cgp presents it
 
 `cargo-cgp` keeps the compiler's header and notes, which already name the missing associated type,
-its trait, and the similar one the trait declares, and replaces the misleading `help:` with one
-naming the edit that compiles:
+its trait, and the associated type the compiler takes it for, and replaces the misleading `help:`
+with one naming the edit that compiles:
 ``rename `Scalr` to `Scalar` in the `#[use_type]` import from `HasScalarType` and in each use of `Scalr` ``,
 without the last clause when the import gives an `as` alias of its own
 (`#[use_type(HasScalarType.{Scalr as Value})]`). No `[CGP-Exxx]` code is stamped, since the header
@@ -76,9 +76,11 @@ is the compiler's; the change is one of the tool's
 
 The tool confirms the import before it changes anything. The `E0576` comes from name resolution, so
 the tool holds it until resolution is over, then requires the caret to sit in an item a CGP macro
-generated, with the name written bare there, and the trait to declare an associated type the name is
-a slip of. A qualified path the program wrote itself, `<Self as HasScalarType>::Scalr`, is respelled
-where it stands, so the compiler's help is right for it and stays.
+generated, with the name written bare there, and the trait to declare an associated type the import
+can be taken to mean. That is the trait's only associated type, which the compiler suggests whatever
+the name's spelling and which is the one name an import of the trait can give, or else one the name
+is a slip of. A qualified path the program wrote itself, `<Self as HasScalarType>::Scalr`, is
+respelled where it stands, so the compiler's help is right for it and stays.
 
 The codes cargo-cgp stamps on the classes it does rewrite are defined in the
 [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
@@ -116,6 +118,9 @@ post-codegen error class, and its mechanics are in the
 - [`lowering/unresolved-imported-type/use_type_unknown_assoc_alias.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/unresolved-imported-type/use_type_unknown_assoc_alias.rs):
   the same misspelling under an `as` alias, `#[use_type(HasScalarType.{Scalr as Value})]`, whose
   help renames the import alone.
+- [`lowering/unresolved-imported-type/use_type_unknown_assoc_no_near_miss.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/unresolved-imported-type/use_type_unknown_assoc_no_near_miss.rs):
+  an import naming `Weight` from a trait whose only associated type is `Scalar`; the compiler still
+  suggests `Scalar` in the signature, and the help names the rename in the import.
 - [`lowering/unresolved-imported-type/use_type_unknown_assoc_shared_trait_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/unresolved-imported-type/use_type_unknown_assoc_shared_trait_name.rs):
   the same misspelling where a second trait shares the imported trait's name; the help still names
   the rename, for the trait the compiler's note points at.

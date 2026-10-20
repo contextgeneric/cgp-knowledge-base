@@ -1204,16 +1204,18 @@ accepts the `E0576` only when the caret sits in an item a CGP macro generated (t
 [`[CGP-E035]`](#reshaping-an-undeclared-dependency) uses) and the source writes the name bare there.
 A qualified path the program wrote itself (`<Self as HasScalarType>::Scalr`) is respelled where it
 stands, so the compiler's help is right for it and stays. The detection then needs the trait the
-import names, and an associated type of it that the name is a slip of (`similar_name`). The
-compiler's message names the trait by its bare name, so when two traits share it, the trait meant is
-the one whose associated type the compiler's "similarly named associated type … defined here" note
-points at. The pass drops each suggestion that edits the alias and adds the rustc-free
-`use_type_misspelling_help`, which names the rename in the import, and in each use of the alias
-unless the import gives an `as` alias of its own. The header stays the compiler's, without a code.
-The fixtures `use_type_unknown_assoc`, `use_type_unknown_assoc_alias`,
+import names, and the associated type of it the import meant: the trait's only associated type,
+which is the one name an import of the trait can give and the one the compiler suggests whatever its
+spelling, or else one the name is a slip of (`similar_name`). The compiler's message names the trait
+by its bare name, so when two traits share it, the trait meant is the one whose associated type the
+compiler's "associated type … defined here" note points at. The pass drops each suggestion that
+edits the alias and adds the rustc-free `use_type_misspelling_help`, which names the rename in the
+import, and in each use of the alias unless the import gives an `as` alias of its own. The header
+stays the compiler's, without a code. The fixtures `use_type_unknown_assoc`,
+`use_type_unknown_assoc_alias`, `use_type_unknown_assoc_no_near_miss`,
 `use_type_unknown_assoc_shared_trait_name`, and `qualified_path_unknown_assoc`, under
 [`lowering/unresolved-imported-type/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/lowering/unresolved-imported-type),
-pin the four cases.
+pin the five cases.
 
 ### Dropping a suggestion spliced after an attribute macro
 
