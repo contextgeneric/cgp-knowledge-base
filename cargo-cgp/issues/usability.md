@@ -281,70 +281,106 @@ leave a genuine repeat indistinguishable from a hop whose parameters differ. The
 drops whole subtrees an earlier block already drew, is the mechanism for brevity that does not
 sacrifice precision.
 
-What remains below are the classes the tool does not yet reshape.
+What remains below are the shapes the tool does not yet reshape, grouped by what stands in the
+way. Each names the fixture that pins it.
 
-## Macro lowering errors point at the attribute, not the cause
+## Errors the tool cannot settle
 
-When a macro lowers accepted input into ill-formed Rust, the error lands on the macro attribute and
-never states the real cause.
-[`option_unsized_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/ill-formed-generated-type/option_unsized_path.rs)
-produces an unsized-type failure (an `Option<Path>` generated from an auto-getter returning
-`Option<&Path>`) as two cascading errors both anchored on the `#[cgp_auto_getter]` attribute, its
-headline naming the `[u8]` inside `Path` and nothing naming the `Option<&T>` shorthand that needs a
-sized `T`. The cause is hinted by the notes but never named. Its counterpart
-[`use_type_unknown_assoc`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/unresolved-imported-type/use_type_unknown_assoc.rs)
-shows a different gap: rustc names the misspelled associated type and the similar one, but its
-suggestion edits the function's signature, while the misspelling is in
-`#[use_type(HasScalarType.Scalr)]`, so applying it leaves the program failing on an undeclared
-`Scalar`. Recognizing the lowering class and naming the offending construct is the work here.
+Some failures carry a cause the tool has no way to confirm, or produce no error at all, so their
+output stays as the compiler wrote it:
 
-The cheaper way to close a case of this shape is often to fix it in `cgp`. A cyclic `#[use_type]`
-routing (`#[use_type(HasA.A in B, HasB.B in A)]`) is decidable from the import list alone, so
-`#[use_type]`
-[rejects it at macro time](../../cgp/implementation/asts/attributes/use_type.md#ground_specs) with a
-message naming the cycle and a caret on the alias that closes it, and nothing reaches the compiler
-for the tool to reshape. The getter macros reject an optional reference to a slice or a trait object
-the same way, since its shape shows the referent is unsized; only a type named by a path, whose size
-the macro cannot see, reaches the compiler. When a lowering error's cause is available to the macro,
-fixing it in `cgp` beats teaching the tool to reconstruct it.
+- **A namespace inheritance cycle:** two namespaces that inherit from each other compile under the
+  pinned nightly with both trait solvers, so `cargo cgp check` reports nothing; the tool checks only
+  what the next-generation solver rejects
+  ([`namespace_inheritance_cycle`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-inheritance-cycle/namespace_inheritance_cycle.rs)).
+- **A bare `Error` that no requirement explains:** a `#[cgp_fn]` signature or a provider body names
+  `Error` without `#[use_type]`, and no requirement of the component names the trait that declares
+  it. Name resolution reports an `E0425` suggesting `std::error::Error` and its namesakes, and since
+  the author may mean one of them, the tool cannot check that `#[use_type(HasErrorType.Error)]` is
+  the fix ([`error_alias_in_cgp_fn`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/error_alias_in_cgp_fn.rs),
+  [`error_alias_in_provider_body`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/error_alias_in_provider_body.rs)).
+- **`Self::Error` with two candidate traits:** when a second abstract-type trait declares an
+  `Error`, the import cannot be chosen, so rustc's `E0220` on `__Context__` stays
+  ([`self_error_two_traits`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/self_error_two_traits.rs)).
+- **An optional reference to an unsized type named by a path:** `#[cgp_auto_getter]` over
+  `Option<&Path>` generates a bound on the unsized `Option<Path>`, and the compiler's `E0277` lands
+  on the attribute naming `[u8]`, with notes naming `Path` and `Option`
+  ([`option_unsized_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/ill-formed-generated-type/option_unsized_path.rs)). The getter macros reject an
+  optional reference to a slice or a trait object at expansion, since its shape shows the referent
+  is unsized, but a type named by a path has a size only the compiler knows.
 
-An `@`-path segment naming an undeclared type keeps rustc's output: an `E0425` per use, with a help
-suggesting a type parameter, then the `E0275` overflow a check reports on the lookup through it
-([`path_segment_not_declared`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/path_segment_not_declared.rs)). The
-[unresolved wiring name](../../cgp/errors/wiring/unresolved-wiring-name.md) class reshapes a whole
-key or value but not a segment of one.
+When a lowering error's cause is visible to the macro, fixing it in `cgp` beats teaching the tool to
+reconstruct it. The getter rejection above is one case; a cyclic `#[use_type]` routing is another,
+which `#[use_type]`
+[rejects at macro time](../../cgp/implementation/asts/attributes/use_type.md#ground_specs), so
+nothing reaches the compiler for the tool to reshape.
 
-## Extensible-data shapes outside the presence-marker leaf
+## Errors no anchor or classifier reaches
 
-One shape of the [extensible data](../../cgp/errors/data/extensible-data.md) class stays as rustc
-wrote it: a bound on a borrowed field view for every lifetime, on an enum with a lifetime
-([`fields_ref_for_all_lifetimes`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/fields_ref_for_all_lifetimes.rs)),
-is a bare `E0477` on the check entry that never points at the `for<'b>` bound.
+These errors keep the compiler's output because nothing in the tool starts from them:
 
-## Construct failures that carry no fix
+- **A lifetime requirement on a check entry:** an error detail borrowed through a wrapper that needs
+  `'static` details, or a provider bounded on `FieldsRef<'b>` for every lifetime and checked for an
+  enum with a lifetime, fails with a bare `E0477` on the check entry. The resolver walks trait
+  obligations, and a lifetime requirement gives it no chain to the bound that demands `'static`
+  ([`borrowed_detail`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/ordinary-trait-bound/borrowed_detail.rs),
+  [`fields_ref_for_all_lifetimes`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/fields_ref_for_all_lifetimes.rs)).
+- **A conflict with a namespace another crate joins or inherits:** a local key wired on an upstream
+  context that joins a namespace, or registered into an upstream namespace and the parent it
+  inherits, overlaps a blanket impl in the other crate. rustc names that impl only in a note, so the
+  conflict classifier finds no local entry to compare with, and each `E0119` keeps rustc's wording
+  ([`upstream_namespace_join_overlap`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/upstream_namespace_join_overlap.rs),
+  [`upstream_namespace_inheritance_overlap`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-override-conflict/upstream_namespace_inheritance_overlap.rs)).
+- **A `Symbol!` digit tag in a direct field read:** `pair.get_field(PhantomData::<Symbol!("0")>)` on
+  a tuple struct keeps rustc's `E0277`, whose labels list the `Index<0>` and `Index<1>` tags the
+  struct implements; the same tag reached through a check is a missing field with an `Index<0>`
+  help ([`symbol_tag_on_tuple_struct`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/symbol_tag_on_tuple_struct.rs)).
 
-Many construct mistakes reach the reader as rustc wrote them, or reshaped without the hint that
-names the fix. The cause is in the output, but the reader must know the construct to act on it.
-The fixtures group by construct:
+## Errors that need a new class or a deeper walk
 
-- **Wiring checks, conflicts, and cycles:** a bundle checked as a context, and a cycle reached by a
-  call.
-- **Lowering:** a bare `Error` without `#[use_type]` that no requirement of the component explains,
-  whose `E0425` suggests importing `std::error::Error` (`error_alias_in_cgp_fn`,
-  `error_alias_in_provider_body`); `Self::Error` where two abstract-type traits declare an `Error`
-  (`self_error_two_traits`).
-- **Providers, fields, and types:** a field read through a `Symbol!` digit tag by a `get_field` call
-  on a tuple struct, a field read as two types, and a borrowed error detail.
-- **Handlers:** a matcher wired as a handler or applied to a struct, and matchers or builders
-  missing an arm or a field.
+These errors are reshaped in part or not at all, and stating their cause needs a class or a walk the
+tool does not have:
+
+- **A matcher where a handler or an enum belongs:** a value matcher wired as a `Handler` names its
+  expansion, `MatchWithHandlers<Product![ExtractFieldAndHandle<…>, …]>`, as the type that is not a
+  provider, and one applied to a struct ends at a bound on the internal `HasFieldHandlers` trait.
+  Neither says which construct the program wrote wrong
+  ([`matcher_wired_to_handler`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/handlers/matcher_wired_to_handler.rs),
+  [`value_matcher_on_struct`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/handlers/value_matcher_on_struct.rs)).
+- **One implicit field read as two types:** two methods of one provider read `count` as `u32` and
+  as `u64`, and rustc's `E0284` and `E0282` on the provider name `__Context__` without saying that
+  the methods disagree ([`implicit_conflicting_types`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/implicit-arguments/implicit_conflicting_types.rs)).
+- **A component named with a parameter:** `#[cgp_impl(new SquareArea)]` names the component after
+  the provider trait, `AreaCalculatorComponent`, while the component's name carries a parameter, and
+  the `E0107` does not say where the name came from
+  ([`parameterized_name_default_component`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/macro-defects/parameterized_name_default_component.rs)).
+- **A dispatcher wired as the entry for the type it dispatches:** the `[CGP-E020]` help names the
+  provider whose requirement closes the loop (`EvalAdd`), while the fix is a wrapper provider for
+  the dispatcher's own entry, which the walk cannot infer
+  ([`dispatcher_cycle`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/dispatcher_cycle.rs)).
+- **A cycle through a plain blanket trait across two contexts:** the walk reads a plain bound on
+  another type as a leaf, so the cycle is reported as that bound, `Outer: Linked`, beside the real
+  missing field ([`cross_context_cycle_reuse`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/cross_context_cycle_reuse.rs),
+  [`cross_context_cycle_reuse_distinct`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/cross_context_cycle_reuse_distinct.rs)).
+
+## Shapes a neighboring rewrite does not reach
+
+Two shapes sit next to a class the tool already reshapes:
+
+- **A misspelled `#[use_type]` import:** `#[use_type(HasScalarType.Scalr)]` rewrites the bare
+  `Scalr` to `<Self as HasScalarType>::Scalr`, and rustc's `E0576` names the misspelling and the
+  similar `Scalar`, but its help respells the signature, which leaves the import's `Scalr` in place
+  and fails on an undeclared `Scalar`
+  ([`use_type_unknown_assoc`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/unresolved-imported-type/use_type_unknown_assoc.rs)).
+- **A `UseContext` cycle reached by a call:** a component wired to `UseContext` with no other
+  implementation is `[CGP-E020]` at a check entry, but a consumer-method call keeps rustc's bare
+  `E0275` on the call ([`use_context_cycle_call`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/use_context_cycle_call.rs)).
 
 ## What good presentation looks like
 
-Taken together, these issues define the tool's presentation target for the classes it does not yet
-reshape: give the extensible-data family a root cause naming the absent variant or field; and
-recover the untransformed lowering class into a coded, root-cause-first diagnostic, or at least name
-the offending construct instead of the macro attribute. The bar is the one the check-trait-failure
-family already meets: lead with the cause as one plain sentence, name the decoded construct, give a
-short dependency path, and never let a misleading `rustc` heuristic outrank the real cause. The
+The bar is the one the check-trait-failure family meets: lead with the cause as one plain sentence,
+name the decoded construct, give a short dependency path, and never let a misleading `rustc`
+heuristic outrank the real cause. For the shapes above, that means naming the construct the program
+wrote in place of the machinery it expands to, and keeping only suggestions that compile. The
 [CGP-side tooling notes](../../cgp/errors/checks/check-trait-failure.md#how-cargo-cgp-presents-it)
 describe the same extraction from the catalog side and are the reference to build against.
