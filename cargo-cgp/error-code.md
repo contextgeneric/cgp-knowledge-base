@@ -450,11 +450,12 @@ for `CGP-E060`.
   is the one to fix. Any overflow whose walk is not cut keeps rustc's wording and notes
   ([`cross_context_cycle_reuse_distinct`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/cross_context_cycle_reuse_distinct.rs)).
 - **Fix (in the `help`):**
-  `` wire a provider in place of `<Provider>`, which provides `<Provider trait>` for `<Context>` by requiring `<Consumer>` on `<Context>` again ``,
+  `` wire a provider in place of `<Provider>`, which provides `<Provider trait>` for `<Context>` by requiring `<Requirement>` on `<Type>` again ``,
   naming the provider whose requirement closes the loop (`UseContext`, or `DebugError` for the
-  `String` route). The provider is named only when a wiring entry chose it, directly or through a
-  redirect. A loop that closes inside a higher-order provider, such as the inner `UseContext` a
-  dispatcher routes each variant through, gets
+  `String` route), the consumer trait it requires with its arguments, and the type it requires it
+  of, which is the context when the loop stays on one context. The provider is named only when a
+  wiring entry chose it, directly or through a redirect. A loop that closes inside a higher-order
+  provider, such as the inner `UseContext` a dispatcher routes each variant through, gets
   `` wire the component to a provider that does not require the consumer trait it provides ``
   instead.
 - **Upstream class:** [wiring cycle](../cgp/errors/wiring/wiring-cycle.md).
