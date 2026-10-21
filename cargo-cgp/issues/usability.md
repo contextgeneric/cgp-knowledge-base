@@ -359,9 +359,11 @@ tool does not have:
   the dispatcher's own entry, which the walk cannot infer
   ([`dispatcher_cycle`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/dispatcher_cycle.rs)).
 - **A cycle through a plain blanket trait across two contexts:** the walk reads a plain bound on
-  another type as a leaf, so the cycle is reported as that bound, `Outer: Linked`, beside the real
-  missing field ([`cross_context_cycle_reuse`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/cross_context_cycle_reuse.rs),
-  [`cross_context_cycle_reuse_distinct`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/cross_context_cycle_reuse_distinct.rs)).
+  another type as a leaf, so the cycle is not named: merged with a missing field, it is reported as
+  that bound, `Outer: Linked`, beside the field
+  ([`cross_context_cycle_reuse`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/cross_context_cycle_reuse.rs)),
+  and on its own the overflow keeps rustc's wording
+  ([`cross_context_cycle_reuse_distinct`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/cross_context_cycle_reuse_distinct.rs)).
 
 ## What good presentation looks like
 
