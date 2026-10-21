@@ -495,10 +495,10 @@ non-generic call, and a `PhantomData` over a tuple, a reference, a slice, and ge
 `auto_dispatch_missing_variant_impl` (a receiver built by an enum-variant constructor, resolved to
 the dispatch payload's missing impl), `foreign_context_error_route` (a call on a context from an
 upstream crate), and the `cascade_later_stage*` shapes whose pipeline stages the walk then descends.
-A receiver typed by an unbounded type parameter is `generic_fn_missing_bound`, and its declines
-are `generic_fn_two_consumers_one_method` (two consumer traits declare the method) and
-`generic_fn_missing_bound_on_generic_consumer` (the consumer trait takes a parameter). The decline boundary
-is pinned by `generic_consumer_unwritten_arg`, and the span gate by
+A receiver typed by an unbounded type parameter is `generic_fn_missing_bound`, and its declines are
+`generic_fn_two_consumers_one_method` (two consumer traits declare the method) and
+`generic_fn_missing_bound_on_generic_consumer` (the consumer trait takes a parameter). The decline
+boundary is pinned by `generic_consumer_unwritten_arg`, and the span gate by
 `unrelated_error_before_call` (an unrelated `Send` error before the failing call keeps its own
 diagnostic) and by `unrelated_error_in_call_argument` and `unrelated_error_in_awaited_argument` (the
 same error inside the call's argument, awaited or not, keeps its own diagnostic too), and the
