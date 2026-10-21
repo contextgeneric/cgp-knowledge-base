@@ -305,7 +305,9 @@ The headline code follows the trait the failing entry or call names, and the cau
 the same under each. A `#[check_providers(...)]` entry asserts a provider's trait directly, so its
 block is `[CGP-E002]` and its tree starts at that provider
 (`` [CGP-E002] missing field `name` on `App` ``,
-[`check_providers_unwired_provider`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/check_providers_unwired_provider.rs)).
+[`check_providers_unwired_provider`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/check_providers_unwired_provider.rs)),
+and one entry over several failing components gives one block per component
+([`check_providers_two_components`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/check_providers_two_components.rs)).
 A trait that is not a component, a hand-written wrapper over a consumer trait or a `#[cgp_fn]`
 blanket trait, fails under `[CGP-E003]`, its tree starting at that trait
 ([`cgp_fn_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/cgp_fn_missing_field.rs),

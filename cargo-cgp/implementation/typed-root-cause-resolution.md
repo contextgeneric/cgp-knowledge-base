@@ -643,8 +643,9 @@ Several fixtures pin the **harder mechanics**:
   a `#[check_providers(...)]` per-layer assertion, matched by the provider-check anchor to its
   generated check impl and walked from the listed provider's obligation into a `[CGP-E002]` block
   whose tree starts at the failing layer. `check_providers_unwired_provider` checks a provider the
-  context does not wire at all, and `same_name_marker_rename` one whose marker shares its name with
-  another component's.
+  context does not wire at all, `same_name_marker_rename` one whose marker shares its name with
+  another component's, and `check_providers_two_components` one provider over two components that
+  fail at one caret, each read from its own check impl.
 - `ordinary_bound_unsatisfied`: a non-field `f64: Eq` bound whose rustc header is kept over a
   lead-less chain note.
 - `constrained_delegate_key` and `pipe_handlers_empty` (under

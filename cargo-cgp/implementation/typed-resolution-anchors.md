@@ -51,6 +51,11 @@ lists, whatever the context wires; a provider the context does not wire at all i
 way. The result records the provider, which makes the block the provider class `[CGP-E002]`
 ([`check_providers_layer`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/higher-order-provider-layer/check_providers_layer.rs),
 [`check_providers_unwired_provider`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/check_providers_unwired_provider.rs)).
+One attribute over several components generates one impl per component, each with the provider as
+`Self` on the one token the attribute names, so their errors share a caret. The impls' spans
+differ in their syntax contexts, which the span comparison includes, so each error reads its own
+impl and gets its own block
+([`check_providers_two_components`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/check_providers_two_components.rs)).
 
 **From a hand-written `impl Trait for Context` block.** A wiring failure often surfaces inside an
 impl the programmer wrote rather than at a check entry. The money-transfer example's per-endpoint
