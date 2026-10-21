@@ -208,6 +208,9 @@ neither shape terminates at any depth, so no limit is high enough.
   the two-context cycle with errors that share no cause, so `Outer`'s tree shows only its missing
   `name` field, pinning that the resolver does not reuse a cached subtree that would repeat an
   ancestor; `Inner`'s overflow, which the walk does not cut, keeps rustc's wording.
+- [`wiring/wiring-cycle/cycle_beside_growing_lookup.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/cycle_beside_growing_lookup.rs):
+  a provider whose requirements both grow and loop through `UseContext`, rewritten to the
+  `[CGP-E020]` cycle, since a cycle explains the lookup more exactly than its depth cut.
 - [`wiring/wiring-cycle/divergent_self_wiring.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/divergent_self_wiring.rs):
   a lookup that grows in the type `CanShow` is required of (`Vec<u32>`, then `Vec<Vec<u32>>`),
   rewritten to `[CGP-E021]` naming the first larger type, with a `help:` naming `ShowWrapped`.

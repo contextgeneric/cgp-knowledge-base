@@ -423,7 +423,8 @@ re-rooting above
 ([`divergent_self_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/divergent_self_wiring.rs)).
 A provider step is kept only when a wiring entry chose that provider, so a provider inside a
 higher-order provider is never named. Where two branches are cut differently, the cycle wins, since
-it explains a lookup that never resolves more exactly. The driver words an `E0275` wiring overflow
+it explains a lookup that never resolves more exactly
+([`cycle_beside_growing_lookup`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/cycle_beside_growing_lookup.rs)). The driver words an `E0275` wiring overflow
 from this reason (`walk_overflow` seeds the walk, and
 [The driver](driver.md#naming-the-traits-behind-a-component-marker) applies it), and leaves an
 overflow whose walk is not cut in rustc's wording.
