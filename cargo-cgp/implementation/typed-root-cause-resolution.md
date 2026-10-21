@@ -567,7 +567,9 @@ Each **leaf class** has fixtures for its field, wiring, and redirect shapes:
   provider and a struct. Pins the dual rendering: `classify::leaf` normalizes the required type
   alongside the un-normalized form and keeps the reduction only when it differs, so the `[CGP-E004]`
   header and the `[CGP-E112]` leaf both read `` `Pool<<App as HasDbType>::Db>` (`Pool<Postgres>`) ``
-  while a concrete requirement stays bare.
+  while a concrete requirement stays bare. `abstract_field_type_missing` (under `fields/`) is the
+  same requirement on a context that lacks the field, whose help names the field without a type,
+  since the required type still holds a projection.
 - `abstract_type_mismatch` (under
   [`checks/check-trait-failure/types/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/checks/check-trait-failure/types)):
   the abstract-type sibling of those two: a context binds `HasScalarType` to `UseType<u32>` while
@@ -655,6 +657,8 @@ Several fixtures pin the **harder mechanics**:
   leaf. The first is a self-contained dispatcher (`PickFirstProvider<Product![]>`, whose `Nil` list
   has no `PickFirst` impl); the second is the canonical core-CGP form, an empty
   `PipeHandlers<Product![]>` whose `Nil` fails `ComposeProviders`.
+  `constrained_delegate_key_empty_sum` is the first's variant counterpart, `Sum![]` for the `Void`
+  rustc prints.
 - `foreign_getter_missing_wiring`: the money-transfer `UseBasicAuth` shape, where the walk descends
   a request getter's blanket impl into its context-side dependency; the provider's two dependencies
   both reach the one missing `HasCredentialType` wiring, so the graph renders them converging on it
@@ -742,7 +746,9 @@ fixtures:
   `consumer_trait_in_provider_impl_call_missing_field` is the missing field reached from a call,
   with no check. `consumer_trait_in_provider_impl_called` is the case with every requirement met,
   where the walk ends at the not-a-provider leaf and the emitter drops the call's error as the
-  header's consequence.
+  header's consequence. `consumer_trait_in_inner_provider_impl` puts the misdirected provider
+  inside a higher-order provider that also needs a missing field, so the check keeps its block with
+  both causes: it is dropped only when every cause is the header's consequence.
 - `direct_delegation_missing_key` (under `checks/check-trait-failure/missing-wiring/`): a
   `GreeterComponent -> Bundle` entry into a table that lacks the key, beside a check. Pins the
   forwarding-entry anchor: the compiler's error on the entry's own forwarding bound reads as the

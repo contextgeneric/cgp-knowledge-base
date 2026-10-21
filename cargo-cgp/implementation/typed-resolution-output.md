@@ -110,7 +110,9 @@ names the cause. The one exception is an empty list: rustc prints CGP's empty li
 the leaf, which reads the type, writes it `Product![]`, so the headline takes the leaf's wording in
 rustc's sentence (`` the trait bound `Product![]: PickFirst` is not satisfied ``), still uncoded,
 and the caret drops its label, which restates the bound with `Nil`
-([`constrained_delegate_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/constrained-key/constrained_delegate_key.rs)).
+([`constrained_delegate_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/constrained-key/constrained_delegate_key.rs);
+an empty sum reads `Sum![]` for rustc's `Void` the same way,
+[`constrained_delegate_key_empty_sum`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/constrained-key/constrained_delegate_key_empty_sum.rs)).
 But a main message that states a *mid-chain symptom* (an ordinary bound that is not one of the
 recovered leaves, such as a getter bound on a request whose real cause is a missing wiring a level
 down) is replaced by a `[CGP-E001]` headline stating the recovered cause. And a main message that is
@@ -386,7 +388,8 @@ which names its items in the order the causes are listed, with no cap:
   segment is, or when it has one prefix segment more or fewer, as a doubled or a dropped
   `#[prefix]` segment makes it (`similar_key`); two type segments that differ name two types, so
   they never count. The candidates are the struct's own fields and the context's own wiring
-  entries.
+  entries, so a slip another context wires is never named
+  ([`near_miss_in_another_context`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/near_miss_in_another_context.rs)).
 
 A field-type mismatch, a non-provider, an ordinary bound, and the extensible-data state causes (a
 field set twice or not set, a variant extracted twice or not extracted, a variant payload of the
