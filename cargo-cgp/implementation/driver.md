@@ -1178,8 +1178,9 @@ reaches the buffer through the same registration, and only in a crate that links
 (`resolve::links_cgp`), so a plain Rust error keeps every suggestion. It drops each structured
 suggestion with a substitution whose text holds a reserved name
 ([`reserved_names`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/signals.rs),
-a word of at least one character between two leading and two trailing underscores) that the source
-file being edited does not contain, since a name the file spells is one the user wrote. The test
+a word whose two leading and two trailing underscores surround a name that neither starts nor ends
+with an underscore of its own, the rule `is_reserved_name` gives every pass that asks) that the
+source file being edited does not contain, since a name the file spells is one the user wrote. The test
 reads the text of the suggestion rather than the macro's expansion, because the suggestion's span
 sits in the user's own code, where nothing marks it as the macro's. Two limits follow. A comment
 that spells the reserved name counts as the user writing it, so the suggestion stays. A diagnostic
