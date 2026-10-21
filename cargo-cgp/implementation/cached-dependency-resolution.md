@@ -5,10 +5,10 @@ diagnostics one CGP mistake produces and across the branches of a single walk. T
 specifies the one cache that resolves each distinct obligation once and reuses the result everywhere
 it recurs, without changing a byte of the output.
 
-**Status: implemented.** The cache is consulted at **every node**: `resolve_node` memoizes each
-interior node on its region-erased obligation and root context, with the incomplete-subtree flag at
-population and the reachable-set disjointness check at consultation, and `resolve_leaves` folds the
-root node's owned sub-result into the diagnostic. It is verified output-preserving against the whole
+The cache is consulted at **every node**: `resolve_node` memoizes each interior node on its
+region-erased obligation and root context, with the incomplete-subtree flag at population and the
+reachable-set disjointness check at consultation, and `resolve_leaves` folds the root node's owned
+sub-result into the diagnostic. It is verified output-preserving against the whole
 `tests/ui/` suite, with a dedicated diamond fixture pinning interior reuse, a mutual-cycle fixture
 pinning the incomplete-subtree cut on a resolving walk, and a fixture for two of its three guards
 that fails when that guard is removed (see [Tests](#tests)).
@@ -192,7 +192,7 @@ same contexts, then `A` reaches `N` and `N` reaches `A`, so `N`'s own walk met t
 cut, and a cut subtree is never cached. A decline therefore needs the loop's obligation walked under
 two root contexts: a plain bound on another context, such as `Outer: Linked` reached from `Inner`'s
 walk, is a leaf there, while `Outer`'s own walk descends it as a bound on its context. The
-`cross_context_cycle_reuse` fixture below builds that shape.
+`cross_context_cycle_reuse_distinct` fixture below builds that shape.
 
 ## The cache key
 
@@ -407,11 +407,12 @@ no such fixture.
   no fixture fails. Pinning the flag needs a subtree that a depth cut leaves short and a later walk,
   starting nearer the subtree, would resolve to a cause within the cap (`MAX_DEPTH` is 256).
 - **Reuse disjointness** (met):
-  [`wiring/wiring-cycle/cross_context_cycle_reuse`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/cross_context_cycle_reuse.rs)
+  [`wiring/wiring-cycle/cross_context_cycle_reuse_distinct`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/cross_context_cycle_reuse_distinct.rs)
   builds the two-context loop of
-  [the consultation guard](#consultation-reuse-only-where-no-cycle-would-form). Skipping the
-  reachable-set check splices the looping `Outer: Linked` leaf into `Outer`'s tree as a second root
-  cause.
+  [the consultation guard](#consultation-reuse-only-where-no-cycle-would-form), with errors that
+  share no cause. Skipping the reachable-set check splices the looping `Outer: Linked` leaf into
+  `Outer`'s tree as a second root cause. Its sibling `cross_context_cycle_reuse`, whose two errors
+  share a missing field and merge into one block, does not show the splice.
 
 The tests below do not exist yet; they are the coverage still to add.
 
@@ -439,7 +440,7 @@ The tests below do not exist yet; they are the coverage still to add.
   `compute_leaves`, which folds the root node's `SubResult` into a `Resolved` (de-duplicate, elide,
   render).
 - [`crates/cargo-cgp-driver/src/emitter/cgp_emitter.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/cgp_emitter.rs):
-  `try_resolve` threads `&self.resolve_cache` through the seven anchors to `resolve_leaves`; the
+  `try_resolve` threads `&self.resolve_cache` through the twelve anchors to `resolve_leaves`; the
   `ResolveCache` lives on `CgpEmitter` beside `dedup` (moving it onto the resolve context is that
   document's refactor). The `DedupLedger` it composes with is here too.
 - [`crates/cargo-cgp-error-processing/src/diagnosis/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/diagnosis):

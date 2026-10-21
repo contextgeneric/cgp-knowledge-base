@@ -118,10 +118,13 @@ each piece is produced.
 
 The resolver treats a diagnostic as a candidate whenever it reports an **unmet obligation** that
 plausibly stems from a CGP component failure, then either traces it to a root cause or steps aside.
-Concretely, a diagnostic is a candidate when it carries code **`E0271`**, **`E0275`** (an overflow
-evaluating a requirement), **`E0277`**, or a **method-bounds `E0599`**: the "the method `…` exists …
-but its trait bounds were not satisfied" shape. Any other code declines before the walk, even one
-whose text names a CGP trait: a coherence conflict (`E0119`) between a derived `HasField` impl and
+Concretely, a diagnostic is a candidate when it carries code **`E0271`**, **`E0277`**, or a
+**method-bounds `E0599`**: the "the method `…` exists … but its trait bounds were not satisfied"
+shape. An `E0275` overflow is no candidate, since the walk explains one only by a cut (a cycle, or a
+lookup that grows), which [the driver](driver.md#naming-the-traits-behind-a-component-marker) words
+from the overflow walk; a bound the walk stops at instead is one whose own evaluation overflowed,
+which no root cause states truly. Any other code declines before the walk, even one whose text
+names a CGP trait: a coherence conflict (`E0119`) between a derived `HasField` impl and
 the `Deref` blanket impl names `HasField`, but two impls overlapping leaves no bound unmet, and
 walking it would invent a missing-impl cause
 ([`deref_has_field_conflict`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/deref_has_field_conflict.rs)).
@@ -214,7 +217,7 @@ traits are recognized structurally, without `IsProviderFor`**:
   consumer whose blanket routes to that provider.
 
 **[Anchoring the starting obligation](typed-resolution-anchors.md)** recovers the obligation the
-compiler failed to prove, one of nine ways tried in order. A `check_components!` entry is matched
+compiler failed to prove, one of twelve ways tried in order. A `check_components!` entry is matched
 by its caret to the check impl and its `CanUseComponent<Marker, Params>` assertion mapped to the
 real consumer obligation, and a `#[check_providers]` entry the same way to the provider obligation
 it asserts; a failure inside a hand-written `impl Trait for Context` block is recovered from the
@@ -260,7 +263,7 @@ application of the rustc-free plan to the compiler's `DiagInner`.
 ## Boundaries and open ends
 
 The resolver is deliberately bounded, and a few edges are worth recording. Because it anchors the
-nine ways above, a wiring failure that is *none* of them declines. The consumer-trait use-site
+twelve ways above, a wiring failure that is *none* of them declines. The consumer-trait use-site
 anchor reaches a manual supertrait bound in a trait definition or `where` clause, and a
 namespace-joined use-site call, whenever a local CGP consumer trait and its context appear in the
 diagnostic's spans (the `use_type_foreign_unsatisfied`, `use_type_nested_unsatisfied`, and
@@ -506,7 +509,7 @@ marking.
     failure re-reported at many sites, or a shared trait, is walked once (see
     [Cached dependency resolution](cached-dependency-resolution.md)).
 - [`crates/cargo-cgp-driver/src/emitter/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/emitter):
-  the `try_resolve` seam (gated to an unmet-obligation code, `E0271`/`E0275`/`E0277` or a
+  the `try_resolve` seam (gated to an unmet-obligation code, `E0271`/`E0277` or a
   method-bounds `E0599`, with a resolution-class `E0599` excluded so the solver never runs on an
   error emitted mid-`clauses_of`) that tries the twelve anchors in turn (the bound-call,
   by-blanket-trait, and forwarding-entry anchors last, gated to `E0277`) and sends the method probe's "no method named" `E0599`

@@ -447,7 +447,8 @@ for `CGP-E060`.
   [`use_context_cycle_call`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/use_context_cycle_call.rs)). A lookup can also overflow
   through a type the compiler could not resolve (an earlier `E0425` or `E0412`), with no loop in the
   wiring; its walk ends without a cut, so the overflow keeps rustc's wording, and the earlier error
-  is the one to fix.
+  is the one to fix. Any overflow whose walk is not cut keeps rustc's wording and notes
+  ([`cross_context_cycle_reuse_distinct`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/cross_context_cycle_reuse_distinct.rs)).
 - **Fix (in the `help`):**
   `` wire a provider in place of `<Provider>`, which provides `<Provider trait>` for `<Context>` by requiring `<Consumer>` on `<Context>` again ``,
   naming the provider whose requirement closes the loop (`UseContext`, or `DebugError` for the
@@ -462,19 +463,23 @@ for `CGP-E060`.
 
 - **Message:**
   `` [CGP-E021] the wiring for the consumer trait `<Consumer>` on context `<Context>` never resolves, because each step requires it for a larger type (`<Larger>`, …) ``,
-  naming the first larger requirement (`` `CanShow<Vec<u32>>` `` for `CanShow<u32>`), with a `help`
-  naming the provider whose requirement grows.
+  naming the first larger requirement (`` `CanShow<Vec<u32>>` `` for `CanShow<u32>`), or the first
+  larger type when the lookup grows in the type the consumer trait is required of
+  (`` `Vec<u32>` `` for `u32`), with a `help` naming the provider whose requirement grows.
 - **Means:** each step of the lookup requires the consumer trait again for a larger type, so no
   requirement repeats, and the compiler gives up at its recursion limit. A provider of
   `CanShow<T>` that requires `CanShow<Vec<T>>` is the plain case.
 - **Triggered by:** the same `E0275` overflow at a check entry or a consumer-method call, when the
   walk reaches its depth limit without meeting a repeated obligation
   ([`divergent_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/divergent_wiring.rs),
-  [`divergent_wiring_call`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/divergent_wiring_call.rs)). The Rust code stays `E0275`, and the `__Check…` note
+  [`divergent_wiring_call`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/divergent_wiring_call.rs),
+  [`divergent_self_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/divergent_self_wiring.rs)). The Rust code stays `E0275`, and the `__Check…` note
   and rustc's advice to raise the recursion limit are dropped, since no limit ends a lookup that
   grows.
 - **Fix (in the `help`):**
-  `` wire a provider in place of `<Provider>`, which provides `<Provider trait>` for `<Context>` by requiring `<Larger>` on `<Context>`, a larger type at every step ``,
+  `` wire a provider in place of `<Provider>`, which provides `<Provider trait>` for `<Context>` by requiring `<Requirement>` on `<Type>`, a larger type at every step ``,
+  where `<Requirement>` is the consumer trait with its arguments and `<Type>` is the context, or the
+  larger type when the lookup grows in it,
   or `` wire the component to a provider whose requirements do not grow with each step `` when no
   wiring entry chose that provider.
 - **Upstream class:** [wiring cycle](../cgp/errors/wiring/wiring-cycle.md).

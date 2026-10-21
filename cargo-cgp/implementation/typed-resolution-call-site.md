@@ -546,7 +546,8 @@ catalog lives in the parent document's [Tests](typed-root-cause-resolution.md#te
 
 - [Typed root-cause resolution](typed-root-cause-resolution.md): the pipeline overview.
 - [Typed resolution: anchoring the starting obligation](typed-resolution-anchors.md): the six
-  anchors tried before these four, and the by-blanket-trait anchor tried after them.
+  anchors tried before these four, and the by-blanket-trait and forwarding-entry anchors tried after
+  them.
 - [Typed resolution: walking to the root cause](typed-resolution-walk.md): how the seeded obligation
   (placeholders and all) is descended.
 - [rustc diagnostic internals](rustc-diagnostic-internals.md): why `tcx.typeck` can never be forced

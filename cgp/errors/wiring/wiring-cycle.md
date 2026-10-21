@@ -112,12 +112,21 @@ meeting a repeat, so the headline is `[CGP-E021]` and reads
 ``… never resolves, because each step requires it for a larger type (`CanShow<Vec<u32>>`, …)``,
 naming the first larger requirement, and the `help:` names `ShowNested` as the provider whose
 requirement grows. The tool drops the recursion-limit advice here too, since no limit ends a lookup
-that grows.
+that grows. A lookup can also grow in the type the consumer trait is required of: a provider of
+`CanShow` that requires `Vec<Self>: CanShow`, wired for `u32` and every `Vec<T>`, asks for
+`Vec<u32>`, then `Vec<Vec<u32>>`. The walk follows each `Vec<…>` as a context, since it carries
+wiring, so the same `[CGP-E021]` names the first larger type, `` (`Vec<u32>`, …) ``, and the `help:`
+names the provider that requires `CanShow` of it
+([`divergent_self_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/divergent_self_wiring.rs)).
 
-An overflow that follows from an unresolved name in the context's wiring, rather than from the
-wiring itself, keeps rustc's wording: its walk ends with neither cut, and the earlier `E0425` stays
-the error to fix. A real cycle beside such a name is still a cycle, since the walk does not descend
-the `{type error}` the name leaves ([`type_error_in_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/type_error_in_wiring.rs)).
+Any overflow the walk does not cut keeps rustc's wording and notes. A walk that stops at a bound
+instead of a cut means that bound's own evaluation overflowed, which no root cause states truly, so
+the tool names none: in `cross_context_cycle_reuse_distinct` a cycle runs through a plain trait
+bound on another context, which the walk does not follow. An overflow that follows from an
+unresolved name in the context's wiring, rather than from the wiring itself, is the other case: its
+walk ends with neither cut, and the earlier `E0425` stays the error to fix. A real cycle beside such
+a name is still a cycle, since the walk does not descend the `{type error}` the name leaves
+([`type_error_in_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/type_error_in_wiring.rs)).
 
 The tool does more than restate the overflow when a cycle is tangled with a recoverable cause, and
 this is where its cycle guard earns its keep. In `mutual_cycle_with_cause` (`ProviderA` depends on
@@ -198,7 +207,10 @@ neither shape terminates at any depth, so no limit is high enough.
 - [`wiring/wiring-cycle/cross_context_cycle_reuse_distinct.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/cross_context_cycle_reuse_distinct.rs):
   the two-context cycle with errors that share no cause, so `Outer`'s tree shows only its missing
   `name` field, pinning that the resolver does not reuse a cached subtree that would repeat an
-  ancestor.
+  ancestor; `Inner`'s overflow, which the walk does not cut, keeps rustc's wording.
+- [`wiring/wiring-cycle/divergent_self_wiring.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/divergent_self_wiring.rs):
+  a lookup that grows in the type `CanShow` is required of (`Vec<u32>`, then `Vec<Vec<u32>>`),
+  rewritten to `[CGP-E021]` naming the first larger type, with a `help:` naming `ShowWrapped`.
 
 ## Related
 

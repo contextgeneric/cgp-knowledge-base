@@ -419,7 +419,12 @@ how it was cut as a rustc-free `WiringOverflow`. An obligation met again among i
 a cycle, stamped `[CGP-E020]` and worded "the lookup leads back to itself"; a `UseContext`
 delegation whose only consumer-trait impl is that delegation is the plain case. The depth cap
 reached without a repeat is a lookup that grows, stamped `[CGP-E021]` and worded with the first
-larger requirement. The emitter then drops the note pointing at the generated `__Check…` trait (the
+larger requirement: the first later obligation of the same trait with other arguments, named by its
+`Self` type when that is what grows. The walk follows a consumer obligation on another context,
+one from another crate included when it carries wiring, so a lookup that grows in the type the
+consumer trait is required of reaches the cap too
+([`divergent_self_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/divergent_self_wiring.rs)).
+The emitter then drops the note pointing at the generated `__Check…` trait (the
 kept caret already covers the check entry) and rustc's advice to raise the recursion limit
 (`is_recursion_limit_help_text`), which no limit satisfies, and attaches a `help` naming the
 provider whose requirement closes or grows the loop (`wiring_overflow_help`). That provider is the
@@ -436,13 +441,18 @@ fixtures pin the reshaped output at a check, and
 [`use_context_cycle_call`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/use_context_cycle_call.rs)
 and
 [`divergent_wiring_call`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/divergent_wiring_call.rs)
-at a call. An overflow can also follow from an earlier unresolved name: a
-wiring entry that names a type the compiler could not resolve holds a `{type error}`, and a lookup
-through it can overflow with no cycle in the wiring. Its walk meets neither the cycle guard nor the
-depth cap, so the `E0275` keeps rustc's wording, since the earlier error is the one to fix
-([`path_segment_not_declared`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/path_segment_not_declared.rs)).
-The walk does not descend an obligation holding a `{type error}`, so a type error cannot make it
-loop, while a real cycle beside one is still reported
+at a call. An overflow the walk does not cut keeps rustc's wording and notes, and the typed
+resolver never takes an `E0275`: a walk that stops at a bound instead of a cut means that bound's
+own evaluation overflowed, which no root cause states truly
+([`cross_context_cycle_reuse_distinct`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/cross_context_cycle_reuse_distinct.rs),
+whose cycle runs through a plain trait bound on another context). An overflow can also follow from
+an earlier unresolved name: a wiring entry that names a type the compiler could not resolve holds a
+`{type error}`, and a lookup through it can overflow with no cycle in the wiring. Its walk meets
+neither the cycle guard nor the depth cap, and the earlier error is the one to fix; when the name
+is a wiring entry's, the emitter drops the overflow as that entry's consequence instead
+([unresolved wiring names](#reshaping-an-unresolved-wiring-name)). The walk does not descend an
+obligation holding a `{type error}`, so a type error cannot make it loop, while a real cycle beside
+one is still reported
 ([`type_error_in_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/type_error_in_wiring.rs)).
 
 The emitter applies the full dispatch only to a diagnostic's *main* message and the note rename to

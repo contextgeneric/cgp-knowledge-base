@@ -114,14 +114,15 @@ fold are a no-op when a clause carries no placeholder (the ordinary concrete-inp
 stage's projection normalizes to a real type), so only the unknown-input case is affected.
 
 One descent step is not about the root context at all. A **cross-context** consumer obligation, one
-whose `Self` is a *different* local context (`Inner: CanCompute` reached while resolving `Outer`,
-the shape where one context's wiring depends on a concrete other context), is re-rooted at that
-context before it is walked. The node and everything below it are labeled and classified against
-`Inner`, not `Outer`. So it reads as a consumer node `for context Inner`, its delegation-routing hop
-is recognized as routing and dropped, and its getter leaf decodes to a missing field rather than an
-opaque foreign bound. Re-rooting also keys the node identically to `Inner`'s own walk, so the two
-share the [cache](cached-dependency-resolution.md). Without it, the descent would carry the outer
-root context down and mislabel the whole foreign-context subtree.
+whose `Self` is a *different* context (`Inner: CanCompute` reached while resolving `Outer`, the
+shape where one context's wiring depends on a concrete other context), is re-rooted at that context
+before it is walked. A type from another crate counts when it carries wiring, as a context a library
+exports does, or a `Vec<T>` the checked crate wires. The node and everything below it are labeled
+and classified against `Inner`, not `Outer`. So it reads as a consumer node `for context Inner`, its
+delegation-routing hop is recognized as routing and dropped, and its getter leaf decodes to a
+missing field rather than an opaque foreign bound. Re-rooting also keys the node identically to
+`Inner`'s own walk, so the two share the [cache](cached-dependency-resolution.md). Without it, the
+descent would carry the outer root context down and mislabel the whole foreign-context subtree.
 
 A branch ends at a **terminal leaf**, and which obligations count as terminal is what keeps the tree
 honest. The descent follows only the CGP wiring vocabulary (any provider trait, where a
@@ -415,12 +416,17 @@ cap also bounds a divergent wiring's worst-case work.
 Each cut records why it stopped, on the sub-result it returns (`SubResult.cut`), and the reason
 rides up to the root. A repeat is a cycle, recorded with the provider step that requires the
 repeated obligation; the cap is a lookup that grows, recorded with its first larger requirement (the
-first obligation that restates an earlier one's trait and type with other arguments) and the
-provider step that requires it. A provider step is kept only when a wiring entry chose that
-provider, so a provider inside a higher-order provider is never named. Where two branches are cut
-differently, the cycle wins, since it explains a lookup that never resolves more exactly. The driver
-words an `E0275` wiring overflow from this reason (`walk_overflow` seeds the walk, and
-[The driver](driver.md#naming-the-traits-behind-a-component-marker) applies it).
+first obligation that restates an earlier one's trait with other arguments, its `Self` type
+included) and the provider step that requires it. A lookup that grows in its `Self` type
+(`Vec<u32>: CanShow`, then `Vec<Vec<u32>>: CanShow`) reaches the cap through the cross-context
+re-rooting above
+([`divergent_self_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/divergent_self_wiring.rs)).
+A provider step is kept only when a wiring entry chose that provider, so a provider inside a
+higher-order provider is never named. Where two branches are cut differently, the cycle wins, since
+it explains a lookup that never resolves more exactly. The driver words an `E0275` wiring overflow
+from this reason (`walk_overflow` seeds the walk, and
+[The driver](driver.md#naming-the-traits-behind-a-component-marker) applies it), and leaves an
+overflow whose walk is not cut in rustc's wording.
 
 The descent is memoized at every node, so a distinct obligation reached from many sites or many
 branches is resolved once and reused; the cycle guard and `MAX_DEPTH` cut above are what decide
@@ -510,8 +516,9 @@ consumer-trait impl (`` consumer trait impl `CanCalculateArea` for context `Rect
 the consumer trait's own `DefId`; a provider-trait obligation
 `Provider: ProviderTrait<Ctx, Params…>` becomes the provider-trait impl, naming the provider trait's
 `DefId`, the context (the trait's leading argument), and the provider struct (the obligation's
-`Self`); a `HasField` becomes the field-trait impl; and a user's own blanket or getter trait (or a
-terminal ordinary bound) renders as `` trait impl `Trait<…>` for `Self` ``. Several details make the
+`Self`); and a user's own blanket or getter trait (or a terminal ordinary bound) renders as
+`` trait impl `Trait<…>` for `Self` ``. A `HasField` obligation is never a step: the walk ends a
+branch there as the field leaf. Several details make the
 labels read well:
 
 - **Plumbing is dropped.** A provider-trait obligation *for the context itself* (the delegation
@@ -599,8 +606,9 @@ parent document's [Tests](typed-root-cause-resolution.md#tests) section.
   the derive each data trait comes from) and `partial.rs` (`read_partial`, a partial value's target
   and markers).
 - [`crates/cargo-cgp-driver/src/resolve/label/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/label):
-  `predicate_label.rs` (each hop as a structured `DepNode`, read off the obligation) and
-  `render_ty.rs` (the type-level list resugaring).
+  `predicate_label.rs` (each hop as a structured `DepNode`, read off the obligation),
+  `render_ty.rs` (the type-level list resugaring), and `empty_lists.rs` (a standalone `Nil` or
+  `Void` written `Product![]` or `Sum![]`).
 
 The per-file map of the whole resolver lives in the parent document's
 [Source](typed-root-cause-resolution.md#source) section.
