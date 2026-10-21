@@ -770,8 +770,11 @@ and worded by the rustc-free `plan_structural_mistake` and `structural_mistake_h
 - **Two check tables sharing a check-trait name** (`[CGP-E016]`): the `E0428` name resolution
   reports. No query is safe that early, so the driver reads the name from the diagnostic's own
   argument and confirms the span came from a `check_components!` expansion through its expansion
-  data alone. rustc's labels and note name the generated trait, so the two carets are relabelled as
-  the first and the second table.
+  data alone. The expansion records a macro by the path its call was written with, so the detector
+  compares that path's last segment with the macro's name: `cgp::prelude::check_components!`
+  counts, and a crate's own macro whose name only ends the same way, such as
+  `table_check_components!`, does not. rustc's labels and note name the generated trait, so the two
+  carets are relabelled as the first and the second table.
 - **A check entry that names no parameters for a component that takes some** (`[CGP-E060]`): an
   `E0277` whose caret is the `Self` span of a check impl (the impl of a trait whose supertrait is
   `CanUseComponent`, as the check-entry anchor finds it) asserting `CanUseComponent<Marker, ()>`,
@@ -780,7 +783,8 @@ and worded by the rustc-free `plan_structural_mistake` and `structural_mistake_h
   and not `()`, each kept only when `Context: CanUseComponent<Marker, Params>` holds in the check
   impl's own environment; with none, the detector declines. The help writes them in the form of the
   macro the check trait comes from (`#[check_params(…)]` for a `delegate_and_check_components!`
-  table, read from the trait definition's macro backtrace, and `Component: Params` otherwise).
+  table, read from the trait definition's macro backtrace by the same name rule, and
+  `Component: Params` otherwise).
   rustc's notes and its `where` suggestion are dropped, and the caret stays on the entry. The
   detector runs before the typed resolver, which declines the unit-parameter obligation and leaves
   rustc's error, or its `[CGP-E002]` text rewrite, in place.
@@ -822,18 +826,21 @@ The `E0207` detectors print a type by its own name rather than through the trimm
 records itself on the diagnostic context, whose lock the emitter holds
 ([rustc diagnostic internals](rustc-diagnostic-internals.md)). The fixtures under
 [`wiring/conflicting-wiring/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/wiring/conflicting-wiring)
-(`check_duplicate_entry`, `check_twice_same_context`, and their siblings) and
+(`check_duplicate_entry`, `check_twice_same_context`, `check_twice_qualified_call`, and their
+siblings) and
 [`wiring/unconstrained-generic/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/wiring/unconstrained-generic)
 (`for_loop_key_without_var`, `default_impl_generic_provider`, `default_impl_explicit_context`,
 `unconstrained_generic`, `entry_generic_shapes`, `entry_generic_checked`, and
 `namespace_entry_generic`, and `default_impl_generic_provider_struct` for the generic provider
 struct) pin the shapes. The check at unit parameters is pinned under
 [`checks/check-trait-failure/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/checks/check-trait-failure)
-by `generic_component_unit_params` and `check_trait_named_as_wrapper` (in
-`delegate_and_check_components!`, a component with a type parameter and a generic key) and
-`generic_check_without_params` (in `check_components!`), and the shared dispatch method by
-`auto_dispatch_shared_method_name` and `auto_dispatch_shared_method_names` under
-`wiring/conflicting-wiring/`.
+by `generic_component_unit_params`, `qualified_delegate_and_check_unit_params`, and
+`check_trait_named_as_wrapper` (in `delegate_and_check_components!`, a component with a type
+parameter, the macro called by its path, and a generic key) and `generic_check_without_params` (in
+`check_components!`), and the shared dispatch method by `auto_dispatch_shared_method_name`,
+`auto_dispatch_shared_method_names`, and `auto_dispatch_shared_method_name_qualified` under
+`wiring/conflicting-wiring/`. The pass-through fixture `own_check_components_macro` pins the name
+rule's decline.
 
 A doubled `#[prefix]` is not among them: its two namespace registrations collide as a duplicate
 redirect, `[CGP-E014]`, which the [duplicate-key reshape](#reshaping-a-duplicate-key-conflict)

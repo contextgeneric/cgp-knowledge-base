@@ -419,7 +419,9 @@ reduce to the same `[CGP-E001]` headline and `root cause:` tree.
   a [check that names no parameters](#when-a-check-names-no-parameters) in
   `delegate_and_check_components!`; its `.rust.stderr` pins the provider-shaped `E0277` with the
   "expected `Rectangle`, found `()`" hint, and its `.cgp.stderr` the `[CGP-E060]` block whose help
-  names `#[check_params(Rectangle)]`.
+  names `#[check_params(Rectangle)]`;
+  [`qualified_delegate_and_check_unit_params`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/checks/qualified_delegate_and_check_unit_params.rs)
+  gives the same help when the table is called as `cgp::prelude::delegate_and_check_components!`.
 - [`checks/check-trait-failure/providers/generic_check_without_params.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/generic_check_without_params.rs):
   the same in `check_components!`, whose help names `AreaCalculatorComponent: Square`.
 - [`checks/check-trait-failure/providers/provider_for_other_context.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/provider_for_other_context.rs):

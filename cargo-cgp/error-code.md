@@ -349,10 +349,13 @@ word them.
   `__Check<Context>`, or `` … name their check trait `<Name>` `` when two `#[check_trait(...)]`
   attributes give one name, from the `E0428` on the second definition. The two carets are labelled
   as the first and the second table. The `E0428` comes from name resolution, before any query is
-  safe, so the driver recognizes it by the span's expansion from `check_components!` alone.
+  safe, so the driver recognizes it by the span's expansion from `check_components!` alone, naming
+  the macro by the last segment of the path the call was written with, so a call written as
+  `cgp::prelude::check_components!` counts and a crate's own `table_check_components!` does not.
   **Fix (in the `help`):** merge the two tables, or name one table's check trait with
   `#[check_trait(...)]`
-  ([`check_twice_same_context`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/check_twice_same_context.rs)).
+  ([`check_twice_same_context`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/check_twice_same_context.rs),
+  [`check_twice_qualified_call`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/check_twice_qualified_call.rs)).
 - **`CGP-E017`: a `for` loop whose key skips its variable.**
   `` [CGP-E017] the `for` loop in the wiring of `<Context>` binds `<T>`, but its key `<key>` does not use it ``,
   one block in place of rustc's three `E0207`s (the key variable and the value variable, in the

@@ -275,7 +275,9 @@ headline. The conflicts `cargo-cgp` rewrites:
   and
   [`wiring/conflicting-wiring/check_trait_named_twice.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/check_trait_named_twice.rs):
   two `check_components!` tables whose check traits share a name, derived and given, rewritten from
-  `E0428` to `[CGP-E016]` with the tables labelled.
+  `E0428` to `[CGP-E016]` with the tables labelled;
+  [`wiring/conflicting-wiring/check_twice_qualified_call.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/check_twice_qualified_call.rs)
+  the same with the second table called as `cgp::prelude::check_components!`.
 
 The two namespace collisions that are *not* duplicate declarations live with their own classes:
 `override_registered_path.rs`, `inherited_override_conflict.rs`, and `for_loop_prefixed_key.rs`
@@ -309,6 +311,9 @@ The pass-through conflicts `cargo-cgp` leaves uncoded:
 - [`wiring/conflicting-wiring/auto_dispatch_shared_method_names.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/auto_dispatch_shared_method_names.rs):
   the same with two shared methods, `area` and `perimeter`: four `E0428`s in the `.rust.stderr`, one
   `[CGP-E061]` per method in the `.cgp.stderr`.
+- [`wiring/conflicting-wiring/auto_dispatch_shared_method_name_qualified.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/auto_dispatch_shared_method_name_qualified.rs):
+  the same with each attribute written `#[cgp::prelude::cgp_auto_dispatch]`, which gives the same
+  one `[CGP-E061]`.
 
 ## Related
 
