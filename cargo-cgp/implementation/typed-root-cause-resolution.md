@@ -274,9 +274,10 @@ the unconditionally-matching dispatch shape
 A caret on a *provider* struct's own impl is handled narrowly rather than fully. The impl-site and
 wrapper-chain anchors skip the provider impl's *supertrait* recovery (its only supertrait is
 `IsProviderFor`, so routing a cause through it would leak the provider trait's `__Context__` and an
-`IsProviderFor` hop), but the impl-site anchor does recover a *cross-context* dependency named
-directly in the provider's own `where` clause (`where Inner: CanCompute`, a concrete local context),
-walking it as that consumer obligation so it de-duplicates into the context's own check
+`IsProviderFor` hop), but the impl-site anchor does recover a failing bound of any impl's own
+`where` clause at its caret, such as a *cross-context* dependency in a provider's
+(`where Inner: CanCompute`, a concrete context), walking it as that consumer obligation so it
+de-duplicates into the context's own check
 ([`cross_context_node_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/resolution/cross_context_node_key.rs));
 a provider impl carrying no such recoverable bound declines. What else declines is a failure none of
 the recoveries reach: a generic component's trait definition, a call whose *receiver's type* is not
@@ -359,10 +360,12 @@ marking.
     or `[CGP-E003]` by its blanket-impl fingerprint) through `wrapper_consumer_causes`, which seeds
     the supertrait directly when it is a CGP consumer *or* a `#[cgp_fn]`/`#[blanket_trait]`
     blanket-impl trait (`is_blanket_trait`), the latter reshaping a `#[cgp_fn]` blanket-trait check
-    whose cause is a missing field. `wrapper_chain.rs` is the foreign-wrapper case, descending each
-    hop's `where`-clauses via `wrapper_chain_children` read un-normalized so an associated-type
-    bound descends to its base trait, until `consumer_handoff_causes` reaches a CGP consumer on the
-    context, named plainly with `subject_is_context = false`. `use_site.rs` recovers the context ADT
+    whose cause is a missing field; before that, `where_bound_on_context` reads a failing consumer
+    bound on a concrete context in the impl's own `where` clause at the caret. `wrapper_chain.rs` is
+    the foreign-wrapper case, descending each hop's `where`-clauses via `wrapper_chain_children`
+    read un-normalized so an associated-type bound descends to its base trait, until
+    `consumer_handoff_causes` reaches a CGP consumer on the context, named plainly with
+    `subject_is_context = false`. `use_site.rs` recovers the context ADT
     from the diagnostic's spans and its wired components from `DelegateComponent` impls via
     `delegated_check_targets`, mapping each marker to its consumer and recovering an `open`-dispatch
     value from a `PathCons` key through `open_dispatch_target`, while skipping a raw path key, a
@@ -906,6 +909,20 @@ The **impl-site and wrapper-chain paths** are pinned by:
   `[CGP-E003]` block (`is_about_impl`).
 - `unrelated_error_in_forwarding_argument`: the same `Send` error nested in the forwarding call's
   argument keeps its own diagnostic beside the `[CGP-E003]` block, by the call-site anchor's rule.
+- `unrelated_error_noted_on_wrapper_impl` and `unrelated_error_noted_on_foreign_wrapper_impl`: an
+  unrelated `Send` error whose note lands on the header of a wrapper impl, on a context and on a
+  foreign type, keeps its own diagnostic, because the impl-site and wrapper-chain anchors read only
+  the primary spans.
+- `wrapper_impl_with_failing_bound`: a wrapper impl whose supertrait and own `where` bound fail for
+  different causes, each reported on its own caret: the bound read as the consumer obligation it
+  names, and the supertrait at the impl's `Self` type.
+- `foreign_context_where_bound` and `foreign_context_wrapper_chain`: the same reach for a context
+  from an upstream crate (via `//@aux-build`), through a failing bound of an impl's own `where`
+  clause and through a wrapper chain's handoff.
+- `impl_bound_on_plain_trait` (under
+  [`pass-through/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/pass-through)):
+  a failing `where Person: Clone` bound on a context left as rustc wrote it, since the bound names
+  no CGP consumer trait.
 
 Finally, the leaf wording and the tree renderer are unit-tested over hand-built `Resolved` values,
 independently of the compiler:

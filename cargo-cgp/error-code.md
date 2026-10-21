@@ -133,8 +133,9 @@ fix, and the [CGP error catalog](../cgp/errors/README.md) class it recognizes.
 - **Triggered by:** an unsatisfied `Context: CanUseComponent<Marker, Params>` bound, a
   `check_components!` / `delegate_and_check_components!` entry failing, a consumer-method call
   (`E0599`) on a context that cannot use a component it wires or on a type parameter that does not
-  have the consumer trait as a bound, or a call to a generic function whose consumer-trait bound the
-  context fails (`E0277`). The Rust code stays whatever rustc
+  have the consumer trait as a bound, a call to a generic function whose consumer-trait bound the
+  context fails (`E0277`), a consumer-trait bound on a context in an impl's own `where` clause, or a
+  `Key -> Table` wiring entry whose table lacks the key. The Rust code stays whatever rustc
   assigned (`E0277` at a check or a bound, `E0599` at a method call).
 - **Fix:** follow the `root cause:` note(s): add the missing field or derive, wire the missing
   component, or satisfy the ordinary bound the chain bottoms out on. A `help` names each fix the

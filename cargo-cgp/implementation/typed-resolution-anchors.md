@@ -108,23 +108,36 @@ forwarding call's argument keeps its own diagnostic too. The wrapper-chain ancho
 same gate. A secondary label or a note never counts, since rustc points those at any code the
 failure passed through.
 
-The tree is then **headed by the impl's own trait**, the wrapper the programmer wrote, so the
-failure reads `CanHandleApiSend → CanHandleApi → …` and points at their code rather than dropping
-the wrapper. The headline's code turns on the wrapper's **fingerprint**: a wrapper that is itself a
+**A bound of the impl's own `where` clause reads as itself.** The compiler reports a concrete
+`where` bound that fails, such as `where Inner: CanCompute` on a provider or `where App: CanRun` on
+a wrapper of another type, at the bound, and that bound can fail for a cause of its own beside the
+impl's supertrait. So before the supertrait recovery, `where_bound_on_context` looks for the bound a
+primary span lies on, and when it is an unmet CGP consumer bound on a context, it walks it as that
+consumer obligation, which de-duplicates into the context's own check
+([`wrapper_impl_with_failing_bound`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/wrapper_impl_with_failing_bound.rs)).
+A context from another crate counts when it carries its own wiring
+([`foreign_context_where_bound`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/foreign_context_where_bound.rs)),
+and a bound on a plain Rust trait keeps rustc's diagnostic
+([`impl_bound_on_plain_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/impl_bound_on_plain_trait.rs)).
+
+A supertrait's tree is **headed by the impl's own trait**, the wrapper the programmer wrote, so
+the failure reads `CanHandleApiSend → CanHandleApi → …` and points at their code rather than
+dropping the wrapper. The headline's code turns on the wrapper's **fingerprint**: a wrapper that is itself a
 CGP consumer trait (has a consumer blanket routing to a provider) takes `[CGP-E001]`, while a plain
 wrapper such as `CanHandleApiSend`, with only a concrete impl, takes `[CGP-E003]`. The wrapper is a
 distinct trait from the CGP supertrait it reduces to, so its error is not a re-report of the
 `check_components!` entry for that supertrait; when the two share their root cause, they coalesce
 into one block at flush, as [the transformed diagnostic](typed-resolution-output.md) describes. This
-anchor is tried *before* the wrapper-chain and use-site ones, and it fires only for an impl on a
-**context**: a struct or enum the checked crate defines, or one from another crate that carries
-`DelegateComponent` wiring of its own (`is_context_adt`), as a context a library exports does. An
-impl on any other foreign type or on a provider struct carries no consumer supertrait on a context
-and is skipped. So is a `check_components!` check impl, whose generated trait carries
-`CanUseComponent` as its supertrait: it belongs to the check-entry anchor, and heading a tree with
-it would present the generated `__CanUseApp` as a trait the programmer wrote. No fixture depends on
-the skip: the check entries the check-entry anchor declines, ones checked at unit parameters, are
-reported as a [structural mistake](driver.md#reshaping-a-structural-mistake) before any anchor runs.
+anchor is tried *before* the wrapper-chain and use-site ones, and its supertrait recovery fires only
+for an impl on a **context**: a struct or enum the checked crate defines, or one from another crate
+that carries `DelegateComponent` wiring of its own (`is_context_adt`), as a context a library
+exports does. An impl on any other foreign type or on a provider struct carries no consumer
+supertrait on a context, so only its own `where` bounds are read. A `check_components!` check impl
+is skipped altogether, since its generated trait carries `CanUseComponent` as its supertrait: it
+belongs to the check-entry anchor, and heading a tree with it would present the generated
+`__CanUseApp` as a trait the programmer wrote. No fixture depends on the skip: the check entries the
+check-entry anchor declines, ones checked at unit parameters, are reported as a
+[structural mistake](driver.md#reshaping-a-structural-mistake) before any anchor runs.
 
 **From a foreign wrapper chain.** The routing glue can put the failure one level further out: a
 hand-written `impl Trait for Foreign` block whose `Self` is a foreign type holding the context,
