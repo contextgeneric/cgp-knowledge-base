@@ -331,7 +331,12 @@ without parameters, so the walk descends the forwarding into the table and ends 
 entry, as a check of the component does
 ([`direct_delegation_missing_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/direct_delegation_missing_key.rs)).
 The result is the consumer class `[CGP-E001]`, and a later report of the same failure, the check's
-or the projection's, de-duplicates against it. It is gated to `E0277`.
+or the projection's, de-duplicates against it. It is gated to `E0277`, takes only an error whose
+caret holds the forwarding bound
+([`unrelated_error_beside_forwarding_entry`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/unrelated_error_beside_forwarding_entry.rs)),
+and declines an entry for a component with type parameters, whose consumer obligation needs values
+the entry does not name
+([`generic_component_forwarding_missing_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/generic_component_forwarding_missing_key.rs)).
 
 ## Tests
 
