@@ -1012,9 +1012,9 @@ at (`CGP-E110` onward).
   `` add an entry for `<key>` to `<T>` ``.
 - **`CGP-E115`: not a provider (leaf).** `` `<X>` is not a provider of `<T>` ``: the chain bottoms
   out on a type wired where a *provider* was expected that does not implement the provider trait at
-  all. The mistake is putting a non-provider (often a request or value type) into a provider slot
-  (e.g. `UseBasicAuth<QueryBalanceRequest>` with the endpoint handler omitted, so the request type
-  sits where an `ApiHandler` belongs. Distinct from `CGP-E114`: the owner is not a table missing one
+  all. The mistake is putting a non-provider (often a request or value type) into a provider slot,
+  for example `UseBasicAuth<QueryBalanceRequest>` with the endpoint handler omitted, so the request
+  type sits where an `ApiHandler` belongs. Distinct from `CGP-E114`: the owner is not a table missing one
   entry, so the fix is to use an actual provider (wrap it in the handler), not to add a wiring
   entry. When an adapter type wraps the wired type into a provider of the trait, a `help` names it
   in place of the wired type, ``wire `WithProvider<ReadDisplayName>` in place of `ReadDisplayName` ``,

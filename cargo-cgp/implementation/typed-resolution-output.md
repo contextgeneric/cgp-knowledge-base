@@ -314,8 +314,8 @@ The `root cause:` lead is worded by *why* the leaf is unmet, in one shape per ki
   ([`builder_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/builder_missing_field.rs),
   [`auto_dispatch_missing_derive`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/auto_dispatch_missing_derive.rs)).
 
-A field-type mismatch is a ninth leaf, worded the same way from its `[CGP-E004]` headline. Any
-other leaf simply restates its bound, as in
+A field-type mismatch is worded the same way, from its `[CGP-E004]` headline. Any other leaf
+simply restates its bound, as in
 ``root cause: the trait bound `f64: Eq` is not satisfied``, module qualifiers stripped.
 
 **A lead is dropped only where a mismatch headline or a kept rustc headline already states that very

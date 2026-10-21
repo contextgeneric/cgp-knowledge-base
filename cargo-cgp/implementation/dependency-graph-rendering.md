@@ -106,9 +106,10 @@ That invariant is held **by the type**, not by discipline.
 is a cause set over a private `Vec<Cause>` whose every constructor normalizes (`from_sub_chains`
 groups the walk's `(leaf, path)` sub-chains, `union` merges several failures' sets, `headed_by`
 prefixes a hop, and collecting folds ready-made causes), with reads exposed through `Deref` to
-`[Cause]`. There is no way to build one holding a leaf twice, so the five places a `Resolved` is
-assembled (the walk's own `compute_leaves`, the impl-site and wrapper-chain anchors, the
-by-component use-site anchor, and the emitter's coalesced block) get it for free.
+`[Cause]`. There is no way to build one holding a leaf twice, so every place a `Resolved` is
+assembled gets it for free: the walk's own `compute_leaves`, the impl-site and wrapper-chain
+anchors, the by-component use-site anchor, the unbounded-parameter call site, and the emitter's
+coalesced block.
 
 It is worth making structural because getting it wrong fails in two directions, and a site that
 re-established it by hand could fall into either. **Merging nothing** states one mistake once per
@@ -439,8 +440,8 @@ compiler, and the end-to-end behavior is pinned by the UI suite.
 - [`crates/cargo-cgp-error-processing/src/diagnosis/resolved.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/resolved.rs):
   `Cause { leaf, paths }`, and the `Causes` set that holds the one-cause-per-distinct-leaf invariant
   by construction, so every cause-list builder gets it for free: the walk's `compute_leaves`, the
-  `impl_site` and `wrapper_chain` anchors, the by-component `use_site` anchor, and the emitter's
-  coalesced block.
+  `impl_site` and `wrapper_chain` anchors, the by-component `use_site` anchor, the `unbounded` call
+  site, and the emitter's coalesced block.
 - [`crates/cargo-cgp-error-processing/src/diagnosis/wording/note.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/wording/note.rs):
   `cause_notes`, folding every cause's paths into one graph and wording the heading over it.
 - [`crates/cargo-cgp-error-processing/src/diagnosis/coalesce.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/coalesce.rs):
