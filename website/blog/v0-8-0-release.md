@@ -15,6 +15,12 @@ and optional agent support, then develops namespace wiring and migration from v0
 
 ## What it covers
 
+The opening connects the release to the author's aim of making CGP easier to debug, learn, and
+follow as an application grows. The narrative uses personal motivation, concrete situations, and
+observations about the code to introduce features. Paragraphs may develop toward their conclusions;
+the author explicitly requested natural prose rather than mandatory point-first openings for this
+post. The rest of the point-first-writing guidance still applies.
+
 The cargo-cgp section restores the author's account of verbose diagnostics as a long-standing
 adoption barrier: a newcomer could need advanced Rust and CGP implementation knowledge to diagnose
 a simple mistake. It names the accompanying v0.1.0 release and shows the readable diagnostic
@@ -28,8 +34,9 @@ testing stated and links to installation and expansion documentation.
 
 The documentation section explains the earlier reliance on blog posts, the missing reference
 material, and the author's limited time for a side project. It preserves his estimate that writing
-comparable documentation by hand would likely take months of full-time work, then explains why
-agent assistance, largely Claude Code, made the work practical. It routes to Reference, Concepts,
+comparable documentation by hand would likely take months of full-time work, then explicitly states
+that agents, primarily Claude Code, wrote much of the new material under the author's direction.
+It routes to Reference, Concepts,
 Comparisons, and Projects before describing the iterative knowledge-base process and review limits. It links the public methodology, disclosure, and
 knowledge-base current-state pages. The skill is optional learning and debugging assistance rather
 than a proficiency guarantee. The quality concern and feedback invitation precede the process explanation, so the explanation
@@ -42,8 +49,10 @@ namespace section opens with the earlier wiring burden and the limits of provide
 states its practical payoff and links for readers who want to skip to the syntax or migration. Its social-media example progresses from coarse manager traits through
 isolated dependencies and a higher-order filtering provider to nine flat wiring entries. Aggregate
 providers group the implementations, but array keys still repeat every component name on the
-application. Prefix registrations and namespace delegation then let production, test, and
-hypothetical local configurations select whole groups with visible one-entry differences.
+application. The namespace reveal shows the short application table before explaining the prefix
+registrations that enable it. The namespace opt-in is explained beside the short table, and the
+completed configuration is followed by a lookup trace. Production,
+test, and hypothetical local configurations select whole groups with visible one-entry differences.
 
 The main example wires environmental contexts with self-targeted components. It explains that
 successive stages replace earlier definitions, labels database operations as illustrative fragments,
@@ -59,9 +68,11 @@ check from the components needed by each intermediate stage, and introduces the 
 `FilterSpamMessage` wrapper before using it in the wiring. Namespace grouping removes repeated
 routing entries; it does not remove individual provider bindings or component checks.
 
-The defaults section contrasts fixed namespace choices with interchangeable provider bundles. It
-shows `#[default_impl]` and its equivalent namespace-body entry as alternatives, then binds a
-composite creator in the body. It states non-overridability and ownership limits beside the benefit:
+The defaults section introduces gradual adoption in a small application before developing the
+syntax, contrasting fixed namespace choices with interchangeable provider bundles. It shows
+`#[default_impl]` and its equivalent namespace-body entry as alternatives, then binds a
+composite creator in the body, where the configuration selects the generic wrapper's inner provider.
+It states non-overridability and ownership limits beside the benefit:
 a prefixed path registration requires the namespace's crate, whereas an unprefixed local marker has
 different ownership rules. Structural prefixes belong in a base namespace and fixed choices in a
 configuration namespace, leaving varying paths unbound.
@@ -71,10 +82,11 @@ cannot supply an expanded key list to `delegate_components!`, and why the preset
 macro-composition approaches were insufficient. This background sits before the namespace solution;
 the migration section links back to it rather than repeating the history.
 
-Other improvements cover `open`, table iteration, implementation-only generics, shape macros,
-fieldless variants, and handler-macro fixes. Migration names all removed preset constructs, works a
-user-group conversion with its filter dependency and component checks, and covers the `use_type`
-separator, direct macro-crate renames, changed validation, possible unused imports and macro-name
+Other improvements introduce `open`, table iteration, implementation-only generics, shape macros,
+and fieldless variants through concrete uses, then cover handler-macro fixes. Migration names all
+removed preset constructs, works a user-group conversion with its filter dependency and component
+checks, and covers the `use_type` separator, direct macro-crate renames, changed validation, possible
+unused imports and macro-name
 ambiguity, and error-backend behavior. Its required component registrations are stated before the
 migrated context, and the default-provider example explicitly updates the earlier implementation.
 The closing invites a small wiring refactor or the Quickstart
@@ -127,6 +139,13 @@ mismatches in unchanged fixtures; running the compile-fail suite from an archive
 unchanged HEAD reproduces the same 42 failures. The revision does not re-bless those unrelated
 snapshots.
 
+The narrative revision preserves all 37 fenced listings verbatim, including the diagnostics and
+historical input, and preserves every heading and anchor. The namespace application table moves
+ahead of its prefix-registration listings. A comparison of the listing multisets verifies that
+the move neither drops nor duplicates a listing. The production site build and the targeted
+`cargo +1.98.1 test --test blog_tests` check pass; that target compiles the wiring stages and passes
+both the repaired-rectangle runtime test and the missing-height compile-fail test.
+
 ## Original-draft preservation
 
 The preservation audit compares the revision with the original draft at website commit
@@ -166,9 +185,14 @@ explicitly a layout-dependent estimate rather than a measured PDF length.
 ## Maintaining it
 
 Keep cargo-cgp and the documentation before the longer namespace explanation, as the author
-requested for readers who may skip that walkthrough. Paragraph openings state their points before
-examples or qualifications, and each paragraph develops one point. Keep independent migration
-changes in separate paragraphs so readers can scan by construct. Within the namespace section, preserve the
+requested for readers who may skip that walkthrough. Preserve the natural narrative style requested
+for this post: paragraphs may begin with a situation, an observation, or a personal motivation and
+develop toward the point. Do not impose point-first openings or a repeated problem-and-solution
+template. Follow the remaining point-first-writing guidance on clear subjects, connected reasoning,
+paragraph focus, accuracy, and plain language. Vary transitions around code listings and explain
+their consequences without repeatedly announcing the next step or restating the syntax. Keep
+independent migration changes in separate
+paragraphs so readers can scan by construct. Within the namespace section, preserve the
 argument from useful provider separation to its wiring cost and then to namespace organization.
 Preserve the author's background on the diagnostic, documentation, and wiring challenges,
 including the time constraint and earlier grouping experiments. Preserve all original substantive
