@@ -54,11 +54,10 @@ deliberate and should stay, but a reader who stops early copies the wrong form, 
 plainly that the second form is the idiom. *Website repo,
 `docs/tutorials/area-calculation/static-dispatch.md`.*
 
-**The v0.8.0 release post is an unfinished draft** that stops without a conclusion, covers one feature of
-several, writes its prefix attributes in forms that do not compile, carries a placeholder date, and
-opens by claiming a release that has not happened. It must be finished before v0.8.0 ships. *Website
-repo, `blog/2026-05-10-v0.8.0-release.md`; the material and the four mechanical items are listed in
-[blog/v0-8-0-release.md](blog/v0-8-0-release.md), and the shape is now specified in
+**The v0.8.0 release post awaits author review and coordinated publication.** Its content and
+verification are recorded in [blog/v0-8-0-release.md](blog/v0-8-0-release.md). The remaining steps
+are the publication date, checks against the released tool, site-wide release pointers and pins,
+and discussion links after submission. *Website repo; the publication requirements are in
 [writing-guides/release-announcement.md](writing-guides/release-announcement.md).*
 
 ## New pages
@@ -106,9 +105,6 @@ recently updated, and linking the public into this knowledge base. The repositor
 already carries the settled tag line and the curated five features and is visible only on GitHub. This is
 a first-contact surface, the fix is small, and it is not a website task, which is the only reason nobody
 has owned it. *`cgp` repo.*
-
-**The release-announcement guide is written but untested**, in the sense that no post has yet been
-written from it; the v0.8.0 draft is the first opportunity and will show whether the spec holds.
 
 **A substantial blog post sits unfinished on a branch.** The `incoherent-rust` draft is the only piece of
 CGP writing aimed at the language-design reader, and it is the one whose value decays, since it answers a

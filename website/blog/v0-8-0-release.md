@@ -1,169 +1,189 @@
-# CGP v0.8.0 - Grouping components with namespaces and paths
+# CGP v0.8.0 - cargo-cgp, new documentation, and namespaces
 
-The **in-preparation announcement for the unreleased v0.8.0**, and the only forward-looking page on
-the site. It builds a strong case for why flat wiring tables stop scaling and why the preset system
-failed to fix it, then introduces namespaces and default implementations and stops without a
-conclusion. Its first namespace snippet still shows an attribute name that was renamed during
-development.
+The release-branch announcement opens with cargo-cgp diagnostics and the expanded documentation
+and optional agent support, then develops namespace wiring and migration from v0.7.0.
 
 - **URL**: <https://contextgeneric.dev/blog/v0.8.0-release>
 - **Source**: [blog/2026-05-10-v0.8.0-release.md](https://github.com/contextgeneric/contextgeneric.dev/blob/v0.8.0/blog/2026-05-10-v0.8.0-release.md),
-  on the website's `v0.8.0` branch; the post is not on `main`
-- **Dated**: 10 May 2026, tagged `release`; the date is a placeholder and must be set to the real
-  release date before v0.8.0 ships
+  on the website's `v0.8.0` branch
+- **Dated**: 10 May 2026 is the placeholder filename date; set the actual publication date at release
+- **Tags**: `release`, `deepdive`
+- **Status**: **Draft**, awaiting the author's review and coordinated publication
+- **How it was made**: revision of a human-written draft by an agent; the footnote links the
+  disclosure's blog-post section
 - **Documents**: [releases/v0-8-0.md](../../releases/v0-8-0.md)
-- **Status**: **Draft**, for an unreleased version
-
-## Why this one is different
-
-Every other post on the site is a finished artifact whose only defect is age. This one is neither
-finished nor about a shipped release.
-
-It was **drafted as the v0.7.1 announcement**, when namespaces were expected to be a minor addition.
-The work grew (namespaces required a new path system, the `open` statement, per-type defaults, and
-ultimately the removal of the entire preset mechanism), so the release was renumbered to **v0.8.0**,
-which is still in development. There is no v0.7.1 tag and there will not be one; the
-last shipped release is [v0.7.0](../../releases/v0-7-0.md). Anything in the base that attributes
-namespaces to "v0.7.1" is wrong.
-
-It is also unfinished. The text stops after a section on the caveats of default implementations,
-with no conclusion and no migration guide, and an empty "Introducing cargo-cgp" heading sits at the
-top of the body. It carries at least one uncorrected typo ("humen eyes"), and its opening sentence
-claims the release has already happened.
-
-The rule in [../AGENTS.md](../AGENTS.md) against rewriting published posts therefore does **not**
-apply here. A draft for an unreleased version is live work, and editing it is the expected activity
-rather than a violation; finishing it is part of preparing the release.
 
 ## What it covers
 
-The post is at its best in its motivation, which is the fullest published argument for CGP's
-scalability problem. It builds a social-media backend with coarse `CanManageUser` and `CanManagePost`
-traits, adds content-filtering dependencies, and then splits the coarse traits into fine-grained
-per-operation ones. It shows that fine-grained traits let a dependency like `CanCensorUsername` reach
-only the one provider that needs it, and that higher-order providers can lift the filtering out into
-`FilterCensoredUsername<CreateUserWithPostgres>` so the database provider does nothing but build SQL.
-Then it counts the cost: nine wiring entries for a deliberately minimal application, and "dozens if
-not hundreds" for a real one, which to an untrained reader is noise that obscures what the context
-actually does.
+The cargo-cgp section restores the author's account of verbose diagnostics as a long-standing
+adoption barrier: a newcomer could need advanced Rust and CGP implementation knowledge to diagnose
+a simple mistake. It names the accompanying v0.1.0 release and shows the readable diagnostic
+before an expandable raw-compiler comparison, both captured from the exact missing-height program.
+It identifies the example as `src/lib.rs` in a package using CGP v0.8.0, specifies that the checker
+runs in that project, then repairs the field and verifies the check. It uses the canonical recognition qualification
+and distinguishes the optional tool's pinned nightly from ordinary stable-Rust builds.
+The compiler-API explanation follows the diagnostic demonstration, before installation instructions.
+The installation sequence includes `cargo install cargo-cgp` and `cargo cgp setup`, with Linux-only
+testing stated and links to installation and expansion documentation.
 
-It then explains why the obvious fixes fail. Array keys group entries but cannot *name* a group. Rust
-cannot express "implement `DelegateComponent` for this list of types," and a macro expanding to a key
-list will not work because macros expand lazily, so `delegate_components!` would see the unexpanded
-call. And presets, the previous answer, support only single inheritance into a context because of
-coherence, while their macro-based multiple inheritance is fragile precisely because macros cannot see
-types.
+The documentation section explains the earlier reliance on blog posts, the missing reference
+material, and the author's limited time for a side project. It preserves his estimate that writing
+comparable documentation by hand would likely take months of full-time work, then explains why
+agent assistance, largely Claude Code, made the work practical. It routes to Reference, Concepts,
+Comparisons, and Projects before describing the iterative knowledge-base process and review limits. It links the public methodology, disclosure, and
+knowledge-base current-state pages. The skill is optional learning and debugging assistance rather
+than a proficiency guarantee. The quality concern and feedback invitation precede the process explanation, so the explanation
+answers a question the reader has already encountered. The post has no direct knowledge-base
+repository links.
 
-The namespace introduction that follows shows components tagged with a hierarchical path prefix, a
-context opting in with a `namespace` statement, and `@`-path keys bulk-delegating a whole group to an
-aggregate provider, with the payoff that a two-entry wiring for `ProductionApp`, `TestApp`, and
-`LocalApp` makes the differences between them readable at a glance. A section on default
-implementations then defines a custom namespace, `DefaultAppComponents`, that inherits
-`DefaultNamespace`, binds providers into it with `#[default_impl]` and with a `cgp_namespace!` block,
-and wires a `ProductionApp` that names only its content filters. It closes with the caveats: a default
-cannot be opted out of without leaving the namespace, and defaults suit a single-crate application.
+The short tooling and documentation sections come first so readers who skip the long namespace
+walkthrough still see those improvements. Namespaces remain the main technical deep dive. The
+namespace section opens with the earlier wiring burden and the limits of provider bundles, then
+states its practical payoff and links for readers who want to skip to the syntax or migration. Its social-media example progresses from coarse manager traits through
+isolated dependencies and a higher-order filtering provider to nine flat wiring entries. Aggregate
+providers group the implementations, but array keys still repeat every component name on the
+application. Prefix registrations and namespace delegation then let production, test, and
+hypothetical local configurations select whole groups with visible one-entry differences.
 
-The post's code follows the `web-app` crate of cgp-examples, which the post does not link. Where each
-section's code lives in that crate is recorded in its
-[project section](../../projects/cgp-examples/web-app/README.md#where-the-blog-posts-code-lives).
+The main example wires environmental contexts with self-targeted components. It explains that
+successive stages replace earlier definitions, labels database operations as illustrative fragments,
+and links the public web-app walkthrough and source. It explains that grouping methods is a design
+choice rather than a restriction on what a component can contain.
+The diagnostic example uses a value context, `Rectangle`; the namespace walkthrough explains the
+subsequent shift to an application context.
+
+The namespace section traces a component lookup through its path and aggregate provider. It explains
+why path-keyed intermediate bundles join the namespace themselves, while bare-key leaf bundles do
+not, and shows a standalone check of the concrete context. It distinguishes that final nine-component
+check from the components needed by each intermediate stage, and introduces the analogous
+`FilterSpamMessage` wrapper before using it in the wiring. Namespace grouping removes repeated
+routing entries; it does not remove individual provider bindings or component checks.
+
+The defaults section contrasts fixed namespace choices with interchangeable provider bundles. It
+shows `#[default_impl]` and its equivalent namespace-body entry as alternatives, then binds a
+composite creator in the body. It states non-overridability and ownership limits beside the benefit:
+a prefixed path registration requires the namespace's crate, whereas an unprefixed local marker has
+different ownership rules. Structural prefixes belong in a base namespace and fixed choices in a
+configuration namespace, leaving varying paths unbound.
+
+The motivation also preserves the earlier grouping attempts. It explains why a nested macro call
+cannot supply an expanded key list to `delegate_components!`, and why the preset inheritance and
+macro-composition approaches were insufficient. This background sits before the namespace solution;
+the migration section links back to it rather than repeating the history.
+
+Other improvements cover `open`, table iteration, implementation-only generics, shape macros,
+fieldless variants, and handler-macro fixes. Migration names all removed preset constructs, works a
+user-group conversion with its filter dependency and component checks, and covers the `use_type`
+separator, direct macro-crate renames, changed validation, possible unused imports and macro-name
+ambiguity, and error-backend behavior. Its required component registrations are stated before the
+migrated context, and the default-provider example explicitly updates the earlier implementation.
+The closing invites a small wiring refactor or the Quickstart
+and asks for specific diagnostic and documentation feedback without promising a roadmap.
 
 ## How it relates to the knowledge base
 
-The feature is [namespaces](../../cgp/concepts/namespaces.md), documented per construct as
-[`cgp_namespace!`](../../cgp/reference/macros/cgp_namespace.md),
-[`RedirectLookup`](../../cgp/reference/providers/redirect_lookup.md),
-[`Path!`](../../cgp/reference/macros/path.md), and
-[`DefaultNamespace`](../../cgp/reference/traits/default_namespace.md), with the `namespace` and
-`@`-path statements in
-[`delegate_components!`](../../cgp/reference/macros/delegate_components.md). The prescriptive
-counterpart, how to actually refactor a growing table, is
-[namespaces-and-prefixes](../../cgp/guides/namespaces-and-prefixes.md), which is the document to write
-from. The release as a whole is tracked in [releases/v0-8-0.md](../../releases/v0-8-0.md), which lists
-everything else v0.8.0 carries that this draft does not yet mention.
+The social-media progression comes from [the worked example](../../examples/social-media-app.md)
+and the [web-app project record](../../projects/cgp-examples/web-app/README.md). Provider composition
+and bundle behavior are owned by [higher-order providers](../../cgp/concepts/higher-order-providers.md)
+and [aggregate providers](../../cgp/concepts/aggregate-providers.md).
 
-The running example is essentially the
-[social media app example](../../examples/social-media-app.md), which follows the same arc from coarse
-manager traits through fine-grained traits and higher-order providers to namespace-grouped wiring, in
-current syntax. The intermediate steps map to
-[impl-side dependencies](../../cgp/concepts/impl-side-dependencies.md),
-[higher-order providers](../../cgp/concepts/higher-order-providers.md), and
-[aggregate providers](../../cgp/concepts/aggregate-providers.md).
+The namespace semantics come from [namespaces](../../cgp/concepts/namespaces.md), the
+[namespaces-and-prefixes guide](../../cgp/guides/namespaces-and-prefixes.md), and the references for
+[`prefix`](../../cgp/reference/attributes/prefix.md),
+[`default_impl`](../../cgp/reference/attributes/default_impl.md),
+[`cgp_namespace!`](../../cgp/reference/macros/cgp_namespace.md), and
+[`delegate_components!`](../../cgp/reference/macros/delegate_components.md). The release inventory
+and removals belong to [v0.8.0](../../releases/v0-8-0.md) and the
+[removal ledger](../../releases/README.md#the-removal-ledger).
 
-For the communication strategy, the motivation section is a strong asset. The "nine entries and
-climbing" demonstration is a real, self-inflicted pain narrated honestly, which is what
-[message.md](../../communication-strategy/message.md#the-problems-cgp-removes) asks for; and admitting that
-presets were tried and did not work is exactly the candour
-[message.md](../../communication-strategy/message.md#the-objections-readers-bring) argues buys credibility. It also speaks
-directly to the "verbose / over-engineered" reflex recorded in
-[evidence.md](../../communication-strategy/evidence.md): a post that
-concedes the verbosity and then fixes it is better positioned than one that denies it.
+Tool scope and installation come from [the cargo-cgp usage reference](../../cargo-cgp/reference/usage.md)
+and [installation](../../cargo-cgp/reference/installation.md). Public framing follows the
+[release-announcement guide](../writing-guides/release-announcement.md),
+[author voice](../../communication-strategy/voice-and-register.md), and
+[AI disclosure policy](../../communication-strategy/ai-disclosure.md).
 
-## Where it diverges from the feature as built
+## Verification and deliberate simplifications
 
-The draft's prefix attributes do not compile, and its prose disagrees with its own code in two
-places. Its contexts, aggregate providers, and default-implementation code use current syntax, and
-the namespace and default-implementation snippets match the `web-app` crate apart from the prefixes.
+The website's
+[blog example file](https://github.com/contextgeneric/contextgeneric.dev/blob/main/example-code/tests/blog/v0_8_0_release.rs)
+compiles the initial database-only managers, the filter-dependent coarse and fine-grained configurations, flat and hierarchical namespace routing, fixed
+defaults and their body-entry alternative, and the migrated user group. It supplies page-elided domain
+types, methods, filter providers, and database bodies, with explicit checks on concrete contexts.
+The local SQLite variant is hypothetical; its omitted providers are supplied as stubs for compilation.
+These checks verify wiring, not a database implementation or a complete web service.
 
-- **The prefix attribute is written without its namespace.** The first snippet shows
-  `#[namespace(@app.core.user)]`, a name the attribute had during development, while the text
-  beside it calls the attribute `#[prefix]`; the later snippets write `#[prefix(@app.core.user)]`.
-  Neither compiles: a probe got ``cannot find attribute `namespace` in this scope`` for the first
-  and ``unexpected end of input, expected `in` `` for the second. The current form names the target
-  namespace, `#[prefix(@app.core.user in DefaultNamespace)]`; see
-  [`#[prefix]`](../../cgp/reference/attributes/prefix.md).
-- **The content-filter prefix is given two ways.** The text assigns `@app.core.content_filter` to
-  `UsernameCensor` and `SpamMessageDetector`, but every wiring snippet routes them under
-  `@app.extra.content_filter`, which is the path the crate uses.
-- **The draft does not mention the `for` statement**, which loops over the entries of another lookup
-  table (`for <Key, Value> in Table { … }`) to wire them into the context, and is part of the shipped
-  namespace feature; see [`delegate_components!`](../../cgp/reference/macros/delegate_components.md).
-- **It does not mention that presets are removed.** v0.8.0 deletes `cgp_preset!`,
-  `#[cgp::re_export_imports]`, and `#[cgp_inherit]` outright, which is the release's largest breaking
-  change and needs a migration guide the draft does not have.
-- **It covers only one of the release's features.** [releases/v0-8-0.md](../../releases/v0-8-0.md)
-  lists the rest (the `open` statement, `#[impl_generics]`, the `#[use_type]` separator change from
-  `::` to `.`, the adoption of [`cargo-cgp`](../../cargo-cgp/README.md), and the move of all
-  documentation into this knowledge base), none of which appear here.
-- **The wiring examples omit checking.** A context wired this way should carry a
-  [`check_components!`](../../cgp/reference/macros/check_components.md) assertion, and namespaces
-  introduce their own failure modes; see
-  [unregistered-namespace-path](../../cgp/errors/checks/unregistered-namespace-path.md),
-  [namespace-override-conflict](../../cgp/errors/wiring/namespace-override-conflict.md), and
-  [namespace-inheritance-cycle](../../cgp/errors/wiring/namespace-inheritance-cycle.md).
-- **`delegate_and_check_components!` is used on `ProductionApp`**, which is correct for that simple
-  case, but the later aggregate providers (`PostgresUserComponents`) are correctly wired with plain
-  `delegate_components!`, a distinction the draft never explains and that
-  [aggregate providers](../../cgp/concepts/aggregate-providers.md) covers.
-- **One copy-paste error in the source:** the `TestApp` section defines the struct `TestApp` but then
-  writes `delegate_components! { ProductionApp { ... } }`, wiring the wrong context. Neither struct in
-  that section derives `HasField`, which the providers' implicit `database` arguments need, though
-  the earlier `ProductionApp` does.
+The missing-height program is a
+[compile-fail fixture](https://github.com/contextgeneric/contextgeneric.dev/blob/main/example-code/tests/compile_fail/blog/v0_8_0_missing_height.rs).
+Both quoted diagnostic bodies were captured from that program in a temporary library target as
+`src/lib.rs`, using cargo with Rust 1.98.1 and the local source-built cargo-cgp driver. The repaired
+program passes cargo-cgp, and a runtime test asserts that a three-by-four rectangle has area twelve. The
+historical preset and old attribute-separator listings are explicitly v0.7.0 input, not current
+examples to compile against v0.8.0. The proposed `???` keys and nested helper-macro form are labeled
+pseudocode in text fences, not presented as accepted Rust syntax.
+
+The production site build passes without broken links or anchors. The blog checks and the selected
+positive example targets pass with Rust 1.98.1. The full example suite has 42 diagnostic snapshot
+mismatches in unchanged fixtures; running the compile-fail suite from an archive of the website's
+unchanged HEAD reproduces the same 42 failures. The revision does not re-bless those unrelated
+snapshots.
+
+## Original-draft preservation
+
+The preservation audit compares the revision with the original draft at website commit
+`080c125db58c`. It checks the explanations and all 29 original Rust listings, not just the section
+headings. The original material remains represented as follows:
+
+| Original material | Where the revision preserves it |
+| --- | --- |
+| Difficult diagnostics and the Rust/CGP knowledge needed to read them | The cargo-cgp motivation, exact missing-height example, diagnostic comparison, and compiler-API explanation |
+| Documentation gaps, reliance on blog posts, limited personal time, and months of manual work | The documentation introduction, retaining the author's capacity argument |
+| Claude Code, iterative planning and revision, reader skepticism, and a request for quality feedback | The documentation process and invitation to assess the actual explanations |
+| Word/page-count placeholders | Measured documentation scale: about 330,000 prose words across more than 340 pages, plus an explicitly qualified printed-page equivalent |
+| Further methodology writing | The author's interest in a dedicated follow-up, alongside the existing process page |
+| All six documentation/agent resources and the skill's learning and diagnostic roles | The expanded resource list and skill subsection |
+| Complete database-only managers, alternative SQLite managers, and initial two-entry wiring | The restored first stage, compiled separately in the blog example file |
+| Content filters, cloud/AI production implementations, deterministic tests, and eight wiring entries | The dependency-growth example and its corrected production/test tables |
+| Accumulating dependencies, ambiguous domain grouping, and limiting destructive operations in generic code | The fine-grained-trait motivation, including the profile-picture, user-post, and deletion examples |
+| Fine-grained traits, filtering wrappers, SQL insert separation, and SQLite composition | The per-operation and higher-order-provider examples |
+| Growth from four to nine entries and potentially much larger tables | The wiring-cost discussion and explicit user/post/filter bundles |
+| Array keys, desired group keys, proposed helper macros, and their expansion/export difficulties | The bundle example, both restored pseudocode listings, and the earlier-approaches discussion |
+| Preset history, single inheritance, macro-based composition, and old inheritance/local-table syntax | The motivation before namespaces and the explicitly historical migration example |
+| Prefix registration, opt-in namespace selection, parent paths, and production/test/local differences | The namespace walkthrough, including different entry orders making flat tables harder to compare |
+| Default-provider flexibility versus an intentionally fixed early implementation | The defaults introduction, including the logging-backed core variant |
+| Namespace inheritance, default attributes and equivalent body entries, composite providers, and filter customization | The defaults examples; `ContentFilterComponents` explicitly aliases the earlier AI filter bundle |
+| Ownership constraints, inability to opt out of one default, single-crate trade-offs, and gradual migration toward multiple crates | The defaults restrictions and gradual-adoption bridge |
+
+The preserved content uses corrected `prefix` syntax and consistent paths, fixes the wrong `TestApp`
+target and missing field derives, and quotes current diagnostics instead of stale codes and carets.
+It qualifies claims that diagnostics are solved, broad macro impossibility claims, and the scope of
+single-crate trade-offs. Those corrections preserve the argument without teaching invalid behavior.
+
+The scale estimate counts regular Markdown/MDX files under the website's `docs/`, excluding symlinked
+skill files, front matter, and fenced code. At the audit there were 343 files and approximately
+330,600 whitespace-separated prose words. The printed equivalent assumes 300 words per page and is
+explicitly a layout-dependent estimate rather than a measured PDF length.
 
 ## Maintaining it
 
-This post has to be finished before v0.8.0 ships, and the material for it already exists. Write the
-namespace sections from [namespaces](../../cgp/concepts/namespaces.md) and the
-[namespaces-and-prefixes guide](../../cgp/guides/namespaces-and-prefixes.md); take the worked
-progression from the [social media app example](../../examples/social-media-app.md); take the rest of
-the release's contents and its breaking changes from
-[releases/v0-8-0.md](../../releases/v0-8-0.md); and keep the motivation section as it stands, since it
-is the best part of the draft and needs no change.
+Keep cargo-cgp and the documentation before the longer namespace explanation, as the author
+requested for readers who may skip that walkthrough. Paragraph openings state their points before
+examples or qualifications, and each paragraph develops one point. Keep independent migration
+changes in separate paragraphs so readers can scan by construct. Within the namespace section, preserve the
+argument from useful provider separation to its wiring cost and then to namespace organization.
+Preserve the author's background on the diagnostic, documentation, and wiring challenges,
+including the time constraint and earlier grouping experiments. Preserve all original substantive
+content and examples when reorganizing; use the audit above to check coverage. Place that history
+where it motivates each improvement, rather than compressing it into a feature summary. Keep migration
+focused on the upgrade, the defaults restrictions beside their examples, and agent authorship
+separate from optional agent support. Keep the closing practical and personal, with honest remaining costs and a bounded request for feedback.
 
-The draft's *AI-generated documentation and skill* section links "knowledge base" to a placeholder
-`#`. The natural target is the site's [knowledge-base pages](../site-structure.md#knowledge-base),
-and its promise of a later post on the methodology is now partly met by the process page there. Both
-are the author's to settle, since the section is in his voice; its word and page counts are also
-still placeholders.
+The renamed headings retain explicit IDs for existing links from the web-app project pages:
+`an-example-social-media-web-app`, `fine-grained-traits`,
+`introducing-cgp-namespaces-and-paths`, and `default-implementations`. Preserve those IDs or update
+all incoming links in the same change.
 
-Two mechanical items go with it. The **placeholder date** in the filename must become the real
-release date, which also sets its position in the blog index (the explicit `slug` fixes the URL).
-The **opening sentence** claims the release has already happened and must not go out before it has.
-The site-wide pointers are already in place on the website's `v0.8.0` branch: its **announcement
-bar** in `docusaurus.config.ts` links this post (the live site's still promotes v0.7.0), and its
-[Introduction page](../site-structure.md) drops the live page's advice that posts from v0.7.0
-onward are the most current material; see [site-structure.md](../site-structure.md).
-
-The [launch-post playbook](../../communication-strategy/formats.md) governs the finished result, and
-because this is a major release with breaking changes, its migration guide should follow the shape the
-[v0.7.0 post](v0-7-0-release.md) used: each change stated with its before and after, and a plain
-statement of what a reader must do.
+The publication work remains separate from revision. The author reads the post before publication;
+the filename gets the actual release date, the fixed slug stays unchanged, and the site branch
+publishes only with both official releases. Re-run the quoted diagnostics against the released tool,
+verify the announcement bar and version pins, and add discussion links after submission. Release
+wording already describes the official versions as shipped, as the branch rules require.

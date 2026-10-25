@@ -35,27 +35,32 @@ immediately what the release is about. Orientation for the newcomer is then **on
 never a re-introduction to the paradigm. Migration detail for the existing user is a clearly-marked
 section they can jump to. Neither reader is asked to wade through the other's material.
 
-## Lead with one change
+## Give the release a clear lead
 
-**A release post is about one thing.** Even when a release contains a dozen changes, the post leads with
-the single most important one and treats the rest as a list at the end. This is the site's existing and
-correct habit (the v0.8.0 draft is titled *"Grouping components with namespaces and paths"* and spends
-its length on that one feature), and it is what makes a release post readable rather than a rendered
-changelog.
+A release post needs a clear argument, with a concrete problem that makes its main feature worth
+reading about. That does not require placing the longest explanation first. Short announcements
+about tooling and documentation can give readers useful news before a technical walkthrough they
+may skip. The v0.8.0 post uses that order at the author's request, while namespaces remain its main
+worked example.
 
-Length follows the size of that one change rather than the size of the release: the v0.4.1 post runs
+Keep the supporting sections focused on what readers gain and where they can try it. A post with
+several announcements should connect them through the release's purpose rather than give every
+changelog entry an equally long explanation.
+
+Length follows the depth needed for the main explanation rather than the number of release entries: the v0.4.1 post runs
 under 800 words because it introduces one crate, and the v0.5.0 post runs to nearly 5,000 because it
 introduces a family of ideas and removes a trait. Neither is wrong. What is wrong is a post whose length
 is set by the number of entries rather than by the weight of the lead.
 
-The title carries this: **`CGP vX.Y.Z - <the one thing>`**, naming the change in plain words. A title that
-says only "CGP v0.8.0 released" wastes the whole pitch for the aggregator audience, for whom the title is
-often all they read.
+The title names the news in plain words: **`CGP vX.Y.Z - <the main improvement>`**, or a short set of
+independent improvements when those form the opening. Match its emphasis to what readers encounter
+first. A title that says only "CGP v0.8.0 released" wastes the pitch for readers who see only the title.
 
 ## The shape
 
-Seven parts, in this order. Only the front matter and the discussion links are mechanical; the rest is
-the argument.
+Use the parts below to build the announcement. Short tooling and documentation sections may sit
+before the main problem-and-solution walkthrough, as explained above. Only the front matter and
+discussion links are mechanical; the rest is the argument.
 
 **Front matter.** `slug` (always; without one, Docusaurus publishes under a dated path rather than a
 flat URL), `authors: [soares]`, and `tags: [release]`. A post that is also a deep dive carries
@@ -74,10 +79,10 @@ arrives later finds the conversation, and it is what makes the reception traceab
 **The problem.** The heart of the post, and the part to spend effort on. Show what was painful before the
 release, in code, at enough length that the reader feels it. The v0.8.0 draft does this best on the
 site (it builds a social-media app's wiring table until it is visibly unmanageable, and only then
-introduces namespaces), and its own internal document notes that this motivation section is the strongest
-part of the draft and needs no change. **Problem before construct** is the same ordering every other CGP
-surface uses, and it matters most here, because a feature announced without its motivation reads as
-churn.
+introduces namespaces), and its internal document records the causal progression that a revision
+must preserve. Repeated declarations may be shortened without losing the reasoning that motivates
+the feature. **Problem before construct** is the same ordering every other CGP surface uses, and
+it matters most here, because a feature announced without its motivation reads as churn.
 
 **The change.** What the release adds, shown on the same example. Use the modern idioms the
 [guides](../../cgp/guides/README.md) teach, since a release post is the most-copied code on the site.
@@ -131,14 +136,14 @@ before announcing the release has buried its own subject, and the tutorials do i
 **No unbenchmarked performance claim.** "Faster" needs a number that can be cited, and CGP's honest claim
 is almost always about compile-time-versus-runtime placement rather than speed.
 
-**No claim that the release has shipped when it has not.** The v0.8.0 draft currently opens by saying
-v0.8.0 "has been released", which is false until it is, and is the kind of error that is easy to leave in
-a draft written months ahead.
+**Release wording and publication have separate gates.** On the release branch, write official
+versions as already shipped, as [the branch rules](../AGENTS.md#the-redesign-lands-on-a-release-branch-all-at-once)
+require. The post and site publish only after both releases exist. Do not turn that publication
+requirement into hedged or pre-release wording inside the draft.
 
 ## Publishing, and what happens afterwards
 
-Seven mechanical items go with publication, and the v0.8.0 draft's document records five of them going
-wrong at once, which is why they are listed rather than assumed. **Set the real date in the filename**,
+Publication carries mechanical steps beyond finishing the prose, so check them explicitly. **Set the real date in the filename**,
 since it fixes both the URL and the post's position in the index. **Set the `slug`.** **Repoint the
 announcement bar** in `docusaurus.config.ts`, which is hardcoded and will otherwise keep promoting the
 previous release. **Add the discussion links** once the post is submitted. And **register the post's
@@ -177,8 +182,9 @@ post may be **superseded** by a later one, with a pointer added. Neither is a li
 
 ## Checking a draft
 
-**Read the title and the excerpt alone.** For much of the aggregator audience that is the whole post, so
-they must name the one change in plain words and be intelligible to someone who has never heard of CGP.
+**Read the title and the excerpt alone.** For much of the aggregator audience that is the whole post,
+so they must name the release's practical improvements in plain words and be intelligible to someone
+who has never heard of CGP.
 
 **Find the problem section, and check it comes before the construct.** If the release's feature appears
 before the pain it addresses, the post reads as churn.

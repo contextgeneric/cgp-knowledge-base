@@ -75,10 +75,10 @@ the section's fixed vocabulary from [../AGENTS.md](../AGENTS.md).
 - [RustLab 2025: how to stop fighting with coherence](rustlab-2025-coherence.md): 2026-03-07,
   *historical*. A full slide-by-slide transcript of CGP's first conference talk, and the clearest
   narrative anywhere of why coherence exists and how provider traits work around it.
-- [CGP v0.8.0: grouping components with namespaces](v0-8-0-release.md): placeholder date
-  2026-05-10, **draft for an unreleased version**. The namespace feature, unfinished: it stops
-  without a conclusion, covers one feature of several, and writes its prefix attributes in forms that
-  do not compile. Begun as the v0.7.1 announcement before the release was renumbered.
+- [CGP v0.8.0: cargo-cgp, new documentation, and namespaces](v0-8-0-release.md): placeholder date
+  2026-05-10, **draft awaiting review and coordinated publication**. The social-media wiring
+  progression, fixed defaults and their limits, verified cargo-cgp diagnostics, expanded
+  documentation and optional agent support, other improvements, migration, and a practical closing.
 
 ## Drafts that live on branches
 

@@ -64,8 +64,8 @@ Register a new guide here in the same change that adds it, and in [../../summary
   contract a new tutorial must record.
 - [release-announcement.md](release-announcement.md): the blog's most repeated artifact and the only
   page type here written in the *author's* voice, covering the two readers a release post serves, the
-  one-change rule, the seven-part shape, the breaking-changes obligation, and what publication fixes
-  permanently.
+  clear lead, the placement of short announcements before a long walkthrough, the announcement's
+  parts, the breaking-changes obligation, and what publication fixes permanently.
 - [project.md](project.md): the Projects section, which ports the internal project sections to the
   site, covering the seven page kinds, the example page written as a short tutorial with its orientation block,
   walkthrough, named pattern, and verified change to try, one reference page per project construct, the

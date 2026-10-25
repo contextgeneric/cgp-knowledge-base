@@ -814,8 +814,8 @@ it stale.
   tooling every tutorial owes.
 - [release-announcement.md](website/writing-guides/release-announcement.md) — the blog's most repeated
   artifact and the only page type specified in the author's voice: the two readers it serves, the
-  one-change rule, the seven-part shape, the breaking-changes obligation from the removal ledger, and
-  the five mechanical items publication fixes.
+  clear lead, the placement of short announcements before a long walkthrough, the announcement's
+  parts, the breaking-changes obligation from the removal ledger, and the publication mechanics.
 - [project.md](website/writing-guides/project.md) — the Projects section ported from the internal
   project sections: the seven page kinds, the example page as a short applied-register tutorial with
   its *New to CGP?* orientation, the problem it solves and its cost without CGP, walkthrough by idea, named pattern, and verified change to try, one
@@ -885,8 +885,9 @@ it stale.
 - [rustlab-2025-coherence.md](website/blog/rustlab-2025-coherence.md) — the conference talk
   transcript, and the clearest published account of why coherence exists and why specialization
   cannot replace it.
-- [v0-8-0-release.md](website/blog/v0-8-0-release.md) — the namespace announcement for the
-  unreleased v0.8.0, an unfinished draft begun under the abandoned v0.7.1 number.
+- [v0-8-0-release.md](website/blog/v0-8-0-release.md) — the release-branch draft: namespace wiring,
+  defaults, verified cargo-cgp diagnostics, documentation and optional agent support, migration,
+  code-verification coverage, and the remaining publication steps.
 - [incoherent-rust-today.md](website/blog/incoherent-rust-today.md) — an unpublished draft on the
   `incoherent-rust` branch reading CGP against the dictionary-passing and incoherent-traits discussion,
   and what it needs before it can be published.

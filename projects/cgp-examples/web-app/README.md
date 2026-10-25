@@ -57,20 +57,18 @@ The crate demonstrates wiring only, and nothing in it runs. Its gaps are each co
 ## Where the blog post's code lives
 
 The [v0.8.0 release post](../../../website/blog/v0-8-0-release.md) develops this application section
-by section, but it does not link the repository. How its code diverges from current CGP is recorded
-in the post's own document; the table below says only where each section's code now lives:
+by section and links both the repository and its public walkthrough. Its record describes the
+verification and deliberate simplifications; this table maps its stages to the crate's source:
 
 | Post section | Current code |
 |---|---|
-| An example social media web app | `coarse_grained.rs`, whose managers already carry the filters of the next section |
-| Filtering usernames and post messages | `coarse_grained.rs`; its `ProductionApp` wires the dummy filters, and the stage has no `TestApp` |
-| Fine grained traits, Higher-order providers | `fine_grained.rs` |
-| Too much wiring with fine grained traits | `fine_grained.rs`: the flat table, as a comment, and `PostgresUserComponents` |
-| The challenges of grouping delegate component keys | `fine_grained.rs`: the array-key wiring of `ProductionApp`; the macro-key and preset alternatives are not in this repository |
-| The problems with CGP presets | not in this repository |
-| Introducing CGP namespaces and paths | `namespace.rs`, whose flat namespace wiring is a comment |
-| Hierarchical delegation | `namespace.rs`, apart from `LocalApp` and `SqliteCoreComponents`, which the crate does not have |
-| Default implementations | `default_impls.rs` |
+| Start with a manager per domain; Add dependencies as the service grows | `coarse_grained.rs` has the filter-dependent stage; the post also shows the earlier database-only stage and contrasts production and test filters |
+| Split independently reusable operations; Separate filtering from database access | `fine_grained.rs`; the post also shows the intermediate creator before filtering is extracted |
+| Count the cost of the separation | `fine_grained.rs`: the flat table, as a comment, the provider bundles, and array-key routing |
+| Give component groups a path | `namespace.rs`, whose flat namespace table is a comment |
+| Group paths hierarchically; Check the completed configuration | `namespace.rs`; the post's SQLite variant is hypothetical and not part of this crate |
+| Sharing default implementations | `default_impls.rs`; the post names `ContentFilterComponents` as an alias for the earlier `AiContentFilterComponents` bundle |
+| Breaking changes and migration | an illustrative user-only configuration checked in the website's example-code crate, not a stage in this crate |
 
 ## The documents
 
@@ -88,8 +86,8 @@ in the post's own document; the table below says only where each section's code 
 
 ## Public material derived from these documents
 
-The [v0.8.0 release post](../../../website/blog/v0-8-0-release.md), whose code follows this crate
-and which must be finished before the release. It also feeds the `web-app` index of the
+The [v0.8.0 release post](../../../website/blog/v0-8-0-release.md), whose worked wiring follows this
+crate and awaits author review and publication. It also feeds the `web-app` index of the
 [cgp-examples project section](../../../website/projects/cgp-examples.md).
 
 ## How it relates to the rest of the base

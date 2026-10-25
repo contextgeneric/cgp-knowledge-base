@@ -294,19 +294,18 @@ somewhere to be tracked.
 
 ## V — The version release
 
-- **V1: finish the v0.8.0 release announcement, and merge the branch.** This is the campaign's last
-  task rather than an interruption in it, because the release and the redesign publish together. The
-  draft stops without a conclusion, covers one feature of several, writes its prefix attributes in forms
-  that do not compile, carries a placeholder date, and opens by claiming a release that has not happened.
-  Its motivation section is the strongest part and needs no change. *Lands in:* `blog/`, then the branch
+- **V1: review and publish the v0.8.0 release announcement, and merge the branch.** This is the
+  campaign's last task because the release and the redesign publish together. The draft's content
+  and code verification are in place; the author must read it, set its publication date, and
+  recheck the quoted diagnostics against the released tool. *Lands in:* `blog/`, then the branch
   merge. *Spec:* [writing-guides/release-announcement.md](writing-guides/release-announcement.md);
   material and the mechanical items in [blog/v0-8-0-release.md](blog/v0-8-0-release.md) and
   [releases/v0-8-0.md](../releases/v0-8-0.md). *Blocked by:* the `cgp` v0.8.0 release itself, and by
   every release-blocking task above. *Carries two items from*
   [the release checklist](writing-guides/release-announcement.md): the announcement bar has to point at
-  the published post, and the tutorials' `cgp` pin has to name the released version rather than the
-  alpha. *Note:* this is the first post written from
-  the release-announcement guide, so it is also the guide's first test; record what the spec got wrong.
+  the published post, and the tutorials and example-code dependency must name the released version.
+  *Note:* the release-announcement guide distinguishes release-branch wording from the publication
+  gate; the draft already uses official versions as shipped, as the branch rules require.
 
 - **V2: publish `cargo-cgp` v0.1.0 so the cargo-cgp pages become true.** The
   [cargo-cgp section](site-structure.md#cargo-cgp), the tool's README, and the `cgp-skills` skill are

@@ -89,6 +89,9 @@ The author's stated preferences govern recurring choices in public writing:
   ordinary direct implementations and gradual adoption. [identity.md](identity.md) owns the wording.
 - **Give the homepage a clear purpose.** Help readers understand CGP and its benefits, then direct
   them to teaching material. Follow the [homepage guide](../website/writing-guides/homepage.md).
+- **Preserve the background when revising a draft.** Retain his account of earlier challenges,
+  attempted solutions, and personal time constraints where they explain why a change matters.
+  Reorganizing a release post must not reduce that account to a list of new features.
 - **Move extended explanations to dedicated pages.** When a homepage section needs essay-length
   treatment, link to an explanation page. Writing guides should identify that destination.
 - **Use frameworks selectively.** Apply useful ideas from Diátaxis and other methods without
