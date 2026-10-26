@@ -346,11 +346,13 @@ These errors keep the compiler's output because nothing in the tool starts from 
 - **A provider called by its own path, or an inner provider two traits could import:** a provider
   body calling another provider directly without its requirement keeps rustc's `E0277` on the
   generated `__Context__`, and an unimported inner provider whose function two provider traits
-  declare, neither of them the impl's, keeps rustc's `E0599`, whose suggestions name `__Context__`
+  declare, neither of them the impl's, keeps rustc's `E0599` with its consumer-trait bounds, where
+  the `#[use_provider]` import is the fix (the tool drops its provider-trait bounds, which name
+  `__Context__`)
   ([`missing_use_provider_concrete_qualifier`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/missing_use_provider_concrete_qualifier.rs),
   [`missing_use_provider_shared_method_name`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/missing_use_provider_shared_method_name.rs)).
-  A provider trait bounding an inner provider without its context argument keeps rustc's `E0107`,
-  whose help adds the generated `__Context__`
+  A provider trait bounding an inner provider without its context argument keeps rustc's `E0107`
+  with no fix named (the tool drops its help, which adds the generated `__Context__`)
   ([`provider_trait_in_inner_bound`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/provider_trait_in_inner_bound.rs)).
 - **A wiring name the tool cannot settle or does not reach:** a key that two components share the
   name of, or that two consumer traits could be guessed from, and a type nested in a value's generic

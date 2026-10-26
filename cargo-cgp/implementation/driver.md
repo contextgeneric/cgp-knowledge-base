@@ -1195,25 +1195,43 @@ it does not resolve. The suggestion is wrong whatever the error: for a `Cow<str>
 `#[cgp_auto_dispatch]` method, `E0106` suggests `Cow<'__a__, str>`, while the `E0726` beside it
 suggests the `Cow<'_, str>` that works.
 
-Like the wiring-name reshape, the drop runs from the `after_expansion` callback, because the
-lifetime errors arrive during name resolution, before an emitted diagnostic can ask whether the
-crate uses CGP. The pass
+The drop runs in two places. The emitter applies it to each diagnostic of a crate that uses CGP as
+it arrives, beside the splice drop below, and so reaches the type-checking errors: an `E0599` whose
+bound suggestions include a provider trait with its generated context
+(`Greeter</* __Context__ */>`), and an `E0107` whose help adds `__Context__` to a provider-trait
+bound. The lifetime errors arrive during name resolution, before an emitted diagnostic can ask
+whether the crate uses CGP, so like the wiring-name reshape the pass
 [`drop_generated_name_suggestions`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/generated_names.rs)
-reaches the buffer through the same registration, and only in a crate that links a CGP crate
-(`resolve::links_cgp`), so a plain Rust error keeps every suggestion. It drops each structured
-suggestion with a substitution whose text holds a reserved name
+also runs from the `after_expansion` callback over what name resolution buffered. It reaches the
+buffer through the same registration, and only in a crate that links a CGP crate
+(`resolve::links_cgp`), so a plain Rust error keeps every suggestion.
+
+Either way the drop removes each substitution whose text holds a reserved name
 ([`reserved_names`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/signals.rs),
 a word whose two leading and two trailing underscores surround a name that neither starts nor ends
 with an underscore of its own, the rule `is_reserved_name` gives every pass that asks) that the
-source file being edited does not contain, since a name the file spells is one the user wrote. The test
-reads the text of the suggestion rather than the macro's expansion, because the suggestion's span
-sits in the user's own code, where nothing marks it as the macro's. Two limits follow. A comment
-that spells the reserved name counts as the user writing it, so the suggestion stays. A diagnostic
-that arrives after name resolution is not covered, and no fixture needs it to be. The
-`retain_suggestions` helper in `edit.rs` serves this pass and the method-probe cleanup alike. The
+source file being edited does not contain, since a name the file spells is one the user wrote.
+rustc offers the bounds that would let a call resolve as one suggestion with a substitution per
+trait, so the drop removes the wrong alternatives and keeps the rest, and a suggestion left with
+none goes too, which also keeps it out of the JSON output, where an emptied suggestion would still
+show its message. The test reads the text of the suggestion rather than the macro's expansion,
+because the suggestion's span sits in the user's own code, where nothing marks it as the macro's.
+Two limits follow. A comment that spells the reserved name counts as the user writing it, so the
+suggestion stays. And a suggestion left with one bound keeps rustc's plural message over it ("the
+following traits define an item"). The `retain_substitutions` helper in `edit.rs` serves this
+pass, beside `retain_suggestions`, which the method-probe cleanup and the splice drop use.
+
+The
 [`auto_dispatch_hidden_lifetime`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/macro-defects/auto_dispatch_hidden_lifetime.rs)
-fixture pins the result: the `E0106` keeps its caret and label, and the `E0726` keeps the right
-help. Two `pass-through/` fixtures pin what keeps such a suggestion:
+fixture pins the name-resolution case: the `E0106` keeps its caret and label, and the `E0726` keeps
+the right help. Three fixtures pin the type-checking case:
+[`generic_fn_consumer_not_in_scope`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/generic_fn_consumer_not_in_scope.rs)
+and
+[`missing_use_provider_shared_method_name`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/missing_use_provider_shared_method_name.rs)
+keep the consumer-trait bounds beside the dropped provider-trait ones, and
+[`provider_trait_in_inner_bound`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/provider_trait_in_inner_bound.rs)
+loses its only help, in its JSON snapshot too. Two `pass-through/` fixtures pin what keeps such a
+suggestion:
 [`reserved_lifetime_written`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/reserved_lifetime_written.rs),
 a CGP crate whose own code names `'__a__`, and
 [`generated_lifetime_without_cgp`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/generated_lifetime_without_cgp.rs),
@@ -1264,9 +1282,9 @@ name takes a parameter, `E0107` suggests `#[cgp_impl(new SquareArea)]<Shape>`, a
 in code the macro wrote.
 
 The drop runs from the emitter's transform for every diagnostic, in a crate that uses CGP
-(`crate_uses_cgp`, which cannot answer during name resolution), so a plain Rust error keeps every suggestion. Unlike the generated-name drop it
-cannot run once after resolution, because these errors arrive at lowering and type-checking, so each
-is cleaned as it arrives. [`drop_attribute_splices`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/attribute_splice.rs)
+(`crate_uses_cgp`, which cannot answer during name resolution), so a plain Rust error keeps every
+suggestion. These errors arrive at lowering and type-checking, so each is cleaned as it arrives,
+and unlike the generated-name drop this one needs no second pass after name resolution. [`drop_attribute_splices`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/attribute_splice.rs)
 recognizes the suggestion by the span it edits, never by its text: a substitution that inserts at a
 span an attribute macro's expansion carries (`ExpnKind::Macro(MacroKind::Attr, _)`), exactly where
 that expansion's call site ends. It then removes that suggestion through `retain_suggestions` and
