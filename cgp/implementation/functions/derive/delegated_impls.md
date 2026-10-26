@@ -67,10 +67,12 @@ relies on the impl's `where` clause to bring the delegate's trait into scope.
 ## Rejected parameters
 
 `signature_to_delegated_impl_item_fn` forwards each argument by the name its pattern binds, which
-`arg_to_ident` reads from a plain identifier pattern. A pattern with no single plain name (a `_`
-parameter, which Rust allows in a bodiless trait method, a `mut value` parameter, or a destructuring
-pattern such as `(a, b): (u32, u32)` in a default method) is rejected with a spanned message saying
-to name it, such as `_value`.
+`arg_to_ident` reads from an identifier pattern without `ref` or a subpattern. A pattern with no
+such name (a `_` parameter, which Rust allows in a bodiless trait method, or in a default method a
+`ref value` binding, a `pair @ (a, b)` binding, or a destructuring pattern such as
+`(a, b): (u32, u32)`) is rejected with a spanned message saying to name it, such as `_value`. A
+`mut value` parameter is forwarded as `value`, and the forwarding method's signature drops the `mut`,
+which only the default body that mutates the parameter needs.
 
 ## Tests
 
@@ -82,7 +84,11 @@ expansion snapshots, which pin the forwarding bodies.
   shows method forwarding through the consumer and provider blanket impls and through `UseContext`
   and `RedirectLookup`.
 - [cgp-macro-tests/tests/parser_rejections/cgp_component.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/cgp_component.rs)
-  pins the rejection of a `_` parameter and of a destructuring parameter, with the message.
+  pins the rejection of a `_` parameter, a `ref` and an `@` binding, and a destructuring parameter,
+  with the message.
+- [basic_delegation/default_method_mut_parameter.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/basic_delegation/default_method_mut_parameter.rs)
+  forwards a `mut` parameter of a default method, to an empty provider that inherits the body and to
+  a provider that writes its own, with clippy's `unused_mut` guarding the forwarding signatures.
 - The default-method case in
   [basic_delegation/default_methods.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/basic_delegation/default_methods.rs)
   confirms a forwarded call resolves to a default body.

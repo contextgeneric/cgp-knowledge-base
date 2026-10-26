@@ -75,12 +75,13 @@ impl, the other along a namespace lookup path.
 
 ## Behavior and corner cases
 
-**Every method parameter must be a plain name.** The forwarding impls (the consumer blanket impl,
-the provider blanket impl, the `UseContext` and `RedirectLookup` impls, and any `#[derive_delegate]`
-impl) call the delegate with each parameter by name, through
+**Every method parameter must have a name of its own.** The forwarding impls (the consumer blanket
+impl, the provider blanket impl, the `UseContext` and `RedirectLookup` impls, and any
+`#[derive_delegate]` impl) call the delegate with each parameter by name, through
 `signature_to_delegated_impl_item_fn` (see [delegated-impl synthesis](../functions/derive/delegated_impls.md)),
-so a `_`, `mut value`, or destructuring parameter is rejected with a message on its pattern saying
-to name it, such as `_value`, and destructure inside a default body.
+so a `_`, `ref value`, `pair @ (a, b)`, or destructuring parameter is rejected with a message on its
+pattern saying to name it, such as `_value`, and destructure inside a default body. A `mut value`
+parameter is forwarded by its name, with the `mut` left off the forwarding impls' signatures.
 
 A **supertrait** on the consumer trait is not kept as a supertrait on the provider trait; it is
 lowered to a bound on the context, and the same context bound is threaded onto every generated impl.
@@ -213,6 +214,9 @@ bare component, exercised through the error and handler families instead.
 
 The behavioral tests confirm the generated wiring works:
 
+- [basic_delegation/default_method_mut_parameter.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/basic_delegation/default_method_mut_parameter.rs)
+  forwards a default method's `mut` parameter by its name, to an empty provider that inherits the
+  body and to one that writes its own.
 - [basic_delegation/default_methods.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/basic_delegation/default_methods.rs)
   checks at run time that an empty provider impl inherits the default bodies and `App.greet()`
   returns the expected string.
@@ -232,9 +236,9 @@ The behavioral tests confirm the generated wiring works:
 - [cgp-macro-tests/tests/parser_rejections/cgp_component.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/cgp_component.rs)
   asserts the macro rejects a non-trait item, a trait carrying a const generic parameter, attribute
   arguments with a repeated key, an unknown key, or no `provider` key, a `name:` parameter the
-  trait does not declare, a `#[uses]` attribute (its message naming `#[extend]`), and a `_` or
-  destructuring method parameter, and that the same `name:` form expands when the trait declares the
-  parameter.
+  trait does not declare, a `#[uses]` attribute (its message naming `#[extend]`), and a `_`,
+  `ref`, `@`, or destructuring method parameter, and that the same `name:` form expands when the
+  trait declares the parameter.
 - The `cargo-cgp` UI fixture
   [`wiring/conflicting-wiring/duplicate_component_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_component_name.rs)
   pins that the derived marker's `E0428` "previous definition" note falls on the provider name
