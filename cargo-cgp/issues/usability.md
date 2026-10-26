@@ -336,6 +336,14 @@ These errors keep the compiler's output because nothing in the tool starts from 
   struct implements; the same tag reached through a check is a missing field with an `Index<0>`
   help ([`symbol_tag_on_tuple_struct`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/symbol_tag_on_tuple_struct.rs)).
 
+- **An unconstrained parameter the structural codes do not word:** a per-entry lifetime the
+  provider uses, a blanket entry keyed by its own parameter, and a `#[default_impl]` of a generic
+  provider struct at a path key or with a second parameter keep rustc's `E0207`s, whose suggestions
+  (adding the parameter to the context, or removing it) do not compile
+  ([`entry_lifetime_not_in_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/entry_lifetime_not_in_key.rs),
+  [`entry_generic_blanket_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/entry_generic_blanket_key.rs),
+  [`default_impl_unregistrable_provider_struct`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/default_impl_unregistrable_provider_struct.rs)).
+
 ## Errors that need a new class or a deeper walk
 
 These errors are reshaped in part or not at all, and stating their cause needs a class or a walk the

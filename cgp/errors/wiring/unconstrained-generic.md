@@ -101,6 +101,15 @@ registers the provider at the key instead:
 All of them drop rustc's suggestion to remove the parameter, which is not the fix. The codes are
 defined in the [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
 
+Four shapes keep rustc's errors, and with them suggestions that do not compile. A per-entry lifetime
+that only the provider uses (`<'a> GreeterComponent: GreetRef<'a>`) is unconstrained because the
+entry's `Delegate` names it, but `[CGP-E019]` lists only type and const parameters. A blanket entry
+keyed by its own parameter (`<T, U> T: Wrap<U>`) has no key `[CGP-E019]` can name. And a
+`#[default_impl]` of a provider struct generic over the parameter is beyond `[CGP-E018]`'s fix when
+its key is a path, which gives no type to put in the parameter's place, or when the struct names a
+second parameter the key does not fix. An ordinary impl with an unconstrained parameter in a crate
+that uses CGP is not a CGP error, and keeps rustc's diagnostic as written.
+
 ## Resolving it
 
 Make the generic reach the key so it is bound: introduce it on a key that carries it
@@ -142,6 +151,15 @@ concise `#[cgp_impl]` form, since the default position cannot bind the provider'
   `#[default_impl]` on the impl of a provider struct generic over `T` (`#[cgp_impl(ShowWith<T>)]`);
   the `.rust.stderr` pins the single `E0207`, and the `.cgp.stderr` the `[CGP-E018]` whose help
   registers `ShowWith<String>`.
+- [`wiring/unconstrained-generic/entry_generic_redirect.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/entry_generic_redirect.rs):
+  a per-entry generic only a `=>` redirect uses; the `.cgp.stderr` pins the `[CGP-E019]` whose help
+  points at where the entry uses it, without naming the generated `RedirectLookup`.
+- [`wiring/unconstrained-generic/entry_lifetime_not_in_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/entry_lifetime_not_in_key.rs),
+  [`wiring/unconstrained-generic/entry_generic_blanket_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/entry_generic_blanket_key.rs),
+  and
+  [`wiring/unconstrained-generic/default_impl_unregistrable_provider_struct.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/default_impl_unregistrable_provider_struct.rs):
+  the shapes that keep rustc's errors, a per-entry lifetime, a blanket key, and the two
+  registrations `[CGP-E018]` cannot write the fix for.
 
 ## Related
 

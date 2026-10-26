@@ -421,7 +421,11 @@ reduce to the same `[CGP-E001]` headline and `root cause:` tree.
   "expected `Rectangle`, found `()`" hint, and its `.cgp.stderr` the `[CGP-E060]` block whose help
   names `#[check_params(Rectangle)]`;
   [`qualified_delegate_and_check_unit_params`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/checks/qualified_delegate_and_check_unit_params.rs)
-  gives the same help when the table is called as `cgp::prelude::delegate_and_check_components!`.
+  gives the same help when the table is called as `cgp::prelude::delegate_and_check_components!`,
+  and
+  [`unit_params_with_unwired_provider`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/checks/unit_params_with_unwired_provider.rs)
+  names only `Rectangle` when a provider the context does not wire implements the component for
+  `Circle`.
 - [`checks/check-trait-failure/providers/generic_check_without_params.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/generic_check_without_params.rs):
   the same in `check_components!`, whose help names `AreaCalculatorComponent: Square`.
 - [`checks/check-trait-failure/providers/provider_for_other_context.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/provider_for_other_context.rs):
