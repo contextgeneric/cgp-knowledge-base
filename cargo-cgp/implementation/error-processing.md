@@ -336,7 +336,9 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
 ## Tests
 
 - [`crates/cargo-cgp-error-processing/tests/error_processing/postprocess.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/postprocess.rs):
-  drives each post-processing transform over crafted inputs: the stripped/left-alone prefix cases,
+  drives each post-processing transform over crafted inputs: the head-and-tail split
+  `scan_head_tail` over nesting, a string literal, and its two declines, the stripped/left-alone
+  prefix cases,
   the exact-match cases `resugar_symbol` must skip, the `PathCons` → `Path!` resugaring (symbol,
   type, and primitive segments, the open `_` tail left out of a key and declined by the `Path!`
   form, and the non-round-trippable cases `resugar_path` must skip), the single-field (inline and
@@ -445,7 +447,8 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   (`strip_cgp_prefixes` and the `CGP_PREFIXES` constant), `resugar_symbol.rs` (the exact-match
   `Symbol!` parser), `resugar_path.rs` (the `PathCons` → `@…`/`Path!(@…)` resugarer, the form chosen
   by its `wrap` parameter), `resugar_list.rs` (`resugar_lists`, the `Product!`/`Sum!` and
-  `Struct!`/`Enum!` resugarer), and `missing_field.rs` (`rewrite_missing_fields`,
+  `Struct!`/`Enum!` resugarer), `spine.rs` (`scan_head_tail`, the split of a cell into its head
+  and tail that both resugarers read), and `missing_field.rs` (`rewrite_missing_fields`,
   `context_has_hasfield_impls`, and the landmark-gated single-field classification).
 - [`crates/cargo-cgp-error-processing/src/shape/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/shape):
   the shared shape spellings: `shape_name.rs` (which names a body can write, and which only raw),

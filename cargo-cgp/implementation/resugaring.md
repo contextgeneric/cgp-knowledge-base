@@ -623,7 +623,8 @@ them rests on this document.
   `render_enum_shape`, and `render_variant`.
 - [`crates/cargo-cgp-error-processing/src/postprocess/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/postprocess):
   the text passes, one module each: `resugar_symbol.rs`, `resugar_path.rs`, `resugar_list.rs`,
-  `strip_modules.rs`, `strip_prefixes.rs`, and `chain.rs`, which sequences them.
+  `strip_modules.rs`, `strip_prefixes.rs`, and `chain.rs`, which sequences them, with `spine.rs`
+  holding the head-and-tail split the path and list passes share.
 - [`crates/cargo-cgp-expand/src/resugar/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-expand/src/resugar):
   the syntax-tree passes, one module per construct (`symbol.rs`, `path.rs`, `list.rs`), plus
   `strip.rs` (the prelude qualifier and the qualified-path index it corrects), `spacing.rs` (the
