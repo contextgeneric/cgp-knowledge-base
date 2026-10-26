@@ -366,6 +366,12 @@ These errors keep the compiler's output because nothing in the tool starts from 
   A provider whose `IsProviderFor` impl covers fewer contexts than its provider-trait impl falls to
   the same text rewrite
   ([`provider_impl_with_partial_marker`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/provider-impl-without-macro/provider_impl_with_partial_marker.rs)).
+- **A data operation's tag with a computed index:** the data-call anchor reads a const argument
+  only when it is a literal, bare or in braces, since evaluating a constant from inside the emitter
+  could report into the diagnostic it is rewriting. A `build_field` set twice through
+  `Index<{ 0 + 1 }>` therefore keeps rustc's `E0271` on the builder's `Mapper`, where `Index<1>`
+  reads ``[CGP-E050] field `1` of `Pair` is already set``
+  ([`build_field_twice_computed_tag`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/build_field_twice_computed_tag.rs)).
 
 ## Errors that need a new class or a deeper walk
 

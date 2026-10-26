@@ -365,14 +365,19 @@ error[E0271]: [CGP-E050] field `first_name` of `Person` is already set
 Reading the tag needs one more piece of the small lowering. `Symbol!("first_name")` expands to
 `Symbol<10, Chars<'f', …>>`, whose length and characters are const generic arguments, so a literal
 const argument is lowered through the compiler's `lit_to_const` query, which builds the constant
-from the literal without evaluating anything (and so reports nothing). Any other const argument,
-such as a computed `{ 0 + 0 }`, leaves the tag unknown and the call declines.
+from the literal without evaluating anything (and so reports nothing). A literal in braces
+(`Index<{ 0 }>`) is read through them. Any other const argument, such as a computed `{ 0 + 1 }`,
+leaves the tag unknown and the call declines; the stand-in the decline discards is a unit constant,
+since an error constant would register a delayed bug with the diagnostic context the emitter holds.
 
 Three rules keep the anchor from claiming a call that is not a data operation:
 
 - **Only data operations qualify:** the traits of the two crates, except the field-access traits
   (`HasField`, `HasFieldMut`, `FieldGetter`, `MutFieldGetter`), which read one field of a value
-  rather than operate on a whole record or enum.
+  rather than operate on a whole record or enum. A method call considers only the operations that
+  take `self`, so `config.builder()` keeps rustc's "associated function, not a method" error
+  rather than reading as a builder of a type without the derive
+  ([`data_function_called_as_method`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/data_function_called_as_method.rs)).
 - **Only a trait in scope at the call qualifies.** The compiler's method lookup considers only the
   traits in scope, and records them per call, so a method of another library that shares a name
   (`Config::builder()` on a type that never derived a builder, in a module without CGP's prelude)
@@ -511,9 +516,11 @@ The data-call anchor's fixtures are the extensible-data family under
 after one merge), `finalize_build_premature` (a "no method named" `E0599`), `extract_field_twice`
 (an `E0308` on a remainder an `if let` binds), `finalize_extract_early` (a remainder a `match` arm
 binds), `downcast_on_remainder` (a remainder used where its enum belongs), `from_variant_wrong_case`
-and `build_with_default_without_default` (type-relative calls), and `upcast_missing_variant` (a
-cast on a constructed value). The pass-through fixture `data_operation_name_not_in_scope` pins the
-in-scope rule.
+and `build_with_default_without_default` (type-relative calls), `upcast_missing_variant` (a cast on
+a constructed value), `extract_field_wrong_case` (an extractor's near miss), and
+`build_field_twice_braced_tag` and `build_field_twice_computed_tag` (a braced tag read, a computed
+one declined). The pass-through fixtures `data_operation_name_not_in_scope` and
+`data_function_called_as_method` pin the in-scope rule and the method rule.
 
 The provider-call anchor's fixtures are `provider_called_directly` (the worked example above) and
 `provider_called_directly_without_error_type` (a `#[cgp_computer]` provider's fallible member,

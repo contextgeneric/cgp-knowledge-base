@@ -240,6 +240,12 @@ These fixtures pin the class, one group per shape:
 
 - [`data/extensible-data/build_field_twice.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/build_field_twice.rs):
   a `build_field` chain setting `first_name` twice; `[CGP-E050]` over `[CGP-E118]`.
+- [`data/extensible-data/build_field_twice_braced_tag.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/build_field_twice_braced_tag.rs)
+  and
+  [`build_field_twice_computed_tag.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/build_field_twice_computed_tag.rs):
+  a tuple struct's field set twice through `Index<{ 0 }>`, `[CGP-E050]` over `[CGP-E118]`, and
+  through the computed `Index<{ 0 + 1 }>`, whose tag the tool does not read, so rustc's `E0271`
+  stays.
 - [`data/extensible-data/builder_field_set_twice.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/builder_field_set_twice.rs):
   a `BuildWithHandlers` list setting `host` twice, behind a check; `[CGP-E118]`.
 - [`data/extensible-data/build_from_overlapping_sources.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/build_from_overlapping_sources.rs):
@@ -286,6 +292,9 @@ These fixtures pin the class, one group per shape:
 - [`data/extensible-data/from_variant_wrong_case.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/from_variant_wrong_case.rs):
   `from_variant` by the tag `circle` for `Circle`; `[CGP-E050]` over `[CGP-E120]` with its near
   miss, its two reports merged.
+- [`data/extensible-data/extract_field_wrong_case.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/extract_field_wrong_case.rs):
+  `extract_field` by the tag `circle` on an extractor; `[CGP-E050]` over `[CGP-E120]` with the near
+  miss from the extractor's enum.
 - [`data/extensible-data/from_variant_bound_missing_variant.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/from_variant_bound_missing_variant.rs):
   a plain function bounded on a variant `Big` lacks; rustc's headline kept, with its "similar impl"
   help resugared from the fragments rustc splits it into.
