@@ -219,7 +219,7 @@ These fixtures pin the class, one group per shape:
   the same on a `#[cgp_impl]` provider; `[CGP-E037]`.
 - [`lowering/wrong-component-half/provider_trait_in_inner_bound.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/provider_trait_in_inner_bound.rs):
   a provider trait bounding an inner provider without its context argument; `rustc`'s `E0107`
-  stays, with a help that adds the generated `__Context__` (`usability`).
+  stays, without its help, which adds the generated `__Context__` (`usability`).
 
 ## Related
 
