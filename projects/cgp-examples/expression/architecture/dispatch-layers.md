@@ -97,7 +97,7 @@ three `[CGP-E020]` errors at the check lines, for `MathExpr`, `Plus<MathExpr>`, 
 error[E0275]: [CGP-E020] the wiring for the consumer trait `CanCompute<Eval, contexts::add_mult::MathExpr>` on context `contexts::add_mult::Interpreter` never resolves, because the lookup leads back to itself
 ```
 
-The help lines of the `MathExpr` and `Times<MathExpr>` errors name `eval::add::EvalAdd`, whose
+The help lines of the `MathExpr` and `Times<MathExpr>` errors name `EvalAdd`, whose
 requirement closes the loop where the tool's walk met it, and the `Plus<MathExpr>` error's loop
 closes inside the dispatcher, so its help names no provider. Neither points at the `MathExpr` entry,
 the one to change. The public dispatch-layers page quotes this output as well; see the
