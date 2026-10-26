@@ -173,8 +173,9 @@ Each expansion variant is pinned in the `handlers` target:
   no parameters (`()` input) and one parameter (the parenthesized bare type).
 - [handlers/computer_macro_generics.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/handlers/computer_macro_generics.rs):
   a `where` clause, a lifetime parameter, and a const generic parameter, and the parameters the
-  output-only check accepts: one bound through another parameter, and one named inside a
-  `Product!` argument.
+  output-only check accepts: one bound through another parameter, inline (`first_item`) or in a
+  `where` clause (`last_item`), and one named inside a tuple in a `Product!` argument
+  (`first_of_pair`).
 - [handlers/computer_macro_output.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/handlers/computer_macro_output.rs):
   an omitted return type, and a qualified `core::result::Result` that selects `PromoteComputer`.
 
@@ -220,7 +221,7 @@ The failure cases pin each rejection and its message with `assert_macro_rejects_
 - [parser_rejections/cgp_computer.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/cgp_computer.rs)
   covers a `self` receiver, a one-argument `Result<u64>` alias, an `impl Trait` parameter and
   return type, a path as the provider name, and a type and a const parameter only the return type
-  uses.
+  uses, the type parameter bounded inline and in a `where` clause.
 
 `cargo-cgp`'s
 [`ok/handler_function_macros.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/ok/handler_function_macros.rs)
