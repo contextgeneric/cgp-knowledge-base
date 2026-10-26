@@ -1216,9 +1216,11 @@ trait, so the drop removes the wrong alternatives and keeps the rest, and a sugg
 none goes too, which also keeps it out of the JSON output, where an emptied suggestion would still
 show its message. The test reads the text of the suggestion rather than the macro's expansion,
 because the suggestion's span sits in the user's own code, where nothing marks it as the macro's.
-Two limits follow. A comment that spells the reserved name counts as the user writing it, so the
-suggestion stays. And a suggestion left with one bound keeps rustc's plural message over it ("the
-following traits define an item"). The `retain_substitutions` helper in `edit.rs` serves this
+Three limits follow. The test reads only the file the suggestion edits, so a comment there that
+spells the reserved name counts as the user writing it, and the suggestion stays, while a reserved
+name the program declares in another file counts as generated, and its suggestion goes. And a
+suggestion left with one bound keeps rustc's plural message over it ("the following traits define
+an item"). The `retain_substitutions` helper in `edit.rs` serves this
 pass, beside `retain_suggestions`, which the method-probe cleanup and the splice drop use.
 
 The
