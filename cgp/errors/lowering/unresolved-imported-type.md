@@ -121,6 +121,9 @@ post-codegen error class, and its mechanics are in the
 - [`lowering/unresolved-imported-type/use_type_unknown_assoc_no_near_miss.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/unresolved-imported-type/use_type_unknown_assoc_no_near_miss.rs):
   an import naming `Weight` from a trait whose only associated type is `Scalar`; the compiler still
   suggests `Scalar` in the signature, and the help names the rename in the import.
+- [`lowering/unresolved-imported-type/use_type_unknown_assoc_two_types.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/unresolved-imported-type/use_type_unknown_assoc_two_types.rs):
+  the misspelled `Scalr` from a trait declaring `Scalar` and `Unit`; the help names the rename to
+  the close one, `Scalar`.
 - [`lowering/unresolved-imported-type/use_type_unknown_assoc_shared_trait_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/unresolved-imported-type/use_type_unknown_assoc_shared_trait_name.rs):
   the same misspelling where a second trait shares the imported trait's name; the help still names
   the rename, for the trait the compiler's note points at.

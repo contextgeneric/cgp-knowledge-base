@@ -1248,9 +1248,10 @@ edits the alias and adds the rustc-free `use_type_misspelling_help`, which names
 import, and in each use of the alias unless the import gives an `as` alias of its own. The header
 stays the compiler's, without a code. The fixtures `use_type_unknown_assoc`,
 `use_type_unknown_assoc_alias`, `use_type_unknown_assoc_no_near_miss`,
-`use_type_unknown_assoc_shared_trait_name`, and `qualified_path_unknown_assoc`, under
+`use_type_unknown_assoc_two_types`, `use_type_unknown_assoc_shared_trait_name`, and
+`qualified_path_unknown_assoc`, under
 [`lowering/unresolved-imported-type/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/lowering/unresolved-imported-type),
-pin the five cases.
+pin the six cases.
 
 ### Dropping a suggestion spliced after an attribute macro
 
