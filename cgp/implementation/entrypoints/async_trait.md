@@ -55,11 +55,12 @@ token is removed, the return type is wrapped in `impl Future`, and a default bod
 mechanical spelling of return-position `impl Trait` in a trait, which captures every lifetime in
 scope, so a body that borrows `&self` or a reference argument needs no extra bound.
 
-The **rebinding covers only parameters bound to a plain name**. A destructuring pattern
-(`(a, b): (u32, u32)`) is destructured when the method is called and its parts move into the future
-only if the body uses them, and a by-value `self` is captured only when the body uses it, since
-`self` cannot be rebound; an unused part is then dropped when the method returns, earlier than an
-`async fn` would drop it.
+The **rebinding covers only parameters bound to a plain name**. A `_` parameter binds nothing to
+move, a destructuring pattern (`(a, b): (u32, u32)`) is destructured when the method is called and
+its parts move into the future only if the body uses them, and a by-value `self` is captured only
+when the body uses it, since `self` cannot be rebound; an unused part is then dropped when the
+method returns, earlier than an `async fn` would drop it, which moves every argument into its
+future.
 
 The **passthrough on non-trait items is deliberate**, not an error path in the usual sense: any item
 that fails to parse as an `ItemTrait` is returned verbatim, which is what lets `#[async_trait]` sit

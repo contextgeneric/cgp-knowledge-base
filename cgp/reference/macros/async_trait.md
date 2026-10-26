@@ -112,7 +112,10 @@ fn add(&self, value: u32, extra: u32) -> impl ::core::future::Future<Output = u3
 ```
 
 A component's default body reaches its provider trait the same way, so an empty provider inherits
-it.
+it. A parameter written as `_` or as a destructuring pattern, and a by-value `self`, is not rebound,
+so a value the body does not use is dropped when the method returns, earlier than an `async fn`
+would drop it; give a `_` or destructured parameter a name (`_guard`) to keep it alive until the
+future completes.
 
 ### Items other than traits pass through
 
