@@ -308,6 +308,19 @@ output stays as the compiler wrote it:
   ([`option_unsized_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/ill-formed-generated-type/option_unsized_path.rs)). The getter macros reject an
   optional reference to a slice or a trait object at expansion, since its shape shows the referent
   is unsized, but a type named by a path has a size only the compiler knows.
+- **A consumer method on an unbounded type parameter, with no one bound to name:** a method two
+  consumer traits declare keeps rustc's `E0599`, since either bound would let the call resolve, and
+  a method of a consumer trait with a parameter keeps it too, since a bound written from the call's
+  arguments would be a guess
+  ([`generic_fn_two_consumers_one_method`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/generic_fn_two_consumers_one_method.rs),
+  [`generic_fn_missing_bound_on_generic_consumer`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/generic_fn_missing_bound_on_generic_consumer.rs)).
+- **A wrong provider or forwarding entry with no one fix:** a provider whose impls differ from its
+  wiring at two arguments keeps the `[CGP-E002]` text rewrite, since no single argument is the one
+  to change, and a forwarding entry for a component with a type parameter keeps rustc's two errors
+  and their `trivial_bounds` suggestion, which does not fix the program, since the entry names no
+  value for the parameter
+  ([`provider_for_other_context_and_input`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/provider_for_other_context_and_input.rs),
+  [`generic_component_forwarding_missing_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/generic_component_forwarding_missing_key.rs)).
 
 When a lowering error's cause is visible to the macro, fixing it in `cgp` beats teaching the tool to
 reconstruct it. The getter rejection above is one case; a cyclic `#[use_type]` routing is another,
@@ -374,6 +387,11 @@ These errors keep the compiler's output because nothing in the tool starts from 
   `Index<{ 0 + 1 }>` therefore keeps rustc's `E0271` on the builder's `Mapper`, where `Index<1>`
   reads ``[CGP-E050] field `1` of `Pair` is already set``
   ([`build_field_twice_computed_tag`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/build_field_twice_computed_tag.rs)).
+- **A consumer method out of scope on an unbounded type parameter:** rustc's "no method named"
+  `E0599` goes only to the data-call anchor, so the call-site anchor does not read it, and the error
+  keeps its bound on the consumer trait, which the module does not import (the tool drops the bound
+  on the provider trait, which names `__Context__`)
+  ([`generic_fn_consumer_not_in_scope`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/generic_fn_consumer_not_in_scope.rs)).
 
 ## Errors that need a new class or a deeper walk
 
