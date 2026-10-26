@@ -179,7 +179,9 @@ the declaration to write in a `help`, and keeps `rustc`'s own code. The codes ar
 - **`[CGP-E031]`** for an unimported inner provider, with a generic component's parameters written
   from the call (`AreaCalculator<Shape>`):
   ``the inner provider `InnerCalculator` is used but not imported``, and
-  ``help: import it with `#[use_provider(InnerCalculator: AreaCalculator)]` ``.
+  ``help: import it with `#[use_provider(InnerCalculator: AreaCalculator)]` ``. When two provider
+  traits declare the called function and the impl implements neither, the import is ambiguous and
+  rustc's error stays.
 - **`[CGP-E035]`** for an unimported abstract type, reported once per definition:
   ``the abstract type `Error` is used but not imported``, and
   ``help: import it with `#[use_type(HasErrorType.Error)]` ``. The tool rewords the `E0220` of
@@ -197,8 +199,8 @@ Four cases keep `rustc`'s output. A call on a generic parameter other than the c
 (`value: &Value`) is left alone on purpose, since its fix is a bound on `Value`, which `#[uses]`
 cannot write. The other three are gaps, described under [Notes for tooling](#notes-for-tooling): a
 bare `Error` that no requirement of the component explains, a `Self::Error` that two abstract-type
-traits could declare, and an undeclared trait that takes a lifetime or const parameter, whose
-`[CGP-E030]` header stands without a help.
+traits could declare, and an undeclared trait or inner provider that takes a lifetime or const
+parameter, whose `[CGP-E030]` or `[CGP-E031]` header stands without a help.
 
 ## Resolving it
 
@@ -227,8 +229,12 @@ today:
   the source map alone, and the trait to import found once the crate's traits are known.
 - **Two abstract-type traits that declare the same name:** the import is ambiguous, and the tool
   does not guess. A rewording could list the candidate imports instead.
-- **A trait with a lifetime or const parameter:** the `[CGP-E030]` help writes only type arguments,
-  so the header stands without one.
+- **A trait with a lifetime or const parameter:** the `[CGP-E030]` and `[CGP-E031]` helps write only
+  type arguments, so the header stands without one.
+- **A provider called by its own path:** a provider body calling another provider directly,
+  `WidthArea::area(self)`, without declaring what that provider requires of the context, keeps
+  rustc's `E0277` on the generated `__Context__`; the called provider is not an inner provider, so
+  `[CGP-E031]` does not claim it, and nothing names the missing `#[uses(…)]`.
 
 The `[T]: Sized` errors that an unresolved call's result type can trail, notably in an `async` body,
 are also left in place: they can land off the failing expression, where dropping them reliably
@@ -267,6 +273,16 @@ These fixtures pin the class, one group per shape:
 - [`lowering/undeclared-dependency/missing_use_provider_generic_component.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/missing_use_provider_generic_component.rs):
   the inner provider of a generic component, whose `[CGP-E031]` help writes the component's
   parameter from the call, `AreaCalculator<Shape>`.
+- [`lowering/undeclared-dependency/missing_use_provider_unread_argument.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/missing_use_provider_unread_argument.rs):
+  a call whose argument the tool cannot type, so the help names the parameter for the reader to
+  replace; and
+  [`missing_use_provider_lifetime_component.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/missing_use_provider_lifetime_component.rs),
+  a component with a lifetime parameter, whose `[CGP-E031]` has no help.
+- [`lowering/undeclared-dependency/missing_use_provider_shared_method_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/missing_use_provider_shared_method_name.rs):
+  two provider traits declaring `area`; the impl's own trait is named, and with neither the impl's
+  own, rustc's `E0599` stays.
+- [`lowering/undeclared-dependency/missing_use_provider_concrete_qualifier.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/missing_use_provider_concrete_qualifier.rs):
+  a provider called by its own path without the requirement it has, left as rustc's `E0277`.
 - [`lowering/undeclared-dependency/self_error_without_bound.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/self_error_without_bound.rs):
   `Self::Error` in a provider body; `[CGP-E035]` from the `E0220`.
 - [`lowering/undeclared-dependency/self_error_in_cgp_fn.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/self_error_in_cgp_fn.rs):

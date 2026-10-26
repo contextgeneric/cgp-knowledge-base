@@ -571,7 +571,10 @@ for `CGP-E060`.
   `help`: `` import it with `#[use_provider(<Inner>: <ProviderTrait><Args>)]` ``. For a generic
   component the help writes the component's parameters after the context, as in
   `#[use_provider(Inner: AreaCalculator<Shape>)]`; a parameter the call does not fix stays named,
-  and the help adds `` , with the type the call uses in place of `<Param>` ``.
+  and the help adds `` , with the type the call uses in place of `<Param>` ``. A provider trait with
+  a lifetime or const parameter gets the header without a help, since the help writes only type
+  arguments
+  ([`missing_use_provider_lifetime_component`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/missing_use_provider_lifetime_component.rs)).
 - **Means:** a higher-order provider's body calls an inner provider as an associated function
   (`<Inner>::method(self)`) that it never imported, so the inner parameter carries no provider-trait
   bound and the call cannot resolve. It is the higher-order-provider counterpart of

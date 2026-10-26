@@ -343,6 +343,12 @@ These errors keep the compiler's output because nothing in the tool starts from 
   ([`entry_lifetime_not_in_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/entry_lifetime_not_in_key.rs),
   [`entry_generic_blanket_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/entry_generic_blanket_key.rs),
   [`default_impl_unregistrable_provider_struct`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/default_impl_unregistrable_provider_struct.rs)).
+- **A provider called by its own path, or an inner provider two traits could import:** a provider
+  body calling another provider directly without its requirement keeps rustc's `E0277` on the
+  generated `__Context__`, and an unimported inner provider whose function two provider traits
+  declare, neither of them the impl's, keeps rustc's `E0599`, whose suggestions name `__Context__`
+  ([`missing_use_provider_concrete_qualifier`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/missing_use_provider_concrete_qualifier.rs),
+  [`missing_use_provider_shared_method_name`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/missing_use_provider_shared_method_name.rs)).
 
 ## Errors that need a new class or a deeper walk
 

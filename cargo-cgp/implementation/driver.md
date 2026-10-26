@@ -944,7 +944,8 @@ unbounded, so rustc reports a vague `E0599` ("no associated function `area` foun
 trait as a bound, the wrong fix for a higher-order provider. The transform rewrites it into a
 `[CGP-E031]` header naming the inner provider, with the `#[use_provider(…)]` fix in a `help` (a
 generic component's parameters written from the call, the way `[CGP-E030]` writes a generic trait's,
-with the inner provider as `Self` and the context argument left for the attribute), recovered by
+with the inner provider as `Self` and the context argument left for the attribute, and no `help` for
+a provider trait with a lifetime or const parameter), recovered by
 [`resolve::detect_missing_use_provider`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/missing_use_provider.rs):
 the failing call is an associated-function call `Param::method(…)` on a generic parameter of an
 enclosing provider-trait impl, the method belongs to a CGP provider trait, and the parameter is not
