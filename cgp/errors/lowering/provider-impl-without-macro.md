@@ -71,6 +71,13 @@ declares the provider struct with `new` and keeps `self` for the context.
   the impl alone; one `[CGP-E039]`.
 - [`lowering/provider-impl-without-macro/provider_impl_without_macro_wired.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/provider-impl-without-macro/provider_impl_without_macro_wired.rs):
   the same wired and checked; the check's `E0277` is dropped as the mistake's consequence.
+- [`lowering/provider-impl-without-macro/provider_impl_with_partial_marker.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/provider-impl-without-macro/provider_impl_with_partial_marker.rs):
+  a provider with an `IsProviderFor` impl for one context and a provider-trait impl for every
+  context; not `[CGP-E039]`, since the provider has a marker impl, so the error falls to the
+  `[CGP-E002]` text rewrite (`usability`).
+- [`lowering/provider-impl-without-macro/provider_impl_from_macro_rules.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/provider-impl-without-macro/provider_impl_from_macro_rules.rs):
+  the impl written by a `macro_rules!` macro, which the detector does not take; the error falls to
+  the `[CGP-E002]` text rewrite over rustc's implementor list (`usability`).
 
 ## Related
 

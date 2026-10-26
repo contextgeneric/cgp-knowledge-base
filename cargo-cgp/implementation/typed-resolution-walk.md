@@ -209,7 +209,12 @@ walk descends it the way it descends a provider. It deliberately does *not* foll
   context (a multi-method getter), and `UseDelegate` on a component with parameters whose trait has
   a `RedirectLookup` impl, which an `open` statement uses
   ([`getter_multi_method_use_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/getter_multi_method_use_field.rs),
-  [`use_delegate_without_derive`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/use_delegate_without_derive.rs)).
+  [`use_delegate_without_derive`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/use_delegate_without_derive.rs);
+  [`use_field_multi_method_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/use_field_multi_method_missing_field.rs)
+  and
+  [`use_delegate_parameterless_component`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/use_delegate_parameterless_component.rs)
+  name neither, since `UseFields` would not hold and the component has no parameters to dispatch
+  on).
   An owner that *has* one reached the blanket only because that impl did not unify with
   the arguments the walk gives it, and two cases follow:
   - When those arguments are fully known (no placeholder, inference variable, or unreduced
@@ -456,7 +461,9 @@ reading each `impl Deref`'s `Target` associated type, so it needs no inference c
 bounded against a cyclic `Deref`. Only a struct with named fields carries a field a `Symbol!` tag
 names: a tuple struct keys its fields by `Index<N>`, so a `Symbol!("0")` tag on one is a *missing*
 field, never an underived one, and the resolver records the `Index<0>` tag the position takes
-([`symbol_tag_on_tuple_struct_check`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/symbol_tag_on_tuple_struct_check.rs)).
+([`symbol_tag_on_tuple_struct_check`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/symbol_tag_on_tuple_struct_check.rs);
+[`symbol_tag_not_a_tuple_position`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/symbol_tag_not_a_tuple_position.rs)
+gets no `Index` tag for a position past the fields or a padded spelling).
 For a missing field the resolver also records what its fix can name: adding the field is confirmed only when the struct has named fields (a tuple struct cannot
 gain one) and implements `HasField` for another field (so it derives it), and the field's type is
 the `Value = T` constraint the requirement writes beside its `HasField` bound, read off the impl
@@ -594,7 +601,8 @@ parent document's [Tests](typed-root-cause-resolution.md#tests) section.
 - [`crates/cargo-cgp-driver/src/resolve/classify/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/classify):
   `reportable.rs` (root cause versus routing dead-end), `adapter.rs` (the adapter types that make a
   non-provider a provider), `provided_components.rs` (the other components it provides),
-  `core_provider.rs` (what serves a slot a misused core provider cannot), `other_arguments.rs` (the argument a provider
+  `core_provider.rs` (what serves a slot a misused core provider cannot), `known.rs` (whether a
+  provider obligation is known well enough to confirm a fix against), `other_arguments.rs` (the argument a provider
   does not implement its provider trait for), `hand_wiring.rs` (a component wired without its
   `IsProviderFor`), `leaf.rs` (`classify_leaf`, which builds the
   rustc-free `Leaf`), `data.rs` (`classify_data_leaf`, the extensible-data leaf read off the presence

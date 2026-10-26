@@ -358,6 +358,14 @@ These errors keep the compiler's output because nothing in the tool starts from 
   item or a type parameter do not fit a wiring entry
   ([`ambiguous_component_names`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/ambiguous_component_names.rs),
   [`value_nested_type_not_declared`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/value_nested_type_not_declared.rs)).
+- **A provider impl a macro writes without `#[cgp_provider]`:** the `[CGP-E039]` detector takes
+  only an impl whose trait reference the program wrote, so an impl a `macro_rules!` macro writes
+  falls to the `[CGP-E002]` text rewrite, which calls the impl's parameter a context, over rustc's
+  list of `IsProviderFor` implementors
+  ([`provider_impl_from_macro_rules`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/provider-impl-without-macro/provider_impl_from_macro_rules.rs)).
+  A provider whose `IsProviderFor` impl covers fewer contexts than its provider-trait impl falls to
+  the same text rewrite
+  ([`provider_impl_with_partial_marker`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/provider-impl-without-macro/provider_impl_with_partial_marker.rs)).
 
 ## Errors that need a new class or a deeper walk
 

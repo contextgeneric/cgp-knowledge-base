@@ -289,6 +289,18 @@ These fixtures pin the class, one group per shape:
 - [`data/extensible-data/from_variant_bound_missing_variant.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/from_variant_bound_missing_variant.rs):
   a plain function bounded on a variant `Big` lacks; rustc's headline kept, with its "similar impl"
   help resugared from the fragments rustc splits it into.
+- [`data/extensible-data/from_variant_without_derive.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/from_variant_without_derive.rs):
+  `from_variant` on an enum that does not derive `FromVariant`; `[CGP-E050]` over `[CGP-E123]` with
+  the derive `help`, not a missing variant.
+- [`data/extensible-data/derive_help_kinds.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/derive_help_kinds.rs):
+  a struct's extractor, an enum's builder, and an upcast from `Option<u64>`; `[CGP-E123]` with no
+  derive `help`, since no derive the type could take supplies the trait.
+- [`data/extensible-data/borrowed_extractors_finalized_early.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/borrowed_extractors_finalized_early.rs):
+  a reference and a mutable reference extractor finalized early; one `[CGP-E121]` block whose chain
+  names each extractor by its borrow.
+- [`pass-through/build_field_wrong_value_type.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/build_field_wrong_value_type.rs):
+  `build_field` given a value of the wrong type; rustc's `E0308` is left as rustc wrote it, since no
+  field state explains it.
 - [`data/extensible-data/has_fields_bound_without_derive.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/has_fields_bound_without_derive.rs):
   a provider bound on `HasFields`, on a context without the derive; `[CGP-E123]` with the derive
   `help`.
