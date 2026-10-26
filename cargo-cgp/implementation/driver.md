@@ -1400,8 +1400,9 @@ will likely grow toward it:
 - [`crates/cargo-cgp-driver/tests/driver/help.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/help.rs):
   `wants_help` detecting the help flags, and the help text explaining the wrapper role and flags.
 - [`crates/cargo-cgp-driver/tests/driver/containment.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/containment.rs):
-  `contain` returning a value, naming a contained panic's message and location, letting a
-  `FatalErrorMarker` unwind on, and restoring the outer state after a nested call; and the two
+  `contain` returning a value, naming a contained panic's message and location, reading a formatted
+  (`String`) and a non-string payload, letting a `FatalErrorMarker` unwind on, and restoring the
+  outer state after a nested call; and the two
   fallbacks with a panicking step: a transform's panic giving back rustc's diagnostic with the
   internal-error note, and a flush's panic emitting every entry untransformed, in order.
 - [`crates/cargo-cgp-driver/tests/driver/repeats.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/repeats.rs):

@@ -337,8 +337,8 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
 
 - [`crates/cargo-cgp-error-processing/tests/error_processing/postprocess.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/postprocess.rs):
   drives each post-processing transform over crafted inputs: the head-and-tail split
-  `scan_head_tail` over nesting, a string literal, and its two declines, the stripped/left-alone
-  prefix cases,
+  `scan_head_tail` over nesting, a string literal with an escaped quote, and its two declines, the
+  stripped/left-alone prefix cases,
   the exact-match cases `resugar_symbol` must skip, the `PathCons` → `Path!` resugaring (symbol,
   type, and primitive segments, the open `_` tail left out of a key and declined by the `Path!`
   form, and the non-round-trippable cases `resugar_path` must skip), the single-field (inline and
