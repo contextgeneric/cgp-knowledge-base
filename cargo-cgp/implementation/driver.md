@@ -700,7 +700,16 @@ Otherwise it classifies the shape into one of the five, each with its own code: 
 (`CGP-E010`, the two keys render equal), an **overlap** (`CGP-E011`, distinct but colliding keys: a
 generic over a specific, or a path prefixing another), **multiple namespaces** (`CGP-E012`, both
 keys are blanket forwardings, so the context joins more than one namespace), a **redirect**
-collision (`CGP-E013`), or a **duplicate redirect** (`CGP-E014`, both entries redirect). Each
+collision (`CGP-E013`), or a **duplicate redirect** (`CGP-E014`, both entries redirect). The two
+redirect shapes need entries over one key, whose keys render equal or one of which is a blanket
+forwarding; two distinct keys are an overlap whatever they map to. An overlap's covering key is the
+one whose pattern unifies with the other key once its impl's parameters are fresh inference
+variables, whichever entry comes first. When neither does, the two patterns are unified with each
+other and the key they share is named, a parameter that meets only another open parameter kept as
+written
+([`specific_before_generic_overlap`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/specific_before_generic_overlap.rs),
+[`path_generic_segment_overlap`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/path_generic_segment_overlap.rs),
+[`overlapping_redirects`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/overlapping_redirects.rs)). Each
 entry's target for the colliding key is read the same way: an ordinary entry's is its `Delegate`, a
 `RedirectLookup` for an `open` or `=>` redirect, while a blanket forwarding (a `namespace` join) has
 a generic `Delegate`, so its target is recovered by normalizing `<key as Namespace<Ctx>>::Delegate`

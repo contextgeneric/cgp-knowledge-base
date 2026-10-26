@@ -135,14 +135,21 @@ Which `[CGP-E00x]` code it stamps distinguishes the shapes this class produces:
   collision inside a namespace reads the same way, with the lookup trait standing in for the context
   and an ordinary type key worded as a type: two `#[default_impl]`s on one per-type key give
   `` conflicting wiring: `DefaultImpls1<ShowImplComponent>` wires type `String` twice ``.
-- A path key overlapping a longer one becomes **`[CGP-E011]` overlapping wiring**, naming the longer
-  key as the one wired and the shorter as what already covers it:
+- Two distinct keys that overlap become **`[CGP-E011]` overlapping wiring**. The key it names as the
+  one that already covers is the one whose pattern matches the other's, whichever entry comes
+  first, and a path key covers a longer one:
   `` [CGP-E011] conflicting wiring: `App` wires `@cgp.core.error.ErrorTypeProviderComponent.String`, which `@cgp.core.error.ErrorTypeProviderComponent` already covers ``.
   Each key ends in the wildcard tail the macro appends, which is why the first path covers the
   second; the message leaves the tail out, since the entries never wrote it. A generic segment is
-  named by its parameter, so `@ComputerComponent.<Code> Code.u64` beside `@ComputerComponent.Eval`
-  reads
-  `` conflicting wiring: `App` wires `@ComputerComponent.Code.u64`, which `@ComputerComponent.Eval` already covers ``.
+  named by its parameter, and a generic key covers its instances, so `@DescriberComponent.Wrap<u64>`
+  beside `@DescriberComponent.<T> Wrap<T>` reads, in either order,
+  `` conflicting wiring: `App` wires `@DescriberComponent.Wrap<u64>`, which `@DescriberComponent.Wrap<T>` already covers ``.
+  When neither key covers the other, the two share only some keys, and the message names the key
+  they share as what the first entry already covers: `@ComputerComponent.<Code> Code.u64` beside
+  `@ComputerComponent.Eval` reads
+  `` conflicting wiring: `App` wires `@ComputerComponent.Eval.u64`, which `@ComputerComponent.Eval` already covers ``.
+  The keys decide the shape, not what the entries map them to, so two redirects of overlapping
+  paths are an overlap too, never a key redirected twice.
 - An `open` header colliding with an explicit mapping becomes **`[CGP-E013]` redirect collision**:
   `` [CGP-E013] conflicting wiring: `Person` wires component `GreeterComponent` directly, but it is redirected to `@GreeterComponent` ``,
   carrying a `help:` that names the redirected key to wire the provider under
@@ -247,9 +254,23 @@ headline. The conflicts `cargo-cgp` rewrites:
   the `E0119` pair with carets on the two keys, the `.cgp.stderr` the `[CGP-E011]` headline naming
   both paths.
 - [`wiring/namespace-paths/path_generic_segment_overlap.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/path_generic_segment_overlap.rs):
-  `@ComputerComponent.<Code> Code.u64` beside `@ComputerComponent.Eval`, the overlap through a
-  generic first segment; the `.cgp.stderr` pins the `[CGP-E011]` headline with the generic segment
-  named by its parameter, `@ComputerComponent.Code.u64`.
+  `@ComputerComponent.<Code> Code.u64` beside `@ComputerComponent.Eval`, two keys that overlap in
+  part through a generic first segment; the `.cgp.stderr` pins the `[CGP-E011]` headline naming the
+  key they share, `@ComputerComponent.Eval.u64`.
+- [`wiring/conflicting-wiring/partial_overlap_open_value.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/partial_overlap_open_value.rs):
+  `@app.<X> Wrap<X>` beside `@app.<T> T.Bar`, a partial overlap whose shared key keeps a type the keys
+  leave open, named `@app.Wrap<_>.Bar`.
+- [`wiring/conflicting-wiring/specific_before_generic_overlap.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/specific_before_generic_overlap.rs):
+  `@DescriberComponent.Wrap<u64>` written before `@DescriberComponent.<T> Wrap<T>`; the
+  `[CGP-E011]` headline still names the generic key as the one that covers.
+- [`wiring/conflicting-wiring/overlapping_redirects.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/overlapping_redirects.rs)
+  and
+  [`wiring/conflicting-wiring/namespace_overlapping_path_keys.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/namespace_overlapping_path_keys.rs):
+  two overlapping paths that both redirect, on a context and inside a `cgp_namespace!` block, each a
+  `[CGP-E011]` overlap rather than a `[CGP-E014]` duplicate redirect.
+- [`wiring/conflicting-wiring/redirect_beside_overlapping_entry.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/redirect_beside_overlapping_entry.rs):
+  a direct `@DescriberComponent.Wrap<u64>` beside a redirected `@DescriberComponent.<T> Wrap<T>`,
+  a `[CGP-E011]` overlap rather than a `[CGP-E013]` redirect collision.
 - [`wiring/conflicting-wiring/path_generic_type_segment_overlap.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/path_generic_type_segment_overlap.rs):
   `@DescriberComponent.<T> Wrap<T>` beside `@DescriberComponent.Wrap<u64>`, the overlap through a
   generic type segment; the `.cgp.stderr` pins the `[CGP-E011]` headline naming both keys with their

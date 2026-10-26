@@ -295,10 +295,12 @@ named by its parameter (`@ComputerComponent.Code.u64`) and a type segment with i
   `` [CGP-E011] conflicting wiring: `<Context>` wires <key>, which <source> already covers ``: two
   distinct but overlapping keys, where one cannot claim what the other already covers (a generic
   entry over a specific one, an `@`-path over a namespace forwarding, or a path that covers another,
-  as a prefix or through a generic segment). A child namespace redefining a key it inherits takes
-  this code too, with the namespace as the subject and the parent as the source. **Fix:** remove or
-  narrow the overlapping entry. (A key the namespace resolves to a *redirect* is `CGP-E013`
-  instead.)
+  as a prefix or through a generic segment). The source is the key that covers the other, whichever
+  entry comes first; when neither covers the other, the key is the one the two share and the source
+  is the first entry's. Two distinct keys take this code whatever the entries map them to, redirects
+  included. A child namespace redefining a key it inherits takes this code too, with the namespace
+  as the subject and the parent as the source. **Fix:** remove or narrow the overlapping entry. (A
+  key the namespace resolves to a *redirect* is `CGP-E013` instead.)
 - **`CGP-E012`: multiple namespaces.**
   `` [CGP-E012] conflicting wiring: `<Context>` joins both `<A>` and `<B>`, but a target type in `delegate_components!` can join only one namespace ``:
   two blanket forwardings that each cover every key, from joining two namespaces (or a namespace
