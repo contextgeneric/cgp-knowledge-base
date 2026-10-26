@@ -256,6 +256,13 @@ These fixtures pin the class, one group per shape:
   `CanFormatPair<(u32, u64)>`.
 - [`lowering/undeclared-dependency/undeclared_generic_trait_parameter.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/undeclared_generic_trait_parameter.rs):
   the argument is a parameter of the function, whose declared type gives `CanFormatPair<u32>`.
+- [`lowering/undeclared-dependency/undeclared_trait_shared_method_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/undeclared_trait_shared_method_name.rs):
+  two CGP traits declaring `describe`; the `[CGP-E030]` names the one rustc's notes point at.
+- [`lowering/undeclared-dependency/undeclared_lifetime_trait.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/undeclared_lifetime_trait.rs):
+  a consumer trait with a lifetime parameter, whose `[CGP-E030]` has no help.
+- [`lowering/undeclared-dependency/provider_for_concrete_context_calls_unwired.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/provider_for_concrete_context_calls_unwired.rs):
+  a provider for a concrete context calling a trait its context does not wire, which is not an
+  undeclared dependency and resolves to the missing wiring.
 - [`lowering/undeclared-dependency/raise_error_in_cgp_fn.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/raise_error_in_cgp_fn.rs):
   `Self::raise_error("failed")` in a `#[cgp_fn]` body; the help names `SourceError` to replace.
 - [`lowering/undeclared-dependency/raise_error_written_source.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/raise_error_written_source.rs):
@@ -294,6 +301,12 @@ These fixtures pin the class, one group per shape:
 - [`lowering/undeclared-dependency/self_error_two_traits.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/self_error_two_traits.rs):
   a crate declaring its own `HasErrorType` beside CGP's, so the `E0220` is left as `rustc` wrote it
   (`usability`).
+- [`lowering/undeclared-dependency/abstract_type_of_other_parameter.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/abstract_type_of_other_parameter.rs)
+  and
+  [`lowering/undeclared-dependency/abstract_type_with_parameter.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/abstract_type_with_parameter.rs):
+  a type sought on an inner provider rather than the context, and one only a trait with a
+  parameter of its own declares; both `E0220`s are left as `rustc` wrote them, since `#[use_type]`
+  cannot import either.
 - [`lowering/undeclared-dependency/error_alias_in_cgp_fn.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/error_alias_in_cgp_fn.rs)
   and
   [`lowering/undeclared-dependency/error_alias_in_provider_body.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/error_alias_in_provider_body.rs):
@@ -313,6 +326,9 @@ These fixtures pin the class, one group per shape:
   generated `__Context__`.
 - [`lowering/undeclared-dependency/supertrait_missing_uses_beside_body_error.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/supertrait_missing_uses_beside_body_error.rs):
   an unrelated error in the provider's body stays beside the `[CGP-E036]`.
+- [`lowering/undeclared-dependency/requirement_on_component_parameter.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/requirement_on_component_parameter.rs):
+  a component requiring `HasName` of the context and `T: Display` of its parameter; the
+  `[CGP-E036]` names `HasName` alone, and the `T: Display` error stays as `rustc` wrote it.
 - [`lowering/undeclared-dependency/use_default_getter_context.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/use_default_getter_context.rs):
   a `#[cgp_impl(UseDefault)]` provider omitting a `#[cgp_getter]` requirement; `[CGP-E036]` names
   `UseDefault`.

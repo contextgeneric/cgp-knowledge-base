@@ -349,6 +349,9 @@ These errors keep the compiler's output because nothing in the tool starts from 
   declare, neither of them the impl's, keeps rustc's `E0599`, whose suggestions name `__Context__`
   ([`missing_use_provider_concrete_qualifier`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/missing_use_provider_concrete_qualifier.rs),
   [`missing_use_provider_shared_method_name`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/missing_use_provider_shared_method_name.rs)).
+  A provider trait bounding an inner provider without its context argument keeps rustc's `E0107`,
+  whose help adds the generated `__Context__`
+  ([`provider_trait_in_inner_bound`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/provider_trait_in_inner_bound.rs)).
 
 ## Errors that need a new class or a deeper walk
 
