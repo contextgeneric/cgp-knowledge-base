@@ -113,8 +113,10 @@ declares itself is collected before the rewrite so the `replace_self` type visit
 collected too, and `Self::LIMIT` is rewritten to the qualified
 `<Provider as ProviderTrait<Context>>::LIMIT` instead. Left as `Self::LIMIT`, the path would be
 ambiguous (`E0034`): the consumer blanket impl gives the provider struct the consumer trait, which
-declares the same const. Only imported abstract types (`Self::Error` from `#[use_type]`) and
-receiver `self`/`Self` are rewritten to the context.
+declares the same const. The block's own item wins even when a trait the context implements, such
+as one `#[uses]` imports, declares an item of the same name; `<Self as HasLimit>::LIMIT` reads the
+context's. Every other `Self` is rewritten to the context, including `Self::Error` from
+`#[use_type]` and a `Self::CEILING` naming a const only the context has.
 
 The **companion attributes** are applied in `ItemCgpImpl::lower` before the provider rewrite:
 `#[implicit]` parameters are extracted from each signature and turned into `HasField` bounds on the
@@ -270,6 +272,10 @@ The behavioral tests confirm the lowered wiring works:
 - [basic_delegation/self_local_assoc_const.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/basic_delegation/self_local_assoc_const.rs)
   confirms the same for an associated const: the provider's `Self::LIMIT` reads its own `LIMIT`
   through the qualified path, and a wired context's calls see the limit.
+- [basic_delegation/self_local_assoc_const_scope.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/basic_delegation/self_local_assoc_const_scope.rs)
+  pins which const a `Self::LIMIT` names: the block's own over a `#[uses]` trait's of the same name,
+  a nested item's own inside that item, and the context's for a const only the context has, in code
+  and in a macro body.
 - [implicit_arguments/cgp_impl_implicit_generic.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/implicit_arguments/cgp_impl_implicit_generic.rs)
   reads `#[implicit]` arguments as a provider's own generic `Scalar`, checked at `f64` through
   `#[check_params]`.

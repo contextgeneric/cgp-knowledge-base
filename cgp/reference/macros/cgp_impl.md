@@ -214,8 +214,10 @@ signatures and bodies: in the emitted impl `Self` is the provider struct, which 
 It rewrites a `Self::LIMIT` naming a local const to the qualified
 `<AllowUnderLimit as RateLimiter<__Context__>>::LIMIT`, because a bare `Self::LIMIT` on the provider
 is ambiguous: the consumer trait's blanket impl gives the provider the consumer trait's `LIMIT` too.
-Every other `Self` in the same block is rewritten to the context as usual, including one naming an
-abstract type the *context* supplies.
+The block's own item wins even when a trait the context implements, such as one imported with
+[`#[uses]`](../attributes/uses.md), declares an item of the same name; write
+`<Self as HasLimit>::LIMIT` to read the context's. Every other `Self` in the same block is rewritten
+to the context as usual, including one naming an abstract type the *context* supplies.
 
 **The rewrite is scoped to the block's own method bodies.** An item nested *inside* a body (a local
 `struct` with its own `impl`, a helper `fn`, an inline `trait`) introduces a fresh `self`/`Self` that
