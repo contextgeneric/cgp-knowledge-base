@@ -215,8 +215,8 @@ widen the caret to the whole invocation). The compiler would report it only as a
 inheritance impl's unconstrained `__Value__`, spanning the whole block, since the bound that would
 determine it is a projection of the very trait the impl defines. The parent's type arguments do not
 matter, since every instance has the same parent rule: `<T> new A<T>: A<u32>` would ask `A<u32>`
-again and `A<Vec<T>>` an ever larger instance, which stable `rustc` reports as `E0275` overflow,
-one of them without a location, and which the pinned nightly accepts.
+again and `A<Vec<T>>` an ever larger instance, which stable `rustc` reports as `E0275` overflows,
+one without a location for each namespace, and which the pinned nightly accepts.
 
 **A per-entry generic that never reaches the key**, as in `<T> GreeterComponent: GreetWith<T>`,
 lowers to an impl of the namespace's lookup trait for the key whose `T` nothing binds, so the
