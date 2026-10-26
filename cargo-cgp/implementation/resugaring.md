@@ -471,6 +471,15 @@ so the driver also reads which item each glob brings in under the name, and a pr
 not one of those items keeps its qualifier: in a crate that glob-imports its own `Error`,
 `std::io::Error` stays qualified
 ([`glob_imported_error_route`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/errors/glob_imported_error_route.rs)).
+Each item counts under every path rustc prints for it. rustc prints a parent module by its name
+alone when that name is unique, so an item a glob re-exports out of a private module prints from
+its nearest uniquely named enclosing module, `add::EvalAdd` for `providers::eval::add::EvalAdd`, and
+reads bare
+([`glob_reexported_provider_cycle`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/glob_reexported_provider_cycle.rs)).
+A shorter path that starts at the name of a crate-root item or of a crate is left out, since rustc
+prints a path from there for that other item
+([`glob_reexported_provider_name_shared`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/glob_reexported_provider_name_shared.rs),
+[`glob_imported_error_under_crate_named_module`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/errors/glob_imported_error_under_crate_named_module.rs)).
 The driver supplies the glob-imported names from the resolver's `glob_map`, and the items from each
 glob `use`'s target module. Reading that module needs the HIR, so only a message the tool rewrote
 gets it; an untransformed message, which can arrive during name resolution, treats a glob-imported
@@ -554,8 +563,8 @@ compiler, and the UI suite pins the typed pass end to end.
   variant spelling, the declines for a single `Index` cell, a non-identifier name, and a
   position-tagged sum, a raw keyword name, a mixed list kept as a plain product, a nested list, a
   non-terminating list declined, the `Cons`-inside-`PathCons` guard, the module and CGP-prefix
-  strips (including the multi-byte box-drawing and string-literal cases), and the
-  `postprocess_message` chain end to end.
+  strips (including the multi-byte box-drawing and string-literal cases), the shorter paths a
+  glob-imported item counts under, and the `postprocess_message` chain end to end.
 - [`crates/cargo-cgp-error-processing/tests/error_processing/shape.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/shape.rs):
   the shared spelling rules directly: which names are written as is, raw, or not at all, the named
   and tuple `Struct!` forms and every product that declines, each variant spelling including a
