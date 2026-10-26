@@ -210,9 +210,13 @@ chain yields a `where` clause that never discharges; unlike the lazy `UseContext
 checking each generated inheritance impl, so both `cgp_namespace!` definitions carry the overflow
 with no use site required. A self-inheriting `new A: A`, the one cycle a single invocation shows,
 never reaches the compiler: `NamespaceTable`'s parser rejects a parent path that is the namespace's
-own name with the same type arguments, the caret on the parent. The compiler would report it only
-as an `E0207` on the inheritance impl's unconstrained `__Value__`, spanning the whole block, since
-the bound that would determine it is a projection of the very trait the impl defines.
+own name, the caret on the parent's path (its `<…>` is rebuilt with the macro's span, which would
+widen the caret to the whole invocation). The compiler would report it only as an `E0207` on the
+inheritance impl's unconstrained `__Value__`, spanning the whole block, since the bound that would
+determine it is a projection of the very trait the impl defines. The parent's type arguments do not
+matter, since every instance has the same parent rule: `<T> new A<T>: A<u32>` would ask `A<u32>`
+again and `A<Vec<T>>` an ever larger instance, which stable `rustc` reports as `E0275` overflow,
+one of them without a location, and which the pinned nightly accepts.
 
 **A per-entry generic that never reaches the key**, as in `<T> GreeterComponent: GreetWith<T>`,
 lowers to an impl of the namespace's lookup trait for the key whose `T` nothing binds, so the
@@ -322,8 +326,8 @@ form:
 
 - [parser_rejections/cgp_namespace.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/cgp_namespace.rs)
   asserts the macro rejects an attribute on a `:` mapping key, on a `=>` redirect key, and on a key
-  inside a `for` loop, and a namespace naming itself as its parent, with and without type arguments,
-  with its message. The same file asserts that a token other than `{` after the header
+  inside a `for` loop, and a namespace naming itself as its parent, with and without type arguments
+  and with arguments of its own (a fixed `u32` and a growing `Vec<T>`), with its message. The same file asserts that a token other than `{` after the header
   (`new MyNamespace: DefaultNamespace;`, `new MyNamespace foo`) is rejected, so the header-only form
   accepts only an input that ends at the header.
 

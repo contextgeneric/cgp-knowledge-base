@@ -28,7 +28,8 @@ and `new NamespaceB: NamespaceA` emits the mirror. CGP cannot see the parent cha
 one macro invocation (each `cgp_namespace!` knows only its own parent) so it lowers each namespace
 faithfully and defers the contradiction to the compiler. A self-inheriting `new A: A {}` is the one
 cycle a single invocation shows, so the macro rejects it with
-``the namespace `A` cannot inherit from itself``, the caret on the parent.
+``the namespace `A` cannot inherit from itself``, the caret on the parent's name, as it rejects a parent
+that is another instance of the namespace, such as `<T> new A<T>: A<u32>`.
 
 ## The raw diagnostic
 
@@ -114,7 +115,8 @@ The raw `E0275` described above therefore has no blessed `.rust.stderr`; it is w
 prints, verified against the compiler rather than against a committed snapshot. The self-inheriting
 form's macro rejection is pinned by the `cargo-cgp` fixture
 [`pass-through/namespace_self_inherit.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/namespace_self_inherit.rs),
-which checks that the tool prints the macro's message as rustc does.
+which checks that the tool prints the macro's message as rustc does, and the instance form's by
+[`pass-through/namespace_inherits_own_instance.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/namespace_inherits_own_instance.rs).
 
 ## Related
 

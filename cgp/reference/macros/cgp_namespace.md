@@ -454,9 +454,11 @@ satisfied, where the `Symbol` is the `show` prefix. This is the
 
 A circular parent chain is an error, reported in one of two places. A namespace that names itself
 as its parent, `new A: A`, is rejected by the macro with
-``the namespace `A` cannot inherit from itself``, the caret on the parent. A chain through two or
-more namespaces, such as `new A: B` with `new B: A`, is not visible to any one invocation, so the
-compiler reports it: the inheritance impl's first bound loops, reported as `E0275` overflow at both
+``the namespace `A` cannot inherit from itself``, the caret on the parent's name, whatever its
+arguments: every instance of a namespace has the same parent rule, so `<T> new A<T>: A<u32>` asks
+`A<u32>` again for a key its table lacks, and `A<Vec<T>>` an ever larger instance. A chain through
+two or more namespaces, such as `new A: B` with `new B: A`, is not visible to any one invocation,
+so the compiler reports it: the inheritance impl's first bound loops, reported as `E0275` overflow at both
 definitions (`overflow evaluating the requirement '__Key__: A<__BComponents>'`, and its mirror). This
 is the [namespace inheritance cycle](../../errors/wiring/namespace-inheritance-cycle.md) error class.
 
