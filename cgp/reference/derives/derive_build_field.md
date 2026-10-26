@@ -161,10 +161,11 @@ It **keeps the original struct's visibility**, and each field keeps its own, so 
 yields a `pub struct __PartialPerson` whose fields can be read and written positionally. But it
 **carries none of the struct's own attributes**: the derive clears them, so a
 `#[derive(Debug, Clone)]` on the input does not reach the partial type and a partially-built value
-can be neither printed nor cloned. Each field keeps only its `#[cfg]` and documentation attributes,
-so a helper attribute of another derive, such as `#[serde(rename = "x")]`, stays on the input
-struct, where that derive reads it. The per-field `HasField` impls on the partial type are the supported way to read
-a field back out mid-build.
+can be neither printed nor cloned. Each field keeps only its documentation, so a helper attribute
+of another derive, such as `#[serde(rename = "x")]`, stays on the input struct, where that derive
+reads it. A `#[cfg]` on a field is evaluated before the derive runs, so the partial type has the
+same fields as the input. The per-field `HasField` impls on the partial type are the supported way
+to read a field back out mid-build.
 
 ## Examples
 

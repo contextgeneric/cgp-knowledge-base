@@ -80,9 +80,10 @@ pub enum __PartialRefShape<'__a__, __R__: MapTypeRef, __F0__: MapType, __F1__: M
 }
 ```
 
-Each variant keeps only its `#[cfg]` and documentation attributes on the companions, so a helper
-attribute of another derive, such as `#[default]` or `#[serde(rename = "x")]`, stays on the input
-enum, where that derive reads it.
+Each variant keeps only its documentation on the companions, so a helper attribute of another
+derive, such as `#[default]` or `#[serde(rename = "x")]`, stays on the input enum, where that
+derive reads it. A `#[cfg]` on a variant is evaluated before the derive runs, so the companions
+have the same variants as the input.
 
 It then emits `PartialData` (both partial enums target `Shape`) and the extractor accessors.
 `HasExtractor` yields an owned extractor with every variant present; `HasExtractorRef` and

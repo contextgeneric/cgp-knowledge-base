@@ -72,11 +72,12 @@ impl.
 
 ## Behavior and corner cases
 
-**The companion enums keep only `#[cfg]` and documentation from each variant.**
-`derive_extractor_enum` and `derive_extractor_enum_ref` clear the enum's own attributes and filter
-each variant's through `retain_companion_attrs`, so a helper attribute of another derive
-(`#[default]`, `#[serde(…)]`) stays on the input enum, where that derive reads it, rather than
-failing to resolve on a companion that lacks the derive.
+**The companion enums keep only the documentation of each variant.** `derive_extractor_enum` and
+`derive_extractor_enum_ref` clear the enum's own attributes and filter each variant's through
+`retain_companion_attrs`, so a helper attribute of another derive (`#[default]`, `#[serde(…)]`)
+stays on the input enum, where that derive reads it, rather than failing to resolve on a companion
+that lacks the derive. No `#[cfg]` or `#[cfg_attr]` reaches the filter, since the compiler
+evaluates both before a derive sees its input.
 
 **Every associated type is named through a qualified projection.** The accessors return
 `<Self as HasExtractor>::Extractor` and its borrowed counterparts, and each `extract_field` returns

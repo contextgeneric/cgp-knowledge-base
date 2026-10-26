@@ -79,10 +79,11 @@ supplies only the all-present impl.
 
 ## Behavior and corner cases
 
-**The companion struct keeps only `#[cfg]` and documentation from each field.**
-`derive_builder_struct` clears the struct's own attributes and filters each field's through
-`retain_companion_attrs`, so a helper attribute of another derive (`#[serde(…)]`) stays on the input
-struct rather than failing to resolve on a companion that lacks the derive.
+**The companion struct keeps only the documentation of each field.** `derive_builder_struct` clears
+the struct's own attributes and filters each field's through `retain_companion_attrs`, so a helper
+attribute of another derive (`#[serde(…)]`) stays on the input struct rather than failing to resolve
+on a companion that lacks the derive. No `#[cfg]` or `#[cfg_attr]` reaches the filter, since the
+compiler evaluates both before a derive sees its input.
 
 A named field is keyed by [`Symbol!`](../../reference/macros/symbol.md) and a tuple field by
 [`Index<N>`](../../reference/types/index.md), following the whole family's tagging rule, so a tuple
