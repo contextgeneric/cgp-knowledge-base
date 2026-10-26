@@ -1150,8 +1150,8 @@ type argument of a provider, is no entry's key or value and stays as rustc wrote
 - **A value** is an undeclared provider (`[CGP-E043]`), with a near miss looked for among the
   providers of the key's component (`similar_name`). The requirement it leaves unprovable, the
   entry's context implementing the component's consumer trait (`Person: CanGreet`), is recorded,
-  and the emitter drops a later `E0275` overflow on exactly that requirement as the entry's
-  consequence (`is_unresolved_wiring_overflow`).
+  and the emitter drops a later `E0275` overflow on that requirement, with whatever parameters the
+  component takes, as the entry's consequence (`is_unresolved_wiring_overflow`).
 - **A `#[cgp_impl]` header's provider** is a provider never declared (`[CGP-E038]`), and a value
   naming the same provider is dropped as its consequence.
 - **A type in an `@`-path** is found by its own span. `delegate_components!` gives a path's
@@ -1168,12 +1168,17 @@ type argument of a provider, is no entry's key or value and stays as rustc wrote
   list records both forms of it, the consumer trait for a call and `CanUseComponent` of the
   component for a check, and the emitter drops the `E0275` on either.
 
-A repeat of a classified name at the same span is dropped; an unclassified diagnostic, repeats
-included, is left as rustc wrote it. The consumer trait as a key is different in kind: its `E0782`
-"expected a type, found a trait" is raised while the compiler lowers the impl's header, with a
-`TyCtxt` in scope, so the emitter recognizes it as it arrives
-(`resolve::detect_consumer_trait_as_key`) and words it as `[CGP-E040]`, the component read off the
-consumer trait's provider trait. The wording of every shape is the rustc-free
+A value, a `#[cgp_impl]` provider, or a path type is called undeclared only when nothing the crate
+could import declares a type of its name. A type of that name in any module of the crate, or a
+public one of a direct dependency (`is_type_declared`, in `component.rs`), makes the name one the
+program did not import, so its `E0425` is left as rustc wrote it, and rustc's import suggestion,
+when it gives one, is the fix. A repeat of a name in a wiring entry at the same span is dropped; a
+diagnostic outside the entries, repeats included, is left as rustc wrote it.
+
+The consumer trait as a key is different in kind: its `E0782` "expected a type, found a trait" is
+raised while the compiler lowers the impl's header, with a `TyCtxt` in scope, so the emitter
+recognizes it as it arrives (`resolve::detect_consumer_trait_as_key`) and words it as
+`[CGP-E040]`, the component read off the consumer trait's provider trait. The wording of every shape is the rustc-free
 `plan_unresolved_wiring_name` and `unresolved_wiring_name_help` over the owned
 `UnresolvedWiringName`, and `is_missing_type_parameter_help_text` names the suggestion the path case
 drops. The blessed snapshots under

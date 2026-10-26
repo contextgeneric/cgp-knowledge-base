@@ -200,17 +200,25 @@ Name what the position takes, in scope:
 ## Notes for tooling
 
 The `E0425`s are raised by name resolution, before the compiler builds the HIR, so the tool holds
-them and reshapes them after resolution, when it can read the wiring entries back. Four cases still
+them and reshapes them after resolution, when it can read the wiring entries back. These cases still
 keep `rustc`'s output:
 
-- **A name that matches components in two crates:** the import is ambiguous, and the tool does not
-  guess.
+- **A name declared elsewhere but not imported:** a provider, a `#[cgp_impl]` provider, or a type in
+  an `@`-path that some module of the crate, or a public module of a dependency, declares is a name
+  not in scope rather than one never declared, so the tool does not call it undeclared. `rustc`'s
+  suggestion to import it, when it gives one, is the fix
+  ([`names_not_imported`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/names_not_imported.rs)).
+- **A key two components could be:** two components of one name, in two crates or in two modules,
+  or a key guessed from a consumer trait's name that two traits share, make the import or the
+  component a guess, and the tool does not guess
+  ([`ambiguous_component_names`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/ambiguous_component_names.rs)).
 - **A key that is no component under any rule:** only the `Component` suffix on a consumer trait's
   name is recognized; a misspelled component name gets no near miss.
 - **A key in another table:** only `delegate_components!` entries are recognized, not a
   `check_components!` entry naming the same wrong key.
 - **A type argument outside an `@`-path:** a value such as `UseDelegate<Missing>` keeps both
-  `E0425`s and the type-parameter suggestion, since only a type inside a path is recognized.
+  `E0425`s and the type-parameter suggestion, since only a type inside a path is recognized
+  ([`value_nested_type_not_declared`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/value_nested_type_not_declared.rs)).
 
 ## Backing fixtures
 
@@ -240,6 +248,26 @@ These fixtures pin the class, one group per shape:
   a component of another module as a segment; `[CGP-E041]` names the `crate::` path.
 - [`wiring/unresolved-wiring-name/path_segment_nested_type.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/path_segment_nested_type.rs):
   a type nested in a segment's generic arguments; `[CGP-E044]` without a help.
+- [`wiring/unresolved-wiring-name/value_not_declared_near_miss.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/value_not_declared_near_miss.rs):
+  a misspelled provider beside a closer name that provides another component; `[CGP-E043]`'s help
+  names the provider of the key's component.
+- [`wiring/unresolved-wiring-name/generic_component_value_not_declared.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/generic_component_value_not_declared.rs):
+  an undeclared provider for a component with a parameter, called; `[CGP-E043]`, with the overflow
+  on `App: CanCalculateArea<Rectangle>` dropped.
+- [`wiring/unresolved-wiring-name/generic_component_path_type_checked.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/generic_component_path_type_checked.rs):
+  an undeclared type in the path a component with a parameter is redirected to, checked at a
+  parameter; `[CGP-E044]`, with the check's overflow dropped.
+- [`wiring/unresolved-wiring-name/value_not_declared_beside_cycle.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/value_not_declared_beside_cycle.rs):
+  an undeclared provider beside a wiring cycle whose consumer trait's name begins with the first
+  component's; the cycle's overflow is kept, as `[CGP-E020]`.
+- [`wiring/unresolved-wiring-name/names_not_imported.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/names_not_imported.rs):
+  providers, a `#[cgp_impl]` provider, and a path type declared in another module or a dependency
+  but not imported; each `E0425` is left as rustc wrote it.
+- [`wiring/unresolved-wiring-name/ambiguous_component_names.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/ambiguous_component_names.rs):
+  a key two components share the name of, and a guessed key two consumer traits could mean; both
+  `E0425`s are left as rustc wrote them.
+- [`wiring/unresolved-wiring-name/value_nested_type_not_declared.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/value_nested_type_not_declared.rs):
+  an undeclared type nested in a value's generic arguments, left as rustc wrote it.
 
 ## Related
 

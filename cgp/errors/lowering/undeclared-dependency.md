@@ -315,6 +315,10 @@ These fixtures pin the class, one group per shape:
 - [`lowering/undeclared-dependency/error_alias_without_use_type.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/error_alias_without_use_type.rs):
   a bare `Error` in a provider of a component that imports the type; the `E0425` becomes
   `[CGP-E035]` and the requirement's `E0277`s are dropped.
+- [`lowering/undeclared-dependency/error_alias_used_twice.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/error_alias_used_twice.rs):
+  the same with `Error` written twice in the provider and once in a function outside it; the
+  provider's first `E0425` becomes `[CGP-E035]`, its second is dropped, and the outside one is
+  left as `rustc` wrote it.
 - [`lowering/undeclared-dependency/use_type_component_self_error.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/use_type_component_self_error.rs):
   the same with `Self::Error`, where the `E0220` becomes `[CGP-E035]`.
 - [`lowering/undeclared-dependency/supertrait_missing_uses.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/supertrait_missing_uses.rs):

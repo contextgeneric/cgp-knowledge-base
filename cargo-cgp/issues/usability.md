@@ -352,6 +352,12 @@ These errors keep the compiler's output because nothing in the tool starts from 
   A provider trait bounding an inner provider without its context argument keeps rustc's `E0107`,
   whose help adds the generated `__Context__`
   ([`provider_trait_in_inner_bound`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/provider_trait_in_inner_bound.rs)).
+- **A wiring name the tool cannot settle or does not reach:** a key that two components share the
+  name of, or that two consumer traits could be guessed from, and a type nested in a value's generic
+  arguments (`UseDelegate<Missing>`) keep rustc's `E0425`s, whose suggestions of a similarly named
+  item or a type parameter do not fit a wiring entry
+  ([`ambiguous_component_names`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/ambiguous_component_names.rs),
+  [`value_nested_type_not_declared`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/value_nested_type_not_declared.rs)).
 
 ## Errors that need a new class or a deeper walk
 

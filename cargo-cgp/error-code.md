@@ -790,6 +790,10 @@ for `CGP-E060`.
   is dropped as its consequence, and so is the `E0275` overflow a call of the component then reports
   under the next-generation solver
   ([`provider_not_declared`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/provider_not_declared.rs)).
+  A provider some module of the crate or a public module of a dependency declares is not in scope
+  rather than undeclared, so its `E0425` is left as rustc wrote it, with rustc's import suggestion
+  when it gives one
+  ([`names_not_imported`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/names_not_imported.rs)).
   The Rust code stays `E0425`.
 - **Fix (in the `help`):** add `new` to the attribute, or declare the provider struct.
 - **Upstream class:** [unresolved wiring name](../cgp/errors/wiring/unresolved-wiring-name.md).
@@ -878,8 +882,14 @@ for `CGP-E060`.
   suggestion of a similarly named trait (often the provider trait) is dropped, and an `E0275`
   overflow on the requirement the entry leaves unprovable (the context implementing the consumer
   trait, as a call reports it, or `CanUseComponent` of the component, as a check reports it) is
-  dropped as its consequence
-  ([`value_not_declared`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/value_not_declared.rs)).
+  dropped as its consequence, whatever parameters the component takes
+  ([`value_not_declared`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/value_not_declared.rs),
+  [`value_not_declared_near_miss`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/value_not_declared_near_miss.rs),
+  [`generic_component_value_not_declared`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/generic_component_value_not_declared.rs)).
+  A provider some module of the crate or a public module of a dependency declares is not in scope
+  rather than undeclared, so its `E0425` is left as rustc wrote it, with rustc's import suggestion
+  when it gives one
+  ([`names_not_imported`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/names_not_imported.rs)).
   The Rust code stays `E0425`.
 - **Fix:** declare the provider, or name one that exists.
 - **Upstream class:** [unresolved wiring name](../cgp/errors/wiring/unresolved-wiring-name.md).
@@ -904,7 +914,12 @@ for `CGP-E060`.
   value's entry leaves unprovable is dropped as its consequence
   ([`path_segment_not_declared`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/path_segment_not_declared.rs),
   [`path_segment_near_miss`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/path_segment_near_miss.rs),
-  [`path_segment_nested_type`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/path_segment_nested_type.rs)).
+  [`path_segment_nested_type`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/path_segment_nested_type.rs),
+  [`generic_component_path_type_checked`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/generic_component_path_type_checked.rs)).
+  A type some module of the crate or a public module of a dependency declares is not in scope
+  rather than undeclared, so its `E0425` is left as rustc wrote it, with rustc's import suggestion
+  when it gives one
+  ([`names_not_imported`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/names_not_imported.rs)).
   The Rust code stays `E0425`.
 - **Fix (in the `help`):** declare or import the type, or write the segment in lowercase.
 - **Upstream class:** [unresolved wiring name](../cgp/errors/wiring/unresolved-wiring-name.md).
