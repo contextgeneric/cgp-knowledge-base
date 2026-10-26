@@ -92,7 +92,7 @@ reuse it.
 
 - [namespaces/path_macro.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/namespaces/path_macro.rs)
   asserts by type equality that `Path!` classifies lowercase, capitalized, and primitive segments
-  and ends the chain in `Nil`.
+  (each of the seventeen primitive names on its own) and ends the chain in `Nil`.
 - [namespaces/redirect_lookup.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/namespaces/redirect_lookup.rs)
   pins, through a `snapshot_cgp_component!` golden, the chain a
   `#[prefix(@bar.baz in DefaultNamespace)]` attribute builds with `append_type`.

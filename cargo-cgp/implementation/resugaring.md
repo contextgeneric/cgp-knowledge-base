@@ -547,9 +547,9 @@ compiler, and the UI suite pins the typed pass end to end.
 - [`crates/cargo-cgp-error-processing/tests/error_processing/postprocess.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/postprocess.rs):
   the text implementations over crafted inputs: an exactly-matched `Symbol!` and the empty symbol, a
   wrong length and a foreign `Symbol` left alone, the `PathCons` → `@…`/`Path!(@…)` forms across
-  symbol, type, primitive, generic-value, and reference-value segments, the open `_` tail left out
-  of a key and declined by `Path!(…)`, the qualified-tail, lowercase-segment, and near-miss
-  primitive (`f`, `u2`) declines, the
+  symbol, type, primitive (each primitive name), generic-value, and reference-value segments, the
+  open `_` tail left out of a key and declined by `Path!(…)`, the qualified-tail, lowercase-segment,
+  and near-miss primitive (`f`, `u2`, `i7`) declines, the
   `Product!`/`Sum!` folds, the named and tuple `Struct!` shapes and the `Enum!` shape in each
   variant spelling, the declines for a single `Index` cell, a non-identifier name, and a
   position-tagged sum, a raw keyword name, a mixed list kept as a plain product, a nested list, a

@@ -79,8 +79,8 @@ the macro itself, and the rest exercise the same parsing through the namespace a
 
 - [namespaces/path_macro.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/namespaces/path_macro.rs)
   asserts by type equality that `Path!` turns lowercase segments into `Symbol!`s, including names
-  such as `f`, `u2`, and `i7` that only look like primitives, keeps capitalized and primitive
-  segments as types, and ends the chain in `Nil`.
+  such as `f`, `u2`, and `i7` that only look like primitives, keeps capitalized segments and each
+  of the seventeen primitive names as types, and ends the chain in `Nil`.
 
 - [namespaces/redirect_lookup.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/namespaces/redirect_lookup.rs)
   pins, through a `snapshot_cgp_component!` golden, how a `#[prefix(@bar.baz in DefaultNamespace)]`
