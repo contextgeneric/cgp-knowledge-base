@@ -74,7 +74,8 @@ error pointing at the offending part of the signature:
   `fn parse<T: FromStr>(value: String) -> Option<T>`, fails with
   ``the parameter `T` appears in no argument type, so the generated `Computer` impl cannot determine it``, since the generated impl's trait arguments carry only the input types. A
   parameter another bound names is accepted, since a bound such as `I: IntoIterator<Item = T>` on an
-  input `I` determines `T`.
+  input `I` determines `T`, and so is one named inside a type macro, as in
+  `pair: Product![T, T]`.
 
 ## Syntax Grammar
 

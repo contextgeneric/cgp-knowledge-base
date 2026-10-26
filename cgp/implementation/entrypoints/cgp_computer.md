@@ -101,8 +101,10 @@ fail with `E0207`. `reject_output_only_params` rejects it during `preprocess`, o
 saying to take an argument whose type names it or to write the provider by hand on a provider
 generic over it. A parameter that another parameter's bound or a `where` predicate names is left to
 the compiler, since an associated-type bound such as `I: IntoIterator<Item = T>` on an input `I`
-determines `T`. Accepting the output-only form would need the provider struct itself to be generic
-over the parameter (`Parse<T>`), which changes how it is named and wired.
+determines `T`. A type macro is only tokens to `syn`, so the search reads its tokens and counts any
+token of the parameter's name, accepting `pair: Product![T, T]` and leaving any doubt to the
+compiler. Accepting the output-only form would need the provider struct itself to be generic over
+the parameter (`Parse<T>`), which changes how it is named and wired.
 
 **Parameter patterns are discarded.** Each input is rebound positionally as `arg_i`, so a `mut`
 binding or a destructuring pattern in the source signature is replaced by a plain binding, and the
@@ -170,7 +172,9 @@ Each expansion variant is pinned in the `handlers` target:
 - [handlers/computer_macro_arity.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/handlers/computer_macro_arity.rs):
   no parameters (`()` input) and one parameter (the parenthesized bare type).
 - [handlers/computer_macro_generics.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/handlers/computer_macro_generics.rs):
-  a `where` clause, a lifetime parameter, and a const generic parameter.
+  a `where` clause, a lifetime parameter, and a const generic parameter, and the parameters the
+  output-only check accepts: one bound through another parameter, and one named inside a
+  `Product!` argument.
 - [handlers/computer_macro_output.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/handlers/computer_macro_output.rs):
   an omitted return type, and a qualified `core::result::Result` that selects `PromoteComputer`.
 
@@ -193,7 +197,8 @@ The behavioral tests exercise the generated provider across the handler family:
   [handlers/computer_macro_named.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/handlers/computer_macro_named.rs),
   [handlers/computer_macro_output.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/handlers/computer_macro_output.rs):
   the generic, named, unit-return, and qualified-`Result` providers called through the family; the
-  generics file includes `first_item`, whose `T` only an input's associated-type bound names.
+  generics file includes `first_item`, whose `T` only an input's associated-type bound names, and
+  `first_of_pair`, whose `T` appears only inside a `Product!` argument.
 - [handlers/computer_macro_visibility.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/handlers/computer_macro_visibility.rs):
   a `pub fn` computer in a child module used from its parent.
 - [handlers/raw_function_names.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/handlers/raw_function_names.rs):
