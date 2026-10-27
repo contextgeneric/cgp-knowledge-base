@@ -393,6 +393,17 @@ These errors keep the compiler's output because nothing in the tool starts from 
   on the provider trait, which names `__Context__`)
   ([`generic_fn_consumer_not_in_scope`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/generic_fn_consumer_not_in_scope.rs)).
 
+## Errors the tool misattributes
+
+These errors are reshaped, but the reshaped message names the wrong owner of the cause:
+
+- **A blanket-trait bound on a struct:** a `#[cgp_fn]` trait required by a struct's bound
+  (`pub struct Holder<T: GetName>(pub T)`), built with a context that lacks the field the trait
+  reads, is reported as `` missing field `name` on `Holder<T>` ``. The field is missing on the context
+  (`App`), and rustc's own message names `App: GetName`; the by-blanket-trait use-site anchor takes
+  the struct whose definition holds the bound as the owner
+  ([`cgp_fn_struct_bound`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/cgp_fn_struct_bound.rs)).
+
 ## Errors that need a new class or a deeper walk
 
 These errors are reshaped in part or not at all, and stating their cause needs a class or a walk the

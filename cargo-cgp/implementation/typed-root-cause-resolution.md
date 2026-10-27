@@ -834,11 +834,16 @@ fixtures:
   with no method call to read. Pins the bound-call anchor's blanket-trait form: it reads `GetName`
   off `greet_all`'s own bound and the context `App` from the argument `app`, a parameter declared
   `&App`, heading `[CGP-E003]` over the missing-field tree, where raw rustc mangles the field name
-  to an unreadable `Symbol<4, Chars<..>>` in a `help`. No fixture reaches the by-blanket-trait
-  anchor (`resolve_use_site_blanket_trait`) alone, since the bound-call anchor is tried first. Its
+  to an unreadable `Symbol<4, Chars<..>>` in a `help`. The bound-call anchor is tried first, so
+  this fixture never reaches the by-blanket-trait anchor (`resolve_use_site_blanket_trait`). Its
   decline-boundary sibling is
   [`generic_consumer_unwritten_arg`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/use-site/generic_consumer_unwritten_arg.rs),
   an `E0599` whose deep blanket-trait bound stays declined because the anchor is gated to `E0277`.
+- `cgp_fn_struct_bound`: the same trait required by a **struct's** bound
+  (`pub struct Holder<T: GetName>(pub T)`, built as `Holder(app)`), the shape that reaches the
+  by-blanket-trait anchor. Pins its current output, which names the wrong owner: the field is
+  reported missing on `Holder<T>`, the struct whose definition holds the bound, rather than on `App`
+  (see [usability issues](../issues/usability.md#errors-the-tool-misattributes)).
 - `use_type_foreign_unsatisfied` and `use_type_nested_unsatisfied`: an unsatisfiable `#[use_type]`
   abstract-type import in a trait definition, recovered by the consumer-trait anchor into a
   `[CGP-E001]` missing-wiring tree instead of leaking generated `__…__` placeholder names. The type
