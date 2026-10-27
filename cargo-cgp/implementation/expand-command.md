@@ -368,19 +368,17 @@ index saying where its qualifier ends. Dropping segments without moving that ind
 inconsistent, and the printer asserts on exactly that, panicking the driver mid-compilation. The
 strip corrects the index for both node kinds that carry one, and two unit tests pin it.
 
-The one option the first slice needs is how much path noise to remove. CGP macros emit
-fully-qualified `::cgp::macro_prelude::Symbol<…>`, which is pure noise to a reader and which the
-resugaring must see past anyway, so **the `cgp::macro_prelude::` qualifier is stripped by default**
-(`cgp`'s own `strip_macro_prelude` does this for its expansion snapshots, and the diagnostic chain's
-`strip_cgp_prefixes` does it for errors). General module qualifiers are **kept**, unlike in a
+The resugaring also removes path noise. CGP macros emit fully-qualified
+`::cgp::macro_prelude::Symbol<…>`, which is pure noise to a reader and which the resugaring must see
+past anyway, so **the `cgp::macro_prelude::` qualifier is always stripped**, as the first pass
+(`cgp`'s own `strip_macro_prelude` does the same for its expansion snapshots, and the diagnostic
+chain strips module paths from errors). General module qualifiers are **kept**, unlike in a
 diagnostic, because in source they carry information a reader may want.
 
-The switch that turns the stripping off, which
-[`ExpandOptions`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-expand/src/options.rs)
-carries so the output can be kept compilable, has no command-line flag yet. A `--verbatim` flag
-would be the front-end's second tool-specific argument, and like `--item` it would have to be
-recognized and removed before the rest are forwarded to cargo, one more exception to the
-pass-through `check` stays; that cost is why the flag waits until someone wants it.
+Stripping the qualifier means the printed expansion does not compile as it stands, and no option
+keeps the qualifier. A `--verbatim` flag that did would be the front-end's second tool-specific
+argument, and like `--item` it would have to be recognized and removed before the rest are
+forwarded to cargo, one more exception to the pass-through `check` stays.
 
 ## How cargo and the output behave in practice
 
@@ -597,5 +595,5 @@ and printing halves need a real compilation, so they are exercised by running th
 - [`crates/cargo-cgp-expand/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-expand):
   the rustc-free resugaring crate: `source.rs` is the entry point, `resugar/` holds one module per
   pass (`symbol`, `path`, `list`, `strip`, `spacing`) over the shared `parts.rs`, `select.rs`
-  narrows an expansion to one module or item, and `options.rs` carries the item path and the strip
-  switch. See [Resugaring](resugaring.md).
+  narrows an expansion to one module or item, and `options.rs` carries the item path. See
+  [Resugaring](resugaring.md).
