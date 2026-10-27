@@ -175,8 +175,8 @@ The rough shape is two structs, one per lifetime class:
 // `&self` emitter methods and from inside a `ty::tls::with` closure. (Exists today.)
 struct ResolveCache {
     // One map, keyed at every node. The key is tcx-free: it is hashed and compared by a
-    // `StableHash` fingerprint of the region-erased obligation and its root context, with
-    // readable debug fields alongside for inspecting the store. The value is the node's
+    // `StableHash` fingerprint of the region-erased obligation and its root context. The value
+    // is the node's
     // owned, rustc-free root-cause sub-chains together with its reachable-fingerprint set
     // (see the cache document).
     entries: RefCell<HashMap<NodeKey, SubResult>>,
@@ -225,7 +225,7 @@ types cannot be inhabited without a live `TyCtxt`: a rustc-free stand-in cannot 
 `Ty<'tcx>`. So the later components must be defined over an *abstracted* vocabulary (an owned model,
 or CGP abstract types) rather than over rustc's types directly. That same choice relates to the
 [cache key](cached-dependency-resolution.md#the-cache-key), which keys each obligation by a
-`StableHash` fingerprint (carrying readable fields alongside for debugging); moving the walk itself
+`StableHash` fingerprint; moving the walk itself
 onto an owned model would let structural equality on owned types replace the fingerprint as the
 key's identity.
 

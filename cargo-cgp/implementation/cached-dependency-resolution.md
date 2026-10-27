@@ -196,14 +196,10 @@ walk, is a leaf there, while `Outer`'s own walk descends it as a bound on its co
 
 ## The cache key
 
-The key is **a small struct hashed and compared by a single `StableHash` fingerprint, carrying
-readable fields alongside purely so the cache store can be inspected.** Its identity, the only thing
-`Hash` and `Eq` read, is a 128-bit `Fingerprint` of the region-erased obligation and the root
-context; the remaining fields render the obligation and the context as text and never affect a
-lookup. This splits the two jobs a key does (being a correct identity, and being legible), so each
-is served by the tool best suited to it, and it rests on the completeness principle
-[the resolve context](resolve-context.md) is built on: the identity *is* the node's input, so every
-input the walk's output depends on must be in it.
+The key is **a small struct holding a single `StableHash` fingerprint**, which its `Hash` and `Eq`
+read: a 128-bit `Fingerprint` of the region-erased obligation and the root context. It rests on the
+completeness principle [the resolve context](resolve-context.md) is built on: the identity *is* the
+node's input, so every input the walk's output depends on must be in it.
 
 The fingerprint is the identity because rustc supplies its encoding, and that encoding is both total
 and faithful in ways a hand-written one would struggle to be. `StableHash` walks the whole structure
@@ -220,45 +216,15 @@ summarizes cannot. Its one cost is the one rustc itself accepts: a 128-bit colli
 That is acceptable where a miscompile would not be, and the standard rustc trusts for its own query
 and incremental caches.
 
-Because the fingerprint carries all the correctness, **the remaining fields are free to be readable
-rather than injective.** They exist so a maintainer investigating a hit or a miss can dump the cache
-store and see, in plain text, which obligations were resolved and which were not (the context, the
-consumer or provider trait, its parameters) without decoding a wall of fingerprints. Since they
-never feed `Hash` or `Eq`, they may render ambiguous short names, resugared lists, whatever reads
-best; two entries that happen to display alike are still distinct entries under their distinct
-fingerprints. This is the payoff of splitting the key: nothing hand-written has to be total or
-injective, so the hazard of a hand-rolled serializer silently merging two shapes never arises. Such
-a merge would be a *deterministic* wrong hit, worse than the fingerprint's astronomically unlikely
-one.
-
-The struct makes the split concrete. `Hash` and `Eq` are hand-written on the fingerprint alone
-rather than derived, because deriving would fold the debug fields into equality and defeat the whole
-arrangement, while `Debug` is derived so the store can be dumped:
+The struct makes this concrete. `Hash` and `Eq` derive from the fingerprint, its only field:
 
 ```rust
-/// Cache key for a resolved node. Identity is the fingerprint; the rest is for humans.
-#[derive(Clone, Debug)]
+/// Cache key for a resolved node: the fingerprint of its obligation and root context.
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
 struct NodeKey {
-    /// The sole basis for `Hash`/`Eq`: a `StableHash` fingerprint of the region-erased
-    /// obligation and its root context. `Copy` and lifetime-free, so it outlives any `TyCtxt`.
+    /// A `StableHash` fingerprint of the region-erased obligation and its root context.
+    /// `Copy` and lifetime-free, so it outlives any `TyCtxt`.
     fingerprint: Fingerprint,
-    /// Debug-only, never read by `Hash`/`Eq`: the obligation and root context rendered as
-    /// text, e.g. `Rectangle: AreaCalculator<Circle>` under `Rectangle`.
-    obligation: String,
-    context: String,
-}
-
-impl PartialEq for NodeKey {
-    fn eq(&self, other: &Self) -> bool {
-        self.fingerprint == other.fingerprint
-    }
-}
-impl Eq for NodeKey {}
-
-impl std::hash::Hash for NodeKey {
-    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        self.fingerprint.hash(state);
-    }
 }
 ```
 
@@ -301,8 +267,7 @@ cache misses where it harmlessly could hit.
 Keying by fingerprint is the pragmatic choice for as long as the walk runs on `Ty<'tcx>`. The
 deferred [resolve-context](resolve-context.md#deferred-the-cgp-component-abstraction) work would
 move the walk onto an owned type model, at which point the node is owned data and structural
-equality could key it directly. The readable fields would become the identity and the fingerprint
-would fall away. That is a possible future, not a decision to make now; build the fingerprint-keyed
+equality could key it directly, and the fingerprint would fall away. That is a possible future, not a decision to make now; build the fingerprint-keyed
 struct, and revisit only if that refactor lands.
 
 ## How the cache relates to the de-duplication ledger
@@ -427,8 +392,8 @@ The tests below do not exist yet; they are the coverage still to add.
 ## Source
 
 - [`crates/cargo-cgp-driver/src/resolve/cache.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/cache.rs):
-  the `NodeKey` (a `StableHash` `Fingerprint` of the region-erased obligation and its context for
-  `Hash`/`Eq`, with readable debug fields and a derived `Debug`), the owned `SubCause` / `SubResult`
+  the `NodeKey` (a `StableHash` `Fingerprint` of the region-erased obligation and its context, which
+  its derived `Hash`/`Eq` read), the owned `SubCause` / `SubResult`
   values (the node-rooted sub-chains, the reachable-fingerprint set, and the incomplete flag), the
   `pred_fingerprint` helper for reachable entries, and the `ResolveCache` store (a
   `RefCell<HashMap>` of `SubResult`).

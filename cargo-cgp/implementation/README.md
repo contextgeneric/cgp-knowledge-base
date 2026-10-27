@@ -64,8 +64,7 @@ same change.
   reasoning: why a node key is not a complete key (the cycle guard makes the walk a function of the
   ancestor set), the incomplete-subtree flag that keeps a guard-truncated subtree out of the cache,
   the reachable-set disjointness check that keeps a reuse from forming a cycle, and the key hashed
-  and compared by a `StableHash` fingerprint (of the obligation and its root context) with readable
-  fields alongside for inspecting the store. It also explains why cacheability is a statelessness
+  and compared by a `StableHash` fingerprint of the obligation and its root context. It also explains why cacheability is a statelessness
   proof, not just a speedup.
 - [Dependency-graph rendering](dependency-graph-rendering.md): how the `root cause:` note's tree is
   built as one rustc-free **dependency graph**. The resolver emits structured, per-`CGP-E1xx`-code
