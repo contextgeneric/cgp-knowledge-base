@@ -443,8 +443,7 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   fragments as the one line it renders as), `strip_modules.rs` (`strip_unambiguous_paths`, the
   UTF-8-safe module-qualifier collapse that keeps a disambiguating qualifier, and
   `strip_module_paths`, which keeps none; both keep a `use` statement's path), `ambiguous.rs`
-  (`AmbiguousNames`, which qualified names tell two types apart), `strip_prefixes.rs`
-  (`strip_cgp_prefixes` and the `CGP_PREFIXES` constant), `resugar_symbol.rs` (the exact-match
+  (`AmbiguousNames`, which qualified names tell two types apart), `resugar_symbol.rs` (the exact-match
   `Symbol!` parser), `resugar_path.rs` (the `PathCons` → `@…`/`Path!(@…)` resugarer, the form chosen
   by its `wrap` parameter), `resugar_list.rs` (`resugar_lists`, the `Product!`/`Sum!` and
   `Struct!`/`Enum!` resugarer), `spine.rs` (`scan_head_tail`, the split of a cell into its head

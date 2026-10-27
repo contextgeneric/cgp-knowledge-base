@@ -512,11 +512,6 @@ extensible-data `help` that names a method's import
 (`` with `use cgp::core::field::impls::CanDowncastFields;` in scope ``) keeps its path
 ([`downcast_on_remainder`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/downcast_on_remainder.rs)).
 
-[`strip_cgp_prefixes`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/strip_prefixes.rs)
-removes the specific CGP re-export paths (`cgp::prelude::`, `cgp::macro_prelude::`,
-`cgp::cgp_core::`, `cgp::cgp_extra::`), turning `cgp::prelude::Chars` into `Chars`. Nothing in the
-chain calls it.
-
 The expand command treats these differently from a diagnostic, and deliberately so: it strips the
 `cgp::macro_prelude::` qualifier the macros emit, because that is pure noise, but **keeps** general
 module qualifiers, because in printed source a qualifier carries information a reader may want (see
@@ -562,8 +557,8 @@ compiler, and the UI suite pins the typed pass end to end.
   `Product!`/`Sum!` folds, the named and tuple `Struct!` shapes and the `Enum!` shape in each
   variant spelling, the declines for a single `Index` cell, a non-identifier name, and a
   position-tagged sum, a raw keyword name, a mixed list kept as a plain product, a nested list, a
-  non-terminating list declined, the `Cons`-inside-`PathCons` guard, the module and CGP-prefix
-  strips (including the multi-byte box-drawing and string-literal cases), the shorter paths a
+  non-terminating list declined, the `Cons`-inside-`PathCons` guard, the module strips (including
+  the multi-byte box-drawing and string-literal cases), the shorter paths a
   glob-imported item counts under, and the `postprocess_message` chain end to end.
 - [`crates/cargo-cgp-error-processing/tests/error_processing/shape.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/shape.rs):
   the shared spelling rules directly: which names are written as is, raw, or not at all, the named
@@ -632,7 +627,7 @@ them rests on this document.
   `render_enum_shape`, and `render_variant`.
 - [`crates/cargo-cgp-error-processing/src/postprocess/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/postprocess):
   the text passes, one module each: `resugar_symbol.rs`, `resugar_path.rs`, `resugar_list.rs`,
-  `strip_modules.rs`, `strip_prefixes.rs`, and `chain.rs`, which sequences them, with `spine.rs`
+  `strip_modules.rs`, and `chain.rs`, which sequences them, with `spine.rs`
   holding the head-and-tail split the path and list passes share.
 - [`crates/cargo-cgp-expand/src/resugar/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-expand/src/resugar):
   the syntax-tree passes, one module per construct (`symbol.rs`, `path.rs`, `list.rs`), plus

@@ -125,8 +125,7 @@ fix, and the [CGP error catalog](../cgp/errors/README.md) class it recognizes.
   (`` missing fields `alpha`, `beta`, `gamma`, and 3 more on `App` ``); mixed causes take the class
   sentence with their count,
   `` [CGP-E001] the consumer trait `<Consumer>` is not implemented for context `<Context>`: 2 root causes ``
-  (pluralized when a use-site failure spans several components). The class sentence is also the
-  internal headline a declined re-report is matched on.
+  (pluralized when a use-site failure spans several components).
 - **Means:** the context cannot use a component it is expected to use: the wiring is missing, or a
   transitive dependency of the wired provider is unmet, so the blanket impl that would give the
   context its consumer trait does not apply.

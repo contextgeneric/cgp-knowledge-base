@@ -308,14 +308,14 @@ generated parameter in the context's place (`__Context__`, the context a provide
 over) is not called a context: the provider note leaves it out, and the consumer note names it
 plainly (the `a_generated_parameter_is_not_called_a_context` test in
 [`rewrite.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/rewrite.rs)).
-The primary header is rewritten further, because an unsatisfied wiring bound is an identified CGP
-error class and gains its [CGP error code](../error-code.md):
-`` the trait bound `Rectangle: CanUseComponent<AreaCalculatorComponent>` is not satisfied `` becomes
-`` [CGP-E001] the consumer trait `CanCalculateArea` is not implemented for context `Rectangle` ``,
-and a provider-side header `` `RectangleArea: IsProviderFor<AreaCalculatorComponent, Rectangle>` ``
+A provider-side primary header is rewritten further, because an unsatisfied `IsProviderFor` bound
+is an identified CGP error class and gains its [CGP error code](../error-code.md):
+`` the trait bound `RectangleArea: IsProviderFor<AreaCalculatorComponent, Rectangle>` is not satisfied ``
 becomes
 `` [CGP-E002] the provider trait `AreaCalculator` with context `Rectangle` is not implemented for provider `RectangleArea` ``,
-restating the fact the marker form stands in for, with the diagnostic's own Rust code kept. This is
+restating the fact the marker form stands in for, with the diagnostic's own Rust code kept. A
+check's `CanUseComponent` header is the [typed resolver](typed-root-cause-resolution.md)'s to word,
+so the text rewrite leaves it. This is
 the transform the `IsProviderFor` and `CanUseComponent` marker traits otherwise hide: the component
 marker names neither trait, its `…Component` suffix is at best an unreliable guess at the provider
 trait, and it says nothing at all about the consumer trait.
