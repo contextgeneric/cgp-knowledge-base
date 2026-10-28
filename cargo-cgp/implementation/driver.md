@@ -1426,6 +1426,11 @@ will likely grow toward it:
   outer state after a nested call; and the two
   fallbacks with a panicking step: a transform's panic giving back rustc's diagnostic with the
   internal-error note, and a flush's panic emitting every entry untransformed, in order.
+- [`crates/cargo-cgp-driver/tests/driver/footers.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/footers.rs):
+  `rebuild_explain_footers` over hand-built diagnostic lists: a footer whose codes all survive left
+  as it is, a code whose errors were all dropped leaving the list, one surviving code keeping only
+  the pointer line, no surviving code dropping both lines, and a footer line naming no readable
+  code left as written.
 - [`crates/cargo-cgp-driver/tests/driver/pipeline.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/pipeline.rs):
   `apply_reshape` over hand-built diagnostics: the plan's header, notes, and then helps replacing
   rustc's message, notes, and suggestions, and each span policy (rustc's spans kept, the primary
@@ -1503,12 +1508,13 @@ will likely grow toward it:
   and wraps it, `cgp_emitter.rs` holds the `CgpEmitter<E>` type (holding the `ComponentNameMap`, the
   rustc-free `DedupLedger` of already-emitted failures, the `cgp_spans` list of recognized-failure
   spans that anchors the `?`-operator cascade suppression, and the shared output whose
-  arrival-ordered buffer of `BufEntry`s is flushed from `Drop` (`Plain` verbatim in place,
-  `Resolved` having its `root cause:` note rendered there against the flush's shared `seen` set, and
-  the `coalescible` ones additionally partitioned by `group_by_shared_cause` and merged into one
-  consumer header per group by `merged_diag`, after which `rebuild_explain_footers` makes the
-  trailing `rustc --explain` footer name only the codes that survived)) and its
-  transform/post-process/de-duplicate/coalesce orchestration, `pipeline/` the `Verdict` a stage
+  arrival-ordered buffer of `BufEntry`s is flushed from `Drop`) and its
+  transform/post-process/de-duplicate orchestration, `flush/` the rendering of that buffer
+  (`Plain` entries verbatim in place, `Resolved` ones with their `root cause:` note rendered against
+  the flush's shared `seen` set, the `coalescible` ones additionally partitioned by
+  `group_by_shared_cause` and merged into one consumer header per group by `merged_diag`, after
+  which `rebuild_explain_footers` makes the trailing `rustc --explain` footer name only the codes
+  that survived), `pipeline/` the `Verdict` a stage
   returns, the `Reshape` that holds a reshaping stage's edits as data, and `apply_reshape`, which
   writes one into the diagnostic, `stage/` the stages, one module each, the typed resolver's
   `resolver.rs` last (among them `shared_dispatch_method.rs`, the pairing of the two `E0428`s two

@@ -455,9 +455,9 @@ compiler, and the end-to-end behavior is pinned by the UI suite.
   the cache in
   [`cache.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/cache.rs)
   stores them.
-- [`crates/cargo-cgp-driver/src/emitter/cgp_emitter.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/cgp_emitter.rs):
-  the flush that renders every resolution's note against one shared `seen`, and the coalesced block
-  whose note is built from the same graph.
+- [`crates/cargo-cgp-driver/src/emitter/flush/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/emitter/flush):
+  the flush that renders every resolution's note against one shared `seen` (`render.rs`,
+  `note.rs`), and the coalesced block whose note is built from the same graph (`merge.rs`).
 
 ## Further reading
 
