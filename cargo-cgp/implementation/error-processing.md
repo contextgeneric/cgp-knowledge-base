@@ -59,7 +59,7 @@ from the driver, is what keeps them unit-testable.
   [Dependency-graph rendering](dependency-graph-rendering.md). The module also holds the
   duplicate-key conflict wording (`wiring.rs`): the `WiringConflict` model and
   `plan_wiring_conflict`, which words the `[CGP-E010]`–`[CGP-E014]` headers (one per conflict shape)
-  the driver's `resolve::conflict` classifier feeds it (see
+  the driver's `detect::conflict` classifier feeds it (see
   [The driver](driver.md#reshaping-a-duplicate-key-conflict)). Five more modules word the driver's
   other reshapes, each with a `plan_*` header and a `*_help` fix: `orphan.rs` (`OrphanConflict`, the
   `[CGP-E022]` orphan-rule namespace registration), `undeclared.rs` (`UndeclaredTrait`, the
@@ -77,7 +77,7 @@ from the driver, is what keeps them unit-testable.
   documented where the driver detects them, in
   [The driver](driver.md#the-drivers-diagnostic-transformations). `structural.rs` holds
   `StructuralMistake`, the structural mistakes in a check table or a wiring entry the driver's
-  `resolve::structural` detectors recover, and words their `[CGP-E015]`–`[CGP-E019]`, `[CGP-E060]`,
+  `detect::structural` detectors recover, and words their `[CGP-E015]`–`[CGP-E019]`, `[CGP-E060]`,
   and `[CGP-E061]` headers and fixes, with a note for the one header that does not say why the
   program fails. `dispatch_names.rs` mirrors the names `#[cgp_auto_dispatch]` gives a method's
   helper and computer, which the emitter pairs to recognize `[CGP-E061]`. `overflow.rs` holds

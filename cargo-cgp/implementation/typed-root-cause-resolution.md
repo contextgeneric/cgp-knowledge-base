@@ -502,13 +502,15 @@ marking.
     `consumer_provider_trait` / `is_consumer_trait`, and `marker_to_consumer`), plus the `Symbol!`
     field-name decode, `is_namespace_lookup_trait` (by the single-`Delegate`-associated-type
     fingerprint plus CGP evidence), and the shared `PathCons`/`Nil`/local-ADT and context-ADT
-    recognizers. A sibling
-    [`conflict/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/conflict)
-    handles the duplicate-key `E0119` conflict, and a sibling
-    [`orphan.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/orphan.rs)
+    recognizers. The class detectors live beside `resolve/`, in the driver's
+    [`detect/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/detect)
+    module, which imports only the query layer and these recognizers:
+    [`conflict/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/detect/conflict)
+    handles the duplicate-key `E0119` conflict, and
+    [`orphan.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/detect/orphan.rs)
     the orphan-rule `E0210`/`E0117` namespace registration, both separate coherence-class transforms
-    documented in [The driver](driver.md#reshaping-a-duplicate-key-conflict), and a sibling
-    [`structural/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/structural)
+    documented in [The driver](driver.md#reshaping-a-duplicate-key-conflict), and
+    [`structural/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/detect/structural)
     the structural mistakes in a check table or a wiring entry
     ([The driver](driver.md#reshaping-a-structural-mistake)). The macro-lowering detectors sit
     beside them: `undeclared.rs`, `missing_use_provider.rs`, `unimported.rs`, and `requirement.rs`
@@ -517,8 +519,8 @@ marking.
     `uses_misuse.rs` for a wrong component half
     ([The driver](driver.md#reshaping-a-wrong-component-half)), and `wiring_name/` reads a wiring
     entry's names back from the HIR for an unresolved wiring name
-    ([The driver](driver.md#reshaping-an-unresolved-wiring-name)). A sibling `cache.rs`
-    memoizes the walk at every node (keyed on the region-erased obligation and context), so a wiring
+    ([The driver](driver.md#reshaping-an-unresolved-wiring-name)). Beside `cgp_item.rs` in
+    `resolve/`, `cache.rs` memoizes the walk at every node (keyed on the region-erased obligation and context), so a wiring
     failure re-reported at many sites, or a shared trait, is walked once (see
     [Cached dependency resolution](cached-dependency-resolution.md)).
 - [`crates/cargo-cgp-driver/src/emitter/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/emitter):

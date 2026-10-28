@@ -337,7 +337,7 @@ These seven codes name a mistake in the shape of what `check_components!`,
 The raw errors name those items (`__CheckApp`, an impl's type parameter) and carry suggestions that
 do not fix the program, so each rewrite names the mistake in the terms the program wrote and puts
 the fix in a `help`. The driver recognizes each from the generated items at the caret
-(`resolve::structural`), and the rustc-free `plan_structural_mistake` and `structural_mistake_help`
+(`detect::structural`), and the rustc-free `plan_structural_mistake` and `structural_mistake_help`
 word them.
 
 - **`CGP-E015`: a check entry listed twice.**
@@ -1229,22 +1229,22 @@ over the `WiringOverflow` the driver's walk recovers, the typed check-failure fo
 `categorized_header` (fed from the resolved failure), and the `CGP-E010`–`CGP-E014` conflict forms
 by
 [`plan_wiring_conflict`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/wiring.rs)
-(fed from the conflict the driver's `resolve::conflict` classifier recovers, one code per
+(fed from the conflict the driver's `detect::conflict` classifier recovers, one code per
 `WiringConflict` shape), the `CGP-E015`–`CGP-E019`, `CGP-E060`, and `CGP-E061` structural forms by
 [`plan_structural_mistake`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/structural.rs)
-(fed from the `StructuralMistake` the driver's `resolve::structural` detectors recover), and the
+(fed from the `StructuralMistake` the driver's `detect::structural` detectors recover), and the
 `CGP-E022` orphan form by
 [`plan_orphan_conflict`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/orphan.rs)
-(fed from the `OrphanConflict` the driver's `resolve::orphan` classifier recovers). The
+(fed from the `OrphanConflict` the driver's `detect::orphan` classifier recovers). The
 `CGP-E030`–`CGP-E037` and `CGP-E039` macro-mistake forms come from the wording functions in the same
 crate's
 [`diagnosis`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/diagnosis)
 module (`plan_undeclared_trait`, `plan_missing_use_provider`, `plan_cgp_impl_misuse`,
 `plan_unimported_abstract_type`, `plan_undeclared_requirement`, `plan_provider_trait_in_uses`, and
 `plan_provider_impl_without_macro`),
-fed from the matching detectors in the driver's `resolve` module, and the `CGP-E038` and
+fed from the matching detectors in the driver's `detect` module, and the `CGP-E038` and
 `CGP-E040`–`CGP-E044` wiring-name forms come from `plan_unresolved_wiring_name` in the same module,
-fed from the driver's `resolve::wiring_name` detectors. The `CGP-E1xx` dependency-tree entry codes
+fed from the driver's `detect::wiring_name` detectors. The `CGP-E1xx` dependency-tree entry codes
 are stamped when a node renders: the inner chain nodes by the structured
 [`DepNode`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/node.rs)
 variants (the driver's
