@@ -1223,8 +1223,8 @@ Three limits follow. The test reads only the file the suggestion edits, so a com
 spells the reserved name counts as the user writing it, and the suggestion stays, while a reserved
 name the program declares in another file counts as generated, and its suggestion goes. And a
 suggestion left with one bound keeps rustc's plural message over it ("the following traits define
-an item"). The `retain_substitutions` helper in `edit.rs` serves this
-pass, beside `retain_suggestions`, which the method-probe cleanup and the splice drop use.
+an item"). The `retain_substitutions` helper in `edit/children.rs` serves this pass, beside
+`retain_suggestions`, which the method-probe cleanup and the splice drop use.
 
 The
 [`auto_dispatch_hidden_lifetime`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/macro-defects/auto_dispatch_hidden_lifetime.rs)
@@ -1535,16 +1535,19 @@ will likely grow toward it:
   identifier, `use_type_misspelling.rs` the help on a misspelled `#[use_type]` import,
   `attribute_splice.rs` the drop of a suggestion spliced after an attribute macro, `repeats.rs` the
   flush's merge of a diagnostic rustc reports twice, `fallback.rs` the diagnostics emitted when the
-  transform or the flush panics, and `edit.rs` holds the `DiagInner`-editing helpers (including
-  `merged_span`, the merged block's one caret and its labelled other sites; `two_definitions_span`,
-  the relabelled carets of a generated name defined twice, for two check tables sharing a
-  check-trait name or two dispatch traits sharing a method; `message_signature`, the
-  span-independent text key for de-duplicating a declined-but-rewritten diagnostic;
-  `strip_method_probe_advice`, the drop of rustc's associated-function framing on a declined
-  consumer-method `E0599`; and `is_question_mark_cascade`, the `Try`/`FromResidual`-shape recognizer
-  for the cascade drop; the text phrasings the last three key on live in the rustc-free
+  transform or the flush panics, and `edit/` holds the `DiagInner`-editing helpers, one module per
+  subject: `spans.rs` the span edits (including `merged_span`, the merged block's one caret and its
+  labelled other sites, and `two_definitions_span`, the relabelled carets of a generated name defined
+  twice, for two check tables sharing a check-trait name or two dispatch traits sharing a method),
+  `readers.rs` the message readers and predicates (including `message_signature`, the
+  span-independent text key for de-duplicating a declined-but-rewritten diagnostic, and
+  `is_question_mark_cascade`, the `Try`/`FromResidual`-shape recognizer for the cascade drop),
+  `children.rs` the header, child, and suggestion edits (including `strip_method_probe_advice`, the
+  drop of rustc's associated-function framing on a declined consumer-method `E0599`), and `text.rs`
+  the rustc-free text transforms applied in place; the rustc phrasings `is_question_mark_cascade`
+  and `strip_method_probe_advice` key on live in the rustc-free
   [`signals`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/signals.rs)
-  module).
+  module.
 - [`crates/cargo-cgp-driver/src/component_map.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/component_map.rs):
   builds the component-marker → trait-names map by inverting the `IsProviderFor` supertrait
   (anchored by `DefId` identity to the `cgp_component` crate) and the consumer-blanket-impl links,
