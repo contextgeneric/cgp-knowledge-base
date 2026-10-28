@@ -812,7 +812,7 @@ and worded by the rustc-free `plan_structural_mistake` and `structural_mistake_h
   and the computer `Compute{Method}`. Neither is enough alone: the helper's caret comes from the
   macro's expansion but sits on the attribute, and the computer's sits on the method name with no
   trace of the macro. So the emitter pairs them as they arrive
-  ([`shared_dispatch_method`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/shared_dispatch_method.rs)):
+  ([`shared_dispatch_method`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/stage/shared_dispatch_method.rs)):
   the macro defines the helper first, so when the computer's `E0428` arrives, a buffered helper
   `E0428` from a `#[cgp_auto_dispatch]` expansion whose method gives the computer's name (the
   rustc-free `dispatch_helper_method` and `dispatch_computer_name` mirror the macro's naming) is
@@ -1426,6 +1426,11 @@ will likely grow toward it:
   outer state after a nested call; and the two
   fallbacks with a panicking step: a transform's panic giving back rustc's diagnostic with the
   internal-error note, and a flush's panic emitting every entry untransformed, in order.
+- [`crates/cargo-cgp-driver/tests/driver/pipeline.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/pipeline.rs):
+  `apply_reshape` over hand-built diagnostics: the plan's header, notes, and then helps replacing
+  rustc's message, notes, and suggestions, and each span policy (rustc's spans kept, the primary
+  span alone, its call site, and the two definitions relabelled); and the verdict chain, where a
+  stage that drops or reshapes a diagnostic ends it.
 - [`crates/cargo-cgp-driver/tests/driver/repeats.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/repeats.rs):
   `merge_repeats` over hand-built diagnostics: a repeat at another caret on the line merged and
   labelled, one the first block covers adding no label, and the same error kept on another line or
@@ -1503,23 +1508,26 @@ will likely grow toward it:
   the `coalescible` ones additionally partitioned by `group_by_shared_cause` and merged into one
   consumer header per group by `merged_diag`, after which `rebuild_explain_footers` makes the
   trailing `rustc --explain` footer name only the codes that survived)) and its
-  transform/post-process/de-duplicate/coalesce orchestration, `buffer.rs` the buffered entries and
-  their untransformed fallback, `output.rs` the inner emitter and buffer shared with the panic hook
-  and the name-resolution reshape, `containment.rs` the `catch_unwind` wrapper and the panic hooks,
-  `name_resolution.rs` the reshape of the wiring entries' name-resolution errors and the overflow
-  drop that goes with it, `generated_names.rs` the drop of a suggestion that names a generated
-  identifier, `use_type_misspelling.rs` the help on a misspelled `#[use_type]` import,
-  `attribute_splice.rs` the drop of a suggestion spliced after an attribute macro,
-  `shared_dispatch_method.rs` the pairing of the two `E0428`s two dispatch traits sharing a method
-  name produce, `repeats.rs` the flush's merge of a diagnostic rustc reports twice, `fallback.rs`
-  the diagnostics emitted when the transform or the flush panics, and `edit.rs` holds the
-  `DiagInner`-editing helpers (including `merged_span`, the merged block's one caret and its
-  labelled other sites; `two_definitions_span`, the relabelled carets of a generated name defined
-  twice, for two check tables sharing a check-trait name or two dispatch traits sharing a method;
-  `message_signature`, the span-independent text key for de-duplicating a declined-but-rewritten
-  diagnostic; `strip_method_probe_advice`, the drop of rustc's associated-function framing on a
-  declined consumer-method `E0599`; and `is_question_mark_cascade`, the `Try`/`FromResidual`-shape
-  recognizer for the cascade drop; the text phrasings the last three key on live in the rustc-free
+  transform/post-process/de-duplicate/coalesce orchestration, `pipeline/` the `Verdict` a stage
+  returns, the `Reshape` that holds a reshaping stage's edits as data, and `apply_reshape`, which
+  writes one into the diagnostic, `stage/` the stages that run before the typed resolver, one module
+  each (among them `shared_dispatch_method.rs`, the pairing of the two `E0428`s two dispatch traits
+  sharing a method name produce), `buffer.rs` the buffered entries and their untransformed fallback,
+  `output.rs` the inner emitter and buffer shared with the panic hook and the name-resolution
+  reshape, `containment.rs` the `catch_unwind` wrapper and the panic hooks, `name_resolution.rs` the
+  reshape of the wiring entries' name-resolution errors and the overflow drop that goes with it,
+  `generated_names.rs` the drop of a suggestion that names a generated identifier,
+  `use_type_misspelling.rs` the help on a misspelled `#[use_type]` import, `attribute_splice.rs` the
+  drop of a suggestion spliced after an attribute macro, `repeats.rs` the flush's merge of a
+  diagnostic rustc reports twice, `fallback.rs` the diagnostics emitted when the transform or the
+  flush panics, and `edit.rs` holds the `DiagInner`-editing helpers (including `merged_span`, the
+  merged block's one caret and its labelled other sites; `two_definitions_span`, the relabelled
+  carets of a generated name defined twice, for two check tables sharing a check-trait name or two
+  dispatch traits sharing a method; `message_signature`, the span-independent text key for
+  de-duplicating a declined-but-rewritten diagnostic; `strip_method_probe_advice`, the drop of
+  rustc's associated-function framing on a declined consumer-method `E0599`; and
+  `is_question_mark_cascade`, the `Try`/`FromResidual`-shape recognizer for the cascade drop; the
+  text phrasings the last three key on live in the rustc-free
   [`signals`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/signals.rs)
   module).
 - [`crates/cargo-cgp-driver/src/component_map.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/component_map.rs):
