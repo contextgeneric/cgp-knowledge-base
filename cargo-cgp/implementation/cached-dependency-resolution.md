@@ -13,9 +13,10 @@ sub-result into the diagnostic. It is verified output-preserving against the who
 pinning the incomplete-subtree cut on a resolving walk, and a fixture for two of its three guards
 that fails when that guard is removed (see [Tests](#tests)).
 
-It is a companion to [The resolve context](resolve-context.md), a planned refactor that would house
-the cache and frames it as one instance of a larger goal (a rustc-free, mockable resolution core),
-and to [Typed root-cause resolution](typed-root-cause-resolution.md) and
+It is a companion to [The resolve context](resolve-context.md), which documents the `ResolveCtx`
+that carries the cache through the resolver and frames the cache as one instance of a larger goal (a
+rustc-free, mockable resolution core), and to
+[Typed root-cause resolution](typed-root-cause-resolution.md) and
 [its walk stage](typed-resolution-walk.md), whose `resolve_leaves` / `resolve_node` descent is the
 thing being cached.
 
@@ -294,8 +295,8 @@ structurally cannot see.
 The cache is one store, the `ResolveCache` on `CgpEmitter` beside `dedup`. Interior mutability (a
 `RefCell` around the map) matches how `DedupLedger` is carried, and the store is created once per
 driver invocation over one crate, with no cross-session incremental database that could change
-underneath it. The planned [resolve context](resolve-context.md) would give the store a home beside
-the compiler-query access and the config constants; that move is part of its refactor.
+underneath it. The [resolve context](resolve-context.md) the emitter builds per diagnostic borrows
+the store beside the compiler handle, so the anchors and the walk reach it as one value.
 
 The borrow discipline is worth stating because this codebase is acutely sensitive to re-entrancy:
 the whole of [rustc diagnostic internals](rustc-diagnostic-internals.md) is about a lock that panics
@@ -405,10 +406,9 @@ The tests below do not exist yet; they are the coverage still to add.
   `compute_leaves`, which folds the root node's `SubResult` into a `Resolved` (de-duplicate, elide,
   render).
 - [`crates/cargo-cgp-driver/src/emitter/stage/resolver.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/stage/resolver.rs):
-  `try_resolve` threads the emitter's `ResolveCache` through the twelve anchors to
-  `resolve_leaves`. The cache lives on `CgpEmitter`
+  `try_resolve` passes the resolve context, which borrows the emitter's `ResolveCache`, through the
+  twelve anchors to `resolve_leaves`. The cache lives on `CgpEmitter`
   ([`cgp_emitter.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/cgp_emitter.rs))
-  beside the `DedupLedger` it composes with (moving it onto the resolve context is that document's
-  refactor).
+  beside the `DedupLedger` it composes with.
 - [`crates/cargo-cgp-error-processing/src/diagnosis/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/diagnosis):
   the owned `Leaf` and `Resolved` values, and the label rendering, that the cache stores.

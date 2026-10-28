@@ -74,13 +74,12 @@ same change.
   top-level root, giving subsumption for free), the shared-subtree and converging-leaf rendering,
   and worked shapes for a diamond and distinct-key redirects. All merging and rendering happens in
   pure, unit-testable functions.
-- [The resolve context](resolve-context.md): the blueprint, partly implemented, for a
-  per-compilation `ResolveCtx` that hosts the caches, the config, and the compiler access, replacing
-  the bare `TyCtxt` threaded through the resolver. Develops the cacheable-is-stateless-is-mockable
-  equivalence, the Class A/B/C query taxonomy, the lifetime split (a long-lived owned cache store
-  plus a per-resolution `'tcx`-scoped context), and the anchoring edge that stays rustc-coupled. The
-  eventual CGP-component abstraction and its separate rustc-free stand-in context are recorded as
-  deferred later work, not designed here.
+- [The resolve context](resolve-context.md): the partly implemented `ResolveCtx`, the compiler
+  access and a borrow of the cache that the resolver's anchors and walk take as one value. Develops
+  the cacheable-is-stateless-is-mockable equivalence, the Class A/B/C query taxonomy, the lifetime
+  split (a long-lived owned cache store plus a per-resolution `'tcx`-scoped context), and the
+  anchoring edge that stays rustc-coupled. The eventual CGP-component abstraction and its separate
+  rustc-free stand-in context are recorded as deferred later work, not designed here.
 - [The error pipeline](error-pipeline.md): the flow that turns rustc's raw diagnostics into readable
   CGP errors, entirely inside the driver (configure rustc, transform each diagnostic, render text or
   JSON), with the front-end forwarding cargo's output untouched.

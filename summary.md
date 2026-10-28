@@ -719,8 +719,8 @@ it stale.
   per-node resolver cache, its soundness reasoning, and why cacheability is a statelessness proof.
 - [dependency-graph-rendering.md](cargo-cgp/implementation/dependency-graph-rendering.md) — folding
   per-cause paths into one DAG and rendering it `cargo tree`-style with shared subtrees.
-- [resolve-context.md](cargo-cgp/implementation/resolve-context.md) — the partly built `ResolveCtx` hosting
-  the caches, config, and compiler access behind a mockable interface.
+- [resolve-context.md](cargo-cgp/implementation/resolve-context.md) — the partly built `ResolveCtx`,
+  the compiler access and the cache the resolver threads, and the path to a mockable interface.
 - [resugaring.md](cargo-cgp/implementation/resugaring.md) — reversing CGP's type-level expansions
   across three inputs (typed, text, syntax tree) that must agree.
 - [expand-command.md](cargo-cgp/implementation/expand-command.md) — `cargo cgp expand`: the cargo
