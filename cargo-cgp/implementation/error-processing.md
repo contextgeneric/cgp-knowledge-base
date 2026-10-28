@@ -88,7 +88,8 @@ from the driver, is what keeps them unit-testable.
   note on a diagnostic the driver shows untransformed after a panic in its own transform (see
   [The driver](driver.md#containing-the-drivers-own-panics)). Each reshape class above but the
   overflow also has a constructor on `ClassPlan` (`class_plan.rs`), which gathers the class's
-  header, notes, and `help`s into one value, composed from the class's own wording functions.
+  header, notes, and `help`s into one value, composed from the class's own wording functions; the
+  emitter's stages and its name-resolution pass word every such reshape from it.
 - **The dependency-tree renderer**
   ([`tree`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/tree.rs))
   is the `DependencyTree` type and its `cargo tree`-style renderer over the tiny `termtree` crate.
