@@ -1130,8 +1130,10 @@ The emitter therefore buffers those `E0425`s untouched, and the driver's `after_
 which the compiler calls right after `resolver_for_lowering` finishes, runs
 [`reshape_name_resolution_errors`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/name_resolution.rs).
 It reaches the buffer through the same thread-local registration the panic hook uses
-(`with_registered_buffer` in `output.rs`), in three steps. It collects the buffered `E0425`s under
-the output's lock, plans them with the lock released, since a query run while planning can emit a
+(`with_registered_buffer` in `output.rs`), in the three steps of
+[`buffer_pass`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/buffer_pass.rs),
+which the `#[use_type]` help replacement shares. It collects the buffered `E0425`s under the
+output's lock, plans them with the lock released, since a query run while planning can emit a
 diagnostic that takes the same lock, and then rewrites them under the lock, after checking that the
 candidates are where they were. The planning,
 [`resolve::plan_unresolved_names`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/wiring_name),
@@ -1149,9 +1151,10 @@ type argument of a provider, is no entry's key or value and stays as rustc wrote
   without its `Component` suffix names exactly one consumer trait.
 - **A value** is an undeclared provider (`[CGP-E043]`), with a near miss looked for among the
   providers of the key's component (`similar_name`). The requirement it leaves unprovable, the
-  entry's context implementing the component's consumer trait (`Person: CanGreet`), is recorded,
-  and the emitter drops a later `E0275` overflow on that requirement, with whatever parameters the
-  component takes, as the entry's consequence (`is_unresolved_wiring_overflow`).
+  entry's context implementing the component's consumer trait (`Person: CanGreet`), is recorded in
+  the emitter's output beside the buffer, and the emitter drops a later `E0275` overflow on that
+  requirement, with whatever parameters the component takes, as the entry's consequence
+  (`is_unresolved_wiring_overflow`).
 - **A `#[cgp_impl]` header's provider** is a provider never declared (`[CGP-E038]`), and a value
   naming the same provider is dropped as its consequence.
 - **A type in an `@`-path** is found by its own span. `delegate_components!` gives a path's
@@ -1440,6 +1443,10 @@ will likely grow toward it:
   `merge_repeats` over hand-built diagnostics: a repeat at another caret on the line merged and
   labelled, one the first block covers adding no label, and the same error kept on another line or
   in another file, with another code, message, or level, without a code, or with an inline message.
+- [`crates/cargo-cgp-driver/tests/driver/unresolved_overflow.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/unresolved_overflow.rs):
+  `is_unresolved_wiring_overflow` over hand-built overflows: a recorded requirement dropped bare,
+  with a consumer trait's arguments, or as a check, and a longer trait name, another context, another
+  code, or nothing recorded kept.
 - [`crates/cargo-cgp-driver/tests/driver/postprocess.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/postprocess.rs):
   a span label the post-processing rewrites, with the span's primary span and context span kept.
 - [`crates/cargo-cgp-error-processing/tests/error_processing/internal_error.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/internal_error.rs):
@@ -1509,31 +1516,33 @@ will likely grow toward it:
   rustc-free `DedupLedger` of already-emitted failures, the `cgp_spans` list of recognized-failure
   spans that anchors the `?`-operator cascade suppression, and the shared output whose
   arrival-ordered buffer of `BufEntry`s is flushed from `Drop`) and its
-  transform/post-process/de-duplicate orchestration, `flush/` the rendering of that buffer
-  (`Plain` entries verbatim in place, `Resolved` ones with their `root cause:` note rendered against
-  the flush's shared `seen` set, the `coalescible` ones additionally partitioned by
+  transform/post-process/de-duplicate orchestration, `flush/` the rendering of that buffer (`Plain`
+  entries verbatim in place, `Resolved` ones with their `root cause:` note rendered against the
+  flush's shared `seen` set, the `coalescible` ones additionally partitioned by
   `group_by_shared_cause` and merged into one consumer header per group by `merged_diag`, after
   which `rebuild_explain_footers` makes the trailing `rustc --explain` footer name only the codes
-  that survived), `pipeline/` the `Verdict` a stage
-  returns, the `Reshape` that holds a reshaping stage's edits as data, and `apply_reshape`, which
-  writes one into the diagnostic, `stage/` the stages, one module each, the typed resolver's
-  `resolver.rs` last (among them `shared_dispatch_method.rs`, the pairing of the two `E0428`s two
-  dispatch traits sharing a method name produce), `buffer.rs` the buffered entries and their untransformed fallback,
-  `output.rs` the inner emitter and buffer shared with the panic hook and the name-resolution
-  reshape, `containment.rs` the `catch_unwind` wrapper and the panic hooks, `name_resolution.rs` the
-  reshape of the wiring entries' name-resolution errors and the overflow drop that goes with it,
-  `generated_names.rs` the drop of a suggestion that names a generated identifier,
-  `use_type_misspelling.rs` the help on a misspelled `#[use_type]` import, `attribute_splice.rs` the
-  drop of a suggestion spliced after an attribute macro, `repeats.rs` the flush's merge of a
-  diagnostic rustc reports twice, `fallback.rs` the diagnostics emitted when the transform or the
-  flush panics, and `edit.rs` holds the `DiagInner`-editing helpers (including `merged_span`, the
-  merged block's one caret and its labelled other sites; `two_definitions_span`, the relabelled
-  carets of a generated name defined twice, for two check tables sharing a check-trait name or two
-  dispatch traits sharing a method; `message_signature`, the span-independent text key for
-  de-duplicating a declined-but-rewritten diagnostic; `strip_method_probe_advice`, the drop of
-  rustc's associated-function framing on a declined consumer-method `E0599`; and
-  `is_question_mark_cascade`, the `Try`/`FromResidual`-shape recognizer for the cascade drop; the
-  text phrasings the last three key on live in the rustc-free
+  that survived), `pipeline/` the `Verdict` a stage returns, the `Reshape` that holds a reshaping
+  stage's edits as data, and `apply_reshape`, which writes one into the diagnostic, `stage/` the
+  stages, one module each, the typed resolver's `resolver.rs` last (among them
+  `shared_dispatch_method.rs`, the pairing of the two `E0428`s two dispatch traits sharing a method
+  name produce), `buffer.rs` the buffered entries and their untransformed fallback, `buffer_pass.rs`
+  the shape the after-expansion passes share, `crate_facts.rs` the facts about the crate the
+  post-processing reads (whether it uses CGP, and its ambiguous type names), `output.rs` the inner
+  emitter, the buffer, and the recorded unprovable requirements, shared with the panic hook and the
+  name-resolution reshape, `containment.rs` the `catch_unwind` wrapper and the panic hooks,
+  `name_resolution.rs` the reshape of the wiring entries' name-resolution errors and the overflow
+  drop that goes with it, `generated_names.rs` the drop of a suggestion that names a generated
+  identifier, `use_type_misspelling.rs` the help on a misspelled `#[use_type]` import,
+  `attribute_splice.rs` the drop of a suggestion spliced after an attribute macro, `repeats.rs` the
+  flush's merge of a diagnostic rustc reports twice, `fallback.rs` the diagnostics emitted when the
+  transform or the flush panics, and `edit.rs` holds the `DiagInner`-editing helpers (including
+  `merged_span`, the merged block's one caret and its labelled other sites; `two_definitions_span`,
+  the relabelled carets of a generated name defined twice, for two check tables sharing a
+  check-trait name or two dispatch traits sharing a method; `message_signature`, the
+  span-independent text key for de-duplicating a declined-but-rewritten diagnostic;
+  `strip_method_probe_advice`, the drop of rustc's associated-function framing on a declined
+  consumer-method `E0599`; and `is_question_mark_cascade`, the `Try`/`FromResidual`-shape recognizer
+  for the cascade drop; the text phrasings the last three key on live in the rustc-free
   [`signals`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/signals.rs)
   module).
 - [`crates/cargo-cgp-driver/src/component_map.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/component_map.rs):
