@@ -161,7 +161,7 @@ walk descends it the way it descends a provider. It deliberately does *not* foll
   for the type it dispatches on, a `Code` fragment or an `Input` value's type), and it does not wire
   this key. It is told apart from a higher-order-provider dead-end (dropped, below) two ways, so it
   is reported when *either* holds (`is_reportable_leaf`, over `is_dispatch_lookup` and
-  `owner_has_impl_of`, in `classify/reportable.rs`):
+  `owner_has_impl_of`; the first in `classify/reportable.rs`, the second in the query layer):
   - **structurally**, when the obligation is a *dispatch lookup into a separate table*: its owner is
     a proper part of the parent obligation's `Self`, as `Components` is of `UseDelegate<Components>`
     / `UseInputDelegate<Components>` (or any custom dispatcher that holds its table as a parameter).
@@ -591,13 +591,17 @@ parent document's [Tests](typed-root-cause-resolution.md#tests) section.
 ## Source
 
 - [`crates/cargo-cgp-driver/src/resolve/walk/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/walk):
-  the descent: `leaves.rs` (the recursion), `vocabulary.rs` (what it walks into, and which
-  dependencies a foreign bound is followed into), `impl_match.rs`
-  (the satisfying impl and its dependencies), `unknowns.rs` (placeholders and stalled projections),
-  `projection_mismatch.rs` (the unmet projection an impl carries, `HasField` or otherwise),
-  `holds.rs` (the solver query), `written_order.rs` (the order an impl's clauses are read in), and
+  the descent: `leaves.rs` (the recursion) and `vocabulary.rs` (what it walks into, and which
+  dependencies a foreign bound is followed into).
+- [`crates/cargo-cgp-driver/src/resolve/query/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/query):
+  the solver queries the walk and the classifiers share: `impl_match.rs` (the satisfying impl and
+  its dependencies), `unknowns.rs` (placeholders and stalled projections), `projection_mismatch.rs`
+  (the unmet projection an impl carries, `HasField` or otherwise), `holds.rs` (the solver query),
+  `projected_type.rs` (the normalization that reads the type an owner supplies for a projected
+  associated type), `written_order.rs` (the order an impl's clauses are read in),
   `misdirected.rs` (the requirements of a provider impl whose `#[cgp_impl]` header names the
-  consumer trait).
+  consumer trait), and `owner_has_impl_of.rs` (whether a type is the concrete `Self` of an impl of
+  a trait).
 - [`crates/cargo-cgp-driver/src/resolve/classify/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/classify):
   `reportable.rs` (root cause versus routing dead-end), `adapter.rs` (the adapter types that make a
   non-provider a provider), `provided_components.rs` (the other components it provides),
@@ -607,9 +611,8 @@ parent document's [Tests](typed-root-cause-resolution.md#tests) section.
   `IsProviderFor`), `leaf.rs` (`classify_leaf`, which builds the
   rustc-free `Leaf`), `data.rs` (`classify_data_leaf`, the extensible-data leaf read off the presence
   markers), `field.rs` (the struct and `Deref`-chain inspection), `required_type.rs` (the
-  type a requirement gives a missing field), `near_miss.rs` (a similar field, variant, or wiring key
-  the program wrote), and `assoc_type.rs` (the normalization that reads the
-  type an owner supplies for any other projected associated type).
+  type a requirement gives a missing field), and `near_miss.rs` (a similar field, variant, or wiring
+  key the program wrote).
 - [`crates/cargo-cgp-driver/src/resolve/data/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/data):
   `traits.rs` (the extensible-data traits, the operations among them, their list recursions, and
   the derive each data trait comes from) and `partial.rs` (`read_partial`, a partial value's target

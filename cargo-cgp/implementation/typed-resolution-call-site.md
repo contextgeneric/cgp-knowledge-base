@@ -540,18 +540,22 @@ catalog lives in the parent document's [Tests](typed-root-cause-resolution.md#te
 ## Source
 
 - [`crates/cargo-cgp-driver/src/resolve/call_site/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/call_site):
-  one file per stage: `find_call.rs` (locating the call and the candidate consumers), `receiver.rs`
-  (the context off the receiver), `unbounded.rs` (a receiver typed by a type parameter its item
-  does not bound by the called consumer trait), `seed.rs` (the signature unification, for each
-  `CallForm`: a consumer method call, a data method call, and a type-relative path call),
-  `written_ty.rs` (the types the call's arguments write), and `lower.rs` (the small syntactic type
-  lowering, literal const arguments included); for the data-call anchor, `data_call.rs` (`resolve_data_call`, locating a
+  one file per stage: `find_call.rs` (locating the call and trying the candidate consumers),
+  `receiver.rs` (the context off the receiver), `unbounded.rs` (a receiver typed by a type
+  parameter its item does not bound by the called consumer trait), and `seed.rs` (the signature
+  unification, for each `CallForm`: a consumer method call, a data method call, and a
+  type-relative path call); for the data-call anchor, `data_call.rs` (`resolve_data_call`, locating a
   method or type-relative call and its data operations in scope) and `chain.rs` (`data_expr_ty`,
   typing a value through the data operations and pattern bindings that produced it); for the
   provider-call anchor, `provider_call.rs` (`resolve_provider_call`, locating a type-relative call
   and the provider traits in scope that declare its function); for the bound-call anchor,
   `bound_call.rs` (`resolve_bound_call`, instantiating a called generic function's own bounds);
   and `receiver.rs`'s `declared_binding_ty`, a binding's declared type with its references.
+- [`crates/cargo-cgp-driver/src/resolve/query/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/query):
+  the readers these anchors share with the undeclared-trait detector: `written_ty.rs` (the types
+  the call's arguments write), `lower.rs` (the small syntactic type lowering, literal const
+  arguments included), and `traits_with_method.rs` (the candidate consumer and blanket traits by
+  method name).
 
 ## Further reading
 

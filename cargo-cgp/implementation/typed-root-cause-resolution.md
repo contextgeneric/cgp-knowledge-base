@@ -189,7 +189,8 @@ The recovery is a pipeline of typed lookups with no string parsing until the ver
 a field name. It runs in the driver's
 [`resolve`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve)
 module (one sub-directory per stage, `anchor/`, `call_site/`, `walk/`, `classify/`, `label/`, over
-the shared `cgp_item.rs`, each behind a re-exporting `mod.rs`) and fills the rustc-free
+the shared `cgp_item.rs` and the `query/` layer of compiler readers the stages share, each behind a
+re-exporting `mod.rs`) and fills the rustc-free
 `Cause`/`Leaf`/`FieldIssue`/`Resolved` types with owned `String`s, so the wording that consumes them
 needs no compiler. Every stage is anchored by `DefId` to the CGP crate that defines the trait or
 type it matches, so a same-named item from an unrelated crate can never drive a replacement. The
@@ -390,10 +391,10 @@ marking.
     `resolve_provider_call`, and `resolve_bound_call`, the HIR re-reads of the failing call, one
     stage per file:
     `find_call.rs` (`method_calls_at`, the calls a primary span lands on without lying strictly
-    inside the receiver or an argument
-    (`is_about_call`), and `traits_with_method`, the candidate consumer traits and
-    `#[cgp_fn]`/`#[blanket_trait]` blanket traits by method name, the blanket traits headed
-    `[CGP-E003]` by clearing `consumers_are_cgp`), `data_call.rs` (`resolve_data_call`, a method or
+    inside the receiver or an argument (`is_about_call`), each tried against the candidate consumer
+    traits and `#[cgp_fn]`/`#[blanket_trait]` blanket traits the query layer's
+    `traits_with_method` finds by method name, the blanket traits headed `[CGP-E003]` by clearing
+    `consumers_are_cgp`), `data_call.rs` (`resolve_data_call`, a method or
     type-relative call to an extensible-data operation in scope at the call, headed `[CGP-E050]` by
     setting `data_operation`), `provider_call.rs` (`resolve_provider_call`, a type-relative call
     to a provider trait's function in scope at the call, its provider obligation walked by
@@ -411,12 +412,9 @@ marking.
     `[CGP-E129]` cause without a walk), `seed.rs` (`seed_from_call`, the signature unification: fresh variables for the
     method's item, `Self` pinned to the context, each written argument type unified with its
     declared input (from the first input for a type-relative call, and a data value's argument typed
-    by `data_expr_ty` too), the trait's parameters read back with `walk`'s `unknowns_to_placeholders`
-    folding what stayed unresolved), `written_ty.rs` (`expr_written_ty`, the argument shapes whose
-    types the call writes, a tuple read partially, its shape recovered with a fresh inference
-    variable per unwritten element), and `lower.rs` (`lower_hir_ty`/`instantiate_written`, the small
-    syntactic type lowering over cached `type_of`, a literal const argument read through the
-    `lit_to_const` query).
+    by `data_expr_ty` too), the trait's parameters read back with the query layer's
+    `unknowns_to_placeholders` folding what stayed unresolved). The argument types the call writes
+    and the syntactic type lowering they stand on are read in the query layer (below).
   - [`walk/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/walk)
     walks the cause chain to each terminal leaf. `leaves.rs` drives the recursion (`resolve_leaves`
     erasing the seed, `resolve_node` the per-node memoized descent with the cycle guard and
@@ -427,24 +425,8 @@ marking.
     provider traits, `DelegateComponent`, context obligations, and extensible-data traits, *not*
     `IsProviderFor`/`CanUseComponent`; `is_context_side`, the subset a foreign bound's blanket is
     followed into; and the `is_workaround_plumbing` drop of a
-    `CanUseComponent`/`IsProviderFor` dependency beside the real obligation). `impl_match.rs` finds
-    the satisfying impl and reads its dependencies (`impl_where_obligations` preferring a
-    concrete-`Self` impl over the delegation blanket, the placeholder instantiation of a
-    higher-ranked binder via `enter_forall_and_leak_universe`, and solving satisfiable clauses
-    first). `unknowns.rs` carries a call-site unknown across inference contexts
-    (`unknowns_to_placeholders`, shared with the call-site anchor; `resolve_fixed_projections` /
-    `try_project_fixed` / `placeholders_to_infer` recovering a stalled associated-type projection
-    whose value is *fixed* independent of an unknown input, structurally, for any trait and
-    associated type, keeping only a fully-concrete result, so a later pipeline stage keyed on an
-    earlier stage's un-normalized output projection is still descended and reported on when its
-    input concretizes). `projection_mismatch.rs` finds an unmet associated-type projection on the
-    concrete-`Self` impl (`projection_mismatch`/`impl_projection_mismatch`, deferring the blanket
-    and preferring a `HasField` projection over any other; `unmet_projection` over an impl's
-    instantiated clauses), `holds.rs` asks the solver whether a predicate is satisfied,
-    `written_order.rs` reads an impl's clauses in the order the program wrote them (`written_order`,
-    undoing the compiler's move of each associated-type constraint to the front), and
-    `misdirected.rs` reads the requirements of a provider impl whose `#[cgp_impl]` header names the
-    consumer trait (`misdirected_impl_clauses`).
+    `CanUseComponent`/`IsProviderFor` dependency beside the real obligation). The solver queries the
+    walk asks live in the query layer (below).
   - [`classify/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/classify)
     classifies a terminal: `data.rs` reads an extensible-data terminal off the presence markers of
     the partial type it lands on (`classify_data_leaf`), `leaf.rs` turns it into the rustc-free
@@ -453,8 +435,8 @@ marking.
     other `HasField` impls and typed by `required_type.rs`'s `required_field_type`, which reads the
     `Value = T` constraint beside the bound on the impl that requires it, and with a similar field or
     wiring key the program wrote found by `near_miss.rs`; a field-type mismatch with
-    `field_type` reading the actual type by `DefId`, an abstract-type mismatch with
-    `assoc_type.rs`'s `projected_type` normalizing the projection for the actual type and
+    `field_type` reading the actual type by `DefId`, an abstract-type mismatch with the query
+    layer's `projected_type` normalizing the projection for the actual type and
     `abstract_type_component_marker` recovering the wiring marker for its `help`, a missing wiring
     on the context, a missing dispatch entry on a non-context delegation table, a not-a-provider on
     a non-table type, a provider for other arguments named by `other_arguments.rs`, a component
@@ -484,6 +466,37 @@ marking.
     into a tuple so a nested placeholder prints `_` rather than the raw `!N` form); and
     `empty_lists.rs` writes a standalone CGP `Nil` or `Void` as `Product![]` or `Sum![]`, in a
     label and in an ordinary-bound leaf alike.
+  - [`query/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/query)
+    holds the compiler readers and solver helpers more than one stage uses, and decides no
+    resolution, so the resolver's stages and the class detectors import it and it imports none of
+    them. `impl_match.rs` finds the satisfying impl and reads its dependencies
+    (`impl_where_obligations` preferring a concrete-`Self` impl over the delegation blanket, the
+    placeholder instantiation of a higher-ranked binder via `enter_forall_and_leak_universe`, and
+    solving satisfiable clauses first). `unknowns.rs` carries a call-site unknown across inference
+    contexts (`unknowns_to_placeholders`, shared by the walk and the call-site anchor;
+    `resolve_fixed_projections` / `try_project_fixed` / `placeholders_to_infer` recovering a stalled
+    associated-type projection whose value is *fixed* independent of an unknown input,
+    structurally, for any trait and associated type, keeping only a fully-concrete result, so a
+    later pipeline stage keyed on an earlier stage's un-normalized output projection is still
+    descended and reported on when its input concretizes). `projection_mismatch.rs` finds an unmet
+    associated-type projection on the concrete-`Self` impl
+    (`projection_mismatch`/`impl_projection_mismatch`, deferring the blanket and preferring a
+    `HasField` projection over any other; `unmet_projection` over an impl's instantiated clauses),
+    `holds.rs` asks the solver whether a predicate is satisfied, `projected_type.rs` normalizes a
+    projection to the type its owner supplies, `written_order.rs` reads an impl's clauses in the
+    order the program wrote them (`written_order`, undoing the compiler's move of each
+    associated-type constraint to the front), and `misdirected.rs` reads the requirements of a
+    provider impl whose `#[cgp_impl]` header names the consumer trait (`misdirected_impl_clauses`).
+    `written_ty.rs` (`expr_written_ty`, the argument shapes whose types a call writes, a tuple read
+    partially, its shape recovered with a fresh inference variable per unwritten element) and
+    `lower.rs` (`lower_hir_ty`/`instantiate_written`, the small syntactic type lowering over cached
+    `type_of`, a literal const argument read through the `lit_to_const` query) serve the call-site
+    anchors and the undeclared-trait detector, and `traits_with_method.rs` finds the traits a call
+    by method name could resolve through. `keys.rs` renders a wiring key, a redirect path, and a
+    provider in the surface forms an entry writes (`describe_key`, `render_path`), and
+    `check_impl.rs`, `import_path.rs`, and `owner_has_impl_of.rs` are the lookups several stages
+    make: the check trait's `CanUseComponent` assertion and an impl's `Self`-type caret, the path a
+    `use` imports an item by, and whether a type is the concrete `Self` of an impl of a trait.
   - `cgp_item.rs` holds the structural, `IsProviderFor`-free trait recognition (`is_provider_trait`
     / `provider_blanket_marker` (the `DelegateComponent`-bounded provider blanket),
     `consumer_provider_trait` / `is_consumer_trait`, and `marker_to_consumer`), plus the `Symbol!`

@@ -83,8 +83,10 @@ which holds the DefId-anchored recognition (`is_cgp_item`, `provider_blanket_mar
 [`classify/field.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/classify/field.rs)
 (`adt_has_field`, `deref_target`, `field_type`); the reportability decisions in
 [`classify/reportable.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/classify/reportable.rs)
-(`is_dispatch_lookup`, `owner_has_impl_of`, `is_blanket_dead_end`, and thus `is_reportable_leaf`); the descent vocabulary
-in
+(`is_dispatch_lookup`, `is_blanket_dead_end`, and thus `is_reportable_leaf`), over the query
+layer's
+[`owner_has_impl_of`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/query/owner_has_impl_of.rs);
+the descent vocabulary in
 [`walk/vocabulary.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/walk/vocabulary.rs);
 and the label rendering in
 [`label/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/label).
@@ -94,16 +96,16 @@ Underneath, these bottom out on rustc queries that are themselves memoized and p
 
 **Class B: pure signature, stateful implementation.** These are the three solver-driven queries:
 `holds` in
-[`walk/holds.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/walk/holds.rs),
+[`query/holds.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/query/holds.rs),
 `impl_where_obligations` in
-[`walk/impl_match.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/walk/impl_match.rs),
+[`query/impl_match.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/query/impl_match.rs),
 and `projection_mismatch` in
-[`walk/projection_mismatch.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/walk/projection_mismatch.rs).
+[`query/projection_mismatch.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/query/projection_mismatch.rs).
 Each builds a fresh `InferCtxt` internally, so the implementation is stateful, but that state is
 fully encapsulated behind a pure typed signature, which is exactly what makes the query cacheable at
 its result boundary and mockable by a table. The obligation to discharge here is **canonical
 output**: `impl_where_obligations` mints placeholders via `unknowns_to_placeholders`
-([`walk/unknowns.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/walk/unknowns.rs)),
+([`query/unknowns.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/query/unknowns.rs)),
 and both the cache value and the mock's answer must be stable modulo those placeholder identities.
 
 **Class C: genuinely stateful or contextual.** Two different kinds of state live here, and they
@@ -300,9 +302,9 @@ belong to the deferred component work and are listed so the later agent inherits
   the emitter's resolver stage, which receives the context the emitter builds inside its
   `ty::tls::with_opt` closure and passes it to the anchors and the overflow walk.
 - [`crates/cargo-cgp-driver/src/resolve/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve):
-  the whole resolver; `cgp_item.rs`, `classify/`, `walk/`, and `label/` are the Class A + Class B
-  surface the later components would cover, while `anchor/` and `call_site/` stay the rustc-coupled
-  edge.
+  the whole resolver; `cgp_item.rs`, `query/`, `classify/`, `walk/`, and `label/` are the Class A +
+  Class B surface the later components would cover, while `anchor/` and `call_site/` stay the
+  rustc-coupled edge.
 - [`crates/cargo-cgp-driver/src/config.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/config.rs):
   the crate and trait-name constants the resolver compares against.
 - [`crates/cargo-cgp-error-processing/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing):

@@ -927,13 +927,13 @@ context); it names a function of a CGP consumer or blanket trait; and that trait
 diagnostic's notes touch is taken. The help writes the trait with the arguments the call uses: the
 detector instantiates the function's signature with fresh variables, pins `Self` to the context, and
 unifies each declared input with the argument's type where that type can be read without typeck (a
-written type, through the call-site anchor's `expr_written_ty`, a parameter's declared type with its
-late-bound lifetimes made fresh, or a `let` annotation). A trait parameter left unknown, or resolved
-to a type holding a lifetime or a generic parameter, stays named for the reader to replace, and a
-trait with a lifetime or const parameter gets the header without a help. A call on any other
-parameter is left alone, since `#[uses]` cannot bound it. Any `[T]: Sized` cascade the failed call
-trails is left as rustc wrote it, because those errors can land off the failing expression, where
-suppressing them reliably would risk hiding an unrelated error.
+written type, through the `expr_written_ty` the call-site anchor also reads, a parameter's declared
+type with its late-bound lifetimes made fresh, or a `let` annotation). A trait parameter left
+unknown, or resolved to a type holding a lifetime or a generic parameter, stays named for the reader
+to replace, and a trait with a lifetime or const parameter gets the header without a help. A call on
+any other parameter is left alone, since `#[uses]` cannot bound it. Any `[T]: Sized` cascade the
+failed call trails is left as rustc wrote it, because those errors can land off the failing
+expression, where suppressing them reliably would risk hiding an unrelated error.
 
 **An unimported inner provider (`[CGP-E031]`).** The body invokes the inner provider as an
 associated function, `InnerCalculator::area(self)`, which needs the parameter bounded as
