@@ -404,9 +404,11 @@ The tests below do not exist yet; they are the coverage still to add.
   caches every complete non-terminal node. `resolve_leaves` erases the seed and delegates to
   `compute_leaves`, which folds the root node's `SubResult` into a `Resolved` (de-duplicate, elide,
   render).
-- [`crates/cargo-cgp-driver/src/emitter/cgp_emitter.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/cgp_emitter.rs):
-  `try_resolve` threads `&self.resolve_cache` through the twelve anchors to `resolve_leaves`; the
-  `ResolveCache` lives on `CgpEmitter` beside `dedup` (moving it onto the resolve context is that
-  document's refactor). The `DedupLedger` it composes with is here too.
+- [`crates/cargo-cgp-driver/src/emitter/stage/resolver.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/stage/resolver.rs):
+  `try_resolve` threads the emitter's `ResolveCache` through the twelve anchors to
+  `resolve_leaves`. The cache lives on `CgpEmitter`
+  ([`cgp_emitter.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/cgp_emitter.rs))
+  beside the `DedupLedger` it composes with (moving it onto the resolve context is that document's
+  refactor).
 - [`crates/cargo-cgp-error-processing/src/diagnosis/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/diagnosis):
   the owned `Leaf` and `Resolved` values, and the label rendering, that the cache stores.

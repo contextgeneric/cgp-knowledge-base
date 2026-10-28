@@ -1510,9 +1510,9 @@ will likely grow toward it:
   trailing `rustc --explain` footer name only the codes that survived)) and its
   transform/post-process/de-duplicate/coalesce orchestration, `pipeline/` the `Verdict` a stage
   returns, the `Reshape` that holds a reshaping stage's edits as data, and `apply_reshape`, which
-  writes one into the diagnostic, `stage/` the stages that run before the typed resolver, one module
-  each (among them `shared_dispatch_method.rs`, the pairing of the two `E0428`s two dispatch traits
-  sharing a method name produce), `buffer.rs` the buffered entries and their untransformed fallback,
+  writes one into the diagnostic, `stage/` the stages, one module each, the typed resolver's
+  `resolver.rs` last (among them `shared_dispatch_method.rs`, the pairing of the two `E0428`s two
+  dispatch traits sharing a method name produce), `buffer.rs` the buffered entries and their untransformed fallback,
   `output.rs` the inner emitter and buffer shared with the panic hook and the name-resolution
   reshape, `containment.rs` the `catch_unwind` wrapper and the panic hooks, `name_resolution.rs` the
   reshape of the wiring entries' name-resolution errors and the overflow drop that goes with it,
