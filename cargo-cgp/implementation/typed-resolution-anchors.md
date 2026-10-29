@@ -19,18 +19,20 @@ impl of a generated check trait,
 `CanUseComponent<Marker, Params>` as a supertrait. The macro re-spans the context type in that impl
 onto the entry the user wrote, so the impl's `Self`-type span equals the failing diagnostic's
 primary span. `resolve_check_failure` walks the crate's check traits (those with a
-`cgp_component::CanUseComponent` supertrait) and picks the impl whose `Self` span matches the caret.
-That ties *this* diagnostic to *this* entry without reading either one's text. It reads the entry's
-`CanUseComponent<Marker, Params>` assertion only to learn *which* component the check names: it maps
-the marker to its consumer trait (`marker_to_consumer`) and ungroups the `Params` slot back into the
-consumer's own arguments (`can_use_to_consumer_obligation` over `consumer_obligation`), yielding the
-real obligation, e.g. `Rectangle: CanCalculateArea`. The ungrouping is decided by the consumer's own
-generics, not by the slot's shape: the slot carries the parameters as all-types data (none as `()`,
-one bare, several as a tuple, a lifetime lifted into `Life<'a>`), so the trait's parameter count
-decides whether a tuple is *the* single tuple-typed parameter or several to spread, and a lifetime
-parameter takes its region back out of the `Life<'a>` lift. Trusting the slot's shape instead would
-hand the solver a malformed obligation (a `Life<'a>` *type* where a region belongs aborts the
-compiler when related), so any mismatch declines to the fallback rather than build one (the
+`cgp_component::CanUseComponent` supertrait) and picks the impl whose `Self` span matches the caret,
+through the query layer's `check_impls_at`, which the provider-check anchor and the unit-parameters
+detector share. That ties *this* diagnostic to *this* entry without reading either one's text. It
+reads the entry's `CanUseComponent<Marker, Params>` assertion only to learn *which* component the
+check names: it maps the marker to its consumer trait (`marker_to_consumer`) and ungroups the
+`Params` slot back into the consumer's own arguments (`can_use_to_consumer_obligation` over
+`consumer_obligation`), yielding the real obligation, e.g. `Rectangle: CanCalculateArea`. The
+ungrouping is decided by the consumer's own generics, not by the slot's shape: the slot carries the
+parameters as all-types data (none as `()`, one bare, several as a tuple, a lifetime lifted into
+`Life<'a>`), so the trait's parameter count decides whether a tuple is *the* single tuple-typed
+parameter or several to spread, and a lifetime parameter takes its region back out of the `Life<'a>`
+lift. Trusting the slot's shape instead would hand the solver a malformed obligation (a `Life<'a>`
+*type* where a region belongs aborts the compiler when related), so any mismatch declines to the
+fallback rather than build one (the
 [`lifetime_component`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/generic/lifetime_component.rs)
 and
 [`tuple_param_component`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/generic/tuple_param_component.rs)
