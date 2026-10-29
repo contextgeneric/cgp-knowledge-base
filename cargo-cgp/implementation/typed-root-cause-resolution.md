@@ -389,32 +389,31 @@ marking.
   - [`call_site/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/call_site)
     holds the seventh to tenth anchors, `resolve_call_site`, `resolve_data_call`,
     `resolve_provider_call`, and `resolve_bound_call`, the HIR re-reads of the failing call, one
-    stage per file:
-    `find_call.rs` (`method_calls_at`, the calls a primary span lands on without lying strictly
-    inside the receiver or an argument (`is_about_call`), each tried against the candidate consumer
-    traits and `#[cgp_fn]`/`#[blanket_trait]` blanket traits the query layer's
+    stage per file: `find_call.rs` (`method_calls_at`, the calls a primary span lands on without
+    lying strictly inside the receiver or an argument (`is_about_call`), each tried against the
+    candidate consumer traits and `#[cgp_fn]`/`#[blanket_trait]` blanket traits the query layer's
     `traits_with_method` finds by method name, the blanket traits headed `[CGP-E003]` by clearing
-    `consumers_are_cgp`), `data_call.rs` (`resolve_data_call`, a method or
-    type-relative call to an extensible-data operation in scope at the call, headed `[CGP-E050]` by
-    setting `data_operation`), `provider_call.rs` (`resolve_provider_call`, a type-relative call
-    to a provider trait's function in scope at the call, its provider obligation walked by
+    `consumers_are_cgp`), `data_call.rs` (`resolve_data_call`, a method or type-relative call to an
+    extensible-data operation in scope at the call, headed `[CGP-E050]` by setting
+    `data_operation`), `provider_call.rs` (`resolve_provider_call`, a type-relative call to a
+    provider trait's function in scope at the call, its provider obligation walked by
     `resolve_provider_leaves` from the context argument, headed `[CGP-E002]`), `bound_call.rs`
     (`resolve_bound_call`, a path call to a generic function whose own bound on a consumer or
     blanket trait fails for a context, the bound instantiated from the turbofish and the arguments,
     a binding typed by `receiver.rs`'s `declared_binding_ty` with its references), `chain.rs`
-    (`data_expr_ty`, the value such a call is made on, typed through the data operations and
-    pattern bindings that produced it), `receiver.rs`
-    (`receiver_context`/`local_binding_context`, the receiver's type from its binding, annotation,
-    parameter, literal, or constructor-call signature, plus `contexts_at_spans`, the same reading
-    applied to every expression at the diagnostic's spans, which is the by-blanket-trait anchor's
-    context source), `unbounded.rs` (`unbounded_receiver`, a consumer method called on a receiver
-    typed by a type parameter its item does not bound by the consumer trait, reported as the
-    `[CGP-E129]` cause without a walk), `seed.rs` (`seed_from_call`, the signature unification: fresh variables for the
-    method's item, `Self` pinned to the context, each written argument type unified with its
-    declared input (from the first input for a type-relative call, and a data value's argument typed
-    by `data_expr_ty` too), the trait's parameters read back with the query layer's
-    `unknowns_to_placeholders` folding what stayed unresolved). The argument types the call writes
-    and the syntactic type lowering they stand on are read in the query layer (below).
+    (`data_expr_ty`, the value such a call is made on, typed through the data operations and pattern
+    bindings that produced it), `receiver.rs` (`receiver_context`/`local_binding_context`, the
+    receiver's type from its binding, annotation, parameter, literal, or constructor-call signature,
+    plus `contexts_at_spans`, the same reading applied to every expression at the diagnostic's
+    spans, which is the by-blanket-trait anchor's context source), `unbounded.rs`
+    (`unbounded_receiver`, a consumer method called on a receiver typed by a type parameter its item
+    does not bound by the consumer trait, reported as the `[CGP-E129]` cause without a walk),
+    `seed.rs` (`seed_from_call`, the signature unification: fresh variables for the method's item,
+    `Self` pinned to the context, each written argument type unified with its declared input by the
+    query layer's `unify_call_inputs` (from the first input for a type-relative call, and a data
+    value's argument typed by `data_expr_ty` too), the trait's parameters read back with the query
+    layer's `unknowns_to_placeholders` folding what stayed unresolved). The argument types the call
+    writes and the syntactic type lowering they stand on are read in the query layer (below).
   - [`walk/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/walk)
     walks the cause chain to each terminal leaf. `leaves/` drives the recursion (`resolve_leaves`
     erasing the seed, `resolve_node` the per-node memoized descent with the cycle guard and
@@ -477,28 +476,31 @@ marking.
     solving satisfiable clauses first). `unknowns.rs` carries a call-site unknown across inference
     contexts (`unknowns_to_placeholders`, shared by the walk and the call-site anchor;
     `resolve_fixed_projections` / `try_project_fixed` / `placeholders_to_infer` recovering a stalled
-    associated-type projection whose value is *fixed* independent of an unknown input,
-    structurally, for any trait and associated type, keeping only a fully-concrete result, so a
-    later pipeline stage keyed on an earlier stage's un-normalized output projection is still
-    descended and reported on when its input concretizes). `projection_mismatch.rs` finds an unmet
-    associated-type projection on the concrete-`Self` impl
-    (`projection_mismatch`/`impl_projection_mismatch`, deferring the blanket and preferring a
-    `HasField` projection over any other; `unmet_projection` over an impl's instantiated clauses),
-    `holds.rs` asks the solver whether a predicate is satisfied, `projected_type.rs` normalizes a
-    projection to the type its owner supplies, `written_order.rs` reads an impl's clauses in the
-    order the program wrote them (`written_order`, undoing the compiler's move of each
-    associated-type constraint to the front), and `misdirected.rs` reads the requirements of a
-    provider impl whose `#[cgp_impl]` header names the consumer trait (`misdirected_impl_clauses`).
-    `written_ty.rs` (`expr_written_ty`, the argument shapes whose types a call writes, a tuple read
-    partially, its shape recovered with a fresh inference variable per unwritten element) and
-    `lower.rs` (`lower_hir_ty`/`instantiate_written`, the small syntactic type lowering over cached
-    `type_of`, a literal const argument read through the `lit_to_const` query) serve the call-site
-    anchors and the undeclared-trait detector, and `traits_with_method.rs` finds the traits a call
-    by method name could resolve through. `keys.rs` renders a wiring key, a redirect path, and a
-    provider in the surface forms an entry writes (`describe_key`, `render_path`), and
-    `check_impl.rs`, `import_path.rs`, and `owner_has_impl_of.rs` are the lookups several stages
-    make: the check trait's `CanUseComponent` assertion and an impl's `Self`-type caret, the path a
-    `use` imports an item by, and whether a type is the concrete `Self` of an impl of a trait.
+    associated-type projection whose value is *fixed* independent of an unknown input, structurally,
+    for any trait and associated type, keeping only a fully-concrete result, so a later pipeline
+    stage keyed on an earlier stage's un-normalized output projection is still descended and
+    reported on when its input concretizes). `projection_mismatch.rs` finds an unmet associated-type
+    projection on the concrete-`Self` impl (`projection_mismatch`/`impl_projection_mismatch`,
+    deferring the blanket and preferring a `HasField` projection over any other; `unmet_projection`
+    over an impl's instantiated clauses), `holds.rs` asks the solver whether a predicate is
+    satisfied, `projected_type.rs` normalizes a projection to the type its owner supplies,
+    `written_order.rs` reads an impl's clauses in the order the program wrote them (`written_order`,
+    undoing the compiler's move of each associated-type constraint to the front), and
+    `misdirected.rs` reads the requirements of a provider impl whose `#[cgp_impl]` header names the
+    consumer trait (`misdirected_impl_clauses`). `written_ty.rs` (`expr_written_ty`, the argument
+    shapes whose types a call writes, a tuple read partially, its shape recovered with a fresh
+    inference variable per unwritten element) and `lower.rs` (`lower_hir_ty`/`instantiate_written`,
+    the small syntactic type lowering over cached `type_of`, a literal const argument read through
+    the `lit_to_const` query) serve the call-site anchors and the undeclared-trait detector,
+    `unify_call_inputs.rs` unifies a call's arguments with the inputs its callee declares (for the
+    call-site seed, the data-call chain, the bound-call anchor, and the undeclared-dependency and
+    missing-`#[use_provider]` detectors, each pinning and reading back its own parameters), and
+    `traits_with_method.rs` finds the traits a call by method name could resolve through. `keys.rs`
+    renders a wiring key, a redirect path, and a provider in the surface forms an entry writes
+    (`describe_key`, `render_path`), and `check_impl.rs`, `import_path.rs`, and
+    `owner_has_impl_of.rs` are the lookups several stages make: the check trait's `CanUseComponent`
+    assertion and an impl's `Self`-type caret, the path a `use` imports an item by, and whether a
+    type is the concrete `Self` of an impl of a trait.
   - `query/cgp_item/` holds the structural, `IsProviderFor`-free trait recognition
     (`is_provider_trait` / `provider_blanket_marker` (the `DelegateComponent`-bounded provider
     blanket), `consumer_provider_trait` / `is_consumer_trait`, and `marker_to_consumer`), plus the
