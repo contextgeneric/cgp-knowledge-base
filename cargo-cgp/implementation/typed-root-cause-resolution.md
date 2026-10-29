@@ -468,9 +468,12 @@ marking.
   - [`query/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/query)
     holds the compiler readers and solver helpers more than one stage uses, and decides no
     resolution, so the resolver's stages and the class detectors import it and it imports none of
-    them. `impl_match.rs` finds the satisfying impl and reads its dependencies
-    (`impl_where_obligations` preferring a concrete-`Self` impl over the delegation blanket, the
-    placeholder instantiation of a higher-ranked binder via `enter_forall_and_leak_universe`, and
+    them. `impl_match.rs` holds the one impl match (`match_impl`: the impl's parameters as fresh
+    variables, its trait ref normalized and unified with the obligation, a higher-ranked binder
+    first instantiated with placeholders via `enter_forall_and_leak_universe`) that the walk, the
+    projection-mismatch reader, the wrapper-chain anchor, and the required-type finder share, each
+    reading the matched impl's clauses its own way, and reads the walk's dependencies
+    (`impl_where_obligations` preferring a concrete-`Self` impl over the delegation blanket and
     solving satisfiable clauses first). `unknowns.rs` carries a call-site unknown across inference
     contexts (`unknowns_to_placeholders`, shared by the walk and the call-site anchor;
     `resolve_fixed_projections` / `try_project_fixed` / `placeholders_to_infer` recovering a stalled

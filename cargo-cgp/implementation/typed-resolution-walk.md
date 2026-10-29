@@ -595,14 +595,13 @@ parent document's [Tests](typed-root-cause-resolution.md#tests) section.
   descent, the overflow step, the context-wiring checks, and the result builders) and
   `vocabulary.rs` (what it walks into, and which dependencies a foreign bound is followed into).
 - [`crates/cargo-cgp-driver/src/resolve/query/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/query):
-  the solver queries the walk and the classifiers share: `impl_match.rs` (the satisfying impl and
-  its dependencies), `unknowns.rs` (placeholders and stalled projections), `projection_mismatch.rs`
-  (the unmet projection an impl carries, `HasField` or otherwise), `holds.rs` (the solver query),
+  the solver queries the walk and the classifiers share: `impl_match.rs` (the impl match and its
+  dependencies), `unknowns.rs` (placeholders and stalled projections), `projection_mismatch.rs` (the
+  unmet projection an impl carries, `HasField` or otherwise), `holds.rs` (the solver query),
   `projected_type.rs` (the normalization that reads the type an owner supplies for a projected
-  associated type), `written_order.rs` (the order an impl's clauses are read in),
-  `misdirected.rs` (the requirements of a provider impl whose `#[cgp_impl]` header names the
-  consumer trait), and `owner_has_impl_of.rs` (whether a type is the concrete `Self` of an impl of
-  a trait).
+  associated type), `written_order.rs` (the order an impl's clauses are read in), `misdirected.rs`
+  (the requirements of a provider impl whose `#[cgp_impl]` header names the consumer trait), and
+  `owner_has_impl_of.rs` (whether a type is the concrete `Self` of an impl of a trait).
 - [`crates/cargo-cgp-driver/src/resolve/classify/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/classify):
   `reportable.rs` (root cause versus routing dead-end), `known.rs` (whether a provider obligation
   is known well enough to confirm a fix against), `leaf.rs` (`classify_leaf`, which builds the
