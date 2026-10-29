@@ -499,10 +499,12 @@ marking.
     data-call and provider-call anchors and the undeclared-dependency, missing-`#[use_provider]`,
     and unimported-abstract-type detectors share. `keys.rs` renders a wiring key, a redirect path,
     and a provider in the surface forms an entry writes (`describe_key`, `render_path`), and
-    `check_impl.rs`, `import_path.rs`, and `owner_has_impl_of.rs` are the lookups several stages
-    make: the check impls at a caret (`check_impls_at`, over the check trait's `CanUseComponent`
-    assertion or another asserting supertrait, and an impl's `Self`-type caret), the path a `use`
-    imports an item by, and whether a type is the concrete `Self` of an impl of a trait.
+    `check_impl.rs`, `import_path.rs`, `local_trait_impls.rs`, and `owner_has_impl_of.rs` are the
+    lookups several stages make: the check impls at a caret (`check_impls_at`, over the check
+    trait's `CanUseComponent` assertion or another asserting supertrait, and an impl's `Self`-type
+    caret), the path a `use` imports an item by, the crate's own trait impls (`local_trait_impls`,
+    which the span-matching anchors and the detectors scan, each with its own test of the impl), and
+    whether a type is the concrete `Self` of an impl of a trait.
   - `query/cgp_item/` holds the structural, `IsProviderFor`-free trait recognition
     (`is_provider_trait` / `provider_blanket_marker` (the `DelegateComponent`-bounded provider
     blanket), `consumer_provider_trait` / `is_consumer_trait`, and `marker_to_consumer`), plus the
