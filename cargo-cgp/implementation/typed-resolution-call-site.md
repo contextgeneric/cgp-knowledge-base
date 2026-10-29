@@ -552,10 +552,12 @@ catalog lives in the parent document's [Tests](typed-root-cause-resolution.md#te
   `bound_call.rs` (`resolve_bound_call`, instantiating a called generic function's own bounds);
   and `receiver.rs`'s `declared_binding_ty`, a binding's declared type with its references.
 - [`crates/cargo-cgp-driver/src/resolve/query/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/query):
-  the readers these anchors share with the undeclared-trait detector: `written_ty.rs` (the types
-  the call's arguments write), `lower.rs` (the small syntactic type lowering, literal const
-  arguments included), `unify_call_inputs.rs` (each argument unified with the input it fills), and
-  `traits_with_method.rs` (the candidate consumer and blanket traits by method name).
+  the readers these anchors share with the undeclared-trait detector: `written_ty.rs` (the types the
+  call's arguments write), `lower.rs` (the small syntactic type lowering, literal const arguments
+  included), `unify_call_inputs.rs` (each argument unified with the input it fills), and
+  `traits_with_method.rs` (the candidate consumer and blanket traits by method name) over
+  `trait_fns_named.rs` (every trait declaring a function of a name, which the data-call and
+  provider-call anchors scan too).
 
 ## Further reading
 
