@@ -589,7 +589,7 @@ and printing halves need a real compilation, so they are exercised by running th
   prints the expanded crate through `pprust::print_crate`, resugars it, and writes it out.
 - [`crates/cargo-cgp-driver/src/callbacks.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/callbacks.rs),
   [`run.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/run.rs),
-  [`config.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/config.rs):
+  [`config/front_end.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/config/front_end.rs):
   the `after_expansion` hook, the request threaded into the callbacks (which also drops the
   diagnostic flag injections in expand mode), and the driver's half of the flag contract.
 - [`crates/cargo-cgp-expand/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-expand):

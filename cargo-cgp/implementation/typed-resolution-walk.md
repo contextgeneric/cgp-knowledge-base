@@ -195,34 +195,34 @@ walk descends it the way it descends a provider. It deliberately does *not* foll
   **not-a-provider** leaf (`[CGP-E115]`), named against `T` rather than a wiring key
   ([`non_provider_wired`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/non_provider_wired.rs)
   pins it). The leaf also records the **adapters** that make the owner a provider
-  (`wrapping_adapters`, `classify/adapter.rs`): for each impl of the provider trait whose `Self` is
-  an ADT over one type parameter the impl bounds by a trait (`WithProvider<P>`, `Promote<P>`; an
+  (`wrapping_adapters`, `classify/fix/adapter.rs`): for each impl of the provider trait whose `Self`
+  is an ADT over one type parameter the impl bounds by a trait (`WithProvider<P>`, `Promote<P>`; an
   ADT such as `UseType<T>`, which only carries `T` as a type, bounds it by nothing), the ADT applied
   to the owner, kept when the solver confirms it implements the trait for the same arguments. No
   adapter is recognized by name, and the search declines when the obligation holds an unknown. It
   also records the other components the owner is a provider of for the same context
-  (`provided_components`, `classify/provided_components.rs`): each provider trait with no parameter beyond `Self` and the context whose
-  delegation blanket keys on a marker, kept when the solver confirms `Owner: Trait<Context>`
+  (`provided_components`, `classify/fix/provided_components.rs`): each provider trait with no
+  parameter beyond `Self` and the context whose delegation blanket keys on a marker, kept when the
+  solver confirms `Owner: Trait<Context>`
   ([`wrong_component_provider_check`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/wrong_component_provider_check.rs)).
-  `core_provider_hint` (`classify/core_provider.rs`) handles two core providers, anchored by `DefId` to the crates that define
-  them: `UseField` on a trait with no `UseField` impl, where `UseFields` implements the trait for the
-  context (a multi-method getter), and `UseDelegate` on a component with parameters whose trait has
-  a `RedirectLookup` impl, which an `open` statement uses
+  `core_provider_hint` (`classify/fix/core_provider.rs`) handles two core providers, anchored by
+  `DefId` to the crates that define them: `UseField` on a trait with no `UseField` impl, where
+  `UseFields` implements the trait for the context (a multi-method getter), and `UseDelegate` on a
+  component with parameters whose trait has a `RedirectLookup` impl, which an `open` statement uses
   ([`getter_multi_method_use_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/getter_multi_method_use_field.rs),
   [`use_delegate_without_derive`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/use_delegate_without_derive.rs);
   [`use_field_multi_method_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/use_field_multi_method_missing_field.rs)
   and
   [`use_delegate_parameterless_component`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/use_delegate_parameterless_component.rs)
   name neither, since `UseFields` would not hold and the component has no parameters to dispatch
-  on).
-  An owner that *has* one reached the blanket only because that impl did not unify with
-  the arguments the walk gives it, and two cases follow:
+  on). An owner that *has* one reached the blanket only because that impl did not unify with the
+  arguments the walk gives it, and two cases follow:
   - When those arguments are fully known (no placeholder, inference variable, or unreduced
     projection) and exactly one argument position is one that none of the owner's concrete impls
-    accepts, the owner implements `T` for other arguments: the **provider-for-other-arguments**
-    leaf (`[CGP-E127]`, `provider_for_other_arguments` in `classify/other_arguments.rs`). It names
-    that argument and the ones the impls take there: the context for a provider written for
-    another context
+    accepts, the owner implements `T` for other arguments: the **provider-for-other-arguments** leaf
+    (`[CGP-E127]`, `provider_for_other_arguments` in `classify/fix/other_arguments.rs`). It names
+    that argument and the ones the impls take there: the context for a provider written for another
+    context
     ([`provider_for_other_context`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/provider_for_other_context.rs)),
     or a component parameter for a pipeline stage given another stage's output type
     ([`pipe_handlers_stage_mismatch`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/handlers/pipe_handlers_stage_mismatch.rs)).
@@ -330,7 +330,7 @@ delegation step fails on that bound alone while every other requirement holds, a
 component passes, since it needs only the delegate's `IsProviderFor`. So when an impl's only failing
 requirements are `IsProviderFor` bounds, one of them on the context, and the context has no
 `IsProviderFor` impl for the component (nor a blanket one over every key, as a namespace join
-writes), `wiring_without_provider_for` (`classify/hand_wiring.rs`) reports the
+writes), `wiring_without_provider_for` (`classify/fix/hand_wiring.rs`) reports the
 **wiring-without-`IsProviderFor`** leaf (`[CGP-E128]`), carrying the delegate the hand-written impl
 names for its `help`
 ([`hand_delegate_without_is_provider`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/hand_delegate_without_is_provider.rs)).
@@ -591,8 +591,9 @@ parent document's [Tests](typed-root-cause-resolution.md#tests) section.
 ## Source
 
 - [`crates/cargo-cgp-driver/src/resolve/walk/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/walk):
-  the descent: `leaves.rs` (the recursion) and `vocabulary.rs` (what it walks into, and which
-  dependencies a foreign bound is followed into).
+  the descent: `leaves/` (the recursion, one module each for its entry points, the per-node
+  descent, the overflow step, the context-wiring checks, and the result builders) and
+  `vocabulary.rs` (what it walks into, and which dependencies a foreign bound is followed into).
 - [`crates/cargo-cgp-driver/src/resolve/query/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/query):
   the solver queries the walk and the classifiers share: `impl_match.rs` (the satisfying impl and
   its dependencies), `unknowns.rs` (placeholders and stalled projections), `projection_mismatch.rs`
@@ -603,16 +604,16 @@ parent document's [Tests](typed-root-cause-resolution.md#tests) section.
   consumer trait), and `owner_has_impl_of.rs` (whether a type is the concrete `Self` of an impl of
   a trait).
 - [`crates/cargo-cgp-driver/src/resolve/classify/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/classify):
-  `reportable.rs` (root cause versus routing dead-end), `adapter.rs` (the adapter types that make a
-  non-provider a provider), `provided_components.rs` (the other components it provides),
-  `core_provider.rs` (what serves a slot a misused core provider cannot), `known.rs` (whether a
-  provider obligation is known well enough to confirm a fix against), `other_arguments.rs` (the argument a provider
-  does not implement its provider trait for), `hand_wiring.rs` (a component wired without its
-  `IsProviderFor`), `leaf.rs` (`classify_leaf`, which builds the
-  rustc-free `Leaf`), `data.rs` (`classify_data_leaf`, the extensible-data leaf read off the presence
-  markers), `field.rs` (the struct and `Deref`-chain inspection), `required_type.rs` (the
-  type a requirement gives a missing field), and `near_miss.rs` (a similar field, variant, or wiring
-  key the program wrote).
+  `reportable.rs` (root cause versus routing dead-end), `known.rs` (whether a provider obligation
+  is known well enough to confirm a fix against), `leaf.rs` (`classify_leaf`, which builds the
+  rustc-free `Leaf`), `data.rs` (`classify_data_leaf`, the extensible-data leaf read off the
+  presence markers), `field.rs` (the struct and `Deref`-chain inspection), and `fix/`, the finders
+  of the facts a `help` names: `adapter.rs` (the adapter types that make a non-provider a
+  provider), `provided_components.rs` (the other components it provides), `core_provider.rs`
+  (what serves a slot a misused core provider cannot), `other_arguments.rs` (the argument a
+  provider does not implement its provider trait for), `hand_wiring.rs` (a component wired
+  without its `IsProviderFor`), `required_type.rs` (the type a requirement gives a missing
+  field), and `near_miss.rs` (a similar field, variant, or wiring key the program wrote).
 - [`crates/cargo-cgp-driver/src/resolve/data/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/data):
   `traits.rs` (the extensible-data traits, the operations among them, their list recursions, and
   the derive each data trait comes from) and `partial.rs` (`read_partial`, a partial value's target

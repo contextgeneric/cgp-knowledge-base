@@ -189,7 +189,7 @@ The recovery is a pipeline of typed lookups with no string parsing until the ver
 a field name. It runs in the driver's
 [`resolve`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve)
 module (one sub-directory per stage, `anchor/`, `call_site/`, `walk/`, `classify/`, `label/`, over
-the shared `cgp_item.rs` and the `query/` layer of compiler readers the stages share, each behind a
+the `query/` layer of compiler readers and CGP recognizers the stages share, each behind a
 re-exporting `mod.rs`) and fills the rustc-free
 `Cause`/`Leaf`/`FieldIssue`/`Resolved` types with owned `String`s, so the wording that consumes them
 needs no compiler. Every stage is anchored by `DefId` to the CGP crate that defines the trait or
@@ -207,8 +207,8 @@ traits are recognized structurally, without `IsProviderFor`**:
 - A **provider trait** is identified by the delegation blanket `#[cgp_component]` generates,
   `impl<Ctx, P> ProviderTrait<Ctx> for P where P: DelegateComponent<Marker>, …`, whose `Self` is a
   bare type parameter bounded by `DelegateComponent` (`is_provider_trait` /
-  `provider_blanket_marker` in `cgp_item.rs`). That same blanket's `DelegateComponent<Marker>` bound
-  also yields the component marker when an anchor needs it, in place of reading the
+  `provider_blanket_marker` in `query/cgp_item/`). That same blanket's `DelegateComponent<Marker>`
+  bound also yields the component marker when an anchor needs it, in place of reading the
   `IsProviderFor<Marker, …>` supertrait.
 - A **consumer trait** is identified by its blanket impl
   `impl<C> Consumer for C where C: Provider<C>` routing to such a provider
@@ -416,7 +416,7 @@ marking.
     `unknowns_to_placeholders` folding what stayed unresolved). The argument types the call writes
     and the syntactic type lowering they stand on are read in the query layer (below).
   - [`walk/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/walk)
-    walks the cause chain to each terminal leaf. `leaves.rs` drives the recursion (`resolve_leaves`
+    walks the cause chain to each terminal leaf. `leaves/` drives the recursion (`resolve_leaves`
     erasing the seed, `resolve_node` the per-node memoized descent with the cycle guard and
     `MAX_DEPTH` backstop, the foreign-getter descent into just context-side dependencies plus a
     same-trait list recursion, the drop of a leaf still carrying a call-site placeholder (an
@@ -430,18 +430,17 @@ marking.
   - [`classify/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/classify)
     classifies a terminal: `data.rs` reads an extensible-data terminal off the presence markers of
     the partial type it lands on (`classify_data_leaf`), `leaf.rs` turns it into the rustc-free
-    `Leaf` (a field by inspecting the
-    struct and its `Deref` chain in `field.rs`, with a missing field's fix confirmed by the struct's
-    other `HasField` impls and typed by `required_type.rs`'s `required_field_type`, which reads the
-    `Value = T` constraint beside the bound on the impl that requires it, and with a similar field or
-    wiring key the program wrote found by `near_miss.rs`; a field-type mismatch with
-    `field_type` reading the actual type by `DefId`, an abstract-type mismatch with the query
-    layer's `projected_type` normalizing the projection for the actual type and
-    `abstract_type_component_marker` recovering the wiring marker for its `help`, a missing wiring
-    on the context, a missing dispatch entry on a non-context delegation table, a not-a-provider on
-    a non-table type, a provider for other arguments named by `other_arguments.rs`, a component
-    wired without its `IsProviderFor` recognized by `hand_wiring.rs`, a missing redirect wiring told
-    apart by `is_path_cons`, or a bound);
+    `Leaf` (a field by inspecting the struct and its `Deref` chain in `field.rs`, with a missing
+    field's fix confirmed by the struct's other `HasField` impls and typed by
+    `fix/required_type.rs`'s `required_field_type`, which reads the `Value = T` constraint beside
+    the bound on the impl that requires it, and with a similar field or wiring key the program wrote
+    found by `fix/near_miss.rs`; a field-type mismatch with `field_type` reading the actual type by
+    `DefId`, an abstract-type mismatch with the query layer's `projected_type` normalizing the
+    projection for the actual type and `abstract_type_component_marker` recovering the wiring marker
+    for its `help`, a missing wiring on the context, a missing dispatch entry on a non-context
+    delegation table, a not-a-provider on a non-table type, a provider for other arguments named by
+    `fix/other_arguments.rs`, a component wired without its `IsProviderFor` recognized by
+    `fix/hand_wiring.rs`, a missing redirect wiring told apart by `is_path_cons`, or a bound);
     `reportable.rs` holds `is_reportable_leaf`, keeping an unmet `DelegateComponent` on the context
     (a missing wiring), on a non-context delegation table (a missing dispatch entry, recognized as a
     separate-table lookup by `is_dispatch_lookup`, the owner a proper part of the parent
@@ -497,14 +496,15 @@ marking.
     `check_impl.rs`, `import_path.rs`, and `owner_has_impl_of.rs` are the lookups several stages
     make: the check trait's `CanUseComponent` assertion and an impl's `Self`-type caret, the path a
     `use` imports an item by, and whether a type is the concrete `Self` of an impl of a trait.
-  - `cgp_item.rs` holds the structural, `IsProviderFor`-free trait recognition (`is_provider_trait`
-    / `provider_blanket_marker` (the `DelegateComponent`-bounded provider blanket),
-    `consumer_provider_trait` / `is_consumer_trait`, and `marker_to_consumer`), plus the `Symbol!`
-    field-name decode, `is_namespace_lookup_trait` (by the single-`Delegate`-associated-type
-    fingerprint plus CGP evidence), and the shared `PathCons`/`Nil`/local-ADT and context-ADT
-    recognizers. The class detectors live beside `resolve/`, in the driver's
+  - `query/cgp_item/` holds the structural, `IsProviderFor`-free trait recognition
+    (`is_provider_trait` / `provider_blanket_marker` (the `DelegateComponent`-bounded provider
+    blanket), `consumer_provider_trait` / `is_consumer_trait`, and `marker_to_consumer`), plus the
+    `Symbol!` field-name decode, `is_namespace_lookup_trait` (by the
+    single-`Delegate`-associated-type fingerprint plus CGP evidence), and the shared
+    `PathCons`/`Nil`/local-ADT and context-ADT recognizers. The class detectors live beside
+    `resolve/`, in the driver's
     [`detect/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/detect)
-    module, which imports only the query layer and these recognizers:
+    module, which imports from the resolver only the query layer, where these recognizers live:
     [`conflict/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/detect/conflict)
     handles the duplicate-key `E0119` conflict, and
     [`orphan.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/detect/orphan.rs)
@@ -514,14 +514,13 @@ marking.
     the structural mistakes in a check table or a wiring entry
     ([The driver](driver.md#reshaping-a-structural-mistake)). The macro-lowering detectors sit
     beside them: `undeclared.rs`, `missing_use_provider.rs`, `unimported.rs`, and `requirement.rs`
-    for an undeclared dependency
-    ([The driver](driver.md#reshaping-an-undeclared-dependency)), and `cgp_impl_misuse.rs` and
-    `uses_misuse.rs` for a wrong component half
+    for an undeclared dependency ([The driver](driver.md#reshaping-an-undeclared-dependency)), and
+    `cgp_impl_misuse.rs` and `uses_misuse.rs` for a wrong component half
     ([The driver](driver.md#reshaping-a-wrong-component-half)), and `wiring_name/` reads a wiring
     entry's names back from the HIR for an unresolved wiring name
-    ([The driver](driver.md#reshaping-an-unresolved-wiring-name)). Beside `cgp_item.rs` in
-    `resolve/`, `cache.rs` memoizes the walk at every node (keyed on the region-erased obligation and context), so a wiring
-    failure re-reported at many sites, or a shared trait, is walked once (see
+    ([The driver](driver.md#reshaping-an-unresolved-wiring-name)). Beside `query/` in `resolve/`,
+    `cache.rs` memoizes the walk at every node (keyed on the region-erased obligation and context),
+    so a wiring failure re-reported at many sites, or a shared trait, is walked once (see
     [Cached dependency resolution](cached-dependency-resolution.md)).
 - [`crates/cargo-cgp-driver/src/emitter/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/emitter):
   the `try_resolve` seam (gated to an unmet-obligation code, `E0271`/`E0277` or a
@@ -551,7 +550,7 @@ marking.
   the `DependencyTree` type and its `cargo tree`-style renderer over `termtree`, the target the
   graph expands into, unit-tested in
   [`tests/error_processing/tree.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/tree.rs).
-- [`crates/cargo-cgp-driver/src/config.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/config.rs):
+- [`crates/cargo-cgp-driver/src/config/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/config):
   the crate and trait-name anchors the resolution matches against.
 
 ## Tests

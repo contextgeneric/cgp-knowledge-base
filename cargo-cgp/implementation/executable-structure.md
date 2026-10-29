@@ -142,7 +142,7 @@ The front-end passes the **sysroot** through `CARGO_CGP_SYSROOT`. It discovers t
 `rustc --print sysroot`
 ([`launch::sysroot`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/sysroot.rs))
 and the driver reads it back to inject `--sysroot`
-([`config::SYSROOT_ENV`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/config.rs)),
+([`config::SYSROOT_ENV`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/config/front_end.rs)),
 because a `rustc_driver` binary that is not inside a toolchain has no other way to locate `std`. The
 two crates declare the variable name independently; the shared string is the contract between them.
 

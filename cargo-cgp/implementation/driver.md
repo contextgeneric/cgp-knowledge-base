@@ -195,7 +195,7 @@ transforms.
 ### Choosing the trait solver
 
 The driver injects `-Znext-solver=globally` into every workspace-crate compilation
-([`config::NEXT_SOLVER_FLAG`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/config.rs),
+([`config::NEXT_SOLVER_FLAG`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/config/rustc_flags.rs),
 applied in
 [`args::rustc_args`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/args.rs)),
 turning on the next-generation trait solver. This is an argument-lever transformation, and it
@@ -239,7 +239,7 @@ described in [Testing](testing.md).
 ### Un-eliding the diagnostic
 
 The driver injects the stable `--verbose` flag into every workspace-crate compilation
-([`config::VERBOSE_FLAG`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/config.rs),
+([`config::VERBOSE_FLAG`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/config/rustc_flags.rs),
 applied in
 [`args::rustc_args`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/args.rs)).
 This is the second argument-lever transformation, and it targets a different failure from the solver
@@ -357,7 +357,7 @@ resolved `DefId` is checked to be the `IsProviderFor` *defined in the `cgp_compo
 crate that owns the trait, since `cgp` and `cgp_core` only re-export it and a `pub use` mints no new
 `DefId`), so a trait merely named `IsProviderFor` in some unrelated crate never seeds an entry, and
 the map is provably rooted in real CGP provider traits. The defining crate name lives in
-[`config`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/config.rs)
+[`config`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/config/cgp_component.rs)
 as `CGP_COMPONENT_CRATE`.
 
 Each entry is **keyed by the marker's full path** (`def_path_str`), not its bare name, so two
@@ -1033,7 +1033,7 @@ generated consumer/provider blanket impls have a bare type-parameter `Self`; and
 reference is a token the user wrote (not from a macro expansion), where the generated
 `IsProviderFor`/`DelegateComponent` forwarding impls carry a synthesized reference. The header trait
 is then classified by
-[`consumer_provider_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/cgp_item.rs):
+[`consumer_provider_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/query/cgp_item/component.rs):
 a consumer trait yields the provider trait to suggest (`[CGP-E032]`), a provider trait is the
 correct target and is skipped, and anything else is a non-CGP trait (`[CGP-E033]`); each of the
 impl's inner-provider `where`-bounds is scanned the same way for a consumer trait (`[CGP-E034]`).
@@ -1207,7 +1207,7 @@ whether the crate uses CGP, so like the wiring-name reshape the pass
 [`drop_generated_name_suggestions`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/generated_names.rs)
 also runs from the `after_expansion` callback over what name resolution buffered. It reaches the
 buffer through the same registration, and only in a crate that links a CGP crate
-(`resolve::links_cgp`), so a plain Rust error keeps every suggestion.
+(`resolve::query::links_cgp`), so a plain Rust error keeps every suggestion.
 
 Either way the drop removes each substitution whose text holds a reserved name
 ([`reserved_names`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/signals.rs),
@@ -1501,9 +1501,10 @@ will likely grow toward it:
 - [`crates/cargo-cgp-driver/src/args.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/args.rs):
   `expand_arg_files`, the `@file` expansion, and `rustc_args`: wrapper-mode stripping, sysroot
   injection, flag injection, and the info-query skip.
-- [`crates/cargo-cgp-driver/src/config.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/config.rs):
-  the shared names: the injected flags (`NEXT_SOLVER_FLAG`, `VERBOSE_FLAG`, `SYSROOT_ENV`) and the
-  identity anchor (`CGP_COMPONENT_CRATE`, `IS_PROVIDER_FOR_TRAIT`), each with its rationale.
+- [`crates/cargo-cgp-driver/src/config/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/config):
+  the shared names, one module per subject: the injected flags (`NEXT_SOLVER_FLAG`, `VERBOSE_FLAG`
+  in `rustc_flags.rs`, `SYSROOT_ENV` in `front_end.rs`) and the identity anchor
+  (`CGP_COMPONENT_CRATE`, `IS_PROVIDER_FOR_TRAIT` in `cgp_component.rs`), each with its rationale.
 - [`crates/cargo-cgp-driver/src/callbacks.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/callbacks.rs):
   the `Callbacks` implementation: its `config` hook installs the transforming emitter, and its
   `after_expansion` hook runs the name-resolution reshape, the `#[use_type]` help replacement, and

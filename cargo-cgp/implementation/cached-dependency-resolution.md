@@ -398,13 +398,13 @@ The tests below do not exist yet; they are the coverage still to add.
   values (the node-rooted sub-chains, the reachable-fingerprint set, and the incomplete flag), the
   `pred_fingerprint` helper for reachable entries, and the `ResolveCache` store (a
   `RefCell<HashMap>` of `SubResult`).
-- [`crates/cargo-cgp-driver/src/resolve/walk/leaves.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/walk/leaves.rs):
-  `resolve_node` memoizes each node: it consults the cache (reusing a complete subtree only when the
-  current ancestor prefix is disjoint from its reachable set), descends into terminal / projection /
-  merge branches building owned node-rooted sub-chains, flags a cycle or depth cut incomplete, and
-  caches every complete non-terminal node. `resolve_leaves` erases the seed and delegates to
-  `compute_leaves`, which folds the root node's `SubResult` into a `Resolved` (de-duplicate, elide,
-  render).
+- [`crates/cargo-cgp-driver/src/resolve/walk/leaves/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/walk/leaves):
+  `node.rs`'s `resolve_node` memoizes each node: it consults the cache (reusing a complete subtree
+  only when the current ancestor prefix is disjoint from its reachable set), descends into terminal
+  / projection / merge branches building owned node-rooted sub-chains, flags a cycle or depth cut
+  incomplete, and caches every complete non-terminal node. `entry.rs`'s `resolve_leaves` erases the
+  seed and delegates to `compute_leaves`, which folds the root node's `SubResult` into a `Resolved`
+  (de-duplicate, elide, render).
 - [`crates/cargo-cgp-driver/src/emitter/stage/resolver.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/stage/resolver.rs):
   `try_resolve` passes the resolve context, which borrows the emitter's `ResolveCache`, through the
   twelve anchors to `resolve_leaves`. The cache lives on `CgpEmitter`

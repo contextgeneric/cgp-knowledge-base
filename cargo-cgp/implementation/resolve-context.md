@@ -21,8 +21,9 @@ The immediate reason is cohesion: the anchors and the walk need both the compile
 [dependency cache](cached-dependency-resolution.md), so `ResolveCtx` threads them as one value and
 names the pair the resolution depends on. A step that never reads the cache, such as a leaf's
 classification, takes the `TyCtxt` alone. The config names (`CGP_COMPONENT_CRATE`,
-`DELEGATE_COMPONENT_TRAIT`, the rest) stay compile-time constants in `config.rs`: they never vary at
-run time, so a struct carrying them would add a value to thread without changing any answer.
+`DELEGATE_COMPONENT_TRAIT`, the rest) stay compile-time constants in the driver's `config` module:
+they never vary at run time, so a struct carrying them would add a value to thread without changing
+any answer.
 
 The larger reason is the payoff that cohesion unlocks: **making the resolution core rustc-free and
 mockable.** The `cargo-cgp-error-processing` crate already proves the resolver's *output* half (the
@@ -76,7 +77,7 @@ current query surface, not hypothetical.
 graph, with no inference context and no hidden parameter; they are directly cacheable and directly
 mockable (a table over a hand-built graph). This is the bulk of the surface and the most valuable to
 mock, because it is where the subtle *decisions* live. It includes all of
-[`cgp_item.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/cgp_item.rs),
+[`query/cgp_item/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/query/cgp_item),
 which holds the DefId-anchored recognition (`is_cgp_item`, `provider_blanket_marker`,
 `consumer_provider_trait`, `marker_to_consumer`, `is_namespace_lookup_trait`, `is_path_cons`,
 `decode_symbol`); the field inspection in
@@ -110,7 +111,7 @@ and both the cache value and the mock's answer must be stable modulo those place
 
 **Class C: genuinely stateful or contextual.** Two different kinds of state live here, and they
 belong in two different places. The first is the **cycle-guarded subtree**: `resolve_node` in
-[`walk/leaves.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/walk/leaves.rs)
+[`walk/leaves/node.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/walk/leaves/node.rs)
 carries the ancestor `prefix` as a real parameter. The prefix is the ancestor-set input that makes
 the walk a function of `(node, ancestor-set)` rather than the node alone, which the
 [cache](cached-dependency-resolution.md#why-a-node-key-is-not-automatically-a-complete-key) handles
@@ -302,10 +303,10 @@ belong to the deferred component work and are listed so the later agent inherits
   the emitter's resolver stage, which receives the context the emitter builds inside its
   `ty::tls::with_opt` closure and passes it to the anchors and the overflow walk.
 - [`crates/cargo-cgp-driver/src/resolve/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve):
-  the whole resolver; `cgp_item.rs`, `query/`, `classify/`, `walk/`, and `label/` are the Class A +
-  Class B surface the later components would cover, while `anchor/` and `call_site/` stay the
-  rustc-coupled edge.
-- [`crates/cargo-cgp-driver/src/config.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/config.rs):
+  the whole resolver; `query/` (with its `cgp_item/` recognizers), `classify/`, `walk/`, and
+  `label/` are the Class A + Class B surface the later components would cover, while `anchor/` and
+  `call_site/` stay the rustc-coupled edge.
+- [`crates/cargo-cgp-driver/src/config/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/config):
   the crate and trait-name constants the resolver compares against.
 - [`crates/cargo-cgp-error-processing/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing):
   the existing rustc-free crate whose discipline this extends; the natural home for the abstracted

@@ -356,7 +356,7 @@ groups anchored here.
   land on, and `is_about_impl`, whether a caret inside an impl is about it). The by-blanket-trait
   anchor recovers its context from the failing expression through the call-site anchor's
   `contexts_at_spans`.
-- [`crates/cargo-cgp-driver/src/resolve/cgp_item.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/cgp_item.rs):
+- [`crates/cargo-cgp-driver/src/resolve/query/cgp_item/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/query/cgp_item):
   the DefId-anchored, `IsProviderFor`-free trait recognition every anchor relies on.
 
 The per-file map of the whole resolver lives in the parent document's

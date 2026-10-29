@@ -53,7 +53,7 @@ The typed approach resugars a construct while the driver still holds it as a rea
 before any string exists. It is
 [`render_ty`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/label/render_ty.rs)
 plus
-[`decode_symbol`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/cgp_item.rs),
+[`decode_symbol`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/query/cgp_item/spine.rs),
 and every dependency-chain label and classified leaf the
 [typed root-cause resolver](typed-root-cause-resolution.md) produces goes through it, so a reshaped
 diagnostic is already sugared when it is built.
@@ -616,12 +616,14 @@ them rests on this document.
 - [`crates/cargo-cgp-driver/src/resolve/label/render_ty.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/label/render_ty.rs):
   the typed pass: the `cgp_spine` walk, the `field_cells` read of a list's tags that feeds the
   shared shape rules, the recursive element rendering, and the placeholder/tuple rendering.
-- [`crates/cargo-cgp-driver/src/resolve/cgp_item.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/cgp_item.rs):
-  `decode_symbol`, the typed `Symbol!` decode with its `LEN` check, `decode_index`, the `Index<N>`
-  decode, and `is_cgp_item`, the `DefId` anchor every typed recognition goes through.
-- [`crates/cargo-cgp-driver/src/config.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/config.rs):
+- [`crates/cargo-cgp-driver/src/resolve/query/cgp_item/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/query/cgp_item):
+  `spine.rs`'s `decode_symbol` (the typed `Symbol!` decode with its `LEN` check) and `decode_index`
+  (the `Index<N>` decode), and `name_anchor.rs`'s `is_cgp_item`, the `DefId` anchor every typed
+  recognition goes through.
+- [`crates/cargo-cgp-driver/src/config/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/config):
   the crate and type-name constants the typed pass anchors against (`CONS_TYPE`, `NIL_TYPE`,
-  `EITHER_TYPE`, `VOID_TYPE`, `FIELD_TYPE`, `PATH_CONS_TYPE`, and their defining crates).
+  `EITHER_TYPE`, `VOID_TYPE`, `FIELD_TYPE`, `PATH_CONS_TYPE`, and their defining crates), in
+  `cgp_base_types.rs` and `cgp_field.rs`.
 - [`crates/cargo-cgp-error-processing/src/shape/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/shape):
   the shared `Struct!`/`Enum!` spelling rules: `shape_name`, `render_struct_shape`,
   `render_enum_shape`, and `render_variant`.

@@ -174,11 +174,11 @@ merges a diagnostic rustc reports twice into its first report (see
 
 **In a crate that does not use CGP, an untransformed diagnostic is never post-processed.** The
 emitter asks the compiler once whether the crate uses `cgp` or one of CGP's own crates
-(`crate_uses_cgp` in the driver's `resolve/cgp_item.rs`, reading the `used_crates` query, which
-counts a crate's dependencies as used with it). A crate that declares `cgp` but never names it does
-not load it, so its own `Symbol`, `Chars`, or `HasField` is never mistaken for CGP's. The query is
-safe only once the crate store is frozen, so the emitter skips an untransformed diagnostic that
-arrives earlier, during name resolution; see the hazard in
+(`crate_uses_cgp` in the driver's `resolve/query/cgp_item/cgp_crates.rs`, reading the `used_crates`
+query, which counts a crate's dependencies as used with it). A crate that declares `cgp` but never
+names it does not load it, so its own `Symbol`, `Chars`, or `HasField` is never mistaken for CGP's.
+The query is safe only once the crate store is frozen, so the emitter skips an untransformed
+diagnostic that arrives earlier, during name resolution; see the hazard in
 [rustc diagnostic internals](rustc-diagnostic-internals.md#freezing-the-crate-store-during-name-resolution-data-should-not-be-frozen).
 
 ## How the driver applies the transforms

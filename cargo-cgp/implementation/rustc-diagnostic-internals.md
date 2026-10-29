@@ -84,7 +84,7 @@ as a side effect, it would also un-elide, but it drags in the disambiguators and
 make a type like `Symbol<6/#0, …>` harder to read, not easier. `cargo-cgp` wants the full field
 name, not the compiler's internal bookkeeping, so it injects the stable `--verbose`. This is the
 reasoning behind
-[`config::VERBOSE_FLAG`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/config.rs);
+[`config::VERBOSE_FLAG`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/config/rustc_flags.rs);
 the injection itself, and the reason it is skipped for cargo's info queries, is documented in
 [The driver](driver.md#un-eliding-the-diagnostic).
 
