@@ -495,14 +495,14 @@ marking.
     call-site seed, the data-call chain, the bound-call anchor, and the undeclared-dependency and
     missing-`#[use_provider]` detectors, each pinning and reading back its own parameters), and
     `traits_with_method.rs` finds the traits a call by method name could resolve through, over
-    `trait_fns_named.rs`, the scan of every trait for a function of a name that the data-call and
-    provider-call anchors and the undeclared-dependency detector share. `keys.rs` renders a wiring
-    key, a redirect path, and a provider in the surface forms an entry writes (`describe_key`,
-    `render_path`), and `check_impl.rs`, `import_path.rs`, and `owner_has_impl_of.rs` are the
-    lookups several stages make: the check impls at a caret (`check_impls_at`, over the check
-    trait's `CanUseComponent` assertion or another asserting supertrait, and an impl's `Self`-type
-    caret), the path a `use` imports an item by, and whether a type is the concrete `Self` of an
-    impl of a trait.
+    `trait_items_named.rs`, the scan of every trait for an associated item of a name that the
+    data-call and provider-call anchors and the undeclared-dependency, missing-`#[use_provider]`,
+    and unimported-abstract-type detectors share. `keys.rs` renders a wiring key, a redirect path,
+    and a provider in the surface forms an entry writes (`describe_key`, `render_path`), and
+    `check_impl.rs`, `import_path.rs`, and `owner_has_impl_of.rs` are the lookups several stages
+    make: the check impls at a caret (`check_impls_at`, over the check trait's `CanUseComponent`
+    assertion or another asserting supertrait, and an impl's `Self`-type caret), the path a `use`
+    imports an item by, and whether a type is the concrete `Self` of an impl of a trait.
   - `query/cgp_item/` holds the structural, `IsProviderFor`-free trait recognition
     (`is_provider_trait` / `provider_blanket_marker` (the `DelegateComponent`-bounded provider
     blanket), `consumer_provider_trait` / `is_consumer_trait`, and `marker_to_consumer`), plus the

@@ -556,8 +556,8 @@ catalog lives in the parent document's [Tests](typed-root-cause-resolution.md#te
   call's arguments write), `lower.rs` (the small syntactic type lowering, literal const arguments
   included), `unify_call_inputs.rs` (each argument unified with the input it fills), and
   `traits_with_method.rs` (the candidate consumer and blanket traits by method name) over
-  `trait_fns_named.rs` (every trait declaring a function of a name, which the data-call and
-  provider-call anchors scan too).
+  `trait_items_named.rs` (every trait declaring an associated item of a name, which the data-call
+  and provider-call anchors scan too).
 
 ## Further reading
 
