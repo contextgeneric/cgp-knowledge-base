@@ -505,10 +505,11 @@ marking.
     (`check_impls_at`, over the check trait's `CanUseComponent` assertion or another asserting
     supertrait, and an impl's `Self`-type caret), the path a `use` imports an item by, every
     expression of the crate's own bodies (`local_body_exprs`, which the call-site anchors and the
-    undeclared-dependency and missing-`#[use_provider]` detectors filter for the calls a diagnostic
-    is about, each with its own test of the expression), the crate's own trait impls
-    (`local_trait_impls`, which the span-matching anchors and the detectors scan, each with its own
-    test of the impl), and whether a type is the concrete `Self` of an impl of a trait.
+    undeclared-dependency and missing-`#[use_provider]` detectors filter for the calls, or with
+    `contexts_at_spans` the expressions, a diagnostic is about, each with its own test), the crate's
+    own trait impls (`local_trait_impls`, which the span-matching anchors and the detectors scan,
+    each with its own test of the impl), and whether a type is the concrete `Self` of an impl of a
+    trait.
   - `query/cgp_item/` holds the structural, `IsProviderFor`-free trait recognition
     (`is_provider_trait` / `provider_blanket_marker` (the `DelegateComponent`-bounded provider
     blanket), `consumer_provider_trait` / `is_consumer_trait`, and `marker_to_consumer`), plus the
