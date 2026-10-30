@@ -701,6 +701,11 @@ Several fixtures pin the **harder mechanics**:
   the shared `CanShared` (missing `name`). One root cause reached by two paths, rendered as a
   diamond: the shared subtree drawn in full under the first branch and `(*)`-referenced under the
   second, both branches visible (see [Dependency-graph rendering](dependency-graph-rendering.md)).
+- `projected_impl_argument`: two blanket impls of one trait that differ only in a projected
+  argument (`Pick<<u8 as Assoc>::Out>` and `Pick<<u16 as Assoc>::Out>`), each requiring a different
+  field. The impl match reduces each impl's trait ref before relating it, so the walk takes the
+  impl the obligation names and reports its field; relating the unreduced projection would leave it
+  a goal for later and take the first impl.
 - `higher_ranked_descent`: a recursive provider with a `Self: for<'a> CanEncodeItem<&'a Value>`
   dependency (the `SerializeIterator` shape), resolved through the placeholder instantiation, where
   reaching the trait ref with `skip_binder()` would feed an escaping bound variable into the solver
