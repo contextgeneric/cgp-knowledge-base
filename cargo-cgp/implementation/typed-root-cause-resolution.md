@@ -447,8 +447,9 @@ marking.
     `owner_has_impl_of` against that trait), and on a non-table type that *does* have one when the
     walk's arguments are fully known and one argument explains the mismatch (a provider for other
     arguments, `is_blanket_dead_end` and `provider_for_other_arguments`), while dropping the
-    remaining dead-end (such an owner fed an argument the walk does not know) and an unmet
-    `CanUseComponent` or `IsProviderFor`; `reportable.rs` holds the two shapes it reads.
+    remaining dead-end (such an owner fed an argument the walk does not know); `reportable.rs` holds
+    the two shapes it reads. An unmet `CanUseComponent` or `IsProviderFor` never reaches it, since
+    the walk drops both as plumbing before descending.
   - [`data/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/data)
     recognizes CGP's extensible-data traits (`is_data_trait`; `is_data_operation`, the ones a call
     to a data operation names, which leave out the field-access traits; `is_data_list_recursion`;
