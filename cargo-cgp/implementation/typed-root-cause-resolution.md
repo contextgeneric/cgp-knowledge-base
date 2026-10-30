@@ -439,7 +439,7 @@ marking.
     delegation table, a not-a-provider on a non-table type, a provider for other arguments named by
     `fix/other_arguments.rs`, a component wired without its `IsProviderFor` recognized by
     `fix/hand_wiring.rs`, a missing redirect wiring told apart by `is_path_cons`, or a bound);
-    `reportable.rs` holds `is_reportable_leaf`, keeping an unmet `DelegateComponent` on the context
+    `leaf.rs` also drops a routing dead-end, keeping an unmet `DelegateComponent` on the context
     (a missing wiring), on a non-context delegation table (a missing dispatch entry, recognized as a
     separate-table lookup by `is_dispatch_lookup`, the owner a proper part of the parent
     obligation's `Self`, or by owner property via `owner_has_impl_of` for `DelegateComponent`), or
@@ -447,7 +447,8 @@ marking.
     `owner_has_impl_of` against that trait), and on a non-table type that *does* have one when the
     walk's arguments are fully known and one argument explains the mismatch (a provider for other
     arguments, `is_blanket_dead_end` and `provider_for_other_arguments`), while dropping the
-    remaining dead-end (such an owner fed an argument the walk does not know).
+    remaining dead-end (such an owner fed an argument the walk does not know) and an unmet
+    `CanUseComponent` or `IsProviderFor`; `reportable.rs` holds the two shapes it reads.
   - [`data/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/data)
     recognizes CGP's extensible-data traits (`is_data_trait`; `is_data_operation`, the ones a call
     to a data operation names, which leave out the field-access traits; `is_data_list_recursion`;

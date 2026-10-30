@@ -84,7 +84,7 @@ which holds the DefId-anchored recognition (`is_cgp_item`, `provider_blanket_mar
 [`classify/field.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/classify/field.rs)
 (`adt_has_field`, `deref_target`, `field_type`); the reportability decisions in
 [`classify/reportable.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/classify/reportable.rs)
-(`is_dispatch_lookup`, `is_blanket_dead_end`, and thus `is_reportable_leaf`), over the query
+(`is_dispatch_lookup` and `is_blanket_dead_end`, which `classify_leaf` reads), over the query
 layer's
 [`owner_has_impl_of`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/query/owner_has_impl_of.rs);
 the descent vocabulary in
@@ -284,9 +284,9 @@ The resolve context itself holds no logic, so its guard is the UI snapshot suite
 belong to the deferred component work and are listed so the later agent inherits the intent.
 
 - **Stand-in decision-logic unit tests (later)**: once the components exist, exercise
-  `is_reportable_leaf`, `is_dispatch_lookup`, `owner_has_impl_of`, the `field_issue` `Deref`-chain
-  classification, and the label rendering over a hand-built graph, covering the branch corners
-  (empty dispatch table, not-a-provider vs provider for other arguments vs dead-end,
+  `classify_leaf`'s dead-end cases, `is_dispatch_lookup`, `owner_has_impl_of`, the `field_issue`
+  `Deref`-chain classification, and the label rendering over a hand-built graph, covering the branch
+  corners (empty dispatch table, not-a-provider vs provider for other arguments vs dead-end,
   present-via-`Deref`) that are awkward to reproduce as whole CGP programs today.
 - **Parity spot-checks (later)**: a handful of fixtures whose stand-in-predicted resolution is
   compared against the real rustc-backed resolution, guarding that the stand-in's assumptions about

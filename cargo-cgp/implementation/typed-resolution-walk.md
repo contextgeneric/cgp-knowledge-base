@@ -160,7 +160,7 @@ walk descends it the way it descends a provider. It deliberately does *not* foll
   provider missing a component wiring, or a `UseDelegate`/`UseInputDelegate` table missing a branch
   for the type it dispatches on, a `Code` fragment or an `Input` value's type), and it does not wire
   this key. It is told apart from a higher-order-provider dead-end (dropped, below) two ways, so it
-  is reported when *either* holds (`is_reportable_leaf`, over `is_dispatch_lookup` and
+  is reported when *either* holds (`classify_leaf`, over `is_dispatch_lookup` and
   `owner_has_impl_of`; the first in `classify/reportable.rs`, the second in the query layer):
   - **structurally**, when the obligation is a *dispatch lookup into a separate table*: its owner is
     a proper part of the parent obligation's `Self`, as `Components` is of `UseDelegate<Components>`
@@ -603,10 +603,11 @@ parent document's [Tests](typed-root-cause-resolution.md#tests) section.
   (the requirements of a provider impl whose `#[cgp_impl]` header names the consumer trait), and
   `owner_has_impl_of.rs` (whether a type is the concrete `Self` of an impl of a trait).
 - [`crates/cargo-cgp-driver/src/resolve/classify/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/classify):
-  `reportable.rs` (root cause versus routing dead-end), `known.rs` (whether a provider obligation
-  is known well enough to confirm a fix against), `leaf.rs` (`classify_leaf`, which builds the
-  rustc-free `Leaf`), `data.rs` (`classify_data_leaf`, the extensible-data leaf read off the
-  presence markers), `field.rs` (the struct and `Deref`-chain inspection), and `fix/`, the finders
+  `reportable.rs` (the shapes that tell a delegation table from a routing dead-end), `known.rs`
+  (whether a provider obligation is known well enough to confirm a fix against), `leaf.rs`
+  (`classify_leaf`, which builds the rustc-free `Leaf` or drops a routing dead-end), `data.rs`
+  (`classify_data_leaf`, the extensible-data leaf read off the presence markers), `field.rs` (the
+  struct and `Deref`-chain inspection), and `fix/`, the finders
   of the facts a `help` names: `adapter.rs` (the adapter types that make a non-provider a
   provider), `provided_components.rs` (the other components it provides), `core_provider.rs`
   (what serves a slot a misused core provider cannot), `other_arguments.rs` (the argument a
