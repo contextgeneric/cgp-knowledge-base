@@ -307,7 +307,8 @@ Keeping it out of the `rustc_private` linkage is the same rule that put the diag
 [`cargo-cgp-error-processing`](error-processing.md): the logic is pure text-to-text, so it builds
 and its tests run on any toolchain, with no compiler in the loop. It is a separate crate rather than
 a module of the error-processing crate because expansion output is not diagnostics, and the two
-share no types.
+share no types. It does depend on that crate for the spelling rules a name follows in both
+(`shape_name`, `is_ident`, `is_primitive_type`), so the two cannot spell one differently.
 
 The pipeline inside it is four steps: parse the compiler's text with `syn::parse_file`, rewrite the
 CGP lists on the syntax tree, optionally strip CGP path qualifiers, and print with
