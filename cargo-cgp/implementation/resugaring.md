@@ -633,8 +633,8 @@ them rests on this document.
   holding the head-and-tail split the path and list passes share.
 - [`crates/cargo-cgp-expand/src/resugar/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-expand/src/resugar):
   the syntax-tree passes, one module per construct (`symbol.rs`, `path.rs`, `list.rs`), plus
-  `strip.rs` (the prelude qualifier and the qualified-path index it corrects), `spacing.rs` (the
-  post-print tightening), `parts.rs` (the shared shape reading and macro-node building), and
+  `strip.rs` (the prelude qualifier and the qualified-path index it corrects), `spacing/` (the
+  post-print tightening: the pass, its literal- and comment-aware scan, and the two layouts), `parts.rs` (the shared shape reading and macro-node building), and
   `file.rs`, which sequences the passes. Driven by
   [`source.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-expand/src/source.rs),
   which also applies the crate's
