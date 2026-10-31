@@ -718,7 +718,7 @@ UI suite exercises the managed/unmanaged wiring end to end.
 - [`crates/cargo-cgp/tests/front_end/preflight.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/preflight.rs):
   parses the driver's `--version` output (accepting the real shape, rejecting a foreign first line
   and missing fields); the
-  [`evaluate`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/preflight.rs)
+  [`evaluate`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/preflight/evaluate.rs)
   verdict on a matching driver, a version mismatch, and a rustc mismatch; and a check that the
   baked-in `PINNED_TOOLCHAIN` equals the channel in
   [`rust-toolchain.toml`](https://github.com/contextgeneric/cargo-cgp/blob/main/rust-toolchain.toml);
@@ -780,7 +780,7 @@ has a build script that bakes in the pinned toolchain.
   runs the preflight (when managed), forces `RUSTUP_TOOLCHAIN`, wires the driver and sysroot, and
   injects the `target/cgp` default, found through `cargo metadata` in `launch/target_dir.rs`, unless
   the caller set the target directory.
-- [`crates/cargo-cgp/src/launch/preflight.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/preflight.rs):
+- [`crates/cargo-cgp/src/launch/preflight/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp/src/launch/preflight):
   verifies the toolchain is installed and the driver runs and matches (the pure `evaluate` plus the
   `--version`-parsing and IO), returning the discovered sysroot.
 - [`crates/cargo-cgp/src/launch/driver_path.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/driver_path.rs):
@@ -790,7 +790,7 @@ has a build script that bakes in the pinned toolchain.
 - [`crates/cargo-cgp/src/setup.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/setup.rs):
   installs the pinned toolchain with `rustup` and the driver with `cargo install`, co-located via
   `--root`.
-- [`crates/cargo-cgp/src/update.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/update.rs):
+- [`crates/cargo-cgp/src/update/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp/src/update):
   reads the crates.io sparse index (`ureq` + `serde_json`), picks the highest in-channel version,
   skips when not newer, else reinstalls and hands off to the new `setup`.
 - [`crates/cargo-cgp-driver/src/version.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/version.rs)

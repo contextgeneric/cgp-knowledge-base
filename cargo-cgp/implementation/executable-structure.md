@@ -273,7 +273,7 @@ The front-end's modules are listed here; the driver's are in the
   the warning printed when the front-end replaces a user's `RUSTC_WORKSPACE_WRAPPER`.
 - [`crates/cargo-cgp/src/launch/driver_path.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/driver_path.rs):
   locates the driver via the `CARGO_CGP_DRIVER` override, as a sibling, or failing both on `PATH`.
-- [`crates/cargo-cgp/src/launch/preflight.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/preflight.rs):
+- [`crates/cargo-cgp/src/launch/preflight/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp/src/launch/preflight):
   the read-only pre-check of the driver and toolchain (see [Distribution](distribution.md)).
 - [`crates/cargo-cgp/src/launch/sysroot.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/sysroot.rs):
   discovers the toolchain sysroot, optionally under a forced toolchain.
@@ -284,7 +284,7 @@ The front-end's modules are listed here; the driver's are in the
   the OS dynamic-library search path.
 - [`crates/cargo-cgp/src/toolchain.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/toolchain.rs),
   [`setup.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/setup.rs),
-  [`update.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/update.rs):
+  [`update/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp/src/update):
   toolchain resolution and the `setup`/`update` subcommands (see [Distribution](distribution.md)).
 - [`crates/cargo-cgp/src/config.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/config.rs):
   the front-end's shared names, including the baked-in `PINNED_TOOLCHAIN` and the management

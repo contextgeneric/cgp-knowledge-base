@@ -575,7 +575,7 @@ and printing halves need a real compilation, so they are exercised by running th
 - [`crates/cargo-cgp/src/launch/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp/src/launch):
   the setup both subcommands share: `command.rs` builds the wrapped cargo command (the preflight,
   the forced toolchain, the sysroot and dylib path), `invocation.rs` orders its arguments around a
-  single `--`, and `driver_path.rs`, `dylib.rs`, `preflight.rs`, `sysroot.rs`, and `target_dir.rs`
+  single `--`, and `driver_path.rs`, `dylib.rs`, `preflight/`, `sysroot.rs`, and `target_dir.rs`
   sit beside them.
   [`check.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/check.rs)
   is just the `cargo check` run.
