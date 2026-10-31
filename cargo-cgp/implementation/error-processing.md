@@ -120,6 +120,10 @@ from the driver, is what keeps them unit-testable.
   failure, because one mistake surfaces at several depths and each depth reaches a different
   *subset* of its causes, so demanding two identical sets would group none of them. Both are pure
   functions over the `Resolved` model.
+- **The string-literal rule**
+  ([`syntax`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/syntax))
+  tells a string literal from the code around it, so a delimiter or a path inside a `Symbol!("…")`
+  tag is never read as code by the transforms that scan rendered text.
 - **The span decisions**
   ([`byte_range`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/byte_range.rs))
   are the anchors' questions over source positions, on plain byte ranges the driver converts each
@@ -370,6 +374,9 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   (with its wiring `help`) and its help-less plain-associated-type sibling, a use-site method
   failure, a kept ordinary bound (header dropped, lead-less note), a provider header via the text
   rewrite, and the pluralized consumer header.
+- [`crates/cargo-cgp-error-processing/tests/error_processing/syntax.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/syntax.rs):
+  where a string literal ends, directly and through the three readers: an escaped quote, an escaped
+  backslash before a quote, and a literal that does not close.
 - [`crates/cargo-cgp-error-processing/tests/error_processing/byte_range.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/byte_range.rs):
   the range comparisons against a byte-set model on every small range, a caret about a call or
   nested in or beside it, and a caret's place in an impl.
@@ -521,6 +528,9 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   the rustc-phrasing predicates the emitter's candidate checks and cleanups key on.
 - [`crates/cargo-cgp-error-processing/src/naming.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/naming.rs):
   the naming rule CGP macros follow for the names they invent.
+- [`crates/cargo-cgp-error-processing/src/syntax/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/syntax):
+  telling a string literal from the code around it, the one rule `spine.rs`, `enum_shape.rs`, and
+  `strip_modules.rs` read rendered text by.
 - [`crates/cargo-cgp-error-processing/src/candidates.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/candidates.rs):
   `bound_candidate_list`, the implementor list cut back to rustc's default length.
 - [`crates/cargo-cgp-error-processing/src/code.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/code.rs):
