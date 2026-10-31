@@ -340,8 +340,10 @@ declines in both forms.
 
 The text implementation is
 [`resugar_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/resugar_path.rs),
-which also copies the macro's own `is_primitive_type` rule (the real primitive names only), as the
-expand crate does; the three are kept in step by hand, so a segment classifies alike everywhere.
+which follows the macro's own `is_primitive_type` rule (the real primitive names only) through the
+error-processing crate's
+[`syntax`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/syntax)
+module, as the expand crate does, so a segment classifies alike in a diagnostic and an expansion.
 
 ### `Product!` and `Sum!`: the lists
 
@@ -446,8 +448,8 @@ The rules are written once, in the rustc-free crate's
 [`shape`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/shape)
 module, which the text and typed passes both call: `render_struct_shape`, `render_enum_shape`, and
 `render_variant` take names and already-rendered values, so the two diagnostic passes cannot
-disagree on a spelling. The syntax-tree pass applies the same rules to `syn` nodes, with its own
-copy of the writable-name check, `shape_name`, kept in step.
+disagree on a spelling. The syntax-tree pass applies the same rules to `syn` nodes, and calls the same
+writable-name check, `shape_name`.
 
 ### The path strips that run first
 
@@ -634,7 +636,8 @@ them rests on this document.
 - [`crates/cargo-cgp-expand/src/resugar/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-expand/src/resugar):
   the syntax-tree passes, one module per construct (`symbol.rs`, `path.rs`, `list.rs`), plus
   `strip.rs` (the prelude qualifier and the qualified-path index it corrects), `spacing/` (the
-  post-print tightening: the pass, its literal- and comment-aware scan, and the two layouts), `parts.rs` (the shared shape reading and macro-node building), and
+  post-print tightening: the pass, its literal- and comment-aware scan, and the two layouts),
+  `parts.rs` (the shared shape reading and macro-node building), and
   `file.rs`, which sequences the passes. Driven by
   [`source.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-expand/src/source.rs),
   which also applies the crate's
