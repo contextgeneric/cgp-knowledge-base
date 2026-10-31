@@ -389,7 +389,8 @@ marking.
     holds the seventh to tenth anchors, `resolve_call_site`, `resolve_data_call`,
     `resolve_provider_call`, and `resolve_bound_call`, the HIR re-reads of the failing call, one
     stage per file: `find_call.rs` (`method_calls_at`, the calls a primary span lands on without
-    lying strictly inside the receiver or an argument (`is_about_call`), each tried against the
+    lying strictly inside the receiver or an argument (`is_about_call`, over the rustc-free
+    `byte_range` decision of that name), each tried against the
     candidate consumer traits and `#[cgp_fn]`/`#[blanket_trait]` blanket traits the query layer's
     `traits_with_method` finds by method name, the blanket traits headed `[CGP-E003]` by the wrapper
     class), `data_call.rs` (`resolve_data_call`, a method or type-relative call to an
@@ -416,7 +417,7 @@ marking.
   - [`walk/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/walk)
     walks the cause chain to each terminal leaf. `leaves/` drives the recursion (`resolve_leaves`
     erasing the seed, `resolve_node` the per-node memoized descent with the cycle guard and
-    `MAX_DEPTH` backstop, the foreign-getter descent into just context-side dependencies plus a
+    `MAX_DEPTH` backstop, `select_children` what each node descends into, the foreign-getter descent into just context-side dependencies plus a
     same-trait list recursion, the drop of a leaf still carrying a call-site placeholder (an
     unknowable `_: Send` is never reported), and `compute_leaves` folding the root node's sub-result
     into a `Resolved`). `vocabulary.rs` decides what the descent walks into (`is_descendable`:
@@ -505,7 +506,9 @@ marking.
     forwarding `let`, for the undeclared-dependency detector), and `argument_ty.rs` reads an argument
     through that signature for the undeclared-dependency and missing-`#[use_provider]` detectors.
     `enclosing_trait_impl.rs` finds the trait impl a body sits in, and `context_param.rs` the reserved
-    `__Context__` parameter of a generated impl. `keys.rs` renders a wiring key, a redirect path,
+    `__Context__` parameter of a generated impl. `byte_range.rs` converts a `Span` to the byte range
+    the rustc-free span decisions read, and holds `same_range`, which compares two spans' ranges
+    whatever their expansion contexts. `keys.rs` renders a wiring key, a redirect path,
     and a provider in the surface forms an entry writes (`describe_key`, `render_path`), and
     `check_impl.rs`, `import_path.rs`, `local_body_exprs.rs`, `local_trait_impls.rs`, and
     `owner_has_impl_of.rs` are the lookups several stages make: the check impls at a caret
@@ -546,7 +549,7 @@ marking.
 - [`crates/cargo-cgp-driver/src/emitter/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/emitter):
   the `try_resolve` seam (gated to an unmet-obligation code, `E0271`/`E0277` or a
   method-bounds `E0599`, with a resolution-class `E0599` excluded so the solver never runs on an
-  error emitted mid-`clauses_of`) that tries the twelve anchors in turn (the bound-call,
+  error emitted mid-`clauses_of`) that tries the twelve anchors of `resolve/anchors.rs` in turn (the bound-call,
   by-blanket-trait, and forwarding-entry anchors last, gated to `E0277`) and sends the method probe's "no method named" `E0599`
   (`is_no_matching_item`) and an `E0308` to the data-call anchor alone, and the `transform_resolved`
   mutation it feeds, mapping the rustc code to a `DiagKind` (overridden to the use-site kind for a
