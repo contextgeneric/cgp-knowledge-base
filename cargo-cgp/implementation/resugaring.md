@@ -548,7 +548,7 @@ inside one still prints as `_`.
 Resugaring is pure text-to-text or type-to-text, so most of it is pinned by unit tests with no
 compiler, and the UI suite pins the typed pass end to end.
 
-- [`crates/cargo-cgp-error-processing/tests/error_processing/postprocess.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/postprocess.rs):
+- [`crates/cargo-cgp-error-processing/tests/error_processing/postprocess/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/tests/error_processing/postprocess):
   the text implementations over crafted inputs: an exactly-matched `Symbol!` and the empty symbol, a
   wrong length and a foreign `Symbol` left alone, the `PathCons` → `@…`/`Path!(@…)` forms across
   symbol, type, primitive (each primitive name), generic-value, and reference-value segments, the

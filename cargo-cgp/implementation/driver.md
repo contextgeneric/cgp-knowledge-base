@@ -307,7 +307,7 @@ and `` required for the context `Rectangle` to implement the consumer trait `Can
 generated parameter in the context's place (`__Context__`, the context a provider impl is generic
 over) is not called a context: the provider note leaves it out, and the consumer note names it
 plainly (the `a_generated_parameter_is_not_called_a_context` test in
-[`rewrite.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/rewrite.rs)).
+[`rewrite/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/tests/error_processing/rewrite)).
 A provider-side primary header is rewritten further, because an unsatisfied `IsProviderFor` bound
 is an identified CGP error class and gains its [CGP error code](../error-code.md):
 `` the trait bound `RectangleArea: IsProviderFor<AreaCalculatorComponent, Rectangle>` is not satisfied ``
@@ -1468,13 +1468,13 @@ will likely grow toward it:
   order. `ice_after_buffered_diagnostic` pins a compiler crash (`-Ztreat-err-as-bug=2`) after a
   buffered wiring failure: the panic hook prints the failure, untransformed, before the crash
   report, as plain rustc orders them.
-- [`crates/cargo-cgp-error-processing/tests/error_processing/rewrite.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/rewrite.rs):
+- [`crates/cargo-cgp-error-processing/tests/error_processing/rewrite/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/tests/error_processing/rewrite):
   the compiler-free rewrite over a hand-built name map, run on any toolchain: both note forms and
   both header forms; generic components (a single parameter reattached to the header, a
   multi-parameter tuple unwrapped, and the notes eliding parameters); the module-prefix and
   generic-subject/context cases; the non-CGP and unknown-marker pass-throughs; and a check that the
   `ComponentNameMap` lazy initializer is *not* forced when no message matches.
-- [`crates/cargo-cgp-error-processing/tests/error_processing/postprocess.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/postprocess.rs):
+- [`crates/cargo-cgp-error-processing/tests/error_processing/postprocess/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/tests/error_processing/postprocess):
   the compiler-free post-processing transforms the emitter applies as its final pass: prefix
   stripping, the `Symbol!` and `Path!` resugaring, and the missing-field reword branches.
 - [`tests/ui/hidden/unsatisfied-dependency/unsatisfied_dependency.cgp.stderr`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/unsatisfied_dependency.cgp.stderr):

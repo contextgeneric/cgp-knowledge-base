@@ -283,7 +283,7 @@ transforms run, in three groups:
   struct lacking the field, and a fieldless struct whose derive generates nothing all show alike;
   naming the derive there would state a fix nothing confirms (the `no_landmark_keeps_the_clause`
   test in
-  [`postprocess.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/postprocess.rs)).
+  [`postprocess/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/tests/error_processing/postprocess)).
   A digit tag (`Symbol!("0")`) names no field, since a tuple struct keys its fields `Index<0>`
   ([`symbol_tag_on_tuple_struct`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/symbol_tag_on_tuple_struct.rs)),
   and a `__Context__`-style parameter a macro generated is not a struct, so its fix is a bound (the
@@ -302,7 +302,7 @@ Because each transform is a pure function over a string, it is tested without ru
 test drives one transform over the case under test and asserts on the returned `Option<String>`;
 nothing compiles, no driver runs, and the test is fast and deterministic, so a whole catalog of
 cases can be exercised as ordinary library tests. This is what the rustc-free design buys.
-[`tests/error_processing/postprocess.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/postprocess.rs)
+[`tests/error_processing/postprocess/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/tests/error_processing/postprocess)
 drives each transform: a stripped prefix, an exactly-matched `Symbol!`, a wrong length or foreign
 type left alone, the single-field rewrite (inline and separate-note landmark) and the clauses it
 keeps, and the `postprocess_message` chain end to end. The diagnosis wording is tested the same way,
@@ -350,7 +350,7 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
 
 ## Tests
 
-- [`crates/cargo-cgp-error-processing/tests/error_processing/postprocess.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/postprocess.rs):
+- [`crates/cargo-cgp-error-processing/tests/error_processing/postprocess/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/tests/error_processing/postprocess):
   drives each post-processing transform over crafted inputs: the head-and-tail split
   `scan_head_tail` over nesting, a string literal with an escaped quote, and its two declines, the
   stripped/left-alone prefix cases,
@@ -366,7 +366,7 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   the shared `Struct!`/`Enum!` spelling rules on their own: writable, raw, and unwritable names,
   the named and tuple struct forms and every product that declines, each variant spelling, and the
   enum declines.
-- [`crates/cargo-cgp-error-processing/tests/error_processing/rewrite.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/rewrite.rs):
+- [`crates/cargo-cgp-error-processing/tests/error_processing/rewrite/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/tests/error_processing/rewrite):
   the wiring-message rewrite over a hand-built name map (see [The driver](driver.md#tests)).
 - [`crates/cargo-cgp-error-processing/tests/error_processing/diagnosis/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/tests/error_processing/diagnosis):
   `plan_resolved` and the wording over hand-built `Resolved` values: the missing-field,
@@ -428,8 +428,12 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   the text signals: the wording each matches and the near-miss it must not (the two `E0599` shapes,
   the method-probe artifacts, the orphan marker-plus-phrase pair, the `?`-cascade phrasing, the
   recursion-limit advice, and both footer forms, including the reworded line that yields no codes,
-  the case the rebuild must decline on rather than delete the footer), and the reserved names a
-  macro generates beside the words a user's own name can form.
+  the case the rebuild must decline on rather than delete the footer).
+- [`crates/cargo-cgp-error-processing/tests/error_processing/naming.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/naming.rs):
+  the reserved names a macro generates beside the words a user's own name can form.
+- [`crates/cargo-cgp-error-processing/tests/error_processing/overflow.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/overflow.rs):
+  the headers of a wiring cycle and a growing lookup, at a check and at a call, the help that names
+  the provider behind them, and an overflow on an ordinary trait left alone.
 - [`crates/cargo-cgp-error-processing/tests/error_processing/orphan.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/orphan.rs):
   `plan_orphan_conflict` and `orphan_conflict_help` over hand-built conflicts: a component key and a
   path key registered, and the reopen trigger's inheritance fix.
