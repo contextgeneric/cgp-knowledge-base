@@ -362,7 +362,8 @@ unit-tests the list's gates and the data-call entry's check.
   `use_site.rs`, `forward_entry.rs`, and `use_site_consumer.rs`, which holds both the by-consumer `resolve_use_site_consumer` and its
   by-blanket-trait sibling `resolve_use_site_blanket_trait` over one shared helper) over the shared
   `seed.rs` (the consumer-obligation builder) and `spans.rs` (the local items a diagnostic's spans
-  land on, and `is_about_impl`, whether a caret inside an impl is about it). The by-blanket-trait
+  land on, and `is_about_impl`, whether a caret inside an impl is about it, over the rustc-free
+  `caret_place`). The by-blanket-trait
   anchor recovers its context from the failing expression through the call-site anchor's
   `contexts_at_spans`.
 - [`crates/cargo-cgp-driver/src/resolve/query/cgp_item/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/query/cgp_item):

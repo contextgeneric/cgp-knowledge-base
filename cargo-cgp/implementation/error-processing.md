@@ -119,6 +119,13 @@ from the driver, is what keeps them unit-testable.
   failure, because one mistake surfaces at several depths and each depth reaches a different
   *subset* of its causes, so demanding two identical sets would group none of them. Both are pure
   functions over the `Resolved` model.
+- **The span decisions**
+  ([`byte_range`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/byte_range.rs))
+  are the anchors' questions over source positions, on plain byte ranges the driver converts each
+  `Span` to: whether a caret is about a call (`is_about_call`), where it sits in an impl
+  (`caret_place`), and the comparisons they stand on, which match `Span::contains` and
+  `Span::overlaps`. A check on `Span` equality, which also compares the expansion context, stays in
+  the driver and arrives as a flag.
 - **The text signals**
   ([`signals`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/signals.rs))
   are the stable rustc phrasings the emitter's candidate checks key on: the wiring-trait mention
@@ -362,6 +369,9 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   (with its wiring `help`) and its help-less plain-associated-type sibling, a use-site method
   failure, a kept ordinary bound (header dropped, lead-less note), a provider header via the text
   rewrite, and the pluralized consumer header.
+- [`crates/cargo-cgp-error-processing/tests/error_processing/byte_range.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/byte_range.rs):
+  the range comparisons against a byte-set model on every small range, a caret about a call or
+  nested in or beside it, and a caret's place in an impl.
 - [`crates/cargo-cgp-error-processing/tests/error_processing/tree.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/tree.rs):
   the `termtree`-backed `render_dependency_tree` (a list, a branch); building and merging trees is
   the graph's job, tested in `graph.rs`.
