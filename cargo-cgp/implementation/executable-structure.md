@@ -269,6 +269,8 @@ The front-end's modules are listed here; the driver's are in the
   the `expand` subcommand over the same launch (see [The expand command](expand-command.md)).
 - [`crates/cargo-cgp/src/launch/target_dir.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/target_dir.rs):
   the isolated `target/cgp` directory a wrapped build uses unless `--target-dir` is forwarded.
+- [`crates/cargo-cgp/src/launch/forwarded_flag.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/forwarded_flag.rs):
+  the one scan that reads a flag's values out of the forwarded arguments, in either form.
 - [`crates/cargo-cgp/src/launch/workspace_wrapper.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/workspace_wrapper.rs):
   the warning printed when the front-end replaces a user's `RUSTC_WORKSPACE_WRAPPER`.
 - [`crates/cargo-cgp/src/launch/driver_path.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/driver_path.rs):

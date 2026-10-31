@@ -747,6 +747,10 @@ UI suite exercises the managed/unmanaged wiring end to end.
   `--config` value, in either form, and ignores arguments after a `--`; `parse_target_directory`
   reads `target_directory` out of `cargo metadata`'s JSON; and `cgp_target_dir` picks the `cgp`
   subdirectory or the relative fallback.
+- [`crates/cargo-cgp/tests/front_end/forwarded_flag.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/forwarded_flag.rs):
+  `scan_flag` gives a flag's values in order and leaves the other arguments in order, reads past a
+  `--`, and takes the argument after a spaced flag as its value; a spaced flag at the end counts as
+  given without a value; the first `--manifest-path` decides; and a longer flag is another flag.
 - [`crates/cargo-cgp/tests/front_end/dispatch.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/dispatch.rs):
   the side-effect-free dispatch paths (an unknown subcommand, a missing subcommand or help flag,
   `--version`/`-V`, and `setup` and `update` answering `--help` without running and refusing any
