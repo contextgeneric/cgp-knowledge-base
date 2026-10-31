@@ -115,7 +115,7 @@ and the plain-compiler baseline it improves on) and one about what the macros *g
 no separate capture or unit pass. Because the driver
 applies every CGP transform in-process and renders the result, `.cgp.stderr` is simply what
 `cargo-cgp` prints, with nothing to reconcile it against. All three are implemented in
-[`passes`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/src/passes.rs):
+[`passes`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-ui-tests/src/passes):
 
 - **The cgp-stderr pass** runs `cargo-cgp check` directly and compares the tool's rendered stderr to
   `<name>.cgp.stderr`. This is the end-to-end check that the whole binary produces the expected
@@ -486,8 +486,8 @@ suite. There is no dogfood test yet (see above).
 
 - [`crates/cargo-cgp-ui-tests/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-ui-tests):
   the custom UI-test harness: `tests/ui.rs` (the `harness = false` entrypoint) and the `src/`
-  modules (`options`, `paths`, `fixtures`, `directives`, `harness`, `passes`, `runner`, `aux`,
-  `normalize`, `snapshot`).
+  modules (`suite`, `options`, `paths`, `fixtures`, `directives`, `harness`, `passes`, `runner`,
+  `aux`, `normalize`, `snapshot`, `blocks`).
 - [`tests/ui/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui): the fixture tree,
   one scenario per `.rs` file with its `.cgp.stderr`, `.rust.stderr`, and `.expand.rs` snapshots,
   grouped into error-class directories beside `ok/`, `pass-through/`, and `robustness/`.
