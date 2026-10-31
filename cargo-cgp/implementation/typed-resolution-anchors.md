@@ -5,7 +5,10 @@ This document covers the first stage of the driver's
 diagnostic the **real trait obligation** that seeds the [walk](typed-resolution-walk.md): a
 consumer-trait obligation `Ctx: ConsumerTrait<Params…>`, or, for a `#[check_providers]` entry or a
 provider's own method called directly, the provider-trait obligation it asserts. Twelve anchors
-recover it from twelve failure shapes, tried in order, and the first that succeeds wins. Eight are
+recover it from twelve failure shapes, tried in the order of the list in `resolve/anchors.rs`, and
+the first that succeeds wins. Each entry of the list states the anchor, the gate that says which
+diagnostics it may read (the last three, a trait used as a bound, read only an `E0277`), a check on
+its resolution, and whether the result is anchored at the call expression. Eight are
 described here. The remaining four re-read the failing call expression, one for a call through a
 consumer or blanket trait, one for a call to an extensible-data operation, one for a provider
 trait's method called through the provider's own path, and one for a bound of a generic function
@@ -346,10 +349,14 @@ Every anchor is pinned end to end by the UI snapshot suite; the consolidated fix
 one entry per pinned behavior, lives in the parent document's
 [Tests](typed-root-cause-resolution.md#tests) section. The check-entry seed's params-slot
 ungrouping, the impl-site and wrapper-chain paths, and the span-matching use-site paths are the
-groups anchored here.
+groups anchored here. The driver's
+[`tests/driver/anchors.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/anchors.rs)
+unit-tests the list's gates and the data-call entry's check.
 
 ## Source
 
+- [`crates/cargo-cgp-driver/src/resolve/anchors.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/anchors.rs):
+  `AnchorInput`, what the anchors read from a diagnostic, and the ordered list `resolve` tries.
 - [`crates/cargo-cgp-driver/src/resolve/anchor/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/anchor):
   one file per anchor (`check_failure.rs`, `provider_check.rs`, `impl_site.rs`, `wrapper_chain.rs`,
   `use_site.rs`, `forward_entry.rs`, and `use_site_consumer.rs`, which holds both the by-consumer `resolve_use_site_consumer` and its

@@ -36,7 +36,7 @@ rustc's own headline stopped on:
   projection sits on.
 - **`[CGP-E050]`, the extensible-data class**, for a call to one of CGP's extensible-data operations
   (a cast such as `upcast`, a builder or extractor operation), which the data-call anchor records
-  by setting `Resolved::data_operation`. These traits are not components, so its class sentence is the
+  as `ResolvedClass::DataOperation`. These traits are not components, so its class sentence is the
   plain-trait one; a data cause reached through a check or a consumer keeps that anchor's class.
 
 The sentence after the code states the causes the note lists, by three rules:

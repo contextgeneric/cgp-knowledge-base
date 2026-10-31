@@ -381,7 +381,7 @@ marking.
     `resolve_use_site_blanket_trait` (eleventh, gated to `E0277`, tried after the call anchors) does
     the same for a `#[cgp_fn]`/`#[blanket_trait]` blanket trait required as a bound, reading the
     context off the failing expression via the call-site anchor's `contexts_at_spans` and heading
-    the result `[CGP-E003]` by clearing `consumers_are_cgp`. A blanket trait is recognized by
+    the result `[CGP-E003]` by giving it the wrapper class. A blanket trait is recognized by
     `is_blanket_trait`: a blanket impl over a bare context, accepted only on evidence that the
     blanket depends on a CGP construct, so a `#[cgp_fn]` trait or one a library publishes is reached
     while `ToString`, `Into`, and a crate's own plain blanket traits are not.
@@ -391,10 +391,10 @@ marking.
     stage per file: `find_call.rs` (`method_calls_at`, the calls a primary span lands on without
     lying strictly inside the receiver or an argument (`is_about_call`), each tried against the
     candidate consumer traits and `#[cgp_fn]`/`#[blanket_trait]` blanket traits the query layer's
-    `traits_with_method` finds by method name, the blanket traits headed `[CGP-E003]` by clearing
-    `consumers_are_cgp`), `data_call.rs` (`resolve_data_call`, a method or type-relative call to an
-    extensible-data operation in scope at the call, headed `[CGP-E050]` by setting
-    `data_operation`), `provider_call.rs` (`resolve_provider_call`, a type-relative call to a
+    `traits_with_method` finds by method name, the blanket traits headed `[CGP-E003]` by the wrapper
+    class), `data_call.rs` (`resolve_data_call`, a method or type-relative call to an
+    extensible-data operation in scope at the call, headed `[CGP-E050]` by the data-operation
+    class), `provider_call.rs` (`resolve_provider_call`, a type-relative call to a
     provider trait's function in scope at the call, its provider obligation walked by
     `resolve_provider_leaves` from the context argument, headed `[CGP-E002]`), `bound_call.rs`
     (`resolve_bound_call`, a path call to a generic function whose own bound on a consumer or
@@ -857,8 +857,8 @@ fixtures:
   missing a field one composed blanket trait reads. Pins the call-site anchor's *blanket-trait*
   candidate: the called `Describe` is a `#[cgp_fn]`/`#[blanket_trait]` blanket-impl trait, not a CGP
   consumer, so no span-matching anchor recovers it; the anchor finds it by method name, walks
-  `App: Describe` to the missing field, and gives the block the `[CGP-E003]` code (clearing
-  `consumers_are_cgp`) rather than declining to rustc's `E0599` with the cause buried under a
+  `App: Describe` to the missing field, and gives the block the `[CGP-E003]` code (the wrapper
+  class) rather than declining to rustc's `E0599` with the cause buried under a
   method-probe candidate list. The use-site counterpart of the impl-site
   [`cgp_fn_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/cgp_fn_missing_field.rs).
 - `upstream_blanket_trait_use_site`: the `cgp_fn_use_site` shape with the blanket trait defined in

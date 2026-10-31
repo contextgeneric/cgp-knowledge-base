@@ -163,7 +163,7 @@ trait that is not a CGP component (no provider trait, no `DelegateComponent`), c
 consumer (`app.describe()`) and seeding the same walkable obligation `Ctx: Describe` whose `Self` is
 the context. Because it is not a CGP component, its result takes the `[CGP-E003]` code rather than
 `[CGP-E001]`, the same class the impl-site anchor gives such a trait reached through a wrapper, by
-clearing the `Resolved::consumers_are_cgp` flag the walk sets. This is what recovers a direct call
+replacing the `ResolvedClass::Consumer` the walk sets with `ResolvedClass::Wrapper`. This is what recovers a direct call
 to a `#[cgp_fn]` trait the context cannot satisfy: an `E0599` whose real cause (a field one composed
 blanket trait reads) rustc buries in a mid-stack note under its method-probe candidate list
 ([`cgp_fn_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/cgp_fn_use_site.rs)).
@@ -399,7 +399,7 @@ a plain type error. The "no method named" shape is recognized by the arguments i
 message names (`item_kind`, `item_ident`), and told apart from the method-bounds `E0599`, which the
 probe builds from the same diagnostic, by that one's plain-string message.
 
-A failure this anchor resolves is headed `[CGP-E050]` (`Resolved::data_operation`), the value named
+A failure this anchor resolves is headed `[CGP-E050]` (`ResolvedClass::DataOperation`), the value named
 plainly unless it carries wiring. When the seed is itself the cause, the operation having no impl at
 all (`FinalizeBuild` on a builder with a field unset), the chain still starts with the operation's
 own step, so it names the finalize the cause is about. The causes and their wording belong to
