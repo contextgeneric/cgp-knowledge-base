@@ -68,9 +68,10 @@ from the driver, is what keeps them unit-testable.
   (`UnimportedAbstractType`, the `[CGP-E035]` abstract type used without `#[use_type]`),
   `requirement.rs` (`UndeclaredRequirement` and its `Requirement`s, the `[CGP-E036]` requirements a
   provider does not declare, with a `#[uses]` help and a `#[use_type]` help), and
-  `cgp_impl_misuse.rs` (`CgpImplMisuse` for the `[CGP-E032]`–`[CGP-E034]` wrong-half mistakes,
-  `ProviderTraitInUses` for the `[CGP-E037]` provider trait in `#[uses]`, and `MissingUseProvider`
-  for the `[CGP-E031]` inner provider never imported, with a generic component's parameters),
+  `cgp_impl_misuse.rs` (`CgpImplMisuse` for the `[CGP-E032]`–`[CGP-E034]` wrong-half mistakes),
+  `provider_trait_in_uses.rs` (`ProviderTraitInUses` for the `[CGP-E037]` provider trait in `#[uses]`),
+  `missing_use_provider.rs` (`MissingUseProvider` for the `[CGP-E031]` inner provider never imported,
+  with a generic component's parameters),
   `macro_less_provider.rs` (`ProviderImplWithoutMacro`, the `[CGP-E039]` provider-trait impl
   written without `#[cgp_provider]`, with its help), and `wiring_name.rs` (`UnresolvedWiringName`, the `[CGP-E038]` and `[CGP-E040]`–`[CGP-E044]` wiring
   key, value, or provider that does not resolve, with a help only where a fix is known). They are
@@ -472,39 +473,38 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   (`render_enum_shape` and `render_variant`).
 - [`crates/cargo-cgp-error-processing/src/rewrite/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/rewrite):
   the wiring-message rewrite and `ComponentNameMap` the driver drives: `mod.rs` (re-exports),
-  `message.rs` (`rewrite_message` and the note/header forms: the code-stamping `rewrite_trait_bound`
-  and the `E0275` `rewrite_wiring_overflow`, whose reason comes from the diagnosis model's
-  `overflow.rs`), `names.rs` (`ComponentNameMap`/`ComponentTraitNames`), `parse.rs`
+  `message.rs` (`rewrite_message` and the note/header forms, with the code-stamping
+  `rewrite_trait_bound`), `names.rs` (`ComponentNameMap`/`ComponentTraitNames`), `parse.rs`
   (`parse_trait_bound`), and `text.rs` (the segment/generics splitters). See
   [The driver](driver.md#naming-the-traits-behind-a-component-marker).
 - [`crates/cargo-cgp-error-processing/src/diagnosis/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/diagnosis):
-  the rustc-free root-cause model and its wording: `leaf.rs` (`Leaf`/`FieldIssue`, and the facts a
+  the rustc-free root-cause model and its wording: `leaf/` (`Leaf`/`FieldIssue`, and the facts a
   `help` reads, `FieldFix`/`NearMiss`/`DeriveFix`), `resolved.rs`
   (`Cause`, holding a leaf and every path that reaches it; `Causes`, the set that keeps one cause
   per distinct leaf by construction, through `from_sub_chains`/`union`/`headed_by` over a private
   field; and `Resolved`), `node.rs` (`DepNode` / `ChainNode`, the structured chain nodes and their
   rendering, with `PartialValue`, a builder or extractor named in words) and `graph.rs` (`DependencyGraph`, the DAG build-and-render), the `wording/` directory
-  (`header.rs` (`class_sentence`, `class_code`, `consumer_header`, and the finders of the leaf a
-  mismatch headline states), `headline.rs` (`cause_headline` and `merged_cause`, the displayed
+  (`header.rs` (`class_sentence`, `class_code`, and `consumer_header`), `mismatch_leaf.rs` (the
+  finders of the leaf a mismatch headline states), `quoted_list.rs`, `required_type.rs`, `headline.rs` (`cause_headline` and `merged_cause`, the displayed
   headline), `lead.rs`
   (`root_cause_lead` and the leaf codes), `note.rs` (`cause_notes`, which folds every cause's paths
   into one graph and words the heading over it, and `cause_notes_seen`, the same against a `seen`
-  set shared with the compilation's other notes), `help.rs` (`fix_help_messages`, which words one
-  `help` per kind of fix on one owner and is the one entry point both the streaming plan and the
+  set shared with the compilation's other notes), `fix_kind.rs` and `fixes.rs` (`fixes_for`, the choice of fixes), `help.rs` (`fix_help_messages`, which
+  words one `help` per kind of fix on one owner and is the one entry point both the streaming plan and the
   emitter's coalesced block build their `help`s through, so a merged block carries the same fixes),
   and `signature.rs` (`cause_signature`)), `group.rs` (`group_by_shared_cause`, partitioning the
   coalescible failures into the connected components of the shares-a-cause relation, keyed
   structurally on each context-scoped `Leaf`), `coalesce.rs` (`coalesce_underived_fields`),
-  `plan.rs` (`DiagKind`, `DiagnosisPlan`, the unrendered `PendingNote` and its `render`, and
+  `plan/` (`DiagKind`, `DiagnosisPlan`, the unrendered `PendingNote` and its `render`, and
   `plan_resolved` with its `categorized_header`), `overflow.rs` (`WiringOverflow` and
-  `OverflowStep`, with `wiring_overflow_reason` and `wiring_overflow_help` for the `[CGP-E020]` and
-  `[CGP-E021]` headers), `structural.rs` (`StructuralMistake`, with `plan_structural_mistake` and
+  `OverflowStep`, with `wiring_overflow_reason`, `wiring_overflow_help`, and `rewrite_wiring_overflow`
+  for the `[CGP-E020]` and `[CGP-E021]` headers), `structural.rs` (`StructuralMistake`, with `plan_structural_mistake` and
   `structural_mistake_help` for the `[CGP-E015]`–`[CGP-E019]`, `[CGP-E060]`, and `[CGP-E061]`
   headers and fixes, and `structural_mistake_note`), `dispatch_names.rs` (`dispatch_helper_method`
   and `dispatch_computer_name`), `similar.rs` (`similar_name` and `similar_key`, the near-miss rules
   the fix `help`s use), and `wiring.rs` (`WiringConflict`/`WiringKey`, `plan_wiring_conflict` for
   the `[CGP-E010]`–`[CGP-E014]` duplicate-key headers, and `wiring_conflict_help` for the redirect
-  fix), plus `orphan.rs`, `undeclared.rs`, `unimported.rs`, `requirement.rs`, `cgp_impl_misuse.rs`,
+  fix), plus `orphan.rs`, `undeclared.rs`, `unimported.rs`, `requirement.rs`, `cgp_impl_misuse.rs`, `provider_trait_in_uses.rs`, `missing_use_provider.rs`,
   `macro_less_provider.rs`, and `wiring_name.rs` (the `[CGP-E022]`, `[CGP-E030]`–`[CGP-E039]`, and `[CGP-E040]`–`[CGP-E044]`
   reshape models and their wording), `class_plan.rs` (`ClassPlan`, one reshape class's header,
   notes, and `help`s in one value, with a constructor per class), and `internal_error.rs` (the note
@@ -519,6 +519,8 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   the `DedupLedger` and its span-independent key scheme.
 - [`crates/cargo-cgp-error-processing/src/signals.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/signals.rs):
   the rustc-phrasing predicates the emitter's candidate checks and cleanups key on.
+- [`crates/cargo-cgp-error-processing/src/naming.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/naming.rs):
+  the naming rule CGP macros follow for the names they invent.
 - [`crates/cargo-cgp-error-processing/src/candidates.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/candidates.rs):
   `bound_candidate_list`, the implementor list cut back to rustc's default length.
 - [`crates/cargo-cgp-error-processing/src/code.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/code.rs):

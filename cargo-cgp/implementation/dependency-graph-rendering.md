@@ -60,7 +60,7 @@ pub enum DepNode {
 A `HasField` obligation is never one of these hops: the walk always treats it as a terminal root
 cause, never a mid-chain step (see [error-code.md](../error-code.md)). The terminal root cause is
 the existing
-[`Leaf`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/leaf.rs),
+[`Leaf`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/leaf/variants.rs),
 unchanged, since it already carries the field, wiring, dispatch, and bound classifications the leads
 and codes are worded from. A graph node is therefore either a hop or a leaf:
 

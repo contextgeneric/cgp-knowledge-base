@@ -1210,7 +1210,7 @@ buffer through the same registration, and only in a crate that links a CGP crate
 (`resolve::query::links_cgp`), so a plain Rust error keeps every suggestion.
 
 Either way the drop removes each substitution whose text holds a reserved name
-([`reserved_names`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/signals.rs),
+([`reserved_names`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/naming.rs),
 a word whose two leading and two trailing underscores surround a name that neither starts nor ends
 with an underscore of its own, the rule `is_reserved_name` gives every pass that asks) that the
 source file being edited does not contain, since a name the file spells is one the user wrote.

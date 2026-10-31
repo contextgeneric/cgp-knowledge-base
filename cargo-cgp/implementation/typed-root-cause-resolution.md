@@ -557,14 +557,14 @@ marking.
   falling back to the in-place text rewrite when resolution returns `None`. A final cross-diagnostic
   de-duplication suppresses a re-report of a failure already shown.
 - [`crates/cargo-cgp-error-processing/src/diagnosis/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/diagnosis):
-  the rustc-free model and wording, `leaf.rs`/`resolved.rs` (the `Leaf`, `FieldIssue`, `Cause`
+  the rustc-free model and wording, `leaf/` and `resolved.rs` (the `Leaf`, `FieldIssue`, `Cause`
   holding a leaf and every path that reaches it, and `Resolved`), `node.rs`/`graph.rs` (the
   structured `DepNode`/`ChainNode` and the `DependencyGraph` that merges and renders their paths;
   see [Dependency-graph rendering](dependency-graph-rendering.md)), the `wording/` directory (the
   coded headers, the `root cause:`/`root causes:` notes with `cause_notes` folding every cause's
   paths into one graph, the leads and their codes, the fix `help`s, and the de-duplication
   `cause_signature`), `coalesce.rs` (`coalesce_underived_fields`, merging several underived fields
-  on one struct into a single heading cause), and `plan.rs` (`DiagKind`, `DiagnosisPlan`, the
+  on one struct into a single heading cause), and `plan/` (`DiagKind`, `DiagnosisPlan`, the
   unrendered `PendingNote`, and `plan_resolved` with its `categorized_header`), unit-tested in
   [`tests/error_processing/diagnosis/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/tests/error_processing/diagnosis),
   [`tests/error_processing/coalesce.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/coalesce.rs),

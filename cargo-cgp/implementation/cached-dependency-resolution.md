@@ -55,7 +55,7 @@ document is the concrete cache the reasoning produces.
 The value cached is the resolver's rustc-free output, and that is what makes the whole scheme sound
 against the compiler's lifetimes. The walk's finished product is owned `String`-only data in the
 compiler-free `cargo-cgp-error-processing` crate: the classified
-[`Leaf`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/leaf.rs)
+[`Leaf`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/leaf/variants.rs)
 values and the structured
 [chain-node](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/node.rs)
 paths that a

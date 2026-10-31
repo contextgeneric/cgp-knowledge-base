@@ -424,7 +424,7 @@ replaces.
 
 The wording is decided rustc-free and only *applied* by the emitter. The emitter maps the
 diagnostic's own rustc code to a rustc-free
-[`DiagKind`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/plan.rs)
+[`DiagKind`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/plan/diag_kind.rs)
 (`E0271` a projection mismatch, `E0599` a use-site method, everything else a plain check) and hands
 that, the main-message text, the `Resolved`, and the name map to `plan_resolved`, which returns a
 `DiagnosisPlan`: the displayed header (or `None` to keep rustc's), the class header beside it, the
@@ -493,8 +493,8 @@ the `cargo tree`-style renderer. The end-to-end fixture catalog lives in the par
 ## Source
 
 - [`crates/cargo-cgp-error-processing/src/diagnosis/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/diagnosis):
-  the rustc-free model (`leaf.rs`, `resolved.rs`), the structured nodes and graph (`node.rs`,
-  `graph.rs`), the wording (`wording/`), the coalescing (`coalesce.rs`), and the plan (`plan.rs`).
+  the rustc-free model (`leaf/`, `resolved.rs`), the structured nodes and graph (`node.rs`,
+  `graph.rs`), the wording (`wording/`), the coalescing (`coalesce.rs`), and the plan (`plan/`).
 - [`crates/cargo-cgp-error-processing/src/tree.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/tree.rs):
   the `DependencyTree` and its renderer, the target the graph expands into.
 - [`crates/cargo-cgp-driver/src/emitter/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/emitter):

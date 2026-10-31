@@ -1221,11 +1221,11 @@ them. The constants live in the
 [`code`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/code.rs)
 module of the error-processing crate, and are stamped by the main-message rewrites, all rustc-free,
 in that same crate. The text forms are stamped by
-[`rewrite_trait_bound` and `rewrite_wiring_overflow`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/rewrite/message.rs),
+[`rewrite_trait_bound`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/rewrite/message.rs) and [`rewrite_wiring_overflow`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/overflow.rs),
 the second taking the overflow's reason, and its `help`, from
 [`wiring_overflow_reason` and `wiring_overflow_help`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/overflow.rs)
 over the `WiringOverflow` the driver's walk recovers, the typed check-failure form by
-[`plan_resolved`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/plan.rs)'s
+[`plan_resolved`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/plan/diagnosis_plan.rs)'s
 `categorized_header` (fed from the resolved failure), and the `CGP-E010`–`CGP-E014` conflict forms
 by
 [`plan_wiring_conflict`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/wiring.rs)
