@@ -399,7 +399,7 @@ marking.
     `resolve_provider_leaves` from the context argument, headed `[CGP-E002]`), `bound_call.rs`
     (`resolve_bound_call`, a path call to a generic function whose own bound on a consumer or
     blanket trait fails for a context, the bound instantiated from the turbofish and the arguments,
-    a binding typed by `receiver.rs`'s `declared_binding_ty` with its references), `chain.rs`
+    a binding typed by `query/binding.rs`'s `declared_binding_ty` with its references), `chain.rs`
     (`data_expr_ty`, the value such a call is made on, typed through the data operations and pattern
     bindings that produced it), `receiver.rs` (`receiver_context`/`local_binding_context`, the
     receiver's type from its binding, annotation, parameter, literal, or constructor-call signature,
@@ -499,7 +499,13 @@ marking.
     `traits_with_method.rs` finds the traits a call by method name could resolve through, over
     `trait_items_named.rs`, the scan of every trait for an associated item of a name that the
     data-call and provider-call anchors and the undeclared-dependency, missing-`#[use_provider]`,
-    and unimported-abstract-type detectors share. `keys.rs` renders a wiring key, a redirect path,
+    and unimported-abstract-type detectors share. `binding.rs` reads the local binding an expression
+    names and the type it is declared with, as written (`declared_binding_ty`, for the call-site
+    anchors) or as the enclosing signature gives it (`param_declared_input`, following an `async fn`'s
+    forwarding `let`, for the undeclared-dependency detector), and `argument_ty.rs` reads an argument
+    through that signature for the undeclared-dependency and missing-`#[use_provider]` detectors.
+    `enclosing_trait_impl.rs` finds the trait impl a body sits in, and `context_param.rs` the reserved
+    `__Context__` parameter of a generated impl. `keys.rs` renders a wiring key, a redirect path,
     and a provider in the surface forms an entry writes (`describe_key`, `render_path`), and
     `check_impl.rs`, `import_path.rs`, `local_body_exprs.rs`, `local_trait_impls.rs`, and
     `owner_has_impl_of.rs` are the lookups several stages make: the check impls at a caret
@@ -817,6 +823,8 @@ fixtures:
   hand-written `DelegateComponent` impl, called. Pins the `[CGP-E128]` leaf the delegation step
   gives when its only failing requirement is the context's own `IsProviderFor` and the context has
   none for the component, with the `help` naming the `delegate_components!` entry.
+- `call_site_annotated_receiver`: the same anchor's receiver typed by a `let` annotation, its
+  initializer a generic call that writes no type.
 - `generic_consumer_use_site`: the same anchor's value-argument case: the dispatch parameter
   recovered by signature unification from a written tuple, no tag argument involved, with the
   misleading method-syntax advice dropped.
@@ -839,7 +847,8 @@ fixtures:
   from the turbofish and from a reference argument. Pins the bound-call anchor and its order before
   the by-blanket-trait anchor: `consumer_bound_call`'s tree starts at the bound `CanGreet`, not at
   the getter rustc's notes name. `cgp_fn_where_bound` is its blanket-trait form, the context a
-  parameter binding of reference type.
+  parameter binding of reference type, and `generic_consumer_bound_reference_binding` pins that
+  binding's reading: its consumer takes a parameter, so no other anchor recovers the bound.
 - `generic_fn_missing_bound` (under `hidden/unsatisfied-dependency/`): a consumer method called on
   `context: &Context` in `fn run<Context>`, which does not bound `Context` by the consumer. Pins the
   call-site anchor's type-parameter receiver: the `[CGP-E129]` cause and its `help` naming the

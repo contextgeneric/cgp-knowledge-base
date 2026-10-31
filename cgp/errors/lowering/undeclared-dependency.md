@@ -256,6 +256,11 @@ These fixtures pin the class, one group per shape:
   `CanFormatPair<(u32, u64)>`.
 - [`lowering/undeclared-dependency/undeclared_generic_trait_parameter.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/undeclared_generic_trait_parameter.rs):
   the argument is a parameter of the function, whose declared type gives `CanFormatPair<u32>`.
+- [`lowering/undeclared-dependency/undeclared_generic_trait_annotated_argument.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/undeclared_generic_trait_annotated_argument.rs):
+  the argument is a `let` whose annotation gives `CanFormatPair<u32>`.
+- [`lowering/undeclared-dependency/undeclared_uses_trait_annotated_receiver.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/undeclared_uses_trait_annotated_receiver.rs):
+  a `#[cgp_impl]` body calling through `let context: &Self = self;`; the receiver is not recognized,
+  so `rustc`'s `E0599` stays (`usability`).
 - [`lowering/undeclared-dependency/undeclared_trait_shared_method_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/undeclared_trait_shared_method_name.rs):
   two CGP traits declaring `describe`; the `[CGP-E030]` names the one rustc's notes point at.
 - [`lowering/undeclared-dependency/undeclared_lifetime_trait.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/undeclared_lifetime_trait.rs):

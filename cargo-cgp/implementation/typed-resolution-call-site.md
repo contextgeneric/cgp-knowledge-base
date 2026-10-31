@@ -493,8 +493,9 @@ at the bound the call requires. A bound on any other trait (`T: Clone`) is left 
 The anchor's fixtures live under
 [`tests/ui/hidden/unsatisfied-dependency/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/hidden/unsatisfied-dependency):
 `cascade_after_use_site` (the worked example above), `generic_consumer_use_site` (the value-argument
-case), `call_site_tuple_input` (the partial tuple recovery), `call_site_written_shapes` (every
-written shape the anchor reads: each definite literal kind, a struct literal, a constant, a
+case), `call_site_annotated_receiver` (a receiver typed by its `let` annotation),
+`call_site_tuple_input` (the partial tuple recovery), `call_site_written_shapes` (every written
+shape the anchor reads: each definite literal kind, a struct literal, a constant, a
 non-generic call, and a `PhantomData` over a tuple, a reference, a slice, and generic paths),
 `cgp_fn_use_site` (the `#[cgp_fn]` trait call recovered as a `[CGP-E003]` block),
 `auto_dispatch_missing_variant_impl` (a receiver built by an enum-variant constructor, resolved to
@@ -533,9 +534,10 @@ matcher's `compute`, its input a fn parameter, resolved to the variant it never 
 The bound-call anchor's fixtures, under `hidden/unsatisfied-dependency/`, are
 `raise_error_unwired_call` (the worked example above, the context from the turbofish),
 `consumer_bound_call` (a consumer trait as a bound, the context from a reference argument, its
-tree headed by the consumer), and `cgp_fn_where_bound` (a `#[cgp_fn]` blanket trait as a bound,
-the context from a parameter binding of reference type, under `[CGP-E003]`). The consolidated
-catalog lives in the parent document's [Tests](typed-root-cause-resolution.md#tests) section.
+tree headed by the consumer), `cgp_fn_where_bound` (a `#[cgp_fn]` blanket trait as a bound, the
+context from a parameter binding of reference type, under `[CGP-E003]`), and
+`generic_consumer_bound_reference_binding` (a generic consumer as a bound, whose context only that
+binding's reading recovers). The consolidated catalog lives in the parent document's [Tests](typed-root-cause-resolution.md#tests) section.
 
 ## Source
 
@@ -549,13 +551,13 @@ catalog lives in the parent document's [Tests](typed-root-cause-resolution.md#te
   typing a value through the data operations and pattern bindings that produced it); for the
   provider-call anchor, `provider_call.rs` (`resolve_provider_call`, locating a type-relative call
   and the provider traits in scope that declare its function); for the bound-call anchor,
-  `bound_call.rs` (`resolve_bound_call`, instantiating a called generic function's own bounds);
-  and `receiver.rs`'s `declared_binding_ty`, a binding's declared type with its references.
+  and `bound_call.rs` (`resolve_bound_call`, instantiating a called generic function's own bounds).
 - [`crates/cargo-cgp-driver/src/resolve/query/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/query):
   the readers these anchors share with the undeclared-trait detector: `local_body_exprs.rs` (every
   expression of the crate's bodies, which each anchor and the missing-`#[use_provider]` detector
   filter for the calls a primary span is about, and `contexts_at_spans` for the expressions a span
-  overlaps), `written_ty.rs` (the types the call's arguments write), `lower.rs` (the small syntactic
+  overlaps), `binding.rs` (the binding an expression names and its declared type, with its
+  references), `written_ty.rs` (the types the call's arguments write), `lower.rs` (the small syntactic
   type lowering, literal const arguments included), `unify_call_inputs.rs` (each argument unified
   with the input it fills), and `traits_with_method.rs` (the candidate consumer and blanket traits
   by method name) over `trait_items_named.rs` (every trait declaring an associated item of a name,
