@@ -400,9 +400,10 @@ The tests below do not exist yet; they are the coverage still to add.
   `RefCell<HashMap>` of `SubResult`).
 - [`crates/cargo-cgp-driver/src/resolve/walk/leaves/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/walk/leaves):
   `node.rs`'s `resolve_node` memoizes each node: it consults the cache (reusing a complete subtree
-  only when the current ancestor prefix is disjoint from its reachable set), descends into terminal
-  / projection / merge branches building owned node-rooted sub-chains, flags a cycle or depth cut
-  incomplete, and caches every complete non-terminal node. `entry.rs`'s `resolve_leaves` erases the
+  only when the current ancestor prefix is disjoint from its reachable set), lets `children.rs`'s
+  `select_children` choose a terminal, a projection result, or the children to merge into owned
+  node-rooted sub-chains, flags a cycle or depth cut incomplete, and caches every complete
+  non-terminal node. `entry.rs`'s `resolve_leaves` erases the
   seed and delegates to `compute_leaves`, which folds the root node's `SubResult` into a `Resolved`
   (de-duplicate, elide, render).
 - [`crates/cargo-cgp-driver/src/emitter/stage/resolver.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/stage/resolver.rs):
