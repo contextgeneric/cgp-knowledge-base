@@ -1447,6 +1447,11 @@ will likely grow toward it:
   `is_unresolved_wiring_overflow` over hand-built overflows: a recorded requirement dropped bare,
   with a consumer trait's arguments, or as a check, and a longer trait name, another context, another
   code, or nothing recorded kept.
+- [`crates/cargo-cgp-driver/tests/driver/flush.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/flush.rs):
+  the flush over hand-built buffers: only coalescible resolutions group, a group is one block at its
+  first member's position with its caret on the site written first, a merged block states the cause
+  once and names every consumer, a note goes ahead of the first `help`, and the shared-dispatch pairing
+  leaves a diagnostic without its helper to the next stage.
 - [`crates/cargo-cgp-driver/tests/driver/postprocess.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/postprocess.rs):
   a span label the post-processing rewrites, with the span's primary span and context span kept.
 - [`crates/cargo-cgp-error-processing/tests/error_processing/internal_error.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/internal_error.rs):
