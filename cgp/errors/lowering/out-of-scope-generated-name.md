@@ -36,9 +36,8 @@ condition that forces it.
 
 ## The raw diagnostic
 
-This section describes what plain `cargo check` prints, which for this class is also what the tool
-prints, per [How cargo-cgp presents it](#how-cargo-cgp-presents-it). This is a **surfaced** class
-with a short diagnostic: one [`E0433`](../error_codes/e0433.md) "cannot find type `Db` in this
+This section describes plain `cargo check`, which for this class is also what the tool prints. This is
+a **surfaced** class with a short diagnostic: one [`E0433`](../error_codes/e0433.md) "cannot find type `Db` in this
 scope" carrying the trailing label `use of undeclared type`, with no note chain and no CGP
 scaffolding, because the failure is caught during name resolution before any bound is evaluated.
 
@@ -58,23 +57,16 @@ The root cause is **present and is the entire diagnostic**: the message names th
 and the caret points at where it could not be resolved. Nothing is suppressed and there is no
 cascade to wade through.
 
-What the raw output does not carry is the CGP-level reading, and for this class that costs little: a
-reader who knows that `#[impl_generics]` scopes its parameter to the impl has the answer from the
-caret alone. The message never says which construct introduced the name, but the caret is inside the
-definition that carries the attribute, so the attribute is one line away.
+The message never says which construct introduced the name, but the caret is inside the definition
+that carries the attribute, so a reader who knows `#[impl_generics]` scopes its parameter to the impl
+has the answer.
 
 ## How cargo-cgp presents it
 
-`cargo-cgp` passes this class through unchanged: the fixture's `.cgp.stderr` is byte-for-byte its
-`.rust.stderr`, because this is a name-resolution error emitted before trait solving, and the
-[typed resolver](../../../cargo-cgp/implementation/typed-resolution/overview.md) neither engages
-on it nor could recover anything useful if it did: there is no obligation to re-run and no wiring to
-descend.
-
-The pass-through is the right outcome rather than a gap, which is why the fixture has `acceptable`
-quality in the tool: the caret is on the author's own token and the message names exactly what is
-missing. The codes the tool stamps on the classes it does rewrite are in the
-[cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
+`cargo-cgp` passes this class through unchanged. It is a name-resolution error, so the
+[typed resolver](../../../cargo-cgp/implementation/typed-resolution/overview.md) has no obligation to
+trace, and the pass-through has `acceptable` quality: the caret is on the author's own token and the
+message names what is missing.
 
 ## Resolving it
 
@@ -173,8 +165,7 @@ from `cgp` would make every `cgp` user link `alloc`, and the only alternative wa
 
 ## Related
 
-- [`#[cgp_fn]`](../../reference/macros/cgp_fn.md): the host of `#[impl_generics]`, whose Failure
-  modes section records this case from the macro's side.
+- [`#[cgp_fn]`](../../reference/macros/cgp_fn.md): the host of `#[impl_generics]`.
 - [Naming a type dependency](../../guides/naming-a-type-dependency.md): the prescriptive guide this
   class is the failure mode of: which of the two homes a type dependency belongs in, and the
   conditions that force the climb.
