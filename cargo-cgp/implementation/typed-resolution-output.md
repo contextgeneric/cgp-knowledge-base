@@ -218,7 +218,7 @@ shown, and the flush coalesces the blocks that share a root cause, as
 ## Further reading
 
 - [Typed root-cause resolution](typed-root-cause-resolution.md): the pipeline overview and the
-  consolidated tests and source catalogs.
+  tests and source catalogs.
 - [Error processing](error-processing.md): the rustc-free crate the wording lives in.
 - [The driver](driver.md): the emitter, its de-duplication ledger, and the fallback text rewrite.
 

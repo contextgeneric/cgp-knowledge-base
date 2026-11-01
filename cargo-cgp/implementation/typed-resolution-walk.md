@@ -178,7 +178,7 @@ The guards also decide what may be cached: a subtree they cut is never stored, a
 ## Further reading
 
 - [Typed root-cause resolution](typed-root-cause-resolution.md): the pipeline overview and the
-  consolidated tests and source catalogs.
+  tests and source catalogs.
 - [rustc diagnostic internals](rustc-diagnostic-internals.md): the panic hazards behind the
   inference-context rules.
 
