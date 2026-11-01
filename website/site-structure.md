@@ -692,9 +692,17 @@ Every quoted error is what the compiler actually reports — including the `E011
 on *Bypassing coherence*, the `E0599` / `CanUseComponent` / `[CGP-E001]` progression on *Checking your
 wiring*, and the two override conflicts on *Namespaces*.
 
-Three pages are worth knowing about individually. *Bypassing coherence* is the tier's opening argument and
-follows the guide's five-movement outline and stays at the basic tier. It explains that distinct
-provider types satisfy Rust's coherence rules and that each wired type selects one provider.
+Three pages are worth knowing about individually. *Bypassing coherence* is the tier's opening
+argument, written in natural-writing style and following the guide's five-movement outline at the
+basic tier. It develops transitive trait resolution before explaining overlap and orphan checks,
+then uses the encoding example to show how distinct local provider types satisfy both rules.
+It shows complete provider bodies and explicit calls that encode the same `String` as text and
+hexadecimal before introducing wiring. That wiring makes one program-wide choice per value type;
+component-key ownership still prevents a downstream crate from wiring a foreign component onto a
+foreign value type. The page keeps the original wiring-section anchor while naming the section
+*Selecting one provider for each type*, and defers independent application choices to the modularity
+hierarchy. Preserve those ownership limits and the distinction between direct provider calls and
+consumer-method selection when shortening the explanation.
 *Modularity Hierarchy* is a hybrid: it explains the five tiers of the hierarchy in a section each, with
 code shown as illustration, then closes with a decision-guide tail that leads with a rule of thumb and
 uses tables where prose would slow a reader who is deciding, every row of its alternatives table
