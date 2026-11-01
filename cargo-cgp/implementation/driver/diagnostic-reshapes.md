@@ -251,7 +251,9 @@ An `E0210` must name the machinery parameter before the impl scan runs, while th
 which names none, goes to the scan directly. rustc emits these errors only for a genuine orphan, so
 matching the caret to a local impl of a foreign namespace trait for a foreign key is the whole
 confirmation. A lone candidate is used even when the range match misses, and any ambiguity declines.
-The impl's own machinery parameter says which fix to word
+The key prints by its own name, for the reason the `E0207` detectors do: an `E0210` holds no type
+in its message, so nothing has printed one with trimmed paths yet. The impl's own machinery parameter
+says which fix to word
 ([`wiring/orphan-rule/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/wiring/orphan-rule)).
 
 ## Reshaping an undeclared dependency

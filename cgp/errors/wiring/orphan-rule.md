@@ -34,7 +34,9 @@ The second is an **unprefixed `#[default_impl]` keyed on a foreign component mar
 the restriction is not about prefixes: `#[default_impl(GreeterComponent in AppNamespace)]` for a
 foreign, unprefixed `GreeterComponent` expands to
 `impl<Components> AppNamespace<Components> for GreeterComponent`: a bare foreign marker as the key,
-still foreign trait for foreign type.
+still foreign trait for foreign type. A per-type default reaches the same impl with an ordinary type
+as the key: `#[default_impl(String in DefaultImpls1<ErrorRaiserComponent>)]` names a foreign
+component's table and a type the crate does not own, and a primitive such as `u64` is foreign too.
 
 The third is a **`cgp_namespace!` block without `new`** that re-opens a foreign namespace to add an
 entry. Omitting `new` tells the macro the namespace trait exists elsewhere and to emit only the
@@ -94,8 +96,9 @@ namespace mechanics without the fix; the gap is knowledge, not information the c
 `cargo-cgp` reshapes this class into a `[CGP-E022]` message that names the foreign namespace and key
 rather than the machinery parameter. The header reads
 `` cannot register the foreign <key> into the foreign namespace `<Namespace>` ``, where `<key>` is
-`` component `GreeterComponent` `` for a bare marker or `` path `@app.AnnouncerComponent` `` for a
-prefix path (resugared from its `PathCons<Symbol<…>>` list), and the raw coherence notes are
+`` component `GreeterComponent` `` for a bare marker, `` type `String` `` for a per-type default, or
+`` path `@app.AnnouncerComponent` `` for a prefix path (resugared from its `PathCons<Symbol<…>>`
+list), and the raw coherence notes are
 replaced by one `help` carrying the ownership-based fix from [Resolving it](#resolving-it) below.
 The caret still points at the offending `#[cgp_impl]` attribute or `cgp_namespace!` block, and the
 Rust code stays `E0210`/`E0117`, kept alongside the `[CGP-E022]` tag.
@@ -107,7 +110,7 @@ implemented for a foreign key, and reads the trigger off the impl's own paramete
 `cgp_namespace!` re-open, `__Components__` for a `#[default_impl]`/`#[prefix]` registration) so the
 `help` names the fix that fits: keying the registration on a local component (or registering it from
 the namespace's crate) for a registration, and inheriting the namespace into a new local one for a
-re-open. The three triggers are pinned by the fixtures under
+re-open. The triggers and key shapes are pinned by the fixtures under
 [`wiring/orphan-rule/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/wiring/orphan-rule);
 `[CGP-E022]` is catalogued in the [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
 
@@ -130,7 +133,7 @@ patterns.
 `cargo-cgp` reshapes this class, as [How cargo-cgp presents it](#how-cargo-cgp-presents-it)
 describes: it recognizes the shape, a namespace trait (a `cgp_namespace!` trait, `DefaultNamespace`,
 or a `DefaultImpls…`, told apart by their single-`Delegate` fingerprint) implemented for a foreign
-component marker or a `PathCons<Symbol<…>>` list, and translates the generic orphan message into the
+component marker, type, or `PathCons<Symbol<…>>` list, and translates the generic orphan message into the
 CGP remedy: own one end, by keying the registration on a local component, registering it from the
 namespace's own crate, or (for a `cgp_namespace!` re-open) inheriting the namespace into a new local
 one. The raw diagnostic was accurate but framed a CGP wiring decision as a bare coherence rule, so
@@ -149,6 +152,11 @@ Each fixture sits under `wiring/orphan-rule/`, where its `.cgp.stderr` pins the 
   the same `#[default_impl]` orphan keyed on a foreign *unprefixed* component marker rather than a
   path, showing the restriction is not specific to prefixes; the snapshot names the
   `` component `GreeterComponent` `` instead.
+- [`wiring/orphan-rule/default_impl_foreign_type_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/orphan-rule/default_impl_foreign_type_key.rs)
+  and
+  [`default_impl_foreign_primitive_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/orphan-rule/default_impl_foreign_primitive_key.rs):
+  a per-type default keyed on a foreign struct and on a primitive; the snapshots name the
+  `` type `String` `` and `` type `u64` ``.
 - [`wiring/orphan-rule/reopen_foreign_namespace.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/orphan-rule/reopen_foreign_namespace.rs):
   a `cgp_namespace!` block without `new` re-opening a foreign namespace; its `__Table__` trigger
   selects the inherit-a-new-namespace `help`, with the caret on the whole `cgp_namespace!` block.
