@@ -60,21 +60,12 @@ through [checks](../../reference/macros/check_components.md). Both are printed w
 `App`" on the second header (or on the loop's `Key: Value` line). The carets land on the entries the
 user wrote, so the diagnostic points straight at the two lines to reconcile.
 
-The signature of this class is that **both** conflicting types are *fully generic*
-(`DelegateComponent<_>` and `IsProviderFor<_, _, _>`, with no concrete key) and the conflict carries
-**no** "downstream crates may implement …" note. That is what separates it from the
-[namespace override conflict](namespace-override-conflict.md), where one side of the overlap names a
-*specific* key (a path or a component marker). The generic-versus-generic shape follows from how
-Rust's coherence checker reasons here. Coherence forbids two impls that could both apply to one
-type, and both impls have the form
-`impl<Key, Value> DelegateComponent<Key> for App where Key: SomeNamespace<App, …>`: the self type is
-the same local `App`, and the key is a free parameter bounded only by a namespace trait. Nothing
-prevents a single key type from implementing both namespace traits, so the compiler proves the
-overlap *directly*, from the impls in front of it; it needs no hypothetical future impl to construct
-the conflict, which is why no downstream note appears. The
-[conflicting wiring](conflicting-wiring.md) class carries the full account of `E0119` and the RFC
-2451 coherence reasoning this builds on; the point here is only that a note-free `E0119` on generic
-`DelegateComponent<_>`/`IsProviderFor<_, _, _>` is this class's signature.
+The signature of this class is that **both** conflicting types are *fully generic* and the conflict
+carries **no** "downstream crates may implement …" note, which separates it from the
+[namespace override conflict](namespace-override-conflict.md), where one side names a specific key. Nothing
+prevents one key type from implementing both namespace traits, so the compiler proves the overlap from the
+impls in front of it, without a hypothetical future impl. The
+[conflicting wiring](conflicting-wiring.md) class gives the account of `E0119`.
 
 ## Where the root cause is
 
@@ -114,25 +105,16 @@ the loop overlaps those entries instead, which is the
 [namespace override conflict](namespace-override-conflict.md), reported as `[CGP-E011]`. Either fix
 leaves the context with one forwarding impl and the overlap gone.
 
-## Notes for tooling
-
-`cargo-cgp` already recognizes and rewrites this class in full (above), leading with the
-`[CGP-E012]` wiring-intent headline rather than the impl-level collision. The one signal it keys on
-is worth restating for any post-processor: the absent "downstream crates may implement …" note over
-fully-generic `DelegateComponent<_>`/`IsProviderFor<_, _, _>` types is what distinguishes this class
-from the [namespace override conflict](namespace-override-conflict.md), and so routes the collision
-to `[CGP-E012]` rather than the override's `[CGP-E011]`.
-
 ## Backing fixtures
 
 The `.rust.stderr` snapshot pins the raw generic `E0119` pair and the `.cgp.stderr` the `[CGP-E012]`
 reshaping.
 
-- [`wiring/namespace-paths/two_namespaces_joined.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-forwarding-conflict/two_namespaces_joined.rs):
+- [`wiring/namespace-forwarding-conflict/two_namespaces_joined.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-forwarding-conflict/two_namespaces_joined.rs):
   two `namespace` joins on one context; the `.rust.stderr` pins the `E0119` pair with carets on the
   two `namespace` lines and no downstream note, the `.cgp.stderr` the single `[CGP-E012]` headline
   naming both `NamespaceA` and `NamespaceB`.
-- [`wiring/duplicate-keys/for_loop_bare_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-forwarding-conflict/for_loop_bare_key.rs):
+- [`wiring/namespace-forwarding-conflict/for_loop_bare_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-forwarding-conflict/for_loop_bare_key.rs):
   a bare-key `for` loop beside a namespace join; the `.rust.stderr` pins the same generic `E0119`
   pair with the conflicting caret on the loop's `Key: Value` line, the `.cgp.stderr` the
   `[CGP-E012]` headline naming `DefaultNamespace` and the loop's `GreeterTable`.
