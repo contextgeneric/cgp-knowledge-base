@@ -131,6 +131,10 @@ them, and the marker flags follow the user's rustc flags after it.
 [`launch::cargo_invocation`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/invocation.rs)
 assembles every wrapped command's arguments this way, `check`'s included.
 
+The arguments after that `--` are rustc's, so the front-end reads none of them: `--item` there is
+rustc's unknown option, which fails the build, and `--help` there prints rustc's help. A flag the
+front-end recognizes counts only before the separator.
+
 Everything else about launching the compilation is what `check` already does, and it is *shared code
 rather than a copy*: the [preflight](distribution.md) that verifies a matching driver, forcing
 `RUSTUP_TOOLCHAIN` to the pinned nightly, `CARGO_CGP_SYSROOT`, the dynamic-library path, and the

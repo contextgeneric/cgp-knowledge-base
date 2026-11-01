@@ -746,12 +746,13 @@ UI suite exercises the managed/unmanaged wiring end to end.
   `cargo metadata`'s JSON; and `cgp_target_dir` picks the `cgp` subdirectory or the relative
   fallback.
 - [`crates/cargo-cgp/tests/front_end/forwarded_flag.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/forwarded_flag.rs):
-  `scan_flag` gives a flag's values in order and leaves the other arguments in order, reads past a
-  `--`, and takes the argument after a spaced flag as its value; a spaced flag at the end counts as
+  `scan_flag` gives a flag's values in order and leaves the other arguments in order, stops at a
+  `--` and keeps what follows, and takes the argument after a spaced flag as its value; a spaced flag at the end counts as
   given without a value; the first `--manifest-path` decides; and a longer flag is another flag.
   `forwards_target_dir` detects an explicit `--target-dir` (spaced or `=`) so the default is not
   injected over it, and ignores one after a `--`, which is rustc's; `forwarded_manifest_path` finds
-  a `--manifest-path` in either form.
+  a `--manifest-path` in either form. `expand`'s `--item`, help flag, and profile flags count only
+  before a `--` too.
 - [`crates/cargo-cgp/tests/front_end/dispatch.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/dispatch.rs):
   the side-effect-free dispatch paths (an unknown subcommand, a missing subcommand or help flag,
   `--version`/`-V`, and `setup` and `update` answering `--help` without running and refusing any
