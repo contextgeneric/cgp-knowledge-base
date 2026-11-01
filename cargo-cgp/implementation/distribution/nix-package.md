@@ -24,8 +24,7 @@ project's active toolchain first on the loader path. A rustc shared library is n
 version, not by hash, so this is harmless until the two versions match. Then the Nix `rustc` loads
 rustup's copy and exits 127 before printing a sysroot. So the failure appears only in a project
 tracking the same Rust version as the pin. A rustup-managed install is immune, since its probe runs
-through `rustup run`. The user-facing account is in
-[Troubleshooting](../../reference/troubleshooting.md#a-nix-install-fails-its-sysroot-probe-under-cargo-cgp).
+through `rustup run`.
 
 ## Tests
 

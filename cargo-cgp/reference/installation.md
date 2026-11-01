@@ -84,15 +84,12 @@ cargo install --locked cargo-cgp   # installs the front-end; builds on Rust 1.96
 cargo cgp setup                    # provisions the pinned nightly + builds the matching driver
 ```
 
-The two commands divide the work cleanly. `cargo install --locked cargo-cgp` builds the front-end
-from the dependency versions the release was tested with, as `setup` and `update` also install. It
-is a plain binary with no compiler linkage, so it installs under the toolchain you already have,
-which must be Rust 1.96 or newer. `cargo cgp setup` then does the heavyweight, stateful work: it
-installs the pinned nightly with its `rustc-dev` and `llvm-tools` components through rustup, builds
-`cargo-cgp-driver` against that exact nightly at the front-end's own version, and places the driver
-next to the front-end in `~/.cargo/bin`. Because `setup` reads the pinned toolchain from the
-front-end's baked-in constant, you never type a nightly date. `setup` requires rustup to manage the
-toolchain.
+`cargo install --locked cargo-cgp` builds a plain binary with no compiler linkage, so it installs under
+the toolchain you already have, which must be Rust 1.96 or newer, and `--locked` keeps the dependency
+versions the release was tested with. `cargo cgp setup` then needs rustup: it installs the pinned nightly
+with its `rustc-dev` and `llvm-tools` components, builds `cargo-cgp-driver` against it at the front-end's
+own version, and places the driver next to the front-end in `~/.cargo/bin`. The pinned toolchain is baked
+into the front-end, so you never type a nightly date.
 
 `setup` and `update` take no options. Each answers `--help` (or `-h`) with a help text of its own
 rather than running, and refuses any other argument with an error naming it, since both install
@@ -133,8 +130,7 @@ environment overrides for you.
 
 ## Uninstalling
 
-How you uninstall matches how you installed, and there is no dedicated `cargo cgp uninstall`
-subcommand: you remove the binaries with the same package manager that placed them.
+Remove the binaries with the package manager that placed them, since there is no `cargo cgp uninstall`.
 
 On the **Nix path**, remove the tool from your profile:
 
@@ -165,14 +161,12 @@ How you update matches how you installed. On the cargo path, `cargo cgp update` 
 cargo cgp update
 ```
 
-It reads the crates.io index for the front-end, picks the highest published version **your release
-channel allows** (a stable install never jumps to a pre-release, while a pre-release install takes
-the newest version of either kind, so it reaches the release it previewed) and does nothing if you
-already have the newest. When there is a newer version it reinstalls the front-end at exactly that
-version and re-runs the new `setup` to bring the driver and toolchain up to match. On Windows the
-running binary is locked and cannot replace itself, so `update` prints the two commands
-(`cargo install cargo-cgp --version <version> --locked` then `cargo cgp setup`) to run by hand from
-a shell where the tool is not running.
+It reads the crates.io index for the front-end, picks the highest published version your release
+channel allows, and does nothing if you already have the newest. Otherwise it reinstalls the
+front-end at exactly that version and re-runs the new `setup` to bring the driver and toolchain up
+to match. On Windows the running binary is locked and cannot replace itself, so `update` prints the
+two commands (`cargo install cargo-cgp --version <version> --locked` then `cargo cgp setup`) to run
+by hand from a shell where the tool is not running.
 
 On the Nix path there is no `cargo cgp update`; you upgrade by refreshing the flake instead. For an
 installed profile, upgrade it (`nix profile upgrade`); for the tool pinned as an input in another
