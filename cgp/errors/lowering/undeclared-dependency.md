@@ -195,12 +195,9 @@ the declaration to write in a `help`, and keeps `rustc`'s own code. The codes ar
   and ``help: declare it as a dependency with `#[uses(HasName)]` ``, or
   `#[use_type(HasErrorType.Error)]` for an abstract-type component.
 
-Four cases keep `rustc`'s output. A call on a generic parameter other than the context
-(`value: &Value`) is left alone on purpose, since its fix is a bound on `Value`, which `#[uses]`
-cannot write. The other three are gaps, described under [Notes for tooling](#notes-for-tooling): a
-bare `Error` that no requirement of the component explains, a `Self::Error` that two abstract-type
-traits could declare, and an undeclared trait or inner provider that takes a lifetime or const
-parameter, whose `[CGP-E030]` or `[CGP-E031]` header stands without a help.
+A call on a generic parameter other than the context (`value: &Value`) keeps `rustc`'s output on
+purpose, since its fix is a bound on `Value`, which `#[uses]` cannot write. The other shapes the tool
+does not fully reshape are gaps, listed under [Notes for tooling](#notes-for-tooling).
 
 ## Resolving it
 
@@ -220,8 +217,7 @@ idiomatic form, and `#[use_type]` also rewrites the bare type name.
 
 ## Notes for tooling
 
-Three shapes still reach the reader as `rustc` wrote them, and each needs more than the emitter has
-today:
+These shapes keep `rustc`'s wording or lack a help, and each needs more than the emitter has:
 
 - **A bare `Error` that no requirement explains:** the `E0425` comes from name resolution, before
   the compiler has built the HIR or can say which traits declare an `Error`, and nothing later
