@@ -321,7 +321,7 @@ The pass-through conflicts `cargo-cgp` leaves uncoded:
   into that namespace; rustc names the upstream impl only in a note, so both `E0119`s stay as rustc
   wrote them.
 - [`wiring/conflicting-wiring/auto_dispatch_shared_method_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/auto_dispatch_shared_method_name.rs):
-  two [`#[cgp_auto_dispatch]`](../../reference/macros/cgp_auto_dispatch.md) traits in one module
+  two `#[cgp_auto_dispatch]` traits in one module
   declaring the same method, so the generated helper `__compute_area__` and computer `ComputeArea`
   are each declared twice; the `.rust.stderr` holds just the two `E0428`s, with the `ComputeArea`
   caret on the second `area` method name, because the pinned nightly stops before the computers'
@@ -335,6 +335,14 @@ The pass-through conflicts `cargo-cgp` leaves uncoded:
 - [`wiring/conflicting-wiring/auto_dispatch_shared_method_name_qualified.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/auto_dispatch_shared_method_name_qualified.rs):
   the same with each attribute written `#[cgp::prelude::cgp_auto_dispatch]`, which gives the same
   one `[CGP-E061]`.
+- [`wiring/conflicting-wiring/consumer_impl_and_wired.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/consumer_impl_and_wired.rs):
+  a consumer trait implemented by hand on a context that also wires the component.
+- [`wiring/conflicting-wiring/deref_has_field_conflict.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/deref_has_field_conflict.rs):
+  a struct deriving `HasField` for a field its `Deref` target also has.
+- [`wiring/conflicting-wiring/for_loop_direct_overlap.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/for_loop_direct_overlap.rs):
+  a direct entry overlapping a `for` loop over a `DefaultImpls1` registry.
+- [`wiring/conflicting-wiring/from_variant_conflicting_impl.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/from_variant_conflicting_impl.rs):
+  a hand-written `FromVariant` impl beside the derived one.
 
 ## Related
 

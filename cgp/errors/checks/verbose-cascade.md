@@ -140,6 +140,12 @@ causes match exactly, since failures whose cause sets merely overlap are grouped
   (`CanCalculateDensity`) depends transitively on the first (`CanCalculateArea`); its `.cgp.stderr`
   pins the two components coalesced into one `[CGP-E001]` headline over the shared `[CGP-E110]`
   leaf.
+- [`checks/verbose-cascade/density_1.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/verbose-cascade/density_1.rs):
+  a missing field two components below the checked one.
+- [`checks/verbose-cascade/density_2.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/verbose-cascade/density_2.rs):
+  the same transitive-path burden as density_1, one layer deeper.
+- [`checks/verbose-cascade/parallel_consumers.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/verbose-cascade/parallel_consumers.rs):
+  two independent consumers coalesced on one cause via parallel (non-subsuming) chains.
 
 ## Related
 

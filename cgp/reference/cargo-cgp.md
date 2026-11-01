@@ -2,8 +2,8 @@
 
 `cargo-cgp` is CGP's first-class toolchain: a cargo subcommand that stands in for `cargo check` and
 rewrites CGP's compiler errors into a compact, root-cause-first form, and that also expands a
-target's macros with CGP's type-level constructs made legible. It is the **recommended way to build
-and check CGP code and to read a CGP compile error**, and an agent working in this repository should
+target's macros with CGP's type-level constructs made legible. It is the **recommended way to check CGP
+code and to read a CGP compile error**, and an agent working in this repository should
 reach for it before plain `cargo check` when diagnosing a wiring failure. This document is enough to
 install and use it without leaving `cgp`; the tool itself lives in a separate repository,
 [github.com/contextgeneric/cargo-cgp](https://github.com/contextgeneric/cargo-cgp), and its own docs
@@ -46,8 +46,8 @@ the pinned stable in
 With **cargo** (rustup present):
 
 ```sh
-cargo install cargo-cgp      # the front-end; builds on any toolchain
-cargo cgp setup              # provisions the pinned nightly + driver, in lockstep
+cargo install --locked cargo-cgp   # the front-end; builds on any toolchain
+cargo cgp setup                    # provisions the pinned nightly + driver, in lockstep
 ```
 
 With **Nix** (pinning the release tag for a reproducible install):

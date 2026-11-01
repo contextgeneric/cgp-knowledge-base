@@ -77,8 +77,7 @@ the fixture's directory mirrors its class here.)
 
 ## Which compiler the raw diagnostic describes
 
-**Each class's *raw diagnostic* section describes plain `cargo check` on stable `rustc` (checked
-with 1.98.1), because that is what a CGP project compiles with: `cgp` pins a stable toolchain.** A
+**Each class's *raw diagnostic* section describes plain `cargo check` on stable `rustc`, because that is what a CGP project compiles with: `cgp` pins a stable toolchain.** A
 fixture's `.rust.stderr` is also plain `cargo check` output, but it is blessed under the nightly
 that `cargo-cgp` pins, since the UI suite runs in that repository, and the two compilers do not
 print the same thing. The nightly omits intermediate provider-trait blocks that stable prints, so a

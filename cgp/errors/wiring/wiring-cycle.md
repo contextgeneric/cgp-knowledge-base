@@ -55,9 +55,9 @@ loop is visible in the chain. That is stable's output: the nightly `cargo-cgp` p
 step earlier, on the check's `Person: CanUseComponent<GreeterComponent>`, and prints no chain.
 
 Exercised instead by a plain method call on the context, the same cycle does *not* overflow: the
-method probe treats the unresolvable requirement as simply unsatisfied and reports the
-[hidden `E0599`](../hidden/unsatisfied-dependency.md) ("method exists but its trait bounds were not
-satisfied") with no hint that a cycle is the reason. So a wiring cycle is `E0275` when checked and a
+method probe treats the unresolvable requirement as simply unsatisfied and reports a
+[hidden `E0599`](../hidden/unsatisfied-dependency.md) (`no method named` on stable, when the context
+is what fails to resolve) with no hint that a cycle is the reason. So a wiring cycle is `E0275` when checked and a
 hidden `E0599` when called, and only the checked form actually reveals the cause.
 
 The [`E0275`](../error_codes/e0275.md) itself is ordinary `rustc` behavior. The trait solver follows
@@ -214,6 +214,10 @@ neither shape terminates at any depth, so no limit is high enough.
 - [`wiring/wiring-cycle/divergent_self_wiring.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/divergent_self_wiring.rs):
   a lookup that grows in the type `CanShow` is required of (`Vec<u32>`, then `Vec<Vec<u32>>`),
   rewritten to `[CGP-E021]` naming the first larger type, with a `help:` naming `ShowWrapped`.
+- [`wiring/wiring-cycle/glob_reexported_provider_cycle.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/glob_reexported_provider_cycle.rs):
+  a provider reached through glob re-exports of private modules, named in a cycle's help.
+- [`wiring/wiring-cycle/glob_reexported_provider_name_shared.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/glob_reexported_provider_name_shared.rs):
+  two providers named `EvalAdd`, one glob-imported, each named in a cycle's help.
 
 ## Related
 

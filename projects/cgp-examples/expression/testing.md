@@ -57,11 +57,11 @@ Its `help` note spells out the elided path as `ComputerComponent`, then `Code`, 
 naming the matcher step for `Times` that fails.
 
 Adding `(Eval, Times<MathExpr>)` to the probe's check block kept the wrapper's error and added one
-at the check line, which `cargo cgp check` reports in terms of the component rather than the
+at the check line, which `cargo cgp check` reports as the missing entry rather than through the
 matcher:
 
 ```text
-error[E0277]: [CGP-E001] the consumer trait `CanCompute<Eval, Times<MathExpr>>` is not implemented for context `Interp`
+error[E0277]: [CGP-E001] missing wiring for `@ComputerComponent.Eval.Times<MathExpr>` on `Interp`
 ```
 
 ## What is untested

@@ -263,6 +263,8 @@ The `.rust.stderr` snapshot pins the raw `E0119` shape and the `.cgp.stderr` the
 - [`wiring/namespace-override-conflict/registration_before_inheriting_namespace.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-override-conflict/registration_before_inheriting_namespace.rs):
   the same registration written before the namespace, so rustc names the inheritance blanket as the
   conflicting impl; the `.cgp.stderr` pins the same `[CGP-E013]` headline and `help`.
+- [`wiring/namespace-override-conflict/upstream_namespace_inheritance_overlap.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-override-conflict/upstream_namespace_inheritance_overlap.rs):
+  a local key registered into an upstream namespace and into the parent it inherits.
 
 ## Related
 

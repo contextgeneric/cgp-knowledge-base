@@ -204,6 +204,14 @@ forgot a `#[default_impl]` or body entry" could be added rather than left for th
   a context forwards `@app` to a path-keyed aggregate provider that joins `DefaultNamespace` itself
   and lacks `@app.NamerComponent`; the `.cgp.stderr` pins the `[CGP-E114]` leaf naming the
   aggregate, whose namespace lookup is the unmet bound.
+- [`checks/unregistered-namespace-path/namespace_not_inheriting_base.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/namespace_not_inheriting_base.rs):
+  a context joining a namespace that does not inherit the namespace its component is prefixed into.
+- [`checks/unregistered-namespace-path/near_miss_in_another_context.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/near_miss_in_another_context.rs):
+  two contexts miss `@app.GreeterComponent`, and only `Other` wires the near miss `@App.GreeterComponent`.
+- [`checks/unregistered-namespace-path/prefix_case_slip.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/prefix_case_slip.rs):
+  `@App.GreeterComponent` wired where the component's prefix is `@app`.
+- [`checks/unregistered-namespace-path/prefix_doubled_marker_generic.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/prefix_doubled_marker_generic.rs):
+  a prefix that repeats the component marker the path already appends.
 
 ## Related
 

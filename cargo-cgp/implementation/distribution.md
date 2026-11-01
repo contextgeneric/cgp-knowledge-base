@@ -5,7 +5,7 @@ is the problem of delivering two binaries and one exact nightly compiler, keepin
 and hiding all of it from a user whose own project builds on stable. This document describes how the
 tool is packaged, installed, and provisioned, and why it is built that way.
 
-The machinery is in place. A bare `cargo install cargo-cgp` installs the front-end;
+The machinery is in place. A `cargo install --locked cargo-cgp` installs the front-end;
 `cargo cgp setup` provisions the pinned toolchain and the matching driver; `cargo cgp check` forces
 the pinned nightly for the wrapped compilation and runs a read-only preflight that verifies a
 matching driver is present before doing anything; and `cargo cgp update` upgrades the tool when a
@@ -31,7 +31,7 @@ The first consequence is that a user needs **two binaries, not one**. The front-
 the driver `cargo-cgp-driver` are separate crates for a good reason: only the driver links the
 compiler and LLVM, and keeping that out of the front-end keeps the front-end a small, ordinary
 binary (see [Executable structure](executable-structure.md#why-two-executables)). But a plain
-`cargo install cargo-cgp` installs only the front-end, and the front-end cannot do anything without
+`cargo install --locked cargo-cgp` installs only the front-end, and the front-end cannot do anything without
 its driver sibling. Getting the tool working therefore always takes a second step to bring the
 driver in, and both must end up side by side.
 
@@ -136,13 +136,13 @@ distribution bug.
 ## Installing the binaries
 
 `cargo-cgp` is always installed with cargo (there is no prebuilt-binary channel), and the install
-splits cleanly in two: a bare `cargo install cargo-cgp` puts the front-end in place, and
+splits cleanly in two: a `cargo install --locked cargo-cgp` puts the front-end in place, and
 `cargo cgp setup` provisions everything heavyweight. That split lets the first command be
 one a user types from memory, with no nightly date string in it, and it dissolves the bootstrapping
 problem that a `rustc_private` tool would otherwise have.
 
 The front-end installs on **any** toolchain, which is the key that makes the split work. Because the
-front-end is an ordinary binary with no `rustc_private` linkage, `cargo install cargo-cgp` builds it
+front-end is an ordinary binary with no `rustc_private` linkage, `cargo install --locked cargo-cgp` builds it
 under whatever toolchain the user already has (stable, or anything else) and needs no pinned
 nightly. So the cargo#11036 hazard above, that `cargo install` ignores a bundled
 `rust-toolchain.toml`, never bites: the front-end does not care which toolchain builds it. The
@@ -165,7 +165,7 @@ and it is possible only because the two crates are released together (below).
 
 Keeping the two crates separate enables this. Folding the driver into the
 `cargo-cgp` package as a second `[[bin]]` would force the whole package, front-end included, to
-build under the pinned nightly, losing the bare-`cargo install cargo-cgp` bootstrap. Two crates let
+build under the pinned nightly, losing the `cargo install --locked cargo-cgp` bootstrap. Two crates let
 the front-end install on any toolchain while the driver stays confined to the pinned one, and cargo
 places both in `~/.cargo/bin`, so the front-end's sibling lookup
 ([`launch::driver_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/driver_path.rs))
@@ -194,7 +194,7 @@ knowingly.
 (`rustup toolchain install <PINNED_TOOLCHAIN> -c rustc-dev -c llvm-tools`) and build the driver
 under it (the equivalent of
 `cargo +<PINNED_TOOLCHAIN> install cargo-cgp-driver@<version> --locked`), landing it beside the
-front-end. It is the command a user runs once after `cargo install cargo-cgp`, and the command the
+front-end. It is the command a user runs once after `cargo install --locked cargo-cgp`, and the command the
 preflight names whenever it finds something wrong. Making provisioning a single named subcommand
 gives the docs one stable entry point instead of a shifting list of `rustup` and `cargo`
 incantations, and it is the one place that reads `PINNED_TOOLCHAIN`, so the user never types the
@@ -292,7 +292,7 @@ A `cargo cgp update` subcommand upgrades the tool to its latest version, and its
 the only ordering that can work. A release may bump the pinned nightly, and the knowledge of the new
 toolchain and the new provisioning logic lives *inside* the new `cargo-cgp` binary; the old process
 cannot provision the new driver because it only knows the old pin. So `update` first reinstalls the
-front-end with `cargo install cargo-cgp --version <target> --locked` (which, having no compiler
+front-end with `cargo install --locked cargo-cgp --version <target> --locked` (which, having no compiler
 linkage, builds under any toolchain and needs no pinned nightly; the version is named because a bare
 `cargo install` takes the newest *stable* release, the wrong target for a pre-release moving to a
 newer pre-release), then runs the freshly installed `cargo-cgp setup` as a child process, which
@@ -336,7 +336,7 @@ registry, so automatic version discovery targets the default crates.io (see
 [Known limitations](#known-limitations)).
 
 Installation and update both go **through cargo**; there is no self-replace mechanism to maintain.
-`update` shells out to `cargo install cargo-cgp` (the same tool that installed it), and where that
+`update` shells out to `cargo install --locked cargo-cgp` (the same tool that installed it), and where that
 succeeds the run of the new `setup` follows. This keeps `update` a thin orchestrator over cargo
 rather than a re-implementation of what cargo already does.
 
@@ -347,7 +347,7 @@ cargo writes the new binary alongside and moves it over the old name with an ato
 running process keeps executing its original inode. On **Windows a running executable is locked**,
 so the `cargo install` step fails with "Access is denied." `update` catches that failure and prints
 the exact commands for the user to run by hand
-(`cargo install cargo-cgp --version <version> --locked` followed by `cargo cgp setup`, from a shell
+(`cargo install --locked cargo-cgp --version <version> --locked` followed by `cargo cgp setup`, from a shell
 where `cargo-cgp` is not currently running), which succeed precisely because they are not
 self-referential. The tool does not embed a self-replacing installer to work around this; it
 delegates to cargo and hands the user the manual path when cargo cannot finish.
@@ -464,7 +464,7 @@ upstream). Everything that needs the version reads it back from that file:
   read with `env!`. No Rust source names the date. Each build script *searches upward* from its
   manifest directory for the first `rust-toolchain.toml`, rather than hardcoding the
   workspace-relative path, because the workspace file is not part of a package tarball: when a
-  published crate is built from crates.io (a plain `cargo install cargo-cgp`, or the
+  published crate is built from crates.io (a `cargo install --locked cargo-cgp`, or the
   `cargo install cargo-cgp-driver` that `setup` runs) there is no workspace above it. To keep the
   value available there, each publishable crate carries a `rust-toolchain.toml` symlink to the
   workspace file (one physical file, so the single-source-of-truth property holds), which cargo
@@ -635,7 +635,7 @@ next to `rustc`; and it runs a version preflight instead of being versioned atom
 compiler. The closest working model for all of this is not Clippy but the `rustc_plugin` family, and
 the two places `cargo-cgp` improves on that model are the check-time toolchain override (the
 analyzed project needs no nightly of its own, where `rustc_plugin` requires it to pin the same one)
-and the bare-`cargo install cargo-cgp` bootstrap that defers every heavyweight step to an explicit
+and the `cargo install --locked cargo-cgp` bootstrap that defers every heavyweight step to an explicit
 `cargo cgp setup` (so the user never types a nightly date to get started).
 
 ## Known limitations
@@ -669,7 +669,7 @@ These limits and assumptions of the managed path are deliberate or accepted:
   `index.crates.io` directly, so unlike the `cargo install` that follows it, it does not consult a
   user's configured registry mirror or source replacement. A locked-down network that blocks
   `index.crates.io` will make `update`'s check fail (with a clear error); the manual
-  `cargo install cargo-cgp` + `cargo cgp setup` path still works through the configured registry.
+  `cargo install --locked cargo-cgp` + `cargo cgp setup` path still works through the configured registry.
 
 ## Further reading
 
@@ -682,7 +682,7 @@ changing the piece each one covers.
   its `src/lib.rs`, `src/build.rs`, `src/cli.rs`, and `src/driver.rs`.
 - [`cargo install` ignores `rust-toolchain.toml` (cargo#11036)](https://github.com/rust-lang/cargo/issues/11036)
   is why `setup` must install the driver with an explicit `cargo +<pinned> install`, and why the
-  front-end, needing no particular toolchain, installs with a bare `cargo install cargo-cgp`.
+  front-end, needing no particular toolchain, installs with a `cargo install --locked cargo-cgp`.
 - [Overrides, in The rustup book](https://rust-lang.github.io/rustup/overrides.html), defines the
   toolchain override precedence that lets `RUSTUP_TOOLCHAIN` win over a project's
   `rust-toolchain.toml`.

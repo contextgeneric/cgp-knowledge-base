@@ -56,6 +56,12 @@ editor's, and the reverse. Because these are diagnostic settings the tool choose
 is a diagnostic pass rather than a reproduction of your project's own `cargo check`, much as Clippy
 runs under its own settings.
 
+**The check reports only what the next-generation solver rejects.** A passing `cargo cgp check` is not
+a passing `cargo check`: two namespaces that inherit from each other are rejected by stable `rustc`
+with an `E0275` and compile clean under the tool
+([`namespace_inheritance_cycle`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-inheritance-cycle/namespace_inheritance_cycle.rs)).
+Build and test with plain cargo on your own toolchain for that reason.
+
 To send the check's artifacts somewhere other than `target/cgp`, pass `--target-dir`, which is taken
 as given. **Otherwise the check builds into the `cgp` subdirectory of the project's own target
 directory**, which the front end reads from `cargo metadata --no-deps` (forwarding any
@@ -131,7 +137,9 @@ impls: `--item AreaCalculator` gives the provider trait together with the blanke
 derive put inside a `const _: () = { … };` block, which comes with its block. If the path matches
 nothing you get an error saying so, not a silent whole-crate expansion.
 
-The filter is the one argument `expand` does not forward to cargo. A bare positional path (the way
+The filter is the one argument `expand` does not forward to cargo, and `expand` reads it and a help
+flag only before a `--`, as cargo reads its own flags. Arguments after a `--` go to rustc, so
+`cargo cgp expand --lib -- --item a` fails at rustc as an unknown option. A bare positional path (the way
 `cargo-expand` takes it) is not accepted, because with everything else passed through untouched a
 bare word cannot be told from the value of a cargo flag (`--bin my_module`).
 
@@ -201,9 +209,7 @@ message and its `` help: run `cargo cgp setup` `` line, and a missing tool arriv
 `no such command` error naming `cgp`. The full integration notes, including why Rust Analyzer's own
 wrapper does not collide with the tool's, are in
 [Rust Analyzer integration](../implementation/distribution.md#rust-analyzer-integration). The public
-page is [Editor integration](https://contextgeneric.dev/docs/cargo-cgp/editor-integration); its
-probe, an LSP client that drives the server this way, is `reports/probes/cargo-cgp-editor/` in the
-workspace root.
+page is [Editor integration](https://contextgeneric.dev/docs/cargo-cgp/editor-integration).
 
 ## Running on a project outside this repository
 
@@ -221,7 +227,7 @@ nix run /path/to/the/local/cargo-cgp -- check   # local checkout — reflects cu
 Only when no local checkout is available, fall back to the published flake:
 
 ```sh
-nix run github:contextgeneric/cargo-cgp -- check
+nix run github:contextgeneric/cargo-cgp/v0.1.0 -- check
 ```
 
 Either way this builds (or reuses a cached) `cargo-cgp` and `cargo-cgp-driver` under the pinned

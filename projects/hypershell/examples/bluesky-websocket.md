@@ -82,10 +82,10 @@ ignores it.
 Removing the error route while keeping the `WebSocket` entry is the change the public page shows. A
 probe checked the program with
 `HandlerComponent: (Program, TokioAsyncReadStream<ReadHalf<SimplexStream>>)`, the input `main`
-builds, and `cargo cgp check` built from source at commit `b6a6323` reported:
+builds, and `cargo cgp check` reported:
 
 ```text
-error[E0277]: [CGP-E002] missing wiring for `@cgp.core.error.ErrorRaiserComponent.Error` on `MyApp`
+error[E0277]: [CGP-E001] missing wiring for `@cgp.core.error.ErrorRaiserComponent.Error` on `MyApp`
    = note: root cause: [CGP-E113] missing wiring for `@cgp.core.error.ErrorRaiserComponent.Error` on `MyApp`
 ```
 

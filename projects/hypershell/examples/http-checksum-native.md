@@ -55,11 +55,10 @@ printing.
 
 Removing the `BytesToHex` stage is the change the public page shows. The raw `GenericArray` digest
 then reaches `StreamToStdout`, whose input dispatcher has no entry for it. A probe checked the
-program on the same context with `HandlerComponent: (Program, Vec<u8>)`, and `cargo cgp check` built
-from source at commit `b6a6323` reported:
+program on the same context with `HandlerComponent: (Program, Vec<u8>)`, and `cargo cgp check` reported:
 
 ```text
-error[E0277]: [CGP-E002] missing entry for `@HandlerComponent.StreamToStdout.GenericArray<u8, …>` in provider `HandleToTokioAsyncRead`
+error[E0277]: [CGP-E001] missing entry for `@HandlerComponent.StreamToStdout.GenericArray<u8, …>` in provider `HandleToTokioAsyncRead`
    = note: root cause: [CGP-E114] missing entry for `@HandlerComponent.StreamToStdout.GenericArray<u8, …>` in provider `HandleToTokioAsyncRead`
 ```
 

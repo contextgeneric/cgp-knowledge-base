@@ -26,16 +26,6 @@ cargo-cgp requires the pinned nightly, which `cargo cgp setup` installs (or the 
 against), and forces it only for the check, so your own project is never asked to adopt it and keeps
 whatever toolchain it already uses for its ordinary builds.
 
-## Current availability
-
-The tool is published at `v0.1.0`, and all three paths work: both crates are on crates.io at that
-matching version, so `cargo install cargo-cgp` followed by `cargo cgp setup` produces a working
-install; the Nix flake builds the same pair from the tagged source; and a source checkout builds it
-directly. The cargo path is the intended primary distribution for a machine with rustup.
-
-This document describes `v0.1.0` as published, per the base's
-[rule on versions](../../AGENTS.md#document-official-versions-never-pre-releases).
-
 ## Platforms and the CGP version it reads
 
 The tool is tested on **Linux** only. The front-end carries macOS and Windows branches (the
@@ -90,11 +80,12 @@ The cargo path installs the small front-end first and then provisions everything
 second step, so the first command is one you can type from memory with no nightly date in it.
 
 ```sh
-cargo install cargo-cgp      # installs the front-end; builds on any toolchain
-cargo cgp setup              # provisions the pinned nightly + builds the matching driver
+cargo install --locked cargo-cgp   # installs the front-end; builds on any toolchain
+cargo cgp setup                    # provisions the pinned nightly + builds the matching driver
 ```
 
-The two commands divide the work cleanly. `cargo install cargo-cgp` builds the front-end, which is a
+The two commands divide the work cleanly. `cargo install --locked cargo-cgp` builds the front-end from
+the dependency versions the release was tested with, as `setup` and `update` also install. It is a
 plain binary with no compiler linkage, so it installs under whatever toolchain you already have.
 `cargo cgp setup` then does the heavyweight, stateful work: it installs the pinned nightly with its
 `rustc-dev` and `llvm-tools` components through rustup, builds `cargo-cgp-driver` against that exact
@@ -113,7 +104,7 @@ doing any slow or stateful work itself.
 
 ## Installing from source
 
-To run the current tool from a checkout (the practical path today alongside Nix), clone the
+To run the current tool from a checkout, clone the
 repository and build both binaries, which the pinned `rust-toolchain.toml` compiles under the
 correct nightly automatically:
 

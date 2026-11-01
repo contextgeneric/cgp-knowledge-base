@@ -71,7 +71,7 @@ field. `MyApp` joins the same namespace as `HypershellCli` and adds only the fie
 
 Running the program on `HypershellCli`, which has no `name` field, is the change the public page
 shows. A probe checked the pairing with a check keyed on the program and its input, and read it with
-`cargo cgp check` built from the `cargo-cgp` source at commit `b6a6323`:
+`cargo cgp check`:
 
 ```rust
 check_components! {
@@ -83,7 +83,7 @@ check_components! {
 ```
 
 ```text
-error[E0277]: [CGP-E002] missing field `name` on `HypershellCli`
+error[E0277]: [CGP-E001] missing field `name` on `HypershellCli`
    = note: root cause: [CGP-E110] missing field `name` on `HypershellCli`
 ```
 

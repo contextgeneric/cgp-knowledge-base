@@ -154,6 +154,12 @@ versus outer" from the depth rather than reading a phrase like "needed by the in
   naming the inner provider, and its `.cgp.stderr` a `[CGP-E001]` block whose
   `` root cause: [CGP-E110] missing field `scale_factor` `` tree carries a *single* `[CGP-E102]` hop
   with the inner provider absent.
+- [`checks/higher-order-provider-layer/deep_nesting.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/higher-order-provider-layer/deep_nesting.rs):
+  a deeply nested stack of higher-order providers, whose dependency tree should descend through every layer down to the missing field at the bottom.
+- [`checks/higher-order-provider-layer/scaled_area_1.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/higher-order-provider-layer/scaled_area_1.rs):
+  the failing layer of a higher-order provider is not spelled out.
+- [`checks/higher-order-provider-layer/scaled_area_2.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/higher-order-provider-layer/scaled_area_2.rs):
+  the outer layer of a higher-order provider fails.
 
 ## Related
 

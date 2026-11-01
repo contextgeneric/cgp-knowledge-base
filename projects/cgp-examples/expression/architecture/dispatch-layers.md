@@ -76,11 +76,12 @@ evaluation keys that way on its own context, `Interp`, and evaluated a `Plus`:
 
 The build failed on the recursion limit, because proving `Interp` can evaluate a `MathExpr` requires
 proving it can evaluate each operand, which is again a `MathExpr`. `cargo cgp check` reports the
-cycle at the `compute` call:
+cycle at each `compute` call: an overflow on the call's output, which it leaves as rustc wrote it,
+and the one on the consumer trait reshaped as `[CGP-E020]`:
 
 ```text
 error[E0275]: overflow evaluating the requirement `<Interp as CanCompute<Eval, MathExpr>>::Output == _`
-error[E0275]: overflow evaluating the requirement `Interp: CanCompute<Eval, MathExpr>`
+error[E0275]: [CGP-E020] the wiring for the consumer trait `CanCompute<Eval, MathExpr>` on context `Interp` never resolves, because the lookup leads back to itself
 ```
 
 A plain `cargo build` reports a single `E0275` from inside the cycle instead, on the requirement

@@ -19,7 +19,7 @@ tool needs. The install and usage documents both call out where to prefer the lo
 ## Overview
 
 Using `cargo-cgp` has two phases: getting it onto your machine, then running it, and the two
-reference documents cover one each. Today the tool has two commands that read your code, both
+reference documents cover one each. The tool has two commands that read your code, both
 compiling it through a custom `rustc` wrapper: `cargo cgp check` presents CGP wiring errors with the
 root cause first, instead of the wall of generated-type errors the plain compiler prints, and
 `cargo cgp expand` shows the Rust your CGP macros generate, with CGP's type-level constructs spelled
@@ -50,8 +50,7 @@ compiler library, a toolchain or version mismatch, or the check being run in the
 the document pairs the exact error message each failure prints with its cause and fix, so an agent
 can match a symptom and act rather than guess.
 
-The tool is at an early stage, so the documents describe what exists now and note plainly where a
-path is intended but not yet available. For the reasoning *behind* the behavior these documents
+For the reasoning *behind* the behavior these documents
 describe: why the toolchain is pinned, how the two binaries stay in lockstep, how the driver reaches
 the compiler, follow the links into the [implementation/](../implementation/README.md) category,
 which is the authoritative source those references summarize.
@@ -62,10 +61,10 @@ This section lists every reference document with a summary of what it explains. 
 document, register it here in the same change.
 
 - [Installation](installation.md): how to install and update `cargo-cgp`. Covers the cargo path
-  (`cargo install cargo-cgp` followed by `cargo cgp setup` to provision the pinned nightly and the
+  (`cargo install --locked cargo-cgp` followed by `cargo cgp setup` to provision the pinned nightly and the
   driver, then `cargo cgp update` to upgrade), the Nix path (running or installing the tool from the
   flake, which builds both binaries against the pinned nightly with no rustup needed), installing
-  from source for development, and the current availability status of each path.
+  from source for development, and the platforms it is tested on.
 - [Usage](usage.md): how to use `cargo-cgp` once installed. Covers the `cargo cgp check` command and
   its argument forwarding, what the check does differently from `cargo check` (the forced pinned
   nightly, the next-generation trait solver, the isolated `target/cgp` directory), how to read the

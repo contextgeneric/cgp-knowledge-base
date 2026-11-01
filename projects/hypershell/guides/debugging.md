@@ -10,10 +10,10 @@ the CGP [debugging guide](../../../cgp/guides/debugging.md).
 ## Check first, then read the root cause
 
 **Put the program in a `check_components!` before reading any error, and read it with
-`cargo cgp check`.** A failure reported at the `handle` call often carries no root cause at all. The
-missing-field mistake below, reported at its call site, produced only `[CGP-E002]` headlines about
-`PipeHandlers` and `ComposeHandlers`. Through a check, the same mistake names the missing field. The
-check is keyed on the program and its input:
+`cargo cgp check`.** A failure reported at the `handle` call can resolve to its root cause too, but only
+when the call writes the input's type: `Vec::new()` leaves it to inference. A check states the input,
+so it reaches the cause either way, and it fails at the program's definition rather than at each call.
+The check is keyed on the program and its input:
 
 ```rust
 check_components! {
@@ -47,7 +47,7 @@ pub type Program = hypershell! {
 ```
 
 ```text
-error[E0277]: [CGP-E002] missing field `name` on `HypershellCli`
+error[E0277]: [CGP-E001] missing field `name` on `HypershellCli`
   = note: root cause: [CGP-E110] missing field `name` on `HypershellCli`
 ```
 
@@ -189,7 +189,7 @@ delegate_components! {
 ```
 
 ```text
-error[E0277]: [CGP-E002] `ShoutText` is not a provider of `Handler`
+error[E0277]: [CGP-E001] `ShoutText` is not a provider of `Handler`
   = note: root cause: [CGP-E115] `ShoutText` is not a provider of `Handler`
 ```
 
@@ -212,7 +212,7 @@ delegate_components! {
 ```
 
 ```text
-error[E0119]: [CGP-E011] `App` cannot wire `@cgp.extra.handler.HandlerComponent.SimpleExec.*` that is already set through `HypershellNamespace`
+error[E0119]: [CGP-E011] conflicting wiring: `App` wires `@cgp.extra.handler.HandlerComponent.SimpleExec<Path, Args>`, which `HypershellNamespace` already covers
 ```
 
 The same entry in a namespace that inherits `HypershellNamespace` fails with a plain `E0119` on the

@@ -108,7 +108,7 @@ error into a surfaced one.
 
 ## Where the root cause is
 
-On stable `rustc` (checked with 1.98.1), the root cause is **not present in the output.** A reader
+On stable `rustc`, the root cause is **not present in the output.** A reader
 or tool must not scan this diagnostic for the failing dependency, because the compiler discarded it
 before printing. The most specific thing the output names is the unsatisfied provider trait
 (`Person: Greeter<Person>`) or consumer trait (`Person: CanGreet`); everything below that (the
@@ -260,6 +260,92 @@ promoting to a check) can.
   `Square`, that lacks the impl; the `.cgp.stderr` reads the enum off the variant constructor at the
   call and leads with ``[CGP-E003] the trait bound `Square: HasArea` is not satisfied`` over the
   matcher chain.
+- [`hidden/unsatisfied-dependency/call_site_annotated_receiver.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/call_site_annotated_receiver.rs):
+  a failing call whose receiver is a `let` with a type annotation.
+- [`hidden/unsatisfied-dependency/call_site_tuple_input.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/call_site_tuple_input.rs):
+  a call-site `E0277` whose failing provider **destructures its input on a tuple shape**, with the root cause reachable only once that shape is recovered, the case `cascade_later_stage` and `cascade_after_use_site` do not cover.
+- [`hidden/unsatisfied-dependency/call_site_written_shapes.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/call_site_written_shapes.rs):
+  a call-site `E0277` whose input writes its type in every shape the call-site anchor reads.
+- [`hidden/unsatisfied-dependency/cascade_after_use_site.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/cascade_after_use_site.rs):
+  a use-site `E0277` on a `Code`-dispatched handler pipeline, resolved from the call expression itself.
+- [`hidden/unsatisfied-dependency/cascade_later_stage.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/cascade_later_stage.rs):
+  a use-site `E0277` on a `Code`-dispatched handler pipeline whose root cause lives in a *later* stage, the shape `cascade_after_use_site` does not cover.
+- [`hidden/unsatisfied-dependency/cascade_later_stage_input.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/cascade_later_stage_input.rs):
+  a use-site `E0277` on a `Code`-dispatched handler pipeline whose root cause is a *later* stage's requirement on its **input type**, where that input is an earlier stage's fixed output, threaded through a forwarding `Call` handler.
+- [`hidden/unsatisfied-dependency/cascade_nested_projection.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/cascade_nested_projection.rs):
+  a use-site `E0277` on a `Code`-dispatched handler pipeline whose root cause is a missing **input-dispatch entry**: the third stage dispatches its provider on the *input type* through [`UseInputDelegate`](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/reference/providers/use_delegate.md), and no entry matches the type the second stage produces.
+- [`hidden/unsatisfied-dependency/cgp_fn_call_mixed_causes.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/cgp_fn_call_mixed_causes.rs):
+  a direct call to a `#[cgp_fn]` trait method on a type without wiring, whose blanket impl fails for two kinds of cause.
+- [`hidden/unsatisfied-dependency/cgp_fn_struct_bound.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/cgp_fn_struct_bound.rs):
+  a `#[cgp_fn]` trait required by a **struct's** bound, built with a context missing the field the trait reads.
+- [`hidden/unsatisfied-dependency/cgp_fn_struct_bound_in_type.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/cgp_fn_struct_bound_in_type.rs):
+  a `#[cgp_fn]` trait required by a struct's bound, where the struct is only named in a type, so no expression carries the context.
+- [`hidden/unsatisfied-dependency/cgp_fn_struct_where_bound.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/cgp_fn_struct_where_bound.rs):
+  a `#[cgp_fn]` trait required by a struct's `where` clause, built with a context missing the field the trait reads.
+- [`hidden/unsatisfied-dependency/cgp_fn_use_site.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/cgp_fn_use_site.rs):
+  a `#[cgp_fn]` trait called at a **use site**, on a context that cannot satisfy it.
+- [`hidden/unsatisfied-dependency/cgp_fn_where_bound.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/cgp_fn_where_bound.rs):
+  a `#[cgp_fn]` trait required through a `where` **bound**, not called as a method.
+- [`hidden/unsatisfied-dependency/consumer_struct_bound.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/consumer_struct_bound.rs):
+  a consumer trait required by a struct's bound, built with a context whose wiring misses the field the provider reads.
+- [`hidden/unsatisfied-dependency/empty_dispatch_table.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/empty_dispatch_table.rs):
+  a use-site `E0277` on a handler pipeline whose root cause is an *empty* input-dispatch table: the second stage dispatches its provider on the input type through `UseInputDelegate<EmptySink>`, and that table wires no entries at all.
+- [`hidden/unsatisfied-dependency/enum_hasfields_lock.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/enum_hasfields_lock.rs):
+  a resolution-class `E0599` near CGP wiring, which must not crash the resolver.
+- [`hidden/unsatisfied-dependency/foreign_context_error_route.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/foreign_context_error_route.rs):
+  a handler pipeline run on a context defined in another crate, with one error type unrouted.
+- [`hidden/unsatisfied-dependency/foreign_context_where_bound.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/foreign_context_where_bound.rs):
+  a hand-written impl whose own `where` clause names a context defined in another crate, with one error type unrouted.
+- [`hidden/unsatisfied-dependency/foreign_context_wrapper_chain.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/foreign_context_wrapper_chain.rs):
+  a local wrapper trait implemented on a foreign type that holds a context defined in another crate, with one error type unrouted.
+- [`hidden/unsatisfied-dependency/foreign_context_wrapper_impl.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/foreign_context_wrapper_impl.rs):
+  a local wrapper trait implemented on a context defined in another crate, with one error type unrouted.
+- [`hidden/unsatisfied-dependency/generic_consumer_bound_reference_binding.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/generic_consumer_bound_reference_binding.rs):
+  a generic function's bound on a generic consumer trait, its context from a binding of reference type.
+- [`hidden/unsatisfied-dependency/generic_consumer_use_site.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/generic_consumer_use_site.rs):
+  a *generic* consumer failing at its call site, its parameter recovered from a plain value argument.
+- [`hidden/unsatisfied-dependency/generic_fn_consumer_not_in_scope.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/generic_fn_consumer_not_in_scope.rs):
+  a consumer method called on an unbounded type parameter, where the consumer trait is not in scope.
+- [`hidden/unsatisfied-dependency/generic_fn_missing_bound_on_generic_consumer.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/generic_fn_missing_bound_on_generic_consumer.rs):
+  a method of a consumer trait with a parameter, called on an unbounded type parameter.
+- [`hidden/unsatisfied-dependency/generic_fn_two_consumers_one_method.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/generic_fn_two_consumers_one_method.rs):
+  a method two consumer traits declare, called on an unbounded type parameter.
+- [`hidden/unsatisfied-dependency/getter_unwired_call.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/getter_unwired_call.rs):
+  Calling a `#[cgp_getter]` method on a context that does not wire the getter.
+- [`hidden/unsatisfied-dependency/manual_supertrait_impl.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/manual_supertrait_impl.rs):
+  a wiring gap surfaced inside a *hand-written* `impl Trait for Context` block, where the caret sits on the impl, never on the context's own type definition.
+- [`hidden/unsatisfied-dependency/missing_wiring.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/missing_wiring.rs):
+  a missing wiring surfaced at the *use site* rather than at a check.
+- [`hidden/unsatisfied-dependency/namespace_join_use_site.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/namespace_join_use_site.rs):
+  a use-site failure on a namespace-joined context, resolved to its root cause *through* the namespace.
+- [`hidden/unsatisfied-dependency/open_dispatch_use_site.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/open_dispatch_use_site.rs):
+  Use-site failure on an `open`-dispatched context, resolved to the real missing wiring.
+- [`hidden/unsatisfied-dependency/placeholder_error_route_leaf.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/placeholder_error_route_leaf.rs):
+  a pipeline call whose first stage raises its input's error type, with the input left to inference.
+- [`hidden/unsatisfied-dependency/provider_called_directly_name_shared.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/provider_called_directly_name_shared.rs):
+  a provider's own method called through its path, where a provider trait of another module declares a function of the same name.
+- [`hidden/unsatisfied-dependency/unrelated_error_before_call.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/unrelated_error_before_call.rs):
+  a plain Rust error in a function that also calls a consumer method whose wiring fails.
+- [`hidden/unsatisfied-dependency/unrelated_error_in_awaited_argument.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/unrelated_error_in_awaited_argument.rs):
+  a plain Rust error inside an argument of an awaited consumer method call whose wiring fails.
+- [`hidden/unsatisfied-dependency/unrelated_error_in_call_argument.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/unrelated_error_in_call_argument.rs):
+  a plain Rust error inside an argument of a consumer method call whose wiring fails.
+- [`hidden/unsatisfied-dependency/unrelated_error_in_forwarding_argument.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/unrelated_error_in_forwarding_argument.rs):
+  a plain Rust error inside an argument of a hand-written impl's forwarding call, whose CGP supertrait also fails.
+- [`hidden/unsatisfied-dependency/unrelated_error_in_wrapper_impl.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/unrelated_error_in_wrapper_impl.rs):
+  a plain Rust error inside a hand-written impl whose CGP supertrait also fails.
+- [`hidden/unsatisfied-dependency/unrelated_error_noted_on_foreign_wrapper_impl.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/unrelated_error_noted_on_foreign_wrapper_impl.rs):
+  a plain Rust error whose note points at a wrapper impl on a foreign type whose chain reaches a failing CGP consumer.
+- [`hidden/unsatisfied-dependency/unrelated_error_noted_on_wrapper_impl.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/unrelated_error_noted_on_wrapper_impl.rs):
+  a plain Rust error whose note points at a hand-written impl whose CGP supertrait also fails.
+- [`hidden/unsatisfied-dependency/unsatisfied_dependency.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/unsatisfied_dependency.rs):
+  a hidden-class error whose cause the tool surfaces.
+- [`hidden/unsatisfied-dependency/upstream_blanket_trait_use_site.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/upstream_blanket_trait_use_site.rs):
+  a `#[cgp_fn]` trait defined **upstream**, called on a context that cannot satisfy it.
+- [`hidden/unsatisfied-dependency/use_site_shared_cause.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/use_site_shared_cause.rs):
+  every consumer a use-site failure names gets its chain, sharing one root cause.
+- [`hidden/unsatisfied-dependency/wrapper_impl_with_failing_bound.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/wrapper_impl_with_failing_bound.rs):
+  a wrapper impl on a context whose supertrait and own `where` bound fail for different causes.
 
 ## Related
 

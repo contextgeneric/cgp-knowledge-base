@@ -392,7 +392,7 @@ reduce to the same `[CGP-E001]` headline and `root cause:` tree.
   `<Self as HasTypes>::Types: HasScalarType` is the one enforced, confirming the
   transitively-grounded foreign bound is checked at depth.
 - [`checks/check-trait-failure/field-types/abstract_field_type_mismatch.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/field-types/abstract_field_type_mismatch.rs):
-  the [wiring-derived field type](#when-the-fields-required-type-comes-from-the-wiring): an `App`
+  the wiring-derived field type: an `App`
   wiring `Db` to `Postgres` while declaring a `Pool<Sqlite>` field, under a provider reading
   `&Pool<Db>`. Its `.rust.stderr` pins the normalized `Pool<Postgres>` requirement and the mangled
   `Symbol<8, Chars<..>>` field name, and its `.cgp.stderr` the `[CGP-E004]`/`[CGP-E112]` reshaping
@@ -401,13 +401,13 @@ reduce to the same `[CGP-E001]` headline and `root cause:` tree.
   is
   [`field_type_mismatch`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/field-types/field_type_mismatch.rs).
 - [`checks/check-trait-failure/types/abstract_type_mismatch.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/types/abstract_type_mismatch.rs):
-  the [equality-pinned abstract type](#when-the-dependency-is-an-equality-pinned-abstract-type): a
+  the equality-pinned abstract type: a
   context wiring `HasScalarType` to `UseType<u32>` under a provider that pins it to `f64`. Its
   `.rust.stderr` pins the raw `E0271` with its caret on the `#[cgp_type]` attribute and no mention
   of `u32`, and its `.cgp.stderr` the `[CGP-E005]`/`[CGP-E116]` reshaping with the `UseType<f64>`
   help.
 - [`checks/check-trait-failure/fields/missing_has_field_derive.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/missing_has_field_derive.rs):
-  the [derive-missing variant](#when-the-derive-is-missing-entirely): a `Person` with the `name`
+  the derive-missing variant: a `Person` with the `name`
   field but no `#[derive(HasField)]`, so the raw output drops the "but trait `HasField<…>` is
   implemented" landmark (the signal the whole derive is missing), and `cargo-cgp` coalesces it to
   one `[CGP-E111]` cause. Related field-derive fixtures
@@ -416,7 +416,7 @@ reduce to the same `[CGP-E001]` headline and `root cause:` tree.
   [`underived_and_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/underived_and_missing_field.rs))
   pin the coalescing and the mixed missing-plus-underived case.
 - [`checks/check-trait-failure/checks/generic_component_unit_params.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/checks/generic_component_unit_params.rs):
-  a [check that names no parameters](#when-a-check-names-no-parameters) in
+  a check that names no parameters in
   `delegate_and_check_components!`; its `.rust.stderr` pins the provider-shaped `E0277` with the
   "expected `Rectangle`, found `()`" hint, and its `.cgp.stderr` the `[CGP-E060]` block whose help
   names `#[check_params(Rectangle)]`;
@@ -429,7 +429,7 @@ reduce to the same `[CGP-E001]` headline and `root cause:` tree.
 - [`checks/check-trait-failure/providers/generic_check_without_params.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/generic_check_without_params.rs):
   the same in `check_components!`, whose help names `AreaCalculatorComponent: Square`.
 - [`checks/check-trait-failure/providers/provider_for_other_context.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/provider_for_other_context.rs):
-  a [provider that takes other arguments](#when-the-provider-takes-other-arguments), written for
+  a provider that takes other arguments, written for
   `Person` and wired on `Robot`; its `.rust.stderr` pins the near-impl hint "expected `Person`, found
   `Robot`", and its `.cgp.stderr` the `[CGP-E127]` leaf naming the context. The component-argument
   forms are
@@ -443,6 +443,166 @@ reduce to the same `[CGP-E001]` headline and `root cause:` tree.
   a generic key, `<I> FooKeyComponent<I>: AnyFoo`, checked at unit parameters; its `.rust.stderr`
   pins the spliced `where` suggestion, and its `.cgp.stderr` the `[CGP-E060]` block naming
   `#[check_params(I)]`.
+- [`checks/check-trait-failure/checks/aggregate_delegate_and_check.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/checks/aggregate_delegate_and_check.rs):
+  `delegate_and_check_components!` on a `new` provider bundle.
+- [`checks/check-trait-failure/constrained-key/constrained_delegate_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/constrained-key/constrained_delegate_key.rs):
+  a component delegation that fails because the `DelegateComponent` impl carries a **constrained key** whose `where`-clause is unsatisfied, the shape `PipeHandlers<Providers>` produces (its `delegate_components!` generic list is.
+- [`checks/check-trait-failure/constrained-key/constrained_delegate_key_empty_sum.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/constrained-key/constrained_delegate_key_empty_sum.rs):
+  a delegation whose constrained key fails on CGP's empty sum, `Sum![]`.
+- [`checks/check-trait-failure/constrained-key/pipe_handlers_empty.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/constrained-key/pipe_handlers_empty.rs):
+  the constrained-key delegation failure in its canonical core-CGP form: wiring a component to `PipeHandlers<Product![]>`, an *empty* pipeline.
+- [`checks/check-trait-failure/duplication/coalesced_underived_field.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/duplication/coalesced_underived_field.rs):
+  one underived field named once, however many coalesced consumers reach it.
+- [`checks/check-trait-failure/duplication/cross_site_dedup.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/duplication/cross_site_dedup.rs):
+  one wiring mistake reported once.
+- [`checks/check-trait-failure/duplication/overlapping_cause_sets.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/duplication/overlapping_cause_sets.rs):
+  Failures whose root-cause *sets* overlap without being equal, coalesced into one block.
+- [`checks/check-trait-failure/duplication/traced_send_wrapper.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/duplication/traced_send_wrapper.rs):
+  a raw error that never names a CGP construct, traced back to the one CGP cause.
+- [`checks/check-trait-failure/errors/glob_imported_error_route.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/errors/glob_imported_error_route.rs):
+  an `open` error table missing the route for `std::io::Error`, in a crate that glob-imports its own `Error`.
+- [`checks/check-trait-failure/errors/glob_imported_error_under_crate_named_module.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/errors/glob_imported_error_under_crate_named_module.rs):
+  an `open` error table missing the route for a dependency's error, in a crate that glob-imports an error of the same name from a module named after that dependency.
+- [`checks/check-trait-failure/errors/open_route_stripped_path.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/errors/open_route_stripped_path.rs):
+  an `open` error table missing the route for `std::io::Error`, in a crate with its own `Error`.
+- [`checks/check-trait-failure/errors/raiser_without_error_type.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/errors/raiser_without_error_type.rs):
+  an error raiser wired on a context with no error type, checked for `io::Error`.
+- [`checks/check-trait-failure/errors/stripped_error_path.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/errors/stripped_error_path.rs):
+  an error raiser that pins the abstract error to a concrete type named `Error` from another module.
+- [`checks/check-trait-failure/field-types/field_type_mismatch_1.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/field-types/field_type_mismatch_1.rs):
+  a field whose name matches but whose type does not, read *directly* by a provider, the shorter-chain counterpart of `field_type_mismatch`.
+- [`checks/check-trait-failure/field-types/field_type_mismatch_modules.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/field-types/field_type_mismatch_modules.rs):
+  Module-path struct resolution for the field-type mismatch: two *different* `Rectangle` contexts, one per module, each derive `HasField` and each wire an area calculator whose `height()` getter needs `f64`, but `shape_a::Rectangle` carries `height: i32` and `shape_b::Rectangle` carries `height: i16`.
+- [`checks/check-trait-failure/fields/abstract_field_type_missing.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/abstract_field_type_missing.rs):
+  a provider reads a field whose required type goes through an abstract type, on a context that lacks the field.
+- [`checks/check-trait-failure/fields/base_area_1.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/base_area_1.rs):
+  a missing field whose name rustc encodes as a nested `Symbol`, in the two-line "similar impl" hint.
+- [`checks/check-trait-failure/fields/base_area_1_1.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/base_area_1_1.rs):
+  a missing field read *directly* by a provider, the shorter-chain counterpart of `base_area_1`.
+- [`checks/check-trait-failure/fields/field_tag_typo_derive_hint.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/field_tag_typo_derive_hint.rs):
+  a `HasField` bound whose tag misspells a field the struct derives.
+- [`checks/check-trait-failure/fields/field_via_deref.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/field_via_deref.rs):
+  a field the context reaches through `Deref`, whose `Deref` target does not derive `HasField`.
+- [`checks/check-trait-failure/fields/getter_use_field_typo.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/getter_use_field_typo.rs):
+  `UseField<Symbol!("frist_name")>` for a field named `first_name`.
+- [`checks/check-trait-failure/fields/many_missing_fields.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/many_missing_fields.rs):
+  a provider reading six fields the context lacks, through `#[implicit]` arguments.
+- [`checks/check-trait-failure/fields/parallel_branches.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/parallel_branches.rs):
+  a provider with two independent unmet field dependencies, which should render as two parallel branches in the dependency tree rather than a single spine.
+- [`checks/check-trait-failure/fields/symbol_tag_not_a_tuple_position.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/symbol_tag_not_a_tuple_position.rs):
+  `Symbol!` tags on tuple structs that spell no position of the struct.
+- [`checks/check-trait-failure/fields/symbol_tag_on_tuple_struct.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/symbol_tag_on_tuple_struct.rs):
+  Reading a tuple-struct field with `Symbol!("0")` where `Index<0>` belongs.
+- [`checks/check-trait-failure/fields/symbol_tag_on_tuple_struct_check.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/symbol_tag_on_tuple_struct_check.rs):
+  a provider that requires a tuple field by `Symbol!("0")`, checked on a tuple struct.
+- [`checks/check-trait-failure/fields/tuple_struct_named_field.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/tuple_struct_named_field.rs):
+  a tuple-struct context reached through an implicit argument that reads a named field.
+- [`checks/check-trait-failure/generic/generic_area.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/generic/generic_area.rs):
+  the wiring-note and header rewrites over a component that carries a generic parameter, so `CanUseComponent`/`IsProviderFor` gain an extra type argument.
+- [`checks/check-trait-failure/generic/generic_area_multi.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/generic/generic_area_multi.rs):
+  the wiring-note and header rewrites over a component with *three* generic parameters, so the parameters reach `CanUseComponent`/`IsProviderFor` grouped in a tuple.
+- [`checks/check-trait-failure/generic/lifetime_component.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/generic/lifetime_component.rs):
+  a component carrying a *lifetime* parameter, failing its check on a missing field.
+- [`checks/check-trait-failure/generic/tuple_param_component.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/generic/tuple_param_component.rs):
+  a component whose single generic parameter is instantiated with a *tuple* type.
+- [`checks/check-trait-failure/handlers/cgp_computer_no_error_type_call.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/handlers/cgp_computer_no_error_type_call.rs):
+  `try_compute` on a context wiring a `#[cgp_computer]` provider and no error type.
+- [`checks/check-trait-failure/handlers/matcher_wired_to_handler.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/handlers/matcher_wired_to_handler.rs):
+  a value matcher, `MatchWithValueHandlers`, wired as the context's `Handler`.
+- [`checks/check-trait-failure/handlers/promote_computer_handwritten_handler.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/handlers/promote_computer_handwritten_handler.rs):
+  `PromoteComputer<Double>` wired as a handler for a hand-written `Computer` provider.
+- [`checks/check-trait-failure/handlers/question_mark_after_failed_handle.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/handlers/question_mark_after_failed_handle.rs):
+  a `BuildAndMergeOutputs` builder whose second output carries a field the target lacks, called with `?` and no check.
+- [`checks/check-trait-failure/handlers/value_matcher_on_struct.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/handlers/value_matcher_on_struct.rs):
+  `MatchWithValueHandlers` applied to a struct.
+- [`checks/check-trait-failure/missing-wiring/basic_missing_wiring.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/basic_missing_wiring.rs):
+  a *transitive* missing wiring.
+- [`checks/check-trait-failure/missing-wiring/direct_delegation_missing_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/direct_delegation_missing_key.rs):
+  a `->` delegation to a table that lacks the key.
+- [`checks/check-trait-failure/missing-wiring/direct_delegation_missing_key_unchecked.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/direct_delegation_missing_key_unchecked.rs):
+  a `->` delegation to a table that lacks the key, with no check or call that uses it.
+- [`checks/check-trait-failure/missing-wiring/direct_missing_wiring.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/direct_missing_wiring.rs):
+  the simplest missing wiring, a `check_components!` asserts a component the context does not wire at all.
+- [`checks/check-trait-failure/missing-wiring/enum_variant_chain.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/enum_variant_chain.rs):
+  a missing wiring reached through a sum spine of *named* variants, whose dependency-tree entries resugar `Either<Field<…>, …, Void>` all the way to the `Enum! { … }` surface form.
+- [`checks/check-trait-failure/missing-wiring/enum_variant_shapes_chain.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/enum_variant_shapes_chain.rs):
+  a missing wiring reached through a sum of named variants that uses every variant shape, whose dependency-tree entries render each variant in its shortest `Enum!` spelling.
+- [`checks/check-trait-failure/missing-wiring/generic_component_forwarding_missing_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/generic_component_forwarding_missing_key.rs):
+  a forwarding entry for a component with a type parameter, into a table that lacks the key.
+- [`checks/check-trait-failure/missing-wiring/missing_normal_bound.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/missing_normal_bound.rs):
+  a checked dependency chain that ends in an ordinary trait bound the context lacks.
+- [`checks/check-trait-failure/missing-wiring/open_aggregate_missing_entry.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/open_aggregate_missing_entry.rs):
+  a missing entry in an aggregate provider's own `open` table.
+- [`checks/check-trait-failure/missing-wiring/parallel_missing_wiring.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/parallel_missing_wiring.rs):
+  two independent missing wirings surface as two separate root causes.
+- [`checks/check-trait-failure/missing-wiring/record_field_chain.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/record_field_chain.rs):
+  a missing wiring reached only *through* the extensible-data record machinery, a record provider that builds each field through the context, over a recursive `Cons`/`Nil` field-list handler.
+- [`checks/check-trait-failure/missing-wiring/redirect_distinct_keys.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/redirect_distinct_keys.rs):
+  two dependencies dispatched along the same `open` route for distinct, unwired value types, the shape that pins two redirect hops staying distinct nodes across branches.
+- [`checks/check-trait-failure/missing-wiring/sum_variant_chain.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/sum_variant_chain.rs):
+  a missing wiring reached *through* a type-level sum spine, whose dependency-tree entries resugar `Either<…, Void>` back to `Sum![…]`.
+- [`checks/check-trait-failure/missing-wiring/transitive_missing_wiring.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/transitive_missing_wiring.rs):
+  a component wired to an aggregate provider that lacks one of the entries it is wired for.
+- [`checks/check-trait-failure/missing-wiring/unrelated_error_beside_forwarding_entry.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/unrelated_error_beside_forwarding_entry.rs):
+  a plain Rust error beside a forwarding entry whose table lacks the key.
+- [`checks/check-trait-failure/providers/field_getter_wired_bare.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/field_getter_wired_bare.rs):
+  a hand-written `FieldGetter` wired directly as a component's provider.
+- [`checks/check-trait-failure/providers/getter_multi_method_use_field.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/getter_multi_method_use_field.rs):
+  a multi-method `#[cgp_getter]` trait wired to `UseField`.
+- [`checks/check-trait-failure/providers/non_provider_wired.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/non_provider_wired.rs):
+  a `check_components!` failure whose root cause is a plain type wired where a *provider* was expected: a higher-order provider's inner slot is filled with a struct that does not implement the provider trait at all.
+- [`checks/check-trait-failure/providers/provider_for_other_context_and_input.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/provider_for_other_context_and_input.rs):
+  a provider written for another context and another input, wired and checked.
+- [`checks/check-trait-failure/providers/use_delegate_parameterless_component.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/use_delegate_parameterless_component.rs):
+  `UseDelegate` wired to a component that takes no parameters.
+- [`checks/check-trait-failure/providers/use_delegate_without_derive.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/use_delegate_without_derive.rs):
+  `UseDelegate` wired for a component that lacks `#[derive_delegate]`.
+- [`checks/check-trait-failure/providers/use_field_multi_method_missing_field.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/use_field_multi_method_missing_field.rs):
+  a getter with two methods wired to `UseField` on a context that lacks one of the getter's fields.
+- [`checks/check-trait-failure/providers/use_field_on_cgp_type.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/use_field_on_cgp_type.rs):
+  `UseField` wired to a `#[cgp_type]` component.
+- [`checks/check-trait-failure/providers/wrong_component_provider_check.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/wrong_component_provider_check.rs):
+  a provider of another component wired under the wrong key.
+- [`checks/check-trait-failure/resolution/cross_context_node_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/resolution/cross_context_node_key.rs):
+  a cross-context dependency, one context's wiring depending on a *concrete* other context, resolved cleanly, and the shape that makes the resolution cache's per-context node key load-bearing.
+- [`checks/check-trait-failure/resolution/diamond_shared_trait.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/resolution/diamond_shared_trait.rs):
+  Diamond reuse in the resolver's walk: one shared trait reached from two independent branches of a single dependency tree.
+- [`checks/check-trait-failure/resolution/fallback_shape_resugar.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/resolution/fallback_shape_resugar.rs):
+  a diagnostic the resolver *declines* still gets its field lists resugared to CGP's `Struct!`/`Enum!` shapes by the fallback post-processing chain.
+- [`checks/check-trait-failure/resolution/fallback_spine_resugar.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/resolution/fallback_spine_resugar.rs):
+  a diagnostic the resolver *declines* still gets its type-level spines resugared by the fallback post-processing chain.
+- [`checks/check-trait-failure/resolution/foreign_getter_missing_wiring.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/resolution/foreign_getter_missing_wiring.rs):
+  a getter on a *request* type resolves to the context's missing wiring, not the opaque getter bound.
+- [`checks/check-trait-failure/resolution/higher_ranked_descent.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/resolution/higher_ranked_descent.rs):
+  Currently a compiler **panic**, not a bad message: the resolver's dependency walk crashes rustc when it descends into a higher-ranked (`for<'a>`) CGP obligation.
+- [`checks/check-trait-failure/resolution/mixed_rust_error.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/resolution/mixed_rust_error.rs):
+  a CGP check failure and an ordinary Rust error in the same crate, to confirm the typed resolver replaces only the CGP wiring diagnostic and leaves the plain error untouched.
+- [`checks/check-trait-failure/resolution/nested_higher_ranked_descent.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/resolution/nested_higher_ranked_descent.rs):
+  a wiring failure threading the record field-list machinery through *nested* higher-ranked (`for<'a>`) hops, resolved to its root cause.
+- [`checks/check-trait-failure/resolution/projected_impl_argument.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/resolution/projected_impl_argument.rs):
+  two blanket impls of one trait that differ only in a projected argument, and the walk choosing between them.
+- [`checks/check-trait-failure/resolution/same_field_two_contexts.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/resolution/same_field_two_contexts.rs):
+  two genuinely distinct root causes that happen to *name* the same thing, kept apart.
+- [`checks/check-trait-failure/resolution/same_name_components.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/resolution/same_name_components.rs):
+  Full-path component resolution: two components in different modules are forced to share the *same* marker name `MeasurerComponent` (via the `#[cgp_component { name, provider }]` override), yet carry different consumer *and* provider trait names, `CanMeasureA`/`MeasurerA` in `shapes_a`, `CanMeasureB`/`MeasurerB` in `shapes_b`.
+- [`checks/check-trait-failure/resolution/same_name_marker_rename.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/resolution/same_name_marker_rename.rs):
+  a `#[check_providers]` check whose component shares its marker name with another component.
+- [`checks/check-trait-failure/types/abstract_type_mismatch_projected.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/types/abstract_type_mismatch_projected.rs):
+  an abstract type a provider pins to a *projection* through another abstract type, which the context binds to something else.
+- [`checks/check-trait-failure/types/computer_result_error_mismatch.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/types/computer_result_error_mismatch.rs):
+  a `#[cgp_computer]` function returning `Result<u64, String>`, called through `try_compute` on a context whose abstract error type is `()` rather than `String`.
+- [`checks/check-trait-failure/types/has_fields_shape_mismatch.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/types/has_fields_shape_mismatch.rs):
+  a provider bound on the context's whole shape, wired on a context whose field type differs.
+- [`checks/check-trait-failure/types/plain_assoc_type_mismatch.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/types/plain_assoc_type_mismatch.rs):
+  the negative counterpart of `abstract_type_mismatch`: the same projection failure on a trait that is **not** a CGP abstract-type component.
+- [`checks/check-trait-failure/use-site/generic_consumer_unwritten_arg.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/use-site/generic_consumer_unwritten_arg.rs):
+  a generic consumer failing at a call whose arguments write no types: the resolver declines, and the fallback strips rustc's misleading method advice.
+- [`checks/check-trait-failure/use-site/pipeline_unhandled_code.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/use-site/pipeline_unhandled_code.rs):
+  a pipeline stage that routes back to the context for a `Code` nothing is wired for.
+- [`checks/check-trait-failure/verbosity/deep_dispatch_chain.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/verbosity/deep_dispatch_chain.rs):
+  a resolved dispatch chain over a DSL-sized program, every construct named in full.
+- [`checks/check-trait-failure/missing-wiring/open_key_qualified_argument.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/open_key_qualified_argument.rs):
+  an `open` dispatch key whose value type takes a type two modules share a name for.
 
 ## Related
 

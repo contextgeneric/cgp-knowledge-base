@@ -164,6 +164,8 @@ The hidden (method-call) form of the same mistake is
 cataloged with the [hidden unsatisfied dependency](../hidden/unsatisfied-dependency.md) class it
 shares its shape with; there the `.cgp.stderr` must recover the buried bound, so it does lead with
 `[CGP-E001]` and a `root cause: [CGP-E117]` tree.
+- [`checks/ordinary-trait-bound/borrowed_detail.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/ordinary-trait-bound/borrowed_detail.rs):
+  Wrapping an error with a borrowed detail through a wrapper that needs `'static` details.
 
 ## Related
 

@@ -82,7 +82,7 @@ Both checks failed with the same root cause, the bundle having no entry for the 
 that reaches it:
 
 ```text
-error[E0277]: [CGP-E002] missing entry for `UserCreatorComponent` in provider `BareCoreComponents`
+error[E0277]: [CGP-E001] missing entry for `UserCreatorComponent` in provider `BareCoreComponents`
    = note: root cause: [CGP-E114] missing entry for `UserCreatorComponent` in provider `BareCoreComponents`
 ```
 

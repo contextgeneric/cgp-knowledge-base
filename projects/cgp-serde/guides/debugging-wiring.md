@@ -59,8 +59,7 @@ because no field in the data has the type:
   the [two-application example](../examples/messages.md#entries-the-traversal-needs) shows the `i64`
   case with its output.
 - **A service a provider takes from the context.** Wiring `&'a Coord` to `DeserializeAndAllocate`
-  without an `AllocatorComponent` entry reports that the context does not contain any delegate entry
-  for `AllocatorComponent`, because the provider allocates through the context's `CanAlloc`. The
+  without an `AllocatorComponent` entry reports missing wiring for `AllocatorComponent`, because the provider allocates through the context's `CanAlloc`. The
   [arena example](../examples/arena.md#wiring-the-three-layers) shows the code and the output.
 
 ## A deserialization check omits the lifetime
