@@ -140,10 +140,9 @@ readability, which means the output is meant to be *read* rather than compiled.
 
 `expand` is not a check: the compilation stops once the crate is expanded, so no type analysis runs, a
 wiring mistake goes unreported, and the command exits 0. An error reported before that point fails the
-command with cargo's exit code. A CGP macro rejecting its input or a wiring entry naming nothing still
-prints what expanded, while a syntax error, a type defined twice, or a `macro_rules!` call matching no
-rule prints nothing
-([how a run fails](../implementation/expand-command.md#how-a-run-fails)).
+command with cargo's exit code. Most such errors, such as a CGP macro rejecting its input, still print
+what expanded, while a type defined twice, a `macro_rules!` call matching no rule, or an unclosed
+delimiter prints nothing ([how a run fails](../implementation/expand-command.md#how-a-run-fails)).
 
 ## Reading the output
 

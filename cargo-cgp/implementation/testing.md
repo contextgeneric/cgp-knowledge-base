@@ -70,16 +70,18 @@ what the macros *generate*.
   `<name>.rust.stderr`. It records the "before", so nothing cross-checks it.
 - **The expand pass** runs `cargo cgp expand` and compares its **stdout** with `<name>.expand.rs`.
   It shows the generated code beside the error about it, and it is the end-to-end coverage of
-  [the expand command](expand-command.md) and its [resugaring](resugaring.md). It does not read the
-  command's exit status, or its stderr.
+  [the expand command](expand-command.md) and its [resugaring](resugaring.md).
 
-Three checks hold each fixture to more than its snapshots, because a snapshot alone cannot catch a
+Four checks hold each fixture to more than its snapshots, because a snapshot alone cannot catch a
 crash that prints nothing or a rewrite of an error the tool should leave alone:
 
 - **The status check** requires the tool and plain `cargo check` to agree on whether the fixture
   compiles. The known case of the next solver accepting a mistake, a namespace inheritance cycle,
   compiles under both on the pinned nightly (only stable rejects it), so
   `namespace_inheritance_cycle` fails this check if a later nightly makes them disagree.
+- **The expand status check** requires `cargo cgp expand` to fail exactly when its stderr reports an
+  error. Expansion stops before type-checking, so its status differs from `cargo check`'s, and a
+  compile error ending in exit 0 would otherwise pass.
 - **The pass-through check**, for fixtures under `pass-through/`, requires the tool's stderr to
   equal plain `cargo check`'s, both normalized as the baseline is. A fixture whose output still
   differs declares `//@rewrites-falsely: <reason>`, and the check reports the marker once the
@@ -98,8 +100,9 @@ how rustc truncates a list in a *diagnostic*, but in an expansion a raw list mea
 declined, which the snapshot must show.
 
 A fixture whose compilation stops before expansion finishes has no expansion, so its snapshot holds
-a two-line comment marker. Every fixture holding it today defines a name twice (`E0428`), which
-rustc treats as fatal once name resolution finishes. The collector skips `*.expand.rs`, or a
+a two-line comment marker. Most fixtures holding it define a name twice (`E0428`), which rustc treats
+as fatal once name resolution finishes; `macro_rules_no_matching_rule` and `unclosed_delimiter` stop
+earlier. The collector skips `*.expand.rs`, or a
 snapshot would be collected as a fixture.
 
 ### The harness
@@ -249,7 +252,7 @@ The harness's own library has these tests, under
 - [`fixtures.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/fixtures.rs): discovery, and the no-expansion marker.
 - [`normalize.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/normalize.rs): the rewrites, the dropped lines, and the spine collapse.
 - [`options.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/options.rs): option and filter parsing.
-- [`passes.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/passes.rs): the header, status, and pass-through checks, and the JSON reduction.
+- [`passes.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/passes.rs): the header, status, expand status, and pass-through checks, and the JSON reduction.
 - [`paths.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/paths.rs): the upward search for the built front-end.
 - [`snapshot.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/snapshot.rs): a missing snapshot, blessing, and the line diff.
 

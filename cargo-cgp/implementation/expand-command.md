@@ -123,13 +123,16 @@ decides it, and running each case gave:
 | Run | Expansion printed | Exit code |
 | --- | --- | --- |
 | A clean crate, or one with a type error or a wiring mistake | yes | 0 |
-| A wiring entry naming nothing, or a CGP macro rejecting its input | what expanded | cargo's 101 |
-| A type defined twice, a syntax error, or a `macro_rules!` call matching no rule | no | cargo's 101 |
+| A CGP macro rejecting its input, `compile_error!`, a wiring entry or import naming nothing, a missing module file, or a syntax error the parser recovers from | what expanded | cargo's 101 |
+| A type defined twice, a `macro_rules!` call matching no rule, or an unclosed delimiter | no | cargo's 101 |
 | Several targets and none selected | no | cargo's 101 |
 | An `--item` path that matches nothing | no | 1 |
 
 The second row surprises readers: the compilation reaches `after_expansion` after those errors, and
-the listing omits what the failed macro would have generated. The driver's reshaping of
+the listing omits what the failed macro would have generated. The third row's `macro_rules!` case
+differs because a call matching no rule counts in `nb_macro_errors`, on which rustc aborts after
+expansion ([`rustc_interface/src/passes.rs`](../../../external/rust/compiler/rustc_interface/src/passes.rs)),
+while the CGP macros' rejections, in the runs above, do not stop it. The driver's reshaping of
 name-resolution errors runs only in a check, so those errors print as rustc wrote them.
 
 The driver prints the `--item` miss straight to stderr rather than as a diagnostic, for two reasons.
@@ -140,8 +143,12 @@ It is not about the code, so it should not fail the compilation in cargo's eyes.
 An expansion that `syn` cannot parse comes back whole even when `--item` asked for less, because the
 filter works on the parsed tree.
 
-Cargo re-runs the expanded unit on each invocation, since the unit produces no artifact to satisfy its
-fingerprint. A `cargo cgp check` in the same target directory afterward re-checks the crate normally.
+A reader that closes the pipe early, as `head` does, is not a failure, so the command then exits with
+cargo's code; any other write error reports. A forwarded `--message-format=json` puts cargo's JSON on
+stdout ahead of the expansion, since stdout is inherited.
+
+Cargo re-runs the expanded unit on each invocation, and a `cargo cgp check` in the same target
+directory afterward re-checks the crate normally.
 
 ## The driver: expand mode
 
@@ -197,8 +204,9 @@ than failing.
   itself a list, so folding the innermost cell first leaves `Cons<A, Product![B]>`.
 - **Only real syntax is emitted.** No `Path!` spelling names a path ending in a generic tail, so an
   `open` statement's per-key entry keeps its raw
-  `PathCons<ItemEncoderComponent, PathCons<u64, __Wildcard__>>`, the one construct an expansion
-  still shows raw. A field list folds to its real `Struct!` or `Enum!` shape.
+  `PathCons<ItemEncoderComponent, PathCons<u64, __Wildcard__>>`, and a list with a generic tail, such
+  as a written `impl … for Cons<Head, Tail>`, stays raw for the same reason. A field list folds to
+  its real `Struct!` or `Enum!` shape.
 - **The printer's spacing is corrected afterward.** The printer lays a macro body out token by
   token, so it prints `Product![Multiply < Symbol!("foo") >]` and breaks a brace-delimited body onto
   its own lines. One narrow text pass removes the spaces inside the bodies of the macros the crate
@@ -269,8 +277,7 @@ Two references explain mechanisms the design relies on:
 ## Tests
 
 The resugaring is pure text-to-text, so unit tests pin it without a compiler, and the UI suite
-covers the launching and printing halves. That suite compares the expansion's stdout and does not
-read its exit status, so only the unit test below and the failure cases' probes cover the exit code.
+covers the launching and printing halves.
 
 - [`crates/cargo-cgp-expand/tests/expand/resugar.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-expand/tests/expand/resugar.rs):
   each construct and its decline cases, the overlap hazards, the outermost-first fold, the spacing,
@@ -283,13 +290,15 @@ read its exit status, so only the unit test below and the failure cases' probes 
 - [`crates/cargo-cgp-driver/tests/driver/expand.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/expand.rs): the
   marker flags recovered and stripped, and a stray item flag never reaching the compiler.
 - [`crates/cargo-cgp/tests/front_end/expand.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/expand.rs): the exit code, the
-  profile detection, the output directory, and the `--item` extraction.
+  closed pipe, the profile detection, the output directory, and the `--item` extraction.
 - [`crates/cargo-cgp/tests/front_end/invocation.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/invocation.rs): the
   marker flags after one `--`.
 - [`crates/cargo-cgp/tests/front_end/help.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/help.rs): what the expand help
   documents.
 - The [UI suite](testing.md#three-passes-per-fixture) expands **every fixture**, comparing with its
-  `<name>.expand.rs`.
+  `<name>.expand.rs` and requiring the command to fail exactly when it reported an error. The
+  `pass-through/` fixtures `macro_rules_no_matching_rule`, `unclosed_delimiter`,
+  `recovered_syntax_error`, and `compile_error_macro` pin the kinds of failure.
 
 ## Source
 

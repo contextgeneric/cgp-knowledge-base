@@ -170,8 +170,9 @@ These are the front-end's modules, which sit under
 [`crates/cargo-cgp/src/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp/src); the driver's are in
 [its Source section](driver/program.md#source).
 
-- [`run.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/run.rs), [`args.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/args.rs):
-  the entry point, the normalization, and the dispatch.
+- [`run.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/run.rs), [`args.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/args.rs),
+  [`help.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/help.rs):
+  the entry point, the normalization, the dispatch, and the help texts.
 - [`launch/command.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/command.rs): the wrapped cargo command
   both reading subcommands run.
 - [`launch/invocation.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/invocation.rs),
