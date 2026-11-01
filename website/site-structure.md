@@ -551,6 +551,10 @@ error-codes page say both bodies are covered.
 
 ### Maintaining it
 
+Use natural-writing whenever adding or revising a page under `docs/cargo-cgp/`, as required by the
+[tooling-page writing guide](writing-guides/tooling.md#writing-style). Apply it throughout the page,
+keeping tables, lists, and code blocks where the content is a set of items or text a reader copies.
+
 **Re-run the commands rather than editing their output.** Every quoted diagnostic and listing on these
 pages came out of the tool, run on exactly the program the page shows, and a paraphrase reads to a user
 as a version mismatch. The guide's draft checks are the procedure.

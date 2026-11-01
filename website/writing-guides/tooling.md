@@ -13,6 +13,20 @@ this guide describes.
   reading the output, a page on editor integration, troubleshooting, and two lookup pages for the
   error codes and the command line
 
+## Writing style
+
+Use **natural-writing** whenever adding or revising a public page under `docs/cargo-cgp/`. Select
+that style in the `point-first-writing` skill and apply it throughout the page. Let each sentence
+build on the previous one, connect paragraphs so readers can follow the reasoning, and vary sentence
+length. A reader arrives here to run a command or to understand an error, so the opening names that
+task and why it matters.
+
+The form still follows the content. The symptom index, the decision table, the command tables, and
+each code's entry stay tables or short structured entries, since a reader looks items up in them, and
+commands and quoted output stay code blocks. The natural-writing style governs the prose that
+introduces and connects them. Preserve technical conditions, exceptions, and uncertainty when
+revising the prose.
+
 ## Why this is its own kind of page
 
 A tooling page fails differently from every other page on the site, which is why it needs its own
@@ -141,6 +155,9 @@ though it has; say which paths are verified.
 ## Checking a draft
 
 **Run every command in it**, on the program the page shows, and paste what came back.
+
+**Check the natural-writing style.** Read the page from start to finish. Each sentence should build
+on the preceding one, paragraphs should connect the reasoning, and sentence lengths should vary.
 
 **Read the installation page as someone with only Nix, then again as someone with only rustup, then as
 someone with neither.** Each should find their path, or learn that none fits, without reading the
