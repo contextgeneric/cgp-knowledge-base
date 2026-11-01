@@ -246,7 +246,7 @@ carries. When a fixture declares an auxiliary crate, the harness rewrites the wo
 manifest to add it as a path dependency before any pass runs; a transitive auxiliary dependency (one
 aux crate's `../other-aux` path) resolves through the shared materialized sibling. Because a
 worker's manifest is rewritten only when its dependency set actually changes, a run of ordinary
-(no-aux) fixtures never disturbs the cached `cgp` build. This is what lets the three cross-crate
+(no-aux) fixtures never disturbs the cached `cgp` build. This lets the three cross-crate
 orphan-rule fixtures, the published-blanket-trait fixture
 `upstream_blanket_trait_use_site`, the positive `ok/cross_crate_wiring.rs`, and the two
 cross-crate dispatch fixtures `ok/cross_crate_dispatch_enum.rs` and
@@ -345,7 +345,7 @@ After an *intended* change to what the tool emits, `--bless` regenerates all thr
 `.cgp.json` where the JSON pass runs), the analogue of Clippy's `cargo bless`. It writes
 `.cgp.stderr` from the real `cargo-cgp` run, `.rust.stderr` from plain `cargo check`, and
 `.expand.rs` from `cargo cgp expand`, and the diff is reviewed before committing. The three move for
-different reasons, which is what makes a diff informative: `.cgp.stderr` changes when the tool's
+different reasons, which makes a diff informative: `.cgp.stderr` changes when the tool's
 diagnostics change, `.rust.stderr` on a toolchain bump *or* whenever a fixture's own line numbering
 shifts, and `.expand.rs` when a CGP macro's expansion changes or when the resugaring does. An
 unexpected `.expand.rs` diff after a `cgp` update is a report of what the macros now generate.
@@ -394,7 +394,7 @@ produced by compiling the fixture through the tool.
 The suite matches Clippy's *approach* closely: a custom Rust test harness with `harness = false` and
 its own `fn main`, driving a tree of `tests/ui/*.rs` fixtures against committed snapshots with a
 bless step. The mental model transfers directly, and
-[`external/rust-clippy/tests/compile-test.rs`](../../../external/rust-clippy/tests/compile-test.rs)
+[`external/rust/src/tools/clippy/tests/compile-test.rs`](../../../external/rust/src/tools/clippy/tests/compile-test.rs)
 is the reference to read alongside this crate. Two deliberate differences remain.
 
 First, the harness is **hand-rolled rather than built on the
@@ -407,14 +407,14 @@ quieted with `-q`) instead of straight to the compiler.
 
 Second, and following from that, the harness **drives the whole tool, where Clippy's `ui_test`
 drives `clippy-driver` directly**. Driving the front-end is a stronger end-to-end test, since it
-exercises `cargo-cgp` as a user invokes it, and it is what makes the cargo-resolves-`cgp` shortcut
+exercises `cargo-cgp` as a user invokes it, and it makes the cargo-resolves-`cgp` shortcut
 possible. If the suite grows enough to want per-diagnostic control (inline `//~` annotations,
 rustfix, and the like), adopting `ui_test` pointed at `cargo-cgp-driver` is the natural next step.
 
 A third, smaller difference is that the suite pins *three* snapshots per fixture where Clippy pins
 one. One extra is the `.rust.stderr` baseline: it records plain `cargo check`, which Clippy never
 needs because it only *adds* lints to rustc's output rather than rewriting it, so it has no "before"
-worth pinning. `cargo-cgp` rewrites, so the before/after pairing is what makes the rewrite legible.
+worth pinning. `cargo-cgp` rewrites, so the before/after pairing makes the rewrite legible.
 The other is the `.expand.rs`, which covers the `expand` command Clippy has no counterpart for.
 There is no unit-test pass against Clippy's either, and none is possible: the driver applies its
 transforms in-process while rendering, so there is no separately renderable stage to check apart
@@ -435,9 +435,22 @@ committed snapshot with a bless step, the workflow reproduced here.
 
 ## Tests
 
-The tests this document describes are the argument-handling tests, the harness crate's own unit
-tests, and the UI snapshot suite, each a module of its crate's one unit-test target except the
-suite. There is no dogfood test yet (see above).
+Every crate has one unit-test target, with a module per subject, and the UI suite has its own. These
+are the targets, with the document that lists each one's tests:
+
+- [`crates/cargo-cgp/tests/front_end/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp/tests/front_end): the front-end's pure helpers
+  ([Executable structure](executable-structure.md#tests), [Distribution](distribution.md#tests),
+  [The expand command](expand-command.md#tests)).
+- [`crates/cargo-cgp-driver/tests/driver/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/tests/driver): the driver's
+  arguments, panic containment, flush, and other code that needs a compiler's types but no
+  compilation ([The driver](driver.md#tests)).
+- [`crates/cargo-cgp-error-processing/tests/error_processing/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/tests/error_processing):
+  the rustc-free wording, tree, and text transforms ([Error processing](error-processing.md#tests)).
+- [`crates/cargo-cgp-expand/tests/expand/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-expand/tests/expand): the expansion's
+  resugaring and item selection ([The expand command](expand-command.md#tests)).
+
+The rest of this list covers the two argument-handling tests, the harness crate's own unit tests, and
+the UI suite.
 
 - [`crates/cargo-cgp/tests/front_end/args.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/args.rs):
   `strip_subcommand` across the `cargo cgp check` form, the direct form, a later matching token, and

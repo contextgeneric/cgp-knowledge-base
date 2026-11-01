@@ -37,7 +37,7 @@ piece of output tells you where to look when that piece is wrong.
 
 **Type and const printing lives in
 [`rustc_middle/src/ty/print/pretty.rs`](../../../external/rust/compiler/rustc_middle/src/ty/print/pretty.rs).**
-This is what turns a `ty::Ty` into a string, through the `PrettyPrinter` trait and the `FmtPrinter`
+This turns a `ty::Ty` into a string, through the `PrettyPrinter` trait and the `FmtPrinter`
 that backs `Ty`'s `Display`. It is where a `Symbol` or a `Chars` chain becomes the characters you
 see, and where the `pretty_print_const_scalar_int` function renders a `char` const literal such as
 `'h'`. It also holds `should_print_verbose`, the gate on the compiler's *internal* debug printing,
@@ -65,7 +65,7 @@ post-processor cannot recover it.
 rustc has two distinct verbosity flags, and the difference between them is the single most useful
 fact in this document, because one is the surgical lever `cargo-cgp` wants and the other is not.
 
-**`opts.verbose` is the broad switch, and it is what gates every *elision* suppression below.** It
+**`opts.verbose` is the broad switch, and it gates every *elision* suppression below.** It
 is set in
 [`rustc_session/src/config.rs`](../../../external/rust/compiler/rustc_session/src/config.rs) (in
 `build_session_options`) by `matches.opt_present("verbose") || unstable_opts.verbose_internals`, so

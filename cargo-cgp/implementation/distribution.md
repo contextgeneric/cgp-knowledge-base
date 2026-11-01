@@ -14,7 +14,7 @@ newer version is published. A handful of environment variables
 override the management for local development. What is *not* yet automated is the release process
 itself: the two crates must be published to crates.io together, at the same version, for the version
 handshake and `setup`'s versioned driver install to hold (see
-[Open decisions and risks](#open-decisions-and-risks-to-resolve)).
+[Known limitations](#known-limitations)).
 
 ## The problem
 
@@ -54,7 +54,7 @@ sound worse than it is. **Updating the host's nightly does not break the driver.
 untouched. The driver keeps working until *cargo-cgp itself* ships a new version that bumps the pin.
 **And the project being checked does not need to use nightly at all.** A user's crate can pin
 stable, or nothing; `cargo-cgp` forces the pinned nightly it provisions for the check and leaves the
-project's real builds alone. The design below is what makes that true.
+project's real builds alone. The design below makes that true.
 
 ## How similar tools solve it
 
@@ -137,7 +137,7 @@ distribution bug.
 
 `cargo-cgp` is always installed with cargo (there is no prebuilt-binary channel), and the install
 splits cleanly in two: a bare `cargo install cargo-cgp` puts the front-end in place, and
-`cargo cgp setup` provisions everything heavyweight. That split is what lets the first command be
+`cargo cgp setup` provisions everything heavyweight. That split lets the first command be
 one a user types from memory, with no nightly date string in it, and it dissolves the bootstrapping
 problem that a `rustc_private` tool would otherwise have.
 
@@ -160,10 +160,10 @@ dependency versions the release was tested with, including the `syn` and `pretty
 whose output the expand snapshots pin, instead of the newest compatible ones. The explicit toolchain
 is mandatory, not stylistic: without it `cargo install` would build the driver against the active
 toolchain and fail on stable or mis-version on another nightly (cargo#11036 again). Pinning the
-driver to the front-end's own version (`--version <version>`) is what keeps the pair in lockstep,
+driver to the front-end's own version (`--version <version>`) keeps the pair in lockstep,
 and it is possible only because the two crates are released together (below).
 
-Keeping the two crates separate is exactly what enables this. Folding the driver into the
+Keeping the two crates separate enables this. Folding the driver into the
 `cargo-cgp` package as a second `[[bin]]` would force the whole package, front-end included, to
 build under the pinned nightly, losing the bare-`cargo install cargo-cgp` bootstrap. Two crates let
 the front-end install on any toolchain while the driver stays confined to the pinned one, and cargo
@@ -333,7 +333,7 @@ follows the shape of the `crates-index` crate but is written directly over those
 taking on that dependency. One limitation follows from reading `index.crates.io` directly: unlike
 the eventual `cargo install`, it does not consult a user's configured registry mirror or private
 registry, so automatic version discovery targets the default crates.io (see
-[Open decisions and risks](#open-decisions-and-risks-to-resolve)).
+[Known limitations](#known-limitations)).
 
 Installation and update both go **through cargo**; there is no self-replace mechanism to maintain.
 `update` shells out to `cargo install cargo-cgp` (the same tool that installed it), and where that
@@ -358,9 +358,8 @@ an old driver, and that is exactly the mismatch the [preflight](#what-the-prefli
 already catches, so the next `cargo cgp check` tells the user to run `cargo cgp setup` and recovers.
 That is also why the Windows manual path above is safe to leave half-done. And **superseded
 toolchains accumulate**: each nightly bump installs a new multi-gigabyte dated toolchain and leaves
-the previous one in `~/.rustup/toolchains`. `update` does not yet *report* the now-unused toolchain;
-the intended behavior is to report it and suggest `rustup toolchain uninstall`, but never remove it
-automatically, since another tool may still depend on that nightly.
+the previous one in `~/.rustup/toolchains`. `update` never removes one, since another tool may depend
+on that nightly, and it does not report one either ([Known limitations](#known-limitations)).
 
 ## Escape hatches for local development
 
@@ -549,8 +548,7 @@ but the design does not depend on one.
 ## Rust Analyzer integration
 
 Rust Analyzer can run `cargo cgp check` as its on-save diagnostic backend, and the design already
-accommodates it, but two of the distribution choices (the JSON rendering and the forced nightly) are
-exactly what makes the integration work or fail. The good news is that the one interaction a reader
+accommodates it, but two of the distribution choices (the JSON rendering and the forced nightly) makes the integration work or fail. The good news is that the one interaction a reader
 would expect to break, Rust Analyzer's own compiler wrapper colliding with the tool's, does not
 happen. The risk that is real is build-artifact contention, and it has a concrete fix.
 
@@ -640,44 +638,34 @@ analyzed project needs no nightly of its own, where `rustc_plugin` requires it t
 and the bare-`cargo install cargo-cgp` bootstrap that defers every heavyweight step to an explicit
 `cargo cgp setup` (so the user never types a nightly date to get started).
 
-## Open decisions and risks to resolve
+## Known limitations
 
-One design choice is still open, one release-process requirement is not yet enforced, one `update`
-report is not yet built, and a few limitations are deliberate; they are collected here so they are
-handled knowingly rather than discovered late.
+These limits and assumptions of the managed path are deliberate or accepted:
 
-- **Versioning scheme (open).** Whether to adopt `rustc_plugin`'s nightly-as-prerelease-label
-  convention for crates.io releases, or keep a plain semver and carry the nightly only in
-  `PINNED_TOOLCHAIN`. `update`'s `semver` comparison already orders either scheme correctly; the
-  choice is about release ergonomics, not code.
-- **Atomic two-crate publishing (not yet enforced).** The exact-version preflight and `setup`'s
-  `cargo-cgp-driver@<version>` both assume both crates are published to crates.io at the same
-  version on every release. `[workspace.package]` keeps the versions equal *in the source tree*, but
-  nothing yet guarantees both are *published* together. A release that ships `cargo-cgp` without a
-  matching `cargo-cgp-driver` leaves `setup` unable to find the driver version it asks for. The
-  release automation must publish the pair atomically.
-- **Superseded-toolchain report (not yet built).** `update` leaves the previous pinned nightly
-  installed and says nothing about it; it should name the now-unused toolchain and suggest
-  `rustup toolchain uninstall`, without removing it.
-- **Driver co-location falls back when the front-end is not in a `bin` directory (limitation).**
+- **Publishing is manual.** The exact-version preflight and `setup`'s `cargo-cgp-driver@<version>`
+  assume both crates are published at the same version. `[workspace.package]` keeps the versions
+  equal in the source tree, but nothing enforces that a release publishes both, and a release that
+  ships `cargo-cgp` alone leaves `setup` unable to find its driver.
+- **`update` does not report a superseded toolchain.** It leaves the previous pinned nightly
+  installed and says nothing about it.
+- **Driver co-location falls back when the front-end is not in a `bin` directory.**
   `setup` derives `--root` from the front-end's `current_exe` so the driver lands beside it (for the
   usual `~/.cargo/bin/cargo-cgp`, root `~/.cargo`). When the front-end sits somewhere that does not
   fit cargo's `<root>/bin` convention, `setup` warns and installs the driver to cargo's default
-  location instead of guessing, which may not co-locate them. This is fine for the ordinary
-  `cargo install` path and left as a rough edge for unusual layouts.
-- **`setup` idempotency rests on cargo's "already installed" being success (assumption).**
+  location instead of guessing, which may not co-locate them. The ordinary `cargo install` path
+  is unaffected.
+- **`setup` idempotency rests on cargo's "already installed" being success.**
   Re-running `setup` (as `update` does) relies on `rustup toolchain install` being a no-op when
   already satisfied and on `cargo install cargo-cgp-driver@<version>` exiting successfully when that
-  version is already present. Both hold on current cargo and rustup; if a future cargo made "already
-  installed" an error, `setup` would need a guard.
-- **rustup is assumed by the managed path (limitation).** The `setup`/`update`/preflight flow
+  version is already present. Both hold on current cargo and rustup.
+- **The managed path assumes rustup.** The `setup`/`update`/preflight flow
   manages toolchains entirely through rustup (`RUSTUP_TOOLCHAIN`, `rustup toolchain install`). A
   machine whose Rust comes from a distro package or another manager has no rustup to drive, so it is
   out of scope for automatic provisioning; `setup` and the preflight report a missing rustup
   plainly rather than failing obscurely. Nix is the exception rather than a gap: it is served by the
   [`flake.nix`](#installing-with-nix), which provisions the toolchain at build time and runs the
   front-end unmanaged.
-- **`update` version discovery targets the default crates.io (limitation).** It reads
+- **`update` version discovery targets the default crates.io.** It reads
   `index.crates.io` directly, so unlike the `cargo install` that follows it, it does not consult a
   user's configured registry mirror or source replacement. A locked-down network that blocks
   `index.crates.io` will make `update`'s check fail (with a clear error); the manual
