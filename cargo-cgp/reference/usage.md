@@ -317,7 +317,8 @@ LD_LIBRARY_PATH=$SYSROOT/lib CARGO_CGP_SYSROOT=$SYSROOT \
 ```
 
 Run this way the driver behaves as it does under cargo, but in isolation, where you can add
-`RUST_BACKTRACE=1`, extra `-Z` flags, or a debugger. The leading `rustc` path puts it in wrapper mode, so keep it; without it the driver runs in the direct mode `--version` uses
+`RUST_BACKTRACE=1`, extra `-Z` flags, or a debugger. The leading `rustc` path puts it in wrapper
+mode, so keep it; without it the driver runs in the direct mode `--version` uses
 ([preparing the arguments](../implementation/driver/program.md#preparing-the-argument-vector)).
 
 ## Further reading
