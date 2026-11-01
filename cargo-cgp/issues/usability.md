@@ -63,12 +63,6 @@ These errors keep the compiler's output because nothing in the tool starts from 
 - **`delegate_components!` on a foreign type:** rustc's `E0117` says the type is not local, and its
   `E0210` beside it names `__Context__`
   ([`orphan_registration_beside_foreign_table`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/orphan-rule/orphan_registration_beside_foreign_table.rs)).
-- **A misspelled name in the body of a misused `#[cgp_impl]`:** the `[CGP-E032]` drops the body's
-  errors by their spans, so the typo appears only once the header is fixed
-  ([`consumer_trait_in_provider_impl_body_typo`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/consumer_trait_in_provider_impl_body_typo.rs)).
-- **A qualified key in a structural code:** `[CGP-E019]` and its neighbours print a key's type by its
-  own name, so `std::io::Error` reads `Error`, and only the caret tells it from a local `Error`
-  ([`entry_generic_qualified_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/entry_generic_qualified_key.rs)).
 - **A lifetime requirement on a check entry:** an error detail borrowed through a wrapper that needs
   `'static` details, or a provider bounded on `FieldsRef<'b>` for every lifetime and checked for an
   enum with a lifetime, fails with a bare `E0477` on the check entry. The resolver walks trait
@@ -154,9 +148,15 @@ These errors keep the compiler's output because nothing in the tool starts from 
 
 ## Errors that need a new class or a deeper walk
 
-These errors are reshaped in part or not at all, and stating their cause needs a class or a walk the
-tool does not have:
+These errors are reshaped in part or not at all, and stating their cause needs a class, a walk, or a
+reading of the compiler's state the tool does not have:
 
+- **A misspelled name in the body of a misused `#[cgp_impl]`:** the `[CGP-E032]` drops the body's
+  errors by their spans, so the typo appears only once the header is fixed
+  ([`consumer_trait_in_provider_impl_body_typo`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/consumer_trait_in_provider_impl_body_typo.rs)).
+- **A qualified key in a structural code:** `[CGP-E019]` and its neighbours print a key's type by its
+  own name, so `std::io::Error` reads `Error`, and only the caret tells it from a local `Error`
+  ([`entry_generic_qualified_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/entry_generic_qualified_key.rs)).
 - **A matcher where a handler or an enum belongs:** a value matcher wired as a `Handler` names its
   expansion, `MatchWithHandlers<Product![ExtractFieldAndHandle<…>, …]>`, as the type that is not a
   provider, and one applied to a struct ends at a bound on the internal `HasFieldHandlers` trait.
