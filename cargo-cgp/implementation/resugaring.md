@@ -1,177 +1,26 @@
 # Resugaring
 
-CGP's type-level constructs are written as macros and compiled as deeply nested types, so a
-programmer writes `Symbol!("height")` and the compiler talks back about
-`Symbol<6, Chars<'h', Chars<'e', …>>>`; resugaring is the family of transforms that reverses each of
-those expansions, so every CGP construct cargo-cgp shows a reader is spelled the way they wrote it.
+CGP's type-level macros compile to deeply nested types, so a programmer writes `Symbol!("height")`
+and the compiler talks back about `Symbol<6, Chars<'h', Chars<'e', …>>>`. Resugaring reverses each
+expansion, so every construct cargo-cgp shows is spelled as the programmer wrote it. Three
+implementations exist because there are three different inputs, and this document is their one
+specification: a change to what a construct resugars to, or to what counts as an exact match,
+belongs in all three at once.
 
-This document is the single home for that logic. The transforms are spread across the tool by
-necessity (three implementations exist because there are three different inputs to resugar), and the
-rules they must all obey are the same, so gathering them here keeps one description of each
-construct instead of one per call site. The subsystems that *drive* them describe only that: how the
-driver applies its diagnostic chain is [Error processing](error-processing.md), how the resolver
-labels a dependency chain is [walking to the root cause](typed-resolution-walk.md), and how the
-expand command post-processes a printed crate is [The expand command](expand-command.md).
+The expanded form does more than look bad: it hides the fact the reader needs. A missing-field error
+exists to name the field, and a `Chars` chain buries that name, worse when rustc elides part of it,
+which is why the driver also
+[injects `--verbose`](rustc-diagnostic-internals.md#the-suppression-points).
 
-## Why resugaring exists
-
-Every CGP type-level macro is sugar over a nested type, and nothing downstream of the macro
-remembers the sugar. `Symbol!("height")` expands to a length and a right-folded character list;
-`Product![A, B]` to a `Cons` list; `Path!(@app.Greeter)` to a `PathCons` chain. The macro emits the
-expanded form, the compiler interns it, and every later mention (a trait bound in an error, a wiring
-key in a coherence conflict, a type in a printed expansion) is that expanded form. A reader who
-never wrote it is then asked to read it, and the encodings are large: a six-character field name is
-a seven-level type, and the compiler will happily break it across four lines mid-list.
-
-Resugaring is worth the machinery because the expanded form does not merely look bad, it *hides the
-fact the reader needs*. The whole point of a missing-field error is the field's name, and that name
-is the one thing a `Chars` chain buries, worse still when rustc elides part of the list, which is
-why the driver also injects `--verbose` (see
-[rustc diagnostic internals](rustc-diagnostic-internals.md#the-suppression-points)). Un-eliding gets
-the characters into the text; resugaring turns them back into a name.
-
-**A resugaring must never lie, and that constraint shapes every rule below.** Rewriting
-`Symbol<6, …>` to `Symbol!("height")` is a claim about what the programmer wrote, so a transform
-that guesses is worse than one that does nothing: a reader who is shown a construct that was never
-in the source has no way to tell, and will go looking for it. So every transform matches **exactly
-or declines**, leaving the raw type in place, and the sections below say precisely what "exactly"
-means for each construct.
+**A resugaring must never lie, and that shapes every rule below.** Showing `Symbol!("height")` is a
+claim about what the program wrote, and a reader shown a construct that was never in the source will
+go looking for it. So every transform matches **exactly or declines**, leaving the raw type in
+place.
 
 ## The three approaches
 
-Resugaring happens at three points in the tool, and each works over a different representation of
-the same construct: an interned compiler type, a rendered string, and a parsed syntax tree. They
-agree on *what* every construct resugars to (that is the whole subject of
-[The resugarings](#the-resugarings) below), and they share nothing at all in *how* they recognize
-it, because the three inputs offer different information and demand different output. The
-sub-sections here describe each approach and what forces it to be its own implementation; the
-section after them collects the reasons the three cannot be collapsed into one.
-
-### Typed: `Ty<'tcx>` inside the resolver
-
-The typed approach resugars a construct while the driver still holds it as a real compiler type,
-before any string exists. It is
-[`render_ty`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/label/render_ty.rs)
-plus
-[`decode_symbol`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/query/cgp_item/spine.rs),
-and every dependency-chain label and classified leaf the
-[typed root-cause resolver](typed-root-cause-resolution.md) produces goes through it, so a reshaped
-diagnostic is already sugared when it is built.
-
-Its distinguishing asset is **identity**: a `Ty<'tcx>` carries the `DefId` of the type it names, so
-every cell can be checked against the crate that defines it: `Cons`/`Nil`/`Symbol`/`Chars` in
-`cgp-base-types`, `Either`/`Void`/`Field` in `cgp-field`. A type merely *spelled* `Cons` in some
-other crate is therefore never resugared, whatever its shape, and this lets the typed pass
-be the liberal one: the `DefId` check does the discriminating, so the structural rules need only
-describe the shape rather than defend against coincidence.
-
-Two more things are available here and nowhere else. A character in a `Symbol!` list is a **const
-generic argument**, which this pass reads out of its valtree as an exact `char`, where the other two
-must parse a printed literal and give up on anything escaped. And an inference **placeholder is
-visible as such**, so the call-site anchor's stand-in for an untyped argument renders as the `_` a
-programmer would write instead of rustc's internal `!N` form.
-
-The cost is where it must live. Reaching a `Ty<'tcx>` means linking the compiler, so this
-implementation sits inside the `rustc_private` half of the tool and cannot be unit-tested on an
-ordinary toolchain. Its coverage comes from UI fixtures compiled end to end.
-
-### Text: `&str` in the rustc-free crate
-
-The text approach resugars constructs inside a diagnostic that has already been rendered to strings.
-It is the
-[`postprocess`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/postprocess)
-chain, and the driver runs it over every diagnostic it emits in a crate that uses CGP. On one the
-tool reshaped, it tidies the compiler-formatted types a constructed message still embeds; on one it
-left alone, a message changes only where a resugaring (or the missing-field reword) fires, so
-everything else stays as rustc printed it (see
-[Error processing](error-processing.md#where-post-processing-sits-in-the-pipeline)).
-
-It exists as a separate implementation because **by the time it runs, the types are gone**. This is
-the point worth being precise about, since the compiler is still right there in the process: rustc
-records no mapping from a substring of a rendered message back to the `Ty` it was printed from, so
-there is nothing for the typed pass to be handed. A declined diagnostic is a tree of strings, and a
-string is all its transforms can consult.
-
-Working on text forces two kinds of machinery the typed pass never needs. The first is **structural
-parsing by hand**: balancing angle, paren, and bracket nesting to find where a cell's head ends and
-its tail begins, skipping string literals so a `>` or `,` inside one does not mislead the scan, and
-tolerating whatever whitespace and line breaks rustc's renderer inserted mid-type. The second is
-**name-collision defence**, since there is no `DefId` to ask: the list pass must check that a cell
-name stands alone rather than ending a longer identifier, or the `Cons<` at the tail of `PathCons<`
-would be read as a list cell.
-
-One hazard belongs to this approach alone. rustc splits a message into styled fragments, and its
-"similar impl" hint splits at *every difference between two types*, shredding a list so that no
-fragment contains a whole construct to match. So the driver post-processes each fragment and then
-reads them again as the single line they render as (see
-[Error processing](error-processing.md#how-the-driver-applies-the-transforms)).
-
-The compensating benefit is testability: a transform is a pure `&str -> Option<String>` function, so
-the whole catalogue of match and decline cases is exercised as ordinary library tests with no
-compiler in the loop.
-
-### Syntax tree: `syn::Type` in the expand command
-
-The syntax-tree approach resugars a whole printed crate rather than a diagnostic, and it is the
-[`cargo-cgp-expand`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-expand)
-crate that `cargo cgp expand` drives (see
-[The expand command](expand-command.md#the-rustc-free-resugaring)). Its input is the source text the
-compiler's pretty-printer produced, re-parsed with `syn`.
-
-It cannot reuse the typed pass, because the expanded AST it works from is **pre-resolution** (there
-are no `DefId`s and no `Ty`s, only names) and because it must live outside the compiler linkage to
-stay testable. So, like the text pass, it recognizes constructs by name and must match exactly.
-
-It cannot reuse the text pass either, and that is a measured result rather than a preference. The
-text matchers are written against rustc's *diagnostic* rendering, and on printed source they are
-formatting-sensitive: `prettyplease` breaks a long generic list across lines and ends it with a
-trailing comma before the closing `>`, which the `Symbol!` matcher's final `>` check rejects. On a
-rectangle example the text matchers resugar `Symbol!("width")` and leave `height` a raw list, purely
-because the longer name is the one that gets wrapped. Matching `syn::Type` is immune to formatting,
-because the structure is already parsed.
-
-Four demands are specific to this approach, and each shapes the code. Its **output must be a syntax
-node**, not a string: `Symbol!("height")` is built as a macro-call type the printer then formats,
-where the other two approaches simply emit text. Its passes must **fold each list outermost-first**,
-because a visitor recurses innermost-first and a list's tail is itself a list (folding the inner
-cell first leaves a two-element list as `Cons<A, Product![B]>`), so each pass folds before recursing
-and then recurses into the elements it collected. That same innermost-first instinct makes
-the shared `Nil` overlap hazard bite hardest here, which is why the passes stay separate whole-tree
-visits (see [the rules](#the-rules-every-resugaring-follows)). And it **emits only real syntax**,
-as the diagnostic passes do, the subject of the next section.
-
-A fifth demand is not about matching at all but about printing, and it is why the crate ends with a
-text pass despite being built to avoid text matching. A resugared construct is a macro call whose
-body holds ordinary types, and the printer lays a macro body out token by token: it cannot know the
-body is a type list, so it prints `Product![Multiply < Symbol!("foo") >]`. Its spacing rules cannot
-be coaxed into the conventional form, because the space *before* a token is the printer's decision
-and an identifier cannot ask for it to be dropped. The printer also breaks every brace-delimited
-macro body onto lines of its own, which would print each `Struct! { … }` shape as a block. So one
-narrow pass removes the spaces inside the bodies of the macros the crate emits, keeping the space
-after a `Struct!` field's single `:`, and joins a `Struct!` or `Enum!` brace body back onto the
-macro's line. It never touches a literal or anything outside those bodies, and it only ever removes
-whitespace, so it cannot alter meaning.
-
-### Every output is real syntax
-
-Every form the resugaring shows is one the programmer could have written, in a diagnostic and in
-source output alike. The case that tests the rule is an **open-ended path**, a `PathCons` list that
-ends in a generic "rest of path" parameter rather than `Nil`. `cgp`'s macros end every `@`-path key
-and redirect target with one, the reserved `__Wildcard__`, so that a lookup's appended parameters
-slot into it. No `Path!` spelling names that type: `Path!(@foo.bar)` is the closed,
-`Nil`-terminated path, a different type. So the `Path!(…)` form declines on an open tail, in the
-text pass and the syntax-tree pass alike, and the list stays raw with its segments resugared.
-
-A message the tool rewrites names a *key* rather than a type, and there the open tail is left out:
-a conflicting `@foo.bar` entry reads `@foo.bar`, exactly as its entry wrote it, since the programmer
-never writes the wildcard. The typed rendering of a conflict's key does the same, and prints any
-other generic segment by its parameter name (`@ComputerComponent.Code.u64`). The `Struct!`/`Enum!`
-shapes are real CGP macros too, so all three passes emit them, under the same exact-match rules.
-
-### Why the three cannot be one
-
-The differences are not incidental; each approach is pinned by what its input offers and what its
-output has to be. Laid side by side, the four axes that decide the implementation:
+Each works over a different representation of the same construct, and no two share an input, so no
+two can share a matcher:
 
 | | Typed | Text | Syntax tree |
 |---|---|---|---|
@@ -181,59 +30,91 @@ output has to be. Laid side by side, the four axes that decide the implementatio
 | **Output form** | a string | a string | a syntax node |
 | **May live outside `rustc_private`** | no | yes | yes |
 
-Reading down the columns explains every divergence in the code. The typed pass is short because the
-compiler hands it both identity and structure; the text pass is the longest because it must rebuild
-structure from characters *and* defend against name collisions without identity; the syntax-tree
-pass is in between, given structure but not identity, and owes the extra step of constructing
-printable nodes. No pair of them shares an input, so no pair can share a matcher.
+### Typed: `Ty<'tcx>` inside the resolver
 
-What they do share is the *specification*, every rule in the next two sections, and that is the
-standing obligation this document exists to serve: a change to what a construct resugars to, or to
-what counts as an exact match, belongs in all three at once.
+[`render_ty`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/label/render_ty.rs)
+and
+[`decode_symbol`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/query/cgp_item/spine.rs)
+serve every label and leaf the [typed resolver](typed-root-cause-resolution.md) produces. **Identity
+is its asset:** every cell is checked by `DefId` against the crate that defines it, so a type merely
+spelled `Cons` elsewhere is never resugared, and the rules need only describe the shape. It alone
+reads a `Symbol!` character exactly, from the const argument's valtree, and sees a placeholder as
+such. It must link the compiler, so its coverage comes from UI fixtures.
+
+### Text: `&str` in the rustc-free crate
+
+The
+[`postprocess`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/postprocess)
+chain runs over each diagnostic in a crate that uses CGP
+([what it may change](error-processing.md#where-post-processing-sits-in-the-pipeline)). It exists
+because **by then the types are gone**: rustc records no mapping from a substring of a message back
+to the `Ty` it was printed from, though the compiler is still in the process.
+
+So it needs two kinds of machinery the typed pass does not:
+
+- **Structural parsing by hand:** balancing nesting to find a cell's head and tail, skipping string
+  literals, and tolerating rustc's line breaks.
+- **Name-collision defence:** with no `DefId`, the list pass must check a cell name stands alone, or
+  the `Cons<` at the end of `PathCons<` would read as a list cell.
+
+rustc also
+[shreds a message into styled fragments](error-processing.md#how-the-driver-applies-the-transforms),
+a hazard this approach alone has. In return, each transform is a pure function, so the whole catalog
+of cases runs as library tests.
+
+### Syntax tree: `syn::Type` in the expand command
+
+[`cargo-cgp-expand`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-expand)
+resugars a whole printed crate for
+[`cargo cgp expand`](expand-command.md#the-rustc-free-resugaring). It cannot reuse the typed pass,
+since the expanded AST is pre-resolution, with no `DefId`s or `Ty`s.
+
+**It cannot reuse the text pass either, a measured result rather than a preference.** On printed
+source the text matchers are formatting-sensitive: `prettyplease` breaks a long generic list and
+ends it with a trailing comma before the `>`, which the `Symbol!` matcher's final check rejects. On
+a rectangle example they resugar `width` and leave `height` raw, purely because the longer name
+wraps.
+
+These demands are specific to it:
+
+- **Its output is a syntax node,** a macro-call type the printer formats.
+- **Each pass folds a list outermost-first,** then recurses into the elements it collected. A
+  visitor recurses innermost-first, and folding an inner cell first leaves `Cons<A, Product![B]>`.
+- **It ends with a narrow text pass over printing.** The printer lays a macro body out token by
+  token, so it prints `Product![Multiply < Symbol!("foo") >]`, and breaks each brace body onto
+  lines. That pass only removes whitespace inside the bodies of the macros the crate emits, keeping
+  the space after a `Struct!` field's `:`, so it cannot alter meaning.
 
 ## The rules every resugaring follows
 
-Four rules hold across all the constructs, and they are stated once here rather than repeated per
-section.
+**Match exactly or decline.** An inference placeholder mid-list, a wrong terminator, or a same-named
+foreign type all leave the raw type. Declining is a normal outcome.
 
-**Match exactly or decline.** Each transform reconstructs the surface form only when the type
-matches the expansion the macro produces, level for level, and leaves the raw type alone otherwise.
-Declining is a normal outcome, not a failure: an inference placeholder mid-list, a wrong terminator,
-or a same-named foreign type all take that path.
+**The order is fixed, because the transforms read each other's output:** the module strip, then
+`Symbol!`, whose output `Path!` reads as a segment and the list pass reads as a `Field`'s tag, then
+`Path!`, then the lists.
 
-**The order is fixed, because the transforms read each other's output.** Module qualifiers are
-stripped first, so everything after matches bare names; then `Symbol!`, whose output the `Path!`
-pass reads as a segment and the list pass reads as a `Field`'s tag; then `Path!`; then the lists.
-The text chain in
-[`postprocess/chain.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/chain.rs)
-sequences them in that order, and any other implementation must too.
+**`Nil` terminates three different lists, so the passes stay separate.** It ends a `Symbol`'s
+characters, a `PathCons` path, and a `Cons` list. A pass that rewrites a bare `Nil` before the
+enclosing construct is examined destroys the match: one combined visitor turns a `Symbol`'s
+terminator into `Product![]`, and every field name silently stays raw. So no implementation may fold
+them into one traversal.
 
-That ordering is load-bearing in one way that is easy to get wrong. **`Nil` terminates three
-different lists** (a `Symbol`'s character list, a `PathCons` path, and an empty `Cons` list), so a
-pass that rewrites a bare `Nil` before the enclosing construct is examined destroys the enclosing
-match. On a syntax tree, where a visitor naturally recurses innermost-first, this bites immediately:
-one combined visitor turns a `Symbol`'s terminating `Nil` into `Product![]`, after which the
-`Symbol` no longer matches and *every field name silently stays raw*. Separate whole-tree passes in
-chain order are what keep the constructs apart, and no implementation may fold them into one
-traversal.
+**Every form shown is one the programmer could have written,** in a diagnostic and in source alike.
+The test case is an **open-ended path**, ending in a generic "rest of path" parameter rather than
+`Nil`, as every `@`-path key does through the reserved `__Wildcard__`. No `Path!` spelling names
+that type, since `Path!(@foo.bar)` is the closed path. So the `Path!(…)` form declines on an open
+tail, and the list stays raw with its segments resugared. A message the tool rewrites names a key
+rather than a type, so there the tail is left out, as the entry wrote it.
 
-**Every surface form is real syntax.** An open-ended path, which no `Path!` spelling names, stays
-a list in the `Path!(…)` form and drops its wildcard tail in a rewritten key, per
-[every output is real syntax](#every-output-is-real-syntax). Every other output, the
-`Struct!`/`Enum!` shapes included, is real, writable syntax everywhere.
-
-**An empty list is written `Product![]` only where its type is known.** The typed implementation
-reads each type's `DefId`, so it writes a standalone CGP `Nil` as `Product![]` and `Void` as
-`Sum![]` (`PipeHandlers<Product![]>`), leaving alone the `Nil` that ends a spine, a `Symbol`'s
-string, or a `Field`'s unit payload. The text and syntax-tree passes see only the name, which a
-program may give a type of its own, so they leave a bare `Nil` or `Void` as it is, and their list
-folds require a first cell before they begin.
+**An empty list is written `Product![]` only where its type is known.** The typed pass writes a
+standalone CGP `Nil` as `Product![]` and `Void` as `Sum![]`, leaving the `Nil` that ends a spine or
+a `Field`'s unit payload. The others see only the name, which a program may give its own type, so a
+bare `Nil` stays, and their folds need a first cell.
 
 ## The resugarings
 
-Each construct below is one transform in each implementation that owns it. The sections share a
-shape: the CGP source a programmer writes, the type it expands to, what resugaring turns it back
-into, and what makes the transform decline.
+Each construct below is one transform in each implementation that owns it.
 
 ### `Symbol!`: the type-level string
 
@@ -315,8 +196,9 @@ dispatches on (`Vec<u8>`, `&Coord`, `DateTime<Utc>`). A namespace path therefore
 PathCons<Symbol!("app"), PathCons<GreeterComponent, Nil>>   →   @app.GreeterComponent
 ```
 
-A segment qualified only inside its arguments (`Wrap<a::Item>`) is an ordinary compound type, whose head decides. A **module-qualified** segment is rendered as written, since `Path!` parses each segment as a type:
-`PathCons<ErrorRaiserComponent, PathCons<std::io::Error, Nil>>` reads
+A segment qualified only inside its arguments (`Wrap<a::Item>`) is an ordinary compound type, whose
+head decides. A **module-qualified** segment is rendered as written, since `Path!` parses each
+segment as a type: `PathCons<ErrorRaiserComponent, PathCons<std::io::Error, Nil>>` reads
 `@ErrorRaiserComponent.std::io::Error`. The [path strip](#the-path-strips-that-run-first) runs first
 and keeps a qualifier only where it tells two types apart, so the one that reaches this pass is
 meaningful, and dropping it would make `std::io::Error` read as any other `Error`. Two segment
@@ -448,8 +330,8 @@ The rules are written once, in the rustc-free crate's
 [`shape`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/shape)
 module, which the text and typed passes both call: `render_struct_shape`, `render_enum_shape`, and
 `render_variant` take names and already-rendered values, so the two diagnostic passes cannot
-disagree on a spelling. The syntax-tree pass applies the same rules to `syn` nodes, and calls the same
-writable-name check, `shape_name`.
+disagree on a spelling. The syntax-tree pass applies the same rules to `syn` nodes, and calls the
+same writable-name check, `shape_name`.
 
 ### The path strips that run first
 
@@ -521,144 +403,65 @@ module qualifiers, because in printed source a qualifier carries information a r
 
 ## What is left unresugared
 
-Three things a reader might expect to see resugared are deliberately not, and each has a reason
-worth recording so nobody adds it as a "missing" transform.
+These are deliberate, so nobody adds them as a "missing" transform:
 
-An **open-ended path** stays raw in source output and in an untransformed diagnostic, and this is
-the one construct a real expansion still shows as a list. An `open` statement's per-key entry is
-generic over the rest of the path, so the impl keys on
-`PathCons<Component, PathCons<Key, __Wildcard__>>`, a tail that is a type parameter, not `Nil`. No
-`Path!` spelling names that type, so the chain is left as written.
-
-An **empty list** stays as its terminator in source output and in an untransformed diagnostic, per
-the shared rule above: those passes cannot tell CGP's `Nil` from a type a program named `Nil`. A
-**type-level index** (`Index<0>`, the tuple-field tag) needs nothing: `Index<N>` *is* the surface
-form a programmer writes, so there is no expansion to reverse. And a **`Life<'a>` lifetime lift** is
-decoded rather than resugared: the resolver reads the region back out of it when rebuilding an
-obligation whose trait wants a real lifetime
-([anchoring the starting obligation](typed-resolution-anchors.md)), and the label then shows the
-lifetime in its ordinary position rather than as a `Life<…>` argument.
-
-One rendering decision sits beside the resugarings in `render_ty` without being one. A **call-site
-placeholder**, the rigid stand-in the [call-site anchor](typed-resolution-call-site.md) seeds for a
-parameter the call leaves to inference, renders as the `_` a programmer would write, never as
-rustc's internal `!N` form, and a tuple is rendered element by element so a placeholder nested
-inside one still prints as `_`.
+- **An open-ended path** stays raw in source output and an untransformed diagnostic, as above. An
+  `open` statement's per-key entry keys on `PathCons<Component, PathCons<Key, __Wildcard__>>`.
+- **An empty list** stays as its terminator in those same places, as above.
+- **`Index<N>`** needs nothing, since it is the surface form.
+- **A `Life<'a>` lift** is decoded rather than resugared: the resolver
+  [reads the region back](typed-resolution-anchors.md#the-check-anchors), and the label shows the
+  lifetime in its ordinary position.
+- **A call-site placeholder** renders as `_`, a rendering decision rather than a resugaring, with a
+  tuple rendered element by element so a nested one does too.
 
 ## Further reading
 
-The CGP construct references define each expansion this document reverses, and are the ground truth
-whenever a rule here needs checking against the macro's own behaviour.
-
-- [`Symbol!`](../../cgp/reference/macros/symbol.md): the length-plus-`Chars` encoding, including why
-  the length is `str::len()`.
-- [`Path!`](../../cgp/reference/macros/path.md): the segment classification the `Path!` resugaring
-  mirrors, and the `PathCons` list.
-- [`Product!`](../../cgp/reference/macros/product.md) and
-  [`Sum!`](../../cgp/reference/macros/sum.md): the `Cons`/`Nil` and `Either`/`Void` lists.
-- [`Field`](../../cgp/reference/types/field.md) and
-  [`HasFields`](../../cgp/reference/traits/has_fields.md): the field cell and the shape the
-  `Struct!`/`Enum!` fold describes.
-- [`Struct!`](../../cgp/reference/macros/struct.md) and
-  [`Enum!`](../../cgp/reference/macros/enum.md): the shape macros the fold reverses, and the
-  encoding rules its spellings follow.
+The CGP references define each expansion this document reverses, and are the ground truth for
+checking a rule: [`Symbol!`](../../cgp/reference/macros/symbol.md),
+[`Path!`](../../cgp/reference/macros/path.md), [`Product!`](../../cgp/reference/macros/product.md),
+[`Sum!`](../../cgp/reference/macros/sum.md), [`Struct!`](../../cgp/reference/macros/struct.md),
+[`Enum!`](../../cgp/reference/macros/enum.md), [`Field`](../../cgp/reference/types/field.md), and
+[`HasFields`](../../cgp/reference/traits/has_fields.md).
 
 ## Tests
 
-Resugaring is pure text-to-text or type-to-text, so most of it is pinned by unit tests with no
-compiler, and the UI suite pins the typed pass end to end.
+**What is not guarded:** the typed implementation needs the compiler, so no test compares it with
+the other two directly, and its agreement rests on the fixtures below and this document.
 
-- [`crates/cargo-cgp-error-processing/tests/error_processing/postprocess/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/tests/error_processing/postprocess):
-  the text implementations over crafted inputs: an exactly-matched `Symbol!` and the empty symbol, a
-  wrong length and a foreign `Symbol` left alone, the `PathCons` → `@…`/`Path!(@…)` forms across
-  symbol, type, primitive (each primitive name), generic-value, and reference-value segments, the
-  open `_` tail left out of a key and declined by `Path!(…)`, the qualified-tail, lowercase-segment,
-  and near-miss primitive (`f`, `u2`, `i7`) declines, the
-  `Product!`/`Sum!` folds, the named and tuple `Struct!` shapes and the `Enum!` shape in each
-  variant spelling, the declines for a single `Index` cell, a non-identifier name, and a
-  position-tagged sum, a raw keyword name, a mixed list kept as a plain product, a nested list, a
-  non-terminating list declined, the `Cons`-inside-`PathCons` guard, the module strips (including
-  the multi-byte box-drawing and string-literal cases), the shorter paths a
-  glob-imported item counts under, and the `postprocess_message` chain end to end.
-- [`crates/cargo-cgp-error-processing/tests/error_processing/shape.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/shape.rs):
-  the shared spelling rules directly: which names are written as is, raw, or not at all, the named
-  and tuple `Struct!` forms and every product that declines, each variant spelling including a
-  payload that only starts with a shape, and the `Enum!` declines.
-- [`tests/ui/checks/check-trait-failure/fields/base_area_1`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/base_area_1.rs):
-  the typed `Symbol!` decode in a real diagnostic: the missing field is named `height` in the lead,
-  where raw rustc renders a `Chars` list (and elides part of it).
-- [`record_field_chain`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/record_field_chain.rs):
-  the typed `Cons`/`Nil` → `Struct! { … }` fold, in a record provider's chain.
-- [`sum_variant_chain`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/sum_variant_chain.rs)
+- [`tests/error_processing/postprocess/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/tests/error_processing/postprocess):
+  the text implementations, with every decline above.
+- [`tests/error_processing/shape.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/shape.rs):
+  the shared spelling rules.
+- [`tests/expand/resugar.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-expand/tests/expand/resugar.rs):
+  the syntax-tree implementation through the driver's whole pipeline, including both `Nil` overlap
+  hazards.
+- [`tests/expand/agreement.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-expand/tests/expand/agreement.rs):
+  the text and syntax-tree implementations compared on the same constructs.
+- Each fixture's `.expand.rs` in the [UI suite](testing.md#three-passes-per-fixture): the
+  syntax-tree pass over real macro output, the widest coverage of the three.
+- [`base_area_1`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/base_area_1.rs),
+  [`record_field_chain`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/record_field_chain.rs),
+  [`sum_variant_chain`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/sum_variant_chain.rs),
+  [`enum_variant_shapes_chain`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/enum_variant_shapes_chain.rs),
   and
-  [`enum_variant_chain`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/enum_variant_chain.rs):
-  the sum list as a plain `Sum![…]` list of bare types, and as an `Enum! { … }` of named variants.
+  [`unregistered-namespace-path/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/checks/unregistered-namespace-path):
+  the typed pass, construct by construct.
 - [`fallback_shape_resugar`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/resolution/fallback_shape_resugar.rs):
-  the text fold on rustc's own rendering of a declined diagnostic: a tuple shape read from
-  `Index<N>` tags, a named shape with a raw keyword field, and an `Enum!` in each variant spelling.
-- [`enum_variant_shapes_chain`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/enum_variant_shapes_chain.rs):
-  the typed fold of a variant list using every variant shape, each hop printing the remaining list
-  with `Empty`, `Rect { w: f64 }`, `Pair(u8, u16)`, and `Circle(f64)` spellings.
+  the text fold on rustc's own rendering.
 - [`ok/shape_macros`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/ok/shape_macros.rs):
-  `Struct!`/`Enum!` written by hand, whose `.expand.rs` shows the syntax-tree pass printing derived
-  field lists in the same forms, brace bodies joined onto one line.
-- The path fixtures,
-  [`unregistered_prefix_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/unregistered_prefix_path.rs),
-  [`qualified_prefix_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/qualified_prefix_path.rs)
-  (a module-qualified path folded to a clean `@…`), and
-  [`open_missing_type_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/open_missing_type_key.rs),
-  pin the typed path rendering, in a namespace redirect and an `open` dispatch key.
-
-- [`crates/cargo-cgp-expand/tests/expand/resugar.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-expand/tests/expand/resugar.rs):
-  the syntax-tree implementation over hand-written expanded source, run through the whole pipeline
-  the driver runs: each construct and its decline cases, both `Nil` overlap hazards, the
-  outermost-first fold, the tightened spacing of a generic element, the named and tuple `Struct!`
-  shapes with their declines, the `Enum!` shape in each variant spelling, the open-ended path left
-  as a list, and the prelude strip including the qualified-path shapes whose index it has
-  to correct.
-
-- Every fixture's `.expand.rs` snapshot in the [UI suite](testing.md#three-passes-per-fixture) pins
-  the syntax-tree pass over *real* macro output, across the whole fixture tree. That is the widest
-  coverage any of the three implementations has: across the current tree no expansion contains a raw
-  `Chars<…>` list outside a fixture's own doc comment, which is the standing evidence that the pass
-  reaches every construct the fixtures produce.
-
-- [`crates/cargo-cgp-expand/tests/expand/agreement.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-expand/tests/expand/agreement.rs):
-  the text and syntax-tree implementations fed the same constructs, each spelling compared: every
-  construct above with its declines, and the open-ended path both leave as a list.
-
-What is *not* guarded: the typed implementation needs the compiler, so no test compares it with the
-other two directly; the fixtures above pin its output construct by construct, and its agreement with
-them rests on this document.
+  `Struct!` and `Enum!` by hand, against the forms the syntax-tree pass prints.
 
 ## Source
 
-- [`crates/cargo-cgp-driver/src/resolve/label/render_ty.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/label/render_ty.rs):
-  the typed pass: the `cgp_spine` walk, the `field_cells` read of a list's tags that feeds the
-  shared shape rules, the recursive element rendering, and the placeholder/tuple rendering.
-- [`crates/cargo-cgp-driver/src/resolve/query/cgp_item/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/query/cgp_item):
-  `spine.rs`'s `decode_symbol` (the typed `Symbol!` decode with its `LEN` check) and `decode_index`
-  (the `Index<N>` decode), and `name_anchor.rs`'s `is_cgp_item`, the `DefId` anchor every typed
-  recognition goes through.
-- [`crates/cargo-cgp-driver/src/config/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/config):
-  the crate and type-name constants the typed pass anchors against (`CONS_TYPE`, `NIL_TYPE`,
-  `EITHER_TYPE`, `VOID_TYPE`, `FIELD_TYPE`, `PATH_CONS_TYPE`, and their defining crates), in
-  `cgp_base_types.rs` and `cgp_field.rs`.
-- [`crates/cargo-cgp-error-processing/src/shape/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/shape):
-  the shared `Struct!`/`Enum!` spelling rules: `shape_name`, `render_struct_shape`,
-  `render_enum_shape`, and `render_variant`.
-- [`crates/cargo-cgp-error-processing/src/postprocess/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/postprocess):
-  the text passes, one module each: `resugar_symbol.rs`, `resugar_path.rs`, `resugar_list.rs`,
-  `strip_modules.rs`, and `chain.rs`, which sequences them, with `spine.rs`
-  holding the head-and-tail split the path and list passes share.
-- [`crates/cargo-cgp-expand/src/resugar/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-expand/src/resugar):
-  the syntax-tree passes, one module per construct (`symbol.rs`, `path.rs`, `list.rs`), plus
-  `strip.rs` (the prelude qualifier and the qualified-path index it corrects), `spacing/` (the
-  post-print tightening: the pass, its literal- and comment-aware scan, and the two layouts),
-  `parts.rs` (the shared shape reading and macro-node building), and
-  `file.rs`, which sequences the passes. Driven by
-  [`source.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-expand/src/source.rs),
-  which also applies the crate's
-  [`select.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-expand/src/select.rs)
-  filter (not a resugaring, but the narrowing `--item <path>` asks for, applied before the passes
-  run so only what is printed is resugared). See [The expand command](expand-command.md).
+- [`resolve/label/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/label)
+  and
+  [`resolve/query/cgp_item/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/query/cgp_item):
+  the typed pass, its symbol decode, and its `DefId` anchor.
+- [`cargo-cgp-error-processing/src/shape/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/shape):
+  the shared `Struct!` and `Enum!` rules.
+- [`cargo-cgp-error-processing/src/postprocess/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/postprocess):
+  the text passes, one module each.
+- [`cargo-cgp-expand/src/resugar/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-expand/src/resugar):
+  the syntax-tree passes, one module per construct, with `spacing/` for the post-print pass and
+  `file.rs` for the order.
