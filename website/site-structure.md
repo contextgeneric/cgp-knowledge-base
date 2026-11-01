@@ -1093,11 +1093,10 @@ catalog's own **hidden-versus-surfaced** axis, stated once near the top as "the 
 explains everything", and it opens with a lookup table keyed on what a reader actually has in front of
 them — a `rustc` code plus a message shape — since that is how anyone arrives at it.
 
-**Every quoted diagnostic is real output read out of a `cargo-cgp` UI fixture's blessed `.cgp.stderr` or
-`.rust.stderr`**, not a remembered or reconstructed one. That is the same source the internal class
-documents are verified against, and it is what makes the page's central demonstration land: the checked
-and the method-call routes to one mistake produce byte-identical recovered output, which the page shows
-rather than asserts. A revision re-reads the fixtures rather than editing the quotes.
+**Every quoted diagnostic is real output from a run of the tool**, on a small program with the page's names,
+not a remembered or reconstructed one. The checked and the method-call routes to one mistake produce the same
+headline, chain, and `help` under different compiler codes, which is the page's central demonstration. A
+revision reruns such a program rather than editing the quotes.
 
 The page covers one group the internal catalog has **no classes for**, and the gap is recorded in
 [cgp/errors/README.md](../cgp/errors/README.md) rather than papered over here. `cargo-cgp`'s

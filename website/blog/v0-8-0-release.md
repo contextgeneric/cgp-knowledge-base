@@ -29,8 +29,9 @@ It identifies the example as `src/lib.rs` in a package using CGP v0.8.0, specifi
 runs in that project, then repairs the field and verifies the check. It uses the canonical recognition qualification
 and distinguishes the optional tool's pinned nightly from ordinary stable-Rust builds.
 The compiler-API explanation follows the diagnostic demonstration, before installation instructions.
-The installation sequence includes `cargo install cargo-cgp` and `cargo cgp setup`, with Linux-only
-testing stated and links to installation and expansion documentation.
+The installation sequence includes `cargo install --locked cargo-cgp` and `cargo cgp setup`, with the
+minimum Rust version and Linux-only testing stated beside it, and links to installation and expansion
+documentation.
 
 The documentation section explains the earlier reliance on blog posts, the missing reference
 material, and the author's limited time for a side project. It preserves his estimate that writing
@@ -83,7 +84,9 @@ macro-composition approaches were insufficient. This background sits before the 
 the migration section links back to it rather than repeating the history.
 
 Other improvements introduce `open`, table iteration, implementation-only generics, shape macros,
-and fieldless variants through concrete uses, then cover handler-macro fixes. Migration names all
+and fieldless variants through concrete uses, then cover handler-macro fixes and the restrictions the
+release lifts: reserved variant names, another derive's helper attributes, async default bodies, and a
+provider's own const. Migration names all
 removed preset constructs, works a user-group conversion with its filter dependency and component
 checks, and covers the `use_type` separator, direct macro-crate renames, changed validation, possible
 unused imports and macro-name
@@ -127,23 +130,19 @@ These checks verify wiring, not a database implementation or a complete web serv
 The missing-height program is a
 [compile-fail fixture](https://github.com/contextgeneric/contextgeneric.dev/blob/main/example-code/tests/compile_fail/blog/v0_8_0_missing_height.rs).
 Both quoted diagnostic bodies were captured from that program in a temporary library target as
-`src/lib.rs`, using cargo with Rust 1.98.1 and the local source-built cargo-cgp driver. The repaired
+`src/lib.rs`, using cargo with stable Rust 1.99 and the local source-built cargo-cgp driver. The repaired
 program passes cargo-cgp, and a runtime test asserts that a three-by-four rectangle has area twelve. The
 historical preset and old attribute-separator listings are explicitly v0.7.0 input, not current
 examples to compile against v0.8.0. The proposed `???` keys and nested helper-macro form are labeled
 pseudocode in text fences, not presented as accepted Rust syntax.
 
-The production site build passes without broken links or anchors. The blog checks and the selected
-positive example targets pass with Rust 1.98.1. The full example suite has 42 diagnostic snapshot
-mismatches in unchanged fixtures; running the compile-fail suite from an archive of the website's
-unchanged HEAD reproduces the same 42 failures. The revision does not re-bless those unrelated
-snapshots.
+The production site build passes without broken links or anchors, and the full example suite passes
+against the sibling `cgp` checkout.
 
 The narrative revision preserves all 37 fenced listings verbatim, including the diagnostics and
 historical input, and preserves every heading and anchor. The namespace application table moves
 ahead of its prefix-registration listings. A comparison of the listing multisets verifies that
-the move neither drops nor duplicates a listing. The production site build and the targeted
-`cargo +1.98.1 test --test blog_tests` check pass; that target compiles the wiring stages and passes
+the move neither drops nor duplicates a listing. The `blog_tests` target compiles the wiring stages and passes
 both the repaired-rectangle runtime test and the missing-height compile-fail test.
 
 ## Original-draft preservation
