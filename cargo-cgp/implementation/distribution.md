@@ -3,18 +3,22 @@
 `cargo-cgp` must run smoothly on a machine that never asked for a nightly toolchain, so distribution
 is the problem of delivering two binaries and one exact nightly compiler, keeping them in lockstep,
 and hiding all of it from a user whose own project builds on stable. This document describes how the
-tool is packaged, installed, and provisioned, and why it is built that way.
+tool is packaged, installed, and provisioned through cargo and rustup, and why it is built that way.
 
-The machinery is in place. A `cargo install --locked cargo-cgp` installs the front-end;
-`cargo cgp setup` provisions the pinned toolchain and the matching driver; `cargo cgp check` forces
-the pinned nightly for the wrapped compilation and runs a read-only preflight that verifies a
-matching driver is present before doing anything; and `cargo cgp update` upgrades the tool when a
-newer version is published. A handful of environment variables
+A `cargo install --locked cargo-cgp` installs the front-end; `cargo cgp setup` provisions the pinned
+toolchain and the matching driver; `cargo cgp check` forces the pinned nightly for the wrapped
+compilation and runs a read-only preflight that verifies a matching driver is present before doing
+anything; and `cargo cgp update` upgrades the tool when a newer version is published. A handful of
+environment variables
 ([`config`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/config.rs))
-override the management for local development. What is *not* yet automated is the release process
-itself: the two crates must be published to crates.io together, at the same version, for the version
-handshake and `setup`'s versioned driver install to hold (see
-[Known limitations](#known-limitations)).
+override the management for local development. Publishing stays manual: the two crates must be
+published to crates.io together, at the same version, for the version handshake and `setup`'s
+versioned driver install to hold (see [Known limitations](#known-limitations)).
+
+Three neighbors cover what a reader looks for separately: [The Nix package](nix-package.md), for a
+machine without rustup; [Bumping the pinned nightly](pinned-nightly-bump.md), for a maintainer
+moving the pin; and [Rust Analyzer integration](rust-analyzer-integration.md), for the on-save check
+and the target directory.
 
 ## The problem
 
@@ -31,9 +35,9 @@ The first consequence is that a user needs **two binaries, not one**. The front-
 the driver `cargo-cgp-driver` are separate crates for a good reason: only the driver links the
 compiler and LLVM, and keeping that out of the front-end keeps the front-end a small, ordinary
 binary (see [Executable structure](executable-structure.md#why-two-executables)). But a plain
-`cargo install --locked cargo-cgp` installs only the front-end, and the front-end cannot do anything without
-its driver sibling. Getting the tool working therefore always takes a second step to bring the
-driver in, and both must end up side by side.
+`cargo install --locked cargo-cgp` installs only the front-end, and the front-end cannot do anything
+without its driver sibling. Getting the tool working therefore always takes a second step to bring
+the driver in, and both must end up side by side.
 
 The second consequence is that the pinned nightly, with its `rustc-dev` component, **has to be
 present on the machine**. Building the driver needs `rustc-dev` (the compiler-internal `.rlib`s) and
@@ -49,12 +53,12 @@ The design's job is to make the match automatic.
 
 Two widespread misconceptions are worth clearing up before the design, because both make the problem
 sound worse than it is. **Updating the host's nightly does not break the driver.** The pin is a
-*dated* nightly (`nightly-2026-10-10`), which rustup treats as an immutable, distinct toolchain; a
-`rustup update` refreshes the rolling `stable`/`beta`/`nightly` channels and leaves a dated nightly
-untouched. The driver keeps working until *cargo-cgp itself* ships a new version that bumps the pin.
-**And the project being checked does not need to use nightly at all.** A user's crate can pin
-stable, or nothing; `cargo-cgp` forces the pinned nightly it provisions for the check and leaves the
-project's real builds alone. The design below makes that true.
+*dated* nightly (such as `nightly-2026-10-10`), which rustup treats as an immutable, distinct
+toolchain; a `rustup update` refreshes the rolling `stable`/`beta`/`nightly` channels and leaves a
+dated nightly untouched. The driver keeps working until *cargo-cgp itself* ships a new version that
+bumps the pin. **And the project being checked does not need to use nightly at all.** A user's crate
+can pin stable, or nothing; `cargo-cgp` forces the pinned nightly it provisions for the check and
+leaves the project's real builds alone. The design below makes that true.
 
 ## How similar tools solve it
 
@@ -141,13 +145,14 @@ splits cleanly in two: a `cargo install --locked cargo-cgp` puts the front-end i
 one a user types from memory, with no nightly date string in it, and it dissolves the bootstrapping
 problem that a `rustc_private` tool would otherwise have.
 
-The front-end installs on **any** toolchain, which is the key that makes the split work. Because the
-front-end is an ordinary binary with no `rustc_private` linkage, `cargo install --locked cargo-cgp` builds it
-under whatever toolchain the user already has (stable, or anything else) and needs no pinned
-nightly. So the cargo#11036 hazard above, that `cargo install` ignores a bundled
-`rust-toolchain.toml`, never bites: the front-end does not care which toolchain builds it. The
-freshly installed front-end embeds the `PINNED_TOOLCHAIN` constant and the whole setup routine, so
-it carries everything needed to provision the rest of the tool itself.
+The front-end installs on an ordinary stable toolchain, which is the key that makes the split work.
+Because the front-end is an ordinary binary with no `rustc_private` linkage,
+`cargo install --locked cargo-cgp` builds it under whatever toolchain the user already has (stable,
+or anything else at or above the `rust-version` the workspace sets) and needs no pinned nightly. So
+the cargo#11036 hazard above, that `cargo install` ignores a bundled `rust-toolchain.toml`, never
+bites: the front-end does not care which toolchain builds it. The freshly installed front-end embeds
+the `PINNED_TOOLCHAIN` constant and the whole setup routine, so it carries everything needed to
+provision the rest of the tool itself.
 
 `cargo cgp setup` then performs the two heavyweight steps under the pinned string it reads from that
 constant, so the user never types the nightly date. It runs
@@ -163,11 +168,11 @@ toolchain and fail on stable or mis-version on another nightly (cargo#11036 agai
 driver to the front-end's own version (`--version <version>`) keeps the pair in lockstep,
 and it is possible only because the two crates are released together (below).
 
-Keeping the two crates separate enables this. Folding the driver into the
-`cargo-cgp` package as a second `[[bin]]` would force the whole package, front-end included, to
-build under the pinned nightly, losing the `cargo install --locked cargo-cgp` bootstrap. Two crates let
-the front-end install on any toolchain while the driver stays confined to the pinned one, and cargo
-places both in `~/.cargo/bin`, so the front-end's sibling lookup
+Keeping the two crates separate enables this. Folding the driver into the `cargo-cgp` package as a
+second `[[bin]]` would force the whole package, front-end included, to build under the pinned
+nightly, losing the `cargo install --locked cargo-cgp` bootstrap. Two crates let the front-end
+install on any toolchain while the driver stays confined to the pinned one, and cargo places both in
+`~/.cargo/bin`, so the front-end's sibling lookup
 ([`launch::driver_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/driver_path.rs))
 finds the driver with no configuration. Lockstep is enforced by the version preflight below, not by
 shared packaging.
@@ -194,22 +199,22 @@ knowingly.
 (`rustup toolchain install <PINNED_TOOLCHAIN> -c rustc-dev -c llvm-tools`) and build the driver
 under it (the equivalent of
 `cargo +<PINNED_TOOLCHAIN> install cargo-cgp-driver@<version> --locked`), landing it beside the
-front-end. It is the command a user runs once after `cargo install --locked cargo-cgp`, and the command the
-preflight names whenever it finds something wrong. Making provisioning a single named subcommand
-gives the docs one stable entry point instead of a shifting list of `rustup` and `cargo`
+front-end. It is the command a user runs once after `cargo install --locked cargo-cgp`, and the
+command the preflight names whenever it finds something wrong. Making provisioning a single named
+subcommand gives the docs one stable entry point instead of a shifting list of `rustup` and `cargo`
 incantations, and it is the one place that reads `PINNED_TOOLCHAIN`, so the user never types the
 nightly date.
 
 ### What the preflight verifies
 
 The preflight is a fast, read-only sequence at the top of `check`, run before any cargo is spawned,
-and every failure produces an actionable error that names what is wrong and directs the user to
-`cargo cgp setup`. The one exception is a machine without rustup, which `setup` cannot repair
-either, so that message names rustup and the Nix flake instead. It answers two questions in order
-(is the pinned toolchain installed, and does the driver actually run and match) and stops at the
-first "no." The ordering is deliberate: the cheap, disambiguating check comes first, so that when
-the driver fails, the preflight already knows whether the toolchain underneath it is to blame and
-can say so.
+and every failure of its checks produces an actionable error that names what is wrong and directs
+the user to `cargo cgp setup`. The one exception is a machine without rustup, which `setup` cannot
+repair either, so that message names rustup and the Nix flake instead. It answers two questions in
+order (is the pinned toolchain installed, and does the driver actually run and match) and stops at
+the first "no." The ordering is deliberate: the cheap, disambiguating check comes first, so that
+when the driver fails, the preflight already knows whether the toolchain underneath it is to blame
+and can say so.
 
 The driver it tests is the one the launch has already located, through the
 [`driver_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/driver_path.rs)
@@ -261,19 +266,18 @@ driver from the wrong release fails the second:
   resolve). Either mismatch sends the user to `setup`. The compiler mismatch names the toolchain the
   preflight queried, which `CARGO_CGP_TOOLCHAIN` can make another one than the driver's own pin.
 
-The flag is the ordinary `--version`, not a tool-specific name: `cargo-cgp` versions on its own
-track, unrelated to `cgp`'s, so a `--cgp-version` would misleadingly imply otherwise. The driver
-already distinguishes a direct invocation from cargo's wrapper invocation by testing whether its
-second argument is a `rustc` path (see [The driver](driver.md#preparing-the-argument-vector)), so
-`cargo-cgp-driver --version` prints the tool's version line while a wrapper-mode `--version` still
-forwards to the real compiler for cargo's probing, the same split `clippy-driver` uses.
+The flag is the ordinary `--version`. The driver distinguishes a direct invocation from cargo's
+wrapper invocation by testing whether its second argument is a `rustc` path (see
+[The driver](driver.md#preparing-the-argument-vector)), so `cargo-cgp-driver --version` prints the
+tool's version line while a wrapper-mode `--version` still forwards to the real compiler for cargo's
+probing, the same split `clippy-driver` uses.
 
 The two comparisons are strict equality rather than a compatibility range, and that is sound only
-because the two crates are **released and version-bumped in lockstep**, which the workspace
-enforces. The crates share one version through `[workspace.package]` in the root
-[`Cargo.toml`](https://github.com/contextgeneric/cargo-cgp/blob/main/Cargo.toml), so a release bumps
-both at once and a `cargo-cgp` is never published against a `cargo-cgp-driver` of a different
-number. Every release ships the pair together, so a correctly provisioned machine holds a matching
+because the two crates are **released and version-bumped in lockstep**. The crates share one version
+through `[workspace.package]` in the root
+[`Cargo.toml`](https://github.com/contextgeneric/cargo-cgp/blob/main/Cargo.toml), so a version bump
+moves both at once, and a release publishes the pair (by hand, see
+[Known limitations](#known-limitations)). A correctly provisioned machine therefore holds a matching
 pair and the preflight passes trivially, paying only the cost of two quick subprocesses. The checks
 exist as the safety net for the ways an installed pair drifts apart *after* a correct install: one
 crate upgraded but not the other, a leftover binary on `PATH`, or the pinned toolchain removed from
@@ -292,12 +296,13 @@ A `cargo cgp update` subcommand upgrades the tool to its latest version, and its
 the only ordering that can work. A release may bump the pinned nightly, and the knowledge of the new
 toolchain and the new provisioning logic lives *inside* the new `cargo-cgp` binary; the old process
 cannot provision the new driver because it only knows the old pin. So `update` first reinstalls the
-front-end with `cargo install --locked cargo-cgp --version <target> --locked` (which, having no compiler
-linkage, builds under any toolchain and needs no pinned nightly; the version is named because a bare
-`cargo install` takes the newest *stable* release, the wrong target for a pre-release moving to a
-newer pre-release), then runs the freshly installed `cargo-cgp setup` as a child process, which
-brings the driver and toolchain up to the new version. The heavy `rustc-dev` work stays deferred to
-the new `setup`, exactly where it belongs.
+front-end with `cargo install cargo-cgp --version <target> --locked` (which, having no compiler
+linkage, needs no pinned nightly; the version is named because a bare `cargo install` takes the
+newest *stable* release, the wrong target for a pre-release moving to a newer pre-release), then
+runs the freshly installed `cargo-cgp setup` as a child process, which brings the driver and
+toolchain up to the new version. It reads its own path before the reinstall, because on Linux
+`current_exe` afterward names the replaced binary `<path> (deleted)`. The heavy `rustc-dev` work
+stays deferred to the new `setup`, exactly where it belongs.
 
 Before touching anything, `update` finds out whether there is a newer version to move to **that the
 running version's channel allows** and skips out early when there is not. It reads the crates.io
@@ -310,17 +315,18 @@ exits without invoking `cargo install`, rustup, or `setup`; only a strictly newe
 reinstall.
 
 Keeping a stable install on stable releases is why `update` enumerates all versions rather than
-asking cargo for the single "latest". Both `cargo search` and `cargo info` report only a crate's *max version*, which
-**includes pre-releases**, so if a pre-release higher than the latest stable is published, a stable
-install could neither see the latest stable through them nor safely take the pre-release. Reading
-the index directly gives every version, so the channel filter can pick the right one: with
-hypothetical versions, `v1.0.0 → v1.0.1`, never `v1.1.0-beta`; and `v1.1.0-beta → v1.1.0` once the
-release is out. The comparison is `semver`, which orders a pre-release below its release, so the
-"highest allowed" and "strictly newer" tests are both exact. A pre-release install must be able to
-take a stable release, since one restricted to pre-releases never sees the release it previewed.
-Pre-releases themselves are test runs of the cargo integration and are not documented as versions,
-per the base's [rule on versions](../../AGENTS.md#document-official-versions-never-pre-releases);
-this paragraph describes only how `update` treats one.
+asking cargo for the single "latest". Both `cargo search` and `cargo info` report only a crate's
+*max version*, which **includes pre-releases**, so if a pre-release higher than the latest stable is
+published, a stable install could neither see the latest stable through them nor safely take the
+pre-release. Reading the index directly gives every version, so the channel filter can pick the
+right one: with hypothetical versions, `v1.0.0 → v1.0.1`, never `v1.1.0-beta`; and
+`v1.1.0-beta → v1.1.0` once the release is out. The comparison is `semver`, which orders a
+pre-release below its release, so the "highest allowed" and "strictly newer" tests are both exact. A
+pre-release install must be able to take a stable release, since one restricted to pre-releases
+never sees the release it previewed. Pre-releases themselves are test runs of the cargo integration
+and are not documented as versions, per the base's
+[rule on versions](../../AGENTS.md#document-official-versions-never-pre-releases); this paragraph
+describes only how `update` treats one.
 
 `setup` and `update` take no arguments. Because both install things, each answers `--help` with a
 help text of its own instead of running, and refuses any other argument with an error naming it,
@@ -336,18 +342,18 @@ registry, so automatic version discovery targets the default crates.io (see
 [Known limitations](#known-limitations)).
 
 Installation and update both go **through cargo**; there is no self-replace mechanism to maintain.
-`update` shells out to `cargo install --locked cargo-cgp` (the same tool that installed it), and where that
-succeeds the run of the new `setup` follows. This keeps `update` a thin orchestrator over cargo
-rather than a re-implementation of what cargo already does.
+`update` shells out to `cargo install --locked cargo-cgp` (the same tool that installed it), and
+where that succeeds the run of the new `setup` follows. This keeps `update` a thin orchestrator over
+cargo rather than a re-implementation of what cargo already does.
 
 The one case cargo cannot handle is the running binary on Windows, and there `update` fails cleanly
 with instructions rather than trying to be clever. When a user types `cargo cgp update`, the running
 process *is* `~/.cargo/bin/cargo-cgp`, the file `cargo install` overwrites. On Unix this is fine:
 cargo writes the new binary alongside and moves it over the old name with an atomic rename, and the
 running process keeps executing its original inode. On **Windows a running executable is locked**,
-so the `cargo install` step fails with "Access is denied." `update` catches that failure and prints
-the exact commands for the user to run by hand
-(`cargo install --locked cargo-cgp --version <version> --locked` followed by `cargo cgp setup`, from a shell
+so the `cargo install` step fails with "Access is denied." A failed reinstall, whatever its cause,
+ends with a note about that lock and the exact commands for the user to run by hand
+(`cargo install cargo-cgp --version <version> --locked` followed by `cargo cgp setup`, from a shell
 where `cargo-cgp` is not currently running), which succeed precisely because they are not
 self-referential. The tool does not embed a self-replacing installer to work around this; it
 delegates to cargo and hands the user the manual path when cargo cannot finish.
@@ -358,8 +364,8 @@ an old driver, and that is exactly the mismatch the [preflight](#what-the-prefli
 already catches, so the next `cargo cgp check` tells the user to run `cargo cgp setup` and recovers.
 That is also why the Windows manual path above is safe to leave half-done. And **superseded
 toolchains accumulate**: each nightly bump installs a new multi-gigabyte dated toolchain and leaves
-the previous one in `~/.rustup/toolchains`. `update` never removes one, since another tool may depend
-on that nightly, and it does not report one either ([Known limitations](#known-limitations)).
+the previous one in `~/.rustup/toolchains`. `update` never removes one, since another tool may
+depend on that nightly, and it does not report one either ([Known limitations](#known-limitations)).
 
 ## Escape hatches for local development
 
@@ -371,163 +377,21 @@ built beside it.
 
 - `CARGO_CGP_DRIVER` names an explicit driver executable, bypassing the sibling lookup, for a driver
   that sits neither beside the front-end nor on `PATH`.
-- `CARGO_CGP_NO_MANAGE` turns off the preflight and its version checks entirely, telling `cargo-cgp`
-  to trust whatever driver and toolchain the environment already provides. The UI suite and the
-  [Nix package](#installing-with-nix) set it, and so does a developer running inside the source
-  checkout under the pinned toolchain: no provisioning, no handshake, just run.
-- `CARGO_CGP_TOOLCHAIN` overrides `PINNED_TOOLCHAIN` at runtime, so the tool can be pointed at a
-  different nightly for testing a toolchain bump before the constant is changed. Because a
-  hand-picked toolchain will not match the driver's baked-in `built_against_rustc`, it is normally
-  paired with `CARGO_CGP_NO_MANAGE` so the preflight does not reject the mismatch.
+- `CARGO_CGP_NO_MANAGE` turns off the preflight and the toolchain forcing, telling `cargo-cgp` to
+  trust whatever driver and toolchain the environment already provides: the sysroot comes from
+  `RUSTC` or the `rustc` on `PATH`. The UI suite and the [Nix package](nix-package.md) set it, and
+  so does a developer running inside the source checkout under the pinned toolchain: no
+  provisioning, no handshake, just run.
+- `CARGO_CGP_TOOLCHAIN` overrides `PINNED_TOOLCHAIN` at runtime, for `setup` and for a managed
+  `check` or `expand`, so the tool can be pointed at a different nightly for testing a toolchain
+  bump before the constant is changed. The preflight still compares the driver with that nightly, so
+  the driver must be built under it, as a `setup` with the same override does. An unmanaged run
+  forces no toolchain, so `CARGO_CGP_NO_MANAGE` makes this override have no effect on `check`.
 
 These variables belong in the shared `config` modules alongside the existing well-known names
 (`CARGO_CGP_SYSROOT` and the rest), passed into the functions that use them rather than read ad hoc,
 per the
 [code organization conventions](https://github.com/contextgeneric/cargo-cgp/blob/main/AGENTS.md#code-organization-conventions).
-
-## Installing with Nix
-
-A [`flake.nix`](https://github.com/contextgeneric/cargo-cgp/blob/main/flake.nix) at the repository
-root packages the tool for Nix, and it is the supported answer for the one machine the rustup-based
-flow above cannot serve: a Nix user has no rustup to install a toolchain or force one, so `setup`,
-the preflight, and `update` have nothing to drive. The flake sidesteps all of them. Nix itself
-supplies the pinned nightly and builds both binaries against it, so provisioning is a build-time
-fact rather than a runtime handshake, and the front-end runs in the unmanaged mode the
-[escape hatches](#escape-hatches-for-local-development) already provide.
-
-Nix reconstructs by hand what a nightly bump would otherwise coordinate through crates.io. The
-toolchain comes from [`oxalica/rust-overlay`](https://github.com/oxalica/rust-overlay), whose
-`fromRustupToolchainFile` reads the same
-[`rust-toolchain.toml`](https://github.com/contextgeneric/cargo-cgp/blob/main/rust-toolchain.toml)
-the `build.rs` scripts read (channel plus the `rustc-dev` and `llvm-tools` components the driver
-needs, and the `rust-src` the UI snapshots need; see [Testing](testing.md)), so the Nix toolchain
-cannot drift from the pinned one. That toolchain is passed to `makeRustPlatform`, and
-`buildRustPackage` compiles the front-end and the driver together under it, exactly as `setup`'s
-`cargo +<pinned> install` does, so the driver embeds the same compiler whose sysroot and
-`librustc_driver` it will later be handed.
-
-Two `wrapProgram` wrappers replace the environment rustup would have arranged. The front-end wrapper
-sets `CARGO_CGP_NO_MANAGE` so the front-end skips the preflight and toolchain forcing, sets `RUSTC`
-to the toolchain's `rustc`, and prepends the toolchain to `PATH`; the wrapped `cargo check` then
-compiles under the same nightly the driver embeds, and the front-end's existing
-`rustc --print sysroot` discovery returns that toolchain's sysroot. Its `lib` holds the matching
-`librustc_driver`, which the front-end prepends to the driver's dynamic-library path just as it does
-on a managed machine. The driver wrapper adds that same `lib` directory to the driver's own runtime
-search path, so the driver loads `librustc_driver` even when invoked directly rather than only
-through the front-end. Both binaries land in one `bin/` directory, so the front-end's
-[sibling lookup](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/launch/driver_path.rs)
-finds the driver with no override.
-
-**The front-end wrapper needs that dylib prefix too, and for a reason peculiar to being invoked
-through rustup.** `cargo cgp check` enters through rustup's `cargo` shim, which exports the
-project's active toolchain's `lib` directory on the loader path for every child, so the Nix `rustc`
-the front-end probes is searched against a *foreign* toolchain's libraries before its own `RUNPATH`.
-That is inert while the two Rust versions differ, because a rustc shared library is named for its
-version (`libLLVM.so.<n>-rust-<version>`) rather than by content hash. When they match, the names
-collide: the Nix `rustc` loads rustup's copy, which wants a system library the Nix loader cannot
-resolve, and exits 127 before printing a sysroot. The counter-intuitive consequence is that the
-failure appears in whichever project tracks the *same* Rust version as the pinned nightly. Prefixing
-the toolchain's own `lib` on the front-end wrapper (the same protection the driver has) makes its
-libraries win that lookup while leaving the caller's entries after them. A rustup-managed install is
-immune by construction: its probe runs through `rustup run`, which points the path at the
-toolchain being queried. The user-facing account is in
-[Troubleshooting](../reference/troubleshooting.md#a-nix-install-fails-its-sysroot-probe-under-cargo-cgp).
-
-The flake's source input is deliberately narrowed with `lib.fileset` to the crate sources, the
-manifests, the lockfile, `rust-toolchain.toml`, and the `LICENSE` the crates link to: everything the
-build reads, plus the target of those links, and nothing else. The churny, build-irrelevant trees at
-the repository root (`docs/`, the `tests/ui` fixtures, `README.md`, `AGENTS.md`) are excluded, so
-editing them leaves the derivation's input hash unchanged and the built binaries cached; only a real
-source change triggers a rebuild.
-
-Running the check under Nix inherits the same caveat as the managed path: because the tool forces a
-fixed diagnostic nightly under `-Znext-solver`, the check compiles against a compiler the project
-did not choose, which is the accepted trade-off recorded above. What Nix does *not* provide is the
-lockstep-and-`update` machinery (a Nix user upgrades the tool by updating the flake input, not
-through `cargo cgp update`), so the crates.io version handshake is simply not part of this path.
-
-## Bumping the pinned nightly
-
-The pinned nightly lives in exactly one place, and every consumer derives its value from there
-rather than repeating it. The `channel` field of
-[`rust-toolchain.toml`](https://github.com/contextgeneric/cargo-cgp/blob/main/rust-toolchain.toml)
-is that single source of truth, so **the version bump itself is a one-line edit**: change the date
-on that `channel` line (and only touch the `components`/`profile` lines if a component was renamed
-upstream). Everything that needs the version reads it back from that file:
-
-- Both crates' build scripts parse the `channel` at build time into the baked-in `PINNED_TOOLCHAIN`
-  constant.
-  [`cargo-cgp/build.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/build.rs)
-  and
-  [`cargo-cgp-driver/build.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/build.rs)
-  both expose it as `CARGO_CGP_PINNED_TOOLCHAIN`, which `config.rs` and the driver's `version.rs`
-  read with `env!`. No Rust source names the date. Each build script *searches upward* from its
-  manifest directory for the first `rust-toolchain.toml`, rather than hardcoding the
-  workspace-relative path, because the workspace file is not part of a package tarball: when a
-  published crate is built from crates.io (a `cargo install --locked cargo-cgp`, or the
-  `cargo install cargo-cgp-driver` that `setup` runs) there is no workspace above it. To keep the
-  value available there, each publishable crate carries a `rust-toolchain.toml` symlink to the
-  workspace file (one physical file, so the single-source-of-truth property holds), which cargo
-  dereferences into a real file in the tarball, and which the upward search then finds in the crate
-  root. A crate's bundled `rust-toolchain.toml` does not affect the installing user's own toolchain,
-  since [`cargo install` ignores it](https://github.com/rust-lang/cargo/issues/11036).
-- The driver's `built-against-rustc` identity is captured automatically: its build script runs
-  `$RUSTC --version` on whatever compiler cargo hands it, so the value reflects the toolchain that
-  *actually* compiled the driver, with nothing to edit.
-- The Nix flake reads the same file through `fromRustupToolchainFile ./rust-toolchain.toml` (see
-  [Installing with Nix](#installing-with-nix)), so the flake picks up the new channel and components
-  with no separate edit, subject to the one Nix follow-up below.
-
-Two automated guards mean the sync cannot silently rot. The
-`pinned_toolchain_matches_the_toolchain_file` test in
-[`preflight.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/preflight.rs)
-asserts the baked-in `PINNED_TOOLCHAIN` equals the channel it re-reads from `rust-toolchain.toml`,
-so a build whose constant drifted from the file fails the test. (The dated string elsewhere in that
-same test file is fixed *sample* `--version` output feeding the parser test; it is both the input
-and the expected value, not the live pin, so it neither tracks the real toolchain nor needs updating
-on a bump.) And because `cargo-cgp` and `cargo-cgp-driver` share one version through
-`[workspace.package]`, the crates.io version handshake is about the *tool* version, not the nightly,
-and is unaffected by a toolchain bump.
-
-What is *not* automatic still has to happen in the same change, because a new compiler changes both
-the code that links it and the diagnostics it prints. Three follow-ups round out a bump:
-
-- **Fix the driver against `rustc_private` API changes.** The `rustc_driver`/`rustc_interface` API
-  is unstable and shifts between nightlies, so the driver may not compile against the new one until
-  its code is updated. This is why the pin is bumped deliberately, and it is the whole reason the
-  toolchain is welded to an exact date (see
-  [The driver](driver.md#accessing-the-rust-compiler-api)).
-- **Re-bless the UI snapshots.** The `.cgp.stderr`/`.rust.stderr` snapshots are recorded under the
-  pinned toolchain, and a new rustc can reword a diagnostic or move a span, so a bump can fail the
-  UI suite until the snapshots are regenerated with
-  `cargo test -p cargo-cgp-ui-tests --test ui -- --bless` and the diffs reviewed (see
-  [Testing](testing.md)).
-- **Provision the new toolchain for the tool's own build.** On a rustup machine, `rustup` installs
-  the new dated nightly with the components the toolchain file lists on first build of it; under
-  Nix, refresh the flake as below. A released tool then reaches its users through the
-  `setup`/`update` flow, which installs whatever nightly the new release pins.
-
-### Updating the Nix packages for a new nightly
-
-Bumping the `channel` is necessary but not always sufficient for the flake, because the flake's
-toolchain comes from `rust-overlay`, and `rust-overlay` only knows the nightlies its own pinned
-revision carries manifests for. A date newer than the `rust-overlay` revision locked in
-[`flake.lock`](https://github.com/contextgeneric/cargo-cgp/blob/main/flake.lock) will make
-`fromRustupToolchainFile` fail to find the manifest, so a forward bump needs the overlay refreshed
-alongside it:
-
-- Run `nix flake update rust-overlay` (or `nix flake update` to refresh every input, including
-  `nixpkgs`) after editing `rust-toolchain.toml`, so the locked overlay is new enough to resolve the
-  new nightly's manifest. Commit the updated `flake.lock` in the same change as the `channel` edit,
-  so the two stay consistent.
-- Rebuild to confirm and to refresh the cache: `nix build .#` compiles both binaries under the new
-  toolchain, and `nix flake check` evaluates the outputs. Because the source input is narrowed to
-  the crate sources and `rust-toolchain.toml` (see [Installing with Nix](#installing-with-nix)), the
-  `channel` edit alone changes the input hash and triggers exactly this rebuild.
-
-A Nix user consuming the flake as an input performs the mirror of this: they run
-`nix flake update cargo-cgp` in their own flake to pull the release that carries the new pin, which
-is how a Nix consumer "upgrades the tool" in place of `cargo cgp update`.
 
 ## Loading the compiler at runtime
 
@@ -545,80 +409,6 @@ wins on two independent grounds. The front-end must run `rustc --print sysroot` 
 needs no build-time linker configuration. An embedded rpath could be added as a second safeguard,
 but the design does not depend on one.
 
-## Rust Analyzer integration
-
-Rust Analyzer can run `cargo cgp check` as its on-save diagnostic backend, and the design already
-accommodates it, but two of the distribution choices (the JSON rendering and the forced nightly) makes the integration work or fail. The good news is that the one interaction a reader
-would expect to break, Rust Analyzer's own compiler wrapper colliding with the tool's, does not
-happen. The risk that is real is build-artifact contention, and it has a concrete fix.
-
-The tool is wired in through `rust-analyzer.check.overrideCommand`, not `check.command`. Rust
-Analyzer's `check.command` names a single cargo subcommand and appends its own flags after it, so it
-cannot express `cargo cgp check` (a two-word invocation), and multi-word or alias commands there are
-[not fully supported](https://github.com/rust-lang/rust-analyzer/issues/8098). The `overrideCommand`
-setting takes the full command as an argument array, is run from the workspace root, and **must emit
-JSON**, so the user supplies the whole line including `--message-format=json`:
-
-```jsonc
-"rust-analyzer.check.overrideCommand": [
-  "cargo", "cgp", "check", "--workspace", "--all-targets", "--message-format=json"
-]
-```
-
-The JSON reaches Rust Analyzer through the pipeline the tool already has, with nothing new to build.
-Rust Analyzer's flycheck parses cargo's `--message-format=json` stream: the `compiler-message`
-records cargo wraps each rustc diagnostic in. In `cargo-cgp` the driver renders the *transformed*
-diagnostic as rustc JSON through its `JsonEmitter`, cargo wraps that into its own message stream,
-and the front-end forwards cargo's stdout untouched (see [Architecture](architecture.md#the-flow-of-a-diagnostic)).
-So the front-end need only forward the `--message-format=json` argument to `cargo check` (which it
-does, since it forwards everything after `check` verbatim), and Rust Analyzer receives well-formed
-cargo JSON with the CGP transforms already applied inside each diagnostic.
-
-Rust Analyzer's own `RUSTC_WRAPPER` does not collide with the tool's `RUSTC_WORKSPACE_WRAPPER`,
-because the two operate in different phases. Rust Analyzer sets `RUSTC_WRAPPER=rust-analyzer` only
-when running build scripts and gathering proc-macro information
-(`rust-analyzer.cargo.buildScripts.useRustcWrapper`), to skip work it does not need, and *not* for
-the flycheck check command. The check command `cargo-cgp` runs is therefore a clean cargo invocation
-with only the tool's own `RUSTC_WORKSPACE_WRAPPER` set. Even in the hypothetical where both were
-present, cargo nests them as `$RUSTC_WRAPPER $RUSTC_WORKSPACE_WRAPPER $RUSTC`, so the driver still
-receives the real `rustc` path as its second argument and its wrapper-mode detection holds; the only
-realistic way to actually chain a second wrapper is a user's global `RUSTC_WRAPPER` such as
-`sccache`, which is a minor, user-created interaction rather than something Rust Analyzer imposes.
-
-The genuine integration risk is build-artifact contention, and the fix is a dedicated target
-directory that the tool uses by default. Because `cargo-cgp` forces the pinned nightly and injects
-`-Znext-solver` and `--verbose`, its check produces artifacts with a different fingerprint from the
-project's ordinary `cargo build` and from Rust Analyzer's own project-loading builds. Sharing one
-`target/` directory then means the two wait on each other for cargo's build lock, the class of
-slowness reported when clippy is used as the check command
-([rust-analyzer#19336](https://github.com/rust-lang/rust-analyzer/issues/19336)). The artifacts
-themselves coexist, since cargo keeps each build's by hash; a probe sharing one directory between
-stable, the pinned nightly, and the tool showed each keeping its own, and the check waiting for the
-lock another cargo run held.
-
-So `cargo cgp check` always builds into a `cgp` subdirectory of the project's target directory,
-`target/cgp` beside `target/debug`, on every invocation (whether Rust Analyzer is the caller or
-not), so a check never waits on the lock a normal build holds, and the reverse. This mirrors how
-`rustc_plugin` isolates its own `target/plugin-<channel>` directory, and the isolation helps
-command-line use as much as the editor; the cost is a one-time rebuild of the dependency graph in
-`target/cgp`, cached thereafter. The front end finds the project's target directory by running
-`cargo metadata --no-deps` (forwarding any `--manifest-path` and `--config`) and reading its
-`target_directory`, so the directory is the same wherever in the package the command runs, and
-follows a `CARGO_TARGET_DIR`, a `build.target-dir` in a config file, or one given with `--config`;
-each gets the `cgp` subdirectory, since each is a directory other cargo runs share. When that query
-fails (no package, a broken manifest) it falls back to the relative `target/cgp` and lets the
-wrapped command report the problem. A user who needs a different location passes `--target-dir`,
-which is taken as given: the front-end injects its default only when the forwarded arguments do not
-already set one, the same inject-only-when-absent rule the driver follows for its own flags.
-
-One residual caveat has no fix, only awareness: Rust Analyzer's inline semantic analysis and the
-`cargo-cgp` flycheck can disagree. Rust Analyzer's own type inference runs against the project's
-toolchain and default solver, while the flycheck diagnostics come from the pinned nightly under
-`-Znext-solver`, so occasionally `cargo-cgp` surfaces a diagnostic Rust Analyzer's inline analysis
-does not, or the reverse. This is the same solver-and-toolchain divergence the tool already accepts
-on the command line ([The driver](driver.md#choosing-the-trait-solver)), now visible in the editor;
-it is a property of running a fixed diagnostic compiler, not a bug to resolve.
-
 ## Comparison with Clippy
 
 Distribution is the one area where `cargo-cgp` cannot follow Clippy, and the divergence is
@@ -635,8 +425,8 @@ next to `rustc`; and it runs a version preflight instead of being versioned atom
 compiler. The closest working model for all of this is not Clippy but the `rustc_plugin` family, and
 the two places `cargo-cgp` improves on that model are the check-time toolchain override (the
 analyzed project needs no nightly of its own, where `rustc_plugin` requires it to pin the same one)
-and the `cargo install --locked cargo-cgp` bootstrap that defers every heavyweight step to an explicit
-`cargo cgp setup` (so the user never types a nightly date to get started).
+and the `cargo install --locked cargo-cgp` bootstrap that defers every heavyweight step to an
+explicit `cargo cgp setup` (so the user never types a nightly date to get started).
 
 ## Known limitations
 
@@ -663,13 +453,13 @@ These limits and assumptions of the managed path are deliberate or accepted:
   machine whose Rust comes from a distro package or another manager has no rustup to drive, so it is
   out of scope for automatic provisioning; `setup` and the preflight report a missing rustup
   plainly rather than failing obscurely. Nix is the exception rather than a gap: it is served by the
-  [`flake.nix`](#installing-with-nix), which provisions the toolchain at build time and runs the
+  [`flake.nix`](nix-package.md), which provisions the toolchain at build time and runs the
   front-end unmanaged.
-- **`update` version discovery targets the default crates.io.** It reads
-  `index.crates.io` directly, so unlike the `cargo install` that follows it, it does not consult a
-  user's configured registry mirror or source replacement. A locked-down network that blocks
-  `index.crates.io` will make `update`'s check fail (with a clear error); the manual
-  `cargo install --locked cargo-cgp` + `cargo cgp setup` path still works through the configured registry.
+- **`update` version discovery targets the default crates.io.** It reads `index.crates.io` directly,
+  so unlike the `cargo install` that follows it, it does not consult a user's configured registry
+  mirror or source replacement. A locked-down network that blocks `index.crates.io` will make
+  `update`'s check fail (with a clear error); the manual `cargo install --locked cargo-cgp` +
+  `cargo cgp setup` path still works through the configured registry.
 
 ## Further reading
 
@@ -728,19 +518,7 @@ UI suite exercises the managed/unmanaged wiring end to end.
 - [`crates/cargo-cgp/tests/front_end/setup.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/setup.rs):
   `driver_install_args`, the locked driver install at the front-end's version, with and without the
   `--root` that places it beside the front-end.
-- [`crates/cargo-cgp/tests/front_end/command.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/command.rs):
-  `metadata_query_args` forwards the manifest path and every `--config` value, in either form, and
-  ignores arguments after a `--`; `parse_target_directory` reads `target_directory` out of
-  `cargo metadata`'s JSON; and `cgp_target_dir` picks the `cgp` subdirectory or the relative
-  fallback.
-- [`crates/cargo-cgp/tests/front_end/forwarded_flag.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/forwarded_flag.rs):
-  `scan_flag` gives a flag's values in order and leaves the other arguments in order, stops at a
-  `--` and keeps what follows, and takes the argument after a spaced flag as its value; a spaced flag at the end counts as
-  given without a value; the first `--manifest-path` decides; and a longer flag is another flag.
-  `forwards_target_dir` detects an explicit `--target-dir` (spaced or `=`) so the default is not
-  injected over it, and ignores one after a `--`, which is rustc's; `forwarded_manifest_path` finds
-  a `--manifest-path` in either form. `expand`'s `--item`, help flag, and profile flags count only
-  before a `--` too.
+
 - [`crates/cargo-cgp/tests/front_end/dispatch.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/dispatch.rs):
   the side-effect-free dispatch paths (an unknown subcommand, a missing subcommand or help flag,
   `--version`/`-V`, and `setup` and `update` answering `--help` without running and refusing any
@@ -794,8 +572,3 @@ has a build script that bakes in the pinned toolchain.
   [`build.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/build.rs),
   which bakes in `PINNED_TOOLCHAIN` and the `built_against_rustc` identity from the compiling
   `$RUSTC --version`.
-- [`flake.nix`](https://github.com/contextgeneric/cargo-cgp/blob/main/flake.nix): the Nix package:
-  builds both binaries under the pinned nightly from `rust-overlay` (read from
-  `rust-toolchain.toml`), wraps the front-end for unmanaged mode and the driver for
-  `librustc_driver` loading, and narrows the source input to the build-relevant paths (see
-  [Installing with Nix](#installing-with-nix)).

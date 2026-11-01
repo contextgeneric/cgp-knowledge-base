@@ -84,6 +84,9 @@ error[E0275]: overflow evaluating the requirement `<Interp as CanCompute<Eval, M
 error[E0275]: [CGP-E020] the wiring for the consumer trait `CanCompute<Eval, MathExpr>` on context `Interp` never resolves, because the lookup leads back to itself
 ```
 
+The wording comes from a rerun on `add_mult`'s own context, whose names carry module paths; they are
+shortened here to the probe's.
+
 A plain `cargo build` reports a single `E0275` from inside the cycle instead, on the requirement
 `EvalAdd: Computer<Interp, Eval, Plus<MathExpr>>`.
 

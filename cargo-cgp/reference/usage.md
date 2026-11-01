@@ -208,7 +208,7 @@ followed by the command's stderr. A preflight failure therefore arrives with the
 message and its `` help: run `cargo cgp setup` `` line, and a missing tool arrives as cargo's
 `no such command` error naming `cgp`. The full integration notes, including why Rust Analyzer's own
 wrapper does not collide with the tool's, are in
-[Rust Analyzer integration](../implementation/distribution.md#rust-analyzer-integration). The public
+[Rust Analyzer integration](../implementation/rust-analyzer-integration.md). The public
 page is [Editor integration](https://contextgeneric.dev/docs/cargo-cgp/editor-integration).
 
 ## Running on a project outside this repository
@@ -255,9 +255,10 @@ setups. They are summarized here; the full contract is in
   that is not provisioned through rustup.
 - `CARGO_CGP_DRIVER`: an explicit path to the driver executable, bypassing the sibling lookup. Point
   it at a freshly built `target/debug/cargo-cgp-driver`.
-- `CARGO_CGP_TOOLCHAIN`: override the pinned nightly at runtime, for testing a toolchain bump;
-  normally paired with `CARGO_CGP_NO_MANAGE`. `setup` reads it too, so it installs the overriding
-  toolchain rather than the pinned one.
+- `CARGO_CGP_TOOLCHAIN`: override the pinned nightly at runtime, for testing a toolchain bump. `setup`
+  reads it too, so it installs the overriding toolchain and builds the driver under it, and the
+  preflight then compares the driver with that toolchain. It has no effect on a check run with
+  `CARGO_CGP_NO_MANAGE`, which forces no toolchain.
 - `CARGO_TARGET_DIR`: moves the project's target directory, and the check builds in its `cgp`
   subdirectory. Pass `--target-dir` to choose the check's directory exactly.
 

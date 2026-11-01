@@ -43,7 +43,7 @@ The flake at the repository root builds both binaries against the pinned nightly
 they run without rustup, which makes it the simplest way to install the current tool. It provisions
 the compiler as a build-time fact, so a machine that has only Nix (no rustup, no nightly) can run
 the tool, and the project you check needs no toolchain of its own. The details of how the flake does
-this are in [Installing with Nix](../implementation/distribution.md#installing-with-nix).
+this are in [The Nix package](../implementation/nix-package.md).
 
 To install the tool onto your `PATH` so `cargo cgp check` works like any other cargo subcommand:
 
@@ -80,7 +80,7 @@ The cargo path installs the small front-end first and then provisions everything
 second step, so the first command is one you can type from memory with no nightly date in it.
 
 ```sh
-cargo install --locked cargo-cgp   # installs the front-end; builds on any toolchain
+cargo install --locked cargo-cgp   # installs the front-end; builds on your own toolchain
 cargo cgp setup                    # provisions the pinned nightly + builds the matching driver
 ```
 

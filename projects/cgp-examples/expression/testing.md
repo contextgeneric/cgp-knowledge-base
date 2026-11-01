@@ -53,8 +53,7 @@ error[E0277]: the trait bound `Interp: DelegateComponent<PathCons<ComputerCompon
 ```
 
 Its `help` note spells out the elided path as `ComputerComponent`, then `Code`, then
-`Times<MathExpr>`. `cargo cgp check` folds the chain into one `[CGP-E002]` error at the same call,
-naming the matcher step for `Times` that fails.
+`Times<MathExpr>`. `cargo cgp check` folds the chain into one `[CGP-E002]` error at the same call, naming the matcher step that fails.
 
 Adding `(Eval, Times<MathExpr>)` to the probe's check block kept the wrapper's error and added one
 at the check line, which `cargo cgp check` reports as the missing entry rather than through the
@@ -63,6 +62,9 @@ matcher:
 ```text
 error[E0277]: [CGP-E001] missing wiring for `@ComputerComponent.Eval.Times<MathExpr>` on `Interp`
 ```
+
+The wording comes from a rerun on `add_mult`'s own context, whose names carry module paths; they are
+shortened here to the probe's.
 
 ## What is untested
 

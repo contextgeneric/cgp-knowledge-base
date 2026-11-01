@@ -251,7 +251,8 @@ obligation the entry wires.
 
 **[Walking to the root cause](typed-resolution-walk.md)** descends the seeded obligation's
 dependency graph (following only the CGP wiring vocabulary and obligations on the context itself,
-never `IsProviderFor`/`CanUseComponent`) to every terminal unmet bound, then decodes each terminal
+never `IsProviderFor`/`CanUseComponent`) to every terminal unmet bound, and
+**[leaves and labels](typed-resolution-leaves.md)** decodes each terminal
 (a `Symbol!` field name read structurally, the struct and its `Deref` chain inspected, a missing
 wiring or dispatch entry named) and renders each hop as a tree label with the type-level lists
 resugared.
@@ -343,7 +344,8 @@ marking.
 - The per-stage documents this overview links:
   [anchoring the starting obligation](typed-resolution-anchors.md),
   [the call-site anchor](typed-resolution-call-site.md),
-  [walking to the root cause](typed-resolution-walk.md), and
+  [walking to the root cause](typed-resolution-walk.md),
+  [leaves and labels](typed-resolution-leaves.md), and
   [the transformed diagnostic](typed-resolution-output.md).
 - [The driver](driver.md): the emitter seam this resolver extends, and the trait-renaming text
   rewrite it falls back to (which still recognizes `IsProviderFor`/`CanUseComponent` in rustc's
@@ -549,7 +551,7 @@ fixtures:
   stage's *fixed* output, threaded through a forwarding handler so it resolves through `CanHandle`.
   Folding the stalled projection to a placeholder leaves the requirement an unreportable
   `_: AsRef<[u8]>`; pins the
-  [`resolve_fixed_projections`](typed-resolution-walk.md#walking-the-dependency-graph-downward)
+  [`resolve_fixed_projections`](typed-resolution-walk.md#recovering-a-later-pipeline-stage)
   recovery that reduces the earlier stage's fixed output by re-normalizing the projection with the
   unknown input treated as deferrable, so the later stage's `<output>: AsRef<[u8]>` becomes the
   reported cause.
@@ -561,7 +563,7 @@ fixtures:
   than dropping as plumbing, leading with
   `` missing entry for `Tagged<Bytes>` in provider `SinkHandlers` `` over the
   chain. A dispatcher that `open`s its component reaches the redirect-wiring leaf instead; see
-  [typed-resolution-walk](typed-resolution-walk.md).
+  [the leaf shapes](typed-resolution-leaves.md#the-leaf-shapes).
 - `empty_dispatch_table`: the same missing-dispatch-entry leaf on an **empty** `UseInputDelegate`
   table, the case the owner-property check cannot see (no `DelegateComponent` impl to find). Pins
   the structural `is_dispatch_lookup` recognition: the unmet `DelegateComponent`'s owner is a proper

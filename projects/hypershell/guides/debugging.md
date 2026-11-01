@@ -10,10 +10,9 @@ the CGP [debugging guide](../../../cgp/guides/debugging.md).
 ## Check first, then read the root cause
 
 **Put the program in a `check_components!` before reading any error, and read it with
-`cargo cgp check`.** A failure reported at the `handle` call can resolve to its root cause too, but only
-when the call writes the input's type: `Vec::new()` leaves it to inference. A check states the input,
-so it reaches the cause either way, and it fails at the program's definition rather than at each call.
-The check is keyed on the program and its input:
+`cargo cgp check`.** A failure reported at the `handle` call resolves to its root cause too, but a
+check fails at the program's definition rather than at each call, and it names the input the program
+runs on. The check is keyed on the program and its input:
 
 ```rust
 check_components! {

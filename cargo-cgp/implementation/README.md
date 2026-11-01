@@ -55,8 +55,11 @@ same change.
     provider's own method called through its path, and the bound-call anchor that reads a called
     generic function's own bound.
   - [Typed resolution: walking to the root cause](typed-resolution-walk.md): the descent from the
-    seeded obligation to every terminal unmet bound, and the decoding, classification, and label
-    rendering of each leaf.
+    seeded obligation to every terminal unmet bound: finding the impl, recovering a later pipeline
+    stage, re-rooting at another context, and the guards that end a branch early.
+  - [Typed resolution: leaves and labels](typed-resolution-leaves.md): what ends a branch, each leaf
+    shape and the routing dead-ends it drops, and the decoding, classification, and label rendering
+    of each leaf.
   - [Typed resolution: the transformed diagnostic](typed-resolution-output.md): the coded headline
     classes, the single `root cause:` note over every leaf's merged dependency graph, and the
     emitter's application of the rustc-free plan.
@@ -117,8 +120,13 @@ same change.
   stable Rust: installing both binaries through cargo in lockstep, provisioning the pinned nightly
   with `rustc-dev`, forcing that nightly for the check so the project needs no toolchain of its own,
   and the version preflight that keeps front-end and driver matched. It follows the `rustc_plugin`
-  model where Clippy's in-toolchain distribution is closed to an out-of-tree tool. It covers the
-  `setup`/`update` subcommands (all provisioning confined to `setup`, a read-only preflight in
-  `check`, cargo-delegated update with crates.io version discovery) and running the tool as a Rust
-  Analyzer check backend (the JSON pipeline, the `RUSTC_WRAPPER` non-collision, and the isolated
-  target directory).
+  model where Clippy's in-toolchain distribution is closed to an out-of-tree tool, and it covers the
+  `setup`/`update` subcommands: all provisioning confined to `setup`, a read-only preflight in
+  `check`, and cargo-delegated update with crates.io version discovery.
+- [The Nix package](nix-package.md): the flake for a machine without rustup, which builds both
+  binaries under the pinned nightly and wraps them for unmanaged mode.
+- [Bumping the pinned nightly](pinned-nightly-bump.md): every consumer of the pin, and what a bump
+  must do in the same change, the Nix overlay included.
+- [Rust Analyzer integration](rust-analyzer-integration.md): running the check on save through
+  `overrideCommand`, why the compiler wrappers do not collide, and the `target/cgp` directory that
+  keeps the check off cargo's build lock.

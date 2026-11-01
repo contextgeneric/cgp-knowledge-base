@@ -311,7 +311,7 @@ promoting to a check) can.
 - [`hidden/unsatisfied-dependency/generic_fn_two_consumers_one_method.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/generic_fn_two_consumers_one_method.rs):
   a method two consumer traits declare, called on an unbounded type parameter.
 - [`hidden/unsatisfied-dependency/getter_unwired_call.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/getter_unwired_call.rs):
-  Calling a `#[cgp_getter]` method on a context that does not wire the getter.
+  calling a `#[cgp_getter]` method on a context that does not wire the getter.
 - [`hidden/unsatisfied-dependency/manual_supertrait_impl.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/manual_supertrait_impl.rs):
   a wiring gap surfaced inside a *hand-written* `impl Trait for Context` block, where the caret sits on the impl, never on the context's own type definition.
 - [`hidden/unsatisfied-dependency/missing_wiring.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/missing_wiring.rs):
@@ -319,7 +319,7 @@ promoting to a check) can.
 - [`hidden/unsatisfied-dependency/namespace_join_use_site.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/namespace_join_use_site.rs):
   a use-site failure on a namespace-joined context, resolved to its root cause *through* the namespace.
 - [`hidden/unsatisfied-dependency/open_dispatch_use_site.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/open_dispatch_use_site.rs):
-  Use-site failure on an `open`-dispatched context, resolved to the real missing wiring.
+  a use-site failure on an `open`-dispatched context, resolved to the real missing wiring.
 - [`hidden/unsatisfied-dependency/placeholder_error_route_leaf.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/placeholder_error_route_leaf.rs):
   a pipeline call whose first stage raises its input's error type, with the input left to inference.
 - [`hidden/unsatisfied-dependency/provider_called_directly_name_shared.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/provider_called_directly_name_shared.rs):

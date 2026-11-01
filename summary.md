@@ -714,7 +714,9 @@ it stale.
   a context, a call to an extensible-data operation typed through its chain, a provider's own
   method called through its path, and a bound of a called generic function.
 - [typed-resolution-walk.md](cargo-cgp/implementation/typed-resolution-walk.md) — the descent to every
-  terminal unmet bound, and each leaf's decoding and classification.
+  terminal unmet bound.
+- [typed-resolution-leaves.md](cargo-cgp/implementation/typed-resolution-leaves.md) — what ends a
+  branch, each leaf's decoding and classification, and how each hop is labeled.
 - [typed-resolution-output.md](cargo-cgp/implementation/typed-resolution-output.md) — the coded
   headline classes, the single root-cause note, and applying the rustc-free plan.
 - [cached-dependency-resolution.md](cargo-cgp/implementation/cached-dependency-resolution.md) — the
@@ -731,6 +733,12 @@ it stale.
   UI snapshot suite, its three passes and bless workflow, and how it compares to Clippy's harness.
 - [distribution.md](cargo-cgp/implementation/distribution.md) — packaging both binaries with a pinned
   nightly, the version preflight, and the `setup`/`update` flow.
+- [nix-package.md](cargo-cgp/implementation/nix-package.md) — the flake that builds both binaries
+  under the pinned nightly for a machine without rustup.
+- [pinned-nightly-bump.md](cargo-cgp/implementation/pinned-nightly-bump.md) — every consumer of the
+  pin, and what a nightly bump must do in the same change.
+- [rust-analyzer-integration.md](cargo-cgp/implementation/rust-analyzer-integration.md) — running the
+  check on save, and the `target/cgp` directory that keeps it off cargo's build lock.
 
 ### `cargo-cgp/issues/`: the gaps still open
 

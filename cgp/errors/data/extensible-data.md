@@ -154,7 +154,7 @@ method and the partial type, and a missing `Default` on the nightly names no fie
 
 The tool's walk descends CGP's extensible-data traits and reads the presence markers, so a failure it
 resolves states the field or variant at fault (see
-[Typed resolution: walking to the root cause](../../../cargo-cgp/implementation/typed-resolution-walk.md)).
+[Typed resolution: leaves and labels](../../../cargo-cgp/implementation/typed-resolution-leaves.md#decoding-classifying-and-rendering-a-leaf)).
 Each cause has its own tree code in the
 [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md):
 

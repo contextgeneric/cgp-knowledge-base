@@ -347,7 +347,7 @@ let _ = Person::builder()
 The anchor types `Person::builder()` as `__PartialPerson<IsNothing, IsNothing>` and the first
 `build_field` as `__PartialPerson<IsPresent, IsNothing>`, seeds the failing second call as
 `__PartialPerson<IsPresent, IsNothing>: BuildField<Symbol!("first_name")>`, and the
-[walk](typed-resolution-walk.md) reads the builder's markers:
+[walk](typed-resolution-leaves.md#decoding-classifying-and-rendering-a-leaf) reads the builder's markers:
 
 ```text
 error[E0271]: [CGP-E050] field `first_name` of `Person` is already set

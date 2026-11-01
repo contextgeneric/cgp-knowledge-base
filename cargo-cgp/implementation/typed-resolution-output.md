@@ -216,7 +216,7 @@ The `root cause:` lead is worded by *why* the leaf is unmet, in one shape per ki
   wiring or a `UseDelegate`/`UseInputDelegate` dispatch table missing a branch for the type it
   dispatches on (a `Code` fragment or an `Input` value's type). The two are recognized alike: by the
   lookup being into a table the provider holds as a parameter, or by the owner carrying at least one
-  `DelegateComponent` impl (see [the walk](typed-resolution-walk.md)). The key may be a redirect
+  `DelegateComponent` impl (see [the leaf shapes](typed-resolution-leaves.md#the-leaf-shapes)). The key may be a redirect
   path, when an aggregate provider `open`s a component in its own table or joins a namespace itself:
   the leaf then reads
   `` missing entry for `@ComputerComponent.Sink.Digest` in provider `ByteSink` ``,
@@ -297,7 +297,7 @@ The `root cause:` lead is worded by *why* the leaf is unmet, in one shape per ki
 
 - An **extensible-data cause**, a field or variant whose state a builder, extractor, or cast does
   not allow, or a data derive a type lacks, is read off the presence markers of the partial type
-  the bound lands on (see [the walk](typed-resolution-walk.md#decoding-classifying-and-rendering-a-leaf))
+  the bound lands on (see [the leaf](typed-resolution-leaves.md#decoding-classifying-and-rendering-a-leaf))
   and names the struct or enum rather than the generated type:
   ``root cause: field `port` of `Config` is not set`` (`[CGP-E119]`), with the field set twice
   (`[CGP-E118]`), a missing variant (`[CGP-E120]`), the variants a match left unextracted

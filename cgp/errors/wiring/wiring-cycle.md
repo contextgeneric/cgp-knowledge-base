@@ -56,9 +56,9 @@ step earlier, on the check's `Person: CanUseComponent<GreeterComponent>`, and pr
 
 Exercised instead by a plain method call on the context, the same cycle does *not* overflow: the
 method probe treats the unresolvable requirement as simply unsatisfied and reports a
-[hidden `E0599`](../hidden/unsatisfied-dependency.md) (`no method named` on stable, when the context
-is what fails to resolve) with no hint that a cycle is the reason. So a wiring cycle is `E0275` when checked and a
-hidden `E0599` when called, and only the checked form actually reveals the cause.
+[hidden `E0599`](../hidden/unsatisfied-dependency.md) (`no method named` on stable) with no hint that
+a cycle is the reason. So a wiring cycle is `E0275` when checked and a hidden `E0599` when called, and
+only the checked form actually reveals the cause.
 
 The [`E0275`](../error_codes/e0275.md) itself is ordinary `rustc` behavior. The trait solver follows
 a requirement's supporting bounds only to a bounded depth (the
