@@ -61,7 +61,7 @@ diagnostic is already sugared when it is built.
 Its distinguishing asset is **identity**: a `Ty<'tcx>` carries the `DefId` of the type it names, so
 every cell can be checked against the crate that defines it: `Cons`/`Nil`/`Symbol`/`Chars` in
 `cgp-base-types`, `Either`/`Void`/`Field` in `cgp-field`. A type merely *spelled* `Cons` in some
-other crate is therefore never resugared, whatever its shape, and this is what lets the typed pass
+other crate is therefore never resugared, whatever its shape, and this lets the typed pass
 be the liberal one: the `DefId` check does the discriminating, so the structural rules need only
 describe the shape rather than defend against coincidence.
 
@@ -135,7 +135,7 @@ node**, not a string: `Symbol!("height")` is built as a macro-call type the prin
 where the other two approaches simply emit text. Its passes must **fold each list outermost-first**,
 because a visitor recurses innermost-first and a list's tail is itself a list (folding the inner
 cell first leaves a two-element list as `Cons<A, Product![B]>`), so each pass folds before recursing
-and then recurses into the elements it collected. That same innermost-first instinct is what makes
+and then recurses into the elements it collected. That same innermost-first instinct makes
 the shared `Nil` overlap hazard bite hardest here, which is why the passes stay separate whole-tree
 visits (see [the rules](#the-rules-every-resugaring-follows)). And it **emits only real syntax**,
 as the diagnostic passes do, the subject of the next section.
@@ -290,7 +290,7 @@ delegate_components! {
 }
 ```
 
-The wiring key that entry generates is a `PathCons` chain, which is what shows up in a coherence
+The wiring key that entry generates is a `PathCons` chain, which shows up in a coherence
 conflict or a missing-wiring leaf:
 
 ```text
@@ -304,7 +304,7 @@ reads as a path the sentence names; a message the tool merely *cleaned up* wants
 `Path!(@ItemEncoderComponent.Vec<u8>)`, because there a raw type is being shown back in source form.
 The emitter passes `wrap` accordingly, bare on a rewrite and wrapped on a fallback.
 
-Segments are rendered back the way `Path!` classifies them going forward, which is what makes the
+Segments are rendered back the way `Path!` classifies them going forward, which makes the
 round trip faithful. `Path!` turns a lowercase, non-primitive identifier into a `Symbol` and keeps
 every other segment verbatim as a named type, so resugaring unwraps a `Symbol!("app")` head to the
 bare segment `app` only when `app` is such an identifier, and renders every other head verbatim: a
@@ -545,6 +545,24 @@ parameter the call leaves to inference, renders as the `_` a programmer would wr
 rustc's internal `!N` form, and a tuple is rendered element by element so a placeholder nested
 inside one still prints as `_`.
 
+## Further reading
+
+The CGP construct references define each expansion this document reverses, and are the ground truth
+whenever a rule here needs checking against the macro's own behaviour.
+
+- [`Symbol!`](../../cgp/reference/macros/symbol.md): the length-plus-`Chars` encoding, including why
+  the length is `str::len()`.
+- [`Path!`](../../cgp/reference/macros/path.md): the segment classification the `Path!` resugaring
+  mirrors, and the `PathCons` list.
+- [`Product!`](../../cgp/reference/macros/product.md) and
+  [`Sum!`](../../cgp/reference/macros/sum.md): the `Cons`/`Nil` and `Either`/`Void` lists.
+- [`Field`](../../cgp/reference/types/field.md) and
+  [`HasFields`](../../cgp/reference/traits/has_fields.md): the field cell and the shape the
+  `Struct!`/`Enum!` fold describes.
+- [`Struct!`](../../cgp/reference/macros/struct.md) and
+  [`Enum!`](../../cgp/reference/macros/enum.md): the shape macros the fold reverses, and the
+  encoding rules its spellings follow.
+
 ## Tests
 
 Resugaring is pure text-to-text or type-to-text, so most of it is pinned by unit tests with no
@@ -644,21 +662,3 @@ them rests on this document.
   [`select.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-expand/src/select.rs)
   filter (not a resugaring, but the narrowing `--item <path>` asks for, applied before the passes
   run so only what is printed is resugared). See [The expand command](expand-command.md).
-
-## Further reading
-
-The CGP construct references define each expansion this document reverses, and are the ground truth
-whenever a rule here needs checking against the macro's own behaviour.
-
-- [`Symbol!`](../../cgp/reference/macros/symbol.md): the length-plus-`Chars` encoding, including why
-  the length is `str::len()`.
-- [`Path!`](../../cgp/reference/macros/path.md): the segment classification the `Path!` resugaring
-  mirrors, and the `PathCons` list.
-- [`Product!`](../../cgp/reference/macros/product.md) and
-  [`Sum!`](../../cgp/reference/macros/sum.md): the `Cons`/`Nil` and `Either`/`Void` lists.
-- [`Field`](../../cgp/reference/types/field.md) and
-  [`HasFields`](../../cgp/reference/traits/has_fields.md): the field cell and the shape the
-  `Struct!`/`Enum!` fold describes.
-- [`Struct!`](../../cgp/reference/macros/struct.md) and
-  [`Enum!`](../../cgp/reference/macros/enum.md): the shape macros the fold reverses, and the
-  encoding rules its spellings follow.

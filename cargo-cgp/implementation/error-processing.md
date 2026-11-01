@@ -10,13 +10,13 @@ The crate is **driven entirely by the driver**; the front-end never touches diag
 as a separate crate for one reason: it links no compiler internals, so it builds and its tests run
 on any toolchain, without the driver's `rustc_private` linkage. The driver depends on it and calls
 into it from its emitter; the crate never depends on the driver or the front-end. Keeping the logic
-here is what lets a plain unit test exercise a transform over a hand-built string, with no compiler,
+here lets a plain unit test exercise a transform over a hand-built string, with no compiler,
 no cargo, and no `cargo-cgp` process in the loop.
 
 ## What the crate holds
 
 The crate's tenants are listed below, all driven by the driver's emitter. Grouping them here, apart
-from the driver, is what keeps them unit-testable.
+from the driver, keeps them unit-testable.
 
 - **Post-processing**
   ([`postprocess`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/postprocess))
@@ -50,8 +50,8 @@ from the driver, is what keeps them unit-testable.
   which the emitter only maps onto rustc's `DiagInner`. The note travels as an unrendered
   `PendingNote` (the causes and the header-stated leaf), because rendering it needs the emission
   order only the emitter's flush knows. Keeping one representation rather than a rendered string
-  alongside is what stops the tests pinning one note while the emitter shows another, and keeping
-  every piece rustc-free is what makes the whole diagnosis-to-text layer unit-testable without a
+  alongside stops the tests pinning one note while the emitter shows another, and keeping
+  every piece rustc-free makes the whole diagnosis-to-text layer unit-testable without a
   `TyCtxt`. The same module holds the structured dependency-graph nodes and their rendering
   (`node.rs`) and the graph that merges and renders them (`graph.rs`), so every node template and
   the whole merge/render live here. It is documented in
@@ -318,23 +318,13 @@ transform that affects an emitted diagnostic shows up as a snapshot diff. The tw
 different seams: this crate's tests pin a transform on a curated input, while the UI suite proves
 the transforms stay consistent with what the driver emits across the whole catalog.
 
-## Planned work
+## Adding a transform
 
-The transforms still ahead extend the per-diagnostic cleanup, each a new function added to the
-post-processing chain, each applying the same exact-match caution `resugar_symbol` sets the
-precedent for. The type-level encodings a CGP diagnostic carries are all decoded (`Symbol!`,
-`Path!`, and the `Product!`/`Sum!` lists with their record and variant forms), so what remains on
-that front is whichever encoding a new CGP construct introduces, and the place to add it is
-[Resugaring](resugaring.md). Recognizing more error classes is the other direction, each rewriting
-its message the way the missing-field transform does.
-
-One larger transformation is deliberately out of scope for this crate's per-string transforms:
-collapsing a *cascade*, the one deep mistake reported at every transitively dependent provider, into
-a single root cause. That is a cross-diagnostic transform, and it can only be decided by looking at
-the whole diagnostic set. It lives in the driver's emitter, which buffers the compilation's
-diagnostics and coalesces the failures that share a cause at flush (see
-[The driver](diagnostic-reshapes.md#naming-the-traits-behind-a-component-marker)). This crate supplies the pure
-pieces it runs on: `group_by_shared_cause`, `Causes::union`, and the `DedupLedger`.
+A new type-level encoding gets a new function in the post-processing chain, applying the same
+exact-match caution `resugar_symbol` sets, and [Resugaring](resugaring.md) explains where it goes.
+Collapsing a cascade does not belong here, because it needs the whole diagnostic set. The driver's
+emitter does that at the [flush](driver.md#de-duplicating-and-coalescing), over this crate's pure
+pieces: `group_by_shared_cause`, `Causes::union`, and the `DedupLedger`.
 
 ## Comparison with Clippy
 
@@ -342,11 +332,19 @@ Clippy offers no prior art for this crate, and the absence is itself informative
 diagnostic type of its own and never rewrites a diagnostic: it reuses rustc's `Diag`/`DiagCtxt`
 machinery and emits its lints through the compiler's own emitters, so its output is rustc's,
 unmodified
-([`clippy_utils/src/diagnostics.rs`](../../../external/rust-clippy/clippy_utils/src/diagnostics.rs)).
+([`clippy_utils/src/diagnostics.rs`](../../../external/rust/src/tools/clippy/clippy_utils/src/diagnostics.rs)).
 `cargo-cgp` does the opposite, *rewriting* the diagnostics rustc already produced, which is why it
 needs a body of string transforms Clippy has no equivalent of. Keeping those transforms in a
 rustc-free crate is the design that makes them testable without the compiler, precisely because
 Clippy's "just use the compiler's emitter" approach is not open to a tool that rewrites.
+
+## Further reading
+
+- [Architecture](architecture.md#the-flow-of-a-diagnostic): the surrounding steps: how rustc is configured to emit
+  better diagnostics, how each diagnostic is transformed, and how the result is rendered.
+- [The driver](driver.md): the emitter that drives these transforms, and the wiring rewrite in full.
+- [CGP error catalog](../../cgp/errors/README.md): the error classes the transforms must learn to
+  recognize, and where each class hides or surfaces its root cause.
 
 ## Tests
 
@@ -542,11 +540,3 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
 - [`crates/cargo-cgp-driver/src/emitter/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/emitter):
   the driver-side caller: applies the transforms over a `DiagInner`'s messages and span labels after
   its own rewrite.
-
-## Further reading
-
-- [Architecture](architecture.md#the-flow-of-a-diagnostic): the surrounding steps: how rustc is configured to emit
-  better diagnostics, how each diagnostic is transformed, and how the result is rendered.
-- [The driver](driver.md): the emitter that drives these transforms, and the wiring rewrite in full.
-- [CGP error catalog](../../cgp/errors/README.md): the error classes the transforms must learn to
-  recognize, and where each class hides or surfaces its root cause.
