@@ -123,15 +123,14 @@ decides it, and running each case gave:
 | Run | Expansion printed | Exit code |
 | --- | --- | --- |
 | A clean crate, or one with a type error or a wiring mistake | yes | 0 |
-| A wiring entry naming nothing, or a macro invocation that does not parse | what expanded | cargo's 101 |
-| A type defined twice, which rustc treats as fatal before `after_expansion` | no | cargo's 101 |
+| A wiring entry naming nothing, or a CGP macro rejecting its input | what expanded | cargo's 101 |
+| A type defined twice, a syntax error, or a `macro_rules!` call matching no rule | no | cargo's 101 |
 | Several targets and none selected | no | cargo's 101 |
 | An `--item` path that matches nothing | no | 1 |
 
-The second row surprises readers. rustc recovers from those errors and finishes expansion, so
-`after_expansion` runs and the listing omits what the failed macro would have generated. The
-driver's reshaping of name-resolution errors runs only in a check, so those errors print as rustc
-wrote them.
+The second row surprises readers: the compilation reaches `after_expansion` after those errors, and
+the listing omits what the failed macro would have generated. The driver's reshaping of
+name-resolution errors runs only in a check, so those errors print as rustc wrote them.
 
 The driver prints the `--item` miss straight to stderr rather than as a diagnostic, for two reasons.
 It is not about the code, so it should not fail the compilation in cargo's eyes. And the
