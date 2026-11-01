@@ -750,10 +750,10 @@ over `Display` and `AsRef<[u8]>` is the same code *Bypassing coherence* opens it
 example rather than two.
 
 The index groups reading links by the questions they answer. The introductions to *Bypassing
-coherence*, *Consumer and provider traits*, and *Impl-side dependencies* establish the concept and
-its purpose. Their running examples enter in the body as illustrations of that concept. Preserve
-the concept as the subject when revising an introduction, and keep costs beside the choices they
-qualify.
+coherence*, *Consumer and provider traits*, *Impl-side dependencies*, and *Modular error handling*
+establish the concept and its purpose. Their running examples enter in the body as illustrations
+of that concept. Preserve the concept as the subject when revising an introduction, and keep
+costs beside the choices they qualify.
 *Abstract types* distinguishes shared type selection from provider compatibility and explains when a
 type dependency must appear in the interface. *Aggregate providers* checks bundles against actual
 contexts and states that namespace customization requires unbound paths. *Checking your wiring*
@@ -771,8 +771,10 @@ trait's `IsProviderFor` supertrait; only the introductory trait pair omits that 
 The dependency and configuration pages explain how contexts satisfy their requirements.
 *Implicit arguments* requires matching `HasField` implementations and distinguishes cloning from
 borrowing, named getters, and wireable field selection.
-*Modular error handling* uses natural-writing style and follows a
-`#[cgp_fn(CanParsePort)]` blanket trait through a string context with per-source dispatch and a
+*Modular error handling* uses natural-writing style and opens with the separation between reusable
+failure reporting and context-selected error representation. It distinguishes configurable error
+construction and wrapping from propagation through ordinary Rust `Result` and `?`. The body follows
+a `#[cgp_fn(CanParsePort)]` blanket trait through a string context with per-source dispatch and a
 concrete domain-error enum with `From` conversions that preserve the original parse error. Its
 `CanParseConfigPort` example shows wrapping and transitive dependencies without adding wrapper
 wiring to those contexts. It distinguishes the fixed parsing implementation from interchangeable
@@ -861,6 +863,10 @@ for the tiers and the shapes, and on
 decision-guide tail.
 
 ### Maintaining it
+
+Use natural-writing whenever adding or revising a page under `docs/concepts/`, as required by the
+[explanation-page writing guide](writing-guides/explanation.md#writing-style). Apply it throughout
+the page, keeping the concept as the subject and using the examples to illustrate it.
 
 The section is bound to the internal concept documents by the
 [synchronization rule](../AGENTS.md#the-synchronization-rule) in both directions: a change to a

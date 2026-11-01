@@ -26,6 +26,18 @@ state of the section in [site-structure.md](../site-structure.md).
   worked out below
 - **Raw material**: [cgp/concepts/](../../cgp/concepts/README.md), rewritten rather than copied
 
+## Writing style
+
+Use **natural-writing** whenever adding or revising a public page under `docs/concepts/`. Select
+that style in the `point-first-writing` skill and apply it throughout the page. Let each sentence
+build on the previous one, connect paragraphs so readers can follow the reasoning, and vary
+sentence length. Use lists for sets of distinct items and connected prose to develop an argument.
+
+Keep the concept and its purpose as the subject of the opening. An example may help introduce
+that concept, but readers must understand that the page explains the idea, not the example's
+application domain. Develop running examples where they support the explanation. Preserve
+technical conditions, exceptions, and uncertainty when revising the prose.
+
 ## What an explanation page is not
 
 Three page types sit next to this one and the boundaries are worth stating, because a draft that drifts
@@ -118,10 +130,11 @@ anything it does not carry. A public reader has none of that.
 Three transformations turn one into the other. **Apply the vocabulary schedule**: defer or gloss the
 terms [vocabulary.md](../../communication-strategy/vocabulary.md) says to defer, and introduce the rest
 with a plain-language definition on first use. **Add the motivation the concept document assumes**: a
-concept opens with what the idea *is*, whereas an explanation page opens with the problem that makes the
-idea worth having. And **remove the internal machinery** (`DelegateComponent`, `IsProviderFor`, the
-`Symbol<…>` list) unless the page's subject *is* that machinery, in which case introduce it as the
-mechanism behind the model rather than as the model.
+public explanation must establish both what the concept means and why it matters. Its opening
+keeps that concept as the subject, with examples supporting its explanation. And **remove the
+internal machinery** (`DelegateComponent`, `IsProviderFor`, the `Symbol<…>` list) unless the page's
+subject *is* that machinery, in which case introduce it as the mechanism behind the model rather
+than as the model.
 
 The synchronization rule applies unchanged in both directions: an explanation page's claims are bound to
 the source exactly as a concept document's are, and a change to the underlying behavior updates both.
@@ -132,9 +145,9 @@ Every page in the tier follows the same shape, which is looser than a reference 
 because an explanation is an argument rather than a specification, and firmer than nothing because a
 reader who has read one page should be able to skim the next by habit.
 
-**Open by naming the question and saying where the page ends.** A sentence or two: what the page
-answers, and what it closes on. This is the declared-length habit at the scale of a single page: a
-reader who knows the shape navigates, and one who does not, abandons.
+**Open with the concept, its purpose, and the page's scope.** Establish what the page explains
+and why a reader would care, then say how far the explanation goes. Any example in the opening
+must support that purpose without making the example appear to be the page's subject.
 
 **Develop the idea in as many sections as it takes**, with the argument's own headings rather than
 prescribed ones, and with code shown as illustration rather than as steps.
@@ -338,6 +351,10 @@ two questions is two pages, and the second one is the essay that should have bee
 
 **Check the frame.** Does the page explain what Rust already does, correctly and sympathetically, before
 improving on it? This is the single most common way a CGP explanation goes wrong.
+
+**Check the natural-writing style.** Read the page from start to finish. Each sentence should build
+on the preceding one, paragraphs should connect the reasoning, and sentence lengths should vary.
+The opening must establish the concept and its purpose, with the examples supporting that subject.
 
 **Find the cost.** If the page makes a claim and never names its limit, it is not finished.
 
