@@ -64,8 +64,8 @@ The walk handles this in two steps:
   depends on the unknown (`_: Send`) from being reported.
 
 The recovery matches on the projection kind alone, never on an associated-type name or a trait, so
-it is not specific to handlers and `Output`. Keep it that way: naming `ComposeHandlers` here would
-break every other composition. Both steps are no-ops on a concrete-input walk.
+it is not specific to handlers and `Output`. Keep it that way, since a pipeline is not the only
+shape that stalls. Both steps are no-ops on a concrete-input walk.
 
 ## Re-rooting at another context
 
@@ -184,7 +184,8 @@ The guards also decide what may be cached: a subtree they cut is never stored, a
 
 ## Tests
 
-The fixtures are cataloged in the parent document's [Tests](typed-root-cause-resolution.md#tests).
+- [The parent document's catalog](typed-root-cause-resolution.md#tests): every fixture that pins the
+  walk.
 
 ## Source
 

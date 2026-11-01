@@ -2,10 +2,11 @@
 
 This document covers what ends a branch of the [walk](typed-resolution-walk.md): which terminal
 bound counts as which cause, when it is dropped, and how a cause reads in the tree
-[the emitter emits](typed-resolution-output.md). One rule runs throughout: no name is matched.
-Traits are recognized by their shape, or by `DefId` when anchored to the crate that defines them, so
-a program's own lookalike is never misread. And a `help` names only a fix the solver confirms, so an
-obligation holding an unknown gets none.
+[the emitter emits](typed-resolution-output.md). Two rules run throughout. A program's names are
+never trusted: CGP's traits are recognized by their shape, or by `DefId` when anchored to the crate
+that defines them, so a lookalike is never misread. And a `help` naming a specific adapter or
+component is confirmed against the program, never guessed, so an obligation holding an unknown gets
+none.
 
 ## The leaf shapes
 
@@ -36,8 +37,9 @@ The corner cases behind that table are the ones a change is likely to break:
   provider. Having wired keys is not enough on its own, as a `#[cgp_computer]` provider wires its
   promotions
   ([`cgp_computer_no_error_type_call`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/handlers/cgp_computer_no_error_type_call.rs)).
-- **A redirect path on a provider with its own impl** follows the last two table rows: it reads as a
-  missing entry only when one argument explains the mismatch.
+- **A redirect path off the context is never "not a provider".** The lookup ran in a provider's own
+  `open` table, so it is a missing dispatch entry. On a provider with its own impl it reads so only
+  when one argument explains the mismatch, and is dropped otherwise.
 - **A path recovered from a call with an inferred input ends in a placeholder.** On the context, the
   leaf drops that tail and names the path the programmer can wire. That claims no entry exists for
   *any* value of the unknown, so it is kept only when the solver finds the lookup can hold for none
@@ -116,7 +118,8 @@ takes one from `CGP-E110` onward. The walk emits one flat path per way a cause i
 
 ## Tests
 
-The fixtures are cataloged in the parent document's [Tests](typed-root-cause-resolution.md#tests).
+- [The parent document's catalog](typed-root-cause-resolution.md#tests): every fixture that pins a
+  leaf.
 
 ## Source
 

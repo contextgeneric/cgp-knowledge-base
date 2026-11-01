@@ -62,9 +62,9 @@ a comparison with related tools:
   [Comparison with cargo-expand](expand-command.md#comparison-with-cargo-expand) for the expand
   command. Include the section only where such a tool exists; omit it, rather than writing a
   paragraph about its absence, for a subsystem with no counterpart.
-- **Tests**: a bullet per test that pins a behavior the document describes, each a link to the test
-  with a one-line note on what it verifies. Because the tool's coverage is small, this section is
-  also where a reader sees, by omission, what is *not* guarded.
+- **Tests**: a bullet per test file or fixture group that pins a behavior the document describes,
+  each a link with a one-line note on what it verifies. Because the tool's coverage is small, this
+  section is also where a reader sees, by omission, what is *not* guarded.
 - **Source**: a bullet per source file or module the document covers, each a link, so a reader can
   jump from the prose to the code.
 
@@ -80,12 +80,15 @@ coverage and code locations at a glance.
 
 ## Level of detail and code snippets
 
-An implementation document gives the high-level picture; the code holds the details, so do not
-rehash it line by line. Explain what a subsystem does and why, name the flow and the contracts, and
-leave the mechanics of each step to the source. Name an internal function only when a reader needs
-it as an entry point into the code. Use a short code snippet (a command line, an argument vector
-before and after normalization, the environment a process is launched with) where it makes a
-specific behavior concrete, and keep it to the fragment that illustrates the point.
+An implementation document gives the high-level concepts and architecture; the code holds the
+details, so leave out what a reader gets easily from it. Keep three things: the code's intention, so
+a later agent does not make it worse; a summary for an agent that does not read the source; and
+issues, corner cases, and anything else worth attention. Explain what a subsystem does and why, name
+the flow and the contracts, and leave the mechanics of each step to the source. Name an internal
+function only when a reader needs it as an entry point into the code. Use a short code snippet (a
+command line, an argument vector before and after normalization, the environment a process is
+launched with) where it makes a specific behavior concrete, and keep it to the fragment that
+illustrates the point.
 
 ## Known gaps and limitations
 

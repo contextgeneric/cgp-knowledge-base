@@ -29,9 +29,14 @@ through `rustup run`. The user-facing account is in
 
 ## Tests
 
-No test builds the flake: the package build runs no tests, and the UI suite needs a sibling `cgp`
-checkout a sandboxed build lacks. Run `nix build` and `nix flake check` after changing the flake or
-the manifests. A nightly bump needs
+No test builds the flake, because the package build runs no tests and the UI suite needs a sibling
+`cgp` checkout a sandboxed build lacks. These commands are the checks to run after changing the
+flake or the manifests:
+
+- `nix build`: builds and wraps both binaries.
+- `nix flake check`: evaluates the outputs.
+
+A nightly bump needs
 [one more step](pinned-nightly-bump.md#updating-the-nix-packages-for-a-new-nightly).
 
 ## Source

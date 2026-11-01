@@ -80,18 +80,19 @@ The cargo path installs the small front-end first and then provisions everything
 second step, so the first command is one you can type from memory with no nightly date in it.
 
 ```sh
-cargo install --locked cargo-cgp   # installs the front-end; builds on your own toolchain
+cargo install --locked cargo-cgp   # installs the front-end; builds on Rust 1.96 or newer
 cargo cgp setup                    # provisions the pinned nightly + builds the matching driver
 ```
 
-The two commands divide the work cleanly. `cargo install --locked cargo-cgp` builds the front-end from
-the dependency versions the release was tested with, as `setup` and `update` also install. It is a
-plain binary with no compiler linkage, so it installs under whatever toolchain you already have.
-`cargo cgp setup` then does the heavyweight, stateful work: it installs the pinned nightly with its
-`rustc-dev` and `llvm-tools` components through rustup, builds `cargo-cgp-driver` against that exact
-nightly at the front-end's own version, and places the driver next to the front-end in
-`~/.cargo/bin`. Because `setup` reads the pinned toolchain from the front-end's baked-in constant,
-you never type a nightly date. `setup` requires rustup to manage the toolchain.
+The two commands divide the work cleanly. `cargo install --locked cargo-cgp` builds the front-end
+from the dependency versions the release was tested with, as `setup` and `update` also install. It
+is a plain binary with no compiler linkage, so it installs under the toolchain you already have,
+which must be Rust 1.96 or newer. `cargo cgp setup` then does the heavyweight, stateful work: it
+installs the pinned nightly with its `rustc-dev` and `llvm-tools` components through rustup, builds
+`cargo-cgp-driver` against that exact nightly at the front-end's own version, and places the driver
+next to the front-end in `~/.cargo/bin`. Because `setup` reads the pinned toolchain from the
+front-end's baked-in constant, you never type a nightly date. `setup` requires rustup to manage the
+toolchain.
 
 `setup` and `update` take no options. Each answers `--help` (or `-h`) with a help text of its own
 rather than running, and refuses any other argument with an error naming it, since both install

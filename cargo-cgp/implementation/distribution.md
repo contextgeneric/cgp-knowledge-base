@@ -26,7 +26,6 @@ an immutable toolchain. And the checked project need not use nightly at all.
 
 ## How similar tools solve it
 
-Clippy avoids the problem by shipping inside the toolchain, which an out-of-tree project cannot do.
 The [`rustc_plugin`](https://github.com/cognitive-engineering-lab/rustc_plugin) framework is the
 model `cargo-cgp` follows: it bakes the pinned nightly into a constant, treats a nightly bump as a
 breaking change, and has an installer do the toolchain setup, since
@@ -65,6 +64,10 @@ part of that second command has a reason:
 - **`--locked` builds the published lockfile,** including the `syn` and `prettyplease` versions
   whose output the expand snapshots pin.
 - **`--root` places the driver beside the front-end,** where the lookup finds it.
+
+Each published crate's `LICENSE` is a symlink to the workspace file, as each binary's
+`rust-toolchain.toml` is, and cargo packages the file it points to. So keep them symlinks rather
+than copies.
 
 ## Provisioning: `setup` does the work, `check` only verifies
 
@@ -137,10 +140,10 @@ this to `rustc_plugin`'s build-time rpath because it must discover the sysroot a
 
 ## Comparison with Clippy
 
-Distribution is where `cargo-cgp` cannot follow Clippy, and this is not a gap to close. Clippy's
-driver is versioned with its toolchain atomically, so it gets everything here for free. `cargo-cgp`
-pins a nightly instead of being built with one, installs it separately, injects a sysroot, and runs
-a preflight.
+Distribution is where `cargo-cgp` cannot follow Clippy, and this is not a gap to close. Clippy ships
+inside the toolchain as a rustup component, which an out-of-tree project cannot do, so it gets
+everything here for free. `cargo-cgp` pins a nightly instead of being built with one, installs it
+separately, injects a sysroot, and runs a preflight.
 
 ## Known limitations
 
@@ -169,11 +172,21 @@ These limits of the managed path are accepted:
 
 ## Tests
 
-Pure logic is unit-tested in
-[`tests/front_end/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp/tests/front_end):
-the preflight's verdicts and messages, the driver lookup, `update`'s channel rule, and `setup`'s
-arguments. The managed path is not in the [UI suite](testing.md), which runs unmanaged, since
-installing a provisioned driver is out of scope for the source-tree test loop.
+Pure logic is unit-tested, with process spawning at the edges. The managed path is not in the UI
+suite, since installing a provisioned driver is out of scope for the source-tree test loop.
+
+- [`front_end/preflight.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/preflight.rs):
+  the preflight's verdicts and messages.
+- [`front_end/driver_path.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/driver_path.rs):
+  the driver lookup.
+- [`front_end/update.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/update.rs):
+  the channel rule, without a network call.
+- [`front_end/setup.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/setup.rs):
+  the driver's install arguments.
+- [`front_end/dispatch.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/dispatch.rs):
+  `setup` and `update` refusing arguments.
+- The [UI snapshot suite](testing.md): the end-to-end proof that the driver runs as the compiler,
+  run unmanaged.
 
 ## Source
 
