@@ -1450,7 +1450,8 @@ will likely grow toward it:
 - [`crates/cargo-cgp-driver/tests/driver/flush.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/flush.rs):
   the flush over hand-built buffers: only coalescible resolutions group, a group is one block at its
   first member's position with its caret on the site written first, a merged block states the cause
-  once and names every consumer, a note goes ahead of the first `help`, and the shared-dispatch pairing
+  once, names every consumer, and drops rustc's children and suggestions, a later block elides a
+  subtree an earlier one drew, a note goes ahead of the first `help`, and the shared-dispatch pairing
   leaves a diagnostic without its helper to the next stage.
 - [`crates/cargo-cgp-driver/tests/driver/postprocess.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/postprocess.rs):
   a span label the post-processing rewrites, with the span's primary span and context span kept.

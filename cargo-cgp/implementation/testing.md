@@ -458,14 +458,18 @@ suite. There is no dogfood test yet (see above).
   the absent case, and the file-not-directory rule that keeps cargo's own `build/cargo-cgp/`
   directory from being mistaken for the binary.
 - [`crates/cargo-cgp-ui-tests/tests/harness/aux.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/aux.rs):
-  the `//@aux-build:` parser: one and several declared crates, a fixture declaring none, an
-  unreadable fixture, and the malformed-directive guard from both sides: a space after the slashes
-  and a doc-comment form are rejected, while prose mentioning the syntax is not.
+  resolving a fixture's declared auxiliary crates: declared order, and an unknown name skipped.
+- [`crates/cargo-cgp-ui-tests/tests/harness/cgp_code.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/cgp_code.rs):
+  the form of a `CGP-Exxx` code, the output's reader taking the code a longer run of digits starts
+  with, and the `//@codes:` directive rejecting that run.
 - [`crates/cargo-cgp-ui-tests/tests/harness/directives.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/directives.rs):
   every directive read together, none declared, `//@codes: none`, commented-out `@`-path wiring left
   alone, and the rejection of an unknown directive, a spaced directive, a `//@rewrites-falsely:`
   without a reason, an `//@env:` without an assignment, an `//@aux-build:` without a crate, a
-  malformed code, an unknown quality, and a second `//@codes:` or `//@quality:`.
+  malformed code, an unknown quality, and a second `//@codes:` or `//@quality:`. Reading
+  `//@aux-build:` from a file: one and several declared crates, a fixture declaring none, an
+  unreadable fixture, and the malformed-directive guard from both sides: a space after the slashes
+  and a doc-comment form are rejected, while prose mentioning the syntax is not.
 - [`crates/cargo-cgp-ui-tests/tests/harness/passes.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/passes.rs):
   the header check (exact codes, a missing directive, `//@codes: none`), the collection of codes
   from output, the status check (agreement and disagreement in both directions), the pass-through
