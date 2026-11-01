@@ -109,8 +109,9 @@ rather than a type, so there the tail is left out, as the entry wrote it.
 
 **An empty list is written `Product![]` only where its type is known.** The typed pass writes a
 standalone CGP `Nil` as `Product![]` and `Void` as `Sum![]`, leaving the `Nil` that ends a spine or
-a `Field`'s unit payload. The others see only the name, which a program may give its own type, so a
-bare `Nil` stays, and their folds need a first cell.
+a variant's unit payload, so a `Struct!` field of an empty list reads `Product![]` there. The others
+see only the name, which a program may give its own type, so a bare `Nil` stays, and their folds need
+a first cell.
 
 ## The resugarings
 
@@ -146,9 +147,10 @@ The match is exact in three ways, and any of them failing leaves the type as it 
 **declared length must equal the decoded string's byte length**, because `Symbol!` bakes in
 `str::len()` rather than a character count, so a length that disagrees means this is not a `Symbol!`
 expansion. The **list must be `Chars` all the way down to `Nil`**, with nothing else in the chain.
-And each `Chars` head must be a **single plain character literal**: an escaped or multi-character
-literal declines, rather than being decoded by guesswork. The empty string is a legitimate match:
-`Symbol<0, Nil>` resugars to `Symbol!("")`.
+And each `Chars` head must be a **single character**. The text pass alone reads a literal rustc
+rendered, so an escaped one (`'\''`) declines there rather than being decoded by guesswork, while the
+other two read the character itself. The empty string is a legitimate match: `Symbol<0, Nil>` resugars
+to `Symbol!("")`.
 
 The typed implementation is `decode_symbol`, which additionally checks `Symbol`, `Chars`, and `Nil`
 by `DefId` against `cgp-base-types` and reads each character out of the const argument's valtree;
@@ -204,7 +206,10 @@ and keeps a qualifier only where it tells two types apart, so the one that reach
 meaningful, and dropping it would make `std::io::Error` read as any other `Error`. Two segment
 shapes decline, leaving the whole list raw rather than risking a mangled path: a qualified segment
 that is not a plain type path (a lowercase tail, generics), and a **bare lowercase identifier**,
-which `Path!` would have encoded as a `Symbol`, so meeting one as a plain type is ambiguous.
+which `Path!` would have encoded as a `Symbol`, so meeting one as a plain type is ambiguous. A
+`Symbol!` head that is not a lowercase, non-primitive identifier declines too, in all three passes,
+since no bare segment spells it. The typed pass holds the type itself, so it prints a qualified
+segment with generics or a lowercase tail rather than declining on its name.
 
 One non-`Nil` tail is treated apart. An **open-ended path** ends in the macros' generic "rest of
 path" parameter instead of `Nil`, which rustc prints as the inference placeholder `_`, the shape
@@ -427,7 +432,11 @@ checking a rule: [`Symbol!`](../../cgp/reference/macros/symbol.md),
 ## Tests
 
 **What is not guarded:** the typed implementation needs the compiler, so no test compares it with
-the other two directly, and its agreement rests on the fixtures below and this document.
+the other two directly, and its agreement rests on the fixtures below and this document. A rule only
+it can break is its reading of a path segment, in
+[`render_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/query/keys.rs),
+which [`qualified_path_segment`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/qualified_path_segment.rs)
+pins for a qualifier.
 
 - [`tests/error_processing/postprocess/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/tests/error_processing/postprocess):
   the text implementations, with every decline above.

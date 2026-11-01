@@ -240,6 +240,8 @@ headline. The conflicts `cargo-cgp` rewrites:
   `@ComputerComponent.<Code> Code.u64` beside `@ComputerComponent.Eval`, two keys that overlap in
   part through a generic first segment; the `.cgp.stderr` pins the `[CGP-E011]` headline naming the
   key they share, `@ComputerComponent.Eval.u64`.
+- [`wiring/conflicting-wiring/qualified_path_segment.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/qualified_path_segment.rs):
+  a duplicated key whose `std::io::Error` segment keeps its qualifier beside a local `Error`, `[CGP-E010]`.
 - [`wiring/conflicting-wiring/partial_overlap_open_value.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/partial_overlap_open_value.rs):
   `@app.<X> Wrap<X>` beside `@app.<T> T.Bar`, a partial overlap whose shared key keeps a type the keys
   leave open, named `@app.Wrap<_>.Bar`.
