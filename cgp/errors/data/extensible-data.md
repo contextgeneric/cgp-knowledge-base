@@ -154,7 +154,7 @@ method and the partial type, and a missing `Default` on the nightly names no fie
 
 The tool's walk descends CGP's extensible-data traits and reads the presence markers, so a failure it
 resolves states the field or variant at fault (see
-[Typed resolution: leaves and labels](../../../cargo-cgp/implementation/typed-resolution-leaves.md#decoding-classifying-and-rendering-a-leaf)).
+[Typed resolution: leaves and labels](../../../cargo-cgp/implementation/typed-resolution/leaves.md#decoding-classifying-and-rendering-a-leaf)).
 Each cause has its own tree code in the
 [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md):
 
@@ -227,7 +227,7 @@ Each shape has its own fix, named by the cause:
 
 The tool types a data operation's value from the operations' signatures, since the emitter cannot
 read typeck results (see
-[Typed resolution: the call-site anchor](../../../cargo-cgp/implementation/typed-resolution-call-site.md#calls-to-extensible-data-operations)).
+[Typed resolution: the call-site anchor](../../../cargo-cgp/implementation/typed-resolution/call-site.md#calls-to-extensible-data-operations)).
 A value that does not come from a data operation, a constructor, a literal, or a binding the tool
 reads (a field access, a generic function's result) stays untyped, and so does a tag written with a
 computed const argument (`Index<{ 0 + 0 }>`), so such a call passes through as rustc wrote it. A

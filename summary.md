@@ -697,27 +697,31 @@ it stale.
   driver's module layers, and `ResolveCtx`.
 - [executable-structure.md](cargo-cgp/implementation/executable-structure.md) — the two-executable
   split, the cargo wrapping, and the environment contract between front-end and driver.
-- [driver.md](cargo-cgp/implementation/driver.md) — the rustc wrapper as a program: argument preparation, compiler-API access, the
+- [driver/README.md](cargo-cgp/implementation/driver/README.md) — the driver's documents and which to read
+  for which question.
+- [driver/program.md](cargo-cgp/implementation/driver/program.md) — the rustc wrapper as a program: argument preparation, compiler-API access, the
   injected flags, the emitter's rendering, de-duplication and coalescing, and panic containment.
-- [diagnostic-reshapes.md](cargo-cgp/implementation/diagnostic-reshapes.md) — what the emitter's stages do to each class of CGP mistake: the
+- [driver/diagnostic-reshapes.md](cargo-cgp/implementation/driver/diagnostic-reshapes.md) — what the emitter's stages do to each class of CGP mistake: the
   wiring-note rename, the conflict, structural, orphan, and macro-lowering reshapes, and the dropped
   suggestions.
 - [error-processing.md](cargo-cgp/implementation/error-processing.md) — the rustc-free crate holding
   the post-processing transforms, the shared `Struct!`/`Enum!` shape spellings, the wiring rewrite,
   the diagnosis model, and the wording.
-- [typed-root-cause-resolution.md](cargo-cgp/implementation/typed-root-cause-resolution.md) — the
+- [typed-resolution/README.md](cargo-cgp/implementation/typed-resolution/README.md) — the resolver's
+  documents, in the order a failure passes through them.
+- [typed-resolution/overview.md](cargo-cgp/implementation/typed-resolution/overview.md) — the
   pipeline overview for resolving a check failure's root cause by asking the trait solver.
-- [typed-resolution-anchors.md](cargo-cgp/implementation/typed-resolution-anchors.md) — the
+- [typed-resolution/anchors.md](cargo-cgp/implementation/typed-resolution/anchors.md) — the
   span-matching anchors that recover the obligation the walk starts from.
-- [typed-resolution-call-site.md](cargo-cgp/implementation/typed-resolution-call-site.md) — the
+- [typed-resolution/call-site.md](cargo-cgp/implementation/typed-resolution/call-site.md) — the
   HIR re-reads of the failing call expression, the seventh to tenth of the twelve anchors: a call on
   a context, a call to an extensible-data operation typed through its chain, a provider's own
   method called through its path, and a bound of a called generic function.
-- [typed-resolution-walk.md](cargo-cgp/implementation/typed-resolution-walk.md) — the descent to every
+- [typed-resolution/walk.md](cargo-cgp/implementation/typed-resolution/walk.md) — the descent to every
   terminal unmet bound.
-- [typed-resolution-leaves.md](cargo-cgp/implementation/typed-resolution-leaves.md) — what ends a
+- [typed-resolution/leaves.md](cargo-cgp/implementation/typed-resolution/leaves.md) — what ends a
   branch, each leaf's decoding and classification, and how each hop is labeled.
-- [typed-resolution-output.md](cargo-cgp/implementation/typed-resolution-output.md) — the coded
+- [typed-resolution/output.md](cargo-cgp/implementation/typed-resolution/output.md) — the coded
   headline classes, the single root-cause note, and applying the rustc-free plan.
 - [cached-dependency-resolution.md](cargo-cgp/implementation/cached-dependency-resolution.md) — the
   per-node resolver cache, its soundness reasoning, and why cacheability is a statelessness proof.
@@ -731,13 +735,15 @@ it stale.
   compiler builds and *suppresses* diagnostic information, and the panic hazards of re-entering it.
 - [testing.md](cargo-cgp/implementation/testing.md) — the unit tests (one target per crate) and the
   UI snapshot suite, its three passes and bless workflow, and how it compares to Clippy's harness.
-- [distribution.md](cargo-cgp/implementation/distribution.md) — packaging both binaries with a pinned
+- [distribution/README.md](cargo-cgp/implementation/distribution/README.md) — how the tool reaches a
+  machine and stays in step with its pinned nightly.
+- [distribution/provisioning.md](cargo-cgp/implementation/distribution/provisioning.md) — packaging both binaries with a pinned
   nightly, the version preflight, and the `setup`/`update` flow.
-- [nix-package.md](cargo-cgp/implementation/nix-package.md) — the flake that builds both binaries
+- [distribution/nix-package.md](cargo-cgp/implementation/distribution/nix-package.md) — the flake that builds both binaries
   under the pinned nightly for a machine without rustup.
-- [pinned-nightly-bump.md](cargo-cgp/implementation/pinned-nightly-bump.md) — every consumer of the
+- [distribution/pinned-nightly-bump.md](cargo-cgp/implementation/distribution/pinned-nightly-bump.md) — every consumer of the
   pin, and what a nightly bump must do in the same change.
-- [rust-analyzer-integration.md](cargo-cgp/implementation/rust-analyzer-integration.md) — running the
+- [distribution/rust-analyzer-integration.md](cargo-cgp/implementation/distribution/rust-analyzer-integration.md) — running the
   check on save, and the `target/cgp` directory that keeps it off cargo's build lock.
 
 ### `cargo-cgp/issues/`: the gaps still open

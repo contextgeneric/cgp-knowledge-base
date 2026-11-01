@@ -66,7 +66,7 @@ next free one:
 The families differ in how the tool recovers them. The **trait-failure** codes `CGP-E001` to
 `CGP-E005` come from the typed resolver; each carries the root cause in the accompanying `note`,
 opening `root cause: …` over its dependency chain (see
-[Typed root-cause resolution](implementation/typed-root-cause-resolution.md)), except the two
+[Typed root-cause resolution](implementation/typed-resolution/overview.md)), except the two
 mismatch codes `CGP-E004` and `CGP-E005`, whose main messages already state their cause in full and
 so carry the chain alone. (`CGP-E003` is the trait-failure code for a hand-written wrapper trait or
 a blanket trait rather than a CGP consumer, and `CGP-E005` the abstract-type counterpart of
@@ -184,7 +184,7 @@ fix, and the [CGP error catalog](../cgp/errors/README.md) class it recognizes.
   construct, which the resolver anchors on the enclosing impl and traces through the wrapper's CGP
   consumer supertrait to the root cause; **or** a `#[cgp_fn]` / `#[blanket_trait]` blanket trait the
   context cannot satisfy, reached either by a direct method call (`app.describe()`, an `E0599` the
-  [call-site anchor](implementation/typed-resolution-call-site.md) recovers from the call
+  [call-site anchor](implementation/typed-resolution/call-site.md) recovers from the call
   expression) or through a `where` bound (`fn f<C: Describe>(…)`, an `E0277` the bound-call anchor
   recovers from the called function's own bound). Whether the failing trait is a CGP consumer or one of these
   non-component traits is decided by its **fingerprint**: a CGP consumer carries a blanket impl
@@ -440,7 +440,7 @@ for `CGP-E060`.
   bound, at a `check_components!` entry, or the consumer trait itself, at a consumer-method call
   (`Person: CanGreet` at `Person.greet()`), whose consumer obligation the tool walks until an
   obligation repeats among its own ancestors. The call's obligation is recovered as the
-  [call-site anchor](implementation/typed-resolution-call-site.md) recovers a failing call's, and
+  [call-site anchor](implementation/typed-resolution/call-site.md) recovers a failing call's, and
   only for the consumer trait the overflow names. The Rust code stays `E0275`. The note pointing at
   the generated `__Check…` trait is dropped, since the kept caret already covers the check entry,
   and so is rustc's advice to raise the recursion limit, which cannot end the loop
@@ -939,7 +939,7 @@ for `CGP-E060`.
 - **Triggered by:** a call to an operation of a trait the `cgp-field` or `cgp-field-extra` crate
   defines (other than the field-access traits such as `HasField`), in scope at the call, by method
   (`builder.build_field(…)`) or by type-relative path (`Shape::from_variant(…)`), on a value the
-  [data-call anchor](implementation/typed-resolution-call-site.md#calls-to-extensible-data-operations)
+  [data-call anchor](implementation/typed-resolution/call-site.md#calls-to-extensible-data-operations)
   types: a constructed value, or a builder, extractor, or remainder typed through the chain of data
   operations and pattern bindings that produced it. Its obligation fails as an `E0277`, an `E0271`,
   an `E0599` ("no method named", or the method-bounds shape), or an `E0308` on a tag argument (a
@@ -1145,7 +1145,7 @@ carry no code. They are listed here so their codelessness is a recorded decision
 `root cause: …` note over the dependency chains of every recovered cause, and a `help` for each fix
 the causes call for.
 They accompany a coded main message or a kept rustc one; the note itself is never coded.
-[The transformed diagnostic](implementation/typed-resolution-output.md) owns them.
+[The transformed diagnostic](implementation/typed-resolution/output.md) owns them.
 
 **Obligation-note renaming** rewrites the `required for … to implement …` chain notes of an
 unresolved (fallback) diagnostic to name the consumer and provider traits instead of the wiring

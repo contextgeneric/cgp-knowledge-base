@@ -67,7 +67,7 @@ definition that carries the attribute, so the attribute is one line away.
 
 `cargo-cgp` passes this class through unchanged: the fixture's `.cgp.stderr` is byte-for-byte its
 `.rust.stderr`, because this is a name-resolution error emitted before trait solving, and the
-[typed resolver](../../../cargo-cgp/implementation/typed-root-cause-resolution.md) neither engages
+[typed resolver](../../../cargo-cgp/implementation/typed-resolution/overview.md) neither engages
 on it nor could recover anything useful if it did: there is no obligation to re-run and no wiring to
 descend.
 

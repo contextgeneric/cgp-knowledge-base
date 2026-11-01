@@ -35,7 +35,7 @@ two can share a matcher:
 [`render_ty`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/label/render_ty.rs)
 and
 [`decode_symbol`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/query/cgp_item/spine.rs)
-serve every label and leaf the [typed resolver](typed-root-cause-resolution.md) produces. **Identity
+serve every label and leaf the [typed resolver](typed-resolution/overview.md) produces. **Identity
 is its asset:** every cell is checked by `DefId` against the crate that defines it, so a type merely
 spelled `Cons` elsewhere is never resugared, and the rules need only describe the shape. It alone
 reads a `Symbol!` character exactly, from the const argument's valtree, and sees a placeholder as
@@ -410,7 +410,7 @@ These are deliberate, so nobody adds them as a "missing" transform:
 - **An empty list** stays as its terminator in those same places, as above.
 - **`Index<N>`** needs nothing, since it is the surface form.
 - **A `Life<'a>` lift** is decoded rather than resugared: the resolver
-  [reads the region back](typed-resolution-anchors.md#the-check-anchors), and the label shows the
+  [reads the region back](typed-resolution/anchors.md#the-check-anchors), and the label shows the
   lifetime in its ordinary position.
 - **A call-site placeholder** renders as `_`, a rendering decision rather than a resugaring, with a
   tuple rendered element by element so a nested one does too.

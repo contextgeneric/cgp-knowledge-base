@@ -12,7 +12,7 @@ crate resugars it before the front-end prints it. Every UI fixture carries an `.
 so the command is covered end to end. The command expands the whole crate ([the limitation](#known-limitation-every-macro-is-expanded)), and
 it lacks the conveniences [`cargo-expand` has](#comparison-with-cargo-expand). The document extends
 [Executable structure](executable-structure.md), whose front-end/driver split it reuses, and
-[The driver](driver.md), whose `Callbacks` it adds a second hook to. The reference implementation
+[The driver](driver/program.md), whose `Callbacks` it adds a second hook to. The reference implementation
 for the command as a whole is not Clippy but `cargo-expand`, checked out read-only at
 [`../external/cargo-expand`](../../../external/cargo-expand).
 
@@ -132,7 +132,7 @@ rustc's unknown option, which fails the build, and `--help` there prints rustc's
 front-end recognizes counts only before the separator.
 
 Everything else about launching the compilation is what `check` already does, and it is *shared code
-rather than a copy*: the [preflight](distribution.md) that verifies a matching driver, forcing
+rather than a copy*: the [preflight](distribution/provisioning.md) that verifies a matching driver, forcing
 `RUSTUP_TOOLCHAIN` to the pinned nightly, `CARGO_CGP_SYSROOT`, the dynamic-library path, and the
 isolated `target/cgp` directory all live in
 [`launch/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp/src/launch), and

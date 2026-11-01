@@ -208,7 +208,7 @@ followed by the command's stderr. A preflight failure therefore arrives with the
 message and its `` help: run `cargo cgp setup` `` line, and a missing tool arrives as cargo's
 `no such command` error naming `cgp`. The full integration notes, including why Rust Analyzer's own
 wrapper does not collide with the tool's, are in
-[Rust Analyzer integration](../implementation/rust-analyzer-integration.md). The public
+[Rust Analyzer integration](../implementation/distribution/rust-analyzer-integration.md). The public
 page is [Editor integration](https://contextgeneric.dev/docs/cargo-cgp/editor-integration).
 
 ## Running on a project outside this repository
@@ -248,7 +248,7 @@ otherwise guarantees, so reach for it only when that match holds. See
 
 A few environment variables change how the front-end behaves, for local development and unusual
 setups. They are summarized here; the full contract is in
-[Distribution](../implementation/distribution.md#escape-hatches-for-local-development).
+[Distribution](../implementation/distribution/provisioning.md#escape-hatches-for-local-development).
 
 - `CARGO_CGP_NO_MANAGE`: when set, skip the preflight and the toolchain forcing, and trust whatever
   driver and toolchain the environment already provides. Used when running a source or Nix build
@@ -350,13 +350,13 @@ isolation, where you can add `RUST_BACKTRACE=1`, extra `-Z` flags, or a debugger
 transform. Dropping the leading `rustc` path instead runs the driver in its *direct* mode, the mode
 `--version` uses; the wrapper-mode form above is the one to copy from `-v` output. How the driver
 prepares its argument vector and reaches the compiler is documented in
-[The driver](../implementation/driver.md#preparing-the-argument-vector).
+[The driver](../implementation/driver/program.md#preparing-the-argument-vector).
 
 ## Further reading
 
 - [Installation](installation.md): installing and updating the tool.
 - [CGP error codes](../error-code.md): the catalog of the `[CGP-Exxx]` codes in the output.
-- [Distribution](../implementation/distribution.md): the design behind the check's toolchain
+- [Distribution](../implementation/distribution/provisioning.md): the design behind the check's toolchain
   forcing, the isolated target directory, and the Rust Analyzer integration.
-- [The driver](../implementation/driver.md): how the driver wraps rustc and transforms diagnostics,
+- [The driver](../implementation/driver/program.md): how the driver wraps rustc and transforms diagnostics,
   for when direct invocation surfaces a driver-side problem.

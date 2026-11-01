@@ -9,26 +9,26 @@ and replaces the diagnostic with one coded headline over a `cargo tree`-style de
 
 The walk follows the **real consumer and provider obligations**, never the scaffolding, and a change
 must keep it that way. `IsProviderFor` exists only so that plain rustc can surface a wiring failure
-(see [check traits](../../cgp/concepts/check-traits.md)): it carries a copy of a provider's `where`
+(see [check traits](../../../cgp/concepts/check-traits.md)): it carries a copy of a provider's `where`
 bounds so the compiler names the missing one. The walk re-solves the real provider impl, whose
 `where` clause holds the same bounds, and the aim is to make `IsProviderFor` removable. Three places
 still touch the scaffolding, each for a stated reason. The check anchor reads a check impl's
 `CanUseComponent` assertion to learn which component the entry names, the
-[`[CGP-E128]` leaf](typed-resolution-leaves.md#the-wiring-without-isproviderfor-leaf) reports a
+[`[CGP-E128]` leaf](leaves.md#the-wiring-without-isproviderfor-leaf) reports a
 context that lacks its own `IsProviderFor`, and the
-[text-rewrite fallback](diagnostic-reshapes.md#naming-the-traits-behind-a-component-marker) for a
+[text-rewrite fallback](../driver/diagnostic-reshapes.md#naming-the-traits-behind-a-component-marker) for a
 declined diagnostic reads both names in rustc's rendered output.
 
 Everything downstream of the rustc-free
 [`Resolved`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/resolved.rs)
-model (the wording, the tree) is tested without a compiler; [Architecture](architecture.md) places
+model (the wording, the tree) is tested without a compiler; [Architecture](../architecture.md) places
 that line.
 
 ## A worked example
 
 One failure end to end shows what the resolver produces. This program is distilled from the
 [`base_area_1`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/base_area_1.rs)
-fixture, itself the failure of the [area-calculation example](../../examples/area-calculation.md):
+fixture, itself the failure of the [area-calculation example](../../../examples/area-calculation.md):
 
 ```rust
 #[cgp_component(AreaCalculator)]
@@ -94,7 +94,7 @@ error[E0277]: [CGP-E001] missing field `height` on `Rectangle`
 The headline states the mistake, and `[CGP-E001]` classes it as a context that cannot implement a
 consumer trait. The tree is the obligation chain the walk descended, and it holds no `IsProviderFor`
 node because the walk never went through one. The `help` names the field with the type the getter
-requires. [error-code.md](../error-code.md) catalogs the codes.
+requires. [error-code.md](../../error-code.md) catalogs the codes.
 
 ## When the resolver engages, and when it declines
 
@@ -110,18 +110,18 @@ The gate excludes these shapes deliberately, and each exclusion prevents a false
 - **A resolution-class `E0599`** (`no variant named …`, `no associated item …`) is emitted while
   type lowering is mid-flight. Running the solver there re-enters the diagnostic context and aborts
   the compiler, the
-  [re-entrant-emission hazard](rustc-diagnostic-internals.md#re-entering-the-diagnostic-context-lock-was-already-held).
+  [re-entrant-emission hazard](../rustc-diagnostic-internals.md#re-entering-the-diagnostic-context-lock-was-already-held).
 - **A coherence conflict (`E0119`)** can name `HasField`, but two overlapping impls leave no bound
   unmet, so a walk would invent a missing-impl cause
   ([`deref_has_field_conflict`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/deref_has_field_conflict.rs)).
 - **An `E0275` overflow** is explained only by a cut (a cycle, or a lookup that grows), which
-  [the text path](diagnostic-reshapes.md#naming-the-traits-behind-a-component-marker) words from the
+  [the text path](../driver/diagnostic-reshapes.md#naming-the-traits-behind-a-component-marker) words from the
   overflow walk. A bound the walk stops at is one whose own evaluation overflowed, which no root
   cause states truly.
 - **A `?`-operator error** is about `Try` on the call's result, not about the call's bounds.
 
 Two more shapes reach
-[the data-call anchor](typed-resolution-call-site.md#calls-to-extensible-data-operations) alone: the
+[the data-call anchor](call-site.md#calls-to-extensible-data-operations) alone: the
 probe's "no method named `…`" `E0599`, and an `E0308` on a call's argument. A call to an
 extensible-data operation can fail with either before its bounds are checked, as when a builder
 finalized too early has no `finalize_build`. An `E0308` is taken only when the walk finds the field
@@ -141,7 +141,7 @@ emitted. A fresh `InferCtxt` per query makes this work, and the whole approach a
 fixture the resolver reshapes exercises that assumption.
 
 This position is also the source of every panic risk the tool faces.
-[rustc diagnostic internals](rustc-diagnostic-internals.md#panic-hazards-running-compiler-code-inside-the-emitter)
+[rustc diagnostic internals](../rustc-diagnostic-internals.md#panic-hazards-running-compiler-code-inside-the-emitter)
 catalogs the constraints: never force a query that emits (so `tcx.typeck` is off limits),
 instantiate a binder before relating it, and keep each `InferCtxt`'s variables to itself.
 
@@ -172,7 +172,7 @@ when its blanket depends on a CGP construct
 ([`upstream_blanket_trait_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/upstream_blanket_trait_use_site.rs),
 [`local_blanket_trait_reached`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/local_blanket_trait_reached.rs)).
 
-**[Anchoring the starting obligation](typed-resolution-anchors.md)** recovers what the compiler
+**[Anchoring the starting obligation](anchors.md)** recovers what the compiler
 failed to prove. The anchors are tried in this order and the first success wins, so the order is
 behavior. A blank gate takes any candidate:
 
@@ -184,7 +184,7 @@ behavior. A blank gate takes any candidate:
 | Wrapper chain | An `impl … for Foreign` whose `where` clauses reach a consumer | |
 | Use site, by component | A consumer call: every component the context in the spans wires | |
 | Use site, by consumer | A local non-generic consumer the spans name, reaching a namespace-joined context | |
-| [Call site](typed-resolution-call-site.md) | The call's HIR: a `Code`-dispatched pipeline, or a `#[cgp_fn]` method | |
+| [Call site](call-site.md) | The call's HIR: a `Code`-dispatched pipeline, or a `#[cgp_fn]` method | |
 | Data call | A call to an extensible-data operation | Also the data-call shapes |
 | Provider call | A provider trait's method called through the provider's own path | |
 | Bound call | A generic function's own bound the context fails | `E0277` only |
@@ -195,12 +195,12 @@ The span-matching anchors come first because each recovers a more exact obligati
 the call. The by-blanket-trait gate keeps a method call leading with the trait the programmer
 invoked, and keeps a declined generic consumer from latching onto a transitive trait.
 
-**[Walking to the root cause](typed-resolution-walk.md)** descends the obligation's dependency graph
-to every terminal unmet bound. **[Leaves and labels](typed-resolution-leaves.md)** decides what each
-terminal means and how each hop reads. **[The transformed diagnostic](typed-resolution-output.md)**
+**[Walking to the root cause](walk.md)** descends the obligation's dependency graph
+to every terminal unmet bound. **[Leaves and labels](leaves.md)** decides what each
+terminal means and how each hop reads. **[The transformed diagnostic](output.md)**
 is the output side: the headline classes, the merged notes, and the plan applied to rustc's
 `DiagInner`. A rewritten main message carries its `[CGP-Exxx]` code inline, and everything else
-stays in rustc's own form, as the [error-code scheme](../error-code.md) settles.
+stays in rustc's own form, as the [error-code scheme](../../error-code.md) settles.
 
 ## Boundaries
 
@@ -253,26 +253,26 @@ opaque, inherent, or const alias has no `Trait::Assoc` to name. Where a projecti
 to a concrete type, the leaf renders that side as `_`.
 
 The cost grows with the square of the chain depth past about 120 chained hops, a known limit that
-[Dependency-graph rendering](dependency-graph-rendering.md#known-limits) explains.
+[Dependency-graph rendering](../dependency-graph-rendering.md#known-limits) explains.
 
 ## Further reading
 
-- [The driver](driver.md): the emitter this resolver runs in.
-- [Error processing](error-processing.md): the rustc-free crate that holds the `Resolved` model and
+- [The driver](../driver/program.md): the emitter this resolver runs in.
+- [Error processing](../error-processing.md): the rustc-free crate that holds the `Resolved` model and
   the wording.
-- [Check traits](../../cgp/concepts/check-traits.md): why `IsProviderFor` and `CanUseComponent`
+- [Check traits](../../../cgp/concepts/check-traits.md): why `IsProviderFor` and `CanUseComponent`
   exist.
-- [rustc diagnostic internals](rustc-diagnostic-internals.md): where rustc drops what the resolver
+- [rustc diagnostic internals](../rustc-diagnostic-internals.md): where rustc drops what the resolver
   must recover, and the panic hazards.
-- [Architecture](architecture.md#the-flow-of-a-diagnostic): where this transformation sits.
-- [CGP check-trait failure](../../cgp/errors/checks/check-trait-failure.md): the error class it
+- [Architecture](../architecture.md#the-flow-of-a-diagnostic): where this transformation sits.
+- [CGP check-trait failure](../../../cgp/errors/checks/check-trait-failure.md): the error class it
   reshapes.
 
 ## Tests
 
 The UI suite pins the resolver end to end, and each fixture's `//!` header states what it
-demonstrates. The [`cgp/errors/`](../../cgp/errors/README.md) class documents list every fixture,
-and [Testing](testing.md) describes the suite. These groups pin the resolver:
+demonstrates. The [`cgp/errors/`](../../../cgp/errors/README.md) class documents list every fixture,
+and [Testing](../testing.md) describes the suite. These groups pin the resolver:
 
 - [`checks/check-trait-failure/fields/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/checks/check-trait-failure/fields):
   an absent field, an underived one, one behind `Deref`, several in written order, and a `Symbol!`
@@ -321,7 +321,7 @@ and [Testing](testing.md) describes the suite. These groups pin the resolver:
   calls.
 - [`data/extensible-data/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/data/extensible-data):
   the data-call anchor and the partial-value leaves, cataloged by the
-  [extensible data](../../cgp/errors/data/extensible-data.md) class.
+  [extensible data](../../../cgp/errors/data/extensible-data.md) class.
 - [`lowering/wrong-component-half/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/lowering/wrong-component-half):
   the descent into a provider whose header names the consumer trait.
 - [`pass-through/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/pass-through):
@@ -361,14 +361,14 @@ Each stage's modules import only the layers below them, in the order `resolve/mo
   import it and it imports none of them. `query/cgp_item/` holds the structural trait recognition,
   and `impl_match.rs` the one impl match.
 - [`resolve/cache.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/cache.rs):
-  the walk's memo ([Cached dependency resolution](cached-dependency-resolution.md)).
+  the walk's memo ([Cached dependency resolution](../cached-dependency-resolution.md)).
 - [`resolve/overflow.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/overflow.rs):
   the overflow walk the `E0275` wording reads.
 - [`emitter/stage/resolver.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/stage/resolver.rs):
   the candidate gate, and the plan applied to the diagnostic.
 - [`cargo-cgp-error-processing/src/diagnosis/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/diagnosis):
   the rustc-free model, the wording, the plan, and the graph
-  ([Dependency-graph rendering](dependency-graph-rendering.md)).
+  ([Dependency-graph rendering](../dependency-graph-rendering.md)).
 - [`cargo-cgp-error-processing/src/tree.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/tree.rs):
   the `cargo tree`-style renderer.
 - [`crates/cargo-cgp-driver/src/config/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/config):

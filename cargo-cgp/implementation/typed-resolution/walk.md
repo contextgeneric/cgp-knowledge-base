@@ -1,8 +1,8 @@
 # Typed resolution: walking to the root cause
 
-The walk descends from the consumer obligation an [anchor](typed-resolution-anchors.md) seeds, along
+The walk descends from the consumer obligation an [anchor](anchors.md) seeds, along
 the wiring's trait obligations, to every terminal unmet bound. [Leaves and
-labels](typed-resolution-leaves.md) covers what ends a branch and how it is worded. This document
+labels](leaves.md) covers what ends a branch and how it is worded. This document
 explains the decisions in the descent that a simpler walk would get wrong.
 
 ## Walking the dependency graph downward
@@ -46,7 +46,7 @@ Two rules matter past a flat wiring:
 A later stage of a pipeline is the case most likely to lose a real cause. A composition such as
 `ComposeHandlers<A, B>` requires `B: Handler<Ctx, Code, A::Output>`, so the later stage's input is a
 projection through the earlier stage. When a call leaves the pipeline's input unwritten, the walk
-holds a [rigid placeholder](typed-resolution-call-site.md), which falsifies `A`'s
+holds a [rigid placeholder](call-site.md), which falsifies `A`'s
 `Input: Send`-style bound. So `A`'s impl is rejected, `A::Output` does not normalize, and the clause
 reads `Handler<Ctx, Code, _>`. Dropping it would discard every root cause past the first stage.
 
@@ -60,7 +60,7 @@ The walk handles this in two steps:
   The result is kept only when fully concrete, so an output that depends on the input falls through.
 - **Fold:** otherwise each stray inference variable becomes a rigid placeholder and the walk
   descends anyway, reaching the stage's context-side needs. The
-  [placeholder-leaf filter](typed-resolution-output.md#the-root-cause-notes) then keeps a leaf that
+  [placeholder-leaf filter](output.md#the-root-cause-notes) then keeps a leaf that
   depends on the unknown (`_: Send`) from being reported.
 
 The recovery matches on the projection kind alone, never on an associated-type name or a trait, so
@@ -74,14 +74,14 @@ resolving `Outer`) is re-rooted at that context. A type from another crate count
 wiring, as an exported context or a `Vec<T>` the checked crate wires does. Without this the subtree
 would be labeled and classified against `Outer`, which turns its routing hop into a false step and
 its getter leaf into an opaque foreign bound. Re-rooting also lets the node share its
-[cache](cached-dependency-resolution.md) entry with `Inner`'s own walk.
+[cache](../cached-dependency-resolution.md) entry with `Inner`'s own walk.
 
 ## Which obligations the walk follows
 
 The walk descends provider traits, `DelegateComponent`, any obligation whose `Self` is the context,
 and CGP's extensible-data traits (those of `cgp-field` and `cgp-field-extra`), whose blanket impls
 lead to the presence marker at fault. Everything else is a
-[terminal leaf](typed-resolution-leaves.md#the-leaf-shapes). The limit protects a guarantee: an
+[terminal leaf](leaves.md#the-leaf-shapes). The limit protects a guarantee: an
 ordinary bound such as `f64: Eq` must stay the leaf, because a `std` blanket impl that happens to
 match (`impl<F: FnPtr> Eq for F`) would otherwise fabricate an `f64: FnPtr` step.
 
@@ -106,14 +106,14 @@ An unmet obligation whose impl's trait clauses all hold is failing on an associa
 `Self: Trait<Assoc = T>` desugars into two predicates and the walk follows only the trait half, so
 the resolver searches the impl for an unmet projection (`projection_mismatch`) and ends the branch
 there. A `HasField` value is the field-type mismatch; any other is the
-[abstract-type mismatch](typed-resolution-output.md#the-root-cause-notes). `HasField` wins when an
+[abstract-type mismatch](output.md#the-root-cause-notes). `HasField` wins when an
 impl carries both, because its leaf names a field to fix.
 
 This search prefers the concrete impl too, since the delegation blanket carries no projection. A
 blanket is deferred, not skipped: a getter trait's only impl is a blanket, and it carries the
 projection. A branch with no projection yields nothing, unless the failing scaffolding is itself the
 cause, the
-[wiring-without-`IsProviderFor` leaf](typed-resolution-leaves.md#the-wiring-without-isproviderfor-leaf).
+[wiring-without-`IsProviderFor` leaf](leaves.md#the-wiring-without-isproviderfor-leaf).
 
 ## A provider whose header names the consumer trait
 
@@ -132,7 +132,7 @@ alone.
 ## Crossing inference contexts
 
 A stray variable from one `InferCtxt` panics another, so these rules are not optional
-([hazard](rustc-diagnostic-internals.md#contaminating-one-inference-context-with-anothers-variables)):
+([hazard](../rustc-diagnostic-internals.md#contaminating-one-inference-context-with-anothers-variables)):
 
 - **No `SelectionContext`.** It asserts against the next-generation solver, so the walk unifies with
   `fresh_args_for_item` instead.
@@ -141,7 +141,7 @@ A stray variable from one `InferCtxt` panics another, so these rules are not opt
 - **Never a bare `skip_binder()` on the obligation.** A higher-ranked obligation such as
   `Self: for<'a> CanSerializeValue<<&'a Value as IntoIterator>::Item>` would relate an escaping
   bound variable and hit the
-  [generalizer panic](rustc-diagnostic-internals.md#feeding-escaping-bound-variables-to-inference-has_escaping_bound_vars).
+  [generalizer panic](../rustc-diagnostic-internals.md#feeding-escaping-bound-variables-to-inference-has_escaping_bound_vars).
   The binder is entered with placeholders rather than inference variables, because a projection
   through the bound lifetime normalizes against a rigid region but stalls against an inference one.
 
@@ -161,7 +161,7 @@ every frame, so the cap bounds a divergent wiring's work.
 
 Each cut records why it stopped (`SubResult.cut`), and the driver words an `E0275` wiring overflow
 from that reason
-([Diagnostic reshapes](diagnostic-reshapes.md#naming-the-traits-behind-a-component-marker)); an
+([Diagnostic reshapes](../driver/diagnostic-reshapes.md#naming-the-traits-behind-a-component-marker)); an
 overflow whose walk is not cut keeps rustc's wording. These points are worth attention:
 
 - A provider step is named only when a wiring entry chose that provider, so a provider inside a
@@ -173,18 +173,18 @@ overflow whose walk is not cut keeps rustc's wording. These points are worth att
   ([`cycle_beside_growing_lookup`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/cycle_beside_growing_lookup.rs)).
 
 The guards also decide what may be cached: a subtree they cut is never stored, as
-[Cached dependency resolution](cached-dependency-resolution.md) explains.
+[Cached dependency resolution](../cached-dependency-resolution.md) explains.
 
 ## Further reading
 
-- [Typed root-cause resolution](typed-root-cause-resolution.md): the pipeline overview and the
+- [Typed root-cause resolution](overview.md): the pipeline overview and the
   tests and source catalogs.
-- [rustc diagnostic internals](rustc-diagnostic-internals.md): the panic hazards behind the
+- [rustc diagnostic internals](../rustc-diagnostic-internals.md): the panic hazards behind the
   inference-context rules.
 
 ## Tests
 
-- [The parent document's catalog](typed-root-cause-resolution.md#tests): the fixture groups that pin
+- [The parent document's catalog](overview.md#tests): the fixture groups that pin
   the walk.
 
 ## Source

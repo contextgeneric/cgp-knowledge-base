@@ -1,4 +1,4 @@
-# Distribution
+# Provisioning through cargo and rustup
 
 `cargo-cgp` must run on a machine that never asked for a nightly, so distribution means delivering
 two binaries and one exact nightly compiler, keeping them in lockstep, and hiding this from a user
@@ -15,7 +15,7 @@ The driver links the compiler's `rustc_private` libraries, which ship only with 
 three things follow:
 
 - **Two binaries.** Only the driver links the compiler, which keeps the front-end small and ordinary
-  ([why](executable-structure.md#why-two-executables)). So installing the front-end always needs a
+  ([why](../executable-structure.md#why-two-executables)). So installing the front-end always needs a
   second step.
 - **The nightly must be present,** both to build the driver and to run it.
 - **The sysroot and the loaded library must match the driver,** or it crashes on a compiler it was
@@ -45,7 +45,7 @@ the loaded library come from one toolchain by construction.
 
 A program could compile under the project's toolchain and fail under the pinned nightly, or the
 reverse. That is an accepted trade-off of a fixed diagnostic compiler, like the
-[next-solver caveat](driver.md#choosing-the-trait-solver).
+[next-solver caveat](../driver/program.md#choosing-the-trait-solver).
 
 ## Installing the binaries
 
@@ -92,7 +92,7 @@ environment, which is both a load test and a handshake. A driver from another ni
 loader, before `main`. One that loads reports its tool version, which must equal the front-end's,
 and the compiler that built it, which must equal the toolchain's. In wrapper mode the same flag must
 reach the real compiler for cargo's probing, so the driver answers only when run directly
-([The driver](driver.md#preparing-the-argument-vector)).
+([The driver](../driver/program.md#preparing-the-argument-vector)).
 
 Strict equality is sound only because the crates are released in lockstep: they share one version,
 and a release publishes both, by hand ([Known limitations](#known-limitations)). The checks catch
@@ -134,7 +134,7 @@ variables allow that:
 ## Loading the compiler at runtime
 
 The front-end finds `librustc_driver` by discovering the sysroot and prepending its `lib` to the
-dynamic-library path ([the contract](executable-structure.md#the-environment-contract)). It prefers
+dynamic-library path ([the contract](../executable-structure.md#the-environment-contract)). It prefers
 this to `rustc_plugin`'s build-time rpath because it must discover the sysroot anyway, to inject the
 `--sysroot` an out-of-tree driver needs.
 
@@ -185,7 +185,7 @@ suite, since installing a provisioned driver is out of scope for the source-tree
   the driver's install arguments.
 - [`front_end/dispatch.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/dispatch.rs):
   `setup` and `update` refusing arguments.
-- The [UI snapshot suite](testing.md): the end-to-end proof that the driver runs as the compiler,
+- The [UI snapshot suite](../testing.md): the end-to-end proof that the driver runs as the compiler,
   run unmanaged.
 
 ## Source

@@ -23,7 +23,7 @@ agent recognizes them. Every post-codegen compile-fail class CGP produces has a 
 [`tests/ui/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui) that carries its root
 cause in the tool's output, so no fixture has `hidden` quality. The one class that produces no usable diagnostic under cargo-cgp,
 `inheritance_cycle`, does so because the next-gen solver *accepts* it (a missing error, tracked as
-a solver caveat in [The driver](../implementation/driver.md#choosing-the-trait-solver)), not
+a solver caveat in [The driver](../implementation/driver/program.md#choosing-the-trait-solver)), not
 because a cause is suppressed.
 
 The two archetypes are defeated by *different* levers, and the distinction is the useful one to

@@ -81,7 +81,7 @@ directory grows crowded. Three directories hold fixtures that belong to no error
 programs that compile clean, `pass-through/` for plain Rust errors the tool must render exactly as
 rustc does, and `robustness/` for how the tool degrades when the compilation fails under it, such as
 a compiler crash or a fatal error while it holds diagnostics. A panic in its own emitter is pinned
-by the driver's unit tests instead (see [The driver](driver.md#containing-the-drivers-own-panics)).
+by the driver's unit tests instead (see [The driver](driver/program.md#containing-the-drivers-own-panics)).
 Every fixture name is unique across the tree, so a fixture can be found by name alone.
 
 **How well the tool presents a fixture's error is a header field rather than a directory.** Every
@@ -439,11 +439,11 @@ Every crate has one unit-test target, with a module per subject, and the UI suit
 are the targets, with the document that lists each one's tests:
 
 - [`crates/cargo-cgp/tests/front_end/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp/tests/front_end): the front-end's pure helpers
-  ([Executable structure](executable-structure.md#tests), [Distribution](distribution.md#tests),
+  ([Executable structure](executable-structure.md#tests), [Distribution](distribution/provisioning.md#tests),
   [The expand command](expand-command.md#tests)).
 - [`crates/cargo-cgp-driver/tests/driver/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/tests/driver): the driver's
   arguments, panic containment, flush, and other code that needs a compiler's types but no
-  compilation ([The driver](driver.md#tests)).
+  compilation ([The driver](driver/program.md#tests)).
 - [`crates/cargo-cgp-error-processing/tests/error_processing/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/tests/error_processing):
   the rustc-free wording, tree, and text transforms ([Error processing](error-processing.md#tests)).
 - [`crates/cargo-cgp-expand/tests/expand/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-expand/tests/expand): the expansion's

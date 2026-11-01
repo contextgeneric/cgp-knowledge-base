@@ -1,12 +1,12 @@
 # Typed resolution: anchoring the starting obligation
 
 An anchor recovers from a failing diagnostic the **real trait obligation** that seeds the
-[walk](typed-resolution-walk.md): a consumer obligation `Ctx: ConsumerTrait<Params…>`, or the
+[walk](walk.md): a consumer obligation `Ctx: ConsumerTrait<Params…>`, or the
 provider obligation a `#[check_providers]` entry or a provider's own method call asserts. Twelve
 anchors read twelve failure shapes, tried in the order the
-[overview's table](typed-root-cause-resolution.md#how-the-root-cause-is-recovered) gives, and the
+[overview's table](overview.md#how-the-root-cause-is-recovered) gives, and the
 first that succeeds wins. This document covers the eight that match spans; the other four re-read
-the call and have [their own document](typed-resolution-call-site.md).
+the call and have [their own document](call-site.md).
 
 Two rules protect the anchors from a false result. An anchor that chooses among candidates seeds
 only an obligation that does not hold, so an unrelated bound cannot produce a chain. And an anchor
@@ -87,7 +87,7 @@ A bound on a plain Rust trait keeps rustc's diagnostic
 **The tree is headed by the impl's own trait,** so it points at the code the programmer wrote. A
 wrapper that is itself a CGP consumer takes `[CGP-E001]`, and a plain one takes `[CGP-E003]`. A
 wrapper is a distinct trait from its supertrait, so its error is no re-report of the check for that
-supertrait; when the two share a root cause, they [coalesce at flush](typed-resolution-output.md).
+supertrait; when the two share a root cause, they [coalesce at flush](output.md).
 
 These limits keep the anchor honest:
 
@@ -200,14 +200,14 @@ needs values the entry does not name
 
 ## Further reading
 
-- [Typed root-cause resolution](typed-root-cause-resolution.md): the pipeline overview, the anchor
+- [Typed root-cause resolution](overview.md): the pipeline overview, the anchor
   order, and the boundaries.
-- [The call-site anchor](typed-resolution-call-site.md): the seventh to tenth anchors.
-- [Walking to the root cause](typed-resolution-walk.md): the descent every seed feeds.
+- [The call-site anchor](call-site.md): the seventh to tenth anchors.
+- [Walking to the root cause](walk.md): the descent every seed feeds.
 
 ## Tests
 
-- [The parent document's catalog](typed-root-cause-resolution.md#tests): the fixture groups that pin
+- [The parent document's catalog](overview.md#tests): the fixture groups that pin
   the anchors.
 - [`tests/driver/anchors.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/anchors.rs):
   the list's gates, and the data-call entry's acceptance.

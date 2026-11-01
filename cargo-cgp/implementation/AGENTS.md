@@ -78,6 +78,14 @@ The **Tests** and **Source** sections are always bullet lists, never flowing par
 lead-in sentence before the bullets is fine; the items themselves are bullets so a reader can scan
 coverage and code locations at a glance.
 
+## Splitting a document
+
+A document that splits becomes a directory named for its subject, such as `typed-resolution/anchors.md`,
+with a `README.md` that summarizes the directory and lists its documents. Each document keeps this shape;
+catalogs that serve the whole family may sit in one of them, as `typed-resolution/overview.md`'s do. The
+parent [README.md](README.md) lists the directory rather than its documents, and
+[../../summary.md](../../summary.md) lists every file.
+
 ## Level of detail and code snippets
 
 An implementation document gives the high-level concepts and architecture; the code holds the

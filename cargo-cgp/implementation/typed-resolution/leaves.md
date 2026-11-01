@@ -1,8 +1,8 @@
 # Typed resolution: leaves and labels
 
-This document covers what ends a branch of the [walk](typed-resolution-walk.md): which terminal
+This document covers what ends a branch of the [walk](walk.md): which terminal
 bound counts as which cause, when it is dropped, and how a cause reads in the tree
-[the emitter emits](typed-resolution-output.md). Two rules run throughout. A program's names are
+[the emitter emits](output.md). Two rules run throughout. A program's names are
 never trusted: CGP's traits are recognized by their shape, or by `DefId` when anchored to the crate
 that defines them, so a lookalike is never misread. And a `help` naming a specific adapter or
 component is confirmed against the program, never guessed, so an obligation holding an unknown gets
@@ -71,12 +71,12 @@ A context that has the impl is left alone, since the delegate is then at fault.
 ## Decoding, classifying, and rendering a leaf
 
 **A field name is decoded from the type,** so the replacement never needs the `--verbose` un-eliding
-the [text path depends on](driver.md#un-eliding-the-diagnostic).
+the [text path depends on](../driver/program.md#un-eliding-the-diagnostic).
 
 **A "missing" `HasField` does not always mean an absent field.** The resolver inspects the struct
 and its `Deref` chain to separate an absent field, a field present without the derive, a field on a
 `Deref` target that has not derived it, and a field of the wrong type
-([the projection rule](typed-resolution-walk.md#an-impl-whose-trait-clauses-all-hold),
+([the projection rule](walk.md#an-impl-whose-trait-clauses-all-hold),
 `[CGP-E004]`). Only named fields count: a tuple struct keys fields by `Index<N>`, so `Symbol!("0")`
 on one is a missing field
 ([`symbol_tag_on_tuple_struct_check`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/symbol_tag_on_tuple_struct_check.rs)).
@@ -92,7 +92,7 @@ the target struct or enum rather than the generated type.
 
 **Any other associated type is read by normalizing the projection,** so one query covers a
 `UseType<T>` wiring and a hand-written impl alike. The `abstract type` wording needs all three
-things [`#[cgp_type]`](../../cgp/reference/macros/cgp_type.md) generates, because it offers
+things [`#[cgp_type]`](../../../cgp/reference/macros/cgp_type.md) generates, because it offers
 `UseType<T>` as the fix.
 
 **Labels are read off the obligation,** with no marker or name map. These points need care:
@@ -111,14 +111,14 @@ things [`#[cgp_type]`](../../cgp/reference/macros/cgp_type.md) generates, becaus
   operation
   ([`finalize_build_premature`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/finalize_build_premature.rs)).
 
-Each hop is a [`DepNode`](error-processing.md) with a code from `CGP-E101` to `CGP-E104`, and a leaf
+Each hop is a [`DepNode`](../error-processing.md) with a code from `CGP-E101` to `CGP-E104`, and a leaf
 takes one from `CGP-E110` onward. The walk emits one flat path per way a cause is reached, and the
-[dependency graph](dependency-graph-rendering.md) merges them. List types are resugared as
-[Resugaring](resugaring.md) describes.
+[dependency graph](../dependency-graph-rendering.md) merges them. List types are resugared as
+[Resugaring](../resugaring.md) describes.
 
 ## Tests
 
-- [The parent document's catalog](typed-root-cause-resolution.md#tests): the fixture groups that pin
+- [The parent document's catalog](overview.md#tests): the fixture groups that pin
   the leaves.
 
 ## Source

@@ -1,7 +1,7 @@
 # Typed resolution: the call-site anchor
 
 Four anchors recover a failure's obligation from the failing call's own HIR, for a failure whose
-spans touch nothing the [span-matching anchors](typed-resolution-anchors.md) can read. The call-site
+spans touch nothing the [span-matching anchors](anchors.md) can read. The call-site
 anchor reads a call through a consumer or blanket trait on a context. Three siblings read
 [a call to an extensible-data operation](#calls-to-extensible-data-operations),
 [a provider's own method](#calls-to-a-providers-own-method), and
@@ -12,9 +12,9 @@ to tenth, so a failure a span-matching anchor can recover keeps that more exact 
 
 The call-site anchor exists for a wiring that answers a whole family of component parameters with
 one generic entry, so the method is found and only the provider's deeper dependencies fail. The
-natural home is the [handler family](../../cgp/concepts/handlers.md), but any consumer wired this
+natural home is the [handler family](../../../cgp/concepts/handlers.md), but any consumer wired this
 way gives the same shape. A pipeline runs through two core providers
-([handler combinators](../../cgp/reference/providers/handler_combinators.md)), and the tree names
+([handler combinators](../../../cgp/reference/providers/handler_combinators.md)), and the tree names
 them: `PipeHandlers<Product![A, B]>` folds to `ComposeHandlers<A, B>`, which feeds `A`'s output to
 `B` as its input.
 
@@ -70,7 +70,7 @@ error[E0277]: [CGP-E001] missing field `name` on `App`
 
 The re-report at `.await` resolves to the same cause and de-duplicates, and the emitter's gate drops
 the `?` cascade, which the resolver never takes. A resolution from these anchors plans as a
-[use-site failure](typed-resolution-output.md#emitting-the-transformed-diagnostic) whatever its
+[use-site failure](output.md#emitting-the-transformed-diagnostic) whatever its
 rustc code, so its class is the trait the call needs, never the plumbing rustc's headline stopped
 on.
 
@@ -79,7 +79,7 @@ on.
 The anchor reads only HIR and the queries the failing code already cached (`type_of`, `fn_sig`,
 `generics_of`). `tcx.typeck` would answer every question, but it would check a body not yet checked
 and emit from inside the emitter, which
-[aborts the compiler](rustc-diagnostic-internals.md#re-entering-the-diagnostic-context-lock-was-already-held).
+[aborts the compiler](../rustc-diagnostic-internals.md#re-entering-the-diagnostic-context-lock-was-already-held).
 
 **The receiver names the context,** since a consumer is implemented on it. The anchor follows the
 receiver syntactically: a binding to its annotation, initializer, or parameter type, a struct
@@ -87,8 +87,8 @@ literal or unit-struct value, a const or static, and a call to its callee's decl
 peeling references. These receivers decline here:
 
 - **One only typeck could type,** a method's result or a field access. The
-  [use-site anchor](typed-resolution-anchors.md#the-use-site-anchors) may still reach it, as its
-  boundary in the [overview](typed-root-cause-resolution.md#boundaries) states.
+  [use-site anchor](anchors.md#the-use-site-anchors) may still reach it, as its
+  boundary in the [overview](overview.md#boundaries) states.
 - **A context type still holding a type parameter,** such as `App<T>` inside `fn run<T>`, whose walk
   the empty parameter environment cannot judge. One instantiation, `App<u32>`, reads as usual.
 - **A type that is no context.** A foreign type counts when it carries its own wiring
@@ -96,7 +96,7 @@ peeling references. These receivers decline here:
 
 **The candidate traits come from the method's name.** Every CGP consumer declaring a `self` method
 of that name is tried first, so a consumer keeps `[CGP-E001]`, then every
-[blanket trait](typed-resolution-anchors.md#recognizing-a-blanket-trait), headed `[CGP-E003]`
+[blanket trait](anchors.md#recognizing-a-blanket-trait), headed `[CGP-E003]`
 ([`cgp_fn_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/cgp_fn_use_site.rs)).
 CGP's extensible-data traits are left to the data-call anchor.
 
@@ -182,7 +182,7 @@ let _ = Person::builder()
 ```
 
 The second call seeds `__PartialPerson<IsPresent, IsNothing>: BuildField<Symbol!("first_name")>`,
-and the [leaf](typed-resolution-leaves.md#the-leaf-shapes) reads the builder's markers:
+and the [leaf](leaves.md#the-leaf-shapes) reads the builder's markers:
 
 ```text
 error[E0271]: [CGP-E050] field `first_name` of `Person` is already set
@@ -277,20 +277,20 @@ case reads ``[CGP-E001] missing wiring for `ErrorRaiserComponent` on `App` ``.
 It comes before the by-blanket-trait anchor because rustc's notes name a trait deeper in the chain,
 and the tree should start at the bound the call requires
 ([`consumer_bound_call`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/consumer_bound_call.rs)).
-It reads no method's own bound, which is a [boundary](typed-root-cause-resolution.md#boundaries).
+It reads no method's own bound, which is a [boundary](overview.md#boundaries).
 
 ## Further reading
 
-- [Typed root-cause resolution](typed-root-cause-resolution.md): the pipeline overview, the anchor
+- [Typed root-cause resolution](overview.md): the pipeline overview, the anchor
   order, and the boundaries.
-- [Anchoring the starting obligation](typed-resolution-anchors.md): the span-matching anchors.
-- [Walking to the root cause](typed-resolution-walk.md): how a seed, placeholders included, is
+- [Anchoring the starting obligation](anchors.md): the span-matching anchors.
+- [Walking to the root cause](walk.md): how a seed, placeholders included, is
   descended.
-- [rustc diagnostic internals](rustc-diagnostic-internals.md): why `tcx.typeck` is off limits.
+- [rustc diagnostic internals](../rustc-diagnostic-internals.md): why `tcx.typeck` is off limits.
 
 ## Tests
 
-- [The parent document's catalog](typed-root-cause-resolution.md#tests): the fixture groups that pin
+- [The parent document's catalog](overview.md#tests): the fixture groups that pin
   these anchors.
 - [`hidden/unsatisfied-dependency/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/hidden/unsatisfied-dependency):
   `cascade_*` and `call_site_*` for the seed, `generic_fn_*` for an unbounded receiver and its declines,

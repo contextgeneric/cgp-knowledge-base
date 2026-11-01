@@ -181,7 +181,7 @@ return type it reports `E0106`. Writing the lifetime out as `Cow<'_, str>` avoid
 elaboration then names it. The `cargo-cgp` fixture
 [`uncataloged/macro-defects/auto_dispatch_hidden_lifetime.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/macro-defects/auto_dispatch_hidden_lifetime.rs) pins the argument case, where
 the tool keeps both errors and drops the wrong help, so only the `E0726` suggestion remains (see
-[Dropping a suggestion that names a generated identifier](../../../cargo-cgp/implementation/diagnostic-reshapes.md#dropping-a-suggestion-that-names-a-generated-identifier)).
+[Dropping a suggestion that names a generated identifier](../../../cargo-cgp/implementation/driver/diagnostic-reshapes.md#dropping-a-suggestion-that-names-a-generated-identifier)).
 
 ## Known issues
 

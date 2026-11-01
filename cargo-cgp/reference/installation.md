@@ -6,7 +6,7 @@ all three in place and matched. The `cargo-cgp` front-end is the cargo subcomman
 pinned in the project's `rust-toolchain.toml`. This document covers the ways to install that pair
 and how to keep it up to date. It is the usage-level summary for an agent; the design behind it (why
 the toolchain is pinned and how the binaries stay in lockstep) is in
-[Distribution](../implementation/distribution.md).
+[Distribution](../implementation/distribution/provisioning.md).
 
 If your goal is only to *run* the current tool (the usual case for an agent testing or demonstrating
 it), you do not install a release at all: use a local checkout through Nix or from source, as
@@ -43,7 +43,7 @@ The flake at the repository root builds both binaries against the pinned nightly
 they run without rustup, which makes it the simplest way to install the current tool. It provisions
 the compiler as a build-time fact, so a machine that has only Nix (no rustup, no nightly) can run
 the tool, and the project you check needs no toolchain of its own. The details of how the flake does
-this are in [The Nix package](../implementation/nix-package.md).
+this are in [The Nix package](../implementation/distribution/nix-package.md).
 
 To install the tool onto your `PATH` so `cargo cgp check` works like any other cargo subcommand:
 
@@ -181,7 +181,7 @@ a new release of the flake, so updating the input is all that is needed.
 
 ## Further reading
 
-- [Distribution](../implementation/distribution.md): the design behind installation: why the
+- [Distribution](../implementation/distribution/provisioning.md): the design behind installation: why the
   toolchain is pinned, how `setup`/`update`/the preflight work, how the two crates stay in lockstep,
   and the Nix packaging.
 - [Usage](usage.md): how to run the tool once it is installed.

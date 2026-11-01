@@ -16,15 +16,15 @@ elsewhere:
 | --- | --- | --- |
 | [`postprocess`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/postprocess) | The final text pass over each message | [Below](#the-post-processing-transforms) |
 | [`shape`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/shape) | `Struct!` and `Enum!` spellings, shared by the text and typed resugaring so they cannot disagree | [Resugaring](resugaring.md#struct-and-enum-a-list-of-fields) |
-| [`rewrite`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/rewrite) | The wiring-message rename and `ComponentNameMap` | [Diagnostic reshapes](diagnostic-reshapes.md#naming-the-traits-behind-a-component-marker) |
-| [`diagnosis`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/diagnosis) | The `Resolved` model, its wording, and the plan and models of each reshape | [The transformed diagnostic](typed-resolution-output.md), [Diagnostic reshapes](diagnostic-reshapes.md) |
+| [`rewrite`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/rewrite) | The wiring-message rename and `ComponentNameMap` | [Diagnostic reshapes](driver/diagnostic-reshapes.md#naming-the-traits-behind-a-component-marker) |
+| [`diagnosis`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/diagnosis) | The `Resolved` model, its wording, and the plan and models of each reshape | [The transformed diagnostic](typed-resolution/output.md), [Diagnostic reshapes](driver/diagnostic-reshapes.md) |
 | [`tree`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/tree.rs) | The `cargo tree`-style renderer the graph expands into | [Dependency-graph rendering](dependency-graph-rendering.md) |
-| [`dedup`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/dedup.rs) | The `DedupLedger` | [The driver](driver.md#de-duplicating-and-coalescing) |
-| [`byte_range`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/byte_range.rs) | The anchors' span decisions over plain ranges | [The anchors](typed-resolution-anchors.md) |
+| [`dedup`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/dedup.rs) | The `DedupLedger` | [The driver](driver/program.md#de-duplicating-and-coalescing) |
+| [`byte_range`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/byte_range.rs) | The anchors' span decisions over plain ranges | [The anchors](typed-resolution/anchors.md) |
 | [`signals`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/signals.rs) | The stable rustc phrasings the emitter keys on | Here |
-| [`candidates`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/candidates.rs) | The implementor list cut back to rustc's length | [The driver](driver.md#un-eliding-the-diagnostic) |
+| [`candidates`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/candidates.rs) | The implementor list cut back to rustc's length | [The driver](driver/program.md#un-eliding-the-diagnostic) |
 | [`syntax`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/syntax) | Telling a string literal from code, and spelling a name | [Resugaring](resugaring.md) |
-| [`naming`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/naming.rs) | The reserved names CGP macros invent | [Diagnostic reshapes](diagnostic-reshapes.md#dropping-a-suggestion-that-names-a-generated-identifier) |
+| [`naming`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/naming.rs) | The reserved names CGP macros invent | [Diagnostic reshapes](driver/diagnostic-reshapes.md#dropping-a-suggestion-that-names-a-generated-identifier) |
 | [`code`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/code.rs) | The `CGP-E` constants | [error-code.md](../error-code.md) |
 
 Three design choices in these modules are worth keeping:
@@ -41,7 +41,7 @@ Three design choices in these modules are worth keeping:
 ## Where post-processing sits in the pipeline
 
 Post-processing is the driver's final pass, after the
-[typed resolver](typed-root-cause-resolution.md) and the text rewrite, and how much applies depends
+[typed resolver](typed-resolution/overview.md) and the text rewrite, and how much applies depends
 on who built the diagnostic, as the `Origin` it receives says.
 
 **A rewritten diagnostic gets the whole chain.** The tool built its sentences, so the strip gives
@@ -117,13 +117,13 @@ first, and it remains for what the resolver declines.
 - **A digit tag:** `Symbol!("0")` names no field, since a tuple struct keys its fields `Index<0>`
   ([`symbol_tag_on_tuple_struct`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/symbol_tag_on_tuple_struct.rs)).
 - **A generated parameter:** `__Context__` is no struct, so its fix is a bound
-  ([`[CGP-E036]`](diagnostic-reshapes.md#reshaping-an-undeclared-dependency)).
+  ([`[CGP-E036]`](driver/diagnostic-reshapes.md#reshaping-an-undeclared-dependency)).
 
 ## Adding a transform
 
 A new type-level encoding gets a new function in the chain, with the exact-match caution
 `resugar_symbol` sets. Collapsing a cascade does not belong here, because it needs the whole
-diagnostic set: the [flush](driver.md#de-duplicating-and-coalescing) does that, over this crate's
+diagnostic set: the [flush](driver/program.md#de-duplicating-and-coalescing) does that, over this crate's
 pure pieces.
 
 ## Comparison with Clippy
@@ -141,7 +141,7 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
 ## Further reading
 
 - [Architecture](architecture.md#the-flow-of-a-diagnostic): the steps around this pass.
-- [The driver](driver.md): the emitter that drives these transforms.
+- [The driver](driver/program.md): the emitter that drives these transforms.
 - [CGP error catalog](../../cgp/errors/README.md): the error classes the transforms recognize.
 
 ## Tests

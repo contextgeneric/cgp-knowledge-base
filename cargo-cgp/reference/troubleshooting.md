@@ -208,7 +208,7 @@ sysroot's `lib` for the driver, so the pinned toolchain wins every lookup by con
 
 Before a managed check, the front-end runs a read-only preflight that verifies the toolchain and the
 driver, and each failure it can repair ends with a `help` naming `cargo cgp setup` as the fix (the
-design is in [Distribution](../implementation/distribution.md#what-the-preflight-verifies)). The
+design is in [Distribution](../implementation/distribution/provisioning.md#what-the-preflight-verifies)). The
 messages tell the cases apart, in the order the preflight checks them. Each message about the driver
 names the driver's path and where it was found: from `CARGO_CGP_DRIVER`, beside `cargo-cgp`, or on
 `PATH`.
@@ -325,5 +325,5 @@ you see, then read the section for the fix.
   diagnoses.
 - [Executable structure](../implementation/executable-structure.md#the-environment-contract): the
   sibling lookup, the sysroot, and the dynamic-library path that the failures above trace to.
-- [Distribution](../implementation/distribution.md#what-the-preflight-verifies): what the managed
+- [Distribution](../implementation/distribution/provisioning.md#what-the-preflight-verifies): what the managed
   preflight checks and why.

@@ -13,10 +13,10 @@ are the crates and what each one holds:
 - **`cargo-cgp`:** the front-end, the cargo subcommand a user runs. It launches cargo with the
   driver wired in and forwards cargo's output, and it depends on no other crate here, so
   `cargo install` builds it on stable Rust ([Executable structure](executable-structure.md),
-  [Distribution](distribution.md)).
+  [Distribution](distribution/provisioning.md)).
 - **`cargo-cgp-driver`:** the `rustc` replacement cargo calls for each workspace crate. It runs the
   real compiler in-process through `rustc_driver`, and it is the one crate that needs the pinned
-  nightly ([The driver](driver.md)).
+  nightly ([The driver](driver/program.md)).
 - **`cargo-cgp-error-processing`:** the rustc-free half of the diagnostics: the root-cause model and
   its wording, the dependency tree, the text transforms, and the spelling rules
   ([Error processing](error-processing.md)).
@@ -40,16 +40,16 @@ cargo and letting its output stream through.
 **Configure** adds two flags to each workspace crate's compilation, each changing how the compiler
 produces diagnostics rather than rewriting what it built. `-Znext-solver=globally` reaches the
 missing leaf bound the default solver may stop short of
-([choosing the trait solver](driver.md#choosing-the-trait-solver)), and `--verbose` stops rustc
+([choosing the trait solver](driver/program.md#choosing-the-trait-solver)), and `--verbose` stops rustc
 compressing the deep `Symbol` and `Cons` types a CGP error carries
-([un-eliding the diagnostic](driver.md#un-eliding-the-diagnostic)).
+([un-eliding the diagnostic](driver/program.md#un-eliding-the-diagnostic)).
 
 **Transform** runs in
 [`CgpEmitter`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/cgp_emitter.rs),
 which receives each diagnostic before any inner emitter sees it. It tries an ordered list of stages,
 each recognizing one class of mistake and returning a `Verdict`: continue, drop the diagnostic, or
-reshape it ([Diagnostic reshapes](diagnostic-reshapes.md)). A diagnostic no stage claims goes to the
-[typed resolver](typed-root-cause-resolution.md), which replaces a wiring failure with its
+reshape it ([Diagnostic reshapes](driver/diagnostic-reshapes.md)). A diagnostic no stage claims goes to the
+[typed resolver](typed-resolution/overview.md), which replaces a wiring failure with its
 root-cause tree. When the resolver declines, a text rewrite names the traits behind any wiring notes
 it recognizes. Either way the [post-processing chain](error-processing.md) then runs, so no raw CGP
 construct leaks from a diagnostic the tool did not rewrite.
@@ -64,7 +64,7 @@ a renderer for that reason, and their difference is purely the tool's work.
 
 A panic anywhere in the transform or the flush falls back to the diagnostics rustc built, so the
 tool cannot lose an error
-([containing the driver's own panics](driver.md#containing-the-drivers-own-panics)).
+([containing the driver's own panics](driver/program.md#containing-the-drivers-own-panics)).
 
 ## The driver's modules
 
@@ -121,7 +121,7 @@ Clippy is also a diagnostic tool built on this integration, but it adds diagnost
 output out unchanged, so neither processes output in its front-end. Clippy registers lint passes and
 keeps the compiler's default emitter, while `cargo-cgp` wraps that emitter in one that edits each
 diagnostic first. The
-[driver's comparison](driver.md#comparison-with-clippy) gives the detail.
+[driver's comparison](driver/program.md#comparison-with-clippy) gives the detail.
 
 ## Tests
 

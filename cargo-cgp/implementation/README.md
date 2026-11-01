@@ -17,8 +17,8 @@ counterpart carries no comparison at all.
 
 ## Catalog
 
-This section indexes every implementation document. When you add a document, register it here in the
-same change.
+This section indexes every implementation document, or the directory that holds a family of them, whose
+own `README.md` lists its documents. When you add a document, register it in the same change.
 
 - [Architecture](architecture.md): the map of the tool: the crates and where the rustc-free line
   sits, the flow of a diagnostic (configure, transform, render), the driver's module layers, and the
@@ -26,43 +26,11 @@ same change.
 - [Executable structure](executable-structure.md): the two-executable split (the `cargo-cgp`
   front-end and the `cargo-cgp-driver` rustc wrapper), how the front-end wraps `cargo`, the
   environment contract between the two, and how the split compares to Clippy.
-- [The driver](driver.md): the deep dive into `cargo-cgp-driver` as a program: how cargo invokes it,
-  how it prepares the rustc argument vector, how it reaches the compiler through `rustc_private`, the
-  two flag levers (trait solver, verbosity), the `CgpEmitter` that renders text or JSON like plain
-  `rustc`, de-duplicating and coalescing, and how it contains its own panics.
-- [Diagnostic reshapes](diagnostic-reshapes.md): what the emitter's stages do to each class of CGP
-  mistake rustc reports in its own terms: the wiring-note rename over the component name map, the
-  duplicate-key, structural, orphan-rule, undeclared-dependency, wrong-component-half, macro-less
-  provider, and unresolved-name reshapes, and the suggestions the emitter drops.
-- [Typed root-cause resolution](typed-root-cause-resolution.md): the deeper emitter transformation
-  that turns a check-failure diagnostic into its root-cause `cargo tree`. It recovers the chain by
-  re-running the check obligation through the trait solver (from inside `emit_diagnostic`, since
-  `after_analysis` is unreachable once the crate has errors), descends the wiring to each terminal
-  leaf, and renders the transitive dependency chain with
-  each wiring trait replaced by its human form. A main message identified as a CGP class is
-  rewritten and stamped with its `[CGP-Exxx]` code (the Rust code kept). The sub-notes become a
-  single `root cause:` note over the dependency graph of every leaf, and anything the resolver
-  declines falls back to the text rewrite. The document is the pipeline overview, with its
-  boundaries and its catalogs of fixture groups and modules, over its per-stage documents:
-  - [Typed resolution: anchoring the starting obligation](typed-resolution-anchors.md): the eight
-    span-matching anchors that recover the obligation to walk from a check entry, a
-    `#[check_providers]` entry, a hand-written impl, a foreign wrapper chain, a use site, a
-    namespace-joined consumer, a blanket trait, or a `->` forwarding entry.
-  - [Typed resolution: the call-site anchor](typed-resolution-call-site.md): the HIR re-reads of
-    the failing call expression, its signature unification, the rigid placeholders that stand in
-    for what the call never types, the data-call anchor that types an extensible-data operation's
-    value through the chain of operations that produced it, the provider-call anchor that reads a
-    provider's own method called through its path, and the bound-call anchor that reads a called
-    generic function's own bound.
-  - [Typed resolution: walking to the root cause](typed-resolution-walk.md): the descent from the
-    seeded obligation to every terminal unmet bound: finding the impl, recovering a later pipeline
-    stage, re-rooting at another context, and the guards that end a branch early.
-  - [Typed resolution: leaves and labels](typed-resolution-leaves.md): what ends a branch, each leaf
-    shape and the routing dead-ends it drops, and the decoding, classification, and label rendering
-    of each leaf.
-  - [Typed resolution: the transformed diagnostic](typed-resolution-output.md): the coded headline
-    classes, the single `root cause:` note over every leaf's merged dependency graph, and the
-    emitter's application of the rustc-free plan.
+- [The driver](driver/README.md): `cargo-cgp-driver` as a program, how it runs the compiler, and what
+  the emitter's stages do to each class of CGP mistake.
+- [Typed root-cause resolution](typed-resolution/README.md): the emitter transformation that replaces a
+  wiring failure with one coded headline over its dependency chain, by asking the trait solver what
+  failed: the overview and boundaries, then one document per stage.
 - [Cached dependency resolution](cached-dependency-resolution.md): the one cache over the typed
   resolver's walk. It is keyed at *every* node and consulted at every step, and it stores each
   node's owned rustc-free sub-chains, so they persist across diagnostics and close both the
@@ -116,17 +84,6 @@ same change.
   compiles fixtures under `tests/ui/` through the tool and diffs committed `.cgp.stderr`,
   `.rust.stderr`, and `.expand.rs` snapshots. The document also covers the bless workflow and how
   the harness compares to Clippy's.
-- [Distribution](distribution.md): how the tool is packaged and installed on a machine that has only
-  stable Rust: installing both binaries through cargo in lockstep, provisioning the pinned nightly
-  with `rustc-dev`, forcing that nightly for the check so the project needs no toolchain of its own,
-  and the version preflight that keeps front-end and driver matched. It follows the `rustc_plugin`
-  model where Clippy's in-toolchain distribution is closed to an out-of-tree tool, and it covers the
-  `setup`/`update` subcommands: all provisioning confined to `setup`, a read-only preflight in
-  `check`, and cargo-delegated update with crates.io version discovery.
-- [The Nix package](nix-package.md): the flake for a machine without rustup, which builds both
-  binaries under the pinned nightly and wraps them for unmanaged mode.
-- [Bumping the pinned nightly](pinned-nightly-bump.md): every consumer of the pin, and what a bump
-  must do in the same change, the Nix overlay included.
-- [Rust Analyzer integration](rust-analyzer-integration.md): running the check on save through
-  `overrideCommand`, why the compiler wrappers do not collide, and the `target/cgp` directory that
-  keeps the check off cargo's build lock.
+- [Distribution](distribution/README.md): how the tool reaches a machine that has only stable Rust and
+  stays in step with its pinned nightly: provisioning through cargo and rustup, the Nix package, the
+  nightly bump, and Rust Analyzer integration.

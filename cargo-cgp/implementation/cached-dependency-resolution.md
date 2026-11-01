@@ -22,7 +22,7 @@ Writing the cache also forces each question the resolver asks the compiler to be
 pure or explicitly stateful. Purity rests on one invariant: the resolver runs at emit time over
 frozen state. The trait set, the impls, the clauses, and the ADT fields are fixed once the crate is
 lowered, and trait solving does not change them
-([why resolution runs in the emitter](typed-root-cause-resolution.md#why-it-runs-in-the-emitter)).
+([why resolution runs in the emitter](typed-resolution/overview.md#why-it-runs-in-the-emitter)).
 So a subtree resolved once stays valid for the rest of the crate's compilation.
 
 ## What is cached
@@ -113,13 +113,13 @@ that context's own walk, so the two share an entry
 
 **The parameter environment is not in the key, which holds only while the walk's environment stays
 empty.** Every solver call uses an empty `ParamEnv`, a constant rather than a hidden input, and a
-seed holding a type parameter [declines](typed-root-cause-resolution.md#boundaries). A change that
+seed holding a type parameter [declines](typed-resolution/overview.md#boundaries). A change that
 gives the walk a real environment must hash it into the fingerprint, or two identical obligations
 under different environments would collide.
 
 ## Limits
 
-- **Hit rate at call sites:** a [call-site seed](typed-resolution-call-site.md) carries rigid
+- **Hit rate at call sites:** a [call-site seed](typed-resolution/call-site.md) carries rigid
   placeholders whose identities are in the fingerprint, so two call sites of one unknown-argument
   trait do not cross-hit. The cache misses where it harmlessly could hit, and nothing else changes.
 - **Cost past about 120 hops:** the tool's cost grows with the square of the chain depth, from the
@@ -152,8 +152,8 @@ checks and releases, computes with no borrow held, then borrows again to insert.
 
 ## Further reading
 
-- [Typed root-cause resolution](typed-root-cause-resolution.md) and
-  [its walk](typed-resolution-walk.md): the descent being cached.
+- [Typed root-cause resolution](typed-resolution/overview.md) and
+  [its walk](typed-resolution/walk.md): the descent being cached.
 - [Architecture](architecture.md#the-resolve-context): the `ResolveCtx` that carries the cache.
 
 ## Tests

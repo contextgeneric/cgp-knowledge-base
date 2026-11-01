@@ -134,7 +134,7 @@ editor reading JSON.
 
 `cause_notes` folds every path of every cause into one graph under the
 `this is required through the dependency chain:` heading, and
-[the output document](typed-resolution-output.md#the-root-cause-notes) covers how the heading reads.
+[the output document](typed-resolution/output.md#the-root-cause-notes) covers how the heading reads.
 The emitter's coalesced block builds the same note: when several consumer failures share a cause,
 its note folds every member's causes into one graph, so a consumer whose chain runs through another
 collapses into it, and no member's chain is dropped.
@@ -156,10 +156,10 @@ one tree inside another, which is simpler. The
 
 ## Further reading
 
-- [Typed root-cause resolution](typed-root-cause-resolution.md): the resolver whose walk fills the
+- [Typed root-cause resolution](typed-resolution/overview.md): the resolver whose walk fills the
   paths.
 - [Error processing](error-processing.md): the rustc-free crate this lives in.
-- [The driver](driver.md): the emitter that builds the coalesced block's note.
+- [The driver](driver/program.md): the emitter that builds the coalesced block's note.
 
 ## Tests
 

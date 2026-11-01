@@ -1,8 +1,8 @@
 # Diagnostic reshapes
 
 The emitter recognizes each class of CGP mistake rustc reports in its own terms, and rewrites it to
-name what the programmer wrote. [The driver](driver.md) explains the emitter as a program, and the
-[typed resolver](typed-root-cause-resolution.md) handles the wiring failures no stage here claims.
+name what the programmer wrote. [The driver](program.md) explains the emitter as a program, and the
+[typed resolver](../typed-resolution/overview.md) handles the wiring failures no stage here claims.
 
 Three rules hold across the reshapes, and a new one should keep them:
 
@@ -12,10 +12,10 @@ Three rules hold across the reshapes, and a new one should keep them:
   confirm declines, and rustc's error stands.
 - **Mind when the error arrives.** A query run while the compiler is lowering types, or during name
   resolution, can re-enter the diagnostic context and
-  [abort the compiler](rustc-diagnostic-internals.md#re-entering-the-diagnostic-context-lock-was-already-held).
+  [abort the compiler](../rustc-diagnostic-internals.md#re-entering-the-diagnostic-context-lock-was-already-held).
   So each detector reads only what is safe at its error's phase, and several read only HIR.
 - **Keep the wording rustc-free.** A detector fills an owned model, and a `plan_*` and `*_help` pair
-  in [error processing](error-processing.md) words it, so the wording is tested without a compiler.
+  in [error processing](../error-processing.md) words it, so the wording is tested without a compiler.
 
 ## The stages, in order
 
@@ -32,7 +32,7 @@ this order, from `transform_with` in
 6. [A provider impl written without its macro](#reshaping-a-provider-impl-written-without-its-macro).
 7. An unimported abstract type, then an undeclared requirement: [an undeclared dependency](#reshaping-an-undeclared-dependency).
 8. A [`?`-operator cascade](#dropping-a-question-mark-cascade), then a later report of a provider impl written without its macro.
-9. The [typed resolver](typed-root-cause-resolution.md), then the [text rewrite](#naming-the-traits-behind-a-component-marker).
+9. The [typed resolver](../typed-resolution/overview.md), then the [text rewrite](#naming-the-traits-behind-a-component-marker).
 
 Three passes run after name resolution rather than as stages, because they need the `TyCtxt` the
 `after_expansion` hook provides:
@@ -258,7 +258,7 @@ The impl's own machinery parameter says which fix to word
 
 A CGP macro lowers a body into an impl over a generated context, and only declared dependencies
 become bounds on it. So each kind of declaration has its own code (the
-[undeclared dependency](../../cgp/errors/lowering/undeclared-dependency.md) class), and each reshape
+[undeclared dependency](../../../cgp/errors/lowering/undeclared-dependency.md) class), and each reshape
 keeps the caret rustc chose
 ([`lowering/undeclared-dependency/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/lowering/undeclared-dependency)).
 
@@ -308,7 +308,7 @@ satisfies it too. A bare `Error` without such a requirement keeps rustc's sugges
 ## Reshaping a wrong component half
 
 A definition can name the wrong half of a component (the
-[wrong component half](../../cgp/errors/lowering/wrong-component-half.md) class), most often in a
+[wrong component half](../../../cgp/errors/lowering/wrong-component-half.md) class), most often in a
 `#[cgp_impl]` header. The macro turns `impl AreaCalculator` inside out, inserting the context as the
 leading generic. Naming the consumer trait `CanCalculateArea` there, or a non-CGP trait, gives one
 mistake a burst of cryptic errors: `E0425`, `E0107`, `E0186`, `E0207`, and a downstream check
@@ -326,7 +326,7 @@ diagnostic lock during the earlier `E0425`. The siblings are suppressed by their
 impl body and the macro's call site, and one that arrived first is purged from the buffer. A
 downstream check re-report is dropped when its leaf is the offending provider, but a requirement of
 that impl that fails on its own resolves to its own cause and stays
-([the walk](typed-resolution-walk.md#a-provider-whose-header-names-the-consumer-trait)).
+([the walk](../typed-resolution/walk.md#a-provider-whose-header-names-the-consumer-trait)).
 
 **The reshape is deliberately specific to `#[cgp_impl]`.** Without the reserved `__Context__`,
 `impl<Ctx> SomeConsumer<Ctx> for ConcreteType` from `#[cgp_provider]` cannot be told from a
@@ -360,7 +360,7 @@ failing check of a context wiring it is dropped as the same mistake
 ## Reshaping an unresolved wiring name
 
 A wrong name in a wiring entry (the
-[unresolved wiring name](../../cgp/errors/wiring/unresolved-wiring-name.md) class) is hard because
+[unresolved wiring name](../../../cgp/errors/wiring/unresolved-wiring-name.md) class) is hard because
 of timing. Most shapes are an `E0425` from name resolution, before the HIR exists and before any
 query that reads the crate is safe, and the name's span carries no trace of `delegate_components!`.
 
@@ -429,7 +429,7 @@ suggestion left with one bound keeps rustc's plural message.
 `#[use_type(HasScalarType.Scalr)]` rewrites each bare `Scalr` to `<Self as HasScalarType>::Scalr`,
 keeping the alias's span, so name resolution reports an `E0576` there. The header and note are
 right, but the help respells the alias, which leaves the import wrong (the
-[unresolved imported abstract type](../../cgp/errors/lowering/unresolved-imported-type.md) class).
+[unresolved imported abstract type](../../../cgp/errors/lowering/unresolved-imported-type.md) class).
 
 The fix runs from the `after_expansion` hook, with the same collect, plan, and rewrite steps as the
 wiring-name pass. It takes the `E0576` only when the caret sits in an item a CGP macro generated and
@@ -466,7 +466,7 @@ user's code
   the rewrite's parameters end to end.
 - [`tests/ui/wiring/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/wiring) and
   [`tests/ui/lowering/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/lowering):
-  each class above, cataloged by the [error classes](../../cgp/errors/README.md).
+  each class above, cataloged by the [error classes](../../../cgp/errors/README.md).
 
 ## Source
 

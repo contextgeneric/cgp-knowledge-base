@@ -18,7 +18,7 @@ emit JSON, so the user supplies the whole line:
 ```
 
 The transforms happen inside the driver, and the front-end forwards cargo's stdout untouched
-([Architecture](architecture.md#the-flow-of-a-diagnostic)). So the editor gets well-formed cargo
+([Architecture](../architecture.md#the-flow-of-a-diagnostic)). So the editor gets well-formed cargo
 JSON with no extra work, and any stage that reshaped the front-end's output would break it.
 
 Rust Analyzer's `RUSTC_WRAPPER` does not collide with the tool's `RUSTC_WORKSPACE_WRAPPER`, since it
@@ -52,7 +52,7 @@ These behaviors are easy to break:
 
 Rust Analyzer's inline analysis uses the project's toolchain and default solver, while the check
 uses the pinned nightly under `-Znext-solver`, so either can show a diagnostic the other does not.
-This has no fix. It is the [divergence the tool accepts](driver.md#choosing-the-trait-solver) on the
+This has no fix. It is the [divergence the tool accepts](../driver/program.md#choosing-the-trait-solver) on the
 command line.
 
 ## Tests

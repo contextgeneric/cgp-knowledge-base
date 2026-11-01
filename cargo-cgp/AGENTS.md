@@ -27,7 +27,7 @@ same pass add a one-line `///` to any public item that lacks one, correct a comm
 matches the code, and delete a comment that only restates the obvious. Keep inline docs terse and
 leave the deeper reasoning to the knowledge base; a one-line doc comment that links out to a
 document beats a paragraph inlined in the source. A doc pointer in source names the document by its
-knowledge-base path (`cgp-knowledge-base/cargo-cgp/implementation/driver.md`), since the two now
+knowledge-base path (`cgp-knowledge-base/cargo-cgp/implementation/driver/program.md`), since the two now
 live in separate repositories.
 
 ## The external references are read-only ground truth

@@ -5,8 +5,8 @@ compiler in-process through `rustc_driver`, which is the whole reason it exists:
 it install the callbacks and the emitter that read and rewrite diagnostics. Aside from the injected
 flags, that emitter, and expand mode, it compiles exactly as `rustc` would. The front-end that
 invokes it and the environment contract between them are in
-[Executable structure](executable-structure.md), and the flow its transformations sit within is in
-[Architecture](architecture.md).
+[Executable structure](../executable-structure.md), and the flow its transformations sit within is in
+[Architecture](../architecture.md).
 
 ## How cargo invokes the driver
 
@@ -39,7 +39,7 @@ The steps run in an order that matters:
    `compiler_entrypoint` ignores the first element and reads the rest as flags, so the path would
    become an input file.
 5. **Inject flags, each only when absent, so an explicit choice always wins:** `--sysroot` from
-   [`CARGO_CGP_SYSROOT`](executable-structure.md#the-environment-contract), since a driver outside a
+   [`CARGO_CGP_SYSROOT`](../executable-structure.md#the-environment-contract), since a driver outside a
    toolchain cannot find `std`, then [`-Znext-solver=globally`](#choosing-the-trait-solver) and
    [`--verbose`](#un-eliding-the-diagnostic). Absence is checked in every spelling rustc accepts:
    `key`, `key=value`, `-Z key=value` as two arguments, and `-v` for `--verbose`.
@@ -62,7 +62,7 @@ two hooks:
   [a misspelled `#[use_type]` import](diagnostic-reshapes.md#replacing-the-help-on-a-misspelled-use_type-import),
   and
   [drops a suggestion that names a generated identifier](diagnostic-reshapes.md#dropping-a-suggestion-that-names-a-generated-identifier).
-  In [expand mode](expand-command.md) it prints the crate and stops the compilation instead.
+  In [expand mode](../expand-command.md) it prints the crate and stops the compilation instead.
 
 ## Accessing the Rust compiler API
 
@@ -74,20 +74,20 @@ crate:
 - **The feature gate sits on both the library and the binary,** because the binary links the
   compiler dylib, and that link needs the linking crate to opt in.
 - **The API ships only with a nightly carrying `rustc-dev`,** so `rust-toolchain.toml` pins an exact
-  nightly ([the bump](pinned-nightly-bump.md)). That nightly is the compiler the driver embeds, and
+  nightly ([the bump](../distribution/pinned-nightly-bump.md)). That nightly is the compiler the driver embeds, and
   the sysroot must belong to it, or the driver loads the wrong `librustc_driver`. Verify each use of
-  the API against [`../external/rust`](../../../external/rust), since it moves between nightlies.
+  the API against [`../external/rust`](../../../../external/rust), since it moves between nightlies.
 
 ## The driver's diagnostic transformations
 
 The driver changes diagnostics in two ways. Two **argument levers** change how the compiler produces
 them and need no parsing. Everything else runs in a **custom emitter**, on diagnostics already
 built, using facts only the live compiler holds. Its stages run in order, as
-[Architecture](architecture.md#the-flow-of-a-diagnostic) describes, and
+[Architecture](../architecture.md#the-flow-of-a-diagnostic) describes, and
 [Diagnostic reshapes](diagnostic-reshapes.md) covers each. A diagnostic no stage claims goes to the
-[typed resolver](typed-root-cause-resolution.md), then to the
+[typed resolver](../typed-resolution/overview.md), then to the
 [text rewrite](diagnostic-reshapes.md#naming-the-traits-behind-a-component-marker) if it declines.
-[Post-processing](error-processing.md) then cleans up every rewritten diagnostic, and changes an
+[Post-processing](../error-processing.md) then cleans up every rewritten diagnostic, and changes an
 untransformed one only where it recovers a CGP encoding.
 
 **The emitter wraps the one the compiler would have built.** `CgpEmitter` is generic over an inner
@@ -130,7 +130,7 @@ compresses long types, and each compression destroys a CGP error, whose types ar
 
 All three are gated on `opts.verbose`. It is not `-Zverbose-internals`, so the compiler's internal
 debug printing stays off and the diagnostics keep their shape
-([the suppression points](rustc-diagnostic-internals.md#the-suppression-points)). The emitter undoes
+([the suppression points](../rustc-diagnostic-internals.md#the-suppression-points)). The emitter undoes
 one of the three: it cuts a failed bound's implementors back to rustc's eight and "and N others",
 because a CGP crate implements `IsProviderFor` hundreds of times
 ([`many_implementors`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/many_implementors.rs)).
@@ -187,7 +187,7 @@ one caret, and the others are labelled "also required here". Its headline states
 under the first member's class code, or every member's class sentence with a count when the causes
 are mixed. Its causes pass through `Causes::union`
 first, because members grouped for sharing a cause hold one copy each, and would otherwise state the
-mistake once per member. The [dependency graph](dependency-graph-rendering.md) then does the
+mistake once per member. The [dependency graph](../dependency-graph-rendering.md) then does the
 merging, so the chain that subsumes another leads
 ([`density_3`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/verbose-cascade/density_3.rs),
 [`dependency_cascade`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/verbose-cascade/dependency_cascade.rs)),
@@ -195,7 +195,7 @@ and independent chains render side by side
 ([`parallel_consumers`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/verbose-cascade/parallel_consumers.rs)).
 Every resolution's note is rendered at the flush, even one that does not coalesce, because only then
 is the emission order known for
-[eliding against earlier blocks](dependency-graph-rendering.md#eliding-across-blocks).
+[eliding against earlier blocks](../dependency-graph-rendering.md#eliding-across-blocks).
 
 **An untouched error is merged only when rustc reports it twice.** In a crate that uses CGP,
 `merge_repeats` folds a later diagnostic with the same level, code, and message, and a primary caret
@@ -239,7 +239,7 @@ must not gain one.
 
 The driver follows `clippy-driver` in its skeleton: both detect wrapper mode the same way, inject
 `--sysroot` only when absent, and run `compiler_entrypoint` inside `catch_with_exit_code`
-([`external/rust/src/tools/clippy/src/driver.rs`](../../../external/rust/src/tools/clippy/src/driver.rs)).
+([`external/rust/src/tools/clippy/src/driver.rs`](../../../../external/rust/src/tools/clippy/src/driver.rs)).
 
 The transformations diverge where the purpose does. Clippy's `config` callback calls
 `register_lints` to add lint passes that emit *new* diagnostics; `cargo-cgp`'s `config` callback
@@ -248,7 +248,7 @@ installs a diagnostic *emitter* that *rewrites* the compiler's existing notes. T
 the `TyCtxt` from a custom emitter where Clippy reads it from a lint pass. The `--sysroot` handling
 also diverges structurally, because `cargo-cgp-driver` is out-of-tree while `clippy-driver` ships
 inside the toolchain; that difference belongs to the shared environment contract and is covered in
-[Executable structure](executable-structure.md#comparison-with-clippy).
+[Executable structure](../executable-structure.md#comparison-with-clippy).
 
 The remaining differences are where the driver is simpler than Clippy, or does more:
 

@@ -8,7 +8,7 @@ can erase the one fact that matters.
 
 The second subject is the more dangerous. The driver re-runs the trait solver from inside
 `emit_diagnostic`, a place rustc never expected such work, and the panics there are real. The
-emitter [contains them](driver.md#containing-the-drivers-own-panics), so the user keeps their errors
+emitter [contains them](driver/program.md#containing-the-drivers-own-panics), so the user keeps their errors
 but loses the reshaping, and a panic inside a query also poisons it, so a later use raises a fatal
 error that ends the compilation early.
 
@@ -66,7 +66,7 @@ inference-variable identifiers, explicit `for<…>` binders, and more.
 
 So **`--verbose` defeats the elisions without the internal debug noise, while `-Zverbose-internals`
 does both.** Its disambiguators and region ids make a type like `Symbol<6/#0, …>` harder to read, so
-the driver [injects the stable flag](driver.md#un-eliding-the-diagnostic).
+the driver [injects the stable flag](driver/program.md#un-eliding-the-diagnostic).
 
 ## The suppression points
 
@@ -127,7 +127,7 @@ head with an "and N others" tail. `--verbose` shows every candidate, which is th
 tool does not want lifted: a CGP crate implements `IsProviderFor` hundreds of times, so the help
 would list them all. The primary "not implemented for" line carries the failing bound anyway, so the
 driver's emitter cuts the list back to rustc's eight and the count (`bound_candidate_list`, see
-[The driver](driver.md#un-eliding-the-diagnostic)), restoring the text plain rustc prints.
+[The driver](driver/program.md#un-eliding-the-diagnostic)), restoring the text plain rustc prints.
 
 ### Internal debug printing is left off (deliberately)
 
@@ -141,7 +141,7 @@ type and re-bless the whole UI suite, so make it a considered choice.
 Not every hidden cause is a printing elision. The default solver may never compute a consumer call's
 real missing bound, and then no verbosity flag recovers it. The rule of thumb: if the cause is
 *present but compressed* in the text, `--verbose` is the lever; if it is *absent* because the solver
-stopped short, [`-Znext-solver`](driver.md#choosing-the-trait-solver) is.
+stopped short, [`-Znext-solver`](driver/program.md#choosing-the-trait-solver) is.
 
 ## Panic hazards: running compiler code inside the emitter
 
@@ -215,9 +215,9 @@ An `E0308` on a call's argument comes from the same body type-checking. The same
 forcing `tcx.typeck` from the emitter outright. `E0271`/`E0277` are trait-solving failures reported
 after collection, so the queries their resolution forces are already cached and they are safe to
 trace. The gate that encodes this is in
-[Typed root-cause resolution](typed-root-cause-resolution.md); the `tcx.typeck` ban is why a call's
+[Typed root-cause resolution](typed-resolution/overview.md); the `tcx.typeck` ban is why a call's
 receiver that only typeck could type is out of reach, as the
-[resolver's boundaries](typed-root-cause-resolution.md#boundaries) record.
+[resolver's boundaries](typed-resolution/overview.md#boundaries) record.
 
 ### Feeding escaping bound variables to inference (`has_escaping_bound_vars`)
 
@@ -243,7 +243,7 @@ variable minted in one must never appear in another. This is not a distinct comp
 a discipline the resolver keeps: it region-erases predicates before they cross into a fresh context,
 and drops a predicate still carrying non-region inference variables rather than re-checking it. The
 mechanics (the `fresh_args_for_item`-plus-unification impl match, the normalize-and-erase step) are
-in [the walk](typed-resolution-walk.md#crossing-inference-contexts); the note here is only that the
+in [the walk](typed-resolution/walk.md#crossing-inference-contexts); the note here is only that the
 erase is load-bearing, not cosmetic.
 
 ### Freezing the crate store during name resolution (`data should not be frozen`)
@@ -282,7 +282,7 @@ Searching `pretty.rs` for `should_print_verbose` enumerates the internal-debug b
 intentionally leaves off.
 
 The flag is a session option, so each of these gates opens for every diagnostic in the compilation,
-including the ones the tool leaves alone. [The driver](driver.md#un-eliding-the-diagnostic) records
+including the ones the tool leaves alone. [The driver](driver/program.md#un-eliding-the-diagnostic) records
 that as a known limitation.
 
 ## Further reading

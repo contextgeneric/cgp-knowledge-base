@@ -2,9 +2,9 @@
 
 A resolved failure's diagnostic is rebuilt from three parts: a coded headline, one `root cause:`
 note, and the fix `help`s. The wording is decided in the rustc-free crate from the `Resolved` model
-and only applied by the emitter. [The anchors](typed-resolution-anchors.md) and
-[the walk](typed-resolution-walk.md) produce the causes worded here, and
-[error-code.md](../error-code.md) catalogs every code with its example.
+and only applied by the emitter. [The anchors](anchors.md) and
+[the walk](walk.md) produce the causes worded here, and
+[error-code.md](../../error-code.md) catalogs every code with its example.
 
 ## The coded headline
 
@@ -39,7 +39,7 @@ class.
   `` [CGP-E001] the consumer trait `CanCalculateVolume` is not implemented for context `Shape`: 2 root causes ``.
 
 Causes are listed in the order the walk reached them, which is
-[the order the program wrote them](typed-resolution-walk.md#walking-the-dependency-graph-downward).
+[the order the program wrote them](walk.md#walking-the-dependency-graph-downward).
 The class sentence also stays as the block's internal headline for the de-duplication ledger, since
 a re-report the resolver declined carries that wording from the text rewrite.
 
@@ -96,19 +96,19 @@ replaced: naming the trait the context fails to implement is truer than leaking 
 ## The root-cause notes
 
 **rustc's sub-messages are always replaced, and a failure gets one note however many causes it
-has.** Every cause's paths fold into one [dependency graph](dependency-graph-rendering.md), which
+has.** Every cause's paths fold into one [dependency graph](../dependency-graph-rendering.md), which
 merges the nodes they share and branches where they diverge. This collapses the long prefix a
 program-sized context type would otherwise repeat. The heading is a singular `root cause:` when all
 paths end on one leaf, or a `root causes:` list when they differ.
 
 The chain repeats the root cause as its own last entry, so it always ends at the cause. A branch
-[elided against an earlier block](dependency-graph-rendering.md#eliding-across-blocks) keeps that
+[elided against an earlier block](../dependency-graph-rendering.md#eliding-across-blocks) keeps that
 end too, and a note with no chain names the cause in its lead. Paths render as a bare
 `@app.GreeterComponent`, and module qualifiers are stripped except where they tell two types apart,
-as [Resugaring](resugaring.md#the-path-strips-that-run-first) describes.
+as [Resugaring](../resugaring.md#the-path-strips-that-run-first) describes.
 
 A lead is worded by why its leaf is unmet.
-[The leaf shapes](typed-resolution-leaves.md#the-leaf-shapes) decide which leaf a bound is, and
+[The leaf shapes](leaves.md#the-leaf-shapes) decide which leaf a bound is, and
 these are the readings a reader meets:
 
 | Leaf | Code | Reads as |
@@ -214,14 +214,14 @@ rewrite gives it, because a declined re-report of the same failure carries that 
 de-duplication ledger records both. This is the one place the text rewrite's name map serves a
 resolved diagnostic. A final de-duplication suppresses a block that re-reports a failure already
 shown, and the flush coalesces the blocks that share a root cause, as
-[Diagnostic reshapes](diagnostic-reshapes.md) and [The driver](driver.md) describe.
+[Diagnostic reshapes](../driver/diagnostic-reshapes.md) and [The driver](../driver/program.md) describe.
 
 ## Further reading
 
-- [Typed root-cause resolution](typed-root-cause-resolution.md): the pipeline overview and the
+- [Typed root-cause resolution](overview.md): the pipeline overview and the
   tests and source catalogs.
-- [Error processing](error-processing.md): the rustc-free crate the wording lives in.
-- [The driver](driver.md): the emitter, its de-duplication ledger, and the fallback text rewrite.
+- [Error processing](../error-processing.md): the rustc-free crate the wording lives in.
+- [The driver](../driver/program.md): the emitter, its de-duplication ledger, and the fallback text rewrite.
 
 ## Tests
 
@@ -234,7 +234,7 @@ shown, and the flush coalesces the blocks that share a root cause, as
   and
   [`tree.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/tree.rs):
   the graph and the renderer.
-- [The parent document's catalog](typed-root-cause-resolution.md#tests): the fixture groups end to
+- [The parent document's catalog](overview.md#tests): the fixture groups end to
   end.
 
 ## Source

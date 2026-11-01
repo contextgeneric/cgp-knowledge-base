@@ -1,10 +1,10 @@
 # The Nix package
 
 A [`flake.nix`](https://github.com/contextgeneric/cargo-cgp/blob/main/flake.nix) packages
-`cargo-cgp` for the one machine [the rustup-based flow](distribution.md) cannot serve. A Nix user
+`cargo-cgp` for the one machine [the rustup-based flow](provisioning.md) cannot serve. A Nix user
 has no rustup, so `setup`, the preflight, and `update` have nothing to drive. Instead Nix builds
 both binaries under the pinned nightly, and the front-end runs in
-[unmanaged mode](distribution.md#escape-hatches-for-local-development). Provisioning becomes a
+[unmanaged mode](provisioning.md#escape-hatches-for-local-development). Provisioning becomes a
 build-time fact, and a user upgrades by updating the flake input.
 
 ## Design points
@@ -25,7 +25,7 @@ version, not by hash, so this is harmless until the two versions match. Then the
 rustup's copy and exits 127 before printing a sysroot. So the failure appears only in a project
 tracking the same Rust version as the pin. A rustup-managed install is immune, since its probe runs
 through `rustup run`. The user-facing account is in
-[Troubleshooting](../reference/troubleshooting.md#a-nix-install-fails-its-sysroot-probe-under-cargo-cgp).
+[Troubleshooting](../../reference/troubleshooting.md#a-nix-install-fails-its-sysroot-probe-under-cargo-cgp).
 
 ## Tests
 

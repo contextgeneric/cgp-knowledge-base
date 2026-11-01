@@ -20,9 +20,9 @@ affect the installer's toolchain, since
 ## What a bump must do by hand
 
 - **Fix the driver against `rustc_private` changes.** That API shifts between nightlies, which is
-  why the pin is an exact date ([The driver](driver.md#accessing-the-rust-compiler-api)).
+  why the pin is an exact date ([The driver](../driver/program.md#accessing-the-rust-compiler-api)).
 - **Re-bless the UI snapshots and review the diffs,** since a new rustc can reword a diagnostic or
-  move a span ([Testing](testing.md)).
+  move a span ([Testing](../testing.md)).
 - **Refresh the flake,** as below.
 
 A released tool reaches users through `setup` and `update`, which install whatever nightly the
@@ -38,7 +38,7 @@ change, and confirm with `nix build` and `nix flake check`.
 
 - [`front_end/preflight.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/preflight.rs):
   the constant matches the file.
-- The [UI snapshot suite](testing.md): fails on any diagnostic a new compiler words differently.
+- The [UI snapshot suite](../testing.md): fails on any diagnostic a new compiler words differently.
 
 ## Source
 
