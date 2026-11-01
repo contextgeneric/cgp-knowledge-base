@@ -249,7 +249,8 @@ impl<
 `__M1__` is unconstrained, so the impl applies whatever state the field is in, and `__F1__` passes
 through untouched, which is why fields can be built in any order. The companion drops the struct's
 own attributes, so it has none of the record's derives (`Debug`, `Clone`, and so on); the field
-attributes are a different matter, under [Known issues](#known-issues).
+attributes go too, except each field's documentation, so another derive's helper attribute does
+not reach it ([`#[derive(BuildField)]`](../derives/derive_build_field.md)).
 
 ### Using the family, and where it stops
 
