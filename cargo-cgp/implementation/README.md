@@ -79,7 +79,7 @@ same change.
   pure, unit-testable functions.
 - [Error processing](error-processing.md): the rustc-free `cargo-cgp-error-processing` crate that
   holds the driver's string-level diagnostic logic: the post-processing text transforms (stripping
-  CGP path prefixes, resugaring `Symbol!` and `Path!`, resugaring `Product!`/`Sum!` lists to their
+  module paths, resugaring `Symbol!` and `Path!`, resugaring `Product!`/`Sum!` lists to their
   `Struct!`/`Enum!` forms, rewriting unmet `HasField` bounds into missing-field messages), the
   wiring-message rewrite, the root-cause diagnosis model and the wording that turns it into the
   header, help, and note text, and the dependency-tree renderer. The driver's emitter drives all of
@@ -98,7 +98,7 @@ same change.
   macros, the `cargo rustc` launch and the marker flag that scopes expand mode to one crate, why the
   driver prints the expanded AST from `after_expansion` instead of setting `-Zunpretty=expanded`
   (which bypasses every callback), what running it settled about cargo's handling of a unit that
-  yields no artifact, and the selective un-expansion still deferred to a second phase.
+  yields no artifact, and the limitation that every macro is expanded.
 - [rustc diagnostic internals](rustc-diagnostic-internals.md): a map of the compiler code that
   builds CGP diagnostics and where it *suppresses* information: the type/const printer, the
   trait-error reporters, the two verbosity switches (`--verbose` versus `-Zverbose-internals`), and

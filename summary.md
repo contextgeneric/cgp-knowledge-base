@@ -697,9 +697,8 @@ it stale.
   driver's module layers, and `ResolveCtx`.
 - [executable-structure.md](cargo-cgp/implementation/executable-structure.md) — the two-executable
   split, the cargo wrapping, and the environment contract between front-end and driver.
-- [driver.md](cargo-cgp/implementation/driver.md) — the deep dive into the rustc wrapper: argument
-  preparation, compiler-API access, the injected flags, every diagnostic transform, and how a panic
-  in the driver falls back to rustc's own diagnostics.
+- [driver.md](cargo-cgp/implementation/driver.md) — the rustc wrapper as a program: argument preparation, compiler-API access, the
+  injected flags, the emitter's rendering, de-duplication and coalescing, and panic containment.
 - [diagnostic-reshapes.md](cargo-cgp/implementation/diagnostic-reshapes.md) — what the emitter's stages do to each class of CGP mistake: the
   wiring-note rename, the conflict, structural, orphan, and macro-lowering reshapes, and the dropped
   suggestions.
@@ -725,7 +724,7 @@ it stale.
 - [resugaring.md](cargo-cgp/implementation/resugaring.md) — reversing CGP's type-level expansions
   across three inputs (typed, text, syntax tree) that must agree.
 - [expand-command.md](cargo-cgp/implementation/expand-command.md) — `cargo cgp expand`: the cargo
-  launch, why the driver prints from `after_expansion`, and the deferred selective un-expansion.
+  launch, why the driver prints from `after_expansion`, and the limitation that every macro is expanded.
 - [rustc-diagnostic-internals.md](cargo-cgp/implementation/rustc-diagnostic-internals.md) — where the
   compiler builds and *suppresses* diagnostic information, and the panic hazards of re-entering it.
 - [testing.md](cargo-cgp/implementation/testing.md) — the unit tests (one target per crate) and the

@@ -38,7 +38,7 @@ in [AGENTS.md](AGENTS.md), on top of the base-wide rules in [../AGENTS.md](../AG
 
 ## How it is organized
 
-This section is divided into categories, and it will grow to hold more as the tool does. Each
+This section is divided into categories. Each
 category answers a different question, so a reader picks the one that matches their need rather than
 reading in sequence.
 
@@ -72,9 +72,6 @@ directories are internals-facing, so it sits beside them rather than inside a ca
 it* section, which is the seam where the two member sections meet: `cgp` owns the anatomy of an
 error class, `cargo-cgp` owns the code it stamps on the message it rewrites that class into.
 
-As the tool grows more moving parts, expect further categories and documents to appear. The
-`reference/` category will grow a fuller reference for the CGP error classes the tool learns to
-recognize (drawing on the [CGP error catalog](../cgp/errors/README.md) next door) alongside its
-installation and usage guides. Add a category by creating its directory with a `README.md` and
-registering it here in the same change, and record its documents in [../summary.md](../summary.md);
-add a standalone document (like `error-code.md`) the same way.
+Add a category by creating its directory with a `README.md` and registering it here in the same
+change, and record its documents in [../summary.md](../summary.md); add a standalone document (like
+`error-code.md`) the same way.

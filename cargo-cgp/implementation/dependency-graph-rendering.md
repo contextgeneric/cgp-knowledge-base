@@ -18,10 +18,10 @@ the reader a readable account of it.
 A single failure's root causes do not form independent chains, so the note cannot be a stack of
 linear spines. It has to be a graph, because real wiring produces three shapes a per-cause spine
 cannot represent. Each shape is a way two root→leaf paths relate to one another beyond simply
-sharing a prefix, and the graph is what lets the note show each correctly.
+sharing a prefix, and the graph lets the note show each correctly.
 
 The first is a **shared dependency**: a diamond. When two providers both depend on one trait and
-that trait is what fails, their two paths share a *suffix* (`… → C → missing`), not a prefix. The
+that trait fails, their two paths share a *suffix* (`… → C → missing`), not a prefix. The
 note should show the shared trait and its subtree once; a spine model that keys only on the root
 would repeat the whole subtree under each parent.
 
@@ -317,7 +317,7 @@ blocks elide against it as usual.
 
 An elided block stays actionable read on its own: its header, its fix `help`, and its `root cause:`
 lead all still name the cause, so what is elided is chain *detail*, never what failed or how to fix
-it. That is what makes the elision safe for a consumer that sees one diagnostic at a time, such as
+it. That makes the elision safe for a consumer that sees one diagnostic at a time, such as
 an editor reading the JSON output.
 
 ## The note over the graph

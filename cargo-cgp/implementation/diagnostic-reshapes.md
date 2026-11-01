@@ -200,7 +200,7 @@ never sees; it happens in the *emitter* specifically because the natural `after_
 unreachable once the crate has errors (the resolver document explains why). Whichever of the two
 produced the diagnostic, it then passes through the rustc-free
 [post-processing](error-processing.md) cleanup, so the type names either transform embeds are
-stripped of CGP path prefixes and resugared.
+stripped of module paths and resugared.
 
 The resolver is not limited to diagnostics worded in CGP terms. A failure that *never names a CGP
 construct* can still be a consequence of a CGP component failing (a hand-written `Send`-recovery

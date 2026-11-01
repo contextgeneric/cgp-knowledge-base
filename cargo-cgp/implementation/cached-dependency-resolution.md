@@ -52,7 +52,7 @@ the crate is lowered, and the trait solving in progress does not change them (se
 
 ## What is cached, and why it is safe to keep across diagnostics
 
-The value cached is the resolver's rustc-free output, and that is what makes the whole scheme sound
+The value cached is the resolver's rustc-free output, and that makes the whole scheme sound
 against the compiler's lifetimes. The walk's finished product is owned `String`-only data in the
 compiler-free `cargo-cgp-error-processing` crate: the classified
 [`Leaf`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/leaf/variants.rs)
@@ -160,7 +160,7 @@ caches a curtailed ancestor; never caching too much only costs a re-walk, never 
 
 A node cached under this rule is therefore **complete**: every branch of its subtree bottomed out on
 a natural terminator (a `HasField` leaf, an impl-less bound, a foreign bound, a projection
-mismatch), and none was cut by budget or cycle. Completeness is what makes the subtree
+mismatch), and none was cut by budget or cycle. Completeness makes the subtree
 *position-independent along the depth axis*: since no branch depended on the remaining depth budget,
 a fresh walk of the node with a larger budget reaches the same terminators and produces the
 identical subtree. A cache hit can thus legitimately return a fuller subtree than a fresh bounded
@@ -245,7 +245,7 @@ and adds nothing; it earns its place only once interior nodes are cached across 
 fixture is the cross-context shape that exercises this. `Outer`'s walk re-roots the shared
 `Inner: CanCompute` node at `Inner` (so it keys identically to `Inner`'s own walk and shares that
 cached subtree), rendering it as a consumer impl for context `Inner`, while `Inner`'s own tree
-renders the same node the same way. The context field is what keeps a subtree cached under one root
+renders the same node the same way. The context field keeps a subtree cached under one root
 context from being reused under another where it would mislabel.
 
 The parameter environment is not in the key, and that is sound only while the walk keeps its current

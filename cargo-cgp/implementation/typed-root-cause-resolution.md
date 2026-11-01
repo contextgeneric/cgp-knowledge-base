@@ -151,7 +151,7 @@ correct (the resolver has nothing to say about a name-resolution error), whereas
 trait-solving failures reported after collection and do not hit the hazard. This is the
 re-entrant-emission panic catalogued in
 [rustc diagnostic internals](rustc-diagnostic-internals.md#re-entering-the-diagnostic-context-lock-was-already-held),
-where the phase a diagnostic is emitted in is what decides whether the solver may safely run on it.
+where the phase a diagnostic is emitted in decides whether the solver may safely run on it.
 
 A candidate the resolver accepts is transformed in two independent halves (the coded headline and
 the root-cause notes), described in

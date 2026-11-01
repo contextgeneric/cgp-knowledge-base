@@ -13,7 +13,7 @@ because the tree shows the transitive path to each root cause, not only the root
 obligation it finds the impl that would satisfy it, takes that impl's `where`-clause obligations as
 its direct dependencies, and recurses into just the ones that do **not** already hold. A satisfied
 dependency (an already present field, a wired provider that checks out) is pruned. Following *every*
-unmet dependency, not only the first, is what surfaces independent causes as **separate** paths: the
+unmet dependency, not only the first, surfaces independent causes as **separate** paths: the
 next-generation solver short-circuits a conjunction at its first unmet bound, so a provider needing
 two absent fields would otherwise hide one.
 
@@ -124,7 +124,7 @@ missing field rather than an opaque foreign bound. Re-rooting also keys the node
 `Inner`'s own walk, so the two share the [cache](cached-dependency-resolution.md). Without it, the
 descent would carry the outer root context down and mislabel the whole foreign-context subtree.
 
-A branch ends at a **terminal leaf**, and which obligations count as terminal is what keeps the tree
+A branch ends at a **terminal leaf**, and which obligations count as terminal keeps the tree
 honest. The descent follows only the CGP wiring vocabulary (any provider trait, where a
 `ProvideFoo: Foo<App>` bound routes on to the provider's own dependencies; `DelegateComponent`; and
 any obligation whose `Self` is the context, covering its consumer, getter, and blanket traits) and
@@ -138,7 +138,7 @@ walk descends it the way it descends a provider. It deliberately does *not* foll
 - An unmet **`DelegateComponent<Marker>` on the context** is the missing-wiring leaf: the context
   delegates that component to no provider. The exception is an entry that forwards the key to
   another table (`GreeterComponent -> Bundle`), which the context does carry: its impl's
-  `where Bundle: DelegateComponent<GreeterComponent>` bound is what fails, so the walk descends into
+  `where Bundle: DelegateComponent<GreeterComponent>` bound fails, so the walk descends into
   that lookup and reports the missing-dispatch-entry leaf on `Bundle`
   ([`direct_delegation_missing_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/direct_delegation_missing_key.rs)).
 - An unmet **`DelegateComponent<PathCons<…>>`**, whose key is a redirect path rather than a bare
@@ -166,7 +166,7 @@ walk descends it the way it descends a provider. It deliberately does *not* foll
     a proper part of the parent obligation's `Self`, as `Components` is of `UseDelegate<Components>`
     / `UseInputDelegate<Components>` (or any custom dispatcher that holds its table as a parameter).
     Such a `where`-clause is unambiguously a table lookup, so an unmet one is a missing entry
-    *regardless of whether that table wires any other key*. This is what reaches an **empty**
+    *regardless of whether that table wires any other key*. This reaches an **empty**
     dispatch table.
   - **by owner property** otherwise (the generic-blanket case, where the owner *equals* the parent
     `Self`): the owner wires at least one other key, i.e. carries a `DelegateComponent` impl, and
@@ -280,7 +280,7 @@ that blanket impl and follows only its **context-side dependencies** (a provider
 extensible-data trait, which is about the foreign type itself), so the real cause on the
 context surfaces (and de-duplicates with the same cause reached down another branch) instead of the
 opaque `Request: HasBasicAuthHeader<Ctx>` bound being reported as a second, misleading root cause.
-Following only context-side dependencies is what preserves the `f64: Eq` guarantee (a foreign
+Following only context-side dependencies preserves the `f64: Eq` guarantee (a foreign
 `f64: FnPtr` step is not context-side, so it is never followed), and it also skips the getter's own
 `Ctx::Assoc`-typed `HasField` clause on the request, which is present but a projection mismatch a
 plain descent would misreport as a missing field. A provider step that belongs to another context is
@@ -506,11 +506,11 @@ owner can supply the type (an abstract type wired to `UseType<T>` resolves throu
 `#[cgp_type]` generates, a hand-written `impl HasErrorType for App` through that impl), so no wiring
 shape is special-cased, and a result that does not reduce to a concrete type is rendered `_` rather
 than half-resolved. The leaf also records whether the trait is a **CGP abstract-type component**,
-which is what earns it the `abstract type` wording and a `help` naming the wiring entry to change.
+which earns it the `abstract type` wording and a `help` naming the wiring entry to change.
 That is recognized structurally by the three things
 [`#[cgp_type]`](../../cgp/reference/macros/cgp_type.md) generates and nothing else does: a consumer
 trait, whose only associated item is a type, whose provider trait carries the `UseType` blanket. The
-last condition is anchored by `DefId` to the crate defining `UseType`, since it is what makes
+last condition is anchored by `DefId` to the crate defining `UseType`, since it makes
 `UseType<T>` a valid fix to suggest (`abstract_type_component_marker`). A behavioral component, or a
 plain trait with an associated type, matches none of the three and reads as a plain
 `associated type` with no `help`.

@@ -93,7 +93,7 @@ supertrait on that context that does not hold and is either a CGP consumer trait
 provider, recognized by `is_blanket_trait` as described under *Recognizing a blanket trait* below)
 **is** the obligation to walk. The resolver seeds it directly (`wrapper_consumer_causes`), with its
 concrete component parameter intact (`CanCalculateArea<Rectangle>`, not the `()` a parameterless
-re-check would substitute), so no marker detour is needed. The blanket-impl case is what reshapes a
+re-check would substitute), so no marker detour is needed. The blanket-impl case reshapes a
 `#[cgp_fn]` blanket-trait check (`pub trait CheckGetUser: GetUser {}` +
 `impl CheckGetUser for App {}`, the tutorial idiom for asserting a blanket trait holds) whose real
 cause is a field the context is missing: the walk descends the blanket's `where` clause

@@ -91,7 +91,7 @@ cgp_namespace! {
             UseType<String>,
 
         // One generic entry serves *every* program: any `Prog<Steps>` runs as the pipeline of
-        // its steps. This is what makes the wiring match unconditionally.
+        // its steps. This makes the wiring match unconditionally.
         @cgp.extra.handler.HandlerComponent.<Steps> Prog<Steps>:
             PipeHandlers<Steps>,
     }
@@ -163,7 +163,7 @@ trait that is not a CGP component (no provider trait, no `DelegateComponent`), c
 consumer (`app.describe()`) and seeding the same walkable obligation `Ctx: Describe` whose `Self` is
 the context. Because it is not a CGP component, its result takes the `[CGP-E003]` code rather than
 `[CGP-E001]`, the same class the impl-site anchor gives such a trait reached through a wrapper, by
-replacing the `ResolvedClass::Consumer` the walk sets with `ResolvedClass::Wrapper`. This is what recovers a direct call
+replacing the `ResolvedClass::Consumer` the walk sets with `ResolvedClass::Wrapper`. This recovers a direct call
 to a `#[cgp_fn]` trait the context cannot satisfy: an `E0599` whose real cause (a field one composed
 blanket trait reads) rustc buries in a mid-stack note under its method-probe candidate list
 ([`cgp_fn_use_site`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/cgp_fn_use_site.rs)).
