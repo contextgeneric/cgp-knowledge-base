@@ -45,119 +45,69 @@ check_components! {
 
 ## The raw diagnostic
 
-This section describes what plain `cargo check` prints, the fallback when `cargo-cgp` is not on
-hand; [How cargo-cgp presents it](#how-cargo-cgp-presents-it) below covers the readable form. This
-is a **surfaced** class: the `help:` note names the concrete unmet leaf exactly as in a single-layer
-[check-trait failure](check-trait-failure.md), and the leaf tells you the offending field. What is
-specific to a higher-order provider is that the *rest* of the diagnostic differs by layer, so the
-two cases are told apart by shape rather than by the leaf alone.
+This section describes plain `cargo check`, the fallback when `cargo-cgp` is not on hand. This is a
+**surfaced** class: a `help:` note names the unmet leaf as in a
+[check-trait failure](check-trait-failure.md). The rest of the diagnostic differs by layer, so the
+shape tells the two cases apart.
 
-When the **inner** layer fails, the compiler prints **two** `E0277` blocks. The first is an
-intermediate block reporting that the inner provider does not implement its provider trait for the
-concrete context (`BaseArea: AreaCalculator<Rectangle>` is not satisfied) carrying the
-[near-contradiction](../../guides/debugging.md) hint that `AreaCalculator<__Context__>` *is*
-implemented for `BaseArea` (the generic impl exists but is inapplicable here). The second block is
-the real one: `Rectangle: CanUseComponent<AreaCalculatorComponent>` is not satisfied, its `help:`
-naming the missing `HasField<Symbol!("base_area")>`, its `unsatisfied trait bound introduced here`
-caret landing on the *inner* provider's `Self: HasBaseArea` clause, and its `required for …` chain
-running through `BaseArea`'s `IsProviderFor` and then, after a `1 redundant requirement hidden`
-note, through `ScaledArea<BaseArea>`'s `IsProviderFor` to `CanUseComponent`. The chain passing
-through both providers' `IsProviderFor`, and the extra intermediate block, are the marks of an
-inner-layer failure. The intermediate block is stable's; the nightly `cargo-cgp` pins prints only
-the `CanUseComponent` block, so on that compiler the chain alone marks the inner layer.
+When the **inner** layer fails, stable prints two `E0277` blocks. The first reports
+`BaseArea: AreaCalculator<Rectangle>` is not satisfied, with the
+[near-contradiction](../../guides/debugging.md) hint that `AreaCalculator<__Context__>` is
+"conditionally implemented" for `BaseArea`: the generic impl exists but is inapplicable here. The
+second is `Rectangle: CanUseComponent<AreaCalculatorComponent>`, whose `help:` names the missing
+`HasField<Symbol<9, Chars<'b', …>>>`. Its `unsatisfied trait bound introduced here` caret lands on the
+inner provider's `Self: HasBaseArea`, and its chain runs through `BaseArea`'s `IsProviderFor` and,
+after a `1 redundant requirement hidden` note, through `ScaledArea<BaseArea>`'s. The nightly
+`cargo-cgp` pins prints only the second block, so there the chain alone marks the inner layer.
 
-When the **outer** layer fails, the compiler prints a **single**, shorter `E0277` block. It is the
-`Rectangle: CanUseComponent<AreaCalculatorComponent>` block, its `help:` naming the missing
-`HasField<Symbol!("scale_factor")>`, its caret landing on the *outer* provider's
-`Self: HasScaleFactor` clause, and its chain running from `ScaledArea<BaseArea>`'s `IsProviderFor`
-straight to `CanUseComponent`, with no `redundant requirement` note and no mention of the inner
-`BaseArea` at all. The outer layer fails before it ever delegates inward, so the inner provider
-never enters the proof.
+When the **outer** layer fails, the compiler prints one shorter `E0277` block, the same
+`CanUseComponent` headline. Its `help:` names the missing `HasField<Symbol<12, Chars<'s', …>>>`, its caret
+lands on the outer provider's `Self: HasScaleFactor`, and its chain runs from
+`ScaledArea<BaseArea>`'s `IsProviderFor` straight to `CanUseComponent`, without a redundancy note or the
+inner `BaseArea`, since the outer layer fails before it delegates inward.
 
 ## Where the root cause is
 
-The root cause is **present** in the `help:` note of the `CanUseComponent` block in both cases, and
-the failing *layer* is present too, in two reinforcing places. The
-`unsatisfied trait bound introduced here` caret sits on the `where` clause of the provider whose
-dependency is unmet: the inner provider for an inner failure, the outer provider for an outer one,
-which is the most direct signal. The chain depth confirms it: an inner failure runs through *both*
-providers' `IsProviderFor` and carries the `1 redundant requirement hidden` note, while an outer
-failure stops at the outer provider's `IsProviderFor` and never names the inner one. The
-intermediate `Inner: ProviderTrait<Context>` block that appears only for the inner case is a third,
-weaker signal: its presence points inward, but it is also the noise a reader should skip past to
-reach the `CanUseComponent` block that carries the leaf.
+The root cause is **present** in the `help:` note of the `CanUseComponent` block in both cases. The
+failing layer shows first in the `unsatisfied trait bound introduced here` caret, on the `where` clause
+of the provider whose dependency is unmet, and then in the chain: both providers' `IsProviderFor` with a
+redundancy note for an inner failure, the outer provider's alone for an outer one. The intermediate block
+of the inner case points inward too, but a reader skips it to reach the block with the leaf.
 
 ## How cargo-cgp presents it
 
-`cargo-cgp` reshapes both cases into a single `[CGP-E001]` headline that states the missing field
-over one `root cause:` tree, and **encodes the failing layer in the shape of that tree** rather than
-leaving it to be read from chain depth and caret position. For the inner failure the tree bottoms
-out at `` [CGP-E110] missing field `base_area` `` beneath *two* stacked `[CGP-E102]` provider-trait
-hops (first `ScaledArea<BaseArea>`, then the `BaseArea` it wraps) before reaching
-`[CGP-E104] HasBaseArea` and the field; the two provider hops are the wrapper relationship made
-explicit. For the outer failure the tree bottoms out at
-`` [CGP-E110] missing field `scale_factor` `` beneath a *single* `[CGP-E102]` hop
-(`ScaledArea<BaseArea>`) with the inner provider never named, exactly mirroring the shorter raw
-block. The intermediate near-contradiction block that clutters the raw inner-layer output is dropped
-entirely, so the recovered form reads the same in both cases save for that one-hop-versus-two-hop
-depth.
+`cargo-cgp` reshapes both cases into one `[CGP-E001]` headline over one `root cause:` tree, and the tree's
+shape shows the layer. An inner failure ends at `` [CGP-E110] missing field `base_area` on `Rectangle` ``
+beneath two `[CGP-E102]` hops, `ScaledArea<BaseArea>` then `BaseArea`, and a `[CGP-E104]` hop for
+`HasBaseArea`. An outer failure ends at `` [CGP-E110] missing field `scale_factor` on `Rectangle` `` beneath
+one `[CGP-E102]` hop, with the inner provider never named. The tree does not state the layer in words, so
+a reader infers inner or outer from the depth.
 
-Checked with `#[check_providers(...)]` instead, each failing layer is its own block under the
-provider code `[CGP-E002]`, whose tree starts at that layer. An outer-layer failure reads
-`` [CGP-E002] missing field `scale_factor` on `Rectangle` `` over a single `[CGP-E102]` hop for
-`ScaledArea<RectangleArea>`, with the inner provider never named
+Checked with `#[check_providers(...)]`, each failing layer is its own `[CGP-E002]` block, whose tree starts
+at that layer
 ([`check_providers_layer`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/higher-order-provider-layer/check_providers_layer.rs)).
-The codes are defined in the [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
+The [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md) defines the codes.
 
 ## Resolving it
 
-Fix the dependency at the layer the diagnostic points to. For the inner failure, supply the field
-the inner provider needs: add `base_area` to `Rectangle` so `BaseArea` implements `HasBaseArea`; for
-the outer failure, supply the field the outer provider needs: add `scale_factor` so `ScaledArea`
-implements `HasScaleFactor`. Wiring is unaffected: the stack `ScaledArea<BaseArea>` is correct in
-both cases, and the fix is always to satisfy the named leaf, never to change the delegation.
+Supply what the named leaf needs at that layer: `base_area` for the inner failure, `scale_factor` for the
+outer. The stack `ScaledArea<BaseArea>` is correct in both cases, so the delegation does not change.
 
-When a stack is deep enough that reading the chain is awkward, force the layer boundary explicitly
-with the `#[check_providers(...)]` form of
-[`check_components!`](../../reference/macros/check_components.md). It changes the assertion from
-`CanUseComponent` on the context to `IsProviderFor` on each named provider, so a dependency missing
-only from the outer wrapper errors on that provider's line alone while one missing from the inner
-provider errors on both, pinpointing the layer without decoding the chain. The
-[debugging guide](../../guides/debugging.md) prescribes this move; this document is the anatomy
-behind it.
-
-## Notes for tooling
-
-`cargo-cgp` already does the work a post-processor would need here: it suppresses the intermediate
-near-contradiction block and reconstructs the wrapper relationship as the stacked `[CGP-E102]` hops
-of the tree. What it does *not* yet do is state the layer in words: the tree shows the wrapper
-structurally (two hops for an inner failure, one for an outer), but a reader still infers "inner
-versus outer" from the depth rather than reading a phrase like "needed by the inner provider
-`BaseArea`, wrapped by `ScaledArea`." A tool wanting to name the layer explicitly can emulate
-`#[check_providers(...)]`, re-asserting `IsProviderFor` per layer to localize it mechanically.
+To locate the layer in a deep stack, use the `#[check_providers(...)]` form of
+[`check_components!`](../../reference/macros/check_components.md). It asserts `IsProviderFor` on each named
+provider, so a dependency missing only from the outer wrapper errors on that line alone, and one missing from
+the inner provider errors on both. The [debugging guide](../../guides/debugging.md) prescribes this move.
 
 ## Backing fixtures
 
 - [`checks/higher-order-provider-layer/higher_order_inner_dependency.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/higher-order-provider-layer/higher_order_inner_dependency.rs):
-  `ScaledArea<BaseArea>` wired onto a `Rectangle` with `scale_factor` but no `base_area`, so the
-  inner layer fails; its `.rust.stderr` pins the shape as the pinned nightly prints it, the
-  `CanUseComponent` block alone (stable adds the intermediate `BaseArea: AreaCalculator<Rectangle>`
-  block before it), with the `HasField<Symbol<9, …>>` leaf, the caret on `BaseArea`'s
-  `Self: HasBaseArea`, and the chain through both providers' `IsProviderFor` with the
-  `1 redundant requirement hidden` note, while its `.cgp.stderr` collapses that to one `[CGP-E001]`
-  block whose `` root cause: [CGP-E110] missing field `base_area` `` tree carries *two* `[CGP-E102]`
-  provider hops (`ScaledArea<BaseArea>` then `BaseArea`).
+  `ScaledArea<BaseArea>` on a `Rectangle` with `scale_factor` but no `base_area`: the inner layer fails, with two `[CGP-E102]` hops.
 - [`checks/higher-order-provider-layer/higher_order_outer_dependency.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/higher-order-provider-layer/higher_order_outer_dependency.rs):
-  the mirror, with `base_area` but no `scale_factor`, so the outer layer fails; its `.rust.stderr`
-  pins the single, shorter block, the `HasField<Symbol!("scale_factor")>` leaf, the caret on
-  `ScaledArea`'s `Self: HasScaleFactor`, and a chain that stops at the outer `IsProviderFor` without
-  naming the inner provider, and its `.cgp.stderr` a `[CGP-E001]` block whose
-  `` root cause: [CGP-E110] missing field `scale_factor` `` tree carries a *single* `[CGP-E102]` hop
-  with the inner provider absent.
+  the mirror, with `base_area` but no `scale_factor`: one `[CGP-E102]` hop, and the inner provider absent.
 - [`checks/higher-order-provider-layer/deep_nesting.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/higher-order-provider-layer/deep_nesting.rs):
-  a deeply nested stack of higher-order providers, whose dependency tree should descend through every layer down to the missing field at the bottom.
+  a deeply nested stack whose tree descends through every layer to the missing field.
 - [`checks/higher-order-provider-layer/scaled_area_1.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/higher-order-provider-layer/scaled_area_1.rs):
-  the failing layer of a higher-order provider is not spelled out.
+  an inner-layer failure, whose tree shows the layer without naming it.
 - [`checks/higher-order-provider-layer/scaled_area_2.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/higher-order-provider-layer/scaled_area_2.rs):
   the outer layer of a higher-order provider fails.
 
