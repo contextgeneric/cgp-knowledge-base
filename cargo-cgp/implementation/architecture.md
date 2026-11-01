@@ -120,8 +120,7 @@ Clippy is also a diagnostic tool built on this integration, but it adds diagnost
 `cargo-cgp` rewrites the ones rustc built. Both work inside the compilation and let cargo carry the
 output out unchanged, so neither processes output in its front-end. Clippy registers lint passes and
 keeps the compiler's default emitter, while `cargo-cgp` wraps that emitter in one that edits each
-diagnostic first. Clippy also has no rustc-free crate, since its lints have no wording logic dense
-enough to need testing apart from the compiler. The
+diagnostic first. The
 [driver's comparison](driver.md#comparison-with-clippy) gives the detail.
 
 ## Tests

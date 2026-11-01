@@ -142,7 +142,7 @@ is skipped altogether, since its generated trait carries `CanUseComponent` as it
 belongs to the check-entry anchor, and heading a tree with it would present the generated
 `__CanUseApp` as a trait the programmer wrote. No fixture depends on the skip: the check entries the
 check-entry anchor declines, ones checked at unit parameters, are reported as a
-[structural mistake](driver.md#reshaping-a-structural-mistake) before any anchor runs.
+[structural mistake](diagnostic-reshapes.md#reshaping-a-structural-mistake) before any anchor runs.
 
 **From a foreign wrapper chain.** The routing glue can put the failure one level further out: a
 hand-written `impl Trait for Foreign` block whose `Self` is a foreign type holding the context,

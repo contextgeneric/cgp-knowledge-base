@@ -65,7 +65,7 @@ paths that a
 causes hold. These carry no `Ty<'tcx>`, no `DefId`, and no compiler handle (the paths are merged and
 rendered into a tree later, by the rustc-free [dependency graph](dependency-graph-rendering.md)). So
 a cached value can live for the whole compilation on a struct that outlives no single `TyCtxt`,
-exactly as the existing [`ComponentNameMap`](driver.md#naming-the-traits-behind-a-component-marker)
+exactly as the existing [`ComponentNameMap`](diagnostic-reshapes.md#naming-the-traits-behind-a-component-marker)
 and [`DedupLedger`](driver.md) already do. This is the decisive difference from caching the
 *intermediate* solver work: an `InferCtxt`'s obligations are `'tcx`-interned and cannot be stored
 past the `ty::tls::with` closure that produced them, but the finished paths are owned and can.
@@ -319,7 +319,7 @@ interception the resolver refuses.
 The cache is complementary to the emitter's diagnostic buffering, not in competition with it. The
 emitter holds every diagnostic until its flush and decides there *what* to emit, coalescing even
 different-consumer-same-cause blocks into one listing (see
-[The driver](driver.md#naming-the-traits-behind-a-component-marker)). The node-memoized walk is the
+[The driver](diagnostic-reshapes.md#naming-the-traits-behind-a-component-marker)). The node-memoized walk is the
 "resolve each unique obligation exactly once" primitive underneath that buffering.
 
 ## Tests

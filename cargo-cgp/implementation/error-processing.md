@@ -37,7 +37,7 @@ from the driver, is what keeps them unit-testable.
   the driver fills in from the compiler. It also rewrites the `E0275` header of a wiring lookup that
   never resolves into its `[CGP-E020]` form for a cycle or its `[CGP-E021]` form for a lookup that
   grows, by the reason the driver's walk found. It is documented where it is used, in
-  [The driver](driver.md#naming-the-traits-behind-a-component-marker).
+  [The driver](diagnostic-reshapes.md#naming-the-traits-behind-a-component-marker).
 - **The diagnosis model and its wording**
   ([`diagnosis`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/diagnosis))
   is the rustc-free root-cause model (the `Resolved` failure the driver's typed resolver produces,
@@ -60,7 +60,7 @@ from the driver, is what keeps them unit-testable.
   duplicate-key conflict wording (`wiring.rs`): the `WiringConflict` model and
   `plan_wiring_conflict`, which words the `[CGP-E010]`–`[CGP-E014]` headers (one per conflict shape)
   the driver's `detect::conflict` classifier feeds it (see
-  [The driver](driver.md#reshaping-a-duplicate-key-conflict)). Five more modules word the driver's
+  [The driver](diagnostic-reshapes.md#reshaping-a-duplicate-key-conflict)). Five more modules word the driver's
   other reshapes, each with a `plan_*` header and a `*_help` fix: `orphan.rs` (`OrphanConflict`, the
   `[CGP-E022]` orphan-rule namespace registration), `undeclared.rs` (`UndeclaredTrait`, the
   `[CGP-E030]` trait a `#[cgp_fn]`/`#[cgp_impl]` body calls without declaring it, with the
@@ -105,7 +105,7 @@ from the driver, is what keeps them unit-testable.
   is the `DedupLedger` the emitter records each transformed diagnostic in, so the re-reports one
   lazy-wiring mistake produces at many sites are suppressed. The key scheme (the recovered cause,
   the rendered text, and the coded header) lives with the ledger, documented in
-  [The driver](driver.md#naming-the-traits-behind-a-component-marker).
+  [The driver](diagnostic-reshapes.md#naming-the-traits-behind-a-component-marker).
 - **The signature keys**
   ([`signature`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/wording/signature.rs))
   are the two span-independent keys the emitter groups failures on: `cause_signature` (context,
@@ -182,7 +182,7 @@ apply to the rest of that message too, so the recovered construct does not sit a
 path resugared in an untransformed message keeps its `Path!(@…)` macro form, since the reader meets
 it as a type. One more change reaches an untransformed diagnostic, outside this crate: the driver
 merges a diagnostic rustc reports twice into its first report (see
-[The driver](driver.md#naming-the-traits-behind-a-component-marker)).
+[The driver](diagnostic-reshapes.md#naming-the-traits-behind-a-component-marker)).
 
 **In a crate that does not use CGP, an untransformed diagnostic is never post-processed.** The
 emitter asks the compiler once whether the crate uses `cgp` or one of CGP's own crates
@@ -288,7 +288,7 @@ transforms run, in three groups:
   ([`symbol_tag_on_tuple_struct`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/symbol_tag_on_tuple_struct.rs)),
   and a `__Context__`-style parameter a macro generated is not a struct, so its fix is a bound (the
   driver reports a provider missing such a bound as `[CGP-E036]`, per
-  [The driver](driver.md#reshaping-an-undeclared-dependency)).
+  [The driver](diagnostic-reshapes.md#reshaping-an-undeclared-dependency)).
 
 In practice the missing-field reword rarely fires, because the
 [typed root-cause resolver](typed-root-cause-resolution.md) recovers most missing-field failures
@@ -333,7 +333,7 @@ collapsing a *cascade*, the one deep mistake reported at every transitively depe
 a single root cause. That is a cross-diagnostic transform, and it can only be decided by looking at
 the whole diagnostic set. It lives in the driver's emitter, which buffers the compilation's
 diagnostics and coalesces the failures that share a cause at flush (see
-[The driver](driver.md#naming-the-traits-behind-a-component-marker)). This crate supplies the pure
+[The driver](diagnostic-reshapes.md#naming-the-traits-behind-a-component-marker)). This crate supplies the pure
 pieces it runs on: `group_by_shared_cause`, `Causes::union`, and the `DedupLedger`.
 
 ## Comparison with Clippy
@@ -487,7 +487,7 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   `message.rs` (`rewrite_message` and the note/header forms, with the code-stamping
   `rewrite_trait_bound`), `names.rs` (`ComponentNameMap`/`ComponentTraitNames`), `parse.rs`
   (`parse_trait_bound`), and `text.rs` (the segment/generics splitters). See
-  [The driver](driver.md#naming-the-traits-behind-a-component-marker).
+  [The driver](diagnostic-reshapes.md#naming-the-traits-behind-a-component-marker).
 - [`crates/cargo-cgp-error-processing/src/diagnosis/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/diagnosis):
   the rustc-free root-cause model and its wording: `leaf/` (`Leaf`/`FieldIssue`, and the facts a
   `help` reads, `FieldFix`/`NearMiss`/`DeriveFix`), `resolved.rs`
@@ -521,7 +521,7 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
   notes, and `help`s in one value, with a constructor per class), and `internal_error.rs` (the note
   on a diagnostic shown untransformed after a contained panic). See
   [Typed root-cause resolution](typed-root-cause-resolution.md) and
-  [The driver](driver.md#reshaping-a-duplicate-key-conflict).
+  [The driver](diagnostic-reshapes.md#reshaping-a-duplicate-key-conflict).
 - [`crates/cargo-cgp-error-processing/src/tree.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/tree.rs):
   the `DependencyTree` type and its `cargo tree`-style renderer, the target the
   [dependency graph](dependency-graph-rendering.md) expands into (the merging lives in the graph,

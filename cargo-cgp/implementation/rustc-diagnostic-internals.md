@@ -328,7 +328,7 @@ driver's
 is where that happens: its `config` hook installs a custom emitter that reaches the live `TyCtxt`
 (from thread-local scope) and rewrites diagnostics before they are serialized. One use of it renames
 CGP wiring notes to name the consumer and provider traits behind a component marker
-([Naming the traits behind a component marker](driver.md#naming-the-traits-behind-a-component-marker)),
+([Naming the traits behind a component marker](diagnostic-reshapes.md#naming-the-traits-behind-a-component-marker)),
 and the same seam can re-run trait fulfillment through the `InferCtxt` / `ObligationCtxt` API to
 reconstruct a chain the printed form renders tersely. This is the reason the foothold is worth
 having: once inside the compiler, the full `Symbol` is an interned type you can read exactly,

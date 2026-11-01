@@ -700,6 +700,9 @@ it stale.
 - [driver.md](cargo-cgp/implementation/driver.md) — the deep dive into the rustc wrapper: argument
   preparation, compiler-API access, the injected flags, every diagnostic transform, and how a panic
   in the driver falls back to rustc's own diagnostics.
+- [diagnostic-reshapes.md](cargo-cgp/implementation/diagnostic-reshapes.md) — what the emitter's stages do to each class of CGP mistake: the
+  wiring-note rename, the conflict, structural, orphan, and macro-lowering reshapes, and the dropped
+  suggestions.
 - [error-processing.md](cargo-cgp/implementation/error-processing.md) — the rustc-free crate holding
   the post-processing transforms, the shared `Struct!`/`Enum!` shape spellings, the wiring rewrite,
   the diagnosis model, and the wording.

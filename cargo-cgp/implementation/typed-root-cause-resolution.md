@@ -22,7 +22,7 @@ fallback for diagnostics the resolver declines still recognizes `IsProviderFor`/
 rustc's rendered output; that is a separate concern, covered in [The driver](driver.md).)
 
 This is a deeper transformation than the rename, and it builds on it.
-[Naming the traits behind a component marker](driver.md#naming-the-traits-behind-a-component-marker)
+[Naming the traits behind a component marker](diagnostic-reshapes.md#naming-the-traits-behind-a-component-marker)
 edits a diagnostic in place, renaming its wording; the resolver instead reconstructs the failure
 from compiler state and replaces the diagnostic wholesale. It is the compiler-state enrichment
 described in [The driver](driver.md) and [Architecture](architecture.md), and everything
@@ -121,7 +121,7 @@ plausibly stems from a CGP component failure, then either traces it to a root ca
 Concretely, a diagnostic is a candidate when it carries code **`E0271`**, **`E0277`**, or a
 **method-bounds `E0599`**: the "the method `…` exists … but its trait bounds were not satisfied"
 shape. An `E0275` overflow is no candidate, since the walk explains one only by a cut (a cycle, or a
-lookup that grows), which [the driver](driver.md#naming-the-traits-behind-a-component-marker) words
+lookup that grows), which [the driver](diagnostic-reshapes.md#naming-the-traits-behind-a-component-marker) words
 from the overflow walk; a bound the walk stops at instead is one whose own evaluation overflowed,
 which no root cause states truly. Any other code declines before the walk, even one whose text
 names a CGP trait: a coherence conflict (`E0119`) between a derived `HasField` impl and
@@ -534,16 +534,16 @@ marking.
     handles the duplicate-key `E0119` conflict, and
     [`orphan.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/detect/orphan.rs)
     the orphan-rule `E0210`/`E0117` namespace registration, both separate coherence-class transforms
-    documented in [The driver](driver.md#reshaping-a-duplicate-key-conflict), and
+    documented in [The driver](diagnostic-reshapes.md#reshaping-a-duplicate-key-conflict), and
     [`structural/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/detect/structural)
     the structural mistakes in a check table or a wiring entry
-    ([The driver](driver.md#reshaping-a-structural-mistake)). The macro-lowering detectors sit
+    ([The driver](diagnostic-reshapes.md#reshaping-a-structural-mistake)). The macro-lowering detectors sit
     beside them: `undeclared.rs`, `missing_use_provider.rs`, `unimported.rs`, and `requirement.rs`
-    for an undeclared dependency ([The driver](driver.md#reshaping-an-undeclared-dependency)), and
+    for an undeclared dependency ([The driver](diagnostic-reshapes.md#reshaping-an-undeclared-dependency)), and
     `cgp_impl_misuse.rs` and `uses_misuse.rs` for a wrong component half
-    ([The driver](driver.md#reshaping-a-wrong-component-half)), and `wiring_name/` reads a wiring
+    ([The driver](diagnostic-reshapes.md#reshaping-a-wrong-component-half)), and `wiring_name/` reads a wiring
     entry's names back from the HIR for an unresolved wiring name
-    ([The driver](driver.md#reshaping-an-unresolved-wiring-name)). Beside `query/` in `resolve/`,
+    ([The driver](diagnostic-reshapes.md#reshaping-an-unresolved-wiring-name)). Beside `query/` in `resolve/`,
     `cache.rs` memoizes the walk at every node (keyed on the region-erased obligation and context),
     so a wiring failure re-reported at many sites, or a shared trait, is walked once (see
     [Cached dependency resolution](cached-dependency-resolution.md)).

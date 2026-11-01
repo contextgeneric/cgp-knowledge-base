@@ -26,14 +26,14 @@ same change.
 - [Executable structure](executable-structure.md): the two-executable split (the `cargo-cgp`
   front-end and the `cargo-cgp-driver` rustc wrapper), how the front-end wraps `cargo`, the
   environment contract between the two, and how the split compares to Clippy.
-- [The driver](driver.md): the deep dive into `cargo-cgp-driver`. It covers how cargo invokes the
-  driver, how the driver prepares the rustc argument vector, and how it reaches the compiler through
-  the `rustc_private` `rustc_driver` API. It also covers the transformations the driver applies to
-  the diagnostics: the two flag levers (trait solver, verbosity), the generic `CgpEmitter` that
-  renders text or JSON like vanilla `rustc`, the emitter that renames CGP wiring notes using the
-  live compiler, and the post-processing fallback that keeps un-rewritten CGP constructs readable.
-  It also covers how the driver contains its own panics, falling back to rustc's diagnostics, and
-  keeps rustc's output order when the compiler crashes.
+- [The driver](driver.md): the deep dive into `cargo-cgp-driver` as a program: how cargo invokes it,
+  how it prepares the rustc argument vector, how it reaches the compiler through `rustc_private`, the
+  two flag levers (trait solver, verbosity), the `CgpEmitter` that renders text or JSON like plain
+  `rustc`, de-duplicating and coalescing, and how it contains its own panics.
+- [Diagnostic reshapes](diagnostic-reshapes.md): what the emitter's stages do to each class of CGP
+  mistake rustc reports in its own terms: the wiring-note rename over the component name map, the
+  duplicate-key, structural, orphan-rule, undeclared-dependency, wrong-component-half, macro-less
+  provider, and unresolved-name reshapes, and the suggestions the emitter drops.
 - [Typed root-cause resolution](typed-root-cause-resolution.md): the deeper emitter transformation
   that turns a check-failure diagnostic into its root-cause `cargo tree`. It recovers the chain by
   re-running the check obligation through the trait solver (from inside `emit_diagnostic`, since
