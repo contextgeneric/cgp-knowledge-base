@@ -318,7 +318,10 @@ recovers the blanket trait from the diagnostic's spans (as the by-consumer ancho
 consumer), and the context from the **failing expression itself** (the call argument whose type
 fails: `app`, read off its binding by the call-site anchor's `contexts_at_spans`), because rustc
 puts its "not implemented for `App`" span on the context's `#[derive(HasField)]` attribute,
-*outside* the struct's item span, so no struct-definition span carries it. The walk then descends
+*outside* the struct's item span, so no struct-definition span carries it. The by-consumer anchor
+reads the same expressions. Neither takes a struct as the context for a span on its generics: for
+`struct Holder<T: GetName>`, rustc's "required by a bound in `Holder`" note lands there, and `Holder`
+only passes the requirement on. The walk then descends
 `Ctx: BlanketTrait` to the cause, and the result takes the `[CGP-E003]` code (not `[CGP-E001]`)
 since a blanket trait is not a component. It is gated to the `E0277` shape and tried **after** the
 call-site anchor deliberately: an `E0599` method call belongs to the call-site anchor, and a

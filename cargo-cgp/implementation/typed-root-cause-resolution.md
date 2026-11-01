@@ -405,7 +405,7 @@ marking.
     bindings that produced it), `receiver.rs` (`receiver_context`/`local_binding_context`, the
     receiver's type from its binding, annotation, parameter, literal, or constructor-call signature,
     plus `contexts_at_spans`, the same reading applied to every expression at the diagnostic's
-    spans, which is the by-blanket-trait anchor's context source), `unbounded.rs`
+    spans, which `use_site_consumer.rs`'s two anchors read a context from), `unbounded.rs`
     (`unbounded_receiver`, a consumer method called on a receiver typed by a type parameter its item
     does not bound by the consumer trait, reported as the `[CGP-E129]` cause without a walk),
     `seed.rs` (`seed_from_call`, the signature unification: fresh variables for the method's item,
@@ -885,11 +885,12 @@ fixtures:
   decline-boundary sibling is
   [`generic_consumer_unwritten_arg`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/use-site/generic_consumer_unwritten_arg.rs),
   an `E0599` whose deep blanket-trait bound stays declined because the anchor is gated to `E0277`.
-- `cgp_fn_struct_bound`: the same trait required by a **struct's** bound
-  (`pub struct Holder<T: GetName>(pub T)`, built as `Holder(app)`), the shape that reaches the
-  by-blanket-trait anchor. Pins its current output, which names the wrong owner: the field is
-  reported missing on `Holder<T>`, the struct whose definition holds the bound, rather than on `App`
-  (see [usability issues](../issues/usability.md#errors-the-tool-misattributes)).
+- `cgp_fn_struct_bound`, `cgp_fn_struct_where_bound`, and `consumer_struct_bound`: a blanket trait
+  or a consumer trait required by a **struct's** bound (`pub struct Holder<T: GetName>(pub T)`, built
+  as `Holder(app)`), the shape that reaches the use-site anchors. Each names the context `App`, not
+  `Holder<T>`, whose generics rustc's note lands on. `cgp_fn_struct_bound_in_type` is the same bound
+  named only in a type, with no expression to read, so it keeps rustc's diagnostic (see
+  [usability issues](../issues/usability.md#errors-no-anchor-or-classifier-reaches)).
 - `use_type_foreign_unsatisfied` and `use_type_nested_unsatisfied`: an unsatisfiable `#[use_type]`
   abstract-type import in a trait definition, recovered by the consumer-trait anchor into a
   `[CGP-E001]` missing-wiring tree instead of leaking generated `__…__` placeholder names. The type

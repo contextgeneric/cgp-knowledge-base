@@ -397,17 +397,10 @@ These errors keep the compiler's output because nothing in the tool starts from 
   generated `__Context__`. The undeclared-trait detector follows only an untyped `let` back to the
   parameter it copies, so it does not recognize this receiver as the context
   ([`undeclared_uses_trait_annotated_receiver`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/undeclared_uses_trait_annotated_receiver.rs)).
-
-## Errors the tool misattributes
-
-These errors are reshaped, but the reshaped message names the wrong owner of the cause:
-
-- **A blanket-trait bound on a struct:** a `#[cgp_fn]` trait required by a struct's bound
-  (`pub struct Holder<T: GetName>(pub T)`), built with a context that lacks the field the trait
-  reads, is reported as `` missing field `name` on `Holder<T>` ``. The field is missing on the context
-  (`App`), and rustc's own message names `App: GetName`; the by-blanket-trait use-site anchor takes
-  the struct whose definition holds the bound as the owner
-  ([`cgp_fn_struct_bound`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/cgp_fn_struct_bound.rs)).
+- **A blanket-trait bound on a struct named only in a type:** `pub holder: Holder<App>` for a
+  `Holder<T: GetName>` has no expression to read `App` from and no span on `App`'s definition, so the
+  error keeps rustc's `E0277`, which states the missing field in a `help` under the bound
+  ([`cgp_fn_struct_bound_in_type`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/cgp_fn_struct_bound_in_type.rs)).
 
 ## Errors that need a new class or a deeper walk
 
