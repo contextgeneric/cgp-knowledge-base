@@ -35,7 +35,7 @@ that is another instance of the namespace, such as `<T> new A<T>: A<u32>`.
 
 This section describes what plain `cargo check` prints, and for this one class it is the *only*
 place the error appears, because
-[`cargo-cgp` does not report it at all](#how-cargo-cgp-presents-it). The compiler reports **`E0275`
+[`cargo-cgp` does not report it at all](#how-cargo-cgp-presents-it). Stable reports **`E0275`
 "overflow evaluating the requirement"**, and the defining property of this class is *where* it
 lands: on the `cgp_namespace!` blocks that define the namespaces, with no context or use site
 required. Evaluating the well-formedness of `NamespaceA`'s inheritance impl means evaluating its
@@ -77,20 +77,12 @@ parent chain is circular," not as "the chain is merely deep."
 
 ## How cargo-cgp presents it
 
-`cargo-cgp` does not report this error at all: under its next-generation trait solver the
-mutually-inheriting namespaces **compile clean**, with no `E0275` to reshape. This is the one class
-in the catalog where the tool's output is *empty* rather than a rewrite of the raw diagnostic. It is
-a next-solver divergence, but the reverse of the usual one: where the caveat about the next solver
-normally warns that it may *report* something the stable solver does not, here it *omits* an error
-the stable solver raises, a missing error, not an added one. The next-gen solver's cycle handling
-terminates the inheritance chain instead of overflowing on it, so the contradiction the current
-solver treats as a fatal overflow simply resolves.
+`cargo-cgp` does not report this error at all: its pinned nightly accepts the mutually-inheriting
+namespaces, under the default solver and the next-generation one alike, so there is no `E0275` to reshape.
+This is the one class in the catalog where the tool's output is *empty*.
 
-The practical consequence is that this class surfaces only for a reader on plain
-`rustc`/`cargo check`; the recommended `cargo-cgp` toolchain will not flag the circular inheritance,
-and there is no `.cgp.stderr` to consult. That does not make the wiring correct: a
-mutually-inheriting namespace is still a mistake, only invisible under the tool, which is why the
-fix in [Resolving it](#resolving-it) still applies even when nothing complains.
+So this class surfaces only for a reader on stable `rustc`. A mutually-inheriting namespace is still a
+mistake, only invisible under the tool, so the fix in [Resolving it](#resolving-it) still applies.
 
 ## Resolving it
 
