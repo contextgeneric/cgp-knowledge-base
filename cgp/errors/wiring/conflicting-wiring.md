@@ -85,23 +85,16 @@ provider's own provider-trait and `IsProviderFor` impls. The nightly that `cargo
 only the `E0428`, because it stops once name resolution finds a type defined twice, before coherence
 checking runs.
 
-Two wrinkles round out the shape, and the second is where Rust's coherence reasoning shows through.
 When the key is a `@`-path, the conflicting trait's name expands into a long `PathCons<Symbol<…>>`
-type that dominates the message, but the caret still lands on the path leaf, so read the caret, not
-the type. And a collision in which one impl is a *blanket* (such as an `open` header, which lowers
-to `impl<Key> …<Key> for Ctx` over every key, colliding with a specific mapping) often carries an
-extra "downstream crates may implement …" note. That note is `rustc` making its coherence rule
-explicit, not a second, separate problem. Coherence forbids two impls that *could* both apply to
-some type, and it reasons about types a downstream crate might add, not only the types in scope;
-because the blanket's applicability to a given key hinges on a trait bound a downstream crate could
-later satisfy, the compiler cannot prove the two impls will never overlap, so it rejects them and
-cites the hypothetical future impl as the reason. This future-compatibility (negative-reasoning)
-rule is what [RFC 2451](https://rust-lang.github.io/rfcs/2451-re-rebalancing-coherence.html)
-formalizes. The two namespace classes split off above turn on the same reasoning: the
-[override conflict](namespace-override-conflict.md) carries this note where a specific entry meets a
-namespace's blanket forwarding, while the [forwarding conflict](namespace-forwarding-conflict.md) is
-a pure blanket-versus-blanket overlap that prints fully-generic `DelegateComponent<_>` /
-`IsProviderFor<_, _, _>` carets with no downstream note.
+type, but the caret lands on the path leaf, so read the caret.
+
+A collision in which one impl is a *blanket*, such as an `open` header colliding with a specific
+mapping, often carries a "downstream crates may implement …" note. That note states coherence's reason
+rather than a second problem: the blanket's applicability to a key hinges on a bound a downstream crate
+could later satisfy, so the compiler cannot prove the impls never overlap
+([RFC 2451](https://rust-lang.github.io/rfcs/2451-re-rebalancing-coherence.html)). The
+[override conflict](namespace-override-conflict.md) carries this note, and the
+[forwarding conflict](namespace-forwarding-conflict.md), a blanket-versus-blanket overlap, does not.
 
 An overlapping path key prints the same `E0119` pair as a duplicated one, including the "downstream
 crates may implement" note on the `IsProviderFor` half, and only the carets tell them apart. For a
@@ -112,11 +105,8 @@ with the longer key, its wildcard tail printed as `_`:
 
 ## Where the root cause is
 
-The root cause is **present and precise**: the two carets name the two conflicting entries directly,
-and the error code names the kind of collision. This is a *structural* class, not a hidden or
-cascading one, so there is no note chain to walk and no suppressed cause to recover: the diagnostic
-points at exactly the two lines to reconcile. The only reading skill it demands is ignoring the
-expanded `PathCons<…>` type on a path-key conflict and trusting the caret.
+The root cause is **present and precise**: the two carets name the two conflicting entries, and the
+error code names the kind of collision.
 
 ## How cargo-cgp presents it
 
@@ -126,7 +116,7 @@ de-duplicates the pair into one message. Because this is a structural class, the
 `IsProviderFor` half of a generated pair is suppressed so one duplicate reads as one conflict, and
 any `@`-path key is written as its entry wrote it, in bare `@a.b` notation, instead of the
 `PathCons<Symbol<…>>` list.
-Which `[CGP-E00x]` code it stamps distinguishes the shapes this class produces:
+The code it stamps distinguishes the shapes this class produces:
 
 - A duplicate key or overlapping generic becomes **`[CGP-E010]` duplicate wiring**:
   `` [CGP-E010] conflicting wiring: `Person` wires component `GreeterComponent` twice `` (or, for a
@@ -208,31 +198,24 @@ remedies (inheriting rather than joining several namespaces, or overriding only 
 leaves unbound) covered in [overlapping namespace forwarding](namespace-forwarding-conflict.md) and
 [namespace override conflict](namespace-override-conflict.md).
 
-## Notes for tooling
-
-`cargo-cgp` already does the collapsing and resugaring this class needs (above); what remains
-uncoded is the `E0428` name-clash pair outside the check tables and the dispatch traits, which is
-precise enough to relay verbatim: the two carets name the two definitions and the code names the
-mistake.
-
 ## Backing fixtures
 
 The `.rust.stderr` snapshot pins the raw `E0119`/`E0428` shape and the `.cgp.stderr` the reshaped
 headline. The conflicts `cargo-cgp` rewrites:
 
-- [`wiring/duplicate-keys/duplicate_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_key.rs)
+- [`wiring/conflicting-wiring/duplicate_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_key.rs)
   and
-  [`wiring/duplicate-keys/duplicate_key_same_block.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_key_same_block.rs):
+  [`wiring/conflicting-wiring/duplicate_key_same_block.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_key_same_block.rs):
   the same key mapped twice, across two blocks and within one; the `.rust.stderr` pins the
   `DelegateComponent` + `IsProviderFor` pair of carets, the `.cgp.stderr` the single `[CGP-E010]`
   headline.
-- [`wiring/duplicate-keys/overlapping_generic.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/overlapping_generic.rs):
+- [`wiring/conflicting-wiring/overlapping_generic.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/overlapping_generic.rs):
   a generic `<T> Wrapper<T>` table overlapping a specific `Wrapper<u64>` table, also `[CGP-E010]`.
-- [`wiring/duplicate-keys/duplicate_open_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_open_key.rs):
+- [`wiring/conflicting-wiring/duplicate_open_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_open_key.rs):
   an `open` header colliding with an explicit mapping; the `.rust.stderr` carries the "downstream
   crates may implement" note, the `.cgp.stderr` the `[CGP-E013]` redirect-collision headline with
   its `help:` naming the `@GreeterComponent` key.
-- [`wiring/duplicate-keys/duplicate_redirect.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_redirect.rs):
+- [`wiring/conflicting-wiring/duplicate_redirect.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_redirect.rs):
   the same component redirected to two paths on one context, rewritten to `[CGP-E014]` naming both
   targets.
 - [`wiring/conflicting-wiring/open_prefixed_component.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/open_prefixed_component.rs):
@@ -241,19 +224,19 @@ headline. The conflicts `cargo-cgp` rewrites:
 - [`wiring/conflicting-wiring/open_and_use_delegate.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/open_and_use_delegate.rs):
   an `open` beside a direct `UseDelegate` entry for a generic component, a `[CGP-E013]` whose `help`
   names the generic key `@AreaCalculatorComponent.<Shape> Shape`.
-- [`wiring/namespace-paths/delegate_duplicate_path_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/delegate_duplicate_path_key.rs):
+- [`wiring/conflicting-wiring/delegate_duplicate_path_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/delegate_duplicate_path_key.rs):
   a duplicated `@`-path key whose raw conflicting trait name is a long `PathCons<Symbol<…>>` type;
   the `.cgp.stderr` resugars it to the bare `@cgp.core.error.ErrorTypeProviderComponent` path
   under `[CGP-E010]`.
-- [`wiring/namespace-paths/namespace_duplicate_path_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/namespace_duplicate_path_key.rs):
+- [`wiring/conflicting-wiring/namespace_duplicate_path_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/namespace_duplicate_path_key.rs):
   the same `@`-path redirected twice inside one `cgp_namespace!` block, a single `E0119` on the
   namespace trait rewritten to `[CGP-E014]`.
-- [`wiring/namespace-paths/path_sub_key_overlap.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/path_sub_key_overlap.rs):
+- [`wiring/conflicting-wiring/path_sub_key_overlap.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/path_sub_key_overlap.rs):
   `@cgp.core.error.ErrorTypeProviderComponent` beside
   `@cgp.core.error.ErrorTypeProviderComponent.String`, the prefix overlap; the `.rust.stderr` pins
   the `E0119` pair with carets on the two keys, the `.cgp.stderr` the `[CGP-E011]` headline naming
   both paths.
-- [`wiring/namespace-paths/path_generic_segment_overlap.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/path_generic_segment_overlap.rs):
+- [`wiring/conflicting-wiring/path_generic_segment_overlap.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/path_generic_segment_overlap.rs):
   `@ComputerComponent.<Code> Code.u64` beside `@ComputerComponent.Eval`, two keys that overlap in
   part through a generic first segment; the `.cgp.stderr` pins the `[CGP-E011]` headline naming the
   key they share, `@ComputerComponent.Eval.u64`.
@@ -275,15 +258,14 @@ headline. The conflicts `cargo-cgp` rewrites:
   `@DescriberComponent.<T> Wrap<T>` beside `@DescriberComponent.Wrap<u64>`, the overlap through a
   generic type segment; the `.cgp.stderr` pins the `[CGP-E011]` headline naming both keys with their
   arguments, which is what keeps it from reading as a duplicate.
-- [`wiring/namespace-paths/duplicate_default_impl.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_default_impl.rs):
+- [`wiring/conflicting-wiring/duplicate_default_impl.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_default_impl.rs):
   two `#[default_impl]` registering the same key, a *single* `E0119` on the one `DefaultImpls1`
   impl; the `.cgp.stderr` pins the `[CGP-E010]` rewrite naming the type key and its table.
-- [`wiring/namespace-paths/default_impl_unprefixed_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/default_impl_unprefixed_key.rs):
+- [`wiring/conflicting-wiring/default_impl_unprefixed_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/default_impl_unprefixed_key.rs):
   a `#[default_impl]` binding a prefixed component's *bare marker* in the namespace its `#[prefix]`
   registers into, so the registration collides with the prefix's own redirect; the `.cgp.stderr`
   pins the `[CGP-E013]` rewrite and the `help` naming the `@app.GreeterComponent` path to register
   under.
-
 - [`wiring/conflicting-wiring/duplicate_prefix.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_prefix.rs):
   two `#[prefix]` attributes registering one component into one namespace, a `[CGP-E014]` naming
   both paths, both carets on `#[cgp_component]`.
@@ -299,6 +281,14 @@ headline. The conflicts `cargo-cgp` rewrites:
   `E0428` to `[CGP-E016]` with the tables labelled;
   [`wiring/conflicting-wiring/check_twice_qualified_call.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/check_twice_qualified_call.rs)
   the same with the second table called as `cgp::prelude::check_components!`.
+- [`wiring/conflicting-wiring/auto_dispatch_shared_method_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/auto_dispatch_shared_method_name.rs):
+  two `#[cgp_auto_dispatch]` traits declaring one method, rewritten to one `[CGP-E061]`. The macro's
+  naming is a known defect rather than a wiring mistake, as its
+  [implementation document](../../implementation/entrypoints/cgp_auto_dispatch.md#known-issues) records.
+- [`wiring/conflicting-wiring/auto_dispatch_shared_method_names.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/auto_dispatch_shared_method_names.rs):
+  the same with two shared methods, one `[CGP-E061]` per method.
+- [`wiring/conflicting-wiring/auto_dispatch_shared_method_name_qualified.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/auto_dispatch_shared_method_name_qualified.rs):
+  the same with each attribute written `#[cgp::prelude::cgp_auto_dispatch]`.
 
 The two namespace collisions that are *not* duplicate declarations live with their own classes:
 `override_registered_path.rs`, `inherited_override_conflict.rs`, and `for_loop_prefixed_key.rs`
@@ -308,9 +298,9 @@ under [namespace override conflict](namespace-override-conflict.md), and `for_lo
 
 The pass-through conflicts `cargo-cgp` leaves uncoded:
 
-- [`wiring/duplicate-keys/duplicate_component_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_component_name.rs):
+- [`wiring/conflicting-wiring/duplicate_component_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_component_name.rs):
   a derived `…Component` marker clashing with a hand-declared type; `E0428` kept verbatim.
-- [`wiring/duplicate-keys/duplicate_provider_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_provider_name.rs):
+- [`wiring/conflicting-wiring/duplicate_provider_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_provider_name.rs):
   two `#[cgp_impl(new …)]` declaring the same provider struct; both snapshots hold the lone uncoded
   `E0428`, since the pinned nightly stops before the provider impls conflict.
 - [`wiring/conflicting-wiring/duplicate_provider_impl.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_provider_impl.rs):
@@ -320,21 +310,6 @@ The pass-through conflicts `cargo-cgp` leaves uncoded:
   a local entry on an upstream context that joins a namespace, for a key the crate also registers
   into that namespace; rustc names the upstream impl only in a note, so both `E0119`s stay as rustc
   wrote them.
-- [`wiring/conflicting-wiring/auto_dispatch_shared_method_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/auto_dispatch_shared_method_name.rs):
-  two `#[cgp_auto_dispatch]` traits in one module
-  declaring the same method, so the generated helper `__compute_area__` and computer `ComputeArea`
-  are each declared twice; the `.rust.stderr` holds just the two `E0428`s, with the `ComputeArea`
-  caret on the second `area` method name, because the pinned nightly stops before the computers'
-  impls conflict, and the `.cgp.stderr` the one `[CGP-E061]`. The macro's naming is a known defect
-  rather than a user's wiring mistake; the
-  [implementation document](../../implementation/entrypoints/cgp_auto_dispatch.md#known-issues)
-  records the fix.
-- [`wiring/conflicting-wiring/auto_dispatch_shared_method_names.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/auto_dispatch_shared_method_names.rs):
-  the same with two shared methods, `area` and `perimeter`: four `E0428`s in the `.rust.stderr`, one
-  `[CGP-E061]` per method in the `.cgp.stderr`.
-- [`wiring/conflicting-wiring/auto_dispatch_shared_method_name_qualified.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/auto_dispatch_shared_method_name_qualified.rs):
-  the same with each attribute written `#[cgp::prelude::cgp_auto_dispatch]`, which gives the same
-  one `[CGP-E061]`.
 - [`wiring/conflicting-wiring/consumer_impl_and_wired.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/consumer_impl_and_wired.rs):
   a consumer trait implemented by hand on a context that also wires the component.
 - [`wiring/conflicting-wiring/deref_has_field_conflict.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/deref_has_field_conflict.rs):
