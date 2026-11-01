@@ -571,7 +571,7 @@ The JSON reaches Rust Analyzer through the pipeline the tool already has, with n
 Rust Analyzer's flycheck parses cargo's `--message-format=json` stream: the `compiler-message`
 records cargo wraps each rustc diagnostic in. In `cargo-cgp` the driver renders the *transformed*
 diagnostic as rustc JSON through its `JsonEmitter`, cargo wraps that into its own message stream,
-and the front-end forwards cargo's stdout untouched (see [The error pipeline](error-pipeline.md)).
+and the front-end forwards cargo's stdout untouched (see [Architecture](architecture.md#the-flow-of-a-diagnostic)).
 So the front-end need only forward the `--message-format=json` argument to `cargo check` (which it
 does, since it forwards everything after `check` verbatim), and Rust Analyzer receives well-formed
 cargo JSON with the CGP transforms already applied inside each diagnostic.

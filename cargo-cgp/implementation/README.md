@@ -20,6 +20,9 @@ counterpart carries no comparison at all.
 This section indexes every implementation document. When you add a document, register it here in the
 same change.
 
+- [Architecture](architecture.md): the map of the tool: the crates and where the rustc-free line
+  sits, the flow of a diagnostic (configure, transform, render), the driver's module layers, and the
+  `ResolveCtx` that carries the compiler handle and the cache.
 - [Executable structure](executable-structure.md): the two-executable split (the `cargo-cgp`
   front-end and the `cargo-cgp-driver` rustc wrapper), how the front-end wraps `cargo`, the
   environment contract between the two, and how the split compares to Clippy.
@@ -74,15 +77,6 @@ same change.
   top-level root, giving subsumption for free), the shared-subtree and converging-leaf rendering,
   and worked shapes for a diamond and distinct-key redirects. All merging and rendering happens in
   pure, unit-testable functions.
-- [The resolve context](resolve-context.md): the partly implemented `ResolveCtx`, the compiler
-  access and a borrow of the cache that the resolver's anchors and walk take as one value. Develops
-  the cacheable-is-stateless-is-mockable equivalence, the Class A/B/C query taxonomy, the lifetime
-  split (a long-lived owned cache store plus a per-resolution `'tcx`-scoped context), and the
-  anchoring edge that stays rustc-coupled. The eventual CGP-component abstraction and its separate
-  rustc-free stand-in context are recorded as deferred later work, not designed here.
-- [The error pipeline](error-pipeline.md): the flow that turns rustc's raw diagnostics into readable
-  CGP errors, entirely inside the driver (configure rustc, transform each diagnostic, render text or
-  JSON), with the front-end forwarding cargo's output untouched.
 - [Error processing](error-processing.md): the rustc-free `cargo-cgp-error-processing` crate that
   holds the driver's string-level diagnostic logic: the post-processing text transforms (stripping
   CGP path prefixes, resugaring `Symbol!` and `Path!`, resugaring `Product!`/`Sum!` lists to their

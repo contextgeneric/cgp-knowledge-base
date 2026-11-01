@@ -157,7 +157,7 @@ post-processing transforms in full and points at the other tenants' own document
 ## Where post-processing sits in the pipeline
 
 Post-processing is the driver's final diagnostic pass, and how much of it applies depends on who
-built the diagnostic (see [The error pipeline](error-pipeline.md)). The driver's emitter first tries
+built the diagnostic (see [Architecture](architecture.md#the-flow-of-a-diagnostic)). The driver's emitter first tries
 the [typed root-cause resolver](typed-root-cause-resolution.md); if that declines, it renames the
 CGP wiring messages it recognizes; then it hands the diagnostic to the post-processing chain with an
 [`Origin`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/chain.rs)
@@ -545,7 +545,7 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
 
 ## Further reading
 
-- [The error pipeline](error-pipeline.md): the surrounding stages: how rustc is configured to emit
+- [Architecture](architecture.md#the-flow-of-a-diagnostic): the surrounding steps: how rustc is configured to emit
   better diagnostics, how each diagnostic is transformed, and how the result is rendered.
 - [The driver](driver.md): the emitter that drives these transforms, and the wiring rewrite in full.
 - [CGP error catalog](../../cgp/errors/README.md): the error classes the transforms must learn to

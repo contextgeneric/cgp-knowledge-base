@@ -9,9 +9,8 @@ debugging, or extending it.
 
 The driver is one half of a two-executable design, and this document assumes the shape of the other
 half. The front-end that invokes it, the reason the tool is split in two, and the environment
-contract between them are in [Executable structure](executable-structure.md); the three-stage
-pipeline the driver's transformations sit within (configure, transform, render) is
-[The error pipeline](error-pipeline.md). This document owns the driver's internals; those two own
+contract between them are in [Executable structure](executable-structure.md); the flow the driver's transformations sit within (configure, transform, render) is in
+[Architecture](architecture.md). This document owns the driver's internals; those two own
 the surrounding structure.
 
 ## How cargo invokes the driver

@@ -30,7 +30,7 @@ The two archetypes are defeated by *different* levers, and the distinction is th
 carry forward. A cause can be hidden because the compiler **never computed it** or because the
 compiler computed it and then **elided it while printing**: the first is a trait-solver problem, the
 second a diagnostic-printing problem, and they need different flags. Both levers are argument
-injections documented in [The error pipeline](../implementation/error-pipeline.md); the printing
+injections documented in [Architecture](../implementation/architecture.md#the-flow-of-a-diagnostic); the printing
 side is mapped function-by-function in
 [rustc diagnostic internals](../implementation/rustc-diagnostic-internals.md).
 

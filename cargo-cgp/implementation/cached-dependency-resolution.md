@@ -13,9 +13,8 @@ sub-result into the diagnostic. It is verified output-preserving against the who
 pinning the incomplete-subtree cut on a resolving walk, and a fixture for two of its three guards
 that fails when that guard is removed (see [Tests](#tests)).
 
-It is a companion to [The resolve context](resolve-context.md), which documents the `ResolveCtx`
-that carries the cache through the resolver and frames the cache as one instance of a larger goal (a
-rustc-free, mockable resolution core), and to
+It builds on [Architecture](architecture.md#the-resolve-context), which documents the `ResolveCtx`
+that carries the cache through the resolver, and on
 [Typed root-cause resolution](typed-root-cause-resolution.md) and
 [its walk stage](typed-resolution-walk.md), whose `resolve_leaves` / `resolve_node` descent is the
 thing being cached.
@@ -36,8 +35,7 @@ primitive: resolve each distinct obligation once.
 
 The compiler memoizes none of that for us, and knowing which layer is already cached prevents
 building the wrong thing. rustc's query system memoizes each individual lookup the walk makes (the
-`clauses_of`, the `impl` list, the ADT fields), so the resolver inherits that for free (see
-[The resolve context](resolve-context.md)). What nothing memoizes is the **composite walk**: the
+`clauses_of`, the `impl` list, the ADT fields), so the resolver inherits that for free. What nothing memoizes is the **composite walk**: the
 descent that assembles those lookups into one root-cause tree, whose result is the rustc-free owned
 value below. That layer is what this cache adds.
 
@@ -47,8 +45,12 @@ eventually to test without a compiler.** A query you can cache is a pure functio
 typed inputs; a query you cannot cache without an extra parameter has hidden state that the extra
 parameter names. So writing the cache is a forcing function: it makes every load-bearing question
 the resolver asks the compiler either provably pure or explicitly stateful, and it draws the line
-between the two. [The resolve context](resolve-context.md) develops that consequence in full; this
-document is the concrete cache the reasoning produces.
+between the two.
+
+Purity rests on one invariant: the resolver runs at emit time, over compiler state that is frozen.
+The trait set, the impls, `clauses_of`, the ADT field lists, and the `Deref` targets are fixed once
+the crate is lowered, and the trait solving in progress does not change them (see
+[why resolution runs in the emitter](typed-root-cause-resolution.md#why-it-runs-in-the-emitter)).
 
 ## What is cached, and why it is safe to keep across diagnostics
 
@@ -199,7 +201,7 @@ walk, is a leaf there, while `Outer`'s own walk descends it as a bound on its co
 
 The key is **a small struct holding a single `StableHash` fingerprint**, which its `Hash` and `Eq`
 read: a 128-bit `Fingerprint` of the region-erased obligation and the root context. It rests on the
-completeness principle [the resolve context](resolve-context.md) is built on: the identity *is* the
+completeness principle above: the identity *is* the
 node's input, so every input the walk's output depends on must be in it.
 
 The fingerprint is the identity because rustc supplies its encoding, and that encoding is both total
@@ -265,11 +267,7 @@ placeholders make distinct obligations, and even a coincidental cross-hit would 
 output-preserving, since both walks resolve the unknown identically; the ceiling is only that the
 cache misses where it harmlessly could hit.
 
-Keying by fingerprint is the pragmatic choice for as long as the walk runs on `Ty<'tcx>`. The
-deferred [resolve-context](resolve-context.md#deferred-the-cgp-component-abstraction) work would
-move the walk onto an owned type model, at which point the node is owned data and structural
-equality could key it directly, and the fingerprint would fall away. That is a possible future, not a decision to make now; build the fingerprint-keyed
-struct, and revisit only if that refactor lands.
+The key is a fingerprint because the walk runs on `Ty<'tcx>`, which has no owned form to compare.
 
 ## How the cache relates to the de-duplication ledger
 
@@ -295,7 +293,7 @@ structurally cannot see.
 The cache is one store, the `ResolveCache` on `CgpEmitter` beside `dedup`. Interior mutability (a
 `RefCell` around the map) matches how `DedupLedger` is carried, and the store is created once per
 driver invocation over one crate, with no cross-session incremental database that could change
-underneath it. The [resolve context](resolve-context.md) the emitter builds per diagnostic borrows
+underneath it. The [resolve context](architecture.md#the-resolve-context) the emitter builds per diagnostic borrows
 the store beside the compiler handle, so the anchors and the walk reach it as one value.
 
 The borrow discipline is worth stating because this codebase is acutely sensitive to re-entrancy:

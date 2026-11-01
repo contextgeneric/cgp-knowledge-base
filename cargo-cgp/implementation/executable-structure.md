@@ -86,7 +86,7 @@ the `cargo` process is propagated, so a failed check fails the command
 ([`exit::exit_code`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/exit.rs)).
 When a signal ends `cargo`, it has no exit code, so on Unix the front-end exits with 128 plus the
 signal number, as a shell reports it: 143 when `cargo` alone is sent `SIGTERM`. The
-[error pipeline](error-pipeline.md) documents where the transforms happen.
+[architecture document](architecture.md#the-flow-of-a-diagnostic) says where the transforms happen.
 
 The front-end's own messages take cargo's forms on stderr, so they read as part of cargo's output.
 An error it stops on prints as `error:` and its message, then each underlying cause under a

@@ -25,7 +25,7 @@ This is a deeper transformation than the rename, and it builds on it.
 [Naming the traits behind a component marker](driver.md#naming-the-traits-behind-a-component-marker)
 edits a diagnostic in place, renaming its wording; the resolver instead reconstructs the failure
 from compiler state and replaces the diagnostic wholesale. It is the compiler-state enrichment
-described in [The driver](driver.md) and [The error pipeline](error-pipeline.md), and everything
+described in [The driver](driver.md) and [Architecture](architecture.md), and everything
 downstream of its rustc-free
 [`Resolved`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/resolved.rs)
 model (the wording, the tree) is unit-tested without a compiler.
@@ -1007,7 +1007,7 @@ independently of the compiler:
   the workaround this resolver is designed to make removable.
 - [rustc diagnostic internals](rustc-diagnostic-internals.md): where rustc drops information the
   resolver must recover, and the panic hazards of running compiler code inside the emitter.
-- [The error pipeline](error-pipeline.md): where this driver-side transformation sits among the
-  pipeline's stages.
+- [Architecture](architecture.md#the-flow-of-a-diagnostic): where this driver-side transformation
+  sits in the flow of a diagnostic.
 - [CGP check-trait failure](../../cgp/errors/checks/check-trait-failure.md): the upstream error
   class the resolver reshapes.

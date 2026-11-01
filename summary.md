@@ -693,13 +693,13 @@ it stale.
   covers.
 - [AGENTS.md](cargo-cgp/implementation/AGENTS.md) — the rules for this tree: design rationale, the
   comparison-with-related-tools section, the document shape, and recording known gaps.
+- [architecture.md](cargo-cgp/implementation/architecture.md) — the map of the tool: the crates, the flow of a diagnostic, the
+  driver's module layers, and `ResolveCtx`.
 - [executable-structure.md](cargo-cgp/implementation/executable-structure.md) — the two-executable
   split, the cargo wrapping, and the environment contract between front-end and driver.
 - [driver.md](cargo-cgp/implementation/driver.md) — the deep dive into the rustc wrapper: argument
   preparation, compiler-API access, the injected flags, every diagnostic transform, and how a panic
   in the driver falls back to rustc's own diagnostics.
-- [error-pipeline.md](cargo-cgp/implementation/error-pipeline.md) — how the stages fit together to
-  turn raw diagnostics into readable CGP errors, all inside the driver.
 - [error-processing.md](cargo-cgp/implementation/error-processing.md) — the rustc-free crate holding
   the post-processing transforms, the shared `Struct!`/`Enum!` shape spellings, the wiring rewrite,
   the diagnosis model, and the wording.
@@ -719,8 +719,6 @@ it stale.
   per-node resolver cache, its soundness reasoning, and why cacheability is a statelessness proof.
 - [dependency-graph-rendering.md](cargo-cgp/implementation/dependency-graph-rendering.md) — folding
   per-cause paths into one DAG and rendering it `cargo tree`-style with shared subtrees.
-- [resolve-context.md](cargo-cgp/implementation/resolve-context.md) — the partly built `ResolveCtx`,
-  the compiler access and the cache the resolver threads, and the path to a mockable interface.
 - [resugaring.md](cargo-cgp/implementation/resugaring.md) — reversing CGP's type-level expansions
   across three inputs (typed, text, syntax tree) that must agree.
 - [expand-command.md](cargo-cgp/implementation/expand-command.md) — `cargo cgp expand`: the cargo
