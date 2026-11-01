@@ -200,7 +200,7 @@ whole set of things that can answer "which provider serves this component, and u
 Naming the *consumer* trait (`--item CanCalculateArea`) is the smaller companion: the consumer trait
 and the one blanket impl that routes it to the provider trait.
 
-The **type** form is what you want for a context. Naming a context (`--item Rectangle`) gives its
+The **type** form suits a context. Naming a context (`--item Rectangle`) gives its
 struct, the `HasField`/`HasFieldMut` impls its [`#[derive(HasField)]`](derives/derive_has_field.md)
 generated, and its `DelegateComponent` wiring entries with the real key and provider types, which is
 how you check that a wiring table produced the keys you intended rather than inferring them from the

@@ -145,7 +145,7 @@ LD_LIBRARY_PATH=$SYSROOT/lib cargo-cgp-driver --version
 
 The second cause is a **toolchain mismatch**: the library path is set, but to a *different*
 toolchain than the one the driver was built against, so the exact `librustc_driver-<hash>.so` is
-absent from it. This is what happens when an unmanaged check runs under a toolchain that is not the
+absent from it. This happens when an unmanaged check runs under a toolchain that is not the
 driver's pinned nightly: the driver embeds, say, `nightly-2026-10-10`, but the ambient toolchain is
 `stable`, so cargo's first probe of the wrapper aborts:
 

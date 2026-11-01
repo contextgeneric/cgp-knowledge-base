@@ -184,7 +184,7 @@ the same text the terminal prints minus the code frame.
 Four consequences of the override are worth telling a user:
 
 - **Rust Analyzer runs the array exactly as written,** so its `check.features`, `check.allTargets`,
-  `check.extraArgs`, and `check.workspace` settings no longer reach the check, and any feature or target
+  `check.extraArgs`, and `check.workspace` settings do not reach the check, and any feature or target
   flag goes in the array.
 - **Its as-you-type diagnostics are separate,** computed by its own analysis on the user's toolchain, so
   they are never rewritten and can disagree with the pinned-nightly check.
@@ -210,7 +210,7 @@ default app from the target project's directory:
 
 ```sh
 cd /path/to/the/target/project                 # a cargo package/workspace that uses `cgp`
-nix run /path/to/the/local/cargo-cgp -- check   # local checkout — reflects current code
+nix run /path/to/the/local/cargo-cgp -- check   # local checkout, which reflects current code
 ```
 
 Only when no local checkout is available, fall back to the published flake:
@@ -221,7 +221,7 @@ nix run github:contextgeneric/cargo-cgp/v0.1.0 -- check
 
 Either way this builds (or reuses a cached) `cargo-cgp` and `cargo-cgp-driver` under the pinned
 nightly and runs `cargo cgp check` in the current directory, with everything after `--` forwarded to
-the check as usual. Running through the flake is what makes it work from *any* directory: the flake
+the check as usual. Running through the flake makes it work from *any* directory: the flake
 wraps the front-end to force the pinned nightly and run unmanaged, so it needs no rustup and leaves
 the target project's own toolchain and `target/` untouched.
 
@@ -278,7 +278,7 @@ A failure *before* that output, typically
 means the loader cannot find the compiler library, either because the dynamic-library path is not
 set or because the driver was built against a different nightly than the one installed. A Nix-built
 driver has that path baked into its wrapper, so `--version` works as-is; a from-source driver needs
-the pinned toolchain's `lib` directory on the loader path, which is what the front-end normally sets
+the pinned toolchain's `lib` directory on the loader path, which the front-end normally sets
 for it (`DYLD_FALLBACK_LIBRARY_PATH` on macOS, `LD_LIBRARY_PATH` elsewhere):
 
 ```sh
@@ -318,8 +318,7 @@ LD_LIBRARY_PATH=$SYSROOT/lib CARGO_CGP_SYSROOT=$SYSROOT \
 ```
 
 Run this way the driver behaves as it does under cargo, but in isolation, where you can add
-`RUST_BACKTRACE=1`, extra `-Z` flags, or a debugger. The leading `rustc` path is what puts it in wrapper
-mode, so keep it; without it the driver runs in the direct mode `--version` uses
+`RUST_BACKTRACE=1`, extra `-Z` flags, or a debugger. The leading `rustc` path puts it in wrapper mode, so keep it; without it the driver runs in the direct mode `--version` uses
 ([preparing the arguments](../implementation/driver/program.md#preparing-the-argument-vector)).
 
 ## Further reading
