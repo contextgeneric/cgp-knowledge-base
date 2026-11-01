@@ -503,7 +503,8 @@ marking.
     and unimported-abstract-type detectors share. `binding.rs` reads the local binding an expression
     names and the type it is declared with, as written (`declared_binding_ty`, for the call-site
     anchors) or as the enclosing signature gives it (`param_declared_input`, following an `async fn`'s
-    forwarding `let`, for the undeclared-dependency detector), and `argument_ty.rs` reads an argument
+    forwarding `let`, for the undeclared-dependency detector), with `binding_let_annotation` for a
+    `let` that names its type, and `argument_ty.rs` reads an argument
     through that signature for the undeclared-dependency and missing-`#[use_provider]` detectors.
     `enclosing_trait_impl.rs` finds the trait impl a body sits in, and `context_param.rs` the reserved
     `__Context__` parameter of a generated impl. `byte_range.rs` converts a `Span` to the byte range

@@ -921,8 +921,8 @@ message is recognized by its plain-string help.
 confirms it structurally. The failing call, found by its method segment's span, sits in a generated
 impl over a bare type-parameter context (reached by walking up from the call's body owner, through
 any `#[async_trait]` coroutine); it is made on that context (a receiver parameter must be declared
-as the context, followed through the `let` an `async fn` adds, and a qualifying type must name the
-context); it names a function of a CGP consumer or blanket trait; and that trait is not already a
+as the context, followed through the `let` an `async fn` adds, a `let`'s annotation must name it, and
+a qualifying type must name it); it names a function of a CGP consumer or blanket trait; and that trait is not already a
 `where` bound of the impl. When several traits share the method name, the one whose definition the
 diagnostic's notes touch is taken. The help writes the trait with the arguments the call uses: the
 detector instantiates the function's signature with fresh variables, pins `Self` to the context, and

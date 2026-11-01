@@ -392,11 +392,6 @@ These errors keep the compiler's output because nothing in the tool starts from 
   keeps its bound on the consumer trait, which the module does not import (the tool drops the bound
   on the provider trait, which names `__Context__`)
   ([`generic_fn_consumer_not_in_scope`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/generic_fn_consumer_not_in_scope.rs)).
-- **An undeclared trait called through an annotated `let`:** a `#[cgp_impl]` body that calls a trait
-  it does not declare through `let context: &Self = self;` keeps rustc's `E0599`, which names the
-  generated `__Context__`. The undeclared-trait detector follows only an untyped `let` back to the
-  parameter it copies, so it does not recognize this receiver as the context
-  ([`undeclared_uses_trait_annotated_receiver`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/undeclared_uses_trait_annotated_receiver.rs)).
 - **A blanket-trait bound on a struct named only in a type:** `pub holder: Holder<App>` for a
   `Holder<T: GetName>` has no expression to read `App` from and no span on `App`'s definition, so the
   error keeps rustc's `E0277`, which states the missing field in a `help` under the bound

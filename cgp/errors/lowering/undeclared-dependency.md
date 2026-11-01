@@ -259,8 +259,13 @@ These fixtures pin the class, one group per shape:
 - [`lowering/undeclared-dependency/undeclared_generic_trait_annotated_argument.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/undeclared_generic_trait_annotated_argument.rs):
   the argument is a `let` whose annotation gives `CanFormatPair<u32>`.
 - [`lowering/undeclared-dependency/undeclared_uses_trait_annotated_receiver.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/undeclared_uses_trait_annotated_receiver.rs):
-  a `#[cgp_impl]` body calling through `let context: &Self = self;`; the receiver is not recognized,
-  so `rustc`'s `E0599` stays (`usability`).
+  a `#[cgp_impl]` body calling through `let context: &Self = self;`; the annotation names the context,
+  so the `[CGP-E030]` reports it.
+- [`lowering/undeclared-dependency/undeclared_uses_trait_forwarded_annotated_receiver.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/undeclared_uses_trait_forwarded_annotated_receiver.rs):
+  the same through an untyped `let` copying the annotated one.
+- [`lowering/undeclared-dependency/undeclared_uses_trait_annotated_other_type.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/undeclared_uses_trait_annotated_other_type.rs):
+  a `let` annotated with another type parameter, whose fix is a bound on that parameter, so `rustc`'s
+  `E0599` stays.
 - [`lowering/undeclared-dependency/undeclared_trait_shared_method_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/undeclared_trait_shared_method_name.rs):
   two CGP traits declaring `describe`; the `[CGP-E030]` names the one rustc's notes point at.
 - [`lowering/undeclared-dependency/undeclared_lifetime_trait.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/undeclared_lifetime_trait.rs):
