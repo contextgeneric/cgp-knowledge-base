@@ -755,8 +755,15 @@ point-first paragraphs, preserve code as illustration, and keep costs beside the
 type dependency must appear in the interface. *Aggregate providers* checks bundles against actual
 contexts and states that namespace customization requires unbound paths. *Checking your wiring*
 distinguishes ordinary trait assertions, component checks, and diagnostic rewriting; its quoted
-output is abbreviated. *Consumer and provider traits* distinguishes context-style `Self` inside
-`#[cgp_impl]` from Rust's ordinary provider-side `Self` and permits multi-item components.
+output is abbreviated. *Consumer and provider traits* uses natural-writing style and distinguishes
+context-style `Self` inside `#[cgp_impl]` from Rust's ordinary provider-side `Self`, including the
+exception for a provider's own associated types and constants. It permits multi-item components,
+and its call trace explains why `App` initially fills both the context and delegating-provider
+roles. Its simplified provider implementations retain the context bounds from the rejected
+blanket implementations, and `send_welcome` demonstrates a generic caller bounded only by the
+consumer trait. It states that direct and usable wired implementations of the same consumer
+trait cannot coexist for one context. The hand-written expansion check includes the provider
+trait's `IsProviderFor` supertrait; only the introductory trait pair omits that bound for explanation.
 
 The dependency and configuration pages explain how contexts satisfy their requirements.
 *Implicit arguments* requires matching `HasField` implementations and distinguishes cloning from
