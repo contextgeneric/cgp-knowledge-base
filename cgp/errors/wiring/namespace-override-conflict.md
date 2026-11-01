@@ -133,36 +133,23 @@ The **context-level** shape produces a **pair** of `E0119`s, because a context i
 the `DelegateComponent` table and the `IsProviderFor` forwarding: one conflict on
 `DelegateComponent<PathCons<…>>` for `App` and one on `IsProviderFor<PathCons<…>, _, _>` for `App`,
 the conflicting key expanded into the long `PathCons<Symbol<…>>` path type (read the caret, not the
-type). This shape additionally carries a
-`note: downstream crates may implement trait IsProviderFor<PathCons<…>, _, _> for type GreetHello`
-(and for the overriding provider), which is `rustc` making its coherence reasoning explicit: whether
-the namespace's blanket forwarding and the direct path entry overlap hinges on whether the
-redirect's delegate provider implements `IsProviderFor` for that path, a bound a downstream crate
-could add, so the compiler cannot rule the overlap out and cites the hypothetical impl. That
-future-compatibility (negative-reasoning) rule is the same one
-[RFC 2451](https://rust-lang.github.io/rfcs/2451-re-rebalancing-coherence.html) formalizes and that
-the [conflicting wiring](conflicting-wiring.md) class explains in full.
+type). This shape also carries a
+`note: downstream crates may implement trait IsProviderFor<PathCons<…>, _, _> for type GreetHello`, which
+states coherence's reason rather than a second problem, as the
+[conflicting wiring](conflicting-wiring.md) class explains.
 
 The **namespace-level** shape produces a **single** `E0119`
 (`conflicting implementations of trait ChildNs<_> for type GreeterComponent`) and **no** downstream
-note. There is only one conflict because a `cgp_namespace!` block emits only its own lookup-trait
-impls (`ChildNs<Table> for Key`), never the context-side `DelegateComponent`/`IsProviderFor` pair,
-so nothing doubles it. There is no downstream note because the overlap is provable locally: the
-inheritance blanket impl covers `GreeterComponent` exactly when `GreeterComponent: BaseNs<…>`, an
-impl the same crate already emitted for the parent, so the compiler constructs the conflict without
-reasoning about any future impl. The self type of the conflict is the *component marker*
+note. A `cgp_namespace!` block emits only its own lookup-trait impls, so nothing doubles it, and the overlap is
+provable from the parent's impl in the same crate. The self type of the conflict is the *component marker*
 (`GreeterComponent`), not the context, which is the tell that the collision is inside the
 namespace's own table rather than on a context.
 
 ## Where the root cause is
 
-The root cause is **present and precise** in both shapes: the two carets name the namespace source
-and the overriding entry, and the error code names the collision. This is a structural class with no
-note chain to walk and nothing suppressed. The one reading skill it asks for is to look past the
-expanded `PathCons<Symbol<…>>` key type on the context-level shape and trust the caret, and to read
-the `downstream crates may implement …` note as coherence's *reason*, not a second, separate
-problem. What neither shape states is the CGP-specific remedy, since the message frames a namespace
-override decision as a bare coherence conflict.
+The root cause is **present and precise** in both shapes: the two carets name the namespace source and the
+overriding entry. Neither states the remedy, since the message frames a namespace override as a bare
+coherence conflict.
 
 ## How cargo-cgp presents it
 
@@ -223,37 +210,29 @@ namespace, so each child supplies the key without overriding an inherited one, t
 guide recommends between a base namespace that describes an application's *structure* and inheriting
 namespaces that each describe one *configuration*.
 
-## Notes for tooling
-
-Every shape is reshaped today, so the class has no outstanding tooling gap. What is worth preserving
-is the discrimination the messages rest on: the subject of a namespace-level collision is the
-namespace's own lookup trait rather than a context, and the code turns on whether the parent *binds*
-the colliding key (`[CGP-E011]`, an override to undo) or *redirects* it (`[CGP-E013]`, a key to
-rewrite as a path), a distinction only the normalized `Delegate` answers, never the error text.
-
 ## Backing fixtures
 
 The `.rust.stderr` snapshot pins the raw `E0119` shape and the `.cgp.stderr` the reshaped form.
 
-- [`wiring/namespace-paths/override_registered_path.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-override-conflict/override_registered_path.rs):
+- [`wiring/namespace-override-conflict/override_registered_path.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-override-conflict/override_registered_path.rs):
   the context-level shape: a context joining `AppNamespace` overrides a path bound with
   `#[default_impl]`; the `.rust.stderr` pins the `E0119` pair on `DelegateComponent<PathCons<…>>`
   and `IsProviderFor<PathCons<…>, _, _>` for `App` with the expanded path type and the
   `downstream crates may implement` note, the `.cgp.stderr` the single `[CGP-E011]` headline with
   the resugared `@app.GreeterComponent` path.
-- [`wiring/duplicate-keys/for_loop_prefixed_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-override-conflict/for_loop_prefixed_key.rs):
+- [`wiring/namespace-override-conflict/for_loop_prefixed_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-override-conflict/for_loop_prefixed_key.rs):
   the context-level shape reached through a `for` loop keyed
   `@cgp.core.error.ErrorRaiserComponent.Key` beside a namespace that binds `….String`; the
   `.rust.stderr` pins the same `E0119` pair and downstream note, the `.cgp.stderr` the `[CGP-E011]`
   headline
   `` conflicting wiring: `App` wires `@cgp.core.error.ErrorRaiserComponent.Key`, which `AppDefaults` already covers ``,
   the loop's key parameter named as written.
-- [`wiring/namespace-paths/inherited_override_conflict.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-override-conflict/inherited_override_conflict.rs):
+- [`wiring/namespace-override-conflict/inherited_override_conflict.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-override-conflict/inherited_override_conflict.rs):
   the namespace-level shape against a key the parent *binds*: a child namespace redefining an
   inherited entry; the `.rust.stderr` pins the single `E0119` on `ChildNs<_>` for
   `GreeterComponent`, with "first implementation here" on the inherited parent and no downstream
   note, and the `.cgp.stderr` the `[CGP-E011]` headline naming the parent that already sets the key.
-- [`wiring/namespace-paths/namespace_inherited_unprefixed_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-override-conflict/namespace_inherited_unprefixed_key.rs):
+- [`wiring/namespace-override-conflict/namespace_inherited_unprefixed_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-override-conflict/namespace_inherited_unprefixed_key.rs):
   the namespace-level shape against a key the parent *redirects*: a `#[default_impl]` binding a
   prefixed component's bare marker in a namespace inheriting `DefaultNamespace`; the `.cgp.stderr`
   pins the `[CGP-E013]` headline and the `help` naming `@app.GreeterComponent`. Its context-level
