@@ -22,122 +22,23 @@ else is left uncoded by design.
 The hundreds digit says where a code appears: a `CGP-E0xx` code heads a rewritten message, and a
 `CGP-E1xx` code labels one entry of the dependency tree beneath it.
 
-## Main-message headlines: `CGP-E0xx`
+## The code families
 
-These lead a rewritten main message, in family blocks of ten. `E001` to `E005` come from the typed
-resolver and carry a dependency chain in their notes, led by a `root cause:` line except for the two
-mismatch codes `E004` and `E005`, whose message states the cause; `E010` to `E014` classify a
-duplicate-key `E0119` conflict (no root-cause note, both `rustc` carets kept); `E015` to `E019` name
-a structural mistake in a check table or a wiring entry; `E020` and `E021` reshape the `E0275`
-overflow of a wiring lookup that never ends, and `E022` an orphan-rule coherence error; `E030` to
-`E039` reword a macro-lowering error, each with its fix in a `help`; `E040` to `E044` reword a
-wiring key, value, or path type that does not resolve; `E050` heads a failed extensible-data operation, stating
-its cause; and `E060` and `E061` continue the structural mistakes.
+The [catalog](../../../cargo-cgp/error-code.md) gives each code's message, meaning, and fix. These are the
+families, so a class document's code can be placed by its number:
 
-- **CGP-E001**: the consumer trait is not implemented for the context (missing wiring, or an unmet
-  transitive dependency).
-- **CGP-E002**: a provider a `#[check_providers]` entry lists, or whose own method is called
-  directly, does not implement its provider trait for the context (its impl-side `where` bounds do
-  not hold).
-- **CGP-E003**: a hand-written wrapper trait or a `#[cgp_fn]` blanket trait (not a CGP consumer)
-  fails because a CGP component it depends on fails.
-- **CGP-E004**: a context field has the wrong type (the `HasField` bound holds but its `::Value`
-  projection fails).
-- **CGP-E005**: an abstract type has the wrong type (the owner supplies one type where a provider
-  requires another).
-- **CGP-E010**: duplicate wiring: the same key mapped twice.
-- **CGP-E011**: overlapping wiring: a key already set through another (generic over specific,
-  `@`-path over a namespace forwarding, or a prefix path).
-- **CGP-E012**: multiple namespaces used for one target in `delegate_components!`.
-- **CGP-E013**: redirect collision: a direct wiring collides with a redirect of the same key.
-- **CGP-E014**: duplicate redirect: the same key redirected more than once.
-- **CGP-E015**: a `check_components!` table lists one entry twice.
-- **CGP-E016**: two `check_components!` tables in one module share a check-trait name.
-- **CGP-E017**: a `for` loop in a wiring table whose key does not use its key variable.
-- **CGP-E018**: a `#[default_impl]` on a provider impl generic over a parameter the registration
-  cannot carry.
-- **CGP-E019**: an entry in a wiring table or a namespace binds generic parameters its key does not
-  use.
-- **CGP-E020**: the wiring never resolves because the lookup leads back to itself (an `E0275`
-  overflow at a check entry or a consumer-method call; a `UseContext` cycle is the usual case).
-- **CGP-E021**: the wiring never resolves because each step requires the consumer trait for a larger
-  type (the same `E0275` overflow, for a lookup that grows without repeating).
-- **CGP-E022**: an orphan-rule namespace registration: a foreign component or path registered into a
-  foreign namespace (`E0210`/`E0117`).
-- **CGP-E030**: a trait used in a `#[cgp_fn]`/`#[cgp_impl]` body (a method on `self`, or an
-  associated function on `Self`) but not declared with `#[uses]`.
-- **CGP-E031**: an inner provider a higher-order provider calls but never imports with
-  `#[use_provider]`.
-- **CGP-E032**: a `#[cgp_impl]` header names the component's consumer trait where its provider trait
-  belongs.
-- **CGP-E033**: `#[cgp_impl]` applied to a trait that is not a CGP component.
-- **CGP-E034**: an inner-provider bound names the consumer trait rather than the provider trait.
-- **CGP-E035**: an abstract type (`Self::Error`, or a bare `Error`) used in a CGP definition but not
-  imported with `#[use_type]`.
-- **CGP-E036**: a requirement a provider trait places on the context (from its component's
-  `#[extend]` or `#[use_type]`) that a `#[cgp_impl]` provider does not declare.
-- **CGP-E037**: a provider trait named in `#[uses]`, where a dependency names its consumer trait.
-- **CGP-E038**: `#[cgp_impl(Provider)]` names a provider struct never declared, where `new` declares
-  it.
-- **CGP-E039**: a provider trait implemented by a plain `impl`, without `#[cgp_provider]`.
-- **CGP-E040**: a consumer trait written as a wiring key, where its component belongs.
-- **CGP-E041**: a component written as a wiring key that exists but is not in scope.
-- **CGP-E042**: a wiring key that names no component, guessed from a consumer trait's name.
-- **CGP-E043**: a provider written as a wiring value that is never declared.
-- **CGP-E044**: a type written inside a wiring entry's `@`-path that is never declared.
-- **CGP-E050**: an extensible-data operation (a builder, an extractor, or a cast such as `upcast`)
-  called on a value whose field or variant is not in the state it needs, or on a type without the
-  data derive it needs; the headline states which.
-- **CGP-E060**: a check entry that names no parameters for a component that takes some, so it checks
-  the component at the unit parameters `()`.
-- **CGP-E061**: two `#[cgp_auto_dispatch]` traits in one module declare a method of one name, so the
-  macro generates the method's helper and computer twice (`E0428`).
-
-## Dependency-tree entries: `CGP-E1xx`
-
-One per rendering template, riding at the start of each entry in a `root cause:` dependency tree.
-`E101` to `E104` are the steps of the chain; `E110` onward are the root causes it ends at, and the
-`root cause:` line above the tree carries its cause's code too.
-
-- **CGP-E101**: consumer trait impl step.
-- **CGP-E102**: provider trait impl step.
-- **CGP-E103**: redirect-lookup step (a namespace or `open` `RedirectLookup`), naming the table it
-  looks the path up in.
-- **CGP-E104**: a step through any other trait impl (a user's blanket trait, or an ordinary bound
-  restated).
-- **CGP-E110**: cause: a genuinely missing context field.
-- **CGP-E111**: cause: the struct has the field but did not derive `HasField`.
-- **CGP-E112**: cause: a field has the wrong type (the tree's face of `CGP-E004`).
-- **CGP-E113**: cause: the context wires no provider for a component (or terminates no namespace
-  path).
-- **CGP-E114**: cause: a non-context delegation table (aggregate provider,
-  `UseDelegate`/`UseInputDelegate`) is missing a key, including an `@`-path its own `open`
-  redirected along.
-- **CGP-E115**: cause: a non-provider was wired into a provider slot.
-- **CGP-E116**: cause: an associated type the owner supplies differs from the one a provider requires
-  (the tree's face of `CGP-E005`).
-- **CGP-E117**: cause: an ordinary (non-CGP) trait bound that does not hold, in the compiler's own
-  wording.
-- **CGP-E118**: cause: a builder field set again while it is already set.
-- **CGP-E119**: cause: builder fields an operation needs set, such as a finalize, that are not set.
-- **CGP-E120**: cause: a variant an extensible-data operation names that the enum lacks.
-- **CGP-E121**: cause: variants an extractor still holds when it is finalized (a match left
-  incomplete).
-- **CGP-E122**: cause: a variant whose payload is not the type an extensible-data operation requires.
-- **CGP-E123**: cause: a type that does not implement a trait a data derive supplies (`HasFields`,
-  `HasExtractor`, `HasBuilder`, `FromVariant`).
-- **CGP-E124**: cause: a variant an extractor already ruled out, extracted again.
-- **CGP-E125**: cause: a field an optional builder's `set` needs held as optional, which a core
-  builder holds set or unset.
-- **CGP-E126**: cause: a builder or an extractor given to an operation that needs the struct or enum
-  itself (`downcast` on a remainder, which takes `downcast_fields`).
-- **CGP-E127**: cause: a provider that implements the provider trait for other arguments than the
-  wiring gives it (a provider written for another context, or a stage given another stage's output
-  type).
-- **CGP-E128**: cause: a component the context wires through a hand-written `DelegateComponent` impl
-  with no `IsProviderFor` impl beside it, so a check passes while every call fails.
-- **CGP-E129**: cause: a consumer-trait method called on a type parameter that its generic function
-  or impl does not bound by the consumer trait.
+| Codes | Family |
+| --- | --- |
+| `CGP-E001` to `CGP-E005` | A trait the context cannot use, and the two type mismatches |
+| `CGP-E010` to `CGP-E014` | A duplicate-key `E0119` conflict |
+| `CGP-E015` to `CGP-E019`, `CGP-E060`, `CGP-E061` | A structural mistake in a check table, a wiring entry, or a dispatch trait |
+| `CGP-E020`, `CGP-E021` | An `E0275` overflow of a wiring lookup that never ends |
+| `CGP-E022` | An orphan-rule namespace registration |
+| `CGP-E030` to `CGP-E039` | A mistake in what a macro was given |
+| `CGP-E040` to `CGP-E044` | A wiring key, value, or path type that does not resolve |
+| `CGP-E050` | A failed extensible-data operation |
+| `CGP-E101` to `CGP-E104` | A step of a dependency chain |
+| `CGP-E110` onward | The root cause a dependency chain ends at |
 
 ## Where CGP classes cite these
 

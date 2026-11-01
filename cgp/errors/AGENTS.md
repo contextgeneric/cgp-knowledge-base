@@ -126,8 +126,8 @@ so the two never duplicate each other. Add an entry when a class first surfaces 
 covered.
 
 The directory also documents **`cargo-cgp`'s own `[CGP-Exxx]` codes** in
-[cargo-cgp-codes.md](error_codes/cargo-cgp-codes.md): a short reference that lists the codes the
-tool stamps on a rewritten message and points at `cargo-cgp`'s authoritative
+[cargo-cgp-codes.md](error_codes/cargo-cgp-codes.md): a short reference that gives the code families
+the tool stamps on a rewritten message and points at `cargo-cgp`'s authoritative
 [error-code catalog](../../cargo-cgp/error-code.md) for the full definitions. A class document's
 *How cargo-cgp presents it* section names the specific `[CGP-Exxx]` and links there, the same way it
 cites a local `rustc`-code entry, and since `cargo-cgp` owns those codes, the entry here is a

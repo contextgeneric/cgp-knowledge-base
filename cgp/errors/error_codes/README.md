@@ -68,9 +68,8 @@ Beyond the `rustc` codes, `cargo-cgp` stamps its own `[CGP-Exxx]` codes on a mes
 into a recognized CGP class. Those are `cargo-cgp`'s, not CGP's, so they are cataloged in one
 pointer entry rather than mixed in above:
 
-- [cargo-cgp-codes.md](cargo-cgp-codes.md): the headline (`CGP-E0xx`) and dependency-tree
-  (`CGP-E1xx`) codes, each with a one-line meaning and a link to `cargo-cgp`'s authoritative
-  [error-code catalog](../../../cargo-cgp/error-code.md).
+- [cargo-cgp-codes.md](cargo-cgp-codes.md): a pointer to `cargo-cgp`'s `[CGP-Exxx]` codes, with their
+  families and the classes that cite them.
 
 ## Relationship to the rest of the catalog
 

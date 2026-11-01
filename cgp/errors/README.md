@@ -12,38 +12,20 @@ shared sections (the worked [examples/](../../examples/README.md) and the outwar
 
 ## Why this exists
 
-A CGP macro expands to ordinary Rust, so many mistakes are not caught by the macro at all; they
-surface later, when the compiler type-checks the generated code. Those downstream errors are the
-subject of this catalog. They are shaped by CGP's machinery in ways that make them hard to read: a
-single mistake can produce a wall of errors naming generated types the user never wrote, and the
-root cause is often buried or, worse, suppressed entirely. Documenting these classes in one place
-serves three readers at once.
+A CGP macro expands to ordinary Rust, so many mistakes surface only when the compiler type-checks the
+generated code. One mistake can then produce a wall of errors naming types the user never wrote, with
+the root cause buried or suppressed. Documenting these classes in one place serves three readers:
 
-The first reader is a **tool author**, and the tool is
-[`cargo-cgp`](https://github.com/contextgeneric/cargo-cgp), CGP's first-class toolchain, a cargo
-subcommand that post-processes `rustc`'s output into a compact, root-cause-first form, much as
-Clippy layers its own analysis on top of the compiler. It needs a complete map of which error
-classes CGP produces, which of them hide the root cause, and where the root cause sits when it is
-present, to decide what to extract, what to suppress, and how to re-present it; where it reaches
-into compiler internals through `rustc_driver` to recover *suppressed* information, it needs to
-know, class by class, which information the compiler hides. This catalog is that map, and each class
-here records both the raw diagnostic and how `cargo-cgp` reshapes it, so the catalog and the tool
-stay two views of one truth.
-
-The second reader is an **agent debugging CGP code**, in this repository or any project that uses
-CGP. Recognizing an error's class on sight (before decoding a single nested type) tells the agent
-what kind of mistake to look for and which technique will surface it. Grepping the error headlines
-(`grep -nE '^error'`) is the mechanical form of that recognition, and each class here has a
-signature line an agent can grep to confirm its cause without reading the whole cascade; the
-[debugging guide](../guides/debugging.md) collects those patterns in a table. The guide is the
-playbook; this catalog is the reference the playbook indexes into.
-
-The third reader is a **sub-agent extracting an error message on the main agent's behalf**. CGP
-error output is frequently long enough that reading it wastes a main agent's context window, so the
-[error-extraction sub-skill](https://github.com/contextgeneric/cgp-skills/blob/main/cgp/references/error-extraction.md)
-delegates the reading to a sub-agent that returns a compact summary. That summary is only useful if
-it reports the same facts every document here records (the class, whether the root cause is present,
-and its position) so the catalog and the sub-skill describe the same anatomy from two directions.
+- **A tool author:** [`cargo-cgp`](https://github.com/contextgeneric/cargo-cgp) post-processes `rustc`'s
+  output into a root-cause-first form, and needs to know which classes hide the cause and where it sits
+  otherwise. Each class records both the raw diagnostic and how the tool reshapes it.
+- **An agent debugging CGP code:** recognizing a class on sight says what mistake to look for. Each class
+  has a signature line to grep, and the [debugging guide](../guides/debugging.md) collects them; the
+  guide is the playbook, and this catalog is its reference.
+- **A sub-agent extracting an error:** the
+  [error-extraction sub-skill](https://github.com/contextgeneric/cgp-skills/blob/main/cgp/references/error-extraction.md)
+  returns a compact summary of the facts each document records: the class, whether the root cause is
+  present, and its position.
 
 ## What belongs here, and what does not
 
@@ -107,6 +89,9 @@ concrete missing bound is named in the diagnostic (for a single-component check,
 `help:` note), and a `required for …` note chain traces the dependency path from it back to the
 check. These errors are cataloged under [checks/](checks/).
 
+A consumer-trait bound on a called function is such a direct obligation too, so its `E0277` also names
+the leaf.
+
 When the same broken wiring is instead exercised by **calling the consumer-trait method directly**
 on the context, the compiler sees a blanket impl of the consumer trait alongside the other candidate
 impls, cannot commit to one, and falls back to a heuristic that reports only "the method exists but
@@ -145,8 +130,7 @@ extensible-data operations, whose cause is a value's state rather than any wirin
 registered in the catalog below in the same change that adds it.
 
 The [hidden/](hidden/) directory holds the classes where the compiler **suppresses** the root cause:
-the errors a user meets by exercising broken wiring through a consumer trait rather than a check.
-These are isolated precisely because their diagnostics report nothing about the true cause, so a
+the errors a user meets by calling a consumer method on broken wiring rather than checking it. These are isolated precisely because their diagnostics report nothing about the true cause, so a
 reader must know not to look for one.
 
 The [checks/](checks/) directory holds the classes where a check trait **surfaces** the root cause
@@ -174,10 +158,8 @@ them as a bound on a generated partial type, so the cause is encoded in that typ
 than stated.
 
 A sixth directory, [error_codes/](error_codes/), is a supporting *reference* rather than a class of
-error: one entry per `rustc` error code the catalog surfaces (`E0107`, `E0119`, `E0117`, `E0207`,
-`E0210`, `E0220`, `E0271`, `E0275`, `E0277`, `E0308`, `E0404`, `E0425`, `E0428`, `E0433`, `E0477`,
-`E0576`, `E0599`, `E0782`), stating what the code means in plain Rust, the rule behind it, and the RFC or issue that
-defines it, grounded in the official documentation. The class documents cite these entries in place
+error: one entry per `rustc` error code the catalog surfaces, stating what the code means in plain
+Rust, the rule behind it, and the RFC or issue that defines it. The class documents cite these entries in place
 of the raw `doc.rust-lang.org` URLs, so the Rust-language facts live in one verified place and the
 class docs carry only the CGP-specific anatomy. The same directory holds
 [cargo-cgp-codes.md](error_codes/cargo-cgp-codes.md), the pointer to `cargo-cgp`'s own `[CGP-Exxx]`
@@ -191,8 +173,8 @@ Hidden-cause errors, in [hidden/](hidden/):
 
 - [Unsatisfied dependency (hidden)](hidden/unsatisfied-dependency.md): a provider's impl-side
   dependency is unmet, and the failure is triggered by a direct consumer-trait method call, so the
-  compiler reports only that the method's bounds are unsatisfied (`E0599`/`E0277`) and hides the
-  missing dependency.
+  compiler reports only that the method's bounds are unsatisfied (`E0599`) and hides the missing
+  dependency.
 
 Surfaced and cascading errors, in [checks/](checks/):
 
@@ -230,8 +212,9 @@ Structural wiring errors, in [wiring/](wiring/):
 - [Wiring cycle](wiring/wiring-cycle.md): a delegation that chases its own tail: an `E0275` overflow
   when forced through a check, but the hidden `E0599` when reached by a plain method call.
 - [Namespace inheritance cycle](wiring/namespace-inheritance-cycle.md): namespaces whose parent
-  chain loops (`A: B` with `B: A`), an `E0275` overflow caught *eagerly at the `cgp_namespace!`
-  definitions* rather than lazily at a use site; `cgp_namespace!` rejects a self-inheriting `A: A`.
+  chain loops (`A: B` with `B: A`), on stable an `E0275` overflow caught *eagerly at the
+  `cgp_namespace!` definitions*; the nightly `cargo-cgp` pins accepts it, and `cgp_namespace!` rejects a
+  self-inheriting `A: A`.
 - [Unconstrained generic](wiring/unconstrained-generic.md): a per-entry generic that never reaches
   the key, leaving an impl parameter unconstrained (`E0207`).
 - [Unresolved wiring name](wiring/unresolved-wiring-name.md): a wiring key or value that names
@@ -277,16 +260,10 @@ Extensible-data errors, in [data/](data/):
 
 Error-code reference, in [error_codes/](error_codes/):
 
-- One entry per `rustc` code the catalog surfaces: [`E0107`](error_codes/e0107.md),
-  [`E0119`](error_codes/e0119.md), [`E0117`](error_codes/e0117.md), [`E0207`](error_codes/e0207.md),
-  [`E0210`](error_codes/e0210.md), [`E0220`](error_codes/e0220.md), [`E0271`](error_codes/e0271.md),
-  [`E0275`](error_codes/e0275.md), [`E0277`](error_codes/e0277.md), [`E0308`](error_codes/e0308.md),
-  [`E0404`](error_codes/e0404.md), [`E0425`](error_codes/e0425.md), [`E0428`](error_codes/e0428.md),
-  [`E0433`](error_codes/e0433.md), [`E0477`](error_codes/e0477.md), [`E0576`](error_codes/e0576.md),
-  [`E0599`](error_codes/e0599.md), [`E0782`](error_codes/e0782.md),
-  each recording what the code means in plain Rust, the rule behind it, and where CGP produces it.
-  Plus [cargo-cgp-codes.md](error_codes/cargo-cgp-codes.md), the pointer to `cargo-cgp`'s
-  `[CGP-Exxx]` codes. See the [error-code reference index](error_codes/README.md).
+- The [error-code reference index](error_codes/README.md) lists one entry per `rustc` code the catalog
+  surfaces, each recording what the code means in plain Rust, the rule behind it, and where CGP produces
+  it, plus [cargo-cgp-codes.md](error_codes/cargo-cgp-codes.md), the pointer to `cargo-cgp`'s
+  `[CGP-Exxx]` codes.
 
 ## Relationship to the rest of the knowledge base
 
