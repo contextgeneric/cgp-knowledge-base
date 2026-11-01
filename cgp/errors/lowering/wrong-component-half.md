@@ -140,9 +140,9 @@ The root cause is **present but misread**. The `E0107` caret sits on the trait n
 the exact token to change, but it does not say that the trait is the wrong half of its component or
 which half belongs there. The surrounding helps point at wrong
 fixes: deleting generics the macro inserted, adding the generated `__Context__`, renaming the
-attribute to `AreaCalculatorComponent`, or parameterizing the provider struct by `__Context__`. In the header shapes the `E0107` is not even first: the `E0425` arrives before it,
-since name resolution runs before the compiler lowers the impl's types, and the `E0186` and `E0207`
-after it repeat the same mistake.
+attribute to `AreaCalculatorComponent`, or parameterizing the provider struct by `__Context__`. In the
+header shapes the `E0107` is not first: the `E0425` arrives before it, since name resolution runs
+before the compiler lowers the impl's types, and the `E0186` and `E0207` after it repeat the mistake.
 
 The landmark is an `E0107` whose caret sits on a trait name inside a `#[cgp_impl]` header or a CGP
 attribute. Read the trait it names and compare it with the half the position expects: a provider
@@ -176,8 +176,8 @@ carrying the fix in a `help`; it keeps `rustc`'s `E0107` code. The codes are def
   and
   ``help: name the consumer trait instead: `#[uses(CanCalculateArea)]` (not the provider trait `AreaCalculator`)``.
 
-The provider attribute on a component keeps `rustc`'s output, a gap described under
-[Notes for tooling](#notes-for-tooling).
+A provider trait bounding an inner provider without its context argument keeps `rustc`'s `E0107`,
+without the `help:` that adds the generated `__Context__`.
 
 ## Resolving it
 
@@ -191,8 +191,6 @@ Name the half the position expects:
 - **A `#[use_provider]` bound:** name the provider trait,
   `#[use_provider(InnerCalculator: AreaCalculator)]`.
 - **A `#[uses]` dependency:** name the consumer trait, `#[uses(CanCalculateArea)]`.
-
-## Notes for tooling
 
 ## Backing fixtures
 
