@@ -69,8 +69,8 @@ its cause is always further down the note chain, at the `IsProviderFor` or `Dele
 really failed.
 
 One error shape is especially worth recognizing: **"the trait `X` is not implemented for `T`"
-immediately followed by a `help:` note saying "the trait `X` *is* implemented for `T`"** (often with
-a slightly different generic parameter name). This near-contradiction means an impl exists but a
+immediately followed by a `help:` note saying "the trait `X` is conditionally implemented for `T`"**
+(often with a slightly different generic parameter name). This near-contradiction means an impl exists but a
 nested requirement inside it is unmet, or two candidate impls make the choice ambiguous: the
 compiler found the impl but could not commit to it. Do not trust the `help:`; the real cause is a
 bound the impl carries that does not hold. The same shape appears when a generated impl carries a
