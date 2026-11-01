@@ -285,8 +285,7 @@ in emission order lets a later block truncate at a subtree an earlier one alread
 because CGP wiring is lazy, so one mistake surfaces in several diagnostics that legitimately do
 *not* de-duplicate (a hand-written wrapper trait is a distinct trait from the consumer it reduces
 to, so it keeps its own block), and their chains can share everything below their own first few
-hops. In the money-transfer example, the second block's chain is almost entirely the first block's
-plus a short routing prefix, so eliding the shared remainder shrinks it to a few lines.
+hops. Eliding the shared remainder can shrink a later block's chain to its own prefix and a few lines.
 
 [`render_seen`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/graph.rs)
 is `render` against a caller-owned `seen`, and three rules keep it honest.
@@ -394,6 +393,15 @@ inherent to wiring in which six traits really do need one shared thing. What *is
 is a subtree drawn in another block, which is [the cross-block elision](#eliding-across-blocks)
 above.
 
+## Further reading
+
+- [Typed root-cause resolution](typed-root-cause-resolution.md): the resolver whose walk fills the
+  paths this document renders, and the anchors that prepend to them.
+- [Error processing](error-processing.md): the rustc-free crate this rendering lives in, alongside
+  the wording, plan, and de-duplication it feeds.
+- [The driver](driver.md): the emitter that applies the plan and builds the coalesced block's note
+  from the same graph.
+
 ## Tests
 
 Because the graph is a pure function over structured data, every shape is a unit test with no
@@ -458,12 +466,3 @@ compiler, and the end-to-end behavior is pinned by the UI suite.
 - [`crates/cargo-cgp-driver/src/emitter/flush/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/emitter/flush):
   the flush that renders every resolution's note against one shared `seen` (`render.rs`,
   `note.rs`), and the coalesced block whose note is built from the same graph (`merge.rs`).
-
-## Further reading
-
-- [Typed root-cause resolution](typed-root-cause-resolution.md): the resolver whose walk fills the
-  paths this document renders, and the anchors that prepend to them.
-- [Error processing](error-processing.md): the rustc-free crate this rendering lives in, alongside
-  the wording, plan, and de-duplication it feeds.
-- [The driver](driver.md): the emitter that applies the plan and builds the coalesced block's note
-  from the same graph.

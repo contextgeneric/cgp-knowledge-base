@@ -24,9 +24,7 @@ thing being cached.
 The cache exists to remove redundant re-resolution, and the redundancy is real, documented, and of
 two kinds. The first is across diagnostics. CGP wiring is lazy, so one mistake surfaces the same
 failure at many sites: the `check_components!` entry, every hand-written `impl` that references the
-broken consumer, and each call. The [money-transfer example](../../examples/money-transfer-api.md)'s
-single un-wired password type produces eighteen identical root-cause trees this way. Without the
-cache, the emitter would resolve every one of those to completion and only then drop the duplicates
+broken consumer, and each call. Without the cache, the emitter would resolve every one of those to completion and only then drop the duplicates
 through the [`DedupLedger`](error-processing.md), so all but one of those walks would be thrown
 away. The second kind sits inside a single walk: a trait depended on by several providers (a shared
 getter, `HasErrorType`) is a diamond in the dependency graph, and without the cache its subtree is
@@ -279,7 +277,7 @@ span-independent [`cause_signature`](driver.md) of context, consumer, and leaves
 removes the redundant walking, and the ledger still governs the redundant showing.
 
 The cache reaches a strictly larger redundancy than the ledger, which is why both are needed. Two
-diagnostics can reach the same shown cause through *different* seeds. The money-transfer wrapper
+diagnostics can reach the same shown cause through *different* seeds. A wrapper
 impl seeds a `[CGP-E003]` wrapper trait (deliberately its own block) while the check entry seeds the
 consumer, and the `density_3` / `dependency_cascade` shapes reach one field through distinct
 consumers. The ledger collapses or keeps those on the output side. The cache, meanwhile, saves the
@@ -326,13 +324,13 @@ different-consumer-same-cause blocks into one listing (see
 
 The primary guard is met; the rest is coverage still to add.
 
-- **Output-preservation regression guard** (met): the existing `tests/ui/` snapshot suite
+- **Output-preservation regression guard**: the existing `tests/ui/` snapshot suite
   passes unchanged with both the root and the interior layer in place. This is the primary
   correctness check: the cache is pure memoization, so any snapshot change would be a bug. It also
   exercises the incidental paths: the cross-site re-report reuse (`cross_site_dedup`,
   `manual_supertrait_impl`) and, where a cycle reaches the walk, the incomplete-subtree cut
   (`use_context_cycle`, a self-cycle that declines).
-- **Cycle cut in a resolving walk** (met):
+- **Cycle cut in a resolving walk**:
   [`wiring/wiring-cycle/mutual_cycle_with_cause`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/mutual_cycle_with_cause.rs)
   wires a two-component mutual cycle (`ProviderA` depends on `CanB`, `ProviderB` back on `CanA`)
   alongside a genuinely missing field. The walk descends the `CanA → CanB → CanA` loop, the cycle
@@ -341,7 +339,7 @@ The primary guard is met; the rest is coverage still to add.
   as repeated `App: CanA` requirements and buries the field. This is the first cyclic fixture that
   *resolves* rather than declining, so it pins the cut and the incomplete-flag propagation on a live
   tree.
-- **Diamond reuse** (met):
+- **Diamond reuse**:
   [`checks/check-trait-failure/resolution/diamond_shared_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/resolution/diamond_shared_trait.rs)
   routes two independent branches (`CanTop` depends on both `CanLeft` and `CanRight`) through one
   shared `CanShared` trait whose provider needs a `name` field the context lacks. The walk descends
@@ -355,7 +353,7 @@ The population and reuse guards each have a fixture that fails when the guard is
 by hand by editing the guard out of `resolve_node` and running the suite. The depth cut's flag has
 no such fixture.
 
-- **Population guard** (met):
+- **Population guard**:
   [`wiring/wiring-cycle/cycle_cut_rechecked`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/cycle_cut_rechecked.rs)
   checks both components of the two-component cycle above. Within one walk an ancestor-induced cut
   never loses a cause (the ancestor's own causes are reported where it is first visited), so the
@@ -370,23 +368,13 @@ no such fixture.
   from the flag, so a depth cut that leaves the flag clear prints the same `[CGP-E021]` output, and
   no fixture fails. Pinning the flag needs a subtree that a depth cut leaves short and a later walk,
   starting nearer the subtree, would resolve to a cause within the cap (`MAX_DEPTH` is 256).
-- **Reuse disjointness** (met):
+- **Reuse disjointness**:
   [`wiring/wiring-cycle/cross_context_cycle_reuse_distinct`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/cross_context_cycle_reuse_distinct.rs)
   builds the two-context loop of
   [the consultation guard](#consultation-reuse-only-where-no-cycle-would-form), with errors that
   share no cause. Skipping the reachable-set check splices the looping `Outer: Linked` leaf into
   `Outer`'s tree as a second root cause. Its sibling `cross_context_cycle_reuse`, whose two errors
   share a missing field and merge into one block, does not show the splice.
-
-The tests below do not exist yet; they are the coverage still to add.
-
-- **Determinism**: a unit test (or a repeated no-bless UI run) confirming the walk yields the same
-  owned sub-chains for the same node, which is the purity the cache assumes; the resolver's
-  placeholder canonicalization, and the branch order that decides which tree a de-duplicated cause
-  keeps, are what this pins.
-- **Whole-crate hit accounting**: an instrumented run over an error-heavy fixture (the
-  money-transfer shape) asserting that the eighteen-tree case computes the walk once per distinct
-  node, not once per site.
 
 ## Source
 
