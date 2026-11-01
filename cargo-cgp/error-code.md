@@ -1145,7 +1145,7 @@ carry no code. They are listed here so their codelessness is a recorded decision
 `root cause: …` note over the dependency chains of every recovered cause, and a `help` for each fix
 the causes call for.
 They accompany a coded main message or a kept rustc one; the note itself is never coded.
-[Typed root-cause resolution](implementation/typed-root-cause-resolution.md) owns them.
+[The transformed diagnostic](implementation/typed-resolution-output.md) owns them.
 
 **Obligation-note renaming** rewrites the `required for … to implement …` chain notes of an
 unresolved (fallback) diagnostic to name the consumer and provider traits instead of the wiring

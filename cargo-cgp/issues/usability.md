@@ -76,6 +76,14 @@ These errors keep the compiler's output because nothing in the tool starts from 
   seed holding a type parameter
   ([`generic_check_context`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/generic/generic_check_context.rs)).
   Checking one instantiation (`Wrapper<f64>`) resolves as usual.
+- **A method's own `where` bound:** a generic method bounded by `where Self: CanLoad<T, Output = T>`
+  keeps rustc's report, since the bound-call anchor reads a path call's function and not a method's
+  bound
+  ([`method_own_bound_call`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/method_own_bound_call.rs),
+  [`method_own_bound_output_mismatch`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/method_own_bound_output_mismatch.rs)).
+- **A generic consumer called on a field access:** only typeck could type the receiver, and the
+  component's parameter rides in the call
+  ([`generic_consumer_field_access_receiver`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/generic_consumer_field_access_receiver.rs)).
 - **A `Symbol!` digit tag in a direct field read:** `pair.get_field(PhantomData::<Symbol!("0")>)` on
   a tuple struct keeps rustc's `E0277`, whose labels list the `Index<0>` and `Index<1>` tags the
   struct implements; the same tag reached through a check is a missing field with an `Index<0>`

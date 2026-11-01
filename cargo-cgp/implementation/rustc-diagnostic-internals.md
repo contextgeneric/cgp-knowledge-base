@@ -250,8 +250,9 @@ data-call anchor takes, both built by `report_no_match_method_error` in
 An `E0308` on a call's argument comes from the same body type-checking. The same reasoning bans forcing `tcx.typeck` from the emitter
 outright. `E0271`/`E0277` are trait-solving failures reported after collection, so the queries their
 resolution forces are already cached and they are safe to trace. The gate that encodes this is in
-[Typed root-cause resolution](typed-root-cause-resolution.md); the `tcx.typeck` ban is why one
-use-site shape is deliberately out of reach, documented there under the resolver's boundaries.
+[Typed root-cause resolution](typed-root-cause-resolution.md); the `tcx.typeck` ban is why a call's
+receiver that only typeck could type is out of reach, as the
+[resolver's boundaries](typed-root-cause-resolution.md#boundaries) record.
 
 ### Feeding escaping bound variables to inference (`has_escaping_bound_vars`)
 
@@ -277,7 +278,7 @@ variable minted in one must never appear in another. This is not a distinct comp
 a discipline the resolver keeps: it region-erases predicates before they cross into a fresh context,
 and drops a predicate still carrying non-region inference variables rather than re-checking it. The
 mechanics (the `fresh_args_for_item`-plus-unification impl match, the normalize-and-erase step) are
-in [Typed root-cause resolution](typed-root-cause-resolution.md); the note here is only that the
+in [the walk](typed-resolution-walk.md#crossing-inference-contexts); the note here is only that the
 erase is load-bearing, not cosmetic.
 
 ### Freezing the crate store during name resolution (`data should not be frozen`)

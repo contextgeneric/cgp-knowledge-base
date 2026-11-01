@@ -342,7 +342,7 @@ An `E0119` naming *neither* internal trait can still be a wiring conflict: an en
 namespace conflicts on that namespace's own lookup trait
 (`` conflicting implementations of trait `MyNamespace<_>` for type `PathCons<…>` ``). The
 classifier's namespace route recognizes that shape by the impls at the carets (a local impl of a
-[namespace lookup trait](typed-root-cause-resolution.md), recognized by the single-`Delegate`
+[namespace lookup trait](typed-resolution-leaves.md#the-leaf-shapes), recognized by the single-`Delegate`
 fingerprint), and words it through the same `WiringConflict` shapes, with the namespace trait as the
 subject, rendered with its leading arguments but without the components table the macro appends
 (`DefaultImpls1<ShowImplComponent>`). Four constructs emit such an impl, and all four are read the
@@ -487,7 +487,7 @@ Everything is recovered from the compiler, not the error text, the reverse of re
 gates the scan on the `E0210` naming such a machinery parameter, then
 [`detect::orphan`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/detect/orphan.rs)
 finds the offending impl: a local impl of a *foreign*
-[namespace lookup trait](typed-root-cause-resolution.md) (the single-`Delegate` fingerprint, so a
+[namespace lookup trait](typed-resolution-leaves.md#the-leaf-shapes) (the single-`Delegate` fingerprint, so a
 downstream crate's own namespace trait is recognized like CGP's built-in `DefaultNamespace`) for a
 *foreign* key. Because rustc emits an `E0210`/`E0117` *only* for a genuine orphan, matching the
 caret to that impl (by source range) is the whole confirmation; a lone candidate is used even when

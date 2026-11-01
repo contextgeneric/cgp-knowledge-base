@@ -184,8 +184,8 @@ The guards also decide what may be cached: a subtree they cut is never stored, a
 
 ## Tests
 
-- [The parent document's catalog](typed-root-cause-resolution.md#tests): every fixture that pins the
-  walk.
+- [The parent document's catalog](typed-root-cause-resolution.md#tests): the fixture groups that pin
+  the walk.
 
 ## Source
 

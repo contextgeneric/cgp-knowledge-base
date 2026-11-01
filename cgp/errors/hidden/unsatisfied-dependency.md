@@ -237,6 +237,16 @@ promoting to a check) can.
   [`provider_called_directly.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/provider_called_directly.rs)
   calls a `PipeHandlers` pipeline whose second stage takes the first stage's input type, not its
   `Result` output, and ends at `[CGP-E127]`.
+- [`hidden/unsatisfied-dependency/cgp_fn_output_bound.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/cgp_fn_output_bound.rs):
+  a `#[cgp_fn]` whose generic output a provider bound pins, reached by the call-site anchor.
+- [`hidden/unsatisfied-dependency/field_access_receiver_call.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/field_access_receiver_call.rs):
+  a consumer called on a field access, recovered by the use-site anchor.
+- [`hidden/unsatisfied-dependency/generic_consumer_field_access_receiver.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/generic_consumer_field_access_receiver.rs):
+  a generic consumer called on a field access, which declines.
+- [`hidden/unsatisfied-dependency/method_own_bound_call.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/method_own_bound_call.rs):
+  a method's own `where` bound, which no anchor reads.
+- [`hidden/unsatisfied-dependency/method_own_bound_output_mismatch.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/method_own_bound_output_mismatch.rs):
+  the same bound failing on its associated type, left as rustc's `E0271`.
 - [`hidden/unsatisfied-dependency/consumer_bound_call.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/consumer_bound_call.rs):
   the consumer trait used as a bound, `fn greet_twice<Context: CanGreet>(…)` called with a `Person`
   that lacks the `name` field; the `.rust.stderr` is the `E0277` on the call, and the `.cgp.stderr`

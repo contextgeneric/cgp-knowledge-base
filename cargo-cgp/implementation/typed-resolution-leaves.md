@@ -118,8 +118,8 @@ takes one from `CGP-E110` onward. The walk emits one flat path per way a cause i
 
 ## Tests
 
-- [The parent document's catalog](typed-root-cause-resolution.md#tests): every fixture that pins a
-  leaf.
+- [The parent document's catalog](typed-root-cause-resolution.md#tests): the fixture groups that pin
+  the leaves.
 
 ## Source
 
