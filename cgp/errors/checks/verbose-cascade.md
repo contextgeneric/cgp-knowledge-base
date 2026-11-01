@@ -38,108 +38,56 @@ check_components! {
 
 ## The raw diagnostic
 
-This section describes what plain `cargo check` prints, the fallback when `cargo-cgp` is not on
-hand; [How cargo-cgp presents it](#how-cargo-cgp-presents-it) below covers the reshaped form. The
-output is a cascade whose block count reflects the depth of the graph, not the number of mistakes.
-Checking three chained components over one missing field produces **six** `E0277` blocks, not three,
-and they are of two kinds. Each checked component yields a `CanUseComponent<…Component>` block that
-*does* reach the concrete root cause: its `help:` note names `HasField<Symbol!("name")>` as not
-implemented for `App` (and points at the nearest existing field, `HasField<Symbol!("age")>`, as a
-landmark). But the deeper components additionally emit **intermediate** blocks
-(`ProvideBar: Bar<App>` is not satisfied, `ProvideFoo: Foo<App>` is not satisfied) that name only an
-inner provider trait and never descend to the field. The intermediate blocks are the noise; the
-`CanUseComponent` blocks are the signal. That is stable's output; the nightly `cargo-cgp` pins
-prints three blocks for the same program (one intermediate
-`ProvideFoo: IsProviderFor<FooComponent, App>` block standing for the `BazComponent` check, and a
-`CanUseComponent` block each for the other two), per
+This section describes plain `cargo check`, the fallback when `cargo-cgp` is not on hand. The block count reflects the
+depth of the graph, not the number of mistakes: three chained components over one missing field produce **six** `E0277`
+blocks of two kinds. Each checked component gives a `CanUseComponent<…Component>` block whose `help:` names the missing
+`HasField<Symbol<4, Chars<'n', …>>>` for `App`. The deeper components add **intermediate** blocks
+(`ProvideBar: Bar<App>`, `ProvideFoo: Foo<App>`) that name only an inner provider trait. The nightly `cargo-cgp` pins
+prints three blocks for the same program, one intermediate `ProvideFoo: IsProviderFor<FooComponent, App>` and two
+`CanUseComponent`, per
 [which compiler the raw diagnostic describes](../README.md#which-compiler-the-raw-diagnostic-describes).
 
-Two pieces of `rustc` machinery shape the cascade and are worth recognizing so they are not misread.
-Each intermediate block carries the [near-contradiction](../../guides/debugging.md) shape:
-`help: the trait Bar<App> is not implemented for ProvideBar` immediately followed by
-`help: the trait Bar<__Context__> is implemented for ProvideBar`, which is `rustc`'s "a similar impl
-exists" hint reporting that the *generic* provider impl (over `__Context__`) exists but does not
-hold for the concrete `App`, because a bound deeper in its chain fails. It does not mean the impl is
-both present and absent; it means the impl is present but inapplicable here. And the longer chains
-end with `= note: N redundant requirements hidden`, `rustc` collapsing repeated identical
-obligations it has already printed, so the elision is a sign the chain revisits the same bound, not
-that a distinct cause was omitted.
+Two pieces of rustc machinery are easy to misread. Each intermediate block carries the
+[near-contradiction](../../guides/debugging.md) pair, ``help: the trait `Bar<App>` is not implemented for `ProvideBar` ``
+and ``help: the trait `Bar<__Context__>` is conditionally implemented for `ProvideBar` ``: the generic impl exists but does
+not hold for `App`, because a bound deeper in its chain fails. And `= note: N redundant requirements hidden` collapses
+obligations already printed, rather than omitting a distinct cause.
 
-The hidden analogue exists too: exercising the same chain through direct consumer-trait *calls*
-rather than a check produces one `E0599` per call, none of which reaches the cause on stable
-`rustc`: the [hidden](../hidden/unsatisfied-dependency.md) failure, multiplied. This document covers
-the surfaced (checked) cascade, where the cause is present but buried in volume.
+Direct consumer calls instead of a check give one `E0599` per call, none reaching the cause on stable: the
+[hidden](../hidden/unsatisfied-dependency.md) failure, multiplied.
 
 ## Where the root cause is
 
-The root cause is **present and repeated**: the same `HasField<Symbol!("name")>` appears in every
-`CanUseComponent` block's `help:` note. The reliable way to find it is not positional but
-structural: **look for a block whose `help:` names a concrete missing item (a `HasField`, an
-abstract type) rather than a provider trait like `ProvideFoo: Foo<App>`.** Those concrete-item
-blocks all point at the one thing to fix; the provider-trait blocks are intermediate consequences.
-When components are checked top-down (foundational last, as in the fixture), the final block is a
-clean concrete-item block, which is why the root cause is *often* found near the last or
-second-to-last message, but the concrete-item test is what makes it reliable regardless of order.
+The root cause is **present and repeated**, in every `CanUseComponent` block's `help:`. Find it by structure rather than
+position: **look for a block whose `help:` names a concrete missing item (a `HasField`, an abstract type) rather than a
+provider trait like `ProvideFoo: Foo<App>`.** When components are checked with the foundational one last, as in the
+fixture, the last block is such a block, but the order does not guarantee it.
 
 ## How cargo-cgp presents it
 
-`cargo-cgp` collapses the whole cascade to a single block. First it **drops every intermediate
-provider-trait block** as derived noise and recovers each *checked* component's failure to a
-`root cause:` tree that descends all the way to the leaf. Then it **coalesces** the checked
-components that share that leaf: rather than one block per component, it emits one block whose
-headline states the shared cause (`` [CGP-E001] missing field `name` on `App` ``), with its caret on
-the first check entry, each other entry labelled "also required here", and a single
-`` root cause: [CGP-E110] missing field `name` `` tree beneath. An editor shows the block as one
-diagnostic, with the other entries as related locations. So a six-block raw cascade over three
-checked components becomes one block, and cargo's re-count reports one error. A component rustc
-happened to surface provider-side is still classed as the consumer its check entry asserts, since a
-`check_components!` entry failing *is* the consumer trait failing.
+`cargo-cgp` collapses the cascade to one block. It drops the intermediate blocks, resolves each checked component to a
+`root cause:` tree, and coalesces the components that share a cause: the headline states it
+(`` [CGP-E001] missing field `name` on `App` ``), the caret sits on the first check entry, each other entry is labelled
+"also required here", and one tree follows. An editor shows one diagnostic with related locations, and cargo's count reads
+one error. A component rustc surfaced provider-side is still classed as the consumer its check entry asserts.
 
-Merging every affected component into one block is possible because the tool holds the compilation's
-diagnostics until they have all arrived (there is no end-of-compilation hook), then groups together
-the ones that *share* a root cause. Grouping on a shared cause rather than on a whole-failure key is
-what also reaches the harder shape, where one omission is reached at several instantiations and so
-surfaces as several root causes: each check entry stops at the first unmet leaf on its own branch
-while a use-site call reaches them all, so no two of those cause sets are equal and grouping on
-equality left one mistake reported as several blocks. The codes are defined in the
-[cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
+The tool can merge these because it holds the compilation's diagnostics until all have arrived, then groups those that
+share a root cause. It groups one cause at a time rather than on the whole set, so it reaches one omission met at several
+instantiations: each check entry stops at the first unmet leaf on its branch while a call reaches them all, and no two of
+those sets are equal. The [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md) defines the codes.
 
 ## Resolving it
 
-Fix the single root cause and the entire cascade collapses at once: supply the `name` field, and all
-six blocks disappear together. The difficulty is isolation, not repair, so the
-[debugging guide](../../guides/debugging.md) prescribes two moves: **check one suspect component in
-isolation** in its own `check_components!` block, which strips the cascade down to that component's
-chain, or **bisect** a large table by commenting entries out until the failure vanishes. Both
-converge on the one broken link far faster than reading the cascade top to bottom.
-
-## Notes for tooling
-
-`cargo-cgp` reshapes this class in full, as [How cargo-cgp presents it](#how-cargo-cgp-presents-it)
-describes: it drops the intermediate provider-trait blocks, recovers each checked component's
-innermost concrete cause, and coalesces the components that share one leaf into a single headline
-that lists every affected consumer over one root-cause tree. The coalescing keys on the root causes
-themselves, consumer-independently and one cause at a time, so it generalizes to any set of checked
-components bottoming out on the same root cause, not just a field, and not only components whose
-causes match exactly, since failures whose cause sets merely overlap are grouped too.
+Fix the one root cause and every block goes. The difficulty is isolation, so the
+[debugging guide](../../guides/debugging.md) prescribes two moves: check one suspect component in its own
+`check_components!` block, or bisect a large table by commenting entries out.
 
 ## Backing fixtures
 
 - [`checks/verbose-cascade/dependency_cascade.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/verbose-cascade/dependency_cascade.rs):
-  a three-deep provider chain over one missing `name` field, checked across all three components;
-  its `.rust.stderr` pins the cascade as the pinned nightly prints it, three blocks where stable
-  prints six: for the `BazComponent` check an intermediate
-  `ProvideFoo: IsProviderFor<FooComponent, App>` block whose `help:` pair is the near-contradiction,
-  and for `BarComponent` and `FooComponent` a `CanUseComponent` block whose `help:` names the
-  `HasField<Symbol<4, …>>` leaf. Its `.cgp.stderr` shows the single coalesced block,
-  `` [CGP-E001] missing field `name` on `App` `` over one
-  `` [CGP-E110] missing field `name` `` tree, its caret on the `BazComponent` entry and the other
-  two entries labelled.
+  a three-deep provider chain over one missing `name` field, checked across all three components, in one coalesced block.
 - [`checks/verbose-cascade/density_3.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/verbose-cascade/density_3.rs):
-  a denser two-component check over one missing `height` field where the second component
-  (`CanCalculateDensity`) depends transitively on the first (`CanCalculateArea`); its `.cgp.stderr`
-  pins the two components coalesced into one `[CGP-E001]` headline over the shared `[CGP-E110]`
-  leaf.
+  two components over one missing `height`, the second depending on the first, coalesced.
 - [`checks/verbose-cascade/density_1.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/verbose-cascade/density_1.rs):
   a missing field two components below the checked one.
 - [`checks/verbose-cascade/density_2.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/verbose-cascade/density_2.rs):
