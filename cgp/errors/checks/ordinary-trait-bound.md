@@ -61,111 +61,62 @@ and cannot see that the wired type violates it, so it defers to the compiler.
 
 ## The raw diagnostic
 
-This section describes what plain `cargo check` prints, the fallback when `cargo-cgp` is not on
-hand; [How cargo-cgp presents it](#how-cargo-cgp-presents-it) below covers the readable form. This
-is a **surfaced** class: forcing the wiring through a
-[`check_components!`](../../reference/macros/check_components.md) produces an `E0277` that names the
-ordinary bound on the concrete type, and its shape is the tell that distinguishes it from a
-`HasField` check-trait failure. The **primary** error is the leaf itself: "the trait bound `f64: Eq`
-is not satisfied," with the caret on the checked component entry and the label "the trait `Eq` is
-not implemented for `f64`." Beneath it, a `help:` note lists the standard types that *do* implement
-the trait (`i128`, `i16`, `i32`, …), which is `rustc`'s stock "these types implement the trait" hint
-for a missing ordinary impl, not the near-contradiction "but trait `HasField<other>` is implemented"
-hint a missing field produces.
+This section describes plain `cargo check`, the fallback when `cargo-cgp` is not on hand. This is a
+**surfaced** class, and the **primary** error is the leaf itself: `` the trait bound `f64: Eq` is not satisfied ``,
+with the caret on the checked entry labelled `` the trait `Eq` is not implemented for `f64` ``. Beneath it,
+a `help:` lists the standard types that implement the trait (`i128`, `i16`, `i32`, …), rather than the
+"but trait `HasField<other>` is implemented" hint a missing field produces.
 
-The position of the cause is the sharp contrast with a
-[check-trait failure](check-trait-failure.md), and knowing it tells the two apart on sight. A
-missing `HasField` roots the *primary* error at `Ctx: CanUseComponent<Component>` and tucks the
-concrete leaf into a `help:` note below it; an unmet ordinary bound roots the primary error at the
-leaf (`f64: Eq`) directly, and the `CanUseComponent` obligation appears only as a `note` further
-down. Between them runs the same scaffolding: a
-`note: required for CompareScalars to implement IsProviderFor<ScalarEqualityComponent, App>` that
-points at the `Scalar: Eq` bound with "unsatisfied trait bound introduced here", then
-`required for App to implement CanUseComponent<…>`, then the bound in the generated `__CheckApp`
-trait. [`IsProviderFor`](../../reference/traits/is_provider_for.md) is again the supertrait that
-carries the provider's `where` clause into the proof, which is why the ordinary bound is named here
-and suppressed in the hidden form. The whole thing is ordinary `rustc` obligation resolution for
-[`E0277`](../error_codes/e0277.md); only the leaf's *kind* (a standard trait on a concrete type)
-changes what the message and its `help:` look like.
+The position of the cause tells this class from a [check-trait failure](check-trait-failure.md). A missing
+`HasField` roots the primary error at `Ctx: CanUseComponent<Component>` and puts the leaf in a `help:`. An
+ordinary bound roots it at the leaf, and `CanUseComponent` appears only in a `note`. The scaffolding between
+is the same: `` required for `CompareScalars` to implement `IsProviderFor<ScalarEqualityComponent, App>` ``,
+pointing at the `Scalar: Eq` bound, then `CanUseComponent`, then the bound in the generated `__CheckApp`
+trait.
 
-Exercised without a check (by calling the consumer method) the same broken wiring instead produces
-the [hidden `E0599`](../hidden/unsatisfied-dependency.md), which names only `App: CanCompareScalars`
-/ `App: ScalarEquality<App>` and never mentions `f64: Eq`. The method-probe heuristic drops the
-nested `where`-clause bound regardless of whether it is a `HasField`, a CGP trait, or an ordinary
-trait, so the ordinary-bound dependency hides exactly as any other does.
+Exercised by calling the consumer method, the same wiring produces the
+[hidden `E0599`](../hidden/unsatisfied-dependency.md), which never mentions `f64: Eq`, because the method probe
+drops a nested bound of any kind.
 
 ## Where the root cause is
 
-The root cause is **present and sits at the very top** of the checked output: the primary `E0277`
-names the concrete type and the ordinary trait it fails (`f64: Eq`) outright. This is the most
-direct of the surfaced classes: there is no `help:`-note indirection as with a `HasField` leaf, and
-the `required for` notes below build *outward* from the leaf toward the check. The caret lands on
-the checked component entry, so the error also points at a site the user controls. The one thing the
-diagnostic does not state is which *wired type* is at fault when the bound is on an abstract type:
-the leaf names `f64`, and the `IsProviderFor` note names the `Scalar: Eq` bound, but connecting
-"`f64` is what `Scalar` resolves to" is left to the reader; trace it to the
+The root cause is **present at the very top** of the checked output, and the caret lands on the checked entry.
+The diagnostic does not say which wired type is at fault when the bound is on an abstract type: the leaf names
+`f64` and a note names `Scalar: Eq`, so the reader connects them through the
 `ScalarTypeProviderComponent: UseType<f64>` wiring.
 
 ## How cargo-cgp presents it
 
-`cargo-cgp` treats this class differently from the CGP-trait failures, and the difference is
-instructive: because the raw primary error already names the ordinary bound at the top, `cargo-cgp`
-**keeps rustc's headline uncoded**: no `[CGP-Exxx]` tag is stamped, the header stays
-``error[E0277]: the trait bound `f64: Eq` is not satisfied``. What it rewrites is the scaffolding
-below. The `required for … IsProviderFor` / `CanUseComponent` / `__CheckApp` chain collapses into a
-compact dependency tree (`[CGP-E101]` consumer-trait hop → `[CGP-E102]` provider-trait hop → the
-leaf), where the ordinary bound keeps the compiler's own wording under the ordinary-bound cause code
-(``[CGP-E117] the trait bound `f64: Eq` is not satisfied``). This is the one surfaced check class
-with no `[CGP-E0xx]` headline: the tool leaves the already-clear `rustc` sentence alone and only
-tidies the frames beneath it.
+`cargo-cgp` **keeps rustc's headline uncoded**, ``error[E0277]: the trait bound `f64: Eq` is not satisfied``,
+since it already states the cause. It rewrites the scaffolding below into a dependency tree: `[CGP-E101]`
+consumer hop, `[CGP-E102]` provider hop, then ``[CGP-E117] the trait bound `f64: Eq` is not satisfied``. This
+is the one surfaced check class without a `[CGP-E0xx]` headline.
 
-The contrast with the [hidden method-call form](../hidden/unsatisfied-dependency.md) sharpens the
-point. There the raw `E0599` buries the bound entirely, so `cargo-cgp` must *recover* it and does
-stamp a headline: `[CGP-E001]` over a
-``root cause: [CGP-E117] the trait bound `f64: Eq` is not satisfied`` tree. A headline code appears
-there because the tool reclassified a hidden error; none appears here because the surfaced error was
-already its own clearest statement. The codes are defined in the
-[cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
+The [hidden method-call form](../hidden/unsatisfied-dependency.md) differs: its raw `E0599` buries the bound, so
+the tool recovers it under `[CGP-E001]` over a ``root cause: [CGP-E117] the trait bound `f64: Eq` is not satisfied``
+tree. The [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md) defines the codes.
+
+The tree stops at the bound, without saying that `f64` is what `Scalar` resolves to, so following the
+abstract-type component to its `UseType<…>` entry remains the reader's step.
 
 ## Resolving it
 
-The fix is to satisfy the ordinary trait, which is a different remedy from every CGP-dependency
-class: not "wire a component" or "add a field," but make the concrete type implement the trait. Wire
-the abstract type (or instantiate the generic) to a type that *does* satisfy the bound (an integer
-type for `Eq`, say, instead of `f64`) or, when the offending type is one you own, derive or
-implement the trait for it (`#[derive(Eq)]`, a manual `impl Ord`). When the bound is stricter than
-the behavior needs (requiring `Eq` where `PartialEq` would do) relax the provider's `where` clause
-instead, so more concrete types qualify. The diagnostic already names both halves: the concrete type
-in the primary error and the bound in the `IsProviderFor` note.
-
-## Notes for tooling
-
-One usability gap remains beyond what `cargo-cgp` already collapses: the tree stops at the ordinary
-bound (`f64: Eq`) but does not **link the concrete type back to the wiring that chose it**.
-Following the abstract-type component to its `UseType<…>` entry (to report "`Scalar` is wired to
-`f64`, which the provider `CompareScalars` requires to be `Eq`") is the connective step still left
-to the reader, since the leaf names `f64` without saying it is what `Scalar` resolves to.
+Make the concrete type satisfy the trait. Wire the abstract type, or instantiate the generic, to a type that
+does (an integer for `Eq` instead of `f64`), or derive or implement the trait on a type you own. When the bound
+is stricter than the behavior needs, relax the provider's `where` clause.
 
 ## Backing fixtures
 
 - [`checks/ordinary-trait-bound/ordinary_bound_unsatisfied.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/ordinary-trait-bound/ordinary_bound_unsatisfied.rs):
-  a provider requiring `Scalar: Eq` on a context that wires `Scalar` to `f64`, checked; its
-  `.rust.stderr` pins the primary `E0277` on `f64: Eq`, the `help:` list of conforming standard
-  types, and the `IsProviderFor` note pointing at the `Scalar: Eq` bound, while its `.cgp.stderr`
-  keeps that same uncoded headline and rewrites only the chain into the `[CGP-E101]`/`[CGP-E102]`
-  tree over the `[CGP-E117]` leaf.
+  `Scalar: Eq` on a context wiring `Scalar` to `f64`, checked; the headline stays uncoded over the tree.
 - [`checks/ordinary-trait-bound/generic_context_ordinary_bound.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/ordinary-trait-bound/generic_context_ordinary_bound.rs):
-  the same bound reached through impl generics: a generic `<T> Wrapper<T>` table checked at
-  `Wrapper<f64>`, surfacing `f64: Eq` through `IsProviderFor<…, Wrapper<f64>>`, with the
-  `.cgp.stderr` tree naming the context as `Wrapper<f64>`.
+  the same through impl generics: `<T> Wrapper<T>` checked at `Wrapper<f64>`.
+- [`checks/ordinary-trait-bound/borrowed_detail.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/ordinary-trait-bound/borrowed_detail.rs):
+  wrapping an error with a borrowed detail through a wrapper that needs `'static` details.
 
 The hidden (method-call) form of the same mistake is
 [`hidden/unsatisfied-dependency/ordinary_bound_unsatisfied_call.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/ordinary_bound_unsatisfied_call.rs),
-cataloged with the [hidden unsatisfied dependency](../hidden/unsatisfied-dependency.md) class it
-shares its shape with; there the `.cgp.stderr` must recover the buried bound, so it does lead with
-`[CGP-E001]` and a `root cause: [CGP-E117]` tree.
-- [`checks/ordinary-trait-bound/borrowed_detail.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/ordinary-trait-bound/borrowed_detail.rs):
-  Wrapping an error with a borrowed detail through a wrapper that needs `'static` details.
+cataloged with the [hidden unsatisfied dependency](../hidden/unsatisfied-dependency.md) class.
 
 ## Related
 
