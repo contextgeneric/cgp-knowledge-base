@@ -63,13 +63,12 @@ own `README.md` lists its documents. When you add a document, register it in the
   per implementation (typed over `Ty<'tcx>`, text over `&str`, syntax tree over `syn::Type`)
   explains why three inputs force three separate matchers that must nonetheless agree, and why
   every form they show is real syntax.
-- [The expand command](expand-command.md): `cargo cgp expand`, which shows the ordinary Rust a
-  project's CGP macros generate: a full `cargo-expand`-style expansion whose CGP type-level sugar
-  the driver resugars before returning it. Covers why the compiler offers no way to expand only some
-  macros, the `cargo rustc` launch and the marker flag that scopes expand mode to one crate, why the
-  driver prints the expanded AST from `after_expansion` instead of setting `-Zunpretty=expanded`
-  (which bypasses every callback), what running it settled about cargo's handling of a unit that
-  yields no artifact, and the limitation that every macro is expanded.
+- [The expand command](expand-command.md): `cargo cgp expand`, which shows the ordinary Rust a project's
+  CGP macros generate: a full `cargo-expand`-style expansion whose CGP type-level sugar the driver
+  resugars. Covers why the compiler offers no way to expand only some macros, the `cargo rustc` launch
+  and the marker flag that scopes expand mode to one crate, how a run fails, why the driver prints from
+  `after_expansion` instead of setting `-Zunpretty=expanded`, and the limitation that every macro is
+  expanded.
 - [rustc diagnostic internals](rustc-diagnostic-internals.md): a map of the compiler code that
   builds CGP diagnostics and where it *suppresses* information: the type/const printer, the
   trait-error reporters, the two verbosity switches (`--verbose` versus `-Zverbose-internals`), and

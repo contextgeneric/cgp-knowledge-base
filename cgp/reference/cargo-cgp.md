@@ -5,9 +5,9 @@ rewrites CGP's compiler errors into a compact, root-cause-first form, and that a
 target's macros with CGP's type-level constructs made legible. It is the **recommended way to check CGP
 code and to read a CGP compile error**, and an agent working in this repository should
 reach for it before plain `cargo check` when diagnosing a wiring failure. This document is enough to
-install and use it without leaving `cgp`; the tool itself lives in a separate repository,
-[github.com/contextgeneric/cargo-cgp](https://github.com/contextgeneric/cargo-cgp), and its own docs
-are the exhaustive reference.
+install and use it; the tool itself lives in a separate repository,
+[github.com/contextgeneric/cargo-cgp](https://github.com/contextgeneric/cargo-cgp), and
+[this base's `cargo-cgp` section](../../cargo-cgp/README.md) is the exhaustive reference.
 
 This is a *tooling* reference, not a CGP construct: it is the one document under `reference/` that
 describes an external tool rather than a macro, trait, or provider. The
@@ -32,7 +32,7 @@ wrapper that turns on the **next-generation trait solver** (`-Znext-solver`), wh
 dependency errors the default solver hides; this alone recovers the root cause of the
 [hidden unsatisfied-dependency](../errors/hidden/unsatisfied-dependency.md) class that plain
 `cargo check` suppresses. On top of that it **rewrites the classes it recognizes** into the coded,
-root-cause-first form. Classes it does not yet rewrite pass through as the compiler wrote them.
+root-cause-first form. Classes it does not rewrite pass through as the compiler wrote them.
 
 ## Installing
 
@@ -46,7 +46,7 @@ the pinned stable in
 With **cargo** (rustup present):
 
 ```sh
-cargo install --locked cargo-cgp   # the front-end; builds on any toolchain
+cargo install --locked cargo-cgp   # the front-end; builds on Rust 1.96 or newer
 cargo cgp setup                    # provisions the pinned nightly + driver, in lockstep
 ```
 
@@ -82,16 +82,11 @@ cargo cgp check                 # like `cargo check`, with CGP errors reshaped
 cargo cgp check --workspace     # every argument after `check` is forwarded to `cargo check`
 ```
 
-`check` is the command you reach for day to day; its companion
-[`expand`](#expanding-the-generated-code) shows the Rust your macros generate. Neither changes how
-you build: both re-compile your code under the pinned nightly purely to show you something, and
-there is no `cargo cgp build`, `run`, or `test`; run those with plain cargo (besides these two, only
-`setup` and `update` exist, and they merely provision the tool). **cargo-cgp is optional, and its
-advantage is readable errors and readable expansions during development.** CGP itself is an ordinary
-library that compiles on any stable Rust ≥ 1.89, so `cargo check`, `cargo build`, `cargo run`, and
-`cargo test` all work on a CGP project unchanged. Reach for `cargo cgp check` when you hit or expect
-a wiring error and want it readable; use plain `cargo check` when you do not; and always build, run,
-and test with ordinary cargo.
+**cargo-cgp is optional, and its advantage is readable errors and readable expansions during
+development.** Both reading commands re-compile your code under the pinned nightly only to show you
+something, and there is no `cargo cgp build`, `run`, or `test`, so build, run, and test with plain cargo.
+CGP itself is an ordinary library that compiles on any stable Rust ≥ 1.89. Reach for `cargo cgp check`
+when you hit or expect a wiring error and want it readable.
 
 Read its output as ordinary rustc/cargo diagnostics with the recognized CGP errors rewritten. When
 the tool rewrites an error into a known class it stamps a short code in brackets and leads with the
@@ -215,8 +210,8 @@ If a path matches nothing you get an error saying so, naming the path, rather th
 whole-crate expansion.
 
 Two limits are worth knowing. `expand` is **not a check**: it stops as soon as the macros are
-expanded, so type-checking never runs and it reports nothing about wiring. A malformed macro
-invocation still fails, since that happens during expansion, but a missing field does not. And the
+expanded, so type-checking never runs and it reports nothing about wiring. An error from before that
+point, such as a macro rejecting its input, fails the command, while a missing field does not. And the
 output is meant to be *read* rather than compiled: the `cgp::macro_prelude::` qualifier the macros
 emit is stripped for legibility, and an `open` statement's per-key wiring entry keeps its raw
 `PathCons<…>` key, since its tail is a generic parameter that no `Path!` spelling covers.
@@ -234,17 +229,16 @@ them with a `check_components!` at the wiring site to make it appear.
 
 ## Version compatibility
 
-This documentation is written for **`cgp` v0.8.0** and **`cargo-cgp` v0.1.0**. The two version
-independently: `cargo-cgp` reads `cgp`'s stable, macro-generated surface (the consumer/provider
-traits, `DelegateComponent`, `HasField`, and the rest), so a newer `cargo-cgp` works against this
-`cgp`, and a newer `cgp` generally works under this `cargo-cgp`. If the tool reports a version far
-behind this one, recommend updating it (`cargo cgp update`, or refresh the Nix flake); the `/cgp`
-skill records the versions it was written against and how to reconcile a mismatch.
+This documentation is written for **`cgp` v0.8.0** and **`cargo-cgp` v0.1.0**. The driver recognizes
+CGP's constructs by the names of the crates that define them and of the items inside them, so it is
+built for the `cgp` v0.8 line. Code on another `cgp` compiles under the tool as it would under
+`cargo check`, but whether its errors are recognized has not been tested. If the tool is older than
+this, recommend updating it (`cargo cgp update`, or refresh the Nix flake); the `/cgp` skill records
+the versions it was written against and how to reconcile a mismatch.
 
 ## Further reading
 
-All in the `cargo-cgp` repository (link as GitHub URLs, read from `../cargo-cgp` locally when
-checked out):
+These documents cover the tool in depth:
 
 - [Usage](../../cargo-cgp/reference/usage.md): running the check, reading output, expanding a
   target, editor integration.

@@ -677,11 +677,10 @@ it stale.
 
 ### `cargo-cgp/reference/`: using the tool
 
-- [README.md](cargo-cgp/reference/README.md) — the usage index and the two phases it covers, getting
-  the tool installed and running it.
+- [README.md](cargo-cgp/reference/README.md) — the usage index: installing the tool, running it, and
+  diagnosing a run that fails.
 - [installation.md](cargo-cgp/reference/installation.md) — every install, update, and uninstall path,
-  through cargo or Nix, the pinned nightly each needs, the front-end changes planned for v0.1.0, and
-  the Linux-only testing and the `cgp` v0.8 line the driver reads.
+  through cargo or Nix, the pinned nightly each needs, and the Linux-only testing and the `cgp` v0.8 line the driver reads.
 - [troubleshooting.md](cargo-cgp/reference/troubleshooting.md) — diagnosing a tool that will not run,
   seam by seam, with the exact message each failure prints.
 - [usage.md](cargo-cgp/reference/usage.md) — running `check` and `expand`, reading the output and its
@@ -730,7 +729,8 @@ it stale.
 - [resugaring.md](cargo-cgp/implementation/resugaring.md) — reversing CGP's type-level expansions
   across three inputs (typed, text, syntax tree) that must agree.
 - [expand-command.md](cargo-cgp/implementation/expand-command.md) — `cargo cgp expand`: the cargo
-  launch, why the driver prints from `after_expansion`, and the limitation that every macro is expanded.
+  launch, how a run fails, why the driver prints from `after_expansion`, and the limitation that every
+  macro is expanded.
 - [rustc-diagnostic-internals.md](cargo-cgp/implementation/rustc-diagnostic-internals.md) — where the
   compiler builds and *suppresses* diagnostic information, and the panic hazards of re-entering it.
 - [testing.md](cargo-cgp/implementation/testing.md) — the unit tests (one target per crate) and the
@@ -751,7 +751,7 @@ it stale.
 - [README.md](cargo-cgp/issues/README.md) — how pending issues are organized, and the rule that every
   issue is backed by a reproducing fixture.
 - [hidden-root-cause.md](cargo-cgp/issues/hidden-root-cause.md) — the cases where no downstream
-  consumer could recover the cause from the output: none open, the two defeated archetypes, and
+  consumer could recover the cause from the output: none open, the two kinds the driver's flags defeat, and
   what a new case would look like.
 - [usability.md](cargo-cgp/issues/usability.md) — output that carries the cause but buries it, the
   readability gaps that remain.

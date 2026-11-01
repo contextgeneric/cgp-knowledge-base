@@ -92,7 +92,6 @@ These errors keep the compiler's output because nothing in the tool starts from 
   a tuple struct keeps rustc's `E0277`, whose labels list the `Index<0>` and `Index<1>` tags the
   struct implements; the same tag reached through a check is a missing field with an `Index<0>`
   help ([`symbol_tag_on_tuple_struct`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/symbol_tag_on_tuple_struct.rs)).
-
 - **An unconstrained parameter the structural codes do not word:** a per-entry lifetime the
   provider uses, a blanket entry keyed by its own parameter, and a `#[default_impl]` of a generic
   provider struct at a path key or with a second parameter keep rustc's `E0207`s, whose suggestions
