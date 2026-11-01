@@ -381,11 +381,11 @@ leads with the cause:
   unsatisfied (`E0277`); the
   [unregistered namespace path](../../errors/checks/unregistered-namespace-path.md) class.
 
-The **namespace inheritance cycle** is the one class with no `cargo-cgp` fixture: under cargo-cgp's
-next-generation trait solver the two mutually-inheriting namespaces compile clean, with no `E0275`
-left to snapshot. That is a *missing*-error divergence (the reverse of the usual next-solver caveat)
-that leaves this class without a fixture, as recorded in
-[cargo-cgp's tests/README.md](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/README.md).
+The **namespace inheritance cycle** has a `cargo-cgp` fixture with empty snapshots: on the nightly
+the tool pins, both trait solvers accept the two mutually-inheriting namespaces, so there is no
+`E0275` to snapshot, as
+[cargo-cgp's tests/README.md](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/README.md)
+records.
 The eager `E0275` overflow at both `cgp_namespace!` definitions remains a plain-`rustc` behavior,
 described in the [namespace inheritance cycle](../../errors/wiring/namespace-inheritance-cycle.md)
 class.

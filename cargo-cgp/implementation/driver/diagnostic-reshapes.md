@@ -248,9 +248,17 @@ that owns neither end gets an `E0210` or `E0117` naming a machinery parameter (`
 the namespace and the key, keeps the caret on the macro alone, and adds the ownership fix.
 
 An `E0210` must name the machinery parameter before the impl scan runs, while the rarer `E0117`,
-which names none, goes to the scan directly. rustc emits these errors only for a genuine orphan, so
-matching the caret to a local impl of a foreign namespace trait for a foreign key is the whole
-confirmation. A lone candidate is used even when the range match misses, and any ambiguity declines.
+which names none, goes to the scan directly, so a plain Rust orphan reaches it too. rustc emits these
+errors only for a genuine orphan, so a caret on a local impl of a foreign namespace trait for a foreign
+key, with no local type among the trait's arguments, is the whole confirmation.
+
+A `#[default_impl]`'s caret is the `#[cgp_impl]` attribute while its impl is spanned on the key, so the
+range match misses, and a lone candidate is used instead. That fallback needs a caret a CGP macro
+generated, or an unrelated `impl Display for Vec<u8>` would read as the registration beside it
+([`orphan_registration_beside_plain_orphan`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/orphan-rule/orphan_registration_beside_plain_orphan.rs),
+[`plain_orphan_beside_type_registration`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/plain_orphan_beside_type_registration.rs)).
+Two orphan registrations in one crate leave the choice ambiguous, so both keep rustc's `E0210`.
+
 The key prints by its own name, for the reason the `E0207` detectors do: an `E0210` holds no type
 in its message, so nothing has printed one with trimmed paths yet. The impl's own machinery parameter
 says which fix to word

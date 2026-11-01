@@ -63,8 +63,8 @@ the fix, and the class.
 - **From:** an unsatisfied `CanUseComponent` bound at a check entry, a consumer-method call (`E0599`)
   on a context or on a type parameter without the bound, a call to a generic function whose
   consumer-trait bound the context fails, a consumer-trait bound in an impl's own `where` clause, or a
-  `Key -> Table` entry whose table lacks the key. A failure the resolver declines keeps rustc's notes
-  under the class sentence.
+  `Key -> Table` entry whose table lacks the key. A `CanUseComponent` failure the resolver declines
+  keeps rustc's notes under the class sentence.
 - **Fix:** follow the `root cause:` note. A `help` names each fix the tool can confirm.
 - **Class:** [check-trait failure](../cgp/errors/checks/check-trait-failure.md).
 
@@ -575,15 +575,16 @@ These codes are the root causes:
   other way out is to feed the stage a type the table covers.
 - **`CGP-E115`: not a provider.** `` `<X>` is not a provider of `<T>` ``: a type in a provider slot that
   does not implement the provider trait, such as a request type where a handler belongs. The owner is not a
-  table missing an entry, so the fix is an actual provider. **Helps,** each only when the solver confirms it:
+  table missing an entry, so the fix is an actual provider. **Helps,** each when the program supports it:
   - **Adapter:** ``wire `WithProvider<ReadDisplayName>` in place of `ReadDisplayName` ``, with the `use`
     it needs when the prelude does not export it. Any impl of the provider trait whose `Self` is a type over
-    one bounded parameter counts, and no adapter is named by its name.
-  - **`UseField` on a multi-method getter:**
+    one bounded parameter counts, when the solver confirms it, and no adapter is named by its name.
+  - **`UseField` on a multi-method getter,** when the solver confirms `UseFields` serves it:
     ``wire `UseFields` in place of `UseField<…>`, which reads each method's field by the method's name``.
-  - **`UseDelegate` on a component without `#[derive_delegate]`:**
+  - **`UseDelegate` on a component without `#[derive_delegate]`,** when its provider trait has a
+    `RedirectLookup` impl:
     ``dispatch with `open AreaCalculatorComponent;` and one `@AreaCalculatorComponent.Shape: <provider>` entry per type, in place of `UseDelegate<AreaTable>` ``.
-  - **A provider of other components:**
+  - **A provider of other components,** confirmed for the same context:
     ``` `SayBye` provides `Farewell`: wire it under `FarewellComponent`, or wire a provider of `Greeter` here ```.
 - **`CGP-E116`: associated type mismatch.** The leaf face of `CGP-E005`, with the same wording.
 - **`CGP-E117`: ordinary trait bound.** `` the trait bound `<S: Trait>` is not satisfied ``: the compiler's
