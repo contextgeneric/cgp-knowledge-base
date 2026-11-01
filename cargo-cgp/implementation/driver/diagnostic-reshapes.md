@@ -250,11 +250,17 @@ the namespace and the key, keeps the caret on the macro alone, and adds the owne
 An `E0210` must name the machinery parameter before the impl scan runs, while the rarer `E0117`,
 which names none, goes to the scan directly, so a plain Rust orphan reaches it too. rustc emits these
 errors only for a genuine orphan, so a caret on a local impl of a foreign namespace trait for a foreign
-key, with no local type among the trait's arguments, is the whole confirmation.
+key, with no local type among the trait's arguments, is the whole confirmation. `DelegateComponent` has
+a namespace trait's shape, but its `Self` is a wiring table rather than a key, so `delegate_components!`
+on a foreign type keeps rustc's errors
+([`orphan_registration_beside_foreign_table`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/orphan-rule/orphan_registration_beside_foreign_table.rs)).
 
 A `#[default_impl]`'s caret is the `#[cgp_impl]` attribute while its impl is spanned on the key, so the
-range match misses, and a lone candidate is used instead. That fallback needs a caret a CGP macro
-generated, or an unrelated `impl Display for Vec<u8>` would read as the registration beside it
+range match misses, and a lone candidate is used instead. That fallback needs a caret a `cgp_`-named
+macro of CGP's proc-macro crate generated, read from the macro's definition so that a renaming import
+keeps the code and a program's own similarly named macro does not take it
+([`orphan_registration_under_renamed_macro`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/orphan-rule/orphan_registration_under_renamed_macro.rs)),
+or an unrelated `impl Display for Vec<u8>` would read as the registration beside it
 ([`orphan_registration_beside_plain_orphan`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/orphan-rule/orphan_registration_beside_plain_orphan.rs),
 [`plain_orphan_beside_type_registration`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/plain_orphan_beside_type_registration.rs)).
 Two orphan registrations in one crate leave the choice ambiguous, so both keep rustc's `E0210`.

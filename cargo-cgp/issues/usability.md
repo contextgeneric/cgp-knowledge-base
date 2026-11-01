@@ -57,6 +57,9 @@ nothing reaches the compiler for the tool to reshape.
 
 These errors keep the compiler's output because nothing in the tool starts from them:
 
+- **`delegate_components!` on a foreign type:** rustc's `E0117` says the type is not local, and its
+  `E0210` beside it names `__Context__`
+  ([`orphan_registration_beside_foreign_table`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/orphan-rule/orphan_registration_beside_foreign_table.rs)).
 - **A lifetime requirement on a check entry:** an error detail borrowed through a wrapper that needs
   `'static` details, or a provider bounded on `FieldsRef<'b>` for every lifetime and checked for an
   enum with a lifetime, fails with a bare `E0477` on the check entry. The resolver walks trait
