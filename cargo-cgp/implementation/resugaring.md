@@ -315,7 +315,7 @@ dispatches on (`Vec<u8>`, `&Coord`, `DateTime<Utc>`). A namespace path therefore
 PathCons<Symbol!("app"), PathCons<GreeterComponent, Nil>>   →   @app.GreeterComponent
 ```
 
-A **module-qualified** segment is rendered as written, since `Path!` parses each segment as a type:
+A segment qualified only inside its arguments (`Wrap<a::Item>`) is an ordinary compound type, whose head decides. A **module-qualified** segment is rendered as written, since `Path!` parses each segment as a type:
 `PathCons<ErrorRaiserComponent, PathCons<std::io::Error, Nil>>` reads
 `@ErrorRaiserComponent.std::io::Error`. The [path strip](#the-path-strips-that-run-first) runs first
 and keeps a qualifier only where it tells two types apart, so the one that reaches this pass is
