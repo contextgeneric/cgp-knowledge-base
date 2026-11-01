@@ -9,10 +9,8 @@ the text is handed back, so a field name reads as `Symbol!("height")` rather tha
 the driver prints the expanded crate from `after_expansion`, and the rustc-free
 [`cargo-cgp-expand`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-expand)
 crate resugars it before the front-end prints it. Every UI fixture carries an `.expand.rs` snapshot,
-so the command is covered end to end. What is *not* built is the
-[selective expansion](#selective-expansion-the-deferred-phase) the command aims at (the whole crate
-is expanded), and the conveniences listed under
-[what the first slice leaves out](#comparison-with-cargo-expand). The document extends
+so the command is covered end to end. The command expands the whole crate ([the limitation](#known-limitation-every-macro-is-expanded)), and
+it lacks the conveniences [`cargo-expand` has](#comparison-with-cargo-expand). The document extends
 [Executable structure](executable-structure.md), whose front-end/driver split it reuses, and
 [The driver](driver.md), whose `Callbacks` it adds a second hook to. The reference implementation
 for the command as a whole is not Clippy but `cargo-expand`, checked out read-only at
@@ -88,17 +86,15 @@ The compiler exposes no expansion hook. `rustc_interface::interface::Config` off
 `after_crate_root_parsing` is too early to help: its own doc comment notes that submodules are not
 yet parsed when it runs, so it cannot even see most of the crate.
 
-What remains is therefore *un*-expansion: let the compiler expand everything, then put the non-CGP
-parts back. That is a real design, the compiler records exactly the provenance it needs, and it is
-[the deferred second phase](#selective-expansion-the-deferred-phase) below rather than part of the
-first slice.
+The only route to selectivity is therefore *un*-expansion, which the tool does not do
+([the limitation](#known-limitation-every-macro-is-expanded)).
 
 The cost of expanding everything is real but bounded, and worth stating plainly so nobody is
 surprised by the output. A nine-line file carrying `#[derive(Debug, Clone)]` and one `println!`
 expands to thirty-one lines, including a `#![feature(prelude_import)]` header, two derived impls,
 and `::std::io::_print(format_args!("rect = {0:?}\n", rect))`. On CGP code the ratio is far better,
 because CGP's own expansion is what the reader came for and dwarfs the std noise, but the noise is
-present, and removing it is the point of the deferred phase.
+present.
 
 ## The front-end: the `expand` subcommand
 
@@ -181,7 +177,7 @@ What a path selects is three rules, and the third is the CGP-shaped one:
 - an `impl` whose **trait** is that path, so `--item AreaCalculator` shows a component's provider
   trait with the blanket impls, the `UseContext` impl, and each provider's impl of it.
 
-The third rule is what makes the filter useful here rather than merely available. A CGP component's
+The third rule makes the filter useful here rather than merely available. A CGP component's
 generated items are almost all impls, and impls have no names of their own, so a filter that matched
 only declarations would answer "what does this component generate?" with just the trait definition.
 
@@ -260,12 +256,11 @@ capture rustc's output through `Config.output_file` and post-process it after `c
 returned, which also trips the `IgnoringOutDir` warning that `build_output_filenames` emits whenever
 an output file is set alongside cargo's `--out-dir`
 ([`rustc_interface/src/util.rs`](../../../external/rust/compiler/rustc_interface/src/util.rs)).
-Doing the work in a callback instead avoids both, and lands the driver on precisely the seam the
-deferred selectivity phase needs.
+Doing the work in a callback instead avoids both.
 
 So the driver hooks `after_expansion` and does the printing itself. By the time that callback runs,
 macro expansion has happened (`compiler_entrypoint` forces `tcx.resolver_for_lowering()` immediately
-before calling it, which is what drives expansion and name resolution), and the expanded AST is
+before calling it, which drives expansion and name resolution), and the expanded AST is
 reachable as `&'tcx Steal<ast::Crate>` from that same query, which is exactly where rustc's own
 [`pretty.rs`](../../../external/rust/compiler/rustc_driver_impl/src/pretty.rs) reads it. The hook
 clones the crate out from behind the `Steal` (`ast::Crate` is `Clone`) and renders it with the
@@ -285,7 +280,7 @@ the text is the text `cargo-expand` would consume, and the `is_expanded` flag ke
 `#![feature(prelude_import)]` / `#![no_std]` preamble that stops the printed source from
 re-injecting libstd. The `src` and `src_name` arguments are the crate root's source text and name,
 read back from the `SourceMap` the way `pretty.rs`'s own small `get_source` helper does, and they
-are what lets the printer interleave the original comments.
+lets the printer interleave the original comments.
 
 The driver then hands that text to the [rustc-free resugaring crate](#the-rustc-free-resugaring),
 writes the result to the requested path, and returns `Compilation::Stop`. Stopping is both
@@ -411,42 +406,16 @@ syntax for "this prefix followed by anything", and inventing one would break the
 above. So the one construct an expansion still shows raw is an `open`-generated key, and the
 surrounding `RedirectLookup<App, Path!(@ItemEncoderComponent)>` beside it reads normally.
 
-## Selective expansion: the deferred phase
+## Known limitation: every macro is expanded
 
-Expanding only the CGP macros is the goal this command aims at, and the design above is chosen so
-that it can be added at the same seam rather than rebuilt. The compiler records exactly the
-provenance the work needs: every `ExpnData` carries `macro_def_id: Option<DefId>` alongside
-`kind: ExpnKind::Macro(MacroKind, Symbol)` and the `call_site` span
-([`rustc_span/src/hygiene.rs`](../../../external/rust/compiler/rustc_span/src/hygiene.rs)). So each
-node of the expanded AST can be traced to the macro that produced it, recognized by *defining crate*
-rather than by name, the same `DefId`-anchored discipline the typed resolver holds itself to. The
-work is then to walk the cloned crate, find each maximal subtree produced by a non-CGP expansion,
-and replace it with the invocation the programmer wrote, reconstructed from the source at its call
-site as an `ast::MacCall` node the printer already knows how to print.
-
-Three sub-problems make this a phase of its own rather than an afternoon. One invocation commonly
-expands to several sibling items, so a run of siblings sharing an expansion must collapse into one
-printed invocation. A derive is worse: expansion strips `#[derive(Serialize)]` from the item and
-appends the impls it generated, so restoring it means re-adding the attribute *and* deleting those
-impls. And some things cannot come back at all: code a `cfg` eliminated is simply absent, and a CGP
-macro invoked from inside a non-CGP macro's output would have to stay expanded inside an
-otherwise-unexpanded parent.
-
-**A syntactic expander was prototyped and rejected as the primary design**, and the reasons are
-worth keeping because they are the reasons to revisit it if driver printing ever proves impractical.
-CGP's macro entry points are ordinary functions
-(`cgp_macro_lib::cgp_impl(attr, body) -> syn::Result<TokenStream>`), and `cgp`'s own
-`cgp-macro-test-util-lib` already calls them that way to pin expansion snapshots, so a `syn`-based
-expander that walks a file and expands only the constructs it recognizes is both small and exactly
-selective; a prototype of roughly 250 lines handled components, providers, auto-getters, derives,
-and wiring tables, leaving `#[derive(Debug)]`, `println!`, and `macro_rules!` untouched. It was
-rejected for three reasons: it would bake one `cgp` version into `cargo-cgp` and could show a user
-an expansion their own `cgp` never produces; it would be `cargo-cgp`'s first *code* dependency on a
-`cgp` crate (permitted by the one-way rule, which forbids only the reverse, but an architectural
-change of its own); and it cannot see `cfg`, a `mod` tree, or a CGP macro emitted by another macro.
-One concrete gap belongs to that route alone and is recorded so it is not rediscovered:
-`cgp-async-macro` keeps its logic inside the proc-macro crate with no library counterpart, so
-`#[async_trait]` would need one added upstream to be expandable that way.
+The command expands the whole crate, not only the CGP macros, so `println!` and `#[derive(Debug)]`
+appear expanded beside the CGP code. Printing only the CGP expansions would mean un-expanding the
+rest, and the compiler records what that needs: every `ExpnData` carries `macro_def_id` beside its
+`kind` and `call_site`
+([`rustc_span/src/hygiene.rs`](../../../external/rust/compiler/rustc_span/src/hygiene.rs)), so each
+node of the expanded AST can be traced to its macro by defining crate. Three things make it hard. One
+invocation commonly expands to several sibling items, a derive strips its attribute and appends impls,
+and code a `cfg` eliminated cannot come back.
 
 ## Comparison with cargo-expand
 
@@ -464,7 +433,7 @@ result through `bat` for highlighting ([`main.rs`](../../../external/cargo-expan
 Everything load-bearing is the compiler's. `cargo cgp expand` has one thing to add, the resugaring,
 and every divergence below follows from where that addition has to happen.
 
-The first slice follows `cargo-expand` on the points where it has already found the right answer. It
+The command follows `cargo-expand` on the points where it has already found the right answer. It
 runs the same `cargo rustc --profile check` for the same reason (per-target rustc arguments, no
 codegen); it routes the expansion through a file rather than stdout, so the content never
 interleaves with cargo's progress output; it judges success by whether output was produced rather
@@ -503,10 +472,7 @@ word is ambiguous, and it matches with its own
 rules, which add the CGP-shaped third rule, selecting the impls *of* a named trait, so naming a
 component's provider trait shows what the component generates.
 
-The one thing `cargo cgp expand` means to do that `cargo-expand` never will is CGP-aware output: the
-resugaring in the first slice, and [the selectivity](#selective-expansion-the-deferred-phase) after
-it. Both need a foothold inside the compilation rather than after it, which is the whole reason the
-printing happens in a callback.
+`cargo cgp expand` differs from `cargo-expand` in its CGP-aware output, the resugaring.
 
 ## Further reading
 
@@ -515,7 +481,7 @@ worth reading before changing the launching or printing halves.
 
 - [`cargo rustc`, in The Cargo Book](https://doc.rust-lang.org/cargo/commands/cargo-rustc.html):
   defines the behaviour the front-end depends on: arguments after `--` are passed to the compiler
-  invocation for the *selected target only*, which is what scopes expand mode to one crate.
+  invocation for the *selected target only*, which scopes expand mode to one crate.
 - [Macro expansion, in the Rust Compiler Development Guide](https://rustc-dev-guide.rust-lang.org/macro-expansion.html):
   the fixed-point expansion process and its interleaving with name resolution, the reason there is
   no per-macro switch to ask for.

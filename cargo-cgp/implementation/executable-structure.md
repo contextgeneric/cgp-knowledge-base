@@ -168,8 +168,8 @@ subcommand; both locate the driver as a sibling of the front-end via `current_ex
 wrapper mode by testing whether the second argument's file stem is `rustc` and drop it; both inject
 `--sysroot` only when one is absent; and both run the compiler with
 `rustc_driver::compiler_entrypoint` inside `catch_with_exit_code`. Reading
-[`external/rust-clippy/src/driver.rs`](../../../external/rust-clippy/src/driver.rs) and
-[`external/rust-clippy/src/main.rs`](../../../external/rust-clippy/src/main.rs) alongside our two
+[`external/rust/src/tools/clippy/src/driver.rs`](../../../external/rust/src/tools/clippy/src/driver.rs) and
+[`external/rust/src/tools/clippy/src/main.rs`](../../../external/rust/src/tools/clippy/src/main.rs) alongside our two
 crates, the correspondence is close enough to map function for function.
 
 The differences fall into two groups: a few are structural, forced by how the tool is distributed,
