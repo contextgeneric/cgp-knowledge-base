@@ -750,10 +750,19 @@ distinguishes ordinary trait assertions, component checks, and diagnostic rewrit
 output is abbreviated. *Consumer and provider traits* distinguishes context-style `Self` inside
 `#[cgp_impl]` from Rust's ordinary provider-side `Self` and permits multi-item components.
 
-The dependency and configuration pages explain their requirements in point-first prose.
+The dependency and configuration pages explain how contexts satisfy their requirements.
 *Implicit arguments* requires matching `HasField` implementations and distinguishes cloning from
-borrowing, named getters, and wireable field selection. *Modular error handling* separates raising
-from wrapping and states the conversion requirements when changing error backends. *Namespaces*
+borrowing, named getters, and wireable field selection.
+*Modular error handling* uses natural-writing style and follows a
+`#[cgp_fn(CanParsePort)]` blanket trait through a string context with per-source dispatch and a
+concrete domain-error enum with `From` conversions that preserve the original parse error. Its
+`CanParseConfigPort` example shows wrapping and transitive dependencies without adding wrapper
+wiring to those contexts. It distinguishes the fixed parsing implementation from interchangeable
+error providers and explains that formatting loses source structure. Its application-specific
+raiser addresses the ambiguity of using `String` for unrelated domain failures. Preserve these
+limits, the conversion requirements, and the separate raising and wrapping checks when changing
+types or backends.
+*Namespaces*
 distinguishes inherited routes from bound destinations and requires explicit checks for inherited
 components. *Modularity Hierarchy* preserves the tier walkthrough and decision guide while stating
 that every tier obeys Rust coherence, a single context can still justify providers, and generic
