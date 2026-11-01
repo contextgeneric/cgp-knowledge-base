@@ -1,34 +1,20 @@
 # rustc diagnostic internals
 
-`cargo-cgp` exists to read and rewrite the compiler's diagnostics, so it has to know how rustc
-builds those diagnostics and, the point of this document, where rustc deliberately *drops*
-information while building them. A CGP error is unusually vulnerable to that dropping: its types are
-enormous nested lists (`Symbol<6, Chars<'h', …>>`, `Cons<A, Cons<B, …>>`), and rustc's diagnostic
-machinery compresses long or repetitive types on the assumption that a human does not want to read
-them in full. For a downstream consumer trying to recover a root cause, that compression can erase
-the one fact that matters. This document maps the compiler code responsible, so the next agent can
-find a suppression point, decide whether to defeat it, and confirm it against the source rather than
-rediscovering it.
+This document holds what an agent cannot learn from this repository: where rustc deliberately
+**drops** information while building a diagnostic, and what panics when compiler code runs inside
+the emitter. CGP errors are unusually exposed to the first, because their types are enormous nested
+lists and rustc compresses those on the assumption that a human does not want them in full, which
+can erase the one fact that matters.
 
-This document has a second subject that the same foothold forces on the tool. Because the driver
-reaches the live `TyCtxt` and re-runs compiler code (the trait solver, and the queries it pulls in)
-from *inside* `emit_diagnostic`, it runs that code in a place rustc never expected arbitrary
-compiler work to run. Doing so can **panic the compiler**, and the panics are not hypothetical: the
-driver guards against each one described below. The information-dropping map below is
-what the tool must defeat; the
-[panic hazards](#panic-hazards-running-compiler-code-inside-the-emitter) section near the end is
-what it must *avoid*. It is the more dangerous half: an elision produces a worse message, but a
-re-entrancy panic loses the transform. The emitter contains such a panic and shows the diagnostic as
-rustc built it (see [The driver](driver.md#containing-the-drivers-own-panics)), so the user keeps
-their errors, but the CGP reshaping is gone. A panic inside a query also leaves that query
-poisoned, and a later use of it raises a fatal error that ends the compilation early.
+The second subject is the more dangerous. The driver re-runs the trait solver from inside
+`emit_diagnostic`, a place rustc never expected such work, and the panics there are real. The
+emitter [contains them](driver.md#containing-the-drivers-own-panics), so the user keeps their errors
+but loses the reshaping, and a panic inside a query also poisons it, so a later use raises a fatal
+error that ends the compilation early.
 
-Every path here points into the read-only Rust checkout at
-[`../external/rust`](../../../external/rust), pinned to the same nightly the driver embeds (see
-[Toolchain and `rustc_private`](https://github.com/contextgeneric/cargo-cgp/blob/main/AGENTS.md#toolchain-and-rustc_private)).
-These are unstable internals that move between nightlies, so this document names **functions**, not
-line numbers; when a reference has drifted, grep for the function name to relocate it. Treat the
-file as read-only: nothing in `../external/rust` is edited to serve this tool.
+Every path here points into the read-only checkout at [`../external/rust`](../../../external/rust),
+kept at the nightly the driver embeds. These internals move between nightlies, so this document
+names **functions**, not lines. When a reference has drifted, grep for the function's name.
 
 ## Where diagnostics are built
 
@@ -37,10 +23,10 @@ piece of output tells you where to look when that piece is wrong.
 
 **Type and const printing lives in
 [`rustc_middle/src/ty/print/pretty.rs`](../../../external/rust/compiler/rustc_middle/src/ty/print/pretty.rs).**
-This turns a `ty::Ty` into a string, through the `PrettyPrinter` trait and the `FmtPrinter`
-that backs `Ty`'s `Display`. It is where a `Symbol` or a `Chars` chain becomes the characters you
-see, and where the `pretty_print_const_scalar_int` function renders a `char` const literal such as
-`'h'`. It also holds `should_print_verbose`, the gate on the compiler's *internal* debug printing,
+This turns a `ty::Ty` into a string, through the `PrettyPrinter` trait and the `FmtPrinter` that
+backs `Ty`'s `Display`. It is where a `Symbol` or a `Chars` chain becomes the characters you see,
+and where the `pretty_print_const_scalar_int` function renders a `char` const literal such as `'h'`.
+It also holds `should_print_verbose`, the gate on the compiler's *internal* debug printing,
 discussed under
 [the two verbosity switches](#the-two-verbosity-switches---verbose-versus--zverbose-internals)
 below.
@@ -62,8 +48,8 @@ post-processor cannot recover it.
 
 ## The two verbosity switches: `--verbose` versus `-Zverbose-internals`
 
-rustc has two distinct verbosity flags, and the difference between them is the single most useful
-fact in this document, because one is the surgical lever `cargo-cgp` wants and the other is not.
+rustc has two distinct verbosity flags, and one is the lever `cargo-cgp` wants while the other is
+not.
 
 **`opts.verbose` is the broad switch, and it gates every *elision* suppression below.** It
 is set in
@@ -78,15 +64,9 @@ is what `should_print_verbose` in `pretty.rs` returns. Turning it on makes the p
 debug detail meant for compiler developers: disambiguator suffixes on paths, region and
 inference-variable identifiers, explicit `for<…>` binders, and more.
 
-The consequence is that **`--verbose` defeats the elisions without triggering the internal debug
-noise, whereas `-Zverbose-internals` does both.** Because `-Zverbose-internals` sets `opts.verbose`
-as a side effect, it would also un-elide, but it drags in the disambiguators and region ids that
-make a type like `Symbol<6/#0, …>` harder to read, not easier. `cargo-cgp` wants the full field
-name, not the compiler's internal bookkeeping, so it injects the stable `--verbose`. This is the
-reasoning behind
-[`config::VERBOSE_FLAG`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/config/rustc_flags.rs);
-the injection itself, and the reason it is skipped for cargo's info queries, is documented in
-[The driver](driver.md#un-eliding-the-diagnostic).
+So **`--verbose` defeats the elisions without the internal debug noise, while `-Zverbose-internals`
+does both.** Its disambiguators and region ids make a type like `Symbol<6/#0, …>` harder to read, so
+the driver [injects the stable flag](driver.md#un-eliding-the-diagnostic).
 
 ## The suppression points
 
@@ -151,41 +131,24 @@ driver's emitter cuts the list back to rustc's eight and the count (`bound_candi
 
 ### Internal debug printing is left off (deliberately)
 
-The `should_print_verbose` branches throughout `pretty.rs` are *not* something `cargo-cgp` turns on.
-They are gated on `verbose_internals`, not `opts.verbose`, so `--verbose` leaves them off, and that
-is intentional: they add disambiguator suffixes (`#0`), region and inference-variable ids, and
-explicit binders that make CGP types longer and less readable without recovering any field name. If
-a future need arises for one of these details, `-Zverbose-internals` is the lever, but it should be
-a considered choice, because it changes the shape of nearly every type in the output and would
-re-bless the whole UI suite.
+The `should_print_verbose` branches in `pretty.rs` are gated on `verbose_internals`, so `--verbose`
+leaves them off. They add disambiguator suffixes, region and inference-variable ids, and explicit
+binders without recovering any field name. Turning them on would change the shape of nearly every
+type and re-bless the whole UI suite, so make it a considered choice.
 
 ## A different kind of suppression: the trait solver
 
-Not every hidden cause is a printing elision. The archetypal CGP hidden error, a consumer-method
-call whose real missing bound the *default* trait solver may never compute, is suppressed earlier,
-during trait solving, not during printing. On a compiler where that happens (stable Rust stops at
-`Person: Greeter<Person>`), no verbosity flag recovers it, because the information was never
-produced; the pinned nightly does reach the bound, but only in a buried note. The driver defeats it
-with a different injected flag, `-Znext-solver=globally`, which selects a solver that does descend
-to the leaf bound. That mechanism, and why it is a separate lever from `--verbose`, is documented in
-[The driver](driver.md#choosing-the-trait-solver); it is mentioned here only so the two are not
-confused. The rule of thumb: if the cause is *present but compressed* in the text, it is a printing
-elision and `--verbose` is the lever; if the cause is *absent* because the solver stopped short, it
-is a solver problem and `-Znext-solver` is the lever.
+Not every hidden cause is a printing elision. The default solver may never compute a consumer call's
+real missing bound, and then no verbosity flag recovers it. The rule of thumb: if the cause is
+*present but compressed* in the text, `--verbose` is the lever; if it is *absent* because the solver
+stopped short, [`-Znext-solver`](driver.md#choosing-the-trait-solver) is.
 
 ## Panic hazards: running compiler code inside the emitter
 
-The driver runs its typed root-cause resolver from inside a diagnostic emitter, and that placement
-is the source of every panic risk the tool faces. rustc calls the emitter to *render* a finished
-diagnostic; it does not expect the emitter to turn around and drive the trait solver, force queries,
-or relate types. The resolver does exactly that (it re-runs the failing obligation through a fresh
-`InferCtxt`), so it lives in territory rustc's invariants do not cover, and it must respect a few of
-those invariants by hand or the transform fails. The emitter contains the resulting panic and falls
-back to rustc's diagnostic, so the hazards cost the reshaping rather than the compilation, but a
-fallback is still a defect. This section collects the hazards so the next agent recognizes them
-before adding a new compiler interaction to the resolver; the per-feature
-detail lives in [Typed root-cause resolution](typed-root-cause-resolution.md) and
-[The driver](driver.md), and this is the index to it.
+rustc calls the emitter to render a finished diagnostic, and does not expect it to drive the trait
+solver, force queries, or relate types. So the resolver lives where rustc's invariants do not cover
+it, and must respect a few by hand. A contained panic still costs the reshaping, so a fallback is a
+defect. Check a new compiler interaction against every hazard below before trusting it.
 
 ### Re-entering the diagnostic context (`lock was already held`)
 
@@ -205,9 +168,10 @@ and the query emits. Two query paths are known to do this. Forcing `clauses_of` 
 `where`-clause has a type that fails to lower makes `gather_explicit_clauses_of` → `lower_ty` →
 `resolve_type_relative_path` report a resolution error (an `E0599` such as `no variant named …`) the
 first time it is computed; if the resolver forces that query while a diagnostic is being emitted,
-the query's own emission re-enters the lock. Forcing `tcx.typeck` has the same effect at a larger scale: on a body not yet checked it runs the
-whole check there, emitting every error in that body inside the emitter. (rustc replays a query's
-stored diagnostics only when incremental compilation reuses it from an earlier session.)
+the query's own emission re-enters the lock. Forcing `tcx.typeck` has the same effect at a larger
+scale: on a body not yet checked it runs the whole check there, emitting every error in that body
+inside the emitter. (rustc replays a query's stored diagnostics only when incremental compilation
+reuses it from an earlier session.)
 
 A query can also take the lock without emitting anything. `trimmed_def_paths`, the map rustc trims
 paths with, records that trimming happened by setting a flag through the diagnostic context
@@ -247,9 +211,10 @@ it out before running the solver. It keeps the `E0599`s the method probe reports
 type-checked, after collection: the method-bounds shape, and the "no method named" shape the
 data-call anchor takes, both built by `report_no_match_method_error` in
 [`rustc_hir_typeck/src/method/suggest.rs`](../../../external/rust/compiler/rustc_hir_typeck/src/method/suggest.rs).
-An `E0308` on a call's argument comes from the same body type-checking. The same reasoning bans forcing `tcx.typeck` from the emitter
-outright. `E0271`/`E0277` are trait-solving failures reported after collection, so the queries their
-resolution forces are already cached and they are safe to trace. The gate that encodes this is in
+An `E0308` on a call's argument comes from the same body type-checking. The same reasoning bans
+forcing `tcx.typeck` from the emitter outright. `E0271`/`E0277` are trait-solving failures reported
+after collection, so the queries their resolution forces are already cached and they are safe to
+trace. The gate that encodes this is in
 [Typed root-cause resolution](typed-root-cause-resolution.md); the `tcx.typeck` ban is why a call's
 receiver that only typeck could type is out of reach, as the
 [resolver's boundaries](typed-root-cause-resolution.md#boundaries) record.
@@ -297,12 +262,10 @@ crates the first time it looks up the impls of a trait from another crate (`trai
 [`rustc_middle/src/ty/trait_def.rs`](../../../external/rust/compiler/rustc_middle/src/ty/trait_def.rs)),
 and every CGP trait is from another crate.
 
-The through-line is that **the resolver's one safe compiler interaction is the trait solver on a
-fresh `InferCtxt`**, proven re-entrant-safe against a diagnostic being emitted mid-solve. Everything
-else (forcing a global query that can emit, relating an un-instantiated binder, leaking a variable
-across contexts, listing the crates before the store is frozen) must be avoided or carefully
-neutralized. A new compiler interaction added to the resolver or the emitter should be checked
-against every hazard above before it is trusted.
+**The resolver's one safe compiler interaction is the trait solver on a fresh `InferCtxt`,** which
+is re-entrant-safe against a diagnostic being emitted mid-solve. Everything else, forcing a query
+that can emit, relating an un-instantiated binder, leaking a variable across contexts, or listing
+the crates before the store is frozen, must be avoided or neutralized.
 
 ## Finding these again, and going further
 
@@ -312,28 +275,15 @@ nightly the trait-error gates are `maybe_highlight`, the lifetime, type, and ali
 and the expected/found shortening in `expected_found_str_term`, all in `infer/mod.rs`;
 `short_string_namespace` in `ty/error.rs`; and both candidate cutoffs in
 `report_similar_impl_candidates` in `fulfillment_errors.rs`. Other diagnostics have gates too: the
-"...and N other places" cutoff of a borrow-checker move error (`move_errors.rs`), the elided-lifetime
-note limit in `trait_impl_difference.rs`, and the long region-highlighted types in
-`placeholder_error.rs`. (`rustc_codegen_ssa` also reads the flag for a linker failure, which a check
-never reaches.) Searching `pretty.rs` for `should_print_verbose` enumerates the internal-debug
-branches `--verbose` intentionally leaves off.
+"...and N other places" cutoff of a borrow-checker move error (`move_errors.rs`), the
+elided-lifetime note limit in `trait_impl_difference.rs`, and the long region-highlighted types in
+`placeholder_error.rs`. (The codegen crates also read the flag, which a check never reaches.)
+Searching `pretty.rs` for `should_print_verbose` enumerates the internal-debug branches `--verbose`
+intentionally leaves off.
 
-The flag is a session option, so each of these gates opens for every diagnostic in the
-compilation, including the ones the tool leaves alone. [The driver](driver.md#un-eliding-the-diagnostic)
-records that as a known limitation.
-
-Both suppression families are defeated with the coarse argument lever: inject a flag, change nothing
-else. The finer work uses the compiler's own state directly rather than its printed output, and the
-driver's
-[`Callbacks`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/callbacks.rs)
-is where that happens: its `config` hook installs a custom emitter that reaches the live `TyCtxt`
-(from thread-local scope) and rewrites diagnostics before they are serialized. One use of it renames
-CGP wiring notes to name the consumer and provider traits behind a component marker
-([Naming the traits behind a component marker](diagnostic-reshapes.md#naming-the-traits-behind-a-component-marker)),
-and the same seam can re-run trait fulfillment through the `InferCtxt` / `ObligationCtxt` API to
-reconstruct a chain the printed form renders tersely. This is the reason the foothold is worth
-having: once inside the compiler, the full `Symbol` is an interned type you can read exactly,
-whatever the printer chose to show.
+The flag is a session option, so each of these gates opens for every diagnostic in the compilation,
+including the ones the tool leaves alone. [The driver](driver.md#un-eliding-the-diagnostic) records
+that as a known limitation.
 
 ## Further reading
 
@@ -341,3 +291,25 @@ whatever the printer chose to show.
   how a diagnostic is assembled, the level above the string-pushing this document describes.
 - [Errors and lints, in the Rust Compiler Development Guide](https://rustc-dev-guide.rust-lang.org/diagnostics.html):
   the emission pipeline and the crates involved.
+
+## Tests
+
+- [`hidden/unsatisfied-dependency/enum_hasfields_lock`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/enum_hasfields_lock.rs):
+  a resolution-class `E0599` the resolver must decline rather than re-enter the lock.
+- [`checks/check-trait-failure/resolution/higher_ranked_descent`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/resolution/higher_ranked_descent.rs):
+  a higher-ranked obligation, which panics the generalizer without instantiating its binder.
+- [`checks/check-trait-failure/fields/base_area_1`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/base_area_1.rs):
+  the `_` elision defeated. A `_` returning inside its `Symbol` is a regression.
+- [`pass-through/many_implementors`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/many_implementors.rs):
+  the implementor list cut back to rustc's length.
+
+## Source
+
+- [`config/rustc_flags.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/config/rustc_flags.rs):
+  the two injected flags.
+- [`emitter/stage/resolver.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/stage/resolver.rs):
+  the gate that declines a collection-phase `E0599`.
+- [`resolve/query/cgp_item/cgp_crates.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/query/cgp_item/cgp_crates.rs):
+  `crate_uses_cgp`, answering only once the store is frozen.
+- [`resolve/query/impl_match.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/query/impl_match.rs):
+  the binder instantiated before an impl match relates it.
