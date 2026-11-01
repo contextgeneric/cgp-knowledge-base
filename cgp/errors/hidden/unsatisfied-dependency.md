@@ -139,6 +139,11 @@ output never contained at all: `[CGP-E101]` consumer-trait hop → `[CGP-E102]` 
 is an associated function, not a method" and the wrong `Person::greet()` suggestion) is dropped, so
 the recovered cause leads instead of the noise.
 
+Two call shapes stay as rustc wrote them, because no anchor reads them: a method's own `where` bound
+([`method_own_bound_call`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/method_own_bound_call.rs)),
+and a generic consumer called on a field access
+([`generic_consumer_field_access_receiver`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/generic_consumer_field_access_receiver.rs)).
+
 The leaf the tree bottoms out on names the actual mistake, and it varies with the suppressed
 dependency's kind. A genuinely absent field is `[CGP-E110]`; a struct that never derived `HasField`
 coalesces to `[CGP-E111]`; a component the context never wired, or an

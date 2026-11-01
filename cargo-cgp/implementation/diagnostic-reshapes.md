@@ -61,7 +61,7 @@ absent from the map passes through.
 provider and marker. A consumer's blanket reads `impl<C> Consumer for C where C: Provider<C>`, and
 requiring the bound's self type to be the impl's tells it from the provider blanket, which bounds a
 projected `Delegate`. The resolver does not use this map, since it reads names off the `DefId`s it
-walks, so only this text path depends on `IsProviderFor`.
+walks.
 
 These points are easy to break:
 
@@ -77,6 +77,8 @@ These points are easy to break:
 - **A header reattaches a generic component's parameters while a note elides them.** The map records
   each component's parameter count, because a one-parameter component whose parameter is a tuple
   arrives in the shape of two parameters (`CanFormatPair<(u32, u64)>`).
+- **The subject is named as the obligation gives it.** It is usually a provider, but a context that
+  stands in as its own provider reads `` the provider `Rectangle` … for the context `Rectangle` ``.
 - **A generated parameter in the context's place is not called a context:** the provider note leaves
   `__Context__` out, and the consumer note names it plainly.
 
@@ -108,9 +110,11 @@ loop, but only when a wiring entry chose that provider, so a provider held insid
 provider is not named
 ([`dispatcher_cycle`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/dispatcher_cycle.rs)).
 
-**An overflow the walk does not cut keeps rustc's wording.** The resolver never takes an `E0275`,
-because a walk that stops at a bound means that bound's own evaluation overflowed, which no root
-cause states truly
+**An overflow the walk does not cut keeps rustc's wording,** as does one on a check that carries a
+generic parameter, whose wiring the walk cannot read
+([`generic_check_cycle`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/generic_check_cycle.rs)).
+The resolver never takes an `E0275`, because a walk that stops at a bound means that bound's own
+evaluation overflowed, which no root cause states truly
 ([`cross_context_cycle_reuse_distinct`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/cross_context_cycle_reuse_distinct.rs)).
 An overflow can also follow from an unresolved name, whose `{type error}` makes a lookup overflow
 with no cycle. When the name is a wiring entry's, the emitter drops the overflow as

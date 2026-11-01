@@ -141,7 +141,7 @@ collapses into it, and no member's chain is dropped.
 
 The resolver produces only paths, and every merge decision is the graph's. An anchor that wraps a
 result in an enclosing trait prepends its hop to each path and groups by leaf, rather than nesting
-one tree inside another, which is simpler and cannot go structurally wrong. The
+one tree inside another, which is simpler. The
 [cache](cached-dependency-resolution.md) stores these node-rooted paths.
 
 ## Known limits

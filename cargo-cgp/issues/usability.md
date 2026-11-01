@@ -74,8 +74,12 @@ These errors keep the compiler's output because nothing in the tool starts from 
   solves under an empty parameter environment, where the solver does not prove a wiring lookup that
   names the check's own `T`, so a walk would report a wired component as missing. It declines any
   seed holding a type parameter
-  ([`generic_check_context`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/generic/generic_check_context.rs)).
-  Checking one instantiation (`Wrapper<f64>`) resolves as usual.
+  ([`generic_check_context`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/generic/generic_check_context.rs),
+  and the same seed from a generic wrapper impl,
+  [`generic_wrapper_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/generic/generic_wrapper_impl.rs),
+  and from an overflow,
+  [`generic_check_cycle`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/generic_check_cycle.rs)).
+  Checking or calling one instantiation resolves as usual.
 - **A method's own `where` bound:** a generic method bounded by `where Self: CanLoad<T, Output = T>`
   keeps rustc's report, since the bound-call anchor reads a path call's function and not a method's
   bound

@@ -89,7 +89,8 @@ peeling references. These receivers decline here:
 - **One only typeck could type,** a method's result or a field access. The
   [use-site anchor](typed-resolution-anchors.md#the-use-site-anchors) may still reach it, as its
   boundary in the [overview](typed-root-cause-resolution.md#boundaries) states.
-- **A generic context,** whose arguments are what the missing typeck results would supply.
+- **A context type still holding a type parameter,** such as `App<T>` inside `fn run<T>`, whose walk
+  the empty parameter environment cannot judge. One instantiation, `App<u32>`, reads as usual.
 - **A type that is no context.** A foreign type counts when it carries its own wiring
   ([`foreign_context_error_route`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/foreign_context_error_route.rs)).
 
@@ -301,8 +302,9 @@ It reads no method's own bound, which is a [boundary](typed-root-cause-resolutio
 ## Source
 
 - [`resolve/call_site/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/call_site):
-  one file per step: `find_call.rs`, `receiver.rs`, `unbounded.rs`, and `seed.rs` for the call-site anchor,
-  `data_call.rs` and `chain.rs` for the data-call anchor, and `provider_call.rs` and `bound_call.rs`.
+  one file per step: `find_call.rs`, `receiver.rs`, `unbounded.rs`, and `seed.rs` for the call-site
+  anchor, `data_call.rs` and `chain.rs` for the data-call anchor, and `provider_call.rs` and
+  `bound_call.rs`.
 - [`resolve/query/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/query):
   the readers these anchors share with the class detectors: `written_ty.rs`, `lower.rs`,
   `unify_call_inputs.rs`, `binding.rs`, `local_body_exprs.rs`, and `traits_with_method.rs`.

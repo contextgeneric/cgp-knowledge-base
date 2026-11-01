@@ -94,6 +94,9 @@ requirement closes the loop:
 Where raw `rustc` hands you an overflow depth and a chain to decode, the tool states that the lookup
 loops and which provider closes it.
 
+A check that carries a generic parameter keeps rustc's `E0275`, because the walk cannot read its
+wiring under an empty parameter environment.
+
 The `help:` names a provider only when a wiring entry chose it, on the context or through a
 redirect. An `open` error route that raises its own `String` through `DebugError` reads as a cycle
 that `DebugError` closes
@@ -157,6 +160,8 @@ neither shape terminates at any depth, so no limit is high enough.
 
 ## Backing fixtures
 
+- [`wiring/wiring-cycle/generic_check_cycle.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/generic_check_cycle.rs):
+  a cycle under a check that carries a generic parameter, which keeps rustc's `E0275`.
 - [`wiring/wiring-cycle/use_context_cycle.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/use_context_cycle.rs):
   a component wired to `UseContext` with no terminating provider, forced through a
   `check_components!`; its `.rust.stderr` pins the raw `E0275` overflow as the pinned nightly prints

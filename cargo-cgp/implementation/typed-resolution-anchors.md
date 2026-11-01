@@ -121,7 +121,9 @@ broken dependency often surfaces at a call, as an `E0599` with no check impl beh
 "method not found for this struct" span lands on the context's definition, so `resolve_use_site`
 takes each local struct or enum a span lands in, re-checks every component it wires, and keeps those
 that fail. The anchor is not limited to method calls: any failure whose spans land on the definition
-reaches it, which is why a call on a field access still resolves.
+reaches it, which is why a call on a field access still resolves. A span on a generic context's
+definition gives `App<T>`, whose seed declines, so a call on `App<u32>` falls to the call-site
+anchor, which reads the instantiation from the receiver.
 
 Three corners matter here:
 

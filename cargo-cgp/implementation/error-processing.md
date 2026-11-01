@@ -195,11 +195,13 @@ after applying them.
 
 ## Source
 
-The table above links each module. The caller is
-[`emitter/edit/text.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/edit/text.rs), which applies the transforms over a `DiagInner`, and
-[`diagnosis/class_plan.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/class_plan.rs) gathers each reshape's header, notes, and `help`s
-into one value for the stages.
+The table above links each module. These are the entry points into them:
 
-- [`postprocess/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/postprocess):
-  `chain.rs` holds the order and the `Origin` rule, and `spine.rs` the split of a cell both
-  resugarers read.
+- [`postprocess/chain.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/chain.rs):
+  the order and the `Origin` rule.
+- [`postprocess/spine.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/spine.rs):
+  the split of a cell both resugarers read.
+- [`diagnosis/class_plan.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/class_plan.rs):
+  each reshape's header, notes, and `help`s in one value, for the stages.
+- [`cargo-cgp-driver/src/emitter/edit/text.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/edit/text.rs):
+  the caller, applying the transforms over a `DiagInner`.

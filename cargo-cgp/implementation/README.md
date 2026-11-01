@@ -38,12 +38,12 @@ same change.
   that turns a check-failure diagnostic into its root-cause `cargo tree`. It recovers the chain by
   re-running the check obligation through the trait solver (from inside `emit_diagnostic`, since
   `after_analysis` is unreachable once the crate has errors), descends the wiring to each terminal
-  leaf (a `HasField` field or an ordinary bound), and renders the transitive dependency chain with
+  leaf, and renders the transitive dependency chain with
   each wiring trait replaced by its human form. A main message identified as a CGP class is
   rewritten and stamped with its `[CGP-Exxx]` code (the Rust code kept). The sub-notes become a
   single `root cause:` note over the dependency graph of every leaf, and anything the resolver
   declines falls back to the text rewrite. The document is the pipeline overview, with its
-  boundaries and its consolidated tests and source catalogs, over four per-stage documents:
+  boundaries and its catalogs of fixture groups and modules, over its per-stage documents:
   - [Typed resolution: anchoring the starting obligation](typed-resolution-anchors.md): the eight
     span-matching anchors that recover the obligation to walk from a check entry, a
     `#[check_providers]` entry, a hand-written impl, a foreign wrapper chain, a use site, a

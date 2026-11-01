@@ -183,7 +183,9 @@ ordinary bound names none and is keyed with its context. Only a failure whose re
 gives way to its cause coalesces, so a type mismatch does not.
 
 **A group of several becomes one block.** Its members are in source order, the first entry takes the
-one caret, and the others are labelled "also required here". Its causes pass through `Causes::union`
+one caret, and the others are labelled "also required here". Its headline states the shared cause
+under the first member's class code, or every member's class sentence with a count when the causes
+are mixed. Its causes pass through `Causes::union`
 first, because members grouped for sharing a cause hold one copy each, and would otherwise state the
 mistake once per member. The [dependency graph](dependency-graph-rendering.md) then does the
 merging, so the chain that subsumes another leads

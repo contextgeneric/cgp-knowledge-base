@@ -22,8 +22,9 @@ naming the trait off its `DefId`, so it stays exact when two components share a 
 | `[CGP-E005]` | An `E0271` traced to any other associated type | none: the cause is the headline |
 | `[CGP-E050]` | A call to an extensible-data operation | as `[CGP-E003]` |
 
-`[CGP-E003]` and `[CGP-E050]` name a foreign subject, or one that carries no wiring, plainly rather than
-calling it a context. A data cause reached through a check or a consumer keeps that anchor's class.
+`[CGP-E003]` and `[CGP-E050]` name a foreign subject, or one that carries no wiring, plainly rather
+than calling it a context. A data cause reached through a check or a consumer keeps that anchor's
+class.
 
 **The displayed headline states the causes the note lists, by three rules:**
 
@@ -43,8 +44,8 @@ The class sentence also stays as the block's internal headline for the de-duplic
 a re-report the resolver declined carries that wording from the text rewrite.
 
 **A mismatch's headline is unusually specific.** Here `HasField<Symbol!("height")>` holds, since
-`Rectangle` derives it, but with `Value = i32`, so only the projection fails. The resolver reads the expected
-type from the projection and the actual type off the struct:
+`Rectangle` derives it, but with `Value = i32`, so only the projection fails. The resolver reads the
+expected type from the projection and the actual type off the struct:
 
 ```rust
 #[cgp_impl(new RectangleArea)]
@@ -142,8 +143,8 @@ These corners of the wording are easy to break:
   ([`multi_redirect_missing`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/multi_redirect_missing.rs),
   [`open_aggregate_missing_entry`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/open_aggregate_missing_entry.rs)).
 - **The step above a not-a-provider leaf reads as a requirement,**
-  ``provider trait `Greeter` required of provider `NotAGreeter` with context `App` ``, rather than as the impl
-  the provider lacks.
+  ``provider trait `Greeter` required of provider `NotAGreeter` with context `App` ``, rather than
+  as the impl the provider lacks.
 - **A provider for other arguments names no fix,** since only the reader knows whether the wiring or
   the provider should change. Several impls join with "or", and an impl's own generic parameters
   print as `_`.

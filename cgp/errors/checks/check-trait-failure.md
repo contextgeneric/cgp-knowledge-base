@@ -301,6 +301,11 @@ derives `HasField` for its other fields, or `` add `#[derive(HasField)]` to `Per
 derive-missing variant. The codes are defined in the
 [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
 
+A check on a generic context, `<T> App<T>`, is the exception: the resolver declines it, so rustc's
+headline stays over the renamed notes and the `missing field` help
+([`generic_check_context`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/generic/generic_check_context.rs)).
+Checking or calling one instantiation resolves as usual.
+
 The headline code follows the trait the failing entry or call names, and the cause and its tree read
 the same under each. A `#[check_providers(...)]` entry asserts a provider's trait directly, so its
 block is `[CGP-E002]` and its tree starts at that provider
@@ -503,6 +508,10 @@ reduce to the same `[CGP-E001]` headline and `root cause:` tree.
   the wiring-note and header rewrites over a component with *three* generic parameters, so the parameters reach `CanUseComponent`/`IsProviderFor` grouped in a tuple.
 - [`checks/check-trait-failure/generic/generic_check_context.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/generic/generic_check_context.rs):
   a check that carries a generic parameter, which the resolver declines.
+- [`checks/check-trait-failure/generic/generic_context_call.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/generic/generic_context_call.rs):
+  a consumer called on one instantiation of a generic context.
+- [`checks/check-trait-failure/generic/generic_wrapper_impl.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/generic/generic_wrapper_impl.rs):
+  a wrapper impl generic over the context's parameter, which the resolver declines.
 - [`checks/check-trait-failure/generic/lifetime_component.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/generic/lifetime_component.rs):
   a component carrying a *lifetime* parameter, failing its check on a missing field.
 - [`checks/check-trait-failure/generic/tuple_param_component.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/generic/tuple_param_component.rs):
