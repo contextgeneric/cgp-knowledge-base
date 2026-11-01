@@ -52,158 +52,95 @@ the redirect resolves to a table slot that holds nothing.
 
 ## The raw diagnostic
 
-This section describes what plain `cargo check` prints, the fallback when `cargo-cgp` is not on
-hand; [How cargo-cgp presents it](#how-cargo-cgp-presents-it) below covers the readable form. This
-is a **surfaced** class, and unusually the root cause *is the primary error* rather than a note
-beneath it. Forcing the wiring through a
-[`check_components!`](../../reference/macros/check_components.md) produces an `E0277` whose headline
-is that the *path* does not implement the namespace lookup trait:
-`PathCons<Symbol!("app"), PathCons<GreeterComponent, Nil>>: DefaultNamespace<App>` is not satisfied,
-with the caret on the checked `GreeterComponent` entry. The failing bound's `Self` is a
-`PathCons<…>` path, not a bare component marker, and that is the signature of the class: the
-compiler is reporting that the redirect target has no table entry. The nightly `cargo-cgp` pins
-leads one bound higher, on `RedirectLookup<App, PathCons<…>>: IsProviderFor<_, App>`, and drops the
-`DefaultNamespace` help list below, so there the `RedirectLookup` over a `PathCons` path is the
-signature to look for.
+This section describes plain `cargo check`, the fallback when `cargo-cgp` is not on hand. This is a **surfaced**
+class, and the root cause is the primary error. A check produces an `E0277` saying the *path* does not implement
+the namespace lookup trait, with the caret on the checked entry:
 
-Two notes below the headline confirm the reading and are worth recognizing. A
-`note: required for App to implement DelegateComponent<PathCons<…>>` names the exact missing table
-entry (the path for which `App` has no delegate) and a
-`note: required for RedirectLookup<App, PathCons<…>> to implement IsProviderFor<GreeterComponent, App>`
-names the [`RedirectLookup`](../../reference/providers/redirect_lookup.md) provider the redirect
-resolved to. A `Self` that is a `RedirectLookup` or a `PathCons` path, rather than a real provider
-struct, always means the failure is in the lookup, not in a provider's dependencies.
+```text
+error[E0277]: the trait bound `PathCons<Symbol<3, Chars<'a', _>>, _>: DefaultNamespace<App>` is not satisfied
+```
 
-One landmark reads at first like a contradiction and is in fact diagnostic. Beneath the headline the
-compiler prints `help: the following other types implement trait DefaultNamespace<Components>:` and
-lists the component *markers* that the namespace does resolve, including the bare `GreeterComponent`
-marker. That the marker implements `DefaultNamespace` while the *path*
-`PathCons<app, GreeterComponent>` does not tells you the `#[prefix]` registration succeeded (the
-component is in the namespace) but the path it routes to was never filled. The problem is a missing
-binding at the leaf, not a missing prefix.
+The failing bound's `Self` is a `PathCons<…>` path rather than a component marker, which is the class's signature.
+The nightly `cargo-cgp` pins leads one bound higher, on `RedirectLookup<App, PathCons<…>>: IsProviderFor<_, App>`,
+and drops the `DefaultNamespace` help list below, so there a `RedirectLookup` over a `PathCons` path is the
+signature.
 
-The diagnostic itself is ordinary `rustc` trait-solving, which is worth seeing so the shape is not
-mistaken for something exotic. [`E0277`](../error_codes/e0277.md) is the code for an unsatisfied
-trait bound, and everything here is standard obligation resolution. Proving the check's
-`App: CanUseComponent<GreeterComponent>` obligation drives the solver through the `RedirectLookup`
-provider, which implements the component's provider trait only
-`where Components: DelegateComponent<Path>`, so the solver must discharge
-`App: DelegateComponent<PathCons<…>>`, finds no impl at that path, and reports *that* bound as the
-unsatisfied one. The `required for …` lines are `rustc`'s ordinary obligation-tracing output for the
-proof, and the `help: the following other types implement trait …` list is its stock "an impl of the
-same trait exists" hint, pointing at the keys the namespace *does* resolve. What makes this class
-read as "surfaced at the top" rather than buried is only that the unmet bound is a *lookup*
-(`DelegateComponent`/`DefaultNamespace`) with no impl at all, so it is the first obligation to fail,
-unlike a [check-trait failure](check-trait-failure.md), where a provider *is* found and the solver
-descends into its `where` clause before reporting the leaf in a `help:` note.
+Two notes confirm the reading. `` required for `App` to implement `DelegateComponent<PathCons<…>>` `` names the
+missing table entry, and `` required for `RedirectLookup<App, PathCons<…>>` to implement `IsProviderFor<GreeterComponent, App>` ``
+names the [`RedirectLookup`](../../reference/providers/redirect_lookup.md) provider the redirect resolved to. A
+`Self` that is one of these, rather than a provider struct, means the failure is in the lookup. The compiler
+elides the path and names a `long-type-….txt` file that holds it in full.
+
+The `help:` list reads at first like a contradiction. `the following other types implement trait DefaultNamespace<Components>`
+lists markers the namespace resolves, which can include the bare `GreeterComponent`. A marker that implements the
+trait beside a path that does not means the `#[prefix]` registration succeeded and only the binding at the path is
+missing.
+
+The lookup is the first obligation to fail. Proving `App: CanUseComponent<GreeterComponent>` goes through
+`RedirectLookup`, which implements the provider trait only where `App: DelegateComponent<Path>`, and no impl exists at
+that path. In a [check-trait failure](check-trait-failure.md), by contrast, a provider is found and the solver
+descends into its `where` clause.
 
 ## Where the root cause is
 
-The root cause is **present and sits at the top of the output**, in the primary `E0277` line and its
-first `required for … DelegateComponent<PathCons<…>>` note. This is the opposite position from a
-[check-trait failure](check-trait-failure.md), whose concrete leaf lives in a `help:` note *below*
-the primary error; here the unsatisfied lookup bound *is* the primary error, and the `required for`
-notes build outward from it toward the check. Reading the `PathCons<…>` key of that bound tells you
-which path is unbound; decode it with the [`Symbol!`](../../reference/macros/symbol.md) segments, or
-read the `long-type-….txt` file the compiler names when the path is elided as `...`.
+The root cause is **present at the top**, in the primary `E0277` and its first `required for … DelegateComponent<PathCons<…>>`
+note. The `PathCons<…>` key says which path is unbound; read the `long-type-….txt` file for its full form.
 
-Exercised without a check (by calling the consumer-trait method on the context) the same broken
-wiring instead produces the [hidden `E0599`](../hidden/unsatisfied-dependency.md): "the method
-`greet` exists for struct `App`, but its trait bounds were not satisfied," naming only
-`App: CanGreet`/`App: Greeter<App>` and descending no further. That output is byte-for-byte the
-shape of the hidden unsatisfied-dependency class, because the compiler's method-probe heuristic
-drops the nested lookup bound exactly as it drops a nested dependency bound. So an unregistered path
-is hidden when reached by a call and surfaced when reached by a check, and only the check reveals
-which path is empty.
+Exercised by a call on the context, the same wiring produces the
+[hidden `E0599`](../hidden/unsatisfied-dependency.md), naming only `App: CanGreet`, because the method probe drops the
+nested lookup bound. So only a check reveals which path is empty.
 
 ## How cargo-cgp presents it
 
-`cargo-cgp` recasts the raw lookup failure from the machinery's point of view to the programmer's:
-it keeps the `E0277` code but replaces the `PathCons<…>: DefaultNamespace<App>` headline with the
-empty path, `` [CGP-E001] missing wiring for `@app.GreeterComponent` on `App` ``, and states it
-again in a `` root cause: [CGP-E113] missing wiring for `@app.GreeterComponent` on `App` `` note.
-The tree between them is short: `[CGP-E101]` consumer-trait hop → `[CGP-E103]` redirect-lookup hop
-naming the path → the `[CGP-E113]` leaf, so the `RedirectLookup` and `DelegateComponent` scaffolding
-of the raw form collapses into one readable "redirect lands on an empty slot" chain. The
-`PathCons<Symbol!(…)>` list is resugared to its surface `@app.GreeterComponent` notation throughout,
-which is the single biggest readability win over the raw output, where the path is an abbreviated
-`PathCons<Symbol<3, Chars<..>>, _>`.
+`cargo-cgp` keeps the `E0277` code and replaces the headline with the empty path,
+`` [CGP-E001] missing wiring for `@app.GreeterComponent` on `App` ``, stated again in a
+`` root cause: [CGP-E113] missing wiring for `@app.GreeterComponent` on `App` `` note. The tree is short: a
+`[CGP-E101]` consumer hop, a `[CGP-E103]` redirect hop naming the path, then the leaf. The path reads in its surface
+`@` notation throughout.
 
 The shape scales with how the redirect fails. A deep prefix renders its whole path
-(`@app.finance.types.QuantityTypeProviderComponent`); a chain of redirects that never terminates
-prints one `[CGP-E103]` hop per link before the `[CGP-E113]` leaf (`@start.GreeterComponent` →
-`@middle` → `@end`); and an `open` per-type dispatch missing a key names the type in the path
-(`@ItemEncoderComponent.Vec<u8>`). When the context wires nothing at the path, the leaf is
-`[CGP-E113]`. When the path is missing from an aggregate provider, whether it `open`s the component
-in its own table or joins the namespace itself, the leaf is the `[CGP-E114]` provider-table leaf
-instead, `` missing entry for `@ComputerComponent.Sink.Digest` in provider `ByteSink` ``, and the
-`[CGP-E103]` hop above it reads `` in `ByteSink` ``, so the tree names the table the entry belongs
-in. When the context wires a key that is a likely slip of the missing one (a recased symbol,
-`@App.GreeterComponent`, or a doubled prefix segment), a `help` names it first, as
-`` a similar key exists in the wiring of `App`: `@App.GreeterComponent` ``. A `help` after the note
-names the entry to write, `` wire `@app.GreeterComponent` to a provider in the wiring of `App` ``
-(or `` add an entry for `@ComputerComponent.Sink.Digest` to `ByteSink` ``). A path wired directly on
-the context is a valid entry beside its namespace join, and so is a registration from the provider's
-side, which [Resolving it](#resolving-it) describes. The codes are defined in the
-[cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
+(`@app.finance.types.QuantityTypeProviderComponent`), a chain of redirects prints one `[CGP-E103]` hop per link
+(`@start.GreeterComponent`, `@middle`, `@end`), and an `open` dispatch missing a key names the type in the path
+(`@ItemEncoderComponent.Vec<u8>`). A path missing from an aggregate provider, which `open`s the component in its own
+table or joins the namespace itself, ends on the `[CGP-E114]` leaf instead,
+`` missing entry for `@ComputerComponent.Sink.Digest` in provider `ByteSink` ``, and the hop above reads `` in `ByteSink` ``.
+
+A `help` names the entry to write, `` wire `@app.GreeterComponent` to a provider in the wiring of `App` `` or
+`` add an entry for `@ComputerComponent.Sink.Digest` to `ByteSink` ``. When the context wires a likely slip of the key,
+such as a recased symbol or a doubled prefix segment, a near miss comes first:
+`` a similar key exists in the wiring of `App`: `@App.GreeterComponent` ``. The
+[cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md) defines the codes.
 
 ## Resolving it
 
-The fix is to bind a provider at the path the component routes to. Register it from the provider's
-own definition with
-[`#[default_impl(@app.GreeterComponent in Namespace)]`](../../reference/attributes/default_impl.md),
-add a namespace **body** entry (`@app.GreeterComponent: GreetHello`) in the namespace's own crate,
-or wire the path directly on the context (`@app.GreeterComponent: GreetHello`), whichever matches
-where the wiring belongs, per the [namespaces guide](../../guides/namespaces-and-prefixes.md). When
-the path itself is wrong (a prefix and a wiring that disagree on the path, or a joined namespace
-that does not inherit the base the component was prefixed into) the fix is to reconcile the two so
-the redirect and the binding name the same path.
+Bind a provider at the path the component routes to: register it with
+[`#[default_impl(@app.GreeterComponent in Namespace)]`](../../reference/attributes/default_impl.md), add a namespace
+body entry (`@app.GreeterComponent: GreetHello`) in the namespace's crate, or wire the path directly on the context,
+per the [namespaces guide](../../guides/namespaces-and-prefixes.md). When a prefix and a wiring disagree on the path, or
+a joined namespace does not inherit the base the component was prefixed into, reconcile them.
 
-A related variant resolves to a delegate that exists but is not a provider for the component: a path
-wired to the wrong provider produces an `E0277` where the `RedirectLookup`'s delegate (a named
-provider) fails to implement the component's provider trait, rather than the `DelegateComponent`
-lookup failing outright. The remedy there is to wire the path to a provider that actually implements
-the component.
+A related variant resolves to a delegate that is not a provider for the component: a path wired to the wrong provider
+fails on the provider's own trait rather than the lookup, and the fix is to wire a provider that implements it.
 
 ## Notes for tooling
 
-`cargo-cgp` already extracts the unbound path: the `[CGP-E113]` leaf decodes the `PathCons` key back
-to `@app.GreeterComponent` and reports that the context wires nothing there. What remains for a tool
-is the **fix hint** the raw `help:` list makes available but `[CGP-E113]` does not spell out:
-because the bare component marker still resolves through the namespace while the path does not, the
-registration succeeded and only the leaf binding is missing, so the actionable advice "you likely
-forgot a `#[default_impl]` or body entry" could be added rather than left for the reader to infer.
+A marker that resolves beside a path that does not shows the binding alone is missing, so a tool could add "you likely
+forgot a `#[default_impl]` or body entry". The `[CGP-E113]` `help` names the entry to write, without that reason.
 
 ## Backing fixtures
 
 - [`checks/unregistered-namespace-path/unregistered_prefix_path.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/unregistered_prefix_path.rs):
-  a `#[prefix]`-ed `Greeter` joined through `DefaultNamespace` with no provider ever bound at
-  `@app.GreeterComponent`; its `.rust.stderr` pins the output of the pinned nightly, which leads one
-  bound higher than stable, with the primary `E0277` on
-  `RedirectLookup<App, PathCons<…>>: IsProviderFor<_, App>` and a `help:` list of the components
-  `RedirectLookup` serves rather than stable's `DefaultNamespace` list, while its `.cgp.stderr`
-  recasts this as `[CGP-E001]` over a `root cause: [CGP-E113] … @app.GreeterComponent` tree with a
-  `[CGP-E103]` redirect hop.
+  a `#[prefix]`ed `Greeter` joined through `DefaultNamespace`, with nothing bound at `@app.GreeterComponent`.
 - [`checks/unregistered-namespace-path/qualified_prefix_path.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/qualified_prefix_path.rs):
-  a deep prefix whose `[CGP-E113]` leaf renders the full
-  `@app.finance.types.QuantityTypeProviderComponent` path, pinning that the resugaring reproduces
-  multi-segment paths intact.
+  a deep prefix whose leaf renders the full `@app.finance.types.QuantityTypeProviderComponent` path.
 - [`checks/unregistered-namespace-path/multi_redirect_missing.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/multi_redirect_missing.rs):
-  a chain of redirects that never terminates, so the `.cgp.stderr` tree stacks one `[CGP-E103]` hop
-  per link (`@start.GreeterComponent` → `@middle` → `@end`) before the `[CGP-E113]` leaf at `@end`.
+  a chain of redirects that never terminates, one `[CGP-E103]` hop per link.
 - [`checks/unregistered-namespace-path/open_missing_type_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/open_missing_type_key.rs):
-  an `open` per-type dispatch missing a type key, where the `[CGP-E113]` leaf names the type in the
-  path (`@ItemEncoderComponent.Vec<u8>`) and the consumer headline is the generic
-  `CanEncodeItem<Vec<u8>>`.
+  an `open` dispatch missing a type key, named in the path (`@ItemEncoderComponent.Vec<u8>`).
 - [`checks/check-trait-failure/missing-wiring/open_aggregate_missing_entry.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/open_aggregate_missing_entry.rs):
-  a context routes one code to an aggregate provider that `open`s `ComputerComponent` in its own
-  table and dispatches on the input, and the aggregate lacks the input the check asks for; the
-  `.cgp.stderr` pins the `[CGP-E114]` leaf naming the aggregate and the `[CGP-E103]` hop that reads
-  `` in `ByteSink` ``.
+  an aggregate provider that `open`s `ComputerComponent` and lacks the input the check asks for: the `[CGP-E114]` leaf.
 - [`checks/unregistered-namespace-path/namespace_aggregate_missing_entry.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/namespace_aggregate_missing_entry.rs):
-  a context forwards `@app` to a path-keyed aggregate provider that joins `DefaultNamespace` itself
-  and lacks `@app.NamerComponent`; the `.cgp.stderr` pins the `[CGP-E114]` leaf naming the
-  aggregate, whose namespace lookup is the unmet bound.
+  a path-keyed aggregate that joins `DefaultNamespace` itself and lacks `@app.NamerComponent`: the `[CGP-E114]` leaf.
 - [`checks/unregistered-namespace-path/namespace_not_inheriting_base.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/namespace_not_inheriting_base.rs):
   a context joining a namespace that does not inherit the namespace its component is prefixed into.
 - [`checks/unregistered-namespace-path/near_miss_in_another_context.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/near_miss_in_another_context.rs):
