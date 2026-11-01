@@ -1,77 +1,50 @@
 # Typed resolution: the transformed diagnostic
 
-This document covers the output side of the driver's
-[typed root-cause resolution](typed-root-cause-resolution.md): the three parts a resolved failure's
-diagnostic is rebuilt from (the coded headline, the `root cause:` notes, and the fix `help`s), and
-how the emitter applies the rustc-free plan to the compiler's `DiagInner`. The recovery that
-produces the causes being worded here is the subject of [the anchors](typed-resolution-anchors.md)
-and [the walk](typed-resolution-walk.md).
+A resolved failure's diagnostic is rebuilt from three parts: a coded headline, one `root cause:`
+note, and the fix `help`s. The wording is decided in the rustc-free crate from the `Resolved` model
+and only applied by the emitter. [The anchors](typed-resolution-anchors.md) and
+[the walk](typed-resolution-walk.md) produce the causes worded here, and
+[error-code.md](../error-code.md) catalogs every code with its example.
 
 ## The coded headline
 
-The main message is rewritten only when the resolution identifies a CGP class, and then it states
-the cause, after the class's code; the Rust error code (`E0277`, `E0599`, `E0271`) is always kept.
-The worked example's headline is `` [CGP-E001] missing field `height` on `Rectangle` ``: the code
-says what kind of failure it is, and the sentence says what to fix.
+**The class comes from the anchor, never from the bound rustc's headline stopped on,** because that
+bound may be dispatch plumbing or a provider deep in the chain, which the programmer never asserted
+on. The Rust error code (`E0277`, `E0599`, `E0271`) is always kept. Each class has a class sentence,
+naming the trait off its `DefId`, so it stays exact when two components share a name:
 
-Six classes choose the code, and the anchor that matched the caret decides which, never the bound
-rustc's own headline stopped on:
+| Code | Class | Class sentence |
+| --- | --- | --- |
+| `[CGP-E001]` | A context that cannot implement a consumer trait | `` the consumer trait `C` is not implemented for context `X` `` |
+| `[CGP-E002]` | A `#[check_providers]` entry, or a provider's method called directly | `` the provider trait `P` with context `X` is not implemented for provider `Q` `` |
+| `[CGP-E003]` | A trait that is no consumer: a hand-written wrapper or a blanket trait | `` the trait `W` is not implemented for … `` |
+| `[CGP-E004]` | An `E0271` traced to a `HasField` projection | none: the cause is the headline |
+| `[CGP-E005]` | An `E0271` traced to any other associated type | none: the cause is the headline |
+| `[CGP-E050]` | A call to an extensible-data operation | as `[CGP-E003]` |
 
-- **`[CGP-E001]`, the consumer class**, for a context that cannot implement a consumer trait, a
-  [check-trait failure](../../cgp/errors/checks/check-trait-failure.md), whether reached through a
-  check entry, a consumer-method `E0599`, or a bound. It holds even when rustc's headline opens on a
-  provider's `IsProviderFor` bound: that provider may be dispatch plumbing, a `RedirectLookup`, or a
-  provider deep in the chain, none of which the programmer asserted on.
-- **`[CGP-E002]`, the provider class**, for a `#[check_providers]` entry or a provider's own method
-  called directly, whose anchor records the provider (see [the anchors](typed-resolution-anchors.md)).
-- **`[CGP-E003]`, the plain-trait class**, for a trait that is *not* itself a CGP consumer: a
-  hand-written wrapper with only a concrete impl, such as `CanCalculateAreaChecked`, or a
-  `#[cgp_fn]`/`#[blanket_trait]` blanket trait, told apart from `[CGP-E001]` by its fingerprint
-  (see [the impl-site and wrapper-chain anchors](typed-resolution-anchors.md)).
-- **`[CGP-E004]`, the field-type mismatch**, for an `E0271` the resolver traced to a `HasField`
-  projection: a field whose name matches but whose type does not.
-- **`[CGP-E005]`, the abstract-type mismatch**, for an `E0271` the resolver traced to any *other*
-  associated-type projection, most often a CGP abstract type the context binds one way while a
-  provider pins it another. It is `[CGP-E004]`'s sibling in every respect but the trait the
-  projection sits on.
-- **`[CGP-E050]`, the extensible-data class**, for a call to one of CGP's extensible-data operations
-  (a cast such as `upcast`, a builder or extractor operation), which the data-call anchor records
-  as `ResolvedClass::DataOperation`. These traits are not components, so its class sentence is the
-  plain-trait one; a data cause reached through a check or a consumer keeps that anchor's class.
+`[CGP-E003]` and `[CGP-E050]` name a foreign subject, or one that carries no wiring, plainly rather than
+calling it a context. A data cause reached through a check or a consumer keeps that anchor's class.
 
-The sentence after the code states the causes the note lists, by three rules:
+**The displayed headline states the causes the note lists, by three rules:**
 
-- **One cause** is stated as itself, in the same sentence the `root cause:` line and the tree's last
-  entry use (``missing wiring for `FarewellComponent` on `App` ``, say).
-- **Several causes of one kind on one owner** are stated together: fields missing from one struct
-  (`` missing fields `first_name` and `last_name` on `Person` ``), wiring missing from one context,
-  or entries missing from one provider's table. A list longer than four names its first three and
-  counts the rest (`` missing fields `alpha`, `beta`, `gamma`, and 3 more on `App` ``), while the
-  note lists every cause
+- **One cause** reads as itself, in the same sentence the `root cause:` line and the tree's last
+  entry use.
+- **Several causes of one kind on one owner** are stated together: fields missing from a struct
+  (`` missing fields `first_name` and `last_name` on `Person` ``), wiring missing from a context,
+  entries missing from a table, or data traits a type lacks. A list longer than four names its first
+  three and counts the rest, while the note lists every cause
   ([`many_missing_fields`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/many_missing_fields.rs)).
-- **Mixed causes** keep the class sentence with their count, and the note lists each:
+- **Mixed causes** keep the class sentence with their count:
   `` [CGP-E001] the consumer trait `CanCalculateVolume` is not implemented for context `Shape`: 2 root causes ``.
 
-Wherever the causes are listed (the headline, the `root causes:` list, and the tree's branches),
-they follow the order the walk reached them, which is the order the program wrote each step's
-requirements (see [the walk](typed-resolution-walk.md#walking-the-dependency-graph-downward)).
+Causes are listed in the order the walk reached them, which is
+[the order the program wrote them](typed-resolution-walk.md#walking-the-dependency-graph-downward).
+The class sentence also stays as the block's internal headline for the de-duplication ledger, since
+a re-report the resolver declined carries that wording from the text rewrite.
 
-Each class has its own class sentence, which names the trait off its `DefId`, so it is exact even
-when two components share a name in different modules:
-
-- **`[CGP-E001]`:** `` the consumer trait `C` is not implemented for context `X` ``.
-- **`[CGP-E002]`:** `` the provider trait `P` with context `X` is not implemented for provider `Q` ``.
-- **`[CGP-E003]`** and **`[CGP-E050]`:** `` the trait `W` is not implemented for … ``, naming a
-  foreign subject, or a blanket or data trait's subject that carries no wiring, plainly rather than
-  calling it a context.
-
-The class sentence is also the block's **internal headline**: the de-duplication ledger records it,
-since a re-report the resolver declined is worded with it by the text rewrite (see
-[The driver](driver.md)). The two mismatch classes have no separate class sentence; their headline
-is their cause.
-
-The field-type-mismatch class is worth showing, because its headline is unusually specific. Reusing
-the area example but giving `Rectangle` a `height` of the wrong type:
+**A mismatch's headline is unusually specific.** Here `HasField<Symbol!("height")>` holds, since
+`Rectangle` derives it, but with `Value = i32`, so only the projection fails. The resolver reads the expected
+type from the projection and the actual type off the struct:
 
 ```rust
 #[cgp_impl(new RectangleArea)]
@@ -88,422 +61,187 @@ pub struct Rectangle {
 }
 ```
 
-`RectangleArea` reads `height` as an `#[implicit]` argument of type `f64`, so
-`HasField<Symbol!("height")>` *is* implemented for `Rectangle` (it derives it) but with
-`Value = i32`; the trait bound holds, and only the associated-type projection
-`<Rectangle as HasField<Symbol!("height")>>::Value == f64` fails, an `E0271`. The **root cause is
-the type mismatch on the `height` field**, and the resolver reads the expected type from the failing
-projection and the actual type off the struct:
-
 ```text
 error[E0271]: [CGP-E004] field `height` on `Rectangle` has type `i32`, but `f64` is required
+  --> src/main.rs:47:9
+   |
+47 |         AreaCalculatorComponent,
+   |         ^^^^^^^^^^^^^^^^^^^^^^^
+   |
    = note: this is required through the dependency chain:
              [CGP-E101] consumer trait impl `CanCalculateArea` for context `Rectangle`
              └─ [CGP-E102] provider trait impl `AreaCalculator` with context `Rectangle` for provider `RectangleArea`
                └─ [CGP-E112] field `height` on `Rectangle` has type `i32`, but `f64` is required
 ```
 
-Two cases keep rustc's own headline rather than a coded one. A main message that already states a
-**genuine recovered leaf** (an ordinary bound such as `f64: Eq` the next-generation solver descended
-to, which is itself the root cause) is left untouched, header and caret and all, because it already
-names the cause. The one exception is an empty list: rustc prints CGP's empty list as `Nil`, while
-the leaf, which reads the type, writes it `Product![]`, so the headline takes the leaf's wording in
-rustc's sentence (`` the trait bound `Product![]: PickFirst` is not satisfied ``), still uncoded,
-and the caret drops its label, which restates the bound with `Nil`
-([`constrained_delegate_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/constrained-key/constrained_delegate_key.rs);
-an empty sum reads `Sum![]` for rustc's `Void` the same way,
-[`constrained_delegate_key_empty_sum`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/constrained-key/constrained_delegate_key_empty_sum.rs)).
-But a main message that states a *mid-chain symptom* (an ordinary bound that is not one of the
-recovered leaves, such as a getter bound on a request whose real cause is a missing wiring a level
-down) is replaced by a `[CGP-E001]` headline stating the recovered cause. And a main message that is
-neither a trait bound nor a resolved class (an unrelated `E0308`) is always kept.
+An `E0271` traced to anything else is a consequence rather than a mismatch: a `Send`-recovery
+wrapper's opaque future, say, whose `type mismatch resolving …` is unreadable. It takes the anchor's
+class
+([`foreign_wrapper_chain`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/duplication/foreign_wrapper_chain.rs)).
+
+**rustc's headline survives in two cases:**
+
+- **It states a recovered leaf,** such as an ordinary bound like `f64: Eq` the solver descended to,
+  so it already names the cause. The one change is an empty list, which rustc prints as `Nil` or
+  `Void` and the leaf writes `Product![]` or `Sum![]`, so the headline takes the leaf's wording,
+  uncoded
+  ([`constrained_delegate_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/constrained-key/constrained_delegate_key.rs),
+  [`constrained_delegate_key_empty_sum`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/constrained-key/constrained_delegate_key_empty_sum.rs)).
+- **It is no trait bound and names no class,** such as an unrelated `E0308`.
+
+A headline that states a mid-chain symptom, an ordinary bound that is no recovered leaf, is
+replaced: naming the trait the context fails to implement is truer than leaking the symptom.
 
 ## The root-cause notes
 
-Whatever happens to the headline, the sub-messages are always replaced. rustc's obligation-chain
-notes, supplementary help, and structured suggestions are discarded, and each recovered root cause
-becomes one `= note:` opening with a `root cause:` lead that names the leaf, followed by the
-dependency chain rendered as a tree. The chain **repeats the root cause as its own terminal leaf**,
-so it always bottoms out *at* the cause rather than one step before it, whatever the leaf's kind. A
-branch elided against an earlier block
-([cross-block elision](dependency-graph-rendering.md#eliding-across-blocks)) keeps that terminus
-too, and a note with no chain at all names the cause in its lead instead. Every lead and every tree
-entry carries a [`CGP-E1xx` code](../error-code.md) (the wording below omits the prefix
-for brevity). Paths render as a bare `@app.GreeterComponent` (the `Path!(@…)` macro form is reserved
-for the resugaring fallback), and module qualifiers are stripped throughout except where they tell
-two types apart, so `cgp::prelude::HasErrorType` reads as `HasErrorType` while `std::io::Error`
-keeps its path (see [Resugaring](resugaring.md#the-path-strips-that-run-first)). The chain is
-indented two spaces under its heading.
+**rustc's sub-messages are always replaced, and a failure gets one note however many causes it
+has.** Every cause's paths fold into one [dependency graph](dependency-graph-rendering.md), which
+merges the nodes they share and branches where they diverge. This collapses the long prefix a
+program-sized context type would otherwise repeat. The heading is a singular `root cause:` when all
+paths end on one leaf, or a `root causes:` list when they differ.
 
-A failure with **several root causes** (the usual shape, since every cause descends from the one
-failing obligation the walk seeded) is always rendered as a **single** note, not one per cause:
-every cause's paths are folded into one [dependency graph](dependency-graph-rendering.md), which
-merges the nodes they share by structural identity (a node reached again is `(*)`-referenced) and
-branches where they diverge, each branch ending at its own leaf. The graph fuses exactly the shared
-dependencies and no more, so causes that share a common ancestor collapse the enormous restated
-prefix a program-sized context type would otherwise repeat, while genuinely independent causes
-render as their own root trees stacked in the one note. The heading lists the distinct leaves: a
-singular `root cause:` lead when they all bottom out on the same leaf, or a `root causes:` list
-(each with its own code, so a reader sees every cause at a glance) when they differ.
+The chain repeats the root cause as its own last entry, so it always ends at the cause. A branch
+[elided against an earlier block](dependency-graph-rendering.md#eliding-across-blocks) keeps that
+end too, and a note with no chain names the cause in its lead. Paths render as a bare
+`@app.GreeterComponent`, and module qualifiers are stripped except where they tell two types apart,
+as [Resugaring](resugaring.md#the-path-strips-that-run-first) describes.
 
-The `root cause:` lead is worded by *why* the leaf is unmet, in one shape per kind of leaf:
+A lead is worded by why its leaf is unmet.
+[The leaf shapes](typed-resolution-leaves.md#the-leaf-shapes) decide which leaf a bound is, and
+these are the readings a reader meets:
 
-- A **genuinely absent field** reads as `` root cause: missing field `height` on `Rectangle` ``, the
-  worked example's leaf. There is no `context` qualifier, since `HasField` can land on any struct.
-- A **present-but-underived field**, one the struct carries but that has no (or an incomplete)
-  `#[derive(HasField)]`, reads as
-  `` root cause: `HasField` not derived for field `name` of `Person` ``, and
-  a separate `help` names the fix: `` add `#[derive(HasField)]` to `Person` ``. When the field is
-  only reachable through a `Deref` target, the `help` points at that target instead
-  ([`missing_has_field_derive`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/missing_has_field_derive.rs),
-  [`field_via_deref`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/field_via_deref.rs)).
-  Several such fields on *one* struct are one mistake (the derive emits an impl per field), so
-  `plan_resolved` coalesces them (`coalesce_underived_fields`) into a single cause reading
-  `` root cause: `HasField` not derived for fields `height` and `width` of `Rectangle` ``,
-  over one merged tree whose branches still end at the per-field leaves
-  ([`base_area_2`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/base_area_2.rs));
-  a lone underived field, an underived field beside a genuinely missing one, and underived fields on
-  *different* structs all stay apart
+| Leaf | Code | Reads as |
+| --- | --- | --- |
+| Absent field | `CGP-E110` | `` missing field `height` on `Rectangle` `` |
+| Field without the derive | `CGP-E111` | `` `HasField` not derived for field `name` of `Person` `` |
+| Field of the wrong type | `CGP-E112` | `` field `height` on `Rectangle` has type `i32`, but `f64` is required `` |
+| Missing wiring, by marker or path | `CGP-E113` | `` missing wiring for `BarProviderComponent` on `App` `` |
+| Missing dispatch entry | `CGP-E114` | `` missing entry for `Tagged<Bytes>` in provider `SinkHandlers` `` |
+| Not a provider | `CGP-E115` | `` `NotAGreeter` is not a provider of `Greeter` `` |
+| Abstract-type mismatch | `CGP-E116` | `` abstract type `Error` of `HasErrorType` on `App` is `String`, but `AppError` is required `` |
+| Ordinary bound | `CGP-E117` | `` the trait bound `f64: Eq` is not satisfied `` |
+| Provider for other arguments | `CGP-E127` | `` `GreetPerson` implements `Greeter` only for `Person`, not `Robot` `` |
+| Wiring without `IsProviderFor` | `CGP-E128` | `` the wiring of `GreeterComponent` on `App` has no `IsProviderFor` impl `` |
+| Unbounded type parameter | `CGP-E129` | `` the type parameter `Context` of `run` is not bounded by `CanGreet` `` |
+
+The extensible-data leaves, `CGP-E118` to `CGP-E126`, name the struct or enum rather than the
+generated type: `` field `port` of `Config` is not set ``.
+
+These corners of the wording are easy to break:
+
+- **Several underived fields on one struct are one mistake,** since the derive emits an impl per
+  field, so they coalesce into one cause over a tree that still ends at each field
+  ([`base_area_2`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/base_area_2.rs)).
+  An underived field beside a missing one, or on another struct, stays apart
   ([`underived_and_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/underived_and_missing_field.rs)).
-- A **missing wiring**, a component the context does not delegate to any provider, is the wiring
-  counterpart of a missing field. It reads as
-  `` root cause: missing wiring for `BarProviderComponent` on `App` `` and
-  names the component marker the programmer writes to fix it. The
-  [`basic_missing_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/basic_missing_wiring.rs)
-  fixture is the shape: a provider `DoFooWithBar` declares `#[uses(CanUseBar)]`, so `App` can use it
-  only if it also wires `BarProviderComponent`, but `App` wires only `FooProviderComponent`. The
-  tree bottoms out on the `CanUseBar` trait the unwired component would have supplied:
+- **An intermediate consumer reads `consumer trait impl`** (`CGP-E101`), since the walk descends the
+  real trait a provider `#[uses]`, rather than the `trait impl` (`CGP-E104`) a getter gets.
+- **A missing redirect reads the same whether it came from a namespace or from `open`,** with the
+  whole path as the key rather than its flattened item name, and each `RedirectLookup` hop names its
+  own table
+  ([`multi_redirect_missing`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/multi_redirect_missing.rs),
+  [`open_aggregate_missing_entry`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/open_aggregate_missing_entry.rs)).
+- **The step above a not-a-provider leaf reads as a requirement,**
+  ``provider trait `Greeter` required of provider `NotAGreeter` with context `App` ``, rather than as the impl
+  the provider lacks.
+- **A provider for other arguments names no fix,** since only the reader knows whether the wiring or
+  the provider should change. Several impls join with "or", and an impl's own generic parameters
+  print as `_`.
+- **An associated type outside CGP reads `associated type` and carries no `help`,** since no wiring
+  entry fixes it
+  ([`plain_assoc_type_mismatch`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/types/plain_assoc_type_mismatch.rs)).
 
-  ```text
-  error[E0277]: [CGP-E001] missing wiring for `BarProviderComponent` on `App`
-     = note: root cause: [CGP-E113] missing wiring for `BarProviderComponent` on `App`
-             this is required through the dependency chain:
-               [CGP-E101] consumer trait impl `CanUseFoo` for context `App`
-               └─ [CGP-E102] provider trait impl `FooProvider` with context `App` for provider `DoFooWithBar`
-                 └─ [CGP-E101] consumer trait impl `CanUseBar` for context `App`
-                   └─ [CGP-E113] missing wiring for `BarProviderComponent` on `App`
-     = help: wire `BarProviderComponent` to a provider in the wiring of `App`
-  ```
-
-  Note the nested `CanUseBar` node: because the walk descends the real trait the provider `#[uses]`,
-  an intermediate consumer trait reads as `consumer trait impl` (`CGP-E101`), not the generic
-  `trait impl` (`CGP-E104`) a plain getter or bound gets.
-
-- A **missing redirect wiring**, a namespace/`open` redirect that resolves to nothing, is the
-  path-keyed counterpart of a missing wiring, reading the *same* way but with the path as the key
-  (`` root cause: missing wiring for `@app.finance.types.QuantityTypeProviderComponent` on `App` ``).
-  Its chain renders each `RedirectLookup` hop as `` redirect lookup to `@…` in `App` ``, so a
-  multi-layer redirect reads as its successive hops down to the unterminated path. This leaf
-  surfaces two ways that render identically: when the context *joins a namespace*, the unterminated
-  redirect is an unmet namespace-lookup bound (`Path: DefaultNamespace<Ctx>`, or a user
-  `cgp_namespace!` trait); when it dispatches a component with a bare `open` statement, the redirect
-  looks the path up in the context's own table, so the failure is an unmet
-  `DelegateComponent<PathCons<…>>` on the context, told apart from a plain missing component (whose
-  key is a bare marker) by the `PathCons` key, and rendered as the whole path rather than its
-  flattened item name. A path missing from any other table is the missing-dispatch-entry leaf below
-  instead. The
-  [`unregistered_prefix_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/unregistered_prefix_path.rs),
-  [`qualified_prefix_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/qualified_prefix_path.rs),
-  [`multi_redirect_missing`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/multi_redirect_missing.rs),
-  and
-  [`open_missing_type_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/open_missing_type_key.rs)
-  fixtures pin the variants.
-
-- A **missing dispatch entry**, a *non-context* delegation table missing a key, is the wiring
-  counterpart for a provider table rather than the context. It reads as
-  `` root cause: missing entry for `Tagged<Bytes>` in provider `SinkHandlers` ``
-  and names the table and the key. The owner is either an aggregate provider missing a component
-  wiring or a `UseDelegate`/`UseInputDelegate` dispatch table missing a branch for the type it
-  dispatches on (a `Code` fragment or an `Input` value's type). The two are recognized alike: by the
-  lookup being into a table the provider holds as a parameter, or by the owner carrying at least one
-  `DelegateComponent` impl (see [the leaf shapes](typed-resolution-leaves.md#the-leaf-shapes)). The key may be a redirect
-  path, when an aggregate provider `open`s a component in its own table or joins a namespace itself:
-  the leaf then reads
-  `` missing entry for `@ComputerComponent.Sink.Digest` in provider `ByteSink` ``,
-  and the `RedirectLookup` hop above it names `ByteSink` as its table, since each hop reads its
-  table off its own `RedirectLookup<Table, Path>`
-  ([`open_aggregate_missing_entry`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/open_aggregate_missing_entry.rs),
-  and
-  [`namespace_aggregate_missing_entry`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/namespace_aggregate_missing_entry.rs)
-  for the namespace form). This is the leaf a handler pipeline bottoms out on when a stage's output
-  is not a type a later stage's `UseInputDelegate` input dispatcher handles, as when a raw digest
-  reaches an `AsyncRead` sink's dispatcher because a byte-encoding stage is missing. The tree shows
-  the offending type flowing into the stage, so a reader sees exactly what reached a stage that
-  cannot handle it
-  ([`cascade_nested_projection`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/cascade_nested_projection.rs)
-  pins the shape;
-  [`transitive_missing_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/transitive_missing_wiring.rs)
-  the aggregate-provider variant).
-
-- A **non-provider**, a type wired where a provider was expected that does not implement the
-  provider trait at all, reads as
-  `` root cause: `NotAGreeter` is not a provider of `Greeter` ``.
-  The mistake is putting a non-provider (often a request or value type) into a provider slot, as
-  `WrapGreeter<NotAGreeter>` does when `NotAGreeter` is an ordinary struct. It is
-  the sibling of a missing dispatch entry for a type that is not a table at all: told apart from a
-  valid provider reached via the blanket after an argument mismatch, which *has* a concrete impl of
-  the trait, by the owner having **no** concrete impl of the provider trait, and named against that
-  trait rather than a wiring key
-  ([`non_provider_wired`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/non_provider_wired.rs)
-  pins it). The chain step directly above this leaf, for the same provider, reads as a requirement
-  (``provider trait `Greeter` required of provider `NotAGreeter` with context `App` ``) rather than
-  as the provider-trait impl the provider lacks; `Causes` rewords it when the chain is built, and it
-  keeps its code and every fact. When an adapter type applied to the provider is a provider of the
-  trait, the leaf carries it for a `help`, as
-  [`field_getter_wired_bare`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/field_getter_wired_bare.rs),
-  [`use_field_on_cgp_type`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/use_field_on_cgp_type.rs),
-  and
-  [`promote_computer_handwritten_handler`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/handlers/promote_computer_handwritten_handler.rs)
-  pin it.
-
-- A **provider for other arguments**, a valid provider whose concrete impls take other arguments
-  than the wiring gives it at one position, reads as
-  `` root cause: `GreetPerson` implements `Greeter` only for `Person`, not `Robot` `` for the
-  context, and as
-  `` root cause: `Double` implements `Computer` only with `Input = u64`, not `Input = String` `` for
-  a component parameter, named by the provider trait's own parameter name; several impls join with
-  "or", and an impl's own generic parameters print as `_`. The mistakes are a provider written for
-  one context and wired on another
-  ([`provider_for_other_context`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/provider_for_other_context.rs)),
-  and a pipeline stage given another stage's output type
-  ([`pipe_handlers_stage_mismatch`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/handlers/pipe_handlers_stage_mismatch.rs)).
-  The cause names no fix: the provider is right for other arguments, and only the reader knows
-  whether the wiring or the provider should change.
-
-- A **wiring without `IsProviderFor`**, a component the context wires by a hand-written
-  `DelegateComponent` impl with no `IsProviderFor` impl beside it, reads as
-  `` root cause: the wiring of `GreeterComponent` on `App` has no `IsProviderFor` impl ``, and a
-  `help` names the entry to write in its place,
-  `` replace the hand-written `DelegateComponent` impl with `delegate_components! { App { GreeterComponent: GreetHello } }` ``,
-  when the impl is one the program wrote
-  ([`hand_delegate_without_is_provider`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/hand_delegate_without_is_provider.rs)).
-
-- An **unbounded type parameter**, a consumer method called on a value of a type parameter its
-  generic function or impl does not bound by the consumer trait, reads as
-  `` root cause: the type parameter `Context` of `run` is not bounded by `CanGreet` ``, and a
-  `help` names the bound, `` add the bound `Context: CanGreet` to `run` ``
-  ([`generic_fn_missing_bound`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/generic_fn_missing_bound.rs)).
-
-- An **abstract-type mismatch**, an associated type the owner supplies differently from what a
-  provider requires, reads as
-  ``root cause: abstract type `Error` of `HasErrorType` on `App` is `String`, but `AppError` is required``,
-  and a separate `help` names the fix:
-  `` wire `ErrorTypeProviderComponent` to `UseType<AppError>` in the wiring for `App`, or change the provider to work with `String` ``.
-  It reads `associated type`, and carries no `help`, when the trait is not a CGP abstract-type
-  component: an ordinary trait's associated type is fixed by whatever impl supplies it, so there is
-  no wiring entry to name. The
-  [`abstract_type_mismatch`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/types/abstract_type_mismatch.rs)
-  fixture pins the shape.
-
-- An **extensible-data cause**, a field or variant whose state a builder, extractor, or cast does
-  not allow, or a data derive a type lacks, is read off the presence markers of the partial type
-  the bound lands on (see [the leaf](typed-resolution-leaves.md#decoding-classifying-and-rendering-a-leaf))
-  and names the struct or enum rather than the generated type:
-  ``root cause: field `port` of `Config` is not set`` (`[CGP-E119]`), with the field set twice
-  (`[CGP-E118]`), a missing variant (`[CGP-E120]`), the variants a match left unextracted
-  (`[CGP-E121]`), a variant payload of the wrong type (`[CGP-E122]`), a missing data trait
-  (`` `Shape` does not implement `HasFields` ``, `[CGP-E123]`), a variant extracted again
-  (`` variant `Circle` of `Shape` is already extracted ``, `[CGP-E124]`), a field an optional
-  builder's `set` needs optional (`` field `foo` of `Context` is not optional ``, `[CGP-E125]`),
-  and a builder or an extractor given where its struct or enum belongs
-  (`` an extractor of `FooBarBaz` does not implement `HasExtractor` ``, `[CGP-E126]`) worded the
-  same way. A field a builder names that its struct lacks takes the missing-field lead above. Several missing data
-  traits on one type merge into one headline
-  (`` `Shape` does not implement `HasFields` and `HasExtractor` ``)
-  ([`builder_missing_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/builder_missing_field.rs),
-  [`auto_dispatch_missing_derive`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/auto_dispatch_missing_derive.rs)).
-
-A field-type mismatch is worded the same way, from its `[CGP-E004]` headline. Any other leaf
-simply restates its bound, as in
-``root cause: the trait bound `f64: Eq` is not satisfied``, module qualifiers stripped.
-
-**A lead is dropped only where a mismatch headline or a kept rustc headline already states that very
-leaf.** Both mismatch classes state their leaf as the headline, as does an `E0271` traced to a
-variant payload of the wrong type (under its anchor's class code,
-[`upcast_payload_mismatch`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/upcast_payload_mismatch.rs)), so their notes carry the chain
-alone (as the `E0271` example above shows), and a kept rustc header restating the ordinary bound the
-walk descended to drops that bound's lead the same way. Every other block keeps its `root cause:`
-line even though its headline states the same cause, so the tree always sits under a line naming
-where it ends. The test is what the header was worded from, not the kind of leaf: a mismatch leaf
-in a block classed by its consumer keeps its lead, as it does in the emitter's coalesced block,
-whose headline may name several subjects when the causes are mixed.
+**A lead is dropped only where the headline was worded from that very leaf:** a mismatch class, a
+variant payload of the wrong type, or a kept rustc headline restating the ordinary bound. Every
+other block keeps its `root cause:` line, even though its headline states the same cause, so the
+tree sits under a line naming where it ends. The test is what the header was worded from, not the
+kind of leaf.
 
 ## The fix `help`s
 
-A resolved block ends with a `help` for each fix its causes call for, after the `root cause:` note,
-so each fix follows the cause it repairs. The fixes of one kind on one owner merge into one `help`,
-which names its items in the order the causes are listed, with no cap:
+**A `help` appears only when its premise holds, because a fix that does not compile is worse than
+none.** A resolved block ends with a `help` for each fix, after the note, and the fixes of one kind
+on one owner merge into one `help` with no cap. `fix_help_messages` builds them, for the per-block
+plan and for the emitter's coalesced block alike, so a merged block carries the same fixes. These
+premises guard them:
 
-- A **missing field** names the field to add, with the type its requirement gives it:
-  `` add the field `height: f64` to `Rectangle` ``, or
-  `` add the fields `first_name: String` and `last_name: String` to `Person` `` for several on one
-  struct. The type is the `Value = T` constraint the requirement writes beside its `HasField` bound,
-  which a getter's return type or an `#[implicit]` argument's type produces, read off the impl
-  that requires the field (`required_field_type`). A field whose requirement states no concrete
-  type is named alone.
-- A **present-but-underived field** names the derive, on the struct or on the `Deref` target that
-  carries the field: `` add `#[derive(HasField)]` to `Person` ``.
-- A **missing wiring**, plain or redirect, names the entries to write:
-  `` wire `BarProviderComponent` and `BazProviderComponent` to providers in the wiring of `App` ``,
-  a redirect named by its path key (`` wire `@app.GreeterComponent` to a provider … ``). A path
-  wired directly on a context is a valid entry even when the context joins a namespace, so the
-  `help` holds for a namespace redirect as well as an `open` one.
-- A **missing dispatch entry** names the table:
-  `` add an entry for `Tagged<Bytes>` to `SinkHandlers` ``.
-- An **abstract-type mismatch** names the wiring entry to change, as described above.
-- A **missing data trait** names the derive that supplies it, the derives one type needs merged
-  into one attribute: `` add `#[derive(HasFields, ExtractField)]` to `Shape` ``. It is given only
-  when the type is a struct or enum the crate defines and of a kind each derive accepts.
-- A **builder or extractor in the wrong place** names the method it takes instead, with the `use`
-  its trait needs, since the data traits are not in the prelude and the compiler's own import
-  suggestion names a crate path that does not compile:
-  ``call `downcast_fields` in place of `downcast` on an extractor, with `use cgp::core::field::impls::CanDowncastFields;` in scope``
-  for an extractor given to `downcast`, and
-  ``call `to_optional` on the builder first to hold each field as optional, with `use cgp::extra::field::impls::ToOptional;` in scope``
-  for a field not optional. Each is given only when the solver confirms the method holds for the
-  value, and the [module strip](resugaring.md#the-path-strips-that-run-first) keeps the `use`
-  path whole.
-- A **non-provider that provides another component** says which, and names both ways out:
-  ``` `SayBye` provides `Farewell`: wire it under `FarewellComponent`, or wire a provider of `Greeter` here ```.
-  It is given only for components whose provider trait the solver confirms the wired type implements
-  for the same context.
-- A **misused core provider** names what serves the slot: ``wire `UseFields` in place of `UseField<…>`,
-  which reads each method's field by the method's name`` for a multi-method getter, and
-  ``dispatch with `open AreaCalculatorComponent;` and one `@AreaCalculatorComponent.Shape: <provider>` entry per type, in place of `UseDelegate<AreaTable>` ``
-  for a component without `#[derive_delegate]`.
-- A **non-provider's adapter** names the adapter type to wire in its place:
-  ``wire `WithProvider<ReadDisplayName>` in place of `ReadDisplayName` ``. Several adapters read as
-  alternatives joined by "or", and an adapter outside the prelude adds the `use` it needs
-  (``wire `Promote<Double>` in place of `Double`, with `use cgp::extra::handler::Promote;` in scope``).
-- A **tuple field's tag** is named when a missing field's name is a position of a tuple struct:
-  ``a field of the tuple struct `Pair` is keyed by `Index<0>`, not by `Symbol!("0")` ``. A tuple
-  struct cannot gain a named field, so no add-the-field `help` follows.
-- A **near miss** comes first when a missing field's struct carries a similar field, a missing
-  variant's enum a similar variant (`` a similar variant exists on `Shape`: `Circle` ``), or a
-  missing key's context wires a similar key: `` a similar field exists on `Person`: `first_name` `` for
-  `frist_name`, or `` a similar key exists in the wiring of `App`: `@App.GreeterComponent` `` for
-  `@app.GreeterComponent`. A name is similar when it matches ignoring case or lies within two
-  edits, a swap of two letters counting as one (`similar_name`). A key is similar when one symbol
-  segment is, or when it has one prefix segment more or fewer, as a doubled or a dropped
-  `#[prefix]` segment makes it (`similar_key`); two type segments that differ name two types, so
-  they never count. The candidates are the struct's own fields and the context's own wiring
-  entries, so a slip another context wires is never named
-  ([`near_miss_in_another_context`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/near_miss_in_another_context.rs)).
-
-A field-type mismatch, a non-provider, an ordinary bound, and the extensible-data state causes (a
-field set twice or not set, a variant extracted twice or not extracted, a variant payload of the
-wrong type) carry no `help`. The mismatch headlines already state both types, a state cause names the field or variant to
-handle, and the others have no single entry the tool can name. A field a builder names that its
-struct lacks gets no add-the-field `help` either, since the merge can then still leave another
-field unset.
-
-**A `help` appears only when its premise holds**, because a fix that does not compile is worse than
-none. Two checks guard it:
-
-- A missing field gets a `help` only when its struct has named fields and implements `HasField` for
-  another field, which shows that the struct derives it. A tuple struct cannot gain a named field
-  ([`tuple_struct_named_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/tuple_struct_named_field.rs)
-  names no fix). A struct with no `HasField` impl may lack the derive as well (a unit struct the
-  program never derived), and a fieldless struct's derive generates nothing, so the two cannot be
-  told apart and adding the field alone is not known to fix it
-  ([`check_providers_unwired_provider`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/check_providers_unwired_provider.rs)
-  names no fix). The classifier records the confirmation and the type in the leaf's `FieldFix`,
-  which is not part of the cause's identity: one field reached through requirements that state its
-  type differently stays one cause, and its `help` names the type only when every route agrees.
-- A key holding a reference or a lifetime argument gets no `help`. The compiler erases its lifetime,
-  so `@ItemEncoderComponent.&u64` cannot be pasted as written: the entry needs a named lifetime
-  (`<'a> @ItemEncoderComponent.&'a u64`)
+- **A missing field** gets a `help` only when its struct has named fields and derives `HasField` for
+  another field. A tuple struct cannot gain a named field, and a struct with no `HasField` impl may
+  lack the derive as well, since a fieldless struct's derive generates nothing
+  ([`tuple_struct_named_field`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/tuple_struct_named_field.rs),
+  [`check_providers_unwired_provider`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/check_providers_unwired_provider.rs)).
+  The type comes from the `Value = T` constraint beside the requirement, and is named only when
+  every route to the field agrees.
+- **A key holding a reference or a lifetime** gets no `help`, since the compiler erased the lifetime
+  and the entry cannot be pasted as written
   ([`higher_ranked_descent`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/resolution/higher_ranked_descent.rs)).
+- **A missing data trait's derive** is offered only for a struct or enum the crate defines, of a
+  kind each derive accepts.
+- **A method for a builder or extractor in the wrong place, and an adapter or another component for
+  a non-provider,** are each confirmed by the solver against the same value and context. A `help`
+  that needs an import names the `use`, because the data traits are outside the prelude and the
+  compiler's own suggestion names a crate path that does not compile.
+- **A near miss** comes first, and its candidates are only the struct's own fields, the enum's own
+  variants, or the context's own wiring, so a slip another context wires is never named
+  ([`near_miss_in_another_context`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/near_miss_in_another_context.rs)).
+  A name is similar when it matches ignoring case or lies within two edits. A key is similar when
+  one symbol segment is, or when it has one prefix segment more or fewer. Two type segments that
+  differ name two types, so they never count.
 
-`fix_help_messages` builds the `help`s from the causes, and both the per-block plan and the
-emitter's coalesced block call it, so a merged block carries the same fixes as the blocks it
-replaces.
+A field-type mismatch, an ordinary bound, and the extensible-data state causes carry no `help`: the
+headlines already state both types, a state cause names what to handle, and the others have no
+single entry to name. A field a builder names that its struct lacks gets none either, since a merge
+can still leave another field unset.
 
 ## Emitting the transformed diagnostic
 
-The wording is decided rustc-free and only *applied* by the emitter. The emitter maps the
-diagnostic's own rustc code to a rustc-free
-[`DiagKind`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/plan/diag_kind.rs)
-(`E0271` a projection mismatch, `E0599` a use-site method, everything else a plain check) and hands
-that, the main-message text, the `Resolved`, and the name map to `plan_resolved`, which returns a
-`DiagnosisPlan`: the displayed header (or `None` to keep rustc's), the class header beside it, the
-fix `help`s, and the `root cause:` note as an unrendered `PendingNote`, which the emitter renders at
-flush by folding every cause's paths into one [dependency graph](dependency-graph-rendering.md)
-against what the compilation's earlier notes already drew. One mapping is by *anchor* rather than by
-code: a resolution the call-site anchor produced plans as a use-site failure whatever its rustc code
-(a genuine `E0271` field mismatch excepted), so its class is the consumer trait the call needs
-rather than whichever provider bound rustc's headline stopped on. At a call, that bound is dispatch
-plumbing (`PipeHandlers`, `ComposeHandlers`) the programmer never asserted on.
+The emitter maps the rustc code to a rustc-free `DiagKind` (`E0271` a projection mismatch, `E0599` a
+use-site method, anything else a plain check) and calls `plan_resolved`, which returns the displayed
+header (or `None` to keep rustc's), the class header, the `help`s, and an unrendered note. A
+resolution anchored at the call plans as a use-site failure whatever its code, except an `E0271`, so
+its class is the trait the call needs.
 
-`plan_resolved`'s `categorized_header` picks the headline class described earlier and words its
-class sentence from the resolution: the `CGP-E001` consumer form (pluralized when a use-site failure
-spans several components), the `CGP-E002` provider form when the resolution records a
-`#[check_providers]` provider, the two mismatch classes (`CGP-E004` for a `HasField` value type,
-`CGP-E005` for any other associated type, the field class tried first as the more specific of the
-two, each worded as its cause, and a variant payload of the wrong type worded as its cause under the
-anchor's own class), the `CGP-E050` extensible-data form when the resolution records a call to a
-data operation, or the `CGP-E003` plain-trait form. One extra case routes here: a
-mismatch-coded (`E0271`) failure the resolver traced to a *non*-mismatch cause (a manual
-`Send`-recovery wrapper's opaque-future error, whose `type mismatch resolving …` message is
-unreadable) takes the `CGP-E001` consumer class, since it is really the consumer trait failing to be
-implemented. The header is `None` (rustc's kept) only when the main message restates a genuine
-recovered leaf; a mid-chain symptom is replaced, and an unrelated non-CGP message is kept.
-`plan_resolved` then turns the class sentence into the displayed header with `cause_headline`, by
-the three rules above, and keeps the class sentence as the plan's `class_header`. When rustc's own
-headline is an `IsProviderFor` bound, the provider form the text rewrite gives it is kept too, as
-`declined_header`: a re-report of the same failure the resolver declines is worded that way, so the
-de-duplication ledger records both. This is the one place the text rewrite and its
-`ComponentNameMap` still serve a resolved diagnostic; the tree beneath is built entirely from the
-real traits.
+`transform_resolved` then edits rustc's `DiagInner`. With a header it replaces the main message and
+collapses the span to the primary caret, since the original labels restate the replaced message. In
+every case it replaces the children with the `help`s and discards rustc's structured suggestions,
+and it never touches the Rust code. The note waits for the flush, because its graph depends on what
+earlier notes drew, and then goes ahead of the `help`s, so each fix follows the cause it repairs.
+The JSON emitter regenerates every field from the `DiagInner`.
 
-`transform_resolved` then mutates rustc's `DiagInner`: with a header it replaces the main message
-and collapses the span to the primary caret (the original labels restate the replaced message), and
-with `None` it leaves the header, labels, and caret alone. Either way the children become the plan's
-single note followed by its `help`s, so each fix follows the cause it repairs: `transform_resolved`
-sets the `help`s, and the flush inserts the rendered note ahead of them. The note opens with its
-`root cause:` lead (or `root causes:` list, when the causes bottom out on different leaves) over
-`this is required through the dependency chain:` and the graph beneath (the lead omitted when the
-kept header or a mismatch header already states the leaf). The `help`s are the
-[fixes above](#the-fix-helps). rustc's structured suggestions are discarded with its notes, the
-diagnostic's Rust code is never touched, and a provider with two absent dependencies sharing its
-chain yields one note over a merged tree that branches to both. The JSON emitter regenerates every
-rendered and structured field from the `DiagInner` for free, with rustc's note-continuation
-indentation aligning each tree's box-drawing under its `= note:`. A final cross-diagnostic
-de-duplication (keyed on the recovered cause, the rendered text, or the class header) suppresses a
-transformed diagnostic that re-reports a failure already shown, and the flush coalesces the blocks
-that share a root cause into one (see [The driver](driver.md)).
+When rustc's headline is an `IsProviderFor` bound, the plan also keeps the provider form the text
+rewrite gives it, because a declined re-report of the same failure carries that wording and the
+de-duplication ledger records both. This is the one place the text rewrite's name map serves a
+resolved diagnostic. A final de-duplication suppresses a block that re-reports a failure already
+shown, and the flush coalesces the blocks that share a root cause, as
+[Diagnostic reshapes](diagnostic-reshapes.md) and [The driver](driver.md) describe.
 
 ## Further reading
 
 - [Typed root-cause resolution](typed-root-cause-resolution.md): the pipeline overview and the
   consolidated tests and source catalogs.
-- [Error processing](error-processing.md): the rustc-free crate the wording lives in, and the
-  post-processing every emitted diagnostic still passes through.
-- [The driver](driver.md): the emitter that hosts the seam, its de-duplication ledger, and the
-  fallback text rewrite.
+- [Error processing](error-processing.md): the rustc-free crate the wording lives in.
+- [The driver](driver.md): the emitter, its de-duplication ledger, and the fallback text rewrite.
 
 ## Tests
 
-The wording is unit-tested rustc-free, over hand-built inputs:
-[`cargo-cgp-error-processing/tests/error_processing/diagnosis/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/tests/error_processing/diagnosis)
-drives the class headers, the displayed headlines (one cause, causes merged by kind and owner, mixed
-causes, and a coalesced block's subjects, in `headline.rs`), the `root cause:` notes, and the fix
-`help`s (merged by kind and owner, typed fields, and the two premise checks, in `helps.rs`);
-[`tests/error_processing/coalesce.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/coalesce.rs)
-the underived-field coalescing and its boundaries;
-[`tests/error_processing/graph.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/graph.rs)
-the graph build-and-render (list, branch, diamond, super-root, within-path repeat, elision) as
-`insta` inline snapshots; and
-[`tests/error_processing/tree.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/tree.rs)
-the `cargo tree`-style renderer. The end-to-end fixture catalog lives in the parent document's
-[Tests](typed-root-cause-resolution.md#tests) section.
+- [`tests/error_processing/diagnosis/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/tests/error_processing/diagnosis):
+  the class headers, the displayed headlines (`headline.rs`), the notes, and the `help`s
+  (`helps.rs`), over hand-built inputs with no compiler.
+- [`tests/error_processing/coalesce.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/coalesce.rs):
+  the underived-field coalescing and its boundaries.
+- [`tests/error_processing/graph.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/graph.rs)
+  and
+  [`tree.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/tree.rs):
+  the graph and the renderer.
+- [The parent document's catalog](typed-root-cause-resolution.md#tests): the fixture groups end to
+  end.
 
 ## Source
 
-- [`crates/cargo-cgp-error-processing/src/diagnosis/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/diagnosis):
-  the rustc-free model (`leaf/`, `resolved.rs`), the structured nodes and graph (`node.rs`,
-  `graph.rs`), the wording (`wording/`), the coalescing (`coalesce.rs`), and the plan (`plan/`).
-- [`crates/cargo-cgp-error-processing/src/tree.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/tree.rs):
-  the `DependencyTree` and its renderer, the target the graph expands into.
-- [`crates/cargo-cgp-driver/src/emitter/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/emitter):
-  the `try_resolve` seam and the `transform_resolved` mutation that applies the plan.
+- [`cargo-cgp-error-processing/src/diagnosis/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/diagnosis):
+  the model (`leaf/`, `resolved.rs`), the nodes and graph (`node.rs`, `graph.rs`), the wording
+  (`wording/`), the coalescing (`coalesce.rs`), and the plan (`plan/`).
+- [`cargo-cgp-error-processing/src/tree.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/tree.rs):
+  the renderer the graph expands into.
+- [`emitter/stage/resolver.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/stage/resolver.rs):
+  `transform_resolved`, which applies the plan.
