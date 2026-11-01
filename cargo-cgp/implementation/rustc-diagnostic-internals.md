@@ -205,9 +205,9 @@ and the query emits. Two query paths are known to do this. Forcing `clauses_of` 
 `where`-clause has a type that fails to lower makes `gather_explicit_clauses_of` → `lower_ty` →
 `resolve_type_relative_path` report a resolution error (an `E0599` such as `no variant named …`) the
 first time it is computed; if the resolver forces that query while a diagnostic is being emitted,
-the query's own emission re-enters the lock. Forcing `tcx.typeck` is worse: it is a body-level query
-that *replays its cached diagnostics* when forced, so forcing it from the emitter re-emits every
-error in that body.
+the query's own emission re-enters the lock. Forcing `tcx.typeck` has the same effect at a larger scale: on a body not yet checked it runs the
+whole check there, emitting every error in that body inside the emitter. (rustc replays a query's
+stored diagnostics only when incremental compilation reuses it from an earlier session.)
 
 A query can also take the lock without emitting anything. `trimmed_def_paths`, the map rustc trims
 paths with, records that trimming happened by setting a flag through the diagnostic context

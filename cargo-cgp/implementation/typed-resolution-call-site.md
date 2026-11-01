@@ -133,8 +133,8 @@ dispatch plumbing, as the failing "provider", with the missing `name` field appe
 
 The spans are useless, but the call expression itself contains almost everything the walk's seed
 obligation `App: CanHandle<Code, Input>` needs, provided it is read from HIR alone. `tcx.typeck`,
-the query that would answer every question at once, replays its cached diagnostics when forced and
-so aborts the compiler from inside the emitter (the re-entrancy hazard in
+the query that would answer every question at once, would type-check a body not yet checked and
+emit its errors from inside the emitter, which aborts the compiler (the re-entrancy hazard in
 [rustc diagnostic internals](rustc-diagnostic-internals.md#re-entering-the-diagnostic-context-lock-was-already-held));
 HIR, by contrast, is fully built long before analysis, and the only queries this recovery touches
 (`type_of`, `fn_sig`, `generics_of` on items the failing code already named) are cached by the very
@@ -488,6 +488,17 @@ for a consumer trait required as a bound (`fn greet_twice<Context: CanGreet>(…
 a trait deeper in the chain, a getter the provider uses, and the tree would start there instead of
 at the bound the call requires. A bound on any other trait (`T: Clone`) is left as rustc wrote it.
 
+## Further reading
+
+- [Typed root-cause resolution](typed-root-cause-resolution.md): the pipeline overview.
+- [Typed resolution: anchoring the starting obligation](typed-resolution-anchors.md): the six
+  anchors tried before these four, and the by-blanket-trait and forwarding-entry anchors tried after
+  them.
+- [Typed resolution: walking to the root cause](typed-resolution-walk.md): how the seeded obligation
+  (placeholders and all) is descended.
+- [rustc diagnostic internals](rustc-diagnostic-internals.md): why `tcx.typeck` can never be forced
+  from the emitter, the constraint this anchor's HIR-only reading exists to respect.
+
 ## Tests
 
 The anchor's fixtures live under
@@ -562,14 +573,3 @@ binding's reading recovers). The consolidated catalog lives in the parent docume
   with the input it fills), and `traits_with_method.rs` (the candidate consumer and blanket traits
   by method name) over `trait_items_named.rs` (every trait declaring an associated item of a name,
   which the data-call and provider-call anchors scan too).
-
-## Further reading
-
-- [Typed root-cause resolution](typed-root-cause-resolution.md): the pipeline overview.
-- [Typed resolution: anchoring the starting obligation](typed-resolution-anchors.md): the six
-  anchors tried before these four, and the by-blanket-trait and forwarding-entry anchors tried after
-  them.
-- [Typed resolution: walking to the root cause](typed-resolution-walk.md): how the seeded obligation
-  (placeholders and all) is descended.
-- [rustc diagnostic internals](rustc-diagnostic-internals.md): why `tcx.typeck` can never be forced
-  from the emitter, the constraint this anchor's HIR-only reading exists to respect.

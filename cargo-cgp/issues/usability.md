@@ -51,7 +51,7 @@ fixture that pins it.
   of CGP's `self`-less provider methods, leaving the unmet wiring bound as the first note
   ([`generic_consumer_unwritten_arg`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/use-site/generic_consumer_unwritten_arg.rs);
   recovering the dispatch parameter itself is a documented
-  [resolver boundary](../implementation/typed-root-cause-resolution.md#boundaries-and-open-ends)).
+  [resolver boundary](../implementation/typed-root-cause-resolution.md#boundaries)).
 - **Wiring coherence conflicts** carry codes. The duplicate delegate-key `E0119` family is
   `[CGP-E010]`–`[CGP-E014]`, including a duplicate `cgp_namespace!` `@`-path as a `[CGP-E014]`
   naming both redirect targets

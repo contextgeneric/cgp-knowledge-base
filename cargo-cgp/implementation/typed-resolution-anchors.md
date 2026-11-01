@@ -63,26 +63,26 @@ impl and gets its own block
 ([`check_providers_two_components`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/check_providers_two_components.rs)).
 
 **From a hand-written `impl Trait for Context` block.** A wiring failure often surfaces inside an
-impl the programmer wrote rather than at a check entry. The money-transfer example's per-endpoint
-wrapper, which adds a `Send` bound the component cannot express, is the case:
+impl the programmer wrote rather than at a check entry. A wrapper trait that adds a bound the
+component cannot express, such as `Send`, is the common case, and the
+[`manual_supertrait_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/manual_supertrait_impl.rs)
+fixture distills it:
 
 ```rust
-pub trait CanHandleApiSend<Api>: CanHandleApi<Api, Request: Send, Response: Send> + Send + Sync {
-    fn handle_api_send(&self, _api: PhantomData<Api>, request: Self::Request)
-        -> impl Future<Output = Result<Self::Response, Self::Error>> + Send;
+pub trait CanCalculateAreaChecked<Shape>: CanCalculateArea<Shape> {
+    fn area_checked(&self, shape: PhantomData<Shape>) -> f64;
 }
 
-impl CanHandleApiSend<QueryBalanceApi> for MockApp {
-    async fn handle_api_send(&self, api: PhantomData<QueryBalanceApi>, request: Self::Request)
-        -> Result<Self::Response, Self::Error> {
-        self.handle_api(api, request).await
+impl CanCalculateAreaChecked<Rectangle> for App {
+    fn area_checked(&self, shape: PhantomData<Rectangle>) -> f64 {
+        self.area(shape)
     }
 }
 ```
 
-`CanHandleApiSend` carries the CGP consumer trait `CanHandleApi<Api>` as a supertrait and is
-implemented directly on `MockApp`. When the underlying `CanHandleApi` wiring is broken, the caret
-lands on this impl (its header, a method signature, or the forwarding call), never on `MockApp`'s
+`CanCalculateAreaChecked` carries the CGP consumer trait `CanCalculateArea<Shape>` as a supertrait and
+is implemented directly on `App`. When the underlying `CanCalculateArea` wiring is broken, the caret
+lands on this impl (its header, a method signature, or the forwarding call), never on `App`'s
 own type definition, so the use-site anchor cannot recover the context from a struct-definition
 span. `resolve_impl_site` handles it: it finds the enclosing trait impl whose *full* HIR span (not
 `def_span`, which for an impl covers only the header) contains the diagnostic's primary span, takes
@@ -92,7 +92,7 @@ supertrait on that context that does not hold and is either a CGP consumer trait
 (`impl<Context> Trait for Context where Self: HasField<…>`, a trait with a blanket impl but no
 provider, recognized by `is_blanket_trait` as described under *Recognizing a blanket trait* below)
 **is** the obligation to walk. The resolver seeds it directly (`wrapper_consumer_causes`), with its
-concrete component parameter intact (`CanHandleApi<QueryBalanceApi>`, not the `()` a parameterless
+concrete component parameter intact (`CanCalculateArea<Rectangle>`, not the `()` a parameterless
 re-check would substitute), so no marker detour is needed. The blanket-impl case is what reshapes a
 `#[cgp_fn]` blanket-trait check (`pub trait CheckGetUser: GetUser {}` +
 `impl CheckGetUser for App {}`, the tutorial idiom for asserting a blanket trait holds) whose real
@@ -126,10 +126,10 @@ and a bound on a plain Rust trait keeps rustc's diagnostic
 ([`impl_bound_on_plain_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/impl_bound_on_plain_trait.rs)).
 
 A supertrait's tree is **headed by the impl's own trait**, the wrapper the programmer wrote, so
-the failure reads `CanHandleApiSend → CanHandleApi → …` and points at their code rather than
+the failure reads `CanCalculateAreaChecked → CanCalculateArea → …` and points at their code rather than
 dropping the wrapper. The headline's code turns on the wrapper's **fingerprint**: a wrapper that is itself a
 CGP consumer trait (has a consumer blanket routing to a provider) takes `[CGP-E001]`, while a plain
-wrapper such as `CanHandleApiSend`, with only a concrete impl, takes `[CGP-E003]`. The wrapper is a
+wrapper such as `CanCalculateAreaChecked`, with only a concrete impl, takes `[CGP-E003]`. The wrapper is a
 distinct trait from the CGP supertrait it reduces to, so its error is not a re-report of the
 `check_components!` entry for that supertrait; when the two share their root cause, they coalesce
 into one block at flush, as [the transformed diagnostic](typed-resolution-output.md) describes. This
@@ -147,10 +147,10 @@ check-entry anchor declines, ones checked at unit parameters, are reported as a
 **From a foreign wrapper chain.** The routing glue can put the failure one level further out: a
 hand-written `impl Trait for Foreign` block whose `Self` is a foreign type holding the context,
 where the CGP consumer sits several ordinary-trait `where`-clause hops beneath the impl. The
-money-transfer example's routing layer is the case: `impl CanAddApiRoutes for Router<Arc<MockApp>>`,
-whose supertrait descends through `CanAddMainApiRoutes<MockApp>` and `CanAddRoute<MockApp, …>`
-before reaching `MockApp: CanHandleApi<…>`, with the real context `MockApp` appearing only as a type
-*argument* of each hop and never as the impl's `Self`. Neither the impl-site anchor (whose `Self`
+[`foreign_wrapper_chain`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/duplication/foreign_wrapper_chain.rs)
+fixture has the shape: `impl CanAddAppRoutes for Box<App>` descends through
+`Box<App>: CanAddRoute<App, GreetApi>` before reaching `App: CanHandleApi<GreetApi>`, with the real
+context `App` appearing only as a type *argument* of each hop and never as the impl's `Self`. Neither the impl-site anchor (whose `Self`
 must be a context) nor the use-site anchor (whose context comes from a struct-definition span the
 caret never touches) can recover it.
 
@@ -160,14 +160,14 @@ obligations beneath it (each impl's `where`-clause bounds) until one lands on a 
 ordinary hop becomes a `trait impl` node, so the tree reads from the code the programmer wrote down
 to the root cause. Two subtleties make the descent work. First, it **re-evaluates each obligation
 with the trait solver** rather than trusting rustc's cascade-suppressed diagnostic: the direct
-`MockApp: CanHandleApiSend<…>` bound is *assumed to hold* off its own ill-formed impl, so the
+`App: CanHandleApiSend<GreetApi>` bound is *assumed to hold* off its own ill-formed impl, so the
 descent reaches the consumer instead through the **base trait of a projection `where`-clause** (a
 `Ctx::Response: Send` bound over the broken `CanHandleApi`, whose base `Ctx: CanHandleApi<…>` is
 what genuinely fails), which requires reading the impl's predicates *un-normalized* so the
 projection's base survives. Second, the tree is headed by the impl's own trait, fingerprinted for
 the `[CGP-E001]`/`[CGP-E003]` code as the impl-site anchor does. But because `Self` is a foreign
 wrapper rather than the context, the class sentence names it **plainly**
-(`` the trait `CanAddApiRoutes` is not implemented for `Router<Arc<MockApp>>` ``, with no `context`
+(`` the trait `CanAddAppRoutes` is not implemented for `Box<App>` ``, with no `context`
 qualifier), carried by the `Resolved::subject_is_context` flag; it is the internal headline, and the
 displayed one only when the causes are too mixed to state at once. Only a genuine CGP consumer is
 ever reported as a cause, so a descent into unrelated `where`-clauses contributes nothing. This
@@ -346,6 +346,15 @@ and declines an entry for a component with type parameters, whose consumer oblig
 the entry does not name
 ([`generic_component_forwarding_missing_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/generic_component_forwarding_missing_key.rs)).
 
+## Further reading
+
+- [Typed root-cause resolution](typed-root-cause-resolution.md): the pipeline overview, its
+  boundaries, and the consolidated tests and source catalogs.
+- [Typed resolution: the call-site anchor](typed-resolution-call-site.md): the seventh to tenth
+  anchors.
+- [Typed resolution: walking to the root cause](typed-resolution-walk.md): the descent every
+  anchor's seed feeds.
+
 ## Tests
 
 Every anchor is pinned end to end by the UI snapshot suite; the consolidated fixture catalog, with
@@ -374,12 +383,3 @@ unit-tests the list's gates and the data-call entry's check.
 
 The per-file map of the whole resolver lives in the parent document's
 [Source](typed-root-cause-resolution.md#source) section.
-
-## Further reading
-
-- [Typed root-cause resolution](typed-root-cause-resolution.md): the pipeline overview, its
-  boundaries, and the consolidated tests and source catalogs.
-- [Typed resolution: the call-site anchor](typed-resolution-call-site.md): the seventh to tenth
-  anchors.
-- [Typed resolution: walking to the root cause](typed-resolution-walk.md): the descent every
-  anchor's seed feeds.

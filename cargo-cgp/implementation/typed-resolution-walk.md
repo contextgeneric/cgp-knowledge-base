@@ -185,8 +185,7 @@ walk descends it the way it descends a provider. It deliberately does *not* foll
   [`cascade_nested_projection`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/cascade_nested_projection.rs),
   with the empty-table variant in
   [`empty_dispatch_table`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/empty_dispatch_table.rs).
-  Hypershell's own dispatchers `open` their component instead, so the same mistake in its
-  `http_checksum_native` example reaches the redirect-wiring leaf above.
+  A dispatcher that `open`s its component instead reaches the redirect-wiring leaf above.
 - An unmet **`DelegateComponent<Marker>` on a type that is neither the context nor any table**
   arises via the generic blanket for the parent provider trait `T` (owner == parent `Self`), and
   splits by whether the owner has a *concrete* impl of `T` (`owner_has_impl_of`). A genuine
@@ -580,6 +579,13 @@ with a field unset, a `FromVariant` for a variant the enum lacks), still heads i
 own step, so the chain names the operation the cause is about rather than restating the cause
 ([`finalize_build_premature`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/finalize_build_premature.rs)).
 
+## Further reading
+
+- [Typed root-cause resolution](typed-root-cause-resolution.md): the pipeline overview, its
+  boundaries, and the consolidated tests and source catalogs.
+- [rustc diagnostic internals](rustc-diagnostic-internals.md): the panic hazards the walk's
+  inference-context discipline exists to avoid.
+
 ## Tests
 
 The walk and its leaf classification carry most of the resolver's fixtures: the leaf classes
@@ -625,10 +631,3 @@ parent document's [Tests](typed-root-cause-resolution.md#tests) section.
 
 The per-file map of the whole resolver lives in the parent document's
 [Source](typed-root-cause-resolution.md#source) section.
-
-## Further reading
-
-- [Typed root-cause resolution](typed-root-cause-resolution.md): the pipeline overview, its
-  boundaries, and the consolidated tests and source catalogs.
-- [rustc diagnostic internals](rustc-diagnostic-internals.md): the panic hazards the walk's
-  inference-context discipline exists to avoid.

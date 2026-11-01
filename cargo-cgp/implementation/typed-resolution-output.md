@@ -25,7 +25,7 @@ rustc's own headline stopped on:
 - **`[CGP-E002]`, the provider class**, for a `#[check_providers]` entry or a provider's own method
   called directly, whose anchor records the provider (see [the anchors](typed-resolution-anchors.md)).
 - **`[CGP-E003]`, the plain-trait class**, for a trait that is *not* itself a CGP consumer: a
-  hand-written wrapper with only a concrete impl, such as `CanHandleApiSend`, or a
+  hand-written wrapper with only a concrete impl, such as `CanCalculateAreaChecked`, or a
   `#[cgp_fn]`/`#[blanket_trait]` blanket trait, told apart from `[CGP-E001]` by its fingerprint
   (see [the impl-site and wrapper-chain anchors](typed-resolution-anchors.md)).
 - **`[CGP-E004]`, the field-type mismatch**, for an `E0271` the resolver traced to a `HasField`
@@ -237,10 +237,9 @@ The `root cause:` lead is worded by *why* the leaf is unmet, in one shape per ki
 
 - A **non-provider**, a type wired where a provider was expected that does not implement the
   provider trait at all, reads as
-  `` root cause: `QueryBalanceRequest` is not a provider of `ApiHandler` ``.
-  The mistake is putting a non-provider (often a request or value type) into a provider slot, as the
-  `money-transfer-api` example does when an endpoint's inner handler is dropped and
-  `UseBasicAuth<QueryBalanceRequest>` leaves the *request* type where an `ApiHandler` belongs. It is
+  `` root cause: `NotAGreeter` is not a provider of `Greeter` ``.
+  The mistake is putting a non-provider (often a request or value type) into a provider slot, as
+  `WrapGreeter<NotAGreeter>` does when `NotAGreeter` is an ordinary struct. It is
   the sibling of a missing dispatch entry for a type that is not a table at all: told apart from a
   valid provider reached via the blanket after an argument mismatch, which *has* a concrete impl of
   the trait, by the owner having **no** concrete impl of the provider trait, and named against that
@@ -474,6 +473,15 @@ de-duplication (keyed on the recovered cause, the rendered text, or the class he
 transformed diagnostic that re-reports a failure already shown, and the flush coalesces the blocks
 that share a root cause into one (see [The driver](driver.md)).
 
+## Further reading
+
+- [Typed root-cause resolution](typed-root-cause-resolution.md): the pipeline overview and the
+  consolidated tests and source catalogs.
+- [Error processing](error-processing.md): the rustc-free crate the wording lives in, and the
+  post-processing every emitted diagnostic still passes through.
+- [The driver](driver.md): the emitter that hosts the seam, its de-duplication ledger, and the
+  fallback text rewrite.
+
 ## Tests
 
 The wording is unit-tested rustc-free, over hand-built inputs:
@@ -499,12 +507,3 @@ the `cargo tree`-style renderer. The end-to-end fixture catalog lives in the par
   the `DependencyTree` and its renderer, the target the graph expands into.
 - [`crates/cargo-cgp-driver/src/emitter/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/emitter):
   the `try_resolve` seam and the `transform_resolved` mutation that applies the plan.
-
-## Further reading
-
-- [Typed root-cause resolution](typed-root-cause-resolution.md): the pipeline overview and the
-  consolidated tests and source catalogs.
-- [Error processing](error-processing.md): the rustc-free crate the wording lives in, and the
-  post-processing every emitted diagnostic still passes through.
-- [The driver](driver.md): the emitter that hosts the seam, its de-duplication ledger, and the
-  fallback text rewrite.
