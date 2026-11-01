@@ -298,7 +298,8 @@ somewhere to be tracked.
   campaign's last task because the release and the redesign publish together. The draft's content
   and code verification are in place; the author must read it, set its publication date, and
   recheck the quoted diagnostics against the released tool. *Lands in:* `blog/`, then the branch
-  merge. *Spec:* [writing-guides/release-announcement.md](writing-guides/release-announcement.md);
+  merge. Before the merge, remove the `cgp` patch from the website's `example-code` manifest and
+  re-bless its snapshots against the release. *Spec:* [writing-guides/release-announcement.md](writing-guides/release-announcement.md);
   material and the mechanical items in [blog/v0-8-0-release.md](blog/v0-8-0-release.md) and
   [releases/v0-8-0.md](../releases/v0-8-0.md). *Blocked by:* the `cgp` v0.8.0 release itself, and by
   every release-blocking task above. *Carries two items from*

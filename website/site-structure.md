@@ -437,7 +437,7 @@ on the site where a single voice is appropriate rather than the project's collec
 
 - **URL** — <https://contextgeneric.dev/docs/cargo-cgp/>
 - **Source** — [docs/cargo-cgp/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/cargo-cgp)
-- **Status** — Current, written against `cargo-cgp` v0.1.0 ahead of its release (task V2)
+- **Status** — Current, written against `cargo-cgp` v0.1.0 ahead of its release (task V2), in natural-writing
 - **How it was made** — written by an agent from [cargo-cgp/reference/](../cargo-cgp/reference/README.md)
   and [cargo-cgp/error-code.md](../cargo-cgp/error-code.md), with every quoted output produced by
   running the tool built from `cargo-cgp`'s `main`; level one of the four in
@@ -471,7 +471,7 @@ pages, in the order a reader needs them, specified by [writing-guides/tooling.md
   through unchanged. The ordinary-trait shape is the one rewritten error that keeps the compiler's own
   headline at a check, so the page's test for a passed-through error is "no `[CGP-Exxx]` code
   anywhere", not "no code in the headline"; reached through a method call, the same mistake gets a
-  CGP headline and a `[CGP-E201]` cause line, which is the only case that code appears in.
+  CGP headline. The list of errors that pass through is a selection, not the whole issue document.
 - **Expand**: when to use it first, the fixed `Rectangle` and its real `--item Rectangle` listing,
   `--item`, choosing a target, the `cargo-expand` comparison quoting the compiler's own expansion, and
   what to expect from the output.
@@ -516,7 +516,7 @@ programs the pages say compile under `tests/cargo_cgp/`.
 ### What a later revision must know
 
 **The quoted output comes from `cargo-cgp`'s `main`, the v0.1.0 release the pages document.** It was
-captured with the source-built tool on Linux, against `cgp`'s `main`, and output that names the
+captured with the source-built tool on Linux, against the sibling `cgp` checkout on the release's branch, and output that names the
 tool's version is quoted as `0.1.0`, per the base's
 [rule on versions](../AGENTS.md#document-official-versions-never-pre-releases). Task V2 in
 [tasks.md](tasks.md) re-runs every quoted command against the tagged release.
@@ -528,7 +528,7 @@ releases, `setup` and `update` answering `--help` and refusing other arguments, 
 sitting in the project's own target directory wherever the command runs.
 
 **The editor page was verified against the rust-analyzer server, not the VS Code window.** An LSP
-client under `reports/probes/cargo-cgp-editor/` in the workspace root starts rust-analyzer with the
+client starts rust-analyzer with the
 override (and any further `check` options) as its initialization options, opens and saves the check
 page's program, and prints what the server publishes and every `window/showMessage`. Every quoted
 editor output comes from it: the rewritten error, the `cargo check failed to start` warning carrying
@@ -540,11 +540,14 @@ those options. The settings file and command-palette names come from VS Code's a
 documentation, which the page links, and the restart command's name from the extension's own
 `package.json`; how VS Code renders the error in its window is the one thing nobody has looked at.
 
+**The website's `example-code` crate patches `cgp` to that sibling checkout**, since the repository's `main`
+does not hold the release yet, and its `.stderr` snapshots are blessed against it. Task V1 removes the patch.
+
 **The pinned nightly's date is shown only where real output contains it.** Commands that need it use
 `nightly-YYYY-MM-DD` and say where to read the real one, so a toolchain bump changes quoted output but
 no instructions.
 
-**An undeclared trait called inside a `#[cgp_impl]` provider body is reshaped into `[CGP-E012]`**,
+**An undeclared trait called inside a `#[cgp_impl]` provider body is reshaped into `[CGP-E030]`**,
 like the same mistake in a `#[cgp_fn]` body; writing the pages found it passing through raw, and the
 fix and its fixture landed in `cargo-cgp` with the front-end changes above. The reading page and the
 error-codes page say both bodies are covered.
@@ -1098,8 +1101,8 @@ rather than asserts. A revision re-reads the fixtures rather than editing the qu
 
 The page covers one group the internal catalog has **no classes for**, and the gap is recorded in
 [cgp/errors/README.md](../cgp/errors/README.md) rather than papered over here. `cargo-cgp`'s
-`CGP-E012`–`CGP-E016` rewrites — a trait used without `#[uses]`, an inner provider used without
-`#[use_provider]`, and the three consumer-versus-provider-trait confusions — are common, first-week
+The rewrites from `CGP-E030` to `CGP-E037`, such as a trait used without `#[uses]`, an inner provider used without
+`#[use_provider]`, and the consumer-versus-provider-trait confusions, are common, first-week
 mistakes with no upstream class document, so the public page carries them under *Using something you did
 not declare* on the strength of the tool's own catalog and its fixtures.
 
@@ -1184,9 +1187,8 @@ Writing the rest of `macros/` corrected four more, all of them in this base rath
 found by running the construct rather than transcribing the document. **`#[blanket_trait]` is not in the
 prelude** — its reference's own example would not have compiled — and needs
 `use cgp::core::macros::blanket_trait;`. **`#[blanket_trait]` does not strip the trait's default bodies**, as
-its Expansion claimed; the body appears both on the trait and in the generated impl. **A self-inheriting
-namespace fails with `E0207`, not the `E0275` overflow** the namespace reference attributed to every cycle;
-only a chain through two or more namespaces overflows. And **the `IsProviderFor` clause `#[cgp_provider]`
+its Expansion claimed; the body appears both on the trait and in the generated impl. **`cgp_namespace!` rejects a self-inheriting
+namespace itself**, and only a chain through two or more namespaces overflows, with `E0275`. And **the `IsProviderFor` clause `#[cgp_provider]`
 derives is augmented, not copied**: a bound naming the component's own provider trait gains its marker
 counterpart, which is the mechanism that carries an inner provider's requirements outward and lets
 `#[check_providers]` localize a broken layer. The claim that `delegate_and_check_components!` on an aggregate
@@ -1214,9 +1216,8 @@ Four are **rules the expansion follows that were unstated**. A provider trait's 
 tuple lifts a lifetime into [`Life<'a>`](../cgp/reference/types/life.md) and takes the first *type* argument
 as the context, which matters the moment a component carries a lifetime. `#[cgp_component]` replaces the
 consumer trait's supertraits with `IsProviderFor` and lowers them to a `where` bound on the context.
-`#[cgp_impl]`'s `Self`-to-context rewrite **exempts an associated type the block itself declares**, so the
-Known-issues entry that had claimed a provider's own associated const *or type* was awkward to name was
-half wrong — only the const is. And `#[cgp_fn]` moves the function's visibility onto the generated trait and
+`#[cgp_impl]`'s `Self`-to-context rewrite **leaves an associated type the block itself declares alone, and
+qualifies a const it declares**, so a provider names its own items as `Self::Output` and `Self::LIMIT`. And `#[cgp_fn]` moves the function's visibility onto the generated trait and
 copies an unrecognized attribute onto both emitted items.
 
 Three are **grammar sections the template requires and five pages lacked**: `#[uses]`, `#[extend]`,
@@ -1273,25 +1274,12 @@ the builder**: `CanBuildFrom` walks the source's field list, so the internal ref
 Examples snippet — which derived only `BuildField` on both structs — would not have compiled. And
 **a partial companion type carries none of the input's struct-level attributes**, because the
 codegen clears them, so a partially-built record or an extraction remainder is neither `Debug` nor
-`Clone` however the original is derived (field and variant attributes, by contrast, are copied, the
-Known issue a `serde` helper attribute trips); that had gone unrecorded on either side and is why an
+`Clone` however the original is derived (each field and variant keeps only its documentation, so a `serde` helper attribute does not reach it); that had gone unrecorded on either side and is why an
 `assert_eq!` over an `extract_field` result does not compile.
 
-The defect is the first entry in the library's [`invalid_expansion`](https://github.com/contextgeneric/cgp/tree/main/crates/tests/cgp-macro-tests/tests/invalid_expansion)
-target, which had been standing empty against exactly this case: **the variant derives name their own
-associated types through `Self::…`, so seven variant names cannot be used.** A variant called `Fields` or
-`FieldsRef` breaks `#[derive(HasFields)]`, `Value` breaks `#[derive(FromVariant)]`, and `Value`,
-`Remainder`, `Extractor`, `ExtractorRef`, or `ExtractorMut` breaks `#[derive(ExtractField)]` — each
-reported as a code-less `ambiguous associated item` headlined at the derive attribute. Whether the message
-also *names* the offending variant turned out to depend on the derive, which is worth recording because the
-first draft of these pages asserted the pessimistic case for all of them: the representation and constructor
-impls are generated `for` the user's enum, so a note points at the real variant, while the extractor's target
-the generated companion enums whose variant identifiers the codegen rebuilds, so both notes land on the
-derive and nothing names the variant. The fix is a fully qualified projection in the codegen; until then it is
-recorded as a Known issue in all five affected reference and implementation documents, on the three public
-pages, and as a third sibling in the
-[out-of-scope generated name](../cgp/errors/lowering/out-of-scope-generated-name.md) error class. Struct *field* names are
-unaffected, since a field is not in the same namespace as an associated type.
+The variant derives name their own associated types through qualified projections such as
+`<Self as HasExtractor>::Extractor`, so no variant name is reserved, and the pages show those projections in
+their expansions.
 
 Porting the `traits/` group turned up a different class of defect from the derives, and the shape of it is
 worth recording because it was found by one systematic check rather than page by page. **Auditing every trait

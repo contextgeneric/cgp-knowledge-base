@@ -60,7 +60,7 @@ repository, and match the pages. The pages say the repository has no test for th
   the reader sees the coarse manager lose every method where the fine-grained stage loses one.
 - **The dispatch wrapper's reason is stated as the likeliest explanation.** The knowledge base
   records the `where`-clause experiments as evidence rather than proof, and `dispatch-layers` keeps
-  that uncertainty. Wiring the dispatcher directly now reports `[CGP-E010]` through the context's
+  that uncertainty. Wiring the dispatcher directly reports `[CGP-E020]` through the context's
   check, which the [dispatch layers
   record](../../projects/cgp-examples/expression/architecture/dispatch-layers.md) is corrected to.
 - **Source links point at `main`**, per the writing guide, so until the `v0.8.0` branch merges they
@@ -172,7 +172,7 @@ example, which the applied tutorial (T3) may draw on; the two must use the same 
   lifecycle document feeds the two examples rather than a page of its own.
 - **Guides** — `adding-an-endpoint.md` and `swapping-the-backend.md`, from
   [guides/](../../projects/cgp-examples/transfer/guides/README.md). The second is where a reader
-  meets the `[CGP-E005]` override conflict, and it should show the base-namespace design from the
+  meets the `[CGP-E011]` override conflict, and it should show the base-namespace design from the
   crate's [missing features](../../projects/cgp-examples/transfer/issues.md#missing-features) if DC4
   adopts it.
 

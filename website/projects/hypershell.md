@@ -72,7 +72,7 @@ The writing turned up several facts a later revision must respect:
   effect. Both are fixed in the project section.
 - **The architecture pages are written for an outside reader, not ported line for line.** Each opens
   with a question such a reader would ask, introduces bundles, namespaces, and input dispatchers one
-  at a time, and leaves out the registration paths, the lookup internals, and the `[CGP-E104]` walk
+  at a time, and leaves out the registration paths, the lookup internals, and the `[CGP-E103]` walk
   the internal documents carry. Their cost sections state trade-offs; the project's open issues stay
   on the limitations page. A revision should keep them that way, per the [writing
   guide](../writing-guides/project.md#architecture-pages).

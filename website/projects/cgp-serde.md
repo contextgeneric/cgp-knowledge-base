@@ -62,12 +62,11 @@ The writing turned up several facts a later revision must respect:
   in the workspace. The postcard claim is the one taken from the records alone, since the crate
   could not be fetched offline.
 - **The `E0275` cases are reshaped when checked.** A provider that depends on itself and a recursive
-  type both report `[CGP-E010]` through `check_components!`, from the published `cargo-cgp` as well
-  as the source build; at a call site with no check, the raw overflow stays. The project's
+  type both report `[CGP-E020]` through `check_components!`; at a call site with no check, the raw overflow stays. The project's
   [debugging guide](../../projects/cgp-serde/guides/debugging-wiring.md) is corrected to match.
 - **A context-defined namespace shares wiring.** The wiring guide's last step shows `AppA` and `AppB`
   sharing entries through a namespace of the reader's own, which a probe confirmed, with each context
-  still opening the component and a rebinding rejected as `[CGP-E005]`. It is advice for the reader,
+  still opening the component and a rebinding rejected as `[CGP-E011]`. It is advice for the reader,
   not the library's `CgpSerdeNamespace`, and the [wiring
   record](../../projects/cgp-serde/guides/wiring-a-context.md#share-wiring-between-contexts) carries it.
 - **Source links point at `main`**, per the writing guide, so until the `v0.8.0` branch merges they
