@@ -293,8 +293,8 @@ for `CGP-E060`.
 - **From:** an `E0599`, either "the method `…` exists for reference `&__Context__`, but its trait bounds
   were not satisfied" or "no associated function or constant named `…` found for type parameter
   `__Context__`".
-- **Left as rustc wrote it:** a call on another generic parameter (`value: &Value`), since its fix is a
-  bound `#[uses]` cannot give, and any `[T]: Sized` cascade an unresolved return type trails, which can
+- **Left as rustc wrote it:** a call in an impl no `#[cgp_fn]` or `#[cgp_impl]` lowered, or on another
+  generic parameter (`value: &Value`), since the fix is a bound `#[uses]` cannot give, and any `[T]: Sized` cascade an unresolved return type trails, which can
   land off the failing expression, so suppressing it could hide an unrelated error.
 - **Fix (in the `help`):** `` declare it as a dependency with `#[uses(<Trait><Args>)]` ``, with the
   arguments the call uses (`#[uses(CanFormatPair<(u32, u64)>)]`). An argument the tool cannot read stays
@@ -310,7 +310,7 @@ for `CGP-E060`.
   the inner-provider counterpart of [`CGP-E030`](#cgp-e030-trait-used-but-not-declared).
 - **From:** an `E0599` "no associated function … found for type parameter `<Inner>`". rustc's suggestion
   leaks `__Context__` and offers the consumer trait, the wrong fix. `Self::method(…)` never qualifies,
-  since its fix is a `#[uses]`.
+  since its fix is a `#[uses]`, and neither does a call in a hand-written impl, whose fix is a bound.
 - **Fix (in the `help`):** `` import it with `#[use_provider(<Inner>: <ProviderTrait><Args>)]` ``. A
   generic component's parameters follow the context, as in `#[use_provider(Inner: AreaCalculator<Shape>)]`.
   A parameter the call does not fix stays named, and the `help` adds

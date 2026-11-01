@@ -273,9 +273,12 @@ keeps the caret rustc chose
 ([`lowering/undeclared-dependency/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/lowering/undeclared-dependency)).
 
 **An undeclared trait (`[CGP-E030]`)** fails with an `E0599`, as `self.method(…)` or
-`Self::method(…)`. The detector confirms that the call sits in a generated impl over a bare
-type-parameter context, walking up from its body owner since an impl's item span does not reliably
-cover it. It also confirms that the call is on that context, names a function of a CGP consumer or
+`Self::method(…)`. The detector confirms that the call sits in an impl a `#[cgp_fn]` or `#[cgp_impl]`
+lowered, over a bare type-parameter context, walking up from its body owner since an impl's item span
+does not reliably cover it. The macro is read from the impl's spans, since the explicit-context form of
+`#[cgp_impl]` declares no reserved `__Context__`. A hand-written impl, with or without `#[cgp_provider]`,
+takes neither `#[uses]` nor `#[use_provider]`, so it keeps rustc's error
+([`undeclared_calls_in_plain_impls`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/undeclared_calls_in_plain_impls.rs)). It also confirms that the call is on that context, names a function of a CGP consumer or
 blanket trait, and that the trait is no `where` bound yet.
 
 - **A call on any other parameter is left alone,** since `#[uses]` cannot bound it.
@@ -288,7 +291,7 @@ blanket trait, and that the trait is no `where` bound yet.
   [the `?` stage](#dropping-a-question-mark-cascade) gives.
 
 **An unimported inner provider (`[CGP-E031]`)** is `InnerCalculator::area(self)` on a parameter with
-no bound. rustc's `E0599` leaks `__Context__` and offers the consumer trait, the wrong fix for a
+no bound, in an impl a CGP macro lowered. rustc's `E0599` leaks `__Context__` and offers the consumer trait, the wrong fix for a
 higher-order provider. It is gated to the unbounded-type-parameter shape, reported during typeck,
 where the queries are cached, unlike the resolution-class `E0599`. Its main message is a Fluent one,
 so it is recognized by its plain-string help.
@@ -333,7 +336,9 @@ enum, and its header trait reference is a token the user wrote.
 
 **Only the `E0107` triggers detection,** because the detector's queries would re-enter the
 diagnostic lock during the earlier `E0425`. The siblings are suppressed by their spans against the
-impl body and the macro's call site, and one that arrived first is purged from the buffer. A
+impl body and the macro's call site, and one that arrived first is purged from the buffer. A span is
+all that ties one to the mistake, so a typo of the program's own in that body is dropped too, and
+appears once the header is fixed. A
 downstream check re-report is dropped when its leaf is the offending provider, but a requirement of
 that impl that fails on its own resolves to its own cause and stays
 ([the walk](../typed-resolution/walk.md#a-provider-whose-header-names-the-consumer-trait)).

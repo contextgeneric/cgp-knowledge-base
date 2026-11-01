@@ -188,15 +188,15 @@ the declaration to write in a `help`, and keeps `rustc`'s own code. The codes ar
   `Self::Error`, and the `E0425` of a bare `Error` when a requirement of the component names the
   trait that declares it; the `E0277` blocks of that requirement are dropped, since the import
   satisfies them too.
-- **`[CGP-E036]`** for an undeclared requirement, reported once per provider, with the caret where
-  rustc first reported it, usually the `#[cgp_impl]` attribute, and the context written as `Self`
-  in any requirement that names it:
+- **`[CGP-E036]`** for an undeclared requirement, reported once per provider, with the caret on the
+  macro's call site, and the context written as `Self` in any requirement that names it:
   ``the provider trait `Greeter` requires `HasName` of the context, but the provider `GreetHello` does not declare it``,
   and ``help: declare it as a dependency with `#[uses(HasName)]` ``, or
   `#[use_type(HasErrorType.Error)]` for an abstract-type component.
 
 A call on a generic parameter other than the context (`value: &Value`) keeps `rustc`'s output on
-purpose, since its fix is a bound on `Value`, which `#[uses]` cannot write. The other shapes the tool
+purpose, since its fix is a bound on `Value`, which `#[uses]` cannot write. So does a call in a
+hand-written impl, with or without `#[cgp_provider]`, which takes neither `#[uses]` nor `#[use_provider]`. The other shapes the tool
 does not fully reshape are gaps, listed under [Notes for tooling](#notes-for-tooling).
 
 ## Resolving it
@@ -266,6 +266,10 @@ These fixtures pin the class, one group per shape:
   two CGP traits declaring `describe`; the `[CGP-E030]` names the one rustc's notes point at.
 - [`lowering/undeclared-dependency/undeclared_lifetime_trait.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/undeclared_lifetime_trait.rs):
   a consumer trait with a lifetime parameter, whose `[CGP-E030]` has no help.
+- [`lowering/undeclared-dependency/undeclared_uses_trait_explicit_context.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/undeclared_uses_trait_explicit_context.rs):
+  a `#[cgp_impl]` in the explicit-context form, `impl<Context> Greeter for Context`; `[CGP-E030]`.
+- [`lowering/undeclared-dependency/undeclared_calls_in_plain_impls.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/undeclared_calls_in_plain_impls.rs):
+  the same calls in hand-written impls and a `#[cgp_new_provider]`, which keep `rustc`'s headline.
 - [`lowering/undeclared-dependency/provider_for_concrete_context_calls_unwired.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/provider_for_concrete_context_calls_unwired.rs):
   a provider for a concrete context calling a trait its context does not wire, which is not an
   undeclared dependency and resolves to the missing wiring.
