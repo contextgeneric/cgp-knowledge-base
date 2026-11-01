@@ -129,7 +129,7 @@ entry for `Vec<&'a Coord>`, and the arena example wires the `&'a Coord` items it
 
 ### Pairing
 
-The serializing counterpart is [`SerializeRecordFields`](#serializefields).
+The serializing counterpart is [`SerializeRecordFields`](#serializerecordfields).
 
 ### Known issues
 

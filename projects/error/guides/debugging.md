@@ -54,9 +54,8 @@ check_components! {
 }
 ```
 
-`cargo cgp check` reports `[CGP-E001]`, that `CanRaiseError<Error>` is not implemented for `App`,
-with the root cause `[CGP-E113]`: `App` contains no delegate entry for `ErrorTypeProviderComponent`.
-The tree shows the missing `HasErrorType` twice, once as the consumer trait's supertrait and once as
+`cargo cgp check` reports `[CGP-E001]` with the root cause `[CGP-E113]`, both reading "missing wiring
+for `ErrorTypeProviderComponent` on `App`". The tree shows the missing `HasErrorType` twice, once as the consumer trait's supertrait and once as
 the provider's pin. Add `ErrorTypeProviderComponent: UseAnyhowError`.
 
 ## Two backends on one context
@@ -80,9 +79,9 @@ check_components! {
 ```
 
 `cargo cgp check` reports `E0271` tagged `[CGP-E005]`: the abstract type `Error` of `HasErrorType`
-on `App` was expected to be `Error` but is `Box<dyn Error + Send + Sync>`. The first `Error` is
-`anyhow::Error` with its path stripped by the tool's resugaring, which makes the message read oddly;
-its help line suggests wiring `UseType<Error>` for the same reason. The root cause is the
+on `App` is `Box<dyn std::error::Error + Send + Sync>`, but `cgp_error_anyhow::Error`, the crate's
+re-export of `anyhow::Error`, is required. Its help line suggests wiring
+`UseType<cgp_error_anyhow::Error>`, or changing the provider to work with the boxed error. The root cause is the
 `#[use_type(HasErrorType.{Error = anyhow::Error})]` pin on `RaiseAnyhowError`. Use the raiser from
 the same crate as the type provider, here `RaiseBoxedStdError`.
 
