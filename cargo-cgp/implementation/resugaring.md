@@ -203,7 +203,10 @@ head decides. A **module-qualified** segment is rendered as written, since `Path
 segment as a type: `PathCons<ErrorRaiserComponent, PathCons<std::io::Error, Nil>>` reads
 `@ErrorRaiserComponent.std::io::Error`. The [path strip](#the-path-strips-that-run-first) runs first
 and keeps a qualifier only where it tells two types apart, so the one that reaches this pass is
-meaningful, and dropping it would make `std::io::Error` read as any other `Error`. Two segment
+meaningful, and dropping it would make `std::io::Error` read as any other `Error`. The exception is a
+key in a code an `E0207` or `E0210` carries, `CGP-E017`, `CGP-E018`, `CGP-E019`, or `CGP-E022`, whose
+types [print by their own names](driver/diagnostic-reshapes.md), so it reads `@ErrorRaiserComponent.Error`
+([`entry_generic_qualified_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/entry_generic_qualified_key.rs)). Two segment
 shapes decline, leaving the whole list raw rather than risking a mangled path: a qualified segment
 that is not a plain type path (a lowercase tail, generics), and a **bare lowercase identifier**,
 which `Path!` would have encoded as a `Symbol`, so meeting one as a plain type is ambiguous. A

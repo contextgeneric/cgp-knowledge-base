@@ -154,6 +154,9 @@ concise `#[cgp_impl]` form, since the default position cannot bind the provider'
 - [`wiring/unconstrained-generic/entry_generic_redirect.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/entry_generic_redirect.rs):
   a per-entry generic only a `=>` redirect uses; the `.cgp.stderr` pins the `[CGP-E019]` whose help
   points at where the entry uses it, without naming the generated `RedirectLookup`.
+- [`wiring/unconstrained-generic/entry_generic_qualified_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/entry_generic_qualified_key.rs):
+  a key written `std::io::Error` beside a local `Error`; the `[CGP-E019]` reads `Error`, and the caret
+  on the entry says which.
 - [`wiring/unconstrained-generic/entry_lifetime_not_in_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/entry_lifetime_not_in_key.rs),
   [`wiring/unconstrained-generic/entry_generic_blanket_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/entry_generic_blanket_key.rs),
   and

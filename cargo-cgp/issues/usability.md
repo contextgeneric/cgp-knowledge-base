@@ -57,9 +57,18 @@ nothing reaches the compiler for the tool to reshape.
 
 These errors keep the compiler's output because nothing in the tool starts from them:
 
+- **Two orphan registrations in one crate:** each `#[default_impl]` caret sits on its attribute and
+  each impl on its key, so neither caret picks a registration, and both keep rustc's `E0210` naming
+  `__Components__` ([`two_orphan_registrations`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/orphan-rule/two_orphan_registrations.rs)).
 - **`delegate_components!` on a foreign type:** rustc's `E0117` says the type is not local, and its
   `E0210` beside it names `__Context__`
   ([`orphan_registration_beside_foreign_table`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/orphan-rule/orphan_registration_beside_foreign_table.rs)).
+- **A misspelled name in the body of a misused `#[cgp_impl]`:** the `[CGP-E032]` drops the body's
+  errors by their spans, so the typo appears only once the header is fixed
+  ([`consumer_trait_in_provider_impl_body_typo`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/consumer_trait_in_provider_impl_body_typo.rs)).
+- **A qualified key in a structural code:** `[CGP-E019]` and its neighbours print a key's type by its
+  own name, so `std::io::Error` reads `Error`, and only the caret tells it from a local `Error`
+  ([`entry_generic_qualified_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unconstrained-generic/entry_generic_qualified_key.rs)).
 - **A lifetime requirement on a check entry:** an error detail borrowed through a wrapper that needs
   `'static` details, or a provider bounded on `FieldsRef<'b>` for every lifetime and checked for an
   enum with a lifetime, fails with a bare `E0477` on the check entry. The resolver walks trait

@@ -238,7 +238,8 @@ These corners need care:
   an entry lowers to, so each is reported once.
 - **The `E0207` detectors print a type by its own name,** rather than through the trimmed-paths map.
   An `E0207` comes before any type was printed with trimmed paths, and the first such print records
-  itself on the diagnostic context, whose lock the emitter holds.
+  itself on the diagnostic context, whose lock the emitter holds. The name drops a qualifier, so a
+  key written `std::io::Error` reads `Error` in these messages.
 
 ## Reshaping an orphan-rule namespace registration
 
@@ -263,7 +264,8 @@ keeps the code and a program's own similarly named macro does not take it
 or an unrelated `impl Display for Vec<u8>` would read as the registration beside it
 ([`orphan_registration_beside_plain_orphan`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/orphan-rule/orphan_registration_beside_plain_orphan.rs),
 [`plain_orphan_beside_type_registration`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/plain_orphan_beside_type_registration.rs)).
-Two orphan registrations in one crate leave the choice ambiguous, so both keep rustc's `E0210`.
+Two orphan registrations in one crate leave the choice ambiguous, so both keep rustc's `E0210`
+([`two_orphan_registrations`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/orphan-rule/two_orphan_registrations.rs)).
 
 The key prints by its own name, for the reason the `E0207` detectors do: an `E0210` holds no type
 in its message, so nothing has printed one with trimmed paths yet. The impl's own machinery parameter

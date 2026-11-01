@@ -205,6 +205,8 @@ These fixtures pin the class, one group per shape:
   the same reached by a call on the context rather than a check.
 - [`lowering/wrong-component-half/consumer_trait_in_provider_impl_field_type.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/consumer_trait_in_provider_impl_field_type.rs):
   the same beside a field of the wrong type, reported as `[CGP-E004]`.
+- [`lowering/wrong-component-half/consumer_trait_in_provider_impl_body_typo.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/consumer_trait_in_provider_impl_body_typo.rs):
+  a misspelled name in the impl's body, dropped with the errors the header causes.
 - [`lowering/wrong-component-half/consumer_trait_in_provider_impl_generic.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/consumer_trait_in_provider_impl_generic.rs):
   a generic component's consumer trait in the header; `[CGP-E032]`.
 - [`lowering/wrong-component-half/cgp_impl_on_non_cgp_trait.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/cgp_impl_on_non_cgp_trait.rs):

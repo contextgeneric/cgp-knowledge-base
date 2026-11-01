@@ -181,6 +181,7 @@ These codes name a mistake in the shape of what a macro was given, which the com
 the generated items. The raw errors name those items (`__CheckApp`, an impl's type parameter) and
 carry suggestions that do not fix the program, so each rewrite uses the program's terms, drops those
 suggestions, puts the fix in a `help`, and reports the mistake once, however many errors rustc gives.
+A `<key>` in `CGP-E017`, `CGP-E018`, or `CGP-E019` names each type without its module path.
 
 The classes are [conflicting wiring](../cgp/errors/wiring/conflicting-wiring.md) for `CGP-E015`,
 `CGP-E016`, and `CGP-E061`, [unconstrained generic](../cgp/errors/wiring/unconstrained-generic.md) for
@@ -271,7 +272,8 @@ for `CGP-E060`.
 
 - **Message:**
   `` [CGP-E022] cannot register the foreign <key> into the foreign namespace `<Namespace>` ``, where
-  `<key>` is `` component `<Marker>` ``, `` type `<Type>` ``, or `` path `@…` ``.
+  `<key>` is `` component `<Marker>` ``, `` type `<Type>` ``, or `` path `@…` ``, naming each type without
+  its module path.
 - **Means:** the crate registers wiring into a namespace it does not own, keyed on something it does not
   own either. A registration lowers to `impl Namespace<_> for Key`, and the orphan rule rejects a
   foreign-trait impl with no local type covering it.

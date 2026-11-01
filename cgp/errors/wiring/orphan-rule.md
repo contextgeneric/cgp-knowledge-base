@@ -167,6 +167,8 @@ Each fixture sits under `wiring/orphan-rule/`, where its `.cgp.stderr` pins the 
 - [`wiring/orphan-rule/orphan_registration_beside_foreign_table.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/orphan-rule/orphan_registration_beside_foreign_table.rs):
   a registration beside `delegate_components!` on a foreign type, whose impls keep rustc's `E0210` and
   `E0117`.
+- [`wiring/orphan-rule/two_orphan_registrations.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/orphan-rule/two_orphan_registrations.rs):
+  two registrations in one crate, which both keep rustc's `E0210`.
 - [`wiring/orphan-rule/reopen_foreign_namespace.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/orphan-rule/reopen_foreign_namespace.rs):
   a `cgp_namespace!` block without `new` re-opening a foreign namespace; its `__Table__` trigger
   selects the inherit-a-new-namespace `help`, with the caret on the whole `cgp_namespace!` block.
