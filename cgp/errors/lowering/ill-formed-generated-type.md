@@ -54,46 +54,30 @@ the type `Path`," and a note "required by an implicit `Sized` bound in `Option`,
 lands on the macro attribute (`#[cgp_auto_getter]`), because the offending type is synthesized in
 the expansion, and a closing note attributes the error to that attribute macro.
 
-Recognizing the exact message form matters, because rustc special-cases the missing-`Sized` case
-rather than printing a generic trait-bound line. It does **not** say "the trait bound `[u8]: Sized`
-is not satisfied"; it says "the size for values of type `[u8]` cannot be known at compilation time"
-and names `Sized` only in the `help:` note. The underlying unmet trait is still `Sized` under error
-code `E0277`, but the headline is the size-specific phrasing. This is the standard `rustc`
+Search for that exact form: rustc special-cases a missing `Sized`, so the headline is not "the trait
+bound `[u8]: Sized` is not satisfied", and `Sized` appears only in the `help:`. It is the standard
 diagnostic for a
-[dynamically sized type](https://doc.rust-lang.org/reference/dynamically-sized-types.html) reaching
-a position that requires a statically known size, such as a generic type parameter like
-`Option<T>`'s `T`, which carries an implicit `Sized` bound unless written `T: ?Sized`.
+[dynamically sized type](https://doc.rust-lang.org/reference/dynamically-sized-types.html) in a
+position that needs a known size.
 
-A second error follows and is derived noise, not a separate cause. The getter body calls `.as_ref()`
-on the ill-formed value, so the compiler adds an **`E0599`**, "the method `as_ref` exists for
-reference `&Option<Path>`, but its trait bounds were not satisfied," whose notes restate
-`[u8]: Sized`, `Path: Sized`, and `Option<Path>: AsRef<_>` as the unmet bounds. It is a consequence
-of the same unsized type, downstream of the `E0277`, and points at no new mistake.
+A second error follows as a consequence. The getter body calls `.as_ref()` on the ill-formed value, so
+the compiler adds an **`E0599`**, "the method `as_ref` exists for reference `&Option<Path>`, but its
+trait bounds were not satisfied".
 
 ## Where the root cause is
 
-The root cause is **present and sits at the top of the output**, in the primary `E0277` and its
-notes. The headline names the innermost unsized type (`[u8]`), so the type the user wrote appears
-first in the `help:` ("within `Path`") and the note after it; reading past the headline to those two
-lines is what connects the error to the getter's return type. There is no note chain to walk and
-nothing suppressed, and the `E0599` on `as_ref` below it is a derived consequence to skip. What the
-raw message does not supply is the CGP-specific reading: that the unsized type came from the
-`Option<&T>` shorthand reading an `Option<Path>` field, and that the fix is to change the field
-type, because the compiler sees only the synthesized type, not the shorthand the user wrote.
+The root cause is **present at the top of the output**. The headline names the innermost unsized type
+(`[u8]`), so the type the user wrote first appears in the `help:` ("within `Path`") and the note after
+it. The raw message does not say that the unsized type came from the `Option<&T>` shorthand reading an
+`Option<Path>` field, since the compiler sees only the synthesized type.
 
 ## How cargo-cgp presents it
 
-`cargo-cgp` does not yet rewrite this class; it passes rustc's diagnostic through unchanged. For the
-fixture, the tool's `.cgp.stderr` is byte-for-byte its raw `.rust.stderr`: the primary `E0277` with
-its `help:` and notes, and the trailing `E0599` on `as_ref`, with no `[CGP-Exxx]` code stamped and
-no note suppressed. The pass-through is why the fixture has `usability` quality in cargo-cgp: the
-cause is present, but three things bury it for a CGP reader. The headline names `[u8]` rather than
-`Path`, the caret points at the `#[cgp_auto_getter]` attribute rather than at the return type,
-because the offending `Option<Path>` is synthesized in the expansion, and the derived `E0599` on
-`as_ref` adds noise below the real error. The improvement left for the tool is translation, not
-recovery: suppress the derived `E0599`, and read the synthesized `Option<Path>` back to its cause,
-that the `Option<&T>` shorthand needs a sized `T`. The codes cargo-cgp stamps on the classes it does
-rewrite are defined in the [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md).
+`cargo-cgp` passes this class through unchanged, which gives the fixture `usability` quality: the
+cause is present, but the headline names `[u8]` rather than `Path`, the caret points at the attribute
+rather than the return type, and the derived `E0599` adds noise. The improvement left is translation:
+drop the `E0599`, and read the synthesized `Option<Path>` back to the rule that the `Option<&T>`
+shorthand needs a sized `T`.
 
 ## Resolving it
 
@@ -109,10 +93,7 @@ catch the shapes they can see, and the compiler catches the rest.
 
 - [`lowering/ill-formed-generated-type/option_unsized_path.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/ill-formed-generated-type/option_unsized_path.rs):
   a `#[cgp_auto_getter]` returning `Option<&Path>`, lowered to a `HasField` bound over the unsized
-  `Option<Path>`; its `.rust.stderr` pins the primary `E0277` "the size for values of type `[u8]`
-  cannot be known at compilation time" with its "within `Path`" `help:`, the notes naming `Path` and
-  the implicit `Sized` bound in `Option`, and the derived `E0599` on `as_ref`. Its `.cgp.stderr` is
-  identical: the pass-through that gives the fixture `usability` quality.
+  `Option<Path>`, and passed through.
 
 ## Related
 
