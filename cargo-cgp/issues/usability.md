@@ -69,6 +69,13 @@ These errors keep the compiler's output because nothing in the tool starts from 
   conflict classifier finds no local entry to compare with, and each `E0119` keeps rustc's wording
   ([`upstream_namespace_join_overlap`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/upstream_namespace_join_overlap.rs),
   [`upstream_namespace_inheritance_overlap`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/namespace-override-conflict/upstream_namespace_inheritance_overlap.rs)).
+- **A check that carries a generic parameter:** `check_components! { <T> App<T> { … } }` keeps
+  rustc's headline over the renamed notes, whose `help` still names the missing field. The resolver
+  solves under an empty parameter environment, where the solver does not prove a wiring lookup that
+  names the check's own `T`, so a walk would report a wired component as missing. It declines any
+  seed holding a type parameter
+  ([`generic_check_context`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/generic/generic_check_context.rs)).
+  Checking one instantiation (`Wrapper<f64>`) resolves as usual.
 - **A `Symbol!` digit tag in a direct field read:** `pair.get_field(PhantomData::<Symbol!("0")>)` on
   a tuple struct keeps rustc's `E0277`, whose labels list the `Index<0>` and `Index<1>` tags the
   struct implements; the same tag reached through a check is a missing field with an `Index<0>`

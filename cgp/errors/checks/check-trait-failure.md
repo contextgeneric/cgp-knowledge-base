@@ -501,6 +501,8 @@ reduce to the same `[CGP-E001]` headline and `root cause:` tree.
   the wiring-note and header rewrites over a component that carries a generic parameter, so `CanUseComponent`/`IsProviderFor` gain an extra type argument.
 - [`checks/check-trait-failure/generic/generic_area_multi.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/generic/generic_area_multi.rs):
   the wiring-note and header rewrites over a component with *three* generic parameters, so the parameters reach `CanUseComponent`/`IsProviderFor` grouped in a tuple.
+- [`checks/check-trait-failure/generic/generic_check_context.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/generic/generic_check_context.rs):
+  a check that carries a generic parameter, which the resolver declines.
 - [`checks/check-trait-failure/generic/lifetime_component.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/generic/lifetime_component.rs):
   a component carrying a *lifetime* parameter, failing its check on a missing field.
 - [`checks/check-trait-failure/generic/tuple_param_component.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/generic/tuple_param_component.rs):
