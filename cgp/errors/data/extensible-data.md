@@ -138,7 +138,7 @@ Field and variant names appear as `Symbol<N, Chars<…>>` spines, elided behind 
 `rustc` and the nightly `cargo-cgp` pins can report one mistake at different bounds: through a check
 the stable compiler may stop at the provider (`BuildAndSetField<…>: Computer<…>` for a field set
 twice), a merge's stray field is an `UpdateField` bound on stable and a `FieldsBuilder` bound on the
-nightly, and a defaulted finalize's unset field names `Port: Default` on stable and only the
+nightly, and `build_with_default` with an unset field names `Port: Default` on stable and only the
 `CanFinalizeWithDefault` bound on the nightly.
 
 ## Where the root cause is
