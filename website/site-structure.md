@@ -808,10 +808,18 @@ Their snippets have counterparts in the matching `example-code/tests/concepts/` 
 that aliases do not verify a composition's requirements, and traces `UseContext` from a collection
 trait to its element trait. It marks the switch from shape contexts to an application
 context and warns against routing an inner request back to the same wrapper. *Impl-side dependencies*
-distinguishes a stable generic caller contract from the requirements concrete contexts must satisfy.
-Its type-dependency example keeps public associated types in the interface and explains when runtime
-or storage requirements can remain on the implementation. Both pages retain their existing compiled
-examples and the separate cost and onward-reading sections.
+uses natural-writing style and distinguishes stable generic caller bounds from the requirements
+concrete contexts must satisfy. It starts with ordinary Rust functions and blanket implementations,
+then uses email providers to explain distinct trait requirements and a greeting component to show
+implicit field access. It states that `CanGreet` does not imply `HasName`, so callers cannot use
+hidden dependencies through the consumer bound alone. Its type-dependency example keeps the shared
+error in the public interface while `CanRunJob` remains a dependency of the generated `RunJobs`
+implementation. The `run_batch` caller requires only `RunJobs` and names its result through the
+implied `HasErrorType` supertrait. The page distinguishes one error choice per context from the
+generic function's per-call choice. Runtime and storage
+requirements may remain on a provider when its public signatures do not expose their types. The
+traits/values/types and type-choice sections keep their original anchors. Both pages retain their
+compiled examples and the separate cost and onward-reading sections.
 
 ### How it relates to the knowledge base
 
