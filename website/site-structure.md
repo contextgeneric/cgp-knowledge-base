@@ -749,8 +749,11 @@ over `Display` and `AsRef<[u8]>` is the same code *Bypassing coherence* opens it
 `EncodeAsText` provider name carries across, so a reader arriving from the front page meets one running
 example rather than two.
 
-The index groups reading links by the questions they answer. The opening concept pages use
-point-first paragraphs, preserve code as illustration, and keep costs beside the choices they qualify.
+The index groups reading links by the questions they answer. The introductions to *Bypassing
+coherence*, *Consumer and provider traits*, and *Impl-side dependencies* establish the concept and
+its purpose. Their running examples enter in the body as illustrations of that concept. Preserve
+the concept as the subject when revising an introduction, and keep costs beside the choices they
+qualify.
 *Abstract types* distinguishes shared type selection from provider compatibility and explains when a
 type dependency must appear in the interface. *Aggregate providers* checks bundles against actual
 contexts and states that namespace customization requires unbound paths. *Checking your wiring*
