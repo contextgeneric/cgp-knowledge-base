@@ -122,8 +122,9 @@ under different environments would collide.
 - **Hit rate at call sites:** a [call-site seed](typed-resolution-call-site.md) carries rigid
   placeholders whose identities are in the fingerprint, so two call sites of one unknown-argument
   trait do not cross-hit. The cache misses where it harmlessly could hit, and nothing else changes.
-- **Cost past about 120 hops:** the walk's cost grows with the square of the chain depth, which
-  stays a known limit rather than an optimization target.
+- **Cost past about 120 hops:** the tool's cost grows with the square of the chain depth, from the
+  [merged graph](dependency-graph-rendering.md#known-limits) rather than from the walk this cache
+  memoizes.
 - **The depth cut's flag is unpinned:** `divergent_wiring` reaches `MAX_DEPTH`, but its overflow is
   worded from the cut's reason rather than from the flag, so clearing the flag changes no output.
   Pinning it needs a subtree a depth cut leaves short and a later walk, nearer the subtree, would

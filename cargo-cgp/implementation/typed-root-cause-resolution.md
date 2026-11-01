@@ -244,7 +244,8 @@ call-site unknown, and an associated-type mismatch on anything but a trait's pro
 opaque, inherent, or const alias has no `Trait::Assoc` to name. Where a projection does not reduce to a
 concrete type, the leaf renders that side as `_`.
 
-The walk's cost grows with the square of the chain depth past about 120 chained hops, a known limit.
+The cost grows with the square of the chain depth past about 120 chained hops, a known limit that
+[Dependency-graph rendering](dependency-graph-rendering.md#known-limits) explains.
 
 ## Further reading
 
