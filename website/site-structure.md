@@ -210,8 +210,9 @@ It contains no Rust listings; the tutorials supply the working examples.
 The status section states the learning cost, young ecosystem, and limited support for adoption. It
 names cargo-cgp and the agent skill as help with specific costs, qualifies both, and recommends
 starting with a small part of a project. Getting Started leads with Hello World and area calculation,
-then routes readers to Overview, Concepts, Reference, and Resources. The book is framed as a
-first-principles resource whose examples can differ from current syntax; blog posts are dated records.
+then routes readers to Overview, Concepts, Reference, and Resources, and notes that blog posts are dated
+records. It leaves out the CGP Patterns book, a
+[legacy resource](AGENTS.md#leave-legacy-resources-off-public-pages).
 
 ### How it relates to the knowledge base
 
