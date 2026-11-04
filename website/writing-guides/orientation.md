@@ -136,11 +136,9 @@ arrives already interested and wants to be routed, not persuaded, so it is a lis
 around each entry says what the thing is and who it is for, in one line.
 
 It earns its place by covering what the site does not. **The entries are the crates, the toolchain,
-the book, the talks, and the projects built with CGP.** A link to another page of this site belongs in the
-Introduction's routing list instead, where a reader looks for it. And **one entry is not a list
-item**: the real system built with CGP is the strongest evidence an evaluator can be given, per
-[evidence.md](../../communication-strategy/evidence.md), so it gets a short section of its own
-rather than a line among eight.
+the talks, and the projects built with CGP**, leaving out the CGP Patterns book and the Hermes SDK, which
+are [legacy resources](../AGENTS.md#leave-legacy-resources-off-public-pages). A link to another page of
+this site belongs in the Introduction's routing list instead, where a reader looks for it.
 
 Every entry is checked when the page is touched: that the crate exists under the name given, that
 the link resolves, and that anything version-specific still holds. This page ages by accumulation,

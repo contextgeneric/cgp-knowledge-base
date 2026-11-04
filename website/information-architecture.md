@@ -409,7 +409,7 @@ pages are what fix it and they land afterwards. Until then the applied tutorial 
 are what this reader gets, which is a reason to draw the tutorial's scenario from an example that
 exercises extensible data rather than from an arbitrary one.
 
-The **enthusiast** is ready to go deep and contribute. Their path is the blog → the book →
+The **enthusiast** is ready to go deep and contribute. Their path is the blog → Concepts →
 Contribute, and the top rung of that ladder is publishing components of their own, which is the
 outcome the Contribute page argues for. An enthusiast who wants to change CGP itself continues from
 Contribute to *Contributing to CGP with an Agent*, the site's only guide to contributing code.

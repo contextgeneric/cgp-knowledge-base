@@ -103,7 +103,7 @@ Match the next step to the reader, following [formats.md](formats.md#the-convers
 - **First contact:** A quickstart or runnable example.
 - **Working developer:** A tutorial addressing their problem.
 - **Evaluator:** Maturity, trade-offs, incremental adoption, and a real system using CGP.
-- **Enthusiast:** The book and contribution guidance, with version context where needed.
+- **Enthusiast:** The Concepts pages, the comparisons, and contribution guidance.
 
 ## Words
 
