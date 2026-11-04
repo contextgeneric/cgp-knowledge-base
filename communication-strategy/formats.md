@@ -175,7 +175,7 @@ Match the next step to what the reader is ready to evaluate. Offer these routes:
 | First-contact skimmer | A quickstart, runnable example, or repository |
 | Working developer | A tutorial addressing their problem |
 | Evaluator | Maturity, costs, incremental adoption, and a real system using CGP |
-| Enthusiast | The [CGP Patterns book](https://patterns.contextgeneric.dev/) and contribution guidance |
+| Enthusiast | The Concepts pages, the comparisons, and contribution guidance |
 
 Check that the destination supports the promise. In particular, dated examples may need version
 context; do not send a newcomer to incompatible code without explaining what they will find.

@@ -192,7 +192,8 @@ the Introduction keeps a one-line pointer to it. Its routing list already keys o
 than section names, and it does not send newcomers to the blog.
 
 **Resources** is current. It carries `cargo-cgp` with its install path and the full crate list, and
-lists neither the CGP Patterns book nor the Hermes SDK.
+lists neither the CGP Patterns book nor the Hermes SDK, which are
+[legacy resources](../AGENTS.md#leave-legacy-resources-off-public-pages).
 
 **The Quickstart is written**, at `/docs/quickstart`. It is the destination the front page's first
 call to action is specified to take, though the current front page still sends that button to the

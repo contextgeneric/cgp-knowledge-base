@@ -367,7 +367,8 @@ its [transcript post](blog/rustlab-2025-coherence.md)), and projects
 ([CGP Examples](https://github.com/contextgeneric/cgp-examples) and
 [Hypershell](../projects/hypershell/README.md)). The cgp-serde, CGP Examples, and Hypershell entries
 link their sections of the Projects pages. The page lists neither the CGP Patterns book nor the
-[Hermes SDK](https://github.com/informalsystems/hermes-sdk/).
+[Hermes SDK](https://github.com/informalsystems/hermes-sdk/), which are
+[legacy resources](AGENTS.md#leave-legacy-resources-off-public-pages).
 
 ### How it relates to the knowledge base
 
@@ -391,8 +392,7 @@ SDK. The changes reach readers when the branch merges.
 
 Keep the page a genuine index rather than a pitch; its readers arrive already interested and want to
 be routed, not persuaded. Add each new crate, tool, or Projects section in the same change that
-publishes it. If the page lists the CGP Patterns book again, keep its description in step with
-[patterns-book.md](patterns-book.md).
+publishes it, and leave out the CGP Patterns book and the Hermes SDK, as legacy resources.
 
 ## Contribute
 

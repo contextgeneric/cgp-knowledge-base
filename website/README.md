@@ -116,8 +116,8 @@ record drift.
   [reference page](writing-guides/reference.md), and the
   [comparison page](writing-guides/related-work.md).
 - [patterns-book.md](patterns-book.md): the record of and plan for the
-  [CGP Patterns book](https://patterns.contextgeneric.dev/), the project's second public documentation
-  property: the seven chapters that are still current against the twelve that are not, the three
+  [CGP Patterns book](https://patterns.contextgeneric.dev/), a legacy resource the site's pages leave
+  out and the project's second public documentation property: the seven chapters that are still current against the twelve that are not, the three
   outbound links the whole book carries, all in its introduction, why CI's single version pin makes a gradual update impossible,
   the map from each chapter to the page that now owns its material, and the five remaining changes that route its
   readers forward.

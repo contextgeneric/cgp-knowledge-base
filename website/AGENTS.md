@@ -15,9 +15,9 @@ A website page is read by the public; the knowledge base is internal agent docum
 unfinished work, known defects, and vocabulary that assumes the `/cgp` skill. Publishing a link into it
 would expose material that was never written for that audience and would break for every reader who
 does not have this repository. So a website page cites only public resources: the
-[`cgp`](https://github.com/contextgeneric/cgp) repository, [docs.rs](https://docs.rs/cgp), the
-[CGP Patterns book](https://patterns.contextgeneric.dev/), other pages on the site itself, and ordinary
-external sources.
+[`cgp`](https://github.com/contextgeneric/cgp) repository, [docs.rs](https://docs.rs/cgp), other pages on
+the site itself, and ordinary external sources, leaving out the
+[legacy resources](#leave-legacy-resources-off-public-pages) below.
 
 Links run the other way instead. A document *here* links freely into the rest of the base and out to
 the public page it describes, so an agent starting from a page always reaches the material behind it.
@@ -58,6 +58,19 @@ it. A link to a page's *source file* is a GitHub URL on `main` in the
 relative path into the checkout; when you need to *read* that file, prefer the local sibling
 checkout (`../contextgeneric.dev`, or `../cgp-website` where it is checked out under the project
 name), per [sibling-projects.md](../sibling-projects.md).
+
+## Leave legacy resources off public pages
+
+**The [CGP Patterns book](patterns-book.md) and the
+[Hermes SDK](https://github.com/informalsystems/hermes-sdk/) are legacy resources, and no public page
+links, lists, or recommends either.** The author settled this. A page that needs a first-principles
+explanation or a real system built with CGP points at the site's own Concepts and Projects pages instead.
+
+The rule reaches what this base tells a page to do, not what it records. The book's own record, the
+project history in [sibling-projects.md](../sibling-projects.md), and the blog records that describe
+posts mentioning either stay as they are, while a strategy, plan, or writing guide here never directs a
+page to present them. A page that already mentions one is a defect to raise with the author, since an
+acknowledgement of where CGP came from is the author's to keep or drop.
 
 ## The agent skill is published as a snapshot
 

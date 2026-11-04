@@ -187,10 +187,10 @@ format has been used, without measuring adoption or proving its effectiveness.
 
 Use dependency injection as an opening only for readers who find that comparison useful. Rust
 already supports lightweight injection through traits and generics, and a framework-oriented pitch
-can obscure the particular problem CGP solves. Concrete use also helps evaluators: the
-[Hermes SDK](https://github.com/informalsystems/hermes-sdk/) supplies a substantial system to
-examine. Its presentation on the site is tracked in the
-[redesign queue](../website/redesign-queue.md).
+can obscure the particular problem CGP solves. Concrete use also helps evaluators, and the site's
+Projects pages supply it. The [Hermes SDK](https://github.com/informalsystems/hermes-sdk/) is a
+[legacy resource](../website/AGENTS.md#leave-legacy-resources-off-public-pages) that public writing
+leaves out.
 
 ## Where the profiles gather
 
@@ -287,7 +287,7 @@ have not been checked again.
 | [Alternative blanket implementations](https://www.greyblake.com/blog/alternative-blanket-implementations-for-single-rust-trait/) | developers hand-roll CGP's marker-struct pattern | 2026-09-19, link resolved |
 | [Rust traits and dependency injection](https://jmmv.dev/2022/04/rust-traits-and-dependency-injection.html) | trait-based injection leaks internal types into a public API | 2026-09-19, link resolved |
 | [RustLab 2025 recording](https://www.youtube.com/watch?v=gXIfP-W9074) | the talk exists and is public | 2026-09-19, link resolved |
-| [Hermes SDK](https://github.com/informalsystems/hermes-sdk/) | a substantial system built with CGP | 2026-09-19, link resolved |
+| [Hermes SDK](https://github.com/informalsystems/hermes-sdk/) | a substantial system built with CGP; a legacy resource public writing leaves out | 2026-09-19, link resolved |
 
 ### Sources for the craft this section borrows
 

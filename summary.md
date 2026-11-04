@@ -776,7 +776,7 @@ it stale.
   why most readers never see the homepage, the four routes in and why three fail, what each surface is
   for, the target page inventory including unwritten pages and the AI section's overview and
   knowledge-base subsection, the sidebar order, and each reader profile's path through the site.
-- [website/patterns-book.md](website/patterns-book.md) — the CGP Patterns book: its measured search
+- [website/patterns-book.md](website/patterns-book.md) — the CGP Patterns book, a legacy resource the site's pages leave out: its measured search
   performance and the single chapter carrying 77% of it, the split between seven current chapters and
   twelve stale ones, the one outbound link in nineteen chapters, the 28 unwritten entries the website
   has since written instead, why CI's single `cgp` pin rules out a gradual update, the chapter-to-page

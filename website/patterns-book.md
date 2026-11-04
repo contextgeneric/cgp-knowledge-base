@@ -5,6 +5,10 @@ second public documentation property: what it contains, which half of it has gon
 be updated gradually, and how its chapters should route readers to the material the website now
 carries.
 
+The website treats the book as a
+[legacy resource](AGENTS.md#leave-legacy-resources-off-public-pages): no public page links or
+recommends it. This record and its plan for the book's own chapters stay for the book's repository.
+
 - **URL**: <https://patterns.contextgeneric.dev/>
 - **Source**: [`cgp-patterns`](https://github.com/contextgeneric/cgp-patterns), an
   [mdBook](https://rust-lang.github.io/mdBook/) whose chapters live in `content/`

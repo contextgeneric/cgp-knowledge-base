@@ -27,8 +27,8 @@ crate has been an open goal since the [launch post](blog/early-preview-announcem
 thin, so the site does not defer to it; see
 [writing-guides/reference.md](writing-guides/reference.md). The
 **[CGP Patterns book](https://patterns.contextgeneric.dev/)** teaches CGP from first principles without
-reference to the `cgp` crate's specific constructs, which makes it the depth a motivated reader
-graduates into, though it has not been updated for some time, and the site currently says so.
+reference to the `cgp` crate's specific constructs, and it is a
+[legacy resource](AGENTS.md#leave-legacy-resources-off-public-pages) the site leaves out.
 **[cgp-skills](https://github.com/contextgeneric/cgp-skills)** is the agent skill, published on the site
 as a copy under `docs/ai/` whose source of truth lives elsewhere.
 
@@ -279,14 +279,13 @@ meantime by the Concepts pages and the posts. The page type is specified in
 - *Introduction*: present, narrowed. Keeps the definition and the routing; loses the maturity section
   to *Project status* and stops sending newcomers to the blog.
 - *Resources*: present and current. The ecosystem index, now carrying `cargo-cgp` and the full crate
-  list; it lists neither the CGP Patterns book nor the Hermes SDK.
+  list; it lists neither the CGP Patterns book nor the Hermes SDK, which are legacy resources.
 
 **Project**
 - *Contribute*: present and current.
 
-**Further depth**: links out to the [book](https://patterns.contextgeneric.dev/) and the
-repositories. [docs.rs](https://docs.rs/cgp) is linked once from Resources rather than from each
-reference page.
+**Further depth**: links out to the repositories, and never to the legacy book.
+[docs.rs](https://docs.rs/cgp) is linked once from Resources rather than from each reference page.
 
 **Blog**: 16 published posts, plus the unfinished v0.8.0 draft, one draft on a branch, and one planned post; the
 owed writing is B1 and B2 in [tasks.md](tasks.md). The blog is the one surface this inventory does not
@@ -381,10 +380,10 @@ language is not worth it.
 
 The **evaluator** reads for risk. Their path is front page → *Project status* → *Modularity Hierarchy* →
 Resources → the Projects index and the two library sections' limitations pages, and what persuades them
-is candour plus social proof. The single most valuable thing the site can do for this reader is present
-the [Hermes SDK](https://github.com/informalsystems/hermes-sdk/) as the real system CGP was built for,
-rather than as one line at the bottom of a link list; the Projects section is the evidence the site can
-host itself.
+is candour plus social proof. The Projects section is that proof, real systems built with CGP that the
+site hosts itself; the [Hermes SDK](https://github.com/informalsystems/hermes-sdk/), the system CGP was
+first built for, is a [legacy resource](AGENTS.md#leave-legacy-resources-off-public-pages) the site
+leaves out.
 
 The **type-system and functional-programming reader** wants the mechanism and the intellectual argument.
 Their path is *Bypassing coherence* → *Consumer and provider traits* → the comparison for the paradigm they know (type

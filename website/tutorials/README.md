@@ -61,11 +61,11 @@ ground affects the other's assumptions.
 
 ## Where tutorials sit among the site's material
 
-The site offers four routes into CGP and they are not interchangeable, so a tutorial revision should
-know which gap it fills. The [Introduction page](../site-structure.md) is orientation and routing, not
+The site's routes into CGP are not interchangeable, so a tutorial revision should know which gap it
+fills. The [Introduction page](../site-structure.md) is orientation and routing, not
 teaching. The [blog](../blog/README.md) carries depth but is largely out of date and organized by
-release rather than by concept. The [CGP Patterns book](https://patterns.contextgeneric.dev/) teaches
-from first principles but has not been updated for some time. **The tutorials are the only
+release rather than by concept. The [CGP Patterns book](../patterns-book.md) is a
+[legacy resource](../AGENTS.md#leave-legacy-resources-off-public-pages) the site leaves out. **The tutorials are the only
 maintained, sequenced teaching material on the site**, which makes them the highest-value pages to
 keep current and the ones a newcomer should be routed to first.
 
