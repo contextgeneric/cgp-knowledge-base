@@ -191,8 +191,8 @@ the *Current Status* section, which [E1](../tasks.md) moves to *Project status*;
 the Introduction keeps a one-line pointer to it. Its routing list already keys on questions rather
 than section names, and it does not send newcomers to the blog.
 
-**Resources** is current. It carries `cargo-cgp` with its install path, the full crate list, and the
-Hermes SDK as a section rather than a list item.
+**Resources** is current. It carries `cargo-cgp` with its install path and the full crate list, and
+lists neither the CGP Patterns book nor the Hermes SDK.
 
 **The Quickstart is written**, at `/docs/quickstart`. It is the destination the front page's first
 call to action is specified to take, though the current front page still sends that button to the

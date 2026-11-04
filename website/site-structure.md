@@ -359,16 +359,15 @@ questions to dated posts.
 
 ### What it covers
 
-A link directory in seven groups on the `v0.8.0` branch: crates (`cgp`, the three error backends
+A link directory on the `v0.8.0` branch, in five groups: crates (`cgp`, the three error backends
 `cgp-error-anyhow`, `cgp-error-eyre`, and `cgp-error-std`, and `cgp-serde`, each by its crates.io
 entry), tooling (`cargo-cgp`, with its install steps and the canonical qualification), tutorials
 (Hello World and Area Calculation), videos (an embedded player for the RustLab 2025 talk, linking to
-its [transcript post](blog/rustlab-2025-coherence.md)), books (the CGP Patterns book, described as
-current in its early chapters and dated in its later ones), a *CGP in production* section presenting
-the [Hermes SDK](https://github.com/informalsystems/hermes-sdk/) as the system CGP was built for, and
-projects ([CGP Examples](https://github.com/contextgeneric/cgp-examples) and
+its [transcript post](blog/rustlab-2025-coherence.md)), and projects
+([CGP Examples](https://github.com/contextgeneric/cgp-examples) and
 [Hypershell](../projects/hypershell/README.md)). The cgp-serde, CGP Examples, and Hypershell entries
-link their sections of the Projects pages.
+link their sections of the Projects pages. The page lists neither the CGP Patterns book nor the
+[Hermes SDK](https://github.com/informalsystems/hermes-sdk/).
 
 ### How it relates to the knowledge base
 
@@ -377,23 +376,22 @@ This page is the site's index of the ecosystem, so it should mirror
 documents here: [hypershell](../projects/hypershell/README.md),
 [cgp-serde](../projects/cgp-serde/README.md),
 [CGP Examples](../projects/cgp-examples/README.md), and the error backends in
-[projects/error/](../projects/error/README.md), whose crates the page lists. The Hermes SDK section is
-the evaluator's social proof that [evidence.md](../communication-strategy/evidence.md) argues for, and
-the tooling section follows [vocabulary.md](../communication-strategy/vocabulary.md) for the
-`cargo-cgp` wording.
+[projects/error/](../projects/error/README.md), whose crates the page lists. The tooling section
+follows [vocabulary.md](../communication-strategy/vocabulary.md) for the `cargo-cgp` wording.
 
 ### Where it diverges
 
-The live page on `main` is an older, shorter list. It omits `cargo-cgp`, names `cgp-error-anyhow` but
-not `cgp-error-eyre` or `cgp-error-std`, lists `cgp-serde` by GitHub URL, and puts the Hermes SDK in a
-bare list at the bottom. The `v0.8.0` page fixes all four, and the fixes reach readers when the branch
-merges.
+The live page on `main` is an older list. It omits `cargo-cgp`, names `cgp-error-anyhow` but not
+`cgp-error-eyre` or `cgp-error-std`, and lists `cgp-serde` by GitHub URL; it also carries a books
+group with the CGP Patterns book, and lists the Hermes SDK among its projects. The `v0.8.0` page adds
+the tool and the backends, links `cgp-serde` by its crates.io entry, and drops the book and the Hermes
+SDK. The changes reach readers when the branch merges.
 
 ### Maintaining it
 
 Keep the page a genuine index rather than a pitch; its readers arrive already interested and want to
 be routed, not persuaded. Add each new crate, tool, or Projects section in the same change that
-publishes it, and keep the book's description in step with
+publishes it. If the page lists the CGP Patterns book again, keep its description in step with
 [patterns-book.md](patterns-book.md).
 
 ## Contribute

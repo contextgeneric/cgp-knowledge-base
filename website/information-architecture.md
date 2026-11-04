@@ -278,8 +278,8 @@ meantime by the Concepts pages and the posts. The page type is specified in
   [writing-guides/orientation.md](writing-guides/orientation.md).
 - *Introduction*: present, narrowed. Keeps the definition and the routing; loses the maturity section
   to *Project status* and stops sending newcomers to the blog.
-- *Resources*: present and current. The ecosystem index, now carrying `cargo-cgp`, the full crate
-  list, and the Hermes SDK as the evaluator's social proof rather than one link among eight.
+- *Resources*: present and current. The ecosystem index, now carrying `cargo-cgp` and the full crate
+  list; it lists neither the CGP Patterns book nor the Hermes SDK.
 
 **Project**
 - *Contribute*: present and current.
