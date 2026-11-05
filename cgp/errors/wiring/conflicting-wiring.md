@@ -160,7 +160,9 @@ The code it stamps distinguishes the shapes this class produces:
   which become **`[CGP-E015]`**:
   `` [CGP-E015] `check_components!` checks `GreeterComponent` twice for `App` ``, with a `help:`
   to remove one of the two entries. An entry with parameters is named as the table wrote it
-  (`` `ShowerComponent: u32` ``).
+  (`` `ShowerComponent: u32` ``). A `delegate_and_check_components!` table that lists an entry
+  twice also wires it twice, so the `[CGP-E010]` for the wiring is the one report, and the check
+  impls' `E0119` is dropped.
 
 Two check tables in one module whose check traits share a name produce an `E0428` on the generated
 check trait, which becomes **`[CGP-E016]`**, naming the macro each table was written with:
@@ -282,6 +284,9 @@ headline. The conflicts `cargo-cgp` rewrites:
   [`wiring/conflicting-wiring/check_duplicate_entry_with_params.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/check_duplicate_entry_with_params.rs):
   one entry listed twice in a `check_components!` table, without and with parameters, rewritten to
   `[CGP-E015]` with the removal `help:`.
+- [`wiring/conflicting-wiring/delegate_and_check_entry_twice.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/delegate_and_check_entry_twice.rs):
+  one entry listed twice in a `delegate_and_check_components!` table, reported once as
+  `[CGP-E010]`.
 - [`wiring/conflicting-wiring/check_twice_same_context.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/check_twice_same_context.rs)
   and
   [`wiring/conflicting-wiring/check_trait_named_twice.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/check_trait_named_twice.rs):

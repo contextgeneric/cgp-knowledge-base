@@ -219,6 +219,10 @@ recognized from the generated items at the caret, by a detector under
 
 These corners need care:
 
+- **`CGP-E015` is a `check_components!` table's.** A `delegate_and_check_components!` table that
+  lists an entry twice wires it twice too, so the check impls' `E0119` restates the `[CGP-E010]`
+  and is dropped, the impl's macro read from its span
+  ([`delegate_and_check_entry_twice`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/delegate_and_check_entry_twice.rs)).
 - **`CGP-E016` compares the macro's last path segment,** so `cgp::prelude::check_components!` counts
   and a crate's own `table_check_components!` does not
   ([`own_check_components_macro`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/own_check_components_macro.rs)).

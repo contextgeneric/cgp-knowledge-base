@@ -191,7 +191,9 @@ for `CGP-E060`.
 
 - **`CGP-E015`: a check entry listed twice.**
   `` [CGP-E015] `check_components!` checks `<entry>` twice for `<Context>` ``, from an `E0119`, with
-  rustc's carets kept. **Help:** `` remove one of the two `<entry>` entries ``.
+  rustc's carets kept. **Help:** `` remove one of the two `<entry>` entries ``. A
+  `delegate_and_check_components!` table that lists an entry twice also wires it twice, so it is
+  reported as `CGP-E010` alone, and the check impls' `E0119` is dropped.
 - **`CGP-E016`: two check tables sharing a check-trait name.**
   `` [CGP-E016] two `<macro>` tables in one module check `<Context>` ``, where `<macro>` is
   `check_components!` or `delegate_and_check_components!`, or
