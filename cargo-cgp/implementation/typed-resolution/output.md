@@ -182,8 +182,11 @@ premises guard them:
   a non-provider,** are each confirmed by the solver against the same value and context. A `help`
   that needs an import names the `use`, because the data traits are outside the prelude and the
   compiler's own suggestion names a crate path that does not compile.
-- **A near miss** comes first, and its candidates are only the struct's own fields, the enum's own
-  variants, or the context's own wiring, so a slip another context wires is never named
+- **A near miss** comes before its cause's fix, also when that fix merges into a `help` an earlier
+  cause opened
+  ([`near_miss_after_merged_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/near_miss_after_merged_wiring.rs)).
+  Its candidates are only the struct's own fields, the enum's own variants, or the context's own
+  wiring, so a slip another context wires is never named
   ([`near_miss_in_another_context`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/near_miss_in_another_context.rs)).
   A name is similar when it matches ignoring case or lies within two edits. A key is similar when
   one symbol segment is, or when it has one prefix segment more or fewer. Two type segments that

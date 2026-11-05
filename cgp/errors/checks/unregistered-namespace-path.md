@@ -145,6 +145,9 @@ forgot a `#[default_impl]` or body entry". The `[CGP-E113]` `help` names the ent
   a context joining a namespace that does not inherit the namespace its component is prefixed into.
 - [`checks/unregistered-namespace-path/near_miss_in_another_context.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/near_miss_in_another_context.rs):
   two contexts miss `@app.GreeterComponent`, and only `Other` wires the near miss `@App.GreeterComponent`.
+- [`checks/unregistered-namespace-path/near_miss_after_merged_wiring.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/near_miss_after_merged_wiring.rs):
+  two prefixed components left unwired, the second with a slipped path, whose near miss comes
+  before the merged wiring `help`.
 - [`checks/unregistered-namespace-path/prefix_case_slip.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/prefix_case_slip.rs):
   `@App.GreeterComponent` wired where the component's prefix is `@app`.
 - [`checks/unregistered-namespace-path/prefix_doubled_marker_generic.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/prefix_doubled_marker_generic.rs):
