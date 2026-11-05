@@ -333,6 +333,8 @@ These fixtures pin the class, one group per shape:
   the same with `Self::Error`, where the `E0220` becomes `[CGP-E035]`.
 - [`lowering/undeclared-dependency/supertrait_missing_uses.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/supertrait_missing_uses.rs):
   a provider omitting the `HasName` a component's `#[extend]` requires; `[CGP-E036]`.
+- [`lowering/undeclared-dependency/supertrait_missing_uses_lifetime_component.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/supertrait_missing_uses_lifetime_component.rs):
+  the same for a component with a lifetime parameter; `[CGP-E036]`.
 - [`lowering/undeclared-dependency/supertrait_missing_uses_generic.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/supertrait_missing_uses_generic.rs):
   the requirement is a generic trait, written `TagFor<u32>` in the header and the help.
 - [`lowering/undeclared-dependency/supertrait_missing_uses_self_argument.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/supertrait_missing_uses_self_argument.rs):

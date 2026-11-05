@@ -192,6 +192,18 @@ lowering, which declines a const argument it cannot read, fills the slot with `t
 before discarding the result. The literal it can read goes through the `lit_to_const` query, which
 builds the constant from the literal alone and reports nothing.
 
+A compiler bug raised from the emitter takes the lock as well, and the panic then names the lock
+rather than the bug. `bug!` reports through `emit_bug_diagnostic` in
+[`rustc_interface/src/callbacks.rs`](../../../external/rust/compiler/rustc_interface/src/callbacks.rs),
+which calls `tcx.dcx().emit_diagnostic` whenever a `TyCtxt` is in scope, before it panics. An
+assertion in a compiler accessor is enough to reach it: `GenericArgs::type_at` raises `bug!` when
+the argument at its index is a region. A provider trait takes its component's lifetime parameters
+ahead of the context, so the resolver and the detectors read the context as the first type
+argument after `Self`, never by raw position, as
+[the labels' rule](typed-resolution/leaves.md#decoding-classifying-and-rendering-a-leaf) says
+([`non_provider_wired_lifetime_component`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/non_provider_wired_lifetime_component.rs),
+[`supertrait_missing_uses_lifetime_component`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/supertrait_missing_uses_lifetime_component.rs)).
+
 Reading the HIR has the same hazard at an earlier phase. Name resolution emits diagnostics (an
 unused import, an unresolved name) before the crate is lowered to HIR, so a HIR read from the
 emitter at that point (`hir_node_by_def_id`, say) forces lowering under the lock, and lowering
@@ -296,6 +308,11 @@ that as a known limitation.
 
 - [`hidden/unsatisfied-dependency/enum_hasfields_lock`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/enum_hasfields_lock.rs):
   a resolution-class `E0599` the resolver must decline rather than re-enter the lock.
+- [`checks/check-trait-failure/providers/non_provider_wired_lifetime_component`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/non_provider_wired_lifetime_component.rs)
+  and
+  [`lowering/undeclared-dependency/supertrait_missing_uses_lifetime_component`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/supertrait_missing_uses_lifetime_component.rs):
+  a component with a lifetime parameter, whose provider trait's context a raw index would miss,
+  raising a `bug!` under the lock.
 - [`checks/check-trait-failure/resolution/higher_ranked_descent`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/resolution/higher_ranked_descent.rs):
   a higher-ranked obligation, which panics the generalizer without instantiating its binder.
 - [`checks/check-trait-failure/fields/base_area_1`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/base_area_1.rs):

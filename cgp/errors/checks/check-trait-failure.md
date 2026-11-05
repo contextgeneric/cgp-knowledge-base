@@ -442,6 +442,9 @@ existing field. The check surfaced both the bound and the wiring entry, so the s
   a multi-method `#[cgp_getter]` trait wired to `UseField`.
 - [`checks/check-trait-failure/providers/non_provider_wired.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/non_provider_wired.rs):
   a `check_components!` failure whose root cause is a plain type wired where a *provider* was expected: a higher-order provider's inner slot is filled with a struct that does not implement the provider trait at all.
+- [`checks/check-trait-failure/providers/non_provider_wired_lifetime_component.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/non_provider_wired_lifetime_component.rs):
+  a plain type wired as the provider of a component with a lifetime parameter, reached by a call;
+  `[CGP-E001]` with a `[CGP-E115]` cause.
 - [`checks/check-trait-failure/providers/provider_for_other_context_and_input.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/provider_for_other_context_and_input.rs):
   a provider written for another context and another input, wired and checked.
 - [`checks/check-trait-failure/providers/use_delegate_parameterless_component.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/use_delegate_parameterless_component.rs):

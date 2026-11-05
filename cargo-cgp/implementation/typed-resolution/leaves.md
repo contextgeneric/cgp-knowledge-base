@@ -99,8 +99,11 @@ things [`#[cgp_type]`](../../../cgp/reference/macros/cgp_type.md) generates, bec
 
 - **Plumbing is dropped:** routing for the context itself, table and namespace lookups, a data
   trait's list recursion, and residual scaffolding.
-- **The context is found by type position.** A component's lifetime parameters sort ahead of it, and
-  indexing by raw position lands on a region and aborts the compiler.
+- **The context is found by type position,** here and in every reader of a provider trait's
+  arguments, the fix finders and the detectors included. A component's lifetime parameters sort
+  ahead of it, and indexing by raw position lands on a region, which raises a compiler bug inside
+  the emitter: the panic is contained, so rustc's error stays, but the reshaping is lost
+  ([the lock hazards](../rustc-diagnostic-internals.md#re-entering-the-diagnostic-context-lock-was-already-held)).
 - **A redirect hop names its own table,** not the walk's context, so a hop inside an aggregate
   provider names the aggregate.
 - **"Context" is used only for a type with wiring of its own.**
