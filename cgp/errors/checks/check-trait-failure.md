@@ -451,6 +451,9 @@ existing field. The check surfaced both the bound and the wiring entry, so the s
   `UseDelegate` wired to a component that takes no parameters.
 - [`checks/check-trait-failure/providers/use_delegate_without_derive.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/use_delegate_without_derive.rs):
   `UseDelegate` wired for a component that lacks `#[derive_delegate]`.
+- [`checks/check-trait-failure/providers/use_delegate_without_derive_lifetime_component.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/use_delegate_without_derive_lifetime_component.rs):
+  the same for a component with a lifetime parameter, whose `open` help names the type parameter
+  alone.
 - [`checks/check-trait-failure/providers/use_field_multi_method_missing_field.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/use_field_multi_method_missing_field.rs):
   a getter with two methods wired to `UseField` on a context that lacks one of the getter's fields.
 - [`checks/check-trait-failure/providers/use_field_on_cgp_type.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/use_field_on_cgp_type.rs):
