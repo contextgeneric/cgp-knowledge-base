@@ -162,12 +162,15 @@ The code it stamps distinguishes the shapes this class produces:
   to remove one of the two entries. An entry with parameters is named as the table wrote it
   (`` `ShowerComponent: u32` ``).
 
-Two `check_components!` tables in one module whose check traits share a name produce an `E0428` on
-the generated check trait, which becomes **`[CGP-E016]`**:
+Two check tables in one module whose check traits share a name produce an `E0428` on the generated
+check trait, which becomes **`[CGP-E016]`**, naming the macro each table was written with:
 `` [CGP-E016] two `check_components!` tables in one module check `App` `` for the derived
-`__CheckApp`, or `` … name their check trait `CheckApp` `` for a name two `#[check_trait(...)]`
-attributes gave. The two carets are labelled as the first and the second table, and a `help:` names
-the merge or the `#[check_trait(...)]` rename.
+`__CheckApp`, `` two `delegate_and_check_components!` tables … `` for the derived `__CanUseApp`,
+or `` … name their check trait `CheckApp` `` for a name two `#[check_trait(...)]` attributes gave,
+which reads `` a `check_components!` table and a `delegate_and_check_components!` table … `` when
+the tables come from different macros. The two carets are labelled as the first and the second
+table, and a `help:` names the merge or the `#[check_trait(...)]` rename, and only the rename for
+tables of different macros.
 
 Two [`#[cgp_auto_dispatch]`](../../reference/macros/cgp_auto_dispatch.md) traits in one module that
 declare a method of one name produce two `E0428`s, one on the helper function and one on the
@@ -179,7 +182,10 @@ in one trait, or declare the traits in different modules.
 
 One form in this class is a **pass-through** that `cargo-cgp` does not rewrite: the other `E0428`
 name clashes (`duplicate_component_name`, `duplicate_provider_name`) keep `rustc`'s uncoded `E0428`,
-because it already points precisely at the two definitions. Under the pinned nightly the `E0428` is
+because it already points precisely at the two definitions, and so does a check table whose derived
+check trait collides with a trait the program declares itself
+([`own_trait_named_like_check_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/own_trait_named_like_check_trait.rs)).
+Under the pinned nightly the `E0428` is
 the only error a name clash produces, since the compiler stops before the conflicting impls reach
 coherence checking. Two `#[cgp_impl(P)]` blocks for one provider struct declared once do reach
 coherence checking: `cargo-cgp` keeps the uncoded `E0119` on the provider trait, whose carets cover
@@ -283,6 +289,11 @@ headline. The conflicts `cargo-cgp` rewrites:
   `E0428` to `[CGP-E016]` with the tables labelled;
   [`wiring/conflicting-wiring/check_twice_qualified_call.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/check_twice_qualified_call.rs)
   the same with the second table called as `cgp::prelude::check_components!`.
+- [`wiring/conflicting-wiring/check_twice_delegate_and_check.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/check_twice_delegate_and_check.rs)
+  and
+  [`wiring/conflicting-wiring/check_trait_named_twice_across_macros.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/check_trait_named_twice_across_macros.rs):
+  two `delegate_and_check_components!` tables for one context, and a table of each macro given one
+  `#[check_trait]` name, each `[CGP-E016]` naming the macros the tables were written with.
 - [`wiring/conflicting-wiring/auto_dispatch_shared_method_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/auto_dispatch_shared_method_name.rs):
   two `#[cgp_auto_dispatch]` traits declaring one method, rewritten to one `[CGP-E061]`. The macro's
   naming is a known defect rather than a wiring mistake, as its

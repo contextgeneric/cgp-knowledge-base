@@ -193,11 +193,17 @@ for `CGP-E060`.
   `` [CGP-E015] `check_components!` checks `<entry>` twice for `<Context>` ``, from an `E0119`, with
   rustc's carets kept. **Help:** `` remove one of the two `<entry>` entries ``.
 - **`CGP-E016`: two check tables sharing a check-trait name.**
-  `` [CGP-E016] two `check_components!` tables in one module check `<Context>` ``, or
-  `` … name their check trait `<Name>` `` when two `#[check_trait(...)]` attributes give one name, from
-  an `E0428`, with the carets labelled as the first and the second table. **Help:**
+  `` [CGP-E016] two `<macro>` tables in one module check `<Context>` ``, where `<macro>` is
+  `check_components!` or `delegate_and_check_components!`, or
+  `` … name their check trait `<Name>` `` when two `#[check_trait(...)]` attributes give one name,
+  which reads `` a `check_components!` table and a `delegate_and_check_components!` table … `` for
+  tables of different macros. It comes from an `E0428`, with the carets labelled as the first and
+  the second table. **Help:**
   `` merge the two tables, or name one table's check trait with `#[check_trait(...)]` ``, or
-  `` merge the two tables, or give one of them another `#[check_trait(...)]` name ``.
+  `` merge the two tables, or give one of them another `#[check_trait(...)]` name ``, or
+  `` give one of the tables another `#[check_trait(...)]` name `` for tables of different macros.
+- **Left as rustc wrote it:** a check table whose derived check trait collides with a trait the
+  program declares itself, which is no pair of tables.
 - **`CGP-E017`: a `for` loop whose key skips its variable.**
   `` [CGP-E017] the `for` loop in the wiring of `<Context>` binds `<T>`, but its key `<key>` does not use it ``,
   one block in place of rustc's `E0207`s, with the caret on the variable. **Help:**

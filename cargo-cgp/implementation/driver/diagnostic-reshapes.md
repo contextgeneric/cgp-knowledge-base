@@ -222,6 +222,11 @@ These corners need care:
 - **`CGP-E016` compares the macro's last path segment,** so `cgp::prelude::check_components!` counts
   and a crate's own `table_check_components!` does not
   ([`own_check_components_macro`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/own_check_components_macro.rs)).
+  It reads both definitions' macros, from the caret and from rustc's earlier-definition label, so a
+  table colliding with a trait the program wrote keeps rustc's error
+  ([`own_trait_named_like_check_trait`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/own_trait_named_like_check_trait.rs)),
+  and the message names each table's macro. A name is read as derived only when both tables come
+  from one macro and it carries that macro's prefix, `__Check` or `__CanUse`.
 - **`CGP-E060`'s help offers only parameters that hold.** They are the `Params` of each
   `IsProviderFor` impl unifying with the check's component and context, fully resolved and not `()`,
   each kept only when `CanUseComponent` holds in the check impl's environment. With none, the
