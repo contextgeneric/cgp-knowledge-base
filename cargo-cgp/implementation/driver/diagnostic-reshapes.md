@@ -337,6 +337,12 @@ failure. The reshape rewrites the `E0107`, whose caret sits on the misused name,
 or `[CGP-E033]`, and suppresses the rest. An inner-provider bound naming the consumer trait, usually
 through `#[use_provider]`, is the sibling `[CGP-E034]`
 ([`lowering/wrong-component-half/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/lowering/wrong-component-half)).
+An inner-provider bound is one on a type parameter other than `__Context__` whose trait takes
+`__Context__` first, the shape `#[use_provider]` writes. A `#[uses]` bound sits on the context, so
+a wrong argument count there keeps rustc's error, and an impl without a `#[cgp_impl]` mistake keeps
+its own errors
+([`uses_wrong_arity`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/uses_wrong_arity.rs),
+[`provider_body_error_beside_unrelated_e0107`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/provider_body_error_beside_unrelated_e0107.rs)).
 
 **Three structural conditions select the user's impl and exclude every generated one,** which also
 carries `__Context__`: it has the inserted `__Context__`, its `Self` is a concrete local struct or

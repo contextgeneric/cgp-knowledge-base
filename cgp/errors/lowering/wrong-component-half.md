@@ -177,7 +177,9 @@ carrying the fix in a `help`; it keeps `rustc`'s `E0107` code. The codes are def
   ``help: name the consumer trait instead: `#[uses(CanCalculateArea)]` (not the provider trait `AreaCalculator`)``.
 
 A provider trait bounding an inner provider without its context argument keeps `rustc`'s `E0107`,
-without the `help:` that adds the generated `__Context__`.
+without the `help:` that adds the generated `__Context__`. A consumer trait given the wrong number
+of arguments in `#[uses]` keeps it too, since that bound is on the context, not on an inner
+provider.
 
 ## Resolving it
 
@@ -213,6 +215,8 @@ These fixtures pin the class, one group per shape:
   `#[cgp_impl]` on an ordinary trait; `[CGP-E033]`.
 - [`lowering/wrong-component-half/higher_order_use_provider_consumer_trait.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/higher_order_use_provider_consumer_trait.rs):
   a consumer trait in `#[use_provider]`; `[CGP-E034]`, with the `E0308` cascade dropped.
+- [`lowering/wrong-component-half/use_provider_generic_consumer_trait.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/use_provider_generic_consumer_trait.rs):
+  the same for a generic component's consumer trait; `[CGP-E034]`.
 - [`lowering/wrong-component-half/uses_provider_trait.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/uses_provider_trait.rs):
   a provider trait in a `#[cgp_fn]`'s `#[uses]`; `[CGP-E037]`.
 - [`lowering/wrong-component-half/uses_provider_trait_in_impl.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/uses_provider_trait_in_impl.rs):

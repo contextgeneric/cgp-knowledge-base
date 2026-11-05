@@ -359,6 +359,8 @@ for `CGP-E060`.
   [`#[use_provider]`](../cgp/reference/attributes/use_provider.md). The attribute fills in the context
   argument, so `Inner: CanCalculateArea<Self>` gives the consumer trait one argument too many.
 - **From:** the `E0107` on the bound. The `E0308` body cascade that mentions `__Context__` is dropped.
+- **Left as rustc wrote it:** a consumer trait given the wrong number of arguments in `#[uses]`,
+  whose bound is on the context rather than on an inner provider, so the `E0107` is an arity slip.
 - **Fix (in the `help`):**
   `` name the provider trait in the bound, idiomatically `#[use_provider(… : <Provider>)]` (not the consumer trait `<Consumer>`) ``.
 - **Class:** [wrong component half](../cgp/errors/lowering/wrong-component-half.md); see also
