@@ -17,7 +17,7 @@ elsewhere:
 | [`postprocess`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/postprocess) | The final text pass over each message | [Below](#the-post-processing-transforms) |
 | [`shape`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/shape) | `Struct!` and `Enum!` spellings, shared by the text and typed resugaring so they cannot disagree | [Resugaring](resugaring.md#struct-and-enum-a-list-of-fields) |
 | [`rewrite`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/rewrite) | The wiring-message rename and `ComponentNameMap` | [Diagnostic reshapes](driver/diagnostic-reshapes.md#naming-the-traits-behind-a-component-marker) |
-| [`diagnosis`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/diagnosis) | The `Resolved` model, its wording, and the plan and models of each reshape | [The transformed diagnostic](typed-resolution/output.md), [Diagnostic reshapes](driver/diagnostic-reshapes.md) |
+| [`diagnosis`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/diagnosis) | The `Resolved` model, its wording, the shape decision of a `DelegateComponent` leaf, and the plan and models of each reshape | [The transformed diagnostic](typed-resolution/output.md), [Leaves](typed-resolution/leaves.md#the-leaf-shapes), [Diagnostic reshapes](driver/diagnostic-reshapes.md) |
 | [`tree`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/tree.rs) | The `cargo tree`-style renderer the graph expands into | [Dependency-graph rendering](dependency-graph-rendering.md) |
 | [`dedup`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/dedup.rs) | The `DedupLedger` | [The driver](driver/program.md#de-duplicating-and-coalescing) |
 | [`byte_range`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/byte_range.rs) | The anchors' span decisions over plain ranges | [The anchors](typed-resolution/anchors.md) |
@@ -27,7 +27,7 @@ elsewhere:
 | [`naming`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/naming.rs) | The reserved names CGP macros invent | [Diagnostic reshapes](driver/diagnostic-reshapes.md#dropping-a-suggestion-that-names-a-generated-identifier) |
 | [`code`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/code.rs) | The `CGP-E` constants | [error-code.md](../error-code.md) |
 
-Three design choices in these modules are worth keeping:
+These design choices in the modules are worth keeping:
 
 - **The dependence on rustc's phrasing lives in `signals`.** Each phrasing the emitter keys on is
   one pure function, so when a nightly rewords a message, the fix and its test sit in one place.
@@ -37,6 +37,11 @@ Three design choices in these modules are worth keeping:
 - **Two kinds of key serve two purposes.** `cause_signature` is textual, because the ledger compares
   it with its rendered-message keys. `group_by_shared_cause` keys on each cause's `Leaf` and
   context, so rewording a lead does not shift the grouping.
+- **A resolver decision can move here behind a facts trait.** `delegate_leaf_shape` decides which
+  leaf an unmet `DelegateComponent` is over facts the driver reads through `DelegateLeafFacts`, so
+  its precedence is tested without a compiler. The driver keeps the reads, since they compare types,
+  scan impls, and run the trait solver; a stand-in answering those queries would amount to a second
+  solver. Each fact is a method, so the solver-backed one runs only on the branch that needs it.
 
 ## Where post-processing sits in the pipeline
 
@@ -184,6 +189,9 @@ after applying them.
   the wording of each reshape.
 - [`class_plan.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/class_plan.rs):
   each reshape class's header, notes, and `help`s landing in their own lists.
+- [`delegate_leaf_shape.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/delegate_leaf_shape.rs):
+  the `DelegateComponent` leaf's shape over every combination of its facts, over a stand-in that
+  counts its reads of the solver-backed fact.
 - [`dedup.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/dedup.rs),
   [`signals.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/signals.rs),
   [`candidates.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/candidates.rs),

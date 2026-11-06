@@ -23,6 +23,13 @@ judgment, since it depends on who owns the lookup:
 | A provider with its own impl, one argument explaining the mismatch | Provider for other arguments (`[CGP-E127]`) |
 | A provider with its own impl, otherwise | Dropped as a routing dead-end |
 
+The choice among these rows runs without the compiler. The driver answers the yes-or-no facts the
+table turns on, such as whether the owner is the context or the key is a path, through the
+`DelegateLeafFacts` trait, and `delegate_leaf_shape` in `cargo-cgp-error-processing` picks the
+shape, which the driver then names from the compiler's types. Unit tests check the precedence over
+every combination of the facts. The facts are methods, not fields, because the finder of the other
+arguments runs the trait solver, and the decision asks for it only on a blanket dead-end.
+
 The corner cases behind that table are the ones a change is likely to break:
 
 - **The context's lookup is terminal even when an impl unifies.** A wired key would hold and never
@@ -123,11 +130,17 @@ takes one from `CGP-E110` onward. The walk emits one flat path per way a cause i
 
 - [The parent document's catalog](overview.md#tests): the fixture groups that pin
   the leaves.
+- [`delegate_leaf_shape.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/delegate_leaf_shape.rs):
+  the `DelegateComponent` leaf's shape over every combination of its facts, and the solver-backed
+  fact read only on a blanket dead-end.
 
 ## Source
 
 - [`resolve/classify/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/classify):
-  the leaf classifiers, and in `fix/` the finders of what a `help` names.
+  the leaf classifiers, and in `fix/` the finders of what a `help` names; `leaf.rs` holds the
+  compiler reads behind the `DelegateComponent` facts.
+- [`diagnosis/leaf/delegate_leaf_shape.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/leaf/delegate_leaf_shape.rs)
+  in `cargo-cgp-error-processing`: the facts trait and the shape decision.
 - [`resolve/data/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/data):
   the extensible-data traits and `read_partial`.
 - [`resolve/label/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/label):
