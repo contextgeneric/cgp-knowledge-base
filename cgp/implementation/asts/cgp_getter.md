@@ -116,8 +116,10 @@ document records.
   `cgp_auto_getter` entrypoint: it rejects const, async, unsafe, and generic getter methods, a
   by-value `self` receiver, a `&mut` return under a `&self` receiver, an optional reference to a
   slice or a trait object (`Option<&[u8]>`, `Option<&mut [u8]>`, `Option<&dyn Debug>`, each with its
-  message), more than one associated type, an associated type alongside a second method, and a
-  non-getter trait item, plus `#[cgp_auto_getter]`'s rejection of any attribute argument.
+  message, and the message's spelling of the written type: an array element, a function trait's
+  argument list, and a parenthesized type after `&mut` or a lifetime), more than one associated
+  type, an associated type alongside a second method, and a non-getter trait item, plus
+  `#[cgp_auto_getter]`'s rejection of any attribute argument.
 
 ## Source
 
