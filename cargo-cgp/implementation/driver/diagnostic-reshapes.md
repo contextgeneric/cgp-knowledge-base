@@ -357,6 +357,12 @@ its own errors
 carries `__Context__`: it has the inserted `__Context__`, its `Self` is a concrete local struct or
 enum, and its header trait reference is a token the user wrote.
 
+**A help names each trait with the arguments the program wrote,** so the reader can type it as it
+stands. The detector reads each argument and constraint of the trait reference from its source and
+leaves out the inserted `__Context__`, which follows any lifetimes
+(`CanRead<'a, __Context__, Text>`). An argument whose source cannot be read leaves the help naming
+the bare trait.
+
 **Only the `E0107` triggers detection,** because the detector's queries would re-enter the
 diagnostic lock during the earlier `E0425`. The siblings are suppressed by their spans against the
 impl body and the macro's call site, and one that arrived first is purged from the buffer. A span is
