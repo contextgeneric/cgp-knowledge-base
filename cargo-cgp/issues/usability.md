@@ -46,6 +46,12 @@ output stays as the compiler wrote it:
   value for the parameter
   ([`provider_for_other_context_and_input`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/provider_for_other_context_and_input.rs),
   [`generic_component_forwarding_missing_key`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/missing-wiring/generic_component_forwarding_missing_key.rs)).
+- **A generic component's provider trait in `#[uses]` with no arguments:** `#[uses(AreaCalculator)]`
+  for `CanCalculateArea<Shape>` reads as `[CGP-E037]`, but the program wrote no argument for `Shape`,
+  so the help names the consumer trait bare, `#[uses(CanCalculateArea)]`, which still needs the
+  argument the program means
+  ([`uses_provider_trait_generic_bare`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/uses_provider_trait_generic_bare.rs)).
+  Written with the component's own arguments, the same mistake gets a complete help.
 
 When a lowering error's cause is visible to the macro, fixing it in `cgp` beats teaching the tool to
 reconstruct it. The getter rejection above is one case; a cyclic `#[use_type]` routing is another,

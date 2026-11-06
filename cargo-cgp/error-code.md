@@ -310,6 +310,8 @@ for `CGP-E060`.
   arguments the call uses (`#[uses(CanFormatPair<(u32, u64)>)]`). An argument the tool cannot read stays
   as the trait's parameter, and the `help` adds `` , with the type the call uses in place of `<Param>` ``.
   A trait with a lifetime or const parameter gets no `help`.
+- **Dropped:** a call whose trait the impl declares under its provider trait, one argument short, as
+  [`CGP-E037`](#cgp-e037-provider-trait-in-uses) reports on the bound.
 - **Class:** [undeclared dependency](../cgp/errors/lowering/undeclared-dependency.md).
 
 ### `CGP-E031`: inner provider used but not imported
@@ -423,9 +425,19 @@ for `CGP-E060`.
   whose first parameter is the context, gets one argument too few. It is the mirror of
   [`CGP-E034`](#cgp-e034-consumer-trait-in-an-inner-provider-bound).
 - **From:** an `E0107` "missing generics for trait `<Provider>`", whose rustc `help` adds the generated
-  `<__Context__>`.
+  `<__Context__>`. A generic component's provider trait written with its own arguments
+  (`AreaCalculator<Rectangle>`) gets an `E0107` one argument short instead, whose rustc `help` adds
+  the component's parameter. The `E0599` on the body's call of the consumer trait, which that form
+  adds, is dropped, since the one fix clears both.
+- **Left as rustc wrote it:** a provider trait given any other number of type arguments, which is an
+  arity mistake of its own.
 - **Fix (in the `help`):**
   `` name the consumer trait instead: `#[uses(<Consumer>)]` (not the provider trait `<Provider>`) ``.
+  For a component with parameters, the consumer trait carries the arguments the attribute wrote, as
+  in `#[uses(CanCalculateArea<Rectangle>)]`.
+  A generic component's provider trait written with no arguments gets the consumer trait bare, which
+  still needs the argument the program means
+  ([usability issue](issues/usability.md#errors-the-tool-cannot-settle)).
 - **Class:** [wrong component half](../cgp/errors/lowering/wrong-component-half.md).
 
 ### `CGP-E038`: `#[cgp_impl]` provider not declared

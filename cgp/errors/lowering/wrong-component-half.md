@@ -180,6 +180,10 @@ carrying the fix in a `help`; it keeps `rustc`'s `E0107` code. The codes are def
   `` `AreaCalculator` is a provider trait and cannot be a `#[uses]` dependency; a dependency names its consumer trait `CanCalculateArea` ``,
   and
   ``help: name the consumer trait instead: `#[uses(CanCalculateArea)]` (not the provider trait `AreaCalculator`)``.
+  A generic component's provider trait written with its own arguments,
+  `#[uses(AreaCalculator<Rectangle>)]`, reads the same, with the consumer trait's arguments in the
+  help, `#[uses(CanCalculateArea<Rectangle>)]`, and the body's call of the consumer trait, which
+  then fails too, is dropped.
 
 A provider trait bounding an inner provider without its context argument keeps `rustc`'s `E0107`,
 without the `help:` that adds the generated `__Context__`. A consumer trait given the wrong number
@@ -198,7 +202,8 @@ Name the half the position expects:
   `Greet` a component alone leaves its consumer trait in the header, the first shape.
 - **A `#[use_provider]` bound:** name the provider trait,
   `#[use_provider(InnerCalculator: AreaCalculator)]`.
-- **A `#[uses]` dependency:** name the consumer trait, `#[uses(CanCalculateArea)]`.
+- **A `#[uses]` dependency:** name the consumer trait, `#[uses(CanCalculateArea)]`, with the
+  arguments the provider trait had, as in `#[uses(CanCalculateArea<Rectangle>)]`.
 
 ## Backing fixtures
 
@@ -238,6 +243,15 @@ These fixtures pin the class, one group per shape:
 - [`lowering/wrong-component-half/uses_provider_trait_before_component.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/uses_provider_trait_before_component.rs):
   a `#[cgp_fn]` naming a provider trait declared after it, so the search for its consumer meets the
   impl's own trait first; `[CGP-E037]`.
+- [`lowering/wrong-component-half/uses_provider_trait_generic.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/uses_provider_trait_generic.rs):
+  a generic component's provider trait written with its own argument; `[CGP-E037]`, whose help
+  writes `#[uses(CanCalculateArea<Rectangle>)]`, with the body's call dropped.
+- [`lowering/wrong-component-half/uses_provider_trait_lifetime.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/uses_provider_trait_lifetime.rs):
+  the same for a component with a lifetime, the lifetime not counted; the help writes
+  `#[uses(CanRead<'static, Text>)]`.
+- [`lowering/wrong-component-half/uses_provider_trait_generic_bare.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/uses_provider_trait_generic_bare.rs):
+  a generic component's provider trait with no arguments; `[CGP-E037]`, whose help names the consumer
+  trait bare, since the program wrote no argument for it (`usability`).
 - [`lowering/wrong-component-half/provider_trait_in_inner_bound.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/provider_trait_in_inner_bound.rs):
   a provider trait bounding an inner provider without its context argument; `rustc`'s `E0107`
   stays, without its help, which adds the generated `__Context__` (`usability`).

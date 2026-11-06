@@ -378,7 +378,12 @@ legitimate impl of a generic consumer on a context, so recognizing it would risk
 valid code.
 
 **The mirror mistake names a provider trait in `#[uses(…)]` (`[CGP-E037]`).** `Self: AreaCalculator`
-lacks the context argument, so rustc reports an `E0107` and suggests `<__Context__>`. It arrives
+lacks the context argument, so rustc reports an `E0107` and suggests `<__Context__>`. A generic
+component's provider trait written with its own arguments is one type argument short too, and is
+taken only with exactly that count, lifetimes aside, so an arity mistake of the program's own keeps
+rustc's error. That form also fails the body's call of the consumer trait, an `E0599` the
+undeclared-trait stage drops when the impl bounds the context by the provider trait in this shape.
+It arrives
 while the compiler lowers the impl's `where` clause, so the bound is read from HIR, and the search
 for the consumer trait skips the impl's own trait, whose blanket may be the impl being lowered,
 which would cycle into the query in flight.
