@@ -330,8 +330,10 @@ The remaining differences are where the driver is simpler than Clippy, or does m
   marked `//@rewrites-falsely:`.
 - [`tests/ui/robustness/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/robustness):
   a fatal error and a compiler crash after a buffered diagnostic. The crash fixture sets
-  `RUSTFLAGS=-Ztreat-err-as-bug=2`, `RUST_BACKTRACE=0`, and `RUSTC_ICE=0`, and names the compiler
-  and driver versions, so a toolchain bump or a version change re-blesses it.
+  `RUSTFLAGS=-Ztreat-err-as-bug=2`, `RUST_BACKTRACE=0`, and `RUSTC_ICE=0`. Its snapshot holds
+  rustc's own version, so a toolchain bump re-blesses it, while the host triple and the driver
+  version are normalized to `$HOST` and `$VERSION`, so another machine or a release's version
+  change does not.
 
 ## Source
 
