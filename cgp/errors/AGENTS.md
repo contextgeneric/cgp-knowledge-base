@@ -141,8 +141,9 @@ post-codegen compile-fail fixture in `cargo-cgp` must be cataloged by a class he
 class that has no fixture yet, add one in `cargo-cgp` following its
 [UI-test guide](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/README.md): drop a
 `<name>.rs` program (with `fn main`, and a `//@aux-build:` directive if it is cross-crate) into the
-category matching the output quality, bless it so both snapshots are written, and open it with a
-header stating what it exercises and linking the class document here as a GitHub URL. Then link it
+directory of its error class, record its output quality in a `//@quality:` header, bless it so both
+snapshots are written, and open it with a header stating what it exercises and linking the class
+document here as a GitHub URL. Then link it
 back from this class's Backing fixtures section. When `../cargo-cgp` is checked out, do both in the
 same change per the [sync rule](../../AGENTS.md#the-synchronization-rule); when it is not, state the
 fixture that needs adding.

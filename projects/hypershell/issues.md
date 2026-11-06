@@ -38,9 +38,9 @@ no wrapper type, so no later stage could consume it. See
 
 `HypershellNamespace` binds every syntax path to a bundle, so neither a context that joins it nor a
 namespace that inherits it can route one syntax to a different provider. An entry for `SimpleExec`
-beside `namespace HypershellNamespace;` fails with `[CGP-E011]`, "`App` cannot wire
-`@cgp.extra.handler.HandlerComponent.SimpleExec.*` that is already set through
-`HypershellNamespace`". This undercuts the design's claim that a context can change how a syntax
+beside `namespace HypershellNamespace;` fails with `[CGP-E011]`, "conflicting wiring: `App` wires
+`@cgp.extra.handler.HandlerComponent.SimpleExec<Path, Args>`, which `HypershellNamespace` already
+covers". This undercuts the design's claim that a context can change how a syntax
 behaves. It matters most for `CoreExec` and `CoreHttpRequest`, which exist so one entry can change
 how every command runs or every request is sent. The workarounds, `Use` in the program or a
 namespace that restates the routes, are in

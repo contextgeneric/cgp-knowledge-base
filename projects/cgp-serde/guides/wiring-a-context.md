@@ -165,8 +165,8 @@ constrain the form. **Each context still opens the component**: without its `ope
 `ValueSerializerComponent: MessagesNamespace<AppA>`, and `cargo cgp check` names the root cause as
 `[CGP-E113]`, `AppA` having no delegate entry for `ValueSerializerComponent`. And **a context cannot
 rebind an entry the namespace makes**: adding `@ValueSerializerComponent.u64: UseSerde` to `AppA`
-fails with `[CGP-E011]`, saying that `AppA` cannot wire `@ValueSerializerComponent.u64` because it
-is already set through `MessagesNamespace`. So the namespace holds only what every joining context
+fails with `[CGP-E011]`, "conflicting wiring: `AppA` wires `@ValueSerializerComponent.u64`, which
+`MessagesNamespace` already covers". So the namespace holds only what every joining context
 shares, and each point of difference stays in the contexts. The mechanism is in
 [namespaces and prefixes](../../../cgp/guides/namespaces-and-prefixes.md). The website's wiring
 guide shows this form as its last step.

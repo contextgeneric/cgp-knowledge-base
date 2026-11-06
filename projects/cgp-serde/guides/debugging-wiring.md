@@ -81,9 +81,8 @@ The check fails even though `u64` is wired:
 error[E0277]: [CGP-E002] the provider trait `ValueDeserializer<u64>` with context `App` is not implemented for provider `RedirectLookup<App, @ValueDeserializerComponent>`
 ```
 
-The clue is in the list of implementations the error prints, which includes
-`IsProviderFor<ValueDeserializerComponent, __Context__, (Life<'_>, Value)>`: the component's
-parameters are a lifetime and a type, and the check supplied only the type. The fix is to write the
+The clue is the help's own bound, `IsProviderFor<ValueDeserializerComponent, App, u64>`: the
+component's parameters are a lifetime and a type, and the check supplied only the type. The fix is to write the
 entry as `(Life<'de>, u64)` with `<'de>` declared on the table, as
 [wiring a context](wiring-a-context.md#check-every-value-type) shows.
 

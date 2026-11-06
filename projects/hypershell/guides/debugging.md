@@ -11,7 +11,7 @@ the CGP [debugging guide](../../../cgp/guides/debugging.md).
 
 **Put the program in a `check_components!` before reading any error, and read it with
 `cargo cgp check`.** A failure reported at the `handle` call resolves to its root cause too, but a
-check fails at the program's definition rather than at each call, and it names the input the program
+check fails once, at the check's entry, rather than at each call, and it names the input the program
 runs on. The check is keyed on the program and its input:
 
 ```rust
