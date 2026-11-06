@@ -116,13 +116,13 @@ which every page in this tier is subject to.
 The Projects section, which links to these pages instead of re-teaching them, is therefore unblocked.
 One task remains in this group, and it is not a concept page:
 
-- **E1: *Project status and adoption risk*.** Mostly a move: lift the "Current Status" section out of
-  the Introduction so the homepage can link it from above the fold. Its frankness is the asset and must
-  survive the move. The section includes cargo-cgp, gradual adoption, and the agent skill among its
-  mitigations. **This page has no settled home**: it is project meta rather than a CGP idea, so it does not belong under Concepts, and
-  under **Project** beside Contribute is the obvious alternative. Settle that before writing it.
-  *Blocks:* F1's second call to action. *Done when:* the page stands alone, the Introduction links to
-  it.
+- **E1: *Project status and adoption risk*.** Mostly a move: lift the "Current Status" section out
+  of the Introduction so the homepage can link it from above the fold. Its frankness is the asset
+  and must survive the move. The section includes cargo-cgp, gradual adoption, and the agent skill
+  among its mitigations. **This page has no settled home**: it is project meta rather than a CGP
+  idea, so it does not belong under Concepts, and under **Project** beside Contribute is the obvious
+  alternative. Settle that before writing it. *Blocks:* F1's second call to action. *Done when:* the
+  page stands alone, the Introduction links to it.
 
 ## F — The front page
 
@@ -157,10 +157,11 @@ One task remains in this group, and it is not a concept page:
 
 ## R — The reference
 
-**The port is finished, and so are the tooling section and the error catalog.** Every construct has a
-page, every group has its `example-code` mirror, and what remains is the author's read of the index. The state of each group is recorded in
-[site-structure.md](site-structure.md#reference); the spec and the porting procedure a later page
-follows are in [writing-guides/reference.md](writing-guides/reference.md).
+**The port is finished, and so are the tooling section and the error catalog.** Every construct has
+a page, every group has its `example-code` mirror, and what remains is the author's read of the
+index. The state of each group is recorded in [site-structure.md](site-structure.md#reference); the
+spec and the porting procedure a later page follows are in
+[writing-guides/reference.md](writing-guides/reference.md).
 
 - **R1: the reference index.** Written, at `docs/reference/index.md`: it names the six constructs a
   newcomer needs, then groups the rest by the job they do. It is one of the surfaces
@@ -260,7 +261,7 @@ somewhere to be tracked.
 
   Four things about its shape are already settled. **Not a release note**, for the reason in
   [redesign-queue.md](redesign-queue.md): the features are old, so a release framing would misreport
-  them as new and compete with namespaces for v0.8.0's one change. **Title in the concrete-feature
+  them as new, and the post keeps namespaces as its main worked example. **Title in the concrete-feature
   register** with no paradigm name, per [vocabulary.md](../communication-strategy/vocabulary.md).
   **One running example the whole way through**, and the database-and-transaction scenario is the one to
   use: it is already verified as compiling code, it is the environmental/self-targeted shape most CGP code
@@ -296,29 +297,31 @@ somewhere to be tracked.
 
 - **V1: review and publish the v0.8.0 release announcement, and merge the branch.** This is the
   campaign's last task because the release and the redesign publish together. The draft's content
-  and code verification are in place; the author must read it, set its publication date, and
-  recheck the quoted diagnostics against the released tool. *Lands in:* `blog/`, then the branch
-  merge. Before the merge, remove the `cgp` patch from the website's `example-code` manifest and
-  re-bless its snapshots against the release. *Spec:* [writing-guides/release-announcement.md](writing-guides/release-announcement.md);
-  material and the mechanical items in [blog/v0-8-0-release.md](blog/v0-8-0-release.md) and
+  and code verification are in place; the author must read it, set its publication date, and recheck
+  the quoted diagnostics against the released tool. *Lands in:* `blog/`, then the branch merge.
+  Before the merge, remove the `cgp` patch from the website's `example-code` manifest and re-bless
+  its snapshots against the release. *Spec:*
+  [writing-guides/release-announcement.md](writing-guides/release-announcement.md); material and the
+  mechanical items in [blog/v0-8-0-release.md](blog/v0-8-0-release.md) and
   [releases/v0-8-0.md](../releases/v0-8-0.md). *Blocked by:* the `cgp` v0.8.0 release itself, and by
-  every release-blocking task above. *Carries two items from*
-  [the release checklist](writing-guides/release-announcement.md): the announcement bar has to point at
-  the published post, and the tutorials and example-code dependency must name the released version.
+  every release-blocking task above. *Carries two items from* [the release
+  checklist](writing-guides/release-announcement.md): the announcement bar has to point at the
+  published post, and the tutorials and example-code dependency must name the released version.
   *Note:* the release-announcement guide distinguishes release-branch wording from the publication
   gate; the draft already uses official versions as shipped, as the branch rules require.
 
-- **V2: publish `cargo-cgp` v0.1.0 so the cargo-cgp pages become true.** The
-  [cargo-cgp section](site-structure.md#cargo-cgp), the tool's README, and the `cgp-skills` skill are
-  written against v0.1.0 as though it had shipped, per the base's
-  [rule on versions](../AGENTS.md#document-official-versions-never-pre-releases), and the front-end
-  changes they rely on are on `cargo-cgp`'s `main`. What remains is the release itself. **Tag and
-  publish v0.1.0**, then **re-run every quoted output against the tagged build**: the pages quote
-  output captured from `main`. The re-run reaches past the section, to every `cargo cgp check` output
-  the site quotes (the compile-errors page, the checking tutorial, the reference pages, the Projects
-  pages), and the editor page's rust-analyzer output, which comes from the probe the
-  [cargo-cgp record](site-structure.md#cargo-cgp) names rather than from a terminal. *Lands in:* the `cargo-cgp` repository, then the website's `v0.8.0` branch. *Blocks:* V1's
-  merge. *Done when:* the tag exists and every quoted output matches it.
+- **V2: publish `cargo-cgp` v0.1.0 so the cargo-cgp pages become true.** The [cargo-cgp
+  section](site-structure.md#cargo-cgp), the tool's README, and the `cgp-skills` skill are written
+  against v0.1.0 as though it had shipped, per the base's [rule on
+  versions](../AGENTS.md#document-official-versions-never-pre-releases), and the front-end changes
+  they rely on are on `cargo-cgp`'s `main`. What remains is the release itself. **Tag and publish
+  v0.1.0**, then **re-run every quoted output against the tagged build**: the pages quote output
+  captured from `main`. The re-run reaches past the section, to every `cargo cgp check` output the
+  site quotes (the compile-errors page, the checking tutorial, the reference pages, the Projects
+  pages), and the editor page's rust-analyzer output, which comes from the probe the [cargo-cgp
+  record](site-structure.md#cargo-cgp) names rather than from a terminal. *Lands in:* the
+  `cargo-cgp` repository, then the website's `v0.8.0` branch. *Blocks:* V1's merge. *Done when:* the
+  tag exists and every quoted output matches it.
 
 ## A — The AI disclosure
 
@@ -446,13 +449,14 @@ published blog posts, whose titles are among the worst offenders and whose
   rustdoc coverage is either true or gone. *Blocked by:* nothing; the reference is complete, so the
   destination exists.
 - **X3: the three canonical diagrams.** The wiring table, the consumer-and-provider split, and
-  coherence scoped, each drawn once as an SVG among the site's static assets and reused by every page
-  that explains the idea, per
+  coherence scoped, each drawn once as an SVG among the site's static assets and reused by every
+  page that explains the idea, per
   [voice-and-register.md](../communication-strategy/voice-and-register.md#show-it-canonical-examples-diagrams-and-diffs).
   Static images are not site machinery, so this stays inside the stock-Docusaurus policy; a diagram
-  plugin would not. *Lands in:* the website repository's `static/img/`, then the concept and tutorial
-  pages that use them. *Blocked by:* nothing. *Done when:* the three files exist, each idea's pages
-  reference the one drawing, and every page still reads correctly with the image missing.
+  plugin would not. *Lands in:* the website repository's `static/img/`, then the concept and
+  tutorial pages that use them. *Blocked by:* nothing. *Done when:* the three files exist, each
+  idea's pages reference the one drawing, and every page still reads correctly with the image
+  missing.
 
 ## What depends on what
 
@@ -482,9 +486,10 @@ the [ordering](#the-ordering) for what to start on.
 | X2, X3 | nothing | nothing |
 
 Two shapes in that graph are worth naming, because they are what make the ordering non-obvious. The
-**Projects pages are gated on code and on the projects' own releases** rather than on writing alone, so the
-long lead time of three of them starts with DC1, DC3, and DC4, and those can run at any time. And **V1 is the terminus rather than an interrupt**: nothing publishes
-until it lands, so a task deferred is a release deferred.
+**Projects pages are gated on code and on the projects' own releases** rather than on writing alone,
+so the long lead time of three of them starts with DC1, DC3, and DC4, and those can run at any time.
+And **V1 is the terminus rather than an interrupt**: nothing publishes until it lands, so a task
+deferred is a release deferred.
 
 ## The ordering
 

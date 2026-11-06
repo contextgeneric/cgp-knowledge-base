@@ -67,7 +67,7 @@ verification and deliberate simplifications; this table maps its stages to the c
 | Count the cost of the separation | `fine_grained.rs`: the flat table, as a comment, the provider bundles, and array-key routing |
 | Give component groups a path | `namespace.rs`, whose flat namespace table is a comment |
 | Group paths hierarchically; Check the completed configuration | `namespace.rs`; the post's SQLite variant is hypothetical and not part of this crate |
-| Sharing default implementations | `default_impls.rs`; the post names `ContentFilterComponents` as an alias for the earlier `AiContentFilterComponents` bundle |
+| Sharing default implementations | `default_impls.rs`; the post wires `AiContentFilterComponents` directly in its defaults example |
 | Breaking changes and migration | an illustrative user-only configuration checked in the website's example-code crate, not a stage in this crate |
 
 ## The documents

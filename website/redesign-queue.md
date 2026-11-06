@@ -88,8 +88,9 @@ of those lists carry a substantial code item: **adopting `#[uses]` in `hypershel
 **A blog post on implicit type arguments**: the framing that an abstract type is an implicit *type*
 argument, so a type dependency stops being a parameter every layer threads. It is a `deepdive` rather
 than a release note: abstract types date to v0.3.0 and `#[use_type]` to v0.7.0, so putting it in the
-v0.8.0 announcement would present a reframing as new and set it competing with namespaces, against that
-guide's one-change rule. Strictly this is new content rather than a redesign defect, and it is listed
+v0.8.0 announcement would present the reframing as new, where the post keeps namespaces as its main
+worked example ([its guide](writing-guides/release-announcement.md#give-the-release-a-clear-lead)).
+Strictly this is new content rather than a redesign defect, and it is listed
 here because it is the one piece of *writing* the queue would otherwise lose track of; its task, its
 running example, and the two decisions it still carries are in [tasks.md](tasks.md).
 

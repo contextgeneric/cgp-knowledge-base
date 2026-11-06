@@ -4,9 +4,11 @@ The release-branch announcement opens with cargo-cgp diagnostics and the expande
 and optional agent support, then develops namespace wiring and migration from v0.7.0.
 
 - **URL**: <https://contextgeneric.dev/blog/v0.8.0-release>
-- **Source**: [blog/2026-05-10-v0.8.0-release.md](https://github.com/contextgeneric/contextgeneric.dev/blob/v0.8.0/blog/2026-05-10-v0.8.0-release.md),
+- **Source**:
+  [blog/2026-05-10-v0.8.0-release.md](https://github.com/contextgeneric/contextgeneric.dev/blob/v0.8.0/blog/2026-05-10-v0.8.0-release.md),
   on the website's `v0.8.0` branch
-- **Dated**: 10 May 2026 is the placeholder filename date; set the actual publication date at release
+- **Dated**: 10 May 2026 is the placeholder filename date; set the actual publication date at
+  release
 - **Tags**: `release`, `deepdive`
 - **Status**: **Draft**, awaiting the author's review and coordinated publication
 - **How it was made**: revision of a human-written draft by an agent; the footnote links the
@@ -36,24 +38,25 @@ documentation.
 The documentation section explains the earlier reliance on blog posts, the missing reference
 material, and the author's limited time for a side project. It preserves his estimate that writing
 comparable documentation by hand would likely take months of full-time work, then explicitly states
-that agents, primarily Claude Code, wrote much of the new material under the author's direction.
-It routes to Reference, Concepts,
-Comparisons, and Projects before describing the iterative knowledge-base process and review limits. It links the public methodology, disclosure, and
+that agents, primarily Claude Code, wrote much of the new material under the author's direction. It
+routes to Reference, Concepts, Comparisons, and Projects before describing the iterative
+knowledge-base process and review limits. It links the public methodology, disclosure, and
 knowledge-base current-state pages. The skill is optional learning and debugging assistance rather
-than a proficiency guarantee. The quality concern and feedback invitation precede the process explanation, so the explanation
-answers a question the reader has already encountered. The post has no direct knowledge-base
-repository links.
+than a proficiency guarantee. The quality concern and feedback invitation precede the process
+explanation, so the explanation answers a question the reader has already encountered. The post has
+no direct knowledge-base repository links.
 
 The short tooling and documentation sections come first so readers who skip the long namespace
 walkthrough still see those improvements. Namespaces remain the main technical deep dive. The
 namespace section opens with the earlier wiring burden and the limits of provider bundles, then
-states its practical payoff and links for readers who want to skip to the syntax or migration. Its social-media example progresses from coarse manager traits through
-isolated dependencies and a higher-order filtering provider to nine flat wiring entries. Aggregate
-providers group the implementations, but array keys still repeat every component name on the
-application. The namespace reveal shows the short application table before explaining the prefix
-registrations that enable it. The namespace opt-in is explained beside the short table, and the
-completed configuration is followed by a lookup trace. Production,
-test, and hypothetical local configurations select whole groups with visible one-entry differences.
+states its practical payoff and links for readers who want to skip to the syntax or migration. Its
+social-media example progresses from coarse manager traits through isolated dependencies and a
+higher-order filtering provider to nine flat wiring entries. Aggregate providers group the
+implementations, but array keys still repeat every component name on the application. The namespace
+reveal shows the short application table before explaining the prefix registrations that enable it.
+The namespace opt-in is explained beside the short table, and the completed configuration is
+followed by a lookup trace. Production, test, and hypothetical local configurations select whole
+groups with visible one-entry differences.
 
 The main example wires environmental contexts with self-targeted components. It explains that
 successive stages replace earlier definitions, labels database operations as illustrative fragments,
@@ -119,27 +122,28 @@ and [installation](../../cargo-cgp/reference/installation.md). Public framing fo
 
 ## Verification and deliberate simplifications
 
-The website's
-[blog example file](https://github.com/contextgeneric/contextgeneric.dev/blob/main/example-code/tests/blog/v0_8_0_release.rs)
-compiles the initial database-only managers, the filter-dependent coarse and fine-grained configurations, flat and hierarchical namespace routing, fixed
-defaults and their body-entry alternative, and the migrated user group. It supplies page-elided domain
-types, methods, filter providers, and database bodies, with explicit checks on concrete contexts.
-The local SQLite variant is hypothetical; its omitted providers are supplied as stubs for compilation.
-These checks verify wiring, not a database implementation or a complete web service.
+The website's [blog example
+file](https://github.com/contextgeneric/contextgeneric.dev/blob/main/example-code/tests/blog/v0_8_0_release.rs)
+compiles the initial database-only managers, the filter-dependent coarse and fine-grained
+configurations, flat and hierarchical namespace routing, fixed defaults and their body-entry
+alternative, and the migrated user group. It supplies page-elided domain types, methods, filter
+providers, and database bodies, with explicit checks on concrete contexts. The local SQLite variant
+is hypothetical; its omitted providers are supplied as stubs for compilation. These checks verify
+wiring, not a database implementation or a complete web service.
 
-The missing-height program is a
-[compile-fail fixture](https://github.com/contextgeneric/contextgeneric.dev/blob/main/example-code/tests/compile_fail/blog/v0_8_0_missing_height.rs).
+The missing-height program is a [compile-fail
+fixture](https://github.com/contextgeneric/contextgeneric.dev/blob/main/example-code/tests/compile_fail/blog/v0_8_0_missing_height.rs).
 Both quoted diagnostic bodies were captured from that program in a temporary library target as
-`src/lib.rs`, using cargo with stable Rust 1.99 and the local source-built cargo-cgp driver. The repaired
-program passes cargo-cgp, and a runtime test asserts that a three-by-four rectangle has area twelve. The
-historical preset and old attribute-separator listings are explicitly v0.7.0 input, not current
-examples to compile against v0.8.0. The proposed `???` keys and nested helper-macro form are labeled
-pseudocode in text fences, not presented as accepted Rust syntax.
+`src/lib.rs`, using cargo with stable Rust 1.99 and the local source-built cargo-cgp driver. The
+repaired program passes cargo-cgp, and a runtime test asserts that a three-by-four rectangle has
+area twelve. The historical preset and old attribute-separator listings are explicitly v0.7.0 input,
+not current examples to compile against v0.8.0. The proposed `???` keys and nested helper-macro form
+are labeled pseudocode in text fences, not presented as accepted Rust syntax.
 
 The production site build passes without broken links or anchors, and the full example suite passes
 against the sibling `cgp` checkout.
 
-The narrative revision preserves all 37 fenced listings verbatim, including the diagnostics and
+The narrative revision preserves all 36 fenced listings verbatim, including the diagnostics and
 historical input, and preserves every heading and anchor. The namespace application table moves
 ahead of its prefix-registration listings. A comparison of the listing multisets verifies that
 the move neither drops nor duplicates a listing. The `blog_tests` target compiles the wiring stages and passes
@@ -168,7 +172,7 @@ headings. The original material remains represented as follows:
 | Preset history, single inheritance, macro-based composition, and old inheritance/local-table syntax | The motivation before namespaces and the explicitly historical migration example |
 | Prefix registration, opt-in namespace selection, parent paths, and production/test/local differences | The namespace walkthrough, including different entry orders making flat tables harder to compare |
 | Default-provider flexibility versus an intentionally fixed early implementation | The defaults introduction, including the logging-backed core variant |
-| Namespace inheritance, default attributes and equivalent body entries, composite providers, and filter customization | The defaults examples; `ContentFilterComponents` explicitly aliases the earlier AI filter bundle |
+| Namespace inheritance, default attributes and equivalent body entries, composite providers, and filter customization | The defaults examples, including the AI filter bundle the post wires directly |
 | Ownership constraints, inability to opt out of one default, single-crate trade-offs, and gradual migration toward multiple crates | The defaults restrictions and gradual-adoption bridge |
 
 The preserved content uses corrected `prefix` syntax and consistent paths, fixes the wrong `TestApp`
@@ -190,15 +194,15 @@ develop toward the point. Do not impose point-first openings or a repeated probl
 template. Follow the remaining point-first-writing guidance on clear subjects, connected reasoning,
 paragraph focus, accuracy, and plain language. Vary transitions around code listings and explain
 their consequences without repeatedly announcing the next step or restating the syntax. Keep
-independent migration changes in separate
-paragraphs so readers can scan by construct. Within the namespace section, preserve the
-argument from useful provider separation to its wiring cost and then to namespace organization.
-Preserve the author's background on the diagnostic, documentation, and wiring challenges,
-including the time constraint and earlier grouping experiments. Preserve all original substantive
-content and examples when reorganizing; use the audit above to check coverage. Place that history
-where it motivates each improvement, rather than compressing it into a feature summary. Keep migration
-focused on the upgrade, the defaults restrictions beside their examples, and agent authorship
-separate from optional agent support. Keep the closing practical and personal, with honest remaining costs and a bounded request for feedback.
+independent migration changes in separate paragraphs so readers can scan by construct. Within the
+namespace section, preserve the argument from useful provider separation to its wiring cost and then
+to namespace organization. Preserve the author's background on the diagnostic, documentation, and
+wiring challenges, including the time constraint and earlier grouping experiments. Preserve all
+original substantive content and examples when reorganizing; use the audit above to check coverage.
+Place that history where it motivates each improvement, rather than compressing it into a feature
+summary. Keep migration focused on the upgrade, the defaults restrictions beside their examples, and
+agent authorship separate from optional agent support. Keep the closing practical and personal, with
+honest remaining costs and a bounded request for feedback.
 
 The renamed headings retain explicit IDs for existing links from the web-app project pages:
 `an-example-social-media-web-app`, `fine-grained-traits`,

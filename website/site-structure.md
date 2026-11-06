@@ -75,17 +75,17 @@ rather than as a fourth documentation tier.
 
 ## The example-code crate
 
-**A Rust crate sits in the repository at `example-code/`, holding compiled counterparts of the code the
-site shows, and it is not part of the site.** Docusaurus never sees it, no page links it, and readers
-are not meant to find it; it exists so that an agent revising a page can check that page's code against
-something the compiler has agreed to. It is a **test-only crate** with no library or binary target: the
-code lives under `tests/` as one integration-test binary per `docs/` section — `tests/concepts_tests.rs`
-pulls in the module tree `tests/concepts/`, and so on — one file per page, with the file name in
-`snake_case`, `docs/concepts/coherence.md` against
+**A Rust crate sits in the repository at `example-code/`, holding compiled counterparts of the code
+the site shows, and it is not part of the site.** Docusaurus never sees it, no page links it, and
+readers are not meant to find it; it exists so that an agent revising a page can check that page's
+code against something the compiler has agreed to. It is a **test-only crate** with no library or
+binary target: the code lives under `tests/` as one integration-test binary per `docs/` section —
+`tests/concepts_tests.rs` pulls in the module tree `tests/concepts/`, and so on — one file per page,
+with the file name in `snake_case`, `docs/concepts/coherence.md` against
 [`tests/concepts/coherence.rs`](https://github.com/contextgeneric/contextgeneric.dev/blob/main/example-code/tests/concepts/coherence.rs),
 and inside a file one module per heading of the page, in the page's order. A page that shows no code
-gets no file. `cargo test` in that directory is the check; `cargo test --no-run` is the fast, run-nothing
-half of it, since a plain `cargo check` skips integration tests.
+gets no file. `cargo test` in that directory is the check; `cargo test --no-run` is the fast,
+run-nothing half of it, since a plain `cargo check` skips integration tests.
 
 The conventions live in the crate's own
 [README](https://github.com/contextgeneric/contextgeneric.dev/blob/main/example-code/README.md) rather
@@ -126,10 +126,11 @@ and the footer repeats the docs entry points alongside the community channels: G
 [Discord](https://discord.gg/Hgk3rCw6pQ), and the [r/cgp subreddit](https://www.reddit.com/r/cgp/).
 The whole site is licensed CC BY-SA 4.0.
 
-Above all of that sits a dismissible **announcement bar**, which on the live site promotes the v0.7.0
-release post; the `v0.8.0` branch already points it at the v0.8.0 post. It is the site's most prominent single piece of copy and the one most likely to go stale: it is
-hardcoded in `docusaurus.config.ts` rather than derived from the newest post, so it must be updated by
-hand with every release announcement. Its wording is a one-line pitch and is therefore governed by
+Above all of that sits a dismissible **announcement bar**, which on the live site promotes the
+v0.7.0 release post; the `v0.8.0` branch already points it at the v0.8.0 post. It is the site's most
+prominent single piece of copy and the one most likely to go stale: it is hardcoded in
+`docusaurus.config.ts` rather than derived from the newest post, so it must be updated by hand with
+every release announcement. Its wording is a one-line pitch and is therefore governed by
 [identity.md](../communication-strategy/identity.md).
 
 The live site's configured tagline reads "Modular programming paradigm for Rust." This is the
@@ -515,9 +516,9 @@ programs the pages say compile under `tests/cargo_cgp/`.
 ### What a later revision must know
 
 **The quoted output comes from `cargo-cgp`'s `main`, the v0.1.0 release the pages document.** It was
-captured with the source-built tool on Linux, against the sibling `cgp` checkout on the release's branch, and output that names the
-tool's version is quoted as `0.1.0`, per the base's
-[rule on versions](../AGENTS.md#document-official-versions-never-pre-releases). Task V2 in
+captured with the source-built tool on Linux, against the sibling `cgp` checkout on the release's
+branch, and output that names the tool's version is quoted as `0.1.0`, per the base's [rule on
+versions](../AGENTS.md#document-official-versions-never-pre-releases). Task V2 in
 [tasks.md](tasks.md) re-runs every quoted command against the tagged release.
 
 **Four front-end behaviors the pages describe landed on `main` while the pages were being written**,
@@ -743,17 +744,18 @@ and **Where to go next**, which routes rather than concludes. *Modularity Hierar
 sections and adds a decision-guide tail after its tier explanations: the tail leads with a rule of thumb
 and uses tables where an explanation page would use prose.
 
-Three conventions the written pages settle are worth copying rather than rediscovering.
-**The `cargo cgp check` concession is the canonical sentence, with no version in it**: every page that
+Three conventions the written pages settle are worth copying rather than rediscovering. **The
+`cargo cgp check` concession is the canonical sentence, with no version in it**: every page that
 mentions the tool says it leads with the root cause for the classes it recognizes and does not yet
 reshape every class, per [vocabulary.md](../communication-strategy/vocabulary.md), and links the
-[list of classes that pass through](https://contextgeneric.dev/docs/cargo-cgp/reading-output#errors-that-pass-through-unchanged)
-where it says more. **A page that crosses between context shapes
-marks the crossing where it happens**, in prose beside the code, rather than in a glossary at either end.
-And **the encoding example is shared with the front page**: the homepage hero's rejected `CanEncode` pair
-over `Display` and `AsRef<[u8]>` is the same code *Bypassing coherence* opens its argument on, and the
-`EncodeAsText` provider name carries across, so a reader arriving from the front page meets one running
-example rather than two.
+[list of classes that pass
+through](https://contextgeneric.dev/docs/cargo-cgp/reading-output#errors-that-pass-through-unchanged)
+where it says more. **A page that crosses between context shapes marks the crossing where it
+happens**, in prose beside the code, rather than in a glossary at either end. And **the encoding
+example is shared with the front page**: the homepage hero's rejected `CanEncode` pair over
+`Display` and `AsRef<[u8]>` is the same code *Bypassing coherence* opens its argument on, and the
+`EncodeAsText` provider name carries across, so a reader arriving from the front page meets one
+running example rather than two.
 
 The index groups reading links by the questions they answer. The introductions to *Bypassing
 coherence*, *Consumer and provider traits*, *Impl-side dependencies*, and *Modular error handling*
@@ -1013,12 +1015,13 @@ complaint; attribute the opinion with its citation or cut it.
 
 ### What it covers
 
-The reference is the site's largest surface and is [canonical](writing-guides/reference.md) rather than
-a supplement to docs.rs. It is a new top-level category at `docs/reference/`, position 7, with a
-hand-written index as its category link and seven subdirectories mirroring what a construct *is*: `macros/`, `attributes/`, `derives/`,
-`components/`, `providers/`, `traits/`, and `types/`. The groups with a written Overview page
-(`macros/`, `attributes/`, `derives/`, and `providers/`) link to it as their category page, and the
-rest use a `generated-index`. A separate `errors.md` covers post-expansion compile errors.
+The reference is the site's largest surface and is [canonical](writing-guides/reference.md) rather
+than a supplement to docs.rs. It is a new top-level category at `docs/reference/`, position 7, with
+a hand-written index as its category link and seven subdirectories mirroring what a construct *is*:
+`macros/`, `attributes/`, `derives/`, `components/`, `providers/`, `traits/`, and `types/`. The
+groups with a written Overview page (`macros/`, `attributes/`, `derives/`, and `providers/`) link to
+it as their category page, and the rest use a `generated-index`. A separate `errors.md` covers
+post-expansion compile errors.
 
 **The construct list is complete, and every page on it is written**, which matters more than it
 sounds: the completeness obligation is against the index rather than against the prose, so no
@@ -1062,26 +1065,27 @@ built-in-component variant above, a trait page keeps its *Under the hood*: its D
 trait itself, while *Under the hood* shows how the macros generate and consume it.
 
 The `types/` group is now written, one page per type rather than the internal reference's
-`type_level_spines` consolidation, and flat: all eleven construct pages sit directly under `types/` with
-no subdirectory. It carries the markers `phantom_data`, `field`, `index_type` (the `Index` type, renamed
-because `index.md` is the section overview), and `life`; the six recursive lists `cons`, `nil`, `either`,
-`void`, `chars`, and `path_cons`, whose family explanation lives on the `Cons`, `Either`, `Chars`, and
-`PathCons` head cells rather than on a group overview; and `mref`. It adds a `PhantomData` page, which
-the internal reference has no document for and which is authored on the site directly, because
-`PhantomData` is used heavily throughout CGP and is the mechanism the other markers rest on. The overview
-describes the whole section and frames `mref` as the one ordinary runtime data type among the type-level
-building blocks. The pages are ordered by importance rather than alphabetically: PhantomData, Field,
-Index, Life, then the six lists Cons, Nil, Either, Void, Chars, PathCons, then MRef last. Each type page
-that shows code has an `example-code` mirror flat under `tests/reference/types/`, so its snippets are
-compiler-checked like the other written groups rather than only ported; the overview page shows no code
-and gets no file. The provider pages are
-mirrored in the
-`example-code` crate under `tests/reference/providers/`: the singletons, all five `With…` alias
-pages, all of `error/`, `handler/`, and `monad/`, and all of `dispatch/`. The `dispatch/` group is now covered end to end, including the builder-side
-(`build_and_set_field`, `build_and_merge`, `build_with_handlers`, `build_and_merge_outputs`) and
-advanced-matcher (`match_first_with_handlers`, `downcast_and_handle`) pages. `UseFieldRef` carries no mirror of its own, since its wireable example lives on its alias page
-(`with_field_ref`); `use_delegated_type` has one for the direct `TypeProviderComponent` form its page
-shows, while its alias form lives on `with_delegated_type`.
+`type_level_spines` consolidation, and flat: all eleven construct pages sit directly under `types/`
+with no subdirectory. It carries the markers `phantom_data`, `field`, `index_type` (the `Index`
+type, renamed because `index.md` is the section overview), and `life`; the six recursive lists
+`cons`, `nil`, `either`, `void`, `chars`, and `path_cons`, whose family explanation lives on the
+`Cons`, `Either`, `Chars`, and `PathCons` head cells rather than on a group overview; and `mref`. It
+adds a `PhantomData` page, which the internal reference has no document for and which is authored on
+the site directly, because `PhantomData` is used heavily throughout CGP and is the mechanism the
+other markers rest on. The overview describes the whole section and frames `mref` as the one
+ordinary runtime data type among the type-level building blocks. The pages are ordered by importance
+rather than alphabetically: PhantomData, Field, Index, Life, then the six lists Cons, Nil, Either,
+Void, Chars, PathCons, then MRef last. Each type page that shows code has an `example-code` mirror
+flat under `tests/reference/types/`, so its snippets are compiler-checked like the other written
+groups rather than only ported; the overview page shows no code and gets no file. The provider pages
+are mirrored in the `example-code` crate under `tests/reference/providers/`: the singletons, all
+five `With…` alias pages, all of `error/`, `handler/`, and `monad/`, and all of `dispatch/`. The
+`dispatch/` group is now covered end to end, including the builder-side (`build_and_set_field`,
+`build_and_merge`, `build_with_handlers`, `build_and_merge_outputs`) and advanced-matcher
+(`match_first_with_handlers`, `downcast_and_handle`) pages. `UseFieldRef` carries no mirror of its
+own, since its wireable example lives on its alias page (`with_field_ref`); `use_delegated_type` has
+one for the direct `TypeProviderComponent` form its page shows, while its alias form lives on
+`with_delegated_type`.
 
 ### The compile-errors page
 
@@ -1097,12 +1101,12 @@ not a remembered or reconstructed one. The checked and the method-call routes to
 headline, chain, and `help` under different compiler codes, which is the page's central demonstration. A
 revision reruns such a program rather than editing the quotes.
 
-The page covers one group the internal catalog has **no classes for**, and the gap is recorded in
-[cgp/errors/README.md](../cgp/errors/README.md) rather than papered over here. `cargo-cgp`'s
-The rewrites from `CGP-E030` to `CGP-E037`, such as a trait used without `#[uses]`, an inner provider used without
-`#[use_provider]`, and the consumer-versus-provider-trait confusions, are common, first-week
-mistakes with no upstream class document, so the public page carries them under *Using something you did
-not declare* on the strength of the tool's own catalog and its fixtures.
+The page's *Using something you did not declare* section collects common, first-week mistakes that
+the internal catalog documents: a trait used without `#[uses]` and an inner provider used without
+`#[use_provider]` are the [undeclared dependency](../cgp/errors/lowering/undeclared-dependency.md)
+class, and the consumer-versus-provider-trait confusions are
+[wrong component half](../cgp/errors/lowering/wrong-component-half.md); the page draws on those
+classes and on the tool's own code catalog.
 
 It also becomes the site's home for the **`[CGP-Exxx]` code reference**. Nothing else on the site listed
 the codes: the tooling section explains the scheme and shows four of them in an example, and the internal
@@ -1111,12 +1115,13 @@ codes and one for dependency-tree codes.
 
 Its code is backed by
 [`tests/reference/errors.rs`](https://github.com/contextgeneric/contextgeneric.dev/blob/main/example-code/tests/reference/errors.rs),
-which is unusual in the crate and worth knowing before editing: the page shows exactly one program, and
-that program is pinned in *both* directions. A live module there proves the wiring block compiles — the
-page asserts that in bold, and it is the reason the error arrives elsewhere — and it deliberately omits
-the `check_components!` this crate otherwise adds to every wired context, because the check is precisely
-what the page withholds. Two `trybuild` compile-fail fixtures under `tests/compile_fail/reference/`
-(`errors_the_fix_1.rs` and `errors_the_fix_2.rs`) then pin the checked failure and the hidden one.
+which is unusual in the crate and worth knowing before editing: the page shows exactly one program,
+and that program is pinned in *both* directions. A live module there proves the wiring block
+compiles — the page asserts that in bold, and it is the reason the error arrives elsewhere — and it
+deliberately omits the `check_components!` this crate otherwise adds to every wired context, because
+the check is precisely what the page withholds. Two `trybuild` compile-fail fixtures under
+`tests/compile_fail/reference/` (`errors_the_fix_1.rs` and `errors_the_fix_2.rs`) then pin the
+checked failure and the hidden one.
 
 ### The glossary page
 
@@ -1144,15 +1149,16 @@ related-concept entry's external link is one the comparison page it routes to al
 from that page's Sources section so the two agree on the authority.
 
 **The terms are linked from the pages that use them**, first use per page with the inline gloss left
-beside it: some 440 links across 176 pages, in page bodies rather than in the closing routing lists. Three rules decided what was left alone, and a later agent
-should read them as settled rather than as unfinished work. **A page that owns a term does not link
-it** — *Bypassing coherence* does not link *coherence*. **A compound use is not the general term**, so
-CGP's own *consumer blanket impl* and *provider blanket impl* keep their abbreviated spelling and only
-the full *blanket implementation* links. And **the basic vocabulary is already glossed**: every
-reference page introduces *context* by convention, and *component*, *provider*, *wiring* and the two
-trait names are the section's working words, so linking them as well would add noise rather than a
-route. Terms already linked to their concept page were left pointing there, which is why *extensible
-variant* and *impl-side dependency* gained few links despite appearing on dozens of pages.
+beside it: some 440 links across 176 pages, in page bodies rather than in the closing routing lists.
+Three rules decided what was left alone, and a later agent should read them as settled rather than
+as unfinished work. **A page that owns a term does not link it** — *Bypassing coherence* does not
+link *coherence*. **A compound use is not the general term**, so CGP's own *consumer blanket impl*
+and *provider blanket impl* keep their abbreviated spelling and only the full *blanket
+implementation* links. And **the basic vocabulary is already glossed**: every reference page
+introduces *context* by convention, and *component*, *provider*, *wiring* and the two trait names
+are the section's working words, so linking them as well would add noise rather than a route. Terms
+already linked to their concept page were left pointing there, which is why *extensible variant* and
+*impl-side dependency* gained few links despite appearing on dozens of pages.
 
 The page shows no code, so it has no `example-code` mirror. Four pages route to it: the reference
 index beside the compile-errors link, the Concepts and Comparisons indexes, and the Introduction's
@@ -1181,22 +1187,24 @@ one-attribute-comma-separated convention its siblings follow. And a predicate pr
 rather than a bound they inherit, so it does not save a caller from restating it; what it buys is that an
 unsatisfiable requirement is reported where the trait is named instead of being accepted in silence.
 
-Writing the rest of `macros/` corrected four more, all of them in this base rather than on the site, and all
-found by running the construct rather than transcribing the document. **`#[blanket_trait]` is not in the
-prelude** — its reference's own example would not have compiled — and needs
-`use cgp::core::macros::blanket_trait;`. **`#[blanket_trait]` does not strip the trait's default bodies**, as
-its Expansion claimed; the body appears both on the trait and in the generated impl. **`cgp_namespace!` rejects a self-inheriting
-namespace itself**, and only a chain through two or more namespaces overflows, with `E0275`. And **the `IsProviderFor` clause `#[cgp_provider]`
-derives is augmented, not copied**: a bound naming the component's own provider trait gains its marker
+Writing the rest of `macros/` corrected four more, all of them in this base rather than on the site,
+and all found by running the construct rather than transcribing the document. **`#[blanket_trait]`
+is not in the prelude** — its reference's own example would not have compiled — and needs
+`use cgp::core::macros::blanket_trait;`. **`#[blanket_trait]` does not strip the trait's default
+bodies**, as its Expansion claimed; the body appears both on the trait and in the generated impl.
+**`cgp_namespace!` rejects a self-inheriting namespace itself**, and only a chain through two or
+more namespaces overflows, with `E0275`. And **the `IsProviderFor` clause `#[cgp_provider]` derives
+is augmented, not copied**: a bound naming the component's own provider trait gains its marker
 counterpart, which is the mechanism that carries an inner provider's requirements outward and lets
-`#[check_providers]` localize a broken layer. The claim that `delegate_and_check_components!` on an aggregate
-provider "cannot hold" was also too strong — it passes vacuously when the bundled provider needs nothing from
-its context, and fails blaming the bundle when it does — and every view of that claim now states the
-conditional behaviour: the two macro references, the
-[aggregate providers](../cgp/concepts/aggregate-providers.md) and
-[check traits](../cgp/concepts/check-traits.md) concepts, and the `/cgp` skill. The related overclaim that a
-bundle "never implements a provider trait with itself in the context position" went with it, since a bundle of
-context-agnostic providers demonstrably does — which is precisely why the vacuous pass is possible.
+`#[check_providers]` localize a broken layer. The claim that `delegate_and_check_components!` on an
+aggregate provider "cannot hold" was also too strong — it passes vacuously when the bundled provider
+needs nothing from its context, and fails blaming the bundle when it does — and every view of that
+claim now states the conditional behaviour: the two macro references, the [aggregate
+providers](../cgp/concepts/aggregate-providers.md) and [check
+traits](../cgp/concepts/check-traits.md) concepts, and the `/cgp` skill. The related overclaim that
+a bundle "never implements a provider trait with itself in the context position" went with it, since
+a bundle of context-agnostic providers demonstrably does — which is precisely why the vacuous pass
+is possible.
 
 A **coverage review of all twenty-seven written pages** against the parsers — rather than against the
 internal documents — turned up eleven further gaps, every one of them a form or a rule that exists in the
@@ -1210,13 +1218,14 @@ declare a getter at all; a getter method may take an optional second **`PhantomD
 missing from both access-mode tables. `#[cgp_component]` accepts a fourth companion attribute,
 [`#[prefix(...)]`](../cgp/reference/attributes/prefix.md), which only the namespace pages had mentioned.
 
-Four are **rules the expansion follows that were unstated**. A provider trait's `IsProviderFor` params
-tuple lifts a lifetime into [`Life<'a>`](../cgp/reference/types/life.md) and takes the first *type* argument
-as the context, which matters the moment a component carries a lifetime. `#[cgp_component]` replaces the
-consumer trait's supertraits with `IsProviderFor` and lowers them to a `where` bound on the context.
-`#[cgp_impl]`'s `Self`-to-context rewrite **leaves an associated type the block itself declares alone, and
-qualifies a const it declares**, so a provider names its own items as `Self::Output` and `Self::LIMIT`. And `#[cgp_fn]` moves the function's visibility onto the generated trait and
-copies an unrecognized attribute onto both emitted items.
+Four are **rules the expansion follows that were unstated**. A provider trait's `IsProviderFor`
+params tuple lifts a lifetime into [`Life<'a>`](../cgp/reference/types/life.md) and takes the first
+*type* argument as the context, which matters the moment a component carries a lifetime.
+`#[cgp_component]` replaces the consumer trait's supertraits with `IsProviderFor` and lowers them to
+a `where` bound on the context. `#[cgp_impl]`'s `Self`-to-context rewrite **leaves an associated
+type the block itself declares alone, and qualifies a const it declares**, so a provider names its
+own items as `Self::Output` and `Self::LIMIT`. And `#[cgp_fn]` moves the function's visibility onto
+the generated trait and copies an unrecognized attribute onto both emitted items.
 
 Three are **grammar sections the template requires and five pages lacked**: `#[uses]`, `#[extend]`,
 `#[extend_where]`, `#[use_provider]`, and `#[derive_delegate]` each take a bespoke argument and now carry a
@@ -1272,7 +1281,8 @@ the builder**: `CanBuildFrom` walks the source's field list, so the internal ref
 Examples snippet — which derived only `BuildField` on both structs — would not have compiled. And
 **a partial companion type carries none of the input's struct-level attributes**, because the
 codegen clears them, so a partially-built record or an extraction remainder is neither `Debug` nor
-`Clone` however the original is derived (each field and variant keeps only its documentation, so a `serde` helper attribute does not reach it); that had gone unrecorded on either side and is why an
+`Clone` however the original is derived (each field and variant keeps only its documentation, so a
+`serde` helper attribute does not reach it); that had gone unrecorded on either side and is why an
 `assert_eq!` over an `extract_field` result does not compile.
 
 The variant derives name their own associated types through qualified projections such as
@@ -1337,17 +1347,17 @@ recursion to [`CanDowncast`](https://contextgeneric.dev/docs/reference/traits/ca
 optional-field page defers the transform to
 [`TransformMapFields`](https://contextgeneric.dev/docs/reference/traits/type-level/transform_map_fields).
 
-Three decisions the split settled are worth copying rather than rediscovering. **Markers stay with their
-trait** — `IsPresent` and the other six are types implementing `MapType` or `MapTypeRef`, not constructs,
-so the index's *Looking for a name you don't see?* table routes them. **A construct documented inside
-another page moves to its own page in the directory its kind belongs to**, which is why
-`#[default_impl(...)]` left `default_namespace.md` for `attributes/`, taking that group from seven pages
-to eight, and why `#[impl_generics(...)]` and `#[prefix(...)]` later left `cgp_fn.md` and
-`cgp_namespace.md` for pages of their own, taking it to ten. And **the `example-code` mirror splits with the pages**: `cast.rs` became four files and
-`product_ops.rs` three, since a mirror file that names a page which no longer exists is worse than none.
-The split pages inherited their snippets already compiled, so the crate stayed green throughout, and
-the pages created around them have since been mirrored too, so every `traits/` construct page now has
-a file.
+Three decisions the split settled are worth copying rather than rediscovering. **Markers stay with
+their trait** — `IsPresent` and the other six are types implementing `MapType` or `MapTypeRef`, not
+constructs, so the index's *Looking for a name you don't see?* table routes them. **A construct
+documented inside another page moves to its own page in the directory its kind belongs to**, which
+is why `#[default_impl(...)]` left `default_namespace.md` for `attributes/`, taking that group from
+seven pages to eight, and why `#[impl_generics(...)]` and `#[prefix(...)]` later left `cgp_fn.md`
+and `cgp_namespace.md` for pages of their own, taking it to ten. And **the `example-code` mirror
+splits with the pages**: `cast.rs` became four files and `product_ops.rs` three, since a mirror file
+that names a page which no longer exists is worse than none. The split pages inherited their
+snippets already compiled, so the crate stayed green throughout, and the pages created around them
+have since been mirrored too, so every `traits/` construct page now has a file.
 
 Reviewing the first four written pages had earlier corrected one originating on the site. The
 [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md) page had given "implementing a provider trait on a
@@ -1424,11 +1434,12 @@ a heading only when the Markdown has none, so a construct page keeps `` # `#[cgp
 
 **A page whose heading is already what a reader searches needs no `title`,** which is why the
 Comparisons and Concepts pages carry a `description` and nothing else: *Type classes* and *Bypassing
-coherence* are the words themselves. Adding a title there would restate the heading. The split is the
-whole point — a title is for a page named `#[cgp_component]`, which nobody types into a search box. Without a `description`, Docusaurus derives one from the first line of
-content, which on a construct page is a heading made mostly of punctuation: the `#[cgp_component]`
-page's snippet was the four characters `` [cgp_component]` `` until this convention reached it. The
-reasoning and the measurement behind it are in [seo.md](seo.md).
+coherence* are the words themselves. Adding a title there would restate the heading. The split is
+the whole point — a title is for a page named `#[cgp_component]`, which nobody types into a search
+box. Without a `description`, Docusaurus derives one from the first line of content, which on a
+construct page is a heading made mostly of punctuation: the `#[cgp_component]` page's snippet was
+the four characters `` [cgp_component]` `` until this convention reached it. The reasoning and the
+measurement behind it are in [seo.md](seo.md).
 
 Four rules keep the sweep consistent. **Put the construct name first in the title**, because that is
 what the reader searched, and keep the whole title under roughly 45 characters so the site name is
@@ -1515,8 +1526,9 @@ the sidebar rather than through an inline link, per the convention above. Two of
 pages had missed the gloss, which makes it the convention here most easily dropped.
 
 **Six pages are exempt from the gloss, because they never use the word above the advanced line**:
-`Product!`, `Sum!`, `Struct!`, `Enum!`, `Path!`, and `#[async_trait]`. `Symbol!` is *not* among them despite belonging to the
-same group — it opens on why encoding a string as a type matters to a context, and glosses the word there.
+`Product!`, `Sum!`, `Struct!`, `Enum!`, `Path!`, and `#[async_trait]`. `Symbol!` is *not* among them
+despite belonging to the same group — it opens on why encoding a string as a type matters to a
+context, and glosses the word there.
 
 A mechanical check over this convention has to allow for three things, and missing any of them reports
 false failures. The phrase may be **split across a line wrap**, so a line-by-line grep fails on most pages
@@ -1671,11 +1683,12 @@ its documentation section. The v0.8.0 release draft's placeholder knowledge-base
 ## AI disclaimer
 
 - **URL** — <https://contextgeneric.dev/docs/ai/disclaimer>
-- **Source** — [docs/ai/disclaimer.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/docs/ai/disclaimer.md)
+- **Source** —
+  [docs/ai/disclaimer.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/docs/ai/disclaimer.md)
 - **Status** — Current
 - **How it was made** — written by an agent from
-  [ai-disclosure.md](../communication-strategy/ai-disclosure.md), which specifies it; level one of the
-  four it describes. The revision awaits the author’s required pre-publication read; its footer
+  [ai-disclosure.md](../communication-strategy/ai-disclosure.md), which specifies it; level one of
+  the four it describes. The revision awaits the author’s required pre-publication read; its footer
   records agent authorship without claiming that review has happened.
 
 ### What it covers
