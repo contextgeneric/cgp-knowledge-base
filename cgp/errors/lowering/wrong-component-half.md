@@ -159,6 +159,9 @@ carrying the fix in a `help`; it keeps `rustc`'s `E0107` code. The codes are def
   `` `CanCalculateArea` is a consumer trait, but a `#[cgp_impl]` provider must implement its provider trait `AreaCalculator` ``,
   and
   ``help: change the impl header to target the provider trait: `impl AreaCalculator` (not `impl CanCalculateArea`)``.
+  For a component with parameters, each trait the help names carries the arguments the header
+  wrote, without the context the macro inserts: `impl AreaCalculator<Rectangle>` for
+  `impl CanCalculateArea<Rectangle>`, and `impl Reader<'a, Text>` for `impl<'a> CanRead<'a, Text>`.
   The sibling `E0425`, `E0186`, and `E0207` and the downstream check report are dropped. A
   requirement of the impl that fails on its own, such as a field the context lacks, is a second
   mistake, so it is reported beside the `[CGP-E032]` as the error the program gives once the header
@@ -170,7 +173,8 @@ carrying the fix in a `help`; it keeps `rustc`'s `E0107` code. The codes are def
   plain `impl`.
 - **`[CGP-E034]`** for a consumer trait in an inner-provider bound:
   `` `CanCalculateArea` is a consumer trait and cannot bound an inner provider; a higher-order provider imports its provider trait `AreaCalculator` ``,
-  with a `help` naming `#[use_provider(… : AreaCalculator)]`. The `E0308` body cascade is dropped.
+  with a `help` naming `#[use_provider(… : AreaCalculator)]`, or `AreaCalculator<Shape>` when the
+  bound wrote `CanCalculateArea<Shape>`. The `E0308` body cascade is dropped.
 - **`[CGP-E037]`** for a provider trait in `#[uses]`:
   `` `AreaCalculator` is a provider trait and cannot be a `#[uses]` dependency; a dependency names its consumer trait `CanCalculateArea` ``,
   and
@@ -185,7 +189,8 @@ provider.
 
 Name the half the position expects:
 
-- **A `#[cgp_impl]` header:** name the provider trait, `impl AreaCalculator`.
+- **A `#[cgp_impl]` header:** name the provider trait, `impl AreaCalculator`, with the arguments
+  the consumer trait had, as in `impl AreaCalculator<Rectangle>`.
 - **A trait that is not a component:** make it one and implement its provider trait,
   `#[cgp_component(GreetProvider)]` on `Greet` and `impl GreetProvider` in the header, or write a
   plain `impl Greet for GreetHello` with the struct declared, if it is an ordinary trait. Making
@@ -210,13 +215,21 @@ These fixtures pin the class, one group per shape:
 - [`lowering/wrong-component-half/consumer_trait_in_provider_impl_body_typo.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/consumer_trait_in_provider_impl_body_typo.rs):
   a misspelled name in the impl's body, dropped with the errors the header causes.
 - [`lowering/wrong-component-half/consumer_trait_in_provider_impl_generic.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/consumer_trait_in_provider_impl_generic.rs):
-  a generic component's consumer trait in the header; `[CGP-E032]`.
+  a generic component's consumer trait in the header; `[CGP-E032]`, whose help writes
+  `impl AreaCalculator<Rectangle>`.
+- [`lowering/wrong-component-half/consumer_trait_in_provider_impl_lifetime.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/consumer_trait_in_provider_impl_lifetime.rs):
+  the same for a component with a lifetime, whose inserted context follows the lifetime; the help
+  writes `impl Reader<'a, Text>`.
 - [`lowering/wrong-component-half/cgp_impl_on_non_cgp_trait.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/cgp_impl_on_non_cgp_trait.rs):
   `#[cgp_impl]` on an ordinary trait; `[CGP-E033]`.
 - [`lowering/wrong-component-half/higher_order_use_provider_consumer_trait.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/higher_order_use_provider_consumer_trait.rs):
   a consumer trait in `#[use_provider]`; `[CGP-E034]`, with the `E0308` cascade dropped.
 - [`lowering/wrong-component-half/use_provider_generic_consumer_trait.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/use_provider_generic_consumer_trait.rs):
-  the same for a generic component's consumer trait; `[CGP-E034]`.
+  the same for a generic component's consumer trait; `[CGP-E034]`, whose help writes
+  `AreaCalculator<Shape>`.
+- [`lowering/wrong-component-half/use_provider_lifetime_consumer_trait.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/use_provider_lifetime_consumer_trait.rs):
+  the same for a component with a lifetime, where the attribute writes the lifetime before the
+  context; `rustc`'s `E0107` and an `E0308` naming `__Context__` stay (`usability`).
 - [`lowering/wrong-component-half/uses_provider_trait.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/uses_provider_trait.rs):
   a provider trait in a `#[cgp_fn]`'s `#[uses]`; `[CGP-E037]`.
 - [`lowering/wrong-component-half/uses_provider_trait_in_impl.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/uses_provider_trait_in_impl.rs):

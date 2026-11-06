@@ -342,6 +342,8 @@ for `CGP-E060`.
   `[CGP-E001]` or `[CGP-E004]`.
 - **Fix (in the `help`):**
   `` change the impl header to target the provider trait: `impl <Provider>` (not `impl <Consumer>`) ``.
+  For a component with parameters, each trait carries the arguments the header wrote, without the
+  inserted context, as in `impl AreaCalculator<Rectangle>`.
 - **Class:** [wrong component half](../cgp/errors/lowering/wrong-component-half.md); see also
   [consumer and provider traits](../cgp/concepts/consumer-and-provider-traits.md).
 
@@ -371,6 +373,8 @@ for `CGP-E060`.
   whose bound is on the context rather than on an inner provider, so the `E0107` is an arity slip.
 - **Fix (in the `help`):**
   `` name the provider trait in the bound, idiomatically `#[use_provider(… : <Provider>)]` (not the consumer trait `<Consumer>`) ``.
+  For a component with parameters, the provider trait carries the arguments the bound wrote, as in
+  `AreaCalculator<Shape>`.
 - **Class:** [wrong component half](../cgp/errors/lowering/wrong-component-half.md); see also
   [higher-order providers](../cgp/concepts/higher-order-providers.md).
 
