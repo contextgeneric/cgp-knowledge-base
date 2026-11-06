@@ -90,7 +90,8 @@ impl<InnerCalculator> AreaCalculator {
 ```
 
 `#[use_provider]` writes the bound `InnerCalculator: CanCalculateArea<Self>`, giving the consumer
-trait a context argument it does not take.
+trait a context argument it does not take. For a component with a lifetime, the context follows the
+lifetime, as in `Inner: CanRead<'a, Self, Source>`.
 
 ### A provider trait in `#[uses]`
 
@@ -229,7 +230,7 @@ These fixtures pin the class, one group per shape:
   `AreaCalculator<Shape>`.
 - [`lowering/wrong-component-half/use_provider_lifetime_consumer_trait.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/use_provider_lifetime_consumer_trait.rs):
   the same for a component with a lifetime, where the attribute writes the lifetime before the
-  context; `rustc`'s `E0107` and an `E0308` naming `__Context__` stay (`usability`).
+  context; `[CGP-E034]`, whose help writes `Reader<'a, Source>`.
 - [`lowering/wrong-component-half/uses_provider_trait.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/uses_provider_trait.rs):
   a provider trait in a `#[cgp_fn]`'s `#[uses]`; `[CGP-E037]`.
 - [`lowering/wrong-component-half/uses_provider_trait_in_impl.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/uses_provider_trait_in_impl.rs):

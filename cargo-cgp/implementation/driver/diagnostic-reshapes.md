@@ -347,7 +347,7 @@ or `[CGP-E033]`, and suppresses the rest. An inner-provider bound naming the con
 through `#[use_provider]`, is the sibling `[CGP-E034]`
 ([`lowering/wrong-component-half/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui/lowering/wrong-component-half)).
 An inner-provider bound is one on a type parameter other than `__Context__` whose trait takes
-`__Context__` first, the shape `#[use_provider]` writes. A `#[uses]` bound sits on the context, so
+`__Context__` first after any lifetimes, the shape `#[use_provider]` writes. A `#[uses]` bound sits on the context, so
 a wrong argument count there keeps rustc's error, and an impl without a `#[cgp_impl]` mistake keeps
 its own errors
 ([`uses_wrong_arity`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/uses_wrong_arity.rs),
