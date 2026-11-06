@@ -120,7 +120,7 @@ yourself. Without it the project's own toolchain runs, and the driver fails to l
 
 ```sh
 cd /path/to/your/project
-RUSTUP_TOOLCHAIN=nightly-2026-10-10 CARGO_CGP_NO_MANAGE=1 \
+RUSTUP_TOOLCHAIN=nightly-2026-11-05 CARGO_CGP_NO_MANAGE=1 \
   CARGO_CGP_DRIVER=/path/to/cargo-cgp/target/debug/cargo-cgp-driver \
   /path/to/cargo-cgp/target/debug/cargo-cgp check
 ```
