@@ -72,7 +72,9 @@ such name (a `_` parameter, which Rust allows in a bodiless trait method, or in 
 `ref value` binding, a `pair @ (a, b)` binding, or a destructuring pattern such as
 `(a, b): (u32, u32)`) is rejected with a spanned message saying to name it, such as `_value`. A
 `mut value` parameter is forwarded as `value`, and the forwarding method's signature drops the `mut`,
-which only the default body that mutates the parameter needs.
+which only the default body that mutates the parameter needs. A `mut self` receiver loses its `mut`
+the same way, while a `&mut self` receiver keeps it, since there the `mut` is part of the receiver's
+type.
 
 ## Tests
 
@@ -88,7 +90,8 @@ expansion snapshots, which pin the forwarding bodies.
   with the message.
 - [basic_delegation/default_method_mut_parameter.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/basic_delegation/default_method_mut_parameter.rs)
   forwards a `mut` parameter of a default method, to an empty provider that inherits the body and to
-  a provider that writes its own, with clippy's `unused_mut` guarding the forwarding signatures.
+  a provider that writes its own, and a `mut self` receiver of a default method, with rustc's
+  `unused_mut` lint, which the clippy runs deny, guarding the forwarding signatures.
 - The default-method case in
   [basic_delegation/default_methods.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/basic_delegation/default_methods.rs)
   confirms a forwarded call resolves to a default body.

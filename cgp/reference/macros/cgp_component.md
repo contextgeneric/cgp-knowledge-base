@@ -504,9 +504,10 @@ name: a `_` parameter, which Rust allows in a bodiless trait method, and in a de
 `ref value` binding, a binding with a subpattern (`pair @ (a, b)`), or a destructuring pattern such
 as `(a, b): (u32, u32)`. The message, on the pattern, reads
 ``a component method parameter needs a plain name, since the generated impls forward each argument by name``.
-Give every parameter a name, such as `_value: u32`, and destructure inside a default body. A `mut value` parameter of a default
-method is forwarded by its name: the forwarding impls leave the `mut` off their own signatures, and
-the default body, which a provider inherits, keeps it.
+Give every parameter a name, such as `_value: u32`, and destructure inside a default body. A
+`mut value` parameter or a `mut self` receiver of a default method is forwarded by its name: the
+forwarding impls leave the `mut` off their own signatures, and the default body, which a provider
+inherits, keeps it.
 
 ## Source
 

@@ -216,7 +216,7 @@ The behavioral tests confirm the generated wiring works:
 
 - [basic_delegation/default_method_mut_parameter.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/basic_delegation/default_method_mut_parameter.rs)
   forwards a default method's `mut` parameter by its name, to an empty provider that inherits the
-  body and to one that writes its own.
+  body and to one that writes its own, and a default method's `mut self` receiver.
 - [basic_delegation/default_methods.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/basic_delegation/default_methods.rs)
   checks at run time that an empty provider impl inherits the default bodies and `App.greet()`
   returns the expected string.
