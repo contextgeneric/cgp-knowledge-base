@@ -293,10 +293,11 @@ keeps the caret rustc chose
 `Self::method(…)`. The detector confirms that the call sits in an impl a `#[cgp_fn]` or `#[cgp_impl]`
 lowered, over a bare type-parameter context, walking up from its body owner since an impl's item span
 does not reliably cover it. The macro is read from the impl's spans, since the explicit-context form of
-`#[cgp_impl]` declares no reserved `__Context__`. A hand-written impl, with or without `#[cgp_provider]`,
-takes neither `#[uses]` nor `#[use_provider]`, so it keeps rustc's error
-([`undeclared_calls_in_plain_impls`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/undeclared_calls_in_plain_impls.rs)). It also confirms that the call is on that context, names a function of a CGP consumer or
-blanket trait, and that the trait is no `where` bound yet.
+`#[cgp_impl]` declares no reserved `__Context__`. The detector also confirms that the call is on that
+context, names a function of a CGP consumer or blanket trait, and that the trait is no `where` bound
+yet. A hand-written impl, with or without `#[cgp_provider]`, takes neither `#[uses]` nor
+`#[use_provider]`, so it keeps rustc's error
+([`undeclared_calls_in_plain_impls`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/undeclared-dependency/undeclared_calls_in_plain_impls.rs)).
 
 - **A call on any other parameter is left alone,** since `#[uses]` cannot bound it.
 - **When several traits share the method,** the one whose definition the diagnostic's notes touch is

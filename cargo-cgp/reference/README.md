@@ -25,10 +25,11 @@ document, register it here in the same change.
   installing from source for development, and the platforms it is tested on.
 - [Usage](usage.md): how to use `cargo-cgp` once installed. Covers the `cargo cgp check` command and
   its argument forwarding, what the check does differently from `cargo check` (the forced pinned
-  nightly, the next-generation trait solver, the isolated `target/cgp` directory), how to read the
-  transformed output and its `[CGP-Exxx]` codes, using the tool as a Rust Analyzer check backend,
-  running it on a project outside this repository through Nix (preferring a local checkout), and the
-  environment variables that override its behavior.
+  nightly, the next-generation trait solver, the isolated `target/cgp` directory), expanding a target
+  with `cargo cgp expand`, how to read the transformed output and its `[CGP-Exxx]` codes, using the
+  tool as a Rust Analyzer check backend, running it on a project outside this repository through Nix
+  (preferring a local checkout), the environment variables that override its behavior, and calling
+  the driver directly to debug an invocation.
 - [Troubleshooting](troubleshooting.md): how to diagnose a `cargo-cgp` that will not run. Covers
   isolating the failing seam (the driver `--version` load test, `cargo cgp check -v`) and the common
   failures with the exact error each prints (command and cargo-project errors, the front-end failing

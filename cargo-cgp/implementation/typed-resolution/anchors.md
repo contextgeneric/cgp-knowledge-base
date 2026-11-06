@@ -217,7 +217,8 @@ needs values the entry does not name
 - [`resolve/anchors.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/anchors.rs):
   what the anchors read from a diagnostic, and the ordered list.
 - [`resolve/anchor/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/anchor):
-  one file per anchor, with `seed.rs` building the obligations and `spans.rs` finding the items a
+  one file per anchor, except `use_site_consumer.rs`, which holds the by-consumer anchor and the
+  by-blanket-trait one, with `seed.rs` building the obligations and `spans.rs` finding the items a
   diagnostic's spans land on.
 - [`resolve/query/cgp_item/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/resolve/query/cgp_item):
   the structural trait recognition, `is_blanket_trait` included.

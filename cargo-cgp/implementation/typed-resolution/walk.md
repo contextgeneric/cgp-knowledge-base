@@ -87,8 +87,10 @@ match (`impl<F: FnPtr> Eq for F`) would otherwise fabricate an `f64: FnPtr` step
 
 Two foreign bounds are followed anyway, because they reach the context only deeper:
 
-- **A getter or blanket trait on a non-context type whose impl depends on the context**, such as a
-  request struct's `HasBasicAuthHeader<Ctx>`. The walk follows only context-side dependencies
+- **A getter or blanket trait on a non-context type whose impl depends on the context**, such as
+  `LoginRequest: HasCredential<App>` in
+  [`foreign_getter_missing_wiring`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/resolution/foreign_getter_missing_wiring.rs).
+  The walk follows only context-side dependencies
   (`is_context_side`), so the real cause surfaces instead of the opaque bound as a second cause.
   This also skips the getter's `HasField` clause on the request, which a plain descent would
   misreport as a missing field. A provider step for another context is not followed, nor is a data
@@ -161,7 +163,7 @@ every frame, so the cap bounds a divergent wiring's work.
 
 Each cut records why it stopped (`SubResult.cut`), and the driver words an `E0275` wiring overflow
 from that reason
-([Diagnostic reshapes](../driver/diagnostic-reshapes.md#naming-the-traits-behind-a-component-marker)); an
+([Diagnostic reshapes](../driver/diagnostic-reshapes.md#wiring-overflows)); an
 overflow whose walk is not cut keeps rustc's wording. These points are worth attention:
 
 - A provider step is named only when a wiring entry chose that provider, so a provider inside a

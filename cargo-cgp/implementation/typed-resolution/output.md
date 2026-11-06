@@ -188,7 +188,8 @@ premises guard them:
   Its candidates are only the struct's own fields, the enum's own variants, or the context's own
   wiring, so a slip another context wires is never named
   ([`near_miss_in_another_context`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/unregistered-namespace-path/near_miss_in_another_context.rs)).
-  A name is similar when it matches ignoring case or lies within two edits. A key is similar when
+  A name is similar when it matches ignoring case, or when its edit distance is at most
+  `(len / 3).clamp(1, 2)` for a target of length `len`. A key is similar when
   one symbol segment is, or when it has one prefix segment more or fewer. Two type segments that
   differ name two types, so they never count.
 
