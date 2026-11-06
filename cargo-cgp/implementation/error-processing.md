@@ -21,7 +21,7 @@ elsewhere:
 | [`tree`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/tree.rs) | The `cargo tree`-style renderer the graph expands into | [Dependency-graph rendering](dependency-graph-rendering.md) |
 | [`dedup`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/dedup.rs) | The `DedupLedger` | [The driver](driver/program.md#de-duplicating-and-coalescing) |
 | [`byte_range`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/byte_range.rs) | The anchors' span decisions over plain ranges | [The anchors](typed-resolution/anchors.md) |
-| [`signals`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/signals.rs) | The stable rustc phrasings the emitter keys on | Here |
+| [`signals`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/signals.rs) | The stable rustc phrasings the emitter keys on, reads names out of, or writes back | Here |
 | [`candidates`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/candidates.rs) | The implementor list cut back to rustc's length | [The driver](driver/program.md#un-eliding-the-diagnostic) |
 | [`syntax`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/syntax) | Telling a string literal from code, and spelling a name | [Resugaring](resugaring.md) |
 | [`naming`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/naming.rs) | The reserved names CGP macros invent | [Diagnostic reshapes](driver/diagnostic-reshapes.md#dropping-a-suggestion-that-names-a-generated-identifier) |
@@ -29,8 +29,9 @@ elsewhere:
 
 These design choices in the modules are worth keeping:
 
-- **The dependence on rustc's phrasing lives in `signals`.** Each phrasing the emitter keys on is
-  one pure function, so when a nightly rewords a message, the fix and its test sit in one place.
+- **The dependence on rustc's phrasing lives in `signals`.** Each phrasing the emitter keys on,
+  reads a name out of, or writes back (the rebuilt footer lines) is one pure function, so when a
+  nightly rewords a message, the fix and its test sit in one place.
 - **`DiagnosisPlan` carries the note unrendered,** as a `PendingNote`, because rendering needs the
   emission order only the flush knows. Keeping one representation also stops the tests pinning one
   note while the emitter shows another.
