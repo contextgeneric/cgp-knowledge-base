@@ -1118,9 +1118,9 @@ Its code is backed by
 [`tests/reference/errors.rs`](https://github.com/contextgeneric/contextgeneric.dev/blob/main/example-code/tests/reference/errors.rs),
 which is unusual in the crate and worth knowing before editing: the page shows exactly one program,
 and that program is pinned in *both* directions. A live module there proves the wiring block
-compiles — the page asserts that in bold, and it is the reason the error arrives elsewhere — and it
-deliberately omits the `check_components!` this crate otherwise adds to every wired context, because
-the check is precisely what the page withholds. Two `trybuild` compile-fail fixtures under
+compiles, which the page asserts in bold, and it deliberately omits the `check_components!` this
+crate otherwise adds to every wired context, because the page withholds the check; that omission
+makes the error arrive elsewhere. Two `trybuild` compile-fail fixtures under
 `tests/compile_fail/reference/` (`errors_the_fix_1.rs` and `errors_the_fix_2.rs`) then pin the
 checked failure and the hidden one.
 
