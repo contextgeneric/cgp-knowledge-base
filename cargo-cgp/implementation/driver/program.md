@@ -230,6 +230,16 @@ untransformed, then hands over. They go out untransformed because a second panic
 aborts the process, so a crash is no time to run the flush's rendering
 ([`ice_after_buffered_diagnostic`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/robustness/ice_after_buffered_diagnostic.rs)).
 
+**A closed stdout ends the driver quietly, with rustc's code for a failed print.** Some of rustc's
+output goes through `println!`, such as the LLVM line of `-vV`, which panics when stdout's reader is
+gone, as in `cargo-cgp-driver <rustc> -vV | head -1`. rustc's own build keeps the default `SIGPIPE`
+action (`-Zon-broken-pipe=kill`), so the closed pipe ends rustc before any panic, but the driver is
+an ordinary cargo binary, whose runtime ignores `SIGPIPE`. So the wrapped hook recognizes std's
+"failed printing to stdout" panic with a broken pipe, emits the buffer as before a crash, and exits
+with code 1 and no report, the code rustc's `safe_print` gives a print it cannot finish. The
+driver's own answers in direct mode, `--help` and `--version`, end successfully on a closed stdout
+instead, as the front-end's `expand` does.
+
 **No input is known to make the emitter panic, so the fallback is tested through its own
 functions.** `transform_or_original` and `render_or_untransformed` take the step as a closure, and
 the unit tests pass one that panics. The shipped driver carries no switch that makes it panic, and
@@ -294,11 +304,13 @@ The remaining differences are where the driver is simpler than Clippy, or does m
   wrapper-mode stripping, flag injection in each spelling, the info-query skips, and `@file`
   expansion.
 - [`tests/driver/run.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/run.rs):
-  a non-Unicode argument exits with rustc's error rather than a panic.
+  a non-Unicode argument exits with rustc's error rather than a panic, and a closed stdout ends
+  the driver without a panic or an ICE file.
 - [`tests/driver/help.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/help.rs):
   the help flags and text.
 - [`tests/driver/containment.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/containment.rs):
-  `contain`, and both fallbacks with a panicking step.
+  `contain`, both fallbacks with a panicking step, and the recognition of a closed stdout's
+  panic.
 - [`tests/driver/footers.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/footers.rs):
   the `rustc --explain` footer naming only the codes still shown.
 - [`tests/driver/pipeline.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/pipeline.rs):
