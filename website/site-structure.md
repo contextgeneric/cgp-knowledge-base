@@ -96,7 +96,8 @@ the other. **Snippets a page deliberately rejects are `trybuild` compile-fail fi
 `tests/compile_fail/`, each a complete failing program checked against a blessed `.stderr`; they catch
 the regression that matters — a rejected snippet the compiler has started accepting — and the `.stderr`
 files are re-blessed with `TRYBUILD=overwrite cargo test --test compile_fail_tests` after a toolchain or
-`cgp` bump. **Duplication between files is wanted**, because each file has to answer for its page alone.
+`cgp` bump, and a snapshot that quotes a `cgp` file holds that checkout's absolute path, so a checkout
+elsewhere fails it until the re-bless. **Duplication between files is wanted**, because each file has to answer for its page alone.
 And **a listing of *generated* code can only be shape-checked here**; `cargo cgp expand`, run against the
 relevant test target, remains the authority on its text, which is the same rule the reference port
 already follows.
