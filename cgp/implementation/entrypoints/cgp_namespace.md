@@ -235,6 +235,12 @@ accepts being empty and emits nothing, so an empty array key or path group compi
 [reference Known issues](../../reference/macros/cgp_namespace.md#known-issues) describe the
 user-visible side of both.
 
+`reject_self_inheritance` compares the parent with the namespace only for a bare name or a `self::`
+path. A parent through any other path, such as `crate::Ns`, names an item the macro cannot resolve,
+so `new Ns: crate::Ns` reaches the compiler, which rejects the cycle with an `E0207` on the
+generated `__Value__`, pinned by
+[`namespace_self_inherit_crate_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/namespace_self_inherit_crate_path.rs).
+
 ## Snapshots
 
 Every `snapshot_cgp_namespace!` invocation across the suite is indexed here, since these snapshots
@@ -326,8 +332,9 @@ form:
 
 - [parser_rejections/cgp_namespace.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/cgp_namespace.rs)
   asserts the macro rejects an attribute on a `:` mapping key, on a `=>` redirect key, and on a key
-  inside a `for` loop, and a namespace naming itself as its parent, with and without type arguments
-  and with arguments of its own (a fixed `u32` and a growing `Vec<T>`), with its message. The same file asserts that a token other than `{` after the header
+  inside a `for` loop, and a namespace naming itself as its parent, with and without type arguments,
+  with arguments of its own (a fixed `u32` and a growing `Vec<T>`), and through a `self::` path,
+  with its message. The same file asserts that a token other than `{` after the header
   (`new MyNamespace: DefaultNamespace;`, `new MyNamespace foo`) is rejected, so the header-only form
   accepts only an input that ends at the header.
 

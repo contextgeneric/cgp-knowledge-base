@@ -452,15 +452,18 @@ entry, or direct wiring answers it, and a `check_components!` reports the lookup
 satisfied, where the `Symbol` is the `show` prefix. This is the
 [unregistered namespace path](../../errors/checks/unregistered-namespace-path.md) error class.
 
-A circular parent chain is an error, reported in one of two places. A namespace that names itself
-as its parent, `new A: A`, is rejected by the macro with
+A circular parent chain is an error, reported in one of two places. A namespace that names itself as
+its parent, `new A: A` or `new A: self::A`, is rejected by the macro with
 ``the namespace `A` cannot inherit from itself``, the caret on the parent's name, whatever its
 arguments: every instance of a namespace has the same parent rule, so `<T> new A<T>: A<u32>` asks
-`A<u32>` again for a key its table lacks, and `A<Vec<T>>` an ever larger instance. A chain through
-two or more namespaces, such as `new A: B` with `new B: A`, is not visible to any one invocation,
-so the compiler reports it: the inheritance impl's first bound loops, reported as `E0275` overflow at both
-definitions (`overflow evaluating the requirement '__Key__: A<__BComponents>'`, and its mirror). This
-is the [namespace inheritance cycle](../../errors/wiring/namespace-inheritance-cycle.md) error class.
+`A<u32>` again for a key its table lacks, and `A<Vec<T>>` an ever larger instance. A parent written
+through any other path, such as `crate::A`, is not checked, since the macro cannot tell which item
+the path names; the compiler then rejects the cycle with an `E0207` on the generated `__Value__`. A
+chain through two or more namespaces, such as `new A: B` with `new B: A`, is not visible to any one
+invocation, so the compiler reports it: the inheritance impl's first bound loops, reported as
+`E0275` overflow at both definitions
+(`overflow evaluating the requirement '__Key__: A<__BComponents>'`, and its mirror). This is the
+[namespace inheritance cycle](../../errors/wiring/namespace-inheritance-cycle.md) error class.
 
 The `namespace` statement names its namespace by a bare identifier, so a namespace from another
 module cannot be written as a path: `namespace some_mod::MyNs;` fails with
