@@ -99,10 +99,10 @@ than the context.
 `Option<T>` field, and an `Option` holds only a sized value, so `Option<&[T]>` and
 `Option<&dyn Trait>` (and their `&mut` forms) have no field to read. `parse_field_type` rejects them
 before lowering, with the caret on the written type and a message naming the sized container to read
-instead:
+instead, each with the referent the getter wrote, as for `Option<&[u8]>`:
 
 ```text
-error: `Option<&[T]>` would read an `Option<[T]>` field, which cannot exist because a slice is unsized; read an `Option<Vec<T>>` field as `Option<&Vec<T>>` instead
+error: `Option<&[u8]>` would read an `Option<[u8]>` field, which cannot exist because a slice is unsized; read an `Option<Vec<u8>>` field as `Option<&Vec<u8>>` instead
 ```
 
 A parenthesized trait object such as `Option<&(dyn Debug + Send)>` is read through its parentheses.
