@@ -558,6 +558,18 @@ error-codes page say both bodies are covered.
 Use natural-writing whenever adding or revising a page under `docs/cargo-cgp/`, as required by the
 [tooling-page writing guide](writing-guides/tooling.md#writing-style). Apply it throughout the page,
 keeping tables, lists, and code blocks where the content is a set of items or text a reader copies.
+All nine pages use connected prose around their commands, diagnostics, and lookup entries. The
+installation and editor pages separate prerequisites from the instructions; the check and expansion
+pages connect outputs to the requirements they expose. The reading and troubleshooting pages connect
+each symptom to its cause and remedy, while error-code entries keep their individual anchors and
+message forms. Installation requirements, command behavior, and limitations are developed in
+separate paragraphs where combining them would obscure the instructions. Troubleshooting follows the
+progression from toolchain availability through driver loading and version checks, and error-code
+entries explain why a requirement fails before giving its remedy. Data-state entries describe how
+an operation's requirement relates to the builder or extractor being used. The prose connects
+requirements, observed output, and remedies while keeping repeated toolchain and build-authority
+explanations brief. Prose revisions preserve the captured outputs, runnable snippets, and command
+syntax.
 
 **Re-run the commands rather than editing their output.** Every quoted diagnostic and listing on these
 pages came out of the tool, run on exactly the program the page shows, and a paraphrase reads to a user

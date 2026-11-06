@@ -24,8 +24,12 @@ task and why it matters.
 The form still follows the content. The symptom index, the decision table, the command tables, and
 each code's entry stay tables or short structured entries, since a reader looks items up in them, and
 commands and quoted output stay code blocks. The natural-writing style governs the prose that
-introduces and connects them. Preserve technical conditions, exceptions, and uncertainty when
-revising the prose.
+introduces and connects them, including the explanations inside individual error-code entries.
+Those entries may use connected paragraphs to explain a cause and remedy; being a lookup page does
+not require point-first prose or fragments. Keep a code's own heading and anchor, and keep its message
+form separate from the explanation. Convert a list to prose when its items develop one argument
+rather than present a set. Preserve technical conditions, exceptions, and uncertainty when revising
+the prose.
 
 ## Why this is its own kind of page
 
