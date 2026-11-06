@@ -758,11 +758,18 @@ example is shared with the front page**: the homepage hero's rejected `CanEncode
 `EncodeAsText` provider name carries across, so a reader arriving from the front page meets one
 running example rather than two.
 
-The index groups reading links by the questions they answer. The introductions to *Bypassing
-coherence*, *Consumer and provider traits*, *Impl-side dependencies*, and *Modular error handling*
-establish the concept and its purpose. Their running examples enter in the body as illustrations
-of that concept. Preserve the concept as the subject when revising an introduction, and keep
-costs beside the choices they qualify.
+The index groups reading links by the questions they answer. All eighteen concept pages and the
+index use natural-writing style, with connected explanations around the illustrative code and tables.
+Each concept page opens with the idea and its purpose; running examples enter in the body to develop
+that idea. The body connects each example to the requirement or limitation it illustrates, removes
+repeated introductions, and develops consequences in prose where they form one argument. Short
+comparisons such as type selection versus type imports and matching versus building are explained in
+connected prose. Cost sections relate each limit to the mechanism it qualifies. Tables and reading
+lists remain where readers compare alternatives or choose a destination. The openings distinguish shared type choices, reusable wiring, explicit checks, computation
+composition, structural data operations, and stronger async bounds before introducing their scenarios.
+Preserve those distinctions, the technical qualifications beside the examples, and the separate cost
+and onward-reading sections. Prose revisions retain the compiled examples, quoted diagnostics, heading
+anchors, and reference links.
 *Abstract types* distinguishes shared type selection from provider compatibility and explains when a
 type dependency must appear in the interface. *Aggregate providers* checks bundles against actual
 contexts and states that namespace customization requires unbound paths. *Checking your wiring*
