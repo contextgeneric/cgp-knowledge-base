@@ -290,7 +290,8 @@ covers the launching and printing halves.
 - [`crates/cargo-cgp-driver/tests/driver/expand.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/expand.rs): the
   marker flags recovered and stripped, and a stray item flag never reaching the compiler.
 - [`crates/cargo-cgp/tests/front_end/expand.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/expand.rs): the exit code, the
-  closed pipe, the profile detection, the output directory, and the `--item` extraction.
+  profile detection, the output directory, and the `--item` extraction; `stdout.rs` holds the
+  closed-pipe rule the expansion is written with.
 - [`crates/cargo-cgp/tests/front_end/invocation.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/invocation.rs): the
   marker flags after one `--`.
 - [`crates/cargo-cgp/tests/front_end/help.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/help.rs): what the expand help

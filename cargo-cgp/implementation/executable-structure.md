@@ -61,7 +61,8 @@ The front-end's own messages take cargo's forms on stderr, so they read as part 
 `error:` with each cause under a `Caused by:`, `help:`, `warning:`, and right-aligned status lines.
 Another program's output, such as rustup's reason a toolchain is missing, is quoted indented two spaces,
 so its own `error:` lines read as part of the quote. The help and version texts go to stdout, as cargo's
-do.
+do, and so does an expansion. A reader that closes stdout early, as `head` does, got what it wanted,
+so the front-end then ends successfully rather than with a panic or an error.
 
 ## Wrapping rustc: the driver
 
@@ -159,6 +160,9 @@ since it runs every fixture through the real front-end ([Testing](testing.md)). 
 - [`invocation.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/invocation.rs): the order of a wrapped
   command's arguments, with one separator.
 - [`report.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/report.rs): the message forms.
+- [`stdout.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/stdout.rs): a closed
+  pipe accepted as the end of the output, and each of the front-end's answers ending successfully on
+  one.
 - [`sysroot.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/sysroot.rs): a failed sysroot probe's
   stderr quoted in its error, and the query through `rustup run` under a forced toolchain.
 - [`workspace_wrapper.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/tests/front_end/workspace_wrapper.rs): the
@@ -191,8 +195,9 @@ These are the front-end's modules, which sit under
 - [`toolchain.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/toolchain.rs),
   [`setup.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/setup.rs),
   [`update/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp/src/update): toolchain resolution and provisioning.
-- [`exit.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/exit.rs), [`report.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/report.rs):
-  the exit code and the message forms.
+- [`exit.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/exit.rs), [`report.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/report.rs),
+  [`stdout.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/stdout.rs):
+  the exit code, the message forms, and the writes to stdout.
 - [`config.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/src/config.rs),
   [`build.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp/build.rs): the shared names, and the baked-in
   `PINNED_TOOLCHAIN` read from `rust-toolchain.toml`.
