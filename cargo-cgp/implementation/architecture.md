@@ -29,7 +29,10 @@ are the crates and what each one holds:
 The line between the driver and the rustc-free crates follows one rule: compiler state is read into
 an owned, `String`-only model at the edge, and the wording, the plan, and the tree built from that
 model live outside the compiler's linkage. The wording of an error therefore gets unit tests that need
-no compiler, while whole-program fixtures pin the code that reads the compiler.
+no compiler, while whole-program fixtures pin the code that reads the compiler. A decision can cross
+the line the same way when its inputs reduce to plain answers: the driver answers them through a
+trait, and the decision lives in the rustc-free crate, as the shape of a `DelegateComponent` leaf
+does ([Leaves](typed-resolution/leaves.md#the-leaf-shapes)).
 
 ## The flow of a diagnostic
 
