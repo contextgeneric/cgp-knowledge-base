@@ -258,8 +258,8 @@ A hand-written wrapper over a consumer trait or a `#[cgp_fn]` blanket trait fail
 The [wiring-derived field type](#when-the-fields-required-type-comes-from-the-wiring) takes
 `[CGP-E004]` over `[CGP-E112]`, with the name resugared and the required type in both forms:
 `` field `database` on `App` has type `Pool<Sqlite>`, but `Pool<<App as HasDbType>::Db>` (`Pool<Postgres>`) is required ``.
-The projection names the wiring the requirement flows from, and the reduced type is what the reader
-compares with the field.
+The projection names the wiring the requirement flows from, and the reader compares the reduced
+type with the field.
 
 The [equality-pinned abstract type](#when-the-dependency-is-an-equality-pinned-abstract-type) takes
 `[CGP-E005]` over `[CGP-E116]`, naming both sides:

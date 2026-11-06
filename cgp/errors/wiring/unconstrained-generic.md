@@ -69,8 +69,8 @@ resolvable no matter what impls other crates add later.
 
 The root cause is **present and precise**: the caret sits on the offending generic parameter, and
 the message states exactly why it is rejected. This is the most localized class in the catalog: the
-diagnostic needs no tracing and hides nothing. What the raw message lacks is the CGP-specific
-remedy: it describes the constraint in impl terms rather than in terms of the wiring entry, and its
+diagnostic needs no tracing and hides nothing. The raw message lacks the CGP-specific remedy: it
+describes the constraint in impl terms rather than in terms of the wiring entry, and its
 suggestions do not compile.
 
 ## How cargo-cgp presents it

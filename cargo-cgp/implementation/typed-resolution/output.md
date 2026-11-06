@@ -155,8 +155,8 @@ These corners of the wording are easy to break:
 **A lead is dropped only where the headline was worded from that very leaf:** a mismatch class, a
 variant payload of the wrong type, or a kept rustc headline restating the ordinary bound. Every
 other block keeps its `root cause:` line, even though its headline states the same cause, so the
-tree sits under a line naming where it ends. The test is what the header was worded from, not the
-kind of leaf.
+tree sits under a line naming where it ends. The header's wording comes from the test rather than
+from the kind of leaf.
 
 ## The fix `help`s
 

@@ -267,7 +267,7 @@ headline. The conflicts `cargo-cgp` rewrites:
 - [`wiring/conflicting-wiring/path_generic_type_segment_overlap.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/path_generic_type_segment_overlap.rs):
   `@DescriberComponent.<T> Wrap<T>` beside `@DescriberComponent.Wrap<u64>`, the overlap through a
   generic type segment; the `.cgp.stderr` pins the `[CGP-E011]` headline naming both keys with their
-  arguments, which is what keeps it from reading as a duplicate.
+  arguments, which keeps it from reading as a duplicate.
 - [`wiring/conflicting-wiring/duplicate_default_impl.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/duplicate_default_impl.rs):
   two `#[default_impl]` registering the same key, a *single* `E0119` on the one `DefaultImpls1`
   impl; the `.cgp.stderr` pins the `[CGP-E010]` rewrite naming the type key and its table.

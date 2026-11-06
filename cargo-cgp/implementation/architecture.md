@@ -138,8 +138,8 @@ diagnostic first. The
 
 ## Tests
 
-The UI snapshot suite covers this document's own concern: every fixture's `.cgp.stderr` is what the
-whole tool, front-end and driver, printed. Each subsystem's document lists its own tests.
+The UI snapshot suite covers this document's own concern: every fixture's `.cgp.stderr` holds the
+output the whole tool, front-end and driver printed. Each subsystem's document lists its own tests.
 
 - [`tests/ui/`](https://github.com/contextgeneric/cargo-cgp/tree/main/tests/ui): the fixtures,
   compiled through the tool and compared with their snapshots ([Testing](testing.md)).

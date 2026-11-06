@@ -57,8 +57,8 @@ unset fails, and so does a `BuildWithHandlers` list without a step for one field
 
 An extractor yields each variant once, and its remainder finalizes only once every variant is ruled
 out. Extracting a variant from a remainder that already ruled it out fails, as does finalizing a
-remainder that may still hold a variant, which is what a `MatchWithHandlers` list without an arm for
-one variant does:
+remainder that may still hold a variant, the mistake a `MatchWithHandlers` list without an arm for
+one variant makes:
 
 ```rust
 delegate_components! {

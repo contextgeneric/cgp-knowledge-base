@@ -393,7 +393,7 @@ bare `Error`s, which also read as CGP's abstract `Error` type
 ([`stripped_error_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/errors/stripped_error_path.rs),
 [`open_route_stripped_path`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/errors/open_route_stripped_path.rs)).
 [`strip_module_paths`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/strip_modules.rs),
-which collapses every run, is what the missing-field check reads a landmark through.
+which collapses every run, supplies the form the missing-field check reads a landmark through.
 
 Both scan the ASCII identifier run by byte but copy every other character whole by its UTF-8 width,
 so multi-byte text (a rendered dependency tree's `└─`) is never split into invalid bytes. They skip

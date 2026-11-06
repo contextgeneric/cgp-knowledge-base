@@ -105,8 +105,8 @@ is none to snapshot:
   on the pinned nightly accept, so its `.cgp.stderr` and `.rust.stderr` are empty; its exit-status
   check fails if a later nightly makes the two disagree.
 
-The raw `E0275` described above therefore has no blessed `.rust.stderr`; it is what stable `rustc`
-prints, verified against the compiler rather than against a committed snapshot. The self-inheriting
+The raw `E0275` described above therefore has no blessed `.rust.stderr`; stable `rustc` prints it,
+verified against the compiler rather than against a committed snapshot. The self-inheriting
 form's macro rejection is pinned by the `cargo-cgp` fixture
 [`pass-through/namespace_self_inherit.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/namespace_self_inherit.rs),
 which checks that the tool prints the macro's message as rustc does, the instance form's by

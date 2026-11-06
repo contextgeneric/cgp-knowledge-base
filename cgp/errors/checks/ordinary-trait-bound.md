@@ -96,7 +96,7 @@ The [hidden method-call form](../hidden/unsatisfied-dependency.md) differs: its 
 the tool recovers it under `[CGP-E001]` over a ``root cause: [CGP-E117] the trait bound `f64: Eq` is not satisfied``
 tree. The [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md) defines the codes.
 
-The tree stops at the bound, without saying that `f64` is what `Scalar` resolves to, so following the
+The tree stops at the bound, without saying that `Scalar` resolves to `f64`, so following the
 abstract-type component to its `UseType<…>` entry remains the reader's step.
 
 ## Resolving it

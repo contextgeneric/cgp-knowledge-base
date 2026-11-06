@@ -154,8 +154,8 @@ Clippy's "just use the compiler's emitter" approach is not open to a tool that r
 
 Each transform is a pure function, so a whole catalog of cases runs as ordinary library tests, under
 [`crates/cargo-cgp-error-processing/tests/error_processing/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/tests/error_processing).
-The [UI suite](testing.md) guards the other seam: every `.cgp.stderr` is what the driver rendered
-after applying them.
+The [UI suite](testing.md) guards the other seam: every `.cgp.stderr` holds the output the driver
+rendered after applying them.
 
 - [`postprocess/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/tests/error_processing/postprocess):
   each transform, what it must skip, and the `Origin` rule.
