@@ -51,4 +51,4 @@ folds, and the getter impls.
 - The `quote!` re-export it depends on is in `cgp-macro-core/src/vendor.rs`, and the
   prefix-stripping helper is `strip_macro_prelude` in `cgp-macro-core/src/functions/strip.rs`.
 - The convention that all AST nodes are built through this macro is recorded in
-  [cgp-macro-core/AGENTS.md](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/AGENTS.md).
+  [crates/macros/AGENTS.md](https://github.com/contextgeneric/cgp/blob/main/crates/macros/AGENTS.md).

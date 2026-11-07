@@ -1,68 +1,53 @@
 # AGENTS.md: the `cargo-cgp` member of the knowledge base
 
-This file governs how to write and maintain the documents in this directory, which document the
-`cargo-cgp` toolchain. Read [README.md](README.md) first for what this section covers and how it is
-organized, the base-wide [../AGENTS.md](../AGENTS.md) for the rules every section shares: the
-synchronization rule, the point-first prose style, document-the-present, how links are written, the
-backtick discipline, and how a document registers itself, and the member project's own
-[AGENTS.md](https://github.com/contextgeneric/cargo-cgp/blob/main/AGENTS.md) for the code itself.
-The rules below add what is specific to documenting this tool; a category may add more in its own
-`AGENTS.md` (the implementation category does, in
-[implementation/AGENTS.md](implementation/AGENTS.md)).
-
-The member project is [`cargo-cgp`](https://github.com/contextgeneric/cargo-cgp), and
-[../sibling-projects.md](../sibling-projects.md) says where to find it and which revision to read.
+Read [README.md](README.md) for what this section covers. The base-wide [../AGENTS.md](../AGENTS.md)
+rules apply.
 
 ## What the synchronization rule means here
 
-The base-wide [synchronization rule](../AGENTS.md#the-synchronization-rule) lands on the tool's own
-moving parts. When you change how the tool behaves (its argument handling, the environment variables
-the executables agree on, the way the driver drives the compiler, the crate or module structure),
-revise the matching document in the same change, and verify every claim against the source before
-you write it rather than transcribing another document.
-
-The rule extends to the code's own inline documentation, which lives in the member repository.
-Reading a module closely enough to document it is exactly when to fix its inline docs, so in the
-same pass add a one-line `///` to any public item that lacks one, correct a comment that no longer
-matches the code, and delete a comment that only restates the obvious. Keep inline docs terse and
-leave the deeper reasoning to the knowledge base; a one-line doc comment that links out to a
-document beats a paragraph inlined in the source. A doc pointer in source names the document by its
-knowledge-base path (`cgp-knowledge-base/cargo-cgp/implementation/driver/program.md`), since the two now
-live in separate repositories.
+- Revise the matching document in the same change as a change to the tool's behavior, its argument
+  handling, the environment contract, the driver, or the crate structure.
+- Verify every claim against the source before writing it.
+- Fix the code's inline docs in the same pass: add a one-line `///` to a public item that lacks one,
+  correct a stale comment, and delete a comment that restates the code.
+- Keep a source doc pointer on its knowledge-base path, such as
+  `cgp-knowledge-base/cargo-cgp/implementation/driver/program.md`.
 
 ## The external references are read-only ground truth
 
-`cargo-cgp` is modeled on Clippy and built against the compiler's internal API, and both are
-available as local sources: the Rust compiler at [`../external/rust`](../../external/rust) and
-Clippy at [`../external/rust-clippy`](../../external/rust-clippy). When a document makes a claim
-about how `rustc_driver` behaves or how Clippy does something, verify it against those sources
-rather than from memory, since the compiler's internals shift between nightlies. Treat them as
-read-only: cite them, do not edit them, and do not create a dependency on them. Their paths are
-filesystem references to local checkouts rather than published links, which is why they stay
-relative where a link to a sibling project would be a GitHub URL. The `cgp` project is different in
-kind: the tool reads its source but never modifies it, while its *documentation* (the
-[`cgp` section](../cgp/README.md) of this base) is revised alongside a change here whenever the two
-must agree.
+- Verify a claim about `rustc_driver` or Clippy against `../external/rust` or
+  `../external/rust-clippy`.
+- Cite them, never edit them, and never create a dependency on them.
+- Keep their paths as relative filesystem references, not published links.
+- Read the `cgp` source but never modify it; revise the `cgp` section of this base when the two must
+  agree.
 
 ## Show the example behind an error message
 
-Every document here quotes diagnostics, so the base-wide rule to
-[show the example behind an error message](../AGENTS.md#show-the-example-behind-an-error-message)
-bites hardest in this section: a reader who meets a rewritten `[CGP-Exxx]` headline must be able to
-see, in the same document, the small program that triggers it and the mistake it is really about.
-Two habits follow. Quote the *fragment* that carries the point rather than a whole cascade, since a
-pasted multi-screen diagnostic bloats a document and rots the moment the wording shifts. And where a
-[UI fixture](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/README.md) already pins the
-behavior, prefer distilling that fixture's program into the document over inventing a fresh one: the
-fixture's blessed `.cgp.stderr` and `.rust.stderr` are then the evidence the quoted output is
-current.
+- Quote the fragment that carries the point, never a whole cascade.
+- Distil a UI fixture's program rather than inventing a fresh one, and check the quoted output against
+  its blessed `.cgp.stderr` and `.rust.stderr`.
+
+## Implementation documents
+
+- Open with a level-one heading and a one-sentence summary, and close with Tests and Source.
+- Make Tests and Source bullet lists, one item per line.
+- Add a comparison with Clippy or cargo-expand only where such a tool exists; state where the design
+  follows it and where it diverges.
+- Split a document that grows into a directory with a `README.md`; the parent lists the directory and
+  `summary.md` lists every file.
+- Give the high-level concepts and architecture; leave the line-by-line mechanics to the code.
+- Use a short command, argument vector, or environment snippet where it makes a behavior concrete.
+- Add an optional **Further reading** section before Tests, and verify a cited URL resolves.
+- Keep the code's intention, a summary for an agent that does not read the source, and the issues and
+  corner cases worth attention.
+- Record a gap in the comparison section where one exists, otherwise beside the behavior.
+- Record a limitation beside the behavior it qualifies, and remove it when closed.
 
 ## Registering a document
 
-Every document registers itself in its category's `README.md` catalog, and in
-[../summary.md](../summary.md), in the same change that creates it, so neither is ever behind the
-tree. When you add a whole category, create its directory with a `README.md`, give it an `AGENTS.md`
-if it needs rules of its own, and register the category in this section's [README.md](README.md).
-The base-wide [prose mechanics](../AGENTS.md#prose-mechanics), the backtick discipline this
-section's long diagnostic snippets make especially easy to break, and the lazy-reflow rule for
-over-long lines, apply to every document here and to inline doc comments in the source.
+- Register a document in its category's `README.md` and in [../summary.md](../summary.md) in the same
+  change.
+- Register a new category in this section's [README.md](README.md) with its own `README.md` and, when
+  needed, an `AGENTS.md`.
+- Follow the base's prose mechanics, including the backtick and lazy-reflow rules.

@@ -36,8 +36,8 @@ to learn a pattern.
 
 The distinction from a **member project** is about what the project is, not how carefully it is
 documented. A member builds CGP itself; a project here is built with it. Both are verified against
-their own source, and a project section grows from a single orienting `README.md` into the shape
-[AGENTS.md](AGENTS.md) describes (architecture, reference, guides, tests, and open issues, plus a
+their own source, and a project section grows from a single orienting `README.md` into the
+[section shape](#section-shape) (architecture, reference, guides, tests, and open issues, plus a
 document per example where the project ships runnable examples) as it is documented. A project made
 of independent subprojects gets one subdirectory per subproject, each with that shape at its own
 scale. A project section is the primary source for its project's facts, so other documents link to
@@ -95,12 +95,43 @@ wants: a real system built with CGP rather than another argument. That value dep
 current, so a project that falls behind the library stops being evidence and starts being a
 liability.
 
+## Section shape
+
+A project starts as a single `README.md` and grows into the shape below as it is documented. The
+shape is a guide rather than a template to fill: omit what a project does not need, and raise an
+addition outside it before making it. The directories and files keep these names, so an agent moving
+between projects finds the same kind of material in the same place.
+
+- **`README.md`**: the front door. It records the repository, local checkout, documented branch,
+  crates, tracked `cgp` version, and status; what the project is; a present-tense paragraph on which
+  revision the documents describe; a short list of confirmed gaps linking `issues.md`; the catalog of
+  every document; and the map to the public material they feed.
+- **`architecture/`**: the project's own design, one idea per document. Its `README.md` states the
+  whole design on one page and catalogs the rest.
+- **`reference/`**: what each public item does, grouped by family rather than one document per item.
+  Its `README.md` carries a table of every public item and the catalog.
+- **`guides/`**: prescriptive documents for using the project: writing a provider, wiring a context,
+  recognizing and fixing the common mistakes.
+- **`examples/`**: for a project that ships runnable programs, one document per program named for it
+  in kebab case, with a `README.md` cataloging them in teaching order. Each document opens with what
+  the program demonstrates and a header list of **Source**, **Run**, **Needs**, and **Result**, then
+  walks the program, its context and wiring, What it demonstrates, and any Known issues. **Result**
+  says what running it produced, or why it was not run. Each example document is also the record its
+  public page is written from, so a program the site will show needs its own document.
+- **A comparison document**, named for what it compares against, when the project replaces or extends
+  a well-known library.
+- **`testing.md`**: what the project's tests pin, which checks they assert, and what is untested.
+- **`issues.md`**: the open defects, missing features, and housekeeping items, grouped in that order.
+
+A project made of several independent subprojects gives each one its own subdirectory, named for the
+subproject's directory in the repository; each subproject follows this shape at its own scale.
+
 ## Adding a project
 
 Create a directory named for the project with a `README.md` following the front-door shape in
-[AGENTS.md](AGENTS.md#the-shape-of-a-project-section): what it is, which revision is documented, how
+[Section shape](#section-shape): what it is, which revision is documented, how
 it is organized, what CGP it uses, how it relates to the rest of the base, and its current status.
 Register it in the catalog above and in [../summary.md](../summary.md) in the same change, add it to
 [../sibling-projects.md](../sibling-projects.md) so its checkout and repository are findable, and
-check whether the website's Resources page should list it. The section then grows into the shape
-[AGENTS.md](AGENTS.md) fixes, with [cgp-serde/](cgp-serde/README.md) as the worked instance.
+check whether the website's Resources page should list it. The section then follows [Section shape](#section-shape), with [cgp-serde/](cgp-serde/README.md) as
+the worked instance.

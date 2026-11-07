@@ -143,15 +143,6 @@ released version records what it introduced, what it broke, and how much of it s
 **removal ledger** in the index dates every construct that has been renamed or deleted. It also
 tracks the release currently in preparation, since v0.8.0 is not yet out.
 
-### `skills/`: the writing skills the base's rules name
-
-[skills/](skills/README.md) publishes the agent skills that this base and its sibling projects tell
-an agent to load but that no other repository ships. It holds
-[point-first-writing](skills/point-first-writing/SKILL.md), the prose convention for paragraphs and
-sections, so a contributor whose agent is told to apply it can find it. The `/cgp` skill is not
-here: it lives in [`cgp-skills`](https://github.com/contextgeneric/cgp-skills), which is deployed on
-its own.
-
 ### `projects/`: the libraries built with CGP
 
 [projects/](projects/README.md) documents the ecosystem projects that *use* CGP rather than being
@@ -191,8 +182,8 @@ The **core** is [`cgp`](https://github.com/contextgeneric/cgp), the library (the
 and the runtime crates its expansions target), together with
 [`cargo-cgp`](https://github.com/contextgeneric/cargo-cgp), the first-class toolchain that rewrites
 CGP compile errors and expands CGP macros. The **outputs built from this base** are
-[`cgp-skills`](https://github.com/contextgeneric/cgp-skills), which holds the agent skills (the
-`/cgp` skill an agent loads before reading or writing CGP code), and
+[`cgp-skills`](https://github.com/contextgeneric/cgp-skills), which holds the `/cgp` skill an agent
+loads before reading or writing CGP code, and
 [`contextgeneric.dev`](https://github.com/contextgeneric/contextgeneric.dev), the public website;
 both live in their own repositories because both are deployed to audiences that may not link back to
 anything here, which is why [website/](website/README.md) documents the site from this side instead.
@@ -232,7 +223,7 @@ people directing such agents. These facts matter to an outside agent.
 **The authoring rules bind only an agent that edits this base or a member project.** The
 `AGENTS.md` files describe how documents are written and kept in sync. A reading agent can treat
 them as context for how much to trust a document, and skip their instructions about registering,
-committing, and loading the writing skills.
+committing, and loading the writing skill.
 
 **Read selectively, because the index is large.** [summary.md](summary.md) lists every document in
 one file of roughly a hundred kilobytes. An agent with a narrow question can start from the section

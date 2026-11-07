@@ -20,8 +20,8 @@ it stale.
   versions and never pre-releases, the rules that follow from this repository being public, how
   links are written, the separate owners of project facts (`projects/`) and CGP patterns (`cgp/`,
   `examples/`) and matching a project's documented branch, registering a document, the prose
-  mechanics, and the committing rule; it also governs `releases/` and `skills/`, which have no rules
-  of their own.
+  mechanics, and the committing rule; it also governs `releases/`, which has no rules
+  of its own.
 - [summary.md](summary.md) — this file.
 - [sibling-projects.md](sibling-projects.md) — the member projects, their repositories, the revision
   of each to read, and the rules for finding a sibling locally versus linking to it.
@@ -409,6 +409,9 @@ it stale.
 - [AGENTS.md](cgp/implementation/AGENTS.md) — the rules for this tree: what an implementation document
   is for, the per-kind document templates, the Tests and Snapshots sections, Known issues, and how to
   document the ways an expansion can fail to compile.
+- [review.md](cgp/implementation/review.md) — the macro review procedure: orientation, hardening the
+  implementation and tests, scrutinizing the codegen, keeping the views in sync, and asking when in
+  doubt.
 
 #### `cgp/implementation/entrypoints/`: one document per macro
 
@@ -690,8 +693,8 @@ it stale.
 
 - [README.md](cargo-cgp/implementation/README.md) — the implementation catalog and what each document
   covers.
-- [AGENTS.md](cargo-cgp/implementation/AGENTS.md) — the rules for this tree: design rationale, the
-  comparison-with-related-tools section, the document shape, and recording known gaps.
+- [improving-errors.md](cargo-cgp/implementation/improving-errors.md) — the loop that turns a real
+  failing CGP project into a UI fixture and a better rewrite.
 - [architecture.md](cargo-cgp/implementation/architecture.md) — the map of the tool: the crates, the flow of a diagnostic, the
   driver's module layers, and `ResolveCtx`.
 - [executable-structure.md](cargo-cgp/implementation/executable-structure.md) — the two-executable
@@ -969,16 +972,6 @@ it stale.
 - [v0-8-0.md](releases/v0-8-0.md) — **unreleased**, in development on `main`: namespaces and
   paths, the `open` statement, the removal of presets, the error backends' behavior changes, and why
   it is not v0.7.1.
-
-## `skills/`: the writing skills the rules name
-
-- [README.md](skills/README.md) — why the base publishes skills that the rules of this base and the
-  member projects name but no other repository ships, how a skill is laid out for an agent harness,
-  and the catalog.
-- [point-first-writing/SKILL.md](skills/point-first-writing/SKILL.md) — the prose convention for
-  documents, guides, and code comments: point-first paragraphs, prose for arguments and lists for
-  sets, grounded and connected claims, plain English, and punctuation that states the relationship
-  in place of em dashes.
 
 ## `projects/`: the libraries built with CGP
 

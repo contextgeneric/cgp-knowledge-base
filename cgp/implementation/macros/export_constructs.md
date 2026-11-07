@@ -34,4 +34,4 @@ its marker; do not write `::cgp::...` path literals inline.
   [cgp-macro-core/src/exports.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/exports.rs),
   and the `::cgp::macro_prelude` re-export surface is what makes the emitted paths resolve.
 - The convention that all CGP items are referenced through these markers is recorded in
-  [cgp-macro-core/AGENTS.md](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/AGENTS.md).
+  [crates/macros/AGENTS.md](https://github.com/contextgeneric/cgp/blob/main/crates/macros/AGENTS.md).

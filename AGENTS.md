@@ -1,290 +1,152 @@
 # AGENTS.md: the CGP knowledge base
 
-This file governs how to write and maintain every document in this repository. Read
-[README.md](README.md) first for what the knowledge base is and how it is organized, and
-[summary.md](summary.md) to see what already exists. The rules here apply to the whole base; a
-section adds its own rules in its own `AGENTS.md`, and those build on these rather than replacing
-them.
-
-The sections with rules of their own are the two member directories and the outward-facing sections:
-[cgp/AGENTS.md](cgp/AGENTS.md) for the CGP library's documentation (and, nested under it,
-[cgp/implementation/AGENTS.md](cgp/implementation/AGENTS.md) and
-[cgp/errors/AGENTS.md](cgp/errors/AGENTS.md)), [cargo-cgp/AGENTS.md](cargo-cgp/AGENTS.md) for the
-toolchain's (with [cargo-cgp/implementation/AGENTS.md](cargo-cgp/implementation/AGENTS.md)),
-[examples/AGENTS.md](examples/AGENTS.md) for the worked examples,
-[related-work/AGENTS.md](related-work/AGENTS.md) for the outward comparisons,
-[communication-strategy/AGENTS.md](communication-strategy/AGENTS.md) for public-facing writing,
-[website/AGENTS.md](website/AGENTS.md) for the public site and the documents that track it, and
-[projects/AGENTS.md](projects/AGENTS.md) for the libraries built with CGP. Read the one that owns
-what you are about to touch, after this file.
-
-Two sections have no rules of their own and are governed by this file alone.
-[releases/](releases/README.md) is the single exception to the document-the-present rule below and
-is otherwise bound by this file unchanged. [skills/](skills/README.md) publishes writing skills that
-documents in this base or the member projects' rules name and no other repository ships, and a skill
-there is written for agents to load rather than as a document about CGP.
+Follow this file for every task in this repository. Read [README.md](README.md) for what the base is,
+and [summary.md](summary.md) for every document it contains.
 
 ## Orient before any task
 
-Load the CGP mental model before reasoning about any document here, because every section assumes
-it. **Invoke the `/cgp` skill**: it is the authoritative orientation on consumer and provider
-traits, `#[cgp_component]`/`#[cgp_impl]`/`#[cgp_fn]`, `delegate_components!`, `HasField`,
-`UseDelegate`, check traits, and the vocabulary the whole base is written in. Re-invoke it whenever
-you move into an unfamiliar construct. The skill lives in
-[`cgp-skills`](https://github.com/contextgeneric/cgp-skills) and is built from this base, so the two
-must always use the same words for the same ideas.
-
-**Load the `/point-first-writing` skill whenever you write or revise prose here**, which is nearly
-every task, and follow its convention. A document in this base is read both by an agent scanning for
-one fact and by an agent reading a subsystem end to end, and the style serves both: open every
-section and every paragraph with a self-contained topic sentence that states its point, then
-elaborate. Frame every list with a sentence before it and, where it helps, one after. An orphaned
-bullet list serves the scanner and abandons the reader who needs the reasoning. Prefer prose to
-bullets unless the content is genuinely a list.
-
-Then read your way in from the top: [summary.md](summary.md) for what exists, the section's
-`README.md` for how its documents are cataloged, and the section's `AGENTS.md` for its own rules.
-Read the documents a task touches before changing them, and the documents they link to when a change
-crosses a boundary.
+- Invoke the `/cgp` skill before working with CGP constructs, and re-invoke it when you move into an
+  unfamiliar construct.
+- Load the `/point-first-writing` skill before writing or revising prose, which is nearly every task.
+- Read [README.md](README.md), [summary.md](summary.md), the section `README.md`, and the section
+  `AGENTS.md` of the section you are about to touch.
+- Read the documents a task touches before changing them, and the documents they link to when a change
+  crosses a boundary.
 
 ## The synchronization rule
 
-**A document must stay in sync with the code it describes, and keeping it in sync is part of the
-change, not a follow-up.** The source in the member projects is the single source of truth, above
-any document here and above the skill. When a change alters a construct's syntax, its expansion, its
-defaults, its error behavior, or the way a tool is structured or behaves, revise the matching
-document in the same change. A document that describes behavior the code no longer has is worse than
-no document, because the next agent will trust it and be misled. Treat a stale document as a bug in
-the change that made it stale.
-
-The rule runs in both directions and reaches every view of the same truth. Adding a construct means
-adding its document and registering it in the section's catalog; removing one means removing or
-superseding its document and updating the catalog; renaming one means fixing every cross-link. The
-implementation source, the tests and expansion snapshots that pin it, the reference document, the
-implementation document, and the `/cgp` skill are five views of one truth. When they disagree, the
-disagreement is a defect, and the code wins. The snapshots are the most mechanical check on whether
-a document's expansion is honest: when you doubt what a macro emits, read the snapshot rather than
-guessing.
-
-Because this base and the code now live in separate repositories, a code change and its
-documentation change land in two working trees. Make both when the sibling checkout is present, per
-[sibling-projects.md](sibling-projects.md); when it is absent, state plainly what needs updating
-where, so nothing is silently left to drift.
+- Keep a document in sync with the code it describes, and keep that sync part of the change rather
+  than a follow-up.
+- Treat the source in the member projects as the single source of truth, above any document here and
+  above the skill.
+- Keep the implementation, the tests and snapshots, the reference document, the implementation
+  document, and the skill in agreement; when they disagree, the code wins.
+- Add a construct's document and catalog entry when the construct is added; remove or supersede both
+  when it is removed; fix every cross-link when it is renamed.
+- Make both the code change and its documentation change when the sibling checkout is present; when it
+  is absent, state plainly what needs updating there.
 
 ## Verify against the source, not from memory
 
-Read the code before you write about it. A claim about an expansion, a default identifier, an
-accepted syntax form, a module layout, or a compiler behavior is a claim about something you can
-check, so check it (in the member project's source, in its tests, or by running the tool) rather
-than transcribing another document or trusting a recollection. The documents most likely to be wrong
-are the ones written from an earlier draft of themselves.
-
-Two kinds of read-only source sit outside the member projects and are worth naming. The Rust
-compiler and Clippy checkouts (`../external/rust`, `../external/rust-clippy`) are the ground truth
-for how `rustc_driver` and a cargo-wrapping tool actually behave, since those internals shift
-between nightlies; cite them, never edit them, and never create a dependency on them. Where
-`../external/rust` is absent, the `rustc-dev` component of cargo-cgp's pinned nightly carries the
-same compiler source, under `~/.rustup/toolchains/<toolchain>/lib/rustlib/rustc-src/rust/compiler`.
-A published crate's own documentation is the ground truth for its API. Prefer verifying against a
-source over reasoning about what it probably does.
+- Verify a claim about an expansion, a default, a syntax form, a module layout, or a compiler behavior
+  against the source, a test, a snapshot, or a command before writing it.
+- Use the Rust compiler and Clippy checkouts under `../external/` as read-only ground truth; cite them,
+  never edit them, and never depend on them.
+- Read the compiler source from the pinned nightly's `rustc-dev` component when `../external/rust` is
+  absent.
+- Treat a published crate's own documentation as the ground truth for its API.
+- Prefer verifying against a source over reasoning about what it probably does.
+- Read the expansion snapshot when you doubt what a macro emits, rather than guessing.
 
 ## Document the present, not the history
 
-Describe how the code works now, written as though it had always worked that way. Do not record how
-it reached its current state: no changelog entries, no version numbers attached to behavior, and no
-"renamed from", "previously", "used to", or "no longer" traces. These artifacts accumulate into
-noise that ages badly: a reader cannot tell which "recently" is which, and a comparison against a
-former state describes something that no longer exists. When you correct a discrepancy, rewrite the
-prose to state the current behavior and delete the old wording outright. Git history is where the
-evolution lives. The one place a document describes a deviation is a Known issues or limitations
-section, and even there the deviation is a current one.
-
-Two sections are exempt, and the exemption is narrow. [releases/](releases/README.md) exists to
-record the history this rule keeps out of everywhere else (when a construct arrived, what it was
-called at each point, and where it went), because a reader meeting `#[cgp_context]` in old code has
-nowhere else to look. [website/blog/](website/blog/README.md) records how far each published post
-has drifted from the current release, for the same reason. Neither exemption travels: a reference,
-concept, guide, or implementation document still describes only the present, and a construct that no
-longer exists is deleted from it rather than annotated. When you need to say what something *used*
-to be, link to the release document that says it.
+- Describe current behavior as though it had always worked that way.
+- Do not record how the code reached its current state with changelog entries, version numbers attached
+  to behavior, or "renamed from", "previously", "used to", or "no longer" traces.
+- Rewrite a corrected discrepancy to state the current behavior and delete the old wording.
+- Keep a current deviation only in a Known issues or limitations section.
+- Exempt only [releases/](releases/README.md) and [website/blog/](website/blog/README.md); when you
+  need to say what something used to be, link the release document that records it.
 
 ## Document official versions, never pre-releases
 
-**Every document names official release versions only, for every crate in the ecosystem**: the
-release a branch is preparing, such as `cgp` v0.8.0 or `cargo-cgp` v0.1.0, never the pre-release
-published on the way to it. A pre-release such as `0.8.0-alpha` or `0.1.0-alpha` is a test run,
-published to check that the crates and the cargo integration work before the official version ships.
-It is not part of the project's public history and is not tracked anywhere: no document names it,
-records how it behaves, compares it with the source, or tells a reader how to move off it.
-
-When the code you are documenting carries a pre-release version (a `Cargo.toml` at `0.8.0-alpha`, a
-binary that reports `0.1.0-alpha`), write as though the official version it leads to has already been
-published. Name that version, describe the code on the branch as that release, and quote command
-output with the official version in place of the pre-release one. Do not add notes about which
-pre-release is on crates.io, what it lacks, or how it differs; when the official version ships, the
-documents are already right.
-
-The rule yields only to an explicit instruction from the user to document a particular pre-release.
-It does not reach code: a manifest or lockfile states whatever version it must to build, and a
-document describing that file names the version it builds against only where an agent needs the
-fact to run it. History stays out by the [rule above](#document-the-present-not-the-history), and
-[releases/](releases/README.md) records official releases alone.
+- Name `cgp` v0.8.0 and `cargo-cgp` v0.1.0 as the official versions the base describes.
+- Update the version rule in every `AGENTS.md` that names them when the official versions change.
+- Name official release versions only, never a pre-release.
+- Write as though the official version has been published; quote command output with the official
+  version.
+- Do not name a pre-release, describe how it behaves, compare it with the source, or tell a reader how
+  to move off it.
+- Yield only to an explicit user instruction to document a particular pre-release.
+- Do not apply the rule to a manifest or lockfile; they state what they must to build.
 
 ## This repository is public
 
-**This knowledge base is written for an internal audience but published in a public repository, and
-those are different things.** "Internal" here means the documents assume the `/cgp` skill, record
-unfinished work, and are never linked from the website, not that they are unread by anyone outside
-the project. Anyone can read them, and some already do: the `cgp` crate's own documentation links
-here. Write every document as though a member of the Rust community will find it, because one may.
-
-Three consequences bind every section, and the first is the one an agent is most likely to breach
-without noticing. **Distil public discussion rather than pointing at it.** Community reaction to CGP
-is legitimate input to the [communication strategy](communication-strategy/README.md), and the
-conclusions drawn from it belong here. But a document records what the reaction *amounts to*, never
-a link to the thread it came from and never a quotation attributable to the person who wrote it.
-Summarizing a recurring objection is analysis; naming the comment that raised it is finger-pointing,
-and it reads that way to the person named. Citations to *published work* that is not itself a
-reaction to CGP (a survey, an article, a repository of design notes) are unaffected and remain the
-way an audience claim is grounded.
-
-**Never disparage another project, and assume its maintainers are reading.** The rule already
-governs public writing; it governs these documents too, for the same reason and now also because
-they are visible. A criticism of another crate is fair only where it would be fair said to its
-author's face.
-
-**Keep material out that would harm someone if read.** Unfinished work and known defects belong here
-and are the point of the base. Speculation about individuals, private correspondence, and anything
-about the project's finances or plans that has not been said publicly do not.
+- Write as though a member of the Rust community will find the document, because one may.
+- Distil public discussion into what it amounts to; never link a thread or quote an identifiable
+  person.
+- Never disparage another project; assume its maintainers are reading.
+- Keep speculation about individuals, private correspondence, and unpublished finances or plans out.
+- Keep unfinished work and known defects in; they are the point of the base.
 
 ## Writing links
 
-Where a link points decides how it is written, and the three cases are worth keeping straight.
-
-A link **inside this repository** is a relative path: a sibling document in the same directory is
-`name.md`, a document in another directory is `../that-dir/name.md`, and a section index is
-`../that-dir/README.md`. Cross-link generously: when a document mentions a construct, an error
-class, or an example that another document owns, link it rather than re-explaining it, and prefer
-one explanation plus a link over two explanations that will eventually disagree.
-
-A link to **a member project's own tree** (its source, its tests, its manifests, its root
-`AGENTS.md`) is always a GitHub URL on the `main` branch
-(`https://github.com/contextgeneric/<project>/blob/main/<path>`, or `/tree/main/` for a directory),
-never a relative `../../cgp/...` path, so the link resolves for a reader who has only this
-repository checked out. When you *read* such a link yourself, prefer the local sibling checkout and
-fetch the URL only when it is absent, per [sibling-projects.md](sibling-projects.md).
-
-A **bare mention of a checkout's location** (the path `../cgp`, or a link into the read-only
-`../external/rust` compiler source) is a filesystem reference rather than a published link, and it
-stays relative. These are directions for an agent working in a local environment, not URLs for a
-reader.
+- Link inside this repository with a relative path.
+- Prefer the local checkout when reading a cross-project link.
+- Link a member project's tree with a GitHub URL on `main`.
+- Link a project section's project at the branch [sibling-projects.md](sibling-projects.md) records, not
+  `main`.
+- Keep a bare checkout path and a read-only external source as a relative filesystem reference.
+- Link a construct, error class, or example to the document that owns it rather than re-explaining it.
+- Cross-link generously; prefer one explanation plus a link over two explanations that will disagree.
 
 ## Project facts and CGP patterns have separate owners
 
-**Facts about a project built with CGP belong to its section under [projects/](projects/README.md),
-and every other document links there instead of restating them.** A project fact is anything true of
-the project's code as it stands: its module layout, its exact current wiring, what one of its items
-does, a design decision specific to it, a known defect, what its tests cover, what running it
-produces, and the changes it still needs. Record each such fact once, in the project section, and
-link to it from wherever else it matters, such as a blog-post record, a website project plan, or a
-task list. A fact stated outside `projects/` has nothing tying it to the project's source, so it
-goes stale the next time the project changes.
-
-**The CGP patterns a project demonstrates belong to [cgp/](cgp/README.md) and
-[examples/](examples/README.md), and a project document links to them instead of re-teaching them.**
-A worked example may develop the same scenario as a project and still stands alone: an agent
-learning CGP reads the example and never needs the project section, which is written for an agent
-working on the project itself. Where any document here reproduces a project's code, it matches the
-project at the branch [sibling-projects.md](sibling-projects.md) records, so the teaching version
-and the running version never disagree. When the project expresses a pattern in an older idiom, the
-gap is recorded as a change the project needs, in its section's `issues.md`, rather than fixed in
-the example alone. A worked example still never presents itself as a description of the project, and
-it carries none of the project's records.
-
-**A concept page may use simplified code instead, when a reduced form explains its concept better.**
-This covers the documents under [cgp/concepts/](cgp/concepts/README.md) and the website's concept
-pages. Their code may borrow a project's names and scenario, such as `transfer`'s `MockApp`, and cut
-it down to the lines the concept needs. Such code is an illustration rather than a reproduction, so
-it need not match the project and is not recorded as drift. It is still bound by the
-[synchronization rule](#the-synchronization-rule): it uses current idioms, it compiles against
-current CGP once the items it leaves out are supplied, and it never claims to be the project's code.
+- Keep project facts in [projects/](projects/README.md); link there from elsewhere, because a fact
+  stated outside the project's section goes stale.
+- Keep CGP patterns in [cgp/](cgp/README.md) and [examples/](examples/README.md); a project links to
+  them instead of restating them.
+- Let a worked example stand alone, even when it develops the same scenario as a project, and never
+  present it as a description of the project.
+- Match a reproduced project's code to the branch [sibling-projects.md](sibling-projects.md) records.
+- Let a concept page use simplified code when the reduction explains the concept better; the code is
+  an illustration, not a reproduction, and still uses current idioms and compiles.
+- Record a project's older idiom as a change in its `issues.md`, not by modernizing the example alone.
 
 ## Registering a document, and adding a section
 
-Every document registers itself in its section's `README.md` catalog in the same change that creates
-it, so a catalog is never behind its tree, and it registers a one-line summary in
-[summary.md](summary.md) in that same change. When you move, rename, split, or delete a document,
-fix the catalog, the summary, and every cross-link to it. The change that leaves a dangling link is
-the change that broke it.
-
-Adding a whole section means creating its directory with a `README.md` that catalogs it, giving it
-an `AGENTS.md` if it needs rules of its own, registering it in the base [README.md](README.md), and
-adding its files to [summary.md](summary.md). When the new section documents a new **member
-project**, also add that project to [sibling-projects.md](sibling-projects.md), and to the matching
-file in every other member repository, which is what lets each project find the others.
+- Register a new document in its section `README.md` and in [summary.md](summary.md) in the same
+  change.
+- Fix the catalog, the summary, and every cross-link when a document is moved, renamed, split, or
+  deleted.
+- Add a section by creating its directory with a `README.md`, an `AGENTS.md` if it needs rules, a base
+  `README.md` entry, and `summary.md` lines.
+- Add a new member project to [sibling-projects.md](sibling-projects.md) and the matching file in each
+  member repository that carries one.
+- Add a nested `AGENTS.md` only when its directory has significant rules of its own; otherwise extend the
+  parent.
 
 ## Keeping summary.md honest
 
-[summary.md](summary.md) exists so an agent can learn, in one read, every file this base contains
-and what each one holds. That makes it the file most easily left behind, so treat it as part of the
-tree rather than a description of it: a document that is added, removed, renamed, or repurposed is
-reflected there in the same change. Keep each entry to one line that says what the document covers,
-in the same vocabulary the document itself uses, and let the section catalogs carry the fuller
-framing: the summary is an index, not a second set of introductions.
+- Keep [summary.md](summary.md) one line per document, in the document's own vocabulary.
+- Update it when a document is added, removed, renamed, or repurposed.
+- Let the section catalogs carry the fuller framing; keep the summary an index.
 
 ## Prose mechanics
 
-Two mechanical habits keep these documents rendering and reading correctly, and both are easy to
-break while editing.
-
-**Keep backticks well formed, and re-check them after every edit.** Keep the opening and closing
-backticks of an inline code span on the **same line**; a line break between them breaks the span.
-When a sentence with inline code would wrap awkwardly, wrap it elsewhere or let the line run long;
-do not split the span. Put the fences of a code block on their own lines with a blank line before
-the opening fence and after the closing one, so the block is recognized rather than folded into the
-surrounding paragraph. The same applies to a markdown link: never break a line inside its `](...)`
-destination. After editing any document, read the text back and confirm every backtick and every
-link is intact.
-
-**Reflow long lines lazily, as you edit.** Prose in this base is wrapped at roughly 100 columns, but
-the wrapping is a convention rather than an invariant, and some lines run over, most often where a
-long GitHub URL replaced a short relative path, or where a single unbreakable URL exceeds the width
-on its own. Do not sweep the base to reflow them: re-wrap the paragraph you are already editing, and
-leave the rest alone. A line that cannot be wrapped without breaking a code span or a link stays
-long, per the rule above.
+- Keep the opening and closing backticks of an inline code span on the same line; never break a link
+  inside `](...)`.
+- Put the fences of a code block on their own lines with a blank line before and after.
+- Reflow only the paragraph being edited; leave the rest alone.
+- Leave a line long when it cannot be wrapped without breaking a code span or link.
 
 ## Show the example behind an error message
 
-When a document mentions a diagnostic tied to a specific example, include that example's code and
-explain both what it does and what root cause produces the message. A reader who meets a rewritten
-`[CGP-Exxx]` headline or a raw compiler error should be able to see, in the same document, the small
-program that triggers it (the `delegate_components!` block, the provider impl, the
-`check_components!` entry) rather than reconstruct it from the message. Show the snippet, say what
-it wires or declares, then name the mistake the message is really about: the field the context never
-derives, the component it omits, the redirect that resolves to nothing. An error quoted with no
-example behind it cannot be checked or understood, and the point of this base is to explain *why* an
-error reads the way it does.
+- Show the code that triggers a diagnostic in the same document.
+- Say what it wires or declares, then name the mistake the message is really about.
+- Do not quote an error with no example behind it.
 
 ## Committing changes
 
-Git commits are made **only when the user explicitly asks for one**, and each such request
-authorizes exactly one commit of the changes then in the working tree. This rule is absolute and
-overrides any general default.
-
-- **Never commit unless explicitly asked.** Do not commit as a side effect of finishing a task or
-  "wrapping up". If the work is done and the user has not asked, leave the changes uncommitted.
-- **Never bring commits up yourself.** Uncommitted work is the normal, expected state, so it is not
-  news: do not report commit status, do not ask whether to commit, and do not hint that committing
-  is the next step. Answer plainly if the user asks; the rule is against volunteering it.
-- **A commit request is one-shot, never a standing mode.** "Commit the changes" means commit the
-  current changes, this once; it does not turn on automatic committing.
-- **Always commit on the current branch.** Do not create or switch branches, even when the current
-  branch is the default one.
+- Commit only when the user explicitly asks for one commit of the changes then in the working tree.
+- Never commit as a side effect of finishing a task.
+- Never bring commits up yourself; answer plainly if asked.
+- Treat a commit request as one-shot, never a standing mode.
+- Always commit on the current branch.
 
 ## Ask when in doubt
 
-Surface a question rather than guessing whenever something should be settled before the next step is
-taken: an ambiguous intended behavior, a corner case whose correct outcome is unclear, a design
-choice with more than one defensible answer, or a document whose right home is genuinely unclear. A
-wrong assumption baked into a document, its catalog, the summary, and the skill is expensive to
-unwind.
+- Surface a question whenever a behavior, a corner case, a document's home, or a decision is
+  ambiguous.
+- Do not bake a guess into a document, its catalog, the summary, and the skill.
+
+## Where the section rules live
+
+- [cgp/AGENTS.md](cgp/AGENTS.md) governs the CGP documentation, and defers to
+  [cgp/implementation/AGENTS.md](cgp/implementation/AGENTS.md) and
+  [cgp/errors/AGENTS.md](cgp/errors/AGENTS.md).
+- [cargo-cgp/AGENTS.md](cargo-cgp/AGENTS.md) governs the tool documentation.
+- [examples/AGENTS.md](examples/AGENTS.md), [related-work/AGENTS.md](related-work/AGENTS.md),
+  [communication-strategy/AGENTS.md](communication-strategy/AGENTS.md),
+  [website/AGENTS.md](website/AGENTS.md), and [projects/AGENTS.md](projects/AGENTS.md) govern their
+  sections.

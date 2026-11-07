@@ -10,7 +10,7 @@ wording, and unsupported claims, but they do not substitute for feedback from re
 
 Use reader simulation after checking the draft's structure and style. [readers.md](readers.md)
 defines audience profiles, [writing-styles.md](writing-styles.md) guides sentence choices, and the
-[`point-first-writing`](../skills/point-first-writing/SKILL.md) skill guides paragraphs and
+`point-first-writing` skill guides paragraphs and
 sections. This method checks how those choices work together as a reader moves through the text.
 
 The method draws on reading research without claiming to measure a reader's mind. Its

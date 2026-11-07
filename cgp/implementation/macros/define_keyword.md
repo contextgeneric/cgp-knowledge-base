@@ -59,4 +59,4 @@ marker after its spelling.
   and the CGP markers in
   [cgp-macro-core/src/types/keywords.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/types/keywords.rs).
 - The convention that custom keywords go through this macro is recorded in
-  [cgp-macro-core/AGENTS.md](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/AGENTS.md).
+  [crates/macros/AGENTS.md](https://github.com/contextgeneric/cgp/blob/main/crates/macros/AGENTS.md).

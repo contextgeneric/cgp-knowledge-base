@@ -54,6 +54,10 @@ macros the implementation is written in, such as `parse_internal!` and `define_k
 This section is the index of implementation documents. When you add a document, register it here in
 the same change.
 
+- [Reviewing a CGP macro](review.md): the macro review procedure moved from `cgp/AGENTS.md`:
+  orientation, hardening the implementation and tests, scrutinizing the codegen, keeping the views in
+  sync, and asking when in doubt.
+
 ### Entrypoints: [entrypoints/](entrypoints/)
 
 The component and provider macros:
@@ -175,7 +179,7 @@ the owning macro's entrypoint or AST document.
 The macros share a handful of mechanics that are easy to misread and that recur across many
 constructs, so a reviewer should hold them in mind before reading any single document. This section
 explains *why the code behaves as it does*; the review workflow in
-[the `cgp` repository's AGENTS.md](https://github.com/contextgeneric/cgp/blob/main/AGENTS.md#scrutinize-the-macro-codegen)
+[the macro review document](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/implementation/review.md#scrutinize-the-macro-codegen)
 under "Scrutinize the macro codegen" lists *what to check* against these same mechanics for each
 macro, and the per-construct documents show where each one bites.
 
