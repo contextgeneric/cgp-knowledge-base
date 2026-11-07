@@ -163,7 +163,9 @@ by the blanket impl over the reserved context type `__Context__`. The implicit p
 `HasField` bounds on the impl and `get_field` bindings at the top of the body:
 
 ```rust
+/// The trait for the `rectangle_area` operation.
 pub trait RectangleArea {
+    /// The `rectangle_area` operation.
     fn rectangle_area(&self) -> f64;
 }
 
@@ -195,7 +197,9 @@ example, the generic goes on both trait and impl, while the function's `where` b
 impl, ahead of the implicit `HasField` bounds:
 
 ```rust
+/// The trait for the `rectangle_area` operation.
 pub trait RectangleArea<Scalar> {
+    /// The `rectangle_area` operation.
     fn rectangle_area(&self) -> Scalar;
 }
 

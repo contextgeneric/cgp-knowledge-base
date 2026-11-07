@@ -97,6 +97,7 @@ output. This centers on two partial companion enums: `__PartialShape` for owned 
 a variant can be present (`IsPresent`) or ruled out (`IsVoid`):
 
 ```rust
+/// The partial extractor for [`Shape`].
 pub enum __PartialShape<__F0__: MapType, __F1__: MapType> {
     Circle(<__F0__ as MapType>::Map<Circle>),
     Rectangle(<__F1__ as MapType>::Map<Rectangle>),

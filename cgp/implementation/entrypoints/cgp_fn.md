@@ -41,7 +41,9 @@ The macro moves through two stages, each a method on the AST type the previous o
 `#[cgp_fn]` emits exactly two items in a fixed order: the trait with the method, and the blanket
 impl of that trait for the reserved context type `__Context__`. There is no provider struct, no
 component marker, and no wiring: the method becomes available on every context that satisfies the
-impl's `where` clause.
+impl's `where` clause. The function's own doc comment stays on the method, where the function's body
+lands, and the trait carries a `#[doc]` line naming the operation; when the function has no doc, the
+method gets one too, so a crate that enables `missing_docs` reports neither.
 
 The interesting transform is what happens to an `#[implicit]` argument. The argument is removed from
 the method signature entirely, its field is required as a `HasField` bound on the impl, and a `let`

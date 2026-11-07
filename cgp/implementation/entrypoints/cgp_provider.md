@@ -87,7 +87,8 @@ name to be present" when no override is given, and with an override it is the `I
 derivation in `provider_impl.rs` that fails, with "provider impl should contain trait path".
 
 The **`new` keyword controls the struct**, whose shape is read from the impl's `Self` type by
-`to_provider_struct`. A plain provider name yields a unit `pub struct Name;`. A generic provider
+`to_provider_struct`. A plain provider name yields a unit `pub struct Name;`, carrying a `#[doc]`
+line that names the provider and its provider trait so `missing_docs` does not report it. A generic provider
 yields a struct with a `PhantomData` field binding its parameters; a lifetime parameter is bound via
 `Life<'a>` inside the `PhantomData` tuple:
 

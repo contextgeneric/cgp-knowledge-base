@@ -41,6 +41,7 @@ the unit `()`, and `IsVoid` maps it to the empty `Void`. A field's present/absen
 in the type:
 
 ```rust
+/// The partial builder for [`Person`].
 pub struct __PartialPerson<__F0__: MapType, __F1__: MapType> {
     pub first_name: <__F0__ as MapType>::Map<String>,
     pub last_name: <__F1__ as MapType>::Map<String>,
@@ -103,9 +104,9 @@ included wholesale by [`#[derive(CgpRecord)]`](derive_cgp_record.md) and
 `derive_builder_struct` builds the companion by **cloning the input struct and replacing its
 identifier**, which decides two user-visible properties. The clone keeps the struct's own visibility
 and each field's, so a `pub struct` yields a `pub struct __Partial{Name}` with `pub` fields. But the
-helper then calls `attrs.clear()`, so none of the input's struct-level attributes reach the
-companion: a `#[derive(Debug, Clone)]` on the record does not carry over, and a partially-built
-value can therefore be neither printed nor cloned. That is not an oversight: a field's type is the
+helper then calls `attrs.clear()` and adds one `#[doc]` line of its own, so none of the input's
+struct-level attributes reach the companion: a `#[derive(Debug, Clone)]` on the record does not carry
+over, and a partially-built value can therefore be neither printed nor cloned. That is not an oversight: a field's type is the
 projection `<__F0__ as MapType>::Map<T>`, so a blanket `Debug` derive on the companion would need
 bounds the derive has no way to state.
 

@@ -70,6 +70,7 @@ marker decides how each field is stored: `IsPresent` maps `T` to `T`, `IsNothing
 and `IsVoid` maps `T` to the empty `Void` type:
 
 ```rust
+/// The partial builder for [`Person`].
 pub struct __PartialPerson<__F0__: MapType, __F1__: MapType> {
     pub first_name: <__F0__ as MapType>::Map<String>,
     pub last_name: <__F1__ as MapType>::Map<String>,

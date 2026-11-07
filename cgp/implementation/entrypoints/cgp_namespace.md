@@ -44,7 +44,9 @@ A `new` namespace emits, in order, the marker struct `__{Namespace}Components`, 
 `impl {Namespace}<__Table__> for {Key}` per entry; omitting `new` emits only the per-entry impls, so
 the trait and struct must already be declared elsewhere. When the header names a parent
 (`: DefaultNamespace`), an inheritance impl is inserted ahead of the entry impls. The
-struct-then-trait-then-impls order is what the canonical snapshots pin.
+struct-then-trait-then-impls order is what the canonical snapshots pin. The struct, the trait, and
+the associated type each carry a `#[doc]` line, so a crate that enables `missing_docs` does not
+report them.
 
 Each entry lowers to one impl of the lookup trait, keyed on the entry's key type, whose `Delegate`
 associated type is the entry's target. A `=>` redirect points the delegate at a `RedirectLookup`

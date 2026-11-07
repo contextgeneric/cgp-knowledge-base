@@ -325,6 +325,7 @@ Fifth, it emits the **component name struct**, a zero-sized marker that serves a
 delegation tables:
 
 ```rust
+/// Component marker for [`CanCalculateArea`].
 pub struct AreaCalculatorComponent;
 ```
 

@@ -139,6 +139,9 @@ snake-cased context name wrapped in double underscores (a `context: Ctx` key giv
 provider parameter is `__Provider__`, and the `RedirectLookup` impl introduces `__Components__` and
 `__Path__`. These names are chosen so they never clash with a user's own type parameters.
 
+The marker struct carries a `#[doc]` line naming the consumer trait, so a crate that enables
+`missing_docs` does not report it.
+
 The **marker struct's name span** is the provider identifier's span, not `Span::call_site()`. When
 the component name is not given explicitly, `CgpComponentArgs` derives it as `{Provider}Component`
 and spans that identifier on the provider identifier the user wrote in `#[cgp_component(Provider)]`.

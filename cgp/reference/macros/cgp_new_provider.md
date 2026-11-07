@@ -81,6 +81,7 @@ where
     Context: HasDimensions,
 {}
 
+/// Provider `RectangleArea` for [`AreaCalculator`].
 pub struct RectangleArea;
 ```
 

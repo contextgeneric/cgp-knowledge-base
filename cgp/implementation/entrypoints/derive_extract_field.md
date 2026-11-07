@@ -41,6 +41,7 @@ remaining-possibility is encoded in the type. `__PartialRef{Name}` adds a `'__a_
 `MapTypeRef` parameter that selects a shared or mutable borrow of each payload:
 
 ```rust
+/// The partial extractor for [`Shape`].
 pub enum __PartialShape<__F0__: MapType, __F1__: MapType> {
     Circle(<__F0__ as MapType>::Map<Circle>),
     Rectangle(<__F1__ as MapType>::Map<Rectangle>),

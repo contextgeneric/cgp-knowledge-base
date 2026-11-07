@@ -374,3 +374,31 @@ empty variant's `&mut Nil` payload with `Box::leak(Box::new(Nil))`, and write `B
 `no_std` crate must import it; the
 [extractor derive's Known issues](entrypoints/derive_extract_field.md#known-issues) record the
 trade-off. Any other non-CGP name an expansion needs comes from `::core`, which every crate has.
+
+### Doc comments on generated items
+
+A macro copies the doc comment a user writes on the item it is applied to, and adds a line of its own
+where the generated item would otherwise be bare. The behavior differs by macro, and a crate that
+enables `missing_docs` depends on it:
+
+- **`#[cgp_component]` and `#[cgp_type]`** copy the consumer trait's doc onto every item they derive:
+  the consumer blanket impl, the provider trait, the provider blanket impl, and the `UseContext` and
+  `RedirectLookup` impls. The marker struct carries a generated line naming the consumer trait.
+- **`#[cgp_impl]` and `#[cgp_new_provider]`** keep the impl's doc on the provider impl, and the
+  provider struct carries a generated line naming the provider and its provider trait.
+- **`#[cgp_fn]`** keeps the function's doc on the method, where the function's body lands, and gives
+  the trait a generated line naming the operation. A function with no doc leaves the method with a
+  generated line too.
+- **`#[cgp_getter]` and `#[cgp_auto_getter]`** keep the trait's and the method's own docs, and add a
+  line only where one is missing.
+- **`#[cgp_computer]`, `#[cgp_producer]`, and `#[cgp_auto_dispatch]`** keep the function's or trait's
+  own doc, and the provider struct they declare carries a generated line naming the provider and its
+  provider trait.
+- **`cgp_namespace!`** cannot take a doc comment, because rustdoc does not document a macro
+  invocation, so the marker struct, the lookup trait, and its `Delegate` associated type each carry a
+  generated line.
+- **`delegate_components! { new … }`** gives each table struct a generated line naming it.
+- **The data derives** keep the type's own doc and give each `__Partial{Name}` builder or extractor a
+  generated line naming the type it builds or extracts.
+
+A generated line is a `#[doc = "…"]` attribute, which a snapshot prints as `///Text` without a space.

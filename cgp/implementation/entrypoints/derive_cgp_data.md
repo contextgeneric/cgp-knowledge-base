@@ -46,7 +46,8 @@ methods, this document does not repeat the item shapes and points to them instea
 
 For a struct, the fixed emission order is: the `HasField`/`HasFieldMut` getters per field, then
 `HasFields`, `HasFieldsRef`, `FromFields`, `ToFields`, `ToFieldsRef`, then the builder block: the
-`__Partial{Name}` struct, `HasBuilder`, `IntoBuilder`, `PartialData`, `FinalizeBuild`, then the
+`__Partial{Name}` struct, which carries a `#[doc]` line so `missing_docs` does not report it,
+`HasBuilder`, `IntoBuilder`, `PartialData`, `FinalizeBuild`, then the
 per-field `UpdateField` and `HasField` impls. For an enum: `HasFields`, `HasFieldsRef`,
 `FromFields`, `ToFields`, `ToFieldsRef`, then one `FromVariant` per variant, then the extractor
 block: the `__Partial{Name}` and `__PartialRef{Name}` enums, `PartialData` for each,

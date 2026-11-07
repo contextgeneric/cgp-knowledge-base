@@ -213,9 +213,12 @@ Because `new` is present, the macro first emits a marker struct named after the 
 associated type:
 
 ```rust
+/// Wiring table for the `MyNamespace` namespace.
 pub struct __MyNamespaceComponents;
 
+/// The `MyNamespace` namespace's wiring table.
 pub trait MyNamespace<__Table__> {
+    /// The provider table the `MyNamespace` namespace delegates to.
     type Delegate;
 }
 ```

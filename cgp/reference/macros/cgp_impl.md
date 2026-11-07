@@ -191,6 +191,7 @@ impl<Context> FooProvider<Context> for ValueToString {
 
 impl<Context> IsProviderFor<FooProviderComponent, Context, ()> for ValueToString {}
 
+/// Provider `ValueToString` for [`FooProvider`].
 pub struct ValueToString;
 ```
 
@@ -256,6 +257,7 @@ where
 {
 }
 
+/// Provider `RectangleAreaCalculator` for [`AreaCalculator`].
 pub struct RectangleAreaCalculator;
 ```
 

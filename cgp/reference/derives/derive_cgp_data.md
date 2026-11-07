@@ -124,6 +124,7 @@ in a `MapType` marker so the field can be present (`IsPresent`), absent (`IsNoth
 (`IsVoid`):
 
 ```rust
+/// The partial builder for [`Person`].
 pub struct __PartialPerson<__F0__: MapType, __F1__: MapType> {
     pub first_name: <__F0__ as MapType>::Map<String>,
     pub last_name: <__F1__ as MapType>::Map<String>,
@@ -180,6 +181,7 @@ The extractor half generates partial enums `__PartialShape` and `__PartialRefSha
 remaining variants:
 
 ```rust
+/// The partial extractor for [`Shape`].
 pub enum __PartialShape<__F0__: MapType, __F1__: MapType> {
     Circle(<__F0__ as MapType>::Map<Circle>),
     Rectangle(<__F1__ as MapType>::Map<Rectangle>),
