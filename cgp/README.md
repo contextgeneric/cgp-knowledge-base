@@ -18,6 +18,15 @@ context picks for itself, extensible records and variants, and a family of compo
 The `/cgp` skill gives a fast orientation on all of that; this section is the durable record that
 goes deeper and stays in sync with the code. Read the two together.
 
+## `no_std` and the `alloc` feature
+
+The `cgp` crate builds for a target without `std`, and its default features need neither `std` nor
+`alloc`. The `alloc` feature turns on the providers that need an allocator, such as `DebugError` and
+`DisplayError`, so a `no_std` build without one leaves it off. The error backends are separate
+crates: `cgp-error-anyhow` and `cgp-error-std` need `alloc`, and `cgp-error-eyre` needs `std`. The
+`cgp-no-std-tests` crate builds the library for `x86_64-unknown-none` with and without `alloc`, so a
+`std` or `alloc` leak fails the build; the test suite's README records how to run it.
+
 ## Why this exists
 
 The base's [README](../README.md#why-this-exists) makes the general case that CGP's meaning has to
