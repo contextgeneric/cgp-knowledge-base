@@ -75,14 +75,14 @@ read. The forms are shared with [`#[cgp_auto_getter]`](../macros/cgp_auto_getter
 |---|---|---|
 | an owned type (a path, tuple, or array) | the same type | `.clone()` |
 | `&T` | `T` | none |
-| `&str` | `String` | `.as_str()` |
+| `&str` | any `'static` value implementing `AsRef<str>` | `.as_ref()` |
 | `Option<&T>` | `Option<T>` | `.as_ref()` |
-| `Option<&str>` | `Option<String>` | `.as_deref()` |
+| `Option<&str>` | any `'static` `Option<U>` whose `U` implements `AsRef<str>` | `.option_as_ref()` |
 | `&[T]` | any `'static` value implementing `AsRef<[T]>` | `.as_ref()` |
 | [`MRef<'_, T>`](../types/mref.md) | `T` | wrapped as `MRef::Ref(…)` |
 
 Each reference form has a mutable mirror, read through [`HasFieldMut`](../traits/has_field.md) and
-`get_field_mut`: `&mut T`, `&mut str` (a `String` field, via `.as_mut_str()`), `&mut [T]` (a field
+`get_field_mut`: `&mut T`, `&mut str` (a field implementing `AsMut<str>`, via `.as_mut()`), `&mut [T]` (a field
 implementing `AsMut<[T]>`, via `.as_mut()`), `Option<&mut T>` (via `.as_mut()`), and
 `Option<&mut str>` (via `.as_deref_mut()`). Every mutable form needs a `&mut self` receiver and must
 be alone, per the rules above.
@@ -143,9 +143,10 @@ where
 The `let` bindings are inserted at the top of the body in argument order, before the original
 statements, so the names are in scope throughout. Each binding's type is the argument's declared
 type, and its value is the read with the conversion from the table. For `#[implicit] name: &str`,
-for example, the bound is `HasField<Symbol!("name"), Value = String>` and the binding is
-`let name: &str = self.get_field(PhantomData::<Symbol!("name")>).as_str();`, so the field holds a
-`String` while the body works with a `&str`.
+for example, the bound is `HasField<Symbol!("name"), Value: AsRef<str> + 'static>` and the binding is
+`let name: &str = self.get_field(PhantomData::<Symbol!("name")>).as_ref();`, so the field may be a
+`String`, a `Cow<str>`, or a `Box<str>` while the body works with a `&str`. A getter keeps the
+`String` field, because its `HasField` bound is also used by the `WithProvider` adapter.
 
 Inside a [`#[cgp_impl]`](../macros/cgp_impl.md) block the rewrite is the same: the bounds are added
 to the impl's `where` clause and the bindings are prepended to the method's body. Given:
@@ -165,11 +166,11 @@ and `area` binds `width` and `height` at its top.
 
 A `#[cgp_impl]` block with several methods gathers the bounds of every method and removes duplicates
 before adding them, since all methods share one impl. Two methods that each take
-`#[implicit] name: &str` contribute one `HasField<Symbol!("name"), Value = String>` bound. The
-comparison covers the whole specification (name, argument type, field type, access form, and
-mutability), so two methods reading the same field in different ways each contribute a bound. When
-the field types agree the two bounds are identical and harmless: a `&str` in one method and a
-`String` in another both require `Value = String`. When they differ, as with `count: u32` in one
+`#[implicit] name: &str` contribute one `HasField<Symbol!("name"), Value: AsRef<str> + 'static>`
+bound. The comparison covers the whole specification (name, argument type, field type, access form,
+and mutability), so two methods reading the same field in different ways each contribute a bound.
+When the field types agree the two bounds are identical and harmless: a `&str` in one method and a
+`String` in another both require `Value: AsRef<str>`. When they differ, as with `count: u32` in one
 method and `count: u64` in another, the bounds demand two `Value` types at once, and the provider
 fails where it is defined with
 ``E0284 type annotations needed: cannot satisfy `<__Context__ as HasField<…>>::Value == u32` ``,

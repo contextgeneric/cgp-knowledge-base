@@ -430,6 +430,8 @@ but must understand to read generated code.
   component.
 - [`HasField`](traits/has_field.md): tag-keyed field access (with `HasFieldMut` and the
   provider-side `FieldGetter`).
+- [`OptionAsRef`](traits/option_as_ref.md): borrows the value inside an `Option` as a `&T`, the bound
+  an `Option<&str>` implicit argument generates.
 - [`HasFields`](traits/has_fields.md): the whole-shape field representation and its conversions.
 - [`HasBuilder`](traits/has_builder.md): the incremental-builder trait family (`BuildField`,
   `UpdateField`, `FinalizeBuild`, …).

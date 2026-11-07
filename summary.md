@@ -206,6 +206,7 @@ it stale.
 - [has_builder.md](cgp/reference/traits/has_builder.md) — the incremental-builder trait family.
 - [has_field.md](cgp/reference/traits/has_field.md) — tag-keyed field access, with `HasFieldMut` and
   the provider-side `FieldGetter`.
+- [option_as_ref.md](cgp/reference/traits/option_as_ref.md) — borrows the value inside an `Option` as a `&T`, the bound an `Option<&str>` implicit argument generates.
 - [has_fields.md](cgp/reference/traits/has_fields.md) — the whole-shape field representation and its
   conversions.
 - [is_provider_for.md](cgp/reference/traits/is_provider_for.md) — the marker supertrait that surfaces

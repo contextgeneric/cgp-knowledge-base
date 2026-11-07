@@ -65,20 +65,21 @@ pub trait Greet {
 // derived blanket impl: the field is a bound, the binding is prepended
 impl<__Context__> Greet for __Context__
 where
-    Self: HasField<Symbol!("name"), Value = String>,
+    Self: HasField<Symbol!("name"), Value: AsRef<str> + 'static>,
 {
     fn greet(&self) {
-        let name: &str = self.get_field(PhantomData::<Symbol!("name")>).as_str();
+        let name: &str = self.get_field(PhantomData::<Symbol!("name")>).as_ref();
         println!("Hello, {}!", name);
     }
 }
 ```
 
 The conversion applied to each binding is chosen by the argument's type, following the same
-field-mode rules the getter macros use: a `&str` argument reads a `String` field and appends
-`.as_str()`, an owned value (a path type, tuple, or array) appends `.clone()`, an `Option<&T>` reads
-an `Option<T>` field and appends `.as_ref()`, an `Option<&str>` reads an `Option<String>` field and
-appends `.as_deref()`, an `&[T]` reads an `AsRef<[T]>` field and appends `.as_ref()`, and a plain
+field-mode rules the getter macros use: a `&str` argument reads any `AsRef<str>` field and appends
+`.as_ref()`, an owned value (a path type, tuple, or array) appends `.clone()`, an `Option<&T>` reads
+an `Option<T>` field and appends `.as_ref()`, an `Option<&str>` reads any `Option<U>` whose `U`
+implements `AsRef<str>` and appends `.option_as_ref()`, an `&[T]` reads an `AsRef<[T]>` field and
+appends `.as_ref()`, and a plain
 `&T` is taken by reference with no conversion. Each reference mode has a mutable mirror selected by
 a `&mut` in the argument's type: a `&mut T` reads through `HasFieldMut`/`get_field_mut`; a
 `&mut [T]` reads an `AsMut<[T]>` field and appends `.as_mut()`; an `Option<&mut T>` reads an

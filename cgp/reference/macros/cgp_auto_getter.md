@@ -67,7 +67,7 @@ recognized forms are these:
 | Return type | Field type | Conversion |
 |---|---|---|
 | `&T` | `T` | none |
-| `&str` | `String` | `.as_str()` |
+| `&str` | `String` | `.as_ref()` |
 | `Option<&T>` | `Option<T>` | `.as_ref()` |
 | `Option<&str>` | `Option<String>` | `.as_deref()` |
 | `&[T]` | any `'static` value implementing `AsRef<[T]>` | `.as_ref()` |
@@ -76,7 +76,7 @@ recognized forms are these:
 
 A `&mut self` getter reads the field through `get_field_mut`, so its bound is on
 [`HasFieldMut`](../traits/has_field.md) rather than `HasField`, and each reference form has a
-mutable mirror: `&mut T`, `&mut str` (a `String` field, via `.as_mut_str()`), `&mut [T]` (a field
+mutable mirror: `&mut T`, `&mut str` (a `String` field, via `.as_mut()`), `&mut [T]` (a field
 implementing `AsMut<[T]>`, via `.as_mut()`), `Option<&mut T>` (via `.as_mut()`), and
 `Option<&mut str>` (via `.as_deref_mut()`).
 
@@ -169,7 +169,7 @@ pub trait HasName {
 ```
 
 the macro emits the trait followed by this impl. The field tag is the method name as a `Symbol!`,
-and because the return type is `&str`, the `Value` is `String` and the body appends `.as_str()`:
+and because the return type is `&str`, the `Value` is `String` and the body appends `.as_ref()`:
 
 ```rust
 impl<__Context__> HasName for __Context__
@@ -177,7 +177,7 @@ where
     __Context__: HasField<Symbol!("name"), Value = String>,
 {
     fn name(&self) -> &str {
-        self.get_field(PhantomData::<Symbol!("name")>).as_str()
+        self.get_field(PhantomData::<Symbol!("name")>).as_ref()
     }
 }
 ```
