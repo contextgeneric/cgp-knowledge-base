@@ -140,8 +140,8 @@ else the base [documents the present](AGENTS.md#document-the-present-not-the-his
 no answer to a question an agent hits constantly: this code, blog post, or book chapter uses
 `#[cgp_context]` or `cgp_preset!`; when did that exist, and what replaced it? A document per
 released version records what it introduced, what it broke, and how much of it still stands, and a
-**removal ledger** in the index dates every construct that has been renamed or deleted. It also
-tracks the release currently in preparation, since v0.8.0 is not yet out.
+**removal ledger** in the index dates every construct that has been renamed or deleted. Its newest
+document records v0.8.0, the release the rest of the base describes.
 
 ### `projects/`: the libraries built with CGP
 
@@ -244,3 +244,7 @@ intent as well as with the source. An outside agent that finds a problem should 
 directing it, who can file it on the [issue
 tracker](https://github.com/contextgeneric/cgp-knowledge-base/issues), with the prompt that found
 it.
+
+## License
+
+Licensed under the [Apache License, Version 2.0](LICENSE).
